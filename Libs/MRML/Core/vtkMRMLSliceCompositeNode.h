@@ -33,11 +33,9 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
 
-  ///
   /// Set node attributes
   void ReadXMLAttributes( const char** atts) override;
 
-  ///
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
@@ -45,39 +43,43 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLSliceCompositeNode);
 
-  ///
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "SliceComposite";}
 
-  ///
+  /// @{
   /// the ID of a MRMLVolumeNode
   const char* GetBackgroundVolumeID();
   void SetBackgroundVolumeID(const char* id);
   void SetReferenceBackgroundVolumeID(const char *id) { this->SetBackgroundVolumeID(id); }
+  /// @}
 
-  ///
+  /// @{
   /// the ID of a MRMLVolumeNode
   const char* GetForegroundVolumeID();
   void SetForegroundVolumeID(const char* id);
   void SetReferenceForegroundVolumeID(const char *id) { this->SetForegroundVolumeID(id); }
+  /// @}
 
-  ///
+  /// @{
   /// the ID of a MRMLVolumeNode
   const char* GetLabelVolumeID();
   void SetLabelVolumeID(const char* id);
   void SetReferenceLabelVolumeID(const char *id) { this->SetLabelVolumeID(id); }
+  /// @}
 
-  ///
+  /// @{
   /// Compositing mode for foreground and background can be alpha
   /// blending, reverse alpha blending, addition, or subtraction
   vtkGetMacro (Compositing, int);
   vtkSetMacro (Compositing, int);
+  /// @}
 
-  ///
+  /// @{
   /// Configures the behavior for blending layers.
   /// The default value is true, indicating that the layers will be clipped to fit the background.
   vtkGetMacro (ClipToBackgroundVolume, bool);
   vtkSetMacro (ClipToBackgroundVolume, bool);
+  /// @}
 
   ///
   /// opacity of the Foreground for rendering over background
@@ -93,41 +95,46 @@ public:
   vtkGetMacro (LabelOpacity, double);
   vtkSetMacro (LabelOpacity, double);
 
-  ///
+  /// @{
   /// toggle that gangs control of slice viewers
   vtkGetMacro (LinkedControl, int );
   vtkSetMacro (LinkedControl, int );
   vtkBooleanMacro(LinkedControl, int);
+  /// @}
 
-  ///
+  /// @{
   /// toggle for whether linked behavior is immediate or waits until
   /// an interaction is finished
   vtkGetMacro (HotLinkedControl, int );
   vtkSetMacro (HotLinkedControl, int );
   vtkBooleanMacro(HotLinkedControl, int);
+  /// @}
 
-  ///
+  /// @{
   /// toggles fiducial visibility in the slice viewer
   vtkGetMacro (FiducialVisibility, int );
   vtkSetMacro (FiducialVisibility, int );
   vtkGetMacro (FiducialLabelVisibility, int );
   vtkSetMacro (FiducialLabelVisibility, int );
+  /// @}
 
-  ///
+  /// @{
   /// This method is deprecated. Instead of this method use
   /// SetIntersectingSlicesVisibility() and GetIntersectingSlicesVisibility()
   /// of vtkMRMLSliceDisplayNode.
   int GetSliceIntersectionVisibility();
   void SetSliceIntersectionVisibility(int visibility);
+  /// @}
 
-  ///
+  /// @{
   /// configures the behavior of PropagateVolumeSelection():
   /// if set to false, the background/label for slice views
   /// will not be reset. Default value is true
   vtkSetMacro (DoPropagateVolumeSelection, bool );
   vtkGetMacro (DoPropagateVolumeSelection, bool );
+  /// @}
 
-  ///
+  /// @{
   /// Name of the layout. Must be unique between all the slice composite
   /// nodes because it is used as a singleton tag.
   /// Must be the same than the slice node.
@@ -140,6 +147,7 @@ public:
   char *GetLayoutName() {
     return this->GetSingletonTag();
   }
+  /// @}
 
   /// Modes for compositing
   enum
@@ -150,6 +158,7 @@ public:
       Subtract
   };
 
+  /// @{
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by
   /// logic classes to determine whether state changes should be
@@ -158,6 +167,7 @@ public:
   void SetInteracting(int);
   vtkGetMacro(Interacting, int);
   vtkBooleanMacro(Interacting, int);
+  /// @}
 
   /// Enum identifying the parameters being manipulated with calls to
   /// InteractionOn() and InteractionOff(). Identifiers are powers of
@@ -178,6 +188,7 @@ public:
     // Next one needs to be 32
   };
 
+  /// @{
   /// Get/Set a flag indicating what parameters are being manipulated
   /// within calls to InteractingOn() and InteractingOff(). These
   /// fields are used to propagate linked behaviors. This flag is a
@@ -185,7 +196,9 @@ public:
   /// flag. Does not mark the node as Modified.
   void SetInteractionFlags(unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);
+  /// @}
 
+  /// @{
   /// Get/Set a flag indicating how the linking behavior should be modified.
   /// InteractionFlags modifier uses bits defined by InteractionFlagType enum
   /// that by default are all set and result in the default behavior. If a
@@ -193,6 +206,7 @@ public:
   /// not broadcast.
   void SetInteractionFlagsModifier(unsigned int);
   vtkGetMacro(InteractionFlagsModifier, unsigned int);
+  /// @}
 
   /// Set all bits of the modifier to 1, resulting in the default linking
   /// behavior (selection of foreground, background and label volumes being
