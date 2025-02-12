@@ -890,6 +890,38 @@ vtkAlgorithmOutput * vtkMRMLSliceLogic::GetImageDataConnection()
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::HasInputs()
+{
+  for (LayerListIterator iterator = this->Layers.begin();
+       iterator != this->Layers.end();
+       ++iterator)
+  {
+    vtkMRMLSliceLayerLogic* layer = *iterator;
+    if (layer != nullptr && layer->GetImageDataConnection() != nullptr)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::HasUVWInputs()
+{
+  for (LayerListIterator iterator = this->Layers.begin();
+       iterator != this->Layers.end();
+       ++iterator)
+  {
+    vtkMRMLSliceLayerLogic* layer = *iterator;
+    if (layer != nullptr && layer->GetImageDataConnectionUVW() != nullptr)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdateImageData ()
 {
   if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
@@ -904,9 +936,7 @@ void vtkMRMLSliceLogic::UpdateImageData ()
   // It seems very strange that the imagedata can be null.
   // It should probably be always a valid imagedata with invalid bounds if needed
 
-  if ( (this->GetBackgroundLayer() != nullptr && this->GetBackgroundLayer()->GetImageDataConnection() != nullptr) ||
-       (this->GetForegroundLayer() != nullptr && this->GetForegroundLayer()->GetImageDataConnection() != nullptr) ||
-       (this->GetLabelLayer() != nullptr && this->GetLabelLayer()->GetImageDataConnection() != nullptr) )
+  if (this->HasInputs())
   {
     if (this->ImageDataConnection == nullptr || this->Pipeline->Blend->GetOutputPort()->GetMTime() > this->ImageDataConnection->GetMTime())
     {
@@ -1154,9 +1184,9 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       displayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       displayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
       if ( (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
-          !((backgroundImagePortUVW != nullptr) || (foregroundImagePortUVW != nullptr) || (labelImagePortUVW != nullptr) ) ) ||
+            !this->HasUVWInputs()) ||
           (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView &&
-          !((backgroundImagePort != nullptr) || (foregroundImagePort != nullptr) || (labelImagePort != nullptr) ) ))
+           !this->HasInputs()) )
       {
         displayNode->SetTextureImageDataConnection(nullptr);
       }
