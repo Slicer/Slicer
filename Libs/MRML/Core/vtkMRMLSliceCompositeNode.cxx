@@ -281,6 +281,64 @@ SetNthLayerVolumeID(int layerIndex, const char* volumeNodeID)
   }
 }
 
+//----------------------------------------------------------------------------
+double vtkMRMLSliceCompositeNode::GetNthLayerOpacity(int layerIndex)
+{
+  if (layerIndex < 0)
+  {
+    vtkErrorMacro(<< "GetNthLayerOpacity: Non-negative layer index is expected.");
+    return 1.0;
+  }
+  if (layerIndex < static_cast<int>(this->LayerOpacities.size()))
+    {
+    return this->LayerOpacities.at(layerIndex);
+    }
+  return 1.0;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetNthLayerOpacity(int layerIndex, double value)
+{
+  if (layerIndex < 0)
+  {
+    vtkErrorMacro(<< "SetNthLayerOpacity: Non-negative layer index is expected.");
+    return;
+  }
+  if (layerIndex >= static_cast<int>(this->LayerOpacities.size()))
+    {
+    this->LayerOpacities.resize(layerIndex + 1);
+    }
+  if (this->LayerOpacities.at(layerIndex) != value)
+    {
+    this->LayerOpacities.at(layerIndex) = value;
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLSliceCompositeNode::GetForegroundOpacity()
+{
+  return this->GetNthLayerOpacity(vtkMRMLSliceCompositeNode::LayerForeground);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetForegroundOpacity(double value)
+{
+  this->SetNthLayerOpacity(vtkMRMLSliceCompositeNode::LayerForeground, value);
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLSliceCompositeNode::GetLabelOpacity()
+{
+  return this->GetNthLayerOpacity(vtkMRMLSliceCompositeNode::LayerLabel);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetLabelOpacity(double value)
+{
+  this->SetNthLayerOpacity(vtkMRMLSliceCompositeNode::LayerLabel, value);
+}
+
 //-----------------------------------------------------------
 int vtkMRMLSliceCompositeNode::GetSliceIntersectionVisibility()
 {
