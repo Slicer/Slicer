@@ -95,9 +95,9 @@ struct BlendPipeline
     //   Splitting and appending channels is probably quite inefficient, but there does not
     //   seem to be simpler pipeline to do this in VTK.
     //
-    //   foreground > AddSubForegroundCast \
-    //                                      > AddSubMath > AddSubOutputCast ...
-    //   background > AddSubBackroundCast  /
+    //   foreground > AddSubForegroundCast > ForegroundFractionMath \
+    //                                                               > AddSubMath > AddSubOutputCast ...
+    //                             background > AddSubBackroundCast /
     //
     //
     //     ... AddSubOutputCast > AddSubExtractRGB       \
