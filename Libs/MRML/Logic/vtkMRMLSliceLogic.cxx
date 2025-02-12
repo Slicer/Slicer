@@ -1065,42 +1065,25 @@ void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, 
 void vtkMRMLSliceLogic::UpdatePipeline()
 {
   int modified = 0;
-  if ( this->SliceCompositeNode )
+
+  if ( this->SliceNode && this->SliceCompositeNode )
   {
     // get the background and foreground image data from the layers
     // so we can use them as input to the image blend
     // TODO: change logic to use a volume node superclass rather than
     // a scalar volume node once the superclass is sorted out for vector/tensor Volumes
 
-    // Background
-    vtkMRMLVolumeNode *bgnode = this->SliceCompositeNode->GetNthLayerVolume(vtkMRMLSliceLogic::LayerBackground);
-    if (this->GetBackgroundLayer())
+    for (int layerIndex = 0; layerIndex < vtkMRMLSliceLogic::Layer_Last; ++layerIndex)
     {
-      if ( this->GetBackgroundLayer()->GetVolumeNode() != bgnode )
+      vtkMRMLVolumeNode* layerNode = this->SliceCompositeNode->GetNthLayerVolume(layerIndex);
+      vtkMRMLSliceLayerLogic* layerLogic = this->GetNthLayer(layerIndex);
+      if (!layerLogic)
       {
-        this->SetNthLayerVolumeNode(vtkMRMLSliceLogic::LayerBackground, bgnode);
-        modified = 1;
+        continue;
       }
-    }
-
-    // Foreground
-    vtkMRMLVolumeNode *fgnode = this->SliceCompositeNode->GetNthLayerVolume(vtkMRMLSliceLogic::LayerForeground);
-    if (this->GetForegroundLayer())
-    {
-      if ( this->GetForegroundLayer()->GetVolumeNode() != fgnode )
+      if (layerLogic->GetVolumeNode() != layerNode )
       {
-        this->SetNthLayerVolumeNode(vtkMRMLSliceLogic::LayerForeground, fgnode);
-        modified = 1;
-      }
-    }
-
-    // Label
-    vtkMRMLVolumeNode *lbnode = this->SliceCompositeNode->GetNthLayerVolume(vtkMRMLSliceLogic::LayerLabel);
-    if (this->GetLabelLayer())
-    {
-      if ( this->GetLabelLayer()->GetVolumeNode() != lbnode )
-      {
-        this->SetNthLayerVolumeNode(vtkMRMLSliceLogic::LayerLabel, lbnode);
+        this->SetNthLayerVolumeNode(layerIndex, layerNode);
         modified = 1;
       }
     }
@@ -1118,24 +1101,29 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     //    label opacity
     //
 
-    vtkAlgorithmOutput* backgroundImagePort = this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerBackground);
-    vtkAlgorithmOutput* foregroundImagePort = this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerForeground);
-
-    vtkAlgorithmOutput* backgroundImagePortUVW = this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerBackground);
-    vtkAlgorithmOutput* foregroundImagePortUVW = this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerForeground);
-
-    vtkAlgorithmOutput* labelImagePort = this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerLabel);
-    vtkAlgorithmOutput* labelImagePortUVW = this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerLabel);
-
     std::deque<SliceLayerInfo> layers;
-    std::deque<SliceLayerInfo> layersUVW;
+    this->Pipeline->AddLayers(
+          layers,
+          this->SliceCompositeNode->GetCompositing(),
+          this->SliceCompositeNode->GetClipToBackgroundVolume(),
+          this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerBackground),
+          this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerForeground),
+          this->SliceCompositeNode->GetForegroundOpacity(),
+          this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerLabel),
+          this->SliceCompositeNode->GetLabelOpacity()
+          );
 
-    this->Pipeline->AddLayers(layers, this->SliceCompositeNode->GetCompositing(), this->SliceCompositeNode->GetClipToBackgroundVolume(),
-      backgroundImagePort, foregroundImagePort, this->SliceCompositeNode->GetForegroundOpacity(),
-      labelImagePort, this->SliceCompositeNode->GetLabelOpacity());
-    this->PipelineUVW->AddLayers(layersUVW, this->SliceCompositeNode->GetCompositing(), this->SliceCompositeNode->GetClipToBackgroundVolume(),
-      backgroundImagePortUVW, foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity(),
-      labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity());
+    std::deque<SliceLayerInfo> layersUVW;
+    this->PipelineUVW->AddLayers(
+          layersUVW,
+          this->SliceCompositeNode->GetCompositing(),
+          this->SliceCompositeNode->GetClipToBackgroundVolume(),
+          this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerBackground),
+          this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerForeground),
+          this->SliceCompositeNode->GetForegroundOpacity(),
+          this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerLabel),
+          this->SliceCompositeNode->GetLabelOpacity()
+          );
 
     // Check fraction changes for add/subtract pipeline
     if (vtkMRMLSliceLogic::UpdateFractions(this->Pipeline->ForegroundFractionMath.GetPointer(), this->SliceCompositeNode->GetForegroundOpacity()))
@@ -1159,7 +1147,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     //Models
     this->UpdateImageData();
     vtkMRMLDisplayNode* displayNode = this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : nullptr;
-    if ( displayNode && this->SliceNode )
+    if ( displayNode )
     {
       displayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       displayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
