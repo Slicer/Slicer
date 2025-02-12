@@ -169,6 +169,14 @@ public:
   /// -- returns nullptr if none of the inputs exist
   vtkAlgorithmOutput *GetImageDataConnection();
 
+  /// Return True if at least one layer has an image data
+  /// \sa vtkMRMLSliceLayerLogic::GetImageDataConnection()
+  bool HasInputs();
+
+  /// Return True if at least one layer has an UVW image data
+  /// \sa vtkMRMLSliceLayerLogic::GetImageDataConnectionUVW()
+  bool HasUVWInputs();
+
   /// update the pipeline to reflect the current state of the nodes
   void UpdatePipeline();
 
