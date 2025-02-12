@@ -1108,9 +1108,9 @@ void vtkMRMLSliceLogic::UpdatePipeline()
           this->SliceCompositeNode->GetClipToBackgroundVolume(),
           this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerBackground),
           this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerForeground),
-          this->SliceCompositeNode->GetForegroundOpacity(),
+          this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerForeground),
           this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerLabel),
-          this->SliceCompositeNode->GetLabelOpacity()
+          this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerLabel)
           );
 
     std::deque<SliceLayerInfo> layersUVW;
@@ -1120,9 +1120,9 @@ void vtkMRMLSliceLogic::UpdatePipeline()
           this->SliceCompositeNode->GetClipToBackgroundVolume(),
           this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerBackground),
           this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerForeground),
-          this->SliceCompositeNode->GetForegroundOpacity(),
+          this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerForeground),
           this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerLabel),
-          this->SliceCompositeNode->GetLabelOpacity()
+          this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerLabel)
           );
 
     // Check fraction changes for add/subtract pipeline
