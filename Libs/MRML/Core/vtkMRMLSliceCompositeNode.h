@@ -106,19 +106,28 @@ public:
   vtkSetMacro (ClipToBackgroundVolume, bool);
   /// @}
 
-  ///
-  /// opacity of the Foreground for rendering over background
-  /// TODO: make this an arbitrary list of layers
-  /// TODO: make different composite types (checkerboard, etc)
-  vtkGetMacro (ForegroundOpacity, double);
-  vtkSetMacro (ForegroundOpacity, double);
+  /// @{
+  /// Opacity of layer N over layer N-1
+  /// \note Only Foreground and Label opacity are saved into the MRML Scene
+  double GetNthLayerOpacity(int layerIndex);
+  void SetNthLayerOpacity(int layerIndex, double value);
+  /// @}
 
-  ///
-  /// opacity of the Label for rendering over background
-  /// TODO: make this an arbitrary list of layers
+  /// @{
+  /// opacity of the Foreground for rendering over background
   /// TODO: make different composite types (checkerboard, etc)
-  vtkGetMacro (LabelOpacity, double);
-  vtkSetMacro (LabelOpacity, double);
+  /// \sa GetNthLayerOpacity, SetNthLayerOpacity
+  double GetForegroundOpacity();
+  void SetForegroundOpacity(double value);
+  /// @}
+
+  /// @{
+  /// opacity of the Label for rendering over background
+  /// TODO: make different composite types (checkerboard, etc)
+  /// \sa GetNthLayerOpacity, SetNthLayerOpacity
+  double GetLabelOpacity();
+  void SetLabelOpacity(double value);
+  /// @}
 
   /// @{
   /// toggle that gangs control of slice viewers
@@ -252,15 +261,16 @@ protected:
   // Cached value of last found displayable node (it is expensive to determine it)
   vtkWeakPointer<vtkMRMLSliceDisplayNode> LastFoundSliceDisplayNode;
 
-  // start by showing only the background volume
-  double ForegroundOpacity{ 0.0 };
+  std::vector<double> LayerOpacities = {
+    1.0, // Layer N (Background)
+    0.0, // Layer N (Foreground) over layer N-1 (Background): Start by showing only the background volume
+    1.0, // Layer N (Label) over layer N-1 (Foreground): Show the label if there is one
+  };
 
   int Compositing{ Alpha };
 
   bool ClipToBackgroundVolume{ true };
 
-  // Show the label if there is one
-  double LabelOpacity{ 1.0 };
   int LinkedControl{ 0 };
   int HotLinkedControl{ 0 };
 
