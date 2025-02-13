@@ -1208,7 +1208,7 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   if (this->BackgroundLayer)
   {
-    os << indent << "BackgroundLayer: ";
+    os << indent << "BackgroundLayer:\n";
     this->BackgroundLayer->PrintSelf(os, nextIndent);
   }
   else
@@ -1218,7 +1218,7 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   if (this->ForegroundLayer)
   {
-    os << indent << "ForegroundLayer: ";
+    os << indent << "ForegroundLayer:\n";
     this->ForegroundLayer->PrintSelf(os, nextIndent);
   }
   else
@@ -1228,7 +1228,7 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   if (this->LabelLayer)
   {
-    os << indent << "LabelLayer: ";
+    os << indent << "LabelLayer:\n";
     this->LabelLayer->PrintSelf(os, nextIndent);
   }
   else
@@ -1238,7 +1238,7 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   if (this->Pipeline->Blend.GetPointer())
   {
-    os << indent << "Blend: ";
+    os << indent << "Blend:\n";
     this->Pipeline->Blend->PrintSelf(os, nextIndent);
   }
   else
@@ -1248,7 +1248,7 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
 
   if (this->PipelineUVW->Blend.GetPointer())
   {
-    os << indent << "BlendUVW: ";
+    os << indent << "BlendUVW:\n";
     this->PipelineUVW->Blend->PrintSelf(os, nextIndent);
   }
   else
