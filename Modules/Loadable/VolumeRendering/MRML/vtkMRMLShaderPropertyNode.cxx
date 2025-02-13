@@ -123,7 +123,7 @@ void vtkMRMLShaderPropertyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "ShaderProperty: ";
+  os << indent << "ShaderProperty:\n";
   this->ShaderProperty->PrintSelf(os,indent.GetNextIndent());
 }
 
