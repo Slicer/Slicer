@@ -617,19 +617,6 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     /// \tbd Ideally it should not be fired if the output polydata is not
     /// modified.
     plane->Modified();
-
-    vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
-    if ( modelDisplayNode )
-    {
-      if (this->LabelLayer && this->LabelLayer->GetImageDataConnectionUVW())
-      {
-        modelDisplayNode->SetInterpolateTexture(0);
-      }
-      else
-      {
-        modelDisplayNode->SetInterpolateTexture(1);
-      }
-    }
   }
 
   // This is called when a slice layer is modified, so pass it on
