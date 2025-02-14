@@ -198,7 +198,7 @@ void vtkMRMLVolumePropertyNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintVectorMacro(EffectiveRange, double, 2);
   vtkMRMLPrintEndMacro();
 
-  os << indent << "VolumeProperty: ";
+  os << indent << "VolumeProperty:\n";
   this->VolumeProperty->PrintSelf(os,indent.GetNextIndent());
 }
 

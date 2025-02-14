@@ -83,7 +83,7 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "CategoryObject: ";
   if (this->CategoryObject)
   {
-    this->CategoryObject->PrintSelf(os, indent.GetNextIndent());
+    this->CategoryObject->PrintSelf(os << "\n", indent.GetNextIndent());
   }
   else
   {
@@ -92,7 +92,7 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "TypeObject: ";
   if (this->TypeObject)
   {
-    this->TypeObject->PrintSelf(os, indent.GetNextIndent());
+    this->TypeObject->PrintSelf(os << "\n", indent.GetNextIndent());
   }
   else
   {
@@ -101,7 +101,7 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "TypeModifierObject: ";
   if (this->TypeModifierObject)
   {
-    this->TypeModifierObject->PrintSelf(os, indent.GetNextIndent());
+    this->TypeModifierObject->PrintSelf(os << "\n", indent.GetNextIndent());
   }
   else
   {
@@ -112,7 +112,7 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "AnatomicRegionObject: ";
   if (this->AnatomicRegionObject)
   {
-    this->AnatomicRegionObject->PrintSelf(os, indent.GetNextIndent());
+    this->AnatomicRegionObject->PrintSelf(os << "\n", indent.GetNextIndent());
   }
   else
   {
@@ -121,7 +121,7 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "AnatomicRegionModifierObject: ";
   if (this->AnatomicRegionModifierObject)
   {
-    this->AnatomicRegionModifierObject->PrintSelf(os, indent.GetNextIndent());
+    this->AnatomicRegionModifierObject->PrintSelf(os << "\n", indent.GetNextIndent());
   }
   else
   {

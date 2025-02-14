@@ -289,7 +289,7 @@ void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(ScreenScaleFactor);
   vtkMRMLPrintEndMacro();
 
-  os << indent << " AxisLabels: ";
+  os << indent << "AxisLabels: ";
   for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
   {
     os << (i>0?";":"") << this->GetAxisLabel(i);

@@ -46,9 +46,9 @@ void vtkImageFillROI::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "Value: "  << this->Value;
-  os << indent << "Radius: " << this->Radius;
-  os << indent << "Shape: "  << this->Shape;
+  os << indent << "Value: "  << this->Value << "\n";
+  os << indent << "Radius: " << this->Radius << "\n";
+  os << indent << "Shape: "  << this->Shape << "\n";
 
   // vtkSetObjectMacro
   os << indent << "Points: ";
