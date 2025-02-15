@@ -100,9 +100,10 @@ struct BlendPipeline
     //                             background > AddSubBackroundCast /
     //
     //
-    //     ... AddSubOutputCast > AddSubExtractRGB       \
-    //
-    //         background > AddSubExtractBackgroundAlpha - > AddSubAppendRGBA > Blend
+    //                          ... AddSubOutputCast > AddSubExtractRGB \
+    //                                                                   > AddSubAppendRGBA
+    //         background > AddSubExtractBackgroundAlpha - > BlendAlpha /
+    //                                                    /
     //
     //         foreground > AddSubExtractForegroundAlpha /
     //
