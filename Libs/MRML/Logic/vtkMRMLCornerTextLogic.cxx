@@ -52,7 +52,7 @@ void vtkMRMLCornerTextLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BottomLeftEnabled:             " << (this->BottomLeftEnabled ? "true" : "false") << "\n";
   os << indent << "TopLeftEnabled:                " << (this->TopLeftEnabled ? "true" : "false") << "\n";
   os << indent << "TopRightEnabled:               " << (this->TopRightEnabled ? "true" : "false") << "\n";
-  os << indent << "DisplayStrictness:             " << this->DisplayStrictness << "\n";
+  os << indent << "IncludeDisplayLevelsLte:       " << this->IncludeDisplayLevelsLte << "\n";
   os << indent << "FontSize:                      " << this->FontSize << "\n";
   os << indent << "FontFamily:                    " << this->FontFamily << "\n";
 
@@ -350,10 +350,9 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(
       }
       else
       {
-        // Only append the text if our selected display amount permits
-        if (vtkMRMLAbstractAnnotationPropertyValueProvider::
-                GetDisplayLevelValueAsInteger(attributes) >=
-            this->DisplayStrictness)
+        // Only append the text if our selected display level is less than cutoff
+        if (vtkMRMLAbstractAnnotationPropertyValueProvider::GetDisplayLevelValueAsInteger(attributes)
+            <= this->IncludeDisplayLevelsLte)
         {
           text += propertyValue + '\n';
         }

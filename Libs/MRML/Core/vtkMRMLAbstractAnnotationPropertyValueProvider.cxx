@@ -44,29 +44,29 @@ int vtkMRMLAbstractAnnotationPropertyValueProvider::GetAttributeValueAsInteger(
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAbstractAnnotationPropertyValueProvider::GetLayerValueAsInteger(
+int vtkMRMLAbstractAnnotationPropertyValueProvider::GetRoleValueAsInteger(
     const XMLTagAttributes& attributes, int defaultValue)
 {
-  if (attributes.count("layer"))
+  if (attributes.count("role"))
   {
-    std::string layer = attributes.at("layer");
+    std::string role = attributes.at("role");
 
     auto getDigit = [](const std::string& s)
     {
       return std::all_of(s.begin(), s.end(), ::isdigit) ? std::stoi(s) : -1;
     };
 
-    if (layer == "background" || getDigit(layer) == LAYER_BACKGROUND)
+    if (role == "background" || getDigit(role) == ROLE_BACKGROUND)
     {
-      return LAYER_BACKGROUND;
+      return ROLE_BACKGROUND;
     }
-    else if (layer == "foreground" || getDigit(layer) == LAYER_FOREGROUND)
+    else if (role == "foreground" || getDigit(role) == ROLE_FOREGROUND)
     {
-      return LAYER_FOREGROUND;
+      return ROLE_FOREGROUND;
     }
-    else if (layer == "label" || getDigit(layer) == LAYER_LABEL)
+    else if (role == "label" || getDigit(role) == ROLE_LABEL)
     {
-      return LAYER_LABEL;
+      return ROLE_LABEL;
     }
   }
   return defaultValue;
@@ -78,25 +78,7 @@ int vtkMRMLAbstractAnnotationPropertyValueProvider::GetDisplayLevelValueAsIntege
 {
   if (attributes.count("display-level"))
   {
-    std::string displayLevel = attributes.at("display-level");
-
-    auto getDigit = [](const std::string& s)
-    {
-      return std::all_of(s.begin(), s.end(), ::isdigit) ? std::stoi(s) : -1;
-    };
-
-    if (displayLevel == "always" || getDigit(displayLevel) == DISPLAY_ALWAYS)
-    {
-      return DISPLAY_ALWAYS;
-    }
-    else if (displayLevel == "sometimes" || getDigit(displayLevel) == DISPLAY_SOMETIMES)
-    {
-       return DISPLAY_SOMETIMES;
-    }
-    else if (displayLevel == "least" || getDigit(displayLevel) == DISPLAY_LEAST)
-    {
-      return DISPLAY_LEAST;
-    }
+    return std::stoi(attributes.at("display-level"));
   }
   return defaultValue;
 }

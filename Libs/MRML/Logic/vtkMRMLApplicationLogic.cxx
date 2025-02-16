@@ -451,38 +451,41 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   <!-- For corners -->
   <corner position="bottom-left">
     <!-- Generic properties -->
-    <property name="VolumeName" layer="label" prefix="L: " display-level="always"/>
-    <property name="VolumeName" layer="foreground" prefix="F: " display-level="always"/>
-    <property name="VolumeName" layer="background" prefix="B: " display-level="always"/>
+    <property name="VolumeName" role="label" prefix="L: " display-level="1"/>
+    <property name="VolumeName" role="foreground" prefix="F: " display-level="1"/>
+    <property name="VolumeName" role="background" prefix="B: " display-level="1"/>
   </corner>
 
   <corner position="top-left">
     <!-- DICOM specific properties -->
-    <property name="PatientName" display-level="sometimes"/>
-    <property name="PatientID" prefix="ID: " display-level="always"/>
-    <property name="PatientInfo" display-level="sometimes"/>
-    <property name="SeriesDate" prefix="B: " layer="background" display-level="sometimes"/>
-    <property name="SeriesDate" prefix="F: " layer="foreground" display-level="sometimes"/>
-    <property name="SeriesTime" prefix="B: " layer="background" display-level="least"/>
-    <property name="SeriesTime" prefix="F: " layer="foreground" display-level="least"/>
-    <property name="SeriesDescription" prefix="B: " layer="background" display-level="least"/>
-    <property name="SeriesDescription" prefix="F: " layer="foreground" display-level="least"/>
+    <property name="PatientName" display-level="2"/>
+    <property name="PatientID" prefix="ID: " display-level="1"/>
+    <property name="PatientInfo" display-level="2"/>
+    <property name="SeriesDate" prefix="B: " role="background" display-level="2"/>
+    <property name="SeriesDate" prefix="F: " role="foreground" display-level="2"/>
+    <property name="SeriesTime" prefix="B: " role="background" display-level="3"/>
+    <property name="SeriesTime" prefix="F: " role="foreground" display-level="3"/>
+    <property name="SeriesDescription" prefix="B: " role="background" display-level="3"/>
+    <property name="SeriesDescription" prefix="F: " role="foreground" display-level="3"/>
   </corner>
 
   <corner position="top-right">
     <!-- DICOM specific properties -->
-    <property name="InstitutionName" display-level="sometimes"/>
-    <property name="ReferringPhysician" display-level="sometimes"/>
-    <property name="Manufacturer" display-level="least"/>
-    <property name="Model" display-level="least"/>
-    <property name="Patient-Position" display-level="always"/>
-    <property name="TR" display-level="always"/>
-    <property name="TE" display-level="always"/>
+    <property name="InstitutionName" display-level="2"/>
+    <property name="ReferringPhysician" display-level="2"/>
+    <property name="Manufacturer" display-level="3"/>
+    <property name="Model" display-level="3"/>
+    <property name="Patient-Position" display-level="1"/>
+    <property name="TR" display-level="1"/>
+    <property name="TE" display-level="1"/>
     <!-- Generic properties -->
-    <property name="SlabReconstructionThickness" prefix="Thickness: " display-level="always"/>
-    <property name="SlabReconstructionType" prefix="Type: " display-level="always"/>
+    <property name="SlabReconstructionThickness" prefix="Thickness: " display-level="1"/>
+    <property name="SlabReconstructionType" prefix="Type: " display-level="1"/>
   </corner>
 </annotations>)");
+      tmpCornerAnnotations->SetSaveWithScene(false);
+      tmpCornerAnnotations->SetHideFromEditors(true);
+
       cornerAnnotationsTextNode = newScene->AddNode(tmpCornerAnnotations);
     }
     assert(vtkMRMLTextNode::SafeDownCast(cornerAnnotationsTextNode));
