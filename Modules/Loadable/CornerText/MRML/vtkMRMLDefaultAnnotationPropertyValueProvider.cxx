@@ -63,24 +63,24 @@ vtkMRMLDefaultAnnotationPropertyValueProvider::GetValueForPropertyName(
   if (propertyName == "VolumeName")
   {
     vtkMRMLVolumeNode* volumeNode;
-    const int layer = this->GetLayerValueAsInteger(attributes);
-    switch (layer)
+    const int role = this->GetRoleValueAsInteger(attributes);
+    switch (role)
     {
-      case LAYER_FOREGROUND:
+      case ROLE_FOREGROUND:
         {
           output = (volumeNode = sliceLogic->GetForegroundLayer()->GetVolumeNode()) != nullptr
                      ? volumeNode->GetName()
                      : "";
           break;
         }
-      case LAYER_BACKGROUND:
+      case ROLE_BACKGROUND:
         {
           output = (volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode()) != nullptr
                      ? volumeNode->GetName()
                      : "";
           break;
         }
-      case LAYER_LABEL:
+      case ROLE_LABEL:
         {
           output = (volumeNode = sliceLogic->GetLabelLayer()->GetVolumeNode()) != nullptr
                      ? volumeNode->GetName()

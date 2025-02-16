@@ -42,22 +42,13 @@ public:
 
   typedef std::unordered_map<std::string, std::string> XMLTagAttributes;
 
-  // Display levels
+  // Roles
 
-  enum DisplayLevel
+  enum Role
   {
-    DISPLAY_LEAST = 1,
-    DISPLAY_SOMETIMES,
-    DISPLAY_ALWAYS
-  };
-
-  // Layers
-
-  enum Layer
-  {
-    LAYER_FOREGROUND = 0,
-    LAYER_BACKGROUND,
-    LAYER_LABEL
+    ROLE_FOREGROUND = 0,
+    ROLE_BACKGROUND,
+    ROLE_LABEL
   };
 
   vtkTypeMacro(vtkMRMLAbstractAnnotationPropertyValueProvider, vtkObject);
@@ -78,58 +69,40 @@ public:
                                      : defaultValue;
   }
 
-  static int GetLayerValueAsInteger(const XMLTagAttributes &attributes,
-      int defaultValue = LAYER_FOREGROUND)
+  static int GetRoleValueAsInteger(const XMLTagAttributes &attributes,
+      int defaultValue = ROLE_FOREGROUND)
   {
-    if (attributes.count("layer"))
+    if (attributes.count("role"))
     {
-      std::string layer = attributes.at("layer");
+      std::string role = attributes.at("role");
 
       auto getDigit = [](const std::string &s)
       {
         return std::all_of(s.begin(), s.end(), ::isdigit) ? std::stoi(s) : -1;
       };
 
-      if (layer == "foreground" || getDigit(layer) == LAYER_FOREGROUND)
+      if (role == "foreground" || getDigit(role) == ROLE_FOREGROUND)
       {
-        return LAYER_FOREGROUND;
+        return ROLE_FOREGROUND;
       }
-      else if (layer == "background" || getDigit(layer) == LAYER_BACKGROUND)
+      else if (role == "background" || getDigit(role) == ROLE_BACKGROUND)
       {
-        return LAYER_BACKGROUND;
+        return ROLE_BACKGROUND;
       }
-      else if (layer == "label" || getDigit(layer) == LAYER_LABEL)
+      else if (role == "label" || getDigit(role) == ROLE_LABEL)
       {
-        return LAYER_LABEL;
+        return ROLE_LABEL;
       }
     }
     return defaultValue;
   }
 
   static int GetDisplayLevelValueAsInteger(const XMLTagAttributes &attributes,
-      int defaultValue = DISPLAY_ALWAYS)
+      int defaultValue = 1)
   {
       if (attributes.count("display-level"))
       {
-          std::string displayLevel = attributes.at("display-level");
-
-          auto getDigit = [](const std::string &s)
-          {
-              return std::all_of(s.begin(), s.end(), ::isdigit) ? std::stoi(s) : -1;
-          };
-
-          if (displayLevel == "always" || getDigit(displayLevel) == DISPLAY_ALWAYS)
-          {
-              return DISPLAY_ALWAYS;
-          }
-          else if (displayLevel == "sometimes" || getDigit(displayLevel) == DISPLAY_SOMETIMES)
-          {
-              return DISPLAY_SOMETIMES;
-          }
-          else if (displayLevel == "least" || getDigit(displayLevel) == DISPLAY_LEAST)
-          {
-              return DISPLAY_LEAST;
-          }
+          return std::stoi(attributes.at("display-level"));
       }
       return defaultValue;
   }

@@ -52,14 +52,14 @@ void vtkMRMLCornerTextLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BottomLeftEnabled:             " << (this->BottomLeftEnabled ? "true" : "false") << "\n";
   os << indent << "TopLeftEnabled:                " << (this->TopLeftEnabled ? "true" : "false") << "\n";
   os << indent << "TopRightEnabled:               " << (this->TopRightEnabled ? "true" : "false") << "\n";
-  os << indent << "DisplayStrictness:             " << this->DisplayStrictness << "\n";
+  os << indent << "IncludeDisplayLevelsLte:       " << this->IncludeDisplayLevelsLte << "\n";
   os << indent << "FontSize:                      " << this->FontSize << "\n";
   os << indent << "FontFamily:                    " << this->FontFamily << "\n";
 
   os << indent << "Registered Providers:\n";
   for (const auto& provider : this->registeredProviders)
   {
-    os << indent.GetNextIndent() << provider.first << ": " 
+    os << indent.GetNextIndent() << provider.first << ": "
        << provider.second.GetPointer() << "\n";
   }
 }
@@ -148,26 +148,32 @@ vtkMRMLTextNode *vtkMRMLCornerTextLogic::GetCornerAnnotations(vtkMRMLScene *mrml
                                                const std::string& viewName)
 {
   vtkMRMLTextNode *textNode;
-  const std::string baseName = "CornerAnnotationsSingleton",
-                    viewArrStr = "Layout" + std::to_string(viewArrangement);
+  const std::string baseName = "CornerAnnotationsSingleton";
+  const std::string viewArrStr = "Layout" + std::to_string(viewArrangement);
 
   // check if a layout specific and view specific text node exists
   if ((textNode = vtkMRMLTextNode::SafeDownCast(mrmlScene->GetSingletonNode(
            (viewArrStr + viewName + baseName).c_str(), "vtkMRMLTextNode"))))
+  {
     return textNode;
+  }
 
   // check if a layout specific text node exists
   if ((textNode = vtkMRMLTextNode::SafeDownCast(mrmlScene->GetSingletonNode(
            (viewArrStr + baseName).c_str(), "vtkMRMLTextNode"))))
+  {
     return textNode;
+  }
 
   // if not, then CornerAnnotationsSingleton should always exist as it is
   // created with the scene.
   if (!(textNode = vtkMRMLTextNode::SafeDownCast(
             mrmlScene->GetSingletonNode(baseName.c_str(), "vtkMRMLTextNode"))))
+  {
     vtkErrorWithObjectMacro(mrmlScene,
                             "vtkMRMLCornerTextLogic::GetCornerAnnotations: "
                             "failed to get text node from scene");
+  }
 
   return textNode;
 }
@@ -349,10 +355,9 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
       }
       else
       {
-        // Only append the text if our selected display amount permits
-        if (vtkMRMLAbstractAnnotationPropertyValueProvider::
-                GetDisplayLevelValueAsInteger(attributes) >=
-            this->DisplayStrictness)
+        // Only append the text if our selected display level is less than cutoff
+        if (vtkMRMLAbstractAnnotationPropertyValueProvider::GetDisplayLevelValueAsInteger(attributes)
+            <= this->IncludeDisplayLevelsLte)
         {
           text += propertyValue + '\n';
         }
