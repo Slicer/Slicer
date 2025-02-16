@@ -1,28 +1,28 @@
 import slicer
 
-LAYER_ANY = slicer.vtkMRMLSliceCompositeNode.LayerNone
-LAYER_BACKGROUND = slicer.vtkMRMLSliceCompositeNode.LayerBackground
-LAYER_FOREGROUND = slicer.vtkMRMLSliceCompositeNode.LayerForeground
-LAYER_LABEL = slicer.vtkMRMLSliceCompositeNode.LayerLabel
+ROLE_ANY = slicer.vtkMRMLSliceCompositeNode.LayerNone
+ROLE_BACKGROUND = slicer.vtkMRMLSliceCompositeNode.LayerBackground
+ROLE_FOREGROUND = slicer.vtkMRMLSliceCompositeNode.LayerForeground
+ROLE_LABEL = slicer.vtkMRMLSliceCompositeNode.LayerLabel
 
 
 class DICOMAnnotationPropertyValueProvider:
     # Static in abstract provider
     @staticmethod
-    def GetLayerValueAsInteger(attributes):
-        if "layer" in attributes:
-            layer = attributes["layer"]
+    def GetRoleValueAsInteger(attributes):
+        if "role" in attributes:
+            role = attributes["role"]
 
             def get_digit(s):
-                return int(s) if s.isdigit() else LAYER_ANY
+                return int(s) if s.isdigit() else ROLE_ANY
 
-            if layer == "foreground" or get_digit(layer) == LAYER_FOREGROUND:
-                return LAYER_FOREGROUND
-            elif layer == "background" or get_digit(layer) == LAYER_BACKGROUND:
-                return LAYER_BACKGROUND
-            elif layer == "label" or get_digit(layer) == LAYER_LABEL:
-                return LAYER_LABEL
-        return LAYER_ANY
+            if role == "foreground" or get_digit(role) == ROLE_FOREGROUND:
+                return ROLE_FOREGROUND
+            elif role == "background" or get_digit(role) == ROLE_BACKGROUND:
+                return ROLE_BACKGROUND
+            elif role == "label" or get_digit(role) == ROLE_LABEL:
+                return ROLE_LABEL
+        return ROLE_ANY
 
     # To be registered
     @staticmethod
@@ -43,10 +43,10 @@ class DICOMAnnotationPropertyValueProvider:
         if not sliceLogic:
             return ""
 
-        # Get the layers
+        # Get the roles
         backgroundVolume = sliceLogic.GetNthLayerVolumeNode(slicer.vtkMRMLSliceLogic.LayerBackground)
         foregroundVolume = sliceLogic.GetNthLayerVolumeNode(slicer.vtkMRMLSliceLogic.LayerForeground)
-        layer_value = DICOMAnnotationPropertyValueProvider.GetLayerValueAsInteger(attributes)
+        role_value = DICOMAnnotationPropertyValueProvider.GetRoleValueAsInteger(attributes)
 
         # Case I: Both background and foreground
         output = ""
@@ -75,12 +75,12 @@ class DICOMAnnotationPropertyValueProvider:
                     key = properties[propertyName]
                     # If they don't match, we want to differentiate
                     if backgroundDicomDic[key] != foregroundDicomDic[key]:
-                        if layer_value == LAYER_BACKGROUND:
+                        if role_value == ROLE_BACKGROUND:
                             output = "B: " + output
-                        elif layer_value == LAYER_FOREGROUND:
+                        elif role_value == ROLE_FOREGROUND:
                             output = "F: " + output
                             uid = fgUid
-                    elif layer_value == LAYER_FOREGROUND:
+                    elif role_value == ROLE_FOREGROUND:
                         # If they do match, we also want to return an empty string
                         # for the foreground case, so we don't print the same thing
                         # twice
@@ -89,11 +89,11 @@ class DICOMAnnotationPropertyValueProvider:
                 uid = bgUids.partition(" ")[0]
             else:
                 return ""
-        elif backgroundVolume is not None and (layer_value == LAYER_BACKGROUND or layer_value == LAYER_ANY):
+        elif backgroundVolume is not None and (role_value == ROLE_BACKGROUND or role_value == ROLE_ANY):
             uids = backgroundVolume.GetAttribute("DICOM.instanceUIDs")
             if uids:
                 uid = uids.partition(" ")[0]
-        elif foregroundVolume is not None and (layer_value == LAYER_FOREGROUND or layer_value == LAYER_ANY):
+        elif foregroundVolume is not None and (role_value == ROLE_FOREGROUND or role_value == ROLE_ANY):
             uids = foregroundVolume.GetAttribute("DICOM.instanceUIDs")
             if uids:
                 uid = uids.partition(" ")[0]

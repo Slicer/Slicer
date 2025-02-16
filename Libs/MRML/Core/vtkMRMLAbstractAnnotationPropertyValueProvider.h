@@ -42,20 +42,12 @@ public:
   // Typedefs
   typedef std::unordered_map<std::string, std::string> XMLTagAttributes;
 
-  // Display levels
-  enum DisplayLevel
+  // Roles
+  enum Role
   {
-    DISPLAY_LEAST = 1,
-    DISPLAY_SOMETIMES,
-    DISPLAY_ALWAYS
-  };
-
-  // Layers
-  enum Layer
-  {
-    LAYER_BACKGROUND = vtkMRMLSliceCompositeNode::LayerBackground,
-    LAYER_FOREGROUND = vtkMRMLSliceCompositeNode::LayerForeground,
-    LAYER_LABEL = vtkMRMLSliceCompositeNode::LayerLabel,
+    ROLE_BACKGROUND = vtkMRMLSliceCompositeNode::LayerBackground,
+    ROLE_FOREGROUND = vtkMRMLSliceCompositeNode::LayerForeground,
+    ROLE_LABEL = vtkMRMLSliceCompositeNode::LayerLabel,
   };
 
   vtkTypeMacro(vtkMRMLAbstractAnnotationPropertyValueProvider, vtkObject);
@@ -72,9 +64,9 @@ public:
                                         const XMLTagAttributes& attributes,
                                         int defaultValue);
 
-  static int GetLayerValueAsInteger(const XMLTagAttributes& attributes, int defaultValue = LAYER_FOREGROUND);
+  static int GetRoleValueAsInteger(const XMLTagAttributes& attributes, int defaultValue = ROLE_FOREGROUND);
 
-  static int GetDisplayLevelValueAsInteger(const XMLTagAttributes& attributes, int defaultValue = DISPLAY_ALWAYS);
+  static int GetDisplayLevelValueAsInteger(const XMLTagAttributes& attributes, int defaultValue = 1);
 
 protected:
   vtkMRMLAbstractAnnotationPropertyValueProvider() = default;

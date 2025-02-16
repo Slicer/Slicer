@@ -78,15 +78,15 @@ void qSlicerCornerTextSettingsWidgetPrivate
   // Amount subpanel
   this->annotationsAmountGroupBox->setEnabled(true);
   QObject::connect(this->level1RadioButton, &QRadioButton::toggled, [=](bool checked) {
-      if (checked) q->setAnnotationDisplayLevel(1);
+      if (checked) q->setIncludeDisplayLevelsLte(1);
   });
 
   QObject::connect(this->level2RadioButton, &QRadioButton::toggled, [=](bool checked) {
-      if (checked) q->setAnnotationDisplayLevel(2);
+      if (checked) q->setIncludeDisplayLevelsLte(2);
   });
 
   QObject::connect(this->level3RadioButton, &QRadioButton::toggled, [=](bool checked) {
-      if (checked) q->setAnnotationDisplayLevel(3);
+      if (checked) q->setIncludeDisplayLevelsLte(3);
   });
 
   // Font Properties subpanel
@@ -103,6 +103,9 @@ void qSlicerCornerTextSettingsWidgetPrivate
   // DICOM Annotations subpanel
   this->dicomAnnotationsCollapsibleGroupBox->setEnabled(false);
   QObject::connect(this->backgroundPersistenceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDICOMAnnotationsPersistence(bool)));
+
+  // Restore defaults button
+  QObject::connect(this->restoreDefaultsButton, SIGNAL(clicked()), q, SLOT(restoreDefaults()));
 
   q->updateWidgetFromCornerTextLogic();
 }
@@ -175,14 +178,14 @@ void qSlicerCornerTextSettingsWidget::setBottomLeftCornerActive(bool enable)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCornerTextSettingsWidget::setAnnotationDisplayLevel(int level)
+void qSlicerCornerTextSettingsWidget::setIncludeDisplayLevelsLte(int level)
 {
   Q_D(qSlicerCornerTextSettingsWidget);
   if (!d->CornerTextLogic)
   {
     return;
   }
-  d->CornerTextLogic->SetDisplayStrictness(level);
+  d->CornerTextLogic->SetIncludeDisplayLevelsLte(level);
 }
 
 //-----------------------------------------------------------------------------
@@ -291,7 +294,7 @@ void qSlicerCornerTextSettingsWidget::updateWidgetFromCornerTextLogic()
 
   d->fontSizeSpinBox->setValue(d->CornerTextLogic->GetFontSize());
 
-  switch (d->CornerTextLogic->GetDisplayStrictness())
+  switch (d->CornerTextLogic->GetIncludeDisplayLevelsLte())
   {
     case 1:
     {
@@ -317,4 +320,63 @@ void qSlicerCornerTextSettingsWidget::updateWidgetFromCornerTextLogic()
   d->bottomLeftCheckBox->setChecked(d->CornerTextLogic->GetBottomLeftEnabled());
   d->topLeftCheckBox->setChecked(d->CornerTextLogic->GetTopLeftEnabled());
   d->topRightCheckBox->setChecked(d->CornerTextLogic->GetTopRightEnabled());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextSettingsWidget::restoreDefaults()
+{
+  Q_D(qSlicerCornerTextSettingsWidget);
+
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+
+  // Set defaults
+  constexpr int DEFAULT_ENABLED = 1;
+  constexpr int DEFAULT_DISPLAY_LEVEL = 3;
+  constexpr int DEFAULT_TOP_LEFT = 0;
+  constexpr int DEFAULT_TOP_RIGHT = 0;
+  constexpr int DEFAULT_BOTTOM_LEFT = 1;
+  const std::string DEFAULT_FONT_FAMILY = "Times";
+  constexpr int DEFAULT_FONT_SIZE = 14;
+  constexpr int DEFAULT_BG_DICOM_ANNOTATIONS_PERSISTENCE = 0;
+
+  // Apply default values to the logic
+  d->CornerTextLogic->SetSliceViewAnnotationsEnabled(DEFAULT_ENABLED);
+  d->CornerTextLogic->SetIncludeDisplayLevelsLte(DEFAULT_DISPLAY_LEVEL);
+  d->CornerTextLogic->SetTopLeftEnabled(DEFAULT_TOP_LEFT);
+  d->CornerTextLogic->SetTopRightEnabled(DEFAULT_TOP_RIGHT);
+  d->CornerTextLogic->SetBottomLeftEnabled(DEFAULT_BOTTOM_LEFT);
+  d->CornerTextLogic->SetFontFamily(DEFAULT_FONT_FAMILY);
+  d->CornerTextLogic->SetFontSize(DEFAULT_FONT_SIZE);
+  // TODO: Not supported yet
+  // d->CornerTextLogic->SetBgDICOMAnnotationsPersistence(DEFAULT_BG_DICOM_ANNOTATIONS_PERSISTENCE);
+
+  // Update UI elements based on the defaults
+  d->sliceViewAnnotationsCheckBox->setChecked(DEFAULT_ENABLED);
+  d->cornerTextParametersCollapsibleButton->setEnabled(DEFAULT_ENABLED);
+
+  (DEFAULT_FONT_FAMILY == "Arial") ? d->arialFontRadioButton->toggle() : d->timesFontRadioButton->toggle();
+
+  d->fontSizeSpinBox->setValue(DEFAULT_FONT_SIZE);
+
+  switch (DEFAULT_DISPLAY_LEVEL)
+  {
+    case 1:
+      d->level1RadioButton->toggle();
+      break;
+    case 2:
+      d->level2RadioButton->toggle();
+      break;
+    case 3:
+      d->level3RadioButton->toggle();
+      break;
+    default:
+      break;
+  }
+
+  d->bottomLeftCheckBox->setChecked(DEFAULT_BOTTOM_LEFT);
+  d->topLeftCheckBox->setChecked(DEFAULT_TOP_LEFT);
+  d->topRightCheckBox->setChecked(DEFAULT_TOP_RIGHT);
 }

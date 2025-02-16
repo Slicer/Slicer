@@ -129,7 +129,7 @@ void qSlicerCornerTextModule::readSettings() const
       this->appLogic()->GetCornerTextLogic();
 
   cornerTextLogic->SetSliceViewAnnotationsEnabled(settings->value("DataProbe/sliceViewAnnotations.enabled", 1).toBool());
-  cornerTextLogic->SetDisplayStrictness(settings->value("DataProbe/sliceViewAnnotations.displayLevel", 1).toInt());
+  cornerTextLogic->SetIncludeDisplayLevelsLte(settings->value("DataProbe/sliceViewAnnotations.displayLevel", 1).toInt());
   cornerTextLogic->SetFontSize(settings->value("DataProbe/sliceViewAnnotations.fontSize", 14).toInt());
   cornerTextLogic->SetFontFamily(settings->value("DataProbe/sliceViewAnnotations.fontFamily", "Times").toString().toStdString());
 
@@ -150,14 +150,14 @@ void qSlicerCornerTextModule::writeSettings() const
 
   QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
 
-  settings->setValue("DataProbe/sliceViewAnnotations.enabled", cornerTextLogic->GetSliceViewAnnotationsEnabled());
-  settings->setValue("DataProbe/sliceViewAnnotations.displayLevel", cornerTextLogic->GetDisplayStrictness());
+  settings->setValue("DataProbe/sliceViewAnnotations.enabled", static_cast<int>(cornerTextLogic->GetSliceViewAnnotationsEnabled()));
+  settings->setValue("DataProbe/sliceViewAnnotations.displayLevel", cornerTextLogic->GetIncludeDisplayLevelsLte());
   settings->setValue("DataProbe/sliceViewAnnotations.fontSize", cornerTextLogic->GetFontSize());
   settings->setValue("DataProbe/sliceViewAnnotations.fontFamily", QString::fromStdString(cornerTextLogic->GetFontFamily()));
 
-  settings->setValue("DataProbe/sliceViewAnnotations.bottomLeft", cornerTextLogic->GetBottomLeftEnabled());
-  settings->setValue("DataProbe/sliceViewAnnotations.topLeft", cornerTextLogic->GetTopLeftEnabled());
-  settings->setValue("DataProbe/sliceViewAnnotations.topRight", cornerTextLogic->GetTopRightEnabled());
+  settings->setValue("DataProbe/sliceViewAnnotations.bottomLeft", static_cast<int>(cornerTextLogic->GetBottomLeftEnabled()));
+  settings->setValue("DataProbe/sliceViewAnnotations.topLeft", static_cast<int>(cornerTextLogic->GetTopLeftEnabled()));
+  settings->setValue("DataProbe/sliceViewAnnotations.topRight", static_cast<int>(cornerTextLogic->GetTopRightEnabled()));
 }
 
 //-----------------------------------------------------------------------------

@@ -66,20 +66,20 @@ vtkMRMLDefaultAnnotationPropertyValueProvider::GetValueForPropertyName(
   if (propertyName == "VolumeName")
   {
     vtkMRMLVolumeNode* volumeNode = nullptr;
-    const int layer = this->GetLayerValueAsInteger(attributes);
-    switch (layer)
+    const int role = this->GetRoleValueAsInteger(attributes);
+    switch (role)
     {
-      case LAYER_FOREGROUND:
+      case ROLE_FOREGROUND:
         {
           volumeNode = sliceLogic->GetNthLayerVolumeNode(vtkMRMLSliceLogic::LayerForeground);
           break;
         }
-      case LAYER_BACKGROUND:
+      case ROLE_BACKGROUND:
         {
           volumeNode = sliceLogic->GetNthLayerVolumeNode(vtkMRMLSliceLogic::LayerBackground);
           break;
         }
-      case LAYER_LABEL:
+      case ROLE_LABEL:
         {
           volumeNode = sliceLogic->GetNthLayerVolumeNode(vtkMRMLSliceLogic::LayerLabel);
           break;
@@ -92,7 +92,7 @@ vtkMRMLDefaultAnnotationPropertyValueProvider::GetValueForPropertyName(
     if (volumeNode)
     {
       output = volumeNode->GetName();
-      if (layer == LAYER_FOREGROUND && sliceLogic->GetNthLayerVolumeNode(vtkMRMLSliceLogic::LayerBackground))
+      if (role == ROLE_FOREGROUND && sliceLogic->GetNthLayerVolumeNode(vtkMRMLSliceLogic::LayerBackground))
       {
         double foregroundOpacity = sliceLogic->GetSliceCompositeNode()->GetForegroundOpacity();
         std::ostringstream stream;
