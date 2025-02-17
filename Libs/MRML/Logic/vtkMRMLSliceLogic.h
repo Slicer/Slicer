@@ -408,6 +408,9 @@ protected:
   /// is a relatively expensive operation.
   static bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers, bool clipToBackgroundVolume);
 
+  /// Helper to update the operation to perform based on compositing mode.
+  static bool UpdateAddSubOperation(vtkImageMathematics* addSubMath, int compositing);
+
   /// Helper to update foreground opacity when adding/subtracting the background layer
   static bool UpdateFractions(vtkImageMathematics* fraction, double opacity);
 

@@ -176,14 +176,8 @@ struct BlendPipeline
       this->AddSubBackgroundCast->SetInputConnection(backgroundImagePort);
       this->AddSubExtractForegroundAlpha->SetInputConnection(foregroundImagePort);
       this->AddSubExtractBackgroundAlpha->SetInputConnection(backgroundImagePort);
-      if (sliceCompositing == vtkMRMLSliceCompositeNode::Add)
-      {
-        this->AddSubMath->SetOperationToAdd();
-      }
-      else
-      {
-        this->AddSubMath->SetOperationToSubtract();
-      }
+      // See UpdateAddSubOperation() for update to AddSubMath operation.
+
       // If clip to background is disabled, blending occurs over the entire extent
       // of all layers, not just within the background volume region.
       if (!clipToBackgroundVolume)
@@ -965,6 +959,30 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::UpdateAddSubOperation(vtkImageMathematics* addSubMath, int compositing)
+{
+  if (compositing != vtkMRMLSliceCompositeNode::Add && compositing != vtkMRMLSliceCompositeNode::Subtract)
+  {
+    vtkErrorWithObjectMacro(nullptr, << "UpdateAddSubOperation: Unexpected compositing mode (" << compositing << "). "
+                            << "Supported values are "
+                            << "Add (" << vtkMRMLSliceCompositeNode::Add << ") or "
+                            << "Subtract(" << vtkMRMLSliceCompositeNode::Subtract << ")");
+    return false;
+  }
+  vtkMTimeType oldAddSubMathMTime = addSubMath->GetMTime();
+  if (compositing == vtkMRMLSliceCompositeNode::Add)
+  {
+    addSubMath->SetOperationToAdd();
+  }
+  else
+  {
+    addSubMath->SetOperationToSubtract();
+  }
+  bool modified = (addSubMath->GetMTime() > oldAddSubMathMTime);
+  return modified;
+}
+
+//----------------------------------------------------------------------------
 bool vtkMRMLSliceLogic::UpdateFractions(vtkImageMathematics* fraction, double opacity)
 {
   vtkMTimeType oldMTime = fraction->GetMTime();
@@ -1103,6 +1121,16 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     this->PipelineUVW->AddLayers(layersUVW, this->SliceCompositeNode->GetCompositing(), this->SliceCompositeNode->GetClipToBackgroundVolume(),
       backgroundImagePortUVW, foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity(),
       labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity());
+
+    // Update add/subtract operations in the pipeline
+    if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->Pipeline->AddSubMath.GetPointer(), this->SliceCompositeNode->GetCompositing()))
+    {
+      modified = 1;
+    }
+    if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->PipelineUVW->AddSubMath.GetPointer(), this->SliceCompositeNode->GetCompositing()))
+    {
+      modified = 1;
+    }
 
     // Update opacity fractions for additional layers in add/subtract blending mode
     if (vtkMRMLSliceLogic::UpdateFractions(this->Pipeline->ForegroundFractionMath.GetPointer(), this->SliceCompositeNode->GetForegroundOpacity()))
