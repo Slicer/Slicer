@@ -1072,7 +1072,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       }
     }
 
-    /// set slice extents in the layers
+    // Update slice extents in the layers if any modification was made
     if (modified)
     {
       this->SetSliceExtentsToSliceNode();
@@ -1104,7 +1104,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       backgroundImagePortUVW, foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity(),
       labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity());
 
-    // Check fraction changes for add/subtract pipeline
+    // Update opacity fractions for additional layers in add/subtract blending mode
     if (vtkMRMLSliceLogic::UpdateFractions(this->Pipeline->ForegroundFractionMath.GetPointer(), this->SliceCompositeNode->GetForegroundOpacity()))
     {
       modified = 1;
@@ -1114,6 +1114,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       modified = 1;
     }
 
+    // Update alpha blending configuration for the layers
     if (vtkMRMLSliceLogic::UpdateBlendLayers(this->Pipeline->Blend.GetPointer(), layers, this->SliceCompositeNode->GetClipToBackgroundVolume()))
     {
       modified = 1;
@@ -1123,13 +1124,15 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       modified = 1;
     }
 
-    //Models
+    // Update models
     this->UpdateImageData();
     vtkMRMLDisplayNode* displayNode = this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : nullptr;
     if ( displayNode && this->SliceNode )
     {
       displayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       displayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
+
+      // Manage texture interpolation based on input availability
       if ( (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
           !((backgroundImagePortUVW != nullptr) || (foregroundImagePortUVW != nullptr) || (labelImagePortUVW != nullptr) ) ) ||
           (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView &&
@@ -1141,6 +1144,8 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       {
         displayNode->SetTextureImageDataConnection(this->ExtractModelTexture->GetOutputPort());
       }
+
+      // Disable interpolation if label layer is present
         if (this->LabelLayer && (this->LabelLayer->GetImageDataConnection() || this->LabelLayer->GetImageDataConnectionUVW()))
         {
           displayNode->SetInterpolateTexture(0);
@@ -1150,6 +1155,8 @@ void vtkMRMLSliceLogic::UpdatePipeline()
           displayNode->SetInterpolateTexture(1);
         }
     }
+
+    // Mark the pipeline as modified if any updates were performed
     if ( modified )
     {
       if (this->SliceModelNode && this->SliceModelNode->GetPolyData())
