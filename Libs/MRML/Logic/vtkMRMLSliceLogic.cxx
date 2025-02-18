@@ -81,9 +81,13 @@ struct BlendPipeline
     /*
     // AlphaBlending, ReverseAlphaBlending:
     //
-    //   foreground \
-    //               > Blend
-    //   background /
+    //   foreground[N] \
+    //                 .
+    //                 .
+    //                 .
+    //   foreground[0] \
+    //                  > Blend
+    //      background /
     //
     // Add, Subtract:
     //
@@ -94,7 +98,12 @@ struct BlendPipeline
     //   Splitting and appending channels is probably quite inefficient, but there does not
     //   seem to be simpler pipeline to do this in VTK.
     //
-    //   foreground > AddSubForegroundCast > ForegroundFractionMath \
+    //
+    //            foreground[N] > AddSubCasts[N] > FractionMaths[N] \
+    //                                                              .
+    //                                                              .
+    //                                                              .
+    //            foreground[0] > AddSubCasts[0] > FractionMaths[0] \
     //                                                               > AddSubMath > AddSubOutputCast ...
     //                            background > AddSubBackgroundCast /
     //
@@ -103,44 +112,105 @@ struct BlendPipeline
     //                                                                   > AddSubAppendRGBA
     //         background > AddSubExtractBackgroundAlpha - > BlendAlpha /
     //                                                    /
-    //
-    //         foreground > AddSubExtractForegroundAlpha /
+    //            foreground[0] > AddSubExtractAlphas[0] /
+    //                                                   .
+    //                                                   .
+    //                                                   .
+    //            additional[N] > AddSubExtractAlphas[N] /
     //
     */
 
-    this->AddSubForegroundCast->SetOutputScalarTypeToShort();
     this->AddSubBackgroundCast->SetOutputScalarTypeToShort();
-    this->ForegroundFractionMath->SetConstantK(1.0);
-    this->ForegroundFractionMath->SetOperationToMultiplyByK();
-    this->ForegroundFractionMath->SetInputConnection(0, this->AddSubForegroundCast->GetOutputPort());
+    // See UpdateStages() for update to AddSubBackgroundCast, AddSubCasts
+    // and FractionMaths input connections.
+
     this->AddSubMath->SetOperationToAdd();
-    this->AddSubMath->SetInputConnection(0, this->AddSubBackgroundCast->GetOutputPort());
-    this->AddSubMath->SetInputConnection(1, this->ForegroundFractionMath->GetOutputPort());
+    // See UpdateStages() for update to AddSubMath input connections.
+
     this->AddSubOutputCast->SetInputConnection(this->AddSubMath->GetOutputPort());
     this->AddSubOutputCast->SetOutputScalarTypeToUnsignedChar();
     this->AddSubOutputCast->ClampOverflowOn();
 
     this->AddSubExtractRGB->SetInputConnection(this->AddSubOutputCast->GetOutputPort());
     this->AddSubExtractRGB->SetComponents(0, 1, 2);
-    this->AddSubExtractBackgroundAlpha->SetComponents(3);
-    this->AddSubExtractForegroundAlpha->SetComponents(3);
 
-    this->BlendAlpha->AddInputConnection(this->AddSubExtractBackgroundAlpha->GetOutputPort());
-    this->BlendAlpha->AddInputConnection(this->AddSubExtractForegroundAlpha->GetOutputPort());
+    this->AddSubExtractBackgroundAlpha->SetComponents(3);
+    // See UpdateStages() for update to AddSubExtractBackgroundAlpha, AddSubExtractAlphas
+    // and BlendAlpha input connections.
 
     this->AddSubAppendRGBA->AddInputConnection(this->AddSubExtractRGB->GetOutputPort());
     this->AddSubAppendRGBA->AddInputConnection(this->BlendAlpha->GetOutputPort());
   }
 
+  //----------------------------------------------------------------------------
+  bool UpdateStages(const std::vector<vtkAlgorithmOutput*>& imagePorts)
+  {
+    std::vector<vtkAlgorithmOutput*> foregroundImagePorts = imagePorts;
+    if(imagePorts.size() > 0)
+    {
+      foregroundImagePorts.erase(foregroundImagePorts.begin());
+    }
+
+    bool stagesChanged = false;
+    int numberOfStages = static_cast<int>(foregroundImagePorts.size());
+    int currentNumberOfStages = static_cast<int>(this->AddSubExtractAlphas.size());
+    if (numberOfStages > currentNumberOfStages)
+    {
+      // Add missing stages
+      for (int count = 0; count < numberOfStages - currentNumberOfStages; ++count)
+      {
+        vtkNew<vtkImageCast> addSubCast;
+        addSubCast->SetOutputScalarTypeToShort();
+        this->AddSubCasts.push_back(addSubCast);
+
+        vtkNew<vtkImageMathematics> fractionMath;
+        fractionMath->SetConstantK(1.0);
+        fractionMath->SetOperationToMultiplyByK();
+        fractionMath->SetInputConnection(0, addSubCast->GetOutputPort());
+        this->FractionMaths.push_back(fractionMath);
+
+        vtkNew<vtkImageExtractComponents> addSubExtractAlpha;
+        addSubExtractAlpha->SetComponents(3);
+        this->AddSubExtractAlphas.push_back(addSubExtractAlpha);
+      }
+      stagesChanged = true;
+    }
+    else if (numberOfStages < currentNumberOfStages)
+    {
+      // Truncate
+      for (int count = 0; count < currentNumberOfStages - numberOfStages; ++count)
+      {
+        this->AddSubCasts.pop_back();
+        this->FractionMaths.pop_back();
+        this->AddSubExtractAlphas.pop_back();
+      }
+      stagesChanged = true;
+    }
+    if (stagesChanged)
+    {
+      // Reset BlendAlpha connections
+      this->BlendAlpha->RemoveAllInputs();
+      this->BlendAlpha->AddInputConnection(this->AddSubExtractBackgroundAlpha->GetOutputPort());
+      for(vtkSmartPointer<vtkImageExtractComponents>& addSubExtractAlpha: this->AddSubExtractAlphas)
+      {
+        this->BlendAlpha->AddInputConnection(addSubExtractAlpha->GetOutputPort());
+      }
+      // Clear AddSubMath inputs
+      this->AddSubMath->RemoveAllInputs();
+    }
+    return stagesChanged;
+  }
+
+  //----------------------------------------------------------------------------
   void AddLayers(std::deque<SliceLayerInfo>& layers,
     int sliceCompositing, bool clipToBackgroundVolume,
-    vtkAlgorithmOutput* backgroundImagePort,
-    vtkAlgorithmOutput* foregroundImagePort, double foregroundOpacity,
+    const std::vector<vtkAlgorithmOutput*>& imagePorts, const std::vector<double>& opacities,
     vtkAlgorithmOutput* labelImagePort, double labelOpacity)
   {
+
     if (sliceCompositing == vtkMRMLSliceCompositeNode::Add || sliceCompositing == vtkMRMLSliceCompositeNode::Subtract)
     {
-      if (!backgroundImagePort || !foregroundImagePort)
+      if (imagePorts.size() < 2)
       {
         // not enough inputs for add/subtract, so use alpha blending pipeline
         sliceCompositing = vtkMRMLSliceCompositeNode::Alpha;
@@ -149,45 +219,54 @@ struct BlendPipeline
 
     if (sliceCompositing == vtkMRMLSliceCompositeNode::Alpha)
     {
-      if (backgroundImagePort)
+      for (int index = 0; index < static_cast<int>(imagePorts.size()); ++index)
       {
-        layers.emplace_back(backgroundImagePort, 1.0);
-      }
-      if (foregroundImagePort)
-      {
-        layers.emplace_back(foregroundImagePort, foregroundOpacity);
+        layers.emplace_back(imagePorts[index], opacities[index]);
       }
     }
     else if (sliceCompositing == vtkMRMLSliceCompositeNode::ReverseAlpha)
     {
-      if (foregroundImagePort)
+      for (int index = static_cast<int>(imagePorts.size()) - 1; index >= 0; --index)
       {
-        layers.emplace_back(foregroundImagePort, 1.0);
-      }
-      if (backgroundImagePort)
-      {
-        layers.emplace_back(backgroundImagePort, foregroundOpacity);
+        layers.emplace_back(imagePorts[index], opacities[index]);
       }
     }
     else
     {
-      this->AddSubForegroundCast->SetInputConnection(foregroundImagePort);
+      // Background
+      vtkAlgorithmOutput* backgroundImagePort = imagePorts.front();
       this->AddSubBackgroundCast->SetInputConnection(backgroundImagePort);
-      this->AddSubExtractForegroundAlpha->SetInputConnection(foregroundImagePort);
-      this->AddSubExtractBackgroundAlpha->SetInputConnection(backgroundImagePort);
+      this->AddSubMath->SetInputConnection(0, this->AddSubBackgroundCast->GetOutputPort());
       // See UpdateAddSubOperation() for update to AddSubMath operation.
+      this->AddSubExtractBackgroundAlpha->SetInputConnection(backgroundImagePort);
+
+      // Foreground(s)
+      std::vector<vtkAlgorithmOutput*> foregroundPorts = imagePorts;
+      foregroundPorts.erase(foregroundPorts.begin());
+      for (int stageIndex = 0; stageIndex < static_cast<int>(foregroundPorts.size()); ++stageIndex)
+      {
+        this->AddSubCasts[stageIndex]->SetInputConnection(foregroundPorts[stageIndex]);
+        this->AddSubExtractAlphas[stageIndex]->SetInputConnection(foregroundPorts[stageIndex]);
+        this->AddSubMath->SetInputConnection(stageIndex, this->FractionMaths[stageIndex]->GetOutputPort());
+      }
 
       // If clip to background is disabled, blending occurs over the entire extent
       // of all layers, not just within the background volume region.
       if (!clipToBackgroundVolume)
       {
-        this->BlendAlpha->SetOpacity(0, 0.5);
-        this->BlendAlpha->SetOpacity(1, 0.5);
+        this->BlendAlpha->SetOpacity(0, 0.5); // Background
+        for (int index = 1; index < static_cast<int>(imagePorts.size()); ++index)
+        {
+          this->BlendAlpha->SetOpacity(index, 0.5);
+        }
       }
       else
       {
-        this->BlendAlpha->SetOpacity(0, 1.);
-        this->BlendAlpha->SetOpacity(1, 0.);
+        this->BlendAlpha->SetOpacity(0, 1.); // Background
+        for (int index = 1; index < static_cast<int>(imagePorts.size()); ++index)
+        {
+          this->BlendAlpha->SetOpacity(index, 0.0);
+        }
       }
 
       layers.emplace_back(this->AddSubAppendRGBA->GetOutputPort(), 1.0);
@@ -200,13 +279,16 @@ struct BlendPipeline
     }
   }
 
-  vtkNew<vtkImageCast> AddSubForegroundCast;
   vtkNew<vtkImageCast> AddSubBackgroundCast;
+  std::vector<vtkSmartPointer<vtkImageCast>> AddSubCasts;
+
   vtkNew<vtkImageMathematics> AddSubMath;
-  vtkNew<vtkImageMathematics> ForegroundFractionMath;
+  std::vector<vtkSmartPointer<vtkImageMathematics>> FractionMaths;
+
   vtkNew<vtkImageExtractComponents> AddSubExtractRGB;
   vtkNew<vtkImageExtractComponents> AddSubExtractBackgroundAlpha;
-  vtkNew<vtkImageExtractComponents> AddSubExtractForegroundAlpha;
+  std::vector<vtkSmartPointer<vtkImageExtractComponents>> AddSubExtractAlphas;
+
   vtkNew<vtkImageBlend> BlendAlpha;
   vtkNew<vtkImageAppendComponents> AddSubAppendRGBA;
   vtkNew<vtkImageCast> AddSubOutputCast;
@@ -482,7 +564,13 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 
     vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetBackgroundLayer());
     vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetForegroundLayer());
-
+    for(int additionalLayerIndex = 0;
+        additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+        ++additionalLayerIndex)
+    {
+      vtkMRMLSliceLogic::UpdateReconstructionSlab(
+            this, this->GetNthLayer(vtkMRMLSliceLogic::Layer_Last + additionalLayerIndex));
+    }
   }
   else if (node == this->SliceCompositeNode)
   {
@@ -1049,9 +1137,43 @@ bool vtkMRMLSliceLogic::UpdateAddSubOperation(vtkImageMathematics* addSubMath, i
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceLogic::UpdateFractions(vtkImageMathematics* fraction, double opacity)
 {
+  if (!fraction)
+  {
+    return false;
+  }
   vtkMTimeType oldMTime = fraction->GetMTime();
   fraction->SetConstantK(opacity);
   bool modified = (fraction->GetMTime() > oldMTime);
+  return modified;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::UpdateFractions(BlendPipeline* pipeline, const std::vector<vtkAlgorithmOutput*>& imagePorts, const std::vector<double>& opacities)
+{
+  if (!pipeline)
+  {
+    return false;
+  }
+  bool modified = false;
+  // Start at 1 to skip background port
+  for (int index = 1, stageIndex = 0; index < static_cast<int>(imagePorts.size()); ++index, ++stageIndex)
+  {
+    if (!imagePorts[index])
+    {
+      continue;
+    }
+    if (!pipeline->FractionMaths[stageIndex].GetPointer())
+    {
+      vtkErrorWithObjectMacro(nullptr, << "UpdateFractions: Failed to get Nth FractionMath Pipeline filter (N=" << stageIndex << ").");
+      continue;
+    }
+    if (vtkMRMLSliceLogic::UpdateFractions(
+          pipeline->FractionMaths[stageIndex].GetPointer(),
+          opacities[index]))
+    {
+      modified = true;
+    }
+  }
   return modified;
 }
 
@@ -1099,15 +1221,26 @@ void vtkMRMLSliceLogic::UpdatePipeline()
 
   if (this->SliceNode && this->SliceCompositeNode)
   {
-    // get the background and foreground image data from the layers
-    // so we can use them as input to the image blend
-
-    for (int layerIndex = 0; layerIndex < vtkMRMLSliceLogic::Layer_Last; ++layerIndex)
+    // Ensure all slice layers (background, foreground, additional layers) have an associated logic
+    // and update them with the corresponding volume nodes.
+    for (int layerIndex = 0; layerIndex < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers(); ++layerIndex)
     {
       vtkMRMLVolumeNode* layerNode = this->SliceCompositeNode->GetNthLayerVolume(layerIndex);
       vtkMRMLSliceLayerLogic* layerLogic = this->GetNthLayer(layerIndex);
+
+      // Ensure additional layers have an associated logic.
+      // Predefined layers are instantiated in ProcessMRMLLogicsEvents().
+      if (!layerLogic && layerIndex >= vtkMRMLSliceLogic::Layer_Last)
+      {
+        this->SetNthLayer(layerIndex, vtkNew<vtkMRMLSliceLayerLogic>());
+        layerLogic = this->GetNthLayer(layerIndex);
+        layerLogic->SetMRMLScene(this->GetMRMLScene());
+        layerLogic->SetVolumeNode(layerNode);
+      }
+
       if (!layerLogic)
       {
+        vtkErrorMacro(<< "UpdatePipeline: Failed to get Nth layer logic (N=" << layerIndex << ").");
         continue;
       }
 
@@ -1125,33 +1258,67 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       this->SetSliceExtentsToSliceNode();
     }
 
-    // Now update the image blend with the background and foreground and label
-    // -- layer 0 opacity is ignored, but since not all inputs may be non-0,
-    //    we keep track so that someone could, for example, have a 0 background
-    //    with a non-0 foreground and label and everything will work with the
-    //    label opacity
-    //
+    // Collect valid (non-null) image data connections and associated opacities for each layer (excluding label layer)
+    std::vector<double> layerOpacities;
+    std::vector<vtkAlgorithmOutput*> layerPorts;
+    std::vector<double> layerUVWOpacities;
+    std::vector<vtkAlgorithmOutput*> layerUVWPorts;
+    for(int layerIndex = 0;
+        layerIndex < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+        ++layerIndex)
+    {
+      if (layerIndex == vtkMRMLSliceLogic::LayerLabel)
+      {
+        continue; // Skip label layer as it is handled separately
+      }
+      if (this->GetNthLayerImageDataConnection(layerIndex))
+      {
+        layerOpacities.push_back(this->SliceCompositeNode->GetNthLayerOpacity(layerIndex));
+        layerPorts.push_back(this->GetNthLayerImageDataConnection(layerIndex));
+      }
+      if (this->GetNthLayerImageDataConnectionUVW(layerIndex))
+      {
+        layerUVWOpacities.push_back(this->SliceCompositeNode->GetNthLayerOpacity(layerIndex));
+        layerUVWPorts.push_back(this->GetNthLayerImageDataConnectionUVW(layerIndex));
+      }
+    }
 
+    // Update pipeline stages
+    if (this->Pipeline->UpdateStages(layerPorts))
+    {
+      modified = 1;
+    }
+
+    // Construct the blending pipeline
     std::deque<SliceLayerInfo> layers;
     this->Pipeline->AddLayers(
           layers,
           this->SliceCompositeNode->GetCompositing(),
           this->SliceCompositeNode->GetClipToBackgroundVolume(),
-          this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerBackground),
-          this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerForeground),
-          this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerForeground),
+          // Layers
+          layerPorts,
+          layerOpacities,
+          // Label
           this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerLabel),
           this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerLabel)
           );
 
+    // Update UVW pipeline stages
+    if (this->PipelineUVW->UpdateStages(layerUVWPorts))
+    {
+      modified = 1;
+    }
+
+    // Construct the UVW blending pipeline
     std::deque<SliceLayerInfo> layersUVW;
     this->PipelineUVW->AddLayers(
           layersUVW,
           this->SliceCompositeNode->GetCompositing(),
           this->SliceCompositeNode->GetClipToBackgroundVolume(),
-          this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerBackground),
-          this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerForeground),
-          this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerForeground),
+          // Layers
+          layerUVWPorts,
+          layerOpacities,
+          // Label
           this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerLabel),
           this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerLabel)
           );
@@ -1171,11 +1338,11 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     }
 
     // Update opacity fractions for additional layers in add/subtract blending mode
-    if (vtkMRMLSliceLogic::UpdateFractions(this->Pipeline->ForegroundFractionMath.GetPointer(), this->SliceCompositeNode->GetForegroundOpacity()))
+    if (vtkMRMLSliceLogic::UpdateFractions(this->Pipeline, layerPorts, layerOpacities))
     {
       modified = 1;
     }
-    if (vtkMRMLSliceLogic::UpdateFractions(this->PipelineUVW->ForegroundFractionMath.GetPointer(), this->SliceCompositeNode->GetForegroundOpacity()))
+    if (vtkMRMLSliceLogic::UpdateFractions(this->PipelineUVW, layerUVWPorts, layerUVWOpacities))
     {
       modified = 1;
     }
@@ -1294,6 +1461,24 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
   else
   {
     os << indent << "LabelLayer: (none)\n";
+  }
+
+  os << indent << "AdditionalLayers:\n";
+  if (this->SliceCompositeNode)
+  {
+    for(int additionalLayerIndex = 0; additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers(); ++additionalLayerIndex)
+    {
+      vtkMRMLSliceLayerLogic* layerLogic = this->GetNthLayer(vtkMRMLSliceLogic::Layer_Last + additionalLayerIndex);
+      if (layerLogic)
+      {
+        os << nextIndent << "Layer " << additionalLayerIndex << ": \n";
+        layerLogic->PrintSelf(os, nextIndent.GetNextIndent());
+      }
+      else
+      {
+        os << nextIndent << "Layer " << additionalLayerIndex << ": (none)\n";
+      }
+    }
   }
 
   if (this->Pipeline->Blend.GetPointer())
@@ -1513,7 +1698,7 @@ vtkMRMLVolumeNode *vtkMRMLSliceLogic::GetNthLayerVolumeNode(int layer)
     vtkErrorMacro(<< "GetNthLayerVolumeNode: Non-negative layer index is expected.");
     return nullptr;
   }
-  int maxLayerIndex = vtkMRMLSliceLogic::Layer_Last;
+  int maxLayerIndex = vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
   if (layer >= maxLayerIndex)
   {
     return nullptr;
@@ -1887,7 +2072,9 @@ void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
   }
 
   vtkNew<vtkCollection> volumeNodes;
-  for (int layer = 0; layer < vtkMRMLSliceLogic::Layer_Last; layer++)
+  for (int layer = 0;
+       layer < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+       layer++)
   {
     vtkMRMLVolumeNode *volumeNode = this->GetNthLayerVolumeNode(layer);
     if (volumeNode)
@@ -2026,8 +2213,14 @@ void vtkMRMLSliceLogic::GetLowestVolumeSliceBounds(double sliceBounds[6], bool u
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::GetSliceBounds(double sliceBounds[6])
 {
+  if (!this->SliceCompositeNode)
+  {
+    return;
+  }
   vtkBoundingBox sliceBoundingBox;
-  for (int layer = 0; layer < vtkMRMLSliceLogic::Layer_Last; layer++)
+  for (int layer = 0;
+       layer < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+       layer++)
   {
     vtkMRMLVolumeNode* volumeNode = this->GetNthLayerVolumeNode(layer);
     if (volumeNode)
@@ -2302,6 +2495,15 @@ std::vector< vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
   std::vector<vtkMRMLSliceLayerLogic *> layerLogics;
   layerLogics.push_back(this->GetBackgroundLayer());
   layerLogics.push_back(this->GetForegroundLayer());
+  if (this->SliceCompositeNode)
+  {
+    for(int additionalLayerIndex = 0;
+        additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+        ++additionalLayerIndex)
+    {
+      layerLogics.push_back(this->GetNthLayer(vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers()));
+    }
+  }
   for (unsigned int layerIndex = 0; layerIndex < layerLogics.size(); layerIndex++)
   {
     vtkMRMLSliceLayerLogic* layerLogic = layerLogics[layerIndex];
@@ -2715,7 +2917,13 @@ bool vtkMRMLSliceLogic::GetSliceOffsetRangeResolution(double range[2], double& r
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkMRMLSliceLogic::GetFirstVolumeNode()
 {
-  for (int layer = 0; layer < vtkMRMLSliceLogic::Layer_Last; layer++)
+  if (!this->SliceCompositeNode)
+  {
+    return nullptr;
+  }
+  for (int layer = 0;
+       layer < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+       layer++)
   {
     vtkMRMLVolumeNode* volumeNode = this->GetNthLayerVolumeNode(layer);
     if (volumeNode)

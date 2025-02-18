@@ -431,8 +431,11 @@ protected:
   /// Helper to update the operation to perform based on compositing mode.
   static bool UpdateAddSubOperation(vtkImageMathematics* addSubMath, int compositing);
 
-  /// Helper to update foreground opacity when adding/subtracting the background layer
+  /// Helper to update layer opacity when adding/subtracting the background layer
   static bool UpdateFractions(vtkImageMathematics* fraction, double opacity);
+
+  /// Helper to update layers opacity when adding/subtracting the background layer
+  static bool UpdateFractions(BlendPipeline* pipeline, const std::vector<vtkAlgorithmOutput*>& imagePorts, const std::vector<double>& opacities);
 
   /// Helper to update reconstruction slab settings for a given layer.
   static void UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, vtkMRMLSliceLayerLogic* sliceLayerLogic);
