@@ -239,12 +239,12 @@ public:
   /// Convert this node's information to a string in JSON data structure.
   ///
   /// \sa WriteXML(), WriteNodeBodyXML()
-  virtual const char* WriteJSONToString(int indent = 0, vtkMRMLMessageCollection* userMessagesInput=nullptr);
+  virtual std::string WriteJSONToString(int indent = 0, vtkMRMLMessageCollection* userMessagesInput=nullptr);
 
   /// Read this node's information from a string in JSON format.
   ///
   /// \sa ReadXMLAttributes(),
-  virtual void ReadJSONFromString(const char* json, bool overwriteReferences = true);
+  virtual void ReadJSONFromString(const char* json);
 
   /// \brief Copy node contents from another node of the same type.
   /// Does not copy node ID and Scene.

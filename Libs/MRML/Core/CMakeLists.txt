@@ -182,6 +182,7 @@ set(MRMLCore_SRCS
   vtkMRMLInteractionEventData.cxx
   vtkMRMLInteractionEventData.h
   vtkMRMLInteractionNode.cxx
+  vtkMRMLJsonElement.cxx
   vtkMRMLLabelMapVolumeDisplayNode.cxx
   vtkMRMLLabelMapVolumeNode.cxx
   vtkMRMLLayoutNode.cxx

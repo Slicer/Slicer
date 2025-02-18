@@ -161,7 +161,7 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->ReadDataOnLoad = 1;
 
-  this->SetUseJSONFormat = 1;
+  this->SetUseJSONFormat = 0;
 
   this->LastLoadedVersion = nullptr;
   this->LastLoadedExtensions = nullptr;
@@ -1403,9 +1403,9 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection * userMessage
         continue;
       }
 
-      const char* jsonNodeString = node->WriteJSONToString(indent, userMessages);
+      std::string jsonNodeString = node->WriteJSONToString(indent, userMessages);
       rapidjson::Document nodeDocument;
-      nodeDocument.Parse(jsonNodeString);
+      nodeDocument.Parse(jsonNodeString.c_str());
       if (document.HasParseError())
       {
         vtkErrorMacro( << "Error parsing JSON string.");
