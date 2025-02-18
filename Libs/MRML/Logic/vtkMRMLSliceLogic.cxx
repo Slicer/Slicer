@@ -1031,8 +1031,6 @@ void vtkMRMLSliceLogic::UpdatePipeline()
   {
     // get the background and foreground image data from the layers
     // so we can use them as input to the image blend
-    // TODO: change logic to use a volume node superclass rather than
-    // a scalar volume node once the superclass is sorted out for vector/tensor Volumes
 
     const char *id;
 
