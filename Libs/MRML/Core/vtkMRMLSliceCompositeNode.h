@@ -23,7 +23,7 @@ class vtkMRMLVolumeNode;
 
 /// \brief MRML node for storing a slice through RAS space.
 ///
-/// This node stores the information about how to composite two
+/// This node stores the information about how to composite N
 /// vtkMRMLVolumes into a single display image.
 class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 {
@@ -79,6 +79,8 @@ public:
     LayerLabel = 2,
     Layer_Last // must be last
   };
+
+  int GetNumberOfAdditionalLayers();
 
   /// @{
   /// \sa GetNthLayerVolumeID, SetNthLayerVolumeID
