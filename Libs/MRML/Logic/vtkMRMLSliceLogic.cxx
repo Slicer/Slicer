@@ -97,7 +97,7 @@ struct BlendPipeline
     //
     //   foreground > AddSubForegroundCast > ForegroundFractionMath \
     //                                                               > AddSubMath > AddSubOutputCast ...
-    //                             background > AddSubBackroundCast /
+    //                            background > AddSubBackgroundCast /
     //
     //
     //                          ... AddSubOutputCast > AddSubExtractRGB \
