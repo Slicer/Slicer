@@ -34,11 +34,6 @@ Version:   $Revision: 1.11 $
 #include <sstream>
 #include <algorithm> // for std::sort
 
-// rapidjson includes
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
-
 //------------------------------------------------------------------------------
 vtkMRMLNode::vtkMRMLNode()
 {
@@ -708,9 +703,29 @@ std::string vtkMRMLNode::WriteJSONToString(int indent, vtkMRMLMessageCollection*
 void vtkMRMLNode::ReadJSONFromString(const char* json)
 {
   vtkNew<vtkMRMLJsonReader> jsonReader;
-  std::string atts = jsonReader->ConvertJsonToXML(json, this->GetNodeTagName());
-  // To Do: ConvertJsonToXML returns the actual XML string. I need the attributes in the form of char**
-  //this->ReadXMLAttributes(atts);
+  std::string xmlString = jsonReader->ConvertJsonToXML(json, this->GetNodeTagName());
+  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(
+    vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
+  if (!element)
+  {
+    vtkErrorMacro("vtkMRMLNode::ReadJSONFromString : Failed to parse XML from JSON string.");
+    return;
+  }
+  if (element->GetName() == nullptr || strcmp(element->GetName(), this->GetNodeTagName()) != 0)
+  {
+    vtkErrorMacro("vtkMRMLNode::ReadJSONFromString : Invalid JSON string.");
+    return;
+  }
+
+  std::vector<const char*> atts;
+  for (int attIndex = 0; attIndex < element->GetNumberOfAttributes(); ++attIndex)
+  {
+    atts.push_back(element->GetAttributeName(attIndex));
+    atts.push_back(element->GetAttributeValue(attIndex));
+  }
+  atts.push_back(nullptr);
+
+  this->ReadXMLAttributes(atts.data());
 }
 
 //----------------------------------------------------------------------------

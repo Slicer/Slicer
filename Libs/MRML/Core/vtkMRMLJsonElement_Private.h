@@ -65,6 +65,7 @@ public:
 
   // Helper methods
   bool ReadVector(rapidjson::Value& item, double* v, int numberOfComponents=3);
+  vtkMRMLJsonElement::Type GetValueType(rapidjson::Value& item);
 
   // Data
   std::shared_ptr<JsonDocumentContainer> JsonRoot;
