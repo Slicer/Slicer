@@ -518,8 +518,8 @@ bool vtkMRMLJsonElement::GetMatrix4x4Property(const char *propertyName,
   {
     vtkErrorToMessageCollectionWithObjectMacro(
       this, this->GetUserMessages(),
-      "vtkMRMLMarkupsPlaneJsonStorageNode::vtkInternal::"
-      "UpdateMarkupsNodeFromJsonValue",
+      "vtkMRMLPlaneJsonStorageNode::vtkInternal::"
+      "UpdateNodeFromJsonValue",
       "File reading failed: " << propertyName
                               << " 16 - element numeric array.");
     return false;
@@ -666,6 +666,63 @@ void vtkMRMLJsonReader::PrintSelf(ostream &os, vtkIndent indent)
 bool vtkMRMLJsonReader::HasErrors()
 {
   return this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLJsonElement* vtkMRMLJsonReader::ReadFromFile(const char* filePath)
+{
+  if (!filePath)
+  {
+    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+      "vtkMRMLJsonIO::ReadFromFile",
+      "Invalid filename");
+    return nullptr;
+  }
+
+  // Read document from file
+  FILE* fp = fopen(filePath, "r");
+  if (!fp)
+  {
+    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+      "vtkMRMLJsonIO::ReadFromFile",
+      "Error opening the file '" << filePath << "'");
+    return nullptr;
+  }
+
+  vtkNew<vtkMRMLJsonElement> jsonElement;
+
+  jsonElement->Internal->JsonRoot = std::make_shared<vtkMRMLJsonElement::vtkInternal::JsonDocumentContainer>();
+
+  char buffer[4096];
+  rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
+  if (jsonElement->Internal->JsonRoot->Document->ParseStream(fs).HasParseError())
+  {
+    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+      "vtkMRMLJsonIO::ReadFromFile",
+      "Error parsing the file '" << filePath << "'");
+    fclose(fp);
+    return nullptr;
+  }
+  fclose(fp);
+
+  if (jsonElement->Internal->JsonRoot->Document->IsObject())
+  {
+    jsonElement->Internal->JsonValue = jsonElement->Internal->JsonRoot->Document->GetObject();
+  }
+  else if (jsonElement->Internal->JsonRoot->Document->IsArray())
+  {
+    jsonElement->Internal->JsonValue = jsonElement->Internal->JsonRoot->Document->GetArray();
+  }
+  else
+  {
+    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+      "vtkMRMLJsonIO::ReadFromFile",
+      "Error parsing the file '" << filePath << "' - root item must be array or list");
+    return nullptr;
+  }
+
+  jsonElement->Register(this);
+  return jsonElement;
 }
 
 //----------------------------------------------------------------------------
@@ -906,7 +963,10 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement *jsonElemen
  }
 
 //---------------------------------------------------------------------------
-vtkMRMLJsonWriter::vtkInternal::vtkInternal(vtkMRMLJsonWriter *external) : External(external) {}
+vtkMRMLJsonWriter::vtkInternal::vtkInternal(vtkMRMLJsonWriter *external) : External(external)
+{
+  this->WriteBuffer.resize(65536);
+}
 
 //---------------------------------------------------------------------------
 vtkMRMLJsonWriter::vtkInternal::~vtkInternal() {}
@@ -949,6 +1009,55 @@ void vtkMRMLJsonWriter::vtkInternal::WriteVector(double *v, int numberOfComponen
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLJsonWriter::WriteToFileBegin(const char* filePath, const char* schema)
+{
+  if (!filePath)
+  {
+    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
+      "vtkMRMLJsonIO::WriteToFileBegin",
+      "Invalid filename");
+    return false;
+  }
+
+  // open the file for writing
+  this->Internal->WriteFileHandle = fopen(filePath, "wb");
+  if (!this->Internal->WriteFileHandle)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLJsonStorageNode::WriteDataInternal",
+      "Writing  node file failed: unable to open file '" << filePath << "' for writing.");
+    return false;
+  }
+
+  // Prepare JSON writer and output stream.
+  this->Internal->FileWriteStream = std::unique_ptr<rapidjson::FileWriteStream>(
+    new rapidjson::FileWriteStream(this->Internal->WriteFileHandle, &this->Internal->WriteBuffer[0], this->Internal->WriteBuffer.size()));
+
+  auto stringWriter = std::unique_ptr<rapidjson::PrettyWriter<rapidjson::FileWriteStream>>(
+    new rapidjson::PrettyWriter<rapidjson::FileWriteStream> (*this->Internal->FileWriteStream));
+  this->Internal->SetFileWriter(std::move(stringWriter));
+
+  this->Internal->Writer->StartObject();
+
+  if (schema)
+  {
+    this->WriteStringProperty("@schema", schema);
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLJsonWriter::WriteToFileEnd()
+{
+  this->Internal->Writer->EndObject();
+  int error = fclose(this->Internal->WriteFileHandle);
+  this->Internal->WriteFileHandle = 0;
+  this->Internal->Writer.reset();
+  this->Internal->FileWriteStream.reset();
+  return (error == 0);
+}
+
+//----------------------------------------------------------------------------
 bool vtkMRMLJsonWriter::WriteToStringBegin(const char *nodeTagName)
 {
   if (!nodeTagName)
@@ -958,9 +1067,8 @@ bool vtkMRMLJsonWriter::WriteToStringBegin(const char *nodeTagName)
 
   // Prepare JSON writer and output stream.
   this->Internal->StringBuffer = std::make_unique<rapidjson::StringBuffer>();
-  this->Internal->Writer =
-    std::make_unique<rapidjson::PrettyWriter<rapidjson::StringBuffer>>(
-      *this->Internal->StringBuffer);
+  auto stringWriter = std::make_unique<rapidjson::PrettyWriter<rapidjson::StringBuffer>>(*this->Internal->StringBuffer);
+  this->Internal->SetStringWriter(std::move(stringWriter));
 
   this->Internal->Writer->StartObject();
   this->Internal->Writer->Key(nodeTagName);
