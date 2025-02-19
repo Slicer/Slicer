@@ -194,6 +194,12 @@ public:
   /// \return JSON element on success and nullptr on failure.
   /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
+  vtkMRMLJsonElement* ReadFromFile(const char* filePath);
+
+  /// Read JSON document from file.
+  /// \return JSON element on success and nullptr on failure.
+  /// Only in C++: The caller must take ownership of the returned object.
+  VTK_NEWINSTANCE
   vtkMRMLJsonElement* ReadFromString(const std::string &jsonString);
 
   /// Convert JSON to XML string
@@ -227,6 +233,14 @@ public:
   static vtkMRMLJsonWriter *New();
   vtkTypeMacro(vtkMRMLJsonWriter,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
+
+  /// This method must be called before writing any properties to the output file.
+  /// Returns true on success.
+  bool WriteToFileBegin(const char* filePath, const char* schema);
+
+  /// This method must be called after writing all properties to the output file.
+  /// Returns true on success.
+  bool WriteToFileEnd();
 
   /// This method must be called before writing any properties to the output file.
   /// Returns true on success.
