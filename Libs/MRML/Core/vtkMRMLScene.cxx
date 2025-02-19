@@ -161,7 +161,7 @@ vtkMRMLScene::vtkMRMLScene()
 
   this->ReadDataOnLoad = 1;
 
-  this->SetUseJSONFormat = 0;
+  this->SetUseJSONFormat = 1;
 
   this->LastLoadedVersion = nullptr;
   this->LastLoadedExtensions = nullptr;

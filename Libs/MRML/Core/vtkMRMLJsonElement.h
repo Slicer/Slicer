@@ -36,11 +36,26 @@ public:
   vtkTypeMacro(vtkMRMLJsonElement, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  // Separator characters for (de)serializing the UID and the attributes map
+  static const std::string XML_SEPARATOR;
+  static const std::string XML_NAME_VALUE_SEPARATOR;
+
   /// Get the JSON schema name
   std::string GetSchema();
 
   /// Returns true if the JSON object contains a member by this name.
   bool HasMember(const char* propertyName);
+
+  enum Type {
+    UNKNOWN = 0,
+    OBJECT = 1,
+    ARRAY = 2,
+    STRING = 3,
+    BOOL = 4,
+    INT = 5,
+    DOUBLE = 6
+  };
+  Type GetMemberType(const char* propertyName);
 
   /// Get string property value.
   /// Returns empty string if no such string property is found.
@@ -119,10 +134,32 @@ public:
   /// Returns the number of elements in this array.
   int GetArraySize();
 
-  /// Returns the n-th elements in this array.
+  /// Returns the n-th object elements in this array.
   /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
   vtkMRMLJsonElement* GetArrayItem(int childItemIndex);
+
+  /// Returns true if this element is an object.
+  bool IsObject();
+
+  /// Returns the number of elements in this object.
+  int GetObjectSize();
+
+  /// Get object member name by index.
+  std::string GetObjectPropertyNameByIndex(int childItemIndex);
+
+  /// Returns the n-th elements in this object as object.
+  /// Only in C++: The caller must take ownership of the returned object.
+  VTK_NEWINSTANCE
+  vtkMRMLJsonElement* GetObjectItem(int childItemIndex);
+
+  /// Returns this element type.
+  Type GetType();
+
+  /// Similar to GetObjectItem, but it returns the n-th elements for any type.
+  /// Only in C++: The caller must take ownership of the returned object.
+  VTK_NEWINSTANCE
+  vtkMRMLJsonElement* GetChildMemberItem(int childItemIndex);
 
   /// Returns user-displayable messages that may contain details about any failed operation.
   vtkGetObjectMacro(UserMessages, vtkMRMLMessageCollection);
@@ -161,7 +198,7 @@ public:
 
   /// Convert JSON to XML string
   /// return string
-  std::string ConvertJsonToXML(const std::string &jsonString, const std::string & nodeTagName);
+  std::string ConvertJsonToXML(const std::string &jsonString, const std::string &nodeTagName);
 
   /// Returns user-displayable messages that may contain details about any failed operation.
   vtkGetObjectMacro(UserMessages, vtkMRMLMessageCollection);
@@ -175,7 +212,7 @@ protected:
   vtkMRMLJsonReader(const vtkMRMLJsonReader&);
   void operator=(const vtkMRMLJsonReader&);
 
-  std::string processJsonElement(vtkMRMLJsonElement* jsonElement);
+  std::string processJsonElement(vtkMRMLJsonElement* jsonElement, const std::string &elementKey = "");
 
   vtkNew<vtkMRMLMessageCollection> UserMessages;
 };
