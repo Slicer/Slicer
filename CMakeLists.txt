@@ -430,6 +430,8 @@ if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(9)$")
 endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
 
+set(Slicer_VTK_MINIMUM_SUPPORTED_VERSION "9.1")
+
 #
 # SimpleITK has large internal libraries, which take an extremely long
 # time to link on windows when they are static. Creating shared
@@ -596,6 +598,7 @@ message(STATUS "Configuring VTK")
 message(STATUS "  Slicer_VTK_RENDERING_BACKEND is ${Slicer_VTK_RENDERING_BACKEND}")
 message(STATUS "  Slicer_VTK_SMP_IMPLEMENTATION_TYPE is ${Slicer_VTK_SMP_IMPLEMENTATION_TYPE}")
 message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
+message(STATUS "  Slicer_VTK_MINIMUM_SUPPORTED_VERSION is ${Slicer_VTK_MINIMUM_SUPPORTED_VERSION}")
 
 #-----------------------------------------------------------------------------
 # Slicer_VTK_COMPONENTS
@@ -897,7 +900,7 @@ endif()
 #-----------------------------------------------------------------------------
 find_package(VTK REQUIRED)
 set(VTK_LIBRARIES "")
-find_package(VTK ${Slicer_VTK_VERSION_MAJOR} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED)
+find_package(VTK ${Slicer_VTK_MINIMUM_SUPPORTED_VERSION} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED)
 set(VTK_GUI_SUPPORT_QT_TARGET_NAME "VTK::GUISupportQt")
 
 if(NOT TARGET ${VTK_GUI_SUPPORT_QT_TARGET_NAME})
