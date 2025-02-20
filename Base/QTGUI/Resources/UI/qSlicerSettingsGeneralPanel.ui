@@ -225,6 +225,29 @@ Default: {documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html</s
      </property>
     </widget>
    </item>
+   <item row="12" column="0">
+    <widget class="QLabel" name="MaxFileNameLengthLabel">
+     <property name="text">
+      <string>Maximum filename length:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QSpinBox" name="MaximumFileNameLengthSpinBox">
+     <property name="toolTip">
+      <string>Limit the maximum length of filenames. For compatibility with Windows systems, a low value such as 50 is recommended. Set a higher value to allow using longer filenames that match long node names.</string>
+     </property>
+     <property name="minimum">
+      <number>8</number>
+     </property>
+     <property name="maximum">
+      <number>4000</number>
+     </property>
+     <property name="value">
+      <number>1000</number>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>

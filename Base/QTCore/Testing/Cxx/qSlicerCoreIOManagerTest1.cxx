@@ -51,7 +51,10 @@ int TestLongNodeNameSaving(const char* temporaryDirectory)
   std::string extension = ".txt";
   std::string longFileName = longNodeName + extension;
   std::string safeFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(QString::fromStdString(longFileName)).toStdString();
-  safeFileName = qSlicerCoreIOManager::forceFileNameMaxLengthExtension(QString::fromStdString(longFileName), extension.length()).toStdString();
+
+  qSlicerCoreIOManager ioManager;
+  ioManager.setDefaultMaximumFileNameLength(25);
+  safeFileName = ioManager.forceFileNameMaxLength(QString::fromStdString(longFileName), extension.length()).toStdString();
 
   vtkSmartPointer<vtkMRMLTextNode> textNode = vtkMRMLTextNode::SafeDownCast(
     scene->AddNewNodeByClass("vtkMRMLTextNode", longNodeName));
