@@ -86,7 +86,7 @@ public:
   /// Return complete file extension for the specified filename.
   /// Longest matched extension will be returned (.seg.nrrd will be returned
   /// if both .nrrd and .seg.nrrd are matched), including dot.
-  /// If filename is not specified then the current FileName will be used
+  /// If filename is not specified then the current FileName will be used.
   /// If there is no match then empty is returned.
   virtual std::string GetSupportedFileExtension(const char* fileName = nullptr, bool includeReadable = true, bool includeWriteable = true);
 
@@ -254,6 +254,7 @@ public:
 
   ///
   /// Return default file extension for writing.
+  /// Does not include the leading dot (e.g., it returns "txt" and not ".txt").
   virtual const char* GetDefaultWriteFileExtension();
 
   ///
@@ -385,17 +386,12 @@ public:
   /// Ensures that the file name (excluding the extension) is shorter than the maximum allowed length.
   /// If the filename is shorter than the maximum allowed length then it is returned unchanged.
   /// If the filename is longer than the maximum allowed length then the filename is shortened by using the following format:
-  /// [first 20 characters of the base name]_[4 character hash code].[extension]
-  /// The length of the prefix is the maximum allowed length minus the length of the hash code plus one for the added underscore.
-  /// The full base name of the file will be exactly maxFileNameLength characters long.
-  /// If maxFileNameLength is negative then the recommended file name length is used.
-  /// \sa GetRecommendedFileNameLength
-  std::string ClampFileName(const std::string& filename, int maxFileNameLength=-1, int hashLength = 4);
-  static std::string ClampFileNameExtension(const std::string& filename, int maxFileNameLength=-1, int hashLength = 4, int extensionLength=0);
+  /// [first maxFileNameLength-hashLength-1 characters of the base name]_[hashLength long hash code].[extension]
+  /// The full base name of the file will be exactly maxFileNameLength characters long. maxFileNameLength must be 8 or higher.
+  /// If extensionLength is not known then GetSupportedFileExtension() method can be used to get it from the filename.
+  /// \sa GetSupportedFileExtension()
+  static std::string ClampFileName(const std::string& filename, int extensionLength, int maxFileNameLength, int hashLength = 4);
   //@}
-
-  /// Get the recommended maximum length of the file name.
-  static int GetRecommendedFileNameLength() { return 25; };
 
 protected:
   vtkMRMLStorageNode();

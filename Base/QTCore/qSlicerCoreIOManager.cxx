@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFileInfo>
+#include <QSettings>
 
 // CTK includes
 #include <ctkUtils.h>
@@ -69,13 +70,18 @@ public:
     vtkMRMLScene* scene = nullptr
   ) const;
 
-  QSettings*        ExtensionFileType;
   QList<qSlicerFileReader*> Readers;
   QList<qSlicerFileWriter*> Writers;
   QMap<qSlicerIO::IOFileType, QStringList> FileTypes;
 
   QString DefaultSceneFileType;
+
+  // This is the default maximum length of a file name.
+  int DefaultMaximumFileNameLength{ 1000 };
 };
+
+CTK_GET_CPP(qSlicerCoreIOManager, int, defaultMaximumFileNameLength, DefaultMaximumFileNameLength);
+CTK_SET_CPP(qSlicerCoreIOManager, int, setDefaultMaximumFileNameLength, DefaultMaximumFileNameLength);
 
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManagerPrivate::qSlicerCoreIOManagerPrivate() = default;
@@ -216,6 +222,19 @@ qSlicerCoreIOManager::qSlicerCoreIOManager(QObject* _parent)
   // constructor.
   qRegisterMetaType<qSlicerIO::IOFileType>("qSlicerIO::IOFileType");
   qRegisterMetaType<qSlicerIO::IOProperties>("qSlicerIO::IOProperties");
+
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+  QSettings* userSettings = app ? app->userSettings() : nullptr;
+  if (userSettings)
+  {
+    int maximumFileNameLength = userSettings->value("ioManager/MaximumFileNameLength", this->defaultMaximumFileNameLength()).toInt();
+    this->setDefaultMaximumFileNameLength(maximumFileNameLength);
+  }
+  else
+  {
+  qWarning() << Q_FUNC_INFO << ": failed to access application settings, using default defaultMaximumFileNameLength value";
+  }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -486,16 +505,13 @@ QString qSlicerCoreIOManager::forceFileNameValidCharacters(const QString& filena
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::forceFileNameMaxLength(const QString& filename, int maxLength/*=-1*/)
+QString qSlicerCoreIOManager::forceFileNameMaxLength(const QString& filename, int extensionLength, int maxLength/*=-1*/)
 {
-  QString extension = this->extractKnownExtension(filename, nullptr);
-  return qSlicerCoreIOManager::forceFileNameMaxLengthExtension(filename, maxLength, extension.length());
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::forceFileNameMaxLengthExtension(const QString& filename, int extensionLength, int maxLength/*=-1*/)
-{
-  return QString::fromStdString(vtkMRMLStorageNode::ClampFileNameExtension(filename.toStdString(), maxLength, 4, extensionLength));
+  if (maxLength < 0)
+  {
+    maxLength = this->defaultMaximumFileNameLength();
+  }
+  return QString::fromStdString(vtkMRMLStorageNode::ClampFileName(filename.toStdString(), extensionLength, maxLength));
 }
 
 //-----------------------------------------------------------------------------
