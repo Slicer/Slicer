@@ -41,6 +41,7 @@
 #include <vtkStripper.h>
 #include <vtkImageStencil.h>
 #include <vtkImageCast.h>
+#include <vtkVersion.h> // For VTK_VERSION_*
 
 // std includes
 #include <map>
