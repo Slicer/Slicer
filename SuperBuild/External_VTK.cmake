@@ -226,7 +226,8 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         )
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-        ${VTK_DIR}/${_library_output_subdir}/Lib/site-packages
+        ${VTK_DIR}/${_library_output_subdir}/Lib/site-packages # Location for VTK 9.3 or older
+        ${VTK_DIR}/lib/site-packages # Location for VTK 9.4+
         )
     endif()
 
@@ -268,7 +269,8 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         )
     else()
       set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-        <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/Lib/site-packages
+        <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/Lib/site-packages # Location for VTK 9.3 or older
+        <APPLAUNCHER_SETTINGS_DIR>/../lib/site-packages # Location for VTK 9.4+
         )
     endif()
     mark_as_superbuild(
