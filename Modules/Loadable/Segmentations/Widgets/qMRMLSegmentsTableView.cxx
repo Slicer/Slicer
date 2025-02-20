@@ -1185,6 +1185,10 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
     QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
     contextMenu->addAction(showOnlySelectedAction);
 
+    QAction* toggleSelectedAction = new QAction(tr("Toggle selected segments"), this);
+    QObject::connect(toggleSelectedAction, SIGNAL(triggered()), this, SLOT(toggleSelectedSegments()));
+    contextMenu->addAction(toggleSelectedAction);
+
     contextMenu->addSeparator();
 
     QAction* jumpSlicesAction = new QAction(tr("Jump slices"), this);
@@ -1418,6 +1422,46 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
     }
 
     displayNode->SetSegmentVisibility(displayedID, visible);
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::toggleSelectedSegments()
+{
+  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  if (selectedSegmentIDs.size() == 0)
+  {
+    qWarning() << Q_FUNC_INFO << ": No segment selected";
+    return;
+  }
+
+  Q_D(qMRMLSegmentsTableView);
+  if (!d->SegmentationNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": No current segmentation node";
+    return;
+  }
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
+    d->SegmentationNode->GetDisplayNode() );
+  if (!displayNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": No display node for segmentation " << d->SegmentationNode->GetName();
+    return;
+  }
+
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  if (!segmentation)
+  {
+    qCritical() << Q_FUNC_INFO << ": No segmentation";
+    return;
+  }
+
+  // Toggle visibility of the selected segments
+  MRMLNodeModifyBlocker blocker(displayNode);
+  for (const QString& segmentID : selectedSegmentIDs)
+  {
+    bool currentVisibility = displayNode->GetSegmentVisibility(segmentID.toStdString());
+    displayNode->SetSegmentVisibility(segmentID.toStdString(), !currentVisibility);
   }
 }
 
