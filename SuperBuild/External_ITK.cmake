@@ -2,7 +2,7 @@
 set(proj ITK)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib" "VTK")
+set(${proj}_DEPENDENCIES "zlib" "VTK" "HDF5")
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND ${proj}_DEPENDENCIES DCMTK)
 endif()
@@ -121,6 +121,9 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DModule_AdaptiveDenoising:BOOL=ON
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DITK_INSTALL_NO_DEVELOPMENT:BOOL=ON
+      # Since HDF5 is built as ext proj we need to be sure that ITK may find it
+      -DITK_USE_SYSTEM_HDF5:BOOL=ON
+      -DHDF5_DIR:PATH=${HDF5_DIR}
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DITK_WRAPPING:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE
       -DITK_WRAP_PYTHON:BOOL=OFF
