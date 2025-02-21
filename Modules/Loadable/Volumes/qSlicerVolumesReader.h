@@ -45,6 +45,11 @@ public:
   QStringList extensions()const override;
   qSlicerIOOptions* options()const override;
 
+  /// Returns a positive number (>0) if the reader can load this file.
+  /// In case the file uses a generic file extension (such as .nrrd) then the confidence value is adjusted based on
+  /// the file content: if the file contains a dwmri nrrd file then confidence is increased to 0.7
+  double canLoadFileConfidence(const QString& file)const override;
+
   bool load(const IOProperties& properties) override;
 
   /// Implements the file list examination for the corresponding method in the core
