@@ -166,6 +166,9 @@ public slots:
   /// Show only selected segments
   void showOnlySelectedSegments();
 
+  /// Toggle visibility for the selected segments
+  void toggleSelectedSegmentsVisibility();
+
   /// Jump position of all slice views to show the segment's center.
   /// Segment's center is determined as the center of bounding box.
   void jumpSlices();

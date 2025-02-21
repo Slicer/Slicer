@@ -1181,6 +1181,10 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 
   if (selectedSegmentIDs.size() > 0)
   {
+    QAction* toggleSelectedAction = new QAction(tr("Toggle selected segments visibility"), this);
+    QObject::connect(toggleSelectedAction, SIGNAL(triggered()), this, SLOT(toggleSelectedSegmentsVisibility()));
+    contextMenu->addAction(toggleSelectedAction);
+
     QAction* showOnlySelectedAction = new QAction(tr("Show only selected segments"), this);
     QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
     contextMenu->addAction(showOnlySelectedAction);
@@ -1418,6 +1422,46 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
     }
 
     displayNode->SetSegmentVisibility(displayedID, visible);
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSegmentsTableView::toggleSelectedSegmentsVisibility()
+{
+  QStringList selectedSegmentIDs = this->selectedSegmentIDs();
+  if (selectedSegmentIDs.size() == 0)
+  {
+    qWarning() << Q_FUNC_INFO << ": No segment selected";
+    return;
+  }
+
+  Q_D(qMRMLSegmentsTableView);
+  if (!d->SegmentationNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": No current segmentation node";
+    return;
+  }
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
+    d->SegmentationNode->GetDisplayNode() );
+  if (!displayNode)
+  {
+    qCritical() << Q_FUNC_INFO << ": No display node for segmentation " << d->SegmentationNode->GetName();
+    return;
+  }
+
+  vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
+  if (!segmentation)
+  {
+    qCritical() << Q_FUNC_INFO << ": No segmentation";
+    return;
+  }
+
+  // Toggle visibility of the selected segments
+  MRMLNodeModifyBlocker blocker(displayNode);
+  for (const QString& segmentID : selectedSegmentIDs)
+  {
+    bool currentVisibility = displayNode->GetSegmentVisibility(segmentID.toStdString());
+    displayNode->SetSegmentVisibility(segmentID.toStdString(), !currentVisibility);
   }
 }
 
