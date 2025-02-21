@@ -25,6 +25,8 @@
 // Qt includes
 #include <QDebug>
 #include <QFileInfo>
+#include <QRegularExpression>
+#include <QTextStream>
 
 // Slicer includes
 #include "qSlicerVolumesIOOptionsWidget.h"
@@ -107,6 +109,55 @@ QStringList qSlicerVolumesReader::extensions()const
     << tr("Dicom") + " (*.dcm *.ima)"
     << tr("Image") + " (*.png *.tif *.tiff *.jpg *.jpeg)"
     << tr("All Files") + " (*)";
+}
+
+//----------------------------------------------------------------------------
+double qSlicerVolumesReader::canLoadFileConfidence(const QString& fileName)const
+{
+  double confidence = Superclass::canLoadFileConfidence(fileName);
+  // Confidence for .nrrd and .nhdr file is 0.55 (5 characters in the file extension matched)
+  if (confidence > 0)
+  {
+    // Inspect the content to recognize DWI volumes.
+    QString upperCaseFileName = fileName.toUpper();
+    if (upperCaseFileName.endsWith("NRRD") || upperCaseFileName.endsWith("NHDR"))
+    {
+      QFile file(fileName);
+      if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+      {
+        QTextStream in(&file);
+        QString line = in.readLine();
+        if (line.startsWith("NRRD"))
+        {
+          // The nrrd header is separated by the data by a blank line, so read everything up to there
+          // since diffusion scans can have a long list of gradients and modality can be
+          // near the end of the header
+          QRegularExpression modalityRe("modality:([^\\n]+)");
+          while (!in.atEnd())
+          {
+            line = in.readLine();
+            if (line.trimmed() == "")
+            {
+              break;
+            }
+            QRegularExpressionMatch modalityMatch = modalityRe.match(line);
+            if (modalityMatch.hasMatch())
+            {
+              QString modalityStr = modalityMatch.captured(1);
+              if (modalityStr.contains("dwmri", Qt::CaseInsensitive))
+              {
+                // This is a DWMRI image, we are confident that it is not just a general image sequence.
+                // Therefore we set higher confidence than the generic sequence reader's confidence of 0.6.
+                confidence = 0.7;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return confidence;
 }
 
 //-----------------------------------------------------------------------------
