@@ -1181,13 +1181,13 @@ void qMRMLSegmentsTableView::contextMenuEvent(QContextMenuEvent* event)
 
   if (selectedSegmentIDs.size() > 0)
   {
+    QAction* toggleSelectedAction = new QAction(tr("Toggle selected segments visibility"), this);
+    QObject::connect(toggleSelectedAction, SIGNAL(triggered()), this, SLOT(toggleSelectedSegmentsVisibility()));
+    contextMenu->addAction(toggleSelectedAction);
+
     QAction* showOnlySelectedAction = new QAction(tr("Show only selected segments"), this);
     QObject::connect(showOnlySelectedAction, SIGNAL(triggered()), this, SLOT(showOnlySelectedSegments()));
     contextMenu->addAction(showOnlySelectedAction);
-
-    QAction* toggleSelectedAction = new QAction(tr("Toggle selected segments"), this);
-    QObject::connect(toggleSelectedAction, SIGNAL(triggered()), this, SLOT(toggleSelectedSegments()));
-    contextMenu->addAction(toggleSelectedAction);
 
     contextMenu->addSeparator();
 
@@ -1426,7 +1426,7 @@ void qMRMLSegmentsTableView::showOnlySelectedSegments()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSegmentsTableView::toggleSelectedSegments()
+void qMRMLSegmentsTableView::toggleSelectedSegmentsVisibility()
 {
   QStringList selectedSegmentIDs = this->selectedSegmentIDs();
   if (selectedSegmentIDs.size() == 0)
