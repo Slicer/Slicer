@@ -12,8 +12,6 @@
 
 =========================================================================auto=*/
 
-#include "vtkSlicerConfigure.h" // Slicer_VTK_RENDERING_USE_{OpenGL|OpenGL2}_BACKEND
-
 // Volume Rendering includes
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
@@ -50,11 +48,6 @@
 #include <vtkPiecewiseFunction.h>
 #include <vtkPointData.h>
 #include <vtkVolumeProperty.h>
-
-#if defined(Slicer_VTK_RENDERING_USE_OpenGL_BACKEND)
-#include <vtkOpenGLExtensionManager.h>
-#include <vtkgl.h>
-#endif
 
 // STD includes
 #include <algorithm>
@@ -101,15 +94,6 @@ void vtkSlicerVolumeRenderingLogic::PrintSelf(ostream& os, vtkIndent indent)
   {
     os << indent << this->DisplayNodes[i]->GetID() << std::endl;
   }
-#if defined(Slicer_VTK_RENDERING_USE_OpenGL_BACKEND)
-  const char *gl_vendor=reinterpret_cast<const char *>(glGetString(GL_VENDOR));
-  os << indent << "Vendor: " << gl_vendor << std::endl;
-  const char *gl_version=reinterpret_cast<const char *>(glGetString(GL_VERSION));
-  os << indent << "Version: " << gl_version << std::endl;
-  const char *glsl_version=
-    reinterpret_cast<const char *>(glGetString(vtkgl::SHADING_LANGUAGE_VERSION));
-  os << indent << "Shading Language Version: " << glsl_version << std::endl;
-#endif
 }
 
 //----------------------------------------------------------------------------

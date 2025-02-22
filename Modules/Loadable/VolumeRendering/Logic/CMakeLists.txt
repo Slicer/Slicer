@@ -18,13 +18,6 @@ set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
   )
 
-if(Slicer_VTK_RENDERING_USE_OpenGL_BACKEND)
-  find_package(OpenGL REQUIRED)
-  list(APPEND ${KIT}_TARGET_LIBRARIES
-    ${OPENGL_LIBRARIES}
-    )
-endif()
-
 #-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(
   NAME ${KIT}

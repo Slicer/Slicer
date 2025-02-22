@@ -1263,11 +1263,7 @@ void qSlicerApplication::logApplicationInformation() const
   // VTK configuration
   qDebug("%s: %s rendering, %s threading",
     qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-#ifdef Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND
     "OpenGL2",
-#else
-    "OpenGL",
-#endif
     VTK_SMP_BACKEND);
 
   // Qt configuration
