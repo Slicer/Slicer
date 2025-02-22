@@ -192,6 +192,16 @@ void qSlicerColorTableTerminologyDelegate::setModelData(QWidget* editor, QAbstra
   colorNode->SetTerminologyFromString(colorIndex, logic->SerializeTerminologyEntry(entry));
 
   model->setData(index, qMRMLColorModel::terminologyTextForColor(colorNode, colorIndex), Qt::DisplayRole);
+
+  //qMRMLColorModel* colorModel = qobject_cast<qMRMLColorModel*>(model);
+  //for (int col = 0; col < model->columnCount(); ++col)
+  //{
+  //  QStandardItem* colorItem = colorModel->invisibleRootItem()->child(color + startIndex, col);
+  //  if (colorItem)
+  //  {
+  //    colorModel->updateItemFromColor(colorItem, color, col);
+  //  }
+  //}
 }
 
 //-----------------------------------------------------------------------------

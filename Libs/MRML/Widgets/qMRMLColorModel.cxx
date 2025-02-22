@@ -352,24 +352,31 @@ void qMRMLColorModel::updateNode()
 
   // TODO: this signal blocking would need to be removed to make the views update automatically
   // but it leads to performance issues on large color tables and also clearing out of the color table.
-  bool wasBlocked = this->blockSignals(true);
-  int startIndex = (this->noneEnabled() ? 1 : 0);
+  QSignalBlocker blocker(this);
+  //bool wasBlocked = this->blockSignals(true);
   for (int color = 0; color < d->MRMLColorNode->GetNumberOfColors(); ++color)
   {
-    for (int j = 0; j < this->columnCount(); ++j)
-    {
-      QStandardItem* colorItem = this->invisibleRootItem()->child(color + startIndex, j);
-      if (!colorItem)
-      {
-        colorItem = new QStandardItem();
-        this->invisibleRootItem()->setChild(color + startIndex,j,colorItem);
-      }
-      this->updateItemFromColor(colorItem, color, j);
-    }
+    this->updateRowForColor(color);
   }
-  this->blockSignals(wasBlocked);
+  //this->blockSignals(wasBlocked);
 
   d->IsUpdatingWidgetFromMRML = false;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLColorModel::updateRowForColor(int color)
+{
+  int startIndex = (this->noneEnabled() ? 1 : 0);
+  for (int col = 0; col < this->columnCount(); ++col)
+  {
+    QStandardItem* colorItem = this->invisibleRootItem()->child(color + startIndex, col);
+    if (!colorItem)
+    {
+      colorItem = new QStandardItem();
+      this->invisibleRootItem()->setChild(color + startIndex,col,colorItem);
+    }
+    this->updateItemFromColor(colorItem, color, col);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -409,6 +416,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
   }
   if (column == d->LabelColumn)
   {
+std::string label(colorName.toLatin1().constData());
     item->setText(colorName);
     item->setToolTip("");
   }

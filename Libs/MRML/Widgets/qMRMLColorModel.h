@@ -127,12 +127,14 @@ public:
   /// Assemble human readable text in format ": , in , " from color in color node.
   static QString terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex, bool simplified=false);
 
+  /// Update all items in the row of a given color index.
+  void updateRowForColor(int color);
+
 protected slots:
   void onMRMLColorNodeModified(vtkObject* node);
   void onItemChanged(QStandardItem * item);
 
 protected:
-
   qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parent=nullptr);
   virtual void updateItemFromColor(QStandardItem* item, int color, int column);
   virtual void updateColorFromItem(int color, QStandardItem* item);

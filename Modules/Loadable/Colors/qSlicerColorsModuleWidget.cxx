@@ -427,6 +427,7 @@ void qSlicerColorsModuleWidget::removeCurrentColorEntry()
   {
     currentNode->RemoveColor(colorIndex);
   }
+  d->ColorView->colorModel()->updateRowForColor(colorIndex);
 }
 
 //-----------------------------------------------------------
