@@ -746,8 +746,6 @@ if(NOT DEFINED Slicer_USE_SYSTEM_QT)
     endif()
   endforeach()
 endif()
-# Always use QVTKOpenGLWidget (instead of QVTKWidget)
-set(Slicer_VTK_USE_QVTKOPENGLWIDGET 1)
 
 #-----------------------------------------------------------------------------
 # Testing
