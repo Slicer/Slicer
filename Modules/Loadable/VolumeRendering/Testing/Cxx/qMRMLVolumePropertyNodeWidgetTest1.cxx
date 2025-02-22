@@ -18,8 +18,6 @@
 
 ==============================================================================*/
 
-#include "vtkSlicerConfigure.h" // Slicer_VTK_RENDERING_USE_{OpenGL|OpenGL2}_BACKEND
-
 // Qt includes
 #include <QApplication>
 #include <QTimer>
@@ -37,11 +35,7 @@
 // this test only works on VTKv6 and later
 
 #include <vtkAutoInit.h>
-#if defined(Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND)
 VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
-#else
-VTK_MODULE_INIT(vtkRenderingContextOpenGL);
-#endif
 
 // STD includes
 
