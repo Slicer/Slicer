@@ -575,10 +575,6 @@ endif()
 #-----------------------------------------------------------------------------
 # Slicer VTK Options
 #-----------------------------------------------------------------------------
-set(_backend "OpenGL2")
-set(Slicer_VTK_RENDERING_BACKEND "${_backend}" CACHE STRING "Rendering backend." FORCE)
-mark_as_superbuild(Slicer_VTK_RENDERING_BACKEND)
-set(Slicer_VTK_RENDERING_USE_${Slicer_VTK_RENDERING_BACKEND}_BACKEND 1)
 
 # Slicer build is only tested with Sequential and TBB. OpenMP might work.
 set(Slicer_DEFAULT_VTK_SMP_IMPLEMENTATION_TYPE "TBB")
@@ -595,7 +591,6 @@ else()
 endif()
 
 message(STATUS "Configuring VTK")
-message(STATUS "  Slicer_VTK_RENDERING_BACKEND is ${Slicer_VTK_RENDERING_BACKEND}")
 message(STATUS "  Slicer_VTK_SMP_IMPLEMENTATION_TYPE is ${Slicer_VTK_SMP_IMPLEMENTATION_TYPE}")
 message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
 message(STATUS "  Slicer_VTK_MINIMUM_SUPPORTED_VERSION is ${Slicer_VTK_MINIMUM_SUPPORTED_VERSION}")
@@ -619,9 +614,9 @@ set(Slicer_VTK_COMPONENTS
   ImagingStatistics
   ImagingStencil
   InteractionImage
-  RenderingContext${Slicer_VTK_RENDERING_BACKEND}
+  RenderingContextOpenGL2
   RenderingQt
-  RenderingVolume${Slicer_VTK_RENDERING_BACKEND}
+  RenderingVolumeOpenGL2
   TestingRendering
   ViewsQt
   zlib
@@ -906,7 +901,6 @@ if(NOT TARGET ${VTK_GUI_SUPPORT_QT_TARGET_NAME})
                     "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
                     "Note that Qt >= ${Slicer_REQUIRED_QT_VERSION} is *required*")
 endif()
-set(VTK_RENDERING_BACKEND "${Slicer_VTK_RENDERING_BACKEND}")
 
 #-----------------------------------------------------------------------------
 # CTK

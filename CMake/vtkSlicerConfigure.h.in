@@ -117,8 +117,6 @@
 #define Slicer_THIRDPARTY_BIN_DIR "@Slicer_THIRDPARTY_BIN_DIR@"
 #define Slicer_THIRDPARTY_LIB_DIR "@Slicer_THIRDPARTY_LIB_DIR@"
 
-#cmakedefine Slicer_VTK_RENDERING_USE_OpenGL2_BACKEND
-
 // Library sub-directory - The following macros define directories only valid for a given build tree.
 #define VTK_DIR "@VTK_DIR@"
 #define CTK_DIR "@CTK_DIR@"
