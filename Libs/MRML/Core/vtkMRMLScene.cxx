@@ -3903,9 +3903,9 @@ std::string vtkMRMLScene::GetTemporaryBundleDirectory()
 {
   std::stringstream ss;
   ss << vtksys::SystemTools::GetCurrentDateTime("_tmp%Y%m%d");
-  const char validCharacters[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  int numberOfCharacters = sizeof(validCharacters) - 1;
-  std::uniform_int_distribution<int> distribution(0, numberOfCharacters);
+  const char validCharacters[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  int numberOfCharacters = sizeof(validCharacters) - 1; // -1 because the null terminator is included in sizeof()
+  std::uniform_int_distribution<int> distribution(0, numberOfCharacters - 1); // -1 because the upper bound is inclusive
   for (int i = 0; i < 5; i++)
   {
     ss << validCharacters[distribution(this->RandomGenerator)];
