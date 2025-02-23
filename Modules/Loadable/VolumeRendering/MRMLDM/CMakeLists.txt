@@ -30,7 +30,7 @@ set(${KIT}_SRCS
 
 set(${KIT}_VTK_LIBRARIES
   VTK::RenderingVolume
-  VTK::RenderingVolume${VTK_RENDERING_BACKEND}
+  VTK::RenderingVolumeOpenGL2
   )
 
 set(${KIT}_TARGET_LIBRARIES
