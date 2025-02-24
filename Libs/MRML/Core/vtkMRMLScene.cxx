@@ -4597,33 +4597,30 @@ bool vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNo
   // (if more files are needed then storage node must generate appropriate additional file names based on the primary file name).
   storageNode->ResetFileNameList();
 
-  // Update primary file name (set name from node name if empty, encode special characters, use default file extension)
+  // Filenames are generated from node names. Very long node names could generate very long file names that are not supported by all file systems
+  // (on Windows, maximum path length is 260). To prevent saving errors on Windows (and prevent loading of scenes on Windows that were saved on other
+  // operating systems), we limit the file name length.
+  const int maxFileNameLength = 50;
+
+  // Update file name: use current base name by default (set name from node name if empty), encode special characters, use default file extension
+  std::string fileBaseName;
   if (fileName.empty())
   {
     // Default storage node usually has empty file name (if Save dialog is not opened yet)
-    // file name is encoded to handle : or / characters in the node names
-    std::string fileBaseName = this->PercentEncode(std::string(storableNode->GetName()));
-    fileBaseName = storageNode->ClampFileName(fileBaseName);
-    std::string extension = storageNode->GetDefaultWriteFileExtension();
-    std::string storageFileName = fileBaseName + std::string(".") + extension;
-    vtkDebugMacro("new file name = " << storageFileName.c_str());
-    storageNode->SetFileName(storageFileName.c_str());
+    fileBaseName = storableNode->GetName() ? storableNode->GetName() : "unnamed";
   }
   else
   {
-    // new file name is encoded to handle : or / characters in the node names
-    std::string storageFileName = this->PercentEncode(vtksys::SystemTools::GetFilenameName(fileName));
-    std::string defaultWriteExtension = std::string(".") + vtksys::SystemTools::LowerCase(storageNode->GetDefaultWriteFileExtension());
-    std::string currentExtension = storageNode->GetSupportedFileExtension(storageFileName.c_str());
-    if (defaultWriteExtension != currentExtension)
-    {
-      // for saving to MRB all nodes will be written in their default format
-      storageFileName = storageNode->GetFileNameWithoutExtension(storageFileName.c_str()) + defaultWriteExtension;
-    }
-    storageFileName = storageNode->ClampFileName(storageFileName);
-    vtkDebugMacro("updated file name = " << storageFileName.c_str());
-    storageNode->SetFileName(storageFileName.c_str());
+    // Get the filename base from the current filename.
+    // For saving to MRB, all nodes will be written in their default format, so we ignore the current file extension.
+    fileBaseName = storageNode->GetFileNameWithoutExtension(vtksys::SystemTools::GetFilenameName(fileName).c_str());
   }
+  std::string defaultWriteExtension = std::string(".") + vtksys::SystemTools::LowerCase(storageNode->GetDefaultWriteFileExtension());
+  // file name is encoded to handle : or / characters in the node names
+  std::string storageFileName = this->PercentEncode(fileBaseName) + defaultWriteExtension;
+  storageFileName = vtkMRMLStorageNode::ClampFileName(storageFileName, defaultWriteExtension.size(), maxFileNameLength);
+  vtkDebugMacro("updated file name = " << storageFileName.c_str());
+  storageNode->SetFileName(storageFileName.c_str());
 
   storageNode->SetDataDirectory(dataDir.c_str());
   vtkDebugMacro("Set data directory to " << dataDir.c_str() << ". Storable node " << storableNode->GetID()

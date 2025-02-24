@@ -33,6 +33,7 @@
 // QtGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerApplicationUpdateManager.h"
+#include "qSlicerCoreIOManager.h"
 #include "qSlicerRelativePathMapper.h"
 #include "qSlicerSettingsGeneralPanel.h"
 #include "ui_qSlicerSettingsGeneralPanel.h"
@@ -198,6 +199,23 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                       SIGNAL(valueChanged(int)),
                       qSlicerSettingsGeneralPanel::tr("Max. number of 'Recent' menu items"),
                       ctkSettingsPanel::OptionRequireRestart);
+
+#ifdef Q_OS_WIN
+  // Total path length limit on Windows is 260 characters, need to keep the filename
+  // length way below that to avoid file saving issues with long paths.
+  this->MaximumFileNameLengthSpinBox->setValue(50);
+#else
+  // Non-Windows systems should have no problem dealing with files with this long name.
+  this->MaximumFileNameLengthSpinBox->setValue(1000);
+#endif
+
+  q->registerProperty("ioManager/MaximumFileNameLength", this->MaximumFileNameLengthSpinBox, /*no tr*/"value",
+    SIGNAL(valueChanged(int)),
+    qSlicerSettingsGeneralPanel::tr("Max. filename length"));
+
+  // Actions to propagate to the application when settings are changed
+  QObject::connect(this->MaximumFileNameLengthSpinBox, SIGNAL(valueChanged(int)),
+    q, SLOT(setMaximumFileNameLength(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -279,4 +297,14 @@ void qSlicerSettingsGeneralPanel::updateAutoUpdateApplicationFromManager()
   QSignalBlocker blocker1(d->ApplicationAutoUpdateCheckCheckBox);
   d->ApplicationAutoUpdateCheckCheckBox->setChecked(app->applicationUpdateManager()->autoUpdateCheck());
 #endif
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsGeneralPanel::setMaximumFileNameLength(int length)
+{
+  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+  if (coreIOManager)
+  {
+    coreIOManager->setDefaultMaximumFileNameLength(length);
+  }
 }

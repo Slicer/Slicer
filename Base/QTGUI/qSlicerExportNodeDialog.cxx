@@ -359,7 +359,7 @@ QString qSlicerExportNodeDialogPrivate::defaultFilename(vtkMRMLNode* node, QStri
   }
 
   QString safeNodeName = qSlicerCoreIOManager::forceFileNameValidCharacters(unsafeNodeName);
-  safeNodeName = qSlicerCoreIOManager::forceFileNameMaxLengthExtension(safeNodeName, 0);
+  safeNodeName = coreIOManager->forceFileNameMaxLength(safeNodeName, 0);
   return qSlicerExportNodeDialogPrivate::forceFileNameExtension(safeNodeName, extension, node);
 }
 
@@ -1089,6 +1089,13 @@ void qSlicerExportNodeDialogPrivate::formatChangedSlot()
 //-----------------------------------------------------------------------------
 QString qSlicerExportNodeDialogPrivate::recommendedFilename(vtkMRMLStorableNode* node) const
 {
+  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
+  if (!coreIOManager)
+  {
+    qCritical() << Q_FUNC_INFO << "failed: Core IO manager not found.";
+    return QString();
+  }
+
   if (!this->FilenameLineEdit->isEnabled())
   {
     qWarning() << Q_FUNC_INFO << "should not be used when the filename text box is disabled.";
@@ -1104,7 +1111,7 @@ QString qSlicerExportNodeDialogPrivate::recommendedFilename(vtkMRMLStorableNode*
   }
 
   // If the filename is too long, suggest a shorter one.
-  QString shortenedFilename = qSlicerCoreIOManager::forceFileNameMaxLengthExtension(this->FilenameLineEdit->text(), extension.length());
+  QString shortenedFilename = coreIOManager->forceFileNameMaxLength(this->FilenameLineEdit->text(), extension.length());
   return qSlicerExportNodeDialogPrivate::forceFileNameExtension(shortenedFilename, extension, node);
 }
 
