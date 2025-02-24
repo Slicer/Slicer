@@ -570,12 +570,12 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
       if (simplified)
       {
         //: For formatting of terminology entry name in simplified mode. %1 is region name (e.g., "Kidney"), %2 is region modifier (e.g., "Left")
-        region = tr("%2 %1").arg(type).arg(region).arg(regionModifier);
+        region = tr("%2 %1").arg(region).arg(regionModifier);
       }
       else
       {
         //: For formatting of terminology entry name. %1 is region name (e.g., "Kidney"), %2 is region modifier (e.g., "Left")
-        region = tr("%1, %2").arg(type).arg(region).arg(regionModifier);
+        region = tr("%1, %2").arg(region).arg(regionModifier);
       }
     }
   }

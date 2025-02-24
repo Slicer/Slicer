@@ -75,7 +75,9 @@ void vtkMRMLColorTableStorageNode::InitializeSupportedReadFileTypes()
   //: File format name
   this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.txt)");
   //: File format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "Comma-separated values") + " (.csv)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "CSV Color Table") + " (.labels.csv)");
+  //: File format name
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "CSV Color Table") + " (.csv)");
 }
 
 //----------------------------------------------------------------------------
@@ -86,7 +88,9 @@ void vtkMRMLColorTableStorageNode::InitializeSupportedWriteFileTypes()
   //: File format name
   this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "MRML Color Table") + " (.txt)");
   //: File format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "Comma-separated values") + " (.csv)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "CSV Color Table") + " (.csv)");
+  //: File format name
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLColorTableStorageNode", "CSV Color Table") + " (.labels.csv)");
 }
 
 //----------------------------------------------------------------------------
@@ -257,23 +261,32 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   std::vector<vtkIdType> validLabelValues(numberOfTuples, this->MaximumColorID + 1);
   for (vtkIdType row = 0; row < numberOfTuples; ++row)
   {
+    int fileRow = row + 1; // file starts with a header row
     if (labelValueColumn->GetValue(row).empty())
     {
-      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
-        "labelValue is not specified in line " << row << " - skipping this line.");
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
+        vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
+          "labelValue is not specified in color file in line %1. Skipping this line."),
+          std::to_string(fileRow).c_str()));
       continue;
     }
     int labelValue = labelValueColumn->GetVariantValue(row).ToInt(&valid);
     if (!valid)
     {
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
-        "labelValue '" << labelValueColumn->GetValue(row) << "' is invalid in line " << row << " - skipping this line.");
+        vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
+          "labelValue '%1' is invalid in color file in line %2. Skipping this line."),
+          labelValueColumn->GetValue(row),
+          std::to_string(fileRow).c_str()));
       continue;
     }
-    if (labelValue < 0)
+    if (labelValue <= 0)
     {
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
-        "labelValue '" << labelValueColumn->GetValue(row) << "' is invalid, the value must be positive, in line " << row << " - skipping this line.");
+        vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
+          "labelValue '%1' is invalid in color file in line %2: the value must be >0. Skipping this line."),
+          labelValueColumn->GetValue(row),
+          std::to_string(fileRow).c_str()));
       continue;
     }
     validLabelValues[row] = labelValue;
@@ -285,19 +298,18 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
     {
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
         vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
-          "Cannot read '%1' file as a volume of type '%2'. Label values must not go above %3."),
-          fullFileName.c_str(),
-          colorNode ? colorNode->GetNodeTagName() : "",
-          std::to_string(this->MaximumColorID).c_str()));
+          "labelValue '%1' is invalid in color file in line %2: the value must not go above be %3."),
+          labelValueColumn->GetValue(row),
+          std::to_string(fileRow).c_str(),
+          std::to_string(this->MaximumColorID).c_str()
+          ));
       colorNode->SetNumberOfColors(0);
       return 0;
     }
-    if (maxLabelValue >= colorNode->GetNumberOfColors())
-    {
-      // we add 1 to the maximum label value because first color's ID is 1 (ID=0 is reserved for background)
-      colorNode->SetNumberOfColors(maxLabelValue + 1);
-    }
   }
+
+  // we add 1 to the maximum label value because first color's ID is 1 (ID=0 is reserved for background)
+  colorNode->SetNumberOfColors(maxLabelValue + 1);
 
   if (colorNode->GetLookupTable())
   {

@@ -1659,7 +1659,7 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntry(vtkSlicerTerminologyEnt
   }
 
   // Region
-  if (d->CurrentCategoryObject->GetShowAnatomy() && d->CurrentRegionObject)
+  if (d->CurrentRegionObject)
   {
     entry->GetRegionObject()->Copy(d->CurrentRegionObject);
   }
@@ -1669,7 +1669,7 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntry(vtkSlicerTerminologyEnt
   }
 
   // Region modifier
-  if (d->CurrentCategoryObject->GetShowAnatomy() && d->CurrentRegionModifierObject)
+  if (d->CurrentRegionModifierObject)
   {
     entry->GetRegionModifierObject()->Copy(d->CurrentRegionModifierObject);
   }

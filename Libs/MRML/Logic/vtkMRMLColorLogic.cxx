@@ -19,6 +19,7 @@
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLdGEMRICProceduralColorNode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLPETProceduralColorNode.h"
 #include "vtkMRMLProceduralColorStorageNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
@@ -394,10 +395,10 @@ void vtkMRMLColorLogic::AddColorFile(const char *fileName, std::vector<std::stri
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char *fileName, const char *nodeName)
+vtkMRMLColorNode* vtkMRMLColorLogic::LoadColorFile(const char *fileName, const char *nodeName, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   // try loading it as a color table node first
-  vtkMRMLColorTableNode* node = this->CreateFileNode(fileName);
+  vtkMRMLColorTableNode* node = this->CreateFileNode(fileName, userMessages);
   vtkMRMLColorNode * addedNode = nullptr;
 
   if (node)
@@ -630,7 +631,7 @@ std::vector<std::string> vtkMRMLColorLogic::FindUserColorFiles()
 }
 
 //--------------------------------------------------------------------------------
-vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
+vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   vtkMRMLColorTableNode * ctnode =  vtkMRMLColorTableNode::New();
   ctnode->SetTypeToFile();
@@ -660,7 +661,13 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
   }
   vtkDebugMacro("CreateFileNode: About to read user file " << fileName);
 
-  if (ctnode->GetStorageNode()->ReadData(ctnode) == 0)
+  int success = ctnode->GetStorageNode()->ReadData(ctnode);
+  if (userMessages)
+  {
+    userMessages->AddMessages(ctnode->GetStorageNode()->GetUserMessages());
+  }
+
+  if (!success)
   {
     vtkErrorMacro("Unable to read file as color table " <<
       (ctnode->GetStorageNode()->GetFileName() ? ctnode->GetStorageNode()->GetFileName() : ""));
@@ -681,9 +688,9 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateFileNode(const char* fileName)
 }
 
 //--------------------------------------------------------------------------------
-vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const char* fileName)
+vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const char* fileName, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
-  vtkMRMLProceduralColorNode* cpnode =  vtkMRMLProceduralColorNode::New();
+  vtkMRMLProceduralColorNode* cpnode = vtkMRMLProceduralColorNode::New();
   cpnode->SetTypeToFile();
   cpnode->SaveWithSceneOff();
   cpnode->HideFromEditorsOn();
@@ -713,7 +720,13 @@ vtkMRMLProceduralColorNode* vtkMRMLColorLogic::CreateProceduralFileNode(const ch
 
   vtkDebugMacro("CreateProceduralFileNode: About to read user file " << fileName);
 
-  if (cpnode->GetStorageNode()->ReadData(cpnode) == 0)
+  int success = cpnode->GetStorageNode()->ReadData(cpnode);
+  if (userMessages)
+  {
+    userMessages->AddMessages(cpnode->GetStorageNode()->GetUserMessages());
+  }
+
+  if (!success)
   {
     vtkErrorMacro("Unable to read procedural color file " <<
       (cpnode->GetStorageNode()->GetFileName() ? cpnode->GetStorageNode()->GetFileName() : ""));

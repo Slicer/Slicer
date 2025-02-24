@@ -17,6 +17,7 @@
 // MRML includes
 class vtkMRMLColorNode;
 class vtkMRMLColorTableNode;
+class vtkMRMLMessageCollection;
 class vtkMRMLProceduralColorNode;
 class vtkMRMLPETProceduralColorNode;
 class vtkMRMLdGEMRICProceduralColorNode;
@@ -188,7 +189,7 @@ public:
   /// it's storage node, turn off hide from editors, remove the
   /// singleton tag.
   /// \sa CreateFileNode, CreateProceduralFileNode
-  vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = nullptr);
+  vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Get/Set the user defined paths where to look for extra color files
   vtkGetStringMacro(UserColorFilePaths);
@@ -228,8 +229,8 @@ protected:
   vtkMRMLdGEMRICProceduralColorNode* CreatedGEMRICColorNode(int type);
   vtkMRMLColorTableNode* CreateDefaultFileNode(const std::string& colorname);
   vtkMRMLColorTableNode* CreateUserFileNode(const std::string& colorname);
-  vtkMRMLColorTableNode* CreateFileNode(const char* fileName);
-  vtkMRMLProceduralColorNode* CreateProceduralFileNode(const char* fileName);
+  vtkMRMLColorTableNode* CreateFileNode(const char* fileName, vtkMRMLMessageCollection* userMessages = nullptr);
+  vtkMRMLProceduralColorNode* CreateProceduralFileNode(const char* fileName, vtkMRMLMessageCollection* userMessages = nullptr);
 
   void AddLabelsNode();
   void AddDefaultTableNode(int i);
