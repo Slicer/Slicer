@@ -519,7 +519,6 @@ int qSlicerSubjectHierarchySegmentsPlugin::getDisplayVisibility(vtkIdType itemID
     segmentationNode->GetDisplayNode() );
   if (!displayNode)
   {
-    qCritical() << Q_FUNC_INFO << ": No display node for segmentation";
     return -1;
   }
 
