@@ -309,6 +309,7 @@ public:
   /// If a segment name matches the name of a color in the table, then the value of the color will be used as the labelmap value
   /// for the segment when exporting the segmentation to labelmap.
   void SetLabelmapConversionColorTableNodeID(const char* labelmapConversionColorTableNodeID);
+  const char* GetLabelmapConversionColorTableNodeID();
   vtkMRMLColorTableNode* GetLabelmapConversionColorTableNode();
 
   /// ReferenceImageGeometryChangedEvent is fired when the ReferenceImageGeometry node reference is Added, Modified, or Removed

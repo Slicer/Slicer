@@ -9,6 +9,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  qMRMLSimpleColorTableView.cxx
+  qMRMLSimpleColorTableView.h
   qSlicerTerminologyItemDelegate.cxx
   qSlicerTerminologyItemDelegate.h
   qSlicerTerminologyNavigatorWidget.cxx
@@ -20,6 +22,7 @@ set(${KIT}_SRCS
   )
 
 set(${KIT}_MOC_SRCS
+  qMRMLSimpleColorTableView.h
   qSlicerTerminologyItemDelegate.h
   qSlicerTerminologyNavigatorWidget.h
   qSlicerTerminologySelectorButton.h

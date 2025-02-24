@@ -13,23 +13,22 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Julien Finet, Kitware Inc.
-  and was partially funded by NIH grant 3P41RR013218-12S1
+  This file was originally developed by Csaba Pinter, EBATINCA, S.L.
+  and was funded by by Murat Maga (Seattle Children’s Research Institute).
 
 ==============================================================================*/
 
-#ifndef __qMRMLColorTableView_h
-#define __qMRMLColorTableView_h
+#ifndef __qMRMLSimpleColorTableView_h
+#define __qMRMLSimpleColorTableView_h
 
 // Qt includes
 #include <QTableView>
-#include <QItemDelegate>
 
-// qMRML includes
-#include "qMRMLWidgetsExport.h"
+// Colors includes
+#include "qSlicerTerminologiesModuleWidgetsExport.h"
 
 class QSortFilterProxyModel;
-class qMRMLColorTableViewPrivate;
+class qMRMLSimpleColorTableViewPrivate;
 class qMRMLColorModel;
 class vtkMRMLColorNode;
 class vtkMRMLNode;
@@ -37,43 +36,33 @@ class vtkMRMLNode;
 /// \brief Table view for color table nodes.
 /// Edition of color (opening dialog) and opacity (slider popup) is handled by
 /// qMRMLItemDelegate.
-class QMRML_WIDGETS_EXPORT qMRMLColorTableView : public QTableView
+class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qMRMLSimpleColorTableView : public QTableView
 {
   Q_OBJECT
-  /// This property show/hides the colors whose name are (none).
-  /// false by default.
-  /// \sa showOnlyNamedColors(), setShowOnlyNamedColors()
-  Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
-  qMRMLColorTableView(QWidget *parent=nullptr);
-  ~qMRMLColorTableView() override;
+  qMRMLSimpleColorTableView(QWidget *parent=nullptr);
+  ~qMRMLSimpleColorTableView() override;
 
   Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;
   Q_INVOKABLE qMRMLColorModel* colorModel()const;
   Q_INVOKABLE QSortFilterProxyModel* sortFilterProxyModel()const;
 
-  /// Return the row of the color with name \a colorName.
-  /// \sa rowFromColorIndex()
-  Q_INVOKABLE int rowFromColorName(const QString& colorName)const;
-  /// Return the row of the color of index \a colorIndex.
-  /// \sa rowFromColorIndex()
-  Q_INVOKABLE int rowFromColorIndex(int colorIndex)const;
-
-  bool showOnlyNamedColors()const;
+  Q_INVOKABLE int selectedColorIndex()const;
 
 public slots:
   void setMRMLColorNode(vtkMRMLColorNode* colorNode);
   /// Utility function to simply connect signals/slots with Qt Designer
   void setMRMLColorNode(vtkMRMLNode* colorNode);
-
-  void setShowOnlyNamedColors(bool);
+  /// Select row in table by color index and scroll to it.
+  /// Returns true on success.
+  bool selectColorByIndex(int colorIndex);
 
 protected:
-  QScopedPointer<qMRMLColorTableViewPrivate> d_ptr;
+  QScopedPointer<qMRMLSimpleColorTableViewPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLColorTableView);
-  Q_DISABLE_COPY(qMRMLColorTableView);
+  Q_DECLARE_PRIVATE(qMRMLSimpleColorTableView);
+  Q_DISABLE_COPY(qMRMLSimpleColorTableView);
 };
 
 #endif

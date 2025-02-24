@@ -467,6 +467,11 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
       item->setData(segmentTerminologyTagValue, qSlicerTerminologyItemDelegate::TerminologyRole);
       item->setToolTip(qMRMLSegmentsTableView::terminologyTooltipForSegment(segment));
     }
+    QString defaultSegmentTerminology = QString::fromStdString(vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAsString(d->SegmentationNode));
+    if (defaultSegmentTerminology != item->data(qSlicerTerminologyItemDelegate::DefaultTerminologyRole).toString())
+    {
+      item->setData(defaultSegmentTerminology, qSlicerTerminologyItemDelegate::DefaultTerminologyRole);
+    }
 
     item->setText(segment->GetName());
   }
@@ -597,6 +602,9 @@ void qMRMLSegmentsModel::updateSegmentFromItemData(QString segmentID, QStandardI
     // Set terminology information to segment as tag
     QString terminologyString = item->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString();
     segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyString.toUtf8().constData());
+
+    QString defaultTerminologyString = item->data(qSlicerTerminologyItemDelegate::DefaultTerminologyRole).toString();
+    vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntryAsString(d->SegmentationNode, defaultTerminologyString.toStdString());
 
     // Set color to segment if it changed
     QColor color = item->data(qSlicerTerminologyItemDelegate::ColorRole).value<QColor>();

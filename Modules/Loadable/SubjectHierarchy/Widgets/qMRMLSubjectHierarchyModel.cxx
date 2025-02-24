@@ -1099,6 +1099,11 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
       QString terminologyString = terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString();
       item->setData(terminologyString, qSlicerTerminologyItemDelegate::TerminologyRole);
     }
+    if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::DefaultTerminologyRole))
+    {
+      QString terminologyString = terminologyMetaData[qSlicerTerminologyItemDelegate::DefaultTerminologyRole].toString();
+      item->setData(terminologyString, qSlicerTerminologyItemDelegate::DefaultTerminologyRole);
+    }
     if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::NameRole))
     {
       QString nameFromColorItem = terminologyMetaData[qSlicerTerminologyItemDelegate::NameRole].toString();
@@ -1321,6 +1326,16 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
 
         // Have owner plugin set the color
         ownerPlugin->setDisplayColor(shItemID, color, terminologyMetaData);
+      }
+    }
+
+    QString defaultTerminologyString = item->data(qSlicerTerminologyItemDelegate::DefaultTerminologyRole).toString();
+    if (!defaultTerminologyString.isEmpty())
+    {
+      vtkMRMLNode* dataNode = vtkMRMLNode::SafeDownCast(d->SubjectHierarchyNode->GetItemDataNode(shItemID));
+      if (dataNode)
+      {
+        vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntryAsString(dataNode, defaultTerminologyString.toStdString());
       }
     }
   }

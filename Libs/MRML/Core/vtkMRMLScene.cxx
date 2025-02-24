@@ -22,7 +22,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLClipNode.h"
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCrosshairNode.h"
@@ -192,7 +191,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCameraNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLClipModelsNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLClipNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCrosshairNode>::New());
@@ -3908,7 +3906,8 @@ std::string vtkMRMLScene::GetTemporaryBundleDirectory()
   std::uniform_int_distribution<int> distribution(0, numberOfCharacters - 1); // -1 because the upper bound is inclusive
   for (int i = 0; i < 5; i++)
   {
-    ss << validCharacters[distribution(this->RandomGenerator)];
+    // % added just in case the random generator creates numbers outside of the distribution (it seemed to happen)
+    ss << validCharacters[distribution(this->RandomGenerator) % numberOfCharacters];
   }
   return ss.str();
 }

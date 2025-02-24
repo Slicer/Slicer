@@ -13,8 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Julien Finet, Kitware Inc.
-  and was partially funded by NIH grant 3P41RR013218-12S1
+  This file was originally developed by Csaba Pinter, EBATINCA, S.L.
+  and was funded by by Murat Maga (Seattle Children’s Research Institute).
 
 ==============================================================================*/
 
@@ -24,16 +24,17 @@
 // Qt includes
 #include <QListView>
 
-// qMRML includes
-#include "qMRMLWidgetsExport.h"
+// Colors includes
+#include "qSlicerColorsModuleWidgetsExport.h"
 
 class QSortFilterProxyModel;
 class qMRMLColorListViewPrivate;
 class qMRMLColorModel;
+class qMRMLSortFilterColorProxyModel;
 class vtkMRMLColorNode;
 class vtkMRMLNode;
 
-class QMRML_WIDGETS_EXPORT qMRMLColorListView : public QListView
+class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorListView : public QListView
 {
   Q_OBJECT
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
@@ -43,7 +44,7 @@ public:
 
   vtkMRMLColorNode* mrmlColorNode()const;
   qMRMLColorModel* colorModel()const;
-  QSortFilterProxyModel* sortFilterProxyModel()const;
+  qMRMLSortFilterColorProxyModel* sortFilterProxyModel()const;
 
   bool showOnlyNamedColors()const;
 
