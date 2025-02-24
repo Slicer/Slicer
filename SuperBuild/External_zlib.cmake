@@ -27,13 +27,13 @@ if(NOT DEFINED ZLIB_ROOT AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/zlib.git"
+    "${EP_GIT_PROTOCOL}://github.com/jamesobutler/zlib-ng.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "66a753054b356da85e1838a081aa94287226823e"
+    "2f620440358eaac5648bc4b0e018333a5f5b6d4e"  # slicer-v2.1.0-2022-11-01-b3dcf11
     QUIET
     )
 
@@ -49,7 +49,10 @@ if(NOT DEFINED ZLIB_ROOT AND NOT Slicer_USE_SYSTEM_${proj})
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
+      -DBUILD_SHARED_LIBS:BOOL=OFF
+      -DZLIB_SYMBOL_PREFIX:STRING=slicer_zlib_
+      -DZLIB_COMPAT:BOOL=ON
+      -DZLIB_ENABLE_TESTS:BOOL=OFF
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS
       ${${proj}_DEPENDENCIES}
@@ -63,7 +66,7 @@ if(NOT DEFINED ZLIB_ROOT AND NOT Slicer_USE_SYSTEM_${proj})
   if(WIN32)
     set(ZLIB_LIBRARY ${zlib_DIR}/lib/zlib.lib)
   else()
-    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libzlib.a)
+    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libz.a)
   endif()
 else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,
