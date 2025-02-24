@@ -468,6 +468,9 @@ public:
   void UnsetNthControlPointPosition(int pointIndex);
 
   /// Set control point status to ignored.
+  /// This method is excluded from wrapping to prevent automatic recognition as a `SET_NTH` function,
+  /// a behavior introduced in VTK 9.4 (kitware/VTK@5672af1f), which requires specific function signatures.
+  VTK_WRAPEXCLUDE
   void SetNthControlPointPositionMissing(int pointIndex);
 
   /// Set control point status to preview
