@@ -20,6 +20,8 @@ set(${KIT}_SRCS
   qSlicer${MODULE_NAME}PlaceWidgetPlugin.h
   qSlicerSimpleMarkupsWidgetPlugin.cxx
   qSlicerSimpleMarkupsWidgetPlugin.h
+  qSlicerMarkupsMeasurementsWidgetPlugin.cxx
+  qSlicerMarkupsMeasurementsWidgetPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -30,6 +32,7 @@ set(${KIT}_MOC_SRCS
   qMRML${MODULE_NAME}ROIWidgetPlugin.h
   qSlicerMarkupsPlaceWidgetPlugin.h
   qSlicerSimpleMarkupsWidgetPlugin.h
+  qSlicerMarkupsMeasurementsWidgetPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
