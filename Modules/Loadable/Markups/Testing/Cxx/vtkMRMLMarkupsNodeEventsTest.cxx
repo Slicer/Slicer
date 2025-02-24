@@ -126,7 +126,7 @@ int vtkMRMLMarkupsNodeEventsTest(int, char* [])
   CHECK_BOOL(containsEvent(observer, vtkMRMLMarkupsNode::PointPositionUndefinedEvent), true);
 
   // Test 7: PointPositionMissingEvent
-  node->SetNthControlPointPositionMissing(0);
+  node->SetControlPointPositionMissing(0);
   CHECK_BOOL(containsEvent(observer, vtkMRMLMarkupsNode::PointPositionMissingEvent), true);
 
   // Test 8: PointPositionNonMissingEvent
