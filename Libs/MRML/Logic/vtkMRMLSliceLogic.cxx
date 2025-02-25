@@ -963,10 +963,8 @@ bool vtkMRMLSliceLogic::UpdateAddSubOperation(vtkImageMathematics* addSubMath, i
 {
   if (compositing != vtkMRMLSliceCompositeNode::Add && compositing != vtkMRMLSliceCompositeNode::Subtract)
   {
-    vtkErrorWithObjectMacro(nullptr, << "UpdateAddSubOperation: Unexpected compositing mode (" << compositing << "). "
-                            << "Supported values are "
-                            << "Add (" << vtkMRMLSliceCompositeNode::Add << ") or "
-                            << "Subtract(" << vtkMRMLSliceCompositeNode::Subtract << ")");
+    // Silently return for unsupported compositing modes, as this function
+    // may be called with any mode.
     return false;
   }
   vtkMTimeType oldAddSubMathMTime = addSubMath->GetMTime();
