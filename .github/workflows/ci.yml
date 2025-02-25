@@ -4,7 +4,7 @@ on:
   # Triggers the workflow on push or pull request events
   push:
     branches:
-      - "main"
+      - "5.8"
   pull_request:
     branches:
       - "*"
@@ -46,7 +46,7 @@ jobs:
         with:
           files: |
             SuperBuild/External_*
-          base_sha: nightly-main
+          base_sha: "5.8"
 
       # List any SuperBuild files that were changed
       - name: "List Changed SuperBuild Files"
