@@ -1122,14 +1122,18 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       backgroundImagePortUVW, foregroundImagePortUVW, this->SliceCompositeNode->GetForegroundOpacity(),
       labelImagePortUVW, this->SliceCompositeNode->GetLabelOpacity());
 
-    // Update add/subtract operations in the pipeline
-    if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->Pipeline->AddSubMath.GetPointer(), this->SliceCompositeNode->GetCompositing()))
+    if (this->SliceCompositeNode->GetCompositing() == vtkMRMLSliceCompositeNode::Add
+        || this->SliceCompositeNode->GetCompositing() == vtkMRMLSliceCompositeNode::Subtract)
     {
-      modified = 1;
-    }
-    if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->PipelineUVW->AddSubMath.GetPointer(), this->SliceCompositeNode->GetCompositing()))
-    {
-      modified = 1;
+      // Update add/subtract operations in the pipeline
+      if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->Pipeline->AddSubMath.GetPointer(), this->SliceCompositeNode->GetCompositing()))
+      {
+        modified = 1;
+      }
+      if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->PipelineUVW->AddSubMath.GetPointer(), this->SliceCompositeNode->GetCompositing()))
+      {
+        modified = 1;
+      }
     }
 
     // Update opacity fractions for additional layers in add/subtract blending mode
