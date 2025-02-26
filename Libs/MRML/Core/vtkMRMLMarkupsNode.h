@@ -468,7 +468,7 @@ public:
   void UnsetNthControlPointPosition(int pointIndex);
 
   /// Set control point status to ignored.
-  void SetNthControlPointPositionMissing(int pointIndex);
+  void SetControlPointPositionMissing(int pointIndex);
 
   /// Set control point status to preview
   void ResetNthControlPointPosition(int n);
