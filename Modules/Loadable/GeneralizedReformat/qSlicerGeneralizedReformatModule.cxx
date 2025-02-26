@@ -68,7 +68,10 @@ QString qSlicerGeneralizedReformatModule::acknowledgementText() const
 QStringList qSlicerGeneralizedReformatModule::contributors() const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("John Doe (AnyWare Corp.)");
+  moduleContributors << QString("Lee Newberg (Kitware)");
+  moduleContributors << QString("Jean-Christophe (Kitware)");
+  moduleContributors << QString("Sam Horvath (Kitware)");
+  moduleContributors << QString("Andras Lasso (PerkLab)");
   return moduleContributors;
 }
 

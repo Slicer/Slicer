@@ -92,8 +92,8 @@ class CurvedPlanarReformationTest(ScriptedLoadableModuleTest):
 
         layoutManager = slicer.app.layoutManager()
         layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalView)
-        sliceLogic = slicer.app.layoutManager().sliceWidget("Red").sliceLogic()
-        self.assertIsNotNone(sliceLogic)
+        generalizedReformatLogic = slicer.modules.generalizedreformat.logic()
+        self.assertIsNotNone(generalizedReformatLogic)
 
         # Get a dental CT scan
         import SampleData
@@ -123,13 +123,13 @@ class CurvedPlanarReformationTest(ScriptedLoadableModuleTest):
         outputSpacing = [0.5, 0.5, 1.0]
 
         straighteningTransformNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTransformNode", "Straightening transform")
-        sliceLogic.CurvedPlanarReformationComputeStraighteningTransform(straighteningTransformNode, curveNode, fieldOfView, outputSpacing[2])
+        generalizedReformatLogic.ComputeStraighteningTransform(straighteningTransformNode, curveNode, fieldOfView, outputSpacing[2])
 
         straightenedVolume = slicer.modules.volumes.logic().CloneVolume(volumeNode, volumeNode.GetName() + " straightened")
-        sliceLogic.CurvedPlanarReformationStraightenVolume(straightenedVolume, volumeNode, outputSpacing, straighteningTransformNode)
+        generalizedReformatLogic.StraightenVolume(straightenedVolume, volumeNode, outputSpacing, straighteningTransformNode)
 
         panoramicVolume = slicer.modules.volumes.logic().CloneVolume(straightenedVolume, straightenedVolume.GetName() + " panoramic")
-        sliceLogic.CurvedPlanarReformationProjectVolume(panoramicVolume, straightenedVolume)
+        generalizedReformatLogic.ProjectVolume(panoramicVolume, straightenedVolume)
 
         slicer.util.setSliceViewerLayers(background=straightenedVolume, fit=True, rotateToVolumePlane=True)
 
