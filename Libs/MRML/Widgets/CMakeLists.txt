@@ -71,18 +71,13 @@ set(MRMLWidgets_SRCS
   qMRMLClipNodeDisplayWidget.h
   qMRMLCollapsibleButton.cxx
   qMRMLCollapsibleButton.h
-  qMRMLColors.cxx
-  qMRMLColors.h
-  qMRMLColorListView.cxx
-  qMRMLColorListView.h
   qMRMLColorModel.cxx
   qMRMLColorModel.h
-  qMRMLColorPickerWidget.cxx
-  qMRMLColorPickerWidget.h
+  qMRMLColorModel_p.h
+  qMRMLColors.cxx
+  qMRMLColors.h
   qMRMLColorTableComboBox.cxx
   qMRMLColorTableComboBox.h
-  qMRMLColorTableView.cxx
-  qMRMLColorTableView.h
   qMRMLCoordinatesWidget.cxx
   qMRMLCoordinatesWidget.h
   qMRMLDisplayNodeWidget.cxx
@@ -184,6 +179,8 @@ set(MRMLWidgets_SRCS
   qMRMLSliceWidget_p.h
   qMRMLSliderWidget.cxx
   qMRMLSliderWidget.h
+  qMRMLSortFilterColorProxyModel.cxx
+  qMRMLSortFilterColorProxyModel.h
   qMRMLSortFilterHierarchyProxyModel.cxx
   qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.cxx
@@ -249,11 +246,8 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLClipNodeWidget.h
   qMRMLClipNodeDisplayWidget.h
   qMRMLCollapsibleButton.h
-  qMRMLColorListView.h
-  qMRMLColorPickerWidget.h
-  qMRMLColorTableComboBox.h
-  qMRMLColorTableView.h
   qMRMLColorModel.h
+  qMRMLColorTableComboBox.h
   qMRMLCoordinatesWidget.h
   qMRMLDisplayNodeViewComboBox.h
   qMRMLDisplayNodeWidget.h
@@ -308,6 +302,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLSliceWidget.h
   qMRMLSliceWidget_p.h
   qMRMLSliderWidget.h
+  qMRMLSortFilterColorProxyModel.h
   qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.h
   qMRMLSpinBox.h
@@ -347,7 +342,6 @@ endif()
 set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLClipNodeWidget.ui
   Resources/UI/qMRMLClipNodeDisplayWidget.ui
-  Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLDisplayNodeWidget.ui
   Resources/UI/qMRMLEventLoggerWidget.ui
   Resources/UI/qMRMLModelInfoWidget.ui

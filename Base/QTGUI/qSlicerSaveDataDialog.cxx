@@ -82,15 +82,7 @@ QString qSlicerFileNameItemDelegate::forceFileNameExtension(const QString& fileN
                                                    vtkMRMLScene* mrmlScene, const QString& nodeID)
 {
   QString strippedFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(fileName);
-
-  qSlicerCoreIOManager* coreIOManager = qSlicerCoreApplication::application()->coreIOManager();
-  if (!coreIOManager)
-  {
-    qCritical() << Q_FUNC_INFO << "failed: Core IO manager not found.";
-    return strippedFileName;
-  }
-
-  strippedFileName = coreIOManager->forceFileNameMaxLength(strippedFileName, extension.length());
+  strippedFileName = qSlicerCoreIOManager::forceFileNameMaxLengthExtension(strippedFileName, extension.length());
 
   if(!mrmlScene)
   {
@@ -107,6 +99,8 @@ QString qSlicerFileNameItemDelegate::forceFileNameExtension(const QString& fileN
     qCritical() << Q_FUNC_INFO << " failed: node not found by ID " << qPrintable(nodeID);
     return QString();
   }
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
   strippedFileName = coreIOManager->stripKnownExtension(strippedFileName, object) + extension;
   return strippedFileName;
 }
@@ -877,25 +871,21 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
         snode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent,
           (qSlicerSaveDataDialog::tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
 
-#ifdef Q_OS_WIN
-        // On Windows, writing may have failed due to too long path.
-        // Let the user know via a warning message.
-
-        // If filename is very long then most likely the user should shorten that.
-        if (file.fileName().length() > 50)
+        // Add warning messages if the file name or path is too long
+        if (file.fileName().length() > vtkMRMLStorageNode::GetRecommendedFileNameLength())
         {
           snode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
-            (qSlicerSaveDataDialog::tr("File writing may have failed because filename is too long: '%1'").arg(file.fileName())).toStdString());
+            (qSlicerSaveDataDialog::tr("File name may be too long: %1.").arg(file.fileName())).toStdString());
         }
-        // Maximum file path is 260 characters on most Windows systems, but during saving extra temporary folders may be used,
-        // therefore warn the user when getting near the maximum.
+        // Maximum file path is 260 characters on most Windows systems. Warn the user if the path
+        // is long and therefore may fail to be saved or cause compatibility issues later.
+        // The warning limit is set to somewhat lower than the 260 limit, to add some safety margin
+        // (e.g., to avoid issues when the file is moved into another folder).
         if (file.absoluteFilePath().length() > 200)
         {
           snode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
-            (qSlicerSaveDataDialog::tr("File writing may have failed because the output folder name is too long: '%1'")
-              .arg(file.absoluteFilePath())).toStdString());
+            (qSlicerSaveDataDialog::tr("File path may be too long: %1.").arg(file.absoluteFilePath())).toStdString());
         }
-#endif
 
         this->updateStatusIconFromStorageNode(row, success);
       }

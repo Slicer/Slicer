@@ -18,18 +18,20 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLColorListViewPlugin_h
-#define __qMRMLColorListViewPlugin_h
+#ifndef __qMRMLColorTableViewPlugin_h
+#define __qMRMLColorTableViewPlugin_h
 
-#include "qMRMLWidgetsAbstractPlugin.h"
+#include "qSlicerColorsModuleWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLColorListViewPlugin : public QObject,
-                                public qMRMLWidgetsAbstractPlugin
+#include "qSlicerColorsModuleWidgetsPluginsExport.h"
+
+class Q_SLICER_QTMODULES_COLORS_WIDGETS_PLUGINS_EXPORT qMRMLColorTableViewPlugin
+  : public QObject, public qSlicerColorsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLColorListViewPlugin(QObject *_parent = nullptr);
+  qMRMLColorTableViewPlugin(QObject *_parent = nullptr);
 
   QWidget *createWidget(QWidget *_parent) override;
   QString  domXml() const override;
@@ -37,7 +39,6 @@ public:
   QString  includeFile() const override;
   bool     isContainer() const override;
   QString  name() const override;
-
 };
 
 #endif

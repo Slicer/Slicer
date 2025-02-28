@@ -31,16 +31,20 @@
 
 // CTK includes
 #include "ctkCallback.h"
+#include "ctkColorDialog.h"
 #include "ctkEventTranslatorPlayerWidget.h"
 #include "ctkQtTestingUtility.h"
 
 // qMRML includes
-#include "qMRMLColorListView.h"
-#include "qMRMLColorModel.h"
+#include "qMRMLColorPickerWidget.h"
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLPETProceduralColorNode.h>
+#include <vtkMRMLScene.h>
+
+// MRMLLogic includes
+#include <vtkMRMLColorLogic.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -55,20 +59,20 @@ namespace
 //-----------------------------------------------------------------------------
 void checkFinalWidgetState(void* data)
 {
-  qMRMLColorListView* widget = reinterpret_cast<qMRMLColorListView*>(data);
+  qMRMLColorPickerWidget* widget = reinterpret_cast<qMRMLColorPickerWidget*>(data);
 
-  CTKCOMPARE(widget->currentIndex().row(), 49);
+  Q_UNUSED(widget);
 }
 }
 
 //-----------------------------------------------------------------------------
-int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  QString xmlDirectory = QString(argv[1]) + "/Modules/Loadable/Colors/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
@@ -76,18 +80,39 @@ int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   etpWidget.setTestUtility(testUtility);
 
   // Test case 1
-  qMRMLColorListView* widget = new qMRMLColorListView();
+  qMRMLColorPickerWidget* widget = new qMRMLColorPickerWidget();
+  widget->setObjectName("ColorPickerWidget1");
+
+  vtkNew<vtkMRMLScene> scene;
+
+  widget->setMRMLScene(scene.GetPointer());
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+
+  etpWidget.addTestCase(widget,
+                        xmlDirectory + "qMRMLColorPickerWidgetEventTranslatorPlayerTest1.xml",
+                        &checkFinalWidgetState);
+
+  // Test case 2
+  qMRMLColorPickerWidget* widget2 = new qMRMLColorPickerWidget();
+  widget2->setObjectName("ColorPickerWidget2");
+
+  vtkNew<vtkMRMLScene> scene2;
 
   vtkNew<vtkMRMLColorTableNode> colorTableNode;
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
+  scene2->AddNode(colorTableNode.GetPointer());
 
-  widget->setMRMLColorNode(colorTableNode.GetPointer());
+  widget2->setMRMLScene(scene2.GetPointer());
 
-  colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
 
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLColorListViewEventTranslatorPlayerTest1.xml",
+  vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;
+  colorPETNode->SetTypeToRainbow();
+  scene2->AddNode(colorPETNode.GetPointer());
+
+  etpWidget.addTestCase(widget2,
+                        xmlDirectory + "qMRMLColorPickerWidgetEventTranslatorPlayerTest2.xml",
                         &checkFinalWidgetState);
 
   // ------------------------

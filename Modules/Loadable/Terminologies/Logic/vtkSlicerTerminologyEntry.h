@@ -28,7 +28,6 @@
 
 // Terminology includes
 #include "vtkSlicerTerminologiesModuleLogicExport.h"
-
 #include "vtkSlicerTerminologyCategory.h"
 #include "vtkSlicerTerminologyType.h"
 
@@ -51,19 +50,29 @@ public:
   vtkGetObjectMacro(TypeObject, vtkSlicerTerminologyType);
   vtkGetObjectMacro(TypeModifierObject, vtkSlicerTerminologyType);
 
-  vtkGetStringMacro(AnatomicContextName);
-  vtkSetStringMacro(AnatomicContextName);
+  vtkGetStringMacro(RegionContextName);
+  vtkSetStringMacro(RegionContextName);
 
-  vtkGetObjectMacro(AnatomicRegionObject, vtkSlicerTerminologyType);
-  vtkGetObjectMacro(AnatomicRegionModifierObject, vtkSlicerTerminologyType);
+  vtkGetObjectMacro(RegionObject, vtkSlicerTerminologyType);
+  vtkGetObjectMacro(RegionModifierObject, vtkSlicerTerminologyType);
+
+  /// Reset to initial state, setting all fields to empty.
+  void Initialize();
+
+  /// Returns true if the object contains a valid terminology entry,
+  /// i.e. valid category and type. Does not consider context name.
+  bool IsValid();
+
+  /// Returns true if all fields are empty.
+  bool IsEmpty();
 
 protected:
   vtkSetObjectMacro(CategoryObject, vtkSlicerTerminologyCategory);
   vtkSetObjectMacro(TypeObject, vtkSlicerTerminologyType);
   vtkSetObjectMacro(TypeModifierObject, vtkSlicerTerminologyType);
 
-  vtkSetObjectMacro(AnatomicRegionObject, vtkSlicerTerminologyType);
-  vtkSetObjectMacro(AnatomicRegionModifierObject, vtkSlicerTerminologyType);
+  vtkSetObjectMacro(RegionObject, vtkSlicerTerminologyType);
+  vtkSetObjectMacro(RegionModifierObject, vtkSlicerTerminologyType);
 
 protected:
   vtkSlicerTerminologyEntry();
@@ -81,12 +90,12 @@ protected:
   /// Type modifier properties
   vtkSlicerTerminologyType* TypeModifierObject;
 
-  /// Anatomic context name (AnatomicContextName in anatomy Json) - optional
-  char* AnatomicContextName;
-  /// Anatomical region properties
-  vtkSlicerTerminologyType* AnatomicRegionObject;
-  /// Anatomical region modifier properties
-  vtkSlicerTerminologyType* AnatomicRegionModifierObject;
+  /// Region context name (AnatomicContextName in anatomy Json) - optional
+  char* RegionContextName;
+  /// Region properties
+  vtkSlicerTerminologyType* RegionObject;
+  /// Region modifier properties
+  vtkSlicerTerminologyType* RegionModifierObject;
 };
 
 #endif

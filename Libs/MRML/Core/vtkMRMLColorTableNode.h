@@ -190,7 +190,7 @@ public:
 
   ///
   /// return a text string describing the color look up table type
-  const char * GetTypeAsString() override;
+  const char* GetTypeAsString() override;
 
   ///
   /// Set the size of the color table if it's a User table
@@ -201,10 +201,6 @@ public:
   int GetNumberOfColors() override;
 
   ///
-  /// keep track of where we last added a color
-  int LastAddedColor;
-
-  ///
   /// Add a color to the User color table, at the end
   void AddColor(const char* name, double r, double g, double b, double a = 1.0);
 
@@ -212,29 +208,41 @@ public:
   /// Set a color into the User color table. Return 1 on success, 0 on failure.
   int SetColor(int entry, const char* name, double r, double g, double b, double a = 1.0);
 
+  /// Undefine color entry.
+  /// Returns true on success.
+  bool RemoveColor(int entry);
+
   /// Set many entries to the same name and color in one batch (with one ModifiedEvent).
   /// This is much more efficient than setting many color entries one by one using SetColor().
+  /// Note that this sets the Defined flag for the color entries to true. The \sa SetColorDefined
+  /// method can be used to unset it if needed.
   int SetColors(int firstEntry, int lastEntry, const char* name, double r, double g, double b, double a = 1.0);
 
+  /// Undefines entries in the specified range.
+  /// Returns true on success, false on failure.
+  bool RemoveColors(int firstEntry, int lastEntry);
+
   /// Set a color into the User color table. Return 1 on success, 0 on failure.
+  /// Note that this sets the Defined flag for the color entry to true. The \sa SetColorDefined
+  /// method can be used to unset it if needed.
   int SetColor(int entry, double r, double g, double b, double a);
   int SetColor(int entry, double r, double g, double b);
   int SetOpacity(int entry, double opacity);
 
-  /// Retrieve the color associated to the index
+  /// Retrieve the color associated to the index.
   /// Return true if the color exists, false otherwise
   bool GetColor(int entry, double color[4]) override;
 
   ///
-  /// clear out the names list
+  /// Clear out the names list.
   void ClearNames();
 
   ///
-  /// reset when close the scene
+  /// Reset when close the scene.
   void Reset(vtkMRMLNode* defaultNode) override;
 
   ///
-  /// Create default storage node or nullptr if does not have one
+  /// Create default storage node or nullptr if does not have one.
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
 protected:
@@ -244,9 +252,12 @@ protected:
   void operator=(const vtkMRMLColorTableNode&);
 
   ///
-  /// The look up table, constructed according to the Type
+  /// The look up table, constructed according to the Type.
   vtkLookupTable *LookupTable;
 
+  ///
+  /// keep track of where we last added a color.
+  int LastAddedColor{-1};
 };
 
 #endif

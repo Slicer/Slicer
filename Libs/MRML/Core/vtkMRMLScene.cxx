@@ -22,7 +22,6 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLClipNode.h"
-#include "vtkMRMLColorNode.h"
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCrosshairNode.h"
@@ -192,7 +191,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCameraNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLClipModelsNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLClipNode>::New());
-  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLColorTableStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLCrosshairNode>::New());
@@ -3908,7 +3906,8 @@ std::string vtkMRMLScene::GetTemporaryBundleDirectory()
   std::uniform_int_distribution<int> distribution(0, numberOfCharacters - 1); // -1 because the upper bound is inclusive
   for (int i = 0; i < 5; i++)
   {
-    ss << validCharacters[distribution(this->RandomGenerator)];
+    // % added just in case the random generator creates numbers outside of the distribution (it seemed to happen)
+    ss << validCharacters[distribution(this->RandomGenerator) % numberOfCharacters];
   }
   return ss.str();
 }
@@ -4597,30 +4596,33 @@ bool vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNo
   // (if more files are needed then storage node must generate appropriate additional file names based on the primary file name).
   storageNode->ResetFileNameList();
 
-  // Filenames are generated from node names. Very long node names could generate very long file names that are not supported by all file systems
-  // (on Windows, maximum path length is 260). To prevent saving errors on Windows (and prevent loading of scenes on Windows that were saved on other
-  // operating systems), we limit the file name length.
-  const int maxFileNameLength = 50;
-
-  // Update file name: use current base name by default (set name from node name if empty), encode special characters, use default file extension
-  std::string fileBaseName;
+  // Update primary file name (set name from node name if empty, encode special characters, use default file extension)
   if (fileName.empty())
   {
     // Default storage node usually has empty file name (if Save dialog is not opened yet)
-    fileBaseName = storableNode->GetName() ? storableNode->GetName() : "unnamed";
+    // file name is encoded to handle : or / characters in the node names
+    std::string fileBaseName = this->PercentEncode(std::string(storableNode->GetName()));
+    fileBaseName = storageNode->ClampFileName(fileBaseName);
+    std::string extension = storageNode->GetDefaultWriteFileExtension();
+    std::string storageFileName = fileBaseName + std::string(".") + extension;
+    vtkDebugMacro("new file name = " << storageFileName.c_str());
+    storageNode->SetFileName(storageFileName.c_str());
   }
   else
   {
-    // Get the filename base from the current filename.
-    // For saving to MRB, all nodes will be written in their default format, so we ignore the current file extension.
-    fileBaseName = storageNode->GetFileNameWithoutExtension(vtksys::SystemTools::GetFilenameName(fileName).c_str());
+    // new file name is encoded to handle : or / characters in the node names
+    std::string storageFileName = this->PercentEncode(vtksys::SystemTools::GetFilenameName(fileName));
+    std::string defaultWriteExtension = std::string(".") + vtksys::SystemTools::LowerCase(storageNode->GetDefaultWriteFileExtension());
+    std::string currentExtension = storageNode->GetSupportedFileExtension(storageFileName.c_str());
+    if (defaultWriteExtension != currentExtension)
+    {
+      // for saving to MRB all nodes will be written in their default format
+      storageFileName = storageNode->GetFileNameWithoutExtension(storageFileName.c_str()) + defaultWriteExtension;
+    }
+    storageFileName = storageNode->ClampFileName(storageFileName);
+    vtkDebugMacro("updated file name = " << storageFileName.c_str());
+    storageNode->SetFileName(storageFileName.c_str());
   }
-  std::string defaultWriteExtension = std::string(".") + vtksys::SystemTools::LowerCase(storageNode->GetDefaultWriteFileExtension());
-  // file name is encoded to handle : or / characters in the node names
-  std::string storageFileName = this->PercentEncode(fileBaseName) + defaultWriteExtension;
-  storageFileName = vtkMRMLStorageNode::ClampFileName(storageFileName, defaultWriteExtension.size(), maxFileNameLength);
-  vtkDebugMacro("updated file name = " << storageFileName.c_str());
-  storageNode->SetFileName(storageFileName.c_str());
 
   storageNode->SetDataDirectory(dataDir.c_str());
   vtkDebugMacro("Set data directory to " << dataDir.c_str() << ". Storable node " << storableNode->GetID()

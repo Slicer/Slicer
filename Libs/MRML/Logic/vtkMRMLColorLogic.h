@@ -17,6 +17,7 @@
 // MRML includes
 class vtkMRMLColorNode;
 class vtkMRMLColorTableNode;
+class vtkMRMLMessageCollection;
 class vtkMRMLProceduralColorNode;
 class vtkMRMLPETProceduralColorNode;
 class vtkMRMLdGEMRICProceduralColorNode;
@@ -187,8 +188,10 @@ public:
   /// the category to File, turn save with scene on on the node and
   /// it's storage node, turn off hide from editors, remove the
   /// singleton tag.
+  /// If userType is set to false (default) then the node type is set to "File" (constant, non-editable),
+  /// otherwise it is set to "User" (user-editable).
   /// \sa CreateFileNode, CreateProceduralFileNode
-  vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = nullptr);
+  vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr, bool userType=false);
 
   /// Get/Set the user defined paths where to look for extra color files
   vtkGetStringMacro(UserColorFilePaths);
@@ -228,8 +231,8 @@ protected:
   vtkMRMLdGEMRICProceduralColorNode* CreatedGEMRICColorNode(int type);
   vtkMRMLColorTableNode* CreateDefaultFileNode(const std::string& colorname);
   vtkMRMLColorTableNode* CreateUserFileNode(const std::string& colorname);
-  vtkMRMLColorTableNode* CreateFileNode(const char* fileName);
-  vtkMRMLProceduralColorNode* CreateProceduralFileNode(const char* fileName);
+  vtkMRMLColorTableNode* CreateFileNode(const char* fileName, vtkMRMLMessageCollection* userMessages = nullptr, bool userType = false);
+  vtkMRMLProceduralColorNode* CreateProceduralFileNode(const char* fileName, vtkMRMLMessageCollection* userMessages = nullptr, bool userType = false);
 
   void AddLabelsNode();
   void AddDefaultTableNode(int i);

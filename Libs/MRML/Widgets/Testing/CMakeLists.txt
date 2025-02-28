@@ -34,14 +34,9 @@ set(TEST_SOURCES
   qMRMLCheckableNodeComboBoxTest1.cxx
   qMRMLClipNodeWidgetTest1.cxx
   qMRMLCollapsibleButtonTest.cxx
-  qMRMLColorListViewTest1.cxx
   qMRMLColorModelTest.cxx
   qMRMLColorModelTest1.cxx
-  qMRMLColorPickerWidgetTest1.cxx
-  qMRMLColorPickerWidgetTest2.cxx
-  qMRMLColorPickerWidgetTest3.cxx
   qMRMLColorTableComboBoxTest1.cxx
-  qMRMLColorTableViewTest1.cxx
   qMRMLDisplayNodeViewComboBoxTest.cxx
   qMRMLDisplayNodeWidgetTest1.cxx
   qMRMLLayoutManagerTest1.cxx
@@ -107,10 +102,7 @@ if(Slicer_USE_QtTesting)
     qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1.cxx
     qMRMLClipNodeWidgetEventTranslatorPlayerTest1.cxx
     qMRMLCollapsibleButtonEventTranslatorPlayerTest1.cxx
-    qMRMLColorListViewEventTranslatorPlayerTest1.cxx
-    qMRMLColorPickerWidgetEventTranslatorPlayerTest1.cxx
     qMRMLColorTableComboBoxEventTranslatorPlayerTest1.cxx
-    qMRMLColorTableViewEventTranslatorPlayerTest1.cxx
     qMRMLDisplayNodeWidgetEventTranslatorPlayerTest1.cxx
     qMRMLLabelComboBoxEventTranslatorPlayerTest1.cxx
     qMRMLLinearTransformSliderEventTranslatorPlayerTest1.cxx
@@ -198,14 +190,9 @@ simple_test( qMRMLCheckableNodeComboBoxTest )
 simple_test( qMRMLCheckableNodeComboBoxTest1 )
 simple_test( qMRMLClipNodeWidgetTest1 )
 simple_test( qMRMLCollapsibleButtonTest)
-simple_test( qMRMLColorListViewTest1 )
 simple_test( qMRMLColorModelTest )
 simple_test( qMRMLColorModelTest1 )
-simple_test( qMRMLColorPickerWidgetTest1 )
-simple_test( qMRMLColorPickerWidgetTest2 )
-simple_test( qMRMLColorPickerWidgetTest3 )
 simple_test( qMRMLColorTableComboBoxTest1 )
-simple_test( qMRMLColorTableViewTest1 )
 simple_test( qMRMLDisplayNodeViewComboBoxTest )
 simple_test( qMRMLDisplayNodeWidgetTest1 )
 simple_test( qMRMLLayoutManagerTest1 )
@@ -295,10 +282,7 @@ if(Slicer_USE_QtTesting)
   QtTesting_TEST(qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1)
   QtTesting_TEST(qMRMLClipNodeWidgetEventTranslatorPlayerTest1)
   QtTesting_TEST(qMRMLCollapsibleButtonEventTranslatorPlayerTest1)
-  QtTesting_TEST(qMRMLColorListViewEventTranslatorPlayerTest1)
-  QtTesting_TEST(qMRMLColorPickerWidgetEventTranslatorPlayerTest1)
   QtTesting_TEST(qMRMLColorTableComboBoxEventTranslatorPlayerTest1)
-  QtTesting_TEST(qMRMLColorTableViewEventTranslatorPlayerTest1)
   QtTesting_TEST(qMRMLDisplayNodeWidgetEventTranslatorPlayerTest1)
   QtTesting_TEST(qMRMLLabelComboBoxEventTranslatorPlayerTest1)
   QtTesting_TEST(qMRMLLinearTransformSliderEventTranslatorPlayerTest1)

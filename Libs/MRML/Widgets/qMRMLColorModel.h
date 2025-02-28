@@ -28,7 +28,7 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-// qMRML includes
+// MRMLWidgets includes
 #include "qMRMLWidgetsExport.h"
 
 class vtkMRMLNode;
@@ -74,15 +74,6 @@ public:
   qMRMLColorModel(QObject *parent=nullptr);
   ~qMRMLColorModel() override;
 
-  /// ColorRole is an invisible role that contains the true color (QColor) when
-  /// Qt::DecorationRole contains a pixmap of the color.
-  enum ItemDataRole{
-    ColorEntryRole = Qt::UserRole,
-    PointerRole,
-    ColorRole
-  };
-
-
   void setMRMLColorNode(vtkMRMLColorNode* node);
   vtkMRMLColorNode* mrmlColorNode()const;
 
@@ -99,6 +90,9 @@ public:
 
   int opacityColumn()const;
   void setOpacityColumn(int column);
+
+  int terminologyColumn()const;
+  void setTerminologyColumn(int column);
 
   int checkableColumn()const;
   void setCheckableColumn(int column);
@@ -130,12 +124,17 @@ public:
   /// so that can return the color index rather than the row
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
+  /// Assemble human readable text in format ": , in , " from color in color node.
+  static QString terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex, bool simplified=false);
+
+  /// Update all items in the row of a given color index.
+  void updateRowForColor(int color);
+
 protected slots:
   void onMRMLColorNodeModified(vtkObject* node);
   void onItemChanged(QStandardItem * item);
 
 protected:
-
   qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parent=nullptr);
   virtual void updateItemFromColor(QStandardItem* item, int color, int column);
   virtual void updateColorFromItem(int color, QStandardItem* item);

@@ -16,7 +16,6 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceDisplayNode.h"
 #include "vtkMRMLModelNode.h"
-#include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
@@ -174,169 +173,37 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------
 void vtkMRMLSliceCompositeNode::SetBackgroundVolumeID(const char* id)
 {
-  this->SetNthLayerVolumeID(vtkMRMLSliceCompositeNode::LayerBackground, id);
+  this->SetNodeReferenceID(BackgroundVolumeNodeReferenceRole, id);
 }
 
 //-----------------------------------------------------------
 const char* vtkMRMLSliceCompositeNode::GetBackgroundVolumeID()
 {
-  return this->GetNthLayerVolumeID(vtkMRMLSliceCompositeNode::LayerBackground);
+  return this->GetNodeReferenceID(BackgroundVolumeNodeReferenceRole);
 }
 
 //-----------------------------------------------------------
 void vtkMRMLSliceCompositeNode::SetForegroundVolumeID(const char* id)
 {
-  this->SetNthLayerVolumeID(vtkMRMLSliceCompositeNode::LayerForeground, id);
+  this->SetNodeReferenceID(ForegroundVolumeNodeReferenceRole, id);
 }
 
 //-----------------------------------------------------------
 const char* vtkMRMLSliceCompositeNode::GetForegroundVolumeID()
 {
-  return this->GetNthLayerVolumeID(vtkMRMLSliceCompositeNode::LayerForeground);
+  return this->GetNodeReferenceID(ForegroundVolumeNodeReferenceRole);
 }
 
 //-----------------------------------------------------------
 void vtkMRMLSliceCompositeNode::SetLabelVolumeID(const char* id)
 {
-  this->SetNthLayerVolumeID(vtkMRMLSliceCompositeNode::LayerLabel, id);
+  this->SetNodeReferenceID(LabelVolumeNodeReferenceRole, id);
 }
 
 //-----------------------------------------------------------
 const char* vtkMRMLSliceCompositeNode::GetLabelVolumeID()
 {
-  return this->GetNthLayerVolumeID(vtkMRMLSliceCompositeNode::LayerLabel);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLSliceCompositeNode::GetNthLayerVolume(int layerIndex)
-{
-  if (layerIndex < 0)
-  {
-    vtkErrorMacro(<< "GetNthLayerVolume: Non-negative layer index is expected.");
-    return nullptr;
-  }
-  if (layerIndex == vtkMRMLSliceCompositeNode::LayerBackground)
-  {
-    return vtkMRMLVolumeNode::SafeDownCast(this->GetNodeReference(BackgroundVolumeNodeReferenceRole));
-  }
-  else if (layerIndex == vtkMRMLSliceCompositeNode::LayerForeground)
-  {
-    return vtkMRMLVolumeNode::SafeDownCast(this->GetNodeReference(ForegroundVolumeNodeReferenceRole));
-  }
-  else if (layerIndex == vtkMRMLSliceCompositeNode::LayerLabel)
-  {
-    return vtkMRMLVolumeNode::SafeDownCast(this->GetNodeReference(LabelVolumeNodeReferenceRole));
-  }
-  return nullptr;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceCompositeNode::SetNthLayerVolume(int layerIndex, vtkMRMLVolumeNode* volumeNode)
-{
-  if (layerIndex < 0)
-  {
-    vtkErrorMacro(<< "SetNthLayerVolume: Non-negative layer index is expected.");
-    return;
-  }
-  char* volumeNodeID = volumeNode != nullptr ? volumeNode->GetID() : nullptr;
-  this->SetNthLayerVolumeID(layerIndex, volumeNodeID);
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLSliceCompositeNode::GetNthLayerVolumeID(int layerIndex)
-{
-  if (layerIndex < 0)
-  {
-    vtkErrorMacro(<< "GetNthLayerVolumeID: Non-negative layer index is expected.");
-    return nullptr;
-  }
-  vtkMRMLVolumeNode* volumeNode = this->GetNthLayerVolume(layerIndex);
-  if (volumeNode)
-    {
-    return volumeNode->GetID();
-    }
-  return nullptr;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceCompositeNode::
-SetNthLayerVolumeID(int layerIndex, const char* volumeNodeID)
-{
-  if (layerIndex < 0)
-  {
-    vtkErrorMacro(<< "SetNthLayerVolumeID: Non-negative layer index is expected.");
-    return;
-  }
-  if (layerIndex == vtkMRMLSliceCompositeNode::LayerBackground)
-  {
-    this->SetNodeReferenceID(BackgroundVolumeNodeReferenceRole, volumeNodeID);
-  }
-  else if (layerIndex == vtkMRMLSliceCompositeNode::LayerForeground)
-  {
-    this->SetNodeReferenceID(ForegroundVolumeNodeReferenceRole, volumeNodeID);
-  }
-  else if (layerIndex == vtkMRMLSliceCompositeNode::LayerLabel)
-  {
-    this->SetNodeReferenceID(LabelVolumeNodeReferenceRole, volumeNodeID);
-  }
-}
-
-//----------------------------------------------------------------------------
-double vtkMRMLSliceCompositeNode::GetNthLayerOpacity(int layerIndex)
-{
-  if (layerIndex < 0)
-  {
-    vtkErrorMacro(<< "GetNthLayerOpacity: Non-negative layer index is expected.");
-    return 1.0;
-  }
-  if (layerIndex < static_cast<int>(this->LayerOpacities.size()))
-    {
-    return this->LayerOpacities.at(layerIndex);
-    }
-  return 1.0;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceCompositeNode::SetNthLayerOpacity(int layerIndex, double value)
-{
-  if (layerIndex < 0)
-  {
-    vtkErrorMacro(<< "SetNthLayerOpacity: Non-negative layer index is expected.");
-    return;
-  }
-  if (layerIndex >= static_cast<int>(this->LayerOpacities.size()))
-    {
-    this->LayerOpacities.resize(layerIndex + 1);
-    }
-  if (this->LayerOpacities.at(layerIndex) != value)
-    {
-    this->LayerOpacities.at(layerIndex) = value;
-    this->Modified();
-    }
-}
-
-//----------------------------------------------------------------------------
-double vtkMRMLSliceCompositeNode::GetForegroundOpacity()
-{
-  return this->GetNthLayerOpacity(vtkMRMLSliceCompositeNode::LayerForeground);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceCompositeNode::SetForegroundOpacity(double value)
-{
-  this->SetNthLayerOpacity(vtkMRMLSliceCompositeNode::LayerForeground, value);
-}
-
-//----------------------------------------------------------------------------
-double vtkMRMLSliceCompositeNode::GetLabelOpacity()
-{
-  return this->GetNthLayerOpacity(vtkMRMLSliceCompositeNode::LayerLabel);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceCompositeNode::SetLabelOpacity(double value)
-{
-  this->SetNthLayerOpacity(vtkMRMLSliceCompositeNode::LayerLabel, value);
+  return this->GetNodeReferenceID(LabelVolumeNodeReferenceRole);
 }
 
 //-----------------------------------------------------------

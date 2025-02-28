@@ -50,7 +50,6 @@ public:
 public slots:
   void setDefaultScenePath(const QString& path);
   void openSlicerRCFile();
-  void setMaximumFileNameLength(int length);
 
 protected slots:
   void updateAutoUpdateApplicationFromManager();

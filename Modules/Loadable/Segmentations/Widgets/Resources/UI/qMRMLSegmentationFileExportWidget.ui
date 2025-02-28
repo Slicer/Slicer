@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>298</width>
-    <height>253</height>
+    <height>259</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -81,7 +81,7 @@
         </stringlist>
        </property>
        <property name="noneEnabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="addEnabled">
         <bool>false</bool>
@@ -338,6 +338,16 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkDirectoryButton</class>
+   <extends>QWidget</extends>
+   <header>ctkDirectoryButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -348,16 +358,6 @@
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDirectoryButton</class>
-   <extends>QWidget</extends>
-   <header>ctkDirectoryButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkDoubleSpinBox</class>
-   <extends>QWidget</extends>
-   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -399,8 +399,8 @@
      <y>114</y>
     </hint>
     <hint type="destinationlabel">
-     <x>209</x>
-     <y>51</y>
+     <x>293</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>

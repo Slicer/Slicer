@@ -23,25 +23,25 @@
 
 // Qt includes
 #include <QTableView>
-#include <QItemDelegate>
 
-// qMRML includes
-#include "qMRMLWidgetsExport.h"
+// Colors includes
+#include "qSlicerColorsModuleWidgetsExport.h"
 
 class QSortFilterProxyModel;
 class qMRMLColorTableViewPrivate;
 class qMRMLColorModel;
+class qMRMLSortFilterColorProxyModel;
 class vtkMRMLColorNode;
 class vtkMRMLNode;
 
 /// \brief Table view for color table nodes.
 /// Edition of color (opening dialog) and opacity (slider popup) is handled by
 /// qMRMLItemDelegate.
-class QMRML_WIDGETS_EXPORT qMRMLColorTableView : public QTableView
+class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorTableView : public QTableView
 {
   Q_OBJECT
-  /// This property show/hides the colors whose name are (none).
-  /// false by default.
+  /// This property show/hides the colors that are defined (indicated by flag in color properties)
+  /// False by default.
   /// \sa showOnlyNamedColors(), setShowOnlyNamedColors()
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
@@ -50,7 +50,7 @@ public:
 
   Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;
   Q_INVOKABLE qMRMLColorModel* colorModel()const;
-  Q_INVOKABLE QSortFilterProxyModel* sortFilterProxyModel()const;
+  Q_INVOKABLE qMRMLSortFilterColorProxyModel* sortFilterProxyModel()const;
 
   /// Return the row of the color with name \a colorName.
   /// \sa rowFromColorIndex()

@@ -25,6 +25,9 @@
 // Slicer includes
 #include "vtkSlicerConfigure.h"
 
+// CTK includes
+#include <ctkColorDialog.h>
+
 // qMRML includes
 #include "qMRMLColorPickerWidget.h"
 
@@ -37,9 +40,7 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-// STD includes
-
-int qMRMLColorPickerWidgetTest3(int argc, char * argv [])
+int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -55,20 +56,19 @@ int qMRMLColorPickerWidgetTest3(int argc, char * argv [])
 
   colorPickerWidget.setMRMLScene(scene.GetPointer());
 
-  // for some reasons it generate a warning if the type is changed.
-  colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
 
   vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;
   colorPETNode->SetTypeToRainbow();
   scene->AddNode(colorPETNode.GetPointer());
 
-  colorPickerWidget.show();
+  ctkColorDialog::addDefaultTab(&colorPickerWidget, "Extra", SIGNAL(colorSelected(QColor)));
 
   if (argc < 2 || QString(argv[1]) != "-I" )
   {
+    // quits the getColor dialog event loop.
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
-
-  return app.exec();
+  ctkColorDialog::getColor(Qt::red, nullptr, "", ctkColorDialog::ColorDialogOptions());
+  return EXIT_SUCCESS;
 }
