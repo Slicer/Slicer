@@ -85,12 +85,11 @@ class SlicerUtilSaveTests(unittest.TestCase):
 
         # Color node
         colorTableNode = slicer.mrmlScene.CreateNodeByClass("vtkMRMLColorTableNode")
+        colorTableNode.UnRegister(None)  # Unregister to prevent memory leak
         colorTableNode.SetTypeToUser()
         colorTableNode.HideFromEditorsOff()  # make the color table selectable in the GUI outside Colors module
         slicer.mrmlScene.AddNode(colorTableNode)
-        colorTableNode.UnRegister(None)
         colorTableNode.SetNumberOfColors(3)
-        colorTableNode.SetNamesInitialised(True)  # prevent automatic color name generation
         colorTableNode.SetColor(0, "some", 0.1, 0.2, 0.7, 1.0)
         colorTableNode.SetColor(1, "color", 0.3, 0.3, 0.6, 1.0)
         colorTableNode.SetColor(2, "here", 0.5, 0.4, 0.5, 1.0)
@@ -101,6 +100,17 @@ class SlicerUtilSaveTests(unittest.TestCase):
         # Load
         loadedColorTableNode = slicer.util.loadNodeFromFile(filename)
         self.assertEqual(loadedColorTableNode.GetClassName(), "vtkMRMLColorTableNode")
+        self.assertEqual(loadedColorTableNode.GetNumberOfColors(), 3)
+        self.assertEqual(loadedColorTableNode.GetColorName(0), "some")
+        self.assertEqual(loadedColorTableNode.GetColorName(1), "color")
+        self.assertEqual(loadedColorTableNode.GetColorName(2), "here")
+        readColorRgba = [0, 0, 0, 0]
+        tolerance = 1/255  # 1/255 is the smallest difference that can be represented in RGBA in 8 bit/channel
+        loadedColorTableNode.GetColor(0, readColorRgba)
+        self.assertAlmostEqual(readColorRgba[0], 0.1, delta=tolerance)
+        self.assertAlmostEqual(readColorRgba[1], 0.2, delta=tolerance)
+        self.assertAlmostEqual(readColorRgba[2], 0.7, delta=tolerance)
+        self.assertAlmostEqual(readColorRgba[3], 1.0, delta=tolerance)
         # Cleanup
         os.remove(filename)
 

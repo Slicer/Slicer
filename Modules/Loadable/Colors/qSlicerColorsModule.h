@@ -47,11 +47,17 @@ public:
 
   qSlicerGetTitleMacro(tr("Colors"));
 
-  /// Return help/acknowledgement text
+  /// Help to use the module
   QString helpText()const override;
+
+  /// Return acknowledgments
   QString acknowledgementText()const override;
+
+  /// Return the authors of the module
   QStringList contributors()const override;
-  bool isHidden()const override;
+
+  /// List dependencies
+  QStringList dependencies()const override;
 
   /// Specify editable node types
   QStringList associatedNodeTypes()const override;

@@ -2,5 +2,6 @@
   <qresource>
     <file>Icons/Colors.png</file>
     <file>Icons/SlicerCopyColor.png</file>
+    <file>Icons/SlicerNewColor.png</file>
   </qresource>
 </RCC>

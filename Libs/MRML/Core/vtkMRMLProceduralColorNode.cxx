@@ -238,7 +238,7 @@ bool vtkMRMLProceduralColorNode::GetColor(int entry, double color[4])
 {
   if (entry < 0 || entry >= this->GetNumberOfColors())
   {
-    vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetNumberOfColors() << ", call SetNumberOfColors" << endl);
+    vtkErrorMacro("GetColor: requested entry " << entry << " is out of table range: 0 - " << this->GetNumberOfColors() << ", call SetNumberOfColors" << endl);
     return false;
   }
   /*
@@ -261,7 +261,7 @@ bool vtkMRMLProceduralColorNode::GetColor(int entry, double color[4])
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLStorageNode * vtkMRMLProceduralColorNode::CreateDefaultStorageNode()
+vtkMRMLStorageNode* vtkMRMLProceduralColorNode::CreateDefaultStorageNode()
 {
   vtkMRMLScene* scene = this->GetScene();
   if (scene == nullptr)

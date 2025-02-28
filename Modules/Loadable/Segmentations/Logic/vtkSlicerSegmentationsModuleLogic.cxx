@@ -71,7 +71,15 @@
 #include <vtkITKImageWriter.h>
 
 // MRML includes
+#include <vtkEventBroker.h>
+#include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLColorTableStorageNode.h>
+#include "vtkMRMLI18N.h"
+#include <vtkMRMLLabelMapVolumeNode.h>
+#include <vtkMRMLLabelMapVolumeDisplayNode.h>
 #include <vtkMRMLMessageCollection.h>
+#include <vtkMRMLModelDisplayNode.h>
+#include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
 #include "vtkMRMLSegmentationNode.h"
 #include "vtkMRMLSegmentationDisplayNode.h"
@@ -79,12 +87,6 @@
 #include "vtkMRMLSegmentEditorNode.h"
 #include <vtkMRMLSubjectHierarchyNode.h>
 #include <vtkMRMLTransformNode.h>
-#include <vtkMRMLColorTableNode.h>
-#include <vtkMRMLLabelMapVolumeNode.h>
-#include <vtkMRMLLabelMapVolumeDisplayNode.h>
-#include <vtkMRMLModelDisplayNode.h>
-#include <vtkMRMLModelNode.h>
-#include <vtkEventBroker.h>
 
 // STD includes
 #include <sstream>
@@ -1046,6 +1048,122 @@ void vtkSlicerSegmentationsModuleLogic::GenerateMergedLabelmapInReferenceGeometr
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLColorTableNode* vtkSlicerSegmentationsModuleLogic::AddColorTableNodeForSegmentation(vtkMRMLSegmentationNode* segmentationNode)
+{
+  if (!segmentationNode)
+  {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::AddColorTableNodeForSegmentation: Invalid segmentation node");
+    return nullptr;
+  }
+  // Create new color table node if labelmap node doesn't have a color node or if the existing one is not user type
+  vtkSmartPointer<vtkMRMLColorTableNode> newColorTable;
+  vtkMRMLScene* scene = segmentationNode->GetScene();
+  if (scene)
+  {
+    newColorTable = vtkSmartPointer<vtkMRMLColorTableNode>::Take(
+      vtkMRMLColorTableNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLColorTableNode")));
+  }
+  else
+  {
+    // fallback to creating a new node without using the scene (default nodes in the scene are not taken into account)
+    newColorTable = vtkSmartPointer<vtkMRMLColorTableNode>::New();
+  }
+
+  // Need to make the color table node visible because only non-hidden storable nodes are offered to be saved
+  newColorTable->SetHideFromEditors(false);
+  std::string colorTableNodeName(segmentationNode->GetName());
+  colorTableNodeName.append("_ColorTable");
+  if (scene)
+  {
+    colorTableNodeName = scene->GenerateUniqueName(colorTableNodeName.c_str());
+  }
+  newColorTable->SetName(colorTableNodeName.c_str());
+  newColorTable->SetTypeToUser();
+  newColorTable->SetAttribute("Category", "Segmentations");
+  // Add an item to the color table, otherwise we get a warning when we set it in the display node.
+  newColorTable->SetNumberOfColors(1);
+  newColorTable->GetLookupTable()->SetRange(0, 0);
+  newColorTable->GetLookupTable()->SetNumberOfTableValues(1);
+  newColorTable->SetColor(0, vtkMRMLTr("vtkSlicerSegmentationsModuleLogic", "background").c_str(), 0.0, 0.0, 0.0, 0.0);
+  segmentationNode->GetScene()->AddNode(newColorTable);
+
+  return newColorTable;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(vtkMRMLSegmentationNode* segmentationNode,
+  const std::vector<std::string> &segmentIDs, vtkMRMLColorTableNode* colorTableNode, vtkIntArray* labelValues/*=nullptr*/)
+{
+  if (!segmentationNode)
+  {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode: Invalid segmentation node");
+    return false;
+  }
+  if (!colorTableNode)
+  {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode: Invalid color table node");
+    return false;
+  }
+
+  std::vector<std::string> exportedSegmentIDs;
+  if (segmentIDs.empty())
+  {
+    segmentationNode->GetSegmentation()->GetSegmentIDs(exportedSegmentIDs);
+  }
+  else
+  {
+    exportedSegmentIDs = segmentIDs;
+  }
+
+
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
+    segmentationNode->GetDisplayNode() );
+
+  int numberOfColors = exportedSegmentIDs.size() + 1;
+  if (labelValues)
+  {
+    for (int i = 0; i < static_cast<int>(exportedSegmentIDs.size()); ++i)
+    {
+      numberOfColors = std::max(numberOfColors, labelValues->GetValue(i) + 1);
+    }
+  }
+
+  int numberOfAlreadyExistingColors = colorTableNode->GetNumberOfColors();
+  colorTableNode->SetNumberOfColors(numberOfColors);
+  colorTableNode->GetLookupTable()->SetRange(0, numberOfColors - 1);
+  colorTableNode->GetLookupTable()->SetNumberOfTableValues(numberOfColors);
+  // Remove "background" from the color legend.
+  colorTableNode->RemoveColor(0);
+
+  short colorIndex = 0;
+  for (std::vector<std::string>::iterator segmentIt = exportedSegmentIDs.begin(); segmentIt != exportedSegmentIDs.end(); ++segmentIt, ++colorIndex)
+  {
+    int labelValue = labelValues ? labelValues->GetValue(colorIndex) : (colorIndex + 1);
+    vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIt);
+    if (!segment)
+    {
+      vtkWarningWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: failed to set color table entry, could not find segment by ID " << *segmentIt);
+      continue;
+    }
+    const char* segmentName = segment->GetName();
+    vtkVector3d color = displayNode->GetSegmentColor(*segmentIt);
+    colorTableNode->SetColor(labelValue, segmentName, color.GetX(), color.GetY(), color.GetZ());
+    // Set terminology
+    std::string segmentTerminologyString;
+    if (segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), segmentTerminologyString))
+    {
+      colorTableNode->SetTerminologyFromString(labelValue, segmentTerminologyString);
+    }
+    else
+    {
+      colorTableNode->SetTerminologyFromString(labelValue, "");
+    }
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegmentationNode* segmentationNode,
   const std::vector<std::string> &segmentIDs, vtkMRMLLabelMapVolumeNode* labelmapNode, vtkMRMLVolumeNode* referenceVolumeNode /*=nullptr*/,
   int extentComputationMode /*=vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS*/, vtkMRMLColorTableNode* exportColorTable/*=nullptr*/)
@@ -1058,6 +1176,11 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
   if (!labelmapNode)
   {
     vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Invalid labelmap volume node");
+    return false;
+  }
+  if (!segmentationNode->GetScene() || !labelmapNode->GetScene())
+  {
+    vtkGenericWarningMacro("vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode: Invalid MRML scene of segmentation or labelmap node");
     return false;
   }
 
@@ -1124,86 +1247,22 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToLabelmapNode(vtkMRMLSegm
     segmentationNode->CreateDefaultDisplayNodes();
   }
 
-  if (exportColorTable)
+  // Make sure we have an editable color table associated with the labelmap node (new color entries may be added to it)
+  if (!labelmapNode->GetDisplayNode()->GetColorNode() || labelmapNode->GetDisplayNode()->GetColorNode()->GetType() != vtkMRMLColorNode::User)
   {
-    labelmapNode->GetDisplayNode()->SetAndObserveColorNodeID(exportColorTable->GetID());
-  }
-  else if (!labelmapNode->GetDisplayNode()->GetColorNode() || labelmapNode->GetDisplayNode()->GetColorNode()->GetType() != vtkMRMLColorNode::User)
-  {
-    // Create new color table node if labelmap node doesn't have a color node or if the existing one is not user type
-    vtkSmartPointer<vtkMRMLColorTableNode> newColorTable = vtkSmartPointer<vtkMRMLColorTableNode>::New();
-    // Need to make the color table node visible because only non-hidden storable nodes are offered to be saved
-    newColorTable->SetHideFromEditors(false);
-    std::string colorTableNodeName(labelmapNode->GetName());
-    colorTableNodeName.append("_ColorTable");
-    newColorTable->SetName(colorTableNodeName.c_str());
-    newColorTable->SetTypeToUser();
-    newColorTable->NamesInitialisedOn();
-    newColorTable->SetAttribute("Category", "Segmentations");
-    // Add an item to the color table, otherwise we get a warning
-    // when we set it in the display node.
-    newColorTable->SetNumberOfColors(1);
-    newColorTable->GetLookupTable()->SetRange(0, 0);
-    newColorTable->GetLookupTable()->SetNumberOfTableValues(1);
-    // Use NoName as color name to not list the "background" color in the color legend.
-    newColorTable->SetColor(0, newColorTable->GetNoName(), 0.0, 0.0, 0.0, 0.0);
-    labelmapNode->GetScene()->AddNode(newColorTable);
+    vtkMRMLColorTableNode* newColorTable = vtkSlicerSegmentationsModuleLogic::AddColorTableNodeForSegmentation(segmentationNode);
+    if (newColorTable == nullptr)
+    {
+      vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to create color table node for segmentation "
+        << segmentationNode->GetName());
+      return false;
+    }
     labelmapNode->GetDisplayNode()->SetAndObserveColorNodeID(newColorTable->GetID());
   }
 
   // Copy segment colors to color table node
-  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(
-    labelmapNode->GetDisplayNode()->GetColorNode() ); // Always valid, as it was created just above if was missing
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
-    segmentationNode->GetDisplayNode() );
-
-  int numberOfColors = exportedSegmentIDs.size() + 1;
-  if (labelValues)
-  {
-    for (int i = 0; i < static_cast<int>(exportedSegmentIDs.size()); ++i)
-    {
-      numberOfColors = std::max(numberOfColors, labelValues->GetValue(i) + 1);
-    }
-  }
-
-  int colorFillStartIndex = 1;
-  if (exportColorTable)
-  {
-    // If we are using an export color table, we don't want to overwrite the existing values in the table,
-    // even if they are not used in the segmentation currently.
-    colorFillStartIndex = exportColorTable->GetNumberOfColors();
-  }
-  colorTableNode->SetNumberOfColors(numberOfColors);
-  colorTableNode->GetLookupTable()->SetRange(0, numberOfColors - 1);
-  colorTableNode->GetLookupTable()->SetNumberOfTableValues(numberOfColors);
-  // Use NoName as color name to not list the "background" color in the color legend.
-  colorTableNode->SetColor(0, colorTableNode->GetNoName(), 0.0, 0.0, 0.0, 0.0);
-
-  for (int i = colorFillStartIndex; i < colorTableNode->GetNumberOfColors(); ++i)
-  {
-    // Fill color table with none
-    colorTableNode->SetColor(i, "(none)", 0.0, 0.0, 0.0);
-  }
-
-  short colorIndex = 0;
-  for (std::vector<std::string>::iterator segmentIt = exportedSegmentIDs.begin(); segmentIt != exportedSegmentIDs.end(); ++segmentIt, ++colorIndex)
-  {
-    int labelValue = colorIndex + 1;
-    if (labelValues)
-    {
-      labelValue = labelValues->GetValue(colorIndex);
-    }
-    vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIt);
-    if (!segment)
-    {
-      vtkWarningWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: failed to set color table entry, could not find segment by ID " << *segmentIt);
-      colorTableNode->SetColor(labelValue, "(none)", 0.0, 0.0, 0.0);
-      continue;
-    }
-    const char* segmentName = segment->GetName();
-    vtkVector3d color = displayNode->GetSegmentColor(*segmentIt);
-    colorTableNode->SetColor(labelValue, segmentName, color.GetX(), color.GetY(), color.GetZ());
-  }
+  vtkMRMLColorTableNode* segmentColorTableNode = vtkMRMLColorTableNode::SafeDownCast(labelmapNode->GetDisplayNode()->GetColorNode());
+  vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(segmentationNode, segmentIDs, segmentColorTableNode, labelValues);
 
   // Move exported labelmap node under same parent as segmentation if they are in the same scene
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(segmentationNode->GetScene());
@@ -2158,7 +2217,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
   // Assign terminology entry to each segment in the segmentation
   std::vector<std::string> segmentIDs;
   segmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
-  vtkSmartPointer<vtkSlicerTerminologyEntry> foundTerminologyEntry = vtkSmartPointer<vtkSlicerTerminologyEntry>::New();
+  vtkNew<vtkSlicerTerminologyEntry> foundTerminologyEntry;
   for (std::vector<std::string>::iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
   {
     vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(*segmentIdIt);
@@ -2172,17 +2231,21 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
       continue;
     }
 
-    // Search for the 3dSlicerLabel attribute in the specified terminology context
-    if (terminologiesLogic->FindTypeInTerminologyBy3dSlicerLabel(terminologyContextName, segment->GetName(), foundTerminologyEntry))
+    std::string foundTerminologyString = colorNode->GetTerminologyAsString(label);
+    if (foundTerminologyString.empty())
     {
-      std::string foundTerminologyString = terminologiesLogic->SerializeTerminologyEntry(foundTerminologyEntry);
-      segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), foundTerminologyString);
+      // Search for the 3dSlicerLabel attribute in the specified terminology context
+      if (terminologiesLogic->FindTypeInTerminologyBy3dSlicerLabel(terminologyContextName, segment->GetName(), foundTerminologyEntry))
+      {
+        foundTerminologyString = terminologiesLogic->SerializeTerminologyEntry(foundTerminologyEntry);
+      }
+      else
+      {
+        // Set first entry if 3dSlicerLabel is not found
+        foundTerminologyString = firstTerminologyString;
+      }
     }
-    else
-    {
-      // Set first entry if 3dSlicerLabel is not found
-      segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), firstTerminologyString);
-    }
+    segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), foundTerminologyString);
   }
 
   return true;
@@ -2465,11 +2528,23 @@ void vtkSlicerSegmentationsModuleLogic::GetLabelValuesFromColorNode(vtkMRMLSegme
   for (int i = 0; i < segmentIds->GetNumberOfValues(); ++i)
   {
     std::string segmentId = segmentIds->GetValue(i);
-    const char* segmentName = segmentationNode->GetSegmentation()->GetSegment(segmentId)->GetName();
-    int labelValue = colorTableNode->GetColorIndexByName(segmentName);
+    vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(segmentId);
+    const char* segmentName = segment->GetName();
+    std::string segmentTerminologyString;
+    int labelValue = -1;
+    if (segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), segmentTerminologyString))
+    {
+      // Use terminology string to match the segment
+      labelValue = vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(colorTableNode, segmentTerminologyString.c_str());
+    }
     if (labelValue < 0)
     {
-      // Label value is not found in the color table
+      // Segment was not found by terminology, try to find it by segment name
+      labelValue = colorTableNode->GetColorIndexByName(segmentName);
+    }
+    if (labelValue < 0)
+    {
+      // Label value is not found in the color table either by terminology or name, create a new label value for it.
       // Use a label value that lies outside the table to prevent collisions with existing values.
       labelValue = extraColorCount;
       ++extraColorCount;
@@ -2514,9 +2589,59 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsBinaryLabelmapRepresentati
   writer->SetRasToIJKMatrix(rasToIJKMatrix);
   writer->SetFileName(fullNameWithExtension.c_str());
   writer->SetUseCompression(useCompression);
-  writer->Write();
 
-  return true;
+  bool success = true;
+  try
+  {
+    writer->Write();
+  }
+  catch (...)
+  {
+    success = false;
+  }
+
+  // Export color table
+
+  vtkMRMLColorTableNode* newColorTable = vtkSlicerSegmentationsModuleLogic::AddColorTableNodeForSegmentation(segmentationNode);
+  if (newColorTable == nullptr)
+  {
+    vtkErrorWithObjectMacro(segmentationNode, "ExportSegmentsToLabelmapNode: Failed to create color table node for segmentation "
+      << segmentationNode->GetName());
+    return false;
+  }
+  std::vector<std::string> segmentIdsVector;
+  if (segmentIds == nullptr)
+  {
+    segmentationNode->GetSegmentation()->GetSegmentIDs(segmentIdsVector);
+  }
+  else
+  {
+    for (int segmentIndex = 0; segmentIndex < segmentIds->GetNumberOfValues(); ++segmentIndex)
+    {
+      segmentIdsVector.push_back(segmentIds->GetValue(segmentIndex));
+    }
+  }
+  vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(segmentationNode, segmentIdsVector, newColorTable, labelValues);
+
+  vtkSmartPointer<vtkMRMLColorTableStorageNode> colorTableStorageNode;
+  vtkMRMLScene* scene = segmentationNode->GetScene();
+  if (scene)
+  {
+    colorTableStorageNode = vtkSmartPointer<vtkMRMLColorTableStorageNode>::Take(vtkMRMLColorTableStorageNode::SafeDownCast(
+      scene->CreateNodeByClass("vtkMRMLColorTableStorageNode")));
+  }
+  else
+  {
+    colorTableStorageNode = vtkSmartPointer<vtkMRMLColorTableStorageNode>::New();
+  }
+
+  std::string fullNameWithExtensionColorTable = fullNameWithoutExtension + ".labels.csv";
+  colorTableStorageNode->SetFileName(fullNameWithExtensionColorTable.c_str());
+  colorTableStorageNode->WriteData(newColorTable);
+
+  scene->RemoveNode(newColorTable);
+
+  return success;
 }
 
 //-----------------------------------------------------------------------------

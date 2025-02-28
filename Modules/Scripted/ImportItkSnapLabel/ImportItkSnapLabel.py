@@ -78,7 +78,6 @@ class ImportItkSnapLabelFileReader:
             # the color node must be visible.
             colorNode.SetHideFromEditors(False)
 
-            colorNode.SetNamesInitialised(True)  # prevent automatic color name generation
             for color in colors:
                 colorNode.SetColor(color["index"], color["name"], color["r"], color["g"], color["b"], color["a"])
 

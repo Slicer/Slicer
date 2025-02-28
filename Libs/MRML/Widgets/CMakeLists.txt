@@ -179,6 +179,8 @@ set(MRMLWidgets_SRCS
   qMRMLSliceWidget_p.h
   qMRMLSliderWidget.cxx
   qMRMLSliderWidget.h
+  qMRMLSortFilterColorProxyModel.cxx
+  qMRMLSortFilterColorProxyModel.h
   qMRMLSortFilterHierarchyProxyModel.cxx
   qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.cxx
@@ -300,6 +302,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLSliceWidget.h
   qMRMLSliceWidget_p.h
   qMRMLSliderWidget.h
+  qMRMLSortFilterColorProxyModel.h
   qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.h
   qMRMLSpinBox.h

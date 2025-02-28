@@ -37,6 +37,9 @@ public:
   /// Reset state of object
   virtual void Initialize();
 
+  /// All fields are empty
+  virtual bool IsEmpty();
+
   /// Copy one type into another
   virtual void Copy(vtkCodedEntry* aEntry);
 
@@ -86,6 +89,9 @@ public:
   /// Example input: CodeValue:[hnsf'U]|CodingSchemeDesignator:UCUM|CodeMeaning:Hounsfield unit
   /// \return true on success
   bool SetFromString(const std::string& content);
+
+  /// Returns true if the two coded entries have the same content
+  static bool AreEqual(vtkCodedEntry* entry1, vtkCodedEntry* entry2);
 
 protected:
   vtkCodedEntry();

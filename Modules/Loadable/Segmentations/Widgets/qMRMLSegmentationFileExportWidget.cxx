@@ -389,6 +389,19 @@ void qMRMLSegmentationFileExportWidget::setColorNodeID(const QString& id)
   {
     return;
   }
+  // Get previous color node ID
+  std::string previousNodeID;
+  const char* previousNodeIDPtr = d->SegmentationNode->GetLabelmapConversionColorTableNodeID();
+  if (previousNodeIDPtr)
+  {
+    previousNodeID = previousNodeIDPtr;
+  }
+  // Compare with current node ID and update if different
   std::string nodeID = id.toStdString();
+  if (nodeID == previousNodeID)
+  {
+    // no change
+    return;
+  }
   d->SegmentationNode->SetLabelmapConversionColorTableNodeID(nodeID.c_str());
 }

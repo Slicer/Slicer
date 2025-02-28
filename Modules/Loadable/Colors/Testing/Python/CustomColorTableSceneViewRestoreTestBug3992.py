@@ -9,7 +9,6 @@ colorNode = slicer.vtkMRMLColorTableNode()
 colorNode.SetName("CustomTest")
 colorNode.SetHideFromEditors(0)
 colorNode.SetTypeToFile()
-colorNode.NamesInitialisedOff()
 colorNode.SetNumberOfColors(3)
 if colorNode.GetLookupTable() is not None:
     colorNode.GetLookupTable().SetTableRange(0, 2)
@@ -21,8 +20,6 @@ colorNode.SetColor(2, "two", 0.5, 0.5, 0.5)
 colorNode.SetColorName(0, "zero")
 colorNode.SetColorName(1, "one")
 colorNode.SetColorName(2, "two")
-
-colorNode.NamesInitialisedOn()
 
 slicer.mrmlScene.AddNode(colorNode)
 

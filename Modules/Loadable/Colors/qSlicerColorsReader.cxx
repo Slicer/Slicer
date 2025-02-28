@@ -81,7 +81,7 @@ qSlicerIO::IOFileType qSlicerColorsReader::fileType()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerColorsReader::extensions()const
 {
-  return QStringList() << "Color (*.txt *.ctbl *.cxml)";
+  return QStringList() << "Color (*.csv *.tsv *.txt *.ctbl *.cxml)";
 }
 
 //----------------------------------------------------------------------------
@@ -124,7 +124,8 @@ bool qSlicerColorsReader::load(const IOProperties& properties)
     return false;
   }
 
-  vtkMRMLColorNode* node = d->ColorLogic->LoadColorFile(fileName.toUtf8());
+  const bool userType = true; // allow editing of color nodes loaded via GUI
+  vtkMRMLColorNode* node = d->ColorLogic->LoadColorFile(fileName.toUtf8(), nullptr, this->userMessages(), userType);
   QStringList loadedNodes;
   if (node)
   {

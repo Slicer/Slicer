@@ -14,3 +14,7 @@ slicer_add_python_unittest(SCRIPT ColorLegendSelfTest.py
 # Test restoring scene view with a custom color node
 slicer_add_python_test(SCRIPT CustomColorTableSceneViewRestoreTestBug3992.py
                        SLICER_ARGS --disable-cli-modules)
+
+# Test color table node with terminology information
+slicer_add_python_test(SCRIPT ColorTerminologiesTest.py
+                       SLICER_ARGS --disable-cli-modules)
