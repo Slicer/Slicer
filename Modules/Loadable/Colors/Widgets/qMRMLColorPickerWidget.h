@@ -26,10 +26,12 @@
 
 // qMRML includes
 #include "qMRMLWidget.h"
-#include "qMRMLWidgetsExport.h"
 
 // CTK includes
 #include <ctkVTKObject.h>
+
+// Colors includes
+#include "qSlicerColorsModuleWidgetsExport.h"
 
 class qMRMLColorPickerWidgetPrivate;
 class vtkMRMLNode;
@@ -38,7 +40,7 @@ class vtkMRMLColorLogic;
 
 /// Given a mrml scene, qMRMLColorPickerWidget allows the selection of
 /// a color/label from all the vtkMRMLColorNode in the scene.
-class QMRML_WIDGETS_EXPORT qMRMLColorPickerWidget : public qMRMLWidget
+class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorPickerWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
