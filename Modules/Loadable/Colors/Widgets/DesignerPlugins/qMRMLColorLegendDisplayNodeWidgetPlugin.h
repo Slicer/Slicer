@@ -19,19 +19,15 @@
 #define __qMRMLColorLegendDisplayNodeWidgetPlugin_h
 
 #include <QtGlobal>
-#include <QtUiPlugin/QDesignerCustomWidgetInterface>
+#include "qSlicerColorsModuleWidgetsAbstractPlugin.h"
 #include "qSlicerColorsModuleWidgetsPluginsExport.h"
 
 class Q_SLICER_QTMODULES_COLORS_WIDGETS_PLUGINS_EXPORT qMRMLColorLegendDisplayNodeWidgetPlugin
-  : public QObject, QDesignerCustomWidgetInterface
+  : public QObject, public qSlicerColorsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
-  Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
-  Q_INTERFACES(QDesignerCustomWidgetInterface);
 public:
-
-
   qMRMLColorLegendDisplayNodeWidgetPlugin(QObject * newParent = nullptr);
 
   // Don't reimplement this method.
@@ -47,7 +43,6 @@ public:
   QString  includeFile() const override;
   bool     isContainer() const override;
   QString  name() const override;
-
 };
 
 #endif
