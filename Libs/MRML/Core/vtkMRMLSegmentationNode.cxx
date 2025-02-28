@@ -1197,6 +1197,12 @@ vtkMRMLColorTableNode* vtkMRMLSegmentationNode::GetLabelmapConversionColorTableN
   return vtkMRMLColorTableNode::SafeDownCast(this->GetNodeReference(this->GetLabelmapConversionColorTableNodeReferenceRole()));
 }
 
+//---------------------------------------------------------------------------
+const char* vtkMRMLSegmentationNode::GetLabelmapConversionColorTableNodeID()
+{
+  return this->GetNodeReferenceID(this->GetLabelmapConversionColorTableNodeReferenceRole());
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
 {

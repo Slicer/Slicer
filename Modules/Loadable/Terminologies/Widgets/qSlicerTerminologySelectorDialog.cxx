@@ -94,6 +94,7 @@ void qSlicerTerminologySelectorDialogPrivate::init()
   // Make connections
   connect(this->NavigatorWidget, SIGNAL(selectionValidityChanged(bool)), q, SLOT(setSelectButtonEnabled(bool)));
   connect(this->NavigatorWidget, SIGNAL(typeDoubleClicked()), this, SLOT(accept()));
+  connect(this->NavigatorWidget, SIGNAL(colorDoubleClicked()), this, SLOT(accept()));
   connect(this->SelectButton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(this->CancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 }

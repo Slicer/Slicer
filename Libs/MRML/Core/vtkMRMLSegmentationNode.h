@@ -208,12 +208,12 @@ public:
 
   // Convenience functions for commonly needed features
 
+  //@{
   /// Change source representation. All other representations are automatically computed
   /// from the source representation.
   virtual bool SetSourceRepresentationToBinaryLabelmap();
-  /// Change source representation. All other representations are automatically computed
-  /// from the source representation.
   virtual bool SetSourceRepresentationToClosedSurface();
+  //@}
 
   /// \deprecated Use SetSourceRepresentationToBinaryLabelmap instead.
   virtual bool SetMasterRepresentationToBinaryLabelmap()
@@ -288,6 +288,7 @@ public:
   /// Get position of the segment's center (in the segmentation node's coordinate system)
   void GetSegmentCenter(const std::string& segmentID, double center[3]);
 
+  //@{
   /// Get position of the segment's center in world coordinate system.
   /// It is the position returned by \sa GetSegmentCenter() transformed by the segmentation node's
   /// parent transform.
@@ -295,21 +296,29 @@ public:
   /// Python-accessible version of \sa GetSegmentCenterRAS.
   /// Get position of the segment's center in world coordinate system.
   void GetSegmentCenterRAS(const std::string& segmentID, double centerRAS[3]);
+  //@}
 
+  //@{
   /// Indicates whether or not the segment filter is visible in the segments view
   vtkSetMacro(SegmentListFilterEnabled, bool);
   vtkGetMacro(SegmentListFilterEnabled, bool);
   vtkBooleanMacro(SegmentListFilterEnabled, bool);
+  //@}
 
+  //@{
   /// Contains a serialized representation of the filtering options used by the segments view
   vtkSetMacro(SegmentListFilterOptions, std::string);
   vtkGetMacro(SegmentListFilterOptions, std::string);
+  //@}
 
+  //@{
   /// The vtkMRMLColorTableNode that is used to convert to and from labelmap representations.
-  /// If a segment name matches the name of a color in the table, then the value of the color will be used as the labelmap value
+  /// If terminology or name of a segment name matches an entry in this color table, then the value of the color will be used as the label value
   /// for the segment when exporting the segmentation to labelmap.
   void SetLabelmapConversionColorTableNodeID(const char* labelmapConversionColorTableNodeID);
+  const char* GetLabelmapConversionColorTableNodeID();
   vtkMRMLColorTableNode* GetLabelmapConversionColorTableNode();
+  //@}
 
   /// ReferenceImageGeometryChangedEvent is fired when the ReferenceImageGeometry node reference is Added, Modified, or Removed
   /// SegmentationChangedEvent is fired when a different vtkSegmentation object is set into the node.

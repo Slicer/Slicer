@@ -17,8 +17,10 @@
 
 // MRML includes
 #include "vtkMRMLStorableNode.h"
+#include "vtkCodedEntry.h"
 
 // VTK includes
+class vtkCodedEntry;
 class vtkLookupTable;
 class vtkScalarsToColors;
 
@@ -33,59 +35,44 @@ class vtkScalarsToColors;
 /// a user. More than one model or label volume or editor can access the prebuilt
 /// nodes. This is used as a superclass for table based, procedural based, and
 /// implicit function based color nodes.
-/// All the color names are initialized to \a NoName ("(none)") when the table
-/// is created, using the max index of the colors expected to fill the table
-/// to set the size of the names array. If the node is being read in from a
-/// file, not all of the colors might be present from 0-max, so the color
-/// name should remain (none) at those indices.
-/// But if the color node is being built up from colors without names, there
-/// is a method to init the names from the color RGBA values so that
-/// something would be there rather than the default \a NoName which is used
-/// to determine that it's a unnamed and probably uninitialized color.
+/// The color table always defined color in the range from 0 to maximum label value,
+/// but some of the colors in this range may remain undefined.
 ///
 /// Subclasses must reimplement GetColor() and GetNumberOfColors().
 class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
 {
 public:
-  static vtkMRMLColorNode *New();
   vtkTypeMacro(vtkMRMLColorNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
+
+  vtkMRMLNode* CreateNodeInstance() override = 0;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance() override;
-
-  ///
   /// Set node attributes
   void ReadXMLAttributes( const char** atts) override;
 
-  ///
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
-  ///
-  /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  /// Copy node content (excludes basic data, such as name and node references).
+  /// \sa vtkMRMLNode::CopyContent
+  vtkMRMLCopyContentMacro(vtkMRMLColorNode);
 
-  ///
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Color";};
 
-  ///
   /// Reset node attributes to the initial state as defined in the constructor.
   /// NOTE:   it preserves values several dynamic attributes that may be set by an application: type, name
   void Reset(vtkMRMLNode* defaultNode) override;
 
   ///
-  ///
   void UpdateScene(vtkMRMLScene *scene) override;
 
-  ///
   /// Set Type to type, then build colors and set names
   virtual void SetType(int type);
-  ///
   /// Get for Type
   vtkGetMacro(Type,int);
 
@@ -101,23 +88,30 @@ public:
   virtual int GetFirstType () { return this->User; }
   virtual int GetLastType () { return this->File; }
 
-  /// return a text string describing the color look up table type
-  virtual const char * GetTypeAsString();
+  /// Return a text string describing the color look up table type.
+  virtual const char* GetTypeAsString();
 
   /// TypeModifiedEvent is generated when the type of the color look up table changes
   enum
   {
-      TypeModifiedEvent = 20002
+    TypeModifiedEvent = 20002
   };
 
+  /// Returns true if the entry is defined.
+  bool GetColorDefined(int ind);
+
+  /// Set the color defined flag for the given entry
+  void SetColorDefined(int ind, bool defined);
+
   /// Get name of a color from its index (index is 0-based)
+  /// Return empty string if undefined or if index is out of range.
   /// \sa GetColorIndexByName()
-  const char *GetColorName(int ind);
+  const char* GetColorName(int ind);
 
   /// Return the index associated with this color name, which can then be used
   /// to get the color. Returns -1 on failure.
   /// \sa GetColorName()
-  int GetColorIndexByName(const char *name);
+  int GetColorIndexByName(const char* name);
 
   /// Get the 0'th based \a colorIndex'th name of this color, replacing all
   /// file name sensitive color name characters with safer character(s).
@@ -128,41 +122,68 @@ public:
   /// they are replaced as an extra precaution.
   /// The color name is truncated to not be longer than 255 characters.
   /// \a subst can be made of invalid characters and be longer than 1 char
-  /// \sa GetColorNameWithoutSpaces
   std::string GetColorNameAsFileName(int colorIndex, const char *subst = "_");
 
   /// \deprecated GetColorNameWithoutSpaces
+  /// The method is no longer needed and will be removed in the future.
   /// Get the 0th based nth name of this color, replacing the spaces with
   /// subst
   /// \sa GetColorNameAsFileName
   std::string GetColorNameWithoutSpaces(int ind, const char *subst);
 
-  /// Set the 0th based nth name of this color.
-  /// Returns 1 on success, 0 on failure.
-  int SetColorName(int ind, const char *name);
+  /// Set the name of the n-th entry.
+  /// Note that this sets the Defined flag for the color entry to true.
+  /// \return 1 on success, 0 on failure.
+  int SetColorName(int ind, const char* name);
 
-  ///
-  /// Set the 0th based nth name of this color, replacing the subst character
-  /// with spaces. Returns 1 on success, 0 on failure
+  /// \deprecated SetColorNameWithSpaces
+  /// The method is no longer needed and will be removed in the future.
+  /// Set the name of the n-th entry, replacing the subst character by space.
+  /// Returns 1 on success, 0 on failure
   int SetColorNameWithSpaces(int ind, const char *name, const char *subst);
-  ///
+
+  // @{
+  /// Get terminology information for a color entry
+  vtkCodedEntry* GetTerminologyCategory(int ind);
+  vtkCodedEntry* GetTerminologyType(int ind);
+  vtkCodedEntry* GetTerminologyTypeModifier(int ind);
+  vtkCodedEntry* GetTerminologyRegion(int ind);
+  vtkCodedEntry* GetTerminologyRegionModifier(int ind);
+  std::string GetTerminologyAsString(int ind);
+  // @}
+
+  /// Set terminology information for a color entry from a string.
+  /// The string can be constructed from coded entries using GetTerminologyAsString() method.
+  bool SetTerminologyFromString(int ind, std::string terminologyString);
+
+  /// Set terminology information for a color entry.
+  /// This is mostly for convenience in Python.
+  bool SetTerminology(int ind,
+    std::string categoryCodingScheme, std::string categoryCodeValue, std::string categoryCodeMeaning,
+    std::string typeCodingScheme, std::string typeCodeValue, std::string typeCodeMeaning,
+    std::string typeModifierCodingScheme="", std::string typeModifierCodeValue="", std::string typeModifierCodeMeaning="",
+    std::string regionCodingScheme="", std::string regionCodeValue="", std::string regionCodeMeaning="",
+    std::string regionModifierCodingScheme="", std::string regionModifierCodeValue="", std::string regionModifierCodeMeaning="");
+
+  /// Convert coded entries to a string.
+  static std::string GetTerminologyAsString(std::string terminologyContextName,
+    vtkCodedEntry* category, vtkCodedEntry* type, vtkCodedEntry* typeModifier,
+    std::string regionContextName="", vtkCodedEntry* region=nullptr, vtkCodedEntry* regionModifier=nullptr);
+
+  /// Get attribute name that indicates if the color table has terminology entries.
+  const char* GetContainsTerminologyAttributeName() { return "ContainsTerminology"; };
+  /// Returns true if the color table has terminology information.
+  bool GetContainsTerminology();
+
   /// Get the number of colors in the table
-  virtual int GetNumberOfColors();
+  virtual int GetNumberOfColors() = 0;
 
-  /// Retrieve the color associated to the index
-  /// Must be reimplemented in the derived classes
-  /// Return 1 if the color exists, 0 otherwise
-  virtual bool GetColor(int ind, double color[4]);
+  /// Retrieve the color associated to the index. Must be reimplemented in the derived classes.
+  /// \return 1 if the color exists, 0 otherwise
+  virtual bool GetColor(int ind, double color[4]) = 0;
 
-  ///
-  /// Name of the file name from which to read color information
-  vtkSetStringMacro(FileName);
-  vtkGetStringMacro(FileName);
-
-  ///
-  /// Most color nodes will implement a look up table, so provide a top level
-  /// get method
-  virtual vtkLookupTable * GetLookupTable();
+  /// Most color nodes will implement a look up table, so provide a top level get method.
+  virtual vtkLookupTable* GetLookupTable();
 
   /// Utility function that either returns a vtkLookupTable or a
   /// vtkColorTransferFunction whichever makes more sense.
@@ -170,19 +191,53 @@ public:
   /// the method if you want it to return something else in subclasses
   virtual vtkScalarsToColors* GetScalarsToColors();
 
-  /// get/set the string used for an unnamed color
-  /// "(none)" by default.
-  /// \sa SetColorName
-  vtkGetStringMacro(NoName);
-  vtkSetStringMacro(NoName);
+  /// \deprecated GetNoName
+  /// In the past, a color was considered undefined when the name matched the special string returned by GetNoName().
+  /// Now the color name has no special meaning, but ColorDefined flag determines if the color is defined.
+  /// The GetNoName()/SetNoName() method is only kept for backward compatibility.
+  const char* GetNoName()
+  {
+    vtkWarningMacro("GetNoName() method is deprecated use GetColorDefined() and SetColorDefined() methods instead");
+    return "(none)";
+  }
+  /// \deprecated SetNoName
+  /// This method has no effect and kept for backward compatility only. Use GetColorDefined() and SetColorDefined() methods instead.
+  /// \sa GetNoName()
+  void SetNoName(const char*)
+  {
+    vtkErrorMacro("SetNoName() method is deprecated use GetColorDefined() and SetColorDefined() methods instead");
+  }
 
-  ///
-  /// Get/Set for the flag on names array having been initialized
-  vtkGetMacro(NamesInitialised, int);
-  vtkSetMacro(NamesInitialised, int);
-  vtkBooleanMacro(NamesInitialised, int);
-  ///
+  // @{
+  /// \deprecated SetNamesInitialised
+  /// This method has no effect and kept for backward compatility only.
+  /// Usually this method just not need to be called anymore.
+  /// Use SetColorName() and SetColorDefined() methods to set or undefine color names.
+  /// \sa GetNoName()
+  void NamesInitialisedOn()
+  {
+    vtkErrorMacro("NamesInitialisedOn() method is deprecated and has no effect and no longer necessary.");
+  }
+  void NamesInitialisedOff()
+  {
+    vtkErrorMacro("NamesInitialisedOff() method is deprecated and has no effect and no longer necessary.");
+  }
+  void SetNamesInitialised(int)
+  {
+    vtkErrorMacro("SetNamesInitialised() method is deprecated and has no effect. Use SetColorName() and SetColorDefined() methods instead.");
+  }
+  int GetNamesInitialised(int)
+  {
+    vtkErrorMacro("GetNamesInitialised() method is deprecated. Use SetColorName() and SetColorDefined() methods to set and unset color names.");
+    return 1;
+  }
+  // @}
+
   /// Set values in the names vector from the colors in the node
+  /// It is not recommended to use this method, because it makes the name and color columns of the table
+  /// store redundant information, which may get out of sync.
+  /// Saving automatically-generated color names in the table also interferes with automatically updating
+  /// the displayed table when terminology is specified or when displaying the color table in an internationalized GUI.
   void SetNamesFromColors();
 
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
@@ -211,35 +266,67 @@ protected:
   vtkMRMLColorNode(const vtkMRMLColorNode&);
   void operator=(const vtkMRMLColorNode&);
 
-  ///
-  /// Set values in the names vector from the colors in the node
-  virtual bool SetNameFromColor(int index);
+  /// Sets whether the color table has terminology information.
+  void SetContainsTerminology(bool containsTerminology);
 
-  /// Return true if the color index has a "real" name, otherwise return false
-  /// if the name is \a NoName (i.e. "(none)") or automatically generated
-  /// (i.e. "R=...G=...B=...").
-  /// \sa GetNoName()
-  virtual bool HasNameFromColor(int index);
+  struct PropertyType
+  {
+    // The label value and corresponding color has been explicitly set.
+    // If the label value is not included in the color table file then "Defined" will set to false.
+    bool Defined{ false };
+    std::string Name;
+    vtkSmartPointer<vtkCodedEntry> Category;
+    vtkSmartPointer<vtkCodedEntry> Type;
+    vtkSmartPointer<vtkCodedEntry> TypeModifier;
+    vtkSmartPointer<vtkCodedEntry> Region;
+    vtkSmartPointer<vtkCodedEntry> RegionModifier;
+    void DeepCopy(PropertyType& source)
+    {
+      this->Defined = source.Defined;
+      this->Name = source.Name;
+      this->Category = source.Category;
+      this->Type = source.Type;
+      this->TypeModifier = source.TypeModifier;
+      this->Region = source.Region;
+      this->RegionModifier = source.RegionModifier;
+    }
+    void Clear()
+    {
+      this->Defined = false;
+      this->Name.clear();
+      this->Category = nullptr;
+      this->Type = nullptr;
+      this->TypeModifier = nullptr;
+      this->Region = nullptr;
+      this->RegionModifier = nullptr;
+    }
+    bool operator==(const PropertyType& other) const
+    {
+      return this->Defined == other.Defined &&
+        this->Name == other.Name &&
+        vtkCodedEntry::AreEqual(this->Category, other.Category) &&
+        vtkCodedEntry::AreEqual(this->Type, other.Type) &&
+        vtkCodedEntry::AreEqual(this->TypeModifier, other.TypeModifier) &&
+        vtkCodedEntry::AreEqual(this->Region, other.Region) &&
+        vtkCodedEntry::AreEqual(this->RegionModifier, other.RegionModifier);
+    }
+    bool operator!=(const PropertyType& other) const
+    {
+      return !(*this == other);
+    }
+  };
+
+  bool GetProperty(int ind, PropertyType& prop);
+
+  /// Set values in the names vector from the colors in the node.
+  virtual bool SetNameFromColor(int index);
 
   /// Which type of color information does this node hold?
   /// Valid values are in the enumerated list
   int Type;
 
-  ///
-  /// A vector of names for the color table elements
-  std::vector<std::string> Names;
-
-  ///
-  /// A file name to read text attributes from
-  char *FileName;
-
-  ///
-  /// the string used for an unnamed color
-  char *NoName;
-
-  ///
-  /// Have the color names been set? Used to do lazy copy of the Names array.
-  int NamesInitialised;
+  /// Vector of names and other properties for the color table elements
+  std::vector<PropertyType> Properties;
 };
 
 #endif

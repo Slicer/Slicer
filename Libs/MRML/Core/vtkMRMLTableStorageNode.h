@@ -56,6 +56,11 @@ public:
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
 
+  /// Helper function to write out table to file
+  static bool WriteTable(std::string filename, vtkTable* table, std::string delimiter,
+    std::map<vtkIdType, std::vector<std::string>> componentNamesMap);
+
+public:
   /// Get/Set schema file name, which contain description of data type of each column
   virtual void SetSchemaFileName(const char* schemaFileName);
   virtual std::string GetSchemaFileName();
@@ -124,7 +129,6 @@ protected:
   bool ReadSchema(std::string filename, vtkMRMLTableNode* tableNode);
   bool ReadTable(std::string filename, vtkMRMLTableNode* tableNode);
 
-  bool WriteTable(std::string filename, vtkMRMLTableNode* tableNode);
   bool WriteSchema(std::string filename, vtkMRMLTableNode* tableNode);
 
   bool AutoFindSchema;

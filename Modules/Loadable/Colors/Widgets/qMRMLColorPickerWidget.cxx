@@ -26,6 +26,7 @@
 
 // qMRML includes
 #include "qMRMLColorPickerWidget.h"
+#include "qMRMLSortFilterColorProxyModel.h"
 #include "ui_qMRMLColorPickerWidget.h"
 
 // MRMLLogic includes

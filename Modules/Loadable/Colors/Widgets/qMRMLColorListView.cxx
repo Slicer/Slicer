@@ -13,8 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Julien Finet, Kitware Inc.
-  and was partially funded by NIH grant 3P41RR013218-12S1
+  This file was developed by Julien Finet, Kitware Inc. and Csaba Pinter, EBATINCA, S.L.
+  and was partially funded by NIH grant 3P41RR013218-12S1 and
+  by Murat Maga (Seattle Children’s Research Institute).
 
 ==============================================================================*/
 
@@ -24,6 +25,7 @@
 // qMRML includes
 #include "qMRMLColorListView.h"
 #include "qMRMLColorModel.h"
+#include "qMRMLSortFilterColorProxyModel.h"
 
 // MRML includes
 #include <vtkMRMLColorNode.h>
@@ -52,18 +54,11 @@ void qMRMLColorListViewPrivate::init()
 
   qMRMLColorModel* colorModel = new qMRMLColorModel(q);
   colorModel->setLabelColumn(0);
-  QSortFilterProxyModel* sortFilterModel = new QSortFilterProxyModel(q);
+  qMRMLSortFilterColorProxyModel* sortFilterModel = new qMRMLSortFilterColorProxyModel(q);
   sortFilterModel->setSourceModel(colorModel);
   q->setModel(sortFilterModel);
 
   q->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  //q->setWrapping(true);
-  //q->setResizeMode(QListView::Adjust);
-  //q->setFlow(QListView::TopToBottom);
-  //q->setRootIndex(sortFilterModel->mapFromSource(colorModel->mrmlColorNodeIndex()));
-
-  //QObject::connect(q, SIGNAL(activated(QModelIndex)),
-  //                 q, SLOT(onItemActivated(QModelIndex)));
 }
 
 //------------------------------------------------------------------------------
@@ -85,9 +80,9 @@ qMRMLColorModel* qMRMLColorListView::colorModel()const
 }
 
 //------------------------------------------------------------------------------
-QSortFilterProxyModel* qMRMLColorListView::sortFilterProxyModel()const
+qMRMLSortFilterColorProxyModel* qMRMLColorListView::sortFilterProxyModel()const
 {
-  return qobject_cast<QSortFilterProxyModel*>(this->model());
+  return qobject_cast<qMRMLSortFilterColorProxyModel*>(this->model());
 }
 
 //------------------------------------------------------------------------------
@@ -117,14 +112,7 @@ vtkMRMLColorNode* qMRMLColorListView::mrmlColorNode()const
 //------------------------------------------------------------------------------
 void qMRMLColorListView::setShowOnlyNamedColors(bool enable)
 {
-  if (enable)
-  {
-    this->sortFilterProxyModel()->setFilterRegExp(QRegExp("^(?!\\(none\\))"));
-  }
-  else
-  {
-    this->sortFilterProxyModel()->setFilterRegExp(QRegExp());
-  }
+  this->sortFilterProxyModel()->setShowEmptyColors(!enable);
 }
 
 //------------------------------------------------------------------------------

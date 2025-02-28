@@ -122,28 +122,32 @@ std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
 //----------------------------------------------------------------------------
 std::vector<std::string> vtkSlicerColorLogic::FindUserColorFiles()
 {
-  std::vector<std::string> DirectoriesToCheck;
+  std::vector<std::string> directoriesToCheck;
   // add the list of dirs set from the application
   if (this->UserColorFilePaths != nullptr)
   {
-    vtkDebugMacro("\nFindColorFiles: got user color file paths = " << this->UserColorFilePaths);
+    vtkDebugMacro("FindColorFiles: got user color file paths = " << this->UserColorFilePaths);
     // parse out the list, breaking at delimiter strings
 #ifdef WIN32
-    const char *delim = ";";
+    const char* delim = ";";
 #else
-    const char *delim = ":";
+    const char* delim = ":";
 #endif
-    char *ptr = strtok(this->UserColorFilePaths, delim);
+    char* ptr = strtok(this->UserColorFilePaths, delim);
     while (ptr != nullptr)
     {
       std::string dir = std::string(ptr);
-      vtkDebugMacro("\nFindColorFiles: Adding user dir " << dir.c_str() << " to the directories to check");
-      DirectoriesToCheck.push_back(dir);
+      vtkDebugMacro("FindColorFiles: Adding user dir " << dir.c_str() << " to the directories to check");
+      directoriesToCheck.push_back(dir);
       ptr = strtok(nullptr, delim);
     }
-  } else { vtkDebugMacro("\nFindColorFiles: oops, the user color file paths aren't set!"); }
+  }
+  else
+  {
+    vtkDebugMacro("FindColorFiles: User color file paths are not set");
+  }
 
-  return this->FindColorFiles(DirectoriesToCheck);
+  return this->FindColorFiles(directoriesToCheck);
 }
 
 //----------------------------------------------------------------------------
@@ -182,7 +186,9 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
     struct dirent *dirp;
     if ((dp  = opendir(dirString.c_str())) == nullptr)
     {
-      vtkErrorMacro("\nError(" << errno << ") opening user specified color path: " << dirString.c_str() << ", no color files will be loaded from that directory\n(check Edit -> Application Settings -> Module Settings to adjust your User defined color file paths)");
+      vtkErrorMacro("FindColorFiles: Error(" << errno << ") opening user specified color path: " << dirString.c_str()
+        << ", no color files will be loaded from that directory\n(check Edit -> Application Settings -> "
+        << "Module Settings to adjust your User defined color file paths)");
     }
     else
     {
@@ -344,8 +350,8 @@ int vtkSlicerColorLogic::GetNumberOfColorLegendDisplayNodes(vtkMRMLDisplayableNo
 {
   if (!displayableNode)
   {
-   vtkGenericWarningMacro("vtkSlicerColorLogic::GetNumberOfColorLegendDisplayNodes: Displayable node is invalid");
-   return 0;
+    vtkGenericWarningMacro("vtkSlicerColorLogic::GetNumberOfColorLegendDisplayNodes: Displayable node is invalid");
+    return 0;
   }
   int numberOfColorLegendDIsplayNodes = 0;
   int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();

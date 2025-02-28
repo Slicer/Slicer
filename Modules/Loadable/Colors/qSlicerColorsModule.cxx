@@ -111,10 +111,8 @@ void qSlicerColorsModule::setup()
   {
     this->appLogic()->SetColorLogic(colorLogic);
   }
-  app->coreIOManager()->registerIO(
-    new qSlicerColorsReader(colorLogic, this));
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter(
-    "Colors", QString("ColorTableFile"),
+  app->coreIOManager()->registerIO(new qSlicerColorsReader(colorLogic, this));
+  app->coreIOManager()->registerIO(new qSlicerNodeWriter("Colors", QString("ColorTableFile"),
     QStringList() << "vtkMRMLColorNode", true, this));
 
   QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(
@@ -151,7 +149,7 @@ void qSlicerColorsModule::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerColorsModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerColorsModule::createWidgetRepresentation()
 {
   return new qSlicerColorsModuleWidget;
 }
@@ -165,7 +163,7 @@ vtkMRMLAbstractLogic* qSlicerColorsModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerColorsModule::helpText()const
 {
-  QString help =
+  QString help = tr(
     "The <b>Colors Module</b> manages color look up tables, stored in Color nodes.<br>"
     "These tables translate between a numeric value and a color "
     "for displaying of various data types, such as volumes and models.<br>"
@@ -179,7 +177,7 @@ QString qSlicerColorsModule::helpText()const
     "and color value can be computed by smoothly interpolating between these values "
     "(example: PET-DICOM). No names are specified for colors.</li>"
     "All built-in color tables are read-only. To edit colors, create a copy "
-    "of the color table by clicking on the 'copy' folder icon.<br>";
+    "of the color table by clicking on the 'copy' folder icon.<br>");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -187,9 +185,7 @@ QString qSlicerColorsModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerColorsModule::acknowledgementText()const
 {
-  QString about =
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.";
-  return about;
+  return tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
 }
 
 //-----------------------------------------------------------------------------
@@ -200,13 +196,15 @@ QStringList qSlicerColorsModule::contributors()const
   moduleContributors << QString("Julien Finet (Kitware)");
   moduleContributors << QString("Ron Kikinis (SPL, BWH)");
   moduleContributors << QString("Mikhail Polkovnikov (IHEP)");
+  moduleContributors << QString("Csaba Pinter (EBATINCA)");
+  moduleContributors << QString("Andras Lasso (PerkLab, Queen's)");
   return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerColorsModule::isHidden()const
+QStringList qSlicerColorsModule::dependencies()const
 {
-  return false;
+  return QStringList() << "Terminologies";
 }
 
 //-----------------------------------------------------------------------------

@@ -752,6 +752,10 @@ QString qMRMLNodeComboBox::getNameFromDialog(const QString& dialogTitle, const Q
 void qMRMLNodeComboBox::emitCurrentNodeChanged()
 {
   Q_D(qMRMLNodeComboBox);
+  if (d->SceneSwitchingInProgress)
+  {
+    return;
+  }
   int currentIndex = d->ComboBox->currentIndex();
   vtkMRMLNode*  node = d->mrmlNode(currentIndex);
   if (!node && ((!d->NoneEnabled &&currentIndex != -1) || (d->NoneEnabled && currentIndex != 0)) )
@@ -837,7 +841,12 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 
   // Update factory
   d->MRMLNodeFactory->setMRMLScene(scene);
+
+  // Set SceneSwitchingInProgress flag to prevent scene model updates emitting node index changes events
+  // (they could overwrite requested node information)
+  d->SceneSwitchingInProgress = true;
   d->MRMLSceneModel->setMRMLScene(scene);
+  d->SceneSwitchingInProgress = false;
 
   if (d->MRMLScene)
   {
@@ -901,7 +910,7 @@ void qMRMLNodeComboBox::setCurrentNode(vtkMRMLNode* newCurrentNode)
     d->RequestedNodeID.clear();
     d->RequestedNode = newCurrentNode;
   }
-  this->setCurrentNodeID(newCurrentNode ? newCurrentNode->GetID() : "");
+  d->setCurrentNodeIDInternal(newCurrentNode ? newCurrentNode->GetID() : "");
 }
 
 // --------------------------------------------------------------------------
@@ -920,6 +929,13 @@ void qMRMLNodeComboBox::setCurrentNodeID(const QString& nodeID)
     d->RequestedNodeID = nodeID;
     d->RequestedNode = nullptr;
   }
+  d->setCurrentNodeIDInternal(nodeID);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLNodeComboBoxPrivate::setCurrentNodeIDInternal(const QString & nodeID)
+{
+  Q_Q(qMRMLNodeComboBox);
   // A straight forward implementation of setCurrentNode would be:
   //    int index = !nodeID.isEmpty() ? d->ComboBox->findData(nodeID, qMRMLSceneModel::UIDRole) : -1;
   //    if (index == -1 && d->NoneEnabled)
@@ -930,33 +946,33 @@ void qMRMLNodeComboBox::setCurrentNodeID(const QString& nodeID)
   // However it doesn't work for custom comboxboxes that display non-flat lists
   // (typically if it is a tree model/view)
   // let's use a more generic one
-  QModelIndexList indexes = d->indexesFromMRMLNodeID(nodeID);
+  QModelIndexList indexes = this->indexesFromMRMLNodeID(nodeID);
   if (indexes.size() == 0)
   {
-    QModelIndex sceneIndex = d->ComboBox->model()->index(0, 0);
-    d->ComboBox->setRootModelIndex(sceneIndex);
+    QModelIndex sceneIndex = this->ComboBox->model()->index(0, 0);
+    this->ComboBox->setRootModelIndex(sceneIndex);
     // The combobox updates the current index of the view only when he needs
     // it (in popup()), however we want the view to be always synchronized
     // with the currentIndex as we use it to know if it has changed. This is
     // why we set it here.
-    QModelIndex noneIndex = ctk::modelChildIndex(d->ComboBox->model(), sceneIndex, 0, d->ComboBox->modelColumn());
-    d->ComboBox->view()->setCurrentIndex(
-      d->NoneEnabled ? noneIndex : sceneIndex);
-    d->ComboBox->setCurrentIndex(d->NoneEnabled ? 0 : -1);
+    QModelIndex noneIndex = ctk::modelChildIndex(this->ComboBox->model(), sceneIndex, 0, this->ComboBox->modelColumn());
+    this->ComboBox->view()->setCurrentIndex(
+      this->NoneEnabled ? noneIndex : sceneIndex);
+    this->ComboBox->setCurrentIndex(this->NoneEnabled ? 0 : -1);
     return;
   }
   //d->ComboBox->setRootModelIndex(indexes[0].parent());
   //d->ComboBox->setCurrentIndex(indexes[0].row());
-  QModelIndex oldIndex = d->ComboBox->view()->currentIndex();
+  QModelIndex oldIndex = this->ComboBox->view()->currentIndex();
   if (oldIndex != indexes[0])
   {
-    d->ComboBox->view()->setCurrentIndex(indexes[0]);
+    this->ComboBox->view()->setCurrentIndex(indexes[0]);
     QKeyEvent event(QEvent::ShortcutOverride, Qt::Key_Enter, Qt::NoModifier);
     // here we conditionally send the event, otherwise, nodeActivated would be
     // fired even if the user didn't manually select the node.
     // Warning: please note that sending a KeyEvent will close the popup menu
     // of the combobox if it is open.
-    QApplication::sendEvent(d->ComboBox->view(), &event);
+    QApplication::sendEvent(this->ComboBox->view(), &event);
   }
 }
 

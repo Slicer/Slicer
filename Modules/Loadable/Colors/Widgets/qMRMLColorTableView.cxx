@@ -29,9 +29,13 @@
 #include "qMRMLColorTableView.h"
 #include "qMRMLColorModel.h"
 #include "qMRMLItemDelegate.h"
+#include "qMRMLSortFilterColorProxyModel.h"
 
 // MRML includes
 #include <vtkMRMLColorTableNode.h>
+
+// Colors widgets includes
+#include "qSlicerColorTableTerminologyDelegate.h"
 
 //------------------------------------------------------------------------------
 class qMRMLColorTableViewPrivate
@@ -56,17 +60,22 @@ void qMRMLColorTableViewPrivate::init()
   Q_Q(qMRMLColorTableView);
 
   qMRMLColorModel* colorModel = new qMRMLColorModel(q);
-  QSortFilterProxyModel* sortFilterModel = new QSortFilterProxyModel(q);
+  qMRMLSortFilterColorProxyModel* sortFilterModel = new qMRMLSortFilterColorProxyModel(q);
   sortFilterModel->setFilterKeyColumn(colorModel->labelColumn());
   sortFilterModel->setSourceModel(colorModel);
   q->setModel(sortFilterModel);
 
   q->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  // Note: resizing to contents can be extremely slow on large color tables.
   q->horizontalHeader()->setStretchLastSection(false);
   q->horizontalHeader()->setSectionResizeMode(colorModel->colorColumn(), QHeaderView::ResizeToContents);
-  q->horizontalHeader()->setSectionResizeMode(colorModel->labelColumn(), QHeaderView::Stretch);
   q->horizontalHeader()->setSectionResizeMode(colorModel->opacityColumn(), QHeaderView::ResizeToContents);
+  q->horizontalHeader()->setSectionResizeMode(colorModel->labelColumn(), QHeaderView::Stretch);
+  q->horizontalHeader()->setSectionResizeMode(colorModel->terminologyColumn(), QHeaderView::Stretch);
+
   q->setItemDelegate(new qMRMLItemDelegate(q));
+  q->setItemDelegateForColumn(colorModel->terminologyColumn(), new qSlicerColorTableTerminologyDelegate(q));
 }
 
 //------------------------------------------------------------------------------
@@ -88,9 +97,9 @@ qMRMLColorModel* qMRMLColorTableView::colorModel()const
 }
 
 //------------------------------------------------------------------------------
-QSortFilterProxyModel* qMRMLColorTableView::sortFilterProxyModel()const
+qMRMLSortFilterColorProxyModel* qMRMLColorTableView::sortFilterProxyModel()const
 {
-  return qobject_cast<QSortFilterProxyModel*>(this->model());
+  return qobject_cast<qMRMLSortFilterColorProxyModel*>(this->model());
 }
 
 //------------------------------------------------------------------------------
@@ -109,8 +118,7 @@ void qMRMLColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
   this->sortFilterProxyModel()->invalidate();
 
   this->setEditTriggers( (node && node->GetType() == vtkMRMLColorTableNode::User) ?
-      QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed :
-      QAbstractItemView::NoEditTriggers);
+    QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed : QAbstractItemView::NoEditTriggers);
 }
 
 //------------------------------------------------------------------------------
@@ -124,14 +132,7 @@ vtkMRMLColorNode* qMRMLColorTableView::mrmlColorNode()const
 //------------------------------------------------------------------------------
 void qMRMLColorTableView::setShowOnlyNamedColors(bool enable)
 {
-  if (enable)
-  {
-    this->sortFilterProxyModel()->setFilterRegExp(QRegExp("^(?!\\(none\\))"));
-  }
-  else
-  {
-    this->sortFilterProxyModel()->setFilterRegExp(QRegExp());
-  }
+  this->sortFilterProxyModel()->setShowEmptyColors(!enable);
 }
 
 //------------------------------------------------------------------------------

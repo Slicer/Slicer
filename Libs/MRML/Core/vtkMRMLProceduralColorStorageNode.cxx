@@ -93,7 +93,6 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     // clear out the node
     int wasModifying = colorNode->StartModify();
     colorNode->SetTypeToFile();
-    colorNode->NamesInitialisedOff();
     ctf->RemoveAllPoints();
 
     std::string line;

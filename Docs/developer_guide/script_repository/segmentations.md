@@ -119,7 +119,6 @@ colorTableNode.HideFromEditorsOff()  # make the color table selectable in the GU
 slicer.mrmlScene.AddNode(colorTableNode); colorTableNode.UnRegister(None)
 largestLabelValue = max([name_value[1] for name_value in segment_names_to_labels])
 colorTableNode.SetNumberOfColors(largestLabelValue + 1)
-colorTableNode.SetNamesInitialised(True) # prevent automatic color name generation
 import random
 for segmentName, labelValue in segment_names_to_labels:
     r = random.uniform(0.0, 1.0)

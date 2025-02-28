@@ -72,7 +72,7 @@ int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  QString xmlDirectory = QString(argv[1]) + "/Modules/Loadable/Colors/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
@@ -105,8 +105,6 @@ int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   widget2->setMRMLScene(scene2.GetPointer());
 
-  // for some reasons it generate a warning if the type is changed.
-  colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
 
   vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;

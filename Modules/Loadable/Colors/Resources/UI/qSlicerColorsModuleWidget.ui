@@ -18,72 +18,13 @@
     <normaloff>:/Icons/Colors.png</normaloff>:/Icons/Colors.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_7">
-   <item row="4" column="1">
-    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
-     <property name="activeSizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="3">
-    <widget class="QFrame" name="frame">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="ColorTableLabel">
-        <property name="text">
-         <string>Colors:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="qMRMLColorTableComboBox" name="ColorTableComboBox">
-          <property name="addEnabled">
-           <bool>false</bool>
-          </property>
-          <property name="removeEnabled">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="CopyColorNodeButton">
-          <property name="toolTip">
-           <string>Duplicate the current color node to allow editing colors, scalar range, size.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="3" column="0" colspan="3">
     <widget class="ctkCollapsibleButton" name="ColorLegendCollapsibleButton">
      <property name="enabled">
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>Color Legend</string>
+      <string>Color legend</string>
      </property>
      <property name="collapsed">
       <bool>true</bool>
@@ -172,10 +113,69 @@
      </layout>
     </widget>
    </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="ColorTableLabel">
+        <property name="text">
+         <string>Colors:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="qMRMLColorTableComboBox" name="ColorTableComboBox">
+          <property name="addEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="removeEnabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="CopyColorNodeButton">
+          <property name="toolTip">
+           <string>Duplicate the current color node to allow editing colors, scalar range, size.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="AddColorTableNodeButton">
+          <property name="toolTip">
+           <string>Add new empty color table node.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="1" column="0" colspan="3">
     <widget class="ctkCollapsibleButton" name="EditColorsCollapsibleButton">
      <property name="text">
-      <string>Color Table</string>
+      <string>Color table</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -230,17 +230,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Number of Colors: </string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="NumberOfColorsSpinBox">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="maximum">
-            <number>10000000</number>
+            <string>Number of colors: </string>
            </property>
           </widget>
          </item>
@@ -253,7 +243,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Hide empty Colors: </string>
+            <string>Hide empty colors: </string>
            </property>
           </widget>
          </item>
@@ -263,7 +253,7 @@
             <string>Show/Hide the unnamed color entries in the list below.</string>
            </property>
            <property name="text">
-            <string> </string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -306,10 +296,57 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QSpinBox" name="NumberOfColorsSpinBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="maximum">
+              <number>10000000</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="AddNewColorButton">
+             <property name="toolTip">
+              <string>Add new color to color table</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="RemoveCurrentColorButton">
+             <property name="toolTip">
+              <string>Delete currently selected color</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="ctkDynamicSpacer" name="DynamicSpacer">
+     <property name="activeSizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
     </widget>
    </item>
   </layout>
@@ -320,11 +357,6 @@
    <extends>qMRMLNodeComboBox</extends>
    <header>qMRMLColorTableComboBox.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLColorTableView</class>
-   <extends>QTableView</extends>
-   <header>qMRMLColorTableView.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
@@ -354,6 +386,11 @@
    <extends>qMRMLWidget</extends>
    <header>qMRMLColorLegendDisplayNodeWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLColorTableView</class>
+   <extends>QTableView</extends>
+   <header>qMRMLColorTableView.h</header>
   </customwidget>
   <customwidget>
    <class>ctkVTKScalarsToColorsWidget</class>

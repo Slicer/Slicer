@@ -79,8 +79,12 @@ void vtkSlicerTerminologyCategory::Copy(vtkCodedEntry* aCategory)
 
   this->Superclass::Copy(aCategory);
 
-  vtkSlicerTerminologyCategory *aTerminologyCategory =
-      vtkSlicerTerminologyCategory::SafeDownCast(aCategory);
+  vtkSlicerTerminologyCategory* aTerminologyCategory = vtkSlicerTerminologyCategory::SafeDownCast(aCategory);
+  if (!aTerminologyCategory)
+  {
+    vtkErrorMacro("Copy: Input type is not a vtkSlicerTerminologyCategory");
+    return;
+  }
 
   this->SetSNOMEDCTConceptID(aTerminologyCategory->GetSNOMEDCTConceptID());
   this->SetUMLSConceptUID(aTerminologyCategory->GetUMLSConceptUID());
