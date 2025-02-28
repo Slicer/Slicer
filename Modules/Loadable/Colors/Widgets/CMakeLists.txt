@@ -18,6 +18,14 @@ set(${KIT}_SRCS
   qMRMLColorPickerWidget.h
   qMRMLColorTableView.cxx
   qMRMLColorTableView.h
+  qSlicerColorTableTerminologyDelegate.cxx
+  qSlicerColorTableTerminologyDelegate.h
+  qSlicerTerminologyEditorWidget.cxx
+  qSlicerTerminologyEditorWidget.h
+  qSlicerTerminologyEditorButton.cxx
+  qSlicerTerminologyEditorButton.h
+  qSlicerTerminologyEditorDialog.cxx
+  qSlicerTerminologyEditorDialog.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -25,11 +33,16 @@ set(${KIT}_MOC_SRCS
   qMRMLColorListView.h
   qMRMLColorPickerWidget.h
   qMRMLColorTableView.h
+  qSlicerColorTableTerminologyDelegate.h
+  qSlicerTerminologyEditorWidget.h
+  qSlicerTerminologyEditorButton.h
+  qSlicerTerminologyEditorDialog.h
   )
 
 set(${KIT}_UI_SRCS
   Resources/UI/qMRMLColorLegendDisplayNodeWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
+  Resources/UI/qSlicerTerminologyEditorWidget.ui
   )
 
 set(${KIT}_RESOURCES

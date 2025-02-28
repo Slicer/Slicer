@@ -1597,13 +1597,20 @@ void vtkMRMLStorageNode::SetWriteFileFormat(const char* writeFileFormat)
 }
 
 //-----------------------------------------------------------------------------
-std::string vtkMRMLStorageNode::ClampFileName(const std::string& filename, int extensionLength, int maxFileNameLength, int hashLength/*=4*/)
+std::string vtkMRMLStorageNode::ClampFileName(const std::string& filename, int maxFileNameLength/*=-1*/, int hashLength/*=4*/)
 {
-  if (maxFileNameLength < 8)
+  std::string extension = this->GetSupportedFileExtension(filename.c_str());
+  return vtkMRMLStorageNode::ClampFileNameExtension(filename, maxFileNameLength, hashLength, extension.length());
+}
+
+//-----------------------------------------------------------------------------
+std::string vtkMRMLStorageNode::ClampFileNameExtension(const std::string& filename,
+  int maxFileNameLength/*=-1*/, int hashLength/*=4*/, int extensionLength/*=0*/)
+{
+  if (maxFileNameLength < 0)
   {
     // Use default limit
-    vtkGenericWarningMacro("ClampFileName: maxFileNameLength is too small, using default value of 8");
-    maxFileNameLength = 8;
+    maxFileNameLength = vtkMRMLStorageNode::GetRecommendedFileNameLength();
   }
 
   // Remove extension

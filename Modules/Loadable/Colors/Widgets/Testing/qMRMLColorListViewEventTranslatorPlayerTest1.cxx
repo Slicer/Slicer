@@ -68,7 +68,7 @@ int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  QString xmlDirectory = QString(argv[1]) + "/Libs/MRML/Widgets/Testing/";
+  QString xmlDirectory = QString(argv[1]) + "/Modules/Loadable/Colors/Widgets/Testing/";
 
   // ------------------------
   ctkEventTranslatorPlayerWidget etpWidget;
@@ -83,7 +83,6 @@ int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char * argv [] )
 
   widget->setMRMLColorNode(colorTableNode.GetPointer());
 
-  colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
 
   etpWidget.addTestCase(widget,

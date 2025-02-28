@@ -45,24 +45,32 @@ public:
   ~qMRMLItemDelegate() override;
   typedef QStyledItemDelegate Superclass;
 
+  /// ColorRole is an invisible role that contains the true color (QColor) when
+  /// Qt::DecorationRole contains a pixmap of the color.
+  enum ItemDataRole {
+    ColorEntryRole = Qt::UserRole,
+    PointerRole,
+    ColorRole
+  };
+
   bool isColor(const QModelIndex& index)const;
   int colorRole(const QModelIndex& index)const;
   bool is0To1Value(const QModelIndex& index)const;
 
-  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const override;
 
-  void setEditorData(QWidget *editor, const QModelIndex &index) const override;
-  void setModelData(QWidget *editor, QAbstractItemModel *model,
+  void setEditorData(QWidget* editor, const QModelIndex &index) const override;
+  void setModelData(QWidget* editor, QAbstractItemModel* model,
                     const QModelIndex &index) const override;
 
   QSize sizeHint(const QStyleOptionViewItem &option,
                          const QModelIndex &index) const override;
 
-  void updateEditorGeometry(QWidget *editor,
+  void updateEditorGeometry(QWidget* editor,
     const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-  bool eventFilter(QObject *object, QEvent *event) override;
+  bool eventFilter(QObject* object, QEvent* event) override;
 
   // We make initStyleOption public so it can be used by qMRMLTreeView
   using QStyledItemDelegate::initStyleOption;

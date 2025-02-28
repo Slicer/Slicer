@@ -72,6 +72,8 @@ public:
 
   /// Get whether name and color override section is visible
   bool overrideSectionVisible() const;
+  /// Show/hide name and color override section
+  void setOverrideSectionVisible(bool);
 
   /// Show dialog
   /// \param nodeToSelect Node is selected in the tree if given
@@ -83,9 +85,6 @@ public:
 
 protected slots:
   void setSelectButtonEnabled(bool);
-
-  /// Show/hide name and color override section
-  void setOverrideSectionVisible(bool);
 
 protected:
   QScopedPointer<qSlicerTerminologySelectorDialogPrivate> d_ptr;

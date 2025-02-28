@@ -50,7 +50,6 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreIOManager:public QObject
 {
   Q_OBJECT;
   Q_PROPERTY(QString defaultSceneFileType READ defaultSceneFileType WRITE setDefaultSceneFileType)
-  Q_PROPERTY(int defaultMaximumFileNameLength READ defaultMaximumFileNameLength WRITE setDefaultMaximumFileNameLength)
 
 public:
   qSlicerCoreIOManager(QObject* parent = nullptr);
@@ -111,16 +110,13 @@ public:
   Q_INVOKABLE static QString forceFileNameValidCharacters(const QString& filename);
 
   /// Clamp the length of a filename to a maximum number of characters.
-  /// The length of the filename extension must also be specified so that it is not included in the shortened section.
-  /// If the extension is not known then extractKnownExtension() method can be used to get the extension.
-  /// If maxLength is not specified, the default maximum length (defaultMaximumFileNameLength) is used.
-  /// \sa extractKnownExtension(), defaultMaximumFileNameLength()
-  Q_INVOKABLE QString forceFileNameMaxLength(const QString& filename, int extensionLength, int maxLength=-1);
+  /// The file extension will be detected and excluded from the specified maximum length.
+  /// \sa qSlicerCoreIOManager::stripKnownExtension()
+  Q_INVOKABLE QString forceFileNameMaxLength(const QString& filename, int maxLength=-1);
 
-  /// Default maximum length for a filename. It is used when maximum filename length is enforced by calling
-  /// forceFileNameMaxLength() without providing a specific maximum length value.
-  /// \sa forceFileNameMaxLength(), setDefaultMaximumFileNameLength()
-  int defaultMaximumFileNameLength()const;
+  /// Clamp the length of a filename to a maximum number of characters.
+  /// The length of the filename extension must also be specified so that it is not included in the shortened section.
+  Q_INVOKABLE static QString forceFileNameMaxLengthExtension(const QString& filename, int extensionLength, int maxLength=-1);
 
   /// If \a fileName ends with an extension that is associated with \a object,
   /// then return that extension. Otherwise return an empty string.
@@ -286,10 +282,6 @@ public slots:
   /// Valid options are defined in qSlicerSceneWriter (for example, "MRML Scene (.mrml)"
   /// or "Medical Reality Bundle (.mrb)").
   void setDefaultSceneFileType(QString);
-
-  /// Default maximum length for a filename.
-  /// \sa forceFileNameMaxLength()
-  void setDefaultMaximumFileNameLength(int);
 
 signals:
 

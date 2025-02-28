@@ -61,6 +61,9 @@ public:
   vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
   QModelIndexList indexesFromMRMLNodeID(const QString& nodeID)const;
 
+  // This assumes that the caller has already updated RequestedNodeID and RequestedNode.
+  void setCurrentNodeIDInternal(const QString& nodeID);
+
   void updateDefaultText();
   void updateNoneItem(bool resetRootIndex = true);
   void updateActionItems(bool resetRootIndex = true);
@@ -88,6 +91,7 @@ public:
   bool SelectNodeUponCreation;
   QString NoneDisplay;
   bool AutoDefaultText;
+  bool SceneSwitchingInProgress{ false };
 
   // Store requested node or ID if setCurrentNode(ID) is called before a scene was set.
   QString RequestedNodeID;

@@ -593,8 +593,7 @@ vtkLookupTable* vtkMRMLColorLegendDisplayableManager::vtkInternal::CreateLookupT
 
   for (int i = 0; i < colorNode->GetNumberOfColors(); ++i)
   {
-    const char* name = colorNode->GetColorName(i);
-    if (name && std::strcmp( name, colorNode->GetNoName()) != 0)
+    if (colorNode->GetColorDefined(i))
     {
       validColorIndex[i] = true;
     }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>325</width>
-    <height>392</height>
+    <width>329</width>
+    <height>455</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,191 +62,6 @@
       <property name="verticalSpacing">
        <number>4</number>
       </property>
-      <item row="1" column="1" rowspan="3">
-       <widget class="ctkExpandButton" name="CategoryExpandButton">
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-        <property name="arrowType">
-         <enum>Qt::LeftArrow</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3" rowspan="4">
-       <widget class="ctkExpandButton" name="AnatomicalRegionExpandButton">
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-        <property name="arrowType">
-         <enum>Qt::RightArrow</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QTableWidget" name="tableWidget_Type">
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="tabKeyNavigation">
-         <bool>false</bool>
-        </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::SingleSelection</enum>
-        </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectRows</enum>
-        </property>
-        <property name="columnCount">
-         <number>1</number>
-        </property>
-        <attribute name="horizontalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderStretchLastSection">
-         <bool>true</bool>
-        </attribute>
-        <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <column/>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="ctkSearchBox" name="SearchBox_Type">
-        <property name="placeholderText">
-         <string>Property type...</string>
-        </property>
-        <property name="showSearchIcon">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="ctkComboBox" name="ComboBox_TypeModifier">
-        <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
-        </property>
-        <property name="defaultText">
-         <string>No type modifier</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4" rowspan="4">
-       <widget class="QFrame" name="frame_AnatomicRegion">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="spacing">
-          <number>4</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <property name="spacing">
-            <number>4</number>
-           </property>
-           <item>
-            <widget class="ctkComboBox" name="ComboBox_AnatomicContext">
-             <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
-             </property>
-             <property name="defaultText">
-              <string>Select anatomic region context...</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_LoadAnatomicContext">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-               <normaloff>:/Icons/Small/SlicerAddData.png</normaloff>:/Icons/Small/SlicerAddData.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>21</width>
-               <height>21</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="ctkSearchBox" name="SearchBox_AnatomicRegion">
-           <property name="placeholderText">
-            <string>Anatomic region...</string>
-           </property>
-           <property name="showSearchIcon">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTableWidget" name="tableWidget_AnatomicRegion">
-           <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
-           </property>
-           <property name="tabKeyNavigation">
-            <bool>false</bool>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::SingleSelection</enum>
-           </property>
-           <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
-           </property>
-           <property name="columnCount">
-            <number>1</number>
-           </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="horizontalHeaderStretchLastSection">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <column/>
-          </widget>
-         </item>
-         <item>
-          <widget class="ctkComboBox" name="ComboBox_AnatomicRegionModifier">
-           <property name="sizeAdjustPolicy">
-            <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
-           </property>
-           <property name="defaultText">
-            <string>No region modifier</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item row="0" column="0" colspan="3">
        <widget class="QFrame" name="frame">
         <property name="frameShape">
@@ -301,6 +116,76 @@
              <width>21</width>
              <height>21</height>
             </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="5">
+       <widget class="QFrame" name="frame_TerminologyOverride">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <property name="leftMargin">
+          <number>4</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_Name">
+           <property name="text">
+            <string>Name:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineEdit_Name"/>
+         </item>
+         <item row="0" column="2">
+          <widget class="QPushButton" name="pushButton_ResetName">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../qSlicerTerminologiesModuleWidgets.qrc">
+             <normaloff>:/Icons/ResetProperty.png</normaloff>:/Icons/ResetProperty.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Color:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="ctkColorPickerButton" name="ColorPickerButton_RecommendedRGB">
+           <property name="displayColorName">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="pushButton_ResetColor">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../qSlicerTerminologiesModuleWidgets.qrc">
+             <normaloff>:/Icons/ResetProperty.png</normaloff>:/Icons/ResetProperty.png</iconset>
            </property>
           </widget>
          </item>
@@ -380,17 +265,59 @@
         </layout>
        </widget>
       </item>
-      <item row="4" column="0" colspan="5">
-       <widget class="QFrame" name="frame_TerminologyOverride">
+      <item row="3" column="2">
+       <widget class="ctkComboBox" name="ComboBox_TypeModifier">
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+        </property>
+        <property name="defaultText">
+         <string>No type modifier</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QTableWidget" name="tableWidget_Type">
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="tabKeyNavigation">
+         <bool>false</bool>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SingleSelection</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectRows</enum>
+        </property>
+        <property name="columnCount">
+         <number>1</number>
+        </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <column/>
+       </widget>
+      </item>
+      <item row="0" column="4" rowspan="4">
+       <widget class="QFrame" name="frame_Region">
         <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+         <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayout_4">
-         <property name="leftMargin">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
           <number>4</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
          </property>
          <property name="topMargin">
           <number>0</number>
@@ -401,53 +328,199 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_Name">
-           <property name="text">
-            <string>Name:</string>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <item>
+            <widget class="ctkComboBox" name="ComboBox_RegionContext">
+             <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+             </property>
+             <property name="defaultText">
+              <string>Select region context...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_LoadRegionContext">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+               <normaloff>:/Icons/Small/SlicerAddData.png</normaloff>:/Icons/Small/SlicerAddData.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>21</width>
+               <height>21</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="ctkSearchBox" name="SearchBox_Region">
+           <property name="placeholderText">
+            <string>Region...</string>
+           </property>
+           <property name="showSearchIcon">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEdit_Name"/>
-         </item>
-         <item row="0" column="2">
-          <widget class="QPushButton" name="pushButton_ResetName">
-           <property name="text">
-            <string/>
+         <item>
+          <widget class="QTableWidget" name="tableWidget_Region">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
            </property>
-           <property name="icon">
-            <iconset resource="../qSlicerTerminologiesModuleWidgets.qrc">
-             <normaloff>:/Icons/ResetProperty.png</normaloff>:/Icons/ResetProperty.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Color:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="ctkColorPickerButton" name="ColorPickerButton_RecommendedRGB">
-           <property name="displayColorName">
+           <property name="tabKeyNavigation">
             <bool>false</bool>
            </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="columnCount">
+            <number>1</number>
+           </property>
+           <attribute name="horizontalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <column/>
           </widget>
          </item>
-         <item row="1" column="2">
-          <widget class="QPushButton" name="pushButton_ResetColor">
-           <property name="text">
-            <string/>
+         <item>
+          <widget class="ctkComboBox" name="ComboBox_RegionModifier">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
            </property>
-           <property name="icon">
-            <iconset resource="../qSlicerTerminologiesModuleWidgets.qrc">
-             <normaloff>:/Icons/ResetProperty.png</normaloff>:/Icons/ResetProperty.png</iconset>
+           <property name="defaultText">
+            <string>No region modifier</string>
            </property>
           </widget>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="ctkSearchBox" name="SearchBox_Type">
+        <property name="placeholderText">
+         <string>Property type...</string>
+        </property>
+        <property name="showSearchIcon">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3" rowspan="4">
+       <widget class="ctkExpandButton" name="RegionExpandButton">
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::RightArrow</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" rowspan="3">
+       <widget class="ctkExpandButton" name="CategoryExpandButton">
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::LeftArrow</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QFrame" name="frame_ColorTable">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <property name="horizontalSpacing">
+       <number>2</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>4</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_LoadTerminology_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+          <normaloff>:/Icons/Small/SlicerAddData.png</normaloff>:/Icons/Small/SlicerAddData.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>21</width>
+          <height>21</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="ctkComboBox" name="ComboBox_Terminology_2">
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+        </property>
+        <property name="defaultText">
+         <string>Select terminology...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QFrame" name="frame_ColorTableView">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
        </widget>
       </item>
      </layout>
@@ -487,14 +560,14 @@
   <tabstop>SearchBox_Type</tabstop>
   <tabstop>tableWidget_Type</tabstop>
   <tabstop>ComboBox_TypeModifier</tabstop>
-  <tabstop>SearchBox_AnatomicRegion</tabstop>
-  <tabstop>tableWidget_AnatomicRegion</tabstop>
-  <tabstop>ComboBox_AnatomicRegionModifier</tabstop>
+  <tabstop>SearchBox_Region</tabstop>
+  <tabstop>tableWidget_Region</tabstop>
+  <tabstop>ComboBox_RegionModifier</tabstop>
   <tabstop>ComboBox_Terminology</tabstop>
   <tabstop>pushButton_LoadTerminology</tabstop>
-  <tabstop>AnatomicalRegionExpandButton</tabstop>
-  <tabstop>ComboBox_AnatomicContext</tabstop>
-  <tabstop>pushButton_LoadAnatomicContext</tabstop>
+  <tabstop>RegionExpandButton</tabstop>
+  <tabstop>ComboBox_RegionContext</tabstop>
+  <tabstop>pushButton_LoadRegionContext</tabstop>
   <tabstop>SearchBox_Category</tabstop>
   <tabstop>tableWidget_Category</tabstop>
   <tabstop>CategoryExpandButton</tabstop>
@@ -505,9 +578,9 @@
  </resources>
  <connections>
   <connection>
-   <sender>AnatomicalRegionExpandButton</sender>
+   <sender>RegionExpandButton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>frame_AnatomicRegion</receiver>
+   <receiver>frame_Region</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
