@@ -222,19 +222,6 @@ qSlicerCoreIOManager::qSlicerCoreIOManager(QObject* _parent)
   // constructor.
   qRegisterMetaType<qSlicerIO::IOFileType>("qSlicerIO::IOFileType");
   qRegisterMetaType<qSlicerIO::IOProperties>("qSlicerIO::IOProperties");
-
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  QSettings* userSettings = app ? app->userSettings() : nullptr;
-  if (userSettings)
-  {
-    int maximumFileNameLength = userSettings->value("ioManager/MaximumFileNameLength", this->defaultMaximumFileNameLength()).toInt();
-    this->setDefaultMaximumFileNameLength(maximumFileNameLength);
-  }
-  else
-  {
-  qWarning() << Q_FUNC_INFO << ": failed to access application settings, using default defaultMaximumFileNameLength value";
-  }
-
 }
 
 //-----------------------------------------------------------------------------
