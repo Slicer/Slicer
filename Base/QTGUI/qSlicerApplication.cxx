@@ -527,6 +527,16 @@ qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
   //       qSlicerIOManager is not added to the constructor initialization list.
   //       Indeed, internally qSlicerIOManager registers qSlicerDataDialog, ...
   d->CoreIOManager = QSharedPointer<qSlicerIOManager>(new qSlicerIOManager);
+  QSettings* userSettings = this->userSettings();
+  if (userSettings)
+  {
+    int maximumFileNameLength = userSettings->value("ioManager/MaximumFileNameLength", d->CoreIOManager->defaultMaximumFileNameLength()).toInt();
+    d->CoreIOManager->setDefaultMaximumFileNameLength(maximumFileNameLength);
+  }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << ": failed to access application settings, using default defaultMaximumFileNameLength value";
+  }
 }
 
 //-----------------------------------------------------------------------------
