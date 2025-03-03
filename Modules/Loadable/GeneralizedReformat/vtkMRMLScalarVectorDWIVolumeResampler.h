@@ -18,11 +18,16 @@
 #ifndef __vtkMRMLScalarVectorDWIVolumeResampler_h
 #define __vtkMRMLScalarVectorDWIVolumeResampler_h
 
-#include "qSlicerBaseQTCLIExport.h"
+#include "qSlicerGeneralizedReformatModuleExport.h"
 
+// GeneralizedReformat MRML includes
 #include "vtkMRMLAbstractVolumeResampler.h"
 
-class Q_SLICER_BASE_QTCLI_EXPORT vtkMRMLScalarVectorDWIVolumeResampler : public vtkMRMLAbstractVolumeResampler
+// MRML includes
+class vtkMRMLVolumeNode;
+class vtkMRMLTransformNode;
+
+class Q_SLICER_QTMODULES_GENERALIZEDREFORMAT_EXPORT vtkMRMLScalarVectorDWIVolumeResampler : public vtkMRMLAbstractVolumeResampler
 {
 public:
   static vtkMRMLScalarVectorDWIVolumeResampler *New();

@@ -23,7 +23,6 @@
 
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
-#include "vtkMRMLAbstractVolumeResampler.h"
 
 #include "vtkMRMLLogicExport.h"
 #include "vtkMRMLSliceCompositeNode.h"
@@ -37,10 +36,8 @@ class vtkMRMLStorableNode;
 class vtkMRMLStorageNode;
 class vtkMRMLInteractionNode;
 class vtkMRMLMessageCollection;
-class vtkMRMLTransformNode;
 class vtkMRMLViewLogic;
 class vtkMRMLViewNode;
-class vtkMRMLVolumeNode;
 class vtkTextProperty;
 
 // VTK includes
@@ -301,14 +298,6 @@ public:
   /// Font family is set from arial/courier/times font family to custom fontfile.
   /// Font file path is set to the one specified in FontFileName property in this object.
   void UseCustomFontFile(vtkTextProperty* textProperty);
-
-  /// @{
-  /// Register/unregister resampler.
-  void RegisterVolumeResampler(const std::string& resamplerName, vtkMRMLAbstractVolumeResampler* resampler);
-  void UnregisterVolumeResampler(const std::string& resamplerName);
-  bool IsVolumeResamplerRegistered(const std::string& resamplerName);
-  vtkMRMLAbstractVolumeResampler* GetVolumeResampler(const std::string& resamplerName);
-  /// @}
 
 protected:
 

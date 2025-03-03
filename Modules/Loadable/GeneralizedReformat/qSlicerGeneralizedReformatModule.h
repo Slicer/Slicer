@@ -23,6 +23,7 @@
 
 #include "qSlicerGeneralizedReformatModuleExport.h"
 
+class qSlicerApplication;
 class qSlicerGeneralizedReformatModulePrivate;
 
 class Q_SLICER_QTMODULES_GENERALIZEDREFORMAT_EXPORT

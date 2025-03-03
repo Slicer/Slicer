@@ -44,15 +44,10 @@
 #include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
-#include "vtkSlicerApplicationLogic.h"
 #include "vtkSlicerVersionConfigure.h" // For Slicer_MAIN_PROJECT_VERSION_FULL
 
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerScriptedLoadableModuleFactory.h"
-#endif
-
-#ifdef Slicer_BUILD_CLI_SUPPORT
-# include "vtkMRMLScalarVectorDWIVolumeResampler.h"
 #endif
 
 #include <vtkSystemInformation.h>
@@ -231,17 +226,6 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
   moduleFactoryManager->setModulesToIgnore(modulesToIgnore);
 
   moduleFactoryManager->setVerboseModuleDiscovery(app->commandOptions()->verboseModuleDiscovery());
-}
-
-//----------------------------------------------------------------------------
-void qSlicerApplicationHelper::registerVolumeResamplers(qSlicerApplication& app)
-{
-#ifdef Slicer_BUILD_CLI_SUPPORT
-  app.applicationLogic()->RegisterVolumeResampler(
-        "ResampleScalarVectorDWIVolume", vtkNew<vtkMRMLScalarVectorDWIVolumeResampler>().GetPointer());
-#else
-  Q_UNUSED(app);
-#endif
 }
 
 //----------------------------------------------------------------------------

@@ -15,7 +15,7 @@
 
 ==============================================================================*/
 
-// MRMLLogic includes
+// GeneralizedReformat MRML includes
 #include "vtkMRMLAbstractVolumeResampler.h"
 
 // MRML includes

@@ -57,8 +57,6 @@ public:
 
   static void setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager);
 
-  static void registerVolumeResamplers(qSlicerApplication& app);
-
   static void showMRMLEventLoggerWidget();
 
   /// Display a warning popup if rendering capabilities do not meet requirements.

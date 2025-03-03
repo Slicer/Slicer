@@ -546,9 +546,8 @@ bool vtkSlicerGeneralizedReformatLogic::StraightenVolume(vtkMRMLScalarVolumeNode
   outputStraightenedVolume->SetIJKToRASMatrix(straightenedVolumeIJKToRASMatrix);
 
   // Resample input volume to straightened volume
-  vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
   std::string volumeResamplerName = "ResampleScalarVectorDWIVolume";
-  if (!appLogic->IsVolumeResamplerRegistered(volumeResamplerName))
+  if (!this->IsVolumeResamplerRegistered(volumeResamplerName))
   {
     vtkErrorMacro(
       "StraightenVolume: failed to get CLI logic for module: "
@@ -753,8 +752,7 @@ bool vtkSlicerGeneralizedReformatLogic::ResampleVolume(std::string& resamplerNam
                                                        int interpolationType,
                                                        const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters)
 {
-  vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
-  vtkMRMLAbstractVolumeResampler* resampler = appLogic->GetVolumeResampler(resamplerName);
+  vtkMRMLAbstractVolumeResampler* resampler = this->GetVolumeResampler(resamplerName);
   if (!resampler)
   {
     vtkErrorMacro("ResampleVolume: resampler not registered " << resamplerName);
@@ -767,6 +765,48 @@ bool vtkSlicerGeneralizedReformatLogic::ResampleVolume(std::string& resamplerNam
         referenceVolume,
         interpolationType,
         resamplingParameters);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerGeneralizedReformatLogic::RegisterVolumeResampler(
+    const std::string& resamplerName, vtkMRMLAbstractVolumeResampler* resampler)
+{
+  if (resamplerName.empty())
+  {
+    vtkErrorMacro("RegisterVolumeResampler: invalid sampler name.");
+    return;
+  }
+  if (this->IsVolumeResamplerRegistered(resamplerName))
+  {
+    return;
+  }
+  this->Resamplers[resamplerName] = resampler;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerGeneralizedReformatLogic::UnregisterVolumeResampler(const std::string& resamplerName)
+{
+  if (!this->IsVolumeResamplerRegistered(resamplerName))
+  {
+    return;
+  }
+  this->Resamplers.erase(resamplerName);
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerGeneralizedReformatLogic::IsVolumeResamplerRegistered(const std::string& resamplerName)
+{
+  return this->Resamplers.find(resamplerName) != this->Resamplers.end();
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLAbstractVolumeResampler* vtkSlicerGeneralizedReformatLogic::GetVolumeResampler(const std::string& resamplerName)
+{
+  if (!this->IsVolumeResamplerRegistered(resamplerName))
+  {
+    return nullptr;
+  }
+  return this->Resamplers[resamplerName];
 }
 
 //---------------------------------------------------------------------------
