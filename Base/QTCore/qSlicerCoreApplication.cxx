@@ -35,6 +35,10 @@
 #include <QStandardPaths>
 #include <QTemporaryFile>
 
+#ifdef Q_OS_WIN32
+#include <Windows.h> // For ExitProcess
+#endif
+
 // For:
 //  - Slicer_BIN_DIR
 //  - Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
