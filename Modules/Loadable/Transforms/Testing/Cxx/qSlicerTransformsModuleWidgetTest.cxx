@@ -25,10 +25,20 @@
 #include "ctkTest.h"
 
 // MRML includes
+#include <qMRMLWidget.h>
 #include "qSlicerTransformsModule.h"
 #include "qSlicerTransformsModuleWidget.h"
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTransformNode.h>
+
+// SubjectHierarchy includes
+#include <qSlicerSubjectHierarchyPluginHandler.h>
+#include <qSlicerSubjectHierarchyPluginLogic.h>
+#include <qSlicerSubjectHierarchyTransformsPlugin.h>
+#include <vtkSlicerSubjectHierarchyModuleLogic.h>
+
+// Slicer includes
+#include <qSlicerApplication.h>
 
 // VTK includes
 #include <vtkMatrix4x4.h>
@@ -49,14 +59,26 @@ private slots:
 void qSlicerTransformsModuleWidgetTester::testIdentity()
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLTransformNode> transformNode;
-  scene->AddNode(transformNode.GetPointer());
+
+  // Set up Subject Hierarchy logic (needed for the subject hierarchy tree view)
+  vtkNew<vtkSlicerSubjectHierarchyModuleLogic> shModuleLogic;
+  shModuleLogic->SetMRMLScene(scene);
+  QScopedPointer<qSlicerSubjectHierarchyPluginLogic> pluginLogic(new qSlicerSubjectHierarchyPluginLogic());
+  pluginLogic->setMRMLScene(scene);
+  qSlicerSubjectHierarchyPluginHandler::instance()->setPluginLogic(pluginLogic.data());
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
 
   qSlicerTransformsModule transformsModule;
+  transformsModule.initialize(qSlicerApplication::application()->applicationLogic());  // register qSlicerSubjectHierarchyTransformsPlugin
   transformsModule.setMRMLScene(scene.GetPointer());
   transformsModule.logic();
   qSlicerTransformsModuleWidget* transformsWidget =
     dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
+
+  vtkNew<vtkMRMLTransformNode> transformNode;
+  scene->AddNode(transformNode.GetPointer());
+
+  transformsWidget->setEditedNode(transformNode);
 
   vtkNew<vtkMatrix4x4> matrix;
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
@@ -75,14 +97,26 @@ void qSlicerTransformsModuleWidgetTester::testIdentity()
 void qSlicerTransformsModuleWidgetTester::testInvert()
 {
   vtkNew<vtkMRMLScene> scene;
-  vtkNew<vtkMRMLTransformNode> transformNode;
-  scene->AddNode(transformNode.GetPointer());
+
+  // Set up Subject Hierarchy logic (needed for the subject hierarchy tree view)
+  vtkNew<vtkSlicerSubjectHierarchyModuleLogic> shModuleLogic;
+  shModuleLogic->SetMRMLScene(scene);
+  QScopedPointer<qSlicerSubjectHierarchyPluginLogic> pluginLogic(new qSlicerSubjectHierarchyPluginLogic());
+  pluginLogic->setMRMLScene(scene);
+  qSlicerSubjectHierarchyPluginHandler::instance()->setPluginLogic(pluginLogic.data());
+  qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
 
   qSlicerTransformsModule transformsModule;
+  transformsModule.initialize(qSlicerApplication::application()->applicationLogic());  // register qSlicerSubjectHierarchyTransformsPlugin
   transformsModule.setMRMLScene(scene.GetPointer());
   transformsModule.logic();
   qSlicerTransformsModuleWidget* transformsWidget =
     dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
+
+  vtkNew<vtkMRMLTransformNode> transformNode;
+  scene->AddNode(transformNode.GetPointer());
+
+  transformsWidget->setEditedNode(transformNode);
 
   vtkNew<vtkMatrix4x4> matrix;
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
@@ -98,5 +132,14 @@ void qSlicerTransformsModuleWidgetTester::testInvert()
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN(qSlicerTransformsModuleWidgetTest)
+//CTK_TEST_MAIN(qSlicerTransformsModuleWidgetTest)
+int qSlicerTransformsModuleWidgetTest(int argc, char* argv[])
+{
+  qMRMLWidget::preInitializeApplication();
+  qSlicerApplication app(argc, argv);
+  qMRMLWidget::postInitializeApplication();
+  qSlicerTransformsModuleWidgetTester tc;
+  return QTest::qExec(&tc, argc, argv);
+}
+
 #include "moc_qSlicerTransformsModuleWidgetTest.cxx"
