@@ -27,6 +27,9 @@
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
+// GeneralizedReformat MRML includes
+#include <vtkMRMLAbstractVolumeResampler.h>
+
 // MRML includes
 class vtkMRMLMarkupsCurveNode;
 class vtkMRMLScalarVolumeNode;
@@ -34,9 +37,11 @@ class vtkMRMLScalarVolumeNode;
 // VTK includes
 class vtkMatrix4x4;
 class vtkPoints;
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <cstdlib>
+#include <map>
 
 #include "vtkSlicerGeneralizedReformatModuleLogicExport.h"
 
@@ -136,6 +141,14 @@ public:
                       const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters =
                       vtkMRMLAbstractVolumeResampler::ResamplingParameters());
 
+  /// @{
+  /// Register/unregister resampler.
+  void RegisterVolumeResampler(const std::string& resamplerName, vtkMRMLAbstractVolumeResampler* resampler);
+  void UnregisterVolumeResampler(const std::string& resamplerName);
+  bool IsVolumeResamplerRegistered(const std::string& resamplerName);
+  vtkMRMLAbstractVolumeResampler* GetVolumeResampler(const std::string& resamplerName);
+  /// @}
+
 protected:
   vtkSlicerGeneralizedReformatLogic();
   ~vtkSlicerGeneralizedReformatLogic() override;
@@ -148,6 +161,8 @@ protected:
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
   double TransformSpacingFactor{ 5.0 };
+
+  std::map<std::string, vtkSmartPointer<vtkMRMLAbstractVolumeResampler>> Resamplers;
 private:
 
   vtkSlicerGeneralizedReformatLogic(const vtkSlicerGeneralizedReformatLogic&); // Not implemented

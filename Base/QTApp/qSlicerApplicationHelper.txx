@@ -307,8 +307,6 @@ int qSlicerApplicationHelper::postInitializeApplication(
     qDebug() << "Number of loaded modules:" << moduleManager->modulesNames().count();
   }
 
-  qSlicerApplicationHelper::registerVolumeResamplers(app);
-
   splashMessage(splashScreen, QString());
 
   if (window)

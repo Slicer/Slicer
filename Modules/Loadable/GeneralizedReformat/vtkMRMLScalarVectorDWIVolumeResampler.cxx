@@ -15,19 +15,22 @@
 
 ==============================================================================*/
 
+// GeneralizedReformat includes
 #include "vtkMRMLScalarVectorDWIVolumeResampler.h"
 
 // Slicer includes
-#include "qSlicerCLIModule.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
-#include "vtkSlicerCLIModuleLogic.h"
+#include <qSlicerCLIModule.h>
+#include <qSlicerCoreApplication.h>
+#include <qSlicerModuleManager.h>
+#include <vtkSlicerCLIModuleLogic.h>
+
+// GeneralizedReformat Logic includes
+#include <vtkMRMLAbstractVolumeResampler.h>
 
 // MRML includes
-#include "vtkMRMLAbstractVolumeResampler.h"
-#include "vtkMRMLCommandLineModuleNode.h"
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLVolumeNode.h"
+#include <vtkMRMLCommandLineModuleNode.h>
+#include <vtkMRMLTransformNode.h>
+#include <vtkMRMLVolumeNode.h>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLScalarVectorDWIVolumeResampler);

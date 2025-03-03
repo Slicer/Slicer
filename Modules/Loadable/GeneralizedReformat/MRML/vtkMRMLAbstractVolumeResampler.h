@@ -18,8 +18,8 @@
 #ifndef __vtkMRMLAbstractVolumeResampler_h
 #define __vtkMRMLAbstractVolumeResampler_h
 
-// MRMLLogic includes
-#include "vtkMRMLLogicExport.h"
+// GeneralizedReformat MRML includes
+#include "vtkSlicerGeneralizedReformatModuleMRMLExport.h"
 
 // MRML includes
 class vtkMRMLTransformNode;
@@ -32,7 +32,7 @@ class vtkMRMLVolumeNode;
 /// \brief Base class for volume resampler.
 ///
 /// Sub-classes must implement actual resampling.
-class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractVolumeResampler : public vtkObject
+class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_MRML_EXPORT vtkMRMLAbstractVolumeResampler : public vtkObject
 {
 public:
   vtkTypeMacro(vtkMRMLAbstractVolumeResampler, vtkObject);

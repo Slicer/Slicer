@@ -73,8 +73,8 @@ class CurvedPlanarReformationTest(ScriptedLoadableModuleTest):
 
     def test_VolumeResamplerRegistered(self):
         resamplerName = "ResampleScalarVectorDWIVolume"
-        self.assertIsNotNone(slicer.app.applicationLogic())
-        self.assertTrue(slicer.app.applicationLogic().IsVolumeResamplerRegistered(resamplerName))
+        self.assertIsNotNone(slicer.modules.generalizedreformat.logic())
+        self.assertTrue(slicer.modules.generalizedreformat.logic().IsVolumeResamplerRegistered(resamplerName))
 
     def test_CurvedPlanarReformation1(self):
         """Ideally you should have several levels of tests.  At the lowest level
