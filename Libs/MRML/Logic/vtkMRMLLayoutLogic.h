@@ -157,6 +157,7 @@ protected:
   void UpdateFromLayoutNode();
   /// Make sure the view node list mapped in the current layout is up-to-date.
   void UpdateViewCollectionsFromLayout();
+  void UpdateViewCornerAnnotations();
   void CreateMissingViews();
   void CreateMissingViews(vtkXMLDataElement* layoutRootElement);
 
