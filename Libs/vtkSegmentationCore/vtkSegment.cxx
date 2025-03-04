@@ -65,7 +65,7 @@ vtkSegment::vtkSegment()
   this->LabelValue = 1;
 
   // Set default terminology Tissue/Tissue from the default Slicer terminology dictionary
-  this->SetTag( vtkSegment::GetTerminologyEntryTagName(),
+  this->SetTerminology(
     "Segmentation category and type - 3D Slicer General Anatomy list~SCT^85756007^Tissue~SCT^85756007^Tissue~^^~Anatomic codes - DICOM master list~^^~^^");
 }
 
@@ -389,4 +389,30 @@ bool vtkSegment::HasTag(std::string tag)
 void vtkSegment::GetTags(std::map<std::string,std::string> &tags)
 {
   tags = this->Tags;
+}
+
+//---------------------------------------------------------------------------
+void vtkSegment::SetTerminology(std::string terminologyEntry)
+{
+  this->SetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyEntry);
+}
+
+//---------------------------------------------------------------------------
+std::string vtkSegment::GetTerminology()
+{
+  std::string terminologyEntry;
+  this->GetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyEntry);
+  return terminologyEntry;
+}
+
+//---------------------------------------------------------------------------
+bool vtkSegment::HasTerminology()
+{
+  std::string terminologyEntry;
+  bool hasTerminology = this->GetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyEntry);
+  if (!hasTerminology)
+  {
+    return false;
+  }
+  return !terminologyEntry.empty();
 }

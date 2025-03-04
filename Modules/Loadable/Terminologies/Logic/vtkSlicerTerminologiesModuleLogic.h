@@ -379,7 +379,7 @@ public:
   /// \param ignoreContextName Only consider the category, type, etc. coded entries if true,
   ///   otherwise look for exact match in the terminology context name as well. True by default.
   /// \return Index of the first match in the color table, -1 if no matching color entry is found.
-  static int GetColorIndexByTerminology(vtkMRMLColorNode* colorNode, const char* terminologyStr, bool ignoreContextName = true);
+  static int GetColorIndexByTerminology(vtkMRMLColorNode* colorNode, std::string terminologyStr, bool ignoreContextName = true);
 
 public:
   vtkGetStringMacro(UserContextsPath);

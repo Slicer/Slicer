@@ -2843,11 +2843,8 @@ bool vtkSlicerTerminologiesModuleLogic::AreSegmentTerminologyEntriesEqual(vtkSeg
     return false;
   }
 
-  std::string terminologyEntry1;
-  segment1->GetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyEntry1);
-
-  std::string terminologyEntry2;
-  segment2->GetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyEntry2);
+  std::string terminologyEntry1 = segment1->GetTerminology();
+  std::string terminologyEntry2 = segment2->GetTerminology();
 
   return this->AreTerminologyEntriesEqual(terminologyEntry1, terminologyEntry2);
 }
@@ -2963,16 +2960,11 @@ bool vtkSlicerTerminologiesModuleLogic::IsTerminologyContextLoaded(std::string t
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(vtkMRMLColorNode* colorNode, const char* terminology, bool ignoreContextName/*=true*/)
+int vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(vtkMRMLColorNode* colorNode, std::string terminology, bool ignoreContextName/*=true*/)
 {
   if (colorNode == nullptr)
   {
     vtkGenericWarningMacro("vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology: need a valid colorNode as argument");
-    return -1;
-  }
-  if (terminology == nullptr)
-  {
-    vtkErrorWithObjectMacro(colorNode, "vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology: need a valid terminology string as argument");
     return -1;
   }
 
@@ -3146,7 +3138,7 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
       continue;
     }
     int indexInColorTable = vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(
-      compatibleColorNode, terminologyStr.c_str(), true /*ignoreContextName*/);
+      compatibleColorNode, terminologyStr, true /*ignoreContextName*/);
     if (indexInColorTable > -1)
     {
       foundColorNodeIDs.push_back(compatibleColorNodeID);

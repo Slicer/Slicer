@@ -182,7 +182,7 @@ QString qMRMLSegmentsModelPrivate::getTerminologyUserDataForSegment(vtkSegment* 
   }
 
   std::string tagValue;
-  return (segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), tagValue) ? QString(tagValue.c_str()) : QString());
+  return QString::fromStdString(segment->GetTerminology());
 }
 
 //------------------------------------------------------------------------------
@@ -601,7 +601,7 @@ void qMRMLSegmentsModel::updateSegmentFromItemData(QString segmentID, QStandardI
 
     // Set terminology information to segment as tag
     QString terminologyString = item->data(qSlicerTerminologyItemDelegate::TerminologyRole).toString();
-    segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), terminologyString.toUtf8().constData());
+    segment->SetTerminology(terminologyString.toStdString());
 
     QString defaultTerminologyString = item->data(qSlicerTerminologyItemDelegate::DefaultTerminologyRole).toString();
     vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntryAsString(d->SegmentationNode, defaultTerminologyString.toStdString());
@@ -1055,8 +1055,8 @@ QString qMRMLSegmentsModel::terminologyTooltipForSegment(vtkSegment* segment)
     return QString();
   }
 
-  std::string serializedTerminology("");
-  if (!segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), serializedTerminology))
+  std::string serializedTerminology = segment->GetTerminology();
+  if (serializedTerminology.empty())
   {
     return tr("No terminology information");
   }

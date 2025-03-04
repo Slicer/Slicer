@@ -479,10 +479,8 @@ void qSlicerSegmentationsModuleWidget::onAddSegment()
   {
     vtkSegment* secondLastSegment = currentSegmentationNode->GetSegmentation()->GetNthSegment(
       currentSegmentationNode->GetSegmentation()->GetNumberOfSegments() - 2 );
-    std::string repeatedTerminologyEntry("");
-    secondLastSegment->GetTag(secondLastSegment->GetTerminologyEntryTagName(), repeatedTerminologyEntry);
-    currentSegmentationNode->GetSegmentation()->GetSegment(addedSegmentID)->SetTag(
-      secondLastSegment->GetTerminologyEntryTagName(), repeatedTerminologyEntry );
+    std::string repeatedTerminologyEntry = secondLastSegment->GetTerminology();
+    currentSegmentationNode->GetSegmentation()->GetSegment(addedSegmentID)->SetTerminology(repeatedTerminologyEntry);
   }
 }
 
