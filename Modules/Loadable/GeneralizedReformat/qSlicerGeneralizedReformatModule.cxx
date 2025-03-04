@@ -15,16 +15,11 @@
 
 ==============================================================================*/
 
-#include <vtkSlicerConfigure.h> // For Slicer_BUILD_CLI_SUPPORT
-
 // GeneralizedReformat Logic includes
 #include <vtkSlicerGeneralizedReformatLogic.h>
 
 // GeneralizedReformat includes
 #include "qSlicerGeneralizedReformatModule.h"
-#ifdef Slicer_BUILD_CLI_SUPPORT
-# include "vtkMRMLScalarVectorDWIVolumeResampler.h"
-#endif
 
 //-----------------------------------------------------------------------------
 class qSlicerGeneralizedReformatModulePrivate
@@ -102,15 +97,6 @@ QStringList qSlicerGeneralizedReformatModule::dependencies() const
 void qSlicerGeneralizedReformatModule::setup()
 {
   this->Superclass::setup();
-
-#ifdef Slicer_BUILD_CLI_SUPPORT
-  vtkSlicerGeneralizedReformatLogic* moduleLogic = vtkSlicerGeneralizedReformatLogic::SafeDownCast(this->logic());
-  if (moduleLogic)
-  {
-    moduleLogic->RegisterVolumeResampler(
-          "ResampleScalarVectorDWIVolume", vtkNew<vtkMRMLScalarVectorDWIVolumeResampler>().GetPointer());
-  }
-#endif
 }
 
 //-----------------------------------------------------------------------------
