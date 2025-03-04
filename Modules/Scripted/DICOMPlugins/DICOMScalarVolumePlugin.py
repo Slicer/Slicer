@@ -5,16 +5,11 @@ import ctk
 import numpy
 import qt
 import vtk
-import vtkITK
-from slicer.i18n import tr as _
 
 import slicer
-
-from DICOMLib import DICOMPlugin
-from DICOMLib import DICOMLoadable
-from DICOMLib import DICOMUtils
-from DICOMLib import DICOMExportScalarVolume
-
+import vtkITK
+from DICOMLib import DICOMExportScalarVolume, DICOMLoadable, DICOMPlugin, DICOMUtils
+from slicer.i18n import tr as _
 
 #
 # This is the plugin to handle translation of scalar volumes
