@@ -19,9 +19,6 @@
 #include "vtkMRMLScalarVectorDWIVolumeResampler.h"
 
 // Slicer includes
-#include <qSlicerCLIModule.h>
-#include <qSlicerCoreApplication.h>
-#include <qSlicerModuleManager.h>
 #include <vtkSlicerCLIModuleLogic.h>
 
 // GeneralizedReformat Logic includes
@@ -70,19 +67,15 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
     vtkMRMLNode* Node{nullptr};
   };
 
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  if (!app
-      || !app->moduleManager()
-      || !dynamic_cast<qSlicerCLIModule*>(app->moduleManager()->module("ResampleScalarVectorDWIVolume")))
+  vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
+  if (appLogic == nullptr)
   {
-    vtkErrorMacro("Resample: ResampleScalarVectorDWIVolume module is not available");
+    vtkErrorMacro("Resample: MRML application logic is not available");
     return false;
   }
 
-  qSlicerCLIModule* cliModule =
-    dynamic_cast<qSlicerCLIModule*>(app->moduleManager()->module("ResampleScalarVectorDWIVolume"));
-
-  vtkSlicerCLIModuleLogic* cliLogic = vtkSlicerCLIModuleLogic::SafeDownCast(cliModule->cliModuleLogic());
+  vtkSlicerCLIModuleLogic* cliLogic =
+    vtkSlicerCLIModuleLogic::SafeDownCast(appLogic->GetModuleLogic("ResampleScalarVectorDWIVolume"));
   if (cliLogic == nullptr)
   {
     vtkErrorMacro("Resample: ResampleScalarVectorDWIVolume module logic is not available");

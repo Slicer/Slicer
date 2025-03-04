@@ -26,6 +26,9 @@ class vtkMRMLTransformNode;
 class vtkMRMLVectorVolumeNode;
 class vtkMRMLVolumeNode;
 
+// MRMLLogic includes
+class vtkMRMLApplicationLogic;
+
 // VTK includes
 #include <vtkObject.h>
 
@@ -71,11 +74,19 @@ public:
   static void SetParameterValueAsInt(ResamplingParameters& parameters, const std::string& name, int value);
   /// }@
 
+  /// @{
+  /// Set/Get MRML application logic to access the overall application state.
+  void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* appLogic);
+  vtkMRMLApplicationLogic* GetMRMLApplicationLogic() const;
+  /// }@
+
 protected:
   vtkMRMLAbstractVolumeResampler() = default;
   ~vtkMRMLAbstractVolumeResampler() override = default;
   vtkMRMLAbstractVolumeResampler(const vtkMRMLAbstractVolumeResampler&) = delete;
   void operator=(const vtkMRMLAbstractVolumeResampler&) = delete;
+
+  vtkMRMLApplicationLogic* MRMLApplicationLogic{ nullptr };
 };
 
 #endif

@@ -21,6 +21,9 @@
 // MRML includes
 #include <vtkMRMLVolumeNode.h>
 
+// MRMLLogic includes
+#include <vtkMRMLApplicationLogic.h>
+
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractVolumeResampler::PrintSelf(ostream& os, vtkIndent indent)
 {
@@ -71,4 +74,16 @@ void vtkMRMLAbstractVolumeResampler::SetParameterValueAsDouble(ResamplingParamet
 void vtkMRMLAbstractVolumeResampler::SetParameterValueAsInt(ResamplingParameters& parameters, const std::string& name, int value)
 {
   vtkMRMLAbstractVolumeResampler::SetParameterValue(parameters, name, vtkVariant(value).ToString());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAbstractVolumeResampler::SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic)
+{
+  this->MRMLApplicationLogic = applicationLogic;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLApplicationLogic* vtkMRMLAbstractVolumeResampler::GetMRMLApplicationLogic() const
+{
+  return this->MRMLApplicationLogic;
 }

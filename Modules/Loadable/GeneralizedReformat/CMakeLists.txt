@@ -1,21 +1,5 @@
 
 #-----------------------------------------------------------------------------
-# Dependencies
-
-if(Slicer_BUILD_CLI_SUPPORT)
-  # Needed to support include of "qSlicerCLIModule.h" depending on "ModuleDescription"
-
-  # ModuleDescriptionParser
-  find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
-
-  # ITK - Import ITK targets required by ModuleDescriptionParser
-  set(${PROJECT_NAME}_ITK_COMPONENTS
-    ${ModuleDescriptionParser_ITK_COMPONENTS}
-    )
-  find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
-endif()
-
-#-----------------------------------------------------------------------------
 set(MODULE_NAME GeneralizedReformat)
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -34,22 +18,11 @@ set(MODULE_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   )
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND MODULE_INCLUDE_DIRECTORIES
-    ${ModuleDescriptionParser_INCLUDE_DIRS}
-    )
-endif()
 
 set(MODULE_SRCS
   qSlicer${MODULE_NAME}Module.cxx
   qSlicer${MODULE_NAME}Module.h
   )
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND MODULE_SRCS
-    vtkMRMLScalarVectorDWIVolumeResampler.cxx
-    vtkMRMLScalarVectorDWIVolumeResampler.h
-    )
-endif()
 
 set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}Module.h
@@ -62,11 +35,6 @@ set(MODULE_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
   vtkSlicer${MODULE_NAME}ModuleLogic
   )
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND MODULE_TARGET_LIBRARIES
-    qSlicerBaseQTCLI
-    )
-endif()
 
 set(MODULE_RESOURCES
   )
