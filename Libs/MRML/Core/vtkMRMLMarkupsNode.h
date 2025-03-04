@@ -468,7 +468,33 @@ public:
   void UnsetNthControlPointPosition(int pointIndex);
 
   /// Set control point status to ignored.
+  /// Excluded from wrapping to prevent unintended `SET_NTH` recognition.
+  /// This behavior was introduced in VTK 9.4 (kitware/VTK@5672af1f) and requires
+  /// specific function signatures. Until the VTK wrapping infrastructure is improved,
+  /// this method should remain excluded. See https://gitlab.kitware.com/vtk/vtk/-/issues/19627.
+  VTK_WRAPEXCLUDE
   void SetNthControlPointPositionMissing(int pointIndex);
+
+  /// \internal
+  /// Workaround for a VTK 9.4 wrapping limitation that prevents
+  /// `SetNthControlPointPositionMissing` from being correctly recognized.
+  ///
+  /// This method is intentionally introduced as an alias for
+  /// `SetNthControlPointPositionMissing` to be patched in the generated
+  /// Python wrapper (`vtkMRMLMarkupsNodePython.cxx`).
+  ///
+  /// The custom target `PatchMRMLCorePythonWrappers` (defined in `CMakeLists.txt`)
+  /// ensures that occurrences of `WrappedSetNthControlPointPositionMissing`
+  /// in the generated wrapper are replaced with `SetNthControlPointPositionMissing`,
+  /// maintaining Python compatibility.
+  ///
+  /// This function should NOT be called directly in C++ code and will be removed
+  /// once the VTK wrapping infrastructure is improved.
+  ///
+  /// See https://gitlab.kitware.com/vtk/vtk/-/issues/19627 for more details.
+  ///
+  /// \sa SetNthControlPointPositionMissing()
+  void WrappedSetNthControlPointPositionMissing(int pointIndex);
 
   /// Set control point status to preview
   void ResetNthControlPointPosition(int n);

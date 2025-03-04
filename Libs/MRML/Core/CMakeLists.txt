@@ -415,6 +415,43 @@ if(VTK_WRAP_PYTHON)
       set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()
   endif()
+
+  # --------------------------------------------------------------------------
+  # Workaround issue https://gitlab.kitware.com/vtk/vtk/-/issues/19627
+  # --------------------------------------------------------------------------
+  set(_generated_wrapper_cxx "vtkMRMLMarkupsNodePython.cxx")
+  set(_patched_wrapper_cxx "${_generated_wrapper_cxx}.patched")
+  set(_patched_done "${CMAKE_CURRENT_BINARY_DIR}/${_generated_wrapper_cxx}.patched.done")
+
+  # Ensure patching happens when the wrapper is regenerated
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_patched_wrapper_cxx}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_generated_wrapper_cxx}
+    COMMAND ${PYTHON_EXECUTABLE} -c
+      "import sys; in_file, out_file, search_text, replace_text = sys.argv[1:]; content = open(in_file).read().replace(search_text, replace_text); open(out_file, 'w').write(content)"
+      ${CMAKE_CURRENT_BINARY_DIR}/${_generated_wrapper_cxx}
+      ${CMAKE_CURRENT_BINARY_DIR}/${_patched_wrapper_cxx}
+      "WrappedSetNthControlPointPositionMissing" "SetNthControlPointPositionMissing"
+    COMMENT "Patching generated Python wrapper source ${_generated_wrapper_cxx}"
+    VERBATIM
+    )
+
+  # Copy the patched file back to the original location, ensuring CMake tracks completion
+  add_custom_command(
+    OUTPUT ${_patched_done}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_patched_wrapper_cxx}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      ${CMAKE_CURRENT_BINARY_DIR}/${_patched_wrapper_cxx}
+      ${CMAKE_CURRENT_BINARY_DIR}/${_generated_wrapper_cxx}
+    COMMAND ${CMAKE_COMMAND} -E touch ${_patched_done}
+    COMMENT "Replacing original ${_generated_wrapper_cxx} with patched version"
+    VERBATIM
+  )
+
+  # Ensure the MRMLCorePython target depends on the patched wrapper
+  add_custom_target(PatchMRMLCorePythonWrappers DEPENDS ${_patched_done})
+
+  add_dependencies(MRMLCorePython PatchMRMLCorePythonWrappers)
 endif()
 
 # --------------------------------------------------------------------------
