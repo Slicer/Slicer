@@ -2960,7 +2960,7 @@ bool vtkSlicerTerminologiesModuleLogic::IsTerminologyContextLoaded(std::string t
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(vtkMRMLColorNode* colorNode, std::string terminology, bool ignoreContextName/*=true*/)
+int vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(vtkMRMLColorNode* colorNode, const std::string& terminology, bool ignoreContextName /* =true */)
 {
   if (colorNode == nullptr)
   {
@@ -3138,7 +3138,7 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
       continue;
     }
     int indexInColorTable = vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(
-      compatibleColorNode, terminologyStr, true /*ignoreContextName*/);
+      compatibleColorNode, terminologyStr, /* ignoreContextName= */ true);
     if (indexInColorTable > -1)
     {
       foundColorNodeIDs.push_back(compatibleColorNodeID);
