@@ -49,7 +49,20 @@ public:
 
   static const double SEGMENT_COLOR_INVALID[3];
 
+  /// Get tag name that stores terminology information (standard codes for describing the segment content).
   static const char* GetTerminologyEntryTagName();
+
+  /// @{
+  /// Convenience methods to get/set terminology information (standard codes for describing the segment content).
+  /// It gets/sets the tag with the name returned by GetTerminologyEntryTagName().
+  /// \sa GetTerminologyEntryTagName()
+  void SetTerminology(std::string terminologyEntry);
+  std::string GetTerminology();
+  /// @}
+
+  /// Returns is terminology is not defined or empty.
+  /// \sa GetTerminology(), GetTerminologyEntryTagName()
+  bool HasTerminology();
 
   static vtkSegment* New();
   vtkTypeMacro(vtkSegment, vtkObject);

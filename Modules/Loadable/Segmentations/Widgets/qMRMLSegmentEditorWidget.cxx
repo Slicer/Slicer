@@ -2174,7 +2174,7 @@ void qMRMLSegmentEditorWidget::onAddSegment()
 
     if (!defaultTerminologyEntryStr.isEmpty())
     {
-      addedSegment->SetTag(vtkSegment::GetTerminologyEntryTagName(), defaultTerminologyEntryStr.toUtf8().constData());
+      addedSegment->SetTerminology(defaultTerminologyEntryStr.toStdString());
     }
   }
 
@@ -2205,10 +2205,8 @@ void qMRMLSegmentEditorWidget::onAddSegment()
   {
     vtkSegment* secondLastSegment = segmentationNode->GetSegmentation()->GetNthSegment(
       segmentationNode->GetSegmentation()->GetNumberOfSegments() - 2 );
-    std::string repeatedTerminologyEntry("");
-    secondLastSegment->GetTag(secondLastSegment->GetTerminologyEntryTagName(), repeatedTerminologyEntry);
-    segmentationNode->GetSegmentation()->GetSegment(addedSegmentID)->SetTag(
-      secondLastSegment->GetTerminologyEntryTagName(), repeatedTerminologyEntry );
+    std::string repeatedTerminologyEntry = secondLastSegment->GetTerminology();
+    segmentationNode->GetSegmentation()->GetSegment(addedSegmentID)->SetTerminology(repeatedTerminologyEntry);
   }
 }
 

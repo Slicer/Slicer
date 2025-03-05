@@ -1149,15 +1149,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToColorTableNode(vtkMRMLSe
     vtkVector3d color = displayNode->GetSegmentColor(*segmentIt);
     colorTableNode->SetColor(labelValue, segmentName, color.GetX(), color.GetY(), color.GetZ());
     // Set terminology
-    std::string segmentTerminologyString;
-    if (segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), segmentTerminologyString))
-    {
-      colorTableNode->SetTerminologyFromString(labelValue, segmentTerminologyString);
-    }
-    else
-    {
-      colorTableNode->SetTerminologyFromString(labelValue, "");
-    }
+    colorTableNode->SetTerminologyFromString(labelValue, segment->GetTerminology());
   }
 
   return true;
@@ -2245,7 +2237,7 @@ bool vtkSlicerSegmentationsModuleLogic::SetTerminologyToSegmentationFromLabelmap
         foundTerminologyString = firstTerminologyString;
       }
     }
-    segment->SetTag(vtkSegment::GetTerminologyEntryTagName(), foundTerminologyString);
+    segment->SetTerminology(foundTerminologyString);
   }
 
   return true;
@@ -2530,12 +2522,11 @@ void vtkSlicerSegmentationsModuleLogic::GetLabelValuesFromColorNode(vtkMRMLSegme
     std::string segmentId = segmentIds->GetValue(i);
     vtkSegment* segment = segmentationNode->GetSegmentation()->GetSegment(segmentId);
     const char* segmentName = segment->GetName();
-    std::string segmentTerminologyString;
     int labelValue = -1;
-    if (segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), segmentTerminologyString))
+    if (segment->HasTerminology())
     {
       // Use terminology string to match the segment
-      labelValue = vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(colorTableNode, segmentTerminologyString.c_str());
+      labelValue = vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(colorTableNode, segment->GetTerminology());
     }
     if (labelValue < 0)
     {

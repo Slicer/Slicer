@@ -563,8 +563,8 @@ void qSlicerSubjectHierarchySegmentsPlugin::setDisplayColor(vtkIdType itemID, QC
   // Set terminology metadata
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::TerminologyRole))
   {
-    segment->SetTag(vtkSegment::GetTerminologyEntryTagName(),
-      terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString().toUtf8().constData() );
+    segment->SetTerminology(
+      terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString().toStdString());
   }
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::DefaultTerminologyRole))
   {
@@ -673,7 +673,7 @@ QColor qSlicerSubjectHierarchySegmentsPlugin::getDisplayColor(vtkIdType itemID, 
   terminologyMetaData.clear();
   std::string tagValue;
   terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole] =
-    QVariant( segment->GetTag(vtkSegment::GetTerminologyEntryTagName(), tagValue) ? QString(tagValue.c_str()) : QString() );
+    QVariant(QString::fromStdString(segment->GetTerminology()));
 
   vtkMRMLSegmentationNode* segmentationNode =
       vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeForSegmentSubjectHierarchyItem(itemID, shNode->GetScene());
