@@ -136,16 +136,19 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject *caller, unsigned lon
     vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(caller);
     vtkMRMLDisplayableNode* displayableReparentedNode = vtkMRMLDisplayableNode::SafeDownCast(
       shNode->GetItemDataNode(reparentedItemID) );
-    // Trigger display update for reparented displayable node if it is in a folder that applies
-    // display properties on its branch (only display nodes that allow overriding)
-    for (int i=0; i<displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
+    if (displayableReparentedNode)
     {
-      vtkMRMLDisplayNode* currentDisplayNode = displayableReparentedNode->GetNthDisplayNode(i);
-      if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
+      // Trigger display update for reparented displayable node if it is in a folder that applies
+      // display properties on its branch (only display nodes that allow overriding)
+      for (int i=0; i<displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
       {
-        currentDisplayNode->Modified();
-      }
-    } // For all display nodes
+        vtkMRMLDisplayNode* currentDisplayNode = displayableReparentedNode->GetNthDisplayNode(i);
+        if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
+        {
+          currentDisplayNode->Modified();
+        }
+      } // For all display nodes
+    }
   } // SubjectHierarchyItemReparentedEvent
 }
 
@@ -198,7 +201,7 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
   std::vector<vtkIdType> childItemIDs;
   shNode->GetItemChildren(folderItemId, childItemIDs, true);
 
-  bool batchProcessing = (childItemIDs.size() > 10);
+  bool batchProcessing = (childItemIDs.size() > 50);
   if (batchProcessing)
   {
     this->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
@@ -237,7 +240,7 @@ vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(
   {
     return nullptr;
   }
-  vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(node->GetScene());
+  vtkMRMLSubjectHierarchyNode* shNode = node->GetScene()->GetSubjectHierarchyNode();
   if (!shNode)
   {
     vtkErrorWithObjectMacro(node, "GetOverridingHierarchyDisplayNode: Failed to get subject hierarchy node from current scene");
