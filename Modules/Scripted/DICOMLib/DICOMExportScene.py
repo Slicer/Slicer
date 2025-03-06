@@ -148,9 +148,7 @@ class DICOMExportScene:
         # cmd = "img2dcm -k 'SeriesDescription=Slicer Data Bundle' -df %s/template.dcm %s %s" % (saveDirectoryPath, imageFile, self.sdbFile)
         seriesDescription = "Slicer Data Bundle" if self.seriesDescription is None else str(self.seriesDescription)
 
-        args = [
-            "-k", f"SeriesDescription={seriesDescription}",
-            "--no-latin1"]  # With this option the UTF8 encoding of the reference file is preserved, otherwise the character set would be forced to Latin1
+        args = ["-k", f"SeriesDescription={seriesDescription}"]
 
         # TODO: It could be safer to pass these fields through the reference file instead of using command-line arguments (from character set point of view)
         for key, value in self.optionalTags.items():
