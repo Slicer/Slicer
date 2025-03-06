@@ -33,6 +33,11 @@
 #include <vtkSmartPointer.h>
 #include <vtkVector.h>
 
+// VTK 9.3 does not have VTK_PROPEXCLUDE
+#ifndef VTK_PROPEXCLUDE
+  #define VTK_PROPEXCLUDE
+#endif
+
 class vtkMatrix3x3;
 class vtkMRMLUnitNode;
 
@@ -468,7 +473,7 @@ public:
   void UnsetNthControlPointPosition(int pointIndex);
 
   /// Set control point status to ignored.
-  void SetNthControlPointPositionMissing(int pointIndex);
+  VTK_PROPEXCLUDE void SetNthControlPointPositionMissing(int pointIndex);
 
   /// Set control point status to preview
   void ResetNthControlPointPosition(int n);
