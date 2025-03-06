@@ -1,5 +1,6 @@
 import logging
 import os
+
 import vtk
 
 import slicer

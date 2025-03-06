@@ -5,7 +5,6 @@ import qt
 import vtk
 
 import slicer
-
 from SegmentEditorEffects import *
 
 

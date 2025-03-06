@@ -1,16 +1,17 @@
-from contextlib import contextmanager
+import enum
 import logging
+from contextlib import contextmanager
 from typing import Optional
+
 import qt
 import vtk
-import enum
 
 import slicer
 from slicer.i18n import tr as _
 from slicer.i18n import translate
+from slicer.parameterNodeWrapper import parameterNodeWrapper
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
-from slicer.parameterNodeWrapper import parameterNodeWrapper
 
 
 @contextmanager

@@ -4,7 +4,6 @@ import os
 import re
 import sys
 import textwrap
-
 from urllib.parse import urlparse
 
 
@@ -26,6 +25,7 @@ def haveGit():
         try:
             global git, GithubHelper, NotSet
             import git  # noqa: F401
+
             from . import GithubHelper
             from .GithubHelper import NotSet
 
@@ -40,7 +40,6 @@ def haveGit():
 
 
 from . import __version__, __version_info__
-
 from .ExtensionProject import ExtensionProject
 from .TemplateManager import TemplateManager
 from .Utilities import *
