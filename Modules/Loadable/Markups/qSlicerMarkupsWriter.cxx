@@ -30,7 +30,6 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLSceneViewNode.h>
 #include <vtkMRMLMarkupsJsonStorageNode.h>
 #include <vtkMRMLMarkupsFiducialStorageNode.h>
 #include <vtkMRMLStorableNode.h>

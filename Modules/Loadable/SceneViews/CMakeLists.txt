@@ -20,9 +20,15 @@ set(MODULE_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_SOURCE_DIR}/SubjectHierarchyPlugins
   ${CMAKE_CURRENT_BINARY_DIR}/SubjectHierarchyPlugins
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
+  ${vtkSlicerSequencesModuleMRML_INCLUDE_DIRS}
   )
 
 set(GUI_SRCS
+  GUI/qMRMLCaptureToolBar.cxx
+  GUI/qMRMLCaptureToolBar.h
+  GUI/qMRMLSceneViewMenu.cxx
+  GUI/qMRMLSceneViewMenu.h
+  GUI/qMRMLSceneViewMenu_p.h
   GUI/qSlicer${MODULE_NAME}ModuleWidget.cxx
   GUI/qSlicer${MODULE_NAME}ModuleWidget.h
   GUI/qSlicer${MODULE_NAME}ModuleDialog.cxx
@@ -36,6 +42,9 @@ set(MODULE_SRCS
   )
 
 set(MODULE_MOC_SRCS
+  GUI/qMRMLCaptureToolBar.h
+  GUI/qMRMLSceneViewMenu.h
+  GUI/qMRMLSceneViewMenu_p.h
   qSlicer${MODULE_NAME}Module.h
   GUI/qSlicer${MODULE_NAME}ModuleWidget.h
   GUI/qSlicer${MODULE_NAME}ModuleDialog.h

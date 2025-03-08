@@ -1,13 +1,22 @@
 
 // QTGUI includes
-#include "qSlicerApplication.h"
-#include "qSlicerCoreIOManager.h"
+#include <qSlicerApplication.h>
+#include <qSlicerCoreIOManager.h>
+#include <qSlicerIOManager.h>
+#include <qSlicerLayoutManager.h>
+#include <qSlicerMainWindow.h>
 #include <qSlicerNodeWriter.h>
+
+#include <QMenuBar>
 
 // SceneViewsModule includes
 #include "qSlicerSceneViewsModule.h"
 
+// SceneViewsModule GUI includes
+#include <qMRMLCaptureToolBar.h>
 #include <qSlicerSceneViewsModuleWidget.h>
+
+// SceneViewsModule Logic includes
 #include <vtkSlicerSceneViewsModuleLogic.h>
 
 // SubjectHierarchy Plugins includes
@@ -17,7 +26,8 @@
 //-----------------------------------------------------------------------------
 class qSlicerSceneViewsModulePrivate
 {
-  public:
+public:
+    qMRMLCaptureToolBar* CaptureToolBar;
 };
 
 //-----------------------------------------------------------------------------
@@ -33,6 +43,8 @@ qSlicerSceneViewsModule::~qSlicerSceneViewsModule() = default;
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModule::setup()
 {
+  Q_D(qSlicerSceneViewsModule);
+
   qSlicerCoreIOManager* ioManager =
     qSlicerApplication::application()->coreIOManager();
   ioManager->registerIO(new qSlicerNodeWriter(
@@ -42,6 +54,56 @@ void qSlicerSceneViewsModule::setup()
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(
     new qSlicerSubjectHierarchySceneViewsPlugin());
+
+  //----------------------------------------------------------------------------
+  // Capture tool bar
+  //----------------------------------------------------------------------------
+  // Capture bar needs to listen to the MRML scene and the layout
+  d->CaptureToolBar = new qMRMLCaptureToolBar;
+  d->CaptureToolBar->setObjectName("CaptureToolBar");
+  d->CaptureToolBar->setWindowTitle("Capture/Restore");
+  d->CaptureToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+  QObject::connect(qSlicerApplication::application(),
+                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   d->CaptureToolBar,
+                   SLOT(setMRMLScene(vtkMRMLScene*)));
+  d->CaptureToolBar->setMRMLScene(
+    qSlicerApplication::application()->mrmlScene());
+
+  QObject::connect(d->CaptureToolBar,
+                   SIGNAL(screenshotButtonClicked()),
+                   qSlicerApplication::application()->ioManager(),
+                   SLOT(openScreenshotDialog()));
+
+  // to get the scene views module dialog to pop up when a button is pressed
+  // in the capture tool bar, we emit a signal, and the
+  // io manager will deal with the sceneviews module
+  QObject::connect(d->CaptureToolBar,
+                   SIGNAL(sceneViewButtonClicked()),
+                   qSlicerApplication::application()->ioManager(),
+                   SLOT(openSceneViewsDialog()));
+
+  // if testing is enabled on the application level, add a time out to the pop ups
+  if (qSlicerApplication::application()->testAttribute(qSlicerCoreApplication::AA_EnableTesting))
+  {
+    d->CaptureToolBar->setPopupsTimeOut(true);
+  }
+
+  qSlicerMainWindow* mainWindow = qobject_cast<qSlicerMainWindow*>(
+    qSlicerApplication::application()->mainWindow());
+  if (mainWindow)
+  {
+    mainWindow->addToolBar(d->CaptureToolBar);
+  }
+  mainWindow->menuBar()->addAction(d->CaptureToolBar->toggleViewAction());
+
+  // Capture tool bar needs to listen to the layout manager
+  QObject::connect(qSlicerApplication::application()->layoutManager(),
+    SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
+    d->CaptureToolBar,
+    SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
+  d->CaptureToolBar->setActiveMRMLThreeDViewNode(
+    qSlicerApplication::application()->layoutManager()->activeMRMLThreeDViewNode());
 }
 
 //-----------------------------------------------------------------------------

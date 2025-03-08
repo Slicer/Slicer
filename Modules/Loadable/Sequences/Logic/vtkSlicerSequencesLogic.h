@@ -123,8 +123,8 @@ protected:
 
 private:
 
-  bool UpdateProxyNodesFromSequencesInProgress{false};
-  bool UpdateSequencesFromProxyNodesInProgress{false};
+  std::set<vtkMRMLSequenceBrowserNode*> UpdateProxyNodesFromSequencesInProgress;
+  std::set<vtkMRMLSequenceBrowserNode*> UpdateSequencesFromProxyNodesInProgress;
 
   vtkSlicerSequencesLogic(const vtkSlicerSequencesLogic&); // Not implemented
   void operator=(const vtkSlicerSequencesLogic&);               // Not implemented
