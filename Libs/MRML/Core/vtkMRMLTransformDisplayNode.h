@@ -26,6 +26,9 @@
 
 #include "vtkMRMLDisplayNode.h"
 
+// vtkAddon includes
+#include <vtkAddonSetGet.h>
+
 class vtkColorTransferFunction;
 class vtkPointSet;
 class vtkMatrix4x4;

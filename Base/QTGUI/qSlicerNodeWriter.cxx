@@ -34,7 +34,6 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>
-#include <vtkMRMLSceneViewNode.h>
 #include <vtkMRMLMessageCollection.h>
 
 // VTK includes
@@ -177,35 +176,6 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char *id)const
 {
   vtkMRMLNode *node = this->mrmlScene()->GetNodeByID(id);
-  if (node == nullptr)
-  {
-    // search in SceneView nodes
-    std::string sID(id);
-    std::vector<vtkMRMLNode *> nodes;
-    this->mrmlScene()->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
-    std::vector<vtkMRMLNode *>::iterator it;
-
-    for (it = nodes.begin(); it != nodes.end(); it++)
-    {
-      vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
-      // skip "Master Scene View" since it contains the same nodes as the scene
-      if (svNode->GetName() && std::string(/*no tr*/"Master Scene View") == std::string(svNode->GetName()))
-      {
-        continue;
-      }
-      std::vector<vtkMRMLNode *> snodes;
-      svNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
-      std::vector<vtkMRMLNode *>::iterator sit;
-      for (sit = snodes.begin(); sit != snodes.end(); sit++)
-      {
-        vtkMRMLNode* snode = (*sit);
-        if (std::string(snode->GetID()) == sID)
-        {
-          return snode;
-        }
-      }
-    }
-  }
   return node;
 }
 

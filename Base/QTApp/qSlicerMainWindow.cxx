@@ -208,36 +208,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->MouseModeToolBar,
                    SLOT(setMRMLScene(vtkMRMLScene*)));
-  //----------------------------------------------------------------------------
-  // Capture tool bar
-  //----------------------------------------------------------------------------
-  // Capture bar needs to listen to the MRML scene and the layout
-  this->CaptureToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->CaptureToolBar,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
-  this->CaptureToolBar->setMRMLScene(
-      qSlicerApplication::application()->mrmlScene());
-
-  QObject::connect(this->CaptureToolBar,
-                   SIGNAL(screenshotButtonClicked()),
-                   qSlicerApplication::application()->ioManager(),
-                   SLOT(openScreenshotDialog()));
-
-  // to get the scene views module dialog to pop up when a button is pressed
-  // in the capture tool bar, we emit a signal, and the
-  // io manager will deal with the sceneviews module
-  QObject::connect(this->CaptureToolBar,
-                   SIGNAL(sceneViewButtonClicked()),
-                   qSlicerApplication::application()->ioManager(),
-                   SLOT(openSceneViewsDialog()));
-
-  // if testing is enabled on the application level, add a time out to the pop ups
-  if (qSlicerApplication::application()->testAttribute(qSlicerCoreApplication::AA_EnableTesting))
-  {
-    this->CaptureToolBar->setPopupsTimeOut(true);
-  }
 
   QList<QAction*> toolBarActions;
   toolBarActions << this->MainToolBar->toggleViewAction();
@@ -247,7 +217,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   toolBarActions << this->ViewToolBar->toggleViewAction();
   //toolBarActions << this->LayoutToolBar->toggleViewAction();
   toolBarActions << this->MouseModeToolBar->toggleViewAction();
-  toolBarActions << this->CaptureToolBar->toggleViewAction();
   toolBarActions << this->ViewersToolBar->toggleViewAction();
   toolBarActions << this->DialogToolBar->toggleViewAction();
   this->WindowToolBarsMenu->addActions(toolBarActions);
@@ -348,15 +317,6 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->ViewLayoutCompareGridAction->setMenu(compareMenu);
   QObject::connect(compareMenu, SIGNAL(triggered(QAction*)),
                    q, SLOT(onLayoutCompareGridActionTriggered(QAction*)));
-
-
-  // Capture tool bar needs to listen to the layout manager
-  QObject::connect(this->LayoutManager,
-                   SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
-                   this->CaptureToolBar,
-                   SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
-  this->CaptureToolBar->setActiveMRMLThreeDViewNode(
-      this->LayoutManager->activeMRMLThreeDViewNode());
 
   // Authorize Drops action from outside
   q->setAcceptDrops(true);
