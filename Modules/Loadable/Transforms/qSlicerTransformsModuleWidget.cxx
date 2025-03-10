@@ -271,6 +271,16 @@ void qSlicerTransformsModuleWidget::enter()
     qCritical() << Q_FUNC_INFO << ": Invalid subject hierarchy";
   }
 
+  // If no node is selected then select the first displayed node to save the user a click
+  if (!d->TransformNodeSelector->currentNode())
+  {
+    vtkMRMLNode* node = d->TransformNodeSelector->findFirstNodeByClass("vtkMRMLTransformNode");
+    if (node)
+    {
+      d->TransformNodeSelector->setCurrentNode(node);
+    }
+  }
+
   this->Superclass::enter();
 }
 

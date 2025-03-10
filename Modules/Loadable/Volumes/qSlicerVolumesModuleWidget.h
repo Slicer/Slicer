@@ -42,6 +42,8 @@ public:
 
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
+  void enter() override;
+
 protected:
   void setup() override;
 

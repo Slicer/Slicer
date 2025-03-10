@@ -1078,3 +1078,21 @@ void qSlicerVolumeRenderingModuleWidget::setSoftEdgeVoxels(double softEdgeVoxels
   }
   displayNode->SetClippingSoftEdgeVoxels(softEdgeVoxels);
 }
+
+//-----------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::enter()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+
+  this->Superclass::enter();
+
+  // If no node is selected then select the first displayed node to save the user a click
+  if (!d->VolumeNodeSelector->currentNode())
+  {
+    vtkMRMLNode* node = d->VolumeNodeSelector->findFirstNodeByClass("vtkMRMLVolumeNode");
+    if (node)
+    {
+      d->VolumeNodeSelector->setCurrentNode(node);
+    }
+  }
+}
