@@ -65,6 +65,7 @@ protected slots:
   void formatChanged();
   bool saveScene();
   bool saveNodes();
+  bool saveHiddenNodes();
   QFileInfo sceneFile()const; // ### Slicer 4.4: Move as protected
   void showMoreColumns(bool);
   void updateSize();

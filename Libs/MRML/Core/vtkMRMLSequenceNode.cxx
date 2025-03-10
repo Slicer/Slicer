@@ -826,6 +826,11 @@ vtkMRMLNode* vtkMRMLSequenceNode::DeepCopyNodeToScene(vtkMRMLNode* source, vtkMR
   target->SetName(newNodeName.c_str());
   target->SetAttribute("Sequences.BaseName", baseName.c_str());
 
+  // Singleton tags can be defined in the constructor of some nodes (ex. vtkMRMLLayoutNode, vtkMRMLCrosshairNode, etc.).
+  // We don't want to copy these tags as they would prevent multiple timepoints from being added to the sequences scene for these nodes.
+  // Since the singleton tags are not copied with CopyContent, it is safe to disable them here.
+  target->SetSingletonOff();
+
   vtkMRMLNode* addedTargetNode = scene->AddNode(target);
   return addedTargetNode;
 }
