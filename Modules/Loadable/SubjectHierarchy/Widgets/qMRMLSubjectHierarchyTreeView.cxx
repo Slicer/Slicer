@@ -2601,3 +2601,44 @@ vtkMRMLNode* qMRMLSubjectHierarchyTreeView::addNode(QString nodeType)
   emit this->nodeAddedByUser(newNode);
   return newNode;
 }
+
+// --------------------------------------------------------------------------
+vtkMRMLNode* qMRMLSubjectHierarchyTreeView::findFirstNodeByClass(const QString& className)const
+{
+  Q_D(const qMRMLSubjectHierarchyTreeView);
+  qMRMLSortFilterSubjectHierarchyProxyModel* model = this->sortFilterProxyModel();
+  const QModelIndex& rootIndex = model->indexFromSubjectHierarchyItem(this->rootItem());
+
+  QList<QModelIndex> indexes;
+  indexes << rootIndex;
+  while (!indexes.isEmpty())
+  {
+    QModelIndex index = indexes.takeFirst();
+    if (!index.isValid())
+    {
+      continue;
+    }
+
+    // Return if this is a node that is of the requested class
+    vtkIdType itemID = model->subjectHierarchyItemFromIndex(index);
+    vtkMRMLNode* dataNode = d->SubjectHierarchyNode->GetItemDataNode(itemID);
+    if (dataNode && dataNode->IsA(className.toStdString().c_str()))
+    {
+      // found a suitable data node
+      return dataNode;
+    }
+
+    // Add item children to the list
+    if (model->hasChildren(index) && !(index.flags() & Qt::ItemNeverHasChildren))
+    {
+      // depth-first search (children are added to the front of the list)
+      for (int i = model->rowCount()-1; i >= 0; --i)
+      {
+        indexes.push_front(model->index(i, 0, index));
+      }
+    }
+  }
+
+  // not found a suitable data node
+  return nullptr;
+}

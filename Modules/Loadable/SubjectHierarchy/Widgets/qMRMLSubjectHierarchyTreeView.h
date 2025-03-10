@@ -253,6 +253,10 @@ public:
   /// An empty blocklist means all plugins are enabled. That is the default.
   QStringList pluginBlockList()const;
 
+  /// Finds the first node that is visible in the tree and is of the specified class
+  /// (either exactly that class or it is a class derived from that class).
+  Q_INVOKABLE vtkMRMLNode* findFirstNodeByClass(const QString& className)const;
+
 public slots:
   /// Set MRML scene
   virtual void setMRMLScene(vtkMRMLScene* scene);
