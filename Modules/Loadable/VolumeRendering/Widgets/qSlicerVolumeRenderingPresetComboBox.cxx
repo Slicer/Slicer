@@ -323,6 +323,10 @@ void qSlicerVolumeRenderingPresetComboBox::applyPreset(vtkMRMLNode* node)
 
   d->VolumePropertyNode->CopyContent(presetNode);
 
+  // Associate the volume property node by the preset by copying its name.
+  // Note: it would be more robust to save the preset ID into the volume property node.
+  d->VolumePropertyNode->SetName(presetNode->GetName());
+
   this->resetOffset();
 }
 
