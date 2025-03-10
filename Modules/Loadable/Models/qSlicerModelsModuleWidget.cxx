@@ -187,6 +187,16 @@ void qSlicerModelsModuleWidget::enter()
   }
 
   this->Superclass::enter();
+
+  // If no node is selected then select the first displayed node to save the user a click
+  if (!d->SubjectHierarchyTreeView->currentNode())
+  {
+    vtkMRMLNode* node = d->SubjectHierarchyTreeView->findFirstNodeByClass("vtkMRMLModelNode");
+    if (node)
+    {
+      d->SubjectHierarchyTreeView->setCurrentNode(node);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------

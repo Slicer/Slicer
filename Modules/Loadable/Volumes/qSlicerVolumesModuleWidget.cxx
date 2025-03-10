@@ -276,3 +276,21 @@ void qSlicerVolumesModuleWidget::colorLegendCollapsibleButtonCollapsed(bool coll
   }
   d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
 }
+
+//-----------------------------------------------------------
+void qSlicerVolumesModuleWidget::enter()
+{
+  Q_D(qSlicerVolumesModuleWidget);
+
+  this->Superclass::enter();
+
+  // If no node is selected then select the first displayed node to save the user a click
+  if (!d->ActiveVolumeNodeSelector->currentNode())
+  {
+    vtkMRMLNode* node = d->ActiveVolumeNodeSelector->findFirstNodeByClass("vtkMRMLVolumeNode");
+    if (node)
+    {
+      d->ActiveVolumeNodeSelector->setCurrentNode(node);
+    }
+  }
+}

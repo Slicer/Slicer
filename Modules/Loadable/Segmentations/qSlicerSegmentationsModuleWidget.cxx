@@ -185,6 +185,16 @@ void qSlicerSegmentationsModuleWidget::onEnter()
   this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndRestoreEvent,
                     this, SLOT(onMRMLSceneEndRestoreEvent()));
 
+  // If no node is selected then select the first displayed node to save the user a click
+  if (!d->MRMLNodeSelector_Segmentation->currentNode())
+  {
+    vtkMRMLNode* node = d->MRMLNodeSelector_Segmentation->findFirstNodeByClass("vtkMRMLSegmentationNode");
+    if (node)
+    {
+      d->MRMLNodeSelector_Segmentation->setCurrentNode(node);
+    }
+  }
+
   this->onSegmentationNodeChanged(d->MRMLNodeSelector_Segmentation->currentNode());
 
   d->populateTerminologyContextComboBox();

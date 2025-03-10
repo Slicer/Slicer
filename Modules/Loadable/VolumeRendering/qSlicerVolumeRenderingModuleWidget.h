@@ -60,6 +60,8 @@ public:
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
   double nodeEditable(vtkMRMLNode* node) override;
 
+  void enter() override;
+
 public slots:
   void setMRMLVolumeNode(vtkMRMLNode* node);
   void setMRMLROINode(vtkMRMLNode* node);
