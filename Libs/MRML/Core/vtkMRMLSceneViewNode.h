@@ -134,6 +134,8 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 
   void SetSceneViewRootDir( const char* name);
 
+  vtkGetObjectMacro(SnapshotScene, vtkMRMLScene);
+
 protected:
   vtkMRMLSceneViewNode();
   ~vtkMRMLSceneViewNode() override;

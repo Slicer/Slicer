@@ -1248,6 +1248,7 @@ void vtkMRMLLayoutLogic::UpdateLayoutNode()
   else
   {
     sceneLayoutNode = vtkMRMLLayoutNode::New();
+    sceneLayoutNode->SetSingletonTag("vtkMRMLLayoutNode");
 
     // we want to set the node to the logic before adding it into the scene, in
     // case an object listens to the scene node added event and query the logic

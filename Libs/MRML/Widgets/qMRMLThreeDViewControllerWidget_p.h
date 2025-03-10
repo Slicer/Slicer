@@ -48,7 +48,6 @@ class QAction;
 class ctkButtonGroup;
 class ctkSignalMapper;
 class ctkSliderWidget;
-class qMRMLSceneViewMenu;
 class vtkMRMLCameraNode;
 class vtkMRMLViewNode;
 class QString;

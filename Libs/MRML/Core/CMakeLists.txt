@@ -248,6 +248,8 @@ set(MRMLCore_SRCS
   vtkMRMLSegmentationStorageNode.cxx
   vtkMRMLSegmentationStorageNode.h
   vtkMRMLSelectionNode.cxx
+  vtkMRMLSequenceBrowserNode.cxx
+  vtkMRMLSequenceBrowserNode.h
   vtkMRMLSequenceNode.cxx
   vtkMRMLSequenceNode.h
   vtkMRMLSequenceStorageNode.cxx

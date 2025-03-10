@@ -73,12 +73,12 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   // logic - handle registration of nodes
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   applicationLogic->SetMRMLScene(scene.GetPointer());
+  vtkNew<vtkSlicerSceneViewsModuleLogic> sceneViewsModuleLogic;
+  sceneViewsModuleLogic->SetMRMLScene(scene.GetPointer());
   vtkNew<vtkSlicerMarkupsLogic> markupsLogic;
   markupsLogic->SetMRMLScene(scene.GetPointer());
   vtkNew<vtkSlicerAnnotationModuleLogic> annotationLogic;
   annotationLogic->SetMRMLScene(scene.GetPointer());
-  vtkNew<vtkSlicerSceneViewsModuleLogic> sceneViewsModuleLogic;
-  sceneViewsModuleLogic->SetMRMLScene(scene.GetPointer());
 
   // read in the scene
   std::cerr << "Reading scene from file: " << fileName.c_str() << std::endl;

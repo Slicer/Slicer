@@ -22,8 +22,6 @@
 #ifndef __vtkMRMLSequenceBrowserNode_h
 #define __vtkMRMLSequenceBrowserNode_h
 
-#include "vtkSlicerSequencesModuleMRMLExport.h"
-
 // MRML includes
 #include <vtkMRML.h>
 #include <vtkMRMLNode.h>
@@ -37,7 +35,7 @@ class vtkCollection;
 class vtkMRMLSequenceNode;
 class vtkIntArray;
 
-class VTK_SLICER_SEQUENCES_MODULE_MRML_EXPORT vtkMRMLSequenceBrowserNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLSequenceBrowserNode : public vtkMRMLNode
 {
 public:
   static vtkMRMLSequenceBrowserNode *New();
@@ -70,6 +68,7 @@ public:
     MissingItemCreateFromPrevious = 0, ///< previous item is used for initializing the new item (this is the default mode)
     MissingItemCreateFromDefault, ///< the new item is created from the default node (typically an empty node)
     MissingItemSetToDefault, ///< the proxy node is set to the default (empty) node; new item is not created
+    MissingItemIgnore, ///< the proxy node is not modified
     NumberOfMissingItemModes // this line must be the last one
   };
 
@@ -91,7 +90,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void CopyContent(vtkMRMLNode *node, bool deepCopy=true) override;
 
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "SequenceBrowser";};
@@ -393,9 +392,16 @@ protected:
   bool PlaybackLooped{true};
   int SelectedItemNumber{-1};
 
-  bool RecordingActive{false};
   double RecordingTimeOffsetSec; // difference between universal time and index value
+  vtkSetMacro(RecordingTimeOffsetSec, double);
+  vtkGetMacro(RecordingTimeOffsetSec, double);
+
+  bool RecordingActive{false};
+
   double LastSaveProxyNodesStateTimeSec;
+  vtkSetMacro(LastSaveProxyNodesStateTimeSec, double);
+  vtkGetMacro(LastSaveProxyNodesStateTimeSec, double);
+
   bool RecordMasterOnly{false};
   int RecordingSamplingMode{vtkMRMLSequenceBrowserNode::SamplingLimitedToPlaybackFrameRate};
   int IndexDisplayMode{vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue};
@@ -407,6 +413,8 @@ protected:
 
   // Counter that is used for generating the unique (only for this class) proxy node postfix strings
   int LastPostfixIndex{0};
+  vtkSetMacro(LastPostfixIndex, int);
+  vtkGetMacro(LastPostfixIndex, int);
 
 private:
   struct SynchronizationProperties;
