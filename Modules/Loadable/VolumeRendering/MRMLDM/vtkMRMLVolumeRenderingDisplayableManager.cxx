@@ -280,7 +280,8 @@ vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::vtkInternal(vtkMRMLVolume
   this->MultiVolumeMapper = vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
   this->MultiVolumeDummyImage = vtkSmartPointer<vtkImageData>::New();
   this->MultiVolumeDummyTrivialProducer = vtkSmartPointer<vtkTrivialProducer>::New();
-  this->MultiVolumeDummyImage->SetSpacing(100.0, 100.0, 100.0);
+  // Keep the volume small to prevent the dummy volume increasing the bounds of the multivolume actor.
+  this->MultiVolumeDummyImage->SetSpacing(1.0, 1.0, 1.0);
   this->MultiVolumeDummyImage->SetExtent(0, 1, 0, 1, 0, 1);
   this->MultiVolumeDummyImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
   this->MultiVolumeDummyImage->GetPointData()->GetScalars()->Fill(0);
@@ -743,6 +744,22 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
     }
     else
     {
+
+      // Move the dummy volume to the same position as the first volume to not make the bounds of the multi-volume actor larger than necessary
+      // (if the dummy volume would not be transformed then the bounds would always include the origin position)
+      PipelineMultiVolume* pipelineMulti = dynamic_cast<PipelineMultiVolume*>(pipeline);
+      if (pipelineMulti)
+      {
+        if (pipelineMulti->ActorPortIndex == 1)
+        {
+          vtkVolume* dummyVolume = this->MultiVolumeActor->GetVolume(0);
+          if (dummyVolume)
+          {
+            dummyVolume->SetUserMatrix(pipeline->IJKToWorldMatrix);
+          }
+        }
+      }
+
       pipeline->VolumeActor->SetUserMatrix(pipeline->IJKToWorldMatrix.GetPointer());
     }
     pipelineModified = true;
