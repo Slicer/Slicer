@@ -1349,6 +1349,7 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement *xmlElement)
       }
       this->WriteObjectPropertyEnd();
     }
+    // Check if it a double array
     else if (std::count(valueStr.begin(), valueStr.end(), ' ') > 0 &&
       std::all_of(valueStr.begin(), valueStr.end(), [](char c) { return std::isdigit(c) || c == ' ' || c == '-' || c == '.';}))
     {
@@ -1363,15 +1364,26 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement *xmlElement)
     }
     else
     {
+      // Check if it is a number
       if (value && (std::isdigit(value[0]) ||
         (value[0] == '-' && std::isdigit(value[1]))))
       {
-        this->WriteIntProperty(name, std::atoi(value));
+        // Check if it is a number with decimal point
+        if (std::strchr(value, '.') != nullptr)
+        {
+          this->WriteDoubleProperty(name, std::atof(value));
+        }
+        else
+        {
+          this->WriteIntProperty(name, std::atoi(value));
+        }
       }
-      else if (value && ( std::strcmp(value, "true") == 0 || std::strcmp(value, "false") == 0))
+      // Check if it is a boolean
+      else if (value && (std::strcmp(value, "true") == 0 || std::strcmp(value, "false") == 0))
       {
         this->WriteBoolProperty(name, std::strcmp(value, "true") == 0);
       }
+      // It is a string
       else
       {
         this->WriteStringProperty(name, value ? value : "");
