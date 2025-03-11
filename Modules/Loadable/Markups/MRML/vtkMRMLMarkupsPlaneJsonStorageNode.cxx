@@ -144,6 +144,10 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(
 
   MRMLNodeModifyBlocker blocker(planeNode);
 
+  // clear out the list
+  markupsNode->RemoveAllControlPoints();
+  markupsNode->ClearValueForAllMeasurements();
+
   if (markupObject->HasMember("planeType"))
   {
     planeNode->SetPlaneType(planeNode->GetPlaneTypeFromString(markupObject->GetStringProperty("planeType").c_str()));

@@ -382,6 +382,7 @@ bool vtkMRMLMarkupsJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkup
 
   // clear out the list
   markupsNode->RemoveAllControlPoints();
+  markupsNode->ClearValueForAllMeasurements();
 
   if (markupObject->HasMember("name"))
   {

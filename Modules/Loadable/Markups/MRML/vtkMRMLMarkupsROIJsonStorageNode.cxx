@@ -112,6 +112,10 @@ bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMar
 
   MRMLNodeModifyBlocker blocker(markupsNode);
 
+  // clear out the list
+  markupsNode->RemoveAllControlPoints();
+  markupsNode->ClearValueForAllMeasurements();
+
   if (markupsObject->HasMember("roiType"))
   {
     roiNode->SetROIType(roiNode->GetROITypeFromString(markupsObject->GetStringProperty("roiType").c_str()));

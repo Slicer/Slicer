@@ -132,9 +132,6 @@ void vtkMRMLMarkupsNode::ReadXMLAttributes(const char** atts)
 {
   MRMLNodeModifyBlocker blocker(this);
 
-  this->RemoveAllControlPoints();
-  this->ClearValueForAllMeasurements();
-
   Superclass::ReadXMLAttributes(atts);
 
   vtkMRMLReadXMLBeginMacro(atts);
