@@ -141,7 +141,8 @@ void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
 void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
                                              const QString& text,
                                              const QString& extraType,
-                                             const Qt::ItemFlags& flags)
+                                             const Qt::ItemFlags& flags,
+                                             const QString& extraItemData)
 {
   Q_ASSERT(parent);
 
@@ -160,6 +161,7 @@ void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
       else
       {
         extraItem->setText(text);
+        extraItem->setData(extraItemData, qMRMLSceneModel::ExtraItemsRole);
       }
       extraItem->setFlags(flags);
     }
@@ -173,7 +175,9 @@ void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
 
   // update extra item cache info (for faster retrieval)
   QMap<QString, QVariant> extraItems = parent->data(qMRMLSceneModel::ExtraItemsRole).toMap();
+  const QString itemsDataKey = extraType + "Data"; // to store associated item data for each item text
   extraItems[extraType] = extraItems[extraType].toStringList() << text;
+  extraItems[itemsDataKey] = extraItems[itemsDataKey].toStringList() << extraItemData;
   parent->setData(extraItems, qMRMLSceneModel::ExtraItemsRole );
 }
 
@@ -233,6 +237,7 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
     indexes = q->match(start, qMRMLSceneModel::UIDRole, extraType, 1, Qt::MatchExactly);
   }
   extraItems[extraType] = QStringList();
+  extraItems[extraType + "Data"] = QStringList(); // empty the associated items data list
   parent->setData(extraItems, qMRMLSceneModel::ExtraItemsRole);
 }
 
@@ -279,7 +284,7 @@ qMRMLSceneModel::qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parentO
 qMRMLSceneModel::~qMRMLSceneModel() = default;
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* parent)
+void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* parent, const QStringList& extraItemsData)
 {
   Q_D(qMRMLSceneModel);
 
@@ -300,19 +305,27 @@ void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* 
   int row = 0;
   foreach(QString extraItem, extraItems)
   {
-    d->insertExtraItem(row++, parent, extraItem, "preItem", Qt::ItemIsEnabled  | Qt::ItemIsSelectable);
+    d->insertExtraItem(row, parent, extraItem, "preItem", Qt::ItemIsEnabled  | Qt::ItemIsSelectable,
+                       extraItemsData.size() > row ? extraItemsData[row++] : extraItems[row++]);
   }
 }
 
 //------------------------------------------------------------------------------
-QStringList qMRMLSceneModel::preItems(QStandardItem* parent)const
+QStringList qMRMLSceneModel::preItems(QStandardItem* parent, bool itemsDataOnly)const
 {
   Q_D(const qMRMLSceneModel);
-  return d->extraItems(parent, "preItem");
+  if (!itemsDataOnly)
+  {
+      return d->extraItems(parent, "preItem");
+  }
+  else
+  {
+      return d->extraItems(parent, "preItemData");
+  }
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::setPostItems(const QStringList& extraItems, QStandardItem* parent)
+void qMRMLSceneModel::setPostItems(const QStringList& extraItems, QStandardItem* parent, const QStringList& extraItemsData)
 {
   Q_D(qMRMLSceneModel);
 
@@ -329,17 +342,26 @@ void qMRMLSceneModel::setPostItems(const QStringList& extraItems, QStandardItem*
   }
 
   d->removeAllExtraItems(parent, "postItem");
+  int i = 0;
   foreach(QString extraItem, extraItems)
   {
-    d->insertExtraItem(parent->rowCount(), parent, extraItem, "postItem", Qt::ItemIsEnabled);
+    d->insertExtraItem(parent->rowCount(), parent, extraItem, "postItem", Qt::ItemIsEnabled,
+                       extraItemsData.size() > i ? extraItemsData[i++] : extraItems[i++]);
   }
 }
 
 //------------------------------------------------------------------------------
-QStringList qMRMLSceneModel::postItems(QStandardItem* parent)const
+QStringList qMRMLSceneModel::postItems(QStandardItem* parent, bool itemsDataOnly)const
 {
   Q_D(const qMRMLSceneModel);
-  return d->extraItems(parent, "postItem");
+  if (!itemsDataOnly)
+  {
+      return d->extraItems(parent, "postItem");
+  }
+  else
+  {
+      return d->extraItems(parent, "postItemData");
+  }
 }
 
 //------------------------------------------------------------------------------
