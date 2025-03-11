@@ -24,6 +24,7 @@
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
 #include "vtkMRMLColorLogic.h"
+#include "vtkMRMLCornerTextLogic.h"
 #include "vtkMRMLLogic.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLSliceLogic.h"
@@ -43,6 +44,7 @@
 #include "vtkMRMLStorageNode.h"
 #include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLTableViewNode.h"
+#include "vtkMRMLTextNode.h"
 #include "vtkMRMLViewNode.h"
 
 // VTK includes
@@ -95,6 +97,7 @@ public:
   vtkSmartPointer<vtkMRMLSliceLinkLogic> SliceLinkLogic;
   vtkSmartPointer<vtkMRMLViewLinkLogic> ViewLinkLogic;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
+  vtkSmartPointer<vtkMRMLCornerTextLogic> CornerTextLogic;
   std::string TemporaryPath;
   std::map<std::string, vtkWeakPointer<vtkMRMLAbstractLogic> > ModuleLogicMap;
   std::map<int, std::string> FontFileNames;
@@ -110,6 +113,7 @@ vtkMRMLApplicationLogic::vtkInternal::vtkInternal(vtkMRMLApplicationLogic* exter
   this->SliceLinkLogic = vtkSmartPointer<vtkMRMLSliceLinkLogic>::New();
   this->ViewLinkLogic = vtkSmartPointer<vtkMRMLViewLinkLogic>::New();
   this->ColorLogic = vtkSmartPointer<vtkMRMLColorLogic>::New();
+  this->CornerTextLogic = vtkSmartPointer<vtkMRMLCornerTextLogic>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -166,6 +170,7 @@ vtkMRMLApplicationLogic::vtkMRMLApplicationLogic()
   this->Internal->SliceLinkLogic->SetMRMLApplicationLogic(this);
   this->Internal->ViewLinkLogic->SetMRMLApplicationLogic(this);
   this->Internal->ColorLogic->SetMRMLApplicationLogic(this);
+  this->Internal->CornerTextLogic->SetMRMLApplicationLogic(this);
 }
 
 //----------------------------------------------------------------------------
@@ -203,6 +208,19 @@ void vtkMRMLApplicationLogic::SetColorLogic(vtkMRMLColorLogic* colorLogic)
 vtkMRMLColorLogic* vtkMRMLApplicationLogic::GetColorLogic()const
 {
   return this->Internal->ColorLogic;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetCornerTextLogic(vtkMRMLCornerTextLogic* cornerTextLogic)
+{
+  this->Internal->CornerTextLogic = cornerTextLogic;
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLCornerTextLogic* vtkMRMLApplicationLogic::GetCornerTextLogic()const
+{
+  return this->Internal->CornerTextLogic;
 }
 
 //----------------------------------------------------------------------------
@@ -419,6 +437,61 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 
   this->Internal->SliceLinkLogic->SetMRMLScene(newScene);
   this->Internal->ViewLinkLogic->SetMRMLScene(newScene);
+
+  vtkMRMLNode* cornerAnnotationsTextNode = nullptr;
+  if (newScene)
+  {
+    // CornerText node
+    cornerAnnotationsTextNode = newScene->GetNodeByID("vtkMRMLTextNodeCornerAnnotationsSingleton");
+    if (!cornerAnnotationsTextNode)
+    {
+      vtkNew<vtkMRMLTextNode> tmpCornerAnnotations;
+      tmpCornerAnnotations->SetSingletonTag("CornerAnnotationsSingleton");
+      tmpCornerAnnotations->SetName("CornerAnnotations");
+      tmpCornerAnnotations->SetText(R"(<annotations>
+  <!-- For corners -->
+  <corner position="bottom-left">
+    <!-- Generic properties -->
+    <property name="VolumeName" role="label" prefix="L: " display-level="1"/>
+    <property name="VolumeName" role="foreground" prefix="F: " display-level="1"/>
+    <property name="VolumeName" role="background" prefix="B: " display-level="1"/>
+  </corner>
+
+  <corner position="top-left">
+    <!-- DICOM specific properties -->
+    <property name="PatientName" display-level="2"/>
+    <property name="PatientID" prefix="ID: " display-level="1"/>
+    <property name="PatientInfo" display-level="2"/>
+    <property name="SeriesDate" prefix="B: " role="background" display-level="2"/>
+    <property name="SeriesDate" prefix="F: " role="foreground" display-level="2"/>
+    <property name="SeriesTime" prefix="B: " role="background" display-level="3"/>
+    <property name="SeriesTime" prefix="F: " role="foreground" display-level="3"/>
+    <property name="SeriesDescription" prefix="B: " role="background" display-level="3"/>
+    <property name="SeriesDescription" prefix="F: " role="foreground" display-level="3"/>
+  </corner>
+
+  <corner position="top-right">
+    <!-- DICOM specific properties -->
+    <property name="InstitutionName" display-level="2"/>
+    <property name="ReferringPhysician" display-level="2"/>
+    <property name="Manufacturer" display-level="3"/>
+    <property name="Model" display-level="3"/>
+    <property name="Patient-Position" display-level="1"/>
+    <property name="TR" display-level="1"/>
+    <property name="TE" display-level="1"/>
+    <!-- Generic properties -->
+    <property name="SlabReconstructionThickness" prefix="Thickness: " display-level="1"/>
+    <property name="SlabReconstructionType" prefix="Type: " display-level="1"/>
+  </corner>
+</annotations>)");
+      tmpCornerAnnotations->SetSaveWithScene(false);
+      tmpCornerAnnotations->SetHideFromEditors(true);
+
+      cornerAnnotationsTextNode = newScene->AddNode(tmpCornerAnnotations);
+    }
+    assert(vtkMRMLTextNode::SafeDownCast(cornerAnnotationsTextNode));
+  }
+
 }
 
 //----------------------------------------------------------------------------
