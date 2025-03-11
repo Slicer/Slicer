@@ -13,8 +13,6 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkMRML${MODULE_NAME}JsonElement.cxx
-  vtkMRML${MODULE_NAME}JsonElement.h
   vtkMRML${MODULE_NAME}JsonStorageNode.cxx
   vtkMRML${MODULE_NAME}JsonStorageNode.h
   vtkMRML${MODULE_NAME}PlaneJsonStorageNode.cxx

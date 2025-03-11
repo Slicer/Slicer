@@ -21,7 +21,7 @@
 
 #include <vtkCodedEntry.h>
 #include "vtkMRMLMarkupsROIJsonStorageNode.h"
-#include "vtkMRMLMarkupsJsonElement.h"
+#include "vtkMRMLJsonElement.h"
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
@@ -50,7 +50,7 @@ bool vtkMRMLMarkupsROIJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNo
 
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
-  vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
+  vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
 {
   if (!vtkMRMLMarkupsJsonStorageNode::WriteBasicProperties(writer, markupsNode))
   {
@@ -101,7 +101,7 @@ bool vtkMRMLMarkupsROIJsonStorageNode::WriteBasicProperties(
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupsObject)
+bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupsObject)
 {
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
   if (!roiNode)
@@ -111,6 +111,10 @@ bool vtkMRMLMarkupsROIJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMar
   }
 
   MRMLNodeModifyBlocker blocker(markupsNode);
+
+  // clear out the list
+  markupsNode->RemoveAllControlPoints();
+  markupsNode->ClearValueForAllMeasurements();
 
   if (markupsObject->HasMember("roiType"))
   {

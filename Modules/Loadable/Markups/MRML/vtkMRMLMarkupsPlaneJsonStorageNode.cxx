@@ -26,7 +26,7 @@
 
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLMarkupsJsonElement.h"
+#include "vtkMRMLJsonElement.h"
 
 #include "vtkDoubleArray.h"
 #include "vtkObjectFactory.h"
@@ -52,7 +52,7 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *ref
 
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteBasicProperties(
-  vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
+  vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
 {
   if (!vtkMRMLMarkupsJsonStorageNode::WriteBasicProperties(writer, markupsNode))
   {
@@ -133,7 +133,7 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteBasicProperties(
 
 //----------------------------------------------------------------------------
 bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(
-  vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupObject)
+  vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupObject)
 {
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode);
   if (!planeNode)
@@ -143,6 +143,10 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(
   }
 
   MRMLNodeModifyBlocker blocker(planeNode);
+
+  // clear out the list
+  markupsNode->RemoveAllControlPoints();
+  markupsNode->ClearValueForAllMeasurements();
 
   if (markupObject->HasMember("planeType"))
   {
