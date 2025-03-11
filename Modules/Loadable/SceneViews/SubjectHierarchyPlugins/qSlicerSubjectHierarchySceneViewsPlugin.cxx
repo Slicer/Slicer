@@ -31,7 +31,6 @@
 // MRML includes
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
-#include <vtkMRMLSceneViewNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -219,13 +218,13 @@ void qSlicerSubjectHierarchySceneViewsPlugin::restoreCurrentSceneView()const
     return;
   }
 
-  vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
-  if (!viewNode)
-  {
-    qCritical() << Q_FUNC_INFO << ": Could not get scene view node!";
-    return;
-  }
+  //vtkMRMLSceneViewNode* viewNode = vtkMRMLSceneViewNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
+  //if (!viewNode)
+  //{
+  //  qCritical() << Q_FUNC_INFO << ": Could not get scene view node!";
+  //  return;
+  //}
 
-  scene->SaveStateForUndo();
-  viewNode->RestoreScene();
+  //scene->SaveStateForUndo();
+  //viewNode->RestoreScene();
 }

@@ -142,7 +142,7 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
   }
 
   // write out the mrml file
-  bool res = this->mrmlScene()->Commit();
+  bool res = this->mrmlScene()->Commit(nullptr, nullptr);
   if (!res)
   {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent,

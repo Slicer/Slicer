@@ -113,15 +113,6 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     success = sequenceScene->ReadFromMRB(fullName.c_str(), this->GetUserMessages());
     if (success)
     {
-      // Remove scene view nodes, as they would interfere with re-saving of the embedded scene
-      // It would be better to disable automatic adding of scene view nodes altogether, but there is no API for that in the Slicer core.
-      std::vector<vtkMRMLNode*> sceneViewNodes;
-      sequenceScene->GetNodesByClass("vtkMRMLSceneViewNode", sceneViewNodes);
-      for (std::vector<vtkMRMLNode*>::iterator sceneViewNodeIt = sceneViewNodes.begin(); sceneViewNodeIt != sceneViewNodes.end(); ++sceneViewNodeIt)
-      {
-        sequenceScene->RemoveNode(*sceneViewNodeIt);
-      }
-
       // Read sequence index information from node embedded in the internal scene
       vtkMRMLSequenceNode* embeddedSequenceNode = vtkMRMLSequenceNode::SafeDownCast(
         sequenceScene->GetSingletonNode("SequenceIndex", "vtkMRMLSequenceNode"));
