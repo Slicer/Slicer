@@ -2,16 +2,15 @@
 
 import logging
 import typing
-from typing import Optional
 import weakref
+from typing import Optional
 
 import qt
-
-import slicer
 import vtk
 
+import slicer
 from .default import Default, extractDefault
-from .guiConnectors import GuiConnector, createGuiConnector, _getPackNameToWidgetMap
+from .guiConnectors import GuiConnector, _getPackNameToWidgetMap, createGuiConnector
 from .parameterInfo import ParameterInfo
 from .parameterPack import _checkMember as checkPackMember
 from .serializers import Serializer, createSerializer

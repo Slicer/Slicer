@@ -3,7 +3,6 @@
 import abc
 from typing import Callable, Optional
 
-
 BaseRequestLoggingFunction = Callable[[list[any]], None]
 """Function signature for an external handle for message logging."""
 
