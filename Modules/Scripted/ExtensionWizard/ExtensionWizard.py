@@ -344,7 +344,7 @@ class ExtensionWizardWidget:
         candidates = [m for m in modules if m.key not in loadedModules]
 
         # Prompt to load additional module(s)
-        if len(candidates):
+        if candidates:
             dlg = LoadModulesDialog(parent)
             dlg.setModules(candidates)
 
@@ -381,7 +381,7 @@ class ExtensionWizardWidget:
                     if not factory.isRegistered(module.key):
                         failed.append(module)
 
-                if len(failed):
+                if failed:
                     if len(failed) > 1:
                         text = _("{count} modules could not be registered").format(count=count)
                     else:
