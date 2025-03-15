@@ -95,7 +95,7 @@ class SegmentEditorMarginEffect(AbstractScriptedSegmentEditorEffect):
             selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
 
         marginSizeMM = abs(self.scriptedEffect.doubleParameter("MarginSizeMm"))
-        marginSizePixel = [int(math.floor(marginSizeMM / spacing)) for spacing in selectedSegmentLabelmapSpacing]
+        marginSizePixel = [math.floor(marginSizeMM / spacing) for spacing in selectedSegmentLabelmapSpacing]
         return marginSizePixel
 
     def updateGUIFromMRML(self):

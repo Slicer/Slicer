@@ -294,7 +294,7 @@ class CMakeScript:
                     suffix = prefix.replace("[", "]")
                     s = self._chompString(suffix, escapes=False)
 
-                if not len(text):
+                if not text:
                     return String(prefix=prefix, suffix=suffix, text=s, indent=indent)
 
                 text += prefix + s + suffix

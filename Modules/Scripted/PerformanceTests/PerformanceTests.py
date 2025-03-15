@@ -100,7 +100,7 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
         elapsedTime = 0
         sliceOffset = 5
         offsetSteps = 10
-        numerOfSweeps = int(math.ceil(iters / offsetSteps))
+        numerOfSweeps = math.ceil(iters / offsetSteps)
         renderingTimesSec = np.zeros(numerOfSweeps * offsetSteps * 2)
         sampleIndex = 0
         startOffset = sliceNode.GetSliceOffset()

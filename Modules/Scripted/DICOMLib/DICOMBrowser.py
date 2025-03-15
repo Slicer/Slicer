@@ -549,12 +549,12 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
                         instanceFile = slicer.dicomDatabase.fileForInstance(instance)
                         if instanceFile != "":
                             instanceFileList.append(instanceFile)
-                    if len(instanceFileList) and not self.isFileListInCheckedLoadables(instanceFileList):
+                    if instanceFileList and not self.isFileListInCheckedLoadables(instanceFileList):
                         referencedFileLists.append(instanceFileList)
 
         # if applicable, find all loadables from the file lists
         loadEnabled = False
-        if len(referencedFileLists):
+        if referencedFileLists:
             (self.referencedLoadables, loadEnabled) = self.getLoadablesFromFileLists(referencedFileLists)
 
         automaticallyLoadReferences = int(slicer.util.settingsValue("DICOM/automaticallyLoadReferences", qt.QMessageBox.InvalidRole))
