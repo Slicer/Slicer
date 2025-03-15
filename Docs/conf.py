@@ -165,7 +165,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "_moduledescriptions"]
 
 # Set EXCLUDE_DEVELOPER_GUIDE=True environment variable to exclude developer guide.
 # It is useful for quicker documentation generation while eiditing user manual.
-if os.environ.get("EXCLUDE_API_REFERENCE", False) == "True":
+if os.environ.get("EXCLUDE_API_REFERENCE", "False") == "True":
     print("API reference is excluded from documentation.")
     exclude_patterns.append("developer_guide/vtkTeem.rst")
     exclude_patterns.append("developer_guide/vtkAddon.rst")
