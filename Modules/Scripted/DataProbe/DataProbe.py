@@ -239,7 +239,7 @@ class DataProbeInfoWidget:
 
         def _roundInt(value):
             try:
-                return int(round(value))
+                return round(value)
             except ValueError:
                 return 0
 
@@ -342,7 +342,7 @@ class DataProbeInfoWidget:
 
         def _roundInt(value):
             try:
-                return int(round(value))
+                return round(value)
             except ValueError:
                 return 0
 

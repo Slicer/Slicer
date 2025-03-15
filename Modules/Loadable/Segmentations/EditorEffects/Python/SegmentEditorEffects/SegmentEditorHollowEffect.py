@@ -99,7 +99,7 @@ class SegmentEditorHollowEffect(AbstractScriptedSegmentEditorEffect):
             selectedSegmentLabelmapSpacing = selectedSegmentLabelmap.GetSpacing()
 
         shellThicknessMM = abs(self.scriptedEffect.doubleParameter("ShellThicknessMm"))
-        shellThicknessPixel = [int(math.floor(shellThicknessMM / selectedSegmentLabelmapSpacing[componentIndex])) for componentIndex in range(3)]
+        shellThicknessPixel = [math.floor(shellThicknessMM / selectedSegmentLabelmapSpacing[componentIndex]) for componentIndex in range(3)]
         return shellThicknessPixel
 
     def updateGUIFromMRML(self):

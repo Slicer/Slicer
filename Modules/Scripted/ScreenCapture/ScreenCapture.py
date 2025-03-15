@@ -1379,7 +1379,7 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
 
         import math
 
-        numberOfRows = int(math.ceil(numberOfImages / numberOfColumns))
+        numberOfRows = math.ceil(numberOfImages / numberOfColumns)
         imageMarginSizePixels = 5
         for row in range(numberOfRows):
             for column in range(numberOfColumns):
