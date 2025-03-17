@@ -1426,8 +1426,12 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateMultiVolumeMap
   {
     vtkMRMLMultiVolumeRenderingDisplayNode* multiDisplayNode =
       vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(pipeline->DisplayNode);
+    if (!multiDisplayNode)
+    {
+      continue;
+    }
     vtkMRMLVolumeNode* volumeNode = multiDisplayNode->GetVolumeNode();
-    if (!multiDisplayNode || !volumeNode)
+    if (!volumeNode)
     {
       continue;
     }
