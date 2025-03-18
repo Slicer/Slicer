@@ -477,6 +477,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT FiducialLayoutSwitchBug1914.py)
   slicer_add_python_unittest(SCRIPT ShaderProperties.py)
   slicer_add_python_unittest(SCRIPT SlicerScriptedFileReaderWriterTest.py)
+  slicer_add_python_unittest(SCRIPT CurvedPlanarReformation.py)
 
   # add as hidden module for use at run time
   set(KIT_PYTHON_SCRIPTS
@@ -503,6 +504,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     ShaderProperties.py
     UtilTest.py
     SlicerScriptedFileReaderWriterTest.py
+    CurvedPlanarReformation.py
     )
 
   if(Slicer_BUILD_CLI_SUPPORT)

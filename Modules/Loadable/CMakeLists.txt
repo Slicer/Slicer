@@ -16,6 +16,7 @@ set(qtmodules
   SceneViews
   Markups # Markups depends on SceneViews (for testing) and Annotations
   Transforms
+  GeneralizedReformat
   Data
   Models
   Plots
