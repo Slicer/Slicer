@@ -30,7 +30,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void CopyContent(vtkMRMLNode* node, bool deepCopy = true) override;
 
   /// \brief Reimplemented to reset maximized view node.
   void Reset(vtkMRMLNode* defaultNode) override;
@@ -72,7 +72,8 @@ public:
   vtkGetMacro(SecondaryPanelSize, int);
   vtkSetMacro(SecondaryPanelSize, int);
 
-  /// Set/Get the size of the last selected module
+  /// Set/Get the name of the last selected module
+  /// Note: this is property is no longer used and may be removed in the future.
   vtkGetStringMacro(SelectedModule);
   vtkSetStringMacro(SelectedModule);
 

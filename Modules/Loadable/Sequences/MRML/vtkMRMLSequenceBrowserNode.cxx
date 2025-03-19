@@ -354,11 +354,8 @@ void vtkMRMLSequenceBrowserNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLSequenceBrowserNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSequenceBrowserNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
-  // TODO: Convert to use MRML node macros
   vtkMRMLSequenceBrowserNode* node = vtkMRMLSequenceBrowserNode::SafeDownCast(anode);
   if (!node)
   {
@@ -367,26 +364,33 @@ void vtkMRMLSequenceBrowserNode::Copy(vtkMRMLNode *anode)
   }
 
   MRMLNodeModifyBlocker blocker(this);
-  Superclass::Copy(anode);
+  Superclass::CopyContent(anode);
 
-  // Note: node references are copied by the superclass
-  this->SynchronizationPostfixes = node->SynchronizationPostfixes;
-  this->SynchronizationPropertiesMap = node->SynchronizationPropertiesMap;
-  this->RecordingTimeOffsetSec = node->RecordingTimeOffsetSec;
-  this->LastSaveProxyNodesStateTimeSec = node->LastSaveProxyNodesStateTimeSec;
-  this->LastPostfixIndex = node->LastPostfixIndex;
-  this->SetHideFromEditors(node->GetHideFromEditors());
-  this->SetPlaybackActive(node->GetPlaybackActive());
-  this->SetPlaybackRateFps(node->GetPlaybackRateFps());
-  this->SetPlaybackItemSkippingEnabled(node->GetPlaybackItemSkippingEnabled());
-  this->SetPlaybackLooped(node->GetPlaybackLooped());
-  this->SetRecordMasterOnly(node->GetRecordMasterOnly());
-  this->SetRecordingSamplingMode(node->GetRecordingSamplingMode());
-  this->SetIndexDisplayMode(node->GetIndexDisplayMode());
-  this->SetIndexDisplayFormat(node->GetIndexDisplayFormat());
-  this->SetRecordingActive(node->GetRecordingActive());
-
-  this->SetSelectedItemNumber(node->GetSelectedItemNumber());
+  vtkMRMLCopyBeginMacro(anode);
+  if (this->SynchronizationPostfixes != node->SynchronizationPostfixes)
+  {
+    this->SynchronizationPostfixes = node->SynchronizationPostfixes;
+    this->Modified();
+  }
+  if (this->SynchronizationPropertiesMap != node->SynchronizationPropertiesMap)
+  {
+    this->SynchronizationPropertiesMap = node->SynchronizationPropertiesMap;
+    this->Modified();
+  }
+  vtkMRMLCopyFloatMacro(RecordingTimeOffsetSec);
+  vtkMRMLCopyFloatMacro(LastSaveProxyNodesStateTimeSec);
+  vtkMRMLCopyIntMacro(LastPostfixIndex);
+  vtkMRMLCopyBooleanMacro(PlaybackActive);
+  vtkMRMLCopyFloatMacro(PlaybackRateFps);
+  vtkMRMLCopyBooleanMacro(PlaybackItemSkippingEnabled);
+  vtkMRMLCopyBooleanMacro(PlaybackLooped);
+  vtkMRMLCopyBooleanMacro(RecordMasterOnly);
+  vtkMRMLCopyIntMacro(RecordingSamplingMode);
+  vtkMRMLCopyIntMacro(IndexDisplayMode);
+  vtkMRMLCopyStringMacro(IndexDisplayFormat);
+  vtkMRMLCopyBooleanMacro(RecordingActive);
+  vtkMRMLCopyIntMacro(SelectedItemNumber);
+  vtkMRMLCopyEndMacro();
 }
 
 //----------------------------------------------------------------------------

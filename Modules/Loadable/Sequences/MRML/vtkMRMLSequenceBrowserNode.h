@@ -91,7 +91,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void CopyContent(vtkMRMLNode *node, bool deepCopy=true) override;
 
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "SequenceBrowser";};
@@ -393,9 +393,16 @@ protected:
   bool PlaybackLooped{true};
   int SelectedItemNumber{-1};
 
-  bool RecordingActive{false};
   double RecordingTimeOffsetSec; // difference between universal time and index value
+  vtkSetMacro(RecordingTimeOffsetSec, double);
+  vtkGetMacro(RecordingTimeOffsetSec, double);
+
+  bool RecordingActive{false};
+
   double LastSaveProxyNodesStateTimeSec;
+  vtkSetMacro(LastSaveProxyNodesStateTimeSec, double);
+  vtkGetMacro(LastSaveProxyNodesStateTimeSec, double);
+
   bool RecordMasterOnly{false};
   int RecordingSamplingMode{vtkMRMLSequenceBrowserNode::SamplingLimitedToPlaybackFrameRate};
   int IndexDisplayMode{vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue};
@@ -407,6 +414,8 @@ protected:
 
   // Counter that is used for generating the unique (only for this class) proxy node postfix strings
   int LastPostfixIndex{0};
+  vtkSetMacro(LastPostfixIndex, int);
+  vtkGetMacro(LastPostfixIndex, int);
 
 private:
   struct SynchronizationProperties;
