@@ -13,6 +13,7 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 // MRML includes
+#include "vtkMRMLJsonElement.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLTransformNode.h"
@@ -793,78 +794,77 @@ void vtkMRMLSliceNode::UpdateMatrices()
     xyToSlice->SetElement(2, 3, 0.);
   }
 
-    // the mapping from slice plane coordinates to RAS
-    // (the Orientation as in Axial, Sagittal, Coronal)
-    //
-    // The combined transform:
-    //
-    // | R | = [Slice to RAS ] [ XY to Slice ]  | X |
-    // | A |                                    | Y |
-    // | S |                                    | Z |
-    // | 1 |                                    | 1 |
-    //
-    // or
-    //
-    // RAS = XYToRAS * XY
-    //
-    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, xyToSlice.GetPointer(), xyToRAS.GetPointer());
+  // the mapping from slice plane coordinates to RAS
+  // (the Orientation as in Axial, Sagittal, Coronal)
+  //
+  // The combined transform:
+  //
+  // | R | = [Slice to RAS ] [ XY to Slice ]  | X |
+  // | A |                                    | Y |
+  // | S |                                    | Z |
+  // | 1 |                                    | 1 |
+  //
+  // or
+  //
+  // RAS = XYToRAS * XY
+  //
+  vtkMatrix4x4::Multiply4x4(this->SliceToRAS, xyToSlice.GetPointer(), xyToRAS.GetPointer());
 
-    bool modified = false;
+  bool modified = false;
 
-    // check to see if the matrix actually changed
-    if ( !MatrixAreEqual(xyToRAS.GetPointer(), this->XYToRAS) )
+  // check to see if the matrix actually changed
+  if ( !MatrixAreEqual(xyToRAS.GetPointer(), this->XYToRAS) )
+  {
+    this->XYToSlice->DeepCopy(xyToSlice.GetPointer());
+    this->XYToRAS->DeepCopy(xyToRAS.GetPointer());
+    modified = true;
+  }
+
+
+  // the mapping from XY output slice pixels to Slice Plane coordinate
+  this->UVWToSlice->Identity();
+  if (this->UVWDimensions[0] > 0 &&
+      this->UVWDimensions[1] > 0 &&
+      this->UVWDimensions[2] > 0)
+  {
+    for (i = 0; i < 2; i++)
     {
-      this->XYToSlice->DeepCopy(xyToSlice.GetPointer());
-      this->XYToRAS->DeepCopy(xyToRAS.GetPointer());
-      modified = true;
+      spacing[i] = this->UVWExtents[i] / (this->UVWDimensions[i]);
+      this->UVWToSlice->SetElement(i, i, spacing[i]);
+      this->UVWToSlice->SetElement(i, 3, -this->UVWExtents[i] / 2. + this->UVWOrigin[i]);
     }
+    this->UVWToSlice->SetElement(2, 2, 1.0);
+    this->UVWToSlice->SetElement(2, 3, 0.);
+  }
 
+  vtkNew<vtkMatrix4x4> uvwToRAS;
 
-    // the mapping from XY output slice pixels to Slice Plane coordinate
-    this->UVWToSlice->Identity();
-    if (this->UVWDimensions[0] > 0 &&
-        this->UVWDimensions[1] > 0 &&
-        this->UVWDimensions[2] > 0)
-    {
-      for (i = 0; i < 2; i++)
-      {
-        spacing[i] = this->UVWExtents[i] / (this->UVWDimensions[i]);
-        this->UVWToSlice->SetElement(i, i, spacing[i]);
-        this->UVWToSlice->SetElement(i, 3, -this->UVWExtents[i] / 2. + this->UVWOrigin[i]);
-      }
-      this->UVWToSlice->SetElement(2, 2, 1.0);
-      this->UVWToSlice->SetElement(2, 3, 0.);
-    }
+  vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->UVWToSlice, uvwToRAS.GetPointer());
 
-    vtkNew<vtkMatrix4x4> uvwToRAS;
+  if (!MatrixAreEqual(uvwToRAS.GetPointer(), this->UVWToRAS))
+  {
+    this->UVWToRAS->DeepCopy(uvwToRAS.GetPointer());
+    modified = true;
+  }
 
-    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->UVWToSlice, uvwToRAS.GetPointer());
+  this->ImplicitFunction->SetNormal(this->SliceToRAS->GetElement(0, 2),
+                                    this->SliceToRAS->GetElement(1, 2),
+                                    this->SliceToRAS->GetElement(2, 2));
+  this->ImplicitFunction->SetOrigin(this->SliceToRAS->GetElement(0, 3),
+                                    this->SliceToRAS->GetElement(1, 3),
+                                    this->SliceToRAS->GetElement(2, 3));
 
-    if (!MatrixAreEqual(uvwToRAS.GetPointer(), this->UVWToRAS))
-    {
-      this->UVWToRAS->DeepCopy(uvwToRAS.GetPointer());
-      modified = true;
-    }
+  if (modified)
+  {
+    this->Modified();
+  }
 
-    this->ImplicitFunction->SetNormal(this->SliceToRAS->GetElement(0, 2),
-                                      this->SliceToRAS->GetElement(1, 2),
-                                      this->SliceToRAS->GetElement(2, 2));
-    this->ImplicitFunction->SetOrigin(this->SliceToRAS->GetElement(0, 3),
-                                      this->SliceToRAS->GetElement(1, 3),
-                                      this->SliceToRAS->GetElement(2, 3));
+  // as UpdateMatrices can be called with DisableModifiedEvent
+  // (typically when the scene is closed, slice nodes are reset but shouldn't
+  // fire events. We should respect the modifiedWasDisabled flag.
+  this->EndModify(disabledModify);
 
-    if (modified)
-    {
-      this->Modified();
-    }
-
-    // as UpdateMatrices can be called with DisableModifiedEvent
-    // (typically when the scene is closed, slice nodes are reset but shouldn't
-    // fire events. We should respect the modifiedWasDisabled flag.
-    this->EndModify(disabledModify);
-
-    this->IsUpdatingMatrices = 0;
-
+  this->IsUpdatingMatrices = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -931,6 +931,21 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSliceNode::ReadMRMLStatusFromJSONString(const char *json)
+{
+  vtkNew<vtkMRMLJsonReader> jsonReader;
+  vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take
+    (jsonReader->ReadFromString(json));
+  double fieldOfView[3];
+  jsonElement->GetVectorProperty("fieldOfView", fieldOfView);
+
+  fieldOfView[1] = fieldOfView[0] * this->GetFieldOfView()[1] / this->GetFieldOfView()[0];
+  this->SetFieldOfView(fieldOfView);
+
+  Superclass::ReadMRMLStatusFromJSONString(json);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
@@ -951,6 +966,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     // Layout color is set in Superclass
     layoutColorFound = true;
   }
+
   vtkMRMLReadXMLVectorMacro(fieldOfView, FieldOfView, double, 3);
   vtkMRMLReadXMLVectorMacro(xyzOrigin, XYZOrigin, double, 3);
   vtkMRMLReadXMLVectorMacro(uvwOrigin, UVWOrigin, double, 3);
