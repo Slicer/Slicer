@@ -931,21 +931,6 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::ReadMRMLStatusFromJSONString(const char *json)
-{
-  vtkNew<vtkMRMLJsonReader> jsonReader;
-  vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take
-    (jsonReader->ReadFromString(json));
-  double fieldOfView[3];
-  jsonElement->GetVectorProperty("fieldOfView", fieldOfView);
-
-  fieldOfView[1] = fieldOfView[0] * this->GetFieldOfView()[1] / this->GetFieldOfView()[0];
-  this->SetFieldOfView(fieldOfView);
-
-  Superclass::ReadMRMLStatusFromJSONString(json);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
@@ -967,7 +952,16 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     layoutColorFound = true;
   }
 
+
   vtkMRMLReadXMLVectorMacro(fieldOfView, FieldOfView, double, 3);
+  // Adjust the FieldOfView to match the aspect ratio of the slice dimensions.
+  // This adjustment ensures that the FieldOfView remains consistent with the current
+  // render window's aspect ratio. It is particularly important when loading or restoring
+  // slice configurations that were saved with a different render window aspect ratio,
+  // as mismatched aspect ratios could lead to distorted or improperly scaled slice views.
+  double windowAspect = (this->Dimensions[0] != 0 ? double(this->Dimensions[1]) / double(this->Dimensions[0]) : 1.);
+  this->FieldOfView[0] = fabs(windowAspect) > 1.e-6 ? this->FieldOfView[1] / windowAspect : this->FieldOfView[0];
+
   vtkMRMLReadXMLVectorMacro(xyzOrigin, XYZOrigin, double, 3);
   vtkMRMLReadXMLVectorMacro(uvwOrigin, UVWOrigin, double, 3);
   vtkMRMLReadXMLVectorMacro(uvwExtents, UVWExtents, double, 3);
@@ -986,7 +980,12 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLStringMacro(defaultOrientation, DefaultOrientation);
   vtkMRMLReadXMLStringMacro(orientationReference, OrientationReference);
   vtkMRMLReadXMLStringMacro(layoutName, LayoutName);
-  vtkMRMLReadXMLVectorMacro(dimensions, Dimensions, int, 3);
+
+  // Read Dimensions only if the current Dimensions are the default ones
+  if (this->Dimensions[0] == 256 && this->Dimensions[1] == 256 && this->Dimensions[2] == 1)
+  {
+    vtkMRMLReadXMLVectorMacro(dimensions, Dimensions, int, 3);
+  }
 
   // resliceDimensions: Setting of UVWDimensions based of the "resliceDimensions" attribute
   // was originally introduced in 2012 through commit Slicer@01ffcb5326 (ENH 9124. Added
