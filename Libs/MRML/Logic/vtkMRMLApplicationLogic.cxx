@@ -41,7 +41,6 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLStorableNode.h"
 #include "vtkMRMLStorageNode.h"
-#include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLTableViewNode.h"
 #include "vtkMRMLViewNode.h"
 

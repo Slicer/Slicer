@@ -40,7 +40,6 @@
 #include <vtkWeakPointer.h>
 
 class QAction;
-class qMRMLSceneViewMenu;
 class vtkMRMLPlotViewNode;
 class vtkMRMLPlotChartNode;
 class QString;

@@ -215,21 +215,17 @@ class ScenePerformanceTest(ScriptedLoadableModuleTest):
         return self.reportPerformance("CloseScene", "", averageTime)
 
     def restoreSceneView(self, sceneViewIndex):
-        node = slicer.mrmlScene.GetNthNodeByClass(sceneViewIndex, "vtkMRMLSceneViewNode")
-        return self.restoreSceneViewNode(node)
-
-    def restoreSceneViewNode(self, node):
         self.delayDisplay("Starting the Restore Scene test")
         logic = ScenePerformanceLogic()
         averageTime = 0
         for x in range(self.Repeat):
             logic.startTiming()
-            node.RestoreScene()
+            slicer.modules.sceneviews.logic().RestoreSceneView(sceneViewIndex)
             time = logic.stopTiming()
-            self.displayPerformance("RestoreSceneView", node.GetID(), time)
+            self.displayPerformance("RestoreSceneView", x, time)
             averageTime = averageTime + time
         averageTime = averageTime / self.Repeat
-        return self.reportPerformance("RestoreSceneView", node.GetID(), averageTime)
+        return self.reportPerformance("RestoreSceneView", x, averageTime)
 
     def setLayout(self, layoutIndex):
         self.delayDisplay("Starting the layout test")

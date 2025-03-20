@@ -259,35 +259,39 @@ void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/
 
   vtkMRMLCopyBeginMacro(anode);
 
-  this->VisualizationMode = node->VisualizationMode;
+  vtkMRMLCopyIntMacro(VisualizationMode);
 
-  this->GlyphSpacingMm = node->GlyphSpacingMm;
-  this->GlyphScalePercent = node->GlyphScalePercent;
-  this->GlyphDisplayRangeMaxMm = node->GlyphDisplayRangeMaxMm;
-  this->GlyphDisplayRangeMinMm = node->GlyphDisplayRangeMinMm;
-  this->GlyphType = node->GlyphType;
-  this->GlyphTipLengthPercent = node->GlyphTipLengthPercent;
-  this->GlyphDiameterMm = node->GlyphDiameterMm;
-  this->GlyphShaftDiameterPercent = node->GlyphShaftDiameterPercent;
-  this->GlyphResolution = node->GlyphResolution;
+  vtkMRMLCopyFloatMacro(GlyphSpacingMm);
+  vtkMRMLCopyFloatMacro(GlyphScalePercent);
+  vtkMRMLCopyFloatMacro(GlyphDisplayRangeMaxMm);
+  vtkMRMLCopyFloatMacro(GlyphDisplayRangeMinMm);
+  vtkMRMLCopyIntMacro(GlyphType);
 
-  this->GridScalePercent = node->GridScalePercent;
-  this->GridSpacingMm = node->GridSpacingMm;
-  this->GridLineDiameterMm = node->GridLineDiameterMm;
-  this->GridResolutionMm = node->GridResolutionMm;
-  this->GridShowNonWarped = node->GridShowNonWarped;
+  vtkMRMLCopyFloatMacro(GlyphTipLengthPercent);
+  vtkMRMLCopyFloatMacro(GlyphDiameterMm);
+  vtkMRMLCopyFloatMacro(GlyphShaftDiameterPercent);
+  vtkMRMLCopyIntMacro(GlyphResolution);
 
-  this->ContourResolutionMm = node->ContourResolutionMm;
-  this->ContourOpacity = node->ContourOpacity;
-  this->ContourLevelsMm = node->ContourLevelsMm;
+  vtkMRMLCopyFloatMacro(GridScalePercent);
+  vtkMRMLCopyFloatMacro(GridSpacingMm);
+  vtkMRMLCopyFloatMacro(GridLineDiameterMm);
+  vtkMRMLCopyFloatMacro(GridResolutionMm);
+  vtkMRMLCopyBooleanMacro(GridShowNonWarped);
 
-  this->EditorVisibility = node->EditorVisibility;
-  this->EditorSliceIntersectionVisibility = node->EditorSliceIntersectionVisibility;
-  this->EditorTranslationEnabled = node->EditorTranslationEnabled;
-  this->EditorRotationEnabled = node->EditorRotationEnabled;
-  this->EditorScalingEnabled = node->EditorScalingEnabled;
-
+  vtkMRMLCopyFloatMacro(ContourResolutionMm);
+  vtkMRMLCopyFloatMacro(ContourOpacity);
+  if (this->ContourLevelsMm != node->ContourLevelsMm)
+  {
+    this->ContourLevelsMm = node->ContourLevelsMm;
+    this->Modified();
+  }
+  vtkMRMLCopyBooleanMacro(EditorVisibility);
+  vtkMRMLCopyBooleanMacro(EditorSliceIntersectionVisibility);
+  vtkMRMLCopyBooleanMacro(EditorTranslationEnabled);
+  vtkMRMLCopyBooleanMacro(EditorRotationEnabled);
+  vtkMRMLCopyBooleanMacro(EditorScalingEnabled);
   vtkMRMLCopyBooleanMacro(EditorVisibility3D);
+  vtkMRMLCopyBooleanMacro(EditorScalingSliceEnabled);
   vtkMRMLCopyVectorMacro(RotationHandleComponentVisibility3D, bool, 4);
   vtkMRMLCopyVectorMacro(ScaleHandleComponentVisibility3D, bool, 4);
   vtkMRMLCopyVectorMacro(TranslationHandleComponentVisibility3D, bool, 4);

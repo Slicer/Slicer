@@ -70,6 +70,7 @@ public:
     MissingItemCreateFromPrevious = 0, ///< previous item is used for initializing the new item (this is the default mode)
     MissingItemCreateFromDefault, ///< the new item is created from the default node (typically an empty node)
     MissingItemSetToDefault, ///< the proxy node is set to the default (empty) node; new item is not created
+    MissingItemIgnore, ///< the proxy node is not modified
     NumberOfMissingItemModes // this line must be the last one
   };
 
