@@ -2,9 +2,14 @@
 access.
 """
 
+import os
+import sys
+_standalone_python = "python" in str.lower(os.path.split(sys.executable)[-1])
+
 from .default import *
-from .guiConnectors import *
-from .guiCreation import *
+if not _standalone_python:
+    from .guiConnectors import *
+    from .guiCreation import *
 from .parameterPack import *
 from .serializers import *
 from .types import *
@@ -17,3 +22,5 @@ from .util import (
     unannotatedType,
 )
 from .wrapper import *
+
+del _standalone_python
