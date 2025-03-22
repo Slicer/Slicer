@@ -22,6 +22,7 @@
 #include "vtkSlicerAnnotationModuleLogic.h"
 #include "vtkSlicerMarkupsLogic.h"
 #include "vtkSlicerSceneViewsModuleLogic.h"
+#include "vtkSlicerSequencesLogic.h"
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
@@ -73,12 +74,28 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   // logic - handle registration of nodes
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   applicationLogic->SetMRMLScene(scene.GetPointer());
-  vtkNew<vtkSlicerMarkupsLogic> markupsLogic;
-  markupsLogic->SetMRMLScene(scene.GetPointer());
-  vtkNew<vtkSlicerAnnotationModuleLogic> annotationLogic;
-  annotationLogic->SetMRMLScene(scene.GetPointer());
+
+  // Scene views logic needs sequences to be registered
+  vtkNew<vtkSlicerSequencesLogic> sequencesModuleLogic;
+  sequencesModuleLogic->SetMRMLScene(scene.GetPointer());
+  sequencesModuleLogic->SetMRMLApplicationLogic(applicationLogic);
+  applicationLogic->SetModuleLogic("Sequences", sequencesModuleLogic.GetPointer());
+
+  // Markups needs scene views logic to be registered
   vtkNew<vtkSlicerSceneViewsModuleLogic> sceneViewsModuleLogic;
   sceneViewsModuleLogic->SetMRMLScene(scene.GetPointer());
+  sceneViewsModuleLogic->SetMRMLApplicationLogic(applicationLogic);
+  applicationLogic->SetModuleLogic("SceneViews", sceneViewsModuleLogic.GetPointer());
+
+  vtkNew<vtkSlicerMarkupsLogic> markupsLogic;
+  markupsLogic->SetMRMLScene(scene.GetPointer());
+  markupsLogic->SetMRMLApplicationLogic(applicationLogic);
+  applicationLogic->SetModuleLogic("Markups", markupsLogic.GetPointer());
+
+  vtkNew<vtkSlicerAnnotationModuleLogic> annotationLogic;
+  annotationLogic->SetMRMLScene(scene.GetPointer());
+  annotationLogic->SetMRMLApplicationLogic(applicationLogic);
+  applicationLogic->SetModuleLogic("Annotations", annotationLogic.GetPointer());
 
   // read in the scene
   std::cerr << "Reading scene from file: " << fileName.c_str() << std::endl;

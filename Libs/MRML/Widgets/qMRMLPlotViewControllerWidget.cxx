@@ -42,7 +42,6 @@
 // qMRML includes
 #include "qMRMLColors.h"
 #include "qMRMLNodeFactory.h"
-#include "qMRMLSceneViewMenu.h"
 #include "qMRMLPlotView.h"
 #include "qMRMLPlotViewControllerWidget_p.h"
 

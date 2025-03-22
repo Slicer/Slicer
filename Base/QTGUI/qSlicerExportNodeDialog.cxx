@@ -39,8 +39,6 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLTransformableNode.h>
-#include <vtkMRMLSceneViewNode.h>
-
 
 //-----------------------------------------------------------------------------
 NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* storableNode, vtkMRMLScene* scene)

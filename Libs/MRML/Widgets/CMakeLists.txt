@@ -61,8 +61,6 @@ configure_file(
 set(MRMLWidgets_SRCS
   qMRMLAbstractViewWidget.cxx
   qMRMLAbstractViewWidget.h
-  qMRMLCaptureToolBar.cxx
-  qMRMLCaptureToolBar.h
   qMRMLCheckableNodeComboBox.cxx
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.cxx
@@ -150,9 +148,6 @@ set(MRMLWidgets_SRCS
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.cxx
   qMRMLSceneModel.h
-  qMRMLSceneViewMenu.cxx
-  qMRMLSceneViewMenu.h
-  qMRMLSceneViewMenu_p.h
   qMRMLSceneTransformModel.cxx
   qMRMLSceneTransformModel.h
   qMRMLSceneHierarchyModel.cxx
@@ -241,7 +236,6 @@ endif()
 # Headers that should run through moc
 set(MRMLWidgets_MOC_SRCS
   qMRMLAbstractViewWidget.h
-  qMRMLCaptureToolBar.h
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h
   qMRMLClipNodeDisplayWidget.h
@@ -285,8 +279,6 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLSceneColorTableModel.h
   qMRMLSceneFactoryWidget.h
   qMRMLSceneModel.h
-  qMRMLSceneViewMenu.h
-  qMRMLSceneViewMenu_p.h
   qMRMLSceneTransformModel.h
   qMRMLSceneHierarchyModel.h
   qMRMLSceneDisplayableModel.h

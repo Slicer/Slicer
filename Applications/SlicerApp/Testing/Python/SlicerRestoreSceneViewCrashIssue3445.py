@@ -121,8 +121,7 @@ class SlicerRestoreSceneViewCrashIssue3445Test(ScriptedLoadableModuleTest):
         ioManager.loadFile(filePath)
         ioManager.loadFile(filePath)
 
-        sceneViewNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLSceneViewNode")
-        sceneViewNode.RestoreScene()
+        slicer.modules.sceneviews.logic().RestoreSceneView(0)
 
         # If test reach this point without crashing it is a success
 

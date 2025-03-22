@@ -30,12 +30,17 @@
 
 // qMRML includes
 #include "qMRMLCaptureToolBar.h"
-#include "qMRMLSceneViewMenu.h"
-#include "qMRMLNodeFactory.h"
+#include <qMRMLSceneViewMenu.h>
+#include <qMRMLNodeFactory.h>
+#include <qSlicerApplication.h>
+
+#include <vtkSlicerApplicationLogic.h>
+
+// Scene view logic
+#include <vtkSlicerSceneViewsModuleLogic.h>
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
-#include <vtkMRMLSceneViewNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
@@ -63,8 +68,6 @@ public:
   vtkSmartPointer<vtkMRMLScene>    MRMLScene;
 
 public slots:
-  void OnMRMLSceneStartBatchProcessing();
-  void OnMRMLSceneEndBatchProcessing();
   void updateWidgetFromMRML();
   void createSceneView();
 };
@@ -106,7 +109,8 @@ void qMRMLCaptureToolBarPrivate::init()
                    q, SIGNAL(screenshotButtonClicked()));
   q->addAction(this->ScreenshotAction);
 
-  // Scene View buttons
+  // Scene View buttons, signal will be observed by qSlicerMainWindow and will cause
+  // qSlicerSceneViewsModuleWidget to open a qSlicerSceneViewsModuleDialog.
   this->SceneViewAction = new QAction(q);
   this->SceneViewAction->setIcon(QIcon(":/Icons/ViewCamera.png"));
   this->SceneViewAction->setText(qMRMLCaptureToolBar::tr("Scene view"));
@@ -123,8 +127,8 @@ void qMRMLCaptureToolBarPrivate::init()
   this->SceneViewMenu = new qMRMLSceneViewMenu(sceneViewMenuButton);
   sceneViewMenuButton->setMenu(this->SceneViewMenu);
   sceneViewMenuButton->setPopupMode(QToolButton::InstantPopup);
-  //QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-  //                 this->SceneViewMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->SceneViewMenu, SLOT(setMRMLScene(vtkMRMLScene*)));
   q->addWidget(sceneViewMenuButton);
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
                   sceneViewMenuButton,
@@ -133,18 +137,17 @@ void qMRMLCaptureToolBarPrivate::init()
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
+  Q_Q(qMRMLCaptureToolBar);
+
   if (newScene == this->MRMLScene)
   {
     return;
   }
-/*
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::StartBatchProcessEvent,
-                      this, SLOT(OnMRMLSceneStartBatchProcessing()));
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::EndBatchProcessEvent,
-                      this, SLOT(OnMRMLSceneEndBatchProcessing()));
-
-*/
+  qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::StartBatchProcessEvent,
+                      q, SLOT(OnMRMLSceneStartBatchProcessing()));
+  qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::EndBatchProcessEvent,
+                      q, SLOT(OnMRMLSceneEndBatchProcessing()));
 
   this->MRMLScene = newScene;
 
@@ -155,16 +158,17 @@ void qMRMLCaptureToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLCaptureToolBarPrivate::OnMRMLSceneStartBatchProcessing()
+void qMRMLCaptureToolBar::OnMRMLSceneStartBatchProcessing()
 {
-  Q_Q(qMRMLCaptureToolBar);
-  q->setEnabled(false);
+  Q_D(qMRMLCaptureToolBar);
+  this->setEnabled(false);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLCaptureToolBarPrivate::OnMRMLSceneEndBatchProcessing()
+void qMRMLCaptureToolBar::OnMRMLSceneEndBatchProcessing()
 {
-  this->updateWidgetFromMRML();
+  Q_D(qMRMLCaptureToolBar);
+  d->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
@@ -182,13 +186,9 @@ void qMRMLCaptureToolBarPrivate::createSceneView()
     return;
   }
 
-  // Create scene view
-  qMRMLNodeFactory nodeFactory;
-  nodeFactory.setMRMLScene(this->MRMLScene);
-  nodeFactory.setBaseName("vtkMRMLSceneViewNode", sceneViewName);
-  vtkMRMLNode * newNode = nodeFactory.createNode("vtkMRMLSceneViewNode");
-  vtkMRMLSceneViewNode * newSceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(newNode);
-  newSceneViewNode->StoreScene();
+  vtkSlicerSceneViewsModuleLogic* sceneViewsLogic = vtkSlicerSceneViewsModuleLogic::SafeDownCast(
+    qSlicerApplication::application()->applicationLogic()->GetModuleLogic("SliceViews"));
+  sceneViewsLogic->CreateSceneView(sceneViewName.toStdString());
 }
 
 // --------------------------------------------------------------------------
