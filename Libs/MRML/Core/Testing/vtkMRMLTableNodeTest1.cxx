@@ -169,7 +169,7 @@ int vtkMRMLTableNodeTest1(int , char * [] )
 
   checkDefaultArrayValue< vtkUnsignedIntArray, unsigned int >(node3, "unsigned int", "3", 3);
   // this is a bit odd (since an unsigned value accepts a negative value), but this is vtkVariant behavior:
-  checkDefaultArrayValue< vtkUnsignedIntArray, unsigned int >(node3, "unsigned int", "-5", -5);
+  checkDefaultArrayValue< vtkUnsignedIntArray, unsigned int >(node3, "unsigned int", "-5", 0);
   checkDefaultArrayValue< vtkUnsignedIntArray, unsigned int >(node3, "unsigned int", "3.3", 0);
   checkDefaultArrayValue< vtkUnsignedIntArray, unsigned int >(node3, "unsigned int", "", 0);
   checkDefaultArrayValue< vtkUnsignedIntArray, unsigned int >(node3, "unsigned int", "some", 0);
@@ -182,7 +182,7 @@ int vtkMRMLTableNodeTest1(int , char * [] )
 
   checkDefaultArrayValue< vtkUnsignedShortArray, unsigned short >(node3, "unsigned short", "3", 3);
   // this is a bit odd (since an unsigned value accepts a negative value), but this is vtkVariant behavior:
-  checkDefaultArrayValue< vtkUnsignedShortArray, unsigned short >(node3, "unsigned short", "-5", -5);
+  checkDefaultArrayValue< vtkUnsignedShortArray, unsigned short >(node3, "unsigned short", "-5", 0);
   checkDefaultArrayValue< vtkUnsignedShortArray, unsigned short >(node3, "unsigned short", "3.3", 0);
   checkDefaultArrayValue< vtkUnsignedShortArray, unsigned short >(node3, "unsigned short", "", 0);
   checkDefaultArrayValue< vtkUnsignedShortArray, unsigned short >(node3, "unsigned short", "some", 0);
@@ -195,7 +195,7 @@ int vtkMRMLTableNodeTest1(int , char * [] )
 
   checkDefaultArrayValue< vtkUnsignedLongArray, unsigned long >(node3, "unsigned long", "3", 3);
   // this is a bit odd (since an unsigned value accepts a negative value), but this is vtkVariant behavior:
-  checkDefaultArrayValue< vtkUnsignedLongArray, unsigned long >(node3, "unsigned long", "-5", -5);
+  checkDefaultArrayValue< vtkUnsignedLongArray, unsigned long >(node3, "unsigned long", "-5", 0);
   checkDefaultArrayValue< vtkUnsignedLongArray, unsigned long >(node3, "unsigned long", "3.3", 0);
   checkDefaultArrayValue< vtkUnsignedLongArray, unsigned long >(node3, "unsigned long", "", 0);
   checkDefaultArrayValue< vtkUnsignedLongArray, unsigned long >(node3, "unsigned long", "some", 0);
@@ -208,7 +208,7 @@ int vtkMRMLTableNodeTest1(int , char * [] )
 
   checkDefaultArrayValue< vtkUnsignedLongLongArray, unsigned long long >(node3, "unsigned long long", "3", 3);
   // this is a bit odd (since an unsigned value accepts a negative value), but this is vtkVariant behavior:
-  checkDefaultArrayValue< vtkUnsignedLongLongArray, unsigned long long >(node3, "unsigned long long", "-5", -5);
+  checkDefaultArrayValue< vtkUnsignedLongLongArray, unsigned long long >(node3, "unsigned long long", "-5", 0);
   checkDefaultArrayValue< vtkUnsignedLongLongArray, unsigned long long >(node3, "unsigned long long", "3.3", 0);
   checkDefaultArrayValue< vtkUnsignedLongLongArray, unsigned long long >(node3, "unsigned long long", "", 0);
   checkDefaultArrayValue< vtkUnsignedLongLongArray, unsigned long long >(node3, "unsigned long long", "some", 0);
