@@ -21,6 +21,9 @@
 #ifndef __qMRMLCaptureToolBar_h
 #define __qMRMLCaptureToolBar_h
 
+// Slicer includes
+#include "qSlicerSceneViewsModuleExport.h"
+
 // Qt includes
 //#include <QSignalMapper>
 #include <QToolBar>
@@ -40,7 +43,7 @@ class vtkMRMLNode;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
 
-class QMRML_WIDGETS_EXPORT qMRMLCaptureToolBar : public QToolBar
+class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLCaptureToolBar : public QToolBar
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -66,6 +69,9 @@ public slots:
   /// Set flag to time out pop ups, set from the qSlicerAppMainWindow according to the
   /// AA_EnableTesting attribute
   void setPopupsTimeOut(bool flag);
+
+  void OnMRMLSceneStartBatchProcessing();
+  void OnMRMLSceneEndBatchProcessing();
 
 signals:
   void screenshotButtonClicked();

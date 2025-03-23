@@ -15,8 +15,6 @@ set(${KIT}_SRCS
   qMRMLWidgetsPlugin.cxx
   qMRMLWidgetsPlugin.h
 
-  qMRMLCaptureToolBarPlugin.h
-  qMRMLCaptureToolBarPlugin.cxx
   qMRMLCheckableNodeComboBoxPlugin.cxx
   qMRMLCheckableNodeComboBoxPlugin.h
   qMRMLClipNodeDisplayWidgetPlugin.cxx
@@ -112,7 +110,6 @@ endif()
 set(${KIT}_MOC_SRCS
   qMRMLWidgetsPlugin.h
 
-  qMRMLCaptureToolBarPlugin.h
   qMRMLCheckableNodeComboBoxPlugin.h
   qMRMLClipNodeDisplayWidgetPlugin.h
   qMRMLClipNodeWidgetPlugin.h

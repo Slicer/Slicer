@@ -35,14 +35,12 @@
 // qMRML includes
 #include "qMRMLColors.h"
 #include "qMRMLNodeFactory.h"
-#include "qMRMLSceneViewMenu.h"
 #include "qMRMLThreeDView.h"
 #include "qMRMLThreeDViewControllerWidget_p.h"
 
 // MRML includes
 #include <vtkMRMLCameraNode.h>
 #include <vtkMRMLScene.h>
-#include <vtkMRMLSceneViewNode.h>
 #include <vtkMRMLViewNode.h>
 
 // VTK includes

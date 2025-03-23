@@ -76,13 +76,12 @@ class RSNA2012ProstateDemoTest(ScriptedLoadableModuleTest):
             checksums="SHA256:2627388ee213564f8783d0242993212ba01189f4c6640d57c4cde4e28fc5f97b")
 
         # get all scene view nodes and test switching
-        svns = slicer.util.getNodes("vtkMRMLSceneViewNode*")
-
-        for reps in range(5):
-            for svname, svnode in svns.items():
-                self.delayDisplay("Restoring scene view %s ..." % svname)
-                svnode.RestoreScene()
-                self.delayDisplay("OK")
+        sceneViewLogic = slicer.modules.sceneviews.logic()
+        for index in range(sceneViewLogic.GetNumberOfSceneViews()):
+            svname = sceneViewLogic.GetNthSceneViewName(index)
+            self.delayDisplay("Restoring scene view %s ..." % svname)
+            sceneViewLogic.RestoreSceneView(svname)
+            self.delayDisplay("OK")
 
         self.delayDisplay("Done testing scene views, will clear the scene")
         slicer.mrmlScene.Clear(0)

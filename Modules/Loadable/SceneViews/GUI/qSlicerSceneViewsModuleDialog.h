@@ -17,8 +17,8 @@ public:
   /// Set the SceneViews module logic.
   void setLogic(vtkSlicerSceneViewsModuleLogic* logic);
 
-  /// Initialize this dialog with values from an existing annotation Snapshot node.
-  void loadNode(const QString& nodeId);
+  /// Initialize this dialog with values from an existing scene view.
+  void loadSceneViewInfo(int index);
   /// Reset the dialog and give it a unique name.
   void reset();
 

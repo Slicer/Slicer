@@ -1,5 +1,3 @@
-import vtk
-
 import slicer
 from slicer.ScriptedLoadableModule import *
 
@@ -159,10 +157,12 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
         self.assertEqual(pointListNode.GetNumberOfControlPoints(), 2)
         self.delayDisplay("The point list has 2 points in it")
 
+        # Scene view restore
+        sceneViewLogic = slicer.modules.sceneviews.logic()
+
         # Restore the invisible scene view
         self.delayDisplay("About to restore Invisible-view scene")
-        sceneView = slicer.util.getNode("Invisible-view")
-        sceneView.RestoreScene()
+        sceneViewLogic.RestoreSceneView("Invisible-view")
         pointListNode = slicer.util.getNode("F")
         self.assertEqual(pointListNode.GetDisplayVisibility(), 0)
         self.delayDisplay("NOT seeing the points")
@@ -218,22 +218,5 @@ class SlicerMRBMultipleSaveRestore(ScriptedLoadableModuleTest):
         """Store a scene view into the current scene.
         TODO: this might move to slicer.util
         """
-        layoutManager = slicer.app.layoutManager()
-
-        sceneViewNode = slicer.vtkMRMLSceneViewNode()
-        view1 = layoutManager.threeDWidget(0).threeDView()
-
-        w2i1 = vtk.vtkWindowToImageFilter()
-        w2i1.SetInput(view1.renderWindow())
-
-        w2i1.Update()
-        image1 = w2i1.GetOutput()
-        sceneViewNode.SetScreenShot(image1)
-        sceneViewNode.UpdateStoredScene()
-        slicer.mrmlScene.AddNode(sceneViewNode)
-
-        sceneViewNode.SetName(name)
-        sceneViewNode.SetSceneViewDescription(description)
-        sceneViewNode.StoreScene()
-
-        return sceneViewNode
+        sceneViewLogic = slicer.modules.sceneviews.logic()
+        sceneViewLogic.CreateSceneView(name, description)

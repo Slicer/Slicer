@@ -47,6 +47,9 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+// Scene views logic includes
+#include <vtkSlicerSceneViewsModuleLogic.h>
+
 //-----------------------------------------------------------------------------
 class qMRMLSceneViewMenuPrivate : public QObject
 {
@@ -59,28 +62,26 @@ public:
   typedef QObject Superclass;
   qMRMLSceneViewMenuPrivate(qMRMLSceneViewMenu& object);
 
+
+public slots:
   /// \brief Clear and update menu given the list of existing vtkMRMLSceneViewNode
   /// associated with the current scene
   void resetMenu();
 
-public slots:
-
   void onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject * mrmlNode);
 
   /// Add menu entry corresponding to \a sceneViewNode
-  void addMenuItem(vtkMRMLNode * sceneViewNode);
+  void addMenuItem(int index);
 
   void onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject * mrmlNode);
 
   /// Remove menu entry corresponding to \a sceneViewNode
-  void removeMenuItem(vtkMRMLNode * sceneViewNode);
-
-  void onMRMLSceneViewNodeModified(vtkObject * mrmlNode);
+  void removeMenuItem(int index);
 
   bool hasNoSceneViewItem()const;
 
-  void restoreSceneView(const QString& sceneViewNodeId);
-  void deleteSceneView(const QString& sceneViewNodeId);
+  void restoreSceneView(int index);
+  void deleteSceneView(int index);
 
 public:
   vtkSmartPointer<vtkMRMLScene>         MRMLScene;
@@ -88,6 +89,7 @@ public:
   QSignalMapper                         DeleteActionMapper;
   QString                               NoSceneViewText;
 
+  vtkWeakPointer<vtkSlicerSceneViewsModuleLogic> SceneViewsLogic;
 };
 
 #endif

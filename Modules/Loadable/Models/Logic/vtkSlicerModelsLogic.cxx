@@ -180,7 +180,6 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
     // Copy all properties and node references from the clip models node to the clip node
     scene->AddNode(clipNode);
     clipNode->Copy(clipModelsNode);
-    clipNode->PrintSelf(std::cout, vtkIndent());
     scene->RemoveNode(clipModelsNode);
 
     // Update model display nodes to use the new clip node

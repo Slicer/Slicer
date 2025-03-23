@@ -35,6 +35,7 @@
 #include "qSlicerApplication.h"
 #include "qSlicerErrorReportDialog.h"
 #include "qSlicerModuleManager.h"
+#include "qMRMLWidget.h"
 
 namespace
 {
