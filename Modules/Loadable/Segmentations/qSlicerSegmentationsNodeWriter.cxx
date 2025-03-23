@@ -32,7 +32,6 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLSceneViewNode.h>
 #include <vtkMRMLSegmentationStorageNode.h>
 #include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>

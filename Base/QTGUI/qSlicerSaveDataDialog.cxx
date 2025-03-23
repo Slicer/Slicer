@@ -54,8 +54,8 @@
 //#include <vtkMRMLHierarchyNode.h>
 #include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>
-#include <vtkMRMLSceneViewNode.h>
 
 /// VTK includes
 #include <vtkStringArray.h>
@@ -270,30 +270,6 @@ void qSlicerSaveDataDialogPrivate::populateItems()
 
   // get all additional storable nodes for all scene views except "Master Scene View"
   nodes.clear();
-  this->MRMLScene->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
-  for (it = nodes.begin(); it != nodes.end(); it++)
-  {
-    vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
-    // skip "Master Scene View" since it contains the same nodes as the scene
-    if (svNode->GetName() && std::string(/*no tr*/"Master Scene View") == std::string(svNode->GetName()))
-    {
-      continue;
-    }
-    std::vector<vtkMRMLNode *> snodes;
-    svNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
-    std::vector<vtkMRMLNode *>::iterator sit;
-    for (sit = snodes.begin(); sit != snodes.end(); sit++)
-    {
-      vtkMRMLNode* node = (*sit);
-      if (storableNodes.find(std::string(node->GetID())) == storableNodes.end())
-      {
-        // process only new storable nodes
-        this->populateNode(node);
-        storableNodes[std::string(node->GetID())] = node;
-      }
-    }
-  }
-
 
   // Here we could have restore the sorting property but we want to keep the
   // MRML scene the first item of the list so we don't do restore the sorting.
@@ -762,9 +738,18 @@ bool qSlicerSaveDataDialogPrivate::save()
 
   if (saveSceneFile && !this->CancelRequested)
   {
-    if (!this->saveScene())
+    /// If we are saving the scene file, then we also want to make sure that we are saving the hidden
+    /// nodes first into a subfolder.
+    if (!this->saveHiddenNodes())
     {
       success = false;
+    }
+    else
+    {
+      if (!this->saveScene())
+      {
+        success = false;
+      }
     }
   }
   else
@@ -931,6 +916,123 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerSaveDataDialogPrivate::saveHiddenNodes()
+{
+  vtkMRMLScene* mrmlScene = this->MRMLScene;
+  if (!mrmlScene)
+  {
+    qCritical() << Q_FUNC_INFO << " failed: MRML scene is invalid";
+    return false;
+  }
+
+  std::vector<vtkMRMLStorableNode*> hiddenNodes;
+  vtkCollection* nodes = mrmlScene->GetNodes();
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
+  {
+    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
+    vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
+    if (!storableNode || !storableNode->GetHideFromEditors() || !storableNode->GetSaveWithScene())
+    {
+      continue;
+    }
+
+    vtkMRMLStorageNode* storageNode = storableNode->GetStorageNode();
+    if (!storageNode)
+    {
+      qDebug() << "creating a new storage node for " << storableNode->GetID();
+      storableNode->AddDefaultStorageNode();
+      storageNode = storableNode->GetStorageNode();
+      if (!storageNode)
+      {
+        // no need for storage node to store this node
+        continue;
+      }
+    }
+
+    hiddenNodes.push_back(storableNode);
+  }
+
+  bool doneWithSaveDataDialog = true;
+  const int sceneRow = this->findSceneRow();
+  for (vtkMRMLStorableNode* hiddenNode : hiddenNodes)
+  {
+    vtkMRMLStorageNode* storageNode = hiddenNode->GetStorageNode();
+    if (!storageNode)
+    {
+      continue;
+    }
+
+    storageNode->GetUserMessages()->ClearMessages();
+
+    // save the node
+    qSlicerCoreIOManager* coreIOManager =
+      qSlicerCoreApplication::application()->coreIOManager();
+    Q_ASSERT(coreIOManager);
+
+    QString strippedFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(hiddenNode->GetName());
+    strippedFileName = coreIOManager->forceFileNameMaxLength(strippedFileName, 0);
+
+    // file properties
+    QString extension = storageNode->GetDefaultWriteFileExtension();
+    QString sceneDirectory = this->sceneFile().absoluteDir().absolutePath();
+    sceneDirectory = QDir::cleanPath(sceneDirectory + QDir::separator() + "Private");
+    QFileInfo file = QFileInfo(sceneDirectory, strippedFileName + "." + extension);
+
+    qSlicerIOOptions options;
+    qSlicerIO::IOFileType fileType = coreIOManager->fileWriterFileType(hiddenNode, extension);
+    qSlicerIO::IOProperties savingParameters = options.properties();
+    savingParameters["nodeID"] = QString(hiddenNode->GetID());
+    savingParameters["fileName"] = file.absoluteFilePath();
+    savingParameters["fileFormat"] = extension;
+
+    QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+    bool success = coreIOManager->saveNodes(fileType, savingParameters);
+    QApplication::restoreOverrideCursor();
+
+    if (!success)
+    {
+      // Make sure an error message is added if saving returns with error
+      storageNode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent,
+        (qSlicerSaveDataDialog::tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
+
+#ifdef Q_OS_WIN
+      // On Windows, writing may have failed due to too long path.
+      // Let the user know via a warning message.
+
+      // If filename is very long then most likely the user should shorten that.
+      if (file.fileName().length() > 50)
+      {
+        storageNode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
+          (qSlicerSaveDataDialog::tr("File writing may have failed because filename is too long: '%1'").arg(file.fileName())).toStdString());
+      }
+      // Maximum file path is 260 characters on most Windows systems, but during saving extra temporary folders may be used,
+      // therefore warn the user when getting near the maximum.
+      if (file.absoluteFilePath().length() > 200)
+      {
+        storageNode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
+          (qSlicerSaveDataDialog::tr("File writing may have failed because the output folder name is too long: '%1'")
+            .arg(file.absoluteFilePath())).toStdString());
+      }
+#endif
+
+      // Display any warning or error messages from the storage node
+      if (storageNode->GetUserMessages()->GetNumberOfMessages() > 0)
+      {
+        doneWithSaveDataDialog = false;
+      }
+    }
+
+    this->updateStatusIconFromMessageCollection(sceneRow, storageNode->GetUserMessages(), success);
+  }
+
+  return doneWithSaveDataDialog;
+}
+
+//-----------------------------------------------------------------------------
 QFileInfo qSlicerSaveDataDialogPrivate::file(int row)const
 {
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
@@ -973,35 +1075,6 @@ vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id)const
 vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id, vtkMRMLScene* scene)
 {
   vtkMRMLNode *node = scene->GetNodeByID(id);
-  if (node == nullptr)
-  {
-    // search in SceneView nodes
-    std::string sID(id);
-    std::vector<vtkMRMLNode *> nodes;
-    scene->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
-    std::vector<vtkMRMLNode *>::iterator it;
-
-    for (it = nodes.begin(); it != nodes.end(); it++)
-    {
-      vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
-      // skip "Master Scene View" since it contains the same nodes as the scene
-      if (svNode->GetName() && std::string(/*no tr*/"Master Scene View") == std::string(svNode->GetName()))
-      {
-        continue;
-      }
-      std::vector<vtkMRMLNode *> snodes;
-      svNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
-      std::vector<vtkMRMLNode *>::iterator sit;
-      for (sit = snodes.begin(); sit != snodes.end(); sit++)
-      {
-        vtkMRMLNode* snode = (*sit);
-        if (std::string(snode->GetID()) == sID)
-        {
-          return snode;
-        }
-      }
-    }
-  }
   return node;
 }
 
@@ -1086,18 +1159,6 @@ QString qSlicerSaveDataDialogPrivate::sceneFileFormat()const
 void qSlicerSaveDataDialogPrivate::setSceneRootDirectory(const QString& dir)
 {
   this->MRMLScene->SetRootDirectory(dir.toUtf8());
-
-  // update the root directory of scene snapshot nodes (not sure why)
-  const int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
-  for (int n=0; n<nnodes; n++)
-  {
-    vtkMRMLNode* node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSceneViewNode");
-    vtkMRMLSceneViewNode *snode = vtkMRMLSceneViewNode::SafeDownCast(node);
-    if (snode && snode->GetStoredScene())
-    {
-      snode->GetStoredScene()->SetRootDirectory(this->MRMLScene->GetRootDirectory());
-    }
-  }
 }
 
 //-----------------------------------------------------------------------------

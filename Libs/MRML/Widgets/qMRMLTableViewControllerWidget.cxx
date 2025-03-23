@@ -37,7 +37,6 @@
 // qMRML includes
 #include "qMRMLColors.h"
 #include "qMRMLNodeFactory.h"
-#include "qMRMLSceneViewMenu.h"
 #include "qMRMLTableView.h"
 #include "qMRMLTableViewControllerWidget_p.h"
 

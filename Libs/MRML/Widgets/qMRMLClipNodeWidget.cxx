@@ -173,7 +173,6 @@ void qMRMLClipNodeWidget::updateWidgetFromMRML()
     }
 
     int nodeIndex = clipButtonGroup->property("Index").toInt();
-    vtkMRMLNode* clippingNode = this->mrmlClipNode()->GetNthClippingNode(nodeIndex);
     int clipState = d->MRMLClipNode->GetNthClippingNodeState(nodeIndex);
     for (QAbstractButton* button : clipButtonGroup->buttons())
     {

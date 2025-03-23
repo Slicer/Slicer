@@ -21,19 +21,21 @@
 #ifndef __qMRMLSceneViewMenu_h
 #define __qMRMLSceneViewMenu_h
 
+// Slicer includes
+#include "qSlicerSceneViewsModuleExport.h"
+
 // Qt includes
 #include <QMenu>
 
 // CTK includes
 #include <ctkVTKObject.h>
 
-#include "qMRMLWidgetsExport.h"
-
 class qMRMLSceneViewMenuPrivate;
 class vtkMRMLScene;
 class vtkMRMLNode;
+class vtkSlicerSceneViewsModuleLogic;
 
-class QMRML_WIDGETS_EXPORT qMRMLSceneViewMenu : public QMenu
+class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewMenu : public QMenu
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -52,6 +54,8 @@ public:
   /// This property holds the menu's text displayed when there are no scene views
   QString noSceneViewText()const;
   void setNoSceneViewText(const QString& newText);
+
+  void setSceneViewsLogic(vtkSlicerSceneViewsModuleLogic* logic);
 
 public slots:
 

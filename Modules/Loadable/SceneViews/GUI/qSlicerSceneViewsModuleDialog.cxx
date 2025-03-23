@@ -57,7 +57,7 @@ void qSlicerSceneViewsModuleDialog::setLogic(vtkSlicerSceneViewsModuleLogic* log
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSceneViewsModuleDialog::loadNode(const QString& nodeId)
+void qSlicerSceneViewsModuleDialog::loadSceneViewInfo(int index)
 {
   if (!this->m_Logic)
   {
@@ -65,27 +65,28 @@ void qSlicerSceneViewsModuleDialog::loadNode(const QString& nodeId)
     return;
   }
   this->setLayoutManager(qSlicerApplication::application()->layoutManager());
-  this->setData(QVariant(nodeId));
+
+  this->setData(QVariant(index));
 
   // get the name..
-  std::string name = this->m_Logic->GetSceneViewName(nodeId.toUtf8());
+  std::string name = this->m_Logic->GetNthSceneViewName(index);
 
   // ..and set it in the GUI
   this->setNameEdit(QString::fromStdString(name));
 
   // get the description..
-  std::string description = this->m_Logic->GetSceneViewDescription(nodeId.toUtf8());
+  std::string description = this->m_Logic->GetNthSceneViewDescription(index);
 
   // ..and set it in the GUI
   this->setDescription(QString::fromStdString(description));
 
   // get the screenshot type..
-  int screenshotType = this->m_Logic->GetSceneViewScreenshotType(nodeId.toUtf8());
+  int screenshotType = this->m_Logic->GetNthSceneViewScreenshotType(index);
 
   // ..and set it in the GUI
   this->setWidgetType((qMRMLScreenShotDialog::WidgetType)screenshotType);
 
-  vtkImageData* imageData = this->m_Logic->GetSceneViewScreenshot(nodeId.toUtf8());
+  vtkImageData* imageData = this->m_Logic->GetNthSceneViewScreenshot(index);
   this->setImageData(imageData);
 }
 
@@ -126,21 +127,24 @@ void qSlicerSceneViewsModuleDialog::accept()
   // we need to know of which type the screenshot is
   int screenshotType = static_cast<int>(this->widgetType());
 
-  if (this->data().toString().isEmpty())
+  int index = -1;
+  if (!this->data().toString().isEmpty())
+  {
+    index = this->data().toInt();
+  }
+
+  if (index < 0)
   {
     // this is a new SceneView
     this->m_Logic->CreateSceneView(nameBytes.data(),descriptionBytes.data(),
-                                   screenshotType,this->imageData());
-    //QMessageBox::information(this, "3D Slicer SceneView created",
-    //             "A new SceneView was created and the current scene was attached.");
+                                   screenshotType,this->imageData(), true, true);
   }
   else
   {
     // this SceneView already exists
-    this->m_Logic->ModifySceneView(std::string(this->data().toString().toUtf8()),nameBytes.data(),descriptionBytes.data()
-                                   ,screenshotType,this->imageData());
-    //QMessageBox::information(this, "3D Slicer SceneView updated",
-    //             The SceneView was updated without changing the attached scene.");
+
+    this->m_Logic->ModifyNthSceneView(index, nameBytes.data(),descriptionBytes.data(),
+      screenshotType,this->imageData());
   }
   this->Superclass::accept();
 }

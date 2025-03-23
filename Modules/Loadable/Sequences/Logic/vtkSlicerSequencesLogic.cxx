@@ -288,7 +288,7 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
   timer->StartTimer();
 #endif
 
-  if (this->UpdateProxyNodesFromSequencesInProgress || this->UpdateSequencesFromProxyNodesInProgress)
+  if (this->UpdateProxyNodesFromSequencesInProgress.count(browserNode) > 0 || this->UpdateSequencesFromProxyNodesInProgress.count(browserNode) > 0)
   {
     // avoid infinite loops (caused by triggering a node update during a node update)
     return;
@@ -318,13 +318,19 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
     return;
   }
 
-  this->UpdateProxyNodesFromSequencesInProgress = true;
+  this->UpdateProxyNodesFromSequencesInProgress.insert(browserNode);
 
   int selectedItemNumber=browserNode->GetSelectedItemNumber();
   std::string indexValue("0");
   if (selectedItemNumber >= 0 && selectedItemNumber < browserNode->GetNumberOfItems())
   {
     indexValue=browserNode->GetMasterSequenceNode()->GetNthIndexValue(selectedItemNumber);
+  }
+
+  /// Pause rending to speed up the update
+  if (this->GetApplicationLogic())
+  {
+    this->GetApplicationLogic()->PauseRender();
   }
 
   std::vector< vtkMRMLSequenceNode* > synchronizedSequenceNodes;
@@ -428,11 +434,12 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
         sourceDataNode = synchronizedSequenceNode->GetDataNodeAtValue(indexValue, /* exactMatchRequired= */ false);
       }
       if (missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemCreateFromDefault
-        || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemSetToDefault)
+        || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemSetToDefault
+        || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemIgnore)
       {
         // We are not saving changes, but we may need to reset the proxy node to the default
         sourceDataNode = synchronizedSequenceNode->GetDataNodeAtValue(indexValue, /* exactMatchRequired= */ true);
-        if (!sourceDataNode)
+        if (!sourceDataNode && missingItemMode != vtkMRMLSequenceBrowserNode::MissingItemIgnore)
         {
           // item is missing, use an empty node as source node for the proxy node
           sourceDataNode = synchronizedSequenceNode->GetNthDataNode(0);
@@ -540,18 +547,24 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
     (nodeModifiedStateIt->first)->EndModify(nodeModifiedStateIt->second);
   }
 
-  this->UpdateProxyNodesFromSequencesInProgress = false;
+  this->UpdateProxyNodesFromSequencesInProgress.erase(browserNode);
 
 #ifdef ENABLE_PERFORMANCE_PROFILING
   timer->StopTimer();
   vtkInfoMacro("UpdateProxyNodesFromSequences: " << timer->GetElapsedTime() << "sec\n");
 #endif
+
+  /// Resume rending
+  if (this->GetApplicationLogic())
+  {
+    this->GetApplicationLogic()->ResumeRender();
+  }
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrowserNode* browserNode, vtkMRMLNode* proxyNode)
 {
-  if (this->UpdateProxyNodesFromSequencesInProgress || this->UpdateSequencesFromProxyNodesInProgress)
+  if (this->UpdateProxyNodesFromSequencesInProgress.count(browserNode) > 0 || this->UpdateSequencesFromProxyNodesInProgress.count(browserNode) > 0)
   {
     // this update is due to updating from sequence nodes
     return;
@@ -575,12 +588,12 @@ void vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrows
 
   if (!proxyNode)
   {
-    vtkErrorMacro("vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes: update if all proxy nodes is not implemented yet");
+    vtkDebugMacro("vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes: update if all proxy nodes is not implemented yet");
     // TODO: update all proxy nodes if there is no info about which one was modified
     return;
   }
 
-  this->UpdateSequencesFromProxyNodesInProgress = true;
+  this->UpdateSequencesFromProxyNodesInProgress.insert(browserNode);
 
   if (browserNode->GetRecordingActive())
   {
@@ -638,7 +651,7 @@ void vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrows
       }
     }
   }
-  this->UpdateSequencesFromProxyNodesInProgress = false;
+  this->UpdateSequencesFromProxyNodesInProgress.erase(browserNode);
 }
 
 //---------------------------------------------------------------------------
@@ -906,7 +919,7 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSequencesLogic::GetFirstBrowserNodeForProxy
     vtkErrorMacro("proxyNode is invalid");
     return nullptr;
   }
-  std::vector< vtkMRMLNode* > browserNodes;
+  std::vector<vtkMRMLNode* > browserNodes;
   this->GetMRMLScene()->GetNodesByClass("vtkMRMLSequenceBrowserNode", browserNodes);
   for (std::vector< vtkMRMLNode* >::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
   {

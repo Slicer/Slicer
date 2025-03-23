@@ -36,6 +36,8 @@ public:
   /// Specify editable node types
   QStringList associatedNodeTypes()const override;
 
+  QStringList dependencies() const override;
+
   qSlicerGetTitleMacro(tr("Scene Views"));
 
 public slots:

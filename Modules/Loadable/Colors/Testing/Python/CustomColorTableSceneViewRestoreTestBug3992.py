@@ -33,9 +33,8 @@ startCol2 = [0.0, 0.0, 0.0, 0.0]
 colorNode.GetColor(2, startCol2)
 print("Starting color 2 =\n\t", startCol2)
 
-sv = slicer.mrmlScene.AddNode(slicer.vtkMRMLSceneViewNode())
-sv.SetName("Scene View Custom Color Test")
-sv.StoreScene()
+svLogic = slicer.modules.sceneviews.logic()
+svLogic.CreateSceneView("Scene View Custom Color Test", "", 0, None)
 
 mainSceneCol2 = [0.3, 0.3, 0.3, 1.0]
 colorNode.SetColor(2, mainSceneCol2[0], mainSceneCol2[1], mainSceneCol2[2], mainSceneCol2[3])
@@ -64,10 +63,8 @@ afterReadSceneCol2 = [0.0, 0.0, 0.0, 0.0]
 readColorNode.GetColor(2, afterReadSceneCol2)
 print("After reading in the scene again, have color 2 =\n\t", afterReadSceneCol2)
 
-readSceneView = slicer.util.getFirstNodeByName("Scene View Custom Color Test")
-
 # Current implementation is a hack to not delete the whole color table on restore, but it also won't restore the color value to the original as it's bypassing the copy since the color table in the scene view is empty.
-readSceneView.RestoreScene()
+svLogic.RestoreSceneView(0)
 
 colorNodeAfterRestore = slicer.util.getFirstNodeByName("CustomTest")
 # mrmlScene.GetNodeByID("vtkMRMLColorTableNode1")

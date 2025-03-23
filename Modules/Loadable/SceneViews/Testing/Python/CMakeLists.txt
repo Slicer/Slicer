@@ -6,7 +6,7 @@ add_test(
   NAME ${testname}
   COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
   --disable-cli-modules --disable-scripted-loadable-modules
-  --testing --python-code "getNode('vtkMRMLSceneViewNode1').RestoreScene(); slicer.app.processEvents()"
+  --testing --python-code "slicer.modules.sceneviews.logic().RestoreSceneView(0); slicer.app.processEvents()"
   ${INPUT}/SceneViewWithoutCamera.mrml
   )
 set_property(TEST ${testname} PROPERTY LABELS ${MODULE_NAME})

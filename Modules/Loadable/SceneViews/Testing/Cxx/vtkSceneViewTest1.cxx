@@ -20,7 +20,7 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 
-int vtkMRMLSceneViewNodeTest1(int , char * [] )
+int vtkSceneViewTest1(int , char * [] )
 {
   vtkNew<vtkMRMLSceneViewNode> node1;
 

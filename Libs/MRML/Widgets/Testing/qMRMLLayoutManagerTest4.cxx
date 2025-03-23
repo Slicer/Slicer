@@ -56,7 +56,7 @@ int qMRMLLayoutManagerTest4(int argc, char * argv[] )
 
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLLayoutNode> layoutNode;
-
+  layoutNode->SetSingletonTag("vtkMRMLLayoutNode");
   scene->AddNode(layoutNode.GetPointer());
 
   applicationLogic->SetMRMLScene(scene.GetPointer());
