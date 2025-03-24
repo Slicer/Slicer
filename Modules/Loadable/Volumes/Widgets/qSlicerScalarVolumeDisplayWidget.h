@@ -43,11 +43,12 @@ public slots:
 
   ///
   /// Set the MRML node of interest
-  void setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode);
   void setMRMLVolumeNode(vtkMRMLNode* node);
+  void setMRMLVolumeNode(vtkMRMLScalarVolumeNode* node);
 
   void setInterpolate(bool interpolate);
-  void setColorNode(vtkMRMLNode* colorNode);
+  void setInvert(bool invert);
+  void setColorNode(vtkMRMLNode* node);
   void setPreset(const QString& presetName);
 
 protected slots:

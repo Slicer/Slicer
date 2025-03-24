@@ -30,6 +30,7 @@ class vtkImageStencil;
 class vtkImageThreshold;
 class vtkImageExtractComponents;
 class vtkImageMathematics;
+class vtkScalarsToColors;
 
 // STD includes
 #include <vector>
@@ -141,6 +142,13 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   vtkSetMacro(Interpolate, int);
   vtkBooleanMacro(Interpolate, int);
 
+  ///
+  /// Set/Get invert order of colors
+  /// If non-zero then colors at the end of the color table are assigned to low values.
+  vtkGetMacro(InvertDisplayScalarRange, int);
+  virtual void SetInvertDisplayScalarRange(int invert);
+  vtkBooleanMacro(InvertDisplayScalarRange, int);
+
   void SetDefaultColorMap() override;
 
   ///
@@ -194,6 +202,11 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// Volume node and returns its image data scalar range.
   virtual void GetDisplayScalarRange(double range[2]);
 
+  /// Get lookup table that is used for assigning colors to scalar values.
+  /// The returned lookup table is managed by the display node object
+  /// and its content should not be modified externally.
+  virtual vtkScalarsToColors* GetLookupTable();
+
 protected:
   vtkMRMLScalarVolumeDisplayNode();
   ~vtkMRMLScalarVolumeDisplayNode() override;
@@ -233,6 +246,7 @@ protected:
   int AutoWindowLevel;
   int ApplyThreshold;
   int AutoThreshold;
+  int InvertDisplayScalarRange;
 
   vtkImageLogic *AlphaLogic;
   vtkImageMapToColors *MapToColors;
