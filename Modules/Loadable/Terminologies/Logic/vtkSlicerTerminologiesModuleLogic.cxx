@@ -3312,3 +3312,108 @@ void vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntry(vtkMRMLNode* 
     node->SetAttribute(vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAttributeName(), terminologyStr.c_str());
   }
 }
+
+std::string vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromFile(std::string filePath)
+{
+  vtkWarningMacro("LoadAnatomicContextFromFile is deprecated. Use LoadRegionContextFromFile instead.");
+  return this->LoadRegionContextFromFile(filePath);
+}
+
+bool vtkSlicerTerminologiesModuleLogic::LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath)
+{
+  vtkWarningMacro("LoadAnatomicContextFromSegmentDescriptorFile is deprecated. Use LoadRegionContextFromSegmentDescriptorFile instead.");
+  return this->LoadRegionContextFromSegmentDescriptorFile(contextName, filePath);
+}
+
+void vtkSlicerTerminologiesModuleLogic::GetLoadedAnatomicContextNames(std::vector<std::string>& anatomicContextNames)
+{
+  vtkWarningMacro("GetLoadedAnatomicContextNames is deprecated. Use GetLoadedRegionContextNames instead.");
+  this->GetLoadedRegionContextNames(anatomicContextNames);
+}
+
+void vtkSlicerTerminologiesModuleLogic::GetLoadedAnatomicContextNames(vtkStringArray* anatomicContextNames)
+{
+  vtkWarningMacro("GetLoadedAnatomicContextNames is deprecated. Use GetLoadedRegionContextNames instead.");
+  this->GetLoadedRegionContextNames(anatomicContextNames);
+}
+
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindAnatomicContextNames(
+  std::string anatomicRegionCodingSchemeDesignator, std::string anatomicRegionCodeValue,
+  std::string anatomicRegionModifierCodingSchemeDesignator, std::string anatomicRegionModifierCodeValue,
+  std::vector<std::string> preferredAnatomicContextNames,
+  vtkCollection* foundEntries)
+{
+  vtkWarningMacro("FindAnatomicContextNames is deprecated. Use FindRegionContextNames instead.");
+  return this->FindRegionContextNames(
+    anatomicRegionCodingSchemeDesignator, anatomicRegionCodeValue,
+    anatomicRegionModifierCodingSchemeDesignator, anatomicRegionModifierCodeValue,
+    preferredAnatomicContextNames, foundEntries);
+}
+
+bool vtkSlicerTerminologiesModuleLogic::GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions)
+{
+  vtkWarningMacro("GetRegionsInAnatomicContext is deprecated. Use GetRegionsInRegionContext instead.");
+  return this->GetRegionsInRegionContext(anatomicContextName, regions);
+}
+
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionsInAnatomicContext(std::string anatomicContextName)
+{
+  vtkWarningMacro("GetNumberOfRegionsInAnatomicContext is deprecated. Use GetNumberOfRegionsInRegionContext instead.");
+  return this->GetNumberOfRegionsInRegionContext(anatomicContextName);
+}
+
+bool vtkSlicerTerminologiesModuleLogic::GetNthRegionInAnatomicContext(std::string anatomicContextName, int regionIndex, vtkSlicerTerminologyType* regionObject)
+{
+  vtkWarningMacro("GetNthRegionInAnatomicContext is deprecated. Use GetNthRegionInRegionContext instead.");
+  return this->GetNthRegionInRegionContext(anatomicContextName, regionIndex, regionObject);
+}
+
+bool vtkSlicerTerminologiesModuleLogic::FindRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions, std::string search)
+{
+  vtkWarningMacro("FindRegionsInAnatomicContext is deprecated. Use FindRegionsInRegionContext instead.");
+  return this->FindRegionsInRegionContext(anatomicContextName, regions, search);
+}
+
+bool vtkSlicerTerminologiesModuleLogic::GetRegionInAnatomicContext(
+  std::string anatomicContextName, CodeIdentifier regionId, vtkSlicerTerminologyType* regionObject)
+{
+  vtkWarningMacro("GetRegionInAnatomicContext is deprecated. Use GetRegionInRegionContext instead.");
+  return this->GetRegionInRegionContext(anatomicContextName, regionId, regionObject);
+}
+
+bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInAnatomicRegion(
+  std::string anatomicContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers)
+{
+  vtkWarningMacro("GetRegionModifiersInAnatomicRegion is deprecated. Use GetRegionModifiersInRegion instead.");
+  return this->GetRegionModifiersInRegion(anatomicContextName, regionId, regionModifiers);
+}
+
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInAnatomicRegion(
+  std::string anatomicContextName, vtkSlicerTerminologyType* regionObject)
+{
+  vtkWarningMacro("GetNumberOfRegionModifierInAnatomicRegion is deprecated. Use GetNumberOfRegionModifierInRegion instead.");
+  return this->GetNumberOfRegionModifierInRegion(anatomicContextName, regionObject);
+}
+
+bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInAnatomicRegion(
+  std::string anatomicContextName, vtkSlicerTerminologyType* regionObject, int regionModifierIndex, vtkSlicerTerminologyType* regionModifier)
+{
+  vtkWarningMacro("GetNthRegionModifierInAnatomicRegion is deprecated. Use GetNthRegionModifierInRegion instead.");
+  return this->GetNthRegionModifierInRegion(anatomicContextName, regionObject, regionModifierIndex, regionModifier);
+}
+
+vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(
+  vtkSlicerTerminologyCategory* category)
+{
+  vtkGenericWarningMacro("vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory is deprecated."
+    " Use GetCodeIdentifierFromCodedEntry instead.");
+  return vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(category);
+}
+
+vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(
+  vtkSlicerTerminologyType* type)
+{
+  vtkGenericWarningMacro("vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType is deprecated."
+    " Use GetCodeIdentifierFromCodedEntry instead.");
+  return vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(type);
+}
