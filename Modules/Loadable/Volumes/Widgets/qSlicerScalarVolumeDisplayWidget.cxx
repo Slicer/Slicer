@@ -50,6 +50,8 @@ public:
   void init();
 
   ctkVTKHistogram* Histogram;
+  vtkWeakPointer<vtkDataArray> HistogramVoxelValues;
+  vtkMTimeType HistogramVoxelValuesMTime;
   vtkSmartPointer<vtkColorTransferFunction> ColorTransferFunction;
 };
 
@@ -232,6 +234,9 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
     this->volumeDisplayNode();
   if (displayNode)
   {
+    QSignalBlocker blocker1(d->ColorTableComboBox);
+    QSignalBlocker blocker2(d->InterpolateCheckbox);
+    QSignalBlocker blocker3(d->InvertDisplayScalarRangeCheckbox);
     d->ColorTableComboBox->setCurrentNode(displayNode->GetColorNode());
     d->InterpolateCheckbox->setChecked(displayNode->GetInterpolate());
     d->InvertDisplayScalarRangeCheckbox->setChecked(displayNode->GetInvertDisplayScalarRange());
@@ -264,94 +269,163 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
     return;
   }
 
-  // Update histogram
+  // Update histogram data if needed
+  if (d->HistogramVoxelValues != voxelValues || d->HistogramVoxelValuesMTime < voxelValues->GetMTime())
+  {
+    d->Histogram->setDataArray(voxelValues);
 
-  // Screen resolution is limited, therefore it does not make sense to compute
-  // many bin counts.
-  const int maxBinCount = 1000;
-  if (voxelValues->GetDataType() == VTK_FLOAT || voxelValues->GetDataType() == VTK_DOUBLE)
-  {
-    d->Histogram->setNumberOfBins(maxBinCount);
-  }
-  else
-  {
+    // Screen resolution is limited, therefore it does not make sense to compute
+    // many bin counts.
+    const int maxBinCount = 1000;
+    if (voxelValues->GetDataType() == VTK_FLOAT || voxelValues->GetDataType() == VTK_DOUBLE)
+    {
+      d->Histogram->setNumberOfBins(maxBinCount);
+    }
+    else
+    {
+      double* range = voxelValues->GetRange();
+      int binCount = static_cast<int>(range[1] - range[0] + 1);
+      if (binCount > maxBinCount)
+      {
+        binCount = maxBinCount;
+      }
+      if (binCount < 1)
+      {
+        binCount = 1;
+      }
+      d->Histogram->setNumberOfBins(binCount);
+    }
+    d->Histogram->build();
+
+    // Update min, center, max labels
     double* range = voxelValues->GetRange();
-    int binCount = static_cast<int>(range[1] - range[0] + 1);
-    if (binCount > maxBinCount)
-    {
-      binCount = maxBinCount;
-    }
-    if (binCount < 1)
-    {
-      binCount = 1;
-    }
-    d->Histogram->setNumberOfBins(binCount);
+    double center = (range[0] + range[1]) / 2.0;
+
+    d->MinValueLabel->setText(QString::number(range[0], 'g', 5));
+    d->CenterValueLabel->setText(QString::number(center, 'g', 5));
+    d->MaxValueLabel->setText(QString::number(range[1], 'g', 5));
+
+    d->HistogramVoxelValues = voxelValues;
+    d->HistogramVoxelValuesMTime = voxelValues->GetMTime();
   }
-  d->Histogram->build();
 
   // Update histogram background
 
   // from vtkKWWindowLevelThresholdEditor::UpdateTransferFunction
-  double range[2] = {0,255};
-  vtkMRMLScalarVolumeDisplayNode* displayNode =
-    this->volumeDisplayNode();
+  double histogramRange[2] = {0,255};
+  vtkMRMLScalarVolumeDisplayNode* displayNode = this->volumeDisplayNode();
   if (displayNode)
   {
-    displayNode->GetDisplayScalarRange(range);
+    displayNode->GetDisplayScalarRange(histogramRange);
   }
   else
   {
-    imageData->GetScalarRange(range);
+    imageData->GetScalarRange(histogramRange);
   }
   // AdjustRange call will take out points that are outside of the new
   // range, but it needs the points to be there in order to work, so call
   // RemoveAllPoints after it's done
-  d->ColorTransferFunction->AdjustRange(range);
+  d->ColorTransferFunction->AdjustRange(histogramRange);
   d->ColorTransferFunction->RemoveAllPoints();
 
-  double min = d->MRMLWindowLevelWidget->level() - 0.5 * d->MRMLWindowLevelWidget->window();
-  double max = d->MRMLWindowLevelWidget->level() + 0.5 * d->MRMLWindowLevelWidget->window();
-  double minVal = 0;
-  double maxVal = 1;
-  double low   = d->MRMLVolumeThresholdWidget->isOff() ? range[0] : d->MRMLVolumeThresholdWidget->lowerThreshold();
-  double upper = d->MRMLVolumeThresholdWidget->isOff() ? range[1] : d->MRMLVolumeThresholdWidget->upperThreshold();
+  double colorTableRange[2] = { displayNode->GetWindowLevelMin(), displayNode->GetWindowLevelMax() };
+  double thresholdRange[2] = { histogramRange[0], histogramRange[1] };
+  if (displayNode->GetApplyThreshold())
+  {
+    thresholdRange[0] = displayNode->GetLowerThreshold();
+    thresholdRange[1] = displayNode->GetUpperThreshold();
+  }
 
   d->ColorTransferFunction->SetColorSpaceToRGB();
 
-  if (low >= max || upper <= min)
+  vtkScalarsToColors* mapToColors = nullptr;
+  if (displayNode && displayNode->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseDirectMapping)
   {
-    d->ColorTransferFunction->AddRGBPoint(range[0], 0, 0, 0);
-    d->ColorTransferFunction->AddRGBPoint(range[1], 0, 0, 0);
+    mapToColors = displayNode->GetLookupTable();
   }
-  else
+
+  // Background color for thresholded region
+  double thresholdedRGB[3] = { 0.2, 0.2, 0.2 };
+
+  const double eps = (histogramRange[1] - histogramRange[0]) / 1e5;
+
+  // Fill lower thresholded region
+  double currentPosition = histogramRange[0]; // can point from here
+  if (currentPosition + eps < thresholdRange[0])
   {
-    max = qMax(min+0.001, max);
-    low = qMax(range[0] + 0.001, low);
-    min = qMax(range[0] + 0.001, min);
-    upper = qMin(range[1] - 0.001, upper);
-
-    if (min <= low)
+    d->ColorTransferFunction->AddRGBPoint(currentPosition + eps, thresholdedRGB[0], thresholdedRGB[1], thresholdedRGB[2]);
+    currentPosition = thresholdRange[0];
+    d->ColorTransferFunction->AddRGBPoint(currentPosition, thresholdedRGB[0], thresholdedRGB[1], thresholdedRGB[2]);
+  }
+  // Draw color gradient between thresholded regions
+  if (currentPosition + eps < thresholdRange[1])
+  {
+    double colorTableVisibleRange[2] =
     {
-      minVal = (low - min)/(max - min);
-      min = low + 0.001;
+      qBound(thresholdRange[0], colorTableRange[0], thresholdRange[1]),
+      qBound(thresholdRange[0], colorTableRange[1], thresholdRange[1])
+    };
+    double colorTableIndexRange[2] = { 0, 0 };
+    if (colorTableRange[1] - colorTableRange[0] > eps)
+    {
+      colorTableIndexRange[0] = (colorTableVisibleRange[0] - colorTableRange[0]) / (colorTableRange[1] - colorTableRange[0]) * 255.0;
+      colorTableIndexRange[1] = (colorTableVisibleRange[1] - colorTableRange[0]) / (colorTableRange[1] - colorTableRange[0]) * 255.0;
+    };
+    // Paint if there is a saturated region below the color table
+    if (currentPosition + eps < colorTableVisibleRange[0])
+    {
+      double belowColor[3] = { 0.0, 0.0, 0.0 };
+      if (mapToColors)
+      {
+        mapToColors->GetColor(0, belowColor);
+      }
+      d->ColorTransferFunction->AddRGBPoint(currentPosition + eps, belowColor[0], belowColor[1], belowColor[2]);
+      currentPosition = colorTableVisibleRange[0];
+      d->ColorTransferFunction->AddRGBPoint(currentPosition, belowColor[0], belowColor[1], belowColor[2]);
+    }
+    // Paint the color gradient
+    if (currentPosition + eps < colorTableRange[1])
+    {
+      if (mapToColors)
+      {
+        int resolution = 50;
+        double rgb[3] = { 0.0, 0.0, 0.0 };
+        for (int i = 0; i < resolution; i++)
+        {
+          currentPosition = colorTableVisibleRange[0] + (colorTableVisibleRange[1] - colorTableVisibleRange[0]) * double(i) / (resolution - 1) + eps;
+          mapToColors->GetColor((colorTableIndexRange[0] + (colorTableIndexRange[1] - colorTableIndexRange[0]) * double(i) / (resolution - 1)), rgb);
+          d->ColorTransferFunction->AddRGBPoint(currentPosition, rgb[0], rgb[1], rgb[2]);
+        }
+      }
+      else
+      {
+        d->ColorTransferFunction->AddRGBPoint(currentPosition + eps,
+          colorTableIndexRange[0] / 255.0, colorTableIndexRange[0] / 255.0, colorTableIndexRange[0] / 255.0);
+        currentPosition = colorTableVisibleRange[1];
+        d->ColorTransferFunction->AddRGBPoint(currentPosition,
+          colorTableIndexRange[1] / 255.0, colorTableIndexRange[1] / 255.0, colorTableIndexRange[1] / 255.0);
+      }
+    }
+    // Paint if there is a saturated region above the color table
+    if (currentPosition + eps < thresholdRange[1])
+    {
+      double aboveColor[3] = { 1.0, 1.0, 1.0 };
+      if (mapToColors)
+      {
+        mapToColors->GetColor(255, aboveColor);
+      }
+      d->ColorTransferFunction->AddRGBPoint(currentPosition + eps, aboveColor[0], aboveColor[1], aboveColor[2]);
+      currentPosition = thresholdRange[1];
+      d->ColorTransferFunction->AddRGBPoint(currentPosition, aboveColor[0], aboveColor[1], aboveColor[2]);
     }
 
-    if (max >= upper)
-    {
-      maxVal = (upper - min)/(max-min);
-      max = upper - 0.001;
-    }
-
-    d->ColorTransferFunction->AddRGBPoint(range[0], 0, 0, 0);
-    d->ColorTransferFunction->AddRGBPoint(low, 0, 0, 0);
-    d->ColorTransferFunction->AddRGBPoint(min, minVal, minVal, minVal);
-    d->ColorTransferFunction->AddRGBPoint(max, maxVal, maxVal, maxVal);
-    d->ColorTransferFunction->AddRGBPoint(upper, maxVal, maxVal, maxVal);
-    if (upper+0.001 < range[1])
-    {
-      d->ColorTransferFunction->AddRGBPoint(upper+0.001, 0, 0, 0);
-      d->ColorTransferFunction->AddRGBPoint(range[1], 0, 0, 0);
-    }
+  }
+  // Fill upper thresholded region
+  if (currentPosition + eps < histogramRange[1])
+  {
+    d->ColorTransferFunction->AddRGBPoint(currentPosition + eps, thresholdedRGB[0], thresholdedRGB[1], thresholdedRGB[2]);
+    currentPosition = histogramRange[1];
+    d->ColorTransferFunction->AddRGBPoint(currentPosition, thresholdedRGB[0], thresholdedRGB[1], thresholdedRGB[2]);
   }
 
   d->ColorTransferFunction->SetAlpha(1.0);
