@@ -132,6 +132,8 @@ void qSlicerScalarVolumeDisplayWidgetPrivate::init()
 
   QObject::connect(this->InterpolateCheckbox, SIGNAL(toggled(bool)),
                    q, SLOT(setInterpolate(bool)));
+  QObject::connect(this->InvertDisplayScalarRangeCheckbox, SIGNAL(toggled(bool)),
+                   q, SLOT(setInvert(bool)));
   QObject::connect(this->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(setColorNode(vtkMRMLNode*)));
   QObject::connect(this->HistogramGroupBox, SIGNAL(toggled(bool)),
@@ -232,6 +234,7 @@ void qSlicerScalarVolumeDisplayWidget::updateWidgetFromMRML()
   {
     d->ColorTableComboBox->setCurrentNode(displayNode->GetColorNode());
     d->InterpolateCheckbox->setChecked(displayNode->GetInterpolate());
+    d->InvertDisplayScalarRangeCheckbox->setChecked(displayNode->GetInvertDisplayScalarRange());
   }
   this->updateHistogram();
 }
@@ -379,6 +382,18 @@ void qSlicerScalarVolumeDisplayWidget::setInterpolate(bool interpolate)
     return;
   }
   displayNode->SetInterpolate(interpolate);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerScalarVolumeDisplayWidget::setInvert(bool invert)
+{
+  vtkMRMLScalarVolumeDisplayNode* displayNode =
+    this->volumeDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+  displayNode->SetInvertDisplayScalarRange(invert);
 }
 
 // --------------------------------------------------------------------------

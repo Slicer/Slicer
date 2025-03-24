@@ -488,6 +488,24 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
   {
     return false;
   }
+
+  // Handle invert flag for scalar volume display nodes
+  if (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetInvertDisplayScalarRange())
+  {
+    // Invert the lookup table colors
+    vtkNew<vtkLookupTable> invertedLut;
+    invertedLut->DeepCopy(lut);
+    // Reverse the order of colors in the table
+    int numColors = invertedLut->GetNumberOfTableValues();
+    for (int i = 0; i < numColors; i++)
+    {
+      double rgba[4] = { 0.0, 0.0, 0.0, 0.0 };
+      lut->GetTableValue(i, rgba);
+      invertedLut->SetTableValue(numColors - 1 - i, rgba);
+    }
+    lut = invertedLut;
+  }
+
   lut->SetTableRange(range);
 
   // Color name == label with valid number of colors (size of validColorMask vector in non zero)
