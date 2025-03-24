@@ -24,6 +24,7 @@
 #include <QInputDialog>
 #include <QLabel>
 #include <QMenu>
+#include <QSettings>
 #include <QWidgetAction>
 
 // CTK includes
@@ -359,6 +360,13 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupShadowsMenu()
   ambientShadowsIntensityShiftAction->setDefaultWidget(this->AmbientShadowsIntensityShiftSlider);
   ambientShadowsIntensityShiftMenu->addAction(ambientShadowsIntensityShiftAction);
   this->ShadowsMenu->addMenu(ambientShadowsIntensityShiftMenu);
+
+  // Reset settings button
+  this->ShadowsMenu->addSeparator();
+  QAction* resetAction = new QAction(qMRMLThreeDViewControllerWidget::tr("Reset settings to default"), this->ShadowsMenu);
+  QObject::connect(resetAction, SIGNAL(triggered()),
+    q, SLOT(resetAmbientShadows()));
+  this->ShadowsMenu->addAction(resetAction);
 
   this->ShadowsButton->setMenu(this->ShadowsMenu);
 }
@@ -1097,4 +1105,28 @@ void qMRMLThreeDViewControllerWidget::setAmbientShadowsIntensityShift(double val
   d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::AmbientShadowsIntensityShiftFlag);
   this->mrmlThreeDViewNode()->SetAmbientShadowsIntensityShift(value);
   d->ViewLogic->EndViewNodeInteraction();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::resetAmbientShadows()
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!this->mrmlThreeDViewNode())
+    {
+    return;
+    }
+
+  // Read default values from application settings
+  QSettings settings;
+  settings.beginGroup("Default3DView");
+  double sizeScale = settings.value("AmbientShadowsSizeScale", 0.0).toDouble();
+  double opacityThreshold = settings.value("AmbientShadowsVolumeOpacityThreshold", 0.0).toDouble();
+  double intensityScale = settings.value("AmbientShadowsIntensityScale", 1.0).toDouble();
+  double intensityShift = settings.value("AmbientShadowsIntensityShift", 0.0).toDouble();
+  settings.endGroup();
+
+  d->AmbientShadowsSizeScaleSlider->setValue(sizeScale);
+  d->AmbientShadowsVolumeOpacityThresholdPercentSlider->setValue(opacityThreshold * 100.0);
+  d->AmbientShadowsIntensityScaleSlider->setValue(intensityScale);
+  d->AmbientShadowsIntensityShiftSlider->setValue(intensityShift);
 }

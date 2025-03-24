@@ -129,6 +129,9 @@ public slots:
   void setAmbientShadowsIntensityScale(double value);
   void setAmbientShadowsIntensityShift(double value);
 
+  /// Reset ambient shadows settings to default values
+  void resetAmbientShadows();
+
 protected slots:
   void updateWidgetFromMRMLViewLogic();
   void updateWidgetFromMRMLView() override;
