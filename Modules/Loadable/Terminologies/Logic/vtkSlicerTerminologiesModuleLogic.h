@@ -381,6 +381,45 @@ public:
   /// \return Index of the first match in the color table, -1 if no matching color entry is found.
   static int GetColorIndexByTerminology(vtkMRMLColorNode* colorNode, const std::string& terminologyStr, bool ignoreContextName = true);
 
+  /// \deprecated Use LoadRegionContextFromFile instead.
+  std::string LoadAnatomicContextFromFile(std::string filePath);
+  // Deprecated. Use LoadRegionContextFromSegmentDescriptorFile instead.
+  bool LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath);
+  // Deprecated. Use GetLoadedRegionContextNames instead.
+  void GetLoadedAnatomicContextNames(std::vector<std::string> &anatomicContextNames);
+  /// \deprecated Use GetLoadedRegionContextNames instead.
+  void GetLoadedAnatomicContextNames(vtkStringArray* anatomicContextNames);
+  /// \deprecated Use FindRegionContextNames instead.
+  std::vector<std::string> FindAnatomicContextNames(
+    std::string anatomicRegionCodingSchemeDesignator, std::string anatomicRegionCodeValue,
+    std::string anatomicRegionModifierCodingSchemeDesignator, std::string anatomicRegionModifierCodeValue,
+    std::vector<std::string> preferredAnatomicContextNames,
+    vtkCollection* foundEntries=nullptr);
+  /// \deprecated Use GetRegionsInRegionContext instead.
+  bool GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions);
+  /// \deprecated Use GetNumberOfRegionsInRegionContext instead.
+  int GetNumberOfRegionsInAnatomicContext(std::string anatomicContextName);
+  /// \deprecated Use GetNthRegionInRegionContext instead.
+  bool GetNthRegionInAnatomicContext(std::string anatomicContextName, int regionIndex, vtkSlicerTerminologyType* regionObject);
+  /// \deprecated Use FindRegionsInRegionContext instead.
+  bool FindRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions, std::string search);
+  /// \deprecated Use GetRegionInRegionContext instead.
+  bool GetRegionInAnatomicContext(std::string anatomicContextName, CodeIdentifier regionId, vtkSlicerTerminologyType* regionObject);
+  /// \deprecated Use GetRegionModifiersInRegion instead.
+  bool GetRegionModifiersInAnatomicRegion(std::string anatomicContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers);
+  /// \deprecated Use GetRegionModifierInRegion instead.
+  bool GetRegionModifierInAnatomicRegion(std::string regionContextName,
+    CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier);
+  /// \deprecated Use GetNumberOfRegionModifierInRegion instead.
+  int GetNumberOfRegionModifierInAnatomicRegion(std::string anatomicContextName, vtkSlicerTerminologyType* regionObject);
+  /// \deprecated Use GetNthRegionModifierInRegion instead.
+  bool GetNthRegionModifierInAnatomicRegion(std::string anatomicContextName, vtkSlicerTerminologyType* regionObject,
+    int regionModifierIndex, vtkSlicerTerminologyType* regionModifier);
+  /// \deprecated Use GetCodeIdentifierFromCodedEntry instead.
+  static CodeIdentifier CodeIdentifierFromTerminologyCategory(vtkSlicerTerminologyCategory* category);
+  /// \deprecated Use GetCodeIdentifierFromCodedEntry instead.
+  static CodeIdentifier CodeIdentifierFromTerminologyType(vtkSlicerTerminologyType* type);
+
 public:
   vtkGetStringMacro(UserContextsPath);
   vtkSetStringMacro(UserContextsPath);
