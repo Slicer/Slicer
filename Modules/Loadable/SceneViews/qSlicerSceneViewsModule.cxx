@@ -23,7 +23,7 @@
 class qSlicerSceneViewsModulePrivate
 {
 public:
-    qMRMLCaptureToolBar* CaptureToolBar;
+  qMRMLCaptureToolBar* CaptureToolBar{ nullptr };
 };
 
 //-----------------------------------------------------------------------------
@@ -47,54 +47,53 @@ void qSlicerSceneViewsModule::setup()
     "SceneViews", QString("SceneViewFile"),
     QStringList() << "vtkMRMLSceneViewNode", true, this));
 
-  //----------------------------------------------------------------------------
-  // Capture tool bar
-  //----------------------------------------------------------------------------
-  // Capture bar needs to listen to the MRML scene and the layout
-  d->CaptureToolBar = new qMRMLCaptureToolBar;
-  d->CaptureToolBar->setObjectName("CaptureToolBar");
-  d->CaptureToolBar->setWindowTitle("Capture/Restore");
-  d->CaptureToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   d->CaptureToolBar,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
-  d->CaptureToolBar->setMRMLScene(
-    qSlicerApplication::application()->mrmlScene());
-
-  QObject::connect(d->CaptureToolBar,
-                   SIGNAL(screenshotButtonClicked()),
-                   qSlicerApplication::application()->ioManager(),
-                   SLOT(openScreenshotDialog()));
-
-  // to get the scene views module dialog to pop up when a button is pressed
-  // in the capture tool bar, we emit a signal, and the
-  // io manager will deal with the sceneviews module
-  QObject::connect(d->CaptureToolBar,
-                   SIGNAL(sceneViewButtonClicked()),
-                   qSlicerApplication::application()->ioManager(),
-                   SLOT(openSceneViewsDialog()));
-
-  // if testing is enabled on the application level, add a time out to the pop ups
-  if (qSlicerApplication::application()->testAttribute(qSlicerCoreApplication::AA_EnableTesting))
-  {
-    d->CaptureToolBar->setPopupsTimeOut(true);
-  }
-
   qSlicerMainWindow* mainWindow = qobject_cast<qSlicerMainWindow*>(
     qSlicerApplication::application()->mainWindow());
   if (mainWindow)
   {
-    mainWindow->addToolBar(d->CaptureToolBar);
-  }
+    //----------------------------------------------------------------------------
+    // Capture tool bar
+    //----------------------------------------------------------------------------
+    // Capture bar needs to listen to the MRML scene and the layout
+    d->CaptureToolBar = new qMRMLCaptureToolBar;
+    d->CaptureToolBar->setObjectName("CaptureToolBar");
+    d->CaptureToolBar->setWindowTitle("Capture/Restore");
+    d->CaptureToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+    QObject::connect(qSlicerApplication::application(),
+                     SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                     d->CaptureToolBar,
+                     SLOT(setMRMLScene(vtkMRMLScene*)));
+    d->CaptureToolBar->setMRMLScene(
+      qSlicerApplication::application()->mrmlScene());
 
-  // Capture tool bar needs to listen to the layout manager
-  QObject::connect(qSlicerApplication::application()->layoutManager(),
-    SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
-    d->CaptureToolBar,
-    SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
-  d->CaptureToolBar->setActiveMRMLThreeDViewNode(
-    qSlicerApplication::application()->layoutManager()->activeMRMLThreeDViewNode());
+    QObject::connect(d->CaptureToolBar,
+                     SIGNAL(screenshotButtonClicked()),
+                     qSlicerApplication::application()->ioManager(),
+                     SLOT(openScreenshotDialog()));
+
+    // to get the scene views module dialog to pop up when a button is pressed
+    // in the capture tool bar, we emit a signal, and the
+    // io manager will deal with the sceneviews module
+    QObject::connect(d->CaptureToolBar,
+                     SIGNAL(sceneViewButtonClicked()),
+                     qSlicerApplication::application()->ioManager(),
+                     SLOT(openSceneViewsDialog()));
+
+    // if testing is enabled on the application level, add a time out to the pop ups
+    if (qSlicerApplication::application()->testAttribute(qSlicerCoreApplication::AA_EnableTesting))
+    {
+      d->CaptureToolBar->setPopupsTimeOut(true);
+    }
+
+    mainWindow->addToolBar(d->CaptureToolBar);
+    // Capture tool bar needs to listen to the layout manager
+    QObject::connect(qSlicerApplication::application()->layoutManager(),
+      SIGNAL(activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode*)),
+      d->CaptureToolBar,
+      SLOT(setActiveMRMLThreeDViewNode(vtkMRMLViewNode*)));
+    d->CaptureToolBar->setActiveMRMLThreeDViewNode(
+      qSlicerApplication::application()->layoutManager()->activeMRMLThreeDViewNode());
+  }
 }
 
 //-----------------------------------------------------------------------------
