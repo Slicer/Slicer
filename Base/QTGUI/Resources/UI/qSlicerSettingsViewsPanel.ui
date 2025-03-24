@@ -570,5 +570,37 @@ p, li { white-space: pre-wrap; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>ThreeDShadowsVisibilityCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ThreeDAmbientShadowsIntensityScaleSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>305</x>
+     <y>292</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>314</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ThreeDShadowsVisibilityCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ThreeDAmbientShadowsIntensityShiftSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>305</x>
+     <y>292</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>314</x>
+     <y>384</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
