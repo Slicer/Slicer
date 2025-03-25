@@ -647,7 +647,7 @@ int vtkSlicerSceneViewsModuleLogic::SceneViewIndexToSequenceBrowserIndex(int sce
   for (vtkMRMLNode* node : nodes)
   {
     vtkMRMLSequenceBrowserNode* sequenceBrowserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(node);
-    if (!sequenceBrowserNode)
+    if (!sequenceBrowserNode || !this->IsSceneViewNode(sequenceBrowserNode))
     {
       continue;
     }
