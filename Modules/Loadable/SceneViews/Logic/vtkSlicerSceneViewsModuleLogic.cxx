@@ -141,6 +141,10 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNode
 
   if (!sequenceBrowser)
   {
+    sequenceBrowser = this->AddNewSceneViewSequenceBrowserNode();
+  }
+  if (!sequenceBrowser)
+  {
     vtkErrorMacro("ConvertSceneViewNodeToSequenceBrowserNode: Failed to get or create sequence browser node.");
     return nullptr;
   }
@@ -225,6 +229,7 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNode
     node->SetDisableModifiedEvent(wasDisabledModifiedEntry.second);
   }
   this->GetMRMLScene()->RemoveNode(sceneViewNode);
+  return sequenceBrowser;
 }
 
 //-----------------------------------------------------------------------------
