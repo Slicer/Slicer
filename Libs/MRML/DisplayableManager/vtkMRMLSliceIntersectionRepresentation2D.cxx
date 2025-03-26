@@ -450,7 +450,7 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
   if (!pipeline->SliceLogic || !this->GetVisibility()
     || !intersectingSliceNode
     || this->Internal->SliceNode->GetViewGroup() != intersectingSliceNode->GetViewGroup()
-    || !intersectingSliceNode->IsMappedInLayout())
+    || !intersectingSliceNode->GetMappedInLayout())
   {
     pipeline->SetIntersectionVisibility(false);
     pipeline->SetThickSlabVisibility(false);
