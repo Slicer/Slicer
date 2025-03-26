@@ -83,6 +83,8 @@ multivolumeexplorer.md
 :maxdepth: 1
 dwiconvert.md
 brainsdwicleanup.md
+resampledtivolume.md
+resamplescalarvectordwivolume.md
 ```
 
 ## Filtering
@@ -141,8 +143,6 @@ createdicomseries.md
 cropvolume.md
 orientscalarvolume.md
 vectortoscalarvolume.md
-resampledtivolume.md
-resamplescalarvectordwivolume.md
 ```
 
 ## Developer Tools
