@@ -1,8 +1,7 @@
 import qt
+
 import slicer
-
 from slicer.ScriptedLoadableModule import *
-
 
 #
 # PerformanceTests
@@ -91,8 +90,9 @@ class PerformanceTestsWidget(ScriptedLoadableModuleWidget):
 
     def reslicing(self, iters=100):
         """go into a loop that stresses the reslice performance"""
-        import time
         import math
+        import time
+
         import numpy as np
 
         sliceNode = slicer.util.getNode("vtkMRMLSliceNodeRed")

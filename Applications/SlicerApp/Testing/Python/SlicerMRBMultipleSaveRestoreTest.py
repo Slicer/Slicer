@@ -1,7 +1,6 @@
 import slicer
 from slicer.ScriptedLoadableModule import *
 
-
 #
 # SlicerMRBMultipleSaveRestoreTest
 #

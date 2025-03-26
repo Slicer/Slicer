@@ -5,14 +5,11 @@ import ctk
 import qt
 
 import slicer
-
 import SlicerWizard.ExtensionDescription
 import SlicerWizard.ExtensionProject
 import SlicerWizard.TemplateManager
 import SlicerWizard.Utilities
-
 from ExtensionWizardLib import *
-
 from slicer.i18n import tr as _
 from slicer.i18n import translate
 

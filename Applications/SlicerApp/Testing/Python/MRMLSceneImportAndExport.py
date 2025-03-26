@@ -1,5 +1,6 @@
-import slicer
 import os
+
+import slicer
 
 
 def testMRMLSceneImportAndExport():

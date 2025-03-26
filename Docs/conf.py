@@ -16,11 +16,12 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import lxml.etree as ET
 import os
 import re
 import sys
 from datetime import date
+
+import lxml.etree as ET
 
 sys.path.insert(0, os.path.abspath("../Base/Python"))
 

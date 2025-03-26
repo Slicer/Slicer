@@ -1,16 +1,14 @@
 import ctk
 import qt
 import vtk
-import vtkTeem
-
-import slicer
-from slicer.ScriptedLoadableModule import *
-from slicer.util import TESTING_DATA_URL
-from slicer.i18n import tr as _
-from slicer.i18n import translate
 
 import DataProbeLib
-
+import slicer
+import vtkTeem
+from slicer.i18n import tr as _
+from slicer.i18n import translate
+from slicer.ScriptedLoadableModule import *
+from slicer.util import TESTING_DATA_URL
 
 #
 # DataProbe
