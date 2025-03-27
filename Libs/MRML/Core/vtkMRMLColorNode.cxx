@@ -746,3 +746,29 @@ void vtkMRMLColorNode::SetContainsTerminology(bool containsTerminology)
     this->RemoveAttribute(this->GetContainsTerminologyAttributeName());
   }
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLColorNode::SetAllColorsDefined()
+{
+  int numberOfColors = this->GetNumberOfColors();
+  bool modified = false;
+  if (this->Properties.size() < numberOfColors)
+  {
+    this->Properties.resize(numberOfColors);
+    modified = true;
+  }
+  for (int index = 0; index < numberOfColors; index++)
+  {
+    if (this->Properties[index].Defined == true)
+    {
+      // no change
+      continue;
+    }
+    this->Properties[index].Defined = true;
+    modified = true;
+  }
+  if (modified)
+  {
+    this->Modified();
+  }
+}

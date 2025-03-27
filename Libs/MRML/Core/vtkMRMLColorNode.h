@@ -103,6 +103,9 @@ public:
   /// Set the color defined flag for the given entry
   void SetColorDefined(int ind, bool defined);
 
+  /// Convenience method to set all colors as defined.
+  void SetAllColorsDefined();
+
   /// Get name of a color from its index (index is 0-based)
   /// Return empty string if undefined or if index is out of range.
   /// \sa GetColorIndexByName()

@@ -168,7 +168,10 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode *anode)
     if (this->LookupTable == nullptr)
     {
       vtkNew<vtkLookupTable> lut;
-      this->SetAndObserveLookupTable(lut.GetPointer());
+      // Only copy the RGBA values and not modify the defined state of colors
+      // (all the color properties are copied in Superclass::Copy).
+      const bool setAllColorsToDefined = false;
+      this->SetAndObserveLookupTable(lut, setAllColorsToDefined);
     }
     if (this->LookupTable != node->GetLookupTable())
     {
@@ -1506,12 +1509,17 @@ vtkLookupTable* vtkMRMLColorTableNode::GetLookupTable()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorTableNode::SetAndObserveLookupTable(vtkLookupTable *lut)
+void vtkMRMLColorTableNode::SetAndObserveLookupTable(vtkLookupTable *lut, bool markAllColorsAsDefined/*=true*/)
 {
   if (lut == this->LookupTable)
   {
     return;
   }
+  MRMLNodeModifyBlocker blocker(this);
   vtkSetAndObserveMRMLObjectMacro(this->LookupTable, lut);
+  if (markAllColorsAsDefined && this->LookupTable)
+  {
+    this->SetAllColorsDefined();
+  }
   this->Modified();
 }
