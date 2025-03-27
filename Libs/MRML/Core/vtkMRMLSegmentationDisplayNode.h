@@ -70,6 +70,27 @@ public:
 
     // Automatically generated operator= and copy constructor work
     // correctly for these members, so there is no need to define them.
+
+    bool operator==(const SegmentDisplayProperties& rhs) const
+    {
+      // color comparison
+      for (int i = 0; i < 3; ++i)
+      {
+        if (fabs(OverrideColor[i] - rhs.OverrideColor[i]) > VTK_DBL_EPSILON)
+        {
+          return false;
+        }
+      }
+      return
+        Visible == rhs.Visible &&
+        Visible3D == rhs.Visible3D &&
+        Visible2DFill == rhs.Visible2DFill &&
+        Visible2DOutline == rhs.Visible2DOutline &&
+        Opacity3D == rhs.Opacity3D &&
+        Opacity2DFill == rhs.Opacity2DFill &&
+        Opacity2DOutline == rhs.Opacity2DOutline &&
+        Pickable == rhs.Pickable;
+    }
   };
 
   typedef std::map<std::string, SegmentDisplayProperties> SegmentDisplayPropertiesMap;
