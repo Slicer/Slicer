@@ -224,7 +224,11 @@ void vtkMRMLSegmentationDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
   vtkMRMLCopyBooleanMacro(ClippingCapSurface);
   vtkMRMLCopyFloatMacro(ClippingCapOpacity);
   vtkMRMLCopyBooleanMacro(ClippingOutline);
-  this->SegmentationDisplayProperties = node->SegmentationDisplayProperties;
+  if (this->SegmentationDisplayProperties != node->SegmentationDisplayProperties)
+  {
+    this->SegmentationDisplayProperties = node->SegmentationDisplayProperties;
+    this->Modified();
+  }
   // Reset segment list source to allow writing display properties to XML,
   // even if referenced segmentation node cannot be found (for example,
   // if SegmentListUpdateSource was not set to nullptr then segment display properties
