@@ -555,6 +555,13 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
     g = g / 255.0;
     b = b / 255.0;
     a = a / 255.0;
+    if (name == "_")
+    {
+      // Special case, empty name is stored as "_"
+      name = "";
+    }
+    // Space in name is replaced by underscores for storage, we restore the original name now
+    std::replace(name.begin(), name.end(), '_', ' ');
     // if the name has ticks around it, from copying from a mrml file, trim
     // them off the string
     if (name.find("'") != std::string::npos)
@@ -576,9 +583,6 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
         << ", breaking the loop over " << lines.size() << " lines in the file " << this->FileName);
       return 0;
     }
-    // Space in name is replaced by underscores for storage, we restore the original name now
-    std::replace(name.begin(), name.end(), '_', ' ');
-    colorNode->SetColorName(id, name.c_str());
   }
   if (lines.size() > 0 && !biggerThanOne)
   {
@@ -755,6 +759,11 @@ int vtkMRMLColorTableStorageNode::WriteCtblFile(std::string fullFileName, vtkMRM
       // If the name has spaces in it, we need to replace them with underscores due to limitation of the file format.
       std::string name = std::string(colorNode->GetColorName(i));
       std::replace(name.begin(), name.end(), ' ', '_');
+      if (name.empty())
+      {
+        // name cannot be completely empty, because then the parser would then mix up the columns
+        name = "_";
+      }
       of << name << " ";
       // the color look up table uses 0-1, file values are 0-255,
       double* rgba = colorNode->GetLookupTable()->GetTableValue(i);
