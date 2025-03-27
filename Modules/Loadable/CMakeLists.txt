@@ -14,6 +14,7 @@ set(qtmodules
   Colors # Colors depends on SubjectHierarchy
   Annotations
   Transforms
+  GeneralizedReformat
   Data
   Models
   Plots
