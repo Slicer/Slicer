@@ -98,10 +98,6 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
           lut->SetTableValue(2, 0.0, 1.0, 0.0, 1.0);
           lut->Build();
           colorNode->SetAndObserveLookupTable(lut);
-          colorNode->SetNumberOfColors(3);
-          colorNode->SetColorDefined(0, true);
-          colorNode->SetColorDefined(1, true);
-          colorNode->SetColorDefined(2, true);
         }
 
         // add node to the scene
