@@ -145,7 +145,6 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   //const char* sequenceAxisUnit = reader->GetAxisUnit(frameAxis);
   //volSequenceNode->SetIndexUnit(sequenceAxisUnit ? sequenceAxisUnit : "");
 
-
   for (int frameIndex = 0; frameIndex < reader->GetNumberOfFrames(); ++frameIndex)
   {
     if (frameIndex > 0)
@@ -160,25 +159,40 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       return 0;
     }
 
-    vtkNew<vtkMRMLVectorVolumeNode> frameVolume;
-    //TODO: Scalar volume if 1 component
+    // Create appropriate volume node based on number of components
+    vtkMRMLVolumeNode* frameVolume = nullptr;
+    if (frameImage->GetNumberOfScalarComponents() > 1)
+    {
+      frameVolume = vtkMRMLVectorVolumeNode::New();
+    }
+    else
+    {
+      frameVolume = vtkMRMLScalarVolumeNode::New();
+    }
+
+    // Set up the volume node
     frameVolume->SetAndObserveImageData(frameImage);
     frameVolume->SetRASToIJKMatrix(reader->GetRasToIjkMatrix());
 
+    // Copy origin and spacing from image data to volume node
+    double origin[3], spacing[3];
+    frameImage->GetOrigin(origin);
+    frameImage->GetSpacing(spacing);
+    frameVolume->SetOrigin(origin);
+    frameVolume->SetSpacing(spacing);
+
+    // Clear origin and spacing from image data since they are now in the volume node
+    frameImage->SetOrigin(0.0, 0.0, 0.0);
+    frameImage->SetSpacing(1.0, 1.0, 1.0);
+
     std::ostringstream indexStr;
-    //if (static_cast<int>(indexValues.size()) > frameIndex)
-    //{
-    //  indexStr << indexValues[frameIndex] << std::ends;
-    //}
-    //else
-    //{
-      indexStr << frameIndex << std::ends;
-    //}
+    indexStr << frameIndex << std::ends;
 
     std::ostringstream nameStr;
     nameStr << refNode->GetName() << "_" << std::setw(4) << std::setfill('0') << frameIndex << std::ends;
-    frameVolume->SetName( nameStr.str().c_str() );
-    volSequenceNode->SetDataNodeAtValue(frameVolume.GetPointer(), indexStr.str().c_str() );
+    frameVolume->SetName(nameStr.str().c_str());
+    volSequenceNode->SetDataNodeAtValue(frameVolume, indexStr.str().c_str());
+    frameVolume->Delete();
   }
 
   vtkDebugMacro(<< " vtkMRMLVolumeSequenceStorageNode::ReadDataInternal: sequence successfully read. ");
@@ -325,7 +339,6 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkNew<vtkITKImageSequenceWriter> writer;
   writer->SetFileName(fullName.c_str());
   writer->SetUseCompression(this->GetUseCompression());
-
   writer->SetRasToIJKMatrix(firstVolumeRasToIjk.GetPointer());
 
   // Pass on voxel type to the writer (NRRD kind of first axis)
