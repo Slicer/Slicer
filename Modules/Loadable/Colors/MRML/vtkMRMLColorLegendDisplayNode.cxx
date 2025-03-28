@@ -24,7 +24,6 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkTextProperty.h>
 
 // STD includes

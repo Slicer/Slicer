@@ -14,7 +14,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkAlgorithmOutput.h"
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 #include "vtkTransform.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
@@ -56,7 +55,6 @@ vtkMRMLGlyphableVolumeSliceDisplayNode::vtkMRMLGlyphableVolumeSliceDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLGlyphableVolumeSliceDisplayNode::~vtkMRMLGlyphableVolumeSliceDisplayNode()
 {
-  this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
   this->SetSliceImagePort(nullptr);
   this->SliceToXYMatrix->Delete();
   this->SliceToXYTransform->Delete();

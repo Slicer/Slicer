@@ -30,7 +30,6 @@
 #include "vtkMRMLTransformNode.h"
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkCubeSource.h>
 #include <vtkDoubleArray.h>
 #include <vtkGeneralTransform.h>
@@ -65,14 +64,15 @@ vtkMRMLMarkupsROINode::vtkMRMLMarkupsROINode()
   this->IsUpdatingControlPointsFromROI = false;
   this->IsUpdatingROIFromControlPoints = false;
 
-  this->CurveInputPoly->GetPoints()->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+  vtkObserveMRMLObjectMacro(this->CurveInputPoly->GetPoints());
 
   this->ObjectToNodeMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  this->ObjectToNodeMatrix->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+  vtkObserveMRMLObjectMacro(this->ObjectToNodeMatrix);
 
   this->ObjectToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
 
-  this->InteractionHandleToWorldMatrix->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+  // To handle cases when InteractionHandleToWorldMatrix was modified externally
+  vtkObserveMRMLObjectMacro(this->InteractionHandleToWorldMatrix);
 
   // Setup measurements calculated for this markup type
   vtkNew<vtkMRMLMeasurementVolume> volumeMeasurement;
@@ -162,7 +162,7 @@ void vtkMRMLMarkupsROINode::SetAndObserveObjectToNodeMatrix(vtkMatrix4x4* object
 
   if (this->ObjectToNodeMatrix)
   {
-    this->ObjectToNodeMatrix->RemoveObserver(this->MRMLCallbackCommand);
+    vtkUnObserveMRMLObjectMacro(this->ObjectToNodeMatrix);
   }
 
   this->ObjectToNodeMatrix = objectToNodeMatrix;
@@ -171,7 +171,7 @@ void vtkMRMLMarkupsROINode::SetAndObserveObjectToNodeMatrix(vtkMatrix4x4* object
     this->ObjectToNodeMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   }
 
-  this->ObjectToNodeMatrix->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+  vtkObserveMRMLObjectMacro(this->ObjectToNodeMatrix);
   this->ObjectToNodeMatrix->Modified();
 }
 

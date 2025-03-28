@@ -13,7 +13,6 @@ Version:   $Revision: 1.14 $
 =========================================================================auto=*/
 
 // MRML includes
-#include "vtkEventBroker.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
@@ -26,7 +25,6 @@ Version:   $Revision: 1.14 $
 #include <vtkAlgorithmOutput.h>
 #include <vtkAppendPolyData.h>
 #include <vtkBoundingBox.h>
-#include <vtkCallbackCommand.h>
 #include <vtkEventForwarderCommand.h>
 #include <vtkGeneralTransform.h>
 #include <vtkHomogeneousTransform.h>
@@ -780,8 +778,7 @@ void vtkMRMLVolumeNode
     this->ImageDataConnection->GetProducer() : nullptr;
   if (imageDataAlgorithm != nullptr)
   {
-    vtkEventBroker::GetInstance()->AddObservation(
-      imageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    vtkObserveMRMLObjectMacro(imageDataAlgorithm);
     imageDataAlgorithm->Register(this);
   }
 
@@ -789,8 +786,7 @@ void vtkMRMLVolumeNode
 
   if (oldImageDataAlgorithm != nullptr)
   {
-    vtkEventBroker::GetInstance()->RemoveObservations (
-      oldImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    vtkUnObserveMRMLObjectMacro(oldImageDataAlgorithm);
     oldImageDataAlgorithm->UnRegister(this);
   }
 

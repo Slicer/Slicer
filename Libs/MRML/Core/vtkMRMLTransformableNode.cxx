@@ -15,7 +15,6 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLTransformableNode.h"
 
 // MRML includes
-#include "vtkEventBroker.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 

@@ -62,11 +62,14 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
   /// get a list of all observed events and priorities for the selected node
   void GetObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities);
 
-  /// Observe ModifiedEvent on the object
-  void ObserveObject(vtkObject *node, float priority=0.0);
+  /// observe ModifiedEvent on the object (convenience method that calls AddObjectEvent with ModifiedEvent)
+  void ObserveObject(vtkObject *node, float priority=0.0, bool logWarningIfSameObservationExists=true);
 
   /// add observers for specified events
-  void AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities=nullptr);
+  void AddObjectEvent(vtkObject *node, unsigned long event, float priority=0.0, bool logWarningIfSameObservationExists=true);
+
+  /// add observers for specified events
+  void AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities=nullptr, bool logWarningIfSameObservationExists=true);
 
   /// accessors for the owner class
   /// - note we do not hold a registered pointer to the owner

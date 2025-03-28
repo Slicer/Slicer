@@ -749,7 +749,7 @@ void qMRMLMarkupsDisplayNodeWidget::onTextPropertyWidgetsChanged()
   double backgroundColorF[3] = { backgroundColor.redF(), backgroundColor.greenF(), backgroundColor.blueF() };
 
   MRMLNodeModifyBlocker blocker(d->MarkupsDisplayNode);
-  vtkSmartPointer<vtkTextProperty> textProperty = d->MarkupsDisplayNode->GetTextProperty(); // always returns valid pointer
+  vtkTextProperty* textProperty = d->MarkupsDisplayNode->GetTextProperty(); // always returns valid pointer
   textProperty->SetFontFamily(fontFamily);
   textProperty->SetBold(textBold);
   textProperty->SetItalic(textItalic);

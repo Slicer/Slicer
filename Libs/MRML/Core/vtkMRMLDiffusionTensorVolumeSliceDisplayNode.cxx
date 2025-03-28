@@ -13,7 +13,6 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 #include <vtkImageData.h>
 #include <vtkVersion.h>
 
@@ -54,7 +53,6 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeSliceDisplayNode::~vtkMRMLDiffusionTensorVolumeSliceDisplayNode()
 {
-  this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
   this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(nullptr);
   this->DiffusionTensorGlyphFilter->Delete();
 }

@@ -20,7 +20,6 @@ Version:   $Revision: 1.3 $
 
 // VTK includes
 #include <vtkObjectFactory.h>
-#include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 
 //----------------------------------------------------------------------------

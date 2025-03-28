@@ -20,7 +20,6 @@
 // MRML includes
 #include "vtkMRMLI18N.h"
 #include "vtkCurveGenerator.h"
-#include <vtkEventBroker.h>
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 #include "vtkMRMLStaticMeasurement.h"
@@ -36,7 +35,6 @@
 #include <vtkAbstractTransform.h>
 #include <vtkBitArray.h>
 #include <vtkBoundingBox.h>
-#include <vtkCallbackCommand.h>
 #include <vtkCellLocator.h>
 #include <vtkCollection.h>
 #include <vtkParallelTransportFrame.h>
@@ -74,7 +72,7 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->CurveGenerator->SetInputData(this->CurveInputPoly);
   this->CurveGenerator->SetCurveTypeToLinearSpline();
   this->CurveGenerator->SetNumberOfPointsPerInterpolatingSegment(1);
-  this->CurveGenerator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+  vtkObserveMRMLObjectMacro(this->CurveGenerator);
 
   this->CurvePolyToWorldTransform = vtkSmartPointer<vtkGeneralTransform>::New();
   this->CurvePolyToWorldTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
@@ -91,19 +89,19 @@ vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLMarkupsNode::PointModifiedEvent);
 
   this->Measurements = vtkCollection::New();
-  this->Measurements->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+  vtkObserveMRMLObjectMacro(this->Measurements);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsNode::~vtkMRMLMarkupsNode()
 {
-  this->CurveGenerator->RemoveObserver(this->MRMLCallbackCommand);
+  vtkUnObserveMRMLObjectMacro(this->CurveGenerator);
   this->SetFixedNumberOfControlPoints(false); // remove the control points instead of just unsetting them
   this->RemoveAllControlPoints();
 
   if (this->Measurements)
   {
-    this->Measurements->RemoveObserver(this->MRMLCallbackCommand);
+    vtkUnObserveMRMLObjectMacro(this->Measurements);
     this->Measurements->Delete();
     this->Measurements = nullptr;
   }
@@ -266,15 +264,11 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
   }
   else if (caller == this->Measurements)
   {
-    vtkEventBroker* broker = vtkEventBroker::GetInstance();
     vtkCollectionSimpleIterator it;
     vtkObject* measurementObject = nullptr;
     for (this->Measurements->InitTraversal(it); (measurementObject = this->Measurements->GetNextItemAsObject(it)) ;)
     {
-      if (!broker->GetObservationExist(measurementObject, vtkMRMLMeasurement::InputDataModifiedEvent, this, this->MRMLCallbackCommand))
-      {
-        broker->AddObservation(measurementObject, vtkMRMLMeasurement::InputDataModifiedEvent, this, this->MRMLCallbackCommand);
-      }
+      vtkObserveMRMLObjectEventMacroNoWarning(measurementObject, vtkMRMLMeasurement::InputDataModifiedEvent);
     }
   }
   else if (caller->IsA("vtkMRMLMeasurement") && event == vtkMRMLMeasurement::InputDataModifiedEvent)

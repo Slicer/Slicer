@@ -20,9 +20,6 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLStorageNode.h"
 #include "vtkTagTable.h"
 
-// VTK includes
-#include <vtkCallbackCommand.h>
-
 // STD includes
 #include <sstream>
 

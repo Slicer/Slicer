@@ -20,7 +20,6 @@ Version:   $Revision: 1.0 $
 // VTK includes
 #include <vtkColorTransferFunction.h>
 #include <vtkCommand.h>
-#include <vtkEventBroker.h>
 #include <vtkLookupTable.h>
 #include <vtkObjectFactory.h>
 
@@ -35,9 +34,8 @@ vtkMRMLNodeNewMacro(vtkMRMLProceduralColorNode);
 vtkMRMLProceduralColorNode::vtkMRMLProceduralColorNode()
 {
   this->ColorTransferFunction = nullptr;
-  vtkColorTransferFunction* ctf=vtkColorTransferFunction::New();
+  vtkNew<vtkColorTransferFunction> ctf;
   this->SetAndObserveColorTransferFunction(ctf);
-  ctf->Delete();
 
   this->ConvertedCTFtoLUT = vtkLookupTable::New();
   this->NumberOfTableValues = 256;
@@ -85,9 +83,8 @@ void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode *anode)
   {
     if (this->ColorTransferFunction==nullptr)
     {
-      vtkColorTransferFunction* ctf=vtkColorTransferFunction::New();
+      vtkNew<vtkColorTransferFunction> ctf;
       this->SetAndObserveColorTransferFunction(ctf);
-      ctf->Delete();
     }
     if (this->ColorTransferFunction!=node->GetColorTransferFunction())
     {
@@ -280,20 +277,8 @@ void vtkMRMLProceduralColorNode::SetAndObserveColorTransferFunction(vtkColorTran
   {
     return;
   }
-  if (this->ColorTransferFunction != nullptr)
-  {
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->ColorTransferFunction, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-    this->ColorTransferFunction->UnRegister(this);
-    this->ColorTransferFunction=nullptr;
-  }
-  this->ColorTransferFunction=ctf;
-  if ( this->ColorTransferFunction )
-  {
-    this->ColorTransferFunction->Register(this);
-    vtkEventBroker::GetInstance()->AddObservation (
-      this->ColorTransferFunction, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-  }
+  vtkSetAndObserveMRMLObjectMacro(this->ColorTransferFunction, ctf);
+  this->StorableModifiedTime.Modified();
   this->Modified();
 }
 

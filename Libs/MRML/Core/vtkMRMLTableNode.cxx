@@ -76,16 +76,8 @@ vtkMRMLTableNode::vtkMRMLTableNode()
 //----------------------------------------------------------------------------
 vtkMRMLTableNode::~vtkMRMLTableNode()
 {
-  if (this->Table)
-  {
-    this->Table->Delete();
-    this->Table = nullptr;
-  }
-  if (this->Schema)
-  {
-    this->Schema->Delete();
-    this->Schema = nullptr;
-  }
+  this->SetAndObserveTable(nullptr);
+  this->SetAndObserveSchema(nullptr);
 }
 
 

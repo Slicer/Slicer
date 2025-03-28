@@ -19,7 +19,6 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLScene.h"
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>

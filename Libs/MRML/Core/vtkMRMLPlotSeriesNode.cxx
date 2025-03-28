@@ -29,10 +29,8 @@
 #include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
 #include <vtkBrush.h>
-#include <vtkCallbackCommand.h>
 #include <vtkCommand.h>
 #include <vtkContextMapper2D.h>
-#include <vtkEventBroker.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
