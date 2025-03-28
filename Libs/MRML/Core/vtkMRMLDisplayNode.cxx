@@ -13,7 +13,6 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 
 // MRML includes
-#include "vtkEventBroker.h"
 #include "vtkMRMLColorNode.h"
 #include "vtkMRMLClipNode.h"
 #include "vtkMRMLDisplayNode.h"
@@ -26,7 +25,6 @@ Version:   $Revision: 1.3 $
 // VTK includes
 #include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
-#include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkImageData.h>
 #include <vtkLookupTable.h>
@@ -118,8 +116,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->AddNodeReferenceRole(this->GetClipNodeReferenceRole(), this->GetClipNodeReferenceRole(), clipNodeEvents);
 
   // add observer to process visualization pipeline
-  vtkEventBroker::GetInstance()->AddObservation(
-    this, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+  vtkObserveMRMLObjectMacro(this);
 }
 
 //----------------------------------------------------------------------------
@@ -449,6 +446,12 @@ void vtkMRMLDisplayNode
   vtkAlgorithm* oldTextureImageDataAlgorithm = this->TextureImageDataConnection ?
     this->TextureImageDataConnection->GetProducer() : nullptr;
 
+  if (oldTextureImageDataAlgorithm != nullptr)
+  {
+    vtkUnObserveMRMLObjectMacro(this->TextureImageDataConnection);
+    oldTextureImageDataAlgorithm->UnRegister(this);
+  }
+
   this->TextureImageDataConnection = newTextureImageDataConnection;
 
   vtkAlgorithm* textureImageDataAlgorithm = this->TextureImageDataConnection ?
@@ -456,19 +459,10 @@ void vtkMRMLDisplayNode
 
   if (textureImageDataAlgorithm != nullptr)
   {
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->TextureImageDataConnection, vtkCommand::ModifiedEvent,
-      this, this->MRMLCallbackCommand );
+    vtkObserveMRMLObjectMacro(this->TextureImageDataConnection);
     textureImageDataAlgorithm->Register(this);
   }
 
-  if (oldTextureImageDataAlgorithm != nullptr)
-  {
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->TextureImageDataConnection, vtkCommand::ModifiedEvent,
-      this, this->MRMLCallbackCommand );
-    oldTextureImageDataAlgorithm->UnRegister(this);
-  }
   this->Modified();
 }
 

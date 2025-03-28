@@ -134,12 +134,13 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
     }
   }
   this->SetObject(nodePtr, node);
-  this->ObserveObject(node, priority);
+  this->ObserveObject(node, priority, logWarningIfSameObservationExists);
 }
 
 
 //----------------------------------------------------------------------------
-void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events, vtkFloatArray *priorities, bool logWarningIfSameObservationExists)
+void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events,
+  vtkFloatArray *priorities, bool logWarningIfSameObservationExists/*=true*/)
 {
   vtkDebugMacro (<< "SetAndObserveObjectEvents of " << node);
   if (*nodePtr == node)
@@ -188,7 +189,7 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
   }
 
   this->SetObject(nodePtr, node);
-  this->AddObjectEvents(node, events, priorities);
+  this->AddObjectEvents(node, events, priorities, logWarningIfSameObservationExists);
 }
 
 //----------------------------------------------------------------------------
@@ -210,19 +211,24 @@ void vtkObserverManager::RemoveObjectEvents(vtkObject *nodePtr)
   }
 }
 
-
 //----------------------------------------------------------------------------
-void vtkObserverManager::ObserveObject(vtkObject* node, float priority)
+void vtkObserverManager::AddObjectEvent(vtkObject *node, unsigned long event, float priority/*=0.0*/, bool logWarningIfSameObservationExists/*=true*/)
 {
   vtkNew<vtkIntArray> events;
-  events->InsertNextValue(vtkCommand::ModifiedEvent);
+  events->InsertNextValue(event);
   vtkNew<vtkFloatArray> priorities;
   priorities->InsertNextValue(priority);
-  this->AddObjectEvents(node, events.GetPointer(), priorities.GetPointer());
+  this->AddObjectEvents(node, events.GetPointer(), priorities.GetPointer(), logWarningIfSameObservationExists);
 }
 
 //----------------------------------------------------------------------------
-void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities)
+void vtkObserverManager::ObserveObject(vtkObject* node, float priority/*=0.0*/, bool logWarningIfSameObservationExists/*=true*/)
+{
+  this->AddObjectEvent(node, vtkCommand::ModifiedEvent, priority, logWarningIfSameObservationExists);
+}
+
+//----------------------------------------------------------------------------
+void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities, bool logWarningIfSameObservationExists/*=true*/)
 {
   if ( (priorities && !events) )
   {
@@ -259,17 +265,33 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
     {
       for (int i=0; i<events->GetNumberOfTuples(); i++)
       {
-#ifndef NDEBUG
         // Make sure we are not adding an already existing connection. It's
         // not a big issue but it just shows poor design.
-        if (this->GetObservationsCount(nodePtr, events->GetValue(i)) > 0)
+        bool observationAlreadyExists = false;
+        vtkNew<vtkIntArray> existingEvents;
+        vtkNew<vtkFloatArray> existingPriorities;
+        this->GetObjectEvents(nodePtr, existingEvents.GetPointer(), existingPriorities.GetPointer());
+        int existingEventCount = std::min(existingEvents->GetNumberOfValues(), existingPriorities->GetNumberOfValues());
+        for (int existingEventIndex = 0; existingEventIndex < existingEventCount; existingEventIndex++)
         {
-          vtkWarningMacro(<< "Observation " << events->GetValue(i)
-                          << " between " << nodePtr->GetClassName()
-                          << " and " << observer->GetClassName()
-                          << " already exists.");
+          float priority = (priorities ? priorities->GetValue(i) : 0.0);
+          if (existingEvents->GetValue(existingEventIndex) == events->GetValue(i)
+            && (existingPriorities->GetValue(existingEventIndex) == priority))
+          {
+            if (logWarningIfSameObservationExists)
+            {
+              vtkWarningMacro(<< "Observation " << events->GetValue(i)
+                << " between " << nodePtr->GetClassName() << " and " << observer->GetClassName()
+                << " with priority " << priority << " already exists.");
+            }
+            observationAlreadyExists = true;
+            break;
+          }
         }
-#endif
+        if (observationAlreadyExists)
+        {
+          continue;
+        }
         vtkObservation *observation=nullptr;
         if (!priorities)
         {

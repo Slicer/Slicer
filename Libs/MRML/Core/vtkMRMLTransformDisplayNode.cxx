@@ -22,7 +22,6 @@
 
 
 #include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
 
 #include "vtkMRMLTransformDisplayNode.h"
 

@@ -13,7 +13,6 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 
 // MRML includes
-#include "vtkEventBroker.h"
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
@@ -21,7 +20,6 @@ Version:   $Revision: 1.3 $
 
 // VTK includes
 #include <vtkCamera.h>
-#include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
 #include <vtkMath.h>
 #include <vtkNew.h>
@@ -227,13 +225,13 @@ void vtkMRMLCameraNode::SetAndObserveCamera(vtkCamera* camera)
 {
   if (this->Camera != nullptr)
   {
+    vtkUnObserveMRMLObjectMacro(this->Camera);
     this->SetCamera(nullptr);
   }
   this->SetCamera(camera);
-  if ( this->Camera )
+  if (this->Camera)
   {
-    vtkEventBroker::GetInstance()->AddObservation (
-      this->Camera, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    vtkObserveMRMLObjectMacro(this->Camera);
   }
 }
 

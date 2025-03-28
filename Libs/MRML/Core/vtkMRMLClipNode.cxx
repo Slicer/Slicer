@@ -24,7 +24,6 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkImplicitBoolean.h>
 #include <vtkImplicitFunctionCollection.h>
 #include <vtkPlane.h>

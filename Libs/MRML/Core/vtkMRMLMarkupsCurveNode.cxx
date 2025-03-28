@@ -91,7 +91,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
 
   this->SurfaceScalarCalculator = vtkSmartPointer<vtkArrayCalculator>::New();
   this->SurfaceScalarCalculator->SetInputConnection(this->SurfaceToLocalTransformer->GetOutputPort());
-  this->SurfaceScalarCalculator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+  vtkObserveMRMLObjectMacro(this->SurfaceScalarCalculator);
   this->SurfaceScalarCalculator->SetAttributeTypeToPointData();
   this->SurfaceScalarCalculator->SetResultArrayName("weights");
   this->SurfaceScalarCalculator->SetResultArrayType(VTK_FLOAT);
@@ -121,7 +121,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->CurveMeasurementsCalculator = vtkSmartPointer<vtkCurveMeasurementsCalculator>::New();
   this->CurveMeasurementsCalculator->SetInputMarkupsMRMLNode(this);
   this->CurveMeasurementsCalculator->SetInputConnection(this->CurveCoordinateSystemGeneratorWorld->GetOutputPort());
-  this->CurveMeasurementsCalculator->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+  vtkObserveMRMLObjectMacro(this->CurveMeasurementsCalculator);
 
   this->WorldOutput = vtkSmartPointer<vtkPassThrough>::New();
   this->WorldOutput->SetInputConnection(this->CurveMeasurementsCalculator->GetOutputPort());

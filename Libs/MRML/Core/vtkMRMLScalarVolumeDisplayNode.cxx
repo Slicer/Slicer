@@ -13,7 +13,6 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 // MRML includes
-#include "vtkEventBroker.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLProceduralColorNode.h"
@@ -21,7 +20,6 @@ Version:   $Revision: 1.2 $
 
 // VTK includes
 #include <vtkAlgorithmOutput.h>
-#include <vtkCallbackCommand.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageCast.h>
@@ -106,8 +104,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->HistogramStatistics = nullptr;
   this->IsInCalculateAutoLevels = false;
 
-  vtkEventBroker::GetInstance()->AddObservation(
-    this, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand  , 10000.);
+  this->MRMLObserverManager->ObserveObject(this, 10000.);
 }
 
 //----------------------------------------------------------------------------
@@ -149,8 +146,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
 
   if (oldInputImageDataAlgorithm != nullptr)
   {
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      oldInputImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    vtkUnObserveMRMLObjectMacro(oldInputImageDataAlgorithm);
   }
 
   this->Superclass::SetInputImageDataConnection(imageDataConnection);
@@ -159,8 +155,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
     this->GetInputImageDataConnection()->GetProducer() : nullptr;
   if (inputImageDataAlgorithm != nullptr)
   {
-    vtkEventBroker::GetInstance()->AddObservation(
-      inputImageDataAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    vtkObserveMRMLObjectMacro(inputImageDataAlgorithm);
   }
 
 }

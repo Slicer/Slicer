@@ -26,7 +26,6 @@ Version:   $Revision: 1.3 $
 #include <itkArchetypeSeriesFileNames.h>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkStringArray.h>
 #include <vtkImageReader2.h>
@@ -342,6 +341,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   itk::ArchetypeSeriesFileNames::StringVectorType names = archtypeNames->GetFileNames();
 
   vtkNew<vtkImageReader2> reader;
+  vtkObserveMRMLObjectEventMacro(reader, vtkCommand::ProgressEvent);
   reader->SetNumberOfScalarComponents(this->GetFileNumberOfScalarComponents());
   reader->SetDataScalarType(this->GetFileScalarType());
   reader->SetDataByteOrder(this->GetFileLittleEndian());
@@ -377,12 +377,13 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       catch (...)
       {
       vtkErrorMacro("ReadDataInternal: Cannot read file");
-      reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
+      vtkUnObserveMRMLObjectMacro(reader);
       return 0;
       }
     if (reader->GetOutput() == nullptr)
     {
       vtkErrorMacro("ReadDataInternal: Cannot read file");
+      vtkUnObserveMRMLObjectMacro(reader);
       return 0;
     }
     if (i==0)
@@ -407,7 +408,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   if (ici->GetOutput() == nullptr)
   {
     vtkErrorMacro("ReadDataInternal: Cannot read file");
-    reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
+    vtkUnObserveMRMLObjectMacro(reader);
     return 0;
   }
   else
@@ -424,7 +425,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   volNode->SetIJKToRASMatrix(mat.GetPointer());
 
-  reader->RemoveObservers(vtkCommand::ProgressEvent, this->MRMLCallbackCommand);
+  vtkUnObserveMRMLObjectMacro(reader);
 
   return result;
 }

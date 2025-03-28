@@ -36,7 +36,6 @@ Version:   $Revision: 1.6 $
 
 // VTK includes
 #include <vtkAddonMathUtilities.h>
-#include <vtkCallbackCommand.h>
 #include <vtkDataArray.h>
 #include <vtkErrorCode.h>
 #include <vtkImageChangeInformation.h>
@@ -368,7 +367,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  reader->AddObserver( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
+  vtkObserveMRMLObjectEventMacro(reader, vtkCommand::ProgressEvent);
 
   if (volNode->GetImageData())
   {

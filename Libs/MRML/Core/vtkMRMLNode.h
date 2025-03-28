@@ -67,6 +67,14 @@ class vtkCallbackCommand;
 #define vtkObserveMRMLObjectMacro(node)  {this->MRMLObserverManager->ObserveObject ( (node) );};
 #endif
 
+#ifndef vtkObserveMRMLObjectEventMacro
+#define vtkObserveMRMLObjectEventMacro(node, event)  {this->MRMLObserverManager->AddObjectEvent ( (node), (event) );};
+#endif
+
+#ifndef vtkObserveMRMLObjectEventMacroNoWarning
+#define vtkObserveMRMLObjectEventMacroNoWarning(node, event)  {this->MRMLObserverManager->AddObjectEvent ( (node), (event), 0.0, false );};
+#endif
+
 #ifndef vtkObserveMRMLObjectEventsMacro
 #define vtkObserveMRMLObjectEventsMacro(node, events)  {this->MRMLObserverManager->AddObjectEvents ( (node), (events) );};
 #endif

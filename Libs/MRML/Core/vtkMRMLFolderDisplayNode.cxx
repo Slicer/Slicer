@@ -26,9 +26,6 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 
-// VTK includes
-#include <vtkCallbackCommand.h>
-
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLFolderDisplayNode);
 
@@ -103,10 +100,8 @@ void vtkMRMLFolderDisplayNode::SetScene(vtkMRMLScene* scene)
       vtkErrorMacro("SetScene: Failed to get subject hierarchy node from current scene");
       return;
     }
-    if (!shNode->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->MRMLCallbackCommand))
-    {
-      shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->MRMLCallbackCommand);
-    }
+
+    vtkObserveMRMLObjectEventMacroNoWarning(shNode, vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent);
   }
 }
 

@@ -31,7 +31,6 @@
 #include <vtkAddonMathUtilities.h>
 
 // VTK includes
-#include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkGeneralTransform.h>
 #include <vtkPlane.h>
@@ -60,9 +59,9 @@ vtkMRMLMarkupsPlaneNode::vtkMRMLMarkupsPlaneNode()
   this->BaseToNodeMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
 
   // Add observers so that we can update the plane/control points
-  this->CurveInputPoly->GetPoints()->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
-  this->ObjectToBaseMatrix->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
-  this->BaseToNodeMatrix->AddObserver(vtkCommand::ModifiedEvent, this->MRMLCallbackCommand);
+  vtkObserveMRMLObjectMacro(this->CurveInputPoly->GetPoints());
+  vtkObserveMRMLObjectMacro(this->ObjectToBaseMatrix);
+  vtkObserveMRMLObjectMacro(this->BaseToNodeMatrix);
 
   // Setup measurements calculated for this markup type
   vtkNew<vtkMRMLMeasurementArea> areaMeasurement;

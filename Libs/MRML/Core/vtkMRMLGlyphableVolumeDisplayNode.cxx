@@ -16,10 +16,12 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLGlyphableVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkCallbackCommand.h"
 #include "vtkObjectFactory.h"
 
 #include <sstream>
+
+// VTK includes
+#include <vtkCommand.h>
 
 // Initialize static member that controls resampling --
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer

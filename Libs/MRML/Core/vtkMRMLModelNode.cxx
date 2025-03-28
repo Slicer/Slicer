@@ -13,7 +13,6 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 
 // MRML includes
-#include "vtkEventBroker.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelStorageNode.h"
@@ -24,7 +23,6 @@ Version:   $Revision: 1.3 $
 // VTK includes
 #include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
-#include <vtkCallbackCommand.h>
 #include <vtkCellData.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkEventForwarderCommand.h>
@@ -335,8 +333,7 @@ void vtkMRMLModelNode
     this->MeshConnection->GetProducer() : nullptr;
   if (newMeshAlgorithm != nullptr)
   {
-    vtkEventBroker::GetInstance()->AddObservation(
-      newMeshAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    vtkObserveMRMLObjectMacro(newMeshAlgorithm);
     newMeshAlgorithm->Register(this);
   }
 
@@ -344,8 +341,7 @@ void vtkMRMLModelNode
 
   if (oldMeshAlgorithm != nullptr)
   {
-    vtkEventBroker::GetInstance()->RemoveObservations (
-      oldMeshAlgorithm, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    vtkUnObserveMRMLObjectMacro(oldMeshAlgorithm);
     oldMeshAlgorithm->UnRegister(this);
   }
 
