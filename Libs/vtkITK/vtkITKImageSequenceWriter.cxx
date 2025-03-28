@@ -49,8 +49,7 @@ vtkStandardNewMacro(vtkITKImageSequenceWriter);
 
 // helper function
 template <class TPixelType, int Dimension>
-void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImageCollection, char* fileName,
-                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
+void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImageCollection, char* fileName, vtkMatrix4x4* rasToIjkMatrix)
 {
   typedef itk::Image<TPixelType, Dimension-1> InImageType;
   typedef itk::Image<TPixelType, Dimension> OutImageType;
@@ -189,41 +188,18 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
       itkImageWriter->SetImageIO(imageIOType);
     }
   }
-  itkImageWriter->SetInput(joinImageFilter->GetOutput());
+  OutImageType::Pointer joinedImage = joinImageFilter->GetOutput();
+  itkImageWriter->SetInput(joinedImage);
 
-  // set measurement frame matrix in metadata object dictionary
-  if (measurementFrameMatrix != nullptr)
+  // Fill in axis kinds metadata
+  itk::MetaDataDictionary &dictionary = joinedImage->GetMetaDataDictionary();
+  std::string kindsKeyBase = "NRRD_kinds[";
+  unsigned int axis = 0;
+  for (int spatialAxis = 0; spatialAxis < 3; ++spatialAxis, ++axis)
   {
-    typedef std::vector<std::vector<double> > DoubleVectorType;
-    typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
-    const itk::MetaDataDictionary &constDictionary = itkImageWriter->GetMetaDataDictionary();
-    itk::MetaDataDictionary::ConstIterator itr = constDictionary.Begin();
-    itk::MetaDataDictionary::ConstIterator end = constDictionary.End();
-    while (itr != end)
-    {
-      // Get Measurement Frame
-      itk::MetaDataObjectBase::Pointer entry = itr->second;
-      MetaDataDoubleVectorType::Pointer entryvalue = dynamic_cast<MetaDataDoubleVectorType*>(entry.GetPointer());
-      if (entryvalue)
-      {
-        if (itr->first.find("NRRD_measurement frame") != -1)
-        {
-          DoubleVectorType tagvalue;
-          tagvalue.resize(3);
-          for (int i = 0; i < 3; i++)
-          {
-            tagvalue[i].resize(3);
-            for (int j = 0; j < 3; j++)
-            {
-              tagvalue[i][j] = measurementFrameMatrix->GetElement(i, j);
-            }
-          }
-          entryvalue->SetMetaDataObjectValue(tagvalue);
-        }
-      }
-      ++itr;
-    }
+    itk::EncapsulateMetaData<std::string>(dictionary, kindsKeyBase + std::to_string(axis) + std::string("]"), "domain");
   }
+  itk::EncapsulateMetaData<std::string>(dictionary, kindsKeyBase + std::to_string(axis) + std::string("]"), "list");
 
   try
   {
@@ -243,11 +219,10 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
 
 //----------------------------------------------------------------------------
 template <class TPixelType>
-void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkCollection *inputImageCollection, char *fileName,
-                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
+void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkCollection *inputImageCollection, char *fileName, vtkMatrix4x4* rasToIjkMatrix)
 {
   // Fix 4 dimensions: 3 spatial + 1 sequence. The fifth dimension for the scalar components is in the pixel type
-  ITKWriteVTKImage<TPixelType, 4>(self, inputImageCollection, fileName, rasToIjkMatrix, measurementFrameMatrix);
+  ITKWriteVTKImage<TPixelType, 4>(self, inputImageCollection, fileName, rasToIjkMatrix);
 }
 
 //----------------------------------------------------------------------------
