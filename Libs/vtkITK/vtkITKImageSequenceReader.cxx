@@ -155,19 +155,19 @@ void vtkITKExecuteDataFromFile_FramesInDimension(vtkITKImageSequenceReader* self
   vtkExportFilter->SetInput(frameImage);
   vtkExportFilter->Update();
 
-  data->DeepCopy(vtkExportFilter->GetOutput());  // Note: crashes if ShallowCopy is used
+  // Copy to output. Note: crashes if ShallowCopy is used
+  data->DeepCopy(vtkExportFilter->GetOutput());
 }
 
 //----------------------------------------------------------------------------
 // NOTE: This function needs to be separate as ImageToVTKImageFilter cannot be
 //       used with dimensions higher than 3
 template <class TPixelType>
-void vtkITKExecuteDataFromFile_FramesInComponent(vtkITKImageSequenceReader* self, unsigned int numOfComponents, vtkImageData* data)
+void vtkITKExecuteDataFromFile_FramesInComponent(vtkITKImageSequenceReader* self, vtkImageData* data)
 {
   using PixelType = TPixelType;
-  //using ValueType = typename PixelType::ValueType;
   constexpr unsigned int ImageDimension = 3;
-  using ImageType = itk::Image<PixelType, ImageDimension>;
+  using ImageType = itk::VectorImage<PixelType, ImageDimension>;
 
   using ReaderType = itk::ImageFileReader<ImageType>;
   ReaderType::Pointer reader = ReaderType::New();
@@ -207,20 +207,78 @@ void vtkITKExecuteDataFromFile_FramesInComponent(vtkITKImageSequenceReader* self
   }
   self->SetRasToIjkMatrix(rasToIjkMatrix);
 
+  // Set number of frames from loaded vector image
   self->SetNumberOfFrames(image->GetNumberOfComponentsPerPixel());
 
-  // Extract requested frame from image
-  using VTKExporterFilterType = itk::ImageToVTKImageFilter<ImageType>;
-  VTKExporterFilterType::Pointer vtkExportFilter = VTKExporterFilterType::New();
-  vtkExportFilter->SetInput(image);
-  vtkExportFilter->Update();
+  // Set up component extractor to get the frame
+  using FrameImageType = itk::Image<PixelType, ImageDimension>;
+  using ComponentExtractorType = itk::VectorIndexSelectionCastImageFilter<ImageType, FrameImageType>;
+  typename ComponentExtractorType::Pointer componentExtractor = ComponentExtractorType::New();
+  componentExtractor->SetInput(image);
+  componentExtractor->SetIndex(self->GetCurrentFrameIndex());
+  componentExtractor->Update();
+  // Get the extracted component image
+  FrameImageType::Pointer frameImage = componentExtractor->GetOutput();
+  FrameImageType::RegionType region = frameImage->GetLargestPossibleRegion();
+  const PixelType* inputBuffer = frameImage->GetBufferPointer();
 
-  vtkNew<vtkImageExtractComponents> extractComponents;
-  extractComponents->SetInputData(vtkExportFilter->GetOutput());
-  extractComponents->SetComponents(self->GetCurrentFrameIndex());
-  extractComponents->Update();
+  // Create VTK image with same properties
+  vtkNew<vtkImageData> outputImage;
+  outputImage->SetDimensions(region.GetSize(0), region.GetSize(1), region.GetSize(2));
 
-  data->DeepCopy(extractComponents->GetOutput());  // Note: crashes if ShallowCopy is used
+  // Set up the VTK image type
+  int vtkType;
+  if (std::is_same<PixelType, unsigned short>::value)
+  {
+    vtkType = VTK_UNSIGNED_SHORT;
+  }
+  else if (std::is_same<PixelType, int>::value)
+  {
+    vtkType = VTK_INT;
+  }
+  else if (std::is_same<PixelType, float>::value)
+  {
+    vtkType = VTK_FLOAT;
+  }
+  else
+  {
+    vtkType = VTK_FLOAT;  // Default to float for unknown types
+  }
+
+  outputImage->AllocateScalars(vtkType, 1);
+
+  // Copy the buffer directly, handling the vector pixel type
+  const size_t numPixels = region.GetNumberOfPixels();
+  void* outputBuffer = outputImage->GetScalarPointer();
+
+  // Copy each pixel value, extracting the scalar component.
+  // This is needed because ImageToVTKImageFilter cannot handle variable length vectors.
+  for (size_t i = 0; i < numPixels; ++i)
+  {
+    switch (vtkType)
+    {
+      case VTK_UNSIGNED_SHORT:
+        static_cast<unsigned short*>(outputBuffer)[i] = inputBuffer[i][0];
+        break;
+      case VTK_INT:
+        static_cast<int*>(outputBuffer)[i] = inputBuffer[i][0];
+        break;
+      case VTK_FLOAT:
+        static_cast<float*>(outputBuffer)[i] = inputBuffer[i][0];
+        break;
+    }
+  }
+
+  // Set spacing and origin
+  FrameImageType::SpacingType itkFrameSpacing = frameImage->GetSpacing();
+  FrameImageType::PointType itkFrameOrigin = frameImage->GetOrigin();
+  double frameSpacing[3] = {itkFrameSpacing[0], itkFrameSpacing[1], itkFrameSpacing[2]};
+  double frameOrigin[3] = {itkFrameOrigin[0], itkFrameOrigin[1], itkFrameOrigin[2]};
+  outputImage->SetSpacing(frameSpacing);
+  outputImage->SetOrigin(frameOrigin);
+
+  // Copy to output. Note: crashes if ShallowCopy is used
+  data->DeepCopy(outputImage);
 }
 
 //----------------------------------------------------------------------------
@@ -299,13 +357,13 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
             switch (imageIO->GetComponentType())
             {
             case itk::ImageIOBase::IOComponentEnum::USHORT:
-              vtkITKExecuteDataFromFile_FramesInComponent<itk::Vector<unsigned short>>(this, imageIO->GetNumberOfComponents(), data);
+              vtkITKExecuteDataFromFile_FramesInComponent<itk::Vector<unsigned short>>(this, data);
               break;
             case itk::ImageIOBase::IOComponentEnum::INT:
-              vtkITKExecuteDataFromFile_FramesInComponent<itk::Vector<int>>(this, imageIO->GetNumberOfComponents(), data);
+              vtkITKExecuteDataFromFile_FramesInComponent<itk::Vector<int>>(this, data);
               break;
             case itk::ImageIOBase::IOComponentEnum::FLOAT:
-              vtkITKExecuteDataFromFile_FramesInComponent<itk::Vector<float>>(this, imageIO->GetNumberOfComponents(), data);
+              vtkITKExecuteDataFromFile_FramesInComponent<itk::Vector<float>>(this, data);
               break;
             }
           }
