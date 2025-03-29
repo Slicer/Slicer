@@ -156,9 +156,16 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
       }
       os << indent << indent << i << " ";
       os << this->GetColorName(i);
-      double color[4];
-      this->GetColor(i, color);
-      os << " (" << color[0] << ", " << color[1] << ", " << color[2] << ", " << color[3] << ")";
+      if (i < this->GetNumberOfColors())
+      {
+        double color[4];
+        this->GetColor(i, color);
+        os << " (" << color[0] << ", " << color[1] << ", " << color[2] << ", " << color[3] << ")";
+      }
+      else
+      {
+        os << " (undefined)";
+      }
       if (prop.Category)
       {
         os << " Category: " << prop.Category->GetAsPrintableString();
@@ -237,6 +244,8 @@ void vtkMRMLColorNode::SetType(int type)
 
   // subclass should override this and define colors according to the node type
 
+  this->StorableModified();
+
   // invoke a modified event
   this->Modified();
 
@@ -306,9 +315,16 @@ void vtkMRMLColorNode::SetColorDefined(int ind, bool defined)
 {
   if (ind < 0 || ind >= (int)this->Properties.size())
   {
+    vtkErrorMacro("SetColorDefined failed: invalid index " << ind);
+    return;
+  }
+  if (this->Properties[ind].Defined == defined)
+  {
     return;
   }
   this->Properties[ind].Defined = defined;
+  this->StorableModified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -553,7 +569,7 @@ bool vtkMRMLColorNode::SetTerminologyFromString(int ind, std::string terminology
   if (this->Properties[ind] != prop)
   {
     this->Properties[ind] = prop;
-    this->StorableModifiedTime.Modified();
+    this->StorableModified();
     this->Modified();
   }
 
@@ -675,7 +691,7 @@ int vtkMRMLColorNode::SetColorName(int ind, const char* name)
   {
     prop.Name = name;
     prop.Defined = true;
-    this->StorableModifiedTime.Modified();
+    this->StorableModified();
     this->Modified();
   }
   return 1;
@@ -769,6 +785,7 @@ void vtkMRMLColorNode::SetAllColorsDefined()
   }
   if (modified)
   {
+    this->StorableModified();
     this->Modified();
   }
 }

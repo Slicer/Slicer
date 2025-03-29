@@ -168,8 +168,8 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode *anode)
     if (this->LookupTable == nullptr)
     {
       vtkNew<vtkLookupTable> lut;
-      // Only copy the RGBA values and not modify the defined state of colors
-      // (all the color properties are copied in Superclass::Copy).
+      // By setting 'setAllColorsToDefined' to false, prevent this->SetAndObserveLookupTable()
+      // overwriting color properties that have been already correctly set by Superclass::Copy.
       const bool setAllColorsToDefined = false;
       this->SetAndObserveLookupTable(lut, setAllColorsToDefined);
     }
@@ -598,7 +598,7 @@ void vtkMRMLColorTableNode::SetType(int type)
   {
     vtkDebugMacro("SetType Creating a new lookup table (was null) of type " << this->GetTypeAsString() << "\n");
     vtkLookupTable *table = vtkLookupTable::New();
-    this->SetLookupTable(table);
+    this->SetAndObserveLookupTable(table);
     table->Delete();
     // as a FullRainbow, set the table range to 255
     this->GetLookupTable()->SetTableRange(0, 255);
@@ -1185,10 +1185,10 @@ void vtkMRMLColorTableNode::SetType(int type)
     vtkErrorMacro("vtkMRMLColorTableNode: SetType ERROR, unknown type " << type << endl);
     return;
   }
+
   // invoke a modified event
   this->Modified();
-
-  // invoke a type  modified event
+  // invoke a type modified event
   this->InvokeEvent(vtkMRMLColorTableNode::TypeModifiedEvent);
 }
 
@@ -1252,26 +1252,24 @@ void vtkMRMLColorTableNode::AddColor(const char* name, double r, double g, doubl
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetColor(int entry, const char* name, double r, double g, double b, double a)
 {
-  if (this->GetType() != this->User && this->GetType() != this->File)
+  if (!vtkMRMLColorTableNode::IsValidColorIndex(entry, "SetColor", /*isCallerMethodSet=*/true))
   {
-    vtkErrorMacro("SetColor: Cannot set a color if not a user defined color table, reset the type first to User or File\n");
-    return 0;
-  }
-  if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
-  {
-    vtkErrorMacro("SetColor: requested entry " << entry << " is out of table range: 0 - "
-      << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
     return 0;
   }
 
   this->GetLookupTable()->SetTableValue(entry, r, g, b, a);
+
+  if (entry >= this->Properties.size())
+  {
+    this->Properties.resize(entry + 1);
+  }
   if (this->SetColorName(entry, name) == 0)
   {
     vtkWarningMacro("SetColor: error setting color name " << name << " for entry " << entry);
     return 0;
   }
 
-  // trigger a modified event
+  this->StorableModified();
   this->Modified();
   return 1;
 }
@@ -1279,17 +1277,11 @@ int vtkMRMLColorTableNode::SetColor(int entry, const char* name, double r, doubl
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, double a)
 {
-  if (this->GetType() != this->User && this->GetType() != this->File)
+  if (!vtkMRMLColorTableNode::IsValidColorIndex(entry, "SetColor", /*isCallerMethodSet=*/true))
   {
-    vtkErrorMacro("SetColor: Cannot set a color if not a user defined color table, reset the type first to User or File\n");
     return 0;
   }
-  if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
-  {
-    vtkErrorMacro("SetColor: requested entry " << entry << " is out of table range: 0 - "
-      << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
-    return 0;
-  }
+
   double* rgba = this->GetLookupTable()->GetTableValue(entry);
   if (rgba[0] == r && rgba[1] == g && rgba[2] == b && rgba[3] == a)
   {
@@ -1298,7 +1290,7 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, dou
   this->GetLookupTable()->SetTableValue(entry, r, g, b, a);
   this->SetColorDefined(entry, true);
 
-  // trigger a modified event
+  this->StorableModified();
   this->Modified();
   return 1;
 }
@@ -1306,32 +1298,21 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, dou
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char* name, double r, double g, double b, double a)
 {
-  if (this->GetType() != this->User && this->GetType() != this->File)
-  {
-    vtkErrorMacro("SetColors: Cannot set a color if not a user defined color table, reset the type first to User or File");
-    return 0;
-  }
   if (firstEntry > lastEntry)
   {
     // empty range, nothing to do
     return 1;
   }
+  if (!this->IsValidColorIndex(firstEntry, "SetColors", /*isCallerMethodSet=*/true)
+      || !this->IsValidColorIndex(lastEntry, "SetColors", /*isCallerMethodSet=*/true))
+  {
+    return 0;
+  }
+
   vtkIdType numberOfValues = this->GetLookupTable()->GetNumberOfTableValues();
   if (vtkIdType(this->Properties.size()) < numberOfValues)
   {
     this->Properties.resize(numberOfValues);
-  }
-  if (firstEntry < 0 || firstEntry >= numberOfValues)
-  {
-    vtkErrorMacro("SetColors: requested first entry "
-      << firstEntry << " is out of table range: 0 - " << numberOfValues << ", call SetNumberOfColors");
-    return 0;
-  }
-  if (lastEntry < 0 || lastEntry >= numberOfValues)
-  {
-    vtkErrorMacro("SetColors: requested last entry "
-      << lastEntry << " is out of table range: 0 - " << numberOfValues << ", call SetNumberOfColors");
-    return 0;
   }
 
   MRMLNodeModifyBlocker blocker(this);
@@ -1353,6 +1334,7 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char* 
   lut->BuildSpecialColors();
   lut->Modified();
 
+  this->StorableModified();
   this->Modified();
   return 1;
 }
@@ -1360,32 +1342,19 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char* 
 //---------------------------------------------------------------------------
 bool vtkMRMLColorTableNode::RemoveColors(int firstEntry, int lastEntry)
 {
-  if (this->GetType() != this->User && this->GetType() != this->File)
-  {
-    vtkErrorMacro("RemoveColors: Cannot set a color if not a user defined color table, reset the type first to User or File");
-    return false;
-  }
   if (firstEntry > lastEntry)
   {
     // empty range, nothing to do
     return true;
   }
+  if (!this->IsValidColorIndex(firstEntry, "RemoveColors", true) || !this->IsValidColorIndex(lastEntry, "SetColors", /*isCallerMethodSet=*/true))
+  {
+    return false;
+  }
   vtkIdType numberOfValues = this->GetLookupTable()->GetNumberOfTableValues();
   if (vtkIdType(this->Properties.size()) < numberOfValues)
   {
     this->Properties.resize(numberOfValues);
-  }
-  if (firstEntry < 0 || firstEntry >= numberOfValues)
-  {
-    vtkErrorMacro("RemoveColors: requested first entry "
-      << firstEntry << " is out of table range: 0 - " << numberOfValues << ", call SetNumberOfColors");
-    return false;
-  }
-  if (lastEntry < 0 || lastEntry >= numberOfValues)
-  {
-    vtkErrorMacro("RemoveColors: requested last entry "
-      << lastEntry << " is out of table range: 0 - " << numberOfValues << ", call SetNumberOfColors");
-    return false;
   }
 
   MRMLNodeModifyBlocker blocker(this);
@@ -1406,6 +1375,7 @@ bool vtkMRMLColorTableNode::RemoveColors(int firstEntry, int lastEntry)
   lut->BuildSpecialColors();
   lut->Modified();
 
+  this->StorableModified();
   this->Modified();
   return true;
 }
@@ -1413,10 +1383,8 @@ bool vtkMRMLColorTableNode::RemoveColors(int firstEntry, int lastEntry)
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
 {
-  if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
+  if (!vtkMRMLColorTableNode::IsValidColorIndex(entry, "SetColor", /*isCallerMethodSet=*/true))
   {
-    vtkErrorMacro("SetColor: requested entry " << entry << " is out of table range: 0 - "
-      << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
     return 0;
   }
   double* rgba = this->GetLookupTable()->GetTableValue(entry);
@@ -1426,17 +1394,21 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
 //---------------------------------------------------------------------------
 bool vtkMRMLColorTableNode::RemoveColor(int entry)
 {
-  if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
+  if (!vtkMRMLColorTableNode::IsValidColorIndex(entry, "RemoveColor", /*isCallerMethodSet=*/true))
   {
-    vtkErrorMacro("RemoveColor: requested entry " << entry << " is out of table range: 0 - "
-      << this->GetLookupTable()->GetNumberOfTableValues() - 1);
     return false;
   }
   this->SetColor(entry, 0.0, 0.0, 0.0, 0.0);
-  if (entry <= this->Properties.size())
+  if (entry >= this->Properties.size())
   {
-    this->Properties[entry].Clear();
-    this->Properties[entry].Defined = false;
+    this->Properties.resize(entry + 1);
+  }
+  PropertyType newProperty;
+  newProperty.Defined = false;
+  if (this->Properties[entry] != newProperty)
+  {
+    this->Properties[entry] = newProperty;
+    this->StorableModified();
     this->Modified();
   }
   return true;
@@ -1445,10 +1417,8 @@ bool vtkMRMLColorTableNode::RemoveColor(int entry)
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetOpacity(int entry, double opacity)
 {
-  if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
+  if (!vtkMRMLColorTableNode::IsValidColorIndex(entry, "SetOpacity", /*isCallerMethodSet=*/true))
   {
-    vtkErrorMacro("SetColor: requested entry " << entry << " is out of table range: 0 - "
-      << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
     return 0;
   }
   double* rgba = this->GetLookupTable()->GetTableValue(entry);
@@ -1458,11 +1428,9 @@ int vtkMRMLColorTableNode::SetOpacity(int entry, double opacity)
 //---------------------------------------------------------------------------
 bool vtkMRMLColorTableNode::GetColor(int entry, double color[4])
 {
-  if (entry < 0 || entry >= this->GetNumberOfColors())
+  if (!vtkMRMLColorTableNode::IsValidColorIndex(entry, "GetColor", /*isCallerMethodSet=*/false))
   {
-    vtkErrorMacro("GetColor: requested entry " << entry << " is out of table range: 0 - "
-      << this->GetLookupTable()->GetNumberOfTableValues() << ", call SetNumberOfColors" << endl);
-    return false;
+    return 0;
   }
   this->GetLookupTable()->GetTableValue(entry, color);
   return true;
@@ -1471,7 +1439,13 @@ bool vtkMRMLColorTableNode::GetColor(int entry, double color[4])
 //---------------------------------------------------------------------------
 void vtkMRMLColorTableNode::ClearNames()
 {
+  if (this->Properties.empty())
+  {
+    return;
+  }
   this->Properties.clear();
+  this->StorableModified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1511,15 +1485,65 @@ vtkLookupTable* vtkMRMLColorTableNode::GetLookupTable()
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::SetAndObserveLookupTable(vtkLookupTable *lut, bool markAllColorsAsDefined/*=true*/)
 {
-  if (lut == this->LookupTable)
+  if (lut != this->LookupTable)
   {
-    return;
+    vtkSetAndObserveMRMLObjectMacro(this->LookupTable, lut);
+    if (this->LookupTable)
+    {
+      this->Properties.resize(LookupTable->GetNumberOfTableValues());
+    }
+    else
+    {
+      this->Properties.clear();
+    }
+    this->StorableModified();
+    this->Modified();
   }
-  MRMLNodeModifyBlocker blocker(this);
-  vtkSetAndObserveMRMLObjectMacro(this->LookupTable, lut);
   if (markAllColorsAsDefined && this->LookupTable)
   {
     this->SetAllColorsDefined();
   }
-  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLColorTableNode::IsValidColorIndex(int entry, const std::string& callerMethod, bool isCallerMethodSet/*=false*/)
+{
+  if (isCallerMethodSet)
+  {
+    // Set... method
+    if (!this->GetLookupTable())
+    {
+      vtkErrorMacro(<< callerMethod << ": lookup table is null, set the type first.");
+      return false;
+    }
+    if (this->GetType() != this->User && this->GetType() != this->File)
+    {
+      vtkErrorMacro(<< callerMethod << ": Cannot modify color table of type '" << this->GetTypeAsString() << "'. Set its type to 'User' or 'File'.");
+      return false;
+    }
+    if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
+    {
+      vtkErrorMacro(<< callerMethod << ": requested color entry " << entry << " is out of table range: 0 - "
+        << this->GetLookupTable()->GetNumberOfTableValues() - 1 << ", call SetNumberOfColors to change the color table size.");
+      return false;
+    }
+  }
+  else
+  {
+    // Get... method
+    if (!this->GetLookupTable())
+    {
+      vtkErrorMacro(<< callerMethod << ": lookup table is null, set the type first.");
+      return false;
+    }
+    if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
+    {
+      vtkErrorMacro(<< callerMethod << ": requested color entry " << entry << " is out of table range: 0 - "
+        << this->GetLookupTable()->GetNumberOfTableValues() - 1 << ", call SetNumberOfColors to change the color table size.");
+      return false;
+    }
+  }
+
+  // This is a valid index
+  return true;
 }
