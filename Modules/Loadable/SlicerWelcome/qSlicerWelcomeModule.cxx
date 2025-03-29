@@ -59,11 +59,13 @@ QString qSlicerWelcomeModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerWelcomeModule::acknowledgementText()const
 {
+  //: %1 and %2 are styling arguments
   return tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC and the Slicer Community. "
-      "See <a href=\"https://www.slicer.org\">https://www.slicer.org</a> for details. We would also like to express our sincere "
+      "See %1 https://www.slicer.org %2 for details. We would also like to express our sincere "
       "thanks to members of the Slicer User Community who have helped us to design the contents "
       "of this Welcome Module, and whose feedback continues to improve functionality, usability "
-      "and Slicer user experience.") + "<br>";
+      "and Slicer user experience.")
+      .arg("<a href=\"https://www.slicer.org\">").arg("</a>") + "<br>";
 }
 
 //-----------------------------------------------------------------------------
