@@ -67,7 +67,7 @@ public:
   /// \sa SetAndObserveLookupTable()
   virtual void SetLookupTable(vtkLookupTable* newLookupTable)
   {
-    SetAndObserveLookupTable(newLookupTable, true);
+    this->SetAndObserveLookupTable(newLookupTable, /*markAllColorsAsDefined=*/true);
   }
 
   ///
@@ -252,6 +252,9 @@ protected:
   ~vtkMRMLColorTableNode() override;
   vtkMRMLColorTableNode(const vtkMRMLColorTableNode&);
   void operator=(const vtkMRMLColorTableNode&);
+
+  /// Log error message and return false if not a valid color index.
+  bool IsValidColorIndex(int entry, const std::string& callerMethod, bool isCallerMethodSet=false);
 
   ///
   /// The look up table, constructed according to the Type.
