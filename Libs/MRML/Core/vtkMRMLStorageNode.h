@@ -393,6 +393,21 @@ public:
   static std::string ClampFileName(const std::string& filename, int extensionLength, int maxFileNameLength, int hashLength = 4);
   //@}
 
+  /// Attempts to correct legacy file paths stored in the node's FileName property.
+  /// This is primarily used during scene loading to handle outdated or invalid file references.
+  ///
+  /// If the file specified by FileName does not exist, the method attempts to resolve it
+  /// relative to the file's original directory (archetype path). If a valid path is found,
+  /// FileName is updated accordingly.
+  ///
+  /// To avoid unnecessary warnings, a message is only logged if the storage node is
+  /// referenced by at least one other node in the scene. Orphan storage nodes (those not
+  /// referenced by any other node) are silently ignored.
+  ///
+  /// This method is automatically invoked during scene loading and usually does not need
+  /// to be called explicitly.
+  void FixFileName();
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode() override;
