@@ -409,13 +409,18 @@ const char* vtkMRMLCameraNode::GetActiveTag()
 //---------------------------------------------------------------------------
 void vtkMRMLCameraNode::SetActiveTag(const char* newActiveTag)
 {
-  vtkWarningMacro("vtkMRMLCameraNode::SetActiveTag() is deprecated. Use vtkMRMLCameraNode::SetLayoutName() instead.");
+  // When reading legacy scenes, "activeTag" attribute is still used, so don't warn in that case
+  if (this->GetScene() && !this->GetScene()->IsImporting())
+  {
+    vtkWarningMacro("vtkMRMLCameraNode::SetActiveTag() is deprecated. Use vtkMRMLCameraNode::SetLayoutName() instead.");
+  }
+
   std::string newActiveTagStr = newActiveTag ? newActiveTag : "";
   if (vtksys::SystemTools::StringStartsWith(newActiveTagStr, "vtkMRMLViewNode"))
   {
     // remove "vtkMRMLViewNode" from the beginning of the view node ID to get its singleton tag,
     // which is the layout name
-    std::string layoutName = newActiveTag;
+    std::string layoutName = newActiveTagStr;
     layoutName.erase(0, 15); // 15 = length of "vtkMRMLViewNode"
     this->SetLayoutName(layoutName.c_str());
   }
