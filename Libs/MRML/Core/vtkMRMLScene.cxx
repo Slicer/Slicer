@@ -908,6 +908,18 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput/*=nullptr*/
     this->UpdateNodeReferences(addedNodes);
     this->RemoveReservedIDs();
 
+    // This must run after node references are updated, but before nodes are loaded
+    for (addedNodes->InitTraversal(it);
+      (node = (vtkMRMLNode*)addedNodes->GetNextItemAsObject(it));)
+    {
+      vtkMRMLStorageNode* storageNode = vtkMRMLStorageNode::SafeDownCast(node);
+      if (!storageNode || storageNode->GetAddToScene())
+      {
+        continue;
+      }
+      storageNode->FixFileName();
+    }
+
     this->InvokeEvent(vtkMRMLScene::NewSceneEvent, nullptr);
 
     // Notify the imported nodes about that all nodes are created

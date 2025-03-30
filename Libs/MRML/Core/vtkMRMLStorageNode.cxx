@@ -282,33 +282,7 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
       name += filename;
       std::string collapsedFullPath = vtksys::SystemTools::CollapseFullPath(name.c_str());
       vtkDebugMacro("ReadXMLAttributes: collapsed path for " << attName << " = " << collapsedFullPath.c_str());
-      // check if this file exists
-      if (vtksys::SystemTools::FileExists(collapsedFullPath.c_str(), true) == false &&
-          this->GetFileName() != nullptr)
-      {
-        vtkDebugMacro("ReadXMLAttributes: File list member " << filename << " is relative, but is not found relative to the mrml root directory. " << collapsedFullPath << " was not found. Trying to find it relative to the archetype: " << this->GetFileName());
-        // get the directory of the file name
-        std::string fileNameDirectory = vtksys::SystemTools::GetParentDirectory(this->GetFileName());
-        vtkDebugMacro("ReadXMLAttributes: Directory of archetype = " << fileNameDirectory);
-        // add a trailing slash if missing
-        if (fileNameDirectory[fileNameDirectory.size()-1]  != '/')
-        {
-          fileNameDirectory = fileNameDirectory + std::string("/");
-        }
-        fileNameDirectory += filename;
-        vtkDebugMacro("ReadXMLAttributes: New uncollapsed path = " << fileNameDirectory);
-        std::string secondCollapsedFullPath = vtksys::SystemTools::CollapseFullPath(fileNameDirectory.c_str());
-        vtkDebugMacro("ReadXMLAttributes: New collapsed path for " << attName << " = " << secondCollapsedFullPath.c_str());
-        if (vtksys::SystemTools::FileExists(secondCollapsedFullPath.c_str(), true) == false)
-        {
-          vtkWarningMacro("ReadXMLAttributes: file list member " << filename << " is relative, but not found relative to the mrml root directory. Trying to find the path relative to the archetype doesn't work either: " << secondCollapsedFullPath << " not found, going back to using path from mrml root dir of " << collapsedFullPath);
-        }
-        else
-        {
-          vtkWarningMacro("ReadXMLAttributes: file list member " << filename << " is relative, but not found relative to the mrml root directory: " << collapsedFullPath << " is invalid. Found the file relative to the archetype, so using path  " <<  secondCollapsedFullPath);
-          collapsedFullPath = secondCollapsedFullPath;
-        }
-      }
+
       this->AddFileName(collapsedFullPath.c_str());
     }
     else if (!strcmp(attName, "uri"))
@@ -1642,4 +1616,69 @@ std::string vtkMRMLStorageNode::ClampFileName(const std::string& filename, int e
   truncatedFilenameSS << extension;
 
   return truncatedFilenameSS.str();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLStorageNode::FixFileName()
+{
+  if (!this->GetFileName())
+  {
+    // no filename, nothing to be fixed
+    return;
+  }
+  std::string collapsedFullPath = this->GetFileName();
+  // check if this file exists
+  if (vtksys::SystemTools::FileExists(collapsedFullPath.c_str(), true))
+  {
+    // the file exists, nothing need to be fixed
+    return;
+  }
+
+  bool logWarning = true;
+  if (this->GetScene())
+  {
+    std::vector<vtkMRMLNode*> referencingNodes;
+    this->GetScene()->GetReferencingNodes(this, referencingNodes);
+    if (referencingNodes.empty())
+    {
+      // this is an orphan storage node, not used by any data nodes
+      // therefore there is no need to make a noise about that it points to a non-existing file
+      logWarning = false;
+    }
+  }
+
+  vtkDebugMacro("FixFileName: File list member " << collapsedFullPath << " is not found relative to the mrml root directory. "
+    << collapsedFullPath << " was not found. Trying to find it relative to the archetype: " << this->GetFileName());
+  // get the directory of the file name
+  std::string fileNameDirectory = vtksys::SystemTools::GetParentDirectory(this->GetFileName());
+  std::string fileNameName = vtksys::SystemTools::GetFilenameName(this->GetFileName());
+
+  vtkDebugMacro("ReadXMLAttributes: Directory of archetype = " << fileNameDirectory);
+  // add a trailing slash if missing
+  if (fileNameDirectory[fileNameDirectory.size() - 1] != '/')
+  {
+    fileNameDirectory = fileNameDirectory + std::string("/");
+  }
+  fileNameDirectory += fileNameName;
+  vtkDebugMacro("FixFileName: New uncollapsed path = " << fileNameDirectory);
+  std::string secondCollapsedFullPath = vtksys::SystemTools::CollapseFullPath(fileNameDirectory.c_str());
+  vtkDebugMacro("FixFileName: New collapsed path = " << secondCollapsedFullPath.c_str());
+
+  if (vtksys::SystemTools::FileExists(secondCollapsedFullPath.c_str(), true) == false)
+  {
+    if (logWarning)
+    {
+      vtkWarningMacro("FixFileName: file list member '" << collapsedFullPath << "' is not found. Path relative to the archetype '"
+        << secondCollapsedFullPath << "' is not found either.");
+    }
+  }
+  else
+  {
+    if (logWarning)
+    {
+      vtkWarningMacro("FixFileName: file list member '" << collapsedFullPath << "' is not found. Using path relative to the archetype '"
+        << secondCollapsedFullPath << "' instead.");
+    }
+    this->SetFileName(secondCollapsedFullPath.c_str());
+  }
 }
