@@ -435,11 +435,14 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
       }
       if (missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemCreateFromDefault
         || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemSetToDefault
-        || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemIgnore)
+        || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemIgnore
+        || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden)
       {
         // We are not saving changes, but we may need to reset the proxy node to the default
         sourceDataNode = synchronizedSequenceNode->GetDataNodeAtValue(indexValue, /* exactMatchRequired= */ true);
-        if (!sourceDataNode && missingItemMode != vtkMRMLSequenceBrowserNode::MissingItemIgnore)
+        if (!sourceDataNode
+          && missingItemMode != vtkMRMLSequenceBrowserNode::MissingItemIgnore
+          && missingItemMode != vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden)
         {
           // item is missing, use an empty node as source node for the proxy node
           sourceDataNode = synchronizedSequenceNode->GetNthDataNode(0);
@@ -451,8 +454,20 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
         }
       }
     }
+
     if (sourceDataNode==nullptr)
     {
+      if (missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden)
+      {
+        vtkMRMLNode* targetProxyNode = browserNode->GetProxyNode(synchronizedSequenceNode);
+        vtkMRMLDisplayNode* proxyDisplayNode = vtkMRMLDisplayNode::SafeDownCast(targetProxyNode);
+        if (proxyDisplayNode)
+        {
+          // Hide the proxy node if the source node is not available
+          proxyDisplayNode->VisibilityOff();
+        }
+      }
+
       // no source node is available
       continue;
     }

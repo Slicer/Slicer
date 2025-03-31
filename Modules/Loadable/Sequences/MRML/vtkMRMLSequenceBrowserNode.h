@@ -71,6 +71,7 @@ public:
     MissingItemCreateFromDefault, ///< the new item is created from the default node (typically an empty node)
     MissingItemSetToDefault, ///< the proxy node is set to the default (empty) node; new item is not created
     MissingItemIgnore, ///< the proxy node is not modified
+    MissingItemDisplayHidden, ///< if it is a vtkMRMLDisplayNode the proxy node is hidden, otherwise behaves as MissingItemIgnore
     NumberOfMissingItemModes // this line must be the last one
   };
 

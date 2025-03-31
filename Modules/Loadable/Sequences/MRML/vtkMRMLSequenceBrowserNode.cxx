@@ -1559,6 +1559,7 @@ std::string vtkMRMLSequenceBrowserNode::GetMissingItemModeAsString(int missingIt
     case vtkMRMLSequenceBrowserNode::MissingItemCreateFromDefault: return "createFromDefault";
     case vtkMRMLSequenceBrowserNode::MissingItemSetToDefault: return "setToDefault";
     case vtkMRMLSequenceBrowserNode::MissingItemIgnore: return "ignore";
+    case vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden: return "displayHidden";
     default:
       return "";
   }

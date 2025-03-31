@@ -436,7 +436,7 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(std::vector<vtkMRMLNode*> s
       sequenceNode->SetIndexType(vtkMRMLSequenceNode::TextIndex);
       sequenceNode->SetAttribute(vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeName(),
         vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeValue());
-      sequenceBrowser->SetMissingItemMode(sequenceNode, vtkMRMLSequenceBrowserNode::MissingItemIgnore);
+      sequenceBrowser->SetMissingItemMode(sequenceNode, vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden);
     }
     sequenceBrowser->SetRecording(sequenceNode, true);
   }
