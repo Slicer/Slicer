@@ -72,15 +72,17 @@ void vtkITKExecuteDataFromFile_FramesInDimension(vtkITKImageSequenceReader* self
   // Debug information about the pixel type
   using ValueType = typename PixelType::ValueType;
   constexpr bool isVector = std::is_same<PixelType, itk::Vector<ValueType>>::value;
+  constexpr bool isCovariantVector = std::is_same<PixelType, itk::CovariantVector<ValueType>>::value;
   constexpr bool isRGB = std::is_same<PixelType, itk::RGBPixel<ValueType>>::value;
   constexpr bool isRGBA = std::is_same<PixelType, itk::RGBAPixel<ValueType>>::value;
 
   std::cout << "PixelType: " << typeid(PixelType).name() << std::endl;
   std::cout << "ValueType: " << typeid(ValueType).name() << std::endl;
   std::cout << "Is Vector: " << isVector << std::endl;
+  std::cout << "Is CovariantVector: " << isCovariantVector << std::endl;
   std::cout << "Is RGB: " << isRGB << std::endl;
   std::cout << "Is RGBA: " << isRGBA << std::endl;
-  if (isVector)
+  if (isVector || isCovariantVector)
   {
     std::cout << "Vector Length: " << PixelType::Dimension << std::endl;
   }
@@ -414,6 +416,23 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
             break;
           case itk::ImageIOBase::IOComponentEnum::FLOAT:
             vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<float>, 4>(this, data);
+            break;
+          case itk::ImageIOBase::IOComponentEnum::DOUBLE:
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<double>, 4>(this, data);
+            break;
+          }
+          break;
+        case itk::CommonEnums::IOPixel::COVARIANTVECTOR:
+          switch (imageIO->GetComponentType())
+          {
+          case itk::ImageIOBase::IOComponentEnum::USHORT:
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<unsigned short>, 4>(this, data);
+            break;
+          case itk::ImageIOBase::IOComponentEnum::FLOAT:
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<float>, 4>(this, data);
+            break;
+          case itk::ImageIOBase::IOComponentEnum::DOUBLE:
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<double>, 4>(this, data);
             break;
           }
           break;
