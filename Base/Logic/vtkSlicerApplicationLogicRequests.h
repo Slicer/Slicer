@@ -11,6 +11,7 @@
 #ifndef __vtkSlicerApplicationLogicRequests_h
 #define __vtkSlicerApplicationLogicRequests_h
 
+#include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
@@ -66,9 +67,7 @@ public:
     vtkDebugWithObjectMacro(appLogic, "ProcessReadNodeData: read data request node id = " << nd->GetID());
 
     vtkSmartPointer<vtkMRMLStorageNode> storageNode;
-#ifdef Slicer_BUILD_CLI_SUPPORT
     vtkMRMLCommandLineModuleNode *clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
-#endif
 
     bool useURI = appLogic->GetMRMLScene()->GetCacheManager()->IsRemoteReference(m_Filename.c_str());
 
@@ -160,14 +159,13 @@ public:
         }
       }
     }
-#ifdef Slicer_BUILD_CLI_SUPPORT
+
     // if the node was a CommandLineModule node, then read the file
     // (no storage node for these, yet)
     if (clp)
     {
       clp->ReadParameterFile(m_Filename);
     }
-#endif
 
     // Delete the file if requested
     if (m_DeleteFile)
