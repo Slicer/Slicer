@@ -200,6 +200,11 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
     itk::EncapsulateMetaData<std::string>(dictionary, kindsKeyBase + std::to_string(axis) + std::string("]"), "domain");
   }
   itk::EncapsulateMetaData<std::string>(dictionary, kindsKeyBase + std::to_string(axis) + std::string("]"), "list");
+  // Set intent code indicating this is a transform (comes from Nifti heritage as a de facto standard)
+  if (self->GetIntentCode())
+  {
+    itk::EncapsulateMetaData<std::string>(dictionary, "intent_code", self->GetIntentCode());
+  }
 
   try
   {
@@ -228,29 +233,14 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkCollection *inputImage
 //----------------------------------------------------------------------------
 vtkITKImageSequenceWriter::vtkITKImageSequenceWriter()
 {
-  this->FileName = nullptr;
-  this->RasToIJKMatrix = nullptr;
-  this->MeasurementFrameMatrix = nullptr;
-  this->UseCompression = 0;
-  this->ImageIOClassName = nullptr;
-  this->VoxelVectorType = vtkITKImageSequenceWriter::VoxelVectorTypeUndefined;
 }
 
 //----------------------------------------------------------------------------
 vtkITKImageSequenceWriter::~vtkITKImageSequenceWriter()
 {
-  // get rid of memory allocated for file names
-  if (this->FileName)
-  {
-    delete [] this->FileName;
-    this->FileName = nullptr;
-  }
-
-  if (this->ImageIOClassName)
-  {
-    delete [] this->ImageIOClassName;
-    this->ImageIOClassName = nullptr;
-  }
+  this->SetFileName(nullptr);
+  this->SetImageIOClassName(nullptr);
+  this->SetIntentCode(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -260,28 +250,6 @@ void vtkITKImageSequenceWriter::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "FileName: " << (this->FileName ? this->FileName : "(none)") << "\n";
   os << indent << "ImageIOClassName: " << (this->ImageIOClassName ? this->ImageIOClassName : "(none)") << "\n";
-}
-
-//----------------------------------------------------------------------------
-// This function sets the name of the file.
-void vtkITKImageSequenceWriter::SetFileName(const char *name)
-{
-  if ( this->FileName && name && (!strcmp(this->FileName,name)))
-  {
-    return;
-  }
-  if (!name && !this->FileName)
-  {
-    return;
-  }
-  if (this->FileName)
-  {
-    delete [] this->FileName;
-  }
-
-  this->FileName = new char[strlen(name) + 1];
-  strcpy(this->FileName, name);
-  this->Modified();
 }
 
 //------------------------------------------------------------------------------

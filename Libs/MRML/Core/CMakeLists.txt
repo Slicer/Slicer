@@ -272,6 +272,8 @@ set(MRMLCore_SRCS
   vtkMRMLTextStorageNode.cxx
   vtkMRMLTransformDisplayNode.cxx
   vtkMRMLTransformNode.cxx
+  vtkMRMLTransformSequenceStorageNode.cxx
+  vtkMRMLTransformSequenceStorageNode.h
   vtkMRMLTransformStorageNode.cxx
   vtkMRMLTransformableNode.cxx
   vtkMRMLTranslator.h

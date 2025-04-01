@@ -1,11 +1,22 @@
-/*=auto=========================================================================
+/*==============================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Program: 3D Slicer
 
-See COPYRIGHT.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  Copyright (c) Children's Hospital of Philadelphia, USA. All Rights Reserved.
 
-=========================================================================auto=*/
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Csaba Pinter, Ebatinca, funded
+  by the grant GRT-00000485 of Children's Hospital of Philadelphia, USA.
+
+==============================================================================*/
 
 // MRML includes
 #include "vtkMRMLI18N.h"
@@ -25,13 +36,11 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkITKImageSequenceWriter.h"
 
 // VTK includes
-#include "vtkImageAppendComponents.h"
 #include "vtkImageData.h"
-#include "vtkImageExtractComponents.h"
 #include "vtkNew.h"
 #include "vtkObjectFactory.h"
+#include "vtkPointData.h"
 #include "vtkStringArray.h"
-#include "vtkTeemNRRDReader.h"
 
 // VTKsys includes
 #include "vtksys/SystemTools.hxx"
@@ -170,10 +179,6 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       frameVolume = vtkMRMLScalarVolumeNode::New();
     }
 
-    // Set up the volume node
-    frameVolume->SetAndObserveImageData(frameImage);
-    frameVolume->SetRASToIJKMatrix(reader->GetRasToIjkMatrix());
-
     // Copy origin and spacing from image data to volume node
     double origin[3], spacing[3];
     frameImage->GetOrigin(origin);
@@ -184,6 +189,10 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     // Clear origin and spacing from image data since they are now in the volume node
     frameImage->SetOrigin(0.0, 0.0, 0.0);
     frameImage->SetSpacing(1.0, 1.0, 1.0);
+
+    // Set up the volume node
+    frameVolume->SetAndObserveImageData(frameImage);
+    frameVolume->SetRASToIJKMatrix(reader->GetRasToIjkMatrix());
 
     std::ostringstream indexStr;
     indexStr << frameIndex << std::ends;
