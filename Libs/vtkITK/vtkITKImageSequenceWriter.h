@@ -46,19 +46,15 @@ public:
     };
 
   ///
-  /// Specify file name for the image file.
-  void SetFileName(const char *);
-
-  char* GetFileName()
-  {
-    return FileName;
-  }
-
-  ///
   /// Use compression if possible
   vtkGetMacro(UseCompression, int);
   vtkSetMacro(UseCompression, int);
   vtkBooleanMacro(UseCompression, int);
+
+  ///
+  /// Set/Get the file name.
+  vtkGetStringMacro(FileName);
+  vtkSetStringMacro(FileName);
 
   ///
   /// Set/Get the ImageIO class name.
@@ -75,15 +71,13 @@ public:
     RasToIJKMatrix = mat;
   }
 
-  /// Set orientation matrix
-  void SetMeasurementFrameMatrix(vtkMatrix4x4* mat)
-  {
-    MeasurementFrameMatrix = mat;
-  }
-
   /// Defines how to interpret voxel components
   vtkSetMacro(VoxelVectorType, int);
   vtkGetMacro(VoxelVectorType, int);
+
+  /// Intent code identifying the type of data in the file
+  vtkSetStringMacro(IntentCode);
+  vtkGetStringMacro(IntentCode);
 
 protected:
   vtkITKImageSequenceWriter();
@@ -97,12 +91,12 @@ protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
 
 protected:
-  char* FileName;
-  vtkMatrix4x4* RasToIJKMatrix;
-  vtkMatrix4x4* MeasurementFrameMatrix;
-  int UseCompression;
-  char* ImageIOClassName;
-  int VoxelVectorType;
+  char* FileName{nullptr};
+  vtkMatrix4x4* RasToIJKMatrix{nullptr};
+  int UseCompression{0};
+  char* ImageIOClassName{nullptr};
+  int VoxelVectorType{VoxelVectorTypeUndefined};
+  char* IntentCode{nullptr};
 
 private:
   vtkITKImageSequenceWriter(const vtkITKImageSequenceWriter&) = delete;
