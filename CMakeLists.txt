@@ -422,13 +422,21 @@ mark_as_superbuild(Slicer_USE_SimpleITK)
 option(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT "Build Slicer with parameter serializer support" OFF)
 mark_as_superbuild(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
 
-set(_default_vtk "9")
-set(Slicer_VTK_VERSION_MAJOR ${_default_vtk} CACHE STRING "VTK major version (9)")
+set(_default_vtk_major_version "9")
+set(Slicer_VTK_VERSION_MAJOR ${_default_vtk_major_version} CACHE STRING "VTK major version (9)")
 set_property(CACHE Slicer_VTK_VERSION_MAJOR PROPERTY STRINGS "9")
 if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(9)$")
   message(FATAL_ERROR "error: Slicer_VTK_VERSION_MAJOR must be 9.")
 endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
+
+set(_default_vtk_minor_version "2")
+set(Slicer_VTK_VERSION_MINOR ${_default_vtk_minor_version} CACHE STRING "VTK minor version (2)")
+set_property(CACHE Slicer_VTK_VERSION_MINOR PROPERTY STRINGS "2")
+if(NOT "${Slicer_VTK_VERSION_MINOR}" MATCHES "^(2)$")
+  message(FATAL_ERROR "error: Slicer_VTK_VERSION_MINOR must be 2.")
+endif()
+mark_as_superbuild(Slicer_VTK_VERSION_MINOR)
 
 set(Slicer_VTK_MINIMUM_SUPPORTED_VERSION "9.2")
 
@@ -593,6 +601,7 @@ endif()
 message(STATUS "Configuring VTK")
 message(STATUS "  Slicer_VTK_SMP_IMPLEMENTATION_TYPE is ${Slicer_VTK_SMP_IMPLEMENTATION_TYPE}")
 message(STATUS "  Slicer_VTK_VERSION_MAJOR is ${Slicer_VTK_VERSION_MAJOR}")
+message(STATUS "  Slicer_VTK_VERSION_MINOR is ${Slicer_VTK_VERSION_MINOR}")
 message(STATUS "  Slicer_VTK_MINIMUM_SUPPORTED_VERSION is ${Slicer_VTK_MINIMUM_SUPPORTED_VERSION}")
 
 #-----------------------------------------------------------------------------
