@@ -430,7 +430,7 @@ if(NOT "${Slicer_VTK_VERSION_MAJOR}" MATCHES "^(9)$")
 endif()
 mark_as_superbuild(Slicer_VTK_VERSION_MAJOR)
 
-set(_default_vtk_minor_version "2")
+set(_default_vtk_minor_version "4")
 set(Slicer_VTK_VERSION_MINOR ${_default_vtk_minor_version} CACHE STRING "VTK minor version (2 or 4)")
 set_property(CACHE Slicer_VTK_VERSION_MINOR PROPERTY STRINGS "2" "4")
 if(NOT "${Slicer_VTK_VERSION_MINOR}" MATCHES "^(2|4)$")
