@@ -221,6 +221,7 @@ set(Slicer_Libs_VTK_WRAPPED_LIBRARIES "@Slicer_Libs_VTK_WRAPPED_LIBRARIES@")
 
 # Slicer VTK version
 set(Slicer_VTK_VERSION_MAJOR "@Slicer_VTK_VERSION_MAJOR@")
+set(Slicer_VTK_VERSION_MINOR "@Slicer_VTK_VERSION_MINOR@")
 
 # Slicer include directories for module
 @Slicer_INCLUDE_MODULE_DIRS_CONFIG@
