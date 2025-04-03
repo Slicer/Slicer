@@ -60,6 +60,14 @@ include(SlicerMacroExtractRepositoryInfo)
 SlicerMacroExtractRepositoryInfo(VAR_PREFIX ${EXTENSION_NAME})
 
 #-----------------------------------------------------------------------------
+# Set extension revision
+#-----------------------------------------------------------------------------
+if(NOT "${${EXTENSION_NAME}_FORCED_WC_REVISION}" STREQUAL "")
+  set(${EXTENSION_NAME}_WC_REVISION "${${EXTENSION_NAME}_FORCED_WC_REVISION}")
+endif()
+message(STATUS "Configuring ${EXTENSION_NAME} revision [${${EXTENSION_NAME}_FORCED_WC_REVISION}]")
+
+#-----------------------------------------------------------------------------
 # Generate extension description
 #-----------------------------------------------------------------------------
 if(NOT "${Slicer_CPACK_SKIP_GENERATE_EXTENSION_DESCRIPTION}")
