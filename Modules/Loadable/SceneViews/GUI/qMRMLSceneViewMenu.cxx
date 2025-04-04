@@ -95,7 +95,6 @@ void qMRMLSceneViewMenuPrivate::onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject 
   // Add observer to the sequence browser node
   qvtkConnect(sequenceBrowserNode, vtkCommand::ModifiedEvent, this, SLOT(resetMenu()));
   qvtkConnect(sequenceBrowserNode, vtkMRMLSequenceBrowserNode::SequenceNodeModifiedEvent, this, SLOT(resetMenu()));
-  qvtkConnect(sequenceBrowserNode, vtkMRMLSequenceBrowserNode::ProxyNodeModifiedEvent, this, SLOT(resetMenu()));
   resetMenu();
 }
 
@@ -143,7 +142,6 @@ void qMRMLSceneViewMenuPrivate::onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObjec
   // Remove observer from the sequence browser node
   qvtkDisconnect(sequenceBrowserNode, vtkCommand::ModifiedEvent, this, SLOT(resetMenu()));
   qvtkDisconnect(sequenceBrowserNode, vtkMRMLSequenceBrowserNode::SequenceNodeModifiedEvent, this, SLOT(resetMenu()));
-  qvtkDisconnect(sequenceBrowserNode, vtkMRMLSequenceBrowserNode::ProxyNodeModifiedEvent, this, SLOT(resetMenu()));
   resetMenu();
 }
 
