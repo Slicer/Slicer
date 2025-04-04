@@ -10,13 +10,12 @@ import typing
 import qt
 
 import slicer
-
 from .util import splitAnnotations
 from .validators import (
-    extractValidators,
+    IsInstance,
     IsNone,
     NotNone,
-    IsInstance,
+    extractValidators,
 )
 
 __all__ = [

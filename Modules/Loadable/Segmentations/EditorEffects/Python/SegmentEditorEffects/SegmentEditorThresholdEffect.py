@@ -3,12 +3,11 @@ import os
 import weakref
 
 import ctk
-import vtk
 import qt
+import vtk
 
 import slicer
 from SegmentEditorEffects import *
-
 from slicer.i18n import tr as _
 
 

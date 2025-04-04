@@ -10,8 +10,7 @@ import slicer
 from slicer.i18n import tr as _
 from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
-from slicer.util import computeChecksum, extractAlgoAndDigest, TESTING_DATA_URL
-
+from slicer.util import TESTING_DATA_URL, computeChecksum, extractAlgoAndDigest
 
 #
 # SampleData methods
@@ -942,7 +941,9 @@ class SampleDataLogic:
         filePath = destFolderPath + "/" + name
         (algo, digest) = extractAlgoAndDigest(checksum)
         if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
-            import urllib.request, urllib.parse, urllib.error
+            import urllib.error
+            import urllib.parse
+            import urllib.request
 
             self.logMessage(_("Requesting download {name} from {uri} ...").format(name=name, uri=uri))
             try:
@@ -1071,7 +1072,9 @@ class SampleDataTest(ScriptedLoadableModuleTest):
         """Gets a URI from a local file path.
         Typically it prefixes the received path by file:// or file:///.
         """
-        import urllib.parse, urllib.request, urllib.parse, urllib.error
+        import urllib.error
+        import urllib.parse
+        import urllib.request
 
         return urllib.parse.urljoin("file:", urllib.request.pathname2url(path))
 

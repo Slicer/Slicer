@@ -5,10 +5,9 @@ import numpy
 import qt
 
 import slicer
-from slicer.ScriptedLoadableModule import *
 from DICOMLib import DICOMUtils
+from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
-
 
 #
 # DICOMReaders
