@@ -81,14 +81,12 @@ class SubjectHierarchyFoldersTest1(unittest.TestCase):
 
         import SampleData
 
-        sceneFile = SampleData.downloadFromURL(
+        SampleData.downloadFromURL(
             fileNames="NACBrainAtlas2015.mrb",
             # Note: this data set is from SlicerDataStore (not from SlicerTestingData) repository
             uris=DATA_STORE_URL + "SHA256/d69d0331d4fd2574be1459b7734921f64f5872d3cb9589ec01b2f53dadc7112f",
-            checksums="SHA256:d69d0331d4fd2574be1459b7734921f64f5872d3cb9589ec01b2f53dadc7112f")[0]
-
-        ioManager = slicer.app.ioManager()
-        ioManager.loadFile(sceneFile)
+            checksums="SHA256:d69d0331d4fd2574be1459b7734921f64f5872d3cb9589ec01b2f53dadc7112f",
+            loadFiles=True)
 
         # Check number of models to see if atlas was fully loaded
         self.assertEqual(298, slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelNode"))  # 301 with main window due to the slice views

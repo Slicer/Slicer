@@ -404,15 +404,55 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   if (coordinateSystemInFileHeader >= 0)
   {
-    // coordinate system specified in the file, use it (regardless oassumingf what was the preferred coordinate system in the node)
+    // coordinate system specified in the file, use it (regardless of what was the preferred coordinate system in the node)
     this->CoordinateSystem = coordinateSystemInFileHeader;
   }
   else
   {
     // no coordinate system in the file, use the currently set coordinate system
-    vtkInfoMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): File "
-      << fullName.c_str() << " does not contain coordinate system information. Assuming "
-      << vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(this->CoordinateSystem) << ".");
+    // Introduction of saving coordinate system information in the file header (6036edbc4b67712822ccb4ee89139cab1cbce3f2, 2020-02-26)
+    // and saving of application revision information (127c2681d0b1e9f1114d269e675b814607791126, 2020-03-28) happened around the same time.
+    // We do not need to log a warning if coordinate system information is not found when loading a scene that was saved before
+    // coordinate system information was saved in model files.
+    bool isImportingFromLegacyScene = false;
+    if (this->GetScene() && this->GetScene()->IsImporting())
+    {
+      // Check if this is a legacy scene by looking at the scene version
+      std::string currentApplication;
+      int currentMajor = 0;
+      int currentMinor = 0;
+      int currentPatch = 0;
+      int currentRevision = 0;
+      bool sceneVersionParsingSuccess = false;
+      // The scene is being imported from a file. The version of this file is stored in LastLoadedVersion.
+      if (vtkMRMLScene::ParseVersion(this->GetScene()->GetLastLoadedVersion(), currentApplication,
+        currentMajor, currentMinor, currentPatch, currentRevision))
+      {
+        // Invalid revision means it is a legacy scene
+        isImportingFromLegacyScene = (currentRevision <= 0);
+      }
+      else
+      {
+        // Not parseable scene version means it is a legacy scene
+        isImportingFromLegacyScene = true;
+      }
+    }
+
+    if (isImportingFromLegacyScene)
+    {
+      this->CoordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS;
+      // For legacy scenes, log a debug message
+      vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): File "
+        << fullName.c_str() << " does not contain coordinate system information. Using "
+        << vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(this->CoordinateSystem) << ".");
+    }
+    else
+    {
+      // For individual files or recent scenes, log a warning
+      vtkWarningMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): File "
+        << fullName.c_str() << " does not contain coordinate system information. Using "
+        << vtkMRMLStorageNode::GetCoordinateSystemTypeAsString(this->CoordinateSystem) << ".");
+    }
   }
 
   vtkSmartPointer<vtkPointSet> meshToSetInNode;

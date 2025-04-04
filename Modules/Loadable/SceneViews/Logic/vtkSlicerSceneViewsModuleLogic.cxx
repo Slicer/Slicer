@@ -219,7 +219,9 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNode
     {
       continue;
     }
+    dataNode->GetScene()->StartState(vtkMRMLScene::BatchProcessState);
     dataNode->CopyContent(snapshotNode);
+    dataNode->GetScene()->EndState(vtkMRMLScene::BatchProcessState);
   }
 
   // Restore the disabled modified event state

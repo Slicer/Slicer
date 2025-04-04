@@ -831,6 +831,12 @@ vtkMRMLNode* vtkMRMLSequenceNode::DeepCopyNodeToScene(vtkMRMLNode* source, vtkMR
   // Since the singleton tags are not copied with CopyContent, it is safe to disable them here.
   target->SetSingletonOff();
 
+  // Switch do batch process state to prevent unnecessary updates and warning messages
+  // (for example in vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline())
+  scene->StartState(vtkMRMLScene::BatchProcessState);
+
   vtkMRMLNode* addedTargetNode = scene->AddNode(target);
+
+  scene->EndState(vtkMRMLScene::BatchProcessState);
   return addedTargetNode;
 }

@@ -393,6 +393,10 @@ public:
   static std::string ClampFileName(const std::string& filename, int extensionLength, int maxFileNameLength, int hashLength = 4);
   //@}
 
+  /// Helper function that can fix up filenames in some legacy scenes.
+  /// It is automatically called during scene loading, so normally this method does not need to be called explicitly.
+  void FixFileName();
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode() override;
