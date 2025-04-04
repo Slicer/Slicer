@@ -205,11 +205,6 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
   }
 #endif
 
-  // Do not restore MappedInLayout state, because the view may not be mapped into the layout just yet.
-  // (the attribute tells that it was mapped into the layout when the scene was saved but the current
-  // layout may be different, see issue #6284).
-  this->SetAttribute("MappedInLayout", nullptr);
-
   this->EndModify(disabledModify);
 }
 
@@ -333,29 +328,18 @@ bool vtkMRMLAbstractViewNode::SetInteractionNode(vtkMRMLNode* node)
   return this->SetInteractionNodeID(node ? node->GetID() : nullptr);
 }
 
+//------------------------------------------------------------------------------
 int vtkMRMLAbstractViewNode::IsMappedInLayout()
 {
-  if (!this->GetAttribute("MappedInLayout"))
-  {
-    return 0;
-  }
-  return strcmp(this->GetAttribute("MappedInLayout"), "1") == 0;
-}
-
-//------------------------------------------------------------------------------
-void vtkMRMLAbstractViewNode::SetMappedInLayout(int value)
-{
-  if (this->IsMappedInLayout() == value)
-  {
-    return;
-  }
-  this->SetAttribute("MappedInLayout", value ? "1" : "0");
+  vtkWarningMacro("vtkMRMLAbstractViewNode::IsMappedInLayout() is deprecated. "
+                  "Use vtkMRMLAbstractViewNode::GetMappedInLayout() instead.");
+  return this->MappedInLayout;
 }
 
 //------------------------------------------------------------------------------
 bool vtkMRMLAbstractViewNode::IsViewVisibleInLayout()
 {
-  return (this->IsMappedInLayout() && this->GetVisibility());
+  return (this->GetMappedInLayout() && this->GetVisibility());
 }
 
 //-----------------------------------------------------------
