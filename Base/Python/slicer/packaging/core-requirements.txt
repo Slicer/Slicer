@@ -1,0 +1,262 @@
+## python-extension-manager-requirements-requirements.txt
+  # [chardet]
+  chardet==5.2.0 --hash=sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970
+  # [/chardet]
+  # [CouchDB]
+  couchdb==1.2 --hash=sha256:13a28a1159c49f8346732e8724b9a4d65cba54bec017c4a7eeb1499fe88151d1
+  # [/CouchDB]
+  # [gitdb]
+  gitdb==4.0.11 --hash=sha256:81a3407ddd2ee8df444cbacea00e2d038e40150acfa3001696fe0dcf1d3adfa4
+  # [/gitdb]
+  # [smmap]
+  smmap==5.0.1 --hash=sha256:e6d8668fa5f93e706934a62d7b4db19c8d9eb8cf2adbb75ef1b675aa332b69da
+  # [/smmap]
+  # [GitPython]
+  GitPython==3.1.43 --hash=sha256:eec7ec56b92aad751f9912a73404bc02ba212a23adb2c7098ee668417051a1ff
+  # [/GitPython]
+  # [six]
+  six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
+  # [/six]
+  
+## python-extension-manager-ssl-requirements-requirements.txt
+  # [cryptography]
+  # Hashes correspond to the following packages:
+  #  - cryptography-42.0.7-cp37-abi3-macosx_10_12_universal2.whl
+  #  - cryptography-42.0.7-cp37-abi3-macosx_10_12_x86_64.whl
+  #  - cryptography-42.0.7-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cryptography-42.0.7-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cryptography-42.0.7-cp37-abi3-manylinux_2_28_aarch64.whl
+  #  - cryptography-42.0.7-cp37-abi3-manylinux_2_28_x86_64.whl
+  #  - cryptography-42.0.7-cp37-abi3-musllinux_1_1_aarch64.whl
+  #  - cryptography-42.0.7-cp37-abi3-musllinux_1_1_x86_64.whl
+  #  - cryptography-42.0.7-cp37-abi3-musllinux_1_2_aarch64.whl
+  #  - cryptography-42.0.7-cp37-abi3-musllinux_1_2_x86_64.whl
+  #  - cryptography-42.0.7-cp37-abi3-win_amd64.whl
+  #  - cryptography-42.0.7-cp39-abi3-macosx_10_12_universal2.whl
+  #  - cryptography-42.0.7-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cryptography-42.0.7-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cryptography-42.0.7-cp39-abi3-manylinux_2_28_aarch64.whl
+  #  - cryptography-42.0.7-cp39-abi3-manylinux_2_28_x86_64.whl
+  #  - cryptography-42.0.7-cp39-abi3-musllinux_1_1_aarch64.whl
+  #  - cryptography-42.0.7-cp39-abi3-musllinux_1_1_x86_64.whl
+  #  - cryptography-42.0.7-cp39-abi3-musllinux_1_2_aarch64.whl
+  #  - cryptography-42.0.7-cp39-abi3-musllinux_1_2_x86_64.whl
+  #  - cryptography-42.0.7-cp39-abi3-win_amd64.whl
+  cryptography==42.0.7 --hash=sha256:a987f840718078212fdf4504d0fd4c6effe34a7e4740378e59d47696e8dfb477 \
+                       --hash=sha256:bd13b5e9b543532453de08bcdc3cc7cebec6f9883e886fd20a92f26940fd3e7a \
+                       --hash=sha256:a79165431551042cc9d1d90e6145d5d0d3ab0f2d66326c201d9b0e7f5bf43604 \
+                       --hash=sha256:a47787a5e3649008a1102d3df55424e86606c9bae6fb77ac59afe06d234605f8 \
+                       --hash=sha256:02c0eee2d7133bdbbc5e24441258d5d2244beb31da5ed19fbb80315f4bbbff55 \
+                       --hash=sha256:5e44507bf8d14b36b8389b226665d597bc0f18ea035d75b4e53c7b1ea84583cc \
+                       --hash=sha256:7f8b25fa616d8b846aef64b15c606bb0828dbc35faf90566eb139aa9cff67af2 \
+                       --hash=sha256:93a3209f6bb2b33e725ed08ee0991b92976dfdcf4e8b38646540674fc7508e13 \
+                       --hash=sha256:e6b8f1881dac458c34778d0a424ae5769de30544fc678eac51c1c8bb2183e9da \
+                       --hash=sha256:3de9a45d3b2b7d8088c3fbf1ed4395dfeff79d07842217b38df14ef09ce1d8d7 \
+                       --hash=sha256:8cb8ce7c3347fcf9446f201dc30e2d5a3c898d009126010cbd1f443f28b52678 \
+                       --hash=sha256:a3a5ac8b56fe37f3125e5b72b61dcde43283e5370827f5233893d461b7360cd4 \
+                       --hash=sha256:779245e13b9a6638df14641d029add5dc17edbef6ec915688f3acb9e720a5858 \
+                       --hash=sha256:0d563795db98b4cd57742a78a288cdbdc9daedac29f2239793071fe114f13785 \
+                       --hash=sha256:31adb7d06fe4383226c3e963471f6837742889b3c4caa55aac20ad951bc8ffda \
+                       --hash=sha256:efd0bf5205240182e0f13bcaea41be4fdf5c22c5129fc7ced4a0282ac86998c9 \
+                       --hash=sha256:a9bc127cdc4ecf87a5ea22a2556cab6c7eda2923f84e4f3cc588e8470ce4e42e \
+                       --hash=sha256:3577d029bc3f4827dd5bf8bf7710cac13527b470bbf1820a3f394adb38ed7d5f \
+                       --hash=sha256:2e47577f9b18723fa294b0ea9a17d5e53a227867a0a4904a1a076d1646d45ca1 \
+                       --hash=sha256:1a58839984d9cb34c855197043eaae2c187d930ca6d644612843b4fe8513c886 \
+                       --hash=sha256:16268d46086bb8ad5bf0a2b5544d8a9ed87a0e33f5e77dd3c3301e63d941a83b
+  # [/cryptography]
+  # Specifying "[crypto]" is required since PyGithub 1.58.1
+  # See https://github.com/Slicer/Slicer/issues/7112
+  # [PyJWT]
+  PyJWT[crypto]==2.8.0 --hash=sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320
+  # [/PyJWT]
+  # [wrapt]
+  # Hashes correspond to the following packages:
+  #  - wrapt-1.16.0-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - wrapt-1.16.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - wrapt-1.16.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - wrapt-1.16.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - wrapt-1.16.0-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - wrapt-1.16.0-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - wrapt-1.16.0-cp39-cp39-win_amd64.whl
+  #  - wrapt-1.16.0-py3-none-any.whl
+  wrapt==1.16.0 --hash=sha256:9b201ae332c3637a42f02d1045e1d0cccfdc41f1f2f801dafbaa7e9b4797bfc2 \
+                --hash=sha256:2076fad65c6736184e77d7d4729b63a6d1ae0b70da4868adeec40989858eb3fb \
+                --hash=sha256:c5cd603b575ebceca7da5a3a251e69561bec509e0b46e4993e1cac402b7247b8 \
+                --hash=sha256:f8212564d49c50eb4565e502814f694e240c55551a5f1bc841d4fcaabb0a9b8a \
+                --hash=sha256:5f15814a33e42b04e3de432e573aa557f9f0f56458745c2074952f564c50e664 \
+                --hash=sha256:edfad1d29c73f9b863ebe7082ae9321374ccb10879eeabc84ba3b69f2579d537 \
+                --hash=sha256:eb1b046be06b0fce7249f1d025cd359b4b80fc1c3e24ad9eca33e0dcdb2e4a35 \
+                --hash=sha256:6906c4100a8fcbf2fa735f6059214bb13b97f75b1a61777fcf6432121ef12ef1
+  # [/wrapt]
+  # [Deprecated]
+  Deprecated==1.2.14 --hash=sha256:6fac8b097794a90302bdbb17b9b815e732d3c4720583ff1b198499d78470466c
+  # [/Deprecated]
+  # [pycparser]
+  pycparser==2.22 --hash=sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc
+  # [/pycparser]
+  # [cffi]
+  # Hashes correspond to the following packages:
+  #  - cffi-1.16.0-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - cffi-1.16.0-cp39-cp39-macosx_11_0_arm64.whl
+  #  - cffi-1.16.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cffi-1.16.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cffi-1.16.0-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - cffi-1.16.0-cp39-cp39-win_amd64.whl
+  cffi==1.16.0 --hash=sha256:582215a0e9adbe0e379761260553ba11c58943e4bbe9c36430c4ca6ac74b15ed \
+               --hash=sha256:b29ebffcf550f9da55bec9e02ad430c992a87e5f512cd63388abb76f1036d8d2 \
+               --hash=sha256:9cb4a35b3642fc5c005a6755a5d17c6c8b6bcb6981baf81cea8bfbc8903e8ba8 \
+               --hash=sha256:8f8e709127c6c77446a8c0a8c8bf3c8ee706a06cd44b1e827c3e6a2ee6b8c098 \
+               --hash=sha256:8895613bcc094d4a1b2dbe179d88d7fb4a15cee43c052e8885783fac397d91fe \
+               --hash=sha256:3686dffb02459559c74dd3d81748269ffb0eb027c39a6fc99502de37d501faa8
+  # [/cffi]
+  # [PyNaCl]
+  # Hashes correspond to the following packages:
+  #  - PyNaCl-1.5.0-cp36-abi3-macosx_10_10_universal2.whl
+  #  - PyNaCl-1.5.0-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_24_aarch64.whl
+  #  - PyNaCl-1.5.0-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - PyNaCl-1.5.0-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl
+  #  - PyNaCl-1.5.0-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - PyNaCl-1.5.0-cp36-abi3-musllinux_1_1_aarch64.whl
+  #  - PyNaCl-1.5.0-cp36-abi3-musllinux_1_1_x86_64.whl
+  #  - PyNaCl-1.5.0-cp36-abi3-win_amd64.whl
+  PyNaCl==1.5.0 --hash=sha256:401002a4aaa07c9414132aaed7f6836ff98f59277a234704ff66878c2ee4a0d1 \
+                --hash=sha256:52cb72a79269189d4e0dc537556f4740f7f0a9ec41c1322598799b0bdad4ef92 \
+                --hash=sha256:a36d4a9dda1f19ce6e03c9a784a2921a4b726b02e1c736600ca9c22029474394 \
+                --hash=sha256:0c84947a22519e013607c9be43706dd42513f9e6ae5d39d3613ca1e142fba44d \
+                --hash=sha256:06b8f6fa7f5de8d5d2f7573fe8c863c051225a27b61e6860fd047b1775807858 \
+                --hash=sha256:a422368fc821589c228f4c49438a368831cb5bbc0eab5ebe1d7fac9dded6567b \
+                --hash=sha256:61f642bf2378713e2c2e1de73444a3778e5f0a38be6fee0fe532fe30060282ff \
+                --hash=sha256:20f42270d27e1b6a29f54032090b972d97f0a1b0948cc52392041ef7831fee93
+  # [/PyNaCl]
+  # [python-dateutil]
+  python-dateutil==2.9.0.post0 --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
+  # [/python-dateutil]
+  # [six]
+  six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
+  # [/six]
+  # [typing_extensions]
+  typing_extensions==4.12.1 --hash=sha256:6024b58b69089e5a89c347397254e35f1bf02a907728ec7fee9bf0fe837d203a
+  # [/typing_extensions]
+  # [PyGithub]
+  PyGithub==2.3.0 --hash=sha256:65b499728be3ce7b0cd2cd760da3b32f0f4d7bc55e5e0677617f90f6564e793e
+  # [/PyGithub]
+  
+## python-numpy-requirements.txt
+  # [numpy]
+  # Hashes correspond to the following packages:
+  #  - numpy-1.26.4-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - numpy-1.26.4-cp39-cp39-macosx_11_0_arm64.whl
+  #  - numpy-1.26.4-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - numpy-1.26.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - numpy-1.26.4-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - numpy-1.26.4-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - numpy-1.26.4-cp39-cp39-win_amd64.whl
+  numpy==1.26.4 --hash=sha256:7349ab0fa0c429c82442a27a9673fc802ffdb7c7775fad780226cb234965e53c \
+                --hash=sha256:52b8b60467cd7dd1e9ed082188b4e6bb35aa5cdd01777621a1658910745b90be \
+                --hash=sha256:d5241e0a80d808d70546c697135da2c613f30e28251ff8307eb72ba696945764 \
+                --hash=sha256:f870204a840a60da0b12273ef34f7051e98c3b5961b61b0c2c1be6dfd64fbcd3 \
+                --hash=sha256:679b0076f67ecc0138fd2ede3a8fd196dddc2ad3254069bcb9faf9a79b1cebcd \
+                --hash=sha256:47711010ad8555514b434df65f7d7b076bb8261df1ca9bb78f53d3b2db02e95c \
+                --hash=sha256:3373d5d70a5fe74a2c1bb6d2cfd9609ecf686d47a2d7b1d37a8f3b6bf6003aea
+  # [/numpy]
+  
+## python-pip-requirements.txt
+  # [pip]
+  pip==24.0 --hash=sha256:ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc
+  # [/pip]
+  
+## python-pythonqt-requirements-requirements.txt
+  # [packaging]
+  packaging==24.0 --hash=sha256:2ddfb553fdf02fb784c234c7ba6ccc288296ceabec964ad2eae3777778130bc5
+  # [/packaging]
+  # [pyparsing]
+  pyparsing==3.1.2 --hash=sha256:f9db75911801ed778fe61bb643079ff86601aca99fcae6345aa67292038fb742
+  # [/pyparsing]
+  # [six]
+  six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
+  # [/six]
+  
+## python-requests-requirements-requirements.txt
+  # [certifi]
+  certifi==2024.2.2 --hash=sha256:dc383c07b76109f368f6106eee2b593b04a011ea4d55f652c6ca24a754d1cdd1
+  # [/certifi]
+  # [idna]
+  idna==3.7 --hash=sha256:82fee1fc78add43492d3a1898bfa6d8a904cc97d8427f683ed8e798d07761aa0
+  # [/idna]
+  # [charset-normalizer]
+  # Hashes correspond to the following packages:
+  #  - charset_normalizer-3.3.2-cp39-cp39-macosx_10_9_universal2.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-macosx_11_0_arm64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-musllinux_1_1_aarch64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - charset_normalizer-3.3.2-cp39-cp39-win_amd64.whl
+  #  - charset_normalizer-3.3.2-py3-none-any.whl
+  charset-normalizer==3.3.2 --hash=sha256:c235ebd9baae02f1b77bcea61bce332cb4331dc3617d254df3323aa01ab47bd4 \
+                            --hash=sha256:5b4c145409bef602a690e7cfad0a15a55c13320ff7a3ad7ca59c13bb8ba4d45d \
+                            --hash=sha256:68d1f8a9e9e37c1223b656399be5d6b448dea850bed7d0f87a8311f1ff3dabb0 \
+                            --hash=sha256:22afcb9f253dac0696b5a4be4a1c0f8762f8239e21b99680099abd9b2b1b2269 \
+                            --hash=sha256:b261ccdec7821281dade748d088bb6e9b69e6d15b30652b74cbbac25e280b796 \
+                            --hash=sha256:d0eccceffcb53201b5bfebb52600a5fb483a20b61da9dbc885f8b103cbe7598c \
+                            --hash=sha256:ff8fa367d09b717b2a17a052544193ad76cd49979c805768879cb63d9ca50561 \
+                            --hash=sha256:b01b88d45a6fcb69667cd6d2f7a9aeb4bf53760d7fc536bf679ec94fe9f3ff3d \
+                            --hash=sha256:3e4d1f6587322d2788836a99c69062fbb091331ec940e02d12d179c1d53e25fc
+  # [/charset-normalizer]
+  # [urllib3]
+  urllib3==2.2.1 --hash=sha256:450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d
+  # [/urllib3]
+  # [requests]
+  requests==2.32.3 --hash=sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6
+  # [/requests]
+  
+## python-scipy-requirements.txt
+  # [scipy]
+  # Hashes correspond to the following packages:
+  #  - scipy-1.13.1-cp39-cp39-macosx_10_9_x86_64.whl
+  #  - scipy-1.13.1-cp39-cp39-macosx_12_0_arm64.whl
+  #  - scipy-1.13.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - scipy-1.13.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - scipy-1.13.1-cp39-cp39-musllinux_1_1_x86_64.whl
+  #  - scipy-1.13.1-cp39-cp39-win_amd64.whl
+  scipy==1.13.1 --hash=sha256:436bbb42a94a8aeef855d755ce5a465479c721e9d684de76bf61a62e7c2b81d5 \
+                --hash=sha256:8335549ebbca860c52bf3d02f80784e91a004b71b059e3eea9678ba994796a24 \
+                --hash=sha256:d533654b7d221a6a97304ab63c41c96473ff04459e404b83275b60aa8f4b7004 \
+                --hash=sha256:637e98dcf185ba7f8e663e122ebf908c4702420477ae52a04f9908707456ba4d \
+                --hash=sha256:a014c2b3697bde71724244f63de2476925596c24285c7a637364761f8710891c \
+                --hash=sha256:392e4ec766654852c25ebad4f64e4e584cf19820b980bc04960bca0b0cd6eaa2
+  # [/scipy]
+  
+## python-setuptools-requirements.txt
+  # [setuptools]
+  setuptools==70.0.0 --hash=sha256:54faa7f2e8d2d11bcd2c07bed282eef1046b5c080d1c32add737d7b5817b1ad4
+  # [/setuptools]
+  
+## python-uv-requirements.txt
+  # [uv]
+  uv==0.5.24 \
+    --hash=sha256:13f4f1e36c2b566c19d6fefd09cca5a2a6e8b1cf2ffa16b670351d0eed0c7d4f \
+    --hash=sha256:188bacdbe39c7f76ad1999ce0dee0dfd2b79d248e121498bbaf94ba6089fb7ee \
+    --hash=sha256:1e933341300f107d228608af9cc23e08c3a386c0077181db23b4cd26535c64d7 \
+    --hash=sha256:421304f2b31799f9f926faa75add2b7bbf653e850b9f97c08cb74e5fb5e7f661 \
+    --hash=sha256:455d23e0f41577eb9edbdac8e41d37875cb2885758760acee96469084f31571c \
+    --hash=sha256:57b473602e7f3f356ba4d2cb5e2c6c7c691f21dbbffd7202c12fc9db29b7ad7a \
+    --hash=sha256:6640a2cb919cc04c0fb599d5630a579bacfa8166b928b7e49e3b71280f30f5d9 \
+    --hash=sha256:9059775b0c74a68799f3e665a08c429f527d3cdf61c15227992cfff75e31c327 \
+    --hash=sha256:a47acfda27654c212af6aeec0b8d12fc0150295b7e6afabbdc741a7eb39d898f \
+    --hash=sha256:ac8919fc145aeba090adce202e470c21f2df7dfcfa01ca67a9575d41adbf3de5 \
+    --hash=sha256:b7895b66a182bf5e5b88e470ab04beaf76361a64970db6058363293a18c9dd2a \
+    --hash=sha256:cfcabf26314411dde69c7a62e9757d5688aa475731c7a3b3749f389488121768 \
+    --hash=sha256:d36da9ab6291eaac151695247cdfb3049e6416d6c210c9890ffcda6d0aa6ad19 \
+    --hash=sha256:d3a9e63b098055830b58b47552ea4fc38c94a95b5f2de44a8d288ef5decce265 \
+    --hash=sha256:d7421d59c80bc805103f1030777f909904feab338620db5b5d81f9c10767304d \
+    --hash=sha256:ecb71bcada372274db34bd32f6a9214974b26b6cdc3145a26d07a710f2ea7f18 \
+    --hash=sha256:f2ccd95cecfcc9e106b9d8d154f6bfc59d8263952f72a720d0158f3b94dc69cb
+  # [/uv]
+  
+## python-wheel-requirements.txt
+  # [wheel]
+  wheel==0.43.0 --hash=sha256:55c570405f142630c6b9f72fe09d9b67cf1477fcf543ae5b8dcb1f5b7377da81
+  # [/wheel]
+  
