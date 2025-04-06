@@ -1171,8 +1171,20 @@ void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** origina
 
   vtkSetAndObserveMRMLObjectMacro((*originalTransformPtr), transform);
 
-  // We set the inverse to nullptr, which means that it's unknown and will be computed atuomatically from the original transform
+  // We set the inverse to nullptr, which means that it's unknown and will be computed automatically from the original transform
   vtkSetAndObserveMRMLObjectMacro((*inverseTransformPtr), nullptr);
+
+  // Update internal transforms (if computed from inverse) to avoid invoking transform modification events later
+  // when we access the transform components. Without this, any access to the transform (even just getting
+  // information about the transform) could lead to a TransformModified event, which could trigger another access
+  // to the transform resulting in calling vtkAbstractTransform::Update() recursively.
+  // Since vtkAbstractTransform::Update() is not reentrant, this should be avoided, because it can lead to crash
+  // (trying to lock an internal mutex throws an exception on Windows, and the recursive calls end up crashing
+  // the application on Linux and macOS).
+  if (*originalTransformPtr)
+  {
+    (*originalTransformPtr)->Update();
+  }
 
   this->StorableModifiedTime.Modified();
   this->TransformModified();
