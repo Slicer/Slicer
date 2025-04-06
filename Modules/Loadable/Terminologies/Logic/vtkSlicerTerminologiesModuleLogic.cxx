@@ -2552,7 +2552,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
   std::string categoryScheme;
   std::string categoryValue;
   vtkSlicerTerminologyCategory* categoryObject = entry->GetCategoryObject();
-  if (categoryObject)
+  if (categoryObject && categoryObject->GetCodingSchemeDesignator() && categoryObject->GetCodeValue())
   {
     categoryScheme = categoryObject->GetCodingSchemeDesignator();
     categoryValue = categoryObject->GetCodeValue();
@@ -2560,7 +2560,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
   std::string typeScheme;
   std::string typeValue;
   vtkSlicerTerminologyType* typeObject = entry->GetTypeObject();
-  if (typeObject)
+  if (typeObject && typeObject->GetCodingSchemeDesignator() && typeObject->GetCodeValue())
   {
     typeScheme = typeObject->GetCodingSchemeDesignator();
     typeValue = typeObject->GetCodeValue();
