@@ -689,12 +689,29 @@ void vtkMRMLTransformNode::ApplyTransform(vtkAbstractTransform* transform)
   }
 
   // We need the current transform to be a vtkGeneralTransform, which can store all the transform components.
-  // (if the current transform is already a general transform tben we can just use that, otherwise we convert)
   // We arbitrarily pick the ToParent transform to store the new composited transform.
+
+  // If the current transform is already a suitable general transform then we will simply concatenate
+  // the hardened transforms to it.
   vtkSmartPointer<vtkGeneralTransform> transformToParentGeneral = vtkGeneralTransform::SafeDownCast(oldTransformToParent);
 
-  if (transformToParentGeneral.GetPointer()==nullptr)
+  if (transformToParentGeneral.GetPointer() != nullptr)
   {
+    // The old transform is already a general transform. We can reuse it, but only if it is not computed from its inverse.
+    // If the transform is computed from its inverse then calling Update() on it would overwrite its content from the
+    // non-inverted transform (removing all the transform components that we add here).
+    transformToParentGeneral->Update();
+    if (transformToParentGeneral->GetInverseFlag())
+    {
+      // Computed from inverse, not usable
+      transformToParentGeneral = nullptr;
+    }
+  }
+
+  if (transformToParentGeneral.GetPointer() == nullptr)
+  {
+    // The old transform is not a general transform that we can use as the new transform.
+    // Create a new general transform.
     transformToParentGeneral = vtkSmartPointer<vtkGeneralTransform>::New();
     if (oldTransformToParent!=nullptr)
     {
