@@ -580,9 +580,12 @@ class DICOMSender:
         :param file: Path to the local DICOM file to transmit.
         """
 
-        if self._dicomSendSCU(file):
-            # success
-            return True
+        try:
+            if self._dicomSendSCU(file):
+                # success
+                return True
+        except UserWarning as uw:
+            logging.info(f'Initial DICOM storescu attempt raised: "{uw}". Possible cause: unsupported SOP class.')
 
         # Retry transfer with alternative configuration with presentation contexts which support SEG/SR.
         # A common cause of failure is an incomplete set of dcmtk/DCMSCU presentation context UIDS.
