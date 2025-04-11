@@ -13,6 +13,8 @@ Version:   $Revision: 1.11 $
 =========================================================================auto=*/
 
 // MRML includes
+#include "vtkMRMLMessageCollection.h"
+#include "vtkMRMLJsonElement.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScene.h"
 
@@ -21,6 +23,8 @@ Version:   $Revision: 1.11 $
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
+#include <vtkXMLDataElement.h>
+#include <vtkXMLUtilities.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
@@ -395,7 +399,13 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   vtkMRMLReadXMLBeginMacro(atts);
-  vtkMRMLReadXMLStringMacro(id, ID);
+  // The node ID should only be set during initial scene loading (when reading a Slicer MRML scene file).
+  // If ReadXMLAttributes is called via ReadJSON for subsequent status updates,
+  // the ID must not be changed to maintain scene consistency.
+  if (this->ID == nullptr)
+  {
+    vtkMRMLReadXMLStringMacro(id, ID);
+  }
   vtkMRMLReadXMLStringMacro(name, Name);
   vtkMRMLReadXMLStringMacro(description, Description);
   vtkMRMLReadXMLBooleanMacro(hideFromEditors, HideFromEditors);
@@ -529,11 +539,48 @@ void vtkMRMLNode::ParseReferencesAttribute(const char* attValue, std::set<std::s
             }
           }
         }
-        else
+        // Current value string is the node ID for the current node reference.
+        // Only proceed if this ID is not already referenced
+        else if (!this->HasNodeReferenceID(role.c_str(), value.c_str()))
         {
-          // Current value string is the node ID for the current node reference.
-          this->AddNodeReferenceID(role.c_str(), value.c_str());
-          references.insert(role);
+          // Split ID by "Node" to get base class name
+          // e.g. "vtkMRMLModelNode123" -> "vtkMRMLModel"
+          std::string valueStr(value);
+          size_t nodePos = valueStr.find("Node");
+          std::string baseClass = valueStr.substr(0, nodePos);
+
+          // Check if any existing reference IDs have same base class
+          // This prevents duplicate references to nodes of the same type
+          int matchingIndex = -1;
+          if (this->NodeReferences.find(role) != this->NodeReferences.end())
+          {
+            // Iterate through existing references looking for matching base class
+            for (NodeReferenceListType::iterator it = this->NodeReferences[role].begin();
+               it != this->NodeReferences[role].end(); ++it)
+            {
+              std::string existingId((*it)->GetReferencedNodeID());
+              size_t existingNodePos = existingId.find("Node");
+              std::string existingBaseClass = existingId.substr(0, existingNodePos);
+              if (baseClass == existingBaseClass)
+              {
+                // Found matching base class, store its index
+                matchingIndex = std::distance(this->NodeReferences[role].begin(), it);
+                break;
+              }
+            }
+          }
+
+          // If no matching base class found, add as new reference
+          // Otherwise update the existing reference with matching base class
+          if (matchingIndex == -1)
+          {
+            this->AddNodeReferenceID(role.c_str(), value.c_str());
+            references.insert(role);
+          }
+          else
+          {
+            this->SetNthNodeReferenceID(role.c_str(), matchingIndex, value.c_str());
+          }
         }
       }
     }
@@ -653,7 +700,88 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
 void vtkMRMLNode::WriteNodeBodyXML(ostream&, int) {}
 
 //----------------------------------------------------------------------------
-void vtkMRMLNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* vtkNotUsed(callData))
+std::string vtkMRMLNode::WriteJSON(int indent, vtkMRMLMessageCollection* userMessagesInput)
+{
+  vtkSmartPointer<vtkMRMLMessageCollection> userMessages = userMessagesInput;
+  if (!userMessages)
+  {
+    userMessages = vtkSmartPointer<vtkMRMLMessageCollection>::New();
+  }
+
+  std::ostringstream xmlStream;
+  vtkIndent vindent(indent);
+
+  vtkNew<vtkMRMLMessageCollection> nodeWritingMessages;
+  nodeWritingMessages->SetObservedObject(this);
+
+  xmlStream << vindent << "<" << this->GetNodeTagName() << "\n ";
+  this->WriteXML(xmlStream, indent);
+  nodeWritingMessages->SetObservedObject(nullptr);
+
+  if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
+  {
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::Commit", "Error writing "
+      << (this->GetName() ? this->GetName() : "(unknown)") << " (" << (this->GetID() ? this->GetID() : "unknown") << ")"
+      << " node to XML");
+  }
+  else if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
+  {
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::Commit", "Warnings encountered while writing "
+      << (this->GetName() ? this->GetName() : "(unknown)") << " (" << (this->GetID() ? this->GetID() : "unknown") << ")"
+      << " node to XML - see application log for details");
+  }
+
+  xmlStream << vindent << ">";
+  this->WriteNodeBodyXML(xmlStream, indent);
+  xmlStream << "</" << this->GetNodeTagName() << ">\n";
+
+  std::string xmlString = xmlStream.str();
+  vtkSmartPointer<vtkXMLDataElement> xmlElement = vtkSmartPointer<vtkXMLDataElement>::Take(
+    vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
+
+  vtkNew<vtkMRMLJsonWriter> jsonWriter;
+  return jsonWriter->ConvertXMLToJson(xmlElement, this->GetNodeTagName());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::ReadJSON(const std::string json)
+{
+  if (json.empty())
+  {
+    vtkErrorMacro("vtkMRMLNode::ReadJSON : input json is empty.");
+    return;
+  }
+
+  vtkNew<vtkMRMLJsonReader> jsonReader;
+  std::string xmlString = jsonReader->ConvertJsonToXML(json, this->GetNodeTagName());
+  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(
+    vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
+  if (!element.GetPointer())
+  {
+    vtkErrorMacro("vtkMRMLNode::ReadJSON : Failed to parse XML from JSON string.");
+    return;
+  }
+  if (element->GetName() == nullptr || strcmp(element->GetName(), this->GetNodeTagName()) != 0)
+  {
+    vtkErrorMacro("vtkMRMLNode::ReadJSON : Invalid JSON string.");
+    return;
+  }
+
+  std::vector<const char*> atts;
+  for (int attIndex = 0; attIndex < element->GetNumberOfAttributes(); ++attIndex)
+  {
+    atts.push_back(element->GetAttributeName(attIndex));
+    atts.push_back(element->GetAttributeValue(attIndex));
+  }
+  atts.push_back(nullptr);
+
+  this->ReadXMLAttributes(atts.data());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::ProcessMRMLEvents (vtkObject *caller,
+                                     unsigned long event,
+                                     void *vtkNotUsed(callData))
 {
 
   // Refreshes the reference (by calling GetNthNodeReference).
