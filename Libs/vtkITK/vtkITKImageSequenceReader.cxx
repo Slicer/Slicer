@@ -367,6 +367,10 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
             case itk::ImageIOBase::IOComponentEnum::FLOAT:
               vtkITKExecuteDataFromFile_FramesInComponent<itk::Vector<float>>(this, data);
               break;
+            default:
+              vtkErrorMacro("Unexpected component type for 5+ component vector voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
+              this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+              return;
             }
           }
           else
@@ -382,6 +386,11 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
             case itk::ImageIOBase::IOComponentEnum::FLOAT:
               vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<float>, 3>(this, data);
               break;
+            default:
+              vtkErrorMacro("Unexpected component type for 4 or less component vector voxel: "
+                << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
+              this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+              return;
             }
           }
           break;
@@ -420,6 +429,10 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
           case itk::ImageIOBase::IOComponentEnum::DOUBLE:
             vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<double>, 4>(this, data);
             break;
+          default:
+            vtkErrorMacro("Unexpected component type for vector voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+            return;
           }
           break;
         case itk::CommonEnums::IOPixel::COVARIANTVECTOR:
@@ -434,6 +447,10 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
           case itk::ImageIOBase::IOComponentEnum::DOUBLE:
             vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<double>, 4>(this, data);
             break;
+          default:
+            vtkErrorMacro("Unexpected component type for covariant vector voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
+            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+            return;
           }
           break;
       }
