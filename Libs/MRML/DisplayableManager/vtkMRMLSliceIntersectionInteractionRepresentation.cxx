@@ -1490,7 +1490,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   if (!pipeline->SliceLogic || !this->GetVisibility()
     || !intersectingSliceNode
     || this->Internal->SliceNode->GetViewGroup() != intersectingSliceNode->GetViewGroup()
-    || !intersectingSliceNode->IsMappedInLayout())
+    || !intersectingSliceNode->GetMappedInLayout())
   {
     pipeline->SetIntersectionsVisibility(false);
     pipeline->SetThicknessVisibility(false);

@@ -67,7 +67,7 @@ bool checkNodeMappedInLayout(int line,
                              vtkMRMLAbstractViewNode* viewNode,
                              bool expectedNodeMappedInLayout)
 {
-  bool nodeMappedInLayout = (viewNode->IsMappedInLayout() != 0);
+  bool nodeMappedInLayout = (viewNode->GetMappedInLayout() != 0);
   if (nodeMappedInLayout != expectedNodeMappedInLayout)
   {
     std::cerr << "Line " << line << " - Problem with GetVisibility()"
