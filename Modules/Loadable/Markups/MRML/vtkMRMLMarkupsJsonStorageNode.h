@@ -28,8 +28,8 @@
 #include "vtkMRMLMarkupsStorageNode.h"
 
 
-class vtkMRMLMarkupsJsonElement;
-class vtkMRMLMarkupsJsonWriter;
+class vtkMRMLJsonElement;
+class vtkMRMLJsonWriter;
 class vtkMRMLMarkupsDisplayNode;
 class vtkMRMLMarkupsNode;
 
@@ -84,21 +84,21 @@ protected:
 
   /// Only in C++: The caller must take ownership of the returned object.
   VTK_NEWINSTANCE
-  vtkMRMLMarkupsJsonElement* ReadMarkupsFile(const char* filePath);
+  vtkMRMLJsonElement* ReadMarkupsFile(const char* filePath);
 
   std::string GetMarkupsClassNameFromMarkupsType(std::string markupsType);
 
-  virtual bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupObject);
-  virtual bool UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLMarkupsJsonElement* markupObject);
+  virtual bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupObject);
+  virtual bool UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLJsonElement* markupObject);
 
-  virtual bool ReadControlPoints(vtkMRMLMarkupsJsonElement* controlPointsArray, int coordinateSystem, vtkMRMLMarkupsNode* markupsNode);
-  virtual bool ReadMeasurements(vtkMRMLMarkupsJsonElement* measurementsArray, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool ReadControlPoints(vtkMRMLJsonElement* controlPointsArray, int coordinateSystem, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool ReadMeasurements(vtkMRMLJsonElement* measurementsArray, vtkMRMLMarkupsNode* markupsNode);
 
-  virtual bool WriteMarkup(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
-  virtual bool WriteBasicProperties(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
-  virtual bool WriteControlPoints(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
-  virtual bool WriteMeasurements(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
-  virtual bool WriteDisplayProperties(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
+  virtual bool WriteMarkup(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool WriteBasicProperties(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool WriteControlPoints(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool WriteMeasurements(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool WriteDisplayProperties(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
 
   std::string GetCoordinateUnitsFromSceneAsString(vtkMRMLMarkupsNode* markupsNode);
 };
