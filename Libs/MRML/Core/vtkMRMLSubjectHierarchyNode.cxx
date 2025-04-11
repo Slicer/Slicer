@@ -27,6 +27,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
+#include "vtkMRMLJsonElement.h"
 #include "vtkMRMLTransformNode.h"
 
 // VTK includes
@@ -36,8 +37,11 @@
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 #include <vtkCallbackCommand.h>
+#include <vtkXMLDataElement.h>
+#include <vtkXMLUtilities.h>
 
 // STD includes
+#include <iostream>
 #include <sstream>
 #include <set>
 #include <map>
@@ -1496,6 +1500,8 @@ public:
   /// Add item and data node observers (if observers has not been added yet)
   void AddItemObservers(vtkSubjectHierarchyItem* item);
 
+  void ProcessJSONSubjectHierarchyItem(vtkXMLDataElement* element);
+
 public:
   /// Scene subject hierarchy item. This is the ancestor of all subject hierarchy items in the tree
   vtkSubjectHierarchyItem* SceneItem;
@@ -1715,6 +1721,59 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
   this->IsResolving = wasResolving;
 
   return true;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::vtkInternal::ProcessJSONSubjectHierarchyItem(vtkXMLDataElement* element)
+{
+  if (element == nullptr)
+  {
+    return;
+  }
+
+  if (element->GetName() == nullptr || strcmp(element->GetName(), "SubjectHierarchyItem") != 0)
+  {
+    return;
+  }
+
+  std::vector<const char*> itemAtts;
+  vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+  for (int itemAttIndex = 0; itemAttIndex < element->GetNumberOfAttributes(); ++itemAttIndex)
+  {
+    const char* attName = element->GetAttributeName(itemAttIndex);
+    const char* attValue = element->GetAttributeValue(itemAttIndex);
+    if (strcmp(attName, "id") == 0)
+    {
+      itemID = vtkVariant(attValue).ToLongLong();
+    }
+    vtkSubjectHierarchyItem* item = this->SceneItem->FindChildByID(itemID);
+    if (item && (strcmp(attName, "dataNode") == 0 || strcmp(attName, "parent") == 0 || strcmp(attName, "id") == 0))
+    {
+      // Note: Updating these values for an already loaded item can disrupt the Subject Hierarchy (SH) structure.
+      // Attempting to resolve the hierarchy after such updates does not rectify the issue.
+      continue;
+    }
+    itemAtts.push_back(attName);
+    itemAtts.push_back(attValue);
+  }
+  itemAtts.push_back(nullptr);
+
+  vtkSubjectHierarchyItem* item = this->SceneItem->FindChildByID(itemID);
+  if (!item)
+  {
+    this->External->ReadItemFromXML(itemAtts.data());
+  }
+  else
+  {
+    item->ReadXMLAttributes(itemAtts.data());
+  }
+
+  // Recursively process all nested elements
+  for (int index = 0; index < element->GetNumberOfNestedElements(); ++index)
+  {
+    vtkXMLDataElement* childElement = element->GetNestedElement(index);
+    this->ProcessJSONSubjectHierarchyItem(childElement);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -2043,6 +2102,51 @@ void vtkMRMLSubjectHierarchyNode::WriteNodeBodyXML(ostream& of, int indent)
   {
     // Write unresolved items
     this->Internal->UnresolvedItems->WriteXML(of, indent + 2, this);
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSubjectHierarchyNode::ReadJSON(const std::string json)
+{
+  if (json.empty())
+  {
+    vtkErrorMacro("vtkMRMLSubjectHierarchyNode::ReadJSON : input json is empty.");
+    return;
+  }
+
+  vtkNew<vtkMRMLJsonReader> jsonReader;
+  std::string xmlString = jsonReader->ConvertJsonToXML(json, this->GetNodeTagName());
+  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
+  if (!element.GetPointer())
+  {
+    vtkErrorMacro("vtkMRMLSubjectHierarchyNode::ReadJSON : Failed to parse XML from JSON string.");
+    return;
+  }
+  if (element->GetName() == nullptr || strcmp(element->GetName(), this->GetNodeTagName()) != 0)
+  {
+    vtkErrorMacro("vtkMRMLSubjectHierarchyNode::ReadJSON : Invalid JSON string.");
+    return;
+  }
+
+  std::vector<const char*> atts;
+  for (int attIndex = 0; attIndex < element->GetNumberOfAttributes(); ++attIndex)
+  {
+    atts.push_back(element->GetAttributeName(attIndex));
+    atts.push_back(element->GetAttributeValue(attIndex));
+  }
+  atts.push_back(nullptr);
+
+  this->ReadXMLAttributes(atts.data());
+
+  for (int index = 0; index < element->GetNumberOfNestedElements(); ++index)
+  {
+    vtkXMLDataElement* childElement = element->GetNestedElement(index);
+    if (childElement->GetName() == nullptr || strcmp(childElement->GetName(), "SubjectHierarchyItem") != 0)
+    {
+      continue;
+    }
+
+    this->Internal->ProcessJSONSubjectHierarchyItem(childElement);
   }
 }
 

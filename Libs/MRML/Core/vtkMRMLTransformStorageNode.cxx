@@ -12,6 +12,7 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+#include "vtkMRMLJsonElement.h"
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLScene.h"
@@ -126,6 +127,108 @@ void vtkMRMLTransformStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLTransformNode");
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLTransformStorageNode::WriteDataToJSONString(vtkMRMLNode* refNode)
+{
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  if (transformNode == nullptr)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLTransformStorageNode::WriteDataToJSONString",
+                                     "Writing transform node json string failed: unable to cast input node " << refNode->GetID() << " to a known transform node.");
+    return "";
+  }
+
+  if (!transformNode->IsTransformToWorldLinear())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLTransformStorageNode::WriteDataToJSONString",
+                                     "Writing transform node json string failed: non-linear transform is not supported. Please save the transform to an image file.");
+    return "";
+  }
+
+  vtkNew<vtkMRMLJsonWriter> writer;
+  if (!writer->WriteToStringBegin(transformNode->GetNodeTagName()))
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLTransformStorageNode::WriteDataToJSONString", "Writing transform node json string failed: node tag name is empty.");
+    return "";
+  }
+
+  writer->WriteStringProperty("type", "linear");
+
+  vtkNew<vtkMatrix4x4> transformMatrix;
+  transformNode->GetMatrixTransformToParent(transformMatrix);
+  writer->WriteMatrix4x4Property("matrix", transformMatrix->GetData(), false);
+
+  return writer->WriteToStringEnd();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformStorageNode::ReadDataFromJSONString(vtkMRMLNode* refNode, const std::string json)
+{
+  if (!refNode)
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadDataFromJSONString", "Reading transform node JSON string failed: null reference node.");
+    return false;
+  }
+
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  if (transformNode == nullptr)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLTransformStorageNode::ReadDataFromJSONString",
+                                     "Reading transform node JSON string failed: unable to cast input node " << refNode->GetID() << " to a known transform node.");
+    return false;
+  }
+
+  if (json.empty())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadDataFromJSONString", "Reading transform node JSON string failed: empty string.");
+    return false;
+  }
+
+  vtkNew<vtkMRMLJsonReader> jsonReader;
+  vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromString(json));
+  if (!jsonElement.GetPointer())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadDataFromJSONString", jsonReader->GetUserMessages()->GetAllMessagesAsString());
+    return false;
+  }
+
+  vtkSmartPointer<vtkMRMLJsonElement> transformElement = jsonElement->GetObjectProperty("Transform");
+  if (!transformElement)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadDataFromJSONString failed", "Cannot find Transform object in JSON string.");
+    return false;
+  }
+
+  std::string transformType = transformElement->GetStringProperty("type");
+  if (transformType.empty())
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadDataFromJSONString failed", "Cannot read type property for transform from JSON string.");
+    return false;
+  }
+
+  if (transformType != "linear")
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadDataFromJSONString failed", "Cannot read transform from JSON string: type is not linear.");
+    return false;
+  }
+
+  double matrixData[16];
+  transformElement->GetMatrix4x4Property("matrix", matrixData, false);
+  vtkNew<vtkMatrix4x4> transformMatrix;
+  transformMatrix->DeepCopy(matrixData);
+  transformNode->SetMatrixTransformToParent(transformMatrix);
+
+  this->Modified();
+  return true;
 }
 
 //----------------------------------------------------------------------------
