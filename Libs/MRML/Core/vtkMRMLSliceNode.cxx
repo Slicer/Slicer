@@ -13,6 +13,7 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 // MRML includes
+#include "vtkMRMLJsonElement.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLTransformNode.h"
