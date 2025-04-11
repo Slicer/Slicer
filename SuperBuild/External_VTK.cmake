@@ -132,11 +132,14 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     )
 
   set(_git_tag)
-  if("${Slicer_VTK_VERSION_MAJOR}" STREQUAL "9")
+  if("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.2")
     set(_git_tag "59ec450206012e86d4855bc669800499254bfc77") # slicer-v9.2.20230607-1ff325c54-2
     set(vtk_egg_info_version "9.2.20230607")
+  elseif("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.4")
+    set(_git_tag "f8fbccd0994e09ad7658c7c3773fb6b657baae24") # slicer-v9.4.1-2024-12-26-6b6b89ee5
+    set(vtk_egg_info_version "9.4.1")
   else()
-    message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR: ${Slicer_VTK_VERSION_MAJOR}")
+    message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR.Slicer_VTK_VERSION_MINOR: ${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}")
   endif()
 
   ExternalProject_SetIfNotDefined(
@@ -176,6 +179,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
       -DVTK_ENABLE_KITS:BOOL=ON
       -DVTK_SMP_IMPLEMENTATION_TYPE:STRING=${Slicer_VTK_SMP_IMPLEMENTATION_TYPE}
+      -DVTK_MODULE_ENABLE_VTK_IOEnSight:STRING=NO
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
       ${EXTERNAL_PROJECT_OPTIONAL_VTK${Slicer_VTK_VERSION_MAJOR}_CMAKE_CACHE_ARGS}
     INSTALL_COMMAND ""
@@ -225,9 +229,15 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         ${VTK_DIR}/${_library_output_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
-      set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-        ${VTK_DIR}/${_library_output_subdir}/Lib/site-packages
-        )
+      if(${vtk_egg_info_version} VERSION_GREATER_EQUAL 9.4)
+        set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+          ${VTK_DIR}/lib/site-packages # Location for VTK 9.4+
+          )
+      else()
+        set(${proj}_PYTHONPATH_LAUNCHER_BUILD
+          ${VTK_DIR}/${_library_output_subdir}/Lib/site-packages # Location for VTK 9.3 or older
+          )
+      endif()
     endif()
 
   mark_as_superbuild(
@@ -267,9 +277,15 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
-      set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
-        <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/Lib/site-packages
-        )
+      if(${vtk_egg_info_version} VERSION_GREATER_EQUAL 9.4)
+        set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+          <APPLAUNCHER_SETTINGS_DIR>/../lib/site-packages # Location for VTK 9.4+
+          )
+      else()
+        set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
+          <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/Lib/site-packages # Location for VTK 9.3 or older
+          )
+      endif()
     endif()
     mark_as_superbuild(
       VARS ${proj}_PYTHONPATH_LAUNCHER_INSTALLED
