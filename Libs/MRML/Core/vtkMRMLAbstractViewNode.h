@@ -97,7 +97,7 @@ public:
   /// layouts, but can be privately used by modules.
   ///
   /// \sa IsViewVisibleInLayout()
-  /// \sa IsMappedInLayout()
+  /// \sa GetMappedInLayout()
   vtkGetMacro(Visibility, int);
   vtkSetMacro(Visibility, int);
 
@@ -132,8 +132,10 @@ public:
   /// \sa GetVisibility()
   /// \sa IsViewVisibleInLayout()
   /// \sa vtkMRMLLayoutNode::SetViewArrangement()
+  vtkSetMacro(MappedInLayout, int);
+  vtkGetMacro(MappedInLayout, int);
+  /// Deprecated. Use GetMappedInLayout instead.
   virtual int IsMappedInLayout();
-  virtual void SetMappedInLayout(int value);
 
   /// Get parent layout node.
   /// Default is no reference, meaning that the view is managed by the main layout.
@@ -357,6 +359,10 @@ protected:
   ///
   /// Labels of coordinate system axes
   vtkSmartPointer<vtkStringArray> AxisLabels;
+
+  ///
+  /// Define if the view is mapped in the current layout with a Qwidget.
+  int MappedInLayout;
 
   static const char* ParentLayoutNodeReferenceRole;
   static const char* InteractionNodeReferenceRole;
