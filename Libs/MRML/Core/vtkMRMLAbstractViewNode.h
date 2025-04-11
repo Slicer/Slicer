@@ -132,8 +132,8 @@ public:
   /// \sa GetVisibility()
   /// \sa IsViewVisibleInLayout()
   /// \sa vtkMRMLLayoutNode::SetViewArrangement()
-  virtual int IsMappedInLayout();
-  virtual void SetMappedInLayout(int value);
+  vtkSetMacro(MappedInLayout, bool);
+  virtual bool IsMappedInLayout();
 
   /// Get parent layout node.
   /// Default is no reference, meaning that the view is managed by the main layout.
@@ -357,6 +357,10 @@ protected:
   ///
   /// Labels of coordinate system axes
   vtkSmartPointer<vtkStringArray> AxisLabels;
+
+  ///
+  /// Define if the view is displayed in the current layout.
+  bool MappedInLayout;
 
   static const char* ParentLayoutNodeReferenceRole;
   static const char* InteractionNodeReferenceRole;
