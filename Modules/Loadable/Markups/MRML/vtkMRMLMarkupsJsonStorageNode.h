@@ -63,6 +63,17 @@ public:
   /// The types are ordered by the index in which they appear in the Json file.
   void GetMarkupsTypesInFile(const char* filePath, std::vector<std::string>& outputMarkupsTypes);
 
+  /// Serialize this node's data into a JSON-formatted string representation.
+  /// \param refNode The node whose data will be serialized
+  /// \return A string containing the node data in JSON format
+  virtual std::string WriteDataToJSONString(vtkMRMLNode* refNode) override;
+
+  /// Parse a JSON-formatted string and populate this node's data from it.
+  /// \param refNode The node whose data will be populated from the JSON
+  /// \param json The JSON-formatted string containing the node data
+  /// \return True on successful parse and data update, false otherwise
+  virtual bool ReadDataFromJSONString(vtkMRMLNode* refNode, const std::string json) override;
+
 protected:
   vtkMRMLMarkupsJsonStorageNode();
   ~vtkMRMLMarkupsJsonStorageNode() override;

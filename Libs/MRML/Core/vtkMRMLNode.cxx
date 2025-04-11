@@ -13,6 +13,8 @@ Version:   $Revision: 1.11 $
 =========================================================================auto=*/
 
 // MRML includes
+#include "vtkMRMLMessageCollection.h"
+#include "vtkMRMLJsonElement.h"
 #include "vtkMRMLNode.h"
 #include "vtkMRMLScene.h"
 
@@ -21,6 +23,8 @@ Version:   $Revision: 1.11 $
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkStringArray.h>
+#include <vtkXMLDataElement.h>
+#include <vtkXMLUtilities.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
@@ -395,7 +399,13 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   vtkMRMLReadXMLBeginMacro(atts);
-  vtkMRMLReadXMLStringMacro(id, ID);
+  // The node ID should only be set during initial scene loading (when reading a Slicer MRML scene file).
+  // If ReadXMLAttributes is called via ReadJSON for subsequent status updates,
+  // the ID must not be changed to maintain scene consistency.
+  if (this->ID == nullptr)
+  {
+    vtkMRMLReadXMLStringMacro(id, ID);
+  }
   vtkMRMLReadXMLStringMacro(name, Name);
   vtkMRMLReadXMLStringMacro(description, Description);
   vtkMRMLReadXMLBooleanMacro(hideFromEditors, HideFromEditors);
@@ -767,6 +777,86 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::WriteNodeBodyXML(ostream&, int) {}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::WriteJSON(int indent, vtkMRMLMessageCollection* userMessagesInput)
+{
+  vtkSmartPointer<vtkMRMLMessageCollection> userMessages = userMessagesInput;
+  if (!userMessages)
+  {
+    userMessages = vtkSmartPointer<vtkMRMLMessageCollection>::New();
+  }
+
+  std::ostringstream xmlStream;
+  vtkIndent vindent(indent);
+
+  vtkNew<vtkMRMLMessageCollection> nodeWritingMessages;
+  nodeWritingMessages->SetObservedObject(this);
+
+  xmlStream << vindent << "<" << this->GetNodeTagName() << "\n ";
+  this->WriteXML(xmlStream, indent);
+  nodeWritingMessages->SetObservedObject(nullptr);
+
+  if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
+  {
+    vtkErrorToMessageCollectionMacro(userMessages,
+                                     "vtkMRMLScene::Commit",
+                                     "Error writing " << (this->GetName() ? this->GetName() : "(unknown)") << " (" << (this->GetID() ? this->GetID() : "unknown") << ")"
+                                                      << " node to XML");
+  }
+  else if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
+  {
+    vtkErrorToMessageCollectionMacro(userMessages,
+                                     "vtkMRMLScene::Commit",
+                                     "Warnings encountered while writing " << (this->GetName() ? this->GetName() : "(unknown)") << " ("
+                                                                           << (this->GetID() ? this->GetID() : "unknown") << ")"
+                                                                           << " node to XML - see application log for details");
+  }
+
+  xmlStream << vindent << ">";
+  this->WriteNodeBodyXML(xmlStream, indent);
+  xmlStream << "</" << this->GetNodeTagName() << ">\n";
+
+  std::string xmlString = xmlStream.str();
+  vtkSmartPointer<vtkXMLDataElement> xmlElement = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
+
+  vtkNew<vtkMRMLJsonWriter> jsonWriter;
+  return jsonWriter->ConvertXMLToJson(xmlElement, this->GetNodeTagName());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::ReadJSON(const std::string json)
+{
+  if (json.empty())
+  {
+    vtkErrorMacro("vtkMRMLNode::ReadJSON : input json is empty.");
+    return;
+  }
+
+  vtkNew<vtkMRMLJsonReader> jsonReader;
+  std::string xmlString = jsonReader->ConvertJsonToXML(json, this->GetNodeTagName());
+  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
+  if (!element.GetPointer())
+  {
+    vtkErrorMacro("vtkMRMLNode::ReadJSON : Failed to parse XML from JSON string.");
+    return;
+  }
+  if (element->GetName() == nullptr || strcmp(element->GetName(), this->GetNodeTagName()) != 0)
+  {
+    vtkErrorMacro("vtkMRMLNode::ReadJSON : Invalid JSON string.");
+    return;
+  }
+
+  std::vector<const char*> atts;
+  for (int attIndex = 0; attIndex < element->GetNumberOfAttributes(); ++attIndex)
+  {
+    atts.push_back(element->GetAttributeName(attIndex));
+    atts.push_back(element->GetAttributeValue(attIndex));
+  }
+  atts.push_back(nullptr);
+
+  this->ReadXMLAttributes(atts.data());
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* vtkNotUsed(callData))

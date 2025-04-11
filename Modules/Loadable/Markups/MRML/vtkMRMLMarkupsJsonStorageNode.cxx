@@ -108,6 +108,123 @@ void vtkMRMLMarkupsJsonStorageNode::GetMarkupsTypesInFile(const char* filePath, 
 }
 
 //----------------------------------------------------------------------------
+std::string vtkMRMLMarkupsJsonStorageNode::WriteDataToJSONString(vtkMRMLNode* refNode)
+{
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(refNode);
+  if (markupsNode == nullptr)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsJsonStorageNode::WriteDataToJSONString",
+                                     "Writing markups node json string failed: unable to cast input node " << refNode->GetID() << " to a known markups node.");
+    return "";
+  }
+
+  vtkNew<vtkMRMLJsonWriter> writer;
+  if (!writer->WriteToStringBegin(markupsNode->GetNodeTagName()))
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::WriteDataToJSONString", "Writing markups node json string failed: node tag name is empty.");
+    return "";
+  }
+
+  writer->WriteArrayPropertyStart("markups");
+  if (!this->WriteMarkup(writer, markupsNode))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsJsonStorageNode::WriteDataToJSONString",
+                                     "Writing markups node json string failed: unable to write markups node '" << (markupsNode->GetName() ? markupsNode->GetName() : "") << "'.");
+    return "";
+  }
+  writer->WriteArrayPropertyEnd();
+
+  return writer->WriteToStringEnd();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLMarkupsJsonStorageNode::ReadDataFromJSONString(vtkMRMLNode* refNode, const std::string json)
+{
+  if (!refNode)
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataFromJSONString", "Reading markups node JSON string failed: null reference node.");
+    return false;
+  }
+
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(refNode);
+  if (markupsNode == nullptr)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsJsonStorageNode::ReadDataFromJSONString",
+                                     "Reading markups node JSON string failed: unable to cast input node " << refNode->GetID() << " to a known markups node.");
+    return false;
+  }
+
+  if (json.empty())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataFromJSONString", "Reading markups node JSON string failed: empty string.");
+    return false;
+  }
+
+  vtkNew<vtkMRMLJsonReader> jsonReader;
+  vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonReader->ReadFromString(json));
+  if (!jsonElement.GetPointer())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLMarkupsJsonStorageNode::ReadDataFromJSONString", jsonReader->GetUserMessages()->GetAllMessagesAsString());
+    return false;
+  }
+  vtkSmartPointer<vtkMRMLJsonElement> rootObject = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetObjectProperty(markupsNode->GetNodeTagName()));
+  if (!rootObject.GetPointer())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsStorageNode::ReadDataFromJSONString failed",
+                                     "Cannot read " << markupsNode->GetClassName() << " markup from JSON string (does not contain " << markupsNode->GetNodeTagName()
+                                                    << " root object)");
+    return false;
+  }
+
+  vtkSmartPointer<vtkMRMLJsonElement> markups = vtkSmartPointer<vtkMRMLJsonElement>::Take(rootObject->GetArrayProperty("markups"));
+  if (!markups.GetPointer() || markups->GetArraySize() < 1)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsStorageNode::ReadDataFromJSONString failed",
+                                     "Cannot read " << markupsNode->GetClassName() << " markup from JSON string (does not contain valid 'markups' array)");
+    return false;
+  }
+  vtkSmartPointer<vtkMRMLJsonElement> markup = vtkSmartPointer<vtkMRMLJsonElement>::Take(markups->GetArrayItem(0));
+  if (!markup.GetPointer())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsStorageNode::ReadDataFromJSONString failed",
+                                     "Cannot read " << markupsNode->GetClassName() << " markup from JSON string (does not contain valid 'markups' array)");
+    return false;
+  }
+
+  std::string markupsType = markup->GetStringProperty("type");
+  if (markupsType.empty())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsStorageNode::ReadDataFromJSONString",
+                                     "Cannot read " << markupsNode->GetClassName() << " markup from JSON string (markup item does not contain 'type' property)");
+    return false;
+  }
+
+  std::string className = this->GetMarkupsClassNameFromMarkupsType(markupsType);
+  if (className != markupsNode->GetClassName())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLMarkupsJsonStorageNode::ReadDataJSONFromString",
+                                     "Reading markups node JSON string failed: cannot read " << markupsNode->GetClassName() << " markups class from JSON string (it contains "
+                                                                                             << className << ").");
+    return false;
+  }
+
+  bool success = this->UpdateMarkupsNodeFromJsonValue(markupsNode, markup);
+
+  this->Modified();
+  return success;
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(const char* filePath, const char* nodeName /*=nullptr*/, int markupIndex /*=0*/)
 {
   vtkMRMLScene* scene = this->GetScene();
@@ -367,7 +484,6 @@ bool vtkMRMLMarkupsJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkup
 
   // clear out the list
   markupsNode->RemoveAllControlPoints();
-  markupsNode->ClearValueForAllMeasurements();
 
   if (markupObject->HasMember("name"))
   {
