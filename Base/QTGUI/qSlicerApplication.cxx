@@ -147,33 +147,37 @@ public:
 
   void updateCompletionModel(const QString& completion) override
   {
-    bool wasLoggingEnabled = this->setLoggingEnabled(false);
+    bool wasQtLoggingEnabled = this->setLoggingEnabled(false, ctkErrorLogQtMessageHandler::HandlerName);
+    bool wasVTKLoggingEnabled = this->setLoggingEnabled(false, ctkVTKErrorLogMessageHandler::HandlerName);
     ctkPythonConsoleCompleter::updateCompletionModel(completion);
-    this->setLoggingEnabled(wasLoggingEnabled);
+    this->setLoggingEnabled(wasQtLoggingEnabled, ctkErrorLogQtMessageHandler::HandlerName);
+    this->setLoggingEnabled(wasVTKLoggingEnabled, ctkVTKErrorLogMessageHandler::HandlerName);
   }
 
   int cursorOffset(const QString& completion) override
   {
-    bool wasLoggingEnabled = this->setLoggingEnabled(false);
+    bool wasQtLoggingEnabled = this->setLoggingEnabled(false, ctkErrorLogQtMessageHandler::HandlerName);
+    bool wasVTKLoggingEnabled = this->setLoggingEnabled(false, ctkVTKErrorLogMessageHandler::HandlerName);
     int result = ctkPythonConsoleCompleter::cursorOffset(completion);
-    this->setLoggingEnabled(wasLoggingEnabled);
+    this->setLoggingEnabled(wasQtLoggingEnabled, ctkErrorLogQtMessageHandler::HandlerName);
+    this->setLoggingEnabled(wasVTKLoggingEnabled, ctkVTKErrorLogMessageHandler::HandlerName);
     return result;
   }
 
 protected:
 
-  bool setLoggingEnabled(bool enable)
+  bool setLoggingEnabled(bool enable, const QString& handlerName)
   {
     if (!this->Application || !this->Application->errorLogModel())
     {
       return false;
     }
-    ctkErrorLogAbstractMessageHandler* qtMessageHandler = this->Application->errorLogModel()->msgHandler("Qt");
-    if (!qtMessageHandler)
+    ctkErrorLogAbstractMessageHandler* messageHandler = this->Application->errorLogModel()->msgHandler(handlerName);
+    if (!messageHandler)
     {
       return false;
     }
-    return !qtMessageHandler->blockSignals(!enable);
+    return !messageHandler->blockSignals(!enable);
   }
 
   qSlicerApplication* Application{nullptr};
