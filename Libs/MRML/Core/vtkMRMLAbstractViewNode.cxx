@@ -59,6 +59,8 @@ vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
   {
     this->AxisLabels->InsertNextValue(DEFAULT_AXIS_LABELS[i]);
   }
+
+  this->MappedInLayout = false;
 }
 
 //----------------------------------------------------------------------------
@@ -100,6 +102,9 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
   // Do not write screenScaleFactor attribute, as we should not use the
   // value that is in the scene but what the user has set in application settings.
   // vtkMRMLWriteXMLFloatMacro(screenScaleFactor, ScreenScaleFactor);
+
+  // Do not write MappedInLayout attribute, as it is set dynamically by the layout manager.
+  // It should not be copied between objects or saved to file.
 
   vtkMRMLWriteXMLEndMacro();
 
@@ -151,6 +156,9 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
   // Do not read screenScaleFactor attribute, as we should not use the
   // value that is in the scene but what the user has set in application settings.
   // vtkMRMLReadXMLFloatMacro(screenScaleFactor, ScreenScaleFactor);
+
+  // Do not read MappedInLayout attribute, as it is set dynamically by the layout manager.
+  // It should not be copied between objects or saved to file.
 
   vtkMRMLReadXMLEndMacro();
 
@@ -205,11 +213,6 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
   }
 #endif
 
-  // Do not restore MappedInLayout state, because the view may not be mapped into the layout just yet.
-  // (the attribute tells that it was mapped into the layout when the scene was saved but the current
-  // layout may be different, see issue #6284).
-  this->SetAttribute("MappedInLayout", nullptr);
-
   this->EndModify(disabledModify);
 }
 
@@ -238,6 +241,10 @@ void vtkMRMLAbstractViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   }
   vtkMRMLCopyEnumMacro(RulerColor);
   vtkMRMLCopyFloatMacro(ScreenScaleFactor);
+
+  // Do not copy MappedInLayout attribute, as it is set dynamically by the layout manager.
+  // It should not be copied between objects or saved to file.
+
   vtkMRMLCopyEndMacro();
 
   vtkMRMLAbstractViewNode *node = vtkMRMLAbstractViewNode::SafeDownCast(anode);
@@ -333,23 +340,10 @@ bool vtkMRMLAbstractViewNode::SetInteractionNode(vtkMRMLNode* node)
   return this->SetInteractionNodeID(node ? node->GetID() : nullptr);
 }
 
-int vtkMRMLAbstractViewNode::IsMappedInLayout()
-{
-  if (!this->GetAttribute("MappedInLayout"))
-  {
-    return 0;
-  }
-  return strcmp(this->GetAttribute("MappedInLayout"), "1") == 0;
-}
-
 //------------------------------------------------------------------------------
-void vtkMRMLAbstractViewNode::SetMappedInLayout(int value)
+bool vtkMRMLAbstractViewNode::IsMappedInLayout()
 {
-  if (this->IsMappedInLayout() == value)
-  {
-    return;
-  }
-  this->SetAttribute("MappedInLayout", value ? "1" : "0");
+  return this->MappedInLayout;
 }
 
 //------------------------------------------------------------------------------
