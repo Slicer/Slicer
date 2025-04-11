@@ -343,7 +343,7 @@ void qMRMLLayoutViewFactory::beginSetupLayout()
   this->Superclass::beginSetupLayout();
   foreach(vtkMRMLAbstractViewNode* viewNode, d->Views.keys())
   {
-    viewNode->SetMappedInLayout(0);
+    viewNode->SetMappedInLayout(false);
   }
 }
 
@@ -614,7 +614,7 @@ void qMRMLLayoutViewFactory::setupView(QDomElement viewElement, QWidget* view)
   this->Superclass::setupView(viewElement, view);
   vtkMRMLAbstractViewNode* viewNode = this->viewNode(view);
   Q_ASSERT(viewNode);
-  viewNode->SetMappedInLayout(1);
+  viewNode->SetMappedInLayout(true);
   view->setVisible(viewNode->GetVisibility());
   view->setWindowTitle(viewNode->GetName());
 }
