@@ -7,6 +7,7 @@ set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT
 set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicer${MODULE_NAME}ModuleLogic_SOURCE_DIR}
   ${vtkSlicer${MODULE_NAME}ModuleLogic_BINARY_DIR}
+  ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -35,6 +36,8 @@ set(${KIT}_SRCS
   qSlicer${MODULE_NAME}PlaceWidget.h
   qSlicerSimpleMarkupsWidget.cxx
   qSlicerSimpleMarkupsWidget.h
+  qSlicerMarkupsMeasurementsWidget.cxx
+  qSlicerMarkupsMeasurementsWidget.h
   )
 
 set(${KIT}_MOC_SRCS
@@ -51,6 +54,7 @@ set(${KIT}_MOC_SRCS
   qMRML${MODULE_NAME}OptionsWidgetsFactory.h
   qSlicer${MODULE_NAME}PlaceWidget.h
   qSlicerSimpleMarkupsWidget.h
+  qSlicerMarkupsMeasurementsWidget.h
   )
 
 set(${KIT}_UI_SRCS
@@ -63,6 +67,7 @@ set(${KIT}_UI_SRCS
   Resources/UI/qMRML${MODULE_NAME}CurveSettingsWidget.ui
   Resources/UI/qSlicer${MODULE_NAME}PlaceWidget.ui
   Resources/UI/qSlicerSimpleMarkupsWidget.ui
+  Resources/UI/qSlicerMarkupsMeasurementsWidget.ui
   )
 
 set(${KIT}_RESOURCES
@@ -71,6 +76,7 @@ set(${KIT}_RESOURCES
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRML
   vtkSlicer${MODULE_NAME}ModuleLogic
+  qSlicer${MODULE_NAME}SubjectHierarchyPlugins
   )
 
 #-----------------------------------------------------------------------------
