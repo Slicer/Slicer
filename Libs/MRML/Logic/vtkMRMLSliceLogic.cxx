@@ -672,8 +672,6 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
 
     // set the plane corner point for use in a model
     double inPoint[4] = { 0, 0, 0, 1 };
-    double outPoint[4];
-    double* outPoint3 = outPoint;
 
     // set the z position to be the active slice (from the lightbox)
     inPoint[2] = this->SliceNode->GetActiveSlice();
