@@ -145,9 +145,8 @@ public:
   /// Name of color attribute in folder subject hierarchy items
   Q_INVOKABLE QString colorItemAttributeName()const { return "Color"; };
 
-  /// Create model display node for given item. If the folder item has an associated model hierarchy
-  /// node, then create a display node associated to that. Otherwise create display node for folder item
-  vtkMRMLDisplayNode* createDisplayNodeForItem(vtkIdType itemID);
+  /// Create display node for given item.
+  virtual vtkMRMLDisplayNode* createDisplayNodeForItem(vtkIdType itemID);
 
   /// Add tree view to the list of view from which empty folders have been created.
   /// This function is called from the DICOM plugin, which can create patient and study items (which are special folders).
@@ -167,10 +166,9 @@ protected slots:
   void onShowEmptyFoldersToggled(bool);
 
 protected:
-  /// Retrieve model display node for given item. If the folder item has an associated model display
-  /// node (created by the plugin), then return that. Otherwise see if it has a model hierarchy node
-  /// with a display node.
-  vtkMRMLDisplayNode* displayNodeForItem(vtkIdType itemID)const;
+  /// Retrieve display node for given item. If the folder item has an associated display
+  /// node (created by the plugin), then return that.
+  virtual vtkMRMLDisplayNode* displayNodeForItem(vtkIdType itemID)const;
 
   /// Determine if apply color to branch option is enabled to a given item or not
   bool isApplyColorToBranchEnabledForItem(vtkIdType itemID)const;
