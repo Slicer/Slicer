@@ -70,14 +70,14 @@ public:
   /// NOTE: Subclasses should implement WriteDataToJSONString(), not this method.
   /// \param refNode The node whose data will be serialized
   /// \return A string containing the node data in JSON format
-  virtual std::string WriteDataToJSONString(vtkMRMLNode *refNode);
+  virtual std::string WriteDataToJSONString(vtkMRMLNode* refNode);
 
   /// Parse a JSON-formatted string and populate this node's data from it.
   /// NOTE: Subclasses should implement ReadDataFromJSONString(), not this method.
   /// \param refNode The node whose data will be populated from the JSON
   /// \param json The JSON-formatted string containing the node data
   /// \return True on successful parse and data update, false otherwise
-  virtual bool ReadDataFromJSONString(vtkMRMLNode *refNode, const std::string json);
+  virtual bool ReadDataFromJSONString(vtkMRMLNode* refNode, const std::string json);
 
   ///
   /// Write this node's information to a MRML file in XML format.

@@ -664,8 +664,6 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
 
     // set the plane corner point for use in a model
     double inPoint[4] = { 0, 0, 0, 1 };
-    double outPoint[4];
-    double* outPoint3 = outPoint;
 
     // set the z position to be the active slice (from the lightbox)
     inPoint[2] = this->SliceNode->GetActiveSlice();
@@ -673,29 +671,27 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     vtkPlaneSource* plane = vtkPlaneSource::SafeDownCast(this->SliceModelNode->GetPolyDataConnection()->GetProducer());
 
     int wasModified = this->SliceModelNode->StartModify();
-    double outPoint[4] = {0.0, 0.0, 0.0, 0.0};
-    double defaultOrigin[3] = {1.0, -1.0, 0.0};
-    double defaultPoint1[3] = {-1.0, -1.0, 0.0};
-    double defaultPoint2[3] = {1.0, 1.0, 0.0};
+    double outPoint[4] = { 0.0, 0.0, 0.0, 0.0 };
+    double defaultOrigin[3] = { 1.0, -1.0, 0.0 };
+    double defaultPoint1[3] = { -1.0, -1.0, 0.0 };
+    double defaultPoint2[3] = { 1.0, 1.0, 0.0 };
 
     // Compute transformed points
     textureToRAS->MultiplyPoint(inPoint, outPoint);
-    double origin[3] = {outPoint[0], outPoint[1], outPoint[2]};
+    double origin[3] = { outPoint[0], outPoint[1], outPoint[2] };
 
     inPoint[0] = dims[0];
     inPoint[1] = 0.0;
     textureToRAS->MultiplyPoint(inPoint, outPoint);
-    double point1[3] = {outPoint[0], outPoint[1], outPoint[2]};
+    double point1[3] = { outPoint[0], outPoint[1], outPoint[2] };
 
     inPoint[0] = 0.0;
     inPoint[1] = dims[1];
     textureToRAS->MultiplyPoint(inPoint, outPoint);
-    double point2[3] = {outPoint[0], outPoint[1], outPoint[2]};
+    double point2[3] = { outPoint[0], outPoint[1], outPoint[2] };
 
     // Validate points to avoid degeneracy
-    if (vtkMath::Distance2BetweenPoints(origin, point1) < 1e-6 ||
-      vtkMath::Distance2BetweenPoints(origin, point2) < 1e-6 ||
-      vtkMath::Distance2BetweenPoints(point1, point2) < 1e-6)
+    if (vtkMath::Distance2BetweenPoints(origin, point1) < 1e-6 || vtkMath::Distance2BetweenPoints(origin, point2) < 1e-6 || vtkMath::Distance2BetweenPoints(point1, point2) < 1e-6)
     {
       vtkMath::Add(origin, defaultOrigin, origin);
       vtkMath::Add(point1, defaultPoint1, point1);

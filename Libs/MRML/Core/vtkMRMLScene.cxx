@@ -127,7 +127,7 @@ Version:   $Revision: 1.18 $
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
 
-//#define MRMLSCENE_VERBOSE
+// #define MRMLSCENE_VERBOSE
 
 #ifdef MRMLSCENE_VERBOSE
 # include <vtkTimerLog.h>
@@ -1077,7 +1077,7 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection, vtkMRMLMessageCol
         document.Parse(this->GetSceneXMLString().c_str());
         if (document.HasParseError())
         {
-          vtkErrorMacro( << "Error parsing JSON string.");
+          vtkErrorMacro(<< "Error parsing JSON string.");
           return 0;
         }
       }
@@ -1086,7 +1086,7 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection, vtkMRMLMessageCol
         std::ifstream ifs(this->URL.c_str());
         if (!ifs.is_open())
         {
-          vtkErrorMacro( << "Error opening file: " << this->URL.c_str());
+          vtkErrorMacro(<< "Error opening file: " << this->URL.c_str());
           return 0;
         }
         std::stringstream buffer;
@@ -1095,7 +1095,7 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection, vtkMRMLMessageCol
         document.Parse(buffer.str().c_str());
         if (document.HasParseError())
         {
-          vtkErrorMacro( << "Error parsing JSON file.");
+          vtkErrorMacro(<< "Error parsing JSON file.");
           return 0;
         }
       }
@@ -1170,7 +1170,7 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection, vtkMRMLMessageCol
             {
               if (node->GetAddToScene())
               {
-                nodeCollection->vtkCollection::AddItem((vtkObject *)node);
+                nodeCollection->vtkCollection::AddItem((vtkObject*)node);
               }
             }
             else
@@ -1252,14 +1252,14 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
 
   if (!this->SetUseJSONFormat)
   {
-    //file << "<?xml version=\"1.0\" standalone='no'?>\n";
-    //file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
+    // file << "<?xml version=\"1.0\" standalone='no'?>\n";
+    // file << "<!DOCTYPE MRML SYSTEM \"mrml20.dtd\">\n";
 
     // Add XML encoding specification. Slicer uses the UTF-8 character set.
     *os << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
     //--- BEGIN test of user tags
-    //file << "<MRML>\n";
+    // file << "<MRML>\n";
     *os << "<MRML";
 
     // write version
@@ -1267,33 +1267,33 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
     {
       *os << " version=\"" << this->GetVersion() << "\"";
     }
-    if (this->GetExtensions() && strlen(this->GetExtensions())>0)
+    if (this->GetExtensions() && strlen(this->GetExtensions()) > 0)
     {
       *os << " extensions=\"" << this->GetExtensions() << "\"";
     }
 
     //---write any user tags.
     std::stringstream ss;
-    if ( this->GetUserTagTable() != nullptr )
+    if (this->GetUserTagTable() != nullptr)
     {
       ss.clear();
-      ss.str ( "" );
+      ss.str("");
       int numc = this->GetUserTagTable()->GetNumberOfTags();
       const char *kwd, *val;
-      for (int i=0; i < numc; i++ )
+      for (int i = 0; i < numc; i++)
       {
         kwd = this->GetUserTagTable()->GetTagAttribute(i);
-        val = this->GetUserTagTable()->GetTagValue (i);
+        val = this->GetUserTagTable()->GetTagValue(i);
         if (kwd != nullptr && val != nullptr)
         {
           ss << kwd << "=" << val;
-          if ( i < (numc-1) )
+          if (i < (numc - 1))
           {
             ss << " ";
           }
         }
       }
-      if ( ss.str().c_str()!= nullptr )
+      if (ss.str().c_str() != nullptr)
       {
         *os << " userTags=\"" << ss.str().c_str() << "\"";
       }
@@ -1304,7 +1304,7 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
 
     // Write each node
     int n;
-    for (n=0; n < this->Nodes->GetNumberOfItems(); n++)
+    for (n = 0; n < this->Nodes->GetNumberOfItems(); n++)
     {
       node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(n);
       if (!node->GetSaveWithScene())
@@ -1315,7 +1315,7 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
       vtkIndent vindent(indent);
       *os << vindent << "<" << node->GetNodeTagName() << "\n ";
 
-      if(indent<=0)
+      if (indent <= 0)
         indent = 1;
 
       vtkNew<vtkMRMLMessageCollection> nodeWritingMessages;
@@ -1324,15 +1324,18 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
       nodeWritingMessages->SetObservedObject(nullptr);
       if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
       {
-        vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::Commit", "Error writing "
-          << (node->GetName() ? node->GetName() : "(unknown)") << " (" << (node->GetID() ? node->GetID() : "unknown") << ")"
-          << " node to XML");
+        vtkErrorToMessageCollectionMacro(userMessages,
+                                         "vtkMRMLScene::Commit",
+                                         "Error writing " << (node->GetName() ? node->GetName() : "(unknown)") << " (" << (node->GetID() ? node->GetID() : "unknown") << ")"
+                                                          << " node to XML");
       }
       else if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
       {
-        vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::Commit", "Warnings encountered while writing "
-          << (node->GetName() ? node->GetName() : "(unknown)") << " (" << (node->GetID() ? node->GetID() : "unknown") << ")"
-          << " node to XML - see application log for details");
+        vtkErrorToMessageCollectionMacro(userMessages,
+                                         "vtkMRMLScene::Commit",
+                                         "Warnings encountered while writing " << (node->GetName() ? node->GetName() : "(unknown)") << " ("
+                                                                               << (node->GetID() ? node->GetID() : "unknown") << ")"
+                                                                               << " node to XML - see application log for details");
       }
 
       *os << vindent << ">";
@@ -1399,7 +1402,7 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
       nodeDocument.Parse(jsonNodeString.c_str());
       if (document.HasParseError())
       {
-        vtkErrorMacro( << "Error parsing JSON string.");
+        vtkErrorMacro(<< "Error parsing JSON string.");
         continue;
       }
 
