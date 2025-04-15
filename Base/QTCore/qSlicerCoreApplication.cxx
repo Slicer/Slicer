@@ -441,6 +441,7 @@ void qSlicerCoreApplicationPrivate::init()
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent, q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void*, ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent, q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void*, ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent, q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void*, ulong)));
+  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestProcessedBackgroundEvent, q, SLOT(processAppLogicBackgroundData()));
   q->qvtkConnect(this->AppLogic, vtkMRMLApplicationLogic::PauseRenderEvent, q, SLOT(pauseRender()));
   q->qvtkConnect(this->AppLogic, vtkMRMLApplicationLogic::ResumeRenderEvent, q, SLOT(resumeRender()));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::EditNodeEvent, q, SLOT(editNode(vtkObject*, void*, ulong)));
@@ -2147,6 +2148,13 @@ void qSlicerCoreApplication::processAppLogicWriteData()
 {
   Q_D(qSlicerCoreApplication);
   d->AppLogic->ProcessWriteData();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::processAppLogicBackgroundData()
+{
+  Q_D(qSlicerCoreApplication);
+  d->AppLogic->ProcessBackgroundQueue();
 }
 
 //-----------------------------------------------------------------------------
