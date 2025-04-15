@@ -1723,7 +1723,6 @@ bool vtkMRMLSubjectHierarchyNode::vtkInternal::ResolveUnresolvedItems()
   return true;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::vtkInternal::ProcessJSONSubjectHierarchyItem(vtkXMLDataElement* element)
 {
@@ -2117,8 +2116,7 @@ void vtkMRMLSubjectHierarchyNode::ReadJSON(const std::string json)
 
   vtkNew<vtkMRMLJsonReader> jsonReader;
   std::string xmlString = jsonReader->ConvertJsonToXML(json, this->GetNodeTagName());
-  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(
-    vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
+  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
   if (!element.GetPointer())
   {
     vtkErrorMacro("vtkMRMLSubjectHierarchyNode::ReadJSON : Failed to parse XML from JSON string.");
@@ -2153,7 +2151,7 @@ void vtkMRMLSubjectHierarchyNode::ReadJSON(const std::string json)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSubjectHierarchyNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSubjectHierarchyNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 

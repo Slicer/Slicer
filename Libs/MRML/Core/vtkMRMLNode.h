@@ -227,6 +227,7 @@ class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
   /// SetID, but that's the only class that is allowed to do so
   friend class vtkMRMLScene;
   friend class vtkMRMLSceneViewNode;
+  friend class vtkSlicerApplicationLogic;
 
 public:
   vtkTypeMacro(vtkMRMLNode, vtkObject);
@@ -289,7 +290,7 @@ public:
   /// Convert this node's information to a string in JSON data structure.
   ///
   /// \sa WriteXML(), WriteNodeBodyXML()
-  virtual std::string WriteJSON(int indent = 0, vtkMRMLMessageCollection* userMessagesInput=nullptr);
+  virtual std::string WriteJSON(int indent = 0, vtkMRMLMessageCollection* userMessagesInput = nullptr);
 
   /// Read this node's information from a string in JSON format.
   ///

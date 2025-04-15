@@ -555,8 +555,7 @@ void vtkMRMLNode::ParseReferencesAttribute(const char* attValue, std::set<std::s
           if (this->NodeReferences.find(role) != this->NodeReferences.end())
           {
             // Iterate through existing references looking for matching base class
-            for (NodeReferenceListType::iterator it = this->NodeReferences[role].begin();
-               it != this->NodeReferences[role].end(); ++it)
+            for (NodeReferenceListType::iterator it = this->NodeReferences[role].begin(); it != this->NodeReferences[role].end(); ++it)
             {
               std::string existingId((*it)->GetReferencedNodeID());
               size_t existingNodePos = existingId.find("Node");
@@ -720,15 +719,18 @@ std::string vtkMRMLNode::WriteJSON(int indent, vtkMRMLMessageCollection* userMes
 
   if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
   {
-    vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::Commit", "Error writing "
-      << (this->GetName() ? this->GetName() : "(unknown)") << " (" << (this->GetID() ? this->GetID() : "unknown") << ")"
-      << " node to XML");
+    vtkErrorToMessageCollectionMacro(userMessages,
+                                     "vtkMRMLScene::Commit",
+                                     "Error writing " << (this->GetName() ? this->GetName() : "(unknown)") << " (" << (this->GetID() ? this->GetID() : "unknown") << ")"
+                                                      << " node to XML");
   }
   else if (nodeWritingMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
   {
-    vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::Commit", "Warnings encountered while writing "
-      << (this->GetName() ? this->GetName() : "(unknown)") << " (" << (this->GetID() ? this->GetID() : "unknown") << ")"
-      << " node to XML - see application log for details");
+    vtkErrorToMessageCollectionMacro(userMessages,
+                                     "vtkMRMLScene::Commit",
+                                     "Warnings encountered while writing " << (this->GetName() ? this->GetName() : "(unknown)") << " ("
+                                                                           << (this->GetID() ? this->GetID() : "unknown") << ")"
+                                                                           << " node to XML - see application log for details");
   }
 
   xmlStream << vindent << ">";
@@ -736,8 +738,7 @@ std::string vtkMRMLNode::WriteJSON(int indent, vtkMRMLMessageCollection* userMes
   xmlStream << "</" << this->GetNodeTagName() << ">\n";
 
   std::string xmlString = xmlStream.str();
-  vtkSmartPointer<vtkXMLDataElement> xmlElement = vtkSmartPointer<vtkXMLDataElement>::Take(
-    vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
+  vtkSmartPointer<vtkXMLDataElement> xmlElement = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
 
   vtkNew<vtkMRMLJsonWriter> jsonWriter;
   return jsonWriter->ConvertXMLToJson(xmlElement, this->GetNodeTagName());
@@ -754,8 +755,7 @@ void vtkMRMLNode::ReadJSON(const std::string json)
 
   vtkNew<vtkMRMLJsonReader> jsonReader;
   std::string xmlString = jsonReader->ConvertJsonToXML(json, this->GetNodeTagName());
-  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(
-    vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
+  vtkSmartPointer<vtkXMLDataElement> element = vtkSmartPointer<vtkXMLDataElement>::Take(vtkXMLUtilities::ReadElementFromString(xmlString.c_str()));
   if (!element.GetPointer())
   {
     vtkErrorMacro("vtkMRMLNode::ReadJSON : Failed to parse XML from JSON string.");
@@ -779,9 +779,7 @@ void vtkMRMLNode::ReadJSON(const std::string json)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLNode::ProcessMRMLEvents (vtkObject *caller,
-                                     unsigned long event,
-                                     void *vtkNotUsed(callData))
+void vtkMRMLNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* vtkNotUsed(callData))
 {
 
   // Refreshes the reference (by calling GetNthNodeReference).
