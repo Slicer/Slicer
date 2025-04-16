@@ -420,6 +420,9 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
         case itk::CommonEnums::IOPixel::VECTOR:
           switch (imageIO->GetComponentType())
           {
+          case itk::ImageIOBase::IOComponentEnum::UCHAR:
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned char>, 4>(this, data);
+            break;
           case itk::ImageIOBase::IOComponentEnum::USHORT:
             vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned short>, 4>(this, data);
             break;
@@ -438,6 +441,9 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
         case itk::CommonEnums::IOPixel::COVARIANTVECTOR:
           switch (imageIO->GetComponentType())
           {
+          case itk::ImageIOBase::IOComponentEnum::UCHAR:
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<unsigned char>, 4>(this, data);
+            break;
           case itk::ImageIOBase::IOComponentEnum::USHORT:
             vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<unsigned short>, 4>(this, data);
             break;
