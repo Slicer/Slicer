@@ -37,6 +37,7 @@
 
 // VTK includes
 #include "vtkImageData.h"
+#include "vtkMatrix3x3.h"
 #include "vtkNew.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
@@ -186,9 +187,11 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     frameVolume->SetOrigin(origin);
     frameVolume->SetSpacing(spacing);
 
-    // Clear origin and spacing from image data since they are now in the volume node
+    // Clear origin, spacing, and directions from image data since they are now in the volume node
     frameImage->SetOrigin(0.0, 0.0, 0.0);
     frameImage->SetSpacing(1.0, 1.0, 1.0);
+    vtkNew<vtkMatrix3x3> identityDirections;
+    frameImage->SetDirectionMatrix(identityDirections);
 
     // Set up the volume node
     frameVolume->SetAndObserveImageData(frameImage);
