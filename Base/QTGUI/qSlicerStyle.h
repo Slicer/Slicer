@@ -44,8 +44,6 @@ public:
   int pixelMetric(PixelMetric metric, const QStyleOption * option = nullptr,
                           const QWidget * widget = nullptr)const override;
 
-  QRect subControlRect(ComplexControl control, const QStyleOptionComplex *option,
-                               SubControl subControl, const QWidget *widget) const override;
   QPalette standardPalette()const override;
   QPalette standardLightPalette()const;
   QPalette standardDarkPalette()const;
