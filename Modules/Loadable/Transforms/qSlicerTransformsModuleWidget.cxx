@@ -331,6 +331,17 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(node);
 
+  this->qvtkReconnect(d->MRMLTransformNode, transformNode,
+    vtkMRMLTransformableNode::TransformModifiedEvent,
+    this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
+
+  if (d->MRMLTransformNode == nullptr && transformNode != nullptr)
+  {
+    d->TransformedCollapsibleButton->setCollapsed(false);
+  }
+
+  d->MRMLTransformNode = transformNode;
+
   bool isTransform = (transformNode != nullptr);
   bool isLinearTransform = (transformNode!=nullptr && transformNode->IsLinear());
   bool isCompositeTransform = (transformNode!=nullptr && transformNode->IsComposite());
@@ -390,17 +401,6 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   }
   d->TransformableTreeView->sortFilterProxyModel()
     ->setHiddenNodeIDs(hiddenNodeIDs);
-
-  this->qvtkReconnect(d->MRMLTransformNode, transformNode,
-                      vtkMRMLTransformableNode::TransformModifiedEvent,
-                      this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
-
-  if (d->MRMLTransformNode == nullptr && transformNode != nullptr)
-  {
-    d->TransformedCollapsibleButton->setCollapsed(false);
-  }
-
-  d->MRMLTransformNode = transformNode;
 
   // If there is no display node then collapse the display section.
   // This allows creation of transform display nodes on request:
