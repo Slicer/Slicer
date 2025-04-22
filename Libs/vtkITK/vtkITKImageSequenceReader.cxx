@@ -35,8 +35,10 @@
 #include "itkNrrdImageIO.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 
-vtkStandardNewMacro(vtkITKImageSequenceReader);
 
+#define KEY_PREFIX "NRRD_"
+
+vtkStandardNewMacro(vtkITKImageSequenceReader);
 
 //----------------------------------------------------------------------------
 vtkITKImageSequenceReader::vtkITKImageSequenceReader()
@@ -59,11 +61,86 @@ void vtkITKImageSequenceReader::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
 
   os << indent << "FileName: " << (this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "Header key/value pairs:\n";
+  for (std::map<std::string,std::string>::iterator it = HeaderKeyValueMap.begin(); it != HeaderKeyValueMap.end(); ++it)
+  {
+    os << indent.GetNextIndent() << it->first << ": " << it->second << "\n";
+  }
+  os << indent << "Axis labels:\n";
+  for (std::map<unsigned int,std::string>::iterator it = AxisLabels.begin(); it != AxisLabels.end(); ++it)
+  {
+    os << indent.GetNextIndent() << "Axis " << it->first << ": " << it->second << "\n";
+  }
+  os << indent << "Axis units:\n";
+  for (std::map<unsigned int,std::string>::iterator it = AxisUnits.begin(); it != AxisUnits.end(); ++it)
+  {
+    os << indent.GetNextIndent() << "Axis " << it->first << ": " << it->second << "\n";
+  }
+  os << indent << "RasToIjkMatrix:\n";
+  if (this->RasToIjkMatrix)
+  {
+    this->RasToIjkMatrix->PrintSelf(os, indent.GetNextIndent());
+  }
+  else
+  {
+    os << indent.GetNextIndent() << "(none)\n";
+  }
+}
+
+//----------------------------------------------------------------------------
+const std::map<std::string,std::string> vtkITKImageSequenceReader::GetHeaderKeysMap()
+{
+  return this->HeaderKeyValueMap;
+}
+
+//----------------------------------------------------------------------------
+const std::vector<std::string> vtkITKImageSequenceReader::GetHeaderKeysVector()
+{
+  std::vector<std::string> keys;
+  for (std::map<std::string,std::string>::iterator it = HeaderKeyValueMap.begin(); it != HeaderKeyValueMap.end(); ++it)
+  {
+    keys.push_back(it->first);
+  }
+  return keys;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkITKImageSequenceReader::GetHeaderValue(const char* key)
+{
+  std::map<std::string,std::string>::iterator it = HeaderKeyValueMap.find(key);
+  if (it != HeaderKeyValueMap.end())
+  {
+    return (it->second.c_str());
+  }
+  else
+  {
+    return nullptr;
+  }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkITKImageSequenceReader::GetAxisLabel(unsigned int axis)
+{
+  if (this->AxisLabels.find(axis) == this->AxisLabels.end())
+  {
+    return nullptr;
+  }
+  return this->AxisLabels[axis].c_str();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkITKImageSequenceReader::GetAxisUnit(unsigned int axis)
+{
+  if (this->AxisUnits.find(axis) == this->AxisUnits.end())
+  {
+    return nullptr;
+  }
+  return this->AxisUnits[axis].c_str();
 }
 
 //----------------------------------------------------------------------------
 template <class TPixelType, int Dimension>
-void vtkITKExecuteDataFromFile_FramesInDimension(vtkITKImageSequenceReader* self, vtkImageData* data)
+void vtkITKExecuteDataFromFile_FramesInDimension(vtkITKImageSequenceReader* self, vtkImageData* data, int listDimIdx)
 {
   using PixelType = TPixelType;
   constexpr unsigned int ImageDimension = Dimension;
@@ -76,12 +153,8 @@ void vtkITKExecuteDataFromFile_FramesInDimension(vtkITKImageSequenceReader* self
   constexpr bool isRGB = std::is_same<PixelType, itk::RGBPixel<ValueType>>::value;
   constexpr bool isRGBA = std::is_same<PixelType, itk::RGBAPixel<ValueType>>::value;
 
-  std::cout << "PixelType: " << typeid(PixelType).name() << std::endl;
-  std::cout << "ValueType: " << typeid(ValueType).name() << std::endl;
-  std::cout << "Is Vector: " << isVector << std::endl;
-  std::cout << "Is CovariantVector: " << isCovariantVector << std::endl;
-  std::cout << "Is RGB: " << isRGB << std::endl;
-  std::cout << "Is RGBA: " << isRGBA << std::endl;
+  std::cout << "PixelType: " << typeid(PixelType).name() << ", ValueType: " << typeid(ValueType).name() << std::endl;
+  std::cout << "Vector: " << isVector << ", CovVector: " << isCovariantVector << ", RGB(A): " << (isRGB || isRGBA) << std::endl;
   if (isVector || isCovariantVector)
   {
     std::cout << "Vector Length: " << PixelType::Dimension << std::endl;
@@ -134,14 +207,13 @@ void vtkITKExecuteDataFromFile_FramesInDimension(vtkITKImageSequenceReader* self
 
   ImageType::RegionType fullRegion = image->GetLargestPossibleRegion();
   ImageType::SizeType extractionSize = fullRegion.GetSize();
-  self->SetNumberOfFrames(extractionSize[Dimension-1]);
+  self->SetNumberOfFrames(extractionSize[listDimIdx]);
 
-  //TODO: Get list dimension from metadata
-  extractionSize[Dimension-1] = 0;  // Collapse sequence dimension when extracting frame
+  extractionSize[listDimIdx] = 0;  // Collapse sequence dimension when extracting frame
 
   ImageType::RegionType extractionRegion;
   ImageType::IndexType extractionIndex = extractionRegion.GetIndex();
-  extractionIndex[Dimension-1] = self->GetCurrentFrameIndex();
+  extractionIndex[listDimIdx] = self->GetCurrentFrameIndex();
   extractionRegion.SetIndex(extractionIndex);
   extractionRegion.SetSize(extractionSize);
   extractImageFilter->SetDirectionCollapseToSubmatrix();
@@ -288,6 +360,12 @@ void vtkITKExecuteDataFromFile_FramesInComponent(vtkITKImageSequenceReader* self
 // are assumed to be the same as the file extent/order.
 void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo)
 {
+  this->HeaderKeyValueMap.clear();
+  this->AxisLabels.clear();
+  this->AxisUnits.clear();
+  this->SequenceAxisLabel.clear();
+  this->SequenceAxisUnit.clear();
+
   if (this->FileName == nullptr)
   {
     vtkErrorMacro("A file name must be specified.");
@@ -317,7 +395,87 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
     imageIO->SetFileName(this->GetFileName());
     imageIO->ReadImageInformation(); // Read only the header information
 
-    //// Print relevant metadata (kept for debugging when adding support for new data types)
+    // Read the relevant header information
+    itk::MetaDataDictionary thisDic = imageIO->GetMetaDataDictionary();
+    std::vector<std::string> keys = thisDic.GetKeys();
+    std::vector<std::string>::const_iterator keyIt;
+    const char* keyField;
+    unsigned int axi;
+    unsigned int baseDim = (imageIO->GetNumberOfComponents() > 1 ? 1 : 0);
+    int listDim{-1}; // List dimension is the (first) dimension of the list of frames, if any
+    for (keyIt = keys.begin(); keyIt != keys.end(); ++keyIt)
+    {
+      //// Print all key/value pairs from metadata dictionary for debugging
+      //std::string a;
+      //itk::ExposeMetaData<std::string>(thisDic, *keyIt, a);
+      //std::cout << "Key: " << *keyIt << ", Value: " << a << std::endl;
+
+      // Check for NRRD specific keys
+      std::string value;
+      if (!strncmp(KEY_PREFIX, keyIt->c_str(), strlen(KEY_PREFIX)))
+      {
+        keyField = keyIt->c_str() + strlen(KEY_PREFIX);
+        if (!strncmp(keyField, "kinds", strlen("kinds")))
+        {
+          if (1 == sscanf(keyField + strlen("kinds"), "[%u]", &axi)
+            && axi < imageIO->GetNumberOfDimensions() + baseDim && listDim == -1)
+          {
+            itk::ExposeMetaData<std::string>(thisDic, *keyIt, value);
+            if (value == "list")
+            {
+              listDim = axi; // Save first list dimension index
+            }
+          }
+        }
+        else if (!strncmp(keyField, "labels", strlen("labels")))
+        {
+          if (1 == sscanf(keyField + strlen("labels"), "[%u]", &axi) && axi < imageIO->GetNumberOfDimensions() + baseDim)
+          {
+            itk::ExposeMetaData<std::string>(thisDic, *keyIt, value);
+            this->AxisLabels[axi] = value;
+          }
+        }
+        else if (!strncmp(keyField, "units", strlen("units")))
+        {
+          if (1 == sscanf(keyField + strlen("units"), "[%u]", &axi) && axi < imageIO->GetNumberOfDimensions() + baseDim)
+          {
+            itk::ExposeMetaData<std::string>(thisDic, *keyIt, value);
+            this->AxisUnits[axi] = value;
+          }
+        }
+      }
+      else
+      {
+        // Read pre-defined keys for NRRDs in ITK
+        itk::ExposeMetaData<std::string>(thisDic, *keyIt, value);
+        if (!(*keyIt).compare("RangeAxisLabel"))
+        {
+          this->SequenceAxisLabel = value;
+        }
+        else if (!(*keyIt).compare("RangeAxisUnit"))
+        {
+          this->SequenceAxisUnit = value;
+        }
+        else if (!(*keyIt).compare("ITK_InputFilterName"))
+        {
+          continue; // There is always a key "ITK_InputFilterName" in the header, skip it
+        }
+        else // Free-form key/value pairs
+        {
+          this->HeaderKeyValueMap[keyIt->c_str()] = value;
+        }
+      }
+    } // For all keys in the metadata dictionary
+
+    // Set SequenceAxisLabel and SequenceAxisUnit from AxisLabels and AxisUnits, respectively,
+    // if the frames are stored in the dimensions instead of the components
+    if (listDim >= 0)
+    {
+      this->SequenceAxisLabel = this->AxisLabels[listDim];
+      this->SequenceAxisUnit = this->AxisUnits[listDim];
+    }
+
+    //// Print relevant image metadata (kept for debugging when adding support for new data types)
     //unsigned int dimension = imageIO->GetNumberOfDimensions();
     //std::cerr << "Dimensions: " << dimension << std::endl;
     //for (unsigned int i = 0; i < dimension; ++i)
@@ -340,7 +498,7 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
             this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
             return;
           }
-          vtkITKExecuteDataFromFile_FramesInDimension<itk::RGBPixel<unsigned char>, 3>(this, data);
+          vtkITKExecuteDataFromFile_FramesInDimension<itk::RGBPixel<unsigned char>, 3>(this, data, listDim);
           break;
         case itk::CommonEnums::IOPixel::RGBA:
           if (imageIO->GetComponentType() != itk::ImageIOBase::IOComponentEnum::UCHAR)
@@ -349,12 +507,10 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
             this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
             return;
           }
-          vtkITKExecuteDataFromFile_FramesInDimension<itk::RGBAPixel<unsigned char>, 3>(this, data);
+          vtkITKExecuteDataFromFile_FramesInDimension<itk::RGBAPixel<unsigned char>, 3>(this, data, listDim);
           break;
         case itk::CommonEnums::IOPixel::VECTOR:
-          // For 3D images with vector type, we suppose that the sequence information is stored as scalar components
-          // if number of components is larger than 4
-          if (imageIO->GetNumberOfComponents() > 4)
+          if (listDim < 0) // If list dimension was not found, then we suppose that the sequence information is stored as scalar components
           {
             switch (imageIO->GetComponentType())
             {
@@ -378,13 +534,13 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
             switch (imageIO->GetComponentType())
             {
             case itk::ImageIOBase::IOComponentEnum::USHORT:
-              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned short>, 3>(this, data);
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned short>, 3>(this, data, listDim);
               break;
             case itk::ImageIOBase::IOComponentEnum::INT:
-              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<int>, 3>(this, data);
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<int>, 3>(this, data, listDim);
               break;
             case itk::ImageIOBase::IOComponentEnum::FLOAT:
-              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<float>, 3>(this, data);
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<float>, 3>(this, data, listDim);
               break;
             default:
               vtkErrorMacro("Unexpected component type for 4 or less component vector voxel: "
@@ -406,7 +562,7 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
             this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
             return;
           }
-          vtkITKExecuteDataFromFile_FramesInDimension<itk::RGBPixel<unsigned char>, 4>(this, data);
+          vtkITKExecuteDataFromFile_FramesInDimension<itk::RGBPixel<unsigned char>, 4>(this, data, listDim);
           break;
         case itk::CommonEnums::IOPixel::RGBA:
           if (imageIO->GetComponentType() != itk::ImageIOBase::IOComponentEnum::UCHAR)
@@ -415,22 +571,22 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
             this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
             return;
           }
-          vtkITKExecuteDataFromFile_FramesInDimension<itk::RGBAPixel<unsigned char>, 4>(this, data);
+          vtkITKExecuteDataFromFile_FramesInDimension<itk::RGBAPixel<unsigned char>, 4>(this, data, listDim);
           break;
         case itk::CommonEnums::IOPixel::VECTOR:
           switch (imageIO->GetComponentType())
           {
           case itk::ImageIOBase::IOComponentEnum::UCHAR:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned char>, 4>(this, data);
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned char>, 4>(this, data, listDim);
             break;
           case itk::ImageIOBase::IOComponentEnum::USHORT:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned short>, 4>(this, data);
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned short>, 4>(this, data, listDim);
             break;
           case itk::ImageIOBase::IOComponentEnum::FLOAT:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<float>, 4>(this, data);
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<float>, 4>(this, data, listDim);
             break;
           case itk::ImageIOBase::IOComponentEnum::DOUBLE:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<double>, 4>(this, data);
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<double>, 4>(this, data, listDim);
             break;
           default:
             vtkErrorMacro("Unexpected component type for vector voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
@@ -442,16 +598,16 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
           switch (imageIO->GetComponentType())
           {
           case itk::ImageIOBase::IOComponentEnum::UCHAR:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<unsigned char>, 4>(this, data);
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<unsigned char>, 4>(this, data, listDim);
             break;
           case itk::ImageIOBase::IOComponentEnum::USHORT:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<unsigned short>, 4>(this, data);
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<unsigned short>, 4>(this, data, listDim);
             break;
           case itk::ImageIOBase::IOComponentEnum::FLOAT:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<float>, 4>(this, data);
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<float>, 4>(this, data, listDim);
             break;
           case itk::ImageIOBase::IOComponentEnum::DOUBLE:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<double>, 4>(this, data);
+            vtkITKExecuteDataFromFile_FramesInDimension<itk::CovariantVector<double>, 4>(this, data, listDim);
             break;
           default:
             vtkErrorMacro("Unexpected component type for covariant vector voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
@@ -461,7 +617,7 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
           break;
       }
       break;
-    }
+    } // Load image from file the sequence frames either in the last dimension or as components, depending on the pixel type
   }
   catch (itk::InvalidArgumentError & e)
   {
