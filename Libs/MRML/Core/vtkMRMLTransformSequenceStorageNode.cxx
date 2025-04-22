@@ -38,11 +38,12 @@
 #include "vtkITKImageSequenceWriter.h"
 
 // VTK includes
-#include "vtkImageData.h"
-#include "vtkNew.h"
-#include "vtkObjectFactory.h"
-#include "vtkPointData.h"
-#include "vtkStringArray.h"
+#include <vtkErrorCode.h>
+#include <vtkImageData.h>
+#include <vtkNew.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkStringArray.h>
 
 // VTKsys includes
 #include "vtksys/SystemTools.hxx"
@@ -90,6 +91,12 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   vtkNew<vtkITKImageSequenceReader> reader;
   reader->SetFileName(fullName.c_str());
   reader->Update();  // Read first frame. This will also set NumberOfFrames
+  if (reader->GetErrorCode() != vtkErrorCode::NoError)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformSequenceStorageNode::ReadDataInternal",
+      "Error reading file.");
+    return 0;
+  }
 
   const char* sequenceAxisLabel = "frame";
   const char* sequenceAxisUnit = "";
@@ -102,7 +109,7 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       reader->Update();
     }
     vtkImageData* frameImage = reader->GetOutput();
-    if (frameImage == nullptr || frameImage->GetPointData()==nullptr || frameImage->GetPointData()->GetScalars() == nullptr)
+    if (frameImage == nullptr || frameImage->GetPointData() == nullptr || frameImage->GetPointData()->GetScalars() == nullptr)
     {
       vtkErrorMacro("vtkMRMLTransformSequenceStorageNode::ReadDataInternal: invalid image data");
       return 0;
