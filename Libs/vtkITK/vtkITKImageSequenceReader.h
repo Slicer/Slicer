@@ -32,23 +32,40 @@ class VTK_ITK_EXPORT vtkITKImageSequenceReader : public vtkMedicalImageReader2
   vtkTypeMacro(vtkITKImageSequenceReader, vtkMedicalImageReader2);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  ///
   /// Specify file name for the image file.
   vtkSetStringMacro(FileName);
+  /// Get file name for the image file.
   vtkGetStringMacro(FileName);
 
-  ///
-  /// Current frame index that is extracted from the sequence image to the output port.
+  /// Set current frame index that is extracted from the sequence image to the output port.
   vtkSetMacro(CurrentFrameIndex, unsigned int);
+  /// Get current frame index that is extracted from the sequence image to the output port.
   vtkGetMacro(CurrentFrameIndex, unsigned int);
 
-  /// Get number of frames in recently read image. Set in first Update. Read only.
+  /// Set number of frames in recently read image. Set in first Update. Read only.
   vtkSetMacro(NumberOfFrames, unsigned int);
+  /// Get number of frames in recently read image. Set in first Update. Read only.
   vtkGetMacro(NumberOfFrames, unsigned int);
 
   /// Get RAS to IJK matrix. It is null until the first reading is done.
   vtkSetObjectMacro(RasToIjkMatrix, vtkMatrix4x4);
   vtkGetObjectMacro(RasToIjkMatrix, vtkMatrix4x4);
+
+  /// Get the list of keys in the header.
+  const std::vector<std::string> GetHeaderKeysVector();
+  /// Get the map of keys in the header.
+  const std::map<std::string, std::string> GetHeaderKeysMap();
+  /// Get a value given a key in the header
+  const char* GetHeaderValue(const char* key);
+
+  /// Get label for specified axis
+  const char* GetAxisLabel(unsigned int axis);
+
+  /// Get unit for specified axis
+  const char* GetAxisUnit(unsigned int axis);
+
+  vtkGetMacro(SequenceAxisLabel, std::string);
+  vtkGetMacro(SequenceAxisUnit, std::string);
 
  protected:
   vtkITKImageSequenceReader();
@@ -69,6 +86,18 @@ protected:
 
   /// RAS to IJK matrix
   vtkMatrix4x4* RasToIjkMatrix{nullptr};
+
+  /// Key/value pairs read from the header.
+  std::map<std::string, std::string> HeaderKeyValueMap;
+
+  // Axis labels read from the header.
+  std::map<unsigned int, std::string> AxisLabels;
+  // Axis units read from the header.
+  std::map<unsigned int, std::string> AxisUnits;
+  // Sequence axis label read from the header.
+  std::string SequenceAxisLabel;
+  // Sequence axis unit read from the header.
+  std::string SequenceAxisUnit;
 
 private:
   vtkITKImageSequenceReader(const vtkITKImageSequenceReader&) = delete;
