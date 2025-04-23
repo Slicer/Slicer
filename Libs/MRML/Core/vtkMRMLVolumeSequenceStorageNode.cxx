@@ -342,6 +342,21 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   // Pass on voxel type to the writer (NRRD kind of first axis)
   writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(frameVolumeVoxelVectorType));
 
+  // Set attributes from sequence node
+  std::vector<std::string> attributeNames = volSequenceNode->GetAttributeNames();
+  for (const std::string& attributeName : attributeNames)
+  {
+    const char* attributeValue = volSequenceNode->GetAttribute(attributeName.c_str());
+    if (attributeValue)
+    {
+      writer->SetAttribute(attributeName.c_str(), attributeValue);
+    }
+  }
+  // Set sequence axis label and unit
+  const unsigned int sequenceAxisIndex = 3; // The fourth NRRD axis regardless the components, because the component axis does not count as real axis
+  writer->SetAxisLabel(sequenceAxisIndex, volSequenceNode->GetIndexName().c_str());
+  writer->SetAxisUnit(sequenceAxisIndex, volSequenceNode->GetIndexUnit().c_str());
+
   // Setup writer
   for (int frameIndex=0; frameIndex<numberOfFrameVolumes; frameIndex++)
   {

@@ -41,9 +41,13 @@
 #include <itkJoinSeriesImageFilter.h>
 #include <itkMetaDataDictionary.h>
 #include <itkMetaDataObject.h>
-#include <itkMetaDataObjectBase.h>
 #include <itkVTKImageImport.h>
 
+
+#define NRRD_DIM_MAX 16
+
+class AttributeMapType: public std::map<std::string, std::string> {};
+class AxisInfoMapType : public std::map<unsigned int, std::string> {};
 
 vtkStandardNewMacro(vtkITKImageSequenceWriter);
 
@@ -206,6 +210,44 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
     itk::EncapsulateMetaData<std::string>(dictionary, "intent_code", self->GetIntentCode());
   }
 
+  // Set axis metadata
+  if (!self->GetAxisLabels()->empty())
+  {
+    std::string labelsKeyBase = "NRRD_labels[";
+    const char* labels[NRRD_DIM_MAX] = { nullptr };
+    for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
+    {
+      if (self->GetAxisLabels()->find(axi) != self->GetAxisLabels()->end())
+      {
+        labels[axi] = (*self->GetAxisLabels())[axi].c_str();
+        itk::EncapsulateMetaData<std::string>(dictionary, labelsKeyBase + std::to_string(axi) + std::string("]"), labels[axi]);
+      }
+    }
+  }
+  if (!self->GetAxisUnits()->empty())
+  {
+    std::string unitsKeyBase = "NRRD_units[";
+    const char* units[NRRD_DIM_MAX] = { nullptr };
+    for (unsigned int axi = 0; axi < NRRD_DIM_MAX; axi++)
+    {
+      if (self->GetAxisUnits()->find(axi) != self->GetAxisUnits()->end())
+      {
+        units[axi] = (*self->GetAxisUnits())[axi].c_str();
+        itk::EncapsulateMetaData<std::string>(dictionary, unitsKeyBase + std::to_string(axi) + std::string("]"), units[axi]);
+      }
+    }
+  }
+  // Set attributes
+  AttributeMapType::iterator ait;
+  for (ait = self->GetAttributes()->begin(); ait != self->GetAttributes()->end(); ++ait)
+  {
+    // Do not set "space" as k-v. it is handled separately, and needs to be a nrrd *field*.
+    if (ait->first != "space")
+    {
+      itk::EncapsulateMetaData<std::string>(dictionary, ait->first, ait->second);
+    }
+  }
+
   try
   {
     joinImageFilter->GetOutput()->SetDirection(outDirection);
@@ -233,6 +275,9 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter *self, vtkCollection *inputImage
 //----------------------------------------------------------------------------
 vtkITKImageSequenceWriter::vtkITKImageSequenceWriter()
 {
+  this->Attributes = new AttributeMapType;
+  this->AxisLabels = new AxisInfoMapType;
+  this->AxisUnits = new AxisInfoMapType;
 }
 
 //----------------------------------------------------------------------------
@@ -241,6 +286,13 @@ vtkITKImageSequenceWriter::~vtkITKImageSequenceWriter()
   this->SetFileName(nullptr);
   this->SetImageIOClassName(nullptr);
   this->SetIntentCode(nullptr);
+
+  delete this->Attributes;
+  this->Attributes = nullptr;
+  delete this->AxisLabels;
+  this->AxisLabels = nullptr;
+  delete this->AxisUnits;
+  this->AxisUnits = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -259,7 +311,52 @@ int vtkITKImageSequenceWriter::FillInputPortInformation(int port, vtkInformation
   return this->Superclass::FillInputPortInformation(port, info);
 }
 
-//----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+void vtkITKImageSequenceWriter::SetAttribute(const std::string& name, const std::string& value)
+{
+  if (!this->Attributes)
+  {
+    return;
+  }
+
+  (*this->Attributes)[name] = value;
+}
+
+//------------------------------------------------------------------------------
+void vtkITKImageSequenceWriter::SetAxisLabel(unsigned int axis, const char* label)
+{
+  if (!this->AxisLabels)
+  {
+    return;
+  }
+  if (label)
+  {
+    (*this->AxisLabels)[axis] = label;
+  }
+  else
+  {
+    this->AxisLabels->erase(axis);
+  }
+}
+
+//------------------------------------------------------------------------------
+void vtkITKImageSequenceWriter::SetAxisUnit(unsigned int axis, const char* unit)
+{
+  if (!this->AxisUnits)
+  {
+    return;
+  }
+  if (unit)
+  {
+    (*this->AxisUnits)[axis] = unit;
+  }
+  else
+  {
+    this->AxisLabels->erase(axis);
+  }
+}
+
+//------------------------------------------------------------------------------
 // Writes all the data from the input.
 void vtkITKImageSequenceWriter::Write()
 {

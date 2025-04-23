@@ -148,7 +148,8 @@ void vtkITKExecuteDataFromFile_FramesInDimension(vtkITKImageSequenceReader* self
 
   // Debug information about the pixel type
   using ValueType = typename PixelType::ValueType;
-  constexpr bool isVector = std::is_same<PixelType, itk::Vector<ValueType>>::value;
+  constexpr bool isVector = std::is_same<PixelType, itk::Vector<ValueType>>::value
+    || std::is_same<PixelType, itk::Vector<ValueType, 4>>::value;
   constexpr bool isCovariantVector = std::is_same<PixelType, itk::CovariantVector<ValueType>>::value;
   constexpr bool isRGB = std::is_same<PixelType, itk::RGBPixel<ValueType>>::value;
   constexpr bool isRGBA = std::is_same<PixelType, itk::RGBAPixel<ValueType>>::value;
@@ -574,24 +575,50 @@ void vtkITKImageSequenceReader::ExecuteDataWithInformation(vtkDataObject* output
           vtkITKExecuteDataFromFile_FramesInDimension<itk::RGBAPixel<unsigned char>, 4>(this, data, listDim);
           break;
         case itk::CommonEnums::IOPixel::VECTOR:
-          switch (imageIO->GetComponentType())
+          switch (imageIO->GetNumberOfComponents())
           {
-          case itk::ImageIOBase::IOComponentEnum::UCHAR:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned char>, 4>(this, data, listDim);
+          case 3:
+            switch (imageIO->GetComponentType())
+            {
+            case itk::ImageIOBase::IOComponentEnum::UCHAR:
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned char>, 4>(this, data, listDim);
+              break;
+            case itk::ImageIOBase::IOComponentEnum::USHORT:
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned short>, 4>(this, data, listDim);
+              break;
+            case itk::ImageIOBase::IOComponentEnum::FLOAT:
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<float>, 4>(this, data, listDim);
+              break;
+            case itk::ImageIOBase::IOComponentEnum::DOUBLE:
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<double>, 4>(this, data, listDim);
+              break;
+            default:
+              vtkErrorMacro("Unexpected component type for vector voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
+              this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+              return;
+            }
             break;
-          case itk::ImageIOBase::IOComponentEnum::USHORT:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned short>, 4>(this, data, listDim);
+          case 4:
+            switch (imageIO->GetComponentType())
+            {
+            case itk::ImageIOBase::IOComponentEnum::UCHAR:
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned char, 4>, 4>(this, data, listDim);
+              break;
+            case itk::ImageIOBase::IOComponentEnum::USHORT:
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<unsigned short, 4>, 4>(this, data, listDim);
+              break;
+            case itk::ImageIOBase::IOComponentEnum::FLOAT:
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<float, 4>, 4>(this, data, listDim);
+              break;
+            case itk::ImageIOBase::IOComponentEnum::DOUBLE:
+              vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<double, 4>, 4>(this, data, listDim);
+              break;
+            default:
+              vtkErrorMacro("Unexpected component type for vector voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
+              this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+              return;
+            }
             break;
-          case itk::ImageIOBase::IOComponentEnum::FLOAT:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<float>, 4>(this, data, listDim);
-            break;
-          case itk::ImageIOBase::IOComponentEnum::DOUBLE:
-            vtkITKExecuteDataFromFile_FramesInDimension<itk::Vector<double>, 4>(this, data, listDim);
-            break;
-          default:
-            vtkErrorMacro("Unexpected component type for vector voxel: " << imageIO->GetComponentTypeAsString(imageIO->GetComponentType()));
-            this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
-            return;
           }
           break;
         case itk::CommonEnums::IOPixel::COVARIANTVECTOR:
