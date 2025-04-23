@@ -34,8 +34,7 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    # "55c47b7a8ed6b80bc3be3ba9d304ebee02a8a71d" # slicer-v5.4.3-2025-03-19-0913f2a
-    "5a309d7ca3bed01f358f80ea209f0f668c5b4a4b" # nrrd-sequence-5d-io
+    "6230caf455c25608ab4cab14e14a72f1408e417c" # nrrd-sequence-5d-io-543
     QUIET
     )
 
