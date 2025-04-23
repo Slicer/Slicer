@@ -28,6 +28,8 @@
 #include "itkImageIOBase.h"
 
 class vtkStringArray;
+class AttributeMapType;
+class AxisInfoMapType;
 
 class VTK_ITK_EXPORT vtkITKImageSequenceWriter : public vtkImageAlgorithm
 {
@@ -37,13 +39,13 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum
-    {
+  {
     VoxelVectorTypeUndefined,
     VoxelVectorTypeSpatial,
     VoxelVectorTypeColorRGB,
     VoxelVectorTypeColorRGBA,
     VoxelVectorType_Last // must be last
-    };
+  };
 
   ///
   /// Use compression if possible
@@ -61,7 +63,6 @@ public:
   vtkGetStringMacro(ImageIOClassName);
   vtkSetStringMacro(ImageIOClassName);
 
-  ///
   /// The main interface which triggers the writer to start.
   void Write();
 
@@ -79,15 +80,28 @@ public:
   vtkSetStringMacro(IntentCode);
   vtkGetStringMacro(IntentCode);
 
+  /// Method to set an attribute that will be passed into the NRRD file on write
+  void SetAttribute(const std::string& name, const std::string& value);
+  /// Get the attributes map
+  AttributeMapType* GetAttributes() const { return this->Attributes; }
+
+  /// Method to set label for each axis
+  void SetAxisLabel(unsigned int axis, const char* label);
+  /// Get the axis labels map
+  AxisInfoMapType* GetAxisLabels() const { return this->AxisLabels; }
+
+  /// Method to set unit for each axis
+  void SetAxisUnit(unsigned int axis, const char* unit);
+  /// Get the axis units map
+  AxisInfoMapType* GetAxisUnits() const { return this->AxisUnits; }
+
 protected:
   vtkITKImageSequenceWriter();
   ~vtkITKImageSequenceWriter() override;
 
-  /**
-   * Fill the input port information objects for this algorithm.  This
-   * is invoked by the first call to GetInputPortInformation for each
-   * port so subclasses can specify what they can handle.
-   */
+  /// Fill the input port information objects for this algorithm.  This
+  /// is invoked by the first call to GetInputPortInformation for each
+  /// port so subclasses can specify what they can handle.
   int FillInputPortInformation(int port, vtkInformation* info) override;
 
 protected:
@@ -97,6 +111,10 @@ protected:
   char* ImageIOClassName{nullptr};
   int VoxelVectorType{VoxelVectorTypeUndefined};
   char* IntentCode{nullptr};
+
+  AttributeMapType* Attributes;
+  AxisInfoMapType* AxisLabels;
+  AxisInfoMapType* AxisUnits;
 
 private:
   vtkITKImageSequenceWriter(const vtkITKImageSequenceWriter&) = delete;
