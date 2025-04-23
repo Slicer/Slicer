@@ -326,7 +326,7 @@ void qSlicerViewersToolBarPrivate::init()
   this->IntersectingSlicesVisibleAction->setIcon(QIcon(":/Icons/SliceIntersections.png"));
   this->IntersectingSlicesVisibleAction->setText(qSlicerViewersToolBar::tr("Slice intersections"));
   this->IntersectingSlicesVisibleAction->setToolTip(
-    qSlicerViewersToolBar::tr("Show how the other slice planes intersect each slice plane."));
+    qSlicerViewersToolBar::tr("Toggle slice intersection visibility. Hold Shift key and move mouse in a view to set slice intersection position."));
   this->IntersectingSlicesVisibleAction->setCheckable(true);
   this->SliceIntersectionsToolButton->setDefaultAction(this->IntersectingSlicesVisibleAction);
   QObject::connect(this->IntersectingSlicesVisibleAction, SIGNAL(triggered(bool)),
