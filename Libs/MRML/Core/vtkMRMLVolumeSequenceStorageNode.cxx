@@ -156,8 +156,6 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     double origin[3], spacing[3];
     frameImage->GetOrigin(origin);
     frameImage->GetSpacing(spacing);
-    frameVolume->SetOrigin(origin);
-    frameVolume->SetSpacing(spacing);
 
     // Clear origin, spacing, and directions from image data since they are now in the volume node
     frameImage->SetOrigin(0.0, 0.0, 0.0);
@@ -167,7 +165,7 @@ int vtkMRMLVolumeSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
     // Set up the volume node
     frameVolume->SetAndObserveImageData(frameImage);
-    frameVolume->SetRASToIJKMatrix(reader->GetRasToIjkMatrix());
+    frameVolume->SetIJKToRASMatrix(reader->GetRasToIjkMatrix());
 
     std::ostringstream indexStr;
     indexStr << frameIndex << std::ends;
