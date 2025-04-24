@@ -76,13 +76,13 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
   typename OutImageType::PointType outOrigin;
   inDirection.SetIdentity();
 
-  double mag[4] = {0.0};
+  double mag[4] = {0.0, 0.0, 0.0, 1.0};
   int i = 0;
-  for (i=0; i<4; i++)
+  for (i=0; i<3; i++)
   {
     // normalize vectors
     mag[i] = 0;
-    for (int j=0; j<4; j++)
+    for (int j=0; j<3; j++)
     {
       mag[i] += ijkToRasMatrix->GetElement(i,j) * ijkToRasMatrix->GetElement(i,j);
     }
@@ -92,10 +92,9 @@ void ITKWriteVTKImage(vtkITKImageSequenceWriter* self, vtkCollection* inputImage
     }
     mag[i] = sqrt(mag[i]);
   }
-
-  for (i=0; i<4; i++)
+  for (i=0; i<3; i++)
   {
-    for (int j=0; j<4; j++)
+    for (int j=0; j<3; j++)
     {
       ijkToRasMatrix->SetElement(i, j, ijkToRasMatrix->GetElement(i,j) / mag[i]);
     }
