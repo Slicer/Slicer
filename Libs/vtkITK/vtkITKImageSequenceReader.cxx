@@ -179,7 +179,8 @@ void vtkITKExecuteDataFromFile_FramesInDimension(vtkITKImageSequenceReader* self
   {
     for (unsigned int row=0; row<3; row++)
     {
-      directions[row][col] = itkDirections[row][col];
+      double lpsRas = (row==0 && col==0) || (row==1 && col==1) ? -1.0 : 1.0;
+      directions[row][col] = itkDirections[row][col] * lpsRas;
     }
   }
   // Make the pose matrix available in VTK
@@ -262,7 +263,8 @@ void vtkITKExecuteDataFromFile_FramesInComponent(vtkITKImageSequenceReader* self
   {
     for (unsigned int row=0; row<3; row++)
     {
-      directions[row][col] = itkDirections[row][col];
+      double lpsRas = (row==0 && col==0) || (row==1 && col==1) ? -1.0 : 1.0;
+      directions[row][col] = itkDirections[row][col] * lpsRas;
     }
   }
   // Make the pose matrix available in VTK
