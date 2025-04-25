@@ -1746,7 +1746,7 @@ bool qSlicerTerminologyNavigatorWidgetPrivate::findTerminology(
   else
   {
     // Not found, select the first terminology item by default
-    terminologyNameToSelect = (!preferredTerminologyNames.empty() ? preferredTerminologyNames[0].c_str() : this->ComboBox_Terminology->itemText(0));
+    terminologyNameToSelect = (!preferredTerminologyNames.empty() ? QString::fromStdString(preferredTerminologyNames[0]) : this->ComboBox_Terminology->itemText(0));
     colorNodeIDToSelect = this->ComboBox_Terminology->itemData(0).toString();
     colorIndexInColorTable = -1;
   }
