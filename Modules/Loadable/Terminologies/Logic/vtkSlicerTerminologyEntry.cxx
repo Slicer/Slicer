@@ -214,3 +214,31 @@ void vtkSlicerTerminologyEntry::Copy(vtkSlicerTerminologyEntry* aEntry)
   this->RegionObject->Copy(aEntry->GetRegionObject());
   this->RegionModifierObject->Copy(aEntry->GetRegionModifierObject());
 }
+
+//----------------------------------------------------------------------------
+const char* vtkSlicerTerminologyEntry::GetAnatomicContextName()
+{
+  vtkWarningMacro("GetAnatomicContextName is deprecated. Use GetRegionContextName instead.");
+  return this->GetRegionContextName();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerTerminologyEntry::SetAnatomicContextName(const char* name)
+{
+  vtkWarningMacro("SetAnatomicContextName is deprecated. Use SetRegionContextName instead.");
+  this->SetRegionContextName(name);
+}
+
+//----------------------------------------------------------------------------
+vtkSlicerTerminologyType* vtkSlicerTerminologyEntry::GetAnatomicRegionObject()
+{
+  vtkWarningMacro("GetAnatomicRegionObject is deprecated. Use GetRegionObject instead.");
+  return this->GetRegionObject();
+}
+
+//----------------------------------------------------------------------------
+vtkSlicerTerminologyType* vtkSlicerTerminologyEntry::GetAnatomicRegionModifierObject()
+{
+  vtkWarningMacro("GetAnatomicRegionModifierObject is deprecated. Use GetRegionObject instead.");
+  return this->GetRegionModifierObject();
+}
