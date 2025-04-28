@@ -66,6 +66,15 @@ public:
   /// Returns true if all fields are empty.
   bool IsEmpty();
 
+  /// \deprecated Use GetRegionContextName instead.
+  const char* GetAnatomicContextName();
+  /// \deprecated Use SetRegionContextName instead.
+  void SetAnatomicContextName(const char* name);
+  /// \deprecated Use GetRegionObject instead.
+  vtkSlicerTerminologyType* GetAnatomicRegionObject();
+  /// \deprecated Use GetRegionModifierObject instead.
+  vtkSlicerTerminologyType* GetAnatomicRegionModifierObject();
+
 protected:
   vtkSetObjectMacro(CategoryObject, vtkSlicerTerminologyCategory);
   vtkSetObjectMacro(TypeObject, vtkSlicerTerminologyType);
