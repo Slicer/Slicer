@@ -96,6 +96,24 @@ public:
   vtkGetMacro(ClippingSoftEdgeVoxels, double);
   //@}
 
+  //@{
+  /// Get/Set the blank voxel value for the volume rendering.
+  /// This value is used for the fill value when clipping for volume rendering.
+  /// It is only used when AutoClippingBlankVoxelValue is false.
+  /// The default value is 0.0.
+  vtkSetMacro(ClippingBlankVoxelValue, double);
+  vtkGetMacro(ClippingBlankVoxelValue, double);
+  //@}
+
+  //@{
+  /// Get/Set whether the blank voxel value is automatically set to the background value of the volume node.
+  /// If disabled, then ClippingBlankVoxelValue is used.
+  /// The default value is true.
+  vtkSetMacro(AutoClippingBlankVoxelValue, bool);
+  vtkGetMacro(AutoClippingBlankVoxelValue, bool);
+  vtkBooleanMacro(AutoClippingBlankVoxelValue, bool);
+  //@}
+
 protected:
   vtkMRMLVolumeRenderingDisplayNode();
   ~vtkMRMLVolumeRenderingDisplayNode() override;
@@ -127,6 +145,9 @@ protected:
   double WindowLevel[2];
 
   double ClippingSoftEdgeVoxels{ 0.0 };
+
+  double ClippingBlankVoxelValue{ 0.0 };
+  bool AutoClippingBlankVoxelValue{ true };
 };
 
 #endif
