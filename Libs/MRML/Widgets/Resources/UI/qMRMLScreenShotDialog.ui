@@ -6,14 +6,71 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>461</width>
-    <height>419</height>
+    <width>433</width>
+    <height>385</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Annotation Screenshot</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="7" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="toolTip">
+      <string>Save snapshot via File Save. Edit in Annotations module.</string>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QTextEdit" name="descriptionTextEdit">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>100</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="ctkDoubleSpinBox" name="scaleFactorSpinBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Adjust the Magnification factor.</string>
+     </property>
+     <property name="suffix">
+      <string>x</string>
+     </property>
+     <property name="decimals">
+      <number>1</number>
+     </property>
+     <property name="minimum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="nameEdit"/>
+   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="nameLabel">
      <property name="text">
@@ -21,8 +78,19 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="nameEdit"/>
+   <item row="5" column="0">
+    <widget class="QLabel" name="descriptionLabel">
+     <property name="text">
+      <string>Description:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="scaleFactorLabel">
+     <property name="text">
+      <string>Scale factor:</string>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="screenshotLabel">
@@ -132,78 +200,10 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="scaleFactorLabel">
-     <property name="text">
-      <string>Scale factor:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="ctkDoubleSpinBox" name="scaleFactorSpinBox">
-     <property name="toolTip">
-      <string>Adjust the Magnification factor.</string>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="suffix">
-      <string>x</string>
-     </property>
-     <property name="decimals">
-      <number>1</number>
-     </property>
-     <property name="minimum">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>10.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>1.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QPushButton" name="saveAsButton">
      <property name="text">
       <string>Save As...:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="descriptionLabel">
-     <property name="text">
-      <string>Description:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="QTextEdit" name="descriptionTextEdit">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>100</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="toolTip">
-      <string>Save snapshot via File Save. Edit in Annotations module.</string>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -211,14 +211,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkThumbnailLabel</class>
-   <extends>QWidget</extends>
-   <header>ctkThumbnailLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkDoubleSpinBox</class>
    <extends>QWidget</extends>
    <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkThumbnailLabel</class>
+   <extends>QWidget</extends>
+   <header>ctkThumbnailLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

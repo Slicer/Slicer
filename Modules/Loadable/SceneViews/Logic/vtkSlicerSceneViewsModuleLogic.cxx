@@ -131,6 +131,40 @@ void vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNodesToSequenceBrowserNodes
 }
 
 //-----------------------------------------------------------------------------
+vtkMRMLSequenceNode* vtkSlicerSceneViewsModuleLogic::GetOrAddSceneViewSequenceNode(vtkMRMLSequenceBrowserNode* sequenceBrowser, vtkMRMLNode* proxyNode)
+{
+  vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(this->GetModuleLogic("Sequences"));
+  if (!sequencesLogic)
+  {
+    vtkErrorMacro("GetOrAddSceneViewSequenceNode: Failed to get sequences logic.");
+    return nullptr;
+  }
+
+  vtkSmartPointer<vtkMRMLSequenceNode> sequenceNode = sequenceBrowser->GetSequenceNode(proxyNode);
+  if (!sequenceNode)
+  {
+    sequenceNode = vtkSmartPointer<vtkMRMLSequenceNode>::Take(vtkMRMLSequenceNode::SafeDownCast(
+      this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSequenceNode")));
+
+    const char* proxyNodeName = proxyNode->GetName();
+    std::string baseName = (proxyNodeName && strlen(proxyNodeName) > 0) ? proxyNodeName : "Default";
+    std::stringstream nodenameStringstream;
+    nodenameStringstream << "SceneViewSequence_" << baseName;
+    std::string uniqueName = this->GetMRMLScene()->GenerateUniqueName(nodenameStringstream.str());
+    sequenceNode->SetName(uniqueName.c_str());
+
+    sequenceNode->HideFromEditorsOn();
+    this->GetMRMLScene()->AddNode(sequenceNode);
+    sequencesLogic->AddSynchronizedNode(sequenceNode, proxyNode, sequenceBrowser);
+    sequenceNode->SetAttribute(vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeName(),
+      vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeValue());
+    sequenceBrowser->SetMissingItemMode(sequenceNode, vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden);
+  }
+
+  return sequenceNode;
+}
+
+//-----------------------------------------------------------------------------
 vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNodeToSequenceBrowserNode(vtkMRMLSceneViewNode* sceneViewNode,
   vtkMRMLSequenceBrowserNode* sequenceBrowser)
 {
@@ -184,26 +218,14 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNode
   vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(this->GetModuleLogic("Sequences"));
   for (vtkMRMLNode* proxyNode : proxyNodes)
   {
-    vtkSmartPointer<vtkMRMLSequenceNode> sequenceNode = sequenceBrowser->GetSequenceNode(proxyNode);
-    if (!sequenceNode)
-    {
-      sequenceNode = vtkSmartPointer<vtkMRMLSequenceNode>::Take(vtkMRMLSequenceNode::SafeDownCast(
-        this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSequenceNode")));
-      std::stringstream nameStringstream;
-      nameStringstream << "Sequence_" << proxyNode->GetName();
-      std::string nameString = nameStringstream.str();
-      sequenceNode->SetName(this->GetMRMLScene()->GetUniqueNameByString(nameString.c_str()));
-      sequenceNode->HideFromEditorsOn();
-      this->GetMRMLScene()->AddNode(sequenceNode);
-      sequenceNode = sequencesLogic->AddSynchronizedNode(sequenceNode, proxyNode, sequenceBrowser);
-    }
+    vtkSmartPointer<vtkMRMLSequenceNode> sequenceNode = this->GetOrAddSceneViewSequenceNode(sequenceBrowser, proxyNode);
     int disabledModifiedEvent = sequenceNode->GetDisableModifiedEvent();
     wasDisabledModifiedEvents[sequenceNode] = disabledModifiedEvent;
     sequenceNode->DisableModifiedEventOn();
   }
 
   this->CreateSceneView(proxyNodes, sceneViewName ? sceneViewName : "", sceneViewDescription ? sceneViewDescription : "",
-    sceneViewScreenshotType , sceneViewScreenshot, sequenceBrowser);
+    sceneViewScreenshotType, sceneViewScreenshot, sequenceBrowser);
 
   int index = this->GetNumberOfSceneViews() - 1;
   for (vtkMRMLNode* proxyNode : proxyNodes)
@@ -379,15 +401,6 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(std::vector<vtkMRMLNode*> s
   vtkMRMLVolumeNode* screenshotNode = this->GetSceneViewScreenshotProxyNode(sequenceBrowser);
   if (screenshotNode)
   {
-    if (!screenshotNode->GetImageData())
-    {
-      // Initialize the screenshot image data to ensure that the correct sequence nodes
-      // are created.
-      vtkNew<vtkImageData> tempScreenshot;
-      tempScreenshot->SetDimensions(1, 1, 1);
-      tempScreenshot->AllocateScalars(VTK_CHAR, 3);
-      screenshotNode->SetAndObserveImageData(tempScreenshot);
-    }
     savedNodes.push_back(screenshotNode);
   }
 
@@ -419,27 +432,7 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(std::vector<vtkMRMLNode*> s
       continue;
     }
 
-    vtkSmartPointer<vtkMRMLSequenceNode> sequenceNode = sequenceBrowser->GetSequenceNode(node);
-    if (!sequenceNode)
-    {
-      sequenceNode = vtkSmartPointer<vtkMRMLSequenceNode>::Take(vtkMRMLSequenceNode::SafeDownCast(
-        this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSequenceNode")));
-
-      if (node->GetName())
-      {
-        std::stringstream nodenameStringstream;
-        nodenameStringstream << "SceneViewSequence_" << node->GetName();
-        this->GetMRMLScene()->GenerateUniqueName(nodenameStringstream.str());
-        sequenceNode->SetName(nodenameStringstream.str().c_str());
-      }
-      sequenceNode->HideFromEditorsOn();
-      this->GetMRMLScene()->AddNode(sequenceNode);
-      sequenceNode = sequencesLogic->AddSynchronizedNode(sequenceNode, node, sequenceBrowser);
-      sequenceNode->SetIndexType(vtkMRMLSequenceNode::TextIndex);
-      sequenceNode->SetAttribute(vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeName(),
-        vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeValue());
-      sequenceBrowser->SetMissingItemMode(sequenceNode, vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden);
-    }
+    vtkSmartPointer<vtkMRMLSequenceNode> sequenceNode = this->GetOrAddSceneViewSequenceNode(sequenceBrowser, node);
     sequenceBrowser->SetRecording(sequenceNode, true);
   }
   sequenceBrowser->SetRecordingActive(wasRecordingActive);
@@ -453,15 +446,167 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(std::vector<vtkMRMLNode*> s
   }
 
   int index = this->GetNumberOfSceneViews() - 1;
-  this->SetNthSceneViewScreenshot(index, screenshot);
-  this->SetNthSceneViewName(index, name);
-  this->SetNthSceneViewDescription(index, description);
-  this->SetNthSceneViewScreenshotType(index, screenshotType);
+  this->ModifyNthSceneView(index, name, description, screenshotType, screenshot);
 
-  if (savedNodes.size() > MAXIMUM_NUMBER_OF_NODES_WITHOUT_BATCH_PROCESSING)
+  if (savedNodesSet.size() > MAXIMUM_NUMBER_OF_NODES_WITHOUT_BATCH_PROCESSING)
   {
     this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
   }
+  if (this->GetApplicationLogic())
+  {
+    this->GetApplicationLogic()->ResumeRender();
+  }
+  this->InvokeEvent(vtkSlicerSceneViewsModuleLogic::SceneViewsModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSceneViewsModuleLogic::UpdateNthSceneView(int sceneViewIndex, bool updateExistingNodes/*=true*/,
+  bool saveDisplayNodes/*=true*/, bool saveViewNodes/*=true*/)
+{
+  if (!this->GetMRMLScene())
+  {
+    vtkErrorMacro("CreateSceneView: No scene set.");
+    return;
+  }
+
+  vtkMRMLSequenceBrowserNode* sequenceBrowser = this->GetNthSceneViewSequenceBrowserNode(sceneViewIndex);
+  if (!sequenceBrowser)
+  {
+    vtkErrorMacro("UpdateNthSceneView: Failed to get sequence browser node.");
+    return;
+  }
+
+  std::vector<vtkMRMLNode*> savedNodes;
+  if (saveDisplayNodes)
+  {
+    this->GetDisplayNodes(savedNodes);
+  }
+  if (saveViewNodes)
+  {
+    this->GetViewNodes(savedNodes);
+  }
+  this->UpdateNthSceneView(savedNodes, sceneViewIndex, updateExistingNodes);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSceneViewsModuleLogic::UpdateNthSceneView(vtkCollection* savedNodes, int sceneViewIndex, bool updateExistingNodes/*=true*/)
+{
+  if (!this->GetMRMLScene())
+  {
+    vtkErrorMacro("UpdateNthSceneView: No scene set.");
+    return;
+  }
+
+  vtkMRMLSequenceBrowserNode* sequenceBrowser = this->GetNthSceneViewSequenceBrowserNode(sceneViewIndex);
+  if (!sequenceBrowser)
+  {
+    vtkErrorMacro("UpdateNthSceneView: Failed to get sequence browser node.");
+    return;
+  }
+
+  std::vector<vtkMRMLNode*> savedNodesVector;
+  for (int i = 0; i < savedNodes->GetNumberOfItems(); ++i)
+  {
+    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(savedNodes->GetItemAsObject(i));
+    if (node)
+    {
+      savedNodesVector.push_back(node);
+    }
+  }
+  this->UpdateNthSceneView(savedNodesVector, sceneViewIndex, updateExistingNodes);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerSceneViewsModuleLogic::UpdateNthSceneView(std::vector<vtkMRMLNode*> savedNodes, int sceneViewIndex, bool updateExistingNodes/*=true*/)
+{
+  if (!this->GetMRMLScene())
+  {
+    vtkErrorMacro("UpdateNthSceneView: No scene set.");
+    return;
+  }
+
+  vtkMRMLSequenceBrowserNode* sequenceBrowser = this->GetNthSceneViewSequenceBrowserNode(sceneViewIndex);
+  if (!sequenceBrowser)
+  {
+    vtkErrorMacro("UpdateNthSceneView: Failed to get sequence browser node.");
+    return;
+  }
+
+  MRMLNodeModifyBlocker blocker(sequenceBrowser);
+  if (this->GetApplicationLogic())
+  {
+    this->GetApplicationLogic()->PauseRender();
+  }
+
+  std::vector<vtkMRMLSequenceNode*> sequenceNodes;
+  sequenceBrowser->GetSynchronizedSequenceNodes(sequenceNodes, true);
+
+  vtkMRMLVolumeNode* screenshotNode = this->GetSceneViewScreenshotProxyNode(sequenceBrowser);
+
+  std::vector<vtkMRMLNode*> existingNodes;
+  if (updateExistingNodes)
+  {
+    // Get existing nodes from the sequence browser
+    sequenceBrowser->GetAllProxyNodes(existingNodes);
+  }
+
+  // Remove duplicates by converting to a set
+  std::set<vtkMRMLNode*> savedNodesSet(savedNodes.begin(), savedNodes.end());
+  savedNodesSet.insert(existingNodes.begin(), existingNodes.end());
+
+  if (savedNodesSet.size() > MAXIMUM_NUMBER_OF_NODES_WITHOUT_BATCH_PROCESSING)
+  {
+    this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+  }
+
+  vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(this->GetModuleLogic("Sequences"));
+  if (!sequencesLogic)
+  {
+    vtkErrorMacro("UpdateNthSceneView: Failed to get sequences logic.");
+    return;
+  }
+
+  int sequenceIndex = this->SceneViewIndexToSequenceBrowserIndex(sceneViewIndex);
+  vtkMRMLSequenceNode* screenshotSequenceNode = sequenceBrowser->GetSequenceNode(screenshotNode);
+  std::string value = screenshotSequenceNode->GetNthIndexValue(sequenceIndex);
+
+  std::string name = this->GetNthSceneViewName(sceneViewIndex);
+  std::string description = this->GetNthSceneViewDescription(sceneViewIndex);
+  int screenshotType = this->GetNthSceneViewScreenshotType(sceneViewIndex);
+  vtkSmartPointer<vtkImageData> screenshot = this->GetNthSceneViewScreenshot(sceneViewIndex);
+
+  for (vtkMRMLNode* node : savedNodesSet)
+  {
+    if (!node)
+    {
+      continue;
+    }
+    // If the node is involved in scene views, we should not save it in the scene view sequences
+    if (this->IsSceneViewNode(node))
+    {
+      continue;
+    }
+
+    vtkSmartPointer<vtkMRMLSequenceNode> sequenceNode = this->GetOrAddSceneViewSequenceNode(sequenceBrowser, node);
+    sequenceNode->SetDataNodeAtValue(node, value);
+  }
+
+  // Restore existing scene view name
+  this->ModifyNthSceneView(sceneViewIndex, name, description, screenshotType, screenshot);
+
+  std::vector<vtkMRMLSequenceNode*> savedSequenceNodes;
+  sequenceBrowser->GetSynchronizedSequenceNodes(savedSequenceNodes, true);
+  for (vtkMRMLSequenceNode* sequenceNode : savedSequenceNodes)
+  {
+    sequenceNode->AddDefaultStorageNode();
+  }
+
+  if (savedNodesSet.size() > MAXIMUM_NUMBER_OF_NODES_WITHOUT_BATCH_PROCESSING)
+  {
+    this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+  }
+
+  this->RestoreSceneView(sceneViewIndex);
 
   if (this->GetApplicationLogic())
   {
@@ -511,6 +656,15 @@ vtkMRMLVolumeNode* vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshotProxyNo
 
   vtkMRMLVolumeNode* screenshotNode = vtkMRMLVolumeNode::SafeDownCast(
     sequenceBrowser->GetNodeReference(vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshotReferenceRole()));
+  if (screenshotNode && !screenshotNode->GetImageData())
+  {
+    // Initialize the screenshot image data to ensure that the correct sequence nodes are created.
+    vtkNew<vtkImageData> tempScreenshot;
+    tempScreenshot->SetDimensions(1, 1, 1);
+    tempScreenshot->AllocateScalars(VTK_CHAR, 3);
+    screenshotNode->SetAndObserveImageData(tempScreenshot);
+  }
+
   return screenshotNode;
 }
 
@@ -881,22 +1035,9 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSceneViewsModuleLogic::AddNewSceneViewSeque
   screenshotNode->HideFromEditorsOn();
   screenshotNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("SceneViewScreenshot"));
   this->GetMRMLScene()->AddNode(screenshotNode);
-
-  vtkSmartPointer<vtkMRMLSequenceNode> sequenceNode = vtkSmartPointer<vtkMRMLSequenceNode>::Take(
-    vtkMRMLSequenceNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSequenceNode")));
-  sequenceNode->HideFromEditorsOn();
-  std::stringstream nameStringstream;
-  nameStringstream << "Sequence_" << screenshotNode->GetName();
-  std::string nameString = nameStringstream.str();
-  sequenceNode->SetName(this->GetMRMLScene()->GetUniqueNameByString(nameString.c_str()));
-  this->GetMRMLScene()->AddNode(sequenceNode);
-
-  vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(this->GetModuleLogic("Sequences"));
-  sequencesLogic->AddSynchronizedNode(sequenceNode, screenshotNode, sequenceBrowserNode);
-  sequenceNode->SetAttribute(vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeName(),
-    vtkSlicerSceneViewsModuleLogic::GetSceneViewNodeAttributeValue());
   sequenceBrowserNode->AddNodeReferenceID(vtkSlicerSceneViewsModuleLogic::GetSceneViewScreenshotReferenceRole(), screenshotNode->GetID());
 
+  vtkSmartPointer<vtkMRMLSequenceNode> sequenceNode = this->GetOrAddSceneViewSequenceNode(sequenceBrowserNode, screenshotNode);
   return sequenceBrowserNode;
 }
 
