@@ -34,6 +34,7 @@
 
 // MRML includes
 class vtkMRMLSequenceBrowserNode;
+class vtkMRMLSequenceNode;
 class vtkMRMLSceneViewNode;
 class vtkMRMLTextNode;
 class vtkMRMLVolumeNode;
@@ -73,8 +74,16 @@ public:
   /// Returns the index for a scene view with the given name. If no matching scene view is found, returns -1.
   int GetSceneViewIndexByName(std::string name);
 
-  /// Modify an existing sceneView.
+  /// Modify the metadata of an existing sceneView.
   void ModifyNthSceneView(int sceneViewIndex, std::string name, std::string, int screenshotType, vtkImageData* screenshot);
+
+  //@{
+  /// Update the contents of a sceneView to match the current state of the scene.
+  /// If new nodes are specified, they will be added to the scene view.
+  void UpdateNthSceneView(int sceneViewIndex, bool updateExistingNodes = true, bool saveDisplayNodes = true, bool saveViewNodes = true);
+  void UpdateNthSceneView(vtkCollection* savedNodes, int sceneViewIndex, bool updateExistingNodes = true);
+  void UpdateNthSceneView(std::vector<vtkMRMLNode*> savedNodes, int sceneViewIndex, bool updateExistingNodes = true);
+  //@}
 
   /// Convert the index of the scene view to the corresponding value index of the sequence browser that holds the snapshot.
   int SceneViewIndexToSequenceBrowserIndex(int sceneViewIndex);
@@ -219,6 +228,9 @@ protected:
 
   /// Add all view-related nodes to the vector.
   void GetViewNodes(std::vector<vtkMRMLNode*>& viewNodes);
+
+  /// Returns the sequence node for a given proxy node. Will create a new vtkMRMLSequenceNode if none exists.
+  vtkMRMLSequenceNode* GetOrAddSceneViewSequenceNode(vtkMRMLSequenceBrowserNode* sequenceBrowser, vtkMRMLNode* proxyNode);
 
 private:
 
