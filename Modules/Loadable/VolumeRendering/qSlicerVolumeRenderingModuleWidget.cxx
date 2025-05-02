@@ -183,6 +183,11 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->ClippingSoftEdgeSlider, SIGNAL(valueChanged(double)),
                    q, SLOT(setSoftEdgeVoxels(double)));
 
+  QObject::connect(this->ClippingBlankVoxelValueAutoCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setClippingBlankVoxelValueAuto(bool)));
+  QObject::connect(this->ClippingBlankVoxelValueSlider, SIGNAL(valueChanged(double)),
+                   q, SLOT(setClippingBlankVoxelValue(double)));
+
   // Disable markups ROI widget by default
   this->MarkupsROIWidget->setVisible(false);
 
@@ -500,6 +505,18 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->ClippingSoftEdgeSlider->setEnabled(clipNode != nullptr);
   d->ClippingSoftEdgeSlider->setValue(displayNode ? displayNode->GetClippingSoftEdgeVoxels() : 0.0);
   d->ClippingSoftEdgeSlider->blockSignals(wasBlocking);
+
+  wasBlocking = d->ClippingBlankVoxelValueAutoCheckBox->blockSignals(true);
+  d->ClippingBlankVoxelValueAutoCheckBox->setEnabled(clipNode != nullptr);
+  d->ClippingBlankVoxelValueAutoCheckBox->setChecked(displayNode ? displayNode->GetAutoClippingBlankVoxelValue() : false);
+  d->ClippingBlankVoxelValueAutoCheckBox->blockSignals(wasBlocking);
+
+  wasBlocking = d->ClippingBlankVoxelValueSlider->blockSignals(true);
+  d->ClippingBlankVoxelValueLabel->setEnabled(clipNode != nullptr);
+  d->ClippingBlankVoxelValueSlider->setEnabled(displayNode != nullptr && !displayNode->GetAutoClippingBlankVoxelValue());
+  d->ClippingBlankVoxelValueSlider->setValue(displayNode ? displayNode->GetClippingBlankVoxelValue() : 0.0);
+  d->ClippingBlankVoxelValueSlider->blockSignals(wasBlocking);
+
 }
 
 // --------------------------------------------------------------------------
@@ -1077,6 +1094,28 @@ void qSlicerVolumeRenderingModuleWidget::setSoftEdgeVoxels(double softEdgeVoxels
     return;
   }
   displayNode->SetClippingSoftEdgeVoxels(softEdgeVoxels);
+}
+
+//-----------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setClippingBlankVoxelValueAuto(bool autoValue)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+  displayNode->SetAutoClippingBlankVoxelValue(autoValue);
+}
+
+//-----------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setClippingBlankVoxelValue(double blankValue)
+{
+  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+  displayNode->SetClippingBlankVoxelValue(blankValue);
 }
 
 //-----------------------------------------------------------

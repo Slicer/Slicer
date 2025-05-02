@@ -196,7 +196,10 @@ void vtkImageMathematicsAddonExecute2(vtkImageMathematicsAddon* self, vtkImageDa
       }
       for (idxR = 0; idxR < rowLength; idxR++)
       {
-        *outPtr = *inPtr * static_cast<float>((*outPtr - normalizeScalarRange[0]) / normalizeMagnitude);
+        // The formula interpolates between the input value (*inPtr) and the lower bound of the scalar range
+        // (normalizeScalarRange[0]), weighted by the normalized value.
+        float normalizedValue = static_cast<float>((*outPtr - normalizeScalarRange[0]) / normalizeMagnitude);
+        *outPtr = normalizedValue * (*inPtr) + (1.0 - normalizedValue) * normalizeScalarRange[0];
         outPtr++;
         inPtr++;
       }

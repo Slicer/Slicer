@@ -78,7 +78,7 @@
         <property name="transformColumnVisible">
          <bool>false</bool>
         </property>
-        <property name="pluginAllowList">
+        <property name="pluginAllowList" stdset="0">
          <stringlist notr="true">
           <string>Volumes</string>
           <string>Folder</string>
@@ -311,8 +311,15 @@
          <bool>true</bool>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="3" column="0" colspan="3">
-          <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
+         <item row="2" column="0">
+          <widget class="QLabel" name="ClippingSoftEdgeLabel">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Soft edge:</string>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="ClippingLabel">
@@ -331,7 +338,27 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="ClippingBlankVoxelValueAutoCheckBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Auto</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="ClippingBlankVoxelValueLabel">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Blank value:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
           <widget class="QCheckBox" name="ClippingCheckBox">
            <property name="enabled">
             <bool>false</bool>
@@ -341,7 +368,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
+         <item row="0" column="1" colspan="2">
           <widget class="qMRMLNodeComboBox" name="ClipNodeSelector">
            <property name="nodeTypes">
             <stringlist notr="true">
@@ -365,17 +392,10 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="ClippingSoftEdgeLabel">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Soft edge:</string>
-           </property>
-          </widget>
+         <item row="5" column="0" colspan="3">
+          <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
          </item>
-         <item row="2" column="2">
+         <item row="2" column="1" colspan="2">
           <widget class="qMRMLSliderWidget" name="ClippingSoftEdgeSlider">
            <property name="enabled">
             <bool>false</bool>
@@ -388,6 +408,22 @@
            </property>
            <property name="maximum">
             <double>10.000000000000000</double>
+           </property>
+           <property name="quantity">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="qMRMLSliderWidget" name="ClippingBlankVoxelValueSlider">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="minimum">
+            <double>-1000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
            </property>
            <property name="quantity">
             <string notr="true"/>
@@ -651,71 +687,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLCheckableNodeComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLCheckableNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLClipNodeWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLClipNodeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLDisplayNodeViewComboBox</class>
-   <extends>qMRMLCheckableNodeComboBox</extends>
-   <header>qMRMLDisplayNodeViewComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLSliderWidget</class>
-   <extends>ctkSliderWidget</extends>
-   <header>qMRMLSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLMarkupsROIWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLMarkupsROIWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLSubjectHierarchyTreeView</class>
-   <extends>QTreeView</extends>
-   <header>qMRMLSubjectHierarchyTreeView.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLVolumePropertyNodeWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLVolumePropertyNodeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerVolumeRenderingPresetComboBox</class>
-   <extends>qSlicerWidget</extends>
-   <header>qSlicerVolumeRenderingPresetComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerGPUMemoryComboBox</class>
-   <extends>QComboBox</extends>
-   <header>qSlicerGPUMemoryComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ctkCheckablePushButton</class>
    <extends>ctkPushButton</extends>
    <header>ctkCheckablePushButton.h</header>
@@ -757,6 +728,65 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLClipNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLClipNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLDisplayNodeViewComboBox</class>
+   <extends>qMRMLCheckableNodeComboBox</extends>
+   <header>qMRMLDisplayNodeViewComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSliderWidget</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLMarkupsROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLMarkupsROIWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSubjectHierarchyTreeView</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLSubjectHierarchyTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLVolumePropertyNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLVolumePropertyNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerVolumeRenderingPresetComboBox</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerVolumeRenderingPresetComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerGPUMemoryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qSlicerGPUMemoryComboBox.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

@@ -143,7 +143,7 @@ public:
     vtkSmartPointer<vtkImageData>                      MaskImage;
     vtkSmartPointer<vtkImageStencil>                   StencilFilter;
     vtkSmartPointer<vtkImageGaussianSmooth>            Gaussian;
-    vtkSmartPointer<vtkImageMathematicsAddon>               ImageMathematics;
+    vtkSmartPointer<vtkImageMathematicsAddon>          ImageMathematics;
   };
 
   //-------------------------------------------------------------------------
@@ -901,8 +901,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         pipeline->ImplicitFunction->SetTransform(newIJKToRASTransform);
       }
 
-      double* inputScalarRange = volumeNode->GetImageData()->GetScalarRange();
-      pipeline->StencilFilter->SetBackgroundValue(0.0);
+      double backgroundValue = displayNode->GetClippingBlankVoxelValue();
+      if (displayNode->GetAutoClippingBlankVoxelValue())
+      {
+        backgroundValue = volumeNode->GetImageBackgroundScalarComponentAsDouble(0);
+      }
+      pipeline->StencilFilter->SetBackgroundValue(backgroundValue);
+
       pipeline->ImplicitFunctionToImageStencilFilter->SetInformationInput(volumeNode->GetImageData());
 
       double softEdgeVoxels = displayNode->GetClippingSoftEdgeVoxels();
@@ -928,6 +933,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
           pipeline->MaskImage->AllocateScalars(inputImage->GetScalarType(), inputImage->GetNumberOfScalarComponents());
         }
 
+        double* inputScalarRange = volumeNode->GetImageData()->GetScalarRange();
         double* tempScalarRange = pipeline->MaskImage->GetScalarRange();
         if (tempScalarRange[1] != inputScalarRange[1])
         {
@@ -949,7 +955,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         pipeline->Gaussian->SetRadiusFactor(3.0);
 
         pipeline->ImageMathematics->SetOperationToMultiplyByScaledRange();
-        pipeline->ImageMathematics->SetRange(0.0, tempScalarRange[1]);
+        pipeline->ImageMathematics->SetRange(backgroundValue, inputScalarRange[1]);
         if (pipeline->ImageMathematics->GetInputConnection(0, 0) != imageConnection)
         {
           pipeline->ImageMathematics->RemoveAllInputConnections(0);

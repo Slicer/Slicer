@@ -98,6 +98,10 @@ protected slots:
 
   void setClippingEnabled(bool state);
   void setSoftEdgeVoxels(double SoftEdgeVoxels);
+
+  void setClippingBlankVoxelValueAuto(bool state);
+  void setClippingBlankVoxelValue(double value);
+
   void setMRMLClipNode(vtkMRMLNode* clipNode);
 
 protected:
