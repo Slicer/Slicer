@@ -183,6 +183,7 @@ bool vtkMRMLTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode 
   int firstDimensions[3] = {0};
   firstDisplacementField->GetDimensions(firstDimensions);
   int firstScalarType = firstDisplacementField->GetScalarType();
+  unsigned int numberOfNonIdentityGridTransforms = 0;
 
   // Check all frames
   int numberOfFrames = seqNode->GetNumberOfDataNodes();
@@ -202,6 +203,14 @@ bool vtkMRMLTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode 
       true /* we would like to modify the transform */));
     if (frameGridTransform == nullptr)
     {
+      // If the transform is linear, it does not prevent the sequence from saving, but will require
+      // creating an identity grid transform volume for saving it into a single volumetric file.
+      // Note: we do not support the case when the first transform in the sequence is linear, because
+      // we need a reference grid transform to copy the geometry from when writing.
+      if (frameTransform->IsA("vtkMRMLLinearTransformNode"))
+      {
+        continue;
+      }
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only grid transforms can be written in this format."));
       return false;
     }
@@ -212,6 +221,10 @@ bool vtkMRMLTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode 
     {
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Invalid grid transform: missing displacement field."));
       return false;
+    }
+    else
+    {
+      numberOfNonIdentityGridTransforms++;
     }
 
     // Check geometry matches first frame
@@ -237,6 +250,13 @@ bool vtkMRMLTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode 
       return false;
     }
   } // for all frames
+
+  // Sanity check to confirm that some of the transforms in the sequence contain non-identity grid transforms
+  if (numberOfNonIdentityGridTransforms == 0)
+  {
+    this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent, std::string("Sequence only contains linear transforms."));
+    return false;
+  }
 
   return true;
 }
@@ -285,8 +305,8 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 
   // Get the displacement field from the grid transform
-  vtkImageData* displacementField = gridTransform->GetDisplacementGrid();
-  if (displacementField == nullptr)
+  vtkImageData* firstDisplacementField = gridTransform->GetDisplacementGrid();
+  if (firstDisplacementField == nullptr)
   {
     this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Invalid grid transform: missing displacement field."));
     return 0;
@@ -313,8 +333,23 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       frameTransform->GetTransformToParentAs("vtkOrientedGridTransform", false, true));
     if (frameGridTransform == nullptr)
     {
-      this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only grid transforms can be written in this format."));
-      return 0;
+      if (frameIndex == 0)
+      {
+        this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("First frame in the sequence needs to contain a valid grid transform."));
+        return 0;
+      }
+
+      // Generate an identity displacement field to use as a placeholder for the linear transform
+      std::ostringstream warningMessage;
+      warningMessage << "Frame " << frameIndex << " contains linear transform. Generating identity displacement field placeholder.";
+      this->GetUserMessages()->AddMessage(vtkCommand::WarningEvent, warningMessage.str());
+      vtkNew<vtkImageData> identityDisplacementField;
+      identityDisplacementField->CopyStructure(firstDisplacementField);
+      identityDisplacementField->AllocateScalars(firstDisplacementField->GetScalarType(), firstDisplacementField->GetNumberOfScalarComponents());
+      identityDisplacementField->GetPointData()->GetScalars()->Fill(0.0); // Fill all voxels with zeros
+      // Add the identity displacement field to the writer
+      writer->AddInputData(identityDisplacementField);
+      continue;
     }
 
     // Get the displacement field
