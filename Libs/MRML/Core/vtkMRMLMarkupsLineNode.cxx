@@ -80,8 +80,8 @@ void vtkMRMLMarkupsLineNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 double vtkMRMLMarkupsLineNode::GetLineLengthWorld()
 {
-  double p1[3] = { 0.0 };
-  double p2[3] = { 0.0 };
+  double p1[3] = { 0.0, 0.0, 0.0 };
+  double p2[3] = { 0.0, 0.0, 0.0 };
   this->GetNthControlPointPositionWorld(0, p1);
   this->GetNthControlPointPositionWorld(1, p2);
   double length = sqrt(vtkMath::Distance2BetweenPoints(p1, p2));
@@ -105,7 +105,7 @@ void vtkMRMLMarkupsLineNode::UpdateInteractionHandleToWorldMatrix()
   double point1_World[3];
   this->GetNthControlPointPositionWorld(1, point1_World);
 
-  double vectorPoint0ToPoint1_World[4] = { 0.0 };
+  double vectorPoint0ToPoint1_World[4] = { 0.0, 0.0, 0.0, 1.0 };
   vtkMath::Subtract(point1_World, point0_World, vectorPoint0ToPoint1_World);
 
   double angle = vtkMath::DegreesFromRadians(vtkMath::AngleBetweenVectors(vectorPoint0ToPoint1_World, handleX_World));
@@ -115,7 +115,7 @@ void vtkMRMLMarkupsLineNode::UpdateInteractionHandleToWorldMatrix()
     return;
   }
 
-  double rotationVector_Local[3] = { 0.0 };
+  double rotationVector_Local[3] = { 1.0, 0.0, 0.0 };
   vtkMath::Cross(handleX_World, vectorPoint0ToPoint1_World, rotationVector_Local);
 
   double origin_World[4] = { 0.0, 0.0, 0.0, 1.0 };
