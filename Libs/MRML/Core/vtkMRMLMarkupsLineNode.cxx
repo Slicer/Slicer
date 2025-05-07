@@ -147,15 +147,18 @@ bool vtkMRMLMarkupsLineNode::GetLineEndPosition(double position[3])
 //---------------------------------------------------------------------------
 vtkVector3d vtkMRMLMarkupsLineNode::GetLineStartPosition()
 {
-  return vtkVector3d(this->GetNthControlPointPosition(0));
+  double position[3] = { 0.0, 0.0, 0.0 };
+  this->GetNthControlPointPosition(0, position);
+  return vtkVector3d(position);
 }
 
 //---------------------------------------------------------------------------
 vtkVector3d vtkMRMLMarkupsLineNode::GetLineEndPosition()
 {
-  return vtkVector3d(this->GetNthControlPointPosition(1));
+  double position[3] = { 0.0, 0.0, 0.0 };
+  this->GetNthControlPointPosition(1, position);
+  return vtkVector3d(position);
 }
-
 
 //---------------------------------------------------------------------------
 vtkVector3d vtkMRMLMarkupsLineNode::GetLineStartPositionWorld()
