@@ -81,6 +81,7 @@ public:
   //@{
   /// Convenience method to get the line start or end position
   /// (control point indices 0 and 1).
+  /// Returns (0, 0, 0) vector if the point position is not defined.
   vtkVector3d GetLineStartPosition();
   vtkVector3d GetLineEndPosition();
   vtkVector3d GetLineStartPositionWorld();
