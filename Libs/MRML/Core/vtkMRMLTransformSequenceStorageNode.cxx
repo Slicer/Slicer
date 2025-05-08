@@ -23,10 +23,10 @@
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLTransformSequenceStorageNode.h"
 
+#include "vtkMRMLGridTransformNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSequenceNode.h"
-#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLVectorVolumeNode.h"
 
 // vtkAddon includes
@@ -116,12 +116,11 @@ int vtkMRMLTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
 
     // Create a grid transform node
-    vtkNew<vtkMRMLTransformNode> frameTransform;
+    vtkNew<vtkMRMLGridTransformNode> frameTransform;
     vtkNew<vtkOrientedGridTransform> gridTransform;
 
     // Set up the grid transform with the image data
     gridTransform->SetDisplacementGridData(frameImage);
-    gridTransform->SetGridDirectionMatrix(reader->GetRasToIjkMatrix());
 
     // Set the transform in the transform node
     frameTransform->SetAndObserveTransformToParent(gridTransform.GetPointer());
@@ -229,7 +228,8 @@ bool vtkMRMLTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode 
 
     // Check geometry matches first frame
     vtkMatrix4x4* frameGridDirection = frameGridTransform->GetGridDirectionMatrix();
-    if (!vtkAddonMathUtilities::MatrixAreEqual(frameGridDirection, firstGridDirection))
+    if (frameGridDirection != nullptr && firstGridDirection != nullptr
+      && !vtkAddonMathUtilities::MatrixAreEqual(frameGridDirection, firstGridDirection))
     {
       vtkDebugMacro("vtkMRMLTransformSequenceStorageNode::CanWriteFromReferenceNode: Grid direction matrix is not the same in all frames"
         << " (first frame: " << vtkAddonMathUtilities::ToString(firstGridDirection)
@@ -313,7 +313,28 @@ int vtkMRMLTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 
   // Set up the writer with the geometry from the first frame
-  writer->SetRasToIJKMatrix(gridTransform->GetGridDirectionMatrix());
+  vtkNew<vtkMatrix4x4> rasToIjkMatrixWithOriginAndSpacing;
+  if (gridTransform->GetGridDirectionMatrix() != nullptr)
+  {
+    rasToIjkMatrixWithOriginAndSpacing->DeepCopy(gridTransform->GetGridDirectionMatrix());
+  }
+  double spacing[3];
+  firstDisplacementField->GetSpacing(spacing);
+  for (int i = 0; i < 3; ++i)
+  {
+    for (int j = 0; j < 3; ++j)
+    {
+      rasToIjkMatrixWithOriginAndSpacing->SetElement(i, j, rasToIjkMatrixWithOriginAndSpacing->GetElement(i, j) / spacing[j]);
+    }
+  }
+  double origin[3];
+  firstDisplacementField->GetOrigin(origin);
+  for (int i = 0; i < 3; ++i)
+  {
+    rasToIjkMatrixWithOriginAndSpacing->SetElement(i, 3, rasToIjkMatrixWithOriginAndSpacing->GetElement(i, 3) - origin[i] / spacing[i]);
+  }
+  writer->SetRasToIJKMatrix(rasToIjkMatrixWithOriginAndSpacing);
+
   writer->SetVoxelVectorType(vtkITKImageSequenceWriter::VoxelVectorTypeSpatial);
   writer->SetIntentCode("1006"); // Set intent code indicating this is a transform (comes from Nifti heritage as a de facto standard)
 
