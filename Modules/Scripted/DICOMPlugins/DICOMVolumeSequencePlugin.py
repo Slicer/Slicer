@@ -4,11 +4,8 @@ import pydicom
 import qt
 
 import slicer
+from DICOMLib import DICOMExportScalarVolume, DICOMPlugin
 from slicer.i18n import tr as _
-
-from DICOMLib import DICOMPlugin
-from DICOMLib import DICOMExportScalarVolume
-
 
 #
 # This plugin can export sequence node that contains volumes

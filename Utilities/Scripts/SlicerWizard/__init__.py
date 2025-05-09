@@ -34,7 +34,6 @@ often performed when developing code and extensions for Slicer.
 """
 
 from .__version__ import __version__, __version_info__
-
 from .ExtensionDescription import ExtensionDescription
 from .ExtensionProject import ExtensionProject
 from .ExtensionWizard import ExtensionWizard

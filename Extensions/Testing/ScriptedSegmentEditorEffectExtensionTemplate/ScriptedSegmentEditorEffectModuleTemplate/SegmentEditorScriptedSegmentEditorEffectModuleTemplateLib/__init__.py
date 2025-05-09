@@ -1,4 +1,3 @@
+from .SegmentEditorEffect import SegmentEditorEffect
 from SegmentEditorEffects.AbstractScriptedSegmentEditorEffect import *
 from SegmentEditorEffects.AbstractScriptedSegmentEditorLabelEffect import *
-
-from .SegmentEditorEffect import SegmentEditorEffect

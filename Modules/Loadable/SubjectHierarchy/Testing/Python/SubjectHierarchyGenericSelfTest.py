@@ -9,7 +9,6 @@ from DICOMLib import DICOMUtils
 from slicer.ScriptedLoadableModule import *
 from slicer.util import TESTING_DATA_URL
 
-
 #
 # SubjectHierarchyGenericSelfTest
 #

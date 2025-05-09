@@ -1,17 +1,16 @@
 import logging
 import os
-import requests
 import subprocess
 import time
 from typing import Callable, Optional
-from requests.auth import HTTPBasicAuth
 
 import ctk
-import qt
-
 import dicomweb_client
-import slicer
+import qt
+import requests
+from requests.auth import HTTPBasicAuth
 
+import slicer
 from DICOMLib.DICOMUtils import getGlobalDICOMAuth
 
 #########################################################

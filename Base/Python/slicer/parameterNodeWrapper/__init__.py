@@ -8,7 +8,6 @@ from .guiCreation import *
 from .parameterPack import *
 from .serializers import *
 from .types import *
-from .validators import *
 from .util import (
     findFirstAnnotation,
     getNodeTypes,
@@ -16,4 +15,5 @@ from .util import (
     splitAnnotations,
     unannotatedType,
 )
+from .validators import *
 from .wrapper import *

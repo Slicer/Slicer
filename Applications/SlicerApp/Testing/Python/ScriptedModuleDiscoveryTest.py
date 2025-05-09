@@ -11,6 +11,7 @@ assert not hasattr(__main__, "ModuleD_WithFileDialog_WithoutWidget")
 assert not hasattr(__main__, "ModuleE_WithFileWriter_WithoutWidget")
 
 from types import ModuleType
+
 import slicer
 
 assert isinstance(slicer.modules, ModuleType)

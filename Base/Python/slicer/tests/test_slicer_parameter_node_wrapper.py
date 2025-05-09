@@ -1,18 +1,18 @@
 import dataclasses
+import enum
 import pathlib
 import typing
-from typing import Annotated
 import unittest
-import enum
+from typing import Annotated
 
 import vtk
-import slicer
 
+import slicer
 from slicer import (
-    vtkMRMLNode,
-    vtkMRMLModelNode,
-    vtkMRMLScalarVolumeNode,
     vtkMRMLLabelMapVolumeNode,
+    vtkMRMLModelNode,
+    vtkMRMLNode,
+    vtkMRMLScalarVolumeNode,
 )
 from slicer.parameterNodeWrapper import *
 

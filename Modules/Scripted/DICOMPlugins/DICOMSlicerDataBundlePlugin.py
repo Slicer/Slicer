@@ -3,12 +3,8 @@ import os
 import tempfile
 
 import slicer
+from DICOMLib import DICOMExportScene, DICOMLoadable, DICOMPlugin
 from slicer.i18n import tr as _
-
-from DICOMLib import DICOMPlugin
-from DICOMLib import DICOMLoadable
-from DICOMLib import DICOMExportScene
-
 
 #
 # This is the plugin to handle translation of encapsulated MRML

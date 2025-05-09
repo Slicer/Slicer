@@ -4,7 +4,6 @@ import qt
 import slicer
 from slicer.ScriptedLoadableModule import *
 
-
 #
 # ViewControllersSliceInterpolationBug1926
 #

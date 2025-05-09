@@ -10,7 +10,6 @@ from slicer.i18n import tr as _
 from slicer.i18n import translate
 from slicer.ScriptedLoadableModule import *
 
-
 #
 # ScreenCapture
 #
@@ -861,8 +860,8 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
         slicer.util.setViewControllersVisible(show)
 
     def getRandomFilePattern(self):
-        import string
         import random
+        import string
 
         numberOfRandomChars = 5
         randomString = "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(numberOfRandomChars))
@@ -953,7 +952,9 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
             try:
                 logging.info("Requesting download ffmpeg from %s..." % url)
 
-                import urllib.request, urllib.error, urllib.parse
+                import urllib.error
+                import urllib.parse
+                import urllib.request
 
                 req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
                 data = urllib.request.urlopen(req).read()

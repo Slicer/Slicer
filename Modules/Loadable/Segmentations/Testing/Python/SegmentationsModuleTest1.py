@@ -4,9 +4,9 @@ import unittest
 
 import qt
 import vtk
-import vtkSegmentationCore
 
 import slicer
+import vtkSegmentationCore
 from slicer.util import TESTING_DATA_URL
 
 

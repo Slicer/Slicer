@@ -1,4 +1,5 @@
 import os
+
 import vtk
 
 import slicer
@@ -60,8 +61,8 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplateTest(ScriptedLoadabl
 
         self.delayDisplay("Starting test_ScriptedSegmentEditorEffectModuleTemplate1")
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
         import SampleData
+        import vtkSegmentationCorePython as vtkSegmentationCore
         from SegmentStatistics import SegmentStatisticsLogic
 
         ##################################

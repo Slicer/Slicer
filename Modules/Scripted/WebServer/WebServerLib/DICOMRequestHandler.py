@@ -1,7 +1,8 @@
 import logging
-import pydicom
 import urllib
 from typing import Optional
+
+import pydicom
 
 import slicer
 from .BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction

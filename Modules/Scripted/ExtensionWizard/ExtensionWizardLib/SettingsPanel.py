@@ -2,10 +2,10 @@ import ctk
 import qt
 
 import SlicerWizard.TemplateManager
-
 from .DirectoryListWidget import DirectoryListWidget
 from .TemplatePathUtilities import *
 from slicer.i18n import tr as _
+
 
 # =============================================================================
 #

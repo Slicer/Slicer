@@ -1,7 +1,9 @@
 import unittest
+
+import vtk
+
 import slicer
 import slicer.util
-import vtk
 
 
 class SlicerUtilGetNodeTest(unittest.TestCase):
