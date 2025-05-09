@@ -28,6 +28,7 @@
 #include "vtkMRMLSliceCompositeNode.h"
 
 class vtkMRMLColorLogic;
+class vtkMRMLCornerTextLogic;
 class vtkMRMLModelDisplayNode;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceLogic;
@@ -82,6 +83,12 @@ public:
   /// By default, a vtkMRMLColorLogic is instantiated.
   void SetColorLogic(vtkMRMLColorLogic* newColorLogic);
   vtkMRMLColorLogic* GetColorLogic()const;
+
+  /// @{
+  /// Set/Get CornerText logic.
+  void SetCornerTextLogic(vtkMRMLCornerTextLogic* newCornerTextLogic);
+  vtkMRMLCornerTextLogic* GetCornerTextLogic() const;
+  /// @}
 
   /// Apply the active volumes in the SelectionNode to the slice composite nodes
   /// Perform the default behavior related to selecting a volume
