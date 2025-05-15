@@ -73,6 +73,12 @@
 #include <iterator>
 #include <sstream>
 
+#ifdef _WIN32
+#include <windows.h> // For GetCurrentProcessId
+#else
+#include <unistd.h> // For getpid
+#endif
+
 //----------------------------------------------------------------------------
 static const char LIST_SEPARATOR = '|';
 static const std::string KEY_SEGMENT_ID = "ID";
@@ -1362,8 +1368,42 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   }
   vtkOrientedImageDataResample::FillImage(commonGeometryImage, 0);
 
+  // Write to a temporary directory first, then move to the final destination
+  std::string targetDir = vtksys::SystemTools::GetFilenamePath(fullName);
+  // Generate a unique temporary subdirectory name using process ID and current time to avoid conflicts across Slicer sessions
+  std::string tempSubDir = std::string("TempWrite") + vtksys::SystemTools::GetFilenameWithoutExtension(fullName);
+  // trim whitespace from the right because a folder name cannot end with space (there can be a space before the ".")
+  tempSubDir.erase(tempSubDir.find_last_not_of(" ") + 1);
+  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+  long long micros = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
+  std::ostringstream tempSubDirStream;
+  tempSubDirStream << tempSubDir << "_"<< micros
+#ifdef _WIN32
+                   << "_pid" << GetCurrentProcessId();
+#else
+                   << "_pid" << getpid();
+#endif
+  tempSubDir = tempSubDirStream.str();
+  std::vector<std::string> pathComponents;
+  vtksys::SystemTools::SplitPath(targetDir.c_str(), pathComponents);
+  pathComponents.push_back(tempSubDir);
+  std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
+
+  if (vtksys::SystemTools::FileExists(tempDir.c_str()))
+  {
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+  }
+  if (!vtksys::SystemTools::MakeDirectory(tempDir.c_str()))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+                                     "Failed to create temporary directory " << tempDir);
+    return 0;
+  }
+
+  std::string tempFile = tempDir + "/" + vtksys::SystemTools::GetFilenameName(fullName);
+
   vtkNew<vtkTeemNRRDWriter> writer;
-  writer->SetFileName(fullName.c_str());
+  writer->SetFileName(tempFile.c_str());
   writer->SetUseCompression(this->GetUseCompression());
   writer->SetSpace(nrrdSpaceLeftPosteriorSuperior);
   writer->SetMeasurementFrameMatrix(nullptr);
@@ -1518,6 +1558,72 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   }
 
   writer->Write();
+
+  // Check for write errors
+  if (writer->GetWriteError())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+      "Error writing temporary NRRD file " << tempFile);
+    vtksys::SystemTools::RemoveFile(tempFile);
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
+  }
+
+  // Move temporary file to final destination
+  // File-based locking to avoid concurrent writes
+  std::string lockFile = fullName + ".lock";
+  int lockAttempts = 0;
+  const int maxLockAttempts = 50;
+  const int lockSleepMs = 100;
+
+  // Try to create lock file (exclusive creation)
+  while (vtksys::SystemTools::FileExists(lockFile.c_str(), true) && lockAttempts < maxLockAttempts)
+  {
+    vtksys::SystemTools::Delay(lockSleepMs);
+    ++lockAttempts;
+  }
+  if (vtksys::SystemTools::FileExists(lockFile.c_str(), true))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+      "Timeout waiting for lock file " << lockFile << ". Another process may be writing to " << fullName);
+    vtksys::SystemTools::RemoveFile(tempFile.c_str());
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
+  }
+  // Create lock file
+  std::ofstream lockStream(lockFile.c_str());
+  lockStream << "locked" << std::endl;
+  lockStream.close();
+
+  // does the target file already exist?
+  if (vtksys::SystemTools::FileExists(fullName.c_str(), true))
+  {
+    // remove it
+    vtkInfoMacro("WriteData: removing old version of file " << fullName);
+    if (!vtksys::SystemTools::RemoveFile(fullName.c_str()))
+    {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+      "Unable to remove old version of file: " << fullName);
+    }
+  }
+
+  // Rename temporary file to final destination
+  int renameReturn = std::rename(tempFile.c_str(), fullName.c_str());
+  // Remove lock file
+  vtksys::SystemTools::RemoveFile(lockFile.c_str());
+
+  if (renameReturn != 0)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+      "Failed to move temporary file " << tempFile << " to " << fullName << ", rename returned code " << renameReturn);
+    vtksys::SystemTools::RemoveFile(tempFile.c_str());
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
+  }
+
+  // Clean up temporary directory
+  vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+
   this->GetUserMessages()->SetObservedObject(nullptr);
   int writeSuccess = true;
   if (writer->GetWriteError())
@@ -1656,10 +1762,44 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
     multiBlockDataset->SetBlock(segmentIndex, currentPolyDataCopy);
   }
 
+  // Write to a temporary directory first, then move to the final destination
+  std::string targetDir = vtksys::SystemTools::GetFilenamePath(path);
+  // Generate a unique temporary subdirectory name using process ID and current time to avoid conflicts across Slicer sessions
+  std::string tempSubDir = std::string("TempWrite") + vtksys::SystemTools::GetFilenameWithoutExtension(path);
+  // trim whitespace from the right because a folder name cannot end with space (there can be a space before the ".")
+  tempSubDir.erase(tempSubDir.find_last_not_of(" ") + 1);
+  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+  long long micros = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
+  std::ostringstream tempSubDirStream;
+  tempSubDirStream << tempSubDir << "_"<< micros
+#ifdef _WIN32
+                   << "_pid" << GetCurrentProcessId();
+#else
+                   << "_pid" << getpid();
+#endif
+  tempSubDir = tempSubDirStream.str();
+  std::vector<std::string> pathComponents;
+  vtksys::SystemTools::SplitPath(targetDir.c_str(), pathComponents);
+  pathComponents.push_back(tempSubDir);
+  std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
+
+  if (vtksys::SystemTools::FileExists(tempDir.c_str()))
+  {
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+  }
+  if (!vtksys::SystemTools::MakeDirectory(tempDir.c_str()))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+                                     "Failed to create temporary directory " << tempDir);
+    return 0;
+  }
+
+  std::string tempFile = tempDir + "/" + vtksys::SystemTools::GetFilenameName(path);
+
   // Write multiblock dataset to disk
   vtkSmartPointer<vtkXMLMultiBlockDataWriter> writer = vtkSmartPointer<vtkXMLMultiBlockDataWriter>::New();
   writer->SetInputData(multiBlockDataset);
-  writer->SetFileName(path.c_str());
+  writer->SetFileName(tempFile.c_str());
   if (this->UseCompression)
   {
     writer->SetDataModeToBinary();
@@ -1673,6 +1813,62 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
 
   this->GetUserMessages()->SetObservedObject(writer);
   writer->Write();
+
+  // Move temporary file to final destination
+  // File-based locking to avoid concurrent writes
+  std::string lockFile = path + ".lock";
+  int lockAttempts = 0;
+  const int maxLockAttempts = 50;
+  const int lockSleepMs = 100;
+
+  // Try to create lock file (exclusive creation)
+  while (vtksys::SystemTools::FileExists(lockFile.c_str(), true) && lockAttempts < maxLockAttempts)
+  {
+    vtksys::SystemTools::Delay(lockSleepMs);
+    ++lockAttempts;
+  }
+  if (vtksys::SystemTools::FileExists(lockFile.c_str(), true))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation",
+      "Timeout waiting for lock file " << lockFile << ". Another process may be writing to " << path);
+    vtksys::SystemTools::RemoveFile(tempFile.c_str());
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
+  }
+  // Create lock file
+  std::ofstream lockStream(lockFile.c_str());
+  lockStream << "locked" << std::endl;
+  lockStream.close();
+
+  // does the target file already exist?
+  if (vtksys::SystemTools::FileExists(path.c_str(), true))
+  {
+    // remove it
+    vtkInfoMacro("WriteData: removing old version of file " << path);
+    if (!vtksys::SystemTools::RemoveFile(path.c_str()))
+    {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation",
+      "Unable to remove old version of file: " << path);
+    }
+  }
+
+  // Rename temporary file to final destination
+  int renameReturn = std::rename(tempFile.c_str(), path.c_str());
+  // Remove lock file
+  vtksys::SystemTools::RemoveFile(lockFile.c_str());
+
+  if (renameReturn != 0)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation",
+                                     "Failed to move temporary file " << tempFile << " to " << path << ", rename returned code " << renameReturn);
+    vtksys::SystemTools::RemoveFile(tempFile.c_str());
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
+  }
+
+  // Clean up temporary directory
+  vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+
   this->GetUserMessages()->SetObservedObject(nullptr);
 
   // Add all files to storage node (multiblock dataset writes segments to individual files in a separate folder)

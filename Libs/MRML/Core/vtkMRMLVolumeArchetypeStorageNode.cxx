@@ -51,6 +51,12 @@ Version:   $Revision: 1.6 $
 #include <algorithm>
 #include <iterator>
 
+#ifdef _WIN32
+#include <windows.h> // For GetCurrentProcessId
+#else
+#include <unistd.h> // For getpid
+#endif
+
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLVolumeArchetypeStorageNode);
 
@@ -626,6 +632,34 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
         targetPathComponents.emplace_back(thisFile);
         sourcePathComponents.emplace_back(thisFile);
         std::string targetFile = vtksys::SystemTools::JoinPath(targetPathComponents);
+
+        // File-based locking to avoid concurrent writes
+        std::string lockFile = fullName + ".lock";
+        int lockAttempts = 0;
+        const int maxLockAttempts = 50;
+        const int lockSleepMs = 100;
+
+        // Try to create lock file (exclusive creation)
+        while (vtksys::SystemTools::FileExists(lockFile.c_str(), true) && lockAttempts < maxLockAttempts)
+        {
+          vtksys::SystemTools::Delay(lockSleepMs);
+          ++lockAttempts;
+        }
+        if (vtksys::SystemTools::FileExists(lockFile.c_str(), true))
+        {
+          vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteDataInternal",
+            vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
+              "Timeout waiting for lock file '%1'. Another process may be writing to '%2'"),
+              lockFile.c_str(), fullName.c_str()));
+          // fall back to doing a second write
+          moveSucceeded = false;
+          break;
+        }
+        // Create lock file
+        std::ofstream lockStream(lockFile.c_str());
+        lockStream << "locked" << std::endl;
+        lockStream.close();
+
         // does the target file already exist?
         if (vtksys::SystemTools::FileExists(targetFile.c_str(), true))
         {
@@ -639,8 +673,11 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
         }
         std::string sourceFile = vtksys::SystemTools::JoinPath(sourcePathComponents);
         vtkDebugMacro("WriteData: moving file number " << fileNum << ", " << sourceFile << " to " << targetFile);
+
         // thisFile needs a full path it's bare
         int renameReturn = std::rename(sourceFile.c_str(), targetFile.c_str());
+        // Remove lock file
+        vtksys::SystemTools::RemoveFile(lockFile.c_str());
         if (renameReturn != 0 )
         {
           vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
@@ -850,9 +887,20 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath(originalDir.c_str(), pathComponents);
   // add a temp dir to it
+  // Generate a unique temporary subdirectory name using process ID and current time to avoid conflicts across Slicer sessions
   std::string tempSubDir = std::string("TempWrite") + vtksys::SystemTools::GetFilenameWithoutExtension(oldName);
   // trim whitespace from the right because a folder name cannot end with space (there can be a space before the ".")
   tempSubDir.erase(tempSubDir.find_last_not_of(" ") + 1);
+  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+  long long micros = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
+  std::ostringstream tempSubDirStream;
+  tempSubDirStream << tempSubDir << "_"<< micros
+#ifdef _WIN32
+                   << "_pid" << GetCurrentProcessId();
+#else
+                   << "_pid" << getpid();
+#endif
+  tempSubDir = tempSubDirStream.str();
   pathComponents.push_back(tempSubDir);
   std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
   vtkDebugMacro("UpdateFileList: deleting and then re-creating temp dir "<< tempDir.c_str());
