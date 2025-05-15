@@ -154,7 +154,7 @@ public:
 
   /// Get markup short name.
   /// This may be displayed to the user and therefore it is translated to the application language.
-  virtual const char* GetDefaultNodeNamePrefix();
+  virtual const char* GetDefaultNodeNamePrefix() override;
 
   /// Get markup type GUI display name
   /// This may be displayed to the user and therefore it is translated to the application language.

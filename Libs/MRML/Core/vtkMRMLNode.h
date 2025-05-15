@@ -383,6 +383,12 @@ public:
   /// \note Subclasses should override this method to provide a more appropriate and translatable name.
   virtual const char* GetTypeDisplayName() { return this->GetNodeTagName(); }
 
+  /// Get default node name prefix used when generating unique node names.
+  ///
+  /// \note Subclasses can override this method to provide a more appropriate prefix for node names.
+  /// By default, this returns the node tag name.
+  virtual const char* GetDefaultNodeNamePrefix() { return this->GetNodeTagName(); }
+
   /// \brief Set a name value pair attribute.
   ///
   /// Fires a vtkCommand::ModifiedEvent.
