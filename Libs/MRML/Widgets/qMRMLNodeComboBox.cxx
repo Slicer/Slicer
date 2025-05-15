@@ -631,7 +631,7 @@ vtkMRMLNode* qMRMLNodeComboBox::addNode(QString nodeType)
     return nullptr;
   }
   // Create the MRML node via the MRML Scene
-  vtkMRMLNode * newNode = d->MRMLNodeFactory->createNode(nodeType);
+  vtkMRMLNode* newNode = vtkMRMLNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass(nodeType.toStdString()));
   // The created node is appended at the bottom of the current list
   if (newNode==nullptr)
   {
