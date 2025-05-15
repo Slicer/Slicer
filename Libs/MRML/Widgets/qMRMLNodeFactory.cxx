@@ -76,17 +76,16 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 
   emit this->nodeInstantiated(node);
 
-  QString baseName;
-  if (d->BaseNames.contains(className) && //
-      !d->BaseNames[className].isEmpty())
+  QString baseName = d->BaseNames.value(className);
+  if (baseName.isEmpty() && //
+      !node->GetName())     // Keep default node name if the base name is empty
   {
-    baseName = d->BaseNames[className];
+    baseName = node->GetDefaultNodeNamePrefix();
   }
-  else
+  if (!baseName.isEmpty())
   {
-    baseName = d->MRMLScene->GetTagByClassName(className.toUtf8());
+    node->SetName(d->MRMLScene->GetUniqueNameByString(baseName.toUtf8()));
   }
-  node->SetName(d->MRMLScene->GetUniqueNameByString(baseName.toUtf8()));
 
   // Set node attributes
   // Attributes must be set before adding the node into the scene as the node
