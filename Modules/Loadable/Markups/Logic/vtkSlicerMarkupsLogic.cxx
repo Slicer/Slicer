@@ -709,7 +709,14 @@ vtkMRMLMarkupsNode* vtkSlicerMarkupsLogic::AddNewMarkupsNode(
   // Set node name
   if (nodeName.empty())
   {
-    nodeName = scene->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
+    if (node->GetName())
+    {
+      nodeName = node->GetName();  // use default node name exactly as given
+    }
+    else
+    {
+      nodeName = scene->GenerateUniqueName(markupsNode->GetDefaultNodeNamePrefix());
+    }
   }
   markupsNode->SetName(nodeName.c_str());
 
