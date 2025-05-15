@@ -158,8 +158,7 @@ public:
 
   /// Get markup short name.
   /// This may be displayed to the user and therefore it is translated to the application language.
-  virtual std::string GetDefaultNodeNamePrefix();
-
+  std::string GetDefaultNodeNamePrefix() override;
   /// Get markup type GUI display name
   /// This may be displayed to the user and therefore it is translated to the application language.
   std::string GetTypeDisplayName() override;
