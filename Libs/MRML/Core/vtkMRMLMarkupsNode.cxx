@@ -60,6 +60,9 @@
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsNode::vtkMRMLMarkupsNode()
 {
+  this->DefaultNodeNamePrefix = vtkMRMLTr("vtkMRMLMarkupsNode", "M");
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsNode", "Markup");
+
   this->TextList = vtkSmartPointer<vtkStringArray>::New();
 
   this->CenterOfRotation.Set(0, 0, 0);
@@ -522,17 +525,6 @@ void vtkMRMLMarkupsNode::SetLocked(int locked)
 
   this->Modified();
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::LockModifiedEvent);
-}
-
-//----------------------------------------------------------------------------
-std::string vtkMRMLMarkupsNode::GetDefaultNodeNamePrefix()
-{
-  if (this->DefaultNodeNamePrefix.empty())
-  {
-    //: This is the default node name prefix for markups nodes.
-    return vtkMRMLTr("vtkMRMLMarkupsNode", "M");
-  }
-  return this->DefaultNodeNamePrefix;
 }
 
 //----------------------------------------------------------------------------

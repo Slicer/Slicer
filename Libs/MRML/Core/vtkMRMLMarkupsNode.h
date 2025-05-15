@@ -38,10 +38,6 @@
 # define VTK_PROPEXCLUDE
 #endif
 
-// This can be used for writing code that is backward-compatible with older Slicer versions
-// where vtkMRMLMarkupsNode::GetDefaultNodeNamePrefix() returned const char* (instead of std::string).
-#define DEFAULT_NODE_NAME_PREFIX_IS_STD_STRING 1
-
 class vtkMatrix3x3;
 class vtkMRMLUnitNode;
 
@@ -155,13 +151,6 @@ public:
   /// Get markup type internal name. This type name is the same regardless of the
   /// chosen application language and should not be displayed to end users.
   virtual const char* GetMarkupType() { return "Markup"; };
-
-  /// Get markup short name.
-  /// This may be displayed to the user and therefore it is translated to the application language.
-  std::string GetDefaultNodeNamePrefix() override;
-  /// Get markup type GUI display name
-  /// This may be displayed to the user and therefore it is translated to the application language.
-  std::string GetTypeDisplayName() override;
 
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;
@@ -1046,9 +1035,6 @@ protected:
 
   /// Store markup type GUI display name. Translated to the application language.
   std::string TypeDisplayName;
-
-  /// Store markup short name. Translated to the application language.
-  std::string DefaultNodeNamePrefix;
 
   /// Transform that moves the xyz unit vectors and origin of the interaction handles to local coordinates
   vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;

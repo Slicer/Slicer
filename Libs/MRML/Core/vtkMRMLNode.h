@@ -211,6 +211,10 @@ class vtkCallbackCommand;
    }
 #endif
 
+// This can be used for writing code that is backward-compatible with older Slicer versions
+// where GetDefaultNodeNamePrefix() returned const char* (instead of std::string).
+#define DEFAULT_NODE_NAME_PREFIX_IS_STD_STRING 1
+
 /// \brief Abstract Superclass for all specific types of MRML nodes.
 ///
 /// This node encapsulates the functionality common to all types of MRML nodes.
@@ -386,9 +390,12 @@ public:
 
   /// Get default node name prefix used when generating unique node names.
   ///
-  /// \note Subclasses can override this method to provide a more appropriate prefix for node names.
-  /// By default, this returns the node tag name.
-  virtual const char* GetDefaultNodeNamePrefix() { return this->GetNodeTagName(); }
+  /// \note If DefaultNodeNamePrefix has not been set then GetDefaultNodeNamePrefix will return the node tag name.
+  virtual std::string GetDefaultNodeNamePrefix();
+
+
+  /// Set default node name prefix used when generating unique node names.
+  virtual void SetDefaultNodeNamePrefix(const std::string& prefix);
 
   /// \brief Set a name value pair attribute.
   ///
@@ -1116,6 +1123,7 @@ protected:
   char* ID{ nullptr };
   char* Name{ nullptr };
   char* Description{ nullptr };
+  std::string DefaultNodeNamePrefix;
   int HideFromEditors{ 0 };
   int Selectable{ 1 };
   int Selected{ 0 };
