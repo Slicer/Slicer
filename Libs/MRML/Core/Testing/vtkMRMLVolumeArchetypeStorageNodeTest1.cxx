@@ -24,6 +24,10 @@
 #include <vtkTransform.h>
 #include <iostream>
 
+// STD includes
+#include <thread>
+#include <chrono>
+
 std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove = false)
 {
   std::string filename = tempDir + "/vtkMRMLVolumeArchetypeStorageNodeTest1_" + suffix + "." + fileExtension;
@@ -232,6 +236,99 @@ int TestFlipsLeftHandedVolumes(const std::string& tempDir)
   return EXIT_SUCCESS;
 }
 
+//----------------------------------------------------------------------------
+int TestConcurrentWriting(const std::string& tempDir)
+{
+  std::cout << "Testing concurrent writing protection..." << std::endl;
+
+  std::vector<std::thread> threads;
+  int numberOfThreads = 3;
+  bool writeResults[3] = { false, false, false };
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
+  scene->AddNode(volumeNode);
+
+  // Create simple image data
+  vtkNew<vtkImageData> imageData;
+  imageData->SetDimensions(500, 500, 500);
+  imageData->AllocateScalars(VTK_FLOAT, 1);
+
+  // Fill with test pattern (faster using pointer access)
+  float* ptr = static_cast<float*>(imageData->GetScalarPointer());
+  vtkIdType idx = 0;
+  for (int k = 0; k < 500; ++k)
+  {
+    for (int j = 0; j < 500; ++j)
+    {
+      for (int i = 0; i < 500; ++i, ++idx)
+      {
+        ptr[idx] = static_cast<float>(i + j + k);
+      }
+    }
+  }
+
+  volumeNode->SetAndObserveImageData(imageData);
+
+  vtkNew<vtkMRMLVolumeArchetypeStorageNode> storageNode;
+  scene->AddNode(storageNode);
+
+  // IMPORTANT: Each thread writes to the SAME file to test locking
+  std::string filename = vtksys::SystemTools::JoinPath({ tempDir, "/concurrent_volume.nrrd" });
+  storageNode->SetFileName(filename.c_str());
+  storageNode->SetSingleFile(true);
+
+  auto writeVolume = [&](int threadId, bool* result)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10 + threadId * 500));
+    *result = storageNode->WriteData(volumeNode);
+    if (*result)
+    {
+      *result = vtksys::SystemTools::FileExists(filename);
+    }
+  };
+
+  // Launch multiple threads to write concurrently to the SAME file
+  for (int threadId = 0; threadId < numberOfThreads; ++threadId)
+  {
+    threads.emplace_back(writeVolume, threadId, &writeResults[threadId]);
+  }
+
+  // Wait for all threads to complete
+  for (auto& thread : threads)
+  {
+    thread.join();
+  }
+
+  // Check results - with proper locking, exactly ONE write should succeed
+  int successfulWrites = 0;
+  for (int threadId = 0; threadId < numberOfThreads; ++threadId)
+  {
+    if (writeResults[threadId])
+    {
+      successfulWrites++;
+      std::cout << "Thread " << threadId << " write succeeded" << std::endl;
+    }
+    else
+    {
+      std::cout << "Thread " << threadId << " write failed (expected with locking)" << std::endl;
+    }
+  }
+
+  if (successfulWrites != numberOfThreads)
+  {
+    std::cerr << "Expected exactly " << numberOfThreads << " successful writes, got " << successfulWrites << std::endl;
+    std::cerr << "This suggests the atomic locking mechanism is not working properly" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Clean up
+  vtksys::SystemTools::RemoveFile(filename);
+
+  std::cout << "Concurrent writing test passed - atomic locking is working!" << std::endl;
+  return EXIT_SUCCESS;
+}
+
 int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
 {
   if (argc != 2)
@@ -257,6 +354,9 @@ int vtkMRMLVolumeArchetypeStorageNodeTest1(int argc, char* argv[])
 
   CHECK_EXIT_SUCCESS(TestVoxelVectorType(tempDir, "jpg", false, false, true, false));
   CHECK_EXIT_SUCCESS(TestFlipsLeftHandedVolumes(tempDir));
+
+  // Test concurrent writing protection
+  CHECK_EXIT_SUCCESS(TestConcurrentWriting(tempDir));
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;
