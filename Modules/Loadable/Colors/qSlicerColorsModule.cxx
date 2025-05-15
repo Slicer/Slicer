@@ -132,7 +132,6 @@ void qSlicerColorsModule::setup()
   ctkColorDialog::addDefaultTab(d->ColorDialogPickerWidget.data(),
                                 "Labels", SIGNAL(colorSelected(QColor)),
                                 SIGNAL(colorNameSelected(QString)));
-  ctkColorDialog::setDefaultTab(1);
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyColorLegendPlugin* colorLegendPlugin = new qSlicerSubjectHierarchyColorLegendPlugin();
