@@ -116,6 +116,10 @@ void vtkMRMLNode::Copy(vtkMRMLNode* node)
   {
     vtkMRMLCopyStringMacro(Name);
   }
+  if (!node->DefaultNodeNamePrefix.empty())
+  {
+    vtkMRMLCopyStdStringMacro(DefaultNodeNamePrefix);
+  }
   vtkMRMLCopyBooleanMacro(HideFromEditors);
   vtkMRMLCopyBooleanMacro(AddToScene);
   if (node->GetSingletonTag())
@@ -948,6 +952,22 @@ void vtkMRMLNode::GetAttributeNames(vtkStringArray* attributeNames)
   {
     attributeNames->InsertNextValue(iter->first);
   }
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLNode::GetDefaultNodeNamePrefix()
+{
+  if (vtkMRMLNode::GetDefaultNodeNamePrefix().empty())
+  {
+    return this->GetNodeTagName();
+  }
+  return this->DefaultNodeNamePrefix;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::SetDefaultNodeNamePrefix(const std::string& prefix)
+{
+  this->DefaultNodeNamePrefix = prefix;
 }
 
 //----------------------------------------------------------------------------
