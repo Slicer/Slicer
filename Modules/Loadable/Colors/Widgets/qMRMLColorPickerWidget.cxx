@@ -77,6 +77,7 @@ void qMRMLColorPickerWidgetPrivate::init()
                    q, SIGNAL(colorSelected(QColor)));
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(QString)),
                    q, SIGNAL(colorNameSelected(QString)));
+  this->MRMLColorListView->setDragDropMode(QAbstractItemView::NoDragDrop);
 
   // SearchBox
   this->SearchBox->setPlaceholderText("Search color...");
