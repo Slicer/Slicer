@@ -387,7 +387,12 @@ public:
   ///
   /// \note Subclasses can override this method to provide a more appropriate prefix for node names.
   /// By default, this returns the node tag name.
-  virtual const char* GetDefaultNodeNamePrefix() { return this->GetNodeTagName(); }
+  virtual const char* GetDefaultNodeNamePrefix() { return this->DefaultNodeNamePrefix ? this->DefaultNodeNamePrefix : this->GetNodeTagName(); }
+
+  /// Set default node name prefix used when generating unique node names.
+  ///
+  /// \note If set to nullptr or empty string, GetDefaultNodeNamePrefix() will return the node tag name.
+  vtkSetStringMacro(DefaultNodeNamePrefix);
 
   /// \brief Set a name value pair attribute.
   ///
@@ -1115,6 +1120,7 @@ protected:
   char* ID{ nullptr };
   char* Name{ nullptr };
   char* Description{ nullptr };
+  char* DefaultNodeNamePrefix{ nullptr };
   int HideFromEditors{ 0 };
   int Selectable{ 1 };
   int Selected{ 0 };

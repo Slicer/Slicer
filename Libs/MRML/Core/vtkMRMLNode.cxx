@@ -64,6 +64,7 @@ vtkMRMLNode::~vtkMRMLNode()
   this->SetID(nullptr);
   this->SetName(nullptr);
   this->SetDescription(nullptr);
+  this->SetDefaultNodeNamePrefix(nullptr);
 
   if (this->MRMLObserverManager)
   {
@@ -115,6 +116,10 @@ void vtkMRMLNode::Copy(vtkMRMLNode* node)
   if (node->GetName() && strcmp(node->GetName(), ""))
   {
     vtkMRMLCopyStringMacro(Name);
+  }
+  if (node->GetDefaultNodeNamePrefix() && strcmp(node->GetDefaultNodeNamePrefix(), ""))
+  {
+    vtkMRMLCopyStringMacro(DefaultNodeNamePrefix);
   }
   vtkMRMLCopyBooleanMacro(HideFromEditors);
   vtkMRMLCopyBooleanMacro(AddToScene);
@@ -390,6 +395,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLStringMacro(id, ID);
   vtkMRMLReadXMLStringMacro(name, Name);
   vtkMRMLReadXMLStringMacro(description, Description);
+  vtkMRMLReadXMLStringMacro(defaultNodeNamePrefix, DefaultNodeNamePrefix);
   vtkMRMLReadXMLBooleanMacro(hideFromEditors, HideFromEditors);
   vtkMRMLReadXMLBooleanMacro(selectable, Selectable);
   vtkMRMLReadXMLBooleanMacro(selected, Selected);
@@ -544,6 +550,7 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLStringMacro(id, ID);
   vtkMRMLWriteXMLStringMacro(name, Name);
   vtkMRMLWriteXMLStringMacro(description, Description);
+  vtkMRMLWriteXMLStringMacro(defaultNodeNamePrefix, DefaultNodeNamePrefix);
   vtkMRMLWriteXMLBooleanMacro(hideFromEditors, HideFromEditors);
   vtkMRMLWriteXMLBooleanMacro(selectable, Selectable);
   vtkMRMLWriteXMLBooleanMacro(selected, Selected);

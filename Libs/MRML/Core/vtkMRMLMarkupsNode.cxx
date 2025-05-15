@@ -179,6 +179,8 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy /*=true
   vtkMRMLCopyOwnedMatrix4x4Macro(InteractionHandleToWorldMatrix);
   vtkMRMLCopyEndMacro();
 
+  this->DefaultNodeNamePrefix = source->DefaultNodeNamePrefix;
+
   // No public set macros, therefore cannot use copy macros
   this->RequiredNumberOfControlPoints = source->RequiredNumberOfControlPoints;
   this->MaximumNumberOfControlPoints = source->MaximumNumberOfControlPoints;
@@ -522,6 +524,12 @@ void vtkMRMLMarkupsNode::SetLocked(int locked)
 
   this->Modified();
   this->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::LockModifiedEvent);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLMarkupsNode::SetDefaultNodeNamePrefix(std::string prefix)
+{
+  this->DefaultNodeNamePrefix = prefix;
 }
 
 //----------------------------------------------------------------------------
