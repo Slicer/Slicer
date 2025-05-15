@@ -2623,7 +2623,7 @@ std::string vtkMRMLScene::GenerateUniqueName(vtkMRMLNode* node)
     vtkErrorMacro("vtkMRMLScene::GenerateUniqueName: input node is invalid");
     return "";
   }
-  return this->GenerateUniqueName(node->GetNodeTagName());
+  return this->GenerateUniqueName(node->GetDefaultNodeNamePrefix());
 }
 
 //------------------------------------------------------------------------------
