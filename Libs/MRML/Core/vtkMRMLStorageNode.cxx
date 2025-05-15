@@ -30,11 +30,25 @@ Version:   $Revision: 1.1.1.1 $
 #include <vtkURIHandler.h>
 
 // VTKSYS includes
+#include <vtksys/Directory.hxx>
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
-#include <algorithm>
 #include <sstream>
+#include <chrono>
+#include <cstring>
+#include <filesystem>
+
+#ifdef _WIN32
+# include <windows.h> // For GetCurrentProcessId
+#else
+# include <unistd.h> // For getpid
+# include <fcntl.h>  // For open, O_CREAT, O_EXCL
+#endif
+
+#define VTKMRMLSTORAGENODE_MAX_LOCK_ATTEMPTS 50
+#define VTKMRMLSTORAGENODE_LOCK_SLEEP_MS_BASE 100
+#define VTKMRMLSTORAGENODE_LOCK_SLEEP_MS_JITTER 50
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLStorageNode, URIHandler, vtkURIHandler);
@@ -1647,4 +1661,226 @@ void vtkMRMLStorageNode::FixFileName()
     }
     this->SetFileName(secondCollapsedFullPath.c_str());
   }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLStorageNode::GenerateTempFilePathForWrite(const std::string& fullFileName, std::string& tempDir, std::string& tempFullFileName)
+{
+  if (fullFileName.empty())
+  {
+    return false;
+  }
+  if (!vtksys::SystemTools::FileIsFullPath(fullFileName))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::GenerateTempFilePathForWrite", "File name '" << fullFileName << "' is not a full path.");
+    return false;
+  }
+
+  // Use the directory of the first file as the target directory
+  std::string targetDir = vtksys::SystemTools::GetFilenamePath(fullFileName);
+  // Generate a unique temporary subdirectory name using process ID and current time
+  std::string tempSubDir = std::string("TempWrite") + vtksys::SystemTools::GetFilenameWithoutExtension(fullFileName);
+
+  // trim whitespace from the right because a folder name cannot end with space (there can be a space before the ".")
+  while (!tempSubDir.empty() && std::isspace((unsigned char)tempSubDir.back()))
+  {
+    tempSubDir.pop_back();
+  }
+
+  // Generate 6 quasi-random numbers (it is not too long so that filepath still remains valid, but name clashes are practically impossible)
+  auto now = std::chrono::system_clock::now();
+  long long micros = (std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count() % 1000000LL);
+
+  std::ostringstream tempSubDirStream;
+  tempSubDirStream << tempSubDir << "_" << micros;
+#ifdef _WIN32
+  tempSubDirStream << "_pid" << GetCurrentProcessId();
+#else
+  tempSubDirStream << "_pid" << getpid();
+#endif
+  tempSubDir = tempSubDirStream.str();
+
+  std::vector<std::string> pathComponents;
+  vtksys::SystemTools::SplitPath(targetDir.c_str(), pathComponents);
+  pathComponents.push_back(tempSubDir);
+
+  tempDir = vtksys::SystemTools::JoinPath(pathComponents);
+  if (vtksys::SystemTools::FileExists(tempDir.c_str()))
+  {
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+  }
+  if (!vtksys::SystemTools::MakeDirectory(tempDir.c_str()))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::CreateUniqueTempFilesForWrite", "Failed to create folder: '" << tempDir << "'");
+    return false;
+  }
+
+  std::string fileName = vtksys::SystemTools::GetFilenameName(fullFileName);
+  pathComponents.push_back(fileName);
+  tempFullFileName = vtksys::SystemTools::JoinPath(pathComponents);
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLStorageNode::MoveFilesWithLocking(const std::string& sourceDir, const std::string& targetDir)
+{
+  if (sourceDir.empty())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::MoveFilesWithLocking", "Source directory string is empty. Cannot commit files.");
+    return false;
+  }
+  if (!vtksys::SystemTools::FileExists(sourceDir.c_str()))
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLStorageNode::MoveFilesWithLocking", "Source directory does not exist: " << sourceDir << ". Cannot commit files.");
+    return false;
+  }
+  if (targetDir.empty())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::MoveFilesWithLocking", "Target directory string is empty. Cannot commit files.");
+    return false;
+  }
+  if (!vtksys::SystemTools::FileExists(targetDir.c_str()))
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLStorageNode::MoveFilesWithLocking", "Target directory does not exist: " << targetDir << ". Cannot commit files.");
+    return false;
+  }
+
+  bool allSuccess = true;
+
+  vtkNew<vtkStringArray> targetFiles;
+  vtkNew<vtkStringArray> sourceFiles;
+  // Use std::filesystem for recursive directory iteration
+  try
+  {
+    // NOTE: some writers (e.g., closed surface segmentation - .seg.vtm) may write files in nested directories
+    for (std::filesystem::recursive_directory_iterator it(sourceDir), end; it != end; ++it)
+    {
+      const std::filesystem::directory_entry& entry = *it;
+      if (!entry.is_regular_file())
+      {
+        continue;
+      }
+
+      std::string filePath = entry.path().string();
+      // Compute relative path from sourceDir to the file
+      std::filesystem::path relativePath = std::filesystem::relative(entry.path(), sourceDir);
+      // The target path should be targetDir + relativePath
+      std::filesystem::path targetPath = std::filesystem::path(targetDir) / relativePath;
+
+      targetFiles->InsertNextValue(targetPath.string());
+      sourceFiles->InsertNextValue(filePath);
+    }
+  }
+  catch (const std::filesystem::filesystem_error& ex)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::MoveFilesWithLocking", "Filesystem error: " << ex.what());
+    return false;
+  }
+
+  if (sourceFiles->GetNumberOfValues() == 0)
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLStorageNode::MoveFilesWithLocking", "No files found in source directory: " << sourceDir << ". Cannot commit files.");
+    return false;
+  }
+
+  // Use a single lock file for all target files (use the first target file)
+  std::string lockFile = targetFiles->GetValue(0) + ".lock";
+
+  // Try to acquire the lock
+  int lockAttempts = 0;
+  bool lockAcquired = false;
+  while (lockAttempts < VTKMRMLSTORAGENODE_MAX_LOCK_ATTEMPTS)
+  {
+    // Use platform-specific atomic file creation
+#ifdef _WIN32
+    HANDLE hFile = CreateFileA(lockFile.c_str(), GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE)
+    {
+      lockAcquired = true;
+      DWORD bytesWritten;
+      const char* lockContent = "locked\n";
+      WriteFile(hFile, lockContent, strlen(lockContent), &bytesWritten, NULL);
+      CloseHandle(hFile);
+      break;
+    }
+#else
+    int fd = open(lockFile.c_str(), O_CREAT | O_EXCL | O_WRONLY, 0644);
+    if (fd != -1)
+    {
+      lockAcquired = true;
+      write(fd, "locked\n", 7);
+      close(fd);
+      break;
+    }
+#endif
+
+    // Lock file already exists or creation failed, wait and retry
+    int sleepMs = VTKMRMLSTORAGENODE_LOCK_SLEEP_MS_BASE + (std::rand() % VTKMRMLSTORAGENODE_LOCK_SLEEP_MS_JITTER);
+    vtksys::SystemTools::Delay(sleepMs);
+    ++lockAttempts;
+  }
+
+  // If lock is not acquired return false
+  if (!lockAcquired)
+  {
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLStorageNode::MoveFilesWithLocking", "Timeout waiting for lock file. Another process may be writing to one or more files.");
+    return false;
+  }
+
+  // Move files
+  for (vtkIdType fileIndex = 0; fileIndex < targetFiles->GetNumberOfValues(); ++fileIndex)
+  {
+    std::string targetFile = targetFiles->GetValue(fileIndex);
+    std::string sourceFile = sourceFiles->GetValue(fileIndex);
+
+    // Remove old file if exists (necessary in windows otherwise rename fails)
+    if (vtksys::SystemTools::FileExists(targetFile.c_str(), true))
+    {
+      if (!vtksys::SystemTools::RemoveFile(targetFile.c_str()))
+      {
+        vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::MoveFilesWithLocking", "Unable to remove old version of file: " << targetFile);
+        allSuccess = false;
+        continue;
+      }
+    }
+
+    // Ensure target directory exists for netsted files for example in .seg.vtm case
+    std::string targetDir = vtksys::SystemTools::GetFilenamePath(targetFile);
+    if (!vtksys::SystemTools::FileExists(targetDir.c_str()))
+    {
+      if (!vtksys::SystemTools::MakeDirectory(targetDir.c_str()))
+      {
+        vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::MoveFilesWithLocking", "Failed to create target directory: " << targetDir);
+        allSuccess = false;
+        continue;
+      }
+    }
+
+    // Rename temporary file to final destination
+    int renameReturn = std::rename(sourceFile.c_str(), targetFile.c_str());
+    // rename does not remove the temp file if it fails; if it succeeds, the temp file is moved to targetFile path and no longer exists at sourceFile path
+    if (renameReturn != 0)
+    {
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                       "vtkMRMLStorageNode::MoveFilesWithLocking",
+                                       "Failed to move source file " << sourceFile << " to " << targetFile << ", rename returned code " << renameReturn);
+      allSuccess = false;
+      continue;
+    }
+  }
+
+  // Remove the lock file
+  vtksys::SystemTools::RemoveFile(lockFile.c_str());
+
+  if (allSuccess)
+  {
+    // Clean up temporary directory
+    vtksys::SystemTools::RemoveADirectory(sourceDir.c_str());
+  }
+  return allSuccess;
 }
