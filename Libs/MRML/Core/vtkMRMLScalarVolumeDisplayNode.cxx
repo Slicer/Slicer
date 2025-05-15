@@ -664,6 +664,14 @@ void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPreset(double window, double 
   preset.Window = window;
   preset.Level = level;
 
+  for (int p = 0; p < this->GetNumberOfWindowLevelPresets(); p++)
+  {
+    if (fabs(this->WindowLevelPresets[p].Window - window) < 1.e-6 && fabs(this->WindowLevelPresets[p].Level - level) < 1.e-6)
+    {
+      // already in the list
+      return;
+    }
+  }
   this->WindowLevelPresets.push_back(preset);
 }
 
