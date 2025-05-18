@@ -363,7 +363,7 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
 
             # hemispheric_white_matter.GetDisplayNode().SetClipping(1)
             skull.GetDisplayNode().SetClipping(1)
-            clip = slicer.util.getNode(pattern="vtkMRMLClipModelsNode1")
+            clip = slicer.util.getNode("ClipModelsParameters1")
             clip.SetRedSliceClipState(0)
             clip.SetYellowSliceClipState(0)
             clip.SetGreenSliceClipState(2)
