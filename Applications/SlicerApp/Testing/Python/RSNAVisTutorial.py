@@ -322,9 +322,9 @@ class RSNAVisTutorialTest(ScriptedLoadableModuleTest):
             mainWindow = slicer.util.mainWindow()
             layoutManager = slicer.app.layoutManager()
             threeDView = layoutManager.threeDWidget(0).threeDView()
-            redWidget = layoutManager.sliceWidget("Red")
+            redWidget = layoutManager.sliceWidget("vtkMRMLSliceNode1")  # it would be 'Red' in a recent scene
             redController = redWidget.sliceController()
-            greenWidget = layoutManager.sliceWidget("Green")
+            greenWidget = layoutManager.sliceWidget("vtkMRMLSliceNode3")  # it would be 'Green' in a recent scene
             greenController = greenWidget.sliceController()
 
             mainWindow.moduleSelector().selectModule("Models")
