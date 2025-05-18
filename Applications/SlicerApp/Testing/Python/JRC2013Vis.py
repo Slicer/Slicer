@@ -360,7 +360,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             greenWidget.sliceController().setSliceVisible(True)
             hemispheric_white_matter = slicer.util.getNode(pattern="hemispheric_white_matter.vtk")
             hemispheric_white_matter.GetDisplayNode().SetClipping(1)
-            clip = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLClipModelsNode")
+            clip = slicer.util.getNode("ClipModelsParameters1")
             clip.SetRedSliceClipState(0)
             clip.SetYellowSliceClipState(0)
             clip.SetGreenSliceClipState(2)
