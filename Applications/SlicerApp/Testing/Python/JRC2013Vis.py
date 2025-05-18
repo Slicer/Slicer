@@ -335,7 +335,7 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             threeDView = layoutManager.threeDWidget(0).threeDView()
             redWidget = layoutManager.sliceWidget("vtkMRMLSliceNode1")  # it would be 'Red' in a recent scene
             redController = redWidget.sliceController()
-            greenWidget = layoutManager.sliceWidget("vtkMRMLSliceNode2")  # it would be 'Green' in a recent scene
+            greenWidget = layoutManager.sliceWidget("vtkMRMLSliceNode3")  # it would be 'Green' in a recent scene
             greenController = greenWidget.sliceController()
 
             self.delayDisplay("Models and Slice Model")
