@@ -234,12 +234,12 @@ class JRC2013VisTest(ScriptedLoadableModuleTest):
             self.delayDisplay("Retrieve DICOM")
             slicer.util.selectModule("DICOM")
             dicomRetrieve = ctk.ctkDICOMRetrieve()
-            dicomRetrieve.setKeepAssociationOpen(True)
+            dicomRetrieve.keepAssociationOpen = True
             dicomRetrieve.setDatabase(slicer.dicomDatabase)
-            dicomRetrieve.setCallingAETitle("SlicerAE")
-            dicomRetrieve.setCalledAETitle("DCMTK")
-            dicomRetrieve.setPort(12345)
-            dicomRetrieve.setHost("localhost")
+            dicomRetrieve.callingAETitle = "SlicerAE"
+            dicomRetrieve.calledAETitle = "DCMTK"
+            dicomRetrieve.port = 12345
+            dicomRetrieve.host = "localhost"
             dicomRetrieve.getStudy("1.2.124.113932.1.170.223.162.178.20050502.160340.12640015")
             popen.kill()
 
