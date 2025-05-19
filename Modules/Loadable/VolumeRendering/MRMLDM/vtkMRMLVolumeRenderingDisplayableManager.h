@@ -65,6 +65,15 @@ public:
   /// Get the MRML ID of the picked node, returns empty string if no pick
   const char* GetPickedNodeID() override;
 
+  /// @{
+  /// Experimental function to adjust the maximum 3D texture size.
+  /// Along each axis, the volume will be split up so that each partition is not larger than this maximum size.
+  /// Default is 2048 on macOS (as Apple hardware typically is limited to this maximum texture size)
+  /// and 4096 on other systems (so that most volumes will not be split up by default).
+  static int GetMaximum3DTextureSize();
+  static void SetMaximum3DTextureSize(int size);
+  /// @}
+
 public:
   static int DefaultGPUMemorySize;
 
@@ -84,6 +93,7 @@ protected:
 
 protected:
   vtkSlicerVolumeRenderingLogic *VolumeRenderingLogic{nullptr};
+  static int Maximum3DTextureSize;
 
 protected:
   vtkMRMLVolumeRenderingDisplayableManager(const vtkMRMLVolumeRenderingDisplayableManager&); // Not implemented

@@ -118,12 +118,11 @@ See [video demo/tutorial of these steps](https://youtu.be/xZwyW6SaoM4?t=12) for 
 - To reduce staircase artifacts during rendering, choose enable "Surface smoothing" in Advanced/Techniques/Advanced rendering properties section, or choose "Normal" or "Maximum" as quality.
 - The volume must not be under a warping (affine or non-linear) transformation. To render a warped volume, the transform must be hardened on the volume. (see [related issue](https://github.com/Slicer/Slicer/issues/6648))
 - If the application crashes when rotating or zooming a volume: This indicates that you get a TDR error, i.e., the operating system shuts down applications that keep the graphics card busy for too long. This happens because the size of the volume is too large for your GPU to comfortably handle. There are several ways to work around this:
-  - Option A: Run the code snippet in the Python console (<kbd>Ctrl</kbd>-<kbd>3</kbd>) to split the volume to smaller chunks (that way you have a better chance that the graphics card will not be unresponsive for too long) _after_ enabling volume rendering.
+  - Option A: Run the code snippet in the Python console (<kbd>Ctrl</kbd>-<kbd>3</kbd>) to split the volume to smaller chunks (that way you have a better chance that the graphics card will not be unresponsive for too long).
     ```python
-    threeDViewWidget = slicer.app.layoutManager().threeDWidget(0)
-    vrDisplayableManager = threeDViewWidget.threeDView().displayableManagerByClassName('vtkMRMLVolumeRenderingDisplayableManager')
-    vrMapper = vrDisplayableManager.GetVolumeMapper(getNode('skull'))
-    vrMapper.SetPartitions(1,1,2)
+    slicer.vtkMRMLVolumeRenderingDisplayableManager.SetMaximum3DTextureSize(400)
+    for vrDisplayNode in getNodesByClass('vtkMRMLVolumeRenderingDisplayNode'):
+        slicer.util.arrayFromVolumeModified(vrDisplayNode.GetVolumeNode())
     ```
   - Option B: Crop and downsample your volume using Crop volume and volume render this smaller volume.
   - Option C: Increase TDR delay value in registry (see details [here](https://docs.microsoft.com/en-us/windows-hardware/drivers/display/tdr-registry-keys))
