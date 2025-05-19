@@ -42,6 +42,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
+#include <vtkUnstructuredGrid.h>
 
 // Qt includes
 #include <QDebug>
@@ -182,41 +183,47 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID)const
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return QString("Invalid");
+    return tr("Invalid item");
   }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return QString("Error");
+    return tr("Error");
+  }
+
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+  if (modelNode == nullptr)
+  {
+    return tr("Invalid model node");
+  }
+  QString dataType = tr("Poly data");
+  vtkPointSet* data = modelNode->GetPolyData();
+  if (data == nullptr)
+  {
+    data = modelNode->GetUnstructuredGrid();
+    dataType = tr("Unstructured grid");
+  }
+  if (data == nullptr)
+  {
+    return tr("Model node does not contain data");
   }
 
   // Get basic tooltip from abstract plugin
-  QString tooltipString = Superclass::tooltip(itemID);
+  QString tooltipString = QString("%1: %2").arg(Superclass::tooltip(itemID)).arg(dataType);
+  tooltipString.append( QString("\n  (") + tr("Points: %1  Cells: %2")
+    .arg(data->GetNumberOfPoints()).arg(data->GetNumberOfCells()) );
 
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  vtkPolyData* polyData = modelNode ? modelNode->GetPolyData() : nullptr;
-  vtkMRMLModelDisplayNode* displayNode = modelNode ? vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode()) : nullptr;
-  if (modelNode && displayNode && polyData)
+  vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
+  if (displayNode && modelNode->GetDisplayVisibility() > 0)
   {
-    bool visible = (displayNode->GetVisibility() > 0);
-    tooltipString.append( QString(" (Points: %1  Cells: %2  Visible: %3")
-      .arg(polyData->GetNumberOfPoints()).arg(polyData->GetNumberOfCells())
-      .arg(visible ? "YES" : "NO") );
-    if (visible)
-    {
-        double color[3] = {0.0,0.0,0.0};
-        displayNode->GetColor(color);
-      tooltipString.append( QString("  Color: %4,%5,%6  Opacity: %7%")
-        .arg(int(color[0]*255.0)).arg(int(color[1]*255.0)).arg(int(color[2]*255.0))
-        .arg(int(displayNode->GetOpacity()*100.0)) );
-    }
-    tooltipString.append(QString(")"));
+    double color[3] = {0.0,0.0,0.0};
+    displayNode->GetColor(color);
+    tooltipString.append( QString("  ") + tr("Color: %1,%2,%3  Opacity: %4%")
+      .arg(int(color[0]*255.0)).arg(int(color[1]*255.0)).arg(int(color[2]*255.0))
+      .arg(int(displayNode->GetOpacity()*100.0)) );
   }
-  else
-  {
-    tooltipString.append(" !Invalid model");
-  }
+  tooltipString.append(QString(")"));
 
   return tooltipString;
 }
