@@ -61,6 +61,7 @@
 #include <vtkImplicitFunctionToImageStencil.h>
 #include <vtkInteractorStyle.h>
 #include <vtkMatrix4x4.h>
+#include <vtkOpenGLGPUVolumeRayCastMapper.h>
 #include <vtkPlane.h>
 #include <vtkPlanes.h>
 #include <vtkPointData.h>
@@ -87,6 +88,14 @@ vtkStandardNewMacro(vtkMRMLVolumeRenderingDisplayableManager);
 
 //---------------------------------------------------------------------------
 int vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize = 256;
+
+#if defined(__APPLE__)
+// Maximum 3D texture size is 2048 on current systems.
+int vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize = 2048;
+#else
+// This value is large enough that on most computers the volume will not be split up.
+int vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize = 4096;
+#endif
 
 //---------------------------------------------------------------------------
 class vtkMRMLVolumeRenderingDisplayableManager::vtkInternal
@@ -1037,6 +1046,20 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
     return;
   }
 
+  // Partition the volume if it is larger than the maximum texture size
+  vtkOpenGLGPUVolumeRayCastMapper* openGLMapper = vtkOpenGLGPUVolumeRayCastMapper::SafeDownCast(mapper);
+  if (openGLMapper)
+  {
+    int* dims = volumeNode->GetImageData()->GetDimensions();
+    unsigned short partitions[3] =
+    {
+      static_cast<unsigned short>(dims[0] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
+      static_cast<unsigned short>(dims[1] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1),
+      static_cast<unsigned short>(dims[2] / vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize + 1)
+    };
+    openGLMapper->SetPartitions(partitions[0], partitions[1], partitions[2]);
+  }
+
   // Update specific volume mapper
   if (displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
   {
@@ -1941,4 +1964,16 @@ int vtkMRMLVolumeRenderingDisplayableManager::Pick3D(double ras[3])
 const char* vtkMRMLVolumeRenderingDisplayableManager::GetPickedNodeID()
 {
   return this->Internal->PickedNodeID.c_str();
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLVolumeRenderingDisplayableManager::GetMaximum3DTextureSize()
+{
+  return vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::SetMaximum3DTextureSize(int size)
+{
+  vtkMRMLVolumeRenderingDisplayableManager::Maximum3DTextureSize = size;
 }
