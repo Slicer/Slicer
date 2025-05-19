@@ -850,7 +850,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath(originalDir.c_str(), pathComponents);
   // add a temp dir to it
-  std::string tempSubDir = std::string("TempWrite") + vtksys::SystemTools::GetFilenameWithoutExtension(oldName);
+  std::string tempSubDir = std::string("TempWrite") + vtksys::SystemTools::GetFilenameWithoutExtension(oldName)
+    + "_" + vtksys::SystemTools::GetCurrentDateTime("%Y%m%d%H%M%6f");
   // trim whitespace from the right because a folder name cannot end with space (there can be a space before the ".")
   tempSubDir.erase(tempSubDir.find_last_not_of(" ") + 1);
   pathComponents.push_back(tempSubDir);

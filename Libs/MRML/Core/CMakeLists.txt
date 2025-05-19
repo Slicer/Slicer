@@ -92,6 +92,11 @@ if(NOT Slicer_BUILD_vtkAddon)
   find_package(vtkAddon REQUIRED)
 endif()
 
+#
+# RapidJSON
+#
+find_package(RapidJSON REQUIRED)
+
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------
@@ -102,6 +107,7 @@ set(include_dirs
   ${vtkITK_INCLUDE_DIRS}
   ${vtkSegmentationCore_INCLUDE_DIRS}
   ${LibArchive_INCLUDE_DIR}
+  ${RapidJSON_INCLUDE_DIR}
   )
 if(MRML_USE_vtkTeem)
   list(APPEND include_dirs ${vtkTeem_INCLUDE_DIRS})
@@ -176,6 +182,7 @@ set(MRMLCore_SRCS
   vtkMRMLInteractionEventData.cxx
   vtkMRMLInteractionEventData.h
   vtkMRMLInteractionNode.cxx
+  vtkMRMLJsonElement.cxx
   vtkMRMLLabelMapVolumeDisplayNode.cxx
   vtkMRMLLabelMapVolumeNode.cxx
   vtkMRMLLayoutNode.cxx
