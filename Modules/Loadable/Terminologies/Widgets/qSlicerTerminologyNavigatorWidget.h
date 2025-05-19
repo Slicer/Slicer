@@ -158,7 +158,8 @@ protected slots:
 
   void onLogicModified();
 
-  void scrollToSelectedColorAfterLayout();
+  // Set focus on color item in list, name editor or property name search box so that the user can just start typing.
+  void setInitialFocus();
 
 signals:
   /// Emitted when selection becomes valid (true argument) or invalid (false argument)
