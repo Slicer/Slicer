@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LineProfile</class>
+ <widget class="QWidget" name="LineProfile">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>418</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="ctkCollapsibleButton" name="parametersCollapsibleButton">
+     <property name="text">
+      <string>Parameters</string>
+     </property>
+     <property name="title" stdset="0">
+      <string>Parameters</string>
+     </property>
+     <layout class="QFormLayout" name="parametersFormLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="inputVolumeLabel">
+        <property name="text">
+         <string>Input Volume:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="inputVolumeSelector"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="inputLineLabel">
+        <property name="text">
+         <string>Input Line:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="outputTableLabel">
+        <property name="text">
+         <string>Intensities Output Table:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLNodeComboBox" name="outputTableSelector"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lineResolutionLabel">
+        <property name="text">
+         <string>Line Resolution:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="ctkSliderWidget" name="lineResolutionSliderWidget"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="qSlicerSimpleMarkupsWidget" name="inputLineWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="plottingCollapsibleButton">
+     <property name="text">
+      <string>Plotting</string>
+     </property>
+     <property name="title" stdset="0">
+      <string>Plotting</string>
+     </property>
+     <layout class="QFormLayout" name="plottingLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="outputPlotSeriesLabel">
+        <property name="text">
+         <string>Output Plot Series:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="outputPlotSeriesSelector"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="plotProportionalDistanceLabel">
+        <property name="text">
+         <string>Plot Proportional Distance (%):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="plotProportionalDistanceCheckBox"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="peaksCollapsibleButton">
+     <property name="text">
+      <string>Peak Detection</string>
+     </property>
+     <property name="title" stdset="0">
+      <string>Peak Detection</string>
+     </property>
+     <layout class="QFormLayout" name="peaksFormLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="outputPeaksTableLabel">
+        <property name="text">
+         <string>Peaks Output Table:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="outputPeaksTableSelector"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="peakMinimumWidthLabel">
+        <property name="text">
+         <string>Minimum Peak Width:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLSpinBox" name="peakMinimumWidthSpinBox"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="heightPercentageForWidthMeasurementLabel">
+        <property name="text">
+         <string>Height for Width Measurement:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLSpinBox" name="heightPercentageForWidthMeasurementSpinBox"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="peakIsMaximumLabel">
+        <property name="text">
+         <string>Peak is Maximum:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="peakIsMaximumCheckBox"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCheckablePushButton" name="applyButton">
+     <property name="text">
+      <string>Compute Intensity Profile</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>ctkPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkPushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkPushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSpinBox</class>
+   <extends>ctkDoubleSpinBox</extends>
+   <header>qMRMLSpinBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerSimpleMarkupsWidget</class>
+   <extends>qSlicerWidget</extends>
+   <header>qSlicerSimpleMarkupsWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
