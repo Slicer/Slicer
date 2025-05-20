@@ -328,7 +328,22 @@ class DataProbeInfoWidget:
 
     def generateIJKPixelDescription(self, ijk, slicerLayerLogic):
         volumeNode = slicerLayerLogic.GetVolumeNode()
-        return f"({ijk[0]:3d}, {ijk[1]:3d}, {ijk[2]:3d})" if volumeNode else ""
+        if not volumeNode:
+            return ""
+        description = f"({ijk[0]:3d}, {ijk[1]:3d}, {ijk[2]:3d})"
+        instanceNumbersAttr = volumeNode.GetAttribute("DICOM.instanceNumbers")
+        if instanceNumbersAttr:
+            try:
+                # The DICOMScalarVolumePlugin ensures that the instance numbers are sorted
+                # so that the i-th slice in the volume node corresponds to the i-th value in the DICOM.instanceNumbers attribute.
+                # Only split up to k+1 values, since we only need the k-th value
+                k = ijk[2]
+                instanceNumbers = instanceNumbersAttr.split(" ", k + 1)
+                if 0 <= k < len(instanceNumbers):
+                    description = _("{description} [slice: {instanceNumber}]").format(description=description, instanceNumber=instanceNumbers[k])
+            except Exception:
+                pass
+        return description
 
     def generateIJKPixelValueDescription(self, ijk, slicerLayerLogic):
         volumeNode = slicerLayerLogic.GetVolumeNode()
@@ -448,13 +463,13 @@ class DataProbeInfoWidget:
         self.viewInfo = qt.QLabel()
         self.viewerFrame.layout().addWidget(self.viewInfo)
 
-        def _setFixedFontFamily(widget, family=None):
+        def _setFixedFontFamily(widget, family=None, wordWrap=True):
             if family is None:
                 family = qt.QFontDatabase.systemFont(qt.QFontDatabase.FixedFont).family()
             font = widget.font
             font.setFamily(family)
             widget.font = font
-            widget.wordWrap = True
+            widget.wordWrap = wordWrap
 
         _setFixedFontFamily(self.viewInfo)
 
@@ -483,7 +498,7 @@ class DataProbeInfoWidget:
             layout.setColumnStretch(col, 100)
 
             _setFixedFontFamily(self.layerNames[layer])
-            _setFixedFontFamily(self.layerIJKs[layer])
+            _setFixedFontFamily(self.layerIJKs[layer], None, False)
             _setFixedFontFamily(self.layerValues[layer])
 
         # information collected about the current crosshair position
