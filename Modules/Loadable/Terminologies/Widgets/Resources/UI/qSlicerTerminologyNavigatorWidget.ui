@@ -609,21 +609,5 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>CategoryExpandButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>frame</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>111</x>
-     <y>110</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>120</x>
-     <y>34</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>
