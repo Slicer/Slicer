@@ -103,7 +103,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_BEGIN();
   bool readSuccess = (scene->Connect() != 0);
   TESTING_OUTPUT_ASSERT_ERRORS(0);
-  TESTING_OUTPUT_ASSERT_WARNINGS(2);  // warning about view tag/layout name, because we read an old scene
+  TESTING_OUTPUT_ASSERT_WARNINGS(0);
   TESTING_OUTPUT_IGNORE_WARNINGS_ERRORS_END();
 
   CHECK_BOOL(readSuccess, true);
