@@ -44,9 +44,6 @@
 #include "qSlicerLayoutManager.h"
 #include "qMRMLUtils.h"
 
-/// Logic includes
-#include "vtkMRMLLogic.h"
-
 /// MRML includes
 #include <vtkCacheManager.h>
 #include <vtkCollection.h>
