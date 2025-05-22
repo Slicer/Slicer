@@ -23,6 +23,7 @@
 class vtkIntArray;
 class vtkMRMLAnnotationROINode;
 class vtkMRMLMarkupsROINode;
+class vtkMRMLMessageCollection;
 class vtkMRMLShaderPropertyNode;
 class vtkMRMLViewNode;
 class vtkMRMLVolumeNode;
@@ -112,6 +113,15 @@ public:
   vtkSetMacro(AutoClippingBlankVoxelValue, bool);
   vtkGetMacro(AutoClippingBlankVoxelValue, bool);
   vtkBooleanMacro(AutoClippingBlankVoxelValue, bool);
+  //@}
+
+  //@{
+  /// Check if the clipping shortcut can be used with the display/clipping node.
+  /// Returns true if the clipping shortcut can be utilized, or returns false otherwise.
+  /// If userMessages is specified, messages will be added to provide reasons for why the clipping shortcut
+  /// cannot be used.
+  bool IsClippingShortcutValid(vtkMRMLMessageCollection* userMessages=nullptr);
+  bool IsClippingShortcutValid(vtkMRMLClipNode* clipNode, vtkMRMLMessageCollection* userMessages=nullptr);
   //@}
 
 protected:

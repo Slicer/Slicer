@@ -227,6 +227,15 @@ public:
   /// Overridden to update the implicit function when the clipping nodes are modified.
   void CopyReferences(vtkMRMLNode* node) override;
 
+  /// Get the list of all clipping planes in the clip node, including from nested clip nodes.
+  /// Returns false if not all of the functions in the clip node are planes.
+  bool GetClippingPlanes(vtkPlaneCollection* planeCollection);
+
+  /// Get the list of all clipping planes in the implicit function.
+  /// If invert is true, then the plane normals will be flipped.
+  /// Returns false if not all of the functions in the clip node are planes.
+  static bool GetClippingPlanesFromFunction(vtkImplicitFunction* function, vtkPlaneCollection* planeCollection, bool invert=false);
+
 protected:
 
   /// Update the implicit function based on the clipping nodes.

@@ -13,7 +13,10 @@ Version:   $Revision: 1.2 $
 =========================================================================auto=*/
 
 // MRML includes
+#include "vtkMRMLI18N.h"
+#include <vtkMRMLClipNode.h>
 #include "vtkMRMLMarkupsROINode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLShaderPropertyNode.h"
 #include "vtkMRMLViewNode.h"
@@ -26,6 +29,7 @@ Version:   $Revision: 1.2 $
 #include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPlaneCollection.h>
 
 // STD includes
 #include <sstream>
@@ -332,4 +336,102 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject *caller,
   {
     this->InvokeEvent(event);
   }
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLVolumeRenderingDisplayNode::IsClippingShortcutValid(vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+{
+  bool shortcutValid = true;
+  if (this->GetCroppingEnabled())
+  {
+    if (userMessages)
+    {
+      userMessages->AddMessage(vtkCommand::MessageEvent, vtkMRMLTr("vtkMRMLVolumeRenderingDisplayNode", "Fast clipping cannot be used with cropping enabled."));
+    }
+    shortcutValid = false;
+  }
+
+  if (this->GetClippingSoftEdgeVoxels() > 0.0)
+  {
+    if (userMessages)
+    {
+      userMessages->AddMessage(vtkCommand::MessageEvent, vtkMRMLTr("vtkMRMLVolumeRenderingDisplayNode", "Fast clipping cannot be used with soft edge voxels."));
+    }
+    shortcutValid = false;
+  }
+
+  if (!this->IsClippingShortcutValid(this->GetClipNode(), userMessages))
+  {
+    shortcutValid = false;
+  }
+
+  return shortcutValid;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLVolumeRenderingDisplayNode::IsClippingShortcutValid(vtkMRMLClipNode* clipNode, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+{
+  if (!clipNode)
+  {
+    return false;
+  }
+
+  bool shortcutValid = true;
+  if (clipNode->GetClipType() == vtkMRMLClipNode::ClipIntersection)
+  {
+    if (userMessages)
+    {
+      userMessages->AddMessage(vtkCommand::MessageEvent, vtkMRMLTr("vtkMRMLVolumeRenderingDisplayNode", "Fast clipping cannot use intersection clip type."));
+    }
+    shortcutValid = false;
+  }
+
+  for (int i = 0; i < clipNode->GetNumberOfClippingNodes(); ++i)
+  {
+    vtkMRMLClipNode* nestedClipNode = vtkMRMLClipNode::SafeDownCast(clipNode->GetNthClippingNode(i));
+    if (nestedClipNode && !this->IsClippingShortcutValid(nestedClipNode, userMessages))
+    {
+      shortcutValid = false;
+    }
+
+    vtkMRMLMarkupsROINode* markupsROINode = vtkMRMLMarkupsROINode::SafeDownCast(clipNode->GetNthClippingNode(i));
+    if (markupsROINode && clipNode->GetNthClippingNodeState(i) == vtkMRMLClipNode::ClipPositiveSpace)
+    {
+      if (userMessages)
+      {
+        userMessages->AddMessage(vtkCommand::MessageEvent, vtkMRMLTr("vtkMRMLVolumeRenderingDisplayNode", "Fast method cannot use positive space of an ROI."));
+      }
+      shortcutValid = false;
+    }
+  }
+
+  vtkNew<vtkPlaneCollection> clippingPlanes;
+  if (!clipNode->GetClippingPlanes(clippingPlanes) && clipNode->GetNumberOfClippingNodes() > 0)
+  {
+    if (userMessages)
+    {
+      userMessages->AddMessage(vtkCommand::MessageEvent, vtkMRMLTr("vtkMRMLVolumeRenderingDisplayNode", "Fast clipping only works with planes."));
+    }
+    shortcutValid = false;
+  }
+
+  if (clippingPlanes->GetNumberOfItems() == 0)
+  {
+    if (userMessages)
+    {
+      userMessages->AddMessage(vtkCommand::MessageEvent, vtkMRMLTr("vtkMRMLVolumeRenderingDisplayNode", "No planes found."));
+    }
+    shortcutValid = false;
+  }
+
+  if (clippingPlanes->GetNumberOfItems() > 6)
+  {
+    if (userMessages)
+    {
+      userMessages->AddMessage(vtkCommand::MessageEvent, vtkMRMLTr("vtkMRMLVolumeRenderingDisplayNode", "Fast method cannot clip with more than 6 planes."));
+    }
+    shortcutValid = false;
+  }
+
+  return shortcutValid;
 }
