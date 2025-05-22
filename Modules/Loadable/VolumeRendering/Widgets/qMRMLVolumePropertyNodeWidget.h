@@ -45,6 +45,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidg
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(bool threshold READ hasThreshold WRITE setThreshold)
+  Q_PROPERTY(int componentCount READ componentCount WRITE setComponentCount)
 
 public:
   /// Constructors
@@ -79,10 +80,14 @@ public slots:
   void setChartsExtent(double extent[2]);
   void setChartsExtent(double min, double max);
 
+  int componentCount()const;
+  void setComponentCount(int component);
+
 signals:
   void thresholdChanged(bool enabled);
   void volumePropertyChanged();
   void chartsExtentChanged();
+  void componentChanged(int component);
 
 protected slots:
   void updateFromVolumePropertyNode();
