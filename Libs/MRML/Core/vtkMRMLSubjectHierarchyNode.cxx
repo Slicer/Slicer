@@ -1042,25 +1042,28 @@ bool vtkSubjectHierarchyItem::Move(vtkSubjectHierarchyItem* beforeItem)
   if (!beforeItem)
   {
     this->Parent->Children.push_back(thisPointer);
-    return true;
+  }
+  else
+  {
+    ChildVector::iterator beforeIt;
+    for (beforeIt = this->Parent->Children.begin(); beforeIt != this->Parent->Children.end(); ++beforeIt)
+    {
+      if (beforeItem == beforeIt->GetPointer())
+      {
+        break;
+      }
+    }
+    if (beforeIt == this->Parent->Children.end())
+    {
+      vtkErrorMacro("Move: Failed to find subject hierarchy item '" << beforeItem->GetName()
+        << "' as insertion position in item '" << this->Parent->GetName() << "'");
+      return false;
+    }
+    this->Parent->Children.insert(beforeIt, thisPointer);
   }
 
-  ChildVector::iterator beforeIt;
-  for (beforeIt=this->Parent->Children.begin(); beforeIt!=this->Parent->Children.end(); ++beforeIt)
-  {
-    if (beforeItem == beforeIt->GetPointer())
-    {
-      break;
-    }
-  }
-  if (beforeIt == this->Parent->Children.end())
-  {
-    vtkErrorMacro("Move: Failed to find subject hierarchy item '" << beforeItem->GetName()
-      << "' as insertion position in item '" << this->Parent->GetName() << "'");
-    return false;
-  }
-  this->Parent->Children.insert(beforeIt, thisPointer);
   this->Parent->Modified();
+  this->Parent->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent, this->Parent);
 
   return true;
 }
@@ -1765,6 +1768,10 @@ void vtkMRMLSubjectHierarchyNode::vtkInternal::AddItemObservers(vtkSubjectHierar
   {
     item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent, this->External->ItemEventCallbackCommand);
   }
+  if (!item->HasObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent, this->External->ItemEventCallbackCommand))
+  {
+    item->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent, this->External->ItemEventCallbackCommand);
+  }
   if (!item->HasObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand))
   {
     item->AddObserver(vtkCommand::ModifiedEvent, this->External->ItemEventCallbackCommand);
@@ -1832,6 +1839,7 @@ vtkMRMLSubjectHierarchyNode::vtkMRMLSubjectHierarchyNode()
   // Connect scene item to events related to removal (the parent item invokes these events, not the removed item itself)
   this->Internal->SceneItem->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, this->ItemEventCallbackCommand);
   this->Internal->SceneItem->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, this->ItemEventCallbackCommand);
+  this->Internal->SceneItem->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent, this->ItemEventCallbackCommand);
 }
 
 //----------------------------------------------------------------------------
@@ -2159,7 +2167,7 @@ vtkMRMLNode* vtkMRMLSubjectHierarchyNode::GetItemDataNode(vtkIdType itemID)
   vtkSubjectHierarchyItem* item = this->Internal->FindItemByID(itemID);
   if (!item)
   {
-    vtkErrorMacro("GetItemDataNode: Failed to find subject hierarchy item by ID " << itemID);
+    // No data node is associated with this item
     return nullptr;
   }
 
@@ -3694,6 +3702,7 @@ void vtkMRMLSubjectHierarchyNode::ItemEventCallback(vtkObject* caller, unsigned 
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemUIDAddedEvent:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested:
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent:
     {
       // Get item from call data
       vtkSubjectHierarchyItem* item = reinterpret_cast<vtkSubjectHierarchyItem*>(callData);
@@ -3783,4 +3792,108 @@ void vtkMRMLSubjectHierarchyNode::ShowItemsInView(vtkIdList* itemIDs, vtkMRMLAbs
   eventData.viewNode = viewNode;
   this->InvokeEvent(SubjectHierarchyItemsShowInViewRequestedEvent, &eventData);
   // The event will be processed by qSlicerSubjectHierarchyPluginHandler
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSubjectHierarchyNode::ReorderItemChildren(vtkIdType parentItemID, vtkIdList* childIDs)
+{
+  vtkSubjectHierarchyItem* parentItem = this->Internal->FindItemByID(parentItemID);
+  if (!parentItem)
+  {
+    vtkErrorMacro("ReorderItemChildren: Failed to find non-scene subject hierarchy item by ID " << parentItemID);
+    return false;
+  }
+
+  // Reparent child items
+  std::set<vtkSubjectHierarchyItem*> modifiedParentItems;
+  for (int childIDIndex = 0; childIDIndex < childIDs->GetNumberOfIds(); ++childIDIndex)
+  {
+    vtkIdType childID = childIDs->GetId(childIDIndex);
+    vtkSubjectHierarchyItem* childItem = this->Internal->SceneItem->FindChildByID(childID);
+    if (!childItem)
+    {
+      vtkErrorMacro("ReorderItemChildren: Failed to find non-scene subject hierarchy item by ID " << childID);
+      continue;
+    }
+    vtkSubjectHierarchyItem* formerParentItem = childItem->Parent;
+    if (formerParentItem == parentItem)
+    {
+      // Item is already a child of the parent item
+      continue;
+    }
+    // Remove item from former parent
+    vtkSubjectHierarchyItem::ChildVector::iterator childIt;
+    for (childIt = formerParentItem->Children.begin(); childIt != formerParentItem->Children.end(); ++childIt)
+    {
+      if (childItem == childIt->GetPointer())
+      {
+        break;
+      }
+    }
+    if (childIt == formerParentItem->Children.end())
+    {
+      vtkErrorMacro("Reparent: Subject hierarchy item '" << this->GetName() << "' not found under item '" << formerParentItem->GetName() << "'");
+      continue;
+    }
+
+    // Prevent deletion of the item from memory until the events are processed
+    vtkSmartPointer<vtkSubjectHierarchyItem> thisPointer = childItem;
+
+    // Remove item from former parent
+    formerParentItem->Children.erase(childIt);
+
+    // Add item to new parent
+    childItem->Parent = parentItem;
+    parentItem->Children.push_back(thisPointer);
+
+    modifiedParentItems.insert(parentItem);
+    modifiedParentItems.insert(formerParentItem);
+  }
+
+  // Update order of child items
+
+  // Reorder child items
+  vtkSubjectHierarchyItem::ChildVector reorderedChildren;
+  for (int childIDIndex = 0; childIDIndex < childIDs->GetNumberOfIds(); ++childIDIndex)
+  {
+    vtkIdType childID = childIDs->GetId(childIDIndex);
+    vtkSubjectHierarchyItem* childItem = this->Internal->SceneItem->FindChildByID(childID);
+    if (!childItem)
+    {
+      vtkErrorMacro("ReorderItemChildren: Failed to find non-scene subject hierarchy item by ID " << childID);
+      continue;
+    }
+    reorderedChildren.push_back(childItem);
+  }
+
+  // Compare parentItem->Children to reorderedChildren
+  bool orderChanged = false;
+  if (parentItem->Children.size() != reorderedChildren.size())
+  {
+    orderChanged = true;
+  }
+  else
+  {
+    for (size_t i = 0; i < parentItem->Children.size(); ++i)
+    {
+      if (parentItem->Children[i] != reorderedChildren[i])
+      {
+        orderChanged = true;
+        break;
+      }
+    }
+  }
+  if (orderChanged)
+  {
+    // Set new order
+    parentItem->Children = reorderedChildren;
+    modifiedParentItems.insert(parentItem);
+  }
+  // Call Modified for all modified parent items
+  for (std::set<vtkSubjectHierarchyItem*>::iterator itemIt = modifiedParentItems.begin(); itemIt != modifiedParentItems.end(); ++itemIt)
+  {
+    (*itemIt)->Modified();
+    (*itemIt)->InvokeEvent(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent, (*itemIt));
+  }
+  return true;
 }
