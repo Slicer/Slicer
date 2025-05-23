@@ -688,3 +688,68 @@ void vtkMRMLClipNode::SetYellowSliceClipState(int state)
 {
   this->SetSliceClipState("vtkMRMLSliceNodeYellow", state);
 }
+
+//----------------------------------------------------------------------------
+bool vtkMRMLClipNode::GetClippingPlanes(vtkPlaneCollection* planeCollection)
+{
+  return this->GetClippingPlanesFromFunction(this->ImplicitFunction, planeCollection);
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLClipNode::GetClippingPlanesFromFunction(vtkImplicitFunction* function, vtkPlaneCollection* planeCollection, bool invert/*=false*/)
+{
+  vtkImplicitBoolean* implicitBoolean = vtkImplicitBoolean::SafeDownCast(function);
+  vtkImplicitInvertableBoolean* invertableBoolean = vtkImplicitInvertableBoolean::SafeDownCast(function);
+  if (implicitBoolean)
+  {
+    bool planesOnly = true;
+    vtkImplicitFunctionCollection* subFunctions = implicitBoolean->GetFunction();
+    for (int i = 0; i < subFunctions->GetNumberOfItems(); ++i)
+    {
+      vtkImplicitFunction* subFunction = vtkImplicitFunction::SafeDownCast(subFunctions->GetItemAsObject(i));
+      if (subFunction)
+      {
+        planesOnly &= GetClippingPlanesFromFunction(subFunction, planeCollection,
+          invertableBoolean && invertableBoolean->GetInvert() ? !invert : invert);
+      }
+    }
+    return planesOnly;
+  }
+
+  vtkPlane* implicitPlane = vtkPlane::SafeDownCast(function);
+  if (implicitPlane)
+  {
+    vtkNew<vtkPlane> tempPlane;
+    tempPlane->SetOrigin(implicitPlane->GetOrigin());
+    tempPlane->SetNormal(implicitPlane->GetNormal());
+    if (invert)
+    {
+      tempPlane->SetNormal(-tempPlane->GetNormal()[0], -tempPlane->GetNormal()[1], -tempPlane->GetNormal()[2]);
+    }
+    planeCollection->AddItem(tempPlane);
+    return true;
+  }
+
+  vtkPlanes* planes = vtkPlanes::SafeDownCast(function);
+  if (planes)
+  {
+    for (int i = 0; i < planes->GetNumberOfPlanes(); ++i)
+    {
+      vtkPlane* currentPlane = planes->GetPlane(i);
+      if (currentPlane)
+      {
+        vtkNew<vtkPlane> tempPlane;
+        tempPlane->SetOrigin(currentPlane->GetOrigin());
+        tempPlane->SetNormal(currentPlane->GetNormal());
+        if (invert)
+        {
+          tempPlane->SetNormal(-tempPlane->GetNormal()[0], -tempPlane->GetNormal()[1], -tempPlane->GetNormal()[2]);
+        }
+        planeCollection->AddItem(tempPlane);
+      }
+    }
+    return true;
+  }
+
+  return false;
+}
