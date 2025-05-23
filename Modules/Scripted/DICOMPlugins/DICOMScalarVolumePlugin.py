@@ -509,6 +509,16 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
             instanceUIDs = instanceUIDs[:-1]  # strip last space
             volumeNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
 
+            #
+            # add list of DICOM instance numbers to the volume node
+            # corresponding to the loaded files
+            #
+            instanceNumbers = []
+            for file in fileList:
+                instanceNumber = slicer.dicomDatabase.fileValue(file, "0020,0013")  # Instance Number tag
+                instanceNumbers.append(instanceNumber if instanceNumber else "?")
+            volumeNode.SetAttribute("DICOM.instanceNumbers", " ".join(instanceNumbers))
+
             # Choose a file in the middle of the series as representative frame,
             # because that is more likely to contain the object of interest than the first or last frame.
             # This is important for example for getting a relevant window/center value for the series.
