@@ -47,6 +47,7 @@ public:
   virtual void setupUi();
 
   vtkWeakPointer<vtkMRMLVolumePropertyNode> VolumePropertyNode;
+  int ComponentCount{ 1 };
 };
 
 // --------------------------------------------------------------------------
@@ -69,6 +70,8 @@ void qMRMLVolumePropertyNodeWidgetPrivate::setupUi()
                    q, SIGNAL(chartsExtentChanged()));
   QObject::connect(this->VolumePropertyWidget, SIGNAL(thresholdEnabledChanged(bool)),
                    q, SIGNAL(thresholdChanged(bool)));
+  QObject::connect(this->ComponentSpinBox, SIGNAL(valueChanged(int)),
+                   this->VolumePropertyWidget, SLOT(setCurrentComponent(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -177,4 +180,22 @@ void qMRMLVolumePropertyNodeWidget::spreadAllPoints(double factor, bool dontSpre
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   return d->VolumePropertyWidget->spreadAllPoints(factor, dontSpreadFirstAndLast);
+}
+
+// --------------------------------------------------------------------------
+int qMRMLVolumePropertyNodeWidget::componentCount()const
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  return d->ComponentCount;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::setComponentCount(int componentCount)
+{
+  Q_D(qMRMLVolumePropertyNodeWidget);
+  d->ComponentCount = componentCount;
+  int currentComponent = d->VolumePropertyWidget->currentComponent();
+  currentComponent = std::clamp(currentComponent, 0, componentCount);
+  d->VolumePropertyWidget->setCurrentComponent(currentComponent);
+  d->ComponentSpinBox->setRange(0, componentCount - 1);
 }
