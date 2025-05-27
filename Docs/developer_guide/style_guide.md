@@ -14,7 +14,7 @@ Line length: Preferably keep lines shorter than 80 characters. Always keep lines
 
 ### Toolkits and libraries
 
-- [VTK coding conventions](https://www.vtk.org/Wiki/VTK_Coding_Standards)
+- [VTK coding conventions](https://docs.vtk.org/en/latest/developers_guide/coding_conventions.html)
 - [Qt style guide](https://wiki.qt.io/Qt_Coding_Style)
 - [Python style guide](https://www.python.org/dev/peps/pep-0008/)
 
