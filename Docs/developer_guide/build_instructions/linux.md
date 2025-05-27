@@ -92,23 +92,6 @@ sudo apt update && sudo apt install git build-essential \
   libxt-dev libssl-dev
 ```
 
-### Ubuntu 20.04 (Focal Fossa)
-
-:::{warning}
-Since the default Qt5 packages available on Ubuntu 20.04 correspond to version 5.12.8 and version 5.15.2 is used to build and test the packages available for download. Compiling Slicer against version 5.12.8 may not succeed, and if it does, the compiled Slicer application may behave differently.
-
-To use Qt 5.15.2, we recommend you download and install following [these instructions](./linux.md#any-distribution)
-:::
-
-Install the development tools and the support libraries:
-
-```console
-sudo apt update && sudo apt install git build-essential \
-  cmake cmake-curses-gui cmake-qt-gui \
-  libqt5x11extras5-dev qtmultimedia5-dev libqt5svg5-dev qtwebengine5-dev libqt5xmlpatterns5-dev qttools5-dev qtbase5-private-dev \
-  libxt-dev qt5-default
-```
-
 ### ArchLinux
 
 :::{warning}
