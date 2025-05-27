@@ -47,8 +47,6 @@ public:
   //--------------------------------------------------------------------------
 
   vtkMRMLNode* CreateNodeInstance() override;
-  /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MarkupsClosedCurve";}
 
   /// Get markup type internal name
   const char* GetMarkupType() override {return "ClosedCurve";};
