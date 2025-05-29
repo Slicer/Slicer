@@ -14,6 +14,7 @@
 #include "vtkMRMLColorTableNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLParser.h"
 #include "vtkMRMLScene.h"
 
@@ -34,16 +35,17 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
     EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   }
 
-  if (argc != 2)
+  if (argc != 3)
   {
     std::cerr << "Line " << __LINE__
               << " - Missing parameters !\n"
-              << "Usage: " << argv[0] << " /path/to/temp"
+              << "Usage: " << argv[0] << " /path/to/temp /path/to/TestData"
               << std::endl;
     return EXIT_FAILURE;
   }
 
   const char* tempDir = argv[1];
+  const char* testDataDir = argv[2];
 
   std::string sceneFileName = std::string(tempDir) + "/vtkMRMLColorTableNodeTest1.mrml";
 
@@ -178,5 +180,100 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
       }
     }
   }
+
+  // Read color table from file and test content
+  {
+    std::string colorTestFileName = std::string(testDataDir) + "/ColorTest.csv";
+    std::string colorTestWithTerminologyFileName = std::string(testDataDir) + "/ColorTestWithTerminology.csv";
+    std::string colorTestMissingAlphaFileName = std::string(testDataDir) + "/ColorTestMissingAlpha.csv";
+    std::string colorTestMissingColorFileName = std::string(testDataDir) + "/ColorTestMissingColor.csv";
+    std::string colorTestMissingLabelValueFileName = std::string(testDataDir) + "/ColorTestMissingLabelValue.csv";
+    std::string colorTestMissingNameFileName = std::string(testDataDir) + "/ColorTestMissingName.csv";
+    std::string colorTestInvalidColorFileName = std::string(testDataDir) + "/ColorTestInvalidColor.csv";
+
+    {
+      // Read minimal color table file -> success
+      vtkNew<vtkMRMLColorTableNode> colorNode;
+      vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
+      colorStorageNode->SetFileName(colorTestFileName.c_str());
+      CHECK_INT(colorStorageNode->ReadData(colorNode), 1);
+      CHECK_INT(colorStorageNode->GetUserMessages()->GetNumberOfMessages(), 0);
+      CHECK_INT(colorNode->GetNumberOfColors(), 11);
+      CHECK_BOOL(colorNode->GetContainsTerminology(), false);
+    }
+
+    {
+      // Read color table file with terminology -> success
+      vtkNew<vtkMRMLColorTableNode> colorNode;
+      vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
+      colorStorageNode->SetFileName(colorTestWithTerminologyFileName.c_str());
+      CHECK_INT(colorStorageNode->ReadData(colorNode), 1);
+      CHECK_INT(colorStorageNode->GetUserMessages()->GetNumberOfMessages(), 0);
+      CHECK_INT(colorNode->GetNumberOfColors(), 11);
+      CHECK_BOOL(colorNode->GetContainsTerminology(), true);
+      CHECK_STD_STRING(colorNode->GetTerminologyAsString(6),
+        "~SCT^49755003^Morphologically Altered Structure~SCT^4147007^Mass~^^~~SCT^64033007^Kidney~SCT^24028007^Right~");
+    }
+
+    {
+      // Read color table file with missing alpha column -> success (optional column)
+      vtkNew<vtkMRMLColorTableNode> colorNode;
+      vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
+      colorStorageNode->SetFileName(colorTestMissingAlphaFileName.c_str());
+      CHECK_INT(colorStorageNode->ReadData(colorNode), 1);
+      CHECK_INT(colorStorageNode->GetUserMessages()->GetNumberOfMessages(), 0);
+      CHECK_INT(colorNode->GetNumberOfColors(), 11);
+      double color[4] = { -1.0, -1.0, -1.0, -1.0 };
+      colorNode->GetColor(5, color);
+      CHECK_DOUBLE(color[3], 1.0);
+    }
+
+    {
+      // Read color table file with missing name column -> success (optional column)
+      vtkNew<vtkMRMLColorTableNode> colorNode;
+      vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
+      colorStorageNode->SetFileName(colorTestMissingNameFileName.c_str());
+      CHECK_INT(colorStorageNode->ReadData(colorNode), 1);
+      CHECK_INT(colorStorageNode->GetUserMessages()->GetNumberOfMessages(), 0);
+      CHECK_INT(colorNode->GetNumberOfColors(), 11);
+      std::string name = colorNode->GetColorName(5);
+      CHECK_STD_STRING(name, "");
+    }
+
+    {
+      // Read color table file with missing color column -> warning
+      vtkNew<vtkMRMLColorTableNode> colorNode;
+      vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
+      colorStorageNode->SetFileName(colorTestMissingColorFileName.c_str());
+      TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+      CHECK_INT(colorStorageNode->ReadData(colorNode), 1);
+      TESTING_OUTPUT_ASSERT_WARNINGS_END();
+      CHECK_INT(colorStorageNode->GetUserMessages()->GetNumberOfMessages(), 1);
+      CHECK_INT(colorNode->GetNumberOfColors(), 11);
+    }
+
+    {
+      // Read color table file with invalid color value -> error
+      vtkNew<vtkMRMLColorTableNode> colorNode;
+      vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
+      colorStorageNode->SetFileName(colorTestInvalidColorFileName.c_str());
+      TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+      CHECK_INT(colorStorageNode->ReadData(colorNode), 0);
+      TESTING_OUTPUT_ASSERT_ERRORS_END();
+    }
+
+    {
+      // Read color table file with missing LabelValue column -> error (required column)
+      vtkNew<vtkMRMLColorTableNode> colorNode;
+      vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
+      colorStorageNode->SetFileName(colorTestMissingLabelValueFileName.c_str());
+      TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+      CHECK_INT(colorStorageNode->ReadData(colorNode), 0);
+      TESTING_OUTPUT_ASSERT_ERRORS_END();
+      CHECK_INT(colorStorageNode->GetUserMessages()->GetNumberOfMessages(), 2);
+      CHECK_INT(colorNode->GetNumberOfColors(), 0);
+    }
+  }
+
   return EXIT_SUCCESS;
 }
