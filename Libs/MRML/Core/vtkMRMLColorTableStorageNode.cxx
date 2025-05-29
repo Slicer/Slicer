@@ -210,35 +210,20 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   }
 
   vtkStringArray* nameColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Name"));
-  if (!nameColumn)
-  {
-    vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
-      "Missing 'Name' column in color table file: '" << fullFileName << "'.");
-  }
+  // Name column is optional, do not log warning
 
-  vtkStringArray* colorRColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Color_R"));
-  if (!colorRColumn)
+  std::vector<std::string> colorColumnNames = { "Color_R", "Color_G", "Color_B", "Color_A" };
+  std::vector<vtkStringArray*> colorColumns;
+  for (const std::string& colorColumnName : colorColumnNames)
   {
-    vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
-      "Missing 'Color_R' column in color table file: '" << fullFileName << "'.");
-  }
-  vtkStringArray* colorGColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Color_G"));
-  if (!colorGColumn)
-  {
-    vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
-      "Missing 'Color_G' column in color table file: '" << fullFileName << "'.");
-  }
-  vtkStringArray* colorBColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Color_B"));
-  if (!colorBColumn)
-  {
-    vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
-      "Missing 'Color_B' column in color table file: '" << fullFileName << "'.");
-  }
-  vtkStringArray* colorAColumn = vtkStringArray::SafeDownCast(table->GetColumnByName("Color_A"));
-  if (!colorAColumn)
-  {
-    vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
-      "Missing 'Color_A' column in color table file: '" << fullFileName << "'.");
+    vtkStringArray* colorColumn = vtkStringArray::SafeDownCast(table->GetColumnByName(colorColumnName.c_str()));
+    if (!colorColumn && colorColumnName != colorColumnNames[3]) // alpha is optional, do not log warning
+    {
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
+        vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode", "Column '%1' was not found in color table file: '%2'. Color component is set to 0."),
+          colorColumnName.c_str(), fullFileName.c_str()));
+    }
+    colorColumns.push_back(colorColumn);
   }
 
   // clear out the table
@@ -332,6 +317,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   // it as a possibly miswritten file
   for (vtkIdType row=0; row < numberOfTuples; ++row)
   {
+    vtkIdType lineNumber = row + 2;  // +1 because 1-based index, +1 because first row is header
     if (validLabelValues[row] == this->MaximumColorID + 1)
     {
       // No valid label value in this row
@@ -339,27 +325,41 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
     }
 
     // Set color
-    bool allValid = true;
-    double r = colorRColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
-    double g = colorGColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
-    double b = colorBColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
-    double a = colorAColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
-    if (!allValid)
+    double rgba[4] = {0.0, 0.0, 0.0, 1.0};
+    for (int i = 0; i < 4; ++i)
     {
-      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
-        vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
-          "Failed to parse color values ('%1', '%2', '%3', '%4') in line %5"), std::to_string(r).c_str(),
-          std::to_string(g).c_str(), std::to_string(b).c_str(), std::to_string(a).c_str(), std::to_string(row).c_str()));
-      continue;
+      vtkStringArray* colorColumn = colorColumns[i];
+      if (colorColumn && row < colorColumn->GetNumberOfTuples())
+      {
+        double color = colorColumn->GetVariantValue(row).ToInt(&valid) / 255.0;
+        if (valid)
+        {
+          rgba[i] = color;
+        }
+        else
+        {
+          vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
+            vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
+              "Failed to read color from column %1 in line %2, value: '%3'"),
+              colorColumnNames[i].c_str(),
+              std::to_string(lineNumber).c_str(),
+              colorColumn->GetValue(row).c_str()));
+          return 0;
+        }
+      }
     }
-    r /= 255.0; g /= 255.0; b /= 255.0; a /= 255.0;
 
-    if (colorNode->SetColor(validLabelValues[row], nameColumn->GetValue(row).c_str(), r, g, b, a) == 0)
+    std::string name;
+    if (nameColumn)
+    {
+      name = nameColumn->GetValue(row);
+    }
+    if (colorNode->SetColor(validLabelValues[row], name.c_str(), rgba[0], rgba[1], rgba[2], rgba[3]) == 0)
     {
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
         vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
-          "Unable to set color '%1' with name '%2', breaking the loop over '%3' lines in the file %4."),
-          std::to_string(validLabelValues[row]).c_str(), nameColumn->GetValue(row).c_str(),
+          "Unable to set color '%1' with name '%2', stopped processing after '%3' lines in the file %4."),
+          std::to_string(validLabelValues[row]).c_str(), name.c_str(),
           std::to_string(numberOfTuples).c_str(), fullFileName.c_str()));
       return 0;
     }
@@ -383,6 +383,10 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
     for (const auto& columnName : TERMINOLOGY_COLUMN_NAMES)
     {
       vtkStringArray* column = vtkStringArray::SafeDownCast(table->GetColumnByName(columnName.c_str()));
+      if (!column)
+      {
+        continue;
+      }
       std::vector<std::string> columnNameComponents;
       vtksys::SystemTools::Split(columnName, columnNameComponents, '_');
 

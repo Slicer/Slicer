@@ -6,9 +6,9 @@ The color file format can store a [color table node](https://apidocs.slicer.org/
 
 Columns:
 - `LabelValue`: label value that is associated with the color. Typically it is used for assigning color and meaning to a voxel value in a label image. It must be a positive integer. 0 value always corresponds to the background value and generally should not be included in the file (only in the rare case when the background needs to be colored). Label values do not have to be sorted. Label values may be skipped (left undefined), but since label values may be stored in a contiguous table from 0 to the largest label value, it is generally recommended to keep the range of values small (e.g., do not use label values such as 1000, 1001, 1002, 15000, 15001 but instead use the values 10, 11, 12, 20, 21).
-- `Name`: internal (project-specific) name. It is only intended for convenience during development and testing. Content of a color table entry is intended to be described by standard terminology columns.
-- `Color_R`, `Color_G`, `Color_B`, `Color_A`: red, green, blue, and opacity (alpha) component of the color. Values are integer, between 0 and 255.
-- Standard terminology columns for specifying content:
+- `Name`: internal (project-specific) name. It is only intended for convenience during development and testing. Content of a color table entry is intended to be described by standard terminology columns. Optional.
+- `Color_R`, `Color_G`, `Color_B`, `Color_A`: red, green, blue, and opacity (alpha) component of the color. Values are integer, between 0 and 255. `Color_A` column is optional, if missing then the default value 255 (fully opaque) is used.
+- Standard terminology columns for specifying content of the segment. The columns are optional and values in them can be empty. However, if there are non-empty values then `Category` and `Type` must be specified. For clinical imaging, it is recommended to use [coding schemes defined for use in DICOM](https://dicom.nema.org/medical/dicom/current/output/html/part16.html#chapter_8).
     - `Category_CodingScheme`, `Category_CodeValue`, `Category_CodeMeaning`: category, such as "anatomical structure" or "physical object"
     - `Type_CodingScheme`, `Type_CodeValue`, `Type_CodeMeaning`: type, such as "Kidney" or "Mass"
     - `TypeModifier_CodingScheme`, `TypeModifier_CodeValue`, `TypeModifier_CodeMeaning`: type modifier, such as "Left" or "Right"

@@ -1,0 +1,5 @@
+LabelValue,Name,Color_R,Color_G,Color_B,Color_A,Category_CodingScheme,Category_CodeValue,Category_CodeMeaning,Type_CodingScheme,Type_CodeValue,Type_CodeMeaning,TypeModifier_CodingScheme,TypeModifier_CodeValue,TypeModifier_CodeMeaning,Region_CodingScheme,Region_CodeValue,Region_CodeMeaning,RegionModifier_CodingScheme,RegionModifier_CodeValue,RegionModifier_CodeMeaning
+1,left_kidney,185,162,13,150,SCT,123037004,Anatomical Structure,SCT,64033007,Kidney,SCT,7771000,Left,,,,,,
+5,right_kidney,165,182,13,150,SCT,123037004,Anatomical Structure,SCT,64033007,Kidney,SCT,24028007,Right,,,,,,
+6,right_kidney_mass,20,28,140,255,SCT,49755003,Morphologically Altered Structure,SCT,4147007,Mass,,,,SCT,64033007,Kidney,SCT,24028007,Right
+10,catheter_renal_artery,220,19,37,255,SCT,260787004,Physical object,SCT,19923001,Catheter,,,,SCT,2841007,Renal artery,,,
