@@ -340,26 +340,57 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
 
     // Set color
     bool allValid = true;
-    double r = colorRColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
-    double g = colorGColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
-    double b = colorBColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
-    double a = colorAColumn->GetVariantValue(row).ToInt(&valid); allValid &= valid;
+    double r = 0.5;
+    if (colorRColumn)
+    {
+      r = colorRColumn->GetVariantValue(row).ToInt(&valid) / 255.;
+      allValid &= valid;
+    }
+    double g = 127.;
+    if (colorGColumn)
+    {
+      g = colorGColumn->GetVariantValue(row).ToInt(&valid) / 255.;
+      allValid &= valid;
+    }
+    double b = 127.;
+    if (colorBColumn)
+    {
+      b = colorBColumn->GetVariantValue(row).ToInt(&valid) / 255.;
+      allValid &= valid;
+    }
+    double a = 255.;
+    if (colorAColumn)
+    {
+      a = colorAColumn->GetVariantValue(row).ToInt(&valid) / 255.;
+      allValid &= valid;
+    }
     if (!allValid)
     {
+      std::string missing = vtkMRMLTr("vtkMRMLColorTableStorageNode", "missing");
+      std::string colorValues =
+        "Color_R: " + (colorRColumn ? "'" + colorRColumn->GetValue(row) + "'" : missing) + ", "
+        "Color_G: " + (colorGColumn ? "'" + colorGColumn->GetValue(row) + "'" : missing) + ", "
+        "Color_B: " + (colorBColumn ? "'" + colorBColumn->GetValue(row) + "'" : missing) + ", "
+        "Color_A: " + (colorAColumn ? "'" + colorAColumn->GetValue(row) + "'" : missing);
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
         vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
-          "Failed to parse color values ('%1', '%2', '%3', '%4') in line %5"), std::to_string(r).c_str(),
-          std::to_string(g).c_str(), std::to_string(b).c_str(), std::to_string(a).c_str(), std::to_string(row).c_str()));
+          "Failed to parse color values from color columns in line %1: %2"),
+          std::to_string(row).c_str(),
+          colorValues.c_str()));
       continue;
     }
-    r /= 255.0; g /= 255.0; b /= 255.0; a /= 255.0;
 
-    if (colorNode->SetColor(validLabelValues[row], nameColumn->GetValue(row).c_str(), r, g, b, a) == 0)
+    std::string name;
+    if (nameColumn)
+    {
+      name = nameColumn->GetValue(row);
+    }
+    if (colorNode->SetColor(validLabelValues[row], name.c_str(), r, g, b, a) == 0)
     {
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
         vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
           "Unable to set color '%1' with name '%2', breaking the loop over '%3' lines in the file %4."),
-          std::to_string(validLabelValues[row]).c_str(), nameColumn->GetValue(row).c_str(),
+          std::to_string(validLabelValues[row]).c_str(), name.c_str(),
           std::to_string(numberOfTuples).c_str(), fullFileName.c_str()));
       return 0;
     }
