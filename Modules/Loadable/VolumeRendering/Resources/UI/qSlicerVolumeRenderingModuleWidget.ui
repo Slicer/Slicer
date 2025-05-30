@@ -311,7 +311,17 @@
          <bool>true</bool>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="2" column="0">
+         <item row="4" column="1" colspan="4">
+          <widget class="QCheckBox" name="ClippingBlankVoxelValueAutoCheckBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Auto</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
           <widget class="QLabel" name="ClippingSoftEdgeLabel">
            <property name="enabled">
             <bool>false</bool>
@@ -338,17 +348,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="ClippingBlankVoxelValueAutoCheckBox">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Auto</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="ClippingBlankVoxelValueLabel">
            <property name="enabled">
             <bool>false</bool>
@@ -358,17 +358,26 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1" colspan="2">
-          <widget class="QCheckBox" name="ClippingCheckBox">
+         <item row="3" column="1" colspan="4">
+          <widget class="qMRMLSliderWidget" name="ClippingSoftEdgeSlider">
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="text">
-            <string/>
+           <property name="singleStep">
+            <double>0.500000000000000</double>
+           </property>
+           <property name="pageStep">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>10.000000000000000</double>
+           </property>
+           <property name="quantity">
+            <string notr="true"/>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" colspan="2">
+         <item row="0" column="1" colspan="4">
           <widget class="qMRMLNodeComboBox" name="ClipNodeSelector">
            <property name="nodeTypes">
             <stringlist notr="true">
@@ -392,29 +401,17 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0" colspan="3">
-          <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
-         </item>
-         <item row="2" column="1" colspan="2">
-          <widget class="qMRMLSliderWidget" name="ClippingSoftEdgeSlider">
+         <item row="1" column="1" colspan="3">
+          <widget class="QCheckBox" name="ClippingCheckBox">
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="singleStep">
-            <double>0.500000000000000</double>
-           </property>
-           <property name="pageStep">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>10.000000000000000</double>
-           </property>
-           <property name="quantity">
-            <string notr="true"/>
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1" colspan="4">
           <widget class="qMRMLSliderWidget" name="ClippingBlankVoxelValueSlider">
            <property name="enabled">
             <bool>false</bool>
@@ -427,6 +424,35 @@
            </property>
            <property name="quantity">
             <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="5">
+          <widget class="qMRMLClipNodeWidget" name="MRMLClipNodeWidget"/>
+         </item>
+         <item row="2" column="1" colspan="4">
+          <widget class="QLabel" name="ClippingInfoLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QToolButton" name="ClippingExpandInfoButton">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -736,7 +762,7 @@
   </customwidget>
   <customwidget>
    <class>qMRMLClipNodeWidget</class>
-   <extends>QWidget</extends>
+   <extends>qMRMLWidget</extends>
    <header>qMRMLClipNodeWidget.h</header>
   </customwidget>
   <customwidget>
@@ -754,6 +780,12 @@
    <class>qMRMLSliderWidget</class>
    <extends>ctkSliderWidget</extends>
    <header>qMRMLSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -999,6 +1031,22 @@
     <hint type="destinationlabel">
      <x>133</x>
      <y>18</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ClippingExpandInfoButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>ClippingInfoLabel</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>333</x>
+     <y>339</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>219</x>
+     <y>363</y>
     </hint>
    </hints>
   </connection>

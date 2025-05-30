@@ -18,8 +18,10 @@
 ==============================================================================*/
 
 // MRML includes
-#include "vtkMRMLClipNode.h"
 #include <vtkImplicitInvertableBoolean.h>
+#include "vtkMRMLClipNode.h"
+#include "vtkMRMLI18N.h"
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLTransformableNode.h>
 #include <vtkMRMLSliceNode.h>
 
@@ -687,4 +689,119 @@ int vtkMRMLClipNode::GetYellowSliceClipState()
 void vtkMRMLClipNode::SetYellowSliceClipState(int state)
 {
   this->SetSliceClipState("vtkMRMLSliceNodeYellow", state);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLClipNode::GetClippingPlanes(vtkPlaneCollection* planeCollection, bool invert/*=false*/, vtkMRMLMessageCollection* messages/*=nullptr*/)
+{
+  bool clippingPlanesOnly = true;
+  for (int n = 0; n < this->GetNumberOfClippingNodes(); ++n)
+  {
+    int clippingState = this->GetNthClippingNodeState(n);
+    if (clippingState == ClipOff)
+    {
+      continue;
+    }
+
+    bool currentClippingNodePlanesOnly = true;
+
+    vtkMRMLNode* clippingNode = this->GetNthClippingNode(n);
+    bool currentInvert = this->GetNthClippingNodeState(n) == ClipNegativeSpace ? !invert : invert;
+
+    vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(clippingNode);
+    if (transformableNode && transformableNode->GetImplicitFunctionWorld())
+    {
+      currentClippingNodePlanesOnly = this->GetClippingPlanesFromFunction(transformableNode->GetImplicitFunctionWorld(), planeCollection, currentInvert);
+    }
+
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(clippingNode);
+    if (sliceNode)
+    {
+      vtkImplicitFunction* implicitFunction = sliceNode->GetImplicitFunctionWorld();
+      if (implicitFunction)
+      {
+        currentClippingNodePlanesOnly = this->GetClippingPlanesFromFunction(sliceNode->GetImplicitFunctionWorld(), planeCollection, currentInvert);
+      }
+      continue;
+    }
+
+    vtkMRMLClipNode* clipNode = vtkMRMLClipNode::SafeDownCast(clippingNode);
+    if (clipNode)
+    {
+      currentClippingNodePlanesOnly = clipNode->GetClippingPlanes(planeCollection, currentInvert, messages);
+      continue;
+    }
+
+    if (messages && !clipNode && !currentClippingNodePlanesOnly)
+    {
+      std::string warningMessage = vtkMRMLTr("vtkMRMLClipNode",
+        "%name (%id) cannot be represented using only planes");
+      warningMessage.replace(warningMessage.find("%name"), 5, clippingNode->GetName());
+      warningMessage.replace(warningMessage.find("%id"), 3, clippingNode->GetID());
+      messages->AddMessage(vtkCommand::MessageEvent, warningMessage);
+    }
+
+    clippingPlanesOnly &= currentClippingNodePlanesOnly;
+  }
+
+  return clippingPlanesOnly;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLClipNode::GetClippingPlanesFromFunction(vtkImplicitFunction* function, vtkPlaneCollection* planeCollection, bool invert/*=false*/)
+{
+  vtkImplicitBoolean* implicitBoolean = vtkImplicitBoolean::SafeDownCast(function);
+  vtkImplicitInvertableBoolean* invertableBoolean = vtkImplicitInvertableBoolean::SafeDownCast(function);
+  if (implicitBoolean)
+  {
+    bool planesOnly = true;
+    vtkImplicitFunctionCollection* subFunctions = implicitBoolean->GetFunction();
+    for (int i = 0; i < subFunctions->GetNumberOfItems(); ++i)
+    {
+      vtkImplicitFunction* subFunction = vtkImplicitFunction::SafeDownCast(subFunctions->GetItemAsObject(i));
+      if (subFunction)
+      {
+        planesOnly &= vtkMRMLClipNode::GetClippingPlanesFromFunction(subFunction, planeCollection,
+          invertableBoolean && invertableBoolean->GetInvert() ? !invert : invert);
+      }
+    }
+    return planesOnly;
+  }
+
+  vtkPlane* implicitPlane = vtkPlane::SafeDownCast(function);
+  if (implicitPlane)
+  {
+    vtkNew<vtkPlane> tempPlane;
+    tempPlane->SetOrigin(implicitPlane->GetOrigin());
+    tempPlane->SetNormal(implicitPlane->GetNormal());
+    if (invert)
+    {
+      tempPlane->SetNormal(-tempPlane->GetNormal()[0], -tempPlane->GetNormal()[1], -tempPlane->GetNormal()[2]);
+    }
+    planeCollection->AddItem(tempPlane);
+    return true;
+  }
+
+  vtkPlanes* planes = vtkPlanes::SafeDownCast(function);
+  if (planes)
+  {
+    for (int i = 0; i < planes->GetNumberOfPlanes(); ++i)
+    {
+      vtkPlane* currentPlane = planes->GetPlane(i);
+      if (currentPlane)
+      {
+        vtkNew<vtkPlane> tempPlane;
+        tempPlane->SetOrigin(currentPlane->GetOrigin());
+        tempPlane->SetNormal(currentPlane->GetNormal());
+        if (invert)
+        {
+          tempPlane->SetNormal(-tempPlane->GetNormal()[0], -tempPlane->GetNormal()[1], -tempPlane->GetNormal()[2]);
+        }
+        planeCollection->AddItem(tempPlane);
+      }
+    }
+    return true;
+  }
+
+  return false;
 }
