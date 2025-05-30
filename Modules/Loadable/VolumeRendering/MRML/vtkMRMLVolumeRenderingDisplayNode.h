@@ -131,7 +131,6 @@ protected:
 
   void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
 
-  //@{
   /// Check if a fast clipping method can be used with the specified clip node.
   /// Returns true if fast clipping can be utilized, or returns false otherwise.
   /// If userMessages is specified, messages will be added to provide reasons for why fast clipping
