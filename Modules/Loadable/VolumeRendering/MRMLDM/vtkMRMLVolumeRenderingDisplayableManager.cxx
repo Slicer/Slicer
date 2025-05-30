@@ -59,10 +59,12 @@
 #include <vtkImplicitBoolean.h>
 #include <vtkImplicitFunctionCollection.h>
 #include <vtkImplicitFunctionToImageStencil.h>
+#include <vtkImplicitInvertableBoolean.h>
 #include <vtkInteractorStyle.h>
 #include <vtkMatrix4x4.h>
 #include <vtkOpenGLGPUVolumeRayCastMapper.h>
 #include <vtkPlane.h>
+#include <vtkPlaneCollection.h>
 #include <vtkPlanes.h>
 #include <vtkPointData.h>
 #include <vtkRenderWindow.h>
@@ -210,6 +212,8 @@ public:
 
   // ROIs
   void UpdatePipelineROIs(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline);
+  void UpdateClippingPlanesFromMarkupsROINode(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline);
+  void UpdateClippingPlanesFromClipNode(vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline);
 
   // Display Nodes
   void AddDisplayNode(vtkMRMLVolumeRenderingDisplayNode* displayNode);
@@ -874,7 +878,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   }
 
   vtkAlgorithmOutput* imageConnection = volumeNode->GetImageDataConnection();
-  if (displayNode->GetClipping())
+  if (displayNode->GetClipping() && !displayNode->IsFastClippingAvailable())
   {
     vtkMRMLClipNode* clipNode = displayNode->GetClipNode();
     if (clipNode)
@@ -1249,9 +1253,34 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
     vtkErrorWithObjectMacro(this->External, "UpdatePipelineROIs: Unable to get volume mapper");
     return;
   }
-  if (!displayNode || displayNode->GetROINode() == nullptr || !displayNode->GetCroppingEnabled())
+
+  // Remove existing clipping planes
+  volumeMapper->RemoveAllClippingPlanes();
+
+  if (displayNode->GetCroppingEnabled())
   {
-    volumeMapper->RemoveAllClippingPlanes();
+    this->UpdateClippingPlanesFromMarkupsROINode(displayNode, pipeline);
+  }
+  else if (displayNode->GetClipping() && displayNode->IsFastClippingAvailable())
+  {
+    this->UpdateClippingPlanesFromClipNode(displayNode, pipeline);
+  }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateClippingPlanesFromMarkupsROINode(
+  vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
+{
+  if (!displayNode || !pipeline)
+  {
+    vtkErrorWithObjectMacro(this->External, "UpdateClippingPlanesFromMarkupsROINode: Display node or pipeline is invalid");
+    return;
+  }
+
+  vtkVolumeMapper* volumeMapper = this->GetVolumeMapper(displayNode);
+  if (!volumeMapper)
+  {
+    vtkErrorWithObjectMacro(this->External, "UpdateClippingPlanesFromMarkupsROINode: Unable to get volume mapper");
     return;
   }
 
@@ -1260,9 +1289,31 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineROIs(
   if (markupsROINode)
   {
     // Calculate and set clipping planes
-    markupsROINode->GetTransformedPlanes(planes.GetPointer(), true);
+    markupsROINode->GetTransformedPlanes(planes, true);
   }
-  volumeMapper->SetClippingPlanes(planes.GetPointer());
+  volumeMapper->SetClippingPlanes(planes);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateClippingPlanesFromClipNode(
+  vtkMRMLVolumeRenderingDisplayNode* displayNode, const Pipeline* pipeline)
+{
+  if (!displayNode || !pipeline)
+  {
+    vtkErrorWithObjectMacro(this->External, "UpdateClippingPlanesFromClipNode: Display node or pipeline is invalid");
+    return;
+  }
+
+  vtkVolumeMapper* volumeMapper = this->GetVolumeMapper(displayNode);
+  if (!volumeMapper)
+  {
+    vtkErrorWithObjectMacro(this->External, "UpdateClippingPlanesFromClipNode: Unable to get volume mapper");
+    return;
+  }
+
+  vtkNew<vtkPlaneCollection> planes;
+  displayNode->GetClipNode()->GetClippingPlanes(planes);
+  volumeMapper->SetClippingPlanes(planes);
 }
 
 //---------------------------------------------------------------------------

@@ -32,13 +32,15 @@
 #include "qSlicerGPUMemoryComboBox.h"
 
 // MRML includes
+#include "vtkMRMLMarkupsROINode.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumeNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumePropertyNode.h"
-#include "vtkMRMLMarkupsROINode.h"
 
 // VTK includes
+#include <vtkPlaneCollection.h>
 #include <vtkVolumeProperty.h>
 
 // STD includes
@@ -187,6 +189,9 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                    q, SLOT(setClippingBlankVoxelValueAuto(bool)));
   QObject::connect(this->ClippingBlankVoxelValueSlider, SIGNAL(valueChanged(double)),
                    q, SLOT(setClippingBlankVoxelValue(double)));
+
+  QObject::connect(this->ClippingExpandInfoButton, SIGNAL(clicked()), q, SLOT(updateWidgetFromMRML()));
+  this->ClippingInfoLabel->setVisible(false);
 
   // Disable markups ROI widget by default
   this->MarkupsROIWidget->setVisible(false);
@@ -517,6 +522,31 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->ClippingBlankVoxelValueSlider->setValue(displayNode ? displayNode->GetClippingBlankVoxelValue() : 0.0);
   d->ClippingBlankVoxelValueSlider->blockSignals(wasBlocking);
 
+  QString message;
+  vtkNew<vtkMRMLMessageCollection> userMessages;
+  userMessages->AddSeparator();
+  QIcon clippingInfoIcon = this->style()->standardIcon(QStyle::SP_MessageBoxInformation);
+  if (displayNode)
+  {
+    if (!displayNode->GetClipping())
+    {
+      message = tr("Clipping disabled.");
+    }
+    else if (displayNode->IsFastClippingAvailable(userMessages))
+    {
+      message = tr("Using fast clipping method.");
+    }
+    else
+    {
+      std::string messages = userMessages->GetAllMessagesAsString();
+      message = tr("Using slow clipping method.\n%1").arg(messages.c_str());
+      clippingInfoIcon = this->style()->standardIcon(QStyle::SP_MessageBoxWarning);
+    }
+  }
+  d->ClippingInfoLabel->setEnabled(clipNode != nullptr);
+  d->ClippingInfoLabel->setText(message);
+  d->ClippingExpandInfoButton->setEnabled(clipNode != nullptr);
+  d->ClippingExpandInfoButton->setIcon(clippingInfoIcon);
 }
 
 // --------------------------------------------------------------------------

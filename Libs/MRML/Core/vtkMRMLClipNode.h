@@ -25,6 +25,7 @@
 class vtkImplicitBoolean;
 class vtkImplicitFunction;
 class vtkImplicitFunctionCollection;
+class vtkMRMLMessageCollection;
 class vtkPlaneCollection;
 
 /// \brief MRML node to represent three clipping planes.
@@ -227,6 +228,10 @@ public:
   /// Overridden to update the implicit function when the clipping nodes are modified.
   void CopyReferences(vtkMRMLNode* node) override;
 
+  /// Get the list of all clipping planes in the clip node, including from nested clip nodes.
+  /// Returns false if not all of the functions in the clip node are planes.
+  bool GetClippingPlanes(vtkPlaneCollection* planeCollection, bool invert=false, vtkMRMLMessageCollection* messages=nullptr);
+
 protected:
 
   /// Update the implicit function based on the clipping nodes.
@@ -234,6 +239,11 @@ protected:
 
   int GetSliceClipState(const char* nodeID);
   void SetSliceClipState(const char* nodeID, int state);
+
+  /// Get the list of all clipping planes in the implicit function.
+  /// If invert is true, then the plane normals will be flipped.
+  /// Returns false if not all of the functions in the clip node are planes.
+  static bool GetClippingPlanesFromFunction(vtkImplicitFunction* function, vtkPlaneCollection* planeCollection, bool invert=false);
 
 protected:
   vtkMRMLClipNode();
