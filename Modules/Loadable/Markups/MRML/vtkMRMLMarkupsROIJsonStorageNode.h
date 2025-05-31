@@ -31,8 +31,8 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsJsonStorageNode.h"
 
-class vtkMRMLMarkupsJsonElement;
-class vtkMRMLMarkupsJsonWriter;
+class vtkMRMLJsonElement;
+class vtkMRMLJsonWriter;
 class vtkMRMLMarkupsNode;
 
 class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsROIJsonStorageNode : public vtkMRMLMarkupsJsonStorageNode
@@ -51,8 +51,8 @@ protected:
   vtkMRMLMarkupsROIJsonStorageNode(const vtkMRMLMarkupsROIJsonStorageNode&);
   void operator=(const vtkMRMLMarkupsROIJsonStorageNode&);
 
-  bool WriteBasicProperties(vtkMRMLMarkupsJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode) override;
-  bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsJsonElement* markupObject) override;
+  bool WriteBasicProperties(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode) override;
+  bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupObject) override;
 };
 
 #endif
