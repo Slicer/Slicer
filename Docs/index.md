@@ -15,6 +15,7 @@ user_guide/data_loading_and_saving
 user_guide/image_segmentation
 user_guide/registration
 user_guide/modules/index
+user_guide/extensions
 user_guide/extensions_manager
 user_guide/settings
 
