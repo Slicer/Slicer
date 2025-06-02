@@ -27,34 +27,30 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   set(requirements_file ${CMAKE_BINARY_DIR}/${proj}-requirements.txt)
   file(WRITE ${requirements_file} [===[
   # [certifi]
-  certifi==2024.2.2 --hash=sha256:dc383c07b76109f368f6106eee2b593b04a011ea4d55f652c6ca24a754d1cdd1
+  certifi==2025.4.26 --hash=sha256:30350364dfe371162649852c63336a15c70c6510c2ad5015b21c2345311805f3
   # [/certifi]
   # [idna]
-  idna==3.7 --hash=sha256:82fee1fc78add43492d3a1898bfa6d8a904cc97d8427f683ed8e798d07761aa0
+  idna==3.10 --hash=sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3
   # [/idna]
   # [charset-normalizer]
   # Hashes correspond to the following packages:
-  #  - charset_normalizer-3.3.2-cp39-cp39-macosx_10_9_universal2.whl
-  #  - charset_normalizer-3.3.2-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - charset_normalizer-3.3.2-cp39-cp39-macosx_11_0_arm64.whl
-  #  - charset_normalizer-3.3.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - charset_normalizer-3.3.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - charset_normalizer-3.3.2-cp39-cp39-musllinux_1_1_aarch64.whl
-  #  - charset_normalizer-3.3.2-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - charset_normalizer-3.3.2-cp39-cp39-win_amd64.whl
-  #  - charset_normalizer-3.3.2-py3-none-any.whl
-  charset-normalizer==3.3.2 --hash=sha256:c235ebd9baae02f1b77bcea61bce332cb4331dc3617d254df3323aa01ab47bd4 \
-                            --hash=sha256:5b4c145409bef602a690e7cfad0a15a55c13320ff7a3ad7ca59c13bb8ba4d45d \
-                            --hash=sha256:68d1f8a9e9e37c1223b656399be5d6b448dea850bed7d0f87a8311f1ff3dabb0 \
-                            --hash=sha256:22afcb9f253dac0696b5a4be4a1c0f8762f8239e21b99680099abd9b2b1b2269 \
-                            --hash=sha256:b261ccdec7821281dade748d088bb6e9b69e6d15b30652b74cbbac25e280b796 \
-                            --hash=sha256:d0eccceffcb53201b5bfebb52600a5fb483a20b61da9dbc885f8b103cbe7598c \
-                            --hash=sha256:ff8fa367d09b717b2a17a052544193ad76cd49979c805768879cb63d9ca50561 \
-                            --hash=sha256:b01b88d45a6fcb69667cd6d2f7a9aeb4bf53760d7fc536bf679ec94fe9f3ff3d \
-                            --hash=sha256:3e4d1f6587322d2788836a99c69062fbb091331ec940e02d12d179c1d53e25fc
+  #  - charset_normalizer-3.4.2-cp39-cp39-macosx_10_9_universal2.whl
+  #  - charset_normalizer-3.4.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - charset_normalizer-3.4.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - charset_normalizer-3.4.2-cp39-cp39-musllinux_1_2_aarch64.whl
+  #  - charset_normalizer-3.4.2-cp39-cp39-musllinux_1_2_x86_64.whl
+  #  - charset_normalizer-3.4.2-cp39-cp39-win_amd64.whl
+  #  - charset_normalizer-3.4.2-py3-none-any.whl
+  charset-normalizer==3.4.2 --hash=sha256:005fa3432484527f9732ebd315da8da8001593e2cf46a3d817669f062c3d9ed4 \
+                            --hash=sha256:e92fca20c46e9f5e1bb485887d074918b13543b1c2a1185e69bb8d17ab6236a7 \
+                            --hash=sha256:82d8fd25b7f4675d0c47cf95b594d4e7b158aca33b76aa63d07186e13c0e0ab7 \
+                            --hash=sha256:dccab8d5fa1ef9bfba0590ecf4d46df048d18ffe3eec01eeb73a42e0d9e7a8ba \
+                            --hash=sha256:982bb1e8b4ffda883b3d0a521e23abcd6fd17418f6d2c4118d257a10199c0ce3 \
+                            --hash=sha256:d11b54acf878eef558599658b0ffca78138c8c3655cf4f3a4a673c437e67732e \
+                            --hash=sha256:7f56930ab0abd1c45cd15be65cc741c28b1c9a34876ce8c17a2fa107810c0af0
   # [/charset-normalizer]
   # [urllib3]
-  urllib3==2.2.1 --hash=sha256:450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d
+  urllib3==2.4.0 --hash=sha256:4e16665048960a0900c702d4a66415956a584919c03361cac9f1df5c5dd7e813
   # [/urllib3]
   # [requests]
   requests==2.32.3 --hash=sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6
