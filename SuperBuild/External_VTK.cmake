@@ -134,10 +134,10 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
   set(_git_tag)
   if("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.2")
     set(_git_tag "59ec450206012e86d4855bc669800499254bfc77") # slicer-v9.2.20230607-1ff325c54-2
-    set(vtk_egg_info_version "9.2.20230607")
+    set(vtk_dist_info_version "9.2.20230607")
   elseif("${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}" STREQUAL "9.4")
     set(_git_tag "454bb391dff78c6ff463298a5143ab5b4f0aa083") # slicer-v9.4.2-2025-03-26-13acb1a5d
-    set(vtk_egg_info_version "9.4.2")
+    set(vtk_dist_info_version "9.4.2")
   else()
     message(FATAL_ERROR "error: Unsupported Slicer_VTK_VERSION_MAJOR.Slicer_VTK_VERSION_MINOR: ${Slicer_VTK_VERSION_MAJOR}.${Slicer_VTK_VERSION_MINOR}")
   endif()
@@ -188,13 +188,29 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
     )
 
   if(Slicer_USE_PYTHONQT AND NOT Slicer_USE_SYSTEM_python)
-    # Create the vtk-*.egg-info directory to prevent pip from re-installing
+    # Create the vtk-*.dist-info directory to prevent pip from re-installing
     # vtk package as a wheel when listed as dependency in Slicer extension.
-    set(_vtk_egg_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-${vtk_egg_info_version}-py${Slicer_REQUIRED_PYTHON_VERSION_DOT}.egg-info")
-    ExternalProject_Add_Step(${proj} create_egg_info
-      COMMAND ${CMAKE_COMMAND} -E make_directory ${_vtk_egg_info_dir}
-      COMMAND ${CMAKE_COMMAND} -E touch ${_vtk_egg_info_dir}/PKG-INFO
-      COMMENT "Creating '${_vtk_egg_info_dir}' directory"
+    # See https://packaging.python.org/en/latest/specifications/recording-installed-packages/
+    set(_vtk_dist_info_metadata "${CMAKE_BINARY_DIR}/${proj}-dist-info-METADATA")
+    file(CONFIGURE OUTPUT ${_vtk_dist_info_metadata}
+      CONTENT [==[
+Metadata-Version: 2.1
+Name: vtk
+Version: @vtk_dist_info_version@
+]==]
+      @ONLY
+      )
+    set(_vtk_dist_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-${vtk_dist_info_version}.dist-info")
+    set(_vtk_egg_info_dir "${python_DIR}/${PYTHON_SITE_PACKAGES_SUBDIR}/vtk-${vtk_dist_info_version}-py${Slicer_REQUIRED_PYTHON_VERSION_DOT}.egg-info")
+    ExternalProject_Add_Step(${proj} create_dist_info
+      # If any, remove existing "vtk-.*.egg-info" directory.
+      # This will avoid issue when doing incremental build.
+      COMMAND ${CMAKE_COMMAND} -E rm -rf ${_vtk_egg_info_dir}
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${_vtk_dist_info_dir}
+      COMMAND ${CMAKE_COMMAND} -E copy
+        ${_vtk_dist_info_metadata}
+        ${_vtk_dist_info_dir}/METADATA
+      COMMENT "Creating '${_vtk_dist_info_dir}' directory"
       DEPENDEES build
       )
   endif()
@@ -229,7 +245,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         ${VTK_DIR}/${_library_output_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
-      if(${vtk_egg_info_version} VERSION_GREATER_EQUAL 9.4)
+      if(${vtk_dist_info_version} VERSION_GREATER_EQUAL 9.4)
         set(${proj}_PYTHONPATH_LAUNCHER_BUILD
           ${VTK_DIR}/lib/site-packages # Location for VTK 9.4+
           )
@@ -277,7 +293,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT Slicer_USE_SYSTEM
         <APPLAUNCHER_SETTINGS_DIR>/../${_library_install_subdir}/python${Slicer_REQUIRED_PYTHON_VERSION_DOT}/site-packages
         )
     else()
-      if(${vtk_egg_info_version} VERSION_GREATER_EQUAL 9.4)
+      if(${vtk_dist_info_version} VERSION_GREATER_EQUAL 9.4)
         set(${proj}_PYTHONPATH_LAUNCHER_INSTALLED
           <APPLAUNCHER_SETTINGS_DIR>/../lib/site-packages # Location for VTK 9.4+
           )
