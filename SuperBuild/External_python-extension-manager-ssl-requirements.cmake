@@ -82,23 +82,23 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/PyJWT]
   # [wrapt]
   # Hashes correspond to the following packages:
-  #  - wrapt-1.17.2-cp39-cp39-macosx_10_9_universal2.whl
-  #  - wrapt-1.17.2-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - wrapt-1.17.2-cp39-cp39-macosx_11_0_arm64.whl
-  #  - wrapt-1.17.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - wrapt-1.17.2-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - wrapt-1.17.2-cp39-cp39-musllinux_1_2_aarch64.whl
-  #  - wrapt-1.17.2-cp39-cp39-musllinux_1_2_x86_64.whl
-  #  - wrapt-1.17.2-cp39-cp39-win_amd64.whl
+  #  - wrapt-1.17.2-cp312-cp312-macosx_10_13_universal2.whl
+  #  - wrapt-1.17.2-cp312-cp312-macosx_10_13_x86_64.whl
+  #  - wrapt-1.17.2-cp312-cp312-macosx_11_0_arm64.whl
+  #  - wrapt-1.17.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - wrapt-1.17.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - wrapt-1.17.2-cp312-cp312-musllinux_1_2_aarch64.whl
+  #  - wrapt-1.17.2-cp312-cp312-musllinux_1_2_x86_64.whl
+  #  - wrapt-1.17.2-cp312-cp312-win_amd64.whl
   #  - wrapt-1.17.2-py3-none-any.whl
-  wrapt==1.17.2 --hash=sha256:99039fa9e6306880572915728d7f6c24a86ec57b0a83f6b2491e1d8ab0235b9a \
-                --hash=sha256:2696993ee1eebd20b8e4ee4356483c4cb696066ddc24bd70bcbb80fa56ff9061 \
-                --hash=sha256:612dff5db80beef9e649c6d803a8d50c409082f1fedc9dbcdfde2983b2025b82 \
-                --hash=sha256:62c2caa1585c82b3f7a7ab56afef7b3602021d6da34fbc1cf234ff139fed3cd9 \
-                --hash=sha256:fc78a84e2dfbc27afe4b2bd7c80c8db9bca75cc5b85df52bfe634596a1da846b \
-                --hash=sha256:ba0f0eb61ef00ea10e00eb53a9129501f52385c44853dbd6c4ad3f403603083f \
-                --hash=sha256:c86563182421896d73858e08e1db93afdd2b947a70064b813d515d66549e15f9 \
-                --hash=sha256:36ccae62f64235cf8ddb682073a60519426fdd4725524ae38874adf72b5f2aeb \
+  wrapt==1.17.2 --hash=sha256:d5e2439eecc762cd85e7bd37161d4714aa03a33c5ba884e26c81559817ca0925 \
+                --hash=sha256:3fc7cb4c1c744f8c05cd5f9438a3caa6ab94ce8344e952d7c45a8ed59dd88392 \
+                --hash=sha256:8fdbdb757d5390f7c675e558fd3186d590973244fab0c5fe63d373ade3e99d40 \
+                --hash=sha256:5bb1d0dbf99411f3d871deb6faa9aabb9d4e744d67dcaaa05399af89d847a91d \
+                --hash=sha256:bc570b5f14a79734437cb7b0500376b6b791153314986074486e0b0fa8d71d98 \
+                --hash=sha256:6d9187b01bebc3875bac9b087948a2bccefe464a7d8f627cf6e48b1bbae30f82 \
+                --hash=sha256:e8b2816ebef96d83657b56306152a93909a83f23994f4b30ad4573b00bd11bb9 \
+                --hash=sha256:ec89ed91f2fa8e3f52ae53cd3cf640d6feff92ba90d62236a81e4e563ac0e991 \
                 --hash=sha256:b18f2d1533a71f069c7f82d524a52599053d4c7166e9dd374ae2136b7f40f7c8
   # [/wrapt]
   # [Deprecated]
@@ -109,20 +109,20 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/pycparser]
   # [cffi]
   # Hashes correspond to the following packages:
-  #  - cffi-1.17.1-cp39-cp39-macosx_10_9_x86_64.whl
-  #  - cffi-1.17.1-cp39-cp39-macosx_11_0_arm64.whl
-  #  - cffi-1.17.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - cffi-1.17.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - cffi-1.17.1-cp39-cp39-musllinux_1_1_aarch64.whl
-  #  - cffi-1.17.1-cp39-cp39-musllinux_1_1_x86_64.whl
-  #  - cffi-1.17.1-cp39-cp39-win_amd64.whl
-  cffi==1.17.1 --hash=sha256:b2ab587605f4ba0bf81dc0cb08a41bd1c0a5906bd59243d56bad7668a6fc6c16 \
-               --hash=sha256:28b16024becceed8c6dfbc75629e27788d8a3f9030691a1dbf9821a128b22c36 \
-               --hash=sha256:ca74b8dbe6e8e8263c0ffd60277de77dcee6c837a3d0881d8c1ead7268c9e576 \
-               --hash=sha256:cdf5ce3acdfd1661132f2a9c19cac174758dc2352bfe37d98aa7512c6b7178b3 \
-               --hash=sha256:9755e4345d1ec879e3849e62222a18c7174d65a6a92d5b346b1863912168b595 \
-               --hash=sha256:c03e868a0b3bc35839ba98e74211ed2b05d2119be4e8a0f224fba9384f1fe02e \
-               --hash=sha256:d016c76bdd850f3c626af19b0542c9677ba156e4ee4fccfdd7848803533ef662
+  #  - cffi-1.17.1-cp312-cp312-macosx_10_9_x86_64.whl
+  #  - cffi-1.17.1-cp312-cp312-macosx_11_0_arm64.whl
+  #  - cffi-1.17.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - cffi-1.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - cffi-1.17.1-cp312-cp312-musllinux_1_1_aarch64.whl
+  #  - cffi-1.17.1-cp312-cp312-musllinux_1_1_x86_64.whl
+  #  - cffi-1.17.1-cp312-cp312-win_amd64.whl
+  cffi==1.17.1 --hash=sha256:805b4371bf7197c329fcb3ead37e710d1bca9da5d583f5073b799d5c5bd1eee4 \
+               --hash=sha256:733e99bc2df47476e3848417c5a4540522f234dfd4ef3ab7fafdf555b082ec0c \
+               --hash=sha256:da95af8214998d77a98cc14e3a3bd00aa191526343078b530ceb0bd710fb48a5 \
+               --hash=sha256:b62ce867176a75d03a665bad002af8e6d54644fad99a3c70905c543130e39d93 \
+               --hash=sha256:386c8bf53c502fff58903061338ce4f4950cbdcb23e2902d86c0f722b786bbe3 \
+               --hash=sha256:4ceb10419a9adf4460ea14cfd6bc43d08701f0835e979bf821052f1805850fe8 \
+               --hash=sha256:51392eae71afec0d0c8fb1a53b204dbb3bcabcb3c9b807eedf3e1e6ccf2de903
   # [/cffi]
   # [PyNaCl]
   # Hashes correspond to the following packages:

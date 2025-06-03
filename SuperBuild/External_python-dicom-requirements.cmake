@@ -48,26 +48,26 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/six]
   # [pillow]
   # Hashes correspond to the following packages:
-  #  - pillow-11.2.1-cp39-cp39-macosx_10_10_x86_64.whl
-  #  - pillow-11.2.1-cp39-cp39-macosx_11_0_arm64.whl
-  #  - pillow-11.2.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - pillow-11.2.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - pillow-11.2.1-cp39-cp39-manylinux_2_28_aarch64.whl
-  #  - pillow-11.2.1-cp39-cp39-manylinux_2_28_x86_64.whl
-  #  - pillow-11.2.1-cp39-cp39-musllinux_1_2_aarch64.whl
-  #  - pillow-11.2.1-cp39-cp39-musllinux_1_2_x86_64.whl
-  #  - pillow-11.2.1-cp39-cp39-win_amd64.whl
-  #  - pillow-11.2.1-cp39-cp39-win_arm64.whl
-  pillow==11.2.1 --hash=sha256:7491cf8a79b8eb867d419648fff2f83cb0b3891c8b36da92cc7f1931d46108c8 \
-                 --hash=sha256:8b02d8f9cb83c52578a0b4beadba92e37d83a4ef11570a8688bbf43f4ca50909 \
-                 --hash=sha256:014ca0050c85003620526b0ac1ac53f56fc93af128f7546623cc8e31875ab928 \
-                 --hash=sha256:3692b68c87096ac6308296d96354eddd25f98740c9d2ab54e1549d6c8aea9d79 \
-                 --hash=sha256:f781dcb0bc9929adc77bad571b8621ecb1e4cdef86e940fe2e5b5ee24fd33b35 \
-                 --hash=sha256:2b490402c96f907a166615e9a5afacf2519e28295f157ec3a2bb9bd57de638cb \
-                 --hash=sha256:dd6b20b93b3ccc9c1b597999209e4bc5cf2853f9ee66e3fc9a400a78733ffc9a \
-                 --hash=sha256:4b835d89c08a6c2ee7781b8dd0a30209a8012b5f09c0a665b65b0eb3560b6f36 \
-                 --hash=sha256:6ebce70c3f486acf7591a3d73431fa504a4e18a9b97ff27f5f47b7368e4b9dd1 \
-                 --hash=sha256:c27476257b2fdcd7872d54cfd119b3a9ce4610fb85c8e32b70b42e3680a29a1e
+  #  - pillow-11.2.1-cp312-cp312-macosx_10_13_x86_64.whl
+  #  - pillow-11.2.1-cp312-cp312-macosx_11_0_arm64.whl
+  #  - pillow-11.2.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - pillow-11.2.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - pillow-11.2.1-cp312-cp312-manylinux_2_28_aarch64.whl
+  #  - pillow-11.2.1-cp312-cp312-manylinux_2_28_x86_64.whl
+  #  - pillow-11.2.1-cp312-cp312-musllinux_1_2_aarch64.whl
+  #  - pillow-11.2.1-cp312-cp312-musllinux_1_2_x86_64.whl
+  #  - pillow-11.2.1-cp312-cp312-win_amd64.whl
+  #  - pillow-11.2.1-cp312-cp312-win_arm64.whl
+  pillow==11.2.1 --hash=sha256:78afba22027b4accef10dbd5eed84425930ba41b3ea0a86fa8d20baaf19d807f \
+                 --hash=sha256:78092232a4ab376a35d68c4e6d5e00dfd73454bd12b230420025fbe178ee3b0b \
+                 --hash=sha256:25a5f306095c6780c52e6bbb6109624b95c5b18e40aab1c3041da3e9e0cd3e2d \
+                 --hash=sha256:0c7b29dbd4281923a2bfe562acb734cee96bbb129e96e6972d315ed9f232bef4 \
+                 --hash=sha256:3e645b020f3209a0181a418bffe7b4a93171eef6c4ef6cc20980b30bebf17b7d \
+                 --hash=sha256:b2dbea1012ccb784a65349f57bbc93730b96e85b42e9bf7b01ef40443db720b4 \
+                 --hash=sha256:da3104c57bbd72948d75f6a9389e6727d2ab6333c3617f0a89d72d4940aa0443 \
+                 --hash=sha256:598174aef4589af795f66f9caab87ba4ff860ce08cd5bb447c6fc553ffee603c \
+                 --hash=sha256:14e33b28bf17c7a38eede290f77db7c664e4eb01f7869e37fa98a5aa95978941 \
+                 --hash=sha256:21e1470ac9e5739ff880c211fc3af01e3ae505859392bf65458c224d0bf283eb
   # [/pillow]
   # [retrying]
   retrying==1.3.4 --hash=sha256:8cc4d43cb8e1125e0ff3344e9de678fefd85db3b750b81b2240dc0183af37b35

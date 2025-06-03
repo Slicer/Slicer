@@ -51,8 +51,8 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
 
   set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-${Slicer_REQUIRED_PYTHON_VERSION}")
 
-  set(_download_3.9.10_url "https://www.python.org/ftp/python/3.9.10/Python-3.9.10.tgz")
-  set(_download_3.9.10_md5 "1440acb71471e2394befdb30b1a958d1")
+  set(_download_3.12.10_url "https://www.python.org/ftp/python/3.12.10/Python-3.12.10.tgz")
+  set(_download_3.12.10_md5 "35c03f014408e26e2b06d576c19cac54")
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
   if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24")
