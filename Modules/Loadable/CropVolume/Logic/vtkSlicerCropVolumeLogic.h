@@ -23,8 +23,6 @@
 
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
-class vtkSlicerCLIModuleLogic;
-class vtkSlicerVolumesLogic;
 class vtkMRMLVolumeNode;
 class vtkMRMLDisplayableNode;
 // vtk includes

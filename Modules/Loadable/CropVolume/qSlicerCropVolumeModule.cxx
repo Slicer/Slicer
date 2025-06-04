@@ -7,9 +7,7 @@
 #include <qSlicerModuleManager.h>
 
 // CropVolume Logic includes
-#include <vtkSlicerCLIModuleLogic.h>
 #include <vtkSlicerCropVolumeLogic.h>
-#include <vtkSlicerVolumesLogic.h>
 
 // CropVolume includes
 #include "qSlicerCropVolumeModule.h"
