@@ -17,16 +17,10 @@
 
 // MRML includes
 #include "vtkMRML.h"
-class vtkMRMLScene;
 
 // VTK includes
 #include <vtkObject.h>
 
-/// \brief Class that manages adding and deleting of observers with events.
-///
-/// Class that manages adding and deleting of observers with events
-/// This class keeps track of observers and events added to each vtk object.
-/// It caches tags returned by AddObserver method so that observers can be removed properly.
 class VTK_MRML_EXPORT vtkMRMLLogic : public vtkObject
 {
 public:
@@ -34,13 +28,6 @@ public:
   static vtkMRMLLogic *New();
   vtkTypeMacro(vtkMRMLLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override { this->Superclass::PrintSelf(os, indent); }
-
-  vtkMRMLScene* GetScene() {return this->Scene;};
-  void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
-
-  void RemoveUnreferencedStorageNodes();
-
-  void RemoveUnreferencedDisplayNodes();
 
   /// Get application home directory.
   /// The path is retrieved from the environment variable defined by MRML_APPLICATION_HOME_DIR_ENV.
@@ -55,8 +42,6 @@ protected:
   ~vtkMRMLLogic() override;
   vtkMRMLLogic(const vtkMRMLLogic&);
   void operator=(const vtkMRMLLogic&);
-
-  vtkMRMLScene *Scene;
 };
 
 #endif
