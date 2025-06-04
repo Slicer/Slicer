@@ -124,12 +124,13 @@ bool qSlicerScriptedFileReader::setPythonSource(const QString& filePath, const Q
 
   d->PythonCppAPI.setObjectName(className);
 
-  // Get a reference (or create if needed) the <moduleName> python module
-  PyObject * module = PyImport_AddModule(moduleName.toUtf8());
+  // Get actual module from sys.modules
+  PyObject* sysModules = PyImport_GetModuleDict();
+  PyObject* module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
-  if (PyObject_HasAttrString(module, className.toUtf8()))
+  if (module && PyObject_HasAttrString(module, className.toUtf8()))
   {
     classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));
   }

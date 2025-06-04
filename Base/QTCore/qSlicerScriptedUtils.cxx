@@ -40,21 +40,21 @@ bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
                                        PyObject * local_dict)
 {
   PyObject* pyRes = nullptr;
-  if (filePath.endsWith(".py"))
+
+  if (filePath.endsWith(".py") || filePath.endsWith(".pyc"))
   {
-    pyRes = PyRun_String(
-          QString("import imp;imp.load_source(%2, %1);del imp;")
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toUtf8(),
-          Py_file_input, global_dict, local_dict);
-  }
-  else if (filePath.endsWith(".pyc"))
-  {
-    pyRes = PyRun_String(
-          QString("with open(%1, 'rb') as f:import imp;imp.load_module(%2, f, %1, ('.pyc', 'rb', 2));del imp")
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName)).toUtf8(),
-          Py_file_input, global_dict, local_dict);
+    QString pyRunStr = QString(
+        "import importlib.util;"
+        "import sys;"
+        "spec = importlib.util.spec_from_file_location(%2, %1);"
+        "module = importlib.util.module_from_spec(spec);"
+        "sys.modules[%2] = module;"
+        "spec.loader.exec_module(module)"
+      )
+      .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
+      .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName));
+
+    pyRes = PyRun_String(pyRunStr.toUtf8(), Py_file_input, global_dict, local_dict);
   }
   if (!pyRes)
   {

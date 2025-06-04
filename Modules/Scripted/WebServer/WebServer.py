@@ -230,16 +230,25 @@ class WebServerWidget(ScriptedLoadableModuleWidget):
         if hasattr(slicer.modules, "dicom"):
             submoduleNames.append("DICOMRequestHandler")
 
-        import imp
+        import importlib.util
 
-        f, filename, description = imp.find_module(packageName)
-        package = imp.load_module(packageName, f, filename, description)
+        # Locate and reload package
+        spec = importlib.util.find_spec(packageName)
+        if spec is None:
+            raise ImportError(f"Cannot find package {packageName}")
+        package = importlib.util.module_from_spec(spec)
+        sys.modules[packageName] = package
+        spec.loader.exec_module(package)
+
+        # Reload each submodule from the package
         for submoduleName in submoduleNames:
-            f, filename, description = imp.find_module(submoduleName, package.__path__)
-            try:
-                imp.load_module(packageName + "." + submoduleName, f, filename, description)
-            finally:
-                f.close()
+            full_name = f"{packageName}.{submoduleName}"
+            sub_spec = importlib.util.find_spec(full_name)
+            if sub_spec is None:
+                raise ImportError(f"Cannot find submodule {full_name}")
+            submodule = importlib.util.module_from_spec(sub_spec)
+            sys.modules[full_name] = submodule
+            sub_spec.loader.exec_module(submodule)
 
         ScriptedLoadableModuleWidget.onReload(self)
 
