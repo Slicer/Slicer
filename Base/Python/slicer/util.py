@@ -189,10 +189,9 @@ def importModuleObjects(from_module_name, dest_module_name, type_info):
         return
 
     # Obtain a reference to the module identified by 'from_module_name'
-    import imp
+    import importlib
 
-    fp, pathname, description = imp.find_module(from_module_name)
-    module = imp.load_module(from_module_name, fp, pathname, description)
+    module = importlib.import_module(from_module_name)
 
     # Loop over content of the python module associated with the given python library
     for item_name in dir(module):
@@ -1401,8 +1400,7 @@ def reloadScriptedModule(moduleName):
 
     The function performs the following:
 
-    * Ensure ``sys.path`` includes the module path and use ``imp.load_module``
-      to load the associated script.
+    * Ensure ``sys.path`` includes the module path and use ``importlib`` to load the associated script.
     * For the current module widget representation:
 
       * Hide all children widgets
@@ -1413,7 +1411,8 @@ def reloadScriptedModule(moduleName):
     * Call ``setup()`` function
     * Update ``slicer.modules.<moduleName>Widget`` attribute
     """
-    import imp, sys, os
+    import importlib.util
+    import sys, os
     import slicer
 
     widgetName = moduleName + "Widget"
@@ -1425,9 +1424,11 @@ def reloadScriptedModule(moduleName):
     if p not in sys.path:
         sys.path.insert(0, p)
 
-    with open(filePath, encoding="utf8") as fp:
-        reloaded_module = imp.load_module(
-            moduleName, fp, filePath, (".py", "r", imp.PY_SOURCE))
+    # Use importlib to load the module from file path
+    spec = importlib.util.spec_from_file_location(moduleName, filePath)
+    reloaded_module = importlib.util.module_from_spec(spec)
+    sys.modules[moduleName] = reloaded_module
+    spec.loader.exec_module(reloaded_module)
 
     # find and hide the existing widget
     parent = eval("slicer.modules.%s.widgetRepresentation()" % moduleName.lower())

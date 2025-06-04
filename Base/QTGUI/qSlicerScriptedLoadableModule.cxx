@@ -126,8 +126,9 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
   PyObject * main_module = PyImport_AddModule("__main__");
   PyObject * global_dict = PyModule_GetDict(main_module);
 
-  // Get a reference (or create if needed) the <moduleName> python module
-  PyObject * module = PyImport_AddModule(moduleName.toUtf8());
+  // Get actual module from sys.modules
+  PyObject* sysModules = PyImport_GetModuleDict();
+  PyObject* module = PyDict_GetItemString(sysModules, moduleName.toUtf8());
 
   // Get a reference to the python module class to instantiate
   PythonQtObjectPtr classToInstantiate;
@@ -143,6 +144,10 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
     {
       return false;
     }
+
+    // After loading, re-fetch actual module from sys.modules
+    module = PyDict_GetItemString(PyImport_GetModuleDict(), moduleName.toUtf8());
+
     if (PyObject_HasAttrString(module, className.toUtf8()))
     {
       classToInstantiate.setNewRef(PyObject_GetAttrString(module, className.toUtf8()));

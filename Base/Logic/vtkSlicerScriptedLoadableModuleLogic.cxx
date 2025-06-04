@@ -197,22 +197,17 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
   if (!classToInstantiate)
   {
-    PyObject * pyRes = nullptr;
-    if (filePath.find(".pyc") != std::string::npos)
-    {
-      std::string pyRunStr = std::string("with open('") + filePath +
-          std::string("', 'rb') as f:import imp;imp.load_module('__main__', f, '") + filePath +
-          std::string("', ('.pyc', 'rb', 2))");
-      pyRes = PyRun_String(
-            pyRunStr.c_str(),
-            Py_file_input, global_dict, global_dict);
-    }
-    else if (filePath.find(".py") != std::string::npos)
-    {
-      std::string pyRunStr = std::string("execfile('") + filePath + std::string("')");
-      pyRes = PyRun_String(pyRunStr.c_str(),
-        Py_file_input, global_dict, global_dict);
-    }
+    std::ostringstream pyRunStream;
+
+    pyRunStream
+      << "import importlib.util;"
+      << "import sys;"
+      << "spec = importlib.util.spec_from_file_location('__main__', r'" << filePath << "');"
+      << "module = importlib.util.module_from_spec(spec);"
+      << "sys.modules['__main__'] = module;"
+      << "spec.loader.exec_module(module)";
+
+    PyObject* pyRes = PyRun_String(pyRunStream.str().c_str(), Py_file_input, global_dict, global_dict);
     if (!pyRes)
     {
       vtkErrorMacro(<< "setPythonSource - Failed to execute file" << filePath << "!");

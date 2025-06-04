@@ -128,13 +128,12 @@
 
 # -----------------------------------------------------------------------------
 def _createModule(name, globals, docstring):
-    import imp
     import sys
+    import types
 
     moduleName = name.split(".")[-1]
-    module = imp.new_module(moduleName)
+    module = types.ModuleType(moduleName, docstring)
     module.__file__ = __file__
-    module.__doc__ = docstring
     sys.modules[name] = module
     globals[moduleName] = module
 
