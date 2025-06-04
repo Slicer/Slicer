@@ -1362,8 +1362,31 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   }
   vtkOrientedImageDataResample::FillImage(commonGeometryImage, 0);
 
+  // Write to a temporary directory first, then move to the final destination
+  std::string targetDir = vtksys::SystemTools::GetFilenamePath(fullName);
+  std::string tempSubDir = std::string("TempWrite") + vtksys::SystemTools::GetFilenameWithoutExtension(fullName)
+                           + "_" + vtksys::SystemTools::GetCurrentDateTime("%Y%m%d%H%M%6f");
+  tempSubDir.erase(tempSubDir.find_last_not_of(" ") + 1);
+  std::vector<std::string> pathComponents;
+  vtksys::SystemTools::SplitPath(targetDir.c_str(), pathComponents);
+  pathComponents.push_back(tempSubDir);
+  std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
+
+  if (vtksys::SystemTools::FileExists(tempDir.c_str()))
+  {
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+  }
+  if (!vtksys::SystemTools::MakeDirectory(tempDir.c_str()))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+                                     "Failed to create temporary directory " << tempDir);
+    return 0;
+  }
+
+  std::string tempFile = tempDir + "/" + vtksys::SystemTools::GetFilenameName(fullName);
+
   vtkNew<vtkTeemNRRDWriter> writer;
-  writer->SetFileName(fullName.c_str());
+  writer->SetFileName(tempFile.c_str());
   writer->SetUseCompression(this->GetUseCompression());
   writer->SetSpace(nrrdSpaceLeftPosteriorSuperior);
   writer->SetMeasurementFrameMatrix(nullptr);
@@ -1518,6 +1541,35 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
   }
 
   writer->Write();
+
+  // Check for write errors
+  if (writer->GetWriteError())
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+      "Error writing temporary NRRD file " << tempFile);
+    vtksys::SystemTools::RemoveFile(tempFile);
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
+  }
+
+  // Move temporary file to final destination
+  if (vtksys::SystemTools::FileExists(fullName.c_str(), true))
+  {
+    vtksys::SystemTools::RemoveFile(fullName.c_str());
+  }
+  int renameReturn = std::rename(tempFile.c_str(), fullName.c_str());
+  if (renameReturn != 0)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+      "Failed to move temporary file " << tempFile << " to " << fullName << ", rename returned code " << renameReturn);
+    vtksys::SystemTools::RemoveFile(tempFile.c_str());
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
+  }
+
+  // Clean up temporary directory
+  vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+
   this->GetUserMessages()->SetObservedObject(nullptr);
   int writeSuccess = true;
   if (writer->GetWriteError())
@@ -1656,10 +1708,33 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
     multiBlockDataset->SetBlock(segmentIndex, currentPolyDataCopy);
   }
 
+  // Write to a temporary directory first, then move to the final destination
+  std::string targetDir = vtksys::SystemTools::GetFilenamePath(path);
+  std::string tempSubDir = std::string("TempWrite") + vtksys::SystemTools::GetFilenameWithoutExtension(path)
+                           + "_" + vtksys::SystemTools::GetCurrentDateTime("%Y%m%d%H%M%6f");
+  tempSubDir.erase(tempSubDir.find_last_not_of(" ") + 1);
+  std::vector<std::string> pathComponents;
+  vtksys::SystemTools::SplitPath(targetDir.c_str(), pathComponents);
+  pathComponents.push_back(tempSubDir);
+  std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
+
+  if (vtksys::SystemTools::FileExists(tempDir.c_str()))
+  {
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+  }
+  if (!vtksys::SystemTools::MakeDirectory(tempDir.c_str()))
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+                                     "Failed to create temporary directory " << tempDir);
+    return 0;
+  }
+
+  std::string tempFile = tempDir + "/" + vtksys::SystemTools::GetFilenameName(path);
+
   // Write multiblock dataset to disk
   vtkSmartPointer<vtkXMLMultiBlockDataWriter> writer = vtkSmartPointer<vtkXMLMultiBlockDataWriter>::New();
   writer->SetInputData(multiBlockDataset);
-  writer->SetFileName(path.c_str());
+  writer->SetFileName(tempFile.c_str());
   if (this->UseCompression)
   {
     writer->SetDataModeToBinary();
@@ -1673,6 +1748,25 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
 
   this->GetUserMessages()->SetObservedObject(writer);
   writer->Write();
+
+  // Move temporary file to final destination
+  if (vtksys::SystemTools::FileExists(path.c_str(), true))
+  {
+    vtksys::SystemTools::RemoveFile(path.c_str());
+  }
+  int renameReturn = std::rename(tempFile.c_str(), path.c_str());
+  if (renameReturn != 0)
+  {
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation",
+                                     "Failed to move temporary file " << tempFile << " to " << path << ", rename returned code " << renameReturn);
+    vtksys::SystemTools::RemoveFile(tempFile.c_str());
+    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    return 0;
+  }
+
+  // Clean up temporary directory
+  vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+
   this->GetUserMessages()->SetObservedObject(nullptr);
 
   // Add all files to storage node (multiblock dataset writes segments to individual files in a separate folder)
