@@ -1707,6 +1707,89 @@ void vtkMRMLScene::RemoveUnusedNodeReferences()
 }
 
 //------------------------------------------------------------------------------
+void vtkMRMLScene::RemoveUnreferencedStorageNodes()
+{
+  std::set<vtkMRMLNode*> referencedNodes;
+
+  std::vector<vtkMRMLNode*> storableNodes;
+  this->GetNodesByClass("vtkMRMLStorableNode", storableNodes);
+
+  for (vtkMRMLNode* node: storableNodes)
+  {
+    if (!node)
+    {
+      continue;
+    }
+    vtkMRMLStorageNode* storageNode = vtkMRMLStorableNode::SafeDownCast(node)->GetStorageNode();
+    if (storageNode)
+    {
+      referencedNodes.insert(storageNode);
+    }
+  }
+
+  std::vector<vtkMRMLNode*> storageNodes;
+  this->GetNodesByClass("vtkMRMLStorageNode", storageNodes);
+
+  for (vtkMRMLNode* node: storageNodes)
+  {
+    if (!node)
+    {
+      continue;
+    }
+    vtkMRMLStorageNode* storageNode = vtkMRMLStorageNode::SafeDownCast(node);
+    std::set<vtkMRMLNode*>::iterator iter = referencedNodes.find(storageNode);
+    if (iter == referencedNodes.end())
+    {
+      this->RemoveNode(storageNode);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void vtkMRMLScene::RemoveUnreferencedDisplayNodes()
+{
+  std::set<vtkMRMLNode*> referencedNodes;
+
+  std::vector<vtkMRMLNode*> displayableNodes;
+  this->GetNodesByClass("vtkMRMLDisplayableNode", displayableNodes);
+
+  for (vtkMRMLNode* node: displayableNodes)
+  {
+    if (!node)
+    {
+      continue;
+    }
+    vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+    int numDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+    for (int n=0; n < numDisplayNodes; n++)
+    {
+      vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(n);
+      if (displayNode)
+      {
+        referencedNodes.insert(displayNode);
+      }
+    }
+  }
+
+  std::vector<vtkMRMLNode*> displayNodes;
+  this->GetNodesByClass("vtkMRMLDisplayNode", displayNodes);
+
+  for (vtkMRMLNode* node: displayNodes)
+  {
+    if (!node)
+    {
+      continue;
+    }
+    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(node);
+    std::set<vtkMRMLNode*>::iterator iter = referencedNodes.find(displayNode);
+    if (iter == referencedNodes.end())
+    {
+      this->RemoveNode(displayNode);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 void vtkMRMLScene::RemoveReferencesToNode(vtkMRMLNode *n)
 {
   if (n == nullptr || n->GetID() == nullptr)
