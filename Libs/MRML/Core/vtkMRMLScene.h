@@ -458,6 +458,26 @@ public:
 
   void RemoveUnusedNodeReferences();
 
+  /// \brief Remove all vtkMRMLStorageNode instances not referenced by any vtkMRMLStorableNode.
+  ///
+  /// This function iterates through all storage and storable nodes in the scene.
+  /// Any storage node that is not referenced by at least one storable node is
+  /// considered unreferenced and will be removed from the scene.
+  ///
+  /// This can help reduce scene size and prevent accumulation of orphaned nodes
+  /// due to improperly implemented modules or bugs.
+  void RemoveUnreferencedStorageNodes();
+
+  /// \brief Remove all vtkMRMLDisplayNode instances not referenced by any vtkMRMLDisplayableNode.
+  ///
+  /// This function traverses all displayable and display nodes in the scene.
+  /// Any display node that is not used by at least one displayable node is
+  /// deemed unreferenced and will be deleted from the scene.
+  ///
+  /// This function is useful for cleaning up leftover nodes and ensuring
+  /// consistency in the scene structure.
+  void RemoveUnreferencedDisplayNodes();
+
   bool IsReservedID(const std::string& id);
 
   void AddReservedID(const char *id);
