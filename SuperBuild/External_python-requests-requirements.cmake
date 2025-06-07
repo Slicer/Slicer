@@ -34,19 +34,19 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   # [/idna]
   # [charset-normalizer]
   # Hashes correspond to the following packages:
-  #  - charset_normalizer-3.4.2-cp39-cp39-macosx_10_9_universal2.whl
-  #  - charset_normalizer-3.4.2-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-  #  - charset_normalizer-3.4.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  #  - charset_normalizer-3.4.2-cp39-cp39-musllinux_1_2_aarch64.whl
-  #  - charset_normalizer-3.4.2-cp39-cp39-musllinux_1_2_x86_64.whl
-  #  - charset_normalizer-3.4.2-cp39-cp39-win_amd64.whl
+  #  - charset_normalizer-3.4.2-cp312-cp312-macosx_10_13_universal2.whl
+  #  - charset_normalizer-3.4.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+  #  - charset_normalizer-3.4.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  #  - charset_normalizer-3.4.2-cp312-cp312-musllinux_1_2_aarch64.whl
+  #  - charset_normalizer-3.4.2-cp312-cp312-musllinux_1_2_x86_64.whl
+  #  - charset_normalizer-3.4.2-cp312-cp312-win_amd64.whl
   #  - charset_normalizer-3.4.2-py3-none-any.whl
-  charset-normalizer==3.4.2 --hash=sha256:005fa3432484527f9732ebd315da8da8001593e2cf46a3d817669f062c3d9ed4 \
-                            --hash=sha256:e92fca20c46e9f5e1bb485887d074918b13543b1c2a1185e69bb8d17ab6236a7 \
-                            --hash=sha256:82d8fd25b7f4675d0c47cf95b594d4e7b158aca33b76aa63d07186e13c0e0ab7 \
-                            --hash=sha256:dccab8d5fa1ef9bfba0590ecf4d46df048d18ffe3eec01eeb73a42e0d9e7a8ba \
-                            --hash=sha256:982bb1e8b4ffda883b3d0a521e23abcd6fd17418f6d2c4118d257a10199c0ce3 \
-                            --hash=sha256:d11b54acf878eef558599658b0ffca78138c8c3655cf4f3a4a673c437e67732e \
+  charset-normalizer==3.4.2 --hash=sha256:0c29de6a1a95f24b9a1aa7aefd27d2487263f00dfd55a77719b530788f75cff7 \
+                            --hash=sha256:cddf7bd982eaa998934a91f69d182aec997c6c468898efe6679af88283b498d3 \
+                            --hash=sha256:4e594135de17ab3866138f496755f302b72157d115086d100c3f19370839dd3a \
+                            --hash=sha256:a370b3e078e418187da8c3674eddb9d983ec09445c99a3a263c2011993522981 \
+                            --hash=sha256:dedb8adb91d11846ee08bec4c8236c8549ac721c245678282dcb06b221aab59f \
+                            --hash=sha256:5a9979887252a82fefd3d3ed2a8e3b937a7a809f65dcb1e068b090e165bbe99e \
                             --hash=sha256:7f56930ab0abd1c45cd15be65cc741c28b1c9a34876ce8c17a2fa107810c0af0
   # [/charset-normalizer]
   # [urllib3]
