@@ -4071,6 +4071,71 @@ def pip_uninstall(requirements):
     _executePythonModule("pip", args)
 
 
+def validate_module_version(
+    module_name: str,
+    minimum_version: str,
+    attempt_fix: bool = False,
+) -> None:
+    """
+    Ensure that some minimum package requirement is met at runtime.
+
+    If the minimum version requirement is not met, either throw or
+    attempt to install the package and possibly restart Slicer.
+
+    :param module_name: The Python Package Index module to check.
+    :param minimum_version: The minimum version requirement.
+    :param attempt_fix: Whether to attempt to fix an installation or version issue
+        with reinstallation and possible application restart.
+
+    :raises ModuleNotFoundError: if a module satisfying version requirements
+        is not installed and the issue could not be fixed.
+    """
+    import importlib
+    from packaging import version
+
+    needRestart = False
+    needInstall = False
+
+    try:
+        module = importlib.import_module(module_name)
+    except ModuleNotFoundError as e:
+        install_message = f"The current operation requires {module_name}.\nClick OK to install from PyPI."
+        if not attempt_fix or not confirmOkCancelDisplay(
+            install_message
+        ):
+            failure_message = f"{module_name} is not installed"
+            raise e
+        module = None
+        needInstall = True
+
+    if module and version.parse(module.__version__) < version.parse(minimum_version):
+        if not attempt_fix or not confirmOkCancelDisplay(
+            f"The current operation requires {module_name}>={minimum_version}.\n"
+            f"Click OK to upgrade {module_name} and restart the application."
+        ):
+            failure_message = f"Expected {module_name}>={minimum_version} but found {module.__version__}"
+            raise ModuleNotFoundError(failure_message)
+        needRestart = True
+        needInstall = True
+
+    if needInstall:
+        import slicer
+        progressDialog = createProgressDialog(
+            labelText=f"Installing {module_name}. This may take a minute...",
+            maximum=0,
+        )
+        slicer.app.processEvents()
+        try:
+            failure_message = f"Failed to install {module_name}>={minimum_version}."
+            with slicer.util.tryWithErrorDisplay(failure_message):
+                pip_install(f"{module_name}>={minimum_version}")
+        finally:
+            progressDialog.close()
+
+    if needRestart:
+        restart()
+
+
 def longPath(path):
     r"""Make long paths work on Windows, where the maximum path length is 260 characters.
 
