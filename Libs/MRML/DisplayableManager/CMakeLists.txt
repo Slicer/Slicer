@@ -120,6 +120,7 @@ set(KIT_SRCS
   vtkMRMLSliceIntersectionInteractionRepresentationHelper.cxx
   vtkMRMLRubberBandWidgetRepresentation.cxx
   vtkMRMLWindowLevelWidget.cxx
+  vtkMRMLOpenGLLineStippleMapper2D.cxx
 
   # Proxy classes
   vtkMRMLLightBoxRendererManagerProxy.cxx
@@ -139,6 +140,20 @@ if(MRMLDisplayableManager_USE_PYTHON)
     WRAP_EXCLUDE
     )
 endif()
+
+# --------------------------------------------------------------------------
+# Shaders
+# --------------------------------------------------------------------------
+set(shader_files
+  glsl/vtkLineStippleGS.glsl
+  )
+foreach(file IN LISTS shader_files)
+  # Header and source files are generated in the current binary directory.
+  vtk_encode_string(
+    INPUT         "${file}"
+    SOURCE_OUTPUT source)
+  list(APPEND KIT_SRCS "${source}")
+endforeach()
 
 # --------------------------------------------------------------------------
 set(lib_name ${PROJECT_NAME})
