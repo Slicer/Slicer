@@ -1,8 +1,8 @@
 docutils
 linkify-it-py
-lxml
+lxml>=4.9.1
 myst-parser
-pygments
+pygments>=2.15.0
 # Workaround for readthedocs bug (https://github.com/readthedocs/sphinx_rtd_theme/issues/1343)
 sphinx>=5.0,!=5.2.0.post0
 sphinx-issues
@@ -10,6 +10,6 @@ sphinx-jsonschema
 sphinx_markdown_tables>=0.0.17
 sphinx-notfound-page
 sphinx_rtd_theme>=0.5.2
-requests>=2.32.2 # not directly required, pinned by Snyk to avoid a vulnerability
+requests>=2.32.4 # not directly required, pinned by Snyk to avoid a vulnerability
 urllib3>=2.2.2 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
