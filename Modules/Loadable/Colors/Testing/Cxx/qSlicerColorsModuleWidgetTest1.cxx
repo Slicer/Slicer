@@ -23,6 +23,7 @@
 
 // Slicer includes
 #include "vtkSlicerConfigure.h"
+#include <vtkSlicerApplicationLogic.h>
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -48,13 +49,14 @@ int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkSmartPointer<vtkMRMLColorLogic> colorLogic = vtkSmartPointer<vtkMRMLColorLogic>::New();
-  colorLogic->SetMRMLScene(scene);
-
   qSlicerColorsModule colorsModule;
+
+  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   colorsModule.setMRMLScene(scene);
-  colorsModule.initialize(nullptr);
+
+  auto appLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
+  appLogic->SetShareDirectory(Slicer_SHARE_DIR);
+  colorsModule.initialize(appLogic);
 
   qSlicerColorsModuleWidget* colorsWidget =
     dynamic_cast<qSlicerColorsModuleWidget*>(colorsModule.widgetRepresentation());

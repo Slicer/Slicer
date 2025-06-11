@@ -86,15 +86,8 @@ set(KIT_target_libraries
   qSlicerBaseQTGUI
   ModuleDescriptionParser ${ITK_LIBRARIES}
   MRMLCLI
+  SlicerBaseLogic
   )
-if(VTK_WRAP_PYTHON AND ${VTK_VERSION} VERSION_GREATER_EQUAL "8.90")
-  # HACK Explicitly list transitive VTK dependencies because _get_dependencies_recurse
-  # used in vtkAddon/CMake/vtkMacroKitPythonWrap.cmake only recurses over dependencies
-  # that are VTK python wrapped.
-  list(APPEND KIT_target_libraries
-    SlicerBaseLogic
-    )
-endif()
 
 if(Slicer_USE_QtTesting)
   list(APPEND KIT_SRCS
@@ -120,30 +113,6 @@ SlicerMacroBuildBaseQtLibrary(
 
 if(Slicer_BUILD_QT_DESIGNER_PLUGINS)
   add_subdirectory(DesignerPlugins)
-endif()
-
-# --------------------------------------------------------------------------
-# Python Wrapping
-# --------------------------------------------------------------------------
-if(VTK_WRAP_PYTHON)
-  include(vtkMacroKitPythonWrap)
-
-  set(_python_wrapped_libraries
-    )
-
-  vtkMacroKitPythonWrap(
-    KIT_NAME ${PROJECT_NAME}
-    KIT_SRCS ${KIT_SRCS}
-    KIT_INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
-    KIT_PYTHON_LIBRARIES ${_python_wrapped_libraries}
-    )
-  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}Python)
-  # Folder
-  set_target_properties(${PROJECT_NAME}Python PROPERTIES FOLDER "Core-Base")
-  if(TARGET ${PROJECT_NAME}Hierarchy)
-    set_target_properties(${PROJECT_NAME}Hierarchy PROPERTIES FOLDER "Core-Base")
-  endif()
 endif()
 
 # --------------------------------------------------------------------------
