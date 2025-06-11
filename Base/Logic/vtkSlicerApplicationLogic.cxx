@@ -8,9 +8,7 @@
 
 // Slicer includes
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkMRMLColorLogic.h"
 // For:
-//  - Slicer_BUILD_CLI_SUPPORT
 //  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //  - Slicer_EXTENSIONS_DIRBASENAME
 //  - Slicer_ORGANIZATION_DOMAIN
@@ -21,9 +19,6 @@
 // MRML includes
 #include <vtkCacheManager.h>
 #include <vtkDataIOManagerLogic.h>
-#ifdef Slicer_BUILD_CLI_SUPPORT
-# include <vtkMRMLCommandLineModuleNode.h>
-#endif
 #include <vtkMRMLRemoteIOLogic.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
