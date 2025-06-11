@@ -118,7 +118,6 @@ endif()
 set(SlicerBaseLogic_SRCS
   # Logic classes (data management and calculation)
   vtkSlicerApplicationLogic.cxx
-  vtkSlicerCLIModuleLogic.cxx
   vtkSlicerModuleLogic.cxx
   vtkSlicerTask.cxx
   vtkDataIOManagerLogic.cxx
@@ -128,6 +127,12 @@ set(SlicerBaseLogic_SRCS
   vtkSystemInformation.cxx
   vtkImageFillROI.cxx
   )
+
+if(Slicer_BUILD_CLI_SUPPORT)
+  list(APPEND SlicerBaseLogic_SRCS
+    vtkSlicerCLIModuleLogic.cxx
+    )
+endif()
 
 if(Slicer_USE_PYTHONQT)
   list(APPEND SlicerBaseLogic_SRCS
