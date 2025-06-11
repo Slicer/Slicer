@@ -47,6 +47,7 @@ public:
   virtual void setupUi();
 
   vtkWeakPointer<vtkMRMLVolumePropertyNode> VolumePropertyNode;
+  int ComponentCount{ 1 };
 };
 
 // --------------------------------------------------------------------------
@@ -69,6 +70,8 @@ void qMRMLVolumePropertyNodeWidgetPrivate::setupUi()
                    q, SIGNAL(chartsExtentChanged()));
   QObject::connect(this->VolumePropertyWidget, SIGNAL(thresholdEnabledChanged(bool)),
                    q, SIGNAL(thresholdChanged(bool)));
+  QObject::connect(this->ComponentSpinBox, SIGNAL(valueChanged(int)),
+                   this->VolumePropertyWidget, SLOT(setCurrentComponent(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -121,6 +124,10 @@ void qMRMLVolumePropertyNodeWidget::updateFromVolumePropertyNode()
   qvtkReconnect(d->VolumePropertyWidget->volumeProperty(), newVolumeProperty,
                 vtkCommand::ModifiedEvent, this, SIGNAL(volumePropertyChanged()));
   d->VolumePropertyWidget->setVolumeProperty(newVolumeProperty);
+
+  bool componentSpinBoxVisible = newVolumeProperty && d->ComponentCount > 1 && newVolumeProperty->GetIndependentComponents();
+  d->ComponentLabel->setVisible(componentSpinBoxVisible);
+  d->ComponentSpinBox->setVisible(componentSpinBoxVisible);
 }
 
 // --------------------------------------------------------------------------
@@ -177,4 +184,27 @@ void qMRMLVolumePropertyNodeWidget::spreadAllPoints(double factor, bool dontSpre
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   return d->VolumePropertyWidget->spreadAllPoints(factor, dontSpreadFirstAndLast);
+}
+
+// --------------------------------------------------------------------------
+int qMRMLVolumePropertyNodeWidget::componentCount()const
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  return d->ComponentCount;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::setComponentCount(int componentCount)
+{
+  Q_D(qMRMLVolumePropertyNodeWidget);
+
+  // Limit the component count to the max range for volume rendering in VTK
+  d->ComponentCount = std::clamp(componentCount, 0, VTK_MAX_VRCOMP);
+  d->ComponentSpinBox->setRange(0, d->ComponentCount - 1);
+
+  int currentComponent = d->VolumePropertyWidget->currentComponent();
+  currentComponent = std::clamp(currentComponent, 0, d->ComponentCount - 1);
+  d->VolumePropertyWidget->setCurrentComponent(currentComponent);
+
+  d->ComponentSpinBox->setVisible(d->ComponentCount > 1);
 }

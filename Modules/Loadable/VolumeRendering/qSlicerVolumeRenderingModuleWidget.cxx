@@ -40,6 +40,7 @@
 #include "vtkMRMLVolumePropertyNode.h"
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkPlaneCollection.h>
 #include <vtkVolumeProperty.h>
 
@@ -339,6 +340,18 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
     d->PresetComboBox->setCurrentNode(presetNode);
     d->PresetComboBox->blockSignals(wasBlocking);
   }
+
+  int numberOfComponents = 1;
+  if (volumeNode)
+  {
+    vtkImageData* imageData = volumeNode->GetImageData();
+    if (imageData)
+    {
+      numberOfComponents = imageData->GetNumberOfScalarComponents();
+    }
+  }
+  // Limit the component count to the max range for volume rendering in VTK
+  d->VolumePropertyNodeWidget->setComponentCount(qMin(numberOfComponents, VTK_MAX_VRCOMP));
 
   // Update widget from display node of the volume node
   this->updateWidgetFromMRML();

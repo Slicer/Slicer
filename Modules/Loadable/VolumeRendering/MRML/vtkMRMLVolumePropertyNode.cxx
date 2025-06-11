@@ -1,7 +1,7 @@
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVolumePropertyNode.h"
-#include "vtkMRMLVolumePropertyStorageNode.h"
+#include "vtkMRMLVolumePropertyJsonStorageNode.h"
 
 // VTK includes
 #include <vtkCommand.h>
@@ -368,7 +368,7 @@ vtkMRMLStorageNode* vtkMRMLVolumePropertyNode::CreateDefaultStorageNode()
     return nullptr;
   }
   return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLVolumePropertyStorageNode"));
+    scene->CreateNodeByClass("vtkMRMLVolumePropertyJsonStorageNode"));
 }
 
 //---------------------------------------------------------------------------
