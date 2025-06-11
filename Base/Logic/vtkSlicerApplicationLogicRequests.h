@@ -11,6 +11,13 @@
 #ifndef __vtkSlicerApplicationLogicRequests_h
 #define __vtkSlicerApplicationLogicRequests_h
 
+// For:
+//  - Slicer_BUILD_CLI_SUPPORT
+#include "vtkSlicerConfigure.h"
+
+#ifdef Slicer_BUILD_CLI_SUPPORT
+#include <vtkMRMLCommandLineModuleNode.h>
+#endif
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
