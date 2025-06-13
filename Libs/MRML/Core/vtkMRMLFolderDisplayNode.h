@@ -115,7 +115,7 @@ protected:
   vtkMRMLFolderDisplayNode(const vtkMRMLFolderDisplayNode&);
   void operator=(const vtkMRMLFolderDisplayNode&);
 
-private:
+protected:
   /// Flag determining whether the display node is to be applied on the
   /// displayable nodes in the subject hierarchy branch under the item that
   /// has the display node associated.
