@@ -2,7 +2,7 @@ docutils
 linkify-it-py
 lxml>=4.9.1
 myst-parser
-pygments>=2.15.0
+pygments>=2.15.1
 # Workaround for readthedocs bug (https://github.com/readthedocs/sphinx_rtd_theme/issues/1343)
 sphinx>=5.0,!=5.2.0.post0
 sphinx-issues
