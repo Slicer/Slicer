@@ -9,7 +9,6 @@ from slicer.util import TESTING_DATA_URL
 from slicer.i18n import tr as _
 from slicer.i18n import translate
 
-import DataProbeLib
 
 
 #
@@ -416,9 +415,6 @@ class DataProbeInfoWidget:
         """Make the internals of the widget to display in the
         Data Probe frame (lower left of slicer main window by default)
         """
-
-        # this method makes SliceView Annotation
-        self.sliceAnnotations = DataProbeLib.SliceAnnotations()
 
         # goto module button
         self.goToModule = qt.QPushButton("->", self.frame)
