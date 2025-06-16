@@ -76,6 +76,8 @@ void qMRMLColorTableViewPrivate::init()
 
   q->setItemDelegate(new qMRMLItemDelegate(q));
   q->setItemDelegateForColumn(colorModel->terminologyColumn(), new qSlicerColorTableTerminologyDelegate(q));
+
+  q->sortFilterProxyModel()->setShowEmptyColors(false);
 }
 
 //------------------------------------------------------------------------------
