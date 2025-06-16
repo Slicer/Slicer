@@ -1259,7 +1259,7 @@ int vtkMRMLColorTableNode::SetColor(int entry, const char* name, double r, doubl
 
   this->GetLookupTable()->SetTableValue(entry, r, g, b, a);
 
-  if (entry >= this->Properties.size())
+  if (static_cast<size_t>(entry) >= this->Properties.size())
   {
     this->Properties.resize(entry + 1);
   }
@@ -1399,7 +1399,7 @@ bool vtkMRMLColorTableNode::RemoveColor(int entry)
     return false;
   }
   this->SetColor(entry, 0.0, 0.0, 0.0, 0.0);
-  if (entry >= this->Properties.size())
+  if (static_cast<size_t>(entry) >= this->Properties.size())
   {
     this->Properties.resize(entry + 1);
   }
