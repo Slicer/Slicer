@@ -255,6 +255,9 @@
            <property name="text">
             <string/>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item row="2" column="0">
@@ -293,6 +296,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="showOnlyNamedColors">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -353,6 +359,27 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkVTKScalarsToColorsWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkVTKScalarsToColorsWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkDynamicSpacer</class>
+   <extends>QWidget</extends>
+   <header>ctkDynamicSpacer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkRangeWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkRangeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLColorTableComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
    <header>qMRMLColorTableComboBox.h</header>
@@ -392,27 +419,6 @@
    <extends>QTableView</extends>
    <header>qMRMLColorTableView.h</header>
   </customwidget>
-  <customwidget>
-   <class>ctkVTKScalarsToColorsWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkVTKScalarsToColorsWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDynamicSpacer</class>
-   <extends>QWidget</extends>
-   <header>ctkDynamicSpacer.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkRangeWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkRangeWidget.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
   <include location="../qSlicerColorsModule.qrc"/>
@@ -430,8 +436,8 @@
      <y>54</y>
     </hint>
     <hint type="destinationlabel">
-     <x>259</x>
-     <y>60</y>
+     <x>221</x>
+     <y>41</y>
     </hint>
    </hints>
   </connection>
@@ -442,12 +448,12 @@
    <slot>setInactive(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>139</x>
-     <y>24</y>
+     <x>148</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>470</y>
+     <x>195</x>
+     <y>615</y>
     </hint>
    </hints>
   </connection>
@@ -458,12 +464,12 @@
    <slot>setMRMLColorNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>210</x>
-     <y>59</y>
+     <x>221</x>
+     <y>41</y>
     </hint>
     <hint type="destinationlabel">
-     <x>232</x>
-     <y>224</y>
+     <x>250</x>
+     <y>430</y>
     </hint>
    </hints>
   </connection>
@@ -478,8 +484,8 @@
      <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>205</x>
-     <y>224</y>
+     <x>223</x>
+     <y>430</y>
     </hint>
    </hints>
   </connection>
@@ -490,12 +496,12 @@
    <slot>setShowOnlyNamedColors(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>127</x>
-     <y>99</y>
+     <x>240</x>
+     <y>145</y>
     </hint>
     <hint type="destinationlabel">
-     <x>128</x>
-     <y>238</y>
+     <x>146</x>
+     <y>430</y>
     </hint>
    </hints>
   </connection>
@@ -510,8 +516,8 @@
      <y>239</y>
     </hint>
     <hint type="destinationlabel">
-     <x>179</x>
-     <y>200</y>
+     <x>197</x>
+     <y>232</y>
     </hint>
    </hints>
   </connection>
@@ -526,8 +532,8 @@
      <y>544</y>
     </hint>
     <hint type="destinationlabel">
-     <x>205</x>
-     <y>488</y>
+     <x>281</x>
+     <y>602</y>
     </hint>
    </hints>
   </connection>
