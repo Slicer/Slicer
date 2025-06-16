@@ -1270,20 +1270,21 @@ void vtkMRMLColorTableNode::AddColor(const char* name, double r, double g, doubl
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetColor(int entry, const char* name, double r, double g, double b, double a)
 {
-  if (!vtkMRMLColorTableNode::IsValidColorIndex(entry, "SetColor", /*isCallerMethodSet=*/true))
+  unsigned int unsignedEntry = static_cast<unsigned int>(entry);
+  if (!vtkMRMLColorTableNode::IsValidColorIndex(unsignedEntry, "SetColor", /*isCallerMethodSet=*/true))
   {
     return 0;
   }
 
-  this->GetLookupTable()->SetTableValue(entry, r, g, b, a);
+  this->GetLookupTable()->SetTableValue(unsignedEntry, r, g, b, a);
 
-  if (static_cast<size_t>(entry) >= this->Properties.size())
+  if (unsignedEntry >= this->Properties.size())
   {
-    this->Properties.resize(entry + 1);
+    this->Properties.resize(unsignedEntry + 1);
   }
-  if (this->SetColorName(entry, name) == 0)
+  if (this->SetColorName(unsignedEntry, name) == 0)
   {
-    vtkWarningMacro("SetColor: error setting color name " << name << " for entry " << entry);
+    vtkWarningMacro("SetColor: error setting color name " << name << " for entry " << unsignedEntry);
     return 0;
   }
 
@@ -1419,20 +1420,21 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
 //---------------------------------------------------------------------------
 bool vtkMRMLColorTableNode::RemoveColor(int entry)
 {
-  if (!vtkMRMLColorTableNode::IsValidColorIndex(entry, "RemoveColor", /*isCallerMethodSet=*/true))
+  unsigned int unsignedEntry = static_cast<unsigned int>(entry);
+  if (!vtkMRMLColorTableNode::IsValidColorIndex(unsignedEntry, "RemoveColor", /*isCallerMethodSet=*/true))
   {
     return false;
   }
-  this->SetColor(entry, 0.0, 0.0, 0.0, 0.0);
-  if (static_cast<size_t>(entry) >= this->Properties.size())
+  this->SetColor(unsignedEntry, 0.0, 0.0, 0.0, 0.0);
+  if (unsignedEntry >= this->Properties.size())
   {
-    this->Properties.resize(entry + 1);
+    this->Properties.resize(unsignedEntry + 1);
   }
   PropertyType newProperty;
   newProperty.Defined = false;
-  if (this->Properties[entry] != newProperty)
+  if (this->Properties[unsignedEntry] != newProperty)
   {
-    this->Properties[entry] = newProperty;
+    this->Properties[unsignedEntry] = newProperty;
     this->StorableModified();
     this->Modified();
   }
