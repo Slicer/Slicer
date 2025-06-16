@@ -1253,10 +1253,10 @@ int vtkMRMLColorTableNode::SetColor(int entry, const char* name, double r, doubl
   }
 
   this->GetLookupTable()->SetTableValue(entry, r, g, b, a);
-
-  if (static_cast<size_t>(entry) >= this->Properties.size())
+  const size_t unsignedEntry = static_cast<size_t>(entry);
+  if (unsignedEntry >= this->Properties.size())
   {
-    this->Properties.resize(entry + 1);
+    this->Properties.resize(unsignedEntry + 1);
   }
   if (this->SetColorName(entry, name) == 0)
   {
@@ -1394,9 +1394,10 @@ bool vtkMRMLColorTableNode::RemoveColor(int entry)
     return false;
   }
   this->SetColor(entry, 0.0, 0.0, 0.0, 0.0);
-  if (static_cast<size_t>(entry) >= this->Properties.size())
+  const size_t unsignedEntry = static_cast<unsigned int>(entry);
+  if (unsignedEntry >= this->Properties.size())
   {
-    this->Properties.resize(entry + 1);
+    this->Properties.resize(unsignedEntry + 1);
   }
   PropertyType newProperty;
   newProperty.Defined = false;

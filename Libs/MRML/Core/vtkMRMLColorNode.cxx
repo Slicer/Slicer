@@ -777,14 +777,14 @@ void vtkMRMLColorNode::SetContainsTerminology(bool containsTerminology)
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::SetAllColorsDefined()
 {
-  int numberOfColors = this->GetNumberOfColors();
+  const size_t numberOfColors = static_cast<size_t>(this->GetNumberOfColors());
   bool modified = false;
-  if (this->Properties.size() < static_cast<size_t>(numberOfColors))
+  if (this->Properties.size() < numberOfColors)
   {
     this->Properties.resize(numberOfColors);
     modified = true;
   }
-  for (int index = 0; index < numberOfColors; index++)
+  for (size_t index = 0; index < numberOfColors; index++)
   {
     if (this->Properties[index].Defined == true)
     {
