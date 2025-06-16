@@ -224,7 +224,6 @@ vtkMRMLSliceNode* vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::GetSlic
   }
 
   // Get the slice node
-  vtkMRMLSliceNode* sliceNode = nullptr;
   for (auto sliceNodeIDToWidgetRep : this->SliceEdgeWidgetRepresentations)
   {
     if (sliceNodeIDToWidgetRep.second.Get() == rep)
@@ -324,7 +323,6 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateAllSliceEdgePi
   {
     return;
   }
-  bool renderRequired = false;
   for (auto sliceNodeIDToWidgetRep : this->SliceEdgeWidgetRepresentations)
   {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNodeByID(sliceNodeIDToWidgetRep.first));

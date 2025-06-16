@@ -423,7 +423,6 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       int currentMinor = 0;
       int currentPatch = 0;
       int currentRevision = 0;
-      bool sceneVersionParsingSuccess = false;
       // The scene is being imported from a file. The version of this file is stored in LastLoadedVersion.
       if (vtkMRMLScene::ParseVersion(this->GetScene()->GetLastLoadedVersion(), currentApplication,
         currentMajor, currentMinor, currentPatch, currentRevision))
