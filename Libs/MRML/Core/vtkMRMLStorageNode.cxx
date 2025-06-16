@@ -1582,7 +1582,7 @@ std::string vtkMRMLStorageNode::ClampFileName(const std::string& filename, int e
 
   // Remove extension
   std::string baseName = filename.substr(0, filename.length() - extensionLength);
-  if (baseName.length() <= maxFileNameLength)
+  if (baseName.length() <= static_cast<size_t>(maxFileNameLength))
   {
     return filename;
   }
