@@ -687,7 +687,7 @@ int vtkMRMLColorNode::SetColorName(int ind, const char* name)
     return 0;
   }
   PropertyType& prop = this->Properties[ind];
-  if (prop.Name != name)
+  if (prop.Name != name || !prop.Defined)
   {
     prop.Name = name;
     prop.Defined = true;
