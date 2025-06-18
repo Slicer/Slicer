@@ -1,4 +1,4 @@
-target-version = "py39"
+target-version = "py312"
 line-length = 550
 
 extend-exclude = [
@@ -46,6 +46,8 @@ extend-ignore = [
   "B028",    # No explicit `stacklevel` keyword argument found
   "B904",    # Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None`
              # to distinguish them from errors in exception handling
+  "B905",    # zip without explicit strict
+
   "C413",    # Unnecessary `reversed` call around `sorted()`
   "C408",    # Unnecessary `dict` call (rewrite as a literal)
   "C418",    # Unnecessary `dict` literal passed to `dict()` (remove the outer call to `dict()`)
@@ -107,6 +109,7 @@ extend-ignore = [
   "RET508", # Unnecessary {branch} after break statement
 
   "RUF005",  # Consider {expression} instead of concatenation
+  "RUF007",  # Consider pairwise instead of zip
   "RUF010",  # Use explicit conversion flag
   "RUF012",  # Mutable class attributes should be annotated with typing.ClassVar
   "RUF013",  # PEP 484 prohibits implicit `Optional`
@@ -117,10 +120,12 @@ extend-ignore = [
   "SIM101",  # Duplicate isinstance call
   "SIM115",  # Use context handler for opening files
 
+  "UP007",   # non-pep604 annotation union
   "UP018",   # Unnecessary `int` call (rewrite as a literal)
   "UP030",   # Use implicit references for positional format fields
   "UP031",   # Use format specifiers instead of percent format
   "UP032",   # Use f-string instead of `format` call
+  "UP038",   # non-pep604 isinstance
 ]
 
 [lint.pydocstyle]
