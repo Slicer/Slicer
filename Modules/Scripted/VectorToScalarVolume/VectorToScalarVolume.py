@@ -38,7 +38,7 @@ def MyObjectsBlockSignals(*qobjects):
         # blockedSignal returns the previous value of signalsBlocked()
         previousValues.append(qobject.blockSignals(True))
     yield
-    for qobject, previousValue in zip(qobjects, previousValues):
+    for qobject, previousValue in zip(qobjects, previousValues, strict=True):
         qobject.blockSignals(previousValue)
 
 

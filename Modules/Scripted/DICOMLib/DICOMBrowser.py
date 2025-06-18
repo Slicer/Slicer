@@ -511,7 +511,7 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
                 except Exception:
                     pass
                 isEqual = True
-                for pair in zip(inputFileListCopy, loadableFileListCopy):
+                for pair in zip(inputFileListCopy, loadableFileListCopy, strict=True):
                     if pair[0] != pair[1]:
                         print(f"{pair[0]} != {pair[1]}")
                         isEqual = False

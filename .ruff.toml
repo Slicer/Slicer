@@ -46,7 +46,6 @@ extend-ignore = [
   "B028",    # No explicit `stacklevel` keyword argument found
   "B904",    # Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None`
              # to distinguish them from errors in exception handling
-  "B905",    # zip without explicit strict
 
   "C413",    # Unnecessary `reversed` call around `sorted()`
   "C408",    # Unnecessary `dict` call (rewrite as a literal)

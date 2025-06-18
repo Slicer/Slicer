@@ -735,7 +735,7 @@ class TupleSerializer(Serializer):
             raise ValueError("Unexpected number of tuple values")
 
         with slicer.util.NodeModify(parameterNode):
-            for index, (value, serializer) in enumerate(zip(values, self._serializers)):
+            for index, (value, serializer) in enumerate(zip(values, self._serializers, strict=True)):
                 serializer.write(parameterNode, self._paramName(name, index), value)
 
     def read(self, parameterNode, name: str) -> None:
