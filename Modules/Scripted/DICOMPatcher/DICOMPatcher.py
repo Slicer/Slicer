@@ -752,7 +752,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
                     continue
 
                 try:
-                    ds = pydicom.read_file(filePath)
+                    ds = pydicom.dcmread(filePath)
                 except (OSError, pydicom.filereader.InvalidDicomError):
                     self.addLog("  Not DICOM file. Skipped.")
                     continue
@@ -774,7 +774,7 @@ class DICOMPatcherLogic(ScriptedLoadableModuleLogic):
                     os.makedirs(dirName)
 
                 self.addLog("  Writing DICOM...")
-                pydicom.write_file(patchedFilePath, ds)
+                pydicom.dcmwrite(patchedFilePath, ds)
                 self.addLog("  Created DICOM file: %s" % patchedFilePath)
 
         self.addLog(f"DICOM patching completed. Patched files are written to:\n{outputDirPath}")

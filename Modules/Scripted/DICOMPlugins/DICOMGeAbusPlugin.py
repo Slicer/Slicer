@@ -83,7 +83,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
                 pass
 
             try:
-                ds = dicom.read_file(filePath, stop_before_pixels=True)
+                ds = dicom.dcmread(filePath, stop_before_pixels=True)
             except Exception as e:
                 logging.debug(f"Failed to parse DICOM file: {str(e)}")
                 continue
@@ -125,7 +125,7 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
 
     def getMetadata(self, filePath):
         try:
-            ds = dicom.read_file(filePath, stop_before_pixels=True)
+            ds = dicom.dcmread(filePath, stop_before_pixels=True)
         except Exception as e:
             raise ValueError(f"Failed to parse DICOM file: {str(e)}")
 
