@@ -77,6 +77,8 @@ extend-ignore = [
   "ISC002",  # Implicitly concatenated string literals over multiple lines
   "ISC003",  # Explicitly concatenated string should be implicitly concatenated
 
+  "PLC0415", # import outside top level
+
   "PLR0912", # Too many branche
   "PLR0913", # Too many arguments in function definition
   "PLR0911", # Too many return statements
@@ -91,6 +93,7 @@ extend-ignore = [
   "PLW0127", # self-assigning-variable 	Self-assignment of variable {name}
   "PLW0602", # Using global for `{name}` but no assignment is done
   "PLW0603", # Using the global statement to update {name} is discouraged
+  "PLW1641", # `__eq__` without `__hash__`
   "PLW2901", # Outer {outer_kind} variable {name} overwritten by inner {inner_kind} target
 
   "Q003",    # Change outer quotes to avoid escaping inner quotes
