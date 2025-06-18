@@ -447,7 +447,7 @@ class TypedParameterNodeTest(unittest.TestCase):
         class ParameterPack:
             box: BoundingBox
             value: int
-            union: Union[int, str]
+            union: int | str
             annotated: Annotated[bool, Default(True)]
             annotatedBox: BoundingBox = BoundingBox(Point(-99, 8), Point(11, 10))
             annotatedSub: AnnotatedSub

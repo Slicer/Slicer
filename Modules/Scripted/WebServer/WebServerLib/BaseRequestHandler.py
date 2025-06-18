@@ -1,7 +1,8 @@
 """Base interface(s) for the Slicer WebServer module."""
 
 import abc
-from typing import Callable, Optional
+
+from collections.abc import Callable
 
 
 BaseRequestLoggingFunction = Callable[[list[any]], None]
@@ -25,7 +26,7 @@ class BaseRequestHandler(abc.ABC):
     """
 
     @abc.abstractmethod
-    def __init__(self, logMessage: Optional[BaseRequestLoggingFunction], **kwargs):
+    def __init__(self, logMessage: BaseRequestLoggingFunction | None, **kwargs):
         """
         Initialize a new request handler instance.
         :param logMessage: An optional external handle for message logging.

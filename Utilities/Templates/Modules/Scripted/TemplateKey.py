@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Annotated, Optional
+from typing import Annotated
 
 import vtk
 
@@ -214,7 +214,7 @@ class TemplateKeyWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             if firstVolumeNode:
                 self._parameterNode.inputVolume = firstVolumeNode
 
-    def setParameterNode(self, inputParameterNode: Optional[TemplateKeyParameterNode]) -> None:
+    def setParameterNode(self, inputParameterNode: TemplateKeyParameterNode | None) -> None:
         """
         Set and observe parameter node.
         Observation is needed because when the parameter node is changed then the GUI must be updated immediately.

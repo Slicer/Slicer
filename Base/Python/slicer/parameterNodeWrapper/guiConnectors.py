@@ -8,7 +8,6 @@ import dataclasses
 import enum
 import logging
 import pathlib
-from typing import Union
 
 import ctk
 import qt
@@ -45,7 +44,7 @@ class Decimals:
 class SingleStep:
     """Annotation for Qt's setSingleStep methods for spinboxes and sliders."""
 
-    value: Union[float, int]
+    value: float | int
 
 
 class GuiConnector(abc.ABC):

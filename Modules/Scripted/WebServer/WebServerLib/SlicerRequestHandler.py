@@ -10,7 +10,6 @@ import numpy
 import os
 import time
 import urllib
-from typing import Optional
 
 import qt
 import vtk.util.numpy_support
@@ -32,7 +31,7 @@ class SlicerRequestHandler(BaseRequestHandler):
         """
         logger.debug(*args)
 
-    def __init__(self, enableExec=False, logMessage: Optional[BaseRequestLoggingFunction] = None):
+    def __init__(self, enableExec=False, logMessage: BaseRequestLoggingFunction | None = None):
         """
         Initialize a new request handler instance.
         :param enableExec: Whether this instance is permitted to execute arbitrary code.

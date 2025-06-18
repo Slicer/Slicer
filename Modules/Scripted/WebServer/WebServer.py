@@ -4,7 +4,8 @@ import sys
 import socket
 import urllib
 from http.server import HTTPServer
-from typing import Callable, Optional
+
+from collections.abc import Callable
 
 import ctk
 import qt
@@ -591,13 +592,13 @@ class WebServerLogic:
     """
 
     def __init__(self,
-                 port:Optional[int]=None,
+                 port:int | None=None,
                  enableSlicer:bool=True,
                  enableExec:bool=False,
                  enableDICOM:bool=True,
                  enableStaticPages:bool=True,
                  requestHandlers:list[BaseRequestHandler]=None,
-                 logMessage:Optional[BaseRequestLoggingFunction]=None,
+                 logMessage:BaseRequestLoggingFunction | None=None,
                  enableCORS:bool=False):
         self.logMessage = logMessage or self.defaultLogMessage
         self.port = port or 2016

@@ -1,7 +1,7 @@
 import enum
 import pathlib
 import unittest
-from typing import Annotated, Union
+from typing import Annotated
 
 import ctk
 import qt
@@ -828,7 +828,7 @@ class ParameterNodeWrapperGuiTest(unittest.TestCase):
         @parameterNodeWrapper
         class ParameterNodeWrapper:
             alpha: vtkMRMLModelNode
-            bravo: Union[vtkMRMLModelNode, vtkMRMLScalarVolumeNode, None]
+            bravo: vtkMRMLModelNode | vtkMRMLScalarVolumeNode | None
 
         param = ParameterNodeWrapper(newParameterNode())
 

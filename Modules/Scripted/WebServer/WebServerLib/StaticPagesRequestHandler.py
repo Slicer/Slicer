@@ -2,7 +2,6 @@ import logging
 import mimetypes
 import os
 import re
-from typing import Optional
 
 from .BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
 
@@ -26,7 +25,7 @@ class StaticPagesRequestHandler(BaseRequestHandler):
         """
         logger.debug(*args)
 
-    def __init__(self, docroot, logMessage: Optional[BaseRequestLoggingFunction] = None):
+    def __init__(self, docroot, logMessage: BaseRequestLoggingFunction | None = None):
         """
         Initialize a new request handler instance.
         :param docroot: directory path of static pages content
