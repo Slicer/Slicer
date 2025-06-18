@@ -93,7 +93,7 @@ class DICOMPlugin:
     def findPrivateTag(self, ds, group, element, privateCreator):
         """Helper function to get private tag from private creator name.
         Example:
-            ds = pydicom.read_file(...)
+            ds = pydicom.dcmread(...)
             tag = self.findPrivateTag(ds, 0x0021, 0x40, "General Electric Company 01")
             value = ds[tag].value
         """
