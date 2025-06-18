@@ -797,8 +797,8 @@ class TypedParameterNodeTest(unittest.TestCase):
     def test_union_simple(self):
         @parameterNodeWrapper
         class ParameterNodeType:
-            intOrStr: typing.Union[int, str]
-            optBool: typing.Optional[bool]
+            intOrStr: int | str
+            optBool: bool | None
 
         param = ParameterNodeType(newParameterNode())
         self.assertTrue(param.isCached("intOrStr"))
@@ -828,7 +828,7 @@ class TypedParameterNodeTest(unittest.TestCase):
     def test_union_many(self):
         @parameterNodeWrapper
         class ParameterNodeType:
-            value: typing.Union[bool, str, int, vtkMRMLModelNode]
+            value: bool | str | int | vtkMRMLModelNode
 
         param = ParameterNodeType(newParameterNode())
         self.assertTrue(param.isCached("value"))
@@ -851,7 +851,7 @@ class TypedParameterNodeTest(unittest.TestCase):
     def test_union_multiple_nodes(self):
         @parameterNodeWrapper
         class ParameterNodeType:
-            value: typing.Union[vtkMRMLModelNode, vtkMRMLLabelMapVolumeNode, None]
+            value: vtkMRMLModelNode | vtkMRMLLabelMapVolumeNode | None
 
         param = ParameterNodeType(newParameterNode())
         self.assertTrue(param.isCached("value"))
@@ -873,10 +873,10 @@ class TypedParameterNodeTest(unittest.TestCase):
     def test_validated_union(self):
         @parameterNodeWrapper
         class ParameterNodeType:
-            value: Annotated[typing.Union[
-                Annotated[int, Minimum(5)],
-                Annotated[str, Choice(["q", "r", "s"])],
-            ], Default(7)]
+            value: Annotated[(
+                Annotated[int, Minimum(5)] |
+                Annotated[str, Choice(["q", "r", "s"])]
+            ), Default(7)]
 
         param = ParameterNodeType(newParameterNode())
         self.assertTrue(param.isCached("value"))

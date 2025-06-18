@@ -1,7 +1,6 @@
 import logging
 import pydicom
 import urllib
-from typing import Optional
 
 import slicer
 from .BaseRequestHandler import BaseRequestHandler, BaseRequestLoggingFunction
@@ -25,7 +24,7 @@ class DICOMRequestHandler(BaseRequestHandler):
         logger.debug(*args)
 
     def __init__(self,
-                 logMessage:Optional[BaseRequestLoggingFunction]=None):
+                 logMessage:BaseRequestLoggingFunction | None = None):
         """
         Initialize a new request handler instance.
         :param logMessage: An optional external handle for message logging.

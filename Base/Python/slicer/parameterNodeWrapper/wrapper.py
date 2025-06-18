@@ -2,7 +2,6 @@
 
 import logging
 import typing
-from typing import Optional
 import weakref
 
 import qt
@@ -29,7 +28,7 @@ SlicerParameterNamePropertyName = "SlicerParameterName"
 
 
 class _Parameter:
-    def __init__(self, parameterInfo: ParameterInfo, prefix: Optional[str] = None):
+    def __init__(self, parameterInfo: ParameterInfo, prefix: str | None = None):
         self.name: str = f"{prefix or ''}{parameterInfo.basename}"
         self.serializer: Serializer = parameterInfo.serializer
         self.default = parameterInfo.default
@@ -127,7 +126,7 @@ def _makeProperty(name: str):
     )
 
 
-def _initMethod(self, parameterNode, prefix: Optional[str] = None):
+def _initMethod(self, parameterNode, prefix: str | None = None):
     self.parameterNode = parameterNode
     self._parameterGUIs = dict()
     self._nextParameterGUIsTag = 0

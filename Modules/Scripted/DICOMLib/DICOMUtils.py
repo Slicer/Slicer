@@ -1,7 +1,6 @@
 import logging
 import os
 import requests
-from typing import Optional
 
 import ctk
 import qt
@@ -916,7 +915,7 @@ GLOBAL_DICOMWEB_PASSWORD_KEY = "GLOBAL_DICOMWEB_PASSWORD_KEY"
 
 
 # ------------------------------------------------------------------------------
-def getGlobalDICOMAuth() -> Optional[requests.auth.HTTPBasicAuth]:
+def getGlobalDICOMAuth() -> requests.auth.HTTPBasicAuth | None:
     """Get the global authentication settings for DICOM networking, if initialized."""
     user = slicer.util.settingsValue(GLOBAL_DICOMWEB_USER_KEY, "")
     pwd = slicer.util.settingsValue(GLOBAL_DICOMWEB_PASSWORD_KEY, "")

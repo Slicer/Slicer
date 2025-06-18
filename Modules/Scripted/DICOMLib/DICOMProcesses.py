@@ -3,7 +3,8 @@ import os
 import requests
 import subprocess
 import time
-from typing import Callable, Optional
+
+from collections.abc import Callable
 from requests.auth import HTTPBasicAuth
 
 import ctk
@@ -621,7 +622,7 @@ class DICOMSender:
 
     def _parseKheopsView(
         self, destinationURL: qt.QUrl,
-    ) -> Optional[tuple[qt.QUrl, HTTPBasicAuth]]:
+    ) -> tuple[qt.QUrl, HTTPBasicAuth] | None:
         """
         Parse parameters for specific Kheops server implementation.
 

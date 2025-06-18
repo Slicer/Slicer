@@ -1,6 +1,5 @@
 from contextlib import contextmanager
 import logging
-from typing import Optional
 import qt
 import vtk
 import enum
@@ -115,7 +114,7 @@ class VectorToScalarVolumeWidget(ScriptedLoadableModuleWidget, VTKObservationMix
     https://github.com/Slicer/Slicer/blob/main/Base/Python/slicer/ScriptedLoadableModule.py
     """
 
-    _parameterNode: Optional[VectorToScalarVolumeParameterNode]
+    _parameterNode: VectorToScalarVolumeParameterNode | None
 
     def __init__(self, parent=None):
         """Called when the user opens the module the first time and the widget is initialized."""
