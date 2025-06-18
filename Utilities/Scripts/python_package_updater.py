@@ -5,6 +5,7 @@ import sys
 from argparse import ArgumentParser
 
 import requests
+from itertools import batched
 
 
 def execute_pip_list(installation_path=None, outdated=False):
@@ -75,14 +76,6 @@ def validate_external_project_python_package_hints(directory):
     Return list of mismatches if any. Each mismatch corresponds to a tuple of the
     form ``(filepath, hint_left_packagename, hint_right_packagename)``.
     """
-
-    def _pairwise(iterable):
-        """s -> (s0, s1), (s2, s3), (s4, s5), ...
-        See https://stackoverflow.com/questions/5389507/iterating-over-every-two-elements-in-a-list/5389547#5389547
-        """
-        a = iter(iterable)
-        return zip(a, a)
-
     mismatches = []
 
     for filepath in external_project_filepaths(directory):
@@ -92,7 +85,7 @@ def validate_external_project_python_package_hints(directory):
         regex = r"^\s*# \[(\/?[\w\-\])\])]+)\]$"
         # Collect hints as a list of the form: ("package1", "/package1", "package2", "/package2", ...)
         hint_pairs = re.findall(regex, file_text, flags=re.MULTILINE)
-        for first, second in _pairwise(hint_pairs):
+        for first, second in batched(hint_pairs, 2):
             if first != second[1:]:
                 mismatches.append((filepath, first, second[1:]))
 

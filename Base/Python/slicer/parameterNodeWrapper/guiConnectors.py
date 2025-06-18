@@ -764,7 +764,7 @@ def _extractCorrectWidgets(widget):
     # Remove stacks that are completely contained within other stacks.
     # note: just doing `sorted(parentStacks, key=lambda x: id(x))` wasn't sorting it right
     ids = [[id(w) for w in ww] for ww in parentStacks]
-    parentStacks, _ = zip(*sorted(zip(parentStacks, ids), key=lambda w: w[1]))
+    parentStacks, _ = zip(*sorted(zip(parentStacks, ids, strict=True), key=lambda w: w[1]), strict=True)
 
     leafParentStacks = [i for i, j in pairwise(parentStacks) if not i == j[:len(i)]] \
         + [parentStacks[-1]]

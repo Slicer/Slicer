@@ -557,7 +557,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
                             raise ValueError(f"Number of window width/center values do not match ({windowWidthList}/{windowCenterList}).")
 
                         # Iterate over the pairs and add window level presets
-                        for windowCenter, windowWidth in zip(windowCenterList, windowWidthList):
+                        for windowCenter, windowWidth in zip(windowCenterList, windowWidthList, strict=True):
                             # Convert the values to float
                             windowCenter = float(windowCenter)
                             windowWidth = float(windowWidth)

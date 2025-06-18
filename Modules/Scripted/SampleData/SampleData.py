@@ -227,7 +227,7 @@ class SampleDataSource:
             "",
         ]
         for fileName, uri, nodeName, loadFile, fileType, checksum in zip(
-            self.fileNames, self.uris, self.nodeNames, self.loadFiles, self.loadFileTypes, self.checksums):
+            self.fileNames, self.uris, self.nodeNames, self.loadFiles, self.loadFileTypes, self.checksums, strict=True):
 
             output.extend([
                 " fileName     : %s" % fileName,
@@ -673,7 +673,7 @@ class SampleDataLogic:
         list of file paths for the results
         """
         filePaths = []
-        for uri, fileName, checksum in zip(source.uris, source.fileNames, source.checksums):
+        for uri, fileName, checksum in zip(source.uris, source.fileNames, source.checksums, strict=False):
             filePaths.append(self.downloadFileIntoCache(uri, fileName, checksum))
         return filePaths
 
@@ -701,7 +701,7 @@ class SampleDataLogic:
         resultFilePaths = []
 
         for uri, fileName, nodeName, checksum, loadFile, loadFileType in zip(
-            source.uris, source.fileNames, source.nodeNames, source.checksums, source.loadFiles, source.loadFileTypes):
+            source.uris, source.fileNames, source.nodeNames, source.checksums, source.loadFiles, source.loadFileTypes, strict=False):
 
             if nodeName is None or fileName is None:
                 import urllib

@@ -533,7 +533,7 @@ class SegmentStatisticsLogic(ScriptedLoadableModuleLogic):
     def makeUnique(names, suffixes, differentiators=None):
         # Add suffix to name if name+differentiator is not unique in the list
         if differentiators:
-            fullNames = [f"{name} & {differentiator}" for name, differentiator in zip(names, differentiators)]
+            fullNames = [f"{name} & {differentiator}" for name, differentiator in zip(names, differentiators, strict=True)]
         else:
             fullNames = names
         uniqueNames = []
