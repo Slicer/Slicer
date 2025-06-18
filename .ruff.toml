@@ -109,7 +109,6 @@ extend-ignore = [
   "RET508", # Unnecessary {branch} after break statement
 
   "RUF005",  # Consider {expression} instead of concatenation
-  "RUF007",  # Consider pairwise instead of zip
   "RUF010",  # Use explicit conversion flag
   "RUF012",  # Mutable class attributes should be annotated with typing.ClassVar
   "RUF013",  # PEP 484 prohibits implicit `Optional`
