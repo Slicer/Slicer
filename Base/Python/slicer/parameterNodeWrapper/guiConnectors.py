@@ -8,6 +8,8 @@ import dataclasses
 import enum
 import logging
 import pathlib
+import types
+import typing
 
 import ctk
 import qt
@@ -125,6 +127,10 @@ def createGuiConnector(widget, datatype) -> GuiConnector:
     Creates an appropriate GuiConnector for the given widget object and possibly annotated datatype.
     Raises a RuntimeError if no appropriate GuiConnector is found.
     """
+    if hasattr(types, "UnionType") and isinstance(datatype, types.UnionType):
+        # Convert types.UnionType to typing.Union for connector compatibility
+        datatype = typing.Union[tuple(typing.get_args(datatype))]
+
     for possibleConnectorType in _registeredGuiConnectors:
         if possibleConnectorType.canRepresent(widget, datatype):
             return possibleConnectorType.create(widget, datatype)

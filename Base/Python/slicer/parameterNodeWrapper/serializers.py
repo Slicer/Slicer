@@ -8,6 +8,7 @@ import logging
 import pathlib
 import typing
 import qt
+import types
 
 import slicer
 
@@ -941,15 +942,24 @@ class NoneSerializer(Serializer):
 class UnionSerializer(Serializer):
     """
     Serializer for multiple types. This supports typing.Union[A, B] as well as
-    typing.Optional[A]
+    typing.Optional[A] and types.UnionType (PEP 604, e.g., int | str)
     """
 
     @staticmethod
     def canSerialize(type_) -> bool:
-        return typing.get_origin(type_) == typing.Union
+        # Support both typing.Union and types.UnionType (PEP 604)
+        if typing.get_origin(type_) == typing.Union:
+            return True
+        if hasattr(types, "UnionType") and isinstance(type_, types.UnionType):
+            return True
+        return False
 
     @staticmethod
     def create(type_):
+        # Handle types.UnionType (PEP 604)
+        if hasattr(types, "UnionType") and isinstance(type_, types.UnionType):
+            args = typing.get_args(type_)
+            type_ = typing.Union[args]
         if UnionSerializer.canSerialize(type_):
             args = typing.get_args(type_)
             if len(args) < 2:

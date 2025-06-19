@@ -3,6 +3,7 @@
 import logging
 import typing
 import weakref
+import types
 
 import qt
 
@@ -302,6 +303,10 @@ def _processClass(classtype):
     allParameters: dict[str, ParameterInfo] = dict()
     for name, nametype in members.items():
         membertype, annotations = splitAnnotations(nametype)
+
+        if hasattr(types, "UnionType") and isinstance(membertype, types.UnionType):
+            # Convert types.UnionType to typing.Union for serializer compatibility
+            membertype = typing.Union[tuple(typing.get_args(membertype))]
 
         try:
             serializer, annotations = createSerializer(membertype, annotations)
