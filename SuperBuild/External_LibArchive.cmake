@@ -2,7 +2,7 @@
 set(proj LibArchive)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib" "RapidJSON")
 if(WIN32)
   list(APPEND ${proj}_DEPENDENCIES zlib)
 endif()

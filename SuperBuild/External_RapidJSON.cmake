@@ -21,18 +21,24 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/miloyip/rapidjson.git"
+    #"${EP_GIT_PROTOCOL}://github.com/miloyip/rapidjson.git" #2023.05.09
+    "${EP_GIT_PROTOCOL}://github.com/Tencent/rapidjson.git"  #2025.06.19
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "973dc9c06dcd3d035ebd039cfb9ea457721ec213" # 2023.05.09
+    # "973dc9c06dcd3d035ebd039cfb9ea457721ec213" # 2023.05.09
+    "24b5e7a8b27f42fa16b96fc70aade9106cf7102f"   # 2025.06.19
     QUIET
     )
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  #RapidJSON requires full paths defined
+  set(${proj}_DIR "${CMAKE_BINARY_DIR}/${proj}-install")
+  set(${proj}_LIB_DIR "${${proj}_DIR}/lib")
+  set(${proj}_INCLUDE_DIR "${${proj}_DIR}/include")
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -51,18 +57,18 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DRAPIDJSON_BUILD_DOC:BOOL=OFF
       -DRAPIDJSON_BUILD_EXAMPLES:BOOL=OFF
       -DRAPIDJSON_BUILD_TESTS:BOOL=OFF
-      -DLIBRARY_INSTALL_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
-      -DRUNTIME_INSTALL_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
-      -DARCHIVE_INSTALL_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
-      -DINCLUDE_INSTALL_DIR:PATH=${Slicer_INSTALL_INCLUDE_DIR}
-    INSTALL_COMMAND ""
+      -DCMAKE_INSTALL_PREFIX:PATH=${${proj}_DIR} # RapidJSON requires full paths defined
+      -DLIBRARY_INSTALL_DIR:PATH=${${proj}_LIB_DIR}
+      -DRUNTIME_INSTALL_DIR:PATH=${${proj}_LIB_DIR}
+      -DARCHIVE_INSTALL_DIR:PATH=${${proj}_LIB_DIR}
+      -DINCLUDE_INSTALL_DIR:PATH=${${proj}_INCLUDE_DIR}
+    #INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(${proj}_DIR ${EP_BINARY_DIR})
   set(${proj}_SOURCE_DIR ${EP_SOURCE_DIR})
   set(${proj}_INCLUDE_DIR ${${proj}_SOURCE_DIR}/include)
 
