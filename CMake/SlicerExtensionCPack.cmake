@@ -264,7 +264,7 @@ if(APPLE)
     # for SuperBuild extensions.
 
     file(WRITE ${slicer_extension_cpack_bundle_fixup_directory}/CMakeLists.txt
-    "cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
+    "cmake_minimum_required(VERSION 3.20.6...3.22.6 FATAL_ERROR)
 project(SlicerExtensionCPackBundleFixup)
 install(SCRIPT \"${slicer_extension_cpack_bundle_fixup_directory}/SlicerExtensionCPackBundleFixup.cmake\")")
     set(source_dir "${slicer_extension_cpack_bundle_fixup_directory}")

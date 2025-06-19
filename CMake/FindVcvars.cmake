@@ -109,7 +109,7 @@
 #
 #
 
-cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20.6...3.22.6 FATAL_ERROR)
 
 # Global variables used only in this script (unset at the end)
 set(_Vcvars_MSVC_ARCH_REGEX "^(32|64)$")

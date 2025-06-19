@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20.6...3.22.6 FATAL_ERROR)
 
 if("${CMAKE_VERSION}" VERSION_EQUAL "3.21.0")
   message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake==3.21.0 is not supported.\nSee https://gitlab.kitware.com/cmake/cmake/-/issues/22476")
