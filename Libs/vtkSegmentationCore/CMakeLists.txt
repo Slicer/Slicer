@@ -1,7 +1,7 @@
 project(vtkSegmentationCore)
 
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.16.3...3.19.7 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20.6...3.22.6 FATAL_ERROR)
 #-----------------------------------------------------------------------------
 
 option(${PROJECT_NAME}_USE_UUID "Use UUIDs for generating segment IDs. Requires gdcm library." ON)
