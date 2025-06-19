@@ -45,7 +45,14 @@ if(Slicer_USE_CTKAPPLAUNCHER)
       DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
       SOURCE_DIR ${EP_BINARY_DIR}
       BUILD_IN_SOURCE 1
-      CONFIGURE_COMMAND ""
+      CONFIGURE_COMMAND
+        # This is unnecesssary after https://github.com/commontk/AppLauncher/pull/135 is incorporated and
+        # a new tagged version is made available.
+        # HACK:  This is almost certainly not cross platform compatible.
+        #        Feed back desired on best way to address this
+        #        1) camke -P patcher.cmake
+        #        2) Fix upstream and remake packages (out of my knowledge base).
+        sed -i.bak "s/cmake_minimum_required.*/cmake_minimum_required(VERSION 3.16.3)/g" ${EP_BINARY_DIR}/CMake/ctkAppLauncher.cmake
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
       DEPENDS
