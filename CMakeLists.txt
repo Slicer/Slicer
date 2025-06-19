@@ -8,9 +8,6 @@ if("${CMAKE_VERSION}" VERSION_GREATER_EQUAL "3.25.0" AND "${CMAKE_VERSION}" VERS
   message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake >=3.25.0,<=3.25.2 is not supported.\nSee https://gitlab.kitware.com/cmake/cmake/-/issues/24567")
 endif()
 
-if("${CMAKE_VERSION}" VERSION_GREATER_EQUAL "4.0")
-  message(FATAL_ERROR "CMake version is ${CMAKE_VERSION} and using CMake >=4.0 is not supported.")
-endif()
 
 #-----------------------------------------------------------------------------
 # Setting C++ Standard

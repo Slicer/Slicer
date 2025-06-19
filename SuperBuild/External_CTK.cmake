@@ -25,7 +25,9 @@ endif()
 
 if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
-  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
+  set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.16.3
+  )
 
     set(_wrap_qtwebkit 0)
 
@@ -65,13 +67,14 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/BRAINSia/CTK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "26688b15fb86e8ddef172ec7b34a09ae7d65338c"
+    # "26688b15fb86e8ddef172ec7b34a09ae7d65338c"
+    "fix-cmake4-config-error" # WIP FOR TESTING
     QUIET
     )
 
@@ -85,6 +88,7 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS
+      -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.16.3
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}

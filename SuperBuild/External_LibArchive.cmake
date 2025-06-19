@@ -2,7 +2,7 @@
 set(proj LibArchive)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib")
+set(${proj}_DEPENDENCIES "zlib" "RapidJSON")
 if(WIN32)
   list(APPEND ${proj}_DEPENDENCIES zlib)
 endif()
@@ -59,6 +59,7 @@ if((NOT DEFINED LibArchive_INCLUDE_DIR
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
     CMAKE_CACHE_ARGS
+      -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.16.3
     # Not used -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     # Not used -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
