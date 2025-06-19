@@ -67,13 +67,14 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/BRAINSia/CTK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "26688b15fb86e8ddef172ec7b34a09ae7d65338c"
+    # "26688b15fb86e8ddef172ec7b34a09ae7d65338c"
+    "fix-cmake4-config-error" # WIP FOR TESTING
     QUIET
     )
 
