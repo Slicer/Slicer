@@ -179,25 +179,16 @@ protected:
   static int DataFromString(const std::string& dataString, double* &data);
   static std::string DataToString(double* data, int size);
 
-  // Getter and setter functions for the storable attributes
-  // (protected because only the XML read/write methods need to use these)
-  int GetInterpolationType();
+  // Setter functions for the storable attributes
+  // (protected because only the XML read method needs to use these)
   void SetInterpolationType(int);
-  int GetShade();
   void SetShade(int);
-  double GetDiffuse();
   void SetDiffuse(double);
-  double GetAmbient();
   void SetAmbient(double);
-  double GetSpecular();
   void SetSpecular(double);
-  double GetSpecularPower();
   void SetSpecularPower(double);
-  std::string GetScalarOpacityAsString();
   void SetScalarOpacityAsString(std::string);
-  std::string GetGradientOpacityAsString();
   void SetGradientOpacityAsString(std::string);
-  std::string GetRGBTransferFunctionAsString();
   void SetRGBTransferFunctionAsString(std::string);
 
 protected:
