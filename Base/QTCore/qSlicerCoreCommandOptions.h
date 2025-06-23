@@ -56,9 +56,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool verboseModuleDiscovery READ verboseModuleDiscovery CONSTANT)
   Q_PROPERTY(bool disableMessageHandlers READ disableMessageHandlers CONSTANT)
   Q_PROPERTY(bool testingEnabled READ isTestingEnabled CONSTANT)
-#ifdef Slicer_USE_PYTHONQT
   Q_PROPERTY(bool pythonDisabled READ isPythonDisabled CONSTANT)
-#endif
   Q_PROPERTY(QStringList additionalModulePaths READ additionalModulePaths CONSTANT)
   Q_PROPERTY(QStringList modulesToIgnore READ modulesToIgnore CONSTANT)
 public:
@@ -198,12 +196,12 @@ public:
   /// \sa settingsDisabled()
   bool isTestingEnabled() const;
 
-#ifdef Slicer_USE_PYTHONQT
   /// Return True if slicer has no python infrastructure initialized.
-  /// Python is still compiled with the app, but not enabled at run-time.
+  /// This can happen either if the application is started with
+  /// the "--disable-python" argument, or if Slicer was built with
+  /// Slicer_USE_PYTHONQT set to OFF.
   /// \sa settingsDisabled()
   bool isPythonDisabled() const;
-#endif
 
 protected:
   /// Add arguments - Called from parse() method
