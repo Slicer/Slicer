@@ -389,6 +389,11 @@ bool qSlicerCoreCommandOptions::isPythonDisabled() const
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("disable-python").toBool();
 }
+#else
+bool qSlicerCoreCommandOptions::isPythonDisabled() const
+{
+  return true;
+}
 #endif
 
 //-----------------------------------------------------------------------------
