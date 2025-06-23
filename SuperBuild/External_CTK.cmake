@@ -65,13 +65,15 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
+    #"${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/BRAINSia/CTK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "fcf31fc6d18ae7f8823060b2e8770a3a4f47ef65"
+    #"fcf31fc6d18ae7f8823060b2e8770a3a4f47ef65"
+    update-python-find-package # --hack for updating find_package(Python3) post cmake 3.12 recommended.
     QUIET
     )
 
