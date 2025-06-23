@@ -222,11 +222,11 @@ if(NOT Slicer_REQUIRED_PYTHON_VERSION MATCHES "([0-9]+)\\.([0-9]+)\\.([0-9]+)")
   message(FATAL_ERROR "Slicer_REQUIRED_PYTHON_VERSION [${Slicer_REQUIRED_PYTHON_VERSION}] is invalid. Value expected to be formatted as X.Y.Z")
 endif()
 
-set(Slicer_REQUIRED_PYTHON_VERSION_MAJOR ${CMAKE_MATCH_1})
-set(Slicer_REQUIRED_PYTHON_VERSION_MINOR ${CMAKE_MATCH_2})
-set(Slicer_REQUIRED_PYTHON_VERSION_PATCH ${CMAKE_MATCH_3})
+set(Slicer_REQUIRED_Python3_VERSION_MAJOR ${CMAKE_MATCH_1})
+set(Slicer_REQUIRED_Python3_VERSION_MINOR ${CMAKE_MATCH_2})
+set(Slicer_REQUIRED_Python3_VERSION_PATCH ${CMAKE_MATCH_3})
 
-set(Slicer_REQUIRED_PYTHON_VERSION_DOT ${Slicer_REQUIRED_PYTHON_VERSION_MAJOR}.${Slicer_REQUIRED_PYTHON_VERSION_MINOR})
+set(Slicer_REQUIRED_PYTHON_VERSION_DOT ${Slicer_REQUIRED_Python3_VERSION_MAJOR}.${Slicer_REQUIRED_Python3_VERSION_MINOR})
 
 set(Slicer_REQUIRED_PYTHON_ABIFLAGS "")
 if(Slicer_REQUIRED_PYTHON_VERSION_DOT VERSION_LESS "3.8")
@@ -935,11 +935,10 @@ include(ctkFunctionAddExecutableUtf8)
 # Set Slicer_PYTHON_VERSION and Slicer_PYTHON_VERSION_DOT
 #-----------------------------------------------------------------------------
 if(Slicer_USE_PYTHONQT)
-  find_package(PythonLibs ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
-  find_package(PythonInterp ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED)
+  find_package(Python3 ${Slicer_REQUIRED_PYTHON_VERSION} EXACT REQUIRED COMPONENTS Interpreter Development)
 
   # Extract python lib path
-  get_filename_component(PYTHON_DIR_PATH ${PYTHON_EXECUTABLE} PATH)
+  get_filename_component(PYTHON_DIR_PATH ${Python3_EXECUTABLE} PATH)
   set(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH}/../lib)
   if(WIN32)
     set(PYTHON_LIBRARY_PATH ${PYTHON_DIR_PATH})
@@ -949,19 +948,19 @@ if(Slicer_USE_PYTHONQT)
   ctkMacroSetPaths("${PYTHON_LIBRARY_PATH}")
   function(_python_sys_attribute attribute varname)
     execute_process(
-      COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print(sys.${attribute})"
+      COMMAND ${Python3_EXECUTABLE} -c "import sys; print(sys.${attribute})"
       OUTPUT_VARIABLE value
       OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(${varname} ${value} PARENT_SCOPE)
   endfunction()
 
-  _python_sys_attribute("version_info.major" Slicer_PYTHON_VERSION_MAJOR)
-  _python_sys_attribute("version_info.minor" Slicer_PYTHON_VERSION_MINOR)
-  _python_sys_attribute("version_info.micro" Slicer_PYTHON_VERSION_PATCH)
+  _python_sys_attribute("version_info.major" Slicer_Python3_VERSION_MAJOR)
+  _python_sys_attribute("version_info.minor" Slicer_Python3_VERSION_MINOR)
+  _python_sys_attribute("version_info.micro" Slicer_Python3_VERSION_PATCH)
   _python_sys_attribute("abiflags" Slicer_PYTHON_ABIFLAGS)
 
-  set(Slicer_PYTHON_VERSION_DOT "${Slicer_PYTHON_VERSION_MAJOR}.${Slicer_PYTHON_VERSION_MINOR}")
-  set(Slicer_PYTHON_VERSION "${Slicer_PYTHON_VERSION_MAJOR}${Slicer_PYTHON_VERSION_MINOR}")
+  set(Slicer_PYTHON_VERSION_DOT "${Slicer_Python3_VERSION_MAJOR}.${Slicer_Python3_VERSION_MINOR}")
+  set(Slicer_PYTHON_VERSION "${Slicer_Python3_VERSION_MAJOR}${Slicer_Python3_VERSION_MINOR}")
 
   message(STATUS "Configuring ${Slicer_MAIN_PROJECT_APPLICATION_NAME} with python ${Slicer_PYTHON_VERSION_DOT}${Slicer_PYTHON_ABIFLAGS}")
 
@@ -1318,7 +1317,7 @@ if(Slicer_USE_PYTHONQT)
     # the corresponding files are excluded from the compilation passing the "-x"
     # argument.
     add_custom_command(
-      COMMAND ${PYTHON_EXECUTABLE} -m compileall -q -x "[\/\\\\]test[s]?[\/\\\\]" ${_python_dir}/${PYTHON_STDLIB_SUBDIR}
+      COMMAND ${Python3_EXECUTABLE} -m compileall -q -x "[\/\\\\]test[s]?[\/\\\\]" ${_python_dir}/${PYTHON_STDLIB_SUBDIR}
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/python_compile_stdlib_and_sitepackages_complete
       COMMENT "Compiling python stdlib and site-packages modules: ${_python_dir}/${PYTHON_STDLIB_SUBDIR}"
       VERBATIM
