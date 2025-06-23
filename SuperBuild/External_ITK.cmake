@@ -52,7 +52,7 @@ if(NOT DEFINED ITK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     #     This will keep the sanity check implemented in SlicerConfig.cmake
     #     quiet.
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-      -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
+      -DPython3_EXECUTABLE:PATH=${Python3_EXECUTABLE}
       )
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       # Required by FindPython3 CMake module used by VTK
