@@ -90,7 +90,7 @@ To create a Slicer package including python libraries, you can *NOT* provide you
   endif()
 
   # Install interpreter
-  get_filename_component(python_bin_dir ${PYTHON_EXECUTABLE} PATH)
+  get_filename_component(python_bin_dir ${Python3_EXECUTABLE} PATH)
   install(
     PROGRAMS ${python_bin_dir}/python${CMAKE_EXECUTABLE_SUFFIX}
     DESTINATION ${Slicer_INSTALL_BIN_DIR}

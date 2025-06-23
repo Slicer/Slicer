@@ -150,14 +150,14 @@ nowarning_test(nomainwindow_ignoreslicerrc --no-main-window --ignore-slicerrc)
 
 add_test(
   NAME py_nomainwindow_SlicerOptionDisableSettingsTest
-  COMMAND ${PYTHON_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/SlicerOptionDisableSettingsTest.py
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
 
 add_test(
   NAME py_nomainwindow_SlicerOptionIgnoreSlicerRCTest
-  COMMAND ${PYTHON_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/SlicerOptionIgnoreSlicerRCTest.py
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
@@ -165,7 +165,7 @@ add_test(
 if(UNIX)
   add_test(
     NAME py_nomainwindow_SlicerOptionModulesToIgnoreTest
-    COMMAND ${PYTHON_EXECUTABLE}
+    COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/SlicerOptionModulesToIgnoreTest.py
       ${Slicer_LAUNCHER_EXECUTABLE}
       ${Slicer_BINARY_DIR}/bin/slicerExtensionWizard
@@ -175,7 +175,7 @@ endif()
 if(Slicer_BUILD_PARAMETERSERIALIZER_SUPPORT)
   ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
     NAME py_nomainwindow_CLISerializationTest
-    COMMAND ${PYTHON_EXECUTABLE}
+    COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_CURRENT_SOURCE_DIR}/CLISerializationTest.py
       ${Slicer_LAUNCHER_EXECUTABLE}
       ${Slicer_SOURCE_DIR}/Testing/Data/Input
@@ -218,14 +218,14 @@ endif()
 set(testname ScriptedModuleCleanupTest_with_testing)
 add_test(
   NAME py_${testname}
-  COMMAND ${PYTHON_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/ScriptedModuleCleanupTest.py ${Slicer_LAUNCHER_EXECUTABLE} --with-testing
   )
 
 set(testname ScriptedModuleCleanupTest_without_testing)
 add_test(
   NAME py_${testname}
-  COMMAND ${PYTHON_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/ScriptedModuleCleanupTest.py ${Slicer_LAUNCHER_EXECUTABLE}
   )
 
@@ -279,7 +279,7 @@ slicer_add_python_unittest(
 
 add_test(
   NAME py_doctest_slicer_util
-  COMMAND ${PYTHON_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
     -m doctest -v ${Slicer_SOURCE_DIR}/Base/Python/slicer/util.py
   )
 
@@ -405,7 +405,7 @@ if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
     )
   add_test(
     NAME py_PythonSslTest
-    COMMAND ${PYTHON_EXECUTABLE}
+    COMMAND ${Python3_EXECUTABLE}
     -c "from urllib.request import urlopen; urlopen('https://www.eff.org/https-everywhere')"
     )
 endif()
@@ -421,7 +421,7 @@ foreach(stdlib_module IN ITEMS
     )
   add_test(
     NAME py_test_stdlib_import_${stdlib_module}_using_python
-    COMMAND ${PYTHON_EXECUTABLE}
+    COMMAND ${Python3_EXECUTABLE}
     -c "import ${stdlib_module}"
     )
 endforeach()
@@ -429,7 +429,7 @@ endforeach()
 # Check that application signal "startupCompleted()" is emitted
 add_test(
   NAME py_startupcompleted_signal_emitted
-  COMMAND ${PYTHON_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/SlicerStartupCompletedTest.py
     ${Slicer_LAUNCHER_EXECUTABLE}
   )
