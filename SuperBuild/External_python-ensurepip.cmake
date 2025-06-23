@@ -36,7 +36,7 @@ if(NOT Slicer_USE_SYSTEM_${proj})
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
-    INSTALL_COMMAND ${PYTHON_EXECUTABLE} -m ensurepip --default-pip
+    INSTALL_COMMAND ${Python3_EXECUTABLE} -m ensurepip --default-pip
     LOG_INSTALL 1
     DEPENDS
       ${${proj}_DEPENDENCIES}

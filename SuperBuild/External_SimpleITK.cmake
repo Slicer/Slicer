@@ -129,16 +129,16 @@ set(ENV{LibraryPaths} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
     # COMPONENTS)
     # See https://gitlab.kitware.com/cmake/cmake/-/merge_requests/7410 for more details
     if(Slicer_USE_SYSTEM_python)
-      find_package(PythonInterp ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED QUIET)
-      set(_python_version "${PYTHON_VERSION_STRING}")
-      set(_python_version_major "${PYTHON_VERSION_MAJOR}")
-      set(_python_version_minor "${PYTHON_VERSION_MINOR}")
-      set(_python_version_patch "${PYTHON_VERSION_PATCH}")
+      find_package(Python3 COMPONENTS Interpreter ${Slicer_REQUIRED_PYTHON_VERSION_DOT} REQUIRED QUIET)
+      set(_python_version "${Python3_VERSION}")
+      set(_python_version_major "${Python3_VERSION_MAJOR}")
+      set(_python_version_minor "${Python3_VERSION_MINOR}")
+      set(_python_version_patch "${Python3_VERSION_PATCH}")
     else()
       set(_python_version "${Slicer_REQUIRED_PYTHON_VERSION}")
-      set(_python_version_major "${Slicer_REQUIRED_PYTHON_VERSION_MAJOR}")
-      set(_python_version_minor "${Slicer_REQUIRED_PYTHON_VERSION_MINOR}")
-      set(_python_version_patch "${Slicer_REQUIRED_PYTHON_VERSION_PATCH}")
+      set(_python_version_major "${Slicer_REQUIRED_Python3_VERSION_MAJOR}")
+      set(_python_version_minor "${Slicer_REQUIRED_Python3_VERSION_MINOR}")
+      set(_python_version_patch "${Slicer_REQUIRED_Python3_VERSION_PATCH}")
     endif()
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -D_Python_VERSION:STRING=${_python_version}
@@ -154,7 +154,7 @@ set(ENV{LibraryPaths} \"${_paths}${_path_sep}\$ENV{${_varname}}\")
   file(WRITE ${_install_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${EP_BINARY_DIR}/SimpleITK-build/Wrapping/Python\")
-ExternalProject_Execute(${proj} \"install\" \"${PYTHON_EXECUTABLE}\" \"-m\" \"pip\" \"install\" \".\")
+ExternalProject_Execute(${proj} \"install\" \"${Python3_EXECUTABLE}\" \"-m\" \"pip\" \"install\" \".\")
 ")
 
   ExternalProject_SetIfNotDefined(
