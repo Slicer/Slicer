@@ -52,7 +52,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
         #        Feed back desired on best way to address this
         #        1) camke -P patcher.cmake
         #        2) Fix upstream and remake packages (out of my knowledge base).
-        sed -i.bak "s/cmake_minimum_required.*/cmake_minimum_required(VERSION 3.16.3)/g" ${EP_BINARY_DIR}/CMake/ctkAppLauncher.cmake
+        sed -i.bak "s/cmake_minimum_required.*/cmake_minimum_required(VERSION 3.20.6)/g" ${EP_BINARY_DIR}/CMake/ctkAppLauncher.cmake
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
       DEPENDS
