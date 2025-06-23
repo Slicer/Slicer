@@ -30,7 +30,7 @@
 #   ExternalProject_FindPythonPackage(
 #     MODULE_NAME <python-module-name>
 #     [VERSION_PROPERTY <version-property>]
-#     [PYTHON_EXECUTABLE /path/to/python-interpreter]
+#     [Python3_EXECUTABLE /path/to/python-interpreter]
 #     [OUTPUT_VAR_PREFIX <output-var-prefix>]
 #     )
 #
@@ -56,9 +56,9 @@
 #  ``NO_VERSION_PROPERTY``
 #    If specified, do not attempt to extract version information and set output variable.
 #
-#  ``PYTHON_EXECUTABLE /path/to/python-interpreter``
+#  ``Python3_EXECUTABLE /path/to/python-interpreter``
 #    Path of the python executable to search module with. It defaults to value
-#    of ``PYTHON_EXECUTABLE`` variable set in the calling scope.
+#    of ``Python3_EXECUTABLE`` variable set in the calling scope.
 #
 #  ``OUTPUT_VAR_PREFIX <output-var-prefix>``
 #    Specify the prefix of output variables ``<output-var-prefix>_PATH`` and ``<output-var-prefix>_VERSION``.
@@ -67,7 +67,7 @@
 
 function(ExternalProject_FindPythonPackage)
   set(options REQUIRED QUIET NO_VERSION_PROPERTY)
-  set(oneValueArgs MODULE_NAME VERSION_PROPERTY PYTHON_EXECUTABLE OUTPUT_VAR_PREFIX)
+  set(oneValueArgs MODULE_NAME VERSION_PROPERTY Python3_EXECUTABLE OUTPUT_VAR_PREFIX)
   set(multiValueArgs )
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -85,14 +85,16 @@ function(ExternalProject_FindPythonPackage)
   endif()
 
   # Python interpreter
-  if(NOT DEFINED MY_PYTHON_EXECUTABLE)
-    if(NOT DEFINED PYTHON_EXECUTABLE)
-      find_package(PythonInterp REQUIRED)
+  if(NOT DEFINED MY_Python3_EXECUTABLE)
+    if(NOT DEFINED Python3_EXECUTABLE)
+      find_package(Python3 COMPONENTS Interpreter REQUIRED)
     endif()
-    set(MY_PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE})
-    if(NOT EXISTS "${MY_PYTHON_EXECUTABLE}")
+    set(MY_Python3_EXECUTABLE ${Python3_EXECUTABLE})
+    if(NOT EXISTS "${MY_Python3_EXECUTABLE}")
       if(MY_REQUIRED)
-        message(FATAL_ERROR "Could not find Python interpreter for required dependency ${MY_MODULE_NAME}. Path '${MY_PYTHON_EXECUTABLE}' corresponds to a nonexistent file.")
+        message(FATAL_ERROR "Could not find Python interpreter for required "
+          "dependency ${MY_MODULE_NAME}. Path '${MY_Python3_EXECUTABLE}' "
+          "corresponds to a nonexistent file.")
       else()
         message(STATUS "Could not find ${MY_MODULE_NAME} because no Python interpreter was found")
         return()
@@ -102,15 +104,15 @@ function(ExternalProject_FindPythonPackage)
 
   # Check if module can be imported
   execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -c "import ${MY_MODULE_NAME}"
+    COMMAND ${Python3_EXECUTABLE} -c "import ${MY_MODULE_NAME}"
     RESULT_VARIABLE _process_status
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
   if(NOT _process_status EQUAL 0)
     if(MY_REQUIRED)
-      message(FATAL_ERROR "Could not import module for required dependency '${MY_MODULE_NAME}' using '${MY_PYTHON_EXECUTABLE}' interpreter.")
+      message(FATAL_ERROR "Could not import module for required dependency '${MY_MODULE_NAME}' using '${MY_Python3_EXECUTABLE}' interpreter.")
     else()
-      message(STATUS "Could not find ${MY_MODULE_NAME} using '${MY_PYTHON_EXECUTABLE}' interpreter.")
+      message(STATUS "Could not find ${MY_MODULE_NAME} using '${MY_Python3_EXECUTABLE}' interpreter.")
       return()
     endif()
   endif()
@@ -118,7 +120,7 @@ function(ExternalProject_FindPythonPackage)
   # Get path
   execute_process(
     COMMAND
-      ${PYTHON_EXECUTABLE} -c
+      ${Python3_EXECUTABLE} -c
         "import ${MY_MODULE_NAME}; print(${MY_MODULE_NAME}.__file__)"
     RESULT_VARIABLE _process_status
     OUTPUT_VARIABLE _process_output
@@ -135,7 +137,7 @@ function(ExternalProject_FindPythonPackage)
   if(NOT MY_NO_VERSION_PROPERTY)
     execute_process(
       COMMAND
-        ${PYTHON_EXECUTABLE} -c
+        ${Python3_EXECUTABLE} -c
           "import ${MY_MODULE_NAME}; print(${MY_MODULE_NAME}.${MY_VERSION_PROPERTY})"
       RESULT_VARIABLE _process_status
       OUTPUT_VARIABLE _process_output
