@@ -6,7 +6,7 @@ Now that cmake FindPython3 can be universally
 used, prefer to only use that set of variable
 names for identifying the python executables.
 
-Intial procesing with manual cleanup by:
+Initial processing with manual cleanup by:
 
 ITK/Utilities/Maintenance/FindPython3_ModernizeCMake.sh
 
