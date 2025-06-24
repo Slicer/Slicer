@@ -90,7 +90,7 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
     --with-pcre-prefix=${PCRE_DIR}
     --without-octave
     --without-java
-    --with-python=${PYTHON_EXECUTABLE})
+    --with-python=${Python3_EXECUTABLE})
 ")
 
     ExternalProject_add(Swig

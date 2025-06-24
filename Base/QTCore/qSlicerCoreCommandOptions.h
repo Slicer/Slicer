@@ -198,13 +198,10 @@ public:
   /// \sa settingsDisabled()
   bool isTestingEnabled()const;
 
-#ifdef Slicer_USE_PYTHONQT
   /// Return True if slicer has no python infrastructure initialized.
   /// Python is still compiled with the app, but not enabled at run-time.
   /// \sa settingsDisabled()
   bool isPythonDisabled()const;
-#endif
-
 
 protected:
   /// Add arguments - Called from parse() method

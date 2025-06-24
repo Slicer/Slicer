@@ -203,7 +203,8 @@ endmacro()
 
 Slicer_Remote_Add(vtkAddon
   GIT_REPOSITORY "${EP_GIT_PROTOCOL}://github.com/Slicer/vtkAddon"
-  GIT_TAG b1fa5034077fc04b10457fe25004c65af6091a37
+  # GIT_TAG b1fa5034077fc04b10457fe25004c65af6091a37
+  GIT_TAG update-python-find-package
   OPTION_NAME Slicer_BUILD_vtkAddon
   )
 list_conditional_append(Slicer_BUILD_vtkAddon Slicer_REMOTE_DEPENDENCIES vtkAddon)
@@ -566,6 +567,8 @@ ExternalProject_Add(${proj}
     -DSlicer_EXTENSION_SOURCE_DIRS:STRING=${Slicer_EXTENSION_SOURCE_DIRS}
     -DSlicer_EXTENSION_INSTALL_DIRS:STRING=${Slicer_EXTENSION_INSTALL_DIRS}
     -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
+    # HACK --- I think that RapidJSON should be installed in a more common shared place
+    -DRapidJSON_DIR:PATH=${CMAKE_BINARY_DIR}/RapidJSON-install/lib/cmake/RapidJSON
     ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
   INSTALL_COMMAND ""
   )

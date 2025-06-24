@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16.3 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20.6...4.0.3 FATAL_ERROR)
 project(SlicerLinkerAsNeededFlagCheck)
 add_library(A SHARED A.cxx)
 add_library(B SHARED B.cxx)

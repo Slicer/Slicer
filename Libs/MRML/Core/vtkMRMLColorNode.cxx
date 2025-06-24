@@ -156,7 +156,7 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
       }
       os << indent << indent << i << " ";
       os << this->GetColorName(i);
-      if (i < this->GetNumberOfColors())
+      if (i < static_cast<unsigned int>(this->GetNumberOfColors()))
       {
         double color[4];
         this->GetColor(i, color);
@@ -766,14 +766,14 @@ void vtkMRMLColorNode::SetContainsTerminology(bool containsTerminology)
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::SetAllColorsDefined()
 {
-  int numberOfColors = this->GetNumberOfColors();
+  unsigned int numberOfColors = static_cast<unsigned int>(this->GetNumberOfColors());
   bool modified = false;
   if (this->Properties.size() < numberOfColors)
   {
     this->Properties.resize(numberOfColors);
     modified = true;
   }
-  for (int index = 0; index < numberOfColors; index++)
+  for (unsigned int index = 0; index < numberOfColors; index++)
   {
     if (this->Properties[index].Defined == true)
     {
