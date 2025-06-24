@@ -46,7 +46,7 @@ if(NOT DEFINED Teem_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "bb7eebe62411f6a3dcb0bbf8471edad6b82ff5d9" # slicer-2025-05-18-r7265
+    "43395a690351cd98235de84775a8747d0bdae106" # slicer-2025-05-18-r7265
     QUIET
     )
 
