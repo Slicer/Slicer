@@ -7,7 +7,6 @@ find_package(RapidJSON REQUIRED)
 set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_LOGIC_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
-  ${RapidJSON_INCLUDE_DIR}
   )
 
 set(${KIT}_SRCS
@@ -22,6 +21,7 @@ set(${KIT}_SRCS
   )
 
 set(${KIT}_TARGET_LIBRARIES
+  RapidJSON
   )
 
 #-----------------------------------------------------------------------------

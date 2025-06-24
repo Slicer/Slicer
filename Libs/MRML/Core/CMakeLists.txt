@@ -107,7 +107,6 @@ set(include_dirs
   ${vtkITK_INCLUDE_DIRS}
   ${vtkSegmentationCore_INCLUDE_DIRS}
   ${LibArchive_INCLUDE_DIR}
-  ${RapidJSON_INCLUDE_DIR}
   )
 if(MRML_USE_vtkTeem)
   list(APPEND include_dirs ${vtkTeem_INCLUDE_DIRS})
@@ -358,6 +357,7 @@ set(libs
   ${VTK_LIBRARIES}
   VTK::IOInfovis
   ${LibArchive_LIBRARY}
+  RapidJSON
   )
 if(MRML_USE_vtkTeem)
   list(APPEND libs vtkTeem)

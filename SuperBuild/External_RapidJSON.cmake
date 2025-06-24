@@ -27,12 +27,23 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "973dc9c06dcd3d035ebd039cfb9ea457721ec213" # slicer-2023-05-09-973dc9c0
+    "4da93e4b581f88fecc460e2259f468faaa438554" # slicer-2024-12-22-24b5e7a8
     QUIET
     )
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+
+  if(CMAKE_CXX_STANDARD STREQUAL "17")
+    set(_build_cxx17 ON)
+    set(_build_cxx20 OFF)
+  elseif(CMAKE_CXX_STANDARD STREQUAL "20")
+    set(_build_cxx17 OFF)
+    set(_build_cxx20 ON)
+  else()
+    message(FATAL_ERROR "CMAKE_CXX_STANDARD must be set to 17 or 20")
+  endif()
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -41,30 +52,35 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS
+      # Compiler settings
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags} # Unused
-      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
-      -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
-      -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
+      # Not used -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+      # Not used -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
+      # Specifying these options conflicts with the use of the RAPIDJSON_BUILD_CXX
+      # options.
+      # -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
+      # -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
+      # -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
+      # Options
+      -DRAPIDJSON_BUILD_CXX11:BOOL=OFF
+      -DRAPIDJSON_BUILD_CXX17:BOOL=${_build_cxx17}
+      -DRAPIDJSON_BUILD_CXX20:BOOL=${_build_cxx20}
       -DRAPIDJSON_BUILD_DOC:BOOL=OFF
       -DRAPIDJSON_BUILD_EXAMPLES:BOOL=OFF
       -DRAPIDJSON_BUILD_TESTS:BOOL=OFF
-      -DLIBRARY_INSTALL_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
-      -DRUNTIME_INSTALL_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
-      -DARCHIVE_INSTALL_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
-      -DINCLUDE_INSTALL_DIR:PATH=${Slicer_INSTALL_INCLUDE_DIR}
-    INSTALL_COMMAND ""
+      -DRAPIDJSON_ENABLE_INSTRUMENTATION_OPT:BOOL=OFF
+      # Install directories
+      -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
+      # Install the project to support importing the associated "header-only"
+      # CMake target via find_package().
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(${proj}_DIR ${EP_BINARY_DIR})
-  set(${proj}_SOURCE_DIR ${EP_SOURCE_DIR})
-  set(${proj}_INCLUDE_DIR ${${proj}_SOURCE_DIR}/include)
+  set(${proj}_DIR "${EP_INSTALL_DIR}/lib/cmake/RapidJSON/")
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
@@ -72,7 +88,6 @@ endif()
 
 mark_as_superbuild(
   VARS
-    ${proj}_INCLUDE_DIR:PATH
     ${proj}_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
