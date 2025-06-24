@@ -21,13 +21,13 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/miloyip/rapidjson.git"
+    "${EP_GIT_PROTOCOL}://github.com/slicer/rapidjson.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "973dc9c06dcd3d035ebd039cfb9ea457721ec213" # 2023.05.09
+    "973dc9c06dcd3d035ebd039cfb9ea457721ec213" # slicer-2023-05-09-973dc9c0
     QUIET
     )
 
