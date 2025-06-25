@@ -4098,3 +4098,32 @@ def longPath(path):
     if path[:4] == "\\\\?\\":
         return path
     return "\\\\?\\" + path.replace("/", "\\")
+
+def getCurrentSlicerTheme():
+    """Get the currently used Slicer theme ("Light" or "Dark"). Takes into account Slicer settings
+    and (if needed) the system settings
+
+    :return string: Slicer style in use
+    """
+
+    import qt
+    settingsApplication = qt.QSettings()
+    settingsRegistry = qt.QSettings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", qt.QSettings.NativeFormat)
+
+    if settingsApplication.value("Styles/Style", "Slicer") == "Dark Slicer":
+        return "Dark"
+
+    if settingsApplication.value("Styles/Style", "Slicer") == "Light Slicer":
+        return "Light"
+
+    if settingsApplication.value("Styles/Style", "Slicer") == "Slicer":
+        import platform
+        if platform.system() == "Windows":
+            if settingsRegistry.value("AppsUseLightTheme") == 0:
+                return "Dark"
+            else:
+                return "Light"
+        else:
+            return "Light" #This is a bad default, need to sort this out in macOS/Linux case
+
+    return "Unrecognized"

@@ -33,12 +33,19 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy.
 """).format(link="<a href=\"https://www.slicer.org\">https://www.slicer.org</a>")
 
-        # Set module icon from Resources/Icons/<ModuleName>.png
+        # Set module icon from possible icons, taking into account theme and extension
+        # Search directories are not loaded yet, so we do this manually
+        # We are keeping serach path loading in widget setup so that it plays nice
+        # with module reload
         moduleDir = os.path.dirname(self.parent.path)
         for iconExtension in [".svg", ".png"]:
-            iconPath = os.path.join(moduleDir, "Resources/Icons", self.moduleName + iconExtension)
-            if os.path.isfile(iconPath):
-                parent.icon = qt.QIcon(iconPath)
+            iconPathTheme = os.path.join(moduleDir, "Resources/Icons", slicer.util.getCurrentSlicerTheme() ,self.moduleName + iconExtension)
+            if os.path.isfile(iconPathTheme):
+                parent.icon = qt.QIcon(iconPathTheme)
+                break
+            iconPathNoTheme = os.path.join(moduleDir, "Resources/Icons", self.moduleName + iconExtension)
+            if os.path.isfile(iconPathNoTheme):
+                parent.icon = qt.QIcon(iconPathNoTheme)
                 break
 
         # Add this test to the SelfTest module's list for discovery when the module
@@ -108,6 +115,11 @@ class ScriptedLoadableModuleWidget:
             self.parent.show()
         slicer.app.moduleManager().connect(
             "moduleAboutToBeUnloaded(QString)", self._onModuleAboutToBeUnloaded)
+
+
+    def iconPath(self, name):
+        return f"{self.moduleName}:{name}"
+
 
     def resourcePath(self, filename):
         """Return the absolute path of the module ``Resources`` directory."""
@@ -232,6 +244,10 @@ class ScriptedLoadableModuleWidget:
     def setup(self):
         # Instantiate and connect default widgets ...
         self.setupDeveloperSection()
+
+        # Set up the icon paths
+        qt.QDir.setSearchPaths(self.moduleName,[self.resourcePath(f"Icons/{slicer.util.getCurrentSlicerTheme()}"), self.resourcePath("Icons")])
+
 
     def onReload(self):
         """Reload scripted module widget representation."""
