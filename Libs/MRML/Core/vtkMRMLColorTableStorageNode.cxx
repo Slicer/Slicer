@@ -252,7 +252,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
       vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLColorTableStorageNode::ReadCsvFile",
         vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
           "labelValue is not specified in color file in line %1. Skipping this line."),
-          std::to_string(fileRow).c_str()));
+          std::to_string(fileRow).c_str()).c_str());
       continue;
     }
     int labelValue = labelValueColumn->GetVariantValue(row).ToInt(&valid);
@@ -262,7 +262,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
         vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
           "labelValue '%1' is invalid in color file in line %2. Skipping this line."),
           labelValueColumn->GetValue(row),
-          std::to_string(fileRow).c_str()));
+          std::to_string(fileRow).c_str()).c_str());
       continue;
     }
     if (labelValue < 0)
@@ -271,7 +271,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
         vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLColorTableStorageNode",
           "labelValue '%1' is invalid in color file in line %2: the value must be positive (>0). Skipping this line."),
           labelValueColumn->GetValue(row),
-          std::to_string(fileRow).c_str()));
+          std::to_string(fileRow).c_str()).c_str());
       continue;
     }
     validLabelValues[row] = labelValue;
@@ -287,7 +287,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
           labelValueColumn->GetValue(row),
           std::to_string(fileRow).c_str(),
           std::to_string(this->MaximumColorID).c_str()
-          ));
+          ).c_str());
       colorNode->SetNumberOfColors(0);
       return 0;
     }
