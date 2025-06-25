@@ -137,7 +137,6 @@ bool qMRMLSortFilterColorProxyModel::filterAcceptsItem(int colorIndex)const
 {
   Q_D(const qMRMLSortFilterColorProxyModel);
 
-  qMRMLColorModel* model = qobject_cast<qMRMLColorModel*>(this->sourceModel());
   vtkMRMLColorNode* colorNode = this->mrmlColorNode();
 
   return d->ShowEmptyColors || colorNode->GetColorDefined(colorIndex);
