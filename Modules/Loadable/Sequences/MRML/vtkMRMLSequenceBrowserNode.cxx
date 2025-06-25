@@ -364,7 +364,7 @@ void vtkMRMLSequenceBrowserNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*
   }
 
   MRMLNodeModifyBlocker blocker(this);
-  Superclass::CopyContent(anode);
+  Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLCopyBeginMacro(anode);
   if (this->SynchronizationPostfixes != node->SynchronizationPostfixes)
