@@ -72,6 +72,13 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
       -DRAPIDJSON_ENABLE_INSTRUMENTATION_OPT:BOOL=OFF
       # Install directories
       -DCMAKE_INSTALL_PREFIX:PATH=${EP_INSTALL_DIR}
+
+      # Specify CMAKE_INSTALL_DIR to ensure CMake configuration files
+      # (RapidJSONConfig.cmake, RapidJSONConfigVersion.cmake, RapidJSON-targets.cmake)
+      # are generated in a consistent location across platforms (Linux, macOS, Windows).
+      # This variable is specific to RapidJSON's build system.
+      -DCMAKE_INSTALL_DIR:PATH=${EP_INSTALL_DIR}/lib/cmake/RapidJSON
+
       # Install the project to support importing the associated "header-only"
       # CMake target via find_package().
     DEPENDS
