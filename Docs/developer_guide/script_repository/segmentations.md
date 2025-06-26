@@ -436,7 +436,8 @@ seg=arrayFromSegment(segmentation_node, segmentId)
 mean_KjiCropped = [coords.mean() for coords in np.nonzero(seg)]
 
 # Get segmentation voxel coordinates
-segImage = segmentationNode.GetBinaryLabelmapRepresentation(segmentId)
+segImage = slicer.vtkOrientedImageData()
+segmentationNode.GetBinaryLabelmapRepresentation(segmentId, segImage)
 segImageExtent = segImage.GetExtent()
 # origin of the array in voxel coordinates is determined by the start extent
 mean_Ijk = [mean_KjiCropped[2], mean_KjiCropped[1], mean_KjiCropped[0]] + np.array([segImageExtent[0], segImageExtent[2], segImageExtent[4]])
@@ -445,7 +446,7 @@ mean_Ijk = [mean_KjiCropped[2], mean_KjiCropped[1], mean_KjiCropped[0]] + np.arr
 ijkToWorld = vtk.vtkMatrix4x4()
 segImage.GetImageToWorldMatrix(ijkToWorld)
 mean_World = [0, 0, 0, 1]
-ijkToRas.MultiplyPoint(np.append(mean_Ijk,1.0), mean_World)
+ijkToWorld.MultiplyPoint(np.append(mean_Ijk,1.0), mean_World)
 mean_World = mean_World[0:3]
 
 # If segmentation node is transformed, apply that transform to get RAS coordinates
