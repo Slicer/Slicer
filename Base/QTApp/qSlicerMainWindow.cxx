@@ -832,7 +832,7 @@ qSlicerMainWindow::qSlicerMainWindow(qSlicerMainWindowPrivate* pimpl,
 {
   // init() is called by derived class.
   // Initialize library resources here
-  QSettings settingsApplication;
+  /*QSettings settingsApplication;
   QSettings settingsRegistry("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", QSettings::NativeFormat);
 
 
@@ -852,7 +852,7 @@ qSlicerMainWindow::qSlicerMainWindow(qSlicerMainWindowPrivate* pimpl,
     }
 #endif
   }
-  QResource::registerResource(resourcePath.c_str());
+  QResource::registerResource(resourcePath.c_str());*/
 }
 
 //-----------------------------------------------------------------------------

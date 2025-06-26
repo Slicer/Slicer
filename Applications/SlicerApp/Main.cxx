@@ -27,6 +27,13 @@
 // SlicerApp includes
 #include "qSlicerAppMainWindow.h"
 
+// Qt Includes
+#include <QResource>
+#include <QSettings>
+
+//MRML includes
+#include <vtkMRMLLogic.h>
+
 namespace
 {
 
@@ -39,6 +46,31 @@ int SlicerAppMain(int argc, char* argv[])
   qSlicerApplicationHelper::preInitializeApplication(argv[0], new SlicerAppStyle);
 
   qSlicerApplication app(argc, argv);
+
+  // Initialize library resources here
+  QSettings settingsApplication;
+  QSettings settingsRegistry("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", QSettings::NativeFormat);
+
+
+  std::string resourcePath = vtkMRMLLogic::GetApplicationShareDirectory() + "/Icons/qSlicerBaseQTGUILightIcons.rcc";
+
+  if (settingsApplication.value("Styles/Style", "Slicer").toString() == "Dark Slicer")
+  {
+    resourcePath = vtkMRMLLogic::GetApplicationShareDirectory() + "/Icons/qSlicerBaseQTGUIDarkIcons.rcc";
+
+  }
+  else if (settingsApplication.value("Styles/Style", "Slicer").toString() == "Slicer")
+  {
+#ifdef Q_OS_WIN
+    if (settingsRegistry.value("AppsUseLightTheme") == 0)
+    {
+      resourcePath = vtkMRMLLogic::GetApplicationShareDirectory() + "/Icons/qSlicerBaseQTGIUDarkIcons.rcc";
+    }
+#endif
+  }
+  QResource::registerResource(resourcePath.c_str());
+
+
   if (app.returnCode() != -1)
   {
     return app.returnCode();
