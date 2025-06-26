@@ -110,7 +110,7 @@ QStringList qSlicerModelsModule::contributors()const
 //-----------------------------------------------------------------------------
 QIcon qSlicerModelsModule::icon()const
 {
-  return QIcon(":/Icons/Large/SlicerModels.png");
+  return QIcon(":/Icons/ModelsModule.svg");
 }
 
 //-----------------------------------------------------------------------------

@@ -97,7 +97,7 @@ QStringList qSlicerAnnotationsModule::contributors()const
 //-----------------------------------------------------------------------------
 QIcon qSlicerAnnotationsModule::icon() const
 {
-  return QIcon(":/Icons/Annotation.png");
+  return QIcon(":/Icons/Annotations.svg");
 }
 
 //-----------------------------------------------------------------------------

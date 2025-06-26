@@ -138,7 +138,7 @@ QStringList qSlicerSegmentationsModule::dependencies()const
 //-----------------------------------------------------------------------------
 QIcon qSlicerSegmentationsModule::icon()const
 {
-  return QIcon(":/Icons/Segmentations.png");
+  return QIcon(":/Icons/SegmentationsModule.svg");
 }
 
 //-----------------------------------------------------------------------------

@@ -62,7 +62,7 @@ qSlicerTransformsModule::~qSlicerTransformsModule() = default;
 //-----------------------------------------------------------------------------
 QIcon qSlicerTransformsModule::icon()const
 {
-  return QIcon(":/Icons/Transforms.png");
+  return QIcon(":/Icons/TransformsModule.svg");
 }
 
 

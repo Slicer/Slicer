@@ -108,7 +108,7 @@ QStringList qSlicerVolumesModule::contributors()const
 //-----------------------------------------------------------------------------
 QIcon qSlicerVolumesModule::icon()const
 {
-  return QIcon(":/Icons/Medium/SlicerVolumes.png");
+  return QIcon(":/Icons/VolumesModule.svg");
 }
 
 //-----------------------------------------------------------------------------
