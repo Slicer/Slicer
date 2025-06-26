@@ -190,7 +190,7 @@ void qSlicerViewersToolBarPrivate::init()
 
   // Default Crosshair action
   this->CrosshairToggleAction = new QAction(q);
-  this->CrosshairToggleAction->setIcon(QIcon(":/Icons/SlicesCrosshair.png"));
+  this->CrosshairToggleAction->setIcon(QIcon(":/Icons/SlicerCrosshair.svg"));
   this->CrosshairToggleAction->setCheckable(true);
   this->CrosshairToggleAction->setToolTip(qSlicerViewersToolBar::tr(
     "Toggle crosshair visibility. Hold Shift key and move mouse in a view to set crosshair position."));
@@ -323,7 +323,7 @@ void qSlicerViewersToolBarPrivate::init()
 
   // Default Slice intersections action
   this->IntersectingSlicesVisibleAction = new QAction(q);
-  this->IntersectingSlicesVisibleAction->setIcon(QIcon(":/Icons/SliceIntersections.png"));
+  this->IntersectingSlicesVisibleAction->setIcon(QIcon(":/Icons/SlicerSlicePlanesOptions.svg"));
   this->IntersectingSlicesVisibleAction->setText(qSlicerViewersToolBar::tr("Slice intersections"));
   this->IntersectingSlicesVisibleAction->setToolTip(
     qSlicerViewersToolBar::tr("Toggle slice intersection visibility. Hold Shift key and move mouse in a view to set slice intersection position."));

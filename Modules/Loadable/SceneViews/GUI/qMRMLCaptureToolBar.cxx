@@ -101,7 +101,7 @@ void qMRMLCaptureToolBarPrivate::init()
 
   // Screenshot button
   this->ScreenshotAction = new QAction(q);
-  this->ScreenshotAction->setIcon(QIcon(":/Icons/ViewCapture.png"));
+  this->ScreenshotAction->setIcon(QIcon(":/Icons/SlicerCapture.svg"));
   this->ScreenshotAction->setText(qMRMLCaptureToolBar::tr("Screenshot"));
   this->ScreenshotAction->setToolTip(qMRMLCaptureToolBar::tr(
     "Capture a screenshot of the full layout, 3D view or slice views. Use File, Save to save the image."));
@@ -112,7 +112,7 @@ void qMRMLCaptureToolBarPrivate::init()
   // Scene View buttons, signal will be observed by qSlicerMainWindow and will cause
   // qSlicerSceneViewsModuleWidget to open a qSlicerSceneViewsModuleDialog.
   this->SceneViewAction = new QAction(q);
-  this->SceneViewAction->setIcon(QIcon(":/Icons/ViewCamera.png"));
+  this->SceneViewAction->setIcon(QIcon(":/Icons/SlicerSceneViewCapture.svg"));
   this->SceneViewAction->setText(qMRMLCaptureToolBar::tr("Scene view"));
   this->SceneViewAction->setToolTip(qMRMLCaptureToolBar::tr("Capture and name a scene view."));
   QObject::connect(this->SceneViewAction, SIGNAL(triggered()),
@@ -122,7 +122,7 @@ void qMRMLCaptureToolBarPrivate::init()
   // Scene view menu
   QToolButton* sceneViewMenuButton = new QToolButton(q);
   sceneViewMenuButton->setText(qMRMLCaptureToolBar::tr("Restore view"));
-  sceneViewMenuButton->setIcon(QIcon(":/Icons/ViewCameraSelect.png"));
+  sceneViewMenuButton->setIcon(QIcon(":/Icons/SlicerSceneViewRestoreOrDelete.svg"));
   sceneViewMenuButton->setToolTip(qMRMLCaptureToolBar::tr("Restore or delete saved scene views."));
   this->SceneViewMenu = new qMRMLSceneViewMenu(sceneViewMenuButton);
   sceneViewMenuButton->setMenu(this->SceneViewMenu);

@@ -79,7 +79,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->AdjustViewAction->setObjectName("AdjustViewAction");
   this->AdjustViewAction->setData(vtkMRMLInteractionNode::ViewTransform);
   this->AdjustViewAction->setToolTip(qSlicerMouseModeToolBar::tr("Translate/rotate view, adjust displayed objects"));
-  this->AdjustViewAction->setIcon(QIcon(":/Icons/MouseViewTransformMode.png"));
+  this->AdjustViewAction->setIcon(QIcon(":/Icons/SlicerMouseModeTransformAdjust.svg"));
   this->AdjustViewAction->setText(qSlicerMouseModeToolBar::tr("View"));
   this->AdjustViewAction->setCheckable(true);
 
@@ -131,7 +131,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->AdjustWindowLevelAction->setToolTip(qSlicerMouseModeToolBar::tr(
     "Adjust window/level of volume by left-click-and-drag in slice views."
     " Hold down Ctrl/Cmd key for temporarily switch between adjustment and region-based setting."));
-  this->AdjustWindowLevelAction->setIcon(QIcon(":/Icons/MouseWindowLevelMode.png"));
+  this->AdjustWindowLevelAction->setIcon(QIcon(":/Icons/SlicerWindowLevel.svg"));
   this->AdjustWindowLevelAction->setText(qSlicerMouseModeToolBar::tr("Window/level"));
   this->AdjustWindowLevelAction->setCheckable(true);
   this->AdjustWindowLevelAction->setMenu(this->AdjustWindowLevelMenu);
@@ -148,7 +148,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->ToolBarAction->setToolTip(qSlicerMouseModeToolBar::tr("Toggle Markups Toolbar"));
   this->ToolBarAction->setText(qSlicerMouseModeToolBar::tr("Toggle Markups Toolbar"));
   this->ToolBarAction->setEnabled(true);
-  this->ToolBarAction->setIcon(QIcon(":/Icons/MarkupsDisplayToolBar.png"));
+  this->ToolBarAction->setIcon(QIcon(":/Icons/SlicerMarkupsMenuToggle.svg"));
 
   QObject::connect(this->ToolBarAction, SIGNAL(triggered()),
     q, SLOT(toggleMarkupsToolBar()));
@@ -178,7 +178,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->PlaceWidgetToolBarAction->setToolTip(qSlicerMouseModeToolBar::tr("Toggle Markups Toolbar"));
   this->PlaceWidgetToolBarAction->setText(qSlicerMouseModeToolBar::tr("Toggle Markups Toolbar"));
   this->PlaceWidgetToolBarAction->setEnabled(true);
-  this->PlaceWidgetToolBarAction->setIcon(QIcon(":/Icons/MarkupsDisplayToolBar.png"));
+  this->PlaceWidgetToolBarAction->setIcon(QIcon(":/Icons/SlicerMarkupsMenuToggle.svg"));
 
   QObject::connect(this->PlaceWidgetToolBarAction, SIGNAL(triggered()),
     q, SLOT(toggleMarkupsToolBar()));

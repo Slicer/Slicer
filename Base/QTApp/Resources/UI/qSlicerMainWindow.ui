@@ -491,7 +491,7 @@
   <action name="ViewExtensionsManagerAction">
    <property name="icon">
     <iconset resource="../../../QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/DefaultModule.svg</normaloff>:/Icons/DefaultModule.svg</iconset>
+     <normaloff>:/Icons/SlicerExtensions.svg</normaloff>:/Icons/SlicerExtensions.svg</iconset>
    </property>
    <property name="text">
     <string>Extensions Manager</string>
