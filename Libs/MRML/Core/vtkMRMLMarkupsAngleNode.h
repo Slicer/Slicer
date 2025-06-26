@@ -40,9 +40,9 @@ public:
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char* GetIcon() override {return ":/Icons/MarkupsAngle.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsAngleMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsAngleMouseModePlaceAdd.png";}
+  const char* GetIcon() override {return ":/Icons/MarkupsAddAngle.svg";}
+  const char* GetAddIcon() override {return ":/Icons/MarkupsAddAngle.svg";}
+  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsAddAngle.svg";}
 
   /// Angle calculation and display modes. Default is Minimal
   /// \sa SetAngleMeasurementModeToMinimal()

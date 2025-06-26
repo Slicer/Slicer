@@ -118,7 +118,7 @@ void qMRMLMarkupsToolBarPrivate::addSetModuleButton(vtkSlicerMarkupsLogic* marku
   moduleButton->setObjectName(QString(moduleName + " module shortcut"));
   //: %1 is the module name
   moduleButton->setToolTip(tr("Open the %1 module").arg(moduleName));
-  QString iconName = ":/Icons/" + moduleName + ".png";
+  QString iconName = ":/Icons/" + moduleName + ".svg";
   moduleButton->setIcon(QIcon(iconName));
   QSignalMapper* mapper = new QSignalMapper(moduleButton);
   QObject::connect(moduleButton, SIGNAL(clicked()), mapper, SLOT(map()));

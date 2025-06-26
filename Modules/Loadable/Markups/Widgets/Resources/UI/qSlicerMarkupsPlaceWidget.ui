@@ -60,8 +60,8 @@
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset resource="../../../Resources/qSlicerMarkupsModule.qrc">
-       <normaloff>:/Icons/MarkupsFiducialMouseModePlace.png</normaloff>:/Icons/MarkupsFiducialMouseModePlace.png</iconset>
+      <iconset>
+       <normaloff>:/Icons/MarkupsAddPoint.svg</normaloff>:/Icons/MarkupsAddPoint.svg</iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>

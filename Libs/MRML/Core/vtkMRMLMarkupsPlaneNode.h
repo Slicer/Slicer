@@ -60,9 +60,9 @@ public:
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char* GetIcon() override {return ":/Icons/MarkupsPlane.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsPlaneMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsPlaneMouseModePlaceAdd.png";}
+  const char* GetIcon() override {return ":/Icons/MarkupsAddPlane.svg";}
+  const char* GetAddIcon() override {return ":/Icons/MarkupsAddPlane.svg";}
+  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsAddPlane.svg";}
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
