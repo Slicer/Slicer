@@ -22,7 +22,6 @@
 
 // SubjectHierarchy Plugins includes
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
-#include "qSlicerSubjectHierarchyFolderPlugin.h"
 #include "qSlicerSubjectHierarchyModelsPlugin.h"
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 
