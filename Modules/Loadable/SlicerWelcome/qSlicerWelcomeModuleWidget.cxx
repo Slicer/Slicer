@@ -364,7 +364,7 @@ void qSlicerWelcomeModuleWidget::setExtensionUpdatesAvailable(bool isAvailable)
     }
     else
     {
-      d->OpenExtensionsManagerButton->setIcon(QIcon(":/Icons/ExtensionDefaultIcon.png"));
+      d->OpenExtensionsManagerButton->setIcon(QIcon(":/Icons/SlicerExtensions.svg"));
     }
   }
 
