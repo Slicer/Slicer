@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline">
+    <path id="path7" style="fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:1.5;stroke-linecap:round;stroke-dasharray:none" d="M 27,8 A 3.0000003,2.9999998 0 0 1 24,11 3.0000003,2.9999998 0 0 1 21,8 3.0000003,2.9999998 0 0 1 24,5.0000001 3.0000003,2.9999998 0 0 1 27,8 Z"/>
+    <path id="path9" style="fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2.00001;stroke-linecap:round" d="M 17,21 C 17,18.514719 16.783502,16.264719 18.050253,14.636039 19.317003,13.007359 22.067003,12 24,12 c 1.932997,0 4.682997,1.007359 5.949747,2.636039 C 31.216498,16.264719 31,18.514719 31,21"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 24,22 v 5.76" id="path1"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 39,29 H 9 v 6" id="path2"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 24,29 v 6" id="path3"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 39,29 v 5.520001" id="path4"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 17,21 H 31" id="path5"/>
+    <path id="path8" style="display:inline;fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round" d="m 42,38 a 3.0000005,2.9999997 0 0 1 -3,3 3.0000005,2.9999997 0 0 1 -3,-3 3.0000005,2.9999997 0 0 1 3,-3 3.0000005,2.9999997 0 0 1 3,3 z"/>
+    <path id="path10" style="display:inline;fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round" d="m 27,38 a 3.0000005,2.9999997 0 0 1 -3,3 3.0000005,2.9999997 0 0 1 -3,-3 3.0000005,2.9999997 0 0 1 3,-3 3.0000005,2.9999997 0 0 1 3,3 z"/>
+    <path id="path11" style="display:inline;fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round" d="m 12,38 a 3.0000005,2.9999997 0 0 1 -3,3 3.0000005,2.9999997 0 0 1 -3,-3 3.0000005,2.9999997 0 0 1 3,-3 3.0000005,2.9999997 0 0 1 3,3 z"/>
+  </g>
+</svg>

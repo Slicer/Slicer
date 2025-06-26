@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1">
+    <filter style="color-interpolation-filters:sRGB;" id="filter3" x="-0.25168001" y="-0.24891426" width="1.50336" height="1.4978285">
+      <feGaussianBlur stdDeviation="0.91 0.9" result="fbSourceGraphic" id="feGaussianBlur3"/>
+      <feColorMatrix result="fbSourceGraphicAlpha" in="fbSourceGraphic" values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0" id="feColorMatrix3"/>
+      <feGaussianBlur id="feGaussianBlur4" stdDeviation="0.91 0.9" result="blur" in="fbSourceGraphic"/>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB;" id="filter5" x="-0.064234213" y="-0.063528326" width="1.1284684" height="1.1270567">
+      <feGaussianBlur stdDeviation="0.91 0.9" result="blur" id="feGaussianBlur5"/>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB;" id="filter8" x="-0.69281144" y="-0.69281138" width="2.3856229" height="2.3856228">
+      <feGaussianBlur stdDeviation="5" result="fbSourceGraphic" id="feGaussianBlur7"/>
+      <feGaussianBlur stdDeviation="0.01" in="SourceGraphic" result="result1" id="feGaussianBlur8"/>
+      <feComposite in2="result1" operator="arithmetic" in="fbSourceGraphic" k2="0.5" k3="0.5" result="result2" id="feComposite8"/>
+      <feBlend in2="fbSourceGraphic" mode="normal" result="result3" id="feBlend8"/>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="filter8-0" x="-0.69281144" y="-0.69281138" width="2.3856229" height="2.3856228">
+      <feGaussianBlur stdDeviation="5" result="fbSourceGraphic" id="feGaussianBlur7-4"/>
+      <feGaussianBlur stdDeviation="0.01" in="SourceGraphic" result="result1" id="feGaussianBlur8-6"/>
+      <feComposite in2="result1" operator="arithmetic" in="fbSourceGraphic" k2="0.5" k3="0.5" result="result2" id="feComposite8-4" k1="0" k4="0"/>
+      <feBlend in2="fbSourceGraphic" mode="normal" result="result3" id="feBlend8-6"/>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="filter8-0-4" x="-0.69281144" y="-0.69281138" width="2.3856229" height="2.3856228">
+      <feGaussianBlur stdDeviation="5" result="fbSourceGraphic" id="feGaussianBlur7-4-2"/>
+      <feGaussianBlur stdDeviation="0.01" in="SourceGraphic" result="result1" id="feGaussianBlur8-6-1"/>
+      <feComposite in2="result1" operator="arithmetic" in="fbSourceGraphic" k2="0.5" k3="0.5" result="result2" id="feComposite8-4-9" k1="0" k4="0"/>
+      <feBlend in2="fbSourceGraphic" mode="normal" result="result3" id="feBlend8-6-2"/>
+    </filter>
+    <filter style="color-interpolation-filters:sRGB" id="filter8-0-4-7" x="-0.69281144" y="-0.69281138" width="2.3856229" height="2.3856228">
+      <feGaussianBlur stdDeviation="5" result="fbSourceGraphic" id="feGaussianBlur7-4-2-5"/>
+      <feGaussianBlur stdDeviation="0.01" in="SourceGraphic" result="result1" id="feGaussianBlur8-6-1-3"/>
+      <feComposite in2="result1" operator="arithmetic" in="fbSourceGraphic" k2="0.5" k3="0.5" result="result2" id="feComposite8-4-9-9" k1="0" k4="0"/>
+      <feBlend in2="fbSourceGraphic" mode="normal" result="result3" id="feBlend8-6-2-0"/>
+    </filter>
+  </defs>
+  <g id="layer1">
+    <path style="fill:none;fill-opacity:1;stroke:none;stroke-width:1.99999;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 42.000002,41.999995 V 6.0000002 H 23.099782 V 23.848443 H 6.0000001 L 6.0206926,42 Z" id="path1"/>
+    <path style="fill:none;stroke:#56695b;stroke-width:1.99999;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 42.000001,25.062761 H 24.999995 V 42" id="path2"/>
+    <path style="display:inline;fill:#abd4b5;fill-opacity:1;stroke:none;stroke-width:2.00001;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 25.993599,8.0397846 v 15.9999994 0 H 42.006401 V 8.0397846 Z" id="path3-9-1-8-95"/>
+    <path style="display:inline;fill:#abd4b5;fill-opacity:1;stroke:none;stroke-width:2.00002;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 26,26 v 16.000001 0 H 42 V 26 Z" id="path8"/>
+    <path style="display:inline;fill:#abd4b5;fill-opacity:1;stroke:none;stroke-width:2.00002;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 8.0194563,25.94722 v 16 0 H 24.019457 l -0.03891,-15.894441 z" id="path9"/>
+    <path style="display:inline;fill:none;fill-opacity:0.602484;stroke:#56695b;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 7.0029931,42.939088 43.00306,42.998354 V 6.9999987 H 24.963337 l -3e-6,18.0764643 -17.9603409,-0.136564 z" id="path3"/>
+  </g>
+</svg>

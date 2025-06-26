@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline">
+    <rect style="fill:none;fill-rule:evenodd;stroke:#7396df;stroke-width:2;stroke-dasharray:none" id="rect1" width="38" height="38" x="5" y="5"/>
+    <rect style="fill:#e5e5e5;fill-rule:evenodd;stroke-width:1" id="rect2" width="36" height="36" x="6" y="6"/>
+    <rect style="fill:#1a1a1a;fill-rule:evenodd;stroke-width:0.999997;fill-opacity:1" id="rect3" width="18" height="36" x="24" y="6"/>
+    <path id="path3" style="fill:#e5e5e5;fill-rule:evenodd;stroke:none;stroke-width:1" d="m 24,12 a 12,12 0 0 1 12,12 v 0 A 12,12 0 0 1 24,36"/>
+    <path id="path4" style="fill:#1a1a1a;fill-rule:evenodd;stroke:none;stroke-width:1;fill-opacity:1" d="M 24,36 A 12,12 0 0 1 12,24 12,12 0 0 1 24,12"/>
+  </g>
+</svg>

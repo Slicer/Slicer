@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline;stroke:#000000">
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1" d="m 7.0000003,34.937036 v 8.117158 H 41.000003 v -8.117158" id="path2"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 24,38 8.996925,-9.270199" id="path4"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 24,38 14.996925,28.729801" id="path4-2"/>
+    <path style="fill:none;stroke:#000000;stroke-width:1.49999;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 24,37.999998 V 23.999999" id="path3"/>
+    <path d="m 23.5,20.85975 v -7.427 L 17,9.66925 v 7.427 z m 1,0 6.5,-3.7635 v -7.427 l -6.5,3.7635 z M 24,22.2925 16,17.69425 v -9.096 L 24,4 32,8.59825 v 9.096 z M 27.7115,10.42125 30.425,8.85975 24,5.14625 l -2.7,1.548 z m -3.7115,2.152 2.7,-1.5675 -6.425,-3.71325 -2.7,1.56725 z" id="path1" style="fill:#000000;stroke-width:0.025"/>
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnbledLayer" style="display:inline">
+    <path d="m 15.6155,40 h 16.769 v -6 q 0,-3.531 -2.427,-6.0345 -2.4265,-2.504 -5.9575,-2.504 -3.531,0 -5.9575,2.504 Q 15.6155,30.469 15.6155,34 Z M 24,22.5385 q 3.531,0 5.9575,-2.504 Q 32.3845,17.531 32.3845,14 V 8 h -16.769 v 6 q 0,3.531 2.427,6.0345 2.4265,2.504 5.9575,2.504 z M 10,42 v -2 h 3.6155 v -6 q 0,-3.704 2.271,-6.571 2.271,-2.8675 5.821,-3.429 -3.55,-0.6 -5.821,-3.448 Q 13.6155,17.704 13.6155,14 V 8 H 10 V 6 h 28 v 2 h -3.6155 v 6 q 0,3.704 -2.271,6.552 -2.271,2.848 -5.821,3.448 3.55,0.5615 5.821,3.429 2.271,2.867 2.271,6.571 v 6 H 38 v 2 z" id="path1" style="fill:#e5e5f6;fill-opacity:1;stroke-width:0.05"/>
+    <path id="path4" style="fill:#e5e5f6;fill-opacity:1;fill-rule:evenodd;stroke-width:0.958202" d="M 32.478516,14 H 15.539062 a 8.4868565,8.2506304 0 0 0 -0.02539,0.359375 8.4868565,8.2506304 0 0 0 8.486328,8.25 8.4868565,8.2506304 0 0 0 8.486328,-8.25 A 8.4868565,8.2506304 0 0 0 32.478516,14 Z"/>
+    <path id="path5" style="fill:#e5e5f6;fill-opacity:1;fill-rule:evenodd;stroke-width:0.958202" d="M 32.478515,41.331959 H 15.539061 a 8.4868565,8.2506304 0 0 1 -0.02539,-0.359375 8.4868565,8.2506304 0 0 1 8.486328,-8.25 8.4868565,8.2506304 0 0 1 8.486328,8.25 8.4868565,8.2506304 0 0 1 -0.0078,0.359375 z"/>
+    <circle style="fill:#e5e5f6;fill-opacity:1;fill-rule:evenodd" id="path6" cx="24" cy="31.384922" r="1.4631176"/>
+    <circle style="fill:#e5e5f6;fill-opacity:1;fill-rule:evenodd" id="circle6" cx="24" cy="26.574963" r="1.4631176"/>
+  </g>
+</svg>

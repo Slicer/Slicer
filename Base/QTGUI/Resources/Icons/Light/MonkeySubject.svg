@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="layer1">
+    <path id="path1" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="M 11.988965,11.969413 A 17,17 0 0 1 24,7 17,17 0 0 1 36.041325,11.99973"/>
+    <path id="path7" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="M 40.522787,20.00031 A 17,17 0 0 1 41,24 v 0 A 17,17 0 0 1 24,41 17,17 0 0 1 7,24 17,17 0 0 1 7.478291,19.99586"/>
+    <path id="path2" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linejoin:round" d="m 18.916466,20.994792 c -3.271223,0 -5.923076,2.611672 -5.923076,5.833333 0.0059,2.676527 1.86056,5.005678 4.498497,5.649414 -0.177048,0.601418 -0.267175,1.224403 -0.267727,1.850586 0,3.681898 3.030687,6.666667 6.769229,6.666667 3.738544,0 6.769231,-2.984769 6.769231,-6.666667 -5.52e-4,-0.626183 -0.09068,-1.249168 -0.267728,-1.850586 2.637938,-0.643736 4.492585,-2.972887 4.498498,-5.649414 0,-3.221661 -2.651853,-5.833333 -5.923078,-5.833333 C 25.685698,20.999092 26.07878,23.00387 24,23 21.916511,22.9961 22.301083,20.994792 18.916466,20.994792 Z"/>
+    <path id="path4" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="m 40.100536,19.135964 a 4.1666666,4.1666666 0 0 0 0.215985,-0.07555 4.1666666,4.1666666 0 0 0 2.410559,-5.376936 4.1666666,4.1666666 0 0 0 -5.376935,-2.410558 4.1666666,4.1666666 0 0 0 -1.01545,0.559392"/>
+    <path id="path5" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="m 7.8961619,19.093087 a 4.3528749,4.1666666 0 0 1 -0.092758,-0.03267 4.3528749,4.1666666 0 0 1 -2.5182868,-5.376936 4.3528749,4.1666666 0 0 1 5.6172299,-2.410558 4.3528749,4.1666666 0 0 1 1.06083,0.559392"/>
+  </g>
+</svg>

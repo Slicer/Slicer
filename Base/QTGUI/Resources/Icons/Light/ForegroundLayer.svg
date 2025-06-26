@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="DarkThemeEnabledLayer" style="display:inline">
+    <path style="display:none;fill:none;stroke:#010101;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1" d="m 36.831057,11.168943 -9.662115,9.662114" id="path5"/>
+    <circle style="display:none;opacity:1;fill:#7396df;fill-opacity:0.8;stroke:#010101;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" id="path6" cx="39" cy="9" r="2"/>
+    <rect style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-opacity:1;paint-order:fill markers stroke" id="rect1" width="24.000002" height="24" x="-41" y="17" transform="scale(-1,1)"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.45" d="m 32.999969,17.675125 v 0.28549 -8.9308241 H 8.9999696 V 33.029791 l 8.7999994,5e-6 v -5e-6 h -2" id="path2"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.3" d="M 20.999969,10.029791 V 17.96453 17.94787" id="path4"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.3" d="M 9.9653485,21.019782 H 17.965348" id="path7"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.8" d="M 28.999968,17.977176 V 40.029791" id="path8"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.8" d="M 17.999969,29.003484 H 39.999966" id="path9"/>
+    <g id="g12" transform="translate(14.084453,13.949007)" style="display:none">
+      <g id="g11" transform="matrix(1,0,0,0.92569397,0,-0.29464283)" style="stroke-width:1.03936">
+        <text xml:space="preserve" style="font-size:13.9376px;line-height:1.25;font-family:'Lucida Grande';-inkscape-font-specification:'Lucida Grande';stroke-width:1.03936" x="6.0980167" y="-3.4541376" id="text1" transform="scale(0.87109957,1.1479744)">
+          <tspan id="tspan1" x="6.0980167" y="-3.4541376" style="font-size:13.9376px;stroke-width:1.03936">m</tspan>
+        </text>
+        <text xml:space="preserve" style="font-size:13.9376px;line-height:1.25;font-family:'Lucida Grande';-inkscape-font-specification:'Lucida Grande';stroke-width:1.03936" x="19.760956" y="-3.4541376" id="text2" transform="scale(0.87109957,1.1479744)">
+          <tspan id="tspan2" x="19.760956" y="-3.4541376" style="font-size:13.9376px;stroke-width:1.03936">m</tspan>
+        </text>
+      </g>
+      <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 5.9999998,-10.987843 H 27.815544" id="path11"/>
+    </g>
+    <rect style="fill:#989898;fill-opacity:1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.502646;paint-order:fill markers stroke" id="rect2" width="10" height="10" x="18" y="18"/>
+    <rect style="fill:#cccccc;fill-opacity:1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.502646;paint-order:fill markers stroke" id="rect3" width="10" height="10" x="30" y="18"/>
+    <rect style="fill:#666666;fill-opacity:1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.502646;paint-order:fill markers stroke" id="rect4" width="10" height="10" x="18" y="30"/>
+    <rect style="fill:#666666;fill-opacity:1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.502646;paint-order:fill markers stroke" id="rect6" width="10" height="10" x="30" y="30"/>
+  </g>
+</svg>

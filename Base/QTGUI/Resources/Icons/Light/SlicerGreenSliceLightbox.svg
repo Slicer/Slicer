@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline">
+    <rect style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.99937;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" id="rect1" width="36" height="36.000629" x="-41" y="4.9996848" transform="rotate(-90)"/>
+    <rect style="fill:#8ed595;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-dashoffset:0.8;paint-order:fill markers stroke" id="rect2" width="34" height="4" x="5.938241" y="6"/>
+    <g id="g22" style="display:inline">
+      <path id="path17" style="display:inline;fill:none;fill-opacity:0.8;stroke:#000000;stroke-width:2;stroke-linecap:round;paint-order:fill markers stroke" d="m 9,21 h 6 v 8 H 9"/>
+      <path id="rect4" style="display:inline;fill:none;fill-opacity:0.8;stroke:#000000;stroke-width:2;stroke-linecap:round;paint-order:fill markers stroke" d="m 37,29 h -6 v -8 0 h 6"/>
+      <rect style="display:inline;fill:none;fill-opacity:0.8;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" id="rect5" width="8" height="8" x="19" y="20.999985"/>
+      <path id="rect7" style="display:inline;fill:none;fill-opacity:0.8;stroke:#000000;stroke-width:2.00001;stroke-linecap:round;paint-order:fill markers stroke" d="M 9.0000071,33 H 15 v 4.9"/>
+      <path id="path13" style="display:inline;fill:none;fill-opacity:0.8;stroke:#000000;stroke-width:2;stroke-linecap:round;paint-order:fill markers stroke" d="M 31,37.9 V 33 33 h 6"/>
+      <path id="rect9" style="display:inline;fill:none;fill-opacity:0.8;stroke:#000000;stroke-width:2;stroke-linecap:round;paint-order:fill markers stroke" d="M 19.00811,37.9 V 33 33 h 8 v 4.9"/>
+      <path id="path18" style="display:inline;fill:none;fill-opacity:0.8;stroke:#000000;stroke-width:2.00001;stroke-linecap:round;paint-order:fill markers stroke" d="M 9.0000071,17 H 15 v -4.9"/>
+      <path id="path19" style="display:inline;fill:none;fill-opacity:0.8;stroke:#000000;stroke-width:2;stroke-linecap:round;paint-order:fill markers stroke" d="m 31,12.1 v 4.9 0 h 6"/>
+      <path id="path20" style="display:inline;fill:none;fill-opacity:0.8;stroke:#000000;stroke-width:2;stroke-linecap:round;paint-order:fill markers stroke" d="m 19.00811,12.1 v 4.9 0 h 8 v -4.9"/>
+    </g>
+  </g>
+</svg>

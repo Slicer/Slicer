@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="layer4">
+    <rect style="fill:#abd3b5;fill-opacity:0.901961;fill-rule:evenodd;stroke-width:1" id="rect5" width="24" height="26" x="12" y="6"/>
+    <rect style="fill:#121212;fill-rule:evenodd;stroke-width:0.999996" id="rect1" width="2" height="33" x="12" y="2.9999998"/>
+    <path style="fill:none;stroke:#ffffff;stroke-width:1.99937;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:3.99874, 1.99937;stroke-dashoffset:1.99937;stroke-opacity:1" d="M 13,32.000002 V 3.9886916" id="path2"/>
+    <path id="path3" style="fill:none;fill-opacity:0.991963;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" d="M 16.331404,43.180524 12.994222,39 9.668596,43.166044"/>
+    <path id="path4" style="fill:none;fill-opacity:0.991963;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" d="M 38.337182,43.180524 35,39 31.674374,43.166044"/>
+    <rect style="fill:#121212;fill-rule:evenodd;stroke-width:0.999996" id="rect2" width="2" height="33.000004" x="34.024345" y="3"/>
+    <path style="fill:none;stroke:#ffffff;stroke-width:1.99937;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:3.99874, 1.99937;stroke-dashoffset:1.99937;stroke-opacity:1" d="M 35.024345,32 V 3.9886896" id="path5"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 3.9999991,31 H 42.000001" id="path6"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 12.085782,31.5 c 0,0 3.620097,-0.154932 4.951309,-1 C 19.4,29 20.969034,10.083395 24.0132,10.066324 27,10.049576 29,29 31,30.5 c 2,1.5 4.952672,1 4.952672,1" id="path1"/>
+  </g>
+</svg>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="DarkThemeEnabledLayer" style="display:inline">
+    <rect style="display:inline;fill:#d6d6ff;fill-opacity:0.8;stroke:#9899d5;stroke-width:1.99997;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:2.2;stroke-opacity:1;paint-order:fill markers stroke" id="rect3-4-5-5" width="16.864836" height="16.864836" x="25.598953" y="-8.4697981" transform="rotate(45)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect5" width="2" height="2" x="-30.031378" y="-6.0374341" transform="matrix(-0.70710678,-0.70710678,-0.70710678,0.70710678,0,0)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect6" width="2" height="2" x="-30.031378" y="-5.9625659" transform="rotate(-135)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect7" width="2" height="2" x="38.031376" y="-6.0374341" transform="rotate(45)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect8" width="2" height="2" x="38.031376" y="-5.9625659" transform="matrix(0.70710678,0.70710678,0.70710678,-0.70710678,0,0)"/>
+    <path style="display:inline;fill:none;stroke:#010101;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 24.090245,19.794739 -4.242641,4.242641 4.242641,4.242641 4.24264,-4.242641 -4.24264,-4.242641" id="path8"/>
+    <path id="path1" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="M 23.936085,42.999974 A 19,19 0 0 1 23.904762,43 19,19 0 0 1 4.9047623,24 19,19 0 0 1 23.904762,5 a 19,19 0 0 1 19,19 v 0 a 19,19 0 0 1 -6.177748,14.02105"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 35,31 v 8 h 8 v 0" id="path2"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect1" width="2" height="2" x="-27.910055" y="-8.1587543" transform="matrix(-0.70710678,-0.70710678,-0.70710678,0.70710678,0,0)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect2" width="2" height="2" x="40.152699" y="-8.0838861" transform="matrix(0.70710678,0.70710678,0.70710678,-0.70710678,0,0)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect3" width="2" height="2" x="40.152699" y="-8.1587543" transform="rotate(45)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect4" width="2" height="2" x="-27.910055" y="-8.0838861" transform="rotate(-135)"/>
+  </g>
+</svg>

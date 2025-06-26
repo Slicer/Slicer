@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline">
+    <rect style="fill:#d6d6ff;stroke:none;stroke-width:2;stroke-linecap:round;paint-order:fill markers stroke" id="rect2" width="16" height="16" x="24" y="6"/>
+    <rect style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.99937;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" id="rect1" width="36.000629" height="36.000317" x="4.9996848" y="5"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.698039" d="M 23,6 V 32" id="path3"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.698039" d="M 22,23 H 6" id="path3-7"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.698039" d="M 40,23 H 24" id="path3-7-2"/>
+    <rect style="fill:none;stroke:#8686ce;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" id="rect5" width="10.000002" height="10" x="26.999996" y="9"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.698039" d="M 6,33 H 40" id="path1"/>
+    <rect style="fill:#ed726c;stroke-width:0.999999;stroke-linecap:round;stroke-dashoffset:2.2;paint-order:fill markers stroke" id="rect2-9" width="16.039164" height="2" x="5.9804192" y="6"/>
+    <rect style="fill:#8ed595;fill-opacity:1;stroke-width:0.999995;stroke-linecap:round;stroke-dashoffset:2.2;paint-order:fill markers stroke" id="rect2-6" width="16.039162" height="2" x="5.9804192" y="24"/>
+    <rect style="fill:#f7ce63;fill-opacity:1;stroke-width:0.999994;stroke-linecap:round;stroke-dashoffset:2.2;paint-order:fill markers stroke" id="rect2-3" width="15.960835" height="2" x="24.019581" y="24"/>
+    <rect style="fill:#8686ce;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:round;paint-order:fill markers stroke" id="rect5-0-5" width="2" height="2.0000002" x="38" y="6"/>
+    <rect style="fill:#8686ce;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:round;paint-order:fill markers stroke" id="rect5-0-6" width="2" height="1.8287303" x="38" y="20.17127"/>
+    <rect style="fill:#8686ce;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:round;paint-order:fill markers stroke" id="rect5-0-3" width="1.9999999" height="2.1550353" x="24" y="20"/>
+    <rect style="fill:#8686ce;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:round;paint-order:fill markers stroke" id="rect5-0-1" width="2" height="2.1316676" x="24" y="5.934166"/>
+    <path id="rect3-4" style="display:inline;fill:#000000;fill-opacity:0.698039;stroke-width:2.98913;stroke-linejoin:round;paint-order:markers fill stroke" d="m 16,34 v 2 H 6 v 2 h 10 v 1.992188 h 2 V 38 h 10 v 1.992188 h 2 V 38 H 40 V 36 H 30 v -2 h -2 v 2 H 18 v -2 z"/>
+  </g>
+</svg>

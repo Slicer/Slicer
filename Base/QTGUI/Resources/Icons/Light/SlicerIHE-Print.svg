@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline">
+    <rect style="fill:none;fill-rule:evenodd;stroke:#7396df;stroke-width:2;stroke-dasharray:none" id="rect1" width="38" height="38" x="5" y="5"/>
+    <g style="fill:#000000" id="g1" transform="matrix(0.05,0,0,0.05,0,46.5385)">
+      <path d="m 640,-610.77 v -80 H 320 v 80 h -40 v -120.01 h 400 v 120.01 z m -440,40 h 560 z m 480,120 c 11.33333,0 20.83333,-3.83333 28.5,-11.5 7.66667,-7.66667 11.5,-17.16667 11.5,-28.5 0,-11.33333 -3.83333,-20.83333 -11.5,-28.5 -7.66667,-7.66667 -17.16667,-11.5 -28.5,-11.5 -11.33333,0 -20.83333,3.83333 -28.5,11.5 -7.66667,7.66667 -11.5,17.16667 -11.5,28.5 0,11.33333 3.83333,20.83333 11.5,28.5 7.66667,7.66667 17.16667,11.5 28.5,11.5 z m -40,240 v -160 H 320 v 160 z m 40,40 H 280 v -120 H 160 v -320 h 640 v 320 H 680 Z m 80,-160 v -240 H 200 v 240 h 80 v -80 h 400 v 80 z" id="path1"/>
+    </g>
+    <path style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 18,29.598826 H 30" id="path2"/>
+    <path style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 18,33.527715 H 29.458492" id="path3"/>
+  </g>
+</svg>

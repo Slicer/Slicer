@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline;stroke:#000000">
+    <path id="path3" style="fill:none;fill-rule:evenodd;stroke:#9899d5;stroke-width:2;stroke-dasharray:8, 2;stroke-dashoffset:0" d="M 43,17 A 12,12 0 0 1 31,29 12,12 0 0 1 19,17 12,12 0 0 1 31,5 12,12 0 0 1 43,17 Z"/>
+    <path id="rect1" style="fill:#9899d5;fill-rule:evenodd;stroke:#000000;stroke-width:2" d="M 7,17 V 41 H 31 V 29 A 12,12 0 0 1 19,17 Z"/>
+  </g>
+</svg>

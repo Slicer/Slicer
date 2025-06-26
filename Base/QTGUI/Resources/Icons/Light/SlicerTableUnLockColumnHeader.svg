@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" fill="#000000" width="48" height="48" viewBox="0 0 48 48" id="icons" version="1.1" xml:space="preserve">
+  <defs id="defs3"/>
+  <g id="layer1">
+    <rect style="fill:#ed8800;fill-rule:evenodd;stroke-width:0.999996" id="rect9" width="22" height="1.9999993" x="20" y="10"/>
+    <path id="rect1" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2" d="M 19,9 H 43 V 37 H 19 Z"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 44.000001,13 h -24" id="path4"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2.00001;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 27,12.000001 V 36.5" id="path5"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2.00001;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 35,12.000001 V 36.5" id="path6"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 44.000001,21 h -24" id="path7"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 44.000001,29 h -24" id="path8"/>
+    <path id="rect1-9" style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linejoin:round;paint-order:markers fill stroke" d="M 4.9806075,11.031933 H 14.980608 v 9.87845 H 4.9806075 Z"/>
+    <ellipse style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.999999;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke" id="path4-3" cx="9.9806042" cy="16.190098" rx="1.1447464" ry="1.1900972"/>
+    <path id="path4-0" style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linejoin:round;paint-order:markers fill stroke" d="M 6.9885576,10.593597 C 6.9885576,9.7487438 6.9348516,8.7420785 7.1057193,8 7.3368025,6.9963933 7.4614112,6.754204 7.7791708,6.1726801 8.2421262,5.3254391 9.5227976,4.474609 10.65462,4.474609 c 0.0043,0 0.0083,9.8e-6 0.002,2.85e-5 -0.0064,-1.87e-5 -0.0021,-2.85e-5 0.002,-2.85e-5 0.683183,0 1.420601,0.1760482 1.999675,0.6081371"/>
+  </g>
+</svg>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="DarkThemeEnabledLayer" style="display:inline">
+    <path id="path2" style="fill:none;fill-rule:evenodd;stroke:#121212;stroke-width:2" d="M 42.000002,33.509594 A 20.791613,21.002022 0 0 1 24.000001,44.000002 20.791613,21.002022 0 0 1 6.0000002,33.509594"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 5.1578037,38.254797 5,33 h 5" id="path3"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 42.921098,38.127398 0.157804,-5.254797 h -5" id="path4"/>
+    <rect style="display:inline;fill:#d6d6ff;fill-opacity:0.8;stroke:#9899d5;stroke-width:1.99998;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:2.2;stroke-opacity:1;paint-order:fill markers stroke" id="rect3-4-5-5" width="18" height="18" x="15" y="11"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect1-02-3" width="2" height="2" x="30.000008" y="11.999947"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect1-0-59" width="2" height="2" x="-18.000008" y="11.999947" transform="scale(-1,1)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect1-2-9" width="2" height="2" x="30.000008" y="-27.999947" transform="scale(1,-1)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect1-0-5-7" width="2" height="2" x="-18.000008" y="-27.999947" transform="scale(-1)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect5" width="2" height="2" x="-20.000008" y="13.999947" transform="scale(-1,1)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect6" width="2" height="2" x="-20.000008" y="-25.999947" transform="scale(-1)"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect7" width="2" height="2" x="28.000008" y="13.999947"/>
+    <rect style="display:inline;fill:#010101;fill-opacity:1;stroke-linecap:round;paint-order:fill markers stroke" id="rect8" width="2" height="2" x="28.000008" y="-25.999947" transform="scale(1,-1)"/>
+    <path style="display:inline;fill:none;stroke:#010101;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 21,17 v 6 h 6 v -6 h -6" id="path8"/>
+  </g>
+</svg>

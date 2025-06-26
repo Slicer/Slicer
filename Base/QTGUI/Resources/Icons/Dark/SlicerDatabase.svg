@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" height="48" viewBox="0 0 48 48" width="48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="DarkThemeEnabledLayer" style="display:inline">
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 35.05,17.301898 V 29.95" id="path3-3"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 13,16.95 V 30.167012" id="path3"/>
+    <path id="path2-7" style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" d="m 13,29.95 a 11,4 0 0 0 11,4 11,4 0 0 0 11,-4"/>
+    <path id="path2" style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" d="m 13,17.05 a 11,4 0 0 1 11,-4 11,4 0 0 1 11,4"/>
+    <path id="path1-6" style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" d="m 35,23.541273 v 0 a 11,4 0 0 1 -11,4 11,4 0 0 1 -11,-4"/>
+    <path id="path1" style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke" d="m 35,17.05 v 0 a 11,4 0 0 1 -11,4 11,4 0 0 1 -11,-4"/>
+  </g>
+</svg>

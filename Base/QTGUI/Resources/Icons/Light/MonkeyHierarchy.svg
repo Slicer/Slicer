@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline">
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 24,22 v 5.76" id="path1"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 39,29 H 9 v 6" id="path2"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 24,29 v 6" id="path3"/>
+    <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 39,29 v 5.520001" id="path4"/>
+    <path id="path8" style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="m 42,38 a 3.0000005,2.9999997 0 0 1 -3,3 3.0000005,2.9999997 0 0 1 -3,-3 3.0000005,2.9999997 0 0 1 3,-3 3.0000005,2.9999997 0 0 1 3,3 z"/>
+    <path id="path10" style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="m 27,38 a 3.0000005,2.9999997 0 0 1 -3,3 3.0000005,2.9999997 0 0 1 -3,-3 3.0000005,2.9999997 0 0 1 3,-3 3.0000005,2.9999997 0 0 1 3,3 z"/>
+    <path id="path11" style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="m 12,38 a 3.0000005,2.9999997 0 0 1 -3,3 3.0000005,2.9999997 0 0 1 -3,-3 3.0000005,2.9999997 0 0 1 3,-3 3.0000005,2.9999997 0 0 1 3,3 z"/>
+    <path id="path20" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-dasharray:none" d="M 29.859371,17.004461 A 6.2631579,6.2631579 0 0 1 24,21.055171 6.2631579,6.2631579 0 0 1 18.140501,17.004121"/>
+    <path id="path2-6" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-dasharray:none" d="m 21.975057,12.508752 c -1.288675,0 -2.333357,1.070955 -2.333357,2.392045 0.0023,1.097549 0.732957,2.052652 1.772153,2.316625 -0.06975,0.246619 -0.105229,0.502084 -0.105484,0.75886 0,1.509816 1.19392,2.733763 2.666692,2.733763 1.472777,0 2.666695,-1.223947 2.666695,-2.733763 -2.19e-4,-0.256776 -0.03573,-0.512241 -0.105484,-0.75886 1.039199,-0.263973 1.769825,-1.219076 1.772154,-2.316625 0,-1.32109 -1.044679,-2.392045 -2.333358,-2.392045 -1.333342,0.0018 -1.178492,0.823853 -1.997412,0.822264 -0.820777,-0.0015 -0.669277,-0.822264 -2.002623,-0.822264 z"/>
+    <path id="path21" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-dasharray:none" d="M 29.859371,12.579565 A 6.2631579,6.2631579 0 0 0 24,8.5288554 6.2631579,6.2631579 0 0 0 18.140501,12.579905"/>
+    <path id="path23" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.999996;stroke-linecap:round" d="m 17.629834,16.732809 a 2,2 0 0 1 -0.15245,0.0058 2,2 0 0 1 -2,-2 2,2 0 0 1 2,-2 2,2 0 0 1 0.15304,0.0059"/>
+    <path id="path24" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.999996;stroke-linecap:round" d="m 30.370156,16.732809 a 2,2 0 0 0 0.15245,0.0058 2,2 0 0 0 2,-2 2,2 0 0 0 -2,-2 2,2 0 0 0 -0.15304,0.0059"/>
+    <circle style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1" id="path25" cx="23.999994" cy="17.004122" r="0.75"/>
+  </g>
+</svg>

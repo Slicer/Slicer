@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve" sodipodi:docname="3DViewersViewFromRight.svg" inkscape:version="1.4 (e7c3feb1, 2024-10-09)">
+  <sodipodi:namedview id="namedview1" pagecolor="#ffffff" bordercolor="#111111" borderopacity="1" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="1" inkscape:deskcolor="#d1d1d1" inkscape:zoom="13.145833" inkscape:cx="23.961965" inkscape:cy="24" inkscape:window-width="1200" inkscape:window-height="773" inkscape:window-x="0" inkscape:window-y="25" inkscape:window-maximized="0" inkscape:current-layer="layer5"/>
+  <defs id="defs1"/>
+  <g inkscape:groupmode="layer" id="layer5" inkscape:label="EnabledLayer" sodipodi:insensitive="true">
+    <path style="font-weight:500;font-size:18.6667px;line-height:1.25;font-family:'Lucida Grande';-inkscape-font-specification:'Lucida Grande Medium';text-align:end;text-anchor:end;fill:#e5e5f6" d="M 16.128888,28.00005 V 14.510442 h 4.083341 q 1.94141,0 2.971359,0.856772 1.039065,0.856773 1.039065,2.488286 0,2.697922 -2.725266,3.828132 L 26,28.00005 h -2.351567 l -3.837247,-5.70574 h -1.786461 v 5.70574 z m 1.895837,-7.136732 h 0.619793 q 3.609381,0 3.609381,-2.834641 0,-2.087243 -3.026047,-2.087243 h -1.203127 z" id="text5" aria-label="R"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.7" d="M 48,23.00005 H 31.112399" id="path4"/>
+  </g>
+</svg>

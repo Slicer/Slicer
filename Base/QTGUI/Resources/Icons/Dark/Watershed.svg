@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline">
+    <rect style="display:inline;fill:#aad4b5;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2;stroke-dasharray:none;stroke-opacity:1" id="rect1" width="4" height="10" x="-36" y="9" rx="0.60000002" ry="0.60000002" transform="rotate(-90)"/>
+    <rect style="display:inline;fill:#aad4b5;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.99999;stroke-dasharray:none;stroke-opacity:1" id="rect2" width="4" height="9.9999981" x="-36" y="29" rx="0.60000002" ry="0.60000002" transform="rotate(-90)"/>
+    <path id="path2" style="fill:#aad4b5;fill-opacity:1;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2;stroke-dasharray:none;stroke-opacity:1" d="m 23.838453,5.7385491 -4.230049,7.7651119 c 0,0 -0.931498,1.611627 -0.975351,2.90497 0,2.678669 2.513357,4.591465 5.215734,4.591369 2.702377,9.5e-5 5.151214,-1.9127 5.151213,-4.591369 -1.66e-4,-1.047309 -0.342338,-2.066429 -0.975351,-2.90497 z"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 4,30.999999 h 5 v 7.999999 h 10 v -7.999999 h 10 v 7.999999 h 10 v -7.981102 h 4.994419" id="path15"/>
+    <path style="fill:none;stroke:#aad4b5;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 17,32 v 1.999999" id="path18"/>
+    <path style="fill:none;stroke:#aad4b5;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 31,31.999998 v 3.999999" id="path19"/>
+    <rect style="fill:#738c79;fill-rule:evenodd" id="rect3" width="8" height="2.1410782" x="10" y="36"/>
+    <rect style="fill:#738c79;fill-rule:evenodd" id="rect4" width="8" height="2.1410782" x="30" y="36"/>
+    <path id="path1" style="fill:#738c79;fill-opacity:1;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2;stroke-dasharray:none;stroke-opacity:1" d="m 18.951172,18 c 0.75817,1.812972 2.769874,3.000076 4.898437,3 2.128615,7.5e-5 4.098716,-1.186954 4.839844,-3"/>
+  </g>
+</svg>

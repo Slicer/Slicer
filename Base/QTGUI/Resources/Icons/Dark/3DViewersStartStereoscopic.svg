@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline">
+    <rect style="fill:#3a73ff;fill-opacity:1;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2;stroke-dasharray:none" id="rect1" width="12" height="10" x="7" y="27"/>
+    <rect style="fill:#d53f37;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2;stroke-dasharray:none" id="rect2" width="12" height="10" x="29" y="27.018658"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 20,29 h 8.000001" id="path2"/>
+    <g id="g6" transform="translate(0,4)" style="stroke:#e5e5f6">
+      <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 7,23 V 10.931141" id="path3"/>
+      <path id="path5" style="fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt" d="M 7.0008087,11.261571 A 4,4 0 0 1 11,7.3419986 4,4 0 0 1 14.235294,8.9897932"/>
+    </g>
+    <g id="g7" transform="matrix(-1,0,0,1,48,4.0186577)" style="stroke:#e5e5f6">
+      <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 7,23 V 10.931141" id="path6"/>
+      <path id="path7" style="fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt" d="M 7.0008087,11.261571 A 4,4 0 0 1 11,7.3419986 4,4 0 0 1 14.235294,8.9897932"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="DarkThemeEnabledLayer" style="display:inline">
+    <path style="display:none;fill:none;stroke:#010101;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1" d="m 36.831057,11.168943 -9.662115,9.662114" id="path5"/>
+    <circle style="display:none;opacity:1;fill:#7396df;fill-opacity:0.8;stroke:#010101;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" id="path6" cx="39" cy="9" r="2"/>
+    <rect style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-opacity:0.45;paint-order:fill markers stroke" id="rect1" width="24.000002" height="24.029791" x="-41.027573" y="16.970209" transform="scale(-1,1)"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 33,15.745334 V 16.030824 9 H 9 v 24 l 7.1,5e-6 V 33 33" id="path2"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 21,10 v 6 -0.0126" id="path4"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 9.9653785,20.98999 H 16.02757" id="path7"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.302448" d="M 28.999999,17.947385 V 40" id="path8"/>
+    <path style="display:inline;fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.302448" d="M 18,29 H 39.999997" id="path9"/>
+    <g id="g12" transform="translate(14.084453,13.949007)" style="display:none">
+      <g id="g11" transform="matrix(1,0,0,0.92569397,0,-0.29464283)" style="stroke-width:1.03936">
+        <text xml:space="preserve" style="font-size:13.9376px;line-height:1.25;font-family:'Lucida Grande';-inkscape-font-specification:'Lucida Grande';stroke-width:1.03936" x="6.0980167" y="-3.4541376" id="text1" transform="scale(0.87109957,1.1479744)">
+          <tspan id="tspan1" x="6.0980167" y="-3.4541376" style="font-size:13.9376px;stroke-width:1.03936">m</tspan>
+        </text>
+        <text xml:space="preserve" style="font-size:13.9376px;line-height:1.25;font-family:'Lucida Grande';-inkscape-font-specification:'Lucida Grande';stroke-width:1.03936" x="19.760956" y="-3.4541376" id="text2" transform="scale(0.87109957,1.1479744)">
+          <tspan id="tspan2" x="19.760956" y="-3.4541376" style="font-size:13.9376px;stroke-width:1.03936">m</tspan>
+        </text>
+      </g>
+      <path style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 5.9999998,-10.987843 H 27.815544" id="path11"/>
+    </g>
+    <path id="rect2" style="fill:#989898;fill-opacity:1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.502646;paint-order:fill markers stroke" d="M 16.02757,15.970703 H 10 V 20 h 6.02757 z"/>
+    <path id="path12" style="fill:#989898;fill-opacity:1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.502646;paint-order:fill markers stroke" d="m 10,10 v 5.970703 H 20 V 10 Z"/>
+    <path id="rect3" style="fill:#666666;fill-opacity:1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.502646;paint-order:fill markers stroke" d="M 16.02757,21.980469 H 9.9999998 v 10 H 16.02757 Z"/>
+    <path id="path13" style="fill:#cccccc;fill-opacity:1;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.502646;paint-order:fill markers stroke" d="m 22,10 v 5.970703 H 32 V 10 Z"/>
+  </g>
+</svg>

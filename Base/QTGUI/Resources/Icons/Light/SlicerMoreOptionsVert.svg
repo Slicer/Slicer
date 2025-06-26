@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 1920 1920" width="48" fill="#000000" version="1.1" id="svg1">
+  <defs id="defs1"/>
+  <g id="g3">
+    <circle style="fill:#000000;fill-rule:evenodd;stroke-width:40" id="path2" cx="960" cy="-480" r="80"/>
+    <circle style="fill:#000000;fill-rule:evenodd;stroke-width:40" id="circle2" cx="960" cy="0" r="80"/>
+    <circle style="fill:#000000;fill-rule:evenodd;stroke-width:40" id="circle3" cx="960" cy="480" r="80"/>
+  </g>
+</svg>

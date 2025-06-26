@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" fill="#000000" width="48" height="48" viewBox="0 0 48 48" id="icons" version="1.1" xml:space="preserve">
+  <defs id="defs3"/>
+  <g id="layer1">
+    <rect style="fill:#fa9f00;fill-rule:evenodd" id="rect2" width="22" height="6" x="6" y="22"/>
+    <rect style="fill:#5b5b7d;fill-rule:evenodd;stroke:none;stroke-width:0.999996" id="rect9" width="22" height="1.9999993" x="6" y="10"/>
+    <path id="rect1" style="fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2" d="M 5,9 H 29 V 37 H 5 Z"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 30.000001,13 h -24" id="path4"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2.00001;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 13,12.000001 V 36.5" id="path5"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2.00001;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 21,12.000001 V 36.5" id="path6"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 30.000001,21 h -24" id="path7"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 30.000001,29 h -24" id="path8"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 42.656384,29.211937 -3.450978,-4.254138 3.450978,-3.62429" id="path2"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 34.549022,29.211937 38,24.957799 34.549022,21.333509" id="path3"/>
+  </g>
+</svg>

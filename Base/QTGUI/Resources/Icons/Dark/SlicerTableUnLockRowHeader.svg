@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" fill="#000000" width="48" height="48" viewBox="0 0 48 48" id="icons" version="1.1" xml:space="preserve">
+  <defs id="defs3"/>
+  <g id="layer1">
+    <rect style="fill:#fa9f00;fill-rule:evenodd;stroke:none;stroke-width:0.999996" id="rect9" width="22" height="1.9999993" x="14" y="-22" transform="rotate(90)"/>
+    <path id="rect1" style="fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:2" d="M 19,9 H 43 V 37 H 19 Z"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 44.000001,13 h -24" id="path4"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2.00001;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 23,12.000001 V 36.5" id="path5"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2.00001;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 31,12.000001 V 36.5" id="path6"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 44.000001,21 h -24" id="path7"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 44.000001,29 h -24" id="path8"/>
+    <path id="rect1-9" style="display:inline;fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linejoin:round;paint-order:markers fill stroke" d="M 4.9806075,21.031933 H 14.980608 v 9.87845 H 4.9806075 Z"/>
+    <ellipse style="display:inline;fill:#e5e5f6;fill-opacity:1;stroke:#e5e5f6;stroke-width:0.999999;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke" id="path4-3" cx="9.9806042" cy="26.190098" rx="1.1447464" ry="1.1900972"/>
+    <rect style="fill:#5b5b7d;fill-rule:evenodd;stroke-width:0.999996" id="rect9-1" width="22" height="1.9999993" x="20" y="10.000001"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:2.00001;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.7" d="M 39,12.000001 V 36.5" id="path10"/>
+    <path id="path4-0" style="display:inline;fill:none;stroke:#e5e5f6;stroke-width:2;stroke-linejoin:round;paint-order:markers fill stroke" d="m 7.0007597,20.593597 c 0,-0.844853 -0.053706,-1.851519 0.117162,-2.593597 0.231083,-1.003607 0.355692,-1.245796 0.673452,-1.82732 0.462955,-0.847241 1.743626,-1.698071 2.8754493,-1.698071 0.0043,0 0.0083,1e-5 0.002,2.9e-5 -0.0064,-1.9e-5 -0.0021,-2.9e-5 0.002,-2.9e-5 0.683183,0 1.420601,0.176048 1.999675,0.608137"/>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="layer1">
+    <path id="path19" style="fill:none;fill-rule:evenodd;stroke:#121212;stroke-width:1.99999;stroke-linecap:round;stroke-opacity:0.97" d="M 16.997105,8.5093748 A 17,17 0 0 1 24,7 17,17 0 0 1 31.003996,8.5098726"/>
+    <path id="path16" style="fill:none;fill-rule:evenodd;stroke:#121212;stroke-width:1.99999;stroke-linecap:round;stroke-opacity:0.97" d="M 40.522769,20.000235 A 17,17 0 0 1 41,24 v 0 A 17,17 0 0 1 24,41 17,17 0 0 1 7,24 17,17 0 0 1 7.4778588,19.997644"/>
+    <path style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 24,29 3,3" id="path1"/>
+    <path style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 24,29 -3,3" id="path2"/>
+    <path id="path4" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="M 8.5829903,16.795006 A 5,5 0 0 1 5,12 5,5 0 0 1 10,7 5,5 0 0 1 14.516944,9.8558873"/>
+    <path id="path5" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:round" d="M 39.41701,16.795006 A 5,5 0 0 0 43,12 5,5 0 0 0 38,7 5,5 0 0 0 33.483056,9.8558873"/>
+    <ellipse style="fill:#000000;fill-rule:evenodd;stroke-width:1" id="ellipse5" cx="24" cy="26" rx="2" ry="2.0032461"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="layer4">
+    <rect style="fill:none;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:1.99999;stroke-dasharray:none" id="rect1" width="34" height="34" x="7" y="7"/>
+    <path style="fill:none;stroke:#e5e5f6;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="m 20.000001,20 12,-0.0252" id="path1"/>
+    <rect style="fill:#121212;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:1.25;stroke-dasharray:none" id="rect3" width="4.75" height="4.75" x="38.625" y="4.625"/>
+    <rect style="fill:#121212;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:1.25;stroke-dasharray:none" id="rect4" width="4.75" height="4.75" x="4.525002" y="4.625"/>
+    <rect style="fill:#121212;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:1.25;stroke-dasharray:none" id="rect5" width="4.75" height="4.75" x="38.625" y="38.625"/>
+    <rect style="fill:#121212;fill-rule:evenodd;stroke:#e5e5f6;stroke-width:1.25;stroke-dasharray:none" id="rect6" width="4.75" height="4.75" x="4.525002" y="38.625"/>
+    <path style="fill:#e5e5f6;stroke:#e5e5f6;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 26,18.024999 V 33.975" id="path2"/>
+    <path style="fill:#b2b2b2;stroke:#e5e5f6;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1" d="m 20,18 -1e-6,3.986217 -4,-4 v -3.9 h 10.9 l 5,3.9 z" id="path3"/>
+    <path style="fill:#b2b2b2;stroke:#e5e5f6;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1" d="m 20,22 h 4 v 11.9 l -3.999999,-4.068109 z" id="path4"/>
+  </g>
+</svg>

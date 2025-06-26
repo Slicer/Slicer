@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" version="1.1" id="svg1" xml:space="preserve">
+  <defs id="defs1"/>
+  <g id="LightThemeEnabledLayer" style="display:inline">
+    <path id="rect1" style="fill:none;stroke:#000000;stroke-width:1.99937;stroke-linecap:round;stroke-opacity:1;paint-order:fill markers stroke" d="M 17.118917,41 H 5 V 41 5 h 12.118917"/>
+    <path id="path1" style="fill:none;stroke:#000000;stroke-width:1.99937;stroke-linecap:round;stroke-opacity:1;paint-order:fill markers stroke" d="M 28.999685,5 H 41 V 41 H 28.999685"/>
+    <path style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.999997px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.5" d="M 12.500002,10 V 40" id="path2"/>
+    <path style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.999997px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.5" d="M 33.499995,10 V 40" id="path2-2"/>
+    <path style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.999998px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.5" d="M 6,23.5 H 18" id="path2-3-5"/>
+    <path style="display:inline;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.5" d="M 28,23.5 H 40" id="path2-3-5-91"/>
+    <path style="display:inline;fill:none;stroke:#010100;stroke-width:2.00001;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 23,43.025973 C 23,3.0000001 23,3.0000001 23,3.0000001" id="path1-8"/>
+    <rect style="display:inline;fill:#f1a16e;stroke:none;stroke-width:1.99999;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke" id="rect2" width="12" height="4.0000005" x="6" y="6"/>
+    <rect style="display:inline;fill:#f1a16e;stroke:none;stroke-width:1.99998;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke" id="rect2-3" width="12" height="4.0000005" x="28" y="6"/>
+  </g>
+</svg>
