@@ -30,7 +30,8 @@
      </property>
      <property name="icon">
       <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
-       <normaloff>:/Icons/pqVcrFirst24.png</normaloff>:/Icons/pqVcrFirst24.png</iconset>
+       <normaloff>:/Icons/SlicerFirstOrSkipBackward.svg</normaloff>:/Icons/SlicerFirstOrSkipBackward.svg
+      </iconset>
      </property>
     </widget>
    </item>
@@ -44,7 +45,8 @@
      </property>
      <property name="icon">
       <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
-       <normaloff>:/Icons/pqVcrBack24.png</normaloff>:/Icons/pqVcrBack24.png</iconset>
+       <normaloff>:/Icons/SlicerBack.svg</normaloff>:/Icons/SlicerBack.svg
+      </iconset>
      </property>
     </widget>
    </item>
@@ -58,8 +60,9 @@
      </property>
      <property name="icon">
       <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
-       <normaloff>:/Icons/pqVcrPlay24.png</normaloff>
-       <normalon>:/Icons/pqVcrPause24.png</normalon>:/Icons/pqVcrPlay24.png</iconset>
+       <normaloff>:/Icons/SlicerPlay.svg</normaloff>
+       <normalon>:/Icons/SlicerPause.svg</normalon>:/Icons/SlicerPlay.svg
+      </iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -76,7 +79,8 @@
      </property>
      <property name="icon">
       <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
-       <normaloff>:/Icons/pqVcrForward24.png</normaloff>:/Icons/pqVcrForward24.png</iconset>
+       <normaloff>:/Icons/SlicerForward.svg</normaloff>:/Icons/SlicerForward.svg
+      </iconset>
      </property>
     </widget>
    </item>
@@ -90,7 +94,8 @@
      </property>
      <property name="icon">
       <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
-       <normaloff>:/Icons/pqVcrLast24.png</normaloff>:/Icons/pqVcrLast24.png</iconset>
+       <normaloff>:/Icons/SlicerLastOrSkipForward.svg</normaloff>:/Icons/SlicerLastOrSkipForward.svg
+      </iconset>
      </property>
     </widget>
    </item>
@@ -126,7 +131,8 @@
      </property>
      <property name="icon">
       <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
-       <normaloff>:/Icons/pqVcrLoop24.png</normaloff>:/Icons/pqVcrLoop24.png</iconset>
+       <normaloff>:/Icons/SlicerLoop.svg</normaloff>:/Icons/SlicerLoop.svg
+      </iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -143,7 +149,8 @@
      </property>
      <property name="icon">
       <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
-       <normaloff>:/Icons/VcrRecord16.png</normaloff>:/Icons/VcrRecord16.png</iconset>
+       <normaloff>:/Icons/SlicerRecordOrRecording.svg</normaloff>:/Icons/SlicerRecordOrRecording.svg
+      </iconset>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -160,7 +167,7 @@
      </property>
      <property name="icon">
       <iconset resource="../qSlicerSequenceBrowserModuleWidgets.qrc">
-       <normaloff>:/Icons/pqCamera24.png</normaloff>:/Icons/pqCamera24.png</iconset>
+       <normaloff>:/Icons/SlicerCapture.svg</normaloff>:/Icons/SlicerCapture.svg</iconset>
      </property>
     </widget>
    </item>
