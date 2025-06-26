@@ -90,7 +90,7 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->MRMLCommandLineModuleNodeSelector->addAttribute(
     "vtkMRMLCommandLineModuleNode", "CommandLineModule", sourceLanguageTitle);
 
-  this->MRMLCommandLineModuleNodeSelector->setNodeTypeLabel("Parameter set", "vtkMRMLCommandLineModuleNode");
+  this->MRMLCommandLineModuleNodeSelector->setNodeTypeLabel(tr("Parameter set"), "vtkMRMLCommandLineModuleNode");
 
   this->addParameterGroups();
 
