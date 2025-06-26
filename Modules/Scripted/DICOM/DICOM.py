@@ -35,7 +35,7 @@ class DICOM(ScriptedLoadableModule):
                                  " and sending receiving data using DICOM networking.")
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
         self.parent.acknowledgementText = _("This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.")
-        self.parent.icon = qt.QIcon(":Icons/Medium/SlicerLoadDICOM.png")
+        self.parent.icon = qt.QIcon(":Icons/DICOMIO.svg")
         self.parent.dependencies = ["SubjectHierarchy"]
 
         self.viewWidget = None  # Widget used in the layout manager (contains just label and browser widget)

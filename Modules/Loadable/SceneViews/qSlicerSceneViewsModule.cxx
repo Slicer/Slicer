@@ -144,7 +144,7 @@ QStringList qSlicerSceneViewsModule::contributors() const
 //-----------------------------------------------------------------------------
 QIcon qSlicerSceneViewsModule::icon() const
 {
-  return QIcon(":/Icons/SelectCameras.png");
+  return QIcon(":/Icons/SlicerSceneViewRestoreOrDelete.svg");
 }
 
 //-----------------------------------------------------------------------------

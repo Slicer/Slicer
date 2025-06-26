@@ -119,7 +119,7 @@ QStringList qSlicerVolumeRenderingModule::contributors()const
 //-----------------------------------------------------------------------------
 QIcon qSlicerVolumeRenderingModule::icon()const
 {
-  return QIcon(":/Icons/VolumeRendering.png");
+  return QIcon(":/Icons/SlicerScalarVolume.svg");
 }
 
 //-----------------------------------------------------------------------------
