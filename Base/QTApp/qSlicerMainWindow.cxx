@@ -1882,11 +1882,11 @@ void qSlicerMainWindow::setExtensionUpdatesAvailable(bool updateAvailable)
 
   if (updateAvailable)
   {
-    d->ViewExtensionsManagerAction->setIcon(QIcon(":/Icons/ExtensionNotificationIcon.png"));
+    d->ViewExtensionsManagerAction->setIcon(QIcon(":/Icons/SlicerDownloadExtension.svg"));
   }
   else
   {
-    d->ViewExtensionsManagerAction->setIcon(QIcon(":/Icons/ExtensionDefaultIcon.png"));
+    d->ViewExtensionsManagerAction->setIcon(QIcon(":/Icons/DefaultModule.svg"));
   }
 #endif
 }
