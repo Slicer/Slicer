@@ -339,6 +339,15 @@ set(KIT_resources
   ${qMRMLWidgets_SOURCE_DIR}/Resources/qMRMLWidgets.qrc
   )
 
+set(KIT_LIGHT_ICONS
+  Resources/qSlicerBaseQTGUILight.qrc
+  )
+
+
+set(KIT_DARK_ICONS
+  Resources/qSlicerBaseQTGUIDark.qrc
+  )
+
 # Python wrap
 if(Slicer_USE_PYTHONQT)
 
@@ -364,6 +373,8 @@ SlicerMacroBuildBaseQtLibrary(
   UI_SRCS ${KIT_UI_SRCS}
   TARGET_LIBRARIES ${KIT_target_libraries}
   RESOURCES ${KIT_resources}
+  LIGHT_ICONS ${KIT_LIGHT_ICONS}
+  DARK_ICONS ${KIT_DARK_ICONS}
   WRAP_PYTHONQT
   )
 
