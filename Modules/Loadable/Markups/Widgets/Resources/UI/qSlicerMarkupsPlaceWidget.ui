@@ -87,7 +87,7 @@
      </property>
      <property name="icon">
       <iconset resource="../../../Resources/qSlicerMarkupsModule.qrc">
-       <normaloff>:/Icons/MarkupsDelete.png</normaloff>:/Icons/MarkupsDelete.png</iconset>
+       <normaloff>:/Icons/SlicerTrash.svg</normaloff>:/Icons/SlicerTrash.svg</iconset>
      </property>
     </widget>
    </item>
@@ -107,7 +107,8 @@
      </property>
      <property name="icon">
       <iconset resource="../../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-       <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
+       <normaloff>:/Icons/SlicerMoreOptionsHoriz.svg</normaloff>:/Icons/SlicerMoreOptionsHoriz.svg
+      </iconset>
      </property>
      <property name="popupMode">
       <enum>QToolButton::InstantPopup</enum>
@@ -166,8 +167,8 @@
   <action name="ActionVisibility">
    <property name="icon">
     <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerInvisible.png</normaloff>
-     <normalon>:/Icons/Small/SlicerVisible.png</normalon>:/Icons/Small/SlicerInvisible.png</iconset>
+     <normaloff>:/Icons/SlicerInvisible.svg</normaloff>
+     <normalon>:/Icons/SlicerVisible.svg</normalon>:/Icons/SlicerInvisible.svg</iconset>
    </property>
    <property name="text">
     <string>Visibility</string>
@@ -179,8 +180,9 @@
   <action name="ActionLocked">
    <property name="icon">
     <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerUnlock.png</normaloff>
-     <normalon>:/Icons/Small/SlicerLock.png</normalon>:/Icons/Small/SlicerUnlock.png</iconset>
+     <normaloff>:/Icons/SlicerUnlock.svg</normaloff>
+     <normalon>:/Icons/SlicerLock.svg</normalon>:/Icons/SlicerUnlock.svg
+    </iconset>
    </property>
    <property name="text">
     <string>Locked</string>

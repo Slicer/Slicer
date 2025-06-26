@@ -528,11 +528,11 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
 
   if ( currentMarkupsNode->GetLocked() )
   {
-    d->ActionLocked->setIcon( QIcon( ":/Icons/Small/SlicerLock.png" ) );
+    d->ActionLocked->setIcon( QIcon( ":/Icons/SlicerLock.svg" ) );
   }
   else
   {
-    d->ActionLocked->setIcon( QIcon( ":/Icons/Small/SlicerUnlock.png" ) );
+    d->ActionLocked->setIcon( QIcon( ":/Icons/SlicerUnlock.svg" ) );
   }
 
   bool fixedNumberControlPoints = currentMarkupsNode->GetFixedNumberOfControlPoints();
@@ -545,7 +545,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   else
   {
     d->ActionFixedNumberOfControlPoints->setIcon(QIcon(":/Icons/Small/SlicerPointNumberUnlock.png"));
-    d->DeleteButton->setIcon(QIcon(":/Icons/MarkupsDelete.png"));
+    d->DeleteButton->setIcon(QIcon(":/Icons/SlicerTrash.svg"));
     d->DeleteButton->setToolTip(qSlicerMarkupsPlaceWidget::tr("Delete last added control point"));
   }
   d->ActionUnsetLast->setVisible(!fixedNumberControlPoints && d->UnsetLastControlPointOptionVisible); // QToolButton button action does this so don't also have in menu
@@ -557,11 +557,11 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   {
     if (currentMarkupsNode->GetDisplayNode()->GetVisibility() )
     {
-      d->ActionVisibility->setIcon( QIcon( ":/Icons/Small/SlicerVisible.png" ) );
+      d->ActionVisibility->setIcon( QIcon( ":/Icons/SlicerVisible.svg" ) );
     }
     else
     {
-      d->ActionVisibility->setIcon( QIcon( ":/Icons/Small/SlicerInvisible.png" ) );
+      d->ActionVisibility->setIcon( QIcon( ":/Icons/SlicerInvisible.svg" ) );
     }
   }
 
