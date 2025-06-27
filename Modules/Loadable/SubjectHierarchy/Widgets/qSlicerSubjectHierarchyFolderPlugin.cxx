@@ -77,7 +77,7 @@ public:
 qSlicerSubjectHierarchyFolderPluginPrivate::qSlicerSubjectHierarchyFolderPluginPrivate(qSlicerSubjectHierarchyFolderPlugin& object)
 : q_ptr(&object)
 {
-  this->FolderIcon = QIcon(":Icons/Folder.png");
+  this->FolderIcon = QIcon(":Icons/SlicerFolder.svg");
 
   this->CreateFolderUnderSceneAction = nullptr;
   this->CreateFolderUnderNodeAction = nullptr;

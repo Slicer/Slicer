@@ -141,7 +141,7 @@ const char* qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_T
 qSlicerSubjectHierarchyTransformsPluginPrivate::qSlicerSubjectHierarchyTransformsPluginPrivate(qSlicerSubjectHierarchyTransformsPlugin& object)
   : q_ptr(&object)
 {
-  this->TransformIcon = QIcon(":Icons/Transform.png");
+  this->TransformIcon = QIcon(":Icons/SlicerTransform.svg");
   this->ToggleInteractionAction = nullptr;
   this->ToggleInteractionTranslationVisibleAction = nullptr;
   this->ToggleInteractionRotationVisibleAction = nullptr;

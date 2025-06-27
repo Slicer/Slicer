@@ -78,17 +78,17 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->PendingItemModified = -1; // -1 means not updating
 
-  this->HiddenIcon = QIcon(":Icons/VisibleOff.png");
-  this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
+  this->HiddenIcon = QIcon(":Icons/SlicerInvisible.svg");
+  this->VisibleIcon = QIcon(":Icons/SlicerVisible.svg");
   this->PartiallyVisibleIcon = QIcon(":Icons/VisiblePartially.png");
 
-  this->UnknownIcon = QIcon(":Icons/Unknown.png");
-  this->WarningIcon = QIcon(":Icons/Warning.png");
+  this->UnknownIcon = QIcon(":Icons/SlicerError.svg");
+  this->WarningIcon = QIcon(":Icons/SlicerWarning.svg");
 
-  this->NoTransformIcon = QIcon(":/Icons/NoTransform.png");
-  this->FolderTransformIcon = QIcon(":/Icons/FolderTransform.png");
-  this->LinearTransformIcon = QIcon(":/Icons/LinearTransform.png");
-  this->DeformableTransformIcon = QIcon(":Icons/DeformableTransform.png");
+  this->NoTransformIcon = QIcon(":/Icons/SlicerRemoveTransform.svg");
+  this->FolderTransformIcon = QIcon(":/Icons/SlicerFolder.svg");
+  this->LinearTransformIcon = QIcon(":/Icons/SlicerLinearTransform.svg");
+  this->DeformableTransformIcon = QIcon(":Icons/SlicerDeformableTransform.svg");
 
   this->DelayedItemChangedInvoked = false;
 
@@ -139,9 +139,9 @@ void qMRMLSubjectHierarchyModelPrivate::init()
   q->horizontalHeaderItem(q->transformColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Applied transform"));
   q->horizontalHeaderItem(q->idColumn())->setToolTip(qMRMLSubjectHierarchyModel::tr("Node ID"));
 
-  q->horizontalHeaderItem(q->visibilityColumn())->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
-  q->horizontalHeaderItem(q->colorColumn())->setIcon(QIcon(":/Icons/Colors.png"));
-  q->horizontalHeaderItem(q->transformColumn())->setIcon(QIcon(":/Icons/Transform.png"));
+  q->horizontalHeaderItem(q->visibilityColumn())->setIcon(QIcon(":/Icons/SlicerToggleVisibility.svg"));
+  q->horizontalHeaderItem(q->colorColumn())->setIcon(QIcon(":/Icons/SlicerSelectColor.svg"));
+  q->horizontalHeaderItem(q->transformColumn())->setIcon(QIcon(":/Icons/TransformsModule.svg"));
 
   // Set visibility icons from model to the default plugin
   qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin()->setDefaultVisibilityIcons(

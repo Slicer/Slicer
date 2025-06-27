@@ -114,9 +114,9 @@ public:
 qSlicerSubjectHierarchyVolumesPluginPrivate::qSlicerSubjectHierarchyVolumesPluginPrivate(qSlicerSubjectHierarchyVolumesPlugin& object)
 : q_ptr(&object)
 {
-  this->VolumeIcon = QIcon(":Icons/Volume.png");
-  this->VolumeVisibilityOffIcon = QIcon(":Icons/VolumeVisibilityOff.png");
-  this->VolumeVisibilityOnIcon = QIcon(":Icons/VolumeVisibilityOn.png");
+  this->VolumeIcon = QIcon(":Icons/SlicerSourceVolume");
+  this->VolumeVisibilityOffIcon = QIcon(":Icons/SlicerInvisible.svg");
+  this->VolumeVisibilityOnIcon = QIcon(":Icons/SlicerVisible.svg");
 }
 
 //------------------------------------------------------------------------------

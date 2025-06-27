@@ -72,7 +72,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModelsPluginPrivate::qSlicerSubjectHierarchyModelsPluginPrivate(qSlicerSubjectHierarchyModelsPlugin& object)
 : q_ptr(&object)
-, ModelIcon(QIcon(":Icons/Model.png"))
+, ModelIcon(QIcon(":Icons/SlicerModel.svg"))
 {
 }
 

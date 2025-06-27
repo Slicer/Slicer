@@ -86,7 +86,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchySegmentsPluginPrivate::qSlicerSubjectHierarchySegmentsPluginPrivate(qSlicerSubjectHierarchySegmentsPlugin& object)
 : q_ptr(&object)
-, SegmentIcon(QIcon(":Icons/Segment.png"))
+, SegmentIcon(QIcon(":Icons/SegmentationDisplayFill.svg"))
 {
 }
 

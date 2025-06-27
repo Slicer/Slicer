@@ -85,7 +85,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchySegmentationsPluginPrivate::qSlicerSubjectHierarchySegmentationsPluginPrivate(qSlicerSubjectHierarchySegmentationsPlugin& object)
 : q_ptr(&object)
-, SegmentationIcon(QIcon(":Icons/Segmentation.png"))
+, SegmentationIcon(QIcon(":Icons/SlicerSegmentation.svg"))
 , ExportBinaryLabelmapAction(nullptr)
 , ExportClosedSurfaceAction(nullptr)
 , ConvertLabelmapToSegmentationAction(nullptr)
