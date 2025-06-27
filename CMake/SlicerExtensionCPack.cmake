@@ -193,7 +193,7 @@ else()
 endif()
 
 #------------------------------------------------------------------------------
-# macOS specific configuration used by the "fix-up" script
+# macOS specific configuration used by the "fixup" script
 #------------------------------------------------------------------------------
 if(APPLE)
   set(fixup_path @rpath)
@@ -216,7 +216,7 @@ if(APPLE)
 
   #
   # Setting this variable in the CMakeLists.txt of an extension allows to update
-  # the list of directories used by the "fix-up" script to look up libraries
+  # the list of directories used by the "fixup" script to look up libraries
   # that should be copied into the extension package.
   #
   # To ensure the extension can be bundled, the variable should be set as a CACHE
@@ -236,7 +236,7 @@ if(APPLE)
   endif()
 
   #------------------------------------------------------------------------------
-  # Configure "fix-up" script
+  # Configure "fixup" script
   #------------------------------------------------------------------------------
   configure_file(
     ${Slicer_EXTENSION_CPACK_BUNDLE_FIXUP}
@@ -244,7 +244,7 @@ if(APPLE)
     @ONLY)
 
   #------------------------------------------------------------------------------
-  # Add install rule ensuring the "fix-up" script is executed at packaging time
+  # Add install rule ensuring the "fixup" script is executed at packaging time
   #------------------------------------------------------------------------------
   if(NOT _has_cpack_cmake_install_projects)
 

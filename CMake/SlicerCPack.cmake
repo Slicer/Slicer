@@ -166,7 +166,7 @@ if(NOT APPLE)
 else()
 
   #------------------------------------------------------------------------------
-  # macOS specific configuration used by the "fix-up" script
+  # macOS specific configuration used by the "fixup" script
   #------------------------------------------------------------------------------
   if(Slicer_USE_PYTHONQT)
     include(${Slicer_CMAKE_DIR}/SlicerBlockInstallExternalPythonModules.cmake)
@@ -189,7 +189,7 @@ else()
 
   #
   # Setting this variable in the CMakeLists.txt of an extension allows to update
-  # the list of directories used by the "fix-up" script to look up libraries
+  # the list of directories used by the "fixup" script to look up libraries
   # that should be copied into the Slicer package when the extension is bundled.
   #
   # To ensure the extension can be bundled, the variable should be set as a CACHE
@@ -211,7 +211,7 @@ else()
   endforeach()
 
   #------------------------------------------------------------------------------
-  # Configure "fix-up" script
+  # Configure "fixup" script
   #------------------------------------------------------------------------------
   set(fixup_path @rpath)
   set(slicer_cpack_bundle_fixup_directory ${Slicer_BINARY_DIR}/CMake/SlicerCPackBundleFixup)

@@ -860,7 +860,7 @@ function(fixup_bundle app libs dirs)
         message(STATUS "${i}/${n}: fixing up '${${key}_RESOLVED_EMBEDDED_ITEM}'")
         fixup_bundle_item("${${key}_RESOLVED_EMBEDDED_ITEM}" "${exepath}" "${dirs}")
       else()
-        message(STATUS "${i}/${n}: fix-up not required on this platform '${${key}_RESOLVED_EMBEDDED_ITEM}'")
+        message(STATUS "${i}/${n}: fixup not required on this platform '${${key}_RESOLVED_EMBEDDED_ITEM}'")
       endif()
     endforeach()
 
