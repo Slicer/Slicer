@@ -105,6 +105,24 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@fixup_path@/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_THIRDPARTY_LIB_DIR@")
   endif()
 
+  set(extension_fixup_embedded_path_overrides "@EXTENSION_FIXUP_BUNDLE_EMBEDDED_PATH_OVERRIDES@")
+  foreach(pair IN LISTS extension_fixup_embedded_path_overrides)
+    string(REPLACE "|" ";" split_pair "${pair}")
+    list(LENGTH split_pair split_len)
+    if(NOT split_len EQUAL 2)
+      message(WARNING "Invalid override pair '${pair}', expected format <regex>|<relative_path>")
+      continue()
+    endif()
+    list(GET split_pair 0 regex)
+    list(GET split_pair 1 relative_path)
+
+    if(item MATCHES "@Slicer_BINARY_INNER_SUBDIR@/${regex}")
+      # Ignore Slicer libraries. They are already expected to be fixed up.
+    elseif(item MATCHES "${regex}")
+      set(path "@fixup_path@/@Slicer_BUNDLE_EXTENSIONS_LOCATION@${relative_path}")
+    endif()
+  endforeach()
+
   math(EXPR lib_current $ENV{FIXUP_LIB_CURRENT}+1)
   set(ENV{FIXUP_LIB_CURRENT} ${lib_current})
   #gp_log_message("${lib_current}/$ENV{FIXUP_LIBS_COUNT} - fixing item ${item} with ${path}")
@@ -336,6 +354,11 @@ function(fixup_slicer_extension)
         "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/qSlicer*PythonQt.so"
         )
     endif()
+  endif()
+
+  set(extension_candidates_patterns "@EXTENSION_FIXUP_BUNDLE_CANDIDATES_PATTERNS@")
+  if(extension_candidates_patterns)
+    list(APPEND candidates_pattern ${extension_candidates_patterns})
   endif()
 
   set(libs "")

@@ -211,6 +211,64 @@ if(APPLE)
   file(REAL_PATH ${Slicer_SUPERBUILD_DIR} Slicer_SUPERBUILD_DIR)
 
   #------------------------------------------------------------------------------
+  # <ExtensionName>_FIXUP_BUNDLE_CANDIDATES_PATTERNS
+  #------------------------------------------------------------------------------
+
+  #
+  # Extensions can define this variable in their CMakeLists.txt to specify
+  # additional glob patterns used by the "fixup" script to locate libraries
+  # that should be processed (e.g., to update rpaths or install names).
+  #
+  # The variable must be set as a CACHE entry to be visible during packaging.
+  # Each pattern should be relative to the extension’s install prefix.
+  #
+
+  set(dollar "$")
+  set(ext_dir "${dollar}{CMAKE_INSTALL_PREFIX}")
+
+  set(EXTENSION_FIXUP_BUNDLE_CANDIDATES_PATTERNS)
+
+  if(DEFINED ${EXTENSION_NAME}_FIXUP_BUNDLE_CANDIDATES_PATTERNS)
+    foreach(candidates_pattern IN LISTS ${EXTENSION_NAME}_FIXUP_BUNDLE_CANDIDATES_PATTERNS)
+      message(STATUS "Using fixup candidates pattern [${candidates_pattern}]")
+      set(candidates_pattern "${ext_dir}/${candidates_pattern}")
+      list(APPEND EXTENSION_FIXUP_BUNDLE_CANDIDATES_PATTERNS ${candidates_pattern})
+    endforeach()
+  endif()
+
+  #------------------------------------------------------------------------------
+  # <ExtensionName>_FIXUP_BUNDLE_EMBEDDED_PATH_OVERRIDES
+  #------------------------------------------------------------------------------
+
+  #
+  # Extensions can define this variable in their CMakeLists.txt to override
+  # how the `install_name_tool` sets the install name (`id`) and resolves
+  # references (`@rpath`) for libraries or executables.
+  #
+  # The value should be a list of entries in the format:
+  #
+  #   "<regex>|<relative_path>"
+  #
+  # - <regex>: A regular expression used to match a given library or executable path.
+  # - <relative_path>: The relative destination path under the bundle, used both
+  #   to compute the relocated path and to define the corresponding `@rpath` entry.
+  #
+  # The relocation behavior is context-aware: it takes into account whether the
+  # fixup is happening as part of the application or extension packaging process.
+  #
+  # This variable must be set as a CACHE entry to be picked up during packaging.
+  #
+
+  set(EXTENSION_FIXUP_BUNDLE_EMBEDDED_PATH_OVERRIDES)
+
+  if(DEFINED ${EXTENSION_NAME}_FIXUP_BUNDLE_EMBEDDED_PATH_OVERRIDES)
+    foreach(embedded_path_override IN LISTS ${EXTENSION_NAME}_FIXUP_BUNDLE_EMBEDDED_PATH_OVERRIDES)
+      message(STATUS "Using fixup embedded path override [${embedded_path_override}]")
+      list(APPEND EXTENSION_FIXUP_BUNDLE_EMBEDDED_PATH_OVERRIDES ${embedded_path_override})
+    endforeach()
+  endif()
+
+  #------------------------------------------------------------------------------
   # <ExtensionName>_FIXUP_BUNDLE_LIBRARY_DIRECTORIES
   #------------------------------------------------------------------------------
 
