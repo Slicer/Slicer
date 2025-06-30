@@ -1320,6 +1320,18 @@ int vtkMRMLStorageNode::WriteData(vtkMRMLNode* refNode)
 }
 
 //------------------------------------------------------------------------------
+std::string vtkMRMLStorageNode::WriteDataToJSONString(vtkMRMLNode* vtkNotUsed(refNode))
+{
+  return "";
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLStorageNode::ReadDataFromJSONString(vtkMRMLNode* vtkNotUsed(refNode), const std::string vtkNotUsed(json))
+{
+  return false;
+}
+
+//------------------------------------------------------------------------------
 int vtkMRMLStorageNode::ReadDataInternal(vtkMRMLNode* vtkNotUsed(refNode))
 {
   return 0;
