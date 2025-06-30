@@ -149,9 +149,15 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
+  /// Get node XML tag name (like Volume, Model)
+  const char* GetNodeTagName() override {return this->GetDefaultNodeNamePrefix();};
+
   /// Get markup type internal name. This type name is the same regardless of the
   /// chosen application language and should not be displayed to end users.
   virtual const char* GetMarkupType() {return "Markup";};
+
+  /// Set markup short name.
+  void SetDefaultNodeNamePrefix(std::string prefix);
 
   /// Get markup short name.
   /// This may be displayed to the user and therefore it is translated to the application language.
