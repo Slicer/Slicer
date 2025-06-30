@@ -67,7 +67,7 @@
 
 namespace
 {
-  const std::string MARKUPS_SCHEMA =
+  const std::string VOLUME_DISPLAY_PRESETS_SCHEMA =
     "https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#";
   const std::string ACCEPTED_VOLUME_DISPLAY_PRESETS_SCHEMA_REGEX =
     "^https://raw\\.githubusercontent\\.com/Slicer/Slicer/main/Modules/Loadable/Volumes/Resources/Schema/"
@@ -1609,17 +1609,26 @@ void vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets()
   std::string errorPrefix = "vtkSlicerVolumesLogic::InitializeDefaultVolumeDisplayPresets failed: Error reading '" + displayPresetsFilename + "'.";
 
   // Verify schema
-  if (!jsonRoot->HasMember("@schema"))
+  std::string schemaStr;
+  if (jsonRoot->HasMember("$schema"))
   {
-    vtkErrorMacro(<< errorPrefix << " File does not contain schema information.");
+    schemaStr = (*jsonRoot)["$schema"].GetString();
+  }
+  else if (jsonRoot->HasMember("@schema"))
+  {
+    // For backward compatibility only (schema should be specified with $schema but in older files @schema was used)
+    schemaStr = (*jsonRoot)["@schema"].GetString();
+  }
+  else
+  {
+    vtkErrorMacro(<< errorPrefix << " File does not contain schema information in '$schema' property.");
     return;
   }
-  rapidjson::Value& schema = (*jsonRoot)["@schema"];
   vtksys::RegularExpression filterProgressRegExp(ACCEPTED_VOLUME_DISPLAY_PRESETS_SCHEMA_REGEX);
-  if (!filterProgressRegExp.find(schema.GetString()))
+  if (!filterProgressRegExp.find(schemaStr))
   {
-    vtkErrorMacro(<< errorPrefix << " File is expected to contain @schema: "
-      << MARKUPS_SCHEMA << " (different minor and patch version numbers are accepted).");
+    vtkErrorMacro(<< errorPrefix << " File is expected to contain $schema: "
+      << VOLUME_DISPLAY_PRESETS_SCHEMA << " (different minor and patch version numbers are accepted).");
     return;
   }
 
