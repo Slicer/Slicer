@@ -16,6 +16,7 @@ This can be used to prevent translation of development and test files.
 
 import argparse
 import glob
+import json
 import logging
 import os
 import re
@@ -357,6 +358,115 @@ def extract_translatable_from_cli_modules(input_paths, exclude_filenames=None):
                 if name.endswith(".xml"):
                     _generate_translation_header_from_cli_xml(os.path.join(root, name))
 
+def extract_translatable_from_json_files(input_paths):
+    """For each JSON file it creates a *_tr.h file that Qt lupdate can consume.
+    The JSON file is translatable if it has a schema and the schema specifies translatable properties.
+    Translatable properties are designated in the schema file by the "translatable" flag.
+    The schema file is searched in the the same folder, `Schema` folder, or `Schemas` folder by the filename
+    myfile-schema.json ( where myfile is the name of the JSON file without extension) or the filename specified in the
+    `$schema` property of the JSON file.
+    :param input_paths: List of folders that may contain JSON files.
+    """
+
+    for input_path in input_paths:
+        for root, dirs, files in os.walk(input_path):
+            for name in files:
+                if name.endswith(".json"):
+                    json_filepath = os.path.join(root, name)
+                    property_names = _get_translatable_property_names_from_json_file(json_filepath)
+                    if not property_names:
+                        # No translatable properties found in the schema, skip this file
+                        continue
+                    _generate_translation_header_from_json_file(json_filepath, property_names)
+
+def _get_schema_path_from_json_file(filename):
+    """Get the schema file path for a JSON file.
+    The schema file is searched in the the same folder, `Schema` folder, or `Schemas` folder by the filename
+    myfile-schema.json ( where myfile is the name of the JSON file without extension) or the filename specified in the
+    `$schema` property of the JSON file.
+    :param filename: Path to the JSON file.
+    :return: Path to the schema file or None if not found.
+    """
+
+    # Try to find myfile-schema.json file
+    candidate_folders = [os.path.dirname(filename), os.path.join(os.path.dirname(filename), "Schema"), os.path.join(os.path.dirname(filename), "Schemas")]
+    for folder in candidate_folders:
+        schema_path = os.path.join(folder, os.path.splitext(os.path.basename(filename))[0] + "-schema.json")
+        if os.path.isfile(schema_path):
+            # Schema file is found
+            return schema_path
+
+    # Try to find schema file that is specified in the $schema property of the JSON file
+    # (network is not accessed, it is searched in local folders only)
+    schema_filename = None
+    try:
+        with open(filename, encoding="utf8") as f:
+            json_data = json.load(f)
+        schema_url = json_data["$schema"]
+        # schema_url example:
+        # https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#
+        schema_filename = os.path.basename(schema_url).split("#")[0]
+    except:
+        # No schema filename was found
+        return None
+    if not schema_filename:
+        # No schema filename was found
+        return None
+    for folder in candidate_folders:
+        schema_path = os.path.join(folder, schema_filename)
+        if os.path.isfile(schema_path):
+            # Schema file is found
+            return schema_path
+
+    # Schema file was not found
+    return None
+
+def _get_translatable_property_names_from_json_file(filename):
+    """Get all translatable property names from a JSON file.
+    It uses the "translatable" custom flag.
+    """
+
+    # find the file-schema.json in the same folder as the json file
+    schema_filename = _get_schema_path_from_json_file(filename)
+    if not schema_filename:
+        return []
+
+    try:
+        with open(schema_filename) as f:
+            schema = json.load(f)
+    except json.JSONDecodeError as e:
+        logging.error(f"Failed to decode JSON schema file '{schema_filename}': {e}")
+        return []
+
+    names = set()
+
+    def recurse(subschema):
+        if isinstance(subschema, dict):
+
+            # Recurse through object properties
+            if "properties" in subschema:
+                for prop, child in subschema["properties"].items():
+                    if child.get("translatable") is True:
+                        names.add(prop)
+                    recurse(child)
+
+            # Recurse into array items
+            if "items" in subschema:
+                recurse(subschema["items"])
+
+            # Recurse into all subschema items
+            if "anyOf" in subschema:
+                for item in subschema["anyOf"]:
+                    recurse(item)
+            if "oneOf" in subschema:
+                for item in subschema["oneOf"]:
+                    recurse(item)
+            if "allOf" in subschema:
+                for item in subschema["allOf"]:
+                    recurse(item)
+
+    recurse(schema)
+    return sorted(names)
 
 def _get_string_values_from_json(data, keys):
     """Get all string values from a JSON object that matches any of the the specified keys"""
@@ -458,13 +568,10 @@ def main(argv):
             "DiffusionTensorTest.xml",
         ]
         extract_translatable_from_cli_modules(cli_input_paths, cli_exclude_names)
-
-        # Slicer presets files translation
-        _generate_translation_header_from_json_file(
-            os.path.join(args.source_code_dir, "Modules/Loadable/Volumes/Resources/VolumeDisplayPresets.json"),
-            ["name", "description"])
     else:
         extract_translatable_from_cli_modules([args.source_code_dir])
+
+    extract_translatable_from_json_files([args.source_code_dir])
 
     update_translations(args.component, args.source_code_dir, args.translations_dir, args.lupdate_path,
                         args.language, args.remove_obsolete_strings, args.source_filter_regex, args.keep_temporary_files)
