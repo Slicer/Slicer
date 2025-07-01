@@ -37,7 +37,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool ignoreSlicerRC READ ignoreSlicerRC CONSTANT)
   Q_PROPERTY(QString pythonScript READ pythonScript CONSTANT)
   Q_PROPERTY(QString extraPythonScript READ extraPythonScript CONSTANT)
-  Q_PROPERTY(QString extraPythonScriptProcessedArgumentsCount READ extraPythonScriptProcessedArgumentsCount CONSTANT)
+  Q_PROPERTY(int extraPythonScriptProcessedArgumentsCount READ extraPythonScriptProcessedArgumentsCount CONSTANT)
   Q_PROPERTY(QString pythonCode READ pythonCode CONSTANT)
   Q_PROPERTY(bool runPythonAndExit READ runPythonAndExit WRITE setRunPythonAndExit)
   Q_PROPERTY(bool disableCLIModules READ disableCLIModules CONSTANT)
