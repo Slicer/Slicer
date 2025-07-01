@@ -17,7 +17,7 @@
 
 #include <vtkSlicerBaseCLIConfigure.h>
 
-#if defined(WIN32) && !defined(VTKSLICER_STATIC)
+#if defined(_WIN32) && !defined(VTKSLICER_STATIC)
 #if defined(SlicerBaseCLI_EXPORTS)
 #define VTK_SLICER_BASE_CLI_EXPORT __declspec( dllexport )
 #else

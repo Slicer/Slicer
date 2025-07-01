@@ -16,7 +16,7 @@
 
 #include <vtkMRMLDisplayableManagerConfigure.h>
 
-#if defined(WIN32) && !defined(MRMLDisplayableManager_STATIC)
+#if defined(_WIN32) && !defined(MRMLDisplayableManager_STATIC)
 #if defined(MRMLDisplayableManager_EXPORTS)
 #define VTK_MRML_DISPLAYABLEMANAGER_EXPORT __declspec( dllexport )
 #else

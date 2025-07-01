@@ -3,7 +3,7 @@
 
 #include "itkObjectFactoryBase.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef MRMLIDIOPlugin_EXPORTS
 #define MRMLIDIOPlugin_EXPORT __declspec(dllexport)
 #else
