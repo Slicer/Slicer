@@ -12,9 +12,9 @@ endif()
 
 if(NOT SWIG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
-  set(SWIG_TARGET_VERSION 4.0.2)
-  set(SWIG_DOWNLOAD_SOURCE_HASH "05e7da70ce6d9a733b96c0bcfa3c1b82765bd859f48c74759bbf4bb1467acb1809caa310cba5e2b3280cd704fca249eaa0624821dffae1d2a75097c7f55d14ed")
-  set(SWIG_DOWNLOAD_WIN_HASH "b8f105f9b9db6acc1f6e3741990915b533cd1bc206eb9645fd6836457fd30789b7229d2e3219d8e35f2390605ade0fbca493ae162ec3b4bc4e428b57155db03d")
+  set(SWIG_TARGET_VERSION 4.3.1)
+  set(SWIG_DOWNLOAD_SOURCE_HASH "8958f7bc3345549a9bc4e00aa8d40a99f6c4bb92b95d627c8796cf8f8d1ba0041a89cab542f171778c2b26aa2a877767181ae9bd2c05fd055f373a32a463399c")
+  set(SWIG_DOWNLOAD_WIN_HASH "ca7210684b6ccb1b9bb186797bf1b67bbf3e76f6d0e702fee78edf7456992a4298eb5fa0b5f602a4240161fedd422920fe56e12cd60b8c8fd71c2f784f3d0f43")
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
   if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24")
@@ -46,7 +46,7 @@ if(NOT SWIG_DIR AND NOT Slicer_USE_SYSTEM_${proj})
     # not windows
 
     # Set dependency list
-    set(${proj}_DEPENDENCIES PCRE python)
+    set(${proj}_DEPENDENCIES PCRE2 python)
 
     # Include dependent projects if any
     ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -87,7 +87,7 @@ set(ENV{YFLAGS} \"${BISON_FLAGS}\")
 set(${proj}_WORKING_DIR \"${EP_BINARY_DIR}\")
 ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
     --prefix=${EP_INSTALL_DIR}
-    --with-pcre-prefix=${PCRE_DIR}
+    --with-pcre2-prefix=${PCRE2_DIR}
     --without-octave
     --without-java
     --with-python=${PYTHON_EXECUTABLE})
