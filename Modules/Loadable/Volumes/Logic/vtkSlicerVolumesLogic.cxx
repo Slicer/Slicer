@@ -68,7 +68,7 @@
 namespace
 {
   const std::string VOLUME_DISPLAY_PRESETS_SCHEMA =
-    "https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.0.json#";
+    "https://raw.githubusercontent.com/Slicer/Slicer/main/Modules/Loadable/Volumes/Resources/Schema/volumes-display-presets-schema-v1.0.1.json#";
   const std::string ACCEPTED_VOLUME_DISPLAY_PRESETS_SCHEMA_REGEX =
     "^https://raw\\.githubusercontent\\.com/Slicer/Slicer/main/Modules/Loadable/Volumes/Resources/Schema/"
     "volumes-display-presets-schema-v1\\.[0-9]+\\.[0-9]+\\.json#";
