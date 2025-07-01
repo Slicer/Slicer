@@ -66,7 +66,7 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
     else()
     set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN
       "${CMAKE_TESTDRIVER_BEFORE_TESTMAIN}\n// Direct VTK messages to standard output
-      #ifdef WIN32
+      #ifdef _WIN32
         vtkWin32OutputWindow* outputWindow =
           vtkWin32OutputWindow::SafeDownCast(vtkOutputWindow::GetInstance());
         if (outputWindow)

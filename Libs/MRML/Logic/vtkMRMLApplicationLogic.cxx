@@ -63,7 +63,7 @@
 #include <sstream>
 
 // For LoadDefaultParameterSets
-#ifdef WIN32
+#ifdef _WIN32
 # include <windows.h>
 #else
 # include <dirent.h>
@@ -690,7 +690,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 //     {
 //     vtkDebugMacro("\nFindColorFiles: got user color file paths = " << this->UserColorFilePaths);
 //     // parse out the list, breaking at delimiter strings
-// #ifdef WIN32
+// #ifdef _WIN32
 //     const char *delim = ";";
 // #else
 //     const char *delim = ":";
@@ -716,7 +716,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
     filesVector.push_back(dirString);
     filesVector.emplace_back("/");
 
-#ifdef WIN32
+#ifdef _WIN32
     WIN32_FIND_DATA findData;
     HANDLE fileHandle;
     int flag = 1;
@@ -761,7 +761,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
         // take this file off so that can build the next file name
         filesVector.pop_back();
 
-#ifdef WIN32
+#ifdef _WIN32
         flag = FindNextFile(fileHandle, &findData);
       } // end of while flag
       FindClose(fileHandle);
