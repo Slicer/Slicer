@@ -1,5 +1,5 @@
 
-set(proj PCRE)
+set(proj PCRE2)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
@@ -12,8 +12,8 @@ if(Slicer_USE_SYSTEM_${proj})
 endif()
 
 # Sanity checks
-if(DEFINED PCRE_DIR AND NOT EXISTS ${PCRE_DIR})
-  message(FATAL_ERROR "PCRE_DIR variable is defined but corresponds to nonexistent directory")
+if(DEFINED PCRE2_DIR AND NOT EXISTS ${PCRE2_DIR})
+  message(FATAL_ERROR "PCRE2_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
 if(NOT Slicer_USE_SYSTEM_${proj})
@@ -21,9 +21,9 @@ if(NOT Slicer_USE_SYSTEM_${proj})
   #  PCRE (Perl Compatible Regular Expressions)
   #
 
-  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/PCRE)
-  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/PCRE-build)
-  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/PCRE-install)
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/PCRE2)
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/PCRE2-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/PCRE2-install)
 
   include(ExternalProjectForNonCMakeProject)
 
@@ -47,12 +47,12 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
     --prefix=${EP_INSTALL_DIR} --disable-shared)
 ")
 
-  set(_version "8.44")
+  set(_version "10.44")
 
-  ExternalProject_add(PCRE
+  ExternalProject_add(PCRE2
     ${${proj}_EP_ARGS}
-    URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/PCRE/pcre-${_version}.tar.gz
-    URL_HASH SHA512=abac4c4f9df9e61d7d7761a9c50843882611752e1df0842a54318f358c28f5953025eba2d78997d21ee690756b56cc9f1c04a5ed591dd60654cc78ba16d9ecfb
+    URL https://github.com/Slicer/SlicerBinaryDependencies/releases/download/PCRE2/pcre2-${_version}.tar.gz
+    URL_HASH SHA512=c43bbe2235993cd703e887bc48cf76d6a6d2f8377accfee3620eff5a4681a36e1f9c147d9e99c6674d5648a54af1d5d174018d9a102abbea7e8d38337bbbd17e
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
@@ -66,5 +66,5 @@ ExternalProject_Execute(${proj} \"configure\" sh ${EP_SOURCE_DIR}/configure
     VERSION ${_version}
     )
 
-  set(PCRE_DIR ${EP_INSTALL_DIR})
+  set(PCRE2_DIR ${EP_INSTALL_DIR})
 endif()
