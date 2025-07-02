@@ -31,7 +31,6 @@
 class qSlicerScriptedLoadableModuleTester : public QObject
 {
   Q_OBJECT
-
 private:
   QString preparePythonSource(const QString& scriptName);
 

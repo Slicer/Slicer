@@ -58,9 +58,9 @@ public:
 
   // Utility function for getting the subject-hierarchy-based relative path of an item.
   // Starting from fromItemID, this function climbs up the subject hierarchy tree until it reaches toItemID,
-  // and it constructs a list of item names that it encounters along the way. The list goes into the return parameter `path`.
-  // The list can be thought of as the interval "(fromItem, toItem]"; i.e. it excludes fromItem.
-  // The returned bool indicates success.
+  // and it constructs a list of item names that it encounters along the way. The list goes into the return parameter
+  // `path`. The list can be thought of as the interval "(fromItem, toItem]"; i.e. it excludes fromItem. The returned
+  // bool indicates success.
   static bool getSubjectHierarchyPath(vtkMRMLSubjectHierarchyNode* shNode, vtkIdType fromItemID, vtkIdType toItemID, QStringList& path);
 
 public:
