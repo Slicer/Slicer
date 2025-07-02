@@ -225,9 +225,9 @@ bool qMRMLColorPickerWidget::eventFilter(QObject* target, QEvent* event)
     }
     if (event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-      if (keyEvent->key() == Qt::Key_Up || //
-          keyEvent->key() == Qt::Key_Down)
+      QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>(event);
+      if (keyEvent && //
+          ((keyEvent->key() == Qt::Key_Up) || (keyEvent->key() == Qt::Key_Down)))
       {
         // give the Focus to MRMLColorListView
         d->MRMLColorListView->setFocus();

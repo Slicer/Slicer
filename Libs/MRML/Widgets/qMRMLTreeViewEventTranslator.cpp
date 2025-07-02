@@ -72,8 +72,8 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object, QEvent* Event
   {
     if (Event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* e = static_cast<QKeyEvent*>(Event);
-      if (e->key() == Qt::Key_Enter)
+      QKeyEvent* e = dynamic_cast<QKeyEvent*>(Event);
+      if (e && (e->key() == Qt::Key_Enter))
       {
         QAction* action = menu->activeAction();
         if (action)
@@ -92,8 +92,8 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object, QEvent* Event
     }
     if (Event->type() == QEvent::MouseButtonRelease)
     {
-      QMouseEvent* e = static_cast<QMouseEvent*>(Event);
-      if (e->button() == Qt::LeftButton)
+      QMouseEvent* e = dynamic_cast<QMouseEvent*>(Event);
+      if (e && e->button() == Qt::LeftButton)
       {
         QAction* action = menu->actionAt(e->pos());
         if (action && !action->menu())

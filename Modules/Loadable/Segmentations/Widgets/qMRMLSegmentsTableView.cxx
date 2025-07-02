@@ -956,18 +956,17 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
     // widget in the tab order)
     if (event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       QAbstractItemModel* model = d->SegmentsTable->model();
       QModelIndex currentIndex = d->SegmentsTable->currentIndex();
-
-      if (model
-          && (                                                                                         //
-            (keyEvent->key() == Qt::Key_Left && currentIndex.column() == 0)                            //
-            || (keyEvent->key() == Qt::Key_Up && currentIndex.row() == 0)                              //
-            || (keyEvent->key() == Qt::Key_Right && currentIndex.column() == model->columnCount() - 1) //
-            || (keyEvent->key() == Qt::Key_Down && currentIndex.row() == model->rowCount() - 1)))
+      if (QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>(event))
       {
-        return true;
+        if (model
+            && ((keyEvent->key() == Qt::Key_Left && currentIndex.column() == 0) || (keyEvent->key() == Qt::Key_Up && currentIndex.row() == 0)
+                || (keyEvent->key() == Qt::Key_Right && currentIndex.column() == model->columnCount() - 1)
+                || (keyEvent->key() == Qt::Key_Down && currentIndex.row() == model->rowCount() - 1)))
+        {
+          return true;
+        }
       }
     }
   }

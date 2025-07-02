@@ -306,9 +306,9 @@ bool qSlicerModuleFinderDialog::eventFilter(QObject* target, QEvent* event)
     // widget in the tab order)
     if (event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
-      if (keyEvent != nullptr && filterModel->rowCount() > 0)
+      QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>(event);
+      if (keyEvent && keyEvent != nullptr && filterModel->rowCount() > 0)
       {
         int currentRow = d->ModuleListView->currentIndex().row();
         int stepSize = 1;
