@@ -59,7 +59,7 @@ qSlicerSegmentationsIOOptionsWidget::qSlicerSegmentationsIOOptionsWidget(QWidget
   {
     bool autoOpacities = settings->value("Segmentations/AutoOpacities").toBool();
     d->AutoOpacitiesCheckBox->setChecked(autoOpacities);
-    d->Properties["autoOpacities"] = autoOpacities;
+    d->Properties.insert("autoOpacities", autoOpacities);
   }
 
   connect(d->AutoOpacitiesCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateProperties()));
@@ -74,6 +74,6 @@ void qSlicerSegmentationsIOOptionsWidget::updateProperties()
 {
   Q_D(qSlicerSegmentationsIOOptionsWidget);
 
-  d->Properties["autoOpacities"] = d->AutoOpacitiesCheckBox->isChecked();
-  d->Properties["colorNodeID"] = d->ColorNodeSelector->currentNodeID();
+  d->Properties.insert("autoOpacities", d->AutoOpacitiesCheckBox->isChecked());
+  d->Properties.insert("colorNodeID", d->ColorNodeSelector->currentNodeID());
 }

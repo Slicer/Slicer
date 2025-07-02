@@ -51,6 +51,8 @@ public:
 
   typedef QString IOFileType;
   typedef QVariantMap IOProperties;
+  typedef QString IOFileType;
+  typedef QMultiMap<QString, QVariant> IOProperties;
 
   /// Unique name of the reader/writer
   Q_INVOKABLE virtual QString description() const = 0;

@@ -119,7 +119,7 @@ bool qSlicerTerminologiesReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerTerminologiesReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   this->setLoadedNodes(QStringList());
   if (d->TerminologiesLogic.GetPointer() == nullptr)

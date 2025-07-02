@@ -251,7 +251,8 @@ void NodeTypeWidgetSet::changeCurrentOptionsWidget(qSlicerFileWriterOptionsWidge
     int index = this->optionsStackedWidget->indexOf(newOptionsWidget);
 
     if (index == -1)
-    { // There's a possibility of memory issues if we run into this error, because newOptionsWidget may never have been given a parent
+    { // There's a possibility of memory issues if we run into this error, because newOptionsWidget may never have been
+      // given a parent
       qCritical() << Q_FUNC_INFO << "has detected an error: options widget is not part of its associated stacked widget.";
 
       // Go to the "no options widget" state
@@ -1244,11 +1245,11 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
 
   if (properties.contains("childIdsNonrecursive"))
   {
-    childIdsNonrecursive = properties["childIdsNonrecursive"].toList();
+    childIdsNonrecursive = properties.value("childIdsNonrecursive").toList();
   }
   if (properties.contains("childIdsRecursive"))
   {
-    childIdsRecursive = properties["childIdsRecursive"].toList();
+    childIdsRecursive = properties.value("childIdsRecursive").toList();
   }
 
   // This will remain null if there is no "selectedNodeID", or it will become a pointer to the selected node
@@ -1258,7 +1259,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
   QList<vtkMRMLStorableNode*> nodesNonrecursive, nodesRecursive;
   if (properties.contains("selectedNodeID"))
   {
-    QString selectedNodeID = properties["selectedNodeID"].toString();
+    QString selectedNodeID = properties.value("selectedNodeID").toString();
     selectedNode = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(selectedNodeID.toUtf8().constData()));
     if (selectedNode)
     {
@@ -1301,7 +1302,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
   QHash<QString, QVariant> nodeIdToSubjectHierarchyPath;
   if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert<QHash<QString, QVariant>>())
   {
-    nodeIdToSubjectHierarchyPath = properties["nodeIdToSubjectHierarchyPath"].toHash();
+    nodeIdToSubjectHierarchyPath = properties.value("nodeIdToSubjectHierarchyPath").toHash();
   }
   else
   {

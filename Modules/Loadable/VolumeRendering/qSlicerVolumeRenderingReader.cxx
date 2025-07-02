@@ -102,7 +102,7 @@ bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerVolumeRenderingReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
   if (d->VolumeRenderingLogic.GetPointer() == nullptr)
   {
     return false;

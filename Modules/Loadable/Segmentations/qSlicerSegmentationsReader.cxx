@@ -141,7 +141,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerSegmentationsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   this->setLoadedNodes(QStringList());
   if (d->SegmentationsLogic.GetPointer() == nullptr)
@@ -152,7 +152,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
   QString name;
   if (properties.contains("name"))
   {
-    name = properties["name"].toString();
+    name = properties.value("name").toString();
   }
 
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
@@ -215,13 +215,13 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     bool autoOpacities = true;
     if (properties.contains("autoOpacities"))
     {
-      autoOpacities = properties["autoOpacities"].toBool();
+      autoOpacities = properties.value("autoOpacities").toBool();
     }
 
     vtkMRMLColorTableNode* colorTableNode = nullptr;
     if (properties.contains("colorNodeID"))
     {
-      std::string nodeID = properties["colorNodeID"].toString().toStdString();
+      std::string nodeID = properties.value("colorNodeID").toString().toStdString();
       colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(nodeID));
     }
 

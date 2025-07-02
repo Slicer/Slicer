@@ -134,7 +134,7 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerModelsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   this->setLoadedNodes(QStringList());
   if (!d->ModelsLogic)
@@ -145,7 +145,7 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
   int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS; // default
   if (properties.contains("coordinateSystem"))
   {
-    coordinateSystem = properties["coordinateSystem"].toInt();
+    coordinateSystem = properties.value("coordinateSystem").toInt();
   }
   this->userMessages()->ClearMessages();
   vtkMRMLModelNode* node = d->ModelsLogic->AddModel(fileName.toUtf8(), coordinateSystem, this->userMessages());

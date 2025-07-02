@@ -165,7 +165,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerSequencesReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   this->setLoadedNodes(QStringList());
   if (d->SequencesLogic.GetPointer() == 0)
@@ -192,7 +192,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
   bool show = true; // show volume node in viewers
   if (properties.contains("show"))
   {
-    show = properties["show"].toBool();
+    show = properties.value("show").toBool();
   }
   vtkMRMLSequenceBrowserNode* browserNode = nullptr;
   if (show)
@@ -215,7 +215,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
     {
       if (properties.contains("colorNodeID"))
       {
-        QString colorNodeID = properties["colorNodeID"].toString();
+        QString colorNodeID = properties.value("colorNodeID").toString();
         if (displayableNode->GetDisplayNode())
         {
           displayableNode->GetDisplayNode()->SetAndObserveColorNodeID(colorNodeID.toUtf8());

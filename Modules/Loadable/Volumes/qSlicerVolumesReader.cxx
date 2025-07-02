@@ -172,25 +172,25 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerVolumesReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   QString name = QFileInfo(fileName).baseName();
   if (properties.contains("name"))
   {
-    name = properties["name"].toString();
+    name = properties.value("name").toString();
   }
   int options = 0;
   if (properties.contains("labelmap"))
   {
-    options |= properties["labelmap"].toBool() ? 0x1 : 0x0;
+    options |= properties.value("labelmap").toBool() ? 0x1 : 0x0;
   }
   if (properties.contains("center"))
   {
-    options |= properties["center"].toBool() ? 0x2 : 0x0;
+    options |= properties.value("center").toBool() ? 0x2 : 0x0;
   }
   if (properties.contains("singleFile"))
   {
-    options |= properties["singleFile"].toBool() ? 0x4 : 0x0;
+    options |= properties.value("singleFile").toBool() ? 0x4 : 0x0;
   }
   if (properties.contains("autoWindowLevel"))
   {
@@ -198,12 +198,12 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
   }
   if (properties.contains("discardOrientation"))
   {
-    options |= properties["discardOrientation"].toBool() ? 0x10 : 0x0;
+    options |= properties.value("discardOrientation").toBool() ? 0x10 : 0x0;
   }
   bool propagateVolumeSelection = true;
   if (properties.contains("show"))
   {
-    propagateVolumeSelection = properties["show"].toBool();
+    propagateVolumeSelection = properties.value("show").toBool();
   }
   vtkSmartPointer<vtkStringArray> fileList;
   if (properties.contains("fileNames"))
@@ -288,7 +288,7 @@ bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList& fileInfoList, QFil
           fileInfoIterator.remove();
         }
       }
-      ioProperties["singleFile"] = false;
+      ioProperties.insert("singleFile", false);
       return true;
     }
   }

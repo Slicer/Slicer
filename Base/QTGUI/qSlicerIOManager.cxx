@@ -212,7 +212,7 @@ qSlicerIOManager::~qSlicerIOManager()
 bool qSlicerIOManager::openLoadSceneDialog()
 {
   qSlicerIO::IOProperties properties;
-  properties["clear"] = true;
+  properties.insert("clear", true);
   return this->openDialog(QString("SceneFile"), qSlicerFileDialog::Read, properties);
 }
 
@@ -220,7 +220,7 @@ bool qSlicerIOManager::openLoadSceneDialog()
 bool qSlicerIOManager::openAddSceneDialog()
 {
   qSlicerIO::IOProperties properties;
-  properties["clear"] = false;
+  properties.insert("clear", false);
   return this->openDialog(QString("SceneFile"), qSlicerFileDialog::Read, properties);
 }
 
@@ -229,10 +229,10 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, qSlicerFileDia
 {
   Q_D(qSlicerIOManager);
   bool deleteDialog = false;
-  if (properties["objectName"].toString().isEmpty())
+  if (properties.value("objectName").toString().isEmpty())
   {
     QString name = d->createUniqueDialogName(fileType, action, properties);
-    properties["objectName"] = name;
+    properties.insert("objectName", name);
   }
   qSlicerFileDialog* dialog = d->findDialog(fileType, action);
   if (dialog == nullptr)
