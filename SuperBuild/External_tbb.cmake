@@ -36,7 +36,7 @@ if((NOT DEFINED TBB_DIR
 
   ExternalProject_SetIfNotDefined(
      Slicer_${proj}_GIT_REPOSITORY
-     ${git_protocol}://github.com/oneapi-src/oneTBB.git
+     ${git_protocol}://github.com/uxlfoundation/oneTBB.git
      QUIET
   )
 
