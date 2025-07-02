@@ -75,8 +75,8 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
   {
     if(Event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* e = static_cast<QKeyEvent*>(Event);
-      if(e->key() == Qt::Key_Enter)
+      QKeyEvent* e = dynamic_cast<QKeyEvent*>(Event);
+      if (e && (e->key() == Qt::Key_Enter))
       {
         QAction* action = menu->activeAction();
         if(action)
@@ -95,8 +95,8 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
     }
     if(Event->type() == QEvent::MouseButtonRelease)
     {
-      QMouseEvent* e = static_cast<QMouseEvent*>(Event);
-      if(e->button() == Qt::LeftButton)
+      QMouseEvent* e = dynamic_cast<QMouseEvent*>(Event);
+      if (e && e->button() == Qt::LeftButton)
       {
         QAction* action = menu->actionAt(e->pos());
         if (action && !action->menu())
@@ -145,13 +145,10 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
               this, SLOT(onCurrentNodeRenamed(QString)));
 
       // Can be better to do it on the model to recover the QModelIndex
-      connect(treeView, SIGNAL(currentNodeDeleted(const QModelIndex&)),
-              this, SLOT(onCurrentNodeDeleted(const QModelIndex&)));
-      connect(treeView, SIGNAL(decorationClicked(QModelIndex)),
-              this, SLOT(onDecorationClicked(QModelIndex)));
+      connect(treeView, SIGNAL(currentNodeDeleted(const QModelIndex&)), this, SLOT(onCurrentNodeDeleted(const QModelIndex&)));
+      connect(treeView, SIGNAL(decorationClicked(QModelIndex)), this, SLOT(onDecorationClicked(QModelIndex)));
 
-      connect(treeView->sceneModel(), SIGNAL(aboutToReparentByDragAndDrop(vtkMRMLNode*,vtkMRMLNode*)),
-              this, SLOT(onAboutToReparentByDnD(vtkMRMLNode*,vtkMRMLNode*)));
+      connect(treeView->sceneModel(), SIGNAL(aboutToReparentByDragAndDrop(vtkMRMLNode*, vtkMRMLNode*)), this, SLOT(onAboutToReparentByDnD(vtkMRMLNode*, vtkMRMLNode*)));
     }
     return this->Superclass::translateEvent(Object, Event, EventType, Error);
   }

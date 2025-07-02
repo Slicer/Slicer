@@ -99,8 +99,7 @@ void qSlicerModuleFinderDialogPrivate::init()
   QObject::connect(this->FilterTitleSearchBox, SIGNAL(textChanged(QString)),
     q, SLOT(onModuleTitleFilterTextChanged()));
 
-  QObject::connect(this->ModuleListView->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-    q, SLOT(onSelectionChanged(QItemSelection, QItemSelection)));
+  QObject::connect(this->ModuleListView->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)), q, SLOT(onSelectionChanged(QItemSelection, QItemSelection)));
 
   this->FilterTitleSearchBox->installEventFilter(q);
   this->ModuleListView->viewport()->installEventFilter(q);
@@ -209,8 +208,7 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     qSlicerCoreApplication* app = qSlicerCoreApplication::application();
     if (app)
     {
-      help = qSlicerUtils::replaceDocumentationUrlVersion(module->helpText(),
-        QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
+      help = qSlicerUtils::replaceDocumentationUrlVersion(module->helpText(), QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
     }
     help.replace("\\n", "<br>");
     help = help.trimmed();
@@ -223,10 +221,8 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     qSlicerAbstractModule* guiModule = qobject_cast<qSlicerAbstractModule*>(module);
     if (guiModule && !guiModule->logo().isNull())
     {
-      d->ModuleDescriptionBrowser->document()->addResource(QTextDocument::ImageResource,
-        QUrl("module://logo.png"), QVariant(guiModule->logo()));
-      html.append(
-        QString("<center><img src=\"module://logo.png\"/></center><br>"));
+      d->ModuleDescriptionBrowser->document()->addResource(QTextDocument::ImageResource, QUrl("module://logo.png"), QVariant(guiModule->logo()));
+      html.append(QString("<center><img src=\"module://logo.png\"/></center><br>"));
     }
     QString acknowledgement = module->acknowledgementText();
     if (!acknowledgement.isEmpty())
@@ -313,9 +309,9 @@ bool qSlicerModuleFinderDialog::eventFilter(QObject* target, QEvent* event)
     // widget in the tab order)
     if (event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       qSlicerModuleFactoryFilterModel* filterModel = d->ModuleListView->filterModel();
-      if (keyEvent != nullptr && filterModel->rowCount() > 0)
+      QKeyEvent* keyEvent = dynamic_cast<QKeyEvent*>(event);
+      if (keyEvent && keyEvent != nullptr && filterModel->rowCount() > 0)
       {
         int currentRow = d->ModuleListView->currentIndex().row();
         int stepSize = 1;
