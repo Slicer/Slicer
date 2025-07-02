@@ -65,13 +65,15 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
+    #"${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/BRAINSia/CTK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "526988788cd1a3af8dc77ef117ebaa9670f81564"
+    #"526988788cd1a3af8dc77ef117ebaa9670f81564"
+    "update-Q_OBJECT-clazy"
     QUIET
     )
 
