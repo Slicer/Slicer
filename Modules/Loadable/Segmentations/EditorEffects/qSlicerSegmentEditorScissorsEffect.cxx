@@ -101,6 +101,7 @@ void DebugWritePolyData(vtkPolyData* poly)
 /// Visualization objects and pipeline for each slice view for drawing cutting outline
 class ScissorsPipeline: public QObject
 {
+  Q_OBJECT
 public:
   ScissorsPipeline()
   {
@@ -141,6 +142,7 @@ public:
 //-----------------------------------------------------------------------------
 class qSlicerSegmentEditorScissorsEffectPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorScissorsEffect);
 protected:
   qSlicerSegmentEditorScissorsEffect* const q_ptr;

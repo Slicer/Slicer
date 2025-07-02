@@ -48,6 +48,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyPlotsPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyPlotsPlugin);
 protected:
   qSlicerSubjectHierarchyPlotsPlugin* const q_ptr;
@@ -111,8 +112,7 @@ void qSlicerSubjectHierarchyPlotsPlugin::setPlotsLogic(vtkSlicerPlotsLogic* plot
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyPlotsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+double qSlicerSubjectHierarchyPlotsPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)

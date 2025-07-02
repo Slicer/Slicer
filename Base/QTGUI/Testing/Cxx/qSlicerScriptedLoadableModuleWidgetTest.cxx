@@ -93,8 +93,7 @@ void qSlicerScriptedLoadableModuleWidgetTester::initTestCase()
 
   QVERIFY(QDir::temp().exists());
 
-  this->TemporaryDirName =
-      QString("qSlicerScriptedLoadableModuleWidgetTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+  this->TemporaryDirName = QString("qSlicerScriptedLoadableModuleWidgetTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
 }
 
 // ----------------------------------------------------------------------------
@@ -211,6 +210,7 @@ namespace
 // ----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModuleWidgetTestSetup : public qSlicerScriptedLoadableModuleWidget
 {
+  Q_OBJECT
 public:
   void callSetup() { this->setup(); }
 };

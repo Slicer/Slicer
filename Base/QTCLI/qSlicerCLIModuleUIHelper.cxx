@@ -60,6 +60,7 @@ qSlicerWidgetValueWrapper::~qSlicerWidgetValueWrapper() = default;
   namespace{                                                            \
     class _NAME##WidgetValueWrapper: public qSlicerWidgetValueWrapper   \
     {                                                                   \
+    Q_OBJECT                                                                                  \
     public:                                                             \
       _NAME##WidgetValueWrapper(const QString& _name,                   \
                                 const QString& _label, _WIDGET * _widget): \
@@ -200,9 +201,7 @@ public:
   ///
   /// Convenient method allowing to retrieve the node type associated
   /// with the parameter type
-  static QString nodeTypeFromMap(const QHash<QString, QString>& map,
-                                 const QString& attribute,
-                                 const QString& defaultValue = QString());
+  static QString nodeTypeFromMap(const QHash<QString, QString>& map, const QString& attribute, const QString& defaultValue = QString());
 
   ///
   /// Initialize the maps containing the mapping
@@ -246,8 +245,7 @@ qSlicerCLIModuleUIHelperPrivate::
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModuleUIHelperPrivate::nodeTypeFromMap(
-  const QHash<QString, QString>& map, const QString& attribute, const QString& defaultValue)
+QString qSlicerCLIModuleUIHelperPrivate::nodeTypeFromMap(const QHash<QString, QString>& map, const QString& attribute, const QString& defaultValue)
 {
   QHash<QString, QString>::const_iterator i = map.constFind(attribute);
 
@@ -563,8 +561,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
   widget->setRenameEnabled(true);
 
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Point, _name, _label, widget);
 
@@ -616,8 +613,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleP
   widget->setRenameEnabled(true);
 
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(PointFile, _name, _label, widget);
 
@@ -643,8 +639,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
   widget->setRenameEnabled(true);
 
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Region, _name, _label, widget);
 
@@ -731,8 +726,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   widget->setBaseName(imageLabel);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
 
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Image, imageName, imageLabel, widget);
 
@@ -774,8 +768,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
   widget->setAddEnabled(channel != "input");
   widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Geometry, _name, _label, widget);
 
@@ -811,8 +804,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
   widget->setRenameEnabled(true);
   widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Table, _name, _label, widget);
 
@@ -848,8 +840,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createMeasurementTagWidget(const Modul
   widget->setRenameEnabled(true);
   widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Measurement, _name, _label, widget);
 
@@ -896,8 +887,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
   }
   widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Transform, _name, _label, widget);
 
@@ -1064,11 +1054,8 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
   {
     widget = d->createDoubleTagWidget(moduleParameter);
   }
-  else if (moduleParameter.GetTag() == "string" ||
-           moduleParameter.GetTag() == "integer-vector" ||
-           moduleParameter.GetTag() == "float-vector" ||
-           moduleParameter.GetTag() == "double-vector" ||
-           moduleParameter.GetTag() == "string-vector")
+  else if (moduleParameter.GetTag() == "string" || moduleParameter.GetTag() == "integer-vector" || moduleParameter.GetTag() == "float-vector"
+           || moduleParameter.GetTag() == "double-vector" || moduleParameter.GetTag() == "string-vector")
   {
     widget = d->createStringTagWidget(moduleParameter);
   }
@@ -1112,10 +1099,8 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
   {
     widget = d->createFileTagWidget(moduleParameter);
   }
-  else if(moduleParameter.GetTag() == "string-enumeration" ||
-          moduleParameter.GetTag() == "integer-enumeration" ||
-          moduleParameter.GetTag() == "float-enumeration" ||
-          moduleParameter.GetTag() == "double-enumeration")
+  else if (moduleParameter.GetTag() == "string-enumeration" || moduleParameter.GetTag() == "integer-enumeration" || moduleParameter.GetTag() == "float-enumeration"
+           || moduleParameter.GetTag() == "double-enumeration")
   {
     widget = d->createEnumerationTagWidget(moduleParameter);
   }
@@ -1155,9 +1140,7 @@ void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModuleUIHelper
-::setCommandLineModuleParameter(vtkMRMLCommandLineModuleNode* commandLineModuleNode,
-                                const QString& name, const QVariant& value)
+void qSlicerCLIModuleUIHelper::setCommandLineModuleParameter(vtkMRMLCommandLineModuleNode* commandLineModuleNode, const QString& name, const QVariant& value)
 {
   Q_D(qSlicerCLIModuleUIHelper);
   QVariant::Type type = value.type();

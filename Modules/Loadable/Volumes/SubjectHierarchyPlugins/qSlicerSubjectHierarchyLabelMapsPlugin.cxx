@@ -56,6 +56,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyLabelMapsPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyLabelMapsPlugin);
 protected:
   qSlicerSubjectHierarchyLabelMapsPlugin* const q_ptr;
@@ -113,8 +114,7 @@ qSlicerSubjectHierarchyLabelMapsPlugin::qSlicerSubjectHierarchyLabelMapsPlugin(Q
 qSlicerSubjectHierarchyLabelMapsPlugin::~qSlicerSubjectHierarchyLabelMapsPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -221,8 +221,8 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::setDisplayVisibility(vtkIdType item
     else
     {
       // If visibility is off, then hide the labelmap from all slice views
-      qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-        qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+      qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+        qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
       if (!volumesPlugin)
       {
         qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
@@ -252,8 +252,8 @@ int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemI
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return -1;
   }
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+    qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
@@ -284,8 +284,8 @@ int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemI
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyLabelMapsPlugin::showLabelMapInAllViews(vtkMRMLLabelMapVolumeNode* node)
 {
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+    qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
@@ -348,8 +348,8 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::toggle2DOutlineVisibility(bool chec
 //-----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyLabelMapsPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
 {
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+    qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";

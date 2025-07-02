@@ -29,6 +29,7 @@ class qMRMLWindowLevelWidgetPrivate
   : public qMRMLVolumeWidgetPrivate
   , public Ui_qMRMLWindowLevelWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLWindowLevelWidget);
 protected:
   typedef qMRMLVolumeWidgetPrivate Superclass;
@@ -64,8 +65,7 @@ void qMRMLWindowLevelWidgetPrivate::init()
 
   q->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
 
-  QObject::connect(this->WindowLevelRangeSlider, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(setMinMaxRangeValue(double,double)));
+  QObject::connect(this->WindowLevelRangeSlider, SIGNAL(valuesChanged(double, double)), q, SLOT(setMinMaxRangeValue(double, double)));
 
   QObject::connect(this->WindowSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setWindow(double)));
@@ -128,8 +128,7 @@ void qMRMLWindowLevelWidgetPrivate::setSingleStep(double singleStep)
 
   // Use the same minimum step as in ctkDoubleRangeSlider::isValidStep
   // to avoid attempting to set too small step size.
-  double sliderMinimumStep = qMax(this->WindowLevelRangeSlider->maximum() / std::numeric_limits<double>::max(),
-    std::numeric_limits<double>::epsilon());
+  double sliderMinimumStep = qMax(this->WindowLevelRangeSlider->maximum() / std::numeric_limits<double>::max(), std::numeric_limits<double>::epsilon());
   this->WindowLevelRangeSlider->setSingleStep(qMax(singleStep, sliderMinimumStep));
 
   this->WindowSpinBox->setSingleStep(singleStep);
@@ -195,9 +194,7 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
 
   if (autoWindowLevel != oldAuto)
   {
-    emit this->autoWindowLevelValueChanged(
-      autoWindowLevel == qMRMLWindowLevelWidget::Auto ?
-        qMRMLWindowLevelWidget::Auto : qMRMLWindowLevelWidget::Manual);
+    emit this->autoWindowLevelValueChanged(autoWindowLevel == qMRMLWindowLevelWidget::Auto ? qMRMLWindowLevelWidget::Auto : qMRMLWindowLevelWidget::Manual);
   }
 }
 
@@ -252,8 +249,7 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
 
   int disabledModify = d->VolumeDisplayNode->StartModify();
   d->VolumeDisplayNode->SetWindowLevel(window, level);
-  if (!qFuzzyCompare(oldWindow, d->VolumeDisplayNode->GetWindow()) ||
-      !qFuzzyCompare(oldLevel, d->VolumeDisplayNode->GetLevel()))
+  if (!qFuzzyCompare(oldWindow, d->VolumeDisplayNode->GetWindow()) || !qFuzzyCompare(oldLevel, d->VolumeDisplayNode->GetLevel()))
   {
     if (this->autoWindowLevel() == qMRMLWindowLevelWidget::Auto)
     {

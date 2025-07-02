@@ -23,6 +23,7 @@
 
 class ACoreModule: public qSlicerCoreModule
 {
+  Q_OBJECT
 public:
   QString title()const override
   {

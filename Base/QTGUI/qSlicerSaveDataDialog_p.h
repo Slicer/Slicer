@@ -144,11 +144,11 @@ protected:
 //-----------------------------------------------------------------------------
 class qSlicerFileNameItemDelegate : public QStyledItemDelegate
 {
+  Q_OBJECT
 public:
   typedef QStyledItemDelegate Superclass;
   qSlicerFileNameItemDelegate( QObject * parent = nullptr );
-  static QString forceFileNameExtension(const QString& fileName, const QString& extension,
-                               vtkMRMLScene *mrmlScene, const QString &nodeID);
+  static QString forceFileNameExtension(const QString& fileName, const QString& extension, vtkMRMLScene* mrmlScene, const QString& nodeID);
 
   vtkMRMLScene* MRMLScene;
 };

@@ -80,6 +80,7 @@ const char* INTERACTION_HANDLE_TYPE_PROPERTY = "InteractionHandleType";
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyMarkupsPluginPrivate : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyMarkupsPlugin);
 protected:
   qSlicerSubjectHierarchyMarkupsPlugin* const q_ptr;
@@ -303,8 +304,8 @@ void qSlicerSubjectHierarchyMarkupsPluginPrivate::jumpToPoint(int controlPointIn
   int viewGroup = -1;
   if (this->ViewContextMenuEventData.contains("ViewNodeID"))
   {
-    vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(
-      markupsNode->GetScene()->GetNodeByID(ViewContextMenuEventData["ViewNodeID"].toString().toStdString()));
+    vtkMRMLAbstractViewNode* viewNode =
+      vtkMRMLAbstractViewNode::SafeDownCast(markupsNode->GetScene()->GetNodeByID(ViewContextMenuEventData["ViewNodeID"].toString().toStdString()));
     if (viewNode)
     {
       viewGroup = viewNode->GetViewGroup();
@@ -331,8 +332,7 @@ qSlicerSubjectHierarchyMarkupsPlugin::qSlicerSubjectHierarchyMarkupsPlugin(QObje
 qSlicerSubjectHierarchyMarkupsPlugin::~qSlicerSubjectHierarchyMarkupsPlugin() = default;
 
 //-----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -491,10 +491,8 @@ QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()co
   Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
 
   QList<QAction*> actions;
-  actions << d->RenamePointAction << d->RefocusCameraAction << d->ToggleSelectPointAction
-    << d->JumpToPreviousPointAction << d->JumpToNextPointAction << d->JumpToClosestPointAction
-    << d->DeletePointAction << d->DeleteNodeAction << d->EditNodeTerminologyAction
-    << d->ToggleHandleInteractive << d->HandleVisibilityAction;
+  actions << d->RenamePointAction << d->RefocusCameraAction << d->ToggleSelectPointAction << d->JumpToPreviousPointAction << d->JumpToNextPointAction << d->JumpToClosestPointAction
+          << d->DeletePointAction << d->DeleteNodeAction << d->EditNodeTerminologyAction << d->ToggleHandleInteractive << d->HandleVisibilityAction;
   return actions;
 }
 
@@ -527,12 +525,9 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
   d->ViewContextMenuEventData["NodeID"] = QVariant(associatedNode->GetID());
 
   int componentType = d->ViewContextMenuEventData["ComponentType"].toInt();
-  bool pointActionsDisabled =
-    componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle ||
-    componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle ||
-    componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle ||
-    componentType == vtkMRMLMarkupsDisplayNode::ComponentPlane ||
-    componentType == vtkMRMLMarkupsROIDisplayNode::ComponentROI;
+  bool pointActionsDisabled = componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle || componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle
+                              || componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle || componentType == vtkMRMLMarkupsDisplayNode::ComponentPlane
+                              || componentType == vtkMRMLMarkupsROIDisplayNode::ComponentROI;
 
   d->RenamePointAction->setVisible(!pointActionsDisabled);
   d->DeletePointAction->setVisible(!pointActionsDisabled);

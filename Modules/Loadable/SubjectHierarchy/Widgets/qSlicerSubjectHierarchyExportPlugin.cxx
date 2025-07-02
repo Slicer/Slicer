@@ -46,6 +46,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyExportPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyExportPlugin);
 protected:
   qSlicerSubjectHierarchyExportPlugin* const q_ptr;
@@ -56,9 +57,9 @@ public:
 
   // Utility function for getting the subject-hierarchy-based relative path of an item.
   // Starting from fromItemID, this function climbs up the subject hierarchy tree until it reaches toItemID,
-  // and it constructs a list of item names that it encounters along the way. The list goes into the return parameter `path`.
-  // The list can be thought of as the interval "(fromItem, toItem]"; i.e. it excludes fromItem.
-  // The returned bool indicates success.
+  // and it constructs a list of item names that it encounters along the way. The list goes into the return parameter
+  // `path`. The list can be thought of as the interval "(fromItem, toItem]"; i.e. it excludes fromItem. The returned
+  // bool indicates success.
   static bool getSubjectHierarchyPath(vtkMRMLSubjectHierarchyNode* shNode, vtkIdType fromItemID, vtkIdType toItemID, QStringList& path);
 
 public:
@@ -83,14 +84,12 @@ void qSlicerSubjectHierarchyExportPluginPrivate::init()
   this->ExportItemAction = new QAction(qSlicerSubjectHierarchyExportPlugin::tr("Export to file..."), q);
   this->ExportItemAction->setToolTip(qSlicerSubjectHierarchyExportPlugin::tr("Export this node to a file"));
   // Put towards end of the list, where export features typically would go
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ExportItemAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ExportItemAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
   QObject::connect(this->ExportItemAction, SIGNAL(triggered()), q, SLOT(exportItems()));
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyExportPluginPrivate::getSubjectHierarchyPath(
-  vtkMRMLSubjectHierarchyNode* shNode, vtkIdType fromItemID, vtkIdType toItemID, QStringList& path)
+bool qSlicerSubjectHierarchyExportPluginPrivate::getSubjectHierarchyPath(vtkMRMLSubjectHierarchyNode* shNode, vtkIdType fromItemID, vtkIdType toItemID, QStringList& path)
 {
   path.clear();
   vtkIdType endItemID = shNode->GetItemParent(toItemID); // One item above the highest we want to go
@@ -99,16 +98,14 @@ bool qSlicerSubjectHierarchyExportPluginPrivate::getSubjectHierarchyPath(
   {
     if (itemID==0)
     {
-      qCritical() << Q_FUNC_INFO << "failed while getting chain of parents from subject hierarchy item"
-        << fromItemID << "to subject hierarchy item" << toItemID
-        << ": encountered item ID 0 before reaching" << toItemID;
+      qCritical() << Q_FUNC_INFO << "failed while getting chain of parents from subject hierarchy item" << fromItemID << "to subject hierarchy item" << toItemID
+                  << ": encountered item ID 0 before reaching" << toItemID;
       return false;
     }
     if  (std::find(encounteredItemIds.begin(), encounteredItemIds.end(), itemID) != encounteredItemIds.end())
     {
-      qCritical() << Q_FUNC_INFO << "failed while getting chain of parents from subject hierarchy item"
-        << fromItemID << "to subject hierarchy item" << toItemID
-        << ": encountered item ID" << itemID << "twice.";
+      qCritical() << Q_FUNC_INFO << "failed while getting chain of parents from subject hierarchy item" << fromItemID << "to subject hierarchy item" << toItemID
+                  << ": encountered item ID" << itemID << "twice.";
       return false;
     }
     encounteredItemIds.push_back(itemID);
@@ -260,10 +257,5 @@ void qSlicerSubjectHierarchyExportPlugin::exportItems()
   }
   properties["nodeIdToSubjectHierarchyPath"] = QVariant(nodeIdToSubjectHierarchyPath);
 
-  qSlicerApplication::application()->ioManager()->openDialog(
-    QString("GenericNodeExport"),
-    qSlicerFileDialog::Write,
-    properties
-  );
-
+  qSlicerApplication::application()->ioManager()->openDialog(QString("GenericNodeExport"), qSlicerFileDialog::Write, properties);
 }

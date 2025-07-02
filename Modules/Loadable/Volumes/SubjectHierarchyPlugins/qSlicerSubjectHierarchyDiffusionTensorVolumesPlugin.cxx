@@ -57,6 +57,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 protected:
   qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin* const q_ptr;
@@ -116,8 +117,8 @@ qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::qSlicerSubjectHierarchyDiff
 qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::~qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node,
+                                                                                         vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -234,8 +235,8 @@ QIcon qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::visibilityIcon(int vi
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+    qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy volumes plugin";
@@ -248,8 +249,8 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::setDisplayVisibility(v
 //-----------------------------------------------------------------------------
 int qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::getDisplayVisibility(vtkIdType itemID)const
 {
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+    qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy volumes plugin";
@@ -289,12 +290,10 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showContextMenuActions
       return;
     }
 
-    qSlicerAbstractCoreModule* tractographyInteractiveSeedingModule =
-      qSlicerApplication::application()->moduleManager()->module("TractographyInteractiveSeeding");
+    qSlicerAbstractCoreModule* tractographyInteractiveSeedingModule = qSlicerApplication::application()->moduleManager()->module("TractographyInteractiveSeeding");
     d->TractographyInteractiveSeedingAction->setVisible(tractographyInteractiveSeedingModule);
 
-    qSlicerAbstractCoreModule* tractographyLabelMapSeedingModule =
-      qSlicerApplication::application()->moduleManager()->module("TractographyLabelMapSeeding");
+    qSlicerAbstractCoreModule* tractographyLabelMapSeedingModule = qSlicerApplication::application()->moduleManager()->module("TractographyLabelMapSeeding");
     d->TractographyLabelMapSeedingAction->setVisible(tractographyLabelMapSeedingModule);
   }
 }
@@ -333,8 +332,8 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::onTractographyInteract
 //-----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
 {
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+    qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";

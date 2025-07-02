@@ -56,6 +56,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyColorLegendPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyColorLegendPlugin);
 protected:
   qSlicerSubjectHierarchyColorLegendPlugin* const q_ptr;
@@ -84,8 +85,7 @@ void qSlicerSubjectHierarchyColorLegendPluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchyColorLegendPlugin);
 
   this->ShowColorLegendAction = new QAction(qSlicerSubjectHierarchyColorLegendPlugin::tr("Show color legend"), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ShowColorLegendAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 10);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ShowColorLegendAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 10);
   QObject::connect(this->ShowColorLegendAction, SIGNAL(toggled(bool)), q, SLOT(toggleVisibilityForCurrentItem(bool)));
   this->ShowColorLegendAction->setCheckable(true);
   this->ShowColorLegendAction->setChecked(false);

@@ -31,7 +31,6 @@
 class qSlicerScriptedLoadableModuleTester: public QObject
 {
   Q_OBJECT
-
 private:
 
   QString preparePythonSource(const QString& scriptName);
@@ -83,8 +82,7 @@ void qSlicerScriptedLoadableModuleTester::initTestCase()
 
   QVERIFY(QDir::temp().exists());
 
-  this->TemporaryDirName =
-      QString("qSlicerScriptedLoadableModuleTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+  this->TemporaryDirName = QString("qSlicerScriptedLoadableModuleTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
 }
 
 // ----------------------------------------------------------------------------
@@ -133,6 +131,7 @@ namespace
 // ----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModuleSetup : public qSlicerScriptedLoadableModule
 {
+  Q_OBJECT
 public:
   void callSetup() { this->setup(); }
 };
