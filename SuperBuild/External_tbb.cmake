@@ -31,7 +31,7 @@ if((NOT DEFINED TBB_DIR
 
   if(NOT DEFINED git_protocol)
       set(git_protocol "https")
-  set(tbb_ver "v2022.2.0-rc1")
+  set(tbb_ver "v2022.2.0")
   endif()
 
   ExternalProject_SetIfNotDefined(
