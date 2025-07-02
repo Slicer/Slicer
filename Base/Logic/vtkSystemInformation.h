@@ -19,19 +19,19 @@ class vtkRenderWindow;
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSystemInformation : public vtkObject
 {
 public:
-  static vtkSystemInformation *New();
-  vtkTypeMacro(vtkSystemInformation,vtkObject);
+  static vtkSystemInformation* New();
+  vtkTypeMacro(vtkSystemInformation, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char * GetVendorString();
-  const char * GetVendorID();
-  const char * GetTypeID();
-  const char * GetFamilyID();
-  const char * GetModelName();
-  const char * GetModelID();
-  const char * GetSteppingCode();
-  const char * GetExtendedProcessorName();
-  const char * GetProcessorSerialNumber();
+  const char* GetVendorString();
+  const char* GetVendorID();
+  const char* GetTypeID();
+  const char* GetFamilyID();
+  const char* GetModelName();
+  const char* GetModelID();
+  const char* GetSteppingCode();
+  const char* GetExtendedProcessorName();
+  const char* GetProcessorSerialNumber();
   int GetProcessorCacheSize();
   int GetLogicalProcessorsPerPhysical();
   float GetProcessorClockFrequency();
@@ -39,11 +39,11 @@ public:
   int GetProcessorCacheXSize(long int);
   int DoesCPUSupportFeature(long int);
 
-  const char * GetOSName();
-  const char * GetHostname();
-  const char * GetOSRelease();
-  const char * GetOSVersion();
-  const char * GetOSPlatform();
+  const char* GetOSName();
+  const char* GetHostname();
+  const char* GetOSRelease();
+  const char* GetOSVersion();
+  const char* GetOSPlatform();
 
   int Is64Bits();
 
@@ -92,7 +92,6 @@ public:
   vtkGetMacro(RenderingCapabilitiesDetails, std::string);
 
 protected:
-
   vtkSmartPointer<vtkRenderWindow> NewOffscreenRenderWindow();
 
   vtkSystemInformation();
@@ -100,7 +99,7 @@ protected:
   vtkSystemInformation(const vtkSystemInformation&);
   void operator=(const vtkSystemInformation&);
 
-  //private:
+  // private:
 
   vtksys::SystemInformation SystemInformation;
   std::string StringHolder;

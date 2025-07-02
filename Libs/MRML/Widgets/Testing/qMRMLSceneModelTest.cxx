@@ -35,7 +35,7 @@
 #include <vtkNew.h>
 
 // ----------------------------------------------------------------------------
-class qMRMLSceneModelTester: public QObject
+class qMRMLSceneModelTester : public QObject
 {
   Q_OBJECT
   void setColumns(qMRMLSceneModel& model);
@@ -175,7 +175,7 @@ void qMRMLSceneModelTester::testSetColumnsWithScene()
   sceneFactory.generateScene();
   sceneModel.setMRMLScene(sceneFactory.mrmlScene());
 
-  for (int i=0; i < 100; ++i)
+  for (int i = 0; i < 100; ++i)
   {
     sceneFactory.generateNode();
   }

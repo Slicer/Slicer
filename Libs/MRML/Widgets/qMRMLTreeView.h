@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QTreeView>
-//#include <QStyledItemDelegate>
+// #include <QStyledItemDelegate>
 class QShowEvent;
 
 // CTK includes
@@ -61,7 +61,8 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   /// can disable it if you want a lazy update.
   /// OnlyVisibleNodes by default.
   /// \sa qMRMLSceneModel::listenNodeModifiedEvent
-  Q_PROPERTY(qMRMLSceneModel::NodeTypes listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  Q_PROPERTY(
+    qMRMLSceneModel::NodeTypes listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
   /// This property controls which node types are visible in the view.
   /// This behaves as a filter, the nodes that have a type not included in the
   /// list will be hidden.
@@ -118,27 +119,27 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
 public:
   typedef QTreeView Superclass;
 
-  qMRMLTreeView(QWidget *parent=nullptr);
+  qMRMLTreeView(QWidget* parent = nullptr);
   ~qMRMLTreeView() override;
 
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
   /// Return a pointer to the current node (not necessarily selected),
   /// 0 if no node is current
   /// \sa QItemSelectionModel::currentIndex(), QItemSelectionModel::selectedIndexes()
-  vtkMRMLNode* currentNode()const;
+  vtkMRMLNode* currentNode() const;
 
   /// Could be "", "Transform", "Displayable" or the type
   /// associated with the scene model added with qMRMLTreeView::setSceneModel()
   /// \sa setSceneModel()
-  QString sceneModelType()const;
+  QString sceneModelType() const;
 
   /// Set the node types on the scene model.
   /// \sa listenNodeModifiedEvent qMRMLSceneModel::setListenNodeModifiedEvent
   void setListenNodeModifiedEvent(qMRMLSceneModel::NodeTypes listen);
   /// Get the node types of the scene model.
   /// \sa qMRMLSceneModel::listenNodeModifiedEvent
-  qMRMLSceneModel::NodeTypes listenNodeModifiedEvent()const;
+  qMRMLSceneModel::NodeTypes listenNodeModifiedEvent() const;
 
   /// Customize the model
   void setSceneModel(qMRMLSceneModel* newSceneModel, const QString& modelType);
@@ -148,22 +149,22 @@ public:
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
   /// vtkMRMLTransformNode
-  QStringList nodeTypes()const;
+  QStringList nodeTypes() const;
   void setNodeTypes(const QStringList& nodeTypes);
 
   /// Show/Hide the "Rename" menu item on right context menu
   /// Visible by default
-  bool isRenameMenuActionVisible()const;
+  bool isRenameMenuActionVisible() const;
   void setRenameMenuActionVisible(bool show);
 
   /// Show/Hide the "Delete" menu item on right context menu
   /// Visible by default
-  bool isDeleteMenuActionVisible()const;
+  bool isDeleteMenuActionVisible() const;
   void setDeleteMenuActionVisible(bool show);
 
   /// Show/Hide the "Edit properties..." menu item on right context menu
   /// Hidden by default
-  bool isEditMenuActionVisible()const;
+  bool isEditMenuActionVisible() const;
   void setEditMenuActionVisible(bool show);
 
   /// Add a custom QAction to add into the context menu that opens with a right
@@ -188,39 +189,39 @@ public:
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
   inline void setShowHidden(bool);
-  inline bool showHidden()const;
+  inline bool showHidden() const;
 
   /// Set the show root node flag.
   /// \sa showRootNode, showRootNode()
   void setShowRootNode(bool show);
   /// Return the show root node flag.
   /// \sa showRootNode, setShowRootNode()
-  bool showRootNode()const;
+  bool showRootNode() const;
 
   /// Set the show scene flag.
   /// \sa showScene, showScene()
   void setShowScene(bool show);
   /// Return the show scene flag.
   /// \sa showScene, setShowScene()
-  bool showScene()const;
+  bool showScene() const;
 
   /// Return the root node of the tree.
   /// \sa setRootNode(), showRootNode
-  vtkMRMLNode* rootNode()const;
+  vtkMRMLNode* rootNode() const;
 
   /// Retrieve the sortFilterProxyModel used to filter/sort
   /// the nodes.
   /// The returned value can't be null.
-  Q_INVOKABLE qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
-  Q_INVOKABLE qMRMLSceneModel* sceneModel()const;
+  Q_INVOKABLE qMRMLSortFilterProxyModel* sortFilterProxyModel() const;
+  Q_INVOKABLE qMRMLSceneModel* sceneModel() const;
 
   /// When true, the tree widget resize itself so that
   /// it's sizeHint is right for the visible indexes
   void setFitSizeToVisibleIndexes(bool);
-  bool fitSizeToVisibleIndexes()const;
+  bool fitSizeToVisibleIndexes() const;
 
   void setMinSizeHint(QSize min);
-  QSize minSizeHint()const;
+  QSize minSizeHint() const;
 
   /// Return true if \a potentialAncestor is an ancestor
   /// of index
@@ -233,8 +234,8 @@ public:
   /// Remove indexes that have at least one ancestor in the list
   static QModelIndexList removeChildren(const QModelIndexList& indexes);
 
-  QSize minimumSizeHint()const override;
-  QSize sizeHint()const override;
+  QSize minimumSizeHint() const override;
+  QSize sizeHint() const override;
 
   void showEvent(QShowEvent* show) override;
   bool eventFilter(QObject* object, QEvent* e) override;
@@ -298,8 +299,7 @@ signals:
 protected slots:
   /// This slot is being triggered when the current node has changed.
   /// \sa currentNodeChanged()
-  virtual void onSelectionChanged(const QItemSelection & selected,
-                                  const QItemSelection & deselected);
+  virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   void onNumberOfVisibleIndexChanged();
 
@@ -318,7 +318,7 @@ protected slots:
   void onCustomContextMenu(const QPoint& point);
 
 protected:
-  qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget *parent=nullptr);
+  qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget* parent = nullptr);
 
 protected:
   QScopedPointer<qMRMLTreeViewPrivate> d_ptr;
@@ -343,7 +343,7 @@ void qMRMLTreeView::setShowHidden(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLTreeView::showHidden()const
+bool qMRMLTreeView::showHidden() const
 {
   return this->sortFilterProxyModel()->showHidden();
 }

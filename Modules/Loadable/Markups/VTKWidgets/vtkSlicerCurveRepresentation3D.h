@@ -42,45 +42,50 @@ class vtkTubeFilter;
 
 class vtkMRMLInteractionEventData;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation3D
+  : public vtkSlicerMarkupsWidgetRepresentation3D
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerCurveRepresentation3D *New();
+  static vtkSlicerCurveRepresentation3D* New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerCurveRepresentation3D,vtkSlicerMarkupsWidgetRepresentation3D);
+  vtkTypeMacro(vtkSlicerCurveRepresentation3D, vtkSlicerMarkupsWidgetRepresentation3D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Subclasses of vtkMRMLAbstractWidgetRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) override;
-  void ReleaseGraphicsResources(vtkWindow *) override;
-  int RenderOverlay(vtkViewport *viewport) override;
-  int RenderOpaqueGeometry(vtkViewport *viewport) override;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  void GetActors(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
+  int RenderOpaqueGeometry(vtkViewport* viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport* viewport) override;
   vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
   double* GetBounds() VTK_SIZEHINT(6) override;
 
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
+                   int& foundComponentType,
+                   int& foundComponentIndex,
+                   double& closestDistance2) override;
 
   void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &componentIndex, double &closestDistance2);
+                            int& foundComponentType,
+                            int& componentIndex,
+                            double& closestDistance2);
 
 protected:
   vtkSlicerCurveRepresentation3D();
   ~vtkSlicerCurveRepresentation3D() override;
 
-  void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) override;
+  void SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode) override;
 
-  vtkSmartPointer<vtkPolyData>   Line;
+  vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
 
   vtkSmartPointer<vtkPolyDataMapper> LineMapper;
@@ -91,7 +96,7 @@ protected:
 
   vtkSmartPointer<vtkCellLocator> CurvePointLocator;
 
-  double PreviousSpecularLightingCoeff{0.0};
+  double PreviousSpecularLightingCoeff{ 0.0 };
 
 private:
   vtkSlicerCurveRepresentation3D(const vtkSlicerCurveRepresentation3D&) = delete;

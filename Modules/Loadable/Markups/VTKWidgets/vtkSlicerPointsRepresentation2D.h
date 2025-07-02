@@ -25,7 +25,7 @@
  * for details.
  * @sa
  * vtkMRMLAbstractWidgetRepresentation3D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerPointsRepresentation2D_h
 #define vtkSlicerPointsRepresentation2D_h
@@ -33,14 +33,15 @@
 #include "vtkSlicerMarkupsModuleVTKWidgetsExport.h"
 #include "vtkSlicerMarkupsWidgetRepresentation2D.h"
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerPointsRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerPointsRepresentation2D
+  : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerPointsRepresentation2D *New();
+  static vtkSlicerPointsRepresentation2D* New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerPointsRepresentation2D,vtkSlicerMarkupsWidgetRepresentation2D);
+  vtkTypeMacro(vtkSlicerPointsRepresentation2D, vtkSlicerMarkupsWidgetRepresentation2D);
 
 protected:
   vtkSlicerPointsRepresentation2D();

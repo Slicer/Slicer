@@ -29,12 +29,11 @@
 
 class qSlicerSceneIOOptionsWidgetPrivate;
 
-class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneIOOptionsWidget
-  : public qSlicerIOOptionsWidget
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneIOOptionsWidget : public qSlicerIOOptionsWidget
 {
   Q_OBJECT
 public:
-  qSlicerSceneIOOptionsWidget(QWidget *parent=nullptr);
+  qSlicerSceneIOOptionsWidget(QWidget* parent = nullptr);
   ~qSlicerSceneIOOptionsWidget() override;
 
   // Update checkboxes in the widget based on
@@ -45,8 +44,7 @@ protected slots:
   void updateProperties();
 
 private:
-  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr),
-                      qSlicerSceneIOOptionsWidget);
+  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerSceneIOOptionsWidget);
   Q_DISABLE_COPY(qSlicerSceneIOOptionsWidget);
 };
 

@@ -50,17 +50,18 @@ public:
   qMRMLNodeAttributeTableView* tableView();
 
   /// Get the inspected MRML node
-  vtkMRMLNode* mrmlNode()const;
+  vtkMRMLNode* mrmlNode() const;
 
 public slots:
   /// Set the inspected MRML node
   void setMRMLNode(vtkMRMLNode* node);
 
-  /// Refreshes the widget contents (useful for keeping displayed contents up-to-date without invoking node modified event)
+  /// Refreshes the widget contents (useful for keeping displayed contents up-to-date without invoking node modified
+  /// event)
   void updateWidgetFromMRML();
 
 protected:
-  void showEvent(QShowEvent *) override;
+  void showEvent(QShowEvent*) override;
 
   QScopedPointer<qMRMLNodeAttributeTableWidgetPrivate> d_ptr;
 

@@ -67,8 +67,7 @@ public:
   void Copy(vtkSegmentationConversionPath* source);
 
 protected:
-
-  std::vector< vtkSmartPointer<vtkSegmentationConverterRule> > Rules;
+  std::vector<vtkSmartPointer<vtkSegmentationConverterRule>> Rules;
 
 protected:
   vtkSegmentationConversionPath();
@@ -100,7 +99,10 @@ public:
   vtkSegmentationConversionPath* GetNextPath();
 
   /// Get the index-th path the list.
-  vtkSegmentationConversionPath* GetPath(int index) { return vtkSegmentationConversionPath::SafeDownCast(this->GetItemAsObject(index)); }
+  vtkSegmentationConversionPath* GetPath(int index)
+  {
+    return vtkSegmentationConversionPath::SafeDownCast(this->GetItemAsObject(index));
+  }
 
   /// Reentrant safe way to get an object in a collection. Just pass the
   /// same cookie back and forth.

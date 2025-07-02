@@ -25,12 +25,13 @@
 #include <QtUiPlugin/QDesignerCustomWidgetInterface>
 #include "qSlicerTextsModuleWidgetsPluginsExport.h"
 
-class Q_SLICER_MODULE_TEXTS_WIDGETS_PLUGINS_EXPORT qSlicerTextsModuleWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
+class Q_SLICER_MODULE_TEXTS_WIDGETS_PLUGINS_EXPORT qSlicerTextsModuleWidgetsAbstractPlugin
+  : public QDesignerCustomWidgetInterface
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerTextsModuleWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;
@@ -38,7 +39,6 @@ public:
   QIcon icon() const override;
   QString toolTip() const override;
   QString whatsThis() const override;
-
 };
 
 #endif

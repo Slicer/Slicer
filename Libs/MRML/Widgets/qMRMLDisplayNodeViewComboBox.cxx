@@ -35,6 +35,7 @@
 class qMRMLDisplayNodeViewComboBoxPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLDisplayNodeViewComboBox);
+
 protected:
   qMRMLDisplayNodeViewComboBox* const q_ptr;
 
@@ -46,12 +47,10 @@ public:
 };
 
 // -----------------------------------------------------------------------------
-qMRMLDisplayNodeViewComboBoxPrivate
-::qMRMLDisplayNodeViewComboBoxPrivate(qMRMLDisplayNodeViewComboBox& object)
+qMRMLDisplayNodeViewComboBoxPrivate ::qMRMLDisplayNodeViewComboBoxPrivate(qMRMLDisplayNodeViewComboBox& object)
   : q_ptr(&object)
   , IsUpdatingWidgetFromMRML(false)
-{
-}
+{}
 
 // -----------------------------------------------------------------------------
 void qMRMLDisplayNodeViewComboBoxPrivate::init()
@@ -59,12 +58,9 @@ void qMRMLDisplayNodeViewComboBoxPrivate::init()
   Q_Q(qMRMLDisplayNodeViewComboBox);
   q->setNodeTypes(QStringList(QString("vtkMRMLAbstractViewNode")));
   q->setBaseName("View");
-  QObject::connect(q, SIGNAL(checkedNodesChanged()),
-                   q, SLOT(updateMRMLFromWidget()));
-  QObject::connect(q, SIGNAL(nodeAdded(vtkMRMLNode*)),
-                   q, SLOT(updateWidgetFromMRML()));
-  QObject::connect(q, SIGNAL(nodeAboutToBeRemoved(vtkMRMLNode*)),
-                   q, SLOT(updateWidgetFromMRML()));
+  QObject::connect(q, SIGNAL(checkedNodesChanged()), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(q, SIGNAL(nodeAdded(vtkMRMLNode*)), q, SLOT(updateWidgetFromMRML()));
+  QObject::connect(q, SIGNAL(nodeAboutToBeRemoved(vtkMRMLNode*)), q, SLOT(updateWidgetFromMRML()));
 }
 
 // --------------------------------------------------------------------------
@@ -83,19 +79,17 @@ qMRMLDisplayNodeViewComboBox::qMRMLDisplayNodeViewComboBox(QWidget* parentWidget
 qMRMLDisplayNodeViewComboBox::~qMRMLDisplayNodeViewComboBox() = default;
 
 // --------------------------------------------------------------------------
-vtkMRMLDisplayNode* qMRMLDisplayNodeViewComboBox::mrmlDisplayNode()const
+vtkMRMLDisplayNode* qMRMLDisplayNodeViewComboBox::mrmlDisplayNode() const
 {
   Q_D(const qMRMLDisplayNodeViewComboBox);
   return d->MRMLDisplayNode;
 }
 
 // --------------------------------------------------------------------------
-void qMRMLDisplayNodeViewComboBox
-::setMRMLDisplayNode(vtkMRMLDisplayNode* displayNode)
+void qMRMLDisplayNodeViewComboBox ::setMRMLDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
   Q_D(qMRMLDisplayNodeViewComboBox);
-  this->qvtkReconnect(d->MRMLDisplayNode, displayNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(d->MRMLDisplayNode, displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->MRMLDisplayNode = displayNode;
   if (d->MRMLDisplayNode)
   {
@@ -115,11 +109,9 @@ void qMRMLDisplayNodeViewComboBox
 }
 
 // --------------------------------------------------------------------------
-void qMRMLDisplayNodeViewComboBox
-::setMRMLDisplayNode(vtkMRMLNode* displayNode)
+void qMRMLDisplayNodeViewComboBox ::setMRMLDisplayNode(vtkMRMLNode* displayNode)
 {
-  this->setMRMLDisplayNode(
-    vtkMRMLDisplayNode::SafeDownCast(displayNode));
+  this->setMRMLDisplayNode(vtkMRMLDisplayNode::SafeDownCast(displayNode));
 }
 
 // --------------------------------------------------------------------------
@@ -195,10 +187,10 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
 }
 
 // --------------------------------------------------------------------------
-QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes()const
+QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes() const
 {
   QList<vtkMRMLAbstractViewNode*> res;
-  foreach(vtkMRMLNode* checkedNode, this->checkedNodes())
+  foreach (vtkMRMLNode* checkedNode, this->checkedNodes())
   {
     res << vtkMRMLAbstractViewNode::SafeDownCast(checkedNode);
   }
@@ -206,10 +198,10 @@ QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes()
 }
 
 // --------------------------------------------------------------------------
-QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::uncheckedViewNodes()const
+QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::uncheckedViewNodes() const
 {
   QList<vtkMRMLAbstractViewNode*> res;
-  foreach(vtkMRMLNode* uncheckedNode, this->uncheckedNodes())
+  foreach (vtkMRMLNode* uncheckedNode, this->uncheckedNodes())
   {
     res << vtkMRMLAbstractViewNode::SafeDownCast(uncheckedNode);
   }

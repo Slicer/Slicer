@@ -35,19 +35,19 @@
 /// type is used for determining if the type of the volume is grayscale/color or label map.
 class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeNode : public vtkMRMLScalarVolumeNode
 {
-  public:
-  static vtkMRMLLabelMapVolumeNode *New();
-  vtkTypeMacro(vtkMRMLLabelMapVolumeNode,vtkMRMLScalarVolumeNode);
+public:
+  static vtkMRMLLabelMapVolumeNode* New();
+  vtkTypeMacro(vtkMRMLLabelMapVolumeNode, vtkMRMLScalarVolumeNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "LabelMapVolume";}
+  const char* GetNodeTagName() override { return "LabelMapVolume"; }
 
   ///
   /// Make a 'None' volume node with blank image data
-  static void CreateNoneNode(vtkMRMLScene *scene);
+  static void CreateNoneNode(vtkMRMLScene* scene);
 
   ///
   /// Create and observe default display node

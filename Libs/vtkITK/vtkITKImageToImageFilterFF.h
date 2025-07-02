@@ -25,16 +25,15 @@
 class VTK_ITK_EXPORT vtkITKImageToImageFilterFF : public vtkITKImageToImageFilter
 {
 public:
-  vtkTypeMacro(vtkITKImageToImageFilterFF,vtkITKImageToImageFilter);
+  vtkTypeMacro(vtkITKImageToImageFilterFF, vtkITKImageToImageFilter);
   static vtkITKImageToImageFilterFF* New() { return nullptr; };
   void PrintSelf(ostream& os, vtkIndent indent) override
   {
-    Superclass::PrintSelf ( os, indent );
+    Superclass::PrintSelf(os, indent);
     os << m_Filter;
   };
 
 protected:
-
   /// To/from ITK
   typedef float InputImagePixelType;
   typedef float OutputImagePixelType;
@@ -46,10 +45,10 @@ protected:
   ImageImportType::Pointer itkImporter;
   ImageExportType::Pointer itkExporter;
 
-  typedef itk::ImageToImageFilter<InputImageType,OutputImageType> GenericFilterType;
+  typedef itk::ImageToImageFilter<InputImageType, OutputImageType> GenericFilterType;
   GenericFilterType::Pointer m_Filter;
 
-  vtkITKImageToImageFilterFF ( GenericFilterType* filter )
+  vtkITKImageToImageFilterFF(GenericFilterType* filter)
   {
     /// Need an import, export, and a ITK pipeline
     m_Filter = filter;
@@ -57,11 +56,11 @@ protected:
     this->itkExporter = ImageExportType::New();
     ConnectPipelines(this->vtkExporter, this->itkImporter);
     ConnectPipelines(this->itkExporter, this->vtkImporter);
-    this->LinkITKProgressToVTKProgress ( m_Filter );
+    this->LinkITKProgressToVTKProgress(m_Filter);
 
     /// Set up the filter pipeline
-    m_Filter->SetInput ( this->itkImporter->GetOutput() );
-    this->itkExporter->SetInput ( m_Filter->GetOutput() );
+    m_Filter->SetInput(this->itkImporter->GetOutput());
+    this->itkExporter->SetInput(m_Filter->GetOutput());
     this->vtkCast->SetOutputScalarTypeToFloat();
   };
 

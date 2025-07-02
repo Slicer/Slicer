@@ -45,44 +45,46 @@ qSlicerStyle::qSlicerStyle()
 qSlicerStyle::~qSlicerStyle() = default;
 
 //------------------------------------------------------------------------------
-QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const QStyleOptionComplex *opt,
-                                                       const QPoint &pt, const QWidget *widget) const
+QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc,
+                                                       const QStyleOptionComplex* opt,
+                                                       const QPoint& pt,
+                                                       const QWidget* widget) const
 {
   SubControl sc = SC_None;
-  switch (cc) {
-  // Hot area for the groove shall be the entire height of the widget
+  switch (cc)
+  {
+    // Hot area for the groove shall be the entire height of the widget
 #ifndef QT_NO_SLIDER
     case CC_Slider:
-        if (const QStyleOptionSlider *slider = qstyleoption_cast<const QStyleOptionSlider *>(opt)) {
-            QRect r = proxy()->subControlRect(cc, slider, SC_SliderHandle, widget);
-            if (r.isValid() && r.contains(pt))
-            {
-              sc = SC_SliderHandle;
-            }
-            else
-            {
-              r = proxy()->subControlRect(cc, slider, SC_SliderGroove ,widget);
-              QPoint center = r.center();
-              if (slider->orientation == Qt::Horizontal)
-              {
-                // If there is no widget, use QStyle::PM_SliderThickness
-                r.setHeight(widget ? widget->height() :
-                            this->pixelMetric(QStyle::PM_SliderThickness, opt, widget));
-              }
-              else
-              {
-                // If there is no widget, use QStyle::PM_SliderThickness
-                r.setWidth(widget ? widget->width() :
-                           this->pixelMetric(QStyle::PM_SliderThickness, opt, widget));
-              }
-              r.moveCenter(center);
-              if (r.isValid() && r.contains(pt))
-              {
-                sc = SC_SliderGroove;
-              }
-            }
+      if (const QStyleOptionSlider* slider = qstyleoption_cast<const QStyleOptionSlider*>(opt))
+      {
+        QRect r = proxy()->subControlRect(cc, slider, SC_SliderHandle, widget);
+        if (r.isValid() && r.contains(pt))
+        {
+          sc = SC_SliderHandle;
         }
-        break;
+        else
+        {
+          r = proxy()->subControlRect(cc, slider, SC_SliderGroove, widget);
+          QPoint center = r.center();
+          if (slider->orientation == Qt::Horizontal)
+          {
+            // If there is no widget, use QStyle::PM_SliderThickness
+            r.setHeight(widget ? widget->height() : this->pixelMetric(QStyle::PM_SliderThickness, opt, widget));
+          }
+          else
+          {
+            // If there is no widget, use QStyle::PM_SliderThickness
+            r.setWidth(widget ? widget->width() : this->pixelMetric(QStyle::PM_SliderThickness, opt, widget));
+          }
+          r.moveCenter(center);
+          if (r.isValid() && r.contains(pt))
+          {
+            sc = SC_SliderGroove;
+          }
+        }
+      }
+      break;
 #endif // QT_NO_SLIDER
     default:
       sc = Superclass::hitTestComplexControl(cc, opt, pt, widget);
@@ -92,10 +94,9 @@ QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const 
 }
 
 // --------------------------------------------------------------------------
-int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption * option,
-                              const QWidget * widget)const
+int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption* option, const QWidget* widget) const
 {
-  switch(metric)
+  switch (metric)
   {
     case QStyle::PM_LayoutLeftMargin:
     case QStyle::PM_LayoutTopMargin:
@@ -124,23 +125,24 @@ int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption * option,
 }
 
 //------------------------------------------------------------------------------
-QPalette qSlicerStyle::standardPalette()const
+QPalette qSlicerStyle::standardPalette() const
 {
   QPalette palette = standardLightPalette();
 
-  #ifdef Q_OS_WIN
-    // Qt on macOS already dynamically picks light/dark theme based on the OS setting
-    QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", QSettings::NativeFormat);
-    if (settings.value("AppsUseLightTheme") == 0)
-    {
-      palette = standardDarkPalette();
-    }
-  #endif
+#ifdef Q_OS_WIN
+  // Qt on macOS already dynamically picks light/dark theme based on the OS setting
+  QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                     QSettings::NativeFormat);
+  if (settings.value("AppsUseLightTheme") == 0)
+  {
+    palette = standardDarkPalette();
+  }
+#endif
   return palette;
 }
 
 //------------------------------------------------------------------------------
-QPalette qSlicerStyle::standardLightPalette()const
+QPalette qSlicerStyle::standardLightPalette() const
 {
   QPalette palette = this->Superclass::standardPalette();
   // Customizations from the standard style ("fusion")
@@ -161,11 +163,11 @@ QPalette qSlicerStyle::standardLightPalette()const
   palette.setColor(QPalette::Disabled, QPalette::ButtonText, "#bebebe");
   palette.setColor(QPalette::BrightText, Qt::red);
   // Color roles used mostly for 3D bevel and shadow effects.
-  palette.setColor(QPalette::Light, "#c8c8c8");  // Lighter than Button color.
-  palette.setColor(QPalette::Midlight, "#e6e6e6");  // Between Button and Light.
-  palette.setColor(QPalette::Dark, "#aaaaaa");  // Darker than Button.
-  palette.setColor(QPalette::Mid, "#c8c8c8");  // Between Button and Dark.
-  palette.setColor(QPalette::Shadow, "#5a5a5a");  // A very dark color.
+  palette.setColor(QPalette::Light, "#c8c8c8");    // Lighter than Button color.
+  palette.setColor(QPalette::Midlight, "#e6e6e6"); // Between Button and Light.
+  palette.setColor(QPalette::Dark, "#aaaaaa");     // Darker than Button.
+  palette.setColor(QPalette::Mid, "#c8c8c8");      // Between Button and Dark.
+  palette.setColor(QPalette::Shadow, "#5a5a5a");   // A very dark color.
   // Color roles relate to selected (marked) items
   palette.setColor(QPalette::Highlight, "#308cc6");
   palette.setColor(QPalette::Disabled, QPalette::Highlight, "#919191");
@@ -177,7 +179,7 @@ QPalette qSlicerStyle::standardLightPalette()const
 }
 
 //------------------------------------------------------------------------------
-QPalette qSlicerStyle::standardDarkPalette()const
+QPalette qSlicerStyle::standardDarkPalette() const
 {
   QPalette palette = this->Superclass::standardPalette();
   // See https://doc.qt.io/qt-5/qpalette.html#ColorRole-enum
@@ -197,11 +199,11 @@ QPalette qSlicerStyle::standardDarkPalette()const
   palette.setColor(QPalette::Disabled, QPalette::ButtonText, "#b4b4b4");
   palette.setColor(QPalette::BrightText, "#ff4444"); // Lighter than Qt::red
   // Color roles used mostly for 3D bevel and shadow effects.
-  palette.setColor(QPalette::Light, "#828284");  // Lighter than Button color.
-  palette.setColor(QPalette::Midlight, "#5a5a5b");  // Between Button and Light.
-  palette.setColor(QPalette::Dark, "#232323");  // Darker than Button.
-  palette.setColor(QPalette::Mid, "#2b2b2b");  // Between Button and Dark.
-  palette.setColor(QPalette::Shadow, "#141414");  // A very dark color.
+  palette.setColor(QPalette::Light, "#828284");    // Lighter than Button color.
+  palette.setColor(QPalette::Midlight, "#5a5a5b"); // Between Button and Light.
+  palette.setColor(QPalette::Dark, "#232323");     // Darker than Button.
+  palette.setColor(QPalette::Mid, "#2b2b2b");      // Between Button and Dark.
+  palette.setColor(QPalette::Shadow, "#141414");   // A very dark color.
   // Color roles relate to selected (marked) items
   palette.setColor(QPalette::Highlight, "#3ca4ff");
   palette.setColor(QPalette::Disabled, QPalette::Highlight, "#505050");
@@ -213,11 +215,13 @@ QPalette qSlicerStyle::standardDarkPalette()const
 }
 
 //------------------------------------------------------------------------------
-int qSlicerStyle::styleHint(StyleHint hint, const QStyleOption *opt, const QWidget *widget,
-                             QStyleHintReturn *returnData) const
+int qSlicerStyle::styleHint(StyleHint hint,
+                            const QStyleOption* opt,
+                            const QWidget* widget,
+                            QStyleHintReturn* returnData) const
 {
   int res;
-  switch(hint)
+  switch (hint)
   {
     case QStyle::SH_ItemView_ActivateItemOnSingleClick:
       if (widget && widget->property("SH_ItemView_ActivateItemOnSingleClick").isValid())
@@ -250,20 +254,16 @@ bool qSlicerStyle::eventFilter(QObject* obj, QEvent* event)
   switch (event->type())
   {
     case QEvent::Wheel:
-      if (qobject_cast<QAbstractScrollArea*>(widget) ||
-          qobject_cast<QScrollBar*>(widget) ||
+      if (qobject_cast<QAbstractScrollArea*>(widget) || qobject_cast<QScrollBar*>(widget) ||
           qobject_cast<QAbstractScrollArea*>(widget->parentWidget()))
       {
         break;
       }
-      for (QWidget* ancestor = widget->parentWidget();
-           ancestor; ancestor = ancestor->parentWidget())
+      for (QWidget* ancestor = widget->parentWidget(); ancestor; ancestor = ancestor->parentWidget())
       {
-        if (QAbstractScrollArea* scrollArea =
-            qobject_cast<QAbstractScrollArea*>(ancestor))
+        if (QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(ancestor))
         {
-          if (scrollArea->verticalScrollBar()->minimum() !=
-              scrollArea->verticalScrollBar()->maximum())
+          if (scrollArea->verticalScrollBar()->minimum() != scrollArea->verticalScrollBar()->maximum())
           {
             event->ignore();
             return true;

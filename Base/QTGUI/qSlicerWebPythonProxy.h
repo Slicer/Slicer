@@ -29,8 +29,7 @@
 
 class qSlicerWebPythonProxyPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebPythonProxy
-  : public QObject
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebPythonProxy : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(bool verbose READ verbose WRITE setVerbose)
@@ -39,7 +38,7 @@ public:
   typedef QObject Superclass;
 
   /// Constructor
-  explicit qSlicerWebPythonProxy(QObject *parent = nullptr);
+  explicit qSlicerWebPythonProxy(QObject* parent = nullptr);
   virtual ~qSlicerWebPythonProxy();
 
   /// This enum maps to ctkAbstractPythonManager execution modes Py_eval_input,
@@ -51,11 +50,11 @@ public:
   ///
   /// \sa ctkAbstractPythonManager::ExecuteStringMode
   enum EvalPythonMode
-    {
+  {
     EvalInput = 0,
     FileInput,
     SingleInput
-    };
+  };
   Q_ENUMS(EvalPythonMode);
 
   /// Enabled detailed logging during Python evaluation.
@@ -76,7 +75,7 @@ public slots:
   /// running python code from web pages.
   ///
   /// \sa qSlicerWebWidget::initializeWebEngineProfile
-  QString evalPython(const QString &python, int mode = FileInput);
+  QString evalPython(const QString& python, int mode = FileInput);
 
 protected:
   qSlicerWebPythonProxy(qSlicerWebPythonProxyPrivate* pimpl);

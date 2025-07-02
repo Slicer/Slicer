@@ -34,16 +34,16 @@ class vtkImageRGBToHSI;
 /// to read the myriad of file formats for medical data.
 class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVolumeDisplayNode
 {
-  public:
-  static vtkMRMLVectorVolumeDisplayNode *New();
-  vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode,vtkMRMLGlyphableVolumeDisplayNode);
+public:
+  static vtkMRMLVectorVolumeDisplayNode* New();
+  vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode, vtkMRMLGlyphableVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -55,7 +55,7 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "VectorVolumeDisplay";}
+  const char* GetNodeTagName() override { return "VectorVolumeDisplay"; }
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -68,9 +68,7 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   vtkGetMacro(ScalarMode, int);
   vtkSetMacro(ScalarMode, int);
 
-  void SetScalarModeToMagnitude() {
-    this->SetScalarMode(this->scalarModeMagnitude);
-  }
+  void SetScalarModeToMagnitude() { this->SetScalarMode(this->scalarModeMagnitude); }
 
   enum
   {
@@ -80,22 +78,16 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   vtkGetMacro(GlyphMode, int);
   vtkSetMacro(GlyphMode, int);
 
-  void SetGlyphModeToLines() {
-    this->SetGlyphMode(this->glyphModeLines);
-  };
-  void SetGlyphModeToTubes() {
-    this->SetGlyphMode(this->glyphModeTubes);
-  };
+  void SetGlyphModeToLines() { this->SetGlyphMode(this->glyphModeLines); };
+  void SetGlyphModeToTubes() { this->SetGlyphMode(this->glyphModeTubes); };
 
-  //virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* ) {return nullptr;};
+  // virtual vtkPolyData* ExecuteGlyphPipeLineAndGetPolyData( vtkImageData* ) {return nullptr;};
 
   void SetDefaultColorMap() override {}
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Get the input of the pipeline
   vtkAlgorithmOutput* GetInputImageDataConnection() override;
@@ -105,19 +97,19 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   ///
   /// get associated slice glyph display node
   /// TODO: return empty list for now, later add glyphs
-  std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
-    GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* vtkNotUsed(node) ) override
+  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> GetSliceGlyphDisplayNodes(
+    vtkMRMLVolumeNode* vtkNotUsed(node)) override
   {
-    return std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>();
+    return std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*>();
   }
 
   ///
   /// Access to this class's internal filter elements
-  vtkGetObjectMacro (ShiftScale, vtkImageShiftScale);
-  vtkGetObjectMacro (RGBToHSI, vtkImageRGBToHSI);
-  vtkGetObjectMacro (ExtractIntensity, vtkImageExtractComponents);
-  vtkGetObjectMacro (AppendComponents, vtkImageAppendComponents);
-  vtkGetObjectMacro (Threshold, vtkImageThreshold);
+  vtkGetObjectMacro(ShiftScale, vtkImageShiftScale);
+  vtkGetObjectMacro(RGBToHSI, vtkImageRGBToHSI);
+  vtkGetObjectMacro(ExtractIntensity, vtkImageExtractComponents);
+  vtkGetObjectMacro(AppendComponents, vtkImageAppendComponents);
+  vtkGetObjectMacro(Threshold, vtkImageThreshold);
 
 protected:
   vtkMRMLVectorVolumeDisplayNode();
@@ -126,15 +118,15 @@ protected:
   void operator=(const vtkMRMLVectorVolumeDisplayNode&);
 
   /// Set the input of the pipeline
-  void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection) override;
   vtkAlgorithmOutput* GetScalarImageDataConnection() override;
 
   int ScalarMode;
   int GlyphMode;
 
-  vtkImageShiftScale *ShiftScale;
-  vtkImageRGBToHSI *RGBToHSI;
-  vtkImageExtractComponents *ExtractIntensity;
+  vtkImageShiftScale* ShiftScale;
+  vtkImageRGBToHSI* RGBToHSI;
+  vtkImageExtractComponents* ExtractIntensity;
 };
 
 #endif

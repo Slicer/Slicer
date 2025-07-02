@@ -36,7 +36,7 @@
 #include <vtkNew.h>
 
 // ----------------------------------------------------------------------------
-class qMRMLDisplayNodeViewComboBoxTester: public QObject
+class qMRMLDisplayNodeViewComboBoxTester : public QObject
 {
   Q_OBJECT
   qMRMLDisplayNodeViewComboBox* ComboBox;

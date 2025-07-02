@@ -42,8 +42,8 @@ class vtkTable;
 class VTK_MRML_EXPORT vtkMRMLPlotSeriesNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLPlotSeriesNode *New();
-  vtkTypeMacro(vtkMRMLPlotSeriesNode,vtkMRMLNode);
+  static vtkMRMLPlotSeriesNode* New();
+  vtkTypeMacro(vtkMRMLPlotSeriesNode, vtkMRMLNode);
 
   /// Enumerated values for SetPlot/GetPlot
   enum
@@ -89,7 +89,7 @@ public:
 
   ///
   /// Set node attributes.
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -102,7 +102,7 @@ public:
   ///
   /// Set and observe Table node ID.
   /// \sa TableNodeID, GetTableNodeID(), SetInputData()
-  virtual void SetAndObserveTableNodeID(const char *tableNodeID);
+  virtual void SetAndObserveTableNodeID(const char* tableNodeID);
 
   ///
   /// Set and observe Table node ID.
@@ -116,20 +116,18 @@ public:
 
   ///
   /// Method to propagate events generated in Plot nodes.
-  void ProcessMRMLEvents (vtkObject *caller,
-                                  unsigned long event,
-                                  void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   ///
   /// TableModifiedEvent is send when the parent table is modified
   enum
   {
-      TableModifiedEvent = 15000
+    TableModifiedEvent = 15000
   };
 
   ///
   /// Get referenced transform node id
-  const char *GetTableNodeID();
+  const char* GetTableNodeID();
 
   //----------------------------------------------------------------
   /// Get and Set Macros
@@ -164,8 +162,8 @@ public:
 
   ///
   /// Convert between plot type ID and name
-  static const char *GetPlotTypeAsString(int id);
-  static int GetPlotTypeFromString(const char *name);
+  static const char* GetPlotTypeAsString(int id);
+  static int GetPlotTypeFromString(const char* name);
 
   ///
   /// Utility methods to set/get the marker style
@@ -177,8 +175,8 @@ public:
 
   ///
   /// Convert between plot markers style ID and name
-  static const char *GetMarkerStyleAsString(int id);
-  static int GetMarkerStyleFromString(const char *name);
+  static const char* GetMarkerStyleAsString(int id);
+  static int GetMarkerStyleFromString(const char* name);
 
   ///
   /// Utility methods to set/get the marker size
@@ -195,8 +193,8 @@ public:
 
   ///
   /// Convert between line style ID and name
-  const char *GetLineStyleAsString(int id);
-  int GetLineStyleFromString(const char *name);
+  const char* GetLineStyleAsString(int id);
+  int GetLineStyleFromString(const char* name);
 
   ///
   /// Utility methods to set/get the Line width
@@ -240,7 +238,7 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override
   {
     Superclass::OnNodeReferenceAdded(reference);
     if (std::string(reference->GetReferenceRole()) == this->TableNodeReferenceRole)
@@ -251,7 +249,7 @@ protected:
 
   ///
   /// Called when a node reference ID is modified.
-  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override
   {
     Superclass::OnNodeReferenceModified(reference);
     if (std::string(reference->GetReferenceRole()) == this->TableNodeReferenceRole)
@@ -262,7 +260,7 @@ protected:
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override
   {
     Superclass::OnNodeReferenceRemoved(reference);
     if (std::string(reference->GetReferenceRole()) == this->TableNodeReferenceRole)
@@ -278,24 +276,23 @@ protected:
   //----------------------------------------------------------------
   /// Data
   //----------------------------------------------------------------
- protected:
-
+protected:
   ///
   /// Type of Plot (scatter, line, bar, ...).
-  int PlotType{PlotTypeLine};
+  int PlotType{ PlotTypeLine };
 
   std::string XColumnName;
   std::string YColumnName;
   std::string LabelColumnName;
 
-  float LineWidth{2};
-  int LineStyle{LineStyleSolid};
+  float LineWidth{ 2 };
+  int LineStyle{ LineStyleSolid };
 
-  float MarkerSize{7};
-  int MarkerStyle{MarkerStyleCircle};
+  float MarkerSize{ 7 };
+  int MarkerStyle{ MarkerStyleCircle };
 
   double Color[3];
-  double Opacity{1.0};
+  double Opacity{ 1.0 };
 };
 
 #endif

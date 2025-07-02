@@ -39,15 +39,14 @@ class qMRMLNodeComboBox;
 class qMRMLSettingsUnitWidgetPrivate;
 class vtkSlicerUnitsLogic;
 
-class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLSettingsUnitWidget
-  : public QWidget
+class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLSettingsUnitWidget : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT
 
 public:
   typedef QWidget Superclass;
-  qMRMLSettingsUnitWidget(QWidget *parent=nullptr);
+  qMRMLSettingsUnitWidget(QWidget* parent = nullptr);
   ~qMRMLSettingsUnitWidget() override;
 
   /// Set the units logic scene for the preset comboboxes

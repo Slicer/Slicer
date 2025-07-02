@@ -39,8 +39,10 @@
 class qMRMLSimpleColorTableViewPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLSimpleColorTableView);
+
 protected:
   qMRMLSimpleColorTableView* const q_ptr;
+
 public:
   qMRMLSimpleColorTableViewPrivate(qMRMLSimpleColorTableView& object);
   void init();
@@ -49,8 +51,7 @@ public:
 //------------------------------------------------------------------------------
 qMRMLSimpleColorTableViewPrivate::qMRMLSimpleColorTableViewPrivate(qMRMLSimpleColorTableView& object)
   : q_ptr(&object)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
 void qMRMLSimpleColorTableViewPrivate::init()
@@ -73,7 +74,7 @@ void qMRMLSimpleColorTableViewPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLSimpleColorTableView::qMRMLSimpleColorTableView(QWidget *_parent)
+qMRMLSimpleColorTableView::qMRMLSimpleColorTableView(QWidget* _parent)
   : QTableView(_parent)
   , d_ptr(new qMRMLSimpleColorTableViewPrivate(*this))
 {
@@ -85,13 +86,13 @@ qMRMLSimpleColorTableView::qMRMLSimpleColorTableView(QWidget *_parent)
 qMRMLSimpleColorTableView::~qMRMLSimpleColorTableView() = default;
 
 //------------------------------------------------------------------------------
-qMRMLColorModel* qMRMLSimpleColorTableView::colorModel()const
+qMRMLColorModel* qMRMLSimpleColorTableView::colorModel() const
 {
   return qobject_cast<qMRMLColorModel*>(this->sortFilterProxyModel()->sourceModel());
 }
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterColorProxyModel* qMRMLSimpleColorTableView::sortFilterProxyModel()const
+qMRMLSortFilterColorProxyModel* qMRMLSimpleColorTableView::sortFilterProxyModel() const
 {
   return qobject_cast<qMRMLSortFilterColorProxyModel*>(this->model());
 }
@@ -115,7 +116,7 @@ void qMRMLSimpleColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLSimpleColorTableView::mrmlColorNode()const
+vtkMRMLColorNode* qMRMLSimpleColorTableView::mrmlColorNode() const
 {
   qMRMLColorModel* mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
@@ -134,12 +135,12 @@ bool qMRMLSimpleColorTableView::selectColorByIndex(int colorIndex)
     return false;
   }
 
-  QModelIndexList foundIndices = colorModel->match(colorModel->index(0,0), qMRMLItemDelegate::ColorEntryRole,
-    colorIndex, 1, Qt::MatchExactly | Qt::MatchRecursive);
+  QModelIndexList foundIndices = colorModel->match(
+    colorModel->index(0, 0), qMRMLItemDelegate::ColorEntryRole, colorIndex, 1, Qt::MatchExactly | Qt::MatchRecursive);
   if (foundIndices.size() == 0)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to find color model index by color index " << colorIndex
-      << " in color node " << colorNode->GetName();
+                << " in color node " << colorNode->GetName();
     return false;
   }
 
@@ -156,7 +157,7 @@ bool qMRMLSimpleColorTableView::selectColorByIndex(int colorIndex)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSimpleColorTableView::selectedColorIndex()const
+int qMRMLSimpleColorTableView::selectedColorIndex() const
 {
   QSortFilterProxyModel* sortFilterModel = this->sortFilterProxyModel();
   if (!sortFilterModel)

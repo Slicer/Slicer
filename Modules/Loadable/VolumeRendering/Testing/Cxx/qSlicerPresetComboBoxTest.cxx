@@ -45,7 +45,7 @@
 #include <vtkPiecewiseFunction.h>
 
 // ----------------------------------------------------------------------------
-class qSlicerPresetComboBoxTester: public QObject
+class qSlicerPresetComboBoxTester : public QObject
 {
   Q_OBJECT
 
@@ -60,16 +60,15 @@ private slots:
 void qSlicerPresetComboBoxTester::testSetScene()
 {
   qSlicerPresetComboBox presetComboBox;
-  QCOMPARE(presetComboBox.nodeCount() , 0);
+  QCOMPARE(presetComboBox.nodeCount(), 0);
 
   vtkNew<vtkMRMLScene> scene;
   presetComboBox.setMRMLScene(scene.GetPointer());
-  QCOMPARE(presetComboBox.nodeCount() , 0);
+  QCOMPARE(presetComboBox.nodeCount(), 0);
 
   vtkNew<vtkMRMLViewNode> viewNode;
   scene->AddNode(viewNode.GetPointer());
-  QCOMPARE(presetComboBox.nodeCount() , 0);
-
+  QCOMPARE(presetComboBox.nodeCount(), 0);
 }
 
 // ----------------------------------------------------------------------------
@@ -103,7 +102,7 @@ void qSlicerPresetComboBoxTester::testAddPresetNode()
   scene->AddNode(presetNode.GetPointer());
 
   presetComboBox.show();
-  //qApp->exec();
+  // qApp->exec();
 }
 // ----------------------------------------------------------------------------
 void qSlicerPresetComboBoxTester::testPreview()
@@ -118,30 +117,30 @@ void qSlicerPresetComboBoxTester::testPreview()
 
   pixmap.convertFromImage(image);
   label.setText(QString("<img src=\"%1\"/>").arg(ctk::base64HTMLImageTagSrc(image)));
-  //label.setPixmap(pixmap); ok !
+  // label.setPixmap(pixmap); ok !
   label.show();
 
-  QImage expectedImage(32,32, QImage::Format_RGB32);
+  QImage expectedImage(32, 32, QImage::Format_RGB32);
   QPainter painter;
   painter.begin(&expectedImage);
-  QLinearGradient redGradient(0.,0.,1.,0.);
+  QLinearGradient redGradient(0., 0., 1., 0.);
   redGradient.setCoordinateMode(QGradient::StretchToDeviceMode);
   redGradient.setColorAt(0., Qt::black);
   redGradient.setColorAt(1., Qt::red);
   painter.setPen(Qt::NoPen);
   painter.setBrush(QBrush(redGradient));
-  painter.drawRect(0,0,32,32);
+  painter.drawRect(0, 0, 32, 32);
   painter.end();
 
-  //QVERIFY(image == expectedImage);
+  // QVERIFY(image == expectedImage);
 
-  //QPixmap expectedPixmap;
-  //expectedPixmap.convertFromImage(expectedImage);
-  //QLabel expectedLabel;
-  //expectedLabel.setPixmap(expectedPixmap);
+  // QPixmap expectedPixmap;
+  // expectedPixmap.convertFromImage(expectedImage);
+  // QLabel expectedLabel;
+  // expectedLabel.setPixmap(expectedPixmap);
 
-  //expectedLabel.show();
-  //qApp->exec();
+  // expectedLabel.show();
+  // qApp->exec();
 }
 
 // ----------------------------------------------------------------------------

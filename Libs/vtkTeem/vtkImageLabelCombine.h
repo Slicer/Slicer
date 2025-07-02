@@ -30,42 +30,35 @@
 class VTK_Teem_EXPORT vtkImageLabelCombine : public vtkThreadedImageAlgorithm
 {
 public:
-  static vtkImageLabelCombine *New();
-  vtkTypeMacro(vtkImageLabelCombine,vtkThreadedImageAlgorithm);
+  static vtkImageLabelCombine* New();
+  vtkTypeMacro(vtkImageLabelCombine, vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Set/Get the Operation to perform.
-  vtkSetMacro(OverwriteInput,int);
-  vtkGetMacro(OverwriteInput,int);
+  vtkSetMacro(OverwriteInput, int);
+  vtkGetMacro(OverwriteInput, int);
 
   ///
   /// Set the two inputs to this filter
-  virtual void SetInput1(vtkDataObject *in)
-  {
-      this->SetInputData(0,in);
-  }
-  virtual void SetInput2(vtkDataObject *in)
-  {
-      this->SetInputData(1,in);
-  }
+  virtual void SetInput1(vtkDataObject* in) { this->SetInputData(0, in); }
+  virtual void SetInput2(vtkDataObject* in) { this->SetInputData(1, in); }
 
 protected:
   vtkImageLabelCombine();
-  ~vtkImageLabelCombine() override  = default;
+  ~vtkImageLabelCombine() override = default;
 
   int OverwriteInput;
 
-  int RequestInformation (vtkInformation *,
-                                  vtkInformationVector **,
-                                  vtkInformationVector *) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  void ThreadedRequestData(vtkInformation *request,
-                                   vtkInformationVector **inputVector,
-                                   vtkInformationVector *outputVector,
-                                   vtkImageData ***inData,
-                                   vtkImageData **outData,
-                                   int extent[6], int threadId) override;
+  void ThreadedRequestData(vtkInformation* request,
+                           vtkInformationVector** inputVector,
+                           vtkInformationVector* outputVector,
+                           vtkImageData*** inData,
+                           vtkImageData** outData,
+                           int extent[6],
+                           int threadId) override;
 
   int FillInputPortInformation(int port, vtkInformation* info) override;
 

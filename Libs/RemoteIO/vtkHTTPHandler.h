@@ -15,15 +15,14 @@
 class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURIHandler
 {
 public:
-
   /// The Usual vtk class functions
-  static vtkHTTPHandler *New();
+  static vtkHTTPHandler* New();
   vtkTypeMacro(vtkHTTPHandler, vtkURIHandler);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// This methods returns 1 if the handler matches the URI's required
   /// protocol and returns 0 if it's not appropriate for the URI.
-  int CanHandleURI ( const char *uri ) override;
+  int CanHandleURI(const char* uri) override;
 
   /// Some web servers don't handle 'keep alive' socket transactions
   /// in a way that's compatible with curl on windows.  When this flag is set
@@ -33,12 +32,12 @@ public:
   int GetForbidReuse();
 
   /// This function wraps curl functionality to download a specified URL to a specified dir
-  void StageFileRead(const char * source, const char * destination) override;
+  void StageFileRead(const char* source, const char* destination) override;
   using vtkURIHandler::StageFileRead;
-  void StageFileWrite(const char * source, const char * destination) override;
+  void StageFileWrite(const char* source, const char* destination) override;
   using vtkURIHandler::StageFileWrite;
-  void InitTransfer () override;
-  int CloseTransfer () override;
+  void InitTransfer() override;
+  int CloseTransfer() override;
 
   /// CA Certificates path for https protocol.
   vtkSetStringMacro(CaCertificatesPath);
@@ -53,7 +52,7 @@ protected:
 private:
   class vtkInternal;
   vtkInternal* Internal;
-  char* CaCertificatesPath{nullptr};
+  char* CaCertificatesPath{ nullptr };
 };
 
 #endif

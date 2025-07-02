@@ -20,25 +20,25 @@ public:
 
   typedef CSFLS SuperClassType;
 
-  typedef SuperClassType::NodeType   NodeType;
+  typedef SuperClassType::NodeType NodeType;
   typedef SuperClassType::CSFLSLayer CSFLSLayer;
   // typedef boost::shared_ptr< Self > Pointer;
 
-  typedef itk::Image<TPixel, 3>        TImage;
-  typedef itk::Image<float, 3>         TFloatImage;
-  typedef itk::Image<double, 3>        TDoubleImage;
-  typedef itk::Image<char, 3>          TCharImage;
+  typedef itk::Image<TPixel, 3> TImage;
+  typedef itk::Image<float, 3> TFloatImage;
+  typedef itk::Image<double, 3> TDoubleImage;
+  typedef itk::Image<char, 3> TCharImage;
   typedef itk::Image<unsigned char, 3> TUCharImage;
-  typedef itk::Image<short, 3>         TShortImage;
+  typedef itk::Image<short, 3> TShortImage;
 
-  typedef TImage      ImageType;
+  typedef TImage ImageType;
   typedef TFloatImage LSImageType;
-  typedef TCharImage  LabelImageType;
+  typedef TCharImage LabelImageType;
   typedef TUCharImage MaskImageType;
   typedef TShortImage ShortImageType;
 
-  typedef typename TImage::IndexType  TIndex;
-  typedef typename TImage::SizeType   TSize;
+  typedef typename TImage::IndexType TIndex;
+  typedef typename TImage::SizeType TSize;
   typedef typename TImage::RegionType TRegion;
 
   CSFLSSegmentor3D();
@@ -68,10 +68,7 @@ public:
 
   // void getSFLSFromPhi();
 
-  void initializeSFLS()
-  {
-    initializeSFLSFromMask();
-  }
+  void initializeSFLS() { initializeSFLSFromMask(); }
   void initializeSFLSFromMask(); // m_insideVoxelCount is first computed here
 
   void initializeLabel();
@@ -88,10 +85,7 @@ public:
   void setMaxRunningTime(double t); // t in min
 
   // about evolution history
-  void keepZeroLayerHistory(bool b)
-  {
-    m_keepZeroLayerHistory = b;
-  }
+  void keepZeroLayerHistory(bool b) { m_keepZeroLayerHistory = b; }
   CSFLSLayer getZeroLayerAtIteration(unsigned long i);
 
   void writeZeroLayerAtIterationToFile(unsigned long i, const char* name);
@@ -117,6 +111,7 @@ public:
   double m_timeStep;
 
   unsigned long m_numIter;
+
 protected:
   double m_curvatureWeight;
 
@@ -130,7 +125,7 @@ protected:
   double m_dy; // in mm
   double m_dz; // in mm
 
-  long   m_insideVoxelCount;
+  long m_insideVoxelCount;
   double m_insideVolume;
 
   double m_maxVolume;      // max physical volume, in mm^3
@@ -147,14 +142,10 @@ protected:
 
   void updateInsideVoxelCount();
 
-  inline bool doubleEqual(double a, double b, double eps = 1e-10)
-  {
-    return a - b < eps && b - a < eps;
-  }
+  inline bool doubleEqual(double a, double b, double eps = 1e-10) { return a - b < eps && b - a < eps; }
 
-  bool                    m_keepZeroLayerHistory;
+  bool m_keepZeroLayerHistory;
   std::vector<CSFLSLayer> m_zeroLayerHistory;
-
 };
 
 #include "SFLSSegmentor3D.txx"

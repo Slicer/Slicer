@@ -22,13 +22,12 @@
 #include "qSlicerVolumeRenderingPresetComboBox.h"
 
 //-----------------------------------------------------------------------------
-qSlicerVolumeRenderingPresetComboBoxPlugin::qSlicerVolumeRenderingPresetComboBoxPlugin(QObject *objectParent)
+qSlicerVolumeRenderingPresetComboBoxPlugin::qSlicerVolumeRenderingPresetComboBoxPlugin(QObject* objectParent)
   : QObject(objectParent)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
-QWidget *qSlicerVolumeRenderingPresetComboBoxPlugin::createWidget(QWidget *widgetParent)
+QWidget* qSlicerVolumeRenderingPresetComboBoxPlugin::createWidget(QWidget* widgetParent)
 {
   qSlicerVolumeRenderingPresetComboBox* newWidget = new qSlicerVolumeRenderingPresetComboBox(widgetParent);
   return newWidget;
@@ -39,7 +38,7 @@ QString qSlicerVolumeRenderingPresetComboBoxPlugin::domXml() const
 {
   return "<widget class=\"qSlicerVolumeRenderingPresetComboBox\" \
           name=\"VolumeRenderingPresetComboBox\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

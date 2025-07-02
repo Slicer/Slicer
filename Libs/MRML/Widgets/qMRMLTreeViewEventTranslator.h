@@ -32,8 +32,7 @@
 
 class vtkMRMLNode;
 
-class QMRML_WIDGETS_EXPORT qMRMLTreeViewEventTranslator :
-  public pqTreeViewEventTranslator
+class QMRML_WIDGETS_EXPORT qMRMLTreeViewEventTranslator : public pqTreeViewEventTranslator
 {
   Q_OBJECT
 
@@ -42,10 +41,10 @@ public:
   qMRMLTreeViewEventTranslator(QObject* parent = nullptr);
 
   using Superclass::translateEvent;
-  bool translateEvent(QObject *Object, QEvent *Event, int EventType, bool &Error) override;
+  bool translateEvent(QObject* Object, QEvent* Event, int EventType, bool& Error) override;
 
 private:
-  qMRMLTreeViewEventTranslator(const qMRMLTreeViewEventTranslator&); // NOT implemented
+  qMRMLTreeViewEventTranslator(const qMRMLTreeViewEventTranslator&);            // NOT implemented
   qMRMLTreeViewEventTranslator& operator=(const qMRMLTreeViewEventTranslator&); // NOT implemented
 
   QObject* CurrentObject;
@@ -54,7 +53,7 @@ private slots:
   void onDestroyed(QObject*);
   void onCurrentNodeDeleted(const QModelIndex&);
   void onCurrentNodeRenamed(const QString&);
-//  void onEditNodeRequested(vtkMRMLNode*);
+  //  void onEditNodeRequested(vtkMRMLNode*);
   void onDecorationClicked(const QModelIndex&);
   void onAboutToReparentByDnD(vtkMRMLNode*, vtkMRMLNode*);
 

@@ -29,7 +29,7 @@
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, std::string text, int encoding);
 
 //---------------------------------------------------------------------------
-int vtkMRMLTextStorageNodeTest1(int argc, char * argv[] )
+int vtkMRMLTextStorageNodeTest1(int argc, char* argv[])
 {
   if (argc != 2)
   {
@@ -53,11 +53,10 @@ int vtkMRMLTextStorageNodeTest1(int argc, char * argv[] )
 }
 
 //---------------------------------------------------------------------------
-int TestReadWriteData(vtkMRMLScene* scene, const char *extension, std::string text, int encoding)
+int TestReadWriteData(vtkMRMLScene* scene, const char* extension, std::string text, int encoding)
 {
-  std::string fileName = std::string(scene->GetRootDirectory()) +
-                         std::string("/vtkMRMLTextNodeTest1") +
-                         std::string(extension);
+  std::string fileName =
+    std::string(scene->GetRootDirectory()) + std::string("/vtkMRMLTextNodeTest1") + std::string(extension);
 
   // Add text node
   vtkNew<vtkMRMLTextNode> textNode;

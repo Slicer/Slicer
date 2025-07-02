@@ -36,14 +36,12 @@ class vtkUniforms;
 /// \brief vtkMRMLShaderPropertyNode volume shader custom code and
 /// custom uniform variables defined by users or specialized rendering
 /// modules.
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLShaderPropertyNode
-  : public vtkMRMLStorableNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLShaderPropertyNode : public vtkMRMLStorableNode
 {
 public:
-
   /// Create a new vtkMRMLShaderPropertyNode
-  static vtkMRMLShaderPropertyNode *New();
-  vtkTypeMacro(vtkMRMLShaderPropertyNode,vtkMRMLStorableNode);
+  static vtkMRMLShaderPropertyNode* New();
+  vtkTypeMacro(vtkMRMLShaderPropertyNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Don't change its scalarOpacity, gradientOpacity or color on the volume property
@@ -51,9 +49,9 @@ public:
   vtkGetObjectMacro(ShaderProperty, vtkShaderProperty);
 
   /// Get the list of user-defined uniform variables.
-  vtkUniforms * GetVertexUniforms();
-  vtkUniforms * GetFragmentUniforms();
-  vtkUniforms * GetGeometryUniforms();
+  vtkUniforms* GetVertexUniforms();
+  vtkUniforms* GetFragmentUniforms();
+  vtkUniforms* GetGeometryUniforms();
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -61,7 +59,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -71,10 +69,10 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLShaderPropertyNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "ShaderProperty";}
+  const char* GetNodeTagName() override { return "ShaderProperty"; }
 
   /// Reimplemented for internal reasons.
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
@@ -91,12 +89,11 @@ protected:
   vtkIntArray* ObservedEvents;
 
   /// Main parameters for visualization
-  vtkShaderProperty* ShaderProperty{nullptr};
+  vtkShaderProperty* ShaderProperty{ nullptr };
 
 private:
   vtkMRMLShaderPropertyNode(const vtkMRMLShaderPropertyNode&) = delete;
   void operator=(const vtkMRMLShaderPropertyNode&) = delete;
-
 };
 
 #endif

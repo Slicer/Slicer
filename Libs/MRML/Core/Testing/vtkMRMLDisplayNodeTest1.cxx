@@ -22,19 +22,13 @@ class vtkMRMLDisplayNodeTestHelper1 : public vtkMRMLDisplayNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayNodeTestHelper1 *New();
+  static vtkMRMLDisplayNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLDisplayNodeTestHelper1,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLDisplayNodeTestHelper1, vtkMRMLDisplayNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLDisplayNodeTestHelper1::New();
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLDisplayNodeTestHelper1::New(); }
 
-  const char * GetTypeAsString()
-  {
-    return "vtkMRMLDisplayNodeTestHelper1";
-  }
+  const char* GetTypeAsString() { return "vtkMRMLDisplayNodeTestHelper1"; }
 
   int ReadFile()
   {
@@ -42,15 +36,12 @@ public:
     return EXIT_SUCCESS;
   }
 
-  const char* GetNodeTagName() override
-  {
-    return "Testing is good";
-  }
+  const char* GetNodeTagName() override { return "Testing is good"; }
 };
 vtkStandardNewMacro(vtkMRMLDisplayNodeTestHelper1);
 
 //----------------------------------------------------------------------------
-int vtkMRMLDisplayNodeTest1(int , char * [])
+int vtkMRMLDisplayNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLDisplayNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

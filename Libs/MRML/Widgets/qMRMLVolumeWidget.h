@@ -48,7 +48,7 @@ public:
 
   ///
   /// Return the current MRML node of interest
-  Q_INVOKABLE vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
+  Q_INVOKABLE vtkMRMLScalarVolumeNode* mrmlVolumeNode() const;
 
 public slots:
   /// Set the volume to observe
@@ -74,11 +74,10 @@ protected slots:
 
 protected:
   QScopedPointer<qMRMLVolumeWidgetPrivate> d_ptr;
-  qMRMLVolumeWidget(qMRMLVolumeWidgetPrivate* ptr,
-                    QWidget* parentWidget = nullptr);
+  qMRMLVolumeWidget(qMRMLVolumeWidgetPrivate* ptr, QWidget* parentWidget = nullptr);
 
   /// Return the volume display node.
-  vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode()const;
+  vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode() const;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLVolumeWidget);

@@ -32,15 +32,15 @@
 #include <QStyle>
 
 //-----------------------------------------------------------------------------
-class qMRMLTextWidgetPrivate
-  : public Ui_qMRMLTextWidget
+class qMRMLTextWidgetPrivate : public Ui_qMRMLTextWidget
 {
   Q_DECLARE_PUBLIC(qMRMLTextWidget);
+
 protected:
   qMRMLTextWidget* const q_ptr;
 
 public:
-  qMRMLTextWidgetPrivate( qMRMLTextWidget& object);
+  qMRMLTextWidgetPrivate(qMRMLTextWidget& object);
   ~qMRMLTextWidgetPrivate();
   virtual void setupUi(qMRMLTextWidget*);
 
@@ -62,8 +62,7 @@ qMRMLTextWidgetPrivate::qMRMLTextWidgetPrivate(qMRMLTextWidget& object)
   , TextEditModified(false)
   , TextNodeContentsModified(false)
   , Editing(false)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qMRMLTextWidgetPrivate::~qMRMLTextWidgetPrivate() = default;
@@ -98,7 +97,7 @@ void qMRMLTextWidgetPrivate::setEditing(bool editing)
 
 //-----------------------------------------------------------------------------
 qMRMLTextWidget::qMRMLTextWidget(QWidget* parentWidget)
-  : Superclass( parentWidget )
+  : Superclass(parentWidget)
   , d_ptr(new qMRMLTextWidgetPrivate(*this))
 {
   this->setup();
@@ -144,7 +143,8 @@ void qMRMLTextWidget::setMRMLTextNode(vtkMRMLTextNode* node)
   }
 
   // Reconnect the appropriate nodes
-  this->qvtkReconnect(d->CurrentTextNode, node, vtkMRMLTextNode::TextModifiedEvent, this, SLOT(onTextNodeContentsModified()));
+  this->qvtkReconnect(
+    d->CurrentTextNode, node, vtkMRMLTextNode::TextModifiedEvent, this, SLOT(onTextNodeContentsModified()));
   d->CurrentTextNode = node;
   d->Editing = false;
   this->updateWidgetFromMRMLRequested();
@@ -152,14 +152,14 @@ void qMRMLTextWidget::setMRMLTextNode(vtkMRMLTextNode* node)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLTextNode* qMRMLTextWidget::mrmlTextNode()const
+vtkMRMLTextNode* qMRMLTextWidget::mrmlTextNode() const
 {
   Q_D(const qMRMLTextWidget);
   return d->CurrentTextNode;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLTextWidget::mrmlNode()const
+vtkMRMLNode* qMRMLTextWidget::mrmlNode() const
 {
   Q_D(const qMRMLTextWidget);
   return d->CurrentTextNode;

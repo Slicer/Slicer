@@ -30,11 +30,13 @@
 #include <vtkMRMLMarkupsDisplayNode.h>
 
 // --------------------------------------------------------------------------
-class qMRMLMarkupsInteractionHandleWidgetPrivate: public Ui_qMRMLMarkupsInteractionHandleWidget
+class qMRMLMarkupsInteractionHandleWidgetPrivate : public Ui_qMRMLMarkupsInteractionHandleWidget
 {
   Q_DECLARE_PUBLIC(qMRMLMarkupsInteractionHandleWidget);
+
 protected:
   qMRMLMarkupsInteractionHandleWidget* const q_ptr;
+
 public:
   qMRMLMarkupsInteractionHandleWidgetPrivate(qMRMLMarkupsInteractionHandleWidget& object);
   void init();
@@ -43,7 +45,8 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsInteractionHandleWidgetPrivate::qMRMLMarkupsInteractionHandleWidgetPrivate(qMRMLMarkupsInteractionHandleWidget& object)
+qMRMLMarkupsInteractionHandleWidgetPrivate::qMRMLMarkupsInteractionHandleWidgetPrivate(
+  qMRMLMarkupsInteractionHandleWidget& object)
   : q_ptr(&object)
 {
   this->DisplayNode = nullptr;
@@ -118,8 +121,7 @@ vtkMRMLMarkupsDisplayNode* qMRMLMarkupsInteractionHandleWidget::mrmlDisplayNode(
 void qMRMLMarkupsInteractionHandleWidget::setMRMLDisplayNode(vtkMRMLMarkupsDisplayNode* displayNode)
 {
   Q_D(qMRMLMarkupsInteractionHandleWidget);
-  this->qvtkReconnect(d->DisplayNode, displayNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(d->DisplayNode, displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   d->DisplayNode = displayNode;
 
@@ -270,7 +272,7 @@ void qMRMLMarkupsInteractionHandleWidget::updateMRMLFromWidget()
   bool rotationHandleAxes[4] = { d->rotateXCheckBox->isChecked(),
                                  d->rotateYCheckBox->isChecked(),
                                  d->rotateZCheckBox->isChecked(),
-                                 d->rotateViewPlaneCheckBox->isChecked()};
+                                 d->rotateViewPlaneCheckBox->isChecked() };
   d->DisplayNode->SetRotationHandleComponentVisibility(rotationHandleAxes);
   d->DisplayNode->SetRotationHandleVisibility(d->rotateVisibilityCheckBox->isChecked());
 

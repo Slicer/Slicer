@@ -33,12 +33,12 @@ class qMRMLEventLoggerWidgetPrivate;
 class vtkMRMLScene;
 class vtkObject;
 
-class QMRML_WIDGETS_EXPORT qMRMLEventLoggerWidget: public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLEventLoggerWidget : public QWidget
 {
   Q_OBJECT
 public:
   typedef QWidget Superclass;
-  explicit qMRMLEventLoggerWidget(QWidget *parent = nullptr);
+  explicit qMRMLEventLoggerWidget(QWidget* parent = nullptr);
   ~qMRMLEventLoggerWidget() override;
 
 public slots:

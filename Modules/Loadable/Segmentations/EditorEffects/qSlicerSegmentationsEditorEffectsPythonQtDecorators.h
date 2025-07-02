@@ -32,11 +32,10 @@ class qSlicerSegmentationsEditorEffectsPythonQtDecorators : public QObject
 {
   Q_OBJECT
 public:
-
   qSlicerSegmentationsEditorEffectsPythonQtDecorators()
   {
-    //PythonQt::self()->registerClass(&qSlicerSegmentEditorEffectFactory::staticMetaObject);
-    // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
+    // PythonQt::self()->registerClass(&qSlicerSegmentEditorEffectFactory::staticMetaObject);
+    //  Note: Use registerCPPClassForPythonQt to register pure Cpp classes
   }
 
 public slots:
@@ -49,9 +48,9 @@ public slots:
 
   //----------------------------------------------------------------------------
   qSlicerSegmentEditorEffectFactory* static_qSlicerSegmentEditorEffectFactory_instance()
-{
+  {
     return qSlicerSegmentEditorEffectFactory::instance();
-}
+  }
 
   //----------------------------------------------------------------------------
   // instance methods

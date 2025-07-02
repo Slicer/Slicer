@@ -38,17 +38,16 @@
 qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem() = default;
 
 #ifdef Slicer_USE_PYTHONQT
-#include "qSlicerScriptedUtils_p.h" // For importModulePythonExtensions
+#  include "qSlicerScriptedUtils_p.h" // For importModulePythonExtensions
 #endif
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
 {
-  qSlicerAbstractCoreModule * module =
-      ctkFactoryPluginItem<qSlicerAbstractCoreModule>::instanciator();
+  qSlicerAbstractCoreModule* module = ctkFactoryPluginItem<qSlicerAbstractCoreModule>::instanciator();
   module->setPath(this->path());
 
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)
   {
     return nullptr;
@@ -60,10 +59,10 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
     // By convention, if the module is not embedded,
     // "<MODULEPATH>/Python" will be appended to PYTHONPATH
     if (!qSlicerScriptedUtils::importModulePythonExtensions(
-          app->corePythonManager(), app->intDir(), this->path(),
-          app->isEmbeddedModule(this->path())))
+          app->corePythonManager(), app->intDir(), this->path(), app->isEmbeddedModule(this->path())))
     {
-      qWarning() << "qSlicerLoadableModuleFactory - Failed to instantiate module" << module->name() << "python extensions";
+      qWarning() << "qSlicerLoadableModuleFactory - Failed to instantiate module" << module->name()
+                 << "python extensions";
     }
   }
 #endif
@@ -118,11 +117,12 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
     }
   }
 
-  QSettings * settings = app->revisionUserSettings();
-  QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
-  QStringList qtModulePaths =  additionalModulePaths + defaultQTModulePaths;
+  QSettings* settings = app->revisionUserSettings();
+  QStringList additionalModulePaths =
+    app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
+  QStringList qtModulePaths = additionalModulePaths + defaultQTModulePaths;
 
-  //qDebug() << "qtModulePaths:" << qtModulePaths;
+  // qDebug() << "qtModulePaths:" << qtModulePaths;
 
   return qtModulePaths;
 }
@@ -133,8 +133,7 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
 //-----------------------------------------------------------------------------
 qSlicerLoadableModuleFactory::qSlicerLoadableModuleFactory()
   : d_ptr(new qSlicerLoadableModuleFactoryPrivate)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerLoadableModuleFactory::~qSlicerLoadableModuleFactory() = default;
@@ -148,7 +147,7 @@ void qSlicerLoadableModuleFactory::registerItems()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerLoadableModuleFactory::fileNameToKey(const QString& fileName)const
+QString qSlicerLoadableModuleFactory::fileNameToKey(const QString& fileName) const
 {
   return qSlicerLoadableModuleFactory::extractModuleName(fileName);
 }
@@ -166,7 +165,7 @@ qSlicerLoadableModuleFactoryItem* qSlicerLoadableModuleFactory::createFactoryFil
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerLoadableModuleFactory::isValidFile(const QFileInfo& file)const
+bool qSlicerLoadableModuleFactory::isValidFile(const QFileInfo& file) const
 {
   if (!Superclass::isValidFile(file))
   {

@@ -34,26 +34,24 @@ class vtkMRMLPlotViewNode;
 class vtkMRMLSliceNode;
 class vtkMRMLViewNode;
 
-class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  qSlicerViewControllersModule(QObject *parent=nullptr);
+  qSlicerViewControllersModule(QObject* parent = nullptr);
   ~qSlicerViewControllersModule() override;
 
   qSlicerGetTitleMacro(tr("View Controllers"));
 
-  QStringList categories()const override;
-  QIcon icon()const override;
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QStringList categories() const override;
+  QIcon icon() const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
   /// Read default slice view settings from application settings (.ini file)
   /// into defaultViewNode.
@@ -73,11 +71,11 @@ public:
 
   /// Read default plot view settings from application settings (.ini file)
   /// into defaultViewNode.
-  void readDefaultPlotViewSettings(vtkMRMLPlotViewNode *defaultViewNode);
+  void readDefaultPlotViewSettings(vtkMRMLPlotViewNode* defaultViewNode);
 
   /// Write default plot view settings to application settings (.ini file)
   /// from defaultViewNode.
-  void writeDefaultPlotViewSettings(vtkMRMLPlotViewNode *defaultViewNode);
+  void writeDefaultPlotViewSettings(vtkMRMLPlotViewNode* defaultViewNode);
 
   /// Set MRML scene for the module. Updates the default view settings based on
   /// the application settings.
@@ -88,7 +86,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

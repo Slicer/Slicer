@@ -32,15 +32,14 @@ class vtkMRMLNode;
 class vtkMRMLSequenceBrowserNode;
 class QSlider;
 
-class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserSeekWidget
-: public qMRMLWidget
+class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserSeekWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLSequenceBrowserSeekWidget(QWidget *newParent = 0);
+  qMRMLSequenceBrowserSeekWidget(QWidget* newParent = 0);
   ~qMRMLSequenceBrowserSeekWidget() override;
 
   /// Get access to the internal slider widget.
@@ -62,7 +61,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLSequenceBrowserSeekWidget);
   Q_DISABLE_COPY(qMRMLSequenceBrowserSeekWidget);
-
 };
 
 #endif

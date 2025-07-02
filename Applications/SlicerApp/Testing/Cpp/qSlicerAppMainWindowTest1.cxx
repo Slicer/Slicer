@@ -26,19 +26,19 @@
 
 // CTK includes
 #ifdef Slicer_USE_PYTHONQT
-# include <ctkPythonConsole.h>
+#  include <ctkPythonConsole.h>
 #endif
 
-#include "qMRMLWidget.h"// SlicerApp includes
+#include "qMRMLWidget.h" // SlicerApp includes
 #include "qSlicerApplication.h"
 #include "qSlicerAppMainWindow.h"
 #ifdef Slicer_USE_PYTHONQT
-# include "qSlicerPythonManager.h"
+#  include "qSlicerPythonManager.h"
 #endif
 
 // STD includes
 
-int qSlicerAppMainWindowTest1(int argc, char * argv[] )
+int qSlicerAppMainWindowTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   qSlicerApplication app(argc, argv);

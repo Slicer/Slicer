@@ -108,7 +108,8 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyMo
   /// This property controls whether nodes unaffiliated with a given node ID are
   /// hidden or not.
   /// All the nodes are visible (empty string) by default.
-  Q_PROPERTY(QString hideNodesUnaffiliatedWithNodeID READ hideNodesUnaffiliatedWithNodeID WRITE setHideNodesUnaffiliatedWithNodeID)
+  Q_PROPERTY(QString hideNodesUnaffiliatedWithNodeID READ hideNodesUnaffiliatedWithNodeID WRITE
+               setHideNodesUnaffiliatedWithNodeID)
 
 public:
   enum FilterType
@@ -119,59 +120,58 @@ public:
   };
 
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterProxyModel(QObject *parent=nullptr);
+  qMRMLSortFilterProxyModel(QObject* parent = nullptr);
   ~qMRMLSortFilterProxyModel() override;
 
   /// Retrieve the associated MRML scene
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
   /// Retrieve the MRML scene index
-  Q_INVOKABLE QModelIndex mrmlSceneIndex()const;
+  Q_INVOKABLE QModelIndex mrmlSceneIndex() const;
 
   /// Retrieve the associated vtkMRMLNode
-  Q_INVOKABLE vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
+  Q_INVOKABLE vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index) const;
 
   /// Retrieve an index for a given vtkMRMLNode
-  Q_INVOKABLE QModelIndex indexFromMRMLNode(vtkMRMLNode* node, int column = 0)const;
+  Q_INVOKABLE QModelIndex indexFromMRMLNode(vtkMRMLNode* node, int column = 0) const;
 
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
   /// vtkMRMLTransformNode
-  QStringList nodeTypes()const;
+  QStringList nodeTypes() const;
   void setNodeTypes(const QStringList& nodeTypes);
 
   /// If a vtkMRMLNode has the property HideFromEditors set to true,
   /// bypass the property and show the node anyway.
   /// \sa setShowHiddenForTypes, showHiddenForTypes
-  bool showHidden()const;
+  bool showHidden() const;
 
   /// Give more control over the types of MRML node you want to force
   /// the display even if their HideFromEditors property is true.
   /// Don't do anything if the list is empty.
   /// \sa setShowHiddenForTypes, showHiddenForTypes
-  QStringList showHiddenForTypes()const;
+  QStringList showHiddenForTypes() const;
   void setShowHiddenForTypes(const QStringList& nodeTypes);
 
   /// Add node type attribute that filter the nodes to
   /// display. The default of a null QVariant means that
   /// any non null attributeValue will match
   Q_INVOKABLE void addAttribute(const QString& nodeType,
-                    const QString& attributeName,
-                    const QVariant& attributeValue = QVariant());
+                                const QString& attributeName,
+                                const QVariant& attributeValue = QVariant());
   /// Remove node type attribute filtering the displayed nodes
   /// \sa addAttribute
   Q_INVOKABLE void removeAttribute(const QString& nodeType, const QString& attributeName);
 
   /// Return the current attribute filter for the given node type.
   /// \sa addAttribute, removeAttribute
-  Q_INVOKABLE QVariant attributeFilter(
-    const QString& nodeType, const QString& attributeName) const;
+  Q_INVOKABLE QVariant attributeFilter(const QString& nodeType, const QString& attributeName) const;
 
   /// Display or not the nodes that are excluded by
   /// the ExcludedChildNodeTypes list.
   /// true by default.
   void setShowChildNodeTypes(bool show);
-  bool showChildNodeTypes()const;
+  bool showChildNodeTypes() const;
 
   /// If a node is a nodeType, hide the node if it is also
   /// a ExcludedChildNodeType. (this can happen if nodeType is a
@@ -179,21 +179,21 @@ public:
   /// \sa hideChildNodeTypes, hideChildNodeTypes()
   void setHideChildNodeTypes(const QStringList& nodeTypes);
   /// \sa hideChildNodeTypes, setHideChildNodeTypes()
-  QStringList hideChildNodeTypes()const;
+  QStringList hideChildNodeTypes() const;
 
   /// Set the list of nodes to hide.
   /// \sa hiddenNodeIDs, hiddenNodeIDs()
   void setHiddenNodeIDs(const QStringList& nodeIDsToHide);
   /// Return the list of nodes to hide.
   /// \sa hiddenNodeIDs, setHiddenNodeIDs()
-  QStringList hiddenNodeIDs()const;
+  QStringList hiddenNodeIDs() const;
 
   /// Set the list of nodes to force visibility.
   /// \sa visibleNodeIDs, visibleNodeIDs()
   void setVisibleNodeIDs(const QStringList& nodeIDsToShow);
   /// Return the list of nodes to show.
   /// \sa visibleNodeIDs, setVisibleNodeIDs()
-  QStringList visibleNodeIDs()const;
+  QStringList visibleNodeIDs() const;
 
   /// Set the node ID used to filter out nodes that are not associated to it.
   /// Recompute the filtering.
@@ -201,20 +201,20 @@ public:
   void setHideNodesUnaffiliatedWithNodeID(const QString& nodeID);
   /// Return the node ID used to filter out nodes that are not associated to it.
   /// \sa hideNodesUnaffiliatedWithNodeID, setHideNodesUnaffiliatedWithNodeID()
-  QString hideNodesUnaffiliatedWithNodeID()const;
+  QString hideNodesUnaffiliatedWithNodeID() const;
 
   /// Return the current filter type.
   /// \sa filterType, setFilterType()
-  FilterType filterType()const;
+  FilterType filterType() const;
   /// Return true if all the nodes are visible.
   /// \sa showAll, setShowAll()
-  bool showAll()const;
+  bool showAll() const;
   /// Return true if all the nodes are hidden
   /// \sa hideAll, setHideAll()
-  bool hideAll()const;
+  bool hideAll() const;
 
   /// Return the scene model used as input if any.
-  Q_INVOKABLE qMRMLSceneModel* sceneModel()const;
+  Q_INVOKABLE qMRMLSceneModel* sceneModel() const;
 
 public slots:
   /// Set the showHidden flag.
@@ -259,15 +259,14 @@ protected:
   /// If for some reason a node has not been observed but its visibility has
   /// changed, the filter can be refresh by calling a\ invalidate()
   /// \sa filterAcceptsNode(), AcceptType, invalidate()
-  bool filterAcceptsRow(int source_row,
-                                const QModelIndex &source_parent)const override;
+  bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
   /// This method returns whether the \a node should be visible or hidden
   /// from the view.
   /// It returns the behavior of the node with regard to the filters.
   /// \sa filterAcceptRow(), AcceptType
-  virtual AcceptType filterAcceptsNode(vtkMRMLNode* node)const;
+  virtual AcceptType filterAcceptsNode(vtkMRMLNode* node) const;
 
-  QStandardItem* sourceItem(const QModelIndex& index)const;
+  QStandardItem* sourceItem(const QModelIndex& index) const;
 
 protected:
   QScopedPointer<qMRMLSortFilterProxyModelPrivate> d_ptr;

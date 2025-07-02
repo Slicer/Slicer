@@ -32,22 +32,21 @@
 
 class vtkImageData;
 
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLShaderPropertyStorageNode
-  : public vtkMRMLStorageNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLShaderPropertyStorageNode : public vtkMRMLStorageNode
 {
 public:
-  static vtkMRMLShaderPropertyStorageNode *New();
-  vtkTypeMacro(vtkMRMLShaderPropertyStorageNode,vtkMRMLStorageNode);
+  static vtkMRMLShaderPropertyStorageNode* New();
+  vtkTypeMacro(vtkMRMLShaderPropertyStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Storage, Transform)
-  const char* GetNodeTagName() override {return "ShaderPropertyStorage";}
+  const char* GetNodeTagName() override { return "ShaderPropertyStorage"; }
 
   /// Return true if the node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:
   vtkMRMLShaderPropertyStorageNode();
@@ -62,11 +61,10 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
-
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 };
 
 #endif

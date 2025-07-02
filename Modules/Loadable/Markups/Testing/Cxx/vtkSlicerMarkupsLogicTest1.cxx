@@ -27,7 +27,7 @@
 #include <vtkNew.h>
 #include <vtkTestingOutputWindow.h>
 
-int vtkSlicerMarkupsLogicTest1(int , char * [] )
+int vtkSlicerMarkupsLogicTest1(int, char*[])
 {
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
 
@@ -55,20 +55,21 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   TESTING_OUTPUT_ASSERT_ERRORS(17); // error messages are expected to be reported due to lack of selection node
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
-  const char *testName = "Test node 2";
+  const char* testName = "Test node 2";
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
   id = logic1->AddNewFiducialNode(testName);
   TESTING_OUTPUT_ASSERT_ERRORS_END(); // error is expected to be reported due to lack of selection node
   CHECK_STD_STRING_DIFFERENT(id, "");
 
-  vtkMRMLNode *mrmlNode = scene->GetNodeByID(id.c_str());
+  vtkMRMLNode* mrmlNode = scene->GetNodeByID(id.c_str());
   CHECK_NOT_NULL(mrmlNode);
-  char *name = mrmlNode->GetName();
+  char* name = mrmlNode->GetName();
   CHECK_NOT_NULL(name);
   CHECK_STRING(testName, name);
 
-  std::cout << "Added a new markup node to the scene, id = '" << id.c_str() << "', name = '" << name << "'" <<  std::endl;
-  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
+  std::cout << "Added a new markup node to the scene, id = '" << id.c_str() << "', name = '" << name << "'"
+            << std::endl;
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
   CHECK_NOT_NULL(markupsNode);
 
   // test the list stuff
@@ -158,14 +159,13 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   std::string activeListID = logic1->GetActiveListID();
   mrmlNode = scene->GetNodeByID(activeListID.c_str());
   CHECK_NOT_NULL(mrmlNode);
-  vtkMRMLMarkupsNode *activeMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
+  vtkMRMLMarkupsNode* activeMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
   CHECK_NOT_NULL(activeMarkupsNode);
 
   std::cout << "Before renaming:" << std::endl;
   for (int i = 0; i < activeMarkupsNode->GetNumberOfControlPoints(); ++i)
   {
-    std::cout << "Markup " << i << " label = "
-              << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
+    std::cout << "Markup " << i << " label = " << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
   }
 
   activeMarkupsNode->SetName("RenamingTest");
@@ -178,8 +178,7 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
   std::cout << "After renaming:" << std::endl;
   for (int i = 0; i < activeMarkupsNode->GetNumberOfControlPoints(); ++i)
   {
-    std::cout << "Markup " << i << " label = "
-              << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
+    std::cout << "Markup " << i << " label = " << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
   }
 
   // test setting active list id

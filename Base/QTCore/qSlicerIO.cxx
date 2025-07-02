@@ -31,8 +31,10 @@
 class qSlicerIOPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerIO);
+
 protected:
   qSlicerIO* q_ptr;
+
 public:
   qSlicerIOPrivate(qSlicerIO& object);
   virtual ~qSlicerIOPrivate();
@@ -75,7 +77,7 @@ qSlicerIO::qSlicerIO(QObject* parentObject)
 qSlicerIO::~qSlicerIO() = default;
 
 //----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerIO::options()const
+qSlicerIOOptions* qSlicerIO::options() const
 {
   return nullptr;
 }

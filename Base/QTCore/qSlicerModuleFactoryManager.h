@@ -34,8 +34,7 @@ class vtkSlicerApplicationLogic;
 // MRML includes
 class vtkMRMLScene;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager
-  : public qSlicerAbstractModuleFactoryManager
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager : public qSlicerAbstractModuleFactoryManager
 {
   Q_OBJECT
 public:
@@ -57,7 +56,7 @@ public:
   Q_INVOKABLE int loadModules();
 
   /// Return the list of all the loaded modules
-  Q_INVOKABLE QStringList loadedModuleNames()const;
+  Q_INVOKABLE QStringList loadedModuleNames() const;
 
   /// Unload all the loaded modules. Unloading a module simply uninstantiate it.
   /// To respect dependencies, the order is reverse to the
@@ -65,18 +64,18 @@ public:
   Q_INVOKABLE void unloadModules();
 
   /// Return true if module \a name has been loaded, false otherwise
-  Q_INVOKABLE bool isLoaded(const QString& name)const;
+  Q_INVOKABLE bool isLoaded(const QString& name) const;
 
   /// Return the loaded module identified by \a name, 0 if no module
   /// has been loaded yet, even if the module has been instantiated.
-  Q_INVOKABLE qSlicerAbstractCoreModule* loadedModule(const QString& name)const;
+  Q_INVOKABLE qSlicerAbstractCoreModule* loadedModule(const QString& name) const;
 
   /// Set the application logic to pass to modules at "load" time.
   void setAppLogic(vtkSlicerApplicationLogic* applicationLogic);
-  vtkSlicerApplicationLogic* appLogic()const;
+  vtkSlicerApplicationLogic* appLogic() const;
 
   /// Return the mrml scene passed to loaded modules
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
   /// Load specified modules.
   ///
@@ -107,6 +106,7 @@ signals:
   void moduleUnloaded(const QString& moduleName);
 
   void mrmlSceneChanged(vtkMRMLScene* newScene);
+
 protected:
   QScopedPointer<qSlicerModuleFactoryManagerPrivate> d_ptr;
 
@@ -120,6 +120,7 @@ protected:
 
   /// Reimplemented to ensure order
   virtual void uninstantiateModules();
+
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleFactoryManager);
   Q_DISABLE_COPY(qSlicerModuleFactoryManager);

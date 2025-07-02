@@ -25,7 +25,7 @@
 #include "ui_qSlicerTerminologiesModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTerminologiesModuleWidgetPrivate: public Ui_qSlicerTerminologiesModule
+class qSlicerTerminologiesModuleWidgetPrivate : public Ui_qSlicerTerminologiesModule
 {
 public:
   qSlicerTerminologiesModuleWidgetPrivate();
@@ -42,10 +42,9 @@ qSlicerTerminologiesModuleWidgetPrivate::qSlicerTerminologiesModuleWidgetPrivate
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologiesModuleWidget::qSlicerTerminologiesModuleWidget(QWidget* _parent)
-  : Superclass( _parent )
-  , d_ptr( new qSlicerTerminologiesModuleWidgetPrivate )
-{
-}
+  : Superclass(_parent)
+  , d_ptr(new qSlicerTerminologiesModuleWidgetPrivate)
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologiesModuleWidget::~qSlicerTerminologiesModuleWidget() = default;

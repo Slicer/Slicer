@@ -18,9 +18,9 @@ vtkSlicerTask::vtkSlicerTask()
 vtkSlicerTask::~vtkSlicerTask() = default;
 
 //----------------------------------------------------------------------------
-void vtkSlicerTask::SetTaskFunction(vtkMRMLAbstractLogic *object,
+void vtkSlicerTask::SetTaskFunction(vtkMRMLAbstractLogic* object,
                                     vtkMRMLAbstractLogic::TaskFunctionPointer function,
-                                    void *clientdata)
+                                    void* clientdata)
 {
   this->TaskObject = object;
   this->TaskFunction = function;

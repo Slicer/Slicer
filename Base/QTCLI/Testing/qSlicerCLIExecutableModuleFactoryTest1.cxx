@@ -27,7 +27,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int qSlicerCLIExecutableModuleFactoryTest1(int, char * [] )
+int qSlicerCLIExecutableModuleFactoryTest1(int, char*[])
 {
   QStringList executableNames;
   executableNames << "Threshold.exe"
@@ -41,9 +41,9 @@ int qSlicerCLIExecutableModuleFactoryTest1(int, char * [] )
     if (moduleName != expectedModuleName)
     {
       std::cerr << __LINE__ << " - Error in  extractModuleName()" << std::endl
-                            << "executableName = " << qPrintable(executableName) << std::endl
-                            << "moduleName = " << qPrintable(moduleName) << std::endl
-                            << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
+                << "executableName = " << qPrintable(executableName) << std::endl
+                << "moduleName = " << qPrintable(moduleName) << std::endl
+                << "expectedModuleName = " << qPrintable(expectedModuleName) << std::endl;
       return EXIT_FAILURE;
     }
   }

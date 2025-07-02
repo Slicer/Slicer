@@ -31,17 +31,19 @@
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
-class qMRMLSceneFactoryWidgetPrivate: public Ui_qMRMLSceneFactoryWidget
+class qMRMLSceneFactoryWidgetPrivate : public Ui_qMRMLSceneFactoryWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSceneFactoryWidget);
+
 protected:
   qMRMLSceneFactoryWidget* const q_ptr;
+
 public:
   qMRMLSceneFactoryWidgetPrivate(qMRMLSceneFactoryWidget& object);
   void init();
   void setNodeActionsEnabled(bool enable);
 
-  vtkMRMLScene*  MRMLScene;
+  vtkMRMLScene* MRMLScene;
   QRandomGenerator RandomGenerator;
 };
 
@@ -122,7 +124,7 @@ void qMRMLSceneFactoryWidget::deleteScene()
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSceneFactoryWidget::mrmlScene()const
+vtkMRMLScene* qMRMLSceneFactoryWidget::mrmlScene() const
 {
   Q_D(const qMRMLSceneFactoryWidget);
   return d->MRMLScene;
@@ -148,8 +150,7 @@ vtkMRMLNode* qMRMLSceneFactoryWidget::generateNode()
     nodeClassName = QString::fromUtf8(node->GetClassName());
     if (nodeClassName.isEmpty())
     {
-      qWarning() << "Class registered (#" << classNumber << "):"
-                 << node << " has an empty classname";
+      qWarning() << "Class registered (#" << classNumber << "):" << node << " has an empty classname";
     }
   }
   return this->generateNode(nodeClassName);
@@ -201,11 +202,11 @@ void qMRMLSceneFactoryWidget::deleteNode(const QString& className)
   int numNodes = d->MRMLScene->GetNumberOfNodesByClass(className.toUtf8());
   if (numNodes == 0)
   {
-    qDebug() << "qMRMLSceneFactoryWidget::deleteNode(" <<className <<") no node";
+    qDebug() << "qMRMLSceneFactoryWidget::deleteNode(" << className << ") no node";
     return;
   }
   vtkMRMLNode* node = d->MRMLScene->GetNthNodeByClass(d->RandomGenerator.generate() % numNodes, className.toUtf8());
-  qDebug() << "qMRMLSceneFactoryWidget::deleteNode(" <<className <<") ==" << node->GetClassName();
+  qDebug() << "qMRMLSceneFactoryWidget::deleteNode(" << className << ") ==" << node->GetClassName();
   d->MRMLScene->RemoveNode(node);
   // FIXME: disable delete button when there is no more nodes in the scene to delete
   emit mrmlNodeRemoved(node);

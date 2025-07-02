@@ -46,8 +46,7 @@ class vtkPolyData;
 class vtkMRMLInteractionWidgetRepresentation;
 class vtkTransform;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidget
-  : public vtkMRMLAbstractWidget
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidget : public vtkMRMLAbstractWidget
 {
 public:
   ///@{
@@ -69,9 +68,9 @@ public:
   {
     WidgetStateInteraction_First = WidgetStateUser,
     WidgetStateOnTranslationHandle = WidgetStateInteraction_First, // hovering over a translation interaction handle
-    WidgetStateOnRotationHandle, // hovering over a rotation interaction handle
-    WidgetStateOnScaleHandle, // hovering over a scale interaction handle
-    WidgetStateUniformScale, // uniform scaling
+    WidgetStateOnRotationHandle,                                   // hovering over a rotation interaction handle
+    WidgetStateOnScaleHandle,                                      // hovering over a scale interaction handle
+    WidgetStateUniformScale,                                       // uniform scaling
     WidgetStateInteraction_Last
   };
 
@@ -79,7 +78,8 @@ public:
   enum
   {
     WidgetEventInteraction_First = WidgetEventUser,
-    WidgetEventReserved = WidgetEventInteraction_First,  // this events is only to prevent other widgets from processing an event
+    WidgetEventReserved =
+      WidgetEventInteraction_First, // this events is only to prevent other widgets from processing an event
     WidgetEventUniformScaleStart,
     WidgetEventUniformScaleEnd,
     WidgetEventCancel,
@@ -93,7 +93,7 @@ public:
   virtual void SetActiveComponentIndex(int index);
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
 
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
@@ -114,7 +114,7 @@ protected:
   void EndWidgetInteraction();
 
   virtual void TranslateWidget(double eventPos[2]);
-  virtual void ScaleWidget(double eventPos[2], bool uniform=false);
+  virtual void ScaleWidget(double eventPos[2], bool uniform = false);
   virtual void RotateWidget(double eventPos[2]);
   virtual void ApplyTransform(vtkTransform* transform) = 0;
 
@@ -127,7 +127,10 @@ protected:
   /// Return true if the event is processed.
   virtual bool ProcessMouseMove(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetMenu(vtkMRMLInteractionEventData* eventData) = 0;
-  virtual bool ProcessWidgetMenuDisplayNodeTypeAndIndex(vtkMRMLInteractionEventData* eventData, vtkMRMLDisplayNode* displayNode, int type, int index);
+  virtual bool ProcessWidgetMenuDisplayNodeTypeAndIndex(vtkMRMLInteractionEventData* eventData,
+                                                        vtkMRMLDisplayNode* displayNode,
+                                                        int type,
+                                                        int index);
   virtual bool ProcessWidgetTranslateStart(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetRotateStart(vtkMRMLInteractionEventData* eventData);
   virtual bool ProcessWidgetScaleStart(vtkMRMLInteractionEventData* eventData);
@@ -145,11 +148,17 @@ protected:
 
   /// Get the closest point on the line defined by the interaction handle axis.
   /// Input coordinates are in display coordinates, while output are in world coordinates.
-  virtual bool GetClosestPointOnInteractionAxis(int type, int index, const double inputDisplay[2], double outputIntersectionWorld[3]);
+  virtual bool GetClosestPointOnInteractionAxis(int type,
+                                                int index,
+                                                const double inputDisplay[2],
+                                                double outputIntersectionWorld[3]);
 
   /// Get the closest point on the plane defined using the interaction handle axis as the plane normal.
   /// Input coordinates are in display coordinates, while output are in world coordinates
-  virtual bool GetIntersectionOnAxisPlane(int type, int index, const double inputDisplay[2], double outputIntersectionWorld[3]);
+  virtual bool GetIntersectionOnAxisPlane(int type,
+                                          int index,
+                                          const double inputDisplay[2],
+                                          double outputIntersectionWorld[3]);
 
   /// Variables for translate/rotate/scale
   double LastEventPosition[2];

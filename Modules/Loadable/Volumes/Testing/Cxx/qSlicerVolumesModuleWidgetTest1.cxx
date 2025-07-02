@@ -42,7 +42,7 @@
 #include <itkFactoryRegistration.h>
 
 //-----------------------------------------------------------------------------
-int qSlicerVolumesModuleWidgetTest1( int argc, char * argv[] )
+int qSlicerVolumesModuleWidgetTest1(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 

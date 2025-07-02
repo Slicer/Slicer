@@ -33,22 +33,22 @@ class vtkPlane;
 /// \li FieldOfView tells the size of slice plane
 class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 {
-  public:
+public:
   /// \brief Instantiate a new Slice node without any orientation presets.
   ///
   /// \note To instantiate a vtkMRMLSliceNode with preconfigured
   /// orientation preset matrices (the default presets are: Axial,
   /// Sagittal and Coronal in default), it is necessary to use
   /// vtkMRMLScene::CreateNodeByClass(const char*)
-  static vtkMRMLSliceNode *New();
-  vtkTypeMacro(vtkMRMLSliceNode,vtkMRMLAbstractViewNode);
+  static vtkMRMLSliceNode* New();
+  vtkTypeMacro(vtkMRMLSliceNode, vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -65,7 +65,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Slice";};
+  const char* GetNodeTagName() override { return "Slice"; };
 
   ///
   /// Mapping from RAS space onto the slice plane
@@ -73,7 +73,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// by calling sliceNode->GetSliceToRAS->DeepCopy(...)
   /// followed by sliceNode->UpdateMatrices().
   /// TODO: maybe this should be a quaternion and a translate to avoid shears/scales
-  virtual vtkMatrix4x4 *GetSliceToRAS();
+  virtual vtkMatrix4x4* GetSliceToRAS();
 
   ///
   /// The visibility of the slice in the 3DViewer.
@@ -108,7 +108,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Get number of View Node ID's for the view to display this node in.
   /// If 0, display in all views
   /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
-  int GetNumberOfThreeDViewIDs()const;
+  int GetNumberOfThreeDViewIDs() const;
   /// Get View Node ID's for the view to display this node in.
   /// If nullptr, display in all views
   /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
@@ -116,16 +116,16 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Get all View Node ID's for the view to display this node in.
   /// If empty, display in all views
   /// \sa ThreeDViewIDs, GetNthThreeDViewID(), AddThreeDViewID()
-  inline std::vector< std::string > GetThreeDViewIDs()const;
+  inline std::vector<std::string> GetThreeDViewIDs() const;
   /// True if the view node id is present in the ThreeDViewID list
   /// false if not found
   /// \sa ThreeDViewIDs, IsDisplayableInView(), AddThreeDViewID()
-  bool IsThreeDViewIDPresent(const char* ThreeDViewID)const;
+  bool IsThreeDViewIDPresent(const char* ThreeDViewID) const;
   /// Returns true if the ThreeDViewID is present in the ThreeDViewID list
   /// or there is no ThreeDViewID in the list (meaning all the views display the
   /// node)
   /// \sa ThreeDViewIDs, IsThreeDViewIDPresent(), AddThreeDViewID()
-  bool IsDisplayableInThreeDView(const char* viewNodeID)const;
+  bool IsDisplayableInThreeDView(const char* viewNodeID) const;
 
   /// The ImplicitPlane widget mode
   /// this lock the normal of the plane to the camera's one
@@ -188,7 +188,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   virtual const char* GetOrientationString();
 
 protected:
-
   /// The OrientationReference is a place to store the last orientation
   /// that was explicitly selected.
   ///
@@ -197,9 +196,8 @@ protected:
   vtkSetStringMacro(OrientationReference);
 
 public:
-
   /// \brief Return the sliceToRAS matrix associated with \a name.
-  vtkMatrix3x3 *GetSliceOrientationPreset(const std::string& name);
+  vtkMatrix3x3* GetSliceOrientationPreset(const std::string& name);
 
   /// \brief Return the preset name corresponding to \a orientationMatrix.
   ///
@@ -242,24 +240,24 @@ public:
   /// \brief Initialize \a orientationMatrix as an `Axial` orientation matrix.
   /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
   /// and neurology (patient right is right side on the screen) view orientation conventions.
-  static void GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft=true);
+  static void GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft = true);
 
   /// \brief Initialize \a orientationMatrix as a `Sagittal` orientation matrix.
   /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
   /// and neurology (patient right is right side on the screen) view orientation conventions.
-  static void GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft=true);
+  static void GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft = true);
 
   /// \brief Initialize \a orientationMatrix as a `Coronal` orientation matrix.
   /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
   /// and neurology (patient right is right side on the screen) view orientation conventions.
-  static void GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft=true);
+  static void GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft = true);
 
   /// \brief Add default slice orientation presets to \a scene.
   /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
   /// and neurology (patient right is right side on the screen) view orientation conventions.
   /// \sa vtkMRMLScene::AddDefaultNode(vtkMRMLNode* node)
   /// \sa GetAxialSliceToRASMatrix, GetSagittalSliceToRASMatrix, GetCoronalSliceToRASMatrix
-  static void AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bool patientRightIsScreenLeft=true);
+  static void AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bool patientRightIsScreenLeft = true);
 
   ///
   /// Size of the slice plane in millimeters
@@ -277,7 +275,7 @@ public:
   ///
   /// Number of samples in each direction
   /// -- note that the spacing is implicitly FieldOfView / Dimensions
-  vtkGetVectorMacro(Dimensions,int,3);
+  vtkGetVectorMacro(Dimensions, int, 3);
   void SetDimensions(int x, int y, int z);
   void SetDimensions(int xyz[3]) { SetDimensions(xyz[0], xyz[1], xyz[2]); }
 
@@ -288,13 +286,13 @@ public:
   ///    to the full Dimensions
   /// -- note that z, the number of slices, should be the same for both
   ///    Dimensions and UVWDimensions
-  vtkGetVectorMacro(UVWDimensions,int,3);
+  vtkGetVectorMacro(UVWDimensions, int, 3);
   void SetUVWDimensions(int x, int y, int z);
   void SetUVWDimensions(int xyz[3]);
 
   ///
   ///    maximum limit for  UVWDimensions
-  vtkGetVectorMacro(UVWMaximumDimensions,int,3);
+  vtkGetVectorMacro(UVWMaximumDimensions, int, 3);
   void SetUVWMaximumDimensions(int x, int y, int z);
   void SetUVWMaximumDimensions(int xyz[3]);
 
@@ -318,35 +316,34 @@ public:
   ///
   /// Set UVW extents and dimensions,
   /// produces less updates then calling both separately
-  void SetUVWExtentsAndDimensions (double extents[3], int dimensions[3]);
+  void SetUVWExtentsAndDimensions(double extents[3], int dimensions[3]);
 
 
   ///
   /// Matrix mapping from XY pixel coordinates on an image window
   /// into slice coordinates in mm
-  vtkMatrix4x4 *GetXYToSlice();
+  vtkMatrix4x4* GetXYToSlice();
 
   ///
   /// Matrix mapping from XY pixel coordinates on an image window
   /// into RAS world coordinates
-  vtkMatrix4x4 *GetXYToRAS();
+  vtkMatrix4x4* GetXYToRAS();
 
   ///
   /// Matrix mapping from UVW texture coordinates
   /// into slice coordinates in mm
-  vtkMatrix4x4 *GetUVWToSlice();
+  vtkMatrix4x4* GetUVWToSlice();
 
   ///
   /// Matrix mapping from UVW texture coordinates
   /// into RAS world coordinates
-  vtkMatrix4x4 *GetUVWToRAS();
+  vtkMatrix4x4* GetUVWToRAS();
 
   ///
   /// helper for comparing to matrices
-  bool MatrixAreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2);
+  bool MatrixAreEqual(const vtkMatrix4x4* m1, const vtkMatrix4x4* m2);
 
-  bool MatrixAreEqual(const vtkMatrix4x4 *matrix,
-                      const vtkMatrix3x3 *orientationMatrix);
+  bool MatrixAreEqual(const vtkMatrix4x4* matrix, const vtkMatrix3x3* orientationMatrix);
   ///
   /// Recalculate XYToSlice and XYToRAS in terms or fov, dim, SliceToRAS
   /// - called when any of the inputs change
@@ -355,7 +352,7 @@ public:
   ///
   /// Set the number of rows and columns to use in a LightBox display
   /// of the node
-  void SetLayoutGrid( int rows, int columns );
+  void SetLayoutGrid(int rows, int columns);
 
   ///
   /// Set/Get the number of rows to use in a LightBox display
@@ -373,9 +370,15 @@ public:
   /// T(x, y, z) - the transverse direction vector of the locator
   /// P(x, y, z) - the tip location of the locator
   /// All the above values are in RAS space.
-  void SetSliceToRASByNTP(double Nx, double Ny, double Nz,
-                          double Tx, double Ty, double Tz,
-                          double Px, double Py, double Pz,
+  void SetSliceToRASByNTP(double Nx,
+                          double Ny,
+                          double Nz,
+                          double Tx,
+                          double Ty,
+                          double Tz,
+                          double Px,
+                          double Py,
+                          double Pz,
                           int Orientation);
 
   ///
@@ -389,14 +392,24 @@ public:
   /// If a non-nullptr exclude pointer is specified then position of that slice node will not be changed.
   /// If jumpMode is set to vtkMRMLSliceNode::DefaultJumpSlice then jump mode set in the slice node will be used.
   /// specified in the slice node will be used.
-  static void JumpAllSlices(vtkMRMLScene* scene, double r, double a, double s,
-    int jumpMode = vtkMRMLSliceNode::DefaultJumpSlice, int viewGroup = -1, vtkMRMLSliceNode* exclude = nullptr);
+  static void JumpAllSlices(vtkMRMLScene* scene,
+                            double r,
+                            double a,
+                            double s,
+                            int jumpMode = vtkMRMLSliceNode::DefaultJumpSlice,
+                            int viewGroup = -1,
+                            vtkMRMLSliceNode* exclude = nullptr);
   void JumpSliceByOffsetting(double r, double a, double s);
   void JumpSliceByOffsetting(int k, double r, double a, double s);
   void JumpSliceByCentering(double r, double a, double s);
 
   /// Enum to specify the method of jumping slices
-  enum {DefaultJumpSlice=-1, CenteredJumpSlice=0, OffsetJumpSlice};
+  enum
+  {
+    DefaultJumpSlice = -1,
+    CenteredJumpSlice = 0,
+    OffsetJumpSlice
+  };
 
   ///
   /// Control how JumpSlice operates. CenteredJumpMode puts the
@@ -410,7 +423,11 @@ public:
 
   /// Enum to specify whether the slice spacing is automatically
   /// determined or prescribed
-  enum {AutomaticSliceSpacingMode=0, PrescribedSliceSpacingMode};
+  enum
+  {
+    AutomaticSliceSpacingMode = 0,
+    PrescribedSliceSpacingMode
+  };
 
   ///
   /// Get/Set the slice spacing mode. Slice spacing can be
@@ -443,7 +460,7 @@ public:
   /// \param forceSlicePlaneToSingleSlice If the volume is single-slice and forceSlicePlaneToSingleSlice
   /// is enabled then slice view will be aligned with the volume's slice plane. If the flag is disabled
   /// or the volume has more than one slice then the slice view will be rotated to the closest orthogonal axis.
-  void RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode, bool forceSlicePlaneToSingleSlice=true);
+  void RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool forceSlicePlaneToSingleSlice = true);
 
   /// Adjusts the slice node to align with the
   /// axes of the provided reference coordinate system
@@ -452,7 +469,7 @@ public:
   /// and for oblique volumes with few slices).
   /// If sliceNormalAxisIndex is >=0 then slice plane normal will
   /// be aligned with that axis.
-  void RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNormalAxisIndex=-1);
+  void RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNormalAxisIndex = -1);
 
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by
@@ -485,7 +502,7 @@ public:
     SliceToRASFlag = 1,
     FieldOfViewFlag = 2, // broadcast a specific field of view setting
     OrientationFlag = 4,
-    ResetFieldOfViewFlag = 8, // broadcast a reset to all viewers
+    ResetFieldOfViewFlag = 8,     // broadcast a reset to all viewers
     MultiplanarReformatFlag = 16, // broadcast reformat widget transformation
     XYZOriginFlag = 32,
     LabelOutlineFlag = 64,
@@ -519,12 +536,11 @@ public:
   void ResetInteractionFlagsModifier();
 
 
-
   /// Enum to specify the method for setting UVW extents
 
   enum SliceResolutionModeType
   {
-    SliceResolutionMatchVolumes=0,
+    SliceResolutionMatchVolumes = 0,
     SliceResolutionMatch2DView,
     SliceFOVMatch2DViewSpacingMatchVolumes,
     SliceFOVMatchVolumesSpacingMatch2DView,
@@ -579,8 +595,8 @@ protected:
   vtkSmartPointer<vtkMatrix4x4> UVWToSlice;
   vtkSmartPointer<vtkMatrix4x4> UVWToRAS;
 
-  typedef std::pair <std::string, vtkSmartPointer<vtkMatrix3x3> > OrientationPresetType;
-  std::vector< OrientationPresetType > OrientationMatrices;
+  typedef std::pair<std::string, vtkSmartPointer<vtkMatrix3x3>> OrientationPresetType;
+  std::vector<OrientationPresetType> OrientationMatrices;
 
   int JumpMode;
 
@@ -627,13 +643,13 @@ protected:
 
   int IsUpdatingMatrices;
 
-  std::vector< std::string > ThreeDViewIDs;
+  std::vector<std::string> ThreeDViewIDs;
 
   vtkSmartPointer<vtkPlane> ImplicitFunction;
 };
 
 //----------------------------------------------------------------------------
-std::vector< std::string > vtkMRMLSliceNode::GetThreeDViewIDs()const
+std::vector<std::string> vtkMRMLSliceNode::GetThreeDViewIDs() const
 {
   return this->ThreeDViewIDs;
 }

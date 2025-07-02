@@ -27,6 +27,7 @@
 class qSlicerCoreModuleFactoryPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerCoreModuleFactory);
+
 protected:
   qSlicerCoreModuleFactory* const q_ptr;
 
@@ -34,7 +35,7 @@ public:
   qSlicerCoreModuleFactoryPrivate(qSlicerCoreModuleFactory& object);
 
   /// Add a module class to the core module factory
-  template<typename ClassType>
+  template <typename ClassType>
   void registerCoreModule();
 };
 
@@ -44,11 +45,10 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerCoreModuleFactoryPrivate::qSlicerCoreModuleFactoryPrivate(qSlicerCoreModuleFactory& object)
   : q_ptr(&object)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
-template<typename ClassType>
+template <typename ClassType>
 void qSlicerCoreModuleFactoryPrivate::registerCoreModule()
 {
   Q_Q(qSlicerCoreModuleFactory);
@@ -70,8 +70,7 @@ void qSlicerCoreModuleFactoryPrivate::registerCoreModule()
 //-----------------------------------------------------------------------------
 qSlicerCoreModuleFactory::qSlicerCoreModuleFactory()
   : d_ptr(new qSlicerCoreModuleFactoryPrivate(*this))
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerCoreModuleFactory::~qSlicerCoreModuleFactory() = default;

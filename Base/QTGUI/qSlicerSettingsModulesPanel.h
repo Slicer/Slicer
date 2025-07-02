@@ -33,8 +33,7 @@
 class QSettings;
 class qSlicerSettingsModulesPanelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsModulesPanel
-  : public ctkSettingsPanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsModulesPanel : public ctkSettingsPanel
 {
   Q_OBJECT
 
@@ -44,10 +43,8 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsModulesPanel
   /// be ignored by saving and restoring them from the application settings.
   ///
   /// \sa qSlicerAbstractModuleFactoryManager::modulesToIgnore
-  Q_PROPERTY(QStringList modulesToAlwaysIgnore
-             READ modulesToAlwaysIgnore
-             WRITE setModulesToAlwaysIgnore
-             NOTIFY modulesToAlwaysIgnoreChanged)
+  Q_PROPERTY(QStringList modulesToAlwaysIgnore READ modulesToAlwaysIgnore WRITE setModulesToAlwaysIgnore NOTIFY
+               modulesToAlwaysIgnoreChanged)
 
 public:
   /// Superclass typedef
@@ -61,7 +58,7 @@ public:
 
   /// Get the \a modulesToAlwaysIgnore list.
   /// \sa setModulesToAlwaysIgnore(const QStringList& modulesNames)
-  QStringList modulesToAlwaysIgnore()const;
+  QStringList modulesToAlwaysIgnore() const;
 
 public slots:
 

@@ -27,12 +27,12 @@ vtkMRMLdGEMRICProceduralColorNode::vtkMRMLdGEMRICProceduralColorNode()
 {
 
   // all this is done in the superclass...
-  //this->Name = nullptr;
-  //this->SetName("");
-  //this->FileName = nullptr;
+  // this->Name = nullptr;
+  // this->SetName("");
+  // this->FileName = nullptr;
 
-  //this->ColorTransferFunction = nullptr;
-  //this->ColorTransferFunction = vtkColorTransferFunction::New();
+  // this->ColorTransferFunction = nullptr;
+  // this->ColorTransferFunction = vtkColorTransferFunction::New();
 }
 
 //----------------------------------------------------------------------------
@@ -61,17 +61,17 @@ void vtkMRMLdGEMRICProceduralColorNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLdGEMRICProceduralColorNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLdGEMRICProceduralColorNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
-  //vtkMRMLdGEMRICProceduralColorNode *node = (vtkMRMLdGEMRICProceduralColorNode *) anode;
+  // vtkMRMLdGEMRICProceduralColorNode *node = (vtkMRMLdGEMRICProceduralColorNode *) anode;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLdGEMRICProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   if (this->ColorTransferFunction != nullptr)
   {
     os << indent << "ColorTransferFunction:" << endl;
@@ -80,15 +80,13 @@ void vtkMRMLdGEMRICProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLdGEMRICProceduralColorNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLdGEMRICProceduralColorNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLdGEMRICProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+void vtkMRMLdGEMRICProceduralColorNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
@@ -107,7 +105,7 @@ void vtkMRMLdGEMRICProceduralColorNode::SetTypeTo3T()
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLdGEMRICProceduralColorNode::GetTypeAsString()
+const char* vtkMRMLdGEMRICProceduralColorNode::GetTypeAsString()
 {
   if (this->Type == this->dGEMRIC15T)
   {
@@ -125,7 +123,8 @@ void vtkMRMLdGEMRICProceduralColorNode::SetType(int type)
 {
   this->Type = type;
 
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = " << this->GetTypeAsString());
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = "
+                << this->GetTypeAsString());
 
   // is it created yet?
   if (this->ColorTransferFunction == nullptr)

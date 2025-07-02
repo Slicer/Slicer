@@ -35,12 +35,11 @@
 #include "vtkSlicerSuperLoadableModuleTemplateModuleLogicExport.h"
 
 
-class VTK_SLICER_SUPERLOADABLEMODULETEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerSuperLoadableModuleTemplateLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_SUPERLOADABLEMODULETEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerSuperLoadableModuleTemplateLogic
+  : public vtkSlicerModuleLogic
 {
 public:
-
-  static vtkSlicerSuperLoadableModuleTemplateLogic *New();
+  static vtkSlicerSuperLoadableModuleTemplateLogic* New();
   vtkTypeMacro(vtkSlicerSuperLoadableModuleTemplateLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -54,10 +53,10 @@ protected:
   void UpdateFromMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-private:
 
+private:
   vtkSlicerSuperLoadableModuleTemplateLogic(const vtkSlicerSuperLoadableModuleTemplateLogic&); // Not implemented
-  void operator=(const vtkSlicerSuperLoadableModuleTemplateLogic&); // Not implemented
+  void operator=(const vtkSlicerSuperLoadableModuleTemplateLogic&);                            // Not implemented
 };
 
 #endif

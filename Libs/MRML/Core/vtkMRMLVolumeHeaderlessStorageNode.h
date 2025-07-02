@@ -22,19 +22,18 @@ class vtkImageData;
 /// \brief MRML node for representing a volume storage.
 ///
 /// vtkMRMLVolumeHeaderlessStorageNode nodes describes how volume data sets is stored on disk.
-class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode
-  : public vtkMRMLStorageNode
+class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode : public vtkMRMLStorageNode
 {
 public:
-  static vtkMRMLVolumeHeaderlessStorageNode *New();
-  vtkTypeMacro(vtkMRMLVolumeHeaderlessStorageNode,vtkMRMLStorageNode);
+  static vtkMRMLVolumeHeaderlessStorageNode* New();
+  vtkTypeMacro(vtkMRMLVolumeHeaderlessStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -42,11 +41,11 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "VolumeHeaderlessStorage";}
+  const char* GetNodeTagName() override { return "VolumeHeaderlessStorage"; }
 
   ///
   /// Scan order in the file
@@ -69,30 +68,20 @@ public:
   vtkSetMacro(FileScalarType, int);
   vtkGetMacro(FileScalarType, int);
 
-  void SetFileScalarTypeToUnsignedChar()
-    {this->SetFileScalarType(VTK_UNSIGNED_CHAR);};
-  void SetFileScalarTypeToChar()
-    {this->SetFileScalarType(VTK_CHAR);};
-  void SetFileScalarTypeToShort() {
-    this->SetFileScalarType(VTK_SHORT);};
-  void SetFileScalarTypeToUnsignedShort()
-    {this->SetFileScalarType(VTK_UNSIGNED_SHORT);};
-  void SetFileScalarTypeToInt() {
-    this->SetFileScalarType(VTK_INT);};
-  void SetFileScalarTypeToUnsignedInt() {
-    this->SetFileScalarType(VTK_UNSIGNED_INT);};
-  void SetFileScalarTypeToLong() {
-    this->SetFileScalarType(VTK_LONG);};
-  void SetFileScalarTypeToUnsignedLong() {
-    this->SetFileScalarType(VTK_UNSIGNED_LONG);};
-  void SetFileScalarTypeToFloat() {
-    this->SetFileScalarType(VTK_FLOAT);};
-  void SetFileScalarTypeToDouble() {
-    this->SetFileScalarType(VTK_DOUBLE);};
+  void SetFileScalarTypeToUnsignedChar() { this->SetFileScalarType(VTK_UNSIGNED_CHAR); };
+  void SetFileScalarTypeToChar() { this->SetFileScalarType(VTK_CHAR); };
+  void SetFileScalarTypeToShort() { this->SetFileScalarType(VTK_SHORT); };
+  void SetFileScalarTypeToUnsignedShort() { this->SetFileScalarType(VTK_UNSIGNED_SHORT); };
+  void SetFileScalarTypeToInt() { this->SetFileScalarType(VTK_INT); };
+  void SetFileScalarTypeToUnsignedInt() { this->SetFileScalarType(VTK_UNSIGNED_INT); };
+  void SetFileScalarTypeToLong() { this->SetFileScalarType(VTK_LONG); };
+  void SetFileScalarTypeToUnsignedLong() { this->SetFileScalarType(VTK_UNSIGNED_LONG); };
+  void SetFileScalarTypeToFloat() { this->SetFileScalarType(VTK_FLOAT); };
+  void SetFileScalarTypeToDouble() { this->SetFileScalarType(VTK_DOUBLE); };
 
   const char* GetFileScalarTypeAsString();
 
-  void SetFileScalarTypeAsString(const char* );
+  void SetFileScalarTypeAsString(const char*);
 
   ///
   /// The number of scalar components for each voxel.
@@ -114,11 +103,10 @@ public:
   vtkSetMacro(CenterImage, int);
 
   /// Return true if node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
-  bool CanWriteFromReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
+  bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:
-
   vtkMRMLVolumeHeaderlessStorageNode();
   ~vtkMRMLVolumeHeaderlessStorageNode() override;
   vtkMRMLVolumeHeaderlessStorageNode(const vtkMRMLVolumeHeaderlessStorageNode&);
@@ -128,12 +116,12 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
-  char *FileScanOrder;
+  char* FileScanOrder;
   int FileScalarType;
   int FileNumberOfScalarComponents;
   int FileLittleEndian;

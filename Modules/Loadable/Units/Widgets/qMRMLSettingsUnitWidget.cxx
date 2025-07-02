@@ -43,9 +43,10 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-class qMRMLSettingsUnitWidgetPrivate: public Ui_qMRMLSettingsUnitWidget
+class qMRMLSettingsUnitWidgetPrivate : public Ui_qMRMLSettingsUnitWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSettingsUnitWidget);
+
 protected:
   qMRMLSettingsUnitWidget* const q_ptr;
 
@@ -60,8 +61,7 @@ public:
 // qMRMLSettingsUnitWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qMRMLSettingsUnitWidgetPrivate::qMRMLSettingsUnitWidgetPrivate(
-  qMRMLSettingsUnitWidget& object)
+qMRMLSettingsUnitWidgetPrivate::qMRMLSettingsUnitWidgetPrivate(qMRMLSettingsUnitWidget& object)
   : q_ptr(&object)
 {
   this->Logic = nullptr;
@@ -73,8 +73,9 @@ void qMRMLSettingsUnitWidgetPrivate::setupUi(qMRMLSettingsUnitWidget* q)
   this->Ui_qMRMLSettingsUnitWidget::setupUi(q);
 
   QObject::connect(this->UnitNodeComboBox,
-    SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    this->UnitInfoWidget, SLOT(setCurrentNode(vtkMRMLNode*)));
+                   SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   this->UnitInfoWidget,
+                   SLOT(setCurrentNode(vtkMRMLNode*)));
 
   // Hide unit label and combobox for now
   this->UnitLabel->setVisible(false);
@@ -86,8 +87,8 @@ void qMRMLSettingsUnitWidgetPrivate::setupUi(qMRMLSettingsUnitWidget* q)
 
 //-----------------------------------------------------------------------------
 qMRMLSettingsUnitWidget::qMRMLSettingsUnitWidget(QWidget* _parent)
-  : Superclass( _parent )
-  , d_ptr( new qMRMLSettingsUnitWidgetPrivate(*this) )
+  : Superclass(_parent)
+  , d_ptr(new qMRMLSettingsUnitWidgetPrivate(*this))
 {
   Q_D(qMRMLSettingsUnitWidget);
   d->setupUi(this);

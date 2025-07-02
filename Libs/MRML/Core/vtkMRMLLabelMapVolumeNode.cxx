@@ -40,7 +40,7 @@ vtkMRMLLabelMapVolumeNode::vtkMRMLLabelMapVolumeNode() = default;
 vtkMRMLLabelMapVolumeNode::~vtkMRMLLabelMapVolumeNode() = default;
 
 //-----------------------------------------------------------
-void vtkMRMLLabelMapVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
+void vtkMRMLLabelMapVolumeNode::CreateNoneNode(vtkMRMLScene* scene)
 {
   vtkNew<vtkImageData> id;
   id->SetDimensions(1, 1, 1);
@@ -57,18 +57,18 @@ void vtkMRMLLabelMapVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
 //----------------------------------------------------------------------------
 void vtkMRMLLabelMapVolumeNode::CreateDefaultDisplayNodes()
 {
-  if (vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->GetDisplayNode())!=nullptr)
+  if (vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
   {
     // display node already exists
     return;
   }
-  if (this->GetScene()==nullptr)
+  if (this->GetScene() == nullptr)
   {
     vtkErrorMacro("vtkMRMLLabelMapVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
   }
   vtkMRMLLabelMapVolumeDisplayNode* dispNode = vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(
-    this->GetScene()->AddNewNodeByClass("vtkMRMLLabelMapVolumeDisplayNode") );
+    this->GetScene()->AddNewNodeByClass("vtkMRMLLabelMapVolumeDisplayNode"));
   dispNode->SetDefaultColorMap();
   this->SetAndObserveDisplayNodeID(dispNode->GetID());
 }

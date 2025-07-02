@@ -41,8 +41,8 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::ReadXMLAttributes(const char**
 {
   this->Superclass::ReadXMLAttributes(atts);
 
-//  vtkMRMLReadXMLBeginMacro(atts);
-//  vtkMRMLReadXMLEndMacro();
+  //  vtkMRMLReadXMLBeginMacro(atts);
+  //  vtkMRMLReadXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -54,5 +54,5 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::WriteXML(ostream& of, int nInd
 //----------------------------------------------------------------------------
 void vtkMRMLGPURayCastVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }

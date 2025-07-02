@@ -92,13 +92,13 @@ public:
   typedef ctkLayoutFactory Superclass;
 
   /// Constructors
-  explicit qMRMLLayoutManager(QObject* parent=nullptr);
+  explicit qMRMLLayoutManager(QObject* parent = nullptr);
   explicit qMRMLLayoutManager(QWidget* viewport, QObject* parent);
   ~qMRMLLayoutManager() override;
 
   /// Return the enabled property value.
   /// \sa enabled
-  bool isEnabled()const;
+  bool isEnabled() const;
 
   /// Reimplemented for internal reasons.
   /// If the registered view factory is a qMRMLLayoutViewFactory, then set
@@ -109,17 +109,17 @@ public:
   /// Return the list of registered MRML view factories.
   /// \sa registeredViewFactories(), registerViewFactory(),
   /// unregisterViewFactory()
-  Q_INVOKABLE QList<qMRMLLayoutViewFactory*> mrmlViewFactories()const;
+  Q_INVOKABLE QList<qMRMLLayoutViewFactory*> mrmlViewFactories() const;
 
   /// Return the view factory that handles the viewClassName view nodes.
   /// This can be used to replace a view factory with another one.
   /// \sa mrmlViewFactories(), registerViewFactory(), unregisterViewFactory()
-  Q_INVOKABLE qMRMLLayoutViewFactory* mrmlViewFactory(const QString& viewClassName)const;
+  Q_INVOKABLE qMRMLLayoutViewFactory* mrmlViewFactory(const QString& viewClassName) const;
 
   /// Return the mrml scene of the layout manager. It is the scene that is set
   /// by setMRMLScene().
   /// \sa setMRMLScene(), enabled
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Get the view widget representing a particular node (can be used
   /// for SliceNodes or ViewNodes, returning qMRMLSliceWidget or
@@ -130,10 +130,10 @@ public:
   Q_INVOKABLE QList<QWidget*> viewWidgets() const;
 
   /// Get slice view widget identified by \a name
-  Q_INVOKABLE qMRMLSliceWidget* sliceWidget(const QString& name)const;
+  Q_INVOKABLE qMRMLSliceWidget* sliceWidget(const QString& name) const;
 
   /// Get 3D widget identified by \a name
-  Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(const QString& name)const;
+  Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(const QString& name) const;
 
   /// Get the list of SliceWidgetNames
   /// All slice widget names are returned,
@@ -141,11 +141,11 @@ public:
   Q_INVOKABLE QStringList sliceViewNames() const;
 
   /// Return the number of instantiated ThreeDRenderView
-  int threeDViewCount()const;
+  int threeDViewCount() const;
   /// Return the number of plot views
-  int tableViewCount()const;
+  int tableViewCount() const;
   /// Return the number of table views
-  int plotViewCount()const;
+  int plotViewCount() const;
   /// Return the total number of views
   int viewCount() const;
 
@@ -153,60 +153,60 @@ public:
   /// where \a id is an integer ranging from 0 to N-1 with N being the number
   /// of instantiated qMRMLThreeDView (that should also be equal to the number
   /// of vtkMRMLViewNode)
-  Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(int id)const;
-  Q_INVOKABLE qMRMLTableWidget* tableWidget(int id)const;
-  Q_INVOKABLE qMRMLPlotWidget* plotWidget(int id)const;
+  Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(int id) const;
+  Q_INVOKABLE qMRMLTableWidget* tableWidget(int id) const;
+  Q_INVOKABLE qMRMLPlotWidget* plotWidget(int id) const;
 
   /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
   /// The returned collection object is owned by the layout manager.
-  Q_INVOKABLE vtkCollection* mrmlSliceLogics()const;
+  Q_INVOKABLE vtkCollection* mrmlSliceLogics() const;
 
   /// Return the up-to-date list of vtkMRMLViewLogics associated to the threeD views.
   /// The returned collection object is owned by the layout manager.
-  Q_INVOKABLE vtkCollection* mrmlViewLogics()const;
+  Q_INVOKABLE vtkCollection* mrmlViewLogics() const;
 
   Q_INVOKABLE void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
-  Q_INVOKABLE vtkMRMLColorLogic* mrmlColorLogic()const;
+  Q_INVOKABLE vtkMRMLColorLogic* mrmlColorLogic() const;
 
   /// Returns the current layout. it's the same value than
   /// vtkMRMLLayoutNode::ViewArrangement
   /// \sa vtkMRMLLayoutNode::SlicerLayout, layoutLogic()
-  int layout()const;
+  int layout() const;
 
   /// Return the layout logic instantiated and used by the manager.
   /// \sa setLayout(), layout()
-  Q_INVOKABLE vtkMRMLLayoutLogic* layoutLogic()const;
+  Q_INVOKABLE vtkMRMLLayoutLogic* layoutLogic() const;
 
   /// Return the view node of the active 3D view.
   /// \todo For now the active view is the first 3D view.
   /// \sa activeThreeDRenderer(), activeMRMLPlotViewNode(),
   /// activePlotRenderer()
-  Q_INVOKABLE vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
+  Q_INVOKABLE vtkMRMLViewNode* activeMRMLThreeDViewNode() const;
   /// Return the renderer of the active 3D view.
   /// \todo For now the active view is the first 3D view.
   /// \sa  activeThreeDRenderer(), activeMRMLPlotViewNode(),
   /// activePlotRenderer()
-  Q_INVOKABLE vtkRenderer* activeThreeDRenderer()const;
+  Q_INVOKABLE vtkRenderer* activeThreeDRenderer() const;
   /// Return the view node of the active table view.
   /// \todo For now the active view is the first table view.
   /// \sa  activeTableRenderer(), activeMRMLThreeDViewNode(),
   /// activeThreeDRenderer()
-  Q_INVOKABLE vtkMRMLTableViewNode* activeMRMLTableViewNode()const;
+  Q_INVOKABLE vtkMRMLTableViewNode* activeMRMLTableViewNode() const;
   /// Return the renderer of the active table view.
   /// \todo For now the active view is the first table view.
   /// \sa  activeMRMLTableViewNode(), activeMRMLThreeDViewNode(),
   /// activeThreeDRenderer()
-  Q_INVOKABLE vtkRenderer* activeTableRenderer()const;
+  Q_INVOKABLE vtkRenderer* activeTableRenderer() const;
   /// Return the view node of the active plot view.
   /// \todo For now the active view is the first plot view.
   /// \sa  activePlotRenderer(), activeMRMLThreeDViewNode(),
   /// activeThreeDRenderer()
-  Q_INVOKABLE vtkMRMLPlotViewNode* activeMRMLPlotViewNode()const;
+  Q_INVOKABLE vtkMRMLPlotViewNode* activeMRMLPlotViewNode() const;
   /// Return the renderer of the active plot view.
   /// \todo For now the active view is the first plot view.
   /// \sa  activeMRMLPlotViewNode(), activeMRMLThreeDViewNode(),
   /// activeThreeDRenderer()
-  Q_INVOKABLE vtkRenderer* activePlotRenderer()const;
+  Q_INVOKABLE vtkRenderer* activePlotRenderer() const;
 
   /// Returns the number of global pause render counts that have been called on the layout manager.
   /// This value does not include pauseRender counts that have been called on each view individually,
@@ -285,6 +285,7 @@ protected:
   void onViewportUsageChanged(const QString& viewportName) override;
 
   using ctkLayoutManager::setLayout;
+
 private:
   Q_DECLARE_PRIVATE(qMRMLLayoutManager);
   Q_DISABLE_COPY(qMRMLLayoutManager);

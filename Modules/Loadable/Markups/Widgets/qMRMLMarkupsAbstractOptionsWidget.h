@@ -24,7 +24,7 @@
 // Markups Widgets includes
 #include "qSlicerMarkupsModuleWidgetsExport.h"
 
-//MRML includes
+// MRML includes
 #include <vtkMRMLScene.h>
 #include <vtkMRMLMarkupsNode.h>
 
@@ -39,8 +39,7 @@ class vtkMRMLNode;
 /// \name qMRMLMarkupsAbstractOptionsWidget
 /// \brief qMRMLMarkupsAbstractOptionsWidget is a base class for the
 /// additional options widgets associated to some types of markups.
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsAbstractOptionsWidget
-  : public QWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsAbstractOptionsWidget : public QWidget
 {
   Q_OBJECT
 
@@ -48,8 +47,8 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsAbstractOptionsWidget
 
 public:
   typedef QWidget Superclass;
-  qMRMLMarkupsAbstractOptionsWidget(QWidget* parent=nullptr);
-  ~qMRMLMarkupsAbstractOptionsWidget()=default;
+  qMRMLMarkupsAbstractOptionsWidget(QWidget* parent = nullptr);
+  ~qMRMLMarkupsAbstractOptionsWidget() = default;
 
   /// Updates the widget based on information from MRML.
   virtual void updateWidgetFromMRML() = 0;
@@ -58,17 +57,15 @@ public:
   virtual const QString className() const = 0;
 
   // Returns the associated markups node
-  vtkMRMLMarkupsNode* mrmlMarkupsNode() const
-    {return this->MarkupsNode.GetPointer();}
+  vtkMRMLMarkupsNode* mrmlMarkupsNode() const { return this->MarkupsNode.GetPointer(); }
 
   // Returns the associated markups node
-  vtkMRMLScene* mrmlScene() const
-    {return this->MRMLScene.GetPointer();}
+  vtkMRMLScene* mrmlScene() const { return this->MRMLScene.GetPointer(); }
 
   /// Checks whether a given node can be handled by the widget. This allows
   /// using complex logics to determine whether the widget can manage a given
   /// markups node or not.
-  virtual bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const = 0;
+  virtual bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const = 0;
 
   /// Clone options widget . Override to return a new instance of the options widget
   virtual qMRMLMarkupsAbstractOptionsWidget* createInstance() const = 0;
@@ -79,8 +76,7 @@ public slots:
   /// Sets the vtkMRMLMarkupsNode to operate on.
   virtual void setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) = 0;
   /// Sets the vtkMRMLNode to operate on.
-  virtual void setMRMLScene(vtkMRMLScene* mrmlScene)
-  {this->MRMLScene = mrmlScene;}
+  virtual void setMRMLScene(vtkMRMLScene* mrmlScene) { this->MRMLScene = mrmlScene; }
 
 protected:
   vtkWeakPointer<vtkMRMLMarkupsNode> MarkupsNode;

@@ -31,12 +31,11 @@
 #include <vtkNew.h>
 
 // --------------------------------------------------------------------------
-class qMRMLColorModelTester: public QObject
+class qMRMLColorModelTester : public QObject
 {
   Q_OBJECT
 private:
-
-  qMRMLColorModel * ColorModel;
+  qMRMLColorModel* ColorModel;
 
 private slots:
   void init();

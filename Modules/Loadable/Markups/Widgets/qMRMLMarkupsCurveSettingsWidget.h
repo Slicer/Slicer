@@ -30,21 +30,20 @@ class qMRMLMarkupsCurveSettingsWidgetPrivate;
 class vtkMRMLMarkupsNode;
 
 // ------------------------------------------------------------------------------
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsCurveSettingsWidget
-  : public qMRMLMarkupsAbstractOptionsWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsCurveSettingsWidget : public qMRMLMarkupsAbstractOptionsWidget
 {
   Q_OBJECT
 
 public:
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsCurveSettingsWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsCurveSettingsWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsCurveSettingsWidget() override;
 
   /// Gets the name of the additional options widget type
-  const QString className() const override {return "qMRMLMarkupsCurveSettingsWidget";}
+  const QString className() const override { return "qMRMLMarkupsCurveSettingsWidget"; }
 
   /// Checks whether a given node can be handled by the widget
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
 
   /// Updates the widget on MRML changes
   void updateWidgetFromMRML() override;
@@ -53,8 +52,7 @@ public:
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
   /// Returns an instance of the widget
-  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
-  { return new qMRMLMarkupsCurveSettingsWidget(); }
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override { return new qMRMLMarkupsCurveSettingsWidget(); }
 
 public slots:
   void onCurveTypeParameterChanged();
@@ -63,7 +61,7 @@ public slots:
   void setMRMLScene(vtkMRMLScene* scene) override;
 
 protected:
-  qMRMLMarkupsCurveSettingsWidget(QWidget* parent, qMRMLMarkupsCurveSettingsWidgetPrivate &d);
+  qMRMLMarkupsCurveSettingsWidget(QWidget* parent, qMRMLMarkupsCurveSettingsWidgetPrivate& d);
 
 protected:
   void setup();

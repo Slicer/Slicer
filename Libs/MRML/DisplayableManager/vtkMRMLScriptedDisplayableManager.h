@@ -26,13 +26,12 @@
 
 #include "vtkMRMLDisplayableManagerExport.h"
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLScriptedDisplayableManager :
-  public vtkMRMLAbstractDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLScriptedDisplayableManager : public vtkMRMLAbstractDisplayableManager
 {
 
 public:
   static vtkMRMLScriptedDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLScriptedDisplayableManager,vtkMRMLAbstractDisplayableManager);
+  vtkTypeMacro(vtkMRMLScriptedDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void SetPythonSource(const std::string& filePath);
@@ -43,8 +42,8 @@ protected:
 
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
-  void ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event, void *callData) override;
-  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLSceneEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   void Create() override;
 
@@ -61,7 +60,7 @@ private:
   void operator=(const vtkMRMLScriptedDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

@@ -46,15 +46,18 @@
 #include <QWidgetAction>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyOpacityPluginPrivate: public QObject
+class qSlicerSubjectHierarchyOpacityPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyOpacityPlugin);
+
 protected:
   qSlicerSubjectHierarchyOpacityPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyOpacityPluginPrivate(qSlicerSubjectHierarchyOpacityPlugin& object);
   ~qSlicerSubjectHierarchyOpacityPluginPrivate() override;
   void init();
+
 public:
   QAction* OpacityAction;
   QMenu* OpacityMenu;
@@ -65,8 +68,9 @@ public:
 // qSlicerSubjectHierarchyOpacityPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyOpacityPluginPrivate::qSlicerSubjectHierarchyOpacityPluginPrivate(qSlicerSubjectHierarchyOpacityPlugin& object)
-: q_ptr(&object)
+qSlicerSubjectHierarchyOpacityPluginPrivate::qSlicerSubjectHierarchyOpacityPluginPrivate(
+  qSlicerSubjectHierarchyOpacityPlugin& object)
+  : q_ptr(&object)
 {
   this->OpacityAction = nullptr;
   this->OpacityMenu = nullptr;
@@ -101,8 +105,8 @@ qSlicerSubjectHierarchyOpacityPluginPrivate::~qSlicerSubjectHierarchyOpacityPlug
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyOpacityPlugin::qSlicerSubjectHierarchyOpacityPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyOpacityPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyOpacityPluginPrivate(*this))
 {
   this->m_Name = QString("Opacity");
 
@@ -114,7 +118,7 @@ qSlicerSubjectHierarchyOpacityPlugin::qSlicerSubjectHierarchyOpacityPlugin(QObje
 qSlicerSubjectHierarchyOpacityPlugin::~qSlicerSubjectHierarchyOpacityPlugin() = default;
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyOpacityPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyOpacityPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyOpacityPlugin);
 
@@ -183,7 +187,8 @@ void qSlicerSubjectHierarchyOpacityPlugin::setOpacityForCurrentItem(double opaci
 
   // Get display node
   vtkMRMLDisplayNode* displayNode = nullptr;
-  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
+  vtkMRMLDisplayableNode* displayableNode =
+    vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   if (displayableNode)
   {
     displayNode = displayableNode->GetDisplayNode();
@@ -195,7 +200,8 @@ void qSlicerSubjectHierarchyOpacityPlugin::setOpacityForCurrentItem(double opaci
   }
   if (!displayNode)
   {
-    qCritical() << Q_FUNC_INFO << ": Unable to find display node for subject hierarchy item " << shNode->GetItemName(currentItemID).c_str();
+    qCritical() << Q_FUNC_INFO << ": Unable to find display node for subject hierarchy item "
+                << shNode->GetItemName(currentItemID).c_str();
     return;
   }
 

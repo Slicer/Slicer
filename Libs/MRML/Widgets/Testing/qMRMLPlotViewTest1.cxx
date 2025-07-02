@@ -45,7 +45,7 @@
 #include <vtkTable.h>
 #include "qMRMLWidget.h"
 
-int qMRMLPlotViewTest1( int argc, char * argv [] )
+int qMRMLPlotViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -74,7 +74,7 @@ int qMRMLPlotViewTest1( int argc, char * argv [] )
 
   // Fill in the table with some example values
   int numPoints = 69;
-  float inc = 7.5 / (numPoints-1);
+  float inc = 7.5 / (numPoints - 1);
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
   {

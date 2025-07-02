@@ -38,12 +38,14 @@
 class qSlicerTerminologyEditorButtonPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologyEditorButton);
+
 protected:
   qSlicerTerminologyEditorButton* const q_ptr;
+
 public:
   qSlicerTerminologyEditorButtonPrivate(qSlicerTerminologyEditorButton& object);
   void init();
-  QString text()const;
+  QString text() const;
 
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;
   mutable QSize CachedSizeHint;
@@ -52,8 +54,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerTerminologyEditorButtonPrivate::qSlicerTerminologyEditorButtonPrivate(qSlicerTerminologyEditorButton& object)
   : q_ptr(&object)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyEditorButtonPrivate::init()
@@ -102,7 +103,7 @@ void qSlicerTerminologyEditorButton::onToggled(bool change)
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyEditorButton::terminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorButton);
   terminologyInfo = d->TerminologyInfo;
@@ -110,7 +111,7 @@ void qSlicerTerminologyEditorButton::terminologyInfo(
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyEditorButton::setTerminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorButton);
 
@@ -120,7 +121,7 @@ void qSlicerTerminologyEditorButton::setTerminologyInfo(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyEditorButton::paintEvent(QPaintEvent *)
+void qSlicerTerminologyEditorButton::paintEvent(QPaintEvent*)
 {
   Q_D(qSlicerTerminologyEditorButton);
   QStylePainter p(this);

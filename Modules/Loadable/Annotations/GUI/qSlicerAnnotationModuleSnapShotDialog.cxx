@@ -21,9 +21,8 @@
 #include <string>
 
 //-----------------------------------------------------------------------------
-qSlicerAnnotationModuleSnapShotDialog
-::qSlicerAnnotationModuleSnapShotDialog(QWidget* parentWidget)
-  :Superclass(parentWidget)
+qSlicerAnnotationModuleSnapShotDialog ::qSlicerAnnotationModuleSnapShotDialog(QWidget* parentWidget)
+  : Superclass(parentWidget)
 {
   this->m_Logic = nullptr;
   this->setLayoutManager(qSlicerApplication::application()->layoutManager());
@@ -65,9 +64,8 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
 
   // get the name..
   std::string name;
-  if (this->m_Logic->GetMRMLScene()
-    && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)
-    && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName())
+  if (this->m_Logic->GetMRMLScene() && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId) &&
+      this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName())
   {
     name = this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName();
   }
@@ -85,8 +83,7 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
 
   // ..and set it in the GUI
   // double check that the screen shot type is in range
-  if (screenshotType < qMRMLScreenShotDialog::ThreeD ||
-      screenshotType > qMRMLScreenShotDialog::FullLayout)
+  if (screenshotType < qMRMLScreenShotDialog::ThreeD || screenshotType > qMRMLScreenShotDialog::FullLayout)
   {
     // reset to full layout
     qErrnoWarning("Screen shot type is out of range, resetting to full layout");
@@ -108,8 +105,7 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
   // check to see if it's an already used name for a node (redrawing the
   // dialog causes it to reset and calling GetUniqueNameByString increments
   // the number each time).
-  vtkCollection *col =
-    this->m_Logic->GetMRMLScene()->GetNodesByName(name.toUtf8());
+  vtkCollection* col = this->m_Logic->GetMRMLScene()->GetNodesByName(name.toUtf8());
   if (col->GetNumberOfItems() > 0)
   {
     // get a new unique name
@@ -139,11 +135,8 @@ void qSlicerAnnotationModuleSnapShotDialog::accept()
   if (this->data().toString().isEmpty())
   {
     // this is a new snapshot
-    this->m_Logic->CreateSnapShot(nameBytes.data(),
-                                  descriptionBytes.data(),
-                                  screenshotType,
-                                  this->scaleFactor(),
-                                  this->imageData());
+    this->m_Logic->CreateSnapShot(
+      nameBytes.data(), descriptionBytes.data(), screenshotType, this->scaleFactor(), this->imageData());
   }
   else
   {

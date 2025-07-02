@@ -48,7 +48,7 @@ public:
   ~qMRMLThreeDViewInformationWidget() override;
 
   /// Get \a viewNode
-  vtkMRMLViewNode* mrmlViewNode()const;
+  vtkMRMLViewNode* mrmlViewNode() const;
 
 public slots:
 

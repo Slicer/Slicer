@@ -101,7 +101,7 @@ public:
 
   QString quantity() const;
 
-  UnitAwareProperties unitAwareProperties()const;
+  UnitAwareProperties unitAwareProperties() const;
 
 public slots:
   void setQuantity(const QString& baseName);

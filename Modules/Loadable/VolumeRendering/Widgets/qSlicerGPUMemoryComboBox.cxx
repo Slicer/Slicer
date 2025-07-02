@@ -34,6 +34,7 @@
 class qSlicerGPUMemoryComboBoxPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerGPUMemoryComboBox);
+
 protected:
   qSlicerGPUMemoryComboBox* const q_ptr;
 
@@ -43,8 +44,8 @@ public:
 
   void init();
 
-  double memoryFromString(const QString& memory)const;
-  QString memoryToString(double memory)const;
+  double memoryFromString(const QString& memory) const;
+  QString memoryToString(double memory) const;
 
   QRegExp MemoryRegExp;
   QString DefaultText;
@@ -54,8 +55,7 @@ public:
 // qSlicerGPUMemoryComboBoxPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerGPUMemoryComboBoxPrivate::qSlicerGPUMemoryComboBoxPrivate(
-  qSlicerGPUMemoryComboBox& object)
+qSlicerGPUMemoryComboBoxPrivate::qSlicerGPUMemoryComboBoxPrivate(qSlicerGPUMemoryComboBox& object)
   : q_ptr(&object)
   , DefaultText("0 MB (Default)")
 {
@@ -71,12 +71,12 @@ void qSlicerGPUMemoryComboBoxPrivate::init()
   Q_Q(qSlicerGPUMemoryComboBox);
 
   q->setEditable(true);
-  q->lineEdit()->setValidator( new QRegExpValidator(this->MemoryRegExp, q));
+  q->lineEdit()->setValidator(new QRegExpValidator(this->MemoryRegExp, q));
   q->addItem(DefaultText);
-  //q->addItem(qSlicerGPUMemoryComboBox::tr("25 %")); //TODO: Uncomment when totalGPUMemoryInMB works
-  //q->addItem(qSlicerGPUMemoryComboBox::tr("50 %"));
-  //q->addItem(qSlicerGPUMemoryComboBox::tr("75 %"));
-  //q->addItem(qSlicerGPUMemoryComboBox::tr("90 %"));
+  // q->addItem(qSlicerGPUMemoryComboBox::tr("25 %")); //TODO: Uncomment when totalGPUMemoryInMB works
+  // q->addItem(qSlicerGPUMemoryComboBox::tr("50 %"));
+  // q->addItem(qSlicerGPUMemoryComboBox::tr("75 %"));
+  // q->addItem(qSlicerGPUMemoryComboBox::tr("90 %"));
   q->addItem(qSlicerGPUMemoryComboBox::tr("128 MB"));
   q->addItem(qSlicerGPUMemoryComboBox::tr("256 MB"));
   q->addItem(qSlicerGPUMemoryComboBox::tr("512 MB"));
@@ -100,7 +100,7 @@ void qSlicerGPUMemoryComboBoxPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-double qSlicerGPUMemoryComboBoxPrivate::memoryFromString(const QString& memory)const
+double qSlicerGPUMemoryComboBoxPrivate::memoryFromString(const QString& memory) const
 {
   if (memory == this->DefaultText)
   {
@@ -129,7 +129,7 @@ double qSlicerGPUMemoryComboBoxPrivate::memoryFromString(const QString& memory)c
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerGPUMemoryComboBoxPrivate::memoryToString(double memory)const
+QString qSlicerGPUMemoryComboBoxPrivate::memoryToString(double memory) const
 {
   if (memory == 0.0)
   {
@@ -163,7 +163,7 @@ qSlicerGPUMemoryComboBox::qSlicerGPUMemoryComboBox(QWidget* parentWidget)
 qSlicerGPUMemoryComboBox::~qSlicerGPUMemoryComboBox() = default;
 
 //-----------------------------------------------------------------------------
-int qSlicerGPUMemoryComboBox::totalGPUMemoryInMB()const
+int qSlicerGPUMemoryComboBox::totalGPUMemoryInMB() const
 {
   // Detect the amount of memory in the graphic card
   vtkNew<vtkGPUInfoList> gpuInfoList;
@@ -181,7 +181,7 @@ int qSlicerGPUMemoryComboBox::totalGPUMemoryInMB()const
 }
 
 // --------------------------------------------------------------------------
-double qSlicerGPUMemoryComboBox::currentGPUMemory()const
+double qSlicerGPUMemoryComboBox::currentGPUMemory() const
 {
   Q_D(const qSlicerGPUMemoryComboBox);
 
@@ -190,7 +190,7 @@ double qSlicerGPUMemoryComboBox::currentGPUMemory()const
 }
 
 // --------------------------------------------------------------------------
-int qSlicerGPUMemoryComboBox::currentGPUMemoryInMB()const
+int qSlicerGPUMemoryComboBox::currentGPUMemoryInMB() const
 {
   Q_D(const qSlicerGPUMemoryComboBox);
 
@@ -213,7 +213,7 @@ int qSlicerGPUMemoryComboBox::currentGPUMemoryInMB()const
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerGPUMemoryComboBox::currentGPUMemoryAsString()const
+QString qSlicerGPUMemoryComboBox::currentGPUMemoryAsString() const
 {
   return this->currentText();
 }

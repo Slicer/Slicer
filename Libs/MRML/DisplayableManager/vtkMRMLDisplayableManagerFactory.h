@@ -38,13 +38,13 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerFactory : publ
 {
 public:
   static vtkMRMLDisplayableManagerFactory* New();
-  vtkTypeMacro(vtkMRMLDisplayableManagerFactory,vtkObject);
+  vtkTypeMacro(vtkMRMLDisplayableManagerFactory, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum
   {
-    DisplayableManagerFactoryRegisteredEvent     = 30100,
-    DisplayableManagerFactoryUnRegisteredEvent   = 30101
+    DisplayableManagerFactoryRegisteredEvent = 30100,
+    DisplayableManagerFactoryUnRegisteredEvent = 30101
   };
 
   /// Return True if Displayable Manager identified by \a vtkClassName
@@ -76,15 +76,14 @@ public:
   /// It returns a vtkMRMLDisplayableManagerGroup representing a list of DisplayableManager
   /// Internally, the factory keep track of all the Group and will invoke the ModifiedEvent
   /// of each group.
-  vtkMRMLDisplayableManagerGroup* InstantiateDisplayableManagers(vtkRenderer * newRenderer);
+  vtkMRMLDisplayableManagerGroup* InstantiateDisplayableManagers(vtkRenderer* newRenderer);
 
   /// Set the application logic. It will be passed to displayable
   /// managers and groups to be created.
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic);
-  vtkMRMLApplicationLogic* GetMRMLApplicationLogic()const;
+  vtkMRMLApplicationLogic* GetMRMLApplicationLogic() const;
 
 protected:
-
   vtkMRMLDisplayableManagerFactory();
   ~vtkMRMLDisplayableManagerFactory() override;
 
@@ -94,10 +93,8 @@ protected:
   typedef vtkMRMLDisplayableManagerFactory Self;
 
 private:
-
   vtkMRMLDisplayableManagerFactory(const vtkMRMLDisplayableManagerFactory&) = delete;
   void operator=(const vtkMRMLDisplayableManagerFactory&) = delete;
-
 };
 
 #endif

@@ -23,10 +23,9 @@
 
 qSlicerMouseModeToolBarPlugin::qSlicerMouseModeToolBarPlugin(QObject* parent)
   : QObject(parent)
-{
-}
+{}
 
-QWidget *qSlicerMouseModeToolBarPlugin::createWidget(QWidget* parentWidget)
+QWidget* qSlicerMouseModeToolBarPlugin::createWidget(QWidget* parentWidget)
 {
   qSlicerMouseModeToolBar* widget = new qSlicerMouseModeToolBar(parentWidget);
   return widget;
@@ -34,11 +33,11 @@ QWidget *qSlicerMouseModeToolBarPlugin::createWidget(QWidget* parentWidget)
 
 QString qSlicerMouseModeToolBarPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qSlicerMouseModeToolBar\" name=\"SlicerMouseModeToolBar\">\n"
-    "  <property name=\"defaultPlaceClassName\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qSlicerMouseModeToolBar\" name=\"SlicerMouseModeToolBar\">\n"
+         "  <property name=\"defaultPlaceClassName\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 QString qSlicerMouseModeToolBarPlugin::includeFile() const

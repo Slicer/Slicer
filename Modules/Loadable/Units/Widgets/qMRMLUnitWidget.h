@@ -85,7 +85,7 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLUnitWidget : public qMRMLWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLUnitWidget(QWidget *parent=nullptr);
+  qMRMLUnitWidget(QWidget* parent = nullptr);
   ~qMRMLUnitWidget() override;
 
   /// Return the name property value.
@@ -150,16 +150,16 @@ public slots:
 
   /// Set the name property value.
   /// \sa name
-  void setName(const QString &);
+  void setName(const QString&);
   /// Set the quantity property value.
   /// \sa quantity
-  void setQuantity(const QString &);
+  void setQuantity(const QString&);
   /// Set the prefix property value.
   /// \sa prefix
-  void setPrefix(const QString &);
+  void setPrefix(const QString&);
   /// Set the suffix property value.
   /// \sa suffix
-  void setSuffix(const QString &);
+  void setSuffix(const QString&);
   /// Set the precision property value.
   /// \sa precision
   void setPrecision(int);

@@ -31,7 +31,7 @@
 //-----------------------------------------------------------------------------
 const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
 {
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)
   {
     qCritical("qSlicerCLIModuleFactoryHelper::modulePaths failed: qSlicerCoreApplication is not instantiated");
@@ -51,17 +51,18 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
     defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR;
     if (!app->intDir().isEmpty())
     {
-       // On Win32, *both* paths have to be there, since scripts are installed
-       // in the install location, and exec/libs are *automatically* installed
-       // in intDir.
-       defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/" + app->intDir();
+      // On Win32, *both* paths have to be there, since scripts are installed
+      // in the install location, and exec/libs are *automatically* installed
+      // in intDir.
+      defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/" + app->intDir();
     }
   }
 
-  QSettings * settings = app->revisionUserSettings();
-  QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
+  QSettings* settings = app->revisionUserSettings();
+  QStringList additionalModulePaths =
+    app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList cmdLineModulePaths = additionalModulePaths + defaultCmdLineModulePaths;
-  foreach(const QString& path, cmdLineModulePaths)
+  foreach (const QString& path, cmdLineModulePaths)
   {
     app->addLibraryPath(path);
   }
@@ -71,13 +72,13 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
 //-----------------------------------------------------------------------------
 bool qSlicerCLIModuleFactoryHelper::isInstalled(const QString& path)
 {
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   return app ? qSlicerUtils::isPluginInstalled(path, app->slicerHome()) : false;
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerCLIModuleFactoryHelper::isBuiltIn(const QString& path)
 {
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   return app ? qSlicerUtils::isPluginBuiltIn(path, app->slicerHome(), app->revision()) : true;
 }

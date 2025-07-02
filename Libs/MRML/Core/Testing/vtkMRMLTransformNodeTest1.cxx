@@ -23,7 +23,12 @@
 #include <vtkTransform.h>
 #include <vtkAddonMathUtilities.h>
 
-vtkMatrix4x4* CreateTransformMatrix(double translateX, double translateY, double translateZ, double rotateX, double rotateY, double rotateZ)
+vtkMatrix4x4* CreateTransformMatrix(double translateX,
+                                    double translateY,
+                                    double translateZ,
+                                    double rotateX,
+                                    double rotateY,
+                                    double rotateZ)
 {
   vtkNew<vtkTransform> tr;
   tr->Translate(translateX, translateY, translateZ);
@@ -35,7 +40,7 @@ vtkMatrix4x4* CreateTransformMatrix(double translateX, double translateY, double
   return matrix;
 }
 
-int vtkMRMLTransformNodeTest1(int , char * [] )
+int vtkMRMLTransformNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLTransformNode> node1;
   vtkNew<vtkMRMLScene> scene;
@@ -53,12 +58,18 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   vtkNew<vtkMRMLTransformNode> eTransform; // == e_to_d
   vtkNew<vtkMRMLTransformNode> qTransform; // == q_to_b
   vtkNew<vtkMRMLTransformNode> rTransform; // == r_to_q
-  vtkSmartPointer<vtkMatrix4x4> w_from_b_mx = vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix( 34,  23, -12,  44,  12,  78));
-  vtkSmartPointer<vtkMatrix4x4> b_from_c_mx = vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix(-34,  11,  12, -22, 128,  18));
-  vtkSmartPointer<vtkMatrix4x4> c_from_d_mx = vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix( 14, -23,  44,  11, -71,  38));
-  vtkSmartPointer<vtkMatrix4x4> d_from_e_mx = vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix( 73,  81,  35,  22,  11, -98));
-  vtkSmartPointer<vtkMatrix4x4> b_from_q_mx = vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix( 13, -71, 335, -42,  91, -28));
-  vtkSmartPointer<vtkMatrix4x4> q_from_r_mx = vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix( 53, -11,  65, -12,  21,   8));
+  vtkSmartPointer<vtkMatrix4x4> w_from_b_mx =
+    vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix(34, 23, -12, 44, 12, 78));
+  vtkSmartPointer<vtkMatrix4x4> b_from_c_mx =
+    vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix(-34, 11, 12, -22, 128, 18));
+  vtkSmartPointer<vtkMatrix4x4> c_from_d_mx =
+    vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix(14, -23, 44, 11, -71, 38));
+  vtkSmartPointer<vtkMatrix4x4> d_from_e_mx =
+    vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix(73, 81, 35, 22, 11, -98));
+  vtkSmartPointer<vtkMatrix4x4> b_from_q_mx =
+    vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix(13, -71, 335, -42, 91, -28));
+  vtkSmartPointer<vtkMatrix4x4> q_from_r_mx =
+    vtkSmartPointer<vtkMatrix4x4>::Take(CreateTransformMatrix(53, -11, 65, -12, 21, 8));
   bTransform->SetMatrixTransformToParent(w_from_b_mx.GetPointer());
   cTransform->SetMatrixTransformToParent(b_from_c_mx.GetPointer());
   dTransform->SetMatrixTransformToParent(c_from_d_mx.GetPointer());
@@ -117,18 +128,22 @@ int vtkMRMLTransformNodeTest1(int , char * [] )
   // Test AreTransformsEqual
   vtkNew<vtkGeneralTransform> transform1;
   vtkNew<vtkGeneralTransform> transform2;
-  vtkMRMLTransformNode::GetTransformBetweenNodes(bTransform.GetPointer(), eTransform.GetPointer(), transform1.GetPointer());
-  vtkMRMLTransformNode::GetTransformBetweenNodes(bTransform.GetPointer(), eTransform.GetPointer(), transform2.GetPointer());
+  vtkMRMLTransformNode::GetTransformBetweenNodes(
+    bTransform.GetPointer(), eTransform.GetPointer(), transform1.GetPointer());
+  vtkMRMLTransformNode::GetTransformBetweenNodes(
+    bTransform.GetPointer(), eTransform.GetPointer(), transform2.GetPointer());
   // Test equal
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), transform2.GetPointer()), true);
-  vtkMRMLTransformNode::GetTransformBetweenNodes(bTransform.GetPointer(), cTransform.GetPointer(), transform2.GetPointer());
+  vtkMRMLTransformNode::GetTransformBetweenNodes(
+    bTransform.GetPointer(), cTransform.GetPointer(), transform2.GetPointer());
   // Test non-equal
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), transform2.GetPointer()), false);
   // Check nullptr transforms
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), nullptr), false);
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(nullptr, nullptr), true);
   // check identity transform is the same as nullptr transform
-  vtkMRMLTransformNode::GetTransformBetweenNodes(eTransform.GetPointer(), eTransform.GetPointer(), transform1.GetPointer());
+  vtkMRMLTransformNode::GetTransformBetweenNodes(
+    eTransform.GetPointer(), eTransform.GetPointer(), transform1.GetPointer());
   CHECK_BOOL(vtkMRMLTransformNode::AreTransformsEqual(transform1.GetPointer(), nullptr), true);
 
   // Test GetMatrixTransformToNode computations

@@ -37,14 +37,14 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerModuleManager::qSlicerModuleManager(QObject* newParent)
-  : Superclass(newParent), d_ptr(new qSlicerModuleManagerPrivate)
+  : Superclass(newParent)
+  , d_ptr(new qSlicerModuleManagerPrivate)
 {
   Q_D(qSlicerModuleManager);
   d->ModuleFactoryManager = new qSlicerModuleFactoryManager(this);
-  connect(d->ModuleFactoryManager, SIGNAL(moduleLoaded(QString)),
-          this, SIGNAL(moduleLoaded(QString)));
-  connect(d->ModuleFactoryManager, SIGNAL(moduleAboutToBeUnloaded(QString)),
-          this, SIGNAL(moduleAboutToBeUnloaded(QString)));
+  connect(d->ModuleFactoryManager, SIGNAL(moduleLoaded(QString)), this, SIGNAL(moduleLoaded(QString)));
+  connect(
+    d->ModuleFactoryManager, SIGNAL(moduleAboutToBeUnloaded(QString)), this, SIGNAL(moduleAboutToBeUnloaded(QString)));
 }
 
 //-----------------------------------------------------------------------------
@@ -59,21 +59,21 @@ void qSlicerModuleManager::printAdditionalInfo()
 }
 
 //---------------------------------------------------------------------------
-qSlicerModuleFactoryManager* qSlicerModuleManager::factoryManager()const
+qSlicerModuleFactoryManager* qSlicerModuleManager::factoryManager() const
 {
   Q_D(const qSlicerModuleManager);
   return const_cast<qSlicerModuleFactoryManager*>(d->ModuleFactoryManager);
 }
 
 //---------------------------------------------------------------------------
-qSlicerAbstractCoreModule* qSlicerModuleManager::module(const QString& name)const
+qSlicerAbstractCoreModule* qSlicerModuleManager::module(const QString& name) const
 {
   Q_D(const qSlicerModuleManager);
   return d->ModuleFactoryManager->loadedModule(name);
 }
 
 //---------------------------------------------------------------------------
-QStringList qSlicerModuleManager::modulesNames()const
+QStringList qSlicerModuleManager::modulesNames() const
 {
   Q_D(const qSlicerModuleManager);
   return d->ModuleFactoryManager->loadedModuleNames();

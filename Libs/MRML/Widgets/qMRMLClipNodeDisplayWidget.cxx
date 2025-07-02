@@ -47,14 +47,13 @@ public:
   void init();
 
   vtkWeakPointer<vtkMRMLDisplayNode> MRMLDisplayNode;
-  bool                               IsUpdatingWidgetFromMRML{false};
+  bool IsUpdatingWidgetFromMRML{ false };
 };
 
 //------------------------------------------------------------------------------
 qMRMLClipNodeDisplayWidgetPrivate::qMRMLClipNodeDisplayWidgetPrivate(qMRMLClipNodeDisplayWidget& object)
   : q_ptr(&object)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
 void qMRMLClipNodeDisplayWidgetPrivate::init()
@@ -63,20 +62,16 @@ void qMRMLClipNodeDisplayWidgetPrivate::init()
   this->setupUi(q);
   q->setEnabled(this->MRMLDisplayNode != nullptr);
 
-  QObject::connect(this->checkBox_Clipping, SIGNAL(toggled(bool)),
-    q, SLOT(updateMRMLFromWidget()));
-  QObject::connect(this->checkBox_ClippingCapping, SIGNAL(toggled(bool)),
-    q, SLOT(updateMRMLFromWidget()));
-  QObject::connect(this->sliderWidget_ClippingCapOpacity, SIGNAL(valueChanged(double)),
-    q, SLOT(updateMRMLFromWidget()));
-  QObject::connect(this->checkBox_ClippingOutline, SIGNAL(toggled(bool)),
-    q, SLOT(updateMRMLFromWidget()));
-  QObject::connect(this->checkBox_ClippingKeepWholeCells, SIGNAL(toggled(bool)),
-    q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->checkBox_Clipping, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->checkBox_ClippingCapping, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(
+    this->sliderWidget_ClippingCapOpacity, SIGNAL(valueChanged(double)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->checkBox_ClippingOutline, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->checkBox_ClippingKeepWholeCells, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
 }
 
 //------------------------------------------------------------------------------
-qMRMLClipNodeDisplayWidget::qMRMLClipNodeDisplayWidget(QWidget* _parent/*=nullptr*/)
+qMRMLClipNodeDisplayWidget::qMRMLClipNodeDisplayWidget(QWidget* _parent /*=nullptr*/)
   : qMRMLWidget(_parent)
   , d_ptr(new qMRMLClipNodeDisplayWidgetPrivate(*this))
 {
@@ -104,8 +99,7 @@ void qMRMLClipNodeDisplayWidget::setMRMLDisplayNode(vtkMRMLNode* node)
 void qMRMLClipNodeDisplayWidget::setMRMLDisplayNode(vtkMRMLDisplayNode* clipNode)
 {
   Q_D(qMRMLClipNodeDisplayWidget);
-  qvtkReconnect(d->MRMLDisplayNode, clipNode, vtkCommand::ModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLDisplayNode, clipNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->MRMLDisplayNode = clipNode;
   this->updateWidgetFromMRML();
 }
@@ -130,9 +124,11 @@ void qMRMLClipNodeDisplayWidget::updateWidgetFromMRML()
 
   bool wasBlocking = false;
 
-  vtkMRMLClipNode* clipNode = d->MRMLDisplayNode ? vtkMRMLClipNode::SafeDownCast(d->MRMLDisplayNode->GetClipNode()) : nullptr;
+  vtkMRMLClipNode* clipNode =
+    d->MRMLDisplayNode ? vtkMRMLClipNode::SafeDownCast(d->MRMLDisplayNode->GetClipNode()) : nullptr;
   vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(d->MRMLDisplayNode);
-  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->MRMLDisplayNode);
+  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode =
+    vtkMRMLSegmentationDisplayNode::SafeDownCast(d->MRMLDisplayNode);
 
   bool widgetsEnabled = clipNode != nullptr;
   bool surfaceWidgetsVisible = modelDisplayNode != nullptr || segmentationDisplayNode != nullptr;
@@ -178,7 +174,8 @@ void qMRMLClipNodeDisplayWidget::updateWidgetFromMRML()
 
   wasBlocking = d->checkBox_ClippingKeepWholeCells->blockSignals(true);
   d->checkBox_ClippingKeepWholeCells->setEnabled(clipNode != nullptr);
-  d->checkBox_ClippingKeepWholeCells->setChecked(clipNode ? clipNode->GetClippingMethod() == vtkMRMLClipNode::WholeCells : false);
+  d->checkBox_ClippingKeepWholeCells->setChecked(clipNode ? clipNode->GetClippingMethod() == vtkMRMLClipNode::WholeCells
+                                                          : false);
   d->checkBox_ClippingKeepWholeCells->setVisible(surfaceWidgetsVisible);
   d->checkBox_ClippingKeepWholeCells->blockSignals(wasBlocking);
 
@@ -210,7 +207,8 @@ void qMRMLClipNodeDisplayWidget::updateMRMLFromWidget()
     modelDisplayNode->SetClippingOutline(d->checkBox_ClippingOutline->isChecked());
   }
 
-  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->MRMLDisplayNode);
+  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode =
+    vtkMRMLSegmentationDisplayNode::SafeDownCast(d->MRMLDisplayNode);
   if (segmentationDisplayNode)
   {
     segmentationDisplayNode->SetClippingCapSurface(d->checkBox_ClippingCapping->isChecked());
@@ -222,6 +220,7 @@ void qMRMLClipNodeDisplayWidget::updateMRMLFromWidget()
   MRMLNodeModifyBlocker clipNodeBlocker(clipNode);
   if (clipNode)
   {
-    clipNode->SetClippingMethod(d->checkBox_ClippingKeepWholeCells->isChecked() ? vtkMRMLClipNode::WholeCells : vtkMRMLClipNode::Straight);
+    clipNode->SetClippingMethod(d->checkBox_ClippingKeepWholeCells->isChecked() ? vtkMRMLClipNode::WholeCells
+                                                                                : vtkMRMLClipNode::Straight);
   }
 }

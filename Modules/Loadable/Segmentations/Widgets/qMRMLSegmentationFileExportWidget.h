@@ -46,10 +46,10 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationFileExportWi
   Q_OBJECT
   QVTK_OBJECT
 
-    /// Key for storing selected options in application settings.
-    /// If an empty key string is given, then selections are not saved or loaded in settings.
-    /// Empty by default.
-    Q_PROPERTY(QString settingsKey READ settingsKey WRITE setSettingsKey)
+  /// Key for storing selected options in application settings.
+  /// If an empty key string is given, then selections are not saved or loaded in settings.
+  /// Empty by default.
+  Q_PROPERTY(QString settingsKey READ settingsKey WRITE setSettingsKey)
 
 public:
   /// Constructor
@@ -57,7 +57,7 @@ public:
   /// Destructor
   ~qMRMLSegmentationFileExportWidget() override;
 
-  QString settingsKey()const;
+  QString settingsKey() const;
   void setSettingsKey(const QString& key);
 
   /// Get current segmentation node

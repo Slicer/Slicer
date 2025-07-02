@@ -23,7 +23,7 @@
 #include "vtkMRMLSceneEventRecorder.h"
 
 //---------------------------------------------------------------------------
-vtkMRMLSceneEventRecorder *vtkMRMLSceneEventRecorder ::New()
+vtkMRMLSceneEventRecorder* vtkMRMLSceneEventRecorder ::New()
 {
   return new vtkMRMLSceneEventRecorder;
 }
@@ -35,8 +35,7 @@ vtkMRMLSceneEventRecorder::vtkMRMLSceneEventRecorder() = default;
 vtkMRMLSceneEventRecorder::~vtkMRMLSceneEventRecorder() = default;
 
 //---------------------------------------------------------------------------
-void vtkMRMLSceneEventRecorder::Execute(
-  vtkObject *vtkcaller, unsigned long eid, void *vtkNotUsed(calldata))
+void vtkMRMLSceneEventRecorder::Execute(vtkObject* vtkcaller, unsigned long eid, void* vtkNotUsed(calldata))
 {
   if (vtkMRMLScene::SafeDownCast(vtkcaller) == nullptr)
   {

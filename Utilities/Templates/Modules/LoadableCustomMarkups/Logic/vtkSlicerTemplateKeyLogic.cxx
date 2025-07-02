@@ -42,9 +42,7 @@
 vtkStandardNewMacro(vtkSlicerTemplateKeyLogic);
 
 //---------------------------------------------------------------------------
-vtkSlicerTemplateKeyLogic::vtkSlicerTemplateKeyLogic()
-{
-}
+vtkSlicerTemplateKeyLogic::vtkSlicerTemplateKeyLogic() {}
 
 //---------------------------------------------------------------------------
 vtkSlicerTemplateKeyLogic::~vtkSlicerTemplateKeyLogic() = default;
@@ -58,7 +56,7 @@ void vtkSlicerTemplateKeyLogic::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 void vtkSlicerTemplateKeyLogic::RegisterNodes()
 {
-  vtkMRMLScene *scene = this->GetMRMLScene();
+  vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
   {
     vtkErrorMacro("RegisterNodes failed: invalid scene");

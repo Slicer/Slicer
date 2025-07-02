@@ -37,8 +37,7 @@
 #include <vtkSlicerSceneViewsModuleLogic.h>
 
 //---------------------------------------------------------------------------
-int vtkSceneViewEventsTest(
-  int vtkNotUsed(argc), char * vtkNotUsed(argv)[])
+int vtkSceneViewEventsTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> appLogic;
@@ -66,12 +65,10 @@ int vtkSceneViewEventsTest(
   // Add observer to the camera node
   int cameraModifiedEventCount = 0;
   vtkNew<vtkCallbackCommand> cameraNodeObserver;
-  cameraNodeObserver->SetCallback(
-    [](vtkObject* caller, unsigned long eid, void* clientData, void* callData)
-    {
-      int* cameraModifiedEventCount = static_cast<int*>(clientData);
-      (*cameraModifiedEventCount)++;
-    });
+  cameraNodeObserver->SetCallback([](vtkObject* caller, unsigned long eid, void* clientData, void* callData) {
+    int* cameraModifiedEventCount = static_cast<int*>(clientData);
+    (*cameraModifiedEventCount)++;
+  });
   cameraNodeObserver->SetClientData(&cameraModifiedEventCount);
   cameraNode->AddObserver(vtkCommand::ModifiedEvent, cameraNodeObserver.GetPointer());
 

@@ -34,18 +34,19 @@ public:
   qSlicerExportNodeDialog(QObject* parent = nullptr);
   ~qSlicerExportNodeDialog() override;
 
-  qSlicerIO::IOFileType fileType()const override;
-  QString description()const override;
-  qSlicerFileDialog::IOAction action()const override;
+  qSlicerIO::IOFileType fileType() const override;
+  QString description() const override;
+  qSlicerFileDialog::IOAction action() const override;
 
   /// Open the export dialog. The expected readerProperties are as follows:
-  /// selectedNodeID (QString): ID of the node rooted at the subtree in the subject hierarchy that will be considered for export
-  /// childIdsNonrecursive (QList<QString>): Node IDs of direct children of selectedNodeID in the subject hierarchy
-  /// childIdsRecursive (QList<QString>): Node IDs of all descendants of selectedNodeID in the subject hierarchy
-  /// nodeIdToSubjectHierarchyPath (QHash<QString, QStringList>): Mapping from node IDs to lists of subject hierarchy item names, where
-  ///   each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID.
-  bool exec(const qSlicerIO::IOProperties& readerProperties =
-                    qSlicerIO::IOProperties()) override;
+  /// selectedNodeID (QString): ID of the node rooted at the subtree in the subject hierarchy that will be considered
+  /// for export childIdsNonrecursive (QList<QString>): Node IDs of direct children of selectedNodeID in the subject
+  /// hierarchy childIdsRecursive (QList<QString>): Node IDs of all descendants of selectedNodeID in the subject
+  /// hierarchy nodeIdToSubjectHierarchyPath (QHash<QString, QStringList>): Mapping from node IDs to lists of subject
+  /// hierarchy item names, where
+  ///   each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches
+  ///   selectedNodeID.
+  bool exec(const qSlicerIO::IOProperties& readerProperties = qSlicerIO::IOProperties()) override;
 
 protected:
   QScopedPointer<qSlicerExportNodeDialogPrivate> d_ptr;

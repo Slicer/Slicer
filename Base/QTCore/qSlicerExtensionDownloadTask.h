@@ -43,8 +43,7 @@ public:
   ///
   /// The task takes ownership of the reply and will delete it when the task
   /// is destroyed.
-  explicit qSlicerExtensionDownloadTask(QNetworkReply* reply,
-                                        QObject* parent = nullptr);
+  explicit qSlicerExtensionDownloadTask(QNetworkReply* reply, QObject* parent = nullptr);
 
   /// Destructor.
   ~qSlicerExtensionDownloadTask() override;

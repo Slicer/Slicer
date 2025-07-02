@@ -23,11 +23,10 @@
 //------------------------------------------------------------------------------
 qMRMLClipNodeDisplayWidgetPlugin::qMRMLClipNodeDisplayWidgetPlugin(QObject* pluginParent)
   : QObject(pluginParent)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLClipNodeDisplayWidgetPlugin::createWidget(QWidget* widgetParent)
+QWidget* qMRMLClipNodeDisplayWidgetPlugin::createWidget(QWidget* widgetParent)
 {
   qMRMLClipNodeDisplayWidget* newWidget = new qMRMLClipNodeDisplayWidget(widgetParent);
   return newWidget;
@@ -38,7 +37,7 @@ QString qMRMLClipNodeDisplayWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLClipNodeDisplayWidget\" \
           name=\"MRMLClipNodeDisplayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

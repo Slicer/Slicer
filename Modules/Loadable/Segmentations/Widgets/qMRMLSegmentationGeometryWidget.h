@@ -55,14 +55,14 @@ public:
   ~qMRMLSegmentationGeometryWidget() override;
 
   /// Get segmentation MRML node
-  Q_INVOKABLE vtkMRMLSegmentationNode* segmentationNode()const;
-  Q_INVOKABLE QString segmentationNodeID()const;
+  Q_INVOKABLE vtkMRMLSegmentationNode* segmentationNode() const;
+  Q_INVOKABLE QString segmentationNodeID() const;
 
-  bool editEnabled()const;
-  vtkMRMLNode* sourceNode()const;
-  double oversamplingFactor()const;
-  bool isotropicSpacing()const;
-  bool padSegmentation()const;
+  bool editEnabled() const;
+  vtkMRMLNode* sourceNode() const;
+  double oversamplingFactor() const;
+  bool isotropicSpacing() const;
+  bool padSegmentation() const;
 
   void setSpacing(double aSpacing[3]);
 

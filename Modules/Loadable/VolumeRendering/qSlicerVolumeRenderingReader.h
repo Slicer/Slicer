@@ -29,8 +29,7 @@ class qSlicerVolumeRenderingReaderPrivate;
 class vtkSlicerVolumeRenderingLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumeRenderingReader
-  : public qSlicerFileReader
+class qSlicerVolumeRenderingReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
@@ -40,12 +39,12 @@ public:
   ~qSlicerVolumeRenderingReader() override;
 
   void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic);
-  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic()const;
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic() const;
 
   // Reimplemented for IO specific description
-  QString description()const override;
-  IOFileType fileType()const override;
-  QStringList extensions()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
 
   bool load(const IOProperties& properties) override;
 

@@ -30,38 +30,35 @@
 
 class qSlicerTerminologiesModulePrivate;
 
-class Q_SLICER_QTMODULES_TERMINOLOGIES_EXPORT qSlicerTerminologiesModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_TERMINOLOGIES_EXPORT qSlicerTerminologiesModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerTerminologiesModule(QObject *parent=nullptr);
+  explicit qSlicerTerminologiesModule(QObject* parent = nullptr);
   ~qSlicerTerminologiesModule() override;
 
   qSlicerGetTitleMacro(tr("Terminologies"));
 
   /// Help to use the module
-  QString helpText()const override;
+  QString helpText() const override;
 
   /// Return acknowledgments
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
 
   /// Return the authors of the module
-  QStringList contributors()const override;
+  QStringList contributors() const override;
 
   /// Return the categories for the module
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// List dependencies
-  QStringList dependencies()const override;
+  QStringList dependencies() const override;
 
 protected:
-
   /// Initialize the module. Register the volumes reader/writer
   void setup() override;
 

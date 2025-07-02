@@ -40,7 +40,7 @@ class qSlicerAbstractCoreModule;
 /// qSlicerModuleSelectorToolBar supports a tree hierarchy of modules (based on
 /// module->categories() ), previous/next buttons to browse the history of
 /// selected modules. (and a plain history button)
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleSelectorToolBar: public QToolBar
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleSelectorToolBar : public QToolBar
 {
   Q_OBJECT
 public:
@@ -55,7 +55,7 @@ public:
   ~qSlicerModuleSelectorToolBar() override;
 
   /// Returns a pointer to the modules menu used to populate the list of modules
-  Q_INVOKABLE qSlicerModulesMenu* modulesMenu()const;
+  Q_INVOKABLE qSlicerModulesMenu* modulesMenu() const;
 
   /// Returns a pointer to the menu combobox used to display the modules menu.
   /// \sa modulesMenu()

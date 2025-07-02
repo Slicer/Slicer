@@ -44,7 +44,6 @@ class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLinearTr
 {
 
 public:
-
   static vtkMRMLLinearTransformsDisplayableManager* New();
   vtkTypeMacro(vtkMRMLLinearTransformsDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -55,7 +54,6 @@ public:
   vtkMRMLTransformHandleWidget* GetWidget(vtkMRMLTransformNode* markupsNode);
 
 protected:
-
   vtkMRMLLinearTransformsDisplayableManager();
   ~vtkMRMLLinearTransformsDisplayableManager() override;
 
@@ -80,12 +78,11 @@ protected:
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
 private:
-
   vtkMRMLLinearTransformsDisplayableManager(const vtkMRMLLinearTransformsDisplayableManager&) = delete;
   void operator=(const vtkMRMLLinearTransformsDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   friend class vtkInternal;
 };
 

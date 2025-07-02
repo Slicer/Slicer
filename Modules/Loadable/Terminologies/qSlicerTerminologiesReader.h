@@ -29,27 +29,27 @@ class qSlicerTerminologiesReaderPrivate;
 class vtkSlicerTerminologiesModuleLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerTerminologiesReader
-  : public qSlicerFileReader
+class qSlicerTerminologiesReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr, QObject* parent = nullptr);
+  qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr,
+                             QObject* parent = nullptr);
   ~qSlicerTerminologiesReader() override;
 
   void setTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic()const;
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic() const;
 
-  QString description()const override;
-  IOFileType fileType()const override;
-  QStringList extensions()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
 
   /// Returns a positive number (>0) if the reader can load this file.
   /// In case the file uses a generic file extension (such as .json) then the confidence value is adjusted based on
   /// the file content: if the file contains markups information then confidence is increased to 0.6,
   /// otherwise the confidence is decreased to 0.4.
-  double canLoadFileConfidence(const QString& file)const override;
+  double canLoadFileConfidence(const QString& file) const override;
 
   bool load(const IOProperties& properties) override;
 

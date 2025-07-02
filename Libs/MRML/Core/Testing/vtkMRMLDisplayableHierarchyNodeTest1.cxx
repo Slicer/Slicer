@@ -32,11 +32,10 @@ namespace
 int TestBasics();
 int TestHierarchyNodeCount();
 int TestHierarchyEvents();
-}
+} // namespace
 
 //----------------------------------------------------------------------------
-int vtkMRMLDisplayableHierarchyNodeTest1(int vtkNotUsed(argc),
-                                         char * vtkNotUsed(argv)[])
+int vtkMRMLDisplayableHierarchyNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   CHECK_EXIT_SUCCESS(TestBasics());
   CHECK_EXIT_SUCCESS(TestHierarchyNodeCount());
@@ -49,18 +48,12 @@ class vtkMRMLDisplayableHierarchyNodeTestHelper1 : public vtkMRMLDisplayableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayableHierarchyNodeTestHelper1 *New();
+  static vtkMRMLDisplayableHierarchyNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLDisplayableHierarchyNodeTestHelper1, vtkMRMLDisplayableNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLDisplayableHierarchyNodeTestHelper1::New();
-  }
-  const char* GetNodeTagName() override
-  {
-    return "vtkMRMLNodeTestHelper1";
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLDisplayableHierarchyNodeTestHelper1::New(); }
+  const char* GetNodeTagName() override { return "vtkMRMLNodeTestHelper1"; }
 };
 vtkStandardNewMacro(vtkMRMLDisplayableHierarchyNodeTestHelper1);
 
@@ -73,33 +66,24 @@ int TestBasics()
   vtkNew<vtkMRMLDisplayableHierarchyNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  TEST_SET_GET_STRING( node1.GetPointer  (), DisplayableNodeID);
+  TEST_SET_GET_STRING(node1.GetPointer(), DisplayableNodeID);
 
   node1->SetDisplayableNodeID("testingDisplayableNodeID");
 
   node1->SetAndObserveDisplayNodeID("testingDisplayNodeID");
-  std::cout << "DisplayNodeID = "
-            << (node1->GetDisplayNodeID() == nullptr ?
-                "NULL" : node1->GetDisplayNodeID())
+  std::cout << "DisplayNodeID = " << (node1->GetDisplayNodeID() == nullptr ? "NULL" : node1->GetDisplayNodeID())
             << std::endl;
 
   vtkMRMLDisplayableNode* pnode = node1->GetDisplayableNode();
-  std::cout << "GetDisplayableNode returned "
-            << (pnode == nullptr ? "null" : "not null")
-            << std::endl;
+  std::cout << "GetDisplayableNode returned " << (pnode == nullptr ? "null" : "not null") << std::endl;
 
   vtkMRMLDisplayNode* dnode1 = node1->GetDisplayNode();
-  std::cout << "GetDisplayNode returned "
-            << (dnode1 == nullptr ? "null" : "not null")
-            << std::endl;
+  std::cout << "GetDisplayNode returned " << (dnode1 == nullptr ? "null" : "not null") << std::endl;
 
   TEST_SET_GET_BOOLEAN(node1, Expanded);
 
-  vtkMRMLDisplayableHierarchyNode* pnode1 =
-    node1->GetCollapsedParentNode();
-  std::cout << "GetUnexpandedParentNode = "
-            << (pnode1 == nullptr ? "NULL" : "not null")
-            << std::endl;
+  vtkMRMLDisplayableHierarchyNode* pnode1 = node1->GetCollapsedParentNode();
+  std::cout << "GetUnexpandedParentNode = " << (pnode1 == nullptr ? "NULL" : "not null") << std::endl;
   return EXIT_SUCCESS;
 }
 
@@ -109,7 +93,7 @@ int TestHierarchyNodeCount()
   vtkNew<vtkMRMLScene> scene;
 
   vtkNew<vtkMRMLDisplayableHierarchyNode> node1;
-  scene->AddNode( node1.GetPointer() );
+  scene->AddNode(node1.GetPointer());
 
   // need a concrete display node
   vtkNew<vtkMRMLScalarVolumeDisplayNode> dnode2;
@@ -150,16 +134,12 @@ int TestHierarchyNodeCount()
   node1->GetChildrenDisplayableNodes(col.GetPointer());
   CHECK_INT(col->GetNumberOfItems(), 3);
 
-  vtkMRMLDisplayableHierarchyNode* hnode3 =
-    node1->GetDisplayableHierarchyNode(scene.GetPointer(), "myid");
-  std::cout << "Displayable hierarchy node from id myid = "
-            << (hnode3 == nullptr ? "NULL" : hnode3->GetID())
+  vtkMRMLDisplayableHierarchyNode* hnode3 = node1->GetDisplayableHierarchyNode(scene.GetPointer(), "myid");
+  std::cout << "Displayable hierarchy node from id myid = " << (hnode3 == nullptr ? "NULL" : hnode3->GetID())
             << std::endl;
   hnode3 = node1->GetDisplayableHierarchyNode(scene.GetPointer(), modelNode->GetID());
-  std::cout << "Displayable hierarchy node from id "
-            << modelNode->GetID() << " = "
-            << (hnode3 == nullptr ? "NULL" : hnode3->GetID())
-            << std::endl;
+  std::cout << "Displayable hierarchy node from id " << modelNode->GetID() << " = "
+            << (hnode3 == nullptr ? "NULL" : hnode3->GetID()) << std::endl;
 
   return EXIT_SUCCESS;
 }

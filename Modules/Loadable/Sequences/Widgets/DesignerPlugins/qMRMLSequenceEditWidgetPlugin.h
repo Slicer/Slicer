@@ -20,21 +20,20 @@
 
 #include "qSlicerSequencesModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT
-qMRMLSequenceEditWidgetPlugin
-  : public QObject, public qSlicerSequencesModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT qMRMLSequenceEditWidgetPlugin
+  : public QObject
+  , public qSlicerSequencesModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLSequenceEditWidgetPlugin(QObject *_parent = 0);
+  qMRMLSequenceEditWidgetPlugin(QObject* _parent = 0);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

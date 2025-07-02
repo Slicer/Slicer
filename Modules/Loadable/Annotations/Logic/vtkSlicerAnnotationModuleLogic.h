@@ -15,16 +15,16 @@ class vtkMRMLAnnotationTextDisplayNode;
 // STD includes
 #include <string>
 
-class VTK_SLICER_ANNOTATIONS_MODULE_LOGIC_EXPORT vtkSlicerAnnotationModuleLogic
-  :public vtkSlicerModuleLogic
+class VTK_SLICER_ANNOTATIONS_MODULE_LOGIC_EXPORT vtkSlicerAnnotationModuleLogic : public vtkSlicerModuleLogic
 {
 public:
-  enum Events{
+  enum Events
+  {
     RefreshRequestEvent = vtkCommand::UserEvent,
     HierarchyNodeAddedEvent
   };
-  static vtkSlicerAnnotationModuleLogic *New();
-  vtkTypeMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
+  static vtkSlicerAnnotationModuleLogic* New();
+  vtkTypeMacro(vtkSlicerAnnotationModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
@@ -34,10 +34,19 @@ public:
   // SnapShot functionality
   //
   /// Create a snapShot.
-  void CreateSnapShot(const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot);
+  void CreateSnapShot(const char* name,
+                      const char* description,
+                      int screenshotType,
+                      double scaleFactor,
+                      vtkImageData* screenshot);
 
   /// Modify an existing snapShot.
-  void ModifySnapShot(std::string id, const char* name, const char* description, int screenshotType, double scaleFactor, vtkImageData* screenshot);
+  void ModifySnapShot(std::string id,
+                      const char* name,
+                      const char* description,
+                      int screenshotType,
+                      double scaleFactor,
+                      vtkImageData* screenshot);
 
   /// Return the name of an existing annotation snapShot.
   std::string GetSnapShotName(const char* id);
@@ -58,7 +67,6 @@ public:
   bool IsSnapshotNode(const char* id);
 
 protected:
-
   vtkSlicerAnnotationModuleLogic();
   ~vtkSlicerAnnotationModuleLogic() override;
 

@@ -27,21 +27,18 @@
 //------------------------------------------------------------------------------
 qSlicerIOOptionsWidget::qSlicerIOOptionsWidget(QWidget* parentWidget)
   : qSlicerWidget(parentWidget)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
-qSlicerIOOptionsWidget
-::qSlicerIOOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parentWidget)
+qSlicerIOOptionsWidget ::qSlicerIOOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parentWidget)
   : qSlicerWidget(parentWidget)
   , qSlicerIOOptions(pimpl)
-{
-}
+{}
 //------------------------------------------------------------------------------
 qSlicerIOOptionsWidget::~qSlicerIOOptionsWidget() = default;
 
 //------------------------------------------------------------------------------
-bool qSlicerIOOptionsWidget::isValid()const
+bool qSlicerIOOptionsWidget::isValid() const
 {
   Q_D(const qSlicerIOOptions);
   return d->Properties.contains("fileName") || d->Properties.contains("fileNames");

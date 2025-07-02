@@ -25,7 +25,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerLineRepresentation2D_h
 #define vtkSlicerLineRepresentation2D_h
@@ -38,30 +38,33 @@ class vtkSampleImplicitFunctionFilter;
 
 class vtkMRMLInteractionEventData;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerLineRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerLineRepresentation2D
+  : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerLineRepresentation2D *New();
+  static vtkSlicerLineRepresentation2D* New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerLineRepresentation2D,vtkSlicerMarkupsWidgetRepresentation2D);
+  vtkTypeMacro(vtkSlicerLineRepresentation2D, vtkSlicerMarkupsWidgetRepresentation2D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Subclasses of vtkContourCurveRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData=nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
+                   int& foundComponentType,
+                   int& foundComponentIndex,
+                   double& closestDistance2) override;
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) override;
-  void ReleaseGraphicsResources(vtkWindow *) override;
-  int RenderOverlay(vtkViewport *viewport) override;
-  int RenderOpaqueGeometry(vtkViewport *viewport) override;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  void GetActors(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
+  int RenderOpaqueGeometry(vtkViewport* viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport* viewport) override;
   vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
@@ -71,7 +74,7 @@ protected:
   vtkSlicerLineRepresentation2D();
   ~vtkSlicerLineRepresentation2D() override;
 
-  void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) override;
+  void SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode) override;
 
   vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkPolyDataMapper2D> LineMapper;

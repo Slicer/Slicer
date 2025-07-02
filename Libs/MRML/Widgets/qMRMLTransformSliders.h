@@ -64,30 +64,38 @@ public:
   ///
   /// Set/Get Coordinate system
   /// By default, the selector coordinate system will be set to GLOBAL
-  enum CoordinateReferenceType { GLOBAL, LOCAL };
+  enum CoordinateReferenceType
+  {
+    GLOBAL,
+    LOCAL
+  };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
   ///
   /// Set/Get TypeOfTransform
   /// By default, the selector coordinate system will be set to TRANSLATION
-  enum TransformType { ROTATION, TRANSLATION };
+  enum TransformType
+  {
+    ROTATION,
+    TRANSLATION
+  };
   void setTypeOfTransform(TransformType typeOfTransform);
   TransformType typeOfTransform() const;
 
   ///
   /// Set/Get Title of the group box
   void setTitle(const QString& title);
-  QString title()const;
+  QString title() const;
 
   /// Return the decimals property value.
   /// \sa decimals
-  int decimals()const;
+  int decimals() const;
 
   ///
   /// Get sliders range
-  double minimum()const;
-  double maximum()const;
+  double minimum() const;
+  double maximum() const;
 
   ///
   /// Set sliders range
@@ -102,25 +110,25 @@ public:
   /// Note: If the QSpinBoxes are hidden, you can still can setMinimum() and
   /// setMaximum() manually
   void setMinMaxVisible(bool visible);
-  bool isMinMaxVisible()const;
+  bool isMinMaxVisible() const;
 
   ///
   /// Set sliders single step
-  double singleStep()const;
+  double singleStep() const;
   void setSingleStep(double step);
 
   ///
   /// Get/Set slider's label
-  QString lrLabel()const;
-  QString paLabel()const;
-  QString isLabel()const;
+  QString lrLabel() const;
+  QString paLabel() const;
+  QString isLabel() const;
   void setLRLabel(const QString& label);
   void setPALabel(const QString& label);
   void setISLabel(const QString& label);
 
   ///
   /// Return the current MRML node of interest
-  Q_INVOKABLE vtkMRMLTransformNode* mrmlTransformNode()const;
+  Q_INVOKABLE vtkMRMLTransformNode* mrmlTransformNode() const;
 
 signals:
   ///
@@ -182,8 +190,7 @@ protected:
   /// Parameter 'pad' allows to specify (using a value between 0 and 1)
   /// which percentage of the found range(max-min) value should be subtracted/added
   /// to the min/max value found.
-  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
-                                                            double pad = 0);
+  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4* mat, double pad = 0);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLTransformSliders);

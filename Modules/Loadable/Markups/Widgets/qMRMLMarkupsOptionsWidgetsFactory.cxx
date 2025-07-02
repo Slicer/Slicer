@@ -26,13 +26,13 @@
 #include <QString>
 
 //----------------------------------------------------------------------------
-qMRMLMarkupsOptionsWidgetsFactory *qMRMLMarkupsOptionsWidgetsFactory::Instance = nullptr;
+qMRMLMarkupsOptionsWidgetsFactory* qMRMLMarkupsOptionsWidgetsFactory::Instance = nullptr;
 
 //----------------------------------------------------------------------------
 class qMRMLMarkupsOptionsWidgetsFactoryCleanup
 {
 public:
-  inline void use()   {   }
+  inline void use() {}
 
   ~qMRMLMarkupsOptionsWidgetsFactoryCleanup()
   {
@@ -42,10 +42,7 @@ public:
     }
   }
 
-  void cleanup()
-  {
-    qMRMLMarkupsOptionsWidgetsFactory::cleanup();
-  }
+  void cleanup() { qMRMLMarkupsOptionsWidgetsFactory::cleanup(); }
 };
 
 //-----------------------------------------------------------------------------
@@ -54,7 +51,7 @@ static qMRMLMarkupsOptionsWidgetsFactoryCleanup qMRMLMarkupsOptionsWidgetsFactor
 //-----------------------------------------------------------------------------
 qMRMLMarkupsOptionsWidgetsFactory* qMRMLMarkupsOptionsWidgetsFactory::instance()
 {
-  if(!qMRMLMarkupsOptionsWidgetsFactory::Instance)
+  if (!qMRMLMarkupsOptionsWidgetsFactory::Instance)
   {
     qMRMLMarkupsOptionsWidgetsFactoryCleanupGlobal.use();
     qMRMLMarkupsOptionsWidgetsFactory::Instance = new qMRMLMarkupsOptionsWidgetsFactory();
@@ -106,9 +103,7 @@ bool qMRMLMarkupsOptionsWidgetsFactory::registerOptionsWidget(qMRMLMarkupsAbstra
   // Check for already registered widget
   if (this->RegisteredWidgets.contains(widget->className()))
   {
-    qWarning() << Q_FUNC_INFO << ":  options widget type "
-               << widget->className()
-               << " already registered.";
+    qWarning() << Q_FUNC_INFO << ":  options widget type " << widget->className() << " already registered.";
     delete widget;
     return false;
   }
@@ -136,7 +131,7 @@ bool qMRMLMarkupsOptionsWidgetsFactory::unregisterOptionsWidget(qMRMLMarkupsAbst
 
   delete widget;
 
-  if(this->unregisterOptionsWidget(className))
+  if (this->unregisterOptionsWidget(className))
   {
     // Emit registered signal
     emit optionsWidgetUnregistered();
@@ -159,8 +154,7 @@ bool qMRMLMarkupsOptionsWidgetsFactory::unregisterOptionsWidget(const QString& c
   // Check for already registered widget
   if (!this->RegisteredWidgets.remove(className))
   {
-    qWarning() << Q_FUNC_INFO << ":  options widget type "
-               << className << " not registered.";
+    qWarning() << Q_FUNC_INFO << ":  options widget type " << className << " not registered.";
     return false;
   }
 
@@ -180,20 +174,17 @@ qMRMLMarkupsAbstractOptionsWidget* qMRMLMarkupsOptionsWidgetsFactory::createWidg
   // Check for already registered widget
   if (!this->RegisteredWidgets.contains(className))
   {
-    qWarning() << Q_FUNC_INFO << ":  options widget type "
-               << className
-               << " not registered.";
+    qWarning() << Q_FUNC_INFO << ":  options widget type " << className << " not registered.";
     return nullptr;
   }
 
   return this->RegisteredWidgets[className]->createInstance();
-
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLMarkupsOptionsWidgetsFactory::unregisterAll()
 {
-  foreach(auto widget, this->RegisteredWidgets)
+  foreach (auto widget, this->RegisteredWidgets)
   {
     if (widget)
     {

@@ -37,9 +37,10 @@ class ExtensionInstallWidgetWebChannelProxy : public QObject
   Q_OBJECT
 public:
   ExtensionInstallWidgetWebChannelProxy() = default;
-  qSlicerExtensionsServerWidget* InstallWidget{nullptr};
+  qSlicerExtensionsServerWidget* InstallWidget{ nullptr };
 public slots:
   void refresh();
+
 private:
   Q_DISABLE_COPY(ExtensionInstallWidgetWebChannelProxy);
 };
@@ -48,6 +49,7 @@ private:
 class qSlicerExtensionsServerWidgetPrivate : public qSlicerWebWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerExtensionsServerWidget);
+
 protected:
   qSlicerExtensionsServerWidget* const q_ptr;
 
@@ -56,7 +58,7 @@ public:
   qSlicerExtensionsServerWidgetPrivate(qSlicerExtensionsServerWidget& object);
   ~qSlicerExtensionsServerWidgetPrivate() override;
 
-  void setFailurePage(const QStringList &errors);
+  void setFailurePage(const QStringList& errors);
 
   void updateTheme();
   void setDarkThemeEnabled(bool enabled);
@@ -65,7 +67,7 @@ public:
   void initializeWebChannelTransport(QByteArray& webChannelScript) override;
   void registerExtensionsManagerModel(qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel);
 
-  qSlicerExtensionsManagerModel * ExtensionsManagerModel;
+  qSlicerExtensionsManagerModel* ExtensionsManagerModel;
 
   bool BrowsingEnabled;
 

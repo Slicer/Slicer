@@ -23,9 +23,10 @@
 // qSlicerSettingsUserInformationPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsUserInformationPanelPrivate: public Ui_qSlicerSettingsUserInformationPanel
+class qSlicerSettingsUserInformationPanelPrivate : public Ui_qSlicerSettingsUserInformationPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsUserInformationPanel);
+
 protected:
   qSlicerSettingsUserInformationPanel* const q_ptr;
 
@@ -40,9 +41,9 @@ public:
 // qSlicerSettingsUserInformationPanelPrivate methods
 
 // --------------------------------------------------------------------------
-qSlicerSettingsUserInformationPanelPrivate
-::qSlicerSettingsUserInformationPanelPrivate(qSlicerSettingsUserInformationPanel& object)
-  :q_ptr(&object)
+qSlicerSettingsUserInformationPanelPrivate ::qSlicerSettingsUserInformationPanelPrivate(
+  qSlicerSettingsUserInformationPanel& object)
+  : q_ptr(&object)
 {
   this->UserInformation = nullptr;
 }
@@ -55,18 +56,12 @@ void qSlicerSettingsUserInformationPanelPrivate::init()
   this->setupUi(q);
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->NameLineEdit, SIGNAL(editingFinished()),
-                   q, SLOT(onNameChanged()));
-  QObject::connect(this->LoginLineEdit, SIGNAL(editingFinished()),
-                   q, SLOT(onLoginChanged()));
-  QObject::connect(this->EmailLineEdit, SIGNAL(textChanged(QString)),
-                   q, SLOT(onEmailChanged(QString)));
-  QObject::connect(this->OrganizationLineEdit, SIGNAL(editingFinished()),
-                   q, SLOT(onOrganizationChanged()));
-  QObject::connect(this->OrganizationRoleLineEdit, SIGNAL(editingFinished()),
-                   q, SLOT(onOrganizationRoleChanged()));
-  QObject::connect(this->ProcedureRoleLineEdit, SIGNAL(editingFinished()),
-                   q, SLOT(onProcedureRoleChanged()));
+  QObject::connect(this->NameLineEdit, SIGNAL(editingFinished()), q, SLOT(onNameChanged()));
+  QObject::connect(this->LoginLineEdit, SIGNAL(editingFinished()), q, SLOT(onLoginChanged()));
+  QObject::connect(this->EmailLineEdit, SIGNAL(textChanged(QString)), q, SLOT(onEmailChanged(QString)));
+  QObject::connect(this->OrganizationLineEdit, SIGNAL(editingFinished()), q, SLOT(onOrganizationChanged()));
+  QObject::connect(this->OrganizationRoleLineEdit, SIGNAL(editingFinished()), q, SLOT(onOrganizationRoleChanged()));
+  QObject::connect(this->ProcedureRoleLineEdit, SIGNAL(editingFinished()), q, SLOT(onProcedureRoleChanged()));
 }
 
 // --------------------------------------------------------------------------
@@ -93,9 +88,7 @@ void qSlicerSettingsUserInformationPanel::setUserInformation(vtkPersonInformatio
     return;
   }
 
-  this->qvtkReconnect(d->UserInformation, userInfo,
-    vtkCommand::ModifiedEvent,
-    this, SLOT(updateFromUserInformation()));
+  this->qvtkReconnect(d->UserInformation, userInfo, vtkCommand::ModifiedEvent, this, SLOT(updateFromUserInformation()));
   d->UserInformation = userInfo;
 
   // Default values
@@ -164,7 +157,7 @@ void qSlicerSettingsUserInformationPanel::onLoginChanged()
 void qSlicerSettingsUserInformationPanel::onEmailChanged(const QString& value)
 {
   Q_D(qSlicerSettingsUserInformationPanel);
-  if(!d->UserInformation->SetEmail(value.toStdString().c_str()))
+  if (!d->UserInformation->SetEmail(value.toStdString().c_str()))
   {
     d->EmailValidationLabel->setText(tr("Invalid format"));
   }

@@ -39,26 +39,24 @@ void vtkMRMLAbstractLayoutNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractLayoutNode::ReadXMLAttributes(const char** atts)
 {
-  //int disabledModify = this->StartModify();
+  // int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
 
-  //this->EndModify(disabledModify);
+  // this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, LabelText, ID
-void vtkMRMLAbstractLayoutNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAbstractLayoutNode::Copy(vtkMRMLNode* anode)
 {
-  //int disabledModify = this->StartModify();
+  // int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
 
-  //this->EndModify(disabledModify);
+  // this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAbstractLayoutNode::PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent))
-{
-}
+void vtkMRMLAbstractLayoutNode::PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent)) {}

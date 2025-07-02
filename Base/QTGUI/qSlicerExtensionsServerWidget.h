@@ -31,8 +31,7 @@
 class qSlicerExtensionsServerWidgetPrivate;
 class qSlicerExtensionsManagerModel;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsServerWidget
-  : public qSlicerWebWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsServerWidget : public qSlicerWebWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool browsingEnabled READ isBrowsingEnabled WRITE setBrowsingEnabled)
@@ -46,7 +45,7 @@ public:
   /// Destructor
   ~qSlicerExtensionsServerWidget() override;
 
-  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
+  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel() const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
   bool isBrowsingEnabled() const;
@@ -68,8 +67,8 @@ public slots:
   void setBrowsingEnabled(bool state);
 
 protected:
-  bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame) override;
-  void changeEvent(QEvent *e) override;
+  bool acceptNavigationRequest(const QUrl& url, QWebEnginePage::NavigationType type, bool isMainFrame) override;
+  void changeEvent(QEvent* e) override;
 
 protected slots:
   void initJavascript() override;

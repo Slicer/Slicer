@@ -21,12 +21,11 @@
 #include "qMRMLColorTableViewPlugin.h"
 #include "qMRMLColorTableView.h"
 
-qMRMLColorTableViewPlugin::qMRMLColorTableViewPlugin(QObject *_parent)
-        : QObject(_parent)
-{
-}
+qMRMLColorTableViewPlugin::qMRMLColorTableViewPlugin(QObject* _parent)
+  : QObject(_parent)
+{}
 
-QWidget *qMRMLColorTableViewPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLColorTableViewPlugin::createWidget(QWidget* _parent)
 {
   qMRMLColorTableView* _widget = new qMRMLColorTableView(_parent);
   return _widget;
@@ -36,7 +35,7 @@ QString qMRMLColorTableViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLColorTableView\" \
           name=\"MRMLColorTableView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLColorTableViewPlugin::icon() const

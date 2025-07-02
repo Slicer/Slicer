@@ -29,27 +29,23 @@ class vtkRenderer;
 
 /// \brief Proxy class to provide mechanisms for a displayable manager to
 /// communicate with 3rd party renderer managers (like CTK).
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLLightBoxRendererManagerProxy
-  : public vtkMRMLAbstractLogic
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLLightBoxRendererManagerProxy : public vtkMRMLAbstractLogic
 {
 public:
   static vtkMRMLLightBoxRendererManagerProxy* New();
-  vtkTypeMacro(vtkMRMLLightBoxRendererManagerProxy,
-                       vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLLightBoxRendererManagerProxy, vtkMRMLAbstractLogic);
 
   /// Method to query the mapping from an id of a LightBox frame to
   /// the Renderer for that frame
-  virtual vtkRenderer *GetRenderer(int vtkNotUsed(id)) { return nullptr; };
+  virtual vtkRenderer* GetRenderer(int vtkNotUsed(id)) { return nullptr; };
 
 protected:
-  vtkMRMLLightBoxRendererManagerProxy() ;
-  ~vtkMRMLLightBoxRendererManagerProxy() override ;
+  vtkMRMLLightBoxRendererManagerProxy();
+  ~vtkMRMLLightBoxRendererManagerProxy() override;
 
 private:
   vtkMRMLLightBoxRendererManagerProxy(const vtkMRMLLightBoxRendererManagerProxy&) = delete;
   void operator=(const vtkMRMLLightBoxRendererManagerProxy&) = delete;
-
-
 };
 
 #endif

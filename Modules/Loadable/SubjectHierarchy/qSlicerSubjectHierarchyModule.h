@@ -34,8 +34,7 @@
 class vtkObject;
 class qSlicerSubjectHierarchyModulePrivate;
 
-class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
@@ -44,28 +43,28 @@ class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModule :
 
 public:
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerSubjectHierarchyModule(QObject *parent=nullptr);
+  explicit qSlicerSubjectHierarchyModule(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyModule() override;
 
   qSlicerGetTitleMacro(tr("Subject Hierarchy"));
 
   /// Help to use the module
-  QString helpText()const override;
+  QString helpText() const override;
 
   /// Return acknowledgments
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
 
   /// Return the authors of the module
-  QStringList contributors()const override;
+  QStringList contributors() const override;
 
   /// Return a custom icon for the module
-  QIcon icon()const override;
+  QIcon icon() const override;
 
   /// Return the categories for the module
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Make this module hidden
-  bool isHidden()const override { return true; };
+  bool isHidden() const override { return true; };
 
 protected:
   /// Initialize the module. Register the volumes reader/writer

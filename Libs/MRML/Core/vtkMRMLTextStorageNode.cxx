@@ -81,7 +81,7 @@ void vtkMRMLTextStorageNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTextStorageNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLTextStorageNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -110,7 +110,7 @@ void vtkMRMLTextStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode * refNode)
+int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   if (!this->CanReadInReferenceNode(refNode))
   {
@@ -161,24 +161,26 @@ int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode * refNode)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode * refNode)
+bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* refNode)
 {
   vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(refNode);
   if (textNode == nullptr)
   {
-    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only text nodes can written in this format."));
+    this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent,
+                                        std::string("Only text nodes can written in this format."));
     return false;
   }
   return true;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
+int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(refNode);
   if (textNode == nullptr)
   {
-    vtkErrorMacro(<< "vtkMRMLTextStorageNode::WriteDataInternal: Do not recognize node type " << refNode->GetClassName());
+    vtkErrorMacro(<< "vtkMRMLTextStorageNode::WriteDataInternal: Do not recognize node type "
+                  << refNode->GetClassName());
     return 0;
   }
 
@@ -194,8 +196,11 @@ int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
   {
     if (!vtksys::SystemTools::RemoveFile(fullName.c_str()))
     {
-      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTextStorageNode::WriteDataInternal",
-        "Text file '" << fullName.c_str() << "' could not be overwritten while trying to write (" << (this->ID ? this->ID : "(unknown)") << ").");
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                       "vtkMRMLTextStorageNode::WriteDataInternal",
+                                       "Text file '" << fullName.c_str()
+                                                     << "' could not be overwritten while trying to write ("
+                                                     << (this->ID ? this->ID : "(unknown)") << ").");
       return 0;
     }
   }
@@ -204,8 +209,11 @@ int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
   file.open(fullName);
   if (!file.is_open())
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTextStorageNode::WriteDataInternal",
-      "Text file '" << fullName.c_str() << "' could not be opened for writing while trying to write (" << (this->ID ? this->ID : "(unknown)") << ").");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLTextStorageNode::WriteDataInternal",
+                                     "Text file '" << fullName.c_str()
+                                                   << "' could not be opened for writing while trying to write ("
+                                                   << (this->ID ? this->ID : "(unknown)") << ").");
     return 0;
   }
   file << textNode->GetText();
@@ -242,7 +250,8 @@ const char* vtkMRMLTextStorageNode::GetDefaultWriteFileExtension()
   vtkStringArray* fileTypes = this->GetSupportedWriteFileTypes();
   if (fileTypes && fileTypes->GetNumberOfValues() > 0)
   {
-    std::string fileExtension = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(fileTypes->GetValue(0).c_str());
+    std::string fileExtension =
+      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(fileTypes->GetValue(0).c_str());
     if (!fileExtension.empty())
     {
       // Remove leading "."
@@ -266,8 +275,10 @@ void vtkMRMLTextStorageNode::SetSupportedReadFileExtensions(const std::vector<st
   for (const std::string& fileExtension : fileExtensions)
   {
     // We do not let developers to specify custom file format description, because then a translated format description
-    // would need to be stored in the scene file, which would be difficult to get translated to the current application language.
-    this->SupportedReadFileTypes->InsertNextValue(vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file (.%1)"), fileExtension.c_str()));
+    // would need to be stored in the scene file, which would be difficult to get translated to the current application
+    // language.
+    this->SupportedReadFileTypes->InsertNextValue(
+      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file (.%1)"), fileExtension.c_str()));
   }
 }
 
@@ -280,8 +291,10 @@ void vtkMRMLTextStorageNode::SetSupportedWriteFileExtensions(const std::vector<s
   for (const std::string& fileExtension : fileExtensions)
   {
     // We do not let developers to specify custom file format description, because then a translated format description
-    // would need to be stored in the scene file, which would be difficult to get translated to the current application language.
-    this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file (.%1)"), fileExtension.c_str()));
+    // would need to be stored in the scene file, which would be difficult to get translated to the current application
+    // language.
+    this->SupportedWriteFileTypes->InsertNextValue(
+      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLTextStorageNode", "Text file (.%1)"), fileExtension.c_str()));
   }
 }
 

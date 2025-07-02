@@ -57,9 +57,9 @@ vtkMRMLScalarVolumeNode* loadVolume2(const char* volume, vtkMRMLScene* scene)
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene);
   displayNode->SetScene(scene);
-  //vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-  //displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
-  //colorLogic->Delete();
+  // vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+  // displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+  // colorLogic->Delete();
   scene->AddNode(storageNode.GetPointer());
   scene->AddNode(displayNode.GetPointer());
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
@@ -77,11 +77,11 @@ vtkMRMLScalarVolumeNode* loadVolume2(const char* volume, vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSliceLogicTest4(int argc, char * argv [] )
+int vtkMRMLSliceLogicTest4(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 
-  if( argc < 2 )
+  if (argc < 2)
   {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -113,17 +113,17 @@ int vtkMRMLSliceLogicTest4(int argc, char * argv [] )
   vtkNew<vtkImageAppendComponents> append;
   append->SetInputConnection(0, colors->GetOutputPort());
 
-  //vtkImageBlend* blend = vtkImageBlend::New();
-  //blend->AddInput(append->GetOutput());
+  // vtkImageBlend* blend = vtkImageBlend::New();
+  // blend->AddInput(append->GetOutput());
 
   colors->Update();
   append->Update();
   append->Update();
   append->Update();
   colors->Update();
-  //append->Update();
-  //blend->Update();
-  //append->Update();
+  // append->Update();
+  // blend->Update();
+  // append->Update();
   resliceMask->SetOutputExtent(0, 400, 0, 300, 0, 0);
   colors->Update();
 

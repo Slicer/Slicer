@@ -43,7 +43,7 @@
 #include <vtkTable.h>
 #include "qMRMLWidget.h"
 
-int qMRMLTableViewTest1( int argc, char * argv [] )
+int qMRMLTableViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -64,9 +64,9 @@ int qMRMLTableViewTest1( int argc, char * argv [] )
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
   {
-    table->SetValue(i, 0, i*0.5-10 );
-    table->SetValue(i, 1, i*1.2+12);
-    table->SetValue(i, 2, table->GetValue(i,0).ToDouble()+table->GetValue(i,1).ToDouble());
+    table->SetValue(i, 0, i * 0.5 - 10);
+    table->SetValue(i, 1, i * 1.2 + 12);
+    table->SetValue(i, 2, table->GetValue(i, 0).ToDouble() + table->GetValue(i, 1).ToDouble());
   }
 
   vtkNew<vtkMRMLTableNode> tableNode;

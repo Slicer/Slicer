@@ -31,11 +31,10 @@
 
 class qSlicerCoreModuleFactoryPrivate;
 
-class Q_SLICER_MODULES_CORE_EXPORT qSlicerCoreModuleFactory :
-  public ctkAbstractQObjectFactory<qSlicerAbstractCoreModule>
+class Q_SLICER_MODULES_CORE_EXPORT qSlicerCoreModuleFactory
+  : public ctkAbstractQObjectFactory<qSlicerAbstractCoreModule>
 {
 public:
-
   typedef ctkAbstractQObjectFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerCoreModuleFactory();
   ~qSlicerCoreModuleFactory() override;

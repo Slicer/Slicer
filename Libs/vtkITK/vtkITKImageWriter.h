@@ -28,8 +28,8 @@ class vtkStringArray;
 class VTK_ITK_EXPORT vtkITKImageWriter : public vtkImageAlgorithm
 {
 public:
-  static vtkITKImageWriter *New();
-  vtkTypeMacro(vtkITKImageWriter,vtkImageAlgorithm);
+  static vtkITKImageWriter* New();
+  vtkTypeMacro(vtkITKImageWriter, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum
@@ -45,12 +45,9 @@ public:
   /// Specify file name for the image file. You should specify either
   /// a FileName or a FilePrefix. Use FilePrefix if the data is stored
   /// in multiple files.
-  void SetFileName(const char *);
+  void SetFileName(const char*);
 
-  char* GetFileName()
-  {
-    return FileName;
-  }
+  char* GetFileName() { return FileName; }
 
   ///
   /// Use compression if possible
@@ -68,16 +65,10 @@ public:
   void Write();
 
   /// Set orientation matrix
-  void SetRasToIJKMatrix(vtkMatrix4x4* mat)
-  {
-    RasToIJKMatrix = mat;
-  }
+  void SetRasToIJKMatrix(vtkMatrix4x4* mat) { RasToIJKMatrix = mat; }
 
   /// Set orientation matrix
-  void SetMeasurementFrameMatrix(vtkMatrix4x4* mat)
-  {
-    MeasurementFrameMatrix = mat;
-  }
+  void SetMeasurementFrameMatrix(vtkMatrix4x4* mat) { MeasurementFrameMatrix = mat; }
 
   /// Defines how to interpret voxel components
   vtkSetMacro(VoxelVectorType, int);
@@ -87,7 +78,7 @@ protected:
   vtkITKImageWriter();
   ~vtkITKImageWriter() override;
 
-  char *FileName;
+  char* FileName;
   vtkMatrix4x4* RasToIJKMatrix;
   vtkMatrix4x4* MeasurementFrameMatrix;
   int UseCompression;
@@ -99,6 +90,6 @@ private:
   void operator=(const vtkITKImageWriter&) = delete;
 };
 
-//vtkStandardNewMacro(vtkITKImageWriter);
+// vtkStandardNewMacro(vtkITKImageWriter);
 
 #endif

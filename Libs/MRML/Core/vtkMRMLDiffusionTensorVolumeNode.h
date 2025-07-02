@@ -30,9 +30,9 @@ class vtkMRMLDiffusionTensorVolumeDisplayNode;
 ///  to RAS.
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusionImageVolumeNode
 {
-  public:
-  static vtkMRMLDiffusionTensorVolumeNode *New();
-  vtkTypeMacro(vtkMRMLDiffusionTensorVolumeNode,vtkMRMLDiffusionImageVolumeNode);
+public:
+  static vtkMRMLDiffusionTensorVolumeNode* New();
+  vtkTypeMacro(vtkMRMLDiffusionTensorVolumeNode, vtkMRMLDiffusionImageVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -45,7 +45,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeNode : public vtkMRMLDiffusion
   vtkMRMLCopyContentDefaultMacro(vtkMRMLDiffusionTensorVolumeNode);
 
   /// Associated volume display MRML node
-  virtual void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
+  virtual void SetAndObserveDisplayNodeID(const char* DisplayNodeID);
 
   /// Associated display MRML node
   virtual vtkMRMLDiffusionTensorVolumeDisplayNode* GetDiffusionTensorVolumeDisplayNode();
@@ -62,7 +62,6 @@ protected:
 
   vtkMRMLDiffusionTensorVolumeNode(const vtkMRMLDiffusionTensorVolumeNode&);
   void operator=(const vtkMRMLDiffusionTensorVolumeNode&);
-
 };
 
 #endif

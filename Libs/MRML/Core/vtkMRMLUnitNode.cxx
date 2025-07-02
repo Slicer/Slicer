@@ -56,11 +56,11 @@ vtkMRMLUnitNode::~vtkMRMLUnitNode()
 {
   if (this->Prefix)
   {
-    delete [] this->Prefix;
+    delete[] this->Prefix;
   }
   if (this->Suffix)
   {
-    delete [] this->Suffix;
+    delete[] this->Suffix;
   }
 }
 
@@ -70,8 +70,7 @@ void vtkMRMLUnitNode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   this->Superclass::WriteXML(of, nIndent);
 
-  of << " Quantity=\""
-    << (this->GetQuantity() ? this->GetQuantity() : "") << "\"";
+  of << " Quantity=\"" << (this->GetQuantity() ? this->GetQuantity() : "") << "\"";
   of << " Prefix=\"" << (this->Prefix ? this->Prefix : "") << "\"";
   of << " Suffix=\"" << (this->Suffix ? this->Suffix : "") << "\"";
   of << " Precision=\"" << this->Precision << "\"";
@@ -82,7 +81,8 @@ void vtkMRMLUnitNode::WriteXML(ostream& of, int nIndent)
 namespace
 {
 //----------------------------------------------------------------------------
-template <typename T> T StringToNumber(const char* num)
+template <typename T>
+T StringToNumber(const char* num)
 {
   std::stringstream ss;
   ss << num;
@@ -101,7 +101,7 @@ double StringToDouble(const char* str)
 {
   return StringToNumber<double>(str);
 }
-}// end namespace
+} // end namespace
 
 //----------------------------------------------------------------------------
 void vtkMRMLUnitNode::ReadXMLAttributes(const char** atts)
@@ -197,11 +197,10 @@ const char* vtkMRMLUnitNode::GetDisplayStringFromValue(double value)
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMRMLUnitNode
-::GetDisplayValueStringFromDisplayValue(double displayValue)
+const char* vtkMRMLUnitNode ::GetDisplayValueStringFromDisplayValue(double displayValue)
 {
   std::stringstream strstream;
-  strstream.setf(ios::fixed,ios::floatfield);
+  strstream.setf(ios::fixed, ios::floatfield);
   strstream.precision(this->Precision);
   strstream << displayValue;
   strstream >> this->LastValueString;
@@ -211,8 +210,7 @@ const char* vtkMRMLUnitNode
 //----------------------------------------------------------------------------
 const char* vtkMRMLUnitNode::GetDisplayStringFromDisplayValueString(const char* value)
 {
-  this->LastDisplayString =
-    this->WrapValueWithPrefixAndSuffix(std::string(value));
+  this->LastDisplayString = this->WrapValueWithPrefixAndSuffix(std::string(value));
   return this->LastDisplayString.c_str();
 }
 
@@ -222,10 +220,10 @@ const char* vtkMRMLUnitNode::GetDisplayStringFormat()
   std::stringstream strstream;
   strstream << this->GetPrefix();
   strstream << "%";
-  strstream << "-"; // left justify
-  strstream << "#"; // force decimal point
+  strstream << "-";                                              // left justify
+  strstream << "#";                                              // force decimal point
   strstream << floor(log10(1. + fabs(this->GetMaximumValue()))); // pad
-  strstream << "." << this->GetPrecision(); // decimals
+  strstream << "." << this->GetPrecision();                      // decimals
   strstream << "g";
   strstream << this->Suffix;
   strstream >> this->LastDisplayString;
@@ -270,9 +268,9 @@ void vtkMRMLUnitNode::SetName(const char* name)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLUnitNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLUnitNode::Copy(vtkMRMLNode* anode)
 {
-  vtkMRMLUnitNode *node = vtkMRMLUnitNode::SafeDownCast(anode);
+  vtkMRMLUnitNode* node = vtkMRMLUnitNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -306,14 +304,11 @@ void vtkMRMLUnitNode::Reset(vtkMRMLNode* defaultNode)
 //----------------------------------------------------------------------------
 void vtkMRMLUnitNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "Quantity: " <<
-    (this->GetQuantity() ? this->GetQuantity() : "(none)") << "\n";
-  os << indent << "Prefix: " <<
-    (this->Prefix ? this->Prefix : "(none)") << "\n";
-  os << indent << "Suffix: " <<
-    (this->Suffix ? this->Suffix : "(none)") << "\n";
+  os << indent << "Quantity: " << (this->GetQuantity() ? this->GetQuantity() : "(none)") << "\n";
+  os << indent << "Prefix: " << (this->Prefix ? this->Prefix : "(none)") << "\n";
+  os << indent << "Suffix: " << (this->Suffix ? this->Suffix : "(none)") << "\n";
   os << indent << "Precision: " << this->Precision << "\n";
   os << indent << "MinimumValue: " << this->MinimumValue << "\n";
   os << indent << "MaximumValue: " << this->MaximumValue << "\n";

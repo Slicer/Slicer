@@ -52,8 +52,7 @@ class vtkMRMLAbstractViewNode;
 // To add widgets to the "controller" section (when not using a
 // popup), add them to the layout().
 //
-class QMRML_WIDGETS_EXPORT qMRMLViewControllerBar
-  : public qMRMLWidget
+class QMRML_WIDGETS_EXPORT qMRMLViewControllerBar : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -67,8 +66,9 @@ public:
   explicit qMRMLViewControllerBar(QWidget* parent = nullptr);
   ~qMRMLViewControllerBar() override;
 
-  enum LayoutBehavior {
-    Popup=0,
+  enum LayoutBehavior
+  {
+    Popup = 0,
     Panel
   };
 
@@ -93,7 +93,7 @@ public:
   /// Label that displays the view's name.
   Q_INVOKABLE QLabel* viewLabel();
 
-  bool showMaximizeViewButton()const;
+  bool showMaximizeViewButton() const;
 
 public slots:
   void maximizeView();

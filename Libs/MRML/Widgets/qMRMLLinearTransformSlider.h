@@ -52,27 +52,35 @@ public:
   /// X axis:LR, Y axis:PA, Z axis:IS
   enum TransformType
   {
-    TRANSLATION_LR, TRANSLATION_PA, TRANSLATION_IS,
-    ROTATION_LR, ROTATION_PA, ROTATION_IS
+    TRANSLATION_LR,
+    TRANSLATION_PA,
+    TRANSLATION_IS,
+    ROTATION_LR,
+    ROTATION_PA,
+    ROTATION_IS
   };
   void setTypeOfTransform(TransformType typeOfTransform);
   TransformType typeOfTransform() const;
 
   ///
   /// Convenience method allowing to get which family of transform is set
-  bool isRotation()const;
-  bool isTranslation()const;
+  bool isRotation() const;
+  bool isTranslation() const;
 
   ///
   /// Set/Get Coordinate system
   /// By default, the selector coordinate system will be set to GLOBAL
-  enum CoordinateReferenceType { GLOBAL, LOCAL };
+  enum CoordinateReferenceType
+  {
+    GLOBAL,
+    LOCAL
+  };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
   ///
   /// Return the current transform node
-  vtkMRMLTransformNode* mrmlTransformNode()const;
+  vtkMRMLTransformNode* mrmlTransformNode() const;
 
 public slots:
   ///
@@ -95,7 +103,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLLinearTransformSlider);
   Q_DISABLE_COPY(qMRMLLinearTransformSlider);
-
 };
 
 #endif

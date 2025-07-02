@@ -17,7 +17,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 
 //------------------------------------------------------------------------------
-int vtkMRMLSceneDefaultNodeTest(int , char * [] )
+int vtkMRMLSceneDefaultNodeTest(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene1;
 
@@ -37,7 +37,8 @@ int vtkMRMLSceneDefaultNodeTest(int , char * [] )
   CHECK_STRING(storageNode->GetDefaultWriteFileExtension(), "stl");
 
   // Test if default node can be modified
-  vtkMRMLModelStorageNode* defaultStorageNode2 = vtkMRMLModelStorageNode::SafeDownCast(scene1->GetDefaultNodeByClass("vtkMRMLModelStorageNode"));
+  vtkMRMLModelStorageNode* defaultStorageNode2 =
+    vtkMRMLModelStorageNode::SafeDownCast(scene1->GetDefaultNodeByClass("vtkMRMLModelStorageNode"));
   CHECK_NOT_NULL(defaultStorageNode2);
   defaultStorageNode2->SetDefaultWriteFileExtension("vtp");
   vtkNew<vtkMRMLModelNode> modelNode2;

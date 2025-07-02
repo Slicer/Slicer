@@ -26,33 +26,30 @@
 class qSlicerTemplateKeyModulePrivate;
 class vtkMRMLScene;
 
-class Q_SLICER_QTMODULES_TEMPLATEKEY_EXPORT qSlicerTemplateKeyModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_TEMPLATEKEY_EXPORT qSlicerTemplateKeyModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerTemplateKeyModule(QObject *parent=nullptr);
+  explicit qSlicerTemplateKeyModule(QObject* parent = nullptr);
   ~qSlicerTemplateKeyModule() override;
 
   qSlicerGetTitleMacro(tr("TemplateKey"));
 
   bool isHidden() const override;
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
-  QIcon icon()const override;
+  QIcon icon() const override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
   QStringList dependencies() const override;
 
 protected:
-
   /// Initialize the module. Register the volumes reader/writer
   void setup() override;
 
@@ -68,7 +65,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerTemplateKeyModule);
   Q_DISABLE_COPY(qSlicerTemplateKeyModule);
-
 };
 
 #endif

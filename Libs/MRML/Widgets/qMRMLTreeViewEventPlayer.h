@@ -30,8 +30,7 @@
 /// Concrete implementation of pqWidgetEventPlayer that translates
 /// high-level events into low-level Qt events.
 
-class QMRML_WIDGETS_EXPORT qMRMLTreeViewEventPlayer :
-  public pqTreeViewEventPlayer
+class QMRML_WIDGETS_EXPORT qMRMLTreeViewEventPlayer : public pqTreeViewEventPlayer
 {
   Q_OBJECT
 
@@ -40,12 +39,15 @@ public:
   qMRMLTreeViewEventPlayer(QObject* parent = nullptr);
 
   using Superclass::playEvent;
-  bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, int EventType, bool &Error) override;
+  bool playEvent(QObject* Object,
+                 const QString& Command,
+                 const QString& Arguments,
+                 int EventType,
+                 bool& Error) override;
 
 private:
-  qMRMLTreeViewEventPlayer(const qMRMLTreeViewEventPlayer&); // NOT implemented
+  qMRMLTreeViewEventPlayer(const qMRMLTreeViewEventPlayer&);            // NOT implemented
   qMRMLTreeViewEventPlayer& operator=(const qMRMLTreeViewEventPlayer&); // NOT implemented
-
 };
 
 #endif

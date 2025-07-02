@@ -21,12 +21,11 @@
 #include "qMRMLListWidgetPlugin.h"
 #include "qMRMLListWidget.h"
 
-qMRMLListWidgetPlugin::qMRMLListWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
-{
-}
+qMRMLListWidgetPlugin::qMRMLListWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
+{}
 
-QWidget *qMRMLListWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLListWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLListWidget* _widget = new qMRMLListWidget(_parent);
   return _widget;
@@ -36,7 +35,7 @@ QString qMRMLListWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLListWidget\" \
           name=\"MRMLListWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLListWidgetPlugin::icon() const

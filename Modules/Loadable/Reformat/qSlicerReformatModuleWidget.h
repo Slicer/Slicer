@@ -29,18 +29,26 @@
 class qSlicerReformatModuleWidgetPrivate;
 class vtkMRMLNode;
 
-class Q_SLICER_QTMODULES_REFORMAT_EXPORT
-qSlicerReformatModuleWidget : public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_REFORMAT_EXPORT qSlicerReformatModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerReformatModuleWidget(QWidget *parent=nullptr);
+  qSlicerReformatModuleWidget(QWidget* parent = nullptr);
   ~qSlicerReformatModuleWidget() override;
 
-  enum OriginReferenceType {ONPLANE, INVOLUME};
-  enum AxesReferenceType {axisX=0, axisY, axisZ};
+  enum OriginReferenceType
+  {
+    ONPLANE,
+    INVOLUME
+  };
+  enum AxesReferenceType
+  {
+    axisX = 0,
+    axisY,
+    axisZ
+  };
 
   /// Utility function that sets the normal of the slice plane.
   void setSliceNormal(double x, double y, double z);

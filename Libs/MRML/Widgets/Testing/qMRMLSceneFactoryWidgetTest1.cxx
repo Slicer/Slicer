@@ -35,13 +35,13 @@
 
 // STD includes
 
-int qMRMLSceneFactoryWidgetTest1( int argc, char * argv [] )
+int qMRMLSceneFactoryWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  qMRMLSceneFactoryWidget   sceneFactory;
+  qMRMLSceneFactoryWidget sceneFactory;
   sceneFactory.generateScene();
   if (sceneFactory.mrmlScene() == nullptr)
   {

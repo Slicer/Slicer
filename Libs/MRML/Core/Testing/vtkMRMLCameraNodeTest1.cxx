@@ -14,23 +14,25 @@
 #include "vtkMRMLCameraNode.h"
 #include "vtkMRMLCoreTestingMacros.h"
 
-namespace {
+namespace
+{
 
 //---------------------------------------------------------------------------
 int ExerciseBasicMethods();
 int TestGetSetLayoutName();
 
-}
+} // namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLCameraNodeTest1(int , char * [] )
+int vtkMRMLCameraNodeTest1(int, char*[])
 {
   CHECK_EXIT_SUCCESS(ExerciseBasicMethods());
   CHECK_EXIT_SUCCESS(TestGetSetLayoutName());
   return EXIT_SUCCESS;
 }
 
-namespace {
+namespace
+{
 
 //---------------------------------------------------------------------------
 int ExerciseBasicMethods()
@@ -77,4 +79,4 @@ int TestGetSetLayoutName()
   return EXIT_SUCCESS;
 }
 
-}
+} // namespace

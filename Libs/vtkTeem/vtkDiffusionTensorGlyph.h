@@ -71,14 +71,14 @@ class vtkMatrix4x4;
 class VTK_Teem_EXPORT vtkDiffusionTensorGlyph : public vtkTensorGlyph
 {
 public:
-  vtkTypeMacro(vtkDiffusionTensorGlyph,vtkTensorGlyph);
+  vtkTypeMacro(vtkDiffusionTensorGlyph, vtkTensorGlyph);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Description
   /// Construct object with defaults:
   /// Scaling is by eigenvalues on and scale factor is 1000.
   /// Glyphs are colored with FA scalar invariant.
-  static vtkDiffusionTensorGlyph *New();
+  static vtkDiffusionTensorGlyph* New();
 
   ///
   /// If MaskGlyphs is 1 (On), Mask is used to mask tensors.
@@ -149,8 +149,8 @@ public:
   /// Resolution of the output glyphs. This parameter is a integer value
   /// that sets the number of tensors (points) that are skipped before a glyph is rendered.
   /// 1 is the finest level meaning that every input point a glyph is rendered.
-  vtkSetClampMacro(Resolution,int,1,VTK_INT_MAX);
-  vtkGetMacro(Resolution,int);
+  vtkSetClampMacro(Resolution, int, 1, VTK_INT_MAX);
+  vtkGetMacro(Resolution, int);
 
   ///
   /// Resolution of the output glyphs in each dimension.
@@ -171,20 +171,20 @@ protected:
   vtkDiffusionTensorGlyph();
   ~vtkDiffusionTensorGlyph() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   void ColorGlyphsBy(int measure);
 
-  int ScalarInvariant;  /// which function of eigenvalues to use for coloring
-  int MaskGlyphs;  /// mask glyphs outside of the brain for example, using the Mask
-  int Resolution; /// allows skipping some tensors for lower resolution glyphing
+  int ScalarInvariant; /// which function of eigenvalues to use for coloring
+  int MaskGlyphs;      /// mask glyphs outside of the brain for example, using the Mask
+  int Resolution;      /// allows skipping some tensors for lower resolution glyphing
 
   int DimensionResolution[2];
 
-  vtkMatrix4x4 *VolumePositionMatrix;
-  vtkMatrix4x4 *TensorRotationMatrix;
+  vtkMatrix4x4* VolumePositionMatrix;
+  vtkMatrix4x4* TensorRotationMatrix;
 
-  vtkImageData *Mask;  /// display glyphs at points where mask is nonzero
+  vtkImageData* Mask; /// display glyphs at points where mask is nonzero
 
 private:
   vtkDiffusionTensorGlyph(const vtkDiffusionTensorGlyph&) = delete;

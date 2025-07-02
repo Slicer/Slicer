@@ -32,16 +32,15 @@ class vtkMRMLWindowLevelWidget;
 /// "scalar bar" (color legend). Its name was given because originally it was intended for
 /// displaying color legend as well, but later a dedicated displayable manager was added for that purpose
 /// (that can be used in any view types, for any displayable node types).
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLScalarBarDisplayableManager :
-  public vtkMRMLAbstractSliceViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLScalarBarDisplayableManager
+  : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 public:
   static vtkMRMLScalarBarDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLScalarBarDisplayableManager,
-                       vtkMRMLAbstractSliceViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLScalarBarDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
   void SetAdjustForegroundWindowLevelEnabled(bool enabled);
@@ -73,7 +72,7 @@ private:
   void UpdateFromMRMLScene() override;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

@@ -2,13 +2,12 @@
 #include "qMRMLThreeDViewInformationWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLThreeDViewInformationWidgetPlugin::qMRMLThreeDViewInformationWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
-{
-}
+qMRMLThreeDViewInformationWidgetPlugin::qMRMLThreeDViewInformationWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
+{}
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLThreeDViewInformationWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLThreeDViewInformationWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLThreeDViewInformationWidget* _widget = new qMRMLThreeDViewInformationWidget(_parent);
   return _widget;
@@ -19,7 +18,7 @@ QString qMRMLThreeDViewInformationWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLThreeDViewInformationWidget\" \
           name=\"MRMLThreeDViewInformationWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

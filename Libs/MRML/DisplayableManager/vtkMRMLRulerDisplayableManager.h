@@ -28,14 +28,13 @@
 #include <vector>
 
 /// \brief Displayable manager that displays orientation marker in a slice or 3D view
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLRulerDisplayableManager
-  : public vtkMRMLAbstractDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLRulerDisplayableManager : public vtkMRMLAbstractDisplayableManager
 {
   friend class vtkRulerRendererUpdateObserver;
 
 public:
   static vtkMRMLRulerDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLRulerDisplayableManager,vtkMRMLAbstractDisplayableManager);
+  vtkTypeMacro(vtkMRMLRulerDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Adds a scale preset to the list of possible scales.
@@ -49,12 +48,15 @@ public:
   /// 1.0 length, 5 major, 2 minor, mm, 1.0 scale
   /// 5.0         5        1        mm  1.0
   /// 10.0        5        2        cm  0.1
-  void AddRulerScalePreset(double length, int numberOfMajorDivisons, int numberOfMinorDivisions, const std::string& displayedUnitName, double displayedScale);
+  void AddRulerScalePreset(double length,
+                           int numberOfMajorDivisons,
+                           int numberOfMinorDivisions,
+                           const std::string& displayedUnitName,
+                           double displayedScale);
   /// Remove all scale presets.
   void RemoveAllRulerScalePresets();
 
 protected:
-
   vtkMRMLRulerDisplayableManager();
   ~vtkMRMLRulerDisplayableManager() override;
 
@@ -74,23 +76,22 @@ protected:
 
   struct RulerScalePreset
   {
-    double Length; // actual length of the ruler (in world coordinates)
-    int NumberOfMajorDivisions; // number of major divisions of the ruler
-    int NumberOfMinorDivisions; // number of divisions of each major division
+    double Length;                 // actual length of the ruler (in world coordinates)
+    int NumberOfMajorDivisions;    // number of major divisions of the ruler
+    int NumberOfMinorDivisions;    // number of divisions of each major division
     std::string DisplayedUnitName; // label that will be shown after the scaled length
-    double DisplayedScale; // displayed length is Length*Scale
+    double DisplayedScale;         // displayed length is Length*Scale
   };
 
   // List of ruler presets, ordered based on length.
   std::vector<RulerScalePreset> RulerScalePresets;
 
 private:
-
   vtkMRMLRulerDisplayableManager(const vtkMRMLRulerDisplayableManager&) = delete;
   void operator=(const vtkMRMLRulerDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

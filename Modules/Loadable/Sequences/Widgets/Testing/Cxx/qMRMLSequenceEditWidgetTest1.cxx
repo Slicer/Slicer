@@ -34,7 +34,7 @@
 // VTK includes
 #include <vtkNew.h>
 
-int qMRMLSequenceEditWidgetTest1( int argc, char * argv [] )
+int qMRMLSequenceEditWidgetTest1(int argc, char* argv[])
 {
   QApplication app(argc, argv);
 
@@ -113,8 +113,8 @@ int qMRMLSequenceEditWidgetTest1( int argc, char * argv [] )
   editWidget->setMRMLScene(scene);
   vbox.addWidget(editWidget);
 
-  QObject::connect(nodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    editWidget, SLOT(setMRMLSequenceNode(vtkMRMLNode*)));
+  QObject::connect(
+    nodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), editWidget, SLOT(setMRMLSequenceNode(vtkMRMLNode*)));
 
   parentWidget.show();
   parentWidget.raise();

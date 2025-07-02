@@ -36,7 +36,8 @@ class vtkMRMLDisplayNode;
 /// Adds menu items to the view context menu (when the user right-clicks in a slice or 3D view
 /// in an empty area).
 ///
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyViewContextMenuPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyViewContextMenuPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -48,14 +49,14 @@ public:
   ~qSlicerSubjectHierarchyViewContextMenuPlugin() override;
 
 public:
-
   /// Get view context menu item actions that are available when right-clicking an object in the views.
   /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
-  QList<QAction*> viewContextMenuActions()const override;
+  QList<QAction*> viewContextMenuActions() const override;
 
   /// Show context menu actions valid for a given subject hierarchy item to be shown in the view.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute, etc.)
+  /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute,
+  /// etc.)
   void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData) override;
 
 protected slots:

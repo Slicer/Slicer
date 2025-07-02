@@ -55,7 +55,8 @@ public:
   /// Copy list of registered effects to the container in a segment editor widget.
   /// Effects that are already in the list (have the same name) will not be modified.
   /// \return List of added effects (does not include effects that were already in the effects argument).
-  Q_INVOKABLE QList<qSlicerSegmentEditorAbstractEffect*> copyEffects(QList<qSlicerSegmentEditorAbstractEffect*>& effects);
+  Q_INVOKABLE QList<qSlicerSegmentEditorAbstractEffect*> copyEffects(
+    QList<qSlicerSegmentEditorAbstractEffect*>& effects);
 
 signals:
   /// Signals that a new effect has been registered.
@@ -70,12 +71,13 @@ private:
   static void cleanup();
 
 private:
-  qSlicerSegmentEditorEffectFactory(QObject* parent=nullptr);
+  qSlicerSegmentEditorEffectFactory(QObject* parent = nullptr);
   ~qSlicerSegmentEditorEffectFactory() override;
 
   Q_DISABLE_COPY(qSlicerSegmentEditorEffectFactory);
   friend class qSlicerSegmentEditorEffectFactoryCleanup;
-  friend class PythonQtWrapper_qSlicerSegmentEditorEffectFactory; // Allow Python wrapping without enabling direct instantiation
+  friend class PythonQtWrapper_qSlicerSegmentEditorEffectFactory; // Allow Python wrapping without enabling direct
+                                                                  // instantiation
 
 private:
   /// Instance of the singleton

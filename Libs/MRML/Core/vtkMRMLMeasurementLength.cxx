@@ -38,7 +38,7 @@ vtkMRMLMeasurementLength::~vtkMRMLMeasurementLength() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurementLength::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
@@ -59,7 +59,7 @@ void vtkMRMLMeasurementLength::Compute()
     if (curveNode->GetNumberOfDefinedControlPoints(true) < 2)
     {
       vtkDebugMacro("Compute: Curve nodes must have more than one control points ("
-        << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
+                    << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
       this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
       return;
     }
@@ -70,7 +70,7 @@ void vtkMRMLMeasurementLength::Compute()
     if (lineNode->GetNumberOfDefinedControlPoints(true) < 2)
     {
       vtkDebugMacro("Compute: Line nodes must have exactly two control points ("
-        << lineNode->GetNumberOfDefinedControlPoints(true) << " found)");
+                    << lineNode->GetNumberOfDefinedControlPoints(true) << " found)");
       this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
       return;
     }

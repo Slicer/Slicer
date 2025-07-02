@@ -29,8 +29,8 @@ class vtkRenderer;
 class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLTransformableNode
 {
 public:
-  static vtkMRMLCameraNode *New();
-  vtkTypeMacro(vtkMRMLCameraNode,vtkMRMLTransformableNode);
+  static vtkMRMLCameraNode* New();
+  vtkTypeMacro(vtkMRMLCameraNode, vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -58,14 +58,14 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Camera";};
+  const char* GetNodeTagName() override { return "Camera"; };
 
   ///
   /// Deprecated. Use SetLayoutName instead.
   /// Set the camera active tag, i.e. the tag for which object (view) this
   /// camera is active.
   const char* GetActiveTag();
-  virtual void SetActiveTag(const char *);
+  virtual void SetActiveTag(const char*);
 
   ///
   /// Name of the layout widget that this camera is used in.
@@ -151,9 +151,7 @@ public:
 
   ///
   /// alternative method to propagate events generated in Camera nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// This is the transform that was last applied
   /// to the position, focal point, and up vector
@@ -175,7 +173,8 @@ public:
   /// Reset the clipping range just based on its position and focal point
   void ResetClippingRange();
 
-  enum Direction{
+  enum Direction
+  {
     Right = 0,
     Left = 1,
     Anterior = 2,
@@ -184,13 +183,15 @@ public:
     Inferior = 5
   };
 
-  enum RASAxis{
+  enum RASAxis
+  {
     R = 0,
     A = 1,
     S = 2,
   };
 
-  enum ScreenAxis{
+  enum ScreenAxis
+  {
     X = 0, // left
     Y = 1, // up
     Z = 2  // forward
@@ -264,7 +265,7 @@ protected:
 
   void SetCamera(vtkCamera* camera);
   void SetAndObserveCamera(vtkCamera* camera);
-  vtkCamera* Camera{nullptr};
+  vtkCamera* Camera{ nullptr };
 
   std::string InternalActiveTag; // variable to hold returned value of GetActiveTag
 
@@ -277,21 +278,21 @@ protected:
 //---------------------------------------------------------------------------
 void vtkMRMLCameraNode::SetPosition(double x, double y, double z)
 {
-  double pos[3] = {x, y, z};
+  double pos[3] = { x, y, z };
   this->SetPosition(pos);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLCameraNode::SetFocalPoint(double x, double y, double z)
 {
-  double pos[3] = {x, y, z};
+  double pos[3] = { x, y, z };
   this->SetFocalPoint(pos);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLCameraNode::SetViewUp(double vx, double vy, double vz)
 {
-  double viewUp[3] = {vx, vy, vz};
+  double viewUp[3] = { vx, vy, vz };
   this->SetViewUp(viewUp);
 }
 

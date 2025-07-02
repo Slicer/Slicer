@@ -26,12 +26,11 @@
 #include <vtkNew.h>
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneImportTest(int argc, char * argv[] )
+int vtkMRMLSceneImportTest(int argc, char* argv[])
 {
   if (argc < 2)
   {
-    std::cout << "Usage: vtkMRMLSceneImportTest scene_file_path.mrml"
-              << std::endl;
+    std::cout << "Usage: vtkMRMLSceneImportTest scene_file_path.mrml" << std::endl;
     return EXIT_FAILURE;
   }
   const char* sceneFilePath = argv[1];

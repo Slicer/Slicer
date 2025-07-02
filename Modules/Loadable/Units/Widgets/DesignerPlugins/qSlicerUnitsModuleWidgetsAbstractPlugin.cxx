@@ -21,8 +21,7 @@
 #include "qSlicerUnitsModuleWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-qSlicerUnitsModuleWidgetsAbstractPlugin
-::qSlicerUnitsModuleWidgetsAbstractPlugin() = default;
+qSlicerUnitsModuleWidgetsAbstractPlugin ::qSlicerUnitsModuleWidgetsAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
 QString qSlicerUnitsModuleWidgetsAbstractPlugin::group() const

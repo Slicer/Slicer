@@ -28,14 +28,13 @@
 /// \brief Displayable manager for ImplicitPlaneWidget2 in 3D views.
 ///
 /// Responsible for any display based on the reformat widgets.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDReformatDisplayableManager :
-  public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDReformatDisplayableManager
+  : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 
 public:
   static vtkMRMLThreeDReformatDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLThreeDReformatDisplayableManager,
-                       vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLThreeDReformatDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
@@ -47,7 +46,7 @@ protected:
   void Create() override;
 
   /// WidgetCallback is a static function to relay modified events from the Logic
-  void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessWidgetsEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   void UnobserveMRMLScene() override;
   void UpdateFromMRMLScene() override;

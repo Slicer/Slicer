@@ -38,8 +38,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelSliceDisplayableManager
 
 public:
   static vtkMRMLModelSliceDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLModelSliceDisplayableManager,
-                       vtkMRMLAbstractSliceViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLModelSliceDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // DisplayableNode handling customizations
@@ -47,7 +46,6 @@ public:
   void RemoveDisplayableNode(vtkMRMLDisplayableNode* displayableNode);
 
 protected:
-
   vtkMRMLModelSliceDisplayableManager();
   ~vtkMRMLModelSliceDisplayableManager() override;
 
@@ -67,14 +65,12 @@ protected:
   int AddingDisplayableNode;
 
 private:
-
   vtkMRMLModelSliceDisplayableManager(const vtkMRMLModelSliceDisplayableManager&) = delete;
   void operator=(const vtkMRMLModelSliceDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   friend class vtkInternal;
-
 };
 
 #endif

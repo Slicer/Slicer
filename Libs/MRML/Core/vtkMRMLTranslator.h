@@ -37,7 +37,10 @@ public:
 
   /// Default translation function that returns the sourceText without any change.
   /// This method must be overridden in derived classes.
-  virtual std::string Translate(const char *context, const char *sourceText, const char *disambiguation = nullptr, int n = -1) = 0;
+  virtual std::string Translate(const char* context,
+                                const char* sourceText,
+                                const char* disambiguation = nullptr,
+                                int n = -1) = 0;
 
 protected:
   vtkMRMLTranslator() = default;

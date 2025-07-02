@@ -64,34 +64,34 @@ class Q_SLICER_MODULE_DICOMLIB_WIDGETS_EXPORT qSlicerDICOMExportable : public QO
   /// The pseudo-tags are translated into real DICOM tags at the time of export.
   /// It tag is a pair of strings (name, value). When the exportable is created
   /// by the DICOM plugin, value is the default value that is set in the editor widget
-  typedef QMap<QString,QString> TagsMap;
+  typedef QMap<QString, QString> TagsMap;
   Q_PROPERTY(TagsMap tags READ tags WRITE setTags);
 
 public:
   typedef QObject Superclass;
-  qSlicerDICOMExportable(QObject *parent = nullptr);
+  qSlicerDICOMExportable(QObject* parent = nullptr);
   ~qSlicerDICOMExportable() override;
 
-  virtual QString name()const;
+  virtual QString name() const;
   void setName(const QString& newName);
 
-  virtual QString tooltip()const;
+  virtual QString tooltip() const;
   void setTooltip(const QString& newTooltip);
 
-  virtual vtkIdType subjectHierarchyItemID()const;
+  virtual vtkIdType subjectHierarchyItemID() const;
   void setSubjectHierarchyItemID(const vtkIdType& newItemID);
 
-  virtual QString directory()const;
+  virtual QString directory() const;
   void setDirectory(const QString& newDirectory);
 
-  virtual QString pluginClass()const;
+  virtual QString pluginClass() const;
   void setPluginClass(const QString& newPluginClass);
 
-  virtual double confidence()const;
+  virtual double confidence() const;
   void setConfidence(const double newConfidence);
 
-  virtual QMap<QString,QString> tags()const;
-  void setTags(const QMap<QString,QString>& newTags);
+  virtual QMap<QString, QString> tags() const;
+  void setTags(const QMap<QString, QString>& newTags);
 
   /// Get one tag from tags list
   /// \return Null QString if tag is absent, otherwise tag value

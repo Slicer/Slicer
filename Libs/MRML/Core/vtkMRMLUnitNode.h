@@ -33,8 +33,8 @@
 class VTK_MRML_EXPORT vtkMRMLUnitNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLUnitNode *New();
-  vtkTypeMacro(vtkMRMLUnitNode,vtkMRMLNode);
+  static vtkMRMLUnitNode* New();
+  vtkTypeMacro(vtkMRMLUnitNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -44,7 +44,7 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -52,11 +52,11 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Unit";}
+  const char* GetNodeTagName() override { return "Unit"; }
 
   /// Reimplemented to prevent reset if unit node is a singleton.
   void Reset(vtkMRMLNode* defaultNode) override;

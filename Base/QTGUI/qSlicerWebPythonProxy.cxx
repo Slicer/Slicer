@@ -28,7 +28,7 @@
 // Slicer includes
 #include "qSlicerApplication.h"
 #ifdef Slicer_USE_PYTHONQT
-# include "qSlicerPythonManager.h"
+#  include "qSlicerPythonManager.h"
 #endif
 #include "qSlicerWebPythonProxy.h"
 #include "qSlicerWebPythonProxy_p.h"
@@ -79,24 +79,22 @@ bool qSlicerWebPythonProxyPrivate::isPythonEvaluationAllowed()
 qSlicerWebPythonProxy::qSlicerWebPythonProxy(QObject* parent)
   : Superclass(parent)
   , d_ptr(new qSlicerWebPythonProxyPrivate)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
 qSlicerWebPythonProxy::qSlicerWebPythonProxy(qSlicerWebPythonProxyPrivate* pimpl)
   : d_ptr(pimpl)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
 qSlicerWebPythonProxy::~qSlicerWebPythonProxy() = default;
 
 // --------------------------------------------------------------------------
-QString qSlicerWebPythonProxy::evalPython(const QString &python, int mode)
+QString qSlicerWebPythonProxy::evalPython(const QString& python, int mode)
 {
   Q_D(qSlicerWebPythonProxy);
 
-  ctkAbstractPythonManager::ExecuteStringMode executeStringMode{ctkAbstractPythonManager::FileInput};
+  ctkAbstractPythonManager::ExecuteStringMode executeStringMode{ ctkAbstractPythonManager::FileInput };
   switch (mode)
   {
     case qSlicerWebPythonProxy::EvalInput:
@@ -117,7 +115,7 @@ QString qSlicerWebPythonProxy::evalPython(const QString &python, int mode)
 #ifdef Slicer_USE_PYTHONQT
   if (d->isPythonEvaluationAllowed())
   {
-    qSlicerPythonManager *pythonManager = qSlicerApplication::application()->pythonManager();
+    qSlicerPythonManager* pythonManager = qSlicerApplication::application()->pythonManager();
     result = pythonManager->executeString(python, executeStringMode).toString();
     if (this->verbose())
     {

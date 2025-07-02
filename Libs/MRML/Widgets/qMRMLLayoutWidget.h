@@ -46,14 +46,14 @@ public:
   ~qMRMLLayoutWidget() override;
 
   /// Layout manager
-  Q_INVOKABLE qMRMLLayoutManager* layoutManager()const;
+  Q_INVOKABLE qMRMLLayoutManager* layoutManager() const;
   /// Set layout manager (useful for specifying a specialized layout manager class)
   Q_INVOKABLE void setLayoutManager(qMRMLLayoutManager* layoutManager);
 
   /// Utility function that returns the mrml scene of the layout manager
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
   /// Utility function that returns the current layout of the layout manager
-  int layout()const;
+  int layout() const;
 
 public slots:
   /// Set the MRML \a scene to the layout manager

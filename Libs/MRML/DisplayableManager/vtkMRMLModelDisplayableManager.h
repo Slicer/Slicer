@@ -102,9 +102,9 @@ public:
   void SetPickedPointID(vtkIdType newPointID);
 
   /// Return true if the node can be represented as a model
-  bool IsModelDisplayable(vtkMRMLDisplayableNode* node)const;
+  bool IsModelDisplayable(vtkMRMLDisplayableNode* node) const;
   /// Return true if the display node is a model
-  bool IsModelDisplayable(vtkMRMLDisplayNode* node)const;
+  bool IsModelDisplayable(vtkMRMLDisplayNode* node) const;
 
   /// Helper function for determining what type of scalar is active.
   /// \return True if attribute location in display node is vtkAssignAttribute::CELL_DATA
@@ -148,8 +148,7 @@ protected:
   void SetModelDisplayProperty(vtkMRMLDisplayableNode* model);
   int GetDisplayedModelsVisibility(vtkMRMLDisplayNode* displayNode);
 
-  const char* GetActiveScalarName(vtkMRMLDisplayNode* displayNode,
-                                  vtkMRMLModelNode* model = nullptr);
+  const char* GetActiveScalarName(vtkMRMLDisplayNode* displayNode, vtkMRMLModelNode* model = nullptr);
 
   /// Returns not null if modified
   vtkAlgorithm* GetClipper(vtkMRMLDisplayNode* dnode,
@@ -160,12 +159,17 @@ protected:
   void RemoveDisplayedID(const std::string& id);
   void ClearDisplayMaps();
 
-  void UpdateMapperProperties(vtkMRMLModelNode* modelNode, vtkMRMLDisplayNode* displayNode,
-    vtkMapper* actor);
-  void UpdateActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* modelDisplayNode, vtkMRMLDisplayNode* displayNode,
-    vtkActor* actor, double opacity);
-  void UpdateCapActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* modelDisplayNode, vtkMRMLDisplayNode* displayNode,
-    vtkActor* capActor, double opacity);
+  void UpdateMapperProperties(vtkMRMLModelNode* modelNode, vtkMRMLDisplayNode* displayNode, vtkMapper* actor);
+  void UpdateActorProperties(vtkMRMLModelNode* modelNode,
+                             vtkMRMLModelDisplayNode* modelDisplayNode,
+                             vtkMRMLDisplayNode* displayNode,
+                             vtkActor* actor,
+                             double opacity);
+  void UpdateCapActorProperties(vtkMRMLModelNode* modelNode,
+                                vtkMRMLModelDisplayNode* modelDisplayNode,
+                                vtkMRMLDisplayNode* displayNode,
+                                vtkActor* capActor,
+                                double opacity);
 
 protected:
   vtkMRMLModelDisplayableManager();

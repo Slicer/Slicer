@@ -44,15 +44,16 @@ class vtkMRMLHierarchyNode;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModelPrivate: public qMRMLSceneModelPrivate
+class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModelPrivate : public qMRMLSceneModelPrivate
 {
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneHierarchyModel);
+
 public:
   typedef qMRMLSceneModelPrivate Superclass;
   qMRMLSceneHierarchyModelPrivate(qMRMLSceneHierarchyModel& object);
   virtual void init();
-  virtual vtkMRMLHierarchyNode* CreateHierarchyNode()const;
+  virtual vtkMRMLHierarchyNode* CreateHierarchyNode() const;
 
   int ExpandColumn;
 };

@@ -21,13 +21,12 @@
 #include "qMRMLPlotViewControllerWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLPlotViewControllerWidgetPlugin::qMRMLPlotViewControllerWidgetPlugin(QObject *_parent)
-        : QObject(_parent)
-{
-}
+qMRMLPlotViewControllerWidgetPlugin::qMRMLPlotViewControllerWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
+{}
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLPlotViewControllerWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLPlotViewControllerWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLPlotViewControllerWidget* _widget = new qMRMLPlotViewControllerWidget(_parent);
   return _widget;
@@ -38,7 +37,7 @@ QString qMRMLPlotViewControllerWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLPlotViewControllerWidget\" \
           name=\"MRMLPlotViewControllerWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

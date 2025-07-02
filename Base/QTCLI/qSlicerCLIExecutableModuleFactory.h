@@ -31,19 +31,20 @@ class qSlicerCLIModule;
 #include <ctkAbstractPluginFactory.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIExecutableModuleFactoryItem
-  : public ctkAbstractFactoryFileBasedItem<qSlicerAbstractCoreModule>
+class qSlicerCLIExecutableModuleFactoryItem : public ctkAbstractFactoryFileBasedItem<qSlicerAbstractCoreModule>
 {
 public:
   qSlicerCLIExecutableModuleFactoryItem(const QString& newTempDirectory);
   bool load() override;
   void uninstantiate() override;
+
 protected:
   /// Return path of the expected XML file.
   QString xmlModuleDescriptionFilePath();
 
   qSlicerAbstractCoreModule* instanciator() override;
   QString runCLIWithXmlArgument();
+
 private:
   QString TempDirectory;
   qSlicerCLIModule* CLIModule;
@@ -52,8 +53,8 @@ private:
 class qSlicerCLIExecutableModuleFactoryPrivate;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIExecutableModuleFactory :
-  public ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>
+class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIExecutableModuleFactory
+  : public ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>
 {
 public:
   typedef ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule> Superclass;
@@ -67,18 +68,16 @@ public:
   /// For example:
   ///  Threshold.exe -> threshold
   ///  Threshold -> threshold
-  QString fileNameToKey(const QString& fileName)const override;
+  QString fileNameToKey(const QString& fileName) const override;
 
   void setTempDirectory(const QString& newTempDirectory);
 
 protected:
-  bool isValidFile(const QFileInfo& file)const override;
+  bool isValidFile(const QFileInfo& file) const override;
 
-  ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
-    createFactoryFileBasedItem() override;
+  ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* createFactoryFileBasedItem() override;
 
 protected:
-
   QScopedPointer<qSlicerCLIExecutableModuleFactoryPrivate> d_ptr;
 
 private:

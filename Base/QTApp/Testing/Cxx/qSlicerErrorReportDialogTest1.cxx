@@ -27,7 +27,7 @@
 
 // STD includes
 
-int qSlicerErrorReportDialogTest1(int argc, char * argv[] )
+int qSlicerErrorReportDialogTest1(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
 

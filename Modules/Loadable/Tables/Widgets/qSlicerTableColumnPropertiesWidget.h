@@ -33,8 +33,7 @@ class qSlicerTableColumnPropertiesWidgetPrivate;
 class vtkMRMLTableNode;
 class qMRMLTableView;
 
-class Q_SLICER_MODULE_TABLES_WIDGETS_EXPORT
-qSlicerTableColumnPropertiesWidget : public qSlicerWidget
+class Q_SLICER_MODULE_TABLES_WIDGETS_EXPORT qSlicerTableColumnPropertiesWidget : public qSlicerWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool columnNameVisible READ columnNameVisible WRITE setColumnNameVisible)
@@ -42,11 +41,11 @@ qSlicerTableColumnPropertiesWidget : public qSlicerWidget
 
 public:
   typedef qSlicerWidget Superclass;
-  qSlicerTableColumnPropertiesWidget(QWidget *parent=nullptr);
+  qSlicerTableColumnPropertiesWidget(QWidget* parent = nullptr);
   ~qSlicerTableColumnPropertiesWidget() override;
 
   /// Get the table node the columns are edited of.
-  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode()const;
+  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode() const;
 
   Q_INVOKABLE QStringList mrmlTableColumnNames();
 
@@ -106,7 +105,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerTableColumnPropertiesWidget);
   Q_DISABLE_COPY(qSlicerTableColumnPropertiesWidget);
-
 };
 
 #endif

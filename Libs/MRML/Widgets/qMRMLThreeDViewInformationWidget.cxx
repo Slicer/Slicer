@@ -31,7 +31,8 @@
 // qMRMLThreeDViewViewPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLThreeDViewInformationWidgetPrivate::qMRMLThreeDViewInformationWidgetPrivate(qMRMLThreeDViewInformationWidget& object)
+qMRMLThreeDViewInformationWidgetPrivate::qMRMLThreeDViewInformationWidgetPrivate(
+  qMRMLThreeDViewInformationWidget& object)
   : q_ptr(&object)
 {
   this->MRMLViewNode = nullptr;
@@ -47,8 +48,7 @@ void qMRMLThreeDViewInformationWidgetPrivate::setupUi(qMRMLWidget* widget)
 
   this->Ui_qMRMLThreeDViewInformationWidget::setupUi(widget);
 
-  this->connect(this->ViewGroupSpinBox, SIGNAL(valueChanged(int)),
-    q, SLOT(setViewGroup(int)));
+  this->connect(this->ViewGroupSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setViewGroup(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -70,7 +70,8 @@ void qMRMLThreeDViewInformationWidgetPrivate::updateWidgetFromMRMLViewNode()
 // qMRMLThreeDViewView methods
 
 // --------------------------------------------------------------------------
-qMRMLThreeDViewInformationWidget::qMRMLThreeDViewInformationWidget(QWidget* _parent) : Superclass(_parent)
+qMRMLThreeDViewInformationWidget::qMRMLThreeDViewInformationWidget(QWidget* _parent)
+  : Superclass(_parent)
   , d_ptr(new qMRMLThreeDViewInformationWidgetPrivate(*this))
 {
   Q_D(qMRMLThreeDViewInformationWidget);
@@ -82,7 +83,7 @@ qMRMLThreeDViewInformationWidget::qMRMLThreeDViewInformationWidget(QWidget* _par
 qMRMLThreeDViewInformationWidget::~qMRMLThreeDViewInformationWidget() = default;
 
 //---------------------------------------------------------------------------
-vtkMRMLViewNode* qMRMLThreeDViewInformationWidget::mrmlViewNode()const
+vtkMRMLViewNode* qMRMLThreeDViewInformationWidget::mrmlViewNode() const
 {
   Q_D(const qMRMLThreeDViewInformationWidget);
   return d->MRMLViewNode;
@@ -104,8 +105,7 @@ void qMRMLThreeDViewInformationWidget::setMRMLViewNode(vtkMRMLViewNode* newViewN
     return;
   }
 
-  d->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkCommand::ModifiedEvent,
-    d, SLOT(updateWidgetFromMRMLViewNode()));
+  d->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRMLViewNode()));
 
   d->MRMLViewNode = newViewNode;
 

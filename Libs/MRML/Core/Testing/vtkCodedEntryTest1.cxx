@@ -18,7 +18,7 @@
 #include "vtkNew.h"
 
 //----------------------------------------------------------------------------
-int vtkCodedEntryTest1(int , char * [] )
+int vtkCodedEntryTest1(int, char*[])
 {
   vtkNew<vtkCodedEntry> codedEntry;
 
@@ -33,14 +33,16 @@ int vtkCodedEntryTest1(int , char * [] )
 
   // Test getting as string
   CHECK_STD_STRING(codedEntry->GetAsPrintableString(), "(110852, DCM, \"MR signal intensity\")");
-  CHECK_STD_STRING(codedEntry->GetAsString(), "CodeValue:110852|CodingSchemeDesignator:DCM|CodeMeaning:MR signal intensity");
+  CHECK_STD_STRING(codedEntry->GetAsString(),
+                   "CodeValue:110852|CodingSchemeDesignator:DCM|CodeMeaning:MR signal intensity");
 
   codedEntry->PrintSelf(std::cout, vtkIndent());
 
   // Test copy
   vtkNew<vtkCodedEntry> codedEntryCopy;
   codedEntryCopy->Copy(codedEntry.GetPointer());
-  CHECK_STD_STRING(codedEntry->GetAsString(), "CodeValue:110852|CodingSchemeDesignator:DCM|CodeMeaning:MR signal intensity");
+  CHECK_STD_STRING(codedEntry->GetAsString(),
+                   "CodeValue:110852|CodingSchemeDesignator:DCM|CodeMeaning:MR signal intensity");
 
   // Test setting from string and get functions
   vtkNew<vtkCodedEntry> codedEntryParsed;

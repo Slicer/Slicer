@@ -18,12 +18,14 @@
 ==============================================================================*/
 /**
  * @class   vtkImageMathematicsAddon
- * @brief   Subclass of vtkImageMathematics that adds the option to multiply an image by another image which has its scalar values scaled.
+ * @brief   Subclass of vtkImageMathematics that adds the option to multiply an image by another image which has its
+ * scalar values scaled.
  *
  * This class is a subclass of vtkImageMathematics that adds an additional operation:
  * - MultiplyByScaledRange: Multiply an image by the value of the second image, scaled using the specified scalar range.
  *
- * In the long term, this class will be removed and the functionality should be added to vtkImageMathematics, if it is found to be useful.
+ * In the long term, this class will be removed and the functionality should be added to vtkImageMathematics, if it is
+ * found to be useful.
  */
 
 #ifndef vtkImageMathematicsAddon_h
@@ -55,9 +57,13 @@ protected:
 
   int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  void ThreadedRequestData(vtkInformation* request, vtkInformationVector** inputVector,
-    vtkInformationVector* outputVector, vtkImageData*** inData, vtkImageData** outData,
-    int outExt[6], int threadId) override;
+  void ThreadedRequestData(vtkInformation* request,
+                           vtkInformationVector** inputVector,
+                           vtkInformationVector* outputVector,
+                           vtkImageData*** inData,
+                           vtkImageData** outData,
+                           int outExt[6],
+                           int threadId) override;
 
   double Range[2] = { 0.0, 1.0 };
 

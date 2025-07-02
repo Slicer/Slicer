@@ -37,7 +37,7 @@
 
 // STD includes
 
-int qMRMLModelTreeViewTest1( int argc, char * argv [] )
+int qMRMLModelTreeViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

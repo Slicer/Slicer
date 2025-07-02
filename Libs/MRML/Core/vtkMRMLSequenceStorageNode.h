@@ -28,21 +28,21 @@
 class VTK_MRML_EXPORT vtkMRMLSequenceStorageNode : public vtkMRMLStorageNode
 {
 public:
-  static vtkMRMLSequenceStorageNode *New();
-  vtkTypeMacro(vtkMRMLSequenceStorageNode,vtkMRMLStorageNode);
+  static vtkMRMLSequenceStorageNode* New();
+  vtkTypeMacro(vtkMRMLSequenceStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Storage, Sequence)
-  const char* GetNodeTagName() override {return "SequenceStorage";};
+  const char* GetNodeTagName() override { return "SequenceStorage"; };
 
   /// Return a default file extension for writing
   const char* GetDefaultWriteFileExtension() override;
 
   /// Return true if the reference node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   // fileName: fCal_Test_Validation_3NWires_fCal2.0-ProbeToTracker-Seq.seq.mha
   // itemName: ProbeToTracker
@@ -67,14 +67,14 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
-  bool WriteToMRB(const char* fullName, vtkMRMLScene *scene);
+  bool WriteToMRB(const char* fullName, vtkMRMLScene* scene);
 
-  bool ReadFromMRB(const char* fullName, vtkMRMLScene *scene);
+  bool ReadFromMRB(const char* fullName, vtkMRMLScene* scene);
 
   /// Force each storable node to be saved to a file with a different name, preventing overwriting during saving
   void ForceUniqueDataNodeFileNames(vtkMRMLSequenceNode* sequenceNode);

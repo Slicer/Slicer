@@ -40,7 +40,7 @@ void doTranslate(vtkRenderer* renderer, vtkMRMLViewNode* viewNode, vtkMRMLCamera
   ev->SetViewNode(viewNode);
   ev->SetType(12);
   ev->SetKeySym("Shift_L");
-  ev->SetModifiers(1);  // Shift btn
+  ev->SetModifiers(1); // Shift btn
   ev->SetMouseMovedSinceButtonDown(false);
   double wp[3];
   wp[0] = 0;
@@ -71,7 +71,7 @@ void doTranslate(vtkRenderer* renderer, vtkMRMLViewNode* viewNode, vtkMRMLCamera
   cameraWidget->ProcessInteractionEvent(ev);
 }
 
-}
+} // namespace
 
 //----------------------------------------------------------------------------
 int vtkMRMLCameraWidgetTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
@@ -114,15 +114,15 @@ int vtkMRMLCameraWidgetTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   CHECK_INT(factory->GetRegisteredDisplayableManagerCount(), 2);
 
   // Instantiate DisplayableManagerGroup
-  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> group = vtkSmartPointer<vtkMRMLDisplayableManagerGroup>::Take(
-    factory->InstantiateDisplayableManagers(rr.GetPointer()));
+  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> group =
+    vtkSmartPointer<vtkMRMLDisplayableManagerGroup>::Take(factory->InstantiateDisplayableManagers(rr.GetPointer()));
   CHECK_NOT_NULL(group);
 
   vtkNew<vtkMRMLThreeDViewInteractorStyle> iObserver;
   iObserver->SetDisplayableManagers(group);
   iObserver->SetInteractor(ri);
 
-  vtkMRMLCameraDisplayableManager * cameraDisplayableManager =vtkMRMLCameraDisplayableManager::SafeDownCast(
+  vtkMRMLCameraDisplayableManager* cameraDisplayableManager = vtkMRMLCameraDisplayableManager::SafeDownCast(
     group->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
   CHECK_NOT_NULL(cameraDisplayableManager);
 
@@ -138,7 +138,7 @@ int vtkMRMLCameraWidgetTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   // Calculate camera shift before changing aspect ratio
   double cameraStartPos[3] = { 0.0, 0.0, 0.0 };
   double cameraEndPos[3] = { 0.0, 0.0, 0.0 };
-  double cameraShift[3] = {0.0, 0.0, 0.0};
+  double cameraShift[3] = { 0.0, 0.0, 0.0 };
   cameraWidget->GetCameraNode()->GetPosition(cameraStartPos);
   doTranslate(rr, viewNode, cameraWidget);
   cameraWidget->GetCameraNode()->GetPosition(cameraEndPos);

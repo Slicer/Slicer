@@ -13,7 +13,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 
-int vtkMRMLScalarVolumeDisplayNodeTest1(int , char * [] )
+int vtkMRMLScalarVolumeDisplayNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLScalarVolumeDisplayNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

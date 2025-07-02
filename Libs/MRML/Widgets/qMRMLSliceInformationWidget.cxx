@@ -36,8 +36,7 @@
 qMRMLSliceInformationWidgetPrivate::qMRMLSliceInformationWidgetPrivate(qMRMLSliceInformationWidget& object)
   : q_ptr(&object)
   , SliceSpacingModeGroup(nullptr)
-{
-}
+{}
 
 //---------------------------------------------------------------------------
 qMRMLSliceInformationWidgetPrivate::~qMRMLSliceInformationWidgetPrivate() = default;
@@ -52,27 +51,22 @@ void qMRMLSliceInformationWidgetPrivate::setupUi(qMRMLWidget* widget)
   // LayoutName is readonly
 
   // Connect Orientation selector
-  this->connect(this->SliceOrientationSelector, SIGNAL(currentIndexChanged(QString)),
-                q, SLOT(setSliceOrientation(QString)));
+  this->connect(
+    this->SliceOrientationSelector, SIGNAL(currentIndexChanged(QString)), q, SLOT(setSliceOrientation(QString)));
 
   // Connect Slice visibility toggle
-  this->connect(this->SliceVisibilityToggle, SIGNAL(clicked(bool)),
-                q, SLOT(setSliceVisible(bool)));
+  this->connect(this->SliceVisibilityToggle, SIGNAL(clicked(bool)), q, SLOT(setSliceVisible(bool)));
 
   // Connect Widget visibility toggle
-  this->connect(this->WidgetVisibilityToggle, SIGNAL(clicked(bool)),
-                q, SLOT(setWidgetVisible(bool)));
+  this->connect(this->WidgetVisibilityToggle, SIGNAL(clicked(bool)), q, SLOT(setWidgetVisible(bool)));
 
   // Dimension and Field of View are readonly
 
-  this->connect(this->ViewGroupSpinBox, SIGNAL(valueChanged(int)),
-    q, SLOT(setViewGroup(int)));
+  this->connect(this->ViewGroupSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setViewGroup(int)));
 
   // Connect LightBox layout
-  this->connect(this->LightboxLayoutRowsSpinBox, SIGNAL(valueChanged(int)),
-                q, SLOT(setLightboxLayoutRows(int)));
-  this->connect(this->LightboxLayoutColumnsSpinBox, SIGNAL(valueChanged(int)),
-                q, SLOT(setLightboxLayoutColumns(int)));
+  this->connect(this->LightboxLayoutRowsSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setLightboxLayoutRows(int)));
+  this->connect(this->LightboxLayoutColumnsSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setLightboxLayoutColumns(int)));
 
   // Connect SliceSpacingMode
   this->SliceSpacingModeGroup = new QButtonGroup(widget);
@@ -80,12 +74,11 @@ void qMRMLSliceInformationWidgetPrivate::setupUi(qMRMLWidget* widget)
                                          vtkMRMLSliceNode::AutomaticSliceSpacingMode);
   this->SliceSpacingModeGroup->addButton(this->PrescribedSliceSpacingRadioButton,
                                          vtkMRMLSliceNode::PrescribedSliceSpacingMode);
-  this->connect(this->SliceSpacingModeGroup, SIGNAL(buttonReleased(int)),
-                q, SLOT(setSliceSpacingMode(int)));
+  this->connect(this->SliceSpacingModeGroup, SIGNAL(buttonReleased(int)), q, SLOT(setSliceSpacingMode(int)));
 
   // Connect Prescribed spacing
-  this->connect(this->PrescribedSpacingSpinBox, SIGNAL(valueChanged(double)),
-                q, SLOT(setPrescribedSliceSpacing(double)));
+  this->connect(
+    this->PrescribedSpacingSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setPrescribedSliceSpacing(double)));
 }
 
 // --------------------------------------------------------------------------
@@ -99,13 +92,13 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
     return;
   }
 
-  //qDebug() << "qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode";
+  // qDebug() << "qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode";
 
   // Update layout name
   this->LayoutNameLineEdit->setText(QString::fromUtf8(this->MRMLSliceNode->GetLayoutName()));
 
-  qMRMLSliceControllerWidgetPrivate::updateSliceOrientationSelector(
-        this->MRMLSliceNode, this->SliceOrientationSelector);
+  qMRMLSliceControllerWidgetPrivate::updateSliceOrientationSelector(this->MRMLSliceNode,
+                                                                    this->SliceOrientationSelector);
 
   // Update slice visibility toggle
   this->SliceVisibilityToggle->setChecked(this->MRMLSliceNode->GetSliceVisible());
@@ -114,7 +107,7 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->WidgetVisibilityToggle->setChecked(this->MRMLSliceNode->GetWidgetVisible());
 
   // Update dimension
-  int dimensions[3] = {0, 0, 0};
+  int dimensions[3] = { 0, 0, 0 };
   this->MRMLSliceNode->GetDimensions(dimensions);
   double coordinatesInDouble[3];
   coordinatesInDouble[0] = dimensions[0];
@@ -123,7 +116,7 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->DimensionWidget->setCoordinates(coordinatesInDouble);
 
   // Update field of view
-  double fieldOfView[3] = {0.0, 0.0, 0.0};
+  double fieldOfView[3] = { 0.0, 0.0, 0.0 };
   this->MRMLSliceNode->GetFieldOfView(fieldOfView);
   coordinatesInDouble[0] = fieldOfView[0];
   coordinatesInDouble[1] = fieldOfView[1];
@@ -141,11 +134,10 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
   {
     this->AutomaticSliceSpacingRadioButton->setChecked(true);
   }
-  else if (this->MRMLSliceNode->GetSliceSpacingMode() ==
-           vtkMRMLSliceNode::PrescribedSliceSpacingMode)
+  else if (this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
   {
     this->PrescribedSliceSpacingRadioButton->setChecked(true);
-    double prescribedSpacing[3] = {0.0, 0.0, 0.0};
+    double prescribedSpacing[3] = { 0.0, 0.0, 0.0 };
     this->MRMLSliceNode->GetPrescribedSliceSpacing(prescribedSpacing);
     this->PrescribedSpacingSpinBox->setValue(prescribedSpacing[2]);
   }
@@ -155,7 +147,8 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
 // qMRMLSliceView methods
 
 // --------------------------------------------------------------------------
-qMRMLSliceInformationWidget::qMRMLSliceInformationWidget(QWidget* _parent) : Superclass(_parent)
+qMRMLSliceInformationWidget::qMRMLSliceInformationWidget(QWidget* _parent)
+  : Superclass(_parent)
   , d_ptr(new qMRMLSliceInformationWidgetPrivate(*this))
 {
   Q_D(qMRMLSliceInformationWidget);
@@ -167,7 +160,7 @@ qMRMLSliceInformationWidget::qMRMLSliceInformationWidget(QWidget* _parent) : Sup
 qMRMLSliceInformationWidget::~qMRMLSliceInformationWidget() = default;
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* qMRMLSliceInformationWidget::mrmlSliceNode()const
+vtkMRMLSliceNode* qMRMLSliceInformationWidget::mrmlSliceNode() const
 {
   Q_D(const qMRMLSliceInformationWidget);
   return d->MRMLSliceNode;
@@ -176,7 +169,7 @@ vtkMRMLSliceNode* qMRMLSliceInformationWidget::mrmlSliceNode()const
 //---------------------------------------------------------------------------
 void qMRMLSliceInformationWidget::setMRMLSliceNode(vtkMRMLNode* newNode)
 {
-  vtkMRMLSliceNode * newSliceNode = vtkMRMLSliceNode::SafeDownCast(newNode);
+  vtkMRMLSliceNode* newSliceNode = vtkMRMLSliceNode::SafeDownCast(newNode);
   if (!newSliceNode)
   {
     return;
@@ -194,8 +187,7 @@ void qMRMLSliceInformationWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNod
     return;
   }
 
-  d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent,
-                   d, SLOT(updateWidgetFromMRMLSliceNode()));
+  d->qvtkReconnect(d->MRMLSliceNode, newSliceNode, vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRMLSliceNode()));
 
   d->MRMLSliceNode = newSliceNode;
 
@@ -311,7 +303,7 @@ void qMRMLSliceInformationWidget::setPrescribedSliceSpacing(double spacing)
     return;
   }
 
-  double spacingArray[3] = {0.0, 0.0, 0.0};
+  double spacingArray[3] = { 0.0, 0.0, 0.0 };
   d->MRMLSliceNode->GetPrescribedSliceSpacing(spacingArray);
   spacingArray[2] = spacing;
   d->MRMLSliceNode->SetPrescribedSliceSpacing(spacingArray);

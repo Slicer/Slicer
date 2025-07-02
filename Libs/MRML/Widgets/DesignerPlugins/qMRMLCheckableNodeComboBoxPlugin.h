@@ -24,19 +24,20 @@
 #include "qMRMLWidgetsAbstractPlugin.h"
 
 class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLCheckableNodeComboBoxPlugin
-  : public QObject, public qMRMLWidgetsAbstractPlugin
+  : public QObject
+  , public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
   qMRMLCheckableNodeComboBoxPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget* parent) override;
-  QString  domXml() const override;
-  QIcon    icon() const override;
-  QString  includeFile() const override;
-  bool     isContainer() const override;
-  QString  name() const override;
+  QWidget* createWidget(QWidget* parent) override;
+  QString domXml() const override;
+  QIcon icon() const override;
+  QString includeFile() const override;
+  bool isContainer() const override;
+  QString name() const override;
 };
 
 #endif

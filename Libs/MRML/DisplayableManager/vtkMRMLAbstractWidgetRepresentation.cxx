@@ -35,9 +35,8 @@ vtkMRMLAbstractWidgetRepresentation::vtkMRMLAbstractWidgetRepresentation()
 vtkMRMLAbstractWidgetRepresentation::~vtkMRMLAbstractWidgetRepresentation() = default;
 
 //----------------------------------------------------------------------
-void vtkMRMLAbstractWidgetRepresentation
-::GetRendererComputedDisplayPositionFromWorldPosition(const double worldPos[3],
-                                                      double displayPos[2])
+void vtkMRMLAbstractWidgetRepresentation ::GetRendererComputedDisplayPositionFromWorldPosition(const double worldPos[3],
+                                                                                               double displayPos[2])
 {
   double pos[4];
   pos[0] = worldPos[0];
@@ -54,9 +53,9 @@ void vtkMRMLAbstractWidgetRepresentation
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLAbstractWidgetRepresentation::SetRenderer(vtkRenderer *ren)
+void vtkMRMLAbstractWidgetRepresentation::SetRenderer(vtkRenderer* ren)
 {
-  if ( ren == this->Renderer )
+  if (ren == this->Renderer)
   {
     return;
   }
@@ -105,19 +104,19 @@ vtkMRMLAbstractViewNode* vtkMRMLAbstractWidgetRepresentation::GetViewNode()
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLAbstractWidgetRepresentation::PrintSelf(ostream& os,
-                                                      vtkIndent indent)
+void vtkMRMLAbstractWidgetRepresentation::PrintSelf(ostream& os, vtkIndent indent)
 {
-  //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
+  // Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
-  os << indent << "PickingTolerance : " << this->PickingTolerance <<"\n";
+  os << indent << "PickingTolerance : " << this->PickingTolerance << "\n";
   os << indent << "ScreenScaleFactor: " << this->GetScreenScaleFactor() << "\n";
   os << indent << "Always On Top: " << (this->AlwaysOnTop ? "On\n" : "Off\n");
 }
 
 //-----------------------------------------------------------------------------
 void vtkMRMLAbstractWidgetRepresentation::AddActorsBounds(vtkBoundingBox& boundingBox,
-  const std::vector<vtkProp*> &actors, double* additionalBounds /*=nullptr*/)
+                                                          const std::vector<vtkProp*>& actors,
+                                                          double* additionalBounds /*=nullptr*/)
 {
   for (auto actor : actors)
   {
@@ -139,10 +138,10 @@ void vtkMRMLAbstractWidgetRepresentation::AddActorsBounds(vtkBoundingBox& boundi
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLAbstractWidgetRepresentation::UpdateFromMRML(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void *vtkNotUsed(callData))
-{
-}
+void vtkMRMLAbstractWidgetRepresentation::UpdateFromMRML(vtkMRMLNode* vtkNotUsed(caller),
+                                                         unsigned long vtkNotUsed(event),
+                                                         void* vtkNotUsed(callData))
+{}
 
 //-----------------------------------------------------------------------------
 void vtkMRMLAbstractWidgetRepresentation::UpdateRelativeCoincidentTopologyOffsets(vtkMapper* mapper)
@@ -151,8 +150,10 @@ void vtkMRMLAbstractWidgetRepresentation::UpdateRelativeCoincidentTopologyOffset
   {
     // max value 65536 so by default we subtract 66000 to make sure we are
     // zero or negative
-    mapper->SetRelativeCoincidentTopologyLineOffsetParameters(this->AlwaysOnTopRelativeOffsetFactor, this->AlwaysOnTopRelativeOffsetUnits);
-    mapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(this->AlwaysOnTopRelativeOffsetFactor, this->AlwaysOnTopRelativeOffsetUnits);
+    mapper->SetRelativeCoincidentTopologyLineOffsetParameters(this->AlwaysOnTopRelativeOffsetFactor,
+                                                              this->AlwaysOnTopRelativeOffsetUnits);
+    mapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(this->AlwaysOnTopRelativeOffsetFactor,
+                                                                 this->AlwaysOnTopRelativeOffsetUnits);
     mapper->SetRelativeCoincidentTopologyPointOffsetParameter(this->AlwaysOnTopRelativeOffsetUnits);
   }
   else

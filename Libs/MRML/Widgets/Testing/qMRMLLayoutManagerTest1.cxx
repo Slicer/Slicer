@@ -101,17 +101,17 @@ bool testLayoutManagerViewWidgetForThreeD(int line, qMRMLLayoutManager* layoutMa
   }
   return true;
 }
-}
+} // namespace
 
 //------------------------------------------------------------------------------
-int qMRMLLayoutManagerTest1(int argc, char * argv[] )
+int qMRMLLayoutManagerTest1(int argc, char* argv[])
 {
   (void)checkViewArrangement; // Fix -Wunused-function warning
 
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
-  qMRMLLayoutManager * layoutManager = new qMRMLLayoutManager();
+  qMRMLLayoutManager* layoutManager = new qMRMLLayoutManager();
 
   vtkNew<vtkMRMLApplicationLogic> applicationLogic;
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(applicationLogic);
@@ -137,14 +137,14 @@ int qMRMLLayoutManagerTest1(int argc, char * argv[] )
   applicationLogic->SetMRMLScene(scene.GetPointer());
   layoutManager->setMRMLScene(scene.GetPointer());
 
-  QWidget * viewport = new QWidget;
+  QWidget* viewport = new QWidget;
   viewport->setWindowTitle("Old widget");
   layoutManager->setViewport(viewport);
   viewport->show();
   layoutManager->setViewport(nullptr);
   layoutManager->setViewport(viewport);
 
-  QWidget * viewport2 = new QWidget;
+  QWidget* viewport2 = new QWidget;
   viewport2->setWindowTitle("New widget");
   layoutManager->setViewport(viewport2);
   viewport2->show();

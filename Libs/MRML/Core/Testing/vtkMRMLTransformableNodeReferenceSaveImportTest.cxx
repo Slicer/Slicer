@@ -37,8 +37,7 @@ int TestImportIntoSceneWithNodeIdConflict();
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLTransformableNodeReferenceSaveImportTest(int vtkNotUsed(argc),
-                                       char * vtkNotUsed(argv)[] )
+int vtkMRMLTransformableNodeReferenceSaveImportTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   CHECK_EXIT_SUCCESS(TestImportIntoEmptyScene());
   CHECK_EXIT_SUCCESS(TestImportIntoSceneWithNodeIdConflict());
@@ -169,4 +168,4 @@ int TestImportIntoSceneWithNodeIdConflict()
   return EXIT_SUCCESS;
 }
 
-}
+} // namespace

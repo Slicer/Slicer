@@ -32,16 +32,16 @@
 vtkSegmentationConverterRule::vtkSegmentationConverterRule() = default;
 
 //----------------------------------------------------------------------------
-vtkSegmentationConverterRule::~vtkSegmentationConverterRule()
-{
-}
+vtkSegmentationConverterRule::~vtkSegmentationConverterRule() {}
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConverterRule::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "Name: " << this->GetName() << "\n";
-  os << indent << "SourceRepresentationName: " << (this->GetSourceRepresentationName() ? this->GetSourceRepresentationName() : "(none)") << "\n";
-  os << indent << "TargetRepresentationName: " << (this->GetTargetRepresentationName() ? this->GetTargetRepresentationName() : "(none)") << "\n";
+  os << indent << "SourceRepresentationName: "
+     << (this->GetSourceRepresentationName() ? this->GetSourceRepresentationName() : "(none)") << "\n";
+  os << indent << "TargetRepresentationName: "
+     << (this->GetTargetRepresentationName() ? this->GetTargetRepresentationName() : "(none)") << "\n";
   if (this->ConversionParameters->GetNumberOfParameters() > 0)
   {
     os << indent << "ConversionParameters:\n";
@@ -62,8 +62,7 @@ vtkSegmentationConverterRule* vtkSegmentationConverterRule::Clone()
 bool vtkSegmentationConverterRule::CreateTargetRepresentation(vtkSegment* segment)
 {
   // Get target representation
-  vtkSmartPointer<vtkDataObject> targetRepresentation = segment->GetRepresentation(
-    this->GetTargetRepresentationName());
+  vtkSmartPointer<vtkDataObject> targetRepresentation = segment->GetRepresentation(this->GetTargetRepresentationName());
 
   // Create an empty target representation if it does not exist, or if we want to replace the target
   if (!targetRepresentation.GetPointer() || this->ReplaceTargetRepresentation)
@@ -76,7 +75,8 @@ bool vtkSegmentationConverterRule::CreateTargetRepresentation(vtkSegment* segmen
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverterRule::GetRuleConversionParameters(vtkSegmentationConversionParameters* conversionParameters)
+void vtkSegmentationConverterRule::GetRuleConversionParameters(
+  vtkSegmentationConversionParameters* conversionParameters)
 {
   // Copy rule conversion parameters into aggregated path parameters
   if (!conversionParameters)
@@ -92,7 +92,9 @@ void vtkSegmentationConverterRule::GetRuleConversionParameters(vtkSegmentationCo
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverterRule::SetConversionParameter(const std::string& name, const std::string& value, const std::string& description/*=""*/)
+void vtkSegmentationConverterRule::SetConversionParameter(const std::string& name,
+                                                          const std::string& value,
+                                                          const std::string& description /*=""*/)
 {
   this->ConversionParameters->SetValue(name, value);
   if (!description.empty())

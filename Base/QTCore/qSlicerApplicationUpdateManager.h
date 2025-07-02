@@ -74,11 +74,12 @@ public:
   ///
   /// - download the json file from `https://download.slicer.org/find?os=win&stability=release`
   /// - save this json file with the filename `find` in a local folder
-  /// - specify this local folder (such as `file:///c:/temp/slicerupdatetest/`) as `Update server URL` in application settings.
+  /// - specify this local folder (such as `file:///c:/temp/slicerupdatetest/`) as `Update server URL` in application
+  /// settings.
   ///
-  Q_INVOKABLE QUrl serverUrl()const;
+  Q_INVOKABLE QUrl serverUrl() const;
 
-  bool autoUpdateCheck()const;
+  bool autoUpdateCheck() const;
 
   /// \brief Check for updates. Reads the last cached value if recently queries from the server.
   /// Emits updateAvailable(bool) signal if update has become available/unavailable.
@@ -107,15 +108,15 @@ public:
 
   /// Get Slicer revision.
   /// \sa setSlicerRequirements
-  QString slicerRevision()const;
+  QString slicerRevision() const;
 
   /// Get Slicer operating system.
   /// \sa setSlicerRequirements
-  QString slicerOs()const;
+  QString slicerOs() const;
 
   /// Get Slicer architecture.
   /// \sa setSlicerRequirements
-  QString slicerArch()const;
+  QString slicerArch() const;
 
   /// \brief Set Slicer revision, operating system and architecture.
   ///

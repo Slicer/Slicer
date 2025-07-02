@@ -50,20 +50,20 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSortFilterSegmentsProxyM
 
 public:
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterSegmentsProxyModel(QObject *parent=nullptr);
+  qMRMLSortFilterSegmentsProxyModel(QObject* parent = nullptr);
   ~qMRMLSortFilterSegmentsProxyModel() override;
 
   /// Returns the segmentation node in the source model
-  Q_INVOKABLE vtkMRMLSegmentationNode* segmentationNode()const;
+  Q_INVOKABLE vtkMRMLSegmentationNode* segmentationNode() const;
 
   /// Segments that have their ID listed in hideSegments are
   /// not shown in the table.
   Q_INVOKABLE void setHideSegments(const QStringList& segmentIDs);
-  Q_INVOKABLE QStringList hideSegments()const;
+  Q_INVOKABLE QStringList hideSegments() const;
 
-  bool filterEnabled()const;
-  QString nameFilter()const;
-  QString textFilter()const;
+  bool filterEnabled() const;
+  QString nameFilter() const;
+  QString textFilter() const;
 
   /// Filter to show segments with the specified state
   /// If the flags for all states are false, than no filtering is performed
@@ -72,21 +72,21 @@ public:
   Q_INVOKABLE bool showStatus(int status) const;
 
   /// Retrieve the associated segment ID from a model index
-  Q_INVOKABLE QString segmentIDFromIndex(const QModelIndex& index)const;
+  Q_INVOKABLE QString segmentIDFromIndex(const QModelIndex& index) const;
 
   /// Retrieve an index for a given a segment ID
-  Q_INVOKABLE QModelIndex indexFromSegmentID(QString segmentID, int column=0)const;
+  Q_INVOKABLE QModelIndex indexFromSegmentID(QString segmentID, int column = 0) const;
 
   /// Returns true if the item in the row indicated by the given sourceRow and
   /// sourceParent should be included in the model; otherwise returns false.
   /// This method tests each item via \a filterAcceptsItem
-  bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const override;
+  bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
   /// Filters items to decide which to display in the view
-  virtual bool filterAcceptsItem(QString segmentID)const;
+  virtual bool filterAcceptsItem(QString segmentID) const;
 
   /// Returns the flags for the current index
-  Qt::ItemFlags flags(const QModelIndex & index)const override;
+  Qt::ItemFlags flags(const QModelIndex& index) const override;
 
   /// Set filter to show segments with the specified state
   /// If the flags for all states are false, than no filtering is performed
@@ -105,7 +105,7 @@ signals:
   void filterModified();
 
 protected:
-  QStandardItem* sourceItem(const QModelIndex& index)const;
+  QStandardItem* sourceItem(const QModelIndex& index) const;
 
 protected:
   QScopedPointer<qMRMLSortFilterSegmentsProxyModelPrivate> d_ptr;

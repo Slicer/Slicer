@@ -13,7 +13,7 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-int qMRMLMatrixWidgetTest1( int argc, char * argv [] )
+int qMRMLMatrixWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -21,7 +21,7 @@ int qMRMLMatrixWidgetTest1( int argc, char * argv [] )
 
   QWidget widget;
 
-  qMRMLMatrixWidget   mrmlItem( &widget );
+  qMRMLMatrixWidget mrmlItem(&widget);
 
   vtkMRMLTransformNode* nullTransformNode = nullptr;
 

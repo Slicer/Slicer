@@ -29,39 +29,44 @@ enum SequenceFileType
 
 class VTK_MRML_EXPORT vtkMRMLLinearTransformSequenceStorageNode : public vtkMRMLNRRDStorageNode
 {
-  public:
-
-  static vtkMRMLLinearTransformSequenceStorageNode *New();
-  vtkTypeMacro(vtkMRMLLinearTransformSequenceStorageNode,vtkMRMLNRRDStorageNode);
+public:
+  static vtkMRMLLinearTransformSequenceStorageNode* New();
+  vtkTypeMacro(vtkMRMLLinearTransformSequenceStorageNode, vtkMRMLNRRDStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "LinearTransformSequenceStorage";};
+  const char* GetNodeTagName() override { return "LinearTransformSequenceStorage"; };
 
   /// Return true if the node can be read in.
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// Return true if the node can be written by using the writer.
   bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override;
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
   ///
   /// Return a default file extension for writing
   const char* GetDefaultWriteFileExtension() override;
 
   /// Read all the fields in the metaimage file header.
-  /// If sequence nodes are passed in createdNodes then they will be reused. New sequence nodes will be created if there are more transforms
-  /// in the sequence metafile than pointers in createdNodes. The caller is responsible for deleting all nodes in createdNodes.
-  /// Return number of created transform nodes.
-  static int ReadSequenceFileTransforms(const std::string& fileName, vtkMRMLScene *scene,
-    std::deque< vtkSmartPointer<vtkMRMLSequenceNode> > &createdNodes, std::map< int, std::string >& frameNumberToIndexValueMap,
-    std::map< std::string, std::string > &imageMetaData, SequenceFileType fileType = METAIMAGE_SEQUENCE_FILE);
+  /// If sequence nodes are passed in createdNodes then they will be reused. New sequence nodes will be created if there
+  /// are more transforms in the sequence metafile than pointers in createdNodes. The caller is responsible for deleting
+  /// all nodes in createdNodes. Return number of created transform nodes.
+  static int ReadSequenceFileTransforms(const std::string& fileName,
+                                        vtkMRMLScene* scene,
+                                        std::deque<vtkSmartPointer<vtkMRMLSequenceNode>>& createdNodes,
+                                        std::map<int, std::string>& frameNumberToIndexValueMap,
+                                        std::map<std::string, std::string>& imageMetaData,
+                                        SequenceFileType fileType = METAIMAGE_SEQUENCE_FILE);
 
   /// Write the transform fields to the metaimage header
-  static bool WriteSequenceMetafileTransforms(const std::string& fileName, std::deque< vtkMRMLSequenceNode* > &transformNodes,
-    std::deque< std::string > &transformNames, vtkMRMLSequenceNode* masterNode, vtkMRMLSequenceNode* imageNode);
+  static bool WriteSequenceMetafileTransforms(const std::string& fileName,
+                                              std::deque<vtkMRMLSequenceNode*>& transformNodes,
+                                              std::deque<std::string>& transformNames,
+                                              vtkMRMLSequenceNode* masterNode,
+                                              vtkMRMLSequenceNode* imageNode);
 
 protected:
   vtkMRMLLinearTransformSequenceStorageNode();

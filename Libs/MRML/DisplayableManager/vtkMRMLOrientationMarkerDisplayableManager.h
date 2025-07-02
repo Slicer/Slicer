@@ -35,11 +35,10 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLOrientationMarkerDisplayableMana
 
 public:
   static vtkMRMLOrientationMarkerDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLOrientationMarkerDisplayableManager,vtkMRMLAbstractDisplayableManager);
+  vtkTypeMacro(vtkMRMLOrientationMarkerDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLOrientationMarkerDisplayableManager();
   ~vtkMRMLOrientationMarkerDisplayableManager() override;
 
@@ -58,12 +57,11 @@ protected:
   void UpdateFromRenderer();
 
 private:
-
   vtkMRMLOrientationMarkerDisplayableManager(const vtkMRMLOrientationMarkerDisplayableManager&) = delete;
   void operator=(const vtkMRMLOrientationMarkerDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

@@ -50,11 +50,11 @@ public:
   /// \note The \li parent can be set later using QWidget::setParent()
   explicit qMRMLRangeWidget(QWidget* parent = nullptr);
 
-  QPalette minimumHandlePalette()const;
-  QPalette maximumHandlePalette()const;
+  QPalette minimumHandlePalette() const;
+  QPalette maximumHandlePalette() const;
 
-  vtkMRMLScene* mrmlScene()const;
-  QString quantity()const;
+  vtkMRMLScene* mrmlScene() const;
+  QString quantity() const;
 
   /// When symmetricMoves is true, moving a handle will move the other handle
   /// symmetrically, otherwise the handles are independent. False by default.
@@ -90,13 +90,14 @@ protected:
 class QMRML_WIDGETS_EXPORT qMRMLDoubleRangeSlider : public ctkDoubleRangeSlider
 {
   Q_OBJECT;
+
 public:
   qMRMLDoubleRangeSlider(QWidget* parentWidget);
-  QPalette minimumHandlePalette()const;
-  QPalette maximumHandlePalette()const;
+  QPalette minimumHandlePalette() const;
+  QPalette maximumHandlePalette() const;
 
-  vtkMRMLScene* mrmlScene()const;
-  QString quantity()const;
+  vtkMRMLScene* mrmlScene() const;
+  QString quantity() const;
 
 public slots:
   /// Set the palette of the minimum handle
@@ -110,11 +111,12 @@ public slots:
 class QMRML_WIDGETS_EXPORT qMRMLRangeSlider : public ctkRangeSlider
 {
   Q_OBJECT;
+
 public:
   qMRMLRangeSlider(QWidget* parentWidget);
   ~qMRMLRangeSlider() override;
-  QPalette minimumHandlePalette()const;
-  QPalette maximumHandlePalette()const;
+  QPalette minimumHandlePalette() const;
+  QPalette maximumHandlePalette() const;
 
 public slots:
   /// Set the palette of the minimum handle
@@ -122,6 +124,7 @@ public slots:
 
   /// Set the palette of the minimum handle
   void setMaximumHandlePalette(const QPalette& palette);
+
 protected:
   void initMinimumSliderStyleOption(QStyleOptionSlider* option) const override;
   void initMaximumSliderStyleOption(QStyleOptionSlider* option) const override;

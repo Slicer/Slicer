@@ -23,10 +23,9 @@
 
 qSlicerModulesListViewPlugin::qSlicerModulesListViewPlugin(QObject* parent)
   : QObject(parent)
-{
-}
+{}
 
-QWidget *qSlicerModulesListViewPlugin::createWidget(QWidget* parentWidget)
+QWidget* qSlicerModulesListViewPlugin::createWidget(QWidget* parentWidget)
 {
   qSlicerModulesListView* widget = new qSlicerModulesListView(parentWidget);
   return widget;
@@ -36,7 +35,7 @@ QString qSlicerModulesListViewPlugin::domXml() const
 {
   return "<widget class=\"qSlicerModulesListView\" \
           name=\"SlicerModulesListView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QString qSlicerModulesListViewPlugin::includeFile() const

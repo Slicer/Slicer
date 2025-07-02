@@ -79,7 +79,6 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLInteractionWidgetRepresentation
   : public vtkMRMLAbstractWidgetRepresentation
 {
 public:
-
   ///@{
   /// Standard VTK class macros.
   vtkTypeMacro(vtkMRMLInteractionWidgetRepresentation, vtkMRMLAbstractWidgetRepresentation);
@@ -87,7 +86,7 @@ public:
   ///@}
 
   /// Update the representation from display node
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;
@@ -101,10 +100,13 @@ public:
   virtual bool GetTransformationReferencePoint(double referencePointWorld[3]);
 
   /// Return found component type (as vtkMRMLInteractionDisplayNode::ComponentType).
-  /// closestDistance2 is the squared distance in display coordinates from the closest position where interaction is possible.
-  /// componentIndex returns index of the found component (e.g., if control point is found then control point index is returned).
+  /// closestDistance2 is the squared distance in display coordinates from the closest position where interaction is
+  /// possible. componentIndex returns index of the found component (e.g., if control point is found then control point
+  /// index is returned).
   virtual void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2);
+                           int& foundComponentType,
+                           int& foundComponentIndex,
+                           double& closestDistance2);
 
   virtual vtkPointPlacer* GetPointPlacer();
 
@@ -200,28 +202,28 @@ protected:
     InteractionPipeline();
     virtual ~InteractionPipeline();
 
-    vtkSmartPointer<vtkPolyData>                ArrowPolyData;
-    vtkSmartPointer<vtkPolyData>                CirclePolyData;
-    vtkSmartPointer<vtkPolyData>                RingPolyData;
-    vtkSmartPointer<vtkPolyData>                ArrowOutlinePolyData;
-    vtkSmartPointer<vtkPolyData>                CircleOutlinePolyData;
-    vtkSmartPointer<vtkPolyData>                RingOutlinePolyData;
+    vtkSmartPointer<vtkPolyData> ArrowPolyData;
+    vtkSmartPointer<vtkPolyData> CirclePolyData;
+    vtkSmartPointer<vtkPolyData> RingPolyData;
+    vtkSmartPointer<vtkPolyData> ArrowOutlinePolyData;
+    vtkSmartPointer<vtkPolyData> CircleOutlinePolyData;
+    vtkSmartPointer<vtkPolyData> RingOutlinePolyData;
 
     std::map<std::pair<int, int>, vtkSmartPointer<vtkPolyData>> HandleGlyphPolyDataMap;
     std::map<std::pair<int, int>, vtkSmartPointer<vtkPolyData>> HandleOutlineGlyphPolyDataMap;
 
-    vtkSmartPointer<vtkPolyData>                RotationHandlePoints;
-    vtkSmartPointer<vtkPolyData>                TranslationHandlePoints;
-    vtkSmartPointer<vtkPolyData>                ScaleHandlePoints;
+    vtkSmartPointer<vtkPolyData> RotationHandlePoints;
+    vtkSmartPointer<vtkPolyData> TranslationHandlePoints;
+    vtkSmartPointer<vtkPolyData> ScaleHandlePoints;
 
-    vtkSmartPointer<vtkAppendPolyData>          Append;
+    vtkSmartPointer<vtkAppendPolyData> Append;
     vtkSmartPointer<vtkTransformPolyDataFilter> HandleToWorldTransformFilter;
-    vtkSmartPointer<vtkTransform>               HandleToWorldTransform;
-    vtkSmartPointer<vtkLookupTable>             ColorTable;
+    vtkSmartPointer<vtkTransform> HandleToWorldTransform;
+    vtkSmartPointer<vtkLookupTable> ColorTable;
 
-    vtkSmartPointer<vtkPolyDataMapper>          Mapper3D;
-    vtkSmartPointer<vtkProperty>                Property3D;
-    vtkSmartPointer<vtkActor>                   Actor3D;
+    vtkSmartPointer<vtkPolyDataMapper> Mapper3D;
+    vtkSmartPointer<vtkProperty> Property3D;
+    vtkSmartPointer<vtkActor> Actor3D;
 
     vtkSmartPointer<vtkTransform> WorldToSliceTransform;
     vtkSmartPointer<vtkTransformPolyDataFilter> WorldToSliceTransformFilter;
@@ -229,26 +231,32 @@ protected:
 
   struct HandleInfo
   {
-    HandleInfo(int index, int componentType, double positionWorld[3], double positionLocal[3], double color[4], int glyphType, bool applyScaleToPosition)
+    HandleInfo(int index,
+               int componentType,
+               double positionWorld[3],
+               double positionLocal[3],
+               double color[4],
+               int glyphType,
+               bool applyScaleToPosition)
       : Index(index)
       , ComponentType(componentType)
       , GlyphType(glyphType)
       , ApplyScaleToPosition(applyScaleToPosition)
     {
-    for (int i = 0; i < 3; ++i)
-    {
-      this->PositionWorld[i] = positionWorld[i];
-    }
-    this->PositionWorld[3] = 1.0;
-    for (int i = 0; i < 3; ++i)
-    {
-      this->PositionLocal[i] = positionLocal[i];
-    }
-    this->PositionLocal[3] = 1.0;
-    for (int i = 0; i < 4; ++i)
-    {
-      this->Color[i] = color[i];
-    }
+      for (int i = 0; i < 3; ++i)
+      {
+        this->PositionWorld[i] = positionWorld[i];
+      }
+      this->PositionWorld[3] = 1.0;
+      for (int i = 0; i < 3; ++i)
+      {
+        this->PositionLocal[i] = positionLocal[i];
+      }
+      this->PositionLocal[3] = 1.0;
+      for (int i = 0; i < 4; ++i)
+      {
+        this->Color[i] = color[i];
+      }
     }
     int Index;
     int ComponentType;
@@ -256,7 +264,7 @@ protected:
     double PositionLocal[4];
     double PositionWorld[4];
     double Color[4];
-    bool ApplyScaleToPosition{true};
+    bool ApplyScaleToPosition{ true };
     bool IsVisible()
     {
       double epsilon = 0.001;
@@ -301,16 +309,26 @@ protected:
   virtual bool GetInteractionSizeAbsolute();
 
   virtual void CanInteractWithCircleHandle(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2, HandleInfo& handleInfo);
+                                           int& foundComponentType,
+                                           int& foundComponentIndex,
+                                           double& closestDistance2,
+                                           HandleInfo& handleInfo);
   virtual void CanInteractWithArrowHandle(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2, HandleInfo& handleInfo);
+                                          int& foundComponentType,
+                                          int& foundComponentIndex,
+                                          double& closestDistance2,
+                                          HandleInfo& handleInfo);
   virtual void CanInteractWithRingHandle(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2, HandleInfo& handleInfo);
+                                         int& foundComponentType,
+                                         int& foundComponentIndex,
+                                         double& closestDistance2,
+                                         HandleInfo& handleInfo);
 
   /// The angle between the camera and the interaction axis at which point the interaction handle starts to fade out.
-  double StartFadeAngleDegrees{10.0};
-  /// The angle between the camera and the interaction axis at which point the interaction handle is completely faded out.
-  double EndFadeAngleDegrees{8.0};
+  double StartFadeAngleDegrees{ 10.0 };
+  /// The angle between the camera and the interaction axis at which point the interaction handle is completely faded
+  /// out.
+  double EndFadeAngleDegrees{ 8.0 };
 
   double ViewScaleFactorMmPerPixel;
   double ScreenSizePixel; // diagonal size of the screen
@@ -321,11 +339,11 @@ protected:
   /// For slice views, renderer world coordinate system is the display coordinate system, so it is measured in pixels.
   /// For 3D views, renderer world coordinate system is the Slicer world coordinate system, so it is measured in the
   /// scene length unit (typically millimeters).
-  double InteractionSize{1.0};
+  double InteractionSize{ 1.0 };
 
-  double WidgetScale{1.0};
+  double WidgetScale{ 1.0 };
 
-  bool Interacting{false};
+  bool Interacting{ false };
 
   vtkSmartPointer<vtkPointPlacer> PointPlacer;
 

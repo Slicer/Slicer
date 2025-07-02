@@ -42,7 +42,7 @@ bool testDTIPipeline();
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSliceLayerLogicTest(int , char * [] )
+int vtkMRMLSliceLayerLogicTest(int, char*[])
 {
   // Test setting volume node and then scene
   {
@@ -76,21 +76,22 @@ int vtkMRMLSliceLayerLogicTest(int , char * [] )
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-namespace{
+namespace
+{
 
 //----------------------------------------------------------------------------
 bool testDTIPipeline()
 {
   vtkNew<vtkImageData> imageData;
-  imageData->SetDimensions(2,2,2);
+  imageData->SetDimensions(2, 2, 2);
   vtkNew<vtkFloatArray> tensors;
   // \fixme Name should not be needed VTK#14693
   tensors->SetName("tensors");
   tensors->SetNumberOfComponents(9);
-  tensors->SetNumberOfTuples(2*2*2);
-  for (int i = 0; i < 2*2*2;++i)
+  tensors->SetNumberOfTuples(2 * 2 * 2);
+  for (int i = 0; i < 2 * 2 * 2; ++i)
   {
-    tensors->SetTuple9(i,1.,0.,0.,0.,1.,0.,0.,0.,1.);
+    tensors->SetTuple9(i, 1., 0., 0., 0., 1., 0., 0., 0., 1.);
   }
   imageData->GetPointData()->SetTensors(tensors.GetPointer());
 
@@ -98,13 +99,11 @@ bool testDTIPipeline()
   tp->SetOutput(imageData.GetPointer());
   // \fixme Set scalar type to Float should not be needed VTK#14692
   tp->UpdateInformation();
-  vtkDataObject::SetPointDataActiveScalarInfo(
-    tp->GetOutputInformation(0), VTK_FLOAT, 9);
+  vtkDataObject::SetPointDataActiveScalarInfo(tp->GetOutputInformation(0), VTK_FLOAT, 9);
 
   vtkNew<vtkAssignAttribute> tensorsToScalars;
-  tensorsToScalars->Assign(vtkDataSetAttributes::TENSORS,
-                           vtkDataSetAttributes::SCALARS,
-                           vtkAssignAttribute::POINT_DATA);
+  tensorsToScalars->Assign(
+    vtkDataSetAttributes::TENSORS, vtkDataSetAttributes::SCALARS, vtkAssignAttribute::POINT_DATA);
   tensorsToScalars->SetInputConnection(tp->GetOutputPort());
   bool verbose = false;
   if (verbose)
@@ -127,13 +126,12 @@ bool testDTIPipeline()
   reslicer->SetOutputDimensionality(2);
 
   vtkNew<vtkAssignAttribute> scalarsToTensors;
-  scalarsToTensors->Assign(vtkDataSetAttributes::SCALARS,
-                           vtkDataSetAttributes::TENSORS,
-                           vtkAssignAttribute::POINT_DATA);
+  scalarsToTensors->Assign(
+    vtkDataSetAttributes::SCALARS, vtkDataSetAttributes::TENSORS, vtkAssignAttribute::POINT_DATA);
   scalarsToTensors->SetInputConnection(reslicer->GetOutputPort());
 
   scalarsToTensors->Update();
   return true;
 }
 
-}
+} // namespace

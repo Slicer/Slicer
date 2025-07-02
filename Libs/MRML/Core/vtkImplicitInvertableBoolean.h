@@ -22,12 +22,13 @@
  *
  * This class is a subclass of vtkImplicitBoolean that adds an option to invert the result of the boolean operation.
  *
- * For clipping functions, it is necessary to be able to invert the result of implicit functions. That ability is supported with
- * vtkImplicitSum, however vtkImplicitSum doesn't work for capping purposes, since we need to be able to retrieve the plane functions from the
- * clipping functions, however the internal functions are not accessible in vtkImplicitSum. This class is a workaround for that issue.
+ * For clipping functions, it is necessary to be able to invert the result of implicit functions. That ability is
+ * supported with vtkImplicitSum, however vtkImplicitSum doesn't work for capping purposes, since we need to be able to
+ * retrieve the plane functions from the clipping functions, however the internal functions are not accessible in
+ * vtkImplicitSum. This class is a workaround for that issue.
  *
- * In the future the changes in this class may be moved to vtkAddon or VTK, either by adding the invert option to vtkImplicitBoolean or by
- * making the internal vtkImplicitFunctionCollection accessible in vtkImplicitSum.
+ * In the future the changes in this class may be moved to vtkAddon or VTK, either by adding the invert option to
+ * vtkImplicitBoolean or by making the internal vtkImplicitFunctionCollection accessible in vtkImplicitSum.
  */
 
 #ifndef vtkImplicitInvertableBoolean_h

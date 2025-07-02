@@ -41,7 +41,7 @@ public:
   typedef QObject Superclass;
   typedef qSlicerApplicationHelper Self;
 
-  qSlicerApplicationHelper(QObject * parent = nullptr);
+  qSlicerApplicationHelper(QObject* parent = nullptr);
   ~qSlicerApplicationHelper() override;
 
   static void preInitializeApplication(const char* argv0, ctkProxyStyle* style);
@@ -49,13 +49,12 @@ public:
   /// Perform initialization steps on the application.
   /// \return If return value is non-zero then the application will terminate using
   /// the returned value as exit code.
-  template<typename SlicerMainWindowType>
-  static int postInitializeApplication(
-      qSlicerApplication& app,
-      QScopedPointer<QSplashScreen>& splashScreen,
-      QScopedPointer<SlicerMainWindowType>& window);
+  template <typename SlicerMainWindowType>
+  static int postInitializeApplication(qSlicerApplication& app,
+                                       QScopedPointer<QSplashScreen>& splashScreen,
+                                       QScopedPointer<SlicerMainWindowType>& window);
 
-  static void setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager);
+  static void setupModuleFactoryManager(qSlicerModuleFactoryManager* moduleFactoryManager);
 
   static void showMRMLEventLoggerWidget();
 

@@ -46,15 +46,18 @@
 #include "qSlicerLayoutManager.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyPlotsPluginPrivate: public QObject
+class qSlicerSubjectHierarchyPlotsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyPlotsPlugin);
+
 protected:
   qSlicerSubjectHierarchyPlotsPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyPlotsPluginPrivate(qSlicerSubjectHierarchyPlotsPlugin& object);
   ~qSlicerSubjectHierarchyPlotsPluginPrivate() override;
   void init();
+
 public:
   QIcon PlotChartIcon;
   QIcon PlotSeriesIcon;
@@ -69,8 +72,9 @@ public:
 // qSlicerSubjectHierarchyPlotsPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPlotsPluginPrivate::qSlicerSubjectHierarchyPlotsPluginPrivate(qSlicerSubjectHierarchyPlotsPlugin& object)
-: q_ptr(&object)
+qSlicerSubjectHierarchyPlotsPluginPrivate::qSlicerSubjectHierarchyPlotsPluginPrivate(
+  qSlicerSubjectHierarchyPlotsPlugin& object)
+  : q_ptr(&object)
 {
   this->PlotChartIcon = QIcon(":Icons/Medium/SlicerInteractivePlotting.png");
   this->PlotSeriesIcon = QIcon(":Icons/Medium/SlicerPlotSeries.png");
@@ -80,9 +84,7 @@ qSlicerSubjectHierarchyPlotsPluginPrivate::qSlicerSubjectHierarchyPlotsPluginPri
 }
 
 //------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPlotsPluginPrivate::init()
-{
-}
+void qSlicerSubjectHierarchyPlotsPluginPrivate::init() {}
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPlotsPluginPrivate::~qSlicerSubjectHierarchyPlotsPluginPrivate() = default;
@@ -92,8 +94,8 @@ qSlicerSubjectHierarchyPlotsPluginPrivate::~qSlicerSubjectHierarchyPlotsPluginPr
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPlotsPlugin::qSlicerSubjectHierarchyPlotsPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyPlotsPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyPlotsPluginPrivate(*this))
 {
   Q_D(qSlicerSubjectHierarchyPlotsPlugin);
   this->m_Name = QString("Plots");
@@ -112,7 +114,8 @@ void qSlicerSubjectHierarchyPlotsPlugin::setPlotsLogic(vtkSlicerPlotsLogic* plot
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyPlotsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node,
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -133,7 +136,7 @@ double qSlicerSubjectHierarchyPlotsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyPlotsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyPlotsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (!itemID)
   {
@@ -161,7 +164,7 @@ double qSlicerSubjectHierarchyPlotsPlugin::canOwnSubjectHierarchyItem(vtkIdType 
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyPlotsPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyPlotsPlugin::roleForPlugin() const
 {
   return "Plot";
 }
@@ -281,7 +284,8 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
         // already hidden
         return;
       }
-      vtkMRMLPlotChartNode* plotChartNode = plotViewNode->GetPlotChartNode();;
+      vtkMRMLPlotChartNode* plotChartNode = plotViewNode->GetPlotChartNode();
+      ;
       if (!plotChartNode)
       {
         // already hidden
@@ -304,17 +308,17 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
   {
     return;
   }
-  std::vector< vtkMRMLNode* > chartNodes;
+  std::vector<vtkMRMLNode*> chartNodes;
   scene->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
-  for (std::vector< vtkMRMLNode* >::iterator chartIt = chartNodes.begin(); chartIt != chartNodes.end(); ++chartIt)
+  for (std::vector<vtkMRMLNode*>::iterator chartIt = chartNodes.begin(); chartIt != chartNodes.end(); ++chartIt)
   {
     vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(*chartIt);
     vtkIdType chartNodeId = shNode->GetItemByDataNode(chartNode);
     shNode->ItemModified(chartNodeId);
   }
-  std::vector< vtkMRMLNode* > seriesNodes;
+  std::vector<vtkMRMLNode*> seriesNodes;
   scene->GetNodesByClass("vtkMRMLPlotSeriesNode", seriesNodes);
-  for (std::vector< vtkMRMLNode* >::iterator seriesIt = seriesNodes.begin(); seriesIt != seriesNodes.end(); ++seriesIt)
+  for (std::vector<vtkMRMLNode*>::iterator seriesIt = seriesNodes.begin(); seriesIt != seriesNodes.end(); ++seriesIt)
   {
     vtkMRMLPlotSeriesNode* seriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(*seriesIt);
     vtkIdType seriesNodeId = shNode->GetItemByDataNode(seriesNode);
@@ -323,7 +327,7 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   if (!itemID)
   {
@@ -361,7 +365,7 @@ int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID)co
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode()const
+vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode() const
 {
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
@@ -376,7 +380,7 @@ vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode()const
     return nullptr;
   }
 
-  for (int i=0; i<layoutManager->plotViewCount(); i++)
+  for (int i = 0; i < layoutManager->plotViewCount(); i++)
   {
     qMRMLPlotWidget* plotWidget = layoutManager->plotWidget(i);
     if (!plotWidget)

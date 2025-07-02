@@ -24,15 +24,15 @@
 class VTK_MRML_EXPORT vtkMRMLGridTransformNode : public vtkMRMLTransformNode
 {
 public:
-  static vtkMRMLGridTransformNode *New();
-  vtkTypeMacro(vtkMRMLGridTransformNode,vtkMRMLTransformNode);
+  static vtkMRMLGridTransformNode* New();
+  vtkTypeMacro(vtkMRMLGridTransformNode, vtkMRMLTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -44,7 +44,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "GridTransform";}
+  const char* GetNodeTagName() override { return "GridTransform"; }
 
 protected:
   vtkMRMLGridTransformNode();

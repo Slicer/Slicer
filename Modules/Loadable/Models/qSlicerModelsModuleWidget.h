@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModuleWidget : public qSlice
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerModelsModuleWidget(QWidget *parent=nullptr);
+  qSlicerModelsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerModelsModuleWidget() override;
 
   void enter() override;
@@ -67,8 +67,7 @@ public slots:
   /// Create or get first color legend if group box is expanded
   void onColorLegendCollapsibleGroupBoxToggled(bool);
 
-  static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
-                               void* client_data, void* call_data);
+  static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data);
 
   /// hide/show all the models in the scene
   void hideAllModels();

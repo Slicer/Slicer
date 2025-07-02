@@ -35,19 +35,18 @@ class vtkMRMLNode;
 class vtkMRMLVolumeNode;
 class vtkMRMLVolumeRenderingDisplayNode;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPropertiesWidget
-  : public QWidget
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPropertiesWidget : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT
 public:
   typedef QWidget Superclass;
-  qSlicerVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
+  qSlicerVolumeRenderingPropertiesWidget(QWidget* parent = nullptr);
   ~qSlicerVolumeRenderingPropertiesWidget() override;
 
-  vtkMRMLNode* mrmlNode()const;
-  vtkMRMLVolumeRenderingDisplayNode* mrmlVolumeRenderingDisplayNode()const;
-  vtkMRMLVolumeNode* mrmlVolumeNode()const;
+  vtkMRMLNode* mrmlNode() const;
+  vtkMRMLVolumeRenderingDisplayNode* mrmlVolumeRenderingDisplayNode() const;
+  vtkMRMLVolumeNode* mrmlVolumeNode() const;
 
 public slots:
   void setMRMLVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);

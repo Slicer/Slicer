@@ -8,23 +8,23 @@ class vtkMRMLInteractionEventData;
 class VTK_MRML_EXPORT vtkMRMLInteractionNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLInteractionNode *New();
-  vtkTypeMacro(vtkMRMLInteractionNode,vtkMRMLNode);
+  static vtkMRMLInteractionNode* New();
+  vtkTypeMacro(vtkMRMLInteractionNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Interaction";}
+  const char* GetNodeTagName() override { return "Interaction"; }
 
   /// Get/Set Current and Last mouse mode.
   vtkGetMacro(CurrentInteractionMode, int);
@@ -49,36 +49,36 @@ public:
   /// bit field operations
   enum
   {
-      Place = 1,
-      ViewTransform = 2,
-      Select = 4,
-      AdjustWindowLevel,
-      User = 1000
+    Place = 1,
+    ViewTransform = 2,
+    Select = 4,
+    AdjustWindowLevel,
+    User = 1000
   };
 
   /// events
   enum
   {
-      InteractionModeChangedEvent = 19001,
-      InteractionModePersistenceChangedEvent,
-      EndPlacementEvent,
-      EditNodeEvent,
-      ShowViewContextMenuEvent,
+    InteractionModeChangedEvent = 19001,
+    InteractionModePersistenceChangedEvent,
+    EndPlacementEvent,
+    EditNodeEvent,
+    ShowViewContextMenuEvent,
   };
 
   /// Return a text string describing the mode
-  const char *GetInteractionModeAsString(int mode);
-  const char *GetInteractionModeAsString() { return this->GetInteractionModeAsString(this->CurrentInteractionMode); } ;
+  const char* GetInteractionModeAsString(int mode);
+  const char* GetInteractionModeAsString() { return this->GetInteractionModeAsString(this->CurrentInteractionMode); };
 
   /// Return the mode given a text string.
-  int GetInteractionModeByString ( const char * modeString );
+  int GetInteractionModeByString(const char* modeString);
 
   /// Convenience methods for the mouse mode tool bar to call
   void SwitchToPersistentPlaceMode();
   void SwitchToSinglePlaceMode();
   void SwitchToViewTransformMode();
 
-/// Enable/Disable Editing of Fibers
+  /// Enable/Disable Editing of Fibers
   vtkGetMacro(EnableFiberEdit, int);
   vtkSetMacro(EnableFiberEdit, int);
 

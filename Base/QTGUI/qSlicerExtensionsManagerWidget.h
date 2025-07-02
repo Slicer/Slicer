@@ -37,8 +37,7 @@
 class qSlicerExtensionsManagerWidgetPrivate;
 class qSlicerExtensionsManagerModel;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManagerWidget
-  : public QWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManagerWidget : public QWidget
 {
   Q_OBJECT
 public:
@@ -51,7 +50,7 @@ public:
   /// Destructor
   ~qSlicerExtensionsManagerWidget() override;
 
-  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
+  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel() const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
   /// Shows a popup if operations are still in progress, asking if the user wants to stop them.

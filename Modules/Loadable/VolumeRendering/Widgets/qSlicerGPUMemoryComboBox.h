@@ -29,27 +29,27 @@
 
 class qSlicerGPUMemoryComboBoxPrivate;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPUMemoryComboBox
-  : public QComboBox
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPUMemoryComboBox : public QComboBox
 {
   Q_OBJECT
   Q_PROPERTY(double currentGPUMemory READ currentGPUMemory WRITE setCurrentGPUMemory)
-  Q_PROPERTY(QString currentGPUMemoryString READ currentGPUMemoryAsString WRITE setCurrentGPUMemoryFromString DESIGNABLE false)
+  Q_PROPERTY(
+    QString currentGPUMemoryString READ currentGPUMemoryAsString WRITE setCurrentGPUMemoryFromString DESIGNABLE false)
 
 public:
   /// Constructors
   typedef QComboBox Superclass;
-  explicit qSlicerGPUMemoryComboBox(QWidget* parent=nullptr);
+  explicit qSlicerGPUMemoryComboBox(QWidget* parent = nullptr);
   ~qSlicerGPUMemoryComboBox() override;
 
   /// Return total memory available in the GPU
-  Q_INVOKABLE int totalGPUMemoryInMB()const;
+  Q_INVOKABLE int totalGPUMemoryInMB() const;
   /// Return currently selected GPU memory in MB or percentage (% value between 0-1)
-  Q_INVOKABLE double currentGPUMemory()const;
+  Q_INVOKABLE double currentGPUMemory() const;
   /// Return currently selected GPU memory in MB
-  Q_INVOKABLE int currentGPUMemoryInMB()const;
+  Q_INVOKABLE int currentGPUMemoryInMB() const;
   /// Return currently selected GPU memory as string
-  Q_INVOKABLE QString currentGPUMemoryAsString()const;
+  Q_INVOKABLE QString currentGPUMemoryAsString() const;
 
 public slots:
   /// Set currently selected GPU memory in MB or percentage (% value between 0-1)

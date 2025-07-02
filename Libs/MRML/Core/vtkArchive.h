@@ -25,7 +25,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 class VTK_MRML_EXPORT vtkArchive : public vtkObject
 {
 public:
-  static vtkArchive *New();
+  static vtkArchive* New();
   vtkTypeMacro(vtkArchive, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -33,7 +33,10 @@ public:
 
   // Warning, it extracts the archive into the current directory
   // With Qt, you can change the current directory using QDir::setCurrent()
-  static bool ExtractTar(const char* tarFileName, bool verbose, bool extract, std::vector<std::string> * extracted_files = nullptr);
+  static bool ExtractTar(const char* tarFileName,
+                         bool verbose,
+                         bool extract,
+                         std::vector<std::string>* extracted_files = nullptr);
 
   // creates a zip file with the full contents of the directory (recurses)
   // zip entries will include relative path of including tail of directoryToZip
@@ -41,7 +44,7 @@ public:
 
   // unzips zip file into specified directory
   // (internally this supports many formats of archive, not just zip)
-  static bool UnZip(const char* zipFileName, const char *destinationDirectory);
+  static bool UnZip(const char* zipFileName, const char* destinationDirectory);
 
 protected:
   vtkArchive();

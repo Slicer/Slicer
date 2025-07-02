@@ -36,8 +36,7 @@ class qSlicerAbstractModulePrivate;
 
 /// Overrides qSlicerAbstractCoreModule and adds an icon property to the
 /// module and associates a QAction to it.
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule
-  : public qSlicerAbstractCoreModule
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule : public qSlicerAbstractCoreModule
 {
   Q_OBJECT
   /// This property holds the module's icon.
@@ -45,18 +44,17 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule
   Q_PROPERTY(QIcon icon READ icon)
   Q_PROPERTY(QImage logo READ logo)
 public:
-
   typedef qSlicerAbstractCoreModule Superclass;
-  qSlicerAbstractModule(QObject *parent=nullptr);
+  qSlicerAbstractModule(QObject* parent = nullptr);
   ~qSlicerAbstractModule() override;
 
   /// Icon of the module. Anytime a graphical representation of the module
   /// is needed, the icon is used. It's the icon shown in the module selector
   /// as well as in the frequently used module toolbar (if any).
-  virtual QIcon icon()const;
+  virtual QIcon icon() const;
 
   /// The logo of the module, the credits given by the grants or institution
-  virtual QImage logo()const;
+  virtual QImage logo() const;
 
   /// Returns then associated QAction of the module. It contains all the
   /// information relative to the module. The text (QAction::text()) and icon
@@ -66,7 +64,8 @@ public:
   /// (QAction::property("index").toInt()).
   /// It is typically used in the module selector menu;
   /// triggering the QAction will make the module current.
-  Q_INVOKABLE QAction * action();
+  Q_INVOKABLE QAction* action();
+
 protected:
   QScopedPointer<qSlicerAbstractModulePrivate> d_ptr;
 

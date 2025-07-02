@@ -36,47 +36,48 @@ class Q_SLICER_QTMODULES_TEXTS_EXPORT qSlicerTextsModule : public qSlicerLoadabl
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
-public:
 
+public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerTextsModule(QObject *parent=nullptr);
+  qSlicerTextsModule(QObject* parent = nullptr);
   ~qSlicerTextsModule() override;
 
   /// Icon of the Texts module
-  QIcon icon()const override;
+  QIcon icon() const override;
 
   /// Categories where the module should appear
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Dependencies of the module
-  QStringList dependencies()const override;
+  QStringList dependencies() const override;
 
   /// Display name for the module
   qSlicerGetTitleMacro(tr("Texts"));
 
   /// Help text of the module
-  QString helpText()const override;
+  QString helpText() const override;
 
   /// Acknowledgement of the module
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
 
   /// Contributors of the module
-  QStringList contributors()const override;
+  QStringList contributors() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 protected:
   /// Reimplemented to initialize the Texts IO
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;
 
   QScopedPointer<qSlicerTextsModulePrivate> d_ptr;
+
 private:
   Q_DECLARE_PRIVATE(qSlicerTextsModule);
   Q_DISABLE_COPY(qSlicerTextsModule);

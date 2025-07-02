@@ -70,7 +70,7 @@ void saveScene(void* vtkNotUsed(data))
 }
 
 //------------------------------------------------------------------------------
-int qMRMLUtf8Test1(int argc, char * argv [] )
+int qMRMLUtf8Test1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -88,24 +88,27 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
   if (activeCodePage != CP_UTF8)
   {
     std::cout << "Active code page is not 65001 (UTF-8)."
-      << " This is expected on Windows 10 versions before 1903 (May 2019 Update)."
-      << " Further tests are skipped." << std::endl;
+              << " This is expected on Windows 10 versions before 1903 (May 2019 Update)."
+              << " Further tests are skipped." << std::endl;
     return 0;
   }
 #endif
 
   // Check if node name that contains special characters is loaded correctly
-  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeDisplayNode1"));
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode =
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeDisplayNode1"));
   CHECK_NOT_NULL(volumeDisplayNode);
   QString actualDisplayNodeName = QString::fromUtf8(volumeDisplayNode->GetName());
   // expectedDisplayNodeName contains a number of unicode characters that are not found in Latin1 character set
   // (the word is "a'rvi'ztu"ro" tu:ko:rfu'ro'ge'p" - https://en.wikipedia.org/wiki/Mojibake#Examples)
-  QString expectedDisplayNodeName = QString::fromUtf8(
-    u8"\u00e1\u0072\u0076\u00ed\u007a\u0074\u0171\u0072\u0151\u0020\u0074\u00fc\u006b\u00f6\u0072\u0066\u00fa\u0072\u00f3\u0067\u00e9\u0070");
+  QString expectedDisplayNodeName =
+    QString::fromUtf8(u8"\u00e1\u0072\u0076\u00ed\u007a\u0074\u0171\u0072\u0151\u0020\u0074\u00fc\u006b\u00f6\u0072"
+                      u8"\u0066\u00fa\u0072\u00f3\u0067\u00e9\u0070");
   CHECK_BOOL(actualDisplayNodeName == expectedDisplayNodeName, true);
 
   // Check that volume can be saved into filename with special character and that file can be loaded
-  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
+  vtkMRMLScalarVolumeNode* volumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNodeByID("vtkMRMLScalarVolumeNode1"));
   CHECK_NOT_NULL(volumeNode);
   vtkMRMLStorageNode* storageNode = vtkMRMLStorageNode::SafeDownCast(volumeNode->GetStorageNode());
   QString filenameWithSpecialChars = expectedDisplayNodeName + ".nrrd";
@@ -145,8 +148,7 @@ int qMRMLUtf8Test1(int argc, char * argv [] )
   ctkCallback callback;
   callback.setCallback(saveScene);
 
-  QObject::connect(myLineEdit, SIGNAL(textChanged(QString)),
-                   &callback, SLOT(invoke()));
+  QObject::connect(myLineEdit, SIGNAL(textChanged(QString)), &callback, SLOT(invoke()));
   myLineEdit->setText(QString("cam") + myLineEdit->text());
 
   if (argc < 3 || QString(argv[2]) != "-I")

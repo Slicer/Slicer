@@ -20,19 +20,18 @@
 
 class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStorageNode
 {
-  public:
-
-  static vtkMRMLVolumeSequenceStorageNode *New();
-  vtkTypeMacro(vtkMRMLVolumeSequenceStorageNode,vtkMRMLNRRDStorageNode);
+public:
+  static vtkMRMLVolumeSequenceStorageNode* New();
+  vtkTypeMacro(vtkMRMLVolumeSequenceStorageNode, vtkMRMLNRRDStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "VolumeSequenceStorage";};
+  const char* GetNodeTagName() override { return "VolumeSequenceStorage"; };
 
   /// Return true if the node can be read in.
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// Return true if the node can be written by using the writer.
   bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override;
@@ -48,7 +47,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStora
   /// The nrrd file will be formatted such as:
   /// "kinds: list domain domain domain"
 #endif
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
   ///
   /// Return a default file extension for writing

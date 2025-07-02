@@ -26,18 +26,12 @@ class vtkMRMLTransformableNodeTestHelper1 : public vtkMRMLTransformableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLTransformableNodeTestHelper1 *New();
+  static vtkMRMLTransformableNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLTransformableNodeTestHelper1,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLTransformableNodeTestHelper1, vtkMRMLTransformableNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLTransformableNodeTestHelper1::New();
-  }
-  const char* GetNodeTagName() override
-  {
-    return "vtkMRMLTransformableNodeTestHelper1";
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLTransformableNodeTestHelper1::New(); }
+  const char* GetNodeTagName() override { return "vtkMRMLTransformableNodeTestHelper1"; }
 };
 vtkStandardNewMacro(vtkMRMLTransformableNodeTestHelper1);
 
@@ -45,7 +39,7 @@ vtkStandardNewMacro(vtkMRMLTransformableNodeTestHelper1);
 int TestSetAndObserveTransformNodeID();
 
 //---------------------------------------------------------------------------
-int vtkMRMLTransformableNodeTest1(int , char * [] )
+int vtkMRMLTransformableNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLTransformableNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -63,18 +57,17 @@ int TestSetAndObserveTransformNodeID()
   vtkNew<vtkMRMLLinearTransformNode> transform;
   scene->AddNode(transform.GetPointer());
   vtkNew<vtkMatrix4x4> matrix;
-  matrix->SetElement(0,3, 1.);
+  matrix->SetElement(0, 3, 1.);
   transform->SetMatrixTransformToParent(matrix.GetPointer());
 
   transformable->SetAndObserveTransformNodeID(transform->GetID());
   CHECK_POINTER(transformable->GetParentTransformNode(), transform.GetPointer());
-  double point[3] = {0., 0., 0.};
-  double res[3] = {-1., -1., -1.};
+  double point[3] = { 0., 0., 0. };
+  double res[3] = { -1., -1., -1. };
   transformable->TransformPointToWorld(point, res);
   if (res[0] != 1. || res[1] != 0. || res[2] != 0.)
   {
-    std::cout << __LINE__ << "TransformPointToWorld failed"
-              << std::endl;
+    std::cout << __LINE__ << "TransformPointToWorld failed" << std::endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

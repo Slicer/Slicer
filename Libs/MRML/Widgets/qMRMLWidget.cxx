@@ -34,24 +34,24 @@
 #include <QSurfaceFormat>
 
 #ifdef _WIN32
-#include <Windows.h> //for SetProcessDPIAware
+#  include <Windows.h> //for SetProcessDPIAware
 #endif
 
 //-----------------------------------------------------------------------------
 class qMRMLWidgetPrivate
 {
 public:
-  vtkSmartPointer<vtkMRMLScene>              MRMLScene;
+  vtkSmartPointer<vtkMRMLScene> MRMLScene;
 };
 
 //-----------------------------------------------------------------------------
 // qMRMLWidget methods
 
 //-----------------------------------------------------------------------------
-qMRMLWidget::qMRMLWidget(QWidget * _parent, Qt::WindowFlags f):Superclass(_parent, f)
+qMRMLWidget::qMRMLWidget(QWidget* _parent, Qt::WindowFlags f)
+  : Superclass(_parent, f)
   , d_ptr(new qMRMLWidgetPrivate)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qMRMLWidget::~qMRMLWidget() = default;
@@ -62,7 +62,7 @@ void qMRMLWidget::setMRMLScene(vtkMRMLScene* newScene)
   Q_D(qMRMLWidget);
   if (newScene == d->MRMLScene)
   {
-    return ;
+    return;
   }
   d->MRMLScene = newScene;
   emit mrmlSceneChanged(newScene);
@@ -90,7 +90,7 @@ void qMRMLWidget::preInitializeApplication()
 
   QString openGLProfileStr = qgetenv(MRML_APPLICATION_OPENGL_PROFILE_ENV);
   openGLProfileStr = openGLProfileStr.toLower();
-  if (openGLProfileStr.isEmpty() || openGLProfileStr=="default")
+  if (openGLProfileStr.isEmpty() || openGLProfileStr == "default")
   {
     // Use default profile
 #ifdef _WIN32

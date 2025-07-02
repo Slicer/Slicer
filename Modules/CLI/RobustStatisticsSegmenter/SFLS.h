@@ -13,7 +13,7 @@ public:
   typedef CSFLS Self;
 
   typedef vnl_vector_fixed<int, 3> NodeType;
-  typedef std::list<NodeType>      CSFLSLayer;
+  typedef std::list<NodeType> CSFLSLayer;
 
   // typedef boost::shared_ptr< Self > Pointer;
 

@@ -25,13 +25,15 @@
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLExpandingWebViewPrivate: public QObject
+class qMRMLExpandingWebViewPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLExpandingWebView);
+
 protected:
   qMRMLExpandingWebView* const q_ptr;
+
 public:
   qMRMLExpandingWebViewPrivate(qMRMLExpandingWebView& object);
   ~qMRMLExpandingWebViewPrivate() override;
@@ -39,7 +41,7 @@ public:
   virtual void init();
 
   void setMRMLScene(vtkMRMLScene* scene);
-  vtkMRMLScene *mrmlScene();
+  vtkMRMLScene* mrmlScene();
 
 public slots:
   /// Handle MRML scene events
@@ -47,8 +49,7 @@ public slots:
   void endProcessing();
 
 protected:
-
-  vtkMRMLScene*                      MRMLScene;
+  vtkMRMLScene* MRMLScene;
 };
 
 #endif

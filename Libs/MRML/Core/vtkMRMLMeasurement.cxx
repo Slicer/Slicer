@@ -66,7 +66,7 @@ void vtkMRMLMeasurement::Clear()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurement::ClearValue(ComputationResult computationResult/*=NoChange*/)
+void vtkMRMLMeasurement::ClearValue(ComputationResult computationResult /*=NoChange*/)
 {
   bool modified = false;
   if (computationResult != NoChange)
@@ -101,7 +101,7 @@ void vtkMRMLMeasurement::ClearValue(ComputationResult computationResult/*=NoChan
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurement::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Enabled: " << (this->Enabled ? "true" : "false") << "\n";
   os << indent << "Name: " << this->Name << "\n";
   os << indent << "PrintableValue: " << this->GetValueWithUnitsAsPrintableString();
@@ -392,9 +392,12 @@ const char* vtkMRMLMeasurement::GetLastComputationResultAsPrintableString()
 {
   switch (this->LastComputationResult)
   {
-    case OK: return "OK";
-    case InsufficientInput: return "Insufficient input";
-    case InternalError: return "Internal error";
+    case OK:
+      return "OK";
+    case InsufficientInput:
+      return "Insufficient input";
+    case InternalError:
+      return "Internal error";
     default:
       // invalid id
       return "";
@@ -402,7 +405,9 @@ const char* vtkMRMLMeasurement::GetLastComputationResultAsPrintableString()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMeasurement::SetDisplayValue(double displayValue, const char* units/*=nullptr*/, double displayCoefficient/*=0.0*/)
+void vtkMRMLMeasurement::SetDisplayValue(double displayValue,
+                                         const char* units /*=nullptr*/,
+                                         double displayCoefficient /*=0.0*/)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Value to " << displayValue);
   bool modified = false;
@@ -524,13 +529,14 @@ double vtkMRMLMeasurement::GetDisplayValue()
 //---------------------------------------------------------------------------
 vtkMRMLUnitNode* vtkMRMLMeasurement::GetUnitNode(const char* quantityName)
 {
-  if (!quantityName || strlen(quantityName)==0)
+  if (!quantityName || strlen(quantityName) == 0)
   {
     return nullptr;
   }
   if (!this->InputMRMLNode || !this->InputMRMLNode->GetScene())
   {
-    vtkWarningMacro("vtkMRMLMeasurement::GetUnitNode failed: InputMRMLNode is required to get the unit node from the scene");
+    vtkWarningMacro(
+      "vtkMRMLMeasurement::GetUnitNode failed: InputMRMLNode is required to get the unit node from the scene");
     return nullptr;
   }
   vtkMRMLScene* scene = this->InputMRMLNode->GetScene();
@@ -538,15 +544,15 @@ vtkMRMLUnitNode* vtkMRMLMeasurement::GetUnitNode(const char* quantityName)
   {
     return nullptr;
   }
-  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-    scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode* selectionNode =
+    vtkMRMLSelectionNode::SafeDownCast(scene->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (!selectionNode)
   {
     vtkWarningMacro("vtkMRMLMeasurement::GetUnitNode failed: selection node not found");
     return nullptr;
   }
-  vtkMRMLUnitNode* unitNode = vtkMRMLUnitNode::SafeDownCast(scene->GetNodeByID(
-    selectionNode->GetUnitNodeID(quantityName)));
+  vtkMRMLUnitNode* unitNode =
+    vtkMRMLUnitNode::SafeDownCast(scene->GetNodeByID(selectionNode->GetUnitNodeID(quantityName)));
 
   // Do not log warning if null, because for example there is no 'angle' unit node, and in
   // that case hundreds of warnings would be thrown in a non erroneous situation.

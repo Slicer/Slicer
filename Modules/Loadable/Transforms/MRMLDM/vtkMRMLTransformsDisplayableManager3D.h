@@ -37,13 +37,11 @@ class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransfor
   : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
-
   static vtkMRMLTransformsDisplayableManager3D* New();
-  vtkTypeMacro(vtkMRMLTransformsDisplayableManager3D,vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLTransformsDisplayableManager3D, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLTransformsDisplayableManager3D();
   ~vtkMRMLTransformsDisplayableManager3D() override;
 
@@ -64,7 +62,6 @@ protected:
   void Create() override;
 
 private:
-
   vtkMRMLTransformsDisplayableManager3D(const vtkMRMLTransformsDisplayableManager3D&) = delete;
   void operator=(const vtkMRMLTransformsDisplayableManager3D&) = delete;
 

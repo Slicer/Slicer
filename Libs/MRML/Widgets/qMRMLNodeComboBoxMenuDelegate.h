@@ -39,27 +39,23 @@ class QComboBox;
 /// but correspond to an action.
 ///
 /// We reimplement the code from Qt "QComboMenuDelegate" used in the class QComboBox.
-class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxMenuDelegate: public QAbstractItemDelegate
+class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxMenuDelegate : public QAbstractItemDelegate
 {
   Q_OBJECT
 public:
   typedef QAbstractItemDelegate Superclass;
-  qMRMLNodeComboBoxMenuDelegate(QObject *parent, QComboBox *cmb);
+  qMRMLNodeComboBoxMenuDelegate(QObject* parent, QComboBox* cmb);
 
 protected:
-  void paint(QPainter *painter,
-                     const QStyleOptionViewItem &option,
-                     const QModelIndex &index) const override;
-  QSize sizeHint(const QStyleOptionViewItem &option,
-                         const QModelIndex &index) const override;
+  void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+  QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 private:
   /// Reimplemented to force the highlight in case the item is not selectable
   /// but current. The highlight color used is then slightly different from
   /// the default color
-  QStyleOptionMenuItem getStyleOption(const QStyleOptionViewItem &option,
-                                      const QModelIndex &index) const;
-  QComboBox *mCombo;
+  QStyleOptionMenuItem getStyleOption(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  QComboBox* mCombo;
   Q_DISABLE_COPY(qMRMLNodeComboBoxMenuDelegate);
 };
 

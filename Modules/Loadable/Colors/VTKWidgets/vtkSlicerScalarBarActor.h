@@ -36,13 +36,12 @@
 // MRMLLogic includes
 #include "vtkSlicerColorsModuleVTKWidgetsExport.h"
 
-class VTK_SLICER_COLORS_VTKWIDGETS_EXPORT vtkSlicerScalarBarActor
-  : public vtkScalarBarActor
+class VTK_SLICER_COLORS_VTKWIDGETS_EXPORT vtkSlicerScalarBarActor : public vtkScalarBarActor
 {
 public:
   // The usual VTK class functions
-  static vtkSlicerScalarBarActor *New();
-  vtkTypeMacro(vtkSlicerScalarBarActor,vtkScalarBarActor);
+  static vtkSlicerScalarBarActor* New();
+  vtkTypeMacro(vtkSlicerScalarBarActor, vtkScalarBarActor);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Get for the flag on using VTK6 annotation as label
@@ -91,8 +90,11 @@ protected:
   /// Parses the requestedFormat string to find a validated format for the types contained in typeString.
   /// validatedFormat is set to the first matching sprintf for the input types
   /// prefix and suffix are set to the non-matching components of requestedFormat
-  static bool ValidateFormatString(std::string& validatedFormat, std::string& prefix, std::string& suffix,
-    const std::string& requestedFormat, const std::string& typeString);
+  static bool ValidateFormatString(std::string& validatedFormat,
+                                   std::string& prefix,
+                                   std::string& suffix,
+                                   const std::string& requestedFormat,
+                                   const std::string& typeString);
 
   /// flag for setting color name as label
   int UseAnnotationAsLabel;

@@ -25,20 +25,17 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerPythonManager : public qSlicerCorePython
 
 public:
   typedef qSlicerCorePythonManager Superclass;
-  qSlicerPythonManager(QObject* parent=nullptr);
+  qSlicerPythonManager(QObject* parent = nullptr);
   ~qSlicerPythonManager() override;
 
 protected:
-
   void preInitialization() override;
   void executeInitializationScripts() override;
 
 private:
-
   /// This is the callback helper function that isolates the event broker from
   /// knowing about any particular scripting implementation of observations code.
-  static void eventBrokerScriptHandler(const char *script, void *clientData);
-
+  static void eventBrokerScriptHandler(const char* script, void* clientData);
 };
 
 #endif

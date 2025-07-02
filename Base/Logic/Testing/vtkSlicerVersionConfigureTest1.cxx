@@ -24,7 +24,7 @@
 #include <vtkAddonTestingMacros.h>
 
 //-----------------------------------------------------------------------------
-int vtkSlicerVersionConfigureTest1(int /*argc*/, char * /*argv*/ [])
+int vtkSlicerVersionConfigureTest1(int /*argc*/, char* /*argv*/[])
 {
   // From vtkSlicerVersionConfigure
   CHECK_STRING_DIFFERENT(Slicer_VERSION, "");

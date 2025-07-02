@@ -23,21 +23,20 @@
 
 #include "qSlicerPlotsModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_PLOTS_WIDGETS_PLUGINS_EXPORT
-qMRMLPlotSeriesPropertiesWidgetPlugin
-  : public QObject, public qSlicerPlotsModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_PLOTS_WIDGETS_PLUGINS_EXPORT qMRMLPlotSeriesPropertiesWidgetPlugin
+  : public QObject
+  , public qSlicerPlotsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLPlotSeriesPropertiesWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLPlotSeriesPropertiesWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

@@ -64,8 +64,7 @@ public:
   Q_INVOKABLE void unregisterAll();
 
   /// Returns the list of additional options widgets registered
-  Q_INVOKABLE const QList<QString> registeredOptionsWidgetsClassNames() const
-  { return this->RegisteredWidgets.keys(); }
+  Q_INVOKABLE const QList<QString> registeredOptionsWidgetsClassNames() const { return this->RegisteredWidgets.keys(); }
 
   /// Creates a markups option widget of a given class name. The markups option
   /// widget must have been registered previously (nullptr will return if not).
@@ -83,12 +82,13 @@ private:
   static void cleanup();
 
 private:
-  qMRMLMarkupsOptionsWidgetsFactory(QObject* parent=nullptr);
+  qMRMLMarkupsOptionsWidgetsFactory(QObject* parent = nullptr);
   ~qMRMLMarkupsOptionsWidgetsFactory() override;
 
   Q_DISABLE_COPY(qMRMLMarkupsOptionsWidgetsFactory);
   friend class qMRMLMarkupsOptionsWidgetsFactoryCleanup;
-  friend class PythonQtWrapper_qMRMLMarkupsOptionsWidgetsFactory; // Allow Python wrapping without enabling direct instantiation
+  friend class PythonQtWrapper_qMRMLMarkupsOptionsWidgetsFactory; // Allow Python wrapping without enabling direct
+                                                                  // instantiation
 
 private:
   /// Instance of the singleton

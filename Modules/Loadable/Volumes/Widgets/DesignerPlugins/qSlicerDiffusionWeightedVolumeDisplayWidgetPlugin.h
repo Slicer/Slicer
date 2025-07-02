@@ -20,21 +20,20 @@
 
 #include "qSlicerVolumesModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_VOLUMES_WIDGETS_PLUGINS_EXPORT
-qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
-  : public QObject, public qSlicerVolumesModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_VOLUMES_WIDGETS_PLUGINS_EXPORT qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
+  : public QObject
+  , public qSlicerVolumesModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin(QObject *_parent = nullptr);
+  qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

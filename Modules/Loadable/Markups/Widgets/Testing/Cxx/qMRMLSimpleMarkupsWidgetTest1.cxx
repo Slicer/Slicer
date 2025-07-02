@@ -32,7 +32,7 @@
 // VTK includes
 #include <vtkNew.h>
 
-int qMRMLSimpleMarkupsWidgetTest1( int argc, char * argv [] )
+int qMRMLSimpleMarkupsWidgetTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);
 

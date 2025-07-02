@@ -41,19 +41,19 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qSlicerTerminologyEditorButton : pub
   Q_OBJECT
 
 public:
-  explicit qSlicerTerminologyEditorButton(QWidget* parent=nullptr);
+  explicit qSlicerTerminologyEditorButton(QWidget* parent = nullptr);
   ~qSlicerTerminologyEditorButton() override;
 
 #ifndef __VTK_WRAP__
   /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object
-  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
+  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo);
 #endif
 
 public slots:
 
 #ifndef __VTK_WRAP__
   /// Set terminology and other metadata (name, color, auto-generated flags)
-  void setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
+  void setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo);
 #endif
 
   /// Opens a terminology dialog to select a new terminology.
@@ -67,13 +67,14 @@ signals:
   void userSetCustomNameOrColor();
 
 protected slots:
-  void onToggled(bool toggled=true);
+  void onToggled(bool toggled = true);
 
 protected:
   void paintEvent(QPaintEvent* event) override;
 
   QScopedPointer<qSlicerTerminologyEditorButtonPrivate> d_ptr;
-private :
+
+private:
   Q_DECLARE_PRIVATE(qSlicerTerminologyEditorButton);
   Q_DISABLE_COPY(qSlicerTerminologyEditorButton);
 };

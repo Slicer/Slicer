@@ -16,14 +16,12 @@
 //-----------------------------------------------------------------------------
 qMRMLSegmentationShow3DButtonPlugin::qMRMLSegmentationShow3DButtonPlugin(QObject* pluginParent)
   : QObject(pluginParent)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentationShow3DButtonPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentationShow3DButtonPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentationShow3DButton* pluginWidget =
-    new qMRMLSegmentationShow3DButton(parentWidget);
+  qMRMLSegmentationShow3DButton* pluginWidget = new qMRMLSegmentationShow3DButton(parentWidget);
   return pluginWidget;
 }
 
@@ -32,7 +30,7 @@ QString qMRMLSegmentationShow3DButtonPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentationShow3DButton\" \
           name=\"SegmentationShow3DButton\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

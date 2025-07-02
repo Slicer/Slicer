@@ -27,7 +27,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation3D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerROIRepresentation3D_h
 #define vtkSlicerROIRepresentation3D_h
@@ -52,40 +52,45 @@ class vtkPolyData;
 class vtkTransformPolyDataFilter;
 class vtkTubeFilter;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerROIRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerROIRepresentation3D
+  : public vtkSlicerMarkupsWidgetRepresentation3D
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerROIRepresentation3D *New();
+  static vtkSlicerROIRepresentation3D* New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerROIRepresentation3D,vtkSlicerMarkupsWidgetRepresentation3D);
+  vtkTypeMacro(vtkSlicerROIRepresentation3D, vtkSlicerMarkupsWidgetRepresentation3D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Subclasses of vtkMRMLAbstractWidgetRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData=nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Updates the dimensions of the cube source filter
   virtual void UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINode* roiNode);
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) override;
-  void ReleaseGraphicsResources(vtkWindow *) override;
-  int RenderOverlay(vtkViewport *viewport) override;
-  int RenderOpaqueGeometry(vtkViewport *viewport) override;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  void GetActors(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
+  int RenderOpaqueGeometry(vtkViewport* viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport* viewport) override;
   vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
   double* GetBounds() VTK_SIZEHINT(6) override;
 
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+                   int& foundComponentType,
+                   int& foundComponentIndex,
+                   double& closestDistance2) override;
 
   void CanInteractWithROI(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+                          int& foundComponentType,
+                          int& foundComponentIndex,
+                          double& closestDistance2);
 
 protected:
   vtkSlicerROIRepresentation3D();
@@ -97,28 +102,28 @@ protected:
 
   vtkSmartPointer<vtkPassThrough> ROIPipelineInputFilter;
 
-  vtkSmartPointer<vtkTransformPolyDataFilter>    ROITransformFilter;
-  vtkSmartPointer<vtkTransform>                  ROIToWorldTransform;
+  vtkSmartPointer<vtkTransformPolyDataFilter> ROITransformFilter;
+  vtkSmartPointer<vtkTransform> ROIToWorldTransform;
 
-  vtkSmartPointer<vtkPolyDataMapper>             ROIMapper;
-  vtkSmartPointer<vtkProperty>                   ROIProperty;
-  vtkSmartPointer<vtkActor>                      ROIActor;
+  vtkSmartPointer<vtkPolyDataMapper> ROIMapper;
+  vtkSmartPointer<vtkProperty> ROIProperty;
+  vtkSmartPointer<vtkActor> ROIActor;
 
-  vtkSmartPointer<vtkPolyDataMapper>             ROIOccludedMapper;
-  vtkSmartPointer<vtkProperty>                   ROIOccludedProperty;
-  vtkSmartPointer<vtkActor>                      ROIOccludedActor;
+  vtkSmartPointer<vtkPolyDataMapper> ROIOccludedMapper;
+  vtkSmartPointer<vtkProperty> ROIOccludedProperty;
+  vtkSmartPointer<vtkActor> ROIOccludedActor;
 
-  vtkSmartPointer<vtkOutlineFilter>              ROIOutlineFilter;
+  vtkSmartPointer<vtkOutlineFilter> ROIOutlineFilter;
 
-  vtkSmartPointer<vtkTransformPolyDataFilter>    ROIOutlineTransformFilter;
+  vtkSmartPointer<vtkTransformPolyDataFilter> ROIOutlineTransformFilter;
 
-  vtkSmartPointer<vtkPolyDataMapper>             ROIOutlineMapper;
-  vtkSmartPointer<vtkProperty>                   ROIOutlineProperty;
-  vtkSmartPointer<vtkActor>                      ROIOutlineActor;
+  vtkSmartPointer<vtkPolyDataMapper> ROIOutlineMapper;
+  vtkSmartPointer<vtkProperty> ROIOutlineProperty;
+  vtkSmartPointer<vtkActor> ROIOutlineActor;
 
-  vtkSmartPointer<vtkPolyDataMapper>             ROIOutlineOccludedMapper;
-  vtkSmartPointer<vtkProperty>                   ROIOutlineOccludedProperty;
-  vtkSmartPointer<vtkActor>                      ROIOutlineOccludedActor;
+  vtkSmartPointer<vtkPolyDataMapper> ROIOutlineOccludedMapper;
+  vtkSmartPointer<vtkProperty> ROIOutlineOccludedProperty;
+  vtkSmartPointer<vtkActor> ROIOutlineOccludedActor;
 
 private:
   vtkSlicerROIRepresentation3D(const vtkSlicerROIRepresentation3D&) = delete;

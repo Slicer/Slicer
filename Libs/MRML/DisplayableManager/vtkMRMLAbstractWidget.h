@@ -36,7 +36,7 @@
  * @sa
  * vtkSlicerWidgetRepresentation vtkSlicerWidgetEventTranslator
  *
-*/
+ */
 
 #ifndef vtkMRMLAbstractWidget_h
 #define vtkMRMLAbstractWidget_h
@@ -68,30 +68,30 @@ public:
 
   /// Set the representation.
   /// The widget takes over the ownership of this actor.
-  virtual void SetRepresentation(vtkMRMLAbstractWidgetRepresentation *r);
+  virtual void SetRepresentation(vtkMRMLAbstractWidgetRepresentation* r);
 
   /// Get the representation
-  virtual vtkMRMLAbstractWidgetRepresentation *GetRepresentation();
+  virtual vtkMRMLAbstractWidgetRepresentation* GetRepresentation();
 
   /// Build the actors of the representation with the info stored in the MRML scene
-  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
+  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr);
 
   /// Convenient method to change what state the widget is in.
-  vtkSetMacro(WidgetState,int);
+  vtkSetMacro(WidgetState, int);
 
   /// Convenient method to determine the state of the method
-  vtkGetMacro(WidgetState,int);
+  vtkGetMacro(WidgetState, int);
 
   /// The state of the widget
   enum
   {
-    WidgetStateAny, ///< this state is used for referring to any widget state (for defining event translations)
-    WidgetStateIdle, ///< mouse pointer is outside the widget, click does not do anything
-    WidgetStateOnWidget, ///< mouse pointer is over the widget, clicking will add a point or manipulate the line
+    WidgetStateAny,       ///< this state is used for referring to any widget state (for defining event translations)
+    WidgetStateIdle,      ///< mouse pointer is outside the widget, click does not do anything
+    WidgetStateOnWidget,  ///< mouse pointer is over the widget, clicking will add a point or manipulate the line
     WidgetStateTranslate, ///< mouse move transforms the entire widget
-    WidgetStateRotate, ///< mouse move transforms the entire widget
-    WidgetStateScale, ///< mouse move transforms the entire widget
-    WidgetStateUser ///< this is a starting index that can be used for widget-specific states
+    WidgetStateRotate,    ///< mouse move transforms the entire widget
+    WidgetStateScale,     ///< mouse move transforms the entire widget
+    WidgetStateUser       ///< this is a starting index that can be used for widget-specific states
   };
 
   /// Widget events
@@ -106,28 +106,34 @@ public:
     WidgetEventScaleStart,
     WidgetEventScaleEnd,
     // MRML events
-    WidgetEventPick, ///< generates a MRML Pick event (e.g., on left click)
-    WidgetEventJumpCursor, ///< jumps cursor to the selected position
-    WidgetEventAction, // generates a MRML Action event (e.g., left double-click)
-    WidgetEventCustomAction1, ///< allows modules to define custom widget actions and get notification via MRML node event
-    WidgetEventCustomAction2, ///< allows modules to define custom widget actions and get notification via MRML node event
-    WidgetEventCustomAction3, ///< allows modules to define custom widget actions and get notification via MRML node event
-    WidgetEventCustomAction4, ///< allows modules to define custom widget actions and get notification via MRML node event
-    WidgetEventCustomAction5, ///< allows modules to define custom widget actions and get notification via MRML node event
-    WidgetEventCustomAction6, ///< allows modules to define custom widget actions and get notification via MRML node event
-    WidgetEventSelect, ///< change MRML node Selected attribute
-    WidgetEventUnselect, ///< change MRML node Selected attribute
-    WidgetEventToggleSelect, ///< change MRML node Selected attribute
+    WidgetEventPick,          ///< generates a MRML Pick event (e.g., on left click)
+    WidgetEventJumpCursor,    ///< jumps cursor to the selected position
+    WidgetEventAction,        // generates a MRML Action event (e.g., left double-click)
+    WidgetEventCustomAction1, ///< allows modules to define custom widget actions and get notification via MRML node
+                              ///< event
+    WidgetEventCustomAction2, ///< allows modules to define custom widget actions and get notification via MRML node
+                              ///< event
+    WidgetEventCustomAction3, ///< allows modules to define custom widget actions and get notification via MRML node
+                              ///< event
+    WidgetEventCustomAction4, ///< allows modules to define custom widget actions and get notification via MRML node
+                              ///< event
+    WidgetEventCustomAction5, ///< allows modules to define custom widget actions and get notification via MRML node
+                              ///< event
+    WidgetEventCustomAction6, ///< allows modules to define custom widget actions and get notification via MRML node
+                              ///< event
+    WidgetEventSelect,        ///< change MRML node Selected attribute
+    WidgetEventUnselect,      ///< change MRML node Selected attribute
+    WidgetEventToggleSelect,  ///< change MRML node Selected attribute
     // Other actions
-    WidgetEventMenu, ///< show context menu
+    WidgetEventMenu,  ///< show context menu
     WidgetEventReset, ///< reset widget to initial state (clear all points)
-    WidgetEventUser ///< this is a starting index that can be used for widget-specific events
+    WidgetEventUser   ///< this is a starting index that can be used for widget-specific events
   };
 
   /// Return true if the widget can process the event.
   /// Distance2 is the squared distance in display coordinates from the closest interaction position.
   /// The displayable manager with the closest distance will get the chance to process the interaction event.
-  virtual bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2);
+  virtual bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2);
 
   /// Allows injecting interaction events for processing, without directly observing window interactor events.
   /// Return true if the widget processed the event.
@@ -137,8 +143,12 @@ public:
   /// Used in the specified widget state only.
   void SetEventTranslation(int widgetState, unsigned long interactionEvent, int modifiers, unsigned long widgetEvent);
 
-  void SetEventTranslationClickAndDrag(int widgetState, unsigned long startInteractionEvent, int modifiers,
-    int widgetStateDragging, unsigned long widgetStartEvent, unsigned long widgetEndEvent);
+  void SetEventTranslationClickAndDrag(int widgetState,
+                                       unsigned long startInteractionEvent,
+                                       int modifiers,
+                                       int widgetStateDragging,
+                                       unsigned long widgetStartEvent,
+                                       unsigned long widgetEndEvent);
 
   /// Define interaction event to widget event translation for mouse and other controller events.
   /// Used in any widget state.
@@ -146,11 +156,20 @@ public:
 
   /// Define interaction event to widget event translation for keyboard events.
   /// Used in any widget state.
-  void SetKeyboardEventTranslation(int modifier, char keyCode, int repeatCount, const char* keySym, unsigned long widgetEvent);
+  void SetKeyboardEventTranslation(int modifier,
+                                   char keyCode,
+                                   int repeatCount,
+                                   const char* keySym,
+                                   unsigned long widgetEvent);
 
   /// Define interaction event to widget event translation for keyboard events.
   /// Used in the specified widget state only.
-  void SetKeyboardEventTranslation(int widgetState, int modifier, char keyCode, int repeatCount, const char* keySym, unsigned long widgetEvent);
+  void SetKeyboardEventTranslation(int widgetState,
+                                   int modifier,
+                                   char keyCode,
+                                   int repeatCount,
+                                   const char* keySym,
+                                   unsigned long widgetEvent);
 
   /// Get widget event from translation event
   virtual unsigned long TranslateInteractionEventToWidgetEvent(vtkMRMLInteractionEventData* eventData);
@@ -191,8 +210,8 @@ protected:
   const char* GetAssociatedNodeID(vtkMRMLInteractionEventData* eventData);
 
   /// Helper function that attempts to translate an event with a specific translator only.
-  unsigned long TranslateInteractionEventToWidgetEvent(
-    vtkWidgetEventTranslator* translator, vtkMRMLInteractionEventData* eventData);
+  unsigned long TranslateInteractionEventToWidgetEvent(vtkWidgetEventTranslator* translator,
+                                                       vtkMRMLInteractionEventData* eventData);
 
   /// Generate a button click event and checks if it can be processed with CanProcessInteractionEvent.
   bool CanProcessButtonClickEvent(vtkMRMLInteractionEventData* eventData, double& distance2);
@@ -209,13 +228,13 @@ protected:
   // In the future, a vector of event translators could be added
   // (one for each state) to be able to define events
   // that are only allowed in a specific state.
-  std::vector< vtkSmartPointer<vtkWidgetEventTranslator> > EventTranslators;
+  std::vector<vtkSmartPointer<vtkWidgetEventTranslator>> EventTranslators;
 
   int WidgetState;
 
   vtkSmartPointer<vtkMRMLAbstractWidgetRepresentation> WidgetRep;
 
-//  bool NeedToRender;
+  //  bool NeedToRender;
 
 private:
   vtkMRMLAbstractWidget(const vtkMRMLAbstractWidget&) = delete;

@@ -42,7 +42,7 @@ class Q_SLICER_MODULE_VOLUMES_WIDGETS_PLUGINS_EXPORT qSlicerVolumesModuleWidgets
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
-    QList< QDesignerCustomWidgetInterface* > plugins;
+    QList<QDesignerCustomWidgetInterface*> plugins;
     plugins << new qSlicerDiffusionTensorVolumeDisplayWidgetPlugin;
     plugins << new qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin;
     plugins << new qSlicerDTISliceDisplayWidgetPlugin;

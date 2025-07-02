@@ -31,12 +31,12 @@ class vtkImageStencilData;
 class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-  vtkTypeMacro(vtkMRMLVolumeDisplayNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLVolumeDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -57,14 +57,14 @@ public:
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Sets ImageData for background mask
   /// Must be reimplemented in deriving class if they need it.
   /// GetBackgroundImageStencilDataConnection() returns 0 if the background image data
   /// is not used.
-  virtual void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput * imageDataConnection);
+  virtual void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* imageDataConnection);
   virtual vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection();
   virtual vtkImageStencilData* GetBackgroundImageStencilData();
 
@@ -85,7 +85,7 @@ public:
   /// Filters can be applied to the input image data. The output image data
   /// is the one used by the mappers.
   /// It internally calls SetInputImageDataPipeline that can be reimplemented.
-  virtual void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection);
+  virtual void SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection);
   virtual vtkAlgorithmOutput* GetInputImageDataConnection();
 
   /// Gets the pipeline input. To be reimplemented in subclasses.
@@ -101,9 +101,7 @@ public:
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
   ///
   /// set gray colormap or override in subclass
   virtual void SetDefaultColorMap();
@@ -118,7 +116,7 @@ protected:
   vtkMRMLVolumeDisplayNode(const vtkMRMLVolumeDisplayNode&);
   void operator=(const vtkMRMLVolumeDisplayNode&);
 
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection);
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection);
 };
 
 #endif

@@ -31,28 +31,26 @@
 
 class qSlicerUnitsModulePrivate;
 
-class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerUnitsModule(QObject *parent=nullptr);
+  explicit qSlicerUnitsModule(QObject* parent = nullptr);
   ~qSlicerUnitsModule() override;
 
   qSlicerGetTitleMacro(tr("Units"));
 
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
-  QIcon icon()const override;
+  QIcon icon() const override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
   QStringList dependencies() const override;
 
   /// Hide unit module by default
@@ -63,7 +61,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;
@@ -74,7 +72,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerUnitsModule);
   Q_DISABLE_COPY(qSlicerUnitsModule);
-
 };
 
 #endif

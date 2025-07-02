@@ -42,18 +42,18 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsDisplayNodeWidget : pub
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLMarkupsDisplayNodeWidget(QWidget *parent=nullptr);
+  qMRMLMarkupsDisplayNodeWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsDisplayNodeWidget() override;
 
-  vtkMRMLMarkupsDisplayNode* mrmlMarkupsDisplayNode()const;
+  vtkMRMLMarkupsDisplayNode* mrmlMarkupsDisplayNode() const;
 
-  bool visibility()const;
+  bool visibility() const;
 
-  bool glyphSizeIsAbsolute()const;
-  bool curveLineSizeIsAbsolute()const;
+  bool glyphSizeIsAbsolute() const;
+  bool curveLineSizeIsAbsolute() const;
 
-  bool propertiesLabelVisibility()const;
-  bool pointLabelsVisibility()const;
+  bool propertiesLabelVisibility() const;
+  bool pointLabelsVisibility() const;
 
 signals:
   /// Signal sent if the any property in the display node is changed
@@ -63,9 +63,9 @@ signals:
 
 public slots:
   /// Set the markups display node to show edit properties of
-  void setMRMLMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode *node);
+  void setMRMLMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode* node);
   /// Utility function to be connected with generic signals
-  void setMRMLMarkupsDisplayNode(vtkMRMLNode *node);
+  void setMRMLMarkupsDisplayNode(vtkMRMLNode* node);
 
   /// Set the markups display node to show edit properties of,
   /// by specifying markups node.
@@ -93,7 +93,7 @@ public slots:
 
 protected slots:
   void updateWidgetFromMRML();
-  vtkMRMLSelectionNode* getSelectionNode(vtkMRMLScene *mrmlScene);
+  vtkMRMLSelectionNode* getSelectionNode(vtkMRMLScene* mrmlScene);
 
   void onSelectedColorPickerButtonChanged(QColor qcolor);
   void onUnselectedColorPickerButtonChanged(QColor qcolor);

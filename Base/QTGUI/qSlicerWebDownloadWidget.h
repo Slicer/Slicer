@@ -31,20 +31,17 @@ class ctkPathLineEdit;
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebDownloadWidget
-  : public QDialog
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebDownloadWidget : public QDialog
 {
   Q_OBJECT
 
 public:
-
   /// Constructor
-  explicit qSlicerWebDownloadWidget(QWidget *parent = nullptr);
+  explicit qSlicerWebDownloadWidget(QWidget* parent = nullptr);
 
 public slots:
 
   void handleDownload(QWebEngineDownloadItem* download);
-
 };
 
 #endif

@@ -47,9 +47,7 @@ public:
 // qSlicerTemplateKeyModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyModulePrivate::qSlicerTemplateKeyModulePrivate()
-{
-}
+qSlicerTemplateKeyModulePrivate::qSlicerTemplateKeyModulePrivate() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerTemplateKeyModule methods
@@ -58,13 +56,10 @@ qSlicerTemplateKeyModulePrivate::qSlicerTemplateKeyModulePrivate()
 qSlicerTemplateKeyModule::qSlicerTemplateKeyModule(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerTemplateKeyModulePrivate)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyModule::~qSlicerTemplateKeyModule()
-{
-}
+qSlicerTemplateKeyModule::~qSlicerTemplateKeyModule() {}
 
 //-----------------------------------------------------------------------------
 bool qSlicerTemplateKeyModule::isHidden() const

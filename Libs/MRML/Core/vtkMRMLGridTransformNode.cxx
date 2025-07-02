@@ -33,14 +33,14 @@ vtkMRMLGridTransformNode::vtkMRMLGridTransformNode()
   // Set up the node with a dummy displacement field (that contains one single
   // null-vector) to make sure the node is valid and can be saved
   vtkNew<vtkImageData> emptyDisplacementField;
-  emptyDisplacementField->SetDimensions(1,1,1);
+  emptyDisplacementField->SetDimensions(1, 1, 1);
   emptyDisplacementField->AllocateScalars(VTK_DOUBLE, 3);
-  emptyDisplacementField->SetScalarComponentFromDouble(0,0,0, 0, 0.0);
-  emptyDisplacementField->SetScalarComponentFromDouble(0,0,0, 1, 0.0);
-  emptyDisplacementField->SetScalarComponentFromDouble(0,0,0, 2, 0.0);
+  emptyDisplacementField->SetScalarComponentFromDouble(0, 0, 0, 0, 0.0);
+  emptyDisplacementField->SetScalarComponentFromDouble(0, 0, 0, 1, 0.0);
+  emptyDisplacementField->SetScalarComponentFromDouble(0, 0, 0, 2, 0.0);
 
   vtkNew<vtkOrientedGridTransform> warp;
-  warp->SetDisplacementGridData( emptyDisplacementField.GetPointer() );
+  warp->SetDisplacementGridData(emptyDisplacementField.GetPointer());
 
   this->SetAndObserveTransformFromParent(warp.GetPointer());
 }
@@ -66,5 +66,5 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLGridTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }

@@ -23,21 +23,20 @@
 
 #include "qSlicerTablesModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_TABLES_WIDGETS_PLUGINS_EXPORT
-qSlicerTableColumnPropertiesWidgetPlugin
-  : public QObject, public qSlicerTablesModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_TABLES_WIDGETS_PLUGINS_EXPORT qSlicerTableColumnPropertiesWidgetPlugin
+  : public QObject
+  , public qSlicerTablesModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qSlicerTableColumnPropertiesWidgetPlugin(QObject *_parent = nullptr);
+  qSlicerTableColumnPropertiesWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

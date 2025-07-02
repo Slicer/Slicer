@@ -41,7 +41,6 @@ class QMRML_WIDGETS_EXPORT qMRMLMatrixWidget : public ctkVTKAbstractMatrixWidget
   Q_ENUMS(CoordinateReferenceType)
 
 public:
-
   /// Constructors
   typedef ctkVTKAbstractMatrixWidget Superclass;
   explicit qMRMLMatrixWidget(QWidget* parent);
@@ -50,11 +49,15 @@ public:
   ///
   /// Set/Get Coordinate system
   /// By default, the selector coordinate system will be set to GLOBAL
-  enum CoordinateReferenceType { GLOBAL, LOCAL };
+  enum CoordinateReferenceType
+  {
+    GLOBAL,
+    LOCAL
+  };
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
-  vtkMRMLTransformNode* mrmlTransformNode()const;
+  vtkMRMLTransformNode* mrmlTransformNode() const;
 
 public slots:
   ///

@@ -44,17 +44,17 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsPlaneWidget : public qM
 
 public:
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsPlaneWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsPlaneWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsPlaneWidget() override;
 
   /// Returns the current MRML Plane node
-  vtkMRMLMarkupsPlaneNode* mrmlPlaneNode()const;
+  vtkMRMLMarkupsPlaneNode* mrmlPlaneNode() const;
 
   /// Gets the name of the additional options widget type
   const QString className() const override { return "qMRMLMarkupsPlaneWidget"; }
 
   /// Checks whether a given node can be handled by the widget
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
 
 public slots:
   /// Updates the widget based on information from MRML.
@@ -64,10 +64,7 @@ public slots:
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
   /// Returns an instance of the widget
-  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
-  {
-    return new qMRMLMarkupsPlaneWidget();
-  }
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override { return new qMRMLMarkupsPlaneWidget(); }
 
 protected slots:
   /// Internal function to update type of Plane
@@ -87,7 +84,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLMarkupsPlaneWidget);
   Q_DISABLE_COPY(qMRMLMarkupsPlaneWidget);
-
 };
 
 #endif

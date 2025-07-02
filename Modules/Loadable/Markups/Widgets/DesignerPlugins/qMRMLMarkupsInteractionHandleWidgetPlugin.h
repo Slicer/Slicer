@@ -25,19 +25,19 @@
 #include "qSlicerMarkupsModuleWidgetsAbstractPlugin.h"
 
 class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT qMRMLMarkupsInteractionHandleWidgetPlugin
-    : public QObject, public qSlicerMarkupsModuleWidgetsAbstractPlugin
+  : public QObject
+  , public qSlicerMarkupsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLMarkupsInteractionHandleWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLMarkupsInteractionHandleWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
-  QString  domXml() const override;
-  QString  includeFile() const override;
-  bool     isContainer() const override;
-  QString  name() const override;
-
+  QWidget* createWidget(QWidget* _parent) override;
+  QString domXml() const override;
+  QString includeFile() const override;
+  bool isContainer() const override;
+  QString name() const override;
 };
 
 #endif

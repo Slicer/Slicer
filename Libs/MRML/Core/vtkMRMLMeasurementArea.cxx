@@ -41,7 +41,7 @@ vtkMRMLMeasurementArea::~vtkMRMLMeasurementArea() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurementArea::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
@@ -64,7 +64,7 @@ void vtkMRMLMeasurementArea::Compute()
     if (curveNode->GetNumberOfDefinedControlPoints(true) < 3)
     {
       vtkDebugMacro("Compute: Curve nodes must have more than one control points ("
-        << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
+                    << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
       this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
       return;
     }

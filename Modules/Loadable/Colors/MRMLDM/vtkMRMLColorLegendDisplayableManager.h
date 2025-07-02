@@ -30,8 +30,8 @@ class vtkMRMLScene;
 /// \brief Displayable manager for color legends.
 ///
 /// This displayable manager implements color legend display in both 2D and 3D views.
-class VTK_SLICER_COLORS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLColorLegendDisplayableManager :
-  public vtkMRMLAbstractDisplayableManager
+class VTK_SLICER_COLORS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLColorLegendDisplayableManager
+  : public vtkMRMLAbstractDisplayableManager
 {
 public:
   static vtkMRMLColorLegendDisplayableManager* New();
@@ -60,9 +60,7 @@ protected:
   void UnobserveMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  void ProcessMRMLNodesEvents(vtkObject *caller,
-                                      unsigned long event,
-                                      void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Called when the SliceNode or Three3DViewNode are modified. May cause ColorLegend to remap its position on screen.
   void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;

@@ -37,14 +37,16 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLDoubleSpinBoxDelegate : 
   Q_OBJECT
 
 public:
-  qMRMLDoubleSpinBoxDelegate(QObject *parent = nullptr);
+  qMRMLDoubleSpinBoxDelegate(QObject* parent = nullptr);
 
-  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-  void setEditorData(QWidget *editor, const QModelIndex &index) const override;
-  void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
+  void setEditorData(QWidget* editor, const QModelIndex& index) const override;
+  void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
 
-  void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  void updateEditorGeometry(QWidget* editor,
+                            const QStyleOptionViewItem& option,
+                            const QModelIndex& index) const override;
 
 protected slots:
   void commitSenderData();

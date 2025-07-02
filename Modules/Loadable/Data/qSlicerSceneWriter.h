@@ -27,8 +27,7 @@
 // Data includes
 #include "qSlicerDataModuleExport.h"
 
-class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneWriter
-  : public qSlicerFileWriter
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneWriter : public qSlicerFileWriter
 {
   Q_OBJECT
 public:
@@ -36,16 +35,16 @@ public:
   qSlicerSceneWriter(QObject* parent = nullptr);
   ~qSlicerSceneWriter() override;
 
-  QString description()const override;
-  IOFileType fileType()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
 
   /// Return true if the object is handled by the writer.
-  bool canWriteObject(vtkObject* object)const override;
+  bool canWriteObject(vtkObject* object) const override;
 
   /// Return  a list of the supported extensions for a particular object.
   /// Please read QFileDialog::nameFilters for the allowed formats
   /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
-  QStringList extensions(vtkObject* object)const override;
+  QStringList extensions(vtkObject* object) const override;
 
   /// Write the node identified by nodeID into the fileName file.
   /// Returns true on success.

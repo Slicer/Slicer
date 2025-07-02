@@ -28,11 +28,13 @@
 #include <vtkMRMLROINode.h>
 
 // --------------------------------------------------------------------------
-class qMRMLROIWidgetPrivate: public Ui_qMRMLROIWidget
+class qMRMLROIWidgetPrivate : public Ui_qMRMLROIWidget
 {
   Q_DECLARE_PUBLIC(qMRMLROIWidget);
+
 protected:
   qMRMLROIWidget* const q_ptr;
+
 public:
   qMRMLROIWidgetPrivate(qMRMLROIWidget& object);
   void init();
@@ -51,16 +53,11 @@ void qMRMLROIWidgetPrivate::init()
 {
   Q_Q(qMRMLROIWidget);
   this->setupUi(q);
-  QObject::connect(this->DisplayClippingBoxButton, SIGNAL(toggled(bool)),
-                   q, SLOT(setDisplayClippingBox(bool)));
-  QObject::connect(this->InteractiveModeCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setInteractiveMode(bool)));
-  QObject::connect(this->LRRangeWidget, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(updateROI()));
-  QObject::connect(this->PARangeWidget, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(updateROI()));
-  QObject::connect(this->ISRangeWidget, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(updateROI()));
+  QObject::connect(this->DisplayClippingBoxButton, SIGNAL(toggled(bool)), q, SLOT(setDisplayClippingBox(bool)));
+  QObject::connect(this->InteractiveModeCheckBox, SIGNAL(toggled(bool)), q, SLOT(setInteractiveMode(bool)));
+  QObject::connect(this->LRRangeWidget, SIGNAL(valuesChanged(double, double)), q, SLOT(updateROI()));
+  QObject::connect(this->PARangeWidget, SIGNAL(valuesChanged(double, double)), q, SLOT(updateROI()));
+  QObject::connect(this->ISRangeWidget, SIGNAL(valuesChanged(double, double)), q, SLOT(updateROI()));
   q->setEnabled(this->ROINode != nullptr);
 }
 
@@ -80,7 +77,7 @@ qMRMLROIWidget::qMRMLROIWidget(QWidget* _parent)
 qMRMLROIWidget::~qMRMLROIWidget() = default;
 
 // --------------------------------------------------------------------------
-vtkMRMLROINode* qMRMLROIWidget::mrmlROINode()const
+vtkMRMLROINode* qMRMLROIWidget::mrmlROINode() const
 {
   Q_D(const qMRMLROIWidget);
   return d->ROINode;
@@ -90,8 +87,7 @@ vtkMRMLROINode* qMRMLROIWidget::mrmlROINode()const
 void qMRMLROIWidget::setMRMLROINode(vtkMRMLROINode* roiNode)
 {
   Q_D(qMRMLROIWidget);
-  qvtkReconnect(d->ROINode, roiNode, vtkCommand::ModifiedEvent,
-                this, SLOT(onMRMLNodeModified()));
+  qvtkReconnect(d->ROINode, roiNode, vtkCommand::ModifiedEvent, this, SLOT(onMRMLNodeModified()));
 
   d->ROINode = roiNode;
   this->onMRMLNodeModified();
@@ -123,13 +119,13 @@ void qMRMLROIWidget::onMRMLNodeModified()
   d->InteractiveModeCheckBox->setChecked(interactive);
 
   // ROI
-  double *xyz = d->ROINode->GetXYZ();
-  double *rxyz = d->ROINode->GetRadiusXYZ();
+  double* xyz = d->ROINode->GetXYZ();
+  double* rxyz = d->ROINode->GetRadiusXYZ();
   double bounds[6];
-  for (int i=0; i < 3; ++i)
+  for (int i = 0; i < 3; ++i)
   {
-    bounds[i]   = xyz[i]-rxyz[i];
-    bounds[3+i] = xyz[i]+rxyz[i];
+    bounds[i] = xyz[i] - rxyz[i];
+    bounds[3 + i] = xyz[i] + rxyz[i];
   }
   d->LRRangeWidget->setValues(bounds[0], bounds[3]);
   d->PARangeWidget->setValues(bounds[1], bounds[4]);
@@ -164,17 +160,13 @@ void qMRMLROIWidget::updateROI()
 {
   Q_D(qMRMLROIWidget);
   double bounds[6];
-  d->LRRangeWidget->values(bounds[0],bounds[1]);
-  d->PARangeWidget->values(bounds[2],bounds[3]);
-  d->ISRangeWidget->values(bounds[4],bounds[5]);
+  d->LRRangeWidget->values(bounds[0], bounds[1]);
+  d->PARangeWidget->values(bounds[2], bounds[3]);
+  d->ISRangeWidget->values(bounds[4], bounds[5]);
 
   int disabledModify = d->ROINode->StartModify();
 
-  d->ROINode->SetXYZ(0.5*(bounds[1]+bounds[0]),
-                     0.5*(bounds[3]+bounds[2]),
-                     0.5*(bounds[5]+bounds[4]));
-  d->ROINode->SetRadiusXYZ(0.5*(bounds[1]-bounds[0]),
-                           0.5*(bounds[3]-bounds[2]),
-                           0.5*(bounds[5]-bounds[4]));
+  d->ROINode->SetXYZ(0.5 * (bounds[1] + bounds[0]), 0.5 * (bounds[3] + bounds[2]), 0.5 * (bounds[5] + bounds[4]));
+  d->ROINode->SetRadiusXYZ(0.5 * (bounds[1] - bounds[0]), 0.5 * (bounds[3] - bounds[2]), 0.5 * (bounds[5] - bounds[4]));
   d->ROINode->EndModify(disabledModify);
 }

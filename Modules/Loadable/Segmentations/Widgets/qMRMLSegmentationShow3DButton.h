@@ -36,7 +36,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentationShow3DButton
   Q_PROPERTY(bool locked READ locked WRITE setLocked)
 
 public:
-  explicit qMRMLSegmentationShow3DButton(QWidget* parent=nullptr);
+  explicit qMRMLSegmentationShow3DButton(QWidget* parent = nullptr);
   ~qMRMLSegmentationShow3DButton() override;
 
   /// Get current segmentation node
@@ -51,7 +51,7 @@ public slots:
   void setLocked(bool);
 
 protected slots:
-  void onToggled(bool toggled=true);
+  void onToggled(bool toggled = true);
   void onEnableSurfaceSmoothingToggled(bool smoothingEnabled);
   void onEnableSurfaceNetsToggled(bool surfaceNetsEnabled);
   void onEnableSurfaceNetsSmoothingToggled(bool surfaceNetsSmoothingEnabled);
@@ -60,7 +60,8 @@ protected slots:
 
 protected:
   QScopedPointer<qMRMLSegmentationShow3DButtonPrivate> d_ptr;
-private :
+
+private:
   Q_DECLARE_PRIVATE(qMRMLSegmentationShow3DButton);
   Q_DISABLE_COPY(qMRMLSegmentationShow3DButton);
 };

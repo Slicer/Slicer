@@ -45,18 +45,18 @@ class vtkMRMLHierarchyNode;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModelPrivate
-  : public qMRMLSceneHierarchyModelPrivate
+class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModelPrivate : public qMRMLSceneHierarchyModelPrivate
 {
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneDisplayableModel);
+
 public:
   typedef qMRMLSceneHierarchyModelPrivate Superclass;
   qMRMLSceneDisplayableModelPrivate(qMRMLSceneDisplayableModel& object);
   void init() override;
 
-  vtkMRMLHierarchyNode* CreateHierarchyNode()const override;
-  vtkMRMLDisplayNode* displayNode(vtkMRMLNode* node)const;
+  vtkMRMLHierarchyNode* CreateHierarchyNode() const override;
+  vtkMRMLDisplayNode* displayNode(vtkMRMLNode* node) const;
 
   int ColorColumn;
   int OpacityColumn;

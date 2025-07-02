@@ -37,8 +37,7 @@ const char* MRMLIDImageIOFactory::GetITKSourceVersion() const
   return ITK_SOURCE_VERSION;
 }
 
-const char*
-MRMLIDImageIOFactory::GetDescription() const
+const char* MRMLIDImageIOFactory::GetDescription() const
 {
   return "ImageIOFactory that imports/exports data to a MRML node.";
 }

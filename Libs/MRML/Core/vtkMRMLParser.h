@@ -25,28 +25,29 @@ class vtkCollection;
 class VTK_MRML_EXPORT vtkMRMLParser : public vtkXMLParser
 {
 public:
-  static vtkMRMLParser *New();
-  vtkTypeMacro(vtkMRMLParser,vtkXMLParser);
+  static vtkMRMLParser* New();
+  vtkTypeMacro(vtkMRMLParser, vtkXMLParser);
 
-  vtkMRMLScene* GetMRMLScene() {return this->MRMLScene;};
-  void SetMRMLScene(vtkMRMLScene* scene) {this->MRMLScene = scene;};
+  vtkMRMLScene* GetMRMLScene() { return this->MRMLScene; };
+  void SetMRMLScene(vtkMRMLScene* scene) { this->MRMLScene = scene; };
 
-  vtkCollection* GetNodeCollection() {return this->NodeCollection;};
-  void SetNodeCollection(vtkCollection* scene) {this->NodeCollection = scene;};
+  vtkCollection* GetNodeCollection() { return this->NodeCollection; };
+  void SetNodeCollection(vtkCollection* scene) { this->NodeCollection = scene; };
 
 protected:
-  vtkMRMLParser() = default;;
-  ~vtkMRMLParser() override  = default;
+  vtkMRMLParser() = default;
+  ;
+  ~vtkMRMLParser() override = default;
   vtkMRMLParser(const vtkMRMLParser&);
   void operator=(const vtkMRMLParser&);
 
   void StartElement(const char* name, const char** atts) override;
-  void EndElement (const char *name) override;
+  void EndElement(const char* name) override;
 
 private:
-  vtkMRMLScene* MRMLScene{nullptr};
-  vtkCollection* NodeCollection{nullptr};
-  std::stack< vtkMRMLNode *> NodeStack;
+  vtkMRMLScene* MRMLScene{ nullptr };
+  vtkCollection* NodeCollection{ nullptr };
+  std::stack<vtkMRMLNode*> NodeStack;
 };
 
 #endif

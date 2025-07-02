@@ -35,8 +35,7 @@ class QSettings;
 class qSlicerSegmentationsSettingsPanelPrivate;
 class vtkSlicerSegmentationsModuleLogic;
 
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsSettingsPanel
-  : public ctkSettingsPanel
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsSettingsPanel : public ctkSettingsPanel
 {
   Q_OBJECT
 
@@ -49,7 +48,7 @@ public:
 
   /// Segmentations logic is used for configuring default settings
   void setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* logic);
-  vtkSlicerSegmentationsModuleLogic* segmentationsLogic()const;
+  vtkSlicerSegmentationsModuleLogic* segmentationsLogic() const;
 
   QString defaultTerminologyEntry();
 

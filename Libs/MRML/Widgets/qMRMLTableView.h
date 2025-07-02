@@ -46,25 +46,25 @@ class QMRML_WIDGETS_EXPORT qMRMLTableView : public QTableView
   Q_PROPERTY(bool firstRowLocked READ firstRowLocked WRITE setFirstRowLocked)
   Q_PROPERTY(bool firstColumnLocked READ firstColumnLocked WRITE setFirstColumnLocked)
 public:
-  qMRMLTableView(QWidget *parent=nullptr);
+  qMRMLTableView(QWidget* parent = nullptr);
   ~qMRMLTableView() override;
 
   /// Return a pointer on the current MRML scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Get the TableView node observed by view.
-  Q_INVOKABLE vtkMRMLTableViewNode* mrmlTableViewNode()const;
+  Q_INVOKABLE vtkMRMLTableViewNode* mrmlTableViewNode() const;
 
-  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode()const;
+  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode() const;
 
-  Q_INVOKABLE qMRMLTableModel* tableModel()const;
-  Q_INVOKABLE QSortFilterProxyModel* sortFilterProxyModel()const;
+  Q_INVOKABLE qMRMLTableModel* tableModel() const;
+  Q_INVOKABLE QSortFilterProxyModel* sortFilterProxyModel() const;
 
-  bool transposed()const;
-  bool firstRowLocked()const;
-  bool firstColumnLocked()const;
+  bool transposed() const;
+  bool firstRowLocked() const;
+  bool firstColumnLocked() const;
 
-  QList<int> selectedMRMLTableColumnIndices()const;
+  QList<int> selectedMRMLTableColumnIndices() const;
 
 public slots:
   /// Set the MRML \a scene that should be listened for events.
@@ -112,7 +112,7 @@ protected:
 
   QScopedPointer<qMRMLTableViewPrivate> d_ptr;
 
-  void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) override;
+  void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLTableView);

@@ -27,15 +27,15 @@ vtkMRMLBSplineTransformNode::vtkMRMLBSplineTransformNode()
 {
   // Set up the node with a dummy bspline grid (that contains a small set of
   // null-vectors) to make sure the node is valid and can be saved
-  double gridSize[3]={4,4,4};
+  double gridSize[3] = { 4, 4, 4 };
   vtkNew<vtkImageData> bsplineCoefficients;
-  bsplineCoefficients->SetExtent(0, gridSize[0]-1, 0, gridSize[1]-1, 0, gridSize[2]-1);
+  bsplineCoefficients->SetExtent(0, gridSize[0] - 1, 0, gridSize[1] - 1, 0, gridSize[2] - 1);
   bsplineCoefficients->AllocateScalars(VTK_DOUBLE, 3);
-  double* bsplineParams=static_cast<double*>(bsplineCoefficients->GetScalarPointer());
-  const unsigned int numberOfParams = 3*gridSize[0]*gridSize[1]*gridSize[2];
-  for (unsigned int i=0; i<numberOfParams; i++)
+  double* bsplineParams = static_cast<double*>(bsplineCoefficients->GetScalarPointer());
+  const unsigned int numberOfParams = 3 * gridSize[0] * gridSize[1] * gridSize[2];
+  for (unsigned int i = 0; i < numberOfParams; i++)
   {
-    *(bsplineParams++) =  0.0;
+    *(bsplineParams++) = 0.0;
   }
 
   vtkNew<vtkOrientedBSplineTransform> warp;
@@ -65,5 +65,5 @@ void vtkMRMLBSplineTransformNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLBSplineTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
