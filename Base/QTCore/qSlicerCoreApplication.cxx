@@ -20,6 +20,10 @@
 
 // standard library includes
 #include  <clocale>
+#include <stdexcept>
+
+// Python include header
+#include <Python.h>
 
 // Qt includes
 #include <QDebug>
@@ -204,10 +208,8 @@ wchar_t* QStringToPythonWCharPointer(QString str)
 // qSlicerCoreApplicationPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
-  qSlicerCoreApplication& object,
-  qSlicerCoreCommandOptions * coreCommandOptions,
-  qSlicerCoreIOManager * coreIOManager) : q_ptr(&object)
+qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(qSlicerCoreApplication& object, qSlicerCoreCommandOptions* coreCommandOptions, qSlicerCoreIOManager* coreIOManager)
+  : q_ptr(&object)
 {
   qRegisterMetaType<qSlicerCoreApplication::ReturnCode>("qSlicerCoreApplication::ReturnCode");
   this->DefaultSettings = nullptr;
@@ -394,13 +396,11 @@ void qSlicerCoreApplicationPrivate::init()
   // Ensure that temporary folder is writable
   {
     // QTemporaryFile is deleted automatically when leaving this scope
-    QTemporaryFile fileInTemporaryPathFolder(
-      QFileInfo(q->temporaryPath(), "_write_test_XXXXXX.tmp").absoluteFilePath());
+    QTemporaryFile fileInTemporaryPathFolder(QFileInfo(q->temporaryPath(), "_write_test_XXXXXX.tmp").absoluteFilePath());
     if (!fileInTemporaryPathFolder.open())
     {
       QString newTempFolder = q->defaultTemporaryPath();
-      qWarning() << Q_FUNC_INFO << "Setting temporary folder to " << newTempFolder
-        << " because previously set " << q->temporaryPath() << " folder is not writable";
+      qWarning() << Q_FUNC_INFO << "Setting temporary folder to " << newTempFolder << " because previously set " << q->temporaryPath() << " folder is not writable";
       q->setTemporaryPath(newTempFolder);
     }
   }
@@ -412,31 +412,20 @@ void qSlicerCoreApplicationPrivate::init()
     QString userInfoString = q->userSettings()->value("UserInformation").toString();
     userInfo->SetFromString(userInfoString.toUtf8().constData());
   }
-  q->qvtkConnect(this->AppLogic, vtkCommand::ModifiedEvent,
-              q, SLOT(onSlicerApplicationLogicModified()));
-  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestInvokeEvent,
-                 q, SLOT(requestInvokeEvent(vtkObject*,void*)), 0.0, Qt::DirectConnection);
-  q->connect(q, SIGNAL(invokeEventRequested(unsigned int,void*,unsigned long,void*)),
-             q, SLOT(scheduleInvokeEvent(unsigned int,void*,unsigned long,void*)), Qt::AutoConnection);
-  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent,
-              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
-  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent,
-              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
-  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent,
-              q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
-  q->qvtkConnect(this->AppLogic, vtkMRMLApplicationLogic::PauseRenderEvent,
-              q, SLOT(pauseRender()));
-  q->qvtkConnect(this->AppLogic, vtkMRMLApplicationLogic::ResumeRenderEvent,
-              q, SLOT(resumeRender()));
-  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::EditNodeEvent,
-              q, SLOT(editNode(vtkObject*, void*, ulong)));
-  q->qvtkConnect(this->AppLogic->GetUserInformation(), vtkCommand::ModifiedEvent,
-    q, SLOT(onUserInformationModified()));
+  q->qvtkConnect(this->AppLogic, vtkCommand::ModifiedEvent, q, SLOT(onSlicerApplicationLogicModified()));
+  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestInvokeEvent, q, SLOT(requestInvokeEvent(vtkObject*, void*)), 0.0, Qt::DirectConnection);
+  q->connect(
+    q, SIGNAL(invokeEventRequested(unsigned int, void*, unsigned long, void*)), q, SLOT(scheduleInvokeEvent(unsigned int, void*, unsigned long, void*)), Qt::AutoConnection);
+  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent, q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void*, ulong)));
+  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent, q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void*, ulong)));
+  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestWriteDataEvent, q, SLOT(onSlicerApplicationLogicRequest(vtkObject*, void*, ulong)));
+  q->qvtkConnect(this->AppLogic, vtkMRMLApplicationLogic::PauseRenderEvent, q, SLOT(pauseRender()));
+  q->qvtkConnect(this->AppLogic, vtkMRMLApplicationLogic::ResumeRenderEvent, q, SLOT(resumeRender()));
+  q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::EditNodeEvent, q, SLOT(editNode(vtkObject*, void*, ulong)));
+  q->qvtkConnect(this->AppLogic->GetUserInformation(), vtkCommand::ModifiedEvent, q, SLOT(onUserInformationModified()));
 
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(
-    this->AppLogic.GetPointer());
-  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(
-    this->AppLogic.GetPointer());
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(this->AppLogic.GetPointer());
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->SetMRMLApplicationLogic(this->AppLogic.GetPointer());
 
   // pass through event handling once without observing the scene
   // -- allows any dependent nodes to be created
@@ -465,8 +454,7 @@ void qSlicerCoreApplicationPrivate::init()
   this->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
   this->ModuleManager->factoryManager()->setAppLogic(this->AppLogic.GetPointer());
   this->ModuleManager->factoryManager()->setMRMLScene(scene);
-  q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                 this->ModuleManager->factoryManager(), SLOT(setMRMLScene(vtkMRMLScene*)));
+  q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->ModuleManager->factoryManager(), SLOT(setMRMLScene(vtkMRMLScene*)));
 
   // The application may exit here immediately if a simple command is specified on the
   // command-line (for example `--version` prints the version information and quits).
@@ -645,8 +633,7 @@ void qSlicerCoreApplicationPrivate::initDataIO()
     if (!fileInCacheFolder.open())
     {
       QString newCacheFolder = q->defaultCachePath();
-      qWarning() << Q_FUNC_INFO << "Setting cache folder to " << newCacheFolder
-        << " because previously set " << q->cachePath() << " folder is not writable";
+      qWarning() << Q_FUNC_INFO << "Setting cache folder to " << newCacheFolder << " because previously set " << q->cachePath() << " folder is not writable";
       q->setCachePath(newCacheFolder);
     }
   }
@@ -690,8 +677,8 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(bool useTmp)
 #ifdef Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
   // If a Slicer.ini file is available in the home directory then use that,
   // otherwise use the default one in the user profile folder.
-  // Qt appends organizationName/organizationDomain to the directory set in QSettings::setPath, therefore we must include it in the folder name
-  // (otherwise QSettings() would return a different setting than app->userSettings()).
+  // Qt appends organizationName/organizationDomain to the directory set in QSettings::setPath, therefore we must
+  // include it in the folder name (otherwise QSettings() would return a different setting than app->userSettings()).
   QString iniFileName = QDir(this->SlicerHome).filePath(QString("%1/%2.ini").arg(ctkAppLauncherSettings().organizationDir()).arg(q->applicationName()));
   if (QFile(iniFileName).exists())
   {
@@ -762,15 +749,12 @@ void qSlicerCoreApplicationPrivate::setPythonOsEnviron(const QString& key, const
     return;
   }
   this->CorePythonManager->executeString(
-        QString("import os; os.environ[%1]=%2; del os")
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(key))
-          .arg(qSlicerCorePythonManager::toPythonStringLiteral(value)));
+    QString("import os; os.environ[%1]=%2; del os").arg(qSlicerCorePythonManager::toPythonStringLiteral(key)).arg(qSlicerCorePythonManager::toPythonStringLiteral(value)));
 }
 #endif
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::updateEnvironmentVariable(const QString& key, const QString& value,
-                                                              QChar separator, bool prepend)
+void qSlicerCoreApplicationPrivate::updateEnvironmentVariable(const QString& key, const QString& value, QChar separator, bool prepend)
 {
   Q_Q(qSlicerCoreApplication);
   if(q->isEnvironmentVariableValueSet(key, value))
@@ -1197,10 +1181,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
 
   QStringList unparsedArguments = options->unparsedArguments();
-  if (unparsedArguments.length() > 0 &&
-      options->pythonScript().isEmpty() &&
-      options->extraPythonScript().isEmpty() &&
-      d->URIArgumentHandlingEnabled)
+  if (unparsedArguments.length() > 0 && options->pythonScript().isEmpty() && options->extraPythonScript().isEmpty() && d->URIArgumentHandlingEnabled)
   {
     this->handleURIArguments(unparsedArguments);
   }
@@ -1236,14 +1217,51 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       pythonArgv[i + 1] = QStringToPythonWCharPointer(scriptArgs.at(i));
     }
 
-    // See https://docs.python.org/c-api/init.html
-    PySys_SetArgvEx(pythonArgc, pythonArgv, /*updatepath=*/false);
+    // https://docs.python.org/3/c-api/init_config.html#init-config
+
+    int status_exit_code = 0;
+
+    PyConfig config;
+    PyConfig_InitPythonConfig(&config);
+    config.isolated = 1;
+
+    /* Decode command line arguments.
+       Implicitly preinitialize Python (in isolated mode). */
+    PyStatus status = PyConfig_SetArgv(&config, pythonArgc, pythonArgv);
+    if (PyStatus_Exception(status))
+    {
+      PyConfig_Clear(&config);
+      if (PyStatus_IsExit(status))
+      {
+        status_exit_code = status.exitcode;
+      }
+      /* Display the error message and exit the process with
+         non-zero exit code */
+      Py_ExitStatusException(status);
+    }
+
+    status = Py_InitializeFromConfig(&config);
+    if (PyStatus_Exception(status))
+    {
+      PyConfig_Clear(&config);
+      if (PyStatus_IsExit(status))
+      {
+        status_exit_code = status.exitcode;
+      }
+      /* Display the error message and exit the process with
+         non-zero exit code */
+      Py_ExitStatusException(status);
+    }
+    PyConfig_Clear(&config);
+
+    if (status_exit_code != 0)
+    {
+      throw std::runtime_error("Python initialization failed with status_code " + std::to_string(status_exit_code));
+    }
 
     // Set 'sys.executable' so that Slicer can be used as a "regular" python interpreter
     this->corePythonManager()->executeString(
-          QString("import sys; sys.executable = %1; del sys").arg(
-            qSlicerCorePythonManager::toPythonStringLiteral(QStandardPaths::findExecutable("PythonSlicer")))
-          );
+      QString("import sys; sys.executable = %1; del sys").arg(qSlicerCorePythonManager::toPythonStringLiteral(QStandardPaths::findExecutable("PythonSlicer"))));
 
     // Clean memory
     for (int i = 0; i < pythonArgc; i++)
@@ -1309,8 +1327,7 @@ QSettings* qSlicerCoreApplication::defaultSettings()const
   // If required, instantiate Settings
   if(!mutable_d->DefaultSettings)
   {
-    mutable_d->DefaultSettings =
-        new QSettings(this->slicerDefaultSettingsFilePath(), QSettings::IniFormat, mutable_self);
+    mutable_d->DefaultSettings = new QSettings(this->slicerDefaultSettingsFilePath(), QSettings::IniFormat, mutable_self);
   }
   return mutable_d->DefaultSettings;
 }
@@ -1345,9 +1362,7 @@ QSettings* qSlicerCoreApplication::revisionUserSettings()const
   // If required, instantiate Settings
   if(!mutable_d->RevisionUserSettings)
   {
-    mutable_d->RevisionUserSettings =
-        new QSettings(this->slicerRevisionUserSettingsFilePath(),
-                      QSettings::IniFormat, const_cast<qSlicerCoreApplication*>(this));
+    mutable_d->RevisionUserSettings = new QSettings(this->slicerRevisionUserSettingsFilePath(), QSettings::IniFormat, const_cast<qSlicerCoreApplication*>(this));
   }
   return mutable_d->RevisionUserSettings;
 }
@@ -1425,8 +1440,7 @@ QString qSlicerCoreApplication::defaultScenePath() const
 {
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
-  QString defaultScenePath = this->toSlicerHomeAbsolutePath(appSettings->value(
-        "DefaultScenePath", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)).toString());
+  QString defaultScenePath = this->toSlicerHomeAbsolutePath(appSettings->value("DefaultScenePath", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)).toString());
 
   return defaultScenePath;
 }
@@ -1456,9 +1470,7 @@ bool qSlicerCoreApplication::isEmbeddedModule(const QString& moduleFileName)cons
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   slicerRevision = this->extensionsManagerModel()->slicerRevision();
 #endif
-  return vtkSlicerApplicationLogic::IsEmbeddedModule(moduleFileName.toStdString(),
-                                                     this->slicerHome().toStdString(),
-                                                     slicerRevision.toStdString());
+  return vtkSlicerApplicationLogic::IsEmbeddedModule(moduleFileName.toStdString(), this->slicerHome().toStdString(), slicerRevision.toStdString());
 }
 
 //-----------------------------------------------------------------------------
@@ -1481,8 +1493,7 @@ QString qSlicerCoreApplication::temporaryPath() const
   Q_D(const qSlicerCoreApplication);
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
-  QString temporaryPath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(
-    appSettings->value("TemporaryPath", this->defaultTemporaryPath()).toString());
+  QString temporaryPath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(appSettings->value("TemporaryPath", this->defaultTemporaryPath()).toString());
   d->createDirectory(temporaryPath, "temporary"); // Make sure the path exists
   return temporaryPath;
 }
@@ -1512,8 +1523,7 @@ QString qSlicerCoreApplication::cachePath() const
   Q_D(const qSlicerCoreApplication);
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
-  QString cachePath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(
-    appSettings->value("Cache/Path", this->defaultCachePath()).toString());
+  QString cachePath = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(appSettings->value("Cache/Path", this->defaultCachePath()).toString());
   d->createDirectory(cachePath, "cache"); // Make sure the path exists
   return cachePath;
 }
@@ -1608,11 +1618,7 @@ QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath()const
     suffix += "-tmp";
     useTmp = true;
   }
-  QString fileName =
-      QDir(filePath).filePath(QString("%1%2%3.ini")
-                                     .arg(prefix)
-                                     .arg(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME)
-                                     .arg(suffix));
+  QString fileName = QDir(filePath).filePath(QString("%1%2%3.ini").arg(prefix).arg(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME).arg(suffix));
   if (useTmp && !this->coreCommandOptions()->keepTemporarySettings())
   {
     QSettings(fileName, QSettings::IniFormat).clear();
@@ -1643,8 +1649,7 @@ QString qSlicerCoreApplication::defaultExtensionsInstallPath() const
 QString qSlicerCoreApplication::extensionsInstallPath() const
 {
   QSettings settings(this->slicerRevisionUserSettingsFilePath(), QSettings::IniFormat);
-  return qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(
-    settings.value("Extensions/InstallPath", this->defaultExtensionsInstallPath()).toString());
+  return qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(settings.value("Extensions/InstallPath", this->defaultExtensionsInstallPath()).toString());
 }
 
 //-----------------------------------------------------------------------------
@@ -1654,8 +1659,7 @@ void qSlicerCoreApplication::setExtensionsInstallPath(const QString& path)
   {
     return;
   }
-  this->revisionUserSettings()->setValue("Extensions/InstallPath",
-    qSlicerCoreApplication::application()->toSlicerHomeRelativePath(path));
+  this->revisionUserSettings()->setValue("Extensions/InstallPath", qSlicerCoreApplication::application()->toSlicerHomeRelativePath(path));
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   Q_ASSERT(this->extensionsManagerModel());
   this->extensionsManagerModel()->updateModel();
@@ -1839,9 +1843,9 @@ QString qSlicerCoreApplication::libraries()const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::copyrights()const
 {
-  QString copyrightsText(QString(
-    "<table align=\"center\" border=\"0\" width=\"80%\"><tr>"
-    "<td align=\"center\"><a href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#license\">%1</a></td>"
+  QString copyrightsText(QString("<table align=\"center\" border=\"0\" width=\"80%\"><tr>"
+                                 "<td align=\"center\"><a "
+                                 "href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#license\">%1</a></td>"
     "<td align=\"center\"><a href=\"https://slicer.org/\">%2</a></td>"
     "<td align=\"center\"><a href=\"https://slicer.readthedocs.io/en/latest/user_guide/about.html#acknowledgments\">%3</a></td>"
     "</tr></table>")
@@ -1853,8 +1857,7 @@ QString qSlicerCoreApplication::copyrights()const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::acknowledgment()const
 {
-  QString acknowledgmentText(
-    tr("Slicer is NOT an FDA approved medical device.<br><br>"
+  QString acknowledgmentText(tr("Slicer is NOT an FDA approved medical device.<br><br>"
     "Supported by: NA-MIC, NAC, BIRN, NCIGT and the Slicer Community.<br><br>"
     "Special thanks to the NIH and our other supporters.<br><br>"
     "This work is part of the National Alliance for Medical Image Computing "
@@ -1989,9 +1992,7 @@ void qSlicerCoreApplication
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication
-::scheduleInvokeEvent(unsigned int delay, void* caller,
-                      unsigned long eventID, void* callData)
+void qSlicerCoreApplication::scheduleInvokeEvent(unsigned int delay, void* caller, unsigned long eventID, void* callData)
 {
   QTimer* timer = new QTimer(this);
   timer->setSingleShot(true);
@@ -2381,8 +2382,7 @@ QString qSlicerCoreApplication::moduleDocumentationUrl(const QString& moduleName
 {
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
-  QString url = appSettings->value("ModuleDocumentationURL",
-    "{documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html").toString();
+  QString url = appSettings->value("ModuleDocumentationURL", "{documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html").toString();
 
   if (url.contains("{documentationbaseurl}"))
   {
