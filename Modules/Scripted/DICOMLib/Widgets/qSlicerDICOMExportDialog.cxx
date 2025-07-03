@@ -72,8 +72,8 @@
 
 //-----------------------------------------------------------------------------
 class qSlicerDICOMExportDialogPrivate
-  : public Ui_qSlicerDICOMExportDialog
-  , public QDialog
+  : public QDialog // QObject baseclass must be the first in list of multiple inheritance for automoc to work.
+  , public Ui_qSlicerDICOMExportDialog
 {
   Q_DECLARE_PUBLIC(qSlicerDICOMExportDialog);
 
