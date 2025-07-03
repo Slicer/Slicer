@@ -86,7 +86,11 @@ if(NOT DEFINED ${proj}_DIR AND NOT Slicer_USE_SYSTEM_${proj})
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
 
-  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${JsonCpp_DIR}/lib/<CMAKE_CFG_INTDIR>)
+  set(_library_output_subdir bin)
+  if(UNIX)
+    set(_library_output_subdir lib)
+  endif()
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${JsonCpp_DIR}/${_library_output_subdir}/<CMAKE_CFG_INTDIR>)
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
