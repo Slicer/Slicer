@@ -22,12 +22,8 @@
 #define qSlicerSequencesModuleWidgetsPlugin_h
 
 // Qt includes
-#include "vtkSlicerConfigure.h" // For Slicer_HAVE_QT5
-#ifdef Slicer_HAVE_QT5
-# include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
-#else
-# include <QDesignerCustomWidgetCollectionInterface>
-#endif
+#include "vtkSlicerConfigure.h"
+#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 
 // SequenceBrowser includes
 #include "qMRMLSequenceBrowserPlayWidgetPlugin.h"
