@@ -84,8 +84,7 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
       QString python_path = findPython();
       if (python_path.isEmpty())
       {
-        this->appendInstantiateErrorString(
-          qSlicerCLIModule::tr("Failed to find python interpreter for CLI: %1").arg(this->path()));
+      this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to find python interpreter for CLI: %1").arg(this->path()));
         return nullptr;
       }
 
@@ -144,7 +143,11 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   env.insert("ITK_AUTOLOAD_PATH", "");
   cli.setProcessEnvironment(env);
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+  cli.startCommand(this->path(), QStringList(QString("--xml")));
+#else
   cli.start(this->path(), QStringList(QString("--xml")));
+#endif
   bool res = cli.waitForFinished(cliProcessTimeoutInMs);
   if (!res)
   {
@@ -206,8 +209,7 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
   {
     this->appendInstantiateWarningString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
     this->appendInstantiateWarningString(qSlicerCLIModule::tr("XML description doesn't start right away."));
-    this->appendInstantiateWarningString(qSlicerCLIModule::tr("Output before '<?xml' is [%1]").arg(
-                                           xmlDescription.mid(0, xmlDescription.indexOf("<?xml"))));
+    this->appendInstantiateWarningString(qSlicerCLIModule::tr("Output before '<?xml' is [%1]").arg(xmlDescription.mid(0, xmlDescription.indexOf("<?xml"))));
     xmlDescription.remove(0, xmlDescription.indexOf("<?xml"));
   }
   return xmlDescription;

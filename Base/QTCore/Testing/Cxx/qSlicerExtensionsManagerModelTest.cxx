@@ -212,8 +212,7 @@ QString qSlicerExtensionsManagerModelTester::slicerVersion(const QString& operat
 }
 
 // ----------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile,
-  qSlicerExtensionsManagerModel::ServerAPI serverAPI)
+bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile, qSlicerExtensionsManagerModel::ServerAPI serverAPI)
 {
   bool success = true;
   QDir tmp = QDir::temp();
@@ -246,10 +245,7 @@ bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile,
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManagerModel * model,
-                                                        const QString& os,
-                                                        int extensionId,
-                                                        const QString& tmp)
+void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManagerModel* model, const QString& os, int extensionId, const QString& tmp)
 {
   QVERIFY(model != nullptr);
   QVERIFY(extensionId >= 0 && extensionId <= 3);
@@ -258,8 +254,7 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
   QString copiedArchiveFile = tmp + "/" + QFileInfo(inputArchiveFile).fileName();
   if (!QFile::exists(copiedArchiveFile))
   {
-    QVERIFY2(QFile::copy(inputArchiveFile, copiedArchiveFile),
-             QString("Failed to copy %1 into %2").arg(inputArchiveFile).arg(copiedArchiveFile).toUtf8());
+    QVERIFY2(QFile::copy(inputArchiveFile, copiedArchiveFile), QString("Failed to copy %1 into %2").arg(inputArchiveFile).arg(copiedArchiveFile).toUtf8());
     QFile::setPermissions(copiedArchiveFile, QFile::ReadOwner | QFile::WriteOwner);
   }
 
@@ -294,8 +289,7 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
   QVERIFY(model->installExtension(extensionName, metadata, copiedArchiveFile));
   QCOMPARE(model->extensionMetadata(extensionName, /* source= */ qSlicerExtensionsManagerModel::MetadataServer),
            Self::extensionMetadata(os, extensionId, /* filtered= */ true, /* installed= */ false));
-  QCOMPARE(model->extensionDescriptionFile(extensionName),
-           model->extensionsInstallPath() + "/" + extensionName + ".s4ext");
+  QCOMPARE(model->extensionDescriptionFile(extensionName), model->extensionsInstallPath() + "/" + extensionName + ".s4ext");
 
   QCOMPARE(spyExtensionInstalled.count(), 1);
   QCOMPARE(spyExtensionEnabledChanged.count(), 0);
@@ -329,13 +323,12 @@ bool qSlicerExtensionsManagerModelTester::resetTmp()
   ctk::removeDirRecursively(tmp.filePath(this->TemporaryDirName));
   tmp.mkdir(this->TemporaryDirName);
   tmp.cd(this->TemporaryDirName);
-  this->Tmp = tmp;
+  this->Tmp.setPath(tmp.dirName());
   return this->Tmp.exists();
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::dumpExtensionMetatype(
-    const char * varname, const ExtensionMetadataType& extensionMetadata)
+void qSlicerExtensionsManagerModelTester::dumpExtensionMetatype(const char* varname, const ExtensionMetadataType& extensionMetadata)
 {
   std::cout << "[" << varname << "]" << std::endl;
   foreach(const QString& key, extensionMetadata.keys())
@@ -346,8 +339,7 @@ void qSlicerExtensionsManagerModelTester::dumpExtensionMetatype(
 }
 
 // ----------------------------------------------------------------------------
-qSlicerExtensionsManagerModelTester::ExtensionMetadataType
-qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int extensionId, bool filtered, bool installed)
+qSlicerExtensionsManagerModelTester::ExtensionMetadataType qSlicerExtensionsManagerModelTester::extensionMetadata(const QString& os, int extensionId, bool filtered, bool installed)
 {
   int serverAPI = qSlicerExtensionsManagerModel::Girder_v1;
 
@@ -395,9 +387,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
     {
       continue;
     }
-    metadata.insert(
-          qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI).value(key, key),
-          allMetadata.value(key));
+    metadata.insert(qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI).value(key, key), allMetadata.value(key));
   }
   return metadata;
 }
@@ -409,8 +399,7 @@ void qSlicerExtensionsManagerModelTester::initTestCase()
 
   QVERIFY(QDir::temp().exists());
 
-  this->TemporaryDirName =
-      QString("qSlicerExtensionsManagerModelTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+  this->TemporaryDirName = QString("qSlicerExtensionsManagerModelTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
 
   QSettings().clear();
 }
@@ -432,7 +421,7 @@ void qSlicerExtensionsManagerModelTester::cleanupTestCase()
   if (this->Tmp != QDir::current() && this->Tmp.exists())
   {
     ctk::removeDirRecursively(this->Tmp.absolutePath());
-    this->Tmp = QDir();
+    this->Tmp.setPath(QString());
   }
   QFile::remove(QSettings().fileName());
 }
@@ -520,8 +509,7 @@ void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey()
 {
   QFETCH(qSlicerExtensionsManagerModel::ServerAPI, serverAPI);
 
-  QHash<QString, QString> serverToExtensionDescriptionKey =
-      qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI);
+  QHash<QString, QString> serverToExtensionDescriptionKey = qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey(serverAPI);
 
   QFETCH(QList<QString>, expectedServerKeys);
   QCOMPARE(serverToExtensionDescriptionKey.keys(), expectedServerKeys);
@@ -575,8 +563,7 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
 
   QFETCH(QString, extensionName);
   QFETCH(QString, jsonFile);
-  QVERIFY2(this->prepareJson(jsonFile, serverAPI),
-           QString("Failed to prepare json for extensionId: %1").arg(extensionName).toUtf8());
+  QVERIFY2(this->prepareJson(jsonFile, serverAPI), QString("Failed to prepare json for extensionId: %1").arg(extensionName).toUtf8());
 
   QFETCH(QString, slicerVersion);
   qSlicerExtensionsManagerModel model;
@@ -603,10 +590,8 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata_data()
   QTest::addColumn<QVariantMap>("expectedResult");
 
   int extensionId = 0;
-  QTest::newRow("1") << qSlicerExtensionsManagerModel::Girder_v1
-                     << this->extensionNameFromExtenionId(extensionId)
-                     << QString(":/extension-%1-%2.json").arg(Slicer_OS_LINUX_NAME).arg(extensionId)
-                     << this->slicerVersion(Slicer_OS_LINUX_NAME, extensionId)
+  QTest::newRow("1") << qSlicerExtensionsManagerModel::Girder_v1 << this->extensionNameFromExtenionId(extensionId)
+                     << QString(":/extension-%1-%2.json").arg(Slicer_OS_LINUX_NAME).arg(extensionId) << this->slicerVersion(Slicer_OS_LINUX_NAME, extensionId)
                      << Self::extensionMetadata(Slicer_OS_LINUX_NAME, extensionId, /* filtered= */ true);
 }
 
@@ -616,8 +601,7 @@ void qSlicerExtensionsManagerModelTester::testFilterExtensionMetadata()
   QFETCH(QVariantMap, inputExtensionMetadata);
   QFETCH(QVariantMap, expectedExtensionMetadata);
   QFETCH(qSlicerExtensionsManagerModel::ServerAPI, serverAPI);
-  ExtensionMetadataType filteredExtensionMetadata =
-      qSlicerExtensionsManagerModel::filterExtensionMetadata(inputExtensionMetadata, serverAPI);
+  ExtensionMetadataType filteredExtensionMetadata = qSlicerExtensionsManagerModel::filterExtensionMetadata(inputExtensionMetadata, serverAPI);
   QCOMPARE(filteredExtensionMetadata, expectedExtensionMetadata);
 }
 
@@ -628,8 +612,7 @@ void qSlicerExtensionsManagerModelTester::testFilterExtensionMetadata_data()
   QTest::addColumn<QVariantMap>("expectedExtensionMetadata");
   QTest::addColumn<qSlicerExtensionsManagerModel::ServerAPI>("serverAPI");
 
-  QTest::newRow("0") << Self::extensionMetadata(Slicer_OS_WIN_NAME, 0)
-                     << Self::extensionMetadata(Slicer_OS_WIN_NAME, 0, /* filtered= */ true)
+  QTest::newRow("0") << Self::extensionMetadata(Slicer_OS_WIN_NAME, 0) << Self::extensionMetadata(Slicer_OS_WIN_NAME, 0, /* filtered= */ true)
                      << qSlicerExtensionsManagerModel::Girder_v1;
 }
 
@@ -709,38 +692,22 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
     expectedFiles << "ImageMaker/lib/Slicer-5.1/cli-modules/ImageMaker";
     expectedFiles << "ImageMaker/lib/Slicer-5.1/cli-modules/libImageMakerLib.so";
     {
-      QTest::newRow("linux-0-success")
-                               << "ImageMaker"
-                               << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
-                               << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
-                               << "30987"
-                               << expectedFiles
-                               << Slicer_OS_LINUX_NAME
-                               << true /* expectedExtractSuccess */
+      QTest::newRow("linux-0-success") << "ImageMaker" << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME) << this->slicerVersion(Slicer_OS_LINUX_NAME, 0) << "30987"
+                                       << expectedFiles << Slicer_OS_LINUX_NAME << true /* expectedExtractSuccess */
                                << false /* nonExistentDestinationPath */
                                << false /* readOnlyDestinationPath */;
     }
     {
-      QTest::newRow("linux-0-nonexistent-destinationPath")
-                               << "ImageMaker"
-                               << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
-                               << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
-                               << "30987"
-                               << expectedFiles
-                               << Slicer_OS_LINUX_NAME
+      QTest::newRow("linux-0-nonexistent-destinationPath") << "ImageMaker" << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
+                                                           << this->slicerVersion(Slicer_OS_LINUX_NAME, 0) << "30987" << expectedFiles << Slicer_OS_LINUX_NAME
                                << false /* expectedExtractSuccess */
                                << true /* nonExistentDestinationPath */
                                << false /* readOnlyDestinationPath */;
     }
 #if !(defined Q_OS_WIN || defined Q_OS_MAC)
     {
-      QTest::newRow("linux-0-readonly-destinationPath")
-                               << "ImageMaker"
-                               << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
-                               << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
-                               << "30987"
-                               << expectedFiles
-                               << Slicer_OS_LINUX_NAME
+      QTest::newRow("linux-0-readonly-destinationPath") << "ImageMaker" << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
+                                                        << this->slicerVersion(Slicer_OS_LINUX_NAME, 0) << "30987" << expectedFiles << Slicer_OS_LINUX_NAME
                                << false /* expectedExtractSuccess */
                                << false /* nonExistentDestinationPath */
                                << true /* readOnlyDestinationPath */;
@@ -753,14 +720,8 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
     expectedFiles << "ImageMaker/lib/Slicer-5.1/cli-modules/ImageMaker";
     expectedFiles << "ImageMaker/lib/Slicer-5.1/cli-modules/libImageMakerLib.dylib";
     {
-      QTest::newRow("macosx-0-success")
-                                << "ImageMaker"
-                                << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_MAC_NAME)
-                                << this->slicerVersion(Slicer_OS_MAC_NAME, 0)
-                                << "30987"
-                                << expectedFiles
-                                << Slicer_OS_MAC_NAME
-                                << true /* expectedExtractSuccess */
+      QTest::newRow("macosx-0-success") << "ImageMaker" << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_MAC_NAME) << this->slicerVersion(Slicer_OS_MAC_NAME, 0) << "30987"
+                                        << expectedFiles << Slicer_OS_MAC_NAME << true /* expectedExtractSuccess */
                                 << false /* nonExistentDestinationPath */
                                 << false /* readOnlyDestinationPath */;
     }
@@ -774,14 +735,8 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
     expectedFiles << "MarkupsToModel/lib/Slicer-5.1/qt-loadable-modules/vtkSlicerMarkupsToModelModuleLogicPython.so";
     expectedFiles << "MarkupsToModel/lib/Slicer-5.1/qt-loadable-modules/vtkSlicerMarkupsToModelModuleMRMLPython.so";
     {
-      QTest::newRow("macosx-1-success")
-                                << "MarkupsToModel"
-                                << QString(":/extension-%1-1.tar.gz").arg(Slicer_OS_MAC_NAME)
-                                << this->slicerVersion(Slicer_OS_MAC_NAME, 1)
-                                << "30987"
-                                << expectedFiles
-                                << Slicer_OS_MAC_NAME
-                                << true /* expectedExtractSuccess */
+      QTest::newRow("macosx-1-success") << "MarkupsToModel" << QString(":/extension-%1-1.tar.gz").arg(Slicer_OS_MAC_NAME) << this->slicerVersion(Slicer_OS_MAC_NAME, 1) << "30987"
+                                        << expectedFiles << Slicer_OS_MAC_NAME << true /* expectedExtractSuccess */
                                 << false /* nonExistentDestinationPath */
                                 << false /* readOnlyDestinationPath */;
     }
@@ -797,8 +752,7 @@ void qSlicerExtensionsManagerModelTester::testWriteAndParseExtensionDescriptionF
 
   QVERIFY(qSlicerExtensionsManagerModel::writeExtensionDescriptionFile(this->Tmp.filePath("ImageMaker.s4ext"), metadata));
 
-  ExtensionMetadataType parsedMetadata =
-      qSlicerExtensionsManagerModel::parseExtensionDescriptionFile(this->Tmp.filePath("ImageMaker.s4ext"));
+  ExtensionMetadataType parsedMetadata = qSlicerExtensionsManagerModel::parseExtensionDescriptionFile(this->Tmp.filePath("ImageMaker.s4ext"));
 
   QCOMPARE(metadata.count(), parsedMetadata.count());
   QCOMPARE(metadata, parsedMetadata);
@@ -1022,11 +976,7 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall_data
   QString architecture("amd64");
   QString slicerRevision("30987");
 
-  QTest::newRow("1")
-      << operatingSystem << architecture << slicerRevision
-      << (QList<int>() << 0 << 1 << 2)
-      << (QStringList())
-      << (QStringList());
+  QTest::newRow("1") << operatingSystem << architecture << slicerRevision << (QList<int>() << 0 << 1 << 2) << (QStringList()) << (QStringList());
 
   QTest::newRow("2")
       << operatingSystem << architecture << slicerRevision
@@ -1034,10 +984,8 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall_data
       << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
       << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2));
 
-  QTest::newRow("3")
-      << operatingSystem << architecture << slicerRevision
-      << (QList<int>() << 0 << 1 << 2)
-      << (QStringList() << this->expectedExtensionNames().at(0) << "Invalid" << this->expectedExtensionNames().at(2))
+  QTest::newRow("3") << operatingSystem << architecture << slicerRevision << (QList<int>() << 0 << 1 << 2)
+                     << (QStringList() << this->expectedExtensionNames().at(0) << "Invalid" << this->expectedExtensionNames().at(2))
       << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2));
 }
 
@@ -1122,29 +1070,21 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
   QString slicerRevision("30987");
   QString architecture("amd64");
 
-  QTest::newRow("1")
-      << Slicer_OS_LINUX_NAME << architecture << slicerRevision
-      << (QList<int>() << 0 << 1 << 2)
-      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
-      << (QStringList())
-      << 0
+  QTest::newRow("1") << Slicer_OS_LINUX_NAME << architecture << slicerRevision << (QList<int>() << 0 << 1 << 2)
+                     << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2)) << (QStringList()) << 0
       << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2));
 
   QTest::newRow("2")
       << Slicer_OS_LINUX_NAME << architecture << slicerRevision
       << (QList<int>() << 0 << 1 << 2)
       << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
-      << (QStringList() << this->expectedExtensionNames().at(2) << "Invalid")
-      << 1
-      << (QStringList() << this->expectedExtensionNames().at(0));
+                     << (QStringList() << this->expectedExtensionNames().at(2) << "Invalid") << 1 << (QStringList() << this->expectedExtensionNames().at(0));
 
   QTest::newRow("3")
       << Slicer_OS_LINUX_NAME << architecture << slicerRevision
       << (QList<int>() << 0 << 1 << 2)
       << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
-      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
-      << 2
-      << (QStringList());
+                     << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2)) << 2 << (QStringList());
 }
 
 // ----------------------------------------------------------------------------
@@ -1388,9 +1328,7 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensionsCount_data()
       << operatingSystem << architecture << slicerRevision
       << (QList<int>() << 0 << 1) << 2;
 
-  QTest::newRow("3 installed")
-      << operatingSystem << architecture << slicerRevision
-      << (QList<int>() << 0 << 1 << 2) << 3;
+  QTest::newRow("3 installed") << operatingSystem << architecture << slicerRevision << (QList<int>() << 0 << 1 << 2) << 3;
 }
 
 // ----------------------------------------------------------------------------
@@ -1440,22 +1378,18 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensions_data()
   QString slicerRevision("30987");
 
   QStringList expectedInstalledExtensionNames;
-  QTest::newRow("0 installed") << operatingSystem << architecture << slicerRevision
-                               << (QList<int>()) << expectedInstalledExtensionNames;
+  QTest::newRow("0 installed") << operatingSystem << architecture << slicerRevision << (QList<int>()) << expectedInstalledExtensionNames;
 
   expectedInstalledExtensionNames = this->expectedExtensionNames();
   std::sort(expectedInstalledExtensionNames.begin(), expectedInstalledExtensionNames.end());
 
-  QTest::newRow("3 installed") << operatingSystem << architecture << slicerRevision
-                               << (QList<int>() << 0 << 1 << 2) << expectedInstalledExtensionNames;
+  QTest::newRow("3 installed") << operatingSystem << architecture << slicerRevision << (QList<int>() << 0 << 1 << 2) << expectedInstalledExtensionNames;
 
   expectedInstalledExtensionNames.removeOne(this->extensionNameFromExtenionId(2));
-  QTest::newRow("2 installed") << operatingSystem << architecture << slicerRevision
-                               << (QList<int>() << 0 << 1) << expectedInstalledExtensionNames;
+  QTest::newRow("2 installed") << operatingSystem << architecture << slicerRevision << (QList<int>() << 0 << 1) << expectedInstalledExtensionNames;
 
   expectedInstalledExtensionNames.removeOne(this->extensionNameFromExtenionId(1));
-  QTest::newRow("1 installed") << operatingSystem << architecture << slicerRevision
-                               << (QList<int>() << 0) << expectedInstalledExtensionNames;
+  QTest::newRow("1 installed") << operatingSystem << architecture << slicerRevision << (QList<int>() << 0) << expectedInstalledExtensionNames;
 }
 
 // ----------------------------------------------------------------------------
@@ -1542,21 +1476,16 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled_data()
   QStringList expectedEnabledExtensionNames;
   QStringList extensionNamesToDisable;
   QStringList expectedEnabledExtensionNamesAfterDisable;
-  QTest::newRow("0 installed") << operatingSystem << architecture << slicerRevision
-                               << (QList<int>()) << expectedEnabledExtensionNames
-                               << extensionNamesToDisable << expectedEnabledExtensionNamesAfterDisable;
+  QTest::newRow("0 installed") << operatingSystem << architecture << slicerRevision << (QList<int>()) << expectedEnabledExtensionNames << extensionNamesToDisable
+                               << expectedEnabledExtensionNamesAfterDisable;
 
   expectedEnabledExtensionNames = this->expectedExtensionNames();
   std::sort(expectedEnabledExtensionNames.begin(), expectedEnabledExtensionNames.end());
-  extensionNamesToDisable = QStringList()
-      << this->expectedExtensionNames().at(1)
-      << this->expectedExtensionNames().at(2);
-  expectedEnabledExtensionNamesAfterDisable = QStringList()
-      << this->expectedExtensionNames().at(0);
+  extensionNamesToDisable = QStringList() << this->expectedExtensionNames().at(1) << this->expectedExtensionNames().at(2);
+  expectedEnabledExtensionNamesAfterDisable = QStringList() << this->expectedExtensionNames().at(0);
   std::sort(expectedEnabledExtensionNamesAfterDisable.begin(), expectedEnabledExtensionNamesAfterDisable.end());
-  QTest::newRow("3 installed") << operatingSystem << architecture << slicerRevision
-                               << (QList<int>() << 0 << 1 << 2) << expectedEnabledExtensionNames
-                               << extensionNamesToDisable << expectedEnabledExtensionNamesAfterDisable;
+  QTest::newRow("3 installed") << operatingSystem << architecture << slicerRevision << (QList<int>() << 0 << 1 << 2) << expectedEnabledExtensionNames << extensionNamesToDisable
+                               << expectedEnabledExtensionNamesAfterDisable;
 
   expectedEnabledExtensionNames.removeOne(this->extensionNameFromExtenionId(2));
   extensionNamesToDisable = QStringList()
@@ -1564,17 +1493,15 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled_data()
   expectedEnabledExtensionNamesAfterDisable = QStringList()
       << this->expectedExtensionNames().at(1);
   std::sort(expectedEnabledExtensionNamesAfterDisable.begin(), expectedEnabledExtensionNamesAfterDisable.end());
-  QTest::newRow("2 installed") << operatingSystem << architecture << slicerRevision
-                               << (QList<int>() << 0 << 1) << expectedEnabledExtensionNames
-                               << extensionNamesToDisable << expectedEnabledExtensionNamesAfterDisable;
+  QTest::newRow("2 installed") << operatingSystem << architecture << slicerRevision << (QList<int>() << 0 << 1) << expectedEnabledExtensionNames << extensionNamesToDisable
+                               << expectedEnabledExtensionNamesAfterDisable;
 
   expectedEnabledExtensionNames.removeOne(this->extensionNameFromExtenionId(1));
   extensionNamesToDisable = QStringList() << this->expectedExtensionNames().at(0);
   expectedEnabledExtensionNamesAfterDisable = QStringList();
   std::sort(expectedEnabledExtensionNamesAfterDisable.begin(), expectedEnabledExtensionNamesAfterDisable.end());
-  QTest::newRow("1 installed") << operatingSystem << architecture << slicerRevision
-                               << (QList<int>() << 0) << expectedEnabledExtensionNames
-                               << extensionNamesToDisable << expectedEnabledExtensionNamesAfterDisable;
+  QTest::newRow("1 installed") << operatingSystem << architecture << slicerRevision << (QList<int>() << 0) << expectedEnabledExtensionNames << extensionNamesToDisable
+                               << expectedEnabledExtensionNamesAfterDisable;
 }
 
 // ----------------------------------------------------------------------------
@@ -1604,17 +1531,14 @@ void qSlicerExtensionsManagerModelTester::testSetExtensionsSettingsFilePath_data
   QTest::addColumn<QString>("extensionsSettingsFilePath");
   QTest::addColumn<QString>("expectedExtensionsSettingsFilePath");
 
-  QTest::newRow("existing absolute path - ini extension")
-      << this->Tmp.filePath("settings.ini") << this->Tmp.filePath("settings.ini");
+  QTest::newRow("existing absolute path - ini extension") << this->Tmp.filePath("settings.ini") << this->Tmp.filePath("settings.ini");
 
-  QTest::newRow("existing absolute path - foo extension")
-      << this->Tmp.filePath("settings.foo") << this->Tmp.filePath("settings.foo");
+  QTest::newRow("existing absolute path - foo extension") << this->Tmp.filePath("settings.foo") << this->Tmp.filePath("settings.foo");
 
   QTest::newRow("existing relative path - ini extension")
       << "settings.ini" << "settings.ini";
 
-  QTest::newRow("nonexistent absolute path - ini extension")
-      << "/path/to/nowhere/45659832254686/settings.ini" << "/path/to/nowhere/45659832254686/settings.ini";
+  QTest::newRow("nonexistent absolute path - ini extension") << "/path/to/nowhere/45659832254686/settings.ini" << "/path/to/nowhere/45659832254686/settings.ini";
 }
 
 // ----------------------------------------------------------------------------
@@ -1672,20 +1596,14 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
   {
     int extensionId = 0;
     QString climodules_lib_dir = QString(Self::CLIMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
-    QTest::newRow("linux-0-ImageMaker")
-        << operatingSystem << architecture << slicerRevision
-        << -1
-        << extensionId
+    QTest::newRow("linux-0-ImageMaker") << operatingSystem << architecture << slicerRevision << -1 << extensionId
         << (QStringList() << this->Tmp.filePath("ImageMaker/" + climodules_lib_dir));
   }
 
   {
     int extensionId = 1;
     QString qtloadablemodules_lib_dir = QString(Self::QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
-    QTest::newRow("linux-1-MarkupsToModel")
-        << operatingSystem << architecture << slicerRevision
-        << 0
-        << extensionId
+    QTest::newRow("linux-1-MarkupsToModel") << operatingSystem << architecture << slicerRevision << 0 << extensionId
         << (QStringList() << this->Tmp.filePath("MarkupsToModel/" + qtloadablemodules_lib_dir));
   }
 
@@ -1693,11 +1611,8 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
   {
     int extensionId = 2;
     QString qtscriptedmodules_lib_dir = QString(Self::QTSCRIPTEDMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
-    QTest::newRow("linux-2-CurveMaker")
-        << operatingSystem << architecture << slicerRevision
-        << 1
-        << extensionId
-        << (QStringList() << this->Tmp.filePath("CurveMaker/" + qtscriptedmodules_lib_dir));
+    QTest::newRow("linux-2-CurveMaker") << operatingSystem << architecture << slicerRevision << 1 << extensionId
+                                        << (QStringList() << this->Tmp.filePath("CurveMaker/" + qtscriptedmodules_lib_dir));
   }
 #endif
 
@@ -1717,20 +1632,14 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
   {
     int extensionId = 0;
     QString climodules_lib_dir = QString(Self::CLIMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
-    QTest::newRow("macosx-0-ImageMaker")
-        << operatingSystem << architecture << slicerRevision
-        << -1
-        << extensionId
+    QTest::newRow("macosx-0-ImageMaker") << operatingSystem << architecture << slicerRevision << -1 << extensionId
         << (QStringList() << this->Tmp.filePath("ImageMaker/" + climodules_lib_dir));
   }
 
   {
     int extensionId = 1;
     QString qtloadablemodules_lib_dir = QString(Self::QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
-    QTest::newRow("macosx-1-MarkupsToModel")
-        << operatingSystem << architecture << slicerRevision
-        << 0
-        << extensionId
+    QTest::newRow("macosx-1-MarkupsToModel") << operatingSystem << architecture << slicerRevision << 0 << extensionId
         << (QStringList() << this->Tmp.filePath("MarkupsToModel/" + qtloadablemodules_lib_dir));
   }
 
@@ -1738,11 +1647,8 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
   {
     int extensionId = 2;
     QString qtscriptedmodules_lib_dir = QString(Self::QTSCRIPTEDMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
-    QTest::newRow("macosx-2-CurveMaker")
-        << operatingSystem << architecture << slicerRevision
-        << 1
-        << extensionId
-        << (QStringList() << this->Tmp.filePath("CurveMaker/" + qtscriptedmodules_lib_dir));
+    QTest::newRow("macosx-2-CurveMaker") << operatingSystem << architecture << slicerRevision << 1 << extensionId
+                                         << (QStringList() << this->Tmp.filePath("CurveMaker/" + qtscriptedmodules_lib_dir));
   }
 #endif
 
@@ -1791,16 +1697,14 @@ void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated
 
   QSettings extensionsSettings(model.extensionsSettingsFilePath(), QSettings::IniFormat);
 
-  QStringList currentLibraryPath =
-      qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "LibraryPaths", "path");
+  QStringList currentLibraryPath = qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "LibraryPaths", "path");
   QCOMPARE(currentLibraryPath, libraryPaths);
 
   QStringList currentPaths =
       qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "Paths", "path");
   QCOMPARE(currentPaths, paths);
 
-  QStringList currentPythonPaths =
-      qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "PYTHONPATH", "path");
+  QStringList currentPythonPaths = qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "PYTHONPATH", "path");
   QCOMPARE(currentPythonPaths, pythonPaths);
 }
 
@@ -1826,31 +1730,21 @@ void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated
     int extensionId = 0;
     QString lib_dir = QString(Self::LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QString climodules_lib_dir = QString(Self::CLIMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
-    QTest::newRow("linux-0-ImageMaker")
-        << operatingSystem << architecture << slicerRevision
-        << ExtensionIdType(operatingSystem, -1)
+    QTest::newRow("linux-0-ImageMaker") << operatingSystem << architecture << slicerRevision << ExtensionIdType(operatingSystem, -1)
         << ExtensionIdType(operatingSystem, extensionId)
-        << (QStringList()
-            << this->Tmp.filePath("ImageMaker/" + lib_dir)
-            << this->Tmp.filePath("ImageMaker/" + climodules_lib_dir))
-        << (QStringList() << this->Tmp.filePath("ImageMaker/" + climodules_lib_dir))
-        << QStringList();
+                                        << (QStringList() << this->Tmp.filePath("ImageMaker/" + lib_dir) << this->Tmp.filePath("ImageMaker/" + climodules_lib_dir))
+                                        << (QStringList() << this->Tmp.filePath("ImageMaker/" + climodules_lib_dir)) << QStringList();
   }
 
   {
     int extensionId = 1;
     QString lib_dir = QString(Self::LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QString qtloadablemodules_lib_dir = QString(Self::QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
-    QTest::newRow("linux-1-MarkupsToModel")
-        << operatingSystem << architecture << slicerRevision
-        << ExtensionIdType(operatingSystem, 0)
+    QTest::newRow("linux-1-MarkupsToModel") << operatingSystem << architecture << slicerRevision << ExtensionIdType(operatingSystem, 0)
         << ExtensionIdType(operatingSystem, extensionId)
-        << (QStringList()
-            << this->Tmp.filePath("MarkupsToModel/" + lib_dir)
-            << this->Tmp.filePath("MarkupsToModel/" + qtloadablemodules_lib_dir))
-        << QStringList()
-        << (QStringList()
-            << this->Tmp.filePath("MarkupsToModel/" + qtloadablemodules_lib_dir));
+                                            << (QStringList()
+                                                << this->Tmp.filePath("MarkupsToModel/" + lib_dir) << this->Tmp.filePath("MarkupsToModel/" + qtloadablemodules_lib_dir))
+                                            << QStringList() << (QStringList() << this->Tmp.filePath("MarkupsToModel/" + qtloadablemodules_lib_dir));
   }
 
 #ifdef Slicer_USE_PYTHONQT
@@ -1858,25 +1752,15 @@ void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated
     int extensionId = 2;
     QString lib_dir = QString(Self::LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QString qtscriptedmodules_lib_dir = QString(Self::QTSCRIPTEDMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
-    QTest::newRow("linux-2-CurveMaker")
-        << operatingSystem << architecture << slicerRevision
-        << ExtensionIdType(operatingSystem, 1)
-        << ExtensionIdType(operatingSystem, extensionId)
-        << (QStringList() << this->Tmp.filePath("CurveMaker/" + lib_dir))
-        << QStringList()
-        << (QStringList()
-            << this->Tmp.filePath("CurveMaker/" + qtscriptedmodules_lib_dir));
+    QTest::newRow("linux-2-CurveMaker") << operatingSystem << architecture << slicerRevision << ExtensionIdType(operatingSystem, 1) << ExtensionIdType(operatingSystem, extensionId)
+                                        << (QStringList() << this->Tmp.filePath("CurveMaker/" + lib_dir)) << QStringList()
+                                        << (QStringList() << this->Tmp.filePath("CurveMaker/" + qtscriptedmodules_lib_dir));
   }
 #endif
 
   {
-    QTest::newRow("linux-Cleanup")
-        << operatingSystem << architecture << slicerRevision
-        << ExtensionIdType(operatingSystem, 2)
-        << ExtensionIdType("", -1)
-        << QStringList()
-        << QStringList()
-        << QStringList();
+    QTest::newRow("linux-Cleanup") << operatingSystem << architecture << slicerRevision << ExtensionIdType(operatingSystem, 2) << ExtensionIdType("", -1) << QStringList()
+                                   << QStringList() << QStringList();
   }
 }
 
@@ -1887,11 +1771,7 @@ typedef void (qSlicerExtensionsManagerModel::* QStringSetter)(const QString&);
 typedef QString (qSlicerExtensionsManagerModel::* QStringGetter)()const;
 
 // ----------------------------------------------------------------------------
-void testRequirementsHelper(qSlicerExtensionsManagerModel * model,
-                            QStringSetter qStringSetterFuncPtr,
-                            QStringGetter qStringGetterFuncPtr,
-                            const char * changedPropertySignal
-                            )
+void testRequirementsHelper(qSlicerExtensionsManagerModel* model, QStringSetter qStringSetterFuncPtr, QStringGetter qStringGetterFuncPtr, const char* changedPropertySignal)
 {
   QFETCH(QStringList, valuesToSet);
   QFETCH(QString, expectedFinalValue);
@@ -1914,11 +1794,7 @@ void testRequirementsHelper(qSlicerExtensionsManagerModel * model,
 void qSlicerExtensionsManagerModelTester::testSetSlicerRevision()
 {
   qSlicerExtensionsManagerModel model;
-  testRequirementsHelper(&model,
-                         &qSlicerExtensionsManagerModel::setSlicerRevision,
-                         &qSlicerExtensionsManagerModel::slicerRevision,
-                         SIGNAL(slicerRevisionChanged(QString))
-                         );
+  testRequirementsHelper(&model, &qSlicerExtensionsManagerModel::setSlicerRevision, &qSlicerExtensionsManagerModel::slicerRevision, SIGNAL(slicerRevisionChanged(QString)));
 }
 
 // ----------------------------------------------------------------------------
@@ -1942,10 +1818,7 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerRevision_data()
 void qSlicerExtensionsManagerModelTester::testSetSlicerOs()
 {
   qSlicerExtensionsManagerModel model;
-  testRequirementsHelper(&model,
-                         &qSlicerExtensionsManagerModel::setSlicerOs,
-                         &qSlicerExtensionsManagerModel::slicerOs,
-                         SIGNAL(slicerOsChanged(QString)));
+  testRequirementsHelper(&model, &qSlicerExtensionsManagerModel::setSlicerOs, &qSlicerExtensionsManagerModel::slicerOs, SIGNAL(slicerOsChanged(QString)));
 }
 
 // ----------------------------------------------------------------------------
@@ -1969,10 +1842,7 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerOs_data()
 void qSlicerExtensionsManagerModelTester::testSetSlicerArch()
 {
   qSlicerExtensionsManagerModel model;
-  testRequirementsHelper(&model,
-                         &qSlicerExtensionsManagerModel::setSlicerArch,
-                         &qSlicerExtensionsManagerModel::slicerArch,
-                         SIGNAL(slicerArchChanged(QString)));
+  testRequirementsHelper(&model, &qSlicerExtensionsManagerModel::setSlicerArch, &qSlicerExtensionsManagerModel::slicerArch, SIGNAL(slicerArchChanged(QString)));
 }
 
 // ----------------------------------------------------------------------------
@@ -2029,16 +1899,10 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerRequirements_data()
   QTest::addColumn<QStringList>("finalExpectedSlicerRequirement");
 
   QList<QStringList> requirementsToSetList = QList<QStringList>()
-      << (QStringList() << "" << "" << "")
-      << (QStringList() << "5" << "" << "")
-      << (QStringList() << "5" << "linux" << "")
-      << (QStringList() << "5" << "linux" << "")
-      << (QStringList() << "5" << "linux" << "amd64")
-      << (QStringList() << "5" << "linux" << "amd64")
-      << (QStringList() << "74" << "linux" << "amd64");
-  QTest::newRow("0") << requirementsToSetList
-                     << (QList<int>() << 0 << 1 << 2 << 2 << 3 << 3 << 4)
-                     << (QStringList() << "74" << "linux" << "amd64");
+                                             << (QStringList() << "" << "" << "") << (QStringList() << "5" << "" << "") << (QStringList() << "5" << "linux" << "")
+                                             << (QStringList() << "5" << "linux" << "") << (QStringList() << "5" << "linux" << "amd64")
+                                             << (QStringList() << "5" << "linux" << "amd64") << (QStringList() << "74" << "linux" << "amd64");
+  QTest::newRow("0") << requirementsToSetList << (QList<int>() << 0 << 1 << 2 << 2 << 3 << 3 << 4) << (QStringList() << "74" << "linux" << "amd64");
 }
 
 // ----------------------------------------------------------------------------

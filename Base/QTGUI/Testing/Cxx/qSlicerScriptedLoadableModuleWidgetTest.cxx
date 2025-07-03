@@ -82,7 +82,7 @@ bool qSlicerScriptedLoadableModuleWidgetTester::resetTmp()
   ctk::removeDirRecursively(tmp.filePath(this->TemporaryDirName));
   tmp.mkdir(this->TemporaryDirName);
   tmp.cd(this->TemporaryDirName);
-  this->Tmp = tmp;
+  this->Tmp.setPath(tmp.dirName());
   return this->Tmp.exists();
 }
 
@@ -102,7 +102,7 @@ void qSlicerScriptedLoadableModuleWidgetTester::cleanupTestCase()
   if (this->Tmp != QDir::current() && this->Tmp.exists())
   {
     ctk::removeDirRecursively(this->Tmp.absolutePath());
-    this->Tmp = QDir();
+    this->Tmp.setPath(QString());
   }
 }
 
