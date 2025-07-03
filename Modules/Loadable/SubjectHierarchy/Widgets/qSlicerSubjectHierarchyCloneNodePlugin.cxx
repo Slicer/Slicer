@@ -73,7 +73,10 @@ void qSlicerSubjectHierarchyCloneNodePluginPrivate::init()
 
   this->CloneItemAction = new QAction(qSlicerSubjectHierarchyCloneNodePlugin::tr("Clone"), q);
   this->CloneItemAction->setToolTip(qSlicerSubjectHierarchyCloneNodePlugin::tr("Clone this item and its data node if any along with display and storage options"));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CloneItemAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 0.5); // put it right after "Rename" action
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CloneItemAction,                              //
+                                                           qSlicerSubjectHierarchyAbstractPlugin::SectionNode, //
+                                                           0,                                                  // "Rename" action's index
+                                                           1.0);                                               // put it right after
   QObject::connect(this->CloneItemAction, SIGNAL(triggered()), q, SLOT(cloneCurrentItem()));
 }
 

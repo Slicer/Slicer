@@ -112,7 +112,10 @@ void qSlicerSubjectHierarchySegmentsPluginPrivate::init()
 
   // Clone segment action
   this->CloneSegmentAction = new QAction(qSlicerSubjectHierarchySegmentsPlugin::tr("Clone"), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CloneSegmentAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 0.5); // put it right after "Rename" action
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CloneSegmentAction,                           //
+                                                           qSlicerSubjectHierarchyAbstractPlugin::SectionNode, //
+                                                           0,                                                  // "Rename" action's index
+                                                           1.0);                                               // put it right after
   QObject::connect(this->CloneSegmentAction, SIGNAL(triggered()), q, SLOT(cloneSegment()));
 
   this->OpacityMenu = new QMenu(qSlicerSubjectHierarchySegmentsPlugin::tr("Opacity"));
