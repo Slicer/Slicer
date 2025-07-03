@@ -71,7 +71,9 @@
 #include "ctkDICOMIndexer.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerDICOMExportDialogPrivate : public Ui_qSlicerDICOMExportDialog, public QDialog
+class qSlicerDICOMExportDialogPrivate
+  : public QDialog // QObject baseclass must be the first in list of multiple inheritance for automoc to work.
+  , public Ui_qSlicerDICOMExportDialog
 {
   Q_DECLARE_PUBLIC(qSlicerDICOMExportDialog);
 protected:
@@ -117,18 +119,12 @@ void qSlicerDICOMExportDialogPrivate::init()
   this->ErrorLabel->setText(QString());
 
   // Make connections
-  connect(this->SubjectHierarchyTreeView, SIGNAL(currentItemChanged(vtkIdType)),
-    q, SLOT(onCurrentItemChanged(vtkIdType)));
-  connect(this->ExportablesListWidget, SIGNAL(currentRowChanged(int)),
-    q, SLOT(onExportableSelectedAtRow(int)));
-  connect(this->DICOMTagEditorWidget, SIGNAL(tagEdited()),
-    q, SLOT(onTagEdited()));
-  connect(this->ExportButton, SIGNAL(clicked()),
-    q, SLOT(onExport()));
-  connect(this->SaveTagsCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(onSaveTagsCheckBoxToggled(bool)) );
-  connect(this->ExportToFolderCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(onExportToFolderCheckBoxToggled(bool)) );
+  connect(this->SubjectHierarchyTreeView, SIGNAL(currentItemChanged(vtkIdType)), q, SLOT(onCurrentItemChanged(vtkIdType)));
+  connect(this->ExportablesListWidget, SIGNAL(currentRowChanged(int)), q, SLOT(onExportableSelectedAtRow(int)));
+  connect(this->DICOMTagEditorWidget, SIGNAL(tagEdited()), q, SLOT(onTagEdited()));
+  connect(this->ExportButton, SIGNAL(clicked()), q, SLOT(onExport()));
+  connect(this->SaveTagsCheckBox, SIGNAL(toggled(bool)), q, SLOT(onSaveTagsCheckBoxToggled(bool)));
+  connect(this->ExportToFolderCheckBox, SIGNAL(toggled(bool)), q, SLOT(onExportToFolderCheckBoxToggled(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -513,10 +509,8 @@ void qSlicerDICOMExportDialog::showUpdatedDICOMBrowser()
   // (no direct function for it, so re-set the folder)
   PythonQt::init();
   PythonQtObjectPtr openBrowserContext = PythonQt::self()->getMainModule();
-  openBrowserContext.evalScript(QString(
-    "slicer.util.selectModule('DICOM')\n"
-    "slicer.modules.DICOMInstance.browserWidget.dicomBrowser.dicomTableManager().updateTableViews()\n"
-    ));
+  openBrowserContext.evalScript(QString("slicer.util.selectModule('DICOM')\n"
+                                        "slicer.modules.DICOMInstance.browserWidget.dicomBrowser.dicomTableManager().updateTableViews()\n"));
 }
 
 //-----------------------------------------------------------------------------
@@ -554,8 +548,7 @@ bool qSlicerDICOMExportDialog::exportSeries(const QDir& outputFolder)
   PythonQt::init();
   PythonQtObjectPtr exportContext = PythonQt::self()->getMainModule();
   exportContext.addVariable("exportables", exportableList);
-  exportContext.evalScript(QString(
-    "plugin = slicer.modules.dicomPlugins[%1]()\n"
+  exportContext.evalScript(QString("plugin = slicer.modules.dicomPlugins[%1]()\n"
     "try:\n"
     "  errorMessage = plugin.export(exportables)\n"
     "except Exception as e:\n"
