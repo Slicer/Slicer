@@ -74,6 +74,8 @@ struct UpdateDownloadInformation
   qint64 DownloadProgress{0};
 };
 
+} // end of anonymous namespace
+
 // --------------------------------------------------------------------------
 class QStandardItemModelWithRole : public QStandardItemModel
 {
@@ -85,8 +87,6 @@ public:
   }
   QHash<int,QByteArray> CustomRoleNames;
 };
-
-} // end of anonymous namespace
 
 // --------------------------------------------------------------------------
 // qSlicerExtensionsManagerModelPrivate methods
@@ -3403,3 +3403,6 @@ bool qSlicerExtensionsManagerModel::waitForAllTasksCompletion(int timeoutMsec/*=
     }
   }
 }
+
+// at bottom of qSlicerExtensionsManagerModel.cxx
+#include "qSlicerExtensionsManagerModel.moc"

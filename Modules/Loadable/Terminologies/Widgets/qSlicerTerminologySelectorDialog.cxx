@@ -200,3 +200,5 @@ void qSlicerTerminologySelectorDialog::setOverrideSectionVisible(bool visible)
   Q_D(qSlicerTerminologySelectorDialog);
   d->NavigatorWidget->setOverrideSectionVisible(visible);
 }
+
+#include "qSlicerTerminologySelectorDialog.moc"

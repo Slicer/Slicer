@@ -489,3 +489,5 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
   }
 #endif
 }
+
+#include "qSlicerWebWidget.moc"

@@ -456,3 +456,5 @@ void qSlicerSubjectHierarchyRegisterPlugin::cancel()
   // Reset saved 'from' item
   this->m_RegisterFromItem = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 }
+
+#include "qSlicerSubjectHierarchyRegisterPlugin.moc"

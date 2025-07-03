@@ -282,3 +282,5 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showInAllViews()
     }
   }
 }
+
+#include "qSlicerSubjectHierarchyVisibilityPlugin.moc"

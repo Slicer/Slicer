@@ -167,3 +167,5 @@ const QString qSlicerSubjectHierarchyCloneNodePlugin::getCloneNodeNamePostfix()
 {
   return QString(vtkSlicerSubjectHierarchyModuleLogic::CLONED_NODE_NAME_POSTFIX);
 }
+
+#include "qSlicerSubjectHierarchyCloneNodePlugin.moc"

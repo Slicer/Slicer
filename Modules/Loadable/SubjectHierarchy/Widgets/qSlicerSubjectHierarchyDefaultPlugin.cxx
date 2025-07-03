@@ -316,3 +316,5 @@ void qSlicerSubjectHierarchyDefaultPlugin::hideAllChildren()
     ownerPlugin->setDisplayVisibility(childItemID, 0);
   }
 }
+
+#include "qSlicerSubjectHierarchyDefaultPlugin.moc"

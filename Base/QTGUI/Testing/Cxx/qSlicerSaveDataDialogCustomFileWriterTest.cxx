@@ -44,8 +44,9 @@ public:
   qSlicerDummyFileWriter(qSlicerIO::IOFileType fileType, QObject* parent = nullptr)
     : qSlicerFileWriter(parent)
     , FileType(fileType)
-    {}
-  ~qSlicerDummyFileWriter() override = default;
+  {
+  }
+  ~qSlicerDummyFileWriter() override = default; // The required destructor is added by the AUTO_MOC system
   virtual QStringList nodeTags()const {return QStringList() << "LinearTransform";}
   QString description()const override{return "Dummy";}
   qSlicerIO::IOFileType fileType()const override{return this->FileType;}
@@ -89,3 +90,5 @@ int qSlicerSaveDataDialogCustomFileWriterTest(int argc, char * argv[] )
 
   return saveDataDialog.exec();
 }
+
+#include "qSlicerSaveDataDialogCustomFileWriterTest.moc"

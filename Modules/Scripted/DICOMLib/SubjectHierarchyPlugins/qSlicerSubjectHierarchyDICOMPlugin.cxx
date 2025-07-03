@@ -650,3 +650,5 @@ vtkIdType qSlicerSubjectHierarchyDICOMPlugin::createDefaultStudyItem()
 
   return studyItemID;
 }
+
+#include "qSlicerSubjectHierarchyDICOMPlugin.moc"

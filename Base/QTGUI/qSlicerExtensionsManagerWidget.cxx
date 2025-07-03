@@ -843,3 +843,5 @@ void qSlicerExtensionsManagerWidget::setFocusToSearchBox()
   Q_D(qSlicerExtensionsManagerWidget);
   d->ToolsWidget->SearchBox->setFocus();
 }
+
+#include "qSlicerExtensionsManagerWidget.moc"

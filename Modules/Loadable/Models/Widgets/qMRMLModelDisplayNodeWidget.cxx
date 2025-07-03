@@ -897,3 +897,5 @@ void qMRMLModelDisplayNodeWidget::setClippingConfigurationButtonVisible(bool sho
   Q_D(qMRMLModelDisplayNodeWidget);
   d->ConfigureClippingPushButton->setVisible(show);
 }
+
+#include "qMRMLModelDisplayNodeWidget.moc"

@@ -390,3 +390,5 @@ void qMRMLColorLegendDisplayNodeWidget::onNumberOfLabelsChanged(int numberOfLabe
 
   d->ColorLegendDisplayNode->SetNumberOfLabels(numberOfLabels);
 }
+
+#include "qMRMLColorLegendDisplayNodeWidget.moc"

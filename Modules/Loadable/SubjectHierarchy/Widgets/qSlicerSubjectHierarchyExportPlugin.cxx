@@ -259,3 +259,5 @@ void qSlicerSubjectHierarchyExportPlugin::exportItems()
 
   qSlicerApplication::application()->ioManager()->openDialog(QString("GenericNodeExport"), qSlicerFileDialog::Write, properties);
 }
+
+#include "qSlicerSubjectHierarchyExportPlugin.moc"
