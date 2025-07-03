@@ -55,8 +55,9 @@ public:
 
   /// Show context menu actions valid for a given subject hierarchy item to be shown in the view.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute, etc.)
-  void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData);
+  /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute,
+  /// etc.)
+  void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData) override;
 
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
