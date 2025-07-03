@@ -138,10 +138,8 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   //----------------------------------------------------------------------------
   // Recently loaded files
   //----------------------------------------------------------------------------
-  QObject::connect(app->coreIOManager(), SIGNAL(newFileLoaded(qSlicerIO::IOProperties)),
-                   q, SLOT(onNewFileLoaded(qSlicerIO::IOProperties)));
-  QObject::connect(app->coreIOManager(), SIGNAL(fileSaved(qSlicerIO::IOProperties)),
-                   q, SLOT(onFileSaved(qSlicerIO::IOProperties)));
+  QObject::connect(app->coreIOManager(), SIGNAL(newFileLoaded(qSlicerIO::IOProperties)), q, SLOT(onNewFileLoaded(qSlicerIO::IOProperties)));
+  QObject::connect(app->coreIOManager(), SIGNAL(fileSaved(qSlicerIO::IOProperties)), q, SLOT(onFileSaved(qSlicerIO::IOProperties)));
 
   //----------------------------------------------------------------------------
   // Load DICOM
@@ -154,8 +152,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // ModulePanel
   //----------------------------------------------------------------------------
   this->PanelDockWidget->toggleViewAction()->setText(qSlicerMainWindow::tr("Show &Module Panel"));
-  this->PanelDockWidget->toggleViewAction()->setToolTip(
-    qSlicerMainWindow::tr("Collapse/Expand the GUI panel and allows Slicer's viewers to occupy "
+  this->PanelDockWidget->toggleViewAction()->setToolTip(qSlicerMainWindow::tr("Collapse/Expand the GUI panel and allows Slicer's viewers to occupy "
           "the entire application window"));
   this->PanelDockWidget->toggleViewAction()->setShortcut(QKeySequence("Ctrl+5"));
   this->AppearanceMenu->insertAction(this->ShowStatusBarAction,
@@ -174,8 +171,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   QObject::connect(moduleManager,SIGNAL(moduleLoaded(QString)),
                    q, SLOT(onModuleLoaded(QString)));
 
-  QObject::connect(moduleManager, SIGNAL(moduleAboutToBeUnloaded(QString)),
-                   q, SLOT(onModuleAboutToBeUnloaded(QString)));
+  QObject::connect(moduleManager, SIGNAL(moduleAboutToBeUnloaded(QString)), q, SLOT(onModuleAboutToBeUnloaded(QString)));
 
   //----------------------------------------------------------------------------
   // ModuleSelector ToolBar
@@ -190,8 +186,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // Connect the selector with the module panel
   this->ModulePanel->setModuleManager(moduleManager);
-  QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)),
-                   this->ModulePanel, SLOT(setModule(QString)));
+  QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)), this->ModulePanel, SLOT(setModule(QString)));
 
   // Ensure the panel dock widget is visible
   QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)),
@@ -204,10 +199,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->MouseModeToolBar->setApplicationLogic(
     qSlicerApplication::application()->applicationLogic());
   this->MouseModeToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->MouseModeToolBar,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(qSlicerApplication::application(), SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->MouseModeToolBar, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   QList<QAction*> toolBarActions;
   toolBarActions << this->MainToolBar->toggleViewAction();
@@ -254,31 +246,23 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->LayoutManager = new qSlicerLayoutManager(layoutFrame);
   // Prevent updates until the main window is shown to avoid detached viewports appear too early.
   this->LayoutManager->setEnabled(false);
-  this->LayoutManager->setScriptedDisplayableManagerDirectory(
-      qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
+  this->LayoutManager->setScriptedDisplayableManagerDirectory(qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
   qSlicerApplication::application()->setLayoutManager(this->LayoutManager);
 #ifdef Slicer_USE_QtTesting
   // we store this layout manager to the Object state property for QtTesting
-  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(
-      qSlicerApplication::application()->layoutManager(), QString(/*no tr*/"layout"));
-  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(
-      this->ModuleSelectorToolBar->modulesMenu(), QString("currentModule"));
+  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(qSlicerApplication::application()->layoutManager(), QString(/*no tr*/ "layout"));
+  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(this->ModuleSelectorToolBar->modulesMenu(), QString("currentModule"));
 #endif
   // Layout manager should also listen the MRML scene
   // Note: This creates the OpenGL context for each view, so things like
   // multisampling should probably be configured before this line is executed.
   this->LayoutManager->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->LayoutManager,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(this->LayoutManager, SIGNAL(layoutChanged(int)),
-                   q, SLOT(onLayoutChanged(int)));
+  QObject::connect(qSlicerApplication::application(), SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->LayoutManager, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(this->LayoutManager, SIGNAL(layoutChanged(int)), q, SLOT(onLayoutChanged(int)));
 
   // TODO: When module will be managed by the layoutManager, this should be
   //       revisited.
-  QObject::connect(this->LayoutManager, SIGNAL(selectModule(QString)),
-                   this->ModuleSelectorToolBar, SLOT(selectModule(QString)));
+  QObject::connect(this->LayoutManager, SIGNAL(selectModule(QString)), this->ModuleSelectorToolBar, SLOT(selectModule(QString)));
 
   // Add menus for configuring compare view
   QMenu *compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
@@ -305,8 +289,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   compareMenu->addAction(this->ViewLayoutCompareWidescreen_7_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompareWidescreen_8_viewersAction);
   this->ViewLayoutCompareWidescreenAction->setMenu(compareMenu);
-  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)),
-                   q, SLOT(onLayoutCompareWidescreenActionTriggered(QAction*)));
+  QObject::connect(compareMenu, SIGNAL(triggered(QAction*)), q, SLOT(onLayoutCompareWidescreenActionTriggered(QAction*)));
 
   // ... and for the grid version of the compare views
   compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
@@ -336,9 +319,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    q, SLOT(onLayoutActionTriggered(QAction*)));
 
   this->ViewToolBar->addWidget(this->LayoutButton);
-  QObject::connect(this->ViewToolBar,
-                   SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
-                   this->LayoutButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
+  QObject::connect(this->ViewToolBar, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)), this->LayoutButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
 
   //----------------------------------------------------------------------------
   // Viewers Toolbar
@@ -347,10 +328,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->ViewersToolBar->setApplicationLogic(
     qSlicerApplication::application()->applicationLogic());
   this->ViewersToolBar->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->ViewersToolBar,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(qSlicerApplication::application(), SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->ViewersToolBar, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   //----------------------------------------------------------------------------
   // Undo/Redo Toolbar
@@ -405,8 +383,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->ViewMenu->insertAction(this->ModuleHomeAction, this->ErrorLogToggleViewAction);
 
   // Change orientation depending on where the widget is docked
-  QObject::connect(this->ErrorLogDockWidget, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
-    q, SLOT(onErrorLogDockWidgetAreaChanged(Qt::DockWidgetArea)));
+  QObject::connect(this->ErrorLogDockWidget, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), q, SLOT(onErrorLogDockWidgetAreaChanged(Qt::DockWidgetArea)));
 
   // Dismiss the error message notification if the user interacted with the error log.
   QObject::connect(this->ErrorLogWidget, SIGNAL(userViewed()),
@@ -440,15 +417,12 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     }
     q->pythonConsole()->setScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->updatePythonConsolePalette();
-    QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)),
-      q, SLOT(onPythonConsoleUserInput(const QString&)));
+    QObject::connect(q->pythonConsole(), SIGNAL(aboutToExecute(const QString&)), q, SLOT(onPythonConsoleUserInput(const QString&)));
     // Set up show/hide action
     this->PythonConsoleToggleViewAction->setText(qSlicerMainWindow::tr("&Python Console"));
-    this->PythonConsoleToggleViewAction->setToolTip(qSlicerMainWindow::tr(
-      "Show Python Console window for controlling the application's data, user interface, and internals"));
-    this->PythonConsoleToggleViewAction->setShortcuts({qSlicerMainWindow::tr("Ctrl+3"), qSlicerMainWindow::tr("Ctrl+`")});
-    QObject::connect(this->PythonConsoleToggleViewAction, SIGNAL(toggled(bool)),
-      q, SLOT(onPythonConsoleToggled(bool)));
+    this->PythonConsoleToggleViewAction->setToolTip(qSlicerMainWindow::tr("Show Python Console window for controlling the application's data, user interface, and internals"));
+    this->PythonConsoleToggleViewAction->setShortcuts({ qSlicerMainWindow::tr("Ctrl+3"), qSlicerMainWindow::tr("Ctrl+`") });
+    QObject::connect(this->PythonConsoleToggleViewAction, SIGNAL(toggled(bool)), q, SLOT(onPythonConsoleToggled(bool)));
     this->ViewMenu->insertAction(this->ModuleHomeAction, this->PythonConsoleToggleViewAction);
     this->PythonConsoleToggleViewAction->setIcon(QIcon(":/python-icon.png"));
     this->DialogToolBar->addAction(this->PythonConsoleToggleViewAction);
@@ -545,8 +519,7 @@ void qSlicerMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IO
 
   // Add separator and clear action
   this->RecentlyLoadedMenu->addSeparator();
-  QAction * clearAction = this->RecentlyLoadedMenu->addAction(
-    qSlicerMainWindow::tr("Clear History"), q, SLOT(onFileRecentLoadedActionTriggered()));
+  QAction* clearAction = this->RecentlyLoadedMenu->addAction(qSlicerMainWindow::tr("Clear History"), q, SLOT(onFileRecentLoadedActionTriggered()));
   clearAction->setProperty("clearMenu", QVariant(true));
 }
 
@@ -574,7 +547,7 @@ QList<qSlicerIO::IOProperties> qSlicerMainWindowPrivate::readRecentlyLoadedFiles
     settings.setArrayIndex(i);
     QVariant file = settings.value("file");
     qSlicerIO::IOProperties properties = file.toMap();
-    properties["fileName"] = qSlicerApplication::application()->toSlicerHomeAbsolutePath(properties["fileName"].toString());
+    properties.insert("fileName", qSlicerApplication::application()->toSlicerHomeAbsolutePath(properties.value("fileName").toString()));
     fileProperties << properties;
   }
   settings.endArray();
@@ -591,7 +564,7 @@ void qSlicerMainWindowPrivate::writeRecentlyLoadedFiles(const QList<qSlicerIO::I
   {
     settings.setArrayIndex(i);
     qSlicerIO::IOProperties properties = fileProperties.at(i);
-    properties["fileName"] = qSlicerApplication::application()->toSlicerHomeRelativePath(properties["fileName"].toString());
+    properties.insert("fileName", qSlicerApplication::application()->toSlicerHomeRelativePath(properties.value("fileName").toString()));
     settings.setValue("file", properties);
   }
   settings.endArray();
@@ -608,12 +581,13 @@ bool qSlicerMainWindowPrivate::confirmCloseApplication()
   bool close = false;
   if (sceneModified)
   {
-    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning, qSlicerMainWindow::tr("Save before exit?"),
-      qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"), QMessageBox::NoButton, q);
-    QAbstractButton* saveButton =
-       messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
-    QAbstractButton* exitButton =
-       messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::ActionRole);
+    QMessageBox* messageBox = new QMessageBox(QMessageBox::Warning,
+                                              qSlicerMainWindow::tr("Save before exit?"),
+                                              qSlicerMainWindow::tr("The scene has been modified. Do you want to save it before exit?"),
+                                              QMessageBox::NoButton,
+                                              q);
+    QAbstractButton* saveButton = messageBox->addButton(qSlicerMainWindow::tr("Save"), QMessageBox::ActionRole);
+    QAbstractButton* exitButton = messageBox->addButton(qSlicerMainWindow::tr("Exit (discard modifications)"), QMessageBox::ActionRole);
     messageBox->addButton(qSlicerMainWindow::tr("Cancel exit"), QMessageBox::RejectRole);
 
     if (!details.isEmpty())
@@ -743,9 +717,8 @@ void qSlicerMainWindowPrivate::setupStatusBar()
   this->ErrorLogToolButton->setDefaultAction(this->ErrorLogToggleViewAction);
   q->statusBar()->addPermanentWidget(this->ErrorLogToolButton);
 
-  QObject::connect(qSlicerApplication::application()->errorLogModel(),
-                   SIGNAL(entryAdded(ctkErrorLogLevel::LogLevel)),
-                   q, SLOT(onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel)));
+  QObject::connect(
+    qSlicerApplication::application()->errorLogModel(), SIGNAL(entryAdded(ctkErrorLogLevel::LogLevel)), q, SLOT(onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel)));
 }
 
 //-----------------------------------------------------------------------------
@@ -985,9 +958,7 @@ void qSlicerMainWindow::on_SDBSaveToDirectoryAction_triggered()
   // Q_D(qSlicerMainWindow);
   // open a file dialog to let the user choose where to save
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
-  QString saveDirName = QFileDialog::getExistingDirectory(
-    this, tr("Slicer Data Bundle Directory (Select Empty Directory)"),
-    tempDir, QFileDialog::ShowDirsOnly);
+  QString saveDirName = QFileDialog::getExistingDirectory(this, tr("Slicer Data Bundle Directory (Select Empty Directory)"), tempDir, QFileDialog::ShowDirsOnly);
   if (saveDirName.isEmpty())
   {
     std::cout << "No directory name chosen!" << std::endl;
@@ -1002,12 +973,11 @@ void qSlicerMainWindow::on_SDBSaveToDirectoryAction_triggered()
   {
     QWidget* widget = layoutManager->viewport();
     QImage screenShot = ctk::grabVTKWidget(widget);
-    properties["screenShot"] = screenShot;
+    properties.insert("screenShot", screenShot);
   }
 
-  properties["fileName"] = saveDirName;
-  qSlicerCoreApplication::application()->coreIOManager()
-    ->saveNodes(QString("SceneFile"), properties);
+  properties.insert("fileName", saveDirName);
+  qSlicerCoreApplication::application()->coreIOManager()->saveNodes(QString("SceneFile"), properties);
 }
 
 //---------------------------------------------------------------------------
@@ -1017,9 +987,7 @@ void qSlicerMainWindow::on_SDBSaveToMRBAction_triggered()
   // open a file dialog to let the user choose where to save
   // make sure it was selected and add a .mrb to it if needed
   //
-  QString fileName = QFileDialog::getSaveFileName(
-    this, tr("Save Data Bundle File"),
-    "", tr("Medical Reality Bundle (*.mrb)"));
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save Data Bundle File"), "", tr("Medical Reality Bundle (*.mrb)"));
 
   if (fileName.isEmpty())
   {
@@ -1032,9 +1000,8 @@ void qSlicerMainWindow::on_SDBSaveToMRBAction_triggered()
     fileName += QString(".mrb");
   }
   qSlicerIO::IOProperties properties;
-  properties["fileName"] = fileName;
-  qSlicerCoreApplication::application()->coreIOManager()
-    ->saveNodes(QString("SceneFile"), properties);
+  properties.insert("fileName", fileName);
+  qSlicerCoreApplication::application()->coreIOManager()->saveNodes(QString("SceneFile"), properties);
 }
 
 //---------------------------------------------------------------------------
@@ -1228,9 +1195,7 @@ void qSlicerMainWindow::onFileRecentLoadedActionTriggered()
   Q_ASSERT(fileParameters.isValid());
 
   qSlicerIO::IOProperties fileProperties = fileParameters.toMap();
-  qSlicerIO::IOFileType fileType =
-      static_cast<qSlicerIO::IOFileType>(
-        fileProperties.find("fileType").value().toString());
+  qSlicerIO::IOFileType fileType = static_cast<qSlicerIO::IOFileType>(fileProperties.find("fileType").value().toString());
 
   qSlicerApplication* app = qSlicerApplication::application();
 
@@ -1299,8 +1264,7 @@ void qSlicerMainWindow::showEvent(QShowEvent *event)
     qSlicerApplication* app = qSlicerApplication::application();
     if (app && app->extensionsManagerModel())
     {
-      connect(app->extensionsManagerModel(), SIGNAL(extensionUpdatesAvailable(bool)),
-        this, SLOT(setExtensionUpdatesAvailable(bool)));
+      connect(app->extensionsManagerModel(), SIGNAL(extensionUpdatesAvailable(bool)), this, SLOT(setExtensionUpdatesAvailable(bool)));
       this->setExtensionUpdatesAvailable(!app->extensionsManagerModel()->availableUpdateExtensions().empty());
     }
 #endif
@@ -1330,9 +1294,7 @@ void qSlicerMainWindow::pythonConsoleInitialDisplay()
 void qSlicerMainWindow::disclaimer()
 {
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) ||
-      !app->coreCommandOptions()->pythonCode().isEmpty() ||
-      !app->coreCommandOptions()->pythonScript().isEmpty())
+  if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) || !app->coreCommandOptions()->pythonCode().isEmpty() || !app->coreCommandOptions()->pythonScript().isEmpty())
   {
     return;
   }
@@ -1513,7 +1475,7 @@ void qSlicerMainWindow::onNewFileLoaded(const qSlicerIO::IOProperties& filePrope
 void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& fileProperties)
 {
   Q_D(qSlicerMainWindow);
-  QString fileName = fileProperties["fileName"].toString();
+  QString fileName = fileProperties.value("fileName").toString();
   if (fileName.isEmpty())
   {
     return;
@@ -1527,8 +1489,8 @@ void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& filePropertie
     // which can cause complication when attempted to be stored,
     // therefore we create a new clean property set.
     qSlicerIO::IOProperties properties;
-    properties["fileName"] = fileName;
-    properties["fileType"] = QString("SceneFile");
+    properties.insert("fileName", fileName);
+    properties.insert("fileType", QString("SceneFile"));
     this->addFileToRecentFiles(properties);
   }
 }
@@ -1740,8 +1702,7 @@ void qSlicerMainWindow::restoreGUIState(bool force/*=false*/)
   Q_D(qSlicerMainWindow);
   QSettings settings;
   settings.beginGroup("MainWindow");
-  this->setToolButtonStyle(settings.value("ShowToolButtonText").toBool()
-                        ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
+  this->setToolButtonStyle(settings.value("ShowToolButtonText").toBool() ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
   bool restore = settings.value("RestoreGeometry", false).toBool();
   if (restore || force)
   {

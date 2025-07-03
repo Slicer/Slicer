@@ -57,7 +57,6 @@ qSlicerWidgetValueWrapper::~qSlicerWidgetValueWrapper() = default;
 
 //-----------------------------------------------------------------------------
 #define WIDGET_VALUE_WRAPPER(_NAME, _WIDGET, _GETTER, _SETTER, _CONVERTER, _NOTIFY) \
-  namespace{                                                            \
     class _NAME##WidgetValueWrapper: public qSlicerWidgetValueWrapper   \
     {                                                                   \
     Q_OBJECT                                                                                  \
@@ -86,8 +85,7 @@ qSlicerWidgetValueWrapper::~qSlicerWidgetValueWrapper() = default;
         }                                                               \
       }                                                                 \
       _WIDGET* Widget;                                                  \
-    };                                                                  \
-  }
+  };
 
 //-----------------------------------------------------------------------------
 WIDGET_VALUE_WRAPPER(IntegerWithoutConstraints, QSpinBox, value, setValue, Int, valueChanged(int));

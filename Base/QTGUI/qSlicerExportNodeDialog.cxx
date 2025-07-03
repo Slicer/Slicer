@@ -79,23 +79,19 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
     const std::string defaultStorageNodeClassName = storableNode->GetDefaultStorageNodeClassName();
     if (!defaultStorageNodeClassName.empty())
     {
-      vtkSmartPointer<vtkMRMLNode> defaultStorageNodeAsNode = vtkSmartPointer<vtkMRMLNode>::Take(
-        scene->CreateNodeByClass(defaultStorageNodeClassName.c_str())
-      );
+      vtkSmartPointer<vtkMRMLNode> defaultStorageNodeAsNode = vtkSmartPointer<vtkMRMLNode>::Take(scene->CreateNodeByClass(defaultStorageNodeClassName.c_str()));
       vtkMRMLStorageNode* defaultStorageNode = vtkMRMLStorageNode::SafeDownCast(defaultStorageNodeAsNode);
       extensionInStorageNode = defaultStorageNode->GetDefaultWriteFileExtension();
     }
   }
 
   // (Checking that storageNode is not null allows us to dodge a warning from completeSlicerWritableFileNameSuffix)
-  QString currentExtension = storageNode ?
-    coreIOManager->completeSlicerWritableFileNameSuffix(storableNode) : QString(".");
+  QString currentExtension = storageNode ? coreIOManager->completeSlicerWritableFileNameSuffix(storableNode) : QString(".");
   int suggestedFormatIndex = -1; // will be index corresponding to format corresponding to currentExtension
   foreach(QString nameFilter, coreIOManager->fileWriterExtensions(storableNode))
   {
     // extract extension (e.g. ".ext") from format description string (e.g. "Blahblahblah (.ext)")
-    QString extension = QString::fromStdString(
-      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
+    QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
 
     // add the entry to the dropdown menu
     this->exportFormatComboBox->addItem(nameFilter, extension);
@@ -135,8 +131,7 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
   }
 
   // We make this connection now, not earlier, so that we don't trigger the signal with the above initialization.
-  QObject::connect(this->exportFormatComboBox, &QComboBox::currentTextChanged,
-                    this, &NodeTypeWidgetSet::formatChangedSlot);
+  QObject::connect(this->exportFormatComboBox, &QComboBox::currentTextChanged, this, &NodeTypeWidgetSet::formatChangedSlot);
 
   // --------------------
   // Setup optionsWidget, now that exportFormatComboBox is initialized
@@ -256,7 +251,8 @@ void NodeTypeWidgetSet::changeCurrentOptionsWidget(qSlicerFileWriterOptionsWidge
     int index = this->optionsStackedWidget->indexOf(newOptionsWidget);
 
     if (index == -1)
-    { // There's a possibility of memory issues if we run into this error, because newOptionsWidget may never have been given a parent
+    { // There's a possibility of memory issues if we run into this error, because newOptionsWidget may never have been
+      // given a parent
       qCritical() << Q_FUNC_INFO << "has detected an error: options widget is not part of its associated stacked widget.";
 
       // Go to the "no options widget" state
@@ -510,9 +506,7 @@ bool qSlicerExportNodeDialogPrivate::setup(
   this->updatePreserveHierarchyCheckBox();
 
   // Initialize directory input widget
-  this->DirectoryPathLineEdit->setCurrentPath(
-    this->LastUsedDirectory.isEmpty() ? this->MRMLScene->GetRootDirectory() : this->LastUsedDirectory
-  );
+  this->DirectoryPathLineEdit->setCurrentPath(this->LastUsedDirectory.isEmpty() ? this->MRMLScene->GetRootDirectory() : this->LastUsedDirectory);
 
   if (this->NodeTypeWidgetSetStartRow < 0)
   {
@@ -917,8 +911,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     }
 
     // Construct file path for node
-    QDir directory = this->PreserveHierarchyCheckBox->isChecked() ?
-      this->getSubjectHierarchyBasedDirectory(node) : this->DirectoryPathLineEdit->currentPath();
+    QDir directory = this->PreserveHierarchyCheckBox->isChecked() ? this->getSubjectHierarchyBasedDirectory(node) : this->DirectoryPathLineEdit->currentPath();
     QString filename;
     if (this->FilenameLineEdit->isEnabled())
     {
@@ -945,8 +938,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     {
       if (this->FilenameLineEdit->isEnabled()) // user error
       {
-        QMessageBox::critical(this, qSlicerExportNodeDialog::tr("Export Error"),
-          qSlicerExportNodeDialog::tr("Failed to export node %1; filename is empty.").arg(node->GetName()));
+        QMessageBox::critical(this, qSlicerExportNodeDialog::tr("Export Error"), qSlicerExportNodeDialog::tr("Failed to export node %1; filename is empty.").arg(node->GetName()));
         return false;
       }
       else // program error
@@ -964,10 +956,11 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
         continue;
       }
       QMessageBox::StandardButtons replaceQuestionButtons;
-      QMessageBox::StandardButton answer = QMessageBox::question(this, qSlicerExportNodeDialog::tr("File Exists"),
-        qSlicerExportNodeDialog::tr("The file %1 already exists. Do you want to replace it?").arg(fileInfo.absoluteFilePath()),
-        this->nodeList().size()>1
-          ? QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel
+      QMessageBox::StandardButton answer =
+        QMessageBox::question(this,
+                              qSlicerExportNodeDialog::tr("File Exists"),
+                              qSlicerExportNodeDialog::tr("The file %1 already exists. Do you want to replace it?").arg(fileInfo.absoluteFilePath()),
+                              this->nodeList().size() > 1 ? QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel
           : QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
         QMessageBox::Yes
       );
@@ -1004,9 +997,9 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
       }
 
       // Fill saving parameters with the gathered information
-      savingParameters["nodeID"] = node->GetID();
-      savingParameters["fileName"] = fileInfo.absoluteFilePath();
-      savingParameters["fileFormat"] = nodeTypeWidgetSet->formatText();
+    savingParameters.insert("nodeID", node->GetID());
+    savingParameters.insert("fileName", fileInfo.absoluteFilePath());
+    savingParameters.insert("fileFormat", nodeTypeWidgetSet->formatText());
 
       // sadly, this copies; if we move to Qt6 then this should be emplace_back with a move
       savingParameterMaps.push_back(savingParameters);
@@ -1101,8 +1094,7 @@ QString qSlicerExportNodeDialogPrivate::recommendedFilename(vtkMRMLStorableNode*
   }
 
   // Get the extension associated with the currently selected format
-  QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-    this->theOnlyNodeTypeWidgetSet()->formatText().toUtf8()));
+  QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(this->theOnlyNodeTypeWidgetSet()->formatText().toUtf8()));
   if (extension == "*")
   {
     extension = QString();
@@ -1247,9 +1239,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
 
   // The following case occurs for example when trying to export a folder item that has children,
   // but none of its descendant items are storable nodes.
-  if (!properties.contains("childIdsNonrecursive") &&
-      !properties.contains("childIdsRecursive") &&
-      !properties.contains("selectedNodeID"))
+  if (!properties.contains("childIdsNonrecursive") && !properties.contains("childIdsRecursive") && !properties.contains("selectedNodeID"))
   {
     QMessageBox::critical(d, tr("Export error"), tr("There is nothing to export."));
     return false;
@@ -1259,11 +1249,11 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
 
   if (properties.contains("childIdsNonrecursive"))
   {
-    childIdsNonrecursive = properties["childIdsNonrecursive"].toList();
+    childIdsNonrecursive = properties.value("childIdsNonrecursive").toList();
   }
   if (properties.contains("childIdsRecursive"))
   {
-    childIdsRecursive = properties["childIdsRecursive"].toList();
+    childIdsRecursive = properties.value("childIdsRecursive").toList();
   }
 
   // This will remain null if there is no "selectedNodeID", or it will become a pointer to the selected node
@@ -1273,7 +1263,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
   QList<vtkMRMLStorableNode*> nodesNonrecursive, nodesRecursive;
   if (properties.contains("selectedNodeID"))
   {
-    QString selectedNodeID = properties["selectedNodeID"].toString();
+    QString selectedNodeID = properties.value("selectedNodeID").toString();
     selectedNode = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(selectedNodeID.toUtf8().constData()));
     if (selectedNode)
     {
@@ -1314,9 +1304,9 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
 
   // Get the hash map that attributes to each node a subject hierarchy path
   QHash<QString,QVariant> nodeIdToSubjectHierarchyPath;
-  if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert< QHash<QString,QVariant> >())
+  if (properties.contains("nodeIdToSubjectHierarchyPath") && properties.value("nodeIdToSubjectHierarchyPath").canConvert<QHash<QString, QVariant>>())
   {
-    nodeIdToSubjectHierarchyPath = properties["nodeIdToSubjectHierarchyPath"].toHash();
+    nodeIdToSubjectHierarchyPath = properties.value("nodeIdToSubjectHierarchyPath").toHash();
   }
   else
   {

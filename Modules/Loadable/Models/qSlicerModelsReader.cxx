@@ -134,7 +134,7 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerModelsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   this->setLoadedNodes(QStringList());
   if (!d->ModelsLogic)
@@ -145,7 +145,7 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
   int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS; // default
   if (properties.contains("coordinateSystem"))
   {
-    coordinateSystem = properties["coordinateSystem"].toInt();
+    coordinateSystem = properties.value("coordinateSystem").toInt();
   }
   this->userMessages()->ClearMessages();
   vtkMRMLModelNode* node = d->ModelsLogic->AddModel(
@@ -158,15 +158,13 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
   this->setLoadedNodes( QStringList(QString(node->GetID())) );
   if (properties.contains("name"))
   {
-    std::string uname = this->mrmlScene()->GetUniqueNameByString(
-      properties["name"].toString().toUtf8());
+    std::string uname = this->mrmlScene()->GetUniqueNameByString(properties.value("name").toString().toUtf8());
     node->SetName(uname.c_str());
   }
 
   // If no other nodes are displayed then reset the field of view
   bool otherNodesAreAlreadyVisible = false;
-  vtkSmartPointer<vtkCollection> displayNodes = vtkSmartPointer<vtkCollection>::Take(
-    this->mrmlScene()->GetNodesByClass("vtkMRMLDisplayNode"));
+  vtkSmartPointer<vtkCollection> displayNodes = vtkSmartPointer<vtkCollection>::Take(this->mrmlScene()->GetNodesByClass("vtkMRMLDisplayNode"));
   for(int displayNodeIndex = 0; displayNodeIndex < displayNodes->GetNumberOfItems(); ++displayNodeIndex)
   {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(

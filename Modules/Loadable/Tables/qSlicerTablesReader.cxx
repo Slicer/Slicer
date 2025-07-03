@@ -127,14 +127,14 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerTablesReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   this->userMessages()->ClearMessages();
 
   QString name = QFileInfo(fileName).baseName();
   if (properties.contains("name"))
   {
-    name = properties["name"].toString();
+    name = properties.value("name").toString();
   }
   std::string uname = this->mrmlScene()->GetUniqueNameByString(name.toUtf8());
   std::string password;
@@ -143,25 +143,18 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
   if( extension.empty() )
   {
-    this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
-      (tr("Table reading failed: no file extension specified: %1").arg(fileName)).toStdString());
+    this->userMessages()->AddMessage(vtkCommand::ErrorEvent, (tr("Table reading failed: no file extension specified: %1").arg(fileName)).toStdString());
     return false;
   }
-  if (   !extension.compare(".db")
-      || !extension.compare(".db3")
-      || !extension.compare(".sqlite")
-      || !extension.compare(".sqlite3"))
+  if (!extension.compare(".db") || !extension.compare(".db3") || !extension.compare(".sqlite") || !extension.compare(".sqlite3"))
   {
     uname = "";
     std::string dbname = std::string("sqlite://") + fileName.toStdString();
-    vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(
-                   vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
+    vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(vtkSQLiteDatabase::SafeDownCast(vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
     if (!database->Open("", vtkSQLiteDatabase::USE_EXISTING))
     {
       bool ok;
-      QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"),
-                                           tr("Database Password:"), QLineEdit::Normal,
-                                           "", &ok);
+      QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"), tr("Database Password:"), QLineEdit::Normal, "", &ok);
       if (ok && !text.isEmpty())
       {
         password = text.toStdString();
@@ -191,8 +184,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
   }
   else
   {
-    this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
-      (tr("Failed to read table from  '%1'").arg(fileName)).toStdString());
+    this->userMessages()->AddMessage(vtkCommand::ErrorEvent, (tr("Failed to read table from  '%1'").arg(fileName)).toStdString());
     this->setLoadedNodes(QStringList());
   }
   return node != nullptr;

@@ -61,7 +61,7 @@ void qSlicerSceneIOOptionsWidget::updateProperties()
 {
   Q_D(qSlicerSceneIOOptionsWidget);
 
-  d->Properties["clear"] = d->ClearSceneCheckBox->isChecked();
+  d->Properties.insert("clear", d->ClearSceneCheckBox->isChecked());
 }
 
 //------------------------------------------------------------------------------
@@ -71,6 +71,6 @@ void qSlicerSceneIOOptionsWidget::updateGUI(const qSlicerIO::IOProperties& ioPro
   qSlicerIOOptionsWidget::updateGUI(ioProperties);
   if (ioProperties.contains("clear"))
   {
-    d->ClearSceneCheckBox->setChecked(ioProperties["clear"].toBool());
+    d->ClearSceneCheckBox->setChecked(ioProperties.value("clear").toBool());
   }
 }

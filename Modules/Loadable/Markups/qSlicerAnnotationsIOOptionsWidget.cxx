@@ -88,16 +88,16 @@ void qSlicerAnnotationsIOOptionsWidget::updateProperties()
     {
       names[i] = names[i].trimmed();
     }
-    d->Properties["name"] = names;
+    d->Properties.insert("name", names);
   }
   else
   {
     d->Properties.remove("name");
   }
-  d->Properties["fiducial"] = d->FiducialRadioButton->isChecked();
-  d->Properties["ruler"] = d->RulerRadioButton->isChecked();
-  d->Properties["roi"] = d->ROIRadioButton->isChecked();
-//  d->Properties["list"] = d->ListRadioButton->isChecked();
+  d->Properties.insert("fiducial", d->FiducialRadioButton->isChecked());
+  d->Properties.insert("ruler", d->RulerRadioButton->isChecked());
+  d->Properties.insert("roi", d->ROIRadioButton->isChecked());
+  //  d->Properties.insert("list", d->ListRadioButton->isChecked());
 }
 
 //-----------------------------------------------------------------------------

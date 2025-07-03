@@ -51,22 +51,20 @@ qSlicerSegmentationsNodeWriter::~qSlicerSegmentationsNodeWriter() = default;
 //----------------------------------------------------------------------------
 bool qSlicerSegmentationsNodeWriter::write(const qSlicerIO::IOProperties& properties)
 {
-  Q_ASSERT(!properties["nodeID"].toString().isEmpty());
+  Q_ASSERT(!properties.value("nodeID").toString().isEmpty());
 
-  vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(
-    this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
+  vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties.value("nodeID").toString().toUtf8().data()));
   if (this->canWriteObjectConfidence(node) <= 0.0)
   {
     return false;
   }
-  vtkMRMLSegmentationStorageNode* snode = vtkMRMLSegmentationStorageNode::SafeDownCast(
-    qSlicerCoreIOManager::createAndAddDefaultStorageNode(node));
+  vtkMRMLSegmentationStorageNode* snode = vtkMRMLSegmentationStorageNode::SafeDownCast(qSlicerCoreIOManager::createAndAddDefaultStorageNode(node));
   if (snode == nullptr)
   {
-    qDebug() << "No storage node for node" << properties["nodeID"].toString();
+    qDebug() << "No storage node for node" << properties.value("nodeID").toString();
     return false;
   }
-  snode->SetCropToMinimumExtent(properties["cropToMinimumExtent"].toBool());
+  snode->SetCropToMinimumExtent(properties.value("cropToMinimumExtent").toBool());
 
   return Superclass::write(properties);
 }

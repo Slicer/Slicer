@@ -64,11 +64,7 @@ public:
   qSlicerFileReader* reader(const QString& fileName)const;
   QList<qSlicerFileReader*> readers(const QString& fileName)const;
 
-  QList<qSlicerFileWriter*> writers(
-    const qSlicerIO::IOFileType &fileType,
-    const qSlicerIO::IOProperties& parameters,
-    vtkMRMLScene* scene = nullptr
-  ) const;
+  QList<qSlicerFileWriter*> writers(const qSlicerIO::IOFileType& fileType, const qSlicerIO::IOProperties& parameters, vtkMRMLScene* scene = nullptr) const;
 
   QList<qSlicerFileReader*> Readers;
   QList<qSlicerFileWriter*> Writers;
@@ -127,10 +123,7 @@ QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fi
 }
 
 //-----------------------------------------------------------------------------
-QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(
-  const qSlicerIO::IOFileType& fileType,
-  const qSlicerIO::IOProperties& parameters,
-  vtkMRMLScene* scene /*=nullptr*/
+QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(const qSlicerIO::IOFileType& fileType, const qSlicerIO::IOProperties& parameters, vtkMRMLScene* scene /*=nullptr*/
 ) const
 {
   QString fileName = parameters.value("fileName").toString();
@@ -291,8 +284,7 @@ qSlicerFileWriter* qSlicerCoreIOManager
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerCoreIOManager
-::fileWriterFileType(vtkObject* object, const QString& format/*=QString()*/)const
+qSlicerIO::IOFileType qSlicerCoreIOManager::fileWriterFileType(vtkObject* object, const QString& format /*=QString()*/) const
 {
   Q_D(const qSlicerCoreIOManager);
 
@@ -507,8 +499,7 @@ QString qSlicerCoreIOManager::extractKnownExtension(const QString& fileName, vtk
   QString longestMatchedExtension;
   foreach(const QString& nameFilter, this->fileWriterExtensions(object))
   {
-    QString extension = QString::fromStdString(
-      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
+    QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
     if (!extension.isEmpty() && fileName.endsWith(extension))
     {
       if (extension.length() > longestMatchedExtension.length())
@@ -591,8 +582,8 @@ QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(vtkMRMLStorab
 bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   qSlicerIO::IOProperties properties;
-  properties["fileName"] = fileName;
-  properties["clear"] = clear;
+  properties.insert("fileName", fileName);
+  properties.insert("clear", clear);
   return this->loadNodes(QString("SceneFile"), properties, nullptr, userMessages);
 }
 
@@ -600,7 +591,7 @@ bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear, vtkMRM
 bool qSlicerCoreIOManager::loadFile(const QString& fileName, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   qSlicerIO::IOProperties properties;
-  properties["fileName"] = fileName;
+  properties.insert("fileName", fileName);
   return this->loadNodes(this->fileType(fileName), properties, nullptr, userMessages);
 }
 
@@ -613,26 +604,26 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   Q_D(qSlicerCoreIOManager);
 
   Q_ASSERT(parameters.contains("fileName"));
-  if (parameters["fileName"].type() == QVariant::StringList)
+  if (parameters.value("fileName").type() == QVariant::StringList)
   {
     bool res = true;
-    QStringList fileNames = parameters["fileName"].toStringList();
-    QStringList names = parameters["name"].toStringList();
+    QStringList fileNames = parameters.value("fileName").toStringList();
+    QStringList names = parameters.value("name").toStringList();
     int nameId = 0;
     foreach(const QString& fileName, fileNames)
     {
       qSlicerIO::IOProperties fileParameters = parameters;
-      fileParameters["fileName"] = fileName;
+      fileParameters.insert("fileName", fileName);
       if (!names.isEmpty())
       {
-        fileParameters["name"] = nameId < names.size() ? names[nameId] : names.last();
+        fileParameters.insert("name", nameId < names.size() ? names[nameId] : names.last());
         ++nameId;
       }
       res &= this->loadNodes(fileType, fileParameters, loadedNodes, userMessages);
     }
     return res;
   }
-  Q_ASSERT(!parameters["fileName"].toString().isEmpty());
+  Q_ASSERT(!parameters.value("fileName").toString().isEmpty());
 
   qSlicerIO::IOProperties loadedFileParameters = parameters;
   loadedFileParameters.insert("fileType", fileType);
@@ -643,7 +634,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   bool success = false;
   int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
   //: %1 is the filename
-  QString userMessagePrefix = tr("Loading %1").arg(parameters["fileName"].toString()) + " - ";
+  QString userMessagePrefix = tr("Loading %1").arg(parameters.value("fileName").toString()) + " - ";
 
   QStringList nodes;
   foreach (qSlicerFileReader* reader, readers)
@@ -652,7 +643,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     timeProbe.start();
     reader->userMessages()->ClearMessages();
     reader->setMRMLScene(d->currentScene());
-    double confidence = reader->canLoadFileConfidence(parameters["fileName"].toString());
+    double confidence = reader->canLoadFileConfidence(parameters.value("fileName").toString());
     if (confidence <= 0.0)
     {
       continue;
@@ -667,10 +658,8 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
       continue;
     }
     float elapsedTimeInSeconds = timeProbe.elapsed() / 1000.0;
-    qDebug() << reader->description() << "Reader has successfully read the file"
-             << parameters["fileName"].toString()
-             << QString("[%1s]").arg(
-                  QString::number(elapsedTimeInSeconds,'f', 2));
+    qDebug() << reader->description() << "Reader has successfully read the file" << parameters.value("fileName").toString()
+             << QString("[%1s]").arg(QString::number(elapsedTimeInSeconds, 'f', 2));
     nodes << reader->loadedNodes();
     success = true;
     break;
@@ -704,17 +693,13 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
-          vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   bool success = true;
   foreach(qSlicerIO::IOProperties fileProperties, files)
   {
     int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
-    success = this->loadNodes(
-      static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
-      fileProperties, loadedNodes, userMessages)
-      && success;
+    success = this->loadNodes(static_cast<qSlicerIO::IOFileType>(fileProperties.value("fileType").toString()), fileProperties, loadedNodes, userMessages) && success;
     // Add a separator between nodes
     if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
     {
@@ -828,12 +813,12 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     scene = d->currentScene();
   }
 
-  if (!parameters.contains("fileName") || !parameters["fileName"].canConvert<QString>())
+  if (!parameters.contains("fileName") || !parameters.value("fileName").canConvert<QString>())
   {
     qCritical() << Q_FUNC_INFO << "failed: \"fileName\" must be included as a string parameter.";
     return false;
   }
-  QString fileName = parameters["fileName"].toString();
+  QString fileName = parameters.value("fileName").toString();
   if (fileName.isEmpty())
   {
     qCritical() << Q_FUNC_INFO << "failed: \"fileName\" parameter must not be empty.";
@@ -848,8 +833,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     qCritical() << Q_FUNC_INFO << "error: No writer found to write file" << fileName << "of type" << fileType;
     if (userMessages)
     {
-      userMessages->AddMessage(vtkCommand::ErrorEvent,
-        (tr("No writer found to write file %1 of type %2.").arg(fileName).arg(fileType)).toStdString());
+      userMessages->AddMessage(vtkCommand::ErrorEvent, (tr("No writer found to write file %1 of type %2.").arg(fileName).arg(fileType)).toStdString());
     }
     return false;
   }
@@ -863,8 +847,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     qCritical() << Q_FUNC_INFO << "error: Unable to create directory" << QFileInfo(fileName).absolutePath();
     if (userMessages)
     {
-      userMessages->AddMessage(vtkCommand::ErrorEvent,
-        (tr("Unable to create directory '%1'").arg(QFileInfo(fileName).absolutePath())).toStdString());
+      userMessages->AddMessage(vtkCommand::ErrorEvent, (tr("Unable to create directory '%1'").arg(QFileInfo(fileName).absolutePath())).toStdString());
     }
     return false;
   }
@@ -896,8 +879,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     qCritical() << Q_FUNC_INFO << "error: Saving failed with all writers found for file" << fileName << "of type" << fileType;
     if (userMessages)
     {
-      userMessages->AddMessage(vtkCommand::ErrorEvent,
-        (tr("Saving failed with all writers found for file '%1' of type '%2'.").arg(fileName).arg(fileType)).toStdString());
+      userMessages->AddMessage(vtkCommand::ErrorEvent, (tr("Saving failed with all writers found for file '%1' of type '%2'.").arg(fileName).arg(fileType)).toStdString());
     }
     return false;
   }
@@ -937,18 +919,15 @@ bool qSlicerCoreIOManager::exportNodes(
   for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex)
   {
     qSlicerIO::IOProperties parameterMap = commonParameterMap;
-    parameterMap["nodeID"] = nodeIDs[nodeIndex];
-    parameterMap["fileName"] = fileNames[nodeIndex];
+    parameterMap.insert("nodeID", nodeIDs[nodeIndex]);
+    parameterMap.insert("fileName", fileNames[nodeIndex]);
     parameterMaps << parameterMap;
   }
   return this->exportNodes(parameterMaps, hardenTransforms, userMessages);
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::exportNodes(
-  const QList<qSlicerIO::IOProperties>& parameterMaps,
-  bool hardenTransforms,
-  vtkMRMLMessageCollection* userMessages/*=nullptr*/
+bool qSlicerCoreIOManager::exportNodes(const QList<qSlicerIO::IOProperties>& parameterMaps, bool hardenTransforms, vtkMRMLMessageCollection* userMessages /*=nullptr*/
 )
 {
   Q_D(qSlicerCoreIOManager);
@@ -966,13 +945,13 @@ bool qSlicerCoreIOManager::exportNodes(
     // Validate parameters
     for (const char* requiredKey : {"nodeID", "fileName", "fileFormat"})
     {
-      if (!parameters.contains(requiredKey) || !parameters[requiredKey].canConvert<QString>())
+      if (!parameters.contains(requiredKey) || !parameters.value(requiredKey).canConvert<QString>())
       {
         qCritical() << Q_FUNC_INFO << "failed:" << requiredKey << "must be included as a string parameter.";
         return false;
       }
     }
-    QString nodeID = parameters["nodeID"].toString();
+    QString nodeID = parameters.value("nodeID").toString();
 
     // Copy over each node to be exported
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(d->currentScene()->GetNodeByID(nodeID.toUtf8()));
@@ -980,9 +959,7 @@ bool qSlicerCoreIOManager::exportNodes(
     {
       if (userMessages)
       {
-        userMessages->AddMessage(vtkCommand::ErrorEvent,
-          (tr("Unable to find a storable node with ID %1").arg(nodeID)).toStdString()
-        );
+        userMessages->AddMessage(vtkCommand::ErrorEvent, (tr("Unable to find a storable node with ID %1").arg(nodeID)).toStdString());
       }
       success = false;
       continue;
@@ -993,9 +970,7 @@ bool qSlicerCoreIOManager::exportNodes(
       qCritical() << Q_FUNC_INFO << "error: Unable to add node to temporary scene";
       if (userMessages)
       {
-        userMessages->AddMessage(vtkCommand::ErrorEvent,
-          (tr("Error encountered while exporting %1.").arg(storableNode->GetName())).toStdString()
-        );
+        userMessages->AddMessage(vtkCommand::ErrorEvent, (tr("Error encountered while exporting %1.").arg(storableNode->GetName())).toStdString());
       }
       success = false;
       continue;
@@ -1022,16 +997,13 @@ bool qSlicerCoreIOManager::exportNodes(
       {
         vtkSmartPointer<vtkGeneralTransform> generalTransform =  vtkSmartPointer<vtkGeneralTransform>::New();
         parentTransform->GetTransformFromWorld(generalTransform);
-        vtkMRMLTransformNode* compositeTransformNode =
-          vtkMRMLTransformNode::SafeDownCast(temporaryScene->AddNewNodeByClass("vtkMRMLTransformNode"));
+        vtkMRMLTransformNode* compositeTransformNode = vtkMRMLTransformNode::SafeDownCast(temporaryScene->AddNewNodeByClass("vtkMRMLTransformNode"));
         if (!compositeTransformNode)
         {
           qCritical() << Q_FUNC_INFO << "Unable to add a transform node to temporary scene";
           if (userMessages)
           {
-            userMessages->AddMessage(vtkCommand::ErrorEvent,
-              (tr("Error encountered while exporting %1.").arg(storableNode->GetName())).toStdString()
-            );
+            userMessages->AddMessage(vtkCommand::ErrorEvent, (tr("Error encountered while exporting %1.").arg(storableNode->GetName())).toStdString());
           }
           success = false;
           continue;
@@ -1044,10 +1016,10 @@ bool qSlicerCoreIOManager::exportNodes(
 
     // Copy parameters map; we will need to set the nodeID parameter to correspond to the node in the temporary scene
     qSlicerIO::IOProperties temporarySceneParameters = parameters;
-    temporarySceneParameters["nodeID"] = temporaryStorableNode->GetID();
+    temporarySceneParameters.insert("nodeID", temporaryStorableNode->GetID());
 
     // Deduce "fileType" from "fileFormat" parameter; saveNodes will want both
-    qSlicerIO::IOFileType fileType = this->fileWriterFileType(storableNode, parameters["fileFormat"].toString());
+    qSlicerIO::IOFileType fileType = this->fileWriterFileType(storableNode, parameters.value("fileFormat").toString());
 
     // Add default storage node into the temporary scene. This is sometimes needed.
     if (!temporaryStorableNode->AddDefaultStorageNode())
@@ -1055,9 +1027,7 @@ bool qSlicerCoreIOManager::exportNodes(
       qCritical() << Q_FUNC_INFO << "error: Unable to create default storage in temporary scene";
       if (userMessages)
       {
-        userMessages->AddMessage(vtkCommand::ErrorEvent,
-          (tr("Unable to create default storage node for %1 in temporary scene.").arg(storableNode->GetName())).toStdString()
-        );
+        userMessages->AddMessage(vtkCommand::ErrorEvent, (tr("Unable to create default storage node for %1 in temporary scene.").arg(storableNode->GetName())).toStdString());
       }
       success = false;
       continue;
@@ -1068,8 +1038,7 @@ bool qSlicerCoreIOManager::exportNodes(
     vtkMRMLDisplayableNode* temporaryDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(temporaryStorableNode);
     if (displayableNode && temporaryDisplayableNode && displayableNode->GetDisplayNode())
     {
-      vtkMRMLDisplayNode* temporaryDisplayNode = vtkMRMLDisplayNode::SafeDownCast(
-        temporaryScene->AddNewNodeByClass(displayableNode->GetDisplayNode()->GetClassName()));
+      vtkMRMLDisplayNode* temporaryDisplayNode = vtkMRMLDisplayNode::SafeDownCast(temporaryScene->AddNewNodeByClass(displayableNode->GetDisplayNode()->GetClassName()));
       if (temporaryDisplayNode)
       {
         temporaryDisplayNode->CopyContent(displayableNode->GetDisplayNode(), false);
@@ -1077,8 +1046,7 @@ bool qSlicerCoreIOManager::exportNodes(
       }
       else
       {
-        userMessages->AddMessage(vtkCommand::WarningEvent,
-          (tr("Unable to save display properties for %1 in temporary scene.").arg(storableNode->GetName())).toStdString());
+        userMessages->AddMessage(vtkCommand::WarningEvent, (tr("Unable to save display properties for %1 in temporary scene.").arg(storableNode->GetName())).toStdString());
       }
     }
 
@@ -1087,16 +1055,13 @@ bool qSlicerCoreIOManager::exportNodes(
     {
       if (userMessages)
       {
-        userMessages->AddMessage(vtkCommand::ErrorEvent,
-          (tr("Error encountered while exporting %1.").arg(storableNode->GetName())).toStdString()
-        );
+        userMessages->AddMessage(vtkCommand::ErrorEvent, (tr("Error encountered while exporting %1.").arg(storableNode->GetName())).toStdString());
       }
       success = false;
     }
 
       // Pick up any user messages that were saved to temporaryStorableNode's storage node
-      if (userMessages && temporaryStorableNode->GetStorageNode()
-          && temporaryStorableNode->GetStorageNode()->GetUserMessages())
+    if (userMessages && temporaryStorableNode->GetStorageNode() && temporaryStorableNode->GetStorageNode()->GetUserMessages())
       {
         userMessages->AddMessages(temporaryStorableNode->GetStorageNode()->GetUserMessages());
       }
@@ -1106,12 +1071,11 @@ bool qSlicerCoreIOManager::exportNodes(
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::saveScene(const QString& fileName, QImage screenShot,
-  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+bool qSlicerCoreIOManager::saveScene(const QString& fileName, QImage screenShot, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   qSlicerIO::IOProperties properties;
-  properties["fileName"] = fileName;
-  properties["screenShot"] = screenShot;
+  properties.insert("fileName", fileName);
+  properties.insert("screenShot", screenShot);
 
   return this->saveNodes(QString("SceneFile"), properties, userMessages);
 }

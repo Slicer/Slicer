@@ -91,10 +91,7 @@ qSlicerIO::IOFileType qSlicerSequencesReader::fileType()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerSequencesReader::extensions()const
 {
-  return QStringList()
-    << tr("Sequence") + " (*.seq.mrb *.mrb)"
-    << tr("Volume Sequence") + " (*.seq.nrrd *.seq.nhdr)"
-    << tr("Volume Sequence") + " (*.nrrd *.nhdr)";
+  return QStringList() << tr("Sequence") + " (*.seq.mrb *.mrb)" << tr("Volume Sequence") + " (*.seq.nrrd *.seq.nhdr)" << tr("Volume Sequence") + " (*.nrrd *.nhdr)";
 }
 
 //----------------------------------------------------------------------------
@@ -167,7 +164,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerSequencesReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   this->setLoadedNodes(QStringList());
   if (d->SequencesLogic.GetPointer() == 0)
@@ -184,8 +181,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
 
   if (properties.contains("name"))
   {
-    std::string customName = this->mrmlScene()->GetUniqueNameByString(
-      properties["name"].toString().toLatin1());
+    std::string customName = this->mrmlScene()->GetUniqueNameByString(properties.value("name").toString().toLatin1());
     node->SetName(customName.c_str());
   }
 
@@ -195,14 +191,13 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
   bool show = true; // show volume node in viewers
   if (properties.contains("show"))
   {
-    show = properties["show"].toBool();
+    show = properties.value("show").toBool();
   }
   vtkMRMLSequenceBrowserNode* browserNode = nullptr;
   if (show)
   {
     std::string browserCustomName = std::string(node->GetName()) + " browser";
-    browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(
-      this->mrmlScene()->AddNewNodeByClass("vtkMRMLSequenceBrowserNode", browserCustomName));
+    browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLSequenceBrowserNode", browserCustomName));
   }
   if (browserNode)
   {
@@ -219,7 +214,7 @@ bool qSlicerSequencesReader::load(const IOProperties& properties)
     {
       if (properties.contains("colorNodeID"))
       {
-        QString colorNodeID = properties["colorNodeID"].toString();
+        QString colorNodeID = properties.value("colorNodeID").toString();
         if (displayableNode->GetDisplayNode())
         {
           displayableNode->GetDisplayNode()->SetAndObserveColorNodeID(colorNodeID.toUtf8());

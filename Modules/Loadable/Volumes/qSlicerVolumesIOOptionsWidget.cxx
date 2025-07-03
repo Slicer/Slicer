@@ -94,18 +94,18 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
     {
       names[i] = names[i].trimmed();
     }
-    d->Properties["name"] = names;
+    d->Properties.insert("name", names);
   }
   else
   {
     d->Properties.remove("name");
   }
-  d->Properties["labelmap"] = d->LabelMapCheckBox->isChecked();
-  d->Properties["center"] = d->CenteredCheckBox->isChecked();
-  d->Properties["singleFile"] = d->SingleFileCheckBox->isChecked();
-  d->Properties["discardOrientation"] = d->OrientationCheckBox->isChecked();
-  d->Properties["show"] = d->ShowCheckBox->isChecked();
-  d->Properties["colorNodeID"] = d->ColorTableComboBox->currentNodeID();
+  d->Properties.insert("labelmap", d->LabelMapCheckBox->isChecked());
+  d->Properties.insert("center", d->CenteredCheckBox->isChecked());
+  d->Properties.insert("singleFile", d->SingleFileCheckBox->isChecked());
+  d->Properties.insert("discardOrientation", d->OrientationCheckBox->isChecked());
+  d->Properties.insert("show", d->ShowCheckBox->isChecked());
+  d->Properties.insert("colorNodeID", d->ColorTableComboBox->currentNodeID());
 }
 
 //-----------------------------------------------------------------------------
@@ -129,8 +129,7 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
     // storage node must be added to the scene to have access to supported file extensions
     // (known file extensions are used to determine node name accurately when there are
     // multiple '.' characters in the filename.
-    snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(
-      this->mrmlScene()->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+    snode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
   }
   if (snode.GetPointer() == nullptr)
   {
@@ -207,6 +206,6 @@ void qSlicerVolumesIOOptionsWidget::updateGUI(const qSlicerIO::IOProperties& ioP
   qSlicerIOOptionsWidget::updateGUI(ioProperties);
   if (ioProperties.contains("singleFile"))
   {
-    d->SingleFileCheckBox->setChecked(ioProperties["singleFile"].toBool());
+    d->SingleFileCheckBox->setChecked(ioProperties.value("singleFile").toBool());
   }
 }

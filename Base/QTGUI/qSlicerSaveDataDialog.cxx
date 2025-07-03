@@ -78,8 +78,7 @@ qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject * parent )
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerFileNameItemDelegate::forceFileNameExtension(const QString& fileName, const QString& extension,
-                                                   vtkMRMLScene* mrmlScene, const QString& nodeID)
+QString qSlicerFileNameItemDelegate::forceFileNameExtension(const QString& fileName, const QString& extension, vtkMRMLScene* mrmlScene, const QString& nodeID)
 {
   QString strippedFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(fileName);
 
@@ -191,8 +190,7 @@ void qSlicerSaveDataDialogPrivate::setMRMLScene(vtkMRMLScene* scene)
 {
   this->MRMLScene = scene;
 
-  qSlicerFileNameItemDelegate * fileNameItemDelegate =
-      dynamic_cast<qSlicerFileNameItemDelegate*>(this->FileWidget->itemDelegateForColumn(Self::FileNameColumn));
+  qSlicerFileNameItemDelegate* fileNameItemDelegate = dynamic_cast<qSlicerFileNameItemDelegate*>(this->FileWidget->itemDelegateForColumn(Self::FileNameColumn));
   Q_ASSERT(fileNameItemDelegate);
   fileNameItemDelegate->MRMLScene = scene;
 
@@ -220,8 +218,7 @@ void qSlicerSaveDataDialogPrivate::setDirectory(const QString& newDirectory)
     {
       continue;
     }
-    ctkPathLineEdit* directoryItemEdit = qobject_cast<ctkPathLineEdit*>(
-      this->FileWidget->cellWidget(row, FileDirectoryColumn));
+    ctkPathLineEdit* directoryItemEdit = qobject_cast<ctkPathLineEdit*>(this->FileWidget->cellWidget(row, FileDirectoryColumn));
     Q_ASSERT(directoryItemEdit);
     directoryItemEdit->setCurrentPath(newDir.path());
   }
@@ -300,9 +297,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   }
   else
   {
-    sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
-                               QDate::currentDate().toString(
-                                 "yyyy-MM-dd") + "-Scene.mrml");
+    sceneFileInfo = QFileInfo(QDir(this->MRMLScene->GetRootDirectory()), QDate::currentDate().toString("yyyy-MM-dd") + "-Scene.mrml");
   }
 
   // Scene Name
@@ -317,8 +312,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   this->FileWidget->setItem(row, NodeTypeColumn, sceneTypeItem);
 
   // Scene Status
-  QTableWidgetItem* sceneModifiedItem = new QTableWidgetItem(
-    this->MRMLScene->GetModifiedSinceRead() ? "Modified" : "Not Modified");
+  QTableWidgetItem* sceneModifiedItem = new QTableWidgetItem(this->MRMLScene->GetModifiedSinceRead() ? "Modified" : "Not Modified");
   sceneModifiedItem->setFlags(sceneModifiedItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsEnabled);
   this->FileWidget->setItem(row, NodeStatusColumn, sceneModifiedItem);
 
@@ -332,8 +326,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   foreach(const QString& nameFilter,
           coreIOManager->fileWriterExtensions(this->MRMLScene))
   {
-    QString extension = QString::fromStdString(
-      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
+    QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
     sceneComboBoxWidget->addItem(nameFilter, extension);
     if (extension == currentExtension)
     {
@@ -405,8 +398,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
 
   if (!storableNode->GetStorageNode())
   {
-    qCritical() << Q_FUNC_INFO << " failed: storage node not found for node "
-      << (storableNode->GetID() ? storableNode->GetID() : "(unknown)")
+    qCritical() << Q_FUNC_INFO << " failed: storage node not found for node " << (storableNode->GetID() ? storableNode->GetID() : "(unknown)")
       << ". The node will not be shown in the save data dialog.";
     return;
   }
@@ -544,8 +536,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate::createNodeTypeItem(vtkMRMLStorab
 }
 
 //-----------------------------------------------------------------------------
-QTableWidgetItem* qSlicerSaveDataDialogPrivate
-::createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo)
+QTableWidgetItem* qSlicerSaveDataDialogPrivate::createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo)
 {
   Q_UNUSED(fileInfo);
   // Node status (modified / not modified)
@@ -582,9 +573,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
       "and should be marked for save by default. Please take care when saving data.";
     }
   */
-  QTableWidgetItem *nodeModifiedItem =
-    new QTableWidgetItem(node->GetModifiedSinceRead() ?
-                         qSlicerSaveDataDialog::tr("Modified") : qSlicerSaveDataDialog::tr("Not Modified"));
+  QTableWidgetItem* nodeModifiedItem = new QTableWidgetItem(node->GetModifiedSinceRead() ? qSlicerSaveDataDialog::tr("Modified") : qSlicerSaveDataDialog::tr("Not Modified"));
   nodeModifiedItem->setFlags( nodeModifiedItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsEnabled);
   return nodeModifiedItem;
 }
@@ -602,8 +591,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   QString currentExtension = coreIOManager->completeSlicerWritableFileNameSuffix(node);
   foreach(QString nameFilter, coreIOManager->fileWriterExtensions(node))
   {
-    QString extension = QString::fromStdString(
-      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
+    QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
     fileFormats->addItem(nameFilter, extension);
     if (currentFormat < 0 && extension == currentExtension)
     {
@@ -647,11 +635,9 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
 }
 
 //-----------------------------------------------------------------------------
-QTableWidgetItem* qSlicerSaveDataDialogPrivate
-::createFileNameItem(const QFileInfo& fileInfo, const QString& extension, const QString& nodeID)
+QTableWidgetItem* qSlicerSaveDataDialogPrivate::createFileNameItem(const QFileInfo& fileInfo, const QString& extension, const QString& nodeID)
 {
-  QTableWidgetItem* fileNameItem = new QTableWidgetItem(
-    qSlicerFileNameItemDelegate::forceFileNameExtension(fileInfo.fileName(), extension, this->mrmlScene(), nodeID));
+  QTableWidgetItem* fileNameItem = new QTableWidgetItem(qSlicerFileNameItemDelegate::forceFileNameExtension(fileInfo.fileName(), extension, this->mrmlScene(), nodeID));
   if (!extension.isEmpty())
   {
     fileNameItem->setData(Self::FileExtensionRole, extension);
@@ -714,9 +700,9 @@ bool qSlicerSaveDataDialogPrivate::save()
       saveSceneFile = this->confirmOverwrite(sceneFile.absoluteFilePath());
       if (!saveSceneFile)
       {
-        this->setStatusIcon(sceneRow, this->ErrorIcon, qSlicerSaveDataDialog::tr(
-          "Scene file was not saved because user chose not to overwrite existing file: %1.")
-          .arg(sceneFile.absoluteFilePath()));
+        this->setStatusIcon(sceneRow,
+                            this->ErrorIcon,
+                            qSlicerSaveDataDialog::tr("Scene file was not saved because user chose not to overwrite existing file: %1.").arg(sceneFile.absoluteFilePath()));
         success = false;
       }
     }
@@ -822,9 +808,10 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     {
       if (!this->confirmOverwrite(file.absoluteFilePath()))
       {
-        this->setStatusIcon(row, this->ErrorIcon, qSlicerSaveDataDialog::tr("Node %1 was not saved because user chose not to overwrite existing file: %2.")
-          .arg(nodeNameItem->text())
-          .arg(file.absoluteFilePath()) );
+        this->setStatusIcon(
+          row,
+          this->ErrorIcon,
+          qSlicerSaveDataDialog::tr("Node %1 was not saved because user chose not to overwrite existing file: %2.").arg(nodeNameItem->text()).arg(file.absoluteFilePath()));
         doneWithSaveDataDialog = false;
         continue;
       }
@@ -843,9 +830,9 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       // \todo fileName is wrong as it contains an obsolete directory
       savingParameters = options->properties();
     }
-    savingParameters["nodeID"] = QString(node->GetID());
-    savingParameters["fileName"] = file.absoluteFilePath();
-    savingParameters["fileFormat"] = format;
+    savingParameters.insert("nodeID", QString(node->GetID()));
+    savingParameters.insert("fileName", file.absoluteFilePath());
+    savingParameters.insert("fileFormat", format);
 
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     bool success = coreIOManager->saveNodes(fileType, savingParameters);
@@ -859,8 +846,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       if (snode)
       {
         // Make sure an error message is added if saving returns with error
-        snode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent,
-          (qSlicerSaveDataDialog::tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
+        snode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, (qSlicerSaveDataDialog::tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
 
 #ifdef Q_OS_WIN
         // On Windows, writing may have failed due to too long path.
@@ -876,9 +862,9 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
         // therefore warn the user when getting near the maximum.
         if (file.absoluteFilePath().length() > 200)
         {
-          snode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
-            (qSlicerSaveDataDialog::tr("File writing may have failed because the output folder name is too long: '%1'")
-              .arg(file.absoluteFilePath())).toStdString());
+          snode->GetUserMessages()->AddMessage(
+            vtkCommand::WarningEvent,
+            (qSlicerSaveDataDialog::tr("File writing may have failed because the output folder name is too long: '%1'").arg(file.absoluteFilePath())).toStdString());
         }
 #endif
 
@@ -886,9 +872,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       }
       else
       {
-        this->setStatusIcon(row, this->ErrorIcon, qSlicerSaveDataDialog::tr("Failed to save node %1 to file %2.")
-          .arg(nodeNameItem->text())
-          .arg(file.absoluteFilePath()));
+        this->setStatusIcon(row, this->ErrorIcon, qSlicerSaveDataDialog::tr("Failed to save node %1 to file %2.").arg(nodeNameItem->text()).arg(file.absoluteFilePath()));
       }
       doneWithSaveDataDialog = false;
       continue;
@@ -985,9 +969,9 @@ bool qSlicerSaveDataDialogPrivate::saveHiddenNodes()
     qSlicerIOOptions options;
     qSlicerIO::IOFileType fileType = coreIOManager->fileWriterFileType(hiddenNode, extension);
     qSlicerIO::IOProperties savingParameters = options.properties();
-    savingParameters["nodeID"] = QString(hiddenNode->GetID());
-    savingParameters["fileName"] = file.absoluteFilePath();
-    savingParameters["fileFormat"] = extension;
+    savingParameters.insert("nodeID", QString(hiddenNode->GetID()));
+    savingParameters.insert("fileName", file.absoluteFilePath());
+    savingParameters.insert("fileFormat", extension);
 
     QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
     bool success = coreIOManager->saveNodes(fileType, savingParameters);
@@ -996,8 +980,7 @@ bool qSlicerSaveDataDialogPrivate::saveHiddenNodes()
     if (!success)
     {
       // Make sure an error message is added if saving returns with error
-      storageNode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent,
-        (qSlicerSaveDataDialog::tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
+      storageNode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, (qSlicerSaveDataDialog::tr("Cannot write data file: %1.").arg(file.absoluteFilePath())).toStdString());
 
 #ifdef Q_OS_WIN
       // On Windows, writing may have failed due to too long path.
@@ -1006,16 +989,16 @@ bool qSlicerSaveDataDialogPrivate::saveHiddenNodes()
       // If filename is very long then most likely the user should shorten that.
       if (file.fileName().length() > 50)
       {
-        storageNode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
-          (qSlicerSaveDataDialog::tr("File writing may have failed because filename is too long: '%1'").arg(file.fileName())).toStdString());
+        storageNode->GetUserMessages()->AddMessage(
+          vtkCommand::WarningEvent, (qSlicerSaveDataDialog::tr("File writing may have failed because filename is too long: '%1'").arg(file.fileName())).toStdString());
       }
       // Maximum file path is 260 characters on most Windows systems, but during saving extra temporary folders may be used,
       // therefore warn the user when getting near the maximum.
       if (file.absoluteFilePath().length() > 200)
       {
-        storageNode->GetUserMessages()->AddMessage(vtkCommand::WarningEvent,
-          (qSlicerSaveDataDialog::tr("File writing may have failed because the output folder name is too long: '%1'")
-            .arg(file.absoluteFilePath())).toStdString());
+        storageNode->GetUserMessages()->AddMessage(
+          vtkCommand::WarningEvent,
+          (qSlicerSaveDataDialog::tr("File writing may have failed because the output folder name is too long: '%1'").arg(file.absoluteFilePath())).toStdString());
       }
 #endif
 
@@ -1036,8 +1019,7 @@ bool qSlicerSaveDataDialogPrivate::saveHiddenNodes()
 QFileInfo qSlicerSaveDataDialogPrivate::file(int row)const
 {
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
-  ctkPathLineEdit* fileDirectoryEdit = qobject_cast<ctkPathLineEdit*>(
-    this->FileWidget->cellWidget(row, FileDirectoryColumn));
+  ctkPathLineEdit* fileDirectoryEdit = qobject_cast<ctkPathLineEdit*>(this->FileWidget->cellWidget(row, FileDirectoryColumn));
 
   if (!fileNameItem || !fileDirectoryEdit)
   {
@@ -1098,8 +1080,7 @@ QString qSlicerSaveDataDialogPrivate::type(int row)const
 //-----------------------------------------------------------------------------
 qSlicerIOOptions* qSlicerSaveDataDialogPrivate::options(int row)const
 {
-  qSlicerIOOptionsWidget* optionsWidget = qobject_cast<qSlicerIOOptionsWidget*>(
-    this->FileWidget->cellWidget(row, OptionsColumn));
+  qSlicerIOOptionsWidget* optionsWidget = qobject_cast<qSlicerIOOptionsWidget*>(this->FileWidget->cellWidget(row, OptionsColumn));
   return optionsWidget;
 }
 
@@ -1107,9 +1088,7 @@ qSlicerIOOptions* qSlicerSaveDataDialogPrivate::options(int row)const
 bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved()const
 {
   QAbstractItemModel* model = this->FileWidget->model();
-  QModelIndexList found = model->match(
-    model->index(0, NodeTypeColumn),
-    Self::SceneTypeRole, QString("Scene"), 1, Qt::MatchExactly);
+  QModelIndexList found = model->match(model->index(0, NodeTypeColumn), Self::SceneTypeRole, QString("Scene"), 1, Qt::MatchExactly);
   if (found.count() == 0 || !found[0].isValid())
   {
     return false;
@@ -1124,9 +1103,7 @@ bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved()const
 int qSlicerSaveDataDialogPrivate::findSceneRow()const
 {
   QAbstractItemModel* model = this->FileWidget->model();
-  QModelIndexList found = model->match(
-    model->index(0, NodeTypeColumn),
-    Self::SceneTypeRole, QString("Scene"), 1, Qt::MatchExactly);
+  QModelIndexList found = model->match(model->index(0, NodeTypeColumn), Self::SceneTypeRole, QString("Scene"), 1, Qt::MatchExactly);
   return found[0].row();
 }
 
@@ -1137,8 +1114,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
   int sceneRow = this->findSceneRow();
 
   QTableWidgetItem* fileNameItem = this->FileWidget->item(sceneRow, FileNameColumn);
-  ctkPathLineEdit* fileDirectoryEdit = qobject_cast<ctkPathLineEdit*>(
-    this->FileWidget->cellWidget(sceneRow, FileDirectoryColumn));
+  ctkPathLineEdit* fileDirectoryEdit = qobject_cast<ctkPathLineEdit*>(this->FileWidget->cellWidget(sceneRow, FileDirectoryColumn));
 
   QDir directory = fileDirectoryEdit->currentPath();
   QFileInfo file = QFileInfo(directory, fileNameItem->text());
@@ -1166,21 +1142,21 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
 {
   qSlicerIO::IOProperties properties;
   QFileInfo file = this->sceneFile();
-  properties["fileName"] = file.absoluteFilePath();
+  properties.insert("fileName", file.absoluteFilePath());
 
   // create a screenShot of the full layout
   if (qSlicerApplication::application()->layoutManager())
   {
     QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
     QImage screenShot = ctk::grabVTKWidget(widget);
-    properties["screenShot"] = screenShot;
+    properties.insert("screenShot", screenShot);
   }
 
   int row = this->findSceneRow();
   qSlicerIOOptions* options = this->options(row);
   if (options)
   {
-    properties.unite(options->properties());
+    properties += options->properties();
   }
 
   vtkNew<vtkMRMLMessageCollection> userMessages;
@@ -1213,9 +1189,9 @@ void qSlicerSaveDataDialogPrivate::selectModifiedData()
     Q_ASSERT(typeItem);
     QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
     Q_ASSERT(selectItem);
-    selectItem->setCheckState(
-      statusItem->text() == qSlicerSaveDataDialog::tr("Modified") &&
-      typeItem->data(Self::SceneTypeRole).toString() != qSlicerSaveDataDialog::tr("Scene") ? Qt::Checked : Qt::Unchecked);
+    selectItem->setCheckState(statusItem->text() == qSlicerSaveDataDialog::tr("Modified") && typeItem->data(Self::SceneTypeRole).toString() != qSlicerSaveDataDialog::tr("Scene")
+                                ? Qt::Checked
+                                : Qt::Unchecked);
   }
 }
 
@@ -1234,8 +1210,7 @@ void qSlicerSaveDataDialogPrivate::selectModifiedSceneData()
     }
     QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
     Q_ASSERT(selectItem);
-    selectItem->setCheckState(
-      statusItem->text() == qSlicerSaveDataDialog::tr("Modified") ? Qt::Checked : Qt::Unchecked);
+    selectItem->setCheckState(statusItem->text() == qSlicerSaveDataDialog::tr("Modified") ? Qt::Checked : Qt::Unchecked);
   }
 }
 
@@ -1298,8 +1273,7 @@ void qSlicerSaveDataDialogPrivate::formatChanged(int row)
   Q_ASSERT(fileNameItem);
 
   // Set the new selected extension to the file name
-  QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-    formatComboBox->currentText().toUtf8()));
+  QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(formatComboBox->currentText().toUtf8()));
   if (extension == "*")
   {
     extension = QString();
@@ -1308,8 +1282,7 @@ void qSlicerSaveDataDialogPrivate::formatChanged(int row)
 
   // Update fileName based on new selected extension
   QString nodeID = fileNameItem->data(Self::UIDRole).toString();
-  fileNameItem->setText(
-        qSlicerFileNameItemDelegate::forceFileNameExtension(fileNameItem->text(), extension, this->MRMLScene, nodeID));
+  fileNameItem->setText(qSlicerFileNameItemDelegate::forceFileNameExtension(fileNameItem->text(), extension, this->MRMLScene, nodeID));
 
   // If the user changed the format, that means he wants to save the node
   // Select the row to mark the node to be saved.
@@ -1560,7 +1533,8 @@ bool qSlicerSaveDataDialogPrivate::confirmOverwrite(const QString& filepath)
   QMessageBox::StandardButton answer = this->ConfirmOverwriteAnswer;
   if (answer != QMessageBox::NoToAll && answer != QMessageBox::YesToAll)
   {
-    answer = QMessageBox::question(this, qSlicerSaveDataDialog::tr("Saving file..."),
+    answer = QMessageBox::question(this,
+                                   qSlicerSaveDataDialog::tr("Saving file..."),
       qSlicerSaveDataDialog::tr("The file: %1 already exists. Do you want to replace it ?").arg(filepath),
       QMessageBox::Yes | QMessageBox::No |
       QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel,

@@ -33,16 +33,12 @@ qSlicerNodeWriterOptionsWidgetPrivate::~qSlicerNodeWriterOptionsWidgetPrivate() 
 void qSlicerNodeWriterOptionsWidgetPrivate::setupUi(QWidget* widget)
 {
   this->Ui_qSlicerNodeWriterOptionsWidget::setupUi(widget);
-  QObject::connect(this->UseCompressionCheckBox, SIGNAL(toggled(bool)),
-                   widget, SLOT(setUseCompression(bool)));
-  QObject::connect(this->CompressionParameterSelector, SIGNAL(currentIndexChanged(int)),
-                   widget, SLOT(setCompressionParameter(int)));
+  QObject::connect(this->UseCompressionCheckBox, SIGNAL(toggled(bool)), widget, SLOT(setUseCompression(bool)));
+  QObject::connect(this->CompressionParameterSelector, SIGNAL(currentIndexChanged(int)), widget, SLOT(setCompressionParameter(int)));
 }
 
 //------------------------------------------------------------------------------
-qSlicerNodeWriterOptionsWidget
-::qSlicerNodeWriterOptionsWidget(qSlicerNodeWriterOptionsWidgetPrivate* pimpl,
-                                   QWidget* parentWidget)
+qSlicerNodeWriterOptionsWidget::qSlicerNodeWriterOptionsWidget(qSlicerNodeWriterOptionsWidgetPrivate* pimpl, QWidget* parentWidget)
   : Superclass(pimpl, parentWidget)
 {
 }
@@ -73,7 +69,7 @@ void qSlicerNodeWriterOptionsWidget::setObject(vtkObject* object)
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(object);
   if (storableNode != nullptr)
   {
-    d->Properties["nodeID"] = storableNode->GetID();
+    d->Properties.insert("nodeID", storableNode->GetID());
   }
   else
   {
@@ -107,7 +103,7 @@ void qSlicerNodeWriterOptionsWidget::setObject(vtkObject* object)
 void qSlicerNodeWriterOptionsWidget::setUseCompression(bool use)
 {
   Q_D(qSlicerNodeWriterOptionsWidget);
-  d->Properties["useCompression"] = (use ? 1 : 0);
+  d->Properties.insert("useCompression", (use ? 1 : 0));
   d->CompressionParameterSelector->setEnabled(d->UseCompressionCheckBox->isChecked());
 }
 
@@ -133,7 +129,7 @@ void qSlicerNodeWriterOptionsWidget::setCompressionParameter(int index)
   Q_D(qSlicerNodeWriterOptionsWidget);
 
   QString parameter = d->CompressionParameterSelector->itemData(index).toString();
-  d->Properties["compressionParameter"] = parameter;
+  d->Properties.insert("compressionParameter", parameter);
 }
 
 //------------------------------------------------------------------------------
@@ -143,5 +139,5 @@ void qSlicerNodeWriterOptionsWidget::setCompressionParameter(QString parameter)
 
   int index = d->CompressionParameterSelector->findData(parameter);
   d->CompressionParameterSelector->setCurrentIndex(index);
-  d->Properties["compressionParameter"] = parameter;
+  d->Properties.insert("compressionParameter", parameter);
 }

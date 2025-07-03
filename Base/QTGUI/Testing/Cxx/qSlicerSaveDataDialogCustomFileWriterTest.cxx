@@ -37,7 +37,7 @@
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerDummyFileWriter: public qSlicerFileWriter
+class qSlicerDummyFileWriter : public qSlicerFileWriter
 {
   Q_OBJECT
 public:
@@ -47,10 +47,10 @@ public:
   {
   }
   ~qSlicerDummyFileWriter() override = default; // The required destructor is added by the AUTO_MOC system
-  virtual QStringList nodeTags()const {return QStringList() << "LinearTransform";}
-  QString description()const override{return "Dummy";}
-  qSlicerIO::IOFileType fileType()const override{return this->FileType;}
-  QStringList extensions(vtkObject*)const override{return QStringList(QString("MyType(*.mhd *.vtk)"));}
+  virtual QStringList nodeTags() const { return QStringList() << "LinearTransform"; }
+  QString description() const override { return "Dummy"; }
+  qSlicerIO::IOFileType fileType() const override { return this->FileType; }
+  QStringList extensions(vtkObject*) const override { return QStringList(QString("MyType(*.mhd *.vtk)")); }
 
   bool write(const IOProperties& properties) override;
 
@@ -60,14 +60,14 @@ public:
 //-----------------------------------------------------------------------------
 bool qSlicerDummyFileWriter::write(const IOProperties& properties)
 {
-  QStringList nodeIDs = QStringList() << properties["nodeID"].toString();
-  qDebug() << "write" << properties["nodeID"].toString();
+  QStringList nodeIDs = QStringList() << properties.value("nodeID").toString();
+  qDebug() << "write" << properties.value("nodeID").toString();
   this->setWrittenNodes(nodeIDs);
   return true;
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSaveDataDialogCustomFileWriterTest(int argc, char * argv[] )
+int qSlicerSaveDataDialogCustomFileWriterTest(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
   app.coreIOManager()->registerIO(new qSlicerDummyFileWriter(QString("TransformFile"), nullptr));
