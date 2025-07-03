@@ -343,3 +343,5 @@ bool qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::showItemInView(vtkIdTy
   }
   return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
 }
+
+#include "qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin.moc"

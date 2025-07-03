@@ -416,3 +416,5 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showItemInView(vtkIdType item
     return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
   }
 }
+
+#include "qSlicerSubjectHierarchyVolumeRenderingPlugin.moc"

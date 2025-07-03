@@ -207,3 +207,5 @@ bool qMRMLSegmentationGeometryDialog::exec()
   }
   return true;
 }
+
+#include "qMRMLSegmentationGeometryDialog.moc"

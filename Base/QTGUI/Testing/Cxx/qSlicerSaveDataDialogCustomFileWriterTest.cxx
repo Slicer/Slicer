@@ -89,3 +89,5 @@ int qSlicerSaveDataDialogCustomFileWriterTest(int argc, char* argv[])
 
   return saveDataDialog.exec();
 }
+
+#include "qSlicerSaveDataDialogCustomFileWriterTest.moc"

@@ -74,4 +74,17 @@ private:
   Q_DISABLE_COPY(qSlicerAbstractModule);
 };
 
+class AModule : public qSlicerAbstractModule
+{
+  Q_OBJECT
+public:
+  QString title() const override { return "A Title"; }
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return nullptr; }
+
+  vtkMRMLAbstractLogic* createLogic() override { return nullptr; }
+
+protected:
+  void setup() override {}
+};
+
 #endif

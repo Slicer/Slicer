@@ -441,3 +441,5 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLDisplayNode()
       break;
   }
 }
+
+#include "qMRMLWindowLevelWidget.moc"

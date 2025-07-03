@@ -91,3 +91,5 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorEraseEffect::clone()
 {
   return new qSlicerSegmentEditorEraseEffect();
 }
+
+#include "qSlicerSegmentEditorEraseEffect.moc"

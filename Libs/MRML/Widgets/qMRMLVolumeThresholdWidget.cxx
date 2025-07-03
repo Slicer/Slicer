@@ -330,3 +330,5 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLDisplayNode()
   }
   d->VolumeThresholdRangeWidget->blockSignals(wasBlocking);
 }
+
+#include "qMRMLVolumeThresholdWidget.moc"

@@ -204,3 +204,5 @@ void qSlicerSubjectHierarchyOpacityPlugin::setOpacityForCurrentItem(double opaci
 
   displayNode->SetOpacity(opacity);
 }
+
+#include "qSlicerSubjectHierarchyOpacityPlugin.moc"

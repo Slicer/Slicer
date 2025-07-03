@@ -420,3 +420,5 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInSlice(bool show,
 
   return true;
 }
+
+#include "qSlicerSubjectHierarchyColorLegendPlugin.moc"
