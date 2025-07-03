@@ -43,7 +43,12 @@
 #cmakedefine Slicer_USE_QtTesting
 #cmakedefine Slicer_USE_OPENTRACKER
 
-#cmakedefine Slicer_HAVE_QT5
+// The Slicer_HAVE_QT5 is retained here to support third party apps that may depend upon it.
+#define Slicer_HAVE_QT5 1 // This must be unconditionally true for QT5 and above code
+                          // Slicer_HAVE_QT5=0 was needed for Qt4 support features
+                          // Slicer_HAVE_QT5=1 will be required for enabling Qt6 compatibility as well
+                          // Prefer #if QT_VERSION < QT_VERSION_CHECK(#, #, #) for specific version
+                          // range compatibility checking.
 #cmakedefine Slicer_HAVE_WEBKIT_SUPPORT
 
 #define VTKSLICER_CONFIGURATION_TYPES "@CMAKE_CONFIGURATION_TYPES@"
