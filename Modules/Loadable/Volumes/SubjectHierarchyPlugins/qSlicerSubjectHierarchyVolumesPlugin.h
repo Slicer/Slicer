@@ -56,8 +56,9 @@ public:
 
   /// Show context menu actions valid for a given subject hierarchy item to be shown in the view.
   /// \param itemID Subject Hierarchy item to show the context menu items for
-  /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute, etc.)
-  void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData);
+  /// \param eventData Supplementary data for the item that may be considered for the menu (sub-item ID, attribute,
+  /// etc.)
+  void showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData) override;
 
   /// Determines if a data node can be placed in the hierarchy using the actual plugin,
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
@@ -65,10 +66,9 @@ public:
   /// \param parentItemID Prospective parent of the node to add.
   ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  double canAddNodeToSubjectHierarchy(
-    vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
+  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier
+  ///   attribute)
+  double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const override;
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
