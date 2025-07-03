@@ -420,8 +420,8 @@ void qSlicerSegmentEditorScissorsEffectPrivate::updateGlyphWithNewPosition(Sciss
 
         if (this->shapeDrawCentered())
         {
-          double halfWidth = fabs(eventPosition[0] - this->DragStartPosition[0]);
-          double halfHeight = fabs(eventPosition[1] - this->DragStartPosition[1]);
+          int halfWidth = std::abs(eventPosition[0] - this->DragStartPosition[0]);
+          int halfHeight = std::abs(eventPosition[1] - this->DragStartPosition[1]);
           points->SetPoint(0, this->DragStartPosition[0] - halfWidth, this->DragStartPosition[1] - halfHeight, 0.0);
           points->SetPoint(1, this->DragStartPosition[0] + halfWidth, this->DragStartPosition[1] - halfHeight, 0.0);
           points->SetPoint(2, this->DragStartPosition[0] + halfWidth, this->DragStartPosition[1] + halfHeight, 0.0);
