@@ -40,6 +40,7 @@
 #include "vtkMRMLVolumePropertyNode.h"
 
 // VTK includes
+#include <vtkImageData.h>
 #include <vtkPlaneCollection.h>
 #include <vtkVolumeProperty.h>
 
@@ -303,6 +304,7 @@ void qSlicerVolumeRenderingModuleWidget::setMRMLVolumeNode(vtkMRMLNode* volumeNo
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
   d->VolumeNodeSelector->setCurrentNode(volumeNode);
+  this->updateNumberOfComponents();
 }
 
 // --------------------------------------------------------------------------
@@ -438,6 +440,10 @@ void qSlicerVolumeRenderingModuleWidget::updateWidgetFromMRML()
   d->RenderingMethodComboBox->setEnabled(displayNode != nullptr);
 
   // Advanced section
+
+  // Limit the component count to the max range for volume rendering in VTK
+  int numberOfComponents = volumePropertyNode ? volumePropertyNode->GetNumberOfIndependentComponents() : 1;
+  d->VolumePropertyNodeWidget->setComponentCount(qMin(numberOfComponents, VTK_MAX_VRCOMP));
 
   // Volume properties tab
   d->VolumePropertyNodeWidget->setEnabled(volumePropertyNode != nullptr);
@@ -657,6 +663,27 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumePropertyNodeChanged(
   if (displayNode)
   {
     displayNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode ? volumePropertyNode->GetID() : nullptr);
+  }
+
+  this->updateNumberOfComponents();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::updateNumberOfComponents()
+{
+  vtkMRMLVolumeNode* volumeNode = this->mrmlVolumeNode();
+  vtkMRMLVolumePropertyNode* volumePropertyNode = this->mrmlVolumePropertyNode();
+  if (volumeNode && volumePropertyNode)
+  {
+    int numberOfVolumeComponents = 1;
+    vtkImageData* imageData = volumeNode->GetImageData();
+    if (imageData)
+    {
+      numberOfVolumeComponents = imageData->GetNumberOfScalarComponents();
+    }
+    int numberOfIndependentComponents = volumePropertyNode->GetNumberOfIndependentComponents();
+    numberOfIndependentComponents = std::max(numberOfIndependentComponents, numberOfVolumeComponents);
+    volumePropertyNode->SetNumberOfIndependentComponents(numberOfIndependentComponents);
   }
 }
 
