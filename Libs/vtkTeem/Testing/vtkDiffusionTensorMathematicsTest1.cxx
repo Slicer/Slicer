@@ -35,36 +35,36 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   vtkMultiThreader::SetGlobalMaximumNumberOfThreads(1);
   // Generate a 2x2x2 tensor image with identity at each voxel
   vtkNew<vtkImageData> tensorImage;
-  int dimensions[3] = {2, 2, 2};
+  int dimensions[3] = { 2, 2, 2 };
   tensorImage->SetDimensions(dimensions);
   tensorImage->SetSpacing(1.5, 10., 100.);
   tensorImage->SetOrigin(-10., 40, 0.1);
 
-  vtkDataArray *scalars = vtkDataArray::CreateDataArray(VTK_FLOAT);
+  vtkDataArray* scalars = vtkDataArray::CreateDataArray(VTK_FLOAT);
   scalars->SetNumberOfComponents(9);
   scalars->SetName("tensors");
-  scalars->SetNumberOfTuples(dimensions[0]*dimensions[1]*dimensions[2]);
+  scalars->SetNumberOfTuples(dimensions[0] * dimensions[1] * dimensions[2]);
 
   tensorImage->GetPointData()->SetTensors(scalars);
   scalars->Delete();
 
   float* ptr = reinterpret_cast<float*>(scalars->GetVoidPointer(0));
-  for (int z=0; z < dimensions[2]; ++z )
+  for (int z = 0; z < dimensions[2]; ++z)
   {
-    for (int y=0; y < dimensions[1]; ++y )
+    for (int y = 0; y < dimensions[1]; ++y)
     {
-      for (int x=0; x < dimensions[0]; ++x )
+      for (int x = 0; x < dimensions[0]; ++x)
       {
         ptr[0] = ptr[4] = ptr[8] = 1.f;
         ptr[1] = ptr[2] = ptr[3] = ptr[5] = ptr[6] = ptr[7] = 0.f;
-        ptr+=9;
+        ptr += 9;
       }
     }
   }
   ptr = reinterpret_cast<float*>(scalars->GetVoidPointer(0));
   // Change the last element of the last tensor to 2.f (instead of 1.f)
   // so the trace would be 4.f not 3.f
-  ptr[dimensions[0]*dimensions[1]*dimensions[2]*9-1] = 2.f;
+  ptr[dimensions[0] * dimensions[1] * dimensions[2] * 9 - 1] = 2.f;
 
   // Generate mask
   // Generate a 2x2x2 tensor image with identity at each voxel
@@ -75,11 +75,11 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   maskImage->AllocateScalars(VTK_SHORT, 9);
 
   short* maskPtr = reinterpret_cast<short*>(maskImage->GetScalarPointer());
-  for (int z=0; z < dimensions[2]; ++z )
+  for (int z = 0; z < dimensions[2]; ++z)
   {
-    for (int y=0; y < dimensions[1]; ++y )
+    for (int y = 0; y < dimensions[1]; ++y)
     {
-      for (int x=0; x < dimensions[0]; ++x )
+      for (int x = 0; x < dimensions[0]; ++x)
       {
         *maskPtr++ = 0;
       }
@@ -96,7 +96,7 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   filter->SetMaskLabelValue(0);  // mask all the labels different from 0
   filter->SetMaskWithScalars(1); // turn on masking
   for (int i = vtkDiffusionTensorMathematics::VTK_TENS_TRACE;
-       i <=vtkDiffusionTensorMathematics::VTK_TENS_MEAN_DIFFUSIVITY;
+       i <= vtkDiffusionTensorMathematics::VTK_TENS_MEAN_DIFFUSIVITY;
        ++i)
   {
     filter->SetOperation(i);
@@ -106,11 +106,11 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
     // Checkout the results
     vtkImageData* output = filter->GetOutput();
     ptr = reinterpret_cast<float*>(output->GetScalarPointer());
-    for (int z=0; z < dimensions[2]; ++z )
+    for (int z = 0; z < dimensions[2]; ++z)
     {
-      for (int y=0; y < dimensions[1]; ++y )
+      for (int y = 0; y < dimensions[1]; ++y)
       {
-        for (int x=0; x < dimensions[0]; ++x )
+        for (int x = 0; x < dimensions[0]; ++x)
         {
           std::cout << '(' << x << ',' << y << ',' << z << ")=" << *ptr << std::endl;
           ++ptr;

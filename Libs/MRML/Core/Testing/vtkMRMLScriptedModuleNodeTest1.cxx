@@ -16,7 +16,7 @@
 
 int TestScriptedModuleParameterSaveLoadSpecialCharacters();
 
-int vtkMRMLScriptedModuleNodeTest1(int , char * [] )
+int vtkMRMLScriptedModuleNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLScriptedModuleNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -29,7 +29,8 @@ int TestScriptedModuleParameterSaveLoadSpecialCharacters()
 {
   vtkNew<vtkMRMLScene> scene;
 
-  const std::string special1 = "Test that special characters can be stored -- ampersand : (&) quote : (\") apostrophe: (') less: (<) greater: (>)";
+  const std::string special1 =
+    "Test that special characters can be stored -- ampersand : (&) quote : (\") apostrophe: (') less: (<) greater: (>)";
   const std::string special2 = "Test that content is not double-decoded -- &amp; &quot; &apos; &lt; &gt; &nbsp;";
   const std::string special3 = "Test attribute percentage encoding -- % %3B %25 %% something";
 

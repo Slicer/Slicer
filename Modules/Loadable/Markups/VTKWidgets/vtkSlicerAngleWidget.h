@@ -22,7 +22,7 @@
  *
  * The vtkSlicerAngleWidget is used to create an angle widget with a set of 3 points.
  *
-*/
+ */
 
 #ifndef vtkSlicerAngleWidget_h
 #define vtkSlicerAngleWidget_h
@@ -38,16 +38,18 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleWidget : public 
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerAngleWidget *New();
+  static vtkSlicerAngleWidget* New();
 
   /// Standard methods for a VTK class.
-  vtkTypeMacro(vtkSlicerAngleWidget,vtkSlicerMarkupsWidget);
+  vtkTypeMacro(vtkSlicerAngleWidget, vtkSlicerMarkupsWidget);
 
   /// Create instance of the markups widget
   vtkSlicerMarkupsWidgetCreateInstanceMacro(vtkSlicerAngleWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
-  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
+  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                   vtkMRMLAbstractViewNode* viewNode,
+                                   vtkRenderer* renderer) override;
 
 protected:
   vtkSlicerAngleWidget();

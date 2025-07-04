@@ -34,8 +34,7 @@
 class qSlicerSettingsCachePanelPrivate;
 class vtkCacheManager;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsCachePanel
-  : public ctkSettingsPanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsCachePanel : public ctkSettingsPanel
 {
   Q_OBJECT
   QVTK_OBJECT

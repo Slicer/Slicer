@@ -44,7 +44,7 @@ public:
   void init();
   void setScalarInvariantToComboBox(int scalarInvariant);
 
-  QComboBox*                                   ComboBox;
+  QComboBox* ComboBox;
   vtkMRMLDiffusionTensorDisplayPropertiesNode* DisplayPropertiesNode;
 
 private:
@@ -52,8 +52,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
-qMRMLScalarInvariantComboBoxPrivate::qMRMLScalarInvariantComboBoxPrivate(
-  qMRMLScalarInvariantComboBox& object)
+qMRMLScalarInvariantComboBoxPrivate::qMRMLScalarInvariantComboBoxPrivate(qMRMLScalarInvariantComboBox& object)
   : q_ptr(&object)
 {
   this->ComboBox = nullptr;
@@ -68,29 +67,24 @@ void qMRMLScalarInvariantComboBoxPrivate::init()
   this->ComboBox = new QComboBox(q);
   QHBoxLayout* layout = new QHBoxLayout(q);
   layout->addWidget(this->ComboBox);
-  layout->setContentsMargins(0,0,0,0);
+  layout->setContentsMargins(0, 0, 0, 0);
   q->setLayout(layout);
   q->setSizePolicy(this->ComboBox->sizePolicy());
 
   this->populateComboBox();
-  QObject::connect(this->ComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onCurrentScalarInvariantChanged(int)));
+  QObject::connect(this->ComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onCurrentScalarInvariantChanged(int)));
 }
 
 //------------------------------------------------------------------------------
 void qMRMLScalarInvariantComboBoxPrivate::populateComboBox()
 {
   this->ComboBox->clear();
-  for (int i = 0;
-        i < vtkMRMLDiffusionTensorVolumeDisplayNode::GetNumberOfScalarInvariants();
-       ++i)
+  for (int i = 0; i < vtkMRMLDiffusionTensorVolumeDisplayNode::GetNumberOfScalarInvariants(); ++i)
   {
     const int scalarInvariant = vtkMRMLDiffusionTensorVolumeDisplayNode::GetNthScalarInvariant(i);
-    this->ComboBox->addItem(
-      vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(scalarInvariant),
-      QVariant(scalarInvariant));
+    this->ComboBox->addItem(vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(scalarInvariant),
+                            QVariant(scalarInvariant));
   }
-
 }
 
 //------------------------------------------------------------------------------
@@ -98,10 +92,8 @@ void qMRMLScalarInvariantComboBoxPrivate::setScalarInvariantToComboBox(int scala
 { // The combobox has been populated on the assumption that all the scalar
   // invariant were comprised between GetFirstScalarInvariant() and
   // GetLastScalarInvariant().
-  Q_ASSERT(scalarInvariant >=
-           vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstScalarInvariant());
-  Q_ASSERT(scalarInvariant <=
-           vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastScalarInvariant());
+  Q_ASSERT(scalarInvariant >= vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstScalarInvariant());
+  Q_ASSERT(scalarInvariant <= vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastScalarInvariant());
   int index = this->ComboBox->findData(QVariant(scalarInvariant));
   Q_ASSERT(index >= 0);
   this->ComboBox->setCurrentIndex(index);
@@ -120,7 +112,7 @@ qMRMLScalarInvariantComboBox::qMRMLScalarInvariantComboBox(QWidget* parentWidget
 qMRMLScalarInvariantComboBox::~qMRMLScalarInvariantComboBox() = default;
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionTensorDisplayPropertiesNode* qMRMLScalarInvariantComboBox::displayPropertiesNode()const
+vtkMRMLDiffusionTensorDisplayPropertiesNode* qMRMLScalarInvariantComboBox::displayPropertiesNode() const
 {
   Q_D(const qMRMLScalarInvariantComboBox);
   return d->DisplayPropertiesNode;
@@ -129,17 +121,14 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* qMRMLScalarInvariantComboBox::displ
 //------------------------------------------------------------------------------
 void qMRMLScalarInvariantComboBox::setDisplayPropertiesNode(vtkMRMLNode* node)
 {
-  this->setDisplayPropertiesNode(
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(node));
+  this->setDisplayPropertiesNode(vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(node));
 }
 
 //------------------------------------------------------------------------------
-void qMRMLScalarInvariantComboBox::setDisplayPropertiesNode(
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* displayNode)
+void qMRMLScalarInvariantComboBox::setDisplayPropertiesNode(vtkMRMLDiffusionTensorDisplayPropertiesNode* displayNode)
 {
   Q_D(qMRMLScalarInvariantComboBox);
-  qvtkReconnect(d->DisplayPropertiesNode, displayNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->DisplayPropertiesNode, displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->DisplayPropertiesNode = displayNode;
   this->updateWidgetFromMRML();
 }
@@ -165,7 +154,7 @@ void qMRMLScalarInvariantComboBox::onCurrentScalarInvariantChanged(int index)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLScalarInvariantComboBox::scalarInvariant()const
+int qMRMLScalarInvariantComboBox::scalarInvariant() const
 {
   Q_D(const qMRMLScalarInvariantComboBox);
   QVariant scalarInvariant = d->ComboBox->itemData(d->ComboBox->currentIndex());

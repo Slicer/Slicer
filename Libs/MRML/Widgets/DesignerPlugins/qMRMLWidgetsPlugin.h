@@ -25,9 +25,9 @@
 
 // Qt includes
 #ifdef MRML_WIDGETS_HAVE_QT5
-#include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
+#  include <QtUiPlugin/QDesignerCustomWidgetCollectionInterface>
 #else
-#include <QDesignerCustomWidgetCollectionInterface>
+#  include <QDesignerCustomWidgetCollectionInterface>
 #endif
 
 // MRMLWidgets includes
@@ -41,7 +41,7 @@
 #include "qMRMLDisplayNodeWidgetPlugin.h"
 #include "qMRMLEventBrokerWidgetPlugin.h"
 #ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
-#include "qMRMLExpandingWebViewPlugin.h"
+#  include "qMRMLExpandingWebViewPlugin.h"
 #endif
 #include "qMRMLLabelComboBoxPlugin.h"
 #include "qMRMLLayoutWidgetPlugin.h"
@@ -90,51 +90,26 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLWidgetsPlugin
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
-    QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qMRMLCheckableNodeComboBoxPlugin
-            << new qMRMLClipNodeDisplayWidgetPlugin
-            << new qMRMLClipNodeWidgetPlugin
-            << new qMRMLCollapsibleButtonPlugin
-            << new qMRMLColorTableComboBoxPlugin
-            << new qMRMLCoordinatesWidgetPlugin
-            << new qMRMLDisplayNodeViewComboBoxPlugin
-            << new qMRMLDisplayNodeWidgetPlugin
-            << new qMRMLEventBrokerWidgetPlugin
+    QList<QDesignerCustomWidgetInterface*> plugins;
+    plugins << new qMRMLCheckableNodeComboBoxPlugin << new qMRMLClipNodeDisplayWidgetPlugin
+            << new qMRMLClipNodeWidgetPlugin << new qMRMLCollapsibleButtonPlugin << new qMRMLColorTableComboBoxPlugin
+            << new qMRMLCoordinatesWidgetPlugin << new qMRMLDisplayNodeViewComboBoxPlugin
+            << new qMRMLDisplayNodeWidgetPlugin << new qMRMLEventBrokerWidgetPlugin
 #ifdef MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT
             << new qMRMLExpandingWebViewPlugin
 #endif
-            << new qMRMLLabelComboBoxPlugin
-            << new qMRMLLayoutWidgetPlugin
-            << new qMRMLLinearTransformSliderPlugin
-            << new qMRMLListWidgetPlugin
-            << new qMRMLMatrixWidgetPlugin
-            << new qMRMLModelInfoWidgetPlugin
-            << new qMRMLNavigationViewPlugin
-            << new qMRMLNodeAttributeTableViewPlugin
-            << new qMRMLNodeAttributeTableWidgetPlugin
-            << new qMRMLNodeComboBoxPlugin
-            << new qMRMLPlotWidgetPlugin
-            << new qMRMLPlotViewControllerWidgetPlugin
-            << new qMRMLRangeWidgetPlugin
-            << new qMRMLROIWidgetPlugin
-            << new qMRMLScalarInvariantComboBoxPlugin
-            << new qMRMLScalarsDisplayWidgetPlugin
-            << new qMRMLSceneFactoryWidgetPlugin
-            << new qMRMLSliceControllerWidgetPlugin
-            << new qMRMLSliceInformationWidgetPlugin
-            << new qMRMLSliceVerticalControllerWidgetPlugin
-            << new qMRMLSliceWidgetPlugin
-            << new qMRMLSliderWidgetPlugin
-            << new qMRMLSpinBoxPlugin
-            << new qMRMLTableViewPlugin
-            << new qMRMLThreeDViewInformationWidgetPlugin
-            << new qMRMLThreeDViewPlugin
-            << new qMRMLTransformSlidersPlugin
-            << new qMRMLTreeViewPlugin
-            << new qMRMLVolumeInfoWidgetPlugin
-            << new qMRMLVolumeThresholdWidgetPlugin
-            << new qMRMLWidgetPlugin
-            << new qMRMLWindowLevelWidgetPlugin;
+            << new qMRMLLabelComboBoxPlugin << new qMRMLLayoutWidgetPlugin << new qMRMLLinearTransformSliderPlugin
+            << new qMRMLListWidgetPlugin << new qMRMLMatrixWidgetPlugin << new qMRMLModelInfoWidgetPlugin
+            << new qMRMLNavigationViewPlugin << new qMRMLNodeAttributeTableViewPlugin
+            << new qMRMLNodeAttributeTableWidgetPlugin << new qMRMLNodeComboBoxPlugin << new qMRMLPlotWidgetPlugin
+            << new qMRMLPlotViewControllerWidgetPlugin << new qMRMLRangeWidgetPlugin << new qMRMLROIWidgetPlugin
+            << new qMRMLScalarInvariantComboBoxPlugin << new qMRMLScalarsDisplayWidgetPlugin
+            << new qMRMLSceneFactoryWidgetPlugin << new qMRMLSliceControllerWidgetPlugin
+            << new qMRMLSliceInformationWidgetPlugin << new qMRMLSliceVerticalControllerWidgetPlugin
+            << new qMRMLSliceWidgetPlugin << new qMRMLSliderWidgetPlugin << new qMRMLSpinBoxPlugin
+            << new qMRMLTableViewPlugin << new qMRMLThreeDViewInformationWidgetPlugin << new qMRMLThreeDViewPlugin
+            << new qMRMLTransformSlidersPlugin << new qMRMLTreeViewPlugin << new qMRMLVolumeInfoWidgetPlugin
+            << new qMRMLVolumeThresholdWidgetPlugin << new qMRMLWidgetPlugin << new qMRMLWindowLevelWidgetPlugin;
     return plugins;
   }
 };

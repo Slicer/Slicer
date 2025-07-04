@@ -23,7 +23,7 @@ Care Ontario.
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStreamingVolumeNode.h"
 
-int vtkMRMLStreamingVolumeNodeTest1(int , char * [] )
+int vtkMRMLStreamingVolumeNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLStreamingVolumeNode> node1;
   vtkNew<vtkMRMLScene> scene;
@@ -66,10 +66,10 @@ int vtkMRMLStreamingVolumeNodeTest1(int , char * [] )
   vtkSmartPointer<vtkImageData> imageData2 = streamingVolumeNode2->GetImageData();
   CHECK_NOT_NULL(imageData2);
 
-  int image1Dimensions[3] = { 0,0,0 };
+  int image1Dimensions[3] = { 0, 0, 0 };
   imageData1->GetDimensions(image1Dimensions);
 
-  int image2Dimensions[3] = { 0,0,0 };
+  int image2Dimensions[3] = { 0, 0, 0 };
   imageData2->GetDimensions(image2Dimensions);
 
   for (int i = 0; i < 3; ++i)

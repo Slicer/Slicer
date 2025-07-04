@@ -28,14 +28,10 @@ vtkStandardNewMacro(vtkSegmentationConversionPath);
 vtkStandardNewMacro(vtkSegmentationConversionPaths);
 
 //----------------------------------------------------------------------------
-vtkSegmentationConversionPath::vtkSegmentationConversionPath()
-{
-}
+vtkSegmentationConversionPath::vtkSegmentationConversionPath() {}
 
 //----------------------------------------------------------------------------
-vtkSegmentationConversionPath::~vtkSegmentationConversionPath()
-{
-}
+vtkSegmentationConversionPath::~vtkSegmentationConversionPath() {}
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConversionPath::PrintSelf(ostream& os, vtkIndent indent)
@@ -79,7 +75,7 @@ void vtkSegmentationConversionPath::RemoveRule(int index)
     vtkErrorMacro("RemoveRule failed: invalid index: " << index);
     return;
   }
-  this->Rules.erase(this->Rules.begin()+index);
+  this->Rules.erase(this->Rules.begin() + index);
 }
 
 //----------------------------------------------------------------------------

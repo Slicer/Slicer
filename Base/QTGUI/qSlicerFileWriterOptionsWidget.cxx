@@ -27,16 +27,12 @@
 //------------------------------------------------------------------------------
 qSlicerFileWriterOptionsWidget::qSlicerFileWriterOptionsWidget(QWidget* parentWidget)
   : Superclass(parentWidget)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
-qSlicerFileWriterOptionsWidget
-::qSlicerFileWriterOptionsWidget(qSlicerIOOptionsPrivate* pimpl,
-                                   QWidget* parentWidget)
+qSlicerFileWriterOptionsWidget ::qSlicerFileWriterOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parentWidget)
   : Superclass(pimpl, parentWidget)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
 qSlicerFileWriterOptionsWidget::~qSlicerFileWriterOptionsWidget() = default;

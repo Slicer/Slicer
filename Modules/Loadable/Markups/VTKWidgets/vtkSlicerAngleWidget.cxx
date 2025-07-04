@@ -29,18 +29,27 @@ vtkStandardNewMacro(vtkSlicerAngleWidget);
 //----------------------------------------------------------------------
 vtkSlicerAngleWidget::vtkSlicerAngleWidget()
 {
-  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
-  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget,
+                                        vtkCommand::LeftButtonPressEvent,
+                                        vtkEvent::AltModifier,
+                                        WidgetStateRotate,
+                                        WidgetEventRotateStart,
+                                        WidgetEventRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget,
+                                        vtkCommand::RightButtonPressEvent,
+                                        vtkEvent::AltModifier,
+                                        WidgetStateScale,
+                                        WidgetEventScaleStart,
+                                        WidgetEventScaleEnd);
 }
 
 //----------------------------------------------------------------------
 vtkSlicerAngleWidget::~vtkSlicerAngleWidget() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerAngleWidget::CreateDefaultRepresentation(
-  vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+void vtkSlicerAngleWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                                       vtkMRMLAbstractViewNode* viewNode,
+                                                       vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))

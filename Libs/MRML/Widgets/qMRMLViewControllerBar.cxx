@@ -44,12 +44,10 @@
 // qMRMLViewControllerBarPrivate methods
 
 //---------------------------------------------------------------------------
-qMRMLViewControllerBarPrivate::qMRMLViewControllerBarPrivate(
-  qMRMLViewControllerBar& object)
+qMRMLViewControllerBarPrivate::qMRMLViewControllerBarPrivate(qMRMLViewControllerBar& object)
   : QObject(nullptr)
   , q_ptr(&object)
-{
-}
+{}
 
 //---------------------------------------------------------------------------
 qMRMLViewControllerBarPrivate::~qMRMLViewControllerBarPrivate()
@@ -107,15 +105,15 @@ void qMRMLViewControllerBarPrivate::init()
   pushPinIcon.addFile(":/Icons/PushPinIn.png", QSize(), QIcon::Normal, QIcon::On);
   pushPinIcon.addFile(":/Icons/PushPinOut.png", QSize(), QIcon::Normal, QIcon::Off);
   this->PinButton->setIcon(pushPinIcon);
-  QObject::connect(this->PinButton, SIGNAL(toggled(bool)),
-                   this->PopupWidget, SLOT(pinPopup(bool)));
+  QObject::connect(this->PinButton, SIGNAL(toggled(bool)), this->PopupWidget, SLOT(pinPopup(bool)));
   this->PinButton->installEventFilter(this);
   this->BarLayout->addWidget(this->PinButton);
 
   this->ViewLabel = new QLabel(q);
   this->ViewLabel->setObjectName("ViewLabel");
   this->ViewLabel->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
-  // Slice controller background color is independent from the color palette, therefore the color of text and controls are hardcoded to black
+  // Slice controller background color is independent from the color palette, therefore the color of text and controls
+  // are hardcoded to black
   this->ViewLabel->setStyleSheet("color: black; background-color: transparent;");
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
   this->ViewLabel->setMinimumWidth(this->ViewLabel->fontMetrics().horizontalAdvance("XX"));
@@ -167,22 +165,22 @@ bool qMRMLViewControllerBarPrivate::eventFilter(QObject* object, QEvent* event)
 //---------------------------------------------------------------------------
 void qMRMLViewControllerBarPrivate::setColor(QColor barColor)
 {
-  //Q_Q(qMRMLViewControllerBar);
+  // Q_Q(qMRMLViewControllerBar);
   this->BarColor = barColor;
 
   QPalette palette = this->BarWidget->palette();
-  QLinearGradient gradient(QPointF(0.,0.), QPointF(0.,1.));
+  QLinearGradient gradient(QPointF(0., 0.), QPointF(0., 1.));
   gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
   // Light gradient
-  //gradient.setColorAt(0., barColor.lighter(102));
-  //gradient.setColorAt(0.1, barColor);
-  //gradient.setColorAt(0.8, barColor.darker(102));
-  //gradient.setColorAt(1., barColor.darker(108));
+  // gradient.setColorAt(0., barColor.lighter(102));
+  // gradient.setColorAt(0.1, barColor);
+  // gradient.setColorAt(0.8, barColor.darker(102));
+  // gradient.setColorAt(1., barColor.darker(108));
   // Glass effect
-  //gradient.setColorAt(0., barColor.lighter(120));
-  //gradient.setColorAt(0.498, barColor.darker(118));
-  //gradient.setColorAt(0.5, barColor.darker(145));
-  //gradient.setColorAt(1., barColor.darker(165));
+  // gradient.setColorAt(0., barColor.lighter(120));
+  // gradient.setColorAt(0.498, barColor.darker(118));
+  // gradient.setColorAt(0.5, barColor.darker(145));
+  // gradient.setColorAt(1., barColor.darker(165));
   // Dialog effect
   int hue = barColor.hue();
   int sat = barColor.saturation();
@@ -200,7 +198,7 @@ void qMRMLViewControllerBarPrivate::setColor(QColor barColor)
 }
 
 //---------------------------------------------------------------------------
-QColor qMRMLViewControllerBarPrivate::color()const
+QColor qMRMLViewControllerBarPrivate::color() const
 {
   return this->BarColor;
 }
@@ -253,7 +251,7 @@ void qMRMLViewControllerBar::setLayoutBehavior(LayoutBehavior behavior)
       d->PopupWidget->setAutoHide(false);
       d->ControllerLayout->addWidget(d->PopupWidget);
       d->PinButton->hide();
-      //d->PinButton->setDown(1);
+      // d->PinButton->setDown(1);
       d->PopupWidget->setActive(false);
       d->PopupWidget->setWindowFlags(d->PopupWidget->windowFlags() & ~Qt::ToolTip);
       d->PopupWidget->pinPopup(true);
@@ -367,7 +365,7 @@ void qMRMLViewControllerBar::updateWidgetFromMRMLView()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLViewControllerBar::showMaximizeViewButton()const
+bool qMRMLViewControllerBar::showMaximizeViewButton() const
 {
   Q_D(const qMRMLViewControllerBar);
   return d->ShowMaximizeViewButton;

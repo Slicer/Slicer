@@ -30,15 +30,15 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLGPURayCastVolumeRende
   : public vtkMRMLVolumeRenderingDisplayNode
 {
 public:
-  static vtkMRMLGPURayCastVolumeRenderingDisplayNode *New();
-  vtkTypeMacro(vtkMRMLGPURayCastVolumeRenderingDisplayNode,vtkMRMLVolumeRenderingDisplayNode);
+  static vtkMRMLGPURayCastVolumeRenderingDisplayNode* New();
+  vtkTypeMacro(vtkMRMLGPURayCastVolumeRenderingDisplayNode, vtkMRMLVolumeRenderingDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -50,7 +50,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "GPURayCastVolumeRendering";}
+  const char* GetNodeTagName() override { return "GPURayCastVolumeRendering"; }
 
 protected:
   vtkMRMLGPURayCastVolumeRenderingDisplayNode();

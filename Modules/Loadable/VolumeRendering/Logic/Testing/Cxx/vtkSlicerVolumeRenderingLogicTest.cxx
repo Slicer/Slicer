@@ -36,7 +36,7 @@
 
 //----------------------------------------------------------------------------
 int testDefaultRenderingMethod(const std::string& moduleShareDirectory);
-int testPresets(const std::string &moduleShareDirectory);
+int testPresets(const std::string& moduleShareDirectory);
 
 //----------------------------------------------------------------------------
 int vtkSlicerVolumeRenderingLogicTest(int argc, char* argv[])
@@ -133,7 +133,8 @@ int testPresets(const std::string& moduleShareDirectory)
     iconImage->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
     iconNode->SetAndObserveImageData(iconImage);
     customPresetsScene->AddNode(iconNode);
-    newPresetWithIcon->SetNodeReferenceID(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole(), iconNode->GetID());
+    newPresetWithIcon->SetNodeReferenceID(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole(),
+                                          iconNode->GetID());
 
     // Add the preset
     CHECK_NOT_NULL(logic->AddPreset(newPresetWithIcon));

@@ -58,6 +58,7 @@ class qMRMLThreeDViewControllerWidgetPrivate
   , public Ui_qMRMLThreeDViewControllerWidget
 {
   Q_DECLARE_PUBLIC(qMRMLThreeDViewControllerWidget);
+
 public:
   typedef qMRMLViewControllerBarPrivate Superclass;
   qMRMLThreeDViewControllerWidgetPrivate(qMRMLThreeDViewControllerWidget& object);
@@ -68,8 +69,8 @@ public:
 
   vtkMRMLViewLogic* viewNodeLogic(vtkMRMLViewNode* node);
 
-  vtkWeakPointer<vtkMRMLCameraNode>   CameraNode;
-  qMRMLThreeDView*                    ThreeDView;
+  vtkWeakPointer<vtkMRMLCameraNode> CameraNode;
+  qMRMLThreeDView* ThreeDView;
 
   QMenu* ShadowsMenu;
   QMenu* AmbientShadowsSizeScaleMenu;
@@ -81,16 +82,16 @@ public:
   ctkSliderWidget* AmbientShadowsIntensityScaleSlider;
   ctkSliderWidget* AmbientShadowsIntensityShiftSlider;
 
-  vtkSmartPointer<vtkMRMLViewLogic>   ViewLogic;
+  vtkSmartPointer<vtkMRMLViewLogic> ViewLogic;
 
-  ctkSignalMapper*                    StereoTypesMapper;
-  ctkButtonGroup*                     AnimateViewButtonGroup;
-  ctkSignalMapper*                    OrientationMarkerTypesMapper;
-  ctkSignalMapper*                    OrientationMarkerSizesMapper;
-  ctkSignalMapper*                    RulerTypesMapper;
-  ctkSignalMapper*                    RulerColorMapper;
+  ctkSignalMapper* StereoTypesMapper;
+  ctkButtonGroup* AnimateViewButtonGroup;
+  ctkSignalMapper* OrientationMarkerTypesMapper;
+  ctkSignalMapper* OrientationMarkerSizesMapper;
+  ctkSignalMapper* RulerTypesMapper;
+  ctkSignalMapper* RulerColorMapper;
 
-  QToolButton*                        CenterToolButton;
+  QToolButton* CenterToolButton;
 
 protected:
   void setupPopupUi() override;

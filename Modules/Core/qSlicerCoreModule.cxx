@@ -33,13 +33,10 @@ public:
 qSlicerCoreModule::qSlicerCoreModule(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerCoreModulePrivate)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerCoreModule::~qSlicerCoreModule() = default;
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreModule::setup()
-{
-}
+void qSlicerCoreModule::setup() {}

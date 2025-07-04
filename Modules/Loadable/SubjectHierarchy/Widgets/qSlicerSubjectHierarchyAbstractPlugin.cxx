@@ -53,17 +53,16 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyAbstractPlugin::qSlicerSubjectHierarchyAbstractPlugin(QObject *parent)
+qSlicerSubjectHierarchyAbstractPlugin::qSlicerSubjectHierarchyAbstractPlugin(QObject* parent)
   : Superclass(parent)
   , m_Name(QString())
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyAbstractPlugin::~qSlicerSubjectHierarchyAbstractPlugin() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyAbstractPlugin::name()const
+QString qSlicerSubjectHierarchyAbstractPlugin::name() const
 {
   if (m_Name.isEmpty())
   {
@@ -80,7 +79,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::setName(QString name)
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyAbstractPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyAbstractPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   Q_UNUSED(itemID);
 
@@ -89,14 +88,14 @@ double qSlicerSubjectHierarchyAbstractPlugin::canOwnSubjectHierarchyItem(vtkIdTy
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyAbstractPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyAbstractPlugin::roleForPlugin() const
 {
   // Default implementation applies to plugins that do not define roles, only functions and/or levels
   return QString("N/A");
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyAbstractPlugin::helpText()const
+const QString qSlicerSubjectHierarchyAbstractPlugin::helpText() const
 {
   // No need to define this function if there is no help text for a plugin
   return QString("");
@@ -155,38 +154,39 @@ void qSlicerSubjectHierarchyAbstractPlugin::editProperties(vtkIdType itemID)
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::itemContextMenuActions() const
 {
   return QList<QAction*>();
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::sceneContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::sceneContextMenuActions() const
 {
   return QList<QAction*>();
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::visibilityContextMenuActions() const
 {
   return QList<QAction*>();
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::transformContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::transformContextMenuActions() const
 {
   return QList<QAction*>();
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::viewContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyAbstractPlugin::viewContextMenuActions() const
 {
   return QList<QAction*>();
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node,
-  vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+double qSlicerSubjectHierarchyAbstractPlugin::canAddNodeToSubjectHierarchy(
+  vtkMRMLNode* node,
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(node);
   Q_UNUSED(parentItemID);
@@ -227,7 +227,8 @@ bool qSlicerSubjectHierarchyAbstractPlugin::addNodeToSubjectHierarchy(vtkMRMLNod
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyAbstractPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const
+double qSlicerSubjectHierarchyAbstractPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID,
+                                                                                    vtkIdType parentItemID) const
 {
   Q_UNUSED(itemID);
   Q_UNUSED(parentItemID);
@@ -252,7 +253,7 @@ bool qSlicerSubjectHierarchyAbstractPlugin::reparentItemInsideSubjectHierarchy(v
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyAbstractPlugin::displayedItemName(vtkIdType itemID)const
+QString qSlicerSubjectHierarchyAbstractPlugin::displayedItemName(vtkIdType itemID) const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -265,7 +266,7 @@ QString qSlicerSubjectHierarchyAbstractPlugin::displayedItemName(vtkIdType itemI
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(vtkIdType itemID)const
+QString qSlicerSubjectHierarchyAbstractPlugin::tooltip(vtkIdType itemID) const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -299,7 +300,7 @@ void qSlicerSubjectHierarchyAbstractPlugin::setDisplayVisibility(vtkIdType itemI
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -312,7 +313,9 @@ int qSlicerSubjectHierarchyAbstractPlugin::getDisplayVisibility(vtkIdType itemID
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyAbstractPlugin::setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)
+void qSlicerSubjectHierarchyAbstractPlugin::setDisplayColor(vtkIdType itemID,
+                                                            QColor color,
+                                                            QMap<int, QVariant> terminologyMetaData)
 {
   Q_UNUSED(itemID);
   Q_UNUSED(color);
@@ -320,18 +323,23 @@ void qSlicerSubjectHierarchyAbstractPlugin::setDisplayColor(vtkIdType itemID, QC
 }
 
 //-----------------------------------------------------------------------------
-QColor qSlicerSubjectHierarchyAbstractPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const
+QColor qSlicerSubjectHierarchyAbstractPlugin::getDisplayColor(vtkIdType itemID,
+                                                              QMap<int, QVariant>& terminologyMetaData) const
 {
   Q_UNUSED(itemID);
   Q_UNUSED(terminologyMetaData);
 
   // Default is transparent
-  return QColor(0,0,0,0);
+  return QColor(0, 0, 0, 0);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSubjectHierarchyAbstractPlugin::setColorAndTerminologyToDisplayableNode(
-  vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData, bool useSelectedColor, bool disableScalarVisibility)
+  vtkIdType itemID,
+  QColor color,
+  QMap<int, QVariant> terminologyMetaData,
+  bool useSelectedColor,
+  bool disableScalarVisibility)
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -349,7 +357,8 @@ void qSlicerSubjectHierarchyAbstractPlugin::setColorAndTerminologyToDisplayableN
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!displayableNode)
   {
-    qCritical() << Q_FUNC_INFO << ": Unable to find node for subject hierarchy item " << shNode->GetItemName(itemID).c_str();
+    qCritical() << Q_FUNC_INFO << ": Unable to find node for subject hierarchy item "
+                << shNode->GetItemName(itemID).c_str();
     return;
   }
   vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
@@ -362,12 +371,13 @@ void qSlicerSubjectHierarchyAbstractPlugin::setColorAndTerminologyToDisplayableN
   // Set terminology metadata
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::TerminologyRole))
   {
-    vtkSlicerTerminologiesModuleLogic::SetTerminologyEntryAsString(displayableNode,
-      terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString().toStdString());
+    vtkSlicerTerminologiesModuleLogic::SetTerminologyEntryAsString(
+      displayableNode, terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole].toString().toStdString());
   }
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::DefaultTerminologyRole))
   {
-    vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntryAsString(displayableNode,
+    vtkSlicerTerminologiesModuleLogic::SetDefaultTerminologyEntryAsString(
+      displayableNode,
       terminologyMetaData[qSlicerTerminologyItemDelegate::DefaultTerminologyRole].toString().toStdString());
   }
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::NameRole))
@@ -377,12 +387,14 @@ void qSlicerSubjectHierarchyAbstractPlugin::setColorAndTerminologyToDisplayableN
   }
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::NameAutoGeneratedRole))
   {
-    displayableNode->SetAttribute(vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName(),
+    displayableNode->SetAttribute(
+      vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName(),
       terminologyMetaData[qSlicerTerminologyItemDelegate::NameAutoGeneratedRole].toString().toUtf8().constData());
   }
   if (terminologyMetaData.contains(qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole))
   {
-    displayableNode->SetAttribute(vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName(),
+    displayableNode->SetAttribute(
+      vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName(),
       terminologyMetaData[qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole].toString().toUtf8().constData());
   }
 
@@ -412,7 +424,9 @@ void qSlicerSubjectHierarchyAbstractPlugin::setColorAndTerminologyToDisplayableN
 
 //-----------------------------------------------------------------------------
 QColor qSlicerSubjectHierarchyAbstractPlugin::colorAndTerminologyFromDisplayableNode(
-  vtkIdType itemID, QMap<int, QVariant>& terminologyMetaData, bool useSelectedColor)const
+  vtkIdType itemID,
+  QMap<int, QVariant>& terminologyMetaData,
+  bool useSelectedColor) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -443,7 +457,8 @@ QColor qSlicerSubjectHierarchyAbstractPlugin::colorAndTerminologyFromDisplayable
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (!displayableNode)
   {
-    qCritical() << Q_FUNC_INFO << ": Unable to find node for subject hierarchy item " << shNode->GetItemName(itemID).c_str();
+    qCritical() << Q_FUNC_INFO << ": Unable to find node for subject hierarchy item "
+                << shNode->GetItemName(itemID).c_str();
     return QColor(0, 0, 0, 0);
   }
   vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
@@ -455,23 +470,27 @@ QColor qSlicerSubjectHierarchyAbstractPlugin::colorAndTerminologyFromDisplayable
 
   // Get terminology metadata
   terminologyMetaData.clear();
-  terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole] = QString::fromStdString(
-    vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAsString(displayableNode));
-  terminologyMetaData[qSlicerTerminologyItemDelegate::DefaultTerminologyRole] = QString::fromStdString(
-    vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAsString(displayableNode));
+  terminologyMetaData[qSlicerTerminologyItemDelegate::TerminologyRole] =
+    QString::fromStdString(vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAsString(displayableNode));
+  terminologyMetaData[qSlicerTerminologyItemDelegate::DefaultTerminologyRole] =
+    QString::fromStdString(vtkSlicerTerminologiesModuleLogic::GetDefaultTerminologyEntryAsString(displayableNode));
   terminologyMetaData[qSlicerTerminologyItemDelegate::NameRole] = displayableNode->GetName();
   // If auto generated flags are not initialized, then set them to the default
   // (color: on, name: off - this way color will be set from the selector but name will not)
   bool nameAutoGenerated = false;
   if (displayableNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName()))
   {
-    nameAutoGenerated = QVariant(displayableNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName())).toBool();
+    nameAutoGenerated =
+      QVariant(displayableNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetNameAutoGeneratedAttributeName()))
+        .toBool();
   }
   terminologyMetaData[qSlicerTerminologyItemDelegate::NameAutoGeneratedRole] = nameAutoGenerated;
   bool colorAutoGenerated = true;
   if (displayableNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName()))
   {
-    colorAutoGenerated = QVariant(displayableNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName())).toBool();
+    colorAutoGenerated =
+      QVariant(displayableNode->GetAttribute(vtkSlicerTerminologiesModuleLogic::GetColorAutoGeneratedAttributeName()))
+        .toBool();
   }
   terminologyMetaData[qSlicerTerminologyItemDelegate::ColorAutoGeneratedRole] = colorAutoGenerated;
 
@@ -489,7 +508,7 @@ QColor qSlicerSubjectHierarchyAbstractPlugin::colorAndTerminologyFromDisplayable
 }
 
 //--------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyAbstractPlugin::isThisPluginOwnerOfItem(vtkIdType itemID)const
+bool qSlicerSubjectHierarchyAbstractPlugin::isThisPluginOwnerOfItem(vtkIdType itemID) const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -522,7 +541,7 @@ qSlicerAbstractModuleWidget* qSlicerSubjectHierarchyAbstractPlugin::switchToModu
 }
 
 //--------------------------------------------------------------------------
-void qSlicerSubjectHierarchyAbstractPlugin::hideAllContextMenuActions()const
+void qSlicerSubjectHierarchyAbstractPlugin::hideAllContextMenuActions() const
 {
   QList<QAction*> allActions;
   allActions << this->sceneContextMenuActions();
@@ -538,7 +557,9 @@ void qSlicerSubjectHierarchyAbstractPlugin::hideAllContextMenuActions()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* vtkNotUsed(allItemsToShow))
+bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID,
+                                                           vtkMRMLAbstractViewNode* viewNode,
+                                                           vtkIdList* vtkNotUsed(allItemsToShow))
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -598,7 +619,10 @@ bool qSlicerSubjectHierarchyAbstractPlugin::showItemInView(vtkIdType itemID, vtk
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(QAction* action, int section, int weight/*=0*/, double weightAdjustment/*=0.0*/)
+void qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(QAction* action,
+                                                              int section,
+                                                              int weight /*=0*/,
+                                                              double weightAdjustment /*=0.0*/)
 {
   if (!action)
   {

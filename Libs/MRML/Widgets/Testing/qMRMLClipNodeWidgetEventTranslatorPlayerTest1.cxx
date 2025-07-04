@@ -56,10 +56,10 @@ void checkFinalWidgetState(void* data)
   qMRMLClipNodeWidget* widget = reinterpret_cast<qMRMLClipNodeWidget*>(data);
   CTKCOMPARE(widget->clipType(), vtkMRMLClipModelsNode::ClipUnion);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
-int qMRMLClipNodeWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLClipNodeWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -75,14 +75,12 @@ int qMRMLClipNodeWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   // Test case 1
   qMRMLClipNodeWidget* widget = new qMRMLClipNodeWidget();
 
-  vtkSmartPointer< vtkMRMLClipModelsNode > clipNode =
-    vtkSmartPointer< vtkMRMLClipModelsNode >::New();
+  vtkSmartPointer<vtkMRMLClipModelsNode> clipNode = vtkSmartPointer<vtkMRMLClipModelsNode>::New();
 
   widget->setMRMLClipNode(clipNode);
 
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLClipNodeWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    widget, xmlDirectory + "qMRMLClipNodeWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

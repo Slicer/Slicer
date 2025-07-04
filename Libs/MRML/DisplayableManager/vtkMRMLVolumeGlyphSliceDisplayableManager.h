@@ -35,12 +35,10 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeGlyphSliceDisplayableManag
 {
 public:
   static vtkMRMLVolumeGlyphSliceDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLVolumeGlyphSliceDisplayableManager,
-                       vtkMRMLAbstractSliceViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLVolumeGlyphSliceDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLVolumeGlyphSliceDisplayableManager();
   ~vtkMRMLVolumeGlyphSliceDisplayableManager() override;
 
@@ -54,12 +52,11 @@ protected:
   void Create() override;
 
 private:
-
   vtkMRMLVolumeGlyphSliceDisplayableManager(const vtkMRMLVolumeGlyphSliceDisplayableManager&) = delete;
   void operator=(const vtkMRMLVolumeGlyphSliceDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   friend class vtkInternal;
 };
 

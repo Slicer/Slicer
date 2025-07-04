@@ -29,24 +29,25 @@
 #include "vtkMRMLTextNode.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTextsModuleWidgetPrivate: public Ui_qSlicerTextsModuleWidget
+class qSlicerTextsModuleWidgetPrivate : public Ui_qSlicerTextsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTextsModuleWidget);
+
 protected:
   qSlicerTextsModuleWidget* const q_ptr;
+
 public:
   qSlicerTextsModuleWidgetPrivate(qSlicerTextsModuleWidget& object);
-  vtkSlicerTextsLogic*      logic() const;
+  vtkSlicerTextsLogic* logic() const;
 };
 
 //-----------------------------------------------------------------------------
 qSlicerTextsModuleWidgetPrivate::qSlicerTextsModuleWidgetPrivate(qSlicerTextsModuleWidget& object)
   : q_ptr(&object)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
-vtkSlicerTextsLogic* qSlicerTextsModuleWidgetPrivate::logic()const
+vtkSlicerTextsLogic* qSlicerTextsModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerTextsModuleWidget);
   return vtkSlicerTextsLogic::SafeDownCast(q->logic());
@@ -56,8 +57,7 @@ vtkSlicerTextsLogic* qSlicerTextsModuleWidgetPrivate::logic()const
 qSlicerTextsModuleWidget::qSlicerTextsModuleWidget(QWidget* _parentWidget)
   : Superclass(_parentWidget)
   , d_ptr(new qSlicerTextsModuleWidgetPrivate(*this))
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerTextsModuleWidget::~qSlicerTextsModuleWidget() = default;
@@ -70,10 +70,9 @@ void qSlicerTextsModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTextsModuleWidget::setEditedNode(
-  vtkMRMLNode* node,
-  QString role/*=QString()*/,
-  QString context/*=QString()*/)
+bool qSlicerTextsModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                             QString role /*=QString()*/,
+                                             QString context /*=QString()*/)
 {
   Q_D(qSlicerTextsModuleWidget);
   Q_UNUSED(role);

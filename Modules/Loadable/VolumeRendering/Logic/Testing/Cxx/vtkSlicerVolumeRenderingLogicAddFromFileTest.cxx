@@ -34,7 +34,7 @@
 #include <vtkTestingOutputWindow.h>
 
 //----------------------------------------------------------------------------
-int testAddVolumePropertyFromFile(const std::string &temporaryDirectory);
+int testAddVolumePropertyFromFile(const std::string& temporaryDirectory);
 
 //----------------------------------------------------------------------------
 int vtkSlicerVolumeRenderingLogicAddFromFileTest(int argc, char* argv[])
@@ -75,7 +75,7 @@ int testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
   std::cout << "\tfile written okay" << std::endl;
 
   // try reading without a scene
-  vtkMRMLVolumePropertyNode *vpNode = logic->AddVolumePropertyFromFile(fileName.c_str());
+  vtkMRMLVolumePropertyNode* vpNode = logic->AddVolumePropertyFromFile(fileName.c_str());
   CHECK_NULL(vpNode);
 
   // set the scene

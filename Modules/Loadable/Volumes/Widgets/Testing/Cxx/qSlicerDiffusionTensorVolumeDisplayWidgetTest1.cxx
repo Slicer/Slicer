@@ -38,7 +38,7 @@
 #include "qMRMLWidget.h"
 
 //-----------------------------------------------------------------------------
-int qSlicerDiffusionTensorVolumeDisplayWidgetTest1( int argc, char * argv[] )
+int qSlicerDiffusionTensorVolumeDisplayWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

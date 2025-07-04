@@ -34,8 +34,10 @@
 class qMRMLColorListViewPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLColorListView);
+
 protected:
   qMRMLColorListView* const q_ptr;
+
 public:
   qMRMLColorListViewPrivate(qMRMLColorListView& object);
   void init();
@@ -44,8 +46,7 @@ public:
 //------------------------------------------------------------------------------
 qMRMLColorListViewPrivate::qMRMLColorListViewPrivate(qMRMLColorListView& object)
   : q_ptr(&object)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
 void qMRMLColorListViewPrivate::init()
@@ -62,7 +63,7 @@ void qMRMLColorListViewPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLColorListView::qMRMLColorListView(QWidget *_parent)
+qMRMLColorListView::qMRMLColorListView(QWidget* _parent)
   : QListView(_parent)
   , d_ptr(new qMRMLColorListViewPrivate(*this))
 {
@@ -74,13 +75,13 @@ qMRMLColorListView::qMRMLColorListView(QWidget *_parent)
 qMRMLColorListView::~qMRMLColorListView() = default;
 
 //------------------------------------------------------------------------------
-qMRMLColorModel* qMRMLColorListView::colorModel()const
+qMRMLColorModel* qMRMLColorListView::colorModel() const
 {
   return qobject_cast<qMRMLColorModel*>(this->sortFilterProxyModel()->sourceModel());
 }
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterColorProxyModel* qMRMLColorListView::sortFilterProxyModel()const
+qMRMLSortFilterColorProxyModel* qMRMLColorListView::sortFilterProxyModel() const
 {
   return qobject_cast<qMRMLSortFilterColorProxyModel*>(this->model());
 }
@@ -98,11 +99,11 @@ void qMRMLColorListView::setMRMLColorNode(vtkMRMLColorNode* node)
   Q_ASSERT(mrmlModel);
   mrmlModel->setMRMLColorNode(node);
   this->sortFilterProxyModel()->invalidate();
-  this->setCurrentIndex(this->model()->index(-1,-1));
+  this->setCurrentIndex(this->model()->index(-1, -1));
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLColorListView::mrmlColorNode()const
+vtkMRMLColorNode* qMRMLColorListView::mrmlColorNode() const
 {
   qMRMLColorModel* mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
@@ -116,13 +117,13 @@ void qMRMLColorListView::setShowOnlyNamedColors(bool enable)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLColorListView::showOnlyNamedColors()const
+bool qMRMLColorListView::showOnlyNamedColors() const
 {
   return this->sortFilterProxyModel()->filterRegExp().isEmpty();
 }
 
 //------------------------------------------------------------------------------
-void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModelIndex &previous)
+void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModelIndex& previous)
 {
   if (current.isValid())
   {

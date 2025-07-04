@@ -55,14 +55,13 @@ qSlicerTerminologiesModulePrivate::qSlicerTerminologiesModulePrivate() = default
 qSlicerTerminologiesModule::qSlicerTerminologiesModule(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerTerminologiesModulePrivate)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologiesModule::~qSlicerTerminologiesModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerTerminologiesModule::helpText()const
+QString qSlicerTerminologiesModule::helpText() const
 {
   QString help =
     tr("The Terminologies module enables viewing and editing terminology dictionaries used for segmentation.");
@@ -71,14 +70,14 @@ QString qSlicerTerminologiesModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTerminologiesModule::acknowledgementText()const
+QString qSlicerTerminologiesModule::acknowledgementText() const
 {
   return tr("This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program"
-    " and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).");
+            " and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTerminologiesModule::contributors()const
+QStringList qSlicerTerminologiesModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Csaba Pinter (Queen's)");
@@ -86,13 +85,13 @@ QStringList qSlicerTerminologiesModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTerminologiesModule::categories()const
+QStringList qSlicerTerminologiesModule::categories() const
 {
   return QStringList() << qSlicerAbstractCoreModule::tr("Informatics");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTerminologiesModule::dependencies()const
+QStringList qSlicerTerminologiesModule::dependencies() const
 {
   return QStringList();
 }
@@ -102,7 +101,8 @@ void qSlicerTerminologiesModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(this->logic());
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic =
+    vtkSlicerTerminologiesModuleLogic::SafeDownCast(this->logic());
 
   // Register IOs
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
@@ -110,7 +110,7 @@ void qSlicerTerminologiesModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerTerminologiesModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerTerminologiesModule::createWidgetRepresentation()
 {
   return new qSlicerTerminologiesModuleWidget;
 }

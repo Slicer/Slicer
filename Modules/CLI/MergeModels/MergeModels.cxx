@@ -9,7 +9,7 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+#  pragma warning(disable : 4786)
 #endif
 
 #include "MergeModelsCLP.h"
@@ -22,7 +22,7 @@
 #include "vtkMRMLModelStorageNode.h"
 
 
-int main( int argc, char * argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 

@@ -35,7 +35,10 @@ class vtkSegmentationCore_EXPORT vtkFractionalLabelmapToClosedSurfaceConversionR
 {
 public:
   /// Conversion parameter: magnification factor
-  static const std::string GetFractionalLabelMapOversamplingFactorParameterName() { return "Fractional labelmap oversampling factor"; };
+  static const std::string GetFractionalLabelMapOversamplingFactorParameterName()
+  {
+    return "Fractional labelmap oversampling factor";
+  };
   static const std::string GetThresholdFractionParameterName() { return "Threshold fraction"; };
 
 public:
@@ -57,19 +60,25 @@ public:
   bool Convert(vtkSegment* segment) override;
 
   /// Get the cost of the conversion.
-  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
+  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr,
+                                 vtkDataObject* targetRepresentation = nullptr) override;
 
   /// Human-readable name of the converter rule
   const char* GetName() override { return "Fractional labelmap to closed surface"; };
 
   /// Human-readable name of the source representation
-  const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName(); };
+  const char* GetSourceRepresentationName() override
+  {
+    return vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName();
+  };
 
   /// Human-readable name of the target representation
-  const char* GetTargetRepresentationName() override { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
+  const char* GetTargetRepresentationName() override
+  {
+    return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName();
+  };
 
 protected:
-
   /// This function adds a border around the image that contains the paddingConstant value
   /// \param FractionalLabelMap The image that is being padded
   /// \param paddingConstant The value that is used to fill the new voxels
@@ -80,7 +89,8 @@ protected:
   ~vtkFractionalLabelmapToClosedSurfaceConversionRule() override;
 
 private:
-  vtkFractionalLabelmapToClosedSurfaceConversionRule(const vtkFractionalLabelmapToClosedSurfaceConversionRule&) = delete;
+  vtkFractionalLabelmapToClosedSurfaceConversionRule(const vtkFractionalLabelmapToClosedSurfaceConversionRule&) =
+    delete;
   void operator=(const vtkFractionalLabelmapToClosedSurfaceConversionRule&) = delete;
 };
 

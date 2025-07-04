@@ -37,13 +37,12 @@ public:
   qSlicerSaveDataDialog(QObject* parent = nullptr);
   ~qSlicerSaveDataDialog() override;
 
-  qSlicerIO::IOFileType fileType()const override;
-  QString description()const override;
-  qSlicerFileDialog::IOAction action()const override;
+  qSlicerIO::IOFileType fileType() const override;
+  QString description() const override;
+  qSlicerFileDialog::IOAction action() const override;
 
   /// Open the data dialog and save the nodes/scene
-  bool exec(const qSlicerIO::IOProperties& readerProperties =
-                    qSlicerIO::IOProperties()) override;
+  bool exec(const qSlicerIO::IOProperties& readerProperties = qSlicerIO::IOProperties()) override;
 
 protected:
   QScopedPointer<qSlicerSaveDataDialogPrivate> d_ptr;

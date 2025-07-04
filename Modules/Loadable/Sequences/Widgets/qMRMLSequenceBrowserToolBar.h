@@ -19,7 +19,7 @@
 #define __qMRMLSequenceBrowserToolBar_h
 
 // Qt includes
-//#include <QSignalMapper>
+// #include <QSignalMapper>
 #include <QToolBar>
 
 // CTK includes

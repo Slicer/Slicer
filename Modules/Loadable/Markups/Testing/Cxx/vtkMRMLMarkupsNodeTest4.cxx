@@ -35,8 +35,12 @@
 
 static const double EPSILON = 1e-5;
 
-int ComparePlane(double xAxisExpected_World[3], double yAxisExpected_World[3], double zAxisExpected_World[3],
-  double originExpected_World[3], vtkMRMLMarkupsPlaneNode* planeNode, double epsilon)
+int ComparePlane(double xAxisExpected_World[3],
+                 double yAxisExpected_World[3],
+                 double zAxisExpected_World[3],
+                 double originExpected_World[3],
+                 vtkMRMLMarkupsPlaneNode* planeNode,
+                 double epsilon)
 {
   double xAxisActual_World[3] = { 0.0 };
   double yAxisActual_World[3] = { 0.0 };
@@ -57,7 +61,7 @@ int ComparePlane(double xAxisExpected_World[3], double yAxisExpected_World[3], d
   return EXIT_SUCCESS;
 }
 
-int vtkMRMLMarkupsNodeTest4(int , char * [] )
+int vtkMRMLMarkupsNodeTest4(int, char*[])
 {
   std::cout << "Testing vtkMRMLMarkupsPlaneNode" << std::endl;
   vtkNew<vtkMRMLScene> scene;
@@ -65,7 +69,9 @@ int vtkMRMLMarkupsNodeTest4(int , char * [] )
   vtkNew<vtkMRMLMarkupsPlaneNode> planeNode;
   scene->AddNode(planeNode);
 
-  for (int planeType = vtkMRMLMarkupsPlaneNode::PlaneType3Points; planeType < vtkMRMLMarkupsPlaneNode::PlaneTypePlaneFit; ++planeType)
+  for (int planeType = vtkMRMLMarkupsPlaneNode::PlaneType3Points;
+       planeType < vtkMRMLMarkupsPlaneNode::PlaneTypePlaneFit;
+       ++planeType)
   {
     std::cout << "Testing plane type: " << planeNode->GetPlaneTypeAsString(planeType) << "." << std::endl;
     planeNode->SetPlaneType(planeType);

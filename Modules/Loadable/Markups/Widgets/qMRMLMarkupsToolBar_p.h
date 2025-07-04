@@ -53,7 +53,7 @@
 #include <qMRMLMarkupsToolBar.h>
 #include <qSlicerMarkupsPlaceWidget.h>
 
-//Logic includes
+// Logic includes
 #include <vtkSlicerApplicationLogic.h>
 #include <vtkMRMLApplicationLogic.h>
 #include <vtkSlicerMarkupsLogic.h>
@@ -73,8 +73,8 @@ class QToolButton;
 class qMRMLMarkupsToolBarPrivate : public QObject
 {
   Q_OBJECT
-    QVTK_OBJECT
-    Q_DECLARE_PUBLIC(qMRMLMarkupsToolBar);
+  QVTK_OBJECT
+  Q_DECLARE_PUBLIC(qMRMLMarkupsToolBar);
 
 protected:
   qMRMLMarkupsToolBar* const q_ptr;
@@ -95,15 +95,15 @@ public slots:
   void onSetModule(const QString& moduleName);
 
 public:
-  vtkSmartPointer<vtkMRMLScene>            MRMLScene;
+  vtkSmartPointer<vtkMRMLScene> MRMLScene;
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
-  vtkWeakPointer<vtkMRMLInteractionNode>   InteractionNode;
-  vtkWeakPointer<vtkMRMLSelectionNode>     SelectionNode;
+  vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
+  vtkWeakPointer<vtkMRMLSelectionNode> SelectionNode;
 
   QString DefaultPlaceClassName;
-  QAction* NodeSelectorAction{nullptr};
-  qMRMLNodeComboBox* MarkupsNodeSelector{nullptr};
-  qSlicerMarkupsPlaceWidget* MarkupsPlaceWidget{nullptr};
+  QAction* NodeSelectorAction{ nullptr };
+  qMRMLNodeComboBox* MarkupsNodeSelector{ nullptr };
+  qSlicerMarkupsPlaceWidget* MarkupsPlaceWidget{ nullptr };
 };
 
 #endif

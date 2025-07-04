@@ -59,8 +59,8 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic
 {
 public:
   /// The Usual VTK class functions
-  static vtkMRMLSliceLogic *New();
-  vtkTypeMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
+  static vtkMRMLSliceLogic* New();
+  vtkTypeMacro(vtkMRMLSliceLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// CompositeModifiedEvent is generated when slice composite node is modified
@@ -79,38 +79,38 @@ public:
   };
 
   /// The MRML slice node for this slice logic
-  vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
-  void SetSliceNode (vtkMRMLSliceNode * newSliceNode);
+  vtkGetObjectMacro(SliceNode, vtkMRMLSliceNode);
+  void SetSliceNode(vtkMRMLSliceNode* newSliceNode);
 
   /// Convenience function for adding a slice node and setting it in this logic
   vtkMRMLSliceNode* AddSliceNode(const char* layoutName);
 
   /// @{
   /// The MRML slice node for this slice logic
-  vtkGetObjectMacro (SliceCompositeNode, vtkMRMLSliceCompositeNode);
-  void SetSliceCompositeNode (vtkMRMLSliceCompositeNode *SliceCompositeNode);
+  vtkGetObjectMacro(SliceCompositeNode, vtkMRMLSliceCompositeNode);
+  void SetSliceCompositeNode(vtkMRMLSliceCompositeNode* SliceCompositeNode);
   /// @}
 
   /// @{
   /// The background slice layer
   vtkMRMLSliceLayerLogic* GetBackgroundLayer();
-  void SetBackgroundLayer (vtkMRMLSliceLayerLogic *BackgroundLayer);
+  void SetBackgroundLayer(vtkMRMLSliceLayerLogic* BackgroundLayer);
   /// @}
 
   /// @{
   /// The foreground slice layer
   vtkMRMLSliceLayerLogic* GetForegroundLayer();
-  void SetForegroundLayer (vtkMRMLSliceLayerLogic *ForegroundLayer);
+  void SetForegroundLayer(vtkMRMLSliceLayerLogic* ForegroundLayer);
   /// @}
 
   /// @{
   /// The Label slice layer
   vtkMRMLSliceLayerLogic* GetLabelLayer();
-  void SetLabelLayer (vtkMRMLSliceLayerLogic *LabelLayer);
+  void SetLabelLayer(vtkMRMLSliceLayerLogic* LabelLayer);
   /// @}
 
   vtkMRMLSliceLayerLogic* GetNthLayer(int layerIndex);
-  void SetNthLayer(int layerIndex, vtkMRMLSliceLayerLogic *layer);
+  void SetNthLayer(int layerIndex, vtkMRMLSliceLayerLogic* layer);
 
   vtkAlgorithmOutput* GetNthLayerImageDataConnection(int layerIndex);
   vtkAlgorithmOutput* GetNthLayerImageDataConnectionUVW(int layerIndex);
@@ -124,24 +124,28 @@ public:
 
   /// Helper to get the background layer Window/Level, intensity range and
   /// status of automatic Window/Level setting
-  void GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                        double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+  void GetBackgroundWindowLevelAndRange(double& window,
+                                        double& level,
+                                        double& rangeLow,
+                                        double& rangeHigh,
+                                        bool& autoWindowLevel);
 
   /// Helper to get the background layer Window/Level and intensity range
-  void GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                        double& rangeLow, double& rangeHigh);
+  void GetBackgroundWindowLevelAndRange(double& window, double& level, double& rangeLow, double& rangeHigh);
 
   /// Helper to set the foreground layer Window/Level
   void SetForegroundWindowLevel(double window, double level);
 
   /// Helper to get the foreground layer Window/Level, intensity range and
   /// status of automatic Window/Level setting
-  void GetForegroundWindowLevelAndRange(double& window, double& level,
-                                        double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+  void GetForegroundWindowLevelAndRange(double& window,
+                                        double& level,
+                                        double& rangeLow,
+                                        double& rangeHigh,
+                                        bool& autoWindowLevel);
 
   /// Helper to get the foreground layer Window/Level and intensity range
-  void GetForegroundWindowLevelAndRange(double& window, double& level,
-                                        double& rangeLow, double& rangeHigh);
+  void GetForegroundWindowLevelAndRange(double& window, double& level, double& rangeLow, double& rangeHigh);
 
   /// Model slice plane
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
@@ -167,7 +171,7 @@ public:
 
   /// the tail of the pipeline
   /// -- returns nullptr if none of the inputs exist
-  vtkAlgorithmOutput *GetImageDataConnection();
+  vtkAlgorithmOutput* GetImageDataConnection();
 
   /// Return True if at least one layer has an image data
   /// \sa vtkMRMLSliceLayerLogic::GetImageDataConnection()
@@ -200,31 +204,31 @@ public:
   /// Get the volume node corresponding to layer
   /// (0=background, 1=foreground, 2=label)
   /// \sa GetNthLayerVolumeNode
-  vtkMRMLVolumeNode *GetLayerVolumeNode(int layer);
+  vtkMRMLVolumeNode* GetLayerVolumeNode(int layer);
 
   /// Get the size of the volume, transformed to RAS space
-  static void GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double rasDimensions[3], double rasCenter[3]);
+  static void GetVolumeRASBox(vtkMRMLVolumeNode* volumeNode, double rasDimensions[3], double rasCenter[3]);
 
   /// Get the size of the volume, transformed to slice space
-  void GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode, double sliceDimensions[3], double sliceCenter[3]);
+  void GetVolumeSliceDimensions(vtkMRMLVolumeNode* volumeNode, double sliceDimensions[3], double sliceCenter[3]);
 
   /// Get the spacing of the volume, transformed to slice space
   /// - to be used, for example, to set the slice increment for stepping a single
   ///   voxel relative to the current slice view
-  double* GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode) VTK_SIZEHINT(3);
+  double* GetVolumeSliceSpacing(vtkMRMLVolumeNode* volumeNode) VTK_SIZEHINT(3);
 
   /// Get the min/max bounds of the volume
   /// - note these are not translated by the current slice offset so they can
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
   /// If useVoxelCenter is set to false (default) then bounds of voxel sides are returned
   /// (otherwise then bounds of voxels centers are returned).
-  void GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode, double sliceBounds[6], bool useVoxelCenter=false);
+  void GetVolumeSliceBounds(vtkMRMLVolumeNode* volumeNode, double sliceBounds[6], bool useVoxelCenter = false);
 
   /// adjust the node's field of view to match the extent of the volume
-  void FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int width, int height);
+  void FitSliceToVolume(vtkMRMLVolumeNode* volumeNode, int width, int height);
 
   /// adjust the node's field of view to match the extent of the volume
-  void FitSliceToVolumes(vtkCollection *volumeNodes, int width, int height);
+  void FitSliceToVolumes(vtkCollection* volumeNodes, int width, int height);
 
   /// Get the size of the volume, transformed to RAS space
   void GetBackgroundRASBox(double rasDimensions[3], double rasCenter[3]);
@@ -248,7 +252,8 @@ public:
   /// of the volume has more than one slice then the slice view will be rotated to the closest orthogonal axis.
   void RotateSliceToLowestVolumeAxes(bool forceSlicePlaneToSingleSlice = true);
 
-  /// adjust the node's field of view to match the extent of the first selected volume (background, foregorund, labelmap)
+  /// adjust the node's field of view to match the extent of the first selected volume (background, foregorund,
+  /// labelmap)
   void FitSliceToFirst(int width = -1, int height = -1);
 
   /// Adjust the node's field of view to match the extent of the volume visible in the slice's background.
@@ -284,7 +289,7 @@ public:
   /// - returns first non-null layer
   /// If useVoxelCenter is set to false (default) then bounds of voxel sides are returned
   /// (otherwise then bounds of voxels centers are returned).
-  void GetLowestVolumeSliceBounds(double sliceBounds[6], bool useVoxelCenter=false);
+  void GetLowestVolumeSliceBounds(double sliceBounds[6], bool useVoxelCenter = false);
 
   /// @{
   /// Get/Set the current distance from the origin to the slice plane
@@ -333,7 +338,7 @@ public:
   /// SLICE_INDEX_ROTATED=the slice is rotated compared to the volume planes,
   /// SLICE_INDEX_OUT_OF_VOLUME=the slice plane is out of the volume
   /// SLICE_INDEX_NO_VOLUME=the specified volume is not available
-  int GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode *volumeNode);
+  int GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode* volumeNode);
 
   /// Get the DICOM slice index (1-based) from slice offset (distance from the origin to the slice plane).
   /// Slice index is computed for the first available volume (the search order is
@@ -352,7 +357,7 @@ public:
   /// @}
 
   /// Get  all slice displaynodes creating PolyData models like glyphs etc.
-  std::vector< vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
+  std::vector<vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
   /// Return the associated slicerlayer nodes
   static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLSliceNode* node);
   /// Return the associated slice node
@@ -366,34 +371,33 @@ public:
   /// Return true if the node is a model node that has the default volume slice
   /// node name suffix, false otherwise
   /// \sa SLICE_MODEL_NODE_NAME_SUFFIX
-  static bool IsSliceModelNode(vtkMRMLNode *mrmlNode);
+  static bool IsSliceModelNode(vtkMRMLNode* mrmlNode);
   /// Return true if the display node is a volume slice node display node
   /// by checking the attribute SliceLogic.IsSliceModelDisplayNode
   /// Returns false if the attribute is not present, true if the attribute
   /// is present and not equal to zero
-  static bool IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayNode);
+  static bool IsSliceModelDisplayNode(vtkMRMLDisplayNode* mrmlDisplayNode);
 
   /// Get volume at the specified world position that should be used
   /// for interactions, such as window/level adjustments.
   /// backgroundVolumeEditable and foregroundVolumeEditable can be used specify that
   /// a volume is not editable (even if it is visible at the given position).
-  int GetEditableLayerAtWorldPosition(double worldPos[3], bool backgroundVolumeEditable = true, bool foregroundVolumeEditable = true);
+  int GetEditableLayerAtWorldPosition(double worldPos[3],
+                                      bool backgroundVolumeEditable = true,
+                                      bool foregroundVolumeEditable = true);
 
   /// Get range and resolution for slice offset sliders.
   /// Returns false if the information cannot be determined.
   bool GetSliceOffsetRangeResolution(double range[2], double& resolution);
 
 protected:
-
   vtkMRMLSliceLogic();
   ~vtkMRMLSliceLogic() override;
 
-  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// process logic events
-  void ProcessMRMLLogicsEvents(vtkObject * caller,
-                               unsigned long event,
-                               void * callData) override;
+  void ProcessMRMLLogicsEvents(vtkObject* caller, unsigned long event, void* callData) override;
   void ProcessMRMLLogicsEvents();
 
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
@@ -407,10 +411,8 @@ protected:
   void SetupCrosshairNode();
 
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
-  static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLScene* scene,
-                                                          const char* layoutName);
-  static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene,
-    const char* layoutName);
+  static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLScene* scene, const char* layoutName);
+  static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene, const char* layoutName);
 
   /// Set volume associated with a layer
   void SetNthLayerVolumeNode(int layerIndex, vtkMRMLVolumeNode* volumeNode);
@@ -418,15 +420,21 @@ protected:
   /// @{
   /// Helper to get/set Window/Level in any layer
   void SetWindowLevel(int layer, double window, double level);
-  void GetWindowLevelAndRange(int layer, double& window, double& level,
-                                      double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+  void GetWindowLevelAndRange(int layer,
+                              double& window,
+                              double& level,
+                              double& rangeLow,
+                              double& rangeHigh,
+                              bool& autoWindowLevel);
   /// @}
 
   /// Helper to update input of blend filter from a set of layers.
   /// It minimizes changes to the imaging pipeline (does not remove and
   /// re-add an input if it is not changed) because rebuilding of the pipeline
   /// is a relatively expensive operation.
-  static bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers, bool clipToBackgroundVolume);
+  static bool UpdateBlendLayers(vtkImageBlend* blend,
+                                const std::deque<SliceLayerInfo>& layers,
+                                bool clipToBackgroundVolume);
 
   /// Helper to update the operation to perform based on compositing mode.
   static bool UpdateAddSubOperation(vtkImageMathematics* addSubMath, int compositing);
@@ -435,7 +443,9 @@ protected:
   static bool UpdateFractions(vtkImageMathematics* fraction, double opacity);
 
   /// Helper to update layers opacity when adding/subtracting the background layer
-  static bool UpdateFractions(BlendPipeline* pipeline, const std::vector<vtkAlgorithmOutput*>& imagePorts, const std::vector<double>& opacities);
+  static bool UpdateFractions(BlendPipeline* pipeline,
+                              const std::vector<vtkAlgorithmOutput*>& imagePorts,
+                              const std::vector<double>& opacities);
 
   /// Helper to update reconstruction slab settings for a given layer.
   static void UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, vtkMRMLSliceLayerLogic* sliceLayerLogic);
@@ -452,8 +462,10 @@ protected:
   /// Deprecated. Returns true if the volume's window/level values are editable on the GUI.
   bool VolumeWindowLevelEditable(const char* vtkNotUsed(volumeNodeID))
   {
-    vtkWarningMacro("vtkMRMLSliceLogic::VolumeWindowLevelEditable method is deprecated. Volume Window Level is always editable. Use the interaction node to check if in editing mode. "
-                    "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
+    vtkWarningMacro("vtkMRMLSliceLogic::VolumeWindowLevelEditable method is deprecated. Volume Window Level is always "
+                    "editable. Use the interaction node to check if in editing mode. "
+                    "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == "
+                    "slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
     return true;
   };
 
@@ -464,26 +476,24 @@ protected:
 
   LayerList Layers;
 
-  bool                          AddingSliceModelNodes;
+  bool AddingSliceModelNodes;
 
-  vtkMRMLSliceNode*             SliceNode;
-  vtkMRMLSliceCompositeNode*    SliceCompositeNode;
+  vtkMRMLSliceNode* SliceNode;
+  vtkMRMLSliceCompositeNode* SliceCompositeNode;
 
-  BlendPipeline*                Pipeline;
-  BlendPipeline*                PipelineUVW;
-  vtkImageReslice*              ExtractModelTexture;
-  vtkAlgorithmOutput*           ImageDataConnection;
+  BlendPipeline* Pipeline;
+  BlendPipeline* PipelineUVW;
+  vtkImageReslice* ExtractModelTexture;
+  vtkAlgorithmOutput* ImageDataConnection;
 
-  vtkMRMLModelNode*             SliceModelNode;
-  vtkMRMLModelDisplayNode*      SliceModelDisplayNode;
-  vtkMRMLLinearTransformNode*   SliceModelTransformNode;
-  double                        SliceSpacing[3];
+  vtkMRMLModelNode* SliceModelNode;
+  vtkMRMLModelDisplayNode* SliceModelDisplayNode;
+  vtkMRMLLinearTransformNode* SliceModelTransformNode;
+  double SliceSpacing[3];
 
 private:
-
   vtkMRMLSliceLogic(const vtkMRMLSliceLogic&) = delete;
   void operator=(const vtkMRMLSliceLogic&) = delete;
-
 };
 
 #endif

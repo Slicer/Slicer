@@ -44,14 +44,13 @@
 //----------------------------------------------------------------------------
 qSlicerMarkupsWriter::qSlicerMarkupsWriter(QObject* parentObject)
   : qSlicerNodeWriter("Markups", QString("MarkupsFile"), QStringList() << "vtkMRMLMarkupsNode", true, parentObject)
-{
-}
+{}
 
 //----------------------------------------------------------------------------
 qSlicerMarkupsWriter::~qSlicerMarkupsWriter() = default;
 
 //----------------------------------------------------------------------------
-QStringList qSlicerMarkupsWriter::extensions(vtkObject* vtkNotUsed(object))const
+QStringList qSlicerMarkupsWriter::extensions(vtkObject* vtkNotUsed(object)) const
 {
   QStringList supportedExtensions;
 
@@ -98,7 +97,8 @@ void qSlicerMarkupsWriter::setStorageNodeClass(vtkMRMLStorableNode* storableNode
   }
 
   // Create and use new storage node of the correct class
-  vtkMRMLStorageNode* newStorageNode = vtkMRMLStorageNode::SafeDownCast(scene->AddNewNodeByClass(storageNodeClassNameStr));
+  vtkMRMLStorageNode* newStorageNode =
+    vtkMRMLStorageNode::SafeDownCast(scene->AddNewNodeByClass(storageNodeClassNameStr));
   if (!newStorageNode)
   {
     qCritical() << Q_FUNC_INFO << " failed: cannot create new storage node of class " << storageNodeClassName;
@@ -116,7 +116,8 @@ void qSlicerMarkupsWriter::setStorageNodeClass(vtkMRMLStorableNode* storableNode
 //----------------------------------------------------------------------------
 bool qSlicerMarkupsWriter::write(const qSlicerIO::IOProperties& properties)
 {
-  vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
+  vtkMRMLStorableNode* node =
+    vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
   std::string fileName = properties["fileName"].toString().toStdString();
 
   vtkNew<vtkMRMLMarkupsFiducialStorageNode> fcsvStorageNode;

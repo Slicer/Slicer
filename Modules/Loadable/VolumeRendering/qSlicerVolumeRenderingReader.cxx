@@ -41,7 +41,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerVolumeRenderingReaderPrivate
 {
-  public:
+public:
   vtkSmartPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;
 };
 
@@ -49,8 +49,7 @@ class qSlicerVolumeRenderingReaderPrivate
 qSlicerVolumeRenderingReader::qSlicerVolumeRenderingReader(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerVolumeRenderingReaderPrivate)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerVolumeRenderingReader::qSlicerVolumeRenderingReader(vtkSlicerVolumeRenderingLogic* logic, QObject* _parent)
@@ -71,30 +70,29 @@ void qSlicerVolumeRenderingReader::setVolumeRenderingLogic(vtkSlicerVolumeRender
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingReader::volumeRenderingLogic()const
+vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingReader::volumeRenderingLogic() const
 {
   Q_D(const qSlicerVolumeRenderingReader);
   return d->VolumeRenderingLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingReader::description()const
+QString qSlicerVolumeRenderingReader::description() const
 {
   return tr("Transfer Function");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerVolumeRenderingReader::fileType()const
+qSlicerIO::IOFileType qSlicerVolumeRenderingReader::fileType() const
 {
   return QString("TransferFunctionFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumeRenderingReader::extensions()const
+QStringList qSlicerVolumeRenderingReader::extensions() const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
-  return QStringList()
-    << tr("Transfer Function") + " (*.vp)";
+  return QStringList() << tr("Transfer Function") + " (*.vp)";
 }
 
 //-----------------------------------------------------------------------------
@@ -107,8 +105,7 @@ bool qSlicerVolumeRenderingReader::load(const IOProperties& properties)
   {
     return false;
   }
-  vtkMRMLVolumePropertyNode* node =
-    d->VolumeRenderingLogic->AddVolumePropertyFromFile(fileName.toUtf8());
+  vtkMRMLVolumePropertyNode* node = d->VolumeRenderingLogic->AddVolumePropertyFromFile(fileName.toUtf8());
   QStringList loadedNodes;
   if (node)
   {

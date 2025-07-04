@@ -38,20 +38,20 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include<vtkCallbackCommand.h>
-#include<vtkNew.h>
-#include<vtkSmartPointer.h>
+#include <vtkCallbackCommand.h>
+#include <vtkNew.h>
+#include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-void RegisteredEventDetectionCallback(vtkObject *caller, unsigned long, void*, void*);
-void UnregisteredEventDetectionCallback(vtkObject *caller, unsigned long, void*, void*);
+void RegisteredEventDetectionCallback(vtkObject* caller, unsigned long, void*, void*);
+void UnregisteredEventDetectionCallback(vtkObject* caller, unsigned long, void*, void*);
 
 //------------------------------------------------------------------------------
 bool registeredEventReceived = false;
 bool unregisteredEventReceived = false;
 
 //------------------------------------------------------------------------------
-int vtkSlicerMarkupsLogicTest4(int , char*[])
+int vtkSlicerMarkupsLogicTest4(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -77,7 +77,7 @@ int vtkSlicerMarkupsLogicTest4(int , char*[])
   logic4->RegisterMarkupsNode(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(),
                               vtkSmartPointer<vtkSlicerPointsWidget>::New());
   TESTING_OUTPUT_ASSERT_WARNINGS_END();
-  CHECK_BOOL(registeredEventReceived, false);  // already registered, should not re-register
+  CHECK_BOOL(registeredEventReceived, false); // already registered, should not re-register
 
   // Test registration of a Markups Node with nullptr node
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -96,8 +96,8 @@ int vtkSlicerMarkupsLogicTest4(int , char*[])
   // Try to register the same markup node. It should trigger a warning macro
   TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
   registeredEventReceived = false;
-  logic4->RegisterMarkupsNode(vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(),
-                              vtkSmartPointer<vtkSlicerPointsWidget>::New(), false);
+  logic4->RegisterMarkupsNode(
+    vtkSmartPointer<vtkMRMLMarkupsFiducialNode>::New(), vtkSmartPointer<vtkSlicerPointsWidget>::New(), false);
   TESTING_OUTPUT_ASSERT_WARNINGS_END();
   CHECK_BOOL(registeredEventReceived, false);
 

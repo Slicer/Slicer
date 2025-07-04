@@ -75,7 +75,7 @@ int vtkSlicerPlotsLogic::GetLayoutWithPlot(int currentLayout)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* source, const char * vtkNotUsed(name))
+vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* source, const char* vtkNotUsed(name))
 {
   if (!source || source->GetScene() == nullptr)
   {
@@ -83,9 +83,9 @@ vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* s
     return nullptr;
   }
 
-  vtkSmartPointer<vtkMRMLNode> clonedNode = vtkSmartPointer<vtkMRMLNode>::Take(
-    source->GetScene()->CreateNodeByClass("vtkMRMLPlotSeriesNode"));
-  vtkMRMLPlotSeriesNode *clonedSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(clonedNode);
+  vtkSmartPointer<vtkMRMLNode> clonedNode =
+    vtkSmartPointer<vtkMRMLNode>::Take(source->GetScene()->CreateNodeByClass("vtkMRMLPlotSeriesNode"));
+  vtkMRMLPlotSeriesNode* clonedSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(clonedNode);
   clonedSeriesNode->CopyWithScene(source);
   std::string nodeName(source->GetName() ? source->GetName() : "");
   nodeName += "_Copy";
@@ -99,7 +99,8 @@ vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* s
 void vtkSlicerPlotsLogic::ShowChartInLayout(vtkMRMLPlotChartNode* chartNode)
 {
   // Switch to a layout that contains plot
-  vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::SafeDownCast(this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
+  vtkMRMLLayoutNode* layoutNode =
+    vtkMRMLLayoutNode::SafeDownCast(this->GetMRMLScene()->GetFirstNodeByClass("vtkMRMLLayoutNode"));
   if (layoutNode)
   {
     int currentLayout = layoutNode->GetViewArrangement();
@@ -133,7 +134,7 @@ vtkMRMLPlotChartNode* vtkSlicerPlotsLogic::GetFirstPlotChartForSeries(vtkMRMLPlo
   }
   std::vector<vtkMRMLNode*> chartNodes;
   unsigned int numberOfNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
-  for (unsigned int chartNodeIndex=0; chartNodeIndex<numberOfNodes; chartNodeIndex++)
+  for (unsigned int chartNodeIndex = 0; chartNodeIndex < numberOfNodes; chartNodeIndex++)
   {
     vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(chartNodes[chartNodeIndex]);
     if (!chartNode)

@@ -22,26 +22,20 @@ class vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 : public vtkMRMLDif
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1 *New();
+  static vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1,vtkMRMLDiffusionTensorDisplayPropertiesNode);
+  vtkTypeMacro(vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1, vtkMRMLDiffusionTensorDisplayPropertiesNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1::New();
-  }
-  const char* GetNodeTagName() override
-  {
-    return "vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1";
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1::New(); }
+  const char* GetNodeTagName() override { return "vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1"; }
 
-  virtual int ReadData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
-  virtual int WriteData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
+  virtual int ReadData(vtkMRMLNode* vtkNotUsed(refNode)) { return 0; }
+  virtual int WriteData(vtkMRMLNode* vtkNotUsed(refNode)) { return 0; }
 };
 vtkStandardNewMacro(vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1);
 
 //---------------------------------------------------------------------------
-int vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1(int , char * [] )
+int vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

@@ -38,9 +38,7 @@
 vtkStandardNewMacro(vtkMRMLTransformHandleWidgetRepresentation);
 
 //----------------------------------------------------------------------
-vtkMRMLTransformHandleWidgetRepresentation::vtkMRMLTransformHandleWidgetRepresentation()
-{
-}
+vtkMRMLTransformHandleWidgetRepresentation::vtkMRMLTransformHandleWidgetRepresentation() {}
 
 //----------------------------------------------------------------------
 vtkMRMLTransformHandleWidgetRepresentation::~vtkMRMLTransformHandleWidgetRepresentation() = default;
@@ -224,21 +222,18 @@ bool vtkMRMLTransformHandleWidgetRepresentation::GetHandleVisibility(int type, i
   bool handleVisibility[4] = { false, false, false, false };
   if (type == InteractionRotationHandle)
   {
-    sliceNode
-      ? this->GetDisplayNode()->GetRotationHandleComponentVisibilitySlice(handleVisibility)
-      : this->GetDisplayNode()->GetRotationHandleComponentVisibility3D(handleVisibility);
+    sliceNode ? this->GetDisplayNode()->GetRotationHandleComponentVisibilitySlice(handleVisibility)
+              : this->GetDisplayNode()->GetRotationHandleComponentVisibility3D(handleVisibility);
   }
   else if (type == InteractionScaleHandle)
   {
-    sliceNode
-      ? this->GetDisplayNode()->GetScaleHandleComponentVisibilitySlice(handleVisibility)
-      : this->GetDisplayNode()->GetScaleHandleComponentVisibility3D(handleVisibility);
+    sliceNode ? this->GetDisplayNode()->GetScaleHandleComponentVisibilitySlice(handleVisibility)
+              : this->GetDisplayNode()->GetScaleHandleComponentVisibility3D(handleVisibility);
   }
   else if (type == InteractionTranslationHandle)
   {
-    sliceNode
-      ? this->GetDisplayNode()->GetTranslationHandleComponentVisibilitySlice(handleVisibility)
-      : this->GetDisplayNode()->GetTranslationHandleComponentVisibility3D(handleVisibility);
+    sliceNode ? this->GetDisplayNode()->GetTranslationHandleComponentVisibilitySlice(handleVisibility)
+              : this->GetDisplayNode()->GetTranslationHandleComponentVisibility3D(handleVisibility);
   }
 
   if (index >= 0 && index <= 3)

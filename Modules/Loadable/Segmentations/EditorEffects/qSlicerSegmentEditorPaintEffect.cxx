@@ -157,18 +157,9 @@ public:
   };
   ~BrushPipeline2D() override = default;
 
-  void SetBrushVisibility(bool visibility) override
-  {
-    this->BrushActor->SetVisibility(visibility);
-  };
-  bool GetBrushVisibility() override
-  {
-    return this->BrushActor->GetVisibility();
-  };
-  void SetFeedbackVisibility(bool visibility) override
-  {
-    this->FeedbackActor->SetVisibility(visibility);
-  };
+  void SetBrushVisibility(bool visibility) override { this->BrushActor->SetVisibility(visibility); };
+  bool GetBrushVisibility() override { return this->BrushActor->GetVisibility(); };
+  void SetFeedbackVisibility(bool visibility) override { this->FeedbackActor->SetVisibility(visibility); };
 
   vtkSmartPointer<vtkActor2D> BrushActor;
   vtkSmartPointer<vtkPolyDataMapper2D> BrushMapper;
@@ -201,18 +192,9 @@ public:
     this->FeedbackActor->VisibilityOff();
   };
   ~BrushPipeline3D() override = default;
-  void SetBrushVisibility(bool visibility) override
-  {
-    this->BrushActor->SetVisibility(visibility);
-  };
-  bool GetBrushVisibility() override
-  {
-    return this->BrushActor->GetVisibility();
-  };
-  void SetFeedbackVisibility(bool visibility) override
-  {
-    this->FeedbackActor->SetVisibility(visibility);
-  };
+  void SetBrushVisibility(bool visibility) override { this->BrushActor->SetVisibility(visibility); };
+  bool GetBrushVisibility() override { return this->BrushActor->GetVisibility(); };
+  void SetFeedbackVisibility(bool visibility) override { this->FeedbackActor->SetVisibility(visibility); };
 
   vtkSmartPointer<vtkPolyDataMapper> BrushMapper;
   vtkSmartPointer<vtkActor> BrushActor;
@@ -269,7 +251,7 @@ qSlicerSegmentEditorPaintEffectPrivate::qSlicerSegmentEditorPaintEffectPrivate(q
   this->WorldOriginToModifierLabelmapIjkTransformer->SetTransform(this->WorldOriginToModifierLabelmapIjkTransform);
   this->WorldOriginToModifierLabelmapIjkTransformer->SetInputConnection(this->BrushPolyDataNormals->GetOutputPort());
   this->BrushPolyDataToStencil = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
-  this->BrushPolyDataToStencil->SetOutputSpacing(1.0,1.0,1.0);
+  this->BrushPolyDataToStencil->SetOutputSpacing(1.0, 1.0, 1.0);
   this->BrushPolyDataToStencil->SetInputConnection(this->WorldOriginToModifierLabelmapIjkTransformer->GetOutputPort());
 
   this->FeedbackGlyphFilter = vtkSmartPointer<vtkGlyph3D>::New();
@@ -336,21 +318,23 @@ BrushPipeline* qSlicerSegmentEditorPaintEffectPrivate::brushForWidget(qMRMLWidge
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorPaintEffectPrivate::paintAddPoint(qMRMLWidget* viewWidget, double brushPosition_World[3],
-  double* lastBrushPosition_World/*=nullptr*/)
+void qSlicerSegmentEditorPaintEffectPrivate::paintAddPoint(qMRMLWidget* viewWidget,
+                                                           double brushPosition_World[3],
+                                                           double* lastBrushPosition_World /*=nullptr*/)
 {
   Q_Q(qSlicerSegmentEditorPaintEffect);
 
   if (lastBrushPosition_World)
   {
     double strokeLength = sqrt(vtkMath::Distance2BetweenPoints(brushPosition_World, lastBrushPosition_World));
-    double maximumDistanceBetweenPoints = this->MaximumPointDistanceInStroke * q->doubleParameter("BrushAbsoluteDiameter");
+    double maximumDistanceBetweenPoints =
+      this->MaximumPointDistanceInStroke * q->doubleParameter("BrushAbsoluteDiameter");
     if (maximumDistanceBetweenPoints > 0.0)
     {
-      int numberOfPointsToAdd = static_cast<int>(strokeLength / maximumDistanceBetweenPoints)-1;
-      for (int pointIndex=0; pointIndex < numberOfPointsToAdd; pointIndex++)
+      int numberOfPointsToAdd = static_cast<int>(strokeLength / maximumDistanceBetweenPoints) - 1;
+      for (int pointIndex = 0; pointIndex < numberOfPointsToAdd; pointIndex++)
       {
-        double lastPointWeight = static_cast<double>(pointIndex+1) / static_cast<double>(numberOfPointsToAdd+1);
+        double lastPointWeight = static_cast<double>(pointIndex + 1) / static_cast<double>(numberOfPointsToAdd + 1);
         this->PaintCoordinates_World->InsertNextPoint(
           lastPointWeight * lastBrushPosition_World[0] + (1.0 - lastPointWeight) * brushPosition_World[0],
           lastPointWeight * lastBrushPosition_World[1] + (1.0 - lastPointWeight) * brushPosition_World[1],
@@ -399,30 +383,39 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushStencil(qMRMLWidget* vie
   vtkNew<vtkMatrix4x4> segmentationToSegmentationIjkTransformMatrix;
   modifierLabelmap->GetImageToWorldMatrix(segmentationToSegmentationIjkTransformMatrix.GetPointer());
   segmentationToSegmentationIjkTransformMatrix->Invert();
-  segmentationToSegmentationIjkTransformMatrix->SetElement(0,3, 0);
-  segmentationToSegmentationIjkTransformMatrix->SetElement(1,3, 0);
-  segmentationToSegmentationIjkTransformMatrix->SetElement(2,3, 0);
-  this->WorldOriginToModifierLabelmapIjkTransform->Concatenate(segmentationToSegmentationIjkTransformMatrix.GetPointer());
+  segmentationToSegmentationIjkTransformMatrix->SetElement(0, 3, 0);
+  segmentationToSegmentationIjkTransformMatrix->SetElement(1, 3, 0);
+  segmentationToSegmentationIjkTransformMatrix->SetElement(2, 3, 0);
+  this->WorldOriginToModifierLabelmapIjkTransform->Concatenate(
+    segmentationToSegmentationIjkTransformMatrix.GetPointer());
 
   vtkNew<vtkMatrix4x4> worldToSegmentationTransformMatrix;
-  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
+  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down
+  // things too much)
   // TODO: show a meaningful error message to the user if attempted
-  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
-  worldToSegmentationTransformMatrix->SetElement(0,3, 0);
-  worldToSegmentationTransformMatrix->SetElement(1,3, 0);
-  worldToSegmentationTransformMatrix->SetElement(2,3, 0);
+  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(
+    nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
+  worldToSegmentationTransformMatrix->SetElement(0, 3, 0);
+  worldToSegmentationTransformMatrix->SetElement(1, 3, 0);
+  worldToSegmentationTransformMatrix->SetElement(2, 3, 0);
   this->WorldOriginToModifierLabelmapIjkTransform->Concatenate(worldToSegmentationTransformMatrix.GetPointer());
 
   this->WorldOriginToModifierLabelmapIjkTransformer->Update();
   vtkPolyData* brushModel_ModifierLabelmapIjk = this->WorldOriginToModifierLabelmapIjkTransformer->GetOutput();
   double* boundsIjk = brushModel_ModifierLabelmapIjk->GetBounds();
-  this->BrushPolyDataToStencil->SetOutputWholeExtent(floor(boundsIjk[0])-1, ceil(boundsIjk[1])+1,
-    floor(boundsIjk[2])-1, ceil(boundsIjk[3])+1, floor(boundsIjk[4])-1, ceil(boundsIjk[5])+1);
+  this->BrushPolyDataToStencil->SetOutputWholeExtent(floor(boundsIjk[0]) - 1,
+                                                     ceil(boundsIjk[1]) + 1,
+                                                     floor(boundsIjk[2]) - 1,
+                                                     ceil(boundsIjk[3]) + 1,
+                                                     floor(boundsIjk[4]) - 1,
+                                                     ceil(boundsIjk[5]) + 1);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorPaintEffectPrivate::transformPointsFromWorldToIJK(vtkOrientedImageData* image,
-  vtkMRMLSegmentationNode* segmentationNode, vtkPoints* rasPoints, vtkPoints* ijkPoints)
+                                                                           vtkMRMLSegmentationNode* segmentationNode,
+                                                                           vtkPoints* rasPoints,
+                                                                           vtkPoints* ijkPoints)
 {
   vtkNew<vtkTransform> worldToModifierLabelmapIjkTransform;
 
@@ -431,15 +424,19 @@ void qSlicerSegmentEditorPaintEffectPrivate::transformPointsFromWorldToIJK(vtkOr
   worldToModifierLabelmapIjkTransform->Concatenate(segmentationToSegmentationIjkTransformMatrix.GetPointer());
 
   vtkNew<vtkMatrix4x4> worldToSegmentationTransformMatrix;
-  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down things too much)
+  // We don't support painting in non-linearly transformed node (it could be implemented, but would probably slow down
+  // things too much)
   // TODO: show a meaningful error message to the user if attempted
-  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
+  vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(
+    nullptr, segmentationNode->GetParentTransformNode(), worldToSegmentationTransformMatrix.GetPointer());
   worldToModifierLabelmapIjkTransform->Concatenate(worldToSegmentationTransformMatrix.GetPointer());
   worldToModifierLabelmapIjkTransform->TransformPoints(rasPoints, ijkPoints);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorPaintEffectPrivate::paintPixel(vtkOrientedImageData* modifierLabelmap, qMRMLWidget* viewWidget, double pixelPosition_World[3])
+void qSlicerSegmentEditorPaintEffectPrivate::paintPixel(vtkOrientedImageData* modifierLabelmap,
+                                                        qMRMLWidget* viewWidget,
+                                                        double pixelPosition_World[3])
 {
   Q_UNUSED(viewWidget);
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
@@ -448,10 +445,9 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintPixel(vtkOrientedImageData* mo
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorPaintEffectPrivate::paintPixels(
-  vtkOrientedImageData* modifierLabelmap,
-    vtkPoints* pixelPositions_World,
-    int updateExtent[6])
+void qSlicerSegmentEditorPaintEffectPrivate::paintPixels(vtkOrientedImageData* modifierLabelmap,
+                                                         vtkPoints* pixelPositions_World,
+                                                         int updateExtent[6])
 {
   Q_Q(qSlicerSegmentEditorPaintEffect);
 
@@ -484,7 +480,8 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintPixels(
   modifierLabelmap->GetExtent(modifierExtent);
 
   vtkNew<vtkPoints> paintCoordinates_Ijk;
-  this->transformPointsFromWorldToIJK(modifierLabelmap, segmentationNode, this->PaintCoordinates_World, paintCoordinates_Ijk);
+  this->transformPointsFromWorldToIJK(
+    modifierLabelmap, segmentationNode, this->PaintCoordinates_World, paintCoordinates_Ijk);
 
   for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
   {
@@ -492,16 +489,13 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintPixels(
 
     paintCoordinates_Ijk->GetPoint(pointIndex, ijkCoordinates);
 
-    int ijk[3] = {
-      static_cast<int>(std::round(ijkCoordinates[0])),
-      static_cast<int>(std::round(ijkCoordinates[1])),
-      static_cast<int>(std::round(ijkCoordinates[2]))
-    };
+    int ijk[3] = { static_cast<int>(std::round(ijkCoordinates[0])),
+                   static_cast<int>(std::round(ijkCoordinates[1])),
+                   static_cast<int>(std::round(ijkCoordinates[2])) };
 
     // Clamp to image extent
-    if (ijk[0] < modifierExtent[0] || ijk[0] > modifierExtent[1] ||
-        ijk[1] < modifierExtent[2] || ijk[1] > modifierExtent[3] ||
-        ijk[2] < modifierExtent[4] || ijk[2] > modifierExtent[5])
+    if (ijk[0] < modifierExtent[0] || ijk[0] > modifierExtent[1] || ijk[1] < modifierExtent[2] ||
+        ijk[1] > modifierExtent[3] || ijk[2] < modifierExtent[4] || ijk[2] > modifierExtent[5])
     {
       continue;
     }
@@ -517,11 +511,10 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintPixels(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorPaintEffectPrivate::paintBrushes(
-  vtkOrientedImageData* modifierLabelmap,
-  qMRMLWidget* viewWidget,
-  vtkPoints* pixelPositions_World,
-  int updateExtent[6])
+void qSlicerSegmentEditorPaintEffectPrivate::paintBrushes(vtkOrientedImageData* modifierLabelmap,
+                                                          qMRMLWidget* viewWidget,
+                                                          vtkPoints* pixelPositions_World,
+                                                          int updateExtent[6])
 {
   Q_UNUSED(pixelPositions_World);
   Q_Q(qSlicerSegmentEditorPaintEffect);
@@ -542,11 +535,12 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintBrushes(
 
   this->BrushPolyDataToStencil->Update();
   vtkImageStencilData* stencilData = this->BrushPolyDataToStencil->GetOutput();
-  int stencilExtent[6]={0,-1,0,-1,0,-1};
+  int stencilExtent[6] = { 0, -1, 0, -1, 0, -1 };
   stencilData->GetExtent(stencilExtent);
 
   vtkNew<vtkPoints> paintCoordinates_Ijk;
-  this->transformPointsFromWorldToIJK(modifierLabelmap, segmentationNode, this->PaintCoordinates_World, paintCoordinates_Ijk);
+  this->transformPointsFromWorldToIJK(
+    modifierLabelmap, segmentationNode, this->PaintCoordinates_World, paintCoordinates_Ijk);
 
   vtkNew<vtkImageStencilToImage> stencilToImage;
   stencilToImage->SetInputConnection(this->BrushPolyDataToStencil->GetOutputPort());
@@ -563,7 +557,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintBrushes(
   for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++)
   {
     double* shiftDouble = paintCoordinates_Ijk->GetPoint(pointIndex);
-    int shift[3] = {vtkMath::Round(shiftDouble[0]), vtkMath::Round(shiftDouble[1]), vtkMath::Round(shiftDouble[2])};
+    int shift[3] = { vtkMath::Round(shiftDouble[0]), vtkMath::Round(shiftDouble[1]), vtkMath::Round(shiftDouble[2]) };
     brushPositioner->SetExtentTranslation(shift);
     brushPositioner->Update();
     vtkNew<vtkOrientedImageData> orientedBrushPositionerOutput;
@@ -588,7 +582,8 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintBrushes(
         }
       }
     }
-    vtkOrientedImageDataResample::ModifyImage(modifierLabelmap, orientedBrushPositionerOutput.GetPointer(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
+    vtkOrientedImageDataResample::ModifyImage(
+      modifierLabelmap, orientedBrushPositionerOutput.GetPointer(), vtkOrientedImageDataResample::OPERATION_MAXIMUM);
   }
   modifierLabelmap->Modified();
 }
@@ -656,13 +651,13 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateAbsoluteBrushDiameter()
   if (sliceWidget)
   {
     vtkMatrix4x4* xyToSlice = sliceWidget->sliceLogic()->GetSliceNode()->GetXYToSlice();
-    mmPerPixel = sqrt(xyToSlice->GetElement(0, 1)*xyToSlice->GetElement(0, 1)
-      + xyToSlice->GetElement(1, 1)*xyToSlice->GetElement(1, 1)
-      + xyToSlice->GetElement(2, 1)*xyToSlice->GetElement(2, 1));
+    mmPerPixel = sqrt(xyToSlice->GetElement(0, 1) * xyToSlice->GetElement(0, 1) +
+                      xyToSlice->GetElement(1, 1) * xyToSlice->GetElement(1, 1) +
+                      xyToSlice->GetElement(2, 1) * xyToSlice->GetElement(2, 1));
     screenSizePixel = sliceWidget->sliceView()->renderWindow()->GetScreenSize()[1];
   }
-  else if (threeDWidget && threeDWidget->threeDView() && threeDWidget->threeDView()->renderer()
-    && threeDWidget->threeDView()->renderer()->GetActiveCamera())
+  else if (threeDWidget && threeDWidget->threeDView() && threeDWidget->threeDView()->renderer() &&
+           threeDWidget->threeDView()->renderer()->GetActiveCamera())
   {
     screenSizePixel = threeDWidget->threeDView()->renderWindow()->GetScreenSize()[1];
     vtkRenderer* renderer = threeDWidget->threeDView()->renderer();
@@ -675,7 +670,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateAbsoluteBrushDiameter()
     double maxY = 1;
     renderer->NormalizedDisplayToDisplay(maxX, maxY);
     int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
-    vtkCamera *cam = renderer->GetActiveCamera();
+    vtkCamera* cam = renderer->GetActiveCamera();
     if (cam->GetParallelProjection())
     {
       // Parallel scale: height of the viewport in world-coordinate distances.
@@ -693,11 +688,13 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateAbsoluteBrushDiameter()
       vtkMath::Normalize(cameraViewUp);
 
       // Get distance in pixels between two points at unit distance above and below the focal point
-      renderer->SetWorldPoint(cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]);
+      renderer->SetWorldPoint(
+        cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]);
       renderer->WorldToDisplay();
       double topCenter[3] = { 0 };
       renderer->GetDisplayPoint(topCenter);
-      renderer->SetWorldPoint(cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]);
+      renderer->SetWorldPoint(
+        cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]);
       renderer->WorldToDisplay();
       double bottomCenter[3] = { 0 };
       renderer->GetDisplayPoint(bottomCenter);
@@ -711,7 +708,8 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateAbsoluteBrushDiameter()
   double newBrushAbsoluteDiameter = screenSizePixel * (brushRelativeDiameter / 100.0) * mmPerPixel;
 
   double brushAbsoluteDiameter = q->doubleParameter("BrushAbsoluteDiameter");
-  if (brushAbsoluteDiameter > 0 && fabs(newBrushAbsoluteDiameter - brushAbsoluteDiameter) / brushAbsoluteDiameter < 0.01)
+  if (brushAbsoluteDiameter > 0 &&
+      fabs(newBrushAbsoluteDiameter - brushAbsoluteDiameter) / brushAbsoluteDiameter < 0.01)
   {
     // no brush size change
     return;
@@ -735,14 +733,14 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushModel(qMRMLWidget* viewW
   qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
   if (!sliceWidget || q->integerParameter("BrushSphere"))
   {
-    this->BrushSphereSource->SetRadius(diameterMm/2.0);
+    this->BrushSphereSource->SetRadius(diameterMm / 2.0);
     this->BrushSphereSource->SetPhiResolution(32);
     this->BrushSphereSource->SetThetaResolution(32);
     this->BrushToWorldOriginTransformer->SetInputConnection(this->BrushSphereSource->GetOutputPort());
   }
   else
   {
-    this->BrushCylinderSource->SetRadius(diameterMm/2.0);
+    this->BrushCylinderSource->SetRadius(diameterMm / 2.0);
     this->BrushCylinderSource->SetResolution(32);
     double sliceSpacingMm = qSlicerSegmentEditorAbstractEffect::sliceSpacing(sliceWidget);
     this->BrushCylinderSource->SetHeight(sliceSpacingMm);
@@ -754,9 +752,9 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushModel(qMRMLWidget* viewW
   {
     // brush is rotated to the slice widget plane
     brushToWorldOriginTransformMatrix->DeepCopy(sliceWidget->sliceLogic()->GetSliceNode()->GetSliceToRAS());
-    brushToWorldOriginTransformMatrix->SetElement(0,3, 0);
-    brushToWorldOriginTransformMatrix->SetElement(1,3, 0);
-    brushToWorldOriginTransformMatrix->SetElement(2,3, 0);
+    brushToWorldOriginTransformMatrix->SetElement(0, 3, 0);
+    brushToWorldOriginTransformMatrix->SetElement(1, 3, 0);
+    brushToWorldOriginTransformMatrix->SetElement(2, 3, 0);
   }
   this->BrushToWorldOriginTransform->Identity();
   this->BrushToWorldOriginTransform->Concatenate(brushToWorldOriginTransformMatrix.GetPointer());
@@ -773,8 +771,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushModel(qMRMLWidget* viewW
 void qSlicerSegmentEditorPaintEffectPrivate::updateBrush(qMRMLWidget* viewWidget, BrushPipeline* pipeline)
 {
   Q_Q(qSlicerSegmentEditorPaintEffect);
-  if (this->BrushToWorldOriginTransformer->GetNumberOfInputConnections(0) == 0
-      || q->integerParameter("BrushPixelMode"))
+  if (this->BrushToWorldOriginTransformer->GetNumberOfInputConnections(0) == 0 || q->integerParameter("BrushPixelMode"))
   {
     pipeline->SetBrushVisibility(false);
     return;
@@ -786,8 +783,10 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrush(qMRMLWidget* viewWidget
   {
     // Update slice cutting plane position and orientation
     vtkMatrix4x4* sliceXyToRas = sliceWidget->sliceLogic()->GetSliceNode()->GetXYToRAS();
-    pipeline->SlicePlane->SetNormal(sliceXyToRas->GetElement(0,2),sliceXyToRas->GetElement(1,2),sliceXyToRas->GetElement(2,2));
-    pipeline->SlicePlane->SetOrigin(sliceXyToRas->GetElement(0,3),sliceXyToRas->GetElement(1,3),sliceXyToRas->GetElement(2,3));
+    pipeline->SlicePlane->SetNormal(
+      sliceXyToRas->GetElement(0, 2), sliceXyToRas->GetElement(1, 2), sliceXyToRas->GetElement(2, 2));
+    pipeline->SlicePlane->SetOrigin(
+      sliceXyToRas->GetElement(0, 3), sliceXyToRas->GetElement(1, 3), sliceXyToRas->GetElement(2, 3));
 
     vtkNew<vtkMatrix4x4> rasToSliceXy;
     vtkMatrix4x4::Invert(sliceXyToRas, rasToSliceXy.GetPointer());
@@ -802,7 +801,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushes()
   // unusedWidgetPipelines will contain those widget pointers that are not in the layout anymore
   QList<qMRMLWidget*> unusedWidgetPipelines = this->BrushPipelines.keys();
   qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
-  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+  foreach (QString sliceViewName, layoutManager->sliceViewNames())
   {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
     if (!q->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))
@@ -902,7 +901,8 @@ std::string qSlicerSegmentEditorPaintEffectPrivate::segmentAtPosition(qMRMLWidge
   {
     return "";
   }
-  std::string selectedSegmentID = (q->parameterSetNode()->GetSelectedSegmentID() ? q->parameterSetNode()->GetSelectedSegmentID() : "");
+  std::string selectedSegmentID =
+    (q->parameterSetNode()->GetSelectedSegmentID() ? q->parameterSetNode()->GetSelectedSegmentID() : "");
   qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
   if (!sliceWidget)
   {
@@ -915,8 +915,9 @@ std::string qSlicerSegmentEditorPaintEffectPrivate::segmentAtPosition(qMRMLWidge
   }
 
   // Get slice displayable manager
-  vtkMRMLSegmentationsDisplayableManager2D* segmentationDisplayableManager2D = vtkMRMLSegmentationsDisplayableManager2D::SafeDownCast(
-    sliceWidget->sliceView()->displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D"));
+  vtkMRMLSegmentationsDisplayableManager2D* segmentationDisplayableManager2D =
+    vtkMRMLSegmentationsDisplayableManager2D::SafeDownCast(
+      sliceWidget->sliceView()->displayableManagerByClassName("vtkMRMLSegmentationsDisplayableManager2D"));
   if (!segmentationDisplayableManager2D)
   {
     return selectedSegmentID;
@@ -924,7 +925,8 @@ std::string qSlicerSegmentEditorPaintEffectPrivate::segmentAtPosition(qMRMLWidge
   std::string newSelectedSegmentID;
   for (int displayNodeIndex = 0; displayNodeIndex < segmentationNode->GetNumberOfDisplayNodes(); displayNodeIndex++)
   {
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetNthDisplayNode(displayNodeIndex));
+    vtkMRMLSegmentationDisplayNode* displayNode =
+      vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetNthDisplayNode(displayNodeIndex));
     if (!displayNode)
     {
       continue;
@@ -953,10 +955,10 @@ std::string qSlicerSegmentEditorPaintEffectPrivate::segmentAtPosition(qMRMLWidge
 
 //----------------------------------------------------------------------------
 qSlicerSegmentEditorPaintEffect::qSlicerSegmentEditorPaintEffect(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSegmentEditorPaintEffectPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSegmentEditorPaintEffectPrivate(*this))
 {
-  this->m_Name = QString(/*no tr*/"Paint");
+  this->m_Name = QString(/*no tr*/ "Paint");
   this->m_Title = tr("Paint");
   this->m_AlwaysErase = false;
   this->m_Erase = false;
@@ -975,16 +977,16 @@ QIcon qSlicerSegmentEditorPaintEffect::icon()
 }
 
 //---------------------------------------------------------------------------
-QString const qSlicerSegmentEditorPaintEffect::helpText()const
+const QString qSlicerSegmentEditorPaintEffect::helpText() const
 {
   return QString("<html>") + tr("Paint with a round brush<br>."
-    "<p><ul style=\"margin: 0\">"
-    "<li><b>Left-button drag-and-drop:</b> paint strokes."
-    "<li><b>Shift + mouse wheel</b> or <b>+/- keys:</b> adjust brush size."
-    "<li><b>Ctrl + mouse wheel:</b> slice view zoom in/out."
-    "</ul><p>"
-    "Editing is available both in slice and 3D views."
-    "<p>");
+                                "<p><ul style=\"margin: 0\">"
+                                "<li><b>Left-button drag-and-drop:</b> paint strokes."
+                                "<li><b>Shift + mouse wheel</b> or <b>+/- keys:</b> adjust brush size."
+                                "<li><b>Ctrl + mouse wheel:</b> slice view zoom in/out."
+                                "</ul><p>"
+                                "Editing is available both in slice and 3D views."
+                                "<p>");
 }
 
 //-----------------------------------------------------------------------------
@@ -1006,7 +1008,9 @@ void qSlicerSegmentEditorPaintEffect::deactivate()
 
 
 //---------------------------------------------------------------------------
-bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* viewWidget, int brushPositionInView[2], double brushPosition_World[3])
+bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* viewWidget,
+                                                                  int brushPositionInView[2],
+                                                                  double brushPosition_World[3])
 {
   // This effect only supports interactions in the 2D slice views currently
   qMRMLSliceWidget* sliceWidget = qobject_cast<qMRMLSliceWidget*>(viewWidget);
@@ -1015,10 +1019,8 @@ bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* v
   if (sliceWidget)
   {
     double eventPositionXY[4] = {
-      static_cast<double>(brushPositionInView[0]),
-      static_cast<double>(brushPositionInView[1]),
-      0.0,
-      1.0};
+      static_cast<double>(brushPositionInView[0]), static_cast<double>(brushPositionInView[1]), 0.0, 1.0
+    };
     sliceWidget->sliceLogic()->GetSliceNode()->GetXYToRAS()->MultiplyPoint(eventPositionXY, brushPosition_World);
   }
   else if (threeDWidget)
@@ -1032,7 +1034,7 @@ bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* v
     if (useCellPicker)
     {
       vtkNew<vtkCellPicker> picker;
-      picker->SetTolerance( .005 );
+      picker->SetTolerance(.005);
       if (!picker->Pick(brushPositionInView[0], brushPositionInView[1], 0, renderer))
       {
         return false;
@@ -1040,18 +1042,18 @@ bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* v
 
       vtkPoints* pickPositions = picker->GetPickedPositions();
       int numberOfPickedPositions = pickPositions->GetNumberOfPoints();
-      if (numberOfPickedPositions<1)
+      if (numberOfPickedPositions < 1)
       {
         return false;
       }
-      double cameraPosition[3]={0,0,0};
+      double cameraPosition[3] = { 0, 0, 0 };
       renderer->GetActiveCamera()->GetPosition(cameraPosition);
       pickPositions->GetPoint(0, brushPosition_World);
       double minDist2 = vtkMath::Distance2BetweenPoints(brushPosition_World, cameraPosition);
-      for (int i=1; i<numberOfPickedPositions; i++)
+      for (int i = 1; i < numberOfPickedPositions; i++)
       {
         double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(i), cameraPosition);
-        if (currentMinDist2<minDist2)
+        if (currentMinDist2 < minDist2)
         {
           pickPositions->GetPoint(i, brushPosition_World);
           minDist2 = currentMinDist2;
@@ -1061,7 +1063,7 @@ bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* v
     else
     {
       vtkNew<vtkPropPicker> picker;
-      //vtkNew<vtkWorldPointPicker> picker;
+      // vtkNew<vtkWorldPointPicker> picker;
       if (!picker->Pick(brushPositionInView[0], brushPositionInView[1], 0, renderer))
       {
         return false;
@@ -1074,10 +1076,9 @@ bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* v
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
-  vtkRenderWindowInteractor* callerInteractor,
-  unsigned long eid,
-  qMRMLWidget* viewWidget )
+bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(vtkRenderWindowInteractor* callerInteractor,
+                                                               unsigned long eid,
+                                                               qMRMLWidget* viewWidget)
 {
   Q_D(qSlicerSegmentEditorPaintEffect);
 
@@ -1091,7 +1092,8 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
   }
 
   bool shiftKeyPressed = callerInteractor->GetShiftKey();
-  bool anyModifierKeyPressed = (callerInteractor->GetShiftKey() || callerInteractor->GetControlKey() || callerInteractor->GetAltKey());
+  bool anyModifierKeyPressed =
+    (callerInteractor->GetShiftKey() || callerInteractor->GetControlKey() || callerInteractor->GetAltKey());
 
   // Process events that do not provide event position (or we don't need event position)
   double scaleDiameterRequested = -1.0; // <0 means no scale change is requested
@@ -1179,7 +1181,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
   d->ActiveViewLastInteractionPosition[0] = eventPosition[0];
   d->ActiveViewLastInteractionPosition[1] = eventPosition[1];
 
-  double brushPosition_World[4] = {0.0, 0.0, 0.0, 1.0};
+  double brushPosition_World[4] = { 0.0, 0.0, 0.0, 1.0 };
   bool worldPositionValid = d->brushPositionInWorld(viewWidget, eventPosition, brushPosition_World);
 
   bool abortEvent = false;
@@ -1194,7 +1196,8 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     else
     {
       // Paint effect
-      std::string selectedSegmentId = (this->parameterSetNode()->GetSelectedSegmentID() ? this->parameterSetNode()->GetSelectedSegmentID() : "");
+      std::string selectedSegmentId =
+        (this->parameterSetNode()->GetSelectedSegmentID() ? this->parameterSetNode()->GetSelectedSegmentID() : "");
       if (this->integerParameter("ColorSmudge"))
       {
         std::string paintSegmentId = d->segmentAtPosition(viewWidget, brushPosition_World);
@@ -1232,7 +1235,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     d->IsPainting = true;
     if (!this->integerParameter("BrushPixelMode"))
     {
-      //this->cursorOff(sliceWidget);
+      // this->cursorOff(sliceWidget);
     }
     QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
     if (!this->parameterSetNode())
@@ -1259,14 +1262,16 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     {
       if (worldPositionValid)
       {
-        d->paintAddPoint(viewWidget, brushPosition_World, d->LastBrushPositionValid ? d->LastBrushPosition_World : nullptr);
+        d->paintAddPoint(
+          viewWidget, brushPosition_World, d->LastBrushPositionValid ? d->LastBrushPosition_World : nullptr);
       }
 
       // Schedule rendering of all views.
-      // Cleaning up pipelines schedules re-rendering as well, but on some Intel video cards, and especially in debug mode,
-      // this additional rendering request is necessary for showing the filled segment after paint stroke is completed.
+      // Cleaning up pipelines schedules re-rendering as well, but on some Intel video cards, and especially in debug
+      // mode, this additional rendering request is necessary for showing the filled segment after paint stroke is
+      // completed.
       QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
-      foreach(qMRMLWidget* aViewWidget, viewWidgets)
+      foreach (qMRMLWidget* aViewWidget, viewWidgets)
       {
         d->BrushPipelines[aViewWidget]->SetFeedbackVisibility(false);
         d->BrushPipelines[aViewWidget]->SetBrushVisibility(worldPositionValid);
@@ -1277,7 +1282,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
       d->IsPainting = false;
       abortEvent = true;
     }
-    //this->cursorOn(sliceWidget);
+    // this->cursorOn(sliceWidget);
   }
   else if (eid == vtkCommand::MouseMoveEvent)
   {
@@ -1290,15 +1295,17 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
         double distance2fromLastInteractionPosition = 0.0;
         if (d->MinimumPaintPointDistance2 > 0.0)
         {
-          distance2fromLastInteractionPosition =
-            (d->ActiveViewLastPaintPosition[0] - eventPosition[0])*(d->ActiveViewLastPaintPosition[0] - eventPosition[0])
-            + (d->ActiveViewLastPaintPosition[1] - eventPosition[1])*(d->ActiveViewLastPaintPosition[1] - eventPosition[1]);
+          distance2fromLastInteractionPosition = (d->ActiveViewLastPaintPosition[0] - eventPosition[0]) *
+                                                   (d->ActiveViewLastPaintPosition[0] - eventPosition[0]) +
+                                                 (d->ActiveViewLastPaintPosition[1] - eventPosition[1]) *
+                                                   (d->ActiveViewLastPaintPosition[1] - eventPosition[1]);
         }
 
         if (distance2fromLastInteractionPosition >= d->MinimumPaintPointDistance2)
         {
           // add a new paint position
-          d->paintAddPoint(viewWidget, brushPosition_World, d->LastBrushPositionValid ? d->LastBrushPosition_World : nullptr);
+          d->paintAddPoint(
+            viewWidget, brushPosition_World, d->LastBrushPositionValid ? d->LastBrushPosition_World : nullptr);
           d->ActiveViewLastPaintPosition[0] = eventPosition[0];
           d->ActiveViewLastPaintPosition[1] = eventPosition[1];
           // Save this position for connecting next stroke
@@ -1318,7 +1325,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     {
       // no valid world position (nothing can be picked), hide the brush
       QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
-      foreach(qMRMLWidget * aViewWidget, viewWidgets)
+      foreach (qMRMLWidget* aViewWidget, viewWidgets)
       {
         bool brushVisibilityChanged = (d->BrushPipelines[aViewWidget]->GetBrushVisibility() != worldPositionValid);
         if (brushVisibilityChanged)
@@ -1337,17 +1344,16 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     d->ActiveViewWidget = nullptr;
     d->updateBrushModel(viewWidget, nullptr);
     d->updateBrushes();
-    //qSlicerSegmentEditorAbstractEffect::forceRender(viewWidget);
+    // qSlicerSegmentEditorAbstractEffect::forceRender(viewWidget);
   }
 
   return abortEvent;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentEditorPaintEffect::processViewNodeEvents(
-    vtkMRMLAbstractViewNode* callerViewNode,
-    unsigned long eid,
-    qMRMLWidget* viewWidget)
+void qSlicerSegmentEditorPaintEffect::processViewNodeEvents(vtkMRMLAbstractViewNode* callerViewNode,
+                                                            unsigned long eid,
+                                                            qMRMLWidget* viewWidget)
 {
   Q_D(qSlicerSegmentEditorPaintEffect);
   Q_UNUSED(callerViewNode);
@@ -1384,7 +1390,6 @@ void qSlicerSegmentEditorPaintEffect::processViewNodeEvents(
   }
 
   d->updateBrush(viewWidget, brushPipeline);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1420,10 +1425,12 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
   d->BrushDiameterIsAbsoluteButton->setCheckable(true);
   d->BrushDiameterIsAbsoluteButton->setText("absolute");
   d->BrushDiameterIsAbsoluteButton->setChecked(false);
-  d->BrushDiameterIsAbsoluteButton->setToolTip(tr("Set the paint brush size as a percentage of screen height or physical size"));
+  d->BrushDiameterIsAbsoluteButton->setToolTip(
+    tr("Set the paint brush size as a percentage of screen height or physical size"));
 
   d->BrushDiameterSliderWidget = new qMRMLSliderWidget(d->BrushDiameterSizeFrame);
-  d->BrushDiameterSliderWidget->setToolTip(tr("Set the paint brush size as a percentage of screen height or physical size"));
+  d->BrushDiameterSliderWidget->setToolTip(
+    tr("Set the paint brush size as a percentage of screen height or physical size"));
 
   d->BrushDiameterSizeFrame->layout()->setContentsMargins(0, 0, 0, 0);
   d->BrushDiameterSizeFrame->layout()->addWidget(d->BrushDiameterIsAbsoluteButton);
@@ -1438,30 +1445,34 @@ void qSlicerSegmentEditorPaintEffect::setupOptionsFrame()
   hbox->addWidget(d->BrushSphereCheckbox);
 
   d->EditIn3DViewsCheckbox = new QCheckBox(tr("Edit in 3D views"));
-  d->EditIn3DViewsCheckbox->setToolTip(tr("Allow painting in 3D views. If enabled, click-and-drag in a 3D view paints in the view "
-                                          "instead of rotating the view."));
+  d->EditIn3DViewsCheckbox->setToolTip(
+    tr("Allow painting in 3D views. If enabled, click-and-drag in a 3D view paints in the view "
+       "instead of rotating the view."));
   hbox->addWidget(d->EditIn3DViewsCheckbox);
 
   d->ColorSmudgeCheckbox = new QCheckBox(tr("Color smudge"));
   d->ColorSmudgeCheckbox->setToolTip(tr("Select segment by sampling the pixel location"
-    "where the brush stroke starts. If brush stroke starts in an empty area then the brush erases highlighted region from the selected segment."));
+                                        "where the brush stroke starts. If brush stroke starts in an empty area then "
+                                        "the brush erases highlighted region from the selected segment."));
   if (!this->m_AlwaysErase)
   {
     hbox->addWidget(d->ColorSmudgeCheckbox);
   }
 
   d->EraseAllSegmentsCheckbox = new QCheckBox(tr("Erase all segments"));
-  d->EraseAllSegmentsCheckbox->setToolTip(tr("If not checked then highlighted area is erased"
-    " from all segments. If unchecked then only area is only erased from selected segment."));
+  d->EraseAllSegmentsCheckbox->setToolTip(
+    tr("If not checked then highlighted area is erased"
+       " from all segments. If unchecked then only area is only erased from selected segment."));
   if (this->m_AlwaysErase)
   {
     hbox->addWidget(d->EraseAllSegmentsCheckbox);
   }
 
   d->BrushPixelModeCheckbox = new QCheckBox(tr("Pixel mode"));
-  d->BrushPixelModeCheckbox->setToolTip(tr("Paint exactly the pixel under the cursor, ignoring the diameter, threshold, and paint over."));
-  //TODO: Implement this effect option
-  //hbox->addWidget(d->BrushPixelModeCheckbox);
+  d->BrushPixelModeCheckbox->setToolTip(
+    tr("Paint exactly the pixel under the cursor, ignoring the diameter, threshold, and paint over."));
+  // TODO: Implement this effect option
+  // hbox->addWidget(d->BrushPixelModeCheckbox);
 
   paintOptionsLayout->addLayout(hbox);
 
@@ -1549,7 +1560,8 @@ void qSlicerSegmentEditorPaintEffect::updateGUIFromMRML()
   }
   else
   {
-    d->BrushDiameterSliderWidget->setRange(this->doubleParameter("BrushMinimumAbsoluteDiameter"), this->doubleParameter("BrushMaximumAbsoluteDiameter"));
+    d->BrushDiameterSliderWidget->setRange(this->doubleParameter("BrushMinimumAbsoluteDiameter"),
+                                           this->doubleParameter("BrushMaximumAbsoluteDiameter"));
     d->BrushDiameterSliderWidget->setValue(this->doubleParameter("BrushAbsoluteDiameter"));
     d->BrushDiameterSliderWidget->setSingleStep(this->doubleParameter("BrushMinimumAbsoluteDiameter"));
   }
@@ -1630,14 +1642,14 @@ void qSlicerSegmentEditorPaintEffect::referenceGeometryChanged()
   {
     return;
   }
-  double spacing[3] = {0.0, 0.0, 0.0};
+  double spacing[3] = { 0.0, 0.0, 0.0 };
   referenceGeometryImage->GetSpacing(spacing);
   double minimumSpacing = qMin(spacing[0], qMin(spacing[1], spacing[2]));
   double minimumDiameter = 0.5 * minimumSpacing;
 
-  int dimensions[3] = {0, 0, 0};
+  int dimensions[3] = { 0, 0, 0 };
   referenceGeometryImage->GetDimensions(dimensions);
-  double bounds[3] = {spacing[0]*dimensions[0], spacing[1]*dimensions[1], spacing[2]*dimensions[2]};
+  double bounds[3] = { spacing[0] * dimensions[0], spacing[1] * dimensions[1], spacing[2] * dimensions[2] };
   double maximumBounds = qMax(bounds[0], qMax(bounds[1], bounds[2]));
   double maximumDiameter = 0.5 * maximumBounds;
 
@@ -1713,7 +1725,7 @@ void qSlicerSegmentEditorPaintEffect::paintApply(qMRMLWidget* viewWidget)
     d->paintBrushes(modifierLabelmap, viewWidget, d->PaintCoordinates_World, updateExtent);
   }
 
-  int modifierExtent[6] = { 0,-1,0,-1,0,-1 };
+  int modifierExtent[6] = { 0, -1, 0, -1, 0, -1 };
   modifierLabelmap->GetExtent(modifierExtent);
   for (int i = 0; i < 3; i++)
   {
@@ -1729,13 +1741,14 @@ void qSlicerSegmentEditorPaintEffect::paintApply(qMRMLWidget* viewWidget)
   qSlicerSegmentEditorAbstractEffect::ModificationMode modificationMode;
   if (this->m_AlwaysErase)
   {
-    modificationMode = this->integerParameter("EraseAllSegments") ?
-      qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll : qSlicerSegmentEditorAbstractEffect::ModificationModeRemove;
+    modificationMode = this->integerParameter("EraseAllSegments")
+                         ? qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll
+                         : qSlicerSegmentEditorAbstractEffect::ModificationModeRemove;
   }
   else
   {
-    modificationMode = this->m_Erase ?
-      qSlicerSegmentEditorAbstractEffect::ModificationModeRemove : qSlicerSegmentEditorAbstractEffect::ModificationModeAdd;
+    modificationMode = this->m_Erase ? qSlicerSegmentEditorAbstractEffect::ModificationModeRemove
+                                     : qSlicerSegmentEditorAbstractEffect::ModificationModeAdd;
   }
 
   this->modifySelectedSegmentByLabelmap(modifierLabelmap, modificationMode, updateExtentList);
@@ -1747,7 +1760,8 @@ void qSlicerSegmentEditorPaintEffect::paintApply(qMRMLWidget* viewWidget)
 }
 
 //-----------------------------------------------------------------------------
-QList<int> qSlicerSegmentEditorPaintEffect::paintBrushesIntoLabelmap(vtkOrientedImageData* labelmap, qMRMLWidget* viewWidget)
+QList<int> qSlicerSegmentEditorPaintEffect::paintBrushesIntoLabelmap(vtkOrientedImageData* labelmap,
+                                                                     qMRMLWidget* viewWidget)
 {
   Q_D(qSlicerSegmentEditorPaintEffect);
   int modifiedExtent[6] = { 0, -1, 0, -1, 0, -1 };

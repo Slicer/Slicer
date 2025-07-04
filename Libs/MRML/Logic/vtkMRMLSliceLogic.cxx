@@ -56,9 +56,9 @@
 #include <algorithm>
 
 //----------------------------------------------------------------------------
-const int vtkMRMLSliceLogic::SLICE_INDEX_ROTATED=-1;
-const int vtkMRMLSliceLogic::SLICE_INDEX_OUT_OF_VOLUME=-2;
-const int vtkMRMLSliceLogic::SLICE_INDEX_NO_VOLUME=-3;
+const int vtkMRMLSliceLogic::SLICE_INDEX_ROTATED = -1;
+const int vtkMRMLSliceLogic::SLICE_INDEX_OUT_OF_VOLUME = -2;
+const int vtkMRMLSliceLogic::SLICE_INDEX_NO_VOLUME = -3;
 const std::string vtkMRMLSliceLogic::SLICE_MODEL_NODE_NAME_SUFFIX = std::string("Volume Slice");
 
 //----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ struct BlendPipeline
   bool UpdateStages(const std::vector<vtkAlgorithmOutput*>& imagePorts)
   {
     std::vector<vtkAlgorithmOutput*> foregroundImagePorts = imagePorts;
-    if(imagePorts.size() > 0)
+    if (imagePorts.size() > 0)
     {
       foregroundImagePorts.erase(foregroundImagePorts.begin());
     }
@@ -191,7 +191,7 @@ struct BlendPipeline
       // Reset BlendAlpha connections
       this->BlendAlpha->RemoveAllInputs();
       this->BlendAlpha->AddInputConnection(this->AddSubExtractBackgroundAlpha->GetOutputPort());
-      for(vtkSmartPointer<vtkImageExtractComponents>& addSubExtractAlpha: this->AddSubExtractAlphas)
+      for (vtkSmartPointer<vtkImageExtractComponents>& addSubExtractAlpha : this->AddSubExtractAlphas)
       {
         this->BlendAlpha->AddInputConnection(addSubExtractAlpha->GetOutputPort());
       }
@@ -203,9 +203,12 @@ struct BlendPipeline
 
   //----------------------------------------------------------------------------
   void AddLayers(std::deque<SliceLayerInfo>& layers,
-    int sliceCompositing, bool clipToBackgroundVolume,
-    const std::vector<vtkAlgorithmOutput*>& imagePorts, const std::vector<double>& opacities,
-    vtkAlgorithmOutput* labelImagePort, double labelOpacity)
+                 int sliceCompositing,
+                 bool clipToBackgroundVolume,
+                 const std::vector<vtkAlgorithmOutput*>& imagePorts,
+                 const std::vector<double>& opacities,
+                 vtkAlgorithmOutput* labelImagePort,
+                 double labelOpacity)
   {
 
     if (sliceCompositing == vtkMRMLSliceCompositeNode::Add || sliceCompositing == vtkMRMLSliceCompositeNode::Subtract)
@@ -308,7 +311,7 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
   this->PipelineUVW = new BlendPipeline;
 
   this->ExtractModelTexture = vtkImageReslice::New();
-  this->ExtractModelTexture->SetOutputDimensionality (2);
+  this->ExtractModelTexture->SetOutputDimensionality(2);
   this->ExtractModelTexture->SetInputConnection(this->PipelineUVW->Blend->GetOutputPort());
 
   this->SliceModelNode = nullptr;
@@ -345,14 +348,14 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
 
   if (this->SliceCompositeNode)
   {
-    vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, 0);
+    vtkSetAndObserveMRMLNodeMacro(this->SliceCompositeNode, 0);
   }
 
   this->DeleteSliceModel();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkMRMLSliceLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   // List of events the slice logics should listen
   vtkNew<vtkIntArray> events;
@@ -382,7 +385,6 @@ void vtkMRMLSliceLogic::UpdateSliceNode()
   {
     this->SetSliceNode(nullptr);
   }
-
 }
 
 //----------------------------------------------------------------------------
@@ -407,10 +409,11 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
   // find SliceCompositeNode in the scene
   std::string layoutName = (this->SliceNode->GetLayoutName() ? this->SliceNode->GetLayoutName() : "");
   vtkSmartPointer<vtkMRMLSliceCompositeNode> updatedSliceCompositeNode =
-      vtkMRMLSliceLogic::GetSliceCompositeNode(this->GetMRMLScene(), layoutName.c_str());
+    vtkMRMLSliceLogic::GetSliceCompositeNode(this->GetMRMLScene(), layoutName.c_str());
 
   if (this->SliceCompositeNode && updatedSliceCompositeNode &&
-       (!this->SliceCompositeNode->GetID() || strcmp(this->SliceCompositeNode->GetID(), updatedSliceCompositeNode->GetID()) != 0) )
+      (!this->SliceCompositeNode->GetID() ||
+       strcmp(this->SliceCompositeNode->GetID(), updatedSliceCompositeNode->GetID()) != 0))
   {
     // local SliceCompositeNode is out of sync with the scene
     this->SetSliceCompositeNode(nullptr);
@@ -421,7 +424,8 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
     if (!updatedSliceCompositeNode && !layoutName.empty())
     {
       // Use CreateNodeByClass instead of New to use default node specified in the scene
-      updatedSliceCompositeNode = vtkSmartPointer<vtkMRMLSliceCompositeNode>::Take(vtkMRMLSliceCompositeNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceCompositeNode")));
+      updatedSliceCompositeNode = vtkSmartPointer<vtkMRMLSliceCompositeNode>::Take(
+        vtkMRMLSliceCompositeNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceCompositeNode")));
       updatedSliceCompositeNode->SetLayoutName(layoutName.c_str());
       this->GetMRMLScene()->AddNode(updatedSliceCompositeNode);
       this->SetSliceCompositeNode(updatedSliceCompositeNode);
@@ -434,7 +438,7 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceLogic::EnterMRMLCallback()const
+bool vtkMRMLSliceLogic::EnterMRMLCallback() const
 {
   return this->AddingSliceModelNodes == false;
 }
@@ -448,9 +452,7 @@ void vtkMRMLSliceLogic::UpdateFromMRMLScene()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if (!(node->IsA("vtkMRMLSliceCompositeNode")
-        || node->IsA("vtkMRMLSliceNode")
-        || node->IsA("vtkMRMLVolumeNode")))
+  if (!(node->IsA("vtkMRMLSliceCompositeNode") || node->IsA("vtkMRMLSliceNode") || node->IsA("vtkMRMLVolumeNode")))
   {
     return;
   }
@@ -460,9 +462,7 @@ void vtkMRMLSliceLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (!(node->IsA("vtkMRMLSliceCompositeNode")
-        || node->IsA("vtkMRMLSliceNode")
-        || node->IsA("vtkMRMLVolumeNode")))
+  if (!(node->IsA("vtkMRMLSliceCompositeNode") || node->IsA("vtkMRMLSliceNode") || node->IsA("vtkMRMLVolumeNode")))
   {
     return;
   }
@@ -491,8 +491,7 @@ void vtkMRMLSliceLogic::OnMRMLSceneEndRestore()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::UpdateSliceNodes()
 {
-  if (this->GetMRMLScene()
-      && this->GetMRMLScene()->IsBatchProcessing())
+  if (this->GetMRMLScene() && this->GetMRMLScene()->IsBatchProcessing())
   {
     return;
   }
@@ -516,14 +515,12 @@ void vtkMRMLSliceLogic::SetupCrosshairNode()
   bool foundDefault = false;
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  vtkSmartPointer<vtkCollection> crosshairs = vtkSmartPointer<vtkCollection>::Take(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode"));
-  for (crosshairs->InitTraversal(it);
-       (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it)) ;)
+  vtkSmartPointer<vtkCollection> crosshairs =
+    vtkSmartPointer<vtkCollection>::Take(this->GetMRMLScene()->GetNodesByClass("vtkMRMLCrosshairNode"));
+  for (crosshairs->InitTraversal(it); (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
   {
-    vtkMRMLCrosshairNode* crosshairNode =
-      vtkMRMLCrosshairNode::SafeDownCast(node);
-    if (crosshairNode
-        && crosshairNode->GetCrosshairName() == std::string("default"))
+    vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
+    if (crosshairNode && crosshairNode->GetCrosshairName() == std::string("default"))
     {
       foundDefault = true;
       break;
@@ -554,22 +551,20 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
   {
     // assert (sliceNode == this->SliceNode); not an assert because the node
     // might have change in CreateSliceModel() or UpdateSliceNode()
-    vtkMRMLDisplayNode* sliceDisplayNode =
-      this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : nullptr;
-    if ( sliceDisplayNode)
+    vtkMRMLDisplayNode* sliceDisplayNode = this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : nullptr;
+    if (sliceDisplayNode)
     {
-      sliceDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
-      sliceDisplayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
+      sliceDisplayNode->SetVisibility(this->SliceNode->GetSliceVisible());
+      sliceDisplayNode->SetViewNodeIDs(this->SliceNode->GetThreeDViewIDs());
     }
 
     vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetBackgroundLayer());
     vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetForegroundLayer());
-    for(int additionalLayerIndex = 0;
-        additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers();
-        ++additionalLayerIndex)
+    for (int additionalLayerIndex = 0; additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+         ++additionalLayerIndex)
     {
       vtkMRMLSliceLogic::UpdateReconstructionSlab(
-            this, this->GetNthLayer(vtkMRMLSliceLogic::Layer_Last + additionalLayerIndex));
+        this, this->GetNthLayer(vtkMRMLSliceLogic::Layer_Last + additionalLayerIndex));
     }
   }
   else if (node == this->SliceCompositeNode)
@@ -580,10 +575,9 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic
-::ProcessMRMLLogicsEvents(vtkObject* vtkNotUsed(caller),
-                          unsigned long vtkNotUsed(event),
-                          void* vtkNotUsed(callData))
+void vtkMRMLSliceLogic ::ProcessMRMLLogicsEvents(vtkObject* vtkNotUsed(caller),
+                                                 unsigned long vtkNotUsed(event),
+                                                 void* vtkNotUsed(callData))
 {
   this->ProcessMRMLLogicsEvents();
 }
@@ -620,13 +614,11 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     this->SetLabelLayer(layer.GetPointer());
   }
   // Update slice plane geometry
-  if (this->SliceNode != nullptr
-      && this->GetSliceModelNode() != nullptr
-      && this->GetMRMLScene() != nullptr
-      && this->GetMRMLScene()->GetNodeByID( this->SliceModelNode->GetID() ) != nullptr
-      && this->SliceModelNode->GetPolyData() != nullptr )
+  if (this->SliceNode != nullptr && this->GetSliceModelNode() != nullptr && this->GetMRMLScene() != nullptr &&
+      this->GetMRMLScene()->GetNodeByID(this->SliceModelNode->GetID()) != nullptr &&
+      this->SliceModelNode->GetPolyData() != nullptr)
   {
-    int *dims1=nullptr;
+    int* dims1 = nullptr;
     int dims[3];
     vtkSmartPointer<vtkMatrix4x4> textureToRAS;
     // If the slice resolution mode is not set to match the 2D view, use UVW dimensions
@@ -634,8 +626,8 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     {
       textureToRAS = this->SliceNode->GetUVWToRAS();
       dims1 = this->SliceNode->GetUVWDimensions();
-      dims[0] = dims1[0]-1;
-      dims[1] = dims1[1]-1;
+      dims[0] = dims1[0] - 1;
+      dims[1] = dims1[1] - 1;
     }
     else // If the slice resolution mode is set to match the 2D view, use texture computed by slice view
     {
@@ -650,10 +642,14 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
       // the matrix elements.
       textureToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
       textureToRAS->DeepCopy(this->SliceNode->GetXYToRAS());
-      textureToRAS->SetElement(0, 3, textureToRAS->GetElement(0, 3)
-        - 0.5 * textureToRAS->GetElement(0, 0) - 0.5 * textureToRAS->GetElement(0, 1)); // Shift by half voxel
-      textureToRAS->SetElement(1, 3, textureToRAS->GetElement(1, 3)
-        - 0.5 * textureToRAS->GetElement(1, 0) - 0.5 * textureToRAS->GetElement(1, 1)); // Shift by half voxel
+      textureToRAS->SetElement(0,
+                               3,
+                               textureToRAS->GetElement(0, 3) - 0.5 * textureToRAS->GetElement(0, 0) -
+                                 0.5 * textureToRAS->GetElement(0, 1)); // Shift by half voxel
+      textureToRAS->SetElement(1,
+                               3,
+                               textureToRAS->GetElement(1, 3) - 0.5 * textureToRAS->GetElement(1, 0) -
+                                 0.5 * textureToRAS->GetElement(1, 1)); // Shift by half voxel
 
       // Use XY dimensions for slice node if resolution mode is set to match 2D view
       dims1 = this->SliceNode->GetDimensions();
@@ -668,15 +664,14 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
     dims[1] = std::max(1, dims[1]);
 
     // set the plane corner point for use in a model
-    double inPoint[4]={0,0,0,1};
+    double inPoint[4] = { 0, 0, 0, 1 };
     double outPoint[4];
-    double *outPoint3 = outPoint;
+    double* outPoint3 = outPoint;
 
     // set the z position to be the active slice (from the lightbox)
     inPoint[2] = this->SliceNode->GetActiveSlice();
 
-    vtkPlaneSource* plane = vtkPlaneSource::SafeDownCast(
-      this->SliceModelNode->GetPolyDataConnection()->GetProducer());
+    vtkPlaneSource* plane = vtkPlaneSource::SafeDownCast(this->SliceModelNode->GetPolyDataConnection()->GetProducer());
 
     int wasModified = this->SliceModelNode->StartModify();
 
@@ -730,7 +725,7 @@ vtkMRMLSliceNode* vtkMRMLSliceLogic::AddSliceNode(const char* layoutName)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::SetSliceNode(vtkMRMLSliceNode * newSliceNode)
+void vtkMRMLSliceLogic::SetSliceNode(vtkMRMLSliceNode* newSliceNode)
 {
   if (this->SliceNode == newSliceNode)
   {
@@ -742,13 +737,11 @@ void vtkMRMLSliceLogic::SetSliceNode(vtkMRMLSliceNode * newSliceNode)
   // changed.
   // This class takes care of passing the one slice node to each of the layers
   // so that users of this class only need to set the node one place.
-  vtkSetAndObserveMRMLNodeMacro( this->SliceNode, newSliceNode );
+  vtkSetAndObserveMRMLNodeMacro(this->SliceNode, newSliceNode);
 
   this->UpdateSliceCompositeNode();
 
-  for (LayerListIterator iterator = this->Layers.begin();
-       iterator != this->Layers.end();
-       ++iterator)
+  for (LayerListIterator iterator = this->Layers.begin(); iterator != this->Layers.end(); ++iterator)
   {
     vtkMRMLSliceLayerLogic* layer = *iterator;
     if (layer != nullptr)
@@ -761,7 +754,7 @@ void vtkMRMLSliceLogic::SetSliceNode(vtkMRMLSliceNode * newSliceNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *sliceCompositeNode)
+void vtkMRMLSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode* sliceCompositeNode)
 {
   if (this->SliceCompositeNode == sliceCompositeNode)
   {
@@ -769,7 +762,7 @@ void vtkMRMLSliceLogic::SetSliceCompositeNode(vtkMRMLSliceCompositeNode *sliceCo
   }
 
   // Observe the composite node, since this holds the parameters for this pipeline
-  vtkSetAndObserveMRMLNodeMacro( this->SliceCompositeNode, sliceCompositeNode );
+  vtkSetAndObserveMRMLNodeMacro(this->SliceCompositeNode, sliceCompositeNode);
   this->UpdatePipeline();
 }
 
@@ -780,7 +773,7 @@ vtkMRMLSliceLayerLogic* vtkMRMLSliceLogic::GetBackgroundLayer()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::SetBackgroundLayer(vtkMRMLSliceLayerLogic *backgroundLayer)
+void vtkMRMLSliceLogic::SetBackgroundLayer(vtkMRMLSliceLayerLogic* backgroundLayer)
 {
   this->SetNthLayer(vtkMRMLSliceLogic::LayerBackground, backgroundLayer);
 }
@@ -792,7 +785,7 @@ vtkMRMLSliceLayerLogic* vtkMRMLSliceLogic::GetForegroundLayer()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::SetForegroundLayer(vtkMRMLSliceLayerLogic *foregroundLayer)
+void vtkMRMLSliceLogic::SetForegroundLayer(vtkMRMLSliceLayerLogic* foregroundLayer)
 {
   this->SetNthLayer(vtkMRMLSliceLogic::LayerForeground, foregroundLayer);
 }
@@ -804,7 +797,7 @@ vtkMRMLSliceLayerLogic* vtkMRMLSliceLogic::GetLabelLayer()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic *labelLayer)
+void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic* labelLayer)
 {
   this->SetNthLayer(vtkMRMLSliceLogic::LayerLabel, labelLayer);
 }
@@ -826,7 +819,7 @@ vtkMRMLSliceLayerLogic* vtkMRMLSliceLogic::GetNthLayer(int layerIndex)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::SetNthLayer(int layerIndex, vtkMRMLSliceLayerLogic *layer)
+void vtkMRMLSliceLogic::SetNthLayer(int layerIndex, vtkMRMLSliceLayerLogic* layer)
 {
   // TODO: Simplify the whole set using a macro similar to vtkMRMLSetAndObserve
   if (layerIndex < 0)
@@ -834,25 +827,24 @@ void vtkMRMLSliceLogic::SetNthLayer(int layerIndex, vtkMRMLSliceLayerLogic *laye
     vtkErrorMacro(<< "SetNthLayer: Non-negative layer index is expected.");
     return;
   }
-  vtkMRMLSliceLayerLogic * currentLayer = this->GetNthLayer(layerIndex);
+  vtkMRMLSliceLayerLogic* currentLayer = this->GetNthLayer(layerIndex);
   if (currentLayer)
-    {
+  {
     currentLayer->SetMRMLScene(0);
-    }
+  }
   if (layerIndex >= static_cast<int>(this->Layers.size()))
-    {
+  {
     this->Layers.resize(layerIndex + 1);
-    }
+  }
   this->Layers.at(layerIndex) = layer;
   if (layer)
-    {
+  {
     layer->SetMRMLScene(this->GetMRMLScene());
 
     layer->SetSliceNode(this->SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
-      layer, vtkCommand::ModifiedEvent,
-      this, this->GetMRMLLogicsCallbackCommand());
-    }
+      layer, vtkCommand::ModifiedEvent, this, this->GetMRMLLogicsCallbackCommand());
+  }
   this->Modified();
 }
 
@@ -890,13 +882,10 @@ void vtkMRMLSliceLogic::SetNthLayerVolumeNode(int layerIndex, vtkMRMLVolumeNode*
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic
-::SetWindowLevel(int layer, double newWindow, double newLevel)
+void vtkMRMLSliceLogic ::SetWindowLevel(int layer, double newWindow, double newLevel)
 {
-  vtkMRMLScalarVolumeNode* volumeNode =
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->GetNthLayerVolumeNode(layer));
-  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode =
-    volumeNode ? volumeNode->GetScalarVolumeDisplayNode() : nullptr;
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetNthLayerVolumeNode(layer));
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = volumeNode ? volumeNode->GetScalarVolumeDisplayNode() : nullptr;
   if (!volumeDisplayNode)
   {
     return;
@@ -909,77 +898,82 @@ void vtkMRMLSliceLogic
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic
-::GetWindowLevelAndRange(int layer, double& window, double& level,
-  double& rangeLow, double& rangeHigh, bool& autoWindowLevel)
+void vtkMRMLSliceLogic ::GetWindowLevelAndRange(int layer,
+                                                double& window,
+                                                double& level,
+                                                double& rangeLow,
+                                                double& rangeHigh,
+                                                bool& autoWindowLevel)
 {
-  vtkMRMLScalarVolumeNode* volumeNode =
-    vtkMRMLScalarVolumeNode::SafeDownCast(this->GetNthLayerVolumeNode(layer));
-  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode =
-    volumeNode ? volumeNode->GetScalarVolumeDisplayNode() : nullptr;
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetNthLayerVolumeNode(layer));
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = volumeNode ? volumeNode->GetScalarVolumeDisplayNode() : nullptr;
   vtkImageData* imageData = (volumeDisplayNode && volumeNode) ? volumeNode->GetImageData() : nullptr;
   if (imageData)
-    {
+  {
     window = volumeDisplayNode->GetWindow();
     level = volumeDisplayNode->GetLevel();
-    double range[2] = {0.0, 255.0};
+    double range[2] = { 0.0, 255.0 };
     imageData->GetScalarRange(range);
     rangeLow = range[0];
     rangeHigh = range[1];
     autoWindowLevel = (volumeDisplayNode->GetAutoWindowLevel() != 0);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic
-::SetBackgroundWindowLevel(double newWindow, double newLevel)
+void vtkMRMLSliceLogic ::SetBackgroundWindowLevel(double newWindow, double newLevel)
 {
   SetWindowLevel(vtkMRMLSliceLogic::LayerBackground, newWindow, newLevel);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic
-::SetForegroundWindowLevel(double newWindow, double newLevel)
+void vtkMRMLSliceLogic ::SetForegroundWindowLevel(double newWindow, double newLevel)
 {
   SetWindowLevel(vtkMRMLSliceLogic::LayerForeground, newWindow, newLevel);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic
-::GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                         double& rangeLow, double& rangeHigh)
+void vtkMRMLSliceLogic ::GetBackgroundWindowLevelAndRange(double& window,
+                                                          double& level,
+                                                          double& rangeLow,
+                                                          double& rangeHigh)
 {
   bool autoWindowLevel; // unused, just a placeholder to allow calling the method
   this->GetBackgroundWindowLevelAndRange(window, level, rangeLow, rangeHigh, autoWindowLevel);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic
-::GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                         double& rangeLow, double& rangeHigh, bool& autoWindowLevel)
+void vtkMRMLSliceLogic ::GetBackgroundWindowLevelAndRange(double& window,
+                                                          double& level,
+                                                          double& rangeLow,
+                                                          double& rangeHigh,
+                                                          bool& autoWindowLevel)
 {
   this->GetWindowLevelAndRange(vtkMRMLSliceLogic::LayerBackground, window, level, rangeLow, rangeHigh, autoWindowLevel);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic
-::GetForegroundWindowLevelAndRange(double& window, double& level,
-                                         double& rangeLow, double& rangeHigh)
+void vtkMRMLSliceLogic ::GetForegroundWindowLevelAndRange(double& window,
+                                                          double& level,
+                                                          double& rangeLow,
+                                                          double& rangeHigh)
 {
   bool autoWindowLevel; // unused, just a placeholder to allow calling the method
   this->GetForegroundWindowLevelAndRange(window, level, rangeLow, rangeHigh, autoWindowLevel);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic
-::GetForegroundWindowLevelAndRange(double& window, double& level,
-                                         double& rangeLow, double& rangeHigh, bool& autoWindowLevel)
+void vtkMRMLSliceLogic ::GetForegroundWindowLevelAndRange(double& window,
+                                                          double& level,
+                                                          double& rangeLow,
+                                                          double& rangeHigh,
+                                                          bool& autoWindowLevel)
 {
   this->GetWindowLevelAndRange(vtkMRMLSliceLogic::LayerForeground, window, level, rangeLow, rangeHigh, autoWindowLevel);
 }
 
 //----------------------------------------------------------------------------
-vtkAlgorithmOutput * vtkMRMLSliceLogic::GetImageDataConnection()
+vtkAlgorithmOutput* vtkMRMLSliceLogic::GetImageDataConnection()
 {
   return this->ImageDataConnection;
 }
@@ -987,9 +981,7 @@ vtkAlgorithmOutput * vtkMRMLSliceLogic::GetImageDataConnection()
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceLogic::HasInputs()
 {
-  for (LayerListIterator iterator = this->Layers.begin();
-       iterator != this->Layers.end();
-       ++iterator)
+  for (LayerListIterator iterator = this->Layers.begin(); iterator != this->Layers.end(); ++iterator)
   {
     vtkMRMLSliceLayerLogic* layer = *iterator;
     if (layer != nullptr && layer->GetImageDataConnection() != nullptr)
@@ -1003,9 +995,7 @@ bool vtkMRMLSliceLogic::HasInputs()
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceLogic::HasUVWInputs()
 {
-  for (LayerListIterator iterator = this->Layers.begin();
-       iterator != this->Layers.end();
-       ++iterator)
+  for (LayerListIterator iterator = this->Layers.begin(); iterator != this->Layers.end(); ++iterator)
   {
     vtkMRMLSliceLayerLogic* layer = *iterator;
     if (layer != nullptr && layer->GetImageDataConnectionUVW() != nullptr)
@@ -1017,23 +1007,24 @@ bool vtkMRMLSliceLogic::HasUVWInputs()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::UpdateImageData ()
+void vtkMRMLSliceLogic::UpdateImageData()
 {
   if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
   {
-    this->ExtractModelTexture->SetInputConnection( this->Pipeline->Blend->GetOutputPort() );
+    this->ExtractModelTexture->SetInputConnection(this->Pipeline->Blend->GetOutputPort());
     this->ImageDataConnection = this->Pipeline->Blend->GetOutputPort();
   }
   else
   {
-    this->ExtractModelTexture->SetInputConnection( this->PipelineUVW->Blend->GetOutputPort() );
+    this->ExtractModelTexture->SetInputConnection(this->PipelineUVW->Blend->GetOutputPort());
   }
   // It seems very strange that the imagedata can be null.
   // It should probably be always a valid imagedata with invalid bounds if needed
 
   if (this->HasInputs())
   {
-    if (this->ImageDataConnection == nullptr || this->Pipeline->Blend->GetOutputPort()->GetMTime() > this->ImageDataConnection->GetMTime())
+    if (this->ImageDataConnection == nullptr ||
+        this->Pipeline->Blend->GetOutputPort()->GetMTime() > this->ImageDataConnection->GetMTime())
     {
       this->ImageDataConnection = this->Pipeline->Blend->GetOutputPort();
     }
@@ -1043,7 +1034,7 @@ void vtkMRMLSliceLogic::UpdateImageData ()
     this->ImageDataConnection = nullptr;
     if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
     {
-      this->ExtractModelTexture->SetInputConnection( this->ImageDataConnection );
+      this->ExtractModelTexture->SetInputConnection(this->ImageDataConnection);
     }
     else
     {
@@ -1053,7 +1044,9 @@ void vtkMRMLSliceLogic::UpdateImageData ()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers, bool clipToBackgroundVolume)
+bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend,
+                                          const std::deque<SliceLayerInfo>& layers,
+                                          bool clipToBackgroundVolume)
 {
   const int blendPort = 0;
   vtkMTimeType oldBlendMTime = blend->GetMTime();
@@ -1063,7 +1056,8 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque
   if (numberOfLayers == blend->GetNumberOfInputConnections(blendPort))
   {
     int layerIndex = 0;
-    for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end(); ++layerIt, ++layerIndex)
+    for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end();
+         ++layerIt, ++layerIndex)
     {
       if (layerIt->BlendInput != blend->GetInputConnection(blendPort, layerIndex))
       {
@@ -1080,7 +1074,8 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque
   {
     blend->RemoveAllInputs();
     int layerIndex = 0;
-    for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end(); ++layerIt, ++layerIndex)
+    for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end();
+         ++layerIt, ++layerIndex)
     {
       blend->AddInputConnection(layerIt->BlendInput);
     }
@@ -1089,7 +1084,8 @@ bool vtkMRMLSliceLogic::UpdateBlendLayers(vtkImageBlend* blend, const std::deque
   // Update opacities
   {
     int layerIndex = 0;
-    for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end(); ++layerIt, ++layerIndex)
+    for (std::deque<SliceLayerInfo>::const_iterator layerIt = layers.begin(); layerIt != layers.end();
+         ++layerIt, ++layerIndex)
     {
       blend->SetOpacity(layerIndex, layerIt->Opacity);
     }
@@ -1115,7 +1111,8 @@ bool vtkMRMLSliceLogic::UpdateAddSubOperation(vtkImageMathematics* addSubMath, i
 {
   if (compositing != vtkMRMLSliceCompositeNode::Add && compositing != vtkMRMLSliceCompositeNode::Subtract)
   {
-    vtkErrorWithObjectMacro(nullptr, << "UpdateAddSubOperation: Unexpected compositing mode (" << compositing << "). "
+    vtkErrorWithObjectMacro(nullptr,
+                            << "UpdateAddSubOperation: Unexpected compositing mode (" << compositing << "). "
                             << "Supported values are "
                             << "Add (" << vtkMRMLSliceCompositeNode::Add << ") or "
                             << "Subtract(" << vtkMRMLSliceCompositeNode::Subtract << ")");
@@ -1148,7 +1145,9 @@ bool vtkMRMLSliceLogic::UpdateFractions(vtkImageMathematics* fraction, double op
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceLogic::UpdateFractions(BlendPipeline* pipeline, const std::vector<vtkAlgorithmOutput*>& imagePorts, const std::vector<double>& opacities)
+bool vtkMRMLSliceLogic::UpdateFractions(BlendPipeline* pipeline,
+                                        const std::vector<vtkAlgorithmOutput*>& imagePorts,
+                                        const std::vector<double>& opacities)
 {
   if (!pipeline)
   {
@@ -1164,12 +1163,11 @@ bool vtkMRMLSliceLogic::UpdateFractions(BlendPipeline* pipeline, const std::vect
     }
     if (!pipeline->FractionMaths[stageIndex].GetPointer())
     {
-      vtkErrorWithObjectMacro(nullptr, << "UpdateFractions: Failed to get Nth FractionMath Pipeline filter (N=" << stageIndex << ").");
+      vtkErrorWithObjectMacro(
+        nullptr, << "UpdateFractions: Failed to get Nth FractionMath Pipeline filter (N=" << stageIndex << ").");
       continue;
     }
-    if (vtkMRMLSliceLogic::UpdateFractions(
-          pipeline->FractionMaths[stageIndex].GetPointer(),
-          opacities[index]))
+    if (vtkMRMLSliceLogic::UpdateFractions(pipeline->FractionMaths[stageIndex].GetPointer(), opacities[index]))
     {
       modified = true;
     }
@@ -1199,10 +1197,8 @@ void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, 
   }
 
   int slabNumberOfSlices = 1;
-  if (sliceNode->GetSlabReconstructionEnabled()
-      && sliceSpacing > 0
-      && sliceNode->GetSlabReconstructionThickness() > sliceSpacing
-      )
+  if (sliceNode->GetSlabReconstructionEnabled() && sliceSpacing > 0 &&
+      sliceNode->GetSlabReconstructionThickness() > sliceSpacing)
   {
     slabNumberOfSlices = static_cast<int>(sliceNode->GetSlabReconstructionThickness() / sliceSpacing);
   }
@@ -1223,7 +1219,9 @@ void vtkMRMLSliceLogic::UpdatePipeline()
   {
     // Ensure all slice layers (background, foreground, additional layers) have an associated logic
     // and update them with the corresponding volume nodes.
-    for (int layerIndex = 0; layerIndex < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers(); ++layerIndex)
+    for (int layerIndex = 0;
+         layerIndex < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+         ++layerIndex)
     {
       vtkMRMLVolumeNode* layerNode = this->SliceCompositeNode->GetNthLayerVolume(layerIndex);
       vtkMRMLSliceLayerLogic* layerLogic = this->GetNthLayer(layerIndex);
@@ -1245,7 +1243,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       }
 
       // Update the layer logic with the corresponding volume node if necessary
-      if (layerLogic->GetVolumeNode() != layerNode )
+      if (layerLogic->GetVolumeNode() != layerNode)
       {
         this->SetNthLayerVolumeNode(layerIndex, layerNode);
         modified = 1;
@@ -1263,9 +1261,9 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     std::vector<vtkAlgorithmOutput*> layerPorts;
     std::vector<double> layerUVWOpacities;
     std::vector<vtkAlgorithmOutput*> layerUVWPorts;
-    for(int layerIndex = 0;
-        layerIndex < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
-        ++layerIndex)
+    for (int layerIndex = 0;
+         layerIndex < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+         ++layerIndex)
     {
       if (layerIndex == vtkMRMLSliceLogic::LayerLabel)
       {
@@ -1291,17 +1289,15 @@ void vtkMRMLSliceLogic::UpdatePipeline()
 
     // Construct the blending pipeline
     std::deque<SliceLayerInfo> layers;
-    this->Pipeline->AddLayers(
-          layers,
-          this->SliceCompositeNode->GetCompositing(),
-          this->SliceCompositeNode->GetClipToBackgroundVolume(),
-          // Layers
-          layerPorts,
-          layerOpacities,
-          // Label
-          this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerLabel),
-          this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerLabel)
-          );
+    this->Pipeline->AddLayers(layers,
+                              this->SliceCompositeNode->GetCompositing(),
+                              this->SliceCompositeNode->GetClipToBackgroundVolume(),
+                              // Layers
+                              layerPorts,
+                              layerOpacities,
+                              // Label
+                              this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerLabel),
+                              this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerLabel));
 
     // Update UVW pipeline stages
     if (this->PipelineUVW->UpdateStages(layerUVWPorts))
@@ -1311,27 +1307,27 @@ void vtkMRMLSliceLogic::UpdatePipeline()
 
     // Construct the UVW blending pipeline
     std::deque<SliceLayerInfo> layersUVW;
-    this->PipelineUVW->AddLayers(
-          layersUVW,
-          this->SliceCompositeNode->GetCompositing(),
-          this->SliceCompositeNode->GetClipToBackgroundVolume(),
-          // Layers
-          layerUVWPorts,
-          layerOpacities,
-          // Label
-          this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerLabel),
-          this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerLabel)
-          );
+    this->PipelineUVW->AddLayers(layersUVW,
+                                 this->SliceCompositeNode->GetCompositing(),
+                                 this->SliceCompositeNode->GetClipToBackgroundVolume(),
+                                 // Layers
+                                 layerUVWPorts,
+                                 layerOpacities,
+                                 // Label
+                                 this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerLabel),
+                                 this->SliceCompositeNode->GetNthLayerOpacity(vtkMRMLSliceLogic::LayerLabel));
 
-    if (this->SliceCompositeNode->GetCompositing() == vtkMRMLSliceCompositeNode::Add
-        || this->SliceCompositeNode->GetCompositing() == vtkMRMLSliceCompositeNode::Subtract)
+    if (this->SliceCompositeNode->GetCompositing() == vtkMRMLSliceCompositeNode::Add ||
+        this->SliceCompositeNode->GetCompositing() == vtkMRMLSliceCompositeNode::Subtract)
     {
       // Update add/subtract operations in the pipeline
-      if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->Pipeline->AddSubMath.GetPointer(), this->SliceCompositeNode->GetCompositing()))
+      if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->Pipeline->AddSubMath.GetPointer(),
+                                                   this->SliceCompositeNode->GetCompositing()))
       {
         modified = 1;
       }
-      if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->PipelineUVW->AddSubMath.GetPointer(), this->SliceCompositeNode->GetCompositing()))
+      if (vtkMRMLSliceLogic::UpdateAddSubOperation(this->PipelineUVW->AddSubMath.GetPointer(),
+                                                   this->SliceCompositeNode->GetCompositing()))
       {
         modified = 1;
       }
@@ -1348,11 +1344,13 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     }
 
     // Update alpha blending configuration for the layers
-    if (vtkMRMLSliceLogic::UpdateBlendLayers(this->Pipeline->Blend.GetPointer(), layers, this->SliceCompositeNode->GetClipToBackgroundVolume()))
+    if (vtkMRMLSliceLogic::UpdateBlendLayers(
+          this->Pipeline->Blend.GetPointer(), layers, this->SliceCompositeNode->GetClipToBackgroundVolume()))
     {
       modified = 1;
     }
-    if (vtkMRMLSliceLogic::UpdateBlendLayers(this->PipelineUVW->Blend.GetPointer(), layersUVW, this->SliceCompositeNode->GetClipToBackgroundVolume()))
+    if (vtkMRMLSliceLogic::UpdateBlendLayers(
+          this->PipelineUVW->Blend.GetPointer(), layersUVW, this->SliceCompositeNode->GetClipToBackgroundVolume()))
     {
       modified = 1;
     }
@@ -1362,14 +1360,14 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     vtkMRMLDisplayNode* displayNode = this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : nullptr;
     if (displayNode)
     {
-      displayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
-      displayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
+      displayNode->SetVisibility(this->SliceNode->GetSliceVisible());
+      displayNode->SetViewNodeIDs(this->SliceNode->GetThreeDViewIDs());
 
       // Manage texture interpolation based on input availability
-      if ( (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
-            !this->HasUVWInputs()) ||
+      if ((this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
+           !this->HasUVWInputs()) ||
           (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView &&
-           !this->HasInputs()) )
+           !this->HasInputs()))
       {
         displayNode->SetTextureImageDataConnection(nullptr);
       }
@@ -1381,17 +1379,17 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       // Disable interpolation if label layer is present
       if (this->GetNthLayerImageDataConnection(vtkMRMLSliceLogic::LayerLabel) ||
           this->GetNthLayerImageDataConnectionUVW(vtkMRMLSliceLogic::LayerLabel))
-        {
-          displayNode->SetInterpolateTexture(0);
-        }
-        else
-        {
-          displayNode->SetInterpolateTexture(1);
-        }
+      {
+        displayNode->SetInterpolateTexture(0);
+      }
+      else
+      {
+        displayNode->SetInterpolateTexture(1);
+      }
     }
 
     // Mark the pipeline as modified if any updates were performed
-    if ( modified )
+    if (modified)
     {
       if (this->SliceModelNode && this->SliceModelNode->GetPolyData())
       {
@@ -1466,7 +1464,8 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "AdditionalLayers:\n";
   if (this->SliceCompositeNode)
   {
-    for(int additionalLayerIndex = 0; additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers(); ++additionalLayerIndex)
+    for (int additionalLayerIndex = 0; additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+         ++additionalLayerIndex)
     {
       vtkMRMLSliceLayerLogic* layerLogic = this->GetNthLayer(vtkMRMLSliceLogic::Layer_Last + additionalLayerIndex);
       if (layerLogic)
@@ -1502,7 +1501,6 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
   }
 
   os << indent << "SLICE_MODEL_NODE_NAME_SUFFIX: " << this->SLICE_MODEL_NODE_NAME_SUFFIX << "\n";
-
 }
 
 //----------------------------------------------------------------------------
@@ -1553,18 +1551,18 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::CreateSliceModel()
 {
-  if(!this->GetMRMLScene())
+  if (!this->GetMRMLScene())
   {
     return;
   }
 
   if (this->SliceModelNode != nullptr &&
-      this->GetMRMLScene()->GetNodeByID(this->GetSliceModelNode()->GetID()) == nullptr )
+      this->GetMRMLScene()->GetNodeByID(this->GetSliceModelNode()->GetID()) == nullptr)
   {
     this->DeleteSliceModel();
   }
 
-  if ( this->SliceModelNode == nullptr)
+  if (this->SliceModelNode == nullptr)
   {
     this->SliceModelNode = vtkMRMLModelNode::New();
     this->SliceModelNode->SetScene(this->GetMRMLScene());
@@ -1582,27 +1580,33 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelNode->SetDisableModifiedEvent(0);
 
     // create display node and set texture
-    vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceDisplayNode"));
+    vtkMRMLSliceDisplayNode* sliceDisplayNode =
+      vtkMRMLSliceDisplayNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLSliceDisplayNode"));
     this->SliceModelDisplayNode = sliceDisplayNode;
     this->SliceModelDisplayNode->SetScene(this->GetMRMLScene());
     this->SliceModelDisplayNode->SetDisableModifiedEvent(1);
 
-    //this->SliceModelDisplayNode->SetInputPolyData(this->SliceModelNode->GetOutputPolyData());
+    // this->SliceModelDisplayNode->SetInputPolyData(this->SliceModelNode->GetOutputPolyData());
     this->SliceModelDisplayNode->SetVisibility(0);
     this->SliceModelDisplayNode->SetOpacity(1);
-    this->SliceModelDisplayNode->SetColor(1,1,1);
+    this->SliceModelDisplayNode->SetColor(1, 1, 1);
 
     // Show intersecting slices in new slice views if this is currently enabled in the application.
     vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();
     if (appLogic)
     {
       // Intersection
-      sliceDisplayNode->SetIntersectingSlicesVisibility(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesVisibility));
-      sliceDisplayNode->SetIntersectingSlicesInteractive(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesInteractive));
-      sliceDisplayNode->SetIntersectingSlicesTranslationEnabled(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesTranslation));
-      sliceDisplayNode->SetIntersectingSlicesRotationEnabled(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesRotation));
+      sliceDisplayNode->SetIntersectingSlicesVisibility(
+        appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesVisibility));
+      sliceDisplayNode->SetIntersectingSlicesInteractive(
+        appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesInteractive));
+      sliceDisplayNode->SetIntersectingSlicesTranslationEnabled(
+        appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesTranslation));
+      sliceDisplayNode->SetIntersectingSlicesRotationEnabled(
+        appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesRotation));
       // ThickSlab
-      sliceDisplayNode->SetIntersectingThickSlabInteractive(appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive));
+      sliceDisplayNode->SetIntersectingThickSlabInteractive(
+        appLogic->GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive));
     }
 
     std::string displayName = "Slice Display";
@@ -1643,10 +1647,10 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelTransformNode->SetName(this->GetMRMLScene()->GenerateUniqueName(transformNodeName).c_str());
 
     this->SliceModelTransformNode->SetDisableModifiedEvent(0);
-
   }
 
-  if (this->SliceModelNode != nullptr && this->GetMRMLScene()->GetNodeByID( this->GetSliceModelNode()->GetID() ) == nullptr )
+  if (this->SliceModelNode != nullptr &&
+      this->GetMRMLScene()->GetNodeByID(this->GetSliceModelNode()->GetID()) == nullptr)
   {
     this->AddingSliceModelNodes = true;
     this->GetMRMLScene()->AddNode(this->SliceModelDisplayNode);
@@ -1661,15 +1665,15 @@ void vtkMRMLSliceLogic::CreateSliceModel()
   // update the description to refer back to the slice and composite nodes
   // TODO: this doesn't need to be done unless the ID change, but it needs
   // to happen after they have been set, so do it every event for now
-  if ( this->SliceModelNode != nullptr )
+  if (this->SliceModelNode != nullptr)
   {
     std::string description;
     std::stringstream ssD;
-    if (this->SliceNode && this->SliceNode->GetID() )
+    if (this->SliceNode && this->SliceNode->GetID())
     {
       ssD << " SliceID " << this->SliceNode->GetID();
     }
-    if (this->SliceCompositeNode && this->SliceCompositeNode->GetID() )
+    if (this->SliceCompositeNode && this->SliceCompositeNode->GetID())
     {
       ssD << " CompositeID " << this->SliceCompositeNode->GetID();
     }
@@ -1680,14 +1684,14 @@ void vtkMRMLSliceLogic::CreateSliceModel()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode *vtkMRMLSliceLogic::GetLayerVolumeNode(int layer)
+vtkMRMLVolumeNode* vtkMRMLSliceLogic::GetLayerVolumeNode(int layer)
 {
   vtkWarningMacro("Deprecated, please use GetNthLayerVolumeNode instead");
   return this->GetNthLayerVolumeNode(layer);
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeNode *vtkMRMLSliceLogic::GetNthLayerVolumeNode(int layer)
+vtkMRMLVolumeNode* vtkMRMLSliceLogic::GetNthLayerVolumeNode(int layer)
 {
   if (!this->SliceNode || !this->SliceCompositeNode)
   {
@@ -1703,22 +1707,21 @@ vtkMRMLVolumeNode *vtkMRMLSliceLogic::GetNthLayerVolumeNode(int layer)
   {
     return nullptr;
   }
-  const char *id = this->SliceCompositeNode->GetNthLayerVolumeID(layer);
+  const char* id = this->SliceCompositeNode->GetNthLayerVolumeID(layer);
   vtkMRMLScene* scene = this->GetMRMLScene();
-  return scene ? vtkMRMLVolumeNode::SafeDownCast(
-    scene->GetNodeByID( id )) : nullptr;
+  return scene ? vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(id)) : nullptr;
 }
 
 //----------------------------------------------------------------------------
 // Get the size of the volume, transformed to RAS space
-void vtkMRMLSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double rasDimensions[3], double rasCenter[3])
+void vtkMRMLSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode* volumeNode, double rasDimensions[3], double rasCenter[3])
 {
   rasCenter[0] = rasDimensions[0] = 0.0;
   rasCenter[1] = rasDimensions[1] = 0.0;
   rasCenter[2] = rasDimensions[2] = 0.0;
 
-  vtkImageData *volumeImage;
-  if ( !volumeNode || ! (volumeImage = volumeNode->GetImageData()) )
+  vtkImageData* volumeImage;
+  if (!volumeNode || !(volumeImage = volumeNode->GetImageData()))
   {
     return;
   }
@@ -1735,8 +1738,9 @@ void vtkMRMLSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode *volumeNode, double ra
 
 //----------------------------------------------------------------------------
 // Get the size of the volume, transformed to RAS space
-void vtkMRMLSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode,
-  double sliceDimensions[3], double sliceCenter[3])
+void vtkMRMLSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode* volumeNode,
+                                                 double sliceDimensions[3],
+                                                 double sliceCenter[3])
 {
   sliceCenter[0] = sliceDimensions[0] = 0.0;
   sliceCenter[1] = sliceDimensions[1] = 0.0;
@@ -1748,13 +1752,14 @@ void vtkMRMLSliceLogic::GetVolumeSliceDimensions(vtkMRMLVolumeNode *volumeNode,
   for (int axis = 0; axis < 3; axis++)
   {
     sliceDimensions[axis] = sliceBounds[2 * axis + 1] - sliceBounds[2 * axis];
-    sliceCenter[axis] = 0.5*(sliceBounds[2 * axis + 1] + sliceBounds[2 * axis]);
+    sliceCenter[axis] = 0.5 * (sliceBounds[2 * axis + 1] + sliceBounds[2 * axis]);
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode,
-  double sliceBounds[6], bool useVoxelCenter/*=false*/)
+void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode* volumeNode,
+                                             double sliceBounds[6],
+                                             bool useVoxelCenter /*=false*/)
 {
   if (this->SliceNode == nullptr || volumeNode == nullptr)
   {
@@ -1778,9 +1783,9 @@ void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode *volumeNode,
 
 //----------------------------------------------------------------------------
 // Get the spacing of the volume, transformed to slice space
-double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
+double* vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode* volumeNode)
 {
-  if ( !volumeNode )
+  if (!volumeNode)
   {
     return (this->SliceSpacing);
   }
@@ -1793,7 +1798,7 @@ double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
   if (this->SliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
   {
     // jvm - should we cache the PrescribedSliceSpacing in SliceSpacing?
-    double *pspacing = this->SliceNode->GetPrescribedSliceSpacing();
+    double* pspacing = this->SliceNode->GetPrescribedSliceSpacing();
     this->SliceSpacing[0] = pspacing[0];
     this->SliceSpacing[1] = pspacing[1];
     this->SliceSpacing[2] = pspacing[2];
@@ -1806,12 +1811,12 @@ double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
   volumeNode->GetIJKToRASMatrix(ijkToWorld);
 
   // Apply transform to the volume axes, if the volume is transformed with a linear transform
-  vtkMRMLTransformNode *transformNode = volumeNode->GetParentTransformNode();
-  if ( transformNode != nullptr &&  transformNode->IsTransformToWorldLinear() )
+  vtkMRMLTransformNode* transformNode = volumeNode->GetParentTransformNode();
+  if (transformNode != nullptr && transformNode->IsTransformToWorldLinear())
   {
     vtkNew<vtkMatrix4x4> volumeRASToWorld;
     transformNode->GetMatrixTransformToWorld(volumeRASToWorld);
-    //rasToRAS->Invert();
+    // rasToRAS->Invert();
     vtkMatrix4x4::Multiply4x4(volumeRASToWorld, ijkToWorld, ijkToWorld);
   }
 
@@ -1866,7 +1871,7 @@ double *vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode *volumeNode)
 
 //----------------------------------------------------------------------------
 // adjust the node's field of view to match the extent of current volume
-void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int width, int height)
+void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode* volumeNode, int width, int height)
 {
   if (!volumeNode)
   {
@@ -1878,7 +1883,7 @@ void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int widt
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::FitSliceToVolumes(vtkCollection *volumeNodes, int width, int height)
+void vtkMRMLSliceLogic::FitSliceToVolumes(vtkCollection* volumeNodes, int width, int height)
 {
   if (!this->SliceNode)
   {
@@ -1906,11 +1911,11 @@ void vtkMRMLSliceLogic::FitSliceToVolumes(vtkCollection *volumeNodes, int width,
       continue;
     }
 
-    double sliceBounds[6] = {0.0, -1.0, 0.0, -1.0, 0.0, -1.0};
+    double sliceBounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
     this->GetVolumeSliceBounds(volumeNode, sliceBounds);
     volumeBounds_Slice.AddBounds(sliceBounds);
 
-    double rasBounds[6] = {0.0, -1.0, 0.0, -1.0, 0.0, -1.0};
+    double rasBounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
     volumeNode->GetRASBounds(rasBounds);
     volumeBounds_RAS.AddBounds(rasBounds);
 
@@ -1963,16 +1968,16 @@ void vtkMRMLSliceLogic::FitSliceToVolumes(vtkCollection *volumeNodes, int width,
   //
   vtkNew<vtkMatrix4x4> sliceToRAS;
   sliceToRAS->DeepCopy(this->SliceNode->GetSliceToRAS());
-  double sliceCenter_RAS[3] = { 0.0, 0.0, 0.0};
+  double sliceCenter_RAS[3] = { 0.0, 0.0, 0.0 };
   volumeBounds_RAS.GetCenter(sliceCenter_RAS);
   sliceToRAS->SetElement(0, 3, sliceCenter_RAS[0]);
   sliceToRAS->SetElement(1, 3, sliceCenter_RAS[1]);
   sliceToRAS->SetElement(2, 3, sliceCenter_RAS[2]);
   this->SliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS);
-  this->SliceNode->SetSliceOrigin(0,0,0);
-  //sliceNode->SetSliceOffset(offset);
+  this->SliceNode->SetSliceOrigin(0, 0, 0);
+  // sliceNode->SetSliceOffset(offset);
 
-  //TODO Fit UVW space
+  // TODO Fit UVW space
   this->SnapSliceOffsetToIJK();
   this->SliceNode->UpdateMatrices();
 }
@@ -1995,7 +2000,7 @@ void vtkMRMLSliceLogic::GetBackgroundSliceDimensions(double sliceDimensions[3], 
 
 //----------------------------------------------------------------------------
 // Get the spacing of the volume, transformed to slice space
-double *vtkMRMLSliceLogic::GetBackgroundSliceSpacing()
+double* vtkMRMLSliceLogic::GetBackgroundSliceSpacing()
 {
   vtkMRMLVolumeNode* backgroundNode = this->GetNthLayerVolumeNode(vtkMRMLSliceLogic::LayerBackground);
   return (this->GetVolumeSliceSpacing(backgroundNode));
@@ -2022,8 +2027,7 @@ void vtkMRMLSliceLogic::FitSliceToFirst(int width, int height)
 
   if (width < 0 || height < 0)
   {
-    vtkErrorMacro(<< __FUNCTION__ << "- Invalid size:" << width
-                  << "x" << height);
+    vtkErrorMacro(<< __FUNCTION__ << "- Invalid size:" << width << "x" << height);
     return;
   }
 
@@ -2066,17 +2070,15 @@ void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
 
   if (width < 0 || height < 0)
   {
-    vtkErrorMacro(<< __FUNCTION__ << "- Invalid size:" << width
-                  << "x" << height);
+    vtkErrorMacro(<< __FUNCTION__ << "- Invalid size:" << width << "x" << height);
     return;
   }
 
   vtkNew<vtkCollection> volumeNodes;
-  for (int layer = 0;
-       layer < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+  for (int layer = 0; layer < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
        layer++)
   {
-    vtkMRMLVolumeNode *volumeNode = this->GetNthLayerVolumeNode(layer);
+    vtkMRMLVolumeNode* volumeNode = this->GetNthLayerVolumeNode(layer);
     if (volumeNode)
     {
       volumeNodes->AddItem(volumeNode);
@@ -2090,12 +2092,9 @@ void vtkMRMLSliceLogic::FitSliceToAll(int width, int height)
 void vtkMRMLSliceLogic::FitFOVToBackground(double fov)
 {
   // get backgroundNode  and imagedata
-  vtkMRMLScalarVolumeNode* backgroundNode =
-    vtkMRMLScalarVolumeNode::SafeDownCast(
-      this->GetMRMLScene()->GetNodeByID(
-        this->SliceCompositeNode->GetBackgroundVolumeID() ));
-  vtkImageData *backgroundImage =
-    backgroundNode ? backgroundNode->GetImageData() : nullptr;
+  vtkMRMLScalarVolumeNode* backgroundNode = vtkMRMLScalarVolumeNode::SafeDownCast(
+    this->GetMRMLScene()->GetNodeByID(this->SliceCompositeNode->GetBackgroundVolumeID()));
+  vtkImageData* backgroundImage = backgroundNode ? backgroundNode->GetImageData() : nullptr;
   if (!backgroundImage)
   {
     return;
@@ -2133,15 +2132,15 @@ void vtkMRMLSliceLogic::FitFOVToBackground(double fov)
   // which is bigger, slice viewer width or height?
   // assign user-specified fov to smaller slice window
   // dimension
-  if ( width < height )
+  if (width < height)
   {
     fovh = fov;
-    fovv = fov * height/width;
+    fovv = fov * height / width;
   }
   else
   {
     fovv = fov;
-    fovh = fov * width/height;
+    fovh = fov * width / height;
   }
   // we want to compute the slice dimensions of the
   // user-specified fov (note that the slice node's z field of
@@ -2187,7 +2186,7 @@ void vtkMRMLSliceLogic::ResizeSliceNode(double newWidth, double newHeight)
 }
 
 //----------------------------------------------------------------------------
-double *vtkMRMLSliceLogic::GetLowestVolumeSliceSpacing()
+double* vtkMRMLSliceLogic::GetLowestVolumeSliceSpacing()
 {
   // Note that "lowest" refers to the lowest (first) volume layer, not the one with the lowest slice spacing
   vtkMRMLVolumeNode* volumeNode = vtkMRMLSliceLogic::GetFirstVolumeNode();
@@ -2199,7 +2198,7 @@ double *vtkMRMLSliceLogic::GetLowestVolumeSliceSpacing()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::GetLowestVolumeSliceBounds(double sliceBounds[6], bool useVoxelCenter/*=false*/)
+void vtkMRMLSliceLogic::GetLowestVolumeSliceBounds(double sliceBounds[6], bool useVoxelCenter /*=false*/)
 {
   vtkMRMLVolumeNode* volumeNode = vtkMRMLSliceLogic::GetFirstVolumeNode();
   if (volumeNode)
@@ -2218,8 +2217,7 @@ void vtkMRMLSliceLogic::GetSliceBounds(double sliceBounds[6])
     return;
   }
   vtkBoundingBox sliceBoundingBox;
-  for (int layer = 0;
-       layer < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+  for (int layer = 0; layer < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
        layer++)
   {
     vtkMRMLVolumeNode* volumeNode = this->GetNthLayerVolumeNode(layer);
@@ -2253,13 +2251,12 @@ double vtkMRMLSliceLogic::GetSliceOffset()
   // this method has been moved to vtkMRMLSliceNode
   // the API stays for backwards compatibility
 
-  if ( !this->SliceNode )
+  if (!this->SliceNode)
   {
     return 0.0;
   }
 
   return this->SliceNode->GetSliceOffset();
-
 }
 
 //----------------------------------------------------------------------------
@@ -2326,8 +2323,8 @@ void vtkMRMLSliceLogic::StartSliceNodeInteraction(unsigned int parameters)
   this->SliceNode->SetInteractionFlags(parameters);
 
   // If we have hot linked controls, then we want to broadcast changes
-  if ((this->SliceCompositeNode->GetHotLinkedControl() || parameters == vtkMRMLSliceNode::MultiplanarReformatFlag)
-      && this->SliceCompositeNode->GetLinkedControl())
+  if ((this->SliceCompositeNode->GetHotLinkedControl() || parameters == vtkMRMLSliceNode::MultiplanarReformatFlag) &&
+      this->SliceCompositeNode->GetLinkedControl())
   {
     this->SliceNode->InteractingOn();
   }
@@ -2342,7 +2339,7 @@ void vtkMRMLSliceLogic::SetSliceExtentsToSliceNode()
   }
 
   double sliceBounds[6];
-  this->GetSliceBounds( sliceBounds );
+  this->GetSliceBounds(sliceBounds);
 
   double extents[3];
   extents[0] = sliceBounds[1] - sliceBounds[0];
@@ -2351,53 +2348,52 @@ void vtkMRMLSliceLogic::SetSliceExtentsToSliceNode()
 
   if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
   {
-    this->SliceNode->SetUVWExtentsAndDimensions(this->SliceNode->GetFieldOfView(),
-                                                this->SliceNode->GetUVWDimensions());
+    this->SliceNode->SetUVWExtentsAndDimensions(this->SliceNode->GetFieldOfView(), this->SliceNode->GetUVWDimensions());
   }
- else if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatchVolumes)
- {
-    double *spacing = this->GetLowestVolumeSliceSpacing();
+  else if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatchVolumes)
+  {
+    double* spacing = this->GetLowestVolumeSliceSpacing();
     double minSpacing = spacing[0];
-    minSpacing = minSpacing < spacing[1] ? minSpacing:spacing[1];
-    minSpacing = minSpacing < spacing[2] ? minSpacing:spacing[2];
+    minSpacing = minSpacing < spacing[1] ? minSpacing : spacing[1];
+    minSpacing = minSpacing < spacing[2] ? minSpacing : spacing[2];
 
     int sliceResolutionMax = 200;
     if (minSpacing > 0.0)
     {
       double maxExtent = extents[0];
-      maxExtent = maxExtent > extents[1] ? maxExtent:extents[1];
-      maxExtent = maxExtent > extents[2] ? maxExtent:extents[2];
+      maxExtent = maxExtent > extents[1] ? maxExtent : extents[1];
+      maxExtent = maxExtent > extents[2] ? maxExtent : extents[2];
 
-      sliceResolutionMax = maxExtent/minSpacing;
+      sliceResolutionMax = maxExtent / minSpacing;
     }
-    int dimensions[]={sliceResolutionMax, sliceResolutionMax, 1};
+    int dimensions[] = { sliceResolutionMax, sliceResolutionMax, 1 };
 
     this->SliceNode->SetUVWExtentsAndDimensions(extents, dimensions);
- }
+  }
   else if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes)
   {
-    double *spacing = this->GetLowestVolumeSliceSpacing();
+    double* spacing = this->GetLowestVolumeSliceSpacing();
     double minSpacing = spacing[0];
-    minSpacing = minSpacing < spacing[1] ? minSpacing:spacing[1];
-    minSpacing = minSpacing < spacing[2] ? minSpacing:spacing[2];
+    minSpacing = minSpacing < spacing[1] ? minSpacing : spacing[1];
+    minSpacing = minSpacing < spacing[2] ? minSpacing : spacing[2];
 
     double fov[3];
-    int dimensions[]={0,0,1};
+    int dimensions[] = { 0, 0, 1 };
     this->SliceNode->GetFieldOfView(fov);
     for (int axis = 0; axis < 2; axis++)
     {
-       dimensions[axis] = ceil(fov[axis]/minSpacing + 0.5);
+      dimensions[axis] = ceil(fov[axis] / minSpacing + 0.5);
     }
     this->SliceNode->SetUVWExtentsAndDimensions(fov, dimensions);
   }
   else if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceFOVMatchVolumesSpacingMatch2DView)
   {
     // compute RAS spacing in 2D view
-    vtkMatrix4x4 *xyToRAS = this->SliceNode->GetXYToRAS();
-    int  dims[3];
+    vtkMatrix4x4* xyToRAS = this->SliceNode->GetXYToRAS();
+    int dims[3];
 
     //
-    double inPoint[4]={0,0,0,1};
+    double inPoint[4] = { 0, 0, 0, 1 };
     double outPoint0[4];
     double outPoint1[4];
     double outPoint2[4];
@@ -2420,13 +2416,12 @@ void vtkMRMLSliceLogic::SetSliceExtentsToSliceNode()
     double xSpacing = sqrt(vtkMath::Distance2BetweenPoints(outPoint0, outPoint1));
     double ySpacing = sqrt(vtkMath::Distance2BetweenPoints(outPoint0, outPoint2));
 
-    dims[0] = extents[0]/xSpacing+1;
-    dims[1] = extents[2]/ySpacing+1;
+    dims[0] = extents[0] / xSpacing + 1;
+    dims[1] = extents[2] / ySpacing + 1;
     dims[2] = 1;
 
     this->SliceNode->SetUVWExtentsAndDimensions(extents, dims);
   }
-
 }
 
 //----------------------------------------------------------------------------
@@ -2474,7 +2469,7 @@ void vtkMRMLSliceLogic::SnapSliceOffsetToIJK()
   double offset, *spacing, bounds[6];
   double oldOffset = this->GetSliceOffset();
   spacing = this->GetLowestVolumeSliceSpacing();
-  this->GetLowestVolumeSliceBounds( bounds );
+  this->GetLowestVolumeSliceBounds(bounds);
 
   // number of slices along the offset dimension (depends on ijkToRAS and Transforms)
   // - find the slice index corresponding to the current slice offset
@@ -2482,26 +2477,26 @@ void vtkMRMLSliceLogic::SnapSliceOffsetToIJK()
   // - note that bounds[4] 'furthest' edge of the volume from the point of view of this slice
   // - note also that spacing[2] may correspond to i, j, or k depending on ijkToRAS and sliceToRAS
   double slice = (oldOffset - bounds[4]) / spacing[2];
-  int intSlice = static_cast<int> (slice);
+  int intSlice = static_cast<int>(slice);
   offset = (intSlice + 0.5) * spacing[2] + bounds[4];
-  this->SetSliceOffset( offset );
+  this->SetSliceOffset(offset);
 }
 
 
 //----------------------------------------------------------------------------
-std::vector< vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
+std::vector<vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
 {
-  std::vector< vtkMRMLDisplayNode*> nodes;
-  std::vector<vtkMRMLSliceLayerLogic *> layerLogics;
+  std::vector<vtkMRMLDisplayNode*> nodes;
+  std::vector<vtkMRMLSliceLayerLogic*> layerLogics;
   layerLogics.push_back(this->GetBackgroundLayer());
   layerLogics.push_back(this->GetForegroundLayer());
   if (this->SliceCompositeNode)
   {
-    for(int additionalLayerIndex = 0;
-        additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers();
-        ++additionalLayerIndex)
+    for (int additionalLayerIndex = 0; additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+         ++additionalLayerIndex)
     {
-      layerLogics.push_back(this->GetNthLayer(vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers()));
+      layerLogics.push_back(
+        this->GetNthLayer(vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers()));
     }
   }
   for (unsigned int layerIndex = 0; layerIndex < layerLogics.size(); layerIndex++)
@@ -2509,36 +2504,37 @@ std::vector< vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
     vtkMRMLSliceLayerLogic* layerLogic = layerLogics[layerIndex];
     if (layerLogic && layerLogic->GetVolumeNode())
     {
-      vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast (layerLogic->GetVolumeNode());
-      vtkMRMLGlyphableVolumeDisplayNode *displayNode = vtkMRMLGlyphableVolumeDisplayNode::SafeDownCast( layerLogic->GetVolumeNode()->GetDisplayNode() );
+      vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(layerLogic->GetVolumeNode());
+      vtkMRMLGlyphableVolumeDisplayNode* displayNode =
+        vtkMRMLGlyphableVolumeDisplayNode::SafeDownCast(layerLogic->GetVolumeNode()->GetDisplayNode());
       if (displayNode)
       {
-        std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> dnodes  = displayNode->GetSliceGlyphDisplayNodes(volumeNode);
-        for (unsigned int n=0; n<dnodes.size(); n++)
+        std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> dnodes =
+          displayNode->GetSliceGlyphDisplayNodes(volumeNode);
+        for (unsigned int n = 0; n < dnodes.size(); n++)
         {
           vtkMRMLGlyphableVolumeSliceDisplayNode* dnode = dnodes[n];
-          if (layerLogic->GetSliceNode()
-            && layerLogic->GetSliceNode()->GetLayoutName()
-            && !strcmp(layerLogic->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
+          if (layerLogic->GetSliceNode() && layerLogic->GetSliceNode()->GetLayoutName() &&
+              !strcmp(layerLogic->GetSliceNode()->GetLayoutName(), dnode->GetName()))
           {
             nodes.push_back(dnode);
           }
         }
-      }//  if (volumeNode)
-    }// if (layerLogic && layerLogic->GetVolumeNode())
+      } //  if (volumeNode)
+    } // if (layerLogic && layerLogic->GetVolumeNode())
   }
   return nodes;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode *volumeNode)
+int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode* volumeNode)
 {
-  if ( !volumeNode )
+  if (!volumeNode)
   {
     return SLICE_INDEX_NO_VOLUME;
   }
-  vtkImageData *volumeImage=nullptr;
-  if ( !(volumeImage = volumeNode->GetImageData()) )
+  vtkImageData* volumeImage = nullptr;
+  if (!(volumeImage = volumeNode->GetImageData()))
   {
     return SLICE_INDEX_NO_VOLUME;
   }
@@ -2548,13 +2544,13 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolume
   }
 
   vtkNew<vtkMatrix4x4> ijkToRAS;
-  volumeNode->GetIJKToRASMatrix (ijkToRAS.GetPointer());
-  vtkMRMLTransformNode *transformNode = volumeNode->GetParentTransformNode();
-  if ( transformNode )
+  volumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
+  vtkMRMLTransformNode* transformNode = volumeNode->GetParentTransformNode();
+  if (transformNode)
   {
     vtkNew<vtkMatrix4x4> rasToRAS;
     transformNode->GetMatrixTransformToWorld(rasToRAS.GetPointer());
-    vtkMatrix4x4::Multiply4x4 (rasToRAS.GetPointer(), ijkToRAS.GetPointer(), ijkToRAS.GetPointer());
+    vtkMatrix4x4::Multiply4x4(rasToRAS.GetPointer(), ijkToRAS.GetPointer(), ijkToRAS.GetPointer());
   }
 
   // Get the slice normal in RAS
@@ -2563,71 +2559,68 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolume
   rasToSlice->DeepCopy(this->SliceNode->GetSliceToRAS());
   rasToSlice->Invert();
 
-  double sliceNormal_IJK[4]={0,0,1,0};  // slice normal vector in IJK coordinate system
-  double sliceNormal_RAS[4]={0,0,0,0};  // slice normal vector in RAS coordinate system
+  double sliceNormal_IJK[4] = { 0, 0, 1, 0 }; // slice normal vector in IJK coordinate system
+  double sliceNormal_RAS[4] = { 0, 0, 0, 0 }; // slice normal vector in RAS coordinate system
   this->SliceNode->GetSliceToRAS()->MultiplyPoint(sliceNormal_IJK, sliceNormal_RAS);
 
   // Find an axis normal that has the same orientation as the slice normal
-  double axisDirection_RAS[3]={0,0,0};
-  int axisIndex=0;
-  double volumeSpacing=1.0; // spacing along axisIndex
-  for (axisIndex=0; axisIndex<3; axisIndex++)
+  double axisDirection_RAS[3] = { 0, 0, 0 };
+  int axisIndex = 0;
+  double volumeSpacing = 1.0; // spacing along axisIndex
+  for (axisIndex = 0; axisIndex < 3; axisIndex++)
   {
-    axisDirection_RAS[0]=ijkToRAS->GetElement(0,axisIndex);
-    axisDirection_RAS[1]=ijkToRAS->GetElement(1,axisIndex);
-    axisDirection_RAS[2]=ijkToRAS->GetElement(2,axisIndex);
-    volumeSpacing=vtkMath::Norm(axisDirection_RAS); // spacing along axisIndex
+    axisDirection_RAS[0] = ijkToRAS->GetElement(0, axisIndex);
+    axisDirection_RAS[1] = ijkToRAS->GetElement(1, axisIndex);
+    axisDirection_RAS[2] = ijkToRAS->GetElement(2, axisIndex);
+    volumeSpacing = vtkMath::Norm(axisDirection_RAS); // spacing along axisIndex
     vtkMath::Normalize(sliceNormal_RAS);
     vtkMath::Normalize(axisDirection_RAS);
-    double dotProd=vtkMath::Dot(sliceNormal_RAS, axisDirection_RAS);
+    double dotProd = vtkMath::Dot(sliceNormal_RAS, axisDirection_RAS);
     // Due to numerical inaccuracies the dot product of two normalized vectors
     // can be slightly bigger than 1 (and acos cannot be computed) - fix that.
-    if (dotProd>1.0)
+    if (dotProd > 1.0)
     {
-      dotProd=1.0;
+      dotProd = 1.0;
     }
-    else if (dotProd<-1.0)
+    else if (dotProd < -1.0)
     {
-      dotProd=-1.0;
+      dotProd = -1.0;
     }
-    double axisMisalignmentDegrees=acos(dotProd)*180.0/vtkMath::Pi();
-    if (fabs(axisMisalignmentDegrees)<0.1)
+    double axisMisalignmentDegrees = acos(dotProd) * 180.0 / vtkMath::Pi();
+    if (fabs(axisMisalignmentDegrees) < 0.1)
     {
       // found an axis that is aligned to the slice normal
       break;
     }
-    if (fabs(axisMisalignmentDegrees-180)<0.1 || fabs(axisMisalignmentDegrees+180)<0.1)
+    if (fabs(axisMisalignmentDegrees - 180) < 0.1 || fabs(axisMisalignmentDegrees + 180) < 0.1)
     {
       // found an axis that is aligned to the slice normal, just points to the opposite direction
-      volumeSpacing*=-1.0;
+      volumeSpacing *= -1.0;
       break;
     }
   }
 
-  if (axisIndex>=3)
+  if (axisIndex >= 3)
   {
     // no aligned axis is found
     return SLICE_INDEX_ROTATED;
   }
 
   // Determine slice index
-  double originPos_RAS[4]={
-    ijkToRAS->GetElement( 0, 3 ),
-    ijkToRAS->GetElement( 1, 3 ),
-    ijkToRAS->GetElement( 2, 3 ),
-    0};
-  double originPos_Slice[4]={0,0,0,0};
+  double originPos_RAS[4] = { ijkToRAS->GetElement(0, 3), ijkToRAS->GetElement(1, 3), ijkToRAS->GetElement(2, 3), 0 };
+  double originPos_Slice[4] = { 0, 0, 0, 0 };
   rasToSlice->MultiplyPoint(originPos_RAS, originPos_Slice);
-  double volumeOriginOffset=originPos_Slice[2];
-  double sliceShift=sliceOffset-volumeOriginOffset;
-  double normalizedSliceShift=sliceShift/volumeSpacing;
-  int sliceIndex=vtkMath::Round(normalizedSliceShift)+1; // +0.5 because the slice plane is displayed in the center of the slice
+  double volumeOriginOffset = originPos_Slice[2];
+  double sliceShift = sliceOffset - volumeOriginOffset;
+  double normalizedSliceShift = sliceShift / volumeSpacing;
+  int sliceIndex =
+    vtkMath::Round(normalizedSliceShift) + 1; // +0.5 because the slice plane is displayed in the center of the slice
 
   // Check if slice index is within the volume
-  int sliceCount=volumeImage->GetDimensions()[axisIndex];
-  if (sliceIndex<1 || sliceIndex>sliceCount)
+  int sliceCount = volumeImage->GetDimensions()[axisIndex];
+  if (sliceIndex < 1 || sliceIndex > sliceCount)
   {
-    sliceIndex=SLICE_INDEX_OUT_OF_VOLUME;
+    sliceIndex = SLICE_INDEX_OUT_OF_VOLUME;
   }
 
   return sliceIndex;
@@ -2649,16 +2642,14 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic
-::GetSliceCompositeNode(vtkMRMLSliceNode* sliceNode)
+vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic ::GetSliceCompositeNode(vtkMRMLSliceNode* sliceNode)
 {
-  return sliceNode ? vtkMRMLSliceLogic::GetSliceCompositeNode(
-    sliceNode->GetScene(), sliceNode->GetLayoutName()) : nullptr;
+  return sliceNode ? vtkMRMLSliceLogic::GetSliceCompositeNode(sliceNode->GetScene(), sliceNode->GetLayoutName())
+                   : nullptr;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic
-::GetSliceCompositeNode(vtkMRMLScene* scene, const char* layoutName)
+vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic ::GetSliceCompositeNode(vtkMRMLScene* scene, const char* layoutName)
 {
   if (!scene || !layoutName)
   {
@@ -2666,13 +2657,10 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic
   }
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
-  for (scene->GetNodes()->InitTraversal(it);
-       (node = (vtkMRMLNode*)scene->GetNodes()->GetNextItemAsObject(it)) ;)
+  for (scene->GetNodes()->InitTraversal(it); (node = (vtkMRMLNode*)scene->GetNodes()->GetNextItemAsObject(it));)
   {
-    vtkMRMLSliceCompositeNode* sliceCompositeNode =
-      vtkMRMLSliceCompositeNode::SafeDownCast(node);
-    if (sliceCompositeNode &&
-        sliceCompositeNode->GetLayoutName() &&
+    vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(node);
+    if (sliceCompositeNode && sliceCompositeNode->GetLayoutName() &&
         !strcmp(sliceCompositeNode->GetLayoutName(), layoutName))
     {
       return sliceCompositeNode;
@@ -2682,20 +2670,19 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSliceNode* vtkMRMLSliceLogic
-::GetSliceNode(vtkMRMLSliceCompositeNode* sliceCompositeNode)
+vtkMRMLSliceNode* vtkMRMLSliceLogic ::GetSliceNode(vtkMRMLSliceCompositeNode* sliceCompositeNode)
 {
   if (!sliceCompositeNode)
   {
     return nullptr;
   }
-  return sliceCompositeNode ? vtkMRMLSliceLogic::GetSliceNode(
-    sliceCompositeNode->GetScene(), sliceCompositeNode->GetLayoutName()) : nullptr;
+  return sliceCompositeNode
+           ? vtkMRMLSliceLogic::GetSliceNode(sliceCompositeNode->GetScene(), sliceCompositeNode->GetLayoutName())
+           : nullptr;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSliceNode* vtkMRMLSliceLogic
-::GetSliceNode(vtkMRMLScene* scene, const char* layoutName)
+vtkMRMLSliceNode* vtkMRMLSliceLogic ::GetSliceNode(vtkMRMLScene* scene, const char* layoutName)
 {
   if (!scene || !layoutName)
   {
@@ -2710,8 +2697,7 @@ vtkMRMLSliceNode* vtkMRMLSliceLogic
     {
       continue;
     }
-    if (sliceNode->GetLayoutName() &&
-      !strcmp(sliceNode->GetLayoutName(), layoutName))
+    if (sliceNode->GetLayoutName() && !strcmp(sliceNode->GetLayoutName(), layoutName))
     {
       return sliceNode;
     }
@@ -2720,11 +2706,9 @@ vtkMRMLSliceNode* vtkMRMLSliceLogic
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceLogic::IsSliceModelNode(vtkMRMLNode *mrmlNode)
+bool vtkMRMLSliceLogic::IsSliceModelNode(vtkMRMLNode* mrmlNode)
 {
-  if (mrmlNode != nullptr &&
-      mrmlNode->IsA("vtkMRMLModelNode") &&
-      mrmlNode->GetName() != nullptr &&
+  if (mrmlNode != nullptr && mrmlNode->IsA("vtkMRMLModelNode") && mrmlNode->GetName() != nullptr &&
       strstr(mrmlNode->GetName(), vtkMRMLSliceLogic::SLICE_MODEL_NODE_NAME_SUFFIX.c_str()) != nullptr)
   {
     return true;
@@ -2733,19 +2717,17 @@ bool vtkMRMLSliceLogic::IsSliceModelNode(vtkMRMLNode *mrmlNode)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceLogic::IsSliceModelDisplayNode(vtkMRMLDisplayNode *mrmlDisplayNode)
+bool vtkMRMLSliceLogic::IsSliceModelDisplayNode(vtkMRMLDisplayNode* mrmlDisplayNode)
 {
   if (vtkMRMLSliceDisplayNode::SafeDownCast(mrmlDisplayNode))
   {
     return true;
   }
-  if (mrmlDisplayNode != nullptr &&
-      mrmlDisplayNode->IsA("vtkMRMLModelDisplayNode"))
+  if (mrmlDisplayNode != nullptr && mrmlDisplayNode->IsA("vtkMRMLModelDisplayNode"))
   {
-    const char *attrib = mrmlDisplayNode->GetAttribute("SliceLogic.IsSliceModelDisplayNode");
+    const char* attrib = mrmlDisplayNode->GetAttribute("SliceLogic.IsSliceModelDisplayNode");
     // allow the attribute to be set to anything but 0
-    if (attrib != nullptr &&
-        strcmp(attrib, "0") != 0)
+    if (attrib != nullptr && strcmp(attrib, "0") != 0)
     {
       return true;
     }
@@ -2766,7 +2748,7 @@ vtkImageBlend* vtkMRMLSliceLogic::GetBlendUVW()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::RotateSliceToLowestVolumeAxes(bool forceSlicePlaneToSingleSlice/*=true*/)
+void vtkMRMLSliceLogic::RotateSliceToLowestVolumeAxes(bool forceSlicePlaneToSingleSlice /*=true*/)
 {
   vtkMRMLVolumeNode* volumeNode = vtkMRMLSliceLogic::GetFirstVolumeNode();
   if (!volumeNode)
@@ -2784,14 +2766,15 @@ void vtkMRMLSliceLogic::RotateSliceToLowestVolumeAxes(bool forceSlicePlaneToSing
 
 //----------------------------------------------------------------------------
 int vtkMRMLSliceLogic::GetEditableLayerAtWorldPosition(double worldPos[3],
-  bool backgroundVolumeEditable/*=true*/, bool foregroundVolumeEditable/*=true*/)
+                                                       bool backgroundVolumeEditable /*=true*/,
+                                                       bool foregroundVolumeEditable /*=true*/)
 {
-  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
   if (!sliceNode)
   {
     return vtkMRMLSliceLogic::LayerNone;
   }
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->GetSliceCompositeNode();
   if (!sliceCompositeNode)
   {
     return vtkMRMLSliceLogic::LayerNone;
@@ -2811,9 +2794,10 @@ int vtkMRMLSliceLogic::GetEditableLayerAtWorldPosition(double worldPos[3],
   {
     if (foregroundVolumeEditable && backgroundVolumeEditable)
     {
-    adjustForeground = (sliceCompositeNode->GetForegroundOpacity() >= 0.01)
-      && this->IsEventInsideVolume(true, worldPos)   // inside background (used as mask for displaying foreground)
-      && this->vtkMRMLSliceLogic::IsEventInsideVolume(false, worldPos); // inside foreground
+      adjustForeground =
+        (sliceCompositeNode->GetForegroundOpacity() >= 0.01) &&
+        this->IsEventInsideVolume(true, worldPos) // inside background (used as mask for displaying foreground)
+        && this->vtkMRMLSliceLogic::IsEventInsideVolume(false, worldPos); // inside foreground
     }
   }
 
@@ -2823,13 +2807,12 @@ int vtkMRMLSliceLogic::GetEditableLayerAtWorldPosition(double worldPos[3],
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceLogic::IsEventInsideVolume(bool background, double worldPos[3])
 {
-  vtkMRMLSliceNode *sliceNode = this->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
   if (!sliceNode)
   {
     return false;
   }
-  vtkMRMLSliceLayerLogic* layerLogic = background ?
-    this->GetBackgroundLayer() : this->GetForegroundLayer();
+  vtkMRMLSliceLayerLogic* layerLogic = background ? this->GetBackgroundLayer() : this->GetForegroundLayer();
   if (!layerLogic)
   {
     return false;
@@ -2880,10 +2863,10 @@ bool vtkMRMLSliceLogic::GetSliceOffsetRangeResolution(double range[2], double& r
 {
   // Calculate the number of slices in the current range.
   // Extent is between the farthest voxel centers (not voxel sides).
-  double sliceBounds[6] = {0, -1, 0, -1, 0, -1};
+  double sliceBounds[6] = { 0, -1, 0, -1, 0, -1 };
   this->GetLowestVolumeSliceBounds(sliceBounds, true);
 
-  const double * sliceSpacing = this->GetLowestVolumeSliceSpacing();
+  const double* sliceSpacing = this->GetLowestVolumeSliceSpacing();
   if (!sliceSpacing)
   {
     range[0] = -1.0;
@@ -2921,8 +2904,7 @@ vtkMRMLVolumeNode* vtkMRMLSliceLogic::GetFirstVolumeNode()
   {
     return nullptr;
   }
-  for (int layer = 0;
-       layer < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
+  for (int layer = 0; layer < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
        layer++)
   {
     vtkMRMLVolumeNode* volumeNode = this->GetNthLayerVolumeNode(layer);

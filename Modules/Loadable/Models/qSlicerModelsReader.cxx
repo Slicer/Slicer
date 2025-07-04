@@ -66,33 +66,32 @@ void qSlicerModelsReader::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerModelsLogic* qSlicerModelsReader::modelsLogic()const
+vtkSlicerModelsLogic* qSlicerModelsReader::modelsLogic() const
 {
   Q_D(const qSlicerModelsReader);
   return d->ModelsLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModelsReader::description()const
+QString qSlicerModelsReader::description() const
 {
   return "Model";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerModelsReader::fileType()const
+qSlicerIO::IOFileType qSlicerModelsReader::fileType() const
 {
   return QString("ModelFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerModelsReader::extensions()const
+QStringList qSlicerModelsReader::extensions() const
 {
-  return QStringList()
-    << "Model (*.vtk *.vtp *.vtu *.g *.byu *.stl *.ply *.obj *.ucd)";
+  return QStringList() << "Model (*.vtk *.vtp *.vtu *.g *.byu *.stl *.ply *.obj *.ucd)";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerModelsReader::options()const
+qSlicerIOOptions* qSlicerModelsReader::options() const
 {
   qSlicerIOOptionsWidget* options = new qSlicerModelsIOOptionsWidget;
   options->setMRMLScene(this->mrmlScene());
@@ -100,7 +99,7 @@ qSlicerIOOptions* qSlicerModelsReader::options()const
 }
 
 //----------------------------------------------------------------------------
-double qSlicerModelsReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerModelsReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 
@@ -148,32 +147,27 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
     coordinateSystem = properties["coordinateSystem"].toInt();
   }
   this->userMessages()->ClearMessages();
-  vtkMRMLModelNode* node = d->ModelsLogic->AddModel(
-    fileName.toUtf8(), coordinateSystem, this->userMessages());
+  vtkMRMLModelNode* node = d->ModelsLogic->AddModel(fileName.toUtf8(), coordinateSystem, this->userMessages());
   if (!node)
   {
     // errors are already logged and userMessages contain details that can be displayed to users
     return false;
   }
-  this->setLoadedNodes( QStringList(QString(node->GetID())) );
+  this->setLoadedNodes(QStringList(QString(node->GetID())));
   if (properties.contains("name"))
   {
-    std::string uname = this->mrmlScene()->GetUniqueNameByString(
-      properties["name"].toString().toUtf8());
+    std::string uname = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toUtf8());
     node->SetName(uname.c_str());
   }
 
   // If no other nodes are displayed then reset the field of view
   bool otherNodesAreAlreadyVisible = false;
-  vtkSmartPointer<vtkCollection> displayNodes = vtkSmartPointer<vtkCollection>::Take(
-    this->mrmlScene()->GetNodesByClass("vtkMRMLDisplayNode"));
-  for(int displayNodeIndex = 0; displayNodeIndex < displayNodes->GetNumberOfItems(); ++displayNodeIndex)
+  vtkSmartPointer<vtkCollection> displayNodes =
+    vtkSmartPointer<vtkCollection>::Take(this->mrmlScene()->GetNodesByClass("vtkMRMLDisplayNode"));
+  for (int displayNodeIndex = 0; displayNodeIndex < displayNodes->GetNumberOfItems(); ++displayNodeIndex)
   {
-    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(
-      displayNodes->GetItemAsObject(displayNodeIndex));
-    if (displayNode->GetDisplayableNode()
-      && displayNode->GetVisibility()
-      && displayNode->GetDisplayableNode() != node)
+    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayNodes->GetItemAsObject(displayNodeIndex));
+    if (displayNode->GetDisplayableNode() && displayNode->GetVisibility() && displayNode->GetDisplayableNode() != node)
     {
       otherNodesAreAlreadyVisible = true;
       break;

@@ -26,8 +26,7 @@
 #include "vtkSlicerTemplateKeyModuleMRMLExport.h"
 
 //-----------------------------------------------------------------------------
-class VTK_SLICER_TEMPLATEKEY_MODULE_MRML_EXPORT vtkMRMLMarkupsTestLineNode
-: public vtkMRMLMarkupsLineNode
+class VTK_SLICER_TEMPLATEKEY_MODULE_MRML_EXPORT vtkMRMLMarkupsTestLineNode : public vtkMRMLMarkupsLineNode
 {
 public:
   static vtkMRMLMarkupsTestLineNode* New();
@@ -37,29 +36,29 @@ public:
   //--------------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------------
-  const char* GetIcon() override {return ":/Icons/MarkupsGeneric.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsGenericMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsGenericMouseModePlaceAdd.png";}
+  const char* GetIcon() override { return ":/Icons/MarkupsGeneric.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsGenericMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsGenericMouseModePlaceAdd.png"; }
 
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
   ///
-  const char* GetNodeTagName() override {return "MarkupsTestLine";}
+  const char* GetNodeTagName() override { return "MarkupsTestLine"; }
 
   /// Get markup type internal name
-  const char* GetMarkupType() override {return "TestLine";}
+  const char* GetMarkupType() override { return "TestLine"; }
 
   // Get markup type GUI display name
-  const char* GetTypeDisplayName() override {return "Test Line";};
+  const char* GetTypeDisplayName() override { return "Test Line"; };
 
   /// Get markup short name
-  const char* GetDefaultNodeNamePrefix() override {return "SC";}
+  const char* GetDefaultNodeNamePrefix() override { return "SC"; }
 
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLMarkupsTestLineNode);
 
-  vtkPolyData* GetTargetOrgan() const {return this->TargetOrgan;}
-  void SetTargetOrgan(vtkPolyData* targetOrgan) {this->TargetOrgan = targetOrgan;}
+  vtkPolyData* GetTargetOrgan() const { return this->TargetOrgan; }
+  void SetTargetOrgan(vtkPolyData* targetOrgan) { this->TargetOrgan = targetOrgan; }
 
 protected:
   vtkMRMLMarkupsTestLineNode();
@@ -68,7 +67,7 @@ protected:
   void operator=(const vtkMRMLMarkupsTestLineNode&);
 
 private:
-  vtkPolyData *TargetOrgan = nullptr;
+  vtkPolyData* TargetOrgan = nullptr;
 };
 
 #endif

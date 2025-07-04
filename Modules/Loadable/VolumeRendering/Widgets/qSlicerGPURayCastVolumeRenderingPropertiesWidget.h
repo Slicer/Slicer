@@ -32,7 +32,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPURayCastVolumeRend
   Q_OBJECT
 public:
   typedef qSlicerVolumeRenderingPropertiesWidget Superclass;
-  qSlicerGPURayCastVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
+  qSlicerGPURayCastVolumeRenderingPropertiesWidget(QWidget* parent = nullptr);
   ~qSlicerGPURayCastVolumeRenderingPropertiesWidget() override;
 
   vtkMRMLGPURayCastVolumeRenderingDisplayNode* mrmlGPURayCastDisplayNode();

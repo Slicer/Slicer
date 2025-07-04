@@ -82,12 +82,12 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   return scalarNode.GetPointer();
 }
 
-int qMRMLSliceWidgetTest2(int argc, char * argv [] )
+int qMRMLSliceWidgetTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
-  if( argc < 2 )
+  if (argc < 2)
   {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -111,7 +111,7 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
   sliceWidget.setMRMLScene(scene.GetPointer());
   sliceWidget.sliceLogic()->AddSliceNode("Red");
 
-  sliceWidget.resize(viewSize.width(), sliceWidget.sliceController()->height() + viewSize.height() );
+  sliceWidget.resize(viewSize.width(), sliceWidget.sliceController()->height() + viewSize.height());
 
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceWidget.sliceLogic()->GetSliceCompositeNode();
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
@@ -132,29 +132,26 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
   }
 
   // test the list of displayable managers
-  QStringList expectedDisplayableManagerClassNames =
-    QStringList() << "vtkMRMLVolumeGlyphSliceDisplayableManager"
-                  << "vtkMRMLModelSliceDisplayableManager"
-                  << "vtkMRMLCrosshairDisplayableManager"
-                  << "vtkMRMLOrientationMarkerDisplayableManager"
-                  << "vtkMRMLRulerDisplayableManager"
-                  << "vtkMRMLScalarBarDisplayableManager";
-  qMRMLSliceView *sliceView = const_cast<qMRMLSliceView*>(sliceWidget.sliceView());
+  QStringList expectedDisplayableManagerClassNames = QStringList() << "vtkMRMLVolumeGlyphSliceDisplayableManager"
+                                                                   << "vtkMRMLModelSliceDisplayableManager"
+                                                                   << "vtkMRMLCrosshairDisplayableManager"
+                                                                   << "vtkMRMLOrientationMarkerDisplayableManager"
+                                                                   << "vtkMRMLRulerDisplayableManager"
+                                                                   << "vtkMRMLScalarBarDisplayableManager";
+  qMRMLSliceView* sliceView = const_cast<qMRMLSliceView*>(sliceWidget.sliceView());
   vtkNew<vtkCollection> collection;
   sliceView->getDisplayableManagers(collection.GetPointer());
   int numManagers = collection->GetNumberOfItems();
-  std::cout << "Slice widget slice view has " << numManagers
-            << " displayable managers." << std::endl;
+  std::cout << "Slice widget slice view has " << numManagers << " displayable managers." << std::endl;
   if (numManagers != expectedDisplayableManagerClassNames.size())
   {
-    std::cerr << "Incorrect number of displayable managers, expected "
-              << expectedDisplayableManagerClassNames.size()
+    std::cerr << "Incorrect number of displayable managers, expected " << expectedDisplayableManagerClassNames.size()
               << " but got " << numManagers << std::endl;
     return EXIT_FAILURE;
   }
   for (int i = 0; i < numManagers; ++i)
   {
-    vtkMRMLAbstractDisplayableManager *sliceViewDM =
+    vtkMRMLAbstractDisplayableManager* sliceViewDM =
       vtkMRMLAbstractDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
     if (sliceViewDM)
     {
@@ -173,14 +170,14 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
   }
   collection->RemoveAllItems();
 
-/*
-  QTimer modifyTimer;
-  modifyTimer.setInterval(0);
-  QObject::connect(&modifyTimer, SIGNAL(timeout()),
-                   &nodeObject, SLOT(modify()));
-  modifyTimer.start();
-*/
-  if (argc < 3 || QString(argv[2]) != "-I" )
+  /*
+    QTimer modifyTimer;
+    modifyTimer.setInterval(0);
+    QObject::connect(&modifyTimer, SIGNAL(timeout()),
+                     &nodeObject, SLOT(modify()));
+    modifyTimer.start();
+  */
+  if (argc < 3 || QString(argv[2]) != "-I")
   {
     QTimer::singleShot(1000, &app, SLOT(quit()));
   }

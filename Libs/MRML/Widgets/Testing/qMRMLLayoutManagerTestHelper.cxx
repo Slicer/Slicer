@@ -10,8 +10,10 @@ namespace
 {
 
 // --------------------------------------------------------------------------
-bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
-                          vtkMRMLLayoutNode * layoutNode, int expectedViewArrangement)
+bool checkViewArrangement(int line,
+                          qMRMLLayoutManager* layoutManager,
+                          vtkMRMLLayoutNode* layoutNode,
+                          int expectedViewArrangement)
 {
   // Ignore deprecated arrangements (that are not expected to be available)
   if (expectedViewArrangement == 5     // SlicerLayoutOneUpSliceView
@@ -24,13 +26,12 @@ bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
       || expectedViewArrangement == 26 // SlicerLayoutOneUpQuantitativeView
       || expectedViewArrangement == 28 // SlicerLayoutThreeOverThreeQuantitativeView
       || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutDicomBrowserView // registered by DICOM module
-      )
+  )
   {
     return true;
   }
 
-  if (layoutManager->layout() != expectedViewArrangement ||
-      layoutNode->GetViewArrangement() != expectedViewArrangement)
+  if (layoutManager->layout() != expectedViewArrangement || layoutNode->GetViewArrangement() != expectedViewArrangement)
   {
     std::cerr << "Line " << line << " - Add scene failed:\n"
               << " expected ViewArrangement: " << expectedViewArrangement << "\n"

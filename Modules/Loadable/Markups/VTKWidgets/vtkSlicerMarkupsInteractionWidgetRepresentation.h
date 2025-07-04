@@ -24,7 +24,7 @@
  *
  * @sa
  * vtkMRMLInteractionWidgetRepresentation
-*/
+ */
 
 #ifndef vtkSlicerMarkupsInteractionWidgetRepresentation_h
 #define vtkSlicerMarkupsInteractionWidgetRepresentation_h
@@ -80,8 +80,8 @@ public:
   void UpdateHandleToWorldTransform(vtkTransform* handleToWorldTransform) override;
 
   double GetInteractionScalePercent() override; // Size relative to screen
-  double GetInteractionSizeMm() override; // Size in mm
-  bool GetInteractionSizeAbsolute() override; // True -> size in mm; false -> relative to screen
+  double GetInteractionSizeMm() override;       // Size in mm
+  bool GetInteractionSizeAbsolute() override;   // True -> size in mm; false -> relative to screen
 
   void GetInteractionHandlePositionWorld(int type, int index, double positionWorld[3]) override;
 
@@ -92,8 +92,13 @@ public:
   void GetInteractionHandleAxisLocal(int type, int index, double axis_Local[3]) override;
   void GetHandleColor(int type, int index, double color[4]) override;
 
-  bool AddScaleEdgeIntersection(int pointIndex, vtkIdTypeArray* visibilityArray, vtkPoints* scaleHandleArray,
-    double sliceNormal[3], double sliceOrigin[3], double edgePoint[3], double edgeVector[3]);
+  bool AddScaleEdgeIntersection(int pointIndex,
+                                vtkIdTypeArray* visibilityArray,
+                                vtkPoints* scaleHandleArray,
+                                double sliceNormal[3],
+                                double sliceOrigin[3],
+                                double edgePoint[3],
+                                double edgeVector[3]);
 
 protected:
   vtkSlicerMarkupsInteractionWidgetRepresentation();

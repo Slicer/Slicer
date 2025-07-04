@@ -27,11 +27,11 @@ class vtkMRMLTransformNode;
 
 #include "vtkSlicerGeneralizedReformatModuleLogicExport.h"
 
-class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkMRMLScalarVectorDWIVolumeResampler :
-    public vtkMRMLAbstractVolumeResampler
+class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkMRMLScalarVectorDWIVolumeResampler
+  : public vtkMRMLAbstractVolumeResampler
 {
 public:
-  static vtkMRMLScalarVectorDWIVolumeResampler *New();
+  static vtkMRMLScalarVectorDWIVolumeResampler* New();
   vtkTypeMacro(vtkMRMLScalarVectorDWIVolumeResampler, vtkMRMLAbstractVolumeResampler);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

@@ -29,12 +29,11 @@ class qSlicerAbstractModuleRepresentationPrivate
 public:
   qSlicerAbstractModuleRepresentationPrivate();
   vtkWeakPointer<vtkMRMLAbstractLogic> Logic;
-  qSlicerAbstractCoreModule*           Module;
+  qSlicerAbstractCoreModule* Module;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentationPrivate
-::qSlicerAbstractModuleRepresentationPrivate()
+qSlicerAbstractModuleRepresentationPrivate ::qSlicerAbstractModuleRepresentationPrivate()
 {
   this->Module = nullptr;
 }
@@ -42,8 +41,7 @@ qSlicerAbstractModuleRepresentationPrivate
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation::qSlicerAbstractModuleRepresentation()
   : d_ptr(new qSlicerAbstractModuleRepresentationPrivate)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation::~qSlicerAbstractModuleRepresentation()
@@ -56,21 +54,21 @@ qSlicerAbstractModuleRepresentation::~qSlicerAbstractModuleRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractModuleRepresentation::moduleName()const
+QString qSlicerAbstractModuleRepresentation::moduleName() const
 {
   Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Module->name();
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerAbstractModuleRepresentation::logic()const
+vtkMRMLAbstractLogic* qSlicerAbstractModuleRepresentation::logic() const
 {
   Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractCoreModule* qSlicerAbstractModuleRepresentation::module()const
+qSlicerAbstractCoreModule* qSlicerAbstractModuleRepresentation::module() const
 {
   Q_D(const qSlicerAbstractModuleRepresentation);
   return d->Module;

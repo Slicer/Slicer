@@ -33,9 +33,7 @@ public:
 // qSlicerTemplateKeyModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyModulePrivate::qSlicerTemplateKeyModulePrivate()
-{
-}
+qSlicerTemplateKeyModulePrivate::qSlicerTemplateKeyModulePrivate() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerTemplateKeyModule methods
@@ -44,13 +42,10 @@ qSlicerTemplateKeyModulePrivate::qSlicerTemplateKeyModulePrivate()
 qSlicerTemplateKeyModule::qSlicerTemplateKeyModule(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerTemplateKeyModulePrivate)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyModule::~qSlicerTemplateKeyModule()
-{
-}
+qSlicerTemplateKeyModule::~qSlicerTemplateKeyModule() {}
 
 //-----------------------------------------------------------------------------
 QString qSlicerTemplateKeyModule::helpText() const
@@ -97,8 +92,7 @@ void qSlicerTemplateKeyModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerTemplateKeyModule
-::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerTemplateKeyModule ::createWidgetRepresentation()
 {
   return new qSlicerTemplateKeyModuleWidget;
 }

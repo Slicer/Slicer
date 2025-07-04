@@ -27,7 +27,7 @@
 #include <vtkVersion.h>
 
 // VTKsys includes
-//#include <vtksys/SystemTools.hxx>
+// #include <vtksys/SystemTools.hxx>
 
 // ITK includes
 #include "itkHistogramThresholdCalculator.h"
@@ -50,7 +50,9 @@ vtkStandardNewMacro(vtkITKImageThresholdCalculator);
 
 // helper function
 template <class TPixelType>
-void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkImageData *inputImage, double& computedThreshold)
+void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator* self,
+                                     vtkImageData* inputImage,
+                                     double& computedThreshold)
 {
   typedef itk::Image<TPixelType, 3> ImageType;
   typedef itk::Statistics::ImageToHistogramFilter<ImageType> HistogramGeneratorType;
@@ -64,7 +66,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
   // vtk export for  vtk image
   vtkNew<vtkImageExport> vtkExporter;
 
-  vtkExporter->SetInputData ( inputImage );
+  vtkExporter->SetInputData(inputImage);
 
   ConnectPipelines(vtkExporter.GetPointer(), itkImporter);
   itkImporter->UpdateLargestPossibleRegion();
@@ -73,40 +75,65 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
   histGenerator->SetInput(itkImporter->GetOutput());
   typename HistogramGeneratorType::HistogramSizeType hsize(1);
   hsize[0] = 64;
-  histGenerator->SetHistogramSize( hsize );
-  histGenerator->SetAutoMinimumMaximum( true );
+  histGenerator->SetHistogramSize(hsize);
+  histGenerator->SetAutoMinimumMaximum(true);
 
   // Create and initialize the calculator
   typename CalculatorType::Pointer calculator;
   switch (self->GetMethod())
   {
-    case vtkITKImageThresholdCalculator::METHOD_HUANG: calculator = itk::HuangThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_INTERMODES: calculator = itk::IntermodesThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_ISO_DATA: calculator = itk::IsoDataThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_KITTLER_ILLINGWORTH: calculator = itk::KittlerIllingworthThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_LI: calculator = itk::LiThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_MAXIMUM_ENTROPY: calculator = itk::MaximumEntropyThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_MOMENTS: calculator = itk::MomentsThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_OTSU: calculator = itk::OtsuThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_RENYI_ENTROPY: calculator = itk::RenyiEntropyThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_SHANBHAG: calculator = itk::ShanbhagThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_TRIANGLE: calculator = itk::TriangleThresholdCalculator<HistogramType>::New(); break;
-    case vtkITKImageThresholdCalculator::METHOD_YEN: calculator = itk::YenThresholdCalculator<HistogramType>::New(); break;
+    case vtkITKImageThresholdCalculator::METHOD_HUANG:
+      calculator = itk::HuangThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_INTERMODES:
+      calculator = itk::IntermodesThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_ISO_DATA:
+      calculator = itk::IsoDataThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_KITTLER_ILLINGWORTH:
+      calculator = itk::KittlerIllingworthThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_LI:
+      calculator = itk::LiThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_MAXIMUM_ENTROPY:
+      calculator = itk::MaximumEntropyThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_MOMENTS:
+      calculator = itk::MomentsThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_OTSU:
+      calculator = itk::OtsuThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_RENYI_ENTROPY:
+      calculator = itk::RenyiEntropyThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_SHANBHAG:
+      calculator = itk::ShanbhagThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_TRIANGLE:
+      calculator = itk::TriangleThresholdCalculator<HistogramType>::New();
+      break;
+    case vtkITKImageThresholdCalculator::METHOD_YEN:
+      calculator = itk::YenThresholdCalculator<HistogramType>::New();
+      break;
     default:
       vtkErrorWithObjectMacro(self, "ITKComputeThresholdFromVTKImage failed: invalid method: " << self->GetMethod());
       return;
   }
 
-  calculator->SetInput( histGenerator->GetOutput() );
+  calculator->SetInput(histGenerator->GetOutput());
 
   try
   {
     calculator->Update();
   }
-  catch (itk::ExceptionObject &err)
+  catch (itk::ExceptionObject& err)
   {
-    vtkErrorWithObjectMacro(self, "Failed to compute threshold value using method " << self->GetMethodAsString(self->GetMethod())
-      << ". Details: " << err);
+    vtkErrorWithObjectMacro(self,
+                            "Failed to compute threshold value using method "
+                              << self->GetMethodAsString(self->GetMethod()) << ". Details: " << err);
   }
 
   computedThreshold = calculator->GetThreshold();
@@ -125,7 +152,7 @@ vtkITKImageThresholdCalculator::~vtkITKImageThresholdCalculator() = default;
 //----------------------------------------------------------------------------
 void vtkITKImageThresholdCalculator::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "Method: " << this->GetMethodAsString(this->Method) << "\n";
   os << indent << "Threshold: " << this->Threshold << "\n";
 }
@@ -134,7 +161,7 @@ void vtkITKImageThresholdCalculator::PrintSelf(ostream& os, vtkIndent indent)
 // Writes all the data from the input.
 void vtkITKImageThresholdCalculator::Update()
 {
-  vtkImageData *inputImage = this->GetImageDataInput(0);
+  vtkImageData* inputImage = this->GetImageDataInput(0);
   vtkPointData* pointData = nullptr;
   if (inputImage)
   {
@@ -142,7 +169,7 @@ void vtkITKImageThresholdCalculator::Update()
   }
   if (pointData == nullptr)
   {
-    vtkErrorMacro(<<"vtkITKImageThresholdCalculator: No input image");
+    vtkErrorMacro(<< "vtkITKImageThresholdCalculator: No input image");
     return;
   }
 
@@ -151,19 +178,19 @@ void vtkITKImageThresholdCalculator::Update()
   {
     this->GetOutputInformation(0)->Set(
       vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
-      this->GetOutputInformation(0)->Get(
-        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+      this->GetOutputInformation(0)->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()),
+      6);
   }
 
-  if ( pointData->GetScalars() == nullptr)
+  if (pointData->GetScalars() == nullptr)
   {
-    vtkErrorMacro(<<"vtkITKImageThresholdCalculator: Scalar input image is required");
+    vtkErrorMacro(<< "vtkITKImageThresholdCalculator: Scalar input image is required");
     return;
   }
   int inputNumberOfScalarComponents = pointData->GetScalars()->GetNumberOfComponents();
   if (inputNumberOfScalarComponents != 1)
   {
-    vtkErrorMacro(<<"vtkITKImageThresholdCalculator: Scalar input image with a single component is required");
+    vtkErrorMacro(<< "vtkITKImageThresholdCalculator: Scalar input image with a single component is required");
     return;
   }
 
@@ -178,7 +205,7 @@ void vtkITKImageThresholdCalculator::Update()
 }
 
 //----------------------------------------------------------------------------
-const char *vtkITKImageThresholdCalculator::GetMethodAsString(int method)
+const char* vtkITKImageThresholdCalculator::GetMethodAsString(int method)
 {
   switch (method)
   {

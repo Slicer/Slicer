@@ -33,14 +33,10 @@
 vtkStandardNewMacro(vtkSlicerSuperLoadableModuleTemplateLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerSuperLoadableModuleTemplateLogic::vtkSlicerSuperLoadableModuleTemplateLogic()
-{
-}
+vtkSlicerSuperLoadableModuleTemplateLogic::vtkSlicerSuperLoadableModuleTemplateLogic() {}
 
 //----------------------------------------------------------------------------
-vtkSlicerSuperLoadableModuleTemplateLogic::~vtkSlicerSuperLoadableModuleTemplateLogic()
-{
-}
+vtkSlicerSuperLoadableModuleTemplateLogic::~vtkSlicerSuperLoadableModuleTemplateLogic() {}
 
 //----------------------------------------------------------------------------
 void vtkSlicerSuperLoadableModuleTemplateLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -49,7 +45,7 @@ void vtkSlicerSuperLoadableModuleTemplateLogic::PrintSelf(ostream& os, vtkIndent
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSuperLoadableModuleTemplateLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerSuperLoadableModuleTemplateLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -71,13 +67,7 @@ void vtkSlicerSuperLoadableModuleTemplateLogic::UpdateFromMRMLScene()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSuperLoadableModuleTemplateLogic
-::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
-{
-}
+void vtkSlicerSuperLoadableModuleTemplateLogic ::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node)) {}
 
 //---------------------------------------------------------------------------
-void vtkSlicerSuperLoadableModuleTemplateLogic
-::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
-{
-}
+void vtkSlicerSuperLoadableModuleTemplateLogic ::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node)) {}

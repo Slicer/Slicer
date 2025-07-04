@@ -46,7 +46,7 @@ public:
   void init();
 
   vtkWeakPointer<vtkMRMLClipNode> MRMLClipNode;
-  bool                            IsUpdatingWidgetFromMRML;
+  bool IsUpdatingWidgetFromMRML;
 };
 
 //------------------------------------------------------------------------------
@@ -66,10 +66,8 @@ void qMRMLClipNodeWidgetPrivate::init()
   clipTypeGroup->addButton(this->UnionRadioButton);
   clipTypeGroup->addButton(this->IntersectionRadioButton);
 
-  QObject::connect(this->UnionRadioButton, SIGNAL(toggled(bool)),
-    q, SLOT(updateNodeClipType()));
-  QObject::connect(this->IntersectionRadioButton, SIGNAL(toggled(bool)),
-    q, SLOT(updateNodeClipType()));
+  QObject::connect(this->UnionRadioButton, SIGNAL(toggled(bool)), q, SLOT(updateNodeClipType()));
+  QObject::connect(this->IntersectionRadioButton, SIGNAL(toggled(bool)), q, SLOT(updateNodeClipType()));
 
   q->setEnabled(this->MRMLClipNode != nullptr);
 }
@@ -87,7 +85,7 @@ qMRMLClipNodeWidget::qMRMLClipNodeWidget(QWidget* _parent)
 qMRMLClipNodeWidget::~qMRMLClipNodeWidget() = default;
 
 //------------------------------------------------------------------------------
-vtkMRMLClipNode* qMRMLClipNodeWidget::mrmlClipNode()const
+vtkMRMLClipNode* qMRMLClipNodeWidget::mrmlClipNode() const
 {
   Q_D(const qMRMLClipNodeWidget);
   return d->MRMLClipNode;
@@ -103,8 +101,7 @@ void qMRMLClipNodeWidget::setMRMLClipNode(vtkMRMLNode* node)
 void qMRMLClipNodeWidget::setMRMLClipNode(vtkMRMLClipNode* clipNode)
 {
   Q_D(qMRMLClipNodeWidget);
-  qvtkReconnect(d->MRMLClipNode, clipNode, vtkCommand::ModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLClipNode, clipNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->MRMLClipNode = clipNode;
   this->updateWidgetFromMRML();
 }
@@ -124,9 +121,7 @@ void qMRMLClipNodeWidget::setClipType(int type)
 int qMRMLClipNodeWidget::clipType() const
 {
   Q_D(const qMRMLClipNodeWidget);
-  return d->UnionRadioButton->isChecked() ?
-    vtkMRMLClipNode::ClipUnion :
-    vtkMRMLClipNode::ClipIntersection;
+  return d->UnionRadioButton->isChecked() ? vtkMRMLClipNode::ClipUnion : vtkMRMLClipNode::ClipIntersection;
 }
 
 //------------------------------------------------------------------------------
@@ -148,13 +143,11 @@ void qMRMLClipNodeWidget::updateWidgetFromMRML()
   d->IsUpdatingWidgetFromMRML = true;
 
   bool wasBlocking = d->UnionRadioButton->blockSignals(true);
-  d->UnionRadioButton->setChecked(
-    d->MRMLClipNode->GetClipType() == vtkMRMLClipNode::ClipUnion);
+  d->UnionRadioButton->setChecked(d->MRMLClipNode->GetClipType() == vtkMRMLClipNode::ClipUnion);
   d->UnionRadioButton->blockSignals(wasBlocking);
 
   wasBlocking = d->IntersectionRadioButton->blockSignals(true);
-  d->IntersectionRadioButton->setChecked(
-    d->MRMLClipNode->GetClipType() == vtkMRMLClipNode::ClipIntersection);
+  d->IntersectionRadioButton->setChecked(d->MRMLClipNode->GetClipType() == vtkMRMLClipNode::ClipIntersection);
   d->IntersectionRadioButton->blockSignals(wasBlocking);
 
   bool needToUpdateReferences = this->needToUpdateClippingNodeFrame();
@@ -178,17 +171,17 @@ void qMRMLClipNodeWidget::updateWidgetFromMRML()
     {
       switch (clipState)
       {
-      case vtkMRMLClipNode::ClipPositiveSpace:
-        button->setChecked(button->objectName() == "PositiveRadioButton");
-        break;
-      case vtkMRMLClipNode::ClipNegativeSpace:
-        button->setChecked(button->objectName() == "NegativeRadioButton");
-        break;
-      case vtkMRMLClipNode::ClipOff:
-        button->setChecked(button->objectName() == "OffRadioButton");
-        break;
-      default:
-        break;
+        case vtkMRMLClipNode::ClipPositiveSpace:
+          button->setChecked(button->objectName() == "PositiveRadioButton");
+          break;
+        case vtkMRMLClipNode::ClipNegativeSpace:
+          button->setChecked(button->objectName() == "NegativeRadioButton");
+          break;
+        case vtkMRMLClipNode::ClipOff:
+          button->setChecked(button->objectName() == "OffRadioButton");
+          break;
+        default:
+          break;
       }
     }
 
@@ -238,8 +231,8 @@ void qMRMLClipNodeWidget::updateClippingNodeFrame()
     clipNodeSelector->setMRMLScene(this->mrmlScene());
     clipNodeSelector->setNodeTypes(clipNodeClasses);
     clipNodeSelector->setCurrentNode(clippingNode);
-    QObject::connect(clipNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-      this, SLOT(updateClippingNodeFromWidget()));
+    QObject::connect(
+      clipNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(updateClippingNodeFromWidget()));
     clipNodeSelector->setProperty("NewSelector", QVariant(clippingNode == nullptr));
 
     QHBoxLayout* clipNodeLayout = new QHBoxLayout();
@@ -261,8 +254,7 @@ void qMRMLClipNodeWidget::updateClippingNodeFrame()
     offClipButton->setText("Off");
     clipTypeGroup->addButton(offClipButton);
     clipNodeFrame->layout()->addWidget(offClipButton);
-    QObject::connect(offClipButton, SIGNAL(toggled(bool)),
-      this, SLOT(updateClippingNodeFromWidget()));
+    QObject::connect(offClipButton, SIGNAL(toggled(bool)), this, SLOT(updateClippingNodeFromWidget()));
     objectsList << offClipButton;
 
     QRadioButton* positiveClipButton = new QRadioButton();
@@ -271,8 +263,7 @@ void qMRMLClipNodeWidget::updateClippingNodeFrame()
     positiveClipButton->setIcon(QIcon(":/Icons/GreySpacePositive.png"));
     clipTypeGroup->addButton(positiveClipButton);
     clipNodeFrame->layout()->addWidget(positiveClipButton);
-    QObject::connect(positiveClipButton, SIGNAL(toggled(bool)),
-      this, SLOT(updateClippingNodeFromWidget()));
+    QObject::connect(positiveClipButton, SIGNAL(toggled(bool)), this, SLOT(updateClippingNodeFromWidget()));
     objectsList << positiveClipButton;
 
     QRadioButton* negativeClipButton = new QRadioButton();
@@ -281,8 +272,7 @@ void qMRMLClipNodeWidget::updateClippingNodeFrame()
     negativeClipButton->setIcon(QIcon(":/Icons/GreySpaceNegative.png"));
     clipTypeGroup->addButton(negativeClipButton);
     clipNodeFrame->layout()->addWidget(negativeClipButton);
-    QObject::connect(negativeClipButton, SIGNAL(toggled(bool)),
-      this, SLOT(updateClippingNodeFromWidget()));
+    QObject::connect(negativeClipButton, SIGNAL(toggled(bool)), this, SLOT(updateClippingNodeFromWidget()));
     objectsList << negativeClipButton;
 
 

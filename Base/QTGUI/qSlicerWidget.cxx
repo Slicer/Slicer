@@ -35,27 +35,26 @@
 class qSlicerWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerWidget);
+
 protected:
   qSlicerWidget* const q_ptr;
 
 public:
   qSlicerWidgetPrivate(qSlicerWidget& object);
 
-  QPointer<QWidget>                          ParentContainer;
+  QPointer<QWidget> ParentContainer;
 };
 
 //-----------------------------------------------------------------------------
 qSlicerWidgetPrivate::qSlicerWidgetPrivate(qSlicerWidget& object)
   : q_ptr(&object)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
-qSlicerWidget::qSlicerWidget(QWidget * _parent, Qt::WindowFlags f)
-  :QWidget(_parent, f)
+qSlicerWidget::qSlicerWidget(QWidget* _parent, Qt::WindowFlags f)
+  : QWidget(_parent, f)
   , d_ptr(new qSlicerWidgetPrivate(*this))
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerWidget::~qSlicerWidget() = default;
@@ -73,7 +72,7 @@ void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerApplicationLogic* qSlicerWidget::appLogic()const
+vtkSlicerApplicationLogic* qSlicerWidget::appLogic() const
 {
   Q_D(const qSlicerWidget);
   if (!qSlicerApplication::application())
@@ -84,7 +83,7 @@ vtkSlicerApplicationLogic* qSlicerWidget::appLogic()const
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerWidget::moduleLogic(const QString& moduleName)const
+vtkMRMLAbstractLogic* qSlicerWidget::moduleLogic(const QString& moduleName) const
 {
   Q_D(const qSlicerWidget);
   vtkSlicerApplicationLogic* applicationLogic = this->appLogic();

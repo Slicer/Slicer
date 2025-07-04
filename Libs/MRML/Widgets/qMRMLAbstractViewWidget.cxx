@@ -36,8 +36,7 @@
 // --------------------------------------------------------------------------
 qMRMLAbstractViewWidget::qMRMLAbstractViewWidget(QWidget* parentWidget)
   : Superclass(parentWidget)
-{
-}
+{}
 
 // --------------------------------------------------------------------------
 QColor qMRMLAbstractViewWidget::viewColor() const

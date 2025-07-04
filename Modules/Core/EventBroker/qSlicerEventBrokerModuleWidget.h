@@ -31,19 +31,17 @@
 
 class qSlicerEventBrokerModuleWidgetPrivate;
 
-class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerEventBrokerModuleWidget(QWidget *parent=nullptr);
+  qSlicerEventBrokerModuleWidget(QWidget* parent = nullptr);
   ~qSlicerEventBrokerModuleWidget() override;
 
 protected slots:
-  void onCurrentObjectChanged(vtkObject* );
+  void onCurrentObjectChanged(vtkObject*);
 
 protected:
   QScopedPointer<qSlicerEventBrokerModuleWidgetPrivate> d_ptr;

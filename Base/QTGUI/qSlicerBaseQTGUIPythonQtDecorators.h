@@ -23,7 +23,7 @@
 
 // CTK includes
 #ifdef Slicer_USE_QtTesting
-# include <ctkQtTestingUtility.h>
+#  include <ctkQtTestingUtility.h>
 #endif
 
 // Slicer includes
@@ -48,7 +48,6 @@ class qSlicerBaseQTGUIPythonQtDecorators : public QObject
   Q_OBJECT
 
 public:
-
   qSlicerBaseQTGUIPythonQtDecorators()
   {
     PythonQt::self()->registerClass(&qSlicerAbstractModuleWidget::staticMetaObject);
@@ -69,9 +68,9 @@ public slots:
 
   //----------------------------------------------------------------------------
   qSlicerAbstractModuleWidget* widgetRepresentation(qSlicerAbstractModule* _module)
-{
+  {
     return dynamic_cast<qSlicerAbstractModuleWidget*>(_module->widgetRepresentation());
-}
+  }
 
   //----------------------------------------------------------------------------
   qSlicerAbstractModuleWidget* createNewWidgetRepresentation(qSlicerAbstractModule* _module)
@@ -83,7 +82,7 @@ public slots:
   // qSlicerAbstractModule
 
   //----------------------------------------------------------------------------
-  qSlicerAbstractModule* module(qSlicerAbstractModuleWidget * _moduleWidget)
+  qSlicerAbstractModule* module(qSlicerAbstractModuleWidget* _moduleWidget)
   {
     return dynamic_cast<qSlicerAbstractModule*>(_moduleWidget->module());
   }

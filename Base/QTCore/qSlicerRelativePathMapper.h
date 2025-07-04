@@ -54,7 +54,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerRelativePathMapper : public QObject
   Q_PROPERTY(QStringList paths READ paths WRITE setPaths NOTIFY pathsChanged)
 
   Q_PROPERTY(QString relativePath READ relativePath WRITE setRelativePath NOTIFY relativePathChanged STORED false)
-  Q_PROPERTY(QStringList relativePaths READ relativePaths WRITE setRelativePaths NOTIFY relativePathsChanged STORED false)
+  Q_PROPERTY(
+    QStringList relativePaths READ relativePaths WRITE setRelativePaths NOTIFY relativePathsChanged STORED false)
 public:
   /// Map the property \a property of the object.
   /// The mapper becomes a child of \a object and will be destructed when
@@ -64,16 +65,16 @@ public:
   qSlicerRelativePathMapper(QObject* targetObject, const QByteArray& propertyName, const QByteArray& signal);
   virtual ~qSlicerRelativePathMapper();
 
-  QByteArray propertyName()const;
+  QByteArray propertyName() const;
 
   /// The mapped object (the mapper parent)
-  QObject* targetObject()const;
+  QObject* targetObject() const;
 
-  QString path()const;
-  QStringList paths()const;
+  QString path() const;
+  QStringList paths() const;
 
-  QString relativePath()const;
-  QStringList relativePaths()const;
+  QString relativePath() const;
+  QStringList relativePaths() const;
 public Q_SLOTS:
   void setPath(const QString& path);
   void setPaths(const QStringList& path);

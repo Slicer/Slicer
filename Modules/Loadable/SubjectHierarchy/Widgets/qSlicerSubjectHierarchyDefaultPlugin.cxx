@@ -38,15 +38,18 @@
 #include <vtkSmartPointer.h>
 
 //----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyDefaultPluginPrivate: public QObject
+class qSlicerSubjectHierarchyDefaultPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDefaultPlugin);
+
 protected:
   qSlicerSubjectHierarchyDefaultPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyDefaultPluginPrivate(qSlicerSubjectHierarchyDefaultPlugin& object);
   ~qSlicerSubjectHierarchyDefaultPluginPrivate() override;
   void init();
+
 public:
   QIcon UnknownIcon;
 
@@ -62,10 +65,11 @@ public:
 // qSlicerSubjectHierarchyDefaultPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyDefaultPluginPrivate::qSlicerSubjectHierarchyDefaultPluginPrivate(qSlicerSubjectHierarchyDefaultPlugin& object)
-: q_ptr(&object)
-, ShowAllChildrenAction(nullptr)
-, HideAllChildrenAction(nullptr)
+qSlicerSubjectHierarchyDefaultPluginPrivate::qSlicerSubjectHierarchyDefaultPluginPrivate(
+  qSlicerSubjectHierarchyDefaultPlugin& object)
+  : q_ptr(&object)
+  , ShowAllChildrenAction(nullptr)
+  , HideAllChildrenAction(nullptr)
 {
   this->UnknownIcon = QIcon(":Icons/Unknown.png");
 }
@@ -90,8 +94,8 @@ void qSlicerSubjectHierarchyDefaultPluginPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDefaultPlugin::qSlicerSubjectHierarchyDefaultPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyDefaultPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyDefaultPluginPrivate(*this))
 {
   this->m_Name = QString("Default");
 
@@ -103,7 +107,9 @@ qSlicerSubjectHierarchyDefaultPlugin::qSlicerSubjectHierarchyDefaultPlugin(QObje
 qSlicerSubjectHierarchyDefaultPlugin::~qSlicerSubjectHierarchyDefaultPlugin() = default;
 
 //----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyDefaultPlugin::setDefaultVisibilityIcons(QIcon visibleIcon, QIcon hiddenIcon, QIcon partiallyVisibleIcon)
+void qSlicerSubjectHierarchyDefaultPlugin::setDefaultVisibilityIcons(QIcon visibleIcon,
+                                                                     QIcon hiddenIcon,
+                                                                     QIcon partiallyVisibleIcon)
 {
   Q_D(qSlicerSubjectHierarchyDefaultPlugin);
 
@@ -113,7 +119,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::setDefaultVisibilityIcons(QIcon visib
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyDefaultPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyDefaultPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   Q_UNUSED(itemID);
 
@@ -122,36 +128,40 @@ double qSlicerSubjectHierarchyDefaultPlugin::canOwnSubjectHierarchyItem(vtkIdTyp
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyDefaultPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyDefaultPlugin::roleForPlugin() const
 {
   return "Unknown";
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
+const QString qSlicerSubjectHierarchyDefaultPlugin::helpText() const
 {
-  return tr(
-    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
-    "Rename item"
-    "</span>"
-    "</p>"
-    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
-    "Double-click the item name, or right-click the item and select 'Rename'"
-    "</span>"
-    "</p>"
-    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
-    "Deform any branch using a transform (registration result)"
-    "</span>"
-    "</p>"
-    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
-    "Make sure the transform column is shown using the 'Show transforms' checkbox. "
-    "To transform a branch, right-click on the cell in the transform column of the row in question, and choose a transform."
-    "</span>"
-    "</p>");
+  return tr("<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; "
+            "text-indent:0px;\">"
+            "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+            "Rename item"
+            "</span>"
+            "</p>"
+            "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; "
+            "text-indent:0px;\">"
+            "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+            "Double-click the item name, or right-click the item and select 'Rename'"
+            "</span>"
+            "</p>"
+            "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; "
+            "text-indent:0px;\">"
+            "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+            "Deform any branch using a transform (registration result)"
+            "</span>"
+            "</p>"
+            "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; "
+            "text-indent:0px;\">"
+            "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+            "Make sure the transform column is shown using the 'Show transforms' checkbox. "
+            "To transform a branch, right-click on the cell in the transform column of the row in question, and choose "
+            "a transform."
+            "</span>"
+            "</p>");
 }
 
 //---------------------------------------------------------------------------
@@ -180,19 +190,19 @@ QIcon qSlicerSubjectHierarchyDefaultPlugin::visibilityIcon(int visible)
   // Default icon is the eye icon that shows the visibility of the whole branch
   switch (visible)
   {
-  case 0:
-    return d->HiddenIcon;
-  case 1:
-    return d->VisibleIcon;
-  case 2:
-    return d->PartiallyVisibleIcon;
-  default:
-    return QIcon();
+    case 0:
+      return d->HiddenIcon;
+    case 1:
+      return d->VisibleIcon;
+    case 2:
+      return d->PartiallyVisibleIcon;
+    default:
+      return QIcon();
   }
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyDefaultPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyDefaultPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyDefaultPlugin);
 
@@ -242,7 +252,8 @@ void qSlicerSubjectHierarchyDefaultPlugin::toggleVisibility()
     qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(currentItemID);
   if (!ownerPlugin)
   {
-    qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << currentItemID << " (named " << shNode->GetItemName(currentItemID).c_str() << ") is not owned by any plugin";
+    qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << currentItemID << " (named "
+                << shNode->GetItemName(currentItemID).c_str() << ") is not owned by any plugin";
     return;
   }
 
@@ -270,7 +281,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::showAllChildren()
   std::vector<vtkIdType> childItemIDs;
   shNode->GetItemChildren(currentItemID, childItemIDs, true);
   std::vector<vtkIdType>::iterator childIt;
-  for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
+  for (childIt = childItemIDs.begin(); childIt != childItemIDs.end(); ++childIt)
   {
     vtkIdType childItemID = (*childIt);
     qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
@@ -278,7 +289,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::showAllChildren()
     if (!ownerPlugin)
     {
       qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << childItemID << " (named "
-        << shNode->GetItemName(childItemID).c_str() << ") is not owned by any plugin";
+                  << shNode->GetItemName(childItemID).c_str() << ") is not owned by any plugin";
       return;
     }
 
@@ -305,7 +316,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::hideAllChildren()
   std::vector<vtkIdType> childItemIDs;
   shNode->GetItemChildren(currentItemID, childItemIDs, true);
   std::vector<vtkIdType>::iterator childIt;
-  for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
+  for (childIt = childItemIDs.begin(); childIt != childItemIDs.end(); ++childIt)
   {
     vtkIdType childItemID = (*childIt);
     qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
@@ -313,7 +324,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::hideAllChildren()
     if (!ownerPlugin)
     {
       qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << childItemID << " (named "
-        << shNode->GetItemName(childItemID).c_str() << ") is not owned by any plugin";
+                  << shNode->GetItemName(childItemID).c_str() << ") is not owned by any plugin";
       return;
     }
 

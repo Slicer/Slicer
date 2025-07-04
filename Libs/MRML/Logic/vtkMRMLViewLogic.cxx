@@ -138,15 +138,12 @@ vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* 
     return nullptr;
   }
 
-  vtkSmartPointer<vtkCollection> viewNodes = vtkSmartPointer<vtkCollection>::Take
-      (scene->GetNodesByClass("vtkMRMLViewNode"));
-  for(int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); ++viewNodeIndex)
+  vtkSmartPointer<vtkCollection> viewNodes =
+    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLViewNode"));
+  for (int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); ++viewNodeIndex)
   {
-    vtkMRMLViewNode* viewNode =
-        vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));
-    if (viewNode &&
-        viewNode->GetLayoutName() &&
-        !strcmp(viewNode->GetLayoutName(), layoutName))
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));
+    if (viewNode && viewNode->GetLayoutName() && !strcmp(viewNode->GetLayoutName(), layoutName))
     {
       return viewNode;
     }
@@ -157,12 +154,12 @@ vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* 
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode* vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene* scene, const char* layoutName)
 {
-  if (!scene || !layoutName || strlen(layoutName)==0)
+  if (!scene || !layoutName || strlen(layoutName) == 0)
   {
     return nullptr;
   }
-  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
-    scene->GetSingletonNode(layoutName, "vtkMRMLCameraNode"));
+  vtkMRMLCameraNode* cameraNode =
+    vtkMRMLCameraNode::SafeDownCast(scene->GetSingletonNode(layoutName, "vtkMRMLCameraNode"));
   return cameraNode;
 }
 

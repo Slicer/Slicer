@@ -25,8 +25,8 @@ class VTK_MRML_EXPORT vtkMRMLLogic : public vtkObject
 {
 public:
   /// The Usual vtk class functions
-  static vtkMRMLLogic *New();
-  vtkTypeMacro(vtkMRMLLogic,vtkObject);
+  static vtkMRMLLogic* New();
+  vtkTypeMacro(vtkMRMLLogic, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override { this->Superclass::PrintSelf(os, indent); }
 
   /// Get application home directory.

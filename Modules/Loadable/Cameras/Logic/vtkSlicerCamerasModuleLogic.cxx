@@ -34,9 +34,7 @@
 vtkStandardNewMacro(vtkSlicerCamerasModuleLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerCamerasModuleLogic::vtkSlicerCamerasModuleLogic()
-{
-}
+vtkSlicerCamerasModuleLogic::vtkSlicerCamerasModuleLogic() {}
 
 //----------------------------------------------------------------------------
 vtkSlicerCamerasModuleLogic::~vtkSlicerCamerasModuleLogic() = default;
@@ -48,8 +46,7 @@ void vtkSlicerCamerasModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLCameraNode* vtkSlicerCamerasModuleLogic
-::GetViewActiveCameraNode(vtkMRMLViewNode* viewNode)
+vtkMRMLCameraNode* vtkSlicerCamerasModuleLogic ::GetViewActiveCameraNode(vtkMRMLViewNode* viewNode)
 {
   if (!this->GetMRMLScene())
   {

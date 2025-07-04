@@ -37,8 +37,7 @@ class qMRMLSequenceBrowserPlayWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLSequenceBrowserNode;
 
-class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserPlayWidget
-: public qMRMLWidget
+class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserPlayWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -55,17 +54,17 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceBrowserPlayWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLSequenceBrowserPlayWidget(QWidget *newParent = 0);
+  qMRMLSequenceBrowserPlayWidget(QWidget* newParent = 0);
   ~qMRMLSequenceBrowserPlayWidget() override;
 
   /// Get keyboard shortcut string for play/pause button
-  QString playPauseShortcut()const;
+  QString playPauseShortcut() const;
 
   /// Get keyboard shortcut string for previous frame button
-  QString previousFrameShortcut()const;
+  QString previousFrameShortcut() const;
 
   /// Get keyboard shortcut string for next frame button
-  QString nextFrameShortcut()const;
+  QString nextFrameShortcut() const;
 
   /// Returns true if recording controls (record and snapshot buttons) are allowed to be shown.
   ///
@@ -107,7 +106,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLSequenceBrowserPlayWidget);
   Q_DISABLE_COPY(qMRMLSequenceBrowserPlayWidget);
-
 };
 
 #endif

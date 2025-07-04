@@ -73,15 +73,15 @@ vtkMRMLSliceEdgeWidgetRepresentation::~vtkMRMLSliceEdgeWidgetRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLSliceEdgeWidgetRepresentation::PrintSelf(ostream& os,
-                                                      vtkIndent indent)
+void vtkMRMLSliceEdgeWidgetRepresentation::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceEdgeWidgetRepresentation::UpdateFromMRML(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void *vtkNotUsed(callData))
+void vtkMRMLSliceEdgeWidgetRepresentation::UpdateFromMRML(vtkMRMLNode* vtkNotUsed(caller),
+                                                          unsigned long vtkNotUsed(event),
+                                                          void* vtkNotUsed(callData))
 {
   if (!this->Pipeline)
   {
@@ -187,8 +187,7 @@ int vtkMRMLSliceEdgeWidgetRepresentation::RenderTranslucentPolygonalGeometry(vtk
 vtkTypeBool vtkMRMLSliceEdgeWidgetRepresentation::HasTranslucentPolygonalGeometry()
 {
   vtkProp* actor = this->GetSliceEdgeActor();
-  if (actor && actor->GetVisibility() &&
-    actor->HasTranslucentPolygonalGeometry())
+  if (actor && actor->GetVisibility() && actor->HasTranslucentPolygonalGeometry())
   {
     return true;
   }
@@ -270,7 +269,7 @@ void vtkMRMLSliceEdgeWidgetRepresentation::GetSliceEdgeColor(double color[4])
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceEdgeWidgetRepresentation::setSliceNode(vtkMRMLSliceNode *sliceNode)
+void vtkMRMLSliceEdgeWidgetRepresentation::setSliceNode(vtkMRMLSliceNode* sliceNode)
 {
   if (!sliceNode || this->SliceNode == sliceNode)
   {
@@ -288,7 +287,7 @@ vtkMRMLSliceNode* vtkMRMLSliceEdgeWidgetRepresentation::GetSliceNode()
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceEdgeWidgetRepresentation::setSliceModelNode(vtkMRMLModelNode *sliceModelNode)
+void vtkMRMLSliceEdgeWidgetRepresentation::setSliceModelNode(vtkMRMLModelNode* sliceModelNode)
 {
   if (!this->Pipeline || this->SliceModelNode == sliceModelNode)
   {
@@ -321,9 +320,8 @@ void vtkMRMLSliceEdgeWidgetRepresentation::UpdateSliceEdgeFromSliceNode()
   prop->GetColor(rgb);
   double* layoutColor = this->GetSliceNode()->GetLayoutColor();
   const double tolerance = 1.e-6;
-  if (fabs(layoutColor[0] - rgb[0]) < tolerance &&
-    fabs(layoutColor[1] - rgb[1]) < tolerance &&
-    fabs(layoutColor[2] - rgb[2]) < tolerance)
+  if (fabs(layoutColor[0] - rgb[0]) < tolerance && fabs(layoutColor[1] - rgb[1]) < tolerance &&
+      fabs(layoutColor[2] - rgb[2]) < tolerance)
   {
     // no change
     return;
@@ -360,6 +358,6 @@ void vtkMRMLSliceEdgeWidgetRepresentation::UpdateViewScaleFactor()
 
   double cameraFP[3] = { 0.0 };
   this->Renderer->GetActiveCamera()->GetFocalPoint(cameraFP);
-  this->ViewScaleFactorMmPerPixel = vtkMRMLAbstractThreeDViewDisplayableManager::
-    GetViewScaleFactorAtPosition(this->Renderer, cameraFP);
+  this->ViewScaleFactorMmPerPixel =
+    vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition(this->Renderer, cameraFP);
 }

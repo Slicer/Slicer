@@ -36,51 +36,48 @@
 #include "vtkMRMLNode.h"
 
 // ----------------------------------------------------------------------------
-qMRMLNodeComboBoxEventTranslator::qMRMLNodeComboBoxEventTranslator(QObject *parent)
+qMRMLNodeComboBoxEventTranslator::qMRMLNodeComboBoxEventTranslator(QObject* parent)
   : pqWidgetEventTranslator(parent)
 {
   this->CurrentObject = nullptr;
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject *Object,
-                                                      QEvent *Event,
-                                                      bool &Error)
+bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   Q_UNUSED(Error);
 
   qMRMLNodeComboBox* widget = nullptr;
-  for(QObject* test = Object; widget == nullptr && test != nullptr; test = test->parent())
+  for (QObject* test = Object; widget == nullptr && test != nullptr; test = test->parent())
   {
     widget = qobject_cast<qMRMLNodeComboBox*>(test);
   }
-  if(!widget)
+  if (!widget)
   {
     return false;
   }
 
-  if(Event->type() == QEvent::Enter && Object == widget)
+  if (Event->type() == QEvent::Enter && Object == widget)
   {
-    if(this->CurrentObject != Object)
+    if (this->CurrentObject != Object)
     {
-      if(this->CurrentObject)
+      if (this->CurrentObject)
       {
         disconnect(this->CurrentObject, nullptr, this, nullptr);
       }
       this->CurrentObject = Object;
-      connect(widget, SIGNAL(destroyed(QObject*)),
-              this, SLOT(onDestroyed(QObject*)));
-      connect(widget, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
-              this, SLOT(onRowsInserted()));
-      connect(widget, SIGNAL(nodeAboutToBeRemoved(vtkMRMLNode*)),
-              this, SLOT(onNodeAboutToBeRemoved(vtkMRMLNode*)));
-      connect(widget, SIGNAL(currentNodeRenamed(QString)),
-              this, SLOT(onCurrentNodeRenamed(QString)));
+      connect(widget, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
+      connect(widget, SIGNAL(nodeAddedByUser(vtkMRMLNode*)), this, SLOT(onRowsInserted()));
+      connect(widget, SIGNAL(nodeAboutToBeRemoved(vtkMRMLNode*)), this, SLOT(onNodeAboutToBeRemoved(vtkMRMLNode*)));
+      connect(widget, SIGNAL(currentNodeRenamed(QString)), this, SLOT(onCurrentNodeRenamed(QString)));
     }
-    if(this->CurrentObject)
+    if (this->CurrentObject)
     {
-      connect(this->CurrentObject, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-              this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)), Qt::UniqueConnection);
+      connect(this->CurrentObject,
+              SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+              this,
+              SLOT(onCurrentNodeChanged(vtkMRMLNode*)),
+              Qt::UniqueConnection);
     }
   }
 
@@ -96,15 +93,15 @@ void qMRMLNodeComboBoxEventTranslator::onDestroyed(QObject* /*Object*/)
 // ----------------------------------------------------------------------------
 void qMRMLNodeComboBoxEventTranslator::onRowsInserted()
 {
-  disconnect(this->CurrentObject, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-             this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)));
+  disconnect(
+    this->CurrentObject, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)));
   emit recordEvent(this->CurrentObject, "nodeAddedByUser", "");
 }
 
 // ----------------------------------------------------------------------------
 void qMRMLNodeComboBoxEventTranslator::onCurrentNodeChanged(vtkMRMLNode* node)
 {
-  if(node)
+  if (node)
   {
     emit recordEvent(this->CurrentObject, "currentNodeChanged", QString(node->GetID()));
   }
@@ -117,10 +114,10 @@ void qMRMLNodeComboBoxEventTranslator::onCurrentNodeChanged(vtkMRMLNode* node)
 // ----------------------------------------------------------------------------
 void qMRMLNodeComboBoxEventTranslator::onNodeAboutToBeRemoved(vtkMRMLNode* node)
 {
-  if(node)
+  if (node)
   {
-    disconnect(this->CurrentObject, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-               this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)));
+    disconnect(
+      this->CurrentObject, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)));
     emit recordEvent(this->CurrentObject, "nodeAboutToBeRemoved", QString(node->GetName()));
   }
   else

@@ -1,0 +1,473 @@
+## This config file is only relevant for clang-format version 19.1.7
+##
+## Examples of each format style can be found on the in the clang-format documentation
+## See: https://clang.llvm.org/docs/ClangFormatStyleOptions.html for details of each option
+##
+## The clang-format binaries can be downloaded as part of the clang binary distributions
+## from https://releases.llvm.org/download.html
+##
+## Use the script Utilities/Maintenance/clang-format.bash to faciliate
+## maintaining a consistent code style.
+##
+## EXAMPLE apply code style enforcement before commit:
+#     Utilities/Maintenance/clang-format.bash --clang ${PATH_TO_CLANG_FORMAT_19.1.7} --modified
+## EXAMPLE apply code style enforcement after commit:
+#     Utilities/Maintenance/clang-format.bash --clang ${PATH_TO_CLANG_FORMAT_19.1.7} --last
+---
+# This configuration requires clang-format version 19.1.7 exactly.
+Language:        Cpp
+AccessModifierOffset: -2
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: None
+AlignConsecutiveAssignments:
+  Enabled:         false
+  AcrossEmptyLines: false
+  AcrossComments:  false
+  AlignCompound:   false
+  AlignFunctionPointers: false
+  PadOperators:    true
+AlignConsecutiveBitFields:
+  Enabled:         false
+  AcrossEmptyLines: false
+  AcrossComments:  false
+  AlignCompound:   false
+  AlignFunctionPointers: false
+  PadOperators:    false
+AlignConsecutiveDeclarations:
+  Enabled:         false
+  AcrossEmptyLines: false
+  AcrossComments:  false
+  AlignCompound:   false
+  AlignFunctionPointers: false
+  PadOperators:    false
+AlignConsecutiveMacros:
+  Enabled:         false
+  AcrossEmptyLines: false
+  AcrossComments:  false
+  AlignCompound:   false
+  AlignFunctionPointers: false
+  PadOperators:    false
+AlignConsecutiveShortCaseStatements:
+  Enabled:         false
+  AcrossEmptyLines: false
+  AcrossComments:  false
+  AlignCaseArrows: false
+  AlignCaseColons: false
+AlignConsecutiveTableGenBreakingDAGArgColons:
+  Enabled:         false
+  AcrossEmptyLines: false
+  AcrossComments:  false
+  AlignCompound:   false
+  AlignFunctionPointers: false
+  PadOperators:    false
+AlignConsecutiveTableGenCondOperatorColons:
+  Enabled:         false
+  AcrossEmptyLines: false
+  AcrossComments:  false
+  AlignCompound:   false
+  AlignFunctionPointers: false
+  PadOperators:    false
+AlignConsecutiveTableGenDefinitionColons:
+  Enabled:         false
+  AcrossEmptyLines: false
+  AcrossComments:  false
+  AlignCompound:   false
+  AlignFunctionPointers: false
+  PadOperators:    false
+AlignEscapedNewlines: Left
+AlignOperands:   Align
+AlignTrailingComments:
+  Kind:            Always
+  OverEmptyLines:  0
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowBreakBeforeNoexceptSpecifier: Never
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseExpressionOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortCompoundRequirementOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+AttributeMacros:
+  - __capability
+BinPackArguments: false
+BinPackParameters: false
+BitFieldColonSpacing: Both
+BraceWrapping:
+  AfterCaseLabel:  true
+  AfterClass:      true
+  AfterControlStatement: Always
+  AfterEnum:       true
+  AfterExternBlock: true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  BeforeCatch:     true
+  BeforeElse:      true
+  BeforeLambdaBody: false
+  BeforeWhile:     false
+  IndentBraces:    false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+BreakAdjacentStringLiterals: true
+BreakAfterAttributes: Leave
+BreakAfterJavaFieldAnnotations: false
+BreakAfterReturnType: Automatic
+BreakArrays:     true
+BreakBeforeBinaryOperators: None
+BreakBeforeConceptDeclarations: Always
+BreakBeforeBraces: Custom
+BreakBeforeInlineASMColon: OnlyMultiline
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+BreakFunctionDefinitionParameters: false
+BreakInheritanceList: BeforeComma
+BreakStringLiterals: true
+BreakTemplateDeclarations: Yes
+## The following line allows larger lines in non-documentation code
+ColumnLimit:     120
+CommentPragmas:  '^ IWYU pragma:'
+CompactNamespaces: false
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+Cpp11BracedListStyle: false
+DerivePointerAlignment: false
+DisableFormat:   false
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: LogicalBlock
+ExperimentalAutoDetectBinPacking: false
+FixNamespaceComments: true
+ForEachMacros:
+#From ITK/.clang-format
+  - foreach
+  - Q_FOREACH
+  - BOOST_FOREACH
+#For Slicer
+  - forever
+  - Q_FOREVER
+  - QBENCHMARK
+  - QBENCHMARK_ONCE
+IfMacros:
+  - KJ_IF_MAYBE
+IncludeBlocks:   Preserve
+IncludeCategories:
+  - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority:        2
+    SortPriority:    0
+    CaseSensitive:   false
+  - Regex:           '^(<|"(gtest|gmock|isl|json)/)'
+    Priority:        3
+    SortPriority:    0
+    CaseSensitive:   false
+  - Regex:           '.*'
+    Priority:        1
+    SortPriority:    0
+    CaseSensitive:   false
+IncludeIsMainRegex: '(Test)?$'
+IncludeIsMainSourceRegex: ''
+IndentAccessModifiers: false
+IndentCaseBlocks: false
+IndentCaseLabels: true
+IndentExternBlock: AfterExternBlock
+IndentGotoLabels: true
+IndentPPDirectives: AfterHash
+IndentRequiresClause: true
+IndentWidth:     2
+IndentWrappedFunctionNames: false
+InsertBraces:    false
+InsertNewlineAtEOF: false
+InsertTrailingCommas: None
+IntegerLiteralSeparator:
+  Binary:          0
+  BinaryMinDigits: 0
+  Decimal:         0
+  DecimalMinDigits: 0
+  Hex:             0
+  HexMinDigits:    0
+JavaScriptQuotes: Leave
+JavaScriptWrapImports: true
+KeepEmptyLines:
+  AtEndOfFile:     false
+  AtStartOfBlock:  true
+  AtStartOfFile:   true
+LambdaBodyIndentation: Signature
+LineEnding:      DeriveLF
+MacroBlockBegin: ''
+MacroBlockEnd:   ''
+MainIncludeChar: Quote
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: None
+ObjCBinPackProtocolList: Auto
+ObjCBlockIndentWidth: 2
+ObjCBreakBeforeNestedBlockParam: true
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: false
+PackConstructorInitializers: BinPack
+PenaltyBreakAssignment: 2
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 300
+## The following line allows larger lines in non-documentation code
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakOpenParenthesis: 0
+PenaltyBreakScopeResolution: 500
+PenaltyBreakString: 1000
+PenaltyBreakTemplateDeclaration: 10
+PenaltyExcessCharacter: 1000000
+PenaltyIndentedWhitespace: 0
+PenaltyReturnTypeOnItsOwnLine: 200
+PointerAlignment: Left
+PPIndentWidth:   -1
+QualifierAlignment: Custom
+QualifierOrder:
+  - friend
+  - static
+  - inline
+  - constexpr
+  - const
+  - type
+ReferenceAlignment: Pointer
+ReflowComments:  true
+RemoveBracesLLVM: false
+RemoveParentheses: Leave
+RemoveSemicolon: false
+RequiresClausePosition: OwnLine
+RequiresExpressionIndentation: OuterScope
+SeparateDefinitionBlocks: Leave
+ShortNamespaceLines: 1
+SkipMacroDefinitionBody: false
+# We may want to sort the includes as a separate pass
+SortIncludes:    Never
+SortJavaStaticImport: Before
+# We may want to revisit this later
+SortUsingDeclarations: LexicographicNumeric
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: true
+SpaceAroundPointerQualifiers: Default
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeJsonColon: false
+SpaceBeforeParens: ControlStatements
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterForeachMacros: true
+  AfterFunctionDefinitionName: false
+  AfterFunctionDeclarationName: false
+  AfterIfMacros:   true
+  AfterOverloadedOperator: false
+  AfterPlacementOperator: true
+  AfterRequiresInClause: false
+  AfterRequiresInExpression: false
+  BeforeNonEmptyParentheses: false
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:  Never
+SpacesInContainerLiterals: false
+SpacesInLineCommentPrefix:
+  Minimum:         1
+  Maximum:         -1
+SpacesInParens:  Never
+SpacesInParensOptions:
+  ExceptDoubleParentheses: false
+  InCStyleCasts:   false
+  InConditionalStatements: false
+  InEmptyParentheses: false
+  Other:           false
+SpacesInSquareBrackets: false
+Standard:        c++17
+StatementAttributeLikeMacros:
+  - Q_EMIT
+StatementMacros:
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
+#Below are from the ITK/.clang-format
+  - ITK_GCC_PRAGMA_PUSH
+  - ITK_GCC_PRAGMA_POP
+  - ITK_GCC_SUPPRESS_Wfloat_equal
+  - ITK_GCC_SUPPRESS_Wformat_nonliteral
+  - ITK_GCC_SUPPRESS_Warray_bounds
+  - ITK_CLANG_PRAGMA_PUSH
+  - ITK_CLANG_PRAGMA_POP
+  - ITK_CLANG_SUPPRESS_Wzero_as_null_pointer_constant
+  - ITK_CLANG_SUPPRESS_Wduplicate_enum
+  - CLANG_PRAGMA_PUSH
+  - CLANG_PRAGMA_POP
+  - CLANG_SUPPRESS_Wfloat_equal
+  - INTEL_PRAGMA_WARN_PUSH
+  - INTEL_PRAGMA_WARN_POP
+  - INTEL_SUPPRESS_warning_1292
+  - itkTemplateFloatingToIntegerMacro
+  - itkLegacyMacro
+#Below are from from VTK/.clang-format
+  - DefineScopedHandle
+  - DefineToNumeric
+  - EXECUTE_METHOD
+  - ParticleTracerSetMacro
+  - PyObject_HEAD
+  - PyObject_VAR_HEAD
+  - SCALAR_FUNC
+  - STANDARD_OPERATION_DEFINITION
+  - STANDARD_OPERATION_FLOAT_OVERRIDE
+  - SetStdContainerMacro
+  - VTKOSTREAM_OPERATOR
+  - VTKOSTREAM_OPERATOR_FUNC
+  - VTK_CREATE_CREATE_FUNCTION
+  - VTK_GETCCWHULL
+  - VTK_GETSIZECCWHULL
+  - VTK_INFORMATION_DEFINE_POINTER_PROPERTY
+  - VTK_INFORMATION_DEFINE_SCALAR_PROPERTY
+  - VTK_INFORMATION_DEFINE_VECTOR_PROPERTY
+  - VTK_INFORMATION_DEFINE_VECTOR_VALUE2_PROPERTY
+  - VTK_INFORMATION_DEFINE_VECTOR_VALUE_PROPERTY
+  - VTK_RECTANGLEINTERSECTION
+  - VTK_RESIZE_CONVERT_FLOAT
+  - VTK_RESIZE_CONVERT_INT_CLAMP
+  - vtkAOSArrayNewInstanceMacro
+  - vtkAbstractObjectFactoryNewMacro
+  - vtkAbstractTemplateTypeMacro
+  - vtkAbstractTypeMacro
+  - vtkAbstractTypeMacroWithNewInstanceType
+  - vtkBaseTypeMacro
+  - vtkCxxSetSmartPointerMacro
+  - vtkEndForBothDiagonalMultiplyMatrixSpecializationMacro
+  - vtkGetCharFromStdStringMacro
+  - vtkGetEnumMacro
+  - vtkGetMacro
+  - vtkGetNewMacro
+  - vtkGetObjectMacro
+  - vtkGetStringMacro
+  - vtkGetStringTokenMacro
+  - vtkGetVector3Macro
+  - vtkGetVector6Macro
+  - vtkGetVectorMacro
+  - vtkImplicitArrayTypeMacro
+  - vtkInformationKeySetStringMacro
+  - vtkInheritanceHierarchyBaseMacro
+  - vtkInheritanceHierarchyOverrideMacro
+  - vtkLastRowMultiplyMatrixSpecializationMacro
+  - vtkMINCImageReaderConvertMacro
+  - vtkMINCImageReaderConvertMacroFloat
+  - vtkMINCImageReaderReadChunkMacro
+  - vtkMINCImageReaderReadChunkMacro2
+  - vtkMINCImageWriterConvertMacro
+  - vtkMINCImageWriterConvertMacroFloat
+  - vtkMINCImageWriterWriteChunkMacro
+  - vtkMINCImageWriterWriteChunkMacro2
+  - vtkObjectFactoryNewMacro
+  - vtkQuaternionOperatorMacro
+  - vtkSetMacro
+  - vtkSetMonitoredParameterMacro
+  - vtkSetObjectMacro
+  - vtkSetSmartPointerMacro
+  - vtkSetStdStringFromCharMacro
+  - vtkSetStringMacro
+  - vtkSetStringTokenMacro
+  - vtkSetVector2Macro
+  - vtkSetVector3Macro
+  - vtkSetVector4Macro
+  - vtkSetVector6Macro
+  - vtkSetVectorMacro
+  - vtkTypeMacro
+  - vtkVector3Cross
+  - vtkVectorDerivedMacro
+  - vtkVectorOperatorMacro
+  - vtkViewportCoordinateMacro
+  - vtkWorldCoordinateMacro
+  - VTKKWRCHelper_GetCellScalarValues
+  - VTKKWRCHelper_GetCellScalarValuesSimple
+  - VTKKWRCHelper_GetCellMagnitudeValues
+  - VTKKWRCHelper_GetCellDirectionValues
+  - VTKKWRCHelper_GetCellComponentScalarValues
+  - VTKKWRCHelper_GetCellComponentRawScalarValues
+  - VTKKWRCHelper_GetCellComponentMagnitudeValues
+  - VTKKWRCHelper_GetCellComponentDirectionValues
+  - VTKKWRCHelper_ComputeWeights
+  - VTKKWRCHelper_InterpolateScalar
+  - VTKKWRCHelper_InterpolateMagnitude
+  - VTKKWRCHelper_InterpolateScalarComponent
+  - VTKKWRCHelper_InterpolateMagnitudeComponent
+  - VTKKWRCHelper_InterpolateShadingComponent
+  - VTKKWRCHelper_LookupColorUS
+  - VTKKWRCHelper_LookupColorMax
+  - VTKKWRCHelper_LookupDependentColorUS
+  - VTKKWRCHelper_LookupColorGOUS
+  - VTKKWRCHelper_LookupShading
+  - VTKKWRCHelper_LookupAndCombineIndependentColorsUS
+  - VTKKWRCHelper_LookupAndCombineIndependentColorsGOUS
+  - VTKKWRCHelper_LookupAndCombineIndependentColorsShadeUS
+  - VTKKWRCHelper_LookupAndCombineIndependentColorsInterpolateShadeUS
+  - VTKKWRCHelper_CompositeColorAndCheckEarlyTermination
+  - VTKKWRCHelper_LookupAndCombineIndependentColorsGOShadeUS
+  - VTKKWRCHelper_LookupAndCombineIndependentColorsGOInterpolateShadeUS
+  - VTKKWRCHelper_SetPixelColor
+  - VTKKWRCHelper_MoveToNextSampleNN
+  - VTKKWRCHelper_MoveToNextSampleGONN
+  - VTKKWRCHelper_MoveToNextSampleShadeNN
+  - VTKKWRCHelper_MoveToNextSampleGOShadeNN
+  - VTKKWRCHelper_InitializeVariables
+  - VTKKWRCHelper_InitializeWeights
+  - VTKKWRCHelper_InitializeVariablesGO
+  - VTKKWRCHelper_InitializeVariablesShade
+  - VTKKWRCHelper_InitializeTrilinVariables
+  - VTKKWRCHelper_InitializeTrilinVariablesGO
+  - VTKKWRCHelper_InitializeTrilinVariablesShade
+  - VTKKWRCHelper_OuterInitialization
+  - VTKKWRCHelper_InnerInitialization
+  - VTKKWRCHelper_InitializeMIPOneNN
+  - VTKKWRCHelper_InitializeMIPMultiNN
+  - VTKKWRCHelper_InitializeMIPOneTrilin
+  - VTKKWRCHelper_InitializeMIPMultiTrilin
+  - VTKKWRCHelper_InitializeCompositeGONN
+  - VTKKWRCHelper_InitializeCompositeShadeNN
+  - VTKKWRCHelper_InitializeCompositeOneNN
+  - VTKKWRCHelper_InitializeCompositeMultiNN
+  - VTKKWRCHelper_InitializeCompositeOneTrilin
+  - VTKKWRCHelper_InitializeCompositeOneGOTrilin
+  - VTKKWRCHelper_InitializeCompositeOneShadeTrilin
+  - VTKKWRCHelper_InitializeCompositeMultiTrilin
+  - VTKKWRCHelper_InitializeCompositeMultiGOTrilin
+  - VTKKWRCHelper_InitializeCompositeMultiShadeTrilin
+  - VTKKWRCHelper_InitializationAndLoopStartNN
+  - VTKKWRCHelper_InitializationAndLoopStartGONN
+  - VTKKWRCHelper_InitializationAndLoopStartShadeNN
+  - VTKKWRCHelper_InitializationAndLoopStartGOShadeNN
+  - VTKKWRCHelper_InitializationAndLoopStartTrilin
+  - VTKKWRCHelper_InitializationAndLoopStartGOTrilin
+  - VTKKWRCHelper_InitializationAndLoopStartShadeTrilin
+  - VTKKWRCHelper_InitializationAndLoopStartGOShadeTrilin
+  - VTKKWRCHelper_IncrementAndLoopEnd
+  - VTKKWRCHelper_CroppingCheckTrilin
+  - VTKKWRCHelper_CroppingCheckNN
+  - VTKKWRCHelper_SpaceLeapSetup
+  - VTKKWRCHelper_SpaceLeapSetupMulti
+  - VTKKWRCHelper_SpaceLeapCheck
+  - VTKKWRCHelper_MIPSpaceLeapCheck
+  - VTKKWRCHelper_MIPSpaceLeapPopulateMulti
+  - VTKKWRCHelper_MIPSpaceLeapCheckMulti
+  - VTKKWRCHelper_InterpolateShading
+  - vtkDGDispatchRange
+  - vtkSetStringMacroBody
+TableGenBreakInsideDAGArg: DontBreak
+TabWidth:        2
+UseTab:          Never
+VerilogBreakBetweenInstancePorts: true
+WhitespaceSensitiveMacros:
+  - BOOST_PP_STRINGIZE
+  - CF_SWIFT_NAME
+  - NS_SWIFT_NAME
+  - PP_STRINGIZE
+  - STRINGIZE
+...

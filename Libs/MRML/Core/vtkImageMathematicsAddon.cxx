@@ -32,14 +32,10 @@
 vtkStandardNewMacro(vtkImageMathematicsAddon);
 
 //----------------------------------------------------------------------------
-vtkImageMathematicsAddon::vtkImageMathematicsAddon()
-{
-}
+vtkImageMathematicsAddon::vtkImageMathematicsAddon() {}
 
 //----------------------------------------------------------------------------
-vtkImageMathematicsAddon::~vtkImageMathematicsAddon()
-{
-}
+vtkImageMathematicsAddon::~vtkImageMathematicsAddon() {}
 
 //----------------------------------------------------------------------------
 void vtkImageMathematicsAddon::PrintSelf(ostream& os, vtkIndent indent)
@@ -50,7 +46,8 @@ void vtkImageMathematicsAddon::PrintSelf(ostream& os, vtkIndent indent)
 //------------------------------------------------------------------------------
 // The output extent is the intersection.
 int vtkImageMathematicsAddon::RequestInformation(vtkInformation* request,
-  vtkInformationVector** inputVector, vtkInformationVector* outputVector)
+                                                 vtkInformationVector** inputVector,
+                                                 vtkInformationVector* outputVector)
 {
   if (this->Operation != VTK_MULTIPLYBYSCALEDRANGE)
   {
@@ -91,16 +88,19 @@ int vtkImageMathematicsAddon::RequestInformation(vtkInformation* request,
 
 //------------------------------------------------------------------------------
 template <class T>
-void vtkImageMathematicsAddonInitOutput(
-  vtkImageData* inData, T* inPtr, vtkImageData* vtkNotUsed(outData), T* outPtr, int ext[6])
+void vtkImageMathematicsAddonInitOutput(vtkImageData* inData,
+                                        T* inPtr,
+                                        vtkImageData* vtkNotUsed(outData),
+                                        T* outPtr,
+                                        int ext[6])
 {
   int idxY, idxZ;
   int maxY, maxZ;
   vtkIdType outIncY, outIncZ;
   int rowLength;
   int typeSize;
-  T* outPtrZ, * outPtrY;
-  T* inPtrZ, * inPtrY;
+  T *outPtrZ, *outPtrY;
+  T *inPtrZ, *inPtrY;
 
   // This method needs to copy scalars from input to output for the update-extent.
   vtkDataArray* inArray = inData->GetPointData()->GetScalars();
@@ -141,8 +141,13 @@ void vtkImageMathematicsAddonInitOutput(
 // This templated function executes the filter for any type of data.
 // Handles the two input operations
 template <class T>
-void vtkImageMathematicsAddonExecute2(vtkImageMathematicsAddon* self, vtkImageData* inData, T* inPtr,
-  vtkImageData* outData, T* outPtr, int outExt[6], int id)
+void vtkImageMathematicsAddonExecute2(vtkImageMathematicsAddon* self,
+                                      vtkImageData* inData,
+                                      T* inPtr,
+                                      vtkImageData* outData,
+                                      T* outPtr,
+                                      int outExt[6],
+                                      int id)
 {
   int idxR, idxY, idxZ;
   int maxY, maxZ;
@@ -217,8 +222,12 @@ void vtkImageMathematicsAddonExecute2(vtkImageMathematicsAddon* self, vtkImageDa
 // It just executes a switch statement to call the correct function for
 // the data types.
 void vtkImageMathematicsAddon::ThreadedRequestData(vtkInformation* request,
-  vtkInformationVector** inputVector, vtkInformationVector* outputVector,
-  vtkImageData*** inData, vtkImageData** outData, int outExt[6], int id)
+                                                   vtkInformationVector** inputVector,
+                                                   vtkInformationVector* outputVector,
+                                                   vtkImageData*** inData,
+                                                   vtkImageData** outData,
+                                                   int outExt[6],
+                                                   int id)
 {
   if (this->Operation != VTK_MULTIPLYBYSCALEDRANGE)
   {
@@ -238,24 +247,23 @@ void vtkImageMathematicsAddon::ThreadedRequestData(vtkInformation* request,
     {
       switch (inData[0][idx1]->GetScalarType())
       {
-        vtkTemplateMacro(vtkImageMathematicsAddonInitOutput(inData[0][idx1],
-          static_cast<VTK_TT*>(inPtr1), outData[0], static_cast<VTK_TT*>(outPtr), outExt));
-      default:
-        vtkErrorMacro(<< "InitOutput: Unknown ScalarType");
-        return;
+        vtkTemplateMacro(vtkImageMathematicsAddonInitOutput(
+          inData[0][idx1], static_cast<VTK_TT*>(inPtr1), outData[0], static_cast<VTK_TT*>(outPtr), outExt));
+        default:
+          vtkErrorMacro(<< "InitOutput: Unknown ScalarType");
+          return;
       }
     }
     else
     {
       switch (inData[0][idx1]->GetScalarType())
       {
-        vtkTemplateMacro(vtkImageMathematicsAddonExecute2(this, inData[0][idx1],
-          static_cast<VTK_TT*>(inPtr1), outData[0], static_cast<VTK_TT*>(outPtr), outExt, id));
-      default:
-        vtkErrorMacro(<< "Execute: Unknown ScalarType");
-        return;
+        vtkTemplateMacro(vtkImageMathematicsAddonExecute2(
+          this, inData[0][idx1], static_cast<VTK_TT*>(inPtr1), outData[0], static_cast<VTK_TT*>(outPtr), outExt, id));
+        default:
+          vtkErrorMacro(<< "Execute: Unknown ScalarType");
+          return;
       }
     }
   }
-
 }

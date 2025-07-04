@@ -17,12 +17,13 @@ public:
 
   typedef CSFLSRobustStatSegmentor3DLabelMap<TPixel> Self;
 
-  typedef typename SuperClassType::NodeType   NodeType;
+  typedef typename SuperClassType::NodeType NodeType;
   typedef typename SuperClassType::CSFLSLayer CSFLSLayer;
 
   /*================================================================================
     ctor */
-  CSFLSRobustStatSegmentor3DLabelMap() : CSFLSSegmentor3D<TPixel>()
+  CSFLSRobustStatSegmentor3DLabelMap()
+    : CSFLSSegmentor3D<TPixel>()
   {
     basicInit();
   }
@@ -39,18 +40,18 @@ public:
      ---------------------------------------------------------------------- */
 
   typedef typename SuperClassType::TShortImage TLabelImage;
-  typedef typename TLabelImage::Pointer       TLabelImagePointer;
+  typedef typename TLabelImage::Pointer TLabelImagePointer;
 
   typedef typename SuperClassType::TFloatImage TFloatImage;
-  typedef typename TFloatImage::Pointer        TFloatImagePointer;
+  typedef typename TFloatImage::Pointer TFloatImagePointer;
 
   // typedef typename SuperClassType::TDoubleImage TDoubleImage;
   // typedef typename TDoubleImage::Pointer TDoubleImagePointer;
 
   typedef typename SuperClassType::MaskImageType TMaskImage;
 
-  typedef typename SuperClassType::TIndex  TIndex;
-  typedef typename SuperClassType::TSize   TSize;
+  typedef typename SuperClassType::TIndex TIndex;
+  typedef typename SuperClassType::TSize TSize;
   typedef typename SuperClassType::TRegion TRegion;
 
   /* ============================================================
@@ -69,22 +70,22 @@ public:
 
 protected:
   /* data */
-  TLabelImagePointer              m_inputLabelImage;
-  std::vector<std::vector<long> > m_seeds; // in IJK
+  TLabelImagePointer m_inputLabelImage;
+  std::vector<std::vector<long>> m_seeds; // in IJK
 
-  std::vector<std::vector<double> > m_featureAtTheSeeds;
+  std::vector<std::vector<double>> m_featureAtTheSeeds;
 
   long m_statNeighborX;
   long m_statNeighborY;
   long m_statNeighborZ;
 
-  const static long m_numberOfFeature = 3;
+  static const long m_numberOfFeature = 3;
   /* Store the robust stat as the feature at each point
      0: median
      1: interquartile range (IRQ)
      2. median absolute deviation (MAD)
   */
-  TLabelImagePointer              m_featureComputed; // if feature at this point is computed, then is 1
+  TLabelImagePointer m_featureComputed; // if feature at this point is computed, then is 1
   std::vector<TFloatImagePointer> m_featureImageList;
 
   double m_kernelWidthFactor; // kernel_width = empirical_std/m_kernelWidthFactor, Eric has it at 10.0
@@ -113,7 +114,7 @@ protected:
   TPixel m_inputImageIntensityMax;
   void computeMinMax();
 
-  std::vector<std::vector<double> > m_PDFlearnedFromSeeds;  // each feature corresponds to a inner std::vector<double>
+  std::vector<std::vector<double>> m_PDFlearnedFromSeeds; // each feature corresponds to a inner std::vector<double>
   void estimatePDFs();
 
   // void getFeatureAt(TDoubleImage::IndexType idx, std::vector<double>& f);
@@ -125,7 +126,6 @@ protected:
   double kernelEvaluation(const std::vector<double>& newFeature);
 
   double kernelEvaluationUsingPDF(const std::vector<double>& newFeature);
-
 };
 
 #include "SFLSRobustStatSegmentor3DLabelMap_single.txx"

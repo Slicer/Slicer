@@ -35,7 +35,7 @@ class vtkStringArray;
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
 public:
-  vtkTypeMacro(vtkMRMLStorageNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLStorageNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override = 0;
@@ -46,7 +46,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Read data from \a FileName and set it in the referenced node.
@@ -57,14 +57,14 @@ public:
   /// Return 1 on success, 0 on failure.
   /// \todo make temporaryFile a property (similar to what FileName)
   /// \sa SetFileName(), ReadDataInternal(), GetStoredTime()
-  virtual int ReadData(vtkMRMLNode *refNode, bool temporaryFile = false);
+  virtual int ReadData(vtkMRMLNode* refNode, bool temporaryFile = false);
 
   ///
   /// Write data from a  referenced node
   /// Return 1 on success, 0 on failure.
   /// NOTE: Subclasses should implement WriteDataInternal(), not this method.
   /// \sa WriteDataInternal()
-  virtual int WriteData(vtkMRMLNode *refNode);
+  virtual int WriteData(vtkMRMLNode* refNode);
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -72,7 +72,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
@@ -88,11 +88,13 @@ public:
   /// if both .nrrd and .seg.nrrd are matched), including dot.
   /// If filename is not specified then the current FileName will be used.
   /// If there is no match then empty is returned.
-  virtual std::string GetSupportedFileExtension(const char* fileName = nullptr, bool includeReadable = true, bool includeWriteable = true);
+  virtual std::string GetSupportedFileExtension(const char* fileName = nullptr,
+                                                bool includeReadable = true,
+                                                bool includeWriteable = true);
 
   ///
   /// return the nth file name, null if doesn't exist
-  const char *GetNthFileName(int n) const;
+  const char* GetNthFileName(int n) const;
 
   ///
   /// Use compression on write
@@ -105,12 +107,12 @@ public:
   vtkSetStringMacro(URI);
   vtkGetStringMacro(URI);
 
-  vtkGetObjectMacro (URIHandler, vtkURIHandler);
+  vtkGetObjectMacro(URIHandler, vtkURIHandler);
   virtual void SetURIHandler(vtkURIHandler* uriHandler);
 
   ///
   /// Propagate Progress Event generated in ReadData
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   ///
   /// Possible Read and Write states
@@ -136,8 +138,8 @@ public:
 
   //@{
   /// Get/Set the state of reading
-  vtkGetMacro(ReadState,int);
-  vtkSetMacro(ReadState,int);
+  vtkGetMacro(ReadState, int);
+  vtkSetMacro(ReadState, int);
   void SetReadStatePending() { this->SetReadState(this->Pending); };
   void SetReadStateIdle() { this->SetReadState(this->Idle); };
   void SetReadStateScheduled() { this->SetReadState(this->Scheduled); };
@@ -145,14 +147,15 @@ public:
   void SetReadStateTransferDone() { this->SetReadState(this->TransferDone); };
   void SetReadStateCancelled() { this->SetReadState(this->Cancelled); };
   void SetReadStateSkippedNoData() { this->SetReadState(this->SkippedNoData); };
-  const char *GetStateAsString(int state);
-  const char *GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
+  const char* GetStateAsString(int state);
+  const char* GetReadStateAsString() { return this->GetStateAsString(this->ReadState); };
   //@}
 
   //@{
   /// Get/Set the state of writing.
-  /// This is a transient property (that is expected to change and is not considered as a node change that needs to be stored persistently).
-  vtkGetMacro(WriteState,int);
+  /// This is a transient property (that is expected to change and is not considered as a node change that needs to be
+  /// stored persistently).
+  vtkGetMacro(WriteState, int);
   void SetWriteState(int writeState);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
   void SetWriteStateIdle() { this->SetWriteState(this->Idle); };
@@ -161,7 +164,7 @@ public:
   void SetWriteStateTransferDone() { this->SetWriteState(this->TransferDone); };
   void SetWriteStateCancelled() { this->SetWriteState(this->Cancelled); };
   void SetWriteStateSkippedNoData() { this->SetWriteState(this->SkippedNoData); };
-  const char *GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
+  const char* GetWriteStateAsString() { return this->GetStateAsString(this->WriteState); };
   //@}
 
   ///
@@ -181,7 +184,7 @@ public:
   /// value is 5, for .seg.nrrd the returned value is 9. If a reader looks into
   /// the file content then it may return with much higher confidence values.
   /// Subclasses should implement this method.
-  virtual int SupportedFileType(const char *fileName);
+  virtual int SupportedFileType(const char* fileName);
 
   ///
   /// Get all the supported read file types
@@ -202,37 +205,35 @@ public:
 
   //@{
   /// Allow to set specific file format that this node will write output.
-  /// This is a transient property (that is expected to change and is not a reason for saving the node again if modified).
+  /// This is a transient property (that is expected to change and is not a reason for saving the node again if
+  /// modified).
   virtual void SetWriteFileFormat(const char* writeFileFormat);
   vtkGetStringMacro(WriteFileFormat);
   //@}
 
   ///
   /// Add in another file name to the list of file names
-  unsigned int AddFileName (const char *fileName);
+  unsigned int AddFileName(const char* fileName);
   ///
   /// Clear the array of file names
   void ResetFileNameList();
 
   ///
   /// See how many file names were generated during ExecuteInformation
-  int GetNumberOfFileNames() const
-  {
-    return (int)this->FileNameList.size();
-  };
+  int GetNumberOfFileNames() const { return (int)this->FileNameList.size(); };
 
   ///
   /// is filename in the filename list already?
   /// returns 1 if yes, 0 if no
-  int FileNameIsInList(const char *fileName);
+  int FileNameIsInList(const char* fileName);
 
   ///
   /// Add in another URI to the list of URI's
-  unsigned int AddURI(const char *uri);
+  unsigned int AddURI(const char* uri);
 
   ///
   /// Get the nth URI from the list of URI's
-  const char *GetNthURI(int n);
+  const char* GetNthURI(int n);
 
   ///
   /// Clear the array of URIs
@@ -240,17 +241,14 @@ public:
 
   ///
   /// Return how many URI names this storage node holds in it's list
-  int GetNumberOfURIs()
-  {
-    return (int)this->URIList.size();
-  }
+  int GetNumberOfURIs() { return (int)this->URIList.size(); }
 
   ///
   /// Set a new data directory for all files
   void SetDataDirectory(const char* dataDirName);
   ///
   /// Set a new URI base for all URI's
-  void SetURIPrefix(const char *uriPrefix);
+  void SetURIPrefix(const char* uriPrefix);
 
   ///
   /// Return default file extension for writing.
@@ -265,22 +263,22 @@ public:
 
   ///
   /// Set the nth file in FileNameList, checks that it is already defined
-  void ResetNthFileName(int n, const char *fileName);
+  void ResetNthFileName(int n, const char* fileName);
   ///
   /// Set the nth URI in URIList, checks that it is already defined
-  void ResetNthURI(int n, const char *uri);
+  void ResetNthURI(int n, const char* uri);
 
   ///
   /// Checks is file path is a relative path by calling appropriate
   /// method on the scene depending on whether the scene pointer is valid.
   /// returns 0 if it's not relative or the input is null, 1 if it is relative
-  int IsFilePathRelative(const char * filepath);
+  int IsFilePathRelative(const char* filepath);
 
   /// Calculates and the absolute path to the input file if the input path is
   /// relative and the scene is defined with a root directory. Sets and then
   /// return TempFileName. Returns null if the input path is null or the path
   /// is relative and the scene is not defined. Returns inputPath if it's absolute.
-  const char *GetAbsoluteFilePath(const char *inputPath);
+  const char* GetAbsoluteFilePath(const char* inputPath);
 
   ///
   /// A temporary file name used to calculate absolute paths
@@ -346,11 +344,10 @@ public:
   {
     CompressionPreset() = default;
 
-    CompressionPreset(const std::string &parameter, const std::string &name)
+    CompressionPreset(const std::string& parameter, const std::string& name)
       : CompressionParameter(parameter)
       , DisplayName(name)
-    {
-    }
+    {}
 
     std::string CompressionParameter;
     std::string DisplayName;
@@ -376,21 +373,25 @@ public:
 
   ///
   /// Convert between coordinate system ID and name
-  static const char *GetCoordinateSystemTypeAsString(int id);
-  static int GetCoordinateSystemTypeFromString(const char *name);
+  static const char* GetCoordinateSystemTypeAsString(int id);
+  static int GetCoordinateSystemTypeFromString(const char* name);
 
-  const vtkMRMLMessageCollection *GetUserMessages() const { return this->UserMessages; }
-  vtkMRMLMessageCollection *GetUserMessages() { return this->UserMessages; }
+  const vtkMRMLMessageCollection* GetUserMessages() const { return this->UserMessages; }
+  vtkMRMLMessageCollection* GetUserMessages() { return this->UserMessages; }
 
   //@{
   /// Ensures that the file name (excluding the extension) is shorter than the maximum allowed length.
   /// If the filename is shorter than the maximum allowed length then it is returned unchanged.
-  /// If the filename is longer than the maximum allowed length then the filename is shortened by using the following format:
-  /// [first maxFileNameLength-hashLength-1 characters of the base name]_[hashLength long hash code].[extension]
-  /// The full base name of the file will be exactly maxFileNameLength characters long. maxFileNameLength must be 8 or higher.
-  /// If extensionLength is not known then GetSupportedFileExtension() method can be used to get it from the filename.
+  /// If the filename is longer than the maximum allowed length then the filename is shortened by using the following
+  /// format: [first maxFileNameLength-hashLength-1 characters of the base name]_[hashLength long hash code].[extension]
+  /// The full base name of the file will be exactly maxFileNameLength characters long. maxFileNameLength must be 8 or
+  /// higher. If extensionLength is not known then GetSupportedFileExtension() method can be used to get it from the
+  /// filename.
   /// \sa GetSupportedFileExtension()
-  static std::string ClampFileName(const std::string& filename, int extensionLength, int maxFileNameLength, int hashLength = 4);
+  static std::string ClampFileName(const std::string& filename,
+                                   int extensionLength,
+                                   int maxFileNameLength,
+                                   int hashLength = 4);
   //@}
 
   /// Attempts to correct legacy file paths stored in the node's FileName property.
@@ -427,17 +428,17 @@ protected:
   ///
   /// If the URI is not null, fetch it and save it to the node's FileName location or
   /// load directly into the reference node.
-  void StageReadData ( vtkMRMLNode *refNode );
+  void StageReadData(vtkMRMLNode* refNode);
 
   ///
   /// Copy data from the local file location (node->FileName) or node to the remote
   /// location specified by the URI
-  void StageWriteData ( vtkMRMLNode *refNode );
+  void StageWriteData(vtkMRMLNode* refNode);
 
-  char *FileName;
-  char *TempFileName;
-  char *URI;
-  vtkURIHandler *URIHandler;
+  char* FileName;
+  char* TempFileName;
+  char* URI;
+  vtkURIHandler* URIHandler;
   int UseCompression;
   int ReadState;
   int WriteState;
@@ -481,7 +482,7 @@ protected:
 
   // Record warnings and errors associated with this
   // vtkMRMLStorableNode.
-  vtkMRMLMessageCollection *UserMessages;
+  vtkMRMLMessageCollection* UserMessages;
 };
 
 #endif

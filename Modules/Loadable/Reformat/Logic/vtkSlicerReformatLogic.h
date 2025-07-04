@@ -38,13 +38,12 @@
 #include "vtkSlicerReformatModuleLogicExport.h"
 
 
-class VTK_SLICER_REFORMAT_MODULE_LOGIC_EXPORT
-vtkSlicerReformatLogic : public vtkSlicerModuleLogic
+class VTK_SLICER_REFORMAT_MODULE_LOGIC_EXPORT vtkSlicerReformatLogic : public vtkSlicerModuleLogic
 {
 public:
-  static vtkSlicerReformatLogic *New();
+  static vtkSlicerReformatLogic* New();
   typedef vtkSlicerReformatLogic Self;
-  vtkTypeMacro(vtkSlicerReformatLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerReformatLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set the world coordinate origin position
@@ -71,7 +70,6 @@ protected:
   ~vtkSlicerReformatLogic() override;
 
 private:
-
   vtkSlicerReformatLogic(const vtkSlicerReformatLogic&) = delete;
   void operator=(const vtkSlicerReformatLogic&) = delete;
 };

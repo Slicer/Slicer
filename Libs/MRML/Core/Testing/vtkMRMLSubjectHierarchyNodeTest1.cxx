@@ -19,7 +19,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
 
-int vtkMRMLSubjectHierarchyNodeTest1(int , char * [])
+int vtkMRMLSubjectHierarchyNodeTest1(int, char*[])
 {
   // Add a scene with 3 text nodes
   vtkNew<vtkMRMLScene> scene;

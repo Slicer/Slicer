@@ -70,7 +70,7 @@ void vtkMRMLFolderDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFolderDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLFolderDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -106,12 +106,12 @@ void vtkMRMLFolderDisplayNode::SetScene(vtkMRMLScene* scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if ( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent
-    && vtkMRMLSubjectHierarchyNode::SafeDownCast(caller) )
+  if (event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent &&
+      vtkMRMLSubjectHierarchyNode::SafeDownCast(caller))
   {
     // No-op if this folder node does not apply display properties on its branch
     if (!this->ApplyDisplayPropertiesOnBranch)
@@ -129,11 +129,11 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject *caller, unsigned lon
       }
     }
     vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::SafeDownCast(caller);
-    vtkMRMLDisplayableNode* displayableReparentedNode = vtkMRMLDisplayableNode::SafeDownCast(
-      shNode->GetItemDataNode(reparentedItemID) );
+    vtkMRMLDisplayableNode* displayableReparentedNode =
+      vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(reparentedItemID));
     // Trigger display update for reparented displayable node if it is in a folder that applies
     // display properties on its branch (only display nodes that allow overriding)
-    for (int i=0; i<displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
+    for (int i = 0; i < displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
     {
       vtkMRMLDisplayNode* currentDisplayNode = displayableReparentedNode->GetNthDisplayNode(i);
       if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
@@ -200,16 +200,16 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
   }
 
   std::vector<vtkIdType>::iterator childIt;
-  for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
+  for (childIt = childItemIDs.begin(); childIt != childItemIDs.end(); ++childIt)
   {
-    vtkMRMLDisplayableNode* childDisplayableNode = vtkMRMLDisplayableNode::SafeDownCast(
-      shNode->GetItemDataNode(*childIt) );
+    vtkMRMLDisplayableNode* childDisplayableNode =
+      vtkMRMLDisplayableNode::SafeDownCast(shNode->GetItemDataNode(*childIt));
     if (!childDisplayableNode)
     {
       continue;
     }
     // Trigger display update for display node of child nodes that allow overriding
-    for (int i=0; i<childDisplayableNode->GetNumberOfDisplayNodes(); ++i)
+    for (int i = 0; i < childDisplayableNode->GetNumberOfDisplayNodes(); ++i)
     {
       vtkMRMLDisplayNode* currentDisplayNode = childDisplayableNode->GetNthDisplayNode(i);
       if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
@@ -235,7 +235,8 @@ vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(
   vtkMRMLSubjectHierarchyNode* shNode = vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(node->GetScene());
   if (!shNode)
   {
-    vtkErrorWithObjectMacro(node, "GetOverridingHierarchyDisplayNode: Failed to get subject hierarchy node from current scene");
+    vtkErrorWithObjectMacro(
+      node, "GetOverridingHierarchyDisplayNode: Failed to get subject hierarchy node from current scene");
     return nullptr;
   }
   vtkIdType nodeShId = shNode->GetItemByDataNode(node);
@@ -249,10 +250,12 @@ vtkMRMLDisplayNode* vtkMRMLFolderDisplayNode::GetOverridingHierarchyDisplayNode(
   // go through parents and return display node of first that applies color
 
   vtkIdType overridingFolderId = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-  for (vtkIdType currentParentId = shNode->GetItemParent(nodeShId); currentParentId != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
-    currentParentId = shNode->GetItemParent(currentParentId))
+  for (vtkIdType currentParentId = shNode->GetItemParent(nodeShId);
+       currentParentId != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
+       currentParentId = shNode->GetItemParent(currentParentId))
   {
-    vtkMRMLFolderDisplayNode* folderDisplayNode = vtkMRMLFolderDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentParentId) );
+    vtkMRMLFolderDisplayNode* folderDisplayNode =
+      vtkMRMLFolderDisplayNode::SafeDownCast(shNode->GetItemDataNode(currentParentId));
     if (folderDisplayNode)
     {
       if (folderDisplayNode->GetApplyDisplayPropertiesOnBranch())
@@ -291,7 +294,8 @@ bool vtkMRMLFolderDisplayNode::GetHierarchyVisibility(vtkMRMLDisplayableNode* no
 
   // Traverse all parents
   vtkIdType parentItemID = nodeShId;
-  while ( (parentItemID = shNode->GetItemParent(parentItemID)) != sceneItemID ) // The double parentheses avoids a Linux build warning
+  while ((parentItemID = shNode->GetItemParent(parentItemID)) !=
+         sceneItemID) // The double parentheses avoids a Linux build warning
   {
     if (!parentItemID)
     {
@@ -333,7 +337,8 @@ double vtkMRMLFolderDisplayNode::GetHierarchyOpacity(vtkMRMLDisplayableNode* nod
   // Traverse all parents
   double opacityProduct = 1.0;
   vtkIdType parentItemID = nodeShId;
-  while ( (parentItemID = shNode->GetItemParent(parentItemID)) != sceneItemID ) // The double parentheses avoids a Linux build warning
+  while ((parentItemID = shNode->GetItemParent(parentItemID)) !=
+         sceneItemID) // The double parentheses avoids a Linux build warning
   {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
     if (displayNode)

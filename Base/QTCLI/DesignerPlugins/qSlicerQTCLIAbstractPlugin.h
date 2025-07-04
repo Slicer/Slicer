@@ -28,13 +28,12 @@
 // QTCLI includes
 #include "qSlicerBaseQTCLIPluginsExport.h"
 
-class Q_SLICER_BASE_QTCLI_PLUGINS_EXPORT qSlicerQTCLIAbstractPlugin
-  : public QDesignerCustomWidgetInterface
+class Q_SLICER_BASE_QTCLI_PLUGINS_EXPORT qSlicerQTCLIAbstractPlugin : public QDesignerCustomWidgetInterface
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerQTCLIAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;

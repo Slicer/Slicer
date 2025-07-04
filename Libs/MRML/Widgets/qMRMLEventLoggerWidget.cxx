@@ -31,7 +31,7 @@
 // VTK includes
 
 //-----------------------------------------------------------------------------
-class qMRMLEventLoggerWidgetPrivate: public Ui_qMRMLEventLoggerWidget
+class qMRMLEventLoggerWidgetPrivate : public Ui_qMRMLEventLoggerWidget
 {
 public:
   void log(const QString& text);
@@ -44,12 +44,12 @@ public:
 // Helper macro allowing to connect signal from qMRMLEventLogger with the corresponding
 // widget.
 //
-#define QMRMLEVENTLOGGERWIDGET_CONNECT_SLOT_MACRO(_EVENT_NAME)               \
-  QObject::connect(d->MRMLEventLogger, SIGNAL(signal##_EVENT_NAME##Event()), \
-    this, SLOT(on##_EVENT_NAME##Event()));
+#define QMRMLEVENTLOGGERWIDGET_CONNECT_SLOT_MACRO(_EVENT_NAME) \
+  QObject::connect(d->MRMLEventLogger, SIGNAL(signal##_EVENT_NAME##Event()), this, SLOT(on##_EVENT_NAME##Event()));
 
 //------------------------------------------------------------------------------
-qMRMLEventLoggerWidget::qMRMLEventLoggerWidget(QWidget *_parent):Superclass(_parent)
+qMRMLEventLoggerWidget::qMRMLEventLoggerWidget(QWidget* _parent)
+  : Superclass(_parent)
   , d_ptr(new qMRMLEventLoggerWidgetPrivate)
 {
   Q_D(qMRMLEventLoggerWidget);
@@ -57,12 +57,12 @@ qMRMLEventLoggerWidget::qMRMLEventLoggerWidget(QWidget *_parent):Superclass(_par
   d->MRMLEventLogger = new qMRMLEventLogger(this);
 
   this->connect(d->MRMLEventLogger,
-                SIGNAL(signalNodeAddedEvent(vtkObject*,vtkObject*)),
-                SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)));
+                SIGNAL(signalNodeAddedEvent(vtkObject*, vtkObject*)),
+                SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
 
   this->connect(d->MRMLEventLogger,
-                SIGNAL(signalNodeRemovedEvent(vtkObject*,vtkObject*)),
-                SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)));
+                SIGNAL(signalNodeRemovedEvent(vtkObject*, vtkObject*)),
+                SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
 
   QMRMLEVENTLOGGERWIDGET_CONNECT_SLOT_MACRO(NewScene);
   QMRMLEVENTLOGGERWIDGET_CONNECT_SLOT_MACRO(SceneClosed);
@@ -97,23 +97,21 @@ void qMRMLEventLoggerWidget::setConsoleOutputEnabled(bool enabled)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLEventLoggerWidget::onNodeAddedEvent(vtkObject* caller,
-                                              vtkObject* call_data)
+void qMRMLEventLoggerWidget::onNodeAddedEvent(vtkObject* caller, vtkObject* call_data)
 {
   Q_UNUSED(caller);
   Q_D(qMRMLEventLoggerWidget);
-  vtkMRMLNode * node = vtkMRMLNode::SafeDownCast(call_data);
+  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(call_data);
   Q_ASSERT(node);
   d->log(QString("NodeAdded: %1").arg(node->GetClassName()));
 }
 
 //------------------------------------------------------------------------------
-void qMRMLEventLoggerWidget::onNodeRemovedEvent(vtkObject* caller,
-                                                vtkObject* call_data)
+void qMRMLEventLoggerWidget::onNodeRemovedEvent(vtkObject* caller, vtkObject* call_data)
 {
   Q_UNUSED(caller);
   Q_D(qMRMLEventLoggerWidget);
-  vtkMRMLNode * node = vtkMRMLNode::SafeDownCast(call_data);
+  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(call_data);
   Q_ASSERT(node);
   d->log(QString("NodeRemoved: %1").arg(node->GetClassName()));
 }
@@ -123,11 +121,11 @@ void qMRMLEventLoggerWidget::onNodeRemovedEvent(vtkObject* caller,
 // form void listenEVENT_NAMEEvent(bool listen)'
 //
 #define QMRMLEVENTLOGGERWIDGET_ONEVENT_SLOT_MACRO(_EVENT_NAME) \
-void qMRMLEventLoggerWidget::on##_EVENT_NAME##Event()          \
-{                                                              \
-  Q_D(qMRMLEventLoggerWidget);                              \
-  d->log(#_EVENT_NAME);                                        \
-}
+  void qMRMLEventLoggerWidget::on##_EVENT_NAME##Event()        \
+  {                                                            \
+    Q_D(qMRMLEventLoggerWidget);                               \
+    d->log(#_EVENT_NAME);                                      \
+  }
 
 //------------------------------------------------------------------------------
 QMRMLEVENTLOGGERWIDGET_ONEVENT_SLOT_MACRO(NewScene);

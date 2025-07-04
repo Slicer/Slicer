@@ -46,7 +46,7 @@ static const double UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC = 0.020; // refresh o
 
 //-----------------------------------------------------------------------------
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QtPlugin>
+#  include <QtPlugin>
 Q_EXPORT_PLUGIN2(qSlicerSequencesModule, qSlicerSequencesModule);
 #endif
 
@@ -62,10 +62,9 @@ public:
   virtual ~qSlicerSequencesModulePrivate();
   QTimer UpdateAllVirtualOutputNodesTimer;
   qMRMLSequenceBrowserToolBar* ToolBar;
-  bool SequencesModuleOwnsToolBar{true};
-  bool AutoShowToolBar{true};
+  bool SequencesModuleOwnsToolBar{ true };
+  bool AutoShowToolBar{ true };
   vtkWeakPointer<vtkMRMLSequenceBrowserNode> SequenceBrowserToShow;
-
 };
 
 //-----------------------------------------------------------------------------
@@ -97,7 +96,7 @@ qSlicerSequencesModulePrivate::~qSlicerSequencesModulePrivate()
 void qSlicerSequencesModulePrivate::addToolBar()
 {
   QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
-  if (mainWindow==nullptr)
+  if (mainWindow == nullptr)
   {
     qDebug("qSlicerSequencesModulePrivate::addToolBar: no main window is available, toolbar is not added");
     return;
@@ -111,9 +110,9 @@ void qSlicerSequencesModulePrivate::addToolBar()
   mainWindow->addToolBarBreak();
   mainWindow->addToolBar(this->ToolBar);
   this->SequencesModuleOwnsToolBar = false;
-  foreach (QMenu* toolBarMenu,mainWindow->findChildren<QMenu*>())
+  foreach (QMenu* toolBarMenu, mainWindow->findChildren<QMenu*>())
   {
-    if(toolBarMenu->objectName()==QString("WindowToolBarsMenu"))
+    if (toolBarMenu->objectName() == QString("WindowToolBarsMenu"))
     {
       toolBarMenu->addAction(this->ToolBar->toggleViewAction());
       break;
@@ -139,8 +138,8 @@ void qSlicerSequencesModulePrivate::addToolBar()
 
 //-----------------------------------------------------------------------------
 qSlicerSequencesModule::qSlicerSequencesModule(QObject* _parent)
-: Superclass(_parent)
-, d_ptr(new qSlicerSequencesModulePrivate)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerSequencesModulePrivate)
 {
   Q_D(qSlicerSequencesModule);
 
@@ -151,30 +150,29 @@ qSlicerSequencesModule::qSlicerSequencesModule(QObject* _parent)
   if (scene)
   {
     // Need to listen for any new sequence browser nodes being added to start/stop timer
-    this->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)));
-    this->qvtkConnect(scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)));
+    this->qvtkConnect(scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
+    this->qvtkConnect(scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
   }
 }
-
 
 
 //-----------------------------------------------------------------------------
 qSlicerSequencesModule::~qSlicerSequencesModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSequencesModule::helpText()const
+QString qSlicerSequencesModule::helpText() const
 {
   return tr("This is a module for creating, recording, and replaying node sequences.");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSequencesModule::acknowledgementText()const
+QString qSlicerSequencesModule::acknowledgementText() const
 {
   return tr("This work was funded by CCO ACRU and OCAIRO grants.");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSequencesModule::contributors()const
+QStringList qSlicerSequencesModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Andras Lasso (PerkLab, Queen's), Matthew Holden (PerkLab, Queen's), Kevin Wang (PMH)");
@@ -182,7 +180,7 @@ QStringList qSlicerSequencesModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerSequencesModule::icon()const
+QIcon qSlicerSequencesModule::icon() const
 {
   return QIcon(":/Icons/Sequences.png");
 }
@@ -208,14 +206,15 @@ void qSlicerSequencesModule::setup()
   // Register IOs
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   vtkSlicerSequencesLogic* sequencesLogic = vtkSlicerSequencesLogic::SafeDownCast(this->logic());
-  ioManager->registerIO(new qSlicerNodeWriter("Sequences", QString("SequenceFile"), QStringList() << "vtkMRMLSequenceNode", true, this));
+  ioManager->registerIO(
+    new qSlicerNodeWriter("Sequences", QString("SequenceFile"), QStringList() << "vtkMRMLSequenceNode", true, this));
   ioManager->registerIO(new qSlicerSequencesReader(sequencesLogic, this));
-  ioManager->registerIO( new qSlicerNodeWriter( "Sequences", QString( "VolumeSequenceFile" ), QStringList() << "vtkMRMLSequenceNode", true, this ) );
+  ioManager->registerIO(new qSlicerNodeWriter(
+    "Sequences", QString("VolumeSequenceFile"), QStringList() << "vtkMRMLSequenceNode", true, this));
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerSequencesModule
-::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerSequencesModule ::createWidgetRepresentation()
 {
   return new qSlicerSequencesModuleWidget;
 }
@@ -240,8 +239,10 @@ void qSlicerSequencesModule::setMRMLScene(vtkMRMLScene* scene)
   }
 
   // Need to listen for any new sequence browser nodes being added to start/stop timer
-  this->qvtkReconnect(oldScene, scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAddedEvent(vtkObject*,vtkObject*)));
-  this->qvtkReconnect(oldScene, scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemovedEvent(vtkObject*,vtkObject*)));
+  this->qvtkReconnect(
+    oldScene, scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
+  this->qvtkReconnect(
+    oldScene, scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
 
   d->ToolBar->setMRMLScene(scene);
 }
@@ -260,7 +261,7 @@ void qSlicerSequencesModule::onNodeAddedEvent(vtkObject*, vtkObject* node)
   // If the timer is not active, so it should be turned on
   if (!d->UpdateAllVirtualOutputNodesTimer.isActive())
   {
-    d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC*1000.0);
+    d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC * 1000.0);
   }
 
   // If toolbar does not show a valid browser node already then queue the newly added sequence node to be
@@ -340,7 +341,7 @@ void qSlicerSequencesModule::updateAllVirtualOutputNodes()
     SlicerRenderBlocker renderBlocker;
     // update proxies then request another singleShot timer
     sequencesLogic->UpdateAllProxyNodes();
-    d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC*1000.0);
+    d->UpdateAllVirtualOutputNodesTimer.start(UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC * 1000.0);
 
     if (d->SequenceBrowserToShow)
     {
@@ -396,17 +397,17 @@ void qSlicerSequencesModule::setAutoShowToolBar(bool autoShow)
 }
 
 //-----------------------------------------------------------------------------
-bool  qSlicerSequencesModule::showSequenceBrowser(vtkMRMLSequenceBrowserNode* browserNode)
+bool qSlicerSequencesModule::showSequenceBrowser(vtkMRMLSequenceBrowserNode* browserNode)
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  if (!app
-    || !app->moduleManager()
-    || !dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences")) )
+  if (!app || !app->moduleManager() ||
+      !dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences")))
   {
     qCritical("Sequences module is not available");
     return false;
   }
-  qSlicerSequencesModule* sequencesModule = dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences"));
+  qSlicerSequencesModule* sequencesModule =
+    dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences"));
   if (sequencesModule->autoShowToolBar())
   {
     sequencesModule->setToolBarActiveBrowserNode(browserNode);
@@ -418,7 +419,6 @@ bool  qSlicerSequencesModule::showSequenceBrowser(vtkMRMLSequenceBrowserNode* br
 //-----------------------------------------------------------------------------
 QStringList qSlicerSequencesModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLSequenceNode"
-    << "vtkMRMLSequenceBrowserNode";
+  return QStringList() << "vtkMRMLSequenceNode"
+                       << "vtkMRMLSequenceBrowserNode";
 }

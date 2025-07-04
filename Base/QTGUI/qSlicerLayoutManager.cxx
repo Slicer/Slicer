@@ -48,20 +48,19 @@
 #include <vtkCornerAnnotation.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerLayoutManagerPrivate: public qMRMLLayoutManagerPrivate
+class qSlicerLayoutManagerPrivate : public qMRMLLayoutManagerPrivate
 {
 public:
   qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object);
 
 public:
-  QString            ScriptedDisplayableManagerDirectory;
+  QString ScriptedDisplayableManagerDirectory;
 };
 
 // --------------------------------------------------------------------------
 qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object)
   : qMRMLLayoutManagerPrivate(object)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
 // qSlicerLayoutManager methods
@@ -69,16 +68,13 @@ qSlicerLayoutManagerPrivate::qSlicerLayoutManagerPrivate(qSlicerLayoutManager& o
 // -----------------------------------------------------------------------------
 qSlicerLayoutManager::qSlicerLayoutManager(QWidget* widget)
   : qMRMLLayoutManager(new qSlicerLayoutManagerPrivate(*this), widget, widget)
-{
-}
+{}
 
 //------------------------------------------------------------------------------
-void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
-  const QString& scriptedDisplayableManagerDirectory)
+void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(const QString& scriptedDisplayableManagerDirectory)
 {
 #ifdef Slicer_USE_PYTHONQT
-  if (qSlicerCoreApplication::testAttribute(
-        qSlicerCoreApplication::AA_DisablePython))
+  if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
     return;
   }
@@ -88,15 +84,15 @@ void qSlicerLayoutManager::setScriptedDisplayableManagerDirectory(
   d->ScriptedDisplayableManagerDirectory = scriptedDisplayableManagerDirectory;
   // Disable for now as we don't have any displayable managers and
   // loading the python file on Windows 64b in Debug crashes.
-  //vtkMRMLSliceViewDisplayableManagerFactory* sliceFactory
+  // vtkMRMLSliceViewDisplayableManagerFactory* sliceFactory
   //  = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
-  //sliceFactory->RegisterDisplayableManager(
+  // sliceFactory->RegisterDisplayableManager(
   //  QFileInfo(QDir(scriptedDisplayableManagerDirectory),
   //            "vtkScriptedExampleDisplayableManager.py")
   //    .absoluteFilePath().toUtf8());
-  //vtkMRMLThreeDViewDisplayableManagerFactory* threeDFactory
+  // vtkMRMLThreeDViewDisplayableManagerFactory* threeDFactory
   //  = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
-  //threeDFactory->RegisterDisplayableManager(
+  // threeDFactory->RegisterDisplayableManager(
   //  QFileInfo(QDir(scriptedDisplayableManagerDirectory),
   //            "vtkScriptedExampleDisplayableManager.py")
   //    .absoluteFilePath().toUtf8());

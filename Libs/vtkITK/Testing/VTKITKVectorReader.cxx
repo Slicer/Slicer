@@ -8,7 +8,7 @@
 #include <itkConfigure.h>
 #include <itkFactoryRegistration.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
   }
   std::cout << "Trying to read file '" << argv[1] << "'" << std::endl;
 
-  vtkITKArchetypeImageSeriesVectorReaderFile *vectorReader = vtkITKArchetypeImageSeriesVectorReaderFile::New();
+  vtkITKArchetypeImageSeriesVectorReaderFile* vectorReader = vtkITKArchetypeImageSeriesVectorReaderFile::New();
   vectorReader->SetArchetype(argv[1]);
   vectorReader->SetOutputScalarTypeToNative();
   vectorReader->SetDesiredCoordinateOrientationToNative();
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   {
     vectorReader->Update();
   }
-  catch (itk::ExceptionObject &err)
+  catch (itk::ExceptionObject& err)
   {
     std::cout << "Unable to read file '" << argv[1] << "', err = \n" << err << std::endl;
     vectorReader->Delete();
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
   }
 
   // now assign it to another image
-  vtkImageData *imageData;
+  vtkImageData* imageData;
 
   imageData = vectorReader->GetOutput();
   if (imageData)

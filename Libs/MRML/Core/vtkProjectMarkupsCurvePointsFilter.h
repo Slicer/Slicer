@@ -71,8 +71,8 @@ public:
   /// control points.
   ///
   /// \sa SetInputConnection, SetInputData
-  using vtkPolyDataAlgorithm::SetInputData;
   using vtkPolyDataAlgorithm::SetInputConnection;
+  using vtkPolyDataAlgorithm::SetInputData;
   ///@}
 
   /// Constrain points to a specified model surface.
@@ -86,8 +86,11 @@ public:
   /// \return true if successful, false otherwise.
   ///
   /// \sa vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface
-  static bool ConstrainPointsToSurface(vtkPoints* originalPoints, vtkDoubleArray* normalVectors, vtkPolyData* surfacePolydata,
-    vtkPoints* surfacePoints, double maximumSearchRadiusTolerance);
+  static bool ConstrainPointsToSurface(vtkPoints* originalPoints,
+                                       vtkDoubleArray* normalVectors,
+                                       vtkPolyData* surfacePolydata,
+                                       vtkPoints* surfacePoints,
+                                       double maximumSearchRadiusTolerance);
 
   ///@{
   /// Set/Get maximumSearchRadiusTolerance defining the allowable projection distance.
@@ -102,17 +105,27 @@ public:
 
 protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
-  int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
+  int RequestData(vtkInformation* request,
+                  vtkInformationVector** inputVector,
+                  vtkInformationVector* outputVector) override;
 
   vtkProjectMarkupsCurvePointsFilter();
+
 private:
   vtkWeakPointer<vtkMRMLMarkupsCurveNode> InputCurveNode;
   double MaximumSearchRadiusTolerance;
 
-  bool ProjectPointsToSurface(vtkMRMLModelNode* modelNode, double maximumSearchRadiusTolerance, vtkPoints* interpolatedPoints, vtkPoints* outputPoints);
-  static bool ConstrainPointsToSurfaceImpl(vtkOBBTree* surfaceObbTree, vtkPointLocator* pointLocator,
-      vtkPoints* originalPoints, vtkDoubleArray* normalVectors, vtkPolyData* surfacePolydata,
-      vtkPoints* surfacePoints, double maximumSearchRadius=.25);
+  bool ProjectPointsToSurface(vtkMRMLModelNode* modelNode,
+                              double maximumSearchRadiusTolerance,
+                              vtkPoints* interpolatedPoints,
+                              vtkPoints* outputPoints);
+  static bool ConstrainPointsToSurfaceImpl(vtkOBBTree* surfaceObbTree,
+                                           vtkPointLocator* pointLocator,
+                                           vtkPoints* originalPoints,
+                                           vtkDoubleArray* normalVectors,
+                                           vtkPolyData* surfacePolydata,
+                                           vtkPoints* surfacePoints,
+                                           double maximumSearchRadius = .25);
 
   class PointProjectionHelper
   {

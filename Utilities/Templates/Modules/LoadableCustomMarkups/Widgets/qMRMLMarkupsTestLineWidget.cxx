@@ -28,8 +28,7 @@
 #include <vtkWeakPointer.h>
 
 // --------------------------------------------------------------------------
-class qMRMLMarkupsTestLineWidgetPrivate:
-  public Ui_qMRMLMarkupsTestLineWidget
+class qMRMLMarkupsTestLineWidgetPrivate : public Ui_qMRMLMarkupsTestLineWidget
 {
   Q_DECLARE_PUBLIC(qMRMLMarkupsTestLineWidget);
 
@@ -44,12 +43,9 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsTestLineWidgetPrivate::
-qMRMLMarkupsTestLineWidgetPrivate(qMRMLMarkupsTestLineWidget* object)
+qMRMLMarkupsTestLineWidgetPrivate::qMRMLMarkupsTestLineWidgetPrivate(qMRMLMarkupsTestLineWidget* object)
   : q_ptr(object)
-{
-
-}
+{}
 
 // --------------------------------------------------------------------------
 void qMRMLMarkupsTestLineWidgetPrivate::setupUi(qMRMLMarkupsTestLineWidget* widget)
@@ -61,10 +57,9 @@ void qMRMLMarkupsTestLineWidgetPrivate::setupUi(qMRMLMarkupsTestLineWidget* widg
 }
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsTestLineWidget::
-qMRMLMarkupsTestLineWidget(QWidget *parent)
-  : Superclass(parent),
-    d_ptr(new qMRMLMarkupsTestLineWidgetPrivate(this))
+qMRMLMarkupsTestLineWidget::qMRMLMarkupsTestLineWidget(QWidget* parent)
+  : Superclass(parent)
+  , d_ptr(new qMRMLMarkupsTestLineWidgetPrivate(this))
 {
   this->setup();
 }
@@ -94,11 +89,11 @@ void qMRMLMarkupsTestLineWidget::updateWidgetFromMRML()
 
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsTestLineWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qMRMLMarkupsTestLineWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const
 {
   Q_D(const qMRMLMarkupsTestLineWidget);
 
-  vtkMRMLMarkupsTestLineNode* testLineNode= vtkMRMLMarkupsTestLineNode::SafeDownCast(markupsNode);
+  vtkMRMLMarkupsTestLineNode* testLineNode = vtkMRMLMarkupsTestLineNode::SafeDownCast(markupsNode);
   if (!testLineNode)
   {
     return false;

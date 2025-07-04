@@ -22,13 +22,12 @@
 #include "qMRMLCaptureToolBar.h"
 
 // --------------------------------------------------------------------------
-qMRMLCaptureToolBarPlugin::qMRMLCaptureToolBarPlugin(QObject *_parent)
-        : QObject(_parent)
-{
-}
+qMRMLCaptureToolBarPlugin::qMRMLCaptureToolBarPlugin(QObject* _parent)
+  : QObject(_parent)
+{}
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLCaptureToolBarPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLCaptureToolBarPlugin::createWidget(QWidget* _parent)
 {
   qMRMLCaptureToolBar* _widget = new qMRMLCaptureToolBar(_parent);
   return _widget;
@@ -39,7 +38,7 @@ QString qMRMLCaptureToolBarPlugin::domXml() const
 {
   return "<widget class=\"qMRMLCaptureToolBar\" \
           name=\"MRMLCaptureToolBar\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

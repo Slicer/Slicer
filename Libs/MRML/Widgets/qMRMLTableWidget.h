@@ -55,18 +55,18 @@ public:
   ~qMRMLTableWidget() override;
 
   /// Get the table node observed by view.
-  Q_INVOKABLE vtkMRMLTableViewNode* mrmlTableViewNode()const;
-  Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode()const override;
+  Q_INVOKABLE vtkMRMLTableViewNode* mrmlTableViewNode() const;
+  Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode() const override;
 
   /// Get a reference to the underlying Table View
   /// Be careful if you change the TableView, you might
   /// unsynchronize the view from the nodes/logics.
-  Q_INVOKABLE qMRMLTableView* tableView()const;
-  Q_INVOKABLE QWidget* viewWidget()const override;
+  Q_INVOKABLE qMRMLTableView* tableView() const;
+  Q_INVOKABLE QWidget* viewWidget() const override;
 
   /// Get table view controller widget
-  Q_INVOKABLE qMRMLTableViewControllerWidget* tableController()const;
-  Q_INVOKABLE qMRMLViewControllerBar* controllerWidget()const override;
+  Q_INVOKABLE qMRMLTableViewControllerWidget* tableController() const;
+  Q_INVOKABLE qMRMLViewControllerBar* controllerWidget() const override;
 
 public slots:
   /// Set the current \a viewNode to observe

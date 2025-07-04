@@ -32,21 +32,20 @@ public:
 qSlicerFileWriter::qSlicerFileWriter(QObject* parentObject)
   : qSlicerIO(parentObject)
   , d_ptr(new qSlicerFileWriterPrivate)
-{
-}
+{}
 
 //----------------------------------------------------------------------------
 qSlicerFileWriter::~qSlicerFileWriter() = default;
 
 //----------------------------------------------------------------------------
-bool qSlicerFileWriter::canWriteObject(vtkObject* object)const
+bool qSlicerFileWriter::canWriteObject(vtkObject* object) const
 {
   Q_UNUSED(object);
   return false;
 }
 
 //----------------------------------------------------------------------------
-double qSlicerFileWriter::canWriteObjectConfidence(vtkObject* object)const
+double qSlicerFileWriter::canWriteObjectConfidence(vtkObject* object) const
 {
   if (!this->canWriteObject(object))
   {
@@ -72,7 +71,7 @@ void qSlicerFileWriter::setWrittenNodes(const QStringList& nodes)
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerFileWriter::writtenNodes()const
+QStringList qSlicerFileWriter::writtenNodes() const
 {
   Q_D(const qSlicerFileWriter);
   return d->WrittenNodes;

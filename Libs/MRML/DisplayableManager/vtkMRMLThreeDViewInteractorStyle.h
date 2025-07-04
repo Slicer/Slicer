@@ -48,11 +48,10 @@ class vtkWorldPointPicker;
 /// \sa vtkInteractorStyleTrackballActor
 /// \sa vtkInteractorStyleJoystickCamera
 /// \sa vtkInteractorStyleJoystickActor
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewInteractorStyle :
-  public vtkMRMLViewInteractorStyle
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewInteractorStyle : public vtkMRMLViewInteractorStyle
 {
 public:
-  static vtkMRMLThreeDViewInteractorStyle *New();
+  static vtkMRMLThreeDViewInteractorStyle* New();
   vtkTypeMacro(vtkMRMLThreeDViewInteractorStyle, vtkMRMLViewInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -70,12 +69,12 @@ public:
 
   ///
   /// Get/Set the CameraNode
-  vtkGetObjectMacro ( CameraNode, vtkMRMLCameraNode );
-  vtkSetObjectMacro ( CameraNode, vtkMRMLCameraNode );
+  vtkGetObjectMacro(CameraNode, vtkMRMLCameraNode);
+  vtkSetObjectMacro(CameraNode, vtkMRMLCameraNode);
 
   ///
   /// Reimplemented to set the default interactive update rate
-  void SetInteractor(vtkRenderWindowInteractor *interactor) override;
+  void SetInteractor(vtkRenderWindowInteractor* interactor) override;
 
 protected:
   vtkMRMLThreeDViewInteractorStyle();
@@ -83,10 +82,11 @@ protected:
 
   bool QuickPick(int x, int y, double pickPoint[3]);
 
-  void ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager * displayableManager,
-                                       unsigned long event, void *callData) override;
+  void ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager* displayableManager,
+                                       unsigned long event,
+                                       void* callData) override;
 
-  vtkMRMLCameraNode *CameraNode;
+  vtkMRMLCameraNode* CameraNode;
 
   // For jump to slice feature (when mouse is moved while shift key is pressed)
   // Slow but can pick anything (volumes and semi-transparent surfaces)

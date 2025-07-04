@@ -33,14 +33,16 @@
 class qMRMLNavigationViewPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLNavigationView);
+
 protected:
   qMRMLNavigationView* const q_ptr;
+
 public:
   qMRMLNavigationViewPrivate(qMRMLNavigationView& object);
   ~qMRMLNavigationViewPrivate();
 
-  vtkMRMLScene*                      MRMLScene;
-  vtkWeakPointer<vtkMRMLViewNode>    MRMLViewNode;
+  vtkMRMLScene* MRMLScene;
+  vtkWeakPointer<vtkMRMLViewNode> MRMLViewNode;
 };
 
 //--------------------------------------------------------------------------
@@ -60,14 +62,14 @@ qMRMLNavigationViewPrivate::~qMRMLNavigationViewPrivate() = default;
 // qMRMLNavigationView methods
 
 // --------------------------------------------------------------------------
-qMRMLNavigationView::qMRMLNavigationView(QWidget* _parent) : Superclass(_parent)
+qMRMLNavigationView::qMRMLNavigationView(QWidget* _parent)
+  : Superclass(_parent)
   , d_ptr(new qMRMLNavigationViewPrivate(*this))
 {
   // Set default background color
-  this->setBackgroundColor(QColor::fromRgbF(
-    vtkMRMLViewNode::defaultBackgroundColor()[0],
-    vtkMRMLViewNode::defaultBackgroundColor()[1],
-    vtkMRMLViewNode::defaultBackgroundColor()[2]));
+  this->setBackgroundColor(QColor::fromRgbF(vtkMRMLViewNode::defaultBackgroundColor()[0],
+                                            vtkMRMLViewNode::defaultBackgroundColor()[1],
+                                            vtkMRMLViewNode::defaultBackgroundColor()[2]));
 }
 
 // --------------------------------------------------------------------------
@@ -81,13 +83,10 @@ void qMRMLNavigationView::setMRMLScene(vtkMRMLScene* newScene)
   {
     return;
   }
-  this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::NodeAddedEvent,
-                      this, SLOT(updateFromMRMLScene()));
-  this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::NodeRemovedEvent,
-                      this, SLOT(updateFromMRMLScene()));
+  this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::NodeAddedEvent, this, SLOT(updateFromMRMLScene()));
+  this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(updateFromMRMLScene()));
 
-  this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::EndBatchProcessEvent,
-                      this, SLOT(updateFromMRMLScene()));
+  this->qvtkReconnect(d->MRMLScene, newScene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT(updateFromMRMLScene()));
   d->MRMLScene = newScene;
   if (!d->MRMLViewNode || newScene != d->MRMLViewNode->GetScene())
   {
@@ -105,8 +104,7 @@ void qMRMLNavigationView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
     return;
   }
 
-  this->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateFromMRMLViewNode()));
+  this->qvtkReconnect(d->MRMLViewNode, newViewNode, vtkCommand::ModifiedEvent, this, SLOT(updateFromMRMLViewNode()));
   d->MRMLViewNode = newViewNode;
   this->updateFromMRMLViewNode();
 
@@ -115,7 +113,7 @@ void qMRMLNavigationView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLViewNode* qMRMLNavigationView::mrmlViewNode()const
+vtkMRMLViewNode* qMRMLNavigationView::mrmlViewNode() const
 {
   Q_D(const qMRMLNavigationView);
   return d->MRMLViewNode;
@@ -142,6 +140,5 @@ void qMRMLNavigationView::updateFromMRMLViewNode()
   }
   double backgroundColor[3];
   d->MRMLViewNode->GetBackgroundColor(backgroundColor);
-  this->setBackgroundColor(
-    QColor::fromRgbF(backgroundColor[0], backgroundColor[1], backgroundColor[2]));
+  this->setBackgroundColor(QColor::fromRgbF(backgroundColor[0], backgroundColor[1], backgroundColor[2]));
 }

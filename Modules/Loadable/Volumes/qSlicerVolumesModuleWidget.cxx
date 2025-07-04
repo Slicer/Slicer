@@ -27,7 +27,7 @@
 #include <qSlicerAbstractCoreModule.h>
 
 // CTK includes
-//#include <ctkModelTester.h>
+// #include <ctkModelTester.h>
 
 // MRML includes
 #include <vtkMRMLApplicationLogic.h>
@@ -46,7 +46,7 @@
 #include "vtkSlicerVolumesLogic.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumesModuleWidgetPrivate: public Ui_qSlicerVolumesModuleWidget
+class qSlicerVolumesModuleWidgetPrivate : public Ui_qSlicerVolumesModuleWidget
 {
 public:
 };
@@ -55,8 +55,7 @@ public:
 qSlicerVolumesModuleWidget::qSlicerVolumesModuleWidget(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerVolumesModuleWidgetPrivate)
-{
-}
+{}
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesModuleWidget::~qSlicerVolumesModuleWidget() = default;
@@ -67,22 +66,29 @@ void qSlicerVolumesModuleWidget::setup()
   Q_D(qSlicerVolumesModuleWidget);
   d->setupUi(this);
 
-  QObject::connect(d->ActiveVolumeNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   d->MRMLVolumeInfoWidget, SLOT(setVolumeNode(vtkMRMLNode*)));
+  QObject::connect(d->ActiveVolumeNodeSelector,
+                   SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   d->MRMLVolumeInfoWidget,
+                   SLOT(setVolumeNode(vtkMRMLNode*)));
 
-  QObject::connect(d->ActiveVolumeNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   d->VolumeDisplayWidget, SLOT(setMRMLVolumeNode(vtkMRMLNode*)));
+  QObject::connect(d->ActiveVolumeNodeSelector,
+                   SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   d->VolumeDisplayWidget,
+                   SLOT(setMRMLVolumeNode(vtkMRMLNode*)));
 
-  QObject::connect(d->ActiveVolumeNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   this, SLOT(nodeSelectionChanged(vtkMRMLNode*)));
+  QObject::connect(d->ActiveVolumeNodeSelector,
+                   SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                   this,
+                   SLOT(nodeSelectionChanged(vtkMRMLNode*)));
 
-  QObject::connect(d->ColorLegendCollapsibleButton, SIGNAL(contentsCollapsed(bool)),
-                   this, SLOT(colorLegendCollapsibleButtonCollapsed(bool)));
+  QObject::connect(d->ColorLegendCollapsibleButton,
+                   SIGNAL(contentsCollapsed(bool)),
+                   this,
+                   SLOT(colorLegendCollapsibleButtonCollapsed(bool)));
 
   // Set up labelmap conversion
   d->ConvertVolumeFrame->setVisible(false);
-  QObject::connect(d->ConvertVolumeButton, SIGNAL(clicked()),
-                   this, SLOT(convertVolume()));
+  QObject::connect(d->ConvertVolumeButton, SIGNAL(clicked()), this, SLOT(convertVolume()));
 }
 
 //------------------------------------------------------------------------------
@@ -97,8 +103,7 @@ void qSlicerVolumesModuleWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerVolumesModuleWidget);
 
-  vtkMRMLVolumeNode* currentVolumeNode = vtkMRMLVolumeNode::SafeDownCast(
-    d->ActiveVolumeNodeSelector->currentNode() );
+  vtkMRMLVolumeNode* currentVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ActiveVolumeNodeSelector->currentNode());
 
   // Color legend section
   vtkMRMLColorLegendDisplayNode* colorLegendNode = nullptr;
@@ -166,8 +171,7 @@ void qSlicerVolumesModuleWidget::convertVolume()
   vtkMRMLLabelMapVolumeNode* currentLabelMapVolumeNode = vtkMRMLLabelMapVolumeNode::SafeDownCast(currentVolume);
 
   // If there is no target labelmap node selected, then perform in-place conversion
-  vtkMRMLVolumeNode* targetVolumeNode = vtkMRMLVolumeNode::SafeDownCast(
-    d->ConvertVolumeTargetSelector->currentNode());
+  vtkMRMLVolumeNode* targetVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ConvertVolumeTargetSelector->currentNode());
   bool inPlaceConversion = (targetVolumeNode == nullptr);
   if (inPlaceConversion)
   {
@@ -185,9 +189,10 @@ void qSlicerVolumesModuleWidget::convertVolume()
     targetVolumeNode->SetSelectable(currentVolume->GetSelectable());
     targetVolumeNode->SetSingletonTag(currentVolume->GetSingletonTag());
     targetVolumeNode->SetDescription(currentVolume->GetDescription());
-    std::vector< std::string > attributeNames = targetVolumeNode->GetAttributeNames();
-    for (std::vector< std::string >::iterator attributeNameIt = attributeNames.begin();
-      attributeNameIt != attributeNames.end(); ++attributeNameIt)
+    std::vector<std::string> attributeNames = targetVolumeNode->GetAttributeNames();
+    for (std::vector<std::string>::iterator attributeNameIt = attributeNames.begin();
+         attributeNameIt != attributeNames.end();
+         ++attributeNameIt)
     {
       targetVolumeNode->SetAttribute(attributeNameIt->c_str(), currentVolume->GetAttribute(attributeNameIt->c_str()));
     }
@@ -197,13 +202,13 @@ void qSlicerVolumesModuleWidget::convertVolume()
   }
   if (currentLabelMapVolumeNode)
   {
-    logic->CreateScalarVolumeFromVolume(this->mrmlScene(),
-      vtkMRMLScalarVolumeNode::SafeDownCast(targetVolumeNode), currentVolume);
+    logic->CreateScalarVolumeFromVolume(
+      this->mrmlScene(), vtkMRMLScalarVolumeNode::SafeDownCast(targetVolumeNode), currentVolume);
   }
   else
   {
-    logic->CreateLabelVolumeFromVolume(this->mrmlScene(),
-      vtkMRMLLabelMapVolumeNode::SafeDownCast(targetVolumeNode), currentVolume);
+    logic->CreateLabelVolumeFromVolume(
+      this->mrmlScene(), vtkMRMLLabelMapVolumeNode::SafeDownCast(targetVolumeNode), currentVolume);
   }
 
   // In case of in-place conversion select the new labelmap node and delete the scalar volume node

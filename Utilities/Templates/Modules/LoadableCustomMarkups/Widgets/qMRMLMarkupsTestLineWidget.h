@@ -28,34 +28,31 @@
 class qMRMLMarkupsTestLineWidgetPrivate;
 class vtkMRMLMarkupsNode;
 
-class Q_SLICER_MODULE_TEMPLATEKEY_WIDGETS_EXPORT
-qMRMLMarkupsTestLineWidget : public qMRMLMarkupsAbstractOptionsWidget
+class Q_SLICER_MODULE_TEMPLATEKEY_WIDGETS_EXPORT qMRMLMarkupsTestLineWidget : public qMRMLMarkupsAbstractOptionsWidget
 {
   Q_OBJECT
 
   Q_PROPERTY(QString className READ className CONSTANT);
 
 public:
-
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsTestLineWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsTestLineWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsTestLineWidget() override;
 
   /// Gets the name of the additional options widget type
-  const QString className() const override {return "qMRMLMarkupsTestLineWidget";}
+  const QString className() const override { return "qMRMLMarkupsTestLineWidget"; }
 
   /// Updates the widget based on information from MRML.
   void updateWidgetFromMRML() override;
 
   /// Checks whether a given node can be handled by the widget
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
 
   /// Returns an instance of the widget
-  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
-  { return new qMRMLMarkupsTestLineWidget(); }
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override { return new qMRMLMarkupsTestLineWidget(); }
 
 public slots:
-/// Set the MRML node of interest
+  /// Set the MRML node of interest
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
 protected:

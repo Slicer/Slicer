@@ -149,7 +149,7 @@ void vtkMRMLColorLegendDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorLegendDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLColorLegendDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   this->Superclass::CopyContent(anode, deepCopy);
@@ -234,7 +234,8 @@ void vtkMRMLColorLegendDisplayNode::SetAndObservePrimaryDisplayNode(vtkMRMLDispl
 {
   if (node && this->Scene != node->GetScene())
   {
-    vtkErrorMacro("vtkMRMLColorLegendDisplayNode: Cannot set reference, the referenced and referencing node are not in the same scene");
+    vtkErrorMacro("vtkMRMLColorLegendDisplayNode: Cannot set reference, the referenced and referencing node are not in "
+                  "the same scene");
     return;
   }
 
@@ -242,14 +243,13 @@ void vtkMRMLColorLegendDisplayNode::SetAndObservePrimaryDisplayNode(vtkMRMLDispl
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorLegendDisplayNode::ProcessMRMLEvents(vtkObject *caller, unsigned long eventID, void *callData)
+void vtkMRMLColorLegendDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long eventID, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, eventID, callData);
 
   // Propagate primary display node and text properties modification events
-  if (eventID == vtkCommand::ModifiedEvent
-    && (caller == this->TitleTextProperty || caller == this->LabelTextProperty
-     || caller == this->GetPrimaryDisplayNode()))
+  if (eventID == vtkCommand::ModifiedEvent && (caller == this->TitleTextProperty || caller == this->LabelTextProperty ||
+                                               caller == this->GetPrimaryDisplayNode()))
   {
     this->Modified();
   }

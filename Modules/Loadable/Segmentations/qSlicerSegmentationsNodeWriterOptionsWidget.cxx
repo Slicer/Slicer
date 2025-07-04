@@ -29,8 +29,7 @@
 #include <vtkMRMLSegmentationStorageNode.h>
 
 //------------------------------------------------------------------------------
-class qSlicerSegmentationsNodeWriterOptionsWidgetPrivate
-  : public qSlicerNodeWriterOptionsWidgetPrivate
+class qSlicerSegmentationsNodeWriterOptionsWidgetPrivate : public qSlicerNodeWriterOptionsWidgetPrivate
 {
 public:
   void setupUi(QWidget* widget) override;
@@ -44,13 +43,13 @@ void qSlicerSegmentationsNodeWriterOptionsWidgetPrivate::setupUi(QWidget* widget
   this->CropToMinimumExtentCheckbox = new QCheckBox(widget);
   this->CropToMinimumExtentCheckbox->setObjectName(QStringLiteral("CropToMinimumExtentCheckBox"));
   this->CropToMinimumExtentCheckbox->setText(qSlicerSegmentationsNodeWriterOptionsWidget::tr("Crop to minimum extent"));
-  this->CropToMinimumExtentCheckbox->setToolTip(
-    qSlicerSegmentationsNodeWriterOptionsWidget::tr("If enabled then segmentation labelmap representation is"
+  this->CropToMinimumExtentCheckbox->setToolTip(qSlicerSegmentationsNodeWriterOptionsWidget::tr(
+    "If enabled then segmentation labelmap representation is"
     " cropped to the minimum necessary size. This saves storage space but changes voxel coordinate system"
     " (physical coordinate system is not affected)."));
   horizontalLayout->addWidget(CropToMinimumExtentCheckbox);
-  QObject::connect(this->CropToMinimumExtentCheckbox, SIGNAL(toggled(bool)),
-    widget, SLOT(setCropToMinimumExtent(bool)));
+  QObject::connect(
+    this->CropToMinimumExtentCheckbox, SIGNAL(toggled(bool)), widget, SLOT(setCropToMinimumExtent(bool)));
 }
 
 //------------------------------------------------------------------------------
@@ -71,8 +70,8 @@ void qSlicerSegmentationsNodeWriterOptionsWidget::setObject(vtkObject* object)
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(object);
   if (storableNode)
   {
-    vtkMRMLSegmentationStorageNode* storageNode = vtkMRMLSegmentationStorageNode::SafeDownCast(
-      storableNode->GetStorageNode());
+    vtkMRMLSegmentationStorageNode* storageNode =
+      vtkMRMLSegmentationStorageNode::SafeDownCast(storableNode->GetStorageNode());
     if (storageNode)
     {
       d->CropToMinimumExtentCheckbox->setChecked(storageNode->GetCropToMinimumExtent());

@@ -29,12 +29,12 @@
 #include "qSlicerTransformsModuleWidgetsPluginsExport.h"
 
 class Q_SLICER_MODULE_TRANSFORMS_WIDGETS_PLUGINS_EXPORT qSlicerTransformsModuleWidgetsAbstractPlugin
-    : public QDesignerCustomWidgetInterface
+  : public QDesignerCustomWidgetInterface
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerTransformsModuleWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;
@@ -42,7 +42,6 @@ public:
   QIcon icon() const override;
   QString toolTip() const override;
   QString whatsThis() const override;
-
 };
 
 #endif

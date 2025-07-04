@@ -37,13 +37,11 @@ class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransfor
 {
 
 public:
-
   static vtkMRMLTransformsDisplayableManager2D* New();
   vtkTypeMacro(vtkMRMLTransformsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLTransformsDisplayableManager2D();
   ~vtkMRMLTransformsDisplayableManager2D() override;
 
@@ -65,12 +63,11 @@ protected:
   void Create() override;
 
 private:
-
   vtkMRMLTransformsDisplayableManager2D(const vtkMRMLTransformsDisplayableManager2D&) = delete;
   void operator=(const vtkMRMLTransformsDisplayableManager2D&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   friend class vtkInternal;
 };
 

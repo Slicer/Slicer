@@ -54,8 +54,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::PrintSelf(ostream& os, vtkInden
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractSliceViewDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(
-    vtkObject* caller)
+void vtkMRMLAbstractSliceViewDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
   assert(vtkMRMLSliceNode::SafeDownCast(caller));
 #ifndef _DEBUG
@@ -65,7 +64,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::OnMRMLDisplayableNodeModifiedEv
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode * vtkMRMLAbstractSliceViewDisplayableManager::GetMRMLSliceNode()
+vtkMRMLSliceNode* vtkMRMLAbstractSliceViewDisplayableManager::GetMRMLSliceNode()
 {
   return vtkMRMLSliceNode::SafeDownCast(this->GetMRMLDisplayableNode());
 }
@@ -77,9 +76,11 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(double x, do
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
-    vtkRenderWindowInteractor * interactor, vtkMRMLSliceNode * sliceNode,
-    double x, double y, double xyz[3])
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(vtkRenderWindowInteractor* interactor,
+                                                                    vtkMRMLSliceNode* sliceNode,
+                                                                    double x,
+                                                                    double y,
+                                                                    double xyz[3])
 {
   if (xyz == nullptr || interactor == nullptr || sliceNode == nullptr)
   {
@@ -95,9 +96,9 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
   float tempX = x / windowWidth;
   float tempY = (windowHeight - 1 - y) / windowHeight;
 
-  float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
+  float z = floor(tempY * numberOfRows) * numberOfColumns + floor(tempX * numberOfColumns);
 
-  vtkRenderer* pokedRenderer = interactor->FindPokedRenderer(x,y);
+  vtkRenderer* pokedRenderer = interactor->FindPokedRenderer(x, y);
 
   xyz[0] = x - (pokedRenderer ? pokedRenderer->GetOrigin()[0] : 0.);
   xyz[1] = y - (pokedRenderer ? pokedRenderer->GetOrigin()[1] : 0.);
@@ -105,9 +106,11 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
-    vtkRenderer * renderer, vtkMRMLSliceNode * sliceNode,
-    double x, double y, double xyz[3])
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(vtkRenderer* renderer,
+                                                                    vtkMRMLSliceNode* sliceNode,
+                                                                    double x,
+                                                                    double y,
+                                                                    double xyz[3])
 {
   if (xyz == nullptr || renderer == nullptr || sliceNode == nullptr)
   {
@@ -123,7 +126,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
   float tempX = x / windowWidth;
   float tempY = (windowHeight - 1 - y) / windowHeight;
 
-  float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
+  float z = floor(tempY * numberOfRows) * numberOfColumns + floor(tempX * numberOfColumns);
 
   xyz[0] = x - renderer->GetOrigin()[0];
   xyz[1] = y - renderer->GetOrigin()[1];
@@ -137,8 +140,9 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(double ras[3], 
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(
-    vtkMRMLSliceNode * sliceNode, double ras[3], double xyz[3])
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(vtkMRMLSliceNode* sliceNode,
+                                                                 double ras[3],
+                                                                 double xyz[3])
 {
   if (sliceNode == nullptr)
   {
@@ -150,7 +154,9 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(
   double rasw[4] = { ras[0], ras[1], ras[2], 1.0 };
   double xyzw[4];
   rasToXYZ->MultiplyPoint(rasw, xyzw);
-  xyz[0] = xyzw[0]/xyzw[3]; xyz[1] = xyzw[1]/xyzw[3]; xyz[2] = xyzw[2]/xyzw[3];
+  xyz[0] = xyzw[0] / xyzw[3];
+  xyz[1] = xyzw[1] / xyzw[3];
+  xyz[2] = xyzw[2] / xyzw[3];
 }
 
 //---------------------------------------------------------------------------
@@ -160,16 +166,22 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(double xyz[3], 
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(
-    vtkMRMLSliceNode * sliceNode, double xyz[3], double ras[3])
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(vtkMRMLSliceNode* sliceNode,
+                                                                 double xyz[3],
+                                                                 double ras[3])
 {
   if (sliceNode == nullptr)
   {
     return;
   }
   double rasw[4], xyzw[4];
-  xyzw[0] = xyz[0]; xyzw[1] = xyz[1]; xyzw[2] = xyz[2]; xyzw[3] = 1.0;
+  xyzw[0] = xyz[0];
+  xyzw[1] = xyz[1];
+  xyzw[2] = xyz[2];
+  xyzw[3] = 1.0;
 
   sliceNode->GetXYToRAS()->MultiplyPoint(xyzw, rasw);
-  ras[0] = rasw[0]/rasw[3]; ras[1] = rasw[1]/rasw[3]; ras[2] = rasw[2]/rasw[3];
+  ras[0] = rasw[0] / rasw[3];
+  ras[1] = rasw[1] / rasw[3];
+  ras[2] = rasw[2] / rasw[3];
 }

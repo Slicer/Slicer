@@ -46,24 +46,24 @@ class Q_SLICER_BASE_QTAPP_EXPORT qSlicerMainWindow : public QMainWindow
 public:
   typedef QMainWindow Superclass;
 
-  qSlicerMainWindow(QWidget *parent=nullptr);
+  qSlicerMainWindow(QWidget* parent = nullptr);
   ~qSlicerMainWindow() override;
 
   /// Return a pointer to the module selector toolbar that can change the
   /// current module.
   /// \sa pythonConsole(), errorLogWidget()
-  Q_INVOKABLE qSlicerModuleSelectorToolBar* moduleSelector()const;
+  Q_INVOKABLE qSlicerModuleSelectorToolBar* moduleSelector() const;
 
 #ifdef Slicer_USE_PYTHONQT
   /// Return a pointer to the python console.
   /// \sa moduleSelector(), errorLogWidget()
-  Q_INVOKABLE ctkPythonConsole* pythonConsole()const;
+  Q_INVOKABLE ctkPythonConsole* pythonConsole() const;
 #endif
   /// Return a pointer to the error log widget.
   /// \sa moduleSelector(), pythonConsole()
-  Q_INVOKABLE ctkErrorLogWidget* errorLogWidget()const;
+  Q_INVOKABLE ctkErrorLogWidget* errorLogWidget() const;
   /// Return a pointer to the dock widget that shows the Error Log.
-  Q_INVOKABLE QDockWidget* errorLogDockWidget()const;
+  Q_INVOKABLE QDockWidget* errorLogDockWidget() const;
 
 public slots:
   virtual void setHomeModuleCurrent();
@@ -128,11 +128,11 @@ public slots:
   /// - recently loaded files
   ///
   /// \sa restoreGUIState()
-  virtual void saveGUIState(bool force=false);
+  virtual void saveGUIState(bool force = false);
 
   /// Read GUI state from application settings and update the user interface accordingly.
   /// \sa saveGUIState()
-  virtual void restoreGUIState(bool force=false);
+  virtual void restoreGUIState(bool force = false);
 
   virtual void addFileToRecentFiles(const qSlicerIO::IOProperties& fileProperties);
 
@@ -147,7 +147,7 @@ signals:
 protected slots:
   virtual void onModuleLoaded(const QString& moduleName);
   virtual void onModuleAboutToBeUnloaded(const QString& moduleName);
-  virtual void onNewFileLoaded(const qSlicerIO::IOProperties &fileProperties);
+  virtual void onNewFileLoaded(const qSlicerIO::IOProperties& fileProperties);
   virtual void onFileSaved(const qSlicerIO::IOProperties& fileProperties);
 
   virtual void onMRMLSceneModified(vtkObject*);
@@ -182,11 +182,11 @@ protected:
   /// Forward the dragEnterEvent to the IOManager which will
   /// decide if it could accept a drag/drop or not.
   /// \sa dropEvent()
-  void dragEnterEvent(QDragEnterEvent *event) override;
+  void dragEnterEvent(QDragEnterEvent* event) override;
 
   /// Forward the dropEvent to the IOManager.
   /// \sa dragEnterEvent()
-  void dropEvent(QDropEvent *event) override;
+  void dropEvent(QDropEvent* event) override;
 
   /// Reimplemented to catch activationChange/show/hide events.
   /// More specifically it allows to:
@@ -196,8 +196,8 @@ protected:
   ///  the error log dialog.
   bool eventFilter(QObject* object, QEvent* event) override;
 
-  void closeEvent(QCloseEvent *event) override;
-  void showEvent(QShowEvent *event) override;
+  void closeEvent(QCloseEvent* event) override;
+  void showEvent(QShowEvent* event) override;
 
   void changeEvent(QEvent* event) override;
 

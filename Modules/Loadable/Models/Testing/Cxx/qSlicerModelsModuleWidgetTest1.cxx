@@ -49,7 +49,7 @@
 #include "qMRMLWidget.h"
 
 //-----------------------------------------------------------------------------
-int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
+int qSlicerModelsModuleWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   qSlicerApplication app(argc, argv);
@@ -57,8 +57,7 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
 
   if (argc < 2)
   {
-    std::cerr << "Usage: qSlicerModelsModuleWidgetTest1 sceneFilePath [-I]"
-              << std::endl;
+    std::cerr << "Usage: qSlicerModelsModuleWidgetTest1 sceneFilePath [-I]" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -81,7 +80,8 @@ int qSlicerModelsModuleWidgetTest1( int argc, char * argv[] )
 
   // Set up Terminologies logic (needed for subject hierarchy tree view color/terminology selector)
   vtkNew<vtkSlicerTerminologiesModuleLogic> terminologiesLogic;
-  QString terminologiesSharePath = app.slicerHome() + '/' + app.slicerSharePath() + "/qt-loadable-modules/Terminologies";
+  QString terminologiesSharePath =
+    app.slicerHome() + '/' + app.slicerSharePath() + "/qt-loadable-modules/Terminologies";
   terminologiesLogic->SetModuleShareDirectory(terminologiesSharePath.toStdString());
   terminologiesLogic->SetMRMLScene(scene.GetPointer());
   terminologiesLogic->SetMRMLApplicationLogic(appLogic);

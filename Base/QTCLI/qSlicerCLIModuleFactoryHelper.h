@@ -29,7 +29,6 @@
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleFactoryHelper
 {
 public:
-
   ///
   /// Convenient method returning a list of module paths that the factory could use
   static const QStringList modulePaths();

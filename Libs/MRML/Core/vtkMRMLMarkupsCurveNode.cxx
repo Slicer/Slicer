@@ -114,7 +114,8 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   events->InsertNextTuple1(vtkCommand::ModifiedEvent);
   events->InsertNextTuple1(vtkMRMLModelNode::MeshModifiedEvent);
   events->InsertNextTuple1(vtkMRMLTransformableNode::TransformModifiedEvent);
-  this->AddNodeReferenceRole(this->GetSurfaceConstraintNodeReferenceRole(), this->GetSurfaceConstraintNodeReferenceMRMLAttributeName(), events);
+  this->AddNodeReferenceRole(
+    this->GetSurfaceConstraintNodeReferenceRole(), this->GetSurfaceConstraintNodeReferenceMRMLAttributeName(), events);
 
   this->CurveCoordinateSystemGeneratorWorld->SetInputConnection(this->ProjectPointsFilter->GetOutputPort());
 
@@ -151,10 +152,13 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->Measurements->AddItem(curvatureMaxMeasurement);
 
   this->CurvatureMeasurementModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->CurvatureMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->CurvatureMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified );
-  broker->AddObservation(curvatureMeanMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
-  broker->AddObservation(curvatureMaxMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
+  this->CurvatureMeasurementModifiedCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
+  this->CurvatureMeasurementModifiedCallbackCommand->SetCallback(
+    vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified);
+  broker->AddObservation(
+    curvatureMeanMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
+  broker->AddObservation(
+    curvatureMaxMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
 
   vtkNew<vtkMRMLStaticMeasurement> torsionMeanMeasurement;
   torsionMeanMeasurement->SetName(this->CurveMeasurementsCalculator->GetMeanTorsionName());
@@ -167,10 +171,13 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->Measurements->AddItem(torsionMaxMeasurement);
 
   this->TorsionMeasurementModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->TorsionMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
-  this->TorsionMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnTorsionMeasurementEnabledModified );
-  broker->AddObservation(torsionMeanMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
-  broker->AddObservation(torsionMaxMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
+  this->TorsionMeasurementModifiedCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
+  this->TorsionMeasurementModifiedCallbackCommand->SetCallback(
+    vtkMRMLMarkupsCurveNode::OnTorsionMeasurementEnabledModified);
+  broker->AddObservation(
+    torsionMeanMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
+  broker->AddObservation(
+    torsionMaxMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
 }
 
 //----------------------------------------------------------------------------
@@ -193,14 +200,15 @@ vtkMRMLMarkupsCurveNode::~vtkMRMLMarkupsCurveNode()
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  Superclass::WriteXML(of, nIndent);
 
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLEnumMacro(curveType, CurveType);
   vtkMRMLWriteXMLIntMacro(numberOfPointsPerInterpolatingSegment, NumberOfPointsPerInterpolatingSegment);
   vtkMRMLWriteXMLEnumMacro(surfaceCostFunctionType, SurfaceCostFunctionType);
   vtkMRMLWriteXMLStringMacro(surfaceDistanceWeightingFunction, SurfaceDistanceWeightingFunction);
-  vtkMRMLWriteXMLFloatMacro(surfaceConstraintMaximumSearchRadiusTolerance, SurfaceConstraintMaximumSearchRadiusTolerance);
+  vtkMRMLWriteXMLFloatMacro(surfaceConstraintMaximumSearchRadiusTolerance,
+                            SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -216,12 +224,13 @@ void vtkMRMLMarkupsCurveNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLIntMacro(numberOfPointsPerInterpolatingSegment, NumberOfPointsPerInterpolatingSegment);
   vtkMRMLReadXMLEnumMacro(surfaceCostFunctionType, SurfaceCostFunctionType);
   vtkMRMLReadXMLStringMacro(surfaceDistanceWeightingFunction, SurfaceDistanceWeightingFunction);
-  vtkMRMLReadXMLFloatMacro(surfaceConstraintMaximumSearchRadiusTolerance, SurfaceConstraintMaximumSearchRadiusTolerance);
+  vtkMRMLReadXMLFloatMacro(surfaceConstraintMaximumSearchRadiusTolerance,
+                           SurfaceConstraintMaximumSearchRadiusTolerance);
   vtkMRMLReadXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -240,21 +249,26 @@ void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 
   for (int index = 0; index < this->Measurements->GetNumberOfItems(); ++index)
   {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
-    if ( currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanCurvatureName()
-      || currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMaxCurvatureName() )
+    vtkMRMLMeasurement* currentMeasurement =
+      vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
+    if (currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanCurvatureName() ||
+        currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMaxCurvatureName())
     {
-      if (!broker->GetObservationExist(currentMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand))
+      if (!broker->GetObservationExist(
+            currentMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand))
       {
-        broker->AddObservation(currentMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
+        broker->AddObservation(
+          currentMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
       }
     }
-    if ( currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanTorsionName()
-      || currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMaxTorsionName() )
+    if (currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanTorsionName() ||
+        currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMaxTorsionName())
     {
-      if (!broker->GetObservationExist(currentMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand))
+      if (!broker->GetObservationExist(
+            currentMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand))
       {
-        broker->AddObservation(currentMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
+        broker->AddObservation(
+          currentMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
       }
     }
   }
@@ -263,7 +277,7 @@ void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintEnumMacro(CurveType);
@@ -305,8 +319,10 @@ vtkAlgorithmOutput* vtkMRMLMarkupsCurveNode::GetCurveWorldConnection()
 }
 
 //---------------------------------------------------------------------------
-double vtkMRMLMarkupsCurveNode::GetCurveLength(vtkPoints* curvePoints, bool closedCurve,
-  vtkIdType startCurvePointIndex /*=0*/, vtkIdType numberOfCurvePoints /*=-1*/)
+double vtkMRMLMarkupsCurveNode::GetCurveLength(vtkPoints* curvePoints,
+                                               bool closedCurve,
+                                               vtkIdType startCurvePointIndex /*=0*/,
+                                               vtkIdType numberOfCurvePoints /*=-1*/)
 {
   if (!curvePoints || curvePoints->GetNumberOfPoints() < 2)
   {
@@ -354,16 +370,16 @@ double vtkMRMLMarkupsCurveNode::GetCurveLength(vtkPoints* curvePoints, bool clos
 }
 
 //---------------------------------------------------------------------------
-double vtkMRMLMarkupsCurveNode::GetCurveLengthWorld(
-  vtkIdType startCurvePointIndex /*=0*/, vtkIdType numberOfCurvePoints /*=-1*/)
+double vtkMRMLMarkupsCurveNode::GetCurveLengthWorld(vtkIdType startCurvePointIndex /*=0*/,
+                                                    vtkIdType numberOfCurvePoints /*=-1*/)
 {
   vtkPoints* points = this->GetCurvePointsWorld();
-  return vtkMRMLMarkupsCurveNode::GetCurveLength(points, this->CurveClosed,
-    startCurvePointIndex, numberOfCurvePoints);
+  return vtkMRMLMarkupsCurveNode::GetCurveLength(points, this->CurveClosed, startCurvePointIndex, numberOfCurvePoints);
 }
 
 //---------------------------------------------------------------------------
-double vtkMRMLMarkupsCurveNode::GetCurveLengthBetweenStartEndPointsWorld(vtkIdType startCurvePointIndex, vtkIdType endCurvePointIndex)
+double vtkMRMLMarkupsCurveNode::GetCurveLengthBetweenStartEndPointsWorld(vtkIdType startCurvePointIndex,
+                                                                         vtkIdType endCurvePointIndex)
 {
   if (startCurvePointIndex <= endCurvePointIndex)
   {
@@ -382,8 +398,11 @@ bool vtkMRMLMarkupsCurveNode::SetControlPointLabels(vtkStringArray* labels, vtkP
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface(vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
-  vtkPoints* surfacePoints, double maximumSearchRadiusTolerance)
+bool vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface(vtkPoints* originalPoints,
+                                                       vtkPoints* normalVectors,
+                                                       vtkPolyData* surfacePolydata,
+                                                       vtkPoints* surfacePoints,
+                                                       double maximumSearchRadiusTolerance)
 {
   // Convert normals from vtkPoints (the legacy interface) to vtkDoubleArray
   vtkNew<vtkDoubleArray> normalVectorsAsArray;
@@ -393,8 +412,8 @@ bool vtkMRMLMarkupsCurveNode::ConstrainPointsToSurface(vtkPoints* originalPoints
     normalVectorsAsArray->InsertNextTuple(normalVectors->GetPoint(i));
   }
 
-  return vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurface(originalPoints, normalVectorsAsArray, surfacePolydata,
-    surfacePoints, maximumSearchRadiusTolerance);
+  return vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurface(
+    originalPoints, normalVectorsAsArray, surfacePolydata, surfacePoints, maximumSearchRadiusTolerance);
 }
 
 //---------------------------------------------------------------------------
@@ -408,9 +427,13 @@ void vtkMRMLMarkupsCurveNode::ResampleCurveWorld(double controlPointDistance)
 
   vtkNew<vtkPoints> interpolatedPoints;
   vtkNew<vtkDoubleArray> pedigreeIdsArray;
-  vtkMRMLMarkupsCurveNode::ResamplePoints(points, interpolatedPoints, controlPointDistance, this->CurveClosed, pedigreeIdsArray);
-  vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(this->Measurements, pedigreeIdsArray,
-    this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment(), this->CurveClosed);
+  vtkMRMLMarkupsCurveNode::ResamplePoints(
+    points, interpolatedPoints, controlPointDistance, this->CurveClosed, pedigreeIdsArray);
+  vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(
+    this->Measurements,
+    pedigreeIdsArray,
+    this->CurveGenerator->GetNumberOfPointsPerInterpolatingSegment(),
+    this->CurveClosed);
 
   vtkNew<vtkPoints> originalPoints;
   this->GetControlPointPositionsWorld(originalPoints);
@@ -423,7 +446,9 @@ void vtkMRMLMarkupsCurveNode::ResampleCurveWorld(double controlPointDistance)
 
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(vtkCollection* measurements,
-  vtkDoubleArray* curvePointsPedigreeIdsArray, int curvePointsPerControlPoint, bool closedCurve)
+                                                                     vtkDoubleArray* curvePointsPedigreeIdsArray,
+                                                                     int curvePointsPerControlPoint,
+                                                                     bool closedCurve)
 {
   if (!measurements || !curvePointsPedigreeIdsArray)
   {
@@ -434,7 +459,8 @@ bool vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(vtkCollecti
   bool success = true;
   for (int index = 0; index < measurements->GetNumberOfItems(); ++index)
   {
-    vtkMRMLStaticMeasurement* currentMeasurement = vtkMRMLStaticMeasurement::SafeDownCast(measurements->GetItemAsObject(index));
+    vtkMRMLStaticMeasurement* currentMeasurement =
+      vtkMRMLStaticMeasurement::SafeDownCast(measurements->GetItemAsObject(index));
     if (!currentMeasurement)
     {
       continue;
@@ -448,14 +474,17 @@ bool vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(vtkCollecti
     if (controlPointValues->GetNumberOfComponents() != 1)
     {
       vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::ResampleCurveWorld: "
-        << "Only the interpolation of single component control point measurements is implemented");
+                             << "Only the interpolation of single component control point measurements is implemented");
       success = false;
       continue;
     }
     vtkNew<vtkDoubleArray> interpolatedMeasurement;
     interpolatedMeasurement->SetName(controlPointValues->GetName());
-    vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues, closedCurve,
-      interpolatedMeasurement, curvePointsPedigreeIdsArray, 1.0/curvePointsPerControlPoint);
+    vtkCurveMeasurementsCalculator::InterpolateArray(controlPointValues,
+                                                     closedCurve,
+                                                     interpolatedMeasurement,
+                                                     curvePointsPedigreeIdsArray,
+                                                     1.0 / curvePointsPerControlPoint);
     controlPointValues->DeepCopy(interpolatedMeasurement);
   }
 
@@ -463,8 +492,11 @@ bool vtkMRMLMarkupsCurveNode::ResampleStaticControlPointMeasurements(vtkCollecti
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoints* sampledPoints,
-  double samplingDistance, bool closedCurve, vtkDoubleArray* pedigreeIdsArray/*=nullptr*/)
+bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints,
+                                             vtkPoints* sampledPoints,
+                                             double samplingDistance,
+                                             bool closedCurve,
+                                             vtkDoubleArray* pedigreeIdsArray /*=nullptr*/)
 {
   if (!originalPoints || !sampledPoints || samplingDistance <= 0)
   {
@@ -502,7 +534,8 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
   vtkIdType numberOfOriginalPoints = originalPoints->GetNumberOfPoints();
   bool addClosingSegment = closedCurve; // for closed curves, add a closing segment that connects last and first points
   double* currentCurvePoint = nullptr;
-  for (vtkIdType originalPointIndex = 0; originalPointIndex < numberOfOriginalPoints || addClosingSegment; originalPointIndex++)
+  for (vtkIdType originalPointIndex = 0; originalPointIndex < numberOfOriginalPoints || addClosingSegment;
+       originalPointIndex++)
   {
     if (originalPointIndex >= numberOfOriginalPoints)
     {
@@ -523,28 +556,24 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
     remainingSegmentLength = distanceFromLastSampledPoint + segmentLength;
     if (remainingSegmentLength >= samplingDistance)
     {
-      double segmentDirectionVector[3] =
-        {
-        (currentCurvePoint[0] - previousCurvePoint[0]) / segmentLength,
-        (currentCurvePoint[1] - previousCurvePoint[1]) / segmentLength,
-        (currentCurvePoint[2] - previousCurvePoint[2]) / segmentLength
-        };
+      double segmentDirectionVector[3] = { (currentCurvePoint[0] - previousCurvePoint[0]) / segmentLength,
+                                           (currentCurvePoint[1] - previousCurvePoint[1]) / segmentLength,
+                                           (currentCurvePoint[2] - previousCurvePoint[2]) / segmentLength };
       // distance of new sampled point from previous curve point
       double distanceFromLastInterpolatedPoint = samplingDistance - distanceFromLastSampledPoint;
       while (remainingSegmentLength >= samplingDistance)
       {
-        double newSampledPoint[3] =
-          {
+        double newSampledPoint[3] = {
           previousCurvePoint[0] + segmentDirectionVector[0] * distanceFromLastInterpolatedPoint,
           previousCurvePoint[1] + segmentDirectionVector[1] * distanceFromLastInterpolatedPoint,
           previousCurvePoint[2] + segmentDirectionVector[2] * distanceFromLastInterpolatedPoint
-          };
+        };
         sampledPoints->InsertNextPoint(newSampledPoint);
         distanceFromLastSampledPoint = 0;
         distanceFromLastInterpolatedPoint += samplingDistance;
         if (pedigreeIdsArray)
         {
-          pedigreeIdsArray->InsertNextValue(originalPointIndex + distanceFromLastInterpolatedPoint/samplingDistance);
+          pedigreeIdsArray->InsertNextValue(originalPointIndex + distanceFromLastInterpolatedPoint / samplingDistance);
         }
         remainingSegmentLength -= samplingDistance;
       }
@@ -570,8 +599,13 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
       // last segment would be too short, so remove the last point and adjust position of second last point
       double lastPointPosition[3] = { 0.0 };
       vtkIdType lastPointOriginalPointIndex = 0;
-      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(lastPointPosition, lastPointOriginalPointIndex,
-        0, -(2.0*samplingDistance+remainingSegmentLength)/2.0, originalPoints, closedCurve))
+      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(
+            lastPointPosition,
+            lastPointOriginalPointIndex,
+            0,
+            -(2.0 * samplingDistance + remainingSegmentLength) / 2.0,
+            originalPoints,
+            closedCurve))
       {
         sampledPoints->SetNumberOfPoints(sampledPoints->GetNumberOfPoints() - 1);
         sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, lastPointPosition);
@@ -597,8 +631,13 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
       // so just adjust the position of the last point
       double lastPointPosition[3] = { 0.0 };
       vtkIdType lastPointOriginalPointIndex = 0;
-      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(lastPointPosition, lastPointOriginalPointIndex,
-        0, -(samplingDistance+remainingSegmentLength)/2.0, originalPoints, closedCurve))
+      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(
+            lastPointPosition,
+            lastPointOriginalPointIndex,
+            0,
+            -(samplingDistance + remainingSegmentLength) / 2.0,
+            originalPoints,
+            closedCurve))
       {
         sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, lastPointPosition);
         if (pedigreeIdsArray)
@@ -617,8 +656,13 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
       // last segment would be much longer than the sampling distance, so add an extra point
       double secondLastPointPosition[3] = { 0.0 };
       vtkIdType secondLastPointOriginalPointIndex = 0;
-      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(secondLastPointPosition, secondLastPointOriginalPointIndex,
-        originalPoints->GetNumberOfPoints() - 1, -(samplingDistance+remainingSegmentLength) / 2.0, originalPoints, closedCurve))
+      if (vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(
+            secondLastPointPosition,
+            secondLastPointOriginalPointIndex,
+            originalPoints->GetNumberOfPoints() - 1,
+            -(samplingDistance + remainingSegmentLength) / 2.0,
+            originalPoints,
+            closedCurve))
       {
         sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1, secondLastPointPosition);
         sampledPoints->InsertNextPoint(originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
@@ -632,10 +676,11 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
       {
         // something went wrong, we could not add a point, therefore just adjust the last point position
         sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1,
-          originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
+                                originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
         if (pedigreeIdsArray)
         {
-          pedigreeIdsArray->SetValue(pedigreeIdsArray->GetNumberOfValues() - 1, originalPoints->GetNumberOfPoints() - 1);
+          pedigreeIdsArray->SetValue(pedigreeIdsArray->GetNumberOfValues() - 1,
+                                     originalPoints->GetNumberOfPoints() - 1);
         }
       }
     }
@@ -644,7 +689,7 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
       // last segment is only slightly longer than the sampling distance
       // so we just adjust the position of last point
       sampledPoints->SetPoint(sampledPoints->GetNumberOfPoints() - 1,
-        originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
+                              originalPoints->GetPoint(originalPoints->GetNumberOfPoints() - 1));
       if (pedigreeIdsArray)
       {
         pedigreeIdsArray->SetValue(pedigreeIdsArray->GetNumberOfValues() - 1, originalPoints->GetNumberOfPoints() - 1);
@@ -656,8 +701,12 @@ bool vtkMRMLMarkupsCurveNode::ResamplePoints(vtkPoints* originalPoints, vtkPoint
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double foundCurvePosition[3], vtkIdType& foundClosestPointIndex,
-  vtkIdType startCurvePointId, double distanceFromStartPoint, vtkPoints* curvePoints, bool closedCurve)
+bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double foundCurvePosition[3],
+                                                                        vtkIdType& foundClosestPointIndex,
+                                                                        vtkIdType startCurvePointId,
+                                                                        double distanceFromStartPoint,
+                                                                        vtkPoints* curvePoints,
+                                                                        bool closedCurve)
 {
   vtkIdType numberOfCurvePoints = (curvePoints != nullptr ? curvePoints->GetNumberOfPoints() : 0);
   if (numberOfCurvePoints == 0)
@@ -679,7 +728,7 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
     if (distanceFromStartPoint > 0.0)
     {
       vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::GetPositionAlongCurve failed: non-zero distance"
-        " is requested but only 1 point is available");
+                             " is requested but only 1 point is available");
       return false;
     }
     else
@@ -733,10 +782,10 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
     if (remainingDistanceFromStartPoint <= 0)
     {
       // reached the requested distance (and probably a bit more)
-      for (int i=0; i<3; i++)
+      for (int i = 0; i < 3; i++)
       {
-        foundCurvePosition[i] = nextPoint[i] +
-          remainingDistanceFromStartPoint * (nextPoint[i] - previousPoint[i]) / lastSegmentLength;
+        foundCurvePosition[i] =
+          nextPoint[i] + remainingDistanceFromStartPoint * (nextPoint[i] - previousPoint[i]) / lastSegmentLength;
       }
       if (fabs(remainingDistanceFromStartPoint) <= fabs(remainingDistanceFromStartPoint + lastSegmentLength))
       {
@@ -744,7 +793,7 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
       }
       else
       {
-        foundClosestPointIndex = pointId-1;
+        foundClosestPointIndex = pointId - 1;
       }
       break;
     }
@@ -758,11 +807,14 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
 
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsCurveNode::GetSampledCurvePointsBetweenStartEndPointsWorld(vtkPoints* sampledPoints,
-  double samplingDistance, vtkIdType startCurvePointIndex, vtkIdType endCurvePointIndex)
+                                                                              double samplingDistance,
+                                                                              vtkIdType startCurvePointIndex,
+                                                                              vtkIdType endCurvePointIndex)
 {
   if (!sampledPoints || samplingDistance <= 0)
   {
-    vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::GetSampledCurvePointsBetweenStartEndPoints failed: invalid inputs");
+    vtkGenericWarningMacro(
+      "vtkMRMLMarkupsCurveNode::GetSampledCurvePointsBetweenStartEndPoints failed: invalid inputs");
     return false;
   }
   vtkPoints* allPoints = this->GetCurvePointsWorld();
@@ -772,9 +824,10 @@ bool vtkMRMLMarkupsCurveNode::GetSampledCurvePointsBetweenStartEndPointsWorld(vt
   }
   if (startCurvePointIndex < 0 || endCurvePointIndex >= allPoints->GetNumberOfPoints())
   {
-    vtkGenericWarningMacro("vtkMRMLMarkupsCurveNode::GetSampledCurvePointsBetweenStartEndPoints failed: invalid inputs ("
-    << "requested " << startCurvePointIndex << ".." << endCurvePointIndex << " range, but there are "
-    << allPoints->GetNumberOfPoints() << " curve points)");
+    vtkGenericWarningMacro(
+      "vtkMRMLMarkupsCurveNode::GetSampledCurvePointsBetweenStartEndPoints failed: invalid inputs ("
+      << "requested " << startCurvePointIndex << ".." << endCurvePointIndex << " range, but there are "
+      << allPoints->GetNumberOfPoints() << " curve points)");
     return false;
   }
   vtkNew<vtkPoints> points;
@@ -820,7 +873,8 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexFromControlPointIndex(int c
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsCurveNode::GetCurveDirectionAtPointIndexWorld(vtkIdType curvePointIndex, double directionVectorWorld[3])
+bool vtkMRMLMarkupsCurveNode::GetCurveDirectionAtPointIndexWorld(vtkIdType curvePointIndex,
+                                                                 double directionVectorWorld[3])
 {
   vtkNew<vtkMatrix4x4> curvePointToWorld;
   if (!this->GetCurvePointToWorldTransformAtPointIndex(curvePointIndex, curvePointToWorld))
@@ -842,7 +896,7 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetFarthestCurvePointIndexToPositionWorld(con
 //---------------------------------------------------------------------------
 vtkIdType vtkMRMLMarkupsCurveNode::GetFarthestCurvePointIndexToPosition(vtkPoints* points, const double pos[3])
 {
-  if (!points || points->GetNumberOfPoints()<1)
+  if (!points || points->GetNumberOfPoints() < 1)
   {
     return false;
   }
@@ -871,28 +925,35 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetFarthestCurvePointIndexToPosition(vtkPoint
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurveWorld(vtkIdType startCurvePointId, double distanceFromStartPoint)
+vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurveWorld(vtkIdType startCurvePointId,
+                                                                     double distanceFromStartPoint)
 {
-  return vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurve(this->GetCurvePointsWorld(), startCurvePointId, distanceFromStartPoint, this->CurveClosed);
+  return vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurve(
+    this->GetCurvePointsWorld(), startCurvePointId, distanceFromStartPoint, this->CurveClosed);
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurve(vtkPoints* points, vtkIdType startCurvePointId, double distanceFromStartPoint, bool curveClosed)
+vtkIdType vtkMRMLMarkupsCurveNode::GetCurvePointIndexAlongCurve(vtkPoints* points,
+                                                                vtkIdType startCurvePointId,
+                                                                double distanceFromStartPoint,
+                                                                bool curveClosed)
 {
   double foundCurvePosition[3] = { 0.0 };
   vtkIdType foundClosestPointIndex = -1;
-  vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(foundCurvePosition, foundClosestPointIndex,
-    startCurvePointId, distanceFromStartPoint, points, curveClosed);
+  vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(
+    foundCurvePosition, foundClosestPointIndex, startCurvePointId, distanceFromStartPoint, points, curveClosed);
   return foundClosestPointIndex;
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsCurveNode::GetPositionAlongCurveWorld(double foundCurvePosition[3], vtkIdType startCurvePointId, double distanceFromStartPoint)
+bool vtkMRMLMarkupsCurveNode::GetPositionAlongCurveWorld(double foundCurvePosition[3],
+                                                         vtkIdType startCurvePointId,
+                                                         double distanceFromStartPoint)
 {
   vtkPoints* points = this->GetCurvePointsWorld();
   vtkIdType foundClosestPointIndex = -1;
-  return vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(foundCurvePosition, foundClosestPointIndex,
-    startCurvePointId, distanceFromStartPoint, points, this->CurveClosed);
+  return vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(
+    foundCurvePosition, foundClosestPointIndex, startCurvePointId, distanceFromStartPoint, points, this->CurveClosed);
 }
 
 //---------------------------------------------------------------------------
@@ -934,11 +995,13 @@ bool vtkMRMLMarkupsCurveNode::GetPointsOnPlaneWorld(vtkPlane* plane, vtkPoints* 
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex(vtkIdType curvePointIndex, vtkMatrix4x4* curvePointToWorld)
+bool vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex(vtkIdType curvePointIndex,
+                                                                        vtkMatrix4x4* curvePointToWorld)
 {
   if (!curvePointToWorld)
   {
-    vtkErrorMacro("vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex failed: Invalid curvePointToWorld");
+    vtkErrorMacro(
+      "vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex failed: Invalid curvePointToWorld");
     return false;
   }
   this->CurveGenerator->Update();
@@ -952,7 +1015,7 @@ bool vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex(vtkIdTyp
   if (curvePointIndex < 0 || curvePointIndex >= n)
   {
     vtkErrorMacro("vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex failed: Invalid curvePointIndex "
-      << curvePointIndex << " (number of curve points: " << n << ")");
+                  << curvePointIndex << " (number of curve points: " << n << ")");
     return false;
   }
   curvePointToWorld->Identity();
@@ -975,7 +1038,7 @@ bool vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex(vtkIdTyp
   double* binormal = binormals->GetTuple3(curvePointIndex);
   double* tangent = tangents->GetTuple3(curvePointIndex);
   double* position = curvePoly->GetPoint(curvePointIndex);
-  for (int row=0; row<3; row++)
+  for (int row = 0; row < 3; row++)
   {
     curvePointToWorld->SetElement(row, 0, normal[row]);
     curvePointToWorld->SetElement(row, 1, binormal[row]);
@@ -1055,21 +1118,27 @@ void vtkMRMLMarkupsCurveNode::SetNumberOfPointsPerInterpolatingSegment(int point
 {
   if (pointsPerSegment < 1)
   {
-    vtkErrorMacro("vtkMRMLMarkupsCurveNode::SetNumberOfPointsPerInterpolatingSegment failed: minimum value is 1, attempted to set value " << pointsPerSegment);
+    vtkErrorMacro("vtkMRMLMarkupsCurveNode::SetNumberOfPointsPerInterpolatingSegment failed: minimum value is 1, "
+                  "attempted to set value "
+                  << pointsPerSegment);
     return;
   }
   this->CurveGenerator->SetNumberOfPointsPerInterpolatingSegment(pointsPerSegment);
 }
 
 //---------------------------------------------------------------------------
-vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const double posWorld[3], double closestPos[3])
+vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurveWorld(const double posWorld[3],
+                                                                          double closestPos[3])
 {
-  return vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(this->GetCurvePointsWorld(), posWorld, closestPos, this->TransformedCurvePolyLocator);
+  return vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(
+    this->GetCurvePointsWorld(), posWorld, closestPos, this->TransformedCurvePolyLocator);
 }
 
 //---------------------------------------------------------------------------
 vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(vtkPoints* points,
-  const double pos[3], double closestPos[3], vtkPointLocator* pointLocator/*=nullptr*/)
+                                                                     const double pos[3],
+                                                                     double closestPos[3],
+                                                                     vtkPointLocator* pointLocator /*=nullptr*/)
 {
   if (!points || points->GetNumberOfPoints() < 1)
   {
@@ -1122,7 +1191,8 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(vtkPoints* 
   if (closestCurvePointIndex - 1 >= 0)
   {
     points->GetPoint(closestCurvePointIndex - 1, otherPoint);
-    double distance2 = vtkLine::DistanceToLine(pos, closestCurvePoint, otherPoint, relativePositionAlongLine, closestPointOnLine);
+    double distance2 =
+      vtkLine::DistanceToLine(pos, closestCurvePoint, otherPoint, relativePositionAlongLine, closestPointOnLine);
     if (distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
     {
       closestDistance2 = distance2;
@@ -1135,7 +1205,8 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(vtkPoints* 
   if (closestCurvePointIndex + 1 < points->GetNumberOfPoints())
   {
     points->GetPoint(closestCurvePointIndex + 1, otherPoint);
-    double distance2 = vtkLine::DistanceToLine(pos, closestCurvePoint, otherPoint, relativePositionAlongLine, closestPointOnLine);
+    double distance2 =
+      vtkLine::DistanceToLine(pos, closestCurvePoint, otherPoint, relativePositionAlongLine, closestPointOnLine);
     if (distance2 < closestDistance2 && relativePositionAlongLine >= 0 && relativePositionAlongLine <= 1)
     {
       closestDistance2 = distance2;
@@ -1156,14 +1227,18 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
   if (this->CurveMeasurementsCalculator && this->GetNumberOfControlPoints() > 1)
   {
     // Update curvature unit (only do it if a curve measurement is enabled)
-    vtkMRMLMeasurement* curvatureMeanMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMeanCurvatureName());
-    vtkMRMLMeasurement* curvatureMaxMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMaxCurvatureName());
-    vtkMRMLMeasurement* torsionAvgMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMeanTorsionName());
-    vtkMRMLMeasurement* torsionMaxMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMaxTorsionName());
-    if ( (curvatureMeanMeasurement && curvatureMeanMeasurement->GetEnabled())
-      || (curvatureMaxMeasurement && curvatureMaxMeasurement->GetEnabled())
-      || (torsionAvgMeasurement && torsionAvgMeasurement->GetEnabled())
-      || (torsionMaxMeasurement && torsionMaxMeasurement->GetEnabled()))
+    vtkMRMLMeasurement* curvatureMeanMeasurement =
+      this->GetMeasurement(this->CurveMeasurementsCalculator->GetMeanCurvatureName());
+    vtkMRMLMeasurement* curvatureMaxMeasurement =
+      this->GetMeasurement(this->CurveMeasurementsCalculator->GetMaxCurvatureName());
+    vtkMRMLMeasurement* torsionAvgMeasurement =
+      this->GetMeasurement(this->CurveMeasurementsCalculator->GetMeanTorsionName());
+    vtkMRMLMeasurement* torsionMaxMeasurement =
+      this->GetMeasurement(this->CurveMeasurementsCalculator->GetMaxTorsionName());
+    if ((curvatureMeanMeasurement && curvatureMeanMeasurement->GetEnabled()) ||
+        (curvatureMaxMeasurement && curvatureMaxMeasurement->GetEnabled()) ||
+        (torsionAvgMeasurement && torsionAvgMeasurement->GetEnabled()) ||
+        (torsionMaxMeasurement && torsionMaxMeasurement->GetEnabled()))
     {
       std::string inverseLengthUnit = "mm-1";
       vtkMRMLUnitNode* lengthUnitNode = this->GetUnitNode("length");
@@ -1181,9 +1256,7 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller,
-                                             unsigned long event,
-                                             void* callData)
+void vtkMRMLMarkupsCurveNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
   {
@@ -1268,7 +1341,8 @@ void vtkMRMLMarkupsCurveNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* refer
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::SetAndObserveSurfaceConstraintNode(vtkMRMLModelNode* modelNode)
 {
-  this->SetAndObserveNodeReferenceID(this->GetSurfaceConstraintNodeReferenceRole(), modelNode ? modelNode->GetID() : nullptr);
+  this->SetAndObserveNodeReferenceID(this->GetSurfaceConstraintNodeReferenceRole(),
+                                     modelNode ? modelNode->GetID() : nullptr);
 }
 
 //---------------------------------------------------------------------------
@@ -1312,7 +1386,7 @@ void vtkMRMLMarkupsCurveNode::SetSurfaceDistanceWeightingFunction(const char* fu
 {
   const char* currentFunction = this->SurfaceScalarCalculator->GetFunction();
   if ((currentFunction && function && strcmp(this->SurfaceScalarCalculator->GetFunction(), function) == 0) ||
-    (currentFunction == nullptr && function == nullptr))
+      (currentFunction == nullptr && function == nullptr))
   {
     return;
   }
@@ -1349,15 +1423,16 @@ void vtkMRMLMarkupsCurveNode::OnSurfaceModelTransformChanged()
     return;
   }
 
-  vtkSmartPointer<vtkGeneralTransform> surfaceToLocalTransform = vtkGeneralTransform::SafeDownCast(
-    this->SurfaceToLocalTransformer->GetTransform());
+  vtkSmartPointer<vtkGeneralTransform> surfaceToLocalTransform =
+    vtkGeneralTransform::SafeDownCast(this->SurfaceToLocalTransformer->GetTransform());
   if (!surfaceToLocalTransform)
   {
     surfaceToLocalTransform = vtkSmartPointer<vtkGeneralTransform>::New();
     this->SurfaceToLocalTransformer->SetTransform(surfaceToLocalTransform);
   }
 
-  vtkMRMLTransformNode::GetTransformBetweenNodes(modelNode->GetParentTransformNode(), this->GetParentTransformNode(), surfaceToLocalTransform);
+  vtkMRMLTransformNode::GetTransformBetweenNodes(
+    modelNode->GetParentTransformNode(), this->GetParentTransformNode(), surfaceToLocalTransform);
 }
 
 //---------------------------------------------------------------------------
@@ -1391,7 +1466,8 @@ void vtkMRMLMarkupsCurveNode::UpdateSurfaceScalarVariables()
   {
     activeScalarChanged = true;
   }
-  else if (activeScalarName && this->ShortestDistanceSurfaceActiveScalar && strcmp(activeScalarName, this->ShortestDistanceSurfaceActiveScalar) != 0)
+  else if (activeScalarName && this->ShortestDistanceSurfaceActiveScalar &&
+           strcmp(activeScalarName, this->ShortestDistanceSurfaceActiveScalar) != 0)
   {
     activeScalarChanged = true;
   }
@@ -1448,10 +1524,11 @@ void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
     return;
   }
 
-  this->ScalarDisplayAssignAttribute->Assign(
-    displayNode->GetActiveScalarName(),
-    vtkDataSetAttributes::SCALARS,
-    displayNode->GetActiveAttributeLocation() >= 0 ? displayNode->GetActiveAttributeLocation() : vtkAssignAttribute::POINT_DATA);
+  this->ScalarDisplayAssignAttribute->Assign(displayNode->GetActiveScalarName(),
+                                             vtkDataSetAttributes::SCALARS,
+                                             displayNode->GetActiveAttributeLocation() >= 0
+                                               ? displayNode->GetActiveAttributeLocation()
+                                               : vtkAssignAttribute::POINT_DATA);
 
   // Connect assign attributes filter if scalar visibility is on
   if (displayNode->GetScalarVisibility())
@@ -1467,8 +1544,10 @@ void vtkMRMLMarkupsCurveNode::UpdateAssignedAttribute()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified(
-  vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified(vtkObject* caller,
+                                                                    unsigned long vtkNotUsed(eid),
+                                                                    void* clientData,
+                                                                    void* vtkNotUsed(callData))
 {
   vtkMRMLMarkupsCurveNode* self = reinterpret_cast<vtkMRMLMarkupsCurveNode*>(clientData);
   vtkMRMLStaticMeasurement* measurement = reinterpret_cast<vtkMRMLStaticMeasurement*>(caller);
@@ -1490,10 +1569,11 @@ void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified(
     bool isCurvatureComputationNeeded = false;
     for (int index = 0; index < self->Measurements->GetNumberOfItems(); ++index)
     {
-      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(self->Measurements->GetItemAsObject(index));
-      if (currentMeasurement->GetEnabled()
-        && (currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMeanCurvatureName()
-          || currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMaxCurvatureName()))
+      vtkMRMLMeasurement* currentMeasurement =
+        vtkMRMLMeasurement::SafeDownCast(self->Measurements->GetItemAsObject(index));
+      if (currentMeasurement->GetEnabled() &&
+          (currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMeanCurvatureName() ||
+           currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMaxCurvatureName()))
       {
         isCurvatureComputationNeeded = true;
         break;
@@ -1520,8 +1600,10 @@ void vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsCurveNode::OnTorsionMeasurementEnabledModified(
-  vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+void vtkMRMLMarkupsCurveNode::OnTorsionMeasurementEnabledModified(vtkObject* caller,
+                                                                  unsigned long vtkNotUsed(eid),
+                                                                  void* clientData,
+                                                                  void* vtkNotUsed(callData))
 {
   vtkMRMLMarkupsCurveNode* self = reinterpret_cast<vtkMRMLMarkupsCurveNode*>(clientData);
   vtkMRMLStaticMeasurement* measurement = reinterpret_cast<vtkMRMLStaticMeasurement*>(caller);
@@ -1543,10 +1625,11 @@ void vtkMRMLMarkupsCurveNode::OnTorsionMeasurementEnabledModified(
     bool isTorsionComputationNeeded = false;
     for (int index = 0; index < self->Measurements->GetNumberOfItems(); ++index)
     {
-      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(self->Measurements->GetItemAsObject(index));
-      if (currentMeasurement->GetEnabled()
-        && (currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMeanTorsionName()
-          || currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMaxTorsionName()))
+      vtkMRMLMeasurement* currentMeasurement =
+        vtkMRMLMeasurement::SafeDownCast(self->Measurements->GetItemAsObject(index));
+      if (currentMeasurement->GetEnabled() &&
+          (currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMeanTorsionName() ||
+           currentMeasurement->GetName() == self->CurveMeasurementsCalculator->GetMaxTorsionName()))
       {
         isTorsionComputationNeeded = true;
         break;

@@ -54,16 +54,15 @@ const std::string vtkMRMLJsonElement::XML_NAME_VALUE_SEPARATOR = std::string(":"
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLJsonElement::vtkInternal::vtkInternal(vtkMRMLJsonElement *external)
-    : External(external) {}
+vtkMRMLJsonElement::vtkInternal::vtkInternal(vtkMRMLJsonElement* external)
+  : External(external)
+{}
 
 //---------------------------------------------------------------------------
 vtkMRMLJsonElement::vtkInternal::~vtkInternal() {}
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::vtkInternal::ReadVector(rapidjson::Value &item,
-                                                 double *v,
-                                                 int numberOfComponents /*=3*/)
+bool vtkMRMLJsonElement::vtkInternal::ReadVector(rapidjson::Value& item, double* v, int numberOfComponents /*=3*/)
 {
   if (!item.IsArray())
   {
@@ -87,7 +86,7 @@ bool vtkMRMLJsonElement::vtkInternal::ReadVector(rapidjson::Value &item,
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLJsonElement::Type vtkMRMLJsonElement::vtkInternal::GetValueType(rapidjson::Value &item)
+vtkMRMLJsonElement::Type vtkMRMLJsonElement::vtkInternal::GetValueType(rapidjson::Value& item)
 {
   if (item.IsObject())
   {
@@ -105,8 +104,7 @@ vtkMRMLJsonElement::Type vtkMRMLJsonElement::vtkInternal::GetValueType(rapidjson
   {
     return vtkMRMLJsonElement::Type::BOOL;
   }
-  else if (item.IsInt() || item.IsUint() ||
-           item.IsInt64() || item.IsUint64())
+  else if (item.IsInt() || item.IsUint() || item.IsInt64() || item.IsUint64())
   {
     return vtkMRMLJsonElement::Type::INT;
   }
@@ -134,19 +132,19 @@ vtkMRMLJsonElement::~vtkMRMLJsonElement()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonElement::PrintSelf(ostream &os, vtkIndent indent)
+void vtkMRMLJsonElement::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::HasMember(const char *propertyName)
+bool vtkMRMLJsonElement::HasMember(const char* propertyName)
 {
   return this->Internal->JsonValue.HasMember(propertyName);
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLJsonElement::Type vtkMRMLJsonElement::GetMemberType(const char *propertyName)
+vtkMRMLJsonElement::Type vtkMRMLJsonElement::GetMemberType(const char* propertyName)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
@@ -158,7 +156,7 @@ vtkMRMLJsonElement::Type vtkMRMLJsonElement::GetMemberType(const char *propertyN
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLJsonElement::GetStringProperty(const char *propertyName)
+std::string vtkMRMLJsonElement::GetStringProperty(const char* propertyName)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
@@ -172,8 +170,7 @@ std::string vtkMRMLJsonElement::GetStringProperty(const char *propertyName)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::GetStringProperty(const char *propertyName,
-                                           std::string &propertyValue)
+bool vtkMRMLJsonElement::GetStringProperty(const char* propertyName, std::string& propertyValue)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
@@ -188,8 +185,7 @@ bool vtkMRMLJsonElement::GetStringProperty(const char *propertyName,
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::GetDoubleProperty(const char *propertyName,
-                                           double &propertyValue)
+bool vtkMRMLJsonElement::GetDoubleProperty(const char* propertyName, double& propertyValue)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
@@ -204,7 +200,7 @@ bool vtkMRMLJsonElement::GetDoubleProperty(const char *propertyName,
 }
 
 //----------------------------------------------------------------------------
-double vtkMRMLJsonElement::GetDoubleProperty(const char *propertyName)
+double vtkMRMLJsonElement::GetDoubleProperty(const char* propertyName)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
@@ -218,14 +214,14 @@ double vtkMRMLJsonElement::GetDoubleProperty(const char *propertyName)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::GetIntProperty(const char *propertyName,
-                                        int &propertyValue)
+bool vtkMRMLJsonElement::GetIntProperty(const char* propertyName, int& propertyValue)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
     return false;
   }
-  if (!this->Internal->JsonValue[propertyName].IsInt()) {
+  if (!this->Internal->JsonValue[propertyName].IsInt())
+  {
     return false;
   }
   propertyValue = this->Internal->JsonValue[propertyName].GetInt();
@@ -233,7 +229,7 @@ bool vtkMRMLJsonElement::GetIntProperty(const char *propertyName,
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLJsonElement::GetIntProperty(const char *propertyName)
+int vtkMRMLJsonElement::GetIntProperty(const char* propertyName)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
@@ -247,7 +243,7 @@ int vtkMRMLJsonElement::GetIntProperty(const char *propertyName)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::GetBoolProperty(const char *propertyName)
+bool vtkMRMLJsonElement::GetBoolProperty(const char* propertyName)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
@@ -257,7 +253,7 @@ bool vtkMRMLJsonElement::GetBoolProperty(const char *propertyName)
 }
 
 //----------------------------------------------------------------------------
-vtkCodedEntry *vtkMRMLJsonElement::GetCodedEntryProperty(const char *propertyName)
+vtkCodedEntry* vtkMRMLJsonElement::GetCodedEntryProperty(const char* propertyName)
 {
   std::vector<std::string> codedEntryVector;
   if (!this->GetStringVectorProperty(propertyName, codedEntryVector))
@@ -272,16 +268,15 @@ vtkCodedEntry *vtkMRMLJsonElement::GetCodedEntryProperty(const char *propertyNam
   }
   vtkNew<vtkCodedEntry> codedEntry;
   codedEntry->SetValueSchemeMeaning(
-      codedEntryVector[0], codedEntryVector[1],
-      codedEntryVector.size() > 2 ? codedEntryVector[2] : "");
+    codedEntryVector[0], codedEntryVector[1], codedEntryVector.size() > 2 ? codedEntryVector[2] : "");
   codedEntry->Register(this);
   return codedEntry;
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::GetArrayItemsStringProperty(const char *arrayName,
-                                                     const char *propertyName,
-                                                     std::vector<std::string> &propertyValues)
+bool vtkMRMLJsonElement::GetArrayItemsStringProperty(const char* arrayName,
+                                                     const char* propertyName,
+                                                     std::vector<std::string>& propertyValues)
 {
   if (!this->Internal->JsonValue.IsObject())
   {
@@ -290,21 +285,19 @@ bool vtkMRMLJsonElement::GetArrayItemsStringProperty(const char *arrayName,
   }
   if (!this->Internal->JsonValue.HasMember(arrayName))
   {
-    vtkErrorMacro("GetArrayItemsStringProperty: " << arrayName
-                                                  << " property is not found");
+    vtkErrorMacro("GetArrayItemsStringProperty: " << arrayName << " property is not found");
     return false;
   }
-  rapidjson::Value &jsonArray = this->Internal->JsonValue[arrayName];
+  rapidjson::Value& jsonArray = this->Internal->JsonValue[arrayName];
   if (!jsonArray.IsArray())
   {
-    vtkErrorMacro("GetArrayItemsStringProperty: "
-                  << arrayName << " property is not an array");
+    vtkErrorMacro("GetArrayItemsStringProperty: " << arrayName << " property is not an array");
     return false;
   }
   int numberOfItems = jsonArray.GetArray().Size();
   for (int itemIndex = 0; itemIndex < numberOfItems; ++itemIndex)
   {
-    rapidjson::Value &item = jsonArray.GetArray()[itemIndex];
+    rapidjson::Value& item = jsonArray.GetArray()[itemIndex];
     std::string stringProperty = item[propertyName].GetString();
     propertyValues.push_back(stringProperty);
   }
@@ -312,7 +305,7 @@ bool vtkMRMLJsonElement::GetArrayItemsStringProperty(const char *arrayName,
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLJsonElement *vtkMRMLJsonElement::GetArrayProperty(const char *arrayName)
+vtkMRMLJsonElement* vtkMRMLJsonElement::GetArrayProperty(const char* arrayName)
 {
   if (!this->Internal->JsonValue.IsObject())
   {
@@ -327,8 +320,7 @@ vtkMRMLJsonElement *vtkMRMLJsonElement::GetArrayProperty(const char *arrayName)
   jsonArray->Internal->JsonValue = this->Internal->JsonValue[arrayName];
   if (!jsonArray->Internal->JsonValue.IsArray())
   {
-    vtkErrorMacro("GetArrayProperty: "
-                  << arrayName << " property is not found or not an array");
+    vtkErrorMacro("GetArrayProperty: " << arrayName << " property is not found or not an array");
     return nullptr;
   }
   jsonArray->Internal->JsonRoot = this->Internal->JsonRoot;
@@ -337,7 +329,7 @@ vtkMRMLJsonElement *vtkMRMLJsonElement::GetArrayProperty(const char *arrayName)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLJsonElement *vtkMRMLJsonElement::GetObjectProperty(const char *objectName)
+vtkMRMLJsonElement* vtkMRMLJsonElement::GetObjectProperty(const char* objectName)
 {
   if (!this->Internal->JsonValue.IsObject())
   {
@@ -346,16 +338,14 @@ vtkMRMLJsonElement *vtkMRMLJsonElement::GetObjectProperty(const char *objectName
   }
   if (!this->Internal->JsonValue.HasMember(objectName))
   {
-    vtkErrorMacro("GetObjectProperty: " << objectName
-                                        << " property is not found");
+    vtkErrorMacro("GetObjectProperty: " << objectName << " property is not found");
     return nullptr;
   }
   vtkNew<vtkMRMLJsonElement> jsonObject;
   jsonObject->Internal->JsonValue = this->Internal->JsonValue[objectName];
   if (!jsonObject->Internal->JsonValue.IsObject())
   {
-    vtkErrorMacro("GetObjectProperty: " << objectName
-                                        << " property is not an array");
+    vtkErrorMacro("GetObjectProperty: " << objectName << " property is not an array");
     return nullptr;
   }
   jsonObject->Internal->JsonRoot = this->Internal->JsonRoot;
@@ -364,21 +354,19 @@ vtkMRMLJsonElement *vtkMRMLJsonElement::GetObjectProperty(const char *objectName
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLJsonElement *vtkMRMLJsonElement::GetArrayItem(int childItemIndex)
+vtkMRMLJsonElement* vtkMRMLJsonElement::GetArrayItem(int childItemIndex)
 {
   int arraySize = this->GetArraySize();
   if (childItemIndex >= arraySize)
   {
-    vtkErrorMacro("GetArrayItem: failed to child item " << childItemIndex
-                                                        << " from element");
+    vtkErrorMacro("GetArrayItem: failed to child item " << childItemIndex << " from element");
     return nullptr;
   }
   vtkNew<vtkMRMLJsonElement> jsonArray;
   jsonArray->Internal->JsonValue = this->Internal->JsonValue.GetArray()[childItemIndex];
   if (!jsonArray->Internal->JsonValue.IsObject())
   {
-    vtkErrorMacro("GetArrayItem: failed to child item " << childItemIndex
-                                                        << " is not an object");
+    vtkErrorMacro("GetArrayItem: failed to child item " << childItemIndex << " is not an object");
     return nullptr;
   }
   jsonArray->Internal->JsonRoot = this->Internal->JsonRoot;
@@ -421,13 +409,12 @@ std::string vtkMRMLJsonElement::GetObjectPropertyNameByIndex(int childItemIndex)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLJsonElement *vtkMRMLJsonElement::GetObjectItem(int childItemIndex)
+vtkMRMLJsonElement* vtkMRMLJsonElement::GetObjectItem(int childItemIndex)
 {
   int obejctSize = this->GetObjectSize();
   if (childItemIndex >= obejctSize)
   {
-    vtkErrorMacro("GetObejctItem: failed to child item " << childItemIndex
-                                                        << " from element");
+    vtkErrorMacro("GetObejctItem: failed to child item " << childItemIndex << " from element");
     return nullptr;
   }
   vtkNew<vtkMRMLJsonElement> jsonObject;
@@ -436,8 +423,7 @@ vtkMRMLJsonElement *vtkMRMLJsonElement::GetObjectItem(int childItemIndex)
   jsonObject->Internal->JsonValue = itr->value;
   if (!jsonObject->Internal->JsonValue.IsObject())
   {
-    vtkErrorMacro("GetObejctItem: failed to child item " << childItemIndex
-                                                        << " is not an object");
+    vtkErrorMacro("GetObejctItem: failed to child item " << childItemIndex << " is not an object");
     return nullptr;
   }
   jsonObject->Internal->JsonRoot = this->Internal->JsonRoot;
@@ -452,13 +438,12 @@ vtkMRMLJsonElement::Type vtkMRMLJsonElement::GetType()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLJsonElement *vtkMRMLJsonElement::GetChildMemberItem(int childItemIndex)
+vtkMRMLJsonElement* vtkMRMLJsonElement::GetChildMemberItem(int childItemIndex)
 {
   int obejctSize = this->GetObjectSize();
   if (childItemIndex >= obejctSize)
   {
-    vtkErrorMacro("GetObejctItem: failed to child item " << childItemIndex
-                                                        << " from element");
+    vtkErrorMacro("GetObejctItem: failed to child item " << childItemIndex << " from element");
     return nullptr;
   }
   vtkNew<vtkMRMLJsonElement> jsonObject;
@@ -494,34 +479,32 @@ std::string vtkMRMLJsonElement::GetSchema()
   {
     return "";
   }
-  rapidjson::Value &schema = this->Internal->JsonValue["@schema"];
+  rapidjson::Value& schema = this->Internal->JsonValue["@schema"];
   return schema.GetString();
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::GetVectorProperty(const char *propertyName, double *v,
-                                           int numberOfComponents /*=3*/)
+bool vtkMRMLJsonElement::GetVectorProperty(const char* propertyName, double* v, int numberOfComponents /*=3*/)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
     return false;
   }
-  rapidjson::Value &item = this->Internal->JsonValue[propertyName];
+  rapidjson::Value& item = this->Internal->JsonValue[propertyName];
   return this->Internal->ReadVector(item, v, numberOfComponents);
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::GetMatrix4x4Property(const char *propertyName,
-                                              double v[16], bool flipRasLps)
+bool vtkMRMLJsonElement::GetMatrix4x4Property(const char* propertyName, double v[16], bool flipRasLps)
 {
   if (!this->GetVectorProperty(propertyName, v, 16))
   {
-    vtkErrorToMessageCollectionWithObjectMacro(
-      this, this->GetUserMessages(),
-      "vtkMRMLPlaneJsonStorageNode::vtkInternal::"
-      "UpdateNodeFromJsonValue",
-      "File reading failed: " << propertyName
-                              << " 16 - element numeric array.");
+    vtkErrorToMessageCollectionWithObjectMacro(this,
+                                               this->GetUserMessages(),
+                                               "vtkMRMLPlaneJsonStorageNode::vtkInternal::"
+                                               "UpdateNodeFromJsonValue",
+                                               "File reading failed: " << propertyName
+                                                                       << " 16 - element numeric array.");
     return false;
   }
 
@@ -537,14 +520,13 @@ bool vtkMRMLJsonElement::GetMatrix4x4Property(const char *propertyName,
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonElement::GetStringVectorProperty(const char *propertyName,
-                                                 std::vector<std::string> &arrayValues)
+bool vtkMRMLJsonElement::GetStringVectorProperty(const char* propertyName, std::vector<std::string>& arrayValues)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
     return false;
   }
-  rapidjson::Value &item = this->Internal->JsonValue[propertyName];
+  rapidjson::Value& item = this->Internal->JsonValue[propertyName];
   if (!item.IsArray())
   {
     return false;
@@ -570,21 +552,20 @@ bool vtkMRMLJsonElement::HasErrors()
 }
 
 //----------------------------------------------------------------------------
-vtkDoubleArray *vtkMRMLJsonElement::GetDoubleArrayProperty(const char *propertyName)
+vtkDoubleArray* vtkMRMLJsonElement::GetDoubleArrayProperty(const char* propertyName)
 {
   if (!this->Internal->JsonValue.HasMember(propertyName))
   {
     return nullptr;
   }
-  rapidjson::Value &arrayItem = this->Internal->JsonValue[propertyName];
+  rapidjson::Value& arrayItem = this->Internal->JsonValue[propertyName];
   if (!arrayItem.IsArray())
   {
     vtkErrorToMessageCollectionWithObjectMacro(
-      this, this->GetUserMessages(),
+      this,
+      this->GetUserMessages(),
       "vtkMRMLJsonElement::GetDoubleArrayProperty",
-      "Property "
-        << propertyName
-        << " is expected to contain an array of floating-point numbers");
+      "Property " << propertyName << " is expected to contain an array of floating-point numbers");
     return nullptr;
   }
   vtkNew<vtkDoubleArray> values;
@@ -594,21 +575,19 @@ vtkDoubleArray *vtkMRMLJsonElement::GetDoubleArrayProperty(const char *propertyN
     // no values stored in the array
     return nullptr;
   }
-  rapidjson::Value &firstControlPointValue = arrayItem.GetArray()[0];
+  rapidjson::Value& firstControlPointValue = arrayItem.GetArray()[0];
   if (firstControlPointValue.IsNumber())
   {
     values->SetNumberOfValues(numberOfTuples);
-    double *valuesPtr = values->GetPointer(0);
-    bool success =
-        this->GetVectorProperty(propertyName, valuesPtr, numberOfTuples);
+    double* valuesPtr = values->GetPointer(0);
+    bool success = this->GetVectorProperty(propertyName, valuesPtr, numberOfTuples);
     if (!success)
     {
       vtkErrorToMessageCollectionWithObjectMacro(
-        this, this->GetUserMessages(),
+        this,
+        this->GetUserMessages(),
         "vtkMRMLJsonIO::GetDoubleArrayProperty",
-        "Property "
-          << propertyName
-          << " is expected to contain an array of floating-point numbers");
+        "Property " << propertyName << " is expected to contain an array of floating-point numbers");
       return nullptr;
     }
   }
@@ -617,19 +596,18 @@ vtkDoubleArray *vtkMRMLJsonElement::GetDoubleArrayProperty(const char *propertyN
     int numberOfComponents = firstControlPointValue.GetArray().Size();
     values->SetNumberOfComponents(numberOfComponents);
     values->SetNumberOfTuples(numberOfTuples);
-    double *valuesPtr = values->GetPointer(0);
-    for (auto &itemValue : arrayItem.GetArray())
+    double* valuesPtr = values->GetPointer(0);
+    for (auto& itemValue : arrayItem.GetArray())
     {
       bool success = this->Internal->ReadVector(itemValue, valuesPtr, numberOfComponents);
       if (!success)
       {
         vtkErrorToMessageCollectionWithObjectMacro(
-          this, this->GetUserMessages(),
+          this,
+          this->GetUserMessages(),
           "vtkMRMLJsonIO::GetDoubleArrayProperty",
-          "Property "
-            << propertyName
-            << " is expected to contain an array of floating-point numbers"
-            << " with the same number of components");
+          "Property " << propertyName << " is expected to contain an array of floating-point numbers"
+                      << " with the same number of components");
         return nullptr;
       }
       valuesPtr += numberOfComponents;
@@ -638,12 +616,11 @@ vtkDoubleArray *vtkMRMLJsonElement::GetDoubleArrayProperty(const char *propertyN
   else
   {
     vtkErrorToMessageCollectionWithObjectMacro(
-      this, this->GetUserMessages(),
+      this,
+      this->GetUserMessages(),
       "vtkMRMLJsonIO::GetDoubleArrayProperty",
-      "Property "
-        << propertyName
-        << " is expected to contain an array of floating-point numbers"
-        << " or array of arrays of floating-point numbers");
+      "Property " << propertyName << " is expected to contain an array of floating-point numbers"
+                  << " or array of arrays of floating-point numbers");
     return nullptr;
   }
   values->Register(this);
@@ -657,7 +634,7 @@ vtkMRMLJsonReader::vtkMRMLJsonReader() {}
 vtkMRMLJsonReader::~vtkMRMLJsonReader() {}
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonReader::PrintSelf(ostream &os, vtkIndent indent)
+void vtkMRMLJsonReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 }
@@ -673,9 +650,8 @@ vtkMRMLJsonElement* vtkMRMLJsonReader::ReadFromFile(const char* filePath)
 {
   if (!filePath)
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLJsonIO::ReadFromFile",
-      "Invalid filename");
+    vtkErrorToMessageCollectionWithObjectMacro(
+      this, this->GetUserMessages(), "vtkMRMLJsonIO::ReadFromFile", "Invalid filename");
     return nullptr;
   }
 
@@ -683,9 +659,8 @@ vtkMRMLJsonElement* vtkMRMLJsonReader::ReadFromFile(const char* filePath)
   FILE* fp = fopen(filePath, "r");
   if (!fp)
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLJsonIO::ReadFromFile",
-      "Error opening the file '" << filePath << "'");
+    vtkErrorToMessageCollectionWithObjectMacro(
+      this, this->GetUserMessages(), "vtkMRMLJsonIO::ReadFromFile", "Error opening the file '" << filePath << "'");
     return nullptr;
   }
 
@@ -697,9 +672,8 @@ vtkMRMLJsonElement* vtkMRMLJsonReader::ReadFromFile(const char* filePath)
   rapidjson::FileReadStream fs(fp, buffer, sizeof(buffer));
   if (jsonElement->Internal->JsonRoot->Document->ParseStream(fs).HasParseError())
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLJsonIO::ReadFromFile",
-      "Error parsing the file '" << filePath << "'");
+    vtkErrorToMessageCollectionWithObjectMacro(
+      this, this->GetUserMessages(), "vtkMRMLJsonIO::ReadFromFile", "Error parsing the file '" << filePath << "'");
     fclose(fp);
     return nullptr;
   }
@@ -715,9 +689,11 @@ vtkMRMLJsonElement* vtkMRMLJsonReader::ReadFromFile(const char* filePath)
   }
   else
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLJsonIO::ReadFromFile",
-      "Error parsing the file '" << filePath << "' - root item must be array or list");
+    vtkErrorToMessageCollectionWithObjectMacro(this,
+                                               this->GetUserMessages(),
+                                               "vtkMRMLJsonIO::ReadFromFile",
+                                               "Error parsing the file '" << filePath
+                                                                          << "' - root item must be array or list");
     return nullptr;
   }
 
@@ -726,44 +702,40 @@ vtkMRMLJsonElement* vtkMRMLJsonReader::ReadFromFile(const char* filePath)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLJsonElement *vtkMRMLJsonReader::ReadFromString(const std::string &jsonString)
+vtkMRMLJsonElement* vtkMRMLJsonReader::ReadFromString(const std::string& jsonString)
 {
   if (jsonString.empty())
   {
     vtkErrorToMessageCollectionWithObjectMacro(
-      this, this->GetUserMessages(), "vtkMRMLJsonIO::ReadFromString",
-      "Invalid JSON string");
+      this, this->GetUserMessages(), "vtkMRMLJsonIO::ReadFromString", "Invalid JSON string");
     return nullptr;
   }
 
   vtkNew<vtkMRMLJsonElement> jsonElement;
 
-  jsonElement->Internal->JsonRoot = std::make_shared<
-      vtkMRMLJsonElement::vtkInternal::JsonDocumentContainer>();
+  jsonElement->Internal->JsonRoot = std::make_shared<vtkMRMLJsonElement::vtkInternal::JsonDocumentContainer>();
 
   if (jsonElement->Internal->JsonRoot->Document->Parse(jsonString.c_str()).HasParseError())
   {
     vtkErrorToMessageCollectionWithObjectMacro(
-      this, this->GetUserMessages(), "vtkMRMLJsonIO::ReadFromString",
-      "Error parsing the JSON string");
+      this, this->GetUserMessages(), "vtkMRMLJsonIO::ReadFromString", "Error parsing the JSON string");
     return nullptr;
   }
 
   if (jsonElement->Internal->JsonRoot->Document->IsObject())
   {
-    jsonElement->Internal->JsonValue =
-      jsonElement->Internal->JsonRoot->Document->GetObject();
+    jsonElement->Internal->JsonValue = jsonElement->Internal->JsonRoot->Document->GetObject();
   }
   else if (jsonElement->Internal->JsonRoot->Document->IsArray())
   {
-    jsonElement->Internal->JsonValue =
-      jsonElement->Internal->JsonRoot->Document->GetArray();
+    jsonElement->Internal->JsonValue = jsonElement->Internal->JsonRoot->Document->GetArray();
   }
   else
   {
-    vtkErrorToMessageCollectionWithObjectMacro(
-      this, this->GetUserMessages(), "vtkMRMLJsonIO::ReadFromString",
-      "Error parsing the JSON string - root item must be array or list");
+    vtkErrorToMessageCollectionWithObjectMacro(this,
+                                               this->GetUserMessages(),
+                                               "vtkMRMLJsonIO::ReadFromString",
+                                               "Error parsing the JSON string - root item must be array or list");
     return nullptr;
   }
 
@@ -772,10 +744,10 @@ vtkMRMLJsonElement *vtkMRMLJsonReader::ReadFromString(const std::string &jsonStr
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLJsonReader::ConvertJsonToXML(const std::string &jsonString, const std::string &nodeTagName)
+std::string vtkMRMLJsonReader::ConvertJsonToXML(const std::string& jsonString, const std::string& nodeTagName)
 {
-  vtkSmartPointer<vtkMRMLJsonElement> jsonElement = vtkSmartPointer<vtkMRMLJsonElement>::Take
-    (this->ReadFromString(jsonString));
+  vtkSmartPointer<vtkMRMLJsonElement> jsonElement =
+    vtkSmartPointer<vtkMRMLJsonElement>::Take(this->ReadFromString(jsonString));
   if (!jsonElement.GetPointer())
   {
     return "";
@@ -790,13 +762,15 @@ std::string vtkMRMLJsonReader::ConvertJsonToXML(const std::string &jsonString, c
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement *jsonElement, const std::string &elementKey/*=""*/)
+std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement* jsonElement,
+                                                  const std::string& elementKey /*=""*/)
 {
   if (!jsonElement)
   {
-    vtkErrorToMessageCollectionWithObjectMacro(
-      this, this->GetUserMessages(), "vtkMRMLJsonIO::processJsonElement",
-      "Error parsing the JSON string - vtkMRMLJsonElement is null");
+    vtkErrorToMessageCollectionWithObjectMacro(this,
+                                               this->GetUserMessages(),
+                                               "vtkMRMLJsonIO::processJsonElement",
+                                               "Error parsing the JSON string - vtkMRMLJsonElement is null");
     return "";
   }
 
@@ -822,7 +796,8 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement *jsonElemen
         continue;
       }
 
-      vtkSmartPointer<vtkMRMLJsonElement> memberElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetObjectItem(memberIndex));
+      vtkSmartPointer<vtkMRMLJsonElement> memberElement =
+        vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetObjectItem(memberIndex));
       if (!memberElement)
       {
         continue;
@@ -835,7 +810,8 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement *jsonElemen
       if (elementKey == "SubjectHierarchyItem")
       {
         delimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR; // SubjectHierarchyItem uses | as delimiter
-        valueDelimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR; // SubjectHierarchyItem uses ^ as valueDelimiter
+        valueDelimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR; // SubjectHierarchyItem
+                                                                                             // uses ^ as valueDelimiter
       }
 
       for (int childIndex = 0; childIndex < numberOfChildMembers; ++childIndex)
@@ -868,7 +844,8 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement *jsonElemen
     }
     else if (type == vtkMRMLJsonElement::Type::ARRAY)
     {
-      vtkSmartPointer<vtkMRMLJsonElement> arrayElement = vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetChildMemberItem(memberIndex));
+      vtkSmartPointer<vtkMRMLJsonElement> arrayElement =
+        vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetChildMemberItem(memberIndex));
       if (!arrayElement)
       {
         continue;
@@ -944,8 +921,8 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement *jsonElemen
 
   for (int memberIndex = 0; memberIndex < numberOfMembers; ++memberIndex)
   {
-    vtkSmartPointer<vtkMRMLJsonElement> childMemberElement = vtkSmartPointer<vtkMRMLJsonElement>::Take
-      (jsonElement->GetChildMemberItem(memberIndex));
+    vtkSmartPointer<vtkMRMLJsonElement> childMemberElement =
+      vtkSmartPointer<vtkMRMLJsonElement>::Take(jsonElement->GetChildMemberItem(memberIndex));
     if (!childMemberElement || childMemberElement->GetType() != vtkMRMLJsonElement::Type::OBJECT)
     {
       continue;
@@ -960,10 +937,11 @@ std::string vtkMRMLJsonReader::processJsonElement(vtkMRMLJsonElement *jsonElemen
     xmlStream << "</" << elementKey << ">";
   }
   return xmlStream.str();
- }
+}
 
 //---------------------------------------------------------------------------
-vtkMRMLJsonWriter::vtkInternal::vtkInternal(vtkMRMLJsonWriter *external) : External(external)
+vtkMRMLJsonWriter::vtkInternal::vtkInternal(vtkMRMLJsonWriter* external)
+  : External(external)
 {
   this->WriteBuffer.resize(65536);
 }
@@ -990,13 +968,13 @@ bool vtkMRMLJsonWriter::HasErrors()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::PrintSelf(ostream &os, vtkIndent indent)
+void vtkMRMLJsonWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::vtkInternal::WriteVector(double *v, int numberOfComponents /*=3*/)
+void vtkMRMLJsonWriter::vtkInternal::WriteVector(double* v, int numberOfComponents /*=3*/)
 {
   this->Writer->SetFormatOptions(rapidjson::kFormatSingleLineArray);
   this->Writer->StartArray();
@@ -1013,9 +991,8 @@ bool vtkMRMLJsonWriter::WriteToFileBegin(const char* filePath, const char* schem
 {
   if (!filePath)
   {
-    vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-      "vtkMRMLJsonIO::WriteToFileBegin",
-      "Invalid filename");
+    vtkErrorToMessageCollectionWithObjectMacro(
+      this, this->GetUserMessages(), "vtkMRMLJsonIO::WriteToFileBegin", "Invalid filename");
     return false;
   }
 
@@ -1023,17 +1000,19 @@ bool vtkMRMLJsonWriter::WriteToFileBegin(const char* filePath, const char* schem
   this->Internal->WriteFileHandle = fopen(filePath, "wb");
   if (!this->Internal->WriteFileHandle)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLJsonStorageNode::WriteDataInternal",
-      "Writing  node file failed: unable to open file '" << filePath << "' for writing.");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLJsonStorageNode::WriteDataInternal",
+                                     "Writing  node file failed: unable to open file '" << filePath
+                                                                                        << "' for writing.");
     return false;
   }
 
   // Prepare JSON writer and output stream.
-  this->Internal->FileWriteStream = std::unique_ptr<rapidjson::FileWriteStream>(
-    new rapidjson::FileWriteStream(this->Internal->WriteFileHandle, &this->Internal->WriteBuffer[0], this->Internal->WriteBuffer.size()));
+  this->Internal->FileWriteStream = std::unique_ptr<rapidjson::FileWriteStream>(new rapidjson::FileWriteStream(
+    this->Internal->WriteFileHandle, &this->Internal->WriteBuffer[0], this->Internal->WriteBuffer.size()));
 
   auto stringWriter = std::unique_ptr<rapidjson::PrettyWriter<rapidjson::FileWriteStream>>(
-    new rapidjson::PrettyWriter<rapidjson::FileWriteStream> (*this->Internal->FileWriteStream));
+    new rapidjson::PrettyWriter<rapidjson::FileWriteStream>(*this->Internal->FileWriteStream));
   this->Internal->SetFileWriter(std::move(stringWriter));
 
   this->Internal->Writer->StartObject();
@@ -1058,7 +1037,7 @@ bool vtkMRMLJsonWriter::WriteToFileEnd()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLJsonWriter::WriteToStringBegin(const char *nodeTagName)
+bool vtkMRMLJsonWriter::WriteToStringBegin(const char* nodeTagName)
 {
   if (!nodeTagName)
   {
@@ -1089,20 +1068,19 @@ std::string vtkMRMLJsonWriter::WriteToStringEnd()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteStringProperty(const std::string &propertyName,
-                                            const std::string &propertyValue)
+void vtkMRMLJsonWriter::WriteStringProperty(const std::string& propertyName, const std::string& propertyValue)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->Writer->String(propertyValue.c_str());
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteStringVectorProperty(const std::string &propertyName,
-                                                  const std::vector<std::string> &arrayValues)
+void vtkMRMLJsonWriter::WriteStringVectorProperty(const std::string& propertyName,
+                                                  const std::vector<std::string>& arrayValues)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->Writer->StartArray();
-  for (const std::string &value : arrayValues)
+  for (const std::string& value : arrayValues)
   {
     this->Internal->Writer->String(value.c_str());
   }
@@ -1110,8 +1088,7 @@ void vtkMRMLJsonWriter::WriteStringVectorProperty(const std::string &propertyNam
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteStringPropertyIfNotEmpty(const std::string &propertyName,
-                                                      const std::string &propertyValue)
+void vtkMRMLJsonWriter::WriteStringPropertyIfNotEmpty(const std::string& propertyName, const std::string& propertyValue)
 {
   if (propertyValue.empty())
   {
@@ -1121,8 +1098,7 @@ void vtkMRMLJsonWriter::WriteStringPropertyIfNotEmpty(const std::string &propert
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteCodedEntryProperty(const std::string &propertyName,
-                                                vtkCodedEntry *codedEntry)
+void vtkMRMLJsonWriter::WriteCodedEntryProperty(const std::string& propertyName, vtkCodedEntry* codedEntry)
 {
   if (!codedEntry)
   {
@@ -1133,52 +1109,45 @@ void vtkMRMLJsonWriter::WriteCodedEntryProperty(const std::string &propertyName,
   // single line
   this->Internal->Writer->SetFormatOptions(rapidjson::kFormatSingleLineArray);
 
-  this->WriteStringVectorProperty(propertyName,
-                                  codedEntry->GetValueSchemeMeaning());
+  this->WriteStringVectorProperty(propertyName, codedEntry->GetValueSchemeMeaning());
 
   this->Internal->Writer->SetFormatOptions(rapidjson::kFormatDefault);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteBoolProperty(const std::string &propertyName,
-                                          bool propertyValue)
+void vtkMRMLJsonWriter::WriteBoolProperty(const std::string& propertyName, bool propertyValue)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->Writer->Bool(propertyValue);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteIntProperty(const std::string &propertyName,
-                                         int propertyValue)
+void vtkMRMLJsonWriter::WriteIntProperty(const std::string& propertyName, int propertyValue)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->Writer->Int(propertyValue);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteDoubleProperty(const std::string &propertyName,
-                                            double propertyValue)
+void vtkMRMLJsonWriter::WriteDoubleProperty(const std::string& propertyName, double propertyValue)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->Writer->Double(propertyValue);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteVectorProperty(const std::string &propertyName,
-                                            double *v,
-                                            int numberOfComponents /*=3*/)
+void vtkMRMLJsonWriter::WriteVectorProperty(const std::string& propertyName, double* v, int numberOfComponents /*=3*/)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->WriteVector(v, numberOfComponents);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteMatrix4x4Property(const std::string &propertyName,
-                                               double v[16], bool flipRasLps)
+void vtkMRMLJsonWriter::WriteMatrix4x4Property(const std::string& propertyName, double v[16], bool flipRasLps)
 {
   if (flipRasLps)
   {
-    double vFlipped[16] = {0.0};
+    double vFlipped[16] = { 0.0 };
     for (int i = 0; i < 8; ++i)
     {
       vFlipped[i] = -v[i];
@@ -1196,8 +1165,7 @@ void vtkMRMLJsonWriter::WriteMatrix4x4Property(const std::string &propertyName,
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteDoubleArrayProperty(const char *propertyName,
-                                                 vtkDoubleArray *doubleArray)
+void vtkMRMLJsonWriter::WriteDoubleArrayProperty(const char* propertyName, vtkDoubleArray* doubleArray)
 {
   this->WriteArrayPropertyStart(propertyName);
   int numberOfComponents = doubleArray->GetNumberOfComponents();
@@ -1205,7 +1173,7 @@ void vtkMRMLJsonWriter::WriteDoubleArrayProperty(const char *propertyName,
   if (numberOfComponents == 1)
   {
     // write single-component array as single array
-    double *values = doubleArray->GetPointer(0);
+    double* values = doubleArray->GetPointer(0);
     // WriteVector() method would write all values in a single line, so we do
     // not use it here
     for (int tupleIndex = 0; tupleIndex < numberOfTuples; ++tupleIndex)
@@ -1218,7 +1186,7 @@ void vtkMRMLJsonWriter::WriteDoubleArrayProperty(const char *propertyName,
     // write multi-component array as an array of arrays
     for (int tupleIndex = 0; tupleIndex < numberOfTuples; ++tupleIndex)
     {
-      double *tuple = doubleArray->GetTuple(tupleIndex);
+      double* tuple = doubleArray->GetTuple(tupleIndex);
       this->Internal->WriteVector(tuple, numberOfComponents);
     }
   }
@@ -1226,19 +1194,20 @@ void vtkMRMLJsonWriter::WriteDoubleArrayProperty(const char *propertyName,
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteArrayPropertyStart(const std::string &propertyName)
+void vtkMRMLJsonWriter::WriteArrayPropertyStart(const std::string& propertyName)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->Writer->StartArray();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteArrayPropertyEnd() {
+void vtkMRMLJsonWriter::WriteArrayPropertyEnd()
+{
   this->Internal->Writer->EndArray();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::WriteObjectPropertyStart(const std::string &propertyName)
+void vtkMRMLJsonWriter::WriteObjectPropertyStart(const std::string& propertyName)
 {
   this->Internal->Writer->Key(propertyName.c_str());
   this->Internal->Writer->StartObject();
@@ -1263,13 +1232,14 @@ void vtkMRMLJsonWriter::WriteObjectEnd()
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLJsonWriter::ConvertXMLToJson(vtkXMLDataElement* xmlElement, const std::string & nodeTagName)
+std::string vtkMRMLJsonWriter::ConvertXMLToJson(vtkXMLDataElement* xmlElement, const std::string& nodeTagName)
 {
   if (!this->WriteToStringBegin(nodeTagName.c_str()))
   {
-    vtkErrorToMessageCollectionWithObjectMacro(
-      this, this->GetUserMessages(), "vtkMRMLJsonIO::ConvertXMLToJson",
-      "Error initialization JSON writer - nodeTagName must be provided");
+    vtkErrorToMessageCollectionWithObjectMacro(this,
+                                               this->GetUserMessages(),
+                                               "vtkMRMLJsonIO::ConvertXMLToJson",
+                                               "Error initialization JSON writer - nodeTagName must be provided");
     return "";
   }
 
@@ -1344,18 +1314,16 @@ bool vtkMRMLJsonWriter::isDouble(const std::string& str)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement *xmlElement)
+void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
 {
   int nAttributes = xmlElement->GetNumberOfAttributes();
   for (int attrIndex = 0; attrIndex < nAttributes; ++attrIndex)
   {
-    const char *name = xmlElement->GetAttributeName(attrIndex);
-    const char *value = xmlElement->GetAttributeValue(attrIndex);
+    const char* name = xmlElement->GetAttributeName(attrIndex);
+    const char* value = xmlElement->GetAttributeValue(attrIndex);
     std::string valueStr = value ? std::string(value) : "";
 
-    if (std::string(name) == "attributes" ||
-      std::string(name) == "uids" ||
-      std::string(name) == "references")
+    if (std::string(name) == "attributes" || std::string(name) == "uids" || std::string(name) == "references")
     {
       std::map<std::string, std::vector<std::string>> valuesMap;
 
@@ -1364,10 +1332,11 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement *xmlElement)
       std::string delimiter = vtkMRMLJsonElement::XML_SEPARATOR;
       std::string valueDelimiter = vtkMRMLJsonElement::XML_NAME_VALUE_SEPARATOR;
       if (valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR) != std::string::npos &&
-        valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR) != std::string::npos)
+          valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR) != std::string::npos)
       {
         delimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR; // SubjectHierarchyItem uses | as delimiter
-        valueDelimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR; // SubjectHierarchyItem uses ^ as valueDelimiter
+        valueDelimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR; // SubjectHierarchyItem
+                                                                                             // uses ^ as valueDelimiter
       }
       while (std::getline(ss, lineValue, delimiter[0]))
       {
@@ -1386,7 +1355,8 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement *xmlElement)
           if (nextValue.front() == '{' && nextValue.back() == '}')
           {
             // for references: merge references properties to the node id
-            // e.g. "vtkMRMLSliceNodeRed {clippingState=ClipPositiveSpace} vtkMRMLSliceNodeGreen {clippingState=ClipPositiveSpace}"
+            // e.g. "vtkMRMLSliceNodeRed {clippingState=ClipPositiveSpace} vtkMRMLSliceNodeGreen
+            // {clippingState=ClipPositiveSpace}"
             valuesMap[attributeName].push_back(singleValue + " " + nextValue);
           }
           else
@@ -1394,7 +1364,6 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement *xmlElement)
             valueStream.seekg(-nextValue.size(), std::ios_base::cur);
             valuesMap[attributeName].push_back(singleValue);
           }
-
         }
       }
       this->WriteObjectPropertyStart(name);
@@ -1415,7 +1384,9 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement *xmlElement)
     }
     // Check if it a double array
     else if (std::count(valueStr.begin(), valueStr.end(), ' ') > 0 &&
-      std::all_of(valueStr.begin(), valueStr.end(), [](char c) { return std::isdigit(c) || c == ' ' || c == '-' || c == '.';}))
+             std::all_of(valueStr.begin(), valueStr.end(), [](char c) {
+               return std::isdigit(c) || c == ' ' || c == '-' || c == '.';
+             }))
     {
       vtkNew<vtkDoubleArray> valueVector;
       std::istringstream iss(valueStr);
