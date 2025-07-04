@@ -121,28 +121,40 @@ ITK transform files store the resampling transform ("transform from parent") in 
 #Insight Transform File V1.0
 #Transform 0
 Transform: AffineTransform_double_3_3
-Parameters: 0.929794207512361 0.03834792453582355 -0.3660767246906854 -0.2694570325150706 0.7484457003494506 -0.6059884002657121 0.2507501531497781 0.6620864522947292 0.7062335947709847 -46.99999999999999 49 17.00000000000002
-FixedParameters: 0 0 0
+Parameters: -0.213789703753722 -0.7715409537503184 0.5991815411500568 -0.6877744504386172 0.5544585467133546 0.46855311897413043 -0.6937292468195099 -0.3119299226790803 -0.6491836839020759 -6.080443282989144 10.318378593490745 159.38003926210894
+FixedParameters: -4.363375593759671 -23.302979114450725 -56.27550193307294
 """
 
 import numpy as np
 import re
 
 def read_itk_affine_transform(filename):
-    with open(filename) as f:
-        tfm_file_lines = f.readlines()
-    # parse the transform parameters
-    match = re.match("Transform: AffineTransform_[a-z]+_([0-9]+)_([0-9]+)", tfm_file_lines[2])
-    if not match or match.group(1) != '3' or match.group(2) != '3':
-        raise ValueError(f"{filename} is not an ITK 3D affine transform file")
-    p = np.array( tfm_file_lines[3].split()[1:], dtype=np.float64 )
-    # assemble 4x4 matrix from ITK transform parameters
-    itk_transform = np.array([
-        [p[0], p[1], p[2], p[9]],
-        [p[3], p[4], p[5], p[10]],
-        [p[6], p[7], p[8], p[11]],
-        [0, 0, 0, 1]])
-    return itk_transform
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+
+    # Extract Parameters
+    params_line = next(line for line in lines if line.startswith('Parameters:'))
+    params = list(map(float, params_line.removeprefix('Parameters:').strip().split()))
+    rotation = np.array(params[:9]).reshape((3, 3))
+    translation = np.array(params[9:12])
+
+    # Extract FixedParameters (center of rotation)
+    fixed_params_line = next(line for line in lines if line.startswith('FixedParameters:'))
+    rotation_center = np.array(list(map(float, fixed_params_line.removeprefix('FixedParameters:').strip().split())))
+
+    # Get homogeneous transformation matrix translation component from transform parameters and fixed parameters.
+    # The homogeneous transformation matrix rotation part is the same as rotation stored in parameters.
+    # However, the translation part is not directly stored in these values, but it is computed from the fixed and moving parameters (and the value is called "offset").
+    # See computation implementation in MatrixOffsetTransformBase::ComputeOffset
+    # https://github.com/InsightSoftwareConsortium/ITK/blob/09305ce7c3509139ab0ca12047f8e6793b01db74/Modules/Core/Transform/include/itkMatrixOffsetTransformBase.hxx#L611-L629
+    offset = translation + rotation_center - rotation @ rotation_center
+
+    # Construct homogeneous transformation matrix
+    transform = np.eye(4)
+    transform[:3, :3] = rotation
+    transform[:3, 3] = offset
+
+    return transform
 
 def itk_to_slicer_transform(itk_transform):
     # ITK transform: from parent, using LPS coordinate system
@@ -165,25 +177,6 @@ with np.printoptions(precision=6, suppress=True):
 #  [  0.038348   0.748446  -0.662086  46.126957]
 #  [  0.366077   0.605988   0.706234   0.481854]
 #  [  0.         0.         0.         1.      ]]
-```
-
-C++:
-
-```cpp
-// Convert from LPS (ITK) to RAS (Slicer)
-// input: transformVtk_LPS matrix in vtkMatrix4x4 in resampling convention in LPS
-// output: transformVtk_RAS matrix in vtkMatri4x4 in modeling convention in RAS
-
-// Tras = lps2ras * Tlps * ras2lps
-vtkSmartPointer<vtkMatrix4x4> lps2ras = vtkSmartPointer<vtkMatrix4x4>::New();
-lps2ras->SetElement(0,0,-1);
-lps2ras->SetElement(1,1,-1);
-vtkMatrix4x4* ras2lps = lps2ras; // lps2ras is diagonal therefore the inverse is identical
-vtkMatrix4x4::Multiply4x4(lps2ras, transformVtk_LPS, transformVtk_LPS);
-vtkMatrix4x4::Multiply4x4(transformVtk_LPS, ras2lps, transformVtk_RAS);
-
-// Convert the sense of the transform (from ITK resampling to Slicer modeling transform)
-vtkMatrix4x4::Invert(transformVtk_RAS);
 ```
 
 ### Apply a transform to a transformable node
