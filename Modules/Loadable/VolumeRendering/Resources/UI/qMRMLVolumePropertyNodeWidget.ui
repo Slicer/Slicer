@@ -6,19 +6,62 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>240</width>
-    <height>338</height>
+    <width>363</width>
+    <height>381</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Volume Property Node</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
     <number>0</number>
    </property>
-   <item>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="1" column="0">
+    <widget class="QLabel" name="ComponentLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Component:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="3">
     <widget class="ctkVTKVolumePropertyWidget" name="VolumePropertyWidget"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Independent Components:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QSpinBox" name="ComponentSpinBox">
+     <property name="maximum">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QCheckBox" name="IndependentComponentCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

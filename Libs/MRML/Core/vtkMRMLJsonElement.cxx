@@ -257,6 +257,21 @@ bool vtkMRMLJsonElement::GetBoolProperty(const char *propertyName)
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLJsonElement::GetBoolProperty(const char* propertyName, bool &propertyValue)
+{
+  if (!this->Internal->JsonValue.HasMember(propertyName))
+  {
+    return false;
+  }
+  if (!this->Internal->JsonValue[propertyName].IsBool())
+  {
+    return false;
+  }
+  propertyValue = this->Internal->JsonValue[propertyName].GetBool();
+  return true;
+}
+
+//----------------------------------------------------------------------------
 vtkCodedEntry *vtkMRMLJsonElement::GetCodedEntryProperty(const char *propertyName)
 {
   std::vector<std::string> codedEntryVector;
@@ -346,8 +361,7 @@ vtkMRMLJsonElement *vtkMRMLJsonElement::GetObjectProperty(const char *objectName
   }
   if (!this->Internal->JsonValue.HasMember(objectName))
   {
-    vtkErrorMacro("GetObjectProperty: " << objectName
-                                        << " property is not found");
+    // Property is not found
     return nullptr;
   }
   vtkNew<vtkMRMLJsonElement> jsonObject;
