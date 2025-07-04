@@ -58,6 +58,8 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         # Layout within the dummy collapsible button
         parametersFormLayout = qt.QFormLayout(parametersCollapsibleButton)
 
+        sequenceNodeLabel = _("Sequence")
+
         #
         # input volume selector
         #
@@ -69,6 +71,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         self.inputSelector.showHidden = False
         self.inputSelector.showChildNodeTypes = False
         self.inputSelector.setMRMLScene(slicer.mrmlScene)
+        self.inputSelector.setNodeTypeLabel(sequenceNodeLabel, "vtkMRMLSequenceNode")
         self.inputSelector.setToolTip(_("Pick a sequence node of volumes that will be cropped and resampled."))
         parametersFormLayout.addRow(_("Input volume sequence: "), self.inputSelector)
 
@@ -85,6 +88,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         self.outputSelector.showHidden = False
         self.outputSelector.showChildNodeTypes = False
         self.outputSelector.setMRMLScene(slicer.mrmlScene)
+        self.outputSelector.setNodeTypeLabel(sequenceNodeLabel, "vtkMRMLSequenceNode")
         self.outputSelector.setToolTip(_("Pick a sequence node where the cropped and resampled volumes will be stored."))
         parametersFormLayout.addRow(_("Output volume sequence: "), self.outputSelector)
 
@@ -101,6 +105,7 @@ class CropVolumeSequenceWidget(ScriptedLoadableModuleWidget):
         self.cropParametersSelector.showHidden = True
         self.cropParametersSelector.showChildNodeTypes = False
         self.cropParametersSelector.setMRMLScene(slicer.mrmlScene)
+        self.cropParametersSelector.setNodeTypeLabel(_("Crop volume parameters"), "vtkMRMLCropVolumeParametersNode")
         self.cropParametersSelector.setToolTip(_("Select a crop volumes parameters."))
 
         self.editCropParametersButton = qt.QPushButton()
