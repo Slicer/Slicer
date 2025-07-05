@@ -156,6 +156,11 @@ int DoIt( int argc, char * argv[])
     // but since Image Type is required, empty if unknown (required but can be empty), we just leave it empty.
     imageType = "";
   }
+  else if (modality == "PT")
+  {
+    sopClassUID = "1.2.840.10008.5.1.4.1.1.128"; // Positron Emission Tomography Image Storage
+    imageType = "ORIGINAL\\PRIMARY\\";
+  }
   else if (modality == "SC")
   {
     // Secondary capture, converted from non-DICOM (scanned drawings, screenshots, etc.)
