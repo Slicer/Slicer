@@ -163,6 +163,7 @@
       <element>MR</element>
       <element>NM</element>
       <element>US</element>
+      <element>PT</element>
       <element>CR</element>
       <element>SC</element>
       <default>CT</default>
