@@ -42,6 +42,7 @@
 #include "vtkTextProperty.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
+#include "vtkQuaternion.h"
 
 // MRML includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
@@ -57,7 +58,14 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->GlyphOrientationArray = vtkSmartPointer<vtkDoubleArray>::New();
   this->GlyphOrientationArray->SetName("direction");
   this->GlyphOrientationArray->SetNumberOfComponents(4);
+  this->GlyphOrientationArray->SetNumberOfTuples(1);
   this->ControlPointsPolyData->GetPointData()->AddArray(this->GlyphOrientationArray);
+
+  this->GlyphScaleArray = vtkSmartPointer<vtkDoubleArray>::New();
+  this->GlyphScaleArray->SetName("scale");
+  this->GlyphScaleArray->SetNumberOfComponents(3);
+  this->GlyphScaleArray->SetNumberOfTuples(1);
+  this->ControlPointsPolyData->GetPointData()->AddArray(this->GlyphScaleArray);
 
   // This turns on resolve coincident topology for everything
   // as it is a class static on the mapper
@@ -69,7 +77,8 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->GlyphMapper->SetOrientationModeToQuaternion();
   this->GlyphMapper->SetOrientationArray("direction");
   this->GlyphMapper->ScalingOn();
-  this->GlyphMapper->SetScaleModeToNoDataScaling();
+  this->GlyphMapper->SetScaleModeToScaleByVectorComponents();
+  this->GlyphMapper->SetScaleArray("scale");
   this->GlyphMapper->SetScaleFactor(1.0);
   this->GlyphMapper->ScalarVisibilityOff();
   // By default the Points are rendered as spheres
@@ -130,7 +139,8 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPi
   this->OccludedGlyphMapper->SetOrientationModeToQuaternion();
   this->OccludedGlyphMapper->SetOrientationArray("direction");
   this->OccludedGlyphMapper->ScalingOn();
-  this->OccludedGlyphMapper->SetScaleModeToNoDataScaling();
+  this->OccludedGlyphMapper->SetScaleModeToScaleByVectorComponents();
+  this->OccludedGlyphMapper->SetScaleArray("scale");
   this->OccludedGlyphMapper->SetScaleFactor(1.0);
   this->OccludedGlyphMapper->ScalarVisibilityOff();
   // By default the Points are rendered as spheres
@@ -843,6 +853,105 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointGlyphOrientation(
 }
 
 //-----------------------------------------------------------------------------
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointGlyphScale()
+{
+  vtkCamera* cam = this->Renderer->GetActiveCamera();
+  if (!cam)
+    {
+    return;
+    }
+
+  vtkTransform* camTransform = cam->GetModelViewTransformObject();
+  if (!camTransform)
+    {
+    return;
+    }
+
+  double camScale[3] = {1.0, 1.0, 1.0};
+  camTransform->GetScale(camScale);
+
+  if (camScale[0] == camScale[1] && camScale[0] == camScale[2])
+    {
+    // view is not distorted
+    return;
+    }
+
+  for (int controlPointType = 0; controlPointType < NumberOfControlPointTypes; controlPointType++)
+    {
+    ControlPointsPipeline3D* controlPoints = reinterpret_cast<ControlPointsPipeline3D*>(this->ControlPoints[controlPointType]);
+    if (!controlPoints->Actor->GetVisibility())
+      {
+      continue;
+      }
+
+    int numPoints = controlPoints->ControlPoints->GetNumberOfPoints();
+
+    controlPoints->GlyphScaleArray->SetNumberOfTuples(numPoints);
+    if (controlPoints->GlyphOrientationArray->GetNumberOfTuples() != numPoints)
+      {
+      return;
+      }
+
+    auto computeDistanceToPointOnEllipsoid = [](const vtkQuaterniond& orientationQuaternion, const double ellipsoid_abc[3], const double p[3]) {
+      double p_rot[3] = { 0.0 };
+      vtkMath::RotateVectorByNormalizedQuaternion(p, orientationQuaternion.GetData(), p_rot);
+      double theta = std::acos(p_rot[2]/std::hypot(p_rot[0], p_rot[1], p_rot[2]));
+      double phi = 0.0;
+      double pi = 3.14159265358979323846;
+      if (p_rot[0] > 0) {
+        phi = std::atan2(p_rot[1], p_rot[0]);
+      } else if (p_rot[0] < 0 && p_rot[1] >= 0) {
+        phi = std::atan2(p_rot[1], p_rot[0]) + pi;
+      } else if (p_rot[0] < 0 && p_rot[1] < 0) {
+        phi = std::atan2(p_rot[1], p_rot[0]) - pi;
+      } else if (p_rot[0] == 0 && p_rot[1] > 0) {
+        phi = pi/2.0;
+      } else if (p_rot[0] == 0 && p_rot[1] < 0) {
+        phi = -pi/2.0;
+      }
+
+      double px_rot = ellipsoid_abc[0]*sin(theta)*cos(phi);
+      double py_rot = ellipsoid_abc[1]*sin(theta)*sin(phi);
+      double pz_rot = ellipsoid_abc[2]*cos(theta);
+      return std::hypot(px_rot, py_rot, pz_rot);
+    };
+
+    double i[3] = { 1.0, 0.0, 0.0 };
+    double j[3] = { 0.0, 1.0, 0.0 };
+    double k[3] = { 0.0, 0.0, 1.0 };
+
+    for (int pointIndex = 0; pointIndex < numPoints; ++pointIndex)
+      {
+      // GlypthScaleArray is applied to the local markups coordinates
+      // (markups always oriented away from the camera: X-to the left, Y-up, Z-away from camera)
+      // Thus camera scaling array must be projected on the markups point coordinate system.
+      vtkQuaterniond orientationQuaternion = vtkQuaterniond(controlPoints->GlyphOrientationArray->GetTuple4(pointIndex));
+
+      // The inequal scale along three axes transfroms the sphere to ellipsoid with semi-minor/major axes equal to scale.
+      // Thus we need to find values on this ellipsoid at points represented by given orientation matrix (quaternion).
+      // And this will be the scale affecting oriented markups point.
+      // To do that we will rotate i,j,k unit vectors to find spherical coordinates (theta, phi)
+      // and calculate ellipsoid coordinates (sphere angles are the same as ellipsoid angles).
+      // Finally compute distance to that point.
+      // Notation from wikipedia (theta, phi):
+      // https://en.wikipedia.org/wiki/Spherical_coordinate_system
+      // https://en.wikipedia.org/wiki/Ellipsoid
+
+      double camScaleRot[3] = { 0.0 };
+      camScaleRot[0] = computeDistanceToPointOnEllipsoid(orientationQuaternion, camScale, i);
+      camScaleRot[1] = computeDistanceToPointOnEllipsoid(orientationQuaternion, camScale, j);
+      camScaleRot[2] = computeDistanceToPointOnEllipsoid(orientationQuaternion, camScale, k);
+
+      controlPoints->GlyphScaleArray->SetTuple3(pointIndex,
+       std::abs(1/camScaleRot[0]),
+       std::abs(1/camScaleRot[1]),
+       std::abs(1/camScaleRot[2]));
+      }
+    controlPoints->GlyphScaleArray->Modified();
+    }
+}
+
+//-----------------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
   vtkViewport *viewport)
 {
@@ -870,6 +979,8 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
   }
 
   this->UpdateControlPointGlyphOrientation();
+  // Update scale after orientation (scale depends on orientation)
+  this->UpdateControlPointGlyphScale();
 
   int count = Superclass::RenderOpaqueGeometry(viewport);
 
