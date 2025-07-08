@@ -71,6 +71,7 @@ public slots:
 
 protected slots:
   void updateWidgetFromMRML();
+  void updateWidgetFromMRMLDisplayNode();
 
 protected:
   QScopedPointer<qMRMLVolumeInfoWidgetPrivate> d_ptr;

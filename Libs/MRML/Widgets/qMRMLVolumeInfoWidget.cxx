@@ -147,8 +147,11 @@ void qMRMLVolumeInfoWidget::setVolumeNode(vtkMRMLVolumeNode* volumeNode)
                 this, SLOT(updateWidgetFromMRML()));
   qvtkReconnect(d->VolumeNode, volumeNode, vtkMRMLVolumeNode::ImageDataModifiedEvent,
                 this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->VolumeNode, volumeNode, vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                this, SLOT(updateWidgetFromMRMLDisplayNode()));
   d->VolumeNode = volumeNode;
   this->updateWidgetFromMRML();
+  this->updateWidgetFromMRMLDisplayNode();
 }
 
 //------------------------------------------------------------------------------
@@ -209,9 +212,6 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
     d->FileNameLineEdit->setText("");
 
     d->VolumeTagLabel->setText("");
-
-    d->WindowLevelPresetsListWidget->clear();
-
     return;
   }
   vtkImageData* image = d->VolumeNode->GetImageData();
@@ -271,8 +271,6 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   vtkMRMLStorageNode* storageNode = d->VolumeNode->GetStorageNode();
   d->FileNameLineEdit->setText(storageNode ? storageNode->GetFileName() : "");
 
-  vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( d->VolumeNode );
-
   // Remove "Volume" postfix from node tag name to get only the volume type
   QString volumeType(d->VolumeNode->GetNodeTagName());
   if (volumeType.endsWith("Volume"))
@@ -289,21 +287,29 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
     qWarning() << __FUNCTION__ << "Invalid volume node tag '" << volumeType << "'!";
   }
   d->VolumeTagLabel->setText(volumeType);
+}
 
+//------------------------------------------------------------------------------
+void qMRMLVolumeInfoWidget::updateWidgetFromMRMLDisplayNode()
+{
+  Q_D(qMRMLVolumeInfoWidget);
   d->WindowLevelPresetsListWidget->clear();
-  vtkMRMLScalarVolumeDisplayNode *displayNode =
-    scalarNode ? scalarNode->GetScalarVolumeDisplayNode() : nullptr;
-  if (displayNode)
+  vtkMRMLScalarVolumeNode* scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast(d->VolumeNode);
+  if (!scalarNode)
   {
-    // populate the win/level presets
-    for (int p = 0; p < displayNode->GetNumberOfWindowLevelPresets(); ++p)
-    {
-      QString windowLevel;
-      windowLevel += QString::number(displayNode->GetWindowPreset(p));
-      windowLevel += " | ";
-      windowLevel += QString::number(displayNode->GetLevelPreset(p));
-      d->WindowLevelPresetsListWidget->addItem(windowLevel);
-    }
+    return;
+  }
+  vtkMRMLScalarVolumeDisplayNode* displayNode = scalarNode->GetScalarVolumeDisplayNode();
+  if (!displayNode)
+  {
+    return;
+  }
+  // populate the win/level presets
+  for (int presetIndex = 0; presetIndex < displayNode->GetNumberOfWindowLevelPresets(); ++presetIndex)
+  {
+    QString windowLevelPreset =
+      QString("%1 | %2").arg(displayNode->GetWindowPreset(presetIndex), displayNode->GetLevelPreset(presetIndex));
+    d->WindowLevelPresetsListWidget->addItem(windowLevelPreset);
   }
 }
 
