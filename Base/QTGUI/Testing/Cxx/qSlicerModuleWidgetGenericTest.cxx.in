@@ -63,7 +63,7 @@ const int allowedWidgetWidthPixel = 500; // no matter how large the screen is, u
 const int allowedWidgetWidthScreenPercentage = 30; // about 1/3 of the screen width is allowed
 
 //-----------------------------------------------------------------------------
-int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
+int qSlicer@MODULENAME@ModuleWidgetGenericTest(int argc, char* argv[])
 {
   bool res = true;
   qSlicerApplication app(argc, argv);
@@ -76,7 +76,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 #ifndef GENERIC_CXX_MODULE_TEST_SKIP_DEPENDENCIES
   if (!module.dependencies().isEmpty())
   {
-    qSlicerModuleFactoryManager * moduleFactoryManager = app.moduleManager()->factoryManager();
+    qSlicerModuleFactoryManager* moduleFactoryManager = app.moduleManager()->factoryManager();
     qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
     moduleFactoryManager->setExplicitModules(module.dependencies());
 
@@ -89,7 +89,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
              << moduleFactoryManager->instantiatedModuleNames().count();
 
     // Load all available modules
-    foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
+    foreach (const QString& name, moduleFactoryManager->instantiatedModuleNames())
     {
       Q_ASSERT(!name.isNull());
       moduleFactoryManager->loadModule(name);
@@ -119,7 +119,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
   module.setPath(modulePath);
 
 #ifdef Slicer_USE_PYTHONQT
-  qSlicerPythonManager * pythonManager = app.pythonManager();
+  qSlicerPythonManager* pythonManager = app.pythonManager();
   {
     bool current = qSlicerLoadableModule::importModulePythonExtensions(
           pythonManager, app.intDir(), module.path());
