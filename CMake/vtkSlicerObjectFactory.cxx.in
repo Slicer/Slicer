@@ -50,7 +50,7 @@ static unsigned int @vtk-module@Count;
 
 @VTK-MODULE@_MODULEINIT_EXPORT void @vtk-module@_AutoInit_Construct()
 {
-  if(++@vtk-module@Count == 1)
+  if (++@vtk-module@Count == 1)
   {
     @vtk-object-factory-extra-init@
     @vtk-module@ObjectFactory* factory = @vtk-module@ObjectFactory::New();
@@ -65,7 +65,7 @@ static unsigned int @vtk-module@Count;
 
 @VTK-MODULE@_MODULEINIT_EXPORT void @vtk-module@_AutoInit_Destruct()
 {
-  if(--@vtk-module@Count == 0)
+  if (--@vtk-module@Count == 0)
   {
     // Do not call vtkObjectFactory::UnRegisterFactory because
     // vtkObjectFactory.cxx statically unregisters all factories.

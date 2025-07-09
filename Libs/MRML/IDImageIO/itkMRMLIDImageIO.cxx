@@ -725,7 +725,7 @@ MRMLIDImageIO
     }
   }
 
-  EncapsulateMetaData<std::vector<std::vector<double>> >(dict,
+  EncapsulateMetaData<std::vector<std::vector<double>>>(dict,
                                            measurementFrameKey,
                                          measurementFrameValue);
 
@@ -794,7 +794,7 @@ MRMLIDImageIO
     measurementFrameValue[i].resize(3);
   }
 
-  ExposeMetaData<std::vector<std::vector<double>> >(dict,
+  ExposeMetaData<std::vector<std::vector<double>>>(dict,
                                                      measurementFrameKey,
                                                      measurementFrameValue);
 
@@ -923,7 +923,7 @@ MRMLIDImageIO
     }
   }
 
-  EncapsulateMetaData<std::vector<std::vector<double>> >(dict,
+  EncapsulateMetaData<std::vector<std::vector<double>>>(dict,
                                            measurementFrameKey,
                                          measurementFrameValue);
 }
@@ -944,7 +944,7 @@ MRMLIDImageIO
     measurementFrameValue[i].resize(3);
   }
 
-  ExposeMetaData<std::vector<std::vector<double>> >(dict,
+  ExposeMetaData<std::vector<std::vector<double>>>(dict,
                                                      measurementFrameKey,
                                                      measurementFrameValue);
 
