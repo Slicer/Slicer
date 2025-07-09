@@ -35,6 +35,8 @@ Version:   $Revision: 1.2 $
 #include <vtkPointData.h>
 #include <vtkVersion.h>
 
+// VTKSYS includes
+#include <vtksys/SystemTools.hxx>
 
 // STD includes
 #include <cassert>
@@ -265,11 +267,8 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   {
     for (int p = 0; p < this->GetNumberOfWindowLevelPresets(); p++)
     {
-      std::stringstream ss;
-      ss << this->WindowLevelPresets[p].Window;
-      ss << "|";
-      ss << this->WindowLevelPresets[p].Level;
-      of << " windowLevelPreset" << p << "=\"" << ss.str() << "\"";
+      of << " windowLevelPreset" << p << "=\""
+         << vtkMRMLScalarVolumeDisplayNode::GetWindowLevelAsPresetString(this->WindowLevelPresets[p].Window, this->WindowLevelPresets[p].Level) << "\"";
     }
   }
 }
@@ -280,6 +279,8 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
+
+  std::vector<WindowLevelPreset> windowLevelPresets;
 
   const char* attName;
   const char* attValue;
@@ -351,9 +352,17 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strncmp(attName, "windowLevelPreset", 17))
     {
-      this->AddWindowLevelPresetFromString(attValue);
+      double window = 0.0;
+      double level = 0.0;
+      if (!vtkMRMLScalarVolumeDisplayNode::GetWindowLevelFromPresetString(attValue, window, level))
+      {
+        continue;
+      }
+      windowLevelPresets.push_back(WindowLevelPreset(window, level));
     }
   }
+
+  this->SetWindowLevelPresets(windowLevelPresets);
 
   this->EndModify(disabledModify);
 }
@@ -374,10 +383,7 @@ void vtkMRMLScalarVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
     this->SetThreshold(node->GetLowerThreshold(), node->GetUpperThreshold());
     this->SetInterpolate(node->Interpolate);
     this->SetInvertDisplayScalarRange(node->GetInvertDisplayScalarRange());
-    for (int p = 0; p < node->GetNumberOfWindowLevelPresets(); p++)
-    {
-      this->AddWindowLevelPreset(node->GetWindowPreset(p), node->GetLevelPreset(p));
-    }
+    this->SetWindowLevelPresets(node->WindowLevelPresets);
   }
 
   Superclass::CopyContent(anode, deepCopy);
@@ -627,44 +633,81 @@ void vtkMRMLScalarVolumeDisplayNode::UpdateLookupTable(vtkMRMLColorNode* newColo
   this->MapToColors->SetLookupTable(lookupTable);
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPresetFromString(const char *preset)
+//----------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::SetWindowLevelPresets(const std::vector<WindowLevelPreset>& srcWindowLevelPresets)
 {
-  // the string is double|double
-  double window = 0.0;
-  double level = 0.0;
+  // Compare with a tolerance
+  static const double WINDOW_LEVEL_PRESET_TOLERANCE = 1.e-6;
+  if (srcWindowLevelPresets.size() == this->GetNumberOfWindowLevelPresets())
+  {
+    bool presetsAreEqual = true;
+    for (int presetIndex = 0; presetIndex < this->WindowLevelPresets.size(); presetIndex++)
+    {
+      WindowLevelPreset& preset = this->WindowLevelPresets[presetIndex];
+      const WindowLevelPreset& srcPreset = srcWindowLevelPresets[presetIndex];
+      if (fabs(preset.Window - srcPreset.Window) > WINDOW_LEVEL_PRESET_TOLERANCE ||
+          fabs(preset.Level - srcPreset.Level) > WINDOW_LEVEL_PRESET_TOLERANCE)
+      {
+        presetsAreEqual = false;
+        break;
+      }
+    }
+    if (presetsAreEqual)
+    {
+      // no change
+      return;
+    }
+  }
 
+  // Presets are different, overwrite
+  this->WindowLevelPresets = srcWindowLevelPresets;
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLScalarVolumeDisplayNode::GetWindowLevelFromPresetString(const char* preset, double& window, double& level)
+{
   if (preset == nullptr)
   {
-    vtkErrorMacro("AddWindowLevelPresetFromString: null input string!");
-    return;
+    vtkGenericWarningMacro("GetWindowLevelFromPresetString: null input string");
+    return false;
   }
-  // parse the string
-  std::string presetString = std::string(preset);
-  char *presetChars = new char [presetString.size()+1];
-  strcpy(presetChars, presetString.c_str());
-  char *pos = strtok(presetChars, "|");
-  if (pos != nullptr)
+  // parse the string, the string is double|double
+  std::vector<std::string> parts = vtksys::SystemTools::SplitString(preset, '|');
+  if (parts.size() != 2)
   {
-    window = atof(pos);
+    return false;
   }
-  pos = strtok(nullptr, "|");
-  if (pos != nullptr)
+  window = atof(parts[0].c_str());
+  level = atof(parts[1].c_str());
+  return true;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLScalarVolumeDisplayNode::GetWindowLevelAsPresetString(double window, double level)
+{
+  std::stringstream ss;
+  ss << window << "|" << level;
+  return ss.str();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPresetFromString(const char* preset)
+{
+  double window = 0.0;
+  double level = 0.0;
+  if (vtkMRMLScalarVolumeDisplayNode::GetWindowLevelFromPresetString(preset, window, level))
   {
-    level = atof(pos);
+    this->AddWindowLevelPreset(window, level);
   }
-  delete[] presetChars;
-  this->AddWindowLevelPreset(window, level);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::AddWindowLevelPreset(double window, double level)
 {
-  vtkMRMLScalarVolumeDisplayNode::WindowLevelPreset preset;
-  preset.Window = window;
-  preset.Level = level;
-
+  vtkMRMLScalarVolumeDisplayNode::WindowLevelPreset preset(window, level);
   this->WindowLevelPresets.push_back(preset);
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -714,6 +757,7 @@ double vtkMRMLScalarVolumeDisplayNode::GetLevelPreset(int p)
 void vtkMRMLScalarVolumeDisplayNode::ResetWindowLevelPresets()
 {
   this->WindowLevelPresets.clear();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
