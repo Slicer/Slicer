@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
         measurementFrameValue[i].resize(3);
       }
 
-      itk::ExposeMetaData<std::vector<std::vector<double>> >(dictionary, itr->first, measurementFrameValue);
+      itk::ExposeMetaData<std::vector<std::vector<double>>>(dictionary, itr->first, measurementFrameValue);
 
       std::cout << itr->first << ": " << std::endl;
       for ( unsigned int i = 0; i < 3; i++ )
