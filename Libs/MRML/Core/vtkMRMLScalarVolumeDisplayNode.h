@@ -172,6 +172,12 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection() override;
 
   ///
+  /// Parse a window level preset string (window and level values separated by "|") to numeric values
+  static bool GetWindowLevelFromPresetString(const char* preset, double& window, double& level);
+  ///
+  /// Convert window and level values to preset string (window and level values separated by "|")
+  static std::string GetWindowLevelAsPresetString(double window, double level);
+  ///
   /// Parse a string with window and level as double|double, and add a preset
   void AddWindowLevelPresetFromString(const char *preset);
   ///
@@ -233,13 +239,16 @@ protected:
   public:
     double Window;
     double Level;
-    WindowLevelPreset() { this->Window = 0.0; this->Level = 0.0; };
+    WindowLevelPreset(double window, double level) : Window(window), Level(level) {}
   };
   //double Window;
   //double Level;
   //double UpperThreshold;
   //double LowerThreshold;
 
+  /// Set the window level presets from the specified vector.
+  /// Calls this->Modified() if there is a change.
+  void SetWindowLevelPresets(const std::vector<WindowLevelPreset>& windowLevelPresets);
 
   /// Booleans
   int Interpolate;
