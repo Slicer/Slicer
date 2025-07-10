@@ -6,8 +6,8 @@ set(MODULE_NAME DataProbe)
 set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}.py
   ${MODULE_NAME}Lib/__init__
-  ${MODULE_NAME}Lib/SliceViewAnnotations
   ${MODULE_NAME}Lib/DataProbeUtil
+  ${MODULE_NAME}Lib/DICOMAnnotationPropertyValueProvider
   )
 
 set(MODULE_PYTHON_RESOURCES

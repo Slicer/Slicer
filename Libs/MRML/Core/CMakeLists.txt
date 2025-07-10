@@ -152,6 +152,7 @@ set(MRMLCore_SRCS
   vtkEventBroker.cxx
   vtkImageMathematicsAddon.cxx
   vtkImplicitInvertableBoolean.cxx
+  vtkMRMLAbstractAnnotationPropertyValueProvider.cxx
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx
   vtkMRMLBSplineTransformNode.cxx

@@ -15,6 +15,7 @@ Version:   $Revision: 1.2 $
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
+#include "vtkMRMLTextNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLVolumeNode.h"
 
@@ -2124,4 +2125,16 @@ int vtkMRMLSliceNode::GetSlabReconstructionTypeFromString(const char* name)
 vtkImplicitFunction* vtkMRMLSliceNode::GetImplicitFunctionWorld()
 {
   return this->ImplicitFunction;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetAndObserveCornerAnnotationsTextNode(vtkMRMLNode* textNode)
+{
+  this->SetAndObserveNodeReferenceID(this->GetCornerAnnotationsTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------
+vtkMRMLTextNode* vtkMRMLSliceNode::GetCornerAnnotationsTextNode()
+{
+  return vtkMRMLTextNode::SafeDownCast(this->GetNodeReference(this->GetCornerAnnotationsTextNodeReferenceRole()));
 }
