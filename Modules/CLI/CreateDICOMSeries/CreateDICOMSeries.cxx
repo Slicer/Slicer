@@ -41,7 +41,7 @@ std::string GenerateRandomCapitalLetters(int numberOfCharacters)
 }
 
 template <class Tin>
-int DoIt( int argc, char* argv[])
+int DoIt(int argc, char* argv[])
 {
   PARSE_ARGS;
 
@@ -423,7 +423,7 @@ int DoIt( int argc, char* argv[])
     typename Image3DType::IndexType  extractIndex;
     extractSize = image->GetLargestPossibleRegion().GetSize();
     extractIndex.Fill(0);
-    if ( reverseImages )
+    if (reverseImages)
     {
       extractIndex[2] = numberOfSlices - i - 1;
     }
@@ -526,7 +526,7 @@ int DoIt( int argc, char* argv[])
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 

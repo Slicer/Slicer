@@ -52,7 +52,7 @@ public:
   void init();
 
   void insertActionOnTop(QAction* action, QMenu* menu);
-  QAction* lastSelectedAction()const;
+  QAction* lastSelectedAction() const;
 
   qSlicerModuleFinderDialog* ModuleFinder;
 #ifdef Q_OS_WIN32
@@ -209,7 +209,7 @@ void qSlicerModuleSelectorToolBarPrivate::insertActionOnTop(QAction* action, QMe
 }
 
 //---------------------------------------------------------------------------
-QAction* qSlicerModuleSelectorToolBarPrivate::lastSelectedAction()const
+QAction* qSlicerModuleSelectorToolBarPrivate::lastSelectedAction() const
 {
   QList<QAction*> actions = this->HistoryMenu->actions();
   return actions.size() ? actions[0] : 0;
@@ -238,7 +238,7 @@ qSlicerModuleSelectorToolBar::qSlicerModuleSelectorToolBar(QWidget* parentWidget
 qSlicerModuleSelectorToolBar::~qSlicerModuleSelectorToolBar() = default;
 
 //---------------------------------------------------------------------------
-qSlicerModulesMenu* qSlicerModuleSelectorToolBar::modulesMenu()const
+qSlicerModulesMenu* qSlicerModuleSelectorToolBar::modulesMenu() const
 {
   Q_D(const qSlicerModuleSelectorToolBar);
   return d->ModulesMenu;
@@ -252,7 +252,7 @@ ctkMenuComboBox* qSlicerModuleSelectorToolBar::modulesMenuComboBox() const
 }
 
 //---------------------------------------------------------------------------
-QString qSlicerModuleSelectorToolBar::selectedModule()const
+QString qSlicerModuleSelectorToolBar::selectedModule() const
 {
   Q_D(const qSlicerModuleSelectorToolBar);
   return d->ModulesMenu->currentModule();

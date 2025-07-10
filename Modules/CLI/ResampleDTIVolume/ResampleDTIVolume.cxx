@@ -275,7 +275,7 @@ ComputeTransformMatrix( const parameters & list,
   itk::Vector<double> offset;
   // if centered transform set, ignore the transformation center
   // set before and use the center of the image instead
-  if ( list.centeredTransform )
+  if (list.centeredTransform)
   {
     if ( !list.imageCenter.compare( "input" ) )
     {
@@ -310,7 +310,7 @@ ComputeTransformMatrix( const parameters & list,
   }
   // If set, inverse the given transform.
   // The given transform therefore transform the input image into the output image
-  if ( list.inverseITKTransformation )
+  if (list.inverseITKTransformation)
   {
     transformMatrix4x4 = transformMatrix4x4.GetInverse();
   }
@@ -347,7 +347,7 @@ FSOrPPD( const std::string& ppd, itk::Matrix<double, 4, 4> *matrix = nullptr )
       = PPDAffineTransformType::New();
     affine = affineppd;
   }
-  if ( matrix )
+  if (matrix)
   {
     affine->SetMatrix4x4( *matrix );
   }
@@ -589,7 +589,7 @@ itk::Matrix< double , 3 , 3 > SetOutputParameters( const parameters & list,
     readerReference->SetFileName( list.referenceVolume.c_str() );
 //    readerReference->Update() ;
     readerReference->UpdateOutputInformation();
-    if ( list.space ) // && list.transformationFile.compare( "" ) )
+    if (list.space) // && list.transformationFile.compare( "" ) )
     {
       typename ReaderType::OutputImageType::PointType originReference;
       typename ReaderType::OutputImageType::DirectionType directionReference;
@@ -777,7 +777,7 @@ int Do( parameters list )
     typedef typename ReaderType::Pointer          ReaderTypePointer;
     ReaderTypePointer reader = ReaderType::New();
     // Read input volume
-    if ( list.numberOfThread )
+    if (list.numberOfThread)
     {
       reader->SetNumberOfThreads( list.numberOfThread );
     }
@@ -798,7 +798,7 @@ int Do( parameters list )
     std::cerr << Except << std::endl;
     return EXIT_FAILURE;
   }
-  if ( list.space )  // &&  list.transformationFile.compare( "" ) )
+  if (list.space)  // &&  list.transformationFile.compare( "" ) )
   {
     RASLPS<PixelType>( image );
   }
@@ -920,7 +920,7 @@ int Do( parameters list )
           BSplineTransform->SetBulkTransform( bulkTransform->GetTransform() );
         }
       }
-      if ( list.numberOfThread )
+      if (list.numberOfThread)
       {
         transformDeformationFieldFilter->SetNumberOfWorkUnits( list.numberOfThread );
       }
@@ -998,7 +998,7 @@ int Do( parameters list )
                                                       // memory after we exit this portion of code
     ResamplerTypePointer resampler = ResamplerType::New();
     resampler->SetInput( image );
-    if ( list.numberOfThread )
+    if (list.numberOfThread)
     {
       resampler->SetNumberOfWorkUnits( list.numberOfThread );
     }
@@ -1028,7 +1028,7 @@ int Do( parameters list )
     typename ZeroCorrection::Pointer zeroFilter;
     zeroFilter = ZeroCorrection::New();
     zeroFilter->SetInput( image );
-    if ( list.numberOfThread )
+    if (list.numberOfThread)
     {
       zeroFilter->SetNumberOfWorkUnits( list.numberOfThread );
     }
@@ -1041,7 +1041,7 @@ int Do( parameters list )
     typename AbsCorrection::Pointer absFilter;
     absFilter = AbsCorrection::New();
     absFilter->SetInput( image );
-    if ( list.numberOfThread )
+    if (list.numberOfThread)
     {
       absFilter->SetNumberOfWorkUnits( list.numberOfThread );
     }
@@ -1054,7 +1054,7 @@ int Do( parameters list )
     typename NearestCorrection::Pointer nearestFilter;
     nearestFilter = NearestCorrection::New();
     nearestFilter->SetInput( image );
-    if ( list.numberOfThread )
+    if (list.numberOfThread)
     {
       nearestFilter->SetNumberOfWorkUnits( list.numberOfThread );
     }
@@ -1062,11 +1062,11 @@ int Do( parameters list )
     image = nearestFilter->GetOutput();
   }
   // Save result
-  if ( list.space )  // &&  list.transformationFile.compare( "" ) )
+  if (list.space)  // &&  list.transformationFile.compare( "" ) )
   {
     RASLPS<PixelType>( image );
   }
-  if ( list.numberOfThread )
+  if (list.numberOfThread)
   {
     writer->SetNumberOfThreads( list.numberOfThread );
   }
@@ -1088,7 +1088,7 @@ int Do( parameters list )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
   parameters list;

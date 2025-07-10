@@ -40,7 +40,7 @@
 #include <vtkVersion.h>
 #include "qMRMLWidget.h"
 
-int qMRMLVolumeInfoWidgetTest1(int argc, char* argv [] )
+int qMRMLVolumeInfoWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

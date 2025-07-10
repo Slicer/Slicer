@@ -38,17 +38,17 @@ class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModule :
 public:
 
   typedef qSlicerCoreModule Superclass;
-  qSlicerEventBrokerModule(QObject* parent=nullptr);
+  qSlicerEventBrokerModule(QObject* parent = nullptr);
   ~qSlicerEventBrokerModule() override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Display name for the module
   qSlicerGetTitleMacro(tr("Event Broker"));
 
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
 protected:
   /// Create and return the widget representation associated to this module

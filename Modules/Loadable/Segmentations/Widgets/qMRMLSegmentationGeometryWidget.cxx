@@ -52,7 +52,7 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qMRMLSegmentationGeometryWidgetPrivate: public Ui_qMRMLSegmentationGeometryWidget
+class qMRMLSegmentationGeometryWidgetPrivate : public Ui_qMRMLSegmentationGeometryWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationGeometryWidget);
 
@@ -197,14 +197,14 @@ qMRMLSegmentationGeometryWidget::qMRMLSegmentationGeometryWidget(QWidget* _paren
 qMRMLSegmentationGeometryWidget::~qMRMLSegmentationGeometryWidget() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLSegmentationNode* qMRMLSegmentationGeometryWidget::segmentationNode()const
+vtkMRMLSegmentationNode* qMRMLSegmentationGeometryWidget::segmentationNode() const
 {
   Q_D(const qMRMLSegmentationGeometryWidget);
   return d->SegmentationNode;
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSegmentationGeometryWidget::segmentationNodeID()const
+QString qMRMLSegmentationGeometryWidget::segmentationNodeID() const
 {
   Q_D(const qMRMLSegmentationGeometryWidget);
   return (d->SegmentationNode.GetPointer() ? d->SegmentationNode->GetID() : QString());
@@ -236,7 +236,7 @@ void qMRMLSegmentationGeometryWidget::setSegmentationNode(vtkMRMLSegmentationNod
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSegmentationGeometryWidget::editEnabled()const
+bool qMRMLSegmentationGeometryWidget::editEnabled() const
 {
   Q_D(const qMRMLSegmentationGeometryWidget);
   return d->EditEnabled;
@@ -251,7 +251,7 @@ void qMRMLSegmentationGeometryWidget::setEditEnabled(bool aEditEnabled)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSegmentationGeometryWidget::sourceNode()const
+vtkMRMLNode* qMRMLSegmentationGeometryWidget::sourceNode() const
 {
   Q_D(const qMRMLSegmentationGeometryWidget);
   return d->MRMLNodeComboBox_SourceGeometryNode->currentNode();
@@ -335,7 +335,7 @@ void qMRMLSegmentationGeometryWidget::onUserSpacingChanged(double* userSpacing)
 }
 
 //-----------------------------------------------------------------------------
-double qMRMLSegmentationGeometryWidget::oversamplingFactor()const
+double qMRMLSegmentationGeometryWidget::oversamplingFactor() const
 {
   Q_D(const qMRMLSegmentationGeometryWidget);
   return d->DoubleSpinBox_OversamplingFactor->value();
@@ -349,7 +349,7 @@ void qMRMLSegmentationGeometryWidget::setOversamplingFactor(double aOversampling
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSegmentationGeometryWidget::isotropicSpacing()const
+bool qMRMLSegmentationGeometryWidget::isotropicSpacing() const
 {
   Q_D(const qMRMLSegmentationGeometryWidget);
   return d->checkBox_IsotropicSpacing->isChecked();
@@ -370,7 +370,7 @@ void qMRMLSegmentationGeometryWidget::setSpacing(double aSpacing[3])
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSegmentationGeometryWidget::padSegmentation()const
+bool qMRMLSegmentationGeometryWidget::padSegmentation() const
 {
   Q_D(const qMRMLSegmentationGeometryWidget);
   return d->CheckBox_PadSegmentation->isChecked();

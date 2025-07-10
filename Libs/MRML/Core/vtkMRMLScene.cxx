@@ -677,7 +677,7 @@ const char* vtkMRMLScene::GetClassNameByTag(const char* tagName)
 //------------------------------------------------------------------------------
 const char* vtkMRMLScene::GetTagByClassName(const char* className)
 {
-  if ( !className )
+  if (!className)
   {
     vtkErrorMacro("GetTagByClassName: className is null");
     return nullptr;
@@ -727,7 +727,7 @@ int bitwiseOr(int firstValue, int secondValue)
 }
 
 //------------------------------------------------------------------------------
-int vtkMRMLScene::GetStates()const
+int vtkMRMLScene::GetStates() const
 {
   return std::accumulate(this->States.begin(), this->States.end(),
                          0x0000, bitwiseOr);
@@ -2166,7 +2166,7 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
         foundNode = node;
       }
     }
-    if ( foundNode )
+    if (foundNode)
     {
       vtkErrorMacro("GetNodeByID: Node is in the scene, but its ID is missing from the NodeIDs cache: " << id);
     }
@@ -2396,7 +2396,7 @@ vtkMRMLNode* vtkMRMLScene::InsertBeforeNode(vtkMRMLNode* item, vtkMRMLNode* n)
 //------------------------------------------------------------------------------
 void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Version = " << (this->GetVersion() ? this->GetVersion() : "NULL") << "\n";
   os << indent << "Extensions = " << (this->GetExtensions() ? this->GetExtensions() : "NULL") << "\n";
@@ -2405,7 +2405,7 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "URL = " << this->GetURL() << "\n";
   os << indent << "Root Directory = " << this->GetRootDirectory() << "\n";
 
-  this->Nodes->vtkCollection::PrintSelf(os,indent);
+  this->Nodes->vtkCollection::PrintSelf(os, indent);
   std::list<std::string> classes = this->GetNodeClassesList();
 
   std::list<std::string>::const_iterator iter;
@@ -2656,7 +2656,7 @@ void vtkMRMLScene::GetNodeReferenceIDsFromUndoStack(std::set<std::string>& refer
 }
 
 //------------------------------------------------------------------------------
-std::string vtkMRMLScene::BuildID(const std::string& baseID, int idIndex)const
+std::string vtkMRMLScene::BuildID(const std::string& baseID, int idIndex) const
 {
   std::stringstream ss;
   ss << baseID;
@@ -2725,7 +2725,7 @@ int vtkMRMLScene::GetUniqueNameIndex(const std::string& baseName)
 }
 
 //------------------------------------------------------------------------------
-std::string vtkMRMLScene::BuildName(const std::string& baseName, int nameIndex)const
+std::string vtkMRMLScene::BuildName(const std::string& baseName, int nameIndex) const
 {
   std::stringstream name;
   name << baseName;

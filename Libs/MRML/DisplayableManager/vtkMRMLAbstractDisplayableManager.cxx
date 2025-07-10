@@ -734,7 +734,7 @@ vtkCallbackCommand* vtkMRMLAbstractDisplayableManager::GetWidgetsCallbackCommand
 }
 
 //----------------------------------------------------------------------------
-vtkObserverManager* vtkMRMLAbstractDisplayableManager::GetWidgetsObserverManager()const
+vtkObserverManager* vtkMRMLAbstractDisplayableManager::GetWidgetsObserverManager() const
 {
   return this->Internal->WidgetsObserverManager;
 }

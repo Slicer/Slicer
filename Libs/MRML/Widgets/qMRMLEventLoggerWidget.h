@@ -33,7 +33,7 @@ class qMRMLEventLoggerWidgetPrivate;
 class vtkMRMLScene;
 class vtkObject;
 
-class QMRML_WIDGETS_EXPORT qMRMLEventLoggerWidget: public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLEventLoggerWidget : public QWidget
 {
   Q_OBJECT
 public:

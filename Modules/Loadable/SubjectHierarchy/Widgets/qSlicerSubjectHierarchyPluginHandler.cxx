@@ -409,7 +409,7 @@ void qSlicerSubjectHierarchyPluginHandler::observeSubjectHierarchyNode(vtkMRMLSu
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyPluginHandler::subjectHierarchyNode()const
+vtkMRMLSubjectHierarchyNode* qSlicerSubjectHierarchyPluginHandler::subjectHierarchyNode() const
 {
   return m_MRMLScene == nullptr ? nullptr : m_MRMLScene->GetSubjectHierarchyNode();
 }
@@ -437,7 +437,7 @@ void qSlicerSubjectHierarchyPluginHandler::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerSubjectHierarchyPluginHandler::mrmlScene()const
+vtkMRMLScene* qSlicerSubjectHierarchyPluginHandler::mrmlScene() const
 {
   return m_MRMLScene;
 }
@@ -485,7 +485,7 @@ void qSlicerSubjectHierarchyPluginHandler::setCurrentItem(vtkIdType itemID)
 }
 
 //-----------------------------------------------------------------------------
-vtkIdType qSlicerSubjectHierarchyPluginHandler::currentItem()const
+vtkIdType qSlicerSubjectHierarchyPluginHandler::currentItem() const
 {
   if (this->m_CurrentItems.size() != 1)
   {
@@ -501,13 +501,13 @@ void qSlicerSubjectHierarchyPluginHandler::setCurrentItems(QList<vtkIdType> item
 }
 
 //-----------------------------------------------------------------------------
-QList<vtkIdType> qSlicerSubjectHierarchyPluginHandler::currentItems()const
+QList<vtkIdType> qSlicerSubjectHierarchyPluginHandler::currentItems() const
 {
   return this->m_CurrentItems;
 }
 
 //------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPluginHandler::currentItems(vtkIdList* selectedItems)const
+void qSlicerSubjectHierarchyPluginHandler::currentItems(vtkIdList* selectedItems) const
 {
   if (!selectedItems)
   {
@@ -528,13 +528,13 @@ void qSlicerSubjectHierarchyPluginHandler::setCurrentTreeView(qMRMLSubjectHierar
 }
 
 //-----------------------------------------------------------------------------
-qMRMLSubjectHierarchyTreeView* qSlicerSubjectHierarchyPluginHandler::currentTreeView()const
+qMRMLSubjectHierarchyTreeView* qSlicerSubjectHierarchyPluginHandler::currentTreeView() const
 {
   return this->m_CurrentTreeView;
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyPluginHandler::autoDeleteSubjectHierarchyChildren()const
+bool qSlicerSubjectHierarchyPluginHandler::autoDeleteSubjectHierarchyChildren() const
 {
   QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
   if (settings->contains("SubjectHierarchy/AutoDeleteSubjectHierarchyChildren"))
@@ -553,7 +553,7 @@ void qSlicerSubjectHierarchyPluginHandler::setAutoDeleteSubjectHierarchyChildren
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyPluginHandler::displayPatientIDInSubjectHierarchyItemName()const
+bool qSlicerSubjectHierarchyPluginHandler::displayPatientIDInSubjectHierarchyItemName() const
 {
   QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
   if (settings->contains("SubjectHierarchy/DisplayPatientIDInSubjectHierarchyItemName"))
@@ -572,7 +572,7 @@ void qSlicerSubjectHierarchyPluginHandler::setDisplayPatientIDInSubjectHierarchy
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyPluginHandler::displayPatientBirthDateInSubjectHierarchyItemName()const
+bool qSlicerSubjectHierarchyPluginHandler::displayPatientBirthDateInSubjectHierarchyItemName() const
 {
   QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
   if (settings->contains("SubjectHierarchy/DisplayPatientBirthDateInSubjectHierarchyItemName"))
@@ -591,7 +591,7 @@ void qSlicerSubjectHierarchyPluginHandler::setDisplayPatientBirthDateInSubjectHi
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyPluginHandler::displayStudyIDInSubjectHierarchyItemName()const
+bool qSlicerSubjectHierarchyPluginHandler::displayStudyIDInSubjectHierarchyItemName() const
 {
   QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
   if (settings->contains("SubjectHierarchy/DisplayStudyIDInSubjectHierarchyItemName"))
@@ -610,7 +610,7 @@ void qSlicerSubjectHierarchyPluginHandler::setDisplayStudyIDInSubjectHierarchyIt
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyPluginHandler::displayStudyDateInSubjectHierarchyItemName()const
+bool qSlicerSubjectHierarchyPluginHandler::displayStudyDateInSubjectHierarchyItemName() const
 {
   QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
   if (settings->contains("SubjectHierarchy/DisplayStudyDateInSubjectHierarchyItemName"))

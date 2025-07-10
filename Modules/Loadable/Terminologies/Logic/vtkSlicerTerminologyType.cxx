@@ -71,7 +71,7 @@ void vtkSlicerTerminologyType::Initialize()
 //----------------------------------------------------------------------------
 void vtkSlicerTerminologyType::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "RecommendedDisplayRGBValue: ("
     << int(this->RecommendedDisplayRGBValue[0]) << ","

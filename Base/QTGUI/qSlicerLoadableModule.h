@@ -40,12 +40,12 @@ public:
 
   typedef qSlicerLoadableModule Self;
   typedef qSlicerAbstractModule Superclass;
-  qSlicerLoadableModule(QObject* parent=nullptr);
+  qSlicerLoadableModule(QObject* parent = nullptr);
   ~qSlicerLoadableModule() override;
 
   /// Return help/acknowledgement text
-  QString helpText()const override;
-  QString acknowledgementText()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
 
   /// \brief Import python extensions associated with \a modulePath.
   ///

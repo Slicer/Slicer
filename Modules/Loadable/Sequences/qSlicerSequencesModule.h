@@ -54,22 +54,22 @@ qSlicerSequencesModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerSequencesModule(QObject* parent=0);
+  explicit qSlicerSequencesModule(QObject* parent = 0);
   ~qSlicerSequencesModule() override;
 
   qSlicerGetTitleMacro(tr("Sequences"));
 
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
-  QIcon icon()const override;
+  QIcon icon() const override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
   QStringList dependencies() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
   /// Indicates that sequence browser toolbar should be showed when a new sequence is loaded.
   /// Adding a new sequence browser node to the scene does not show the toolbar automatically

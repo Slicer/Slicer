@@ -1777,7 +1777,7 @@ void qMRMLSliceControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* qMRMLSliceControllerWidget::mrmlSliceNode()const
+vtkMRMLSliceNode* qMRMLSliceControllerWidget::mrmlSliceNode() const
 {
   return vtkMRMLSliceNode::SafeDownCast(this->mrmlViewNode());
 }
@@ -1908,7 +1908,7 @@ void qMRMLSliceControllerWidget::setSliceViewLabel(const QString& newSliceViewLa
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLSliceControllerWidget::sliceViewLabel()const
+QString qMRMLSliceControllerWidget::sliceViewLabel() const
 {
   if (!this->mrmlSliceNode())
   {
@@ -1931,7 +1931,7 @@ void qMRMLSliceControllerWidget::setSliceViewColor(const QColor& newSliceViewCol
 }
 
 //---------------------------------------------------------------------------
-QColor qMRMLSliceControllerWidget::sliceViewColor()const
+QColor qMRMLSliceControllerWidget::sliceViewColor() const
 {
   Q_D(const qMRMLSliceControllerWidget);
   return d->color();
@@ -2062,7 +2062,7 @@ void qMRMLSliceControllerWidget::fitSliceToBackground()
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLSliceControllerWidget::sliceOrientation()const
+QString qMRMLSliceControllerWidget::sliceOrientation() const
 {
   Q_D(const qMRMLSliceControllerWidget);
   return d->SliceOrientationSelector->currentText();
@@ -2114,7 +2114,7 @@ void qMRMLSliceControllerWidget::setSliceEdgeVisibility3D(bool visible)
 }
 
 //---------------------------------------------------------------------------
-bool qMRMLSliceControllerWidget::isLinked()const
+bool qMRMLSliceControllerWidget::isLinked() const
 {
   Q_D(const qMRMLSliceControllerWidget);
   // It is not really an assert here, what could have happen is that the
@@ -2128,7 +2128,7 @@ bool qMRMLSliceControllerWidget::isLinked()const
 }
 
 //---------------------------------------------------------------------------
-bool qMRMLSliceControllerWidget::isCompareView()const
+bool qMRMLSliceControllerWidget::isCompareView() const
 {
   return this->mrmlSliceNode() && QString(this->mrmlSliceNode()->GetLayoutName()).startsWith("Compare");
 }
@@ -3046,7 +3046,7 @@ void qMRMLSliceControllerWidget::updateWidgetFromMRMLView()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSliceControllerWidget::showSliceOffsetSlider()const
+bool qMRMLSliceControllerWidget::showSliceOffsetSlider() const
 {
   Q_D(const qMRMLSliceControllerWidget);
   return d->ShowSliceOffsetSlider;

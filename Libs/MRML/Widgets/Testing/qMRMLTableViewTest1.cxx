@@ -43,7 +43,7 @@
 #include <vtkTable.h>
 #include "qMRMLWidget.h"
 
-int qMRMLTableViewTest1( int argc, char* argv [] )
+int qMRMLTableViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

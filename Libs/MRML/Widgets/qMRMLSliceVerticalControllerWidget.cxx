@@ -39,7 +39,7 @@
 #include <vtkMRMLUnitNode.h>
 
 //------------------------------------------------------------------------------
-class qMRMLSliceVerticalControllerWidgetPrivate: public Ui_qMRMLSliceVerticalControllerWidget
+class qMRMLSliceVerticalControllerWidgetPrivate : public Ui_qMRMLSliceVerticalControllerWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSliceVerticalControllerWidget);
 
@@ -186,7 +186,7 @@ void qMRMLSliceVerticalControllerWidget::setMRMLSliceNode(vtkMRMLSliceNode* newS
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* qMRMLSliceVerticalControllerWidget::mrmlSliceNode()const
+vtkMRMLSliceNode* qMRMLSliceVerticalControllerWidget::mrmlSliceNode() const
 {
   Q_D(const qMRMLSliceVerticalControllerWidget);
   return d->SliceLogic->GetSliceNode();
@@ -326,7 +326,7 @@ qMRMLSliderWidget* qMRMLSliceVerticalControllerWidget::sliceVerticalOffsetSlider
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSliceVerticalControllerWidget::showSliceOffsetSlider()const
+bool qMRMLSliceVerticalControllerWidget::showSliceOffsetSlider() const
 {
   Q_D(const qMRMLSliceVerticalControllerWidget);
   return d->ShowSliceOffsetSlider;

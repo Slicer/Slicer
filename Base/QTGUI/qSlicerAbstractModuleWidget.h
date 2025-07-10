@@ -44,7 +44,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModuleWidget
 public:
   /// Constructor
   /// \sa QWidget
-  qSlicerAbstractModuleWidget(QWidget* parent=nullptr);
+  qSlicerAbstractModuleWidget(QWidget* parent = nullptr);
   ~qSlicerAbstractModuleWidget() override;
 
   /// The enter and exit methods are called when the module panel changes.
@@ -55,7 +55,7 @@ public:
   /// in order to have \a isEntered() valid.
   Q_INVOKABLE virtual void enter();
   Q_INVOKABLE virtual void exit();
-  bool isEntered()const;
+  bool isEntered() const;
 
   /// Node editing
   Q_INVOKABLE bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;

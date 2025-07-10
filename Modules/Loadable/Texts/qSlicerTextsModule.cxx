@@ -53,7 +53,7 @@ qSlicerTextsModule::qSlicerTextsModule(QObject* _parentObject)
 qSlicerTextsModule::~qSlicerTextsModule() = default;
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerTextsModule::icon()const
+QIcon qSlicerTextsModule::icon() const
 {
   return QIcon(":/Icons/SlicerTexts.png");
 }
@@ -84,7 +84,7 @@ vtkMRMLAbstractLogic* qSlicerTextsModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTextsModule::helpText()const
+QString qSlicerTextsModule::helpText() const
 {
   QString help = tr("A module to create, edit and manage text data in the scene.") + QLatin1String("<br>");
   help += this->defaultDocumentationLink();
@@ -92,7 +92,7 @@ QString qSlicerTextsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTextsModule::acknowledgementText()const
+QString qSlicerTextsModule::acknowledgementText() const
 {
   return tr("This work was supported through CANARIE's Research Software Program, and Cancer Care Ontario."
     " The Texts module was contributed by Kyle Sunderland and Andras Lasso (Perk Lab, Queen's University)");
@@ -100,7 +100,7 @@ QString qSlicerTextsModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTextsModule::contributors()const
+QStringList qSlicerTextsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Kyle Sunderland (PerkLab, Queen's)");

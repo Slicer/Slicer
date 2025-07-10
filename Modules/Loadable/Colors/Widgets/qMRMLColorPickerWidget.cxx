@@ -40,7 +40,7 @@
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-class qMRMLColorPickerWidgetPrivate: public Ui_qMRMLColorPickerWidget
+class qMRMLColorPickerWidgetPrivate : public Ui_qMRMLColorPickerWidget
 {
   Q_DECLARE_PUBLIC(qMRMLColorPickerWidget);
 
@@ -107,14 +107,14 @@ void qMRMLColorPickerWidget::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorLogic* qMRMLColorPickerWidget::mrmlColorLogic()const
+vtkMRMLColorLogic* qMRMLColorPickerWidget::mrmlColorLogic() const
 {
   Q_D(const qMRMLColorPickerWidget);
   return d->ColorLogic.GetPointer();
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLColorPickerWidget::currentColorNode()const
+vtkMRMLColorNode* qMRMLColorPickerWidget::currentColorNode() const
 {
   Q_D(const qMRMLColorPickerWidget);
   return vtkMRMLColorNode::SafeDownCast(d->ColorTableComboBox->currentNode());

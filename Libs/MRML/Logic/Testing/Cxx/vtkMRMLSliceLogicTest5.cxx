@@ -81,7 +81,7 @@ vtkMRMLScalarVolumeNode* vtkMRMLSliceLogicTest5_loadVolume(const char* volume, v
 }
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSliceLogicTest5(int argc, char* argv [] )
+int vtkMRMLSliceLogicTest5(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 

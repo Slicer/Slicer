@@ -38,13 +38,13 @@ public:
   qSlicerAnnotationsReader(vtkSlicerMarkupsLogic* logic, QObject* parent = nullptr);
   ~qSlicerAnnotationsReader() override;
 
-  vtkSlicerMarkupsLogic* markupsLogic()const;
+  vtkSlicerMarkupsLogic* markupsLogic() const;
   void setMarkupsLogic(vtkSlicerMarkupsLogic* logic);
 
-  QString description()const override;
-  IOFileType fileType()const override;
-  QStringList extensions()const override;
-  qSlicerIOOptions* options()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
+  qSlicerIOOptions* options() const override;
 
   bool load(const IOProperties& properties) override;
 protected:

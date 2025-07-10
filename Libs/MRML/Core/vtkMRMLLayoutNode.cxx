@@ -389,7 +389,7 @@ void vtkMRMLLayoutNode::CopyLayoutDescriptions(vtkMRMLLayoutNode* source)
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   // Layout:
   os << indent << "ViewArrangement: " << this->ViewArrangement  << "\n";

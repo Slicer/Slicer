@@ -217,7 +217,7 @@ public:
   void SetMetaDataDictionary( const itk::MetaDataDictionary& );
   const itk::MetaDataDictionary& GetMetaDataDictionary() const;
 
-  bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms() const override;
 
   void ApplyTransform(vtkAbstractTransform* transform) override;
 

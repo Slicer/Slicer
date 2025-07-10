@@ -27,7 +27,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char* argv[] )
+int DoIt(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -82,7 +82,7 @@ int DoIt( int argc, char* argv[] )
     filter->ThresholdAbove(ThresholdValue);
   }
 
-  if ( Negate )
+  if (Negate)
   {
     InputPixelType outsideValue =
       (filter->GetLower() != itk::NumericTraits<InputPixelType>::NonpositiveMin()) ?
@@ -122,7 +122,7 @@ int DoIt( int argc, char* argv[] )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;

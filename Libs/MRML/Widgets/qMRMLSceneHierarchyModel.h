@@ -39,28 +39,28 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModel : public qMRMLSceneModel
 
 public:
   typedef qMRMLSceneModel Superclass;
-  qMRMLSceneHierarchyModel(QObject* parent=nullptr);
+  qMRMLSceneHierarchyModel(QObject* parent = nullptr);
   ~qMRMLSceneHierarchyModel() override;
 
-  int expandColumn()const;
+  int expandColumn() const;
   void setExpandColumn(int column);
 
-  Qt::DropActions supportedDropActions()const override;
+  Qt::DropActions supportedDropActions() const override;
 
   ///
-  vtkMRMLNode* parentNode(vtkMRMLNode* node)const override;
-  int          nodeIndex(vtkMRMLNode* node)const override;
+  vtkMRMLNode* parentNode(vtkMRMLNode* node) const override;
+  int          nodeIndex(vtkMRMLNode* node) const override;
   /// fast function that only check the type of the node to know if it can be a child.
-  bool         canBeAChild(vtkMRMLNode* node)const override;
+  bool         canBeAChild(vtkMRMLNode* node) const override;
   /// fast function that only check the type of the node to know if it can be a parent.
-  bool         canBeAParent(vtkMRMLNode* node)const override;
+  bool         canBeAParent(vtkMRMLNode* node) const override;
   /// if newParent == 0, set the node into the vtkMRMLScene
   bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent) override;
 
 protected:
   qMRMLSceneHierarchyModel(qMRMLSceneHierarchyModelPrivate* pimpl,
-                           QObject* parent=nullptr);
-  QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const override;
+                           QObject* parent = nullptr);
+  QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column) const override;
 
   void observeNode(vtkMRMLNode* node) override;
 
@@ -71,7 +71,7 @@ protected:
   void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item) override;
 
   /// Must be reimplemented in subclasses that add new column types
-  int maxColumnId()const override;
+  int maxColumnId() const override;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneHierarchyModel);

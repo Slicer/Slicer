@@ -201,7 +201,7 @@ qSlicerExtensionsServerWidget::qSlicerExtensionsServerWidget(QWidget* _parent)
 qSlicerExtensionsServerWidget::~qSlicerExtensionsServerWidget() = default;
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel* qSlicerExtensionsServerWidget::extensionsManagerModel()const
+qSlicerExtensionsManagerModel* qSlicerExtensionsServerWidget::extensionsManagerModel() const
 {
   Q_D(const qSlicerExtensionsServerWidget);
   return d->ExtensionsManagerModel;

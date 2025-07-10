@@ -451,7 +451,7 @@ void qMRMLThreeDViewControllerWidget::setMRMLViewNode(
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLViewNode* qMRMLThreeDViewControllerWidget::mrmlThreeDViewNode()const
+vtkMRMLViewNode* qMRMLThreeDViewControllerWidget::mrmlThreeDViewNode() const
 {
   Q_D(const qMRMLThreeDViewControllerWidget);
   return vtkMRMLViewNode::SafeDownCast(this->mrmlViewNode());
@@ -494,7 +494,7 @@ void qMRMLThreeDViewControllerWidget::setViewLabel(const QString& newViewLabel)
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLThreeDViewControllerWidget::viewLabel()const
+QString qMRMLThreeDViewControllerWidget::viewLabel() const
 {
   Q_D(const qMRMLThreeDViewControllerWidget);
   if (!this->mrmlThreeDViewNode())

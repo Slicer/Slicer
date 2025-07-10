@@ -1029,7 +1029,7 @@ bool vtkMRMLVolumeNode::GetModifiedSinceRead()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLVolumeNode::CanApplyNonLinearTransforms()const
+bool vtkMRMLVolumeNode::CanApplyNonLinearTransforms() const
 {
   return true;
 }

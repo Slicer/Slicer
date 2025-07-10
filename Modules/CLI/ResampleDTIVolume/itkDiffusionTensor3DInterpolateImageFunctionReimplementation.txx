@@ -33,7 +33,7 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
 {
   DiffusionTensor3DInterpolateImageFunction<DataType>::SetInputImage( inputImage );   // separateFilter->GetOutput( 0 )
                                                                                       // ) ;
-  if ( !inputImage )
+  if (!inputImage)
   {
     return;
   }

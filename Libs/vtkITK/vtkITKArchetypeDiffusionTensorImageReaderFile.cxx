@@ -39,7 +39,7 @@ vtkITKArchetypeDiffusionTensorImageReaderFile::~vtkITKArchetypeDiffusionTensorIm
 //----------------------------------------------------------------------------
 void vtkITKArchetypeDiffusionTensorImageReaderFile::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "vtk ITK Archetype Image Series DiffusionTensor3D Reader File\n";
 }
 

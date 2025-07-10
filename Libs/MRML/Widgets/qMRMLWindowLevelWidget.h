@@ -57,27 +57,27 @@ public:
 
   ///
   /// Get window
-  double window()const;
+  double window() const;
 
   ///
   /// Get level
-  double level()const;
+  double level() const;
 
   ///
   /// Get minimum of the range
-  double minimumValue()const;
+  double minimumValue() const;
 
   ///
   /// Get maximum of the range
-  double maximumValue()const;
+  double maximumValue() const;
 
   ///
   /// Get minimum of the range
-  double minimumBound()const;
+  double minimumBound() const;
 
   ///
   /// Get maximum of the range
-  double maximumBound()const;
+  double maximumBound() const;
 
 signals:
   ///

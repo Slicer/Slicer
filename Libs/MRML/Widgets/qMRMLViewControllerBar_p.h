@@ -54,7 +54,7 @@ class QVBoxLayout;
 class vtkMRMLLayoutNode;
 
 //-----------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLViewControllerBarPrivate: public QObject
+class QMRML_WIDGETS_EXPORT qMRMLViewControllerBarPrivate : public QObject
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLViewControllerBar);
@@ -69,7 +69,7 @@ public:
 
   virtual void init();
   virtual void setColor(QColor color);
-  virtual QColor color()const;
+  virtual QColor color() const;
 
   // Need to observe the view and layout nodes to update maximize/restore button state.
   vtkWeakPointer<vtkMRMLAbstractViewNode> ViewNode;

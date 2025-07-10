@@ -88,7 +88,7 @@ qSlicerDiffusionWeightedVolumeDisplayWidget
 
 // --------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeNode* qSlicerDiffusionWeightedVolumeDisplayWidget
-::volumeNode()const
+::volumeNode() const
 {
   Q_D(const qSlicerDiffusionWeightedVolumeDisplayWidget);
   return d->VolumeNode;
@@ -96,7 +96,7 @@ vtkMRMLDiffusionWeightedVolumeNode* qSlicerDiffusionWeightedVolumeDisplayWidget
 
 // --------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeDisplayNode* qSlicerDiffusionWeightedVolumeDisplayWidget
-::volumeDisplayNode()const
+::volumeDisplayNode() const
 {
   vtkMRMLDiffusionWeightedVolumeNode* volumeNode = this->volumeNode();
   return volumeNode ? vtkMRMLDiffusionWeightedVolumeDisplayNode::SafeDownCast(

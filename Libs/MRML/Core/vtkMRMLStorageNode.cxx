@@ -356,7 +356,7 @@ void vtkMRMLStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "FileName: " <<
     (this->FileName ? this->FileName : "(none)") << "\n";

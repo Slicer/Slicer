@@ -84,11 +84,11 @@ public:
   Q_INVOKABLE static qSlicerSubjectHierarchyPluginHandler* instance();
 
   /// Get subject hierarchy node
-  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
+  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode() const;
   /// Set MRML scene
   void setMRMLScene(vtkMRMLScene* scene);
   /// Get MRML scene
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Get plugin logic
   Q_INVOKABLE qSlicerSubjectHierarchyPluginLogic* pluginLogic();
@@ -106,7 +106,7 @@ public:
   /// IMPORTANT NOTE: This function is solely used for plugin-provided context menus. This is NOT to be used for getting the
   ///                 selected item of individual widgets (tree views, comboboxes).
   /// \return Current item if only one is selected, otherwise INVALID_ITEM_ID
-  Q_INVOKABLE vtkIdType currentItem()const;
+  Q_INVOKABLE vtkIdType currentItem() const;
 
   /// Set current subject hierarchy items in case of multi-selection
   /// IMPORTANT NOTE: This function will not change the selection in individual widgets (tree views, comboboxes). This is
@@ -116,24 +116,24 @@ public:
   /// Get current subject hierarchy items in case of multi-selection
   /// IMPORTANT NOTE: This function is solely used for plugin-provided context menus. This is NOT to be used for getting the
   ///                 selected items of individual widgets (tree views, comboboxes).
-  Q_INVOKABLE QList<vtkIdType> currentItems()const;
-  Q_INVOKABLE void currentItems(vtkIdList* selectedItems)const;
+  Q_INVOKABLE QList<vtkIdType> currentItems() const;
+  Q_INVOKABLE void currentItems(vtkIdList* selectedItems) const;
 
   /// Set current tree view. The tree view where context menu was requested sets this.
   /// It allows accessing the tree view the user is using.
   Q_INVOKABLE void setCurrentTreeView(qMRMLSubjectHierarchyTreeView* treeView);
   /// Get current tree view.
-  Q_INVOKABLE qMRMLSubjectHierarchyTreeView* currentTreeView()const;
+  Q_INVOKABLE qMRMLSubjectHierarchyTreeView* currentTreeView() const;
 
-  Q_INVOKABLE bool autoDeleteSubjectHierarchyChildren()const;
+  Q_INVOKABLE bool autoDeleteSubjectHierarchyChildren() const;
   Q_INVOKABLE void setAutoDeleteSubjectHierarchyChildren(bool flag);
-  Q_INVOKABLE bool displayPatientIDInSubjectHierarchyItemName()const;
+  Q_INVOKABLE bool displayPatientIDInSubjectHierarchyItemName() const;
   Q_INVOKABLE void setDisplayPatientIDInSubjectHierarchyItemName(bool on);
-  Q_INVOKABLE bool displayPatientBirthDateInSubjectHierarchyItemName()const;
+  Q_INVOKABLE bool displayPatientBirthDateInSubjectHierarchyItemName() const;
   Q_INVOKABLE void setDisplayPatientBirthDateInSubjectHierarchyItemName(bool on);
-  Q_INVOKABLE bool displayStudyIDInSubjectHierarchyItemName()const;
+  Q_INVOKABLE bool displayStudyIDInSubjectHierarchyItemName() const;
   Q_INVOKABLE void setDisplayStudyIDInSubjectHierarchyItemName(bool on);
-  Q_INVOKABLE bool displayStudyDateInSubjectHierarchyItemName()const;
+  Q_INVOKABLE bool displayStudyDateInSubjectHierarchyItemName() const;
   Q_INVOKABLE void setDisplayStudyDateInSubjectHierarchyItemName(bool on);
 
 public:
@@ -244,7 +244,7 @@ private:
   static void cleanup();
 
 private:
-  qSlicerSubjectHierarchyPluginHandler(QObject* parent=nullptr);
+  qSlicerSubjectHierarchyPluginHandler(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyPluginHandler() override;
 
   Q_DISABLE_COPY(qSlicerSubjectHierarchyPluginHandler);

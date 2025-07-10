@@ -30,13 +30,13 @@ public:
   explicit qSlicerScalarVolumeDisplayWidget(QWidget* parent);
   ~qSlicerScalarVolumeDisplayWidget() override;
 
-  Q_INVOKABLE vtkMRMLScalarVolumeNode* volumeNode()const;
-  Q_INVOKABLE vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode()const;
+  Q_INVOKABLE vtkMRMLScalarVolumeNode* volumeNode() const;
+  Q_INVOKABLE vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode() const;
 
-  bool isColorTableComboBoxEnabled()const;
+  bool isColorTableComboBoxEnabled() const;
   void setColorTableComboBoxEnabled(bool);
 
-  bool isMRMLWindowLevelWidgetEnabled()const;
+  bool isMRMLWindowLevelWidgetEnabled() const;
   void setMRMLWindowLevelWidgetEnabled(bool);
 
 public slots:

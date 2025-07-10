@@ -22,10 +22,10 @@
 
 // STD includes
 
-class AModule: public qSlicerAbstractModule
+class AModule : public qSlicerAbstractModule
 {
 public:
-  QString title()const override { return "A Title";}
+  QString title() const override { return "A Title";}
   qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
   {
     return nullptr;
@@ -36,7 +36,7 @@ public:
     return nullptr;
   }
 protected:
-  void setup () override {}
+  void setup() override {}
 };
 
 int qSlicerAbstractModuleTest1(int, char*[])

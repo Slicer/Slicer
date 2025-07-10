@@ -198,7 +198,7 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLInteractionNode* qSlicerSimpleMarkupsWidget::interactionNode()const
+vtkMRMLInteractionNode* qSlicerSimpleMarkupsWidget::interactionNode() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
   return d->MarkupsPlaceWidget->interactionNode();

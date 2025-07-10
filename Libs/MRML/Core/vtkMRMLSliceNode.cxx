@@ -247,7 +247,7 @@ const char* vtkMRMLSliceNode::GetNthThreeDViewID(unsigned int index)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID)const
+bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID) const
 {
   if (viewNodeID == nullptr)
   {
@@ -260,7 +260,7 @@ bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID)const
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::IsDisplayableInThreeDView(const char* viewNodeID)const
+bool vtkMRMLSliceNode::IsDisplayableInThreeDView(const char* viewNodeID) const
 {
   return this->GetNumberOfThreeDViewIDs() == 0
     || this->IsThreeDViewIDPresent(viewNodeID);
@@ -1196,7 +1196,7 @@ vtkMatrix4x4* vtkMRMLSliceNode::GetSliceToRAS()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintVectorMacro(FieldOfView, double, 3);

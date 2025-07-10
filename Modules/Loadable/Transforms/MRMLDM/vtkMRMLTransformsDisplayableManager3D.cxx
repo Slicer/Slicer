@@ -535,7 +535,7 @@ void vtkMRMLTransformsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject* ca
 
   vtkMRMLTransformNode* displayableNode = vtkMRMLTransformNode::SafeDownCast(caller);
   vtkMRMLTransformDisplayNode* displayNode = nullptr;
-  if ( displayableNode )
+  if (displayableNode)
   {
     vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*> (callData);
     displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(callDataNode);

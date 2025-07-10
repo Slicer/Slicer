@@ -15,7 +15,7 @@
 #include "itkNumberToString.h"
 
 
-class AttributeMapType: public std::map<std::string, std::string> {};
+class AttributeMapType : public std::map<std::string, std::string> {};
 class AxisInfoMapType : public std::map<unsigned int, std::string> {};
 
 vtkStandardNewMacro(vtkTeemNRRDWriter);
@@ -454,12 +454,12 @@ void vtkTeemNRRDWriter::WriteData()
 
 void vtkTeemNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "RAS to IJK Matrix: ";
-     this->IJKToRASMatrix->PrintSelf(os,indent);
+     this->IJKToRASMatrix->PrintSelf(os, indent);
   os << indent << "Measurement frame: ";
-     this->MeasurementFrameMatrix->PrintSelf(os,indent);
+     this->MeasurementFrameMatrix->PrintSelf(os, indent);
 }
 
 void vtkTeemNRRDWriter::SetAttribute(const std::string& name, const std::string& value)

@@ -34,7 +34,7 @@
 // qSlicerSettingsPythonPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsPythonPanelPrivate: public Ui_qSlicerSettingsPythonPanel
+class qSlicerSettingsPythonPanelPrivate : public Ui_qSlicerSettingsPythonPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsPythonPanel);
 protected:
@@ -53,7 +53,7 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerSettingsPythonPanelPrivate::qSlicerSettingsPythonPanelPrivate(qSlicerSettingsPythonPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 

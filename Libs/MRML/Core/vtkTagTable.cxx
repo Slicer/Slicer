@@ -146,7 +146,7 @@ void vtkTagTable::Copy( vtkTagTable* t)
       val = t->GetTagValue(i);
       selected = t->IsTagSelected ( att.c_str() );
       this->AddUniqueTag ( att.c_str(), val.c_str() );
-      if ( selected )
+      if (selected)
       {
         this->SelectTag ( att.c_str() );
       }
@@ -256,7 +256,7 @@ int vtkTagTable::UpdateTag ( const char* attribute, const char* value, int selec
       if (lowTest == lowAtt )
       {
         iter->second = val;
-        if ( selected )
+        if (selected)
         {
           this->SelectTag ( attribute );
         }
@@ -351,7 +351,7 @@ const char* vtkTagTable::GetTagAttribute ( int index)
           iter != this->TagTable.end();
           iter++, i++)
     {
-      if (i==index )
+      if (i==index)
       {
         return ( iter->first.c_str() );
       }
@@ -373,7 +373,7 @@ const char* vtkTagTable::GetTagAttribute ( int index)
           iter != this->TagTable.end();
           iter++, i++)
     {
-      if (i==index )
+      if (i==index)
       {
         return ( iter->second.c_str() );
       }

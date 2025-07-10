@@ -59,7 +59,7 @@ public:
   void init();
 
   void updateColumnCount();
-  virtual int maxColumnId()const;
+  virtual int maxColumnId() const;
 
   vtkSmartPointer<vtkMRMLColorLogic>  ColorLogic;
   vtkSmartPointer<vtkCallbackCommand> CallBack;

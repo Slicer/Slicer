@@ -28,7 +28,7 @@ DiffusionTensor3DPPDAffineTransform<TData>
   {
     m_TransformMatrixInverse = this->m_TransformMatrix.GetInverse();
   }
-  catch ( ... )
+  catch (...)
   {
     itkExceptionMacro(<< "Transform matrix is not invertible" );
   }
@@ -81,14 +81,14 @@ DiffusionTensor3DPPDAffineTransform<TData>
   n1 = m_TransformMatrixInverse  * e1;
   // n1 = transformMF  * e1 ;
   double normtemp = n1.GetVnlVector().two_norm();
-  if ( normtemp )
+  if (normtemp)
   {
     n1 /= normtemp;
   }
   n2 = m_TransformMatrixInverse * e2;
   // n2 = transformMF * e2 ;
   normtemp = n2.GetVnlVector().two_norm();
-  if ( normtemp )
+  if (normtemp)
   {
     n2 /= normtemp;
   }

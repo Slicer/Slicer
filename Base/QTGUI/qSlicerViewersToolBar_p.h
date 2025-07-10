@@ -61,7 +61,7 @@ class QAction;
 class QActionGroup;
 class QToolButton;
 
-class qSlicerViewersToolBarPrivate: public QObject
+class qSlicerViewersToolBarPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT

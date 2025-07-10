@@ -78,7 +78,7 @@ class vtkPolyData;
 class vtkStringArray;
 class vtkTransformPolyDataFilter;
 
-class  VTK_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
 {
   /// Make the storage node a friend so that ReadDataInternal can set the ControlPoint ids
   friend class vtkMRMLMarkupsStorageNode;
@@ -600,7 +600,7 @@ public:
 
   /// Returns true since can apply non linear transforms
   /// \sa ApplyTransform
-  bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms() const override;
 
   /// Apply the passed transformation to all of the control points
   /// \sa CanApplyNonLinearTransforms

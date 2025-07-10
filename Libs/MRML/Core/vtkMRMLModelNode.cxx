@@ -142,7 +142,7 @@ vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetModelDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintObjectMacro(UnstructuredGrid);
@@ -614,7 +614,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       background = scalars1->GetTuple1(nValue);
       overlay = scalars2->GetTuple1(nValue);
 
-      if ( reverseOverlay )
+      if (reverseOverlay)
       {
         overlay = -overlay;
       }
@@ -669,7 +669,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     if ( bUseGray && overlayMin != 0 )
     {
       func->AddRGBPoint( -overlayMin + EPS, 0.5, 0.5, 0.5 );
-      if ( haveCurvScalars)
+      if (haveCurvScalars)
       {
         func->AddRGBPoint( -curvatureMin - EPS, 0.5, 0.5, 0.5 );
       }
@@ -684,7 +684,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
 
     if ( bUseGray && overlayMin != 0 )
     {
-      if ( haveCurvScalars )
+      if (haveCurvScalars)
       {
         func->AddRGBPoint( curvatureMin + EPS, 0.5, 0.5, 0.5 );
       }
@@ -722,7 +722,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLModelNode::CanApplyNonLinearTransforms()const
+bool vtkMRMLModelNode::CanApplyNonLinearTransforms() const
 {
   return true;
 }
@@ -786,7 +786,7 @@ void vtkMRMLModelNode::GetBounds(double bounds[6])
 void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double outputBounds_RAS[6])
 {
   vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
-  if ( !transformNode )
+  if (!transformNode)
   {
     // node is not transformed, therefore RAS=local
     for (int i=0; i<6; i++)

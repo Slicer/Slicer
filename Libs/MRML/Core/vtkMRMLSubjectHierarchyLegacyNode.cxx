@@ -64,7 +64,7 @@ vtkMRMLSubjectHierarchyLegacyNode::~vtkMRMLSubjectHierarchyLegacyNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyLegacyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << " Level=\""
     << (this->Level ? this->Level : "NULL" ) << "\n";
@@ -195,7 +195,7 @@ std::string vtkMRMLSubjectHierarchyLegacyNode::GetUID(std::string uidName)
 }
 
 //----------------------------------------------------------------------------
-std::map<std::string, std::string> vtkMRMLSubjectHierarchyLegacyNode::GetUIDs()const
+std::map<std::string, std::string> vtkMRMLSubjectHierarchyLegacyNode::GetUIDs() const
 {
   return this->UIDs;
 }

@@ -37,7 +37,7 @@ class qMRMLMarkupsMalformedWidget : public qMRMLMarkupsAbstractOptionsWidget
 
 public:
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsMalformedWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsMalformedWidget(QWidget* parent = nullptr);
 
   /// Gets the name of the additional options widget type
   const QString className() const override {return "";}

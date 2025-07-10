@@ -28,7 +28,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char* argv[] )
+int DoIt(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -111,7 +111,7 @@ int DoIt( int argc, char* argv[] )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;

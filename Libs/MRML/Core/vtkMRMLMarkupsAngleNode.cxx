@@ -95,7 +95,7 @@ void vtkMRMLMarkupsAngleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsAngleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintEnumMacro(AngleMeasurementMode);

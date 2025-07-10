@@ -38,7 +38,7 @@
 #include "vtkMRMLScene.h"
 
 // ----------------------------------------------------------------------------
-class qMRMLCollapsibleButtonTester: public QObject
+class qMRMLCollapsibleButtonTester : public QObject
 {
   Q_OBJECT
 private slots:

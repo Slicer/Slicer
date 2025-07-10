@@ -61,7 +61,7 @@ vtkSlicerDICOMLoadable::~vtkSlicerDICOMLoadable()
 //----------------------------------------------------------------------------
 void vtkSlicerDICOMLoadable::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Name:   " << (this->Name?this->Name:"NULL") << "\n";
   os << indent << "Tooltip:   " << (this->Tooltip?this->Tooltip:"NULL") << "\n";

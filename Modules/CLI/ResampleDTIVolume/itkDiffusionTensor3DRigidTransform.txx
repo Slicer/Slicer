@@ -87,7 +87,7 @@ DiffusionTensor3DRigidTransform<TData>
   Matrix<double, 3, 3> result;
   result = matrix * matrix.GetTranspose();
   bool ok = true;
-  if ( m_PrecisionChecking )
+  if (m_PrecisionChecking)
   {
     for ( int i = 0; i < 3; i++ )
     {
@@ -104,13 +104,13 @@ DiffusionTensor3DRigidTransform<TData>
           break;
         }
       }
-      if ( !ok )
+      if (!ok)
       {
         break;
       }
     }
   }
-  if ( ok )
+  if (ok)
   {
     double det = this->GetDet( matrix );
     if ( det > 1 - PRECISION && det < 1 + PRECISION )

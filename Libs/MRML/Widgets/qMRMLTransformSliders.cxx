@@ -36,7 +36,7 @@
 
 
 //-----------------------------------------------------------------------------
-class qMRMLTransformSlidersPrivate: public Ui_qMRMLTransformSliders
+class qMRMLTransformSlidersPrivate : public Ui_qMRMLTransformSliders
 {
 public:
   qMRMLTransformSlidersPrivate()
@@ -284,14 +284,14 @@ void qMRMLTransformSliders::setTitle(const QString& _title)
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::title()const
+QString qMRMLTransformSliders::title() const
 {
   Q_D(const qMRMLTransformSliders);
   return d->SlidersGroupBox->title();
 }
 
 // --------------------------------------------------------------------------
-int qMRMLTransformSliders::decimals()const
+int qMRMLTransformSliders::decimals() const
 {
   Q_D(const qMRMLTransformSliders);
   return d->LRSlider->decimals();
@@ -306,14 +306,14 @@ void qMRMLTransformSliders::setDecimals(int newDecimals)
 }
 
 // --------------------------------------------------------------------------
-double qMRMLTransformSliders::minimum()const
+double qMRMLTransformSliders::minimum() const
 {
   Q_D(const qMRMLTransformSliders);
   return d->MinValueSpinBox->value();
 }
 
 // --------------------------------------------------------------------------
-double qMRMLTransformSliders::maximum()const
+double qMRMLTransformSliders::maximum() const
 {
   Q_D(const qMRMLTransformSliders);
   return d->MaxValueSpinBox->value();
@@ -376,7 +376,7 @@ void qMRMLTransformSliders::setMinMaxVisible(bool visible)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLTransformSliders::isMinMaxVisible()const
+bool qMRMLTransformSliders::isMinMaxVisible() const
 {
   Q_D(const qMRMLTransformSliders);
   return d->MinMaxWidget->isVisibleTo(
@@ -384,7 +384,7 @@ bool qMRMLTransformSliders::isMinMaxVisible()const
 }
 
 // --------------------------------------------------------------------------
-double qMRMLTransformSliders::singleStep()const
+double qMRMLTransformSliders::singleStep() const
 {
   Q_D(const qMRMLTransformSliders);
   // Assumes settings of the sliders are all the same
@@ -402,21 +402,21 @@ void qMRMLTransformSliders::setSingleStep(double step)
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::lrLabel()const
+QString qMRMLTransformSliders::lrLabel() const
 {
   Q_D(const qMRMLTransformSliders);
   return d->LRLabel->text();
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::paLabel()const
+QString qMRMLTransformSliders::paLabel() const
 {
   Q_D(const qMRMLTransformSliders);
   return d->PALabel->text();
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLTransformSliders::isLabel()const
+QString qMRMLTransformSliders::isLabel() const
 {
   Q_D(const qMRMLTransformSliders);
   return d->ISLabel->text();

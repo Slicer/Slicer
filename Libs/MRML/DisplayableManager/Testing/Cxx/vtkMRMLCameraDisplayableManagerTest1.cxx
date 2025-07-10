@@ -453,7 +453,7 @@ namespace
 bool readFileIntoString(const char* filename, std::string& output)
 {
   std::ifstream istream(filename);
-  if ( !istream )
+  if (!istream)
   {
     cerr << "Could not open input file:" << filename << endl;
     return false;

@@ -41,25 +41,25 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerVolumeRenderingModule(QObject* parent=nullptr);
+  explicit qSlicerVolumeRenderingModule(QObject* parent = nullptr);
   ~qSlicerVolumeRenderingModule() override;
 
   /// Title of the module
-  QString title()const override;
+  QString title() const override;
   /// Help of the module
-  QString helpText()const override;
+  QString helpText() const override;
   /// Acknowledgement for the module
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
   /// Contributors of the module.
-  QStringList contributors()const override;
+  QStringList contributors() const override;
 
   /// Return a custom icon for the module
-  QIcon icon()const override;
+  QIcon icon() const override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer

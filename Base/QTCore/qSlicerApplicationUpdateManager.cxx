@@ -202,7 +202,7 @@ qSlicerApplicationUpdateManager::qSlicerApplicationUpdateManager(QObject* _paren
 qSlicerApplicationUpdateManager::~qSlicerApplicationUpdateManager() = default;
 
 // --------------------------------------------------------------------------
-QUrl qSlicerApplicationUpdateManager::serverUrl()const
+QUrl qSlicerApplicationUpdateManager::serverUrl() const
 {
   QSettings settings;
   return QUrl(settings.value("ApplicationUpdate/ServerUrl").toString());
@@ -223,7 +223,7 @@ void qSlicerApplicationUpdateManager::setAutoUpdateCheck(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerApplicationUpdateManager::autoUpdateCheck()const
+bool qSlicerApplicationUpdateManager::autoUpdateCheck() const
 {
   Q_D(const qSlicerApplicationUpdateManager);
   return d->AutoUpdateCheck;
@@ -418,7 +418,7 @@ void qSlicerApplicationUpdateManager::setSlicerRequirements(const QString& revis
 }
 
 // --------------------------------------------------------------------------
-QUrl qSlicerApplicationUpdateManager::applicationDownloadPageUrl()const
+QUrl qSlicerApplicationUpdateManager::applicationDownloadPageUrl() const
 {
   // Currently the download page is the root folder of the application update servers
   return this->serverUrl();

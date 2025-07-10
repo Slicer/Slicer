@@ -121,7 +121,7 @@ public:
   std::string GetUID(std::string uidName);
 
   /// Get UID map for this subject hierarchy node
-  std::map<std::string, std::string> GetUIDs()const;
+  std::map<std::string, std::string> GetUIDs() const;
 
 protected:
   /// Level identifier (default levels are Subject and Study)

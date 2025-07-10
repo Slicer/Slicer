@@ -252,7 +252,7 @@ int vtkImageLabelCombine::FillInputPortInformation(
 
 void vtkImageLabelCombine::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "OverwriteInput: " << this->OverwriteInput  << "\n";
 

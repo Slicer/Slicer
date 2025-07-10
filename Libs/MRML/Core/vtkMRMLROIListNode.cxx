@@ -244,7 +244,7 @@ void vtkMRMLROIListNode::Copy(vtkMRMLNode* vtkNotUsed(anode))
 void vtkMRMLROIListNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   //int idx
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   //Fill in
 }
 

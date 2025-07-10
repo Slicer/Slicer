@@ -45,7 +45,7 @@ public:
   QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  Q_INVOKABLE const QString helpText()const override;
+  Q_INVOKABLE const QString helpText() const override;
 
   /// Create options frame widgets, make connections, and add them to the main options frame using \sa addOptionsWidget
   void setupOptionsFrame() override;

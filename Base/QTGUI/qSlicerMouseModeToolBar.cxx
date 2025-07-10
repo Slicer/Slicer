@@ -480,7 +480,7 @@ void qSlicerMouseModeToolBarPrivate::onPlaceNodeClassNameListModifiedEvent()
 
 //---------------------------------------------------------------------------
 qSlicerMouseModeToolBar::qSlicerMouseModeToolBar(const QString& title, QWidget* parentWidget)
-  :Superclass(title, parentWidget)
+  : Superclass(title, parentWidget)
   , d_ptr(new qSlicerMouseModeToolBarPrivate(*this))
 {
   Q_D(qSlicerMouseModeToolBar);
@@ -627,7 +627,7 @@ void qSlicerMouseModeToolBar::setPersistence(bool persistent)
 }
 
 //---------------------------------------------------------------------------
-QString qSlicerMouseModeToolBar::defaultPlaceClassName()const
+QString qSlicerMouseModeToolBar::defaultPlaceClassName() const
 {
   Q_D(const qSlicerMouseModeToolBar);
   return d->DefaultPlaceClassName;
@@ -641,7 +641,7 @@ void qSlicerMouseModeToolBar::setDefaultPlaceClassName(const QString& className)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLInteractionNode* qSlicerMouseModeToolBar::interactionNode()const
+vtkMRMLInteractionNode* qSlicerMouseModeToolBar::interactionNode() const
 {
   Q_D(const qSlicerMouseModeToolBar);
   return d->InteractionNode;

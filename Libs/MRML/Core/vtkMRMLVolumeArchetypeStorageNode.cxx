@@ -152,7 +152,7 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
   os << indent << "SingleFile:   " << this->SingleFile << "\n";
   os << indent << "UseOrientationFromFile:   " << this->UseOrientationFromFile << "\n";
@@ -221,7 +221,7 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
   {
     reader->UpdateInformation();
   }
-  catch ( ... )
+  catch (...)
   {
     return nullptr;
   }
@@ -238,7 +238,7 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
     {
       reader->UpdateInformation();
     }
-    catch ( ... )
+    catch (...)
     {
       return nullptr;
     }

@@ -8,7 +8,7 @@ class vtkMatrix4x4;
 class vtkAbstractTransform;
 class vtkMRMLScene;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerNode : public vtkMRMLAnnotationLinesNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerNode : public vtkMRMLAnnotationLinesNode
 {
 public:
   static vtkMRMLAnnotationRulerNode* New();

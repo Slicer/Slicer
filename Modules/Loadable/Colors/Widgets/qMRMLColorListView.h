@@ -40,14 +40,14 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorListView : public QListVie
   Q_OBJECT
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
-  qMRMLColorListView(QWidget* parent=nullptr);
+  qMRMLColorListView(QWidget* parent = nullptr);
   ~qMRMLColorListView() override;
 
-  vtkMRMLColorNode* mrmlColorNode()const;
-  qMRMLColorModel* colorModel()const;
-  qMRMLSortFilterColorProxyModel* sortFilterProxyModel()const;
+  vtkMRMLColorNode* mrmlColorNode() const;
+  qMRMLColorModel* colorModel() const;
+  qMRMLSortFilterColorProxyModel* sortFilterProxyModel() const;
 
-  bool showOnlyNamedColors()const;
+  bool showOnlyNamedColors() const;
 
 public slots:
   void setMRMLColorNode(vtkMRMLColorNode* colorNode);

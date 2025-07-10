@@ -197,14 +197,14 @@ vtkMRMLMarkupsNode* qSlicerMarkupsPlaceWidget::currentMarkupsNode() const
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSelectionNode* qSlicerMarkupsPlaceWidget::selectionNode()const
+vtkMRMLSelectionNode* qSlicerMarkupsPlaceWidget::selectionNode() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
   return d->SelectionNode;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLInteractionNode* qSlicerMarkupsPlaceWidget::interactionNode()const
+vtkMRMLInteractionNode* qSlicerMarkupsPlaceWidget::interactionNode() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
   return d->InteractionNode;
@@ -425,7 +425,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
     return;
   }
   bool wasActive = this->currentNodeActive();
-  if ( placeEnable )
+  if (placeEnable)
   {
     // activate and set place mode
     if (!wasActive)

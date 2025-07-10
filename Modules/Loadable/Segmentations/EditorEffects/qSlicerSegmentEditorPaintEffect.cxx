@@ -975,7 +975,7 @@ QIcon qSlicerSegmentEditorPaintEffect::icon()
 }
 
 //---------------------------------------------------------------------------
-QString const qSlicerSegmentEditorPaintEffect::helpText()const
+QString const qSlicerSegmentEditorPaintEffect::helpText() const
 {
   return QString("<html>") + tr("Paint with a round brush<br>."
     "<p><ul style=\"margin: 0\">"

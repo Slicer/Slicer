@@ -56,7 +56,7 @@ vtkITKLabelShapeStatistics::~vtkITKLabelShapeStatistics()
 //----------------------------------------------------------------------------
 void vtkITKLabelShapeStatistics::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------

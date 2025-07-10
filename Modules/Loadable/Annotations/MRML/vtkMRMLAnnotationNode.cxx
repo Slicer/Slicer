@@ -214,7 +214,7 @@ void vtkMRMLAnnotationNode::ProcessMRMLEvents( vtkObject* caller,
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << endl;
   this->PrintAnnotationInfo(os,indent,0);
 }

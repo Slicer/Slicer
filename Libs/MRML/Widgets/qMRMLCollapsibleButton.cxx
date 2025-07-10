@@ -44,7 +44,7 @@ public:
 
 // --------------------------------------------------------------------------
 qMRMLCollapsibleButton::qMRMLCollapsibleButton(QWidget* parentWidget)
-  :Superclass(parentWidget), d_ptr(new qMRMLCollapsibleButtonPrivate)
+  : Superclass(parentWidget), d_ptr(new qMRMLCollapsibleButtonPrivate)
 {
 }
 
@@ -65,7 +65,7 @@ void qMRMLCollapsibleButton::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qMRMLCollapsibleButton::mrmlScene()const
+vtkMRMLScene* qMRMLCollapsibleButton::mrmlScene() const
 {
   Q_D(const qMRMLCollapsibleButton);
   return d->MRMLScene;

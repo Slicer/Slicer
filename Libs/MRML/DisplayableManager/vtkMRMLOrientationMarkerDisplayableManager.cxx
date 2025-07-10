@@ -82,8 +82,8 @@ public:
   }
 
 protected:
-  vtkCenteredAxesActor()  = default;
-  ~vtkCenteredAxesActor() override  = default;
+  vtkCenteredAxesActor() = default;
+  ~vtkCenteredAxesActor() override = default;
 };
 
 vtkStandardNewMacro(vtkCenteredAxesActor);

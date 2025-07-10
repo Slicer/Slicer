@@ -108,7 +108,7 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModule::translate(const std::string& sourceText)const
+QString qSlicerCLIModule::translate(const std::string& sourceText) const
 {
   Q_D(const qSlicerCLIModule);
   QString contextName = QStringLiteral("CLI_") + this->name();
@@ -116,14 +116,14 @@ QString qSlicerCLIModule::translate(const std::string& sourceText)const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModule::title()const
+QString qSlicerCLIModule::title() const
 {
   Q_D(const qSlicerCLIModule);
   return this->translate(d->Desc.GetTitle());
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCLIModule::categories()const
+QStringList qSlicerCLIModule::categories() const
 {
   Q_D(const qSlicerCLIModule);
   // Category names are translated by component (instead of translating
@@ -144,14 +144,14 @@ QStringList qSlicerCLIModule::categories()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCLIModule::contributors()const
+QStringList qSlicerCLIModule::contributors() const
 {
   Q_D(const qSlicerCLIModule);
   return QStringList() << QString::fromStdString(d->Desc.GetContributor());
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerCLIModule::index()const
+int qSlicerCLIModule::index() const
 {
   Q_D(const qSlicerCLIModule);
   bool ok = false;
@@ -160,21 +160,21 @@ int qSlicerCLIModule::index()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModule::acknowledgementText()const
+QString qSlicerCLIModule::acknowledgementText() const
 {
   Q_D(const qSlicerCLIModule);
   return this->translate(d->Desc.GetAcknowledgements());
 }
 
 //-----------------------------------------------------------------------------
-QImage qSlicerCLIModule::logo()const
+QImage qSlicerCLIModule::logo() const
 {
   Q_D(const qSlicerCLIModule);
   return this->moduleLogoToImage(d->Desc.GetLogo());
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModule::helpText()const
+QString qSlicerCLIModule::helpText() const
 {
   Q_D(const qSlicerCLIModule);
   QString help = this->translate(d->Desc.GetDescription());
@@ -203,7 +203,7 @@ void qSlicerCLIModule::setEntryPoint(const QString& entryPoint)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModule::entryPoint()const
+QString qSlicerCLIModule::entryPoint() const
 {
   Q_D(const qSlicerCLIModule);
   return QString::fromStdString(d->Desc.GetTarget());
@@ -217,7 +217,7 @@ void qSlicerCLIModule::setModuleType(const QString& moduleType)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModule::moduleType()const
+QString qSlicerCLIModule::moduleType() const
 {
   Q_D(const qSlicerCLIModule);
   return QString::fromStdString(d->Desc.GetType());
@@ -280,7 +280,7 @@ ModuleDescription& qSlicerCLIModule::moduleDescription()
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCLIModule::associatedNodeTypes()const
+QStringList qSlicerCLIModule::associatedNodeTypes() const
 {
   return QStringList() << "vtkMRMLCommandLineModuleNode";
 }

@@ -157,7 +157,7 @@ public:
   }
   ~qMRMLLayoutCustomViewFactory() override = default;
 
-  QString viewClassName()const override
+  QString viewClassName() const override
   {
     return "vtkMRMLCustomViewNode";
   }
@@ -194,7 +194,7 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char* argv[] )
+int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char* argv[])
 {
   (void)checkViewArrangement; // Fix -Wunused-function warning
 

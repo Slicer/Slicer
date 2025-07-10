@@ -94,11 +94,11 @@ public:
 
   /// Get MRML scene that has been set by setMRMLScene(). Default is no scene.
   /// \sa setMRMLScene()
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
-  QString quantity()const;
+  QString quantity() const;
 
-  UnitAwareProperties unitAwareProperties()const;
+  UnitAwareProperties unitAwareProperties() const;
 
 public slots:
   void setQuantity(const QString& baseName);

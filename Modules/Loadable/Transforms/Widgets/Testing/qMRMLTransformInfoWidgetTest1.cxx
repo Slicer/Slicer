@@ -40,7 +40,7 @@
 
 // STD includes
 
-int qMRMLTransformInfoWidgetTest1(int argc, char* argv [] )
+int qMRMLTransformInfoWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

@@ -165,7 +165,7 @@ void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Line Thickness   : " << this->LineThickness << "\n";
   os << indent << "Label Position   : " << this->LabelPosition << "\n";
   os << indent << "Label Visibility : " << (this->LabelVisibility ? "true" : "false") << "\n";

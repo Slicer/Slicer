@@ -224,7 +224,7 @@ void vtkMRMLPlotChartNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*
 //----------------------------------------------------------------------------
 void vtkMRMLPlotChartNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  vtkMRMLNode::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintStringMacro(Title);

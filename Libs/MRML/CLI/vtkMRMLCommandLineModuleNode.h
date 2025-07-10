@@ -156,9 +156,9 @@ public:
   /// Return true if the module is in a busy state: Scheduled, Running,
   /// Cancelling, Completing.
   /// \sa SetStatus(), GetStatus(), BusyMask, Cancel()
-  bool IsBusy()const;
+  bool IsBusy() const;
 
-  int GetProgress()const;
+  int GetProgress() const;
 
   /// Set a request to stop the processing of the CLI.
   /// Do nothing if the module is not "busy".
@@ -200,7 +200,7 @@ public:
 
   /// Return true if the AutoRun is enabled, false otherwise.
   /// \sa SetAutoRun(), AutoRunMode, GetAutoRunDelay()
-  bool GetAutoRun()const;
+  bool GetAutoRun() const;
 
   /// Set the auto running flags for the node.
   /// The behavior is ensured by the CLI logic. AutoRun is not enabled until
@@ -211,7 +211,7 @@ public:
 
   /// Return the AutoRun mode flags.
   /// \sa AutoRunMode, SetAutoRunMode(), GetAutoRun(), GetAutoRunDelay()
-  int GetAutoRunMode()const;
+  int GetAutoRunMode() const;
 
   /// Set the delay (in milliseconds) to wait before automatically running
   /// the module. 1000 ms by default.
@@ -221,19 +221,19 @@ public:
   /// Return the number of msecs to wait before automatically running
   /// the module.
   /// \sa SetAutoRunDelay(), GetAutoRun(), GetAutoRunMode()
-  unsigned int GetAutoRunDelay()const;
+  unsigned int GetAutoRunDelay() const;
 
   /// Return the last time the module was ran.
   /// \sa GetParameterMTime(), GetInputMTime(), GetMTime()
-  vtkMTimeType GetLastRunTime()const;
+  vtkMTimeType GetLastRunTime() const;
 
   /// Return the last time a parameter was modified
   /// \sa GetInputMTime(), GetMTime()
-  vtkMTimeType GetParameterMTime()const;
+  vtkMTimeType GetParameterMTime() const;
 
   /// Return the last time an input parameter was modified.
   /// \sa GetParameterMTime(), GetMTime()
-  vtkMTimeType GetInputMTime()const;
+  vtkMTimeType GetInputMTime() const;
 
   /// Read a parameter file. This will set any parameters that
   /// parameters in this ModuleDescription.
@@ -310,7 +310,7 @@ public:
   /// Returns true if the value is a default value for a parameter that is not
   /// an output parameter.
   /// \sa SetAutoRun
-  bool IsInputDefaultValue(const std::string& value)const;
+  bool IsInputDefaultValue(const std::string& value) const;
 
   /// Methods to manage the master list of module description prototypes
   static int GetNumberOfRegisteredModules();

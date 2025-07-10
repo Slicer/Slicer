@@ -34,7 +34,7 @@
 #include <vtkMRMLVolumeNode.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerCropVolumeModuleWidgetPrivate: public Ui_qSlicerCropVolumeModuleWidget
+class qSlicerCropVolumeModuleWidgetPrivate : public Ui_qSlicerCropVolumeModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerCropVolumeModuleWidget);
 protected:

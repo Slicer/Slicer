@@ -875,7 +875,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     notDICOM = 1;
   }
   gfn->Delete();
-  if ( notDICOM )
+  if (notDICOM)
   {
     std::cerr << "PET Dicom parameter doesn't point to a dicom directory!" << std::endl;
     return EXIT_FAILURE;
@@ -1565,7 +1565,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 // ...
 // ...............................................................................................
 // ...
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;

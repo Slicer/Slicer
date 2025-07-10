@@ -139,7 +139,7 @@ qSlicerDTISliceDisplayWidget
 
 // --------------------------------------------------------------------------
 vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerDTISliceDisplayWidget
-::displayPropertiesNode()const
+::displayPropertiesNode() const
 {
   Q_D(const qSlicerDTISliceDisplayWidget);
   return d->DisplayNode ?
@@ -148,7 +148,7 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerDTISliceDisplayWidget
 
 // --------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeSliceDisplayNode* qSlicerDTISliceDisplayWidget
-::displayNode()const
+::displayNode() const
 {
   Q_D(const qSlicerDTISliceDisplayWidget);
   return d->DisplayNode;
@@ -376,7 +376,7 @@ void qSlicerDTISliceDisplayWidget::setGlyphEigenVector(int index)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerDTISliceDisplayWidget::isVisibilityHidden()const
+bool qSlicerDTISliceDisplayWidget::isVisibilityHidden() const
 {
   Q_D(const qSlicerDTISliceDisplayWidget);
   return d->GlyphVisibilityLabel->isVisibleTo(

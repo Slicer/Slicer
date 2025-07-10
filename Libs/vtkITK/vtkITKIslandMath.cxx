@@ -37,7 +37,7 @@ vtkITKIslandMath::~vtkITKIslandMath() = default;
 
 void vtkITKIslandMath::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "FullyConnected: " << FullyConnected << std::endl;
   os << indent << "SliceBySlice: " << SliceBySlice << std::endl;

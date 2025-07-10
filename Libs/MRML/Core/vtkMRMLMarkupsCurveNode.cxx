@@ -263,7 +263,7 @@ void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintEnumMacro(CurveType);

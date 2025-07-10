@@ -159,7 +159,7 @@ void vtkMRMLAnnotationPointDisplayNode::SetGlyphTypeFromString(const char* glyph
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationPointDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Glyph scale: (";
   os << this->GlyphScale << ")\n";
   os << indent << "Glyph type: ";

@@ -170,7 +170,7 @@ struct SegmentListFilterParameters
 };
 
 //-----------------------------------------------------------------------------
-class qMRMLSegmentsTableViewPrivate: public Ui_qMRMLSegmentsTableView
+class qMRMLSegmentsTableViewPrivate : public Ui_qMRMLSegmentsTableView
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentsTableView);
 
@@ -707,7 +707,7 @@ vtkMRMLNode* qMRMLSegmentsTableView::segmentationNode()
 }
 
 //--------------------------------------------------------------------------
-qMRMLSortFilterSegmentsProxyModel* qMRMLSegmentsTableView::sortFilterProxyModel()const
+qMRMLSortFilterSegmentsProxyModel* qMRMLSegmentsTableView::sortFilterProxyModel() const
 {
   Q_D(const qMRMLSegmentsTableView);
   if (!d->SortFilterModel)
@@ -719,7 +719,7 @@ qMRMLSortFilterSegmentsProxyModel* qMRMLSegmentsTableView::sortFilterProxyModel(
 }
 
 //--------------------------------------------------------------------------
-qMRMLSegmentsModel* qMRMLSegmentsTableView::model()const
+qMRMLSegmentsModel* qMRMLSegmentsTableView::model() const
 {
   Q_D(const qMRMLSegmentsTableView);
   if (!d->Model)
@@ -1648,14 +1648,14 @@ void qMRMLSegmentsTableView::setHideSegments(const QStringList& segmentIDs)
 }
 
 // --------------------------------------------------------------------------
-QStringList qMRMLSegmentsTableView::hideSegments()const
+QStringList qMRMLSegmentsTableView::hideSegments() const
 {
   Q_D(const qMRMLSegmentsTableView);
   return d->SortFilterModel->hideSegments();
 }
 
 // --------------------------------------------------------------------------
-QStringList qMRMLSegmentsTableView::displayedSegmentIDs()const
+QStringList qMRMLSegmentsTableView::displayedSegmentIDs() const
 {
   Q_D(const qMRMLSegmentsTableView);
 
@@ -1693,7 +1693,7 @@ void qMRMLSegmentsTableView::setUseTerminologySelector(bool useTerminologySelect
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLSegmentsTableView::useTerminologySelector()const
+bool qMRMLSegmentsTableView::useTerminologySelector() const
 {
   Q_D(const qMRMLSegmentsTableView);
   if (d->UseTerminologySelectorSettingsKey.isEmpty())

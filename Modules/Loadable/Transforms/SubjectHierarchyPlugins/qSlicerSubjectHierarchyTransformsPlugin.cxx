@@ -568,7 +568,7 @@ qSlicerSubjectHierarchyTransformsPlugin::qSlicerSubjectHierarchyTransformsPlugin
 qSlicerSubjectHierarchyTransformsPlugin::~qSlicerSubjectHierarchyTransformsPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyTransformsPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const
+double qSlicerSubjectHierarchyTransformsPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID) const
 {
   if (!itemID || !parentItemID)
   {
@@ -643,7 +643,7 @@ bool qSlicerSubjectHierarchyTransformsPlugin::reparentItemInsideSubjectHierarchy
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTransformsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -660,7 +660,7 @@ double qSlicerSubjectHierarchyTransformsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyTransformsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyTransformsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -691,13 +691,13 @@ double qSlicerSubjectHierarchyTransformsPlugin::canOwnSubjectHierarchyItem(vtkId
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyTransformsPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyTransformsPlugin::roleForPlugin() const
 {
   return "Transform";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyTransformsPlugin::tooltip(vtkIdType itemID)const
+QString qSlicerSubjectHierarchyTransformsPlugin::tooltip(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -757,7 +757,7 @@ QIcon qSlicerSubjectHierarchyTransformsPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyTransformsPlugin);
 
@@ -868,7 +868,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::showVisibilityContextMenuActionsFo
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::viewContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::viewContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyTransformsPlugin);
 
@@ -1282,7 +1282,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::showTransformContextMenuActionsFor
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::transformContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::transformContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyTransformsPlugin);
 
@@ -1472,7 +1472,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::onCreateNewTransform()
 }
 
 //------------------------------------------------------------------------------
-int qSlicerSubjectHierarchyTransformsPlugin::transformListSection()const
+int qSlicerSubjectHierarchyTransformsPlugin::transformListSection() const
 {
   // +20 to allow placing more items between default section and the transform list
   return qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 20;

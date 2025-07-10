@@ -213,7 +213,7 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
 
 //----------------------------------------------------------------------------
 vtkMRMLApplicationLogic* vtkMRMLDisplayableManagerFactory
-::GetMRMLApplicationLogic()const
+::GetMRMLApplicationLogic() const
 {
   return this->Internal->ApplicationLogic.GetPointer();
 }

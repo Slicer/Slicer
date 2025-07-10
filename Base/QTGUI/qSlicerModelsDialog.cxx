@@ -100,19 +100,19 @@ qSlicerModelsDialog::qSlicerModelsDialog(QObject* _parent)
 qSlicerModelsDialog::~qSlicerModelsDialog() = default;
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerModelsDialog::fileType()const
+qSlicerIO::IOFileType qSlicerModelsDialog::fileType() const
 {
   return QString("ModelFile");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModelsDialog::description()const
+QString qSlicerModelsDialog::description() const
 {
   return tr("Models");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileDialog::IOAction qSlicerModelsDialog::action()const
+qSlicerFileDialog::IOAction qSlicerModelsDialog::action() const
 {
   return qSlicerFileDialog::Read;
 }
@@ -148,7 +148,7 @@ bool qSlicerModelsDialog::exec(const qSlicerIO::IOProperties& readerProperties)
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerModelsDialog::loadedNodes()const
+QStringList qSlicerModelsDialog::loadedNodes() const
 {
   Q_D(const qSlicerModelsDialog);
   return d->LoadedNodeIDs;

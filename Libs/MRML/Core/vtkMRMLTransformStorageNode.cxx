@@ -115,7 +115,7 @@ void vtkMRMLTransformStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "PreferITKv3CompatibleTransforms: " <<
     (this->PreferITKv3CompatibleTransforms ? "true" : "false") << "\n";
 }

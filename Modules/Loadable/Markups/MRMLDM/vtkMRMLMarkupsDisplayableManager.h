@@ -38,7 +38,7 @@ class vtkSlicerViewerWidget;
 class vtkMRMLMarkupsDisplayNode;
 class vtkAbstractWidget;
 
-class  VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsDisplayableManager :
+class VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsDisplayableManager :
     public vtkMRMLAbstractDisplayableManager
 {
 public:

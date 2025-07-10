@@ -204,7 +204,7 @@ void vtkMRMLCameraNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 //----------------------------------------------------------------------------
 void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintVectorMacro(Position, double, 3);

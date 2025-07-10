@@ -261,7 +261,7 @@ vtkITKImageWriter::~vtkITKImageWriter()
 //----------------------------------------------------------------------------
 void vtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "FileName: " <<
     (this->FileName ? this->FileName : "(none)") << "\n";

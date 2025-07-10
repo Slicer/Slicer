@@ -44,7 +44,7 @@ vtkImageFillROI::~vtkImageFillROI()
 //----------------------------------------------------------------------------
 void vtkImageFillROI::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Value: "  << this->Value << "\n";
   os << indent << "Radius: " << this->Radius << "\n";

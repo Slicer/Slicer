@@ -49,7 +49,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTableModel : public QStandardItemModel
 
 public:
   typedef QAbstractItemModel Superclass;
-  qMRMLTableModel(QObject* parent=nullptr);
+  qMRMLTableModel(QObject* parent = nullptr);
   ~qMRMLTableModel() override;
 
   enum ItemDataRole{
@@ -57,12 +57,12 @@ public:
   };
 
   void setMRMLTableNode(vtkMRMLTableNode* node);
-  vtkMRMLTableNode* mrmlTableNode()const;
+  vtkMRMLTableNode* mrmlTableNode() const;
 
   /// Set/Get transposed flag
   /// If transposed is true then columns of the MRML table are added as rows in the model.
   void setTransposed(bool transposed);
-  bool transposed()const;
+  bool transposed() const;
 
   /// Return the VTK table cell associated to the node index.
   void updateMRMLFromModel(QStandardItem* item);
@@ -71,10 +71,10 @@ public:
   void updateModelFromMRML();
 
   /// Get MRML table index from model index
-  int mrmlTableRowIndex(QModelIndex modelIndex)const;
+  int mrmlTableRowIndex(QModelIndex modelIndex) const;
 
   /// Get MRML table index from model index
-  int mrmlTableColumnIndex(QModelIndex modelIndex)const;
+  int mrmlTableColumnIndex(QModelIndex modelIndex) const;
 
   /// Delete entire row or column from the MRML table that contains item in the selection.
   /// Returns the number of deleted rows or columns.
@@ -88,7 +88,7 @@ protected slots:
 
 protected:
 
-  qMRMLTableModel(qMRMLTableModelPrivate* pimpl, QObject* parent=nullptr);
+  qMRMLTableModel(qMRMLTableModelPrivate* pimpl, QObject* parent = nullptr);
 
   static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
                               void* client_data, void* call_data);

@@ -1111,5 +1111,5 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
 //----------------------------------------------------------------------------
 void vtkTeemNRRDReader::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }

@@ -21,7 +21,7 @@ namespace
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -54,7 +54,7 @@ int main( int argc, char* argv[] )
     return EXIT_FAILURE;
   }
 
-  if ( FirstOverwrites )
+  if (FirstOverwrites)
   {
     input = readerA->GetOutput();
     duplicator->SetInputImage(readerB->GetOutput() );

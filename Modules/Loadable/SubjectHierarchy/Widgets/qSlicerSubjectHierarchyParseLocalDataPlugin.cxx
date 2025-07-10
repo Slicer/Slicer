@@ -45,7 +45,7 @@
 #include <vtkCollection.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyParseLocalDataPluginPrivate: public QObject
+class qSlicerSubjectHierarchyParseLocalDataPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyParseLocalDataPlugin);
 protected:
@@ -99,7 +99,7 @@ qSlicerSubjectHierarchyParseLocalDataPlugin::qSlicerSubjectHierarchyParseLocalDa
 qSlicerSubjectHierarchyParseLocalDataPlugin::~qSlicerSubjectHierarchyParseLocalDataPlugin() = default;
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyParseLocalDataPlugin::sceneContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyParseLocalDataPlugin::sceneContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyParseLocalDataPlugin);
 

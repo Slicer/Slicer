@@ -332,7 +332,7 @@ int vtkITKLevelTracingImageFilter::FillInputPortInformation(int, vtkInformation*
 
 void vtkITKLevelTracingImageFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Seed point location: [" << Seed[0] << "," << Seed[1] << "," << Seed[2] << "]"
     << std::endl;

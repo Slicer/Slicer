@@ -50,7 +50,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerFileDialog::qSlicerFileDialog(QObject* _parent)
-  :QObject(_parent)
+  : QObject(_parent)
 {
   qRegisterMetaType<qSlicerFileDialog::IOAction>("qSlicerFileDialog::IOAction");
 }
@@ -80,7 +80,7 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerFileDialog::isMimeDataAccepted(const QMimeData* mimeData)const
+bool qSlicerFileDialog::isMimeDataAccepted(const QMimeData* mimeData) const
 {
   Q_UNUSED(mimeData);
   return false;
@@ -93,7 +93,7 @@ void qSlicerFileDialog::dropEvent(QDropEvent* event)
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerFileDialog::loadedNodes()const
+QStringList qSlicerFileDialog::loadedNodes() const
 {
   return QStringList();
 }
@@ -134,7 +134,7 @@ void qSlicerStandardFileDialog::setFileType(qSlicerIO::IOFileType _fileType)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerStandardFileDialog::fileType()const
+qSlicerIO::IOFileType qSlicerStandardFileDialog::fileType() const
 {
   Q_D(const qSlicerStandardFileDialog);
   return d->FileType;
@@ -148,7 +148,7 @@ void qSlicerStandardFileDialog::setDescription(const QString& description)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerStandardFileDialog::description()const
+QString qSlicerStandardFileDialog::description() const
 {
   Q_D(const qSlicerStandardFileDialog);
   return d->Description;
@@ -162,14 +162,14 @@ void qSlicerStandardFileDialog::setAction(qSlicerFileDialog::IOAction dialogActi
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileDialog::IOAction qSlicerStandardFileDialog::action()const
+qSlicerFileDialog::IOAction qSlicerStandardFileDialog::action() const
 {
   Q_D(const qSlicerStandardFileDialog);
   return d->Action;
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerStandardFileDialog::loadedNodes()const
+QStringList qSlicerStandardFileDialog::loadedNodes() const
 {
   Q_D(const qSlicerStandardFileDialog);
   return d->LoadedNodes;
@@ -223,7 +223,7 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
 
 //-----------------------------------------------------------------------------
 qSlicerIOOptions* qSlicerStandardFileDialog
-::options(const qSlicerIO::IOProperties& ioProperties)const
+::options(const qSlicerIO::IOProperties& ioProperties) const
 {
   Q_D(const qSlicerStandardFileDialog);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();

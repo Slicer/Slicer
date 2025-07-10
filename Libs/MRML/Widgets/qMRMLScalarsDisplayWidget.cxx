@@ -47,7 +47,7 @@ public:
   qMRMLScalarsDisplayWidgetPrivate(qMRMLScalarsDisplayWidget& object);
   void init();
 
-  QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes()const;
+  QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes() const;
 
 public:
   QList<vtkWeakPointer<vtkMRMLDisplayNode>> CurrentDisplayNodes;
@@ -98,7 +98,7 @@ void qMRMLScalarsDisplayWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-QList<vtkMRMLModelDisplayNode*> qMRMLScalarsDisplayWidgetPrivate::currentModelDisplayNodes()const
+QList<vtkMRMLModelDisplayNode*> qMRMLScalarsDisplayWidgetPrivate::currentModelDisplayNodes() const
 {
   QList<vtkMRMLModelDisplayNode*> modelDisplayNodes;
   foreach (vtkMRMLDisplayNode* displayNode, this->CurrentDisplayNodes)
@@ -127,7 +127,7 @@ qMRMLScalarsDisplayWidget::qMRMLScalarsDisplayWidget(QWidget* parentWidget)
 qMRMLScalarsDisplayWidget::~qMRMLScalarsDisplayWidget() = default;
 
 //------------------------------------------------------------------------------
-vtkMRMLDisplayNode* qMRMLScalarsDisplayWidget::mrmlDisplayNode()const
+vtkMRMLDisplayNode* qMRMLScalarsDisplayWidget::mrmlDisplayNode() const
 {
   Q_D(const qMRMLScalarsDisplayWidget);
   if (d->CurrentDisplayNodes.size() > 0)
@@ -139,7 +139,7 @@ vtkMRMLDisplayNode* qMRMLScalarsDisplayWidget::mrmlDisplayNode()const
 }
 
 //------------------------------------------------------------------------------
-QList<vtkMRMLDisplayNode*> qMRMLScalarsDisplayWidget::mrmlDisplayNodes()const
+QList<vtkMRMLDisplayNode*> qMRMLScalarsDisplayWidget::mrmlDisplayNodes() const
 {
   Q_D(const qMRMLScalarsDisplayWidget);
   QList<vtkMRMLDisplayNode*> displayNodes; // this list will only contain valid (non-null) display node pointers
@@ -208,7 +208,7 @@ void qMRMLScalarsDisplayWidget::setScalarsVisibility(bool visible)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLScalarsDisplayWidget::scalarsVisibility()const
+bool qMRMLScalarsDisplayWidget::scalarsVisibility() const
 {
   Q_D(const qMRMLScalarsDisplayWidget);
   return d->ScalarsVisibilityCheckBox->isChecked();
@@ -243,7 +243,7 @@ void qMRMLScalarsDisplayWidget::setActiveScalarName(const QString& arrayName)
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLScalarsDisplayWidget::activeScalarName()const
+QString qMRMLScalarsDisplayWidget::activeScalarName() const
 {
   Q_D(const qMRMLScalarsDisplayWidget);
   // TODO: use currentArrayName()
@@ -272,7 +272,7 @@ void qMRMLScalarsDisplayWidget::setScalarsColorNode(vtkMRMLColorNode* colorNode)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLScalarsDisplayWidget::scalarsColorNode()const
+vtkMRMLColorNode* qMRMLScalarsDisplayWidget::scalarsColorNode() const
 {
   Q_D(const qMRMLScalarsDisplayWidget);
   return vtkMRMLColorNode::SafeDownCast(d->ScalarsColorNodeComboBox->currentNode());

@@ -1149,7 +1149,7 @@ void vtkDiffusionTensorMathematics::ColorByMode(double w[3], double& R,
 
 void vtkDiffusionTensorMathematics::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Operation: " << this->Operation << "\n";
 }

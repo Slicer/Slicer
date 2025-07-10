@@ -434,7 +434,7 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceLogic::EnterMRMLCallback()const
+bool vtkMRMLSliceLogic::EnterMRMLCallback() const
 {
   return this->AddingSliceModelNodes == false;
 }
@@ -556,7 +556,7 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
     // might have change in CreateSliceModel() or UpdateSliceNode()
     vtkMRMLDisplayNode* sliceDisplayNode =
       this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : nullptr;
-    if ( sliceDisplayNode)
+    if (sliceDisplayNode)
     {
       sliceDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       sliceDisplayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
@@ -1391,7 +1391,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     }
 
     // Mark the pipeline as modified if any updates were performed
-    if ( modified )
+    if (modified)
     {
       if (this->SliceModelNode && this->SliceModelNode->GetPolyData())
       {
@@ -1780,7 +1780,7 @@ void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode* volumeNode,
 // Get the spacing of the volume, transformed to slice space
 double* vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode* volumeNode)
 {
-  if ( !volumeNode )
+  if (!volumeNode)
   {
     return (this->SliceSpacing);
   }
@@ -2533,7 +2533,7 @@ std::vector<vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
 //----------------------------------------------------------------------------
 int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode* volumeNode)
 {
-  if ( !volumeNode )
+  if (!volumeNode)
   {
     return SLICE_INDEX_NO_VOLUME;
   }
@@ -2550,7 +2550,7 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolume
   vtkNew<vtkMatrix4x4> ijkToRAS;
   volumeNode->GetIJKToRASMatrix (ijkToRAS.GetPointer());
   vtkMRMLTransformNode* transformNode = volumeNode->GetParentTransformNode();
-  if ( transformNode )
+  if (transformNode)
   {
     vtkNew<vtkMatrix4x4> rasToRAS;
     transformNode->GetMatrixTransformToWorld(rasToRAS.GetPointer());

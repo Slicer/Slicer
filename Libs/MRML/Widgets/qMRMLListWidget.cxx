@@ -101,7 +101,7 @@ void qMRMLListWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLListWidget::mrmlScene()const
+vtkMRMLScene* qMRMLListWidget::mrmlScene() const
 {
   QSortFilterProxyModel* sortModel = qobject_cast<QSortFilterProxyModel*>(this->model());
   Q_ASSERT(qobject_cast<const qMRMLSceneModel*>(sortModel->sourceModel()));

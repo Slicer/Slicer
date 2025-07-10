@@ -154,7 +154,7 @@ ComputeTransformMatrix( const parameters & list,
   itk::Vector<double> offset;
   // if centered transform set, ignore the transformation center
   // set before and use the center of the image instead
-  if ( list.centeredTransform )
+  if (list.centeredTransform)
   {
     if ( !list.imageCenter.compare( "input" ) )
     {
@@ -188,7 +188,7 @@ ComputeTransformMatrix( const parameters & list,
   }
   // If set, inverse the given transform.
   // The given transform therefore transform the input image into the output image
-  if ( list.inverseITKTransformation )
+  if (list.inverseITKTransformation)
   {
     transformMatrix4x4 = transformMatrix4x4.GetInverse();
   }
@@ -587,7 +587,7 @@ SetAllTransform( parameters & list,
         bulkTransform = SetTransform<ImageType>( list, image, transformFile, outputImageCenter );
         BSplineTransform->SetBulkTransform( bulkTransform );
       }
-      if ( list.numberOfThread )
+      if (list.numberOfThread)
       {
         transformDeformationFieldFilter->SetNumberOfWorkUnits( list.numberOfThread );
       }
@@ -803,7 +803,7 @@ void SetOutputParameters( const parameters & list,
     readerReference = FileReaderType::New();
     readerReference->SetFileName(list.referenceVolume.c_str() );
     readerReference->Update();
-    if ( list.space )  // && list.transformationFile.compare( "" ) )
+    if (list.space)  // && list.transformationFile.compare( "" ) )
     {
       typename ImageType::PointType originReference;
       typename ImageType::DirectionType directionReference;
@@ -957,7 +957,7 @@ Transform3DPointer InverseTransform( const Transform3DPointer & transform )
       }
     }
   }
-  catch ( ... )
+  catch (...)
   {
     std::cerr << "Exception Detected" << std::endl;
     inverseTransform = nullptr;
@@ -980,7 +980,7 @@ ReadMeasurementFrame( itk::MetaDataDictionary& dico, const Transform3DPointer & 
     itk::MetaDataObjectBase::Pointer  entry = itr->second;
     MetaDataDoubleVectorType::Pointer entryvalue
       = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
-    if ( entryvalue )
+    if (entryvalue)
     {
       int pos = itr->first.find( "NRRD_measurement frame" );
       if ( pos != -1 )
@@ -997,7 +997,7 @@ ReadMeasurementFrame( itk::MetaDataDictionary& dico, const Transform3DPointer & 
         }
         // if the transform is invertible, we set the measurement frame to the identity matrix
         // because we are going to apply this measurement frame to the gradient vectors before transforming them
-        if ( inverseTransform )
+        if (inverseTransform)
         {
           entryvalue->SetMetaDataObjectValue( tagvalue );
         }
@@ -1024,14 +1024,14 @@ int TransformGradients( itk::MetaDataDictionary& dico,
     itk::MetaDataObjectBase::Pointer entry = itr->second;
     MetaDataStringType::Pointer      entryvalue
       = dynamic_cast<MetaDataStringType*>( entry.GetPointer() );
-    if ( entryvalue )
+    if (entryvalue)
     {
       // get the gradient directions
       int pos = itr->first.find( "DWMRI_gradient" );
       if ( pos != -1 )
       {
         dtmri = true;
-        if ( inverseTransform )
+        if (inverseTransform)
         {
           std::string            tagvalue = entryvalue->GetMetaDataObjectValue();
           itk::Vector<double, 3> vec;
@@ -1232,7 +1232,7 @@ int Rotate( parameters & list )
     reader = itk::ImageFileReader<VectorImageType>::New();
     reader->SetFileName( list.inputVolume.c_str() );
     reader->Update();
-    if ( list.space )  // && list.transformationFile.compare( "" ) )
+    if (list.space)  // && list.transformationFile.compare( "" ) )
     {
       RASLPS<VectorImageType>( reader->GetOutput() );
     }
@@ -1263,7 +1263,7 @@ int Rotate( parameters & list )
     std::cerr << exception << std::endl;
     return EXIT_FAILURE;
   }
-  if ( !transform )
+  if (!transform)
   {
     return EXIT_FAILURE;
   }
@@ -1284,7 +1284,7 @@ int Rotate( parameters & list )
   vectorOutputImage.clear();
   // If necessary, transform gradient vectors with the loaded transformations
   int dwmriProblem = CheckDWMRI( dico, transform );
-  if ( list.space ) // && list.transformationFile.compare( "" ) )
+  if (list.space) // && list.transformationFile.compare( "" ) )
   {
     RASLPS<VectorImageType>( outputImage );
   }
@@ -1304,7 +1304,7 @@ int Rotate( parameters & list )
     return EXIT_FAILURE;
   }
   // If there was a problem while computing the transformed dwmri, exits with an error
-  if ( dwmriProblem )
+  if (dwmriProblem)
   {
     return EXIT_FAILURE;
   }
@@ -1313,7 +1313,7 @@ int Rotate( parameters & list )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
   parameters list;

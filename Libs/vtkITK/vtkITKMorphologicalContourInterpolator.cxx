@@ -130,7 +130,7 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData* input, 
 
 void vtkITKMorphologicalContourInterpolator::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "Label: " << Label << std::endl;
   os << indent << "Axis: " << Axis << std::endl;
   os << indent << "HeuristicAlignment: " << HeuristicAlignment << std::endl;

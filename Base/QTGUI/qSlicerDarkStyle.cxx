@@ -35,7 +35,7 @@ qSlicerDarkStyle::qSlicerDarkStyle() = default;
 qSlicerDarkStyle::~qSlicerDarkStyle() = default;
 
 //------------------------------------------------------------------------------
-QPalette qSlicerDarkStyle::standardPalette()const
+QPalette qSlicerDarkStyle::standardPalette() const
 {
   QPalette palette = this->Superclass::standardDarkPalette();
   return palette;

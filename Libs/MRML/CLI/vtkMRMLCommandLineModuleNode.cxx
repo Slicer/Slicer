@@ -286,7 +286,7 @@ void vtkMRMLCommandLineModuleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "Status: " << this->GetStatusString() << "\n";
   os << indent << "AutoRun:" << this->GetAutoRun() << "\n";
   os << indent << "AutoRunMode:" << this->GetAutoRunMode() << "\n";
@@ -383,7 +383,7 @@ void vtkMRMLCommandLineModuleNode
 
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode
-::IsInputDefaultValue(const std::string& value)const
+::IsInputDefaultValue(const std::string& value) const
 {
   bool isInput = false;
   std::vector<ModuleParameter> parameters =

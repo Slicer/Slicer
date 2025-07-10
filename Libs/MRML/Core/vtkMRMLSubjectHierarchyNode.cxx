@@ -1847,7 +1847,7 @@ vtkMRMLSubjectHierarchyNode::~vtkMRMLSubjectHierarchyNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "SceneItemID: " << this->Internal->SceneItemID << "\n";
   os << indent << "UnresolvedItemsID: "

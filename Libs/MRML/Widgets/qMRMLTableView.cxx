@@ -192,13 +192,13 @@ qMRMLTableView::qMRMLTableView(QWidget* _parent)
 qMRMLTableView::~qMRMLTableView() = default;
 
 //------------------------------------------------------------------------------
-qMRMLTableModel* qMRMLTableView::tableModel()const
+qMRMLTableModel* qMRMLTableView::tableModel() const
 {
   return qobject_cast<qMRMLTableModel*>(this->sortFilterProxyModel()->sourceModel());
 }
 
 //------------------------------------------------------------------------------
-QSortFilterProxyModel* qMRMLTableView::sortFilterProxyModel()const
+QSortFilterProxyModel* qMRMLTableView::sortFilterProxyModel() const
 {
   return qobject_cast<QSortFilterProxyModel*>(this->model());
 }
@@ -229,7 +229,7 @@ void qMRMLTableView::setMRMLTableNode(vtkMRMLTableNode* node)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLTableNode* qMRMLTableView::mrmlTableNode()const
+vtkMRMLTableNode* qMRMLTableView::mrmlTableNode() const
 {
   qMRMLTableModel* mrmlModel = this->tableModel();
   if (!mrmlModel)
@@ -241,7 +241,7 @@ vtkMRMLTableNode* qMRMLTableView::mrmlTableNode()const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLTableView::transposed()const
+bool qMRMLTableView::transposed() const
 {
   Q_D(const qMRMLTableView);
   CTK_CHECK_AND_RETURN_FALSE_IF_FAIL(d->verifyTableModelAndNode)
@@ -703,7 +703,7 @@ void qMRMLTableView::deleteRow()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLTableView::firstRowLocked()const
+bool qMRMLTableView::firstRowLocked() const
 {
   Q_D(const qMRMLTableView);
   CTK_CHECK_AND_RETURN_FALSE_IF_FAIL(d->verifyTableModelAndNode)
@@ -745,7 +745,7 @@ void qMRMLTableView::setFirstRowLocked(bool locked)
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLTableView::firstColumnLocked()const
+bool qMRMLTableView::firstColumnLocked() const
 {
   Q_D(const qMRMLTableView);
   CTK_CHECK_AND_RETURN_FALSE_IF_FAIL(d->verifyTableModelAndNode)
@@ -826,21 +826,21 @@ void qMRMLTableView::setMRMLTableViewNode(vtkMRMLTableViewNode* newTableViewNode
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLTableViewNode* qMRMLTableView::mrmlTableViewNode()const
+vtkMRMLTableViewNode* qMRMLTableView::mrmlTableViewNode() const
 {
   Q_D(const qMRMLTableView);
   return d->MRMLTableViewNode;
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLScene* qMRMLTableView::mrmlScene()const
+vtkMRMLScene* qMRMLTableView::mrmlScene() const
 {
   Q_D(const qMRMLTableView);
   return d->MRMLScene;
 }
 
 //---------------------------------------------------------------------------
-QList<int> qMRMLTableView::selectedMRMLTableColumnIndices()const
+QList<int> qMRMLTableView::selectedMRMLTableColumnIndices() const
 {
   QList<int> mrmlColumnIndexList;
   QModelIndexList selection = selectionModel()->selectedIndexes();

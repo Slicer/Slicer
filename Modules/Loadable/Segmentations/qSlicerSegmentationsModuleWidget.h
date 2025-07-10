@@ -49,7 +49,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget :
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerSegmentationsModuleWidget(QWidget* parent=nullptr);
+  qSlicerSegmentationsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerSegmentationsModuleWidget() override;
 
   void enter() override;

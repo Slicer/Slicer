@@ -37,8 +37,8 @@ public:
   using vtkURIHandler::StageFileRead;
   void StageFileWrite(const char* source, const char* destination) override;
   using vtkURIHandler::StageFileWrite;
-  void InitTransfer () override;
-  int CloseTransfer () override;
+  void InitTransfer() override;
+  int CloseTransfer() override;
 
   /// CA Certificates path for https protocol.
   vtkSetStringMacro(CaCertificatesPath);

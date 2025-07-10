@@ -51,7 +51,7 @@ static const int REPRESENTATION_WIREFRAME = 1;
 static const int REPRESENTATION_SURFACE = 2;
 
 //------------------------------------------------------------------------------
-class qMRMLModelDisplayNodeWidgetPrivate: public QWidget, public Ui_qMRMLModelDisplayNodeWidget
+class qMRMLModelDisplayNodeWidgetPrivate : public QWidget, public Ui_qMRMLModelDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLModelDisplayNodeWidget);
 
@@ -65,8 +65,8 @@ public:
 
   bool IsUpdatingWidgetFromMRML{ false };
 
-  QList<vtkMRMLModelDisplayNode*> modelDisplayNodesFromSelection()const;
-  QList<vtkMRMLDisplayNode*> displayNodesFromSelection()const;
+  QList<vtkMRMLModelDisplayNode*> modelDisplayNodesFromSelection() const;
+  QList<vtkMRMLDisplayNode*> displayNodesFromSelection() const;
 
   // Current display nodes, used to display the current display properties in the widget.
   // They are the first display node that belong to the first current subject hierarchy item.
@@ -157,7 +157,7 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-QList<vtkMRMLModelDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::modelDisplayNodesFromSelection()const
+QList<vtkMRMLModelDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::modelDisplayNodesFromSelection() const
 {
   Q_Q(const qMRMLModelDisplayNodeWidget);
   QList<vtkMRMLModelDisplayNode*> modelDisplayNodes;
@@ -190,7 +190,7 @@ QList<vtkMRMLModelDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::modelDisplay
 }
 
 //------------------------------------------------------------------------------
-QList<vtkMRMLDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::displayNodesFromSelection()const
+QList<vtkMRMLDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::displayNodesFromSelection() const
 {
   Q_Q(const qMRMLModelDisplayNodeWidget);
   QList<vtkMRMLDisplayNode*> displayNodes;
@@ -261,21 +261,21 @@ void qMRMLModelDisplayNodeWidget::setMRMLScene(vtkMRMLScene* newScene)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLModelDisplayNode* qMRMLModelDisplayNodeWidget::mrmlModelDisplayNode()const
+vtkMRMLModelDisplayNode* qMRMLModelDisplayNodeWidget::mrmlModelDisplayNode() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   return d->CurrentModelDisplayNode;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLDisplayNode* qMRMLModelDisplayNodeWidget::mrmlDisplayNode()const
+vtkMRMLDisplayNode* qMRMLModelDisplayNodeWidget::mrmlDisplayNode() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   return d->CurrentDisplayNode;
 }
 
 //------------------------------------------------------------------------------
-vtkIdType qMRMLModelDisplayNodeWidget::currentSubjectHierarchyItemID()const
+vtkIdType qMRMLModelDisplayNodeWidget::currentSubjectHierarchyItemID() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   if (d->CurrentSubjectHierarchyItemIDs.empty())
@@ -332,7 +332,7 @@ void qMRMLModelDisplayNodeWidget::setCurrentSubjectHierarchyItemID(vtkIdType cur
 }
 
 //------------------------------------------------------------------------------
-QList<vtkIdType> qMRMLModelDisplayNodeWidget::currentSubjectHierarchyItemIDs()const
+QList<vtkIdType> qMRMLModelDisplayNodeWidget::currentSubjectHierarchyItemIDs() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   return d->CurrentSubjectHierarchyItemIDs;
@@ -542,7 +542,7 @@ void qMRMLModelDisplayNodeWidget::setVisibility(bool visible)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLModelDisplayNodeWidget::visibility()const
+bool qMRMLModelDisplayNodeWidget::visibility() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   return d->VisibilityCheckBox->isChecked();
@@ -562,7 +562,7 @@ void qMRMLModelDisplayNodeWidget::setClipping(bool clip)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLModelDisplayNodeWidget::clipping()const
+bool qMRMLModelDisplayNodeWidget::clipping() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   return d->ClippingCheckBox->isChecked();
@@ -581,7 +581,7 @@ void qMRMLModelDisplayNodeWidget::setSliceIntersectionVisible(bool visible)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLModelDisplayNodeWidget::sliceIntersectionVisible()const
+bool qMRMLModelDisplayNodeWidget::sliceIntersectionVisible() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   return d->SliceIntersectionVisibilityCheckBox->isChecked();
@@ -600,7 +600,7 @@ void qMRMLModelDisplayNodeWidget::setSliceIntersectionThickness(int thickness)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLModelDisplayNodeWidget::sliceIntersectionThickness()const
+int qMRMLModelDisplayNodeWidget::sliceIntersectionThickness() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   return d->SliceIntersectionThicknessSpinBox->value();
@@ -619,7 +619,7 @@ void qMRMLModelDisplayNodeWidget::setSliceIntersectionOpacity(double opacity)
 }
 
 //------------------------------------------------------------------------------
-double qMRMLModelDisplayNodeWidget::sliceIntersectionOpacity()const
+double qMRMLModelDisplayNodeWidget::sliceIntersectionOpacity() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   return d->SliceIntersectionOpacitySlider->value();
@@ -908,7 +908,7 @@ void qMRMLModelDisplayNodeWidget::setDistanceToColorNode(vtkMRMLNode* colorNode)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLModelDisplayNodeWidget::clippingConfigurationButtonVisible()const
+bool qMRMLModelDisplayNodeWidget::clippingConfigurationButtonVisible() const
 {
   Q_D(const qMRMLModelDisplayNodeWidget);
   return d->ConfigureClippingPushButton->isVisible();

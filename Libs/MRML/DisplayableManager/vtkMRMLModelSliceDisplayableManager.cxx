@@ -836,7 +836,7 @@ void vtkMRMLModelSliceDisplayableManager
 
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(caller);
 
-  if ( displayableNode )
+  if (displayableNode)
   {
     vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*> (callData);
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(callDataNode);

@@ -108,7 +108,7 @@ void vtkMRMLNRRDStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLNRRDStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
 }
 

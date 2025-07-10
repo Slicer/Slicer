@@ -48,8 +48,8 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsAbstractOptionsWidget
 
 public:
   typedef QWidget Superclass;
-  qMRMLMarkupsAbstractOptionsWidget(QWidget* parent=nullptr);
-  ~qMRMLMarkupsAbstractOptionsWidget()=default;
+  qMRMLMarkupsAbstractOptionsWidget(QWidget* parent = nullptr);
+  ~qMRMLMarkupsAbstractOptionsWidget() = default;
 
   /// Updates the widget based on information from MRML.
   virtual void updateWidgetFromMRML() = 0;

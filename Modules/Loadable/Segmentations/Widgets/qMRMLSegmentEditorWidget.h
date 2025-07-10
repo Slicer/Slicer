@@ -93,35 +93,35 @@ public:
   ~qMRMLSegmentEditorWidget() override;
 
   /// Get the segment editor parameter set node
-  Q_INVOKABLE vtkMRMLSegmentEditorNode* mrmlSegmentEditorNode()const;
+  Q_INVOKABLE vtkMRMLSegmentEditorNode* mrmlSegmentEditorNode() const;
 
   /// Get currently selected segmentation MRML node
-  Q_INVOKABLE vtkMRMLNode* segmentationNode()const;
+  Q_INVOKABLE vtkMRMLNode* segmentationNode() const;
   /// Get ID of currently selected segmentation node
-  Q_INVOKABLE QString segmentationNodeID()const;
+  Q_INVOKABLE QString segmentationNodeID() const;
   /// Get currently selected source volume MRML node
-  Q_INVOKABLE vtkMRMLNode* sourceVolumeNode()const;
+  Q_INVOKABLE vtkMRMLNode* sourceVolumeNode() const;
   /// Get ID of currently selected source volume node
-  Q_INVOKABLE QString sourceVolumeNodeID()const;
+  Q_INVOKABLE QString sourceVolumeNodeID() const;
 
   /// Deprecated. Use sourceVolumeNode() method instead.
-  Q_INVOKABLE vtkMRMLNode* masterVolumeNode()const
+  Q_INVOKABLE vtkMRMLNode* masterVolumeNode() const
   {
     qWarning("qMRMLSegmentEditorWidget::masterVolumeNode is deprecated, use sourceVolumeNode() method instead.");
     return this->sourceVolumeNode();
   };
   /// Deprecated. Use sourceVolumeNodeID() method instead.
-  Q_INVOKABLE QString masterVolumeNodeID()const
+  Q_INVOKABLE QString masterVolumeNodeID() const
   {
     qWarning("qMRMLSegmentEditorWidget::masterVolumeNodeID is deprecated, use sourceVolumeNodeID() method instead.");
     return this->sourceVolumeNodeID();
   };
   /// Get segment ID of selected segment
-  Q_INVOKABLE QString currentSegmentID()const;
+  Q_INVOKABLE QString currentSegmentID() const;
 
   /// Return active effect if selected, nullptr otherwise
   /// \sa m_ActiveEffect, setActiveEffect()
-  Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* activeEffect()const;
+  Q_INVOKABLE qSlicerSegmentEditorAbstractEffect* activeEffect() const;
   /// Set active effect
   /// \sa m_ActiveEffect, activeEffect()
   Q_INVOKABLE void setActiveEffect(qSlicerSegmentEditorAbstractEffect* effect);
@@ -283,7 +283,7 @@ public:
   QString defaultTerminologyEntry();
 
   /// Returns true if automatic jump to current segment is enabled.
-  bool jumpToSelectedSegmentEnabled()const;
+  bool jumpToSelectedSegmentEnabled() const;
 
 public slots:
   /// Set the MRML \a scene associated with the widget

@@ -55,7 +55,7 @@ public slots:
 
   /// Set/Get \a viewNode
   void setMRMLViewNode(vtkMRMLViewNode* newViewNode);
-  vtkMRMLViewNode* mrmlViewNode()const;
+  vtkMRMLViewNode* mrmlViewNode() const;
 
 protected slots:
   void updateFromMRMLViewNode();

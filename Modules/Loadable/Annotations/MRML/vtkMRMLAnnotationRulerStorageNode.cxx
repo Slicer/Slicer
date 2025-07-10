@@ -40,7 +40,7 @@ void vtkMRMLAnnotationRulerStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------

@@ -698,9 +698,9 @@ int vtkDiffusionTensorGlyph::RequestData(
 
         // Apply the transformation to a series of points,
         // and append the results to outPts.
-        if ( newNormals )
+        if (newNormals)
         {
-          if ( flipNormals )
+          if (flipNormals)
           {
             trans->Scale(-1.,-1.,-1.);
             trans->TransformNormals(sourceNormals,newNormals);
@@ -728,14 +728,14 @@ int vtkDiffusionTensorGlyph::RequestData(
   output->SetPoints(newPts);
   newPts->Delete();
 
-  if ( newScalars )
+  if (newScalars)
   {
     int idx = outPD->AddArray(newScalars);
     outPD->SetActiveAttribute(idx, vtkDataSetAttributes::SCALARS);
     newScalars->Delete();
   }
 
-  if ( newNormals )
+  if (newNormals)
   {
     outPD->SetNormals(newNormals);
     newNormals->Delete();
@@ -745,7 +745,7 @@ int vtkDiffusionTensorGlyph::RequestData(
   trans->Delete();
   matrix->Delete();
 
-  if ( userVolumeTransform )
+  if (userVolumeTransform)
   {
     userVolumeTransform->Delete();
   }
@@ -757,7 +757,7 @@ int vtkDiffusionTensorGlyph::RequestData(
 
 void vtkDiffusionTensorGlyph::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Color Glyphs by Scalar Invariant: " << this->ScalarInvariant << "\n";
   os << indent << "Mask Glyphs: " << (this->MaskGlyphs ? "On\n" : "Off\n");

@@ -38,7 +38,7 @@
 #include "qSlicerAbstractModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyTextsPluginPrivate: public QObject
+class qSlicerSubjectHierarchyTextsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTextsPlugin);
 protected:
@@ -79,7 +79,7 @@ qSlicerSubjectHierarchyTextsPlugin::~qSlicerSubjectHierarchyTextsPlugin() = defa
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTextsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -120,13 +120,13 @@ double qSlicerSubjectHierarchyTextsPlugin::canOwnSubjectHierarchyItem(vtkIdType 
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyTextsPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyTextsPlugin::roleForPlugin() const
 {
   return "Text";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyTextsPlugin::tooltip(vtkIdType itemID)const
+QString qSlicerSubjectHierarchyTextsPlugin::tooltip(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {

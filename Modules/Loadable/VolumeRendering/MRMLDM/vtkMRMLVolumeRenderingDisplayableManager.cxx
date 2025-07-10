@@ -139,7 +139,7 @@ public:
 
       this->ImageMathematics = vtkSmartPointer<vtkImageMathematicsAddon>::New();
     }
-    virtual ~Pipeline()  = default;
+    virtual ~Pipeline() = default;
 
     vtkWeakPointer<vtkMRMLVolumeRenderingDisplayNode> DisplayNode;
     vtkSmartPointer<vtkVolume> VolumeActor;

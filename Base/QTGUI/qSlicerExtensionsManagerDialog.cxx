@@ -30,7 +30,7 @@
 #include "ui_qSlicerExtensionsManagerDialog.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerExtensionsManagerDialogPrivate: public Ui_qSlicerExtensionsManagerDialog
+class qSlicerExtensionsManagerDialogPrivate : public Ui_qSlicerExtensionsManagerDialog
 {
   Q_DECLARE_PUBLIC(qSlicerExtensionsManagerDialog);
 protected:
@@ -130,7 +130,7 @@ qSlicerExtensionsManagerDialog::qSlicerExtensionsManagerDialog(QWidget* _parent)
 qSlicerExtensionsManagerDialog::~qSlicerExtensionsManagerDialog() = default;
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel* qSlicerExtensionsManagerDialog::extensionsManagerModel()const
+qSlicerExtensionsManagerModel* qSlicerExtensionsManagerDialog::extensionsManagerModel() const
 {
   Q_D(const qSlicerExtensionsManagerDialog);
   return d->ExtensionsManagerWidget->extensionsManagerModel();
@@ -171,7 +171,7 @@ void qSlicerExtensionsManagerDialog::setExtensionsManagerModel(qSlicerExtensions
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerDialog::restartRequested()const
+bool qSlicerExtensionsManagerDialog::restartRequested() const
 {
   Q_D(const qSlicerExtensionsManagerDialog);
   return d->RestartRequested;

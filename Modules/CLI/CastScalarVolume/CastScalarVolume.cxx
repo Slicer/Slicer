@@ -66,7 +66,7 @@ int DoIt( int argc, char* argv[], Tin, Tout )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;

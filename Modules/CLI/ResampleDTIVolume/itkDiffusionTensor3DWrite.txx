@@ -56,7 +56,7 @@ DiffusionTensor3DWrite<TData>
     itk::MetaDataObjectBase::Pointer entry = itr->second;
     MetaDataIntType::Pointer         entryvalue
       = dynamic_cast<MetaDataIntType*>( entry.GetPointer() );
-    if ( entryvalue )
+    if (entryvalue)
     {
       int pos = itr->first.find( "space" );
       if ( pos != -1 )
@@ -82,7 +82,7 @@ DiffusionTensor3DWrite<TData>
     itk::MetaDataObjectBase::Pointer  entry = itr->second;
     MetaDataDoubleVectorType::Pointer entryvalue
       = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
-    if ( entryvalue )
+    if (entryvalue)
     {
       int pos = itr->first.find( "NRRD_measurement frame" );
       if ( pos != -1 )

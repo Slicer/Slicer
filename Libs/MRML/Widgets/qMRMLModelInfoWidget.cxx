@@ -39,7 +39,7 @@
 #include <vtkVersion.h>
 
 //------------------------------------------------------------------------------
-class qMRMLModelInfoWidgetPrivate: public Ui_qMRMLModelInfoWidget
+class qMRMLModelInfoWidgetPrivate : public Ui_qMRMLModelInfoWidget
 {
   Q_DECLARE_PUBLIC(qMRMLModelInfoWidget);
 
@@ -91,7 +91,7 @@ qMRMLModelInfoWidget::~qMRMLModelInfoWidget() = default;
 
 
 //------------------------------------------------------------------------------
-vtkMRMLModelNode* qMRMLModelInfoWidget::mrmlModelNode()const
+vtkMRMLModelNode* qMRMLModelInfoWidget::mrmlModelNode() const
 {
   Q_D(const qMRMLModelInfoWidget);
   return d->MRMLModelNode;

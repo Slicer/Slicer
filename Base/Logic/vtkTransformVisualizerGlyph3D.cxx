@@ -85,7 +85,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     return 1;
   }
 
-  if ( inCScalars==nullptr )
+  if (inCScalars==nullptr)
   {
     vtkDebugMacro("No scalar data is available!");
     return 1;
@@ -258,7 +258,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
 //------------------------------------------------------------------------------
 void vtkTransformVisualizerGlyph3D::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //------------------------------------------------------------------------------

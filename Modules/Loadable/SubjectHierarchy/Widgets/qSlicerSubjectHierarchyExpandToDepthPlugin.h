@@ -42,7 +42,7 @@ public:
   /// Get scene context menu item actions to add to tree view
   /// Separate method is needed for the scene, as its actions are set to the
   /// tree by a different method \sa itemContextMenuActions
-  QList<QAction*> sceneContextMenuActions()const override;
+  QList<QAction*> sceneContextMenuActions() const override;
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for

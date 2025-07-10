@@ -83,7 +83,7 @@ QString qSlicerAnnotationsModule::acknowledgementText() const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAnnotationsModule::contributors()const
+QStringList qSlicerAnnotationsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Nicole Aucoin (SPL, BWH)");

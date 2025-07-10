@@ -44,7 +44,7 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-int qMRMLSliceWidgetTest1(int argc, char* argv [] )
+int qMRMLSliceWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

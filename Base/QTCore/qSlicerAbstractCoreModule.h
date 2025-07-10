@@ -196,19 +196,19 @@ public:
   /// The modules can typically be instantiated before the application
   /// is initialized (module manager, IO manager...). Most of the
   /// initialization must be done in qSlicerAbstractCoreModule::setup()
-  qSlicerAbstractCoreModule(QObject* parent=nullptr);
+  qSlicerAbstractCoreModule(QObject* parent = nullptr);
   ~qSlicerAbstractCoreModule() override;
 
   virtual void printAdditionalInfo();
 
   /// Convenience method to return slicer wiki URL
-  QString slicerWikiUrl()const{ return "https://www.slicer.org/w/index.php"; }
+  QString slicerWikiUrl() const{ return "https://www.slicer.org/w/index.php"; }
 
   /// Convenience method that returns a string that can be inserted into the application help text that contains
   /// link to the module's documentation in current Slicer version's documentation on ReadTheDocs.
   /// The text is "For more information, see the online documentation."
   /// and it points to https://slicer.readthedocs.io/en/(version)/user_guide/modules/(modulename).html
-  QString defaultDocumentationLink()const;
+  QString defaultDocumentationLink() const;
 
   /// Initialize the module, an appLogic must be given to
   /// initialize the module
@@ -217,44 +217,44 @@ public:
   /// Set/Get the name of the module. The name is used to uniquely describe
   /// a module: name must be unique.
   /// The name is set by the module factory (the registered item key string).
-  virtual QString name()const;
+  virtual QString name() const;
   virtual void setName(const QString& name);
 
   /// Title of the module, (displayed to the user)
   /// \a title() must be reimplemented in derived classes.
-  virtual QString title()const = 0;
+  virtual QString title() const = 0;
 
   /// Categories the module belongs to. Categories support subcategories. Use the
   /// '.' separator to specify a subcategory (no depth limit), e.g.:
   /// "Filtering.Arithmetic".
   /// The function must be reimplemented in derived classes.
   /// Note: If a category doesn't exist, it will be created.
-  virtual QStringList categories()const;
+  virtual QStringList categories() const;
 
   /// Return the category index of the module.
-  virtual int index()const;
+  virtual int index() const;
 
   /// Returns \a true if the module should be hidden to the user.
   /// By default, interactive modules are visible and non-interactive
   /// modules are hidden.
   /// \sa hidden, isWidgetRepresentationCreationEnabled
-  virtual bool isHidden()const;
+  virtual bool isHidden() const;
 
   /// Return the contributors of the module
-  virtual QStringList contributors()const;
+  virtual QStringList contributors() const;
 
   /// Return help text of the module
   /// Must be reimplemented in the derived classes
-  virtual QString helpText()const;
+  virtual QString helpText() const;
 
   /// Return acknowledgement text for the module
   /// Must be reimplemented in the derived classes
-  virtual QString acknowledgementText()const;
+  virtual QString acknowledgementText() const;
 
   /// Set/Get if the module should be able to create new widget
   /// representations or not.
   /// \sa widgetRepresentation()
-  bool isWidgetRepresentationCreationEnabled()const;
+  bool isWidgetRepresentationCreationEnabled() const;
   void setWidgetRepresentationCreationEnabled(bool value);
 
   /// This method allows to get a pointer to the WidgetRepresentation.
@@ -287,25 +287,25 @@ public:
   /// Return a pointer on the MRML scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
-  virtual QStringList dependencies()const;
+  virtual QStringList dependencies() const;
 
   /// Returns path if any
   /// \todo Ideally this function should be added within the qSlicerLoadableModule.
-  QString path()const;
+  QString path() const;
   void setPath(const QString& newPath);
 
   /// Return true is this instance of the module is loaded from an installed directory
   /// \todo Ideally this function should be added within the qSlicerLoadableModule.
-  bool isInstalled()const;
+  bool isInstalled() const;
   void setInstalled(bool value);
 
   /// Determine if this module is a built-in Slicer module or one from an extension
   /// or any user-specified folder.
-  bool isBuiltIn()const;
+  bool isBuiltIn() const;
   void setBuiltIn(bool value);
 
   /// Return node types associated with this module (e.g., node types this module can edit)
-  virtual QStringList associatedNodeTypes()const;
+  virtual QStringList associatedNodeTypes() const;
 
 public slots:
 

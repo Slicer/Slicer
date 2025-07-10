@@ -48,7 +48,7 @@ void qSlicerAbstractModulePanel::setModuleManager(qSlicerModuleManager* moduleMa
 }
 
 //---------------------------------------------------------------------------
-qSlicerModuleManager* qSlicerAbstractModulePanel::moduleManager()const
+qSlicerModuleManager* qSlicerAbstractModulePanel::moduleManager() const
 {
   Q_D(const qSlicerAbstractModulePanel);
   return d->ModuleManager;

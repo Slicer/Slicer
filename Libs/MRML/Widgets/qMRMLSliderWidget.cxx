@@ -140,14 +140,14 @@ void qMRMLSliderWidget::setQuantity(const QString& quantity)
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSliderWidget::quantity()const
+QString qMRMLSliderWidget::quantity() const
 {
   Q_D(const qMRMLSliderWidget);
   return d->Quantity;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSliderWidget::mrmlScene()const
+vtkMRMLScene* qMRMLSliderWidget::mrmlScene() const
 {
   Q_D(const qMRMLSliderWidget);
   return d->MRMLScene;
@@ -171,7 +171,7 @@ void qMRMLSliderWidget::setMRMLScene(vtkMRMLScene* scene)
 
 // --------------------------------------------------------------------------
 qMRMLSliderWidget::UnitAwareProperties
-qMRMLSliderWidget::unitAwareProperties()const
+qMRMLSliderWidget::unitAwareProperties() const
 {
   Q_D(const qMRMLSliderWidget);
   return d->Flags;

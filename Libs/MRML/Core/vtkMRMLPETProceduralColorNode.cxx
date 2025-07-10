@@ -63,7 +63,7 @@ void vtkMRMLPETProceduralColorNode::Copy(vtkMRMLNode* anode)
 void vtkMRMLPETProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   if (this->ColorTransferFunction != nullptr)
   {
     os << indent << "ColorTransferFunction:" << endl;

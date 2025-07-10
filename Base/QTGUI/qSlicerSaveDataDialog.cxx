@@ -200,7 +200,7 @@ void qSlicerSaveDataDialogPrivate::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerSaveDataDialogPrivate::mrmlScene()const
+vtkMRMLScene* qSlicerSaveDataDialogPrivate::mrmlScene() const
 {
   return this->MRMLScene;
 }
@@ -1033,7 +1033,7 @@ bool qSlicerSaveDataDialogPrivate::saveHiddenNodes()
 }
 
 //-----------------------------------------------------------------------------
-QFileInfo qSlicerSaveDataDialogPrivate::file(int row)const
+QFileInfo qSlicerSaveDataDialogPrivate::file(int row) const
 {
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
   ctkPathLineEdit* fileDirectoryEdit = qobject_cast<ctkPathLineEdit*>(
@@ -1050,7 +1050,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::file(int row)const
 }
 
 //-----------------------------------------------------------------------------
-vtkObject* qSlicerSaveDataDialogPrivate::object(int row)const
+vtkObject* qSlicerSaveDataDialogPrivate::object(int row) const
 {
   if (this->type(row) == qSlicerSaveDataDialog::tr("Scene"))
   {
@@ -1066,7 +1066,7 @@ vtkObject* qSlicerSaveDataDialogPrivate::object(int row)const
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char* id)const
+vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char* id) const
 {
   return qSlicerSaveDataDialogPrivate::getNodeByID(id, this->MRMLScene);
 }
@@ -1079,7 +1079,7 @@ vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char* id, vtkMRMLScene* s
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSaveDataDialogPrivate::format(int row)const
+QString qSlicerSaveDataDialogPrivate::format(int row) const
 {
   QComboBox* fileFormatComboBox = qobject_cast<QComboBox*>(
     this->FileWidget->cellWidget(row, FileFormatColumn));
@@ -1088,7 +1088,7 @@ QString qSlicerSaveDataDialogPrivate::format(int row)const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSaveDataDialogPrivate::type(int row)const
+QString qSlicerSaveDataDialogPrivate::type(int row) const
 {
   QTableWidgetItem* typeItem = this->FileWidget->item(row, NodeTypeColumn);
   Q_ASSERT(typeItem);
@@ -1096,7 +1096,7 @@ QString qSlicerSaveDataDialogPrivate::type(int row)const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerSaveDataDialogPrivate::options(int row)const
+qSlicerIOOptions* qSlicerSaveDataDialogPrivate::options(int row) const
 {
   qSlicerIOOptionsWidget* optionsWidget = qobject_cast<qSlicerIOOptionsWidget*>(
     this->FileWidget->cellWidget(row, OptionsColumn));
@@ -1104,7 +1104,7 @@ qSlicerIOOptions* qSlicerSaveDataDialogPrivate::options(int row)const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved()const
+bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved() const
 {
   QAbstractItemModel* model = this->FileWidget->model();
   QModelIndexList found = model->match(
@@ -1121,7 +1121,7 @@ bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved()const
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSaveDataDialogPrivate::findSceneRow()const
+int qSlicerSaveDataDialogPrivate::findSceneRow() const
 {
   QAbstractItemModel* model = this->FileWidget->model();
   QModelIndexList found = model->match(
@@ -1131,7 +1131,7 @@ int qSlicerSaveDataDialogPrivate::findSceneRow()const
 }
 
 //-----------------------------------------------------------------------------
-QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
+QFileInfo qSlicerSaveDataDialogPrivate::sceneFile() const
 {
   // search the scene
   int sceneRow = this->findSceneRow();
@@ -1150,7 +1150,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSaveDataDialogPrivate::sceneFileFormat()const
+QString qSlicerSaveDataDialogPrivate::sceneFileFormat() const
 {
   return this->format(this->findSceneRow());
 }
@@ -1518,20 +1518,20 @@ qSlicerSaveDataDialog::qSlicerSaveDataDialog(QObject* parentObject)
 qSlicerSaveDataDialog::~qSlicerSaveDataDialog() = default;
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerSaveDataDialog::fileType()const
+qSlicerIO::IOFileType qSlicerSaveDataDialog::fileType() const
 {
   // FIXME: not really a nofile, but more a collection of files
   return QString("NoFile");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSaveDataDialog::description()const
+QString qSlicerSaveDataDialog::description() const
 {
   return qSlicerSaveDataDialog::tr("Any Data");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileDialog::IOAction qSlicerSaveDataDialog::action()const
+qSlicerFileDialog::IOAction qSlicerSaveDataDialog::action() const
 {
   return qSlicerFileDialog::Write;
 }

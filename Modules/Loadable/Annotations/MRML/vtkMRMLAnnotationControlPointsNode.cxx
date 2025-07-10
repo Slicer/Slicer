@@ -235,7 +235,7 @@ void vtkMRMLAnnotationControlPointsNode::ProcessMRMLEvents ( vtkObject* caller,
 //----------------------------------------------------------------------------
 //void vtkMRMLAnnotationControlPointsNode::PrintSelf(ostream& os, vtkIndent indent)
 //{
-//  vtkMRMLModelNode::PrintSelf(os,indent);
+//  vtkMRMLModelNode::PrintSelf(os, indent);
 //  os << endl;
 //  this->PrintAnnotationInfo(os,indent,0);
 //}

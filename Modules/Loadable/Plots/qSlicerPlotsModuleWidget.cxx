@@ -54,7 +54,7 @@
 #include <vtkPlot.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerPlotsModuleWidgetPrivate: public Ui_qSlicerPlotsModuleWidget
+class qSlicerPlotsModuleWidgetPrivate : public Ui_qSlicerPlotsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerPlotsModuleWidget);
 protected:
@@ -62,7 +62,7 @@ protected:
 public:
   qSlicerPlotsModuleWidgetPrivate(qSlicerPlotsModuleWidget& object);
 
-  vtkSlicerPlotsLogic*      logic()const;
+  vtkSlicerPlotsLogic*      logic() const;
 
   vtkWeakPointer<vtkMRMLPlotChartNode> MRMLPlotChartNode;
   vtkWeakPointer<vtkMRMLPlotSeriesNode> MRMLPlotSeriesNode;
@@ -76,7 +76,7 @@ qSlicerPlotsModuleWidgetPrivate::qSlicerPlotsModuleWidgetPrivate(qSlicerPlotsMod
   this->MRMLPlotSeriesNode = nullptr;
 }
 //-----------------------------------------------------------------------------
-vtkSlicerPlotsLogic* qSlicerPlotsModuleWidgetPrivate::logic()const
+vtkSlicerPlotsLogic* qSlicerPlotsModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerPlotsModuleWidget);
   return vtkSlicerPlotsLogic::SafeDownCast(q->logic());
@@ -84,7 +84,7 @@ vtkSlicerPlotsLogic* qSlicerPlotsModuleWidgetPrivate::logic()const
 
 /*
 //-----------------------------------------------------------------------------
-vtkPlot* qSlicerPlotsModuleWidgetPrivate::table()const
+vtkPlot* qSlicerPlotsModuleWidgetPrivate::table() const
 {
   if (this->MRMLPlotChartNode.GetPointer()==nullptr)
     {

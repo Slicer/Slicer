@@ -232,7 +232,7 @@ public:
   /// BTX
   void LinkITKProgressToVTKProgress ( itk::ProcessObject* process )
   {
-    if ( process )
+    if (process)
     {
       this->m_Process = process;
       this->m_Process->AddObserver ( itk::ProgressEvent(), this->m_ProgressCommand );

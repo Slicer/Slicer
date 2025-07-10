@@ -60,7 +60,7 @@ vtkSegmentationConverter::~vtkSegmentationConverter() = default;
 //----------------------------------------------------------------------------
 void vtkSegmentationConverter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   if (!this->ConverterRules.empty())
   {
     os << indent << "Rules:\n";

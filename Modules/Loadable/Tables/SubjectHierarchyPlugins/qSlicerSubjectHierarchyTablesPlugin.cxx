@@ -58,7 +58,7 @@
 #include "qSlicerLayoutManager.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyTablesPluginPrivate: public QObject
+class qSlicerSubjectHierarchyTablesPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTablesPlugin);
 protected:
@@ -108,7 +108,7 @@ qSlicerSubjectHierarchyTablesPlugin::~qSlicerSubjectHierarchyTablesPlugin() = de
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -126,7 +126,7 @@ double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyTablesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyTablesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -151,7 +151,7 @@ double qSlicerSubjectHierarchyTablesPlugin::canOwnSubjectHierarchyItem(vtkIdType
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyTablesPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyTablesPlugin::roleForPlugin() const
 {
   return "Table";
 }
@@ -264,7 +264,7 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -299,7 +299,7 @@ int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkIdType itemID)c
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode()const
+vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode() const
 {
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)

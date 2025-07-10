@@ -56,7 +56,7 @@ public:
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
   double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
+    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID ) const override;
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
@@ -64,14 +64,14 @@ public:
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
-  double canOwnSubjectHierarchyItem(vtkIdType itemID)const override;
+  double canOwnSubjectHierarchyItem(vtkIdType itemID) const override;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
   ///   Each plugin should provide only one role.
-  Q_INVOKABLE const QString roleForPlugin()const override;
+  Q_INVOKABLE const QString roleForPlugin() const override;
 
   /// Get help text for plugin to be added in subject hierarchy module widget help box
-  const QString helpText()const override;
+  const QString helpText() const override;
 
   /// Get icon of an owned subject hierarchy item
   /// \return Icon to set, empty icon if nothing to set
@@ -84,12 +84,12 @@ public:
   void editProperties(vtkIdType itemID) override;
 
   /// Get item context menu item actions to add to tree view
-  QList<QAction*> itemContextMenuActions()const override;
+  QList<QAction*> itemContextMenuActions() const override;
 
   /// Get scene context menu item actions to add to tree view. Also provides actions for right-click on empty area
   /// Separate method is needed for the scene, as its actions are set to the
   /// tree by a different method \sa itemContextMenuActions
-  QList<QAction*> sceneContextMenuActions()const override;
+  QList<QAction*> sceneContextMenuActions() const override;
 
   /// Show context menu actions valid for a given subject hierarchy item.
   /// \param itemID Subject Hierarchy item to show the context menu items for

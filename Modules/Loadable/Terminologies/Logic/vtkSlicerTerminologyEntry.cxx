@@ -132,7 +132,7 @@ bool vtkSlicerTerminologyEntry::IsEmpty()
 //----------------------------------------------------------------------------
 void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "TerminologyContextName:   " << (this->TerminologyContextName?this->TerminologyContextName:"NULL") << "\n";
 

@@ -52,7 +52,7 @@ vtkOrientedImageData::~vtkOrientedImageData() = default;
 //----------------------------------------------------------------------------
 void vtkOrientedImageData::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Directions:\n";
   for (int i = 0; i < 3; i++)

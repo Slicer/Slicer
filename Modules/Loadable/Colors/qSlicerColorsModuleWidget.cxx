@@ -71,7 +71,7 @@
 #include <cstring>
 
 //-----------------------------------------------------------------------------
-class qSlicerColorsModuleWidgetPrivate: public Ui_qSlicerColorsModuleWidget
+class qSlicerColorsModuleWidgetPrivate : public Ui_qSlicerColorsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerColorsModuleWidget);
 protected:
@@ -80,7 +80,7 @@ protected:
 public:
   qSlicerColorsModuleWidgetPrivate(qSlicerColorsModuleWidget& obj);
   virtual ~qSlicerColorsModuleWidgetPrivate();
-  vtkSlicerColorLogic* colorLogic()const;
+  vtkSlicerColorLogic* colorLogic() const;
   void setDefaultColorNode();
 
   vtkWeakPointer<vtkMRMLDisplayableNode> DisplayableNode; /// Current displayable node
@@ -99,7 +99,7 @@ qSlicerColorsModuleWidgetPrivate::~qSlicerColorsModuleWidgetPrivate()
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerColorLogic* qSlicerColorsModuleWidgetPrivate::colorLogic()const
+vtkSlicerColorLogic* qSlicerColorsModuleWidgetPrivate::colorLogic() const
 {
   Q_Q(const qSlicerColorsModuleWidget);
   return vtkSlicerColorLogic::SafeDownCast(q->logic());

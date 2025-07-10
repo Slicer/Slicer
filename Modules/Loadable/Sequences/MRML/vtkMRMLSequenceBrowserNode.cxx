@@ -683,7 +683,7 @@ vtkMRMLNode* vtkMRMLSequenceBrowserNode::AddProxyNode(vtkMRMLNode* sourceProxyNo
   std::string proxyNodeRef=PROXY_NODE_REFERENCE_ROLE_BASE+rolePostfix;
   // Create a new one from scratch in the new scene to make sure only the needed parts are copied
   vtkMRMLNode* proxyNode = sourceProxyNode;
-  if ( copy )
+  if (copy)
   {
     proxyNode = sourceProxyNode->CreateNodeInstance();
     std::string proxyNodeName = sequenceNode->GetName();

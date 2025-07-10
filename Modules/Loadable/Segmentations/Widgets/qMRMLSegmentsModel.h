@@ -74,36 +74,36 @@ public:
   };
 
   typedef QStandardItemModel Superclass;
-  qMRMLSegmentsModel(QObject* parent=nullptr);
+  qMRMLSegmentsModel(QObject* parent = nullptr);
   ~qMRMLSegmentsModel() override;
 
-  int nameColumn()const;
+  int nameColumn() const;
   void setNameColumn(int column);
-  int visibilityColumn()const;
+  int visibilityColumn() const;
   void setVisibilityColumn(int column);
-  int colorColumn()const;
+  int colorColumn() const;
   void setColorColumn(int column);
-  int opacityColumn()const;
+  int opacityColumn() const;
   void setOpacityColumn(int column);
-  int statusColumn()const;
+  int statusColumn() const;
   void setStatusColumn(int column);
-  int layerColumn()const;
+  int layerColumn() const;
   void setLayerColumn(int layer);
 
   /// Returns the segment ID for the given index
-  QString segmentIDFromIndex(const QModelIndex& index)const;
+  QString segmentIDFromIndex(const QModelIndex& index) const;
   /// Returns the segment ID for the given item
-  QString segmentIDFromItem(QStandardItem* item)const;
+  QString segmentIDFromItem(QStandardItem* item) const;
   /// Returns the index for the given segment ID
-  QModelIndex indexFromSegmentID(QString segmentID, int column=0)const;
+  QModelIndex indexFromSegmentID(QString segmentID, int column=0) const;
   /// Returns the item for the given segment ID
-  QStandardItem* itemFromSegmentID(QString segmentID, int column=0)const;
+  QStandardItem* itemFromSegmentID(QString segmentID, int column=0) const;
 
   /// Return all the QModelIndexes (all the columns) for a given segment ID
-  QModelIndexList indexes(QString segmentID)const;
+  QModelIndexList indexes(QString segmentID) const;
 
   /// The segmentation node that is used to populate the model
-  vtkMRMLSegmentationNode* segmentationNode()const;
+  vtkMRMLSegmentationNode* segmentationNode() const;
   virtual void setSegmentationNode(vtkMRMLSegmentationNode* segmentation);
 
   /// Assemble terminology info string (for tooltips) from a segment's terminology tags
@@ -126,14 +126,14 @@ protected slots:
   void updateColumnCount();
 
 protected:
-  qMRMLSegmentsModel(qMRMLSegmentsModelPrivate* pimpl, QObject* parent=nullptr);
+  qMRMLSegmentsModel(qMRMLSegmentsModelPrivate* pimpl, QObject* parent = nullptr);
 
   /// Removes all items and regenerates the model from the segments in the segmentation node
   virtual void rebuildFromSegments();
   /// Updates all items from the segments in the segmentation model
   virtual void updateFromSegments();
 
-  virtual Qt::ItemFlags segmentFlags(QString segmentID, int column)const;
+  virtual Qt::ItemFlags segmentFlags(QString segmentID, int column) const;
 
   /// Update QStandardItem associated using segmentID and column
   virtual void updateItemFromSegment(QStandardItem* item, QString segmentID, int column );
@@ -159,7 +159,7 @@ protected:
   static void onEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);
 
   /// Must be reimplemented in subclasses that add new column types
-  virtual int maxColumnId()const;
+  virtual int maxColumnId() const;
 
   /// Called when a segment is added to the segmentation node
   virtual void onSegmentAdded(QString segmentID);

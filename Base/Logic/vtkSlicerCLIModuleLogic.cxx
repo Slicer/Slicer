@@ -185,8 +185,8 @@ public:
     }
   }
   protected:
-  vtkSlicerCLIOneShotCallbackCallback()  = default;
-  ~vtkSlicerCLIOneShotCallbackCallback() override  = default;
+  vtkSlicerCLIOneShotCallbackCallback() = default;
+  ~vtkSlicerCLIOneShotCallbackCallback() override = default;
 };
 
 //----------------------------------------------------------------------------
@@ -344,7 +344,7 @@ void vtkSlicerCLIModuleLogic::SetDefaultModuleDescription(const ModuleDescriptio
 
 //-----------------------------------------------------------------------------
 const ModuleDescription& vtkSlicerCLIModuleLogic
-::GetDefaultModuleDescription()const
+::GetDefaultModuleDescription() const
 {
   return this->Internal->DefaultModuleDescription;
 }
@@ -804,7 +804,7 @@ void vtkSlicerCLIModuleLogic
 //       itksys::DynamicLoader::LibraryHandle lib
 //         = itksys::DynamicLoader::OpenLibrary(moduleDescriptionObject.GetLocation().c_str());
 // #endif
-//       if ( lib )
+//       if (lib)
 //         {
 //         ModuleEntryPoint entryPoint
 //           = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleEntryPoint");
@@ -2523,7 +2523,7 @@ vtkSlicerCLIModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
 
 //----------------------------------------------------------------------------
 bool vtkSlicerCLIModuleLogic
-::IsCommandLineModuleNodeUpdatingDisplay(vtkMRMLCommandLineModuleNode* node)const
+::IsCommandLineModuleNodeUpdatingDisplay(vtkMRMLCommandLineModuleNode* node) const
 {
   // Update display except if the node has the updateDisplay attribute set to
   // "false".

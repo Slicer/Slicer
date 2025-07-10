@@ -99,7 +99,7 @@ void DebugWritePolyData(vtkPolyData* poly)
 
 //-----------------------------------------------------------------------------
 /// Visualization objects and pipeline for each slice view for drawing cutting outline
-class ScissorsPipeline: public QObject
+class ScissorsPipeline : public QObject
 {
 public:
   ScissorsPipeline()
@@ -139,7 +139,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-class qSlicerSegmentEditorScissorsEffectPrivate: public QObject
+class qSlicerSegmentEditorScissorsEffectPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorScissorsEffect);
 protected:
@@ -1176,7 +1176,7 @@ QIcon qSlicerSegmentEditorScissorsEffect::icon()
 }
 
 //---------------------------------------------------------------------------
-QString const qSlicerSegmentEditorScissorsEffect::helpText()const
+QString const qSlicerSegmentEditorScissorsEffect::helpText() const
 {
   return QString("<html>") + tr("Cut through the entire segment from the current viewpoint<br>."
     "<p><ul style=\"margin: 0\">"

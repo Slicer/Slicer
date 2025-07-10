@@ -150,7 +150,7 @@ struct SegmentEditorEventObservation
 // qMRMLSegmentEditorWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-class qMRMLSegmentEditorWidgetPrivate: public Ui_qMRMLSegmentEditorWidget
+class qMRMLSegmentEditorWidgetPrivate : public Ui_qMRMLSegmentEditorWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentEditorWidget);
 
@@ -1608,7 +1608,7 @@ void qMRMLSegmentEditorWidget::onSourceVolumeImageDataModified()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorAbstractEffect* qMRMLSegmentEditorWidget::activeEffect()const
+qSlicerSegmentEditorAbstractEffect* qMRMLSegmentEditorWidget::activeEffect() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
 
@@ -1847,7 +1847,7 @@ void qMRMLSegmentEditorWidget::onInteractionNodeModified()
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLSegmentEditorNode* qMRMLSegmentEditorWidget::mrmlSegmentEditorNode()const
+vtkMRMLSegmentEditorNode* qMRMLSegmentEditorWidget::mrmlSegmentEditorNode() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   return d->ParameterSetNode;
@@ -1880,7 +1880,7 @@ void qMRMLSegmentEditorWidget::setMRMLSegmentEditorNode(vtkMRMLSegmentEditorNode
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLInteractionNode* qMRMLSegmentEditorWidget::interactionNode()const
+vtkMRMLInteractionNode* qMRMLSegmentEditorWidget::interactionNode() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   return d->InteractionNode;
@@ -1947,7 +1947,7 @@ void qMRMLSegmentEditorWidget::setSegmentationNode(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSegmentEditorWidget::segmentationNode()const
+vtkMRMLNode* qMRMLSegmentEditorWidget::segmentationNode() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   return d->SegmentationNodeComboBox->currentNode();
@@ -1967,14 +1967,14 @@ void qMRMLSegmentEditorWidget::setSegmentationNodeID(const QString& nodeID)
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSegmentEditorWidget::segmentationNodeID()const
+QString qMRMLSegmentEditorWidget::segmentationNodeID() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   return d->SegmentationNodeComboBox->currentNodeID();
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSegmentEditorWidget::currentSegmentID()const
+QString qMRMLSegmentEditorWidget::currentSegmentID() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
 
@@ -2012,7 +2012,7 @@ void qMRMLSegmentEditorWidget::setSourceVolumeNode(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSegmentEditorWidget::sourceVolumeNode()const
+vtkMRMLNode* qMRMLSegmentEditorWidget::sourceVolumeNode() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   if (!d->ParameterSetNode)
@@ -2035,7 +2035,7 @@ void qMRMLSegmentEditorWidget::setSourceVolumeNodeID(const QString& nodeID)
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSegmentEditorWidget::sourceVolumeNodeID()const
+QString qMRMLSegmentEditorWidget::sourceVolumeNodeID() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   vtkMRMLNode* sourceVolumeNode = this->sourceVolumeNode();
@@ -3899,7 +3899,7 @@ void qMRMLSegmentEditorWidget::setJumpToSelectedSegmentEnabled(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLSegmentEditorWidget::jumpToSelectedSegmentEnabled()const
+bool qMRMLSegmentEditorWidget::jumpToSelectedSegmentEnabled() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   return d->SegmentsTableView->jumpToSelectedSegmentEnabled();
@@ -3929,7 +3929,7 @@ void qMRMLSegmentEditorWidget::setShow3DButtonVisible(bool visible)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLSegmentEditorWidget::show3DButtonVisible()const
+bool qMRMLSegmentEditorWidget::show3DButtonVisible() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   return d->Show3DButton->isVisible();
@@ -3944,7 +3944,7 @@ void qMRMLSegmentEditorWidget::setAddRemoveSegmentButtonsVisible(bool visible)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLSegmentEditorWidget::addRemoveSegmentButtonsVisible()const
+bool qMRMLSegmentEditorWidget::addRemoveSegmentButtonsVisible() const
 {
   Q_D(const qMRMLSegmentEditorWidget);
   return d->AddSegmentButton->isVisible() && d->RemoveSegmentButton->isVisible();

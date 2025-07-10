@@ -224,7 +224,7 @@ void vtkMRMLDiffusionImageVolumeNode::ProcessMRMLEvents ( vtkObject* caller,
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionImageVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "DiffusionWeightedNodeID: " <<
     (this->DiffusionWeightedNodeID ? this->DiffusionWeightedNodeID : "(none)") << "\n";

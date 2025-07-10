@@ -57,7 +57,7 @@
 class qSlicerAppMainWindow;
 
 //-----------------------------------------------------------------------------
-class qSlicerWelcomeModuleWidgetPrivate: public Ui_qSlicerWelcomeModuleWidget
+class qSlicerWelcomeModuleWidgetPrivate : public Ui_qSlicerWelcomeModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerWelcomeModuleWidget);
 protected:

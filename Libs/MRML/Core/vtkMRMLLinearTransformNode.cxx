@@ -147,7 +147,7 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   if (this->IsLinear())
   {

@@ -36,19 +36,19 @@ class Q_SLICER_QTMODULES_TEMPLATEKEY_EXPORT qSlicerTemplateKeyModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerTemplateKeyModule(QObject* parent=nullptr);
+  explicit qSlicerTemplateKeyModule(QObject* parent = nullptr);
   ~qSlicerTemplateKeyModule() override;
 
   qSlicerGetTitleMacro(tr("TemplateKey"));
 
   bool isHidden() const override;
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
-  QIcon icon()const override;
+  QIcon icon() const override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
   QStringList dependencies() const override;
 
 protected:

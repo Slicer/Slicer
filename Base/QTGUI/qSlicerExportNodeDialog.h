@@ -34,9 +34,9 @@ public:
   qSlicerExportNodeDialog(QObject* parent = nullptr);
   ~qSlicerExportNodeDialog() override;
 
-  qSlicerIO::IOFileType fileType()const override;
-  QString description()const override;
-  qSlicerFileDialog::IOAction action()const override;
+  qSlicerIO::IOFileType fileType() const override;
+  QString description() const override;
+  qSlicerFileDialog::IOAction action() const override;
 
   /// Open the export dialog. The expected readerProperties are as follows:
   /// selectedNodeID (QString): ID of the node rooted at the subtree in the subject hierarchy that will be considered for export

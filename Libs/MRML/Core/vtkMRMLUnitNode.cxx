@@ -306,7 +306,7 @@ void vtkMRMLUnitNode::Reset(vtkMRMLNode* defaultNode)
 //----------------------------------------------------------------------------
 void vtkMRMLUnitNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Quantity: " <<
     (this->GetQuantity() ? this->GetQuantity() : "(none)") << "\n";

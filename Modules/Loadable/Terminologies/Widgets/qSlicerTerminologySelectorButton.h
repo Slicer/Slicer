@@ -40,7 +40,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorBut
   Q_OBJECT
 
 public:
-  explicit qSlicerTerminologySelectorButton(QWidget* parent=nullptr);
+  explicit qSlicerTerminologySelectorButton(QWidget* parent = nullptr);
   ~qSlicerTerminologySelectorButton() override;
 
 #ifndef __VTK_WRAP__
@@ -72,7 +72,7 @@ protected:
   void paintEvent(QPaintEvent* event) override;
 
   QScopedPointer<qSlicerTerminologySelectorButtonPrivate> d_ptr;
-private :
+private:
   Q_DECLARE_PRIVATE(qSlicerTerminologySelectorButton);
   Q_DISABLE_COPY(qSlicerTerminologySelectorButton);
 };

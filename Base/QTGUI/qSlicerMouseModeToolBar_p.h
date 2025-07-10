@@ -61,7 +61,7 @@ class QAction;
 class QActionGroup;
 class QToolButton;
 
-class qSlicerMouseModeToolBarPrivate: public QObject
+class qSlicerMouseModeToolBarPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT

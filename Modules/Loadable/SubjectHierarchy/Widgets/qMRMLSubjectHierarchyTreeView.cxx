@@ -623,14 +623,14 @@ void qMRMLSubjectHierarchyTreeView::setSubjectHierarchyNode(vtkMRMLSubjectHierar
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode* qMRMLSubjectHierarchyTreeView::subjectHierarchyNode()const
+vtkMRMLSubjectHierarchyNode* qMRMLSubjectHierarchyTreeView::subjectHierarchyNode() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   return d->SubjectHierarchyNode;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSubjectHierarchyTreeView::mrmlScene()const
+vtkMRMLScene* qMRMLSubjectHierarchyTreeView::mrmlScene() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   return d->Model ? d->Model->mrmlScene() : nullptr;
@@ -661,14 +661,14 @@ void qMRMLSubjectHierarchyTreeView::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-vtkIdType qMRMLSubjectHierarchyTreeView::currentItem()const
+vtkIdType qMRMLSubjectHierarchyTreeView::currentItem() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   return d->SelectedItems.count() ? d->SelectedItems[0] : vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSubjectHierarchyTreeView::currentNode()const
+vtkMRMLNode* qMRMLSubjectHierarchyTreeView::currentNode() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   vtkIdType itemID = currentItem();
@@ -800,7 +800,7 @@ void qMRMLSubjectHierarchyTreeView::setCurrentNode(vtkMRMLNode* node)
 }
 
 //--------------------------------------------------------------------------
-qMRMLSortFilterSubjectHierarchyProxyModel* qMRMLSubjectHierarchyTreeView::sortFilterProxyModel()const
+qMRMLSortFilterSubjectHierarchyProxyModel* qMRMLSubjectHierarchyTreeView::sortFilterProxyModel() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   if (!d->SortFilterModel)
@@ -811,7 +811,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel* qMRMLSubjectHierarchyTreeView::sortFi
 }
 
 //--------------------------------------------------------------------------
-qMRMLSubjectHierarchyModel* qMRMLSubjectHierarchyTreeView::model()const
+qMRMLSubjectHierarchyModel* qMRMLSubjectHierarchyTreeView::model() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   if (!d->Model)
@@ -822,7 +822,7 @@ qMRMLSubjectHierarchyModel* qMRMLSubjectHierarchyTreeView::model()const
 }
 
 //--------------------------------------------------------------------------
-int qMRMLSubjectHierarchyTreeView::displayedItemCount()const
+int qMRMLSubjectHierarchyTreeView::displayedItemCount() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   int count = this->sortFilterProxyModel()->acceptedItemCount(this->rootItem());
@@ -847,7 +847,7 @@ void qMRMLSubjectHierarchyTreeView::setShowRootItem(bool show)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyTreeView::showRootItem()const
+bool qMRMLSubjectHierarchyTreeView::showRootItem() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   return d->ShowRootItem;
@@ -906,7 +906,7 @@ void qMRMLSubjectHierarchyTreeView::setRootItem(vtkIdType rootItemID)
 }
 
 //--------------------------------------------------------------------------
-vtkIdType qMRMLSubjectHierarchyTreeView::rootItem()const
+vtkIdType qMRMLSubjectHierarchyTreeView::rootItem() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   if (!d->SubjectHierarchyNode)
@@ -947,7 +947,7 @@ void qMRMLSubjectHierarchyTreeView::updateRootItem()
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyTreeView::highlightReferencedItems()const
+bool qMRMLSubjectHierarchyTreeView::highlightReferencedItems() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   return d->HighlightReferencedItems;
@@ -961,7 +961,7 @@ void qMRMLSubjectHierarchyTreeView::setHighlightReferencedItems(bool highlightOn
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyTreeView::contextMenuEnabled()const
+bool qMRMLSubjectHierarchyTreeView::contextMenuEnabled() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   return d->ContextMenuEnabled;
@@ -975,7 +975,7 @@ void qMRMLSubjectHierarchyTreeView::setContextMenuEnabled(bool enabled)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyTreeView::editMenuActionVisible()const
+bool qMRMLSubjectHierarchyTreeView::editMenuActionVisible() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   return d->EditActionVisible;
@@ -989,7 +989,7 @@ void qMRMLSubjectHierarchyTreeView::setEditMenuActionVisible(bool visible)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyTreeView::selectRoleSubMenuVisible()const
+bool qMRMLSubjectHierarchyTreeView::selectRoleSubMenuVisible() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   return d->SelectRoleSubMenuVisible;
@@ -1003,7 +1003,7 @@ void qMRMLSubjectHierarchyTreeView::setSelectRoleSubMenuVisible(bool visible)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyTreeView::noneEnabled()const
+bool qMRMLSubjectHierarchyTreeView::noneEnabled() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   if (!d->Model)
@@ -1025,7 +1025,7 @@ void qMRMLSubjectHierarchyTreeView::setNoneEnabled(bool enable)
 }
 
 //--------------------------------------------------------------------------
-QString qMRMLSubjectHierarchyTreeView::noneDisplay()const
+QString qMRMLSubjectHierarchyTreeView::noneDisplay() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   if (!d->Model)
@@ -1056,7 +1056,7 @@ void qMRMLSubjectHierarchyTreeView::setIncludeItemAttributeNamesFilter(QStringLi
 }
 
 //-----------------------------------------------------------------------------
-QStringList qMRMLSubjectHierarchyTreeView::includeItemAttributeNamesFilter()const
+QStringList qMRMLSubjectHierarchyTreeView::includeItemAttributeNamesFilter() const
 {
   return this->sortFilterProxyModel()->includeItemAttributeNamesFilter();
 }
@@ -1071,7 +1071,7 @@ void qMRMLSubjectHierarchyTreeView::setIncludeNodeAttributeNamesFilter(QStringLi
 }
 
 //-----------------------------------------------------------------------------
-QStringList qMRMLSubjectHierarchyTreeView::includeNodeAttributeNamesFilter()const
+QStringList qMRMLSubjectHierarchyTreeView::includeNodeAttributeNamesFilter() const
 {
   return this->sortFilterProxyModel()->includeNodeAttributeNamesFilter();
 }
@@ -1086,7 +1086,7 @@ void qMRMLSubjectHierarchyTreeView::setExcludeItemAttributeNamesFilter(QStringLi
 }
 
 //-----------------------------------------------------------------------------
-QStringList qMRMLSubjectHierarchyTreeView::excludeItemAttributeNamesFilter()const
+QStringList qMRMLSubjectHierarchyTreeView::excludeItemAttributeNamesFilter() const
 {
   return this->sortFilterProxyModel()->excludeItemAttributeNamesFilter();
 }
@@ -1101,7 +1101,7 @@ void qMRMLSubjectHierarchyTreeView::setExcludeNodeAttributeNamesFilter(QStringLi
 }
 
 //-----------------------------------------------------------------------------
-QStringList qMRMLSubjectHierarchyTreeView::excludeNodeAttributeNamesFilter()const
+QStringList qMRMLSubjectHierarchyTreeView::excludeNodeAttributeNamesFilter() const
 {
   return this->sortFilterProxyModel()->excludeNodeAttributeNamesFilter();
 }
@@ -1126,7 +1126,7 @@ void qMRMLSubjectHierarchyTreeView::setAttributeNameFilter(QString& attributeNam
 }
 
 //--------------------------------------------------------------------------
-QString qMRMLSubjectHierarchyTreeView::attributeNameFilter()const
+QString qMRMLSubjectHierarchyTreeView::attributeNameFilter() const
 {
   return this->sortFilterProxyModel()->attributeNameFilter();
 }
@@ -1141,7 +1141,7 @@ void qMRMLSubjectHierarchyTreeView::setAttributeValueFilter(QString& attributeVa
 }
 
 //--------------------------------------------------------------------------
-QString qMRMLSubjectHierarchyTreeView::attributeValueFilter()const
+QString qMRMLSubjectHierarchyTreeView::attributeValueFilter() const
 {
   return this->sortFilterProxyModel()->attributeValueFilter();
 }
@@ -1227,7 +1227,7 @@ void qMRMLSubjectHierarchyTreeView::setLevelFilter(QStringList& levelFilter)
 }
 
 //--------------------------------------------------------------------------
-QStringList qMRMLSubjectHierarchyTreeView::levelFilter()const
+QStringList qMRMLSubjectHierarchyTreeView::levelFilter() const
 {
   return this->sortFilterProxyModel()->levelFilter();
 }
@@ -1242,7 +1242,7 @@ void qMRMLSubjectHierarchyTreeView::setNameFilter(QString& nameFilter)
 }
 
 //--------------------------------------------------------------------------
-QString qMRMLSubjectHierarchyTreeView::nameFilter()const
+QString qMRMLSubjectHierarchyTreeView::nameFilter() const
 {
   return this->sortFilterProxyModel()->nameFilter();
 }
@@ -1262,7 +1262,7 @@ void qMRMLSubjectHierarchyTreeView::setNodeTypes(const QStringList& types)
 }
 
 //--------------------------------------------------------------------------
-QStringList qMRMLSubjectHierarchyTreeView::nodeTypes()const
+QStringList qMRMLSubjectHierarchyTreeView::nodeTypes() const
 {
   return this->sortFilterProxyModel()->nodeTypes();
 }
@@ -1277,7 +1277,7 @@ void qMRMLSubjectHierarchyTreeView::setHideChildNodeTypes(const QStringList& typ
 }
 
 //--------------------------------------------------------------------------
-QStringList qMRMLSubjectHierarchyTreeView::hideChildNodeTypes()const
+QStringList qMRMLSubjectHierarchyTreeView::hideChildNodeTypes() const
 {
   return this->sortFilterProxyModel()->hideChildNodeTypes();
 }
@@ -2473,7 +2473,7 @@ void qMRMLSubjectHierarchyTreeView::setUseTerminologySelector(bool useTerminolog
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyTreeView::useTerminologySelector()const
+bool qMRMLSubjectHierarchyTreeView::useTerminologySelector() const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   if (d->UseTerminologySelectorSettingsKey.isEmpty())
@@ -2509,7 +2509,7 @@ void qMRMLSubjectHierarchyTreeView::setBaseName(const QString& baseName, const Q
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSubjectHierarchyTreeView::baseName(const QString& nodeType /* ="" */)const
+QString qMRMLSubjectHierarchyTreeView::baseName(const QString& nodeType /* ="" */) const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   if (!nodeType.isEmpty())
@@ -2546,7 +2546,7 @@ void qMRMLSubjectHierarchyTreeView::setNodeTypeLabel(const QString& label, const
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSubjectHierarchyTreeView::nodeTypeLabel(const QString& nodeType)const
+QString qMRMLSubjectHierarchyTreeView::nodeTypeLabel(const QString& nodeType) const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   // If a label was explicitly specified then use that
@@ -2603,7 +2603,7 @@ vtkMRMLNode* qMRMLSubjectHierarchyTreeView::addNode(QString nodeType)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSubjectHierarchyTreeView::findFirstNodeByClass(const QString& className)const
+vtkMRMLNode* qMRMLSubjectHierarchyTreeView::findFirstNodeByClass(const QString& className) const
 {
   Q_D(const qMRMLSubjectHierarchyTreeView);
   qMRMLSortFilterSubjectHierarchyProxyModel* model = this->sortFilterProxyModel();

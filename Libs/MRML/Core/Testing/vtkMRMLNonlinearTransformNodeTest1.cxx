@@ -38,7 +38,7 @@ int TestBSplineLinearCompositeTransformSplit(const char* filename);
 int TestRelativeTransforms(const char* filename);
 int TestGetTransform();
 
-int vtkMRMLNonlinearTransformNodeTest1(int argc, char* argv[] )
+int vtkMRMLNonlinearTransformNodeTest1(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 

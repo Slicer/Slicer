@@ -145,7 +145,7 @@ void vtkMRMLGlyphableVolumeDisplayNode::Copy(vtkMRMLNode* anode)
 void vtkMRMLGlyphableVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
  os << indent << "GlyphColorNodeID: " <<
     (this->GlyphColorNodeID ? this->GlyphColorNodeID : "(none)") << "\n";

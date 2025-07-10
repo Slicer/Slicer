@@ -234,7 +234,7 @@ public:
   /// bounds may not fully contain the transformed model points.
   virtual void TransformBoundsToRAS(double inputBounds_Local[6], double outputBounds_RAS[6]);
 
-  bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms() const override;
   void ApplyTransform(vtkAbstractTransform* transform) override;
 
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;

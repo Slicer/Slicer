@@ -45,7 +45,7 @@
 #include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
-class qMRMLVolumeInfoWidgetPrivate: public Ui_qMRMLVolumeInfoWidget
+class qMRMLVolumeInfoWidgetPrivate : public Ui_qMRMLVolumeInfoWidget
 {
   Q_DECLARE_PUBLIC(qMRMLVolumeInfoWidget);
 
@@ -127,7 +127,7 @@ qMRMLVolumeInfoWidget::~qMRMLVolumeInfoWidget() = default;
 
 
 //------------------------------------------------------------------------------
-vtkMRMLVolumeNode* qMRMLVolumeInfoWidget::volumeNode()const
+vtkMRMLVolumeNode* qMRMLVolumeInfoWidget::volumeNode() const
 {
   Q_D(const qMRMLVolumeInfoWidget);
   return d->VolumeNode;
@@ -167,7 +167,7 @@ void qMRMLVolumeInfoWidget::setDataTypeEditable(bool enable)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLVolumeInfoWidget::isDataTypeEditable()const
+bool qMRMLVolumeInfoWidget::isDataTypeEditable() const
 {
   Q_D(const qMRMLVolumeInfoWidget);
   return d->ScanOrderComboBox->isVisible();
@@ -336,7 +336,7 @@ void qMRMLVolumeInfoWidget::setImageOrigin(double* origin)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLVolumeInfoWidget::isCentered()const
+bool qMRMLVolumeInfoWidget::isCentered() const
 {
   Q_D(const qMRMLVolumeInfoWidget);
   if (!d->VolumeNode)

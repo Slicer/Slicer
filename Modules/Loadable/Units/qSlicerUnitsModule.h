@@ -41,18 +41,18 @@ class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerUnitsModule(QObject* parent=nullptr);
+  explicit qSlicerUnitsModule(QObject* parent = nullptr);
   ~qSlicerUnitsModule() override;
 
   qSlicerGetTitleMacro(tr("Units"));
 
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
-  QIcon icon()const override;
+  QIcon icon() const override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
   QStringList dependencies() const override;
 
   /// Hide unit module by default

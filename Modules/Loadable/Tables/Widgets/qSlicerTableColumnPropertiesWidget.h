@@ -42,11 +42,11 @@ qSlicerTableColumnPropertiesWidget : public qSlicerWidget
 
 public:
   typedef qSlicerWidget Superclass;
-  qSlicerTableColumnPropertiesWidget(QWidget* parent=nullptr);
+  qSlicerTableColumnPropertiesWidget(QWidget* parent = nullptr);
   ~qSlicerTableColumnPropertiesWidget() override;
 
   /// Get the table node the columns are edited of.
-  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode()const;
+  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode() const;
 
   Q_INVOKABLE QStringList mrmlTableColumnNames();
 

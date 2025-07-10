@@ -46,12 +46,12 @@ qMRMLTransformInfoWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLTransformInfoWidget(QWidget* parent=nullptr);
+  qMRMLTransformInfoWidget(QWidget* parent = nullptr);
   ~qMRMLTransformInfoWidget() override;
 
-  vtkMRMLTransformNode* mrmlTransformNode()const;
+  vtkMRMLTransformNode* mrmlTransformNode() const;
 
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
 public slots:
 

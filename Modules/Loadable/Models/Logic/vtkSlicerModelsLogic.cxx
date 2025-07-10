@@ -43,10 +43,10 @@
 vtkStandardNewMacro(vtkSlicerModelsLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerModelsLogic::vtkSlicerModelsLogic()=default;
+vtkSlicerModelsLogic::vtkSlicerModelsLogic() = default;
 
 //----------------------------------------------------------------------------
-vtkSlicerModelsLogic::~vtkSlicerModelsLogic()=default;
+vtkSlicerModelsLogic::~vtkSlicerModelsLogic() = default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)

@@ -107,7 +107,7 @@ vtkMRMLModelStorageNode::~vtkMRMLModelStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------

@@ -31,7 +31,7 @@
 // STD includes
 
 //-----------------------------------------------------------------------------
-class qSlicerCamerasModuleWidgetPrivate: public Ui_qSlicerCamerasModuleWidget
+class qSlicerCamerasModuleWidgetPrivate : public Ui_qSlicerCamerasModuleWidget
 {
 public:
 };

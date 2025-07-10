@@ -32,11 +32,11 @@ class qSlicerLoadableHelloWorldModule : public qSlicerLoadableModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerLoadableHelloWorldModule(QObject* parent=nullptr):Superclass(parent){}
+  qSlicerLoadableHelloWorldModule(QObject* parent = nullptr):Superclass(parent){}
   ~qSlicerLoadableHelloWorldModule() override = default;
 
-  QString helpText()const override { return QString("helpText"); }
-  QString acknowledgementText()const override { return QString("acknowledgementText"); }
+  QString helpText() const override { return QString("helpText"); }
+  QString acknowledgementText() const override { return QString("acknowledgementText"); }
 
   qSlicerGetTitleMacro("Loadable Hello world");
 
@@ -55,7 +55,7 @@ protected:
 };
 
 // ----------------------------------------------------------------------------
-class qSlicerLoadableModuleWithPythonTester: public QObject
+class qSlicerLoadableModuleWithPythonTester : public QObject
 {
   Q_OBJECT
 

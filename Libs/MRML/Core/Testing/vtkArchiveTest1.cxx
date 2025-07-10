@@ -33,7 +33,7 @@ bool validFile(const char* fileName)
   return false;
 }
 
-int vtkArchiveTest1(int argc, char* argv[] )
+int vtkArchiveTest1(int argc, char* argv[])
 {
   if (argc < 2)
   {

@@ -19,7 +19,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int qSlicerModuleManagerTest1(int argc, char* argv [] )
+int qSlicerModuleManagerTest1(int argc, char* argv[])
 {
 
   // By design, a ModuleManager should be instantiated only if a

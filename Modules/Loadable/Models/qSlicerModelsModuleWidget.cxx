@@ -58,7 +58,7 @@
 
 
 //-----------------------------------------------------------------------------
-class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModuleWidget
+class qSlicerModelsModuleWidgetPrivate : public Ui_qSlicerModelsModuleWidget
 {
 public:
   qSlicerModelsModuleWidgetPrivate();

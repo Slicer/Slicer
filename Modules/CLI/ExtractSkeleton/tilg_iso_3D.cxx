@@ -363,7 +363,7 @@ int Tilg_Test_3(int c, int d, int type)
     bcx = bitcount(c & MASK_CX);
     bcy = bitcount(c & MASK_CY);
     bcz = bitcount(c & MASK_CZ);
-    if ( type )
+    if (type)
     {
       /* fuer Mittelflaechen */
       if ( (d == 0) || (d == 1) )
@@ -698,7 +698,7 @@ void tilg_iso_3D(int dx, int dy, int dz,
   /* eigentliches Bildparsing */
   end = end - nzz - nx - 1;
   cnt = 1;
-  while ( cnt )
+  while (cnt)
   {
     cnt = 0;
     for ( dir = 0; dir < 18; dir++ )
@@ -733,7 +733,7 @@ void tilg_iso_3D(int dx, int dy, int dz,
 
   /* sequentiell maximal Verduennen */
   cnt = 1;
-  while ( cnt )
+  while (cnt)
   {
     cnt = 0;
     for ( i = nzz + nx + 1; i < end; i++ )

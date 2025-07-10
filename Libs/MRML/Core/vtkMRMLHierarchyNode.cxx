@@ -180,7 +180,7 @@ void vtkMRMLHierarchyNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "AssociatedNodeID: " <<
     (this->AssociatedNodeIDReference ? this->AssociatedNodeIDReference : "(none)") << "\n";
   os << indent << "ParentNodeID: " <<

@@ -284,7 +284,7 @@ void qMRMLMarkupsToolBarPrivate::onPlaceNodeClassNameListModifiedEvent()
 
 // --------------------------------------------------------------------------
 qMRMLMarkupsToolBar::qMRMLMarkupsToolBar(const QString& title, QWidget* parentWidget)
-  :Superclass(title, parentWidget)
+  : Superclass(title, parentWidget)
    , d_ptr(new qMRMLMarkupsToolBarPrivate(*this))
 {
   Q_D(qMRMLMarkupsToolBar);
@@ -333,14 +333,14 @@ void qMRMLMarkupsToolBar::setActiveMarkupsNode(vtkMRMLMarkupsNode* newActiveNode
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLInteractionNode* qMRMLMarkupsToolBar::interactionNode()const
+vtkMRMLInteractionNode* qMRMLMarkupsToolBar::interactionNode() const
 {
   Q_D(const qMRMLMarkupsToolBar);
   return d->InteractionNode;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSelectionNode* qMRMLMarkupsToolBar::selectionNode()const
+vtkMRMLSelectionNode* qMRMLMarkupsToolBar::selectionNode() const
 {
   Q_D(const qMRMLMarkupsToolBar);
   return d->SelectionNode;

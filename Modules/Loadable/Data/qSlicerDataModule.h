@@ -38,21 +38,21 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModule
   Q_INTERFACES(qSlicerLoadableModule);
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerDataModule(QObject* parent=nullptr);
+  qSlicerDataModule(QObject* parent = nullptr);
   ~qSlicerDataModule() override;
 
   void setup() override;
 
-  QIcon icon()const override;
-  QStringList categories()const override;
-  QStringList dependencies()const override;
+  QIcon icon() const override;
+  QStringList categories() const override;
+  QStringList dependencies() const override;
 
   qSlicerGetTitleMacro(tr("Data"));
 
   /// Return help/acknowledgement text
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 protected:
 
   /// Create and return the widget representation associated to this module

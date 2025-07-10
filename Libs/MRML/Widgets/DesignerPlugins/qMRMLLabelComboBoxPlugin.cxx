@@ -4,7 +4,7 @@
 #include "qMRMLLabelComboBox.h"
 
 //-----------------------------------------------------------------------------
-qMRMLLabelComboBoxPlugin::qMRMLLabelComboBoxPlugin(QObject* _parent):QObject(_parent)
+qMRMLLabelComboBoxPlugin::qMRMLLabelComboBoxPlugin(QObject* _parent): QObject(_parent)
 {
 }
 

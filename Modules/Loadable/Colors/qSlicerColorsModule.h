@@ -39,28 +39,28 @@ class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModule
 
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerColorsModule(QObject* parent=nullptr);
+  qSlicerColorsModule(QObject* parent = nullptr);
   ~qSlicerColorsModule() override;
 
-  QStringList categories()const override;
-  QIcon icon()const override;
+  QStringList categories() const override;
+  QIcon icon() const override;
 
   qSlicerGetTitleMacro(tr("Colors"));
 
   /// Help to use the module
-  QString helpText()const override;
+  QString helpText() const override;
 
   /// Return acknowledgments
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
 
   /// Return the authors of the module
-  QStringList contributors()const override;
+  QStringList contributors() const override;
 
   /// List dependencies
-  QStringList dependencies()const override;
+  QStringList dependencies() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
   void setMRMLScene(vtkMRMLScene* newMRMLScene) override;
 

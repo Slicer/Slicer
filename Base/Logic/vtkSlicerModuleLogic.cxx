@@ -44,7 +44,7 @@ vtkMRMLAbstractLogic* vtkSlicerModuleLogic::GetModuleLogic(const char* moduleNam
 }
 
 //----------------------------------------------------------------------------
-std::string vtkSlicerModuleLogic::GetModuleShareDirectory()const
+std::string vtkSlicerModuleLogic::GetModuleShareDirectory() const
 {
   return this->ModuleShareDirectory;
 }

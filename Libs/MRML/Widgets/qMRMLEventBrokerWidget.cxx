@@ -60,15 +60,15 @@ public:
   qMRMLEventBrokerWidgetPrivate();
   void setupUi(QWidget*);
 
-  vtkObservation* observation(QTreeWidgetItem* item)const;
+  vtkObservation* observation(QTreeWidgetItem* item) const;
 
-  QTreeWidgetItem* itemFromSubject(vtkObject* subject)const;
-  QTreeWidgetItem* itemFromEvent(QTreeWidgetItem* subjectItem, unsigned long long event)const;
-  QTreeWidgetItem* itemFromObservation(vtkObservation* observation)const;
+  QTreeWidgetItem* itemFromSubject(vtkObject* subject) const;
+  QTreeWidgetItem* itemFromEvent(QTreeWidgetItem* subjectItem, unsigned long long event) const;
+  QTreeWidgetItem* itemFromObservation(vtkObservation* observation) const;
 
-  vtkObject* objectFromItem(QTreeWidgetItem*)const;
+  vtkObject* objectFromItem(QTreeWidgetItem*) const;
 
-  void setObjectToItem(QTreeWidgetItem* item, vtkObject* object)const;
+  void setObjectToItem(QTreeWidgetItem* item, vtkObject* object) const;
   void showItem(QTreeWidgetItem* item);
 
   void addObservation(vtkObservation* observation);
@@ -83,7 +83,7 @@ qMRMLEventBrokerWidgetPrivate::qMRMLEventBrokerWidgetPrivate()
 }
 
 //------------------------------------------------------------------------------
-vtkObservation* qMRMLEventBrokerWidgetPrivate::observation(QTreeWidgetItem* item)const
+vtkObservation* qMRMLEventBrokerWidgetPrivate::observation(QTreeWidgetItem* item) const
 {
   if (!item || !item->parent() || !item->parent()->parent())
   {
@@ -108,7 +108,7 @@ vtkObservation* qMRMLEventBrokerWidgetPrivate::observation(QTreeWidgetItem* item
 }
 
 //------------------------------------------------------------------------------
-QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromSubject(vtkObject* subject)const
+QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromSubject(vtkObject* subject) const
 {
   if (!subject)
   {
@@ -131,7 +131,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromSubject(vtkObject* subje
 }
 
 //------------------------------------------------------------------------------
-QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromEvent(QTreeWidgetItem* subjectItem, unsigned long long event)const
+QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromEvent(QTreeWidgetItem* subjectItem, unsigned long long event) const
 {
   if (!subjectItem)
   {
@@ -157,7 +157,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromEvent(QTreeWidgetItem* s
 }
 
 //------------------------------------------------------------------------------
-QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservation* observation)const
+QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservation* observation) const
 {
   if (!observation)
   {
@@ -183,7 +183,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservati
 }
 
 //------------------------------------------------------------------------------
-void qMRMLEventBrokerWidgetPrivate::setObjectToItem(QTreeWidgetItem* item, vtkObject* object)const
+void qMRMLEventBrokerWidgetPrivate::setObjectToItem(QTreeWidgetItem* item, vtkObject* object) const
 {
   item->setData(NameColumn, Qt::UserRole,
     QVariant::fromValue(reinterpret_cast<long long>(object)));
@@ -208,7 +208,7 @@ void qMRMLEventBrokerWidgetPrivate::setObjectToItem(QTreeWidgetItem* item, vtkOb
 }
 
 //------------------------------------------------------------------------------
-vtkObject* qMRMLEventBrokerWidgetPrivate::objectFromItem(QTreeWidgetItem* item)const
+vtkObject* qMRMLEventBrokerWidgetPrivate::objectFromItem(QTreeWidgetItem* item) const
 {
   if (!item)
   {

@@ -86,7 +86,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
 
 public:
   typedef QStandardItemModel Superclass;
-  qMRMLSubjectHierarchyModel(QObject* parent=nullptr);
+  qMRMLSubjectHierarchyModel(QObject* parent = nullptr);
   ~qMRMLSubjectHierarchyModel() override;
 
   enum ItemDataRole
@@ -102,69 +102,69 @@ public:
     LastRole
   };
 
-  int nameColumn()const;
+  int nameColumn() const;
   void setNameColumn(int column);
 
-  int visibilityColumn()const;
+  int visibilityColumn() const;
   void setVisibilityColumn(int column);
 
-  int colorColumn()const;
+  int colorColumn() const;
   void setColorColumn(int column);
 
-  int transformColumn()const;
+  int transformColumn() const;
   void setTransformColumn(int column);
 
-  int descriptionColumn()const;
+  int descriptionColumn() const;
   void setDescriptionColumn(int column);
 
-  int idColumn()const;
+  int idColumn() const;
   void setIDColumn(int column);
 
-  bool noneEnabled()const;
+  bool noneEnabled() const;
   void setNoneEnabled(bool enable);
 
-  QString noneDisplay()const;
+  QString noneDisplay() const;
   void setNoneDisplay(const QString& displayName);
 
-  Qt::DropActions supportedDropActions()const override;
-  QMimeData* mimeData(const QModelIndexList& indexes)const override;
+  Qt::DropActions supportedDropActions() const override;
+  QMimeData* mimeData(const QModelIndexList& indexes) const override;
   bool dropMimeData(const QMimeData* data, Qt::DropAction action,
                             int row, int column, const QModelIndex& parent) override;
 
   Q_INVOKABLE virtual void setMRMLScene(vtkMRMLScene* scene);
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
-  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
+  vtkMRMLSubjectHierarchyNode* subjectHierarchyNode() const;
 
   /// nullptr until a valid scene is set
-  QStandardItem* subjectHierarchySceneItem()const;
+  QStandardItem* subjectHierarchySceneItem() const;
   /// Invalid until a valid scene is set
-  QModelIndex subjectHierarchySceneIndex()const;
-  virtual bool canBeAChild(vtkIdType itemID)const;
-  virtual bool canBeAParent(vtkIdType itemID)const;
+  QModelIndex subjectHierarchySceneIndex() const;
+  virtual bool canBeAChild(vtkIdType itemID) const;
+  virtual bool canBeAParent(vtkIdType itemID) const;
 
-  vtkIdType subjectHierarchyItemFromIndex(const QModelIndex& index)const;
-  vtkIdType subjectHierarchyItemFromItem(QStandardItem* item)const;
-  QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
-  QStandardItem* itemFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
+  vtkIdType subjectHierarchyItemFromIndex(const QModelIndex& index) const;
+  vtkIdType subjectHierarchyItemFromItem(QStandardItem* item) const;
+  QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0) const;
+  QStandardItem* itemFromSubjectHierarchyItem(vtkIdType itemID, int column=0) const;
 
   /// Return all the QModelIndexes (all the columns) for a given subject hierarchy item
-  QModelIndexList indexes(vtkIdType itemID)const;
+  QModelIndexList indexes(vtkIdType itemID) const;
 
-  Q_INVOKABLE virtual vtkIdType parentSubjectHierarchyItem(vtkIdType itemID)const;
+  Q_INVOKABLE virtual vtkIdType parentSubjectHierarchyItem(vtkIdType itemID) const;
   /// Returns the row model index relative to its parent independently of any filtering or proxy model
   /// Must be reimplemented in derived classes
-  Q_INVOKABLE virtual int subjectHierarchyItemIndex(vtkIdType itemID)const;
+  Q_INVOKABLE virtual int subjectHierarchyItemIndex(vtkIdType itemID) const;
   /// Insert/move item in subject hierarchy under new parent
   Q_INVOKABLE virtual bool reparent(vtkIdType itemID, vtkIdType newParentID);
   /// Move item in subject hierarchy branch to a new row (re-order)
   Q_INVOKABLE virtual bool moveToRow(vtkIdType itemID, int newRow);
   /// Utility method that returns true if \a child has \a parent as ancestor (parent, grandparent, etc.)
   /// \sa isAffiliatedItem()
-  Q_INVOKABLE bool isAncestorItem(vtkIdType child, vtkIdType ancestor)const;
+  Q_INVOKABLE bool isAncestorItem(vtkIdType child, vtkIdType ancestor) const;
   /// Utility method that returns true if 2 nodes are child/parent (or any ancestor) for each other
   /// \sa isAncestorItem()
-  Q_INVOKABLE bool isAffiliatedItem(vtkIdType itemA, vtkIdType itemB)const;
+  Q_INVOKABLE bool isAffiliatedItem(vtkIdType itemA, vtkIdType itemB) const;
 
 signals:
   /// This signal is sent when a user is about to reparent an item by drag and drop
@@ -211,7 +211,7 @@ protected slots:
   void updateColumnCount();
 
 protected:
-  qMRMLSubjectHierarchyModel(qMRMLSubjectHierarchyModelPrivate* pimpl, QObject* parent=nullptr);
+  qMRMLSubjectHierarchyModel(qMRMLSubjectHierarchyModelPrivate* pimpl, QObject* parent = nullptr);
 
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);
@@ -222,7 +222,7 @@ protected:
   virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID);
   virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, QStandardItem* parent, int row=-1);
 
-  virtual QFlags<Qt::ItemFlag> subjectHierarchyItemFlags(vtkIdType itemID, int column)const;
+  virtual QFlags<Qt::ItemFlag> subjectHierarchyItemFlags(vtkIdType itemID, int column) const;
 
   virtual void updateItemFromSubjectHierarchyItem(
     QStandardItem* item, vtkIdType shItemID, int column );
@@ -239,7 +239,7 @@ protected:
   static void onEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);
 
   /// Must be reimplemented in subclasses that add new column types
-  virtual int maxColumnId()const;
+  virtual int maxColumnId() const;
 
 protected:
   QScopedPointer<qMRMLSubjectHierarchyModelPrivate> d_ptr;

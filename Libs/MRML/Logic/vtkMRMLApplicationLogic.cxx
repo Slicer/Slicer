@@ -180,13 +180,13 @@ void vtkMRMLApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSelectionNode* vtkMRMLApplicationLogic::GetSelectionNode()const
+vtkMRMLSelectionNode* vtkMRMLApplicationLogic::GetSelectionNode() const
 {
   return this->Internal->SelectionNode;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLInteractionNode* vtkMRMLApplicationLogic::GetInteractionNode()const
+vtkMRMLInteractionNode* vtkMRMLApplicationLogic::GetInteractionNode() const
 {
   return this->Internal->InteractionNode;
 }
@@ -199,13 +199,13 @@ void vtkMRMLApplicationLogic::SetColorLogic(vtkMRMLColorLogic* colorLogic)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLColorLogic* vtkMRMLApplicationLogic::GetColorLogic()const
+vtkMRMLColorLogic* vtkMRMLApplicationLogic::GetColorLogic() const
 {
   return this->Internal->ColorLogic;
 }
 
 //----------------------------------------------------------------------------
-vtkCollection* vtkMRMLApplicationLogic::GetSliceLogics()const
+vtkCollection* vtkMRMLApplicationLogic::GetSliceLogics() const
 {
   return this->Internal->SliceLogics;
 }
@@ -629,7 +629,7 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char* sdbFilePath, cons
 
   this->GetMRMLScene()->SetURL( mrmlFile.c_str() );
   int success = this->GetMRMLScene()->Connect(userMessages);
-  if ( !success )
+  if (!success)
   {
     vtkErrorMacro("Failed to read the scene");
     return false;

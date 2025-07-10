@@ -51,7 +51,7 @@
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchySegmentationsPluginPrivate: public QObject
+class qSlicerSubjectHierarchySegmentationsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchySegmentationsPlugin);
 protected:
@@ -164,7 +164,7 @@ qSlicerSubjectHierarchySegmentationsPlugin::~qSlicerSubjectHierarchySegmentation
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchySegmentationsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -198,7 +198,7 @@ bool qSlicerSubjectHierarchySegmentationsPlugin::addNodeToSubjectHierarchy(vtkMR
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchySegmentationsPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)const
+double qSlicerSubjectHierarchySegmentationsPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -312,7 +312,7 @@ bool qSlicerSubjectHierarchySegmentationsPlugin::reparentItemInsideSubjectHierar
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchySegmentationsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchySegmentationsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -340,13 +340,13 @@ double qSlicerSubjectHierarchySegmentationsPlugin::canOwnSubjectHierarchyItem(vt
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchySegmentationsPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchySegmentationsPlugin::roleForPlugin() const
 {
   return "Segmentation";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchySegmentationsPlugin::tooltip(vtkIdType itemID)const
+QString qSlicerSubjectHierarchySegmentationsPlugin::tooltip(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -402,7 +402,7 @@ QString qSlicerSubjectHierarchySegmentationsPlugin::tooltip(vtkIdType itemID)con
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchySegmentationsPlugin::helpText()const
+const QString qSlicerSubjectHierarchySegmentationsPlugin::helpText() const
 {
   //TODO:
   //return QString("<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">Create new Contour set from scratch</span></p>"
@@ -479,7 +479,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::setDisplayVisibility(vtkIdType 
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchySegmentationsPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchySegmentationsPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -504,7 +504,7 @@ int qSlicerSubjectHierarchySegmentationsPlugin::getDisplayVisibility(vtkIdType i
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchySegmentationsPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchySegmentationsPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchySegmentationsPlugin);
 
@@ -599,7 +599,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::showContextMenuActionsForItem(v
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchySegmentationsPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchySegmentationsPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchySegmentationsPlugin);
 

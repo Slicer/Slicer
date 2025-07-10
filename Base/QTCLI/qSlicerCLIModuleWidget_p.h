@@ -65,7 +65,7 @@ class vtkSlicerCLIModuleLogic;
 class qSlicerCLIModuleUIHelper;
 
 //-----------------------------------------------------------------------------
-class qSlicerCLIModuleWidgetPrivate: public QObject,
+class qSlicerCLIModuleWidgetPrivate : public QObject,
                                      public Ui_qSlicerCLIModuleWidget
 {
   Q_OBJECT
@@ -78,14 +78,14 @@ public:
 
   ///
   /// Convenient function to cast vtkSlicerLogic into vtkSlicerCLIModuleLogic
-  vtkSlicerCLIModuleLogic* logic()const;
+  vtkSlicerCLIModuleLogic* logic() const;
 
   ///
   /// Convenient function to cast vtkMRMLNode into vtkMRMLCommandLineModuleNode
-  vtkMRMLCommandLineModuleNode* commandLineModuleNode()const;
+  vtkMRMLCommandLineModuleNode* commandLineModuleNode() const;
 
   /// Convenient method to cast qSlicerAbstractModule into qSlicerCLIModule
-  qSlicerCLIModule* module()const;
+  qSlicerCLIModule* module() const;
 
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;

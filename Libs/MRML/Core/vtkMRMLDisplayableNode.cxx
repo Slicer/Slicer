@@ -119,7 +119,7 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   int numDisplayNodes = this->GetNumberOfNodeReferences(
     this->GetDisplayNodeReferenceRole());

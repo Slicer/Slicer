@@ -511,7 +511,7 @@ int vtkDataIOManager::GetUniqueTransferID ( )
   }
 
   // loop until found or return.
-  while ( !exists )
+  while (!exists)
   {
 
     // loop thru the existing data transfers
@@ -527,7 +527,7 @@ int vtkDataIOManager::GetUniqueTransferID ( )
       }
     }
     // finished looping -- did we find the id?
-    if ( exists )
+    if (exists)
     {
       // if so, try a new id
       id++;

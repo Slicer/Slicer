@@ -41,7 +41,7 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qSlicerTerminologyEditorButton : pub
   Q_OBJECT
 
 public:
-  explicit qSlicerTerminologyEditorButton(QWidget* parent=nullptr);
+  explicit qSlicerTerminologyEditorButton(QWidget* parent = nullptr);
   ~qSlicerTerminologyEditorButton() override;
 
 #ifndef __VTK_WRAP__
@@ -73,7 +73,7 @@ protected:
   void paintEvent(QPaintEvent* event) override;
 
   QScopedPointer<qSlicerTerminologyEditorButtonPrivate> d_ptr;
-private :
+private:
   Q_DECLARE_PRIVATE(qSlicerTerminologyEditorButton);
   Q_DISABLE_COPY(qSlicerTerminologyEditorButton);
 };

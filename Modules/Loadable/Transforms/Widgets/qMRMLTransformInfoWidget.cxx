@@ -36,7 +36,7 @@
 #include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
-class qMRMLTransformInfoWidgetPrivate: public Ui_qMRMLTransformInfoWidget
+class qMRMLTransformInfoWidgetPrivate : public Ui_qMRMLTransformInfoWidget
 {
   Q_DECLARE_PUBLIC(qMRMLTransformInfoWidget);
 
@@ -119,7 +119,7 @@ void qMRMLTransformInfoWidget::processEvent(
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLTransformNode* qMRMLTransformInfoWidget::mrmlTransformNode()const
+vtkMRMLTransformNode* qMRMLTransformInfoWidget::mrmlTransformNode() const
 {
   Q_D(const qMRMLTransformInfoWidget);
   return d->TransformNode.GetPointer();
@@ -132,7 +132,7 @@ void qMRMLTransformInfoWidget::setMRMLTransformNode(vtkMRMLNode* node)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLTransformInfoWidget::mrmlScene()const
+vtkMRMLScene* qMRMLTransformInfoWidget::mrmlScene() const
 {
   Q_D(const qMRMLTransformInfoWidget);
   return d->MRMLScene.GetPointer();

@@ -265,7 +265,7 @@ void vtkMRMLStorableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/
 void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   if (this->UserTagTable->GetNumberOfTags() > 0)
   {
     os << indent << "UserTagTable:\n";
@@ -353,7 +353,7 @@ vtkMRMLStorageNode* vtkMRMLStorableNode::GetStorageNode()
 
 
 /*
-std::vector<vtkMRMLStorageNode*> vtkMRMLStorableNode::GetStorageNodes()const
+std::vector<vtkMRMLStorageNode*> vtkMRMLStorableNode::GetStorageNodes() const
 {
 }
 

@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerTransformsModuleWidget(QWidget* parent=nullptr);
+  qSlicerTransformsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerTransformsModuleWidget() override;
 
   /// Reimplemented for internal reasons
@@ -95,7 +95,7 @@ protected slots:
 protected:
   ///
   /// Convenient method to return the coordinate system currently selected
-  int coordinateReference()const;
+  int coordinateReference() const;
 
 protected:
   QScopedPointer<qSlicerTransformsModuleWidgetPrivate> d_ptr;

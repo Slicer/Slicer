@@ -869,7 +869,7 @@ void vtkEventBroker::ProcessEventQueue ()
     vtkObservation* observation = this->EventQueue.front();
     observation->Register( this );
     int finished = 0;
-    while ( !finished )
+    while (!finished)
     {
       vtkObservation::CallType call = observation->GetCallDataList()->front();
       observation->GetCallDataList()->pop_front();

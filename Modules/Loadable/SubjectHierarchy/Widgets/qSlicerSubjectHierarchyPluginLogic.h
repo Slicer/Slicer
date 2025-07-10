@@ -59,7 +59,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
 
 public:
   typedef QObject Superclass;
-  qSlicerSubjectHierarchyPluginLogic(QObject* parent=nullptr);
+  qSlicerSubjectHierarchyPluginLogic(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyPluginLogic() override;
 
 public:
@@ -67,10 +67,10 @@ public:
   void setMRMLScene(vtkMRMLScene* scene) override;
 
   /// Assessor function for getting subject hierarchy plugin by name (for python)
-  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* subjectHierarchyPluginByName(QString name)const;
+  Q_INVOKABLE qSlicerSubjectHierarchyAbstractPlugin* subjectHierarchyPluginByName(QString name) const;
 
   /// Assessor function for getting currently selected subject hierarchy item (for python)
-  Q_INVOKABLE vtkIdType currentSubjectHierarchyItem()const;
+  Q_INVOKABLE vtkIdType currentSubjectHierarchyItem() const;
 
   /// Utility test function to be able to set currently selected subject hierarchy node from python
   /// Only used in python tests!

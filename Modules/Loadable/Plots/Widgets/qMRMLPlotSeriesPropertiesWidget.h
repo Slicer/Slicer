@@ -50,7 +50,7 @@ public:
   ~qMRMLPlotSeriesPropertiesWidget() override;
 
   /// Get \a PlotViewNode
-  vtkMRMLPlotSeriesNode* mrmlPlotSeriesNode()const;
+  vtkMRMLPlotSeriesNode* mrmlPlotSeriesNode() const;
 
 public slots:
 

@@ -40,7 +40,7 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-int qMRMLColorPickerWidgetTest2(int argc, char* argv [])
+int qMRMLColorPickerWidgetTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

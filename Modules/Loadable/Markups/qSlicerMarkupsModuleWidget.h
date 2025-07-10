@@ -44,7 +44,7 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerMarkupsModuleWidget(QWidget* parent=nullptr);
+  qSlicerMarkupsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerMarkupsModuleWidget() override;
 
   /// Set up the GUI from mrml when entering

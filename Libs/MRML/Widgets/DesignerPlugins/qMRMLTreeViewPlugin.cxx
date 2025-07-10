@@ -23,7 +23,7 @@
 #include "qMRMLTreeView.h"
 
 // --------------------------------------------------------------------------
-qMRMLTreeViewPlugin::qMRMLTreeViewPlugin(QObject* _parent):QObject(_parent)
+qMRMLTreeViewPlugin::qMRMLTreeViewPlugin(QObject* _parent): QObject(_parent)
 {
 }
 

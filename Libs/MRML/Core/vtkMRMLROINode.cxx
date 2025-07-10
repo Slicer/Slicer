@@ -17,7 +17,7 @@ vtkMRMLNodeNewMacro(vtkMRMLROINode);
 //----------------------------------------------------------------------------
 void vtkMRMLROINode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkObject::PrintSelf(os,indent);
+  vtkObject::PrintSelf(os, indent);
 
   os << "XYZ:\n";
   os << indent << XYZ[0] << " " << XYZ[1] << " " << XYZ[2] << "\n";
@@ -372,7 +372,7 @@ void vtkMRMLROINode::SetRadiusIJK(double* radiusIJK)
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLROINode::CanApplyNonLinearTransforms()const
+bool vtkMRMLROINode::CanApplyNonLinearTransforms() const
 {
   return true;
 }

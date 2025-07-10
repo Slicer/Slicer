@@ -45,21 +45,21 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorTableView : public QTableV
   /// \sa showOnlyNamedColors(), setShowOnlyNamedColors()
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
-  qMRMLColorTableView(QWidget* parent=nullptr);
+  qMRMLColorTableView(QWidget* parent = nullptr);
   ~qMRMLColorTableView() override;
 
-  Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;
-  Q_INVOKABLE qMRMLColorModel* colorModel()const;
-  Q_INVOKABLE qMRMLSortFilterColorProxyModel* sortFilterProxyModel()const;
+  Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode() const;
+  Q_INVOKABLE qMRMLColorModel* colorModel() const;
+  Q_INVOKABLE qMRMLSortFilterColorProxyModel* sortFilterProxyModel() const;
 
   /// Return the row of the color with name \a colorName.
   /// \sa rowFromColorIndex()
-  Q_INVOKABLE int rowFromColorName(const QString& colorName)const;
+  Q_INVOKABLE int rowFromColorName(const QString& colorName) const;
   /// Return the row of the color of index \a colorIndex.
   /// \sa rowFromColorIndex()
-  Q_INVOKABLE int rowFromColorIndex(int colorIndex)const;
+  Q_INVOKABLE int rowFromColorIndex(int colorIndex) const;
 
-  bool showOnlyNamedColors()const;
+  bool showOnlyNamedColors() const;
 
 public slots:
   void setMRMLColorNode(vtkMRMLColorNode* colorNode);

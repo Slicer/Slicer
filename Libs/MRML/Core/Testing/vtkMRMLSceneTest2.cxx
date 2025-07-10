@@ -175,14 +175,14 @@ protected:
   {
     this->NumberOfSingletonNodes = 0;
   }
-  ~vtkMRMLSceneCallback() override  = default;
+  ~vtkMRMLSceneCallback() override = default;
 
 }; // class vtkMRMLSceneCallback
 
 }; //namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneTest2(int argc, char* argv [] )
+int vtkMRMLSceneTest2(int argc, char* argv[])
 {
   if ( argc < 2 )
   {

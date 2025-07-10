@@ -83,7 +83,7 @@ private:
   static void cleanup();
 
 private:
-  qMRMLMarkupsOptionsWidgetsFactory(QObject* parent=nullptr);
+  qMRMLMarkupsOptionsWidgetsFactory(QObject* parent = nullptr);
   ~qMRMLMarkupsOptionsWidgetsFactory() override;
 
   Q_DISABLE_COPY(qMRMLMarkupsOptionsWidgetsFactory);

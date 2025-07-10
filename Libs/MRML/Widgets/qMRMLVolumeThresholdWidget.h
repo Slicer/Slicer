@@ -36,7 +36,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget
 public:
   /// Constructors
   typedef qMRMLVolumeWidget Superclass;
-  explicit qMRMLVolumeThresholdWidget(QWidget* parent=nullptr);
+  explicit qMRMLVolumeThresholdWidget(QWidget* parent = nullptr);
   ~qMRMLVolumeThresholdWidget() override;
 
   enum ControlMode
@@ -50,23 +50,23 @@ public:
   void setAutoThreshold(ControlMode autoWindowLevel);
 
   /// Is the thresholding activated
-  bool isOff()const;
+  bool isOff() const;
 
   ///
   /// Get lowerThreshold
-  double lowerThreshold()const;
+  double lowerThreshold() const;
 
   ///
   /// Get upperThreshold
-  double upperThreshold()const;
+  double upperThreshold() const;
 
   ///
   /// Get lower threshold bound
-  double lowerThresholdBound()const;
+  double lowerThresholdBound() const;
 
   ///
   /// Get upper threshold bound
-  double upperThresholdBound()const;
+  double upperThresholdBound() const;
 
 signals:
   ///

@@ -94,7 +94,7 @@ void vtkCacheManager::MapFileToURI ( const char* uri, const char* fname )
       added = 1;
     }
   }
-  if ( !added )
+  if (!added)
   {
     this->uriMap.insert (std::make_pair (remote, local ));
     this->Modified();

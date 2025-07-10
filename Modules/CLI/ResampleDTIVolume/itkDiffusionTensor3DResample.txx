@@ -137,7 +137,7 @@ DiffusionTensor3DResample<TInput, TOutput>
   Superclass::GenerateOutputInformation();
   // get pointers to the input and output
   OutputImagePointerType outputPtr = this->GetOutput( 0 );
-  if ( !outputPtr )
+  if (!outputPtr)
   {
     return;
   }

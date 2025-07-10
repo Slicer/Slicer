@@ -63,13 +63,13 @@ qSlicerTablesModule::qSlicerTablesModule(QObject* _parent)
 qSlicerTablesModule::~qSlicerTablesModule() = default;
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerTablesModule::icon()const
+QIcon qSlicerTablesModule::icon() const
 {
   return QIcon(":/Icons/Tables.png");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTablesModule::helpText()const
+QString qSlicerTablesModule::helpText() const
 {
   QString help =
     tr("The Tables module allows displaying and editing of spreadsheets.") + "<br>";
@@ -78,7 +78,7 @@ QString qSlicerTablesModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTablesModule::acknowledgementText()const
+QString qSlicerTablesModule::acknowledgementText() const
 {
   return tr("This work was was partially funded by OCAIRO, the Applied"
    " Cancer Research Unit program of Cancer Care Ontario, and Department of"
@@ -87,7 +87,7 @@ QString qSlicerTablesModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTablesModule::contributors()const
+QStringList qSlicerTablesModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Andras Lasso (PerkLab), Kevin Wang (PMH)");

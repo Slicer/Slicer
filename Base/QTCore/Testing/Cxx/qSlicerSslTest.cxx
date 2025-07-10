@@ -11,7 +11,7 @@
 #include "qSlicerCoreApplication.h"
 
 // ----------------------------------------------------------------------------
-class qSlicerSslTester: public QObject
+class qSlicerSslTester : public QObject
 {
   Q_OBJECT
   typedef qSlicerSslTester Self;

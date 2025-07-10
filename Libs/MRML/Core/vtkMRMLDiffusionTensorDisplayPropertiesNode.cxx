@@ -229,7 +229,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode* anode)
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "ScalarInvariant:             " << this->ScalarInvariant << "\n";
   os << indent << "GlyphGeometry:             " << this->GlyphGeometry << "\n";
   os << indent << "ColorGlyphBy:             " << this->ColorGlyphBy << "\n";

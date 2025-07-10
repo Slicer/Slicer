@@ -77,7 +77,7 @@ bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
 }
 
 //-----------------------------------------------------------------------------
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 

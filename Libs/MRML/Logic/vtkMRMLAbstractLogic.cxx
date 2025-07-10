@@ -132,7 +132,7 @@ void vtkMRMLAbstractLogic::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-vtkMRMLApplicationLogic* vtkMRMLAbstractLogic::GetMRMLApplicationLogic()const
+vtkMRMLApplicationLogic* vtkMRMLAbstractLogic::GetMRMLApplicationLogic() const
 {
   return this->Internal->MRMLApplicationLogic;
 }
@@ -238,13 +238,13 @@ void vtkMRMLAbstractLogic
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLScene* vtkMRMLAbstractLogic::GetMRMLScene()const
+vtkMRMLScene* vtkMRMLAbstractLogic::GetMRMLScene() const
 {
   return this->Internal->MRMLScene;
 }
 
 //----------------------------------------------------------------------------
-vtkObserverManager* vtkMRMLAbstractLogic::GetMRMLSceneObserverManager()const
+vtkObserverManager* vtkMRMLAbstractLogic::GetMRMLSceneObserverManager() const
 {
   return this->Internal->MRMLSceneObserverManager;
 }
@@ -256,7 +256,7 @@ vtkCallbackCommand* vtkMRMLAbstractLogic::GetMRMLSceneCallbackCommand()
 }
 
 //----------------------------------------------------------------------------
-vtkObserverManager* vtkMRMLAbstractLogic::GetMRMLNodesObserverManager()const
+vtkObserverManager* vtkMRMLAbstractLogic::GetMRMLNodesObserverManager() const
 {
   return this->Internal->MRMLNodesObserverManager;
 }
@@ -268,7 +268,7 @@ vtkCallbackCommand* vtkMRMLAbstractLogic::GetMRMLNodesCallbackCommand()
 }
 
 //----------------------------------------------------------------------------
-vtkObserverManager* vtkMRMLAbstractLogic::GetMRMLLogicsObserverManager()const
+vtkObserverManager* vtkMRMLAbstractLogic::GetMRMLLogicsObserverManager() const
 {
   return this->Internal->MRMLLogicsObserverManager;
 }
@@ -372,7 +372,7 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene* ne
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAbstractLogic::GetProcessingMRMLSceneEvent()const
+int vtkMRMLAbstractLogic::GetProcessingMRMLSceneEvent() const
 {
   return this->Internal->ProcessingMRMLSceneEvent;
 }
@@ -393,13 +393,13 @@ void vtkMRMLAbstractLogic::SetInMRMLSceneCallbackFlag(int flag)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAbstractLogic::GetInMRMLSceneCallbackFlag()const
+int vtkMRMLAbstractLogic::GetInMRMLSceneCallbackFlag() const
 {
   return this->Internal->InMRMLSceneCallbackFlag;
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLAbstractLogic::EnterMRMLSceneCallback()const
+bool vtkMRMLAbstractLogic::EnterMRMLSceneCallback() const
 {
   return true;
 }
@@ -412,13 +412,13 @@ void vtkMRMLAbstractLogic::SetInMRMLNodesCallbackFlag(int flag)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAbstractLogic::GetInMRMLNodesCallbackFlag()const
+int vtkMRMLAbstractLogic::GetInMRMLNodesCallbackFlag() const
 {
   return this->Internal->InMRMLNodesCallbackFlag;
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLAbstractLogic::EnterMRMLNodesCallback()const
+bool vtkMRMLAbstractLogic::EnterMRMLNodesCallback() const
 {
   return true;
 }
@@ -431,13 +431,13 @@ void vtkMRMLAbstractLogic::SetInMRMLLogicsCallbackFlag(int flag)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAbstractLogic::GetInMRMLLogicsCallbackFlag()const
+int vtkMRMLAbstractLogic::GetInMRMLLogicsCallbackFlag() const
 {
   return this->Internal->InMRMLLogicsCallbackFlag;
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLAbstractLogic::EnterMRMLLogicsCallback()const
+bool vtkMRMLAbstractLogic::EnterMRMLLogicsCallback() const
 {
   return true;
 }
@@ -551,7 +551,7 @@ void vtkMRMLAbstractLogic
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLAbstractLogic::GetDisableModifiedEvent()const
+bool vtkMRMLAbstractLogic::GetDisableModifiedEvent() const
 {
   return this->Internal->DisableModifiedEvent;
 }
@@ -587,7 +587,7 @@ int vtkMRMLAbstractLogic::InvokePendingModifiedEvent ()
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLAbstractLogic::GetPendingModifiedEventCount()const
+int vtkMRMLAbstractLogic::GetPendingModifiedEventCount() const
 {
   return this->Internal->ModifiedEventPending;
 }

@@ -56,21 +56,21 @@ public:
 
   /// Get the module factory manager that contains the list of modules
   /// and modules to ignore
-  Q_INVOKABLE qSlicerAbstractModuleFactoryManager* factoryManager()const;
+  Q_INVOKABLE qSlicerAbstractModuleFactoryManager* factoryManager() const;
 
-  Q_INVOKABLE qSlicerModuleFactoryFilterModel* filterModel()const;
+  Q_INVOKABLE qSlicerModuleFactoryFilterModel* filterModel() const;
 
   /// Return the list of all loaded, ignored and toIgnore modules.
-  QStringList modules()const;
+  QStringList modules() const;
 
-  bool isCheckBoxVisible()const;
+  bool isCheckBoxVisible() const;
   /// Return the list of checked modules. It is the list of all the modules
   /// to load at startup.
-  QStringList checkedModules()const;
+  QStringList checkedModules() const;
 
   /// Return the list of unchecked modules. Please note it is the same
   /// than the qSlicerModuleFactoryManager::modulesToIgnore property.
-  QStringList uncheckedModules()const;
+  QStringList uncheckedModules() const;
 
 public slots:
   /// Set the module factory manager that contains the list of modules

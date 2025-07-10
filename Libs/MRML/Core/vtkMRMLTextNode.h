@@ -18,7 +18,7 @@
 // MRML includes
 #include <vtkMRMLStorableNode.h>
 
-class  VTK_MRML_EXPORT vtkMRMLTextNode : public vtkMRMLStorableNode
+class VTK_MRML_EXPORT vtkMRMLTextNode : public vtkMRMLStorableNode
 {
 public:
 

@@ -38,28 +38,28 @@ qSlicerReformatModule : public qSlicerLoadableModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerReformatModule(QObject* parent=nullptr);
+  explicit qSlicerReformatModule(QObject* parent = nullptr);
   ~qSlicerReformatModule() override;
 
   qSlicerGetTitleMacro(tr("Reformat"));
 
   /// Help to use the module
-  QString helpText()const override;
+  QString helpText() const override;
 
   /// Return acknowledgements
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
 
   /// Return a custom icon for the module
-  QIcon icon()const override;
+  QIcon icon() const override;
 
   /// Return the category for the module
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Return the contributor for the module
-  QStringList contributors()const override;
+  QStringList contributors() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 protected:
 

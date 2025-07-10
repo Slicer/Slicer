@@ -93,7 +93,7 @@ QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const 
 
 // --------------------------------------------------------------------------
 int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption* option,
-                              const QWidget* widget)const
+                              const QWidget* widget) const
 {
   switch(metric)
   {
@@ -124,7 +124,7 @@ int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption* option,
 }
 
 //------------------------------------------------------------------------------
-QPalette qSlicerStyle::standardPalette()const
+QPalette qSlicerStyle::standardPalette() const
 {
   QPalette palette = standardLightPalette();
 
@@ -140,7 +140,7 @@ QPalette qSlicerStyle::standardPalette()const
 }
 
 //------------------------------------------------------------------------------
-QPalette qSlicerStyle::standardLightPalette()const
+QPalette qSlicerStyle::standardLightPalette() const
 {
   QPalette palette = this->Superclass::standardPalette();
   // Customizations from the standard style ("fusion")
@@ -177,7 +177,7 @@ QPalette qSlicerStyle::standardLightPalette()const
 }
 
 //------------------------------------------------------------------------------
-QPalette qSlicerStyle::standardDarkPalette()const
+QPalette qSlicerStyle::standardDarkPalette() const
 {
   QPalette palette = this->Superclass::standardPalette();
   // See https://doc.qt.io/qt-5/qpalette.html#ColorRole-enum

@@ -114,7 +114,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::PrintSelf(ostream& os, vtkInd
 {
  //int idx;
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 //  os << indent << "ColorMode:             " << this->ColorMode << "\n";
 }
 //----------------------------------------------------------------------------
@@ -282,7 +282,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateAssignedAttribute()
       this->SliceImagePort != nullptr)
   {
           int ScalarInvariant =  0;
-          if ( DiffusionTensorDisplayPropertiesNode )
+          if (DiffusionTensorDisplayPropertiesNode)
           {
             ScalarInvariant = DiffusionTensorDisplayPropertiesNode->GetColorGlyphBy();
           }

@@ -40,7 +40,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML (MRML) file
@@ -57,7 +57,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
-  const char* GetNodeTagName () override {return "DiffusionTensorVolumeSliceDisplayNode";}
+  const char* GetNodeTagName() override {return "DiffusionTensorVolumeSliceDisplayNode";}
 
   ///
   /// Updates this node if it depends on other nodes

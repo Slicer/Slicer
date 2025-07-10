@@ -188,7 +188,7 @@ qSlicerMarkupsModule::qSlicerMarkupsModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerMarkupsModule::categories()const
+QStringList qSlicerMarkupsModule::categories() const
 {
   return QStringList() << "" << qSlicerAbstractCoreModule::tr("Informatics");
 }
@@ -197,7 +197,7 @@ QStringList qSlicerMarkupsModule::categories()const
 qSlicerMarkupsModule::~qSlicerMarkupsModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsModule::helpText()const
+QString qSlicerMarkupsModule::helpText() const
 {
   QString help = tr(
     "A module to create and manage markups in 2D and 3D."
@@ -207,13 +207,13 @@ QString qSlicerMarkupsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsModule::acknowledgementText()const
+QString qSlicerMarkupsModule::acknowledgementText() const
 {
   return tr("This work was supported by NAMIC, NAC, and the Slicer Community.");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerMarkupsModule::contributors()const
+QStringList qSlicerMarkupsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Nicole Aucoin (BWH)");
@@ -221,7 +221,7 @@ QStringList qSlicerMarkupsModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerMarkupsModule::icon()const
+QIcon qSlicerMarkupsModule::icon() const
 {
   return QIcon(":/Icons/Markups.png");
 }

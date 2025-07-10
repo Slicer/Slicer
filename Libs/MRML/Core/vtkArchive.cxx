@@ -230,7 +230,7 @@ vtkArchive::~vtkArchive() = default;
 //----------------------------------------------------------------------------
 void vtkArchive::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //-----------------------------------------------------------------------------

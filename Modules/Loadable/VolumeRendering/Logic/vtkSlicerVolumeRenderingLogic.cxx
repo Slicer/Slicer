@@ -88,7 +88,7 @@ vtkSlicerVolumeRenderingLogic::~vtkSlicerVolumeRenderingLogic()
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "Display nodes:" << std::endl;
   for (unsigned int i = 0; i < this->DisplayNodes.size(); ++i)
   {
@@ -1344,7 +1344,7 @@ bool vtkSlicerVolumeRenderingLogic::LoadPresets(vtkMRMLScene* scene)
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerVolumeRenderingLogic::IsDifferentFunction(vtkPiecewiseFunction* function1, vtkPiecewiseFunction* function2)const
+bool vtkSlicerVolumeRenderingLogic::IsDifferentFunction(vtkPiecewiseFunction* function1, vtkPiecewiseFunction* function2) const
 {
   if ((function1 != nullptr) ^ (function2 != nullptr))
   {
@@ -1378,7 +1378,7 @@ bool vtkSlicerVolumeRenderingLogic::IsDifferentFunction(vtkPiecewiseFunction* fu
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerVolumeRenderingLogic::IsDifferentFunction(vtkColorTransferFunction* function1, vtkColorTransferFunction* function2)const
+bool vtkSlicerVolumeRenderingLogic::IsDifferentFunction(vtkColorTransferFunction* function1, vtkColorTransferFunction* function2) const
 {
   if ((function1 != nullptr) ^ (function2 != nullptr))
   {

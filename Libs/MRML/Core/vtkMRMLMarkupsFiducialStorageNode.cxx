@@ -52,8 +52,8 @@ static const int FIELD_AUTOCREATED = 15;
 class CsvCodec
 {
 public:
-  CsvCodec()  = default;
-  ~CsvCodec()  = default;
+  CsvCodec() = default;
+  ~CsvCodec() = default;
 
   void ReadFromString(const std::string& row)
   {
@@ -271,7 +271,7 @@ void vtkMRMLMarkupsFiducialStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------

@@ -22,7 +22,7 @@
 #include "qMRMLPlotWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLPlotWidgetPlugin::qMRMLPlotWidgetPlugin(QObject* _parent):QObject(_parent)
+qMRMLPlotWidgetPlugin::qMRMLPlotWidgetPlugin(QObject* _parent): QObject(_parent)
 {
 }
 

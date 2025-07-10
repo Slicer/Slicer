@@ -68,7 +68,7 @@ int DoIt( int argc, char* argv[], T )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -132,7 +132,7 @@ int main( int argc, char* argv[] )
     std::cerr << excep.what() << std::endl;
     return EXIT_FAILURE;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cerr << "Unknown exception caught !" << std::endl;
     return EXIT_FAILURE;

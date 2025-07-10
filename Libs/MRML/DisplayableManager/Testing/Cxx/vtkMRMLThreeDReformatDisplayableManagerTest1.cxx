@@ -875,7 +875,7 @@ namespace
 {
 
 //----------------------------------------------------------------------------
-class vtkAbortCommand: public vtkCommand
+class vtkAbortCommand : public vtkCommand
 {
 public:
   static vtkAbortCommand* New(){ return new vtkAbortCommand; }
@@ -898,7 +898,7 @@ public:
   {
     this->RenderWindow->Render();
   }
-  vtkRenderCallback()  = default;
+  vtkRenderCallback() = default;
   vtkRenderWindow* RenderWindow{nullptr};
 };
 

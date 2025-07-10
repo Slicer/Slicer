@@ -188,7 +188,7 @@ void qMRMLLabelComboBox::setCurrentColor(const QString& color)
 }
 
 // ------------------------------------------------------------------------------
-QString qMRMLLabelComboBox::currentColorName()const
+QString qMRMLLabelComboBox::currentColorName() const
 {
   Q_D(const qMRMLLabelComboBox);
   return d->ComboBox->currentText();

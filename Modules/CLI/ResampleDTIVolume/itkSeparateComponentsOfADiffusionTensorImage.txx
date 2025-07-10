@@ -70,7 +70,7 @@ SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>
   for ( int i = 0; i < 6; i++ )
   {
     OutputImagePointerType outputPtr = this->GetOutput( i );
-    if ( !outputPtr )
+    if (!outputPtr)
     {
       return;
     }

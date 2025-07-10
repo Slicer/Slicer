@@ -23,7 +23,7 @@
 
 
 
-int qSlicerCamerasModuleWidgetTest1(int argc, char* argv [] )
+int qSlicerCamerasModuleWidgetTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);
 

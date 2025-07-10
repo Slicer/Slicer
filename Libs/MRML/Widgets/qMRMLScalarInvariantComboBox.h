@@ -44,14 +44,14 @@ class QMRML_WIDGETS_EXPORT qMRMLScalarInvariantComboBox : public QWidget
   Q_PROPERTY(int scalarInvariant READ scalarInvariant WRITE setScalarInvariant)
 
 public:
-  qMRMLScalarInvariantComboBox(QWidget* parent=nullptr);
+  qMRMLScalarInvariantComboBox(QWidget* parent = nullptr);
   ~qMRMLScalarInvariantComboBox() override;
 
   /// Return the optionally set display properties node set
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* displayPropertiesNode()const;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* displayPropertiesNode() const;
 
   /// Returns the currently selected scalar invariant
-  int scalarInvariant()const;
+  int scalarInvariant() const;
 
 public slots:
   /// Set the volume node properties to synchronize the combobox with.

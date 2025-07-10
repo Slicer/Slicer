@@ -543,7 +543,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 }
 
 //------------------------------------------------------------------------------
-QList<qSlicerDICOMExportable*> qSlicerDICOMTagEditorWidget::exportables()const
+QList<qSlicerDICOMExportable*> qSlicerDICOMTagEditorWidget::exportables() const
 {
   Q_D(const qSlicerDICOMTagEditorWidget);
   return d->Exportables;

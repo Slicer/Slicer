@@ -138,21 +138,21 @@ qSlicerVolumeRenderingPresetComboBox::qSlicerVolumeRenderingPresetComboBox(QWidg
 qSlicerVolumeRenderingPresetComboBox::~qSlicerVolumeRenderingPresetComboBox() = default;
 
 // --------------------------------------------------------------------------
-vtkMRMLNode* qSlicerVolumeRenderingPresetComboBox::currentNode()const
+vtkMRMLNode* qSlicerVolumeRenderingPresetComboBox::currentNode() const
 {
   Q_D(const qSlicerVolumeRenderingPresetComboBox);
   return d->PresetComboBox->currentNode();
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerVolumeRenderingPresetComboBox::currentNodeID()const
+QString qSlicerVolumeRenderingPresetComboBox::currentNodeID() const
 {
   Q_D(const qSlicerVolumeRenderingPresetComboBox);
   return d->PresetComboBox->currentNodeID();
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLVolumePropertyNode* qSlicerVolumeRenderingPresetComboBox::mrmlVolumePropertyNode()const
+vtkMRMLVolumePropertyNode* qSlicerVolumeRenderingPresetComboBox::mrmlVolumePropertyNode() const
 {
   Q_D(const qSlicerVolumeRenderingPresetComboBox);
   return d->VolumePropertyNode;
@@ -331,7 +331,7 @@ void qSlicerVolumeRenderingPresetComboBox::applyPreset(vtkMRMLNode* node)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerVolumeRenderingPresetComboBox::showIcons()const
+bool qSlicerVolumeRenderingPresetComboBox::showIcons() const
 {
   Q_D(const qSlicerVolumeRenderingPresetComboBox);
   return d->PresetComboBox->showIcons();

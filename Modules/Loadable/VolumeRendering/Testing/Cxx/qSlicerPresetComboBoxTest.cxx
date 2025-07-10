@@ -45,7 +45,7 @@
 #include <vtkPiecewiseFunction.h>
 
 // ----------------------------------------------------------------------------
-class qSlicerPresetComboBoxTester: public QObject
+class qSlicerPresetComboBoxTester : public QObject
 {
   Q_OBJECT
 

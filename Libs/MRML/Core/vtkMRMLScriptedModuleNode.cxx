@@ -125,7 +125,7 @@ const char* vtkMRMLScriptedModuleNode::GetNodeTagName()
 //----------------------------------------------------------------------------
 void vtkMRMLScriptedModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  vtkMRMLNode::PrintSelf(os, indent);
 
   std::map<std::string, std::string>::iterator iter;
 

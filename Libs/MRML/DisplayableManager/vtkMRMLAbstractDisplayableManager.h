@@ -170,7 +170,7 @@ protected:
   vtkCallbackCommand* GetWidgetsCallbackCommand();
 
   /// Get widget observerManager
-  vtkObserverManager* GetWidgetsObserverManager()const;
+  vtkObserverManager* GetWidgetsObserverManager() const;
 
   /// Called by SetMRMLScene - Used to initialize the Scene
   /// Observe all the events of the scene and call OnMRMLSceneEndClose()

@@ -43,7 +43,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule
 public:
 
   typedef qSlicerAbstractModule Superclass;
-  qSlicerCLIModule(QWidget* parent=nullptr);
+  qSlicerCLIModule(QWidget* parent = nullptr);
   ~qSlicerCLIModule() override;
 
   ///
@@ -87,7 +87,7 @@ public:
   QStringList contributors() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
   QImage logo() const override;
   void setLogo(const ModuleLogo& logo);
@@ -101,7 +101,7 @@ public:
   ModuleDescription& moduleDescription();
 
   /// Translate string from source language to current application language
-  QString translate(const std::string& sourceText)const;
+  QString translate(const std::string& sourceText) const;
 
 protected:
   ///

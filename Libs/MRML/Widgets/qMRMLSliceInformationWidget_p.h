@@ -54,7 +54,7 @@ class vtkMRMLSliceNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLSliceInformationWidgetPrivate: public QObject,
+class qMRMLSliceInformationWidgetPrivate : public QObject,
                                    public Ui_qMRMLSliceInformationWidget
 {
   Q_OBJECT

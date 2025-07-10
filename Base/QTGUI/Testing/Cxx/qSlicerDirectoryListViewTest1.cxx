@@ -33,7 +33,7 @@
 // STD includes
 #include <iostream>
 
-int qSlicerDirectoryListViewTest1(int argc, char* argv[] )
+int qSlicerDirectoryListViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

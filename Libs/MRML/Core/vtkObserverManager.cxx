@@ -95,7 +95,7 @@ void vtkObserverManager::SetObject(vtkObject** nodePtr, vtkObject* node)
 
   *nodePtr  = node ;
 
-  if ( node )
+  if (node)
   {
     vtkDebugMacro (<< "registering " << node << " with " << this << "\n");
     node->Register(this);

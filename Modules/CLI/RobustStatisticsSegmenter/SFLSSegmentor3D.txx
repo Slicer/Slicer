@@ -513,7 +513,7 @@ CSFLSSegmentor3D<TPixel>
     double thePhi;
     bool   found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
 
-    if ( found )
+    if (found)
     {
       double phi_new = thePhi - 1;
       mp_phi->SetPixel(idx, phi_new);
@@ -562,7 +562,7 @@ CSFLSSegmentor3D<TPixel>
     double thePhi;
     bool   found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
 
-    if ( found )
+    if (found)
     {
       double phi_new = thePhi + 1;
       mp_phi->SetPixel(idx, phi_new);
@@ -612,7 +612,7 @@ CSFLSSegmentor3D<TPixel>
     double thePhi;
     bool   found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
 
-    if ( found )
+    if (found)
     {
       double phi_new = thePhi - 1;
       mp_phi->SetPixel(idx, phi_new);
@@ -656,7 +656,7 @@ CSFLSSegmentor3D<TPixel>
     double thePhi;
     bool   found = getPhiOfTheNbhdWhoIsClosestToZeroLevelInLayerCloserToZeroLevel(ix, iy, iz, thePhi);
 
-    if ( found )
+    if (found)
     {
       double phi_new = thePhi + 1;
       mp_phi->SetPixel(idx, phi_new);
@@ -929,7 +929,7 @@ void
 CSFLSSegmentor3D<TPixel>
 ::initializeSFLSFromMask()
 {
-  if ( !mp_mask )
+  if (!mp_mask)
   {
     std::cerr << "set mp_mask first.\n";
     raise(SIGABRT);
@@ -1391,21 +1391,21 @@ CSFLSSegmentor3D<TPixel>
     zok = 1;
   }
 
-  if ( xok )
+  if (xok)
   {
     dx  = (mp_phi->GetPixel(idx2) - mp_phi->GetPixel(idx1) ) / (2.0 * m_dx);
     dxx = (mp_phi->GetPixel(idx2) - 2.0 * (mp_phi->GetPixel(idx) ) + mp_phi->GetPixel(idx1) ) / (m_dx * m_dx);
     dx2 = dx * dx;
   }
 
-  if ( yok )
+  if (yok)
   {
     dy  = ( (mp_phi->GetPixel(idx4) - mp_phi->GetPixel(idx3) ) ) / (2.0 * m_dy);
     dyy = (mp_phi->GetPixel(idx4) - 2 * (mp_phi->GetPixel(idx) ) + mp_phi->GetPixel(idx3) ) / (m_dy * m_dy);
     dy2 = dy * dy;
   }
 
-  if ( zok )
+  if (zok)
   {
     dz  = ( (mp_phi->GetPixel(idx6) - mp_phi->GetPixel(idx5) ) ) / (2.0 * m_dz);
     dzz = (mp_phi->GetPixel(idx6) - 2.0 * (mp_phi->GetPixel(idx) ) + mp_phi->GetPixel(idx5) ) / (m_dz * m_dz);
@@ -1456,7 +1456,7 @@ typename CSFLSSegmentor3D<TPixel>::CSFLSLayer
 CSFLSSegmentor3D<TPixel>
 ::getZeroLayerAtIteration(unsigned long i)
 {
-  if ( !m_keepZeroLayerHistory )
+  if (!m_keepZeroLayerHistory)
   {
     std::cerr << "Error: no history stored.";
     std::cerr << "By default, they are not. Set keepZeroLayerHistory(true) *before* doSegmentation to keep history.\n";
@@ -1479,7 +1479,7 @@ void
 CSFLSSegmentor3D<TPixel>
 ::writeZeroLayerAtIterationToFile(unsigned long i, const char* name)
 {
-  if ( !m_keepZeroLayerHistory )
+  if (!m_keepZeroLayerHistory)
   {
     std::cerr << "Error: no history stored.";
     std::cerr << "By default, they are not. Set keepZeroLayerHistory(true) *before* doSegmentation to keep history.\n";

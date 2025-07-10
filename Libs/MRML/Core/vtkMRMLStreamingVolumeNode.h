@@ -41,7 +41,7 @@ Care Ontario.
 /// In this context, a frame is considered to be a compressed image that may require additional frames to decode to an image,
 /// and an image is the uncompressed pixel based representation.
 /// A video codec can be used to decode and encode between frame and image representations
-class  VTK_MRML_EXPORT vtkMRMLStreamingVolumeNode : public vtkMRMLVectorVolumeNode
+class VTK_MRML_EXPORT vtkMRMLStreamingVolumeNode : public vtkMRMLVectorVolumeNode
 {
 public:
   static vtkMRMLStreamingVolumeNode* New();

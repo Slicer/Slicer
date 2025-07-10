@@ -36,18 +36,18 @@ qSlicerLoadableModuleTemplateModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerLoadableModuleTemplateModule(QObject* parent=0);
+  explicit qSlicerLoadableModuleTemplateModule(QObject* parent = 0);
   ~qSlicerLoadableModuleTemplateModule() override;
 
   qSlicerGetTitleMacro(tr("qSlicerLoadableModuleTemplateModule"));
 
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
-  QIcon icon()const override;
+  QIcon icon() const override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
   QStringList dependencies() const override;
 
 protected:

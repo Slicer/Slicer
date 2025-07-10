@@ -50,7 +50,7 @@ public:
   qMRMLNodeAttributeTableView* tableView();
 
   /// Get the inspected MRML node
-  vtkMRMLNode* mrmlNode()const;
+  vtkMRMLNode* mrmlNode() const;
 
 public slots:
   /// Set the inspected MRML node

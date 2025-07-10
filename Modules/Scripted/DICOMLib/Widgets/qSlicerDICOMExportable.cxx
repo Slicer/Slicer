@@ -110,7 +110,7 @@ CTK_SET_CPP(qSlicerDICOMExportable, const double, setConfidence, Confidence)
 CTK_GET_CPP(qSlicerDICOMExportable, double, confidence, Confidence)
 
 //-----------------------------------------------------------------------------
-QMap<QString,QString> qSlicerDICOMExportable::tags()const
+QMap<QString,QString> qSlicerDICOMExportable::tags() const
 {
   Q_D(const qSlicerDICOMExportable);
   return d->Tags;

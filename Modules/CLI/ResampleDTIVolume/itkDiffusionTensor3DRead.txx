@@ -63,7 +63,7 @@ DiffusionTensor3DRead<TData>
       itk::MetaDataObjectBase::Pointer  entry = itr->second;
       MetaDataDoubleVectorType::Pointer entryvalue1
         = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
-      if ( entryvalue1 )
+      if (entryvalue1)
       {
         int pos = itr->first.find( "NRRD_measurement frame" );
         if ( pos != -1 )
@@ -82,7 +82,7 @@ DiffusionTensor3DRead<TData>
       // get the space orientation
       MetaDataStringType::Pointer entryvalue2
         = dynamic_cast<MetaDataStringType*>( entry.GetPointer() );
-      if ( entryvalue2 )
+      if (entryvalue2)
       {
         int pos = itr->first.find( "NRRD_space" );
         if ( pos != -1 )

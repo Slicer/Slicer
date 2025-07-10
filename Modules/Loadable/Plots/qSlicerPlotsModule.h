@@ -40,20 +40,20 @@ class Q_SLICER_QTMODULES_PLOTS_EXPORT qSlicerPlotsModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerPlotsModule(QObject* parent=nullptr);
+  explicit qSlicerPlotsModule(QObject* parent = nullptr);
   ~qSlicerPlotsModule() override;
 
   qSlicerGetTitleMacro(tr("Plots"));
 
-  QIcon icon()const override;
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QIcon icon() const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
-  QStringList categories()const override;
-  QStringList dependencies()const override;
+  QStringList categories() const override;
+  QStringList dependencies() const override;
 
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 protected:
 

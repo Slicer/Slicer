@@ -44,7 +44,7 @@
 
 //-----------------------------------------------------------------------------
 qMRMLUtils::qMRMLUtils(QObject* _parent)
-  :QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -102,7 +102,7 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformN
 
   transform->SetMatrix(matrix.GetPointer());
 
-  if ( global )
+  if (global)
   {
     transform->PostMultiply();
   }

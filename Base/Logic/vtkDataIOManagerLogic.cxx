@@ -157,7 +157,7 @@ void vtkDataIOManagerLogic::DeleteDataTransferFromCache ( vtkDataTransfer* dt )
   if ( dt != nullptr )
   {
     vtkDataIOManager* dm = this->GetDataIOManager();
-    if ( dm )
+    if (dm)
     {
       vtkCacheManager* cm = dm->GetCacheManager();
       if ( cm != nullptr )
@@ -177,7 +177,7 @@ void vtkDataIOManagerLogic::DeleteDataTransferFromCache ( vtkDataTransfer* dt )
 void vtkDataIOManagerLogic::ClearCache ()
 {
   vtkDataIOManager* dm = this->GetDataIOManager();
-  if ( dm )
+  if (dm)
   {
     vtkCacheManager* cm = dm->GetCacheManager();
     if ( cm != nullptr )
@@ -721,7 +721,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void* clientdata )
         this->GetApplicationLogic()->RequestModified( dt );
 
         vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast( node );
-        if ( !storableNode )
+        if (!storableNode)
         {
           vtkErrorMacro( "ApplyTransfer: could not get storable node for scheduled data transfer" );
           return;
@@ -743,7 +743,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void* clientdata )
           vtkErrorMacro("ApplyTransfer: unable to find a storage node in scheduled state.");
         }
         vtkMRMLStorageNode* storageNode = storableNode->GetNthStorageNode(storageNodeIndex);
-        if ( !storageNode )
+        if (!storageNode)
         {
           vtkErrorMacro( "ApplyTransfer: no storage node for scheduled data transfer" );
           return;
@@ -779,7 +779,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void* clientdata )
         this->GetApplicationLogic()->RequestModified( dt );
 
         vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast( node );
-        if ( !storableNode )
+        if (!storableNode)
         {
           vtkErrorMacro( "ApplyTransfer: Upload: could not get storable node for scheduled data transfer" );
           return;
@@ -798,7 +798,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void* clientdata )
           vtkErrorMacro("ApplyTransfer: upload: unable to find a storage node in scheduled state.");
         }
         vtkMRMLStorageNode* storageNode = storableNode->GetNthStorageNode(storageNodeIndex);
-        if ( !storageNode )
+        if (!storageNode)
         {
           vtkErrorMacro( "ApplyTransfer: Upload: no storage node for scheduled data transfer" );
           return;

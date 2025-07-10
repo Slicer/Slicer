@@ -75,20 +75,20 @@ public:
   /// Destructor
   ~qSlicerModuleFactoryFilterModel() override;
 
-  bool showToLoad()const;
-  bool showToIgnore()const;
-  bool showLoaded()const;
-  bool showIgnored()const;
-  bool showFailed()const;
-  bool showBuiltIn()const;
-  bool showTesting()const;
-  bool showHidden()const;
+  bool showToLoad() const;
+  bool showToIgnore() const;
+  bool showLoaded() const;
+  bool showIgnored() const;
+  bool showFailed() const;
+  bool showBuiltIn() const;
+  bool showTesting() const;
+  bool showHidden() const;
 
-  QStringList showModules()const;
+  QStringList showModules() const;
 
-  bool hideAllWhenShowModulesIsEmpty()const;
+  bool hideAllWhenShowModulesIsEmpty() const;
   void setHideAllWhenShowModulesIsEmpty(bool hide);
-  Qt::DropActions supportedDropActions()const override;
+  Qt::DropActions supportedDropActions() const override;
   bool dropMimeData(const QMimeData* data, Qt::DropAction action,
                             int row, int column, const QModelIndex& parent) override;
 
@@ -105,13 +105,13 @@ public slots:
   void setShowModules(const QStringList& modules);
 
 signals:
-  void showModulesChanged(const QStringList&)const;
+  void showModulesChanged(const QStringList&) const;
 protected:
   QScopedPointer<qSlicerModuleFactoryFilterModelPrivate> d_ptr;
 
   bool lessThan(const QModelIndex& leftIndex,
-                        const QModelIndex& rightIndex)const override;
-  bool filterAcceptsRow(int source_row, const QModelIndex& source_parent)const override;
+                        const QModelIndex& rightIndex) const override;
+  bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleFactoryFilterModel);

@@ -90,7 +90,7 @@ void PrintAvailableTests()
   }
 }
 
-int main(int ac, char* av[] )
+int main(int ac, char* av[])
 {
   itk::FloatingPointExceptions::Enable();
 
@@ -212,7 +212,7 @@ int main(int ac, char* av[] )
         }
 
         // if the best we can do still has errors, generate the error images
-        if ( bestBaselineStatus )
+        if (bestBaselineStatus)
         {
           RegressionTestImage(testFilename,
                               bestBaseline.c_str(),
@@ -242,7 +242,7 @@ int main(int ac, char* av[] )
       std::cerr << e.what() << "\n";
       result = -1;
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "ITK test driver caught an unknown exception!!!\n";
       result = -1;
@@ -351,14 +351,14 @@ int RegressionTestImage(const char* testImageFilename,
   DiffusionDiffType::Pointer diffusiondiff;
   int                        returnValue;
   // If it is not a DTI, we load the image as a scalar image
-  if ( !diffusion )
+  if (!diffusion)
   {
     returnValue = ReadImages<ImageType>( baselineImageFilename,
                                          testImageFilename,
                                          baselineImage,
                                          testImage
                                          );
-    if ( returnValue )
+    if (returnValue)
     {
       return returnValue;
     }
@@ -380,7 +380,7 @@ int RegressionTestImage(const char* testImageFilename,
                                                   diffusionBaselineImage,
                                                   diffusionTestImage
                                                   );
-    if ( returnValue )
+    if (returnValue)
     {
       return returnValue;
     }
@@ -405,7 +405,7 @@ int RegressionTestImage(const char* testImageFilename,
     RescaleType::Pointer rescale = RescaleType::New();
     rescale->SetOutputMinimum(itk::NumericTraits<unsigned char>::NonpositiveMin() );
     rescale->SetOutputMaximum(itk::NumericTraits<unsigned char>::max() );
-    if ( !diffusion )
+    if (!diffusion)
     {
       rescale->SetInput(diff->GetOutput() );
     }
@@ -448,7 +448,7 @@ int RegressionTestImage(const char* testImageFilename,
     diffName << testImageFilename << ".diff.png";
     try
     {
-      if ( !diffusion )
+      if (!diffusion)
       {
         rescale->SetInput(diff->GetOutput() );
       }
@@ -463,7 +463,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during rescale of " << diffName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during rescale of " << diffName.str() << std::endl;
     }
@@ -477,7 +477,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during write of " << diffName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during write of " << diffName.str() << std::endl;
     }
@@ -490,7 +490,7 @@ int RegressionTestImage(const char* testImageFilename,
     ImageType::Pointer baselineFA;
     // We need a scalar image to show the differences between the baseline image and the test image.
     // We compute the FA of both diffusion tensor images
-    if ( diffusion )
+    if (diffusion)
     {
       typedef itk::TensorFractionalAnisotropyImageFilter<DiffusionImageType, ImageType> FAFilterType;
       FAFilterType::Pointer testFAfilter = FAFilterType::New();
@@ -507,7 +507,7 @@ int RegressionTestImage(const char* testImageFilename,
     }
 
     std::ostringstream baseName;
-    if ( !diffusion )
+    if (!diffusion)
     {
       baseName << testImageFilename << ".base.png";
     }
@@ -517,7 +517,7 @@ int RegressionTestImage(const char* testImageFilename,
     }
     try
     {
-      if ( !diffusion )
+      if (!diffusion)
       {
         rescale->SetInput( baselineImage );
       }
@@ -532,7 +532,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during rescale of " << baseName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during rescale of " << baseName.str() << std::endl;
     }
@@ -546,7 +546,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during write of " << baseName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during write of " << baseName.str() << std::endl;
     }
@@ -556,7 +556,7 @@ int RegressionTestImage(const char* testImageFilename,
     std::cout << "</DartMeasurementFile>" << std::endl;
 
     ::std::ostringstream testName;
-    if ( !diffusion )
+    if (!diffusion)
     {
       testName << testImageFilename << ".test.png";
     }
@@ -566,7 +566,7 @@ int RegressionTestImage(const char* testImageFilename,
     }
     try
     {
-      if ( !diffusion )
+      if (!diffusion)
       {
         rescale->SetInput( testImage );
       }
@@ -581,7 +581,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during rescale of " << testName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during rescale of " << testName.str() << std::endl;
     }
@@ -595,7 +595,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during write of " << testName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during write of " << testName.str() << std::endl;
     }
@@ -636,7 +636,7 @@ std::map<std::string, int> RegressionTestBaselines(char* baselineFilename)
     std::ostringstream filename;
     filename << originalBaseline << "." << x << suffix;
     std::ifstream filestream(filename.str().c_str() );
-    if ( !filestream )
+    if (!filestream)
     {
       break;
     }

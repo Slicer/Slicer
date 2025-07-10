@@ -81,7 +81,7 @@ qSlicerSubjectHierarchyModule::qSlicerSubjectHierarchyModule(QObject* _parent)
 qSlicerSubjectHierarchyModule::~qSlicerSubjectHierarchyModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyModule::helpText()const
+QString qSlicerSubjectHierarchyModule::helpText() const
 {
   QString help =
     "The Subject hierarchy module provides a nice and intuitive tree view of the loaded data."
@@ -91,7 +91,7 @@ QString qSlicerSubjectHierarchyModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyModule::acknowledgementText()const
+QString qSlicerSubjectHierarchyModule::acknowledgementText() const
 {
   return "This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).";
 }
@@ -111,7 +111,7 @@ QStringList qSlicerSubjectHierarchyModule::contributors() const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerSubjectHierarchyModule::icon()const
+QIcon qSlicerSubjectHierarchyModule::icon() const
 {
   return QIcon(":/Icons/SubjectHierarchy.png");
 }

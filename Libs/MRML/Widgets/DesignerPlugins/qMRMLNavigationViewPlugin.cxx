@@ -23,7 +23,7 @@
 #include "qMRMLNavigationView.h"
 
 //-----------------------------------------------------------------------------
-qMRMLNavigationViewPlugin::qMRMLNavigationViewPlugin(QObject* _parent):QObject(_parent)
+qMRMLNavigationViewPlugin::qMRMLNavigationViewPlugin(QObject* _parent): QObject(_parent)
 {
 }
 

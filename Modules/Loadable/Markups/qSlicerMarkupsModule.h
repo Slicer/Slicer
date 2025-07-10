@@ -49,28 +49,28 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerMarkupsModule(QObject* parent=nullptr);
+  explicit qSlicerMarkupsModule(QObject* parent = nullptr);
   ~qSlicerMarkupsModule() override;
 
   qSlicerGetTitleMacro(tr("Markups"));
 
   /// Help to use the module
-  QString helpText()const override;
+  QString helpText() const override;
 
   /// Return acknowledgements
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
 
   /// Return the authors of the module
-  QStringList  contributors()const override;
+  QStringList  contributors() const override;
 
   /// Return a custom icon for the module
-  QIcon icon()const override;
+  QIcon icon() const override;
 
   /// Return the categories for the module
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
   void setMRMLScene(vtkMRMLScene* scene) override;
 

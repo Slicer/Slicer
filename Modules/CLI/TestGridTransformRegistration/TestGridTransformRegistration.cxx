@@ -171,7 +171,7 @@ int DoIt( int argc, char* argv[], T )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   // Print out the arguments (need to add --echo to the argument list

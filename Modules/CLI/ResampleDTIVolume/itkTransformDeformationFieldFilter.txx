@@ -89,7 +89,7 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
   Superclass::GenerateOutputInformation();
   // get pointers to the input and output
   OutputDeformationFieldPointerType outputPtr = this->GetOutput( 0 );
-  if ( !outputPtr )
+  if (!outputPtr)
   {
     return;
   }

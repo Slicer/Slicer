@@ -537,7 +537,7 @@ template <typename T> bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Gener
   }
 
   // Set the bulk transform
-  if ( bulkTransformItk )
+  if (bulkTransformItk)
   {
     std::string bulkTransformItkTransformName = bulkTransformItk->GetNameOfClass();
 

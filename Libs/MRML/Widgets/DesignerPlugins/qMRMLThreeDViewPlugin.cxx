@@ -4,7 +4,7 @@
 #include "qMRMLThreeDView.h"
 
 //-----------------------------------------------------------------------------
-qMRMLThreeDViewPlugin::qMRMLThreeDViewPlugin(QObject* _parent):QObject(_parent)
+qMRMLThreeDViewPlugin::qMRMLThreeDViewPlugin(QObject* _parent): QObject(_parent)
 {
 }
 

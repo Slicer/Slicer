@@ -871,7 +871,7 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
   vtkAlgorithmOutput* sliceImagePort = this->GetSliceImageDataConnection();
 
   vtkMRMLGlyphableVolumeDisplayNode* displayNode = vtkMRMLGlyphableVolumeDisplayNode::SafeDownCast( this->VolumeNode->GetDisplayNode() );
-  if ( !displayNode )
+  if (!displayNode)
   {
     return;
   }

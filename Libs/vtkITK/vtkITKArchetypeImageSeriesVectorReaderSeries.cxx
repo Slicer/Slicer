@@ -53,7 +53,7 @@ vtkITKArchetypeImageSeriesVectorReaderSeries::~vtkITKArchetypeImageSeriesVectorR
 //----------------------------------------------------------------------------
 void vtkITKArchetypeImageSeriesVectorReaderSeries::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "vtk ITK Archetype Image Series Vector Reader\n";
 }
 

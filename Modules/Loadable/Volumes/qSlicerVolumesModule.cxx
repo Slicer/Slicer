@@ -62,13 +62,13 @@ qSlicerVolumesModule::qSlicerVolumesModule(QObject* _parent)
 qSlicerVolumesModule::~qSlicerVolumesModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesModule::title()const
+QString qSlicerVolumesModule::title() const
 {
   return tr("Volumes");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesModule::helpText()const
+QString qSlicerVolumesModule::helpText() const
 {
   QString help = tr(
     "The Volumes Module is the interface for adjusting Window, Level, Threshold, "
@@ -79,7 +79,7 @@ QString qSlicerVolumesModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesModule::acknowledgementText()const
+QString qSlicerVolumesModule::acknowledgementText() const
 {
   QString acknowledgement = QString(
     "<center><table border=\"0\"><tr>"
@@ -94,7 +94,7 @@ QString qSlicerVolumesModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumesModule::contributors()const
+QStringList qSlicerVolumesModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Steve Pieper (Isomics)");
@@ -106,7 +106,7 @@ QStringList qSlicerVolumesModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerVolumesModule::icon()const
+QIcon qSlicerVolumesModule::icon() const
 {
   return QIcon(":/Icons/Medium/SlicerVolumes.png");
 }

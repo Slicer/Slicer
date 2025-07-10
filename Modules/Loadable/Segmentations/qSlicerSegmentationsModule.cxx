@@ -94,7 +94,7 @@ qSlicerSegmentationsModule::qSlicerSegmentationsModule(QObject* _parent)
 qSlicerSegmentationsModule::~qSlicerSegmentationsModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSegmentationsModule::helpText()const
+QString qSlicerSegmentationsModule::helpText() const
 {
   QString help = tr(
     "Segmentations module manages segmentations. Each segmentation can contain"
@@ -107,7 +107,7 @@ QString qSlicerSegmentationsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSegmentationsModule::acknowledgementText()const
+QString qSlicerSegmentationsModule::acknowledgementText() const
 {
   return tr("This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s "
             "ACRU program and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).");
@@ -130,13 +130,13 @@ QStringList qSlicerSegmentationsModule::contributors() const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSegmentationsModule::dependencies()const
+QStringList qSlicerSegmentationsModule::dependencies() const
 {
   return QStringList() << "Terminologies";
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerSegmentationsModule::icon()const
+QIcon qSlicerSegmentationsModule::icon() const
 {
   return QIcon(":/Icons/Segmentations.png");
 }

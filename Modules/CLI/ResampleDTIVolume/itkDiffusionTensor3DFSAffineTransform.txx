@@ -84,7 +84,7 @@ DiffusionTensor3DFSAffineTransform<TData>
     matrix = ComputeMatrixSquareRoot(
         this->m_TransformMatrix * TransformMatrixTranspose ).GetInverse();
   }
-  catch ( ... )
+  catch (...)
   {
     itkExceptionMacro(<< "Matrix is not invertible while computing rotation matrix" );
   }

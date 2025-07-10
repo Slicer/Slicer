@@ -73,7 +73,7 @@ public:
   void setInteractor(vtkRenderWindowInteractor* interactor) override;
 
   /// Returns the interactor observer of the view
-  Q_INVOKABLE vtkMRMLThreeDViewInteractorStyle* interactorObserver()const;
+  Q_INVOKABLE vtkMRMLThreeDViewInteractorStyle* interactorObserver() const;
 
   /// Add a displayable manager to the view,
   /// the displayable manager is proper to the 3D view and is not shared
@@ -91,7 +91,7 @@ public:
   Q_INVOKABLE  vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
 
   /// Get the 3D View node observed by view.
-  Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode()const;
+  Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode() const;
 
   /// Methods to rotate/reset the camera,
   /// Can defined a view axis by its index (from 0 to 5)
@@ -119,15 +119,15 @@ public:
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dropEvent(QDropEvent* event) override;
 
-  bool shadowsVisibility()const;
-  double ambientShadowsSizeScale()const;
-  double ambientShadowsVolumeOpacityThreshold()const;
-  double ambientShadowsIntensityScale()const;
-  double ambientShadowsIntensityShift()const;
+  bool shadowsVisibility() const;
+  double ambientShadowsSizeScale() const;
+  double ambientShadowsVolumeOpacityThreshold() const;
+  double ambientShadowsIntensityScale() const;
+  double ambientShadowsIntensityShift() const;
 
   /// Advanced option to directly access SSAO pass used to render the ambient shadows.
   /// Intended for experimentation and troubleshooting only.
-  Q_INVOKABLE vtkSSAOPass* ssaoPass()const;
+  Q_INVOKABLE vtkSSAOPass* ssaoPass() const;
 
 public slots:
 

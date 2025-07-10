@@ -207,7 +207,7 @@ int main(int ac, char* av[])
         }
 
         // if the best we can do still has errors, generate the error images
-        if ( bestBaselineStatus )
+        if (bestBaselineStatus)
         {
           RegressionTestImage(testFilename,
                               bestBaseline.c_str(),
@@ -237,7 +237,7 @@ int main(int ac, char* av[])
       std::cerr << e.what() << "\n";
       result = -1;
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "ITK test driver caught an unknown exception!!!\n";
       result = -1;
@@ -374,7 +374,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during rescale of " << diffName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during rescale of " << diffName.str() << std::endl;
     }
@@ -388,7 +388,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during write of " << diffName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during write of " << diffName.str() << std::endl;
     }
@@ -409,7 +409,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during rescale of " << baseName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during rescale of " << baseName.str() << std::endl;
     }
@@ -423,7 +423,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during write of " << baseName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during write of " << baseName.str() << std::endl;
     }
@@ -444,7 +444,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during rescale of " << testName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during rescale of " << testName.str() << std::endl;
     }
@@ -458,7 +458,7 @@ int RegressionTestImage(const char* testImageFilename,
       std::cerr << "Error during write of " << testName.str() << std::endl;
       std::cerr << e.what() << "\n";
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "Error during write of " << testName.str() << std::endl;
     }
@@ -499,7 +499,7 @@ std::map<std::string, int> RegressionTestBaselines(char* baselineFilename)
     std::ostringstream filename;
     filename << originalBaseline << "." << x << suffix;
     std::ifstream filestream( filename.str().c_str() );
-    if ( !filestream )
+    if (!filestream)
     {
       break;
     }

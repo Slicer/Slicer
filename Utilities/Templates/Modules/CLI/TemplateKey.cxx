@@ -51,7 +51,7 @@ int DoIt( int argc, char* argv[], TPixel )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 

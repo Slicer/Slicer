@@ -40,7 +40,7 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-int qMRMLColorModelTest1(int argc, char* argv [])
+int qMRMLColorModelTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

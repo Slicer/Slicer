@@ -63,7 +63,7 @@ public:
   virtual ~qSlicerVolumeRenderingModuleWidgetPrivate();
 
   virtual void setupUi(qSlicerVolumeRenderingModuleWidget*);
-  vtkMRMLVolumeRenderingDisplayNode* displayNodeForVolumeNode(vtkMRMLVolumeNode* volumeNode)const;
+  vtkMRMLVolumeRenderingDisplayNode* displayNodeForVolumeNode(vtkMRMLVolumeNode* volumeNode) const;
   vtkMRMLVolumeRenderingDisplayNode* createVolumeRenderingDisplayNode(vtkMRMLVolumeNode* volumeNode);
 
   QMap<int, int>                     LastTechniques;
@@ -211,7 +211,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::displayNodeForVolumeNode(vtkMRMLVolumeNode* volumeNode)const
+vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::displayNodeForVolumeNode(vtkMRMLVolumeNode* volumeNode) const
 {
   if (!volumeNode)
   {
@@ -292,7 +292,7 @@ void qSlicerVolumeRenderingModuleWidget::setup()
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLVolumeNode* qSlicerVolumeRenderingModuleWidget::mrmlVolumeNode()const
+vtkMRMLVolumeNode* qSlicerVolumeRenderingModuleWidget::mrmlVolumeNode() const
 {
   Q_D(const qSlicerVolumeRenderingModuleWidget);
   return vtkMRMLVolumeNode::SafeDownCast(d->VolumeNodeSelector->currentNode());
@@ -632,7 +632,7 @@ void qSlicerVolumeRenderingModuleWidget::fitROIToVolume()
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLVolumePropertyNode* qSlicerVolumeRenderingModuleWidget::mrmlVolumePropertyNode()const
+vtkMRMLVolumePropertyNode* qSlicerVolumeRenderingModuleWidget::mrmlVolumePropertyNode() const
 {
   Q_D(const qSlicerVolumeRenderingModuleWidget);
   return vtkMRMLVolumePropertyNode::SafeDownCast(d->VolumePropertyNodeComboBox->currentNode());
@@ -673,14 +673,14 @@ void qSlicerVolumeRenderingModuleWidget::onNewVolumePropertyAdded(vtkMRMLNode* n
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLDisplayableNode* qSlicerVolumeRenderingModuleWidget::mrmlROINode()const
+vtkMRMLDisplayableNode* qSlicerVolumeRenderingModuleWidget::mrmlROINode() const
 {
   Q_D(const qSlicerVolumeRenderingModuleWidget);
   return vtkMRMLDisplayableNode::SafeDownCast(d->ROINodeComboBox->currentNode());
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLMarkupsROINode* qSlicerVolumeRenderingModuleWidget::mrmlMarkupsROINode()const
+vtkMRMLMarkupsROINode* qSlicerVolumeRenderingModuleWidget::mrmlMarkupsROINode() const
 {
   Q_D(const qSlicerVolumeRenderingModuleWidget);
   return vtkMRMLMarkupsROINode::SafeDownCast(d->ROINodeComboBox->currentNode());
@@ -705,7 +705,7 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLROINodeChanged(vtkMRMLNode
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidget::mrmlDisplayNode()const
+vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidget::mrmlDisplayNode() const
 {
   Q_D(const qSlicerVolumeRenderingModuleWidget);
   vtkMRMLVolumeNode* volumeNode = this->mrmlVolumeNode();

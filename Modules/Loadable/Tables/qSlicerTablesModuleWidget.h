@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_TABLES_EXPORT qSlicerTablesModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerTablesModuleWidget(QWidget* parent=nullptr);
+  qSlicerTablesModuleWidget(QWidget* parent = nullptr);
   ~qSlicerTablesModuleWidget() override;
 
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
@@ -63,7 +63,7 @@ protected slots:
 protected:
   ///
   /// Convenient method to return the coordinate system currently selected
-  //int coordinateReference()const;
+  //int coordinateReference() const;
 
 protected:
   QScopedPointer<qSlicerTablesModuleWidgetPrivate> d_ptr;

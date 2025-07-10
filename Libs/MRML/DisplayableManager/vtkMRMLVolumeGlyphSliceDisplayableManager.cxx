@@ -56,7 +56,7 @@ public:
   vtkInternal(vtkMRMLVolumeGlyphSliceDisplayableManager* external);
   ~vtkInternal();
 
-  vtkObserverManager* GetMRMLNodesObserverManager()const;
+  vtkObserverManager* GetMRMLNodesObserverManager() const;
   void Modified();
 
   bool IsDisplayable(vtkMRMLDisplayNode*);
@@ -130,7 +130,7 @@ vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::~vtkInternal()
 }
 
 //---------------------------------------------------------------------------
-vtkObserverManager* vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::GetMRMLNodesObserverManager()const
+vtkObserverManager* vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::GetMRMLNodesObserverManager() const
 {
   return this->External->GetMRMLNodesObserverManager();
 }

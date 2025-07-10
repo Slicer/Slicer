@@ -43,35 +43,35 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModel : public qMRMLSceneHierarc
 
 public:
   typedef qMRMLSceneHierarchyModel Superclass;
-  qMRMLSceneDisplayableModel(QObject* parent=nullptr);
+  qMRMLSceneDisplayableModel(QObject* parent = nullptr);
   ~qMRMLSceneDisplayableModel() override;
 
-  int colorColumn()const;
+  int colorColumn() const;
   void setColorColumn(int column);
 
-  int opacityColumn()const;
+  int opacityColumn() const;
   void setOpacityColumn(int column);
 
   ///
-  vtkMRMLNode* parentNode(vtkMRMLNode* node)const override;
-  //virtual int          nodeIndex(vtkMRMLNode* node)const;
+  vtkMRMLNode* parentNode(vtkMRMLNode* node) const override;
+  //virtual int          nodeIndex(vtkMRMLNode* node) const;
   /// fast function that only check the type of the node to know if it can be a child.
-  bool         canBeAChild(vtkMRMLNode* node)const override;
+  bool         canBeAChild(vtkMRMLNode* node) const override;
   /// fast function that only check the type of the node to know if it can be a parent.
-  bool         canBeAParent(vtkMRMLNode* node)const override;
+  bool         canBeAParent(vtkMRMLNode* node) const override;
 
 protected:
   qMRMLSceneDisplayableModel(qMRMLSceneDisplayableModelPrivate* pimpl,
-                             QObject* parent=nullptr);
+                             QObject* parent = nullptr);
 
   /// Reimplemented to listen to the displayable DisplayModifiedEvent event for
   /// visibility check state changes.
   void observeNode(vtkMRMLNode* node) override;
-  QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const override;
+  QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column) const override;
   void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column) override;
   void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item) override;
 
-  int maxColumnId()const override;
+  int maxColumnId() const override;
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneDisplayableModel);
   Q_DISABLE_COPY(qMRMLSceneDisplayableModel);

@@ -121,7 +121,7 @@ public:
   virtual QIcon icon() { return QIcon(); };
 
   /// Get help text for effect to be displayed in the help box
-  Q_INVOKABLE virtual const QString helpText()const { return QString(); };
+  Q_INVOKABLE virtual const QString helpText() const { return QString(); };
 
   /// Clone editor effect. Override to return a new instance of the effect sub-class
   virtual qSlicerSegmentEditorAbstractEffect* clone() = 0;
@@ -252,7 +252,7 @@ public:
   /// Get name of effect.
   /// This name is used by various modules for accessing an effect.
   /// This string is not displayed on the user interface and must not be translated.
-  virtual QString name()const;
+  virtual QString name() const;
   /// Set the name of the effect.
   /// NOTE: name must be defined in constructor in C++ effects, this can only be used in python scripted ones
   virtual void setName(QString name);
@@ -260,18 +260,18 @@ public:
   /// Get title of effect.
   /// This string is displayed on the application GUI and it is translated.
   /// Returns the effect's name when the title is empty.
-  virtual QString title()const;
+  virtual QString title() const;
   /// Set the title of the effect
   virtual void setTitle(QString title);
 
   /// Get flag indicating whether effect operates on segments (true) or the whole segmentation (false).
-  virtual bool perSegment()const;
+  virtual bool perSegment() const;
   /// Set flag indicating whether effect operates on segments (true) or the whole segmentation (false).
   /// NOTE: name must be defined in constructor in C++ effects, this can only be used in python scripted ones
   virtual void setPerSegment(bool perSegment);
 
   /// If this property is set to true then this effect is enabled only when the segmentation has segment(s) in it.
-  virtual bool requireSegments()const;
+  virtual bool requireSegments() const;
   /// If this property is set to true then this effect is enabled only when the segmentation has segment(s) in it.
   virtual void setRequireSegments(bool requireSegments);
 

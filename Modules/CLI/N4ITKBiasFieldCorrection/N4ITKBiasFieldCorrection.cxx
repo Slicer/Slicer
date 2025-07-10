@@ -101,14 +101,14 @@ int main(int argc, char* * argv)
         break;
       }
     }
-    if ( !maskLabel )
+    if (!maskLabel)
     {
       return EXIT_FAILURE;
     }
     correcter->SetMaskLabel(maskLabel);
   }
 
-  if ( !maskImage )
+  if (!maskImage)
   {
     std::cout << "Mask no read.  Creating Otsu mask." << std::endl;
     typedef itk::OtsuThresholdImageFilter<ImageType, MaskImageType>
@@ -152,7 +152,7 @@ int main(int argc, char* * argv)
     correcter->SetNumberOfFittingLevels( numberOfFittingLevels );
   }
 
-  if ( convergenceThreshold )
+  if (convergenceThreshold)
   {
     correcter->SetConvergenceThreshold( convergenceThreshold );
   }
@@ -169,13 +169,13 @@ int main(int argc, char* * argv)
 
   ImageType::PointType newOrigin = inputImage->GetOrigin();
 
-  if ( bsplineOrder )
+  if (bsplineOrder)
   {
     correcter->SetSplineOrder(bsplineOrder);
   }
 
   CorrecterType::ArrayType numberOfControlPoints;
-  if ( splineDistance )
+  if (splineDistance)
   {
 
     itk::SizeValueType lowerBound[ImageDimension];
@@ -214,7 +214,7 @@ int main(int argc, char* * argv)
     maskPadder->Update();
     maskImage = maskPadder->GetOutput();
 
-    if ( weightImage )
+    if (weightImage)
     {
       PadderType::Pointer weightPadder = PadderType::New();
       weightPadder->SetInput( weightImage );
@@ -256,7 +256,7 @@ int main(int argc, char* * argv)
 
   correcter->SetInput( shrinker->GetOutput() );
   correcter->SetMaskImage( maskshrinker->GetOutput() );
-  if ( weightImage )
+  if (weightImage)
   {
     typedef itk::ShrinkImageFilter<ImageType, ImageType> WeightShrinkerType;
     WeightShrinkerType::Pointer weightshrinker = WeightShrinkerType::New();
@@ -274,15 +274,15 @@ int main(int argc, char* * argv)
   /**
    * histogram sharpening options
    */
-  if ( bfFWHM )
+  if (bfFWHM)
   {
     correcter->SetBiasFieldFullWidthAtHalfMaximum( bfFWHM );
   }
-  if ( wienerFilterNoise )
+  if (wienerFilterNoise)
   {
     correcter->SetWienerFilterNoise( wienerFilterNoise );
   }
-  if ( nHistogramBins )
+  if (nHistogramBins)
   {
     correcter->SetNumberOfHistogramBins( nHistogramBins );
   }
@@ -297,7 +297,7 @@ int main(int argc, char* * argv)
     std::cerr << err << std::endl;
     return EXIT_FAILURE;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cerr << "Unknown Exception caught." << std::endl;
     return EXIT_FAILURE;

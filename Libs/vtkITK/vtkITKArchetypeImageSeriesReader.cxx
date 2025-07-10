@@ -150,7 +150,7 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
 
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Archetype: " <<
     (this->Archetype ? this->Archetype : "(none)") << "\n";
@@ -505,7 +505,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
           {
             this->IsOnlyFile = true;
           }
-          else if ( AnalyzeHeader )
+          else if (AnalyzeHeader)
           {
             this->AnalyzeDicomHeaders();
           }
@@ -555,7 +555,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   }
   else
   {
-    if ( !GroupingByTags )
+    if (!GroupingByTags)
     {
       AssembleVolumeContainingArchetype();
     }
@@ -645,7 +645,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         itk::MetaDataObjectBase::Pointer  entry = itr->second;
         MetaDataDoubleVectorType::Pointer entryvalue1
           = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
-        if ( entryvalue1 )
+        if (entryvalue1)
         {
           int pos = itr->first.find( "NRRD_measurement frame" );
           if ( pos != -1 )

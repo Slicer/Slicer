@@ -189,7 +189,7 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   if (this->LookupTable != nullptr)
   {

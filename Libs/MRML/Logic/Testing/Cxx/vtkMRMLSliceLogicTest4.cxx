@@ -77,7 +77,7 @@ vtkMRMLScalarVolumeNode* loadVolume2(const char* volume, vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSliceLogicTest4(int argc, char* argv [] )
+int vtkMRMLSliceLogicTest4(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 

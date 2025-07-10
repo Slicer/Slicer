@@ -82,7 +82,7 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   return scalarNode.GetPointer();
 }
 
-int qMRMLSliceWidgetTest2(int argc, char* argv [] )
+int qMRMLSliceWidgetTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

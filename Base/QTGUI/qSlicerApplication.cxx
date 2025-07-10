@@ -634,7 +634,7 @@ bool qSlicerApplication::notify(QObject* receiver, QEvent* event)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCommandOptions* qSlicerApplication::commandOptions()const
+qSlicerCommandOptions* qSlicerApplication::commandOptions() const
 {
   qSlicerCommandOptions* _commandOptions =
     dynamic_cast<qSlicerCommandOptions*>(this->coreCommandOptions());
@@ -702,14 +702,14 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerLayoutManager* qSlicerApplication::layoutManager()const
+qSlicerLayoutManager* qSlicerApplication::layoutManager() const
 {
   Q_D(const qSlicerApplication);
   return d->LayoutManager.data();
 }
 
 //-----------------------------------------------------------------------------
-QMainWindow* qSlicerApplication::mainWindow()const
+QMainWindow* qSlicerApplication::mainWindow() const
 {
   foreach (QWidget* widget, this->topLevelWidgets())
   {
@@ -810,7 +810,7 @@ void qSlicerApplication::confirmRestart(QString reason)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=nullptr*/)const
+QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=nullptr*/) const
 {
   QString mostSuitableModuleName = "Data";
   double mostSuitableModuleConfidence = 0.0;
@@ -891,7 +891,7 @@ void qSlicerApplication::openNodeModule(vtkMRMLNode* node, QString role /*=QStri
 }
 
 // --------------------------------------------------------------------------
-ctkSettingsDialog* qSlicerApplication::settingsDialog()const
+ctkSettingsDialog* qSlicerApplication::settingsDialog() const
 {
   Q_D(const qSlicerApplication);
   return d->SettingsDialog;
@@ -1062,7 +1062,7 @@ QStringList qSlicerApplication::recentLogFiles()
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerApplication::currentLogFile()const
+QString qSlicerApplication::currentLogFile() const
 {
   Q_D(const qSlicerApplication);
   return d->ErrorLogModel->filePath();

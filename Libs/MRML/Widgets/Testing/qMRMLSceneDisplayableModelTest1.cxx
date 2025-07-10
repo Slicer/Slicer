@@ -41,7 +41,7 @@
 // MRML includes
 #include <vtkMRMLDisplayableHierarchyNode.h>
 
-int qMRMLSceneDisplayableModelTest1(int argc, char* argv [])
+int qMRMLSceneDisplayableModelTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

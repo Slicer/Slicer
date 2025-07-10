@@ -30,7 +30,7 @@
 
 class vtkMRMLProceduralColorNode;
 
-class  VTK_MRML_EXPORT vtkMRMLMarkupsFiducialDisplayNode : public vtkMRMLMarkupsDisplayNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsFiducialDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:
   static vtkMRMLMarkupsFiducialDisplayNode* New();

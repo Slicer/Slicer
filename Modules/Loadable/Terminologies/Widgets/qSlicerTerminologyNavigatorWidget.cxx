@@ -116,7 +116,7 @@ vtkSlicerTerminologyEntry* qSlicerTerminologyNavigatorWidget::TerminologyInfoBun
 // qSlicerTerminologyNavigatorWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-class qSlicerTerminologyNavigatorWidgetPrivate: public Ui_qSlicerTerminologyNavigatorWidget
+class qSlicerTerminologyNavigatorWidgetPrivate : public Ui_qSlicerTerminologyNavigatorWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologyNavigatorWidget);
 

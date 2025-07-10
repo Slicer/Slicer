@@ -39,7 +39,7 @@ VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
 
 // STD includes
 
-int qMRMLVolumePropertyNodeWidgetTest1(int argc, char* argv [] )
+int qMRMLVolumePropertyNodeWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

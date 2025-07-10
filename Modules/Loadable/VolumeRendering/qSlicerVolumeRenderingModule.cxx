@@ -69,13 +69,13 @@ qSlicerVolumeRenderingModule::qSlicerVolumeRenderingModule(QObject* _parent)
 qSlicerVolumeRenderingModule::~qSlicerVolumeRenderingModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingModule::title()const
+QString qSlicerVolumeRenderingModule::title() const
 {
   return tr("Volume Rendering");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingModule::helpText()const
+QString qSlicerVolumeRenderingModule::helpText() const
 {
   QString help =
     tr("Volume Rendering Module provides advanced tools for toggling interactive "
@@ -89,7 +89,7 @@ QString qSlicerVolumeRenderingModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingModule::acknowledgementText()const
+QString qSlicerVolumeRenderingModule::acknowledgementText() const
 {
   QString acknowledgement =
     "<center><table border=\"0\"><tr>"
@@ -105,7 +105,7 @@ QString qSlicerVolumeRenderingModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumeRenderingModule::contributors()const
+QStringList qSlicerVolumeRenderingModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Julien Finet (Kitware)");
@@ -117,7 +117,7 @@ QStringList qSlicerVolumeRenderingModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerVolumeRenderingModule::icon()const
+QIcon qSlicerVolumeRenderingModule::icon() const
 {
   return QIcon(":/Icons/VolumeRendering.png");
 }
