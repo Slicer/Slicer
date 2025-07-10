@@ -35,7 +35,7 @@ class vtkStringArray;
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
 public:
-  vtkTypeMacro(vtkMRMLStorageNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLStorageNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override = 0;
@@ -105,7 +105,7 @@ public:
   vtkSetStringMacro(URI);
   vtkGetStringMacro(URI);
 
-  vtkGetObjectMacro (URIHandler, vtkURIHandler);
+  vtkGetObjectMacro(URIHandler, vtkURIHandler);
   virtual void SetURIHandler(vtkURIHandler* uriHandler);
 
   ///
@@ -136,8 +136,8 @@ public:
 
   //@{
   /// Get/Set the state of reading
-  vtkGetMacro(ReadState,int);
-  vtkSetMacro(ReadState,int);
+  vtkGetMacro(ReadState, int);
+  vtkSetMacro(ReadState, int);
   void SetReadStatePending() { this->SetReadState(this->Pending); };
   void SetReadStateIdle() { this->SetReadState(this->Idle); };
   void SetReadStateScheduled() { this->SetReadState(this->Scheduled); };
@@ -152,7 +152,7 @@ public:
   //@{
   /// Get/Set the state of writing.
   /// This is a transient property (that is expected to change and is not considered as a node change that needs to be stored persistently).
-  vtkGetMacro(WriteState,int);
+  vtkGetMacro(WriteState, int);
   void SetWriteState(int writeState);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
   void SetWriteStateIdle() { this->SetWriteState(this->Idle); };

@@ -42,7 +42,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 {
   public:
   static vtkMRMLDiffusionTensorVolumeDisplayNode* New();
-  vtkTypeMacro(vtkMRMLDiffusionTensorVolumeDisplayNode,vtkMRMLGlyphableVolumeDisplayNode);
+  vtkTypeMacro(vtkMRMLDiffusionTensorVolumeDisplayNode, vtkMRMLGlyphableVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -163,7 +163,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   vtkGetObjectMacro(DTIMathematics, vtkDiffusionTensorMathematics);
   vtkGetObjectMacro(DTIMathematicsAlpha, vtkDiffusionTensorMathematics);
-  vtkGetObjectMacro (ShiftScale, vtkImageShiftScale);
+  vtkGetObjectMacro(ShiftScale, vtkImageShiftScale);
 
 
   ///

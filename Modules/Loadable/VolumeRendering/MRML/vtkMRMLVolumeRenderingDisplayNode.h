@@ -35,7 +35,7 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
   : public vtkMRMLDisplayNode
 {
 public:
-  vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set node attributes
@@ -70,9 +70,9 @@ public:
 
   double GetSampleDistance();
 
-  vtkSetMacro(CroppingEnabled,int);
-  vtkGetMacro(CroppingEnabled,int);
-  vtkBooleanMacro(CroppingEnabled,int);
+  vtkSetMacro(CroppingEnabled, int);
+  vtkGetMacro(CroppingEnabled, int);
+  vtkBooleanMacro(CroppingEnabled, int);
 
   vtkSetVector2Macro(Threshold, double);
   vtkGetVectorMacro(Threshold, double, 2);

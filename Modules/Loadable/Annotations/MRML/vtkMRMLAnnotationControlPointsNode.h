@@ -18,7 +18,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsN
 {
 public:
   static vtkMRMLAnnotationControlPointsNode* New();
-  vtkTypeMacro(vtkMRMLAnnotationControlPointsNode,vtkMRMLAnnotationNode);
+  vtkTypeMacro(vtkMRMLAnnotationControlPointsNode, vtkMRMLAnnotationNode);
 
   // void PrintSelf(ostream& os, vtkIndent indent) override;
   // Description:

@@ -26,7 +26,7 @@ class VTK_MRML_EXPORT vtkMRMLHierarchyStorageNode : public vtkMRMLStorageNode
 {
 public:
   static vtkMRMLHierarchyStorageNode* New();
-  vtkTypeMacro(vtkMRMLHierarchyStorageNode,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLHierarchyStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

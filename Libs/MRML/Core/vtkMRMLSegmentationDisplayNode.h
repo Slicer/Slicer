@@ -97,7 +97,7 @@ public:
 
 public:
   static vtkMRMLSegmentationDisplayNode* New();
-  vtkTypeMacro(vtkMRMLSegmentationDisplayNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLSegmentationDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

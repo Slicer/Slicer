@@ -38,7 +38,7 @@ class VTK_MRML_EXPORT vtkMRMLTableSQLiteStorageNode : public vtkMRMLStorageNode
 {
 public:
   static vtkMRMLTableSQLiteStorageNode* New();
-  vtkTypeMacro(vtkMRMLTableSQLiteStorageNode,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLTableSQLiteStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

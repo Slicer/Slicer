@@ -102,7 +102,7 @@ public:
 
 public:
   static vtkMRMLSubjectHierarchyNode* New();
-  vtkTypeMacro(vtkMRMLSubjectHierarchyNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLSubjectHierarchyNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

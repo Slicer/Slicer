@@ -31,7 +31,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
 {
   public:
   static vtkMRMLDiffusionImageVolumeNode* New();
-  vtkTypeMacro(vtkMRMLDiffusionImageVolumeNode,vtkMRMLTensorVolumeNode);
+  vtkTypeMacro(vtkMRMLDiffusionImageVolumeNode, vtkMRMLTensorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

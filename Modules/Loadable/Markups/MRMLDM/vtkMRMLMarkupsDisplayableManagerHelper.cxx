@@ -54,7 +54,7 @@
 #include <vector>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLMarkupsDisplayableManagerHelper);
+vtkStandardNewMacro(vtkMRMLMarkupsDisplayableManagerHelper);
 
 //---------------------------------------------------------------------------
 vtkMRMLMarkupsDisplayableManagerHelper::vtkMRMLMarkupsDisplayableManagerHelper()

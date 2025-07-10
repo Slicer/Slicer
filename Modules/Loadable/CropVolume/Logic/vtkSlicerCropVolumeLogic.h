@@ -65,7 +65,7 @@ class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic
 public:
 
   static vtkSlicerCropVolumeLogic* New();
-  vtkTypeMacro(vtkSlicerCropVolumeLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerCropVolumeLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Crop input volume using the specified ROI node.

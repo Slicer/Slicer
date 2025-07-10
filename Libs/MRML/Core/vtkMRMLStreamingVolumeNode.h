@@ -45,7 +45,7 @@ class  VTK_MRML_EXPORT vtkMRMLStreamingVolumeNode : public vtkMRMLVectorVolumeNo
 {
 public:
   static vtkMRMLStreamingVolumeNode* New();
-  vtkTypeMacro(vtkMRMLStreamingVolumeNode,vtkMRMLVectorVolumeNode);
+  vtkTypeMacro(vtkMRMLStreamingVolumeNode, vtkMRMLVectorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

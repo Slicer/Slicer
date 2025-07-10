@@ -26,8 +26,8 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
   vtkGetStringMacro ( Password );
   vtkSetStringMacro ( Password );
 
-  vtkGetStringMacro (HostName );
-  vtkSetStringMacro (HostName );
+  vtkGetStringMacro(HostName);
+  vtkSetStringMacro(HostName);
 
   ///
   /// When set, a user won't be prompted again during a given session.

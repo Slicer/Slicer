@@ -44,7 +44,7 @@ class vtkMRMLDisplayNode;
 class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLTransformableNode
 {
 public:
-  vtkTypeMacro(vtkMRMLDisplayableNode,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLDisplayableNode, vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------

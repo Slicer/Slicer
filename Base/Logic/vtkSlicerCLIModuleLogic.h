@@ -49,7 +49,7 @@ public:
   };
 
   static vtkSlicerCLIModuleLogic* New();
-  vtkTypeMacro(vtkSlicerCLIModuleLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerCLIModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// The default module description is used when creating new nodes.

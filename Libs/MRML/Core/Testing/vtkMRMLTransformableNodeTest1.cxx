@@ -28,7 +28,7 @@ public:
   // Provide a concrete New.
   static vtkMRMLTransformableNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLTransformableNodeTestHelper1,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLTransformableNodeTestHelper1, vtkMRMLTransformableNode);
 
   vtkMRMLNode* CreateNodeInstance() override
   {

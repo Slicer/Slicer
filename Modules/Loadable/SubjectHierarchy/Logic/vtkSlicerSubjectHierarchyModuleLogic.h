@@ -46,7 +46,7 @@ public:
 
 public:
   static vtkSlicerSubjectHierarchyModuleLogic* New();
-  vtkTypeMacro(vtkSlicerSubjectHierarchyModuleLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerSubjectHierarchyModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 public:

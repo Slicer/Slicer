@@ -39,7 +39,7 @@ public:
   static vtkSlicerROIWidget* New();
 
   /// Standard methods for a VTK class.
-  vtkTypeMacro(vtkSlicerROIWidget,vtkSlicerMarkupsWidget);
+  vtkTypeMacro(vtkSlicerROIWidget, vtkSlicerMarkupsWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
   void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;

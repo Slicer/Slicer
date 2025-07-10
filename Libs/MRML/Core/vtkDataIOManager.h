@@ -23,7 +23,7 @@ class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject
 
   /// The Usual vtk class functions
   static vtkDataIOManager* New();
-  vtkTypeMacro(vtkDataIOManager,vtkObject);
+  vtkTypeMacro(vtkDataIOManager, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkGetObjectMacro ( DataTransferCollection, vtkCollection );
   void SetDataTransferCollection(vtkCollection* dataTransfer );

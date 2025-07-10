@@ -34,7 +34,7 @@ class VTK_MRML_EXPORT vtkMRMLUnitNode : public vtkMRMLNode
 {
 public:
   static vtkMRMLUnitNode* New();
-  vtkTypeMacro(vtkMRMLUnitNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLUnitNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------

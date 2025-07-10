@@ -60,7 +60,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic
 public:
   /// The Usual VTK class functions
   static vtkMRMLSliceLogic* New();
-  vtkTypeMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLSliceLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// CompositeModifiedEvent is generated when slice composite node is modified
@@ -79,7 +79,7 @@ public:
   };
 
   /// The MRML slice node for this slice logic
-  vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
+  vtkGetObjectMacro(SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode* newSliceNode);
 
   /// Convenience function for adding a slice node and setting it in this logic
@@ -87,7 +87,7 @@ public:
 
   /// @{
   /// The MRML slice node for this slice logic
-  vtkGetObjectMacro (SliceCompositeNode, vtkMRMLSliceCompositeNode);
+  vtkGetObjectMacro(SliceCompositeNode, vtkMRMLSliceCompositeNode);
   void SetSliceCompositeNode (vtkMRMLSliceCompositeNode* SliceCompositeNode);
   /// @}
 

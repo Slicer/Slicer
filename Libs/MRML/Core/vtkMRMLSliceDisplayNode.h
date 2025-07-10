@@ -29,7 +29,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceDisplayNode : public vtkMRMLModelDisplayNode
 {
 public:
   static vtkMRMLSliceDisplayNode* New();
-  vtkTypeMacro(vtkMRMLSliceDisplayNode,vtkMRMLModelDisplayNode);
+  vtkTypeMacro(vtkMRMLSliceDisplayNode, vtkMRMLModelDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Read node attributes from XML file

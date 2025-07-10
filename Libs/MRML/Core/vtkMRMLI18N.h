@@ -74,7 +74,7 @@ public:
 
   /// Get translator object that can translate text that is displayed to the user
   /// to the currently chosen language.
-  vtkGetObjectMacro (Translator, vtkMRMLTranslator);
+  vtkGetObjectMacro(Translator, vtkMRMLTranslator);
 
 protected:
   vtkMRMLI18N();

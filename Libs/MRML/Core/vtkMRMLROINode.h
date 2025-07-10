@@ -13,7 +13,7 @@ class VTK_MRML_EXPORT vtkMRMLROINode : public vtkMRMLTransformableNode
 {
 public:
   static vtkMRMLROINode* New();
-  vtkTypeMacro(vtkMRMLROINode,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLROINode, vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -89,9 +89,9 @@ public:
   /// with the GetPlanes() method. When off, the normals point out of the
   /// box. When on, the normals point into the hexahedron.  InsideOut is off
   /// by default.
-  vtkSetMacro(InsideOut,int);
-  vtkGetMacro(InsideOut,int);
-  vtkBooleanMacro(InsideOut,int);
+  vtkSetMacro(InsideOut, int);
+  vtkGetMacro(InsideOut, int);
+  vtkBooleanMacro(InsideOut, int);
 
   ///
   /// Get/Set for LabelText

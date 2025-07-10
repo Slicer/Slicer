@@ -24,7 +24,7 @@
 #include <vtkObjectFactory.h>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLLightBoxRendererManagerProxy );
+vtkStandardNewMacro(vtkMRMLLightBoxRendererManagerProxy);
 
 //---------------------------------------------------------------------------
 vtkMRMLLightBoxRendererManagerProxy::vtkMRMLLightBoxRendererManagerProxy() = default;

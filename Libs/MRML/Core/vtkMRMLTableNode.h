@@ -48,7 +48,7 @@ public:
 
 public:
   static vtkMRMLTableNode* New();
-  vtkTypeMacro(vtkMRMLTableNode,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLTableNode, vtkMRMLStorableNode);
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

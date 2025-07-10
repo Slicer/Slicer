@@ -26,7 +26,7 @@ class VTK_MRML_EXPORT vtkMRMLProceduralColorStorageNode : public vtkMRMLStorageN
 {
   public:
   static vtkMRMLProceduralColorStorageNode* New();
-  vtkTypeMacro(vtkMRMLProceduralColorStorageNode,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLProceduralColorStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

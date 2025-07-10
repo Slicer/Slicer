@@ -18,7 +18,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLinesNode
 {
 public:
   static vtkMRMLAnnotationLinesNode* New();
-  vtkTypeMacro(vtkMRMLAnnotationLinesNode,vtkMRMLAnnotationControlPointsNode);
+  vtkTypeMacro(vtkMRMLAnnotationLinesNode, vtkMRMLAnnotationControlPointsNode);
   // void PrintSelf(ostream& os, vtkIndent indent) override;
   // Description:
   // Just prints short summary

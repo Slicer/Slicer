@@ -10,7 +10,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTask : public vtkObject
 {
 public:
   static vtkSlicerTask* New();
-  vtkTypeMacro(vtkSlicerTask,vtkObject);
+  vtkTypeMacro(vtkSlicerTask, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   typedef vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunctionPointer;
@@ -34,7 +34,7 @@ public:
   };
 
   vtkSetClampMacro (Type, int, vtkSlicerTask::Undefined, vtkSlicerTask::Networking);
-  vtkGetMacro (Type, int);
+  vtkGetMacro(Type, int);
   void SetTypeToProcessing() {this->SetType(vtkSlicerTask::Processing);};
   void SetTypeToNetworking() {this->SetType(vtkSlicerTask::Networking);};
 

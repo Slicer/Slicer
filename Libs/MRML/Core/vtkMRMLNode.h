@@ -43,12 +43,12 @@ class vtkCallbackCommand;
 #include <vector>
 
 #ifndef vtkSetMRMLObjectMacro
-#define vtkSetMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
+#define vtkSetMRMLObjectMacro(node, value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
 #endif
 
 /// Can be used to set any vtkObject, not only vtkMRMLNodes.
 #ifndef vtkSetAndObserveMRMLObjectMacro
-#define vtkSetAndObserveMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value) );};
+#define vtkSetAndObserveMRMLObjectMacro(node, value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value) );};
 #endif
 
 #ifndef vtkSetAndObserveMRMLObjectMacroNoWarning
@@ -122,7 +122,7 @@ virtual void Set##name (const char* _arg) \
 #endif
 
 #ifndef vtkCxxSetReferenceStringMacro
-#define vtkCxxSetReferenceStringMacro(class,name)   \
+#define vtkCxxSetReferenceStringMacro(class, name)   \
 void class::Set##name (const char* _arg)            \
 {                                                 \
   vtkSetReferenceStringBodyMacro(name);             \
@@ -180,7 +180,7 @@ class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
     friend class vtkMRMLSceneViewNode;
 
 public:
-  vtkTypeMacro(vtkMRMLNode,vtkObject);
+  vtkTypeMacro(vtkMRMLNode, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// These values are used in methods that specify node references.
@@ -911,7 +911,7 @@ protected:
   class VTK_MRML_EXPORT vtkMRMLNodeReference : public vtkObject
   {
   public:
-    vtkTypeMacro(vtkMRMLNodeReference,vtkObject);
+    vtkTypeMacro(vtkMRMLNodeReference, vtkObject);
     static vtkMRMLNodeReference* New();
     void PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent)) override {};
 

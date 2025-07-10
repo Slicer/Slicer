@@ -37,7 +37,7 @@ class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   static vtkMRMLModelDisplayNode* New();
-  vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLModelDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum SliceDisplayModeType
@@ -115,12 +115,12 @@ public:
   /// Set whether to threshold the model display node.
   /// \sa ThresholdEnabled, GetThresholdEnabled()
   void SetThresholdEnabled(bool enabled);
-  vtkBooleanMacro(ThresholdEnabled,bool);
+  vtkBooleanMacro(ThresholdEnabled, bool);
 
   /// Get whether to threshold the model display node.
   /// \sa ThresholdEnabled, SetThresholdEnabled(), ThresholdEnabledOn(),
   /// ThresholdEnabledOff()
-  vtkGetMacro(ThresholdEnabled,bool);
+  vtkGetMacro(ThresholdEnabled, bool);
 
   /// Set the threshold range of the model display node.
   /// \sa GetThresholdMin(), GetThresholdMax()

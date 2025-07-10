@@ -26,7 +26,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLCrosshairNode* New();
-  vtkTypeMacro(vtkMRMLCrosshairNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLCrosshairNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// CursorPositionModifiedEvent is invoked when the cursor position is modified,

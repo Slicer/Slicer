@@ -55,7 +55,7 @@
 #include <cassert>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLScalarBarDisplayableManager );
+vtkStandardNewMacro(vtkMRMLScalarBarDisplayableManager);
 
 //---------------------------------------------------------------------------
 class vtkMRMLScalarBarDisplayableManager::vtkInternal

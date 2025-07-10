@@ -17,8 +17,8 @@ public:
   vtkTypeMacro(vtkURIHandler, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  vtkGetStringMacro (HostName);
-  vtkSetStringMacro (HostName);
+  vtkGetStringMacro(HostName);
+  vtkSetStringMacro(HostName);
 
   ///
   /// virtual methods to be defined in subclasses.
