@@ -25,7 +25,7 @@
 #include "qSlicerCorePythonManager.h"
 
 // ----------------------------------------------------------------------------
-class qSlicerPythonManagerWithoutApplicationTester: public QObject
+class qSlicerPythonManagerWithoutApplicationTester : public QObject
 {
   Q_OBJECT
 
@@ -44,4 +44,4 @@ void qSlicerPythonManagerWithoutApplicationTester::testInitialize()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerPythonManagerWithoutApplicationTest)
-#include "moc_qSlicerPythonManagerWithoutApplicationTest.cxx"
+#include "qSlicerPythonManagerWithoutApplicationTest.moc"

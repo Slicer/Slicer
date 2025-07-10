@@ -146,4 +146,4 @@ void qSlicerPresetComboBoxTester::testPreview()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerPresetComboBoxTest)
-#include "moc_qSlicerPresetComboBoxTest.cxx"
+#include "qSlicerPresetComboBoxTest.moc"
