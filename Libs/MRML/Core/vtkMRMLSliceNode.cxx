@@ -202,7 +202,7 @@ void vtkMRMLSliceNode::RemoveThreeDViewID(char* viewNodeID)
   {
     return;
   }
-  std::vector< std::string > viewNodeIDs;
+  std::vector<std::string> viewNodeIDs;
   for(unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
   {
     if (std::string(viewNodeID) != this->ThreeDViewIDs[i])
@@ -254,7 +254,7 @@ bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID)const
     return false;
   }
   std::string value(viewNodeID);
-  std::vector< std::string >::const_iterator it =
+  std::vector<std::string>::const_iterator it =
     std::find(this->ThreeDViewIDs.begin(), this->ThreeDViewIDs.end(), value);
   return it != this->ThreeDViewIDs.end();
 }
@@ -347,7 +347,7 @@ bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4* matrix,
 //----------------------------------------------------------------------------
 vtkMatrix3x3* vtkMRMLSliceNode::GetSliceOrientationPreset(const std::string& name)
 {
-  std::vector< OrientationPresetType >::iterator it;
+  std::vector<OrientationPresetType>::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     if (it->first == name)
@@ -369,7 +369,7 @@ std::string vtkMRMLSliceNode::GetSliceOrientationPresetName(vtkMatrix3x3* orient
     return std::string();
   }
 
-  std::vector< OrientationPresetType >::reverse_iterator it;
+  std::vector<OrientationPresetType>::reverse_iterator it;
   for (it = this->OrientationMatrices.rbegin();
        it != this->OrientationMatrices.rend();
        ++it)
@@ -410,7 +410,7 @@ void vtkMRMLSliceNode::GetSliceOrientationPresetNames(vtkStringArray* presetOrie
 
   presetOrientationNames->SetNumberOfValues(this->OrientationMatrices.size());
 
-  std::vector< OrientationPresetType >::iterator it;
+  std::vector<OrientationPresetType>::iterator it;
   int id = 0;
   for (it = this->OrientationMatrices.begin();
        it != this->OrientationMatrices.end();
@@ -437,7 +437,7 @@ bool vtkMRMLSliceNode::AddSliceOrientationPreset(const std::string& name, vtkMat
     return false;
   }
 
-  std::vector< OrientationPresetType >::iterator it;
+  std::vector<OrientationPresetType>::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     if (it->first == name)
@@ -454,7 +454,7 @@ bool vtkMRMLSliceNode::AddSliceOrientationPreset(const std::string& name, vtkMat
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceNode::RemoveSliceOrientationPreset(const std::string& name)
 {
-  std::vector< OrientationPresetType >::iterator it;
+  std::vector<OrientationPresetType>::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     if (it->first == name)
@@ -488,7 +488,7 @@ bool vtkMRMLSliceNode::RenameSliceOrientationPreset(const std::string& name, con
     this->SetOrientationReference(updatedName.c_str());
   }
 
-  std::vector< OrientationPresetType >::iterator it;
+  std::vector<OrientationPresetType>::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     if (it->first == name)
@@ -513,7 +513,7 @@ bool vtkMRMLSliceNode::HasSliceOrientationPreset(const std::string& name)
     return false;
   }
 
-  std::vector< OrientationPresetType >::iterator it;
+  std::vector<OrientationPresetType>::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     if (it->first == name)
@@ -886,7 +886,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLMatrix4x4Macro(sliceToRAS, SliceToRAS);
 
   // orientationMatrix
-  std::vector< OrientationPresetType >::iterator it;
+  std::vector<OrientationPresetType>::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     std::stringstream ss;
@@ -1230,7 +1230,7 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
 
   vtkMRMLPrintMatrix4x4Macro(SliceToRAS);
 
-  std::vector< OrientationPresetType >::iterator it;
+  std::vector<OrientationPresetType>::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     os << indent << "OrientationMatrix"<< this->URLEncodeString(it->first.c_str()) <<": \n";

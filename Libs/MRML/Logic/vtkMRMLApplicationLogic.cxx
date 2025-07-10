@@ -95,7 +95,7 @@ public:
   vtkSmartPointer<vtkMRMLViewLinkLogic> ViewLinkLogic;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
   std::string TemporaryPath;
-  std::map<std::string, vtkWeakPointer<vtkMRMLAbstractLogic> > ModuleLogicMap;
+  std::map<std::string, vtkWeakPointer<vtkMRMLAbstractLogic>> ModuleLogicMap;
   std::map<int, std::string> FontFileNames;
 };
 

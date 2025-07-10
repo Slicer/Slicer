@@ -50,7 +50,7 @@
 #include <vtkMRMLInteractionEventData.h>
 #include <vtkMRMLViewNode.h>
 
-std::map<vtkRenderer*, vtkSmartPointer<vtkFloatArray> > vtkSlicerMarkupsWidgetRepresentation3D::CachedZBuffers;
+std::map<vtkRenderer*, vtkSmartPointer<vtkFloatArray>> vtkSlicerMarkupsWidgetRepresentation3D::CachedZBuffers;
 
 vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D::ControlPointsPipeline3D()
 {

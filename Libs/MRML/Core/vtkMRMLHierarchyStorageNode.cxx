@@ -58,7 +58,7 @@ int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   vtkMRMLHierarchyNode* hierarchyNode = nullptr;
   if ( refNode->IsA("vtkMRMLHierarchyNode") )
   {
-    hierarchyNode = dynamic_cast <vtkMRMLHierarchyNode*> (refNode);
+    hierarchyNode = dynamic_cast<vtkMRMLHierarchyNode*> (refNode);
   }
 
   if (hierarchyNode == nullptr)
@@ -110,7 +110,7 @@ int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkMRMLHierarchyNode* hierarchyNode = nullptr;
   if ( refNode->IsA("vtkMRMLHierarchyNode") )
   {
-    hierarchyNode = dynamic_cast <vtkMRMLHierarchyNode*> (refNode);
+    hierarchyNode = dynamic_cast<vtkMRMLHierarchyNode*> (refNode);
   }
 
   if (hierarchyNode == nullptr)

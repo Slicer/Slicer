@@ -203,7 +203,7 @@ protected:
   vtkMRMLScene* SequenceScene{0};
 
   /// List of data items (the scene may contain some more nodes, such as storage nodes)
-  std::deque< IndexEntryType > IndexEntries;
+  std::deque<IndexEntryType> IndexEntries;
 };
 
 #endif

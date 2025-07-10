@@ -131,7 +131,7 @@ public:
   };
 
   /// Container type for segments. Maps segment IDs to segment objects
-  typedef std::map<std::string, vtkSmartPointer<vtkSegment> > SegmentMap;
+  typedef std::map<std::string, vtkSmartPointer<vtkSegment>> SegmentMap;
 
 public:
   static vtkSegmentation* New();
@@ -625,9 +625,9 @@ protected:
   /// This contains the segment IDs in display order.
   /// (we could retrieve segment IDs from SegmentMap too, but that always contains segments in
   /// alphabetical order)
-  std::deque< std::string > SegmentIds;
+  std::deque<std::string> SegmentIds;
 
-  std::set<vtkSmartPointer<vtkDataObject> > SourceRepresentationCache;
+  std::set<vtkSmartPointer<vtkDataObject>> SourceRepresentationCache;
 
   bool UUIDSegmentIDs;
 

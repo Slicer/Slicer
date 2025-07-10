@@ -40,7 +40,7 @@ class vtkDataObject;
 class vtkSegmentationCore_EXPORT vtkSegmentationConverterFactory : public vtkObject
 {
 public:
-  typedef std::vector< vtkSmartPointer<vtkSegmentationConverterRule> > RuleListType;
+  typedef std::vector<vtkSmartPointer<vtkSegmentationConverterRule>> RuleListType;
 
   vtkTypeMacro(vtkSegmentationConverterFactory, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;

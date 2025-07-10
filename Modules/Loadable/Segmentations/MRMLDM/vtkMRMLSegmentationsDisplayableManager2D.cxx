@@ -256,7 +256,7 @@ public:
   typedef std::map < vtkMRMLSegmentationDisplayNode*, PipelineMapType > PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLSegmentationNode*, std::set< vtkMRMLSegmentationDisplayNode* > > SegmentationToDisplayCacheType;
+  typedef std::map < vtkMRMLSegmentationNode*, std::set<vtkMRMLSegmentationDisplayNode*>> SegmentationToDisplayCacheType;
   SegmentationToDisplayCacheType SegmentationToDisplayNodes;
 
   // Segmentations
@@ -444,8 +444,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::RemoveSegmentationNo
     return;
   }
 
-  std::set< vtkMRMLSegmentationDisplayNode* > dnodes = displayableIt->second;
-  std::set< vtkMRMLSegmentationDisplayNode* >::iterator diter;
+  std::set<vtkMRMLSegmentationDisplayNode*> dnodes = displayableIt->second;
+  std::set<vtkMRMLSegmentationDisplayNode*>::iterator diter;
   for (diter = dnodes.begin(); diter != dnodes.end(); ++diter)
   {
     this->RemoveDisplayNode(*diter);
@@ -544,9 +544,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddDisplayNode(vtkMR
   }
   PipelineMapType pipelineVector;
 
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
   {
     vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
     if (!segment)
@@ -629,9 +629,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelin
 
   bool requestTransformUpdate = false;
   // Make sure each segment has a pipeline
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
   {
     vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
     vtkDataObject* representationObject = segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D());

@@ -50,13 +50,13 @@ int main( int argc, char* argv[] )
     }
     else if( itr->first.find("NRRD_measurement frame") != std::string::npos )
     {
-      std::vector<std::vector<double> > measurementFrameValue(3);
+      std::vector<std::vector<double>> measurementFrameValue(3);
       for( unsigned int i = 0; i < 3; i++ )
       {
         measurementFrameValue[i].resize(3);
       }
 
-      itk::ExposeMetaData<std::vector<std::vector<double> > >(dictionary, itr->first, measurementFrameValue);
+      itk::ExposeMetaData<std::vector<std::vector<double>> >(dictionary, itr->first, measurementFrameValue);
 
       std::cout << itr->first << ": " << std::endl;
       for( unsigned int i = 0; i < 3; i++ )

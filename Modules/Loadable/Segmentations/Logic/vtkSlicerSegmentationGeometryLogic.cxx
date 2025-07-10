@@ -571,9 +571,9 @@ bool vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode()
   bool success = true;
 
   MRMLNodeModifyBlocker blocker(this->InputSegmentationNode);
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   this->InputSegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
   {
     std::string currentSegmentID = *segmentIdIt;
     vtkSegment* currentSegment = this->InputSegmentationNode->GetSegmentation()->GetSegment(*segmentIdIt);

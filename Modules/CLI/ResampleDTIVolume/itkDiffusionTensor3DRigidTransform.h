@@ -43,7 +43,7 @@ public:
   // /Set the 4x4 Matrix (the last row is ignored and considered to be 0,0,0,1
   void SetMatrix4x4( MatrixTransform4x4Type matrix );
 
-  // /Set the transformation matrix from an itk::RigidTransform< double > object
+  // /Set the transformation matrix from an itk::RigidTransform<double> object
   void SetTransform( typename Rigid3DTransformType::Pointer transform );
   typename VersorRigid3DTransformType::Pointer GetRigidTransform();
 

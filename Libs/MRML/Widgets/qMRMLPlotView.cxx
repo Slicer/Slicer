@@ -760,7 +760,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   // Plot data nodes that should not be added to the chart
   // because they are already added or because they should not be added
   // (as not all necessary table data are available).
-  std::set< vtkMRMLPlotSeriesNode* > plotSeriesNodesNotToAdd;
+  std::set<vtkMRMLPlotSeriesNode*> plotSeriesNodesNotToAdd;
 
   // Remove plots from chart that are no longer needed or available
   for (int chartPlotSeriesNodesIndex = q->chart()->GetNumberOfPlots()-1; chartPlotSeriesNodesIndex >= 0; chartPlotSeriesNodesIndex--)

@@ -313,12 +313,12 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
   {
-    volNode = dynamic_cast <vtkMRMLScalarVolumeNode*> (refNode);
+    volNode = dynamic_cast<vtkMRMLScalarVolumeNode*> (refNode);
   }
 #ifdef MRML_USE_vtkTeem
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") )
   {
-    volNode = dynamic_cast <vtkMRMLVectorVolumeNode*> (refNode);
+    volNode = dynamic_cast<vtkMRMLVectorVolumeNode*> (refNode);
   }
 #endif
   if (volNode->GetImageData())

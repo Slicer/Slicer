@@ -233,7 +233,7 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode* refNode)
 
   GridImageDoubleType::Pointer gridImage_Lps = nullptr;
 
-  typedef itk::ImageFileReader< GridImageDoubleType >  ReaderType;
+  typedef itk::ImageFileReader<GridImageDoubleType>  ReaderType;
   std::string fullName =  this->GetFullNameFromFileName();
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( fullName );
@@ -390,7 +390,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
     if (transformList.size()==1)
     {
       // there is only one single transform, so we create a specific VTK transform type instead of a general transform
-      typename TransformType::Pointer transformComponentItk = const_cast< TransformType* >(transformList.front().GetPointer());
+      typename TransformType::Pointer transformComponentItk = const_cast<TransformType*>(transformList.front().GetPointer());
       transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(
             vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, transformComponentItk, center_RAS));
     }
@@ -402,7 +402,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
       for( typename ConstTransformListType::const_iterator it = transformList.begin();
         it != end; ++it )
       {
-        typename TransformType::Pointer transformComponentItk = const_cast< TransformType* >(it->GetPointer());
+        typename TransformType::Pointer transformComponentItk = const_cast<TransformType*>(it->GetPointer());
         vtkAbstractTransform* transformComponent = vtkITKTransformConverter::CreateVTKTransformFromITK<T>(loggerObject, transformComponentItk, center_RAS);
         if (transformComponent!=nullptr)
         {

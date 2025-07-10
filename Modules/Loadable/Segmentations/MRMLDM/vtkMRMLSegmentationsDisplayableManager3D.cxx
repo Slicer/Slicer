@@ -118,7 +118,7 @@ public:
   typedef std::map<vtkMRMLSegmentationDisplayNode*, PipelineMapType> PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLSegmentationNode*, std::set< vtkMRMLSegmentationDisplayNode* > > SegmentationToDisplayCacheType;
+  typedef std::map < vtkMRMLSegmentationNode*, std::set<vtkMRMLSegmentationDisplayNode*>> SegmentationToDisplayCacheType;
   SegmentationToDisplayCacheType SegmentationToDisplayNodes;
 
   // Segmentations
@@ -289,8 +289,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayableTra
 {
   // Update the pipeline for all tracked DisplayableNode
   PipelinesCacheType::iterator pipelinesIter;
-  std::set< vtkMRMLSegmentationDisplayNode* > displayNodes = this->SegmentationToDisplayNodes[mNode];
-  std::set< vtkMRMLSegmentationDisplayNode* >::iterator dnodesIter;
+  std::set<vtkMRMLSegmentationDisplayNode*> displayNodes = this->SegmentationToDisplayNodes[mNode];
+  std::set<vtkMRMLSegmentationDisplayNode*>::iterator dnodesIter;
   for ( dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++ )
   {
     if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
@@ -357,9 +357,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::AddDisplayNode(vtkMR
     return;
   }
   PipelineMapType pipelineVector;
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
   {
     pipelineVector[*segmentIdIt] = this->CreateSegmentPipeline(*segmentIdIt);
   }
@@ -432,9 +432,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateSegmentPipelin
   }
 
   // Make sure each segment has a pipeline
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
   {
     // If segment does not have a pipeline, create one
     PipelineMapType::iterator pipelineIt = segmentPipelines.find(*segmentIdIt);

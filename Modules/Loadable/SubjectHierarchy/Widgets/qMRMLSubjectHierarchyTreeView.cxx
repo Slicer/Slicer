@@ -333,7 +333,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::updateMenuActions()
 void qMRMLSubjectHierarchyTreeViewPrivate::updateSceneMenuActions()
 {
   Q_Q(qMRMLSubjectHierarchyTreeView);
-  QList< QAction* > sceneMenuActions;
+  QList<QAction*> sceneMenuActions;
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, this->enabledPlugins())
   {
     foreach (QAction* action, plugin->sceneContextMenuActions())
@@ -362,7 +362,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::updateSceneMenuActions()
 void qMRMLSubjectHierarchyTreeViewPrivate::updateVisibilityMenuActions()
 {
   Q_Q(qMRMLSubjectHierarchyTreeView);
-  QList< QAction* > visibilityMenuActions;
+  QList<QAction*> visibilityMenuActions;
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, this->enabledPlugins())
   {
     // Add visibility context menu actions
@@ -379,7 +379,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::updateVisibilityMenuActions()
 void qMRMLSubjectHierarchyTreeViewPrivate::updateNodeMenuActions()
 {
   Q_Q(qMRMLSubjectHierarchyTreeView);
-  QList< QAction* > nodeMenuActions;
+  QList<QAction*> nodeMenuActions;
   // Add default node actions
   nodeMenuActions.append(this->RenameAction);
   nodeMenuActions.append(this->DeleteAction);
@@ -426,7 +426,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::updateNodeMenuActions()
 void qMRMLSubjectHierarchyTreeViewPrivate::updateTransformMenuActions()
 {
   Q_Q(qMRMLSubjectHierarchyTreeView);
-  QList< QAction* > transformMenuActions;
+  QList<QAction*> transformMenuActions;
   foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, this->enabledPlugins())
   {
     foreach (QAction* action, plugin->transformContextMenuActions())

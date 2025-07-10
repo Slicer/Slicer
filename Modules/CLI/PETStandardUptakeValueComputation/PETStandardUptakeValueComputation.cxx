@@ -847,7 +847,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
   typedef short PixelValueType;
   typedef itk::Image<PixelValueType, 3 > VolumeType;
-  typedef itk::ImageSeriesReader< VolumeType > VolumeReaderType;
+  typedef itk::ImageSeriesReader<VolumeType> VolumeReaderType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
 
   if ( !list.PETDICOMPath.compare(""))

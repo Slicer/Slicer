@@ -82,7 +82,7 @@ int main(int argc, char* * argv)
 //   typedef int PixelType;
 //   typedef itk::Image<PixelType, 3 > ImageType;
 
-//   typedef itk::ImageFileReader< ImageType > ImageReaderType;
+//   typedef itk::ImageFileReader<ImageType> ImageReaderType;
 //   ImageReaderType::Pointer reader = ImageReaderType::New();
 //   reader->SetFileName(originalImageFileName.c_str());
 
@@ -100,10 +100,10 @@ int main(int argc, char* * argv)
 //       raise(SIGABRT);
 //     }
 
-// //   std::vector<std::vector<long> > seedListIJK;
+// //   std::vector<std::vector<long>> seedListIJK;
 // //   seedsPreprocess<ImageType>(img, seed, seedListIJK);
 
-//   CSFLSRobustStatSegmentor3D< PixelType > seg;
+//   CSFLSRobustStatSegmentor3D<PixelType> seg;
 //   seg.setImage(img);
 
 //   seg.setSeeds(seedListIJK);

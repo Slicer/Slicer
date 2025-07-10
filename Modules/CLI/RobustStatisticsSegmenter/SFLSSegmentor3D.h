@@ -22,7 +22,7 @@ public:
 
   typedef SuperClassType::NodeType   NodeType;
   typedef SuperClassType::CSFLSLayer CSFLSLayer;
-  // typedef boost::shared_ptr< Self > Pointer;
+  // typedef boost::shared_ptr<Self> Pointer;
 
   typedef itk::Image<TPixel, 3>        TImage;
   typedef itk::Image<float, 3>         TFloatImage;
@@ -111,7 +111,7 @@ public:
   typename MaskImageType::Pointer mp_mask; // 0, non-0 mask for object
   typename LSImageType::Pointer mp_phi;
 
-  //  std::list< double > m_force;
+  //  std::list<double> m_force;
   std::vector<double> m_force;
 
   double m_timeStep;

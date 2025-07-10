@@ -21,7 +21,7 @@
 //---------------------------------------------------------------------------
 int vtkMRMLLinearTransformNodeEventsTest(int, char*[])
 {
-  vtkNew< vtkMRMLLinearTransformNode > linearTransformNode;
+  vtkNew<vtkMRMLLinearTransformNode> linearTransformNode;
 
   vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> callback;
 

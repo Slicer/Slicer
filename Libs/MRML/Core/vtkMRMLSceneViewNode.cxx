@@ -554,7 +554,7 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
   vtkCollection* sceneNodes = this->Scene->GetNodes();
   // Use smart pointer to ensure the nodes still exist when being removed.
   // Indeed, removing a node can have the side effect of removing other nodes.
-  std::stack<vtkSmartPointer<vtkMRMLNode> > removedNodes;
+  std::stack<vtkSmartPointer<vtkMRMLNode>> removedNodes;
   for (sceneNodes->InitTraversal(it);
        (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
   {

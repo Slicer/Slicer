@@ -1193,7 +1193,7 @@ bool vtkMRMLTableNode::SetColumnType(const std::string& columnName, int valueTyp
   // Replace column: vtkTable API has no way of inserting a column, so we temporarily remove all columns
   // after the selected column and put back in order.
   int wasModified = this->StartModify();
-  std::deque< vtkSmartPointer< vtkAbstractArray > > removedColumns;
+  std::deque<vtkSmartPointer<vtkAbstractArray>> removedColumns;
   while (table->GetNumberOfColumns() > columnIndex)
   {
     removedColumns.emplace_back(table->GetColumn(table->GetNumberOfColumns()-1));

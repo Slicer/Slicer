@@ -57,7 +57,7 @@ protected:
   qSlicerTablesModuleWidget* const q_ptr;
 public:
   qSlicerTablesModuleWidgetPrivate(qSlicerTablesModuleWidget& object);
-//  static QList<vtkSmartPointer<vtkMRMLTransformableNode> > getSelectedNodes(qMRMLTreeView* tree);
+//  static QList<vtkSmartPointer<vtkMRMLTransformableNode>> getSelectedNodes(qMRMLTreeView* tree);
 
   vtkSlicerTablesLogic*      logic()const;
   vtkTable* table()const;

@@ -292,7 +292,7 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
     }
   }
   // Map the grouped exportables by confidence values so that the highest confidence is on top
-  QMultiMap<double,QList<qSlicerDICOMExportable*> > exportablesByConfidence;
+  QMultiMap<double,QList<qSlicerDICOMExportable*>> exportablesByConfidence;
   foreach(const QString& plugin, exportablesByPlugin.uniqueKeys())
   {
     // Geometric mean to emphasize larger values
@@ -313,7 +313,7 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
   foreach (double inverseConfidence, exportablesByConfidence.uniqueKeys())
   {
     // Get exportable lists for the confidence number (there might be equality!)
-    QList<QList<qSlicerDICOMExportable*> > exportableLists = exportablesByConfidence.values(inverseConfidence);
+    QList<QList<qSlicerDICOMExportable*>> exportableLists = exportablesByConfidence.values(inverseConfidence);
     foreach(QList<qSlicerDICOMExportable*> exportables, exportableLists)
     {
       // Set exportable name as the first one in the list, giving also the

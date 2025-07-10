@@ -56,7 +56,7 @@ public:
   bool isDataNodeCandidate(vtkMRMLNode* node);
 
   /// Get a list of MLRML nodes that are in the scene but not added to the sequences data node at the chosen index value
-  void dataNodeCandidates(std::vector< vtkSmartPointer<vtkMRMLNode> > &foundNodes, vtkMRMLSequenceNode* sequenceNode);
+  void dataNodeCandidates(std::vector<vtkSmartPointer<vtkMRMLNode>> &foundNodes, vtkMRMLSequenceNode* sequenceNode);
 
   void setCurrentDataNodeCandidate(vtkMRMLNode* node);
 
@@ -190,7 +190,7 @@ void qMRMLSequenceEditWidgetPrivate::setCurrentDataNodeCandidate(vtkMRMLNode* no
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSequenceEditWidgetPrivate::dataNodeCandidates(std::vector< vtkSmartPointer<vtkMRMLNode> > &foundNodes, vtkMRMLSequenceNode* sequenceNode)
+void qMRMLSequenceEditWidgetPrivate::dataNodeCandidates(std::vector<vtkSmartPointer<vtkMRMLNode>> &foundNodes, vtkMRMLSequenceNode* sequenceNode)
 {
   Q_Q( const qMRMLSequenceEditWidget );
   foundNodes.clear();
@@ -409,7 +409,7 @@ void qMRMLSequenceEditWidget::updateCandidateNodesWidgetFromMRML(bool forceUpdat
   d->DataNodeCandidatesClassName = newDataNodeCandidatesClassName;
 
   // Display the candidate data nodes
-  std::vector< vtkSmartPointer<vtkMRMLNode> > candidateNodes;
+  std::vector<vtkSmartPointer<vtkMRMLNode>> candidateNodes;
   d->dataNodeCandidates(candidateNodes, d->SequenceNode);
 
   d->ListWidget_CandidateNodes->clear();
@@ -591,7 +591,7 @@ void qMRMLSequenceEditWidget::onAddDataNodeButtonClicked()
     return;
   }
   QList<QListWidgetItem*> selectedItems = d->ListWidget_CandidateNodes->selectedItems();
-  std::vector< vtkSmartPointer<vtkMRMLNode> > nodesToAdd;
+  std::vector<vtkSmartPointer<vtkMRMLNode>> nodesToAdd;
   for (QListWidgetItem* item : selectedItems)
   {
     QString currentCandidateNodeId = item->data(Qt::UserRole).toString();

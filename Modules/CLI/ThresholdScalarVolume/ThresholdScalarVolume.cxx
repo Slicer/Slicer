@@ -85,7 +85,7 @@ int DoIt( int argc, char* argv[] )
   if( Negate )
   {
     InputPixelType outsideValue =
-      (filter->GetLower() != itk::NumericTraits< InputPixelType >::NonpositiveMin()) ?
+      (filter->GetLower() != itk::NumericTraits<InputPixelType>::NonpositiveMin()) ?
       filter->GetLower() - 1 : filter->GetUpper() + 1;
     filter->SetOutsideValue( outsideValue );
     changeFilter = ChangeFilterType::New();

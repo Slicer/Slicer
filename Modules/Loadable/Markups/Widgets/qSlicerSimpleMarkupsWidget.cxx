@@ -431,7 +431,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
   if ( selectedAction == deleteAction )
   {
     QItemSelectionModel* selectionModel = d->MarkupsControlPointsTableWidget->selectionModel();
-    std::vector< int > deleteControlPoints;
+    std::vector<int> deleteControlPoints;
     // Need to find selected before removing because removing automatically refreshes the table
     for ( int i = 0; i < d->MarkupsControlPointsTableWidget->rowCount(); i++ )
     {

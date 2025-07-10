@@ -129,7 +129,7 @@ void vtkMRMLTransformNode::FlattenGeneralTransform(vtkCollection* outputTransfor
   }
 
   // Push the transforms onto the stack in reverse order
-  std::stack< vtkAbstractTransform* > tstack;
+  std::stack<vtkAbstractTransform*> tstack;
   tstack.push(inputTransform);
 
   // Write out all the transforms on the stack
@@ -1709,7 +1709,7 @@ bool vtkMRMLTransformNode::IsGeneralTransformLinear(vtkAbstractTransform* inputT
   }
 
   // Push the transforms onto the stack in reverse order (use a stack to avoid recursive method call)
-  std::stack< vtkAbstractTransform* > tstack;
+  std::stack<vtkAbstractTransform*> tstack;
   tstack.push(inputTransform);
 
   // Put all the transforms on the stack

@@ -162,7 +162,7 @@ void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* f
 
   if (measurementFrameMatrix != nullptr)
   {
-    typedef std::vector<std::vector<double> > DoubleVectorType;
+    typedef std::vector<std::vector<double>> DoubleVectorType;
     typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
     const itk::MetaDataDictionary& dictionary = itkImageWriter->GetMetaDataDictionary();
 

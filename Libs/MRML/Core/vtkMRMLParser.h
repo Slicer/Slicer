@@ -46,7 +46,7 @@ protected:
 private:
   vtkMRMLScene* MRMLScene{nullptr};
   vtkCollection* NodeCollection{nullptr};
-  std::stack< vtkMRMLNode*> NodeStack;
+  std::stack<vtkMRMLNode*> NodeStack;
 };
 
 #endif

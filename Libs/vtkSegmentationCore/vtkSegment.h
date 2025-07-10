@@ -43,7 +43,7 @@
 ///
 class vtkSegmentationCore_EXPORT vtkSegment : public vtkObject
 {
-  typedef std::map<std::string, vtkSmartPointer<vtkDataObject> > RepresentationMap;
+  typedef std::map<std::string, vtkSmartPointer<vtkDataObject>> RepresentationMap;
 
 public:
 

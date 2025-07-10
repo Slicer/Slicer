@@ -352,7 +352,7 @@ public:
   /// @}
 
   /// Get  all slice displaynodes creating PolyData models like glyphs etc.
-  std::vector< vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
+  std::vector<vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
   /// Return the associated slicerlayer nodes
   static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLSliceNode* node);
   /// Return the associated slice node
