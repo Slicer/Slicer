@@ -37,7 +37,7 @@ static void PrintLabels(vtkMRMLMarkupsNode* m)
   }
 }
 
-int vtkSlicerMarkupsLogicTest2(int argc, char* argv [] )
+int vtkSlicerMarkupsLogicTest2(int argc, char* argv[])
 {
   std::string tempFolder = ".";
   if (argc > 1)

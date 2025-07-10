@@ -78,16 +78,16 @@ public:
   ///
   /// Set/Get Title of the group box
   void setTitle(const QString& title);
-  QString title()const;
+  QString title() const;
 
   /// Return the decimals property value.
   /// \sa decimals
-  int decimals()const;
+  int decimals() const;
 
   ///
   /// Get sliders range
-  double minimum()const;
-  double maximum()const;
+  double minimum() const;
+  double maximum() const;
 
   ///
   /// Set sliders range
@@ -102,25 +102,25 @@ public:
   /// Note: If the QSpinBoxes are hidden, you can still can setMinimum() and
   /// setMaximum() manually
   void setMinMaxVisible(bool visible);
-  bool isMinMaxVisible()const;
+  bool isMinMaxVisible() const;
 
   ///
   /// Set sliders single step
-  double singleStep()const;
+  double singleStep() const;
   void setSingleStep(double step);
 
   ///
   /// Get/Set slider's label
-  QString lrLabel()const;
-  QString paLabel()const;
-  QString isLabel()const;
+  QString lrLabel() const;
+  QString paLabel() const;
+  QString isLabel() const;
   void setLRLabel(const QString& label);
   void setPALabel(const QString& label);
   void setISLabel(const QString& label);
 
   ///
   /// Return the current MRML node of interest
-  Q_INVOKABLE vtkMRMLTransformNode* mrmlTransformNode()const;
+  Q_INVOKABLE vtkMRMLTransformNode* mrmlTransformNode() const;
 
 signals:
   ///

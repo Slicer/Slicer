@@ -33,7 +33,7 @@
 #include <QMenu>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyExpandToDepthPluginPrivate: public QObject
+class qSlicerSubjectHierarchyExpandToDepthPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyExpandToDepthPlugin);
 protected:
@@ -107,7 +107,7 @@ qSlicerSubjectHierarchyExpandToDepthPlugin::qSlicerSubjectHierarchyExpandToDepth
 qSlicerSubjectHierarchyExpandToDepthPlugin::~qSlicerSubjectHierarchyExpandToDepthPlugin() = default;
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyExpandToDepthPlugin::sceneContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyExpandToDepthPlugin::sceneContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyExpandToDepthPlugin);
 

@@ -428,7 +428,7 @@ void vtkMRMLDisplayableManagerGroup::DoCallback(vtkObject* vtk_obj, unsigned lon
 #endif
   assert(displayableManagerName);
 
-  switch(event)
+  switch (event)
   {
     case vtkMRMLDisplayableManagerFactory::DisplayableManagerFactoryRegisteredEvent:
       self->onDisplayableManagerFactoryRegisteredEvent(displayableManagerName);

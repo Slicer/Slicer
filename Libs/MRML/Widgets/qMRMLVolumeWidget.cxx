@@ -232,14 +232,14 @@ void qMRMLVolumeWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* qMRMLVolumeWidget::mrmlVolumeNode()const
+vtkMRMLScalarVolumeNode* qMRMLVolumeWidget::mrmlVolumeNode() const
 {
   Q_D(const qMRMLVolumeWidget);
   return d->VolumeNode;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScalarVolumeDisplayNode* qMRMLVolumeWidget::mrmlDisplayNode()const
+vtkMRMLScalarVolumeDisplayNode* qMRMLVolumeWidget::mrmlDisplayNode() const
 {
   Q_D(const qMRMLVolumeWidget);
   return d->VolumeDisplayNode;

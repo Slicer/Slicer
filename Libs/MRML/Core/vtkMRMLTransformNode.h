@@ -242,7 +242,7 @@ public:
   virtual int SetAndObserveMatrixTransformFromParent(vtkMatrix4x4* matrix);
 
   /// Reimplemented from vtkMRMLTransformableNode
-  bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms() const override;
   /// Reimplemented from vtkMRMLTransformableNode
   void ApplyTransform(vtkAbstractTransform* transform) override;
 

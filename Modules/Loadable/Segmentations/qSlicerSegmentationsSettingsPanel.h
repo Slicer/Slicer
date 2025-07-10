@@ -49,7 +49,7 @@ public:
 
   /// Segmentations logic is used for configuring default settings
   void setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* logic);
-  vtkSlicerSegmentationsModuleLogic* segmentationsLogic()const;
+  vtkSlicerSegmentationsModuleLogic* segmentationsLogic() const;
 
   QString defaultTerminologyEntry();
 

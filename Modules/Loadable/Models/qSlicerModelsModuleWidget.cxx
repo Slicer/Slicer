@@ -58,7 +58,7 @@
 
 
 //-----------------------------------------------------------------------------
-class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModuleWidget
+class qSlicerModelsModuleWidgetPrivate : public Ui_qSlicerModelsModuleWidget
 {
 public:
   qSlicerModelsModuleWidgetPrivate();
@@ -448,7 +448,7 @@ void qSlicerModelsModuleWidget::setDisplaySelectionFromSubjectHierarchyItems(QLi
   }
 
   vtkMRMLNode* firstDataNode = nullptr;
-  if ( itemIDs.size() > 0
+  if (itemIDs.size() > 0
     // In case of empty selection the only item in the list is the scene
     && !(itemIDs.size() == 1 && itemIDs[0] == shNode->GetSceneItemID()) )
   {

@@ -57,7 +57,7 @@ public:
   vtkMRMLScene* mrmlScene() const;
 
   /// Get the PlotView node observed by view.
-  vtkMRMLPlotViewNode* mrmlPlotViewNode()const;
+  vtkMRMLPlotViewNode* mrmlPlotViewNode() const;
 
   /// Redefine the sizeHint so layouts work properly.
   QSize sizeHint() const override;

@@ -59,7 +59,7 @@ vtkMRMLThreeDViewInteractorStyle::~vtkMRMLThreeDViewInteractorStyle()
 //----------------------------------------------------------------------------
 void vtkMRMLThreeDViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------

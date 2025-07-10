@@ -35,7 +35,7 @@ vtkMRMLScriptedModuleNode::~vtkMRMLScriptedModuleNode()
 {
   if (this->ModuleName)
   {
-    delete [] this->ModuleName;
+    delete[] this->ModuleName;
     this->ModuleName = nullptr;
   }
 }
@@ -78,11 +78,11 @@ void vtkMRMLScriptedModuleNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-    if ( !strcmp(attName, "ModuleName") )
+    if (!strcmp(attName, "ModuleName"))
     {
       this->SetModuleName( attValue );
     }
-    else if ( !strncmp(attName, "parameter", strlen("parameter") ) )
+    else if (!strncmp(attName, "parameter", strlen("parameter") ))
     {
       std::string satt(attValue);
       int space = (int)satt.find(" ", 0);
@@ -125,7 +125,7 @@ const char* vtkMRMLScriptedModuleNode::GetNodeTagName()
 //----------------------------------------------------------------------------
 void vtkMRMLScriptedModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  vtkMRMLNode::PrintSelf(os, indent);
 
   std::map<std::string, std::string>::iterator iter;
 
@@ -180,7 +180,7 @@ void vtkMRMLScriptedModuleNode::UnsetAllParameters()
 std::string vtkMRMLScriptedModuleNode
 ::GetParameter(const std::string& name) const
 {
-  if ( this->Parameters.find(name) == this->Parameters.end() )
+  if (this->Parameters.find(name) == this->Parameters.end())
   {
     return std::string();
   }

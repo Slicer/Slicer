@@ -16,7 +16,7 @@ typename WarpTransform3D<FieldData>::Pointer WarpTransform3D<FieldData>::New()
 {
   Pointer smartPtr = ::itk::ObjectFactory<Self>::Create();
 
-  if ( smartPtr.IsNull() )
+  if (smartPtr.IsNull())
   {
     smartPtr = static_cast<Pointer>( new Self );
   }
@@ -46,7 +46,7 @@ WarpTransform3D<FieldData>
 {
   m_DeformationField = nullptr;
 //  m_OutputSpacing.Fill( 1 ) ;
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
     m_NeighborhoodRadius[i] = 1;    // radius of neighborhood we will use
     m_DerivativeWeights[i] = 1.0;
@@ -66,7 +66,7 @@ WarpTransform3D<FieldData>
 
   itk::Index<3> index;
   m_DeformationField->TransformPhysicalPointToIndex( inputPoint, index );
-  if ( !m_DeformationField->GetLargestPossibleRegion().IsInside( index ) )
+  if (!m_DeformationField->GetLargestPossibleRegion().IsInside( index ))
   {
     return inputPoint;
   }
@@ -88,7 +88,7 @@ WarpTransform3D<FieldData>
   itk::Index<3>       start;
   m_DeformationField->TransformPhysicalPointToIndex( inputPoint, start );
   jacobian.SetSize( 3, 3 );
-  if ( !m_DeformationField->GetLargestPossibleRegion().IsInside( start ) )
+  if (!m_DeformationField->GetLargestPossibleRegion().IsInside( start ))
   {
     jacobian.Fill( 0 );
   }
@@ -97,9 +97,9 @@ WarpTransform3D<FieldData>
   bit = ConstNeighborhoodIteratorType(m_NeighborhoodRadius, m_DeformationField, region );
 //  bit.OverrideBoundaryCondition(&nbc);
   bit.GoToBegin();
-  for ( unsigned int i = 0; i < 3; ++i )
+  for (unsigned int i = 0; i < 3; ++i)
   {
-    for ( unsigned int j = 0; j < 3; ++j )
+    for (unsigned int j = 0; j < 3; ++j)
     {
       jacobian( j, i ) = m_DerivativeWeights[i]
         * 0.5 * ( bit.GetNext( i )[j] - bit.GetPrevious( i )[j] );
@@ -113,9 +113,9 @@ WarpTransform3D<FieldData>
 ::SetDeformationField( DeformationImagePointerType deformationField )
 {
   m_DeformationField = deformationField;
-  for ( unsigned int i = 0; i < 3; i++ )
+  for (unsigned int i = 0; i < 3; i++)
   {
-    if ( deformationField->GetSpacing()[i] == 0.0 )
+    if (deformationField->GetSpacing()[i] == 0.0)
     {
       itkExceptionMacro(<< "Image spacing in dimension " << i << " is zero." );
     }

@@ -56,14 +56,14 @@ public:
   /// Volume rendering logic is synchronized with the settings.
   /// \sa vtkSlicerVolumeRenderingLogic::SetDefaultRenderingMethod
   void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic);
-  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic()const;
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic() const;
 
-  QString defaultRenderingMethod()const;
-  QString defaultQuality()const;
-  int defaultInteractiveSpeed()const;
-  bool defaultSurfaceSmoothing()const;
-  bool defaultAutoReleaseGraphicsResources()const;
-  QString gpuMemory()const;
+  QString defaultRenderingMethod() const;
+  QString defaultQuality() const;
+  int defaultInteractiveSpeed() const;
+  bool defaultSurfaceSmoothing() const;
+  bool defaultAutoReleaseGraphicsResources() const;
+  QString gpuMemory() const;
 
 public slots:
   void setDefaultRenderingMethod(const QString& method);

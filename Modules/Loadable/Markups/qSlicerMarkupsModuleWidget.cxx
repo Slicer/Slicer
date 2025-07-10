@@ -98,7 +98,7 @@ static const int COORDINATE_COMBOBOX_INDEX_HIDE = 2;
 
 //extern qSlicerMarkupsOptionsWidgetsFactory* qSlicerMarkupsOptionsWidgetsFactory::Instance = nullptr;
 //-----------------------------------------------------------------------------
-class qSlicerMarkupsModuleWidgetPrivate: public Ui_qSlicerMarkupsModule
+class qSlicerMarkupsModuleWidgetPrivate : public Ui_qSlicerMarkupsModule
 {
   Q_DECLARE_PUBLIC(qSlicerMarkupsModuleWidget);
 

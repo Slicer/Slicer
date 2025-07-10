@@ -103,7 +103,7 @@ void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode* anode)
 void vtkMRMLProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   if (this->ColorTransferFunction != nullptr)
   {
     os << indent << "ColorTransferFunction:" << endl;
@@ -298,8 +298,8 @@ bool vtkMRMLProceduralColorNode::IsColorMapEqual(vtkColorTransferFunction* tf1, 
     return false;
   }
   const int NUMBER_OF_VALUES_PER_POINT = 6; // x, red, green, blue, midpoint, sharpness
-  double values1[NUMBER_OF_VALUES_PER_POINT]={0};
-  double values2[NUMBER_OF_VALUES_PER_POINT]={0};
+  double values1[NUMBER_OF_VALUES_PER_POINT] = { 0 };
+  double values2[NUMBER_OF_VALUES_PER_POINT] = { 0 };
   int numberOfPoints = tf1->GetSize();
   for (int pointIndex = 0; pointIndex < numberOfPoints; ++pointIndex)
   {

@@ -62,8 +62,8 @@ public:
   /// Python compatibility function for showing dialog (calls \a exec)
   Q_INVOKABLE bool execDialog() { return this->exec(); };
 
-  bool editEnabled()const;
-  bool resampleLabelmaps()const;
+  bool editEnabled() const;
+  bool resampleLabelmaps() const;
 
 public slots:
   void setEditEnabled(bool aEditEnabled);

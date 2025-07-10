@@ -239,7 +239,7 @@ void ClickCallbackFunction (
     return;
   }
 
-  switch(eventId)
+  switch (eventId)
   {
     case vtkCommand::MouseWheelForwardEvent:
     {
@@ -298,7 +298,7 @@ void qMRMLThreeDView::setInteractor(vtkRenderWindowInteractor* interactor)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLThreeDViewInteractorStyle* qMRMLThreeDView::interactorObserver()const
+vtkMRMLThreeDViewInteractorStyle* qMRMLThreeDView::interactorObserver() const
 {
   Q_D(const qMRMLThreeDView);
   return d->InteractorObserver;
@@ -437,7 +437,7 @@ void qMRMLThreeDView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLViewNode* qMRMLThreeDView::mrmlViewNode()const
+vtkMRMLViewNode* qMRMLThreeDView::mrmlViewNode() const
 {
   Q_D(const qMRMLThreeDView);
   return d->MRMLViewNode;
@@ -587,7 +587,7 @@ void qMRMLThreeDView::dropEvent(QDropEvent* event)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLThreeDView::shadowsVisibility()const
+bool qMRMLThreeDView::shadowsVisibility() const
 {
   Q_D(const qMRMLThreeDView);
   vtkRenderer* renderer = this->renderer();
@@ -618,7 +618,7 @@ void qMRMLThreeDView::setShadowsVisibility(bool visibility)
 }
 
 //------------------------------------------------------------------------------
-double qMRMLThreeDView::ambientShadowsSizeScale()const
+double qMRMLThreeDView::ambientShadowsSizeScale() const
 {
   Q_D(const qMRMLThreeDView);
   // Compute sizeScale from bias by inverting computation implemented in setAmbientShadowsSizeScale.
@@ -643,7 +643,7 @@ void qMRMLThreeDView::setAmbientShadowsSizeScale(double sizeScale)
 }
 
 //------------------------------------------------------------------------------
-double qMRMLThreeDView::ambientShadowsVolumeOpacityThreshold()const
+double qMRMLThreeDView::ambientShadowsVolumeOpacityThreshold() const
 {
   Q_D(const qMRMLThreeDView);
   return d->ShadowsRenderPass->GetVolumeOpacityThreshold();
@@ -658,14 +658,14 @@ void qMRMLThreeDView::setAmbientShadowsVolumeOpacityThreshold(double opacityThre
 }
 
 //------------------------------------------------------------------------------
-vtkSSAOPass* qMRMLThreeDView::ssaoPass()const
+vtkSSAOPass* qMRMLThreeDView::ssaoPass() const
 {
   Q_D(const qMRMLThreeDView);
   return d->ShadowsRenderPass;
 }
 
 //------------------------------------------------------------------------------
-double qMRMLThreeDView::ambientShadowsIntensityScale()const
+double qMRMLThreeDView::ambientShadowsIntensityScale() const
 {
   Q_D(const qMRMLThreeDView);
   return d->ShadowsRenderPass->GetIntensityScale();
@@ -679,7 +679,7 @@ void qMRMLThreeDView::setAmbientShadowsIntensityScale(double intensityScale)
 }
 
 //------------------------------------------------------------------------------
-double qMRMLThreeDView::ambientShadowsIntensityShift()const
+double qMRMLThreeDView::ambientShadowsIntensityShift() const
 {
   Q_D(const qMRMLThreeDView);
   return d->ShadowsRenderPass->GetIntensityShift();

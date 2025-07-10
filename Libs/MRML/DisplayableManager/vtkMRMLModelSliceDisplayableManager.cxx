@@ -256,9 +256,9 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   PipelinesCacheType::iterator pipelinesIter;
   std::set<vtkMRMLDisplayNode*> displayNodes = this->ModelToDisplayNodes[mNode];
   std::set<vtkMRMLDisplayNode*>::iterator dnodesIter;
-  for ( dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++ )
+  for (dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++)
   {
-    if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
+    if (((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()))
     {
       this->GetNodeTransformToWorld( mNode, pipelinesIter->second->NodeToWorld);
       this->UpdateDisplayNodePipeline(pipelinesIter->first, pipelinesIter->second);
@@ -739,7 +739,7 @@ void vtkMRMLModelSliceDisplayableManager::AddDisplayableNode(
   for (int i = 0; i<nnodes; i++)
   {
     vtkMRMLDisplayNode* dnode = node->GetNthDisplayNode(i);
-    if ( this->Internal->UseDisplayNode(dnode) )
+    if (this->Internal->UseDisplayNode(dnode))
     {
       this->Internal->ModelToDisplayNodes[node].insert(dnode);
       this->Internal->AddDisplayNode( node, dnode );
@@ -765,7 +765,7 @@ void vtkMRMLModelSliceDisplayableManager
 
   std::set<vtkMRMLDisplayNode*> dnodes = displayableIt->second;
   std::set<vtkMRMLDisplayNode*>::iterator diter;
-  for ( diter = dnodes.begin(); diter != dnodes.end(); ++diter)
+  for (diter = dnodes.begin(); diter != dnodes.end(); ++diter)
   {
     this->Internal->RemoveDisplayNode(*diter);
   }
@@ -797,7 +797,7 @@ void vtkMRMLModelSliceDisplayableManager
 void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if ( node && !node->IsA("vtkMRMLModelNode")
+  if (node && !node->IsA("vtkMRMLModelNode")
        && !node->IsA("vtkMRMLModelDisplayNode") )
   {
     return;
@@ -807,12 +807,12 @@ void vtkMRMLModelSliceDisplayableManager
   vtkMRMLDisplayNode* displayNode = nullptr;
 
   bool modified = false;
-  if ( (modelNode = vtkMRMLDisplayableNode::SafeDownCast(node)) )
+  if ((modelNode = vtkMRMLDisplayableNode::SafeDownCast(node)))
   {
     this->RemoveDisplayableNode(modelNode);
     modified = true;
   }
-  else if ( (displayNode = vtkMRMLDisplayNode::SafeDownCast(node)) )
+  else if ((displayNode = vtkMRMLDisplayNode::SafeDownCast(node)))
   {
     this->Internal->RemoveDisplayNode(displayNode);
     modified = true;
@@ -836,24 +836,24 @@ void vtkMRMLModelSliceDisplayableManager
 
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(caller);
 
-  if ( displayableNode )
+  if (displayableNode)
   {
     vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*> (callData);
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(callDataNode);
 
-    if ( displayNode && (event == vtkMRMLDisplayableNode::DisplayModifiedEvent) )
+    if (displayNode && (event == vtkMRMLDisplayableNode::DisplayModifiedEvent))
     {
       this->Internal->UpdateDisplayNode(displayNode);
       this->RequestRender();
     }
-    else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)
              || (event == vtkMRMLModelNode::PolyDataModifiedEvent))
     {
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();
     }
   }
-  else if ( vtkMRMLSliceNode::SafeDownCast(caller) )
+  else if (vtkMRMLSliceNode::SafeDownCast(caller))
   {
       this->Internal->UpdateSliceNode();
       this->RequestRender();

@@ -43,7 +43,7 @@
 #include <vtkTestingOutputWindow.h>
 
 // --------------------------------------------------------------------------
-class qSlicerModelsModuleWidgetTester: public QObject
+class qSlicerModelsModuleWidgetTester : public QObject
 {
   Q_OBJECT
 private:

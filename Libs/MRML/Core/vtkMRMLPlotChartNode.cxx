@@ -69,22 +69,22 @@ vtkMRMLPlotChartNode::~vtkMRMLPlotChartNode()
 {
   if (this->Title)
   {
-    delete [] this->Title;
+    delete[] this->Title;
     this->Title = nullptr;
   }
   if (this->XAxisTitle)
   {
-    delete [] this->XAxisTitle;
+    delete[] this->XAxisTitle;
     this->XAxisTitle = nullptr;
   }
   if (this->YAxisTitle)
   {
-    delete [] this->YAxisTitle;
+    delete[] this->YAxisTitle;
     this->YAxisTitle = nullptr;
   }
   if (this->FontType)
   {
-    delete [] this->FontType;
+    delete[] this->FontType;
     this->FontType = nullptr;
   }
 }
@@ -224,7 +224,7 @@ void vtkMRMLPlotChartNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*
 //----------------------------------------------------------------------------
 void vtkMRMLPlotChartNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  vtkMRMLNode::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintStringMacro(Title);

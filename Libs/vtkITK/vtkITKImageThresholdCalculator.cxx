@@ -125,7 +125,7 @@ vtkITKImageThresholdCalculator::~vtkITKImageThresholdCalculator() = default;
 //----------------------------------------------------------------------------
 void vtkITKImageThresholdCalculator::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "Method: " << this->GetMethodAsString(this->Method) << "\n";
   os << indent << "Threshold: " << this->Threshold << "\n";
 }
@@ -155,7 +155,7 @@ void vtkITKImageThresholdCalculator::Update()
         vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
   }
 
-  if ( pointData->GetScalars() == nullptr)
+  if (pointData->GetScalars() == nullptr)
   {
     vtkErrorMacro(<<"vtkITKImageThresholdCalculator: Scalar input image is required");
     return;

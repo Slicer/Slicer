@@ -39,7 +39,7 @@
 // Common test driver includes
 #include "qMRMLWidgetCxxTests.h"
 
-int qMRMLNodeComboBoxTest3( int argc, char* argv [] )
+int qMRMLNodeComboBoxTest3(int argc, char* argv[])
 {
   if (argc < 2)
   {

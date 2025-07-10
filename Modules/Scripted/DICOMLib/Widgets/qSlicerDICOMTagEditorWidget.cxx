@@ -377,7 +377,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
   // Add missing patient tags with empty values to patient item so that they are displayed in the table
   std::vector<std::string> patientItemAttributeNames = shNode->GetItemAttributeNames(d->PatientItemID);
   std::vector<std::string> patientTagNames = vtkMRMLSubjectHierarchyConstants::GetDICOMPatientTagNames();
-  for ( std::vector<std::string>::iterator patientTagIt = patientTagNames.begin();
+  for (std::vector<std::string>::iterator patientTagIt = patientTagNames.begin();
     patientTagIt != patientTagNames.end(); ++patientTagIt )
   {
     std::string tagAttributeName = vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + (*patientTagIt);
@@ -502,7 +502,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
     foreach (QString tagName, exportableTagsMap.keys())
     {
       // Only use series tags
-      if ( vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(tagName.toUtf8().constData())
+      if (vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(tagName.toUtf8().constData())
         || vtkSlicerSubjectHierarchyModuleLogic::IsStudyTag(tagName.toUtf8().constData()) )
       {
         continue;
@@ -543,7 +543,7 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
 }
 
 //------------------------------------------------------------------------------
-QList<qSlicerDICOMExportable*> qSlicerDICOMTagEditorWidget::exportables()const
+QList<qSlicerDICOMExportable*> qSlicerDICOMTagEditorWidget::exportables() const
 {
   Q_D(const qSlicerDICOMTagEditorWidget);
   return d->Exportables;

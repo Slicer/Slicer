@@ -151,7 +151,7 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkGridTr
   outputPointItk = gridItk->TransformPoint( inputPointItk );
 
   // VTK
-  double outputPoint[3]={0};
+  double outputPoint[3] = { 0 };
   gridVtk->TransformPoint( inputPoint, outputPoint );
 
   itk::Point<double,3> inputPointVtk( inputPoint );
@@ -174,14 +174,14 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkGridTr
 // Compute transformed point differences between single-precision and double-precision VTK grid transform implementations
 double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], vtkOrientedGridTransform* gridVtk, bool logDetails)
 {
-  double outputPoint[3]={0};
+  double outputPoint[3] = { 0 };
   gridVtk->TransformPoint( inputPoint, outputPoint );
 
-  float floatInputPoint[3]={0};
+  float floatInputPoint[3] = { 0 };
   floatInputPoint[0]=static_cast<float>(inputPoint[0]);
   floatInputPoint[1]=static_cast<float>(inputPoint[1]);
   floatInputPoint[2]=static_cast<float>(inputPoint[2]);
-  float floatOutputPoint[3]={0};
+  float floatOutputPoint[3] = { 0 };
   gridVtk->TransformPoint( floatInputPoint, floatOutputPoint );
 
   itk::Point<double,3> outputPointVtk( outputPoint );
@@ -216,9 +216,9 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedGridTransfor
     double xPlus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
     xMinus1[row]-=eps;
     xPlus1[row]+=eps;
-    double xMinus1Transformed[3]={0};
+    double xMinus1Transformed[3] = { 0 };
     gridVtk->TransformPoint( xMinus1, xMinus1Transformed);
-    double xPlus1Transformed[3]={0};
+    double xPlus1Transformed[3] = { 0 };
     gridVtk->TransformPoint( xPlus1, xPlus1Transformed);
     for (int col = 0; col<3; col++)
     {
@@ -227,7 +227,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedGridTransfor
   }
 
   // Jacobian computed by the transform class
-  double outputPoint[3]={0};
+  double outputPoint[3] = { 0 };
   double jacobianVtk[3][3];
   gridVtk->InternalTransformDerivative( inputPoint, outputPoint, jacobianVtk );
 
@@ -356,7 +356,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
         inputPoint[2] = origin[2]+direction[2][0]*spacing[0]*i+direction[2][1]*spacing[1]*j+direction[2][2]*spacing[2]*k;
         // Compare transformation results computed by ITK and VTK.
         double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), false);
-        if ( differenceItkVtk > 1e-2 )
+        if (differenceItkVtk > 1e-2)
         {
           getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), true);
           std::cout << "ERROR: Point transform result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<") with linear interpolation"<< std::endl;
@@ -382,7 +382,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
         double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), false);
         // the larger the distance between the grid points, the larger difference is expected between ITK's linear and VTK's cubic
         // interpolation, therefore make the threshold the 20% of the spacing
-        if ( differenceItkVtk > averageSpacing*0.20 )
+        if (differenceItkVtk > averageSpacing*0.20)
         {
           getTransformedPointDifferenceItkVtk(inputPoint, gridItk, gridVtk.GetPointer(), true);
           std::cout << "ERROR: Point transform result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<") with cubic interpolation"<< std::endl;
@@ -390,7 +390,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
         }
         // Verify single/double-precision computation difference
         double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, gridVtk.GetPointer(), false);
-        if ( differenceSingleDoubleVtk > 1e-4 )
+        if (differenceSingleDoubleVtk > 1e-4)
         {
           getTransformedPointDifferenceSingleDoubleVtk(inputPoint, gridVtk.GetPointer(), true);
           std::cout << "ERROR: Point transform result mismatch between single-precision and double-precision VTK computation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
@@ -398,7 +398,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
         }
         // Verify VTK derivative
         double derivativeError = getDerivativeErrorVtk(inputPoint, gridVtk.GetPointer(), false);
-        if ( derivativeError > 1e-2 )
+        if (derivativeError > 1e-2)
         {
           getDerivativeErrorVtk(inputPoint, gridVtk.GetPointer(), true);
           std::cout << "ERROR: Transform derivative result mismatch between VTK and numerical approximation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
@@ -408,7 +408,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
         double inverseError = getInverseErrorVtk(inputPoint, gridVtk.GetPointer(), false);
         // add 10% to the inverse tolerance, as the point is transformed twice, so the error can be slightly higher
         // than a single inverse computation
-        if ( inverseError > gridVtk->GetInverseTolerance()*1.10 )
+        if (inverseError > gridVtk->GetInverseTolerance()*1.10)
         {
           getInverseErrorVtk(inputPoint, gridVtk.GetPointer(), true);
           std::cout << "ERROR: Point transformed by forward and inverse transform does not match the original point" << std::endl;

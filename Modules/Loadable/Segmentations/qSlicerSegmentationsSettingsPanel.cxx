@@ -43,7 +43,7 @@
 // qSlicerSegmentationsSettingsPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSegmentationsSettingsPanelPrivate: public Ui_qSlicerSegmentationsSettingsPanel
+class qSlicerSegmentationsSettingsPanelPrivate : public Ui_qSlicerSegmentationsSettingsPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSegmentationsSettingsPanel);
 protected:
@@ -65,7 +65,7 @@ public:
 // --------------------------------------------------------------------------
 qSlicerSegmentationsSettingsPanelPrivate
 ::qSlicerSegmentationsSettingsPanelPrivate(qSlicerSegmentationsSettingsPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 
@@ -146,7 +146,7 @@ qSlicerSegmentationsSettingsPanel::qSlicerSegmentationsSettingsPanel(QWidget* _p
 qSlicerSegmentationsSettingsPanel::~qSlicerSegmentationsSettingsPanel() = default;
 
 // --------------------------------------------------------------------------
-vtkSlicerSegmentationsModuleLogic* qSlicerSegmentationsSettingsPanel::segmentationsLogic()const
+vtkSlicerSegmentationsModuleLogic* qSlicerSegmentationsSettingsPanel::segmentationsLogic() const
 {
   Q_D(const qSlicerSegmentationsSettingsPanel);
   return d->SegmentationsLogic;

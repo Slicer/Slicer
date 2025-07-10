@@ -43,7 +43,7 @@ vtkMRMLAnnotationNode::~vtkMRMLAnnotationNode()
   this->TextList->Delete();
   if (this->ReferenceNodeID)
   {
-      delete [] this->ReferenceNodeID;
+      delete[] this->ReferenceNodeID;
   }
 
   if (this->m_Backup)
@@ -214,7 +214,7 @@ void vtkMRMLAnnotationNode::ProcessMRMLEvents( vtkObject* caller,
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << endl;
   this->PrintAnnotationInfo(os,indent,0);
 }
@@ -256,7 +256,7 @@ void vtkMRMLAnnotationNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, i
     os << indent << this->GetAttributeTypesEnumAsString(j) <<": ";
     if (this->GetNumberOfTexts())
     {
-      for (int i = 0; i <  this->GetNumberOfTexts(); i++ )
+      for (int i = 0; i <  this->GetNumberOfTexts(); i++)
       {
         os << this->GetAnnotationAttribute(i,j) << " " ;
       }
@@ -410,7 +410,7 @@ int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt)
       return 0;
   }
 
-  for (int i = idEntry; i < n-1; i++ )
+  for (int i = idEntry; i < n-1; i++)
   {
       dataArray->SetValue(i,dataArray->GetValue(i+1));
   }
@@ -502,7 +502,7 @@ int vtkMRMLAnnotationNode::AddText(const char* newText,int selectedFlag, int vis
 //-------------------------------------------------------------------------
 std::string vtkMRMLAnnotationNode::GetText(int n)
 {
-  if ((this->GetNumberOfTexts() <= n) || n < 0 )
+  if ((this->GetNumberOfTexts() <= n) || n < 0)
   {
       return std::string();
   }
@@ -523,7 +523,7 @@ int  vtkMRMLAnnotationNode::DeleteText(int id)
       return -1;
   }
 
-  for (int i = id; i < n-1; i++ )
+  for (int i = id; i < n-1; i++)
   {
       this->TextList->SetValue(i,this->GetText(i+1));
   }

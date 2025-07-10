@@ -54,7 +54,7 @@ public:
   void setViewLabel(const QString& newViewLabel);
 
   /// Get the label for the view (abbreviation for the view name).
-  QString viewLabel()const;
+  QString viewLabel() const;
 
   /// Get PlotViewNode associated with this PlotViewController.
   Q_INVOKABLE vtkMRMLPlotViewNode* mrmlPlotViewNode() const;

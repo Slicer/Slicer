@@ -30,7 +30,7 @@
 #endif
 
 //-----------------------------------------------------------------------------
-class qSlicerAboutDialogPrivate: public Ui_qSlicerAboutDialog
+class qSlicerAboutDialogPrivate : public Ui_qSlicerAboutDialog
 {
 public:
 };

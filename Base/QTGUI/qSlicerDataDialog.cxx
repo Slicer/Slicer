@@ -348,7 +348,7 @@ void qSlicerDataDialogPrivate::showOptions(bool show)
 }
 
 //-----------------------------------------------------------------------------
-QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
+QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles() const
 {
   QList<qSlicerIO::IOProperties> files;
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
@@ -443,7 +443,7 @@ void qSlicerDataDialogPrivate::setFileOptions(
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerDataDialogPrivate::senderRow()const
+int qSlicerDataDialogPrivate::senderRow() const
 {
   QComboBox* comboBox = qobject_cast<QComboBox*>(this->sender());
   if (!comboBox)
@@ -469,7 +469,7 @@ int qSlicerDataDialogPrivate::senderRow()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerDataDialogPrivate::haveSameTypeOption(int row1, int row2)const
+bool qSlicerDataDialogPrivate::haveSameTypeOption(int row1, int row2) const
 {
   QComboBox* comboBox1 = qobject_cast<QComboBox*>(
     this->FileWidget->cellWidget(row1, TypeColumn));
@@ -493,7 +493,7 @@ bool qSlicerDataDialogPrivate::haveSameTypeOption(int row1, int row2)const
   return true;
 }
 //-----------------------------------------------------------------------------
-bool qSlicerDataDialogPrivate::propagateChange(int changedRow)const
+bool qSlicerDataDialogPrivate::propagateChange(int changedRow) const
 {
   QTableWidgetItem* item = this->FileWidget->item(changedRow, FileColumn);
   bool fileSelected = item ? item->checkState() != Qt::Unchecked : false;
@@ -574,26 +574,26 @@ qSlicerDataDialog::qSlicerDataDialog(QObject* _parent)
 qSlicerDataDialog::~qSlicerDataDialog() = default;
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerDataDialog::fileType()const
+qSlicerIO::IOFileType qSlicerDataDialog::fileType() const
 {
   // FIXME: not really a scene file, but more a collection of files
   return QString("NoFile");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerDataDialog::description()const
+QString qSlicerDataDialog::description() const
 {
   return tr("Any Data");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileDialog::IOAction qSlicerDataDialog::action()const
+qSlicerFileDialog::IOAction qSlicerDataDialog::action() const
 {
   return qSlicerFileDialog::Read;
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerDataDialog::isMimeDataAccepted(const QMimeData* mimeData)const
+bool qSlicerDataDialog::isMimeDataAccepted(const QMimeData* mimeData) const
 {
   return mimeData->hasFormat("text/uri-list");
 }

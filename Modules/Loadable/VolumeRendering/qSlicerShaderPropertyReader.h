@@ -40,14 +40,14 @@ public:
   ~qSlicerShaderPropertyReader() override;
 
   void setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic);
-  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic()const;
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic() const;
 
   // Reimplemented for IO specific description
   QString description() const override;
   IOFileType fileType() const override;
   QStringList extensions() const override;
 
-  bool load(const IOProperties& properties) override ;
+  bool load(const IOProperties& properties) override;
 
 protected:
   QScopedPointer<qSlicerShaderPropertyReaderPrivate> d_ptr;

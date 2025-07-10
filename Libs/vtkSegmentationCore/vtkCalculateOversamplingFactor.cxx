@@ -406,7 +406,7 @@ void vtkCalculateOversamplingFactor::ClipMembershipFunction(vtkPiecewiseFunction
   {
     membershipFunction->GetNodeValue(nodeIndex, currentNode);
     membershipFunction->GetNodeValue(nodeIndex+1, nextNode);
-    if ( (currentNode[1] < clipValue && nextNode[1] > clipValue)
+    if ((currentNode[1] < clipValue && nextNode[1] > clipValue)
       || (currentNode[1] > clipValue && nextNode[1] < clipValue) )
     {
       double newNodeParameterValue = (((nextNode[0]-currentNode[0])*(currentNode[1]-clipValue)) / (currentNode[1]-nextNode[1])) + currentNode[0];
@@ -442,7 +442,7 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
   }
 
   // Sanity check for sensible oversampling factor
-  if ( oversamplingFactor < 0.01
+  if (oversamplingFactor < 0.01
     || oversamplingFactor > 100.0 )
   {
     vtkWarningWithObjectMacro(imageData, "vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry: Oversampling factor" << oversamplingFactor << "seems unreasonable!");

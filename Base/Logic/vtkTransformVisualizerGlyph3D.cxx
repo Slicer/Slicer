@@ -85,7 +85,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     return 1;
   }
 
-  if ( inCScalars==nullptr )
+  if (inCScalars==nullptr)
   {
     vtkDebugMacro("No scalar data is available!");
     return 1;
@@ -129,10 +129,10 @@ int vtkTransformVisualizerGlyph3D::RequestData(
   // point attributes.
   vtkIdType ptIncr = 0;
   vtkIdType cellIncr = 0;
-  double v[3] = {0};
+  double v[3] = { 0 };
   for (vtkIdType inPtId = 0; inPtId < numPts; inPtId++)
   {
-    if ( ! (inPtId % 10000) )
+    if (! (inPtId % 10000))
     {
       this->UpdateProgress(static_cast<double>(inPtId)/numPts);
       if (this->GetAbortExecute())
@@ -175,7 +175,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     if (this->Orient && (vMag > 0.0))
     {
       // if there is no y or z component
-      if ( v[1] == 0.0 && v[2] == 0.0 )
+      if (v[1] == 0.0 && v[2] == 0.0)
       {
         if (v[0] < 0) //just flip x if we need to
         {
@@ -189,12 +189,12 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     }
 
     // Scale data if appropriate
-    if ( this->Scaling )
+    if (this->Scaling)
     {
-      if ( this->ScaleDirectional )
+      if (this->ScaleDirectional)
       {
         double scale = vMag * this->ScaleFactor;
-        if ( scale == 0.0 )
+        if (scale == 0.0)
         {
           scale = 1.0e-10;
         }
@@ -211,7 +211,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
         {
           scale *= vMag;
         }
-        if ( scale == 0.0 )
+        if (scale == 0.0)
         {
           scale = 1.0e-10;
         }
@@ -258,7 +258,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
 //------------------------------------------------------------------------------
 void vtkTransformVisualizerGlyph3D::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //------------------------------------------------------------------------------

@@ -47,11 +47,11 @@ public:
   /// Destructor
   ~qSlicerExtensionsLocalWidget() override;
 
-  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
+  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel() const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
   /// Allow filtering of extensions list
-  QString searchText()const;
+  QString searchText() const;
 
 signals:
   void linkActivated(const QUrl& link);

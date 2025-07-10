@@ -28,7 +28,7 @@
 
 #include <PythonQt.h>
 // ----------------------------------------------------------------------------
-class qSlicerScriptedLoadableModuleTester: public QObject
+class qSlicerScriptedLoadableModuleTester : public QObject
 {
   Q_OBJECT
 

@@ -52,7 +52,7 @@ class vtkMRMLThreeDViewInteractorStyle;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLThreeDViewPrivate: public ctkVTKRenderViewPrivate
+class qMRMLThreeDViewPrivate : public ctkVTKRenderViewPrivate
 {
   Q_OBJECT
   QVTK_OBJECT

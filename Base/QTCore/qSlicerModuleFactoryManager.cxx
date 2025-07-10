@@ -205,14 +205,14 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerModuleFactoryManager::isLoaded(const QString& name)const
+bool qSlicerModuleFactoryManager::isLoaded(const QString& name) const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->LoadedModules.contains(name);
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerModuleFactoryManager::loadedModuleNames()const
+QStringList qSlicerModuleFactoryManager::loadedModuleNames() const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->LoadedModules;
@@ -277,7 +277,7 @@ void qSlicerModuleFactoryManager::uninstantiateModule(const QString& name)
 }
 
 //---------------------------------------------------------------------------
-qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::loadedModule(const QString& name)const
+qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::loadedModule(const QString& name) const
 {
   if (!this->isRegistered(name))
   {
@@ -312,7 +312,7 @@ void qSlicerModuleFactoryManager::setAppLogic(vtkSlicerApplicationLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerApplicationLogic* qSlicerModuleFactoryManager::appLogic()const
+vtkSlicerApplicationLogic* qSlicerModuleFactoryManager::appLogic() const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->AppLogic;
@@ -355,7 +355,7 @@ void qSlicerModuleFactoryManager::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerModuleFactoryManager::mrmlScene()const
+vtkMRMLScene* qSlicerModuleFactoryManager::mrmlScene() const
 {
   Q_D(const qSlicerModuleFactoryManager);
   return d->MRMLScene;

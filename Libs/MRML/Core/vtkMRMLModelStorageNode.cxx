@@ -107,7 +107,7 @@ vtkMRMLModelStorageNode::~vtkMRMLModelStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -189,7 +189,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if ( extension.empty() )
+  if (extension.empty())
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
       "Model file '" << fullName.c_str() << "' has no file extension while trying to read node (" << (this->ID ? this->ID : "(unknown)") << ").");

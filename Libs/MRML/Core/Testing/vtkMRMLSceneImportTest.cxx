@@ -26,7 +26,7 @@
 #include <vtkNew.h>
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneImportTest(int argc, char* argv[] )
+int vtkMRMLSceneImportTest(int argc, char* argv[])
 {
   if (argc < 2)
   {

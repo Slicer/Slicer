@@ -40,7 +40,7 @@ vtkMRMLMeasurementVolume::~vtkMRMLMeasurementVolume() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurementVolume::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------

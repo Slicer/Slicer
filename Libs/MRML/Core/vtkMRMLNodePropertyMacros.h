@@ -263,7 +263,7 @@
 #define vtkMRMLReadXMLVectorMacro(xmlAttributeName, propertyName, vectorType, vectorSize) \
   if (!strcmp(xmlReadAttName, #xmlAttributeName)) \
   { \
-    vectorType vectorValue[vectorSize] = {0}; \
+    vectorType vectorValue[vectorSize] = { 0 }; \
     std::stringstream ss; \
     ss << xmlReadAttValue; \
     for (int i = 0; i<vectorSize; i++) \

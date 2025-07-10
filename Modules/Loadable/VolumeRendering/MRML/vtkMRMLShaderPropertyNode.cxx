@@ -121,7 +121,7 @@ void vtkMRMLShaderPropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
 //----------------------------------------------------------------------------
 void vtkMRMLShaderPropertyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "ShaderProperty:\n";
   this->ShaderProperty->PrintSelf(os,indent.GetNextIndent());

@@ -55,7 +55,7 @@ class vtkProp;
 class QFrame;
 
 //-----------------------------------------------------------------------------
-class qSlicerSegmentEditorAbstractEffectPrivate: public QObject
+class qSlicerSegmentEditorAbstractEffectPrivate : public QObject
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorAbstractEffect);

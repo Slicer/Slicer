@@ -54,14 +54,14 @@ public:
   qMRMLLayoutViewFactoryPrivate(qMRMLLayoutViewFactory& obj);
   virtual void init();
 
-  vtkMRMLAbstractViewNode* viewNodeByName(const QString& viewName)const;
-  vtkMRMLAbstractViewNode* viewNodeByLayoutLabel(const QString& layoutLabel)const;
+  vtkMRMLAbstractViewNode* viewNodeByName(const QString& viewName) const;
+  vtkMRMLAbstractViewNode* viewNodeByLayoutLabel(const QString& layoutLabel) const;
 
-  vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement)const;
-  vtkMRMLLayoutLogic::ViewProperties propertiesFromXML(QDomElement viewElement)const;
-  vtkMRMLLayoutLogic::ViewProperty propertyFromXML(QDomElement propertyElement)const;
+  vtkMRMLLayoutLogic::ViewAttributes attributesFromXML(QDomElement viewElement) const;
+  vtkMRMLLayoutLogic::ViewProperties propertiesFromXML(QDomElement viewElement) const;
+  vtkMRMLLayoutLogic::ViewProperty propertyFromXML(QDomElement propertyElement) const;
 
-  QList<qMRMLWidget*> mrmlWidgets()const;
+  QList<qMRMLWidget*> mrmlWidgets() const;
 
 protected:
   qMRMLLayoutViewFactory* q_ptr;
@@ -91,7 +91,7 @@ void qMRMLLayoutViewFactoryPrivate::init()
 
 //------------------------------------------------------------------------------
 vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
-::viewNodeByName(const QString& viewName)const
+::viewNodeByName(const QString& viewName) const
 {
   foreach (vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
   {
@@ -105,7 +105,7 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
 
 //------------------------------------------------------------------------------
 vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
-::viewNodeByLayoutLabel(const QString& layoutLabel)const
+::viewNodeByLayoutLabel(const QString& layoutLabel) const
 {
   foreach (vtkMRMLAbstractViewNode* viewNode, this->Views.keys())
   {
@@ -119,7 +119,7 @@ vtkMRMLAbstractViewNode* qMRMLLayoutViewFactoryPrivate
 
 //------------------------------------------------------------------------------
 vtkMRMLLayoutLogic::ViewAttributes qMRMLLayoutViewFactoryPrivate
-::attributesFromXML(QDomElement viewElement)const
+::attributesFromXML(QDomElement viewElement) const
 {
   vtkMRMLLayoutLogic::ViewAttributes attributes;
   QDomNamedNodeMap elementAttributes = viewElement.attributes();
@@ -135,7 +135,7 @@ vtkMRMLLayoutLogic::ViewAttributes qMRMLLayoutViewFactoryPrivate
 
 //------------------------------------------------------------------------------
 vtkMRMLLayoutLogic::ViewProperties qMRMLLayoutViewFactoryPrivate
-::propertiesFromXML(QDomElement viewElement)const
+::propertiesFromXML(QDomElement viewElement) const
 {
   vtkMRMLLayoutLogic::ViewProperties properties;
   for (QDomElement childElement = viewElement.firstChildElement();
@@ -149,7 +149,7 @@ vtkMRMLLayoutLogic::ViewProperties qMRMLLayoutViewFactoryPrivate
 
 //------------------------------------------------------------------------------
 vtkMRMLLayoutLogic::ViewProperty qMRMLLayoutViewFactoryPrivate
-::propertyFromXML(QDomElement propertyElement)const
+::propertyFromXML(QDomElement propertyElement) const
 {
   vtkMRMLLayoutLogic::ViewProperty property;
   QDomNamedNodeMap elementAttributes = propertyElement.attributes();
@@ -167,7 +167,7 @@ vtkMRMLLayoutLogic::ViewProperty qMRMLLayoutViewFactoryPrivate
 
 //------------------------------------------------------------------------------
 QList<qMRMLWidget*> qMRMLLayoutViewFactoryPrivate
-::mrmlWidgets()const
+::mrmlWidgets() const
 {
   QList<qMRMLWidget*> res;
   foreach (QWidget* viewWidget, this->Views.values())
@@ -204,13 +204,13 @@ qMRMLLayoutViewFactory::~qMRMLLayoutViewFactory()
 }
 
 // --------------------------------------------------------------------------
-QString qMRMLLayoutViewFactory::viewClassName()const
+QString qMRMLLayoutViewFactory::viewClassName() const
 {
   return QString();
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLLayoutViewFactory::isElementSupported(QDomElement layoutElement)const
+bool qMRMLLayoutViewFactory::isElementSupported(QDomElement layoutElement) const
 {
   if (!this->Superclass::isElementSupported(layoutElement))
   {
@@ -221,13 +221,13 @@ bool qMRMLLayoutViewFactory::isElementSupported(QDomElement layoutElement)const
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLLayoutViewFactory::isViewNodeSupported(vtkMRMLAbstractViewNode* viewNode)const
+bool qMRMLLayoutViewFactory::isViewNodeSupported(vtkMRMLAbstractViewNode* viewNode) const
 {
   return viewNode && viewNode->IsA(this->viewClassName().toUtf8());
 }
 
 // --------------------------------------------------------------------------
-qMRMLLayoutManager* qMRMLLayoutViewFactory::layoutManager()const
+qMRMLLayoutManager* qMRMLLayoutViewFactory::layoutManager() const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->LayoutManager;
@@ -241,7 +241,7 @@ void qMRMLLayoutViewFactory::setLayoutManager(qMRMLLayoutManager* layoutManager)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLLayoutViewFactory::mrmlScene()const
+vtkMRMLScene* qMRMLLayoutViewFactory::mrmlScene() const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->MRMLScene;
@@ -275,7 +275,7 @@ void qMRMLLayoutViewFactory::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutViewFactory::viewWidget(int id)const
+QWidget* qMRMLLayoutViewFactory::viewWidget(int id) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   if (id < 0 || id >= d->Views.size())
@@ -286,21 +286,21 @@ QWidget* qMRMLLayoutViewFactory::viewWidget(int id)const
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutViewFactory::viewWidget(vtkMRMLAbstractViewNode* node)const
+QWidget* qMRMLLayoutViewFactory::viewWidget(vtkMRMLAbstractViewNode* node) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->Views.value(node, 0);
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::viewNode(QWidget* widget)const
+vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::viewNode(QWidget* widget) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->Views.key(widget, 0);
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutViewFactory::viewWidget(const QString& name)const
+QWidget* qMRMLLayoutViewFactory::viewWidget(const QString& name) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   vtkMRMLAbstractViewNode* viewNode = d->viewNodeByName(name);
@@ -308,7 +308,7 @@ QWidget* qMRMLLayoutViewFactory::viewWidget(const QString& name)const
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLLayoutViewFactory::viewWidgetByLayoutLabel(const QString& layoutLabel)const
+QWidget* qMRMLLayoutViewFactory::viewWidgetByLayoutLabel(const QString& layoutLabel) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   vtkMRMLAbstractViewNode* viewNode = d->viewNodeByLayoutLabel(layoutLabel);
@@ -330,7 +330,7 @@ QStringList qMRMLLayoutViewFactory::viewNodeNames() const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLLayoutViewFactory::viewCount()const
+int qMRMLLayoutViewFactory::viewCount() const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->Views.size();
@@ -514,14 +514,14 @@ void qMRMLLayoutViewFactory::setActiveViewNode(vtkMRMLAbstractViewNode* node)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::activeViewNode()const
+vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::activeViewNode() const
 {
   Q_D(const qMRMLLayoutViewFactory);
   return d->ActiveViewNode;
 }
 
 // --------------------------------------------------------------------------
-vtkRenderer* qMRMLLayoutViewFactory::activeRenderer()const
+vtkRenderer* qMRMLLayoutViewFactory::activeRenderer() const
 {
   QWidget* activeViewWidget = this->viewWidget(this->activeViewNode());
   if (!activeViewWidget)
@@ -536,7 +536,7 @@ vtkRenderer* qMRMLLayoutViewFactory::activeRenderer()const
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::viewNodeFromXML(QDomElement viewElement)const
+vtkMRMLAbstractViewNode* qMRMLLayoutViewFactory::viewNodeFromXML(QDomElement viewElement) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   vtkMRMLLayoutLogic::ViewAttributes attributes =
@@ -574,7 +574,7 @@ QWidget* qMRMLLayoutViewFactory::createViewFromXML(QDomElement viewElement)
 
 //------------------------------------------------------------------------------
 QList<vtkMRMLAbstractViewNode*> qMRMLLayoutViewFactory
-::viewNodesFromXML(QDomElement viewElement)const
+::viewNodesFromXML(QDomElement viewElement) const
 {
   Q_D(const qMRMLLayoutViewFactory);
   vtkMRMLLayoutLogic::ViewAttributes attributes =

@@ -106,13 +106,13 @@ public:
   /// Segments that have their ID listed in hideSegments are
   /// not shown in the table.
   Q_INVOKABLE void setHideSegments(const QStringList& segmentIDs);
-  Q_INVOKABLE QStringList hideSegments()const;
+  Q_INVOKABLE QStringList hideSegments() const;
 
   /// Return list of visible segment IDs
-  Q_INVOKABLE QStringList displayedSegmentIDs()const;
+  Q_INVOKABLE QStringList displayedSegmentIDs() const;
 
-  Q_INVOKABLE qMRMLSortFilterSegmentsProxyModel* sortFilterProxyModel()const;
-  Q_INVOKABLE qMRMLSegmentsModel* model()const;
+  Q_INVOKABLE qMRMLSortFilterSegmentsProxyModel* sortFilterProxyModel() const;
+  Q_INVOKABLE qMRMLSegmentsModel* model() const;
 
   /// The text used to filter the segments in the table
   /// \sa setTextFilter
@@ -122,17 +122,17 @@ public:
   /// Default value is "Segmentations/UseTerminologySelector".
   /// If set to empty then the option will not be saved to and loaded from application settings.
   /// \sa setUseTerminologySelectorSettingsKey
-  QString useTerminologySelectorSettingsKey()const;
+  QString useTerminologySelectorSettingsKey() const;
 
   /// Returns true if standard terminologies are used for choosing segment name and color.
   /// If false then simple selectors are used.
-  bool useTerminologySelector()const;
+  bool useTerminologySelector() const;
 
   /// Returns true if the user can choose between the standard terminologies selector or the simple selectors for segment name and color.
-  bool terminologySelectorOptionVisible()const;
+  bool terminologySelectorOptionVisible() const;
 
   /// Offer automatic disable of using standard terminologies selector if custom segment names or colors are used frequently.
-  bool terminologySelectorAutoDisable()const;
+  bool terminologySelectorAutoDisable() const;
 
   // If the specified status should be shown in the table
   /// \sa setStatusShown
@@ -205,7 +205,7 @@ public slots:
   void setStatusShown(int status, bool shown);
 
   /// Returns true if automatic jump to current segment is enabled.
-  bool jumpToSelectedSegmentEnabled()const;
+  bool jumpToSelectedSegmentEnabled() const;
 
 signals:
   /// Emitted if selection changes

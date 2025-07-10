@@ -101,7 +101,7 @@ void vtkMRMLMeasurement::ClearValue(ComputationResult computationResult/*=NoChan
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurement::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Enabled: " << (this->Enabled ? "true" : "false") << "\n";
   os << indent << "Name: " << this->Name << "\n";
   os << indent << "PrintableValue: " << this->GetValueWithUnitsAsPrintableString();

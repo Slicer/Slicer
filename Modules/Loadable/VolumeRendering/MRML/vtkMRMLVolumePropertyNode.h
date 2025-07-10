@@ -207,10 +207,10 @@ protected:
   /// This flag is used for temporarily ignoring volume property changes.
   /// This is needed because vtkVolume invokes Modification events on the volume property
   /// when the property is set into the volume.
-  bool IgnoreVolumePropertyChanges{false};
+  bool IgnoreVolumePropertyChanges{ false };
 
   /// Main parameters for visualization
-  vtkVolumeProperty* VolumeProperty{nullptr};
+  vtkVolumeProperty* VolumeProperty{ nullptr };
 
   /// Effective range of the transfer functions. Outside this range the functions are constant.
   /// Elements: {xMin, xMax}. Other axes not supported because the three transfer functions are

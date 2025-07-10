@@ -54,5 +54,5 @@ void vtkMRMLGPURayCastVolumeRenderingDisplayNode::WriteXML(ostream& of, int nInd
 //----------------------------------------------------------------------------
 void vtkMRMLGPURayCastVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }

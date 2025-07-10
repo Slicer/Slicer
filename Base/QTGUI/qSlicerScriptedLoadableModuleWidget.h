@@ -44,7 +44,7 @@ public:
   qSlicerScriptedLoadableModuleWidget(QWidget* parentWidget = nullptr);
   ~qSlicerScriptedLoadableModuleWidget() override;
 
-  QString pythonSource()const;
+  QString pythonSource() const;
   bool setPythonSource(const QString& filePath, const QString& className = QLatin1String(""));
 
   Q_INVOKABLE void reload();

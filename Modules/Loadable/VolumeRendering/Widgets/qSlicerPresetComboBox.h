@@ -47,9 +47,9 @@ public:
   explicit qSlicerPresetComboBox(QWidget* parent = nullptr);
   ~qSlicerPresetComboBox() override;
 
-  bool showIcons()const;
-  bool showLabelsInPopup()const;
-  QSize iconSizeInPopup()const;
+  bool showIcons() const;
+  bool showLabelsInPopup() const;
+  QSize iconSizeInPopup() const;
 
 public slots:
   void setIconToPreset(vtkMRMLNode* presetNode);

@@ -177,7 +177,7 @@ protected:
   static void AddToExtent(int extent[6], int extentToAdd[6]);
 
 protected:
-  bool CropToMinimumExtent{false};
+  bool CropToMinimumExtent{ false };
 
 protected:
   vtkMRMLSegmentationStorageNode();

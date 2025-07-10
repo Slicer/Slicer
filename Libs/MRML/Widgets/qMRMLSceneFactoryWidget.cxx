@@ -31,7 +31,7 @@
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 
-class qMRMLSceneFactoryWidgetPrivate: public Ui_qMRMLSceneFactoryWidget
+class qMRMLSceneFactoryWidgetPrivate : public Ui_qMRMLSceneFactoryWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSceneFactoryWidget);
 protected:
@@ -122,7 +122,7 @@ void qMRMLSceneFactoryWidget::deleteScene()
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSceneFactoryWidget::mrmlScene()const
+vtkMRMLScene* qMRMLSceneFactoryWidget::mrmlScene() const
 {
   Q_D(const qMRMLSceneFactoryWidget);
   return d->MRMLScene;

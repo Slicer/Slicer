@@ -365,7 +365,7 @@ bool runTests(vtkMRMLScene* scene,
 }
 
 // --------------------------------------------------------------------------
-int qMRMLLayoutManagerVisibilityTest(int argc, char* argv[] )
+int qMRMLLayoutManagerVisibilityTest(int argc, char* argv[])
 {
   (void)checkViewArrangement; // Fix -Wunused-function warning
 

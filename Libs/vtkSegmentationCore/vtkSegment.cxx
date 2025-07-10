@@ -76,7 +76,7 @@ vtkSegment::~vtkSegment()
   this->Representations.clear();
   if (this->Name)
   {
-    delete [] this->Name;
+    delete[] this->Name;
     this->Name = nullptr;
   }
 }

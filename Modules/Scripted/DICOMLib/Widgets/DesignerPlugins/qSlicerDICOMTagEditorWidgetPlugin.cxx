@@ -42,7 +42,7 @@ QString qSlicerDICOMTagEditorWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerDICOMTagEditorWidget\" \
           name=\"DICOMTagEditorWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

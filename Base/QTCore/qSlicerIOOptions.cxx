@@ -40,14 +40,14 @@ qSlicerIOOptions::qSlicerIOOptions(qSlicerIOOptionsPrivate* pimpl)
 qSlicerIOOptions::~qSlicerIOOptions() = default;
 
 //------------------------------------------------------------------------------
-bool qSlicerIOOptions::isValid()const
+bool qSlicerIOOptions::isValid() const
 {
   Q_D(const qSlicerIOOptions);
   return d->Properties.size() > 0;
 }
 
 //------------------------------------------------------------------------------
-const qSlicerIO::IOProperties& qSlicerIOOptions::properties()const
+const qSlicerIO::IOProperties& qSlicerIOOptions::properties() const
 {
   Q_D(const qSlicerIOOptions);
   return d->Properties;

@@ -86,14 +86,14 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLRangeWidget::minimumHandlePalette()const
+QPalette qMRMLRangeWidget::minimumHandlePalette() const
 {
   return qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())
     ->minimumHandlePalette();
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLRangeWidget::maximumHandlePalette()const
+QPalette qMRMLRangeWidget::maximumHandlePalette() const
 {
   return qobject_cast<qMRMLDoubleRangeSlider*>(this->slider())
     ->maximumHandlePalette();
@@ -166,14 +166,14 @@ void qMRMLRangeWidget::setQuantity(const QString& quantity)
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLRangeWidget::quantity()const
+QString qMRMLRangeWidget::quantity() const
 {
   Q_ASSERT(this->MinSpinBox->quantity() == this->MaxSpinBox->quantity());
   return this->MinSpinBox->quantity();
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLRangeWidget::mrmlScene()const
+vtkMRMLScene* qMRMLRangeWidget::mrmlScene() const
 {
   Q_ASSERT(this->MinSpinBox->mrmlScene() == this->MaxSpinBox->mrmlScene());
   return this->MinSpinBox->mrmlScene();
@@ -204,14 +204,14 @@ qMRMLDoubleRangeSlider::qMRMLDoubleRangeSlider(QWidget* parentWidget)
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLDoubleRangeSlider::minimumHandlePalette()const
+QPalette qMRMLDoubleRangeSlider::minimumHandlePalette() const
 {
   return qobject_cast<qMRMLRangeSlider*>(this->slider())
     ->minimumHandlePalette();
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLDoubleRangeSlider::maximumHandlePalette()const
+QPalette qMRMLDoubleRangeSlider::maximumHandlePalette() const
 {
   return qobject_cast<qMRMLRangeSlider*>(this->slider())
     ->maximumHandlePalette();
@@ -266,14 +266,14 @@ qMRMLRangeSlider::qMRMLRangeSlider(QWidget* parentWidget)
 qMRMLRangeSlider::~qMRMLRangeSlider() = default;
 
 // --------------------------------------------------------------------------
-QPalette qMRMLRangeSlider::minimumHandlePalette()const
+QPalette qMRMLRangeSlider::minimumHandlePalette() const
 {
   Q_D(const qMRMLRangeSlider);
   return d->MinimumPalette;
 }
 
 // --------------------------------------------------------------------------
-QPalette qMRMLRangeSlider::maximumHandlePalette()const
+QPalette qMRMLRangeSlider::maximumHandlePalette() const
 {
   Q_D(const qMRMLRangeSlider);
   return d->MaximumPalette;

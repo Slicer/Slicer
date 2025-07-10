@@ -116,7 +116,7 @@ vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
 {
   if (this->Archetype)
   {
-    delete [] this->Archetype;
+    delete[] this->Archetype;
     this->Archetype = nullptr;
   }
   if (RasToIjkMatrix)
@@ -150,7 +150,7 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
 
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Archetype: " <<
     (this->Archetype ? this->Archetype : "(none)") << "\n";
@@ -351,7 +351,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   int extent[6];
   std::string fileNameCollapsed = itksys::SystemTools::CollapseFullPath( this->Archetype);
 
-  if ( this->SingleFile )
+  if (this->SingleFile)
   {
     this->AnalyzeHeader = false;
   }
@@ -389,7 +389,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   try
   {
     // if user already set up FileNames, we do not try to find candidate files
-    if ( this->GetNumberOfFileNames() > 0 )
+    if (this->GetNumberOfFileNames() > 0)
     {
       unsigned int nFiles = this->GetNumberOfFileNames();
       this->AllFileNames.resize( 0 );
@@ -406,7 +406,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       }
 
       // if we need to analyze the header
-      if ( this->AnalyzeHeader )
+      if (this->AnalyzeHeader)
       {
         this->AnalyzeDicomHeaders();
       }
@@ -414,7 +414,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
     else
     {
 #ifdef VTKITK_BUILD_DICOM_SUPPORT
-      if ( this->ArchetypeIsDICOM && !this->GetSingleFile() )
+      if (this->ArchetypeIsDICOM && !this->GetSingleFile())
       {
         typedef itk::GDCMSeriesFileNames DICOMNameGeneratorType;
         DICOMNameGeneratorType::Pointer inputImageFileGenerator = DICOMNameGeneratorType::New();
@@ -443,7 +443,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         //int nFiles = this->AllFileNames.size(); UNUSED
 
         // analysis dicom files and fill the Dicom Tag arrays
-        if ( this->AnalyzeHeader )
+        if (this->AnalyzeHeader)
         {
           this->AnalyzeDicomHeaders();
         }
@@ -466,7 +466,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         }
 
         // do we have just one candidate file
-        if ( candidateFiles.size() == 1 )
+        if (candidateFiles.size() == 1)
         {
           this->IsOnlyFile = true;
         }
@@ -484,7 +484,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         imageReader->SetFileName(this->Archetype);
         imageReader->UpdateOutputInformation();
         region = imageReader->GetOutput()->GetLargestPossibleRegion();
-        if ( region.GetSize()[2] > 1 )
+        if (region.GetSize()[2] > 1)
         {
           candidateFiles.emplace_back(this->Archetype);
           this->AllFileNames.emplace_back(this->Archetype);
@@ -501,11 +501,11 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
           {
             this->AllFileNames[f] = candidateFiles[f];
           }
-          if ( candidateFiles.size() == 1 )
+          if (candidateFiles.size() == 1)
           {
             this->IsOnlyFile = true;
           }
-          else if ( AnalyzeHeader )
+          else if (AnalyzeHeader)
           {
             this->AnalyzeDicomHeaders();
           }
@@ -548,14 +548,14 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   }
 
   // Reduce the selection of filenames
-  if ( this->IsOnlyFile || this->SingleFile )
+  if (this->IsOnlyFile || this->SingleFile)
   {
     this->FileNames.resize( 0 );
     this->FileNames.emplace_back(this->Archetype);
   }
   else
   {
-    if ( !GroupingByTags )
+    if (!GroupingByTags)
     {
       AssembleVolumeContainingArchetype();
     }
@@ -622,7 +622,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         origin[i] = filter->GetOutput()->GetOrigin()[i];
 
         // Get IJK to RAS direction vector
-        for ( unsigned int j = 0; j < filter->GetOutput()->GetImageDimension (); j++ )
+        for (unsigned int j = 0; j < filter->GetOutput()->GetImageDimension (); j++)
         {
           IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
         }
@@ -640,20 +640,20 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       const itk::MetaDataDictionary& dictionary = imageReader->GetMetaDataDictionary();
       itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
       itk::MetaDataDictionary::ConstIterator end = dictionary.End();
-      while ( itr != end )
+      while (itr != end)
       {
         itk::MetaDataObjectBase::Pointer  entry = itr->second;
         MetaDataDoubleVectorType::Pointer entryvalue1
           = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
-        if ( entryvalue1 )
+        if (entryvalue1)
         {
           int pos = itr->first.find( "NRRD_measurement frame" );
-          if ( pos != -1 )
+          if (pos != -1)
           {
             DoubleVectorType tagvalue = entryvalue1->GetMetaDataObjectValue();
-            for ( int i = 0; i < 3; i++ )
+            for (int i = 0; i < 3; i++)
             {
-              for ( int j = 0; j < 3; j++ )
+              for (int j = 0; j < 3; j++)
               {
                 this->MeasurementFrameMatrix->SetElement(i,j, tagvalue.at( j ).at( i ));
               }
@@ -700,7 +700,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         spacing[i] = filter->GetOutput()->GetSpacing()[i];
         origin[i] = filter->GetOutput()->GetOrigin()[i];
         // Get IJK to RAS direction vector
-        for ( unsigned int j = 0; j < filter->GetOutput()->GetImageDimension (); j++ )
+        for (unsigned int j = 0; j < filter->GetOutput()->GetImageDimension (); j++)
         {
           IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
         }
@@ -778,10 +778,10 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   // so probably it would be better to remove it.
   this->RasToIjkMatrix->SetElement(3,3,1.0);
 
-  if ( !this->GetUseOrientationFromFile() )
+  if (!this->GetUseOrientationFromFile())
   {
     this->RasToIjkMatrix->Identity();
-    for ( unsigned int j = 0; j < 3; j++ )
+    for (unsigned int j = 0; j < 3; j++)
     {
       this->RasToIjkMatrix->SetElement(j, j, 1.0/spacing[j]);
     }
@@ -845,59 +845,59 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       else
       {
         double min = 0, max = 0;
-        for ( unsigned int f = 0; f < this->FileNames.size(); f++ )
+        for (unsigned int f = 0; f < this->FileNames.size(); f++)
         {
           imageIO->SetFileName( this->FileNames[f] );
           imageIO->ReadImageInformation();
 
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::UCHAR )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::UCHAR)
           {
             min = std::numeric_limits<uint8_t>::min() < min ? std::numeric_limits<uint8_t>::min() : min;
             max = std::numeric_limits<uint8_t>::max() > max ? std::numeric_limits<uint8_t>::max() : max;
           }
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::CHAR )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::CHAR)
           {
             min = std::numeric_limits<int8_t>::min() < min ? std::numeric_limits<int8_t>::min() : min;
             max = std::numeric_limits<int8_t>::max() > max ? std::numeric_limits<int8_t>::max() : max;
           }
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::USHORT )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::USHORT)
           {
             min = std::numeric_limits<uint16_t>::min() < min ? std::numeric_limits<uint16_t>::min() : min;
             max = std::numeric_limits<uint16_t>::max() > max ? std::numeric_limits<uint16_t>::max() : max;
           }
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::SHORT )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::SHORT)
           {
             min = std::numeric_limits<int16_t>::min() < min ? std::numeric_limits<int16_t>::min() : min;
             max = std::numeric_limits<int16_t>::max() > max ? std::numeric_limits<int16_t>::max() : max;
           }
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::UINT )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::UINT)
           {
             min = std::numeric_limits<uint32_t>::min() < min ? std::numeric_limits<uint32_t>::min() : min;
             max = std::numeric_limits<uint32_t>::max() > max ? std::numeric_limits<uint32_t>::max() : max;
           }
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::INT )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::INT)
           {
             min = static_cast<double>(std::numeric_limits<int32_t>::min() < min ? std::numeric_limits<int32_t>::min() : min);
             max = static_cast<double>(std::numeric_limits<int32_t>::max() > max ? std::numeric_limits<int32_t>::max() : max);
           }
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::ULONG )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::ULONG)
           { // note that on windows ULONG is only 32 bit
             min = static_cast<double>(std::numeric_limits<uint64_t>::min() < min ? std::numeric_limits<uint64_t>::min() : min);
             max = static_cast<double>(std::numeric_limits<uint64_t>::max() > max ? std::numeric_limits<uint64_t>::max() : max);
           }
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::LONG )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::LONG)
           { // note that on windows LONG is only 32 bit
             min = static_cast<double>(std::numeric_limits<int64_t>::min() < min ? std::numeric_limits<int64_t>::min() : min);
             max = static_cast<double>(std::numeric_limits<int64_t>::max() > max ? std::numeric_limits<int64_t>::max() : max);
           }
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::FLOAT )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::FLOAT)
           {
             // use -max() as min() for both float and double as temp workaround
             // should switch to lowest() function in C++ 11 in the future
             min = -std::numeric_limits<float>::max() < min ? -std::numeric_limits<float>::max() : min;
             max = std::numeric_limits<float>::max() > max ? std::numeric_limits<float>::max() : max;
           }
-          if ( imageIO->GetComponentType() == itk::IOComponentEnum::DOUBLE )
+          if (imageIO->GetComponentType() == itk::IOComponentEnum::DOUBLE)
           {
             min = -std::numeric_limits<double>::max() < min ? -std::numeric_limits<double>::max() : min;
             max = std::numeric_limits<double>::max() > max ? std::numeric_limits<double>::max() : max;
@@ -907,29 +907,29 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         {
           throw std::string("Invalid voxel value range");
         }
-        if ( min >= 0 ) // unsigned
+        if (min >= 0 ) // unsigned
         {
-          if ( max <= std::numeric_limits<uint8_t>::max() )
+          if (max <= std::numeric_limits<uint8_t>::max())
           {
             scalarType = VTK_UNSIGNED_CHAR;
           }
-          else if ( max <= std::numeric_limits<uint16_t>::max() )
+          else if (max <= std::numeric_limits<uint16_t>::max())
           {
             scalarType = VTK_UNSIGNED_SHORT;
           }
-          else if ( max <= std::numeric_limits<uint32_t>::max() )
+          else if (max <= std::numeric_limits<uint32_t>::max())
           {
             scalarType = VTK_UNSIGNED_INT;
           }
-          else if ( max <= static_cast<double>(std::numeric_limits<uint64_t>::max()) )
+          else if (max <= static_cast<double>(std::numeric_limits<uint64_t>::max()))
           {
             scalarType = VTK_UNSIGNED_LONG;
           }
-          else if ( max <= std::numeric_limits<float>::max() )
+          else if (max <= std::numeric_limits<float>::max())
           {
             scalarType = VTK_FLOAT;
           }
-          else if ( max <= std::numeric_limits<double>::max() )
+          else if (max <= std::numeric_limits<double>::max())
           {
             scalarType = VTK_DOUBLE;
           }
@@ -940,32 +940,32 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         }
         else
         {
-          if ( max <= std::numeric_limits<int8_t>::max()
+          if (max <= std::numeric_limits<int8_t>::max()
             && min >= std::numeric_limits<int8_t>::min() )
           {
             scalarType = VTK_CHAR;
           }
-          else if ( max <= std::numeric_limits<int16_t>::max()
+          else if (max <= std::numeric_limits<int16_t>::max()
             && min >= std::numeric_limits<int16_t>::min() )
           {
             scalarType = VTK_SHORT;
           }
-          else if ( max <= std::numeric_limits<int32_t>::max()
+          else if (max <= std::numeric_limits<int32_t>::max()
             && min >= std::numeric_limits<int32_t>::min() )
           {
             scalarType = VTK_INT;
           }
-          else if ( max <= std::numeric_limits<int64_t>::max()
+          else if (max <= std::numeric_limits<int64_t>::max()
             && min >= std::numeric_limits<int64_t>::min() )
           {
             scalarType = VTK_LONG;
           }
-          else if ( max <= std::numeric_limits<float>::max()
+          else if (max <= std::numeric_limits<float>::max()
             && min >= -std::numeric_limits<float>::max() )
           {
             scalarType = VTK_FLOAT;
           }
-          else if ( max <= std::numeric_limits<double>::max()
+          else if (max <= std::numeric_limits<double>::max()
             && min >= -std::numeric_limits<double>::max() )
           {
             scalarType = VTK_DOUBLE;
@@ -1188,7 +1188,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInst
   std::string FirstName;
   for (int k = 0; k < nFiles; k++)
   {
-    if ( (this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) ||
+    if ((this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) ||
          (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) ||
          (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) ||
          (this->IndexEchoNumbers[k] != idxEchoNumbers && this->IndexEchoNumbers[k] >= 0 && idxEchoNumbers >= 0) ||
@@ -1206,7 +1206,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInst
       {
         return this->AllFileNames[k].c_str();
       }
-      else if ( count == 0 )
+      else if (count == 0)
       {
         FirstName = this->AllFileNames[k];
         count ++;
@@ -1291,7 +1291,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
 
   itk::GDCMImageIO::Pointer gdcmIO = itk::GDCMImageIO::New();
-  if ( !gdcmIO->CanReadFile(this->Archetype) )
+  if (!gdcmIO->CanReadFile(this->Archetype))
   {
     itk::ImageIOBase::Pointer lastImageIO;
     for (int f = 0; f < nFiles; f++)
@@ -1570,7 +1570,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetTagValue( char* tag )
 //----------------------------------------------------------------------------
 const char* vtkITKArchetypeImageSeriesReader::GetFileName( unsigned int n )
 {
-  if ( n >= this->GetNumberOfFileNames() )
+  if (n >= this->GetNumberOfFileNames())
   {
     return nullptr;
   }
@@ -1657,7 +1657,7 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
       // position index will be -1
       int kth_orientation = -1;
       int kth_position = -1;
-      if ( this->ImagePositionPatient.size() != 0 )
+      if (this->ImagePositionPatient.size() != 0)
       {
         kth_orientation = this->IndexImageOrientationPatient[k];
         kth_position = this->IndexImagePositionPatient[k];

@@ -25,18 +25,18 @@ public:
   ~qSlicerAnnotationsModule() override;
 
   /// Return the help and acknowledgement text for the Annotation module.
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
   QStringList dependencies() const override;
 
   /// Return the icon of the Annotation module.
-  QIcon icon()const override;
+  QIcon icon() const override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
   qSlicerGetTitleMacro(tr("Annotations"));
 

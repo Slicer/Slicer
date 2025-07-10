@@ -40,7 +40,7 @@ QString qMRMLNodeAttributeTableWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLNodeAttributeTableWidget\" \
           name=\"MRMLNodeAttributeTableWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

@@ -23,20 +23,20 @@ vtkURIHandler::vtkURIHandler()
 vtkURIHandler::~vtkURIHandler()
 {
   this->LocalFile = nullptr;
-  if ( this->PermissionPrompter != nullptr )
+  if (this->PermissionPrompter != nullptr)
   {
     this->PermissionPrompter->Delete();
     this->PermissionPrompter = nullptr;
   }
-  if ( this->Prefix != nullptr )
+  if (this->Prefix != nullptr)
   {
     this->SetPrefix ( nullptr );
   }
-  if ( this->Name != nullptr )
+  if (this->Name != nullptr)
   {
     this->SetName ( nullptr );
   }
-  if ( this->HostName != nullptr )
+  if (this->HostName != nullptr)
   {
     this->SetHostName (nullptr );
   }
@@ -80,7 +80,7 @@ int vtkURIHandler::ProgressCallback ( FILE * vtkNotUsed(outputFile), double dlto
 //----------------------------------------------------------------------------
 size_t vtkURIHandler::BufferedWrite ( char* buffer, size_t size, size_t nitems )
 {
-  if ( this->LocalFile != nullptr )
+  if (this->LocalFile != nullptr)
   {
     //this->LocalFile->write(buffer,size*nitems);
     size_t size_written = fwrite(buffer, sizeof(char), size*nitems, this->LocalFile);

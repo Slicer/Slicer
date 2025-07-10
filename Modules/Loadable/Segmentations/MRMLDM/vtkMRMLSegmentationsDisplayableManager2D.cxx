@@ -421,7 +421,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddSegmentationNode(
   for (int i = 0; i<nnodes; i++)
   {
     vtkMRMLSegmentationDisplayNode* dnode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
-    if ( this->UseDisplayNode(dnode) )
+    if (this->UseDisplayNode(dnode))
     {
       this->SegmentationToDisplayNodes[node].insert(dnode);
       this->AddDisplayNode( node, dnode );
@@ -481,9 +481,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayableTra
   PipelinesCacheType::iterator pipelinesIter;
   std::set<vtkMRMLSegmentationDisplayNode*> displayNodes = this->SegmentationToDisplayNodes[mNode];
   std::set<vtkMRMLSegmentationDisplayNode*>::iterator dnodesIter;
-  for ( dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++ )
+  for (dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++)
   {
-    if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
+    if (((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()))
     {
       for (PipelineMapType::iterator pipelineIt=pipelinesIter->second.begin(); pipelineIt!=pipelinesIter->second.end(); ++pipelineIt)
       {
@@ -823,7 +823,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       }
 
       // Only update slice intersection if it has changed
-      if ( pipeline->SliceIntersectionUpdatedTime < polyData->GetMTime()
+      if (pipeline->SliceIntersectionUpdatedTime < polyData->GetMTime()
         || pipeline->SliceIntersectionUpdatedTime < this->SliceXYToRAS->GetMTime() )
       {
         pipeline->ModelWarper->SetInputData(polyData);
@@ -1317,7 +1317,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::PrintSelf(ostream& os, vtkIndent 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if ( !node->IsA("vtkMRMLSegmentationNode") )
+  if (!node->IsA("vtkMRMLSegmentationNode"))
   {
     return;
   }
@@ -1336,7 +1336,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeAdded(vtkMRMLNode*
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if ( node
+  if (node
     && (!node->IsA("vtkMRMLSegmentationNode"))
     && (!node->IsA("vtkMRMLSegmentationDisplayNode")) )
   {
@@ -1347,12 +1347,12 @@ void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeRemoved(vtkMRMLNod
   vtkMRMLSegmentationDisplayNode* displayNode = nullptr;
 
   bool modified = false;
-  if ( (segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node)) )
+  if ((segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node)))
   {
     this->Internal->RemoveSegmentationNode(segmentationNode);
     modified = true;
   }
-  else if ( (displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node)) )
+  else if ((displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node)))
   {
     this->Internal->RemoveDisplayNode(displayNode);
     modified = true;
@@ -1387,14 +1387,14 @@ void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject*
         this->RequestRender();
       }
     }
-    else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)
            || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
            || (event == vtkSegmentation::RepresentationModified))
     {
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();
     }
-    else if ( (event == vtkCommand::ModifiedEvent) // segmentation object may be replaced
+    else if ((event == vtkCommand::ModifiedEvent) // segmentation object may be replaced
            || (event == vtkSegmentation::SegmentAdded)
            || (event == vtkSegmentation::SegmentModified)
            || (event == vtkSegmentation::SegmentRemoved) )
@@ -1403,7 +1403,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject*
       this->RequestRender();
     }
   }
-  else if ( vtkMRMLSliceNode::SafeDownCast(caller) )
+  else if (vtkMRMLSliceNode::SafeDownCast(caller))
   {
     this->Internal->UpdateSliceNode();
     this->RequestRender();

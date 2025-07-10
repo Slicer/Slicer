@@ -25,16 +25,16 @@ public:
   ~qSlicerSceneViewsModule() override;
 
   /// Return the help and acknowledgement text for the SceneViews module.
-  QString helpText()const override ;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
   /// Return the icon of the SceneViews module.
-  QIcon icon()const override;
-  QStringList categories()const override;
+  QIcon icon() const override;
+  QStringList categories() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
   QStringList dependencies() const override;
 

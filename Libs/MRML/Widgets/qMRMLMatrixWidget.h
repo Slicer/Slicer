@@ -54,7 +54,7 @@ public:
   void setCoordinateReference(CoordinateReferenceType coordinateReference);
   CoordinateReferenceType coordinateReference() const;
 
-  vtkMRMLTransformNode* mrmlTransformNode()const;
+  vtkMRMLTransformNode* mrmlTransformNode() const;
 
 public slots:
   ///

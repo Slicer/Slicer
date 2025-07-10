@@ -56,7 +56,7 @@ void vtkMRMLAbstractWidgetRepresentation
 //-----------------------------------------------------------------------------
 void vtkMRMLAbstractWidgetRepresentation::SetRenderer(vtkRenderer* ren)
 {
-  if ( ren == this->Renderer )
+  if (ren == this->Renderer)
   {
     return;
   }

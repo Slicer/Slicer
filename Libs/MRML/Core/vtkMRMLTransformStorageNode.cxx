@@ -115,7 +115,7 @@ void vtkMRMLTransformStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "PreferITKv3CompatibleTransforms: " <<
     (this->PreferITKv3CompatibleTransforms ? "true" : "false") << "\n";
 }
@@ -187,7 +187,7 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode* 
   }
   ++it;
   TransformType::Pointer transform2=nullptr;
-  if ( it != transforms->end() )
+  if (it != transforms->end())
   {
     transform2 = (*it);
     if (!transform2)
@@ -356,7 +356,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
 
   vtkSmartPointer<vtkAbstractTransform> transformVtk;
   std::string firstTransformType = firstTransform->GetTransformTypeAsString();
-  if ( firstTransformType.find("CompositeTransform") == std::string::npos )
+  if (firstTransformType.find("CompositeTransform") == std::string::npos)
   {
     // just a single transform
     transformVtk = vtkSmartPointer<vtkAbstractTransform>::Take(
@@ -399,7 +399,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
       // we have multiple transforms, so we create a general transform that can hold a list of transforms
       vtkNew<vtkGeneralTransform> generalTransform;
       //generalTransform->PostMultiply();
-      for ( typename ConstTransformListType::const_iterator it = transformList.begin();
+      for (typename ConstTransformListType::const_iterator it = transformList.begin();
         it != end; ++it )
       {
         typename TransformType::Pointer transformComponentItk = const_cast<TransformType*>(it->GetPointer());
@@ -547,7 +547,7 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode* refNode)
   writer->SetInput( transformItk );
 
   // In ITKv3 bulk transform may be added as a second transform in the transform list
-  if ( secondaryTransformItk.IsNotNull() )
+  if (secondaryTransformItk.IsNotNull())
   {
     writer->AddTransform( secondaryTransformItk );
   }
@@ -689,7 +689,7 @@ bool vtkMRMLTransformStorageNode::IsImageFile(const std::string& filename)
       "Filename does not contain extension: '" << filename.c_str() << "'");
     return false;
   }
-  if ( !extension.compare(".nrrd")
+  if (!extension.compare(".nrrd")
       || !extension.compare(".nhdr")
       || !extension.compare(".mha")
       || !extension.compare(".mhd")

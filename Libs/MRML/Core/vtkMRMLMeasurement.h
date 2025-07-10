@@ -207,10 +207,10 @@ protected:
   vtkMRMLUnitNode* GetUnitNode(const char* quantityName);
 
 protected:
-  bool Enabled{true};
+  bool Enabled{ true };
   std::string Name;
   double Value{0.0};
-  bool ValueDefined{false};
+  bool ValueDefined{ false };
   double DisplayCoefficient{1.0};  std::string Units;
   std::string Description;
   std::string PrintFormat; // for value (double), unit (string)
@@ -218,7 +218,7 @@ protected:
   vtkSmartPointer<vtkCodedEntry> DerivationCode; // min/max/mean
   vtkSmartPointer<vtkCodedEntry> UnitsCode;      // cubic millimeter
   vtkSmartPointer<vtkCodedEntry> MethodCode;     // Sum of segmented voxel volumes
-  ComputationResult LastComputationResult{InsufficientInput};
+  ComputationResult LastComputationResult{ InsufficientInput };
 
   /// Per-control point measurements.
   vtkSmartPointer<vtkDoubleArray> ControlPointValues;

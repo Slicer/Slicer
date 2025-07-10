@@ -24,7 +24,7 @@ vtkMRMLAnnotationStorageNode::~vtkMRMLAnnotationStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -182,7 +182,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode* ref
 {
   vtkDebugMacro("Reading Annotation data");
   // test whether refNode is a valid node to hold a text list
-  if ( !refNode ||
+  if (!refNode ||
        !( refNode->IsA("vtkMRMLAnnotationNode"))
      )
   {
@@ -198,7 +198,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode* ref
 
   Superclass::StageReadData(refNode);
 
-  if ( this->GetReadState() != this->TransferDone )
+  if (this->GetReadState() != this->TransferDone)
   {
     // remote file download hasn't finished
     vtkWarningMacro("OpenFileToRead: Read state is pending, returning.");
@@ -292,7 +292,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode* 
       columnNumber ++;
     }
     vtkDebugMacro("ReadAnnotationTextData: text string = " << annotation.c_str());
-    if (refNode->AddText(annotation.c_str(), sel, vis) < 0 )
+    if (refNode->AddText(annotation.c_str(), sel, vis) < 0)
     {
       vtkErrorMacro("Error adding text to list, annotation = " << annotation);
       return 0;
@@ -417,7 +417,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode* annotati
     {
       if (line[1] == ' ')
       {
-        if (this->ReadAnnotationTextProperties(annotationNode, line, typeColumn, annotationColumn, selColumn, visColumn, numColumns) < 0 )
+        if (this->ReadAnnotationTextProperties(annotationNode, line, typeColumn, annotationColumn, selColumn, visColumn, numColumns) < 0)
         {
           annotationNode->SetDisableModifiedEvent(modFlag);
           return 0;

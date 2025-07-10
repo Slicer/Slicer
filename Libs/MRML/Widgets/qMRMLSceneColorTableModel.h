@@ -41,7 +41,7 @@ protected:
   QScopedPointer<qMRMLSceneColorTableModelPrivate> d_ptr;
 
   void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column) override;
-  bool updateGradientFromNode(vtkMRMLColorNode* node)const;
+  bool updateGradientFromNode(vtkMRMLColorNode* node) const;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneColorTableModel);

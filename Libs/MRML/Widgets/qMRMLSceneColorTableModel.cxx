@@ -99,7 +99,7 @@ void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node)const
+bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node) const
 {
   Q_D(const qMRMLSceneColorTableModel);
   Q_ASSERT(node);

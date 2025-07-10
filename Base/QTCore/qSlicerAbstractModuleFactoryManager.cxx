@@ -45,12 +45,12 @@ public:
     qSlicerModuleFactory;
   typedef qSlicerAbstractModuleFactoryManager::qSlicerFileBasedModuleFactory
     qSlicerFileBasedModuleFactory;
-  QVector<qSlicerFileBasedModuleFactory*> fileBasedFactories()const;
-  QVector<qSlicerModuleFactory*> notFileBasedFactories()const;
+  QVector<qSlicerFileBasedModuleFactory*> fileBasedFactories() const;
+  QVector<qSlicerModuleFactory*> notFileBasedFactories() const;
 
   // Helper function that returns module factory for a module name, without
   // the risk of creating a nullptr entry if the module is not registered.
-  qSlicerModuleFactory* registeredModuleFactory(const QString& moduleName)const;
+  qSlicerModuleFactory* registeredModuleFactory(const QString& moduleName) const;
 
   QStringList SearchPaths;
   QStringList ExplicitModules;
@@ -91,7 +91,7 @@ void qSlicerAbstractModuleFactoryManagerPrivate::printAdditionalInfo()
 
 //-----------------------------------------------------------------------------
 QVector<qSlicerAbstractModuleFactoryManagerPrivate::qSlicerFileBasedModuleFactory*>
-qSlicerAbstractModuleFactoryManagerPrivate::fileBasedFactories()const
+qSlicerAbstractModuleFactoryManagerPrivate::fileBasedFactories() const
 {
   QVector<qSlicerFileBasedModuleFactory*> factories;
   foreach (qSlicerModuleFactory* factory, this->Factories.keys())
@@ -107,7 +107,7 @@ qSlicerAbstractModuleFactoryManagerPrivate::fileBasedFactories()const
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleFactoryManagerPrivate::qSlicerModuleFactory*
 qSlicerAbstractModuleFactoryManagerPrivate
-::registeredModuleFactory(const QString& moduleName)const
+::registeredModuleFactory(const QString& moduleName) const
 {
   if (!this->RegisteredModules.contains(moduleName))
   {
@@ -119,7 +119,7 @@ qSlicerAbstractModuleFactoryManagerPrivate
 //-----------------------------------------------------------------------------
 QVector<qSlicerAbstractModuleFactoryManagerPrivate::qSlicerModuleFactory*>
 qSlicerAbstractModuleFactoryManagerPrivate
-::notFileBasedFactories()const
+::notFileBasedFactories() const
 {
   QVector<qSlicerModuleFactory*> factories;
   foreach (qSlicerModuleFactory* factory, this->Factories.keys())
@@ -195,7 +195,7 @@ void qSlicerAbstractModuleFactoryManager::setSearchPaths(const QStringList& path
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAbstractModuleFactoryManager::searchPaths()const
+QStringList qSlicerAbstractModuleFactoryManager::searchPaths() const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   return d->SearchPaths;
@@ -214,7 +214,7 @@ void qSlicerAbstractModuleFactoryManager::setExplicitModules(const QStringList& 
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAbstractModuleFactoryManager::explicitModules()const
+QStringList qSlicerAbstractModuleFactoryManager::explicitModules() const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   return d->ExplicitModules;
@@ -233,14 +233,14 @@ void qSlicerAbstractModuleFactoryManager::setModulesToIgnore(const QStringList& 
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAbstractModuleFactoryManager::modulesToIgnore()const
+QStringList qSlicerAbstractModuleFactoryManager::modulesToIgnore() const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   return d->ModulesToIgnore;
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAbstractModuleFactoryManager::ignoredModuleNames()const
+QStringList qSlicerAbstractModuleFactoryManager::ignoredModuleNames() const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   return d->IgnoredModules.keys();
@@ -485,7 +485,7 @@ void qSlicerAbstractModuleFactoryManager::uninstantiateModule(const QString& mod
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractCoreModule* qSlicerAbstractModuleFactoryManager::moduleInstance(const QString& moduleName)const
+qSlicerAbstractCoreModule* qSlicerAbstractModuleFactoryManager::moduleInstance(const QString& moduleName) const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   qSlicerModuleFactory* factory = d->registeredModuleFactory(moduleName);
@@ -493,14 +493,14 @@ qSlicerAbstractCoreModule* qSlicerAbstractModuleFactoryManager::moduleInstance(c
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerAbstractModuleFactoryManager::isRegistered(const QString& moduleName)const
+bool qSlicerAbstractModuleFactoryManager::isRegistered(const QString& moduleName) const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   return (d->registeredModuleFactory(moduleName) != nullptr);
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerAbstractModuleFactoryManager::isInstantiated(const QString& moduleName)const
+bool qSlicerAbstractModuleFactoryManager::isInstantiated(const QString& moduleName) const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   bool instantiated = this->isRegistered(moduleName) &&
@@ -520,7 +520,7 @@ void qSlicerAbstractModuleFactoryManager::setVerboseModuleDiscovery(bool verbose
 }
 
 //---------------------------------------------------------------------------
-QStringList qSlicerAbstractModuleFactoryManager::dependentModules(const QString& dependency)const
+QStringList qSlicerAbstractModuleFactoryManager::dependentModules(const QString& dependency) const
 {
   QStringList dependents;
   foreach (const QString& moduleName, this->instantiatedModuleNames())
@@ -535,14 +535,14 @@ QStringList qSlicerAbstractModuleFactoryManager::dependentModules(const QString&
 }
 
 //---------------------------------------------------------------------------
-QStringList qSlicerAbstractModuleFactoryManager::moduleDependees(const QString& module)const
+QStringList qSlicerAbstractModuleFactoryManager::moduleDependees(const QString& module) const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   return d->ModuleDependees.value(module);
 }
 
 //---------------------------------------------------------------------------
-bool  qSlicerAbstractModuleFactoryManager::isVerbose()const
+bool  qSlicerAbstractModuleFactoryManager::isVerbose() const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
   return d->Verbose;

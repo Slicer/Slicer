@@ -48,7 +48,7 @@
 #include <vtkCornerAnnotation.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerLayoutManagerPrivate: public qMRMLLayoutManagerPrivate
+class qSlicerLayoutManagerPrivate : public qMRMLLayoutManagerPrivate
 {
 public:
   qSlicerLayoutManagerPrivate(qSlicerLayoutManager& object);

@@ -82,12 +82,12 @@ void vtkSlicerTerminologyEntry::Initialize()
 //----------------------------------------------------------------------------
 bool vtkSlicerTerminologyEntry::IsValid()
 {
-  if ( this->CategoryObject == nullptr || this->CategoryObject->GetCodeMeaning() == nullptr
+  if (this->CategoryObject == nullptr || this->CategoryObject->GetCodeMeaning() == nullptr
     || this->CategoryObject->GetCodingSchemeDesignator() == nullptr || this->CategoryObject->GetCodeValue() == nullptr )
   {
     return false;
   }
-  if ( this->TypeObject == nullptr || this->TypeObject->GetCodeMeaning() == nullptr
+  if (this->TypeObject == nullptr || this->TypeObject->GetCodeMeaning() == nullptr
     || this->TypeObject->GetCodingSchemeDesignator() == nullptr || this->TypeObject->GetCodeValue() == nullptr )
   {
     return false;
@@ -132,7 +132,7 @@ bool vtkSlicerTerminologyEntry::IsEmpty()
 //----------------------------------------------------------------------------
 void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "TerminologyContextName:   " << (this->TerminologyContextName?this->TerminologyContextName:"NULL") << "\n";
 

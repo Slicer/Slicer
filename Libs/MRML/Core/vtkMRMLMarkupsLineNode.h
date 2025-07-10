@@ -32,7 +32,7 @@
 ///
 /// Markups is intended to be used for manual marking/editing of point positions.
 ///
-class  VTK_MRML_EXPORT vtkMRMLMarkupsLineNode : public vtkMRMLMarkupsNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsLineNode : public vtkMRMLMarkupsNode
 {
 public:
   static vtkMRMLMarkupsLineNode* New();

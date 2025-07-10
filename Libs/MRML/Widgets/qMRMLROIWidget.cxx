@@ -28,7 +28,7 @@
 #include <vtkMRMLROINode.h>
 
 // --------------------------------------------------------------------------
-class qMRMLROIWidgetPrivate: public Ui_qMRMLROIWidget
+class qMRMLROIWidgetPrivate : public Ui_qMRMLROIWidget
 {
   Q_DECLARE_PUBLIC(qMRMLROIWidget);
 protected:
@@ -80,7 +80,7 @@ qMRMLROIWidget::qMRMLROIWidget(QWidget* _parent)
 qMRMLROIWidget::~qMRMLROIWidget() = default;
 
 // --------------------------------------------------------------------------
-vtkMRMLROINode* qMRMLROIWidget::mrmlROINode()const
+vtkMRMLROINode* qMRMLROIWidget::mrmlROINode() const
 {
   Q_D(const qMRMLROIWidget);
   return d->ROINode;

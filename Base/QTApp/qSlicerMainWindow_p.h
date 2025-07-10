@@ -72,15 +72,15 @@ public:
   void addFavoriteModule(const QString& moduleName);
 
 #ifdef Slicer_USE_PYTHONQT
-  QDockWidget*                    PythonConsoleDockWidget{nullptr};
-  QAction*                        PythonConsoleToggleViewAction{nullptr};
+  QDockWidget*                    PythonConsoleDockWidget{ nullptr };
+  QAction*                        PythonConsoleToggleViewAction{ nullptr };
 #endif
-  QDockWidget*                    ErrorLogDockWidget{nullptr};
-  QAction*                        ErrorLogToggleViewAction{nullptr};
-  ctkErrorLogWidget*              ErrorLogWidget{nullptr};
-  QToolButton*                    ErrorLogToolButton{nullptr};
-  QToolButton*                    LayoutButton{nullptr};
-  qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar{nullptr};
+  QDockWidget*                    ErrorLogDockWidget{ nullptr };
+  QAction*                        ErrorLogToggleViewAction{ nullptr };
+  ctkErrorLogWidget*              ErrorLogWidget{ nullptr };
+  QToolButton*                    ErrorLogToolButton{ nullptr };
+  QToolButton*                    LayoutButton{ nullptr };
+  qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar{ nullptr };
   QStringList                     FavoriteModules;
   // In case of a custom CentralWidget is used, the layout manager may get deleted.
   // Use QPointer to detect if the underlying object is deleted.
@@ -89,8 +89,8 @@ public:
 
   QByteArray                      StartupState;
 
-  bool                            WindowInitialShowCompleted{false};
-  bool                            IsClosing{false};
+  bool                            WindowInitialShowCompleted{ false };
+  bool                            IsClosing{ false };
 };
 
 #endif

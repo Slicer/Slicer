@@ -64,9 +64,9 @@ protected:
   vtkMRMLRemoteIOLogic(const vtkMRMLRemoteIOLogic&);
   void operator=(const vtkMRMLRemoteIOLogic&);
 
-  vtkCacheManager* CacheManager{nullptr};
-  vtkDataIOManager* DataIOManager{nullptr};
-  char* CaCertificatesPath{nullptr};
+  vtkCacheManager* CacheManager{ nullptr };
+  vtkDataIOManager* DataIOManager{ nullptr };
+  char* CaCertificatesPath{ nullptr };
 };
 
 #endif

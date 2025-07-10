@@ -45,7 +45,7 @@ protected:
 public:
   qSlicerTerminologySelectorButtonPrivate(qSlicerTerminologySelectorButton& object);
   void init();
-  QString text()const;
+  QString text() const;
 
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;
   mutable QSize CachedSizeHint;

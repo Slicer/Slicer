@@ -170,7 +170,7 @@ struct SegmentListFilterParameters
 };
 
 //-----------------------------------------------------------------------------
-class qMRMLSegmentsTableViewPrivate: public Ui_qMRMLSegmentsTableView
+class qMRMLSegmentsTableViewPrivate : public Ui_qMRMLSegmentsTableView
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentsTableView);
 
@@ -188,36 +188,36 @@ public:
   vtkWeakPointer<vtkMRMLSegmentationNode> SegmentationNode;
 
   /// Flag determining whether the long-press per-view segment visibility options are available
-  bool AdvancedSegmentVisibility{false};
+  bool AdvancedSegmentVisibility{ false };
 
   /// Currently, if we are requesting segment display information from the
   /// segmentation display node,  the display node may emit modification events.
   /// We make sure these events do not interrupt the update process by setting
   /// IsUpdatingWidgetFromMRML to true when an update is already in progress.
-  bool IsUpdatingWidgetFromMRML{false};
+  bool IsUpdatingWidgetFromMRML{ false };
 
-  bool IsFilterBarVisible{false};
+  bool IsFilterBarVisible{ false };
 
-  qMRMLSegmentsModel* Model{nullptr};
-  qMRMLSortFilterSegmentsProxyModel* SortFilterModel{nullptr};
+  qMRMLSegmentsModel* Model{ nullptr };
+  qMRMLSortFilterSegmentsProxyModel* SortFilterModel{ nullptr };
 
-  qSlicerTerminologyItemDelegate* TerminologyItemDelegate{nullptr};
+  qSlicerTerminologyItemDelegate* TerminologyItemDelegate{ nullptr };
 
   QIcon StatusIcons[vtkSlicerSegmentationsModuleLogic::LastStatus];
   QPushButton* ShowStatusButtons[vtkSlicerSegmentationsModuleLogic::LastStatus];
   QTimer FilterParameterChangedTimer;
 
-  bool JumpToSelectedSegmentEnabled{false};
+  bool JumpToSelectedSegmentEnabled{ false };
 
   /// When the model is being reset, the blocking state and selected segment IDs are stored here.
-  bool WasBlockingTableSignalsBeforeReset{false};
+  bool WasBlockingTableSignalsBeforeReset{ false };
   QStringList SelectedSegmentIDsBeforeReset;
 
   /// The settings key used to specify whether standard terminologies are used for name and color.
   QString UseTerminologySelectorSettingsKey{"Segmentations/UseTerminologySelector"};
 
   /// Counter for the number of times the user specifies custom name. Offer not using terminology if used often.
-  unsigned int NonStandardTerminologySelectedCounter{0};
+  unsigned int NonStandardTerminologySelectedCounter{ 0 };
 
   bool TerminologySelectorOptionVisible{ true };
   /// Use terminology selector if UseTerminologySelectorSettingsKey is empty
@@ -707,7 +707,7 @@ vtkMRMLNode* qMRMLSegmentsTableView::segmentationNode()
 }
 
 //--------------------------------------------------------------------------
-qMRMLSortFilterSegmentsProxyModel* qMRMLSegmentsTableView::sortFilterProxyModel()const
+qMRMLSortFilterSegmentsProxyModel* qMRMLSegmentsTableView::sortFilterProxyModel() const
 {
   Q_D(const qMRMLSegmentsTableView);
   if (!d->SortFilterModel)
@@ -719,7 +719,7 @@ qMRMLSortFilterSegmentsProxyModel* qMRMLSegmentsTableView::sortFilterProxyModel(
 }
 
 //--------------------------------------------------------------------------
-qMRMLSegmentsModel* qMRMLSegmentsTableView::model()const
+qMRMLSegmentsModel* qMRMLSegmentsTableView::model() const
 {
   Q_D(const qMRMLSegmentsTableView);
   if (!d->Model)
@@ -1648,14 +1648,14 @@ void qMRMLSegmentsTableView::setHideSegments(const QStringList& segmentIDs)
 }
 
 // --------------------------------------------------------------------------
-QStringList qMRMLSegmentsTableView::hideSegments()const
+QStringList qMRMLSegmentsTableView::hideSegments() const
 {
   Q_D(const qMRMLSegmentsTableView);
   return d->SortFilterModel->hideSegments();
 }
 
 // --------------------------------------------------------------------------
-QStringList qMRMLSegmentsTableView::displayedSegmentIDs()const
+QStringList qMRMLSegmentsTableView::displayedSegmentIDs() const
 {
   Q_D(const qMRMLSegmentsTableView);
 
@@ -1693,7 +1693,7 @@ void qMRMLSegmentsTableView::setUseTerminologySelector(bool useTerminologySelect
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLSegmentsTableView::useTerminologySelector()const
+bool qMRMLSegmentsTableView::useTerminologySelector() const
 {
   Q_D(const qMRMLSegmentsTableView);
   if (d->UseTerminologySelectorSettingsKey.isEmpty())

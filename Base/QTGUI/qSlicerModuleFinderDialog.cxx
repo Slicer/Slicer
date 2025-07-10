@@ -38,7 +38,7 @@
 // qSlicerModuleFinderDialogPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerModuleFinderDialogPrivate: public Ui_qSlicerModuleFinderDialog
+class qSlicerModuleFinderDialogPrivate : public Ui_qSlicerModuleFinderDialog
 {
   Q_DECLARE_PUBLIC(qSlicerModuleFinderDialog);
 protected:
@@ -60,7 +60,7 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerModuleFinderDialogPrivate::qSlicerModuleFinderDialogPrivate(qSlicerModuleFinderDialog& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 
@@ -358,7 +358,7 @@ bool qSlicerModuleFinderDialog::eventFilter(QObject* target, QEvent* event)
 }
 
 //---------------------------------------------------------------------------
-QString qSlicerModuleFinderDialog::currentModuleName()const
+QString qSlicerModuleFinderDialog::currentModuleName() const
 {
   Q_D(const qSlicerModuleFinderDialog);
   return d->CurrentModuleName;

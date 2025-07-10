@@ -169,7 +169,7 @@ int vtkTeemNRRDReader::CanReadFile(const char* filename)
   }
 
   // We'll assume we can read from stdin (don't try to read the header though)
-  //if ( fname == "-" )
+  //if (fname == "-")
   //  {
   //  return true;
   //  }
@@ -402,7 +402,7 @@ void vtkTeemNRRDReader::ExecuteInformation()
     this->SetDataByteOrderToBigEndian();
   }
 
-  //if ( nio->encoding == nrrdEncodingAscii )
+  //if (nio->encoding == nrrdEncodingAscii)
   //  {
   //  this->SetFileTypeToASCII();
   //  }
@@ -925,7 +925,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
 
   // Read in the this->nrrd.  Yes, this means that the header is being read
   // twice: once by ExecuteInformation, and once here
-  if ( nrrdLoad(this->nrrd, this->GetFileName(), nullptr) != 0 )
+  if (nrrdLoad(this->nrrd, this->GetFileName(), nullptr) != 0)
   {
     char* err =  biffGetDone(NRRD); // would be nice to free(err)
     vtkErrorMacro("Read: Error reading " << this->GetFileName() << ":\n" << err);
@@ -1111,5 +1111,5 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
 //----------------------------------------------------------------------------
 void vtkTeemNRRDReader::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }

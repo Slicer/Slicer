@@ -13,7 +13,7 @@
 #include "vtkMRMLAnnotationDisplayNode.h"
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode : public vtkMRMLAnnotationDisplayNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
  public:
   static vtkMRMLAnnotationLineDisplayNode* New (  );
@@ -24,7 +24,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Read node attributes from XML (MRML) file

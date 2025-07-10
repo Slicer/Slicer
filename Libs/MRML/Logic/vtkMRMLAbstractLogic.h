@@ -142,11 +142,11 @@ public:
   vtkTypeMacro(vtkMRMLAbstractLogic, vtkObject);
 
   /// Get access to overall application state
-  virtual vtkMRMLApplicationLogic* GetMRMLApplicationLogic()const;
+  virtual vtkMRMLApplicationLogic* GetMRMLApplicationLogic() const;
   virtual void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic);
 
   /// Return a reference to the current MRML scene
-  vtkMRMLScene* GetMRMLScene()const;
+  vtkMRMLScene* GetMRMLScene() const;
 
   /// Set and observe the MRMLScene
   void SetMRMLScene(vtkMRMLScene* newScene);
@@ -215,18 +215,18 @@ protected:
 
   /// Get MRML scene observerManager. It points to the scene callback.
   /// \sa GetMRMLSceneCallbackCommand()
-  vtkObserverManager* GetMRMLSceneObserverManager()const;
+  vtkObserverManager* GetMRMLSceneObserverManager() const;
 
   /// Get MRML nodes observerManager. It points to the nodes callback.
   /// \sa GetMRMLNodesCallbackCommand()
-  vtkObserverManager* GetMRMLNodesObserverManager()const;
+  vtkObserverManager* GetMRMLNodesObserverManager() const;
 
   /// Get MRML logics observerManager. It points to the logics callback.
   /// \sa GetMRMLLogicsCallbackCommand()
-  vtkObserverManager* GetMRMLLogicsObserverManager()const;
+  vtkObserverManager* GetMRMLLogicsObserverManager() const;
 
   /// Return the event id currently processed or 0 if any.
-  int GetProcessingMRMLSceneEvent()const;
+  int GetProcessingMRMLSceneEvent() const;
 
   /// Called anytime a scene is not set to the logic anymore (e.g. a new or
   /// no scene is set)
@@ -356,11 +356,11 @@ protected:
   /// Values can be higher than 1 when receiving nested event:
   /// processing a MRML scene event fires other scene events.
   /// \sa SetInMRMLCallbackFlag()
-  int GetInMRMLSceneCallbackFlag()const;
+  int GetInMRMLSceneCallbackFlag() const;
 
   /// Return true if the MRML callback must be executed, false otherwise.
   /// By default, it returns true, you can reimplement it in subclasses
-  virtual bool EnterMRMLSceneCallback()const;
+  virtual bool EnterMRMLSceneCallback() const;
 
   /// Set event id currently processed or 0 if any.
   /// \sa EnterMRMLSceneCallback()
@@ -376,12 +376,12 @@ protected:
   /// Values can be higher than 1 when receiving nested events:
   /// processing a MRML node event fires other node events.
   /// \sa SetMRMLNodesCallbackFlag()
-  int GetInMRMLNodesCallbackFlag()const;
+  int GetInMRMLNodesCallbackFlag() const;
 
   /// Return true if the MRML Nodes callback must be executed, false otherwise.
   /// By default, it returns true, you can reimplement it in subclasses.
   /// \sa SetInMRMLNodesCallbackFlag()
-  virtual bool EnterMRMLNodesCallback()const;
+  virtual bool EnterMRMLNodesCallback() const;
 
   /// Set InMRMLLogicsCallback flag.
   /// In InMRMLLogicsCallback, loop are avoided by checking the value of the
@@ -393,11 +393,11 @@ protected:
   /// Values can be higher than 1 when receiving nested events:
   /// processing a MRML logic event fires other node events.
   /// \sa SetMRMLLogicsCallbackFlag()
-  int GetInMRMLLogicsCallbackFlag()const;
+  int GetInMRMLLogicsCallbackFlag() const;
 
   /// Return true if the Logics callback must be executed, false otherwise.
   /// By default, it returns true, you can reimplement it in subclasses
-  virtual bool EnterMRMLLogicsCallback()const;
+  virtual bool EnterMRMLLogicsCallback() const;
 
   /// MRMLSceneCallback is a static function to relay modified events from the MRML Scene
   /// In subclass, MRMLSceneCallback can also be used to relay event from observe MRML node(s)
@@ -419,7 +419,7 @@ protected:
   /// Return the number of pending ModifiedEvent;
   inline int EndModify(bool wasModifying);
 
-  bool GetDisableModifiedEvent()const;
+  bool GetDisableModifiedEvent() const;
   void SetDisableModifiedEvent(bool onOff);
 
   /// overrides the vtkObject method so that all changes to the node which would normally
@@ -433,7 +433,7 @@ protected:
   /// while the DisableModifiedEvent flag was nonzero.
   int InvokePendingModifiedEvent();
 
-  int GetPendingModifiedEventCount()const;
+  int GetPendingModifiedEventCount() const;
 
 private:
 

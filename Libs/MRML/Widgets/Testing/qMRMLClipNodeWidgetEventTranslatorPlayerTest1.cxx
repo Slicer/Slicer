@@ -59,7 +59,7 @@ void checkFinalWidgetState(void* data)
 }
 
 //-----------------------------------------------------------------------------
-int qMRMLClipNodeWidgetEventTranslatorPlayerTest1(int argc, char* argv [] )
+int qMRMLClipNodeWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

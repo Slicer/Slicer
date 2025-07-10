@@ -171,9 +171,9 @@ protected:
   /// Utility functions to browse XML data elements
   vtkXMLDataElement* GetNextViewElement(vtkXMLDataElement* viewElement);
   vtkXMLDataElement* GetNextElement(vtkXMLDataElement* element);
-  ViewAttributes     GetViewElementAttributes(vtkXMLDataElement* viewElement)const;
-  ViewProperties     GetViewElementProperties(vtkXMLDataElement* viewElement)const;
-  ViewProperty       GetViewElementProperty(vtkXMLDataElement* viewProperty)const;
+  ViewAttributes     GetViewElementAttributes(vtkXMLDataElement* viewElement) const;
+  ViewProperties     GetViewElementProperties(vtkXMLDataElement* viewElement) const;
+  ViewProperty       GetViewElementProperty(vtkXMLDataElement* viewProperty) const;
 
   vtkXMLDataElement* GetViewportElementForView(vtkXMLDataElement* layoutRootElement, vtkMRMLAbstractViewNode* viewNode);
 

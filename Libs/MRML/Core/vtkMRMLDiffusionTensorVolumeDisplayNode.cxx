@@ -139,7 +139,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::Copy(vtkMRMLNode* anode)
 void vtkMRMLDiffusionTensorVolumeDisplayNode
 ::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "ScalarInvariant:             " << this->ScalarInvariant << "\n";
 }

@@ -121,12 +121,12 @@ void BuildShaderProperty( vtkMRMLShaderPropertyNode* spNode )
 int CompareUniforms( vtkUniforms* u1, vtkUniforms* u2 )
 {
   CHECK_BOOL(u1->GetNumberOfUniforms()==u2->GetNumberOfUniforms(),true);
-  for ( int i = 0; i < u1->GetNumberOfUniforms(); ++i )
+  for (int i = 0; i < u1->GetNumberOfUniforms(); ++i)
   {
     const char* name = u1->GetNthUniformName(i);
     CHECK_BOOL(u1->GetUniformScalarType(name)==VTK_INT || u1->GetUniformScalarType(name)==VTK_FLOAT,true);
     CHECK_BOOL(u1->GetUniformScalarType(name)==u2->GetUniformScalarType(name),true);
-    if ( u1->GetUniformScalarType(name) == VTK_INT )
+    if (u1->GetUniformScalarType(name) == VTK_INT)
     {
       std::vector<int> u1Val;
       u1->GetUniform(name,u1Val);
@@ -134,7 +134,7 @@ int CompareUniforms( vtkUniforms* u1, vtkUniforms* u2 )
       u2->GetUniform(name,u2Val);
       CHECK_BOOL(u1Val == u2Val,true);
     }
-    else if ( u1->GetUniformScalarType(name) == VTK_FLOAT )
+    else if (u1->GetUniformScalarType(name) == VTK_FLOAT)
     {
       std::vector<float> u1Val;
       u1->GetUniform(name,u1Val);
@@ -161,7 +161,7 @@ int CompareShaderProperty( vtkMRMLShaderPropertyNode* n1, vtkMRMLShaderPropertyN
 
   // Compare partial shader replacements
   CHECK_BOOL(sp1->GetNumberOfShaderReplacements() == sp2->GetNumberOfShaderReplacements(),true);
-  for ( int i = 0; i < sp1->GetNumberOfShaderReplacements(); ++i)
+  for (int i = 0; i < sp1->GetNumberOfShaderReplacements(); ++i)
   {
     std::string name1;
     bool replaceFirst1 = false;

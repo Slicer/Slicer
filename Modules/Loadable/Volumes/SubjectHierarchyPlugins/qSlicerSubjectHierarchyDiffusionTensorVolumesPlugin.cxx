@@ -55,7 +55,7 @@
 #include "qSlicerAbstractCoreModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate: public QObject
+class qSlicerSubjectHierarchyDiffusionTensorVolumesPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 protected:
@@ -117,7 +117,7 @@ qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::~qSlicerSubjectHierarchyDif
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -134,7 +134,7 @@ double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canAddNodeToSubjectH
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -159,13 +159,13 @@ double qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::canOwnSubjectHierarc
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::roleForPlugin() const
 {
   return "DTI volume";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tooltip(vtkIdType itemID)const
+QString qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::tooltip(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -246,7 +246,7 @@ void qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::setDisplayVisibility(v
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
@@ -260,7 +260,7 @@ int qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::getDisplayVisibility(vt
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyDiffusionTensorVolumesPlugin);
 

@@ -46,7 +46,7 @@
 #include <QMessageBox>
 
 // --------------------------------------------------------------------------
-class qMRMLSegmentationConversionParametersWidgetPrivate: public Ui_qMRMLSegmentationConversionParametersWidget
+class qMRMLSegmentationConversionParametersWidgetPrivate : public Ui_qMRMLSegmentationConversionParametersWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationConversionParametersWidget);
 protected:

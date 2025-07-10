@@ -43,7 +43,7 @@
 #include <vtkStringArray.h>
 
 // ----------------------------------------------------------------------------
-class qMRMLSliceControllerWidgetTester: public QObject
+class qMRMLSliceControllerWidgetTester : public QObject
 {
   Q_OBJECT
   vtkMRMLScene* MRMLScene;

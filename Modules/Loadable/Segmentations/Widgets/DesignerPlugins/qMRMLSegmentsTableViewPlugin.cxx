@@ -40,7 +40,7 @@ QString qMRMLSegmentsTableViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentsTableView\" \
           name=\"SegmentsTableView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

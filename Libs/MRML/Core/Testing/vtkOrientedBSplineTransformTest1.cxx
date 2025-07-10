@@ -176,7 +176,7 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkBSplin
   outputPointItk = bsplineItk->TransformPoint( inputPointItk );
 
   // VTK
-  double outputPoint[3]={0};
+  double outputPoint[3] = { 0 };
   bsplineVtk->TransformPoint( inputPoint, outputPoint );
 
   itk::Point<double,3> inputPointVtk( inputPoint );
@@ -199,14 +199,14 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkBSplin
 // Compute transformed point differences between single-precision and double-precision VTK BSpline implementations
 double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], vtkOrientedBSplineTransform* bsplineVtk, bool logDetails)
 {
-  double outputPoint[3]={0};
+  double outputPoint[3] = { 0 };
   bsplineVtk->TransformPoint( inputPoint, outputPoint );
 
-  float floatInputPoint[3]={0};
+  float floatInputPoint[3] = { 0 };
   floatInputPoint[0]=static_cast<float>(inputPoint[0]);
   floatInputPoint[1]=static_cast<float>(inputPoint[1]);
   floatInputPoint[2]=static_cast<float>(inputPoint[2]);
-  float floatOutputPoint[3]={0};
+  float floatOutputPoint[3] = { 0 };
   bsplineVtk->TransformPoint( floatInputPoint, floatOutputPoint );
 
   itk::Point<double,3> outputPointVtk( outputPoint );
@@ -241,9 +241,9 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
     double xPlus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
     xMinus1[row]-=eps;
     xPlus1[row]+=eps;
-    double xMinus1Transformed[3]={0};
+    double xMinus1Transformed[3] = { 0 };
     bsplineVtk->TransformPoint( xMinus1, xMinus1Transformed);
-    double xPlus1Transformed[3]={0};
+    double xPlus1Transformed[3] = { 0 };
     bsplineVtk->TransformPoint( xPlus1, xPlus1Transformed);
     for (int col = 0; col<3; col++)
     {
@@ -252,7 +252,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
   }
 
   // Jacobian computed by the transform class
-  double outputPoint[3]={0};
+  double outputPoint[3] = { 0 };
   double jacobianVtk[3][3];
   bsplineVtk->InternalTransformDerivative( inputPoint, outputPoint, jacobianVtk );
 
@@ -399,14 +399,14 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
         inputPoint[2] = origin[2]+direction[2][0]*spacing[0]*i+direction[2][1]*spacing[1]*j+direction[2][2]*spacing[2]*k;
         // Compare transformation results computed by ITK and VTK.
         double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), false);
-        if ( differenceItkVtk > 1e-6 )
+        if (differenceItkVtk > 1e-6)
         {
           getTransformedPointDifferenceItkVtk(inputPoint, bsplineItk, bsplineVtk.GetPointer(), true);
           std::cout << "ERROR: Point transform result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
           numberOfItkVtkPointMismatches++;
         }
         double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), false);
-        if ( differenceSingleDoubleVtk > 1e-4 )
+        if (differenceSingleDoubleVtk > 1e-4)
         {
           getTransformedPointDifferenceSingleDoubleVtk(inputPoint, bsplineVtk.GetPointer(), true);
           std::cout << "ERROR: Point transform result mismatch between single-precision and double-precision VTK computation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
@@ -414,7 +414,7 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
         }
         // Verify VTK derivative
         double derivativeError = getDerivativeErrorVtk(inputPoint, bsplineVtk.GetPointer(), false);
-        if ( derivativeError > 1e-6 )
+        if (derivativeError > 1e-6)
         {
           getDerivativeErrorVtk(inputPoint, bsplineVtk.GetPointer(), true);
           std::cout << "ERROR: Transform derivative result mismatch between VTK and numerical approximation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
@@ -422,7 +422,7 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
         }
         // Verify VTK inverse transform
         double inverseError = getInverseErrorVtk(inputPoint, bsplineVtk.GetPointer(), false);
-        if ( inverseError > 1e-3 )
+        if (inverseError > 1e-3)
         {
           getInverseErrorVtk(inputPoint, bsplineVtk.GetPointer(), true);
           std::cout << "ERROR: Point transformed by forward and inverse transform does not match the original point" << std::endl;

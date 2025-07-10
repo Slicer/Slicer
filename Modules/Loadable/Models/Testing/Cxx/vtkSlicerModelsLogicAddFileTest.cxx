@@ -36,7 +36,7 @@ int testAddFile(const char* filePath);
 int testAddModelWithPolyData(bool withPolyData);
 
 //-----------------------------------------------------------------------------
-int vtkSlicerModelsLogicAddFileTest( int argc, char* argv[] )
+int vtkSlicerModelsLogicAddFileTest(int argc, char* argv[])
 {
   // Test failure cases
 

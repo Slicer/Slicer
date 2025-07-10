@@ -147,11 +147,11 @@ public:
   };
 
   // Attributes
-  vtkMRMLScalarVolumeNode* VolumeNode{nullptr};
-  int ChangeImageBehavior{DeepCopyImage};
+  vtkMRMLScalarVolumeNode* VolumeNode{ nullptr };
+  int ChangeImageBehavior{ DeepCopyImage };
   vtkSmartPointer<vtkCollection> ImageDataCollection;
   int CurrentImageData{-1};
-  vtkRenderWindowInteractor* Interactor{nullptr};
+  vtkRenderWindowInteractor* Interactor{ nullptr };
 };
 
 //----------------------------------------------------------------------------

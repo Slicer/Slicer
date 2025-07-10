@@ -44,13 +44,13 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-int qMRMLSliceWidgetTest1(int argc, char* argv [] )
+int qMRMLSliceWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
   vtkMultiThreader::SetGlobalMaximumNumberOfThreads(1);
-  if ( argc < 2 )
+  if (argc < 2)
   {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -77,7 +77,7 @@ int qMRMLSliceWidgetTest1(int argc, char* argv [] )
   for (unsigned int i = 0; i < sliceNodes.size(); ++i)
   {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
-    if (!strcmp(sliceNode->GetLayoutName(), "Red") )
+    if (!strcmp(sliceNode->GetLayoutName(), "Red"))
     {
       redSliceNode = sliceNode;
       break;
@@ -117,7 +117,7 @@ int qMRMLSliceWidgetTest1(int argc, char* argv [] )
   QObject::connect(&modifyTimer, SIGNAL(timeout()),
                    &nodeObject, SLOT(modify()));
   //modifyTimer.start();
-  if (argc < 3 || QString(argv[2]) != "-I" )
+  if (argc < 3 || QString(argv[2]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

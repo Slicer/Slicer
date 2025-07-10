@@ -48,7 +48,7 @@ public:
 
 protected:
   /// Return path of the expected XML file.
-  QString xmlModuleDescriptionFilePath()const;
+  QString xmlModuleDescriptionFilePath() const;
 
   qSlicerAbstractCoreModule* instanciator() override;
   QString resolveXMLModuleDescriptionSymbol();
@@ -78,7 +78,7 @@ public:
   ///  libThresholdLib.{dylib, bundle, so} -> threshold
   ///  ThresholdLib.dll -> threshold
   /// \sa qSlicerUtils::extractModuleNameFromLibraryName
-  QString fileNameToKey(const QString& fileName)const override;
+  QString fileNameToKey(const QString& fileName) const override;
 
   void setTempDirectory(const QString& newTempDirectory);
 
@@ -86,7 +86,7 @@ protected:
   ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
     createFactoryFileBasedItem() override;
 
-  bool isValidFile(const QFileInfo& file)const override;
+  bool isValidFile(const QFileInfo& file) const override;
 
 protected:
 

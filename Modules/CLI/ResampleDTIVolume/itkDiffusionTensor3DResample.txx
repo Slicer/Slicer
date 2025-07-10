@@ -38,16 +38,16 @@ DiffusionTensor3DResample<TInput, TOutput>
 {
   unsigned long latestTime = Object::GetMTime();
 
-  if ( m_Transform.IsNotNull() )
+  if (m_Transform.IsNotNull())
   {
-    if ( latestTime < m_Transform->GetMTime() )
+    if (latestTime < m_Transform->GetMTime())
     {
       latestTime = m_Transform->GetMTime();
     }
   }
-  if ( m_Interpolator.IsNotNull() )
+  if (m_Interpolator.IsNotNull())
   {
-    if ( latestTime < m_Interpolator->GetMTime() )
+    if (latestTime < m_Interpolator->GetMTime())
     {
       latestTime = m_Interpolator->GetMTime();
     }
@@ -60,11 +60,11 @@ void
 DiffusionTensor3DResample<TInput, TOutput>
 ::BeforeThreadedGenerateData()
 {
-  if ( m_Interpolator.IsNull() )
+  if (m_Interpolator.IsNull())
   {
     itkExceptionMacro( << "Interpolator not set" );
   }
-  if ( m_Transform.IsNull() )
+  if (m_Transform.IsNull())
   {
     itkExceptionMacro( << "Transform not set" );
   }
@@ -74,7 +74,7 @@ DiffusionTensor3DResample<TInput, TOutput>
   // m_Interpolator->SetDefaultPixelValue( m_DefaultPixelValue ) ;
   m_DefaultTensor.SetIdentity();
   m_DefaultTensor *= this->m_DefaultPixelValue;
-/*  for ( unsigned int i = 0 ; i < 3 ; i++ )
+/*  for (unsigned int i = 0 ; i < 3 ; i++)
     {
     m_DefaultTensor( i , i ) *= this->m_DefaultPixelValue ;
     }*/
@@ -92,13 +92,13 @@ DiffusionTensor3DResample<TInput, TOutput>
 
   typename OutputImageType::IndexType index;
   Point<double, 3> point;
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     index = it.GetIndex();
     outputImagePtr->TransformIndexToPhysicalPoint( index, point );
     const Point<double, 3> pointTransform
       = m_Transform->EvaluateTensorPosition( point );
-    if ( m_Interpolator->IsInsideBuffer( pointTransform ) )
+    if (m_Interpolator->IsInsideBuffer( pointTransform ))
     {
       inputTensor = m_Interpolator->Evaluate( pointTransform );
       outputTensor = m_Transform->EvaluateTransformedTensor( inputTensor,
@@ -137,7 +137,7 @@ DiffusionTensor3DResample<TInput, TOutput>
   Superclass::GenerateOutputInformation();
   // get pointers to the input and output
   OutputImagePointerType outputPtr = this->GetOutput( 0 );
-  if ( !outputPtr )
+  if (!outputPtr)
   {
     return;
   }
@@ -148,7 +148,7 @@ DiffusionTensor3DResample<TInput, TOutput>
   typename OutputImageType::RegionType outputLargestPossibleRegion;
   outputLargestPossibleRegion.SetSize( m_OutputSize );
   typename OutputImageType::IndexType index;
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
     index[i] = 0;
   }
@@ -183,7 +183,7 @@ DiffusionTensor3DResample<TInput, TOutput>
   // call the superclass's implementation of this method
   Superclass::GenerateInputRequestedRegion();
 
-  if ( !this->GetInput() )
+  if (!this->GetInput())
   {
     return;
   }

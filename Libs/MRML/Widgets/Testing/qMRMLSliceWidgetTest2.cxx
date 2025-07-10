@@ -82,12 +82,12 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   return scalarNode.GetPointer();
 }
 
-int qMRMLSliceWidgetTest2(int argc, char* argv [] )
+int qMRMLSliceWidgetTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
-  if ( argc < 2 )
+  if (argc < 2)
   {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -180,7 +180,7 @@ int qMRMLSliceWidgetTest2(int argc, char* argv [] )
                    &nodeObject, SLOT(modify()));
   modifyTimer.start();
 */
-  if (argc < 3 || QString(argv[2]) != "-I" )
+  if (argc < 3 || QString(argv[2]) != "-I")
   {
     QTimer::singleShot(1000, &app, SLOT(quit()));
   }

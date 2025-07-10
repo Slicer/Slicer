@@ -36,7 +36,7 @@ QString qSlicerModulesListViewPlugin::domXml() const
 {
   return "<widget class=\"qSlicerModulesListView\" \
           name=\"SlicerModulesListView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QString qSlicerModulesListViewPlugin::includeFile() const

@@ -41,7 +41,7 @@ QString qMRMLTransformInfoWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLTransformInfoWidget\" \
           name=\"MRMLTransformInfoWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

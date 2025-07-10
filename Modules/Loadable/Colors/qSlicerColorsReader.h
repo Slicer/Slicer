@@ -39,17 +39,17 @@ public:
   ~qSlicerColorsReader() override;
 
   void setColorLogic(vtkSlicerColorLogic* colorLogic);
-  vtkSlicerColorLogic* colorLogic()const;
+  vtkSlicerColorLogic* colorLogic() const;
 
-  QString description()const override;
-  IOFileType fileType()const override;
-  QStringList extensions()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
 
   /// Returns a positive number (>0) if the reader can load this file.
   /// In case the file uses the generic .txt file extension then the confidence value is adjusted based on
   /// the file content: if the file contains color table information then confidence is increased to 0.6,
   /// otherwise the confidence is decreased to 0.4.
-  double canLoadFileConfidence(const QString& file)const override;
+  double canLoadFileConfidence(const QString& file) const override;
 
   bool load(const IOProperties& properties) override;
 protected:

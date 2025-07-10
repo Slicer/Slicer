@@ -331,7 +331,7 @@ bool vtkMRMLInteractionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* 
     return false;
   }
 
-  if ( this->WidgetState != vtkMRMLInteractionWidget::WidgetStateTranslate
+  if (this->WidgetState != vtkMRMLInteractionWidget::WidgetStateTranslate
     && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateScale
     && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateUniformScale
     && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateRotate)

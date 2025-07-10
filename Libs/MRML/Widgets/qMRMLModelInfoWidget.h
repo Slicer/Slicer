@@ -44,7 +44,7 @@ public:
   qMRMLModelInfoWidget(QWidget* parent = nullptr);
   ~qMRMLModelInfoWidget() override;
 
-  vtkMRMLModelNode* mrmlModelNode()const;
+  vtkMRMLModelNode* mrmlModelNode() const;
 
 public slots:
   /// Utility function to be connected with generic signals

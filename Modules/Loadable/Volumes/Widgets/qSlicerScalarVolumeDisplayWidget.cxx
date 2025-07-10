@@ -158,7 +158,7 @@ qSlicerScalarVolumeDisplayWidget::qSlicerScalarVolumeDisplayWidget(QWidget* _par
 qSlicerScalarVolumeDisplayWidget::~qSlicerScalarVolumeDisplayWidget() = default;
 
 // --------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* qSlicerScalarVolumeDisplayWidget::volumeNode()const
+vtkMRMLScalarVolumeNode* qSlicerScalarVolumeDisplayWidget::volumeNode() const
 {
   Q_D(const qSlicerScalarVolumeDisplayWidget);
   return vtkMRMLScalarVolumeNode::SafeDownCast(
@@ -166,7 +166,7 @@ vtkMRMLScalarVolumeNode* qSlicerScalarVolumeDisplayWidget::volumeNode()const
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerScalarVolumeDisplayWidget::isColorTableComboBoxEnabled()const
+bool qSlicerScalarVolumeDisplayWidget::isColorTableComboBoxEnabled() const
 {
   Q_D(const qSlicerScalarVolumeDisplayWidget);
   return d->ColorTableComboBox->isEnabled();
@@ -180,7 +180,7 @@ void qSlicerScalarVolumeDisplayWidget::setColorTableComboBoxEnabled(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerScalarVolumeDisplayWidget::isMRMLWindowLevelWidgetEnabled()const
+bool qSlicerScalarVolumeDisplayWidget::isMRMLWindowLevelWidgetEnabled() const
 {
   Q_D(const qSlicerScalarVolumeDisplayWidget);
   return d->MRMLWindowLevelWidget->isEnabled();
@@ -194,7 +194,7 @@ void qSlicerScalarVolumeDisplayWidget::setMRMLWindowLevelWidgetEnabled(bool enab
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScalarVolumeDisplayNode* qSlicerScalarVolumeDisplayWidget::volumeDisplayNode()const
+vtkMRMLScalarVolumeDisplayNode* qSlicerScalarVolumeDisplayWidget::volumeDisplayNode() const
 {
   vtkMRMLVolumeNode* volumeNode = this->volumeNode();
   return volumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(

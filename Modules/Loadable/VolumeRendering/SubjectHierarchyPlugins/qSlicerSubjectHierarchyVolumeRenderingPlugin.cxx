@@ -57,7 +57,7 @@
 #include "qMRMLThreeDWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyVolumeRenderingPluginPrivate: public QObject
+class qSlicerSubjectHierarchyVolumeRenderingPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyVolumeRenderingPlugin);
 protected:
@@ -128,7 +128,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPlugin::setVolumeRenderingLogic(vtkSl
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyVolumeRenderingPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyVolumeRenderingPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyVolumeRenderingPlugin);
 

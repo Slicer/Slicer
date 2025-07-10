@@ -31,7 +31,7 @@
 #include <vtkSmartPointer.h>
 
 // --------------------------------------------------------------------------
-class qMRMLLabelComboBoxTester: public QObject
+class qMRMLLabelComboBoxTester : public QObject
 {
   Q_OBJECT
 private:

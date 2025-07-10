@@ -36,7 +36,7 @@
 #include <set>
 
 // --------------------------------------------------------------------------
-class qMRMLNodeAttributeTableViewPrivate: public Ui_qMRMLNodeAttributeTableView
+class qMRMLNodeAttributeTableViewPrivate : public Ui_qMRMLNodeAttributeTableView
 {
   Q_DECLARE_PUBLIC(qMRMLNodeAttributeTableView);
 protected:

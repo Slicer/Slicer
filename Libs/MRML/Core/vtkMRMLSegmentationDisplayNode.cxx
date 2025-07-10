@@ -398,7 +398,7 @@ bool vtkMRMLSegmentationDisplayNode::GetSegmentColor(std::string segmentID, doub
   // Get display properties and return override color if set
   this->UpdateSegmentList();
   SegmentDisplayPropertiesMap::iterator propsIt = this->SegmentationDisplayProperties.find(segmentID);
-  if ( propsIt != this->SegmentationDisplayProperties.end()
+  if (propsIt != this->SegmentationDisplayProperties.end()
     && propsIt->second.OverrideColor[0] >= 0.0 && propsIt->second.OverrideColor[1] >= 0.0 && propsIt->second.OverrideColor[2] >= 0.0 )
   {
     // If found and overridden, then return the override color
@@ -862,7 +862,7 @@ bool vtkMRMLSegmentationDisplayNode::CalculateAutoOpacitiesForSegments()
 
   // Make sure the requested representation exists
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-  if ( !this->PreferredDisplayRepresentationName3D
+  if (!this->PreferredDisplayRepresentationName3D
     || !segmentation->CreateRepresentation(this->PreferredDisplayRepresentationName3D) )
   {
     return false;

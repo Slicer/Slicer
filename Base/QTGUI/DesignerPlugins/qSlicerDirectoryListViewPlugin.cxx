@@ -36,7 +36,7 @@ QString qSlicerDirectoryListViewPlugin::domXml() const
 {
   return "<widget class=\"qSlicerDirectoryListView\" \
           name=\"SlicerDirectoryListView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QString qSlicerDirectoryListViewPlugin::includeFile() const

@@ -37,7 +37,7 @@ class ExtensionInstallWidgetWebChannelProxy : public QObject
   Q_OBJECT
 public:
   ExtensionInstallWidgetWebChannelProxy() = default;
-  qSlicerExtensionsServerWidget* InstallWidget{nullptr};
+  qSlicerExtensionsServerWidget* InstallWidget{ nullptr };
 public slots:
   void refresh();
 private:

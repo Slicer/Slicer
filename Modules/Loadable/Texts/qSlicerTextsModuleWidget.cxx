@@ -29,7 +29,7 @@
 #include "vtkMRMLTextNode.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTextsModuleWidgetPrivate: public Ui_qSlicerTextsModuleWidget
+class qSlicerTextsModuleWidgetPrivate : public Ui_qSlicerTextsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTextsModuleWidget);
 protected:
@@ -46,7 +46,7 @@ qSlicerTextsModuleWidgetPrivate::qSlicerTextsModuleWidgetPrivate(qSlicerTextsMod
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerTextsLogic* qSlicerTextsModuleWidgetPrivate::logic()const
+vtkSlicerTextsLogic* qSlicerTextsModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerTextsModuleWidget);
   return vtkSlicerTextsLogic::SafeDownCast(q->logic());

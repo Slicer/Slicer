@@ -60,7 +60,7 @@ public:
 
   /// Get interaction node.
   /// \sa setInteractionNode()
-  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
+  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode() const;
 
   /// Get the markups table widget
   Q_INVOKABLE QTableWidget* tableWidget() const;
@@ -95,7 +95,7 @@ public:
   void setViewGroup(int newViewGroup);
 
   /// Get view group where slice positions will be updated.
-  int viewGroup()const;
+  int viewGroup() const;
 
 public slots:
 

@@ -56,7 +56,7 @@
 #include "qMRMLNodeComboBox.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyRegisterPluginPrivate: public QObject
+class qSlicerSubjectHierarchyRegisterPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyRegisterPlugin);
 protected:
@@ -141,7 +141,7 @@ qSlicerSubjectHierarchyRegisterPlugin::qSlicerSubjectHierarchyRegisterPlugin(QOb
 qSlicerSubjectHierarchyRegisterPlugin::~qSlicerSubjectHierarchyRegisterPlugin() = default;
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyRegisterPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyRegisterPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyRegisterPlugin);
 

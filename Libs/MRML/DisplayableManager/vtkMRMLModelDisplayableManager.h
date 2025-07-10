@@ -102,9 +102,9 @@ public:
   void SetPickedPointID(vtkIdType newPointID);
 
   /// Return true if the node can be represented as a model
-  bool IsModelDisplayable(vtkMRMLDisplayableNode* node)const;
+  bool IsModelDisplayable(vtkMRMLDisplayableNode* node) const;
   /// Return true if the display node is a model
-  bool IsModelDisplayable(vtkMRMLDisplayNode* node)const;
+  bool IsModelDisplayable(vtkMRMLDisplayNode* node) const;
 
   /// Helper function for determining what type of scalar is active.
   /// \return True if attribute location in display node is vtkAssignAttribute::CELL_DATA

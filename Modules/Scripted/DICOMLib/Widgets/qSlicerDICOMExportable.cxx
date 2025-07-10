@@ -110,7 +110,7 @@ CTK_SET_CPP(qSlicerDICOMExportable, const double, setConfidence, Confidence)
 CTK_GET_CPP(qSlicerDICOMExportable, double, confidence, Confidence)
 
 //-----------------------------------------------------------------------------
-QMap<QString,QString> qSlicerDICOMExportable::tags()const
+QMap<QString,QString> qSlicerDICOMExportable::tags() const
 {
   Q_D(const qSlicerDICOMExportable);
   return d->Tags;
@@ -179,7 +179,7 @@ void qSlicerDICOMExportable::copyFromVtkExportable(vtkSlicerDICOMExportable* vtk
   d->Confidence = vtkExportable->GetConfidence();
 
   std::map<std::string, std::string> vtkTags = vtkExportable->GetTags();
-  for ( std::map<std::string, std::string>::iterator it=vtkTags.begin(); it != vtkTags.end(); ++it )
+  for (std::map<std::string, std::string>::iterator it=vtkTags.begin(); it != vtkTags.end(); ++it)
   {
     this->setTag(it->first.c_str(), it->second.c_str());
   }

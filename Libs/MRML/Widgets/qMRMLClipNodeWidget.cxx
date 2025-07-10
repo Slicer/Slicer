@@ -87,7 +87,7 @@ qMRMLClipNodeWidget::qMRMLClipNodeWidget(QWidget* _parent)
 qMRMLClipNodeWidget::~qMRMLClipNodeWidget() = default;
 
 //------------------------------------------------------------------------------
-vtkMRMLClipNode* qMRMLClipNodeWidget::mrmlClipNode()const
+vtkMRMLClipNode* qMRMLClipNodeWidget::mrmlClipNode() const
 {
   Q_D(const qMRMLClipNodeWidget);
   return d->MRMLClipNode;

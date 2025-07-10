@@ -55,7 +55,7 @@ qSlicerReformatModule(QObject* _parent) : Superclass(_parent),
 qSlicerReformatModule::~qSlicerReformatModule() = default;
 
 //------------------------------------------------------------------------------
-QString qSlicerReformatModule::helpText()const
+QString qSlicerReformatModule::helpText() const
 {
   QString help = tr("The Transforms Reformat Widget Module creates"
     " and edits the Slice Node transforms.") + QLatin1String("<br>");
@@ -64,25 +64,25 @@ QString qSlicerReformatModule::helpText()const
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerReformatModule::acknowledgementText()const
+QString qSlicerReformatModule::acknowledgementText() const
 {
   return tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
 }
 
 //------------------------------------------------------------------------------
-QIcon qSlicerReformatModule::icon()const
+QIcon qSlicerReformatModule::icon() const
 {
   return QIcon(":/Icons/Reformat.png");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerReformatModule::categories()const
+QStringList qSlicerReformatModule::categories() const
 {
   return QStringList() << qSlicerAbstractCoreModule::tr("Registration.Specialized");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerReformatModule::contributors()const
+QStringList qSlicerReformatModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Michael Jeulin-Lagarrigue (Kitware)");

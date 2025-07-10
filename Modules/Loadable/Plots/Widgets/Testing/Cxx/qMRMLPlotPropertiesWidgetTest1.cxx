@@ -49,7 +49,7 @@
 #include <vtkTable.h>
 #include "qMRMLWidget.h"
 
-int qMRMLPlotPropertiesWidgetTest1( int argc, char* argv [] )
+int qMRMLPlotPropertiesWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

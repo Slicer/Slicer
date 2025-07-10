@@ -20,7 +20,7 @@
 #include <itkFactoryRegistration.h>
 
 //-----------------------------------------------------------------------------
-int vtkSlicerTransformLogicTest1(int argc, char* argv [])
+int vtkSlicerTransformLogicTest1(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 

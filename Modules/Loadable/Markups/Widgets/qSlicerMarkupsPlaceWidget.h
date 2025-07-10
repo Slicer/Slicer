@@ -75,8 +75,8 @@ public:
 
   /// Get interaction node.
   /// \sa setInteractionNode()
-  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode()const;
-  Q_INVOKABLE vtkMRMLSelectionNode* selectionNode()const;
+  Q_INVOKABLE vtkMRMLInteractionNode* interactionNode() const;
+  Q_INVOKABLE vtkMRMLSelectionNode* selectionNode() const;
 
   /// Returns true if the current markups node is the active markups node in the scene.
   bool currentNodeActive() const;

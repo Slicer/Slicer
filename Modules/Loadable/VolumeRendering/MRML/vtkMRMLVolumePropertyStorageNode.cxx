@@ -40,7 +40,7 @@ vtkMRMLVolumePropertyStorageNode::~vtkMRMLVolumePropertyStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 #else
   ifs.open(fullName.c_str(), ios::in);
 #endif
-  if ( !ifs )
+  if (!ifs)
   {
     vtkErrorMacro("Cannot open volume property file: " << fullName);
     return 0;
@@ -179,7 +179,7 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   ofs.open(fullName.c_str(), ios::out);
 #endif
 
-  if ( !ofs )
+  if (!ofs)
   {
     vtkErrorMacro("Cannot open volume property file: " << fullName);
     return 0;

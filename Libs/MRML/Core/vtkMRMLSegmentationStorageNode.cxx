@@ -103,7 +103,7 @@ vtkMRMLSegmentationStorageNode::~vtkMRMLSegmentationStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(CropToMinimumExtent);
   vtkMRMLPrintEndMacro();
@@ -500,7 +500,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
     {
       // Skip region outside extent of current segment (consider common extent boundaries)
       BinaryLabelmap4DImageType::IndexType segmentIndex = segmentLabelmapIterator.GetIndex();
-      if ( segmentIndex[0] + commonGeometryExtent[0] < currentSegmentExtent[0]
+      if (segmentIndex[0] + commonGeometryExtent[0] < currentSegmentExtent[0]
         || segmentIndex[0] + commonGeometryExtent[0] > currentSegmentExtent[1]
         || segmentIndex[1] + commonGeometryExtent[2] < currentSegmentExtent[2]
         || segmentIndex[1] + commonGeometryExtent[2] > currentSegmentExtent[3]
@@ -1136,7 +1136,7 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
       segmentation->SetSourceRepresentationName(sourceRepresentationName.c_str());
     }
     // Read conversion parameters (stored in each segment file, but need to set only once)
-    if ( conversionParameters.empty()
+    if (conversionParameters.empty()
       && currentPolyData->GetFieldData()->GetAbstractArray(GetSegmentationMetaDataKey(KEY_SEGMENTATION_CONVERSION_PARAMETERS).c_str()) )
     {
       vtkStringArray* conversionParametersArray = vtkStringArray::SafeDownCast(
@@ -1145,7 +1145,7 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
       segmentation->DeserializeConversionParameters(conversionParameters);
     }
     // Read contained representation names
-    if ( containedRepresentationNames.empty()
+    if (containedRepresentationNames.empty()
       && currentPolyData->GetFieldData()->GetAbstractArray(GetSegmentationMetaDataKey(KEY_SEGMENTATION_CONTAINED_REPRESENTATION_NAMES).c_str()) )
     {
       containedRepresentationNames = vtkStringArray::SafeDownCast(

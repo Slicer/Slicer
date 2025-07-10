@@ -63,7 +63,7 @@ protected slots:
 protected:
   ///
   /// Convenient method to return the coordinate system currently selected
-  //int coordinateReference()const;
+  //int coordinateReference() const;
 
 protected:
   QScopedPointer<qSlicerTablesModuleWidgetPrivate> d_ptr;

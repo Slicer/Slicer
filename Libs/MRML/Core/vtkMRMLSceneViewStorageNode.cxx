@@ -86,7 +86,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
   // compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if ( extension.empty() )
+  if (extension.empty())
   {
     vtkErrorMacro("ReadData: no file extension specified: " << fullName.c_str());
     return 0;
@@ -97,7 +97,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   vtkNew<vtkImageData> imageData;
   vtkSmartPointer<vtkImageReader2> reader;
 
-  if ( extension == std::string(".png") )
+  if (extension == std::string(".png"))
   {
       reader=vtkSmartPointer<vtkPNGReader>::New();
   }

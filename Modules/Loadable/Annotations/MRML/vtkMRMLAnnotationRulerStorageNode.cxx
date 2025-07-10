@@ -40,7 +40,7 @@ void vtkMRMLAnnotationRulerStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -115,7 +115,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
     columnNumber ++;
   }
 
-  if (refNode->SetRuler(lineID, sel, vis) < 0 )
+  if (refNode->SetRuler(lineID, sel, vis) < 0)
   {
     vtkErrorMacro("Error setting angle , lineID = " << lineID);
     return -1;
@@ -358,7 +358,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* 
   }
 
   // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLAnnotationRulerNode") ) )
+  if (!( refNode->IsA("vtkMRMLAnnotationRulerNode") ))
   {
     vtkErrorMacro("WriteAnnotationDataInternal: Reference node is not a proper vtkMRMLAnnotationRulerNode");
     return 0;

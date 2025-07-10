@@ -38,7 +38,7 @@ QString qMRMLPlotViewControllerWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLPlotViewControllerWidget\" \
           name=\"MRMLPlotViewControllerWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

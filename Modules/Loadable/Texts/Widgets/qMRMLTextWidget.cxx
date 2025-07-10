@@ -152,14 +152,14 @@ void qMRMLTextWidget::setMRMLTextNode(vtkMRMLTextNode* node)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLTextNode* qMRMLTextWidget::mrmlTextNode()const
+vtkMRMLTextNode* qMRMLTextWidget::mrmlTextNode() const
 {
   Q_D(const qMRMLTextWidget);
   return d->CurrentTextNode;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLTextWidget::mrmlNode()const
+vtkMRMLNode* qMRMLTextWidget::mrmlNode() const
 {
   Q_D(const qMRMLTextWidget);
   return d->CurrentTextNode;

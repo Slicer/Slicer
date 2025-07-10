@@ -37,7 +37,7 @@ vtkMRMLMeasurementAngle::~vtkMRMLMeasurementAngle() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMeasurementAngle::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
@@ -72,7 +72,7 @@ void vtkMRMLMeasurementAngle::Compute()
   angleNode->GetNthControlPointPositionWorld(1, c);
   angleNode->GetNthControlPointPositionWorld(2, p2);
 
-  if ( vtkMath::Distance2BetweenPoints(p1, c) < VTK_DBL_EPSILON
+  if (vtkMath::Distance2BetweenPoints(p1, c) < VTK_DBL_EPSILON
     || vtkMath::Distance2BetweenPoints(p2, c) < VTK_DBL_EPSILON )
   {
     vtkErrorMacro("Compute: Control points are too close to each other to compute angle reliably");

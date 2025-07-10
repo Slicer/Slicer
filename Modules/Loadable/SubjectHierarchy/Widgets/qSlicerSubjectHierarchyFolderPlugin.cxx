@@ -49,7 +49,7 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyFolderPluginPrivate: public QObject
+class qSlicerSubjectHierarchyFolderPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyFolderPlugin);
 protected:
@@ -144,7 +144,7 @@ qSlicerSubjectHierarchyFolderPlugin::~qSlicerSubjectHierarchyFolderPlugin() = de
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyFolderPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -174,7 +174,7 @@ bool qSlicerSubjectHierarchyFolderPlugin::addNodeToSubjectHierarchy(vtkMRMLNode*
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (!itemID)
   {
@@ -211,7 +211,7 @@ double qSlicerSubjectHierarchyFolderPlugin::canOwnSubjectHierarchyItem(vtkIdType
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyFolderPlugin::roleForPlugin() const
 {
   // Get current node to determine role
   vtkIdType currentItemID = qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
@@ -290,7 +290,7 @@ void qSlicerSubjectHierarchyFolderPlugin::setDisplayVisibility(vtkIdType itemID,
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyFolderPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchyFolderPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   // Use the folder display node to get folder visibility.
   // This is necessary because the displayable manager considers this display node.
@@ -345,7 +345,7 @@ void qSlicerSubjectHierarchyFolderPlugin::setDisplayColor(vtkIdType itemID, QCol
 }
 
 //-----------------------------------------------------------------------------
-QColor qSlicerSubjectHierarchyFolderPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const
+QColor qSlicerSubjectHierarchyFolderPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -391,7 +391,7 @@ QColor qSlicerSubjectHierarchyFolderPlugin::getDisplayColor(vtkIdType itemID, QM
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyFolderPlugin);
 
@@ -401,7 +401,7 @@ QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::itemContextMenuActions()con
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::sceneContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::sceneContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyFolderPlugin);
 
@@ -475,7 +475,7 @@ void qSlicerSubjectHierarchyFolderPlugin::updateShowEmptyFoldersAction()
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyFolderPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyFolderPlugin);
 
@@ -614,7 +614,7 @@ void qSlicerSubjectHierarchyFolderPlugin::onShowEmptyFoldersToggled(bool on)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::displayNodeForItem(vtkIdType itemID)const
+vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::displayNodeForItem(vtkIdType itemID) const
 {
   if (!itemID)
   {
@@ -678,7 +678,7 @@ vtkMRMLDisplayNode* qSlicerSubjectHierarchyFolderPlugin::createDisplayNodeForIte
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyFolderPlugin::isApplyColorToBranchEnabledForItem(vtkIdType itemID)const
+bool qSlicerSubjectHierarchyFolderPlugin::isApplyColorToBranchEnabledForItem(vtkIdType itemID) const
 {
   if (!itemID)
   {

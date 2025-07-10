@@ -44,7 +44,7 @@
 #include <vtkMRMLStorableNode.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyExportPluginPrivate: public QObject
+class qSlicerSubjectHierarchyExportPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyExportPlugin);
 protected:

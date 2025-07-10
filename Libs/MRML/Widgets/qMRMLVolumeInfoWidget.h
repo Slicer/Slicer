@@ -47,12 +47,12 @@ public:
   qMRMLVolumeInfoWidget(QWidget* parent = nullptr);
   ~qMRMLVolumeInfoWidget() override;
 
-  vtkMRMLVolumeNode* volumeNode()const;
+  vtkMRMLVolumeNode* volumeNode() const;
   // Depends on the dimension, spacing and origin of the volume
-  bool isCentered()const;
+  bool isCentered() const;
 
   // Disabled by default
-  bool isDataTypeEditable()const;
+  bool isDataTypeEditable() const;
 
 public slots:
   /// Utility function to be connected with generic signals

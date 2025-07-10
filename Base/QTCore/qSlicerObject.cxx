@@ -54,7 +54,7 @@ void qSlicerObject::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerObject::mrmlScene()const
+vtkMRMLScene* qSlicerObject::mrmlScene() const
 {
   Q_D(const qSlicerObject);
   return d->MRMLScene;

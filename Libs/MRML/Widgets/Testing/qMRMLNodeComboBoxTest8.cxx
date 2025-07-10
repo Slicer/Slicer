@@ -57,7 +57,7 @@ bool checkActionCount(int line, qMRMLSceneModel* sceneModel, int expected)
 
 // --------------------------------------------------------------------------
 // test the adding of user menu actions
-int qMRMLNodeComboBoxTest8( int argc, char* argv [] )
+int qMRMLNodeComboBoxTest8(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

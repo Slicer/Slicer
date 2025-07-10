@@ -104,7 +104,7 @@ void vtkMRMLTableViewNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLTableViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "DoPropagateTableSelection: " << this->DoPropagateTableSelection << "\n";
 }
 

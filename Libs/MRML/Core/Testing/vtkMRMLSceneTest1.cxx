@@ -35,7 +35,7 @@ public:
     this->vtkMRMLNode::Reset(defaultNode);
   }
 
-  int ResetCount{0};
+  int ResetCount{ 0 };
 
 protected:
   vtkMRMLCustomNode() = default;
@@ -416,7 +416,7 @@ int vtkMRMLSceneTest1(int, char*[])
     const char* nodeAddedFromPrivateSceneID = nodeFromPrivateScene->GetID();
     const char* changedIDFromPrivateScene =
       scene1->GetChangedID(nodeInPrivateSceneID.c_str());
-    if ( changedIDFromPrivateScene
+    if (changedIDFromPrivateScene
       || nodeInPrivateSceneID.empty() || !nodeAddedFromPrivateSceneID ||
       !nodeInPrivateSceneID.compare(nodeAddedFromPrivateSceneID) )
     {
@@ -447,7 +447,7 @@ int vtkMRMLSceneTest1(int, char*[])
     scene1->Import();
     const char* changedIDFromImportedScene =
       scene1->GetChangedID(importedNodeID);
-    if ( !importedNodeID || !changedIDFromImportedScene ||
+    if (!importedNodeID || !changedIDFromImportedScene ||
       !strcmp(changedIDFromImportedScene, importedNodeID) )
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetChangedID()\n"

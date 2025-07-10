@@ -21,7 +21,7 @@ SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>
   this->SetNumberOfIndexedOutputs( 6 );
   const unsigned int numOfIdexedOutputs = this->GetNumberOfIndexedOutputs();
   this->SetNumberOfRequiredOutputs( 6 );
-  for ( unsigned int i = 1; i < numOfIdexedOutputs; i++ )  // we skip output0 because it is created by default
+  for (unsigned int i = 1; i < numOfIdexedOutputs; i++ )  // we skip output0 because it is created by default
   {
     OutputImagePointerType output
       = static_cast<OutputImageType*>( this->MakeOutput( i ).GetPointer() );
@@ -37,7 +37,7 @@ SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>
   InputIteratorType it( this->GetInput(), outputRegionForThread );
 
   std::vector<OutputIteratorType> out;
-  for ( int i = 0; i < 6; i++ )
+  for (int i = 0; i < 6; i++)
   {
     OutputImagePointerType outputImagePtr = this->GetOutput( i );
     OutputIteratorType     outtemp( outputImagePtr, outputRegionForThread );
@@ -45,10 +45,10 @@ SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>
     out.push_back( outtemp );
   }
   InputTensorDataType inputTensor;
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     inputTensor = it.Get();
-    for ( int i = 0; i < 6; i++ )
+    for (int i = 0; i < 6; i++)
     {
       out[i].Set( static_cast<OutputDataType>( inputTensor[i] ) );
       ++out[i];
@@ -67,10 +67,10 @@ SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>
   // call the superclass' implementation of this method
   Superclass::GenerateOutputInformation();
   // get pointers to the input and output
-  for ( int i = 0; i < 6; i++ )
+  for (int i = 0; i < 6; i++)
   {
     OutputImagePointerType outputPtr = this->GetOutput( i );
-    if ( !outputPtr )
+    if (!outputPtr)
     {
       return;
     }
@@ -94,7 +94,7 @@ SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>
   // call the superclass's implementation of this method
   Superclass::GenerateInputRequestedRegion();
 
-  if ( !this->GetInput() )
+  if (!this->GetInput())
   {
     return;
   }

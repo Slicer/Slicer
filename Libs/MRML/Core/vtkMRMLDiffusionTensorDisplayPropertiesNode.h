@@ -179,7 +179,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //vtkSetMacro(GlyphGeometry, int);
   /// Also update the glyph polydata source
   void SetGlyphGeometry( int geometry ) {
-    if ( this->GlyphGeometry != geometry )
+    if (this->GlyphGeometry != geometry)
     {
       this->GlyphGeometry = geometry;
       this->UpdateGlyphSource();
@@ -251,10 +251,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   //vtkSetMacro(GlyphGeometry, int);
   /// Also update the glyph polydata source
   void SetGlyphEigenvector( int eigenvector ) {
-    if ( this->GlyphEigenvector != eigenvector )
+    if (this->GlyphEigenvector != eigenvector)
     {
       this->GlyphEigenvector = eigenvector;
-      if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
+      if (this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
       {
         /// Update the source if the eigenvector has changed
         this->UpdateGlyphSource();
@@ -301,10 +301,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   vtkGetMacro(LineGlyphResolution, int);
   //vtkSetMacro(LineGlyphResolution, int);
   void SetLineGlyphResolution( int resolution ) {
-    if ( this->LineGlyphResolution != resolution )
+    if (this->LineGlyphResolution != resolution)
     {
       this->LineGlyphResolution = resolution;
-      if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
+      if (this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
       {
         /// Update the source if the resolution has changed
         this->UpdateGlyphSource();
@@ -326,10 +326,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// Set the radius of the tube glyph
   //vtkSetMacro(TubeGlyphRadius, double);
   void SetTubeGlyphRadius( double radius ) {
-    if ( this->TubeGlyphRadius != radius )
+    if (this->TubeGlyphRadius != radius)
     {
       this->TubeGlyphRadius = radius;
-      if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
+      if (this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
       {
         /// Update the source if the radius has changed
         this->UpdateGlyphSource();
@@ -344,10 +344,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   vtkGetMacro(TubeGlyphNumberOfSides, int);
   //vtkSetMacro(TubeGlyphNumberOfSides, int);
   void SetTubeGlyphNumberOfSides( int numberOfSides ) {
-    if ( this->TubeGlyphNumberOfSides != numberOfSides )
+    if (this->TubeGlyphNumberOfSides != numberOfSides)
     {
       this->TubeGlyphNumberOfSides = numberOfSides;
-      if ( this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
+      if (this->GlyphGeometry == this->Lines || this->GlyphGeometry == this->Tubes)
       {
         /// Update the source if the numberOfSides has changed
         this->UpdateGlyphSource();

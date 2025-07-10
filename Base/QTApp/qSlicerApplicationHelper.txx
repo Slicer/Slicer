@@ -102,10 +102,10 @@ protected:
     return QObject::eventFilter(obj, event);
   }
 private:
-  bool DisableTopMost{true};
-  QWidget* Widget{nullptr};
+  bool DisableTopMost{ true };
+  QWidget* Widget{ nullptr };
   QPoint PressPosition;
-  bool Dragging{false};
+  bool Dragging{ false };
 };
 
 

@@ -60,25 +60,25 @@ qSlicerSceneReader::qSlicerSceneReader(vtkSlicerCamerasModuleLogic* camerasLogic
 qSlicerSceneReader::~qSlicerSceneReader() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSceneReader::description()const
+QString qSlicerSceneReader::description() const
 {
   return tr("MRML Scene");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerSceneReader::fileType()const
+qSlicerIO::IOFileType qSlicerSceneReader::fileType() const
 {
   return QString(/*no tr*/"SceneFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSceneReader::extensions()const
+QStringList qSlicerSceneReader::extensions() const
 {
   return QStringList() << "*.mrml";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerSceneReader::options()const
+qSlicerIOOptions* qSlicerSceneReader::options() const
 {
   return new qSlicerSceneIOOptionsWidget;
 }

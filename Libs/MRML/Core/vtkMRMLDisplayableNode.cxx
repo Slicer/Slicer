@@ -119,7 +119,7 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   int numDisplayNodes = this->GetNumberOfNodeReferences(
     this->GetDisplayNodeReferenceRole());
@@ -268,7 +268,7 @@ int vtkMRMLDisplayableNode::GetDisplayClassVisibility(const char* nodeClass)
   for (int i = 0; i<ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
-    if ( displayNode && displayNode->IsShowModeDefault()
+    if (displayNode && displayNode->IsShowModeDefault()
       && displayNode->IsA(nodeClass) )
     {
       visible = displayNode->GetVisibility();

@@ -82,14 +82,14 @@ qSlicerLabelMapVolumeDisplayWidget::qSlicerLabelMapVolumeDisplayWidget(QWidget* 
 qSlicerLabelMapVolumeDisplayWidget::~qSlicerLabelMapVolumeDisplayWidget() = default;
 
 // --------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* qSlicerLabelMapVolumeDisplayWidget::volumeNode()const
+vtkMRMLScalarVolumeNode* qSlicerLabelMapVolumeDisplayWidget::volumeNode() const
 {
   Q_D(const qSlicerLabelMapVolumeDisplayWidget);
   return d->VolumeNode;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLLabelMapVolumeDisplayNode* qSlicerLabelMapVolumeDisplayWidget::volumeDisplayNode()const
+vtkMRMLLabelMapVolumeDisplayNode* qSlicerLabelMapVolumeDisplayWidget::volumeDisplayNode() const
 {
   Q_D(const qSlicerLabelMapVolumeDisplayWidget);
   return d->VolumeNode ? vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(
@@ -156,7 +156,7 @@ void qSlicerLabelMapVolumeDisplayWidget::setSliceIntersectionThickness(int thick
 }
 
 //------------------------------------------------------------------------------
-int qSlicerLabelMapVolumeDisplayWidget::sliceIntersectionThickness()const
+int qSlicerLabelMapVolumeDisplayWidget::sliceIntersectionThickness() const
 {
   Q_D(const qSlicerLabelMapVolumeDisplayWidget);
   return d->SliceIntersectionThicknessSpinBox->value();

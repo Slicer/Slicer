@@ -13,7 +13,7 @@ class vtkMRMLAnnotationTextDisplayNode;
 class vtkMRMLAnnotationDisplayNode;
 class vtkMRMLAnnotationNode;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationStorageNode : public vtkMRMLStorageNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationStorageNode : public vtkMRMLStorageNode
 {
 public:
   static vtkMRMLAnnotationStorageNode* New();

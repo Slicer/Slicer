@@ -142,7 +142,7 @@ vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetModelDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintObjectMacro(UnstructuredGrid);
@@ -161,7 +161,7 @@ void vtkMRMLModelNode::SetAndObserveMesh(vtkPointSet* mesh)
   {
     // Check that mesh is polydata or unstructuredgrid
     vtkPolyData* polydata = vtkPolyData::SafeDownCast(mesh);
-    if ( !polydata && !vtkUnstructuredGrid::SafeDownCast(mesh))
+    if (!polydata && !vtkUnstructuredGrid::SafeDownCast(mesh))
     {
       vtkErrorMacro("SetAndObserveMesh: mesh should be a"
                     "vtkPolyData or an vtkUnstructuredGrid.");
@@ -609,27 +609,27 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     vtkDebugMacro("CompositeScalars: using overlay mid = " << overlayMid);
     float overlay = 0.0;
     float background = 0.0;
-    for ( int nValue = 0; nValue < cValues; nValue++ )
+    for (int nValue = 0; nValue < cValues; nValue++)
     {
       background = scalars1->GetTuple1(nValue);
       overlay = scalars2->GetTuple1(nValue);
 
-      if ( reverseOverlay )
+      if (reverseOverlay)
       {
         overlay = -overlay;
       }
-      if ( overlay > 0 && !showOverlayPositive )
+      if (overlay > 0 && !showOverlayPositive)
       {
         overlay = 0;
       }
 
-      if ( overlay < 0 && !showOverlayNegative )
+      if (overlay < 0 && !showOverlayNegative)
       {
         overlay = 0;
       }
 
       // Insert the appropriate color into the composed array.
-      if ( overlay < overlayMin &&
+      if (overlay < overlayMin &&
           overlay > -overlayMin )
       {
         composedScalars->InsertNextValue( background );
@@ -657,7 +657,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       curvatureMin = 0.5;
     }
     bool bUseGray = true;
-    if ( overlayMin <= curvatureMin )
+    if (overlayMin <= curvatureMin)
     {
       curvatureMin = overlayMin - EPS;
       bUseGray = false;
@@ -666,15 +666,15 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
     func->AddRGBPoint( -overlayMid, 0, 0, 1 );
     func->AddRGBPoint( -overlayMin, 0, 0, 1 );
 
-    if ( bUseGray && overlayMin != 0 )
+    if (bUseGray && overlayMin != 0)
     {
       func->AddRGBPoint( -overlayMin + EPS, 0.5, 0.5, 0.5 );
-      if ( haveCurvScalars)
+      if (haveCurvScalars)
       {
         func->AddRGBPoint( -curvatureMin - EPS, 0.5, 0.5, 0.5 );
       }
     }
-    if ( haveCurvScalars && overlayMin != 0 )
+    if (haveCurvScalars && overlayMin != 0)
     {
       func->AddRGBPoint( -curvatureMin, 0.6, 0.6, 0.6 );
       func->AddRGBPoint(  0,            0.6, 0.6, 0.6 );
@@ -682,9 +682,9 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       func->AddRGBPoint(  curvatureMin, 0.4, 0.4, 0.4 );
     }
 
-    if ( bUseGray && overlayMin != 0 )
+    if (bUseGray && overlayMin != 0)
     {
-      if ( haveCurvScalars )
+      if (haveCurvScalars)
       {
         func->AddRGBPoint( curvatureMin + EPS, 0.5, 0.5, 0.5 );
       }
@@ -722,7 +722,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLModelNode::CanApplyNonLinearTransforms()const
+bool vtkMRMLModelNode::CanApplyNonLinearTransforms() const
 {
   return true;
 }
@@ -786,7 +786,7 @@ void vtkMRMLModelNode::GetBounds(double bounds[6])
 void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double outputBounds_RAS[6])
 {
   vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
-  if ( !transformNode )
+  if (!transformNode)
   {
     // node is not transformed, therefore RAS=local
     for (int i = 0; i<6; i++)
@@ -813,14 +813,14 @@ void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double 
 
   // initialize bounds with point 0
   double* cornerPoint_RAS = transformLocalToRAS->TransformDoublePoint(cornerPoints_Local[0]);
-  for ( int i = 0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     outputBounds_RAS[2*i]   = cornerPoint_RAS[i];
     outputBounds_RAS[2*i+1] = cornerPoint_RAS[i];
   }
 
   // update bounds with the rest of the points
-  for ( int i = 1; i<8; i++)
+  for (int i = 1; i<8; i++)
   {
     cornerPoint_RAS = transformLocalToRAS->TransformPoint( cornerPoints_Local[i] );
     for (int n = 0; n<3; n++)

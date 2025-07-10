@@ -54,7 +54,7 @@ class qSlicerDataModulePrivate
 
 //-----------------------------------------------------------------------------
 qSlicerDataModule::qSlicerDataModule(QObject* parentObject)
-  :Superclass(parentObject)
+  : Superclass(parentObject)
   , d_ptr(new qSlicerDataModulePrivate)
 {
 }
@@ -63,7 +63,7 @@ qSlicerDataModule::qSlicerDataModule(QObject* parentObject)
 qSlicerDataModule::~qSlicerDataModule() = default;
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerDataModule::icon()const
+QIcon qSlicerDataModule::icon() const
 {
   return QIcon(":/Icons/SubjectHierarchy.png");
 }
@@ -129,7 +129,7 @@ vtkMRMLAbstractLogic* qSlicerDataModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerDataModule::helpText()const
+QString qSlicerDataModule::helpText() const
 {
   QString help = QString(
     tr("The Data module is the central data-organizing point where all loaded data is "
@@ -142,7 +142,7 @@ QString qSlicerDataModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerDataModule::acknowledgementText()const
+QString qSlicerDataModule::acknowledgementText() const
 {
   QString about =
     "<center><table border=\"0\"><tr>"
@@ -157,7 +157,7 @@ QString qSlicerDataModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerDataModule::contributors()const
+QStringList qSlicerDataModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Csaba Pinter (Queen's)");

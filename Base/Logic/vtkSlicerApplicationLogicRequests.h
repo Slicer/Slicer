@@ -44,7 +44,7 @@ public:
 
   virtual void Execute(vtkSlicerApplicationLogic*) {};
 
-  int GetUID()const{return m_UID;}
+  int GetUID() const{return m_UID;}
 
 protected:
   vtkMTimeType m_UID;
@@ -321,7 +321,7 @@ public:
         // defined for this node, don't use the one from the miniscene since it
         // was only used to read/write the temp area).
         vtkMRMLStorableNode* storableTarget = vtkMRMLStorableNode::SafeDownCast(target);
-        if ( storableTarget )
+        if (storableTarget)
         {
           const char* oldStorageNodeID = storableTarget->GetStorageNodeID();
           target->Copy(source);
@@ -613,7 +613,7 @@ protected:
 };
 
 //----------------------------------------------------------------------------
-class WriteDataRequestFile: public DataRequest
+class WriteDataRequestFile : public DataRequest
 {
 public:
   WriteDataRequestFile(
@@ -629,7 +629,7 @@ protected:
 };
 
 //----------------------------------------------------------------------------
-class WriteDataRequestScene: public DataRequest
+class WriteDataRequestScene : public DataRequest
 {
 public:
   WriteDataRequestScene(const std::vector<std::string>& targetNodes,

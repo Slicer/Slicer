@@ -93,7 +93,7 @@ qMRMLLinearTransformSlider::TransformType qMRMLLinearTransformSlider::typeOfTran
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLLinearTransformSlider::isRotation()const
+bool qMRMLLinearTransformSlider::isRotation() const
 {
   return (this->typeOfTransform() == ROTATION_LR ||
           this->typeOfTransform() == ROTATION_PA ||
@@ -101,7 +101,7 @@ bool qMRMLLinearTransformSlider::isRotation()const
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLLinearTransformSlider::isTranslation()const
+bool qMRMLLinearTransformSlider::isTranslation() const
 {
   return (this->typeOfTransform() == TRANSLATION_LR ||
           this->typeOfTransform() == TRANSLATION_PA ||
@@ -143,7 +143,7 @@ void qMRMLLinearTransformSlider::setMRMLTransformNode(vtkMRMLTransformNode* tran
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLTransformNode* qMRMLLinearTransformSlider::mrmlTransformNode()const
+vtkMRMLTransformNode* qMRMLLinearTransformSlider::mrmlTransformNode() const
 {
   Q_D(const qMRMLLinearTransformSlider);
   return d->MRMLTransformNode;

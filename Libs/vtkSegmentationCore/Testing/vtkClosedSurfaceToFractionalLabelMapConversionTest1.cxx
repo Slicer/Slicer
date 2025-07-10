@@ -125,7 +125,7 @@ int vtkClosedSurfaceToFractionalLabelMapConversionTest1(int vtkNotUsed(argc), ch
     return EXIT_FAILURE;
   }
   double meanValue = imageAccumulate->GetMean()[0];
-  if ( std::abs(meanValue - expectedMeanValue) > 0.00001)
+  if (std::abs(meanValue - expectedMeanValue) > 0.00001)
   {
     std::cerr << __LINE__ << ": Fractional mean: " << std::fixed << meanValue <<
       " does not match expected value: " << std::fixed << expectedMeanValue <<  "!" << std::endl;

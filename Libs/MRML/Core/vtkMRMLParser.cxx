@@ -55,7 +55,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
       }
       else if (!strcmp(attName, "userTags"))
       {
-        if ( this->MRMLScene->GetUserTagTable() == nullptr )
+        if (this->MRMLScene->GetUserTagTable() == nullptr)
         {
           //--- null table, no tags are read.
           return;
@@ -69,14 +69,14 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
           std::string tags;
           ss >> tags;
           //--- now pull apart individual tags
-          if ( tags.c_str() != nullptr )
+          if (tags.c_str() != nullptr)
           {
             i = tags.find("=");
-            if ( i != std::string::npos)
+            if (i != std::string::npos)
             {
               kwd = tags.substr(0, i);
               val = tags.substr(i+1, std::string::npos );
-              if ( kwd.c_str() != nullptr && val.c_str() != nullptr )
+              if (kwd.c_str() != nullptr && val.c_str() != nullptr)
               {
                 this->MRMLScene->GetUserTagTable()->AddOrUpdateTag ( kwd.c_str(), val.c_str(), 0 );
               }
@@ -223,7 +223,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
 void vtkMRMLParser::EndElement(const char* name)
 {
-  if ( !strcmp(name, "MRML") || this->NodeStack.empty() )
+  if (!strcmp(name, "MRML") || this->NodeStack.empty())
   {
     return;
   }

@@ -43,11 +43,11 @@ public:
   qMRMLSimpleColorTableView(QWidget* parent = nullptr);
   ~qMRMLSimpleColorTableView() override;
 
-  Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;
-  Q_INVOKABLE qMRMLColorModel* colorModel()const;
-  Q_INVOKABLE qMRMLSortFilterColorProxyModel* sortFilterProxyModel()const;
+  Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode() const;
+  Q_INVOKABLE qMRMLColorModel* colorModel() const;
+  Q_INVOKABLE qMRMLSortFilterColorProxyModel* sortFilterProxyModel() const;
 
-  Q_INVOKABLE int selectedColorIndex()const;
+  Q_INVOKABLE int selectedColorIndex() const;
 
 public slots:
   void setMRMLColorNode(vtkMRMLColorNode* colorNode);

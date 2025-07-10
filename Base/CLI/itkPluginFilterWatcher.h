@@ -32,7 +32,7 @@ namespace itk
  * filter and reporting these events to std::cout. Formats reports
  * with xml.
  */
-class PluginFilterWatcher: public SimpleFilterWatcher
+class PluginFilterWatcher : public SimpleFilterWatcher
 {
 public:
   PluginFilterWatcher(itk::ProcessObject* o,

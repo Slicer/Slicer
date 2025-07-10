@@ -25,7 +25,7 @@
 #include "ui_qSlicerTerminologiesModule.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTerminologiesModuleWidgetPrivate: public Ui_qSlicerTerminologiesModule
+class qSlicerTerminologiesModuleWidgetPrivate : public Ui_qSlicerTerminologiesModule
 {
 public:
   qSlicerTerminologiesModuleWidgetPrivate();

@@ -48,7 +48,7 @@ QString qSlicerSimpleMarkupsWidgetPlugin
 {
   return "<widget class=\"qSlicerSimpleMarkupsWidget\" \
           name=\"SimpleMarkupsWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

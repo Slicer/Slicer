@@ -115,7 +115,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
         }
       }
       // set the table range
-      if ( this->LookupTable->GetNumberOfTableValues() > 0 )
+      if (this->LookupTable->GetNumberOfTableValues() > 0)
       {
         this->LookupTable->SetRange(0, 255);
       }
@@ -189,7 +189,7 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   if (this->LookupTable != nullptr)
   {

@@ -52,18 +52,18 @@ public:
   /// Return a pointer to the module selector toolbar that can change the
   /// current module.
   /// \sa pythonConsole(), errorLogWidget()
-  Q_INVOKABLE qSlicerModuleSelectorToolBar* moduleSelector()const;
+  Q_INVOKABLE qSlicerModuleSelectorToolBar* moduleSelector() const;
 
 #ifdef Slicer_USE_PYTHONQT
   /// Return a pointer to the python console.
   /// \sa moduleSelector(), errorLogWidget()
-  Q_INVOKABLE ctkPythonConsole* pythonConsole()const;
+  Q_INVOKABLE ctkPythonConsole* pythonConsole() const;
 #endif
   /// Return a pointer to the error log widget.
   /// \sa moduleSelector(), pythonConsole()
-  Q_INVOKABLE ctkErrorLogWidget* errorLogWidget()const;
+  Q_INVOKABLE ctkErrorLogWidget* errorLogWidget() const;
   /// Return a pointer to the dock widget that shows the Error Log.
-  Q_INVOKABLE QDockWidget* errorLogDockWidget()const;
+  Q_INVOKABLE QDockWidget* errorLogDockWidget() const;
 
 public slots:
   virtual void setHomeModuleCurrent();

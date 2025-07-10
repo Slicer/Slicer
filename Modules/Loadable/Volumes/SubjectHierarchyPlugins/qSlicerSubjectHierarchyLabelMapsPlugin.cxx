@@ -54,7 +54,7 @@
 #include <QAction>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyLabelMapsPluginPrivate: public QObject
+class qSlicerSubjectHierarchyLabelMapsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyLabelMapsPlugin);
 protected:
@@ -114,7 +114,7 @@ qSlicerSubjectHierarchyLabelMapsPlugin::~qSlicerSubjectHierarchyLabelMapsPlugin(
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -131,7 +131,7 @@ double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyLabelMapsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyLabelMapsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -156,13 +156,13 @@ double qSlicerSubjectHierarchyLabelMapsPlugin::canOwnSubjectHierarchyItem(vtkIdT
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyLabelMapsPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyLabelMapsPlugin::roleForPlugin() const
 {
   return "Label map volume";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyLabelMapsPlugin::tooltip(vtkIdType itemID)const
+QString qSlicerSubjectHierarchyLabelMapsPlugin::tooltip(vtkIdType itemID) const
 {
   return qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes")->tooltip(itemID);
 }
@@ -239,7 +239,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::setDisplayVisibility(vtkIdType item
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -296,7 +296,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::showLabelMapInAllViews(vtkMRMLLabel
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyLabelMapsPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyLabelMapsPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyLabelMapsPlugin);
 

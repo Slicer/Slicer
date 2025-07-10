@@ -18,7 +18,7 @@
 // MRML includes
 #include <vtkMRMLStorableNode.h>
 
-class  VTK_MRML_EXPORT vtkMRMLTextNode : public vtkMRMLStorableNode
+class VTK_MRML_EXPORT vtkMRMLTextNode : public vtkMRMLStorableNode
 {
 public:
 
@@ -96,8 +96,8 @@ protected:
   void operator=(const vtkMRMLTextNode&);
 
   std::string Text;
-  int Encoding{VTK_ENCODING_US_ASCII};
-  int ForceCreateStorageNode{CreateStorageNodeAuto};
+  int Encoding{ VTK_ENCODING_US_ASCII };
+  int ForceCreateStorageNode{ CreateStorageNodeAuto };
 
 };
 

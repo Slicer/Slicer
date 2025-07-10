@@ -89,11 +89,11 @@ unsigned int vtkClosedSurfaceToBinaryLabelmapConversionRule::GetConversionCost(
 //----------------------------------------------------------------------------
 vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresentationObjectByRepresentation(std::string representationName)
 {
-  if ( !representationName.compare(this->GetSourceRepresentationName()) )
+  if (!representationName.compare(this->GetSourceRepresentationName()))
   {
     return (vtkDataObject*)vtkPolyData::New();
   }
-  else if ( !representationName.compare(this->GetTargetRepresentationName()) )
+  else if (!representationName.compare(this->GetTargetRepresentationName()))
   {
     return (vtkDataObject*)vtkOrientedImageData::New();
   }

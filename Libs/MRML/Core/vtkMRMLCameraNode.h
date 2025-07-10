@@ -264,7 +264,7 @@ protected:
 
   void SetCamera(vtkCamera* camera);
   void SetAndObserveCamera(vtkCamera* camera);
-  vtkCamera* Camera{nullptr};
+  vtkCamera* Camera{ nullptr };
 
   std::string InternalActiveTag; // variable to hold returned value of GetActiveTag
 

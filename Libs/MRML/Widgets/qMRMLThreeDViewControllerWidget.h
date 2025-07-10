@@ -54,7 +54,7 @@ public:
   void setQuadBufferStereoSupportEnabled(bool value);
 
   /// Get ViewLogic
-  vtkMRMLViewLogic* viewLogic()const;
+  vtkMRMLViewLogic* viewLogic() const;
 
   /// Set \a newViewLogic
   /// Use if two instances of the controller need to observe the same logic.
@@ -64,7 +64,7 @@ public:
   void setViewLabel(const QString& newViewLabel);
 
   /// Get the label for the view (abbreviation for the view name)
-  QString viewLabel()const;
+  QString viewLabel() const;
 
   /// Get 3D view node associated with this ThreeDViewController.
   Q_INVOKABLE vtkMRMLViewNode* mrmlThreeDViewNode() const;

@@ -54,16 +54,16 @@ public:
 
   /// Return the VTK volume property associated with the MRML volume property
   /// node.
-  vtkVolumeProperty* volumeProperty()const;
+  vtkVolumeProperty* volumeProperty() const;
 
   ///
   /// Return the outer bounds of the opacity and color transfer function
   /// views.
-  void chartsBounds(double bounds[4])const;
-  void chartsExtent(double extent[4])const;
+  void chartsBounds(double bounds[4]) const;
+  void chartsExtent(double extent[4]) const;
 
   void setThreshold(bool enable);
-  bool hasThreshold()const;
+  bool hasThreshold() const;
 
 public slots:
   /// Convenient function to connect with signal/slots

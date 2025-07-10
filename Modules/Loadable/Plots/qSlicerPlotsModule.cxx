@@ -59,13 +59,13 @@ qSlicerPlotsModule::qSlicerPlotsModule(QObject* _parent)
 qSlicerPlotsModule::~qSlicerPlotsModule() = default;
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerPlotsModule::icon()const
+QIcon qSlicerPlotsModule::icon() const
 {
   return QIcon(":/Icons/Plots.png");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerPlotsModule::helpText()const
+QString qSlicerPlotsModule::helpText() const
 {
   QString help = tr("The Plots module allows editing properties of plots.") + QLatin1String("<br>");
   help += this->defaultDocumentationLink();
@@ -73,14 +73,14 @@ QString qSlicerPlotsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerPlotsModule::acknowledgementText()const
+QString qSlicerPlotsModule::acknowledgementText() const
 {
   return tr("This module was originally developed by Davide Punzo, Kapteyn Astronomical Institute,"
     " and was supported through the European Research Council grant nr. 291531.");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerPlotsModule::contributors()const
+QStringList qSlicerPlotsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << "Davide Punzo (Kapteyn Astronomical Institute)";

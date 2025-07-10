@@ -57,7 +57,7 @@ class vtkObject;
 class vtkStringArray;
 
 //-----------------------------------------------------------------------------
-class qMRMLTableViewPrivate: public QObject
+class qMRMLTableViewPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT

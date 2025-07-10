@@ -453,7 +453,7 @@ namespace
 bool readFileIntoString(const char* filename, std::string& output)
 {
   std::ifstream istream(filename);
-  if ( !istream )
+  if (!istream)
   {
     cerr << "Could not open input file:" << filename << endl;
     return false;
@@ -487,8 +487,8 @@ public:
   }
 protected:
   vtkRenderRequestCallback() = default;
-  vtkRenderer* Renderer{nullptr};
-  int           RenderRequestCount{0};
+  vtkRenderer* Renderer{ nullptr };
+  int           RenderRequestCount{ 0 };
 };
 
 //----------------------------------------------------------------------------
@@ -709,7 +709,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   recorder->SetInteractor(nullptr);
 
   int retval = vtkRegressionTestImageThreshold(rw.GetPointer(), 85.0);
-  if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
+  if (record || retval == vtkRegressionTester::DO_INTERACTOR)
   {
     displayableManagerGroup->GetInteractor()->Initialize();
     displayableManagerGroup->GetInteractor()->Start();

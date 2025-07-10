@@ -60,8 +60,8 @@ public:
 
   ///
   /// Convenience method allowing to get which family of transform is set
-  bool isRotation()const;
-  bool isTranslation()const;
+  bool isRotation() const;
+  bool isTranslation() const;
 
   ///
   /// Set/Get Coordinate system
@@ -72,7 +72,7 @@ public:
 
   ///
   /// Return the current transform node
-  vtkMRMLTransformNode* mrmlTransformNode()const;
+  vtkMRMLTransformNode* mrmlTransformNode() const;
 
 public slots:
   ///

@@ -351,7 +351,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || !this->GetVisibility() || !interactionEventData )
+  if (!markupsNode || markupsNode->GetLocked() || !this->GetVisibility() || !interactionEventData)
   {
     return;
   }
@@ -513,7 +513,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
     || !this->GetVisibility() || !interactionEventData || !interactionEventData->IsWorldPositionValid() )
   {
     return;
@@ -626,7 +626,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode*
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(Unselected)->TextProperty);
 
   /* TODO: implement this for better performance
-  if (event == )
+  if (event ==)
     {
     int* nPtr = nullptr;
     int n = -1;

@@ -4,7 +4,7 @@
 #include "qMRMLSliceWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLSliceWidgetPlugin::qMRMLSliceWidgetPlugin(QObject* _parent):QObject(_parent)
+qMRMLSliceWidgetPlugin::qMRMLSliceWidgetPlugin(QObject* _parent): QObject(_parent)
 {
 }
 

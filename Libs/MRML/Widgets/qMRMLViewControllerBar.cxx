@@ -200,7 +200,7 @@ void qMRMLViewControllerBarPrivate::setColor(QColor barColor)
 }
 
 //---------------------------------------------------------------------------
-QColor qMRMLViewControllerBarPrivate::color()const
+QColor qMRMLViewControllerBarPrivate::color() const
 {
   return this->BarColor;
 }
@@ -367,7 +367,7 @@ void qMRMLViewControllerBar::updateWidgetFromMRMLView()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLViewControllerBar::showMaximizeViewButton()const
+bool qMRMLViewControllerBar::showMaximizeViewButton() const
 {
   Q_D(const qMRMLViewControllerBar);
   return d->ShowMaximizeViewButton;

@@ -38,7 +38,7 @@ public:
   qSlicerMarkupsWriter(QObject* parent);
   ~qSlicerMarkupsWriter() override;
 
-  QStringList extensions(vtkObject* object)const override;
+  QStringList extensions(vtkObject* object) const override;
 
   bool write(const qSlicerIO::IOProperties& properties) override;
 

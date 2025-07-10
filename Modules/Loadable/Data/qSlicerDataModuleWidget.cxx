@@ -52,7 +52,7 @@
 #include <QTimer>
 
 //-----------------------------------------------------------------------------
-class qSlicerDataModuleWidgetPrivate: public Ui_qSlicerDataModuleWidget
+class qSlicerDataModuleWidgetPrivate : public Ui_qSlicerDataModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerDataModuleWidget);
 protected:
@@ -522,7 +522,7 @@ void qSlicerDataModuleWidget::onSubjectHierarchyItemModified(vtkIdType itemID)
 }
 
 //-----------------------------------------------------------------------------
-qMRMLSubjectHierarchyModel* qSlicerDataModuleWidget::subjectHierarchySceneModel()const
+qMRMLSubjectHierarchyModel* qSlicerDataModuleWidget::subjectHierarchySceneModel() const
 {
   Q_D(const qSlicerDataModuleWidget);
 

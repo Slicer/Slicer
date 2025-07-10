@@ -133,7 +133,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
     return 1;
   }
   inScalars=pd->GetScalars();
-  if ( inScalars == nullptr )
+  if (inScalars == nullptr)
   {
     vtkErrorMacro(<<"Scalars must be defined for level tracing");
     return 1;
@@ -158,7 +158,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
 #undef vtkTemplateMacroCase_ll
 # define vtkTemplateMacroCase_ll(typeN, type, call)
 #endif
-  if (inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1)
   {
     void* scalars = inScalars->GetVoidPointer(0);
     switch (inScalars->GetDataType())
@@ -232,7 +232,7 @@ int vtkITKLevelTracing3DImageFilter::FillInputPortInformation(int, vtkInformatio
 
 void vtkITKLevelTracing3DImageFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Seed point location: [" << Seed[0] << "," << Seed[1] << "," << Seed[2] << "]"
     << std::endl;

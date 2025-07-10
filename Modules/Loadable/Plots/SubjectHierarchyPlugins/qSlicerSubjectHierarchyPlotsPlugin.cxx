@@ -46,7 +46,7 @@
 #include "qSlicerLayoutManager.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyPlotsPluginPrivate: public QObject
+class qSlicerSubjectHierarchyPlotsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyPlotsPlugin);
 protected:
@@ -112,7 +112,7 @@ void qSlicerSubjectHierarchyPlotsPlugin::setPlotsLogic(vtkSlicerPlotsLogic* plot
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyPlotsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -133,7 +133,7 @@ double qSlicerSubjectHierarchyPlotsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyPlotsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyPlotsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (!itemID)
   {
@@ -161,7 +161,7 @@ double qSlicerSubjectHierarchyPlotsPlugin::canOwnSubjectHierarchyItem(vtkIdType 
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyPlotsPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyPlotsPlugin::roleForPlugin() const
 {
   return "Plot";
 }
@@ -323,7 +323,7 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   if (!itemID)
   {
@@ -361,7 +361,7 @@ int qSlicerSubjectHierarchyPlotsPlugin::getDisplayVisibility(vtkIdType itemID)co
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode()const
+vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode() const
 {
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)

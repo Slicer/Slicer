@@ -40,7 +40,7 @@
 static const char* NONE_DISPLAY = "None";
 
 //-----------------------------------------------------------------------------
-class qMRMLSegmentSelectorWidgetPrivate: public Ui_qMRMLSegmentSelectorWidget
+class qMRMLSegmentSelectorWidgetPrivate : public Ui_qMRMLSegmentSelectorWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentSelectorWidget);
 
@@ -462,7 +462,7 @@ void qMRMLSegmentSelectorWidget::setNoneEnabled(bool enable)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSegmentSelectorWidget::noneEnabled()const
+bool qMRMLSegmentSelectorWidget::noneEnabled() const
 {
   Q_D(const qMRMLSegmentSelectorWidget);
   return d->MRMLNodeComboBox_Segmentation->noneEnabled();
@@ -476,7 +476,7 @@ void qMRMLSegmentSelectorWidget::setEditEnabled(bool enable)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSegmentSelectorWidget::editEnabled()const
+bool qMRMLSegmentSelectorWidget::editEnabled() const
 {
   Q_D(const qMRMLSegmentSelectorWidget);
   return d->MRMLNodeComboBox_Segmentation->editEnabled();
@@ -490,14 +490,14 @@ void qMRMLSegmentSelectorWidget::setSegmentationNodeSelectorVisible(bool visible
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSegmentSelectorWidget::segmentationNodeSelectorVisible()const
+bool qMRMLSegmentSelectorWidget::segmentationNodeSelectorVisible() const
 {
   Q_D(const qMRMLSegmentSelectorWidget);
   return d->MRMLNodeComboBox_Segmentation->isVisible();
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSegmentSelectorWidget::multiSelection()const
+bool qMRMLSegmentSelectorWidget::multiSelection() const
 {
   Q_D(const qMRMLSegmentSelectorWidget);
   return d->MultiSelection;
@@ -527,7 +527,7 @@ void qMRMLSegmentSelectorWidget::setMultiSelection(bool multi)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSegmentSelectorWidget::horizontalLayout()const
+bool qMRMLSegmentSelectorWidget::horizontalLayout() const
 {
   Q_D(const qMRMLSegmentSelectorWidget);
   return ( d->gridLayout->rowCount() == 1 );
@@ -558,7 +558,7 @@ void qMRMLSegmentSelectorWidget::setHorizontalLayout(bool horizontal)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSegmentSelectorWidget::selectNodeUponCreation()const
+bool qMRMLSegmentSelectorWidget::selectNodeUponCreation() const
 {
   Q_D(const qMRMLSegmentSelectorWidget);
   return d->MRMLNodeComboBox_Segmentation->selectNodeUponCreation();

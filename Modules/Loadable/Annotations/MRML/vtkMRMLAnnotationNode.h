@@ -27,7 +27,7 @@ class vtkStringArray;
 // STD includes
 #include <string>
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
 {
 public:
   static vtkMRMLAnnotationNode* New();
@@ -80,7 +80,7 @@ public:
 
   /// Returns false since in general cannot apply non linear transforms
   /// \sa ApplyTransformMatrix, ApplyTransform
-  bool CanApplyNonLinearTransforms()const override {return false;}
+  bool CanApplyNonLinearTransforms() const override {return false;}
 
   int AddText(const char* newText,int selectedFlag, int visibleFlag);
   void SetText(int id, const char* newText,int selectedFlag, int visibleFlag);

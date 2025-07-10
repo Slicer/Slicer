@@ -50,7 +50,7 @@
 #include <vtkTable.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerTablesModuleWidgetPrivate: public Ui_qSlicerTablesModuleWidget
+class qSlicerTablesModuleWidgetPrivate : public Ui_qSlicerTablesModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTablesModuleWidget);
 protected:
@@ -59,8 +59,8 @@ public:
   qSlicerTablesModuleWidgetPrivate(qSlicerTablesModuleWidget& object);
 //  static QList<vtkSmartPointer<vtkMRMLTransformableNode>> getSelectedNodes(qMRMLTreeView* tree);
 
-  vtkSlicerTablesLogic*      logic()const;
-  vtkTable* table()const;
+  vtkSlicerTablesLogic*      logic() const;
+  vtkTable* table() const;
 
   vtkWeakPointer<vtkMRMLTableNode> MRMLTableNode;
   QAction*                      CopyAction;
@@ -78,14 +78,14 @@ qSlicerTablesModuleWidgetPrivate::qSlicerTablesModuleWidgetPrivate(qSlicerTables
   this->PlotAction = nullptr;
 }
 //-----------------------------------------------------------------------------
-vtkSlicerTablesLogic* qSlicerTablesModuleWidgetPrivate::logic()const
+vtkSlicerTablesLogic* qSlicerTablesModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerTablesModuleWidget);
   return vtkSlicerTablesLogic::SafeDownCast(q->logic());
 }
 
 //-----------------------------------------------------------------------------
-vtkTable* qSlicerTablesModuleWidgetPrivate::table()const
+vtkTable* qSlicerTablesModuleWidgetPrivate::table() const
 {
   if (this->MRMLTableNode.GetPointer()==nullptr)
   {

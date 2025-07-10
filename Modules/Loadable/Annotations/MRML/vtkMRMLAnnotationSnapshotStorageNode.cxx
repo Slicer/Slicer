@@ -49,7 +49,7 @@ vtkMRMLAnnotationSnapshotStorageNode::~vtkMRMLAnnotationSnapshotStorageNode() = 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationSnapshotStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ int vtkMRMLAnnotationSnapshotStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if ( extension.empty() )
+  if (extension.empty())
   {
     vtkErrorMacro("ReadData: no file extension specified: " << fullName.c_str());
     return 0;
@@ -86,7 +86,7 @@ int vtkMRMLAnnotationSnapshotStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   try
   {
-    if ( extension == std::string(".png") )
+    if (extension == std::string(".png"))
     {
       vtkNew<vtkPNGReader> reader;
       reader->SetFileName(fullName.c_str());

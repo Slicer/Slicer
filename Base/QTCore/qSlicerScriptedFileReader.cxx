@@ -87,7 +87,7 @@ qSlicerScriptedFileReader::qSlicerScriptedFileReader(QObject* parent)
 qSlicerScriptedFileReader::~qSlicerScriptedFileReader() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileReader::pythonSource()const
+QString qSlicerScriptedFileReader::pythonSource() const
 {
   Q_D(const qSlicerScriptedFileReader);
   return d->PythonSource;
@@ -168,7 +168,7 @@ PyObject* qSlicerScriptedFileReader::self() const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileReader::description()const
+QString qSlicerScriptedFileReader::description() const
 {
   Q_D(const qSlicerScriptedFileReader);
 
@@ -189,7 +189,7 @@ QString qSlicerScriptedFileReader::description()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerScriptedFileReader::fileType()const
+qSlicerIO::IOFileType qSlicerScriptedFileReader::fileType() const
 {
   Q_D(const qSlicerScriptedFileReader);
 
@@ -209,7 +209,7 @@ qSlicerIO::IOFileType qSlicerScriptedFileReader::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerScriptedFileReader::extensions()const
+QStringList qSlicerScriptedFileReader::extensions() const
 {
   Q_D(const qSlicerScriptedFileReader);
   PyObject* result = d->PythonCppAPI.callMethod(d->ExtensionsMethod);
@@ -243,7 +243,7 @@ QStringList qSlicerScriptedFileReader::extensions()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileReader::canLoadFile(const QString& file)const
+bool qSlicerScriptedFileReader::canLoadFile(const QString& file) const
 {
   Q_D(const qSlicerScriptedFileReader);
   PyObject* arguments = PyTuple_New(1);
@@ -266,7 +266,7 @@ bool qSlicerScriptedFileReader::canLoadFile(const QString& file)const
 }
 
 //-----------------------------------------------------------------------------
-double qSlicerScriptedFileReader::canLoadFileConfidence(const QString& file)const
+double qSlicerScriptedFileReader::canLoadFileConfidence(const QString& file) const
 {
   Q_D(const qSlicerScriptedFileReader);
   PyObject* arguments = PyTuple_New(1);

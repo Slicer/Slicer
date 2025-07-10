@@ -91,13 +91,13 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData* input, 
     return;
   }
   vtkDataArray* inScalars = pd->GetScalars();
-  if ( inScalars == nullptr )
+  if (inScalars == nullptr)
   {
     vtkErrorMacro(<<"Scalars must be defined for distance transform");
     return;
   }
 
-  if (inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1)
   {
 
 ////////// These types are not defined in itk ////////////
@@ -130,7 +130,7 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData* input, 
 
 void vtkITKMorphologicalContourInterpolator::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "Label: " << Label << std::endl;
   os << indent << "Axis: " << Axis << std::endl;
   os << indent << "HeuristicAlignment: " << HeuristicAlignment << std::endl;

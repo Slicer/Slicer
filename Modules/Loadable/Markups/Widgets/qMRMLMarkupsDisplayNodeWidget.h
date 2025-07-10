@@ -45,15 +45,15 @@ public:
   qMRMLMarkupsDisplayNodeWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsDisplayNodeWidget() override;
 
-  vtkMRMLMarkupsDisplayNode* mrmlMarkupsDisplayNode()const;
+  vtkMRMLMarkupsDisplayNode* mrmlMarkupsDisplayNode() const;
 
-  bool visibility()const;
+  bool visibility() const;
 
-  bool glyphSizeIsAbsolute()const;
-  bool curveLineSizeIsAbsolute()const;
+  bool glyphSizeIsAbsolute() const;
+  bool curveLineSizeIsAbsolute() const;
 
-  bool propertiesLabelVisibility()const;
-  bool pointLabelsVisibility()const;
+  bool propertiesLabelVisibility() const;
+  bool pointLabelsVisibility() const;
 
 signals:
   /// Signal sent if the any property in the display node is changed

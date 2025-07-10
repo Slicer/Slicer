@@ -152,14 +152,14 @@ void qMRMLThreeDWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newView
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLViewNode* qMRMLThreeDWidget::mrmlViewNode()const
+vtkMRMLViewNode* qMRMLThreeDWidget::mrmlViewNode() const
 {
   Q_D(const qMRMLThreeDWidget);
   return d->ThreeDView->mrmlViewNode();
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLThreeDWidget::mrmlAbstractViewNode()const
+vtkMRMLAbstractViewNode* qMRMLThreeDWidget::mrmlAbstractViewNode() const
 {
   Q_D(const qMRMLThreeDWidget);
   return this->mrmlViewNode();
@@ -181,14 +181,14 @@ vtkMRMLAbstractLogic* qMRMLThreeDWidget::logic() const
 }
 
 // --------------------------------------------------------------------------
-qMRMLThreeDView* qMRMLThreeDWidget::threeDView()const
+qMRMLThreeDView* qMRMLThreeDWidget::threeDView() const
 {
   Q_D(const qMRMLThreeDWidget);
   return d->ThreeDView;
 }
 
 // --------------------------------------------------------------------------
-QWidget* qMRMLThreeDWidget::viewWidget()const
+QWidget* qMRMLThreeDWidget::viewWidget() const
 {
   Q_D(const qMRMLThreeDWidget);
   return this->threeDView();

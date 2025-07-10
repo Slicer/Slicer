@@ -47,7 +47,7 @@
 #define REPRESENTATION_NAME_PROPERTY "RepresentationName"
 
 // --------------------------------------------------------------------------
-class qMRMLSegmentationRepresentationsListViewPrivate: public Ui_qMRMLSegmentationRepresentationsListView
+class qMRMLSegmentationRepresentationsListViewPrivate : public Ui_qMRMLSegmentationRepresentationsListView
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationRepresentationsListView);
 protected:

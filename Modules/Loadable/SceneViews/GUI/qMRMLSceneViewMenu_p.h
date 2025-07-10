@@ -78,7 +78,7 @@ public slots:
   /// Remove menu entry corresponding to \a sceneViewNode
   void removeMenuItem(int index);
 
-  bool hasNoSceneViewItem()const;
+  bool hasNoSceneViewItem() const;
 
   void restoreSceneView(int index);
   void deleteSceneView(int index);

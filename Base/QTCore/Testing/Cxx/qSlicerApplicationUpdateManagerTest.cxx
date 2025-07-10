@@ -34,7 +34,7 @@
 #include <iostream>
 
 // ----------------------------------------------------------------------------
-class qSlicerApplicationUpdateManagerTester: public QObject
+class qSlicerApplicationUpdateManagerTester : public QObject
 {
   Q_OBJECT
   typedef qSlicerApplicationUpdateManagerTester Self;

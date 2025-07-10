@@ -60,7 +60,7 @@ QString getActiveActionText(qSlicerMouseModeToolBar& mouseModeToolBar)
   return QString();
 }
 
-int qSlicerMouseModeToolBarTest1(int argc, char* argv[] )
+int qSlicerMouseModeToolBarTest1(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
   qSlicerMouseModeToolBar mouseToolBar;

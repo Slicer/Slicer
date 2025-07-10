@@ -42,18 +42,18 @@ public:
   qSlicerCamerasModule(QObject* parent = nullptr);
   ~qSlicerCamerasModule() override;
 
-  QStringList categories()const override;
-  QIcon icon()const override;
+  QStringList categories() const override;
+  QIcon icon() const override;
 
   qSlicerGetTitleMacro(tr("Cameras"));
 
   /// Return help/acknowledgement text
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 protected:
 

@@ -60,7 +60,7 @@ qSlicerTransformsModule::qSlicerTransformsModule(QObject* _parentObject)
 qSlicerTransformsModule::~qSlicerTransformsModule() = default;
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerTransformsModule::icon()const
+QIcon qSlicerTransformsModule::icon() const
 {
   return QIcon(":/Icons/Transforms.png");
 }
@@ -93,7 +93,7 @@ vtkMRMLAbstractLogic* qSlicerTransformsModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTransformsModule::helpText()const
+QString qSlicerTransformsModule::helpText() const
 {
   QString help = tr("The Transforms Module creates and edits transforms.") + QLatin1String("<br>");
   help += this->defaultDocumentationLink();
@@ -101,13 +101,13 @@ QString qSlicerTransformsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTransformsModule::acknowledgementText()const
+QString qSlicerTransformsModule::acknowledgementText() const
 {
   return tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTransformsModule::contributors()const
+QStringList qSlicerTransformsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Alex Yarmarkovich (Isomics)");

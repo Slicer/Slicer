@@ -52,7 +52,7 @@ public:
 
   /// Get MRML scene.
   /// By default, there is no scene.
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
   ///
   /// Create and add a node given its \a className to the scene associated
@@ -83,11 +83,11 @@ public:
   /// Note: If an attribute already exist, it's value will be overwritten.
   Q_INVOKABLE void addAttribute(const QString& attributeName, const QString& attributeValue);
   Q_INVOKABLE void removeAttribute(const QString& attributeName);
-  Q_INVOKABLE QString attribute(const QString& attributeName)const;
+  Q_INVOKABLE QString attribute(const QString& attributeName) const;
 
   /// Base name used to generate a name for create node.
   Q_INVOKABLE void setBaseName(const QString& className, const QString& baseName);
-  Q_INVOKABLE QString baseName(const QString& className)const;
+  Q_INVOKABLE QString baseName(const QString& className) const;
 
 public slots:
   ///

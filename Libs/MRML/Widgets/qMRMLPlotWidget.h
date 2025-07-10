@@ -53,18 +53,18 @@ public:
   ~qMRMLPlotWidget() override;
 
   /// Get the Plot node observed by view.
-  Q_INVOKABLE vtkMRMLPlotViewNode* mrmlPlotViewNode()const;
+  Q_INVOKABLE vtkMRMLPlotViewNode* mrmlPlotViewNode() const;
   Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode() const override;
 
   /// Get a reference to the underlying Plot View
   /// Be careful if you change the PlotView, you might
   /// unsynchronize the view from the nodes/logics.
-  Q_INVOKABLE qMRMLPlotView* plotView()const;
-  Q_INVOKABLE QWidget* viewWidget()const override;
+  Q_INVOKABLE qMRMLPlotView* plotView() const;
+  Q_INVOKABLE QWidget* viewWidget() const override;
 
   /// Get plot view controller widget
-  Q_INVOKABLE qMRMLPlotViewControllerWidget* plotController()const;
-  Q_INVOKABLE qMRMLViewControllerBar* controllerWidget()const override;
+  Q_INVOKABLE qMRMLPlotViewControllerWidget* plotController() const;
+  Q_INVOKABLE qMRMLViewControllerBar* controllerWidget() const override;
 
 public slots:
   /// Set the current \a viewNode to observe

@@ -109,7 +109,7 @@ qSlicerSegmentEditorScriptedPaintEffect::qSlicerSegmentEditorScriptedPaintEffect
 qSlicerSegmentEditorScriptedPaintEffect::~qSlicerSegmentEditorScriptedPaintEffect() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSegmentEditorScriptedPaintEffect::pythonSource()const
+QString qSlicerSegmentEditorScriptedPaintEffect::pythonSource() const
 {
   Q_D(const qSlicerSegmentEditorScriptedPaintEffect);
   return d->PythonSourceFilePath;
@@ -236,7 +236,7 @@ QIcon qSlicerSegmentEditorScriptedPaintEffect::icon()
 }
 
 //-----------------------------------------------------------------------------
-const QString qSlicerSegmentEditorScriptedPaintEffect::helpText()const
+const QString qSlicerSegmentEditorScriptedPaintEffect::helpText() const
 {
   Q_D(const qSlicerSegmentEditorScriptedPaintEffect);
   PyObject* result = d->PythonCppAPI.callMethod(d->HelpTextMethod);

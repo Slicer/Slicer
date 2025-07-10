@@ -67,7 +67,7 @@ void qSlicerAbstractModuleWidget::exit()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerAbstractModuleWidget::isEntered()const
+bool qSlicerAbstractModuleWidget::isEntered() const
 {
   Q_D(const qSlicerAbstractModuleWidget);
   return d->IsEntered;

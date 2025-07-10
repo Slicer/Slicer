@@ -51,7 +51,7 @@
 // qSlicerUnitsSettingsPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerUnitsSettingsPanelPrivate: public Ui_qSlicerUnitsSettingsPanel
+class qSlicerUnitsSettingsPanelPrivate : public Ui_qSlicerUnitsSettingsPanel
 {
   Q_DECLARE_PUBLIC(qSlicerUnitsSettingsPanel);
 protected:
@@ -80,7 +80,7 @@ public:
 // --------------------------------------------------------------------------
 qSlicerUnitsSettingsPanelPrivate
 ::qSlicerUnitsSettingsPanelPrivate(qSlicerUnitsSettingsPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->Logic = nullptr;
   this->MRMLScene = nullptr;

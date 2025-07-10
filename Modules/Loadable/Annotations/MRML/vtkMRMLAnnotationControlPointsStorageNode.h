@@ -12,7 +12,7 @@
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationControlPointsNode;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsStorageNode : public vtkMRMLAnnotationStorageNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsStorageNode : public vtkMRMLAnnotationStorageNode
 {
 public:
   static vtkMRMLAnnotationControlPointsStorageNode* New();

@@ -48,7 +48,7 @@
 // qSlicerSettingsGeneralPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsGeneralPanelPrivate: public Ui_qSlicerSettingsGeneralPanel
+class qSlicerSettingsGeneralPanelPrivate : public Ui_qSlicerSettingsGeneralPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsGeneralPanel);
 protected:
@@ -65,7 +65,7 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerSettingsGeneralPanelPrivate::qSlicerSettingsGeneralPanelPrivate(qSlicerSettingsGeneralPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 

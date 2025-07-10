@@ -489,7 +489,7 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(
   const unsigned int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
   const unsigned int actualNumberOfParameters = bsplineItk->GetNumberOfParameters();
 
-  if ( actualNumberOfParameters != expectedNumberOfParameters )
+  if (actualNumberOfParameters != expectedNumberOfParameters)
   {
     vtkErrorWithObjectMacro(loggerObject,"Mismatch in number of BSpline parameters in the transform file and the MRML node");
     return false;
@@ -537,7 +537,7 @@ template <typename T> bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Gener
   }
 
   // Set the bulk transform
-  if ( bulkTransformItk )
+  if (bulkTransformItk)
   {
     std::string bulkTransformItkTransformName = bulkTransformItk->GetNameOfClass();
 
@@ -687,7 +687,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
 
   const unsigned int expectedNumberOfVectors = gridSize[0]*gridSize[1]*gridSize[2];
   const unsigned int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
-  if ( bsplineItk->GetNumberOfParameters() != expectedNumberOfParameters )
+  if (bsplineItk->GetNumberOfParameters() != expectedNumberOfParameters)
   {
     vtkErrorWithObjectMacro(loggerObject,"Mismatch in number of BSpline parameters in the ITK transform and the VTK transform");
     return false;
@@ -1036,7 +1036,7 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(vtkObject
   double* displacementVectors_Ras = reinterpret_cast<double*>(gridImage_Ras->GetScalarPointer());
   itk::ImageRegionConstIterator<GridImageType> inputIt(gridImage_Lps, gridImage_Lps->GetRequestedRegion());
   inputIt.GoToBegin();
-  while ( !inputIt.IsAtEnd() )
+  while (!inputIt.IsAtEnd())
   {
     typename GridImageType::PixelType displacementVectorLps=inputIt.Get();
     *(displacementVectors_Ras++) = -displacementVectorLps[0];
@@ -1132,7 +1132,7 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
   if (gridImage_Ras->GetScalarType()==VTK_DOUBLE)
   {
     double* displacementVectors_Ras = reinterpret_cast<double*>(gridImage_Ras->GetScalarPointer());
-    while ( !gridImageIt_Lps.IsAtEnd() )
+    while (!gridImageIt_Lps.IsAtEnd())
     {
       displacementVectorLps[0] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
       displacementVectorLps[1] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
@@ -1144,7 +1144,7 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
   else if (gridImage_Ras->GetScalarType()==VTK_FLOAT)
   {
     float* displacementVectors_Ras = reinterpret_cast<float*>(gridImage_Ras->GetScalarPointer());
-  while ( !gridImageIt_Lps.IsAtEnd() )
+  while (!gridImageIt_Lps.IsAtEnd())
   {
     displacementVectorLps[0] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
     displacementVectorLps[1] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
@@ -1223,7 +1223,7 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
     {
       continue;
     }
-    double pointVtk_Ras[3]={0};
+    double pointVtk_Ras[3] = { 0 };
     pointVtk_Ras[0] = -pointItk_Lps[0];
     pointVtk_Ras[1] = -pointItk_Lps[1];
     pointVtk_Ras[2] =  pointItk_Lps[2];
@@ -1240,7 +1240,7 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
     {
       continue;
     }
-    double pointVtk_Ras[3]={0};
+    double pointVtk_Ras[3] = { 0 };
     pointVtk_Ras[0] = -pointItk_Lps[0];
     pointVtk_Ras[1] = -pointItk_Lps[1];
     pointVtk_Ras[2] =  pointItk_Lps[2];
@@ -1284,7 +1284,7 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
   {
     for (int i = 0; i<sourceLandmarksVtk_Ras->GetNumberOfPoints(); i++)
     {
-      double posVtk_Ras[3]={0};
+      double posVtk_Ras[3] = { 0 };
       sourceLandmarksVtk_Ras->GetPoint(i, posVtk_Ras);
       ThinPlateSplineTransformDoubleType::InputPointType posItk_Lps;
       posItk_Lps[0] = -posVtk_Ras[0];
@@ -1299,7 +1299,7 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
   {
     for (int i = 0; i<targetLandmarksVtk_Ras->GetNumberOfPoints(); i++)
     {
-      double posVtk_Ras[3]={0};
+      double posVtk_Ras[3] = { 0 };
       targetLandmarksVtk_Ras->GetPoint(i, posVtk_Ras);
       ThinPlateSplineTransformDoubleType::InputPointType posItk_Lps;
       posItk_Lps[0] = -posVtk_Ras[0];

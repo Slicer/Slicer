@@ -28,7 +28,7 @@
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-class qSlicerEventBrokerModuleWidgetPrivate: public Ui_qSlicerEventBrokerModuleWidget
+class qSlicerEventBrokerModuleWidgetPrivate : public Ui_qSlicerEventBrokerModuleWidget
 {
 public:
   void setupUi(qSlicerWidget* widget);

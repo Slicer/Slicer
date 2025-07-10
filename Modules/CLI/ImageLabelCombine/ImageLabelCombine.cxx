@@ -21,7 +21,7 @@ namespace
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -48,13 +48,13 @@ int main( int argc, char* argv[] )
     readerA->Update();
     readerB->Update();
   }
-  catch ( itk::ExceptionObject& e )
+  catch (itk::ExceptionObject& e)
   {
     std::cerr << "Failed to read input images. Exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
 
-  if ( FirstOverwrites )
+  if (FirstOverwrites)
   {
     input = readerA->GetOutput();
     duplicator->SetInputImage(readerB->GetOutput() );
@@ -96,9 +96,9 @@ int main( int argc, char* argv[] )
   IteratorType itOut(output, output->GetLargestPossibleRegion() );
   itIn.GoToBegin();
   itOut.GoToBegin();
-  for ( ; !itIn.IsAtEnd(); ++itIn, ++itOut )
+  for (; !itIn.IsAtEnd(); ++itIn, ++itOut)
   {
-    if ( !itIn.Get() )
+    if (!itIn.Get())
     {
       continue;
     }
@@ -110,7 +110,7 @@ int main( int argc, char* argv[] )
   {
     writer->Update();
   }
-  catch ( itk::ExceptionObject& e )
+  catch (itk::ExceptionObject& e)
   {
     std::cerr << "Failed to write output. Exception: " << e << std::endl;
     return EXIT_FAILURE;

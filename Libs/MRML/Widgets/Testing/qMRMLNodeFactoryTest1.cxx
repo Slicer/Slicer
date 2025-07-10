@@ -38,7 +38,7 @@
 // STD includes
 #include <cstdlib>
 
-int qMRMLNodeFactoryTest1( int argc, char* argv [] )
+int qMRMLNodeFactoryTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

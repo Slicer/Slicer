@@ -90,8 +90,8 @@ protected:
   vtkMRMLScalarVolumeNode(const vtkMRMLScalarVolumeNode&);
   void operator=(const vtkMRMLScalarVolumeNode&);
 
-  vtkCodedEntry* VoxelValueQuantity{nullptr};
-  vtkCodedEntry* VoxelValueUnits{nullptr};
+  vtkCodedEntry* VoxelValueQuantity{ nullptr };
+  vtkCodedEntry* VoxelValueUnits{ nullptr };
 };
 
 #endif

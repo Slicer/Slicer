@@ -77,7 +77,7 @@ vtkMRMLAnnotationROINode::~vtkMRMLAnnotationROINode()
   vtkDebugMacro("Destructing...." << (this->GetID() != nullptr ? this->GetID() : "null id"));
   if (this->LabelText)
   {
-    delete [] this->LabelText;
+    delete[] this->LabelText;
     this->LabelText = nullptr;
   }
 }
@@ -660,12 +660,12 @@ void vtkMRMLAnnotationROINode::GetBounds(double bounds[6])
   {
     return;
   }
-  double centerPoint[3]={0};
+  double centerPoint[3] = { 0 };
   if (!this->GetXYZ(centerPoint))
   {
     return;
   }
-  double radius[3]={0};
+  double radius[3] = { 0 };
   if (!this->GetRadiusXYZ(radius))
   {
     return;

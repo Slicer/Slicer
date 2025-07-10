@@ -719,7 +719,7 @@ std::vector<unsigned long> vtkMRMLNodeCallback::GetReceivedEvents()
 //---------------------------------------------------------------------------
 void vtkMRMLNodeCallback::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->vtkCallbackCommand::PrintSelf(os,indent);
+  this->vtkCallbackCommand::PrintSelf(os, indent);
 
   os << indent << "ErrorString: " << this->GetErrorString() << "\n";
   os << indent << "TotalNumberOfEvents: " << this->GetTotalNumberOfEvents() << "\n";

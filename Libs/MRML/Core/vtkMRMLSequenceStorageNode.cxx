@@ -43,7 +43,7 @@ vtkMRMLSequenceStorageNode::~vtkMRMLSequenceStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -75,7 +75,7 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if ( extension.empty() )
+  if (extension.empty())
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSequenceStorageNode::ReadDataInternal",
       "Reading sequence node file failed: no file extension specified in filename '" << fullName << "'");

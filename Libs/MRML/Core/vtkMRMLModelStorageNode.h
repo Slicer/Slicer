@@ -34,7 +34,7 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override  {return "ModelStorage";}
+  const char* GetNodeTagName() override {return "ModelStorage";}
 
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;

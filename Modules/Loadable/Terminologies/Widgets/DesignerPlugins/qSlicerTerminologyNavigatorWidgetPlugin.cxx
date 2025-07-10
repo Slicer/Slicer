@@ -40,7 +40,7 @@ QString qSlicerTerminologyNavigatorWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerTerminologyNavigatorWidget\" \
           name=\"SegmentationDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

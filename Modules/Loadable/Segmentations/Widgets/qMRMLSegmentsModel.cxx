@@ -238,20 +238,20 @@ void qMRMLSegmentsModel::setSegmentationNode(vtkMRMLSegmentationNode* segmentati
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLSegmentationNode* qMRMLSegmentsModel::segmentationNode()const
+vtkMRMLSegmentationNode* qMRMLSegmentsModel::segmentationNode() const
 {
   Q_D(const qMRMLSegmentsModel);
   return d->SegmentationNode;
 }
 
 // -----------------------------------------------------------------------------
-QString qMRMLSegmentsModel::segmentIDFromIndex(const QModelIndex& index)const
+QString qMRMLSegmentsModel::segmentIDFromIndex(const QModelIndex& index) const
 {
   return this->segmentIDFromItem(this->itemFromIndex(index));
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSegmentsModel::segmentIDFromItem(QStandardItem* item)const
+QString qMRMLSegmentsModel::segmentIDFromItem(QStandardItem* item) const
 {
   Q_D(const qMRMLSegmentsModel);
   if (!d->SegmentationNode || !item)
@@ -266,7 +266,7 @@ QString qMRMLSegmentsModel::segmentIDFromItem(QStandardItem* item)const
   return item->data(qMRMLSegmentsModel::SegmentIDRole).toString();
 }
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSegmentsModel::itemFromSegmentID(QString segmentID, int column/*=0*/)const
+QStandardItem* qMRMLSegmentsModel::itemFromSegmentID(QString segmentID, int column/*=0*/) const
 {
   QModelIndex index = this->indexFromSegmentID(segmentID, column);
   QStandardItem* item = this->itemFromIndex(index);
@@ -274,7 +274,7 @@ QStandardItem* qMRMLSegmentsModel::itemFromSegmentID(QString segmentID, int colu
 }
 
 //------------------------------------------------------------------------------
-QModelIndex qMRMLSegmentsModel::indexFromSegmentID(QString segmentID, int column/*=0*/)const
+QModelIndex qMRMLSegmentsModel::indexFromSegmentID(QString segmentID, int column/*=0*/) const
 {
   Q_D(const qMRMLSegmentsModel);
 
@@ -377,7 +377,7 @@ void qMRMLSegmentsModel::updateFromSegments()
 }
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLSegmentsModel::segmentFlags(QString segmentID, int column)const
+Qt::ItemFlags qMRMLSegmentsModel::segmentFlags(QString segmentID, int column) const
 {
   Q_D(const qMRMLSegmentsModel);
   Q_UNUSED(segmentID);
@@ -907,7 +907,7 @@ void qMRMLSegmentsModel::onItemChanged(QStandardItem* item)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSegmentsModel::nameColumn()const
+int qMRMLSegmentsModel::nameColumn() const
 {
   Q_D(const qMRMLSegmentsModel);
   return d->NameColumn;
@@ -922,7 +922,7 @@ void qMRMLSegmentsModel::setNameColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSegmentsModel::visibilityColumn()const
+int qMRMLSegmentsModel::visibilityColumn() const
 {
   Q_D(const qMRMLSegmentsModel);
   return d->VisibilityColumn;
@@ -937,7 +937,7 @@ void qMRMLSegmentsModel::setVisibilityColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSegmentsModel::colorColumn()const
+int qMRMLSegmentsModel::colorColumn() const
 {
   Q_D(const qMRMLSegmentsModel);
   return d->ColorColumn;
@@ -952,7 +952,7 @@ void qMRMLSegmentsModel::setColorColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSegmentsModel::opacityColumn()const
+int qMRMLSegmentsModel::opacityColumn() const
 {
   Q_D(const qMRMLSegmentsModel);
   return d->OpacityColumn;
@@ -967,7 +967,7 @@ void qMRMLSegmentsModel::setOpacityColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSegmentsModel::statusColumn()const
+int qMRMLSegmentsModel::statusColumn() const
 {
   Q_D(const qMRMLSegmentsModel);
   return d->StatusColumn;
@@ -982,7 +982,7 @@ void qMRMLSegmentsModel::setStatusColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSegmentsModel::layerColumn()const
+int qMRMLSegmentsModel::layerColumn() const
 {
   Q_D(const qMRMLSegmentsModel);
   return d->LayerColumn;
@@ -1025,7 +1025,7 @@ void qMRMLSegmentsModel::updateColumnCount()
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSegmentsModel::maxColumnId()const
+int qMRMLSegmentsModel::maxColumnId() const
 {
   Q_D(const qMRMLSegmentsModel);
   int maxId = -1;

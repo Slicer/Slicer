@@ -49,11 +49,11 @@ public:
 
   qSlicerGetTitleMacro(tr("View Controllers"));
 
-  QStringList categories()const override;
-  QIcon icon()const override;
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QStringList categories() const override;
+  QIcon icon() const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
   /// Read default slice view settings from application settings (.ini file)
   /// into defaultViewNode.

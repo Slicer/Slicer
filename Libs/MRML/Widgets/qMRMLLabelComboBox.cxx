@@ -160,7 +160,7 @@ void qMRMLLabelComboBox::setCurrentColor(int index)
 
   if (d->NoneEnabled)
   {
-    if (index < -1 || index >= (d->ComboBox->count() - 1) )
+    if (index < -1 || index >= (d->ComboBox->count() - 1))
     {
       return;
     }
@@ -188,7 +188,7 @@ void qMRMLLabelComboBox::setCurrentColor(const QString& color)
 }
 
 // ------------------------------------------------------------------------------
-QString qMRMLLabelComboBox::currentColorName()const
+QString qMRMLLabelComboBox::currentColorName() const
 {
   Q_D(const qMRMLLabelComboBox);
   return d->ComboBox->currentText();
@@ -225,7 +225,7 @@ void qMRMLLabelComboBox::setColorNameVisible(bool visible)
 {
   Q_D(qMRMLLabelComboBox);
 
-  if ( visible != d->ColorNameVisible )
+  if (visible != d->ColorNameVisible)
   {
     d->ColorNameVisible = visible;
     this->updateWidgetFromMRML();
@@ -240,7 +240,7 @@ void qMRMLLabelComboBox::setLabelValueVisible(bool visible)
 {
   Q_D(qMRMLLabelComboBox);
 
-  if ( visible != d->LabelValueVisible )
+  if (visible != d->LabelValueVisible)
   {
     d->LabelValueVisible = visible;
     this->updateWidgetFromMRML();
@@ -328,7 +328,7 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
 
     }
 
-    if ( d->ColorNameVisible )
+    if (d->ColorNameVisible)
     {
       text += colorName;
     }

@@ -875,7 +875,7 @@ namespace
 {
 
 //----------------------------------------------------------------------------
-class vtkAbortCommand: public vtkCommand
+class vtkAbortCommand : public vtkCommand
 {
 public:
   static vtkAbortCommand* New(){ return new vtkAbortCommand; }
@@ -899,7 +899,7 @@ public:
     this->RenderWindow->Render();
   }
   vtkRenderCallback() = default;
-  vtkRenderWindow* RenderWindow{nullptr};
+  vtkRenderWindow* RenderWindow{ nullptr };
 };
 
 };
@@ -1049,7 +1049,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   }
 
   int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
-  if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
+  if (record || retval == vtkRegressionTester::DO_INTERACTOR)
   {
     displayableManagerGroup->GetInteractor()->Initialize();
     displayableManagerGroup->GetInteractor()->Start();

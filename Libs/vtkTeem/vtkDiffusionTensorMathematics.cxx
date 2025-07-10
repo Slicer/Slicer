@@ -70,11 +70,11 @@ vtkDiffusionTensorMathematics::vtkDiffusionTensorMathematics()
 //----------------------------------------------------------------------------
  vtkDiffusionTensorMathematics::~vtkDiffusionTensorMathematics()
  {
-   if ( this->TensorRotationMatrix )
+   if (this->TensorRotationMatrix)
    {
      this->TensorRotationMatrix->Delete();
    }
-   if ( this->ScalarMask )
+   if (this->ScalarMask)
    {
      this->ScalarMask->Delete();
    }
@@ -229,7 +229,7 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics*
   pd = in1Data->GetPointData();
   inTensors = pd->GetTensors();
 
-  if ( !inTensors || in1Data->GetNumberOfPoints() < 1 )
+  if (!inTensors || in1Data->GetNumberOfPoints() < 1)
   {
     vtkGenericWarningMacro(<<"No input tensor data to filter!");
     return;
@@ -419,7 +419,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   inTensors = pd->GetTensors();
   numPts = in1Data->GetNumberOfPoints();
 
-  if ( !inTensors || numPts < 1 )
+  if (!inTensors || numPts < 1)
   {
     vtkGenericWarningMacro(<<"No input tensor data to filter!");
     return;
@@ -945,7 +945,7 @@ int  vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
  else
    cardinality = 0;
 
- switch(cardinality) {
+ switch (cardinality) {
     case 3:
         w[0]=0;
         w[1]=0;
@@ -1149,7 +1149,7 @@ void vtkDiffusionTensorMathematics::ColorByMode(double w[3], double& R,
 
 void vtkDiffusionTensorMathematics::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Operation: " << this->Operation << "\n";
 }

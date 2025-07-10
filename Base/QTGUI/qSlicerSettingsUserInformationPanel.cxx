@@ -23,7 +23,7 @@
 // qSlicerSettingsUserInformationPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsUserInformationPanelPrivate: public Ui_qSlicerSettingsUserInformationPanel
+class qSlicerSettingsUserInformationPanelPrivate : public Ui_qSlicerSettingsUserInformationPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsUserInformationPanel);
 protected:
@@ -42,7 +42,7 @@ public:
 // --------------------------------------------------------------------------
 qSlicerSettingsUserInformationPanelPrivate
 ::qSlicerSettingsUserInformationPanelPrivate(qSlicerSettingsUserInformationPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->UserInformation = nullptr;
 }

@@ -55,7 +55,7 @@ qMRMLSortFilterHierarchyProxyModel::~qMRMLSortFilterHierarchyProxyModel() = defa
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterHierarchyProxyModel
-::filterAcceptsNode(vtkMRMLNode* node)const
+::filterAcceptsNode(vtkMRMLNode* node) const
 {
   //Q_D(const qMRMLSortFilterHierarchyProxyModel);
   AcceptType res = this->Superclass::filterAcceptsNode(node);

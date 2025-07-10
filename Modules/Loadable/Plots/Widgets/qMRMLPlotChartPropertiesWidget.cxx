@@ -370,7 +370,7 @@ qMRMLPlotChartPropertiesWidget::qMRMLPlotChartPropertiesWidget(QWidget* _parent)
 qMRMLPlotChartPropertiesWidget::~qMRMLPlotChartPropertiesWidget() = default;
 
 //---------------------------------------------------------------------------
- vtkMRMLPlotChartNode* qMRMLPlotChartPropertiesWidget::mrmlPlotChartNode()const
+ vtkMRMLPlotChartNode* qMRMLPlotChartPropertiesWidget::mrmlPlotChartNode() const
  {
   Q_D(const qMRMLPlotChartPropertiesWidget);
   return d->PlotChartNode;

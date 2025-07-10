@@ -197,14 +197,14 @@ vtkMRMLMarkupsNode* qSlicerMarkupsPlaceWidget::currentMarkupsNode() const
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSelectionNode* qSlicerMarkupsPlaceWidget::selectionNode()const
+vtkMRMLSelectionNode* qSlicerMarkupsPlaceWidget::selectionNode() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
   return d->SelectionNode;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLInteractionNode* qSlicerMarkupsPlaceWidget::interactionNode()const
+vtkMRMLInteractionNode* qSlicerMarkupsPlaceWidget::interactionNode() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
   return d->InteractionNode;
@@ -287,7 +287,7 @@ void qSlicerMarkupsPlaceWidget::modifyLastPoint()
 void qSlicerMarkupsPlaceWidget::deleteLastPoint()
 {
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if ( currentMarkupsNode == nullptr )
+  if (currentMarkupsNode == nullptr)
   {
     return;
   }
@@ -326,7 +326,7 @@ void qSlicerMarkupsPlaceWidget::unsetLastDefinedPoint()
 void qSlicerMarkupsPlaceWidget::deleteAllPoints()
 {
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if ( currentMarkupsNode == nullptr )
+  if (currentMarkupsNode == nullptr)
   {
     return;
   }
@@ -425,7 +425,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
     return;
   }
   bool wasActive = this->currentNodeActive();
-  if ( placeEnable )
+  if (placeEnable)
   {
     // activate and set place mode
     if (!wasActive)
@@ -518,7 +518,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   bool wasBlockedVisibilityButton = d->ActionVisibility->blockSignals( true );
   bool wasBlockedLockButton = d->ActionLocked->blockSignals( true );
 
-  if ( currentMarkupsNode->GetDisplayNode() != nullptr  )
+  if (currentMarkupsNode->GetDisplayNode() != nullptr)
   {
     double* color = currentMarkupsNode->GetDisplayNode()->GetSelectedColor();
     QColor qColor;
@@ -526,7 +526,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
     d->ColorButton->setColor( qColor );
   }
 
-  if ( currentMarkupsNode->GetLocked() )
+  if (currentMarkupsNode->GetLocked())
   {
     d->ActionLocked->setIcon( QIcon( ":/Icons/Small/SlicerLock.png" ) );
   }
@@ -555,7 +555,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   d->ActionVisibility->setEnabled(currentMarkupsNode->GetDisplayNode() != nullptr);
   if (currentMarkupsNode->GetDisplayNode() != nullptr)
   {
-    if (currentMarkupsNode->GetDisplayNode()->GetVisibility() )
+    if (currentMarkupsNode->GetDisplayNode()->GetVisibility())
     {
       d->ActionVisibility->setIcon( QIcon( ":/Icons/Small/SlicerVisible.png" ) );
     }
@@ -744,7 +744,7 @@ QToolButton* qSlicerMarkupsPlaceWidget::deleteButton() const
 bool qSlicerMarkupsPlaceWidget::buttonsVisible() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
-  foreach ( QWidget* w, d->OptionsWidgets )
+  foreach (QWidget* w, d->OptionsWidgets)
   {
     if (!w->isVisible())
     {
@@ -758,7 +758,7 @@ bool qSlicerMarkupsPlaceWidget::buttonsVisible() const
 void qSlicerMarkupsPlaceWidget::setButtonsVisible(bool visible)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
-  foreach ( QWidget* w, d->OptionsWidgets )
+  foreach (QWidget* w, d->OptionsWidgets)
   {
     w->setVisible(visible);
   }
@@ -768,13 +768,13 @@ void qSlicerMarkupsPlaceWidget::setButtonsVisible(bool visible)
 void qSlicerMarkupsPlaceWidget::setNodeColor(QColor color)
 {
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if ( currentMarkupsNode == nullptr )
+  if (currentMarkupsNode == nullptr)
   {
     return;
   }
 
   vtkMRMLDisplayNode* currentMarkupsDisplayNode = currentMarkupsNode->GetDisplayNode();
-  if ( currentMarkupsDisplayNode == nullptr )
+  if (currentMarkupsDisplayNode == nullptr)
   {
     return;
   }
@@ -790,13 +790,13 @@ QColor qSlicerMarkupsPlaceWidget::nodeColor() const
   Q_D(const qSlicerMarkupsPlaceWidget);
 
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if ( currentMarkupsNode == nullptr )
+  if (currentMarkupsNode == nullptr)
   {
     return d->DefaultNodeColor;
   }
 
   vtkMRMLDisplayNode* currentMarkupsDisplayNode = currentMarkupsNode->GetDisplayNode();
-  if ( currentMarkupsDisplayNode == nullptr )
+  if (currentMarkupsDisplayNode == nullptr)
   {
     return d->DefaultNodeColor;
   }
@@ -841,7 +841,7 @@ void qSlicerMarkupsPlaceWidget::onColorButtonChanged(QColor color)
 void qSlicerMarkupsPlaceWidget::onVisibilityButtonClicked()
 {
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if ( currentMarkupsNode == nullptr || currentMarkupsNode->GetDisplayNode() == nullptr )
+  if (currentMarkupsNode == nullptr || currentMarkupsNode->GetDisplayNode() == nullptr)
   {
     return;
   }

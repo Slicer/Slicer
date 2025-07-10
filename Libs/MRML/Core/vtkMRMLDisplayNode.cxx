@@ -312,7 +312,7 @@ void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintVectorMacro(Color, double, 3);
@@ -385,7 +385,7 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char* oldID, const char* newID)
     bool modified = false;
     for (unsigned int i = 0; i<this->ViewNodeIDs.size(); i++)
     {
-      if ( std::string(oldID) == this->ViewNodeIDs[i])
+      if (std::string(oldID) == this->ViewNodeIDs[i])
       {
         this->ViewNodeIDs[i] =  std::string(newID);
         modified = true;
@@ -655,7 +655,7 @@ const char* vtkMRMLDisplayNode::GetNthViewNodeID(unsigned int index)
 }
 
 //-------------------------------------------------------
-bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)const
+bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID) const
 {
   if (viewNodeID == nullptr)
   {
@@ -668,7 +668,7 @@ bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)const
 }
 
 //-------------------------------------------------------
-bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID)const
+bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID) const
 {
   return this->GetNumberOfViewNodeIDs() == 0 || this->IsViewNodeIDPresent(viewNodeID);
 }

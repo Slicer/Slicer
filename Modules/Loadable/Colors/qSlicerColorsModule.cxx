@@ -78,13 +78,13 @@ qSlicerColorsModule::qSlicerColorsModule(QObject* _parent)
 qSlicerColorsModule::~qSlicerColorsModule() = default;
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerColorsModule::categories()const
+QStringList qSlicerColorsModule::categories() const
 {
   return QStringList() << qSlicerAbstractCoreModule::tr("Informatics");
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerColorsModule::icon()const
+QIcon qSlicerColorsModule::icon() const
 {
   return QIcon(":/Icons/Colors.png");
 }
@@ -160,7 +160,7 @@ vtkMRMLAbstractLogic* qSlicerColorsModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerColorsModule::helpText()const
+QString qSlicerColorsModule::helpText() const
 {
   QString help = tr(
     "The <b>Colors Module</b> manages color look up tables, stored in Color nodes.<br>"
@@ -182,13 +182,13 @@ QString qSlicerColorsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerColorsModule::acknowledgementText()const
+QString qSlicerColorsModule::acknowledgementText() const
 {
   return tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerColorsModule::contributors()const
+QStringList qSlicerColorsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
@@ -201,7 +201,7 @@ QStringList qSlicerColorsModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerColorsModule::dependencies()const
+QStringList qSlicerColorsModule::dependencies() const
 {
   return QStringList() << "Terminologies";
 }

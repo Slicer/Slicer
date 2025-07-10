@@ -128,7 +128,7 @@ void qSlicerLoadableModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerLoadableModule::helpText()const
+QString qSlicerLoadableModule::helpText() const
 {
   qDebug() << "WARNING: " << this->metaObject()->className()
            << "::helpText() is not implemented";
@@ -136,7 +136,7 @@ QString qSlicerLoadableModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerLoadableModule::acknowledgementText()const
+QString qSlicerLoadableModule::acknowledgementText() const
 {
   qDebug() << "WARNING: " << this->metaObject()->className()
            << "::acknowledgementText - Not implemented";

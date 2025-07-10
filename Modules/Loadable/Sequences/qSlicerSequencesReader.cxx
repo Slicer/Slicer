@@ -70,26 +70,26 @@ void qSlicerSequencesReader::setSequencesLogic(vtkSlicerSequencesLogic* newSeque
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerSequencesLogic* qSlicerSequencesReader::sequencesLogic()const
+vtkSlicerSequencesLogic* qSlicerSequencesReader::sequencesLogic() const
 {
   Q_D(const qSlicerSequencesReader);
   return d->SequencesLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSequencesReader::description()const
+QString qSlicerSequencesReader::description() const
 {
   return tr("Sequence");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerSequencesReader::fileType()const
+qSlicerIO::IOFileType qSlicerSequencesReader::fileType() const
 {
   return QString("SequenceFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSequencesReader::extensions()const
+QStringList qSlicerSequencesReader::extensions() const
 {
   return QStringList()
     << tr("Sequence") + " (*.seq.mrb *.mrb)"
@@ -98,7 +98,7 @@ QStringList qSlicerSequencesReader::extensions()const
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerSequencesReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 

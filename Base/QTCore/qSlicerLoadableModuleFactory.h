@@ -56,7 +56,7 @@ public:
   void registerItems() override;
 
   ///
-  QString fileNameToKey(const QString& fileName)const override;
+  QString fileNameToKey(const QString& fileName) const override;
 
   /// Extract module name given \a libraryName
   /// \sa qSlicerUtils::extractModuleNameFromLibraryName
@@ -65,7 +65,7 @@ public:
 protected:
   qSlicerLoadableModuleFactoryItem* createFactoryFileBasedItem() override;
 
-  bool isValidFile(const QFileInfo& file)const override;
+  bool isValidFile(const QFileInfo& file) const override;
 
 protected:
   QScopedPointer<qSlicerLoadableModuleFactoryPrivate> d_ptr;

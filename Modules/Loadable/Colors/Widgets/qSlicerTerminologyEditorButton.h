@@ -73,7 +73,7 @@ protected:
   void paintEvent(QPaintEvent* event) override;
 
   QScopedPointer<qSlicerTerminologyEditorButtonPrivate> d_ptr;
-private :
+private:
   Q_DECLARE_PRIVATE(qSlicerTerminologyEditorButton);
   Q_DISABLE_COPY(qSlicerTerminologyEditorButton);
 };

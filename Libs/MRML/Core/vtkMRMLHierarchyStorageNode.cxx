@@ -34,7 +34,7 @@ vtkMRMLHierarchyStorageNode::~vtkMRMLHierarchyStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -56,7 +56,7 @@ int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // cast the input node
   vtkMRMLHierarchyNode* hierarchyNode = nullptr;
-  if ( refNode->IsA("vtkMRMLHierarchyNode") )
+  if (refNode->IsA("vtkMRMLHierarchyNode"))
   {
     hierarchyNode = dynamic_cast<vtkMRMLHierarchyNode*> (refNode);
   }
@@ -108,7 +108,7 @@ int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   // cast the input node
   vtkMRMLHierarchyNode* hierarchyNode = nullptr;
-  if ( refNode->IsA("vtkMRMLHierarchyNode") )
+  if (refNode->IsA("vtkMRMLHierarchyNode"))
   {
     hierarchyNode = dynamic_cast<vtkMRMLHierarchyNode*> (refNode);
   }

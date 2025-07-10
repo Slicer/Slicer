@@ -86,7 +86,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object,
           {
             which = action->text();
           }
-          if (which != "Rename" && which != "Delete" )
+          if (which != "Rename" && which != "Delete")
           {
             emit recordEvent(menu, "activate", which);
           }
@@ -106,7 +106,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object,
           {
             which = action->text();
           }
-          if (which != "Rename" && which != "Delete" )
+          if (which != "Rename" && which != "Delete")
           {
             emit recordEvent(menu, "activate", which);
           }

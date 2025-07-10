@@ -45,7 +45,7 @@
 #include <vtkTable.h>
 #include "qMRMLWidget.h"
 
-int qMRMLPlotViewTest1( int argc, char* argv [] )
+int qMRMLPlotViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

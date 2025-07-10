@@ -182,13 +182,13 @@ protected:
   vtkMRMLCrosshairNode(const vtkMRMLCrosshairNode&);
   void operator=(const vtkMRMLCrosshairNode&);
 
-  int CrosshairMode{NoCrosshair};
-  int CrosshairThickness{Fine};
-  int CrosshairBehavior{OffsetJumpSlice};
+  int CrosshairMode{ NoCrosshair };
+  int CrosshairThickness{ Fine };
+  int CrosshairBehavior{ OffsetJumpSlice };
   float CrosshairColor[3]{1.0f, 0.8f, 0.1f}; // Light yellow
 
   double CrosshairRAS[3]{0.0, 0.0, 0.0};
-  int LightBoxPane{0};
+  int LightBoxPane{ 0 };
 
   /// Last known cursor position in RAS coordinate system.
   /// If CursorPositionValid is false then this position is not up-to-date anymore.
@@ -202,8 +202,8 @@ protected:
   vtkWeakPointer<vtkMRMLSliceNode> CursorSliceNode;
 
   /// Set to false if the cursor is not in a view
-  bool CursorPositionRASValid{false};
-  bool FastPick3D{false};
+  bool CursorPositionRASValid{ false };
+  bool FastPick3D{ false };
 };
 
 #endif

@@ -369,7 +369,7 @@ namespace
     vtkIdType volume1ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME1_UID_VALUE);
     vtkIdType volume2ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME2_UID_VALUE);
     vtkIdType model21ShItemID = shNode->GetItemByUID(UID_NAME, MODEL21_UID_VALUE);
-    if ( patientShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || study1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (patientShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || study1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || volume1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || volume2ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || model21ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
     {
@@ -390,7 +390,7 @@ namespace
 
     commonAncestorItemID = vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
       shNode, volume2ShItemID, model21ShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
-    if ( commonAncestorItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (commonAncestorItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || shNode->GetItemLevel(commonAncestorItemID).compare(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()) )
     {
       std::cerr << "Common parent check failed (volume2 and model21 are in the same study)" << std::endl;
@@ -399,7 +399,7 @@ namespace
 
     commonAncestorItemID = vtkSlicerSubjectHierarchyModuleLogic::AreItemsInSameBranch(
       shNode, volume1ShItemID, volume2ShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
-    if ( commonAncestorItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (commonAncestorItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || shNode->GetItemLevel(commonAncestorItemID).compare(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
     {
       std::cerr << "Common parent check failed (volume1 and volume2 are in the same patient)" << std::endl;
@@ -410,7 +410,7 @@ namespace
     vtkIdType foundChildItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
 
     foundChildItemID = shNode->GetItemChildWithName(shNode->GetSceneItemID(), shNode->GetItemName(patientShItemID));
-    if ( foundChildItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (foundChildItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || shNode->GetItemLevel(foundChildItemID).compare(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
     {
       std::cerr << "Failed to find top-level subject hierarchy item by name" << std::endl;
@@ -418,7 +418,7 @@ namespace
     }
 
     foundChildItemID = shNode->GetItemChildWithName(patientShItemID, shNode->GetItemName(study1ShItemID));
-    if ( foundChildItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (foundChildItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || shNode->GetItemLevel(foundChildItemID).compare(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()) )
     {
       std::cerr << "Failed to find child subject hierarchy item by name" << std::endl;
@@ -481,7 +481,7 @@ namespace
     // GetItemAncestorAtLevel utility method in node class
     vtkIdType ancestorAtStudyLevel =
       shNode->GetItemAncestorAtLevel(volume1ShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
-    if ( ancestorAtStudyLevel == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (ancestorAtStudyLevel == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || shNode->GetItemLevel(ancestorAtStudyLevel).compare(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()) )
     {
       std::cerr << "Failed to find ancestor at study level" << std::endl;
@@ -490,7 +490,7 @@ namespace
 
     vtkIdType ancestorAtPatientLevel =
       shNode->GetItemAncestorAtLevel(volume1ShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient());
-    if ( ancestorAtPatientLevel == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (ancestorAtPatientLevel == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || shNode->GetItemLevel(ancestorAtPatientLevel).compare(vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
     {
       std::cerr << "Failed to find ancestor at patient level" << std::endl;
@@ -527,7 +527,7 @@ namespace
     // Check newly created study and patient items
     vtkIdType patientShItemID = shNode->GetItemByUID(UID_NAME, PATIENT_UID_VALUE);
     vtkIdType studyShItemID = shNode->GetItemByUID(UID_NAME, STUDY1_UID_VALUE);
-    if ( patientShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (patientShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || studyShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
     {
       std::cerr << "Patient and study items not created for DICOM series" << std::endl;
@@ -613,7 +613,7 @@ namespace
     vtkIdType volume2ShItemID = shNode->GetItemByUID(UID_NAME, VOLUME2_UID_VALUE);
     vtkIdType model21ShItemID = shNode->GetItemByUID(UID_NAME, MODEL21_UID_VALUE);
     vtkIdType model22ShItemID = shNode->GetItemByUID(UID_NAME, MODEL22_UID_VALUE);
-    if ( patientShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || study1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (patientShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || study1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || study2ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || volume1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || model1ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || volume2ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || model21ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || model22ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
@@ -677,7 +677,7 @@ namespace
     vtkIdType study2ShItemID = shNode->GetItemByUID(UID_NAME, STUDY2_UID_VALUE);
     vtkIdType model21ShItemID = shNode->GetItemByUID(UID_NAME, MODEL21_UID_VALUE);
     vtkIdType model22ShItemID = shNode->GetItemByUID(UID_NAME, MODEL22_UID_VALUE);
-    if ( study2ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+    if (study2ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
       || model21ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID || model22ShItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
     {
       std::cerr << "Failed to get items by UID" << std::endl;
@@ -752,7 +752,7 @@ namespace
 
     // Transform study2 using transform2, harden transform on model21
     vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(shNode, study2ShItemID, transformNode2.GetPointer());
-    if ( model21Node->GetParentTransformNode() != transformNode2.GetPointer()
+    if (model21Node->GetParentTransformNode() != transformNode2.GetPointer()
       || model22Node->GetParentTransformNode() != transformNode2.GetPointer() )
     {
       std::cerr << "Failed to apply transform2 on study2" << std::endl;
@@ -772,7 +772,7 @@ namespace
 
     // Set transform1 on study2 without hardening
     vtkSlicerSubjectHierarchyModuleLogic::TransformBranch(shNode, study2ShItemID, transformNode1.GetPointer(), false);
-    if ( model21Node->GetParentTransformNode() != transformNode1.GetPointer()
+    if (model21Node->GetParentTransformNode() != transformNode1.GetPointer()
       || model22Node->GetParentTransformNode() != transformNode1.GetPointer() )
     {
       std::cerr << "Failed to apply transform1 on study2" << std::endl;

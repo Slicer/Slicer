@@ -29,7 +29,7 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLExport.h"
 
-class  VTK_MRML_EXPORT vtkMRMLMarkupsPlaneDisplayNode : public vtkMRMLMarkupsDisplayNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsPlaneDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:
   static vtkMRMLMarkupsPlaneDisplayNode* New();

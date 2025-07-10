@@ -132,40 +132,40 @@ void qMRMLPlotWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNo
 }
 
 //--------------------------------------------------------------------------
-vtkMRMLPlotViewNode* qMRMLPlotWidget::mrmlPlotViewNode()const
+vtkMRMLPlotViewNode* qMRMLPlotWidget::mrmlPlotViewNode() const
 {
   Q_D(const qMRMLPlotWidget);
   return d->PlotView->mrmlPlotViewNode();
 }
 
 //--------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLPlotWidget::mrmlAbstractViewNode()const
+vtkMRMLAbstractViewNode* qMRMLPlotWidget::mrmlAbstractViewNode() const
 {
   return this->mrmlPlotViewNode();
 }
 
 //--------------------------------------------------------------------------
-qMRMLPlotView* qMRMLPlotWidget::plotView()const
+qMRMLPlotView* qMRMLPlotWidget::plotView() const
 {
   Q_D(const qMRMLPlotWidget);
   return d->PlotView;
 }
 
 //--------------------------------------------------------------------------
-QWidget* qMRMLPlotWidget::viewWidget()const
+QWidget* qMRMLPlotWidget::viewWidget() const
 {
   return this->plotView();
 }
 
 //--------------------------------------------------------------------------
-qMRMLPlotViewControllerWidget* qMRMLPlotWidget::plotController()const
+qMRMLPlotViewControllerWidget* qMRMLPlotWidget::plotController() const
 {
   Q_D(const qMRMLPlotWidget);
   return d->PlotController;
 }
 
 //---------------------------------------------------------------------------
-qMRMLViewControllerBar* qMRMLPlotWidget::controllerWidget()const
+qMRMLViewControllerBar* qMRMLPlotWidget::controllerWidget() const
 {
   return this->plotController();
 }

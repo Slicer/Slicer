@@ -55,7 +55,7 @@ qSlicerUnitsModule
 qSlicerUnitsModule::~qSlicerUnitsModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerUnitsModule::helpText()const
+QString qSlicerUnitsModule::helpText() const
 {
   QString help =
     "This module controls the Units of the scene."
@@ -65,7 +65,7 @@ QString qSlicerUnitsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerUnitsModule::acknowledgementText()const
+QString qSlicerUnitsModule::acknowledgementText() const
 {
   QString acknowledgement = QString(
     "<center><table border=\"0\"><tr>"
@@ -79,7 +79,7 @@ QString qSlicerUnitsModule::acknowledgementText()const
   return acknowledgement;
 }
 //-----------------------------------------------------------------------------
-QStringList qSlicerUnitsModule::contributors()const
+QStringList qSlicerUnitsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Johan Andruejol (Kitware)")
@@ -88,7 +88,7 @@ QStringList qSlicerUnitsModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerUnitsModule::icon()const
+QIcon qSlicerUnitsModule::icon() const
 {
   return QIcon("");
 }

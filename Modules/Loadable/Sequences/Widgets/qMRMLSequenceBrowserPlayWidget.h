@@ -59,13 +59,13 @@ public:
   ~qMRMLSequenceBrowserPlayWidget() override;
 
   /// Get keyboard shortcut string for play/pause button
-  QString playPauseShortcut()const;
+  QString playPauseShortcut() const;
 
   /// Get keyboard shortcut string for previous frame button
-  QString previousFrameShortcut()const;
+  QString previousFrameShortcut() const;
 
   /// Get keyboard shortcut string for next frame button
-  QString nextFrameShortcut()const;
+  QString nextFrameShortcut() const;
 
   /// Returns true if recording controls (record and snapshot buttons) are allowed to be shown.
   ///

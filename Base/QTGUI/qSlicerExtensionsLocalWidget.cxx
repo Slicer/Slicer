@@ -112,7 +112,7 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsLocalWidgetPrivate::qSlicerExtensionsLocalWidgetPrivate(qSlicerExtensionsLocalWidget& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->ExtensionsManagerModel = nullptr;
 }
@@ -839,7 +839,7 @@ qSlicerExtensionsLocalWidget::qSlicerExtensionsLocalWidget(QWidget* _parent)
 qSlicerExtensionsLocalWidget::~qSlicerExtensionsLocalWidget() = default;
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel* qSlicerExtensionsLocalWidget::extensionsManagerModel()const
+qSlicerExtensionsManagerModel* qSlicerExtensionsLocalWidget::extensionsManagerModel() const
 {
   Q_D(const qSlicerExtensionsLocalWidget);
   return d->ExtensionsManagerModel;

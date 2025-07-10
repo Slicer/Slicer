@@ -19,7 +19,7 @@ class vtkMRMLStorageNode;
 /// Visualization parameters for these nodes are controlled by the
 /// vtkMRMLAnnotationPointDisplayNode class.
 /// \deprecated Use vtkMRMLMarkupsFiducialNode
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialNode : public vtkMRMLAnnotationControlPointsNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialNode : public vtkMRMLAnnotationControlPointsNode
 {
 public:
   static vtkMRMLAnnotationFiducialNode* New();

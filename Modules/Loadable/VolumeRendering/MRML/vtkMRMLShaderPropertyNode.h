@@ -91,7 +91,7 @@ protected:
   vtkIntArray* ObservedEvents;
 
   /// Main parameters for visualization
-  vtkShaderProperty* ShaderProperty{nullptr};
+  vtkShaderProperty* ShaderProperty{ nullptr };
 
 private:
   vtkMRMLShaderPropertyNode(const vtkMRMLShaderPropertyNode&) = delete;

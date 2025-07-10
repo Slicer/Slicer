@@ -21,7 +21,7 @@ int main(int argc, char* * argv)
 {
   itk::itkFactoryRegistration();
 
-  if ( argc != 7 )
+  if (argc != 7)
   {
     std::cerr << "Parameters: inputImage labelImageName outputImage expectedVolume intensityHomo[0~1] lambda[0~1]\n";
     exit(-1);
@@ -53,7 +53,7 @@ int main(int argc, char* * argv)
     reader->Update();
     img = reader->GetOutput();
   }
-  catch ( itk::ExceptionObject& err )
+  catch (itk::ExceptionObject& err)
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
@@ -73,7 +73,7 @@ int main(int argc, char* * argv)
     readerLabel->Update();
     labelImg = readerLabel->GetOutput();
   }
-  catch ( itk::ExceptionObject& err )
+  catch (itk::ExceptionObject& err)
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
@@ -113,7 +113,7 @@ int main(int argc, char* * argv)
   {
     outputWriter->Update();
   }
-  catch ( itk::ExceptionObject& err )
+  catch (itk::ExceptionObject& err)
   {
     std::cout << "ExceptionObject caught !" << std::endl;
     std::cout << err << std::endl;
@@ -149,11 +149,11 @@ getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixe
 
   mask->Allocate();
   mask->FillBuffer(0);
-  for ( long ix = 0; ix < nx; ++ix )
+  for (long ix = 0; ix < nx; ++ix)
   {
-    for ( long iy = 0; iy < ny; ++iy )
+    for (long iy = 0; iy < ny; ++iy)
     {
-      for ( long iz = 0; iz < nz; ++iz )
+      for (long iz = 0; iz < nz; ++iz)
       {
         MaskType::IndexType idx = {{ix, iy, iz}};
         TPixel              v = img->GetPixel(idx);

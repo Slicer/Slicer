@@ -54,7 +54,7 @@ class vtkMRMLSliceViewInteractorStyle;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLSliceViewPrivate: public ctkVTKSliceViewPrivate
+class qMRMLSliceViewPrivate : public ctkVTKSliceViewPrivate
 {
   Q_OBJECT
   QVTK_OBJECT

@@ -32,7 +32,7 @@
 // qSlicerSettingsDeveloperPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsDeveloperPanelPrivate: public Ui_qSlicerSettingsDeveloperPanel
+class qSlicerSettingsDeveloperPanelPrivate : public Ui_qSlicerSettingsDeveloperPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsDeveloperPanel);
 protected:
@@ -49,7 +49,7 @@ public:
 // --------------------------------------------------------------------------
 qSlicerSettingsDeveloperPanelPrivate
 ::qSlicerSettingsDeveloperPanelPrivate(qSlicerSettingsDeveloperPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 

@@ -592,7 +592,7 @@ void vtkMarkupsGlyphSource2D::CreateDash(vtkPoints* pts, vtkCellArray* lines,
 //----------------------------------------------------------------------------
 void vtkMarkupsGlyphSource2D::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Center: (" << this->Center[0] << ", "
      << this->Center[1] << ", " << this->Center[2] << ")\n";

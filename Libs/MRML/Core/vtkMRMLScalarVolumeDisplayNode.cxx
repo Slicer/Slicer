@@ -393,7 +393,7 @@ void vtkMRMLScalarVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
 void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "AutoWindowLevel:   " << this->AutoWindowLevel << "\n";
   os << indent << "Window:            " << this->GetWindow() << "\n";

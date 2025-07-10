@@ -105,10 +105,10 @@ public:
   NodeIndexType m_Right;
   NodeIndexType m_Parent;
   NodeIndexType m_Child;
-  short m_Degree{0};
-  bool m_Mark{false};
+  short m_Degree{ 0 };
+  bool m_Mark{ false };
 
-  NodeKeyValueType m_Key{0};
+  NodeKeyValueType m_Key{ 0 };
   NodeIndexType m_Index;
 };
 

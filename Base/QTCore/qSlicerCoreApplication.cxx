@@ -163,7 +163,7 @@
 //-----------------------------------------------------------------------------
 // Adapter class for translation in MRML classes using Qt translation infrastructure
 
-class vtkQtTranslator: public vtkMRMLTranslator
+class vtkQtTranslator : public vtkMRMLTranslator
 {
 public:
   static vtkQtTranslator* New();
@@ -708,7 +708,7 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(bool useTmp)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplicationPrivate::isInstalled(const QString& slicerHome)const
+bool qSlicerCoreApplicationPrivate::isInstalled(const QString& slicerHome) const
 {
   return !QFile::exists(slicerHome + "/CMakeCache.txt");
 }
@@ -837,7 +837,7 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()const
+QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX() const
 {
   Q_Q(const qSlicerCoreApplication);
   if (q->isInstalled())
@@ -854,7 +854,7 @@ QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()co
 #endif
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplicationPrivate::isUsingLauncher()const
+bool qSlicerCoreApplicationPrivate::isUsingLauncher() const
 {
   Q_Q(const qSlicerCoreApplication);
   if (!q->isInstalled())
@@ -1060,7 +1060,7 @@ void qSlicerCoreApplication::parseArguments(bool& exitWhenDone)
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerCoreApplication::returnCode()const
+int qSlicerCoreApplication::returnCode() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->ReturnCode;
@@ -1295,7 +1295,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 }
 
 //-----------------------------------------------------------------------------
-QSettings* qSlicerCoreApplication::defaultSettings()const
+QSettings* qSlicerCoreApplication::defaultSettings() const
 {
   Q_D(const qSlicerCoreApplication);
   if (!QFile(this->slicerDefaultSettingsFilePath()).exists())
@@ -1316,7 +1316,7 @@ QSettings* qSlicerCoreApplication::defaultSettings()const
 }
 
 //-----------------------------------------------------------------------------
-QSettings* qSlicerCoreApplication::userSettings()const
+QSettings* qSlicerCoreApplication::userSettings() const
 {
   Q_D(const qSlicerCoreApplication);
   qSlicerCoreApplicationPrivate* mutable_d =
@@ -1331,13 +1331,13 @@ QSettings* qSlicerCoreApplication::userSettings()const
 }
 
 //-----------------------------------------------------------------------------
-QSettings* qSlicerCoreApplication::settings()const
+QSettings* qSlicerCoreApplication::settings() const
 {
   return this->userSettings();
 }
 
 //-----------------------------------------------------------------------------
-QSettings* qSlicerCoreApplication::revisionUserSettings()const
+QSettings* qSlicerCoreApplication::revisionUserSettings() const
 {
   Q_D(const qSlicerCoreApplication);
   qSlicerCoreApplicationPrivate* mutable_d =
@@ -1357,14 +1357,14 @@ CTK_GET_CPP(qSlicerCoreApplication, QString, intDir, IntDir);
 CTK_GET_CPP(qSlicerCoreApplication, QString, startupWorkingPath, StartupWorkingPath);
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplication::isInstalled()const
+bool qSlicerCoreApplication::isInstalled() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->isInstalled(d->SlicerHome);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::releaseType()const
+QString qSlicerCoreApplication::releaseType() const
 {
   return QString(Slicer_RELEASE_TYPE);
 }
@@ -1450,7 +1450,7 @@ QString qSlicerCoreApplication::slicerSharePath() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplication::isEmbeddedModule(const QString& moduleFileName)const
+bool qSlicerCoreApplication::isEmbeddedModule(const QString& moduleFileName) const
 {
   QString slicerRevision = this->revision();
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
@@ -1534,7 +1534,7 @@ void qSlicerCoreApplication::setCachePath(const QString& path)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::launcherExecutableFilePath()const
+QString qSlicerCoreApplication::launcherExecutableFilePath() const
 {
   Q_D(const qSlicerCoreApplication);
   if (!d->isUsingLauncher())
@@ -1546,7 +1546,7 @@ QString qSlicerCoreApplication::launcherExecutableFilePath()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::launcherSettingsFilePath()const
+QString qSlicerCoreApplication::launcherSettingsFilePath() const
 {
   QString appName = this->applicationName().replace("-tmp", "");
   if (this->isInstalled())
@@ -1560,7 +1560,7 @@ QString qSlicerCoreApplication::launcherSettingsFilePath()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::launcherRevisionSpecificUserSettingsFilePath()const
+QString qSlicerCoreApplication::launcherRevisionSpecificUserSettingsFilePath() const
 {
   if (this->isInstalled())
   {
@@ -1577,19 +1577,19 @@ QString qSlicerCoreApplication::launcherRevisionSpecificUserSettingsFilePath()co
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::slicerDefaultSettingsFilePath()const
+QString qSlicerCoreApplication::slicerDefaultSettingsFilePath() const
 {
   return this->slicerHome() + "/" Slicer_SHARE_DIR "/" + this->applicationName() + "DefaultSettings.ini";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::slicerUserSettingsFilePath()const
+QString qSlicerCoreApplication::slicerUserSettingsFilePath() const
 {
   return this->userSettings()->fileName();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath()const
+QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath() const
 {
 #ifdef Slicer_STORE_SETTINGS_IN_APPLICATION_HOME_DIR
   this->userSettings(); // ensure applicationName is initialized
@@ -1673,7 +1673,7 @@ void qSlicerCoreApplication::setCorePythonManager(qSlicerCorePythonManager* mana
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCorePythonManager* qSlicerCoreApplication::corePythonManager()const
+qSlicerCorePythonManager* qSlicerCoreApplication::corePythonManager() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->CorePythonManager.data();
@@ -1687,7 +1687,7 @@ void qSlicerCoreApplication::setPythonConsole(ctkPythonConsole* console)
 }
 
 //-----------------------------------------------------------------------------
-ctkPythonConsole* qSlicerCoreApplication::pythonConsole()const
+ctkPythonConsole* qSlicerCoreApplication::pythonConsole() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->PythonConsole.data();
@@ -1705,7 +1705,7 @@ void qSlicerCoreApplication::setExtensionsManagerModel(qSlicerExtensionsManagerM
 }
 
 //-----------------------------------------------------------------------------
-qSlicerExtensionsManagerModel* qSlicerCoreApplication::extensionsManagerModel()const
+qSlicerExtensionsManagerModel* qSlicerCoreApplication::extensionsManagerModel() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->ExtensionsManagerModel.data();
@@ -1723,7 +1723,7 @@ void qSlicerCoreApplication::setapplicationUpdateManager(qSlicerApplicationUpdat
 }
 
 //-----------------------------------------------------------------------------
-qSlicerApplicationUpdateManager* qSlicerCoreApplication::applicationUpdateManager()const
+qSlicerApplicationUpdateManager* qSlicerCoreApplication::applicationUpdateManager() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->ApplicationUpdateManager.data();
@@ -1732,14 +1732,14 @@ qSlicerApplicationUpdateManager* qSlicerCoreApplication::applicationUpdateManage
 #endif
 
 //-----------------------------------------------------------------------------
-ctkErrorLogAbstractModel* qSlicerCoreApplication::errorLogModel()const
+ctkErrorLogAbstractModel* qSlicerCoreApplication::errorLogModel() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->ErrorLogModel.data();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleManager* qSlicerCoreApplication::moduleManager()const
+qSlicerModuleManager* qSlicerCoreApplication::moduleManager() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->ModuleManager.data();
@@ -1753,7 +1753,7 @@ void qSlicerCoreApplication::setCoreIOManager(qSlicerCoreIOManager* manager)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCoreIOManager* qSlicerCoreApplication::coreIOManager()const
+qSlicerCoreIOManager* qSlicerCoreApplication::coreIOManager() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->CoreIOManager.data();
@@ -1767,62 +1767,62 @@ void qSlicerCoreApplication::setCoreCommandOptions(qSlicerCoreCommandOptions* op
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCoreCommandOptions* qSlicerCoreApplication::coreCommandOptions()const
+qSlicerCoreCommandOptions* qSlicerCoreApplication::coreCommandOptions() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->CoreCommandOptions.data();
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplication::isCustomMainApplication()const
+bool qSlicerCoreApplication::isCustomMainApplication() const
 {
   return (this->mainApplicationName() != QString("Slicer"));
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::mainApplicationName()const
+QString qSlicerCoreApplication::mainApplicationName() const
 {
   return QString(Slicer_MAIN_PROJECT_APPLICATION_NAME);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::mainApplicationRepositoryUrl()const
+QString qSlicerCoreApplication::mainApplicationRepositoryUrl() const
 {
   return QString(Slicer_MAIN_PROJECT_WC_URL);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::mainApplicationRepositoryRevision()const
+QString qSlicerCoreApplication::mainApplicationRepositoryRevision() const
 {
   return QString(Slicer_MAIN_PROJECT_WC_REVISION);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::mainApplicationRevision()const
+QString qSlicerCoreApplication::mainApplicationRevision() const
 {
   return QString(Slicer_MAIN_PROJECT_REVISION);
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerCoreApplication::mainApplicationMajorVersion()const
+int qSlicerCoreApplication::mainApplicationMajorVersion() const
 {
   return Slicer_MAIN_PROJECT_VERSION_MAJOR;
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerCoreApplication::mainApplicationMinorVersion()const
+int qSlicerCoreApplication::mainApplicationMinorVersion() const
 {
   return Slicer_MAIN_PROJECT_VERSION_MINOR;
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerCoreApplication::mainApplicationPatchVersion()const
+int qSlicerCoreApplication::mainApplicationPatchVersion() const
 {
   return Slicer_MAIN_PROJECT_VERSION_PATCH;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::libraries()const
+QString qSlicerCoreApplication::libraries() const
 {
   QString librariesText(
     tr("Built on top of:") +
@@ -1837,7 +1837,7 @@ QString qSlicerCoreApplication::libraries()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::copyrights()const
+QString qSlicerCoreApplication::copyrights() const
 {
   QString copyrightsText(QString(
     "<table align=\"center\" border=\"0\" width=\"80%\"><tr>"
@@ -1851,7 +1851,7 @@ QString qSlicerCoreApplication::copyrights()const
   return copyrightsText;
 }
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::acknowledgment()const
+QString qSlicerCoreApplication::acknowledgment() const
 {
   QString acknowledgmentText(
     tr("Slicer is NOT an FDA approved medical device.<br><br>"
@@ -1866,25 +1866,25 @@ QString qSlicerCoreApplication::acknowledgment()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::repositoryUrl()const
+QString qSlicerCoreApplication::repositoryUrl() const
 {
   return Slicer_WC_URL;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::repositoryBranch()const
+QString qSlicerCoreApplication::repositoryBranch() const
 {
   return QFileInfo(this->repositoryUrl()).fileName();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::repositoryRevision()const
+QString qSlicerCoreApplication::repositoryRevision() const
 {
   return Slicer_WC_REVISION;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::revision()const
+QString qSlicerCoreApplication::revision() const
 {
   return Slicer_REVISION;
 }
@@ -1902,33 +1902,33 @@ int qSlicerCoreApplication::minorVersion() const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::platform()const
+QString qSlicerCoreApplication::platform() const
 {
   return QString("%1-%2").arg(Slicer_OS).arg(Slicer_ARCHITECTURE);
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::arch()const
+QString qSlicerCoreApplication::arch() const
 {
   return Slicer_ARCHITECTURE;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreApplication::os()const
+QString qSlicerCoreApplication::os() const
 {
   return Slicer_OS;
 }
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT
 //-----------------------------------------------------------------------------
-ctkDICOMDatabase* qSlicerCoreApplication::dicomDatabase()const
+ctkDICOMDatabase* qSlicerCoreApplication::dicomDatabase() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->DICOMDatabase.data();
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<ctkDICOMDatabase> qSlicerCoreApplication::dicomDatabaseShared()const
+QSharedPointer<ctkDICOMDatabase> qSlicerCoreApplication::dicomDatabaseShared() const
 {
   Q_D(const qSlicerCoreApplication);
   return d->DICOMDatabase;
@@ -2035,7 +2035,7 @@ void qSlicerCoreApplication
   Q_UNUSED(appLogic);
   Q_UNUSED(d);
   int delayInMs = *reinterpret_cast<int*>(delay);
-  switch(event)
+  switch (event)
   {
     case vtkSlicerApplicationLogic::RequestModifiedEvent:
       QTimer::singleShot(delayInMs,
@@ -2316,7 +2316,7 @@ QStringList qSlicerCoreApplication::toSlicerHomeRelativePaths(const QStringList&
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerCoreApplication::moduleLogic(const QString& moduleName)const
+vtkMRMLAbstractLogic* qSlicerCoreApplication::moduleLogic(const QString& moduleName) const
 {
   Q_D(const qSlicerCoreApplication);
   vtkSlicerApplicationLogic* applicationLogic = this->applicationLogic();

@@ -41,7 +41,7 @@ qSlicerIOOptionsWidget
 qSlicerIOOptionsWidget::~qSlicerIOOptionsWidget() = default;
 
 //------------------------------------------------------------------------------
-bool qSlicerIOOptionsWidget::isValid()const
+bool qSlicerIOOptionsWidget::isValid() const
 {
   Q_D(const qSlicerIOOptions);
   return d->Properties.contains("fileName") || d->Properties.contains("fileNames");

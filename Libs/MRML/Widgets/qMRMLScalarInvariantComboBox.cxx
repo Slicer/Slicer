@@ -120,7 +120,7 @@ qMRMLScalarInvariantComboBox::qMRMLScalarInvariantComboBox(QWidget* parentWidget
 qMRMLScalarInvariantComboBox::~qMRMLScalarInvariantComboBox() = default;
 
 //------------------------------------------------------------------------------
-vtkMRMLDiffusionTensorDisplayPropertiesNode* qMRMLScalarInvariantComboBox::displayPropertiesNode()const
+vtkMRMLDiffusionTensorDisplayPropertiesNode* qMRMLScalarInvariantComboBox::displayPropertiesNode() const
 {
   Q_D(const qMRMLScalarInvariantComboBox);
   return d->DisplayPropertiesNode;
@@ -165,7 +165,7 @@ void qMRMLScalarInvariantComboBox::onCurrentScalarInvariantChanged(int index)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLScalarInvariantComboBox::scalarInvariant()const
+int qMRMLScalarInvariantComboBox::scalarInvariant() const
 {
   Q_D(const qMRMLScalarInvariantComboBox);
   QVariant scalarInvariant = d->ComboBox->itemData(d->ComboBox->currentIndex());

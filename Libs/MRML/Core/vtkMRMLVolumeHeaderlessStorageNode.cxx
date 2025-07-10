@@ -63,7 +63,7 @@ vtkMRMLVolumeHeaderlessStorageNode::~vtkMRMLVolumeHeaderlessStorageNode()
 {
   if (this->FileScanOrder)
   {
-    delete [] this->FileScanOrder;
+    delete[] this->FileScanOrder;
     this->FileScanOrder = nullptr;
   }
 }
@@ -268,7 +268,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeHeaderlessStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
   int idx;
 
   os << indent << "FileScanOrder: " <<
@@ -311,12 +311,12 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   vtkMRMLVolumeNode* volNode = nullptr;
 
-  if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
+  if (refNode->IsA("vtkMRMLScalarVolumeNode"))
   {
     volNode = dynamic_cast<vtkMRMLScalarVolumeNode*> (refNode);
   }
 #ifdef MRML_USE_vtkTeem
-  else if ( refNode->IsA("vtkMRMLVectorVolumeNode") )
+  else if (refNode->IsA("vtkMRMLVectorVolumeNode"))
   {
     volNode = dynamic_cast<vtkMRMLVectorVolumeNode*> (refNode);
   }

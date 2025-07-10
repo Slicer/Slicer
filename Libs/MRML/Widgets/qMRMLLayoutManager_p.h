@@ -105,16 +105,16 @@ public:
 
   /// Convenient function allowing to get a reference to the renderView widget
   /// identified by \a renderViewName.
-  qMRMLThreeDWidget* threeDWidget(vtkMRMLViewNode* node)const;
-  qMRMLTableWidget* tableWidget(vtkMRMLTableViewNode* node)const;
-  qMRMLPlotWidget* plotWidget(vtkMRMLPlotViewNode* node)const;
+  qMRMLThreeDWidget* threeDWidget(vtkMRMLViewNode* node) const;
+  qMRMLTableWidget* tableWidget(vtkMRMLTableViewNode* node) const;
+  qMRMLPlotWidget* plotWidget(vtkMRMLPlotViewNode* node) const;
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
-  qMRMLSliceWidget* sliceWidget(vtkMRMLSliceNode* node)const;
+  qMRMLSliceWidget* sliceWidget(vtkMRMLSliceNode* node) const;
 
-  vtkMRMLNode* viewNode(QWidget* )const;
-  QWidget* viewWidget(vtkMRMLNode* )const;
+  vtkMRMLNode* viewNode(QWidget* ) const;
+  QWidget* viewWidget(vtkMRMLNode* ) const;
 
 public slots:
   /// Handle MRML scene event
@@ -140,8 +140,8 @@ public:
 
   struct ViewportInfo
   {
-    QWidget* Window{nullptr};
-    QWidget* Viewport{nullptr};
+    QWidget* Window{ nullptr };
+    QWidget* Viewport{ nullptr };
     QByteArray LastSavedWindowGeometry;
   };
 
@@ -168,9 +168,9 @@ public:
   qMRMLLayoutThreeDViewFactory(QObject* parent = nullptr);
   ~qMRMLLayoutThreeDViewFactory() override;
 
-  QString viewClassName()const override;
+  QString viewClassName() const override;
 
-  vtkCollection* viewLogics()const;
+  vtkCollection* viewLogics() const;
 
 protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
@@ -188,7 +188,7 @@ public:
   typedef qMRMLLayoutViewFactory Superclass;
   qMRMLLayoutTableViewFactory(QObject* parent = nullptr);
 
-  QString viewClassName()const override;
+  QString viewClassName() const override;
 
 protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
@@ -203,14 +203,14 @@ public:
   typedef qMRMLLayoutViewFactory Superclass;
   qMRMLLayoutPlotViewFactory(QObject* parent = nullptr);
 
-  QString viewClassName()const override;
+  QString viewClassName() const override;
 
-  vtkMRMLColorLogic* colorLogic()const;
+  vtkMRMLColorLogic* colorLogic() const;
   void setColorLogic(vtkMRMLColorLogic* colorLogic);
 
 protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;
-  vtkMRMLColorLogic* ColorLogic{nullptr};
+  vtkMRMLColorLogic* ColorLogic{ nullptr };
 };
 
 //------------------------------------------------------------------------------
@@ -223,9 +223,9 @@ public:
   qMRMLLayoutSliceViewFactory(QObject* parent = nullptr);
   ~qMRMLLayoutSliceViewFactory() override;
 
-  QString viewClassName()const override;
+  QString viewClassName() const override;
 
-  vtkCollection* sliceLogics()const;
+  vtkCollection* sliceLogics() const;
 
 protected:
   QWidget* createViewFromNode(vtkMRMLAbstractViewNode* viewNode) override;

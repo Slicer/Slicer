@@ -154,13 +154,13 @@ void qSlicerSubjectHierarchyPluginLogic::registerCorePlugins()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginLogic::subjectHierarchyPluginByName(QString name)const
+qSlicerSubjectHierarchyAbstractPlugin* qSlicerSubjectHierarchyPluginLogic::subjectHierarchyPluginByName(QString name) const
 {
   return qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName(name);
 }
 
 //-----------------------------------------------------------------------------
-vtkIdType qSlicerSubjectHierarchyPluginLogic::currentSubjectHierarchyItem()const
+vtkIdType qSlicerSubjectHierarchyPluginLogic::currentSubjectHierarchyItem() const
 {
   return qSlicerSubjectHierarchyPluginHandler::instance()->currentItem();
 }

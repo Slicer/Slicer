@@ -42,7 +42,7 @@
 #include "qMRMLLayoutManagerTestHelper.cxx"
 
 // --------------------------------------------------------------------------
-int qMRMLLayoutManagerTest2(int argc, char* argv[] )
+int qMRMLLayoutManagerTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

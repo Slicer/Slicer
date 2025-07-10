@@ -92,7 +92,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self), T*
   typename LevelTracingType::Pointer tracing = LevelTracingType::New();
 
   itk::Index<2> seed2D = {{0,0}};
-  switch(plane)
+  switch (plane)
   {
   case 0: //JK plane
     seed2D[0] = seed[1];
@@ -138,7 +138,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self), T*
 
   const unsigned int numberChain = chain->NumberOfSteps();
 
-  if ( numberChain == 0 )
+  if (numberChain == 0)
   {
     return;
   }
@@ -151,7 +151,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self), T*
 
   do
   {
-    switch( plane )
+    switch (plane)
     {
       default:
       case 0:  //JK plane
@@ -178,11 +178,11 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self), T*
     chainTemp[1] = chainTemp[1] + offset[1];
     //vtkGenericWarningMacro( << "Chain point: "  << chainTemp );
   }
-  while ( i < numberChain );
+  while (i < numberChain );
 
   newPolys->InsertNextCell( i, ptIds );
 
-  delete [] ptIds;
+  delete[] ptIds;
 }
 
 //
@@ -223,7 +223,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
     return 1;
   }
   inScalars=pd->GetScalars();
-  if ( inScalars == nullptr )
+  if (inScalars == nullptr)
   {
     vtkErrorMacro(<<"Scalars must be defined for level tracing");
     return 1;
@@ -263,7 +263,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
 #undef vtkTemplateMacroCase_ll
 # define vtkTemplateMacroCase_ll(typeN, type, call)
 #endif
-  if (inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1)
   {
     void* scalars = inScalars->GetVoidPointer(0);
     switch (inScalars->GetDataType())
@@ -332,7 +332,7 @@ int vtkITKLevelTracingImageFilter::FillInputPortInformation(int, vtkInformation*
 
 void vtkITKLevelTracingImageFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Seed point location: [" << Seed[0] << "," << Seed[1] << "," << Seed[2] << "]"
     << std::endl;

@@ -51,12 +51,12 @@ public:
   explicit qMRMLDisplayNodeViewComboBox(QWidget* parent = nullptr);
   ~qMRMLDisplayNodeViewComboBox() override;
 
-  vtkMRMLDisplayNode* mrmlDisplayNode()const;
+  vtkMRMLDisplayNode* mrmlDisplayNode() const;
 
   /// Return a list of view nodes the display node is visible into.
-  QList<vtkMRMLAbstractViewNode*> checkedViewNodes()const;
+  QList<vtkMRMLAbstractViewNode*> checkedViewNodes() const;
   /// Return a list of view nodes the display node is not visible into.
-  QList<vtkMRMLAbstractViewNode*> uncheckedViewNodes()const;
+  QList<vtkMRMLAbstractViewNode*> uncheckedViewNodes() const;
 
 public slots:
   /// Set the display node to observe.

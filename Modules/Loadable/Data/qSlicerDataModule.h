@@ -43,16 +43,16 @@ public:
 
   void setup() override;
 
-  QIcon icon()const override;
-  QStringList categories()const override;
-  QStringList dependencies()const override;
+  QIcon icon() const override;
+  QStringList categories() const override;
+  QStringList dependencies() const override;
 
   qSlicerGetTitleMacro(tr("Data"));
 
   /// Return help/acknowledgement text
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 protected:
 
   /// Create and return the widget representation associated to this module

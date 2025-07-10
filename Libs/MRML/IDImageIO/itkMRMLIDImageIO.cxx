@@ -203,7 +203,7 @@ MRMLIDImageIO
       }
       m_Spacing[i] = sqrt(m_Spacing[i]);
     }
-    for ( i=0; i<3; i++)
+    for (i=0; i<3; i++)
     {
       for (j=0; j<3; j++)
       {
@@ -218,7 +218,7 @@ MRMLIDImageIO
     vtkMatrix4x4* ijkToLps = vtkMatrix4x4::New();
     vtkMatrix4x4::Multiply4x4(ijkToRas, rasToLps, ijkToLps);
 
-    for ( i=0; i<3; i++)
+    for (i=0; i<3; i++)
     {
       m_Origin[i] =  ijkToRas->GetElement(3,i);
       m_Direction[i].resize(3);
@@ -411,7 +411,7 @@ MRMLIDImageIO
   for (i = 0; (i < this->GetNumberOfDimensions()) && (i < 3); i++)
   {
     // Get IJK to RAS direction vector
-    for ( j=0; (j < this->GetNumberOfDimensions()) && (j < 3); j++ )
+    for (j=0; (j < this->GetNumberOfDimensions()) && (j < 3); j++)
     {
       ijkToLps->SetElement(j, i, m_Spacing[i]*this->GetDirection(i)[j]);
     }

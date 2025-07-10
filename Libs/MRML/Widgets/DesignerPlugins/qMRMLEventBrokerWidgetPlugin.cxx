@@ -45,7 +45,7 @@ QString qMRMLEventBrokerWidgetPlugin::domXml() const
           "   <height>200</height>\n"
           "  </rect>\n"
           " </property>\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLEventBrokerWidgetPlugin::icon() const

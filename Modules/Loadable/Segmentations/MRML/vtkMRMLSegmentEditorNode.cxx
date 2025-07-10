@@ -117,7 +117,7 @@ void vtkMRMLSegmentEditorNode::ReadXMLAttributes(const char** atts)
     {
       std::stringstream ss;
       ss << attValue;
-      double range[2]={0};
+      double range[2] = { 0 };
       ss >> range[0];
       ss >> range[1];
       this->SetSourceVolumeIntensityMaskRange(range);
@@ -162,7 +162,7 @@ void vtkMRMLSegmentEditorNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentEditorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "SelectedSegmentID: " << (this->SelectedSegmentID ? this->SelectedSegmentID : "") << "\n";
   os << indent << "ActiveEffectName: " << (this->ActiveEffectName ? this->ActiveEffectName : "") << "\n";

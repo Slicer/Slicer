@@ -86,7 +86,7 @@ qMRMLVolumePropertyNodeWidget::qMRMLVolumePropertyNodeWidget(QWidget* parentWidg
 qMRMLVolumePropertyNodeWidget::~qMRMLVolumePropertyNodeWidget() = default;
 
 // --------------------------------------------------------------------------
-vtkVolumeProperty* qMRMLVolumePropertyNodeWidget::volumeProperty()const
+vtkVolumeProperty* qMRMLVolumePropertyNodeWidget::volumeProperty() const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   return d->VolumePropertyWidget->volumeProperty();
@@ -124,7 +124,7 @@ void qMRMLVolumePropertyNodeWidget::updateFromVolumePropertyNode()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget::chartsBounds(double bounds[4])const
+void qMRMLVolumePropertyNodeWidget::chartsBounds(double bounds[4]) const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   d->VolumePropertyWidget->chartsBounds(bounds);
@@ -145,7 +145,7 @@ void qMRMLVolumePropertyNodeWidget::setChartsExtent(double min, double max)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLVolumePropertyNodeWidget::chartsExtent(double extent[4])const
+void qMRMLVolumePropertyNodeWidget::chartsExtent(double extent[4]) const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   d->VolumePropertyWidget->chartsExtent(extent);
@@ -159,7 +159,7 @@ void qMRMLVolumePropertyNodeWidget::setThreshold(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLVolumePropertyNodeWidget::hasThreshold()const
+bool qMRMLVolumePropertyNodeWidget::hasThreshold() const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   return d->VolumePropertyWidget->isThresholdEnabled();

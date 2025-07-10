@@ -38,7 +38,7 @@
 #include <vtkSmartPointer.h>
 
 //----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyDefaultPluginPrivate: public QObject
+class qSlicerSubjectHierarchyDefaultPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDefaultPlugin);
 protected:
@@ -113,7 +113,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::setDefaultVisibilityIcons(QIcon visib
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyDefaultPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyDefaultPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   Q_UNUSED(itemID);
 
@@ -122,13 +122,13 @@ double qSlicerSubjectHierarchyDefaultPlugin::canOwnSubjectHierarchyItem(vtkIdTyp
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyDefaultPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyDefaultPlugin::roleForPlugin() const
 {
   return "Unknown";
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyDefaultPlugin::helpText()const
+const QString qSlicerSubjectHierarchyDefaultPlugin::helpText() const
 {
   return tr(
     "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
@@ -192,7 +192,7 @@ QIcon qSlicerSubjectHierarchyDefaultPlugin::visibilityIcon(int visible)
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyDefaultPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyDefaultPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyDefaultPlugin);
 

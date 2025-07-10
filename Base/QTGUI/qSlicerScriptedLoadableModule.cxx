@@ -96,7 +96,7 @@ qSlicerScriptedLoadableModule::qSlicerScriptedLoadableModule(QObject* _parentObj
 qSlicerScriptedLoadableModule::~qSlicerScriptedLoadableModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedLoadableModule::pythonSource()const
+QString qSlicerScriptedLoadableModule::pythonSource() const
 {
   Q_D(const qSlicerScriptedLoadableModule);
   return d->PythonSourceFilePath;

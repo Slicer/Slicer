@@ -40,7 +40,7 @@ QString qMRMLSegmentationDisplayNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentationDisplayNodeWidget\" \
           name=\"SegmentationDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

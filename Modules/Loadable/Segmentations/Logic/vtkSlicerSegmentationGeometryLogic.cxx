@@ -429,7 +429,7 @@ bool vtkSlicerSegmentationGeometryLogic::IsSourceSegmentationWithBinaryLabelmapM
   vtkMRMLSegmentationNode* sourceSegmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->SourceGeometryNode);
   std::string binaryLabelmapName = vtkSegmentationConverter::GetBinaryLabelmapRepresentationName();
   vtkSmartPointer<vtkOrientedImageData> sourceBinaryLabelmap;
-  if ( sourceSegmentationNode
+  if (sourceSegmentationNode
     && sourceSegmentationNode->GetSegmentation()
     && sourceSegmentationNode->GetSegmentation()->GetNumberOfSegments() > 0
     && sourceSegmentationNode->GetSegmentation()->ContainsRepresentation(binaryLabelmapName)
@@ -494,7 +494,7 @@ void vtkSlicerSegmentationGeometryLogic::ComputeSourceAxisIndexForInputAxis()
   // If source is volume type and input segmentation has non-empty binary labelmap master that need to be resampled,
   // then match the axes of the input labelmap to the axes of the transformed source node.
   // Use this calculated permutation for updating spacing widget from geometry and interpreting spacing input
-  if ( (transformableSourceNode->IsA("vtkMRMLScalarVolumeNode") || this->IsSourceSegmentationWithBinaryLabelmapMaster())
+  if ((transformableSourceNode->IsA("vtkMRMLScalarVolumeNode") || this->IsSourceSegmentationWithBinaryLabelmapMaster())
     && this->InputSegmentationCanBeResampled() )
   {
     // Determine transform between source node and input segmentation
@@ -560,7 +560,7 @@ bool vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode()
 
   // Check if source representation is binary or fractional labelmap (those are the only supported representations in segment editor)
   std::string sourceRepresentationName = this->InputSegmentationNode->GetSegmentation()->GetSourceRepresentationName();
-  if ( sourceRepresentationName != vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()
+  if (sourceRepresentationName != vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()
     && sourceRepresentationName != vtkSegmentationConverter::GetFractionalLabelmapRepresentationName() )
   {
     vtkErrorMacro("vtkSlicerSegmentationGeometryLogic::ResampleLabelmapsInSegmentationNode: "

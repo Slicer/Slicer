@@ -49,11 +49,11 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   scalars->Delete();
 
   float* ptr = reinterpret_cast<float*>(scalars->GetVoidPointer(0));
-  for (int z = 0; z < dimensions[2]; ++z )
+  for (int z = 0; z < dimensions[2]; ++z)
   {
-    for (int y = 0; y < dimensions[1]; ++y )
+    for (int y = 0; y < dimensions[1]; ++y)
     {
-      for (int x = 0; x < dimensions[0]; ++x )
+      for (int x = 0; x < dimensions[0]; ++x)
       {
         ptr[0] = ptr[4] = ptr[8] = 1.f;
         ptr[1] = ptr[2] = ptr[3] = ptr[5] = ptr[6] = ptr[7] = 0.f;
@@ -75,11 +75,11 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   maskImage->AllocateScalars(VTK_SHORT, 9);
 
   short* maskPtr = reinterpret_cast<short*>(maskImage->GetScalarPointer());
-  for (int z = 0; z < dimensions[2]; ++z )
+  for (int z = 0; z < dimensions[2]; ++z)
   {
-    for (int y = 0; y < dimensions[1]; ++y )
+    for (int y = 0; y < dimensions[1]; ++y)
     {
-      for (int x = 0; x < dimensions[0]; ++x )
+      for (int x = 0; x < dimensions[0]; ++x)
       {
         *maskPtr++ = 0;
       }
@@ -106,11 +106,11 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
     // Checkout the results
     vtkImageData* output = filter->GetOutput();
     ptr = reinterpret_cast<float*>(output->GetScalarPointer());
-    for (int z = 0; z < dimensions[2]; ++z )
+    for (int z = 0; z < dimensions[2]; ++z)
     {
-      for (int y = 0; y < dimensions[1]; ++y )
+      for (int y = 0; y < dimensions[1]; ++y)
       {
-        for (int x = 0; x < dimensions[0]; ++x )
+        for (int x = 0; x < dimensions[0]; ++x)
         {
           std::cout << '(' << x << ',' << y << ',' << z << ")=" << *ptr << std::endl;
           ++ptr;

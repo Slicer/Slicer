@@ -54,31 +54,31 @@ public:
   qSlicerScriptedLoadableModule(QObject* parent = nullptr);
   ~qSlicerScriptedLoadableModule() override;
 
-  QString pythonSource()const;
+  QString pythonSource() const;
   bool setPythonSource(const QString& filePath);
 
-  QString title()const override ;
+  QString title() const override;
   void setTitle(const QString& newTitle);
 
-  QStringList categories()const override;
+  QStringList categories() const override;
   void setCategories(const QStringList& newCategories);
 
-  QStringList contributors()const override;
+  QStringList contributors() const override;
   void setContributors(const QStringList& newContributors);
 
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
   void setAssociatedNodeTypes(const QStringList& newAssociatedNodeTypes);
 
-  QString helpText()const override;
+  QString helpText() const override;
   void setHelpText(const QString& newHelpText);
 
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
   void setAcknowledgementText(const QString& newAcknowledgementText);
 
-  virtual QVariantMap extensions()const;
+  virtual QVariantMap extensions() const;
   void setExtensions(const QVariantMap& extensions);
 
-  QIcon icon()const override;
+  QIcon icon() const override;
   void setIcon(const QIcon& newIcon);
 
   QStringList dependencies() const override;
@@ -89,7 +89,7 @@ public:
 
   /// Enable/Disable hide state of the module
   /// Needs to be hidden before the module menu is created.
-  bool isHidden()const override;
+  bool isHidden() const override;
   void setHidden(bool hidden);
 
 protected:

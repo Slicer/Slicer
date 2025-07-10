@@ -42,7 +42,7 @@ public:
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dropEvent(QDropEvent* event) override;
 
-  QList<qSlicerIO::IOProperties> selectedFiles()const;
+  QList<qSlicerIO::IOProperties> selectedFiles() const;
 public slots:
   void addDirectory();
   void addFiles();
@@ -75,11 +75,11 @@ protected:
   void addFile(const QFileInfo& file, const QString& readerDescription = QString(), qSlicerIO::IOProperties* ioProperties = nullptr);
   void setFileOptions(int row, const QString& filePath, const QString& fileDescription);
   /// Return the row the last signal comes from.
-  int senderRow()const;
-  bool propagateChange(int changedRow)const;
+  int senderRow() const;
+  bool propagateChange(int changedRow) const;
   /// Return true if the 2 items have the same filetype options.
   /// I.e. same items int the TypeColumn combobox.
-  bool haveSameTypeOption(int row1, int row2)const;
+  bool haveSameTypeOption(int row1, int row2) const;
   /// Check if file is an archive, and if so, give the user
   /// the option to unpack it and load the contents.
   /// Currently only zip files with the extension .zip are handled.

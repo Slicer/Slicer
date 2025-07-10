@@ -215,17 +215,17 @@ protected:
   void operator=(const vtkMRMLSegmentEditorNode&);
 
   /// Selected segment ID
-  char* SelectedSegmentID{nullptr};
+  char* SelectedSegmentID{ nullptr };
 
   /// Active effect name
-  char* ActiveEffectName{nullptr};
+  char* ActiveEffectName{ nullptr };
 
   int MaskMode{vtkMRMLSegmentationNode::EditAllowedEverywhere};
-  char* MaskSegmentID{nullptr};
+  char* MaskSegmentID{ nullptr };
 
-  int OverwriteMode{OverwriteAllSegments};
+  int OverwriteMode{ OverwriteAllSegments };
 
-  bool SourceVolumeIntensityMask{false};
+  bool SourceVolumeIntensityMask{ false };
   double SourceVolumeIntensityMaskRange[2];
 };
 

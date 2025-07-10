@@ -26,7 +26,7 @@
 
 //-----------------------------------------------------------------------------
 ctkVTKConnection* qMRMLConnectionFactory::createConnection(
-  ctkVTKObjectEventsObserver* parent)const
+  ctkVTKObjectEventsObserver* parent) const
 {
   return new qMRMLEventBrokerConnection(parent);
 }

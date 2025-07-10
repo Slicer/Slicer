@@ -4,7 +4,7 @@
 #include "qMRMLThreeDView.h"
 
 //-----------------------------------------------------------------------------
-qMRMLThreeDViewPlugin::qMRMLThreeDViewPlugin(QObject* _parent):QObject(_parent)
+qMRMLThreeDViewPlugin::qMRMLThreeDViewPlugin(QObject* _parent): QObject(_parent)
 {
 }
 
@@ -28,7 +28,7 @@ QString qMRMLThreeDViewPlugin::domXml() const
           "   <height>200</height>\n"
           "  </rect>\n"
           " </property>\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

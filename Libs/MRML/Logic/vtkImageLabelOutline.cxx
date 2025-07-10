@@ -271,7 +271,7 @@ void vtkImageLabelOutline::ThreadedExecute(vtkImageData* inData,
 //----------------------------------------------------------------------------
 void vtkImageLabelOutline::PrintSelf(ostream& os, vtkIndent indent)
 {
-    Superclass::PrintSelf(os,indent);
+    Superclass::PrintSelf(os, indent);
 
     os << indent << "Outline: " << this->Outline << "\n";
     os << indent << "Background: " << this->Background<< "\n";

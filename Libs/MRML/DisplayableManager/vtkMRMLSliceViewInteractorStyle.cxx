@@ -60,7 +60,7 @@ vtkMRMLSliceViewInteractorStyle::~vtkMRMLSliceViewInteractorStyle()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "\nSlice Logic:\n";
   if (this->SliceLogic)

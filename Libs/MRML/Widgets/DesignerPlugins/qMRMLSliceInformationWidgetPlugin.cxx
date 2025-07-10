@@ -19,7 +19,7 @@ QString qMRMLSliceInformationWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSliceInformationWidget\" \
           name=\"MRMLSliceInformationWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

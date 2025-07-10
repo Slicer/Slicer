@@ -39,9 +39,9 @@ vtkMRMLLayoutNode::vtkMRMLLayoutNode()
 //----------------------------------------------------------------------------
 vtkMRMLLayoutNode::~vtkMRMLLayoutNode()
 {
-  if ( this->SelectedModule)
+  if (this->SelectedModule)
   {
-    delete [] this->SelectedModule;
+    delete[] this->SelectedModule;
     this->SelectedModule = nullptr;
   }
   if (this->LayoutRootElement)
@@ -110,65 +110,65 @@ void vtkMRMLLayoutNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->GUIPanelVisibility;
     }
-    else if ( !strcmp ( attName, "bottomPanelVisibility" ))
+    else if (!strcmp ( attName, "bottomPanelVisibility" ))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->BottomPanelVisibility;
     }
-    else if ( !strcmp (attName, "guiPanelLR" ))
+    else if (!strcmp (attName, "guiPanelLR" ))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->GUIPanelLR;
     }
-    else if ( !strcmp (attName, "collapseSliceControllers"))
+    else if (!strcmp (attName, "collapseSliceControllers"))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->CollapseSliceControllers;
     }
-    else if ( !strcmp (attName, "numberOfCompareViewRows" ))
+    else if (!strcmp (attName, "numberOfCompareViewRows" ))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfCompareViewRows;
     }
-    else if ( !strcmp (attName, "numberOfCompareViewColumns" ))
+    else if (!strcmp (attName, "numberOfCompareViewColumns" ))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfCompareViewColumns;
     }
-    else if ( !strcmp (attName, "numberOfLightboxRows" ))
+    else if (!strcmp (attName, "numberOfLightboxRows" ))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfCompareViewLightboxRows;
     }
-    else if ( !strcmp (attName, "numberOfLightboxColumns" ))
+    else if (!strcmp (attName, "numberOfLightboxColumns" ))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->NumberOfCompareViewLightboxColumns;
     }
-    else if ( !strcmp (attName, "mainPanelSize" ))
+    else if (!strcmp (attName, "mainPanelSize" ))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->MainPanelSize;
     }
-    else if ( !strcmp (attName, "secondaryPanelSize" ))
+    else if (!strcmp (attName, "secondaryPanelSize" ))
     {
       std::stringstream ss;
       ss << attValue;
       ss >> this->SecondaryPanelSize;
     }
-    else if ( !strcmp (attName, "selectedModule" ))
+    else if (!strcmp (attName, "selectedModule" ))
     {
       this->SetSelectedModule(attValue);
     }
-    else if ( !strcmp(attName, "layout"))
+    else if (!strcmp(attName, "layout"))
     {
       //this->SetAndParseCurrentLayoutDescription(attValue);
     }
@@ -189,7 +189,7 @@ void vtkMRMLLayoutNode::Reset(vtkMRMLNode* defaultNode)
 void vtkMRMLLayoutNode::SetViewArrangement(int arrNew)
 {
   // if the view arrangement definition has not been changed, return
-  if ( this->ViewArrangement == arrNew
+  if (this->ViewArrangement == arrNew
     && this->GetCurrentLayoutDescription()
     && this->GetCurrentLayoutDescription() == this->GetLayoutDescription(arrNew) )
   {
@@ -389,7 +389,7 @@ void vtkMRMLLayoutNode::CopyLayoutDescriptions(vtkMRMLLayoutNode* source)
 //----------------------------------------------------------------------------
 void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   // Layout:
   os << indent << "ViewArrangement: " << this->ViewArrangement  << "\n";
@@ -403,7 +403,7 @@ void vtkMRMLLayoutNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "NumberOfCompareViewLightboxColumns: " << this->NumberOfCompareViewLightboxColumns << "\n";
   os << indent << "Main panel size: " << this->MainPanelSize << "\n";
   os << indent << "Secondary panel size: " << this->SecondaryPanelSize << "\n";
-  if ( this->SelectedModule )
+  if (this->SelectedModule)
   {
     os << indent << "Selected module: " << this->SelectedModule << "\n";
   }

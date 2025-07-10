@@ -152,7 +152,7 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
   os << indent << "SingleFile:   " << this->SingleFile << "\n";
   os << indent << "UseOrientationFromFile:   " << this->UseOrientationFromFile << "\n";
@@ -221,14 +221,14 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
   {
     reader->UpdateInformation();
   }
-  catch ( ... )
+  catch (...)
   {
     return nullptr;
   }
 
   unsigned int numberOfFileNames = reader->GetNumberOfFileNames();
 
-  if ( numberOfFileNames == 1 )
+  if (numberOfFileNames == 1)
   {
     reader = vtkSmartPointer<vtkITKArchetypeImageSeriesVectorReaderFile>::New();
     reader->SetArchetype(fullName.c_str());
@@ -238,7 +238,7 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
     {
       reader->UpdateInformation();
     }
-    catch ( ... )
+    catch (...)
     {
       return nullptr;
     }
@@ -281,7 +281,7 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode* storage
   // one of those, then don't send the rest of the list
   //
   std::string fileExt = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if ( fileExt != std::string(".hdr")
+  if (fileExt != std::string(".hdr")
       && fileExt != std::string(".img")
       && fileExt != std::string(".mhd")
       && fileExt != std::string(".nhdr") )
@@ -641,7 +641,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
         vtkDebugMacro("WriteData: moving file number " << fileNum << ", " << sourceFile << " to " << targetFile);
         // thisFile needs a full path it's bare
         int renameReturn = std::rename(sourceFile.c_str(), targetFile.c_str());
-        if (renameReturn != 0 )
+        if (renameReturn != 0)
         {
           vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
             vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Error renaming file to '%1', rename returned code %2"),
@@ -802,7 +802,7 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
 std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNode, bool move)
 {
   // test whether refNode is a valid node to hold a volume
-  if (!refNode->IsA("vtkMRMLScalarVolumeNode") )
+  if (!refNode->IsA("vtkMRMLScalarVolumeNode"))
   {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode::UpdateFileList: Reference node is not a volume");
     return "";

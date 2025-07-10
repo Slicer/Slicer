@@ -34,7 +34,7 @@
 // VTK includes
 #include <vtkNew.h>
 
-int qMRMLSequenceEditWidgetTest1( int argc, char* argv [] )
+int qMRMLSequenceEditWidgetTest1(int argc, char* argv[])
 {
   QApplication app(argc, argv);
 

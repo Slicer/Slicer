@@ -43,7 +43,7 @@ QString qMRMLSceneFactoryWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSceneFactoryWidget\" \
           name=\"MRMLSceneFactoryWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

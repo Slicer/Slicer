@@ -89,7 +89,7 @@ void qMRMLColorModelPrivate::updateColumnCount()
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModelPrivate::maxColumnId()const
+int qMRMLColorModelPrivate::maxColumnId() const
 {
   int maxId = 0; // information (scene, node uid... ) are stored in the 1st column
   maxId = qMax(maxId, this->ColorColumn);
@@ -140,7 +140,7 @@ void qMRMLColorModel::setMRMLColorNode(vtkMRMLColorNode* colorNode)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLColorModel::mrmlColorNode()const
+vtkMRMLColorNode* qMRMLColorModel::mrmlColorNode() const
 {
   Q_D(const qMRMLColorModel);
   return d->MRMLColorNode;
@@ -167,14 +167,14 @@ void qMRMLColorModel::setNoneEnabled(bool enable)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLColorModel::noneEnabled()const
+bool qMRMLColorModel::noneEnabled() const
 {
   Q_D(const qMRMLColorModel);
   return d->NoneEnabled;
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::colorColumn()const
+int qMRMLColorModel::colorColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->ColorColumn;
@@ -189,7 +189,7 @@ void qMRMLColorModel::setColorColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::labelColumn()const
+int qMRMLColorModel::labelColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->LabelColumn;
@@ -204,7 +204,7 @@ void qMRMLColorModel::setLabelColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::opacityColumn()const
+int qMRMLColorModel::opacityColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->OpacityColumn;
@@ -219,7 +219,7 @@ void qMRMLColorModel::setOpacityColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::terminologyColumn()const
+int qMRMLColorModel::terminologyColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->TerminologyColumn;
@@ -234,7 +234,7 @@ void qMRMLColorModel::setTerminologyColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::checkableColumn()const
+int qMRMLColorModel::checkableColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->CheckableColumn;
@@ -250,7 +250,7 @@ void qMRMLColorModel::setCheckableColumn(int column)
 
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::colorFromItem(QStandardItem* colorItem)const
+int qMRMLColorModel::colorFromItem(QStandardItem* colorItem) const
 {
   Q_D(const qMRMLColorModel);
   // TODO: fasten by saving the pointer into the data
@@ -267,7 +267,7 @@ int qMRMLColorModel::colorFromItem(QStandardItem* colorItem)const
 }
 
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
+QStandardItem* qMRMLColorModel::itemFromColor(int color, int column) const
 {
   if (color == -1)
   {
@@ -288,14 +288,14 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
 }
 
 //------------------------------------------------------------------------------
-QModelIndexList qMRMLColorModel::indexes(int color)const
+QModelIndexList qMRMLColorModel::indexes(int color) const
 {
   return this->match(this->index(0,0), qMRMLItemDelegate::ColorEntryRole, color, -1,
                      Qt::MatchExactly | Qt::MatchRecursive);
 }
 
 //------------------------------------------------------------------------------
-QColor qMRMLColorModel::qcolorFromColor(int entry)const
+QColor qMRMLColorModel::qcolorFromColor(int entry) const
 {
   Q_D(const qMRMLColorModel);
   if (d->MRMLColorNode == nullptr || entry < 0)
@@ -308,7 +308,7 @@ QColor qMRMLColorModel::qcolorFromColor(int entry)const
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLColorModel::nameFromColor(int entry)const
+QString qMRMLColorModel::nameFromColor(int entry) const
 {
   Q_D(const qMRMLColorModel);
   if (d->MRMLColorNode == nullptr || entry < 0)
@@ -319,7 +319,7 @@ QString qMRMLColorModel::nameFromColor(int entry)const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::colorFromName(const QString& name)const
+int qMRMLColorModel::colorFromName(const QString& name) const
 {
   Q_D(const qMRMLColorModel);
   if (d->MRMLColorNode == nullptr)
@@ -473,7 +473,7 @@ void qMRMLColorModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
   qMRMLColorModel* colorModel = reinterpret_cast<qMRMLColorModel*>(client_data);
   Q_ASSERT(colorNode);
   Q_ASSERT(colorModel);
-  switch(event)
+  switch (event)
   {
     default:
     case vtkCommand::ModifiedEvent:
@@ -559,7 +559,7 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
 
   // Get region (if any; with modifier, if any)
   QString region;
-  if ( colorNode->GetTerminologyRegion(colorIndex) != nullptr
+  if (colorNode->GetTerminologyRegion(colorIndex) != nullptr
     && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
   {
     region = colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning();

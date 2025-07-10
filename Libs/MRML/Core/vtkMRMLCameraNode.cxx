@@ -94,7 +94,7 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
           ss << " ";
         }
       }
-      if ( row != 3 )
+      if (row != 3)
       {
         ss << " ";
       }
@@ -204,7 +204,7 @@ void vtkMRMLCameraNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 //----------------------------------------------------------------------------
 void vtkMRMLCameraNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintVectorMacro(Position, double, 3);
@@ -546,7 +546,7 @@ void vtkMRMLCameraNode::TranslateAlong(ScreenAxis screenAxis, bool positive)
   const double height = tan( viewAngle / 2) * distance * 2.;
   const double shift = (positive ? 1. : -1. ) * height / 6.;
   double offset[3] = {0., 0., 0.};
-  switch(screenAxis)
+  switch (screenAxis)
   {
     case X:
     {

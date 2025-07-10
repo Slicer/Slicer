@@ -11,7 +11,7 @@
 #include "vtkSlicerBaseLogic.h"
 #include <vtkVersion.h>
 
-class  VTK_SLICER_BASE_LOGIC_EXPORT vtkImageRectangularSource : public vtkImageAlgorithm
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageRectangularSource : public vtkImageAlgorithm
 {
 public:
   static vtkImageRectangularSource* New();

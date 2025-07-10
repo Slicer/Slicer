@@ -42,7 +42,7 @@
 
 // STD includes
 
-int qMRMLSceneHierarchyModelTest1(int argc, char* argv [])
+int qMRMLSceneHierarchyModelTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -113,7 +113,7 @@ int qMRMLSceneHierarchyModelTest1(int argc, char* argv [])
   view2.show();
   view2.resize(500, 300);
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

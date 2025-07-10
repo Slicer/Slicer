@@ -41,18 +41,18 @@ public:
                        QObject* parent = nullptr);
   ~qSlicerTablesReader() override;
 
-  vtkSlicerTablesLogic* logic()const;
+  vtkSlicerTablesLogic* logic() const;
   void setLogic(vtkSlicerTablesLogic* logic);
 
-  QString description()const override;
-  IOFileType fileType()const override;
-  QStringList extensions()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
 
   /// Returns a positive number (>0) if the reader can load this file.
   /// It only differs from the default confidence (based on file extension matching)
   /// that .txt files are recognized with a reduced confidence of 0.4, because
   /// .txt files more likely store simple text than a table.
-  double canLoadFileConfidence(const QString& file)const override;
+  double canLoadFileConfidence(const QString& file) const override;
 
   bool load(const IOProperties& properties) override;
 protected:

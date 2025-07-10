@@ -151,7 +151,7 @@ public:
 }
 
 //-----------------------------------------------------------------------------
-class qSlicerExtensionsManagerWidgetPrivate: public Ui_qSlicerExtensionsManagerWidget
+class qSlicerExtensionsManagerWidgetPrivate : public Ui_qSlicerExtensionsManagerWidget
 {
   Q_DECLARE_PUBLIC(qSlicerExtensionsManagerWidget);
 protected:
@@ -315,7 +315,7 @@ qSlicerExtensionsManagerWidget::~qSlicerExtensionsManagerWidget()
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel* qSlicerExtensionsManagerWidget::extensionsManagerModel()const
+qSlicerExtensionsManagerModel* qSlicerExtensionsManagerWidget::extensionsManagerModel() const
 {
   Q_D(const qSlicerExtensionsManagerWidget);
   return d->ExtensionsLocalWidget->extensionsManagerModel();

@@ -24,17 +24,17 @@ public:
   qSlicerGetTitleMacro(tr("Crop Volume"));
 
   /// Return a custom icon for the module
-  QIcon icon()const override;
+  QIcon icon() const override;
   QStringList categories() const override;
 
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
-  QStringList dependencies()const override;
+  QStringList dependencies() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer

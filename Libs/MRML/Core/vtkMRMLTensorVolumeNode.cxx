@@ -54,7 +54,7 @@ void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)
     for (int j = 0; j<3; j++)
     {
       ss << this->MeasurementFrameMatrix[i][j] << " ";
-      if ( i != 2 && j != 2 )
+      if (i != 2 && j != 2)
       {
         ss << "  ";
       }
@@ -197,7 +197,7 @@ void vtkMRMLTensorVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << "MeasurementFrameMatrix:\n";
   for (int i = 0; i<3; i++)
   {

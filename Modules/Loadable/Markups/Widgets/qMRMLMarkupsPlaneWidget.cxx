@@ -137,7 +137,7 @@ void qMRMLMarkupsPlaneWidget::setup()
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLMarkupsPlaneNode* qMRMLMarkupsPlaneWidget::mrmlPlaneNode()const
+vtkMRMLMarkupsPlaneNode* qMRMLMarkupsPlaneWidget::mrmlPlaneNode() const
 {
   Q_D(const qMRMLMarkupsPlaneWidget);
   return vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);

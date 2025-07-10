@@ -25,7 +25,7 @@
 #include "qSlicerCorePythonManager.h"
 
 // ----------------------------------------------------------------------------
-class qSlicerCorePythonManagerWithoutApplicationTester: public QObject
+class qSlicerCorePythonManagerWithoutApplicationTester : public QObject
 {
   Q_OBJECT
 

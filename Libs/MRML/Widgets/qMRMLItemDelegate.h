@@ -37,7 +37,7 @@ class ctkDoubleSpinBox;
 /// If an index has a Qt::EditRole set to a QString that exactly is on the form
 /// X.YY where X is 0 or 1 and Y is a digit (0 to 9), then the editor will be
 /// a ctkDoubleSpinBox with a slider popping up on mouse hover.
-class QMRML_WIDGETS_EXPORT qMRMLItemDelegate: public QStyledItemDelegate
+class QMRML_WIDGETS_EXPORT qMRMLItemDelegate : public QStyledItemDelegate
 {
   Q_OBJECT
 public:
@@ -53,9 +53,9 @@ public:
     ColorRole
   };
 
-  bool isColor(const QModelIndex& index)const;
-  int colorRole(const QModelIndex& index)const;
-  bool is0To1Value(const QModelIndex& index)const;
+  bool isColor(const QModelIndex& index) const;
+  int colorRole(const QModelIndex& index) const;
+  bool is0To1Value(const QModelIndex& index) const;
 
   QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                           const QModelIndex& index) const override;

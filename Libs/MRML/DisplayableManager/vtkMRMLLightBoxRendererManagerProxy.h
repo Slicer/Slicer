@@ -43,7 +43,7 @@ public:
 
 protected:
   vtkMRMLLightBoxRendererManagerProxy() ;
-  ~vtkMRMLLightBoxRendererManagerProxy() override ;
+  ~vtkMRMLLightBoxRendererManagerProxy() override;
 
 private:
   vtkMRMLLightBoxRendererManagerProxy(const vtkMRMLLightBoxRendererManagerProxy&) = delete;

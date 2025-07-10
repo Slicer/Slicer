@@ -233,7 +233,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::AddSegmentationNode(
   for (int i = 0; i<nnodes; i++)
   {
     vtkMRMLSegmentationDisplayNode* dnode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
-    if ( this->UseDisplayNode(dnode) )
+    if (this->UseDisplayNode(dnode))
     {
       this->SegmentationToDisplayNodes[node].insert(dnode);
       this->AddDisplayNode( node, dnode );
@@ -258,7 +258,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::RemoveSegmentationNo
 
   std::set<vtkMRMLSegmentationDisplayNode*> dnodes = displayableIt->second;
   std::set<vtkMRMLSegmentationDisplayNode*>::iterator diter;
-  for ( diter = dnodes.begin(); diter != dnodes.end(); ++diter)
+  for (diter = dnodes.begin(); diter != dnodes.end(); ++diter)
   {
     this->RemoveDisplayNode(*diter);
   }
@@ -291,9 +291,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateDisplayableTra
   PipelinesCacheType::iterator pipelinesIter;
   std::set<vtkMRMLSegmentationDisplayNode*> displayNodes = this->SegmentationToDisplayNodes[mNode];
   std::set<vtkMRMLSegmentationDisplayNode*>::iterator dnodesIter;
-  for ( dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++ )
+  for (dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++)
   {
-    if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
+    if (((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()))
     {
       this->UpdateDisplayNodePipeline(pipelinesIter->first, pipelinesIter->second);
       for (PipelineMapType::iterator pipelineIt=pipelinesIter->second.begin(); pipelineIt!=pipelinesIter->second.end(); ++pipelineIt)
@@ -877,7 +877,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::PrintSelf(ostream& os, vtkIndent 
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager3D::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if ( !node->IsA("vtkMRMLSegmentationNode") )
+  if (!node->IsA("vtkMRMLSegmentationNode"))
   {
     return;
   }
@@ -896,7 +896,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::OnMRMLSceneNodeAdded(vtkMRMLNode*
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager3D::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if ( node
+  if (node
     && (!node->IsA("vtkMRMLSegmentationNode"))
     && (!node->IsA("vtkMRMLSegmentationDisplayNode")) )
   {
@@ -907,12 +907,12 @@ void vtkMRMLSegmentationsDisplayableManager3D::OnMRMLSceneNodeRemoved(vtkMRMLNod
   vtkMRMLSegmentationDisplayNode* displayNode = nullptr;
 
   bool modified = false;
-  if ( (segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node)) )
+  if ((segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(node)))
   {
     this->Internal->RemoveSegmentationNode(segmentationNode);
     modified = true;
   }
-  else if ( (displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node)) )
+  else if ((displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node)))
   {
     this->Internal->RemoveDisplayNode(displayNode);
     modified = true;
@@ -946,7 +946,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject*
         this->RequestRender();
       }
     }
-    else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)
            || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
            || (event == vtkSegmentation::RepresentationModified)
            || (event == vtkSegmentation::SegmentModified) )
@@ -954,7 +954,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject*
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();
     }
-    else if ( (event == vtkCommand::ModifiedEvent) // segmentation object may be replaced
+    else if ((event == vtkCommand::ModifiedEvent) // segmentation object may be replaced
            || (event == vtkSegmentation::SegmentAdded)
            || (event == vtkSegmentation::SegmentRemoved) )
     {

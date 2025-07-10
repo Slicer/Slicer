@@ -153,7 +153,7 @@ void qMRMLNodeFactory::removeAttribute(const QString& name)
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLNodeFactory::attribute(const QString& name)const
+QString qMRMLNodeFactory::attribute(const QString& name) const
 {
   Q_D(const qMRMLNodeFactory);
   return d->Attributes[name];
@@ -167,7 +167,7 @@ void qMRMLNodeFactory::setBaseName(const QString& className, const QString& base
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLNodeFactory::baseName(const QString& className)const
+QString qMRMLNodeFactory::baseName(const QString& className) const
 {
   Q_D(const qMRMLNodeFactory);
   if (!d->BaseNames.contains(className))

@@ -68,7 +68,7 @@ class vtkPolyDataNormals;
 class vtkPolyDataToImageStencil;
 
 /// \brief Private implementation of the segment editor paint effect
-class qSlicerSegmentEditorPaintEffectPrivate: public QObject
+class qSlicerSegmentEditorPaintEffectPrivate : public QObject
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorPaintEffect);

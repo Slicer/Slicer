@@ -61,7 +61,7 @@ public:
 
   /// Get the \a modulesToAlwaysIgnore list.
   /// \sa setModulesToAlwaysIgnore(const QStringList& modulesNames)
-  QStringList modulesToAlwaysIgnore()const;
+  QStringList modulesToAlwaysIgnore() const;
 
 public slots:
 

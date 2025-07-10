@@ -32,7 +32,7 @@
 // qSlicerSubjectHierarchySettingsPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchySettingsPanelPrivate: public Ui_qSlicerSubjectHierarchySettingsPanel
+class qSlicerSubjectHierarchySettingsPanelPrivate : public Ui_qSlicerSubjectHierarchySettingsPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchySettingsPanel);
 protected:
@@ -49,7 +49,7 @@ public:
 // --------------------------------------------------------------------------
 qSlicerSubjectHierarchySettingsPanelPrivate
 ::qSlicerSubjectHierarchySettingsPanelPrivate(qSlicerSubjectHierarchySettingsPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 

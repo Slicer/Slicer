@@ -139,14 +139,14 @@ void qMRMLCoordinatesWidget::setQuantity(const QString& quantity)
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLCoordinatesWidget::quantity()const
+QString qMRMLCoordinatesWidget::quantity() const
 {
   Q_D(const qMRMLCoordinatesWidget);
   return d->Quantity;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLCoordinatesWidget::mrmlScene()const
+vtkMRMLScene* qMRMLCoordinatesWidget::mrmlScene() const
 {
   Q_D(const qMRMLCoordinatesWidget);
   return d->MRMLScene;
@@ -168,7 +168,7 @@ void qMRMLCoordinatesWidget::setMRMLScene(vtkMRMLScene* scene)
 
 // --------------------------------------------------------------------------
 qMRMLCoordinatesWidget::UnitAwareProperties
-qMRMLCoordinatesWidget::unitAwareProperties()const
+qMRMLCoordinatesWidget::unitAwareProperties() const
 {
   Q_D(const qMRMLCoordinatesWidget);
   return d->Flags;

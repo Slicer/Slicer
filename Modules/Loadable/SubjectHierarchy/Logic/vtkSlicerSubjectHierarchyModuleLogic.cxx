@@ -79,7 +79,7 @@ void vtkSlicerSubjectHierarchyModuleLogic::UpdateFromMRMLScene()
 vtkIdType vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy(
   vtkMRMLSubjectHierarchyNode* shNode, const char* patientId, const char* studyInstanceUID, const char* seriesInstanceUID )
 {
-  if ( !shNode || !patientId || !studyInstanceUID || !seriesInstanceUID )
+  if (!shNode || !patientId || !studyInstanceUID || !seriesInstanceUID)
   {
     vtkGenericWarningMacro("vtkSlicerSubjectHierarchyModuleLogic::InsertDicomSeriesInHierarchy: Invalid input arguments");
     return vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;
@@ -257,7 +257,7 @@ vtkIdType vtkSlicerSubjectHierarchyModuleLogic::AreNodesInSameBranch(vtkMRMLNode
 bool vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(std::string tagName)
 {
   std::vector<std::string> patientTagNames = vtkMRMLSubjectHierarchyConstants::GetDICOMPatientTagNames();
-  for ( std::vector<std::string>::iterator patientTagIt = patientTagNames.begin();
+  for (std::vector<std::string>::iterator patientTagIt = patientTagNames.begin();
     patientTagIt != patientTagNames.end(); ++patientTagIt )
   {
     if (!tagName.compare(*patientTagIt))
@@ -273,7 +273,7 @@ bool vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(std::string tagName)
 bool vtkSlicerSubjectHierarchyModuleLogic::IsStudyTag(std::string tagName)
 {
   std::vector<std::string> studyTagNames = vtkMRMLSubjectHierarchyConstants::GetDICOMStudyTagNames();
-  for ( std::vector<std::string>::iterator studyTagIt = studyTagNames.begin();
+  for (std::vector<std::string>::iterator studyTagIt = studyTagNames.begin();
     studyTagIt != studyTagNames.end(); ++studyTagIt )
   {
     if (!tagName.compare(*studyTagIt))

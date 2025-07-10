@@ -39,7 +39,7 @@ QString qMRMLDisplayNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLDisplayNodeWidget\" \
           name=\"MRMLDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

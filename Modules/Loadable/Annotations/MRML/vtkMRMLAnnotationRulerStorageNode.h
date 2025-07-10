@@ -11,7 +11,7 @@
 
 class vtkMRMLAnnotationRulerNode;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerStorageNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerStorageNode
   : public vtkMRMLAnnotationLinesStorageNode
 {
 public:

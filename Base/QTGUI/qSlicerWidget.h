@@ -46,10 +46,10 @@ public:
   ~qSlicerWidget() override;
 
   // Convenience method for getting application logic from the application.
-  vtkSlicerApplicationLogic* appLogic()const;
+  vtkSlicerApplicationLogic* appLogic() const;
 
   // Convenience method for getting a module logic from the application.
-  vtkMRMLAbstractLogic* moduleLogic(const QString& moduleName)const;
+  vtkMRMLAbstractLogic* moduleLogic(const QString& moduleName) const;
 
 public slots:
   void setMRMLScene(vtkMRMLScene* scene) override;

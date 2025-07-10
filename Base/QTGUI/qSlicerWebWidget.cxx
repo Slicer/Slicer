@@ -78,7 +78,7 @@ qSlicerWebEnginePage::~qSlicerWebEnginePage() = default;
 
 // --------------------------------------------------------------------------
 qSlicerWebWidgetPrivate::qSlicerWebWidgetPrivate(qSlicerWebWidget& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
   , HandleExternalUrlWithDesktopService(false)
   , NavigationRequestAccepted(true)
 {

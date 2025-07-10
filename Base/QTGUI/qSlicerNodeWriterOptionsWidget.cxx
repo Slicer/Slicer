@@ -59,7 +59,7 @@ qSlicerNodeWriterOptionsWidget::qSlicerNodeWriterOptionsWidget(QWidget* parentWi
 qSlicerNodeWriterOptionsWidget::~qSlicerNodeWriterOptionsWidget() = default;
 
 //------------------------------------------------------------------------------
-bool qSlicerNodeWriterOptionsWidget::isValid()const
+bool qSlicerNodeWriterOptionsWidget::isValid() const
 {
   Q_D(const qSlicerNodeWriterOptionsWidget);
   return d->Properties.contains("nodeID") &&
@@ -112,7 +112,7 @@ void qSlicerNodeWriterOptionsWidget::setUseCompression(bool use)
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerNodeWriterOptionsWidget::showUseCompression()const
+bool qSlicerNodeWriterOptionsWidget::showUseCompression() const
 {
   Q_D(const qSlicerNodeWriterOptionsWidget);
   return d->UseCompressionCheckBox->isVisibleTo(

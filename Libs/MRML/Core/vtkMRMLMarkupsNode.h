@@ -78,7 +78,7 @@ class vtkPolyData;
 class vtkStringArray;
 class vtkTransformPolyDataFilter;
 
-class  VTK_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
 {
   /// Make the storage node a friend so that ReadDataInternal can set the ControlPoint ids
   friend class vtkMRMLMarkupsStorageNode;
@@ -600,7 +600,7 @@ public:
 
   /// Returns true since can apply non linear transforms
   /// \sa ApplyTransform
-  bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms() const override;
 
   /// Apply the passed transformation to all of the control points
   /// \sa CanApplyNonLinearTransforms
@@ -983,12 +983,12 @@ protected:
 
   /// Used for limiting number of control points that may be placed.
   /// This is a soft limit at which automatic placement stops.
-  int RequiredNumberOfControlPoints{0};
+  int RequiredNumberOfControlPoints{ 0 };
   /// Used for limiting number of control points that may be placed.
   /// This is a hard limit at which new control points cannot be added.
   int MaximumNumberOfControlPoints{-1};
 
-  bool CurveClosed{false};
+  bool CurveClosed{ false };
 
   /// Vector of control points
   ControlPointsListType ControlPoints;
@@ -1014,18 +1014,18 @@ protected:
   vtkSmartPointer<vtkPointLocator> TransformedCurvePolyLocator;
 
   /// Locks all the points and GUI
-  int Locked{0};
+  int Locked{ 0 };
 
   /// Locks number of control points. If enabled then points cannot be added or removed.
   /// Point position can be unset instead of deleting the point.
-  bool FixedNumberOfControlPoints{false};
+  bool FixedNumberOfControlPoints{ false };
 
   std::string ControlPointLabelFormat{"%N-%d"};
 
   /// Keep track of the number of markups that were added to the list, always
   /// incrementing, not decreasing when they're removed. Used to help create
   /// unique names and ids. Reset to 0 when \sa RemoveAllControlPoints called
-  int LastUsedControlPointNumber{0};
+  int LastUsedControlPointNumber{ 0 };
 
   /// Index of the control point index that placement is started from (if no other point is requested specifically).
   int ControlPointPlacementStartIndex{ -1 };
@@ -1049,7 +1049,7 @@ protected:
   vtkSmartPointer<vtkMatrix4x4> InteractionHandleToWorldMatrix;
 
   /// Flag set from SetControlPointPositionsWorld that pauses update of measurements until the update is complete.
-  bool IsUpdatingPoints{false};
+  bool IsUpdatingPoints{ false };
 
   friend class qSlicerMarkupsModuleWidget; // To directly access measurements
 };

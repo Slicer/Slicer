@@ -75,18 +75,18 @@ void vtkObservation::PrintSelf(ostream& os, vtkIndent indent)
   this->vtkObject::PrintSelf(os, indent);
 
 
-  if ( this->CallbackCommand ) os << indent << "EventBroker: " << this->EventBroker << "\n";
+  if (this->CallbackCommand ) os << indent << "EventBroker: " << this->EventBroker << "\n";
   else os << indent << "EventBroker: " << "(none) \n";
 
-  if ( this->Subject ) os << indent << "Subject: " << this->Subject << "\n";
+  if (this->Subject ) os << indent << "Subject: " << this->Subject << "\n";
   else os << indent << "Subject: " << "(none) \n";
 
   os << indent << "Event: " << this->Event << "\n";
 
-  if ( this->Observer ) os << indent << "Observer: " << this->Observer << "\n";
+  if (this->Observer ) os << indent << "Observer: " << this->Observer << "\n";
   else os << indent << "Observer: " << "(none) \n";
 
-  if ( this->CallbackCommand ) os << indent << "CallbackCommand: " << this->CallbackCommand << "\n";
+  if (this->CallbackCommand ) os << indent << "CallbackCommand: " << this->CallbackCommand << "\n";
   else os << indent << "CallbackCommand: " << "(none) \n";
 
   os << indent << "Script: " <<

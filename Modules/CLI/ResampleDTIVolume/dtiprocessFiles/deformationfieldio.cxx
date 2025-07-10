@@ -29,7 +29,7 @@ DeformationImageType::Pointer readDeformationField(std::string warpfile, Deforma
   DeformationImageReader::Pointer defreader = DeformationImageReader::New();
   defreader->SetFileName(warpfile.c_str() );
 
-  if ( dft == HField )
+  if (dft == HField)
   {
 
     typedef itk::HFieldToDeformationFieldImageFilter<DeformationImageType> DeformationConvertType;

@@ -36,7 +36,7 @@
 //---------------------------------------------------------------------------
 /// vtkMRMLTestLogic records what methods of vtkMRMLAbstractLogic are called
 /// when vtkMRMLScene fires events.
-class vtkMRMLTestLogic: public vtkMRMLAbstractLogic
+class vtkMRMLTestLogic : public vtkMRMLAbstractLogic
 {
 public:
   vtkTypeMacro(vtkMRMLTestLogic, vtkMRMLAbstractLogic);

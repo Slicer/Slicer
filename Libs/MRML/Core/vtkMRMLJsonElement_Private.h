@@ -234,7 +234,7 @@ public:
   }
 
   std::vector<char> WriteBuffer;
-  FILE* WriteFileHandle{0};
+  FILE* WriteFileHandle{ 0 };
   std::unique_ptr<rapidjson::FileWriteStream> FileWriteStream;
   std::unique_ptr<rapidjson::StringBuffer> StringBuffer;
   std::unique_ptr<BaseWriter> Writer;

@@ -4,7 +4,7 @@
 #include "qMRMLLabelComboBox.h"
 
 //-----------------------------------------------------------------------------
-qMRMLLabelComboBoxPlugin::qMRMLLabelComboBoxPlugin(QObject* _parent):QObject(_parent)
+qMRMLLabelComboBoxPlugin::qMRMLLabelComboBoxPlugin(QObject* _parent): QObject(_parent)
 {
 }
 
@@ -28,7 +28,7 @@ QString qMRMLLabelComboBoxPlugin::domXml() const
           "   <height>20</height>\n"
           "  </rect>\n"
           " </property>\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

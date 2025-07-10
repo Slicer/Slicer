@@ -181,7 +181,7 @@ public:
   }
   void HandleProgressEvent ()
   {
-    if ( this->m_Process )
+    if (this->m_Process)
     {
       this->UpdateProgress ( m_Process->GetProgress() );
     }
@@ -232,7 +232,7 @@ public:
   /// BTX
   void LinkITKProgressToVTKProgress ( itk::ProcessObject* process )
   {
-    if ( process )
+    if (process)
     {
       this->m_Process = process;
       this->m_Process->AddObserver ( itk::ProgressEvent(), this->m_ProgressCommand );

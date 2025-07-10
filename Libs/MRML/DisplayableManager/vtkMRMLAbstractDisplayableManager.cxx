@@ -431,7 +431,7 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractor(int eventI
   {
     int currentInteractionMode =
       this->MRMLInteractionNode->GetCurrentInteractionMode();
-    if ( currentInteractionMode & this->External->ActiveInteractionModes() )
+    if (currentInteractionMode & this->External->ActiveInteractionModes())
     {
       this->SetAndObserveInteractor(this->Renderer->GetRenderWindow()->GetInteractor());
       updateObserver = (this->Interactor != nullptr);
@@ -734,7 +734,7 @@ vtkCallbackCommand* vtkMRMLAbstractDisplayableManager::GetWidgetsCallbackCommand
 }
 
 //----------------------------------------------------------------------------
-vtkObserverManager* vtkMRMLAbstractDisplayableManager::GetWidgetsObserverManager()const
+vtkObserverManager* vtkMRMLAbstractDisplayableManager::GetWidgetsObserverManager() const
 {
   return this->Internal->WidgetsObserverManager;
 }

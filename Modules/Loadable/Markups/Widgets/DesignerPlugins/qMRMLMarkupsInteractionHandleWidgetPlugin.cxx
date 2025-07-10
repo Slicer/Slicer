@@ -40,7 +40,7 @@ QString qMRMLMarkupsInteractionHandleWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLMarkupsInteractionHandleWidget\" \
           name=\"MRMLMarkupsInteractionHandleWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

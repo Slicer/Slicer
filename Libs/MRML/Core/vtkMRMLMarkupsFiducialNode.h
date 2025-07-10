@@ -34,7 +34,7 @@
 /// There is no specific limit for number of points that can be added to a list,
 /// but performance is optimal if there are less than 2000 points.
 ///
-class  VTK_MRML_EXPORT vtkMRMLMarkupsFiducialNode : public vtkMRMLMarkupsNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsFiducialNode : public vtkMRMLMarkupsNode
 {
 public:
   static vtkMRMLMarkupsFiducialNode* New();

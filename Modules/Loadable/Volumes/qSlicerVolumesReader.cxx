@@ -82,26 +82,26 @@ void qSlicerVolumesReader::setLogic(vtkSlicerVolumesLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerVolumesLogic* qSlicerVolumesReader::logic()const
+vtkSlicerVolumesLogic* qSlicerVolumesReader::logic() const
 {
   Q_D(const qSlicerVolumesReader);
   return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumesReader::description()const
+QString qSlicerVolumesReader::description() const
 {
   return tr("Volume");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerVolumesReader::fileType()const
+qSlicerIO::IOFileType qSlicerVolumesReader::fileType() const
 {
   return QString("VolumeFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVolumesReader::extensions()const
+QStringList qSlicerVolumesReader::extensions() const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
   return QStringList()
@@ -112,7 +112,7 @@ QStringList qSlicerVolumesReader::extensions()const
 }
 
 //----------------------------------------------------------------------------
-double qSlicerVolumesReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerVolumesReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
   // Confidence for .nrrd and .nhdr file is 0.55 (5 characters in the file extension matched)
@@ -161,7 +161,7 @@ double qSlicerVolumesReader::canLoadFileConfidence(const QString& fileName)const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerVolumesReader::options()const
+qSlicerIOOptions* qSlicerVolumesReader::options() const
 {
   // set the mrml scene on the options widget to allow selecting a color node
   qSlicerIOOptionsWidget* options = new qSlicerVolumesIOOptionsWidget;
@@ -267,7 +267,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, qSlicerIO::IOProperties& ioProperties)const
+bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, qSlicerIO::IOProperties& ioProperties) const
 {
 
   //

@@ -298,7 +298,7 @@ void vtkSlicerPlaneRepresentation2D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsPlaneNode* markupsNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
-  if ( !markupsNode || markupsNode->GetLocked() || !markupsNode->GetIsPlaneValid()
+  if (!markupsNode || markupsNode->GetLocked() || !markupsNode->GetIsPlaneValid()
     || !this->GetVisibility() || !interactionEventData )
   {
     return;

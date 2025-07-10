@@ -24,7 +24,7 @@ QString qMRMLLinearTransformSliderPlugin::domXml() const
           "   <height>32</height>\n"
           "  </rect>\n"
           " </property>\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLLinearTransformSliderPlugin::icon() const

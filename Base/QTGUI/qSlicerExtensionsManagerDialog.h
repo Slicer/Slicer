@@ -45,11 +45,11 @@ public:
   /// Destructor
   ~qSlicerExtensionsManagerDialog() override;
 
-  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
+  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel() const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
   /// Return True if the application is expected to be restarted.
-  bool restartRequested()const;
+  bool restartRequested() const;
 
   /// \sa restartRequested()
   void setRestartRequested(bool value);

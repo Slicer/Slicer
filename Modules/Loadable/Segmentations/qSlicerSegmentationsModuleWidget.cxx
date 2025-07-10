@@ -64,7 +64,7 @@
 #include <QMessageBox>
 
 //-----------------------------------------------------------------------------
-class qSlicerSegmentationsModuleWidgetPrivate: public Ui_qSlicerSegmentationsModule
+class qSlicerSegmentationsModuleWidgetPrivate : public Ui_qSlicerSegmentationsModule
 {
   Q_DECLARE_PUBLIC(qSlicerSegmentationsModuleWidget);
 protected:

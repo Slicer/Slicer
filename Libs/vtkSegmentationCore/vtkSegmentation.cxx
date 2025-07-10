@@ -236,7 +236,7 @@ void vtkSegmentation::GetBounds(double bounds[6])
 void vtkSegmentation::SetSourceRepresentationName(const std::string& representationName)
 {
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting SourceRepresentationName to " << representationName );
-  if ( this->SourceRepresentationName == representationName )
+  if (this->SourceRepresentationName == representationName)
   {
     // no change in representation name
     return;

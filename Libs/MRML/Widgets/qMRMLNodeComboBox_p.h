@@ -57,9 +57,9 @@ public:
   virtual ~qMRMLNodeComboBoxPrivate();
   virtual void init(QAbstractItemModel* model);
 
-  vtkMRMLNode* mrmlNode(int row)const;
-  vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
-  QModelIndexList indexesFromMRMLNodeID(const QString& nodeID)const;
+  vtkMRMLNode* mrmlNode(int row) const;
+  vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index) const;
+  QModelIndexList indexesFromMRMLNodeID(const QString& nodeID) const;
 
   // This assumes that the caller has already updated RequestedNodeID and RequestedNode.
   void setCurrentNodeIDInternal(const QString& nodeID);
@@ -69,7 +69,7 @@ public:
   void updateActionItems(bool resetRootIndex = true);
   void updateDelegate(bool force = false);
 
-  bool hasPostItem(const QString& name)const;
+  bool hasPostItem(const QString& name) const;
 
   static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data);
 

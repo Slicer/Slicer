@@ -30,7 +30,7 @@ namespace
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
@@ -90,15 +90,15 @@ int main( int argc, char* argv[] )
     minMaxCalculator->ReleaseDataFlagOn();
     minMaxCalculator->Update();
 
-    if ( labelToSmooth == -1 )
+    if (labelToSmooth == -1)
     {
       labelToSmooth = minMaxCalculator->GetMaximum();
     }
-    else if ( labelToSmooth > minMaxCalculator->GetMaximum() )
+    else if (labelToSmooth > minMaxCalculator->GetMaximum())
     {
       labelToSmooth = minMaxCalculator->GetMaximum();
     }
-    else if ( labelToSmooth < minMaxCalculator->GetMinimum() )
+    else if (labelToSmooth < minMaxCalculator->GetMinimum())
     {
       labelToSmooth = minMaxCalculator->GetMinimum();
     }
@@ -124,7 +124,7 @@ int main( int argc, char* argv[] )
     UCharImageType::SizeType             imageSize = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
     UCharImageType::RegionType::SizeType regionSize;
     UCharImageType::IndexType            regionIndex;
-    for ( unsigned int i = 0; i < ImageDimension; i++ )
+    for (unsigned int i = 0; i < ImageDimension; i++)
     {
       boundingBox[2 * i] = std::max(0, (int)(boundingBox[2 * i] - boundingBoxPadding) );
       boundingBox[2 * i + 1] = std::min( (int)(imageSize[i] - 1), (int)(boundingBox[2 * i + 1] + boundingBoxPadding) );
@@ -185,13 +185,13 @@ int main( int argc, char* argv[] )
     writer->Update();
 
   }
-  catch ( itk::ExceptionObject& exc )
+  catch (itk::ExceptionObject& exc)
   {
     std::cout << "ExceptionObject caught !" << std::endl;
     std::cout << exc << std::endl;
     return EXIT_FAILURE;
   }
-  catch ( std::exception& exc )
+  catch (std::exception& exc)
   {
     std::cout << "ExceptionObject caught !" << std::endl;
     std::cout << exc.what() << std::endl;

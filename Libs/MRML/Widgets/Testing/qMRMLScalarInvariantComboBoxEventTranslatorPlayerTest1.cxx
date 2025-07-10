@@ -60,7 +60,7 @@ void checkFinalWidgetState(void* data)
 }
 
 //-----------------------------------------------------------------------------
-int qMRMLScalarInvariantComboBoxEventTranslatorPlayerTest1(int argc, char* argv [] )
+int qMRMLScalarInvariantComboBoxEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

@@ -134,7 +134,7 @@ public:
 
   vtkIdType ptId{-1};
   vtkIdType edgeId{-1};
-  EdgeLocatorNode *next{nullptr};
+  EdgeLocatorNode *next{ nullptr };
 };
 
 // The EdgeLocator class itself, for keeping track of edges
@@ -586,7 +586,7 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
 
     raster.PrepareForNewData();
 
-    if ( this->SliceCache.count(z) == 0 )
+    if (this->SliceCache.count(z) == 0)
     {
 
       slice = vtkSmartPointer<vtkPolyData>::New();
@@ -963,10 +963,10 @@ void vtkPolyDataToFractionalLabelmapFilter::PolyDataCutter(
         c1 = (v1 > 0);
 
         // If at least one edge end point wasn't clipped
-        if ( (c0 | c1) )
+        if ((c0 | c1))
         {
           // If only one end was clipped, interpolate new point
-          if ( (c0 ^ c1) )
+          if ((c0 ^ c1))
           {
             edgeLocator.InterpolateEdge(
               points, newPoints, i0, i1, v0, v1, linePts[c0 ^ odd]);

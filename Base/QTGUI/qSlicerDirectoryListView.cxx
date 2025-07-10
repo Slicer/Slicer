@@ -115,7 +115,7 @@ qSlicerDirectoryListView::qSlicerDirectoryListView(QWidget* _parent)
 qSlicerDirectoryListView::~qSlicerDirectoryListView() = default;
 
 // --------------------------------------------------------------------------
-QStringList qSlicerDirectoryListView::directoryList(bool absolutePath)const
+QStringList qSlicerDirectoryListView::directoryList(bool absolutePath) const
 {
   Q_D(const qSlicerDirectoryListView);
   QStringList directoryList;
@@ -132,7 +132,7 @@ QStringList qSlicerDirectoryListView::directoryList(bool absolutePath)const
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerDirectoryListView::selectedDirectoryList(bool absolutePath)const
+QStringList qSlicerDirectoryListView::selectedDirectoryList(bool absolutePath) const
 {
   Q_D(const qSlicerDirectoryListView);
   QStringList directoryList;
@@ -150,7 +150,7 @@ QStringList qSlicerDirectoryListView::selectedDirectoryList(bool absolutePath)co
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerDirectoryListView::hasDirectory(const QString& path)const
+bool qSlicerDirectoryListView::hasDirectory(const QString& path) const
 {
   Q_D(const qSlicerDirectoryListView);
   QString absolutePath = QFileInfo(path).absoluteFilePath();

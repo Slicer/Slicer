@@ -55,7 +55,7 @@ public:
 
   /// Set/Get NoneEnabled flags
   /// An additional item is added into the menu list, where the user can select "None".
-  bool noneEnabled()const;
+  bool noneEnabled() const;
   void setNoneEnabled(bool enable);
 
   ///Display or not the colors names
@@ -68,12 +68,12 @@ public:
 
   virtual void printAdditionalInfo();
 
-  vtkMRMLColorNode* mrmlColorNode()const;
+  vtkMRMLColorNode* mrmlColorNode() const;
 
-  int currentColor()const;
-  QString currentColorName()const;
+  int currentColor() const;
+  QString currentColorName() const;
 
-  int maximumColorCount()const;
+  int maximumColorCount() const;
   void setMaximumColorCount(int maximum);
 
 public slots:

@@ -121,18 +121,18 @@ int vtkHTTPHandler::CanHandleURI ( const char* uri )
   std::string prefix;
 
   //--- get all characters up to (and not including) the '://'
-  if ( ( index = uriString.find ( "://", 0 ) ) != std::string::npos )
+  if (( index = uriString.find ( "://", 0 ) ) != std::string::npos)
   {
     prefix = uriString.substr ( 0, index );
     //--- check to see if any bracketed characters are in
     //--- this part of the string.
-    if ( (index = prefix.find ( "]:", 0 ) ) != std::string::npos )
+    if ((index = prefix.find ( "]:", 0 ) ) != std::string::npos)
     {
       //--- if so, strip off the leading bracketed characters in case
       //--- we adopt the gwe "[filename.ext]:" prefix.
       prefix = prefix.substr ( index+2 );
     }
-    if ( !strcmp(prefix.c_str(), "http") || !strcmp(prefix.c_str(), "https"))
+    if (!strcmp(prefix.c_str(), "http") || !strcmp(prefix.c_str(), "https"))
     {
       vtkDebugMacro("vtkHTTPHandler: CanHandleURI: can handle this file: " << uriString.c_str());
       return (1);
@@ -202,7 +202,7 @@ void vtkHTTPHandler::StageFileRead(const char* source, const char* destination)
   this->InitTransfer( );
 
 
-  if ( this->Internal->ForbidReuse )
+  if (this->Internal->ForbidReuse)
   {
     curl_easy_setopt(this->Internal->CurlHandle, CURLOPT_FORBID_REUSE, 1);
   }
@@ -254,7 +254,7 @@ void vtkHTTPHandler::StageFileRead(const char* source, const char* destination)
     //--- the reason the read command failed,
     //--- reset the 'remember check' in the permissions
     //--- prompter so that new login info  will be prompted.
-    if ( this->GetPermissionPrompter() != nullptr )
+    if (this->GetPermissionPrompter() != nullptr)
     {
       this->GetPermissionPrompter()->SetRemember ( 0 );
     }
@@ -321,7 +321,7 @@ void vtkHTTPHandler::StageFileWrite(const char* source, const char* destination)
     //--- the reason the read command failed,
     //--- reset the 'remember check' in the permissions
     //--- prompter so that new login info  will be prompted.
-    if ( this->GetPermissionPrompter() != nullptr )
+    if (this->GetPermissionPrompter() != nullptr)
     {
       this->GetPermissionPrompter()->SetRemember ( 0 );
     }

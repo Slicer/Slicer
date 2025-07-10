@@ -93,13 +93,13 @@ qMRMLColorTableView::qMRMLColorTableView(QWidget* _parent)
 qMRMLColorTableView::~qMRMLColorTableView() = default;
 
 //------------------------------------------------------------------------------
-qMRMLColorModel* qMRMLColorTableView::colorModel()const
+qMRMLColorModel* qMRMLColorTableView::colorModel() const
 {
   return qobject_cast<qMRMLColorModel*>(this->sortFilterProxyModel()->sourceModel());
 }
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterColorProxyModel* qMRMLColorTableView::sortFilterProxyModel()const
+qMRMLSortFilterColorProxyModel* qMRMLColorTableView::sortFilterProxyModel() const
 {
   return qobject_cast<qMRMLSortFilterColorProxyModel*>(this->model());
 }
@@ -124,7 +124,7 @@ void qMRMLColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLColorTableView::mrmlColorNode()const
+vtkMRMLColorNode* qMRMLColorTableView::mrmlColorNode() const
 {
   qMRMLColorModel* mrmlModel = this->colorModel();
   Q_ASSERT(mrmlModel);
@@ -138,20 +138,20 @@ void qMRMLColorTableView::setShowOnlyNamedColors(bool enable)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLColorTableView::showOnlyNamedColors()const
+bool qMRMLColorTableView::showOnlyNamedColors() const
 {
   return this->sortFilterProxyModel()->filterRegExp().isEmpty();
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorTableView::rowFromColorName(const QString& colorName)const
+int qMRMLColorTableView::rowFromColorName(const QString& colorName) const
 {
   int index = this->colorModel()->colorFromName(colorName);
   return this->rowFromColorIndex(index);
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorTableView::rowFromColorIndex(int colorIndex)const
+int qMRMLColorTableView::rowFromColorIndex(int colorIndex) const
 {
   QModelIndexList indexes = this->colorModel()->indexes(colorIndex);
   if (indexes.isEmpty())

@@ -43,28 +43,28 @@ public:
   ~qSlicerTextsModule() override;
 
   /// Icon of the Texts module
-  QIcon icon()const override;
+  QIcon icon() const override;
 
   /// Categories where the module should appear
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Dependencies of the module
-  QStringList dependencies()const override;
+  QStringList dependencies() const override;
 
   /// Display name for the module
   qSlicerGetTitleMacro(tr("Texts"));
 
   /// Help text of the module
-  QString helpText()const override;
+  QString helpText() const override;
 
   /// Acknowledgement of the module
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
 
   /// Contributors of the module
-  QStringList contributors()const override;
+  QStringList contributors() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 protected:
   /// Reimplemented to initialize the Texts IO

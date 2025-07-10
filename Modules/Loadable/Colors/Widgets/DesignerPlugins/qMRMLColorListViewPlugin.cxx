@@ -36,7 +36,7 @@ QString qMRMLColorListViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLColorListView\" \
           name=\"MRMLColorListView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLColorListViewPlugin::icon() const

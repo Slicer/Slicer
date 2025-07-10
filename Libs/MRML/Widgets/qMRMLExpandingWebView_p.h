@@ -25,7 +25,7 @@
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLExpandingWebViewPrivate: public QObject
+class qMRMLExpandingWebViewPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT

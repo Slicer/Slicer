@@ -1016,21 +1016,21 @@ void qMRMLPlotView::setMRMLPlotViewNode(vtkMRMLPlotViewNode* newPlotViewNode)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLPlotViewNode* qMRMLPlotView::mrmlPlotViewNode()const
+vtkMRMLPlotViewNode* qMRMLPlotView::mrmlPlotViewNode() const
 {
   Q_D(const qMRMLPlotView);
   return d->MRMLPlotViewNode;
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLScene* qMRMLPlotView::mrmlScene()const
+vtkMRMLScene* qMRMLPlotView::mrmlScene() const
 {
   Q_D(const qMRMLPlotView);
   return d->MRMLScene;
 }
 
 //---------------------------------------------------------------------------
-QSize qMRMLPlotView::sizeHint()const
+QSize qMRMLPlotView::sizeHint() const
 {
   // return a default size hint (invalid size)
   return QSize();

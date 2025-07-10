@@ -70,7 +70,7 @@ vtkMRMLViewInteractorStyle::~vtkMRMLViewInteractorStyle()
 //----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -471,7 +471,7 @@ void vtkMRMLViewInteractorStyle::ProcessEvents(vtkObject* vtkNotUsed(object),
   vtkMRMLViewInteractorStyle* self
     = reinterpret_cast<vtkMRMLViewInteractorStyle*>(clientdata);
 
-  switch(event)
+  switch (event)
   {
     /// Mouse functions
     case vtkCommand::MouseMoveEvent:

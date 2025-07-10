@@ -72,25 +72,25 @@ public:
   qSlicerDICOMExportable(QObject* parent = nullptr);
   ~qSlicerDICOMExportable() override;
 
-  virtual QString name()const;
+  virtual QString name() const;
   void setName(const QString& newName);
 
-  virtual QString tooltip()const;
+  virtual QString tooltip() const;
   void setTooltip(const QString& newTooltip);
 
-  virtual vtkIdType subjectHierarchyItemID()const;
+  virtual vtkIdType subjectHierarchyItemID() const;
   void setSubjectHierarchyItemID(const vtkIdType& newItemID);
 
-  virtual QString directory()const;
+  virtual QString directory() const;
   void setDirectory(const QString& newDirectory);
 
-  virtual QString pluginClass()const;
+  virtual QString pluginClass() const;
   void setPluginClass(const QString& newPluginClass);
 
-  virtual double confidence()const;
+  virtual double confidence() const;
   void setConfidence(const double newConfidence);
 
-  virtual QMap<QString,QString> tags()const;
+  virtual QMap<QString,QString> tags() const;
   void setTags(const QMap<QString,QString>& newTags);
 
   /// Get one tag from tags list

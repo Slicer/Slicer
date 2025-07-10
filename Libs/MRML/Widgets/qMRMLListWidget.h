@@ -39,7 +39,7 @@ public:
   qMRMLListWidget(QWidget* parent = nullptr);
   ~qMRMLListWidget() override;
 
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);

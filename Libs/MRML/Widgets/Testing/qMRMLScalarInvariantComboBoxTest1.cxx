@@ -37,7 +37,7 @@
 
 // STD includes
 
-int qMRMLScalarInvariantComboBoxTest1(int argc, char* argv [] )
+int qMRMLScalarInvariantComboBoxTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -71,7 +71,7 @@ int qMRMLScalarInvariantComboBoxTest1(int argc, char* argv [] )
 
   scalarComboBox.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

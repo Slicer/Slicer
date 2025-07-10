@@ -52,7 +52,7 @@ qSlicerWidgetPrivate::qSlicerWidgetPrivate(qSlicerWidget& object)
 
 //-----------------------------------------------------------------------------
 qSlicerWidget::qSlicerWidget(QWidget* _parent, Qt::WindowFlags f)
-  :QWidget(_parent, f)
+  : QWidget(_parent, f)
   , d_ptr(new qSlicerWidgetPrivate(*this))
 {
 }
@@ -73,7 +73,7 @@ void qSlicerWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerApplicationLogic* qSlicerWidget::appLogic()const
+vtkSlicerApplicationLogic* qSlicerWidget::appLogic() const
 {
   Q_D(const qSlicerWidget);
   if (!qSlicerApplication::application())
@@ -84,7 +84,7 @@ vtkSlicerApplicationLogic* qSlicerWidget::appLogic()const
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerWidget::moduleLogic(const QString& moduleName)const
+vtkMRMLAbstractLogic* qSlicerWidget::moduleLogic(const QString& moduleName) const
 {
   Q_D(const qSlicerWidget);
   vtkSlicerApplicationLogic* applicationLogic = this->appLogic();

@@ -139,10 +139,10 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   ArrayOfImageIOType allobjects = itk::ObjectFactoryBase::CreateAllInstance("itkImageIOBase");
 
   ArrayOfImageIOType::iterator itr = allobjects.begin();
-  while ( itr != allobjects.end() )
+  while (itr != allobjects.end())
   {
     IOBaseType* io = dynamic_cast<IOBaseType*>( itr->GetPointer() );
-    if ( ! io )
+    if (! io)
     {
       continue;
     }
@@ -155,7 +155,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
       const ArrayOfITKExtensionsType& writeExtensions = io->GetSupportedWriteExtensions();
       ArrayOfITKExtensionsType::const_iterator writeItr = writeExtensions.begin();
 
-      while ( writeItr != writeExtensions.end() )
+      while (writeItr != writeExtensions.end())
       {
         // Once we have the GetSupportedWriteGenericNames() ready, we will used that.
         // For now, just use the class name.

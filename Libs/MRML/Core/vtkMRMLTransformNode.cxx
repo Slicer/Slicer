@@ -349,7 +349,7 @@ else
 //----------------------------------------------------------------------------
 void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "ReadAsTransformToParent: " << this->ReadAsTransformToParent << "\n";
 
   // Flatten the transform list to make the copying simpler
@@ -656,7 +656,7 @@ vtkMRMLTransformNode* vtkMRMLTransformNode::GetFirstCommonParent(vtkMRMLTransfor
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTransformNode::CanApplyNonLinearTransforms()const
+bool vtkMRMLTransformNode::CanApplyNonLinearTransforms() const
 {
   return true;
 }

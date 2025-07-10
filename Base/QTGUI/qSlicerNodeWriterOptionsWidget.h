@@ -40,7 +40,7 @@ public:
   bool showUseCompression() const;
   void setShowUseCompression(bool show);
 
-  bool isValid()const override;
+  bool isValid() const override;
 
 public slots:
   void setObject(vtkObject* object) override;

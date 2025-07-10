@@ -72,33 +72,33 @@ void qSlicerAnnotationsReader::setMarkupsLogic(vtkSlicerMarkupsLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerMarkupsLogic* qSlicerAnnotationsReader::markupsLogic()const
+vtkSlicerMarkupsLogic* qSlicerAnnotationsReader::markupsLogic() const
 {
   Q_D(const qSlicerAnnotationsReader);
   return d->MarkupsLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAnnotationsReader::description()const
+QString qSlicerAnnotationsReader::description() const
 {
   return qSlicerAnnotationsReader::tr("Annotation");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerAnnotationsReader::fileType()const
+qSlicerIO::IOFileType qSlicerAnnotationsReader::fileType() const
 {
   return QString("AnnotationFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAnnotationsReader::extensions()const
+QStringList qSlicerAnnotationsReader::extensions() const
 {
   return QStringList()
     << qSlicerAnnotationsReader::tr("Annotations") + " (*.acsv)";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerAnnotationsReader::options()const
+qSlicerIOOptions* qSlicerAnnotationsReader::options() const
 {
   return new qSlicerAnnotationsIOOptionsWidget;
 }

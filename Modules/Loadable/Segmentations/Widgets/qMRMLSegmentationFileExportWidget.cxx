@@ -52,7 +52,7 @@
 #include <vtkSlicerApplicationLogic.h>
 
 //-----------------------------------------------------------------------------
-class qMRMLSegmentationFileExportWidgetPrivate: public Ui_qMRMLSegmentationFileExportWidget
+class qMRMLSegmentationFileExportWidgetPrivate : public Ui_qMRMLSegmentationFileExportWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationFileExportWidget);
 
@@ -337,7 +337,7 @@ void qMRMLSegmentationFileExportWidget::showDestinationFolder()
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSegmentationFileExportWidget::settingsKey()const
+QString qMRMLSegmentationFileExportWidget::settingsKey() const
 {
   Q_D(const qMRMLSegmentationFileExportWidget);
   return d->SettingsKey;

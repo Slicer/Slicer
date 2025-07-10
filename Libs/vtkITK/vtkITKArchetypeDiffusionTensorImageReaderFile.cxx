@@ -39,7 +39,7 @@ vtkITKArchetypeDiffusionTensorImageReaderFile::~vtkITKArchetypeDiffusionTensorIm
 //----------------------------------------------------------------------------
 void vtkITKArchetypeDiffusionTensorImageReaderFile::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "vtk ITK Archetype Image Series DiffusionTensor3D Reader File\n";
 }
 
@@ -93,7 +93,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
   tensors->SetNumberOfComponents(9);
   tensors->SetNumberOfTuples(data->GetNumberOfPoints());
   //tensors->Modified();
-  for ( it.GoToBegin(); !it.IsAtEnd() ; ++it )
+  for (it.GoToBegin(); !it.IsAtEnd() ; ++it)
   {
     const itk::Index<3u> index = it.GetIndex();
     vtkIdType position = data->FindPoint(index[0], index[1], index[2]);

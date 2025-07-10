@@ -32,7 +32,7 @@
 
 #include <PythonQt.h>
 // ----------------------------------------------------------------------------
-class qSlicerScriptedLoadableModuleWidgetTester: public QObject
+class qSlicerScriptedLoadableModuleWidgetTester : public QObject
 {
   Q_OBJECT
 

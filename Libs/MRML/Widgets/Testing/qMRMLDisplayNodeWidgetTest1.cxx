@@ -37,7 +37,7 @@
 
 // STD includes
 
-int qMRMLDisplayNodeWidgetTest1(int argc, char* argv [] )
+int qMRMLDisplayNodeWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -119,7 +119,7 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char* argv [] )
 
   displayNodeWidget.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

@@ -36,7 +36,7 @@ public:
   /// Convenience method for getting another module's logic from the application logic.
   virtual vtkMRMLAbstractLogic* GetModuleLogic(const char* moduleName);
 
-  std::string GetModuleShareDirectory()const;
+  std::string GetModuleShareDirectory() const;
   void SetModuleShareDirectory(const std::string& shareDirectory);
 
 protected:

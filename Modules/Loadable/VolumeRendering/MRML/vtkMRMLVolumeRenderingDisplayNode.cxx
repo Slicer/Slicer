@@ -146,7 +146,7 @@ void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintIntMacro(CroppingEnabled);
@@ -217,7 +217,7 @@ vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetShaderPropertyN
 vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetOrCreateShaderPropertyNode( vtkMRMLScene* mrmlScene )
 {
   vtkMRMLShaderPropertyNode* sp = this->GetShaderPropertyNode();
-  if ( sp == nullptr )
+  if (sp == nullptr)
   {
     vtkNew<vtkMRMLShaderPropertyNode> shaderNode;
     mrmlScene->AddNode(shaderNode);
@@ -290,7 +290,7 @@ double vtkMRMLVolumeRenderingDisplayNode::GetSampleDistance()
 
   const double minSpacing = volumeNode->GetMinSpacing() > 0 ? volumeNode->GetMinSpacing() : 1.;
   double sampleDistance = minSpacing / firstViewNode->GetVolumeRenderingOversamplingFactor();
-  if ( firstViewNode
+  if (firstViewNode
     && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Maximum)
   {
     sampleDistance = minSpacing / 10.; // =10x smaller than pixel is high quality

@@ -80,7 +80,7 @@ public:
     double window{0.0};
     double level{0.0};
     std::string colorNodeID;
-    bool valid{false};
+    bool valid{ false };
   };
   std::vector<VolumeDisplayPreset> VolumeDisplayPresets;
 

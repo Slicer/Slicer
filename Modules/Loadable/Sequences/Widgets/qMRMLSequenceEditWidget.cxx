@@ -65,7 +65,7 @@ public:
   vtkWeakPointer<vtkMRMLSequenceNode> SequenceNode;
   // data node class name that was used for populating the candidate node list
   QString DataNodeCandidatesClassName;
-  bool DataNodeCandidatesUpdateNeeded{true};
+  bool DataNodeCandidatesUpdateNeeded{ true };
 };
 
 //-----------------------------------------------------------------------------
@@ -207,7 +207,7 @@ void qMRMLSequenceEditWidgetPrivate::dataNodeCandidates(std::vector<vtkSmartPoin
 
   std::string dataNodeClassName = sequenceNode->GetDataNodeClassName();
 
-  for ( int i = 0; i < scene->GetNumberOfNodes(); i++ )
+  for (int i = 0; i < scene->GetNumberOfNodes(); i++)
   {
     vtkMRMLNode* currentNode = vtkMRMLNode::SafeDownCast(scene->GetNthNode(i));
     if (!this->isDataNodeCandidate(currentNode))
@@ -357,7 +357,7 @@ void qMRMLSequenceEditWidget::updateWidgetFromMRML()
   d->TableWidget_DataNodes->setHorizontalHeaderLabels( SequenceNodesTableHeader );
 
   int numberOfDataNodes = d->SequenceNode->GetNumberOfDataNodes();
-  for ( int dataNodeIndex = 0; dataNodeIndex < numberOfDataNodes; dataNodeIndex++ )
+  for (int dataNodeIndex = 0; dataNodeIndex < numberOfDataNodes; dataNodeIndex++)
   {
     std::string currentValue = d->SequenceNode->GetNthIndexValue( dataNodeIndex );
     vtkMRMLNode* currentDataNode = d->SequenceNode->GetNthDataNode( dataNodeIndex );
@@ -436,12 +436,12 @@ void qMRMLSequenceEditWidget::onDataNodeEdited(int row, int column)
     return;
   }
   std::string currentIndexValue = d->SequenceNode->GetNthIndexValue( d->TableWidget_DataNodes->currentRow() );
-  if ( currentIndexValue.empty() )
+  if (currentIndexValue.empty())
   {
     return;
   }
   vtkMRMLNode* currentDataNode = d->SequenceNode->GetDataNodeAtValue(currentIndexValue.c_str() );
-  if ( currentDataNode == nullptr )
+  if (currentDataNode == nullptr)
   {
     return;
   }

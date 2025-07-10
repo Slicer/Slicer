@@ -62,7 +62,7 @@ public:
   ~qSlicerCLIProgressBar() override;
 
   /// Get the \a commandLineModuleNode
-  Q_INVOKABLE vtkMRMLCommandLineModuleNode* commandLineModuleNode()const;
+  Q_INVOKABLE vtkMRMLCommandLineModuleNode* commandLineModuleNode() const;
 
   /// Visibility behavior of the GUI elements of the CLI progress bar.
   enum Visibility
@@ -75,13 +75,13 @@ public:
 
   /// Visibility of the module name.
   /// \sa nameVisibility
-  Visibility nameVisibility()const;
+  Visibility nameVisibility() const;
   /// Visibility of the status label.
   /// \sa statusVisibility
-  Visibility statusVisibility()const;
+  Visibility statusVisibility() const;
   /// Visibility of the progress bar.
   /// \sa progressVisiblity
-  Visibility progressVisibility()const;
+  Visibility progressVisibility() const;
 
 public slots:
 

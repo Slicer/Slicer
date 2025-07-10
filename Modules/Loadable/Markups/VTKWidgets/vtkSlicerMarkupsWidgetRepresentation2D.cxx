@@ -581,7 +581,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithLine(
 
   vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
     || !this->GetVisibility() || !interactionEventData )
   {
     return;

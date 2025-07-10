@@ -115,7 +115,7 @@ void qMRMLMatrixWidget::setMRMLTransformNode(vtkMRMLTransformNode* transformNode
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLTransformNode* qMRMLMatrixWidget::mrmlTransformNode()const
+vtkMRMLTransformNode* qMRMLMatrixWidget::mrmlTransformNode() const
 {
   Q_D(const qMRMLMatrixWidget);
   return d->MRMLTransformNode;

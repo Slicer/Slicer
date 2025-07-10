@@ -214,7 +214,7 @@ void qMRMLTableModel::setMRMLTableNode(vtkMRMLTableNode* tableNode)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLTableNode* qMRMLTableModel::mrmlTableNode()const
+vtkMRMLTableNode* qMRMLTableModel::mrmlTableNode() const
 {
   Q_D(const qMRMLTableModel);
   return d->MRMLTableNode;
@@ -584,7 +584,7 @@ void qMRMLTableModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
   qMRMLTableModel* tableModel = reinterpret_cast<qMRMLTableModel*>(client_data);
   Q_ASSERT(tableNode);
   Q_ASSERT(tableModel);
-  switch(event)
+  switch (event)
   {
     default:
     case vtkCommand::ModifiedEvent:
@@ -627,14 +627,14 @@ void qMRMLTableModel::setTransposed(bool transposed)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLTableModel::transposed()const
+bool qMRMLTableModel::transposed() const
 {
   Q_D(const qMRMLTableModel);
   return d->Transposed;
 }
 
 //------------------------------------------------------------------------------
-int qMRMLTableModel::mrmlTableRowIndex(QModelIndex modelIndex)const
+int qMRMLTableModel::mrmlTableRowIndex(QModelIndex modelIndex) const
 {
   Q_D(const qMRMLTableModel);
   if (!d->MRMLTableNode)
@@ -653,7 +653,7 @@ int qMRMLTableModel::mrmlTableRowIndex(QModelIndex modelIndex)const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLTableModel::mrmlTableColumnIndex(QModelIndex modelIndex)const
+int qMRMLTableModel::mrmlTableColumnIndex(QModelIndex modelIndex) const
 {
   Q_D(const qMRMLTableModel);
   if (!d->MRMLTableNode)

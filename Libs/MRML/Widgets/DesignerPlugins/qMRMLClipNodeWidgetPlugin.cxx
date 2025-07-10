@@ -39,7 +39,7 @@ QString qMRMLClipNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLClipNodeWidget\" \
           name=\"MRMLClipNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

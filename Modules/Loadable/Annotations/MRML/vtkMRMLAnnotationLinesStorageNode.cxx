@@ -40,7 +40,7 @@ void vtkMRMLAnnotationLinesStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -150,7 +150,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
     columnNumber ++;
   }
 
-  if (refNode->AddLine(coordID[0],coordID[1], sel, vis) < 0 )
+  if (refNode->AddLine(coordID[0],coordID[1], sel, vis) < 0)
   {
     vtkErrorMacro("Error adding list to list, coordID = " << coordID[0] << " " << coordID[1]);
     return -1;
@@ -273,7 +273,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode
         {
             if (!this->ReadAnnotationLinesProperties(refNode, line, typePointColumn, startIDColumn, endIDColumn, selPointColumn, visPointColumn, numPointColumns))
             {
-            if (this->ReadAnnotationLineDisplayProperties(aLineDisplayNode, line,this->GetAnnotationStorageType()) < 0 )
+            if (this->ReadAnnotationLineDisplayProperties(aLineDisplayNode, line,this->GetAnnotationStorageType()) < 0)
             {
                 return 0;
             }

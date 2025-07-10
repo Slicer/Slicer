@@ -119,7 +119,7 @@ public:
   /// environment variable. Otherwise, it returns the extensions settings value `Extensions/ServerUrl`.
   ///
   /// \sa extensionsSettingsFilePath()
-  Q_INVOKABLE QUrl serverUrl()const;
+  Q_INVOKABLE QUrl serverUrl() const;
 
   /// \brief Frontend server URL displaying extension manager web page.
   ///
@@ -127,29 +127,29 @@ public:
   /// environment variable. Otherwise, it returns the extensions settings value `Extensions/FrontendServerUrl`.
   ///
   /// \sa extensionsSettingsFilePath()
-  Q_INVOKABLE QUrl frontendServerUrl()const;
+  Q_INVOKABLE QUrl frontendServerUrl() const;
 
   /// Returns the URL of the extensions manager frontend for the current application version and operating system.
-  Q_INVOKABLE QUrl extensionsListUrl()const;
+  Q_INVOKABLE QUrl extensionsListUrl() const;
 
-  Q_INVOKABLE QString extensionsInstallPath()const;
+  Q_INVOKABLE QString extensionsInstallPath() const;
 
   Q_INVOKABLE QString extensionInstallPath(const QString& extensionName) const;
 
-  Q_INVOKABLE QStringList extensionModulePaths(const QString& extensionName)const;
+  Q_INVOKABLE QStringList extensionModulePaths(const QString& extensionName) const;
 
   Q_INVOKABLE QString extensionDescriptionFile(const QString& extensionName) const;
 
   void setNewExtensionEnabledByDefault(bool value);
-  bool newExtensionEnabledByDefault()const;
+  bool newExtensionEnabledByDefault() const;
 
-  bool autoUpdateCheck()const;
-  bool autoUpdateInstall()const;
-  bool autoInstallDependencies()const;
+  bool autoUpdateCheck() const;
+  bool autoUpdateInstall() const;
+  bool autoInstallDependencies() const;
 
   /// If set to true (by default) then the user may be asked to confirm installation of additional dependencies.
   /// If set to false then no blocking popups are displayed and dependencies are installed automatically.
-  bool interactive()const;
+  bool interactive() const;
 
   enum MatadataSource
   {
@@ -157,44 +157,44 @@ public:
     MetadataLocal,   ///< return local metadata (stored in s4ext files in the extensions folder)
     MetadataServer   ///< return metadata downloaded from the server
   };
-  Q_INVOKABLE ExtensionMetadataType extensionMetadata(const QString& extensionName, int source = MetadataAll)const;
+  Q_INVOKABLE ExtensionMetadataType extensionMetadata(const QString& extensionName, int source = MetadataAll) const;
 
-  Q_INVOKABLE QString extensionDescription(const QString& extensionName)const;
+  Q_INVOKABLE QString extensionDescription(const QString& extensionName) const;
 
   /// \brief Return the number of managed extensions
   /// \sa managedExtensionsCount, installedExtensionsCount, bookmarkedExtensionsCount
-  int managedExtensionsCount()const;
+  int managedExtensionsCount() const;
 
   /// \brief Return names of all managed extensions, i.e., installed or bookmarked extensions
-  QStringList managedExtensions()const;
+  QStringList managedExtensions() const;
 
   /// \brief Return True if the \a extensionName is loaded
   bool isExtensionLoaded(const QString& extensionName) const;
 
   /// \brief Return True if the \a extensionName is installed
   /// \sa installExtension, installedExtensionsCount, installedExtensions, extensionInstalled
-  Q_INVOKABLE bool isExtensionInstalled(const QString& extensionName)const;
+  Q_INVOKABLE bool isExtensionInstalled(const QString& extensionName) const;
 
   /// \brief Return the number of installed extensions
   /// \sa installExtension, isExtensionInstalled, installedExtensions, extensionInstalled
-  int installedExtensionsCount()const;
+  int installedExtensionsCount() const;
 
   /// \brief Return the number of installed extensions. Deprecated, use installedExtensionsCount instead.
   /// \sa installExtension, isExtensionInstalled, installedExtensions, extensionInstalled
-  int numberOfInstalledExtensions()const;
+  int numberOfInstalledExtensions() const;
 
   /// \brief Return names of all installed extensions sorted in alphabetical order.
   /// \sa installExtension, installedExtensionsCount, isExtensionInstalled, extensionInstalled
-  QStringList installedExtensions()const;
+  QStringList installedExtensions() const;
 
   /// \brief Return True if the \a extensionName is bookmarked.
   /// Bookmarked extensions are included in the list of managed extensions list, even if not installed.
   /// \sa setExtensionBookmarked, extensionBookmarkedChanged, bookmarkedExtensions
-  Q_INVOKABLE bool isExtensionBookmarked(const QString& extensionName)const;
+  Q_INVOKABLE bool isExtensionBookmarked(const QString& extensionName) const;
 
   /// \brief Return True if the \a extensionName is enabled
   /// \sa setExtensionEnabled, extensionEnabledChanged, enabledExtensions
-  Q_INVOKABLE bool isExtensionEnabled(const QString& extensionName)const;
+  Q_INVOKABLE bool isExtensionEnabled(const QString& extensionName) const;
 
   /// Get the names of all extensions scheduled for update.
   ///
@@ -208,18 +208,18 @@ public:
   ///         update is available for the specified extension.
   ///
   /// \sa checkForExtensionsUpdates
-  Q_INVOKABLE bool isExtensionUpdateAvailable(const QString& extensionName)const;
+  Q_INVOKABLE bool isExtensionUpdateAvailable(const QString& extensionName) const;
 
   /// Get list of extension names that has available updates.
   /// \sa checkForExtensionsUpdates
-  QStringList availableUpdateExtensions()const;
+  QStringList availableUpdateExtensions() const;
 
   /// Test if extension is scheduled to be updated.
   ///
   /// \return \c true if \p extensionName is scheduled to be updated.
   ///
   /// \sa updateScheduledExtensions();
-  Q_INVOKABLE bool isExtensionScheduledForUpdate(const QString& extensionName)const;
+  Q_INVOKABLE bool isExtensionScheduledForUpdate(const QString& extensionName) const;
 
   /// \brief Return names of all extensions scheduled for uninstall
   /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall, extensionScheduledForUninstall
@@ -227,38 +227,38 @@ public:
 
   /// \brief Return True if the \a extensionName is scheduled to be uninstalled
   /// \sa uninstallScheduledExtensions();
-  Q_INVOKABLE bool isExtensionScheduledForUninstall(const QString& extensionName)const;
+  Q_INVOKABLE bool isExtensionScheduledForUninstall(const QString& extensionName) const;
 
   /// \brief Return names of all bookmarked extensions
   /// \sa setExtensionBookmarked, extensionBookmarkedChanged, bookmarkedExtensions
-  QStringList bookmarkedExtensions()const;
+  QStringList bookmarkedExtensions() const;
 
   /// \brief Return names of all enabled extensions sorted in alphabetical order.
   /// \sa setExtensionEnabled, extensionEnabledChanged, isExtensionEnabled
-  QStringList enabledExtensions()const;
+  QStringList enabledExtensions() const;
 
   /// \brief Set/Get extension settings file path.
   ///
   /// Signal extensionsSettingsFilePathChanged() is emitted when a new path is set.
-  QString extensionsSettingsFilePath()const;
+  QString extensionsSettingsFilePath() const;
   void setExtensionsSettingsFilePath(const QString& extensionsSettingsFilePath);
 
   /// \brief Set/Get Slicer revision.
   ///
   /// Signal slicerRevisionChanged() is emitted when a revision is set.
-  QString slicerRevision()const;
+  QString slicerRevision() const;
   void setSlicerRevision(const QString& revision);
 
   /// \brief Set/Get Slicer operating system.
   ///
   /// Signal slicerOsChanged() is emitted when a new operating system is set.
-  QString slicerOs()const;
+  QString slicerOs() const;
   void setSlicerOs(const QString& os);
 
   /// \brief Set/Get Slicer architecture.
   ///
   /// Signal slicerArchChanged() is emitted when a new architecture is set.
-  QString slicerArch()const;
+  QString slicerArch() const;
   void setSlicerArch(const QString& arch);
 
   /// \brief Convenience function setting Slicer revision, operating system and architecture.
@@ -270,7 +270,7 @@ public:
   /// three properties has been updated.
   void setSlicerRequirements(const QString& revision, const QString& os, const QString& arch);
 
-  QString slicerVersion()const;
+  QString slicerVersion() const;
   void setSlicerVersion(const QString& version);
 
   /// \brief Check if \a extensionName is compatible with the system identified
@@ -322,7 +322,7 @@ public:
                                            const QString& destinationPath);
 
   /// Return the item model used internally
-  Q_INVOKABLE const QStandardItemModel* model()const;
+  Q_INVOKABLE const QStandardItemModel* model() const;
 
   /// Return time of last successful update of extensions metadata from the server.
   /// If there has not been any updates then it the object is set to null.
@@ -511,7 +511,7 @@ public slots:
   /// Wait for all active tasks to complete.
   /// Set timeoutMsec to specify maximum time to wait for completion (set negative value to wait indefinitely).
   /// Returns true if all tasks are completed.
-  Q_INVOKABLE bool waitForAllTasksCompletion(int timeoutMsec = -1)const;
+  Q_INVOKABLE bool waitForAllTasksCompletion(int timeoutMsec = -1) const;
 
 signals:
 

@@ -256,7 +256,7 @@ protected:
     double PositionLocal[4];
     double PositionWorld[4];
     double Color[4];
-    bool ApplyScaleToPosition{true};
+    bool ApplyScaleToPosition{ true };
     bool IsVisible()
     {
       double epsilon = 0.001;
@@ -325,7 +325,7 @@ protected:
 
   double WidgetScale{1.0};
 
-  bool Interacting{false};
+  bool Interacting{ false };
 
   vtkSmartPointer<vtkPointPlacer> PointPlacer;
 

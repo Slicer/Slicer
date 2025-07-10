@@ -257,7 +257,7 @@ void vtkSlicerSequencesLogic::UpdateAllProxyNodes()
       this->LastSequenceBrowserUpdateTimeSec.erase(browserNode);
       continue;
     }
-    if ( this->LastSequenceBrowserUpdateTimeSec.find(browserNode) == this->LastSequenceBrowserUpdateTimeSec.end() )
+    if (this->LastSequenceBrowserUpdateTimeSec.find(browserNode) == this->LastSequenceBrowserUpdateTimeSec.end())
     {
       // we just started to play now, no need to update output nodes yet
       this->LastSequenceBrowserUpdateTimeSec[browserNode] = updateStartTimeSec;
@@ -813,7 +813,7 @@ void vtkSlicerSequencesLogic::GetCompatibleNodesFromScene(vtkCollection* compati
   }
   vtkSmartPointer<vtkCollection> sequenceNodes = vtkSmartPointer<vtkCollection>::Take(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSequenceNode"));
   vtkObject* nextObject = nullptr;
-  for (sequenceNodes->InitTraversal(); (nextObject = sequenceNodes->GetNextItemAsObject()); )
+  for (sequenceNodes->InitTraversal(); (nextObject = sequenceNodes->GetNextItemAsObject());)
   {
     vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(nextObject);
     if (sequenceNode==nullptr)

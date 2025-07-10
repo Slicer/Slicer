@@ -107,7 +107,7 @@ void qSlicerAbstractCoreModule::printAdditionalInfo()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractCoreModule::name()const
+QString qSlicerAbstractCoreModule::name() const
 {
   Q_D(const qSlicerAbstractCoreModule);
   return d->Name;
@@ -121,31 +121,31 @@ void qSlicerAbstractCoreModule::setName(const QString& _name)
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAbstractCoreModule::categories()const
+QStringList qSlicerAbstractCoreModule::categories() const
 {
   return QStringList();
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAbstractCoreModule::contributors()const
+QStringList qSlicerAbstractCoreModule::contributors() const
 {
   return QStringList();
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerAbstractCoreModule::index()const
+int qSlicerAbstractCoreModule::index() const
 {
   return -1;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractCoreModule::helpText()const
+QString qSlicerAbstractCoreModule::helpText() const
 {
   return QString();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractCoreModule::acknowledgementText()const
+QString qSlicerAbstractCoreModule::acknowledgementText() const
 {
   return QString();
 }
@@ -203,13 +203,13 @@ vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::moduleLogic(const QString& modu
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerAbstractCoreModule::isHidden()const
+bool qSlicerAbstractCoreModule::isHidden() const
 {
   return this->isWidgetRepresentationCreationEnabled() ? false : true;
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAbstractCoreModule::dependencies()const
+QStringList qSlicerAbstractCoreModule::dependencies() const
 {
   return QStringList();
 }
@@ -326,13 +326,13 @@ void qSlicerAbstractCoreModule::representationDeleted(qSlicerAbstractModuleRepre
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAbstractCoreModule::associatedNodeTypes()const
+QStringList qSlicerAbstractCoreModule::associatedNodeTypes() const
 {
   return QStringList();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractCoreModule::defaultDocumentationLink()const
+QString qSlicerAbstractCoreModule::defaultDocumentationLink() const
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)

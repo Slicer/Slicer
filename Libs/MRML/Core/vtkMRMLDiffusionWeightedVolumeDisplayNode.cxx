@@ -98,7 +98,7 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::Copy(vtkMRMLNode* anode)
 void vtkMRMLDiffusionWeightedVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Diffusion Component:   " << this->DiffusionComponent << "\n";
 

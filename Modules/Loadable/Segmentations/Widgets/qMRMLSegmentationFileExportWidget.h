@@ -57,7 +57,7 @@ public:
   /// Destructor
   ~qMRMLSegmentationFileExportWidget() override;
 
-  QString settingsKey()const;
+  QString settingsKey() const;
   void setSettingsKey(const QString& key);
 
   /// Get current segmentation node

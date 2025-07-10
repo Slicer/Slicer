@@ -24,7 +24,7 @@ QString qMRMLVolumeThresholdWidgetPlugin::domXml() const
           "   <height>20</height>\n"
           "  </rect>\n"
           " </property>\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLVolumeThresholdWidgetPlugin::icon() const

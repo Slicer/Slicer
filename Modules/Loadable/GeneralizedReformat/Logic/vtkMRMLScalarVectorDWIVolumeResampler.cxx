@@ -63,8 +63,8 @@ bool vtkMRMLScalarVectorDWIVolumeResampler::Resample(vtkMRMLVolumeNode* inputVol
       }
     }
   private:
-    vtkMRMLScene* Scene{nullptr};
-    vtkMRMLNode* Node{nullptr};
+    vtkMRMLScene* Scene{ nullptr };
+    vtkMRMLNode* Node{ nullptr };
   };
 
   vtkMRMLApplicationLogic* appLogic = this->GetMRMLApplicationLogic();

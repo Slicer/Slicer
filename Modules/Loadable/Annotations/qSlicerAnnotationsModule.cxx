@@ -18,7 +18,7 @@
 class qSlicerAnnotationsModulePrivate
 {
   public:
-    qSlicerAnnotationModuleSnapShotDialog* m_SnapShotDialog{nullptr};
+    qSlicerAnnotationModuleSnapShotDialog* m_SnapShotDialog{ nullptr };
 };
 
 //-----------------------------------------------------------------------------
@@ -83,7 +83,7 @@ QString qSlicerAnnotationsModule::acknowledgementText() const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerAnnotationsModule::contributors()const
+QStringList qSlicerAnnotationsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Nicole Aucoin (SPL, BWH)");

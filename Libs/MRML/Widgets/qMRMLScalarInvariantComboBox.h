@@ -48,10 +48,10 @@ public:
   ~qMRMLScalarInvariantComboBox() override;
 
   /// Return the optionally set display properties node set
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* displayPropertiesNode()const;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* displayPropertiesNode() const;
 
   /// Returns the currently selected scalar invariant
-  int scalarInvariant()const;
+  int scalarInvariant() const;
 
 public slots:
   /// Set the volume node properties to synchronize the combobox with.

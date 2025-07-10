@@ -121,14 +121,14 @@ public:
   std::string GetUID(std::string uidName);
 
   /// Get UID map for this subject hierarchy node
-  std::map<std::string, std::string> GetUIDs()const;
+  std::map<std::string, std::string> GetUIDs() const;
 
 protected:
   /// Level identifier (default levels are Subject and Study)
-  char* Level{nullptr};
+  char* Level{ nullptr };
 
   /// Name of the owner plugin that claimed this node
-  char* OwnerPluginName{nullptr};
+  char* OwnerPluginName{ nullptr };
 
   /// List of UIDs of this subject hierarchy node
   /// UIDs can be DICOM UIDs, Girder URLs, etc.

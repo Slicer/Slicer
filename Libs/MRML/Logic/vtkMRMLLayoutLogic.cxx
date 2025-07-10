@@ -2021,7 +2021,7 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromLayoutDescription(const char* lay
 
 //----------------------------------------------------------------------------
 vtkMRMLLayoutLogic::ViewAttributes vtkMRMLLayoutLogic
-::GetViewElementAttributes(vtkXMLDataElement* viewElement)const
+::GetViewElementAttributes(vtkXMLDataElement* viewElement) const
 {
   ViewAttributes attributes;
   assert(viewElement->GetName() == std::string("view"));
@@ -2034,7 +2034,7 @@ vtkMRMLLayoutLogic::ViewAttributes vtkMRMLLayoutLogic
 
 //----------------------------------------------------------------------------
 vtkMRMLLayoutLogic::ViewProperties vtkMRMLLayoutLogic
-::GetViewElementProperties(vtkXMLDataElement* viewElement)const
+::GetViewElementProperties(vtkXMLDataElement* viewElement) const
 {
   ViewProperties properties;
   assert(viewElement->GetName() == std::string("view"));
@@ -2048,7 +2048,7 @@ vtkMRMLLayoutLogic::ViewProperties vtkMRMLLayoutLogic
 
 //----------------------------------------------------------------------------
 vtkMRMLLayoutLogic::ViewProperty vtkMRMLLayoutLogic
-::GetViewElementProperty(vtkXMLDataElement* viewProperty)const
+::GetViewElementProperty(vtkXMLDataElement* viewProperty) const
 {
   ViewProperty property;
   assert(viewProperty->GetName() == std::string("property"));

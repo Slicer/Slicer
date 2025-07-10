@@ -73,7 +73,7 @@ void qSlicerCLILoadableModuleFactoryItem::loadLibraryAndResolveSymbols(
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLILoadableModuleFactoryItem::xmlModuleDescriptionFilePath()const
+QString qSlicerCLILoadableModuleFactoryItem::xmlModuleDescriptionFilePath() const
 {
   QFileInfo info = QFileInfo(this->path());
   QString moduleName =
@@ -318,7 +318,7 @@ createFactoryFileBasedItem()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& fileName)const
+QString qSlicerCLILoadableModuleFactory::fileNameToKey(const QString& fileName) const
 {
   return qSlicerUtils::extractModuleNameFromLibraryName(fileName);
 }
@@ -331,7 +331,7 @@ void qSlicerCLILoadableModuleFactory::setTempDirectory(const QString& newTempDir
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCLILoadableModuleFactory::isValidFile(const QFileInfo& file)const
+bool qSlicerCLILoadableModuleFactory::isValidFile(const QFileInfo& file) const
 {
   if (!Superclass::isValidFile(file))
   {

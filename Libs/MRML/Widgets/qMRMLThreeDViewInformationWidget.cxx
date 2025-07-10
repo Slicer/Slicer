@@ -82,7 +82,7 @@ qMRMLThreeDViewInformationWidget::qMRMLThreeDViewInformationWidget(QWidget* _par
 qMRMLThreeDViewInformationWidget::~qMRMLThreeDViewInformationWidget() = default;
 
 //---------------------------------------------------------------------------
-vtkMRMLViewNode* qMRMLThreeDViewInformationWidget::mrmlViewNode()const
+vtkMRMLViewNode* qMRMLThreeDViewInformationWidget::mrmlViewNode() const
 {
   Q_D(const qMRMLThreeDViewInformationWidget);
   return d->MRMLViewNode;

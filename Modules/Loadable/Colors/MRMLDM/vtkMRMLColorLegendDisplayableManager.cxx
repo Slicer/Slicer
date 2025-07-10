@@ -535,7 +535,7 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
     actor->SetUseAnnotationAsLabel(true);
     actor->SetCenterLabel(true);
   }
-  else if (!colorLegendDisplayNode->GetUseColorNamesForLabels()) // Color name == value ( default behaviour )
+  else if (!colorLegendDisplayNode->GetUseColorNamesForLabels()) // Color name == value ( default behaviour)
   {
     actor->SetNumberOfLabels(colorLegendDisplayNode->GetNumberOfLabels());
     actor->SetMaximumNumberOfColors(colorLegendDisplayNode->GetMaxNumberOfColors());

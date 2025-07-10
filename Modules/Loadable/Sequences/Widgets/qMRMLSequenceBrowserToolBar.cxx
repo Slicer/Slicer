@@ -105,7 +105,7 @@ void qMRMLSequenceBrowserToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 
 // --------------------------------------------------------------------------
 qMRMLSequenceBrowserToolBar::qMRMLSequenceBrowserToolBar(const QString& title, QWidget* parentWidget)
-  :Superclass(title, parentWidget)
+  : Superclass(title, parentWidget)
    , d_ptr(new qMRMLSequenceBrowserToolBarPrivate(*this))
 {
   Q_D(qMRMLSequenceBrowserToolBar);

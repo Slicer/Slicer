@@ -196,7 +196,7 @@ void qMRMLCaptureToolBarPrivate::createSceneView()
 
 // --------------------------------------------------------------------------
 qMRMLCaptureToolBar::qMRMLCaptureToolBar(const QString& title, QWidget* parentWidget)
-  :Superclass(title, parentWidget)
+  : Superclass(title, parentWidget)
    , d_ptr(new qMRMLCaptureToolBarPrivate(*this))
 {
   Q_D(qMRMLCaptureToolBar);

@@ -51,7 +51,7 @@ public:
   /// Destructor
   ~qSlicerExtensionsManagerWidget() override;
 
-  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
+  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel() const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
   /// Shows a popup if operations are still in progress, asking if the user wants to stop them.

@@ -58,7 +58,7 @@ vtkMRMLColorTableStorageNode::~vtkMRMLColorTableStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -233,7 +233,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   // It is important to only change type if it has not been set already
   // because otherwise "User" color node types would be always reverted to
   // read-only "File" type when the scene is saved and reloaded.
-  if ( colorNode->GetType() < colorNode->GetFirstType()
+  if (colorNode->GetType() < colorNode->GetFirstType()
     || colorNode->GetType() > colorNode->GetLastType() )
   {
     // no valid type has been set, set it to File

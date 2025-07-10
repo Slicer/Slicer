@@ -434,7 +434,7 @@ void vtkMRMLSliceLogic::UpdateSliceCompositeNode()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceLogic::EnterMRMLCallback()const
+bool vtkMRMLSliceLogic::EnterMRMLCallback() const
 {
   return this->AddingSliceModelNodes == false;
 }
@@ -556,7 +556,7 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
     // might have change in CreateSliceModel() or UpdateSliceNode()
     vtkMRMLDisplayNode* sliceDisplayNode =
       this->SliceModelNode ? this->SliceModelNode->GetModelDisplayNode() : nullptr;
-    if ( sliceDisplayNode)
+    if (sliceDisplayNode)
     {
       sliceDisplayNode->SetVisibility( this->SliceNode->GetSliceVisible() );
       sliceDisplayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
@@ -1245,7 +1245,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       }
 
       // Update the layer logic with the corresponding volume node if necessary
-      if (layerLogic->GetVolumeNode() != layerNode )
+      if (layerLogic->GetVolumeNode() != layerNode)
       {
         this->SetNthLayerVolumeNode(layerIndex, layerNode);
         modified = 1;
@@ -1366,7 +1366,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
       displayNode->SetViewNodeIDs( this->SliceNode->GetThreeDViewIDs());
 
       // Manage texture interpolation based on input availability
-      if ( (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
+      if ((this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
             !this->HasUVWInputs()) ||
           (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView &&
            !this->HasInputs()) )
@@ -1391,7 +1391,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     }
 
     // Mark the pipeline as modified if any updates were performed
-    if ( modified )
+    if (modified)
     {
       if (this->SliceModelNode && this->SliceModelNode->GetPolyData())
       {
@@ -1564,7 +1564,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->DeleteSliceModel();
   }
 
-  if ( this->SliceModelNode == nullptr)
+  if (this->SliceModelNode == nullptr)
   {
     this->SliceModelNode = vtkMRMLModelNode::New();
     this->SliceModelNode->SetScene(this->GetMRMLScene());
@@ -1646,7 +1646,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
 
   }
 
-  if (this->SliceModelNode != nullptr && this->GetMRMLScene()->GetNodeByID( this->GetSliceModelNode()->GetID() ) == nullptr )
+  if (this->SliceModelNode != nullptr && this->GetMRMLScene()->GetNodeByID( this->GetSliceModelNode()->GetID() ) == nullptr)
   {
     this->AddingSliceModelNodes = true;
     this->GetMRMLScene()->AddNode(this->SliceModelDisplayNode);
@@ -1661,15 +1661,15 @@ void vtkMRMLSliceLogic::CreateSliceModel()
   // update the description to refer back to the slice and composite nodes
   // TODO: this doesn't need to be done unless the ID change, but it needs
   // to happen after they have been set, so do it every event for now
-  if ( this->SliceModelNode != nullptr )
+  if (this->SliceModelNode != nullptr)
   {
     std::string description;
     std::stringstream ssD;
-    if (this->SliceNode && this->SliceNode->GetID() )
+    if (this->SliceNode && this->SliceNode->GetID())
     {
       ssD << " SliceID " << this->SliceNode->GetID();
     }
-    if (this->SliceCompositeNode && this->SliceCompositeNode->GetID() )
+    if (this->SliceCompositeNode && this->SliceCompositeNode->GetID())
     {
       ssD << " CompositeID " << this->SliceCompositeNode->GetID();
     }
@@ -1718,7 +1718,7 @@ void vtkMRMLSliceLogic::GetVolumeRASBox(vtkMRMLVolumeNode* volumeNode, double ra
   rasCenter[2] = rasDimensions[2] = 0.0;
 
   vtkImageData* volumeImage;
-  if ( !volumeNode || ! (volumeImage = volumeNode->GetImageData()) )
+  if (!volumeNode || ! (volumeImage = volumeNode->GetImageData()))
   {
     return;
   }
@@ -1780,7 +1780,7 @@ void vtkMRMLSliceLogic::GetVolumeSliceBounds(vtkMRMLVolumeNode* volumeNode,
 // Get the spacing of the volume, transformed to slice space
 double* vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode* volumeNode)
 {
-  if ( !volumeNode )
+  if (!volumeNode)
   {
     return (this->SliceSpacing);
   }
@@ -1807,7 +1807,7 @@ double* vtkMRMLSliceLogic::GetVolumeSliceSpacing(vtkMRMLVolumeNode* volumeNode)
 
   // Apply transform to the volume axes, if the volume is transformed with a linear transform
   vtkMRMLTransformNode* transformNode = volumeNode->GetParentTransformNode();
-  if ( transformNode != nullptr &&  transformNode->IsTransformToWorldLinear() )
+  if (transformNode != nullptr &&  transformNode->IsTransformToWorldLinear())
   {
     vtkNew<vtkMatrix4x4> volumeRASToWorld;
     transformNode->GetMatrixTransformToWorld(volumeRASToWorld);
@@ -2133,7 +2133,7 @@ void vtkMRMLSliceLogic::FitFOVToBackground(double fov)
   // which is bigger, slice viewer width or height?
   // assign user-specified fov to smaller slice window
   // dimension
-  if ( width < height )
+  if (width < height)
   {
     fovh = fov;
     fovv = fov * height/width;
@@ -2253,7 +2253,7 @@ double vtkMRMLSliceLogic::GetSliceOffset()
   // this method has been moved to vtkMRMLSliceNode
   // the API stays for backwards compatibility
 
-  if ( !this->SliceNode )
+  if (!this->SliceNode)
   {
     return 0.0;
   }
@@ -2533,12 +2533,12 @@ std::vector<vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
 //----------------------------------------------------------------------------
 int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolumeNode* volumeNode)
 {
-  if ( !volumeNode )
+  if (!volumeNode)
   {
     return SLICE_INDEX_NO_VOLUME;
   }
   vtkImageData* volumeImage = nullptr;
-  if ( !(volumeImage = volumeNode->GetImageData()) )
+  if (!(volumeImage = volumeNode->GetImageData()))
   {
     return SLICE_INDEX_NO_VOLUME;
   }
@@ -2550,7 +2550,7 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolume
   vtkNew<vtkMatrix4x4> ijkToRAS;
   volumeNode->GetIJKToRASMatrix (ijkToRAS.GetPointer());
   vtkMRMLTransformNode* transformNode = volumeNode->GetParentTransformNode();
-  if ( transformNode )
+  if (transformNode)
   {
     vtkNew<vtkMatrix4x4> rasToRAS;
     transformNode->GetMatrixTransformToWorld(rasToRAS.GetPointer());

@@ -36,7 +36,7 @@ DiffusionTensor3DInterpolateImageFunction<TData>
 {
   m_DefaultPixelValue = defaultPixelValue ;
   m_DefaultPixel.SetIdentity() ;
-  for ( unsigned int i = 0 ; i < 3 ; i++ )
+  for (unsigned int i = 0 ; i < 3 ; i++)
     {
     m_DefaultPixel( i , i ) *= static_cast<TData>( this->m_DefaultPixelValue ) ;
     }

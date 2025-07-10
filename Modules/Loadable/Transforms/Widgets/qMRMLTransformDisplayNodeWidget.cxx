@@ -89,7 +89,7 @@ void qMRMLTransformDisplayNodeWidgetPrivate
   this->ColorMapWidget->view()->addColorTransferFunction(nullptr);
   this->ColorMapWidget->view()->setColorTransferFunctionToPlots(this->ColorTransferFunction);
 
-  double chartBounds[8]={0};
+  double chartBounds[8] = { 0 };
   this->ColorMapWidget->view()->chartBounds(chartBounds);
   chartBounds[2] = 0;
   chartBounds[3] = 100;
@@ -996,7 +996,7 @@ void qMRMLTransformDisplayNodeWidget::colorUpdateRange()
   }
   double range[2] = {0.0, 10.0};
   colorMap->GetRange(range);
-  double chartBounds[8] = {0};
+  double chartBounds[8] = { 0 };
   d->ColorMapWidget->view()->chartBounds(chartBounds);
   chartBounds[2] = 0;
   chartBounds[3] = range[1]*1.1;

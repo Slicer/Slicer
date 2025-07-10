@@ -54,7 +54,7 @@
 #include "qMRMLThreeDWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyColorLegendPluginPrivate: public QObject
+class qSlicerSubjectHierarchyColorLegendPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyColorLegendPlugin);
 protected:
@@ -112,7 +112,7 @@ qSlicerSubjectHierarchyColorLegendPlugin::qSlicerSubjectHierarchyColorLegendPlug
 qSlicerSubjectHierarchyColorLegendPlugin::~qSlicerSubjectHierarchyColorLegendPlugin() = default;
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyColorLegendPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyColorLegendPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyColorLegendPlugin);
 

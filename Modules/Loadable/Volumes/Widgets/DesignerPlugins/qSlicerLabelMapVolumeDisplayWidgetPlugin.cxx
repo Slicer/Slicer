@@ -41,7 +41,7 @@ QString qSlicerLabelMapVolumeDisplayWidgetPlugin
 {
   return "<widget class=\"qSlicerLabelMapVolumeDisplayWidget\" \
           name=\"VolumeDisplayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

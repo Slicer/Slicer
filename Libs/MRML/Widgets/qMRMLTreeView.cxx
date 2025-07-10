@@ -204,7 +204,7 @@ void qMRMLTreeViewPrivate::recomputeSizeHint(bool force)
 }
 
 //------------------------------------------------------------------------------
-QSize qMRMLTreeViewPrivate::sizeHint()const
+QSize qMRMLTreeViewPrivate::sizeHint() const
 {
   Q_Q(const qMRMLTreeView);
   if (!this->FitSizeToVisibleIndexes)
@@ -307,7 +307,7 @@ qMRMLTreeView::qMRMLTreeView(QWidget* _parent)
 
 //------------------------------------------------------------------------------
 qMRMLTreeView::qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget* parentObject)
-  :Superclass(parentObject)
+  : Superclass(parentObject)
   , d_ptr(pimpl)
 {
   Q_D(qMRMLTreeView);
@@ -330,7 +330,7 @@ void qMRMLTreeView::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLTreeView::sceneModelType()const
+QString qMRMLTreeView::sceneModelType() const
 {
   Q_D(const qMRMLTreeView);
   return d->SceneModelType;
@@ -396,14 +396,14 @@ void qMRMLTreeView::setSortFilterProxyModel(qMRMLSortFilterProxyModel* newFilter
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLTreeView::mrmlScene()const
+vtkMRMLScene* qMRMLTreeView::mrmlScene() const
 {
   Q_D(const qMRMLTreeView);
   return d->SceneModel ? d->SceneModel->mrmlScene() : nullptr;
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLTreeView::currentNode()const
+vtkMRMLNode* qMRMLTreeView::currentNode() const
 {
   Q_D(const qMRMLTreeView);
   return d->SortFilterModel->mrmlNodeFromIndex(this->selectionModel()->currentIndex());
@@ -440,14 +440,14 @@ void qMRMLTreeView::setListenNodeModifiedEvent(qMRMLSceneModel::NodeTypes listen
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneModel::NodeTypes qMRMLTreeView::listenNodeModifiedEvent()const
+qMRMLSceneModel::NodeTypes qMRMLTreeView::listenNodeModifiedEvent() const
 {
   Q_D(const qMRMLTreeView);
   return d->SceneModel ? d->SceneModel->listenNodeModifiedEvent() : qMRMLSceneModel::OnlyVisibleNodes;
 }
 
 // --------------------------------------------------------------------------
-QStringList qMRMLTreeView::nodeTypes()const
+QStringList qMRMLTreeView::nodeTypes() const
 {
   return this->sortFilterProxyModel()->nodeTypes();
 }
@@ -459,7 +459,7 @@ void qMRMLTreeView::setNodeTypes(const QStringList& _nodeTypes)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLTreeView::isRenameMenuActionVisible()const
+bool qMRMLTreeView::isRenameMenuActionVisible() const
 {
   Q_D(const qMRMLTreeView);
   return d->NodeMenu->actions().contains(d->RenameAction);
@@ -481,7 +481,7 @@ void qMRMLTreeView::setRenameMenuActionVisible(bool show)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLTreeView::isDeleteMenuActionVisible()const
+bool qMRMLTreeView::isDeleteMenuActionVisible() const
 {
   Q_D(const qMRMLTreeView);
   return d->NodeMenu->actions().contains(d->DeleteAction);
@@ -503,7 +503,7 @@ void qMRMLTreeView::setDeleteMenuActionVisible(bool show)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLTreeView::isEditMenuActionVisible()const
+bool qMRMLTreeView::isEditMenuActionVisible() const
 {
   Q_D(const qMRMLTreeView);
   return d->NodeMenu->actions().contains(d->EditAction);
@@ -591,7 +591,7 @@ void qMRMLTreeView::setShowScene(bool show)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLTreeView::showScene()const
+bool qMRMLTreeView::showScene() const
 {
   Q_D(const qMRMLTreeView);
   return d->ShowScene;
@@ -611,7 +611,7 @@ void qMRMLTreeView::setShowRootNode(bool show)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLTreeView::showRootNode()const
+bool qMRMLTreeView::showRootNode() const
 {
   Q_D(const qMRMLTreeView);
   return d->ShowRootNode;
@@ -651,7 +651,7 @@ void qMRMLTreeView::setRootNode(vtkMRMLNode* rootNode)
 }
 
 //--------------------------------------------------------------------------
-vtkMRMLNode* qMRMLTreeView::rootNode()const
+vtkMRMLNode* qMRMLTreeView::rootNode() const
 {
   Q_D(const qMRMLTreeView);
   vtkMRMLNode* treeRootNode =
@@ -675,7 +675,7 @@ void qMRMLTreeView::updateRootNode(vtkObject* node)
 }
 
 //--------------------------------------------------------------------------
-qMRMLSortFilterProxyModel* qMRMLTreeView::sortFilterProxyModel()const
+qMRMLSortFilterProxyModel* qMRMLTreeView::sortFilterProxyModel() const
 {
   Q_D(const qMRMLTreeView);
   Q_ASSERT(d->SortFilterModel);
@@ -683,7 +683,7 @@ qMRMLSortFilterProxyModel* qMRMLTreeView::sortFilterProxyModel()const
 }
 
 //--------------------------------------------------------------------------
-qMRMLSceneModel* qMRMLTreeView::sceneModel()const
+qMRMLSceneModel* qMRMLTreeView::sceneModel() const
 {
   Q_D(const qMRMLTreeView);
   Q_ASSERT(d->SceneModel);
@@ -691,14 +691,14 @@ qMRMLSceneModel* qMRMLTreeView::sceneModel()const
 }
 
 //--------------------------------------------------------------------------
-QSize qMRMLTreeView::minimumSizeHint()const
+QSize qMRMLTreeView::minimumSizeHint() const
 {
   Q_D(const qMRMLTreeView);
   return d->sizeHint();
 }
 
 //--------------------------------------------------------------------------
-QSize qMRMLTreeView::sizeHint()const
+QSize qMRMLTreeView::sizeHint() const
 {
   Q_D(const qMRMLTreeView);
   return d->sizeHint();
@@ -732,7 +732,7 @@ void qMRMLTreeView::setFitSizeToVisibleIndexes(bool enable)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLTreeView::fitSizeToVisibleIndexes()const
+bool qMRMLTreeView::fitSizeToVisibleIndexes() const
 {
   Q_D(const qMRMLTreeView);
   return d->FitSizeToVisibleIndexes;
@@ -747,7 +747,7 @@ void qMRMLTreeView::setMinSizeHint(QSize min)
 }
 
 //--------------------------------------------------------------------------
-QSize qMRMLTreeView::minSizeHint()const
+QSize qMRMLTreeView::minSizeHint() const
 {
   Q_D(const qMRMLTreeView);
   return d->TreeViewMinSizeHint;

@@ -59,7 +59,7 @@ public:
   virtual void init();
   void setSceneModel(qMRMLSceneModel* newModel);
   void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel);
-  QSize sizeHint()const;
+  QSize sizeHint() const;
   void recomputeSizeHint(bool forceUpdate = false);
   /// Save the current expansion state of children nodes of a
   /// vtkMRMLDisplayableHierarchyNode

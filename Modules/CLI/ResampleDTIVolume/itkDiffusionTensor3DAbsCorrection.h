@@ -70,14 +70,14 @@ public:
     typename DiffusionTensor3DExtended<double>::EigenVectorsMatrixType eigenVectors;
     DiffusionTensor3DExtended<double> tensorDouble( A );
     tensorDouble.ComputeEigenAnalysis( eigenValues, eigenVectors );
-    for ( int i = 0; i < 3; i++ )
+    for (int i = 0; i < 3; i++)
     {
       mat[i][i] = ( eigenValues[i] < 0 ? -eigenValues[i] : eigenValues[i] );
     }
     eigenVectors = eigenVectors.GetTranspose();
     matcorrect = eigenVectors * mat * eigenVectors.GetInverse();
     tensorDouble.SetTensorFromMatrix( matcorrect );
-    for ( int i = 0; i < 6; i++ )
+    for (int i = 0; i < 6; i++)
     {
       tensor[i] = ( TOutput ) tensorDouble[i];
     }

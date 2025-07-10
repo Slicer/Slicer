@@ -332,7 +332,7 @@ void vtkMRMLSequenceNode::CopySequenceIndex(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSequenceNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  vtkMRMLNode::PrintSelf(os, indent);
   os << indent << "indexName: " << this->IndexName + "\n";
   os << indent << "indexUnit: " << this->IndexUnit + "\n";
 

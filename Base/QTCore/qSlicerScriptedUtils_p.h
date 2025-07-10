@@ -88,7 +88,7 @@ public:
   qSlicerPythonCppAPI();
   virtual ~qSlicerPythonCppAPI();
 
-  QString objectName()const;
+  QString objectName() const;
   void setObjectName(const QString& name);
 
   void declareMethod(int id, const char* name);
@@ -97,7 +97,7 @@ public:
 
   PyObject* callMethod(int id, PyObject* arguments = nullptr);
 
-  PyObject* pythonSelf()const;
+  PyObject* pythonSelf() const;
 
 private:
 

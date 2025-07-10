@@ -22,7 +22,7 @@
 #include "qSlicerSegmentEditorEraseEffect.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSegmentEditorEraseEffectPrivate: public QObject
+class qSlicerSegmentEditorEraseEffectPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSegmentEditorEraseEffect);
 protected:
@@ -70,7 +70,7 @@ QIcon qSlicerSegmentEditorEraseEffect::icon()
 }
 
 //---------------------------------------------------------------------------
-QString const qSlicerSegmentEditorEraseEffect::helpText()const
+QString const qSlicerSegmentEditorEraseEffect::helpText() const
 {
   return QString("<html>") + tr("Erase from current segment with a round brush<br>."
     "<p><ul style=\"margin: 0\">"

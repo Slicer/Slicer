@@ -76,7 +76,7 @@ qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidget
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModuleWidget::qSlicerScriptedLoadableModuleWidget(QWidget* parentWidget)
-  :Superclass(parentWidget), d_ptr(new qSlicerScriptedLoadableModuleWidgetPrivate)
+  : Superclass(parentWidget), d_ptr(new qSlicerScriptedLoadableModuleWidgetPrivate)
 {
   new QVBoxLayout(this);
 }
@@ -85,7 +85,7 @@ qSlicerScriptedLoadableModuleWidget::qSlicerScriptedLoadableModuleWidget(QWidget
 qSlicerScriptedLoadableModuleWidget::~qSlicerScriptedLoadableModuleWidget() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedLoadableModuleWidget::pythonSource()const
+QString qSlicerScriptedLoadableModuleWidget::pythonSource() const
 {
   Q_D(const qSlicerScriptedLoadableModuleWidget);
   return d->PythonSourceFilePath;

@@ -126,7 +126,7 @@ qSlicerSegmentEditorAbstractEffect::qSlicerSegmentEditorAbstractEffect(QObject* 
 qSlicerSegmentEditorAbstractEffect::~qSlicerSegmentEditorAbstractEffect() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSegmentEditorAbstractEffect::name()const
+QString qSlicerSegmentEditorAbstractEffect::name() const
 {
   if (m_Name.isEmpty())
   {
@@ -143,7 +143,7 @@ void qSlicerSegmentEditorAbstractEffect::setName(QString name)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSegmentEditorAbstractEffect::title()const
+QString qSlicerSegmentEditorAbstractEffect::title() const
 {
   if (!this->m_Title.isEmpty())
   {
@@ -167,7 +167,7 @@ void qSlicerSegmentEditorAbstractEffect::setTitle(QString title)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSegmentEditorAbstractEffect::perSegment()const
+bool qSlicerSegmentEditorAbstractEffect::perSegment() const
 {
   return this->m_PerSegment;
 }
@@ -180,7 +180,7 @@ void qSlicerSegmentEditorAbstractEffect::setPerSegment(bool perSegment)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerSegmentEditorAbstractEffect::requireSegments()const
+bool qSlicerSegmentEditorAbstractEffect::requireSegments() const
 {
   return this->m_RequireSegments;
 }

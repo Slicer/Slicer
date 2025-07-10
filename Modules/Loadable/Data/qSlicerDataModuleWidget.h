@@ -71,7 +71,7 @@ public slots:
 
 public:
   /// Assessor function for subject hierarchy model (for python)
-  Q_INVOKABLE qMRMLSubjectHierarchyModel* subjectHierarchySceneModel()const;
+  Q_INVOKABLE qMRMLSubjectHierarchyModel* subjectHierarchySceneModel() const;
 
 protected:
   static void onSubjectHierarchyItemEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData);

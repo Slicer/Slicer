@@ -43,7 +43,7 @@ public:
   /// Return  a list of the supported extensions. Please read
   /// QFileDialog::nameFilters for the allowed formats
   /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
-  Q_INVOKABLE virtual QStringList extensions()const;
+  Q_INVOKABLE virtual QStringList extensions() const;
 
   /// Returns true if the reader can load this file.
   /// Default implementation is a simple and fast, it just checks
@@ -51,7 +51,7 @@ public:
   /// This method is kept for backward compatibility, readers should override
   /// canLoadFileConfidence method instead of this method to indicate if they can
   /// read a file.
-  Q_INVOKABLE virtual bool canLoadFile(const QString& file)const;
+  Q_INVOKABLE virtual bool canLoadFile(const QString& file) const;
 
   /// Returns a positive number (>0) if the reader can load this file.
   /// The higher the returned value is the more confident the reader it is
@@ -61,7 +61,7 @@ public:
   /// The additional confidence for longer matched file extensions allow prioritization of
   /// more specific readers. For example, "*.seg.nrrd" is more specific than "*.nrrd";
   /// "*.nrrd" is more specific than "*.*".
-  Q_INVOKABLE virtual double canLoadFileConfidence(const QString& file)const;
+  Q_INVOKABLE virtual double canLoadFileConfidence(const QString& file) const;
 
   /// Return the matching name filters -> if the fileName is "my_image.nrrd"
   /// and the supported extensions are "Volumes (*.mha *.nrrd *.raw)",
@@ -70,7 +70,7 @@ public:
   /// \param longestExtensionMatchPtr If non-zero then the method returns
   /// the length of the longest matched extension length in this argument.
   /// It can be used to determine how specifically extension matched.
-  Q_INVOKABLE QStringList supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr = nullptr)const;
+  Q_INVOKABLE QStringList supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr = nullptr) const;
 
   /// Properties available: fileMode, multipleFiles, fileType.
   Q_INVOKABLE virtual bool load(const IOProperties& properties);
@@ -78,12 +78,12 @@ public:
   /// Return the list of generated nodes from loading the file(s) in load().
   /// Empty list if load() failed
   /// \sa setLoadedNodes(), load()
-  Q_INVOKABLE virtual QStringList loadedNodes()const;
+  Q_INVOKABLE virtual QStringList loadedNodes() const;
 
   /// Implements the file list examination for the corresponding method in the core
   /// IO manager.
   /// \sa qSlicerCoreIOManager
-  Q_INVOKABLE virtual bool examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, qSlicerIO::IOProperties& ioProperties)const;
+  Q_INVOKABLE virtual bool examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, qSlicerIO::IOProperties& ioProperties) const;
 
 protected:
   /// Must be called in load() on success with the list of nodes added into the

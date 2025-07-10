@@ -286,7 +286,7 @@ int vtkMRMLSliceDisplayNode::GetActiveComponentIndex(std::string context/*=GetDe
 //---------------------------------------------------------------------------
 void vtkMRMLSliceDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context/*=GetDefaultContextName()*/)
 {
-  if ( this->ActiveComponents.find(context) != this->ActiveComponents.end()
+  if (this->ActiveComponents.find(context) != this->ActiveComponents.end()
     && this->ActiveComponents[context].Type == componentType
     && this->ActiveComponents[context].Index == componentIndex )
   {

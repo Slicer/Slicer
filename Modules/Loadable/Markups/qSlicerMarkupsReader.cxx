@@ -66,14 +66,14 @@ void qSlicerMarkupsReader::setMarkupsLogic(vtkSlicerMarkupsLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerMarkupsLogic* qSlicerMarkupsReader::markupsLogic()const
+vtkSlicerMarkupsLogic* qSlicerMarkupsReader::markupsLogic() const
 {
   Q_D(const qSlicerMarkupsReader);
   return d->MarkupsLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerMarkupsReader::description()const
+QString qSlicerMarkupsReader::description() const
 {
   return tr("Markups");
 }
@@ -94,7 +94,7 @@ QStringList qSlicerMarkupsReader::extensions() const
 }
 
 //----------------------------------------------------------------------------
-double qSlicerMarkupsReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerMarkupsReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 

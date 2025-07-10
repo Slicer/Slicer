@@ -310,7 +310,7 @@ int vtkMRMLMarkupsNode::EndModify(int previousDisableModifiedEventState)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(Locked);
@@ -1824,7 +1824,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointDescription(int n, std::string descri
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLMarkupsNode::CanApplyNonLinearTransforms()const
+bool vtkMRMLMarkupsNode::CanApplyNonLinearTransforms() const
 {
   return true;
 }

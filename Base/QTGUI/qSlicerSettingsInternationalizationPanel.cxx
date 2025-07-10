@@ -30,7 +30,7 @@
 // qSlicerSettingsInternationalizationPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsInternationalizationPanelPrivate: public Ui_qSlicerSettingsInternationalizationPanel
+class qSlicerSettingsInternationalizationPanelPrivate : public Ui_qSlicerSettingsInternationalizationPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsInternationalizationPanel);
 protected:
@@ -47,7 +47,7 @@ public:
 // --------------------------------------------------------------------------
 qSlicerSettingsInternationalizationPanelPrivate
 ::qSlicerSettingsInternationalizationPanelPrivate(qSlicerSettingsInternationalizationPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 

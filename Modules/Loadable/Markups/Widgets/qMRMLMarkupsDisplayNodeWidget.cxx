@@ -42,7 +42,7 @@
 #include <vtkTextProperty.h>
 
 //------------------------------------------------------------------------------
-class qMRMLMarkupsDisplayNodeWidgetPrivate: public QWidget, public Ui_qMRMLMarkupsDisplayNodeWidget
+class qMRMLMarkupsDisplayNodeWidgetPrivate : public QWidget, public Ui_qMRMLMarkupsDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLMarkupsDisplayNodeWidget);
 
@@ -204,7 +204,7 @@ qMRMLMarkupsDisplayNodeWidget::~qMRMLMarkupsDisplayNodeWidget()
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLMarkupsDisplayNode* qMRMLMarkupsDisplayNodeWidget::mrmlMarkupsDisplayNode()const
+vtkMRMLMarkupsDisplayNode* qMRMLMarkupsDisplayNodeWidget::mrmlMarkupsDisplayNode() const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
   return d->MarkupsDisplayNode;
@@ -435,7 +435,7 @@ void qMRMLMarkupsDisplayNodeWidget::setVisibility(bool visible)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLMarkupsDisplayNodeWidget::visibility()const
+bool qMRMLMarkupsDisplayNodeWidget::visibility() const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
   return d->VisibilityCheckBox->isChecked();
@@ -464,14 +464,14 @@ void qMRMLMarkupsDisplayNodeWidget::setPointLabelsVisibility(bool visible)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLMarkupsDisplayNodeWidget::propertiesLabelVisibility()const
+bool qMRMLMarkupsDisplayNodeWidget::propertiesLabelVisibility() const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
   return d->PropertiesLabelVisibilityCheckBox->isChecked();
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLMarkupsDisplayNodeWidget::pointLabelsVisibility()const
+bool qMRMLMarkupsDisplayNodeWidget::pointLabelsVisibility() const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
   return d->PointLabelsVisibilityCheckBox->isChecked();
@@ -489,7 +489,7 @@ void qMRMLMarkupsDisplayNodeWidget::setGlyphSizeIsAbsolute(bool absolute)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLMarkupsDisplayNodeWidget::glyphSizeIsAbsolute()const
+bool qMRMLMarkupsDisplayNodeWidget::glyphSizeIsAbsolute() const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
   return d->glyphSizeIsAbsoluteButton->isChecked();
@@ -508,7 +508,7 @@ void qMRMLMarkupsDisplayNodeWidget::setCurveLineSizeIsAbsolute(bool absolute)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLMarkupsDisplayNodeWidget::curveLineSizeIsAbsolute()const
+bool qMRMLMarkupsDisplayNodeWidget::curveLineSizeIsAbsolute() const
 {
   Q_D(const qMRMLMarkupsDisplayNodeWidget);
   return d->curveLineSizeIsAbsoluteButton->isChecked();

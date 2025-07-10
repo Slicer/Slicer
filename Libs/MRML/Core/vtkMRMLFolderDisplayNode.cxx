@@ -110,7 +110,7 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned lon
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if ( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent
+  if (event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent
     && vtkMRMLSubjectHierarchyNode::SafeDownCast(caller) )
   {
     // No-op if this folder node does not apply display properties on its branch
@@ -291,7 +291,7 @@ bool vtkMRMLFolderDisplayNode::GetHierarchyVisibility(vtkMRMLDisplayableNode* no
 
   // Traverse all parents
   vtkIdType parentItemID = nodeShId;
-  while ( (parentItemID = shNode->GetItemParent(parentItemID)) != sceneItemID ) // The double parentheses avoids a Linux build warning
+  while ((parentItemID = shNode->GetItemParent(parentItemID)) != sceneItemID ) // The double parentheses avoids a Linux build warning
   {
     if (!parentItemID)
     {
@@ -333,7 +333,7 @@ double vtkMRMLFolderDisplayNode::GetHierarchyOpacity(vtkMRMLDisplayableNode* nod
   // Traverse all parents
   double opacityProduct = 1.0;
   vtkIdType parentItemID = nodeShId;
-  while ( (parentItemID = shNode->GetItemParent(parentItemID)) != sceneItemID ) // The double parentheses avoids a Linux build warning
+  while ((parentItemID = shNode->GetItemParent(parentItemID)) != sceneItemID ) // The double parentheses avoids a Linux build warning
   {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(shNode->GetItemDataNode(parentItemID));
     if (displayNode)

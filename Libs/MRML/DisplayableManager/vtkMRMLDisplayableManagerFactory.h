@@ -81,7 +81,7 @@ public:
   /// Set the application logic. It will be passed to displayable
   /// managers and groups to be created.
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic);
-  vtkMRMLApplicationLogic* GetMRMLApplicationLogic()const;
+  vtkMRMLApplicationLogic* GetMRMLApplicationLogic() const;
 
 protected:
 

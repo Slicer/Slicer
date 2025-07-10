@@ -224,7 +224,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
 ::GenerateInputRequestedRegion()
 {
   Superclass::GenerateInputRequestedRegion();
-  if ( this->GetInput() )
+  if (this->GetInput())
   {
     InputImagePointer image = const_cast<InputImageType*>( this->GetInput() );
     image->SetRequestedRegionToLargestPossibleRegion();
@@ -451,7 +451,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
         continue;
       }
     } //for loop
-  }  while ( ! ((pix[0] == seed[0]) && (pix[1] == seed[1])) );  //end while
+  }  while (! ((pix[0] == seed[0]) && (pix[1] == seed[1])) );  //end while
 }
 
 template <class TInputImage, class TOutputImage>
@@ -483,7 +483,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   IteratorType it ( outputImage, function, m_Seed );
   it.GoToBegin();
 
-  while ( !it.IsAtEnd())
+  while (!it.IsAtEnd())
   {
     it.Set(NumericTraits<OutputImagePixelType>::OneValue());
     ++it;

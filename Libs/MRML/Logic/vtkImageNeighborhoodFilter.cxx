@@ -34,7 +34,7 @@ vtkImageNeighborhoodFilter::~vtkImageNeighborhoodFilter()
 {
   if (this->Mask != nullptr)
   {
-    delete [] this->Mask;
+    delete[] this->Mask;
   }
 }
 
@@ -70,7 +70,7 @@ void vtkImageNeighborhoodFilter::SetKernelSize(int size0, int size1, int size2)
   {
     if (this->Mask != nullptr)
     {
-      delete [] this->Mask;
+      delete[] this->Mask;
     }
     this->Mask = new unsigned char[this->KernelSize[0]*
       this->KernelSize[1]*this->KernelSize[2]];

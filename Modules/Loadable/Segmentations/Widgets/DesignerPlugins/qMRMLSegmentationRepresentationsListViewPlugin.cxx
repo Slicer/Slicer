@@ -40,7 +40,7 @@ QString qMRMLSegmentationRepresentationsListViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentationRepresentationsListView\" \
           name=\"SegmentationRepresentationsListView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

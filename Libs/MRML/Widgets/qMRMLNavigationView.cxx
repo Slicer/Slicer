@@ -115,7 +115,7 @@ void qMRMLNavigationView::setMRMLViewNode(vtkMRMLViewNode* newViewNode)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLViewNode* qMRMLNavigationView::mrmlViewNode()const
+vtkMRMLViewNode* qMRMLNavigationView::mrmlViewNode() const
 {
   Q_D(const qMRMLNavigationView);
   return d->MRMLViewNode;

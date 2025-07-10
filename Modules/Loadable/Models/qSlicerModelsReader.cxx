@@ -66,33 +66,33 @@ void qSlicerModelsReader::setModelsLogic(vtkSlicerModelsLogic* newModelsLogic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerModelsLogic* qSlicerModelsReader::modelsLogic()const
+vtkSlicerModelsLogic* qSlicerModelsReader::modelsLogic() const
 {
   Q_D(const qSlicerModelsReader);
   return d->ModelsLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModelsReader::description()const
+QString qSlicerModelsReader::description() const
 {
   return "Model";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerModelsReader::fileType()const
+qSlicerIO::IOFileType qSlicerModelsReader::fileType() const
 {
   return QString("ModelFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerModelsReader::extensions()const
+QStringList qSlicerModelsReader::extensions() const
 {
   return QStringList()
     << "Model (*.vtk *.vtp *.vtu *.g *.byu *.stl *.ply *.obj *.ucd)";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerModelsReader::options()const
+qSlicerIOOptions* qSlicerModelsReader::options() const
 {
   qSlicerIOOptionsWidget* options = new qSlicerModelsIOOptionsWidget;
   options->setMRMLScene(this->mrmlScene());
@@ -100,7 +100,7 @@ qSlicerIOOptions* qSlicerModelsReader::options()const
 }
 
 //----------------------------------------------------------------------------
-double qSlicerModelsReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerModelsReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 

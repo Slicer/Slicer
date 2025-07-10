@@ -99,7 +99,7 @@ bool vtkMRMLDisplayableManagerFactory::IsDisplayableManagerRegistered(const char
       this->Internal->DisplayableManagerClassNames.end(),
       vtkClassName);
 
-  if ( it == this->Internal->DisplayableManagerClassNames.end())
+  if (it == this->Internal->DisplayableManagerClassNames.end())
   {
     return false;
   }
@@ -125,7 +125,7 @@ bool vtkMRMLDisplayableManagerFactory::RegisterDisplayableManager(const char* vt
       this->Internal->DisplayableManagerClassNames.end(),
       vtkClassOrScriptName);
 
-  if ( it != this->Internal->DisplayableManagerClassNames.end())
+  if (it != this->Internal->DisplayableManagerClassNames.end())
   {
     vtkWarningMacro(<<"RegisterDisplayableManager - " << vtkClassOrScriptName << " already registered");
     return false;
@@ -162,7 +162,7 @@ bool vtkMRMLDisplayableManagerFactory::UnRegisterDisplayableManager(const char* 
       this->Internal->DisplayableManagerClassNames.end(),
       vtkClassOrScriptName);
 
-  if ( it == this->Internal->DisplayableManagerClassNames.end())
+  if (it == this->Internal->DisplayableManagerClassNames.end())
   {
     vtkWarningMacro(<<"UnRegisterDisplayableManager - " << vtkClassOrScriptName << " is NOT registered");
     return false;
@@ -213,7 +213,7 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
 
 //----------------------------------------------------------------------------
 vtkMRMLApplicationLogic* vtkMRMLDisplayableManagerFactory
-::GetMRMLApplicationLogic()const
+::GetMRMLApplicationLogic() const
 {
   return this->Internal->ApplicationLogic.GetPointer();
 }

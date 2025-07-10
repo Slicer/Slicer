@@ -68,7 +68,7 @@ void checkFinalWidgetState(void* data)
 }
 
 //-----------------------------------------------------------------------------
-int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv [] )
+int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -102,7 +102,7 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv [] )
   for (unsigned int i = 0; i < sliceNodes.size(); ++i)
   {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
-    if (!strcmp(sliceNode->GetLayoutName(), "Red") )
+    if (!strcmp(sliceNode->GetLayoutName(), "Red"))
     {
       redSliceNode = sliceNode;
       break;
