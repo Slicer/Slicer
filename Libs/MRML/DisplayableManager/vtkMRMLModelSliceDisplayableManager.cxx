@@ -92,7 +92,7 @@ public:
   typedef std::map < vtkMRMLDisplayNode*, const Pipeline* > PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLDisplayableNode*, std::set< vtkMRMLDisplayNode* > > ModelToDisplayCacheType;
+  typedef std::map < vtkMRMLDisplayableNode*, std::set<vtkMRMLDisplayNode*>> ModelToDisplayCacheType;
   ModelToDisplayCacheType ModelToDisplayNodes;
 
   // Transforms
@@ -878,8 +878,8 @@ void vtkMRMLModelSliceDisplayableManager::UpdateFromMRML()
 
   // Find the display nodes that need to be removed
   // (not deleted immediately because it would invalidate the pipeline iteration)
-  std::set< vtkMRMLDisplayableNode* > displayableNodesToRemove;
-  std::deque< vtkMRMLDisplayNode* > displayNodesToRemove;
+  std::set<vtkMRMLDisplayableNode*> displayableNodesToRemove;
+  std::deque<vtkMRMLDisplayNode*> displayNodesToRemove;
   for (auto modelToDisplayNode : this->Internal->DisplayPipelines)
   {
     vtkMRMLDisplayNode* displayNode = modelToDisplayNode.first;

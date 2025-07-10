@@ -71,7 +71,7 @@ vtkDataIOManager::~vtkDataIOManager()
 void vtkDataIOManager::TransferUpdateCallback ( vtkObject* caller,
                                        unsigned long eid, void* clientData, void* callData )
 {
-  vtkDataIOManager* self = reinterpret_cast <vtkDataIOManager*>(clientData);
+  vtkDataIOManager* self = reinterpret_cast<vtkDataIOManager*>(clientData);
   if ( self->GetInUpdateCallbackFlag())
   {
     return;

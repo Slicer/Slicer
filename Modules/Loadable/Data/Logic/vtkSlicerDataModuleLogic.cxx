@@ -94,7 +94,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 
   // Collect a list of storage and display nodes that are only
   // referenced by the node to be removed.
-  std::vector< vtkWeakPointer<vtkMRMLNode> > nodesToRemove;
+  std::vector<vtkWeakPointer<vtkMRMLNode>> nodesToRemove;
 
   /// we can't get the display node directly as it might be 0 because the
   /// displayable node has no longer access to the scene
@@ -138,7 +138,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   {
     this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState, toRemove);
   }
-  std::vector< vtkWeakPointer<vtkMRMLNode> >::const_iterator nodeIterator;
+  std::vector<vtkWeakPointer<vtkMRMLNode>>::const_iterator nodeIterator;
   nodeIterator = nodesToRemove.begin();
   while (nodeIterator != nodesToRemove.end())
   {

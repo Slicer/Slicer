@@ -257,7 +257,7 @@ void vtkCacheManager::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-std::vector< std::string > vtkCacheManager::GetAllCachedFiles ( )
+std::vector<std::string> vtkCacheManager::GetAllCachedFiles ( )
 {
   this->CachedFileList.clear();
   this->GetCachedFileList ( this->GetRemoteCacheDirectory() );
@@ -266,7 +266,7 @@ std::vector< std::string > vtkCacheManager::GetAllCachedFiles ( )
 
 
 //----------------------------------------------------------------------------
-std::vector< std::string > vtkCacheManager::GetCachedFiles ( ) const
+std::vector<std::string> vtkCacheManager::GetCachedFiles ( ) const
 {
   return this->CachedFileList;
 }
@@ -527,8 +527,8 @@ void vtkCacheManager::DeleteFromCachedFileList ( const char* target )
 {
 
   std::string tstring = target;
-  std::vector< std::string > tmp = this->CachedFileList;
-  std::vector< std::string >::iterator it;
+  std::vector<std::string> tmp = this->CachedFileList;
+  std::vector<std::string>::iterator it;
   this->CachedFileList.clear();
 
   for (it = tmp.begin(); it < tmp.end(); it++ )

@@ -100,7 +100,7 @@ bool checkNodeVisibleInLayout(int line,
 // --------------------------------------------------------------------------
 bool checkViews(int line,
                 qMRMLLayoutManager* layoutManager,
-                QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility)
+                QHash<vtkMRMLAbstractViewNode*, QList<bool>> viewNodesToExpectedVisibility)
 {
   foreach(vtkMRMLAbstractViewNode* viewNode, viewNodesToExpectedVisibility.keys())
   {
@@ -192,7 +192,7 @@ bool runTests(vtkMRMLScene* scene,
 
   // All view widgets are expected to be visible
   {
-    QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility;
+    QHash<vtkMRMLAbstractViewNode*, QList<bool>> viewNodesToExpectedVisibility;
     viewNodesToExpectedVisibility[redNode] =    QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[yellowNode] = QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
@@ -209,7 +209,7 @@ bool runTests(vtkMRMLScene* scene,
 
   // Yellow widget is expected to be hidden
   {
-    QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility;
+    QHash<vtkMRMLAbstractViewNode*, QList<bool>> viewNodesToExpectedVisibility;
     viewNodesToExpectedVisibility[redNode] =    QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[yellowNode] = QList<bool>()  << NoVisibility << MappedInLayout    << NotVisibleInLayout;
     viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
@@ -226,7 +226,7 @@ bool runTests(vtkMRMLScene* scene,
 
   // Yellow and ThreeD widgets are expected to be hidden
   {
-    QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility;
+    QHash<vtkMRMLAbstractViewNode*, QList<bool>> viewNodesToExpectedVisibility;
     viewNodesToExpectedVisibility[redNode] =    QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[yellowNode] = QList<bool>()  << NoVisibility << MappedInLayout    << NotVisibleInLayout;
     viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
@@ -246,7 +246,7 @@ bool runTests(vtkMRMLScene* scene,
 
   // Only yellow widgets is expected to be hidden
   {
-    QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility;
+    QHash<vtkMRMLAbstractViewNode*, QList<bool>> viewNodesToExpectedVisibility;
     viewNodesToExpectedVisibility[redNode] =    QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[yellowNode] = QList<bool>()  << NoVisibility << MappedInLayout    << NotVisibleInLayout;
     viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
@@ -266,7 +266,7 @@ bool runTests(vtkMRMLScene* scene,
 
   // Only yellow widgets is expected to be hidden
   {
-    QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility;
+    QHash<vtkMRMLAbstractViewNode*, QList<bool>> viewNodesToExpectedVisibility;
     viewNodesToExpectedVisibility[redNode] =    QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[yellowNode] = QList<bool>()  << NoVisibility << MappedInLayout    << NotVisibleInLayout;
     viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
@@ -283,7 +283,7 @@ bool runTests(vtkMRMLScene* scene,
 
   // Yellow and ThreeD widgets are expected to be hidden
   {
-    QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility;
+    QHash<vtkMRMLAbstractViewNode*, QList<bool>> viewNodesToExpectedVisibility;
     viewNodesToExpectedVisibility[redNode] =    QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[yellowNode] = QList<bool>()  << NoVisibility << MappedInLayout    << NotVisibleInLayout;
     viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
@@ -302,7 +302,7 @@ bool runTests(vtkMRMLScene* scene,
 
   // All view widgets are expected to be visible
   {
-    QHash<vtkMRMLAbstractViewNode*, QList<bool> > viewNodesToExpectedVisibility;
+    QHash<vtkMRMLAbstractViewNode*, QList<bool>> viewNodesToExpectedVisibility;
     viewNodesToExpectedVisibility[redNode] =    QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[yellowNode] = QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;
     viewNodesToExpectedVisibility[greenNode] =  QList<bool>()  << Visibility   << MappedInLayout    << VisibleInLayout;

@@ -68,7 +68,7 @@ public:
 
 protected:
 
-  std::vector< vtkSmartPointer<vtkSegmentationConverterRule> > Rules;
+  std::vector<vtkSmartPointer<vtkSegmentationConverterRule>> Rules;
 
 protected:
   vtkSegmentationConversionPath();

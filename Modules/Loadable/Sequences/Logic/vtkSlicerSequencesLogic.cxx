@@ -242,7 +242,7 @@ void vtkSlicerSequencesLogic::UpdateAllProxyNodes()
     vtkErrorMacro("vtkSlicerSequencesLogic::UpdateAllProxyNodes failed: scene is invalid");
     return;
   }
-  std::vector< vtkMRMLNode* > browserNodes;
+  std::vector<vtkMRMLNode*> browserNodes;
   int numBrowserNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLSequenceBrowserNode", browserNodes);
   for (int i = 0; i < numBrowserNodes; i++)
   {
@@ -333,13 +333,13 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
     this->GetApplicationLogic()->PauseRender();
   }
 
-  std::vector< vtkMRMLSequenceNode* > synchronizedSequenceNodes;
+  std::vector<vtkMRMLSequenceNode*> synchronizedSequenceNodes;
   browserNode->GetSynchronizedSequenceNodes(synchronizedSequenceNodes, true);
 
   // Store the previous modified state of nodes to allow calling EndModify when all the nodes are updated (to prevent multiple renderings on partial update)
   std::vector< std::pair<vtkMRMLNode*, int> > nodeModifiedStates;
 
-  for (std::vector< vtkMRMLSequenceNode* >::iterator sourceSequenceNodeIt = synchronizedSequenceNodes.begin();
+  for (std::vector<vtkMRMLSequenceNode*>::iterator sourceSequenceNodeIt = synchronizedSequenceNodes.begin();
     sourceSequenceNodeIt!=synchronizedSequenceNodes.end(); ++sourceSequenceNodeIt)
   {
     vtkMRMLSequenceNode* synchronizedSequenceNode=(*sourceSequenceNodeIt);
@@ -855,9 +855,9 @@ void vtkSlicerSequencesLogic::GetBrowserNodesForSequenceNode(vtkMRMLSequenceNode
     return;
   }
   foundBrowserNodes->RemoveAllItems();
-  std::vector< vtkMRMLNode* > browserNodes;
+  std::vector<vtkMRMLNode*> browserNodes;
   this->GetMRMLScene()->GetNodesByClass("vtkMRMLSequenceBrowserNode", browserNodes);
-  for (std::vector< vtkMRMLNode* >::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
   {
     vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(*browserNodeIt);
     if (browserNode->IsSynchronizedSequenceNode(sequenceNode, true))
@@ -877,9 +877,9 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSequencesLogic::GetFirstBrowserNodeForSeque
     vtkErrorMacro("Scene is invalid");
     return nullptr;
   }
-  std::vector< vtkMRMLNode* > browserNodes;
+  std::vector<vtkMRMLNode*> browserNodes;
   this->GetMRMLScene()->GetNodesByClass("vtkMRMLSequenceBrowserNode", browserNodes);
-  for (std::vector< vtkMRMLNode* >::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
   {
     vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(*browserNodeIt);
     if (browserNode->IsSynchronizedSequenceNode(sequenceNode, true))
@@ -909,9 +909,9 @@ void vtkSlicerSequencesLogic::GetBrowserNodesForProxyNode(vtkMRMLNode* proxyNode
     vtkErrorMacro("proxyNode is invalid");
     return;
   }
-  std::vector< vtkMRMLNode* > browserNodes;
+  std::vector<vtkMRMLNode*> browserNodes;
   this->GetMRMLScene()->GetNodesByClass("vtkMRMLSequenceBrowserNode", browserNodes);
-  for (std::vector< vtkMRMLNode* >::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
   {
     vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(*browserNodeIt);
     if (browserNode->IsProxyNodeID(proxyNode->GetID()))
@@ -934,9 +934,9 @@ vtkMRMLSequenceBrowserNode* vtkSlicerSequencesLogic::GetFirstBrowserNodeForProxy
     vtkErrorMacro("proxyNode is invalid");
     return nullptr;
   }
-  std::vector<vtkMRMLNode* > browserNodes;
+  std::vector<vtkMRMLNode*> browserNodes;
   this->GetMRMLScene()->GetNodesByClass("vtkMRMLSequenceBrowserNode", browserNodes);
-  for (std::vector< vtkMRMLNode* >::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator browserNodeIt = browserNodes.begin(); browserNodeIt != browserNodes.end(); ++browserNodeIt)
   {
     vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(*browserNodeIt);
     if (browserNode->IsProxyNodeID(proxyNode->GetID()))

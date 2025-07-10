@@ -372,7 +372,7 @@ public:
   const char* GetAttribute(const char* name);
 
   /// Get all attribute names.
-  std::vector< std::string > GetAttributeNames();
+  std::vector<std::string> GetAttributeNames();
 
   /// Get all attribute names. Python-wrappable version.
   void GetAttributeNames(vtkStringArray* attributeNames);
@@ -1120,7 +1120,7 @@ protected:
 
   /// NodeReferences is a map that stores vector of references for each referenceRole,
   /// the referenceRole can be any unique string, for example "display", "transform" etc.
-  typedef std::vector< vtkSmartPointer<vtkMRMLNodeReference> > NodeReferenceListType;
+  typedef std::vector<vtkSmartPointer<vtkMRMLNodeReference>> NodeReferenceListType;
   typedef std::map<std::string, NodeReferenceListType > NodeReferencesType;
   NodeReferencesType NodeReferences;
 

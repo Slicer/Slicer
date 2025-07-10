@@ -254,7 +254,7 @@ public:
 
   /// List of view node IDs in display nodes, which were specified when views observation was set up.
   /// If node IDs change (segmentation node is shown/hidden in a specific view) then view observations has to be refreshed.
-  QMap<QString, std::vector<std::string> > ObservedViewNodeIDs; // <SegmentationDisplayNodeID, ViewNodeIDs>
+  QMap<QString, std::vector<std::string>> ObservedViewNodeIDs; // <SegmentationDisplayNodeID, ViewNodeIDs>
 
   bool AutoShowSourceVolumeNode;
 
@@ -287,7 +287,7 @@ public:
   /// set this value to the current value. This allows notifying effects when there is a change.
   std::string LastNotifiedReferenceImageGeometry;
 
-  QList< QShortcut* > KeyboardShortcuts;
+  QList<QShortcut*> KeyboardShortcuts;
 
   Qt::ToolButtonStyle EffectButtonStyle;
 
@@ -1320,9 +1320,9 @@ void qMRMLSegmentEditorWidget::updateMaskingSection()
   if (segmentationNode)
   {
     vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-    std::vector< std::string > segmentIDs;
+    std::vector<std::string> segmentIDs;
     segmentation->GetSegmentIDs(segmentIDs);
-    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
       int currentSegmentItemIndex = d->MaskModeComboBox->findData(QString::fromLocal8Bit(segmentIdIt->c_str()));
       if (currentSegmentItemIndex >= d->MaskModeComboBoxFixedItemsCount)
@@ -2233,13 +2233,13 @@ void qMRMLSegmentEditorWidget::onRemoveSegment()
   // Switch to a new valid segment now (to avoid transient state when no segments are selected
   // as it could deactivate current effect).
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
   if (segmentIDs.size() > 1)
   {
     std::string newSelectedSegmentID;
     std::string previousSegmentID = segmentIDs.front();
-    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
       if (*segmentIdIt == selectedSegmentID)
       {
@@ -2421,9 +2421,9 @@ void qMRMLSegmentEditorWidget::onSegmentAddedRemoved()
   if (segmentationNode)
   {
     vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
-    std::vector< std::string > segmentIDs;
+    std::vector<std::string> segmentIDs;
     segmentation->GetSegmentIDs(segmentIDs);
-    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
       QString segmentName = segmentation->GetSegment(*segmentIdIt)->GetName();
       d->MaskModeComboBox->addItem(tr("Inside ") + segmentName, QString::fromLocal8Bit(segmentIdIt->c_str()));

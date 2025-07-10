@@ -56,12 +56,12 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformSequenceStorageNode : public vtkMRML
   /// in the sequence metafile than pointers in createdNodes. The caller is responsible for deleting all nodes in createdNodes.
   /// Return number of created transform nodes.
   static int ReadSequenceFileTransforms(const std::string& fileName, vtkMRMLScene* scene,
-    std::deque< vtkSmartPointer<vtkMRMLSequenceNode> > &createdNodes, std::map<int, std::string >& frameNumberToIndexValueMap,
+    std::deque<vtkSmartPointer<vtkMRMLSequenceNode>> &createdNodes, std::map<int, std::string >& frameNumberToIndexValueMap,
     std::map<std::string, std::string > &imageMetaData, SequenceFileType fileType = METAIMAGE_SEQUENCE_FILE);
 
   /// Write the transform fields to the metaimage header
-  static bool WriteSequenceMetafileTransforms(const std::string& fileName, std::deque< vtkMRMLSequenceNode* > &transformNodes,
-    std::deque< std::string > &transformNames, vtkMRMLSequenceNode* masterNode, vtkMRMLSequenceNode* imageNode);
+  static bool WriteSequenceMetafileTransforms(const std::string& fileName, std::deque<vtkMRMLSequenceNode*> &transformNodes,
+    std::deque<std::string> &transformNames, vtkMRMLSequenceNode* masterNode, vtkMRMLSequenceNode* imageNode);
 
 protected:
   vtkMRMLLinearTransformSequenceStorageNode();

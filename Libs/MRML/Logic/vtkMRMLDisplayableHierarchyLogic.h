@@ -24,7 +24,7 @@ class vtkMRMLDisplayableHierarchyNode;
 #include <cstdlib>
 #include <vector>
 
-typedef std::vector< vtkMRMLDisplayableHierarchyNode*> vtkMRMLDisplayableHierarchyNodeList;
+typedef std::vector<vtkMRMLDisplayableHierarchyNode*> vtkMRMLDisplayableHierarchyNodeList;
 
 /// \brief Slicer logic class for hierarchy manipulation.
 ///

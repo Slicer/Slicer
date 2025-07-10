@@ -209,7 +209,7 @@ protected:
   // In the future, a vector of event translators could be added
   // (one for each state) to be able to define events
   // that are only allowed in a specific state.
-  std::vector< vtkSmartPointer<vtkWidgetEventTranslator> > EventTranslators;
+  std::vector<vtkSmartPointer<vtkWidgetEventTranslator>> EventTranslators;
 
   int WidgetState;
 

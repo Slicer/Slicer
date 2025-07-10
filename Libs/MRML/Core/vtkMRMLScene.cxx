@@ -392,7 +392,7 @@ void vtkMRMLScene::RemoveAllNodes(bool removeSingletons)
 
   // Store the node ids because a module may decide to delete some helper nodes
   // when a node is deleted
-  std::deque< std::string > removeNodeIds;
+  std::deque<std::string> removeNodeIds;
   vtkMRMLNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   for (this->Nodes->InitTraversal(it);
@@ -403,7 +403,7 @@ void vtkMRMLScene::RemoveAllNodes(bool removeSingletons)
       removeNodeIds.emplace_back(node->GetID());
     }
   }
-  for(std::deque< std::string >::iterator nodeIt=removeNodeIds.begin(); nodeIt!=removeNodeIds.end(); ++nodeIt)
+  for(std::deque<std::string>::iterator nodeIt=removeNodeIds.begin(); nodeIt!=removeNodeIds.end(); ++nodeIt)
   {
     vtkMRMLNode* node=this->GetNodeByID(*nodeIt);
     if (node)
@@ -438,7 +438,7 @@ vtkMRMLNode* vtkMRMLScene::GetDefaultNodeByClass(const char* className)
   {
     return nullptr;
   }
-  std::map<std::string, vtkSmartPointer<vtkMRMLNode> >::iterator it = this->DefaultNodes.find(std::string(className));
+  std::map<std::string, vtkSmartPointer<vtkMRMLNode>>::iterator it = this->DefaultNodes.find(std::string(className));
   if (it == this->DefaultNodes.end())
   {
     return nullptr;
@@ -476,7 +476,7 @@ void vtkMRMLScene::CopyDefaultNodesToScene(vtkMRMLScene* scene)
   {
     return;
   }
-  for (std::map<std::string, vtkSmartPointer<vtkMRMLNode> >::iterator it = this->DefaultNodes.begin();
+  for (std::map<std::string, vtkSmartPointer<vtkMRMLNode>>::iterator it = this->DefaultNodes.begin();
     it != this->DefaultNodes.end(); ++it)
   {
     scene->AddDefaultNode(it->second);
@@ -1893,9 +1893,9 @@ vtkCollection* vtkMRMLScene::GetNodesByClass(const char* className)
 }
 
 //------------------------------------------------------------------------------
-std::list< std::string > vtkMRMLScene::GetNodeClassesList()
+std::list<std::string> vtkMRMLScene::GetNodeClassesList()
 {
-  std::list< std::string > classes;
+  std::list<std::string> classes;
 
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
@@ -2146,7 +2146,7 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
 
   vtkMRMLNode* node = nullptr;
   this->UpdateNodeIDs();
-  std::map<std::string, vtkSmartPointer<vtkMRMLNode> >::iterator it = this->NodeIDs.find(std::string(id));
+  std::map<std::string, vtkSmartPointer<vtkMRMLNode>>::iterator it = this->NodeIDs.find(std::string(id));
   if (it != this->NodeIDs.end())
   {
     node = it->second;
@@ -2408,7 +2408,7 @@ void vtkMRMLScene::PrintSelf(ostream& os, vtkIndent indent)
   this->Nodes->vtkCollection::PrintSelf(os,indent);
   std::list<std::string> classes = this->GetNodeClassesList();
 
-  std::list< std::string >::const_iterator iter;
+  std::list<std::string>::const_iterator iter;
   // Iterate through list and output each element.
   for (iter = classes.begin(); iter != classes.end(); iter++)
   {
@@ -3156,7 +3156,7 @@ void vtkMRMLScene::Redo()
 
   vtkCollection* currentScene = this->Nodes;
   //std::hash_map<std::string, vtkMRMLNode*> currentMap;
-  std::map<std::string, vtkWeakPointer<vtkMRMLNode> > currentMap;
+  std::map<std::string, vtkWeakPointer<vtkMRMLNode>> currentMap;
   nnodes = currentScene->GetNumberOfItems();
   for (n=0; n<nnodes; n++)
   {
@@ -3168,7 +3168,7 @@ void vtkMRMLScene::Redo()
   }
 
   //std::hash_map<std::string, vtkMRMLNode*> undoMap;
-  std::map<std::string, vtkWeakPointer<vtkMRMLNode> > undoMap;
+  std::map<std::string, vtkWeakPointer<vtkMRMLNode>> undoMap;
 
   vtkCollection* undoScene = nullptr;
 
@@ -3189,11 +3189,11 @@ void vtkMRMLScene::Redo()
     }
   }
 
-  std::map<std::string, vtkWeakPointer<vtkMRMLNode> >::iterator iter;
-  std::map<std::string, vtkWeakPointer<vtkMRMLNode> >::iterator curIter;
+  std::map<std::string, vtkWeakPointer<vtkMRMLNode>>::iterator iter;
+  std::map<std::string, vtkWeakPointer<vtkMRMLNode>>::iterator curIter;
 
   // copy back changes and add deleted nodes to the current scene
-  std::vector<vtkWeakPointer<vtkMRMLNode> > addNodes;
+  std::vector<vtkWeakPointer<vtkMRMLNode>> addNodes;
   for(iter=undoMap.begin(); iter != undoMap.end(); iter++)
   {
     curIter = currentMap.find(iter->first);
@@ -3216,7 +3216,7 @@ void vtkMRMLScene::Redo()
   }
 
   // remove new nodes created before Undo
-  std::vector<vtkWeakPointer<vtkMRMLNode> > removeNodes;
+  std::vector<vtkWeakPointer<vtkMRMLNode>> removeNodes;
   for(curIter=currentMap.begin(); curIter != currentMap.end(); curIter++)
   {
     if (!curIter->second)
@@ -3255,7 +3255,7 @@ void vtkMRMLScene::Redo()
 //------------------------------------------------------------------------------
 void vtkMRMLScene::ClearUndoStack()
 {
-  std::list< vtkCollection* >::iterator iter;
+  std::list<vtkCollection*>::iterator iter;
   for(iter=this->UndoStack.begin(); iter != this->UndoStack.end(); iter++)
   {
     (*iter)->RemoveAllItems();
@@ -3267,7 +3267,7 @@ void vtkMRMLScene::ClearUndoStack()
 //------------------------------------------------------------------------------
 void vtkMRMLScene::ClearRedoStack()
 {
-  std::list< vtkCollection* >::iterator iter;
+  std::list<vtkCollection*>::iterator iter;
   for(iter=this->RedoStack.begin(); iter != this->RedoStack.end(); iter++)
   {
     (*iter)->RemoveAllItems();
@@ -3983,7 +3983,7 @@ void vtkMRMLScene::SetMaximumNumberOfSavedUndoStates(int stackSize)
 //-----------------------------------------------------------------------------
 void vtkMRMLScene::TrimUndoStack()
 {
-  std::list<vtkSmartPointer<vtkCollection> > removedStacks;
+  std::list<vtkSmartPointer<vtkCollection>> removedStacks;
   while(static_cast<int>(this->UndoStack.size()) > this->MaximumNumberOfSavedUndoStates)
   {
     removedStacks.emplace_back(this->UndoStack.front());
@@ -4404,7 +4404,7 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir,
   // Use a map to store the file names from a storage node, the 0th one is by
   // definition the GetFileName returned value, then the rest are at index n+1
   // from GetNthFileName(n).
-  std::map<vtkMRMLStorageNode*, std::vector<std::string> > originalStorageNodeFileNames;
+  std::map<vtkMRMLStorageNode*, std::vector<std::string>> originalStorageNodeFileNames;
 
   bool success = true;
   std::map<std::string, vtkMRMLNode*> storableNodes;
@@ -4471,7 +4471,7 @@ bool vtkMRMLScene::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir,
         //   << "\n\tmodified since read = " << storableNode->GetModifiedSinceRead() << std::endl;
 
         storageNode->ResetFileNameList();
-        std::vector< std::string > &originalFileNames = originalStorageNodeFileNames[storageNode];
+        std::vector<std::string> &originalFileNames = originalStorageNodeFileNames[storageNode];
         for (size_t index = 0; index < originalFileNames.size(); index++)
         {
           if (index == 0)
@@ -4590,7 +4590,7 @@ std::string vtkMRMLScene::CreateUniqueFileName(const std::string& filename, cons
 
 //----------------------------------------------------------------------------
 bool vtkMRMLScene::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode* storableNode, std::string& dataDir,
-  std::map<vtkMRMLStorageNode*, std::vector<std::string> > &originalStorageNodeFileNames, vtkMRMLMessageCollection* userMessages)
+  std::map<vtkMRMLStorageNode*, std::vector<std::string>> &originalStorageNodeFileNames, vtkMRMLMessageCollection* userMessages)
 {
   if (!storableNode || !storableNode->GetSaveWithScene())
   {

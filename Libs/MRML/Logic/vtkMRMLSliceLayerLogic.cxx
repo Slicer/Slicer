@@ -876,7 +876,7 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
     return;
   }
   int displayNodesModified = 0;
-  std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> dnodes  = displayNode->GetSliceGlyphDisplayNodes( this->VolumeNode );
+  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> dnodes  = displayNode->GetSliceGlyphDisplayNodes( this->VolumeNode );
   for (unsigned int n=0; n<dnodes.size(); n++)
   {
     vtkMRMLGlyphableVolumeSliceDisplayNode* dnode = dnodes[n];

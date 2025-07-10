@@ -70,7 +70,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 1;
   }
 
-  vtkMRMLSceneViewNode* sceneViewNode = dynamic_cast <vtkMRMLSceneViewNode*> (refNode);
+  vtkMRMLSceneViewNode* sceneViewNode = dynamic_cast<vtkMRMLSceneViewNode*> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())

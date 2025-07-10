@@ -88,7 +88,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
 
   // pixel type and number of components are correct. OK to read image data
   filter->UpdateLargestPossibleRegion();
-  itk::ImageRegionConstIteratorWithIndex< ImageType >
+  itk::ImageRegionConstIteratorWithIndex<ImageType>
     it( reader->GetOutput(), reader->GetOutput()->GetLargestPossibleRegion() );
   tensors->SetNumberOfComponents(9);
   tensors->SetNumberOfTuples(data->GetNumberOfPoints());

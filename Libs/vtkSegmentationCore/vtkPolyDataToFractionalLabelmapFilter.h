@@ -64,11 +64,11 @@ class vtkSegmentationCore_EXPORT vtkPolyDataToFractionalLabelmapFilter :
   public vtkPolyDataToImageStencil
 {
 private:
-  std::map<double, vtkSmartPointer<vtkCellArray> > LinesCache;
-  std::map<double, vtkSmartPointer<vtkPolyData> > SliceCache;
+  std::map<double, vtkSmartPointer<vtkCellArray>> LinesCache;
+  std::map<double, vtkSmartPointer<vtkPolyData>> SliceCache;
   std::map<double, vtkIdType*> PointIdsCache;
   std::map<double, vtkIdType> NptsCache;
-  std::map<double,  vtkSmartPointer<vtkIdTypeArray> > PointNeighborCountsCache;
+  std::map<double,  vtkSmartPointer<vtkIdTypeArray>> PointNeighborCountsCache;
 
   vtkCellLocator* CellLocator;
 

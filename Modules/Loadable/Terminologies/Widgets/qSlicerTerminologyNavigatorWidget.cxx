@@ -208,7 +208,7 @@ public:
   vtkSmartPointer<vtkSlicerTerminologyCategory> CurrentCategoryObject;
   /// Category objects of the currently selected categories in the UI
   /// Used for populating the type list when categories are selected
-  QList<vtkSmartPointer<vtkSlicerTerminologyCategory> > SelectedCategoryObjects;
+  QList<vtkSmartPointer<vtkSlicerTerminologyCategory>> SelectedCategoryObjects;
   /// Object containing the details of the current type
   vtkSmartPointer<vtkSlicerTerminologyType> CurrentTypeObject;
   /// Object containing the details of the current type modifier if any

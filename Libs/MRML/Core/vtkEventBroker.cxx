@@ -309,7 +309,7 @@ void vtkEventBroker::RemoveObservations (ObservationVector observations)
   }
 
   // remove from event queue
-  std::deque< vtkObservation*>::iterator queueIter;
+  std::deque<vtkObservation*>::iterator queueIter;
   for(queueIter=this->EventQueue.begin(); queueIter != this->EventQueue.end();)
   {
     // foreach of the broker's observations see if it is in the list of items to be removed
@@ -764,7 +764,7 @@ void vtkEventBroker::QueueObservation ( vtkObservation* observation,
   }
   else
   {
-    std::deque< vtkObservation::CallType >::const_iterator dataIter;
+    std::deque<vtkObservation::CallType>::const_iterator dataIter;
     for(dataIter=observation->GetCallDataList()->begin();dataIter != observation->GetCallDataList()->end(); dataIter++)
     {
       if ( call.EventID == dataIter->EventID &&

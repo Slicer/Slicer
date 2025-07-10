@@ -46,9 +46,9 @@ int qMRMLVolumeInfoWidgetTest1(int argc, char* argv [] )
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkNew< vtkMRMLScalarVolumeNode > volumeNode;
+  vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
 
-  vtkNew< vtkImageData > imageData;
+  vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(256, 256, 1);
   imageData->AllocateScalars(VTK_UNSIGNED_SHORT, 1); // allocate storage for image data
   volumeNode->SetAndObserveImageData(imageData.GetPointer());

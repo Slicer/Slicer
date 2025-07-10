@@ -353,7 +353,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateCenterOfRotation()
     centerWorldPos[1] += p[1];
     centerWorldPos[2] += p[2];
   }
-  double inv_N = 1. / static_cast< double >(markupsNode->GetNumberOfControlPoints());
+  double inv_N = 1. / static_cast<double>(markupsNode->GetNumberOfControlPoints());
   centerWorldPos[0] *= inv_N;
   centerWorldPos[1] *= inv_N;
   centerWorldPos[2] *= inv_N;

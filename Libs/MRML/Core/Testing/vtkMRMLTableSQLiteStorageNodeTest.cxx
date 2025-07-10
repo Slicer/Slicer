@@ -50,7 +50,7 @@ int vtkMRMLTableSQLiteStorageNodeTest(int, char*[])
   vtkNew<vtkMRMLTableNode> tableNode;
   scene->AddNode(tableNode.GetPointer());
 
-  vtkNew< vtkMRMLTableSQLiteStorageNode > storageNode;
+  vtkNew<vtkMRMLTableSQLiteStorageNode> storageNode;
   scene->AddNode(storageNode.GetPointer());
 
   tableNode->SetAndObserveStorageNodeID(storageNode->GetID());

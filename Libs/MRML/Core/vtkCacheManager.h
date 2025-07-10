@@ -15,7 +15,7 @@ class vtkMRMLScene;
 #include <map>
 
 #ifndef vtkObjectPointer
-#define vtkObjectPointer(xx) (reinterpret_cast <vtkObject**>( (xx) ))
+#define vtkObjectPointer(xx) (reinterpret_cast<vtkObject**>( (xx) ))
 #endif
 
 class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
@@ -114,7 +114,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   float GetCurrentCacheSize();
   float GetFreeCacheSpaceRemaining();
 
-  std::vector< std::string > GetCachedFiles()const;
+  std::vector<std::string> GetCachedFiles()const;
 
   ///
   vtkGetMacro ( RemoteCacheLimit, int );
@@ -165,12 +165,12 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 
   std::string RemoteCacheDirectory;
   int GetCachedFileList(const char* dirname);
-  std::vector< std::string > GetAllCachedFiles();
+  std::vector<std::string> GetAllCachedFiles();
   /// This array contains a list of cached file names (without paths)
   /// in case it's faster to search thru this list than to
   /// snuffle thru a large cache dir. Must keep current
   /// with every download, remove from cache, and clearcache call.
-  std::vector< std::string > CachedFileList;
+  std::vector<std::string> CachedFileList;
 
  protected:
   vtkCacheManager();

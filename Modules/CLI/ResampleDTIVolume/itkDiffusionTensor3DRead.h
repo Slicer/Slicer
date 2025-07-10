@@ -44,7 +44,7 @@ public:
   typedef ImageFileReader<DiffusionImageType>  FileReaderType;
   typedef MetaDataDictionary                   DictionaryType;
   typedef MetaDataObject<std::string>          MetaDataStringType;
-  typedef std::vector<std::vector<double> >    DoubleVectorType;
+  typedef std::vector<std::vector<double>>    DoubleVectorType;
   typedef MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
   typedef SmartPointer<Self>                   Pointer;
   typedef SmartPointer<const Self>             ConstPointer;

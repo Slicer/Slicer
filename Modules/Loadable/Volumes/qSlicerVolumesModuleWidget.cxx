@@ -185,8 +185,8 @@ void qSlicerVolumesModuleWidget::convertVolume()
     targetVolumeNode->SetSelectable(currentVolume->GetSelectable());
     targetVolumeNode->SetSingletonTag(currentVolume->GetSingletonTag());
     targetVolumeNode->SetDescription(currentVolume->GetDescription());
-    std::vector< std::string > attributeNames = targetVolumeNode->GetAttributeNames();
-    for (std::vector< std::string >::iterator attributeNameIt = attributeNames.begin();
+    std::vector<std::string> attributeNames = targetVolumeNode->GetAttributeNames();
+    for (std::vector<std::string>::iterator attributeNameIt = attributeNames.begin();
       attributeNameIt != attributeNames.end(); ++attributeNameIt)
     {
       targetVolumeNode->SetAttribute(attributeNameIt->c_str(), currentVolume->GetAttribute(attributeNameIt->c_str()));

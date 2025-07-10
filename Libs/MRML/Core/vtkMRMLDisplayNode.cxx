@@ -489,7 +489,7 @@ void vtkMRMLDisplayNode::UpdateReferences()
     this->SetAndObserveColorNodeID(nullptr);
   }
 
-  std::vector< std::string > viewNodeIDs;
+  std::vector<std::string> viewNodeIDs;
 
   for (unsigned int i=0; i < this->ViewNodeIDs.size(); i++)
   {
@@ -613,7 +613,7 @@ void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
   {
     return;
   }
-  std::vector< std::string > viewNodeIDs;
+  std::vector<std::string> viewNodeIDs;
   for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
   {
     if (std::string(viewNodeID) != this->ViewNodeIDs[i])
@@ -662,7 +662,7 @@ bool vtkMRMLDisplayNode::IsViewNodeIDPresent(const char* viewNodeID)const
     return false;
   }
   std::string value(viewNodeID);
-  std::vector< std::string >::const_iterator it =
+  std::vector<std::string>::const_iterator it =
     std::find(this->ViewNodeIDs.begin(), this->ViewNodeIDs.end(), value);
   return it != this->ViewNodeIDs.end();
 }

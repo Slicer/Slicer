@@ -252,7 +252,7 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene* newScene)
   // Controller and connect it up
   std::vector<vtkMRMLNode*> sliceNodes;
   newScene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
-  for (std::vector< vtkMRMLNode* >::iterator sliceNodeIt = sliceNodes.begin(); sliceNodeIt != sliceNodes.end(); ++sliceNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator sliceNodeIt = sliceNodes.begin(); sliceNodeIt != sliceNodes.end(); ++sliceNodeIt)
   {
     vtkMRMLSliceNode* snode = vtkMRMLSliceNode::SafeDownCast(*sliceNodeIt);
     if (snode)
@@ -263,7 +263,7 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene* newScene)
 
   std::vector<vtkMRMLNode*> threeDNodes;
   newScene->GetNodesByClass("vtkMRMLViewNode", threeDNodes);
-  for (std::vector< vtkMRMLNode* >::iterator threeDNodeIt = threeDNodes.begin(); threeDNodeIt != threeDNodes.end(); ++threeDNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator threeDNodeIt = threeDNodes.begin(); threeDNodeIt != threeDNodes.end(); ++threeDNodeIt)
   {
     vtkMRMLViewNode* vnode = vtkMRMLViewNode::SafeDownCast(*threeDNodeIt);
     if (vnode)
@@ -274,7 +274,7 @@ void qSlicerViewControllersModuleWidget::setMRMLScene(vtkMRMLScene* newScene)
 
   std::vector<vtkMRMLNode*> plotNodes;
   newScene->GetNodesByClass("vtkMRMLPlotViewNode", plotNodes);
-  for (std::vector< vtkMRMLNode* >::iterator plotNodeIt = plotNodes.begin(); plotNodeIt != plotNodes.end(); ++plotNodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator plotNodeIt = plotNodes.begin(); plotNodeIt != plotNodes.end(); ++plotNodeIt)
   {
     vtkMRMLPlotViewNode* pnode = vtkMRMLPlotViewNode::SafeDownCast(*plotNodeIt);
     if (pnode)

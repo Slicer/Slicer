@@ -327,7 +327,7 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
   consequents.push_back(rule6_OversamplingLow);
 
   // Calculate areas and centroids of all the sections (trapezoids) of all the consequent membership functions
-  std::vector<std::pair<double,double> > areaCentroidPairs;
+  std::vector<std::pair<double,double>> areaCentroidPairs;
   for (std::vector<vtkPiecewiseFunction*>::iterator consequentIt=consequents.begin(); consequentIt!=consequents.end(); ++consequentIt)
   {
     vtkPiecewiseFunction* currentMembershipFunction = (*consequentIt);
@@ -375,7 +375,7 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
   // Calculate combined center of mass from the components
   double nominator = 0.0;
   double denominator = 0.0;
-  for (std::vector<std::pair<double,double> >::iterator trapezoidIt=areaCentroidPairs.begin(); trapezoidIt!=areaCentroidPairs.end(); ++trapezoidIt)
+  for (std::vector<std::pair<double,double>>::iterator trapezoidIt=areaCentroidPairs.begin(); trapezoidIt!=areaCentroidPairs.end(); ++trapezoidIt)
   {
     nominator += trapezoidIt->first * trapezoidIt->second;
     denominator += trapezoidIt->first;
