@@ -68,9 +68,11 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object,
                                     int EventType,
                                     bool& Error)
 {
-  if (Command != "currentNodeRenamed" && Command != "currentNodeDeleted" &&
-     Command != "editNodeRequested" && Command != "decorationClicked" &&
-     Command != "reParentByDragnDrop")
+  if (Command != "currentNodeRenamed" && //
+      Command != "currentNodeDeleted" && //
+      Command != "editNodeRequested" &&  //
+      Command != "decorationClicked" &&  //
+      Command != "reParentByDragnDrop")
   {
     return this->Superclass::playEvent(Object, Command, Arguments, EventType, Error);
   }

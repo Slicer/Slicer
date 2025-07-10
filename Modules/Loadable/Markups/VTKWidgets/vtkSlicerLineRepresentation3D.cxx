@@ -208,8 +208,8 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
-  this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode
-    && this->LineActor->GetVisibility()
+  this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode //
+    && this->LineActor->GetVisibility() //
     && this->MarkupsDisplayNode->GetOccludedVisibility());
 
   if (markupsNode->GetNumberOfDefinedControlPoints(true) == 2 && this->MarkupsDisplayNode->GetPropertiesLabelVisibility())
@@ -236,7 +236,7 @@ void vtkSlicerLineRepresentation3D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1 //
     || !interactionEventData )
   {
     return;

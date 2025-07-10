@@ -500,12 +500,12 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
     {
       // Skip region outside extent of current segment (consider common extent boundaries)
       BinaryLabelmap4DImageType::IndexType segmentIndex = segmentLabelmapIterator.GetIndex();
-      if (segmentIndex[0] + commonGeometryExtent[0] < currentSegmentExtent[0]
-        || segmentIndex[0] + commonGeometryExtent[0] > currentSegmentExtent[1]
-        || segmentIndex[1] + commonGeometryExtent[2] < currentSegmentExtent[2]
-        || segmentIndex[1] + commonGeometryExtent[2] > currentSegmentExtent[3]
-        || segmentIndex[2] + commonGeometryExtent[4] < currentSegmentExtent[4]
-        || segmentIndex[2] + commonGeometryExtent[4] > currentSegmentExtent[5] )
+      if (segmentIndex[0] + commonGeometryExtent[0] < currentSegmentExtent[0]    //
+          || segmentIndex[0] + commonGeometryExtent[0] > currentSegmentExtent[1] //
+          || segmentIndex[1] + commonGeometryExtent[2] < currentSegmentExtent[2] //
+          || segmentIndex[1] + commonGeometryExtent[2] > currentSegmentExtent[3] //
+          || segmentIndex[2] + commonGeometryExtent[4] < currentSegmentExtent[4] //
+          || segmentIndex[2] + commonGeometryExtent[4] > currentSegmentExtent[5])
       {
         continue;
       }
@@ -633,12 +633,12 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
 
     // Special case: extent = [0, 0, 0, 0, 0, 0] means there is no image data
     isExtentValid = true;
-    if (imageExtentInFile[0] == 0
-      && imageExtentInFile[1] == 0
-      && imageExtentInFile[2] == 0
-      && imageExtentInFile[3] == 0
-      && imageExtentInFile[4] == 0
-      && imageExtentInFile[5] == 0)
+    if (imageExtentInFile[0] == 0    //
+        && imageExtentInFile[1] == 0 //
+        && imageExtentInFile[2] == 0 //
+        && imageExtentInFile[3] == 0 //
+        && imageExtentInFile[4] == 0 //
+        && imageExtentInFile[5] == 0)
     {
       imageExtentInFile[1] = -1;
       imageExtentInFile[3] = -1;
@@ -713,8 +713,8 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
     default:
       break;
   }
-  if (ret != vtkOrientedImageDataResample::TYPE_OK
-    && !vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(imageData))
+  if (ret != vtkOrientedImageDataResample::TYPE_OK //
+      && !vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(imageData))
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
       "vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation",
@@ -891,9 +891,9 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
             layerExtent[i * 2 + 1] += referenceImageExtentOffset[i];
           }
           // Copy with clipping to specified extent
-          if (layerExtent[0] <= layerExtent[1]
-            && layerExtent[2] <= layerExtent[3]
-            && layerExtent[4] <= layerExtent[5])
+          if (layerExtent[0] <= layerExtent[1]    //
+              && layerExtent[2] <= layerExtent[3] //
+              && layerExtent[4] <= layerExtent[5])
           {
             // non-empty segment
             extractComponents->SetComponents(frameIndex);
@@ -1019,16 +1019,16 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationStorageNode::AddToExtent(int extent[6], int extentToAdd[6])
 {
-  if (extentToAdd[0] > extentToAdd[1]
-    || extentToAdd[2] > extentToAdd[3]
-    || extentToAdd[4] > extentToAdd[5])
+  if (extentToAdd[0] > extentToAdd[1]    //
+      || extentToAdd[2] > extentToAdd[3] //
+      || extentToAdd[4] > extentToAdd[5])
   {
     // extentToAdd is empty, no need to change the extent
     return;
   }
-  if (extent[0] > extent[1]
-    || extent[2] > extent[3]
-    || extent[4] > extent[5])
+  if (extent[0] > extent[1]    //
+      || extent[2] > extent[3] //
+      || extent[4] > extent[5])
   {
     // initial extent is empty, use the added extent
     for (int i = 0; i < 6; i++)
@@ -1136,8 +1136,8 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
       segmentation->SetSourceRepresentationName(sourceRepresentationName.c_str());
     }
     // Read conversion parameters (stored in each segment file, but need to set only once)
-    if (conversionParameters.empty()
-      && currentPolyData->GetFieldData()->GetAbstractArray(GetSegmentationMetaDataKey(KEY_SEGMENTATION_CONVERSION_PARAMETERS).c_str()) )
+    if (conversionParameters.empty() //
+        && currentPolyData->GetFieldData()->GetAbstractArray(GetSegmentationMetaDataKey(KEY_SEGMENTATION_CONVERSION_PARAMETERS).c_str()) )
     {
       vtkStringArray* conversionParametersArray = vtkStringArray::SafeDownCast(
         currentPolyData->GetFieldData()->GetAbstractArray(GetSegmentationMetaDataKey(KEY_SEGMENTATION_CONVERSION_PARAMETERS).c_str()) );
@@ -1145,8 +1145,8 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
       segmentation->DeserializeConversionParameters(conversionParameters);
     }
     // Read contained representation names
-    if (containedRepresentationNames.empty()
-      && currentPolyData->GetFieldData()->GetAbstractArray(GetSegmentationMetaDataKey(KEY_SEGMENTATION_CONTAINED_REPRESENTATION_NAMES).c_str()) )
+    if (containedRepresentationNames.empty() //
+        && currentPolyData->GetFieldData()->GetAbstractArray(GetSegmentationMetaDataKey(KEY_SEGMENTATION_CONTAINED_REPRESENTATION_NAMES).c_str()) )
     {
       containedRepresentationNames = vtkStringArray::SafeDownCast(
         currentPolyData->GetFieldData()->GetAbstractArray(GetSegmentationMetaDataKey(KEY_SEGMENTATION_CONTAINED_REPRESENTATION_NAMES).c_str()) )->GetValue(0);
@@ -1345,9 +1345,9 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
       commonGeometryImage->GetExtent(commonGeometryExtent);
     }
   }
-  if (commonGeometryExtent[0] > commonGeometryExtent[1]
-    || commonGeometryExtent[2] > commonGeometryExtent[3]
-    || commonGeometryExtent[4] > commonGeometryExtent[5])
+  if (commonGeometryExtent[0] > commonGeometryExtent[1]    //
+      || commonGeometryExtent[2] > commonGeometryExtent[3] //
+      || commonGeometryExtent[4] > commonGeometryExtent[5])
   {
     // common image is empty, which cannot be written to image file
     // change it to a 1x1x1 image instead
@@ -1424,9 +1424,9 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
 
     int currentBinaryLabelmapExtent[6] = { 0, -1, 0, -1, 0, -1 };
     currentBinaryLabelmap->GetExtent(currentBinaryLabelmapExtent);
-    if (currentBinaryLabelmapExtent[0] <= currentBinaryLabelmapExtent[1]
-      && currentBinaryLabelmapExtent[2] <= currentBinaryLabelmapExtent[3]
-      && currentBinaryLabelmapExtent[4] <= currentBinaryLabelmapExtent[5])
+    if (currentBinaryLabelmapExtent[0] <= currentBinaryLabelmapExtent[1]    //
+        && currentBinaryLabelmapExtent[2] <= currentBinaryLabelmapExtent[3] //
+        && currentBinaryLabelmapExtent[4] <= currentBinaryLabelmapExtent[5])
     {
       // There is a valid labelmap
 

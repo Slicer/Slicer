@@ -305,13 +305,13 @@ protected:
     }
     bool operator==(const PropertyType& other) const
     {
-      return this->Defined == other.Defined &&
-        this->Name == other.Name &&
-        vtkCodedEntry::AreEqual(this->Category, other.Category) &&
-        vtkCodedEntry::AreEqual(this->Type, other.Type) &&
-        vtkCodedEntry::AreEqual(this->TypeModifier, other.TypeModifier) &&
-        vtkCodedEntry::AreEqual(this->Region, other.Region) &&
-        vtkCodedEntry::AreEqual(this->RegionModifier, other.RegionModifier);
+      return this->Defined == other.Defined &&                                  //
+             this->Name == other.Name &&                                        //
+             vtkCodedEntry::AreEqual(this->Category, other.Category) &&         //
+             vtkCodedEntry::AreEqual(this->Type, other.Type) &&                 //
+             vtkCodedEntry::AreEqual(this->TypeModifier, other.TypeModifier) && //
+             vtkCodedEntry::AreEqual(this->Region, other.Region) &&             //
+             vtkCodedEntry::AreEqual(this->RegionModifier, other.RegionModifier);
     }
     bool operator!=(const PropertyType& other) const
     {

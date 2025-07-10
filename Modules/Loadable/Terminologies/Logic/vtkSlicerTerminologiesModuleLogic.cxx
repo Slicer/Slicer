@@ -205,8 +205,8 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray
     {
       rapidjson::Value& codingSchemeDesignator = currentObject["CodingSchemeDesignator"];
       rapidjson::Value& codeValue = currentObject["CodeValue"];
-      if (codingSchemeDesignator.IsString() && !codeId.CodingSchemeDesignator.compare(codingSchemeDesignator.GetString())
-        && codeValue.IsString() && !codeId.CodeValue.compare(codeValue.GetString()) )
+      if (codingSchemeDesignator.IsString() && !codeId.CodingSchemeDesignator.compare(codingSchemeDesignator.GetString()) //
+          && codeValue.IsString() && !codeId.CodeValue.compare(codeValue.GetString()) )
       {
         foundIndex = index;
         return currentObject;
@@ -419,8 +419,8 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
   type->SetCodeValue(codeValue->value.GetString());
   type->SetContextGroupName(contextGroupName != typeObject.MemberEnd() ? contextGroupName->value.GetString() : nullptr);
 
-  if (recommendedDisplayRGBValue != typeObject.MemberEnd()
-    && (recommendedDisplayRGBValue->value).IsArray() && (recommendedDisplayRGBValue->value).Size() == 3)
+  if (recommendedDisplayRGBValue != typeObject.MemberEnd() //
+      && (recommendedDisplayRGBValue->value).IsArray() && (recommendedDisplayRGBValue->value).Size() == 3)
   {
     if (recommendedDisplayRGBValue->value[0].IsString())
     {
@@ -667,9 +667,9 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     // Note: "The reason for the inner list is that we have one single schema both for input and output. When we provide input metafile,
     //       we can have multiple input files, and each file can have multiple labels, that is why we need to have list of lists"
     segmentAttributes = segmentAttributes[0]; // Enter "innerList"
-    if (!segmentAttributes.HasMember("SegmentedPropertyCategoryCodeSequence")
-      || !segmentAttributes.HasMember("SegmentedPropertyTypeCodeSequence")
-      || !segmentAttributes.HasMember("recommendedDisplayRGBValue") )
+    if (!segmentAttributes.HasMember("SegmentedPropertyCategoryCodeSequence") //
+        || !segmentAttributes.HasMember("SegmentedPropertyTypeCodeSequence")  //
+        || !segmentAttributes.HasMember("recommendedDisplayRGBValue") )
     {
       vtkGenericWarningMacro("ConvertSegmentationDescriptorToTerminologyContext: Invalid segment terminology entry at index " << index);
       ++index;
@@ -1338,8 +1338,8 @@ void vtkSlicerTerminologiesModuleLogic::LoadUserContexts()
     std::string fileName = files->GetValue(index);
 
     // Only load json files
-    if (userSettingsDir->FileIsDirectory(fileName.c_str())
-      || fileName.size() < 5 || fileName.substr(fileName.size()-5).compare(".json") )
+    if (userSettingsDir->FileIsDirectory(fileName.c_str()) //
+        || fileName.size() < 5 || fileName.substr(fileName.size()-5).compare(".json") )
     {
       continue;
     }
@@ -2086,8 +2086,8 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
   entry->SetTerminologyContextName(nullptr);
   entry->SetRegionContextName(nullptr);
 
-  if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject()
-    || !entry->GetRegionObject() || !entry->GetRegionModifierObject() )
+  if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject() //
+      || !entry->GetRegionObject() || !entry->GetRegionModifierObject() )
   {
     vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Invalid terminology entry given");
     return false;
@@ -2181,8 +2181,8 @@ bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSl
     return false;
   }
 
-  if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject()
-    || !entry->GetRegionObject() || !entry->GetRegionModifierObject())
+  if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject() //
+      || !entry->GetRegionObject() || !entry->GetRegionModifierObject())
   {
     vtkErrorWithObjectMacro(entry, "UpdateEntryFromLoadedTerminologies: Invalid terminology entry given");
     return false;
@@ -2311,8 +2311,8 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
   {
     return "Invalid terminology";
   }
-  if (!entry->GetTerminologyContextName()
-    || !entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue() )
+  if (!entry->GetTerminologyContextName() //
+      || !entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue() )
   {
     return "No terminology information";
   }
@@ -2342,8 +2342,8 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
   }
 
   // If region is not selected, then do not show region context name either
-  if (entry->GetRegionContextName()
-    && entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue() )
+  if (entry->GetRegionContextName() //
+      && entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue() )
   {
     terminologyStr = terminologyStr + std::string("\n  Region context: ") + std::string(entry->GetRegionContextName());
     terminologyStr = terminologyStr + std::string("\n  Region: ") + std::string(entry->GetRegionObject()->GetCodeMeaning());
@@ -2529,7 +2529,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
     vtkErrorMacro("FindFirstColorNodeOrTerminology: Invalid terminology entry");
     return false;
   }
-  if (!entry->GetTerminologyContextName() &&
+  if (!entry->GetTerminologyContextName() && //
     (!entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue()))
   {
     // neither context name nor category is specified, this is an empty terminology
@@ -2889,10 +2889,10 @@ bool vtkSlicerTerminologiesModuleLogic::AreTerminologyEntriesEqual(vtkSlicerTerm
     return entry1 == entry2;
   }
 
-  return this->AreCodedEntriesEqual(entry1->GetCategoryObject(), entry2->GetCategoryObject())
-      && this->AreCodedEntriesEqual(entry1->GetTypeObject(), entry2->GetTypeObject())
-      && this->AreCodedEntriesEqual(entry1->GetTypeModifierObject(), entry2->GetTypeModifierObject())
-      && this->AreCodedEntriesEqual(entry1->GetRegionObject(), entry2->GetRegionObject())
+  return this->AreCodedEntriesEqual(entry1->GetCategoryObject(), entry2->GetCategoryObject()) //
+      && this->AreCodedEntriesEqual(entry1->GetTypeObject(), entry2->GetTypeObject()) //
+      && this->AreCodedEntriesEqual(entry1->GetTypeModifierObject(), entry2->GetTypeModifierObject()) //
+      && this->AreCodedEntriesEqual(entry1->GetRegionObject(), entry2->GetRegionObject()) //
       && this->AreCodedEntriesEqual(entry1->GetRegionModifierObject(), entry2->GetRegionModifierObject());
 }
 
@@ -2991,11 +2991,11 @@ int vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(vtkMRMLColorNo
       continue;
     }
 
-    if (vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetCategoryObject(), entry2->GetCategoryObject())
-      && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetTypeObject(), entry2->GetTypeObject())
-      && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetTypeModifierObject(), entry2->GetTypeModifierObject())
-      && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetRegionObject(), entry2->GetRegionObject())
-      && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetRegionModifierObject(), entry2->GetRegionModifierObject()))
+    if (vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetCategoryObject(), entry2->GetCategoryObject())            //
+        && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetTypeObject(), entry2->GetTypeObject())                 //
+        && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetTypeModifierObject(), entry2->GetTypeModifierObject()) //
+        && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetRegionObject(), entry2->GetRegionObject())             //
+        && vtkSlicerTerminologiesModuleLogic::AreCodedEntriesExactMatch(entry1->GetRegionModifierObject(), entry2->GetRegionModifierObject()))
     {
       // found a match
       if (!ignoreContextName)

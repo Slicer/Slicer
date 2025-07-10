@@ -172,7 +172,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
   for (int i = basicNode->GetFirstType(); i <= basicNode->GetLastType(); i++)
   {
     // don't have a File node...
-    if (i != vtkMRMLColorTableNode::File
+    if (i != vtkMRMLColorTableNode::File //
         && i != vtkMRMLColorTableNode::Obsolete)
     {
       //std::string id = std::string(this->GetColorTableNodeID(i));
@@ -193,7 +193,7 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
   for (int i = 0; i < numProcNodes; i++)
   {
     vtkMRMLProceduralColorNode* procNode = vtkMRMLProceduralColorNode::SafeDownCast(procNodes[i]);
-    if (procNode != nullptr &&
+    if (procNode != nullptr && //
         strcmp(procNode->GetID(), this->GetProceduralColorNodeID(procNode->GetName())) == 0)
     {
       // it's one we added
@@ -576,8 +576,8 @@ vtkMRMLColorTableNode* vtkMRMLColorLogic::CreateDefaultFileNode(const std::strin
     return nullptr;
   }
 
-  if (strcmp(ctnode->GetName(),"GenericColors") == 0 ||
-      strcmp(ctnode->GetName(),"GenericAnatomyColors") == 0)
+  if (strcmp(ctnode->GetName(), "GenericColors") == 0 || //
+      strcmp(ctnode->GetName(), "GenericAnatomyColors") == 0)
   {
     vtkDebugMacro("Found default lut node");
     // No category to float to the top of the node
@@ -857,9 +857,9 @@ void vtkMRMLColorLogic::AddDefaultTableNodes()
   for (int i = basicNode->GetFirstType(); i <= basicNode->GetLastType(); i++)
   {
     // don't add a second Labels node, File node or the old atlas node
-    if (i != vtkMRMLColorTableNode::Labels &&
-        i != vtkMRMLColorTableNode::File &&
-        i != vtkMRMLColorTableNode::Obsolete &&
+    if (i != vtkMRMLColorTableNode::Labels &&   //
+        i != vtkMRMLColorTableNode::File &&     //
+        i != vtkMRMLColorTableNode::Obsolete && //
         i != vtkMRMLColorTableNode::User)
     {
       this->AddDefaultTableNode(i);

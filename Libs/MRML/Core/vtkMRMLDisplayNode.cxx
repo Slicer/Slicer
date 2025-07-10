@@ -410,8 +410,8 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
   // is cached. If it is still valid then we use it.
   if (this->LastFoundDisplayableNode != nullptr)
   {
-    if (this->LastFoundDisplayableNode->GetScene() == this->Scene
-      && this->LastFoundDisplayableNode->HasDisplayNodeID(this->GetID()))
+    if (this->LastFoundDisplayableNode->GetScene() == this->Scene //
+        && this->LastFoundDisplayableNode->HasDisplayNodeID(this->GetID()))
     {
       return this->LastFoundDisplayableNode;
     }
@@ -561,17 +561,17 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents( vtkObject* caller, unsigned long eve
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->TextureImageDataConnection != nullptr &&
-      this->TextureImageDataConnection == vtkAlgorithmOutput::SafeDownCast(caller) &&
+  if (this->TextureImageDataConnection != nullptr && //
+      this->TextureImageDataConnection == vtkAlgorithmOutput::SafeDownCast(caller) && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
 
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
-  if (cnode != nullptr &&
-      this->ColorNodeID != nullptr && cnode->GetID() != nullptr &&
-      strcmp(this->ColorNodeID, cnode->GetID()) == 0 &&
+  if (cnode != nullptr && //
+      this->ColorNodeID != nullptr && cnode->GetID() != nullptr && //
+      strcmp(this->ColorNodeID, cnode->GetID()) == 0 && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
@@ -726,9 +726,9 @@ void vtkMRMLDisplayNode
 //-------------------------------------------------------
 bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
 {
-  if (!viewNodeID
-    || !this->GetVisibility()
-    || !this->IsDisplayableInView(viewNodeID))
+  if (!viewNodeID               //
+      || !this->GetVisibility() //
+      || !this->IsDisplayableInView(viewNodeID))
   {
     return false;
   }
@@ -928,9 +928,9 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayNode::SetActiveScalar(const char* scalarName, int location)
 {
-  if (location == this->ActiveAttributeLocation
-    && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
-        || (scalarName == nullptr && this->ActiveScalarName == nullptr)))
+  if (location == this->ActiveAttributeLocation                                                 //
+      && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName)) //
+          || (scalarName == nullptr && this->ActiveScalarName == nullptr)))
   {
     // no change
     return;

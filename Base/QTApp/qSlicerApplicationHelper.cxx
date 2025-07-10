@@ -141,8 +141,8 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
   if (!options->disableLoadableModules())
   {
     moduleFactoryManager->registerFactory(new qSlicerLoadableModuleFactory);
-    if (!options->disableBuiltInModules() &&
-        !options->disableBuiltInLoadableModules() &&
+    if (!options->disableBuiltInModules() &&         //
+        !options->disableBuiltInLoadableModules() && //
         !options->runPythonAndExit())
     {
       QString loadablePath = app->slicerHome() + "/" + Slicer_QTLOADABLEMODULES_LIB_DIR + "/";
@@ -159,9 +159,9 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
   {
     moduleFactoryManager->registerFactory(
       new qSlicerScriptedLoadableModuleFactory);
-    if (!options->disableBuiltInModules() &&
-        !options->disableBuiltInScriptedLoadableModules() &&
-        !qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython) &&
+    if (!options->disableBuiltInModules() &&                                        //
+        !options->disableBuiltInScriptedLoadableModules() &&                        //
+        !qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython) && //
         !options->runPythonAndExit())
     {
       QString scriptedPath = app->slicerHome() + "/" + Slicer_QTSCRIPTEDMODULES_LIB_DIR + "/";
@@ -195,8 +195,8 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     cliExecutableFactory->setTempDirectory(tempDirectory);
     moduleFactoryManager->registerFactory(cliExecutableFactory, preferExecutableCLIs ? 1 : 0);
 
-    if (!options->disableBuiltInModules() &&
-        !options->disableBuiltInCLIModules() &&
+    if (!options->disableBuiltInModules() &&    //
+        !options->disableBuiltInCLIModules() && //
         !options->runPythonAndExit())
     {
       QString cliPath = app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";

@@ -142,11 +142,11 @@ void vtkSlicerMarkupsInteractionWidgetRepresentation::SetActiveComponentIndex(in
 bool vtkSlicerMarkupsInteractionWidgetRepresentation::IsDisplayable()
 {
   vtkMRMLMarkupsDisplayNode* displayNode = this->GetDisplayNode();
-  if (!displayNode
-    || !this->GetMarkupsNode()
-    || !this->GetViewNode()
-    || !displayNode->GetVisibility()
-    || !displayNode->GetHandlesInteractive()
+  if (!displayNode //
+    || !this->GetMarkupsNode() //
+    || !this->GetViewNode() //
+    || !displayNode->GetVisibility() //
+    || !displayNode->GetHandlesInteractive() //
     || !displayNode->IsDisplayableInView(this->GetViewNode()->GetID()))
   {
     return false;

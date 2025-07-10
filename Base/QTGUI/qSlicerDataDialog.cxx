@@ -527,7 +527,7 @@ bool qSlicerDataDialogPrivate::checkAndHandleArchive(const QFileInfo& file)
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::updateCheckBoxes(Qt::Orientation orientation, int first, int last)
 {
-  if (orientation != Qt::Horizontal ||
+  if (orientation != Qt::Horizontal || //
       first > FileColumn || last < FileColumn)
     {
     return;

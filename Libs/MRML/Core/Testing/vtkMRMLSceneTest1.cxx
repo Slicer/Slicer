@@ -416,16 +416,16 @@ int vtkMRMLSceneTest1(int, char*[])
     const char* nodeAddedFromPrivateSceneID = nodeFromPrivateScene->GetID();
     const char* changedIDFromPrivateScene =
       scene1->GetChangedID(nodeInPrivateSceneID.c_str());
-    if (changedIDFromPrivateScene
-      || nodeInPrivateSceneID.empty() || !nodeAddedFromPrivateSceneID ||
+    if (changedIDFromPrivateScene                                        //
+      || nodeInPrivateSceneID.empty() || !nodeAddedFromPrivateSceneID || //
       !nodeInPrivateSceneID.compare(nodeAddedFromPrivateSceneID) )
     {
-      std::cerr << "Line " << __LINE__ << " - Problem with GetChangedID()\n"
-                << "  nodeFromPrivateSceneID: " << nodeInPrivateSceneID << "\n"
-                << "  changedIDFromPrivateScene: " <<
-                (changedIDFromPrivateScene?changedIDFromPrivateScene:"NULL") << "\n"
-                << "  nodeAddedFromPrivateSceneID: " <<
-                (nodeAddedFromPrivateSceneID?nodeAddedFromPrivateSceneID:"NULL")
+      std::cerr << "Line " << __LINE__ << " - Problem with GetChangedID()\n"         //
+                << "  nodeFromPrivateSceneID: " << nodeInPrivateSceneID << "\n"      //
+                << "  changedIDFromPrivateScene: " <<                                //
+                (changedIDFromPrivateScene?changedIDFromPrivateScene:"NULL") << "\n" //
+                << "  nodeAddedFromPrivateSceneID: " <<                              //
+                (nodeAddedFromPrivateSceneID?nodeAddedFromPrivateSceneID:"NULL")     //
                 << std::endl;
       return EXIT_FAILURE;
     }
@@ -447,14 +447,14 @@ int vtkMRMLSceneTest1(int, char*[])
     scene1->Import();
     const char* changedIDFromImportedScene =
       scene1->GetChangedID(importedNodeID);
-    if (!importedNodeID || !changedIDFromImportedScene ||
-      !strcmp(changedIDFromImportedScene, importedNodeID) )
+    if (!importedNodeID || !changedIDFromImportedScene || //
+        !strcmp(changedIDFromImportedScene, importedNodeID) )
     {
-      std::cerr << "Line " << __LINE__ << " - Problem with GetChangedID()\n"
-                << "  importedNodeID: " <<
-                (importedNodeID?importedNodeID:"NULL") << "\n"
-                << "  changedIDFromImportedScene: " <<
-                (changedIDFromImportedScene?changedIDFromImportedScene:"NULL")
+      std::cerr << "Line " << __LINE__ << " - Problem with GetChangedID()\n"   //
+                << "  importedNodeID: " <<                                     //
+                (importedNodeID?importedNodeID:"NULL") << "\n"                 //
+                << "  changedIDFromImportedScene: " <<                         //
+                (changedIDFromImportedScene?changedIDFromImportedScene:"NULL") //
                 << std::endl;
       return EXIT_FAILURE;
     }

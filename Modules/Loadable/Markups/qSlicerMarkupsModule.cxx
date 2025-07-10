@@ -558,8 +558,8 @@ bool qSlicerMarkupsModule::showMarkups(vtkMRMLMarkupsNode* markupsNode)
 {
   Q_UNUSED(markupsNode);
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  if (!app
-      || !app->moduleManager()
+  if (!app //
+      || !app->moduleManager() //
       || !dynamic_cast<qSlicerMarkupsModule*>(app->moduleManager()->module(/*no tr*/"Markups")))
   {
     qCritical("Markups module is not available");

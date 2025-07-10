@@ -441,9 +441,9 @@ void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
     = reinterpret_cast<vtkMRMLViewInteractorStyle*>(clientdata);
 
   // Save info for button click detection
-  if (event == vtkCommand::LeftButtonPressEvent
-    || event == vtkCommand::RightButtonPressEvent
-    || event == vtkCommand::MiddleButtonPressEvent)
+  if (event == vtkCommand::LeftButtonPressEvent     //
+      || event == vtkCommand::RightButtonPressEvent //
+      || event == vtkCommand::MiddleButtonPressEvent)
   {
     self->MouseMovedSinceButtonDown = false;
   }

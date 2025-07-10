@@ -260,9 +260,9 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
     // Unblock signals
     d->comboBox_Segment->blockSignals(wasBlocked);
 
-    if ((this->noneEnabled() && d->CurrentSegmentID.isEmpty()) ||
-      (!d->CurrentSegmentID.isEmpty() &&
-      std::find(segmentIDs.begin(), segmentIDs.end(), d->CurrentSegmentID.toStdString()) != segmentIDs.end())) // Current segment removed
+    if ((this->noneEnabled() && d->CurrentSegmentID.isEmpty()) || //
+        (!d->CurrentSegmentID.isEmpty() && //
+        std::find(segmentIDs.begin(), segmentIDs.end(), d->CurrentSegmentID.toStdString()) != segmentIDs.end())) // Current segment removed
     {
       // Restore stored selection
       wasBlocked = d->comboBox_Segment->blockSignals(true);

@@ -105,7 +105,7 @@ vtkMRMLJsonElement::Type vtkMRMLJsonElement::vtkInternal::GetValueType(rapidjson
   {
     return vtkMRMLJsonElement::Type::BOOL;
   }
-  else if (item.IsInt() || item.IsUint() ||
+  else if (item.IsInt() || item.IsUint() || //
            item.IsInt64() || item.IsUint64())
   {
     return vtkMRMLJsonElement::Type::INT;
@@ -1353,9 +1353,9 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
     const char* value = xmlElement->GetAttributeValue(attrIndex);
     std::string valueStr = value ? std::string(value) : "";
 
-    if (std::string(name) == "attributes" ||
-      std::string(name) == "uids" ||
-      std::string(name) == "references")
+    if (std::string(name) == "attributes" || //
+        std::string(name) == "uids" || //
+        std::string(name) == "references")
     {
       std::map<std::string, std::vector<std::string>> valuesMap;
 
@@ -1363,8 +1363,8 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
       std::string lineValue;
       std::string delimiter = vtkMRMLJsonElement::XML_SEPARATOR;
       std::string valueDelimiter = vtkMRMLJsonElement::XML_NAME_VALUE_SEPARATOR;
-      if (valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR) != std::string::npos &&
-        valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR) != std::string::npos)
+      if (valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR) != std::string::npos && //
+          valueStr.find(vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR) != std::string::npos)
       {
         delimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_SEPARATOR; // SubjectHierarchyItem uses | as delimiter
         valueDelimiter = vtkMRMLSubjectHierarchyNode::SUBJECTHIERARCHY_NAME_VALUE_SEPARATOR; // SubjectHierarchyItem uses ^ as valueDelimiter
@@ -1414,7 +1414,7 @@ void vtkMRMLJsonWriter::processXMLElement(vtkXMLDataElement* xmlElement)
       this->WriteObjectPropertyEnd();
     }
     // Check if it a double array
-    else if (std::count(valueStr.begin(), valueStr.end(), ' ') > 0 &&
+    else if (std::count(valueStr.begin(), valueStr.end(), ' ') > 0 && //
       std::all_of(valueStr.begin(), valueStr.end(), [](char c) { return std::isdigit(c) || c == ' ' || c == '-' || c == '.';}))
     {
       vtkNew<vtkDoubleArray> valueVector;

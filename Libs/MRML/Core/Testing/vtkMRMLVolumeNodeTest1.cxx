@@ -88,8 +88,8 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
     const char* computedScanOrder =
         vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(ijkToRAS.GetPointer());
 
-    if (!computedScanOrder ||
-        strcmp(computedScanOrder, "") == 0 ||
+    if (!computedScanOrder ||                 //
+        strcmp(computedScanOrder, "") == 0 || //
         *it != computedScanOrder)
     {
       std::cerr << "Failed to compute scan order from '" << *it << "' IJKToRAS matrix: '"

@@ -89,7 +89,7 @@ namespace
 /// different from -1, 16 otherwise.
 int significantDecimals(double value, int defaultDecimals = -1)
 {
-  if (value == 0.
+  if (value == 0. //
       || fabs(value) == std::numeric_limits<double>::infinity())
   {
     return 0;
@@ -121,7 +121,7 @@ int significantDecimals(double value, int defaultDecimals = -1)
       only0s = false;
     }
     // Has the digit been repeated too many times ?
-    if (digit == previous && previousRepeat == 2 &&
+    if (digit == previous && previousRepeat == 2 && //
         !only0s)
     {
       if (digit == '0' || digit == '9')
@@ -166,10 +166,10 @@ int significantDecimals(double value, int defaultDecimals = -1)
 int orderOfMagnitude(double value)
 {
   value = fabs(value);
-  if (value == 0.
-      || value == std::numeric_limits<double>::infinity()
-      || value != value // is NaN
-      || value < std::numeric_limits<double>::epsilon() // is tool small to compute
+  if (value == 0.                                         //
+      || value == std::numeric_limits<double>::infinity() //
+      || value != value                                   // is NaN
+      || value < std::numeric_limits<double>::epsilon()   // is tool small to compute
   )
   {
     return std::numeric_limits<int>::min();
@@ -188,7 +188,7 @@ int orderOfMagnitude(double value)
   }
 
   double epsilon = std::numeric_limits<double>::epsilon();
-  while ((magnitudeStep > 0 && value >= magnitude) ||
+  while ((magnitudeStep > 0 && value >= magnitude) || //
           (magnitudeStep < 0 && value < magnitude - epsilon))
   {
     magnitude *= magnitudeFactor;
@@ -710,7 +710,7 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
   }
 
   bool useURI = false;
-  if (this->GetMRMLScene() &&
+  if (this->GetMRMLScene() && //
       this->GetMRMLScene()->GetCacheManager())
   {
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
@@ -718,8 +718,8 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
 
   // Use NRRD writer if we are dealing with DWI, DTI or vector volumes
 
-  if (volumeNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||
-//      volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") ||
+  if (volumeNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") || //
+                                                               //      volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") || //
       volumeNode->IsA("vtkMRMLVectorVolumeNode"))
   {
 
@@ -887,8 +887,8 @@ vtkSlicerVolumesLogic::CreateLabelVolumeFromVolume(vtkMRMLScene* scene,
 vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::CreateScalarVolumeFromVolume(
   vtkMRMLScene* scene, vtkMRMLScalarVolumeNode* outputVolume, vtkMRMLVolumeNode* inputVolume)
 {
-  if (scene == nullptr || outputVolume == nullptr
-    || inputVolume == nullptr || inputVolume->GetImageData() == nullptr )
+  if (scene == nullptr || outputVolume == nullptr //
+      || inputVolume == nullptr || inputVolume->GetImageData() == nullptr)
   {
     return nullptr;
   }
@@ -1254,8 +1254,8 @@ int vtkSlicerVolumesLogic::IsFreeSurferVolume (const char* filename)
   }
 
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(filename);
-  if (extension == std::string(".mgz") ||
-      extension == std::string(".mgh") ||
+  if (extension == std::string(".mgz") || //
+      extension == std::string(".mgh") || //
       extension == std::string(".mgh.gz"))
   {
     return 1;
@@ -1479,7 +1479,7 @@ vtkSlicerVolumesLogic
   int dimensions[3] = {0, 0, 0};
 
   // Make sure inputs are initialized
-  if (!inputVolumeNode || !referenceVolumeNode ||
+  if (!inputVolumeNode || !referenceVolumeNode || //
       !inputVolumeNode->GetImageData() || !referenceVolumeNode->GetImageData())
   {
     return nullptr;
@@ -1514,7 +1514,7 @@ vtkSlicerVolumesLogic
 
   vtkSmartPointer<vtkMRMLTransformNode> referenceVolumeNodeTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID(referenceVolumeNode->GetTransformNodeID()));
-  if (referenceVolumeNodeTransformNode.GetPointer() != nullptr &&
+  if (referenceVolumeNodeTransformNode.GetPointer() != nullptr && //
       inputVolumeNodeTransformNode.GetPointer() != nullptr)
   {
     vtkSmartPointer<vtkGeneralTransform> ras2referenceVolumeRAS = vtkSmartPointer<vtkGeneralTransform>::New();
@@ -1775,9 +1775,9 @@ std::string vtkSlicerVolumesLogic::GetAppliedVolumeDisplayPresetId(vtkMRMLVolume
   }
   for (const auto& preset : this->VolumeDisplayPresets)
   {
-    if (preset.window == volumeDisplayNode->GetWindow()
-      && preset.level == volumeDisplayNode->GetLevel()
-      && preset.colorNodeID == volumeDisplayNode->GetColorNodeID())
+    if (preset.window == volumeDisplayNode->GetWindow()  //
+        && preset.level == volumeDisplayNode->GetLevel() //
+        && preset.colorNodeID == volumeDisplayNode->GetColorNodeID())
     {
       // found it
       return preset.id;

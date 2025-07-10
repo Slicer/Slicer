@@ -312,9 +312,9 @@ void vtkOrientedImageData::ComputeBounds()
 
   // Sanity check
   const int* extent = this->Extent;
-  if (extent[0] > extent[1] ||
-       extent[2] > extent[3] ||
-       extent[4] > extent[5] )
+  if (extent[0] > extent[1] || //
+      extent[2] > extent[3] || //
+      extent[4] > extent[5])
   {
     // Image is empty, indicated by uninitialized bounds
     vtkMath::UninitializeBounds(this->Bounds);

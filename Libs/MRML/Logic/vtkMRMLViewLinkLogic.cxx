@@ -106,7 +106,7 @@ void vtkMRMLViewLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   // Update from CameraNode
   vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
-  if (cameraNode && cameraNode->GetID() &&
+  if (cameraNode && cameraNode->GetID() && //
       this->GetMRMLScene() && !this->GetMRMLScene()->IsBatchProcessing())
   {
 
@@ -133,7 +133,7 @@ void vtkMRMLViewLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 
   // Update from viewNode
   vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(node);
-  if (viewNode && viewNode->GetID() &&
+  if (viewNode && viewNode->GetID() && //
       this->GetMRMLScene() && !this->GetMRMLScene()->IsBatchProcessing())
   {
     // if this is not the node that we are interacting with, short circuit

@@ -262,8 +262,8 @@ bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID) const
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceNode::IsDisplayableInThreeDView(const char* viewNodeID) const
 {
-  return this->GetNumberOfThreeDViewIDs() == 0
-    || this->IsThreeDViewIDPresent(viewNodeID);
+  return this->GetNumberOfThreeDViewIDs() == 0 //
+         || this->IsThreeDViewIDPresent(viewNodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -471,8 +471,8 @@ bool vtkMRMLSliceNode::RemoveSliceOrientationPreset(const std::string& name)
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceNode::RenameSliceOrientationPreset(const std::string& name, const std::string& updatedName)
 {
-  if (name == vtkMRMLSliceNode::GetReformatOrientationName()
-    || updatedName == vtkMRMLSliceNode::GetReformatOrientationName())
+  if (name == vtkMRMLSliceNode::GetReformatOrientationName() //
+      || updatedName == vtkMRMLSliceNode::GetReformatOrientationName())
   {
     vtkErrorMacro("RenameSliceOrientationPreset: 'Reformat' refers to any "
                   "arbitrary orientation. It can NOT be used as a preset name.");
@@ -663,95 +663,95 @@ void vtkMRMLSliceNode::SetSliceToRASByNTP (double Nx, double Ny, double Nz,
                          double Px, double Py, double Pz,
                          int Orientation)
 {
-    vnl_double_3 n, t, c;
-    vnl_double_3 negN, negT, negC;
+  vnl_double_3 n, t, c;
+  vnl_double_3 negN, negT, negC;
 
-    n[0] = Nx;
-    n[1] = Ny;
-    n[2] = Nz;
-    t[0] = Tx;
-    t[1] = Ty;
-    t[2] = Tz;
+  n[0] = Nx;
+  n[1] = Ny;
+  n[2] = Nz;
+  t[0] = Tx;
+  t[1] = Ty;
+  t[2] = Tz;
 
-    // Ensure N, T orthogonal:
-    //    C = N x T
-    //    T = C x N
-    c = vnl_cross_3d(n, t);
-    t = vnl_cross_3d(c, n);
+  // Ensure N, T orthogonal:
+  //    C = N x T
+  //    T = C x N
+  c = vnl_cross_3d(n, t);
+  t = vnl_cross_3d(c, n);
 
-    // Ensure vectors are normalized
-    n.normalize();
-    t.normalize();
-    c.normalize();
+  // Ensure vectors are normalized
+  n.normalize();
+  t.normalize();
+  c.normalize();
 
-    // Get negative vectors
-    negN = -n;
-    negT = -t;
-    negC = -c;
+  // Get negative vectors
+  negN = -n;
+  negT = -t;
+  negC = -c;
 
-    this->SliceToRAS->Identity();
-    // Tip location
-    this->SliceToRAS->SetElement(0, 3, Px);
-    this->SliceToRAS->SetElement(1, 3, Py);
-    this->SliceToRAS->SetElement(2, 3, Pz);
+  this->SliceToRAS->Identity();
+  // Tip location
+  this->SliceToRAS->SetElement(0, 3, Px);
+  this->SliceToRAS->SetElement(1, 3, Py);
+  this->SliceToRAS->SetElement(2, 3, Pz);
 
-    switch (Orientation)
-    {
-        // para-Axial
-        case 0:
-            // N
-            this->SliceToRAS->SetElement(0, 2, n[0]);
-            this->SliceToRAS->SetElement(1, 2, n[1]);
-            this->SliceToRAS->SetElement(2, 2, n[2]);
+  switch (Orientation)
+  {
+    // para-Axial
+    case 0:
+      // N
+      this->SliceToRAS->SetElement(0, 2, n[0]);
+      this->SliceToRAS->SetElement(1, 2, n[1]);
+      this->SliceToRAS->SetElement(2, 2, n[2]);
 
-            // C
-            this->SliceToRAS->SetElement(0, 1, c[0]);
-            this->SliceToRAS->SetElement(1, 1, c[1]);
-            this->SliceToRAS->SetElement(2, 1, c[2]);
-            // T
-            this->SliceToRAS->SetElement(0, 0, t[0]);
-            this->SliceToRAS->SetElement(1, 0, t[1]);
-            this->SliceToRAS->SetElement(2, 0, t[2]);
+      // C
+      this->SliceToRAS->SetElement(0, 1, c[0]);
+      this->SliceToRAS->SetElement(1, 1, c[1]);
+      this->SliceToRAS->SetElement(2, 1, c[2]);
+      // T
+      this->SliceToRAS->SetElement(0, 0, t[0]);
+      this->SliceToRAS->SetElement(1, 0, t[1]);
+      this->SliceToRAS->SetElement(2, 0, t[2]);
 
-            break;
+      break;
 
-        // para-Sagittal
-        case 1:
-            // T
-            this->SliceToRAS->SetElement(0, 2, t[0]);
-            this->SliceToRAS->SetElement(1, 2, t[1]);
-            this->SliceToRAS->SetElement(2, 2, t[2]);
+    // para-Sagittal
+    case 1:
+      // T
+      this->SliceToRAS->SetElement(0, 2, t[0]);
+      this->SliceToRAS->SetElement(1, 2, t[1]);
+      this->SliceToRAS->SetElement(2, 2, t[2]);
 
-            // negN
-            this->SliceToRAS->SetElement(0, 1, negN[0]);
-            this->SliceToRAS->SetElement(1, 1, negN[1]);
-            this->SliceToRAS->SetElement(2, 1, negN[2]);
-            // negC
-            this->SliceToRAS->SetElement(0, 0, negC[0]);
-            this->SliceToRAS->SetElement(1, 0, negC[1]);
-            this->SliceToRAS->SetElement(2, 0, negC[2]);
+      // negN
+      this->SliceToRAS->SetElement(0, 1, negN[0]);
+      this->SliceToRAS->SetElement(1, 1, negN[1]);
+      this->SliceToRAS->SetElement(2, 1, negN[2]);
+      // negC
+      this->SliceToRAS->SetElement(0, 0, negC[0]);
+      this->SliceToRAS->SetElement(1, 0, negC[1]);
+      this->SliceToRAS->SetElement(2, 0, negC[2]);
 
-            break;
+      break;
 
-        // para-Coronal
-        case 2:
-            // C
-            this->SliceToRAS->SetElement(0, 2, c[0]);
-            this->SliceToRAS->SetElement(1, 2, c[1]);
-            this->SliceToRAS->SetElement(2, 2, c[2]);
-            // negN
-            this->SliceToRAS->SetElement(0, 1, negN[0]);
-            this->SliceToRAS->SetElement(1, 1, negN[1]);
-            this->SliceToRAS->SetElement(2, 1, negN[2]);
-            // T
-            this->SliceToRAS->SetElement(0, 0, t[0]);
-            this->SliceToRAS->SetElement(1, 0, t[1]);
-            this->SliceToRAS->SetElement(2, 0, t[2]);
+    // para-Coronal
+    case 2:
+      // C
+      this->SliceToRAS->SetElement(0, 2, c[0]);
+      this->SliceToRAS->SetElement(1, 2, c[1]);
+      this->SliceToRAS->SetElement(2, 2, c[2]);
+      // negN
+      this->SliceToRAS->SetElement(0, 1, negN[0]);
+      this->SliceToRAS->SetElement(1, 1, negN[1]);
+      this->SliceToRAS->SetElement(2, 1, negN[2]);
+      // T
+      this->SliceToRAS->SetElement(0, 0, t[0]);
+      this->SliceToRAS->SetElement(1, 0, t[1]);
+      this->SliceToRAS->SetElement(2, 0, t[2]);
 
-            break;
-    }
+      break;
+  }
 
-    this->UpdateMatrices();
+  this->UpdateMatrices();
 }
 
 //----------------------------------------------------------------------------
@@ -777,8 +777,8 @@ void vtkMRMLSliceNode::UpdateMatrices()
 
   // the mapping from XY output slice pixels to Slice Plane coordinate
   xyToSlice->Identity();
-  if (this->Dimensions[0] > 0 &&
-      this->Dimensions[1] > 0 &&
+  if (this->Dimensions[0] > 0 && //
+      this->Dimensions[1] > 0 && //
       this->Dimensions[2] > 0)
   {
     for (i = 0; i < 3; i++)
@@ -793,77 +793,77 @@ void vtkMRMLSliceNode::UpdateMatrices()
     xyToSlice->SetElement(2, 3, 0.);
   }
 
-    // the mapping from slice plane coordinates to RAS
-    // (the Orientation as in Axial, Sagittal, Coronal)
-    //
-    // The combined transform:
-    //
-    // | R | = [Slice to RAS ] [ XY to Slice ]  | X |
-    // | A |                                    | Y |
-    // | S |                                    | Z |
-    // | 1 |                                    | 1 |
-    //
-    // or
-    //
-    // RAS = XYToRAS * XY
-    //
-    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, xyToSlice.GetPointer(), xyToRAS.GetPointer());
+  // the mapping from slice plane coordinates to RAS
+  // (the Orientation as in Axial, Sagittal, Coronal)
+  //
+  // The combined transform:
+  //
+  // | R | = [Slice to RAS ] [ XY to Slice ]  | X |
+  // | A |                                    | Y |
+  // | S |                                    | Z |
+  // | 1 |                                    | 1 |
+  //
+  // or
+  //
+  // RAS = XYToRAS * XY
+  //
+  vtkMatrix4x4::Multiply4x4(this->SliceToRAS, xyToSlice.GetPointer(), xyToRAS.GetPointer());
 
-    bool modified = false;
+  bool modified = false;
 
-    // check to see if the matrix actually changed
-    if (!MatrixAreEqual(xyToRAS.GetPointer(), this->XYToRAS))
+  // check to see if the matrix actually changed
+  if (!MatrixAreEqual(xyToRAS.GetPointer(), this->XYToRAS))
+  {
+    this->XYToSlice->DeepCopy(xyToSlice.GetPointer());
+    this->XYToRAS->DeepCopy(xyToRAS.GetPointer());
+    modified = true;
+  }
+
+
+  // the mapping from XY output slice pixels to Slice Plane coordinate
+  this->UVWToSlice->Identity();
+  if (this->UVWDimensions[0] > 0 && //
+      this->UVWDimensions[1] > 0 && //
+      this->UVWDimensions[2] > 0)
+  {
+    for (i = 0; i < 2; i++)
     {
-      this->XYToSlice->DeepCopy(xyToSlice.GetPointer());
-      this->XYToRAS->DeepCopy(xyToRAS.GetPointer());
-      modified = true;
+      spacing[i] = this->UVWExtents[i] / (this->UVWDimensions[i]);
+      this->UVWToSlice->SetElement(i, i, spacing[i]);
+      this->UVWToSlice->SetElement(i, 3, -this->UVWExtents[i] / 2. + this->UVWOrigin[i]);
     }
+    this->UVWToSlice->SetElement(2, 2, 1.0);
+    this->UVWToSlice->SetElement(2, 3, 0.);
+  }
 
+  vtkNew<vtkMatrix4x4> uvwToRAS;
 
-    // the mapping from XY output slice pixels to Slice Plane coordinate
-    this->UVWToSlice->Identity();
-    if (this->UVWDimensions[0] > 0 &&
-        this->UVWDimensions[1] > 0 &&
-        this->UVWDimensions[2] > 0)
-    {
-      for (i = 0; i < 2; i++)
-      {
-        spacing[i] = this->UVWExtents[i] / (this->UVWDimensions[i]);
-        this->UVWToSlice->SetElement(i, i, spacing[i]);
-        this->UVWToSlice->SetElement(i, 3, -this->UVWExtents[i] / 2. + this->UVWOrigin[i]);
-      }
-      this->UVWToSlice->SetElement(2, 2, 1.0);
-      this->UVWToSlice->SetElement(2, 3, 0.);
-    }
+  vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->UVWToSlice, uvwToRAS.GetPointer());
 
-    vtkNew<vtkMatrix4x4> uvwToRAS;
+  if (!MatrixAreEqual(uvwToRAS.GetPointer(), this->UVWToRAS))
+  {
+    this->UVWToRAS->DeepCopy(uvwToRAS.GetPointer());
+    modified = true;
+  }
 
-    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->UVWToSlice, uvwToRAS.GetPointer());
+  this->ImplicitFunction->SetNormal(this->SliceToRAS->GetElement(0, 2), //
+                                    this->SliceToRAS->GetElement(1, 2), //
+                                    this->SliceToRAS->GetElement(2, 2));
+  this->ImplicitFunction->SetOrigin(this->SliceToRAS->GetElement(0, 3), //
+                                    this->SliceToRAS->GetElement(1, 3), //
+                                    this->SliceToRAS->GetElement(2, 3));
 
-    if (!MatrixAreEqual(uvwToRAS.GetPointer(), this->UVWToRAS))
-    {
-      this->UVWToRAS->DeepCopy(uvwToRAS.GetPointer());
-      modified = true;
-    }
+  if (modified)
+  {
+    this->Modified();
+  }
 
-    this->ImplicitFunction->SetNormal(this->SliceToRAS->GetElement(0, 2),
-                                      this->SliceToRAS->GetElement(1, 2),
-                                      this->SliceToRAS->GetElement(2, 2));
-    this->ImplicitFunction->SetOrigin(this->SliceToRAS->GetElement(0, 3),
-                                      this->SliceToRAS->GetElement(1, 3),
-                                      this->SliceToRAS->GetElement(2, 3));
+  // as UpdateMatrices can be called with DisableModifiedEvent
+  // (typically when the scene is closed, slice nodes are reset but shouldn't
+  // fire events. We should respect the modifiedWasDisabled flag.
+  this->EndModify(disabledModify);
 
-    if (modified)
-    {
-      this->Modified();
-    }
-
-    // as UpdateMatrices can be called with DisableModifiedEvent
-    // (typically when the scene is closed, slice nodes are reset but shouldn't
-    // fire events. We should respect the modifiedWasDisabled flag.
-    this->EndModify(disabledModify);
-
-    this->IsUpdatingMatrices = 0;
+  this->IsUpdatingMatrices = 0;
 
 }
 
@@ -1295,8 +1295,8 @@ void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
 
   double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
 
-  if (r != sr || a != sa || s != ss
-    || this->XYZOrigin[0] != 0 || this->XYZOrigin[1] != 0 || this->XYZOrigin[2] != 0)
+  if (r != sr || a != sa || s != ss //
+      || this->XYZOrigin[0] != 0 || this->XYZOrigin[1] != 0 || this->XYZOrigin[2] != 0)
   {
     sliceToRAS->SetElement( 0, 3, r - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(0,2) );
     sliceToRAS->SetElement( 1, 3, a - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(1,2));
@@ -1328,9 +1328,9 @@ void vtkMRMLSliceNode::JumpSliceByOffsetting(double r, double a, double s)
   double sliceSpacing = sqrt(vtkMath::Distance2BetweenPoints(p2ras, p1ras));
 
   double d;
-  d = (r-sr)*sliceToRAS->GetElement(0,2)
-      + (a-sa)*sliceToRAS->GetElement(1,2)
-      + (s-ss)*sliceToRAS->GetElement(2,2);
+  d = (r - sr) * sliceToRAS->GetElement(0, 2)   //
+      + (a - sa) * sliceToRAS->GetElement(1, 2) //
+      + (s - ss) * sliceToRAS->GetElement(2, 2);
   sr += (d - this->ActiveSlice*sliceSpacing)*sliceToRAS->GetElement(0,2);
   sa += (d - this->ActiveSlice*sliceSpacing)*sliceToRAS->GetElement(1,2);
   ss += (d - this->ActiveSlice*sliceSpacing)*sliceToRAS->GetElement(2,2);
@@ -1410,9 +1410,9 @@ void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene, double r, double a, do
 void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
 {
   bool modified = false;
-  if (x != this->FieldOfView[0] ||
-       y != this->FieldOfView[1] ||
-       z != this->FieldOfView[2] )
+  if (x != this->FieldOfView[0] || //
+      y != this->FieldOfView[1] || //
+      z != this->FieldOfView[2])
   {
     modified = true;
     this->FieldOfView[0] = x;
@@ -1429,9 +1429,9 @@ void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetXYZOrigin(double x, double y, double z)
 {
-  if (x != this->XYZOrigin[0] ||
-       y != this->XYZOrigin[1] ||
-       z != this->XYZOrigin[2] )
+  if (x != this->XYZOrigin[0] || //
+      y != this->XYZOrigin[1] || //
+      z != this->XYZOrigin[2])
   {
     this->XYZOrigin[0] = x;
     this->XYZOrigin[1] = y;
@@ -1443,9 +1443,9 @@ void vtkMRMLSliceNode::SetXYZOrigin(double x, double y, double z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWOrigin(double x, double y, double z)
 {
-  if (x != this->UVWOrigin[0] ||
-       y != this->UVWOrigin[1] ||
-       z != this->UVWOrigin[2] )
+  if (x != this->UVWOrigin[0] || //
+      y != this->UVWOrigin[1] || //
+      z != this->UVWOrigin[2])
   {
     this->UVWOrigin[0] = x;
     this->UVWOrigin[1] = y;
@@ -1457,9 +1457,9 @@ void vtkMRMLSliceNode::SetUVWOrigin(double x, double y, double z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetDimensions(int x, int y, int z)
 {
-  if (x != this->Dimensions[0] ||
-       y != this->Dimensions[1] ||
-       z != this->Dimensions[2] )
+  if (x != this->Dimensions[0] || //
+      y != this->Dimensions[1] || //
+      z != this->Dimensions[2])
   {
     this->Dimensions[0] = x;
     this->Dimensions[1] = y;
@@ -1471,9 +1471,9 @@ void vtkMRMLSliceNode::SetDimensions(int x, int y, int z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWExtents (double x, double y, double z)
 {
-  if (x != this->UVWExtents[0] ||
-       y != this->UVWExtents[1] ||
-       z != this->UVWExtents[2] )
+  if (x != this->UVWExtents[0] || //
+      y != this->UVWExtents[1] || //
+      z != this->UVWExtents[2])
   {
     this->UVWExtents[0] = x;
     this->UVWExtents[1] = y;
@@ -1498,9 +1498,9 @@ void vtkMRMLSliceNode::SetSliceResolutionMode(int mode)
     {
       this->SetUVWOrigin(0,0,0);
     }
-    else if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatch2DView ||
-        this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes ||
-        this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatchVolumesSpacingMatch2DView)
+    else if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatch2DView ||             //
+             this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes || //
+             this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatchVolumesSpacingMatch2DView)
     {
       this->SetUVWOrigin(this->GetXYZOrigin());
     }
@@ -1532,8 +1532,9 @@ void vtkMRMLSliceNode::SetUVWOrigin (double xyz[3])
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWMaximumDimensions(int x, int y, int z)
 {
-  if (x != this->UVWMaximumDimensions[0] || y != this->UVWMaximumDimensions[1]
-       || z != this->UVWMaximumDimensions[2] )
+  if (x != this->UVWMaximumDimensions[0]    //
+      || y != this->UVWMaximumDimensions[1] //
+      || z != this->UVWMaximumDimensions[2])
   {
     this->UVWMaximumDimensions[0] = x;
     this->UVWMaximumDimensions[1] = y;
@@ -1545,9 +1546,9 @@ void vtkMRMLSliceNode::SetUVWMaximumDimensions(int x, int y, int z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWDimensions(int x, int y, int z)
 {
-  if (x != this->UVWDimensions[0] ||
-       y != this->UVWDimensions[1] ||
-       z != this->UVWDimensions[2] )
+  if (x != this->UVWDimensions[0] || //
+      y != this->UVWDimensions[1] || //
+      z != this->UVWDimensions[2])
   {
     if (x > this->UVWMaximumDimensions[0])
     {
@@ -1582,12 +1583,12 @@ void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
     v=0;
     w=0;
   }
-  if (this->SliceResolutionMode != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
+  if (this->SliceResolutionMode != vtkMRMLSliceNode::SliceResolutionMatch2DView && //
       this->SliceResolutionMode != vtkMRMLSliceNode::SliceResolutionCustom)
   {
-    if (u != this->UVWOrigin[0] ||
-         v != this->UVWOrigin[1] ||
-         w != this->UVWOrigin[2] )
+    if (u != this->UVWOrigin[0] || //
+        v != this->UVWOrigin[1] || //
+        w != this->UVWOrigin[2])
     {
       this->UVWOrigin[0] = u;
       this->UVWOrigin[1] = v;
@@ -1595,9 +1596,9 @@ void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
       modified = true;
     }
   }
-  if (x != this->XYZOrigin[0] ||
-       y != this->XYZOrigin[1] ||
-       z != this->XYZOrigin[2] )
+  if (x != this->XYZOrigin[0] || //
+      y != this->XYZOrigin[1] || //
+      z != this->XYZOrigin[2])
   {
     this->XYZOrigin[0] = x;
     this->XYZOrigin[1] = y;
@@ -1622,9 +1623,9 @@ void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimens
 {
   bool modified = false;
 
-  if (extents[0] != this->UVWExtents[0] ||
-       extents[1] != this->UVWExtents[1] ||
-       extents[2] != this->UVWExtents[2] )
+  if (extents[0] != this->UVWExtents[0] || //
+      extents[1] != this->UVWExtents[1] || //
+      extents[2] != this->UVWExtents[2])
   {
     modified = true;
     this->UVWExtents[0] = extents[0];
@@ -1632,9 +1633,9 @@ void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimens
     this->UVWExtents[2] = extents[2];
   }
 
-  if (dimensions[0] != this->UVWDimensions[0] ||
-       dimensions[1] != this->UVWDimensions[1] ||
-       dimensions[2] != this->UVWDimensions[2] )
+  if (dimensions[0] != this->UVWDimensions[0] || //
+      dimensions[1] != this->UVWDimensions[1] || //
+      dimensions[2] != this->UVWDimensions[2])
   {
     modified = true;
     if (dimensions[0] > this->UVWMaximumDimensions[0])
@@ -1691,8 +1692,8 @@ void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
   // code. Should the adjustments to Dimensions and FieldOfView be
   // pulled out the SetLayoutGrid*() methods and put in the logic/gui
   // level?
-  if (( rows != this->LayoutGridRows)
-      || ( columns != this->LayoutGridColumns ))
+  if ((rows != this->LayoutGridRows) //
+      || (columns != this->LayoutGridColumns))
   {
     // Calculate the scaling and "scaling magnitudes"
     double scaling[3];
@@ -1915,9 +1916,9 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
 
   // if the translation has changed, update the rest of the matrices
   double eps = 1.0e-6;
-  if (fabs(v1[0] - v3[0]) > eps ||
-       fabs(v1[1] - v3[1]) > eps ||
-       fabs(v1[2] - v3[2]) > eps )
+  if (fabs(v1[0] - v3[0]) > eps || //
+      fabs(v1[1] - v3[1]) > eps || //
+      fabs(v1[2] - v3[2]) > eps)
   {
     // copy new translation into sliceToRAS
     for (int i = 0; i < 4; i++)
@@ -1982,13 +1983,12 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNorma
     return;
   }
 
-  double testedDirections[6][4] = {
-    { 1,  0,  0, 0 },
-    { -1, 0,  0, 0 },
-    { 0,  1,  0, 0 },
-    { 0, -1,  0, 0 },
-    { 0,  0,  1, 0 },
-    { 0,  0, -1, 0 } };
+  double testedDirections[6][4] = { { 1, 0, 0, 0 },  //
+                                    { -1, 0, 0, 0 }, //
+                                    { 0, 1, 0, 0 },  //
+                                    { 0, -1, 0, 0 }, //
+                                    { 0, 0, 1, 0 },  //
+                                    { 0, 0, -1, 0 } };
 
   // To keep left/right handedness of the input referenceToRAS coordinate system,
   // we need to determine it here and reproduce in the end result later.
@@ -2019,8 +2019,8 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNorma
     for (int testedDirectionIndexY = 0; testedDirectionIndexY < 6; testedDirectionIndexY++)
     {
       int volumeAxisAsSliceY = testedDirectionIndexY / 2;
-      if (volumeAxisAsSliceY == volumeAxisAsSliceX
-        || (sliceNormalAxisIndex >= 0 && volumeAxisAsSliceY == sliceNormalAxisIndex))
+      if (volumeAxisAsSliceY == volumeAxisAsSliceX //
+          || (sliceNormalAxisIndex >= 0 && volumeAxisAsSliceY == sliceNormalAxisIndex))
       {
         // Y slice axis must not be snapped to X slice axis or volume plane normal axis
         continue;
@@ -2039,9 +2039,9 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNorma
         // we ignore z axis flip (we will compute final z direction from on x and y axes and sliceToRasRightHanded)
         zAxisAngleDiff = vtkMath::Pi() - zAxisAngleDiff;
       }
-      double angleDiff =
-        fabs(vtkMath::AngleBetweenVectors(sliceXAxisVolumeAxisDirection, sliceXAxisDirection))
-        + fabs(vtkMath::AngleBetweenVectors(sliceYAxisVolumeAxisDirection, sliceYAxisDirection))
+      double angleDiff =                                                                         //
+        fabs(vtkMath::AngleBetweenVectors(sliceXAxisVolumeAxisDirection, sliceXAxisDirection))   //
+        + fabs(vtkMath::AngleBetweenVectors(sliceYAxisVolumeAxisDirection, sliceYAxisDirection)) //
         + zAxisAngleDiff;
 
       if (angleDiff < minAngleDiff || minAngleDiff < 0.)
@@ -2075,9 +2075,8 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNorma
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceNode::SetOrientationToDefault()
 {
-  if (!this->GetDefaultOrientation()
-    || strlen(this->GetDefaultOrientation()) == 0
-    || !strcmp(this->GetDefaultOrientation(), vtkMRMLSliceNode::GetReformatOrientationName()) )
+  if (!this->GetDefaultOrientation() || strlen(this->GetDefaultOrientation()) == 0 //
+      || !strcmp(this->GetDefaultOrientation(), vtkMRMLSliceNode::GetReformatOrientationName()))
   {
     return false;
   }

@@ -435,7 +435,7 @@ bool vtkMRMLCommandLineModuleNode
     if (node)
     {
       // Observe if not already observed
-      if (this->MRMLObserverManager->GetObservationsCount(node) == 0 &&
+      if (this->MRMLObserverManager->GetObservationsCount(node) == 0 && //
           this->IsInputDefaultValue(value))
       {
         vtkNew<vtkIntArray> events;

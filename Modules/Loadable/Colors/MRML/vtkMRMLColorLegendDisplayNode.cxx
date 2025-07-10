@@ -247,9 +247,9 @@ void vtkMRMLColorLegendDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigne
   Superclass::ProcessMRMLEvents(caller, eventID, callData);
 
   // Propagate primary display node and text properties modification events
-  if (eventID == vtkCommand::ModifiedEvent
-    && (caller == this->TitleTextProperty || caller == this->LabelTextProperty
-     || caller == this->GetPrimaryDisplayNode()))
+  if (eventID == vtkCommand::ModifiedEvent //
+      && (caller == this->TitleTextProperty || caller == this->LabelTextProperty //
+          || caller == this->GetPrimaryDisplayNode()))
   {
     this->Modified();
   }

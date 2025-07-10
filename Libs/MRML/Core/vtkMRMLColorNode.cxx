@@ -419,9 +419,9 @@ std::string vtkMRMLColorNode::GetTerminologyAsString(std::string terminologyCont
   serializedEntry += terminologyContextName + "~";
   if (category)
   {
-    serializedEntry += (category->GetCodingSchemeDesignator() ? std::string(category->GetCodingSchemeDesignator()) : "") + "^"
-      + (category->GetCodeValue() ? std::string(category->GetCodeValue()) : "") + "^"
-      + (category->GetCodeMeaning() ? std::string(category->GetCodeMeaning()) : "") + "~";
+    serializedEntry += (category->GetCodingSchemeDesignator() ? std::string(category->GetCodingSchemeDesignator()) : "") + "^" //
+                       + (category->GetCodeValue() ? std::string(category->GetCodeValue()) : "") + "^"                         //
+                       + (category->GetCodeMeaning() ? std::string(category->GetCodeMeaning()) : "") + "~";
   }
   else
   {
@@ -429,9 +429,9 @@ std::string vtkMRMLColorNode::GetTerminologyAsString(std::string terminologyCont
   }
   if (type)
   {
-    serializedEntry += (type->GetCodingSchemeDesignator() ? std::string(type->GetCodingSchemeDesignator()) : "") + "^"
-      + (type->GetCodeValue() ? std::string(type->GetCodeValue()) : "") + "^"
-      + (type->GetCodeMeaning() ? std::string(type->GetCodeMeaning()) : "") + "~";
+    serializedEntry += (type->GetCodingSchemeDesignator() ? std::string(type->GetCodingSchemeDesignator()) : "") + "^" //
+                       + (type->GetCodeValue() ? std::string(type->GetCodeValue()) : "") + "^"                         //
+                       + (type->GetCodeMeaning() ? std::string(type->GetCodeMeaning()) : "") + "~";
   }
   else
   {
@@ -439,9 +439,9 @@ std::string vtkMRMLColorNode::GetTerminologyAsString(std::string terminologyCont
   }
   if (typeModifier)
   {
-    serializedEntry += (typeModifier->GetCodingSchemeDesignator() ? std::string(typeModifier->GetCodingSchemeDesignator()) : "") + "^"
-      + (typeModifier->GetCodeValue() ? std::string(typeModifier->GetCodeValue()) : "") + "^"
-      + (typeModifier->GetCodeMeaning() ? std::string(typeModifier->GetCodeMeaning()) : "") + "~";
+    serializedEntry += (typeModifier->GetCodingSchemeDesignator() ? std::string(typeModifier->GetCodingSchemeDesignator()) : "") + "^" //
+                       + (typeModifier->GetCodeValue() ? std::string(typeModifier->GetCodeValue()) : "") + "^"                         //
+                       + (typeModifier->GetCodeMeaning() ? std::string(typeModifier->GetCodeMeaning()) : "") + "~";
   }
   else
   {
@@ -451,9 +451,9 @@ std::string vtkMRMLColorNode::GetTerminologyAsString(std::string terminologyCont
   serializedEntry += regionContextName + "~";
   if (region)
   {
-    serializedEntry += (region->GetCodingSchemeDesignator() ? std::string(region->GetCodingSchemeDesignator()) : "") + "^"
-      + (region->GetCodeValue() ? std::string(region->GetCodeValue()) : "") + "^"
-      + (region->GetCodeMeaning() ? std::string(region->GetCodeMeaning()) : "") + "~";
+    serializedEntry += (region->GetCodingSchemeDesignator() ? std::string(region->GetCodingSchemeDesignator()) : "") + "^" //
+                       + (region->GetCodeValue() ? std::string(region->GetCodeValue()) : "") + "^"                         //
+                       + (region->GetCodeMeaning() ? std::string(region->GetCodeMeaning()) : "") + "~";
   }
   else
   {
@@ -461,9 +461,9 @@ std::string vtkMRMLColorNode::GetTerminologyAsString(std::string terminologyCont
   }
   if (regionModifier)
   {
-    serializedEntry += (regionModifier->GetCodingSchemeDesignator() ? std::string(regionModifier->GetCodingSchemeDesignator()) : "") + "^"
-      + (regionModifier->GetCodeValue() ? std::string(regionModifier->GetCodeValue()) : "") + "^"
-      + (regionModifier->GetCodeMeaning() ? std::string(regionModifier->GetCodeMeaning()) : "") + "~";
+    serializedEntry += (regionModifier->GetCodingSchemeDesignator() ? std::string(regionModifier->GetCodingSchemeDesignator()) : "") + "^" //
+                       + (regionModifier->GetCodeValue() ? std::string(regionModifier->GetCodeValue()) : "") + "^"                         //
+                       + (regionModifier->GetCodeMeaning() ? std::string(regionModifier->GetCodeMeaning()) : "") + "~";
   }
   else
   {
@@ -658,7 +658,7 @@ std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char* sub
 std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char* subst)
 {
   std::string fileName(this->GetColorName(colorIndex));
-  std::string validCharacters =
+  std::string validCharacters = //
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabscdefghijklmnopqrstuvwxyz"
     "0123456789"
     "-_.()$!~#'%^{}";
@@ -726,9 +726,9 @@ void vtkMRMLColorNode::Reset(vtkMRMLNode* vtkNotUsed(defaultNode))
 //---------------------------------------------------------------------------
 bool vtkMRMLColorNode::GetModifiedSinceRead()
 {
-  return this->Superclass::GetModifiedSinceRead() ||
-    (this->GetScalarsToColors() &&
-     this->GetScalarsToColors()->GetMTime() > this->GetStoredTime());
+  return this->Superclass::GetModifiedSinceRead() || //
+         (this->GetScalarsToColors() &&              //
+          this->GetScalarsToColors()->GetMTime() > this->GetStoredTime());
 }
 
 //---------------------------------------------------------------------------

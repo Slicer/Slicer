@@ -348,10 +348,10 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 //---------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData )
 {
-  if (caller!=nullptr
-    && (event==vtkCommand::ModifiedEvent || event==vtkMRMLTransformableNode::TransformModifiedEvent)
-    && caller==GetRegionNode()
-    && this->Visibility)
+  if (caller!=nullptr                                                                                  //
+      && (event==vtkCommand::ModifiedEvent || event==vtkMRMLTransformableNode::TransformModifiedEvent) //
+      && caller==GetRegionNode()                                                                       //
+      && this->Visibility)
   {
     // update visualization if the region node is changed
     // Note: this updates all the 2D views as well, so instead of a generic modified event a separate
@@ -359,17 +359,17 @@ void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject* caller, unsigne
     // If 3D visibility is disabled then we can ignore this event, as the region is only used for 3D display.
     this->Modified();
   }
-  else if (caller!=nullptr
-    && caller==GetGlyphPointsNode() // event can be any content modified event
-    && this->VisualizationMode == VIS_MODE_GLYPH
-    && (this->Visibility || this->GetVisibility2D()) )
+  else if (caller!=nullptr                              //
+           && caller==GetGlyphPointsNode()              // event can be any content modified event
+           && this->VisualizationMode == VIS_MODE_GLYPH //
+           && (this->Visibility || this->GetVisibility2D()))
   {
     // update visualization if glyph points are changed
     this->Modified();
   }
-  else if (caller!=nullptr
-    && event==vtkCommand::ModifiedEvent
-    && caller==GetColorNode())
+  else if (caller!=nullptr                     //
+           && event==vtkCommand::ModifiedEvent //
+           && caller==GetColorNode())
   {
     // update visualization if the color node is changed
     this->Modified();
@@ -608,9 +608,9 @@ void vtkMRMLTransformDisplayNode::SetDefaultColors()
 vtkColorTransferFunction* vtkMRMLTransformDisplayNode::GetColorMap()
 {
   vtkMRMLProceduralColorNode* colorNode = vtkMRMLProceduralColorNode::SafeDownCast(GetColorNode());
-  if (colorNode==nullptr
-    || colorNode->GetColorTransferFunction()==nullptr
-    || colorNode->GetColorTransferFunction()->GetSize()==0)
+  if (colorNode==nullptr                                //
+      || colorNode->GetColorTransferFunction()==nullptr //
+      || colorNode->GetColorTransferFunction()->GetSize() == 0)
   {
     // We don't have a color node or it is not the right type
     this->SetDefaultColors();

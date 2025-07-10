@@ -273,7 +273,7 @@ bool qSlicerModuleFactoryFilterModel::lessThan(const QModelIndex& leftIndex,
   Q_D(const qSlicerModuleFactoryFilterModel);
   QString leftModule = this->sourceModel()->data(leftIndex, Qt::UserRole).toString();
   QString rightModule = this->sourceModel()->data(rightIndex, Qt::UserRole).toString();
-  if (d->ShowModules.contains(leftModule) &&
+  if (d->ShowModules.contains(leftModule) && //
       d->ShowModules.contains(rightModule))
   {
     return d->ShowModules.indexOf(leftModule) < d->ShowModules.indexOf(rightModule);
@@ -309,7 +309,7 @@ bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QMod
   }
   if (!d->ShowIgnored)
   {
-    if (this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() != QBrush() &&
+    if (this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() != QBrush() && //
         this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() != QBrush(Qt::red))
     {
       return false;

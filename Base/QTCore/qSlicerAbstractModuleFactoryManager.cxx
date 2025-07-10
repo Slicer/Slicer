@@ -503,7 +503,7 @@ bool qSlicerAbstractModuleFactoryManager::isRegistered(const QString& moduleName
 bool qSlicerAbstractModuleFactoryManager::isInstantiated(const QString& moduleName) const
 {
   Q_D(const qSlicerAbstractModuleFactoryManager);
-  bool instantiated = this->isRegistered(moduleName) &&
+  bool instantiated = this->isRegistered(moduleName) && //
     d->RegisteredModules[moduleName]->instance(moduleName) != nullptr;
   return instantiated;
 }

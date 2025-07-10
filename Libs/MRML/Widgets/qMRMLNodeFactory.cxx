@@ -81,7 +81,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   emit this->nodeInstantiated(node);
 
   QString baseName;
-  if (d->BaseNames.contains(className) &&
+  if (d->BaseNames.contains(className) && //
       !d->BaseNames[className].isEmpty())
   {
     baseName = d->BaseNames[className];
@@ -113,7 +113,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   if (!node->GetScene() || !node->GetScene()->IsNodePresent(node))
   {
     vtkMRMLNode* nodeAdded = d->MRMLScene->AddNode(node);
-    Q_ASSERT(nodeAdded == node ||
+    Q_ASSERT(nodeAdded == node || //
              node->GetSingletonTag() != nullptr);
     node = nodeAdded;
   }

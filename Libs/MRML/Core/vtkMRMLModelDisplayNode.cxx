@@ -172,8 +172,8 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject* caller,
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
-  if (cnode != nullptr && cnode == this->GetDistanceEncodedProjectionColorNode()
-    && event == vtkCommand::ModifiedEvent)
+  if (cnode != nullptr && cnode == this->GetDistanceEncodedProjectionColorNode() //
+      && event == vtkCommand::ModifiedEvent)
   {
     // Slice distance encoded projection color node changed
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
@@ -284,7 +284,7 @@ vtkUnstructuredGrid* vtkMRMLModelDisplayNode::GetOutputUnstructuredGrid()
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputMeshConnection()
 {
-  if (this->GetActiveScalarName() &&
+  if (this->GetActiveScalarName() && //
       this->GetScalarVisibility() && // do not threshold if scalars hidden
       this->ThresholdEnabled)
   {
@@ -428,9 +428,9 @@ void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::UpdateAssignedAttribute()
 {
-  this->AssignAttribute->Assign(
-    this->GetActiveScalarName(),
-    vtkDataSetAttributes::SCALARS,
+  this->AssignAttribute->Assign(   //
+    this->GetActiveScalarName(),   //
+    vtkDataSetAttributes::SCALARS, //
     this->GetActiveAttributeLocation() >= 0 ? this->GetActiveAttributeLocation() : vtkAssignAttribute::POINT_DATA);
 
   if (this->GetActiveAttributeLocation() == vtkAssignAttribute::POINT_DATA)

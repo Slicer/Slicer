@@ -219,7 +219,7 @@ void vtkMRMLAbstractLogic
                      void* clientData, void* callData)
 {
   vtkMRMLAbstractLogic* self = reinterpret_cast<vtkMRMLAbstractLogic*>(clientData);
-  assert("Observed object is not a logic" &&
+  assert("Observed object is not a logic" && //
          vtkMRMLAbstractLogic::SafeDownCast(caller));
 
   if (self && !self->EnterMRMLLogicsCallback())

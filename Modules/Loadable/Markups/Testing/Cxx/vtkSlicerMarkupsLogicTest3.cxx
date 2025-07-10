@@ -99,13 +99,13 @@ int vtkSlicerMarkupsLogicTest3(int, char*[])
 
   int numAnnotationFiducials = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode");
   int numMarkupsFiducials = scene->GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialNode");
-  if (numAnnotationFiducials != 0 ||
+  if (numAnnotationFiducials != 0 || //
       numMarkupsFiducials != 2)
   {
-    std::cerr << "Failed to convert 15 annotation fiducials in two hierarchies "
-    << " to 2 markup lists, have " << numAnnotationFiducials
-    << " annotation fiduicals and " << numMarkupsFiducials
-    << " markups fiducial lists" << std::endl;
+    std::cerr << "Failed to convert 15 annotation fiducials in two hierarchies " //
+              << " to 2 markup lists, have " << numAnnotationFiducials           //
+              << " annotation fiduicals and " << numMarkupsFiducials             //
+              << " markups fiducial lists" << std::endl;
     return EXIT_FAILURE;
   }
   else
@@ -167,12 +167,12 @@ int vtkSlicerMarkupsLogicTest3(int, char*[])
         pointDispNode->GetColor(annotCol);
         if (vtkMath::Distance2BetweenPoints(col, annotCol) > 0.01)
         {
-          std::cerr << "Failed to set color, expected "
-                    << annotCol[0] << ","
-                    << annotCol[1] << ","
-                    << annotCol[2] << ", but got: "
-                    << col[0] << ","
-                    << col[1] << ","
+          std::cerr << "Failed to set color, expected " //
+                    << annotCol[0] << ","               //
+                    << annotCol[1] << ","               //
+                    << annotCol[2] << ", but got: "     //
+                    << col[0] << ","                    //
+                    << col[1] << ","                    //
                     << col[2] << std::endl;
           return EXIT_FAILURE;
         }

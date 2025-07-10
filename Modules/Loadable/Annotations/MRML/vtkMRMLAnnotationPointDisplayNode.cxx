@@ -35,8 +35,8 @@ vtkMRMLAnnotationPointDisplayNode::vtkMRMLAnnotationPointDisplayNode()
 {
   this->GlyphType = vtkMRMLAnnotationPointDisplayNode::Sphere3D;
   this->GlyphScale = 5.0;
-  this->SliceProjection = (vtkMRMLAnnotationDisplayNode::ProjectionOff |
-                           vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor |
+  this->SliceProjection = (vtkMRMLAnnotationDisplayNode::ProjectionOff |                   //
+                           vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor | //
                            vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
 }
 

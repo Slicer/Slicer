@@ -689,11 +689,11 @@ bool vtkMRMLTransformStorageNode::IsImageFile(const std::string& filename)
       "Filename does not contain extension: '" << filename.c_str() << "'");
     return false;
   }
-  if (!extension.compare(".nrrd")
-      || !extension.compare(".nhdr")
-      || !extension.compare(".mha")
-      || !extension.compare(".mhd")
-      || !extension.compare(".nii")
+  if (!extension.compare(".nrrd")    //
+      || !extension.compare(".nhdr") //
+      || !extension.compare(".mha")  //
+      || !extension.compare(".mhd")  //
+      || !extension.compare(".nii")  //
       || !extension.compare(".nii.gz"))
   {
     return true;

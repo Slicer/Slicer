@@ -76,7 +76,7 @@ int DoIt(int argc, char* argv[])
 
   // Shift scale the data if necessary based on the rescale slope and
   // rescale interscept prescribed.
-  if (fabs(rescaleIntercept) > itk::NumericTraits<double>::epsilon()
+  if (fabs(rescaleIntercept) > itk::NumericTraits<double>::epsilon() //
       || fabs(rescaleSlope - 1.0) > itk::NumericTraits<double>::epsilon() )
   {
     reader->ReleaseDataFlagOn();

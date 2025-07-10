@@ -136,11 +136,11 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
 
   // Compute the angle (only if necessary since we don't want
   // fluctuations in angle value as the camera moves, etc.)
-  if (((fabs(p1[0] - c[0]) < 0.001) &&
-       (fabs(p1[1] - c[1]) < 0.001) &&
-       (fabs(p1[2] - c[2]) < 0.001)) ||
-      ((fabs(p2[0] - c[0]) < 0.001) &&
-       (fabs(p2[1] - c[1]) < 0.001) &&
+  if (((fabs(p1[0] - c[0]) < 0.001) && //
+       (fabs(p1[1] - c[1]) < 0.001) && //
+       (fabs(p1[2] - c[2]) < 0.001)) || //
+      ((fabs(p2[0] - c[0]) < 0.001) && //
+       (fabs(p2[1] - c[1]) < 0.001) && //
        (fabs(p2[2] - c[2]) < 0.001)))
   {
     return;
@@ -165,11 +165,11 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
     angleTextPlacementRatio *= arcLengthAdjustmentFactor;
   }
   const double lArc = length * anglePlacementRatio;
-  double arcp1[3] = { lArc * vector1[0] + c[0],
-                      lArc * vector1[1] + c[1],
+  double arcp1[3] = { lArc * vector1[0] + c[0], //
+                      lArc * vector1[1] + c[1], //
                       lArc * vector1[2] + c[2] };
-  double arcp2[3] = { lArc * vector2[0] + c[0],
-                      lArc * vector2[1] + c[1],
+  double arcp2[3] = { lArc * vector2[0] + c[0], //
+                      lArc * vector2[1] + c[1], //
                       lArc * vector2[2] + c[2] };
 
   this->Arc->SetPoint1(arcp1);
@@ -192,19 +192,19 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
   l2 = vtkMath::Normalize(vector2);
   length = l1 < l2 ? l1 : l2;
   const double lText = length * angleTextPlacementRatio;
-  double vector3[3] = { vector1[0] + vector2[0],
-                        vector1[1] + vector2[1],
+  double vector3[3] = { vector1[0] + vector2[0], //
+                        vector1[1] + vector2[1], //
                         vector1[2] + vector2[2] };
   vtkMath::Normalize(vector3);
-  double textPos[3] = { lText * (longArc ? -1.0 : 1.0) * vector3[0] + c[0],
-                        lText * (longArc ? -1.0 : 1.0) * vector3[1] + c[1],
+  double textPos[3] = { lText * (longArc ? -1.0 : 1.0) * vector3[0] + c[0], //
+                        lText * (longArc ? -1.0 : 1.0) * vector3[1] + c[1], //
                         lText * (longArc ? -1.0 : 1.0) * vector3[2] + c[2]};
 
-  this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]),
+  this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), //
                                       static_cast<int>(textPos[1]));
   this->TextActor->SetVisibility(
-    this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
-    && this->AnyPointVisibilityOnSlice
+    this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
+    && this->AnyPointVisibilityOnSlice //
     && markupsNode->GetNumberOfDefinedControlPoints(true) == 3);
 }
 
@@ -251,8 +251,8 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   {
     controlPointType = Active;
   }
-  else if ((numberOfDefinedControlPoints > 0 && !markupsNode->GetNthControlPointSelected(0)) ||
-           (numberOfDefinedControlPoints > 1 && !markupsNode->GetNthControlPointSelected(1)) ||
+  else if ((numberOfDefinedControlPoints > 0 && !markupsNode->GetNthControlPointSelected(0)) || //
+           (numberOfDefinedControlPoints > 1 && !markupsNode->GetNthControlPointSelected(1)) || //
            (numberOfDefinedControlPoints > 2 && !markupsNode->GetNthControlPointSelected(2)))
   {
     controlPointType = Unselected;
@@ -289,7 +289,7 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1 //
     || !this->GetVisibility() || !interactionEventData )
   {
     return;

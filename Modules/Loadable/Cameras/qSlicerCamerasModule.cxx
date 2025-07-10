@@ -107,7 +107,7 @@ QStringList qSlicerCamerasModule::contributors() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerCamerasModule::associatedNodeTypes() const
 {
-  return QStringList()
+  return QStringList() //
     << "vtkMRMLCameraNode"
     << "vtkMRMLViewNode";
 }

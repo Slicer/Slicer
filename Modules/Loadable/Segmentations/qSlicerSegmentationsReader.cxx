@@ -91,7 +91,7 @@ qSlicerIO::IOFileType qSlicerSegmentationsReader::fileType() const
 QStringList qSlicerSegmentationsReader::extensions() const
 {
   QString extensionText = tr("Segmentation");
-  return QStringList()
+  return QStringList() //
     << extensionText + " (*.seg.nrrd)" << extensionText + " (*.seg.nhdr)" << extensionText + " (*.seg.vtm)"
     << extensionText + " (*.nrrd)" << extensionText + " (*.nhdr)" << extensionText + " (*.vtm)"
     << extensionText + " (*.nii.gz)" << extensionText + " (*.nii)" << extensionText + " (*.hdr)"

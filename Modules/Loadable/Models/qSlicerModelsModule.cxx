@@ -165,7 +165,7 @@ vtkMRMLAbstractLogic* qSlicerModelsModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerModelsModule::associatedNodeTypes() const
 {
-  return QStringList()
+  return QStringList() //
     << "vtkMRMLModelNode"
     << "vtkMRMLModelDisplayNode";
 }

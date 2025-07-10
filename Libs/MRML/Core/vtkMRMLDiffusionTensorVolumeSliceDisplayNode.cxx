@@ -162,8 +162,8 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateAssignedAttribute()
     dtDPN ?
     dtDPN->GetGlyphConnection() : nullptr );
 
-  if (dtDPN == nullptr ||
-      this->SliceImagePort == nullptr ||
+  if (dtDPN == nullptr ||                //
+      this->SliceImagePort == nullptr || //
       dtDPN->GetGlyphGeometry( ) == vtkMRMLDiffusionTensorDisplayPropertiesNode::Superquadrics)
   {
     this->ScalarVisibilityOff();
@@ -276,9 +276,9 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateAssignedAttribute()
   // care of an unsync scalar range value if the display node is invisible, or if
   // the glyphs are invisible (Visibility vs ScalarVisibility).
   // Moreover, if the input is null the filter would generate an error.
-  if (this->GetVisibility() &&
-      this->GetScalarVisibility() &&
-      this->GetAutoScalarRange() &&
+  if (this->GetVisibility() &&       //
+      this->GetScalarVisibility() && //
+      this->GetAutoScalarRange() &&  //
       this->SliceImagePort != nullptr)
   {
           int ScalarInvariant =  0;
@@ -321,9 +321,9 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
   vtkDebugMacro(<< this->GetClassName() << ": Setting and Observing Diffusion Tensor Display Properties ID: " << id  );
 
   if (
-      (id != this->GetDiffusionTensorDisplayPropertiesNodeID())
-      && id != nullptr && this->GetDiffusionTensorDisplayPropertiesNodeID() != nullptr
-      && (strcmp(id, this->GetDiffusionTensorDisplayPropertiesNodeID()) == 0)
+      (id != this->GetDiffusionTensorDisplayPropertiesNodeID()) //
+       && id != nullptr && this->GetDiffusionTensorDisplayPropertiesNodeID() != nullptr //
+       && (strcmp(id, this->GetDiffusionTensorDisplayPropertiesNodeID()) == 0)
       )
   {
     return;
@@ -360,11 +360,10 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ProcessMRMLEvents ( vtkObject
   // Let everyone know that the "display" has changed.
   vtkMRMLDiffusionTensorDisplayPropertiesNode* propertiesNode =
     vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(caller);
-  if (propertiesNode != nullptr &&
-      this->DiffusionTensorDisplayPropertiesNodeID != nullptr &&
-      propertiesNode->GetID() != nullptr &&
-      strcmp(this->DiffusionTensorDisplayPropertiesNodeID,
-             propertiesNode->GetID()) == 0 &&
+  if (propertiesNode != nullptr &&                                                          //
+      this->DiffusionTensorDisplayPropertiesNodeID != nullptr &&                            //
+      propertiesNode->GetID() != nullptr &&                                                 //
+      strcmp(this->DiffusionTensorDisplayPropertiesNodeID, propertiesNode->GetID()) == 0 && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->Modified();

@@ -108,7 +108,7 @@ void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coor
   if (this->coordinateReference() != _coordinateReference)
   {
     // reference changed
-    if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
+    if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION //
       || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION
           && ref == qMRMLLinearTransformSlider::LOCAL) )
     {
@@ -240,7 +240,7 @@ void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
   // or transform type is translation and coordinate reference is global. In these cases the slider range must not be updated:
   // it is not necessary (as the slider will be reset to 0 anyway when another slider is moved) and changing the slider range
   // can even cause instability (transform value increasing continuously) when the user drags the slider using the mouse.
-  if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
+  if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION //
     || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION && coordinateReference() == LOCAL) )
   {
     return;
@@ -484,7 +484,7 @@ void qMRMLTransformSliders::onSliderPositionChanged(qMRMLLinearTransformSlider* 
   Q_D(qMRMLTransformSliders);
   d->ActiveSliders.insert(slider);
 
-  if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION
+  if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION //
     || (this->typeOfTransform() == qMRMLTransformSliders::TRANSLATION && coordinateReference() == LOCAL) )
   {
     // When a rotation slider is manipulated, the other rotation sliders are

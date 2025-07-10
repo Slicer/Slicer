@@ -222,15 +222,15 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
       }
     }
     // If the action to add is NOT a menu
-    if (!moduleAction->menu() && (action->menu() ||
-                                  action->isSeparator() ||
+    if (!moduleAction->menu() && (action->menu() || //
+                                  action->isSeparator() || //
                                   actionIndex > index))
     {
       menu->insertAction(action, moduleAction);
       return;
     }
     // If the action to add is a menu
-    else if (moduleAction->menu() && action->menu() &&
+    else if (moduleAction->menu() && action->menu() && //
              (actionIndex > index) && actionBuiltIn)
     {
       menu->insertAction(action, moduleAction);

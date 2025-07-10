@@ -62,7 +62,7 @@ qSlicerNodeWriterOptionsWidget::~qSlicerNodeWriterOptionsWidget() = default;
 bool qSlicerNodeWriterOptionsWidget::isValid() const
 {
   Q_D(const qSlicerNodeWriterOptionsWidget);
-  return d->Properties.contains("nodeID") &&
+  return d->Properties.contains("nodeID") && //
          d->Properties.contains("fileName");
 }
 

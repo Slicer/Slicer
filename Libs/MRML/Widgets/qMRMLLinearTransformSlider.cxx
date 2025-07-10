@@ -95,16 +95,16 @@ qMRMLLinearTransformSlider::TransformType qMRMLLinearTransformSlider::typeOfTran
 // --------------------------------------------------------------------------
 bool qMRMLLinearTransformSlider::isRotation() const
 {
-  return (this->typeOfTransform() == ROTATION_LR ||
-          this->typeOfTransform() == ROTATION_PA ||
+  return (this->typeOfTransform() == ROTATION_LR || //
+          this->typeOfTransform() == ROTATION_PA || //
           this->typeOfTransform() == ROTATION_IS);
 }
 
 // --------------------------------------------------------------------------
 bool qMRMLLinearTransformSlider::isTranslation() const
 {
-  return (this->typeOfTransform() == TRANSLATION_LR ||
-          this->typeOfTransform() == TRANSLATION_PA ||
+  return (this->typeOfTransform() == TRANSLATION_LR || //
+          this->typeOfTransform() == TRANSLATION_PA || //
           this->typeOfTransform() == TRANSLATION_IS);
 }
 
@@ -248,9 +248,9 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
   double centerOfTransformation[3] = { 0.0, 0.0, 0.0 };
   d->MRMLTransformNode->GetCenterOfTransformation(centerOfTransformation);
 
-  if (this->typeOfTransform() == ROTATION_LR
-   || this->typeOfTransform() == ROTATION_PA
-   || this->typeOfTransform() == ROTATION_IS)
+  if (this->typeOfTransform() == ROTATION_LR    //
+      || this->typeOfTransform() == ROTATION_PA //
+      || this->typeOfTransform() == ROTATION_IS)
   {
     // We only need to translate the center of the transformation to the origin when we are rotating
      if (d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL)
@@ -356,9 +356,9 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
   }
   d->OldPosition = _sliderPosition;
 
-  if (this->typeOfTransform() == ROTATION_LR
-    || this->typeOfTransform() == ROTATION_PA
-    || this->typeOfTransform() == ROTATION_IS)
+  if (this->typeOfTransform() == ROTATION_LR    //
+      || this->typeOfTransform() == ROTATION_PA //
+      || this->typeOfTransform() == ROTATION_IS)
   {
     transform->Translate(-centerOfTransformation[0], -centerOfTransformation[1], -centerOfTransformation[2]);
   }

@@ -200,7 +200,7 @@ void vtkMRMLAbstractViewNode::ReadXMLAttributes(const char** atts)
   if (!this->GetLayoutName() || strlen(this->GetLayoutName()))
   {
     const char* layoutName = nullptr;
-    if (this->GetID() &&
+    if (this->GetID() && //
         strncmp(this->GetID(), this->GetClassName(), strlen(this->GetClassName())) == 0)
     {
       layoutName = this->GetID() + strlen(this->GetClassName());

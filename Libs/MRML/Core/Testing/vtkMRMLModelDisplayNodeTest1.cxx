@@ -202,21 +202,21 @@ int TestSetMesh(bool observeMeshBeforeObserveDisplay,
   }
 
   vtkPointSet* displayInputMesh = display->GetInputMesh();
-  if ((meshTypeIsPolyData && displayInputMesh != display->GetInputPolyData()) ||
-      (!meshTypeIsPolyData && displayInputMesh != display->GetInputUnstructuredGrid()) ||
-      displayInputMesh != model->GetMesh() ||
+  if ((meshTypeIsPolyData && displayInputMesh != display->GetInputPolyData()) ||          //
+      (!meshTypeIsPolyData && displayInputMesh != display->GetInputUnstructuredGrid()) || //
+      displayInputMesh != model->GetMesh() ||                                             //
       displayInputMesh != mesh)
   {
-    std::cerr << __LINE__ << ": vtkMRMLModelNode::SetAndobserveMesh failed when "
-              << (meshTypeIsPolyData ? "surface" : "volumetric")
-              << " mesh is set "
-              << (observeMeshBeforeObserveDisplay ? "before" : "after")
-              << " the display node is observed and when the display node is "
-              << "added in the scene "
-              << (observeDisplayBeforeAddToScene ? "before" : "after")
-              << " the observation:\n"
-              << "Mesh: " << mesh << ", "
-              << "Model: " << model->GetMesh() << ", "
+    std::cerr << __LINE__ << ": vtkMRMLModelNode::SetAndobserveMesh failed when " //
+              << (meshTypeIsPolyData ? "surface" : "volumetric")                  //
+              << " mesh is set "                                                  //
+              << (observeMeshBeforeObserveDisplay ? "before" : "after")           //
+              << " the display node is observed and when the display node is "    //
+              << "added in the scene "                                            //
+              << (observeDisplayBeforeAddToScene ? "before" : "after")            //
+              << " the observation:\n"                                            //
+              << "Mesh: " << mesh << ", "                                         //
+              << "Model: " << model->GetMesh() << ", "                            //
               << "Display: " << display->GetInputMesh() << std::endl;
     mesh->Delete();
     return EXIT_FAILURE;

@@ -406,8 +406,8 @@ void vtkCalculateOversamplingFactor::ClipMembershipFunction(vtkPiecewiseFunction
   {
     membershipFunction->GetNodeValue(nodeIndex, currentNode);
     membershipFunction->GetNodeValue(nodeIndex+1, nextNode);
-    if ((currentNode[1] < clipValue && nextNode[1] > clipValue)
-      || (currentNode[1] > clipValue && nextNode[1] < clipValue) )
+    if ((currentNode[1] < clipValue && nextNode[1] > clipValue) //
+        || (currentNode[1] > clipValue && nextNode[1] < clipValue) )
     {
       double newNodeParameterValue = (((nextNode[0]-currentNode[0])*(currentNode[1]-clipValue)) / (currentNode[1]-nextNode[1])) + currentNode[0];
       newNodeParameterValues.push_back(newNodeParameterValue);
@@ -442,8 +442,8 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
   }
 
   // Sanity check for sensible oversampling factor
-  if (oversamplingFactor < 0.01
-    || oversamplingFactor > 100.0 )
+  if (oversamplingFactor < 0.01 //
+      || oversamplingFactor > 100.0)
   {
     vtkWarningWithObjectMacro(imageData, "vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry: Oversampling factor" << oversamplingFactor << "seems unreasonable!");
     return;
@@ -467,9 +467,9 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
     int extentMax = std::max(extentMin + static_cast<int>(floor(oversamplingFactor*dimension)) - 1, 0);
     newExtent[axis*2] = extentMin;
     newExtent[axis*2+1] = extentMax;
-    newSpacing[axis] = spacing[axis]
-      * double(extent[axis * 2 + 1] - extent[axis * 2] + 1)
-      / double(newExtent[axis * 2 + 1] - newExtent[axis * 2] + 1);
+    newSpacing[axis] = spacing[axis]                                         //
+                       * double(extent[axis * 2 + 1] - extent[axis * 2] + 1) //
+                       / double(newExtent[axis * 2 + 1] - newExtent[axis * 2] + 1);
   }
   imageData->SetExtent(newExtent);
   imageData->SetSpacing(newSpacing);
@@ -478,13 +478,10 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
   // to be in the same position, so we need to shift the origin by a half voxel size difference
   vtkSmartPointer<vtkMatrix4x4> imageToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
   imageData->GetImageToWorldMatrix(imageToWorld);
-  double newOrigin_Image[4] =
-    {
-    0.5 * (1.0 - spacing[0] / newSpacing[0]),
-    0.5 * (1.0 - spacing[1] / newSpacing[1]),
-    0.5 * (1.0 - spacing[2] / newSpacing[2]),
-    1.0
-    };
+  double newOrigin_Image[4] = { 0.5 * (1.0 - spacing[0] / newSpacing[0]), //
+                                0.5 * (1.0 - spacing[1] / newSpacing[1]), //
+                                0.5 * (1.0 - spacing[2] / newSpacing[2]), //
+                                1.0 };
   double newOrigin_World[4] = { 0.0, 0.0, 0.0, 1.0 };
   imageToWorld->MultiplyPoint(newOrigin_Image, newOrigin_World);
   imageData->SetOrigin(newOrigin_World);

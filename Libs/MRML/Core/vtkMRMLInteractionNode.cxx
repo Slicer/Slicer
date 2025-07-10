@@ -287,7 +287,7 @@ const char* vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::SwitchToPersistentPlaceMode()
 {
-  if (this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place &&
+  if (this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place && //
       this->GetPlaceModePersistence() == 1)
   {
     return;
@@ -303,7 +303,7 @@ void vtkMRMLInteractionNode::SwitchToPersistentPlaceMode()
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::SwitchToSinglePlaceMode()
 {
-  if (this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place &&
+  if (this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place && //
       this->GetPlaceModePersistence() == 0)
   {
     return;
@@ -319,7 +319,7 @@ void vtkMRMLInteractionNode::SwitchToSinglePlaceMode()
 //----------------------------------------------------------------------------
 void vtkMRMLInteractionNode::SwitchToViewTransformMode()
 {
-  if (this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform &&
+  if (this->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform && //
       this->GetTransformModePersistence() == 1)
   {
     return;

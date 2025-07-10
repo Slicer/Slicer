@@ -602,8 +602,8 @@ void qSlicerVolumeRenderingModuleWidget::fitROIToVolume()
   vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic())->FitROIToVolume(displayNode);
 
   vtkMRMLMarkupsROINode* markupsROINode = displayNode->GetMarkupsROINode();
-  if (markupsROINode &&
-     (d->MarkupsROIWidget->mrmlROINode() != this->mrmlMarkupsROINode()
+  if (markupsROINode && //
+     (d->MarkupsROIWidget->mrmlROINode() != this->mrmlMarkupsROINode() //
      || d->MarkupsROIWidget->mrmlROINode() != markupsROINode))
   {
     qCritical() << Q_FUNC_INFO << ": ROI node mismatch";
@@ -720,8 +720,8 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
   vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
   QString renderingClassName = d->RenderingMethodComboBox->itemData(index).toString();
   // Display node is already the right type, don't change anything
-  if (!displayNode || renderingClassName.isEmpty()
-    || renderingClassName == displayNode->GetClassName())
+  if (!displayNode || renderingClassName.isEmpty() //
+      || renderingClassName == displayNode->GetClassName())
   {
     return;
   }
@@ -1013,8 +1013,8 @@ bool qSlicerVolumeRenderingModuleWidget::setEditedNode(vtkMRMLNode* node,
 //-----------------------------------------------------------
 double qSlicerVolumeRenderingModuleWidget::nodeEditable(vtkMRMLNode* node)
 {
-  if (vtkMRMLVolumePropertyNode::SafeDownCast(node)
-    || vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node))
+  if (vtkMRMLVolumePropertyNode::SafeDownCast(node) //
+      || vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node))
   {
     return 0.5;
   }

@@ -1366,8 +1366,8 @@ bool qMRMLSubjectHierarchyTreeView::clickDecoration(QMouseEvent* e)
   }
 
   // Visibility and color columns
-  if (sourceIndex.column() == this->model()->visibilityColumn()
-    || sourceIndex.column() == this->model()->colorColumn() )
+  if (sourceIndex.column() == this->model()->visibilityColumn() //
+      || sourceIndex.column() == this->model()->colorColumn())
   {
     vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(index);
     if (!itemID)
@@ -1541,8 +1541,8 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
 
   // Show multi-selection context menu if there are more than one selected items,
   // and right-click didn't happen on the scene or the empty area
-  if (d->SelectedItems.size() > 1
-    && itemID && itemID != d->SubjectHierarchyNode->GetSceneItemID() )
+  if (d->SelectedItems.size() > 1 //
+      && itemID && itemID != d->SubjectHierarchyNode->GetSceneItemID())
   {
     // Multi-selection: only show delete and toggle visibility actions
     d->EditAction->setVisible(false);
@@ -1761,8 +1761,8 @@ void qMRMLSubjectHierarchyTreeView::updateSelectPluginActions()
 
     // Do not show plugin in list if confidence is 0, or if it's disabled (by allowlist or blocklist).
     // Always show owner plugin.
-    if ((confidenceNumber <= 0.0 || !enabledPluginsList.contains(currentPlugin))
-      && !isOwner )
+    if ((confidenceNumber <= 0.0 || !enabledPluginsList.contains(currentPlugin)) //
+        && !isOwner)
     {
       currentSelectPluginAction->setVisible(false);
     }
@@ -1858,8 +1858,8 @@ void qMRMLSubjectHierarchyTreeView::deleteSelectedItems()
     // Ask the user whether to delete all the item's children
     bool deleteChildren = false;
     QMessageBox::StandardButton answer = QMessageBox::Yes;
-    if (currentItemIDs.count() > 1
-      && !qSlicerSubjectHierarchyPluginHandler::instance()->autoDeleteSubjectHierarchyChildren() )
+    if (currentItemIDs.count() > 1 //
+        && !qSlicerSubjectHierarchyPluginHandler::instance()->autoDeleteSubjectHierarchyChildren())
     {
       answer =
         QMessageBox::question(nullptr, tr("Delete subject hierarchy branch?"),
@@ -1971,8 +1971,8 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
       {
         vtkIdType nodeItemID = d->SubjectHierarchyNode->GetItemByDataNode(
           vtkMRMLNode::SafeDownCast(referencedNodes->GetItemAsObject(index)) );
-        if (nodeItemID && nodeItemID != itemID
-          && (std::find(directlyReferencedItems.begin(), directlyReferencedItems.end(), nodeItemID) == directlyReferencedItems.end()) )
+        if (nodeItemID && nodeItemID != itemID //
+            && (std::find(directlyReferencedItems.begin(), directlyReferencedItems.end(), nodeItemID) == directlyReferencedItems.end()))
         {
           directlyReferencedItems.push_back(nodeItemID);
         }
@@ -1989,8 +1989,8 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
       for (std::vector<vtkMRMLNode*>::iterator refNodeIt=referencingNodes.begin(); refNodeIt!=referencingNodes.end(); refNodeIt++)
       {
         vtkIdType nodeItemID = d->SubjectHierarchyNode->GetItemByDataNode(*refNodeIt);
-        if (nodeItemID && nodeItemID != itemID
-          && (std::find(referencingItems.begin(), referencingItems.end(), nodeItemID) == referencingItems.end()) )
+        if (nodeItemID && nodeItemID != itemID //
+            && (std::find(referencingItems.begin(), referencingItems.end(), nodeItemID) == referencingItems.end()))
         {
           referencingItems.push_back(nodeItemID);
         }
@@ -2391,8 +2391,8 @@ void qMRMLSubjectHierarchyTreeView::onCustomContextMenu(const QPoint& point)
     if (sourceIndex.flags() & Qt::ItemIsEnabled)
     {
       // Item is enabled
-      if (sourceIndex.column() == this->model()->visibilityColumn()
-        || sourceIndex.column() == this->model()->colorColumn())
+      if (sourceIndex.column() == this->model()->visibilityColumn() //
+          || sourceIndex.column() == this->model()->colorColumn())
       {
         vtkIdType itemID = d->SortFilterModel->subjectHierarchyItemFromIndex(index);
         if (itemID) // Valid item is needed for visibility actions

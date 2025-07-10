@@ -349,8 +349,8 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode* node )
   //--- if the filename already exists in cache and
   //--- user has selected not to redownload cached files
   //--- just return.
-  if ((cm->CachedFileExists ( dest ) ) &&
-       allCachedFilesExist &&
+  if ((cm->CachedFileExists ( dest ) ) && //
+       allCachedFilesExist && //
        ( !(cm->GetEnableForceRedownload())) )
   {
     dnode->GetNthStorageNode(storageNodeIndex)->SetReadStateTransferDone();
@@ -486,7 +486,7 @@ int vtkDataIOManagerLogic::QueueRead ( vtkMRMLNode* node )
 
     }
   }
-  if (dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs() > 0 &&
+  if (dnode->GetNthStorageNode(storageNodeIndex)->GetNumberOfURIs() > 0 && //
        !this->GetDataIOManager()->GetEnableAsynchronousIO())
   {
     vtkDebugMacro("QueueRead: setting storage node state to transferdone after synchronous transfer of all files: " << dnode->GetNthStorageNode(storageNodeIndex)->GetURI());
@@ -730,7 +730,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void* clientdata )
         int storageNodeIndex = -1;
         for (int i = 0; i < storableNode->GetNumberOfStorageNodes(); i++)
         {
-          if (storableNode->GetNthStorageNode(i)->GetReadState() == vtkMRMLStorageNode::Transferring &&
+          if (storableNode->GetNthStorageNode(i)->GetReadState() == vtkMRMLStorageNode::Transferring && //
               strcmp(storableNode->GetNthStorageNode(i)->GetURI(),source) == 0)
           {
             vtkDebugMacro("ApplyTransfer: found a working storage node who's uri matches source " << source << " at " << i);

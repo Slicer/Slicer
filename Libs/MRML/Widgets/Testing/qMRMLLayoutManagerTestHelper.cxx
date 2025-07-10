@@ -29,7 +29,7 @@ bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
     return true;
   }
 
-  if (layoutManager->layout() != expectedViewArrangement ||
+  if (layoutManager->layout() != expectedViewArrangement || //
       layoutNode->GetViewArrangement() != expectedViewArrangement)
   {
     std::cerr << "Line " << line << " - Add scene failed:\n"

@@ -365,7 +365,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   FilterType::Pointer filter;
 
   // First see if the archetype exists, if it's not a pointer into memory
-  if (fileNameCollapsed.find("slicer:") != std::string::npos &&
+  if (fileNameCollapsed.find("slicer:") != std::string::npos && //
       fileNameCollapsed.find("#") != std::string::npos)
   {
     vtkDebugMacro("File " << fileNameCollapsed.c_str() << " is a pointer to the mrml scene in memory, not checking for it on disk");
@@ -940,33 +940,33 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         }
         else
         {
-          if (max <= std::numeric_limits<int8_t>::max()
-            && min >= std::numeric_limits<int8_t>::min() )
+          if (max <= std::numeric_limits<int8_t>::max() //
+              && min >= std::numeric_limits<int8_t>::min())
           {
             scalarType = VTK_CHAR;
           }
-          else if (max <= std::numeric_limits<int16_t>::max()
-            && min >= std::numeric_limits<int16_t>::min() )
+          else if (max <= std::numeric_limits<int16_t>::max() //
+                   && min >= std::numeric_limits<int16_t>::min())
           {
             scalarType = VTK_SHORT;
           }
-          else if (max <= std::numeric_limits<int32_t>::max()
-            && min >= std::numeric_limits<int32_t>::min() )
+          else if (max <= std::numeric_limits<int32_t>::max() //
+                   && min >= std::numeric_limits<int32_t>::min())
           {
             scalarType = VTK_INT;
           }
-          else if (max <= std::numeric_limits<int64_t>::max()
-            && min >= std::numeric_limits<int64_t>::min() )
+          else if (max <= std::numeric_limits<int64_t>::max() //
+                   && min >= std::numeric_limits<int64_t>::min())
           {
             scalarType = VTK_LONG;
           }
-          else if (max <= std::numeric_limits<float>::max()
-            && min >= -std::numeric_limits<float>::max() )
+          else if (max <= std::numeric_limits<float>::max() //
+                   && min >= -std::numeric_limits<float>::max())
           {
             scalarType = VTK_FLOAT;
           }
-          else if (max <= std::numeric_limits<double>::max()
-            && min >= -std::numeric_limits<double>::max() )
+          else if (max <= std::numeric_limits<double>::max() //
+                   && min >= -std::numeric_limits<double>::max())
           {
             scalarType = VTK_DOUBLE;
           }
@@ -1096,7 +1096,7 @@ void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vt
   }
 
   // If no metadata scalar range found
-  if (this->MetaDataScalarRangeMinima.empty() ||
+  if (this->MetaDataScalarRangeMinima.empty() || //
      this->MetaDataScalarRangeMaxima.empty())
   {
     return;
@@ -1104,7 +1104,7 @@ void vtkITKArchetypeImageSeriesReader::SetMetaDataScalarRangeToPointDataInfo( vt
 
   // If metadata scalar range not consistent
   unsigned int nbrOfComponents = data->GetNumberOfScalarComponents();
-  if (nbrOfComponents != this->MetaDataScalarRangeMinima.size() ||
+  if (nbrOfComponents != this->MetaDataScalarRangeMinima.size() || //
       nbrOfComponents != this->MetaDataScalarRangeMaxima.size())
   {
     // Mismatch between image data and meta data number of scalar components, ignoring metada scalar range
@@ -1188,15 +1188,15 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInst
   std::string FirstName;
   for (int k = 0; k < nFiles; k++)
   {
-    if ((this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) ||
-         (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) ||
-         (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) ||
-         (this->IndexEchoNumbers[k] != idxEchoNumbers && this->IndexEchoNumbers[k] >= 0 && idxEchoNumbers >= 0) ||
-         (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation &&
-           this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0) ||
-         (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) ||
-         (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient &&
-           this->IndexImageOrientationPatient[k] >= 0 && idxImageOrientationPatient >= 0) )
+    if ((this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) || //
+        (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) ||                           //
+        (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) ||                           //
+        (this->IndexEchoNumbers[k] != idxEchoNumbers && this->IndexEchoNumbers[k] >= 0 && idxEchoNumbers >= 0) ||                           //
+        (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation &&                                                   //
+         this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0)
+        ||                                                                                                                //
+        (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) || //
+        (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient && this->IndexImageOrientationPatient[k] >= 0 && idxImageOrientationPatient >= 0))
     {
       continue;
     }
@@ -1233,14 +1233,14 @@ void vtkITKArchetypeImageSeriesReader::GroupFiles ( int idxSeriesInstanceUID,
   int nFiles = this->AllFileNames.size();
   for (int k = 0; k < nFiles; k++)
   {
-    if ((this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) ||
-      (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) ||
-      (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) ||
-      (this->IndexEchoNumbers[k] != idxEchoNumbers && this->IndexEchoNumbers[k] >= 0 && idxEchoNumbers >= 0) ||
-      (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation &&
-        this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0) ||
-      (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) ||
-      (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient &&
+    if ((this->IndexSeriesInstanceUIDs[k] != idxSeriesInstanceUID && this->IndexSeriesInstanceUIDs[k] >= 0 && idxSeriesInstanceUID >= 0) || //
+      (this->IndexContentTime[k] != idxContentTime && this->IndexContentTime[k] >= 0 && idxContentTime >= 0) || //
+      (this->IndexTriggerTime[k] != idxTriggerTime && this->IndexTriggerTime[k] >= 0 && idxTriggerTime >= 0) || //
+      (this->IndexEchoNumbers[k] != idxEchoNumbers && this->IndexEchoNumbers[k] >= 0 && idxEchoNumbers >= 0) || //
+      (this->IndexDiffusionGradientOrientation[k] != idxDiffusionGradientOrientation && //
+        this->IndexDiffusionGradientOrientation[k] >= 0 && idxDiffusionGradientOrientation >= 0) || //
+      (this->IndexSliceLocation[k] != idxSliceLocation && this->IndexSliceLocation[k] >= 0 && idxSliceLocation >= 0) || //
+      (this->IndexImageOrientationPatient[k] != idxImageOrientationPatient && //
         this->IndexImageOrientationPatient[k] >= 0 && idxImageOrientationPatient >= 0))
     {
       continue;
@@ -1314,11 +1314,11 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
       // Don't read the image header if it is a 2D file type.
       std::string IOType = imageReader->GetImageIO()->GetNameOfClass();
-      bool ioHas3DInformation =
-        IOType.find("BPMImageIO") != std::string::npos &&
-        IOType.find("JPEGImageIO") != std::string::npos &&
-        IOType.find("PNGImageIO") != std::string::npos &&
-        IOType.find("TIFFImageIO") != std::string::npos &&
+      bool ioHas3DInformation =                            //
+        IOType.find("BPMImageIO") != std::string::npos &&  //
+        IOType.find("JPEGImageIO") != std::string::npos && //
+        IOType.find("PNGImageIO") != std::string::npos &&  //
+        IOType.find("TIFFImageIO") != std::string::npos && //
         IOType.find("RawImageIO") != std::string::npos;
       if (ioHas3DInformation)
       {
@@ -1349,7 +1349,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
       this->IndexSliceLocation[f] = idx;
 
       // Orientation
-      float sliceOrientation[6] = {1., 0., 0.,
+      float sliceOrientation[6] = {1., 0., 0., //
                                    0., 1., 0.};
       if (ioHas3DInformation)
       {
@@ -1609,9 +1609,9 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
   this->FileNames.resize(0);
 
   // Note: Since IndexArchetype is unsigned int, it's always positive
-  if (this->IndexArchetype >= this->IndexSeriesInstanceUIDs.size()
-      || this->IndexArchetype >= this->IndexTriggerTime.size()
-      || this->IndexArchetype >= this->IndexDiffusionGradientOrientation.size()
+  if (this->IndexArchetype >= this->IndexSeriesInstanceUIDs.size()              //
+      || this->IndexArchetype >= this->IndexTriggerTime.size()                  //
+      || this->IndexArchetype >= this->IndexDiffusionGradientOrientation.size() //
       || this->IndexArchetype >= this->IndexImageOrientationPatient.size())
   {
     vtkErrorMacro("AssembleVolumeContainingArchetype: index archetype "
@@ -1634,17 +1634,17 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
   // Follows logic originally in LoadVolume.tcl
   for (unsigned int k = 0; k < this->AllFileNames.size(); k++)
   {
-    if ((this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID &&
+    if ((this->IndexSeriesInstanceUIDs[k] != iArchetypeSeriesUID && //
          this->IndexSeriesInstanceUIDs[k] >= 0 && iArchetypeSeriesUID >= 0)
-        ||
-        (this->IndexEchoNumbers[k] != iArchetypeEchoNumbers &&
+        ||                                                     //
+        (this->IndexEchoNumbers[k] != iArchetypeEchoNumbers && //
          this->IndexEchoNumbers[k] >= 0 && iArchetypeEchoNumbers >= 0)
-        ||
-        (this->IndexDiffusionGradientOrientation[k] != iArchetypeDiffusion  &&
+        ||                                                                    //
+        (this->IndexDiffusionGradientOrientation[k] != iArchetypeDiffusion && //
          this->IndexDiffusionGradientOrientation[k] >= 0 && iArchetypeDiffusion >= 0)
-        ||
-        (this->IndexImageOrientationPatient[k] != iArchetypeOrientation &&
-         this->IndexImageOrientationPatient[k] >= 0 && iArchetypeOrientation >= 0) )
+        ||                                                                 //
+        (this->IndexImageOrientationPatient[k] != iArchetypeOrientation && //
+         this->IndexImageOrientationPatient[k] >= 0 && iArchetypeOrientation >= 0))
     {
       // file doesn't match our criteria
       continue;

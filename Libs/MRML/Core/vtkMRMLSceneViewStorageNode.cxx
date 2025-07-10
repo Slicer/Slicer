@@ -101,8 +101,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   {
       reader=vtkSmartPointer<vtkPNGReader>::New();
   }
-  else if (extension == std::string(".jpg") ||
-           extension == std::string(".jpeg"))
+  else if (extension == std::string(".jpg") || extension == std::string(".jpeg"))
   {
     reader=vtkSmartPointer<vtkJPEGReader>::New();
   }

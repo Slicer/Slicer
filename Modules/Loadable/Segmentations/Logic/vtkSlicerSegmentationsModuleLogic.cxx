@@ -1531,7 +1531,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkMRML
       default:
         break;
     }
-    if (ret != vtkOrientedImageDataResample::TYPE_OK &&
+    if (ret != vtkOrientedImageDataResample::TYPE_OK && //
       !vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(labelOrientedImageData))
     {
       vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
@@ -1601,7 +1601,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(vtkOrie
     default:
       break;
   }
-  if (ret != vtkOrientedImageDataResample::TYPE_OK &&
+  if (ret != vtkOrientedImageDataResample::TYPE_OK && //
     !vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(labelOrientedImageData))
   {
     vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
@@ -1784,7 +1784,7 @@ bool vtkSlicerSegmentationsModuleLogic::ImportLabelmapToSegmentationNode(
     default:
       break;
   }
-  if (ret != vtkOrientedImageDataResample::TYPE_OK &&
+  if (ret != vtkOrientedImageDataResample::TYPE_OK && //
     !vtkOrientedImageDataResample::CastSegmentationToSmallestIntegerType(labelOrientedImageData))
   {
     vtkErrorToMessageCollectionWithObjectMacro(segmentationNode, userMessages,
@@ -2857,8 +2857,8 @@ void vtkSlicerSegmentationsModuleLogic::SetSegmentStatus(vtkSegment* segment, in
   std::string currentStatusStr;
   if (status == vtkSlicerSegmentationsModuleLogic::NotStarted)
   {
-    if (!segment->GetTag(vtkSlicerSegmentationsModuleLogic::GetStatusTagName(), currentStatusStr)
-      || currentStatusStr.empty())
+    if (!segment->GetTag(vtkSlicerSegmentationsModuleLogic::GetStatusTagName(), currentStatusStr) //
+        || currentStatusStr.empty())
     {
       // Status information is not stored in the segment (which means that the segmentation is not started).
       // Avoid changing the tag, as it would trigger a modified event, which for example could interfere with undo/redo history
@@ -3044,8 +3044,8 @@ bool vtkSlicerSegmentationsModuleLogic::IsSegmentationExentOutsideReferenceGeome
 
   for (int i = 0; i < 3; ++i)
   {
-    if (transformedSegmentationExtent[2 * i] < referenceExtent[2 * i]
-      || transformedSegmentationExtent[2 * i + 1] > referenceExtent[2 * i + 1])
+    if (transformedSegmentationExtent[2 * i] < referenceExtent[2 * i] //
+        || transformedSegmentationExtent[2 * i + 1] > referenceExtent[2 * i + 1])
     {
       return true;
     }

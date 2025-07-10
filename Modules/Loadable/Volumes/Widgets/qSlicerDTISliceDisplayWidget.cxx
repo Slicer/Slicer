@@ -254,8 +254,8 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
   this->displayPropertiesNode()->SetColorGlyphBy(scalarInvariant);
 
   if (d->DisplayNode && (
-    this->displayPropertiesNode()->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation ||
-    this->displayPropertiesNode()->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector ||
+    this->displayPropertiesNode()->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation || //
+    this->displayPropertiesNode()->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector || //
     this->displayPropertiesNode()->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector
     ) )
   {

@@ -445,8 +445,8 @@ vtkMRMLSliceDisplayNode* vtkMRMLSliceCompositeNode::GetSliceDisplayNode()
   // It is an expensive operation to determine the displayable node
   // (need to iterate through the scene), so the last found value
   // is cached. If it is still valid then we use it.
-  if (this->LastFoundSliceDisplayNode != nullptr
-    && this->LastFoundSliceDisplayNode->GetScene() == this->Scene)
+  if (this->LastFoundSliceDisplayNode != nullptr //
+      && this->LastFoundSliceDisplayNode->GetScene() == this->Scene)
   {
     vtkMRMLModelNode* sliceModelNode = vtkMRMLModelNode::SafeDownCast(this->LastFoundSliceDisplayNode->GetDisplayableNode());
     if (this->GetCompositeNodeIDFromSliceModelNode(sliceModelNode) == this->GetID())

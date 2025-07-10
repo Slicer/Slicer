@@ -74,17 +74,17 @@ bool TestPerformance()
   colorLogic->SetMRMLScene(scene.GetPointer());
 
   overallTimer->StopTimer();
-  std::cout << "<DartMeasurement name=\"AddDefaultColorNodes\" "
-            << "type=\"numeric/double\">"
+  std::cout << "<DartMeasurement name=\"AddDefaultColorNodes\" " //
+            << "type=\"numeric/double\">"                        //
             << overallTimer->GetElapsedTime() << "</DartMeasurement>" << std::endl;
   overallTimer->StartTimer();
 
   colorLogic->Delete();
 
   overallTimer->StopTimer();
-  std::cout << "<DartMeasurement name=\"RemoveDefaultColorNodes\" "
-            << "type=\"numeric/double\">"
-            << overallTimer->GetElapsedTime()
+  std::cout << "<DartMeasurement name=\"RemoveDefaultColorNodes\" " //
+            << "type=\"numeric/double\">"                           //
+            << overallTimer->GetElapsedTime()                       //
             << "</DartMeasurement>" << std::endl;
 
   return true;
@@ -236,9 +236,9 @@ bool TestCopy()
                 << " - Failed to get color " << i << " from the copied node." << std::endl;
       return false;
     }
-    if (copyColor[0] != originalColor[0] ||
-        copyColor[1] != originalColor[1] ||
-        copyColor[2] != originalColor[2] ||
+    if (copyColor[0] != originalColor[0] || //
+        copyColor[1] != originalColor[1] || //
+        copyColor[2] != originalColor[2] || //
         copyColor[3] != originalColor[3])
     {
       std::cerr << "Line " << __LINE__
@@ -251,7 +251,7 @@ bool TestCopy()
     }
     const char* originalColorName = originalNode->GetColorName(i);
     const char* copyColorName = copiedNode->GetColorName(i);
-    if (originalColorName != nullptr && copyColorName != nullptr &&
+    if (originalColorName != nullptr && copyColorName != nullptr && //
         strcmp(originalColorName, copyColorName) != 0)
     {
       std::cerr << "Line " << __LINE__
@@ -311,9 +311,9 @@ bool TestProceduralCopy()
                 << " - Failed to get color " << i << " from the copied node." << std::endl;
       return false;
     }
-    if (copyColor[0] != originalColor[0] ||
-        copyColor[1] != originalColor[1] ||
-        copyColor[2] != originalColor[2] ||
+    if (copyColor[0] != originalColor[0] || //
+        copyColor[1] != originalColor[1] || //
+        copyColor[2] != originalColor[2] || //
         copyColor[3] != originalColor[3])
     {
       std::cerr << "Line " << __LINE__
@@ -326,7 +326,7 @@ bool TestProceduralCopy()
     }
     const char* originalColorName = originalNode->GetColorName(i);
     const char* copyColorName = copiedNode->GetColorName(i);
-    if (originalColorName != nullptr && copyColorName != nullptr &&
+    if (originalColorName != nullptr && copyColorName != nullptr && //
         strcmp(originalColorName, copyColorName) != 0)
     {
       std::cerr << "Line " << __LINE__

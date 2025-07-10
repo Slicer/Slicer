@@ -326,7 +326,7 @@ void qSlicerCLIModuleWidgetPrivate::onValueChanged(const QString& name, const QV
   Q_Q(qSlicerCLIModuleWidget);
   // but if the scene is closing, then nevermind, values are changing
   // because nodes are getting removed
-  if (!q->mrmlScene() ||
+  if (!q->mrmlScene() || //
       q->mrmlScene()->IsClosing())
   {
     return;

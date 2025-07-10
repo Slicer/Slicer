@@ -126,11 +126,11 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
 
   // Compute the angle (only if necessary since we don't want
   // fluctuations in angle value as the camera moves, etc.)
-  if (((fabs(p1[0] - c[0]) < 0.001) &&
-       (fabs(p1[1] - c[1]) < 0.001) &&
-       (fabs(p1[2] - c[2]) < 0.001)) ||
-      ((fabs(p2[0] - c[0]) < 0.001) &&
-       (fabs(p2[1] - c[1]) < 0.001) &&
+  if (((fabs(p1[0] - c[0]) < 0.001) && //
+       (fabs(p1[1] - c[1]) < 0.001) && //
+       (fabs(p1[2] - c[2]) < 0.001)) || //
+      ((fabs(p2[0] - c[0]) < 0.001) && //
+       (fabs(p2[1] - c[1]) < 0.001) && //
        (fabs(p2[2] - c[2]) < 0.001)))
   {
     return;
@@ -380,7 +380,7 @@ void vtkSlicerAngleRepresentation3D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1 //
     || !interactionEventData )
   {
     return;

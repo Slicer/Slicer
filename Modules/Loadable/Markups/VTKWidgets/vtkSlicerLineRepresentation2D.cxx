@@ -131,8 +131,8 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
                           */
     this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), static_cast<int>(textPos[1]));
     this->TextActor->SetVisibility(
-      this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
-      && this->AnyPointVisibilityOnSlice
+      this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
+      && this->AnyPointVisibilityOnSlice //
       && markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
   }
   else
@@ -170,8 +170,8 @@ void vtkSlicerLineRepresentation2D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
-    || !interactionEventData )
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1 //
+      || !interactionEventData )
   {
     return;
   }

@@ -1360,8 +1360,8 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
   {
     vtkDataObject* representationBefore = representationsBefore[segmentIt->first];
     vtkDataObject* representationAfter = segmentIt->second->GetRepresentation(targetRepresentationName);
-    if (representationBefore != representationAfter
-      || (representationBefore != nullptr && representationAfter != nullptr && representationBefore->GetMTime() != representationAfter->GetMTime()) )
+    if (representationBefore != representationAfter //
+        || (representationBefore != nullptr && representationAfter != nullptr && representationBefore->GetMTime() != representationAfter->GetMTime()) )
     {
       // representation has been modified
       modifiedSegmentIds.push_back(segmentIt->first);
@@ -1601,9 +1601,13 @@ bool vtkSegmentation::GenerateMergedLabelmap(
   // Allocate image data if empty or if reference extent changed
   int imageDataExtent[6] = { 0,-1,0,-1,0,-1 };
   sharedImageData->GetExtent(imageDataExtent);
-  if (sharedImageData->GetScalarType() != VTK_SHORT
-    || imageDataExtent[0] != referenceExtent[0] || imageDataExtent[1] != referenceExtent[1] || imageDataExtent[2] != referenceExtent[2]
-    || imageDataExtent[3] != referenceExtent[3] || imageDataExtent[4] != referenceExtent[4] || imageDataExtent[5] != referenceExtent[5])
+  if (sharedImageData->GetScalarType() != VTK_SHORT //
+      || imageDataExtent[0] != referenceExtent[0]   //
+      || imageDataExtent[1] != referenceExtent[1]   //
+      || imageDataExtent[2] != referenceExtent[2]   //
+      || imageDataExtent[3] != referenceExtent[3]   //
+      || imageDataExtent[4] != referenceExtent[4]   //
+      || imageDataExtent[5] != referenceExtent[5])
   {
     if (sharedImageData->GetPointData()->GetScalars() && sharedImageData->GetScalarType() != VTK_SHORT)
     {
@@ -2151,7 +2155,7 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
 
     double currentSpacing[3] = {1, 1, 1};
     currentBinaryLabelmap->GetSpacing(currentSpacing);
-    if (!highestResolutionLabelmap
+    if (!highestResolutionLabelmap //
       || currentSpacing[0] * currentSpacing[1] * currentSpacing[2] < lowestSpacing[0] * lowestSpacing[1] * lowestSpacing[2])
     {
       lowestSpacing[0] = currentSpacing[0];
@@ -2190,16 +2194,22 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
   vtkSmartPointer<vtkOrientedImageData> commonGeometryImage = vtkSmartPointer<vtkOrientedImageData>::New();
   vtkSegmentationConverter::DeserializeImageGeometry(referenceGeometryString, commonGeometryImage, false);
 
-  if (extentComputationMode == EXTENT_UNION_OF_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS
-    || extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED
-    || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
+  if (extentComputationMode == EXTENT_UNION_OF_SEGMENTS                     //
+      || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS        //
+      || extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED           //
+      || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED //
+      || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
   {
     // Determine extent that contains all segments
     int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
-    this->DetermineCommonLabelmapExtent(commonGeometryExtent, commonGeometryImage, sharedSegmentIDs,
-      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED ||
-      extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY,
-      extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED);
+    this->DetermineCommonLabelmapExtent(commonGeometryExtent,
+                                        commonGeometryImage,
+                                        sharedSegmentIDs,
+                                        extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS             //
+                                          || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED //
+                                          || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY,
+                                        extentComputationMode == EXTENT_UNION_OF_SEGMENTS_PADDED //
+                                          || extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_PADDED);
     if (extentComputationMode == EXTENT_UNION_OF_EFFECTIVE_SEGMENTS_AND_REFERENCE_GEOMETRY)
     {
       // Expand the common geometry extent to include the reference image geometry.
@@ -2274,9 +2284,10 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
     {
       currentBinaryLabelmap->GetExtent(currentBinaryLabelmapExtent);
     }
-    if (validExtent && currentBinaryLabelmapExtent[0] <= currentBinaryLabelmapExtent[1]
-      && currentBinaryLabelmapExtent[2] <= currentBinaryLabelmapExtent[3]
-      && currentBinaryLabelmapExtent[4] <= currentBinaryLabelmapExtent[5])
+    if (validExtent                                                         //
+        && currentBinaryLabelmapExtent[0] <= currentBinaryLabelmapExtent[1] //
+        && currentBinaryLabelmapExtent[2] <= currentBinaryLabelmapExtent[3] //
+        && currentBinaryLabelmapExtent[4] <= currentBinaryLabelmapExtent[5])
     {
       // There is a valid labelmap
 
@@ -2664,8 +2675,8 @@ void vtkSegmentation::CopySegment(vtkSegment* destination, vtkSegment* source, v
       baselineRepresentation = baseline->GetRepresentation(*representationNameIt);
     }
     // Shallow-copy from baseline if it's up-to-date, otherwise deep-copy from source
-    if (baselineRepresentation != nullptr
-      && baselineRepresentation->GetMTime() > sourceRepresentation->GetMTime())
+    if (baselineRepresentation != nullptr //
+        && baselineRepresentation->GetMTime() > sourceRepresentation->GetMTime())
     {
       // we already have an up-to-date copy in the baseline, so reuse that
       destination->AddRepresentation(*representationNameIt, baselineRepresentation);

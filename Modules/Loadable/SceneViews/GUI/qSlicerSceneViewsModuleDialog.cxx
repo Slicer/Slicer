@@ -239,9 +239,9 @@ void qSlicerSceneViewsModuleDialog::accept()
   }
   else
   {
-    if (d->UpdateExistingNodesCheckBox->isChecked()
-      || d->CaptureDisplayNodesCheckBox->isChecked()
-      || d->CaptureViewNodesCheckBox->isChecked())
+    if (d->UpdateExistingNodesCheckBox->isChecked()    //
+        || d->CaptureDisplayNodesCheckBox->isChecked() //
+        || d->CaptureViewNodesCheckBox->isChecked())
     {
       // update the nodes saved in the scene view
       this->m_Logic->UpdateNthSceneView(index,

@@ -158,8 +158,8 @@ bool vtkSlicerMarkupsWidget::ProcessMouseMove(vtkMRMLInteractionEventData* event
     }
     this->UpdatePreviewPoint(eventData, associatedNodeID, positionPreviewState);
   }
-  else if (state == WidgetStateIdle
-    || state == WidgetStateOnWidget)
+  else if (state == WidgetStateIdle //
+           || state == WidgetStateOnWidget)
   {
     // update state
     int foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
@@ -219,8 +219,8 @@ bool vtkSlicerMarkupsWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* ev
     return false;
   }
 
-  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateTranslateControlPoint
-    && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateTranslate
+  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateTranslateControlPoint //
+    && this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateTranslate //
     ) || !this->WidgetRep)
   {
     return false;
@@ -559,8 +559,8 @@ bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventD
   }
 
   // If we are placing markups or dragging the mouse then we interact everywhere
-  if (this->WidgetState == WidgetStateDefine
-    || this->WidgetState == WidgetStateTranslateControlPoint
+  if (this->WidgetState == WidgetStateDefine //
+    || this->WidgetState == WidgetStateTranslateControlPoint //
     || this->WidgetState == WidgetStateTranslate)
   {
     distance2 = 0.0;
@@ -775,7 +775,7 @@ void vtkSlicerMarkupsWidget::Leave(vtkMRMLInteractionEventData* eventData)
   this->RemovePreviewPoint();
 
   // Ensure that EndInteractionEvent is invoked, even if interrupted by an unexpected event
-  if (this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateTranslateControlPoint
+  if (this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateTranslateControlPoint //
     || this->WidgetState == vtkSlicerMarkupsWidget::WidgetStateTranslate)
   {
     this->EndWidgetInteraction();
@@ -1184,7 +1184,7 @@ bool vtkSlicerMarkupsWidget::GetInteractive()
 //-------------------------------------------------------------------------
 int vtkSlicerMarkupsWidget::GetMouseCursor()
 {
-  if (this->WidgetState == WidgetStateIdle ||
+  if (this->WidgetState == WidgetStateIdle || //
     this->WidgetState == WidgetStateDefine) // default cursor shape is the "place" cursor
   {
     return VTK_CURSOR_DEFAULT;
@@ -1230,8 +1230,9 @@ bool vtkSlicerMarkupsWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
     bool requiredPointsReached = hasRequiredPoints && hasRequiredPointNumber && !bool(markupsNode->GetNumberOfUndefinedControlPoints() > 0);
     bool lockedPointsReached = markupsNode->GetFixedNumberOfControlPoints() && !bool(markupsNode->GetNumberOfUndefinedControlPoints() > 0);
 
-    if ((requiredPointsReached && !interactionNode->GetPlaceModePersistence())
-      || (!hasRequiredPoints && !interactionNode->GetPlaceModePersistence()) || lockedPointsReached)
+    if ((requiredPointsReached && !interactionNode->GetPlaceModePersistence()) //
+      || (!hasRequiredPoints && !interactionNode->GetPlaceModePersistence()) //
+      || lockedPointsReached)
     {
       vtkDebugMacro("End of one time place, place mode persistence = " << interactionNode->GetPlaceModePersistence());
       interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);

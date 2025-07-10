@@ -62,7 +62,7 @@ qSlicerExtensionsServerWidgetPrivate::~qSlicerExtensionsServerWidgetPrivate()
 void qSlicerExtensionsServerWidgetPrivate::setFailurePage(const QStringList& errors)
 {
   Q_Q(qSlicerExtensionsServerWidget);
-  QString html =
+  QString html = //
       "<style type='text/css'>"
       "  div.viewWrapperSlicer{"
       "    font-family:'Lucida Grande','Lucida Sans Unicode',helvetica,arial,Verdana,sans-serif;"

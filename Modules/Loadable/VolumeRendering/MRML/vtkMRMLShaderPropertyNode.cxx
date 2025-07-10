@@ -157,7 +157,7 @@ vtkMRMLStorageNode* vtkMRMLShaderPropertyNode::CreateDefaultStorageNode()
 //---------------------------------------------------------------------------
 bool vtkMRMLShaderPropertyNode::GetModifiedSinceRead()
 {
-  return this->Superclass::GetModifiedSinceRead() ||
-    (this->ShaderProperty &&
+  return this->Superclass::GetModifiedSinceRead() || //
+    (this->ShaderProperty && //
      this->ShaderProperty->GetMTime() > this->GetStoredTime());
 }

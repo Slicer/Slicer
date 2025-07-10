@@ -112,9 +112,8 @@ vtkMRMLViewNode* vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 ::AddSliceNode(vtkMRMLSliceNode* sliceNode)
 {
-  if (!sliceNode ||
-     this->SliceNodes.find(vtkMRMLSliceNode::SafeDownCast(sliceNode)) !=
-     this->SliceNodes.end())
+  if (!sliceNode || //
+      this->SliceNodes.find(vtkMRMLSliceNode::SafeDownCast(sliceNode)) != this->SliceNodes.end())
   {
     return;
   }
@@ -338,16 +337,16 @@ bool vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 
   // Update the widget itself if necessary
   bool visible =
-    sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID())
+    sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID()) //
     && sliceNode->GetWidgetVisible();
 
   // re-render if it was visible or now becomes visible
   bool renderingRequired = planeWidget->GetEnabled() || visible;
 
-  if ((!planeWidget->GetEnabled() && visible) ||
-     (planeWidget->GetEnabled() && !visible) ||
-     (!rep->GetLockNormalToCamera() && sliceNode->GetWidgetNormalLockedToCamera()) ||
-     (rep->GetLockNormalToCamera() && !sliceNode->GetWidgetNormalLockedToCamera()))
+  if ((!planeWidget->GetEnabled() && visible) || //
+      (planeWidget->GetEnabled() && !visible) || //
+      (!rep->GetLockNormalToCamera() && sliceNode->GetWidgetNormalLockedToCamera()) || //
+       (rep->GetLockNormalToCamera() && !sliceNode->GetWidgetNormalLockedToCamera()))
   {
     planeWidget->SetEnabled(sliceNode->GetWidgetVisible());
     planeWidget->SetLockNormalToCamera(sliceNode->GetWidgetNormalLockedToCamera());
@@ -387,7 +386,7 @@ void vtkMRMLThreeDReformatDisplayableManager::UpdateFromMRMLScene()
 void vtkMRMLThreeDReformatDisplayableManager
 ::OnMRMLSceneNodeAdded(vtkMRMLNode* nodeAdded)
 {
-  if (this->GetMRMLScene()->IsBatchProcessing() ||
+  if (this->GetMRMLScene()->IsBatchProcessing() || //
       !nodeAdded->IsA("vtkMRMLSliceNode"))
   {
     return;

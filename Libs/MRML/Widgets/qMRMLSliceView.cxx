@@ -270,7 +270,7 @@ void qMRMLSliceViewPrivate::updateWidgetFromMRML()
     this->MRMLSliceNode->GetLayoutGridRows(),
     this->MRMLSliceNode->GetLayoutGridColumns());
   bool displayLightboxBorders =
-    this->MRMLSliceNode->GetLayoutGridRows() != 1 ||
+    this->MRMLSliceNode->GetLayoutGridRows() != 1 || //
     this->MRMLSliceNode->GetLayoutGridColumns() != 1;
   q->lightBoxRendererManager()->SetHighlighted(0, 0, displayLightboxBorders);
 }

@@ -93,7 +93,7 @@ void vtkMRMLDisplayableHierarchyNode::ReadXMLAttributes(const char** atts)
     {
       this->SetDisplayableNodeID(attValue);
     }
-    else if (!strcmp(attName, "displayNodeRef") ||
+    else if (!strcmp(attName, "displayNodeRef") || //
              !strcmp(attName, "displayNodeID"))
     {
       this->SetDisplayNodeID(attValue);
@@ -219,7 +219,7 @@ void vtkMRMLDisplayableHierarchyNode::ProcessMRMLEvents ( vtkObject* caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLDisplayNode* dnode = this->GetDisplayNode();
-  if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
+  if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent, nullptr);

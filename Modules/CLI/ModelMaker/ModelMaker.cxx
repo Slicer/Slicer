@@ -828,8 +828,8 @@ int main(int argc, char* argv[])
     std::cout << "Image data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3]
               << " " << extents[4] << " " << extents[5] << endl;
   }
-  if (extents[0] == extents[1] ||
-      extents[2] == extents[3] ||
+  if (extents[0] == extents[1] || //
+      extents[2] == extents[3] || //
       extents[4] == extents[5])
   {
     std::cerr << "The volume is not 3D." << endl;
@@ -906,7 +906,7 @@ int main(int argc, char* argv[])
         std::string colorName = std::string(colorNode->GetColorNameAsFileName(i));
         if (colorName.c_str() != nullptr)
         {
-          if (!SkipUnNamed ||
+          if (!SkipUnNamed || //
               (SkipUnNamed && (colorName.compare("invalid") != 0 && colorName.compare("(none)") != 0)))
           {
             labelName = Name + std::string("_") + stringI + std::string("_") + colorName;
@@ -1289,7 +1289,7 @@ int main(int argc, char* argv[])
         writer->SetInputData(nullptr);
         writer = nullptr;
       }
-      if (transformIJKtoLPS == nullptr ||
+      if (transformIJKtoLPS == nullptr || //
           transformIJKtoLPS->GetMatrix() == nullptr)
       {
         std::cout << "transformIJKtoLPS is "
@@ -1695,9 +1695,9 @@ int main(int argc, char* argv[])
         }
         // if there's no color hierarchy, or no color name or the mrml node
         // named for the color isn't a model hierarchy node, use a flat hierarchy
-        if (topColorHierarchyNode == nullptr ||
-            colorName.compare("") == 0 ||
-            mrmlNode == nullptr ||
+        if (topColorHierarchyNode == nullptr || //
+            colorName.compare("") == 0 || //
+            mrmlNode == nullptr || //
             strcmp(mrmlNode->GetClassName(),"vtkMRMLModelHierarchyNode") != 0)
         {
           vtkNew<vtkMRMLModelHierarchyNode> mhnd;
@@ -1775,7 +1775,7 @@ int main(int argc, char* argv[])
       topColorHierarchyNode->GetAllChildrenNodes(allChildren);
       for (unsigned int i = 0; i < allChildren.size(); i++)
       {
-        if (allChildren[i]->GetAssociatedNodeID() == nullptr &&
+        if (allChildren[i]->GetAssociatedNodeID() == nullptr && //
             allChildren[i]->GetNumberOfChildrenNodes() == 0)
         {
           // if this child doesn't have an associated node, nor does it have children nodes (keep the structure of the hierarchy), remove it and it's display node

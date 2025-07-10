@@ -681,8 +681,8 @@ double qSlicerSubjectHierarchyTransformsPlugin::canOwnSubjectHierarchyItem(vtkId
     return 0.5; // There are other plugins that can handle special transform nodes better, thus the relatively low value
   }
 
-  if (associatedNode && associatedNode->IsA("vtkMRMLDisplayableNode")
-    && !associatedNode->IsA("vtkMRMLMarkupsNode")) // Markups are handled by the Markups plugin
+  if (associatedNode && associatedNode->IsA("vtkMRMLDisplayableNode") //
+      && !associatedNode->IsA("vtkMRMLMarkupsNode")) // Markups are handled by the Markups plugin
   {
     return 0.1; // Most other plugins can handle displayable nodes better.
   }
@@ -1240,8 +1240,8 @@ void qSlicerSubjectHierarchyTransformsPlugin::showTransformContextMenuActionsFor
     else
     {
       vtkMRMLTransformNode* actionTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->GetNodeByID(actionTransformNodeID.c_str()));
-      if (actionTransformNode && !actionTransformNode->GetHideFromEditors()
-        && actionTransformNode != node /* do not let apply transform to itself */)
+      if (actionTransformNode && !actionTransformNode->GetHideFromEditors() //
+          && actionTransformNode != node /* do not let apply transform to itself */)
       {
         visible = true;
       }

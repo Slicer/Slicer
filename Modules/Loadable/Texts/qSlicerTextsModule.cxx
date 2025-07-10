@@ -128,6 +128,6 @@ void qSlicerTextsModule::setup()
 //-----------------------------------------------------------------------------
 QStringList qSlicerTextsModule::associatedNodeTypes() const
 {
-  return QStringList()
+  return QStringList() //
     << "vtkMRMLTextNode";
 }

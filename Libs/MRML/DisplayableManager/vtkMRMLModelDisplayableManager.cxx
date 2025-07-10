@@ -177,7 +177,7 @@ void vtkMRMLModelDisplayableManager::vtkInternal::FindPickedDisplayNodeFromMesh(
   {
     if (modelIt->second != 0)
     {
-      if (vtkMRMLModelDisplayNode::SafeDownCast(modelIt->second) &&
+      if (vtkMRMLModelDisplayNode::SafeDownCast(modelIt->second) && //
         vtkMRMLModelDisplayNode::SafeDownCast(modelIt->second)->GetOutputMesh() == mesh)
       {
         this->PickedDisplayNodeID = modelIt->first;
@@ -247,9 +247,9 @@ void vtkMRMLModelDisplayableManager::vtkInternal::FindPickedPointOnMeshAndCell(v
     double* pointCoords = mesh->GetPoint(pointId);
     if (pointCoords != nullptr)
     {
-      double distance = sqrt(pow(pointCoords[0] - pickedPoint[0], 2) +
-        pow(pointCoords[1] - pickedPoint[1], 2) +
-        pow(pointCoords[2] - pickedPoint[2], 2));
+      double distance = sqrt(pow(pointCoords[0] - pickedPoint[0], 2) + //
+                             pow(pointCoords[1] - pickedPoint[1], 2) + //
+                             pow(pointCoords[2] - pickedPoint[2], 2));
       if (p == 0 || distance < closestDistance)
       {
         closestDistance = distance;
@@ -334,9 +334,9 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller,
   {
     return;
   }
-  if (this->GetInteractor() &&
-    this->GetInteractor()->GetRenderWindow() &&
-    this->GetInteractor()->GetRenderWindow()->CheckInRenderStatus())
+  if (this->GetInteractor() &&                    //
+      this->GetInteractor()->GetRenderWindow() && //
+      this->GetInteractor()->GetRenderWindow()->CheckInRenderStatus())
   {
     vtkDebugMacro("skipping ProcessMRMLNodesEvents during render");
     return;
@@ -353,7 +353,7 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller,
     {
     case vtkMRMLDisplayableNode::DisplayModifiedEvent:
       // don't go any further if the modified display node is not a model
-      if (!this->IsModelDisplayable(displayableNode) &&
+      if (!this->IsModelDisplayable(displayableNode) && //
         !this->IsModelDisplayable(
           reinterpret_cast<vtkMRMLDisplayNode*>(callData)))
       {
@@ -419,8 +419,8 @@ void vtkMRMLModelDisplayableManager::UpdateFromMRMLScene()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if (!node->IsA("vtkMRMLDisplayableNode") &&
-    !node->IsA("vtkMRMLDisplayNode"))
+  if (!node->IsA("vtkMRMLDisplayableNode") //
+      && !node->IsA("vtkMRMLDisplayNode"))
   {
     return;
   }
@@ -439,8 +439,8 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (!node->IsA("vtkMRMLDisplayableNode") &&
-    !node->IsA("vtkMRMLDisplayNode"))
+  if (!node->IsA("vtkMRMLDisplayableNode") //
+      && !node->IsA("vtkMRMLDisplayNode"))
   {
     return;
   }
@@ -466,8 +466,8 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayableNode* node) const
 {
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-  if (!node ||
-    (modelNode && modelNode->IsA("vtkMRMLAnnotationNode")))
+  if (!node || //
+      (modelNode && modelNode->IsA("vtkMRMLAnnotationNode")))
   {
     /// issue 2666: don't manage annotation nodes - don't show lines between the control points
     return false;
@@ -532,7 +532,7 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
       updateMRML = true;
       break;
     }
-    bool visible = modelDisplayable &&
+    bool visible = modelDisplayable && //
       (dnode->GetVisibility() == 1) && (dnode->GetVisibility3D() == 1) && this->IsModelDisplayable(dnode);
     bool hasActor =
       this->Internal->DisplayedActors.find(dnode->GetID()) != this->Internal->DisplayedActors.end();
@@ -565,9 +565,9 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateFromMRML()
 {
-  if (this->GetInteractor() &&
-    this->GetInteractor()->GetRenderWindow() &&
-    this->GetInteractor()->GetRenderWindow()->CheckInRenderStatus())
+  if (this->GetInteractor()                       //
+      && this->GetInteractor()->GetRenderWindow() //
+      && this->GetInteractor()->GetRenderWindow()->CheckInRenderStatus())
   {
     vtkDebugMacro("skipping update during render");
     return;
@@ -904,8 +904,8 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode* dis
           {
             mapper->SetInputConnection(meshConnection);
           }
-          if ((meshType == vtkMRMLModelNode::UnstructuredGridMeshType&& mapper->IsA("vtkDataSetMapper"))
-            || (meshType == vtkMRMLModelNode::PolyDataMeshType&& mapper->IsA("vtkPolyDataMapper")))
+          if ((meshType == vtkMRMLModelNode::UnstructuredGridMeshType && mapper->IsA("vtkDataSetMapper")) //
+              || (meshType == vtkMRMLModelNode::PolyDataMeshType && mapper->IsA("vtkPolyDataMapper")))
           {
             mapperUpdateNeeded = false;
           }
@@ -1347,14 +1347,14 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
     // as the model's. It is important to consider the model's visibility, because the user will
     // still want to show/hide children regardless of application of display properties from the
     // hierarchy.
-    bool visible = hierarchyVisibility
-      && modelDisplayNode->GetVisibility() && modelDisplayNode->GetVisibility3D()
-      && modelDisplayNode->IsDisplayableInView(this->GetMRMLViewNode()->GetID());
+    bool visible = hierarchyVisibility                                                         //
+                   && modelDisplayNode->GetVisibility() && modelDisplayNode->GetVisibility3D() //
+                   && modelDisplayNode->IsDisplayableInView(this->GetMRMLViewNode()->GetID());
     prop->SetVisibility(visible);
-    bool capVisible = visible
-      && modelDisplayNode->GetClipping()
-      && modelDisplayNode->GetClipNode() != nullptr
-      && (modelDisplayNode->GetClippingCapSurface() || modelDisplayNode->GetClippingOutline());
+    bool capVisible = visible                                       //
+                      && modelDisplayNode->GetClipping()            //
+                      && modelDisplayNode->GetClipNode() != nullptr //
+                      && (modelDisplayNode->GetClippingCapSurface() || modelDisplayNode->GetClippingOutline());
     if (capActor)
     {
       capActor->SetVisibility(capVisible);
@@ -1666,8 +1666,8 @@ bool vtkMRMLModelDisplayableManager::IsCellScalarsActive(
   {
     return (displayNode->GetActiveAttributeLocation() == vtkAssignAttribute::CELL_DATA);
   }
-  if (modelNode &&
-    modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS))
+  if (modelNode && //
+      modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS))
   {
     return true;
   }
@@ -2026,8 +2026,8 @@ void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
       double yNew = windowHeight - y - 1;
       vtkMRMLDisplayNode* displayNode = nullptr;
 
-      if (this->Pick(x, yNew) &&
-        strcmp(this->GetPickedNodeID(), "") != 0)
+      if (this->Pick(x, yNew) //
+          && strcmp(this->GetPickedNodeID(), "") != 0)
       {
         // find the node id, the picked node name is probably the display node
         const char* pickedNodeID = this->GetPickedNodeID();

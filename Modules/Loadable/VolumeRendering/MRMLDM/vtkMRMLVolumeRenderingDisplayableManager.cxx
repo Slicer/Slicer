@@ -347,8 +347,8 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolum
   {
     return nullptr;
   }
-  if (displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode")
-    || displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode") )
+  if (displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode") //
+      || displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
   {
     vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::Pipeline* pipeline = this->GetPipeline(displayNode);
     if (!pipeline)
@@ -392,9 +392,9 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UseDisplayNode(vtkMR
 
   // Check whether display node can be shown in this view
   vtkMRMLVolumeRenderingDisplayNode* volRenDispNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(displayNode);
-  if (!volRenDispNode
-    || !volRenDispNode->GetVolumeNodeID()
-    || !volRenDispNode->GetVolumePropertyNodeID() )
+  if (!volRenDispNode //
+      || !volRenDispNode->GetVolumeNodeID() //
+      || !volRenDispNode->GetVolumePropertyNodeID())
   {
     return false;
   }
@@ -414,8 +414,8 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::IsVisible(vtkMRMLVol
     }
   }
 
-  return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D()
-    && displayNode->GetOpacity() > 0
+  return displayNode && displayNode->GetVisibility() && displayNode->GetVisibility3D() //
+    && displayNode->GetOpacity() > 0 //
     && displayNode->IsDisplayableInView(this->External->GetMRMLViewNode()->GetID());
 }
 
@@ -429,7 +429,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::RemoveOrphanPipeline
   {
     Pipeline* pipeline = *it;
     if (!pipeline->DisplayNode.GetPointer() || !pipeline->DisplayNode->GetDisplayableNode()
-      || (autoRelease && pipeline->DisplayNode &&
+      || (autoRelease && pipeline->DisplayNode && //
         (!pipeline->DisplayNode->IsDisplayableInView(viewNode->GetID()) || !this->IsVisible(pipeline->DisplayNode))))
     {
       it = this->RemovePipelineIt(it);
@@ -733,8 +733,8 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdatePipelineTransf
       continue;
     }
     vtkMRMLVolumeNode* currentVolumeNode = vtkMRMLVolumeNode::SafeDownCast(pipeline->DisplayNode->GetDisplayableNode());
-    if (currentVolumeNode == nullptr
-      || (volumeNode != nullptr && currentVolumeNode != volumeNode))
+    if (currentVolumeNode == nullptr //
+        || (volumeNode != nullptr && currentVolumeNode != volumeNode))
     {
       continue;
     }
@@ -936,11 +936,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
         vtkImageData* inputImage = volumeNode->GetImageData();
         int* tempExtent = pipeline->MaskImage->GetExtent();
         int* volumeExtent = inputImage->GetExtent();
-        if (tempExtent[0] != volumeExtent[0] || tempExtent[1] != volumeExtent[1]
-          || tempExtent[2] != volumeExtent[2] || tempExtent[3] != volumeExtent[3]
-          || tempExtent[4] != volumeExtent[4] || tempExtent[5] != volumeExtent[5]
-          || pipeline->MaskImage->GetScalarType() != inputImage->GetScalarType()
-          || pipeline->MaskImage->GetNumberOfScalarComponents() != inputImage->GetNumberOfScalarComponents())
+        if (tempExtent[0] != volumeExtent[0] || tempExtent[1] != volumeExtent[1] //
+            || tempExtent[2] != volumeExtent[2] || tempExtent[3] != volumeExtent[3] //
+            || tempExtent[4] != volumeExtent[4] || tempExtent[5] != volumeExtent[5] //
+            || pipeline->MaskImage->GetScalarType() != inputImage->GetScalarType() //
+            || pipeline->MaskImage->GetNumberOfScalarComponents() != inputImage->GetNumberOfScalarComponents())
         {
           pipeline->MaskImage->SetExtent(volumeExtent);
           pipeline->MaskImage->AllocateScalars(inputImage->GetScalarType(), inputImage->GetNumberOfScalarComponents());
@@ -1348,8 +1348,8 @@ vtkIdType vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetMaxMemoryInB
   }
 
   // Special case: for GPU volume raycast mapper, round up to nearest 128MB
-  if (displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode")
-    || displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode") )
+  if (displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode") //
+      || displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode"))
   {
     if (gpuMemorySizeMB < 128)
     {
@@ -1806,9 +1806,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
         }
       }
     }
-    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)
-           || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
-           || (event == vtkCommand::ModifiedEvent))
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent) //
+             || (event == vtkMRMLTransformableNode::TransformModifiedEvent) //
+             || (event == vtkCommand::ModifiedEvent))
     {
       // Parent transforms, volume origin, etc. changed, so we need to recompute transforms
       if (this->Internal->UpdatePipelineTransforms(volumeNode))
@@ -1841,7 +1841,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
   //
   // Other events
   //
-  else if (event == vtkCommand::StartEvent ||
+  else if (event == vtkCommand::StartEvent || //
            event == vtkCommand::StartInteractionEvent)
   {
     ++this->Internal->Interaction;
@@ -1856,7 +1856,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
       }
     }
   }
-  else if (event == vtkCommand::EndEvent ||
+  else if (event == vtkCommand::EndEvent || //
            event == vtkCommand::EndInteractionEvent)
   {
     --this->Internal->Interaction;

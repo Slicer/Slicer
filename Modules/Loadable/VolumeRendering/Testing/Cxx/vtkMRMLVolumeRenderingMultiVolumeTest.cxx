@@ -126,12 +126,12 @@ void SetupVolumeNode(vtkMRMLScene* scene, vtkMRMLScalarVolumeNode* volumeNode)
   volumeNode->AddAndObserveDisplayNodeID(vrDisplayNode->GetID());
 }
 
-char TestCopyImageDataEventLog[] =
-"# StreamVersion 1\n"
-"EnterEvent 585 173 0 0 0 0 0\n"
-"KeyPressEvent 585 173 0 0 0 0 0\n"
-"KeyPressEvent 560 178 0 0 0 0 0\n"
-"KeyPressEvent 536 185 0 0 0 0 0\n";
+char TestCopyImageDataEventLog[] = //
+  "# StreamVersion 1\n"
+  "EnterEvent 585 173 0 0 0 0 0\n"
+  "KeyPressEvent 585 173 0 0 0 0 0\n"
+  "KeyPressEvent 560 178 0 0 0 0 0\n"
+  "KeyPressEvent 536 185 0 0 0 0 0\n";
 
 class vtkChangeImageCallback : public vtkCommand
 {

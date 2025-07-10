@@ -89,7 +89,7 @@ int vtkMRMLHierarchyNodeTest3(int, char*[])
     modelDisplayNodes.push_back(vtkSmartPointer<vtkMRMLModelDisplayNode>::New());
     scene->AddNode(modelNodes[m]);
     scene->AddNode(modelDisplayNodes[m]);
-    if (!modelNodes[m] || !modelDisplayNodes[m] ||
+    if (!modelNodes[m] || !modelDisplayNodes[m] || //
         !modelDisplayNodes[m]->GetID())
     {
       std::cerr << "Error setting up a display node for the " << m << "th model node\n";

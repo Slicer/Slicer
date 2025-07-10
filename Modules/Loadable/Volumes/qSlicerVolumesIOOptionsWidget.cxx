@@ -157,7 +157,7 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
     // doesn't consider '_' as a word boundary.
     QRegExp labelMapName("(\\b|_)([Ll]abel(s)?)(\\b|_)");
     QRegExp segName("(\\b|_)([Ss]eg)(\\b|_)");
-    if (fileBaseName.contains(labelMapName) ||
+    if (fileBaseName.contains(labelMapName) || //
       fileBaseName.contains(segName))
     {
       hasLabelMapName = true;

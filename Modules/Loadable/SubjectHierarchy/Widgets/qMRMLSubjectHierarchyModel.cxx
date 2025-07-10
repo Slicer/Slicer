@@ -124,7 +124,7 @@ void qMRMLSubjectHierarchyModelPrivate::init()
   q->setTransformColumn(4);
   q->setIDColumn(5);
 
-  q->setHorizontalHeaderLabels(QStringList()
+  q->setHorizontalHeaderLabels(QStringList() //
     << qMRMLSubjectHierarchyModel::tr("Node")
     << qMRMLSubjectHierarchyModel::tr("Description")
     << "" /*visibility*/
@@ -600,9 +600,9 @@ bool qMRMLSubjectHierarchyModel::reparent(vtkIdType itemID, vtkIdType newParentI
   // then abort reparenting (it means that the actual owner plugin cannot reparent its own virtual item, so it then
   // cannot be reparented).
   if (( ( !d->SubjectHierarchyNode->GetItemAttribute(newParentID,
-             vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str()).empty() )
+             vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str()).empty() ) //
       || ( !d->SubjectHierarchyNode->GetItemAttribute(oldParentID,
-             vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str()).empty() ) )
+             vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str()).empty() ) ) //
     && selectedPlugin == qSlicerSubjectHierarchyPluginHandler::instance()->defaultPlugin() )
   {
     qCritical() << Q_FUNC_INFO << ": Failed to reparent virtual item "
@@ -869,8 +869,8 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
     return flags;
   }
 
-  if (column == this->nameColumn() || column == this->colorColumn()
-    || column == this->descriptionColumn())
+  if (column == this->nameColumn() || column == this->colorColumn() //
+      || column == this->descriptionColumn())
   {
     flags |= Qt::ItemIsEditable;
   }
@@ -894,8 +894,8 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
   }
   // Along the same logic, drop is not enabled to children nodes in virtual branches
   vtkIdType parentItemID = d->SubjectHierarchyNode->GetItemParent(itemID);
-  if (parentItemID
-    && d->SubjectHierarchyNode->HasItemAttribute(
+  if (parentItemID //
+      && d->SubjectHierarchyNode->HasItemAttribute(
          parentItemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()) )
   {
     flags &= ~Qt::ItemIsDropEnabled;
@@ -1077,8 +1077,8 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
     // It should be fine to set the icon even if it is the same, but due
     // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
     // it would fire a superfluous itemChanged() signal.
-    if (item->data(VisibilityRole).isNull()
-      || item->data(VisibilityRole).toInt() != visible )
+    if (item->data(VisibilityRole).isNull() //
+        || item->data(VisibilityRole).toInt() != visible)
     {
       item->setData(visible, VisibilityRole);
       if (!visibilityIcon.isNull())

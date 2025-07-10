@@ -100,10 +100,9 @@ int vtkDiffusionTensorMathematics::RequestInformation (
 
   // We want the whole extent of the tensors, and should
   // allocate the matching size image data.
-  vtkDebugMacro(<<"Execute information extent: " <<
-    ext[0] << " " << ext[1] << " " << ext[2] << " " <<
-    ext[3] << " " << ext[4] << " " << ext[5]);
-
+  vtkDebugMacro(<< "Execute information extent: " <<               //
+                ext[0] << " " << ext[1] << " " << ext[2] << " " << //
+                ext[3] << " " << ext[4] << " " << ext[5]);
 
   // We always want to output float, unless it is color
   if (this->Operation == VTK_TENS_COLOR_ORIENTATION)
@@ -499,8 +498,8 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
         {
           *outPtr = 0;
 
-          if (op ==  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_MODE ||
-            op ==  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION) {
+          if (op == vtkDiffusionTensorMathematics::VTK_TENS_COLOR_MODE //
+              || op == vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION) {
             outPtr++;
             *outPtr = 0; // green
             outPtr++;
@@ -771,8 +770,8 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
           }
 
           // scale double if the user requested this
-          if (scaleFactor != 1 && op !=  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION
-            && op !=  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_MODE)
+          if (scaleFactor != 1 && op !=  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_ORIENTATION //
+              && op !=  vtkDiffusionTensorMathematics::VTK_TENS_COLOR_MODE)
           {
             *outPtr = (T) ((*outPtr) * scaleFactor);
           }
@@ -923,7 +922,7 @@ int  vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
      w[2] = 0;
   }
 
-  if (!((w[0]>= w[1] && w[0]>= w[2]) &&
+  if (!((w[0]>= w[1] && w[0]>= w[2]) && //
       (w[1]>=w[2]) ))  {
         return -1;
   }
@@ -1008,10 +1007,11 @@ double vtkDiffusionTensorMathematics::RelativeAnisotropy(double w[3])
   double trace = w[0]+w[1]+w[2];
   trace = MAX(trace, VTK_EPS);
 
-  return ((0.70710678)*
-                (sqrt((w[0]-w[1])*(w[0]-w[1]) +
-                      (w[2]-w[1])*(w[2]-w[1]) +
-                      (w[2]-w[0])*(w[2]-w[0])))/trace);
+  return ((0.70710678) *                        //
+          (sqrt((w[0] - w[1]) * (w[0] - w[1]) + //
+                (w[2] - w[1]) * (w[2] - w[1]) + //
+                (w[2] - w[0]) * (w[2] - w[0])))
+          / trace);
 }
 
 double vtkDiffusionTensorMathematics::FractionalAnisotropy(double w[3])
@@ -1019,10 +1019,11 @@ double vtkDiffusionTensorMathematics::FractionalAnisotropy(double w[3])
   double norm = sqrt(w[0]*w[0]+ w[1]*w[1] +  w[2]*w[2]);
   norm = MAX(norm, VTK_EPS);
 
-  return ((0.70710678)*
-                (sqrt((w[0]-w[1])*(w[0]-w[1]) +
-                      (w[2]-w[1])*(w[2]-w[1]) +
-                      (w[2]-w[0])*(w[2]-w[0])))/norm);
+  return ((0.70710678) *                        //
+          (sqrt((w[0] - w[1]) * (w[0] - w[1]) + //
+                (w[2] - w[1]) * (w[2] - w[1]) + //
+                (w[2] - w[0]) * (w[2] - w[0])))
+          / norm);
 }
 
 double vtkDiffusionTensorMathematics::LinearMeasure(double w[3])
@@ -1121,17 +1122,20 @@ double vtkDiffusionTensorMathematics::Mode(double w[3])
 
   // see PhD thesis, Gordon Kindlmann
   double mean = (w[0] + w[1] + w[2])/3;
-  double norm = ((w[0] - mean)*(w[0] - mean) +
-                  (w[1] - mean)*(w[1] - mean) +
-                  (w[2] - mean)*(w[2] - mean))/3;
+  double norm = ((w[0] - mean) * (w[0] - mean) + //
+                 (w[1] - mean) * (w[1] - mean) + //
+                 (w[2] - mean) * (w[2] - mean))
+                / 3;
   norm = sqrt(norm);
   norm = norm*norm*norm;
   norm = MAX(norm, VTK_EPS);
 
   // multiply by sqrt 2: range from -1 to 1
-  return  (M_SQRT2*((w[0] + w[1] - 2*w[2]) *
-                         (2*w[0] - w[1] - w[2]) *
-                         (w[0] - 2*w[1] + w[2]))/(27*norm));
+  return (M_SQRT2
+          * ((w[0] + w[1] - 2 * w[2]) * //
+             (2 * w[0] - w[1] - w[2]) * //
+             (w[0] - 2 * w[1] + w[2]))
+          / (27 * norm));
 }
 
 void vtkDiffusionTensorMathematics::ColorByMode(double w[3], double& R,
@@ -1202,7 +1206,7 @@ void vtkDiffusionTensorMathematics::ModeToRGB(double Mode, double FA,
 void vtkDiffusionTensorMathematics::RGBToIndex(double R, double G,
                                          double B, double& index)
 {
-  if (fabs(R-G) < 0.00001 &&
+  if (fabs(R-G) < 0.00001 && //
       fabs(R-B) < 0.00001)
   {
     index = 0;

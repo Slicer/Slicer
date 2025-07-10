@@ -438,13 +438,13 @@ SetTransformAndOrder( parameters & list,
     }
     else
     {
-        if (transformClassName == "Rigid3DTransform" ||
-            transformClassName == "Euler3DTransform" ||
-            transformClassName == "CenteredEuler3DTransform" ||
-            transformClassName == "QuaternionRigidTransform" ||
-            transformClassName == "VersorTransform" ||
-            transformClassName == "ScaleSkewVersor3DTransform" ||
-            transformClassName == "ScaleVersor3DTransform" ||
+        if (transformClassName == "Rigid3DTransform" || //
+            transformClassName == "Euler3DTransform" || //
+            transformClassName == "CenteredEuler3DTransform" || //
+            transformClassName == "QuaternionRigidTransform" || //
+            transformClassName == "VersorTransform" || //
+            transformClassName == "ScaleSkewVersor3DTransform" || //
+            transformClassName == "ScaleVersor3DTransform" || //
             transformClassName == "Similarity3DTransform"
             ) // if rigid3D transform
         {
@@ -730,11 +730,11 @@ void ResampleDeformationField( DeformationImageType::Pointer & field,
   fieldSpacing = field->GetSpacing();
   fieldSize = field->GetLargestPossibleRegion().GetSize();
   fieldDirection = field->GetDirection();
-  if (fieldSize == size
-       && fieldSpacing == spacing
-       && fieldDirection == direction
-       && fieldOrigin == origin
-       )
+  if (fieldSize == size //
+      && fieldSpacing == spacing //
+      && fieldDirection == direction //
+      && fieldOrigin == origin //
+      )
   {
     return;
   }
@@ -856,10 +856,10 @@ int Do( parameters list )
   }
   // If more than one transform or if hfield, add all transforms and compute the deformation field
   TransformTypePointer transform;
-  if (( list.transformationFile.compare( "")
-        && transformFile->GetTransformList()->size() > 1
-        && nonRigidTransforms > 0
-        )
+  if (( list.transformationFile.compare( "") //
+        && transformFile->GetTransformList()->size() > 1 //
+        && nonRigidTransforms > 0 //
+        ) //
       || list.deffield.compare( "" )
       )
   {
@@ -1123,10 +1123,9 @@ int main(int argc, char* argv[])
   list.notbulk = notbulk;
   list.noMeasurementFrame = noMeasurementFrame;
   // verify if all the vector parameters have the good length
-  if (list.outputImageSpacing.size() != 3 || list.outputImageSize.size() != 3
-      || ( list.outputImageOrigin.size() != 3
-           && list.outputImageOrigin.size() != 0 )
-      || list.directionMatrix.size() != 9 || rotationPoint.size() != 3
+  if (list.outputImageSpacing.size() != 3 || list.outputImageSize.size() != 3 //
+      || ( list.outputImageOrigin.size() != 3 && list.outputImageOrigin.size() != 0 ) //
+      || list.directionMatrix.size() != 9 || rotationPoint.size() != 3 //
       || list.transformMatrix.size() != 12 )
   {
     std::cerr << "Argument(s) having wrong size" << std::endl;
