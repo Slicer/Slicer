@@ -140,7 +140,7 @@ vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* 
 
   vtkSmartPointer<vtkCollection> viewNodes = vtkSmartPointer<vtkCollection>::Take
       (scene->GetNodesByClass("vtkMRMLViewNode"));
-  for(int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); ++viewNodeIndex)
+  for (int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); ++viewNodeIndex)
   {
     vtkMRMLViewNode* viewNode =
         vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));

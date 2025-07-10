@@ -99,7 +99,7 @@ void vtkSlicerVolumeRenderingLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic::RegisterNodes()
 {
-  if(!this->GetMRMLScene())
+  if (!this->GetMRMLScene())
   {
     vtkWarningMacro("RegisterNodes: No MRML scene.");
     return;

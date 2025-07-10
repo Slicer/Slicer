@@ -86,17 +86,17 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
     this->URIHandler = nullptr;
   }
 
-  if(this->SupportedReadFileTypes)
+  if (this->SupportedReadFileTypes)
   {
     this->SupportedReadFileTypes->Delete();
     this->SupportedReadFileTypes = nullptr;
   }
-  if(this->SupportedWriteFileTypes)
+  if (this->SupportedWriteFileTypes)
   {
     this->SupportedWriteFileTypes->Delete();
     this->SupportedWriteFileTypes = nullptr;
   }
-  if(this->WriteFileFormat)
+  if (this->WriteFileFormat)
   {
     delete [] this->WriteFileFormat;
     this->WriteFileFormat = nullptr;
@@ -380,7 +380,7 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ReadState:  " << this->GetReadStateAsString() << "\n";
   os << indent << "WriteState: " << this->GetWriteStateAsString() << "\n";
   os << indent << "SupportedWriteFileTypes: \n";
-  for(int i=0; i<this->SupportedWriteFileTypes->GetNumberOfTuples(); i++)
+  for (int i=0; i<this->SupportedWriteFileTypes->GetNumberOfTuples(); i++)
   {
     os << indent << "FileType: " <<
       this->SupportedWriteFileTypes->GetValue(i) << "\n";
@@ -964,7 +964,7 @@ vtkStringArray* vtkMRMLStorageNode::GetSupportedReadFileTypes()
 //----------------------------------------------------------------------------
 vtkStringArray* vtkMRMLStorageNode::GetSupportedWriteFileTypes()
 {
-  if(this->SupportedWriteFileTypes->GetNumberOfTuples()==0)
+  if (this->SupportedWriteFileTypes->GetNumberOfTuples()==0)
   {
     // File types list has not been initialized yet
     this->InitializeSupportedWriteFileTypes();

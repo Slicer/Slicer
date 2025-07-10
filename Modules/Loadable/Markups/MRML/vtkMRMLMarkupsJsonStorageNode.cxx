@@ -1025,7 +1025,7 @@ bool vtkMRMLMarkupsJsonStorageNode::WriteControlPoints(
     writer->WriteStringProperty("description", cp->Description.c_str());
     writer->WriteStringProperty("associatedNodeID", cp->AssociatedNodeID.c_str());
 
-    if(cp->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
+    if (cp->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
     {
       double xyz[3] = { 0.0, 0.0, 0.0 };
       markupsNode->GetNthControlPointPosition(controlPointIndex, xyz);

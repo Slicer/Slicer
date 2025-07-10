@@ -74,7 +74,7 @@ void vtkMRMLTableViewNode::ReadXMLAttributes(const char** atts)
   {
     attName = *(atts++);
     attValue = *(atts++);
-    if(!strcmp (attName, "doPropagateTableSelection" ))
+    if (!strcmp (attName, "doPropagateTableSelection" ))
     {
       this->SetDoPropagateTableSelection(atoi(attValue)?true:false);
     }

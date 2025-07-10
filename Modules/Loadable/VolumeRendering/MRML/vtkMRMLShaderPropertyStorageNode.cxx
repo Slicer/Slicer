@@ -84,7 +84,7 @@ template< typename ScalarType >
 void DecodeTuple(const Json::Value & json, std::vector<ScalarType> & tuple)
 {
   tuple.resize(json.size());
-  for(Json::ArrayIndex index = 0; index < json.size(); ++index)
+  for (Json::ArrayIndex index = 0; index < json.size(); ++index)
   {
     ScalarType value;
     DecodeValue(json[index], value);
@@ -97,12 +97,12 @@ template< typename ScalarType >
 void DecodeMatrix(const Json::Value & json, std::vector<ScalarType> & values)
 {
   Json::ArrayIndex nbRows = json.size();
-  for(Json::ArrayIndex rowIndex = 0; rowIndex < nbRows; ++rowIndex)
+  for (Json::ArrayIndex rowIndex = 0; rowIndex < nbRows; ++rowIndex)
   {
     const Json::Value & row = json[rowIndex];
 
     Json::ArrayIndex nbCols = row.size();
-    for(Json::ArrayIndex columnIndex = 0; columnIndex < nbCols; ++columnIndex)
+    for (Json::ArrayIndex columnIndex = 0; columnIndex < nbCols; ++columnIndex)
     {
       ScalarType value;
       DecodeValue(row[columnIndex], value);
@@ -115,43 +115,43 @@ void DecodeMatrix(const Json::Value & json, std::vector<ScalarType> & values)
 template< typename ScalarType >
 void DecodeValues(const Json::Value & json, vtkUniforms::TupleType tupleType, int vtkNotUsed(nbComponents), int nbTuples, std::vector<ScalarType> & values)
 {
-  if(nbTuples == 1)
+  if (nbTuples == 1)
   {
-    if(tupleType == vtkUniforms::TupleTypeScalar)
+    if (tupleType == vtkUniforms::TupleTypeScalar)
     {
       ScalarType value;
       DecodeValue(json["value"], value);
       values.resize(1, value);
     }
-    else if(tupleType == vtkUniforms::TupleTypeVector)
+    else if (tupleType == vtkUniforms::TupleTypeVector)
     {
       DecodeTuple(json["value"], values);
     }
-    else if(tupleType == vtkUniforms::TupleTypeMatrix)
+    else if (tupleType == vtkUniforms::TupleTypeMatrix)
     {
       DecodeMatrix(json["value"], values);
     }
   }
   else
   {
-    if(tupleType == vtkUniforms::TupleTypeScalar)
+    if (tupleType == vtkUniforms::TupleTypeScalar)
     {
       DecodeTuple(json["value"], values);
     }
-    else if(tupleType == vtkUniforms::TupleTypeVector)
+    else if (tupleType == vtkUniforms::TupleTypeVector)
     {
       Json::Value jsonTuple = json["value"];
-      for(Json::ArrayIndex index = 0; index < jsonTuple.size(); ++index)
+      for (Json::ArrayIndex index = 0; index < jsonTuple.size(); ++index)
       {
         std::vector<ScalarType> tuple;
         DecodeTuple(jsonTuple[index], tuple);
         values.insert(values.end(), tuple.begin(), tuple.end());
       }
     }
-    else if(tupleType == vtkUniforms::TupleTypeMatrix)
+    else if (tupleType == vtkUniforms::TupleTypeMatrix)
     {
       Json::Value jsonTuple = json["value"];
-      for(Json::ArrayIndex index = 0; index < jsonTuple.size(); ++index)
+      for (Json::ArrayIndex index = 0; index < jsonTuple.size(); ++index)
       {
         std::vector<ScalarType> matrix;
         DecodeMatrix(jsonTuple[index], matrix);
@@ -164,7 +164,7 @@ void DecodeValues(const Json::Value & json, vtkUniforms::TupleType tupleType, in
 //----------------------------------------------------------------------------
 void ReadUniforms(Json::Value & uniformsJson, vtkUniforms* uniforms)
 {
-  for(Json::ArrayIndex index = 0; index < uniformsJson.size(); ++index)
+  for (Json::ArrayIndex index = 0; index < uniformsJson.size(); ++index)
   {
     Json::Value uniformJson = uniformsJson[index];
     std::string uName = uniformJson["name"].asString();
@@ -172,13 +172,13 @@ void ReadUniforms(Json::Value & uniformsJson, vtkUniforms* uniforms)
     vtkUniforms::TupleType tupleType = vtkUniforms::StringToTupleType(uniformJson["tupleType"].asString());
     int nbComponents = uniformJson["numberOfComponents"].asInt();
     int nbTuples = uniformJson["numberOfTuples"].asInt();
-    if(scalarType == VTK_INT)
+    if (scalarType == VTK_INT)
     {
       std::vector<int> values;
       DecodeValues(uniformJson, tupleType, nbComponents, nbTuples, values);
       uniforms->SetUniform(uName.c_str(), tupleType, nbComponents, values);
     }
-    else if(scalarType == VTK_FLOAT)
+    else if (scalarType == VTK_FLOAT)
     {
       std::vector<float> values;
       DecodeValues(uniformJson, tupleType, nbComponents, nbTuples, values);
@@ -220,21 +220,21 @@ int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // Read vertex shader code
   std::string vertexShaderCode = root["VertexShaderCode"].asString();
-  if(!vertexShaderCode.empty())
+  if (!vertexShaderCode.empty())
   {
     sp->SetVertexShaderCode(vertexShaderCode.c_str());
   }
 
   // Read fragment shader code
   std::string fragmentShaderCode = root["FragmentShaderCode"].asString();
-  if(!fragmentShaderCode.empty())
+  if (!fragmentShaderCode.empty())
   {
     sp->SetFragmentShaderCode(fragmentShaderCode.c_str());
   }
 
   // Read geometry shader code
   std::string geometryShaderCode = root["GeometryShaderCode"].asString();
-  if(!geometryShaderCode.empty())
+  if (!geometryShaderCode.empty())
   {
     sp->SetGeometryShaderCode(geometryShaderCode.c_str());
   }
@@ -253,7 +253,7 @@ int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // Read shader replacements
   Json::Value shaderReplacement = root["ShaderReplacements"];
-  for(Json::ArrayIndex i = 0; i < shaderReplacement.size(); ++i)
+  for (Json::ArrayIndex i = 0; i < shaderReplacement.size(); ++i)
   {
     Json::Value spv = shaderReplacement[i];
     std::string shaderType = spv["ShaderType"].asString();
@@ -261,15 +261,15 @@ int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     bool replaceFirst = spv["replaceFirst"].asBool();
     std::string replacementValue = spv["ReplacementValue"].asString();
     bool replaceAll = spv["replaceAll"].asBool();
-    if(shaderType == std::string("Vertex"))
+    if (shaderType == std::string("Vertex"))
     {
       sp->AddVertexShaderReplacement(replacementSpec, replaceFirst, replacementValue, replaceAll);
     }
-    else if(shaderType == std::string("Fragment"))
+    else if (shaderType == std::string("Fragment"))
     {
       sp->AddFragmentShaderReplacement(replacementSpec, replaceFirst, replacementValue, replaceAll);
     }
-    else if(shaderType == std::string("Geometry"))
+    else if (shaderType == std::string("Geometry"))
     {
       sp->AddGeometryShaderReplacement(replacementSpec, replaceFirst, replacementValue, replaceAll);
     }
@@ -286,10 +286,10 @@ template< typename MatrixValueType >
 Json::Value EncodeMatrix(const std::vector<MatrixValueType> & matrix, Json::ArrayIndex matrixWidth, Json::ArrayIndex offset = 0)
 {
   Json::Value json;
-  for(Json::ArrayIndex rowIndex = 0; rowIndex < matrixWidth; ++rowIndex)
+  for (Json::ArrayIndex rowIndex = 0; rowIndex < matrixWidth; ++rowIndex)
   {
     Json::Value row;
-    for(Json::ArrayIndex columnIndex = 0; columnIndex < matrixWidth; ++columnIndex)
+    for (Json::ArrayIndex columnIndex = 0; columnIndex < matrixWidth; ++columnIndex)
     {
       row[columnIndex] = matrix[offset + rowIndex * matrixWidth + columnIndex];
     }
@@ -304,7 +304,7 @@ Json::Value EncodeTuple(const std::vector<TupleValueType> & tuple, Json::ArrayIn
 {
   Json::Value json;
   json.resize(tupleLength);
-  for(Json::ArrayIndex index = 0; index < tupleLength; ++index)
+  for (Json::ArrayIndex index = 0; index < tupleLength; ++index)
   {
     json[index] = tuple[index+offset];
   }
@@ -315,17 +315,17 @@ Json::Value EncodeTuple(const std::vector<TupleValueType> & tuple, Json::ArrayIn
 template< typename scalarT >
 void EncodeValues(const std::vector<scalarT> & values, Json::ArrayIndex nbComponents, Json::ArrayIndex nbTuples, vtkUniforms::TupleType tt, Json::Value & json)
 {
-  if(nbTuples == 1)
+  if (nbTuples == 1)
   {
-    if(tt == vtkUniforms::TupleTypeScalar)
+    if (tt == vtkUniforms::TupleTypeScalar)
     {
       json["value"] = values[0];
     }
-    else if(tt == vtkUniforms::TupleTypeVector)
+    else if (tt == vtkUniforms::TupleTypeVector)
     {
       json["value"] = EncodeTuple(values, nbComponents);
     }
-    else if(tt == vtkUniforms::TupleTypeMatrix)
+    else if (tt == vtkUniforms::TupleTypeMatrix)
     {
       Json::ArrayIndex matrixWidth = static_cast<Json::ArrayIndex>(sqrt(nbComponents));
       json["value"] = EncodeMatrix(values, matrixWidth);
@@ -333,23 +333,23 @@ void EncodeValues(const std::vector<scalarT> & values, Json::ArrayIndex nbCompon
   }
   else
   {
-    if(tt == vtkUniforms::TupleTypeScalar)
+    if (tt == vtkUniforms::TupleTypeScalar)
     {
       json["value"] = EncodeTuple(values, nbTuples);
     }
-    else if(tt == vtkUniforms::TupleTypeVector)
+    else if (tt == vtkUniforms::TupleTypeVector)
     {
       json["value"].resize(nbTuples);
-      for(Json::ArrayIndex index = 0; index < nbTuples; ++index)
+      for (Json::ArrayIndex index = 0; index < nbTuples; ++index)
       {
         json["value"][index] = EncodeTuple(values, nbComponents, index * nbComponents);
       }
     }
-    else if(tt == vtkUniforms::TupleTypeMatrix)
+    else if (tt == vtkUniforms::TupleTypeMatrix)
     {
       Json::ArrayIndex matrixWidth = static_cast<Json::ArrayIndex>(sqrt(nbComponents));
       json["value"].resize(nbTuples);
-      for(Json::ArrayIndex index = 0; index < nbTuples; ++index)
+      for (Json::ArrayIndex index = 0; index < nbTuples; ++index)
       {
         json["value"][index] = EncodeMatrix(values, matrixWidth, index * nbComponents);
       }
@@ -361,7 +361,7 @@ void EncodeValues(const std::vector<scalarT> & values, Json::ArrayIndex nbCompon
 void WriteUniforms(vtkUniforms* uniforms, Json::Value & root)
 {
   root.resize(static_cast<Json::ArrayIndex>(uniforms->GetNumberOfUniforms()));
-  for(int i = 0; i < uniforms->GetNumberOfUniforms(); ++i)
+  for (int i = 0; i < uniforms->GetNumberOfUniforms(); ++i)
   {
     std::string uName = uniforms->GetNthUniformName(i);
 
@@ -377,18 +377,18 @@ void WriteUniforms(vtkUniforms* uniforms, Json::Value & root)
     uniformsJson["numberOfComponents"] = nbComponents;
     uniformsJson["numberOfTuples"] = nbTuples;
 
-    if(scalarType == VTK_INT)
+    if (scalarType == VTK_INT)
     {
       std::vector<int> values;
-      if(uniforms->GetUniform(uName.c_str(), values))
+      if (uniforms->GetUniform(uName.c_str(), values))
       {
         EncodeValues(values, nbComponents, nbTuples, tupleType, uniformsJson);
       }
     }
-    else if(scalarType == VTK_FLOAT)
+    else if (scalarType == VTK_FLOAT)
     {
       std::vector<float> values;
-      if(uniforms->GetUniform(uName.c_str(), values))
+      if (uniforms->GetUniform(uName.c_str(), values))
       {
         EncodeValues(values, nbComponents, nbTuples, tupleType, uniformsJson);
       }
@@ -423,17 +423,17 @@ int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   Json::Value root;
 
   vtkShaderProperty* shaderProperty = spNode->GetShaderProperty();
-  if(shaderProperty->HasVertexShaderCode())
+  if (shaderProperty->HasVertexShaderCode())
   {
     std::string vertexShaderCode(shaderProperty->GetVertexShaderCode());
     root["VertexShaderCode"] = vertexShaderCode;
   }
-  if(shaderProperty->HasFragmentShaderCode())
+  if (shaderProperty->HasFragmentShaderCode())
   {
     std::string fragmentShaderCode(shaderProperty->GetFragmentShaderCode());
     root["FragmentShaderCode"] = fragmentShaderCode;
   }
-  if(shaderProperty->HasGeometryShaderCode())
+  if (shaderProperty->HasGeometryShaderCode())
   {
     std::string geometryShaderCode(shaderProperty->GetGeometryShaderCode());
     root["GeometryShaderCode"] = geometryShaderCode;
@@ -457,7 +457,7 @@ int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   // Collect shader replacements in json structures
   Json::Value replacements;
   replacements.resize(static_cast<Json::ArrayIndex>(shaderProperty->GetNumberOfShaderReplacements()));
-  for(Json::ArrayIndex index = 0; index < replacements.size(); ++index)
+  for (Json::ArrayIndex index = 0; index < replacements.size(); ++index)
   {
     Json::Value property;
     property["ShaderType"] = shaderProperty->GetNthShaderReplacementTypeAsString(index);

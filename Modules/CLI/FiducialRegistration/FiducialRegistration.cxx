@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
     // Checking conditions.
 
-  if( fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 ||
+  if ( fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 ||
     fixedLandmarks.size() != movingLandmarks.size() )
   {
     std::cerr << "Fixed and moving landmark lists must be of the same size "
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     rms = INVALID_RMS;
   }
 
-  if( saveTransform == "" )
+  if ( saveTransform == "" )
   {
     std::cerr << "An output transform must be specified" << std::endl;
     if (outputMessage == "")
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
   }
 
 
-  if( transformType != "Translation" && fixedLandmarks.size() < 3 )
+  if ( transformType != "Translation" && fixedLandmarks.size() < 3 )
   {
     std::cerr << "At least 3 fixed landmark fiducial points must be specified "
               << "for Rigid or Similarity transforms, have " << fixedLandmarks.size()
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
     fixedToMovingT->SetMatrix(transform->GetMatrix());
     fixedToMovingT->SetTranslation(transform->GetTranslation());
   }
-  else if( transformType == "Similarity" )
+  else if ( transformType == "Similarity" )
   {
     typedef itk::Similarity3DTransform<double> TransformType;
     TransformType::Pointer transform = TransformType::New();
@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
     fixedToMovingT->SetMatrix(transform->GetMatrix());
     fixedToMovingT->SetTranslation(transform->GetTranslation());
   }
-  else if( transformType == "Affine" )
+  else if ( transformType == "Affine" )
   {
     typedef itk::AffineTransform<double> TransformType;
     TransformType::Pointer transform = TransformType::New();
@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
   AffineTransform::OutputVectorType errortr;
   AffineTransform::OutputPointType movingPointInFixed;
   int counter = itk::NumericTraits<int>::ZeroValue();
-  while( mitr != movingPoints.end() )
+  while ( mitr != movingPoints.end() )
   {
     movingPointInFixed = movingToFixedT->TransformPoint( *mitr );
     errortr = *fitr - movingPointInFixed;

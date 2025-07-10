@@ -184,7 +184,7 @@ qSlicerScriptedLoadableModuleFactory::~qSlicerScriptedLoadableModuleFactory() = 
 bool qSlicerScriptedLoadableModuleFactory::isValidFile(const QFileInfo& file)const
 {
   // Skip if current file isn't a python file
-  if(!ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>::isValidFile(file))
+  if (!ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>::isValidFile(file))
   {
     return false;
   }

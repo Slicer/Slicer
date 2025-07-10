@@ -170,7 +170,7 @@ int TemporaryPathTest()
   data.push_back("c:\\path\\to\\temp\\slicer");
   data.push_back(""); // Test empty string
 
-  for(TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
+  for (TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
   {
     std::string temporaryPath(data.at(rowIdx));
     MRMLAppLogic->SetTemporaryPath(temporaryPath.c_str());

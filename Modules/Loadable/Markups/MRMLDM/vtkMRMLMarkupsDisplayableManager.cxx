@@ -482,7 +482,7 @@ void vtkMRMLMarkupsDisplayableManager::OnMRMLViewNodeModifiedEvent(vtkMRMLAbstra
   // run through all markup nodes in the helper
   vtkMRMLMarkupsDisplayableManagerHelper::DisplayNodeToWidgetIt it
     = this->Helper->MarkupsDisplayNodesToWidgets.begin();
-  while(it != this->Helper->MarkupsDisplayNodesToWidgets.end())
+  while (it != this->Helper->MarkupsDisplayNodesToWidgets.end())
   {
     // we loop through all widgets
     vtkSlicerMarkupsWidget* widget = (it->second);

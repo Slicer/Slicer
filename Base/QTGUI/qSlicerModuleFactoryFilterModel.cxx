@@ -65,7 +65,7 @@ void qSlicerModuleFactoryFilterModelPrivate::decodeDataRecursive(QDataStream& st
 
     int childPos = childCount;
 
-    while(childPos > 0) {
+    while (childPos > 0) {
         childPos--;
         QStandardItem* child = new QStandardItem();
         decodeDataRecursive(stream, child);
@@ -412,7 +412,7 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::Dr
   }
 
   // Insert new items
-  foreach(QStandardItem* item, items)
+  foreach (QStandardItem* item, items)
   {
     QString moduleName = item->data(Qt::UserRole).toString();
     newShowModules.removeAll(moduleName);

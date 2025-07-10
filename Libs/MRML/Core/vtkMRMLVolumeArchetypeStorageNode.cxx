@@ -677,7 +677,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
     writer->SetInputConnection( volNode->GetImageDataConnection() );
     writer->SetUseCompression(this->GetUseCompression());
-    if(this->WriteFileFormat)
+    if (this->WriteFileFormat)
     {
       writer->SetImageIOClassName(
         this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->GetClassNameFromFormatString(this->WriteFileFormat));
@@ -791,7 +791,7 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
   {
     vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
       GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
-    for(int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
+    for (int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
     {
       this->SupportedWriteFileTypes->InsertNextValue(supportedFormats->GetValue(i));
     }
@@ -881,7 +881,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   writer->SetFileName(tempName.c_str());
   writer->SetInputData( volNode->GetImageData() );
   writer->SetUseCompression(this->GetUseCompression());
-  if(this->WriteFileFormat)
+  if (this->WriteFileFormat)
   {
     if (this->GetScene() &&
         this->GetScene()->GetDataIOManager() &&

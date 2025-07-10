@@ -802,7 +802,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushes()
   // unusedWidgetPipelines will contain those widget pointers that are not in the layout anymore
   QList<qMRMLWidget*> unusedWidgetPipelines = this->BrushPipelines.keys();
   qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
-  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+  foreach (QString sliceViewName, layoutManager->sliceViewNames())
   {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
     if (!q->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))
@@ -1266,7 +1266,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
       // Cleaning up pipelines schedules re-rendering as well, but on some Intel video cards, and especially in debug mode,
       // this additional rendering request is necessary for showing the filled segment after paint stroke is completed.
       QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
-      foreach(qMRMLWidget* aViewWidget, viewWidgets)
+      foreach (qMRMLWidget* aViewWidget, viewWidgets)
       {
         d->BrushPipelines[aViewWidget]->SetFeedbackVisibility(false);
         d->BrushPipelines[aViewWidget]->SetBrushVisibility(worldPositionValid);
@@ -1318,7 +1318,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     {
       // no valid world position (nothing can be picked), hide the brush
       QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
-      foreach(qMRMLWidget* aViewWidget, viewWidgets)
+      foreach (qMRMLWidget* aViewWidget, viewWidgets)
       {
         bool brushVisibilityChanged = (d->BrushPipelines[aViewWidget]->GetBrushVisibility() != worldPositionValid);
         if (brushVisibilityChanged)

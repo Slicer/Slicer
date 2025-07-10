@@ -137,7 +137,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
   // default labels, will be overridden by view node AxisLabels
   const char* labels[6] = {"R", "A", "S", "L", "P", "I"};
 
-  for(int i = 0; i < 6; ++i)
+  for (int i = 0; i < 6; ++i)
   {
     vtkNew<vtkVectorText> axisText;
     axisText->SetText(labels[i]);
@@ -169,7 +169,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::AddAxis(vtkRenderer* renderer)
 
   renderer->AddViewProp(this->BoxAxisActor);
 
-  for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
+  for (std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
   {
     vtkFollower* actor = this->AxisLabelActors[i];
     renderer->AddViewProp(actor);
@@ -264,7 +264,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer* rendere
   this->BoxAxisActor->VisibilityOff();
 
   int axisLabelVisibility = 0;
-  for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
+  for (std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
   {
     vtkFollower* actor = this->AxisLabelActors[i];
     axisLabelVisibility = actor->GetVisibility();
@@ -329,7 +329,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer* rendere
     // Letter size in world coordinate system
     double letterSizeWorld = this->BoxAxisBoundingBox->GetMaxLength() * letterSize;
 
-    for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
+    for (std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
     {
       vtkFollower* actor = this->AxisLabelActors[i];
       actor->SetScale(letterSizeWorld, letterSizeWorld, letterSizeWorld);
@@ -391,7 +391,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer* rendere
 
   // Update camera and make the axis visible again
   this->BoxAxisActor->SetVisibility(boxVisibility);
-  for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
+  for (std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
   {
     vtkFollower* actor = this->AxisLabelActors[i];
     actor->SetCamera(renderer->GetActiveCamera());
@@ -498,7 +498,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelText()
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::SetAxisLabelColor(double newAxisLabelColor[3])
 {
-  for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
+  for (std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
   {
     vtkFollower* actor = this->AxisLabelActors[i];
     actor->GetProperty()->SetColor(newAxisLabelColor);
@@ -713,7 +713,7 @@ void vtkMRMLViewDisplayableManager
     }
     // Note: event == ModifiedEvent is handled by superclass
   }
-  else if(vtkMRMLCameraNode::SafeDownCast(caller))
+  else if (vtkMRMLCameraNode::SafeDownCast(caller))
   {
     if (event == vtkCommand::ModifiedEvent)
     {

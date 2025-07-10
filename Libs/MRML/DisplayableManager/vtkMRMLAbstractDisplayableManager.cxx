@@ -286,7 +286,7 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::SetAndObserveInteractor(
   if (newInteractor)
   {
     newInteractor->Register(this->External);
-    for(size_t i=0; i < this->InteractorObservableEvents.size(); ++i)
+    for (size_t i=0; i < this->InteractorObservableEvents.size(); ++i)
     {
       int eid = this->InteractorObservableEvents[i].first;
       float priority = this->InteractorObservableEvents[i].second;
@@ -673,12 +673,12 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLNodesEvents(
 {
   if (caller == this->GetMRMLDisplayableNode())
   {
-      if(event == vtkCommand::ModifiedEvent)
+      if (event == vtkCommand::ModifiedEvent)
       {
         this->OnMRMLDisplayableNodeModifiedEvent(caller);
         return;
       }
-      else if(event == vtkMRMLNode::ReferenceAddedEvent ||
+      else if (event == vtkMRMLNode::ReferenceAddedEvent ||
               event == vtkMRMLNode::ReferenceRemovedEvent ||
               event == vtkMRMLNode::ReferenceModifiedEvent)
       {
@@ -763,7 +763,7 @@ void vtkMRMLAbstractDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::AddMRMLDisplayableManagerEvent(int eventId)
 {
-  for(int i = 0; i < this->Internal->MRMLDisplayableNodeObservableEvents->GetNumberOfValues(); ++i)
+  for (int i = 0; i < this->Internal->MRMLDisplayableNodeObservableEvents->GetNumberOfValues(); ++i)
   {
     if (eventId == this->Internal->MRMLDisplayableNodeObservableEvents->GetValue(i))
     {

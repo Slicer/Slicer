@@ -51,9 +51,9 @@ MatrixExtended<T, NRows, NColumns>
 ::operator MatrixExtended<C, NRowsC, NColumnsC> const ()
 {
   MatrixExtended<C, NRowsC, NColumnsC> tmp;
-  for( unsigned int i = 0; i < NRows; i++ )
+  for ( unsigned int i = 0; i < NRows; i++ )
   {
-    for( unsigned int j = 0; j < NColumns; j++ )
+    for ( unsigned int j = 0; j < NColumns; j++ )
     {
       tmp[i][j] = ( C ) ( *this )[i][j];
     }
@@ -66,9 +66,9 @@ MatrixExtended<T, NRows, NColumns>
 MatrixExtended<T, NRows, NColumns>
 ::operator=( const Self & matrix )
 {
-  for( unsigned int i = 0; i < NRows; i++ )
+  for ( unsigned int i = 0; i < NRows; i++ )
   {
-    for( unsigned int j = 0; j < NColumns; j++ )
+    for ( unsigned int j = 0; j < NColumns; j++ )
     {
       ( *this )[i][j] = matrix[i][j];
     }
@@ -81,9 +81,9 @@ MatrixExtended<T, NRows, NColumns>
 MatrixExtended<T, NRows, NColumns>
 ::operator=( const Superclass & matrix )
 {
-  for( unsigned int i = 0; i < NRows; i++ )
+  for ( unsigned int i = 0; i < NRows; i++ )
   {
-    for( unsigned int j = 0; j < NColumns; j++ )
+    for ( unsigned int j = 0; j < NColumns; j++ )
     {
       ( *this )[i][j] = matrix[i][j];
     }
@@ -96,9 +96,9 @@ MatrixExtended<T, NRows, NColumns>
 MatrixExtended<T, NRows, NColumns>
 ::operator=( const InternalMatrixType& matrix )
 {
-  for( unsigned int i = 0; i < NRows; i++ )
+  for ( unsigned int i = 0; i < NRows; i++ )
   {
-    for( unsigned int j = 0; j < NColumns; j++ )
+    for ( unsigned int j = 0; j < NColumns; j++ )
     {
       ( *this )[i][j] = matrix[i][j];
     }

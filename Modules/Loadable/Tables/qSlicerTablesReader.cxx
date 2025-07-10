@@ -141,7 +141,7 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
 
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
-  if( extension.empty() )
+  if ( extension.empty() )
   {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
       (tr("Table reading failed: no file extension specified: %1").arg(fileName)).toStdString());

@@ -167,7 +167,7 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
   bool otherNodesAreAlreadyVisible = false;
   vtkSmartPointer<vtkCollection> displayNodes = vtkSmartPointer<vtkCollection>::Take(
     this->mrmlScene()->GetNodesByClass("vtkMRMLDisplayNode"));
-  for(int displayNodeIndex = 0; displayNodeIndex < displayNodes->GetNumberOfItems(); ++displayNodeIndex)
+  for (int displayNodeIndex = 0; displayNodeIndex < displayNodes->GetNumberOfItems(); ++displayNodeIndex)
   {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(
       displayNodes->GetItemAsObject(displayNodeIndex));

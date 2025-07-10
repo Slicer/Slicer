@@ -92,7 +92,7 @@ QString qSlicerFileNameItemDelegate::forceFileNameExtension(const QString& fileN
 
   strippedFileName = coreIOManager->forceFileNameMaxLength(strippedFileName, extension.length());
 
-  if(!mrmlScene)
+  if (!mrmlScene)
   {
     // no scene is set, cannot check extension
     return strippedFileName;
@@ -329,7 +329,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   QComboBox* sceneComboBoxWidget = new QComboBox(this->FileWidget);
   int currentFormat = -1;
   QString currentExtension = coreIOManager->extractKnownExtension(sceneFileInfo.fileName(), this->MRMLScene);
-  foreach(const QString& nameFilter,
+  foreach (const QString& nameFilter,
           coreIOManager->fileWriterExtensions(this->MRMLScene))
   {
     QString extension = QString::fromStdString(
@@ -600,7 +600,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
     qSlicerCoreApplication::application()->coreIOManager();
   int currentFormat = -1;
   QString currentExtension = coreIOManager->completeSlicerWritableFileNameSuffix(node);
-  foreach(QString nameFilter, coreIOManager->fileWriterExtensions(node))
+  foreach (QString nameFilter, coreIOManager->fileWriterExtensions(node))
   {
     QString extension = QString::fromStdString(
       vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));

@@ -109,7 +109,7 @@ inline double vectorangle(double* v1, double* v2)
 {
   double prod = 0, length1 = 0, length2 = 0;
 
-  for( int k = 0; k < 3; k++ )
+  for ( int k = 0; k < 3; k++ )
   {
     prod += v1[k] * v2[k];
     length1 += v1[k] * v1[k];
@@ -124,7 +124,7 @@ inline double vectorangle(Coord3d v1, Coord3d v2)
 {
   double prod = 0, length1 = 0, length2 = 0;
 
-  for( int k = 0; k < 3; k++ )
+  for ( int k = 0; k < 3; k++ )
   {
     prod += v1[k] * v2[k];
     length1 += v1[k] * v1[k];
@@ -154,14 +154,14 @@ inline int transWorldToImage(Coord3d loc_world, int* loc_img,
 {
   int adjust = 0;
 
-  for( int i = 0; i < 3; i++ )
+  for ( int i = 0; i < 3; i++ )
   {
     loc_img[i] = (int) ( (loc_world[i] - origin[i]) / voxelsize);
-    if( loc_img[i] < 0 )
+    if ( loc_img[i] < 0 )
     {
       adjust = 1; loc_img[i] = 0;
     }
-    if( loc_img[i] >= dims[i] )
+    if ( loc_img[i] >= dims[i] )
     {
       loc_img[i] = dims[i] - 1; adjust = 1;
     }
@@ -176,14 +176,14 @@ inline int transWorldToImage(double* loc_world, int* loc_img,
 {
   int adjust = 0;
 
-  for( int i = 0; i < 3; i++ )
+  for ( int i = 0; i < 3; i++ )
   {
     loc_img[i] = (int) ( (loc_world[i] - origin[i]) / voxelsize);
-    if( loc_img[i] < 0 )
+    if ( loc_img[i] < 0 )
     {
       adjust = 1; loc_img[i] = 0;
     }
-    if( loc_img[i] >= dims[i] )
+    if ( loc_img[i] >= dims[i] )
     {
       loc_img[i] = dims[i] - 1; adjust = 1;
     }

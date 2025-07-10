@@ -338,7 +338,7 @@ void qSlicerExtensionsManagerModelTester::dumpExtensionMetatype(
     const char* varname, const ExtensionMetadataType& extensionMetadata)
 {
   std::cout << "[" << varname << "]" << std::endl;
-  foreach(const QString& key, extensionMetadata.keys())
+  foreach (const QString& key, extensionMetadata.keys())
   {
     std::cout << varname << ".insert(\"" << qPrintable(key) << "\", "
               << "\"" << qPrintable(extensionMetadata.value(key).toString()) << "\");" << std::endl;
@@ -389,7 +389,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString& os, int ex
 
   QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore(serverAPI));
   QVariantMap metadata;
-  foreach(const QString& key, allMetadata.keys())
+  foreach (const QString& key, allMetadata.keys())
   {
     if (filtered && keysToIgnore.contains(key))
     {
@@ -680,10 +680,10 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
   }
 
   bool expectedFilesExist = true;
-  foreach(const QString& expectedFile, expectedFiles)
+  foreach (const QString& expectedFile, expectedFiles)
   {
     expectedFilesExist = expectedFilesExist && QFile::exists(this->Tmp.filePath(expectedFile));
-    if(!expectedFilesExist)
+    if (!expectedFilesExist)
     {
       qCritical() << "Missing file" << expectedFile;
     }
@@ -915,7 +915,7 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
       this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
     }
 
-    foreach(const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList()
             << "MarkupsToModel")
     {
       QVERIFY(this->uninstallHelper(&model, extensionName));
@@ -928,26 +928,26 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.updateModel();
 
-    foreach(const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList()
             << "ImageMaker"
             << "CurveMaker")
     {
       QVERIFY(model.isExtensionInstalled(extensionName));
     }
 
-    foreach(const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList()
             << "MarkupsToModel")
     {
       QVERIFY(!model.isExtensionInstalled(extensionName));
     }
 
-    foreach(const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList()
             << "MarkupsToModel")
     {
       this->installHelper(&model, operatingSystem, this->expectedExtensionNames().indexOf(extensionName), this->Tmp.absolutePath());
     }
 
-    foreach(const QString& extensionName, this->expectedExtensionNames())
+    foreach (const QString& extensionName, this->expectedExtensionNames())
     {
       QVERIFY(model.isExtensionInstalled(extensionName));
     }
@@ -975,7 +975,7 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall()
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
-    foreach(int extensionIdToInstall, extensionIdsToInstall)
+    foreach (int extensionIdToInstall, extensionIdsToInstall)
     {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
     }
@@ -991,7 +991,7 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall()
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
-    foreach(const QString& extensionNameToScheduleForUninstall, extensionNamesToScheduleForUninstall)
+    foreach (const QString& extensionNameToScheduleForUninstall, extensionNamesToScheduleForUninstall)
     {
       model.scheduleExtensionForUninstall(extensionNameToScheduleForUninstall);
     }
@@ -1060,7 +1060,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
-    foreach(int extensionIdToInstall, extensionIdsToInstall)
+    foreach (int extensionIdToInstall, extensionIdsToInstall)
     {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
     }
@@ -1073,7 +1073,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
-    foreach(const QString& extensionNameToScheduleForUninstall, extensionNamesToScheduleForUninstall)
+    foreach (const QString& extensionNameToScheduleForUninstall, extensionNamesToScheduleForUninstall)
     {
       model.scheduleExtensionForUninstall(extensionNameToScheduleForUninstall);
     }
@@ -1088,7 +1088,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
-    foreach(const QString& extensionNameToCancelScheduledForUninstall, extensionNamesToCancelScheduledForUninstall)
+    foreach (const QString& extensionNameToCancelScheduledForUninstall, extensionNamesToCancelScheduledForUninstall)
     {
       model.cancelExtensionScheduledForUninstall(extensionNameToCancelScheduledForUninstall);
     }
@@ -1226,7 +1226,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     QCOMPARE(spyExtensionEnabledChanged.count(), 1);
 
     QCOMPARE(model.isExtensionEnabled("ImageMaker"), false);
-    foreach(const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList()
             << "MarkupsToModel"
             << "CurveMaker")
     {
@@ -1236,7 +1236,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
     model.updateModel();
 
     QCOMPARE(model.isExtensionEnabled("ImageMaker"), false);
-    foreach(const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList()
             << "MarkupsToModel"
             << "CurveMaker")
     {
@@ -1348,7 +1348,7 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensionsCount()
     qSlicerExtensionsManagerModel model;
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
-    foreach(int extensionIdToInstall, extensionIdsToInstall)
+    foreach (int extensionIdToInstall, extensionIdsToInstall)
     {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
     }
@@ -1411,7 +1411,7 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensions()
     qSlicerExtensionsManagerModel model;
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
-    foreach(int extensionIdToInstall, extensionIdsToInstall)
+    foreach (int extensionIdToInstall, extensionIdsToInstall)
     {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
     }
@@ -1480,25 +1480,25 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
     qSlicerExtensionsManagerModel model;
     model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
-    foreach(int extensionIdToInstall, extensionIdsToInstall)
+    foreach (int extensionIdToInstall, extensionIdsToInstall)
     {
       this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
     }
     QCOMPARE(model.enabledExtensions(), expectedEnabledExtensionNames);
 
-    foreach(const QString& extensionName, expectedEnabledExtensionNames)
+    foreach (const QString& extensionName, expectedEnabledExtensionNames)
     {
       additionalModulePathsPerExtension.insert(extensionName, model.extensionModulePaths(extensionName));
     }
 
-    foreach(const QString& extensionName, extensionNamesToDisable)
+    foreach (const QString& extensionName, extensionNamesToDisable)
     {
       model.setExtensionEnabled(extensionName, false);
     }
     QCOMPARE(model.enabledExtensions(), expectedEnabledExtensionNamesAfterDisable);
 
     QStringList expectedAdditionalPaths;
-    foreach(const QString& extensionName, expectedEnabledExtensionNamesAfterDisable)
+    foreach (const QString& extensionName, expectedEnabledExtensionNamesAfterDisable)
     {
       expectedAdditionalPaths << additionalModulePathsPerExtension.value(extensionName);
     }
@@ -1514,7 +1514,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
     QCOMPARE(model.enabledExtensions(), expectedEnabledExtensionNamesAfterDisable);
 
     QStringList expectedAdditionalPaths;
-    foreach(const QString& extensionName, expectedEnabledExtensionNamesAfterDisable)
+    foreach (const QString& extensionName, expectedEnabledExtensionNamesAfterDisable)
     {
       expectedAdditionalPaths << additionalModulePathsPerExtension.value(extensionName);
     }
@@ -1899,7 +1899,7 @@ void testRequirementsHelper(qSlicerExtensionsManagerModel* model,
 
   QSignalSpy spySlicerRequirementsChanged(model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)));
   QSignalSpy spySlicerPropertyChanged(model, changedPropertySignal);
-  foreach(const QString& valuetoSet, valuesToSet)
+  foreach (const QString& valuetoSet, valuesToSet)
   {
     (model->*qStringSetterFuncPtr)(valuetoSet);
   }
@@ -2008,7 +2008,7 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerRequirements()
 
   QCOMPARE(requirementsToSetList.count(), expectedSlicerRequirementsChangedCounts.count());
 
-  for(int setIdx = 0; setIdx < requirementsToSetList.count(); ++setIdx)
+  for (int setIdx = 0; setIdx < requirementsToSetList.count(); ++setIdx)
   {
     QStringList set(requirementsToSetList.at(setIdx));
     QCOMPARE(set.count(), 3);

@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "The input volume is: " << InputVolume << std::endl;
     std::cout << "The labels are: " << std::endl;
-    for(::size_t l = 0; l < Labels.size(); l++)
+    for (::size_t l = 0; l < Labels.size(); l++)
     {
       std::cout << "\tList element " << l << " = " << Labels[l] << std::endl;
     }
@@ -612,7 +612,7 @@ int main(int argc, char* argv[])
       // recalculate the number of filter steps, discount the labels with no
       // voxels
       numModelsToGenerate = 0;
-      for(int i = StartLabel; i <= EndLabel; i++)
+      for (int i = StartLabel; i <= EndLabel; i++)
       {
         if ((int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i)) > 0)
         {
@@ -695,7 +695,7 @@ int main(int argc, char* argv[])
     {
       cubes->Update();
     }
-    catch(...)
+    catch (...)
     {
       std::cerr << "ERROR while updating marching cubes filter." << std::endl;
       return EXIT_FAILURE;
@@ -738,7 +738,7 @@ int main(int argc, char* argv[])
       {
         smoother->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR while updating smoothing filter." << std::endl;
         return EXIT_FAILURE;
@@ -785,7 +785,7 @@ int main(int argc, char* argv[])
         numModelsToGenerate = 0;
         for (int i = StartLabel; i <= EndLabel; i++)
           {
-          if((int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i)) > 0)
+          if ((int)floor((((hist->GetOutput())->GetPointData())->GetScalars())->GetTuple1(i)) > 0)
             {
             if (debug && i < 0 && i > -100) { std::cout << i << " "; }
             numModelsToGenerate++;
@@ -858,7 +858,7 @@ int main(int argc, char* argv[])
   if (useStartEnd || GenerateAll)
   {
     // set up the loop list with all the labels between start and end
-    for(int i = StartLabel; i <= EndLabel; i++)
+    for (int i = StartLabel; i <= EndLabel; i++)
     {
       loopLabels.push_back(i);
     }
@@ -866,12 +866,12 @@ int main(int argc, char* argv[])
   else
   {
     // just copy the list of labels into the new var
-    for(::size_t i = 0; i < Labels.size(); i++)
+    for (::size_t i = 0; i < Labels.size(); i++)
     {
       loopLabels.push_back(Labels[i]);
     }
   }
-  for(::size_t l = 0; l < loopLabels.size(); l++)
+  for (::size_t l = 0; l < loopLabels.size(); l++)
   {
     // get the label out of the vector
     int i = loopLabels[l];
@@ -1029,7 +1029,7 @@ int main(int argc, char* argv[])
       {
         imageToStructuredPoints->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR while updating image to structured points for label " << i << std::endl;
         return EXIT_FAILURE;
@@ -1112,7 +1112,7 @@ int main(int argc, char* argv[])
       {
         mcubes->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR while running marching cubes, for label " << i << std::endl;
         return EXIT_FAILURE;
@@ -1244,7 +1244,7 @@ int main(int argc, char* argv[])
       {
         decimator->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR decimating model " << i << std::endl;
         return EXIT_FAILURE;
@@ -1370,7 +1370,7 @@ int main(int argc, char* argv[])
           {
             smootherSinc->Update();
           }
-          catch(...)
+          catch (...)
           {
             std::cerr << "ERROR updating Sinc smoother for model " << i << std::endl;
             return EXIT_FAILURE;
@@ -1417,7 +1417,7 @@ int main(int argc, char* argv[])
           {
             smootherPoly->Update();
           }
-          catch(...)
+          catch (...)
           {
             std::cerr << "ERROR updating Poly smoother for model " << i << std::endl;
             return EXIT_FAILURE;
@@ -1573,7 +1573,7 @@ int main(int argc, char* argv[])
       {
         stripper->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cerr << "ERROR updating stripper for model " << i << std::endl;
         return EXIT_FAILURE;
@@ -1736,7 +1736,7 @@ int main(int argc, char* argv[])
   if (madeModels.size() > 0)
   {
     std::cout << "Made models from labels:";
-    for(::size_t i = 0; i < madeModels.size(); i++)
+    for (::size_t i = 0; i < madeModels.size(); i++)
     {
       std::cout << " " << madeModels[i];
     }
@@ -1745,7 +1745,7 @@ int main(int argc, char* argv[])
   if (skippedModels.size() > 0)
   {
     std::cout << "Skipped making models from labels:";
-    for(::size_t i = 0; i < skippedModels.size(); i++)
+    for (::size_t i = 0; i < skippedModels.size(); i++)
     {
       std::cout << " " << skippedModels[i];
     }

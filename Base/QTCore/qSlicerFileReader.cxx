@@ -88,9 +88,9 @@ QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int
   {
     return matchingNameFilters;
   }
-  foreach(const QString& nameFilter, this->extensions())
+  foreach (const QString& nameFilter, this->extensions())
   {
-    foreach(QString extension, ctk::nameFilterToExtensions(nameFilter))
+    foreach (QString extension, ctk::nameFilterToExtensions(nameFilter))
     {
       QRegExp regExp(extension, Qt::CaseInsensitive, QRegExp::Wildcard);
       Q_ASSERT(regExp.isValid());

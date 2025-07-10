@@ -227,7 +227,7 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
       row.push_back("1");
       data.push_back(row);
     }
-    for(TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
+    for (TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
     {
       std::string filePath(data.at(rowIdx).at(0));
       std::string applicationHomeDir(data.at(rowIdx).at(1));

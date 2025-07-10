@@ -204,7 +204,7 @@ std::string vtkMRMLScriptedModuleNode::GetParameterNamesAsCommaSeparatedList()
     namesAsStr = *it;
     ++it;
   }
-  for(; it != names.end(); ++it)
+  for (; it != names.end(); ++it)
   {
     namesAsStr.append(",").append(*it);
   }
@@ -220,7 +220,7 @@ std::vector<std::string> vtkMRMLScriptedModuleNode::GetParameterNames()
   std::vector<std::string> names;
 
   ParameterMap::iterator it;
-  for(it = this->Parameters.begin(); it != this->Parameters.end(); ++it)
+  for (it = this->Parameters.begin(); it != this->Parameters.end(); ++it)
   {
     names.push_back(it->first);
   }

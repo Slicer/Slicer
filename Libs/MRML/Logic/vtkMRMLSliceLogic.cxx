@@ -146,7 +146,7 @@ struct BlendPipeline
   bool UpdateStages(const std::vector<vtkAlgorithmOutput*>& imagePorts)
   {
     std::vector<vtkAlgorithmOutput*> foregroundImagePorts = imagePorts;
-    if(imagePorts.size() > 0)
+    if (imagePorts.size() > 0)
     {
       foregroundImagePorts.erase(foregroundImagePorts.begin());
     }
@@ -191,7 +191,7 @@ struct BlendPipeline
       // Reset BlendAlpha connections
       this->BlendAlpha->RemoveAllInputs();
       this->BlendAlpha->AddInputConnection(this->AddSubExtractBackgroundAlpha->GetOutputPort());
-      for(vtkSmartPointer<vtkImageExtractComponents>& addSubExtractAlpha: this->AddSubExtractAlphas)
+      for (vtkSmartPointer<vtkImageExtractComponents>& addSubExtractAlpha: this->AddSubExtractAlphas)
       {
         this->BlendAlpha->AddInputConnection(addSubExtractAlpha->GetOutputPort());
       }
@@ -564,7 +564,7 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 
     vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetBackgroundLayer());
     vtkMRMLSliceLogic::UpdateReconstructionSlab(this, this->GetForegroundLayer());
-    for(int additionalLayerIndex = 0;
+    for (int additionalLayerIndex = 0;
         additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers();
         ++additionalLayerIndex)
     {
@@ -1263,7 +1263,7 @@ void vtkMRMLSliceLogic::UpdatePipeline()
     std::vector<vtkAlgorithmOutput*> layerPorts;
     std::vector<double> layerUVWOpacities;
     std::vector<vtkAlgorithmOutput*> layerUVWPorts;
-    for(int layerIndex = 0;
+    for (int layerIndex = 0;
         layerIndex < vtkMRMLSliceLogic::Layer_Last + this->SliceCompositeNode->GetNumberOfAdditionalLayers();
         ++layerIndex)
     {
@@ -1466,7 +1466,7 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "AdditionalLayers:\n";
   if (this->SliceCompositeNode)
   {
-    for(int additionalLayerIndex = 0; additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers(); ++additionalLayerIndex)
+    for (int additionalLayerIndex = 0; additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers(); ++additionalLayerIndex)
     {
       vtkMRMLSliceLayerLogic* layerLogic = this->GetNthLayer(vtkMRMLSliceLogic::Layer_Last + additionalLayerIndex);
       if (layerLogic)
@@ -1553,7 +1553,7 @@ void vtkMRMLSliceLogic::DeleteSliceModel()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::CreateSliceModel()
 {
-  if(!this->GetMRMLScene())
+  if (!this->GetMRMLScene())
   {
     return;
   }
@@ -2497,7 +2497,7 @@ std::vector<vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
   layerLogics.push_back(this->GetForegroundLayer());
   if (this->SliceCompositeNode)
   {
-    for(int additionalLayerIndex = 0;
+    for (int additionalLayerIndex = 0;
         additionalLayerIndex < this->SliceCompositeNode->GetNumberOfAdditionalLayers();
         ++additionalLayerIndex)
     {

@@ -277,7 +277,7 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
     QVariantList exportablesVariantList = context.getVariable("exportables").toList();
 
     // Group exportables by provider plugin
-    foreach(QVariant exportableVariant, exportablesVariantList)
+    foreach (QVariant exportableVariant, exportablesVariantList)
     {
       qSlicerDICOMExportable* exportable = qobject_cast<qSlicerDICOMExportable*>(
         exportableVariant.value<QObject*>() );
@@ -293,7 +293,7 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
   }
   // Map the grouped exportables by confidence values so that the highest confidence is on top
   QMultiMap<double,QList<qSlicerDICOMExportable*>> exportablesByConfidence;
-  foreach(const QString& plugin, exportablesByPlugin.uniqueKeys())
+  foreach (const QString& plugin, exportablesByPlugin.uniqueKeys())
   {
     // Geometric mean to emphasize larger values
     double meanConfidenceForPlugin = 0.0;
@@ -314,7 +314,7 @@ void qSlicerDICOMExportDialog::examineSelectedItem()
   {
     // Get exportable lists for the confidence number (there might be equality!)
     QList<QList<qSlicerDICOMExportable*>> exportableLists = exportablesByConfidence.values(inverseConfidence);
-    foreach(QList<qSlicerDICOMExportable*> exportables, exportableLists)
+    foreach (QList<qSlicerDICOMExportable*> exportables, exportableLists)
     {
       // Set exportable name as the first one in the list, giving also the
       // confidence number and plugin name in parentheses
@@ -444,7 +444,7 @@ void qSlicerDICOMExportDialog::onExport()
       indexer.addDirectory(outputFolder.absolutePath(), true);
     }
     // Remove temporary DICOM folder if exported to the DICOM database folder
-    foreach(QString file, outputFolder.entryList())
+    foreach (QString file, outputFolder.entryList())
     {
       outputFolder.remove(file);
     }

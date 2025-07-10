@@ -661,7 +661,7 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
       closedSurfacePoints->InsertNextPoint(pointWorld);
     }
   }
-  else if(threeDWidget)
+  else if (threeDWidget)
   {
     vtkRenderer* renderer = qSlicerSegmentEditorAbstractEffect::renderer(threeDWidget);
     if (!renderer)

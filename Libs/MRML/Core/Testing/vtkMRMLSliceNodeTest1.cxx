@@ -127,9 +127,9 @@ namespace
 //----------------------------------------------------------------------------
 void InitializeMatrix(vtkMatrix3x3* matrix, double value)
 {
-  for(int ii = 0; ii < 3; ++ii)
+  for (int ii = 0; ii < 3; ++ii)
   {
-    for(int jj = 0; jj < 3; ++jj)
+    for (int jj = 0; jj < 3; ++jj)
     {
       matrix->SetElement(ii, jj, value);
     }

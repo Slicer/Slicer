@@ -47,7 +47,7 @@ int qMRMLVolumeThresholdWidgetTest1(int argc, char* argv [] )
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  if( argc < 2 )
+  if ( argc < 2 )
   {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
