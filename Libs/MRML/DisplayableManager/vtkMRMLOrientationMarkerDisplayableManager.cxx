@@ -111,7 +111,7 @@ public:
 };
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLOrientationMarkerDisplayableManager );
+vtkStandardNewMacro(vtkMRMLOrientationMarkerDisplayableManager);
 
 //---------------------------------------------------------------------------
 class vtkMRMLOrientationMarkerDisplayableManager::vtkInternal

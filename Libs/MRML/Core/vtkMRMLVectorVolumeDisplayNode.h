@@ -36,7 +36,7 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
 {
   public:
   static vtkMRMLVectorVolumeDisplayNode* New();
-  vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode,vtkMRMLGlyphableVolumeDisplayNode);
+  vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode, vtkMRMLGlyphableVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -113,11 +113,11 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
 
   ///
   /// Access to this class's internal filter elements
-  vtkGetObjectMacro (ShiftScale, vtkImageShiftScale);
-  vtkGetObjectMacro (RGBToHSI, vtkImageRGBToHSI);
-  vtkGetObjectMacro (ExtractIntensity, vtkImageExtractComponents);
-  vtkGetObjectMacro (AppendComponents, vtkImageAppendComponents);
-  vtkGetObjectMacro (Threshold, vtkImageThreshold);
+  vtkGetObjectMacro(ShiftScale, vtkImageShiftScale);
+  vtkGetObjectMacro(RGBToHSI, vtkImageRGBToHSI);
+  vtkGetObjectMacro(ExtractIntensity, vtkImageExtractComponents);
+  vtkGetObjectMacro(AppendComponents, vtkImageAppendComponents);
+  vtkGetObjectMacro(Threshold, vtkImageThreshold);
 
 protected:
   vtkMRMLVectorVolumeDisplayNode();

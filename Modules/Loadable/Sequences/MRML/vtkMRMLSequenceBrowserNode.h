@@ -41,7 +41,7 @@ class VTK_SLICER_SEQUENCES_MODULE_MRML_EXPORT vtkMRMLSequenceBrowserNode : publi
 {
 public:
   static vtkMRMLSequenceBrowserNode* New();
-  vtkTypeMacro(vtkMRMLSequenceBrowserNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLSequenceBrowserNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// ProxyNodeModifiedEvent is invoked when a proxy node is modified

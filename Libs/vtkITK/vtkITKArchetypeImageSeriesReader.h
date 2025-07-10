@@ -46,7 +46,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageAlgorithm
 {
 public:
   static vtkITKArchetypeImageSeriesReader* New();
-  vtkTypeMacro(vtkITKArchetypeImageSeriesReader,vtkImageAlgorithm);
+  vtkTypeMacro(vtkITKArchetypeImageSeriesReader, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   using CoordinateOrientationCode = itk::SpatialOrientationEnums::ValidCoordinateOrientations;
@@ -74,34 +74,34 @@ public:
   ///
   /// Set/Get the default spacing of the data in the file. This will be
   /// used if the reader provided spacing is 1.0. (Default is 1.0)
-  vtkSetVector3Macro(DefaultDataSpacing,double);
-  vtkGetVector3Macro(DefaultDataSpacing,double);
+  vtkSetVector3Macro(DefaultDataSpacing, double);
+  vtkGetVector3Macro(DefaultDataSpacing, double);
 
   ///
   /// Set/Get the default origin of the data (location of first pixel
   /// in the file). This will be used if the reader provided origin is
   /// 0.0. (Default is 0.0)
-  vtkSetVector3Macro(DefaultDataOrigin,double);
-  vtkGetVector3Macro(DefaultDataOrigin,double);
+  vtkSetVector3Macro(DefaultDataOrigin, double);
+  vtkGetVector3Macro(DefaultDataOrigin, double);
 
   ///
   /// When reading files which start at an unusual index, this can be added
   /// to the slice number when generating the file name (default = 0)
-  vtkSetMacro(FileNameSliceOffset,int);
-  vtkGetMacro(FileNameSliceOffset,int);
+  vtkSetMacro(FileNameSliceOffset, int);
+  vtkGetMacro(FileNameSliceOffset, int);
 
   ///
   /// When reading files which have regular, but non contiguous slices
   /// (e.g. filename.1,filename.3,filename.5)
   /// a spacing can be specified to skip missing files (default = 1)
-  vtkSetMacro(FileNameSliceSpacing,int);
-  vtkGetMacro(FileNameSliceSpacing,int);
+  vtkSetMacro(FileNameSliceSpacing, int);
+  vtkGetMacro(FileNameSliceSpacing, int);
 
   ///
   /// The maximum number of files to include in the series. If this is
   /// zero, then all files will be included. (Default is 0)
-  vtkSetMacro(FileNameSliceCount,int);
-  vtkGetMacro(FileNameSliceCount,int);
+  vtkSetMacro(FileNameSliceCount, int);
+  vtkGetMacro(FileNameSliceCount, int);
 
   /// Determine if the file can be read using ITK
   virtual int CanReadFile(const char* filename);

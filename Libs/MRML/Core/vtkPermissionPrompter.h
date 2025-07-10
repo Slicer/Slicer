@@ -18,16 +18,16 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
 
   ///
   /// Member for storing a user name, if required
-  vtkGetStringMacro ( Username );
-  vtkSetStringMacro ( Username );
+  vtkGetStringMacro(Username);
+  vtkSetStringMacro(Username);
 
   ///
   /// Member for storing a password, if required
-  vtkGetStringMacro ( Password );
-  vtkSetStringMacro ( Password );
+  vtkGetStringMacro(Password);
+  vtkSetStringMacro(Password);
 
-  vtkGetStringMacro (HostName );
-  vtkSetStringMacro (HostName );
+  vtkGetStringMacro(HostName);
+  vtkSetStringMacro(HostName);
 
   ///
   /// When set, a user won't be prompted again during a given session.
@@ -35,10 +35,10 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
   vtkGetMacro ( Remember, int );
   vtkSetMacro ( Remember, int );
 
-  vtkGetStringMacro ( PromptMessage );
-  vtkSetStringMacro ( PromptMessage );
-  vtkGetStringMacro ( PromptTitle );
-  vtkSetStringMacro ( PromptTitle );
+  vtkGetStringMacro(PromptMessage);
+  vtkSetStringMacro(PromptMessage);
+  vtkGetStringMacro(PromptTitle);
+  vtkSetStringMacro(PromptTitle);
 
   ///
   /// Sets null values for UserName and Password.

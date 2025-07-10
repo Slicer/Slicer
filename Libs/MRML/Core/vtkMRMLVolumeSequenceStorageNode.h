@@ -23,7 +23,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStora
   public:
 
   static vtkMRMLVolumeSequenceStorageNode* New();
-  vtkTypeMacro(vtkMRMLVolumeSequenceStorageNode,vtkMRMLNRRDStorageNode);
+  vtkTypeMacro(vtkMRMLVolumeSequenceStorageNode, vtkMRMLNRRDStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
 

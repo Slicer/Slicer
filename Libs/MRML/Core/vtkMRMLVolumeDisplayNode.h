@@ -31,7 +31,7 @@ class vtkImageStencilData;
 class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-  vtkTypeMacro(vtkMRMLVolumeDisplayNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLVolumeDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///

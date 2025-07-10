@@ -48,7 +48,7 @@ class VTK_MRML_EXPORT vtkMRMLSequenceNode : public vtkMRMLStorableNode
 {
 public:
   static vtkMRMLSequenceNode* New();
-  vtkTypeMacro(vtkMRMLSequenceNode,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLSequenceNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Create instance of a sequence node

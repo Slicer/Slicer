@@ -43,7 +43,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceViewInteractorStyle :
 {
 public:
   static vtkMRMLSliceViewInteractorStyle* New();
-  vtkTypeMacro(vtkMRMLSliceViewInteractorStyle,vtkMRMLViewInteractorStyle);
+  vtkTypeMacro(vtkMRMLSliceViewInteractorStyle, vtkMRMLViewInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Give a chance to displayable managers to process the event.

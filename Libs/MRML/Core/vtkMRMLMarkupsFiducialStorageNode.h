@@ -35,7 +35,7 @@ class VTK_MRML_EXPORT vtkMRMLMarkupsFiducialStorageNode : public vtkMRMLMarkupsS
 {
 public:
   static vtkMRMLMarkupsFiducialStorageNode* New();
-  vtkTypeMacro(vtkMRMLMarkupsFiducialStorageNode,vtkMRMLMarkupsStorageNode);
+  vtkTypeMacro(vtkMRMLMarkupsFiducialStorageNode, vtkMRMLMarkupsStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

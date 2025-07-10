@@ -6,7 +6,7 @@
 #include <vtkObjectFactory.h>
 
 
-vtkStandardNewMacro ( vtkDataTransfer );
+vtkStandardNewMacro(vtkDataTransfer);
 vtkCxxSetObjectMacro( vtkDataTransfer, Handler, vtkURIHandler );
 
 //----------------------------------------------------------------------------

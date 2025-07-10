@@ -43,7 +43,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotSeriesNode : public vtkMRMLNode
 {
 public:
   static vtkMRMLPlotSeriesNode* New();
-  vtkTypeMacro(vtkMRMLPlotSeriesNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLPlotSeriesNode, vtkMRMLNode);
 
   /// Enumerated values for SetPlot/GetPlot
   enum

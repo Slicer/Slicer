@@ -31,7 +31,7 @@ public:
   // Provide a concrete New.
   static vtkMRMLVolumeNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLVolumeNodeTestHelper1,vtkMRMLVolumeNode);
+  vtkTypeMacro(vtkMRMLVolumeNodeTestHelper1, vtkMRMLVolumeNode);
 
   vtkMRMLNode* CreateNodeInstance() override
   {

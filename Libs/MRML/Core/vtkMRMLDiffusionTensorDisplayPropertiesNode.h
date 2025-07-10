@@ -36,7 +36,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 {
  public:
   static vtkMRMLDiffusionTensorDisplayPropertiesNode* New();
-  vtkTypeMacro(vtkMRMLDiffusionTensorDisplayPropertiesNode,vtkMRMLColorTableNode);
+  vtkTypeMacro(vtkMRMLDiffusionTensorDisplayPropertiesNode, vtkMRMLColorTableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------

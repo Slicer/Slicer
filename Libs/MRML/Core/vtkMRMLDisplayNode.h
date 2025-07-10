@@ -39,7 +39,7 @@ class vtkTextProperty;
 class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 {
 public:
-  vtkTypeMacro(vtkMRMLDisplayNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLDisplayNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Representation models

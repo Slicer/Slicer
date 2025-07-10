@@ -138,25 +138,25 @@ public:
   /// Event Logging
   ///
   /// Turn on event tracing (requires TraceFile)
-  vtkBooleanMacro (EventLogging, int);
-  vtkSetMacro (EventLogging, int);
-  vtkGetMacro (EventLogging, int);
+  vtkBooleanMacro(EventLogging, int);
+  vtkSetMacro(EventLogging, int);
+  vtkGetMacro(EventLogging, int);
 
   ///
   /// Current level of indent (event nesting)
   /// shows what is called by what when in synchronous mode
-  vtkSetMacro (EventNestingLevel, int);
-  vtkGetMacro (EventNestingLevel, int);
+  vtkSetMacro(EventNestingLevel, int);
+  vtkGetMacro(EventNestingLevel, int);
 
   ///
   /// File to write event logs to when EventLogging is turned on
-  vtkSetStringMacro (LogFileName);
-  vtkGetStringMacro (LogFileName);
+  vtkSetStringMacro(LogFileName);
+  vtkGetStringMacro(LogFileName);
 
   ///
   /// Timer log class for calculating elapsed time for event invocations
   virtual void SetTimerLog(vtkTimerLog* timerLog);
-  vtkGetObjectMacro (TimerLog, vtkTimerLog);
+  vtkGetObjectMacro(TimerLog, vtkTimerLog);
 
   ///
   /// Open and close the log file
@@ -229,9 +229,9 @@ public:
   ///  - CompressCallDataOff: maintain the list of all call data values, but only
   ///    one unique entry for each
   ///  Compression is ON by default
-  vtkBooleanMacro (CompressCallData, int);
-  vtkGetMacro (CompressCallData, int);
-  vtkSetMacro (CompressCallData, int);
+  vtkBooleanMacro(CompressCallData, int);
+  vtkGetMacro(CompressCallData, int);
+  vtkSetMacro(CompressCallData, int);
 
   ///
   /// Sets the method pointer to be used for processing script observations

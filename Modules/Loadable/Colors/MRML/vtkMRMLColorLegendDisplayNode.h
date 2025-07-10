@@ -38,7 +38,7 @@ public:
   enum OrientationType : int { Horizontal = 0, Vertical, Orientation_Last };
 
   static vtkMRMLColorLegendDisplayNode* New();
-  vtkTypeMacro(vtkMRMLColorLegendDisplayNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLColorLegendDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

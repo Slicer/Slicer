@@ -42,7 +42,7 @@ class vtkSegmentationCore_EXPORT vtkOrientedImageDataResample : public vtkObject
 {
 public:
   static vtkOrientedImageDataResample* New();
-  vtkTypeMacro(vtkOrientedImageDataResample,vtkObject);
+  vtkTypeMacro(vtkOrientedImageDataResample, vtkObject);
 
   enum
   {

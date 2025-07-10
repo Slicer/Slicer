@@ -27,7 +27,7 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
 {
   public:
   static vtkMRMLLabelMapVolumeDisplayNode* New();
-  vtkTypeMacro(vtkMRMLLabelMapVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
+  vtkTypeMacro(vtkMRMLLabelMapVolumeDisplayNode, vtkMRMLVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

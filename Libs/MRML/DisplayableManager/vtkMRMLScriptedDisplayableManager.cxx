@@ -38,7 +38,7 @@
 // STD includes
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLScriptedDisplayableManager );
+vtkStandardNewMacro(vtkMRMLScriptedDisplayableManager);
 
 //---------------------------------------------------------------------------
 class vtkMRMLScriptedDisplayableManager::vtkInternal

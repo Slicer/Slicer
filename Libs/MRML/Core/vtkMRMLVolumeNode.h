@@ -40,7 +40,7 @@ class vtkMatrix4x4;
 class VTK_MRML_EXPORT vtkMRMLVolumeNode : public vtkMRMLDisplayableNode
 {
 public:
-  vtkTypeMacro(vtkMRMLVolumeNode,vtkMRMLDisplayableNode);
+  vtkTypeMacro(vtkMRMLVolumeNode, vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum
@@ -115,10 +115,10 @@ public:
   /// parameters that go to make up the IJKToRAS matrix
   /// In setter methods, StorableModifiedTime may need to be updated,
   /// which cannot be achieved by using vtkGetVector3Macro.
-  vtkGetVector3Macro (Spacing, double);
+  vtkGetVector3Macro(Spacing, double);
   virtual void SetSpacing(double arg1, double arg2, double arg3);
   virtual void SetSpacing(double arg[3]);
-  vtkGetVector3Macro (Origin, double);
+  vtkGetVector3Macro(Origin, double);
   virtual void SetOrigin(double arg1, double arg2, double arg3);
   virtual void SetOrigin(double arg[3]);
 

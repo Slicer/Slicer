@@ -33,7 +33,7 @@ class vtkXMLDataElement;
 class VTK_MRML_EXPORT vtkMRMLAbstractLayoutNode : public vtkMRMLNode
 {
 public:
-  vtkTypeMacro(vtkMRMLAbstractLayoutNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLAbstractLayoutNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set node attributes

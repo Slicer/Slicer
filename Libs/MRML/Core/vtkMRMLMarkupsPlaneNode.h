@@ -56,7 +56,7 @@ class  VTK_MRML_EXPORT vtkMRMLMarkupsPlaneNode : public vtkMRMLMarkupsNode
 {
 public:
   static vtkMRMLMarkupsPlaneNode* New();
-  vtkTypeMacro(vtkMRMLMarkupsPlaneNode,vtkMRMLMarkupsNode);
+  vtkTypeMacro(vtkMRMLMarkupsPlaneNode, vtkMRMLMarkupsNode);
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

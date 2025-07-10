@@ -37,7 +37,7 @@ public:
 
   /// Create a new vtkMRMLVolumePropertyNode
   static vtkMRMLVolumePropertyNode* New();
-  vtkTypeMacro(vtkMRMLVolumePropertyNode,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLVolumePropertyNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Don't change its scalarOpacity, gradientOpacity or color on the volume property

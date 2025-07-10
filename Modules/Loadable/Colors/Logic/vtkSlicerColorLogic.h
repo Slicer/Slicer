@@ -30,7 +30,7 @@ public:
 
   /// The Usual vtk class functions
   static vtkSlicerColorLogic* New();
-  vtkTypeMacro(vtkSlicerColorLogic,vtkMRMLColorLogic);
+  vtkTypeMacro(vtkSlicerColorLogic, vtkMRMLColorLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Return a default color node id for a label map

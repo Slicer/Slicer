@@ -57,7 +57,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLViewLogic : public vtkMRMLAbstractLogic
 public:
   /// The Usual VTK class functions
   static vtkMRMLViewLogic* New();
-  vtkTypeMacro(vtkMRMLViewLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLViewLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set/Get layout name. This is used for finding the camera and view node in the scene.
@@ -65,10 +65,10 @@ public:
   virtual const char* GetName() const;
 
   /// The MRML View node for this View logic
-  vtkGetObjectMacro (ViewNode, vtkMRMLViewNode);
+  vtkGetObjectMacro(ViewNode, vtkMRMLViewNode);
 
   /// The MRML camera node for this View logic
-  vtkGetObjectMacro (CameraNode, vtkMRMLCameraNode);
+  vtkGetObjectMacro(CameraNode, vtkMRMLCameraNode);
 
   /// Indicate an interaction with the camera node is beginning. The
   /// parameters of the camera node being manipulated are passed as a

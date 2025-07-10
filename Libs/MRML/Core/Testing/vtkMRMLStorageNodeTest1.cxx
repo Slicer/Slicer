@@ -38,7 +38,7 @@ public:
   // Provide a concrete New.
   static vtkMRMLStorageNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLStorageNodeTestHelper1,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLStorageNodeTestHelper1, vtkMRMLStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override
   {

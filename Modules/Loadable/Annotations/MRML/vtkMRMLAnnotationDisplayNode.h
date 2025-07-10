@@ -15,7 +15,7 @@
 #include "vtkMRMLDisplayNode.h"
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 
-#define vtkSetAndPropagateVector3Macro(name,type) \
+#define vtkSetAndPropagateVector3Macro(name, type) \
 virtual void SetAndPropagateSuper##name (type _arg1, type _arg2, type _arg3) \
 { \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Super" << #name " to (" << _arg1 << "," << _arg2 << "," << _arg3 << ")"); \
@@ -49,7 +49,7 @@ virtual void SetAndPropagateSuper##name (type _arg[3]) \
   this->SetAndPropagateSuper##name (_arg[0], _arg[1], _arg[2]);\
 }
 
-#define vtkSetAndPropagateMacro(name,type) \
+#define vtkSetAndPropagateMacro(name, type) \
 virtual void SetAndPropagateSuper##name (type _arg) \
 { \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Super" << #name " to (" << _arg << ")"); \

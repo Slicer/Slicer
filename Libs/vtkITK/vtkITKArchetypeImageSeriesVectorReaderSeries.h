@@ -22,7 +22,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderSeries : public vtkIT
 {
 public:
   static vtkITKArchetypeImageSeriesVectorReaderSeries* New();
-  vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderSeries,vtkITKArchetypeImageSeriesReader);
+  vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderSeries, vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static void ReadProgressCallback(itk::Object* obj,

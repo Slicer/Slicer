@@ -47,7 +47,7 @@
 };
 #endif
 
-vtkStandardNewMacro ( vtkDataIOManagerLogic );
+vtkStandardNewMacro(vtkDataIOManagerLogic);
 
 typedef std::pair< vtkDataTransfer*, vtkMRMLNode*> TransferNodePair;
 

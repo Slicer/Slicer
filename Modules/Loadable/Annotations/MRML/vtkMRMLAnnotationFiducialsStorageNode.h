@@ -16,7 +16,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStora
 {
   public:
   static vtkMRMLAnnotationFiducialsStorageNode* New();
-  vtkTypeMacro(vtkMRMLAnnotationFiducialsStorageNode,vtkMRMLAnnotationControlPointsStorageNode);
+  vtkTypeMacro(vtkMRMLAnnotationFiducialsStorageNode, vtkMRMLAnnotationControlPointsStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
 

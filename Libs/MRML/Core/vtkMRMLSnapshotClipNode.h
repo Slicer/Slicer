@@ -30,7 +30,7 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLSnapshotClipNode* New();
-  vtkTypeMacro(vtkMRMLSnapshotClipNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLSnapshotClipNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

@@ -52,7 +52,7 @@ class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkSlicerSegmentationsModuleLogic :
 {
 public:
   static vtkSlicerSegmentationsModuleLogic* New();
-  vtkTypeMacro(vtkSlicerSegmentationsModuleLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerSegmentationsModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Get segmentation node containing a segmentation object. As segmentation objects are out-of-MRML

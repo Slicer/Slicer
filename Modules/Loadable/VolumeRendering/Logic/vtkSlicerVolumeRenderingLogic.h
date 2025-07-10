@@ -59,7 +59,7 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_LOGIC_EXPORT vtkSlicerVolumeRenderingLog
 public:
 
   static vtkSlicerVolumeRenderingLogic* New();
-  vtkTypeMacro(vtkSlicerVolumeRenderingLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerVolumeRenderingLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Inform the logic and observers that a rendering method (class deriving

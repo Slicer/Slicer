@@ -35,7 +35,7 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 {
   public:
   static vtkMRMLTensorVolumeNode* New();
-  vtkTypeMacro(vtkMRMLTensorVolumeNode,vtkMRMLScalarVolumeNode);
+  vtkTypeMacro(vtkMRMLTensorVolumeNode, vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -68,8 +68,8 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
     { Superclass::UpdateReferenceID(oldID, newID); }
 
   ///
-  vtkGetMacro(Order,int);
-  vtkSetMacro(Order,int);
+  vtkGetMacro(Order, int);
+  vtkSetMacro(Order, int);
 
   ///
   /// Set the Measurement frame matrix from 3x3 array

@@ -38,7 +38,7 @@ class VTK_Teem_EXPORT vtkDiffusionTensorMathematics : public vtkThreadedImageAlg
 {
 public:
   static vtkDiffusionTensorMathematics* New();
-  vtkTypeMacro(vtkDiffusionTensorMathematics,vtkThreadedImageAlgorithm);
+  vtkTypeMacro(vtkDiffusionTensorMathematics, vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Operation options.
@@ -77,7 +77,7 @@ public:
   };
   ///
   /// Get the Operation to perform.
-  vtkGetMacro(Operation,int);
+  vtkGetMacro(Operation, int);
   vtkSetClampMacro(Operation,int, VTK_TENS_TRACE, VTK_TENS_MEAN_DIFFUSIVITY);
 
   ///
@@ -177,14 +177,14 @@ public:
   ///
   /// Specify scale factor to scale output (float) scalars by.
   /// This is not used when the output is RGBA (char color data).
-  vtkSetMacro(ScaleFactor,double);
-  vtkGetMacro(ScaleFactor,double);
+  vtkSetMacro(ScaleFactor, double);
+  vtkGetMacro(ScaleFactor, double);
 
   ///
   /// Turn on/off extraction of eigenvalues from tensor.
-  vtkSetMacro(ExtractEigenvalues,int);
-  vtkBooleanMacro(ExtractEigenvalues,int);
-  vtkGetMacro(ExtractEigenvalues,int);
+  vtkSetMacro(ExtractEigenvalues, int);
+  vtkBooleanMacro(ExtractEigenvalues, int);
+  vtkGetMacro(ExtractEigenvalues, int);
 
   /// Description
   /// This matrix is only used for ColorByOrientation.

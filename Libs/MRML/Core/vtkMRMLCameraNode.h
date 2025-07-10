@@ -30,7 +30,7 @@ class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLTransformableNode
 {
 public:
   static vtkMRMLCameraNode* New();
-  vtkTypeMacro(vtkMRMLCameraNode,vtkMRMLTransformableNode);
+  vtkTypeMacro(vtkMRMLCameraNode, vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------

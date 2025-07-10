@@ -38,7 +38,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerFactory : publ
 {
 public:
   static vtkMRMLDisplayableManagerFactory* New();
-  vtkTypeMacro(vtkMRMLDisplayableManagerFactory,vtkObject);
+  vtkTypeMacro(vtkMRMLDisplayableManagerFactory, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum

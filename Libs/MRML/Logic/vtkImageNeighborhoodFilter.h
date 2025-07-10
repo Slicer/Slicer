@@ -23,7 +23,7 @@ class VTK_MRML_LOGIC_EXPORT vtkImageNeighborhoodFilter : public vtkImageSpatialA
 {
 public:
   static vtkImageNeighborhoodFilter* New();
-  vtkTypeMacro(vtkImageNeighborhoodFilter,vtkImageSpatialAlgorithm);
+  vtkTypeMacro(vtkImageNeighborhoodFilter, vtkImageSpatialAlgorithm);
 
   ///
   /// Mask that defines area of interest in the neighborhood.

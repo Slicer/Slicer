@@ -14,7 +14,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationROINode
 {
 public:
   static vtkMRMLAnnotationROINode* New();
-  vtkTypeMacro(vtkMRMLAnnotationROINode,vtkMRMLAnnotationLinesNode);
+  vtkTypeMacro(vtkMRMLAnnotationROINode, vtkMRMLAnnotationLinesNode);
   /// Description:
   /// Just prints short summary
   void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1) override;

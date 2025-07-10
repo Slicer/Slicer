@@ -64,41 +64,41 @@ public:
 
   /// The Usual vtk class functions
   static vtkMRMLSliceLayerLogic* New();
-  vtkTypeMacro(vtkMRMLSliceLayerLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLSliceLayerLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// The volume node to operate on
-  vtkGetObjectMacro (VolumeNode, vtkMRMLVolumeNode);
+  vtkGetObjectMacro(VolumeNode, vtkMRMLVolumeNode);
   void SetVolumeNode (vtkMRMLVolumeNode* VolumeNode);
 
   ///
   /// The volume display node has the render properties of the volume
   /// - this node is set implicitly when the volume is set
   ///   and it is observed by this logic
-  vtkGetObjectMacro (VolumeDisplayNode, vtkMRMLVolumeDisplayNode);
-  vtkGetObjectMacro (VolumeDisplayNodeUVW, vtkMRMLVolumeDisplayNode);
+  vtkGetObjectMacro(VolumeDisplayNode, vtkMRMLVolumeDisplayNode);
+  vtkGetObjectMacro(VolumeDisplayNodeUVW, vtkMRMLVolumeDisplayNode);
 
   ///
   /// The slice node that defines the view
-  vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
+  vtkGetObjectMacro(SliceNode, vtkMRMLSliceNode);
   void SetSliceNode (vtkMRMLSliceNode* SliceNode);
 
   ///
   /// The image reslice or slice being used
-  vtkGetObjectMacro (Reslice, vtkImageReslice);
-  vtkGetObjectMacro (ResliceUVW, vtkImageReslice);
+  vtkGetObjectMacro(Reslice, vtkImageReslice);
+  vtkGetObjectMacro(ResliceUVW, vtkImageReslice);
 
   ///
   /// Select if this is a label layer or not (it currently determines if we use
   /// the label outline filter)
-  vtkGetMacro (IsLabelLayer, int);
-  vtkSetMacro (IsLabelLayer, int);
-  vtkBooleanMacro (IsLabelLayer, int);
+  vtkGetMacro(IsLabelLayer, int);
+  vtkSetMacro(IsLabelLayer, int);
+  vtkBooleanMacro(IsLabelLayer, int);
 
   ///
   /// The filter that turns the label map into an outline
-  vtkGetObjectMacro (LabelOutline, vtkImageLabelOutline);
+  vtkGetObjectMacro(LabelOutline, vtkImageLabelOutline);
 
   ///
   /// Get the output of the pipeline for this layer
@@ -127,7 +127,7 @@ public:
 
   ///
   /// The current reslice transform XYToIJK
-  vtkGetObjectMacro (XYToIJKTransform, vtkGeneralTransform);
+  vtkGetObjectMacro(XYToIJKTransform, vtkGeneralTransform);
 
   ///
   /// Get/set interpolation mode used in image reslice (when interpolation is enabled).

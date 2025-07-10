@@ -46,7 +46,7 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
 
   /// The Usual vtk class functions
   static vtkObservation* New();
-  vtkTypeMacro(vtkObservation,vtkObject);
+  vtkTypeMacro(vtkObservation, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
@@ -56,22 +56,22 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   ///   observers to these objects and will thereby know when they
   ///   are no longer valid
   virtual void SetEventBroker(vtkEventBroker* eventBroker);
-  vtkGetObjectMacro (EventBroker, vtkEventBroker);
-  vtkGetMacro (InEventQueue, int);
-  vtkSetMacro (InEventQueue, int);
-  vtkGetObjectMacro (ObservationCallbackCommand, vtkCallbackCommand);
-  vtkGetObjectMacro (Subject, vtkObject);
+  vtkGetObjectMacro(EventBroker, vtkEventBroker);
+  vtkGetMacro(InEventQueue, int);
+  vtkSetMacro(InEventQueue, int);
+  vtkGetObjectMacro(ObservationCallbackCommand, vtkCallbackCommand);
+  vtkGetObjectMacro(Subject, vtkObject);
   void AssignSubject(vtkObject* subject) {this->Subject = subject;};
   vtkGetMacro (Event, unsigned long);
   vtkSetMacro (Event, unsigned long);
   virtual void SetCallbackCommand(vtkCallbackCommand* callbackCommand);
-  vtkGetObjectMacro (CallbackCommand, vtkCallbackCommand);
-  vtkSetStringMacro (Script);
-  vtkGetStringMacro (Script);
-  vtkGetObjectMacro (Observer, vtkObject);
+  vtkGetObjectMacro(CallbackCommand, vtkCallbackCommand);
+  vtkSetStringMacro(Script);
+  vtkGetStringMacro(Script);
+  vtkGetObjectMacro(Observer, vtkObject);
   void AssignObserver(vtkObject* observer) {this->Observer = observer;};
-  vtkSetStringMacro (Comment);
-  vtkGetStringMacro (Comment);
+  vtkSetStringMacro(Comment);
+  vtkGetStringMacro(Comment);
   vtkSetMacro(Priority, float);
   vtkGetMacro(Priority, float);
 
@@ -85,10 +85,10 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   /// Description
   /// Elapsed time of last invocation and total elapsed time
   /// (in synchronous mode, elapsed time include children)
-  vtkGetMacro (LastElapsedTime, double);
-  vtkSetMacro (LastElapsedTime, double);
-  vtkGetMacro (TotalElapsedTime, double);
-  vtkSetMacro (TotalElapsedTime, double);
+  vtkGetMacro(LastElapsedTime, double);
+  vtkSetMacro(LastElapsedTime, double);
+  vtkGetMacro(TotalElapsedTime, double);
+  vtkSetMacro(TotalElapsedTime, double);
 
   struct CallType
   {

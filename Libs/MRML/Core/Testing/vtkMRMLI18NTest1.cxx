@@ -41,7 +41,7 @@ namespace
     void operator=(const vtkTestTranslator&) = delete;
   };
 
-  vtkStandardNewMacro(vtkTestTranslator );
+  vtkStandardNewMacro(vtkTestTranslator);
 }
 
 int vtkMRMLI18NTest1(int, char*[])

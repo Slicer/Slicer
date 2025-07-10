@@ -31,7 +31,7 @@
 #include <cassert>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLTestSliceViewDisplayableManager );
+vtkStandardNewMacro(vtkMRMLTestSliceViewDisplayableManager);
 
 //---------------------------------------------------------------------------
 int vtkMRMLTestSliceViewDisplayableManager::NodeAddedCount = 0;

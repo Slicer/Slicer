@@ -67,7 +67,7 @@ class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
 public:
 
   static vtkSlicerVolumesLogic* New();
-  vtkTypeMacro(vtkSlicerVolumesLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerVolumesLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   typedef vtkSlicerVolumesLogic Self;
 

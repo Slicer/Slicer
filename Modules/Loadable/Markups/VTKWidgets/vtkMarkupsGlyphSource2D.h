@@ -51,7 +51,7 @@ class vtkCellArray;
 class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkMarkupsGlyphSource2D : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeMacro(vtkMarkupsGlyphSource2D,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkMarkupsGlyphSource2D, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Construct a vertex glyph centered at the origin, scale 1.0, white in
@@ -59,53 +59,53 @@ public:
   static vtkMarkupsGlyphSource2D* New();
 
   /// Set the center of the glyph. By default the center is (0,0,0).
-  vtkSetVector3Macro(Center,double);
+  vtkSetVector3Macro(Center, double);
   vtkGetVectorMacro(Center,double,3);
 
   /// Set the scale of the glyph. Note that the glyphs are designed
   /// to fit in the (1,1) rectangle.
   vtkSetClampMacro(Scale,double,0.0,VTK_DOUBLE_MAX);
-  vtkGetMacro(Scale,double);
+  vtkGetMacro(Scale, double);
 
   /// Set the scale of optional portions of the glyph (e.g., the
   /// dash and cross is DashOn() and CrossOn()).
   vtkSetClampMacro(Scale2,double,0.0,VTK_DOUBLE_MAX);
-  vtkGetMacro(Scale2,double);
+  vtkGetMacro(Scale2, double);
 
   /// Set the color of the glyph. The default color is white.
-  vtkSetVector3Macro(Color,double);
+  vtkSetVector3Macro(Color, double);
   vtkGetVectorMacro(Color,double,3);
 
   /// Specify whether the glyph is filled (a polygon) or not (a
   /// closed polygon defined by line segments). This only applies
   /// to 2D closed glyphs.
-  vtkSetMacro(Filled,int);
-  vtkGetMacro(Filled,int);
-  vtkBooleanMacro(Filled,int);
+  vtkSetMacro(Filled, int);
+  vtkGetMacro(Filled, int);
+  vtkBooleanMacro(Filled, int);
 
   /// Specify whether a short line segment is drawn through the
   /// glyph. (This is in addition to the glyph. If the glyph type
   /// is set to "Dash" there is no need to enable this flag.)
-  vtkSetMacro(Dash,int);
-  vtkGetMacro(Dash,int);
-  vtkBooleanMacro(Dash,int);
+  vtkSetMacro(Dash, int);
+  vtkGetMacro(Dash, int);
+  vtkBooleanMacro(Dash, int);
 
   /// Specify whether a cross is drawn as part of the glyph. (This
   /// is in addition to the glyph. If the glyph type is set to
   /// "Cross" there is no need to enable this flag.)
-  vtkSetMacro(Cross,int);
-  vtkGetMacro(Cross,int);
-  vtkBooleanMacro(Cross,int);
+  vtkSetMacro(Cross, int);
+  vtkGetMacro(Cross, int);
+  vtkBooleanMacro(Cross, int);
 
   /// Specify an angle (in degrees) to rotate the glyph around
   /// the z-axis. Using this ivar, it is possible to generate
   /// rotated glyphs (e.g., crosses, arrows, etc.)
-  vtkSetMacro(RotationAngle,double);
-  vtkGetMacro(RotationAngle,double);
+  vtkSetMacro(RotationAngle, double);
+  vtkGetMacro(RotationAngle, double);
 
   /// Specify the type of glyph to generate.
   vtkSetClampMacro(GlyphType,int, GlyphNone, GlyphType_Last-1);
-  vtkGetMacro(GlyphType,int);
+  vtkGetMacro(GlyphType, int);
   void SetGlyphTypeToNone() {this->SetGlyphType(GlyphNone);}
   void SetGlyphTypeToStarBurst() {this->SetGlyphType(GlyphStarBurst);}
   void SetGlyphTypeToCross() {this->SetGlyphType(GlyphCross);}

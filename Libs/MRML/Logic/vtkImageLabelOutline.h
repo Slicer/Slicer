@@ -29,7 +29,7 @@ class VTK_MRML_LOGIC_EXPORT vtkImageLabelOutline : public vtkImageNeighborhoodFi
 {
 public:
   static vtkImageLabelOutline* New();
-  vtkTypeMacro(vtkImageLabelOutline,vtkImageNeighborhoodFilter);
+  vtkTypeMacro(vtkImageLabelOutline, vtkImageNeighborhoodFilter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///

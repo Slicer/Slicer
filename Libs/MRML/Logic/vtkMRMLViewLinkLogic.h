@@ -46,7 +46,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLViewLinkLogic : public vtkMRMLAbstractLogic
 public:
   /// The Usual VTK class functions
   static vtkMRMLViewLinkLogic* New();
-  vtkTypeMacro(vtkMRMLViewLinkLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLViewLinkLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:

@@ -55,7 +55,7 @@ class VTK_MRML_EXPORT vtkMRMLFolderDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   static vtkMRMLFolderDisplayNode* New();
-  vtkTypeMacro(vtkMRMLFolderDisplayNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLFolderDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

@@ -24,7 +24,7 @@ class VTK_Teem_EXPORT vtkTeemNRRDWriter : public vtkWriter
 {
 public:
 
-  vtkTypeMacro(vtkTeemNRRDWriter,vtkWriter);
+  vtkTypeMacro(vtkTeemNRRDWriter, vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkTeemNRRDWriter* New();
@@ -39,27 +39,27 @@ public:
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
 
-  vtkSetObjectMacro(DiffusionGradients,vtkDoubleArray);
-  vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
+  vtkSetObjectMacro(DiffusionGradients, vtkDoubleArray);
+  vtkGetObjectMacro(DiffusionGradients, vtkDoubleArray);
 
-  vtkSetObjectMacro(BValues,vtkDoubleArray);
-  vtkGetObjectMacro(BValues,vtkDoubleArray);
+  vtkSetObjectMacro(BValues, vtkDoubleArray);
+  vtkGetObjectMacro(BValues, vtkDoubleArray);
 
-  vtkSetObjectMacro(IJKToRASMatrix,vtkMatrix4x4);
-  vtkGetObjectMacro(IJKToRASMatrix,vtkMatrix4x4);
+  vtkSetObjectMacro(IJKToRASMatrix, vtkMatrix4x4);
+  vtkGetObjectMacro(IJKToRASMatrix, vtkMatrix4x4);
 
-  vtkSetObjectMacro(MeasurementFrameMatrix,vtkMatrix4x4);
-  vtkGetObjectMacro(MeasurementFrameMatrix,vtkMatrix4x4);
+  vtkSetObjectMacro(MeasurementFrameMatrix, vtkMatrix4x4);
+  vtkGetObjectMacro(MeasurementFrameMatrix, vtkMatrix4x4);
 
-  vtkSetMacro(UseCompression,int);
-  vtkGetMacro(UseCompression,int);
-  vtkBooleanMacro(UseCompression,int);
+  vtkSetMacro(UseCompression, int);
+  vtkGetMacro(UseCompression, int);
+  vtkBooleanMacro(UseCompression, int);
 
   vtkSetClampMacro(CompressionLevel, int, 0, 9);
   vtkGetMacro(CompressionLevel, int);
 
   vtkSetClampMacro(FileType,int,VTK_ASCII,VTK_BINARY);
-  vtkGetMacro(FileType,int);
+  vtkGetMacro(FileType, int);
   void SetFileTypeToASCII() {this->SetFileType(VTK_ASCII);};
   void SetFileTypeToBinary() {this->SetFileType(VTK_BINARY);};
 

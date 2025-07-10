@@ -27,7 +27,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode
 {
 public:
   static vtkMRMLVolumeHeaderlessStorageNode* New();
-  vtkTypeMacro(vtkMRMLVolumeHeaderlessStorageNode,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLVolumeHeaderlessStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

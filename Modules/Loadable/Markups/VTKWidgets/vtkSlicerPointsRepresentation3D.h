@@ -40,7 +40,7 @@ public:
   static vtkSlicerPointsRepresentation3D* New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerPointsRepresentation3D,vtkSlicerMarkupsWidgetRepresentation3D);
+  vtkTypeMacro(vtkSlicerPointsRepresentation3D, vtkSlicerMarkupsWidgetRepresentation3D);
 
 protected:
   vtkSlicerPointsRepresentation3D();

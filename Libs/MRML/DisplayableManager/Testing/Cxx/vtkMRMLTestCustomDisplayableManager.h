@@ -32,7 +32,7 @@ class vtkMRMLTestCustomDisplayableManager :
 
 public:
   static vtkMRMLTestCustomDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLTestCustomDisplayableManager,vtkMRMLAbstractDisplayableManager);
+  vtkTypeMacro(vtkMRMLTestCustomDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // For testing

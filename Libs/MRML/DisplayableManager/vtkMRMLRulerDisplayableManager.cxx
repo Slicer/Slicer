@@ -79,7 +79,7 @@ public:
 };
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLRulerDisplayableManager );
+vtkStandardNewMacro(vtkMRMLRulerDisplayableManager);
 
 //---------------------------------------------------------------------------
 class vtkMRMLRulerDisplayableManager::vtkInternal

@@ -42,7 +42,7 @@ class vtkScalarsToColors;
 class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
 {
 public:
-  vtkTypeMacro(vtkMRMLColorNode,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLColorNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override = 0;
@@ -74,7 +74,7 @@ public:
   /// Set Type to type, then build colors and set names
   virtual void SetType(int type);
   /// Get for Type
-  vtkGetMacro(Type,int);
+  vtkGetMacro(Type, int);
 
   /// Set the type to User or File, ones that don't require building
   /// data structures, just setting flags

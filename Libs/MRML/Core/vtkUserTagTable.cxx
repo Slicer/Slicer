@@ -9,7 +9,7 @@
 #include "vtkStringArray.h"
 #include <vtksys/SystemTools.hxx>
 
-vtkStandardNewMacro ( vtkUserTagTable );
+vtkStandardNewMacro(vtkUserTagTable);
 
 //----------------------------------------------------------------------------
 vtkUserTagTable::vtkUserTagTable()

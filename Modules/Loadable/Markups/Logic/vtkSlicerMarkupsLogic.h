@@ -68,7 +68,7 @@ public:
   };
 
   static vtkSlicerMarkupsLogic* New();
-  vtkTypeMacro(vtkSlicerMarkupsLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerMarkupsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void ProcessMRMLNodesEvents(vtkObject* caller,

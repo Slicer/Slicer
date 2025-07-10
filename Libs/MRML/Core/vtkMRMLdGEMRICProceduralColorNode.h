@@ -26,7 +26,7 @@ class VTK_MRML_EXPORT vtkMRMLdGEMRICProceduralColorNode : public vtkMRMLProcedur
 {
 public:
   static vtkMRMLdGEMRICProceduralColorNode* New();
-  vtkTypeMacro(vtkMRMLdGEMRICProceduralColorNode,vtkMRMLProceduralColorNode);
+  vtkTypeMacro(vtkMRMLdGEMRICProceduralColorNode, vtkMRMLProceduralColorNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------

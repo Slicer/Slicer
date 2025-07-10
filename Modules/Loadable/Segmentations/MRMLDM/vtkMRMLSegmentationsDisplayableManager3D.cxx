@@ -62,7 +62,7 @@
 #include <vtkTransformPolyDataFilter.h>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro ( vtkMRMLSegmentationsDisplayableManager3D );
+vtkStandardNewMacro(vtkMRMLSegmentationsDisplayableManager3D);
 
 //---------------------------------------------------------------------------
 class vtkMRMLSegmentationsDisplayableManager3D::vtkInternal

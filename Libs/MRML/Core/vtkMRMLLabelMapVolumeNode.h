@@ -37,7 +37,7 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeNode : public vtkMRMLScalarVolumeNode
 {
   public:
   static vtkMRMLLabelMapVolumeNode* New();
-  vtkTypeMacro(vtkMRMLLabelMapVolumeNode,vtkMRMLScalarVolumeNode);
+  vtkTypeMacro(vtkMRMLLabelMapVolumeNode, vtkMRMLScalarVolumeNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
 

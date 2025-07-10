@@ -91,9 +91,9 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   void SetGlyphTypeFromString(const char* glyphString);
 
   /// Get/Set for Symbol scale
-  ///  vtkSetMacro(GlyphScale,double);
+  ///  vtkSetMacro(GlyphScale, double);
   void SetGlyphScale(double scale);
-  vtkGetMacro(GlyphScale,double);
+  vtkGetMacro(GlyphScale, double);
 
   /// Create a backup of this node and attach it.
   void CreateBackup() override;

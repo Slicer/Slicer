@@ -44,7 +44,7 @@
 #include <cassert>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLVolumeGlyphSliceDisplayableManager );
+vtkStandardNewMacro(vtkMRMLVolumeGlyphSliceDisplayableManager);
 
 //---------------------------------------------------------------------------
 class vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal

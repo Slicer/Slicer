@@ -56,7 +56,7 @@ class VTK_Teem_EXPORT vtkTeemNRRDReader : public vtkMedicalImageReader2
 public:
   static vtkTeemNRRDReader* New();
 
-  vtkTypeMacro(vtkTeemNRRDReader,vtkMedicalImageReader2);
+  vtkTypeMacro(vtkTeemNRRDReader, vtkMedicalImageReader2);
 
   ///
   /// Returns a IJK to RAS transformation matrix
@@ -115,22 +115,22 @@ public:
   /// Report the status of the reading process.
   /// If this is different than zero, there have been some error
   /// parsing the complete header information.
-  vtkGetMacro(ReadStatus,int);
+  vtkGetMacro(ReadStatus, int);
 
   ///
   /// Point data field type
-  vtkSetMacro(PointDataType,int);
-  vtkGetMacro(PointDataType,int);
+  vtkSetMacro(PointDataType, int);
+  vtkGetMacro(PointDataType, int);
 
   ///
   /// Set the data type: int, float....
-  vtkSetMacro(DataType,int);
-  vtkGetMacro(DataType,int);
+  vtkSetMacro(DataType, int);
+  vtkGetMacro(DataType, int);
 
   ///
   //Number of components
-  vtkSetMacro(NumberOfComponents,int);
-  vtkGetMacro(NumberOfComponents,int);
+  vtkSetMacro(NumberOfComponents, int);
+  vtkGetMacro(NumberOfComponents, int);
 
 
   ///

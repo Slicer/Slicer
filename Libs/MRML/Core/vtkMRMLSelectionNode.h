@@ -35,7 +35,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 {
   public:
   static vtkMRMLSelectionNode* New();
-  vtkTypeMacro(vtkMRMLSelectionNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLSelectionNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -74,7 +74,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// The active placeNode is used to control what placeNode is being
   /// dropped by the user.
   /// \sa SetActivePlaceNodeClassName, SetReferenceActivePlaceNodeClassName
-  vtkGetStringMacro (ActivePlaceNodeClassName);
+  vtkGetStringMacro(ActivePlaceNodeClassName);
   /// Set the classname of the active placeNode type.
   /// Use SetReferenceActivePlaceNodeClassName if you need the mouse mode tool
   /// bar to update.

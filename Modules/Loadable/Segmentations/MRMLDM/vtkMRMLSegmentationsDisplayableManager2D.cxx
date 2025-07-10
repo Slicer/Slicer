@@ -79,7 +79,7 @@
 #include <sstream>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLSegmentationsDisplayableManager2D );
+vtkStandardNewMacro(vtkMRMLSegmentationsDisplayableManager2D);
 
 //---------------------------------------------------------------------------
 // Convert a linear transform that is almost exactly a permute transform

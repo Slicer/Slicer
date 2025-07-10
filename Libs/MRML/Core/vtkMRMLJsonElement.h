@@ -231,7 +231,7 @@ class VTK_MRML_EXPORT vtkMRMLJsonWriter : public vtkObject
 public:
 
   static vtkMRMLJsonWriter* New();
-  vtkTypeMacro(vtkMRMLJsonWriter,vtkObject);
+  vtkTypeMacro(vtkMRMLJsonWriter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// This method must be called before writing any properties to the output file.
