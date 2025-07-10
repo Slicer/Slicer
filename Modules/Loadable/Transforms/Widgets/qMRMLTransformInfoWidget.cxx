@@ -230,7 +230,7 @@ void qMRMLTransformInfoWidget::updateTransformVectorDisplayFromMRML()
         if (transformFromParent)
         {
           double* rasDisplacedTransformedBack = transformFromParent->TransformDoublePoint(rasDisplaced[0], rasDisplaced[1], rasDisplaced[2]);
-          static double INVERSE_COMPUTATION_ALLOWED_SQUARED_ERROR=0.1;
+          static double INVERSE_COMPUTATION_ALLOWED_SQUARED_ERROR = 0.1;
           bool inverseAccurate = vtkMath::Distance2BetweenPoints(ras,rasDisplacedTransformedBack)<INVERSE_COMPUTATION_ALLOWED_SQUARED_ERROR;
 
           d->ViewerDisplacementVectorRAS->setText(QString("Displacement vector  RAS: (%1, %2, %3)%4").

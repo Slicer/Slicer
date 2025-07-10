@@ -61,7 +61,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
   void ReadXMLAttributes(const char** atts);
   void WriteXML(ostream& of, int indent, vtkMRMLNode* xmlEncoderNode);
-  void DeepCopy(vtkSubjectHierarchyItem* item, bool copyChildren=true);
+  void DeepCopy(vtkSubjectHierarchyItem* item, bool copyChildren = true);
 
   typedef std::vector<vtkSmartPointer<vtkSubjectHierarchyItem>> ChildVector;
 
@@ -170,20 +170,20 @@ public:
   /// \param itemID ID to find
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
   /// \return Item if found, nullptr otherwise
-  vtkSubjectHierarchyItem* FindChildByID(vtkIdType itemID, bool recursive=true);
+  vtkSubjectHierarchyItem* FindChildByID(vtkIdType itemID, bool recursive = true);
   /// Find child by associated data MRML node
   /// \param dataNode Data MRML node to find
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
   /// \return Item if found, nullptr otherwise
-  vtkSubjectHierarchyItem* FindChildByDataNode(vtkMRMLNode* dataNode, bool recursive=true);
+  vtkSubjectHierarchyItem* FindChildByDataNode(vtkMRMLNode* dataNode, bool recursive = true);
   /// Find child by UID (exact match)
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
   /// \return Item if found, nullptr otherwise
-  vtkSubjectHierarchyItem* FindChildByUID(std::string uidName, std::string uidValue, bool recursive=true);
+  vtkSubjectHierarchyItem* FindChildByUID(std::string uidName, std::string uidValue, bool recursive = true);
   /// Find child by UID list (containing). For example find UID in instance UID list
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
   /// \return Item if found, nullptr otherwise
-  vtkSubjectHierarchyItem* FindChildByUIDList(std::string uidName, std::string uidValue, bool recursive=true);
+  vtkSubjectHierarchyItem* FindChildByUIDList(std::string uidName, std::string uidValue, bool recursive = true);
   /// Find children by name
   /// \param name Name (or part of a name) to find
   /// \param foundItemIDs List of found item IDs. Needs to be empty when passing as argument!
@@ -192,9 +192,9 @@ public:
   /// \param recursive Flag whether to find only direct children (false) or in the whole branch (true). True by default
   /// \return Item if found, nullptr otherwise
   void FindChildrenByName( std::string name, std::vector<vtkIdType> &foundItemIDs,
-                           bool contains=false, bool recursive=true );
+                           bool contains = false, bool recursive = true );
   /// Get data nodes (of a certain type) associated to items in the branch of this item
-  void GetDataNodesInBranch(vtkCollection* children, const char* childClass=nullptr);
+  void GetDataNodesInBranch(vtkCollection* children, const char* childClass = nullptr);
   /// Get IDs of all children in the branch recursively
   void GetAllChildren(std::vector<vtkIdType> &childIDs);
   /// Get list of IDs of all direct children of this item
@@ -3393,7 +3393,7 @@ bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(
   this->GetDataNodesInBranch(itemID, childTransformableNodes.GetPointer(), "vtkMRMLTransformableNode");
   childTransformableNodes->InitTraversal();
 
-  for (int childNodeIndex=0; childNodeIndex<childTransformableNodes->GetNumberOfItems(); ++childNodeIndex)
+  for (int childNodeIndex = 0; childNodeIndex<childTransformableNodes->GetNumberOfItems(); ++childNodeIndex)
   {
     vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(
       childTransformableNodes->GetItemAsObject(childNodeIndex) );

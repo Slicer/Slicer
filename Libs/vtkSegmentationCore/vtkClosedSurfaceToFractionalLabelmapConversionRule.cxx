@@ -127,7 +127,7 @@ bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkSegment* seg
   // Pad the extent of the fractional labelmap
   int extent[6] = {0,-1,0,-1,0,-1};
   fractionalLabelMap->GetExtent(extent);
-  for (int i=0; i<2; ++i)
+  for (int i = 0; i<2; ++i)
   {
     --extent[2*i];
     ++extent[2*i+1];

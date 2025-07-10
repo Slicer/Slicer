@@ -789,7 +789,7 @@ void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double 
   if ( !transformNode )
   {
     // node is not transformed, therefore RAS=local
-    for (int i=0; i<6; i++)
+    for (int i = 0; i<6; i++)
     {
       outputBounds_RAS[i]=inputBounds_Local[i];
     }
@@ -813,17 +813,17 @@ void vtkMRMLModelNode::TransformBoundsToRAS(double inputBounds_Local[6], double 
 
   // initialize bounds with point 0
   double* cornerPoint_RAS = transformLocalToRAS->TransformDoublePoint(cornerPoints_Local[0]);
-  for ( int i=0; i<3; i++)
+  for ( int i = 0; i<3; i++)
   {
     outputBounds_RAS[2*i]   = cornerPoint_RAS[i];
     outputBounds_RAS[2*i+1] = cornerPoint_RAS[i];
   }
 
   // update bounds with the rest of the points
-  for ( int i=1; i<8; i++)
+  for ( int i = 1; i<8; i++)
   {
     cornerPoint_RAS = transformLocalToRAS->TransformPoint( cornerPoints_Local[i] );
-    for (int n=0; n<3; n++)
+    for (int n = 0; n<3; n++)
     {
       if (cornerPoint_RAS[n] < outputBounds_RAS[2*n]) // min bound
       {
@@ -1004,7 +1004,7 @@ void vtkMRMLModelNode
 ::SetMeshToDisplayNodes()
 {
   int ndisp = this->GetNumberOfDisplayNodes();
-  for (int n=0; n<ndisp; n++)
+  for (int n = 0; n<ndisp; n++)
   {
     vtkMRMLModelDisplayNode* dnode = vtkMRMLModelDisplayNode::SafeDownCast(
       this->GetNthDisplayNode(n));

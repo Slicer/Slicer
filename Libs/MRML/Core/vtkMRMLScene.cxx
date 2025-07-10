@@ -288,7 +288,7 @@ vtkMRMLScene::~vtkMRMLScene()
     this->Nodes = nullptr;
   }
 
-  for (unsigned int n=0; n<this->RegisteredNodeClasses.size(); n++)
+  for (unsigned int n = 0; n<this->RegisteredNodeClasses.size(); n++)
   {
     this->RegisteredNodeClasses[n]->Delete();
   }
@@ -405,7 +405,7 @@ void vtkMRMLScene::RemoveAllNodes(bool removeSingletons)
   }
   for (std::deque<std::string>::iterator nodeIt=removeNodeIds.begin(); nodeIt!=removeNodeIds.end(); ++nodeIt)
   {
-    vtkMRMLNode* node=this->GetNodeByID(*nodeIt);
+    vtkMRMLNode* node = this->GetNodeByID(*nodeIt);
     if (node)
     {
       // node is still in the scene
@@ -425,7 +425,7 @@ void vtkMRMLScene::ResetNodes()
   {
     nodes.push_back(node);
   }
-  for (unsigned int i=0; i<nodes.size(); i++)
+  for (unsigned int i = 0; i<nodes.size(); i++)
   {
     nodes[i]->Reset(GetDefaultNodeByClass(nodes[i]->GetClassName()));
   }
@@ -495,7 +495,7 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
     return nullptr;
   }
   vtkMRMLNode* node = nullptr;
-  for (unsigned int i=0; i<RegisteredNodeClasses.size(); i++)
+  for (unsigned int i = 0; i<RegisteredNodeClasses.size(); i++)
   {
     if (!strcmp(RegisteredNodeClasses[i]->GetClassName(), className))
     {
@@ -621,7 +621,7 @@ void vtkMRMLScene::CopyRegisteredNodesToScene(vtkMRMLScene* scene)
       this->RegisteredAbstractNodeClassTypeDisplayNames.begin(),
       this->RegisteredAbstractNodeClassTypeDisplayNames.end());
     vtkMRMLNode* node = nullptr;
-    for (unsigned int i=0; i<this->RegisteredNodeClasses.size(); i++)
+    for (unsigned int i = 0; i<this->RegisteredNodeClasses.size(); i++)
     {
       node = this->RegisteredNodeClasses[i]->CreateNodeInstance();
       if (!scene->GetClassNameByTag(node->GetNodeTagName()))
@@ -664,7 +664,7 @@ const char* vtkMRMLScene::GetClassNameByTag(const char* tagName)
     vtkErrorMacro("GetClassNameByTag: tagname is null");
     return nullptr;
   }
-  for (unsigned int i=0; i<RegisteredNodeTags.size(); i++)
+  for (unsigned int i = 0; i<RegisteredNodeTags.size(); i++)
   {
     if (!strcmp(RegisteredNodeTags[i].c_str(), tagName))
     {
@@ -682,7 +682,7 @@ const char* vtkMRMLScene::GetTagByClassName(const char* className)
     vtkErrorMacro("GetTagByClassName: className is null");
     return nullptr;
   }
-  for (unsigned int i=0; i<this->RegisteredNodeClasses.size(); i++)
+  for (unsigned int i = 0; i<this->RegisteredNodeClasses.size(); i++)
   {
     if (!strcmp(this->RegisteredNodeClasses[i]->GetClassName(), className))
     {
@@ -695,7 +695,7 @@ const char* vtkMRMLScene::GetTagByClassName(const char* className)
 //------------------------------------------------------------------------------
 std::string vtkMRMLScene::GetTypeDisplayNameByClassName(std::string className)
 {
-  for (unsigned int i=0; i<this->RegisteredNodeClasses.size(); i++)
+  for (unsigned int i = 0; i<this->RegisteredNodeClasses.size(); i++)
   {
     if (className.compare(this->RegisteredNodeClasses[i]->GetClassName())==0)
     {
@@ -868,7 +868,7 @@ int vtkMRMLScene::Import(vtkMRMLMessageCollection* userMessagesInput/*=nullptr*/
     /// imported scene.
     /// Mark all the node IDs of the scene as reserved so the node ID
     /// generator doesn't choose them.
-    vtkMRMLNode* node=nullptr;
+    vtkMRMLNode* node = nullptr;
     vtkCollectionSimpleIterator it;
     for (loadedNodes->InitTraversal(it);
          (node = (vtkMRMLNode*)loadedNodes->GetNextItemAsObject(it)) ;)
@@ -1136,7 +1136,7 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
     }
   }
 
-  int indent=0;
+  int indent = 0;
 
   // this event is being detected by GUI to provide feedback during load
   // of data. But, commented out for now because CLI modules are using MRML
@@ -1171,7 +1171,7 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
     ss.str ( "" );
     int numc = this->GetUserTagTable()->GetNumberOfTags();
     const char* kwd, *val;
-    for (int i=0; i < numc; i++ )
+    for (int i = 0; i < numc; i++ )
     {
       kwd = this->GetUserTagTable()->GetTagAttribute(i);
       val = this->GetUserTagTable()->GetTagValue (i);
@@ -1593,7 +1593,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode* n)
         referringNodesIt != referringNodes.end();
         ++referringNodesIt)
       {
-        vtkMRMLNode* node=this->GetNodeByID(*referringNodesIt);
+        vtkMRMLNode* node = this->GetNodeByID(*referringNodesIt);
         if (node)
         {
           node->UpdateReferences();
@@ -1644,7 +1644,7 @@ void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode* n)
     // can happen when adding singleton nodes that are not really added but copied
     return;
   }
-  std::string nid=n->GetID();
+  std::string nid = n->GetID();
 
   NodeReferencesType::value_type::second_type::iterator referringNodesIt;
   for (NodeReferencesType::iterator referenceIt = this->NodeReferences.begin();
@@ -1672,7 +1672,7 @@ void vtkMRMLScene::RemoveUnusedNodeReferences()
       referringNodesIt != referenceIt->second.end();
       /*upon deletion the increment is done already, so don't increment here*/)
     {
-      vtkMRMLNode* currentReferencingNodePtr=this->GetNodeByID(*referringNodesIt);
+      vtkMRMLNode* currentReferencingNodePtr = this->GetNodeByID(*referringNodesIt);
       if (currentReferencingNodePtr==nullptr)
       {
         // ### Slicer 4.4: Simplify this logic when adding support for C++11 across all supported platform/compilers
@@ -1761,7 +1761,7 @@ void vtkMRMLScene::RemoveUnreferencedDisplayNodes()
     }
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
     int numDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
-    for (int n=0; n < numDisplayNodes; n++)
+    for (int n = 0; n < numDisplayNodes; n++)
     {
       vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(n);
       if (displayNode)
@@ -1834,7 +1834,7 @@ int vtkMRMLScene::GetNumberOfNodesByClass(const char* className)
     vtkErrorMacro("GetNumberOfNodesByClass: class name is null.");
     return 0;
   }
-  int num=0;
+  int num = 0;
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
   for (this->Nodes->InitTraversal(it);
@@ -2024,7 +2024,7 @@ vtkMRMLNode* vtkMRMLScene::GetNthNodeByClass(int n, const char* className)
     return nullptr;
   }
 
-  int num=0;
+  int num = 0;
   vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
   for (this->Nodes->InitTraversal(it);
@@ -2187,7 +2187,7 @@ vtkCollection* vtkMRMLScene::GetNodesByClassByName(const char* className, const 
   }
 
   vtkMRMLNode* node;
-  for (int n=0; n < this->Nodes->GetNumberOfItems(); n++)
+  for (int n = 0; n < this->Nodes->GetNumberOfItems(); n++)
   {
     node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(n);
     if (node->GetName() != nullptr && !strcmp(node->GetName(), name) && node->IsA(className))
@@ -2524,7 +2524,7 @@ std::string vtkMRMLScene::GetNthRegisteredAbstractNodeTypeDisplayName(int n)
 //------------------------------------------------------------------------------
 bool vtkMRMLScene::IsNodeClassRegistered(const std::string& className)
 {
-  for (int index=0; index < this->GetNumberOfRegisteredNodeClasses(); ++index)
+  for (int index = 0; index < this->GetNumberOfRegisteredNodeClasses(); ++index)
   {
     vtkMRMLNode* registeredNodeClass = this->GetNthRegisteredNodeClass(index);
     if (!registeredNodeClass)
@@ -2855,7 +2855,7 @@ void vtkMRMLScene::SaveStateForUndo (vtkCollection* nodes)
 
   int nnodes = nodes->GetNumberOfItems();
 
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
     vtkMRMLNode* node  = vtkMRMLNode::SafeDownCast(nodes->GetItemAsObject(n));
     if (node && node->GetUndoEnabled())
@@ -2898,7 +2898,7 @@ void vtkMRMLScene::PushIntoUndoStack()
 
   int nnodes = currentScene->GetNumberOfItems();
 
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
     vtkMRMLNode* node  = vtkMRMLNode::SafeDownCast(currentScene->GetItemAsObject(n));
     if (node && node->GetUndoEnabled())
@@ -2926,7 +2926,7 @@ void vtkMRMLScene::PushIntoRedoStack()
 
   int nnodes = currentScene->GetNumberOfItems();
 
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
     vtkMRMLNode* node  = vtkMRMLNode::SafeDownCast(currentScene->GetItemAsObject(n));
     if (node && node->GetUndoEnabled())
@@ -2957,7 +2957,7 @@ void vtkMRMLScene::CopyNodeInUndoStack(vtkMRMLNode* copyNode)
 
   vtkCollection* undoScene = this->UndoStack.back();
   int nnodes = undoScene->GetNumberOfItems();
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
     vtkMRMLNode* node  = vtkMRMLNode::SafeDownCast(undoScene->GetItemAsObject(n));
     if (node == copyNode)
@@ -2986,7 +2986,7 @@ void vtkMRMLScene::CopyNodeInRedoStack(vtkMRMLNode* copyNode)
   }
   vtkCollection* undoScene = this->RedoStack.back();
   int nnodes = undoScene->GetNumberOfItems();
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
     vtkMRMLNode* node  = vtkMRMLNode::SafeDownCast(undoScene->GetItemAsObject(n));
     if (node == copyNode)
@@ -3488,7 +3488,7 @@ void vtkMRMLScene::GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<
     vtkErrorMacro("GetReferencingNodes: null node or referenced node");
     return;
   }
-  const char* referencedId=referencedNode->GetID();
+  const char* referencedId = referencedNode->GetID();
 
   NodeReferencesType::iterator referencedNodeIdIt=this->NodeReferences.find(referencedId);
 
@@ -3501,7 +3501,7 @@ void vtkMRMLScene::GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<
     referringNodesIt != referencedNodeIdIt->second.end();
     ++referringNodesIt)
   {
-    vtkMRMLNode* node=this->GetNodeByID(*referringNodesIt);
+    vtkMRMLNode* node = this->GetNodeByID(*referringNodesIt);
     if (node)
     {
       referencingNodes.push_back(node);
@@ -3917,7 +3917,7 @@ SetStorableNodesModifiedSinceRead(vtkCollection* storableNodes)
 //-----------------------------------------------------------------------------
 int vtkMRMLScene::GetNumberOfNodeReferences()
 {
-  int totalNumberOfReferences=0;
+  int totalNumberOfReferences = 0;
   for (NodeReferencesType::iterator referenceIt = this->NodeReferences.begin();
     referenceIt != this->NodeReferences.end();
     ++referenceIt)

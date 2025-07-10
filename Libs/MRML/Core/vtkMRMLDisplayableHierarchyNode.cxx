@@ -272,7 +272,7 @@ void vtkMRMLDisplayableHierarchyNode::RemoveChildrenNodes()
   }
 
   std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
-  for (unsigned int i=0; i<children.size(); i++)
+  for (unsigned int i = 0; i<children.size(); i++)
   {
     vtkMRMLDisplayableHierarchyNode* child = vtkMRMLDisplayableHierarchyNode::SafeDownCast(children[i]);
     if (child)
@@ -302,7 +302,7 @@ void vtkMRMLDisplayableHierarchyNode::RemoveAllChildrenNodes()
   }
 
   std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
-  for (unsigned int i=0; i<children.size(); i++)
+  for (unsigned int i = 0; i<children.size(); i++)
   {
     vtkMRMLDisplayableHierarchyNode* child = vtkMRMLDisplayableHierarchyNode::SafeDownCast(children[i]);
     if (child)

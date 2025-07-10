@@ -178,7 +178,7 @@ public:
   /// \param segmentIDs List of IDs of segments to include in the merged labelmap. If empty or missing, then all segments are included
   /// \param computeEffectiveExtent Specifies if the extent of a segment is the whole extent or the effective extent (where voxel values >0 found)
   void DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
-    const std::vector<std::string>& segmentIDs = std::vector<std::string>(), bool computeEffectiveExtent=false, bool addPadding=false);
+    const std::vector<std::string>& segmentIDs = std::vector<std::string>(), bool computeEffectiveExtent = false, bool addPadding = false);
 #endif // __VTK_WRAP__
 
   /// Determine common labelmap geometry for whole segmentation, for python compatibility.
@@ -186,7 +186,7 @@ public:
 
   /// Determine common labelmap extent for whole segmentation, for python compatibility.
   void DetermineCommonLabelmapExtent(int commonGeometryExtent[6], vtkOrientedImageData* commonGeometryImage,
-    vtkStringArray* segmentIds, bool computeEffectiveExtent=false, bool addPadding=false);
+    vtkStringArray* segmentIds, bool computeEffectiveExtent = false, bool addPadding = false);
 
   /// Updates image geometry (origin, spacing, axis directions, extents) based on labelmaps stored in the segmentation.
   /// Does not allocate memory (to allow just retrieving geometry information without using memory).
@@ -291,7 +291,7 @@ public:
   /// \param removeFromSource If true, then delete segment from source segmentation after copying.
   ///                        Default value is false.
   /// \return Success flag
-  bool CopySegmentFromSegmentation(vtkSegmentation* fromSegmentation, std::string segmentId, bool removeFromSource=false);
+  bool CopySegmentFromSegmentation(vtkSegmentation* fromSegmentation, std::string segmentId, bool removeFromSource = false);
 
 // Representation related methods
 
@@ -368,14 +368,14 @@ public:
   /// \param sharedSegmentIds Output segment IDs
   /// \param includeOriginalSegmentId If true, the original segment ID is included in the output
   void GetSegmentIDsSharingRepresentation(std::string originalSegmentId, std::string representationName,
-    std::vector<std::string>& sharedSegmentIds, bool includeOriginalSegmentId=true);
+    std::vector<std::string>& sharedSegmentIds, bool includeOriginalSegmentId = true);
 
   /// Gets the segment IDs that are shared with the specified segment binary labelmap
   /// \param originalSegmentId ID of the specified segment
   /// \param sharedSegmentIds Output segment IDs
   /// \param includeOriginalSegmentId If true, the original segment ID is included in the output
   void GetSegmentIDsSharingBinaryLabelmapRepresentation(std::string originalSegmentId, std::vector<std::string> &sharedSegmentIds,
-    bool includeOriginalSegmentId=true);
+    bool includeOriginalSegmentId = true);
 
   /// Gets a unique shared labelmap value for the specified segment
   /// Compares all of the other segments that are shared with the specified segmentId to determine the a unique
@@ -429,7 +429,7 @@ public:
   /// Reduce the binary labelmap representation to as few layers as possible.
   /// \param forceToSingleLayer If false, then the layers will not be overwritten by each other, if true then the layers can
   ///   overwrite each other, but the result is guaranteed to have one layer
-  void CollapseBinaryLabelmaps(bool forceToSingleLayer=false);
+  void CollapseBinaryLabelmaps(bool forceToSingleLayer = false);
 
   // Conversion related methods
 
@@ -443,7 +443,7 @@ public:
   /// \param targetRepresentationName Name of the representation to create
   /// \param alwaysConvert If true, then conversion takes place even if target representation exists. False by default.
   /// \return true on success
-  bool CreateRepresentation(const std::string& targetRepresentationName, bool alwaysConvert=false);
+  bool CreateRepresentation(const std::string& targetRepresentationName, bool alwaysConvert = false);
 
   /// Generate or update a representation in all segments, using the specified conversion
   /// path and parameters.

@@ -44,7 +44,7 @@ vtkStandardNewMacro(vtkITKImageWriter);
 // helper function
 template <class TPixelType, int Dimension>
 void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* fileName,
-                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
+                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix = nullptr)
 {
   typedef itk::Image<TPixelType, Dimension> ImageType;
 
@@ -65,11 +65,11 @@ void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* f
   direction.SetIdentity();
 
   double mag[3] = {0.0};
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     // normalize vectors
     mag[i] = 0;
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       mag[i] += ijkToRasMatrix->GetElement(i,j) * ijkToRasMatrix->GetElement(i,j);
     }
@@ -80,9 +80,9 @@ void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* f
     mag[i] = sqrt(mag[i]);
   }
 
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       ijkToRasMatrix->SetElement(i, j, ijkToRasMatrix->GetElement(i,j) / mag[i]);
     }
@@ -98,10 +98,10 @@ void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* f
   vtkMatrix4x4* ijkToLpsMatrix = vtkMatrix4x4::New();
   vtkMatrix4x4::Multiply4x4(ijkToRasMatrix, rasToLpsMatrix, ijkToLpsMatrix);
 
-  for (int i=0; i<Dimension; i++)
+  for (int i = 0; i<Dimension; i++)
   {
     origin[i] = ijkToRasMatrix->GetElement(3,i);
-    for (int j=0; j<Dimension; j++)
+    for (int j = 0; j<Dimension; j++)
     {
       if (Dimension == 2)
       {
@@ -216,7 +216,7 @@ void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* f
 //----------------------------------------------------------------------------
 template <class TPixelType>
 void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* fileName,
-                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
+                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix = nullptr)
 {
   std::string fileExtension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(fileName) );
   bool saveAsJPEG = (fileExtension == ".jpg") || (fileExtension == ".jpeg");
@@ -581,7 +581,7 @@ void vtkITKImageWriter::Write()
         vtkFloatArray* in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
         float inValue[9];
         float outValue[6];
-        for (int i=0; i<out->GetNumberOfTuples(); i++)
+        for (int i = 0; i<out->GetNumberOfTuples(); i++)
         {
           in->GetTypedTuple(i, inValue);
           //ITK expect tensors saved in upper-triangular format

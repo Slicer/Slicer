@@ -237,7 +237,7 @@ public:
                                        vtkMRMLVolumeNode* volumeNode,
                                        vtkMRMLVolumePropertyNode* propNode = nullptr,
                                        vtkMRMLNode* roiNode = nullptr,
-                                       bool createROI=true);
+                                       bool createROI = true);
 
   ///  Create cropping ROI node, if does not exist yet
   vtkMRMLDisplayableNode* CreateROINode(vtkMRMLVolumeRenderingDisplayNode* displayNode);
@@ -301,7 +301,7 @@ public:
   /// \param appendToEnd controls if the preset is added before or after existing presets.
   /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()
   /// \return Copy of the preset node that is added to the preset scene, nullptr on failure.
-  vtkMRMLVolumePropertyNode* AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon = nullptr, bool appendToEnd=false);
+  vtkMRMLVolumePropertyNode* AddPreset(vtkMRMLVolumePropertyNode* preset, vtkImageData* icon = nullptr, bool appendToEnd = false);
 
   /// Removes a preset and its associated icon (if specified) from the preset scene.
   /// \sa GetPresetsScene(), GetIconVolumeReferenceRole()

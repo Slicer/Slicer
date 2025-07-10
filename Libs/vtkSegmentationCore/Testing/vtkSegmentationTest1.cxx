@@ -331,11 +331,11 @@ void CreateCubeLabelmap(vtkOrientedImageData* imageData)
   identityImageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
   unsigned char* imagePtr = (unsigned char*)identityImageData->GetScalarPointer();
-  for (unsigned int x=0; x<size; ++x)
+  for (unsigned int x = 0; x<size; ++x)
   {
-    for (unsigned int y=0; y<size; ++y)
+    for (unsigned int y = 0; y<size; ++y)
     {
-      for (unsigned int z=0; z<size; ++z)
+      for (unsigned int z = 0; z<size; ++z)
       {
         unsigned char* currentPtr = imagePtr + z*size*size + y*size + x;
         if (x>100/4 && x<size*3/4 && y>100/4 && y<size*3/4 && z>100/4 && z<size*3/4)

@@ -131,7 +131,7 @@ public:
   /// If onlyIfPropagateVolumeSelectionAllowed is true then field of view will be reset on
   /// only those slices where propagate volume selection is allowed
   /// If resetOrientation is true then slice orientation can be modified during function call
-  void FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed=false, bool resetOrientation=true);
+  void FitSliceToAll(bool onlyIfPropagateVolumeSelectionAllowed = false, bool resetOrientation = true);
 
   /// Fit all the visible volumes into their views.
   /// This is a more advanced version of FitSliceToAll, which takes into account that in case of
@@ -140,7 +140,7 @@ public:
   /// If onlyIfPropagateVolumeSelectionAllowed is true then field of view will be reset on
   /// only those slices where propagate volume selection is allowed
   /// If resetOrientation is true then slice orientation can be modified during function call
-  void FitSliceToBackground(bool onlyIfPropagateVolumeSelectionAllowed=false, bool resetOrientation=true);
+  void FitSliceToBackground(bool onlyIfPropagateVolumeSelectionAllowed = false, bool resetOrientation = true);
 
   /// Propagate selected table in the SelectionNode to table view nodes.
   void PropagateTableSelection();
@@ -172,12 +172,12 @@ public:
   /// \sa qSlicerCoreIOManager::saveScene
   /// If screenShot is not null, use it as the screen shot for a scene view
   /// Returns false if the save failed
-  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot = nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
+  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Open the file into a temp directory and load the scene file
   /// inside.  Note that the first mrml file found in the extracted
   /// directory will be used.
-  bool OpenSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory, vtkMRMLMessageCollection* userMessages=nullptr);
+  bool OpenSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Unpack the file into a temp directory and return the scene file
   /// inside.  Note that the first mrml file found in the extracted
@@ -311,7 +311,7 @@ protected:
 
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
-  void FitSliceToContent(bool all, bool onlyIfPropagateVolumeSelectionAllowed=false, bool resetOrientation=true);
+  void FitSliceToContent(bool all, bool onlyIfPropagateVolumeSelectionAllowed = false, bool resetOrientation = true);
 
   void OnMRMLSceneStartBatchProcess() override;
   void OnMRMLSceneEndBatchProcess() override;

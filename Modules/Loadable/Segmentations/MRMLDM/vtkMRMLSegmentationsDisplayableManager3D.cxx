@@ -230,7 +230,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::AddSegmentationNode(
 
   this->AddObservations(node);
 
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i<nnodes; i++)
   {
     vtkMRMLSegmentationDisplayNode* dnode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
     if ( this->UseDisplayNode(dnode) )
@@ -825,7 +825,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::FindFirstPickedDispl
   }
 
   vtkProp3DCollection* props = this->CellPicker->GetProp3Ds();
-  for (int propIndex=0; propIndex<props->GetNumberOfItems(); ++propIndex)
+  for (int propIndex = 0; propIndex<props->GetNumberOfItems(); ++propIndex)
   {
     vtkProp3D* pickedProp = vtkProp3D::SafeDownCast(props->GetItemAsObject(propIndex));
     if (!pickedProp)
@@ -996,7 +996,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::UpdateFromMRML()
   vtkMRMLSegmentationNode* segmentationNode = nullptr;
   std::vector<vtkMRMLNode*> segmentationNodes;
   int numOfSegmentationNodes = scene ? scene->GetNodesByClass("vtkMRMLSegmentationNode", segmentationNodes) : 0;
-  for (int i=0; i<numOfSegmentationNodes; i++)
+  for (int i = 0; i<numOfSegmentationNodes; i++)
   {
     segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(segmentationNodes[i]);
     if (segmentationNode && this->Internal->UseDisplayableNode(segmentationNode))

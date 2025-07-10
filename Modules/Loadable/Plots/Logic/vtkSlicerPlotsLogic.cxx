@@ -133,7 +133,7 @@ vtkMRMLPlotChartNode* vtkSlicerPlotsLogic::GetFirstPlotChartForSeries(vtkMRMLPlo
   }
   std::vector<vtkMRMLNode*> chartNodes;
   unsigned int numberOfNodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
-  for (unsigned int chartNodeIndex=0; chartNodeIndex<numberOfNodes; chartNodeIndex++)
+  for (unsigned int chartNodeIndex = 0; chartNodeIndex<numberOfNodes; chartNodeIndex++)
   {
     vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(chartNodes[chartNodeIndex]);
     if (!chartNode)

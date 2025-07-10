@@ -124,7 +124,7 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
   int numDisplayNodes = this->GetNumberOfNodeReferences(
     this->GetDisplayNodeReferenceRole());
 
-  for (int i=0; i<numDisplayNodes; i++)
+  for (int i = 0; i<numDisplayNodes; i++)
   {
     const char* id = this->GetNthNodeReferenceID(
       this->GetDisplayNodeReferenceRole(), i);
@@ -206,7 +206,7 @@ void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject* caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
-  for (int i=0; i<numDisplayNodes; i++)
+  for (int i = 0; i<numDisplayNodes; i++)
   {
     vtkMRMLDisplayNode* dnode = this->GetNthDisplayNode(i);
     if (dnode != nullptr && dnode == vtkMRMLDisplayNode::SafeDownCast(caller))
@@ -244,7 +244,7 @@ int vtkMRMLDisplayableNode::GetDisplayVisibility()
     return 2;
   }
 
-  for (int i=1; i<ndnodes; i++)
+  for (int i = 1; i<ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
     if (displayNode && displayNode->IsShowModeDefault()
@@ -265,7 +265,7 @@ int vtkMRMLDisplayableNode::GetDisplayClassVisibility(const char* nodeClass)
   }
   int ndnodes = this->GetNumberOfDisplayNodes();
   int visible = 0;
-  for (int i=0; i<ndnodes; i++)
+  for (int i = 0; i<ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
     if ( displayNode && displayNode->IsShowModeDefault()
@@ -286,7 +286,7 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
   }
 
   int ndnodes = this->GetNumberOfDisplayNodes();
-  for (int i=0; i<ndnodes; i++)
+  for (int i = 0; i<ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
     if (displayNode && displayNode->IsShowModeDefault())
@@ -310,7 +310,7 @@ void vtkMRMLDisplayableNode::SetDisplayClassVisibility(const char* nodeClass, in
   }
 
   int ndnodes = this->GetNumberOfDisplayNodes();
-  for (int i=0; i<ndnodes; i++)
+  for (int i = 0; i<ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
     if (displayNode && displayNode->IsShowModeDefault()

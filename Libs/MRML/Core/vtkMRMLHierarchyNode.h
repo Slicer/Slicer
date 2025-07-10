@@ -143,7 +143,7 @@ public:
 
   /// Find all associated children nodes of a specified class in the hierarchy
   /// if childClass is nullptr returns all associated children nodes.
-  virtual void GetAssociatedChildrenNodes(vtkCollection* children, const char* childClass=nullptr);
+  virtual void GetAssociatedChildrenNodes(vtkCollection* children, const char* childClass = nullptr);
 
   ///
   /// Get Hierarchy node for a given associated node

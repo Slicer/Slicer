@@ -196,7 +196,7 @@ public:
   /// The modules can typically be instantiated before the application
   /// is initialized (module manager, IO manager...). Most of the
   /// initialization must be done in qSlicerAbstractCoreModule::setup()
-  qSlicerAbstractCoreModule(QObject* parent=nullptr);
+  qSlicerAbstractCoreModule(QObject* parent = nullptr);
   ~qSlicerAbstractCoreModule() override;
 
   virtual void printAdditionalInfo();

@@ -236,7 +236,7 @@ void vtkSlicerSequencesLogic::UpdateAllProxyNodes()
 {
   double updateStartTimeSec = vtkTimerLog::GetUniversalTime();
 
-  vtkMRMLScene* scene=this->GetMRMLScene();
+  vtkMRMLScene* scene = this->GetMRMLScene();
   if (scene==nullptr)
   {
     vtkErrorMacro("vtkSlicerSequencesLogic::UpdateAllProxyNodes failed: scene is invalid");
@@ -311,7 +311,7 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
     return;
   }
 
-  vtkMRMLScene* scene=browserNode->GetScene();
+  vtkMRMLScene* scene = browserNode->GetScene();
   if (scene==nullptr)
   {
     vtkErrorMacro("vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences failed: scene is invalid");
@@ -320,7 +320,7 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
 
   this->UpdateProxyNodesFromSequencesInProgress.insert(browserNode);
 
-  int selectedItemNumber=browserNode->GetSelectedItemNumber();
+  int selectedItemNumber = browserNode->GetSelectedItemNumber();
   std::string indexValue("0");
   if (selectedItemNumber >= 0 && selectedItemNumber < browserNode->GetNumberOfItems())
   {
@@ -473,7 +473,7 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
     }
 
     // Get the current target output node
-    vtkMRMLNode* targetProxyNode=browserNode->GetProxyNode(synchronizedSequenceNode);
+    vtkMRMLNode* targetProxyNode = browserNode->GetProxyNode(synchronizedSequenceNode);
     if (targetProxyNode!=nullptr)
     {
       // a proxy node with the requested role exists already

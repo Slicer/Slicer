@@ -52,9 +52,9 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
     this->GetMatrixTransformToParent(matrix.GetPointer());
 
     std::stringstream ss;
-    for (int row=0; row<4; row++)
+    for (int row = 0; row<4; row++)
     {
-      for (int col=0; col<4; col++)
+      for (int col = 0; col<4; col++)
       {
         ss << matrix->GetElement(row, col);
         if (!(row==3 && col==3))
@@ -92,9 +92,9 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for (int row=0; row<4; row++)
+      for (int row = 0; row<4; row++)
       {
-        for (int col=0; col<4; col++)
+        for (int col = 0; col<4; col++)
         {
           ss >> val;
           matrix->SetElement(row, col, val);
@@ -108,9 +108,9 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for (int row=0; row<4; row++)
+      for (int row = 0; row<4; row++)
       {
-        for (int col=0; col<4; col++)
+        for (int col = 0; col<4; col++)
         {
           ss >> val;
           matrix->SetElement(row, col, val);
@@ -155,9 +155,9 @@ void vtkMRMLLinearTransformNode::PrintSelf(ostream& os, vtkIndent indent)
     this->GetMatrixTransformToParent(toParentMatrix.GetPointer());
 
     os << indent << "MatrixTransformToParent: " << "\n";
-    for (int row=0; row<4; row++)
+    for (int row = 0; row<4; row++)
     {
-      for (int col=0; col<4; col++)
+      for (int col = 0; col<4; col++)
       {
         os << toParentMatrix->GetElement(row, col);
         if (!(row==3 && col==3))

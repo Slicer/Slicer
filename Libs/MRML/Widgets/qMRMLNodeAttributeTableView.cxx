@@ -236,7 +236,7 @@ QString qMRMLNodeAttributeTableView::generateNewAttributeName() const
 
   QString newAttributeNameBase("NewAttributeName");
   QString newAttributeName(newAttributeNameBase);
-  int i=0;
+  int i = 0;
   while (d->InspectedNode->GetAttribute(newAttributeName.toUtf8().constData()))
   {
     newAttributeName = QString("%1%2").arg(newAttributeNameBase).arg(++i);
@@ -315,7 +315,7 @@ QStringList qMRMLNodeAttributeTableView::attributes() const
   Q_D(const qMRMLNodeAttributeTableView);
 
   QStringList attributeList;
-  for (int i=0; i<d->NodeAttributesTable->rowCount(); ++i)
+  for (int i = 0; i<d->NodeAttributesTable->rowCount(); ++i)
   {
     attributeList << d->NodeAttributesTable->item(i,0)->text();
   }

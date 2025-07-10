@@ -37,7 +37,7 @@ void CreateThinPlateSplineVtk(vtkThinPlateSplineTransform* tpsTransform, vtkPoin
 itkThinPlateSplineType::Pointer CreateThinPlateSplineItk(vtkPoints* sourceLandmarks, vtkPoints* targetLandmarks)
 {
   PointSetType::Pointer sourceLandmarksItk = PointSetType::New();
-  for (int i=0; i<sourceLandmarks->GetNumberOfPoints(); i++)
+  for (int i = 0; i<sourceLandmarks->GetNumberOfPoints(); i++)
   {
     double pos[3]={0};
     sourceLandmarks->GetPoint(i, pos);
@@ -48,7 +48,7 @@ itkThinPlateSplineType::Pointer CreateThinPlateSplineItk(vtkPoints* sourceLandma
     sourceLandmarksItk->GetPoints()->InsertElement(i,posItk);
   }
   PointSetType::Pointer targetLandmarksItk = PointSetType::New();
-  for (int i=0; i<targetLandmarks->GetNumberOfPoints(); i++)
+  for (int i = 0; i<targetLandmarks->GetNumberOfPoints(); i++)
   {
     double pos[3]={0};
     targetLandmarks->GetPoint(i, pos);
@@ -150,8 +150,8 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkThinPlateSplineTrans
 {
   // Jacobian estimated using central difference
   double jacobianEstimation[3][3];
-  double eps=1e-3; // step size
-  for (int row=0; row<3; row++)
+  double eps = 1e-3; // step size
+  for (int row = 0; row<3; row++)
   {
     double xMinus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
     double xPlus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
@@ -161,7 +161,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkThinPlateSplineTrans
     tpsVtk->TransformPoint( xMinus1, xMinus1Transformed);
     double xPlus1Transformed[3]={0};
     tpsVtk->TransformPoint( xPlus1, xPlus1Transformed);
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
       jacobianEstimation[col][row] = (xPlus1Transformed[col]-xMinus1Transformed[col])/(2*eps);
     }
@@ -179,11 +179,11 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkThinPlateSplineTrans
   }
 
   double maxDifference = 0;
-  for (int row=0; row<3; row++)
+  for (int row = 0; row<3; row++)
   {
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
-      double difference=fabs(jacobianVtk[row][col]-jacobianEstimation[row][col]);
+      double difference = fabs(jacobianVtk[row][col]-jacobianEstimation[row][col]);
       if (difference>maxDifference)
       {
         maxDifference = difference;
@@ -207,7 +207,7 @@ double getInverseErrorVtk(const double inputPoint[3], vtkThinPlateSplineTransfor
   tpsVtk->TransformPoint( inputPoint, outputPoint);
 
   double inversePoint[3] = { -1, -1, -1 };
-  vtkAbstractTransform* inverseTpsVtk=tpsVtk->GetInverse();
+  vtkAbstractTransform* inverseTpsVtk = tpsVtk->GetInverse();
   inverseTpsVtk->TransformPoint( outputPoint, inversePoint );
 
   itk::Point<double,3> inputPointVtk( inputPoint );
@@ -254,7 +254,7 @@ int vtkThinPlateSplineTransformTest1(int, char*[])
     for (int x = 0; x < dims[0]; x++)
     {
       double landmarkPosition[3]={0};
-      for (int i=0; i<3; i++)
+      for (int i = 0; i<3; i++)
       {
         landmarkPosition[i] = origin[i]+x*spacing[0]*direction[i][0]+y*spacing[1]*direction[i][1]+z*spacing[2]*direction[i][2];
       }
@@ -271,24 +271,24 @@ int vtkThinPlateSplineTransformTest1(int, char*[])
   AddLandmarkDisplacement(targetLandmarks.GetPointer(), 0, 0, 6, 50, 70, -60, dims);
 
   // Create an ITK ThinPlateSpline transform. It'll serve as the reference.
-  itkThinPlateSplineType::Pointer tpsItk=CreateThinPlateSplineItk(sourceLandmarks.GetPointer(), targetLandmarks.GetPointer());
+  itkThinPlateSplineType::Pointer tpsItk = CreateThinPlateSplineItk(sourceLandmarks.GetPointer(), targetLandmarks.GetPointer());
 
   // Create a VTK ThinPlateSpline transform with the same parameters.
   vtkNew<vtkThinPlateSplineTransform> tpsVtk;
   CreateThinPlateSplineVtk(tpsVtk.GetPointer(), sourceLandmarks.GetPointer(), targetLandmarks.GetPointer());
 
-  int numberOfPointsTested=0;
-  int numberOfItkVtkPointMismatches=0;
-  int numberOfSingleDoubleVtkPointMismatches=0;
-  int numberOfDerivativeMismatches=0;
-  int numberOfInverseMismatches=0;
+  int numberOfPointsTested = 0;
+  int numberOfItkVtkPointMismatches = 0;
+  int numberOfSingleDoubleVtkPointMismatches = 0;
+  int numberOfDerivativeMismatches = 0;
+  int numberOfInverseMismatches = 0;
 
   // We take samples in the tps region (first node + 2 < node < last node - 1)
   // because the boundaries are handled differently in ITK and VTK (in ITK there is an
   // abrupt change to 0, while in VTK it is smoothly converges to zero)
-  const int numberOfSamplesPerAxis=25;
-  const double startMargin=2;
-  const double endMargin=1;
+  const int numberOfSamplesPerAxis = 25;
+  const double startMargin = 2;
+  const double endMargin = 1;
   const double startI = startMargin;
   const double endI = (dims[0]-1)-endMargin;
   const double startJ = startMargin;
@@ -298,11 +298,11 @@ int vtkThinPlateSplineTransformTest1(int, char*[])
   const double incI=(endI-startI)/numberOfSamplesPerAxis;
   const double incJ=(endJ-startJ)/numberOfSamplesPerAxis;
   const double incK=(endK-startK)/numberOfSamplesPerAxis;
-  for (double k=startK+incK; k<=endK-incK; k+=incK)
+  for (double k = startK+incK; k<=endK-incK; k+=incK)
   {
-    for (double j=startJ+incJ; j<=endJ-incJ; j+=incJ)
+    for (double j = startJ+incJ; j<=endJ-incJ; j+=incJ)
     {
-      for (double i=startI+incI; i<=endI-incI; i+=incI)
+      for (double i = startI+incI; i<=endI-incI; i+=incI)
       {
         numberOfPointsTested++;
         double inputPoint[3];

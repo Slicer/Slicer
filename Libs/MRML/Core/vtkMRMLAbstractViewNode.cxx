@@ -55,7 +55,7 @@ vtkMRMLAbstractViewNode::vtkMRMLAbstractViewNode()
   this->SetHideFromEditors(0);
 
   this->AxisLabels = vtkSmartPointer<vtkStringArray>::New();
-  for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
+  for (int i = 0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
   {
     this->AxisLabels->InsertNextValue(DEFAULT_AXIS_LABELS[i]);
   }
@@ -109,7 +109,7 @@ void vtkMRMLAbstractViewNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLEndMacro();
 
   of << " AxisLabels=\"";
-  for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
+  for (int i = 0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
   {
     of << (i>0?";":"") << this->GetAxisLabel(i);
   }
@@ -248,7 +248,7 @@ void vtkMRMLAbstractViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   vtkMRMLCopyEndMacro();
 
   vtkMRMLAbstractViewNode* node = vtkMRMLAbstractViewNode::SafeDownCast(anode);
-  for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
+  for (int i = 0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
   {
     this->SetAxisLabel(i,node->GetAxisLabel(i));
   }
@@ -297,7 +297,7 @@ void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintEndMacro();
 
   os << indent << "AxisLabels: ";
-  for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
+  for (int i = 0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
   {
     os << (i>0?";":"") << this->GetAxisLabel(i);
   }
@@ -375,7 +375,7 @@ int vtkMRMLAbstractViewNode::GetOrientationMarkerTypeFromString(const char* name
     // invalid name
     return -1;
   }
-  for (int i=0; i<OrientationMarkerType_Last; i++)
+  for (int i = 0; i<OrientationMarkerType_Last; i++)
   {
     if (strcmp(name, GetOrientationMarkerTypeAsString(i))==0)
     {
@@ -409,7 +409,7 @@ int vtkMRMLAbstractViewNode::GetOrientationMarkerSizeFromString(const char* name
     // invalid name
     return -1;
   }
-  for (int i=0; i<OrientationMarkerSize_Last; i++)
+  for (int i = 0; i<OrientationMarkerSize_Last; i++)
   {
     if (strcmp(name, GetOrientationMarkerSizeAsString(i))==0)
     {
@@ -443,7 +443,7 @@ int vtkMRMLAbstractViewNode::GetRulerTypeFromString(const char* name)
     // invalid name
     return -1;
   }
-  for (int i=0; i<RulerType_Last; i++)
+  for (int i = 0; i<RulerType_Last; i++)
   {
     if (strcmp(name, GetRulerTypeAsString(i))==0)
     {
@@ -477,7 +477,7 @@ int vtkMRMLAbstractViewNode::GetRulerColorFromString(const char* name)
     // invalid name
     return -1;
   }
-  for (int i=0; i<RulerColor_Last; i++)
+  for (int i = 0; i<RulerColor_Last; i++)
   {
     if (strcmp(name, GetRulerColorAsString(i))==0)
     {

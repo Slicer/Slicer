@@ -536,7 +536,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
         // MRML references available in SH
         vtkSmartPointer<vtkCollection> referencedNodes;
         referencedNodes.TakeReference(shNode->GetScene()->GetReferencedNodes(shNode->GetItemDataNode(currentItemID)));
-        for (int index=0; index!=referencedNodes->GetNumberOfItems(); ++index)
+        for (int index = 0; index!=referencedNodes->GetNumberOfItems(); ++index)
         {
           vtkIdType nodeItemID = shNode->GetItemByDataNode(vtkMRMLNode::SafeDownCast(referencedNodes->GetItemAsObject(index)));
           if (nodeItemID && (std::find(referencedItems.begin(), referencedItems.end(), nodeItemID) == referencedItems.end()))

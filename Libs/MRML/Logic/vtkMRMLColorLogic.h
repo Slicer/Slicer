@@ -191,7 +191,7 @@ public:
   /// If userType is set to false (default) then the node type is set to "File" (constant, non-editable),
   /// otherwise it is set to "User" (user-editable).
   /// \sa CreateFileNode, CreateProceduralFileNode
-  vtkMRMLColorNode* LoadColorFile(const char* fileName, const char* nodeName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr, bool userType=false);
+  vtkMRMLColorNode* LoadColorFile(const char* fileName, const char* nodeName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr, bool userType = false);
 
   /// Get/Set the user defined paths where to look for extra color files
   vtkGetStringMacro(UserColorFilePaths);

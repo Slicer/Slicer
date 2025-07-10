@@ -322,7 +322,7 @@ void FibHeap::Consolidate()
   // Initialize the consolidation detection array
   const int Dn = 1 + 8 * sizeof(long);
   FibHeapNode *A[Dn]; // 1+lg(n)
-  for (int i=0; i < Dn; i++)
+  for (int i = 0; i < Dn; i++)
   {
     A[i] = nullptr;
   }

@@ -119,7 +119,7 @@ public:
   };
 
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterProxyModel(QObject* parent=nullptr);
+  qMRMLSortFilterProxyModel(QObject* parent = nullptr);
   ~qMRMLSortFilterProxyModel() override;
 
   /// Retrieve the associated MRML scene

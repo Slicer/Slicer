@@ -218,7 +218,7 @@ public:
   ///   be used to calculate the range (e.g. of a slider) that operates in slice space
   /// If useVoxelCenter is set to false (default) then bounds of voxel sides are returned
   /// (otherwise then bounds of voxels centers are returned).
-  void GetVolumeSliceBounds(vtkMRMLVolumeNode* volumeNode, double sliceBounds[6], bool useVoxelCenter=false);
+  void GetVolumeSliceBounds(vtkMRMLVolumeNode* volumeNode, double sliceBounds[6], bool useVoxelCenter = false);
 
   /// adjust the node's field of view to match the extent of the volume
   void FitSliceToVolume(vtkMRMLVolumeNode* volumeNode, int width, int height);
@@ -284,7 +284,7 @@ public:
   /// - returns first non-null layer
   /// If useVoxelCenter is set to false (default) then bounds of voxel sides are returned
   /// (otherwise then bounds of voxels centers are returned).
-  void GetLowestVolumeSliceBounds(double sliceBounds[6], bool useVoxelCenter=false);
+  void GetLowestVolumeSliceBounds(double sliceBounds[6], bool useVoxelCenter = false);
 
   /// @{
   /// Get/Set the current distance from the origin to the slice plane

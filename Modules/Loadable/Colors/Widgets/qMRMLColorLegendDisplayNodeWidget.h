@@ -44,7 +44,7 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorLegendDisplayNodeWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  explicit qMRMLColorLegendDisplayNodeWidget(QWidget* parent=0);
+  explicit qMRMLColorLegendDisplayNodeWidget(QWidget* parent = 0);
   ~qMRMLColorLegendDisplayNodeWidget() override;
 
 public slots:

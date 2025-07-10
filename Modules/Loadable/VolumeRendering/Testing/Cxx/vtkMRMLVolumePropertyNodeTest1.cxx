@@ -146,7 +146,7 @@ int piecewiseFunctionFromString()
   vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(s, function);
   CHECK_INT(function->GetSize(), 5);
 
-  for (int i=0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i)
   {
     double node[4];
     function->GetNodeValue(i, node);

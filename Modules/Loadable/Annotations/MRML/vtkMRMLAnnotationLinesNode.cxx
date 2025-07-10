@@ -233,7 +233,7 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
 vtkMRMLAnnotationLineDisplayNode* vtkMRMLAnnotationLinesNode::GetAnnotationLineDisplayNode()
 {
   int nnodes = this->GetNumberOfDisplayNodes();
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
     vtkMRMLAnnotationLineDisplayNode* node = vtkMRMLAnnotationLineDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
 
@@ -480,7 +480,7 @@ int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtId
       }
 
       int addCells = id - cellLine->GetNumberOfCells();
-      for (int i=0; i< addCells; i++)
+      for (int i = 0; i< addCells; i++)
       {
       cellLine->InsertNextCell(0,nullptr);
       }

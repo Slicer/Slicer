@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerVolumesModule(QObject* parent=nullptr);
+  qSlicerVolumesModule(QObject* parent = nullptr);
   ~qSlicerVolumesModule() override;
 
   QString helpText()const override;

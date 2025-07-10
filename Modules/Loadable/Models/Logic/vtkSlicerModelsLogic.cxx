@@ -43,10 +43,10 @@
 vtkStandardNewMacro(vtkSlicerModelsLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerModelsLogic::vtkSlicerModelsLogic()=default;
+vtkSlicerModelsLogic::vtkSlicerModelsLogic() = default;
 
 //----------------------------------------------------------------------------
-vtkSlicerModelsLogic::~vtkSlicerModelsLogic()=default;
+vtkSlicerModelsLogic::~vtkSlicerModelsLogic() = default;
 
 //----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
@@ -244,7 +244,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix,
 
   int nfiles = dir.GetNumberOfFiles();
   int res = 1;
-  for (int i=0; i<nfiles; i++) {
+  for (int i = 0; i<nfiles; i++) {
     const char* filename = dir.GetFile(i);
     std::string sname = filename;
     if (!itksys::SystemTools::FileIsDirectory(filename))
@@ -493,7 +493,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     {
       vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
       int ndnodes = modelNode->GetNumberOfDisplayNodes();
-      for (int i=0; i<ndnodes; i++)
+      for (int i = 0; i<ndnodes; i++)
       {
         vtkMRMLDisplayNode* displayNode = modelNode->GetNthDisplayNode(i);
         if (displayNode && displayNode->IsShowModeDefault())

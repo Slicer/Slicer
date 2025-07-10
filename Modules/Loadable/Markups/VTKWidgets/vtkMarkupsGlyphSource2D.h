@@ -144,7 +144,7 @@ public:
 
 protected:
   vtkMarkupsGlyphSource2D();
-  ~vtkMarkupsGlyphSource2D() override  = default;
+  ~vtkMarkupsGlyphSource2D() override = default;
 
   int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
@@ -167,7 +167,7 @@ protected:
   void CreateDash(vtkPoints* pts, vtkCellArray* lines,
                   vtkCellArray* polys, vtkUnsignedCharArray* colors, double scale = 1.0);
   void CreateCross(vtkPoints* pts, vtkCellArray* lines,
-                   vtkCellArray* polys, vtkUnsignedCharArray* colors, double scale = 1.0, bool dot=false);
+                   vtkCellArray* polys, vtkUnsignedCharArray* colors, double scale = 1.0, bool dot = false);
   void CreateThickCross(vtkPoints* pts, vtkCellArray* lines,
                         vtkCellArray* polys, vtkUnsignedCharArray* colors);
   void CreateTriangle(vtkPoints* pts, vtkCellArray* lines,

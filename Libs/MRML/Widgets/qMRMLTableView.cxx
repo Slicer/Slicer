@@ -300,7 +300,7 @@ void qMRMLTableView::copySelection()
   QItemSelectionModel* selection = selectionModel();
   QString textToCopy;
   bool firstLine = true;
-  for (int rowIndex=0; rowIndex<mrmlModel->rowCount(); rowIndex++)
+  for (int rowIndex = 0; rowIndex<mrmlModel->rowCount(); rowIndex++)
   {
     if (!selection->rowIntersectsSelection(rowIndex, QModelIndex()))
     {
@@ -316,7 +316,7 @@ void qMRMLTableView::copySelection()
       textToCopy.append('\n');
     }
     bool firstItemInLine = true;
-    for (int columnIndex=0; columnIndex<mrmlModel->columnCount(); columnIndex++)
+    for (int columnIndex = 0; columnIndex<mrmlModel->columnCount(); columnIndex++)
     {
       if (!selection->columnIntersectsSelection(columnIndex, QModelIndex()))
       {

@@ -148,7 +148,7 @@ void class::Set##name (const char* _arg)            \
 //
 #ifndef vtkMRMLCopyContentMacro
 #define vtkMRMLCopyContentMacro(thisClassName) \
-    void CopyContent(vtkMRMLNode* node, bool deepCopy=true) override; \
+    void CopyContent(vtkMRMLNode* node, bool deepCopy = true) override; \
     bool HasCopyContent() const override \
     { \
     return strcmp(#thisClassName, this->GetClassNameInternal()) == 0; \
@@ -260,7 +260,7 @@ public:
   /// \note
   /// If a class implements this then make sure CopyContent and HasCopyContent methods are implemented
   /// in all parent classes by adding vtkMRMLCopyContentMacro(ClassName) to the class headers.
-  virtual void CopyContent(vtkMRMLNode* node, bool deepCopy=true);
+  virtual void CopyContent(vtkMRMLNode* node, bool deepCopy = true);
 
   /// \brief Copy the references of the node into this.
   ///
@@ -686,8 +686,8 @@ public:
   /// event in the ContentModifiedEvents list of the observed node is invoked.
   ///
   /// \sa GetReferenceNodeFromMRMLAttributeName()
-  void AddNodeReferenceRole(const char* referenceRole, const char* mrmlAttributeName=nullptr,
-    vtkIntArray* events=nullptr, bool observeContentModifiedEvents=false);
+  void AddNodeReferenceRole(const char* referenceRole, const char* mrmlAttributeName = nullptr,
+    vtkIntArray* events = nullptr, bool observeContentModifiedEvents = false);
 
   /// \brief Set a reference to a node with specified nodeID from this node for a specific \a referenceRole.
   vtkMRMLNode* SetNodeReferenceID(const char* referenceRole, const char* referencedNodeID);
@@ -709,7 +709,7 @@ public:
   /// list of the observed node is invoked. If observeContentModifiedEvents is set to
   /// ContentModifiedObserveUndefined then the behavior defined in the node reference role will be used.
   vtkMRMLNode* SetAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID,
-    vtkIntArray* events=nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
+    vtkIntArray* events = nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
 
   /// \brief Add and observe a reference node from this node for a specific
   /// \a referenceRole.
@@ -721,7 +721,7 @@ public:
   /// list of the observed node is invoked. If observeContentModifiedEvents is set to
   /// ContentModifiedObserveUndefined then the behavior defined in the node reference role will be used.
   vtkMRMLNode* AddAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID,
-    vtkIntArray* events=nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
+    vtkIntArray* events = nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
 
   /// \brief Set and observe the Nth node ID for a specific reference role.
   ///
@@ -745,7 +745,7 @@ public:
   /// \sa AddAndObserveNodeReferenceID(const char*)
   /// \sa RemoveNthNodeReferenceID(int)
   vtkMRMLNode* SetAndObserveNthNodeReferenceID(const char* referenceRole, int n, const char* referencedNodeID,
-    vtkIntArray* events=nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
+    vtkIntArray* events = nullptr, ContentModifiedObserveType observeContentModifiedEvents=ContentModifiedObserveUndefined);
 
   /// Convenience method that removes the Nth node ID from the list.
   void RemoveNthNodeReferenceID(const char* referenceRole, int n);

@@ -162,7 +162,7 @@ public:
   /// \return The most suitable plugins if found, empty list otherwise
   QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForAddingNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID );
+    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID );
 
   /// Returns the plugin that can handle an item the best for reparenting it inside the subject hierarchy
   /// The best plugins are found based on the confidence numbers they return for the inputs.
@@ -244,7 +244,7 @@ private:
   static void cleanup();
 
 private:
-  qSlicerSubjectHierarchyPluginHandler(QObject* parent=nullptr);
+  qSlicerSubjectHierarchyPluginHandler(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyPluginHandler() override;
 
   Q_DISABLE_COPY(qSlicerSubjectHierarchyPluginHandler);

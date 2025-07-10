@@ -145,7 +145,7 @@ vtkSlicerMarkupsWidgetRepresentation::vtkSlicerMarkupsWidgetRepresentation()
 //----------------------------------------------------------------------
 vtkSlicerMarkupsWidgetRepresentation::~vtkSlicerMarkupsWidgetRepresentation()
 {
-  for (int i=0; i<NumberOfControlPointTypes; i++)
+  for (int i = 0; i<NumberOfControlPointTypes; i++)
   {
     delete this->ControlPoints[i];
     this->ControlPoints[i] = nullptr;

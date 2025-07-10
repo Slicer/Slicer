@@ -551,9 +551,9 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     // Find that offset vector in RAS space
     vtkNew<vtkMatrix3x3> xyToRas3x3;
     xyToRas3x3->Identity();
-    for (int i=0; i<3; i++)
+    for (int i = 0; i<3; i++)
     {
-      for (int j=0; j<3; j++)
+      for (int j = 0; j<3; j++)
       {
         double val = xyToRAS->GetElement(i, j);
         xyToRas3x3->SetElement(i, j, val);

@@ -59,7 +59,7 @@ public:
 
   bool isVisible(qSlicerCLIProgressBar::Visibility visibility)const;
 
-  QString getLastNLines(const std::string& str, int numberOfLines, unsigned int maxLength=5000);
+  QString getLastNLines(const std::string& str, int numberOfLines, unsigned int maxLength = 5000);
 
 private:
 

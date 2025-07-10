@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerModelsModule(QObject* parent=nullptr);
+  explicit qSlicerModelsModule(QObject* parent = nullptr);
   ~qSlicerModelsModule() override;
 
   qSlicerGetTitleMacro(tr("Models"));

@@ -83,7 +83,7 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
   //
   // Quality
   //
-  for (int qualityIndex=0; qualityIndex<vtkMRMLViewNode::VolumeRenderingQuality_Last; qualityIndex++)
+  for (int qualityIndex = 0; qualityIndex<vtkMRMLViewNode::VolumeRenderingQuality_Last; qualityIndex++)
   {
     this->QualityControlComboBox->addItem(vtkMRMLViewNode::GetVolumeRenderingQualityAsString(qualityIndex));
   }

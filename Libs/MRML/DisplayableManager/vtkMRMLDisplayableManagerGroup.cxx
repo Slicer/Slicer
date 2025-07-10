@@ -208,7 +208,7 @@ void vtkMRMLDisplayableManagerGroup::Initialize(vtkMRMLDisplayableManagerFactory
   this->SetAndObserveDisplayableManagerFactory(factory);
   this->SetRenderer(renderer);
 
-  for (int i=0; i < factory->GetRegisteredDisplayableManagerCount(); ++i)
+  for (int i = 0; i < factory->GetRegisteredDisplayableManagerCount(); ++i)
   {
     std::string classOrScriptName = factory->GetRegisteredDisplayableManagerName(i);
     vtkSmartPointer<vtkMRMLAbstractDisplayableManager> displayableManager;

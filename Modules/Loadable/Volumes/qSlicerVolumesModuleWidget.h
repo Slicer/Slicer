@@ -37,7 +37,7 @@ class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerVolumesModuleWidget(QWidget* parent=nullptr);
+  qSlicerVolumesModuleWidget(QWidget* parent = nullptr);
   ~qSlicerVolumesModuleWidget() override;
 
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;

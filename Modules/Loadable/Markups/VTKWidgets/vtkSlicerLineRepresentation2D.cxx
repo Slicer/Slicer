@@ -202,7 +202,7 @@ void vtkSlicerLineRepresentation2D::ReleaseGraphicsResources(vtkWindow* win)
 //----------------------------------------------------------------------
 int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count +=  this->LineActor->RenderOverlay(viewport);
@@ -214,7 +214,7 @@ int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 //-----------------------------------------------------------------------------
 int vtkSlicerLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count += this->LineActor->RenderOpaqueGeometry(viewport);
@@ -226,7 +226,7 @@ int vtkSlicerLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 //-----------------------------------------------------------------------------
 int vtkSlicerLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);

@@ -85,7 +85,7 @@ public:
   ///   of target nodes are hardened before applying the specified transform. If false, then the already applied parent transforms are
   ///   transformed with the specified transform (Note: this latter approach may result in unwanted transformations of other nodes)
   static void TransformBranch(
-    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, vtkMRMLTransformNode* transformNode, bool hardenExistingTransforms=true);
+    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, vtkMRMLTransformNode* transformNode, bool hardenExistingTransforms = true);
 
   /// Harden transform on subject hierarchy item and on all children, recursively
   /// \param shNode Subject hierarchy where item can be found
@@ -97,7 +97,7 @@ public:
   /// \param name Custom name. If omitted, then default postfix is added from \sa node
   /// \return Clone subject hierarchy node
   static vtkIdType CloneSubjectHierarchyItem(
-    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, const char* name=nullptr );
+    vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemID, const char* name = nullptr );
 
   /// Convenience function to get subject hierarchy node from the logic
   vtkMRMLSubjectHierarchyNode* GetSubjectHierarchyNode();

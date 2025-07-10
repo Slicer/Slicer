@@ -141,7 +141,7 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
 
       double newVal[3] = {0,0,0};
 
-      for (int i=0; i<3; i++)
+      for (int i = 0; i<3; i++)
       {
         ss >> val;
         newVal[i] = val;
@@ -157,7 +157,7 @@ void vtkMRMLAnnotationROINode::ReadXMLAttributes(const char** atts)
 
       double newVal[3] = {0,0,0};
 
-      for (int i=0; i<3; i++)
+      for (int i = 0; i<3; i++)
       {
         ss >> val;
         newVal[i] = val;

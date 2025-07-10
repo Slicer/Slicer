@@ -160,7 +160,7 @@ public:
   /// \sa SetMRMLSceneInternal()
   /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
   void SetAndObserveMRMLScene(vtkMRMLScene* newScene);
-  void SetAndObserveMRMLSceneEvents(vtkMRMLScene* newScene, vtkIntArray* events, vtkFloatArray* priorities=nullptr);
+  void SetAndObserveMRMLSceneEvents(vtkMRMLScene* newScene, vtkIntArray* events, vtkFloatArray* priorities = nullptr);
   /// @endcond
 
 protected:
@@ -340,7 +340,7 @@ protected:
   /// \sa SetMRMLSceneInternal()
   void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene* newScene,
                                             vtkIntArray* events,
-                                            vtkFloatArray* priorities=nullptr);
+                                            vtkFloatArray* priorities = nullptr);
 
   /// Register node classes into the MRML scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derived classes.

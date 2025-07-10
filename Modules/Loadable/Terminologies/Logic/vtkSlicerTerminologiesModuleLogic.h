@@ -50,7 +50,7 @@ public:
     public:
       CodeIdentifier()
         { };
-      CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning=std::string())
+      CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning = std::string())
         : CodingSchemeDesignator(codingSchemeDesignator)
         , CodeValue(codeValue)
         , CodeMeaning(codeMeaning)
@@ -146,8 +146,8 @@ public:
     std::string regionCodingSchemeDesignator, std::string regionCodeValue,
     std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
     std::vector<std::string> preferredColorNodeNames,
-    vtkIntArray* foundColorIndices=nullptr,
-    vtkIntArray* foundPreferredColorNodeIndices=nullptr);
+    vtkIntArray* foundColorIndices = nullptr,
+    vtkIntArray* foundPreferredColorNodeIndices = nullptr);
 
   /// Return collection of vtkSlicerTerminologyEntry objects designated by the given codes.
   /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
@@ -159,7 +159,7 @@ public:
     std::string typeCodingSchemeDesignator, std::string typeCodeValue,
     std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
     std::vector<std::string> preferredTerminologyNames,
-    vtkCollection* foundEntries=nullptr,
+    vtkCollection* foundEntries = nullptr,
     vtkIntArray* foundPreferredTerminologyNameIndices =nullptr);
 
   /// Find the best fitting color node or terminology
@@ -196,7 +196,7 @@ public:
     std::string regionCodingSchemeDesignator, std::string regionCodeValue,
     std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
     std::vector<std::string> preferredRegionContextNames,
-    vtkCollection* foundEntries=nullptr);
+    vtkCollection* foundEntries = nullptr);
 
   /// Get a category with given name from a terminology
   /// \param category Output argument containing the details of the found category if any (if return value is true)
@@ -394,7 +394,7 @@ public:
     std::string anatomicRegionCodingSchemeDesignator, std::string anatomicRegionCodeValue,
     std::string anatomicRegionModifierCodingSchemeDesignator, std::string anatomicRegionModifierCodeValue,
     std::vector<std::string> preferredAnatomicContextNames,
-    vtkCollection* foundEntries=nullptr);
+    vtkCollection* foundEntries = nullptr);
   /// \deprecated Use GetRegionsInRegionContext instead.
   bool GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions);
   /// \deprecated Use GetNumberOfRegionsInRegionContext instead.

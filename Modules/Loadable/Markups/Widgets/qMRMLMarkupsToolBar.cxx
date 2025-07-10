@@ -482,7 +482,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
     if (markupsNode && markupsLogic->GetCreateMarkupsPushButton(markupName.c_str()))
     {
       bool buttonExists = false;
-      for (int index=0; index< this->layout()->count(); index++)
+      for (int index = 0; index< this->layout()->count(); index++)
       {
         std::string buttonName = this->layout()->itemAt(index)->widget()->objectName().toStdString();
         if (buttonName == /*no tr*/ "Create" + markupName + "PushButton")

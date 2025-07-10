@@ -626,7 +626,7 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
       && this->GetMRMLScene()->GetNodeByID( this->SliceModelNode->GetID() ) != nullptr
       && this->SliceModelNode->GetPolyData() != nullptr )
   {
-    int* dims1=nullptr;
+    int* dims1 = nullptr;
     int dims[3];
     vtkSmartPointer<vtkMatrix4x4> textureToRAS;
     // If the slice resolution mode is not set to match the 2D view, use UVW dimensions
@@ -2514,7 +2514,7 @@ std::vector<vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
       if (displayNode)
       {
         std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> dnodes  = displayNode->GetSliceGlyphDisplayNodes(volumeNode);
-        for (unsigned int n=0; n<dnodes.size(); n++)
+        for (unsigned int n = 0; n<dnodes.size(); n++)
         {
           vtkMRMLGlyphableVolumeSliceDisplayNode* dnode = dnodes[n];
           if (layerLogic->GetSliceNode()
@@ -2537,7 +2537,7 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolume
   {
     return SLICE_INDEX_NO_VOLUME;
   }
-  vtkImageData* volumeImage=nullptr;
+  vtkImageData* volumeImage = nullptr;
   if ( !(volumeImage = volumeNode->GetImageData()) )
   {
     return SLICE_INDEX_NO_VOLUME;
@@ -2569,8 +2569,8 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolume
 
   // Find an axis normal that has the same orientation as the slice normal
   double axisDirection_RAS[3]={0,0,0};
-  int axisIndex=0;
-  double volumeSpacing=1.0; // spacing along axisIndex
+  int axisIndex = 0;
+  double volumeSpacing = 1.0; // spacing along axisIndex
   for (axisIndex=0; axisIndex<3; axisIndex++)
   {
     axisDirection_RAS[0]=ijkToRAS->GetElement(0,axisIndex);
@@ -2579,7 +2579,7 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolume
     volumeSpacing=vtkMath::Norm(axisDirection_RAS); // spacing along axisIndex
     vtkMath::Normalize(sliceNormal_RAS);
     vtkMath::Normalize(axisDirection_RAS);
-    double dotProd=vtkMath::Dot(sliceNormal_RAS, axisDirection_RAS);
+    double dotProd = vtkMath::Dot(sliceNormal_RAS, axisDirection_RAS);
     // Due to numerical inaccuracies the dot product of two normalized vectors
     // can be slightly bigger than 1 (and acos cannot be computed) - fix that.
     if (dotProd>1.0)
@@ -2590,7 +2590,7 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolume
     {
       dotProd=-1.0;
     }
-    double axisMisalignmentDegrees=acos(dotProd)*180.0/vtkMath::Pi();
+    double axisMisalignmentDegrees = acos(dotProd)*180.0/vtkMath::Pi();
     if (fabs(axisMisalignmentDegrees)<0.1)
     {
       // found an axis that is aligned to the slice normal
@@ -2618,13 +2618,13 @@ int vtkMRMLSliceLogic::GetSliceIndexFromOffset(double sliceOffset, vtkMRMLVolume
     0};
   double originPos_Slice[4]={0,0,0,0};
   rasToSlice->MultiplyPoint(originPos_RAS, originPos_Slice);
-  double volumeOriginOffset=originPos_Slice[2];
-  double sliceShift=sliceOffset-volumeOriginOffset;
-  double normalizedSliceShift=sliceShift/volumeSpacing;
-  int sliceIndex=vtkMath::Round(normalizedSliceShift)+1; // +0.5 because the slice plane is displayed in the center of the slice
+  double volumeOriginOffset = originPos_Slice[2];
+  double sliceShift = sliceOffset-volumeOriginOffset;
+  double normalizedSliceShift = sliceShift/volumeSpacing;
+  int sliceIndex = vtkMath::Round(normalizedSliceShift)+1; // +0.5 because the slice plane is displayed in the center of the slice
 
   // Check if slice index is within the volume
-  int sliceCount=volumeImage->GetDimensions()[axisIndex];
+  int sliceCount = volumeImage->GetDimensions()[axisIndex];
   if (sliceIndex<1 || sliceIndex>sliceCount)
   {
     sliceIndex=SLICE_INDEX_OUT_OF_VOLUME;

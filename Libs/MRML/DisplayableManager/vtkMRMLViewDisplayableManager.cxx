@@ -194,7 +194,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
 
   std::vector<vtkMRMLNode*> nodes;
   int nnodes = scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
-  for (int n=0; n < nnodes; n++)
+  for (int n = 0; n < nnodes; n++)
   {
     vtkMRMLDisplayableNode* displayableNode =
       vtkMRMLDisplayableNode::SafeDownCast(nodes[n]);
@@ -223,14 +223,14 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
     {
       if (!vtkMath::AreBoundsInitialized(bounds))
       {
-        for (int i=0; i<6; i++)
+        for (int i = 0; i<6; i++)
         {
           bounds[i] = nodeBounds[i];
         }
       }
       else
       {
-        for (int i=0; i<3; i++)
+        for (int i = 0; i<3; i++)
         {
           if (bounds[2*i] > nodeBounds[2*i])
           {
@@ -439,9 +439,9 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
   int cameraBasedVilibility = this->External->GetMRMLViewNode()->GetAxisLabelsCameraDependent();
 
   double s2 = 0.5*sqrt(2.0);
-  for  (int j=0; j<2; j++)
+  for  (int j = 0; j<2; j++)
   {
-    for  (int i=0; i<3; i++)
+    for  (int i = 0; i<3; i++)
     {
       vtkFollower* actor = this->AxisLabelActors[i+3*j];
       if (cameraBasedVilibility)
@@ -481,7 +481,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelText()
   // In the view node axis labels are ordered as -X,+X,-Y,+Y,-Z,+Z.
   // viewAxisToDmAxis converts from view to displayable manager axis order.
   const int viewAxisToDmAxis[6]={3,0,4,1,5,2};
-  for (int labelIndexView=0; labelIndexView<6; labelIndexView++)
+  for (int labelIndexView = 0; labelIndexView<6; labelIndexView++)
   {
     if (strcmp(this->AxisLabelTexts[viewAxisToDmAxis[labelIndexView]]->GetText(),viewNode->GetAxisLabel(labelIndexView))!=0)
     {

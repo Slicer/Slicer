@@ -267,7 +267,7 @@ void vtkSlicerCurveRepresentation3D::ReleaseGraphicsResources(
 //----------------------------------------------------------------------
 int vtkSlicerCurveRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderOverlay(viewport);
   if (this->LineActor->GetVisibility())
   {
@@ -284,7 +284,7 @@ int vtkSlicerCurveRepresentation3D::RenderOverlay(vtkViewport* viewport)
 int vtkSlicerCurveRepresentation3D::RenderOpaqueGeometry(
   vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {
@@ -304,7 +304,7 @@ int vtkSlicerCurveRepresentation3D::RenderOpaqueGeometry(
 int vtkSlicerCurveRepresentation3D::RenderTranslucentPolygonalGeometry(
   vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {

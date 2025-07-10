@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule
   Q_INTERFACES(qSlicerLoadableModule);
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerCamerasModule(QObject* parent=nullptr);
+  qSlicerCamerasModule(QObject* parent = nullptr);
   ~qSlicerCamerasModule() override;
 
   QStringList categories()const override;

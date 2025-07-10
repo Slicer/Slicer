@@ -139,7 +139,7 @@ public:
 
       this->ImageMathematics = vtkSmartPointer<vtkImageMathematicsAddon>::New();
     }
-    virtual ~Pipeline()  = default;
+    virtual ~Pipeline() = default;
 
     vtkWeakPointer<vtkMRMLVolumeRenderingDisplayNode> DisplayNode;
     vtkSmartPointer<vtkVolume> VolumeActor;
@@ -523,7 +523,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddVolumeNode(vtkMRM
 
   this->AddObservations(node);
 
-  for (int i=0; i<numDisplayNodes; i++)
+  for (int i = 0; i<numDisplayNodes; i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
     if (this->UseDisplayNode(displayNode))
@@ -1820,7 +1820,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
     else if (event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
     {
       int numDisplayNodes = volumeNode->GetNumberOfDisplayNodes();
-      for (int i=0; i<numDisplayNodes; i++)
+      for (int i = 0; i<numDisplayNodes; i++)
       {
         vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
         if (this->Internal->UseDisplayNode(displayNode))
@@ -1909,7 +1909,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::UpdateFromMRML()
   vtkMRMLVolumeNode* volumeNode = nullptr;
   std::vector<vtkMRMLNode*> volumeNodes;
   int numOfVolumeNodes = scene ? scene->GetNodesByClass("vtkMRMLVolumeNode", volumeNodes) : 0;
-  for (int i=0; i<numOfVolumeNodes; i++)
+  for (int i = 0; i<numOfVolumeNodes; i++)
   {
     volumeNode = vtkMRMLVolumeNode::SafeDownCast(volumeNodes[i]);
     if (volumeNode && this->Internal->UseDisplayableNode(volumeNode))

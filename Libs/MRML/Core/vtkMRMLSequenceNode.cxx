@@ -100,7 +100,7 @@ void vtkMRMLSequenceNode::WriteXML(ostream& of, int nIndent)
   of << indent << " indexName=\"" << this->IndexName << "\"";
   of << indent << " indexUnit=\"" << this->IndexUnit << "\"";
 
-  std::string indexTypeString=GetIndexTypeAsString();
+  std::string indexTypeString = GetIndexTypeAsString();
   of << indent << " indexType=\"" << indexTypeString << "\"";
 
   of << indent << " numericIndexValueTolerance=\"" << this->NumericIndexValueTolerance << "\"";
@@ -157,7 +157,7 @@ void vtkMRMLSequenceNode::ReadXMLAttributes(const char** atts)
     }
     else if (!strcmp(attName, "indexType"))
     {
-      int indexType=GetIndexTypeFromString(attValue);
+      int indexType = GetIndexTypeFromString(attValue);
       if (indexType<0 || indexType>=vtkMRMLSequenceNode::NumberOfIndexTypes)
       {
         vtkErrorMacro("Invalid index type: "<<(attValue?attValue:"(empty). Assuming TextIndex."));
@@ -476,7 +476,7 @@ void vtkMRMLSequenceNode::RemoveDataNodeAtValue(const std::string& indexValue)
 //---------------------------------------------------------------------------
 int vtkMRMLSequenceNode::GetItemNumberFromIndexValue(const std::string& indexValue, bool exactMatchRequired /* =true */)
 {
-  int numberOfSeqItems=this->IndexEntries.size();
+  int numberOfSeqItems = this->IndexEntries.size();
   if (numberOfSeqItems == 0)
   {
     return -1;
@@ -540,7 +540,7 @@ int vtkMRMLSequenceNode::GetItemNumberFromIndexValue(const std::string& indexVal
   }
 
   // Need linear search for non-numeric index
-  for (int i=0; i<numberOfSeqItems; i++)
+  for (int i = 0; i<numberOfSeqItems; i++)
   {
     if (this->IndexEntries[i].IndexValue.compare(indexValue)==0)
     {
@@ -628,13 +628,13 @@ std::string vtkMRMLSequenceNode::GetDataNodeClassName()
     return "";
   }
   // All the nodes should be of the same class, so just get the class from the first one
-  vtkMRMLNode* node=this->IndexEntries[0].DataNode;
+  vtkMRMLNode* node = this->IndexEntries[0].DataNode;
   if (node==nullptr)
   {
     vtkErrorMacro("vtkMRMLSequenceNode::GetDataNodeClassName node is invalid");
     return "";
   }
-  const char* className=node->GetClassName();
+  const char* className = node->GetClassName();
   return SAFE_CHAR_POINTER(className);
 }
 
@@ -647,13 +647,13 @@ std::string vtkMRMLSequenceNode::GetDataNodeTagName()
     return undefinedReturn;
   }
   // All the nodes should be of the same class, so just get the class from the first one
-  vtkMRMLNode* node=this->IndexEntries[0].DataNode;
+  vtkMRMLNode* node = this->IndexEntries[0].DataNode;
   if (node==nullptr)
   {
     vtkErrorMacro("vtkMRMLSequenceNode::GetDataNodeClassName node is invalid");
     return undefinedReturn;
   }
-  const char* tagName=node->GetNodeTagName();
+  const char* tagName = node->GetNodeTagName();
   if (tagName==nullptr)
   {
     return undefinedReturn;
@@ -763,7 +763,7 @@ void vtkMRMLSequenceNode::UpdateSequenceIndex()
 //-----------------------------------------------------------
 void vtkMRMLSequenceNode::SetIndexTypeFromString(const char* indexTypeString)
 {
-  int indexType=GetIndexTypeFromString(indexTypeString);
+  int indexType = GetIndexTypeFromString(indexTypeString);
   this->SetIndexType(indexType);
 }
 
@@ -788,7 +788,7 @@ std::string vtkMRMLSequenceNode::GetIndexTypeAsString(int indexType)
 //-----------------------------------------------------------
 int vtkMRMLSequenceNode::GetIndexTypeFromString(const std::string& indexTypeString)
 {
-  for (int i=0; i<vtkMRMLSequenceNode::NumberOfIndexTypes; i++)
+  for (int i = 0; i<vtkMRMLSequenceNode::NumberOfIndexTypes; i++)
   {
     if (indexTypeString == GetIndexTypeAsString(i))
     {

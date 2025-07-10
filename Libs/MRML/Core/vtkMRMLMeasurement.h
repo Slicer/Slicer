@@ -131,7 +131,7 @@ public:
   /// displayCoefficient value for the chosen units.
   /// If units and/or displayCoefficient is not specified then the current Units and/or DisplayCoefficient values are used.
   /// The stored value is computed as displayValue / DisplayCoefficient.
-  void SetDisplayValue(double value, const char* units=nullptr, double displayCoefficient=0.0);
+  void SetDisplayValue(double value, const char* units = nullptr, double displayCoefficient = 0.0);
 
   /// Get display value.
   /// It is computed using this formula: DisplayValue = Value * DisplayCoefficient.

@@ -195,7 +195,7 @@ void vtkSlicerSegmentationsModuleLogic::OnSubjectHierarchyUIDAdded(vtkObject* ca
   // connection between loaded DICOM volumes and segmentations (related to reference image geometry)
   std::vector<vtkMRMLNode*> segmentationNodes;
   unsigned int numberOfNodes = self->GetMRMLScene()->GetNodesByClass("vtkMRMLSegmentationNode", segmentationNodes);
-  for (unsigned int nodeIndex=0; nodeIndex<numberOfNodes; nodeIndex++)
+  for (unsigned int nodeIndex = 0; nodeIndex<numberOfNodes; nodeIndex++)
   {
     vtkMRMLSegmentationNode* node = vtkMRMLSegmentationNode::SafeDownCast(segmentationNodes[nodeIndex]);
     if (node)
@@ -215,7 +215,7 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
 
   std::vector<vtkMRMLNode*> segmentationNodes;
   unsigned int numberOfNodes = scene->GetNodesByClass("vtkMRMLSegmentationNode", segmentationNodes);
-  for (unsigned int nodeIndex=0; nodeIndex<numberOfNodes; nodeIndex++)
+  for (unsigned int nodeIndex = 0; nodeIndex<numberOfNodes; nodeIndex++)
   {
     vtkMRMLSegmentationNode* node = vtkMRMLSegmentationNode::SafeDownCast(segmentationNodes[nodeIndex]);
     if (node && node->GetSegmentation() == segmentation)
@@ -238,7 +238,7 @@ vtkMRMLSegmentationNode* vtkSlicerSegmentationsModuleLogic::GetSegmentationNodeF
 
   std::vector<vtkMRMLNode*> segmentationNodes;
   unsigned int numberOfNodes = scene->GetNodesByClass("vtkMRMLSegmentationNode", segmentationNodes);
-  for (unsigned int nodeIndex=0; nodeIndex<numberOfNodes; nodeIndex++)
+  for (unsigned int nodeIndex = 0; nodeIndex<numberOfNodes; nodeIndex++)
   {
     vtkMRMLSegmentationNode* node = vtkMRMLSegmentationNode::SafeDownCast(segmentationNodes[nodeIndex]);
     segmentId = node->GetSegmentation()->GetSegmentIdBySegment(segment);

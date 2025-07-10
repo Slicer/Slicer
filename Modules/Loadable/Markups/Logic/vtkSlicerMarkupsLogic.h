@@ -112,13 +112,13 @@ public:
 
   /// Create a new markups node and associated display node, adding both to the scene.
   /// For ROI nodes, each new node will have a unique color.
-  vtkMRMLMarkupsNode* AddNewMarkupsNode(std::string className, std::string nodeName=std::string(), vtkMRMLScene* scene = nullptr);
+  vtkMRMLMarkupsNode* AddNewMarkupsNode(std::string className, std::string nodeName = std::string(), vtkMRMLScene* scene = nullptr);
 
   /// Add a new control point to the currently active markups fiducial node at the given RAS
   /// coordinates (default 0,0,0). Will create a markups fiducial node if one is not active.
   /// Returns -1 on failure, index of the added control point
   /// on success.
-  int AddControlPoint(double r=0.0, double a=0.0, double s=0.0);
+  int AddControlPoint(double r = 0.0, double a = 0.0, double s = 0.0);
 
   /// jump the slice windows to the given coordinate
   /// If viewGroup is -1 then all all slice views are updated, otherwise only those views
@@ -138,13 +138,13 @@ public:
   /// Load a markups node from fileName, return nullptr on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene
   /// as well.
-  char* LoadMarkups(const char* fileName, const char* fidsName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
+  char* LoadMarkups(const char* fileName, const char* fidsName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// This method is deprecated. It is kept for backward compatibility only, it does the same as LoadMarkups method.
-  char* LoadMarkupsFiducials(const char* fileName, const char* fidsName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
+  char* LoadMarkupsFiducials(const char* fileName, const char* fidsName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
-  char* LoadMarkupsFromFcsv(const char* fileName, const char* nodeName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
-  char* LoadMarkupsFromJson(const char* fileName, const char* nodeName=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
+  char* LoadMarkupsFromFcsv(const char* fileName, const char* nodeName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
+  char* LoadMarkupsFromJson(const char* fileName, const char* nodeName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Load a legacy annotation file, return nullptr on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene
@@ -203,13 +203,13 @@ public:
   /// ROIs but deletes the 1:1 hierarchy nodes.
   /// If addedNodeIds or removedNodeIds are specified then IDs of data and hierarchy nodes
   /// added or removed during conversion in the main scene are added to these arrays.
-  void ConvertAnnotationFiducialsToMarkups(vtkStringArray* addedNodeIds=nullptr, vtkStringArray* removedNodeIds=nullptr);
+  void ConvertAnnotationFiducialsToMarkups(vtkStringArray* addedNodeIds = nullptr, vtkStringArray* removedNodeIds = nullptr);
 
   /// Searches the scene for annotation ruler and ROI nodes and converts each to
   /// markup line or ROI node.
   /// If addedNodeIds or removedNodeIds are specified then IDs of data and hierarchy nodes
   /// added or removed during conversion in the main scene are added to these arrays.
-  void ConvertAnnotationLinesROIsToMarkups(vtkStringArray* addedNodeIds=nullptr, vtkStringArray* removedNodeIds=nullptr);
+  void ConvertAnnotationLinesROIsToMarkups(vtkStringArray* addedNodeIds = nullptr, vtkStringArray* removedNodeIds = nullptr);
 
   void ConvertAnnotationHierarchyToSubjectHierarchy(vtkMRMLScene* scene);
 
@@ -257,7 +257,7 @@ public:
   /// \param numberOfInternalGridPoints specifies the number of additional grid points that are added to get a more evenly triangulated
   /// surface. Default is 225, which corresponds to 15x15 subdivisions for a square shaped region.
   /// \warning Specifying radiusScalingFactor has no effect. Associated feature is not yet implemented.
-  static bool FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0, vtkIdType numberOfInternalGridPoints=225);
+  static bool FitSurfaceProjectWarp(vtkPoints* curvePoints, vtkPolyData* surface, double radiusScalingFactor = 1.0, vtkIdType numberOfInternalGridPoints = 225);
 
   /// Create a "soap bubble" surface that fits on the provided point list.
   /// Compared to FitSurfaceProjectWarp, this method can tolerate more if points are not on a plane but it may not be able to
@@ -272,7 +272,7 @@ public:
 
   /// Return true if the polygon points are oriented clockwise.
   /// If pointIds is null then point IDs will be 0, 1, 2, ... n-1.
-  static bool IsPolygonClockwise(vtkPoints* points, vtkIdList* pointIds=nullptr);
+  static bool IsPolygonClockwise(vtkPoints* points, vtkIdList* pointIds = nullptr);
 
   /// Get best fit plane for a markup
   static bool GetBestFitPlane(vtkMRMLMarkupsNode* curveNode, vtkPlane* plane);
@@ -289,8 +289,8 @@ public:
   /// \param markupsWidget vtkSlicerWidget associated to the MRMLMarkups node registered.
   void RegisterMarkupsNode(vtkMRMLMarkupsNode* markupsNode,
                            vtkSlicerMarkupsWidget* markupsWidget,
-                           bool createPushButton=true,
-                           vtkSlicerMarkupsInteractionWidget* interactionWidget=nullptr);
+                           bool createPushButton = true,
+                           vtkSlicerMarkupsInteractionWidget* interactionWidget = nullptr);
 
   /// Unregister a markup and its corresponding widget. This will trigger the
   /// vtkSlicerMarkupsLogic::MarkupUnregistered event.
@@ -363,7 +363,7 @@ public:
     return this->MoveNthControlPointToNewListAtIndex(n, markupsNode, newMarkupsNode, newIndex);
   }
   /// \deprecated Use AddControlPoint instead.
-  int AddFiducial(double r=0.0, double a=0.0, double s=0.0)
+  int AddFiducial(double r = 0.0, double a = 0.0, double s = 0.0)
   {
     vtkWarningMacro("vtkSlicerMarkupsLogic::AddFiducial method is deprecated, please use AddControlPoint instead");
     return this->AddControlPoint(r, a, s);

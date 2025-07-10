@@ -133,7 +133,7 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned lon
       shNode->GetItemDataNode(reparentedItemID) );
     // Trigger display update for reparented displayable node if it is in a folder that applies
     // display properties on its branch (only display nodes that allow overriding)
-    for (int i=0; i<displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
+    for (int i = 0; i<displayableReparentedNode->GetNumberOfDisplayNodes(); ++i)
     {
       vtkMRMLDisplayNode* currentDisplayNode = displayableReparentedNode->GetNthDisplayNode(i);
       if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())
@@ -209,7 +209,7 @@ void vtkMRMLFolderDisplayNode::ChildDisplayNodesModified()
       continue;
     }
     // Trigger display update for display node of child nodes that allow overriding
-    for (int i=0; i<childDisplayableNode->GetNumberOfDisplayNodes(); ++i)
+    for (int i = 0; i<childDisplayableNode->GetNumberOfDisplayNodes(); ++i)
     {
       vtkMRMLDisplayNode* currentDisplayNode = childDisplayableNode->GetNthDisplayNode(i);
       if (currentDisplayNode && currentDisplayNode->GetFolderDisplayOverrideAllowed())

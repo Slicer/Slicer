@@ -51,20 +51,20 @@ Version:   $Revision: 1.14 $
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       this->IJKToRASDirections[i][j] = (i == j) ? 1.0 : 0.0;
     }
   }
 
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     this->Spacing[i] = 1.0;
   }
 
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     this->Origin[i] = 0.0;
   }
@@ -99,9 +99,9 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 
   // IJKToRASDirections 3x3 C array
   std::stringstream ss;
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       ss << this->IJKToRASDirections[i][j] << " ";
       if ( i != 2 && j != 2 )
@@ -140,9 +140,9 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
       double val;
       ss << attValue;
       double dirs[3][3];
-      for (int i=0; i<3; i++)
+      for (int i = 0; i<3; i++)
       {
-        for (int j=0; j<3; j++)
+        for (int j = 0; j<3; j++)
         {
           ss >> val;
           dirs[i][j] = val;
@@ -228,9 +228,9 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMRMLVolumeNode::SetIJKToRASDirections(double dirs[3][3])
 {
   bool isModified = false;
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       if (!vtkMathUtilities::FuzzyCompare<double>(this->IJKToRASDirections[i][j], dirs[i][j]))
       {
@@ -290,7 +290,7 @@ void vtkMRMLVolumeNode::SetKToRASDirection(double kr, double ka, double ks)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetIToRASDirection(double dirs[3])
 {
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     dirs[i] = IJKToRASDirections[i][0];
   }
@@ -299,7 +299,7 @@ void vtkMRMLVolumeNode::GetIToRASDirection(double dirs[3])
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetJToRASDirection(double dirs[3])
 {
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     dirs[i] = IJKToRASDirections[i][1];
   }
@@ -308,7 +308,7 @@ void vtkMRMLVolumeNode::GetJToRASDirection(double dirs[3])
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetKToRASDirection(double dirs[3])
 {
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     dirs[i] = IJKToRASDirections[i][2];
   }
@@ -417,9 +417,9 @@ void vtkMRMLVolumeNode::SetIJKToRASMatrix(vtkMatrix4x4* argMat)
 
   double dirs[3][3];
   double origin[3];
-  for (int row=0; row<3; row++)
+  for (int row = 0; row<3; row++)
   {
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
       dirs[row][col] = mat->GetElement(row, col);
     }
@@ -472,9 +472,9 @@ void vtkMRMLVolumeNode::GetRASToIJKMatrix(vtkMatrix4x4* mat)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::GetIJKToRASDirections(double dirs[3][3])
 {
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       dirs[i][j] = IJKToRASDirections[i][j];
     }
@@ -485,9 +485,9 @@ void vtkMRMLVolumeNode::GetIJKToRASDirections(double dirs[3][3])
 void vtkMRMLVolumeNode::SetIJKToRASDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMatrix)
 {
   double dirs[3][3];
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       dirs[i][j] = ijkToRASDirectionMatrix->Element[i][j];
     }
@@ -500,9 +500,9 @@ void vtkMRMLVolumeNode::GetIJKToRASDirectionMatrix(vtkMatrix4x4* ijkToRASDirecti
 {
   double dirs[3][3];
   this->GetIJKToRASDirections(dirs);
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       ijkToRASDirectionMatrix->Element[i][j] = dirs[i][j];
     }
@@ -623,7 +623,7 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* ijkToR
   int max_comp = 0;
   double max = fabs(kvec[0]);
 
-  for (int i=1; i<3; i++)
+  for (int i = 1; i<3; i++)
   {
     if (fabs(kvec[i]) > max)
     {
@@ -800,7 +800,7 @@ void vtkMRMLVolumeNode
 ::SetImageDataToDisplayNodes()
 {
   int ndisp = this->GetNumberOfDisplayNodes();
-  for (int n=0; n<ndisp; n++)
+  for (int n = 0; n<ndisp; n++)
   {
     vtkMRMLVolumeDisplayNode* dnode = vtkMRMLVolumeDisplayNode::SafeDownCast(
       this->GetNthDisplayNode(n));
@@ -1003,11 +1003,11 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
     positionScale[2] = dimensions[2] / (numberOfSubdivisions - 1.0);
     positionOffset = -0.5;
   }
-  for (int i=0; i < numberOfSubdivisions; i++)
+  for (int i = 0; i < numberOfSubdivisions; i++)
   {
-    for (int j=0; j < numberOfSubdivisions; j++)
+    for (int j = 0; j < numberOfSubdivisions; j++)
     {
-      for (int k=0; k < numberOfSubdivisions; k++)
+      for (int k = 0; k < numberOfSubdivisions; k++)
       {
         doubleDimensions[0] = i * positionScale[0] + positionOffset;
         doubleDimensions[1] = j * positionScale[1] + positionOffset;
@@ -1196,7 +1196,7 @@ void vtkMRMLVolumeNode::ShiftImageDataExtentToZeroStart()
   ijkToRasMatrix->MultiplyPoint(shiftedOrigin_IJK, shiftedOrigin_RAS);
   this->SetOrigin(shiftedOrigin_RAS);
 
-  for (int i=0; i<3; ++i)
+  for (int i = 0; i<3; ++i)
   {
     extent[2*i+1] -= extent[2*i];
     extent[2*i] = 0;

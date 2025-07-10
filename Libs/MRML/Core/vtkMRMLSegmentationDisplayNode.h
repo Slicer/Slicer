@@ -176,7 +176,7 @@ public:
   /// \param colorNumber Index of the color in generic anatomy color table that is returned.
   ///                    Default value is 0, meaning that \sa NumberOfGeneratedColors is used.
   ///                    A value of -1 means that a random color is generated.
-  void GenerateSegmentColor(double color[3], int colorNumber=0);
+  void GenerateSegmentColor(double color[3], int colorNumber = 0);
   /// Python compatibility function for \sa GenerateSegmentColor.
   /// The color with index \sa NumberOfGeneratedColors from generic anatomy color table is returned.
   void GenerateSegmentColor(double& r, double& g, double& b);

@@ -189,7 +189,7 @@ void vtkDataIOManager::AllTransfersClearedFromCache()
 
   vtkDataTransfer* dt;
   int n = this->DataTransferCollection->GetNumberOfItems();
-  for ( int i=0; i < n; i++ )
+  for ( int i = 0; i < n; i++ )
   {
     dt = vtkDataTransfer::SafeDownCast (this->DataTransferCollection->GetItemAsObject ( i ) );
     if ( dt != nullptr )
@@ -248,7 +248,7 @@ void vtkDataIOManager::RemoveDataTransfer ( int transferID )
   }
 
   int n = this->DataTransferCollection->GetNumberOfItems();
-  for ( int i=0; i < n; i++ )
+  for ( int i = 0; i < n; i++ )
   {
     dt = vtkDataTransfer::SafeDownCast (this->DataTransferCollection->GetItemAsObject ( i ) );
     if ( dt != nullptr )
@@ -277,7 +277,7 @@ vtkDataTransfer* vtkDataIOManager::GetDataTransfer ( int transferID )
   }
 
   int n = this->DataTransferCollection->GetNumberOfItems();
-  for ( int i=0; i < n; i++ )
+  for ( int i = 0; i < n; i++ )
   {
     dt = vtkDataTransfer::SafeDownCast ( this->DataTransferCollection->GetItemAsObject (i) );
     if ( transferID == dt->GetTransferID() )
@@ -517,7 +517,7 @@ int vtkDataIOManager::GetUniqueTransferID ( )
     // loop thru the existing data transfers
     int n = this->DataTransferCollection->GetNumberOfItems();
     vtkDebugMacro("GetUniqueTransferID: in loop, id = " << id << ", n = " << n);
-    for ( int i=0; i < n; i++ )
+    for ( int i = 0; i < n; i++ )
     {
       dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject ( i ) );
       if  ( dt != nullptr && id == dt->GetTransferID() )

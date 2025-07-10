@@ -283,7 +283,7 @@ void qSlicerDataModuleWidget::setMRMLIDsVisible(bool visible)
   // Transform hierarchy view
   d->TransformMRMLTreeView->setColumnHidden(d->TransformMRMLTreeView->sceneModel()->idColumn(), !visible);
   int columnCount = d->TransformMRMLTreeView->header()->count();
-  for (int i=0; i<columnCount; ++i)
+  for (int i = 0; i<columnCount; ++i)
   {
     d->TransformMRMLTreeView->resizeColumnToContents(i);
   }
@@ -291,7 +291,7 @@ void qSlicerDataModuleWidget::setMRMLIDsVisible(bool visible)
   // All nodes view
   d->AllNodesMRMLTreeView->setColumnHidden(d->AllNodesMRMLTreeView->sceneModel()->idColumn(), !visible);
   columnCount = d->AllNodesMRMLTreeView->header()->count();
-  for (int i=0; i<columnCount; ++i)
+  for (int i = 0; i<columnCount; ++i)
   {
     d->AllNodesMRMLTreeView->resizeColumnToContents(i);
   }

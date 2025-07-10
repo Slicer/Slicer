@@ -1317,7 +1317,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " <item>"
     "  <layout type=\"vertical\">";
 
-  for (int i=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
+  for (int i = 1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
   {
     compareView <<
       "   <item>"
@@ -1368,7 +1368,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " <item>"
     "  <layout type=\"horizontal\">";
 
-  for (int i=1; i <= this->LayoutNode->GetNumberOfCompareViewColumns(); ++i)
+  for (int i = 1; i <= this->LayoutNode->GetNumberOfCompareViewColumns(); ++i)
   {
     compareWidescreenView <<
       "   <item>"
@@ -1419,12 +1419,12 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " <item>"
     "  <layout type=\"vertical\">";
 
-  for (int i=1, k=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
+  for (int i = 1, k=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
   {
     compareViewGrid <<
       "   <item>"
       "    <layout type=\"horizontal\">";
-    for (int j=1; j <= this->LayoutNode->GetNumberOfCompareViewColumns();
+    for (int j = 1; j <= this->LayoutNode->GetNumberOfCompareViewColumns();
          ++j,++k)
     {
       compareViewGrid <<

@@ -242,24 +242,24 @@ public:
   /// \brief Initialize \a orientationMatrix as an `Axial` orientation matrix.
   /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
   /// and neurology (patient right is right side on the screen) view orientation conventions.
-  static void GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft=true);
+  static void GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft = true);
 
   /// \brief Initialize \a orientationMatrix as a `Sagittal` orientation matrix.
   /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
   /// and neurology (patient right is right side on the screen) view orientation conventions.
-  static void GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft=true);
+  static void GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft = true);
 
   /// \brief Initialize \a orientationMatrix as a `Coronal` orientation matrix.
   /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
   /// and neurology (patient right is right side on the screen) view orientation conventions.
-  static void GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft=true);
+  static void GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft = true);
 
   /// \brief Add default slice orientation presets to \a scene.
   /// \param patientRightIsScreenLeft chooses between radiology (default, patient right is left side on the screen)
   /// and neurology (patient right is right side on the screen) view orientation conventions.
   /// \sa vtkMRMLScene::AddDefaultNode(vtkMRMLNode* node)
   /// \sa GetAxialSliceToRASMatrix, GetSagittalSliceToRASMatrix, GetCoronalSliceToRASMatrix
-  static void AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bool patientRightIsScreenLeft=true);
+  static void AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bool patientRightIsScreenLeft = true);
 
   ///
   /// Size of the slice plane in millimeters
@@ -443,7 +443,7 @@ public:
   /// \param forceSlicePlaneToSingleSlice If the volume is single-slice and forceSlicePlaneToSingleSlice
   /// is enabled then slice view will be aligned with the volume's slice plane. If the flag is disabled
   /// or the volume has more than one slice then the slice view will be rotated to the closest orthogonal axis.
-  void RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool forceSlicePlaneToSingleSlice=true);
+  void RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool forceSlicePlaneToSingleSlice = true);
 
   /// Adjusts the slice node to align with the
   /// axes of the provided reference coordinate system

@@ -315,7 +315,7 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayProperties(std::string seg
   else
   {
     // If found then replace values
-    for (int i=0; i<3; i++)
+    for (int i = 0; i<3; i++)
     {
       if (propsIt->second.OverrideColor[i] != properties.OverrideColor[i])
       {
@@ -906,7 +906,7 @@ bool vtkMRMLSegmentationDisplayNode::CalculateAutoOpacitiesForSegments()
 
   // Determine number of levels
   int numberOfLevels = 0;
-  for (int i=0; i<levels->GetNumberOfTuples(); ++i)
+  for (int i = 0; i<levels->GetNumberOfTuples(); ++i)
   {
     if (levels->GetValue(i) > numberOfLevels)
     {

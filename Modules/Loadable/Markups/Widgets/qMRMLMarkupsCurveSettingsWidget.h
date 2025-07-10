@@ -37,7 +37,7 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsCurveSettingsWidget
 
 public:
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsCurveSettingsWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsCurveSettingsWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsCurveSettingsWidget() override;
 
   /// Gets the name of the additional options widget type

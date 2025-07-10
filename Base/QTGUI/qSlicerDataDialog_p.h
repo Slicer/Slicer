@@ -36,7 +36,7 @@ class qSlicerDataDialogPrivate
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerDataDialog);
 public:
-  explicit qSlicerDataDialogPrivate(qSlicerDataDialog* object, QWidget* _parent=nullptr);
+  explicit qSlicerDataDialogPrivate(qSlicerDataDialog* object, QWidget* _parent = nullptr);
   ~qSlicerDataDialogPrivate() override;
 
   void dragEnterEvent(QDragEnterEvent* event) override;
@@ -48,7 +48,7 @@ public slots:
   void addFiles();
   void reset();
   void showOptions(bool);
-  void resetColumnWidths(bool forceFileColumnStretch=false);
+  void resetColumnWidths(bool forceFileColumnStretch = false);
 
 protected slots:
   void onFileTypeChanged(const QString&);
@@ -72,7 +72,7 @@ protected:
   // time consuming if you do it for every file added).
   // If a readerDescription is specified then only that reader will be offered. If ioProperties is specified as well then
   // it will be used to initialize the reader properties widget.
-  void addFile(const QFileInfo& file, const QString& readerDescription=QString(), qSlicerIO::IOProperties* ioProperties=nullptr);
+  void addFile(const QFileInfo& file, const QString& readerDescription = QString(), qSlicerIO::IOProperties* ioProperties = nullptr);
   void setFileOptions(int row, const QString& filePath, const QString& fileDescription);
   /// Return the row the last signal comes from.
   int senderRow()const;

@@ -167,7 +167,7 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  std::string extension=vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
 
   vtkSmartPointer<vtkImageWriter> writer;
   if (extension == ".png")

@@ -622,7 +622,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         origin[i] = filter->GetOutput()->GetOrigin()[i];
 
         // Get IJK to RAS direction vector
-        for ( unsigned int j=0; j < filter->GetOutput()->GetImageDimension (); j++ )
+        for ( unsigned int j = 0; j < filter->GetOutput()->GetImageDimension (); j++ )
         {
           IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
         }
@@ -700,7 +700,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         spacing[i] = filter->GetOutput()->GetSpacing()[i];
         origin[i] = filter->GetOutput()->GetOrigin()[i];
         // Get IJK to RAS direction vector
-        for ( unsigned int j=0; j < filter->GetOutput()->GetImageDimension (); j++ )
+        for ( unsigned int j = 0; j < filter->GetOutput()->GetImageDimension (); j++ )
         {
           IjkToLpsMatrix->SetElement(j, i, spacing[i]*filter->GetOutput()->GetDirection()[j][i]);
         }
@@ -781,7 +781,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
   if ( !this->GetUseOrientationFromFile() )
   {
     this->RasToIjkMatrix->Identity();
-    for ( unsigned int j=0; j < 3; j++ )
+    for ( unsigned int j = 0; j < 3; j++ )
     {
       this->RasToIjkMatrix->SetElement(j, j, 1.0/spacing[j]);
     }

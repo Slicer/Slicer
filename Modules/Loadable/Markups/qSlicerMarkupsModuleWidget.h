@@ -44,7 +44,7 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerMarkupsModuleWidget(QWidget* parent=nullptr);
+  qSlicerMarkupsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerMarkupsModuleWidget() override;
 
   /// Set up the GUI from mrml when entering
@@ -145,7 +145,7 @@ public slots:
   void onResetControlPointPushButtonClicked();
   void onUnsetControlPointPushButtonClicked();
   void onMissingControlPointPushButtonClicked();
-  void onDeleteControlPointPushButtonClicked(bool confirm=true);
+  void onDeleteControlPointPushButtonClicked(bool confirm = true);
   void onDeleteAllControlPointsInListPushButtonClicked();
 
   /// Update the selection node from the tree view
@@ -364,7 +364,7 @@ public slots:
     this->onMissingControlPointPushButtonClicked();
   };
   /// \deprecated Use onDeleteControlPointPushButtonClicked instead.
-  void onDeleteMarkupPushButtonClicked(bool confirm=true)
+  void onDeleteMarkupPushButtonClicked(bool confirm = true)
   {
     qWarning("qSlicerMarkupsModuleWidget::onDeleteMarkupPushButtonClicked method is deprecated, please use onDeleteControlPointPushButtonClicked instead");
     this->onDeleteControlPointPushButtonClicked(confirm);

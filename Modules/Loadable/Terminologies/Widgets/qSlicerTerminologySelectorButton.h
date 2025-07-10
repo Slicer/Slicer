@@ -40,7 +40,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologySelectorBut
   Q_OBJECT
 
 public:
-  explicit qSlicerTerminologySelectorButton(QWidget* parent=nullptr);
+  explicit qSlicerTerminologySelectorButton(QWidget* parent = nullptr);
   ~qSlicerTerminologySelectorButton() override;
 
 #ifndef __VTK_WRAP__
@@ -66,7 +66,7 @@ signals:
   void userSetCustomNameOrColor();
 
 protected slots:
-  void onToggled(bool toggled=true);
+  void onToggled(bool toggled = true);
 
 protected:
   void paintEvent(QPaintEvent* event) override;

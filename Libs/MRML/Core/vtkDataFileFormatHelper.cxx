@@ -170,7 +170,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   }
 
 #ifdef USE_TEMP_ITK_FILEFORMAT_TABLE
-  for (int idx=0; idx<numFiles; idx++)
+  for (int idx = 0; idx<numFiles; idx++)
   {
     ITKImageFileFormat structFileFormat = FileFormatTable[idx];
     std::string ioClassName(structFileFormat.ClassName);
@@ -216,7 +216,7 @@ std::string vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
     {
       fileext = fileext.substr(0, pos1);
     }
-    std::string lowercaseExtension=vtksys::SystemTools::LowerCase(fileext);
+    std::string lowercaseExtension = vtksys::SystemTools::LowerCase(fileext);
     // make sure there is a leading . character
     if (!lowercaseExtension.empty() && lowercaseExtension[0] != '.')
     {
@@ -262,7 +262,7 @@ const char* vtkDataFileFormatHelper::GetClassNameFromFormatString(
 
     vtkStringArray* itkFileExtensions = this->GetITKSupportedWriteFileExtensions();
 
-    for (int idx=0; idx<itkFileExtensions->GetNumberOfTuples(); idx++)
+    for (int idx = 0; idx<itkFileExtensions->GetNumberOfTuples(); idx++)
     {
       const char* extFormat = this->GetITKSupportedExtensionGenericNameByIndex(idx);
       std::string strExt = vtksys::SystemTools::LowerCase( itkFileExtensions->GetValue(idx) );

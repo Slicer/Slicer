@@ -46,7 +46,7 @@ class Q_SLICER_BASE_QTAPP_EXPORT qSlicerMainWindow : public QMainWindow
 public:
   typedef QMainWindow Superclass;
 
-  qSlicerMainWindow(QWidget* parent=nullptr);
+  qSlicerMainWindow(QWidget* parent = nullptr);
   ~qSlicerMainWindow() override;
 
   /// Return a pointer to the module selector toolbar that can change the
@@ -128,11 +128,11 @@ public slots:
   /// - recently loaded files
   ///
   /// \sa restoreGUIState()
-  virtual void saveGUIState(bool force=false);
+  virtual void saveGUIState(bool force = false);
 
   /// Read GUI state from application settings and update the user interface accordingly.
   /// \sa saveGUIState()
-  virtual void restoreGUIState(bool force=false);
+  virtual void restoreGUIState(bool force = false);
 
   virtual void addFileToRecentFiles(const qSlicerIO::IOProperties& fileProperties);
 

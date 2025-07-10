@@ -145,7 +145,7 @@ protected:
   bool ProcessSetWindowLevelFromRegionStart(vtkMRMLInteractionEventData* eventData);
   void ProcessSetWindowLevelFromRegion(vtkMRMLInteractionEventData* eventData);
   // If updateWindowLevel is set to false then the operation is cancelled without changing the window/level
-  bool ProcessSetWindowLevelFromRegionEnd(vtkMRMLInteractionEventData* eventData, bool updateWindowLevel=true);
+  bool ProcessSetWindowLevelFromRegionEnd(vtkMRMLInteractionEventData* eventData, bool updateWindowLevel = true);
 
   bool ProcessResetWindowLevel(vtkMRMLInteractionEventData* eventData);
 

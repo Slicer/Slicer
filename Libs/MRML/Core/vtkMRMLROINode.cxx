@@ -117,7 +117,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for (int i=0; i<3; i++)
+      for (int i = 0; i<3; i++)
       {
         ss >> val;
         this->XYZ[i] = val;
@@ -128,7 +128,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for (int i=0; i<3; i++)
+      for (int i = 0; i<3; i++)
       {
         ss >> val;
         this->RadiusXYZ[i] = val;

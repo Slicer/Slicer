@@ -84,7 +84,7 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   this->ContourResolutionMm=5.0;
   this->ContourOpacity=0.8;
   this->ContourLevelsMm.clear();
-  for (double level=2.0; level<20.0; level+=2.0)
+  for (double level = 2.0; level<20.0; level+=2.0)
   {
     this->ContourLevelsMm.push_back(level);
   }
@@ -405,7 +405,7 @@ void vtkMRMLTransformDisplayNode::SetAndObserveGlyphPointsNode(vtkMRMLNode* node
 void vtkMRMLTransformDisplayNode::SetContourLevelsMm(double* values, int size)
 {
   this->ContourLevelsMm.clear();
-  for (int i=0; i<size; i++)
+  for (int i = 0; i<size; i++)
   {
     this->ContourLevelsMm.push_back(values[i]);
   }
@@ -449,7 +449,7 @@ int vtkMRMLTransformDisplayNode::ConvertVisualizationModeFromString(const char* 
   {
     return -1;
   }
-  for (int modeIndex=0; modeIndex<VIS_MODE_LAST; modeIndex++)
+  for (int modeIndex = 0; modeIndex<VIS_MODE_LAST; modeIndex++)
   {
     if (strcmp(modeString, vtkMRMLTransformDisplayNode::ConvertVisualizationModeToString(modeIndex))==0)
     {
@@ -478,7 +478,7 @@ int vtkMRMLTransformDisplayNode::ConvertGlyphTypeFromString(const char* modeStri
   {
     return -1;
   }
-  for (int modeIndex=0; modeIndex<GLYPH_TYPE_LAST; modeIndex++)
+  for (int modeIndex = 0; modeIndex<GLYPH_TYPE_LAST; modeIndex++)
   {
     if (strcmp(modeString,vtkMRMLTransformDisplayNode::ConvertGlyphTypeToString(modeIndex))==0)
     {
@@ -540,7 +540,7 @@ std::string vtkMRMLTransformDisplayNode::ConvertContourLevelsToString(const std:
 std::string vtkMRMLTransformDisplayNode::DoubleVectorToString(const double* values, int numberOfValues)
 {
   std::stringstream ss;
-  for (int i=0; i<numberOfValues; i++)
+  for (int i = 0; i<numberOfValues; i++)
   {
     if (i>0)
     {
@@ -558,8 +558,8 @@ bool vtkMRMLTransformDisplayNode::IsContourLevelEqual(const std::vector<double>&
   {
     return false;
   }
-  const double COMPARISON_TOLERANCE=0.01;
-  for (unsigned int i=0; i<levels1.size(); i++)
+  const double COMPARISON_TOLERANCE = 0.01;
+  for (unsigned int i = 0; i<levels1.size(); i++)
   {
     if (fabs(levels1[i]-levels2[i])>COMPARISON_TOLERANCE)
     {
@@ -593,7 +593,7 @@ void vtkMRMLTransformDisplayNode::SetDefaultColors()
   // the color node must be visible.
   colorNode->SetHideFromEditors(false);
 
-  vtkColorTransferFunction* colorMap=colorNode->GetColorTransferFunction();
+  vtkColorTransferFunction* colorMap = colorNode->GetColorTransferFunction();
   // Map: mm -> RGB
   colorMap->AddRGBPoint( 1.0,  0.2, 0.2, 0.2);
   colorMap->AddRGBPoint( 2.0,  0.0, 1.0, 0.0);
@@ -607,7 +607,7 @@ void vtkMRMLTransformDisplayNode::SetDefaultColors()
 //----------------------------------------------------------------------------
 vtkColorTransferFunction* vtkMRMLTransformDisplayNode::GetColorMap()
 {
-  vtkMRMLProceduralColorNode* colorNode=vtkMRMLProceduralColorNode::SafeDownCast(GetColorNode());
+  vtkMRMLProceduralColorNode* colorNode = vtkMRMLProceduralColorNode::SafeDownCast(GetColorNode());
   if (colorNode==nullptr
     || colorNode->GetColorTransferFunction()==nullptr
     || colorNode->GetColorTransferFunction()->GetSize()==0)
@@ -621,15 +621,15 @@ vtkColorTransferFunction* vtkMRMLTransformDisplayNode::GetColorMap()
       return nullptr;
     }
   }
-  vtkColorTransferFunction* colorMap=colorNode->GetColorTransferFunction();
+  vtkColorTransferFunction* colorMap = colorNode->GetColorTransferFunction();
   return colorMap;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetColorMap(vtkColorTransferFunction* newColorMap)
 {
-  int oldModified=this->StartModify();
-  vtkMRMLProceduralColorNode* colorNode=vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode());
+  int oldModified = this->StartModify();
+  vtkMRMLProceduralColorNode* colorNode = vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode());
   if (colorNode==nullptr)
   {
     // We don't have a color node or it is not the right type

@@ -146,7 +146,7 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showVisibilityContextMenuActionsFo
   vtkSmartPointer<vtkCollection> childDisplayableNodes = vtkSmartPointer<vtkCollection>::New();
   shNode->GetDataNodesInBranch(itemID, childDisplayableNodes, "vtkMRMLDisplayableNode");
   childDisplayableNodes->InitTraversal();
-  for (int i=0; i<childDisplayableNodes->GetNumberOfItems(); ++i)
+  for (int i = 0; i<childDisplayableNodes->GetNumberOfItems(); ++i)
   {
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(i));
     vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(i));
@@ -207,7 +207,7 @@ void qSlicerSubjectHierarchyVisibilityPlugin::toggleCurrentItemVisibility2D(bool
   vtkSmartPointer<vtkCollection> childDisplayableNodes = vtkSmartPointer<vtkCollection>::New();
   shNode->GetDataNodesInBranch(currentItemID, childDisplayableNodes, "vtkMRMLDisplayableNode");
   childDisplayableNodes->InitTraversal();
-  for (int i=0; i<childDisplayableNodes->GetNumberOfItems(); ++i)
+  for (int i = 0; i<childDisplayableNodes->GetNumberOfItems(); ++i)
   {
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(i));
     vtkMRMLDisplayNode* displayNode = displayableNode ? vtkMRMLDisplayNode::SafeDownCast(displayableNode->GetDisplayNode()) : nullptr;
@@ -238,7 +238,7 @@ void qSlicerSubjectHierarchyVisibilityPlugin::toggleCurrentItemVisibility3D(bool
   vtkSmartPointer<vtkCollection> childDisplayableNodes = vtkSmartPointer<vtkCollection>::New();
   shNode->GetDataNodesInBranch(currentItemID, childDisplayableNodes, "vtkMRMLDisplayableNode");
   childDisplayableNodes->InitTraversal();
-  for (int i=0; i<childDisplayableNodes->GetNumberOfItems(); ++i)
+  for (int i = 0; i<childDisplayableNodes->GetNumberOfItems(); ++i)
   {
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(i));
     vtkMRMLDisplayNode* displayNode = displayableNode ? vtkMRMLDisplayNode::SafeDownCast(displayableNode->GetDisplayNode()) : nullptr;
@@ -269,7 +269,7 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showInAllViews()
   vtkSmartPointer<vtkCollection> childDisplayableNodes = vtkSmartPointer<vtkCollection>::New();
   shNode->GetDataNodesInBranch(currentItemID, childDisplayableNodes, "vtkMRMLDisplayableNode");
   childDisplayableNodes->InitTraversal();
-  for (int i=0; i<childDisplayableNodes->GetNumberOfItems(); ++i)
+  for (int i = 0; i<childDisplayableNodes->GetNumberOfItems(); ++i)
   {
     vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(childDisplayableNodes->GetItemAsObject(i));
     vtkMRMLDisplayNode* displayNode = displayableNode ? vtkMRMLDisplayNode::SafeDownCast(displayableNode->GetDisplayNode()) : nullptr;
