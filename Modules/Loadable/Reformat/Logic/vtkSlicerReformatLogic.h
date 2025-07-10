@@ -44,7 +44,7 @@ vtkSlicerReformatLogic : public vtkSlicerModuleLogic
 public:
   static vtkSlicerReformatLogic* New();
   typedef vtkSlicerReformatLogic Self;
-  vtkTypeMacro(vtkSlicerReformatLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerReformatLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set the world coordinate origin position

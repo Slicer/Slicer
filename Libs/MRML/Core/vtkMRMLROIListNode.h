@@ -11,7 +11,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 {
   public:
     static vtkMRMLROIListNode* New();
-    vtkTypeMacro(vtkMRMLROIListNode,vtkMRMLNode);
+    vtkTypeMacro(vtkMRMLROIListNode, vtkMRMLNode);
     void PrintSelf(ostream& os, vtkIndent indent) override;
 
     //--------------------------------------------------------------------------
@@ -107,12 +107,12 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     ///
     /// Get/Set for list visibility
     void SetVisibility(int visible);
-    vtkGetMacro(Visibility,int);
+    vtkGetMacro(Visibility, int);
 
     ///
     /// Get/Set for Text scale
     void SetTextScale(double scale);
-    vtkGetMacro(TextScale,double);
+    vtkGetMacro(TextScale, double);
 
     ///
     /// Get/Set for ROI and Text color

@@ -23,7 +23,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialNode :
 {
 public:
   static vtkMRMLAnnotationFiducialNode* New();
-  vtkTypeMacro(vtkMRMLAnnotationFiducialNode,vtkMRMLAnnotationControlPointsNode);
+  vtkTypeMacro(vtkMRMLAnnotationFiducialNode, vtkMRMLAnnotationControlPointsNode);
 
   //--------------------------------------------------------------------------
   // MRMLNode methods

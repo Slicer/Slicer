@@ -31,13 +31,13 @@ class VTK_Teem_EXPORT vtkImageLabelCombine : public vtkThreadedImageAlgorithm
 {
 public:
   static vtkImageLabelCombine* New();
-  vtkTypeMacro(vtkImageLabelCombine,vtkThreadedImageAlgorithm);
+  vtkTypeMacro(vtkImageLabelCombine, vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// Set/Get the Operation to perform.
-  vtkSetMacro(OverwriteInput,int);
-  vtkGetMacro(OverwriteInput,int);
+  vtkSetMacro(OverwriteInput, int);
+  vtkGetMacro(OverwriteInput, int);
 
   ///
   /// Set the two inputs to this filter

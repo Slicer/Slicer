@@ -9,7 +9,7 @@ class VTK_MRML_EXPORT vtkMRMLInteractionNode : public vtkMRMLNode
 {
 public:
   static vtkMRMLInteractionNode* New();
-  vtkTypeMacro(vtkMRMLInteractionNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLInteractionNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

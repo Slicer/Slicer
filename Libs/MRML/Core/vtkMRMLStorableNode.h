@@ -33,7 +33,7 @@ class vtkTagTable;
 class VTK_MRML_EXPORT vtkMRMLStorableNode : public vtkMRMLNode
 {
 public:
-  vtkTypeMacro(vtkMRMLStorableNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLStorableNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------

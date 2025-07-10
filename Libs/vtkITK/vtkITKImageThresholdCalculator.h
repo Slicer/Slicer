@@ -29,7 +29,7 @@ class VTK_ITK_EXPORT vtkITKImageThresholdCalculator : public vtkImageAlgorithm
 {
 public:
   static vtkITKImageThresholdCalculator* New();
-  vtkTypeMacro(vtkITKImageThresholdCalculator,vtkImageAlgorithm);
+  vtkTypeMacro(vtkITKImageThresholdCalculator, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkGetMacro(Threshold, double);

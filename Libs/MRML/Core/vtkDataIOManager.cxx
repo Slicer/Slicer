@@ -13,7 +13,7 @@
 
 // STD includes
 
-vtkStandardNewMacro ( vtkDataIOManager );
+vtkStandardNewMacro(vtkDataIOManager);
 vtkCxxSetObjectMacro(vtkDataIOManager, CacheManager, vtkCacheManager);
 vtkCxxSetObjectMacro(vtkDataIOManager, DataTransferCollection, vtkCollection);
 vtkCxxSetObjectMacro(vtkDataIOManager, FileFormatHelper, vtkDataFileFormatHelper);

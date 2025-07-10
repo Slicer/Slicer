@@ -4,7 +4,7 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro ( vtkPermissionPrompter );
+vtkStandardNewMacro(vtkPermissionPrompter);
 
 //----------------------------------------------------------------------------
 vtkPermissionPrompter::vtkPermissionPrompter()

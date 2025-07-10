@@ -45,7 +45,7 @@ class  VTK_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   static vtkMRMLMarkupsDisplayNode* New();
-  vtkTypeMacro(vtkMRMLMarkupsDisplayNode,vtkMRMLDisplayNode);
+  vtkTypeMacro(vtkMRMLMarkupsDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -156,8 +156,8 @@ public:
   ///@}
 
   /// Set the text scale of the associated text.
-  vtkGetMacro(TextScale,double);
-  vtkSetMacro(TextScale,double);
+  vtkGetMacro(TextScale, double);
+  vtkSetMacro(TextScale, double);
 
   //@{
   /**
@@ -270,14 +270,14 @@ public:
   /// Diameter of the point is defined as percentage of "window size".
   /// "Window size" is computed as diagonal size of the screen multiplied by ScreenScaleFactor
   /// (stored in the view node).
-  vtkSetMacro(GlyphScale,double);
-  vtkGetMacro(GlyphScale,double);
+  vtkSetMacro(GlyphScale, double);
+  vtkGetMacro(GlyphScale, double);
 
   /// Get/Set absolute markup point size.
   /// This value is used in 3D views. This value is used in slice views if SliceUseGlyphScale is set to false.
   /// Diameter of the point is defined as "scale" percentage of diagonal size of the window.
-  vtkSetMacro(GlyphSize,double);
-  vtkGetMacro(GlyphSize,double);
+  vtkSetMacro(GlyphSize, double);
+  vtkGetMacro(GlyphSize, double);
 
   /// This flag controls if GlyphScale relative or GlyphSize absolute size is used
   /// to determine size of point glyphs.

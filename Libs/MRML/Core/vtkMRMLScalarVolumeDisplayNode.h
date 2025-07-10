@@ -42,7 +42,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 {
   public:
   static vtkMRMLScalarVolumeDisplayNode* New();
-  vtkTypeMacro(vtkMRMLScalarVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
+  vtkTypeMacro(vtkMRMLScalarVolumeDisplayNode, vtkMRMLVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

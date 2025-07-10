@@ -5,7 +5,7 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro ( vtkURIHandler );
+vtkStandardNewMacro(vtkURIHandler);
 vtkCxxSetObjectMacro( vtkURIHandler, PermissionPrompter, vtkPermissionPrompter );
 //----------------------------------------------------------------------------
 vtkURIHandler::vtkURIHandler()

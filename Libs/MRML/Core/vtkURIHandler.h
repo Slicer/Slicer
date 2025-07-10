@@ -17,8 +17,8 @@ public:
   vtkTypeMacro(vtkURIHandler, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  vtkGetStringMacro (HostName);
-  vtkSetStringMacro (HostName);
+  vtkGetStringMacro(HostName);
+  vtkSetStringMacro(HostName);
 
   ///
   /// virtual methods to be defined in subclasses.
@@ -64,10 +64,10 @@ public:
   vtkSetMacro ( RequiresPermission, int );
   vtkGetObjectMacro ( PermissionPrompter, vtkPermissionPrompter );
   virtual void SetPermissionPrompter(vtkPermissionPrompter* prompter);
-  vtkGetStringMacro ( Prefix );
-  vtkSetStringMacro ( Prefix );
-  vtkGetStringMacro ( Name );
-  vtkSetStringMacro ( Name );
+  vtkGetStringMacro(Prefix);
+  vtkSetStringMacro(Prefix);
+  vtkGetStringMacro(Name);
+  vtkSetStringMacro(Name);
 
  private:
 

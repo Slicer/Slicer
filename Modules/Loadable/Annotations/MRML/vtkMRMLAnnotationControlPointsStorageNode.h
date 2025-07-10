@@ -16,7 +16,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsS
 {
 public:
   static vtkMRMLAnnotationControlPointsStorageNode* New();
-  vtkTypeMacro(vtkMRMLAnnotationControlPointsStorageNode,vtkMRMLAnnotationStorageNode);
+  vtkTypeMacro(vtkMRMLAnnotationControlPointsStorageNode, vtkMRMLAnnotationStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

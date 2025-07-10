@@ -69,7 +69,7 @@
 #include <map>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLModelSliceDisplayableManager );
+vtkStandardNewMacro(vtkMRMLModelSliceDisplayableManager);
 
 //---------------------------------------------------------------------------
 class vtkMRMLModelSliceDisplayableManager::vtkInternal

@@ -25,7 +25,7 @@
 class VTK_ITK_EXPORT vtkITKImageToImageFilterF3F3 : public vtkITKImageToImageFilter
 {
 public:
-  vtkTypeMacro(vtkITKImageToImageFilterF3F3,vtkITKImageToImageFilter);
+  vtkTypeMacro(vtkITKImageToImageFilterF3F3, vtkITKImageToImageFilter);
   static vtkITKImageToImageFilterF3F3* New() { return 0; };
   void PrintSelf(ostream& os, vtkIndent indent)
   {

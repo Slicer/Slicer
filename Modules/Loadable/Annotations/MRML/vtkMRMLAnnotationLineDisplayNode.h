@@ -54,9 +54,9 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
                                    void * /*callData*/ ) override;
 
   /// Get/Set for Symbol scale
-  ///  vtkSetMacro(GlyphScale,double);
+  ///  vtkSetMacro(GlyphScale, double);
   void SetLineThickness(double thickness);
-  vtkGetMacro(LineThickness,double);
+  vtkGetMacro(LineThickness, double);
 
   /// Get/Set for LabelPosition
   vtkSetClampMacro(LabelPosition, double, 0.0, 1.0);

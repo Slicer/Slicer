@@ -16,10 +16,10 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   static vtkDataTransfer* New();
   vtkTypeMacro(vtkDataTransfer, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  vtkGetStringMacro ( SourceURI );
-  vtkSetStringMacro ( SourceURI );
-  vtkGetStringMacro ( DestinationURI );
-  vtkSetStringMacro ( DestinationURI );
+  vtkGetStringMacro(SourceURI);
+  vtkSetStringMacro(SourceURI);
+  vtkGetStringMacro(DestinationURI);
+  vtkSetStringMacro(DestinationURI);
   vtkGetObjectMacro ( Handler, vtkURIHandler );
   virtual void SetHandler(vtkURIHandler* uriHandler);
   vtkGetMacro ( TransferType, int );
@@ -28,8 +28,8 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   vtkSetMacro ( TransferID, int );
   vtkGetMacro ( SizeOnDisk, int );
   vtkSetMacro ( SizeOnDisk, int );
-  vtkGetStringMacro ( TransferNodeID);
-  vtkSetStringMacro ( TransferNodeID);
+  vtkGetStringMacro(TransferNodeID);
+  vtkSetStringMacro(TransferNodeID);
   vtkGetMacro ( Progress, int );
   vtkSetMacro ( Progress, int );
   vtkGetMacro ( TransferStatus, int );

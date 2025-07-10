@@ -26,7 +26,7 @@ public:
   // Provide a concrete New.
   static vtkMRMLColorNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLColorNodeTestHelper1,vtkMRMLColorNode);
+  vtkTypeMacro(vtkMRMLColorNodeTestHelper1, vtkMRMLColorNode);
 
   vtkMRMLNode* CreateNodeInstance() override
   {

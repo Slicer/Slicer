@@ -29,7 +29,7 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
 {
   public:
   static vtkMRMLSceneViewNode* New();
-  vtkTypeMacro(vtkMRMLSceneViewNode,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLSceneViewNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

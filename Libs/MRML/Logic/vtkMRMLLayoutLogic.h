@@ -74,7 +74,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLLayoutLogic : public vtkMRMLAbstractLogic
 public:
   /// The Usual vtk class functions
   static vtkMRMLLayoutLogic* New();
-  vtkTypeMacro(vtkMRMLLayoutLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLLayoutLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   typedef std::map<std::string, std::string> ViewAttributes;

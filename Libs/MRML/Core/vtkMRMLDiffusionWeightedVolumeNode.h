@@ -35,7 +35,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 {
   public:
   static vtkMRMLDiffusionWeightedVolumeNode* New();
-  vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeNode,vtkMRMLScalarVolumeNode);
+  vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeNode, vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -65,7 +65,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
   void SetDiffusionGradients(vtkDoubleArray* grad);
   double* GetDiffusionGradient(int val) VTK_SIZEHINT(3);
   void GetDiffusionGradient(int val, double g[3]);
-  vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
+  vtkGetObjectMacro(DiffusionGradients, vtkDoubleArray);
 
   ///
   void SetBValue (int val, const double b);
@@ -75,7 +75,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 #undef GetBValue
 #endif
   double GetBValue(int val);
-  vtkGetObjectMacro(BValues,vtkDoubleArray);
+  vtkGetObjectMacro(BValues, vtkDoubleArray);
 
   ///  Set/Get measurement frame that relates the coordinate system where the
   /// tensor measurements are given with the RAS coordinate system

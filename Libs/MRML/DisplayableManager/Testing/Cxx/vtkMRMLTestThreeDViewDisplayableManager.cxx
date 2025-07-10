@@ -31,7 +31,7 @@
 #include <cassert>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLTestThreeDViewDisplayableManager );
+vtkStandardNewMacro(vtkMRMLTestThreeDViewDisplayableManager);
 
 //---------------------------------------------------------------------------
 int vtkMRMLTestThreeDViewDisplayableManager::NodeAddedCount = 0;

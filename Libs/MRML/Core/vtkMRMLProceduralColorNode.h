@@ -28,7 +28,7 @@ class VTK_MRML_EXPORT vtkMRMLProceduralColorNode : public vtkMRMLColorNode
 {
 public:
   static vtkMRMLProceduralColorNode* New();
-  vtkTypeMacro(vtkMRMLProceduralColorNode,vtkMRMLColorNode);
+  vtkTypeMacro(vtkMRMLProceduralColorNode, vtkMRMLColorNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------

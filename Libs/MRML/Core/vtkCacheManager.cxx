@@ -10,7 +10,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro ( vtkCacheManager );
+vtkStandardNewMacro(vtkCacheManager);
 
 #define MB 1000000.0
 

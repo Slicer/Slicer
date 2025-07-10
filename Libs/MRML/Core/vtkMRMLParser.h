@@ -26,7 +26,7 @@ class VTK_MRML_EXPORT vtkMRMLParser : public vtkXMLParser
 {
 public:
   static vtkMRMLParser* New();
-  vtkTypeMacro(vtkMRMLParser,vtkXMLParser);
+  vtkTypeMacro(vtkMRMLParser, vtkXMLParser);
 
   vtkMRMLScene* GetMRMLScene() {return this->MRMLScene;};
   void SetMRMLScene(vtkMRMLScene* scene) {this->MRMLScene = scene;};

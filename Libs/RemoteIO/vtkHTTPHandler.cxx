@@ -44,7 +44,7 @@ vtkHTTPHandler::vtkInternal::~vtkInternal()
 // vtkHTTPHandler methods
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro ( vtkHTTPHandler );
+vtkStandardNewMacro(vtkHTTPHandler);
 
 //----------------------------------------------------------------------------
 size_t read_callback(void* ptr, size_t size, size_t nmemb, FILE *stream)

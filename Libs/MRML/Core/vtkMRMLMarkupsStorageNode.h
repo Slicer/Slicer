@@ -32,7 +32,7 @@
 class VTK_MRML_EXPORT vtkMRMLMarkupsStorageNode : public vtkMRMLStorageNode
 {
 public:
-  vtkTypeMacro(vtkMRMLMarkupsStorageNode,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLMarkupsStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Read node attributes from XML file

@@ -50,7 +50,7 @@
 #include <vtkSmartPointer.h>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro ( vtkMRMLTransformsDisplayableManager3D );
+vtkStandardNewMacro(vtkMRMLTransformsDisplayableManager3D);
 
 //---------------------------------------------------------------------------
 class vtkMRMLTransformsDisplayableManager3D::vtkInternal

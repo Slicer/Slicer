@@ -38,7 +38,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   //----------------------------------------------------------------
 
   static vtkMRMLPlotChartNode* New();
-  vtkTypeMacro(vtkMRMLPlotChartNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLPlotChartNode, vtkMRMLNode);
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

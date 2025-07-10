@@ -24,7 +24,7 @@ public:
   // Provide a concrete New.
   static vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1,vtkMRMLDiffusionTensorDisplayPropertiesNode);
+  vtkTypeMacro(vtkMRMLDiffusionTensorDisplayPropertiesNodeTestHelper1, vtkMRMLDiffusionTensorDisplayPropertiesNode);
 
   vtkMRMLNode* CreateNodeInstance() override
   {

@@ -87,7 +87,7 @@
 class VTK_MRML_EXPORT vtkMRMLMessageCollection : public vtkObject
 {
 public:
-  vtkTypeMacro(vtkMRMLMessageCollection,vtkObject);
+  vtkTypeMacro(vtkMRMLMessageCollection, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkMRMLMessageCollection* New();
 

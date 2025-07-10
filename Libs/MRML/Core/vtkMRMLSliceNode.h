@@ -41,7 +41,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Sagittal and Coronal in default), it is necessary to use
   /// vtkMRMLScene::CreateNodeByClass(const char*)
   static vtkMRMLSliceNode* New();
-  vtkTypeMacro(vtkMRMLSliceNode,vtkMRMLAbstractViewNode);
+  vtkTypeMacro(vtkMRMLSliceNode, vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

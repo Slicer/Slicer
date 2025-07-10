@@ -71,7 +71,7 @@ class vtkMatrix4x4;
 class VTK_Teem_EXPORT vtkDiffusionTensorGlyph : public vtkTensorGlyph
 {
 public:
-  vtkTypeMacro(vtkDiffusionTensorGlyph,vtkTensorGlyph);
+  vtkTypeMacro(vtkDiffusionTensorGlyph, vtkTensorGlyph);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Description
@@ -150,7 +150,7 @@ public:
   /// that sets the number of tensors (points) that are skipped before a glyph is rendered.
   /// 1 is the finest level meaning that every input point a glyph is rendered.
   vtkSetClampMacro(Resolution,int,1,VTK_INT_MAX);
-  vtkGetMacro(Resolution,int);
+  vtkGetMacro(Resolution, int);
 
   ///
   /// Resolution of the output glyphs in each dimension.

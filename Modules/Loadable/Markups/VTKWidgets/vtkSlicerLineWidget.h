@@ -41,7 +41,7 @@ public:
   static vtkSlicerLineWidget* New();
 
   /// Standard methods for a VTK class.
-  vtkTypeMacro(vtkSlicerLineWidget,vtkSlicerMarkupsWidget);
+  vtkTypeMacro(vtkSlicerLineWidget, vtkSlicerMarkupsWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
   void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;

@@ -45,7 +45,7 @@ public:
   // Provide a concrete New.
   static vtkMRMLNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLNodeTestHelper1,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLNodeTestHelper1, vtkMRMLNode);
 
   NodeReferencesType& GetInternalReferencedNodes()
   {
@@ -132,7 +132,7 @@ class vtkMRMLStorageNodeTestHelper : public vtkMRMLStorageNode
 public:
   static vtkMRMLStorageNodeTestHelper* New();
 
-  vtkTypeMacro(vtkMRMLStorageNodeTestHelper,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLStorageNodeTestHelper, vtkMRMLStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override
   {

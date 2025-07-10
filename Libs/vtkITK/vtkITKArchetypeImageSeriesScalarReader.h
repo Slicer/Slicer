@@ -24,7 +24,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesScalarReader : public vtkITKArche
  public:
 
   static vtkITKArchetypeImageSeriesScalarReader* New();
-  vtkTypeMacro(vtkITKArchetypeImageSeriesScalarReader,vtkITKArchetypeImageSeriesReader);
+  vtkTypeMacro(vtkITKArchetypeImageSeriesScalarReader, vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
  protected:
