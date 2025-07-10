@@ -83,7 +83,7 @@ public:
   bool notify(QObject* receiver, QEvent* event) override;
 
   /// Get commandOptions
-  Q_INVOKABLE qSlicerCommandOptions* commandOptions()const;
+  Q_INVOKABLE qSlicerCommandOptions* commandOptions() const;
 
   /// Get IO Manager
   Q_INVOKABLE qSlicerIOManager* ioManager();
@@ -93,7 +93,7 @@ public:
   Q_INVOKABLE qSlicerPythonManager* pythonManager();
   Q_INVOKABLE ctkPythonConsole* pythonConsole();
   /// Log messages at this or higher level will be displayed in the Python console.
-  Q_INVOKABLE ctkErrorLogLevel::LogLevel pythonConsoleLogLevel()const;
+  Q_INVOKABLE ctkErrorLogLevel::LogLevel pythonConsoleLogLevel() const;
 #endif
 
   #ifdef Slicer_USE_QtTesting
@@ -102,11 +102,11 @@ public:
   #endif
 
   /// Set/Get layout manager
-  Q_INVOKABLE qSlicerLayoutManager* layoutManager()const;
+  Q_INVOKABLE qSlicerLayoutManager* layoutManager() const;
   Q_INVOKABLE void setLayoutManager(qSlicerLayoutManager* layoutManager);
 
   /// Return a pointer on the main window of the application if any.
-  QMainWindow* mainWindow()const;
+  QMainWindow* mainWindow() const;
 
   /// TODO
   /// See http://doc.trolltech.com/4.6/qapplication.html#commitData
@@ -121,9 +121,9 @@ public:
   /// found module is returned. Confidence value = 0 means that the found module can
   /// probably not do much with that node, while 1.0 means that the found module is certainly
   /// the best module to manage than node.
-  QString nodeModule(vtkMRMLNode* node, double* confidence = nullptr)const;
+  QString nodeModule(vtkMRMLNode* node, double* confidence = nullptr) const;
 
-  Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
+  Q_INVOKABLE ctkSettingsDialog* settingsDialog() const;
   Q_INVOKABLE void openSettingsDialog(const QString& settingsPanel = QString());
 
   /// Log application information.
@@ -200,7 +200,7 @@ public slots:
 
   /// Path of the current log file
   /// \sa recentLogFiles(), setupFileLogging()
-  QString currentLogFile()const;
+  QString currentLogFile() const;
 
   /// When turning on OpenGL and using the full screen mode, menus and tooltips
   /// are no longer visible. By enabling hasBorderInFullScreen, a one-pixel border

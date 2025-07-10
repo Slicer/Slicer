@@ -54,7 +54,7 @@ public:
   qSlicerSegmentEditorScriptedLabelEffect(QObject* parent = nullptr);
   ~qSlicerSegmentEditorScriptedLabelEffect() override;
 
-  Q_INVOKABLE QString pythonSource()const;
+  Q_INVOKABLE QString pythonSource() const;
 
   /// Set python source for the implemented effect
   /// \param filePath Python file path
@@ -76,7 +76,7 @@ public:
   QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  const QString helpText()const override;
+  const QString helpText() const override;
 
   /// Clone editor effect. Override to return a new instance of the effect sub-class
   qSlicerSegmentEditorAbstractEffect* clone() override;

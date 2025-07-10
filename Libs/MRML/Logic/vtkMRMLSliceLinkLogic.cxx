@@ -161,7 +161,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   // Update from SliceNode
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
-  if ( sliceNode && sliceNode->GetID()
+  if (sliceNode && sliceNode->GetID()
     && this->GetMRMLScene() && !this->GetMRMLScene()->IsBatchProcessing() )
   {
     SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
@@ -193,7 +193,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
       // Slice node changed and slices are linked. Broadcast.
       //std::cout << "Slice node changed and slices are linked!" << std::endl;
 
-      if (it != this->SliceNodeInteractionStatus.end() && !it->second.Interacting )
+      if (it != this->SliceNodeInteractionStatus.end() && !it->second.Interacting)
       {
         it->second.Interacting = sliceNode->GetInteracting();
         // Start Interaction event : we update the current sliceNodeNormal

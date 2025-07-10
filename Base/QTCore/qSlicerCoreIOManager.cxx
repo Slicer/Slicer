@@ -59,10 +59,10 @@ class qSlicerCoreIOManagerPrivate
 public:
   qSlicerCoreIOManagerPrivate();
   ~qSlicerCoreIOManagerPrivate();
-  vtkMRMLScene* currentScene()const;
+  vtkMRMLScene* currentScene() const;
 
-  qSlicerFileReader* reader(const QString& fileName)const;
-  QList<qSlicerFileReader*> readers(const QString& fileName)const;
+  qSlicerFileReader* reader(const QString& fileName) const;
+  QList<qSlicerFileReader*> readers(const QString& fileName) const;
 
   QList<qSlicerFileWriter*> writers(
     const qSlicerIO::IOFileType& fileType,
@@ -90,20 +90,20 @@ qSlicerCoreIOManagerPrivate::qSlicerCoreIOManagerPrivate() = default;
 qSlicerCoreIOManagerPrivate::~qSlicerCoreIOManagerPrivate() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerCoreIOManagerPrivate::currentScene()const
+vtkMRMLScene* qSlicerCoreIOManagerPrivate::currentScene() const
 {
   return qSlicerCoreApplication::application()->mrmlScene();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileReader* qSlicerCoreIOManagerPrivate::reader(const QString& fileName)const
+qSlicerFileReader* qSlicerCoreIOManagerPrivate::reader(const QString& fileName) const
 {
   QList<qSlicerFileReader*> matchingReaders = this->readers(fileName);
   return matchingReaders.count() ? matchingReaders[0] : 0;
 }
 
 //-----------------------------------------------------------------------------
-QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fileName)const
+QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fileName) const
 {
   // Use a map so that we can access readers sorted by confidence.
   QMultiMap<double, qSlicerFileReader*> matchingReadersSortedByConfidence;
@@ -214,7 +214,7 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(
 
 //-----------------------------------------------------------------------------
 qSlicerCoreIOManager::qSlicerCoreIOManager(QObject* _parent)
-  :QObject(_parent)
+  : QObject(_parent)
   , d_ptr(new qSlicerCoreIOManagerPrivate)
 {
   // To ensure that these types are known before any qSlicerIO instance is created,
@@ -228,7 +228,7 @@ qSlicerCoreIOManager::qSlicerCoreIOManager(QObject* _parent)
 qSlicerCoreIOManager::~qSlicerCoreIOManager() = default;
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerCoreIOManager::fileType(const QString& fileName)const
+qSlicerIO::IOFileType qSlicerCoreIOManager::fileType(const QString& fileName) const
 {
   QList<qSlicerIO::IOFileType> matchingFileTypes = this->fileTypes(fileName);
   return matchingFileTypes.count() ? matchingFileTypes[0] : QString("NoFile");
@@ -236,14 +236,14 @@ qSlicerIO::IOFileType qSlicerCoreIOManager::fileType(const QString& fileName)con
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerCoreIOManager
-::fileTypeFromDescription(const QString& fileDescription)const
+::fileTypeFromDescription(const QString& fileDescription) const
 {
   qSlicerFileReader* reader = this->reader(fileDescription);
   return reader ? reader->fileType() : QString("NoFile");
 }
 
 qSlicerFileWriter* qSlicerCoreIOManager
-::writer(vtkObject* object, const QString& extension/*=QString()*/)const
+::writer(vtkObject* object, const QString& extension/*=QString()*/) const
 {
   Q_D(const qSlicerCoreIOManager);
 
@@ -292,7 +292,7 @@ qSlicerFileWriter* qSlicerCoreIOManager
 
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerCoreIOManager
-::fileWriterFileType(vtkObject* object, const QString& format/*=QString()*/)const
+::fileWriterFileType(vtkObject* object, const QString& format/*=QString()*/) const
 {
   Q_D(const qSlicerCoreIOManager);
 
@@ -308,7 +308,7 @@ qSlicerIO::IOFileType qSlicerCoreIOManager
 }
 
 //-----------------------------------------------------------------------------
-QList<qSlicerIO::IOFileType> qSlicerCoreIOManager::fileTypes(const QString& fileName)const
+QList<qSlicerIO::IOFileType> qSlicerCoreIOManager::fileTypes(const QString& fileName) const
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerIO::IOFileType> matchingFileTypes;
@@ -320,7 +320,7 @@ QList<qSlicerIO::IOFileType> qSlicerCoreIOManager::fileTypes(const QString& file
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCoreIOManager::fileDescriptions(const QString& fileName)const
+QStringList qSlicerCoreIOManager::fileDescriptions(const QString& fileName) const
 {
   Q_D(const qSlicerCoreIOManager);
   QStringList matchingDescriptions;
@@ -333,7 +333,7 @@ QStringList qSlicerCoreIOManager::fileDescriptions(const QString& fileName)const
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerCoreIOManager::
-fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const
+fileDescriptionsByType(const qSlicerIO::IOFileType fileType) const
 {
   QStringList matchingDescriptions;
   foreach (qSlicerFileReader* reader, this->readers())
@@ -348,7 +348,7 @@ fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerCoreIOManager::fileWriterDescriptions(
-  const qSlicerIO::IOFileType& fileType)const
+  const qSlicerIO::IOFileType& fileType) const
 {
   QStringList matchingDescriptions;
   foreach (qSlicerFileWriter* writer, this->writers(fileType))
@@ -360,7 +360,7 @@ QStringList qSlicerCoreIOManager::fileWriterDescriptions(
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerCoreIOManager::fileWriterExtensions(
-  vtkObject* object)const
+  vtkObject* object) const
 {
   Q_D(const qSlicerCoreIOManager);
   // Use a map so that we can access writers sorted by confidence.
@@ -386,7 +386,7 @@ QStringList qSlicerCoreIOManager::fileWriterExtensions(
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCoreIOManager::allWritableFileExtensions()const
+QStringList qSlicerCoreIOManager::allWritableFileExtensions() const
 {
   Q_D(const qSlicerCoreIOManager);
 
@@ -423,7 +423,7 @@ QStringList qSlicerCoreIOManager::allWritableFileExtensions()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCoreIOManager::allReadableFileExtensions()const
+QStringList qSlicerCoreIOManager::allReadableFileExtensions() const
 {
   Q_D(const qSlicerCoreIOManager);
 
@@ -542,7 +542,7 @@ QString qSlicerCoreIOManager::stripKnownExtension(const QString& fileName, vtkOb
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& readerDescription)const
+qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& readerDescription) const
 {
   Q_D(const qSlicerCoreIOManager);
   qSlicerFileReader* reader = this->reader(readerDescription);
@@ -556,7 +556,7 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& readerDescrip
 
 //-----------------------------------------------------------------------------
 qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
-  vtkObject* object, const QString& extension)const
+  vtkObject* object, const QString& extension) const
 {
   Q_D(const qSlicerCoreIOManager);
   qSlicerFileWriter* bestWriter = this->writer(object, extension);
@@ -569,7 +569,7 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode* node)const
+QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode* node) const
 {
   vtkMRMLStorageNode* storageNode = node->GetStorageNode();
   if (!storageNode)
@@ -1117,21 +1117,21 @@ bool qSlicerCoreIOManager::saveScene(const QString& fileName, QImage screenShot,
 }
 
 //-----------------------------------------------------------------------------
-const QList<qSlicerFileReader*>& qSlicerCoreIOManager::readers()const
+const QList<qSlicerFileReader*>& qSlicerCoreIOManager::readers() const
 {
   Q_D(const qSlicerCoreIOManager);
   return d->Readers;
 }
 
 //-----------------------------------------------------------------------------
-const QList<qSlicerFileWriter*>& qSlicerCoreIOManager::writers()const
+const QList<qSlicerFileWriter*>& qSlicerCoreIOManager::writers() const
 {
   Q_D(const qSlicerCoreIOManager);
   return d->Writers;
 }
 
 //-----------------------------------------------------------------------------
-QList<qSlicerFileReader*> qSlicerCoreIOManager::readers(const qSlicerIO::IOFileType& fileType)const
+QList<qSlicerFileReader*> qSlicerCoreIOManager::readers(const qSlicerIO::IOFileType& fileType) const
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerFileReader*> res;
@@ -1146,7 +1146,7 @@ QList<qSlicerFileReader*> qSlicerCoreIOManager::readers(const qSlicerIO::IOFileT
 }
 
 //-----------------------------------------------------------------------------
-QList<qSlicerFileWriter*> qSlicerCoreIOManager::writers(const qSlicerIO::IOFileType& fileType)const
+QList<qSlicerFileWriter*> qSlicerCoreIOManager::writers(const qSlicerIO::IOFileType& fileType) const
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerFileWriter*> res;
@@ -1161,7 +1161,7 @@ QList<qSlicerFileWriter*> qSlicerCoreIOManager::writers(const qSlicerIO::IOFileT
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileReader* qSlicerCoreIOManager::reader(const QString& ioDescription)const
+qSlicerFileReader* qSlicerCoreIOManager::reader(const QString& ioDescription) const
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerFileReader*> res;
@@ -1212,7 +1212,7 @@ int qSlicerCoreIOManager::registeredFileWriterCount(const qSlicerIO::IOFileType&
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::defaultSceneFileType()const
+QString qSlicerCoreIOManager::defaultSceneFileType() const
 {
   Q_D(const qSlicerCoreIOManager);
   return d->DefaultSceneFileType;
@@ -1226,7 +1226,7 @@ void qSlicerCoreIOManager::setDefaultSceneFileType(QString fileType)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, QString& readerDescription, qSlicerIO::IOProperties& ioProperties)const
+bool qSlicerCoreIOManager::examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, QString& readerDescription, qSlicerIO::IOProperties& ioProperties) const
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerFileReader*> res;

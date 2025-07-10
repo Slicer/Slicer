@@ -33,7 +33,7 @@ bool validFile(const char* fileName)
   return false;
 }
 
-int vtkArchiveTest1(int argc, char* argv[] )
+int vtkArchiveTest1(int argc, char* argv[])
 {
   if (argc < 2)
   {
@@ -63,9 +63,9 @@ int vtkArchiveTest1(int argc, char* argv[] )
   //
   // unzip test file to local directory
   //
-  if ( vtksys::SystemTools::FileExists("archiveTest") )
+  if (vtksys::SystemTools::FileExists("archiveTest"))
   {
-    if ( !vtksys::SystemTools::RemoveADirectory("archiveTest") )
+    if (!vtksys::SystemTools::RemoveADirectory("archiveTest"))
     {
       std::cerr << "Error: could not remove archiveTest directory" << std::endl;
       return EXIT_FAILURE;
@@ -91,7 +91,7 @@ int vtkArchiveTest1(int argc, char* argv[] )
   for (unsigned int i = 0; i < numberOfFiles; i++)
   {
     std::cout << "Extracted file: " << cwd.GetFile(i) << std::endl;
-    if ( validFile(cwd.GetFile(i)) ) validFiles++;
+    if (validFile(cwd.GetFile(i)) ) validFiles++;
   }
 
   if (validFiles != 4)
@@ -106,9 +106,9 @@ int vtkArchiveTest1(int argc, char* argv[] )
   // Create a new zip file of the archive
   //
 
-  if ( vtksys::SystemTools::FileExists("archiveTest.zip") )
+  if (vtksys::SystemTools::FileExists("archiveTest.zip"))
   {
-    if ( !vtksys::SystemTools::RemoveFile("archiveTest.zip") )
+    if (!vtksys::SystemTools::RemoveFile("archiveTest.zip"))
     {
       std::cerr << "Error: could not remove archiveTest.zip file" << std::endl;
       return EXIT_FAILURE;
@@ -129,9 +129,9 @@ int vtkArchiveTest1(int argc, char* argv[] )
 
   // make fresh output directory
   std::cout << "creating extractedArchiveTest" << std::endl;
-  if ( vtksys::SystemTools::FileExists("extractedArchiveTest") )
+  if (vtksys::SystemTools::FileExists("extractedArchiveTest"))
   {
-    if ( !vtksys::SystemTools::RemoveADirectory("extractedArchiveTest") )
+    if (!vtksys::SystemTools::RemoveADirectory("extractedArchiveTest"))
     {
       std::cerr << "Error: could not remove extractedArchiveTest directory" << std::endl;
       return EXIT_FAILURE;
@@ -158,7 +158,7 @@ int vtkArchiveTest1(int argc, char* argv[] )
   for (unsigned int i = 0; i < numberOfFiles; i++)
   {
     std::cerr << "Extracted file: " << cwd.GetFile(i) << std::endl;
-    if ( validFile(cwd.GetFile(i)) ) validFiles++;
+    if (validFile(cwd.GetFile(i)) ) validFiles++;
   }
 
   if (validFiles != 4)

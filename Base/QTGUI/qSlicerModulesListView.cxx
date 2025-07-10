@@ -57,9 +57,9 @@ public:
   void addModules();
   void removeModules();
 
-  int sortedInsertionIndex(const QString& moduleName)const;
-  QStandardItem* moduleItem(const QString& moduleName)const;
-  QStringList indexListToModules(const QModelIndexList& indexes)const;
+  int sortedInsertionIndex(const QString& moduleName) const;
+  QStandardItem* moduleItem(const QString& moduleName) const;
+  QStringList indexListToModules(const QModelIndexList& indexes) const;
   void setModulesCheckState(const QStringList& moduleNames, Qt::CheckState check);
 
   QStandardItemModel* ModulesListModel;
@@ -73,7 +73,7 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerModulesListViewPrivate::qSlicerModulesListViewPrivate(qSlicerModulesListView& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->ModulesListModel = nullptr;
   this->FilterModel = nullptr;
@@ -213,7 +213,7 @@ void qSlicerModulesListViewPrivate::removeModules()
 
 // --------------------------------------------------------------------------
 int qSlicerModulesListViewPrivate
-::sortedInsertionIndex(const QString& moduleName)const
+::sortedInsertionIndex(const QString& moduleName) const
 {
   int index = 0;
   for (; index < this->ModulesListModel->rowCount(); ++index)
@@ -230,7 +230,7 @@ int qSlicerModulesListViewPrivate
 
 // --------------------------------------------------------------------------
 QStandardItem* qSlicerModulesListViewPrivate
-::moduleItem(const QString& moduleName)const
+::moduleItem(const QString& moduleName) const
 {
   QModelIndex start = this->ModulesListModel->index(0, 0);
   QModelIndexList moduleIndexes = this->ModulesListModel->match(
@@ -245,7 +245,7 @@ QStandardItem* qSlicerModulesListViewPrivate
 
 // --------------------------------------------------------------------------
 QStringList qSlicerModulesListViewPrivate
-::indexListToModules(const QModelIndexList& indexes)const
+::indexListToModules(const QModelIndexList& indexes) const
 {
   QStringList modules;
   foreach (const QModelIndex& index, indexes)
@@ -333,21 +333,21 @@ void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManag
 }
 
 // --------------------------------------------------------------------------
-qSlicerAbstractModuleFactoryManager* qSlicerModulesListView::factoryManager()const
+qSlicerAbstractModuleFactoryManager* qSlicerModulesListView::factoryManager() const
 {
   Q_D(const qSlicerModulesListView);
   return d->FactoryManager;
 }
 
 // --------------------------------------------------------------------------
-qSlicerModuleFactoryFilterModel* qSlicerModulesListView::filterModel()const
+qSlicerModuleFactoryFilterModel* qSlicerModulesListView::filterModel() const
 {
   Q_D(const qSlicerModulesListView);
   return d->FilterModel;
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModulesListView::isCheckBoxVisible()const
+bool qSlicerModulesListView::isCheckBoxVisible() const
 {
   Q_D(const qSlicerModulesListView);
   return d->CheckBoxVisible;
@@ -361,7 +361,7 @@ void qSlicerModulesListView::setCheckBoxVisible(bool show)
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerModulesListView::modules()const
+QStringList qSlicerModulesListView::modules() const
 {
   Q_D(const qSlicerModulesListView);
   QStringList modules;
@@ -377,7 +377,7 @@ QStringList qSlicerModulesListView::modules()const
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerModulesListView::checkedModules()const
+QStringList qSlicerModulesListView::checkedModules() const
 {
   Q_D(const qSlicerModulesListView);
   QModelIndex start = d->ModulesListModel->index(0,0);
@@ -387,7 +387,7 @@ QStringList qSlicerModulesListView::checkedModules()const
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerModulesListView::uncheckedModules()const
+QStringList qSlicerModulesListView::uncheckedModules() const
 {
   Q_D(const qSlicerModulesListView);
   QModelIndex start = d->ModulesListModel->index(0,0);

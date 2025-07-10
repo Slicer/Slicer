@@ -161,7 +161,7 @@ void qSlicerTableColumnPropertiesWidget::setMRMLTableNode(vtkMRMLTableNode* node
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLTableNode* qSlicerTableColumnPropertiesWidget::mrmlTableNode()const
+vtkMRMLTableNode* qSlicerTableColumnPropertiesWidget::mrmlTableNode() const
 {
   Q_D(const qSlicerTableColumnPropertiesWidget);
   return d->CurrentTableNode;
@@ -387,14 +387,14 @@ void qSlicerTableColumnPropertiesWidget::onCancelTypeChange()
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerTableColumnPropertiesWidget::columnNameVisible()const
+bool qSlicerTableColumnPropertiesWidget::columnNameVisible() const
 {
   Q_D(const qSlicerTableColumnPropertiesWidget);
   return d->ColumnNameVisible;
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerTableColumnPropertiesWidget::confirmTypeChange()const
+bool qSlicerTableColumnPropertiesWidget::confirmTypeChange() const
 {
   Q_D(const qSlicerTableColumnPropertiesWidget);
   return d->ConfirmTypeChange;

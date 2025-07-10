@@ -139,7 +139,7 @@ void vtkMRMLColorNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Name: " << (this->Name ? this->Name : "(none)") << "\n";
   os << indent << "Type: (" << this->GetTypeAsString() << ")\n";

@@ -52,7 +52,7 @@ vtkOrientedImageData::~vtkOrientedImageData() = default;
 //----------------------------------------------------------------------------
 void vtkOrientedImageData::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Directions:\n";
   for (int i = 0; i < 3; i++)
@@ -305,14 +305,14 @@ void vtkOrientedImageData::GetDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMat
 //---------------------------------------------------------------------------
 void vtkOrientedImageData::ComputeBounds()
 {
-  if ( this->GetMTime() <= this->ComputeTime )
+  if (this->GetMTime() <= this->ComputeTime)
   {
     return;
   }
 
   // Sanity check
   const int* extent = this->Extent;
-  if ( extent[0] > extent[1] ||
+  if (extent[0] > extent[1] ||
        extent[2] > extent[3] ||
        extent[4] > extent[5] )
   {

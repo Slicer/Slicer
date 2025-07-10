@@ -38,7 +38,7 @@
 // qSlicerSettingsModulesPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsModulesPanelPrivate: public Ui_qSlicerSettingsModulesPanel
+class qSlicerSettingsModulesPanelPrivate : public Ui_qSlicerSettingsModulesPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsModulesPanel);
 protected:
@@ -57,7 +57,7 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerSettingsModulesPanelPrivate::qSlicerSettingsModulesPanelPrivate(qSlicerSettingsModulesPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->ModulesMenu = nullptr;
 }
@@ -267,7 +267,7 @@ void qSlicerSettingsModulesPanel::setModulesToAlwaysIgnore(const QStringList& mo
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSettingsModulesPanel::modulesToAlwaysIgnore()const
+QStringList qSlicerSettingsModulesPanel::modulesToAlwaysIgnore() const
 {
   Q_D(const qSlicerSettingsModulesPanel);
   return d->ModulesToAlwaysIgnore;

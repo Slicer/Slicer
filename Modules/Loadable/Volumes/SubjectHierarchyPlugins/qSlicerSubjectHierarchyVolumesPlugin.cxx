@@ -73,7 +73,7 @@ namespace
 }
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyVolumesPluginPrivate: public QObject
+class qSlicerSubjectHierarchyVolumesPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyVolumesPlugin);
 protected:
@@ -93,16 +93,16 @@ public:
   QIcon VolumeVisibilityOffIcon;
   QIcon VolumeVisibilityOnIcon;
 
-  QAction* ShowVolumesInBranchAction{nullptr};
-  QAction* ShowVolumeInForegroundAction{nullptr};
-  QAction* ResetFieldOfViewOnShowAction{nullptr};
-  QAction* ResetViewOrientationOnShowAction{nullptr};
+  QAction* ShowVolumesInBranchAction{ nullptr };
+  QAction* ShowVolumeInForegroundAction{ nullptr };
+  QAction* ResetFieldOfViewOnShowAction{ nullptr };
+  QAction* ResetViewOrientationOnShowAction{ nullptr };
 
-  QAction* VolumeDisplayPresetAction{nullptr};
-  QMenu* PresetSubmenu{nullptr};
-  ctkSignalMapper* PresetModeMapper{nullptr};
+  QAction* VolumeDisplayPresetAction{ nullptr };
+  QMenu* PresetSubmenu{ nullptr };
+  ctkSignalMapper* PresetModeMapper{ nullptr };
 
-  QAction* ShowColorLegendAction{nullptr};
+  QAction* ShowColorLegendAction{ nullptr };
 
   vtkWeakPointer<vtkMRMLVolumeNode> SelectedVolumeNode;
 };
@@ -280,7 +280,7 @@ qSlicerSubjectHierarchyVolumesPlugin::qSlicerSubjectHierarchyVolumesPlugin(QObje
 qSlicerSubjectHierarchyVolumesPlugin::~qSlicerSubjectHierarchyVolumesPlugin() = default;
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::viewContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::viewContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyVolumesPlugin);
   QList<QAction*> actions;
@@ -410,7 +410,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showViewContextMenuActionsForItem(vtk
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -427,7 +427,7 @@ double qSlicerSubjectHierarchyVolumesPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyVolumesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyVolumesPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -452,13 +452,13 @@ double qSlicerSubjectHierarchyVolumesPlugin::canOwnSubjectHierarchyItem(vtkIdTyp
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyVolumesPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyVolumesPlugin::roleForPlugin() const
 {
   return "Scalar volume";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(vtkIdType itemID)const
+QString qSlicerSubjectHierarchyVolumesPlugin::tooltip(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -569,7 +569,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::setDisplayVisibility(vtkIdType itemID
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkIdType itemID)const
+int qSlicerSubjectHierarchyVolumesPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -756,7 +756,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
   }
 
   // Update scene model for subject hierarchy nodes that were just shown
-  for ( QSet<vtkIdType>::iterator volumeItemIt = subjectHierarchyItemsToUpdate.begin();
+  for (QSet<vtkIdType>::iterator volumeItemIt = subjectHierarchyItemsToUpdate.begin();
        volumeItemIt != subjectHierarchyItemsToUpdate.end(); ++volumeItemIt )
   {
    shNode->ItemModified(*volumeItemIt);
@@ -834,7 +834,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::hideVolumeFromAllViews(vtkMRMLScalarV
 
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyVolumesPlugin::collectShownVolumes( QSet<vtkIdType>& shownVolumeItemIDs,
-  int layer/*=vtkMRMLApplicationLogic::BackgroundLayer | vtkMRMLApplicationLogic::ForegroundLayer | vtkMRMLApplicationLogic::LabelLayer*/ )const
+  int layer/*=vtkMRMLApplicationLogic::BackgroundLayer | vtkMRMLApplicationLogic::ForegroundLayer | vtkMRMLApplicationLogic::LabelLayer*/ ) const
 {
   shownVolumeItemIDs.clear();
 
@@ -860,17 +860,17 @@ void qSlicerSubjectHierarchyVolumesPlugin::collectShownVolumes( QSet<vtkIdType>&
   for (int i = 0; i<numberOfCompositeNodes; i++)
   {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-    if ( layer & vtkMRMLApplicationLogic::BackgroundLayer
+    if (layer & vtkMRMLApplicationLogic::BackgroundLayer
       && compositeNode->GetBackgroundVolumeID() && strcmp(compositeNode->GetBackgroundVolumeID(),"") )
     {
       shownVolumeItemIDs.insert(shNode->GetItemByDataNode( scene->GetNodeByID(compositeNode->GetBackgroundVolumeID())) );
     }
-    if ( layer & vtkMRMLApplicationLogic::ForegroundLayer
+    if (layer & vtkMRMLApplicationLogic::ForegroundLayer
       && compositeNode->GetForegroundVolumeID() && strcmp(compositeNode->GetForegroundVolumeID(),"") )
     {
       shownVolumeItemIDs.insert(shNode->GetItemByDataNode( scene->GetNodeByID(compositeNode->GetForegroundVolumeID())) );
     }
-    if ( layer & vtkMRMLApplicationLogic::LabelLayer
+    if (layer & vtkMRMLApplicationLogic::LabelLayer
       && compositeNode->GetLabelVolumeID() && strcmp(compositeNode->GetLabelVolumeID(),"") )
     {
       shownVolumeItemIDs.insert(shNode->GetItemByDataNode( scene->GetNodeByID(compositeNode->GetLabelVolumeID())) );
@@ -879,7 +879,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::collectShownVolumes( QSet<vtkIdType>&
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyVolumesPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyVolumesPlugin);
 
@@ -919,7 +919,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVisibilityContextMenuActionsForIt
   }
 
   // Folders (Patient, Study, Folder)
-  if ( shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient())
+  if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient())
     || shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy())
     || shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder()) )
   {
@@ -958,7 +958,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
   // First, hide all volumes from all views, so that only the volumes from the selected branch are shown
   QSet<vtkIdType> subjectHierarchyItemsToUpdate;
   this->collectShownVolumes(subjectHierarchyItemsToUpdate, vtkMRMLApplicationLogic::BackgroundLayer);
-  for ( QSet<vtkIdType>::iterator volumeItemIt = subjectHierarchyItemsToUpdate.begin();
+  for (QSet<vtkIdType>::iterator volumeItemIt = subjectHierarchyItemsToUpdate.begin();
        volumeItemIt != subjectHierarchyItemsToUpdate.end(); ++volumeItemIt )
   {
    this->hideVolumeFromAllViews(vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(*volumeItemIt)));

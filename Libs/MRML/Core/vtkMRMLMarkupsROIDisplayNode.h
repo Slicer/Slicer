@@ -28,7 +28,7 @@
 #include "vtkMRMLExport.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
-class  VTK_MRML_EXPORT vtkMRMLMarkupsROIDisplayNode : public vtkMRMLMarkupsDisplayNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsROIDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:
   static vtkMRMLMarkupsROIDisplayNode* New();

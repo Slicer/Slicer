@@ -74,7 +74,7 @@ public:
 
 public:
   vtkSmartPointer<vtkCallbackCommand> CallBack;
-  bool UpdatingItemFromSegment{false};
+  bool UpdatingItemFromSegment{ false };
 
   int NameColumn{-1};
   int VisibilityColumn{-1};

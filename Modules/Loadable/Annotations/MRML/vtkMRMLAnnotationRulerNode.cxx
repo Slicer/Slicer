@@ -35,17 +35,17 @@ vtkMRMLAnnotationRulerNode::~vtkMRMLAnnotationRulerNode()
   vtkDebugMacro("Destructing...." << (this->GetID() != nullptr ? this->GetID() : "null id"));
   if (this->DistanceAnnotationFormat)
   {
-      delete [] this->DistanceAnnotationFormat;
+      delete[] this->DistanceAnnotationFormat;
       this->DistanceAnnotationFormat = nullptr;
   }
   if (this->ModelID1)
   {
-    delete [] this->ModelID1;
+    delete[] this->ModelID1;
     this->ModelID1 = nullptr;
   }
   if (this->ModelID2)
   {
-    delete [] this->ModelID2;
+    delete[] this->ModelID2;
     this->ModelID2 = nullptr;
   }
 }

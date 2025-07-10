@@ -48,7 +48,7 @@ public:
   ~qMRMLMarkupsROIWidget() override;
 
   /// Returns the current MRML ROI node
-  vtkMRMLMarkupsROINode* mrmlROINode()const;
+  vtkMRMLMarkupsROINode* mrmlROINode() const;
 
   void setExtent(double min, double max);
   void setExtent(double minLR, double maxLR,

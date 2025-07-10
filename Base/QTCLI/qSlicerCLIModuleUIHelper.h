@@ -40,7 +40,7 @@ class vtkMRMLCommandLineModuleNode;
 class qSlicerCLIModuleUIHelperPrivate;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCLI_EXPORT qSlicerWidgetValueWrapper: public QObject
+class Q_SLICER_BASE_QTCLI_EXPORT qSlicerWidgetValueWrapper : public QObject
 {
   Q_OBJECT
 public:
@@ -81,13 +81,13 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCLI_EXPORT ButtonGroupWidgetWrapper: public QWidget
+class Q_SLICER_BASE_QTCLI_EXPORT ButtonGroupWidgetWrapper : public QWidget
 {
   Q_OBJECT
 public:
   ButtonGroupWidgetWrapper(QWidget* parentWidget = nullptr);
 
-  QButtonGroup* buttonGroup()const;
+  QButtonGroup* buttonGroup() const;
   QString checkedValue();
 
   void setCheckedValue(const QString& value);
@@ -100,7 +100,7 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleUIHelper: public QObject
+class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleUIHelper : public QObject
 {
   Q_OBJECT
 public:

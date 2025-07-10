@@ -192,7 +192,7 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintVectorMacro(EffectiveRange, double, 2);
@@ -308,7 +308,7 @@ void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(
   {
     result->FillFromDataPointer(size, data);
   }
-  delete [] data;
+  delete[] data;
 }
 
 //---------------------------------------------------------------------------
@@ -321,7 +321,7 @@ void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(
   {
     result->FillFromDataPointer(size, data);
   }
-  delete [] data;
+  delete[] data;
 }
 
 //----------------------------------------------------------------------------

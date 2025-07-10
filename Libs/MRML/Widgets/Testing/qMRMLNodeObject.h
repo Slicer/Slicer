@@ -31,10 +31,10 @@ public:
   qMRMLNodeObject(vtkMRMLNode* node, QObject* parent = nullptr);
 
   void setProcessEvents(bool process);
-  bool processEvents()const;
+  bool processEvents() const;
 
   void setMessage(const QString& message);
-  QString message()const;
+  QString message() const;
 
 public slots:
   void modify();

@@ -23,7 +23,7 @@
 #include "ui_qSlicerTemplateKeyModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTemplateKeyModuleWidgetPrivate: public Ui_qSlicerTemplateKeyModuleWidget
+class qSlicerTemplateKeyModuleWidgetPrivate : public Ui_qSlicerTemplateKeyModuleWidget
 {
 public:
   qSlicerTemplateKeyModuleWidgetPrivate();

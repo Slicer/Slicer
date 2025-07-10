@@ -74,7 +74,7 @@ bool qSlicerUtils::isCLIScriptedExecutable(const QString& filePath)
   QFile scriptFile(filePath);
   QTextStream scriptStream(&scriptFile);
 
-  if ( (filePath.endsWith(".py", Qt::CaseInsensitive)) &&
+  if ((filePath.endsWith(".py", Qt::CaseInsensitive)) &&
        (scriptFile.open(QIODevice::ReadOnly))          &&
        (scriptStream.readLine(2).startsWith("#!")) )
   {

@@ -90,7 +90,7 @@ void vtkMRMLCrosshairNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*
 //----------------------------------------------------------------------------
 void vtkMRMLCrosshairNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintEnumMacro(CrosshairMode);

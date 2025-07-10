@@ -34,7 +34,7 @@
 #include <vtkMRMLNode.h>
 
 // -----------------------------------------------------------------------------
-class qMRMLCheckableNodeComboBoxPrivate: public qMRMLNodeComboBoxPrivate
+class qMRMLCheckableNodeComboBoxPrivate : public qMRMLNodeComboBoxPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLCheckableNodeComboBox);
 protected:
@@ -101,7 +101,7 @@ qMRMLCheckableNodeComboBox::qMRMLCheckableNodeComboBox(QWidget* parentWidget)
 qMRMLCheckableNodeComboBox::~qMRMLCheckableNodeComboBox() = default;
 
 // --------------------------------------------------------------------------
-QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::checkedNodes()const
+QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::checkedNodes() const
 {
   Q_D(const qMRMLCheckableNodeComboBox);
   QList<vtkMRMLNode*> res;
@@ -120,7 +120,7 @@ QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::checkedNodes()const
 }
 
 // --------------------------------------------------------------------------
-QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::uncheckedNodes()const
+QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::uncheckedNodes() const
 {
   QList<vtkMRMLNode*> res = this->nodes();
   foreach (vtkMRMLNode* checkedNode, this->checkedNodes())
@@ -131,7 +131,7 @@ QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::uncheckedNodes()const
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLCheckableNodeComboBox::allChecked()const
+bool qMRMLCheckableNodeComboBox::allChecked() const
 {
   Q_D(const qMRMLCheckableNodeComboBox);
   const ctkCheckableComboBox* checkableComboBox =
@@ -140,7 +140,7 @@ bool qMRMLCheckableNodeComboBox::allChecked()const
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLCheckableNodeComboBox::noneChecked()const
+bool qMRMLCheckableNodeComboBox::noneChecked() const
 {
   Q_D(const qMRMLCheckableNodeComboBox);
   const ctkCheckableComboBox* checkableComboBox =
@@ -149,7 +149,7 @@ bool qMRMLCheckableNodeComboBox::noneChecked()const
 }
 
 // --------------------------------------------------------------------------
-Qt::CheckState qMRMLCheckableNodeComboBox::checkState(vtkMRMLNode* node)const
+Qt::CheckState qMRMLCheckableNodeComboBox::checkState(vtkMRMLNode* node) const
 {
   Q_D(const qMRMLCheckableNodeComboBox);
   const ctkCheckableComboBox* checkableComboBox =

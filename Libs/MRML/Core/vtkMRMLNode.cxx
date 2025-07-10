@@ -72,7 +72,7 @@ vtkMRMLNode::~vtkMRMLNode()
   }
 
   // unregister and set null pointers.
-  if ( this->MRMLCallbackCommand )
+  if (this->MRMLCallbackCommand)
   {
     this->MRMLCallbackCommand->SetClientData( nullptr );
     this->MRMLCallbackCommand->Delete ( );
@@ -435,7 +435,7 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
   {
     attName = *(xmlReadAtts++);
     attValue = *(xmlReadAtts++);
-    if ( const char* referenceRole =
+    if (const char* referenceRole =
                 this->GetReferenceRoleFromMRMLAttributeName(attName) )
     {
       // Reference role has already been read
@@ -953,7 +953,7 @@ const char* vtkMRMLNode::GetAttribute(const char* name)
 std::vector<std::string> vtkMRMLNode::GetAttributeNames()
 {
   std::vector<std::string> attributeNamesVector;
-  for ( AttributesType::iterator iter = this->Attributes.begin(); iter != this->Attributes.end(); ++iter )
+  for (AttributesType::iterator iter = this->Attributes.begin(); iter != this->Attributes.end(); ++iter)
   {
     attributeNamesVector.push_back(iter->first);
   }
@@ -987,7 +987,7 @@ void vtkMRMLNode::MRMLCallback(vtkObject* caller,
 {
   vtkMRMLNode* self = reinterpret_cast<vtkMRMLNode*>(clientData);
 
-  if ( self == nullptr )
+  if (self == nullptr)
   {
     //vtkDebugMacro(self, "In vtkMRMLNode *********MRMLCallback called after delete!");
     return;
@@ -1018,8 +1018,8 @@ void vtkMRMLNode::SetID (const char* _arg)
 {
   // Mostly copied from vtkSetStringMacro() in vtkSetGet.cxx
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting ID to " << (_arg?_arg:"(null)") );
-  if ( this->ID == nullptr && _arg == nullptr) { return;}
-  if ( this->ID && _arg && (!strcmp(this->ID,_arg))) { return;}
+  if (this->ID == nullptr && _arg == nullptr) { return;}
+  if (this->ID && _arg && (!strcmp(this->ID,_arg))) { return;}
   char* oldID = this->ID;
   if (_arg)
   {
@@ -1027,14 +1027,14 @@ void vtkMRMLNode::SetID (const char* _arg)
     char* cp1 =  new char[n];
     const char* cp2 = (_arg);
     this->ID = cp1;
-    do { *cp1++ = *cp2++; } while ( --n );
+    do { *cp1++ = *cp2++; } while (--n );
   }
    else
    {
     this->ID = nullptr;
    }
   this->InvokeEvent(vtkMRMLNode::IDChangedEvent, oldID);
-  if (oldID) { delete [] oldID; }
+  if (oldID) { delete[] oldID; }
   this->Modified();
 }
 
@@ -1364,7 +1364,7 @@ const char* vtkMRMLNode::GetNthNodeReferenceID(const char* referenceRole, int n)
 vtkMRMLNode* vtkMRMLNode::GetNthNodeReference(const char* referenceRole, int n)
 {
 
-  if (!referenceRole || n < 0 )
+  if (!referenceRole || n < 0)
   {
     return nullptr;
   }

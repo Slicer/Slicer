@@ -47,7 +47,7 @@ void qMRMLSceneHierarchyModelPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLHierarchyNode* qMRMLSceneHierarchyModelPrivate::CreateHierarchyNode()const
+vtkMRMLHierarchyNode* qMRMLSceneHierarchyModelPrivate::CreateHierarchyNode() const
 {
   return vtkMRMLHierarchyNode::New();
 }
@@ -56,14 +56,14 @@ vtkMRMLHierarchyNode* qMRMLSceneHierarchyModelPrivate::CreateHierarchyNode()cons
 
 //------------------------------------------------------------------------------
 qMRMLSceneHierarchyModel::qMRMLSceneHierarchyModel(QObject* vparent)
-  :Superclass(new qMRMLSceneHierarchyModelPrivate(*this), vparent)
+  : Superclass(new qMRMLSceneHierarchyModelPrivate(*this), vparent)
 {
 }
 
 //------------------------------------------------------------------------------
 qMRMLSceneHierarchyModel::qMRMLSceneHierarchyModel(
   qMRMLSceneHierarchyModelPrivate* pimpl, QObject* parent)
-  :Superclass(pimpl, parent)
+  : Superclass(pimpl, parent)
 {
 }
 
@@ -71,7 +71,7 @@ qMRMLSceneHierarchyModel::qMRMLSceneHierarchyModel(
 qMRMLSceneHierarchyModel::~qMRMLSceneHierarchyModel() = default;
 
 //------------------------------------------------------------------------------
-int qMRMLSceneHierarchyModel::expandColumn()const
+int qMRMLSceneHierarchyModel::expandColumn() const
 {
   Q_D(const qMRMLSceneHierarchyModel);
   return d->ExpandColumn;
@@ -86,7 +86,7 @@ void qMRMLSceneHierarchyModel::setExpandColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneHierarchyModel::maxColumnId()const
+int qMRMLSceneHierarchyModel::maxColumnId() const
 {
   Q_D(const qMRMLSceneHierarchyModel);
   int maxId = this->Superclass::maxColumnId();
@@ -130,7 +130,7 @@ vtkMRMLNode* qMRMLSceneHierarchyModel::childNode(vtkMRMLNode* node, int childInd
 }
 */
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSceneHierarchyModel::parentNode(vtkMRMLNode* node)const
+vtkMRMLNode* qMRMLSceneHierarchyModel::parentNode(vtkMRMLNode* node) const
 {
   vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
   if (!hierarchyNode)
@@ -141,7 +141,7 @@ vtkMRMLNode* qMRMLSceneHierarchyModel::parentNode(vtkMRMLNode* node)const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
+int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node) const
 {
   Q_D(const qMRMLSceneHierarchyModel);
   if (!d->MRMLScene)
@@ -182,7 +182,7 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
           d->MRMLScene, parent->GetID());
       }
       const int childrenCount = parentHierarchy->GetNumberOfChildrenNodes();
-      for ( int i = 0; i < childrenCount ; ++i)
+      for (int i = 0; i < childrenCount ; ++i)
       {
         vtkMRMLHierarchyNode* child = parentHierarchy->GetNthChildNode(i);
         if (child == hnode)
@@ -238,13 +238,13 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneHierarchyModel::canBeAChild(vtkMRMLNode* node)const
+bool qMRMLSceneHierarchyModel::canBeAChild(vtkMRMLNode* node) const
 {
   return node != nullptr;
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneHierarchyModel::canBeAParent(vtkMRMLNode* node)const
+bool qMRMLSceneHierarchyModel::canBeAParent(vtkMRMLNode* node) const
 {
   return node && node->IsA("vtkMRMLHierarchyNode");
 }
@@ -345,13 +345,13 @@ bool qMRMLSceneHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
 }
 
 //------------------------------------------------------------------------------
-Qt::DropActions qMRMLSceneHierarchyModel::supportedDropActions()const
+Qt::DropActions qMRMLSceneHierarchyModel::supportedDropActions() const
 {
   return Qt::MoveAction;
 }
 
 //------------------------------------------------------------------------------
-QFlags<Qt::ItemFlag> qMRMLSceneHierarchyModel::nodeFlags(vtkMRMLNode* node, int column)const
+QFlags<Qt::ItemFlag> qMRMLSceneHierarchyModel::nodeFlags(vtkMRMLNode* node, int column) const
 {
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
   if (!this->canBeAParent(node))

@@ -147,8 +147,8 @@ bool vtkSlicerGeneralizedReformatLogic::ComputeStraighteningTransform(
       }
     }
   private:
-    vtkMRMLScene* Scene{nullptr};
-    vtkMRMLNode* Node{nullptr};
+    vtkMRMLScene* Scene{ nullptr };
+    vtkMRMLNode* Node{ nullptr };
   };
 
   if (transformToStraightenedNode == nullptr)

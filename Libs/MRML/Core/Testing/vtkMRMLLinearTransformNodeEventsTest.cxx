@@ -37,7 +37,7 @@ int vtkMRMLLinearTransformNodeEventsTest(int, char*[])
     std::cerr << "GetMatrixTransformToParent() failed" << std::endl;
     return EXIT_FAILURE;
   }
-  if ( fabs(matrixRetrieved->Element[0][0]-matrix->Element[0][0])>0.001
+  if (fabs(matrixRetrieved->Element[0][0]-matrix->Element[0][0])>0.001
     || fabs(matrixRetrieved->Element[0][1]-matrix->Element[0][1])>0.001
     || fabs(matrixRetrieved->Element[0][2]-matrix->Element[0][2])>0.001
     || fabs(matrixRetrieved->Element[0][3]-matrix->Element[0][3])>0.001
@@ -106,7 +106,7 @@ int vtkMRMLLinearTransformNodeEventsTest(int, char*[])
     std::cerr << "GetMatrixTransformToParent() failed" << std::endl;
     return EXIT_FAILURE;
   }
-  if ( fabs(matrixRetrieved->Element[0][3]-originalElement03)>0.001 )
+  if (fabs(matrixRetrieved->Element[0][3]-originalElement03)>0.001)
   {
     std::cerr << "GetMatrixTransformToParent() changed while expected it to remain the same" << std::endl;
     return EXIT_FAILURE;

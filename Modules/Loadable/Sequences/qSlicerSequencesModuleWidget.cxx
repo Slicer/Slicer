@@ -67,7 +67,7 @@ enum
 };
 
 //-----------------------------------------------------------------------------
-class qSlicerSequencesModuleWidgetPrivate: public Ui_qSlicerSequencesModuleWidget
+class qSlicerSequencesModuleWidgetPrivate : public Ui_qSlicerSequencesModuleWidget
 {
   Q_DECLARE_PUBLIC( qSlicerSequencesModuleWidget );
 
@@ -254,7 +254,7 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
     vtkNew<vtkGeneralTransform> worldTransform;
     worldTransform->Identity();
     vtkMRMLTransformNode* transformNode = transformableProxyNode ? transformableProxyNode->GetParentTransformNode() : nullptr;
-    if ( transformNode )
+    if (transformNode)
     {
       transformNode->GetTransformFromWorld(worldTransform.GetPointer());
     }
@@ -1121,7 +1121,7 @@ void qSlicerSequencesModuleWidget::onProxyNodeChanged(vtkMRMLNode* newProxyNode)
 void qSlicerSequencesModuleWidget::updateChart()
 {
   Q_D(qSlicerSequencesModuleWidget);
-  if (  d->pushButton_iCharting->isChecked())
+  if (d->pushButton_iCharting->isChecked())
   {
     d->updateInteractiveCharting();
   }

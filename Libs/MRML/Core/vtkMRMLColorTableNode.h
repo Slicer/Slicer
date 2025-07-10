@@ -187,8 +187,8 @@ public:
 
   ///
   /// Return the lowest and highest integers, for use in looping
-  int GetFirstType () override { return this->FullRainbow; };
-  int GetLastType () override { return this->CoolTint3; };
+  int GetFirstType() override { return this->FullRainbow; };
+  int GetLastType() override { return this->CoolTint3; };
 
   ///
   /// return a text string describing the color look up table type

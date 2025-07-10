@@ -41,7 +41,7 @@ vtkMRMLProceduralColorStorageNode::~vtkMRMLProceduralColorStorageNode() = defaul
 //----------------------------------------------------------------------------
 void vtkMRMLProceduralColorStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -151,7 +151,7 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   // cast the input node
   vtkMRMLProceduralColorNode* colorNode = nullptr;
-  if ( refNode->IsA("vtkMRMLProceduralColorNode") )
+  if (refNode->IsA("vtkMRMLProceduralColorNode"))
   {
     colorNode = dynamic_cast<vtkMRMLProceduralColorNode*> (refNode);
   }

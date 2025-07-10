@@ -36,7 +36,7 @@ QString qMRMLListWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLListWidget\" \
           name=\"MRMLListWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLListWidgetPlugin::icon() const

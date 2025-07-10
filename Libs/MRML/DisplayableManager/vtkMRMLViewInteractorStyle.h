@@ -113,7 +113,7 @@ protected:
   vtkMRMLViewInteractorStyle();
   ~vtkMRMLViewInteractorStyle() override;
 
-  vtkRenderWindowInteractor* Interactor{nullptr};
+  vtkRenderWindowInteractor* Interactor{ nullptr };
   vtkInteractorStyle* GetInteractorStyle();
 
   vtkCallbackCommand* EventCallbackCommand;

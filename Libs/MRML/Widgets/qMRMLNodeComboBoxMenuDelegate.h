@@ -39,7 +39,7 @@ class QComboBox;
 /// but correspond to an action.
 ///
 /// We reimplement the code from Qt "QComboMenuDelegate" used in the class QComboBox.
-class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxMenuDelegate: public QAbstractItemDelegate
+class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxMenuDelegate : public QAbstractItemDelegate
 {
   Q_OBJECT
 public:

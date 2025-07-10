@@ -59,7 +59,7 @@ public:
 protected:
   QScopedPointer<qSlicerScriptedLoadableModuleFactoryPrivate> d_ptr;
 
-  bool isValidFile(const QFileInfo& file)const override;
+  bool isValidFile(const QFileInfo& file) const override;
   ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
     createFactoryFileBasedItem() override;
 

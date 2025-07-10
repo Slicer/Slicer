@@ -105,7 +105,7 @@ public:
 
   ///
   /// transform utility functions
-  bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms() const override;
   void ApplyTransform(vtkAbstractTransform* transform) override;
 
   /// Description

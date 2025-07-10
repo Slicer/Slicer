@@ -178,7 +178,7 @@ void qMRMLSliceWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewN
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceCompositeNode* qMRMLSliceWidget::mrmlSliceCompositeNode()const
+vtkMRMLSliceCompositeNode* qMRMLSliceWidget::mrmlSliceCompositeNode() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->mrmlSliceCompositeNode();
@@ -192,7 +192,7 @@ void qMRMLSliceWidget::setSliceViewName(const QString& newSliceViewName)
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLSliceWidget::sliceViewName()const
+QString qMRMLSliceWidget::sliceViewName() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->sliceViewName();
@@ -206,7 +206,7 @@ void qMRMLSliceWidget::setSliceViewLabel(const QString& newSliceViewLabel)
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLSliceWidget::sliceViewLabel()const
+QString qMRMLSliceWidget::sliceViewLabel() const
 {
   Q_D(const qMRMLSliceWidget);
   return this->viewLabel();
@@ -220,7 +220,7 @@ void qMRMLSliceWidget::setSliceViewColor(const QColor& newSliceViewColor)
 }
 
 //---------------------------------------------------------------------------
-QColor qMRMLSliceWidget::sliceViewColor()const
+QColor qMRMLSliceWidget::sliceViewColor() const
 {
   Q_D(const qMRMLSliceWidget);
   return this->viewColor();
@@ -234,7 +234,7 @@ void qMRMLSliceWidget::setSliceOrientation(const QString& orientation)
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLSliceWidget::sliceOrientation()const
+QString qMRMLSliceWidget::sliceOrientation() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->sliceOrientation();
@@ -255,40 +255,40 @@ vtkAlgorithmOutput* qMRMLSliceWidget::imageDataConnection() const
 }
 
 //---------------------------------------------------------------------------
-vtkInteractorObserver* qMRMLSliceWidget::interactorStyle()const
+vtkInteractorObserver* qMRMLSliceWidget::interactorStyle() const
 {
   return this->sliceView()->interactorStyle();
 }
 
 //---------------------------------------------------------------------------
-vtkCornerAnnotation* qMRMLSliceWidget::overlayCornerAnnotation()const
+vtkCornerAnnotation* qMRMLSliceWidget::overlayCornerAnnotation() const
 {
   return this->sliceView()->overlayCornerAnnotation();
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* qMRMLSliceWidget::mrmlSliceNode()const
+vtkMRMLSliceNode* qMRMLSliceWidget::mrmlSliceNode() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->mrmlSliceNode();
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLSliceWidget::mrmlAbstractViewNode()const
+vtkMRMLAbstractViewNode* qMRMLSliceWidget::mrmlAbstractViewNode() const
 {
   Q_D(const qMRMLSliceWidget);
   return this->mrmlSliceNode();
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceLogic* qMRMLSliceWidget::sliceLogic()const
+vtkMRMLSliceLogic* qMRMLSliceWidget::sliceLogic() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController->sliceLogic();
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qMRMLSliceWidget::logic()const
+vtkMRMLAbstractLogic* qMRMLSliceWidget::logic() const
 {
   Q_D(const qMRMLSliceWidget);
   return this->sliceLogic();
@@ -310,35 +310,35 @@ void qMRMLSliceWidget::setSliceOffsetSliderOrientation(Qt::Orientation orientati
 }
 
 // --------------------------------------------------------------------------
-qMRMLSliceView* qMRMLSliceWidget::sliceView()const
+qMRMLSliceView* qMRMLSliceWidget::sliceView() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceView;
 }
 
 // --------------------------------------------------------------------------
-QWidget* qMRMLSliceWidget::viewWidget()const
+QWidget* qMRMLSliceWidget::viewWidget() const
 {
   Q_D(const qMRMLSliceWidget);
   return this->sliceView();
 }
 
 // --------------------------------------------------------------------------
-Qt::Orientation qMRMLSliceWidget::sliceOffsetSliderOrientation()const
+Qt::Orientation qMRMLSliceWidget::sliceOffsetSliderOrientation() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceOffsetSliderOrientation;
 }
 
 // --------------------------------------------------------------------------
-qMRMLSliceControllerWidget* qMRMLSliceWidget::sliceController()const
+qMRMLSliceControllerWidget* qMRMLSliceWidget::sliceController() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController;
 }
 
 // --------------------------------------------------------------------------
-qMRMLViewControllerBar* qMRMLSliceWidget::controllerWidget()const
+qMRMLViewControllerBar* qMRMLSliceWidget::controllerWidget() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceController;

@@ -148,7 +148,7 @@ void qSlicerLoadableModuleFactory::registerItems()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerLoadableModuleFactory::fileNameToKey(const QString& fileName)const
+QString qSlicerLoadableModuleFactory::fileNameToKey(const QString& fileName) const
 {
   return qSlicerLoadableModuleFactory::extractModuleName(fileName);
 }
@@ -166,7 +166,7 @@ qSlicerLoadableModuleFactoryItem* qSlicerLoadableModuleFactory::createFactoryFil
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerLoadableModuleFactory::isValidFile(const QFileInfo& file)const
+bool qSlicerLoadableModuleFactory::isValidFile(const QFileInfo& file) const
 {
   if (!Superclass::isValidFile(file))
   {

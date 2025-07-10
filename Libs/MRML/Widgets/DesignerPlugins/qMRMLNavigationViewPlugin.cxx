@@ -23,7 +23,7 @@
 #include "qMRMLNavigationView.h"
 
 //-----------------------------------------------------------------------------
-qMRMLNavigationViewPlugin::qMRMLNavigationViewPlugin(QObject* _parent):QObject(_parent)
+qMRMLNavigationViewPlugin::qMRMLNavigationViewPlugin(QObject* _parent): QObject(_parent)
 {
 }
 
@@ -47,7 +47,7 @@ QString qMRMLNavigationViewPlugin::domXml() const
           "   <height>200</height>\n"
           "  </rect>\n"
           " </property>\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

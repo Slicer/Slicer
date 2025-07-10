@@ -56,7 +56,7 @@
 #include "dcmtk/dcmdata/dcuid.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyDICOMPluginPrivate: public QObject
+class qSlicerSubjectHierarchyDICOMPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDICOMPlugin);
 protected:
@@ -168,7 +168,7 @@ qSlicerSubjectHierarchyDICOMPlugin::~qSlicerSubjectHierarchyDICOMPlugin() = defa
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyDICOMPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(node);
   Q_UNUSED(parentItemID);
@@ -178,7 +178,7 @@ double qSlicerSubjectHierarchyDICOMPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -207,7 +207,7 @@ double qSlicerSubjectHierarchyDICOMPlugin::canOwnSubjectHierarchyItem(vtkIdType 
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin() const
 {
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
@@ -239,7 +239,7 @@ const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin()const
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyDICOMPlugin::helpText()const
+const QString qSlicerSubjectHierarchyDICOMPlugin::helpText() const
 {
   return QString(
     "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
@@ -304,7 +304,7 @@ QIcon qSlicerSubjectHierarchyDICOMPlugin::visibilityIcon(int visible)
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyDICOMPlugin);
 
@@ -314,7 +314,7 @@ QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::itemContextMenuActions()cons
 }
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::sceneContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyDICOMPlugin::sceneContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyDICOMPlugin);
 
@@ -502,7 +502,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
   else // Item belongs to a data node (i.e. series)
   {
     vtkIdType studyItemID = shNode->GetItemParent(currentItemID);
-    if ( studyItemID && shNode->IsItemLevel(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy())
+    if (studyItemID && shNode->IsItemLevel(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy())
       && shNode->IsItemLevel(shNode->GetItemParent(studyItemID), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
     {
       // Valid if current item is a series and has a study parent which has a patient parent

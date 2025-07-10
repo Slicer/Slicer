@@ -39,7 +39,7 @@ QString qMRMLCaptureToolBarPlugin::domXml() const
 {
   return "<widget class=\"qMRMLCaptureToolBar\" \
           name=\"MRMLCaptureToolBar\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

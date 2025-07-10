@@ -57,7 +57,7 @@ public:
 
   void init();
 
-  bool isVisible(qSlicerCLIProgressBar::Visibility visibility)const;
+  bool isVisible(qSlicerCLIProgressBar::Visibility visibility) const;
 
   QString getLastNLines(const std::string& str, int numberOfLines, unsigned int maxLength = 5000);
 
@@ -85,7 +85,7 @@ private:
 
 //-----------------------------------------------------------------------------
 qSlicerCLIProgressBarPrivate::qSlicerCLIProgressBarPrivate(qSlicerCLIProgressBar& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->CommandLineModuleNode = nullptr;
   this->NameVisibility = qSlicerCLIProgressBar::AlwaysHidden;
@@ -162,7 +162,7 @@ void qSlicerCLIProgressBarPrivate::init()
 
 //-----------------------------------------------------------------------------
 bool qSlicerCLIProgressBarPrivate
-::isVisible(qSlicerCLIProgressBar::Visibility visibility)const
+::isVisible(qSlicerCLIProgressBar::Visibility visibility) const
 {
   if (visibility == qSlicerCLIProgressBar::AlwaysHidden)
   {
@@ -234,14 +234,14 @@ qSlicerCLIProgressBar::qSlicerCLIProgressBar(QWidget* _parent)
 qSlicerCLIProgressBar::~qSlicerCLIProgressBar() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLCommandLineModuleNode* qSlicerCLIProgressBar::commandLineModuleNode()const
+vtkMRMLCommandLineModuleNode* qSlicerCLIProgressBar::commandLineModuleNode() const
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->CommandLineModuleNode;
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::nameVisibility()const
+qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::nameVisibility() const
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->NameVisibility;
@@ -261,7 +261,7 @@ void qSlicerCLIProgressBar::setNameVisibility(qSlicerCLIProgressBar::Visibility 
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::statusVisibility()const
+qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::statusVisibility() const
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->StatusVisibility;
@@ -281,7 +281,7 @@ void qSlicerCLIProgressBar::setStatusVisibility(qSlicerCLIProgressBar::Visibilit
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::progressVisibility()const
+qSlicerCLIProgressBar::Visibility qSlicerCLIProgressBar::progressVisibility() const
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->ProgressVisibility;

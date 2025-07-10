@@ -32,7 +32,7 @@ vtkDataTransfer::~vtkDataTransfer()
 
   this->SourceURI = nullptr;
   this->DestinationURI = nullptr;
-  if ( this->Handler != nullptr )
+  if (this->Handler != nullptr)
   {
     this->SetHandler (nullptr);
   }

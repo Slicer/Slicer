@@ -114,14 +114,14 @@ public:
   ~qMRMLSubjectHierarchyTreeView() override;
 
 public:
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Return the subject hierarchy node found in the current MRML scene.
   /// While the scene is closing, this method may return a null pointer.
-  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
+  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode() const;
 
   /// Get current (=selected) item. If there are multiple items selected, then the first one is returned
-  Q_INVOKABLE vtkIdType currentItem()const;
+  Q_INVOKABLE vtkIdType currentItem() const;
   /// Get current (=selected) items.
   QList<vtkIdType> currentItems();
   /// Get current (=selected) items.
@@ -129,25 +129,25 @@ public:
   Q_INVOKABLE void currentItems(vtkIdList* selectedItems);
 
   /// Convenience method to set current item by associated data node.
-  virtual vtkMRMLNode* currentNode()const;
+  virtual vtkMRMLNode* currentNode() const;
 
   /// Get root item of the tree
-  Q_INVOKABLE vtkIdType rootItem()const;
+  Q_INVOKABLE vtkIdType rootItem() const;
   /// Get root item visibility
-  bool showRootItem()const;
+  bool showRootItem() const;
 
   /// Get whether the "Create node" actions are shown in the context menu of the scene
-  bool addNodeMenuActionVisible()const;
+  bool addNodeMenuActionVisible() const;
 
   /// Get whether multi-selection is enabled
   bool multiSelection();
 
-  QStringList includeItemAttributeNamesFilter()const;
-  QStringList includeNodeAttributeNamesFilter()const;
-  QStringList excludeItemAttributeNamesFilter()const;
-  QStringList excludeNodeAttributeNamesFilter()const;
-  QString attributeValueFilter()const;
-  QString attributeNameFilter()const;
+  QStringList includeItemAttributeNamesFilter() const;
+  QStringList includeNodeAttributeNamesFilter() const;
+  QStringList excludeItemAttributeNamesFilter() const;
+  QStringList excludeNodeAttributeNamesFilter() const;
+  QString attributeValueFilter() const;
+  QString attributeNameFilter() const;
   /// Set attribute filter that allows showing only items that have the specified attribute and their parents.
   /// \param attributeName Name of the attribute by which the items are filtered
   /// \param attributeValue Value of the specified attribute that needs to match this given value in order
@@ -184,47 +184,47 @@ public:
 
   /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
   void setLevelFilter(QStringList& levelFilter);
-  QStringList levelFilter()const;
+  QStringList levelFilter() const;
 
   /// Set name filter that allows showing only items containing a specified string (case-insensitive). Show all items if empty
   void setNameFilter(QString& nameFilter);
-  QString nameFilter()const;
+  QString nameFilter() const;
 
   /// Set node type filter that allows showing only data nodes of a certain type. Show all data nodes if empty
   void setNodeTypes(const QStringList& types);
-  QStringList nodeTypes()const;
+  QStringList nodeTypes() const;
 
   /// BaseName is the name used to generate a node name for all the new created
   /// nodes.
   /// If nodeType is not specified for setBaseName() then base name is set for all already defined node types.
   /// If nodeType is not specified for baseName() then base name of the first node type is returned.
   void setBaseName(const QString& baseName, const QString& nodeType = "");
-  QString baseName(const QString& nodeType = "")const;
+  QString baseName(const QString& nodeType = "") const;
 
   /// NodeTypeLabel is the name displayed to the user as node type. By default the node's tag is used.
   /// Configuration is useful for cases when a more specific type name is preferred (e.g., instead of
   /// the generic "Create new SubjectHierarchy" option, a module can set up the widget to show
   /// "Create new Measurements"). If label is set to empty then the default label is used.
   Q_INVOKABLE void setNodeTypeLabel(const QString& label, const QString& nodeType);
-  Q_INVOKABLE QString nodeTypeLabel(const QString& nodeType)const;
+  Q_INVOKABLE QString nodeTypeLabel(const QString& nodeType) const;
 
   /// Set child node types filter that allows hiding certain data node subclasses that would otherwise be
   /// accepted by the data node type filter. Show all data nodes if empty
   void setHideChildNodeTypes(const QStringList& types);
-  QStringList hideChildNodeTypes()const;
+  QStringList hideChildNodeTypes() const;
 
-  Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel()const;
-  Q_INVOKABLE qMRMLSubjectHierarchyModel* model()const;
+  Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel() const;
+  Q_INVOKABLE qMRMLSubjectHierarchyModel* model() const;
 
   /// Determine the number of shown items
-  Q_INVOKABLE int displayedItemCount()const;
+  Q_INVOKABLE int displayedItemCount() const;
 
-  bool highlightReferencedItems()const;
-  bool contextMenuEnabled()const;
-  bool editMenuActionVisible()const;
-  bool selectRoleSubMenuVisible()const;
-  bool noneEnabled()const;
-  QString noneDisplay()const;
+  bool highlightReferencedItems() const;
+  bool contextMenuEnabled() const;
+  bool editMenuActionVisible() const;
+  bool selectRoleSubMenuVisible() const;
+  bool noneEnabled() const;
+  QString noneDisplay() const;
 
   /// Set visibility column visibility
   void setVisibilityColumnVisible(bool visible);
@@ -244,18 +244,18 @@ public:
 
   /// Returns true if standard terminologies are used for choosing color.
   /// If false then simple selectors are used.
-  bool useTerminologySelector()const;
+  bool useTerminologySelector() const;
 
   /// Get list of subject hierarchy plugins that are enabled.
   /// An empty allowlist means all plugins are enabled. That is the default.
-  QStringList pluginAllowList()const;
+  QStringList pluginAllowList() const;
   /// Get list of subject hierarchy plugins that are disabled.
   /// An empty blocklist means all plugins are enabled. That is the default.
-  QStringList pluginBlockList()const;
+  QStringList pluginBlockList() const;
 
   /// Finds the first node that is visible in the tree and is of the specified class
   /// (either exactly that class or it is a class derived from that class).
-  Q_INVOKABLE vtkMRMLNode* findFirstNodeByClass(const QString& className)const;
+  Q_INVOKABLE vtkMRMLNode* findFirstNodeByClass(const QString& className) const;
 
 public slots:
   /// Set MRML scene

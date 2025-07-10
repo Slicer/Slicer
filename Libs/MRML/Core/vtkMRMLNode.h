@@ -86,17 +86,17 @@ class vtkCallbackCommand;
 #ifndef vtkSetReferenceStringBodyMacro
 #define vtkSetReferenceStringBodyMacro(name) \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting " << #name " to " << (_arg?_arg:"(null)") ); \
-  if ( this->name == nullptr && _arg == nullptr) { return;} \
-  if ( this->name && _arg && (!strcmp(this->name,_arg))) { return;} \
+  if (this->name == nullptr && _arg == nullptr) { return;} \
+  if (this->name && _arg && (!strcmp(this->name,_arg))) { return;} \
   std::string oldValue; \
-  if (this->name) { oldValue = this->name; delete [] this->name;  } \
+  if (this->name) { oldValue = this->name; delete[] this->name;  } \
   if (_arg) \
   { \
     size_t n = strlen(_arg) + 1; \
     char* cp1 =  new char[n]; \
     const char* cp2 = (_arg); \
     this->name = cp1; \
-    do { *cp1++ = *cp2++; } while ( --n ); \
+    do { *cp1++ = *cp2++; } while (--n ); \
   } \
    else \
    { \
@@ -552,7 +552,7 @@ public:
   {
     int oldModifiedEventPending = 0;
     // Invoke pending standard Modified event
-    if ( this->ModifiedEventPending )
+    if (this->ModifiedEventPending)
     {
       oldModifiedEventPending += this->ModifiedEventPending;
       this->ModifiedEventPending = 0;
@@ -1091,20 +1091,20 @@ protected:
   /// Holders for MRML callbacks
   vtkCallbackCommand* MRMLCallbackCommand;
 
-  char* ID{nullptr};
-  char* Name{nullptr};
-  char* Description{nullptr};
-  int HideFromEditors{0};
-  int Selectable{1};
-  int Selected{0};
-  int AddToScene{1};
-  bool UndoEnabled{false};
+  char* ID{ nullptr };
+  char* Name{ nullptr };
+  char* Description{ nullptr };
+  int HideFromEditors{ 0 };
+  int Selectable{ 1 };
+  int Selected{ 0 };
+  int AddToScene{ 1 };
+  bool UndoEnabled{ false };
 
-  int  SaveWithScene{true};
+  int  SaveWithScene{ true };
 
   ///
   /// Flag to avoid event loops
-  int InMRMLCallbackFlag{0};
+  int InMRMLCallbackFlag{ 0 };
 
   // We don't increase the reference count of Scene when store its pointer
   // therefore we must use a weak pointer to prevent pointer dangling when
@@ -1141,12 +1141,12 @@ private:
   void SetID(const char* newID);
 
   /// Variable used to manage encoded/decoded URL strings
-  char* TempURLString{nullptr};
+  char* TempURLString{ nullptr };
 
-  char* SingletonTag{nullptr};
+  char* SingletonTag{ nullptr };
 
-  int DisableModifiedEvent{0};
-  int ModifiedEventPending{0};
+  int DisableModifiedEvent{ 0 };
+  int ModifiedEventPending{ 0 };
   std::map<int, int> CustomModifiedEventPending; // event id, pending value (number of events grouped together)
 };
 

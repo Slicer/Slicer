@@ -30,7 +30,7 @@
 class qSlicerActionsDialogPrivate;
 
 //------------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerActionsDialog: public QDialog
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerActionsDialog : public QDialog
 {
   Q_OBJECT
 public:

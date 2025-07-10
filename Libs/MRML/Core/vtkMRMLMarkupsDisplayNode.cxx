@@ -470,7 +470,7 @@ const char* vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeAsString(int id)
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(PropertiesLabelVisibility);
   vtkMRMLPrintBooleanMacro(PointLabelsVisibility);
@@ -623,7 +623,7 @@ int vtkMRMLMarkupsDisplayNode::GetActiveComponentIndex(std::string context/*=Get
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context/*=GetDefaultContextName()*/)
 {
-  if ( this->ActiveComponents.find(context) != this->ActiveComponents.end()
+  if (this->ActiveComponents.find(context) != this->ActiveComponents.end()
     && this->ActiveComponents[context].Type == componentType
     && this->ActiveComponents[context].Index == componentIndex )
   {
@@ -721,7 +721,7 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
   //TODO: Allow other interaction contexts to place markups
   bool activeComponentChanged = false;
   std::string interactionContext = eventData->GetInteractionContextName();
-  if ( this->ActiveComponents[interactionContext].Index != controlPointIndex
+  if (this->ActiveComponents[interactionContext].Index != controlPointIndex
     || this->ActiveComponents[interactionContext].Type != ComponentControlPoint )
   {
     this->ActiveComponents[interactionContext].Type = ComponentControlPoint;
@@ -812,7 +812,7 @@ void vtkMRMLMarkupsDisplayNode::GetActiveControlPoints(std::vector<int>& control
 //---------------------------------------------------------------------------
 int vtkMRMLMarkupsDisplayNode::GetActiveControlPoint(std::string context)
 {
-  if ( this->ActiveComponents.find(context) != this->ActiveComponents.end()
+  if (this->ActiveComponents.find(context) != this->ActiveComponents.end()
     && this->ActiveComponents[context].Type == ComponentControlPoint )
   {
     return this->ActiveComponents[context].Index;

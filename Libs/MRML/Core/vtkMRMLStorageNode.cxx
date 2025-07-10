@@ -67,20 +67,20 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
 {
   if (this->FileName)
   {
-    delete [] this->FileName;
+    delete[] this->FileName;
     this->FileName = nullptr;
   }
   if (this->TempFileName)
   {
-    delete [] this->TempFileName;
+    delete[] this->TempFileName;
     this->TempFileName = nullptr;
   }
   if (this->URI)
   {
-    delete [] this->URI;
+    delete[] this->URI;
     this->URI = nullptr;
   }
-  if ( this->URIHandler )
+  if (this->URIHandler)
   {
     // don't delete it, it's obtained from the scene, it's just a pointer
     this->URIHandler = nullptr;
@@ -98,7 +98,7 @@ vtkMRMLStorageNode::~vtkMRMLStorageNode()
   }
   if (this->WriteFileFormat)
   {
-    delete [] this->WriteFileFormat;
+    delete[] this->WriteFileFormat;
     this->WriteFileFormat = nullptr;
   }
   if (this->StoredTime)
@@ -356,7 +356,7 @@ void vtkMRMLStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "FileName: " <<
     (this->FileName ? this->FileName : "(none)") << "\n";
@@ -414,7 +414,7 @@ void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject* vtkNotUsed(caller), unsi
 void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode* refNode )
 {
   // if the URI is null, or empty assume the file name is set and return
-  if ( this->Scene )
+  if (this->Scene)
   {
     // this event is being detected by GUI to provide feedback during load
     // of data. But,
@@ -423,13 +423,13 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode* refNode )
 //    this->Scene->InvokeEvent (vtkMRMLScene::ImportProgressFeedbackEvent );
   }
 
-  if ( this->GetURI() == nullptr )
+  if (this->GetURI() == nullptr)
   {
     vtkDebugMacro("StageReadData: uri is null, setting state to transfer done");
     this->SetReadStateTransferDone();
     return;
   }
-  if ( !(strcmp(this->GetURI(), "")) )
+  if (!(strcmp(this->GetURI(), "")))
   {
     vtkDebugMacro("StageReadData: uri is empty, setting state to transfer done");
     this->SetReadStateTransferDone();
@@ -443,14 +443,14 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode* refNode )
   }
 
   // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
+  if (!this->GetAddToScene() || !refNode->GetAddToScene())
   {
     return;
   }
 
   vtkCacheManager* cacheManager = this->Scene->GetCacheManager();
   const char* fname = nullptr;
-  if ( cacheManager != nullptr )
+  if (cacheManager != nullptr)
   {
     fname = cacheManager->GetFilenameFromURI( this->GetURI() );
   }
@@ -514,7 +514,7 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode* refNode )
 //----------------------------------------------------------------------------
 void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode* refNode )
 {
-  if ( this->Scene )
+  if (this->Scene)
   {
     // this event is being detected by GUI to provide feedback during load
     // of data. But,
@@ -533,7 +533,7 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode* refNode )
     vtkDebugMacro("StageWriteData: uri is null, setting state to transfer done");
     return;
   }
-  if ( !(strcmp(this->GetURI(), "")) )
+  if (!(strcmp(this->GetURI(), "")))
   {
     vtkDebugMacro("StageWriteData: uri is empty, setting state to transfer done");
     this->SetWriteStateTransferDone();
@@ -762,7 +762,7 @@ int vtkMRMLStorageNode::FileNameIsInList(const char* fileName)
         *it : vtksys::SystemTools::RelativePath(rootDir, it->c_str());
       vtkDebugMacro("\tComparing " << relativeFileName
         << " and " << thisRelativeFileName);
-      if ( relativeFileName == thisRelativeFileName )
+      if (relativeFileName == thisRelativeFileName)
       {
         return 1;
       }
@@ -1111,7 +1111,7 @@ int vtkMRMLStorageNode::IsFilePathRelative(const char* filepath)
     vtkErrorMacro("IsFilePathRelative: input file path is null! Returning 0");
     return 0;
   }
-  if ( this->Scene )
+  if (this->Scene)
   {
     return this->Scene->IsFilePathRelative(filepath);
   }
@@ -1194,7 +1194,7 @@ int vtkMRMLStorageNode::ReadData(vtkMRMLNode* refNode, bool temporary)
     return 0;
   }
 
-  if ( !this->CanReadInReferenceNode(refNode) )
+  if (!this->CanReadInReferenceNode(refNode))
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::ReadData",
       "Cannot read data into reference node of class " << refNode->GetClassName() << ".");
@@ -1220,7 +1220,7 @@ int vtkMRMLStorageNode::ReadData(vtkMRMLNode* refNode, bool temporary)
   }
 
   this->StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
+  if (this->GetReadState() != this->TransferDone)
   {
     // remote file download hasn't finished
     vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::ReadData",
@@ -1295,7 +1295,7 @@ int vtkMRMLStorageNode::WriteData(vtkMRMLNode* refNode)
   }
 
   // test whether refNode is a valid node to hold a volume
-  if (!this->CanWriteFromReferenceNode(refNode) )
+  if (!this->CanWriteFromReferenceNode(refNode))
   {
     return 0;
   }

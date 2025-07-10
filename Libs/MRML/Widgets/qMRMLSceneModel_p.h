@@ -61,14 +61,14 @@ public:
   virtual ~qMRMLSceneModelPrivate();
   void init();
 
-  QModelIndexList indexes(const QString& nodeID)const;
+  QModelIndexList indexes(const QString& nodeID) const;
 
-  QStringList extraItems(QStandardItem* parent, const QString& extraType)const;
+  QStringList extraItems(QStandardItem* parent, const QString& extraType) const;
   void insertExtraItem(int row, QStandardItem* parent,
                        const QString& text, const QString& extraType,
                        const Qt::ItemFlags& flags);
   void removeAllExtraItems(QStandardItem* parent, const QString extraType);
-  bool isExtraItem(const QStandardItem* item)const;
+  bool isExtraItem(const QStandardItem* item) const;
   void listenNodeModifiedEvent();
   void reparentItems(QList<QStandardItem*>& children, int newIndex, QStandardItem* newParent);
 

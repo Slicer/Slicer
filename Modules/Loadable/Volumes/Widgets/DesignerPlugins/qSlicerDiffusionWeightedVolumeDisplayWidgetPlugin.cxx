@@ -41,7 +41,7 @@ QString qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
 {
   return "<widget class=\"qSlicerDiffusionWeightedVolumeDisplayWidget\" \
           name=\"VolumeDisplayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

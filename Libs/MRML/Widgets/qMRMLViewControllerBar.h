@@ -93,7 +93,7 @@ public:
   /// Label that displays the view's name.
   Q_INVOKABLE QLabel* viewLabel();
 
-  bool showMaximizeViewButton()const;
+  bool showMaximizeViewButton() const;
 
 public slots:
   void maximizeView();

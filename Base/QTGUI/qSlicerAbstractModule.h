@@ -53,10 +53,10 @@ public:
   /// Icon of the module. Anytime a graphical representation of the module
   /// is needed, the icon is used. It's the icon shown in the module selector
   /// as well as in the frequently used module toolbar (if any).
-  virtual QIcon icon()const;
+  virtual QIcon icon() const;
 
   /// The logo of the module, the credits given by the grants or institution
-  virtual QImage logo()const;
+  virtual QImage logo() const;
 
   /// Returns then associated QAction of the module. It contains all the
   /// information relative to the module. The text (QAction::text()) and icon

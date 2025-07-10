@@ -55,7 +55,7 @@ public:
   /// in order to have \a isEntered() valid.
   Q_INVOKABLE virtual void enter();
   Q_INVOKABLE virtual void exit();
-  bool isEntered()const;
+  bool isEntered() const;
 
   /// Node editing
   Q_INVOKABLE bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;

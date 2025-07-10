@@ -40,7 +40,7 @@
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-class qMRMLColorPickerWidgetPrivate: public Ui_qMRMLColorPickerWidget
+class qMRMLColorPickerWidgetPrivate : public Ui_qMRMLColorPickerWidget
 {
   Q_DECLARE_PUBLIC(qMRMLColorPickerWidget);
 
@@ -107,14 +107,14 @@ void qMRMLColorPickerWidget::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorLogic* qMRMLColorPickerWidget::mrmlColorLogic()const
+vtkMRMLColorLogic* qMRMLColorPickerWidget::mrmlColorLogic() const
 {
   Q_D(const qMRMLColorPickerWidget);
   return d->ColorLogic.GetPointer();
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLColorPickerWidget::currentColorNode()const
+vtkMRMLColorNode* qMRMLColorPickerWidget::currentColorNode() const
 {
   Q_D(const qMRMLColorPickerWidget);
   return vtkMRMLColorNode::SafeDownCast(d->ColorTableComboBox->currentNode());
@@ -221,7 +221,7 @@ void qMRMLColorPickerWidget::onTextChanged(const QString& colorText)
                                         d->SearchBox->text(), 1,
                                         Qt::MatchContains);
     }
-    if (indexList.count() > 0 )
+    if (indexList.count() > 0)
     {
       newCurrentIndex = indexList[0];
     }

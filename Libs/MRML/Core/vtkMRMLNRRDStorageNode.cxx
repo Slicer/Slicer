@@ -108,7 +108,7 @@ void vtkMRMLNRRDStorageNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLNRRDStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
 }
 
@@ -126,23 +126,23 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLVolumeNode* volNode = nullptr;
 
-  if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
+  if (refNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
   {
     volNode = dynamic_cast<vtkMRMLDiffusionTensorVolumeNode*> (refNode);
   }
-  else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
+  else if (refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
   {
     volNode = dynamic_cast<vtkMRMLDiffusionWeightedVolumeNode*> (refNode);
   }
-  else if ( refNode->IsA("vtkMRMLVectorVolumeNode") )
+  else if (refNode->IsA("vtkMRMLVectorVolumeNode"))
   {
     volNode = dynamic_cast<vtkMRMLVectorVolumeNode*> (refNode);
   }
-  else if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
+  else if (refNode->IsA("vtkMRMLScalarVolumeNode"))
   {
     volNode = dynamic_cast<vtkMRMLScalarVolumeNode*> (refNode);
   }
-  else if ( refNode->IsA("vtkMRMLVolumeNode") )
+  else if (refNode->IsA("vtkMRMLVolumeNode"))
   {
     // Generic case used for any VolumeNode. Used when Extensions add
     // node types that are subclasses of VolumeNode.
@@ -193,15 +193,15 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   reader->UpdateInformation();
 
   // Check type
-  if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
+  if (refNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
   {
-    if ( ! (reader->GetPointDataType() == vtkDataSetAttributes::TENSORS))
+    if (! (reader->GetPointDataType() == vtkDataSetAttributes::TENSORS))
     {
       vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");
       return 0;
     }
   }
-  else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
+  else if (refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
   {
     vtkDebugMacro("ReadData: Checking we have right info in file");
     const char* value = reader->GetHeaderValue("modality");
@@ -209,14 +209,14 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     {
       return 0;
     }
-    if ( ! (reader->GetPointDataType() == vtkDataSetAttributes::SCALARS &&
+    if (! (reader->GetPointDataType() == vtkDataSetAttributes::SCALARS &&
             !strcmp(value,"DWMRI") ) )
     {
       vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");
       return 0;
     }
   }
-  else if ( refNode->IsA("vtkMRMLVectorVolumeNode") )
+  else if (refNode->IsA("vtkMRMLVectorVolumeNode"))
   {
     if (! (reader->GetPointDataType() == vtkDataSetAttributes::VECTORS
            || reader->GetPointDataType() == vtkDataSetAttributes::NORMALS))
@@ -225,7 +225,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       return 0;
     }
   }
-  else if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
+  else if (refNode->IsA("vtkMRMLScalarVolumeNode"))
   {
     if (!(reader->GetPointDataType() == vtkDataSetAttributes::SCALARS &&
         (reader->GetNumberOfComponents() == 1 || reader->GetNumberOfComponents()==3) ))
@@ -242,7 +242,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // set measurement frame
   vtkMatrix4x4* mat2;
-  if ( refNode->IsA("vtkMRMLTensorVolumeNode") )
+  if (refNode->IsA("vtkMRMLTensorVolumeNode"))
   {
     mat2 = reader->GetMeasurementFrameMatrix();
     if (mat2 == nullptr)
@@ -255,7 +255,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       (vtkMRMLTensorVolumeNode::SafeDownCast(volNode))->SetMeasurementFrameMatrix(mat2);
     }
   }
-  if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
+  if (refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
   {
     mat2 = reader->GetMeasurementFrameMatrix();
     if (mat2 == nullptr)
@@ -270,7 +270,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
 
   // parse additional diffusion key-value pairs and handle specially
-  if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
+  if (refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
   {
     vtkNew<vtkDoubleArray> grad;
     vtkNew<vtkDoubleArray> bvalue;
@@ -285,7 +285,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // parse non-specific key-value pairs
   std::vector<std::string> keys = reader->GetHeaderKeysVector();
-  for ( std::vector<std::string>::iterator kit = keys.begin();
+  for (std::vector<std::string>::iterator kit = keys.begin();
         kit != keys.end(); ++kit)
   {
     volNode->SetAttribute(kit->c_str(), reader->GetHeaderValue(kit->c_str()));
@@ -312,7 +312,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkDoubleArray* bValues = nullptr;
   vtkNew<vtkMatrix4x4> ijkToRas;
 
-  if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
+  if (refNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
   {
     volNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(refNode);
     if (volNode)
@@ -320,7 +320,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       ((vtkMRMLDiffusionTensorVolumeNode*) volNode)->GetMeasurementFrameMatrix(mf.GetPointer());
     }
   }
-  else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
+  else if (refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
   {
 
     volNode = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(refNode);
@@ -331,7 +331,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       bValues = ((vtkMRMLDiffusionWeightedVolumeNode*) volNode)->GetBValues();
     }
   }
-  else if ( refNode->IsA("vtkMRMLVectorVolumeNode") )
+  else if (refNode->IsA("vtkMRMLVectorVolumeNode"))
   {
     volNode = vtkMRMLVectorVolumeNode::SafeDownCast(refNode);
     if (volNode)
@@ -339,11 +339,11 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       ((vtkMRMLVectorVolumeNode*) volNode)->GetMeasurementFrameMatrix(mf.GetPointer());
     }
   }
-  else if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
+  else if (refNode->IsA("vtkMRMLScalarVolumeNode"))
   {
     volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
   }
-  else if ( refNode->IsA("vtkMRMLVolumeNode") )
+  else if (refNode->IsA("vtkMRMLVolumeNode"))
   {
     // Generic case used for any VolumeNode. Used when Extensions add
     // node types that are subclasses of VolumeNode.

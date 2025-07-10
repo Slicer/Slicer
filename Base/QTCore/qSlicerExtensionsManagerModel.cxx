@@ -70,8 +70,8 @@ struct UpdateDownloadInformation
 
   QString ExtensionId;
   QString ArchiveName;
-  qint64 DownloadSize{0};
-  qint64 DownloadProgress{0};
+  qint64 DownloadSize{ 0 };
+  qint64 DownloadProgress{ 0 };
 };
 
 // --------------------------------------------------------------------------
@@ -171,12 +171,12 @@ public:
   void saveExtensionsMetadataFromServerToCache();
   void loadCachedExtensionsMetadataFromServer();
 
-  QFileInfoList extensionDescriptionFileInfos(const QString& extensionDescriptionPath)const;
+  QFileInfoList extensionDescriptionFileInfos(const QString& extensionDescriptionPath) const;
 
   void addExtensionModelRow(const ExtensionMetadataType& metadata);
-  QStandardItem* extensionItem(const QString& extensionName, int column = Self::NameColumn)const;
+  QStandardItem* extensionItem(const QString& extensionName, int column = Self::NameColumn) const;
 
-  QStringList columnNames()const;
+  QStringList columnNames() const;
 
   void addExtensionPathToApplicationSettings(const QString& extensionName);
   void removeExtensionPathFromApplicationSettings(const QString& extensionName);
@@ -184,9 +184,9 @@ public:
   void addExtensionPathToLauncherSettings(const QString& extensionName);
   void removeExtensionPathFromLauncherSettings(const QString& extensionName);
 
-  bool checkExtensionsInstallDestinationPath(const QString& destinationPath, QString& error)const;
+  bool checkExtensionsInstallDestinationPath(const QString& destinationPath, QString& error) const;
 
-  bool checkExtensionSettingsPermissions(QString& error)const;
+  bool checkExtensionSettingsPermissions(QString& error) const;
   void addExtensionSettings(const QString& extensionName);
   void removeExtensionSettings(const QString& extensionName);
 
@@ -216,12 +216,12 @@ public:
   /// for metadata access quickly and even without network connection.
   bool removeExtensionDescriptionFile(const QString& extensionName);
 
-  QStringList extensionLibraryPaths(const QString& extensionName)const;
-  QStringList extensionQtPluginPaths(const QString& extensionName)const;
-  QStringList extensionPaths(const QString& extensionName)const;
+  QStringList extensionLibraryPaths(const QString& extensionName) const;
+  QStringList extensionQtPluginPaths(const QString& extensionName) const;
+  QStringList extensionPaths(const QString& extensionName) const;
 
 #ifdef Slicer_USE_PYTHONQT
-  QStringList extensionPythonPaths(const QString& extensionName)const;
+  QStringList extensionPythonPaths(const QString& extensionName) const;
 #endif
   static bool validateExtensionMetadata(const ExtensionMetadataType& extensionMetadata, int serverAPI);
 
@@ -233,16 +233,16 @@ public:
   QHash<int, QString> ColumnIdToName;
   QStringList ColumnNames;
 
-  bool NewExtensionEnabledByDefault{true};
-  bool Interactive{true};
+  bool NewExtensionEnabledByDefault{ true };
+  bool Interactive{ true };
   // By default enable checking of the extension server for updates.
   // This is according to common practices in all operating systems
   // most software (including venerable open source apps like vim).
   // Anyone who is particularly concerned is expected to look
   // for ways to disable automatic updates.
-  bool AutoUpdateCheck{true};
-  bool AutoUpdateInstall{false};
-  bool AutoInstallDependencies{true};
+  bool AutoUpdateCheck{ true };
+  bool AutoUpdateInstall{ false };
+  bool AutoInstallDependencies{ true };
 
   QNetworkAccessManager NetworkManager;
 
@@ -472,7 +472,7 @@ void qSlicerExtensionsManagerModelPrivate::loadCachedExtensionsMetadataFromServe
 }
 
 // --------------------------------------------------------------------------
-QFileInfoList qSlicerExtensionsManagerModelPrivate::extensionDescriptionFileInfos(const QString& extensionDescriptionPath)const
+QFileInfoList qSlicerExtensionsManagerModelPrivate::extensionDescriptionFileInfos(const QString& extensionDescriptionPath) const
 {
   QDir extensionDescriptionDir(extensionDescriptionPath);
   QFileInfoList fileInfos = extensionDescriptionDir.entryInfoList(QStringList() << "*.s4ext",
@@ -564,7 +564,7 @@ void qSlicerExtensionsManagerModelPrivate::addExtensionModelRow(const ExtensionM
 }
 
 // --------------------------------------------------------------------------
-QStandardItem* qSlicerExtensionsManagerModelPrivate::extensionItem(const QString& extensionName, int column)const
+QStandardItem* qSlicerExtensionsManagerModelPrivate::extensionItem(const QString& extensionName, int column) const
 {
   QList<QStandardItem*> foundItems =
       this->Model.findItems(extensionName, Qt::MatchExactly, Self::NameColumn);
@@ -576,7 +576,7 @@ QStandardItem* qSlicerExtensionsManagerModelPrivate::extensionItem(const QString
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModelPrivate::columnNames()const
+QStringList qSlicerExtensionsManagerModelPrivate::columnNames() const
 {
   return this->ColumnNames;
 }
@@ -785,7 +785,7 @@ extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
 
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModelPrivate::checkExtensionsInstallDestinationPath(
-    const QString& destinationPath, QString& error)const
+    const QString& destinationPath, QString& error) const
 {
   if (!QDir(destinationPath).exists())
   {
@@ -815,7 +815,7 @@ bool qSlicerExtensionsManagerModelPrivate::checkExtensionsInstallDestinationPath
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModelPrivate::checkExtensionSettingsPermissions(QString& error)const
+bool qSlicerExtensionsManagerModelPrivate::checkExtensionSettingsPermissions(QString& error) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
 
@@ -903,7 +903,7 @@ QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensi
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModelPrivate::extensionLibraryPaths(const QString& extensionName)const
+QStringList qSlicerExtensionsManagerModelPrivate::extensionLibraryPaths(const QString& extensionName) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
   if (this->SlicerVersion.isEmpty())
@@ -921,7 +921,7 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionLibraryPaths(const QS
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModelPrivate::extensionQtPluginPaths(const QString& extensionName)const
+QStringList qSlicerExtensionsManagerModelPrivate::extensionQtPluginPaths(const QString& extensionName) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
   if (this->SlicerVersion.isEmpty())
@@ -935,7 +935,7 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionQtPluginPaths(const Q
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModelPrivate::extensionPaths(const QString& extensionName)const
+QStringList qSlicerExtensionsManagerModelPrivate::extensionPaths(const QString& extensionName) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
   if (this->SlicerVersion.isEmpty())
@@ -951,7 +951,7 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionPaths(const QString& 
 
 #ifdef Slicer_USE_PYTHONQT
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModelPrivate::extensionPythonPaths(const QString& extensionName)const
+QStringList qSlicerExtensionsManagerModelPrivate::extensionPythonPaths(const QString& extensionName) const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
   if (this->SlicerVersion.isEmpty())
@@ -1128,14 +1128,14 @@ int qSlicerExtensionsManagerModel::serverAPIFromString(const QString& str)
 }
 
 // --------------------------------------------------------------------------
-QUrl qSlicerExtensionsManagerModel::serverUrl()const
+QUrl qSlicerExtensionsManagerModel::serverUrl() const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
   return QUrl(qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_SERVER_URL", settings.value("Extensions/ServerUrl").toString()));
 }
 
 // --------------------------------------------------------------------------
-QUrl qSlicerExtensionsManagerModel::frontendServerUrl()const
+QUrl qSlicerExtensionsManagerModel::frontendServerUrl() const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
   QString url = qEnvironmentVariable("SLICER_EXTENSIONS_MANAGER_FRONTEND_SERVER_URL", settings.value("Extensions/FrontendServerUrl").toString());
@@ -1147,7 +1147,7 @@ QUrl qSlicerExtensionsManagerModel::frontendServerUrl()const
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerExtensionsManagerModel::extensionsInstallPath()const
+QString qSlicerExtensionsManagerModel::extensionsInstallPath() const
 {
   QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
   return qSlicerCoreApplication::application()->toSlicerHomeAbsolutePath(settings.value("Extensions/InstallPath").toString());
@@ -1164,7 +1164,7 @@ QString qSlicerExtensionsManagerModel::extensionInstallPath(const QString& exten
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModel::extensionModulePaths(const QString& extensionName)const
+QStringList qSlicerExtensionsManagerModel::extensionModulePaths(const QString& extensionName) const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   QString path = this->extensionInstallPath(extensionName);
@@ -1201,7 +1201,7 @@ void qSlicerExtensionsManagerModel::setNewExtensionEnabledByDefault(bool value)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::newExtensionEnabledByDefault()const
+bool qSlicerExtensionsManagerModel::newExtensionEnabledByDefault() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   return d->NewExtensionEnabledByDefault;
@@ -1222,7 +1222,7 @@ void qSlicerExtensionsManagerModel::setAutoUpdateCheck(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::autoUpdateCheck()const
+bool qSlicerExtensionsManagerModel::autoUpdateCheck() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   return d->AutoUpdateCheck;
@@ -1243,7 +1243,7 @@ void qSlicerExtensionsManagerModel::setAutoUpdateInstall(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::autoUpdateInstall()const
+bool qSlicerExtensionsManagerModel::autoUpdateInstall() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   return d->AutoUpdateInstall;
@@ -1264,14 +1264,14 @@ void qSlicerExtensionsManagerModel::setAutoInstallDependencies(bool enable)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::autoInstallDependencies()const
+bool qSlicerExtensionsManagerModel::autoInstallDependencies() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   return d->AutoInstallDependencies;
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerExtensionsManagerModel::extensionDescription(const QString& extensionName)const
+QString qSlicerExtensionsManagerModel::extensionDescription(const QString& extensionName) const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   QStandardItem* item = d->extensionItem(extensionName);
@@ -1287,7 +1287,7 @@ QString qSlicerExtensionsManagerModel::extensionDescription(const QString& exten
 
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel::extensionMetadata(
-  const QString& extensionName, int source/*=MetadataAll*/)const
+  const QString& extensionName, int source/*=MetadataAll*/) const
 {
   Q_D(const qSlicerExtensionsManagerModel);
 
@@ -1338,25 +1338,25 @@ bool qSlicerExtensionsManagerModel::isExtensionInstalled(const QString& extensio
 }
 
 // --------------------------------------------------------------------------
-int qSlicerExtensionsManagerModel::installedExtensionsCount()const
+int qSlicerExtensionsManagerModel::installedExtensionsCount() const
 {
   return this->installedExtensions().size();
 }
 
 // --------------------------------------------------------------------------
-int qSlicerExtensionsManagerModel::numberOfInstalledExtensions()const
+int qSlicerExtensionsManagerModel::numberOfInstalledExtensions() const
 {
   return this->installedExtensionsCount();
 }
 
 // --------------------------------------------------------------------------
-int qSlicerExtensionsManagerModel::managedExtensionsCount()const
+int qSlicerExtensionsManagerModel::managedExtensionsCount() const
 {
   return this->managedExtensions().size();
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModel::managedExtensions()const
+QStringList qSlicerExtensionsManagerModel::managedExtensions() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   QStringList names;
@@ -1369,7 +1369,7 @@ QStringList qSlicerExtensionsManagerModel::managedExtensions()const
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModel::installedExtensions()const
+QStringList qSlicerExtensionsManagerModel::installedExtensions() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   QStringList names;
@@ -1450,7 +1450,7 @@ void qSlicerExtensionsManagerModel::setExtensionBookmarked(const QString& extens
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::isExtensionBookmarked(const QString& extensionName)const
+bool qSlicerExtensionsManagerModel::isExtensionBookmarked(const QString& extensionName) const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   QStandardItem* item = d->extensionItem(extensionName, qSlicerExtensionsManagerModelPrivate::BookmarkedColumn);
@@ -1504,7 +1504,7 @@ void qSlicerExtensionsManagerModel::setExtensionEnabled(const QString& extension
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::isExtensionEnabled(const QString& extensionName)const
+bool qSlicerExtensionsManagerModel::isExtensionEnabled(const QString& extensionName) const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   QStandardItem* item = d->extensionItem(extensionName, qSlicerExtensionsManagerModelPrivate::EnabledColumn);
@@ -1524,7 +1524,7 @@ QStringList qSlicerExtensionsManagerModel::scheduledForUpdateExtensions() const
 
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::isExtensionScheduledForUpdate(
-  const QString& extensionName)const
+  const QString& extensionName) const
 {
   return this->scheduledForUpdateExtensions().contains(extensionName);
 }
@@ -1538,13 +1538,13 @@ QStringList qSlicerExtensionsManagerModel::scheduledForUninstallExtensions() con
 
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::isExtensionScheduledForUninstall(
-  const QString& extensionName)const
+  const QString& extensionName) const
 {
   return this->scheduledForUninstallExtensions().contains(extensionName);
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModel::bookmarkedExtensions()const
+QStringList qSlicerExtensionsManagerModel::bookmarkedExtensions() const
 {
   QSettings settings;
   QStringList bookmarkedExtensions = settings.value("Extensions/Bookmarked").toStringList();
@@ -1552,7 +1552,7 @@ QStringList qSlicerExtensionsManagerModel::bookmarkedExtensions()const
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModel::enabledExtensions()const
+QStringList qSlicerExtensionsManagerModel::enabledExtensions() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   QStringList names;
@@ -3007,7 +3007,7 @@ QStringList qSlicerExtensionsManagerModel::isExtensionCompatible(const QString& 
 }
 
 // --------------------------------------------------------------------------
-const QStandardItemModel* qSlicerExtensionsManagerModel::model()const
+const QStandardItemModel* qSlicerExtensionsManagerModel::model() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   return &d->Model;
@@ -3429,7 +3429,7 @@ void qSlicerExtensionsManagerModel::aboutToLoadExtensions()
 }
 
 // --------------------------------------------------------------------------
-QUrl qSlicerExtensionsManagerModel::extensionsListUrl()const
+QUrl qSlicerExtensionsManagerModel::extensionsListUrl() const
 {
   Q_D(const qSlicerExtensionsManagerModel);
 
@@ -3449,7 +3449,7 @@ QUrl qSlicerExtensionsManagerModel::extensionsListUrl()const
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::waitForAllTasksCompletion(int timeoutMsec/*=-1*/)const
+bool qSlicerExtensionsManagerModel::waitForAllTasksCompletion(int timeoutMsec/*=-1*/) const
 {
   Q_D(const qSlicerExtensionsManagerModel);
 

@@ -58,7 +58,7 @@ vtkMRMLTableSQLiteStorageNode::~vtkMRMLTableSQLiteStorageNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLTableSQLiteStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -197,13 +197,13 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     //figure out what type of data is stored in this column
     std::string columnType = table->GetColumn(i)->GetClassName();
 
-    if ( (columnType.find("String") != std::string::npos) ||
+    if ((columnType.find("String") != std::string::npos) ||
         (columnType.find("Data") != std::string::npos) ||
         (columnType.find("Variant") != std::string::npos) )
     {
       createTableQuery += " TEXT";
     }
-    else if ( (columnType.find("Double") != std::string::npos) ||
+    else if ((columnType.find("Double") != std::string::npos) ||
              (columnType.find("Float") != std::string::npos) )
     {
       createTableQuery += " REAL";

@@ -40,13 +40,13 @@ qSlicerCamerasModule::qSlicerCamerasModule(QObject* _parent)
 qSlicerCamerasModule::~qSlicerCamerasModule() = default;
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCamerasModule::categories()const
+QStringList qSlicerCamerasModule::categories() const
 {
   return QStringList() << qSlicerAbstractCoreModule::tr("Developer Tools");
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerCamerasModule::icon()const
+QIcon qSlicerCamerasModule::icon() const
 {
   return QIcon(":/Icons/Cameras.png");
 }
@@ -64,7 +64,7 @@ vtkMRMLAbstractLogic* qSlicerCamerasModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCamerasModule::helpText()const
+QString qSlicerCamerasModule::helpText() const
 {
   QString help = tr(
     "Manage 3D views and cameras.<br>"
@@ -81,7 +81,7 @@ QString qSlicerCamerasModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCamerasModule::acknowledgementText()const
+QString qSlicerCamerasModule::acknowledgementText() const
 {
   QString acknowledgement = tr(
     "<center><table border=\"0\"><tr>"
@@ -96,7 +96,7 @@ QString qSlicerCamerasModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCamerasModule::contributors()const
+QStringList qSlicerCamerasModule::contributors() const
 {
   QStringList contributors;
   contributors << QString("Julien Finet (Kitware)");

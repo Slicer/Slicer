@@ -101,13 +101,13 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData* input, vtkImageData* o
     return;
   }
   vtkDataArray* inScalars = pd->GetScalars();
-  if ( inScalars == nullptr )
+  if (inScalars == nullptr)
   {
     vtkErrorMacro(<<"Scalars must be defined for distance transform");
     return;
   }
 
-  if (inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1)
   {
 
 ////////// These types are not defined in itk ////////////
@@ -142,7 +142,7 @@ void vtkITKDistanceTransform::SimpleExecute(vtkImageData* input, vtkImageData* o
 
 void vtkITKDistanceTransform::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "BackgroundValue: " << BackgroundValue << std::endl;
   os << indent << "InsideIsPositive: " << InsideIsPositive << std::endl;

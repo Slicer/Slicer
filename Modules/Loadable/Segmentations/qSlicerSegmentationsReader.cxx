@@ -69,26 +69,26 @@ void qSlicerSegmentationsReader::setSegmentationsLogic(vtkSlicerSegmentationsMod
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerSegmentationsModuleLogic* qSlicerSegmentationsReader::segmentationsLogic()const
+vtkSlicerSegmentationsModuleLogic* qSlicerSegmentationsReader::segmentationsLogic() const
 {
   Q_D(const qSlicerSegmentationsReader);
   return d->SegmentationsLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSegmentationsReader::description()const
+QString qSlicerSegmentationsReader::description() const
 {
   return tr("Segmentation");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerSegmentationsReader::fileType()const
+qSlicerIO::IOFileType qSlicerSegmentationsReader::fileType() const
 {
   return QString(/*no tr*/"SegmentationFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSegmentationsReader::extensions()const
+QStringList qSlicerSegmentationsReader::extensions() const
 {
   QString extensionText = tr("Segmentation");
   return QStringList()
@@ -99,7 +99,7 @@ QStringList qSlicerSegmentationsReader::extensions()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerSegmentationsReader::options()const
+qSlicerIOOptions* qSlicerSegmentationsReader::options() const
 {
   qSlicerIOOptionsWidget* options = new qSlicerSegmentationsIOOptionsWidget;
   options->setMRMLScene(this->mrmlScene());
@@ -107,7 +107,7 @@ qSlicerIOOptions* qSlicerSegmentationsReader::options()const
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSegmentationsReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerSegmentationsReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 

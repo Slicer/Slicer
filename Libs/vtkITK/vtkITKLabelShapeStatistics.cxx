@@ -56,7 +56,7 @@ vtkITKLabelShapeStatistics::~vtkITKLabelShapeStatistics()
 //----------------------------------------------------------------------------
 void vtkITKLabelShapeStatistics::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -162,7 +162,7 @@ void vtkITKLabelShapeStatisticsHandleProgressEvent (itk::Object* caller,
 {
   itk::ProcessObject* itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
   vtkAlgorithm* vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
-  if ( itkFilter && vtkFilter )
+  if (itkFilter && vtkFilter)
   {
     vtkFilter->UpdateProgress ( itkFilter->GetProgress() );
   }
@@ -384,13 +384,13 @@ int vtkITKLabelShapeStatistics::RequestData(
     return 0;
   }
   vtkDataArray* inScalars = pd->GetScalars();
-  if ( inScalars == nullptr )
+  if (inScalars == nullptr)
   {
     vtkErrorMacro(<<"Scalars must be defined for island math");
     return 0;
   }
 
-  if (inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1)
   {
 
 ////////// These types are not defined in itk ////////////

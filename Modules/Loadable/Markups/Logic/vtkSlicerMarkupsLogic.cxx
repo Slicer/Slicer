@@ -900,7 +900,7 @@ char* vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* nodeN
 
   // get file extension
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
-  if ( extension.empty() )
+  if (extension.empty())
   {
     vtkErrorMacro("vtkSlicerMarkupsLogic::LoadMarkups failed: no file extension specified: " << fileName);
     return nullptr;

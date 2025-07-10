@@ -41,7 +41,7 @@ QString qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
 {
   return "<widget class=\"qSlicerDiffusionTensorVolumeDisplayWidgetPlugin\" \
           name=\"VolumeDisplayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

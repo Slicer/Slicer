@@ -37,7 +37,7 @@ vtkITKIslandMath::~vtkITKIslandMath() = default;
 
 void vtkITKIslandMath::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "FullyConnected: " << FullyConnected << std::endl;
   os << indent << "SliceBySlice: " << SliceBySlice << std::endl;
@@ -54,7 +54,7 @@ void vtkITKIslandMathHandleProgressEvent (itk::Object* caller,
 {
   itk::ProcessObject* itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
   vtkAlgorithm* vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
-  if ( itkFilter && vtkFilter )
+  if (itkFilter && vtkFilter)
   {
     vtkFilter->UpdateProgress ( itkFilter->GetProgress() );
   }
@@ -139,13 +139,13 @@ void vtkITKIslandMath::SimpleExecute(vtkImageData* input, vtkImageData* output)
     return;
   }
   vtkDataArray* inScalars = pd->GetScalars();
-  if ( inScalars == nullptr )
+  if (inScalars == nullptr)
   {
     vtkErrorMacro(<<"Scalars must be defined for island math");
     return;
   }
 
-  if (inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1)
   {
 
 ////////// These types are not defined in itk ////////////

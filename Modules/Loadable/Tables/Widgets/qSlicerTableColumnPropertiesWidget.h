@@ -46,7 +46,7 @@ public:
   ~qSlicerTableColumnPropertiesWidget() override;
 
   /// Get the table node the columns are edited of.
-  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode()const;
+  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode() const;
 
   Q_INVOKABLE QStringList mrmlTableColumnNames();
 

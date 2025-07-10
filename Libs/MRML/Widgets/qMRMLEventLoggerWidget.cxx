@@ -31,7 +31,7 @@
 // VTK includes
 
 //-----------------------------------------------------------------------------
-class qMRMLEventLoggerWidgetPrivate: public Ui_qMRMLEventLoggerWidget
+class qMRMLEventLoggerWidgetPrivate : public Ui_qMRMLEventLoggerWidget
 {
 public:
   void log(const QString& text);

@@ -1221,19 +1221,19 @@ qSlicerExportNodeDialog::qSlicerExportNodeDialog(QObject* parentObject)
 qSlicerExportNodeDialog::~qSlicerExportNodeDialog() = default;
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerExportNodeDialog::fileType()const
+qSlicerIO::IOFileType qSlicerExportNodeDialog::fileType() const
 {
   return QString("GenericNodeExport");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerExportNodeDialog::description()const
+QString qSlicerExportNodeDialog::description() const
 {
   return tr("Export an individual node");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileDialog::IOAction qSlicerExportNodeDialog::action()const
+qSlicerFileDialog::IOAction qSlicerExportNodeDialog::action() const
 {
   return qSlicerFileDialog::Write;
 }

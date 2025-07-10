@@ -347,7 +347,7 @@ vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetVolum
   {
     return nullptr;
   }
-  if ( displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode")
+  if (displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode")
     || displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode") )
   {
     vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::Pipeline* pipeline = this->GetPipeline(displayNode);
@@ -392,7 +392,7 @@ bool vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UseDisplayNode(vtkMR
 
   // Check whether display node can be shown in this view
   vtkMRMLVolumeRenderingDisplayNode* volRenDispNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(displayNode);
-  if ( !volRenDispNode
+  if (!volRenDispNode
     || !volRenDispNode->GetVolumeNodeID()
     || !volRenDispNode->GetVolumePropertyNodeID() )
   {
@@ -1348,7 +1348,7 @@ vtkIdType vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::GetMaxMemoryInB
   }
 
   // Special case: for GPU volume raycast mapper, round up to nearest 128MB
-  if ( displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode")
+  if (displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode")
     || displayNode->IsA("vtkMRMLMultiVolumeRenderingDisplayNode") )
   {
     if (gpuMemorySizeMB < 128)
@@ -1754,12 +1754,12 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNod
   vtkMRMLVolumeNode* volumeNode = nullptr;
   vtkMRMLVolumeRenderingDisplayNode* displayNode = nullptr;
 
-  if ( (volumeNode = vtkMRMLVolumeNode::SafeDownCast(node)) )
+  if ((volumeNode = vtkMRMLVolumeNode::SafeDownCast(node)))
   {
     this->Internal->RemoveVolumeNode(volumeNode);
     this->RequestRender();
   }
-  else if ( (displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node)) )
+  else if ((displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node)))
   {
     this->Internal->RemoveDisplayNode(displayNode);
     this->RequestRender();
@@ -1806,7 +1806,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
         }
       }
     }
-    else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)
            || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
            || (event == vtkCommand::ModifiedEvent))
     {

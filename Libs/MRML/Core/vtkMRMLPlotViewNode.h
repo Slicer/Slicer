@@ -154,11 +154,11 @@ protected:
   /// Called after a node reference ID is removed (list size decreased).
   void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
-  bool DoPropagatePlotChartSelection{true};
+  bool DoPropagatePlotChartSelection{ true };
 
-  int InteractionMode{InteractionModePanView};
-  bool EnablePointMoveAlongX{true};
-  bool EnablePointMoveAlongY{true};
+  int InteractionMode{ InteractionModePanView };
+  bool EnablePointMoveAlongX{ true };
+  bool EnablePointMoveAlongY{ true };
 };
 
 #endif

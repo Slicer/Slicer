@@ -41,7 +41,7 @@ QString qMRMLMarkupsDisplayNodeWidgetPlugin
 {
   return "<widget class=\"qMRMLMarkupsDisplayNodeWidget\" \
           name=\"MarkupsDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

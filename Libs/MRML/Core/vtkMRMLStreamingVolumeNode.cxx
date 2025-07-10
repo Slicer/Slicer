@@ -388,7 +388,7 @@ void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*
 //----------------------------------------------------------------------------
 void vtkMRMLStreamingVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   vtkMRMLPrintBeginMacro(os, indent);
   os << indent << this->Frame << "\n";
   if (this->Codec)

@@ -46,7 +46,7 @@ int bitcount(int i)
   int c = 0;
   int m;
 
-  while ( i != 0 )
+  while (i != 0)
   {
     c++;
     m = i - 1;
@@ -61,11 +61,11 @@ void init_data()
 {
   int x, y, z;
 
-  for ( z = 0; z < 5; z++ )
+  for (z = 0; z < 5; z++)
   {
-    for ( y = 0; y < 5; y++ )
+    for (y = 0; y < 5; y++)
     {
-      for ( x = 0; x < 5; x++ )
+      for (x = 0; x < 5; x++)
       {
         p[x][y][z] = BG;
       }
@@ -82,13 +82,13 @@ void mark(int x, int y, int z)
   const int upper_i = x + 2;
 
   p[x][y][z] = BG;
-  for ( int k = z - 1; k < upper_k; k++ )
+  for (int k = z - 1; k < upper_k; k++)
   {
-    for ( int j = y - 1; j < upper_j; j++ )
+    for (int j = y - 1; j < upper_j; j++)
     {
-      for ( int i = x - 1; i < upper_i; i++ )
+      for (int i = x - 1; i < upper_i; i++)
       {
-        if ( p[i][j][k] == OBJ )
+        if (p[i][j][k] == OBJ)
         {
           mark(i, j, k);
         }
@@ -103,11 +103,11 @@ int count_components(int nc)
 {
   int x, y, z, count;
 
-  for ( z = 1; z < 4; z++ )
+  for (z = 1; z < 4; z++)
   {
-    for ( y = 1; y < 4; y++ )
+    for (y = 1; y < 4; y++)
     {
-      for ( x = 1; x < 4; x++ )
+      for (x = 1; x < 4; x++)
       {
         p[x][y][z] = (nc & 1) ? OBJ : BG;
         nc /= 2;
@@ -115,13 +115,13 @@ int count_components(int nc)
     }
   }
   count = 0;
-  for ( z = 1; z < 4; z++ )
+  for (z = 1; z < 4; z++)
   {
-    for ( y = 1; y < 4; y++ )
+    for (y = 1; y < 4; y++)
     {
-      for ( x = 1; x < 4; x++ )
+      for (x = 1; x < 4; x++)
       {
-        if ( p[x][y][z] != BG )
+        if (p[x][y][z] != BG)
         {
           count++;
           mark(x, y, z);
@@ -272,89 +272,89 @@ int Tilg_Test_3(int c, int d, int type)
   /* delta-Kanten berechnen */
   de = 6 - bitcount(c & MASK_E_01);
   /* delta-Flaechen berechnen */
-  if ( (c & MASK_F_01) == 0 )
+  if ((c & MASK_F_01) == 0)
   {
     df++; dfx++;
   }
-  if ( (c & MASK_F_02) == 0 )
+  if ((c & MASK_F_02) == 0)
   {
     df++; dfy++;
   }
-  if ( (c & MASK_F_03) == 0 )
+  if ((c & MASK_F_03) == 0)
   {
     df++; dfy++;
   }
-  if ( (c & MASK_F_04) == 0 )
+  if ((c & MASK_F_04) == 0)
   {
     df++; dfx++;
   }
-  if ( (c & MASK_F_05) == 0 )
+  if ((c & MASK_F_05) == 0)
   {
     df++; dfz++;
   }
-  if ( (c & MASK_F_06) == 0 )
+  if ((c & MASK_F_06) == 0)
   {
     df++; dfz++;
   }
-  if ( (c & MASK_F_07) == 0 )
+  if ((c & MASK_F_07) == 0)
   {
     df++; dfz++;
   }
-  if ( (c & MASK_F_08) == 0 )
+  if ((c & MASK_F_08) == 0)
   {
     df++; dfz++;
   }
-  if ( (c & MASK_F_09) == 0 )
+  if ((c & MASK_F_09) == 0)
   {
     df++; dfx++;
   }
-  if ( (c & MASK_F_10) == 0 )
+  if ((c & MASK_F_10) == 0)
   {
     df++; dfy++;
   }
-  if ( (c & MASK_F_11) == 0 )
+  if ((c & MASK_F_11) == 0)
   {
     df++; dfy++;
   }
-  if ( (c & MASK_F_12) == 0 )
+  if ((c & MASK_F_12) == 0)
   {
     df++; dfx++;
   }
   /* delta-Wuerfel berechnen */
-  if ( (c & MASK_U_01) == 0 )
+  if ((c & MASK_U_01) == 0)
   {
     du++;
   }
-  if ( (c & MASK_U_02) == 0 )
+  if ((c & MASK_U_02) == 0)
   {
     du++;
   }
-  if ( (c & MASK_U_03) == 0 )
+  if ((c & MASK_U_03) == 0)
   {
     du++;
   }
-  if ( (c & MASK_U_04) == 0 )
+  if ((c & MASK_U_04) == 0)
   {
     du++;
   }
-  if ( (c & MASK_U_05) == 0 )
+  if ((c & MASK_U_05) == 0)
   {
     du++;
   }
-  if ( (c & MASK_U_06) == 0 )
+  if ((c & MASK_U_06) == 0)
   {
     du++;
   }
-  if ( (c & MASK_U_07) == 0 )
+  if ((c & MASK_U_07) == 0)
   {
     du++;
   }
-  if ( (c & MASK_U_08) == 0 )
+  if ((c & MASK_U_08) == 0)
   {
     du++;
   }
   /* Tilgbarkeitsbedingung */
-  if ( (de - df + du) == 1 )
+  if ((de - df + du) == 1)
   {
     free_mask = f_tab[d];
     dex = 4 - bitcount(c & MASK_EX);
@@ -363,20 +363,20 @@ int Tilg_Test_3(int c, int d, int type)
     bcx = bitcount(c & MASK_CX);
     bcy = bitcount(c & MASK_CY);
     bcz = bitcount(c & MASK_CZ);
-    if ( type )
+    if (type)
     {
       /* fuer Mittelflaechen */
-      if ( (d == 0) || (d == 1) )
+      if ((d == 0) || (d == 1))
       {
-        if ( ( (dex - dfx) == 1) && ( (dez - dfz) == 1) && ( ( (bcx > 1) &&
+        if (( (dex - dfx) == 1) && ( (dez - dfz) == 1) && ( ( (bcx > 1) &&
                                                               (bcz > 1) ) ) )
         {
           return BG;
         }
       }
-      else if ( (d == 2)  || (d == 3) )
+      else if ((d == 2)  || (d == 3))
       {
-        if ( ( (dey - dfy) == 1) && ( (dez - dfz) == 1) && ( ( (bcy > 1) &&
+        if (( (dey - dfy) == 1) && ( (dez - dfz) == 1) && ( ( (bcy > 1) &&
                                                               (bcz > 1) ) ) )
         {
           return BG;
@@ -384,7 +384,7 @@ int Tilg_Test_3(int c, int d, int type)
       }
       else
       {
-        if ( ( (dex - dfx) == 1) && ( (dey - dfy) == 1) && ( ( (bcx > 1) &&
+        if (( (dex - dfx) == 1) && ( (dey - dfy) == 1) && ( ( (bcx > 1) &&
                                                               (bcy > 1) ) ) )
         {
           return BG;
@@ -394,11 +394,11 @@ int Tilg_Test_3(int c, int d, int type)
     else
     {
       /* fuer Mittelachsen */
-      switch( d )
+      switch (d)
       {
         case 0:
         case 1:
-          if (  ( (dex - dfx) == 1) && ( (dez - dfz) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dez - dfz) == 1)  &&
                ( ( (bcx > 1) && (bcz > 1) )  || (c & free_mask) )  )
           {
             return BG;
@@ -406,7 +406,7 @@ int Tilg_Test_3(int c, int d, int type)
           break;
         case 2:
         case 3:
-          if (  ( (dey - dfy) == 1) && ( (dez - dfz) == 1)  &&
+          if (( (dey - dfy) == 1) && ( (dez - dfz) == 1)  &&
                ( ( (bcy > 1) && (bcz > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -414,7 +414,7 @@ int Tilg_Test_3(int c, int d, int type)
           break;
         case 4:
         case 5:
-          if (  ( (dex - dfx) == 1) && ( (dey - dfy) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dey - dfy) == 1)  &&
                ( ( (bcx > 1) && (bcy > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -425,23 +425,23 @@ int Tilg_Test_3(int c, int d, int type)
           dex = 4 - bitcount(c & MASK_E_06);
           bcx = bitcount(c & MASK_C06);
           dfx = 0;
-          if ( (c & MASK_F_13) == 0 )
+          if ((c & MASK_F_13) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_14) == 0 )
+          if ((c & MASK_F_14) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_15) == 0 )
+          if ((c & MASK_F_15) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_16) == 0 )
+          if ((c & MASK_F_16) == 0)
           {
             dfx++;
           }
-          if ( ( (dey - dfy) == 1) && ( (dex - dfx) == 1) &&
+          if (( (dey - dfy) == 1) && ( (dex - dfx) == 1) &&
               ( ( (bcy > 1) && (bcx > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -452,23 +452,23 @@ int Tilg_Test_3(int c, int d, int type)
           dex = 4 - bitcount(c & MASK_E_08);
           bcx = bitcount(c & MASK_C08);
           dfx = 0;
-          if ( (c & MASK_F_17) == 0 )
+          if ((c & MASK_F_17) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_18) == 0 )
+          if ((c & MASK_F_18) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_19) == 0 )
+          if ((c & MASK_F_19) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_20) == 0 )
+          if ((c & MASK_F_20) == 0)
           {
             dfx++;
           }
-          if ( ( (dey - dfy) == 1) && ( (dex - dfx) == 1) &&
+          if (( (dey - dfy) == 1) && ( (dex - dfx) == 1) &&
               ( ( (bcy > 1) && (bcx > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -479,23 +479,23 @@ int Tilg_Test_3(int c, int d, int type)
           dey = 4 - bitcount(c & MASK_E_10);
           bcy = bitcount(c & MASK_C10);
           dfy = 0;
-          if ( (c & MASK_F_21) == 0 )
+          if ((c & MASK_F_21) == 0)
           {
             dfy++;
           }
-          if ( (c & MASK_F_22) == 0 )
+          if ((c & MASK_F_22) == 0)
           {
             dfy++;
           }
-          if ( (c & MASK_F_23) == 0 )
+          if ((c & MASK_F_23) == 0)
           {
             dfy++;
           }
-          if ( (c & MASK_F_24) == 0 )
+          if ((c & MASK_F_24) == 0)
           {
             dfy++;
           }
-          if (  ( (dex - dfx) == 1) && ( (dey - dfy) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dey - dfy) == 1)  &&
                ( ( (bcx > 1) && (bcy > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -506,23 +506,23 @@ int Tilg_Test_3(int c, int d, int type)
           dey = 4 - bitcount(c & MASK_E_12);
           bcy = bitcount(c & MASK_C12);
           dfy = 0;
-          if ( (c & MASK_F_25) == 0 )
+          if ((c & MASK_F_25) == 0)
           {
             dfy++;
           }
-          if ( (c & MASK_F_26) == 0 )
+          if ((c & MASK_F_26) == 0)
           {
             dfy++;
           }
-          if ( (c & MASK_F_27) == 0 )
+          if ((c & MASK_F_27) == 0)
           {
             dfy++;
           }
-          if ( (c & MASK_F_28) == 0 )
+          if ((c & MASK_F_28) == 0)
           {
             dfy++;
           }
-          if (  ( (dex - dfx) == 1) && ( (dey - dfy) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dey - dfy) == 1)  &&
                ( ( (bcx > 1) && (bcy > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -533,23 +533,23 @@ int Tilg_Test_3(int c, int d, int type)
           dex = 4 - bitcount(c & MASK_E_14);
           bcx = bitcount(c & MASK_C14);
           dfx = 0;
-          if ( (c & MASK_F_29) == 0 )
+          if ((c & MASK_F_29) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_30) == 0 )
+          if ((c & MASK_F_30) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_31) == 0 )
+          if ((c & MASK_F_31) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_32) == 0 )
+          if ((c & MASK_F_32) == 0)
           {
             dfx++;
           }
-          if (  ( (dex - dfx) == 1) && ( (dez - dfz) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dez - dfz) == 1)  &&
                ( ( (bcx > 1) && (bcz > 1) )  || (c & free_mask) )  )
           {
             return BG;
@@ -560,30 +560,30 @@ int Tilg_Test_3(int c, int d, int type)
           dex = 4 - bitcount(c & MASK_E_16);
           bcx = bitcount(c & MASK_C16);
           dfx = 0;
-          if ( (c & MASK_F_33) == 0 )
+          if ((c & MASK_F_33) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_34) == 0 )
+          if ((c & MASK_F_34) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_35) == 0 )
+          if ((c & MASK_F_35) == 0)
           {
             dfx++;
           }
-          if ( (c & MASK_F_36) == 0 )
+          if ((c & MASK_F_36) == 0)
           {
             dfx++;
           }
-          if (  ( (dex - dfx) == 1) && ( (dez - dfz) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dez - dfz) == 1)  &&
                ( ( (bcx > 1) && (bcz > 1) )  || (c & free_mask) )  )
           {
             return BG;
           }
           break;
         case 18:
-          if ( count_components(c & ~ (8192) ) == 1 )
+          if (count_components(c & ~ (8192) ) == 1)
           {
             return BG;
           }
@@ -621,35 +621,35 @@ void tilg_iso_3D(int dx, int dy, int dz,
   workbuf = data;
   nzz = nx * ny;
   /* Speicher allozieren */
-  if ( (list = (int*) malloc(nzz * nz * sizeof(int) / 4) ) == nullptr )
+  if ((list = (int*) malloc(nzz * nz * sizeof(int) / 4) ) == nullptr)
   {
     printf("out of memory\n");
     return;
   }
   /* Arbeitskopie des Bildes erstellen und binaerisieren */
   end = nx * ny * nz;
-  for ( i = 0; i < end; i++ )
+  for (i = 0; i < end; i++)
   {
     result[i] = ( (workbuf[i] >= LIM) ? OBJ : BG  );
   }
   /* Rand von 1-Voxel-Breite auf 0 setzen */
-  for ( y = 0; y < ny; y++ )
+  for (y = 0; y < ny; y++)
   {
-    for ( x = 0; x < nx; x++ )
+    for (x = 0; x < nx; x++)
     {
       P(result, x, y, 0) = (P(result, x, y, nz - 1) = BG);
     }
   }
-  for ( y = 0; y < ny; y++ )
+  for (y = 0; y < ny; y++)
   {
-    for ( z = 0; z < nz; z++ )
+    for (z = 0; z < nz; z++)
     {
       P(result, 0, y, z) = (P(result, nx - 1, y, z) = BG);
     }
   }
-  for ( z = 0; z < nz; z++ )
+  for (z = 0; z < nz; z++)
   {
-    for ( x = 0; x < nx; x++ )
+    for (x = 0; x < nx; x++)
     {
       P(result, x, 0, z) = (P(result, x, ny - 1, z) = BG);
     }
@@ -698,23 +698,23 @@ void tilg_iso_3D(int dx, int dy, int dz,
   /* eigentliches Bildparsing */
   end = end - nzz - nx - 1;
   cnt = 1;
-  while ( cnt )
+  while (cnt)
   {
     cnt = 0;
-    for ( dir = 0; dir < 18; dir++ )
+    for (dir = 0; dir < 18; dir++)
     {
       cnt1 = 0;
       dir_mask = dir_tab[dir];
-      for ( i = nzz + nx + 1; i < end; i++ )
+      for (i = nzz + nx + 1; i < end; i++)
       {
-        if ( result[i] == OBJ )
+        if (result[i] == OBJ)
         {
           nc = Env_Code_3(i);
-          if ( ( (~ nc) & dir_mask) == dir_mask )
+          if (( (~ nc) & dir_mask) == dir_mask)
           {
-            if ( bitcount(nc) > 2 )
+            if (bitcount(nc) > 2)
             {
-              if ( Tilg_Test_3(nc, dir, type) == BG )
+              if (Tilg_Test_3(nc, dir, type) == BG)
               {
                 list[cnt1++] = i;
               }
@@ -723,7 +723,7 @@ void tilg_iso_3D(int dx, int dy, int dz,
         }
       }
       /* Voxel der Liste loeschen */
-      for ( i = 0; i < cnt1; i++ )
+      for (i = 0; i < cnt1; i++)
       {
         result[list[i]] = BG;
       }
@@ -733,17 +733,17 @@ void tilg_iso_3D(int dx, int dy, int dz,
 
   /* sequentiell maximal Verduennen */
   cnt = 1;
-  while ( cnt )
+  while (cnt)
   {
     cnt = 0;
-    for ( i = nzz + nx + 1; i < end; i++ )
+    for (i = nzz + nx + 1; i < end; i++)
     {
-      if ( result[i] == OBJ )
+      if (result[i] == OBJ)
       {
         nc = Env_Code_3(i);
-        if ( bitcount(nc) > 2 )
+        if (bitcount(nc) > 2)
         {
-          if ( Tilg_Test_3(nc, 18, type) == BG )
+          if (Tilg_Test_3(nc, 18, type) == BG)
           {
             cnt++;
             result[i] = BG;

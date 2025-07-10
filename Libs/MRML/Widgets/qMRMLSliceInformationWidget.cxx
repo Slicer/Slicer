@@ -167,7 +167,7 @@ qMRMLSliceInformationWidget::qMRMLSliceInformationWidget(QWidget* _parent) : Sup
 qMRMLSliceInformationWidget::~qMRMLSliceInformationWidget() = default;
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* qMRMLSliceInformationWidget::mrmlSliceNode()const
+vtkMRMLSliceNode* qMRMLSliceInformationWidget::mrmlSliceNode() const
 {
   Q_D(const qMRMLSliceInformationWidget);
   return d->MRMLSliceNode;

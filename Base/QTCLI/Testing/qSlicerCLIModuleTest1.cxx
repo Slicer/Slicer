@@ -194,7 +194,7 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
   QTimer::singleShot(0, &callback, SLOT(invoke()));
 
   bool checkResult = false;
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(500, &app, SLOT(quit()));
     checkResult = true;

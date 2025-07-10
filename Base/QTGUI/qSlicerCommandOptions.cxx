@@ -34,7 +34,7 @@ qSlicerCommandOptions::qSlicerCommandOptions():Superclass()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCommandOptions::disableToolTips()const
+bool qSlicerCommandOptions::disableToolTips() const
 {
   return this->parsedArgs().value("disable-tooltips").toBool();
 }
@@ -72,7 +72,7 @@ bool qSlicerCommandOptions::showPythonInteractor() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCommandOptions::enableQtTesting()const
+bool qSlicerCommandOptions::enableQtTesting() const
 {
 #ifdef Slicer_USE_QtTesting
   return this->parsedArgs().value("qt-testing").toBool();
@@ -82,7 +82,7 @@ bool qSlicerCommandOptions::enableQtTesting()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCommandOptions::exitAfterStartup()const
+bool qSlicerCommandOptions::exitAfterStartup() const
 {
   return this->parsedArgs().value("exit-after-startup").toBool();
 }

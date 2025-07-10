@@ -42,15 +42,15 @@ public:
   qMRMLDisplayNodeWidget(QWidget* parent = nullptr);
   ~qMRMLDisplayNodeWidget() override;
 
-  vtkMRMLDisplayNode* mrmlDisplayNode()const;
+  vtkMRMLDisplayNode* mrmlDisplayNode() const;
 
-  bool visibility()const;
-  bool selected()const;
-  bool clipping()const;
-  bool threeDVisible()const;
-  bool sliceIntersectionVisible()const;
-  int sliceIntersectionThickness()const;
-  double sliceIntersectionOpacity()const;
+  bool visibility() const;
+  bool selected() const;
+  bool clipping() const;
+  bool threeDVisible() const;
+  bool sliceIntersectionVisible() const;
+  int sliceIntersectionThickness() const;
+  double sliceIntersectionOpacity() const;
 
 public slots:
   /// Set the volume node to display

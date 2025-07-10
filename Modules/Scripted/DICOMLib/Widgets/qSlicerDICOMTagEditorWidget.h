@@ -55,7 +55,7 @@ public:
   QString setExportables(QList<qSlicerDICOMExportable*> exportables);
 
   /// Get exportable list
-  QList<qSlicerDICOMExportable*> exportables()const;
+  QList<qSlicerDICOMExportable*> exportables() const;
 
   /// Clear exportables and tables
   void clear();

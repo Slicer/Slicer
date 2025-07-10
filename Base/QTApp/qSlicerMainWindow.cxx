@@ -860,7 +860,7 @@ qSlicerMainWindow::~qSlicerMainWindow()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector()const
+qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector() const
 {
   Q_D(const qSlicerMainWindow);
   return d->ModuleSelectorToolBar;
@@ -868,7 +868,7 @@ qSlicerModuleSelectorToolBar* qSlicerMainWindow::moduleSelector()const
 
 #ifdef Slicer_USE_PYTHONQT
 //---------------------------------------------------------------------------
-ctkPythonConsole* qSlicerMainWindow::pythonConsole()const
+ctkPythonConsole* qSlicerMainWindow::pythonConsole() const
 {
   return qSlicerCoreApplication::application()->pythonConsole();
 }
@@ -906,7 +906,7 @@ void qSlicerMainWindow::onUserViewedErrorLog()
 }
 
 //---------------------------------------------------------------------------
-ctkErrorLogWidget* qSlicerMainWindow::errorLogWidget()const
+ctkErrorLogWidget* qSlicerMainWindow::errorLogWidget() const
 {
   Q_D(const qSlicerMainWindow);
   return d->ErrorLogWidget;
@@ -1027,7 +1027,7 @@ void qSlicerMainWindow::on_SDBSaveToMRBAction_triggered()
     return;
   }
 
-  if ( !fileName.endsWith(".mrb") )
+  if (!fileName.endsWith(".mrb"))
   {
     fileName += QString(".mrb");
   }

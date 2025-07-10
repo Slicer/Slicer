@@ -53,18 +53,18 @@ public:
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
   /// Get the TableView node observed by view.
-  Q_INVOKABLE vtkMRMLTableViewNode* mrmlTableViewNode()const;
+  Q_INVOKABLE vtkMRMLTableViewNode* mrmlTableViewNode() const;
 
-  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode()const;
+  Q_INVOKABLE vtkMRMLTableNode* mrmlTableNode() const;
 
-  Q_INVOKABLE qMRMLTableModel* tableModel()const;
-  Q_INVOKABLE QSortFilterProxyModel* sortFilterProxyModel()const;
+  Q_INVOKABLE qMRMLTableModel* tableModel() const;
+  Q_INVOKABLE QSortFilterProxyModel* sortFilterProxyModel() const;
 
-  bool transposed()const;
-  bool firstRowLocked()const;
-  bool firstColumnLocked()const;
+  bool transposed() const;
+  bool firstRowLocked() const;
+  bool firstColumnLocked() const;
 
-  QList<int> selectedMRMLTableColumnIndices()const;
+  QList<int> selectedMRMLTableColumnIndices() const;
 
 public slots:
   /// Set the MRML \a scene that should be listened for events.

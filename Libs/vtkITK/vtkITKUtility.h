@@ -63,10 +63,10 @@ void ConnectPipelines(VTK_Exporter* exporter, ITK_Importer importer)
 
 #define DelegateSetMacro(name,arg) DelegateITKInputMacro(Set##name,arg)
 #define DelegateITKInputMacro(name,arg) \
-if ( 1 ) { \
+if (1) { \
   vtkDebugMacro( << this->GetClassName() << " (" << this << "): setting " #name " to " << #arg ); \
   ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*> ( this->m_Filter.GetPointer() ); \
-  if ( tempFilter ) \
+  if (tempFilter) \
   { \
     tempFilter->name ( arg ); \
     this->Modified(); \
@@ -75,10 +75,10 @@ if ( 1 ) { \
 
 #define DelegateGetMacro(name) DelegateITKOutputMacro (Get##name)
 #define DelegateITKOutputMacro(name) \
-if ( 1 ) { \
+if (1) { \
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): returning " #name ); \
   ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*> ( this->m_Filter.GetPointer() ); \
-  if ( tempFilter ) \
+  if (tempFilter) \
   { \
     return tempFilter->name (); \
   } \

@@ -344,7 +344,7 @@ void vtkSlicerCLIModuleLogic::SetDefaultModuleDescription(const ModuleDescriptio
 
 //-----------------------------------------------------------------------------
 const ModuleDescription& vtkSlicerCLIModuleLogic
-::GetDefaultModuleDescription()const
+::GetDefaultModuleDescription() const
 {
   return this->Internal->DefaultModuleDescription;
 }
@@ -572,7 +572,7 @@ vtkSlicerCLIModuleLogic
 
   if (tag == "image")
   {
-    if ( commandType == CommandLineModule
+    if (commandType == CommandLineModule
          || type == "dynamic-contrast-enhanced"
          || this->GetAllowInMemoryTransfer() == 0)
     {
@@ -602,7 +602,7 @@ vtkSlicerCLIModuleLogic
 
       fname = tname;
 
-      delete [] tname;
+      delete[] tname;
     }
   }
 
@@ -639,7 +639,7 @@ vtkSlicerCLIModuleLogic
     // Use default fname construction, tack on extension
     // In general, use tsv (tab-separated values) file format for tables
     std::string ext = ".tsv";
-    if ( type == "color")
+    if (type == "color")
     {
       // Special case: color tables use .ctbl files
       ext = ".ctbl";
@@ -804,7 +804,7 @@ void vtkSlicerCLIModuleLogic
 //       itksys::DynamicLoader::LibraryHandle lib
 //         = itksys::DynamicLoader::OpenLibrary(moduleDescriptionObject.GetLocation().c_str());
 // #endif
-//       if ( lib )
+//       if (lib)
 //         {
 //         ModuleEntryPoint entryPoint
 //           = (ModuleEntryPoint)itksys::DynamicLoader::GetSymbolAddress(lib, "ModuleEntryPoint");
@@ -887,21 +887,21 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
   }
 
   // Assume that the modules correctly report themselves
-  if ( node0->GetModuleDescription().GetType() == "CommandLineModule" )
+  if (node0->GetModuleDescription().GetType() == "CommandLineModule")
   {
     vtkInfoMacro("Found CommandLine Module, target is " << node0->GetModuleDescription().GetTarget());
     commandType = CommandLineModule;
-    if ( entryPoint != nullptr )
+    if (entryPoint != nullptr)
     {
       vtkWarningMacro("Module reports that it is a Command Line Module but has a shared object module target. " << target);
     }
   }
-  else if ( node0->GetModuleDescription().GetType() == "SharedObjectModule" )
+  else if (node0->GetModuleDescription().GetType() == "SharedObjectModule")
   {
     vtkInfoMacro("Found SharedObject Module");
 
     commandType = SharedObjectModule;
-    if ( entryPoint == nullptr )
+    if (entryPoint == nullptr)
     {
       vtkWarningMacro("Module reports that it is a Shared Object Module but does not have a shared object module target. " << target);
     }
@@ -1283,7 +1283,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
   commandLineAsString.push_back( node0->GetModuleDescription().GetTarget() );
 
   // Add a command line flag for the process information structure
-  if ( commandType == SharedObjectModule )
+  if (commandType == SharedObjectModule)
   {
     commandLineAsString.emplace_back("--processinformationaddress");
 
@@ -2054,7 +2054,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
       this->Internal->ProcessesKillLock.unlock();
     }
   }
-  else if ( commandType == SharedObjectModule )
+  else if (commandType == SharedObjectModule)
   {
     // Run as a shared object module
     //
@@ -2075,7 +2075,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
       }
 
       // run the module
-      if ( entryPoint != nullptr ) {
+      if (entryPoint != nullptr ) {
         returnValue = (*entryPoint)(commandLineAsString.size(), command);
       }
 
@@ -2382,11 +2382,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
   // clean up
   //
   //
-  delete [] command;
+  delete[] command;
 
   // Remove any remaining temporary files.  At this point, these files
   // should be the files written as inputs to the module
-  if ( this->GetDeleteTemporaryFiles() )
+  if (this->GetDeleteTemporaryFiles())
   {
     bool removed;
     std::set<std::string>::iterator fit;
@@ -2523,7 +2523,7 @@ vtkSlicerCLIModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
 
 //----------------------------------------------------------------------------
 bool vtkSlicerCLIModuleLogic
-::IsCommandLineModuleNodeUpdatingDisplay(vtkMRMLCommandLineModuleNode* node)const
+::IsCommandLineModuleNodeUpdatingDisplay(vtkMRMLCommandLineModuleNode* node) const
 {
   // Update display except if the node has the updateDisplay attribute set to
   // "false".
@@ -2594,7 +2594,7 @@ void vtkSlicerCLIModuleLogic
       cliNode->GetModuleTitle() ==
         this->Internal->DefaultModuleDescription.GetTitle())
   {
-    switch(event)
+    switch (event)
     {
       case vtkCommand::ModifiedEvent:
         break;

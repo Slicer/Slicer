@@ -119,7 +119,7 @@ private:
   /// Flag determining whether the display node is to be applied on the
   /// displayable nodes in the subject hierarchy branch under the item that
   /// has the display node associated.
-  bool ApplyDisplayPropertiesOnBranch{false};
+  bool ApplyDisplayPropertiesOnBranch{ false };
 };
 
 #endif

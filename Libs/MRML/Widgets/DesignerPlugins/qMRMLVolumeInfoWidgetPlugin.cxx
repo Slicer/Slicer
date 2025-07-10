@@ -39,7 +39,7 @@ QString qMRMLVolumeInfoWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLVolumeInfoWidget\" \
           name=\"MRMLVolumeInfoWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

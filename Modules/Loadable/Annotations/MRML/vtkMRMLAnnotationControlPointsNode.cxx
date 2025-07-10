@@ -119,7 +119,7 @@ WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
     }
 
     std::stringstream ss;
-    for (int i = 0; i < n; i++ )
+    for (int i = 0; i < n; i++)
     {
       double* ptr = points->GetPoint(i);
       if (i==0 && prefix.compare("") != 0)
@@ -235,7 +235,7 @@ void vtkMRMLAnnotationControlPointsNode::ProcessMRMLEvents ( vtkObject* caller,
 //----------------------------------------------------------------------------
 //void vtkMRMLAnnotationControlPointsNode::PrintSelf(ostream& os, vtkIndent indent)
 //{
-//  vtkMRMLModelNode::PrintSelf(os,indent);
+//  vtkMRMLModelNode::PrintSelf(os, indent);
 //  os << endl;
 //  this->PrintAnnotationInfo(os,indent,0);
 //}
@@ -260,7 +260,7 @@ void vtkMRMLAnnotationControlPointsNode::PrintAnnotationInfo(ostream& os, vtkInd
     os << indent << "ctrlPtsCoord: " ;
     vtkPoints* points = this->GetPoints();
     int n = points->GetNumberOfPoints();
-    for (int i = 0; i < n; i++ )
+    for (int i = 0; i < n; i++)
     {
       double* ptr = points->GetPoint(i);
       os << ptr[0] << " "<<  ptr[1] << " "<<  ptr[2] ;
@@ -274,7 +274,7 @@ void vtkMRMLAnnotationControlPointsNode::PrintAnnotationInfo(ostream& os, vtkInd
       for (int j = NUM_TEXT_ATTRIBUTE_TYPES ; j < NUM_CP_ATTRIBUTE_TYPES; j ++)
       {
       os << indent << this->GetAttributeTypesEnumAsString(j) <<": ";
-      for (int i = 0; i < n; i++ )
+      for (int i = 0; i < n; i++)
       {
           os << this->GetAnnotationAttribute(i,j) << " " ;
       }
@@ -401,7 +401,7 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
   }
 
   // create event in hearder when deleted
-  for (int i = id; i < n-1; i++ )
+  for (int i = id; i < n-1; i++)
   {
       points->SetPoint(i,points->GetPoint(i+1));
   }

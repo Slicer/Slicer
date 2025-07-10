@@ -44,7 +44,7 @@ QString qMRMLPlotSeriesPropertiesWidgetPlugin
 {
   return "<widget class=\"qMRMLPlotSeriesPropertiesWidget\" \
           name=\"SlicerPlotChartPropertiesWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

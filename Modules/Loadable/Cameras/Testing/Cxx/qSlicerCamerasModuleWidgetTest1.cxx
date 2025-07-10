@@ -23,13 +23,13 @@
 
 
 
-int qSlicerCamerasModuleWidgetTest1(int argc, char* argv [] )
+int qSlicerCamerasModuleWidgetTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);
 
   qSlicerCoreApplication* aptr = app.application();
 
-  if ( aptr != (&app) )
+  if (aptr != (&app))
   {
     std::cerr << "Problem with the application() singleton" << std::endl;
     return EXIT_FAILURE;

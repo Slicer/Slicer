@@ -241,7 +241,7 @@ void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   for (int index = 0; index < this->Measurements->GetNumberOfItems(); ++index)
   {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
-    if ( currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanCurvatureName()
+    if (currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanCurvatureName()
       || currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMaxCurvatureName() )
     {
       if (!broker->GetObservationExist(currentMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand))
@@ -249,7 +249,7 @@ void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
         broker->AddObservation(currentMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
       }
     }
-    if ( currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanTorsionName()
+    if (currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMeanTorsionName()
       || currentMeasurement->GetName() == this->CurveMeasurementsCalculator->GetMaxTorsionName() )
     {
       if (!broker->GetObservationExist(currentMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand))
@@ -263,7 +263,7 @@ void vtkMRMLMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsCurveNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintEnumMacro(CurveType);
@@ -1160,7 +1160,7 @@ void vtkMRMLMarkupsCurveNode::UpdateMeasurementsInternal()
     vtkMRMLMeasurement* curvatureMaxMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMaxCurvatureName());
     vtkMRMLMeasurement* torsionAvgMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMeanTorsionName());
     vtkMRMLMeasurement* torsionMaxMeasurement = this->GetMeasurement(this->CurveMeasurementsCalculator->GetMaxTorsionName());
-    if ( (curvatureMeanMeasurement && curvatureMeanMeasurement->GetEnabled())
+    if ((curvatureMeanMeasurement && curvatureMeanMeasurement->GetEnabled())
       || (curvatureMaxMeasurement && curvatureMaxMeasurement->GetEnabled())
       || (torsionAvgMeasurement && torsionAvgMeasurement->GetEnabled())
       || (torsionMaxMeasurement && torsionMaxMeasurement->GetEnabled()))

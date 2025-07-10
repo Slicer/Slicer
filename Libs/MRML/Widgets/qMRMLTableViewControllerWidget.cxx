@@ -311,7 +311,7 @@ void qMRMLTableViewControllerWidget::setViewLabel(const QString& newViewLabel)
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLTableViewControllerWidget::viewLabel()const
+QString qMRMLTableViewControllerWidget::viewLabel() const
 {
   Q_D(const qMRMLTableViewControllerWidget);
   if (this->mrmlTableViewNode())
@@ -331,7 +331,7 @@ void qMRMLTableViewControllerWidget::setMRMLTableViewNode(
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLTableViewNode* qMRMLTableViewControllerWidget::mrmlTableViewNode()const
+vtkMRMLTableViewNode* qMRMLTableViewControllerWidget::mrmlTableViewNode() const
 {
   Q_D(const qMRMLTableViewControllerWidget);
   return vtkMRMLTableViewNode::SafeDownCast(this->mrmlViewNode());

@@ -166,7 +166,7 @@ protected:
 
 public:
   vtkMRMLSliceCompositeNode*          MRMLSliceCompositeNode;
-  vtkMRMLSelectionNode*               SelectionNode{nullptr};
+  vtkMRMLSelectionNode*               SelectionNode{ nullptr };
   vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;
   vtkCollection*                      SliceLogics;
   vtkWeakPointer<vtkAlgorithmOutput>  ImageDataConnection;
@@ -215,10 +215,10 @@ public:
   ctkSignalMapper*                    RulerColorMapper;
 
   ctkSignalMapper*                    SlabReconstructionTypesMapper;
-  QMenu*                              SlabReconstructionThicknessMenu{nullptr};
-  QActionGroup*                       SlabReconstructionTypesActions{nullptr};
+  QMenu*                              SlabReconstructionThicknessMenu{ nullptr };
+  QActionGroup*                       SlabReconstructionTypesActions{ nullptr };
 
-  bool                                ShowSliceOffsetSlider{true};
+  bool                                ShowSliceOffsetSlider{ true };
 };
 
 #endif

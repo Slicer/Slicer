@@ -144,7 +144,7 @@ void qMRMLExpandingWebView::setMRMLScene(vtkMRMLScene* newScene)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLScene* qMRMLExpandingWebView::mrmlScene()const
+vtkMRMLScene* qMRMLExpandingWebView::mrmlScene() const
 {
   Q_D(const qMRMLExpandingWebView);
   return d->MRMLScene;
@@ -197,7 +197,7 @@ void qMRMLExpandingWebView::updateWidgetFromMRML()
 }
 
 //---------------------------------------------------------------------------
-QSize qMRMLExpandingWebView::sizeHint()const
+QSize qMRMLExpandingWebView::sizeHint() const
 {
   // return a default size hint (invalid size)
   return QSize();

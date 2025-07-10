@@ -30,7 +30,7 @@
 #include "vtkMRMLUnitNode.h"
 
 //-----------------------------------------------------------------------------
-class qMRMLUnitWidgetPrivate: public Ui_qMRMLUnitWidget
+class qMRMLUnitWidgetPrivate : public Ui_qMRMLUnitWidget
 {
   Q_DECLARE_PUBLIC(qMRMLUnitWidget);
 protected:

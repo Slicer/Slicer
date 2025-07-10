@@ -71,41 +71,41 @@ qSlicerRelativePathMapper::~qSlicerRelativePathMapper()
 }
 
 // --------------------------------------------------------------------------
-QByteArray qSlicerRelativePathMapper::propertyName()const
+QByteArray qSlicerRelativePathMapper::propertyName() const
 {
   Q_D(const qSlicerRelativePathMapper);
   return d->PropertyName;
 }
 
 // --------------------------------------------------------------------------
-QObject* qSlicerRelativePathMapper::targetObject()const
+QObject* qSlicerRelativePathMapper::targetObject() const
 {
   return this->parent();
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerRelativePathMapper::path()const
+QString qSlicerRelativePathMapper::path() const
 {
   Q_D(const qSlicerRelativePathMapper);
   return this->targetObject()->property(this->propertyName()).toString();
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerRelativePathMapper::paths()const
+QStringList qSlicerRelativePathMapper::paths() const
 {
   Q_D(const qSlicerRelativePathMapper);
   return this->targetObject()->property(this->propertyName()).toStringList();
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerRelativePathMapper::relativePath()const
+QString qSlicerRelativePathMapper::relativePath() const
 {
   Q_D(const qSlicerRelativePathMapper);
   return qSlicerCoreApplication::application()->toSlicerHomeRelativePath(this->path());
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerRelativePathMapper::relativePaths()const
+QStringList qSlicerRelativePathMapper::relativePaths() const
 {
   Q_D(const qSlicerRelativePathMapper);
   return qSlicerCoreApplication::application()->toSlicerHomeRelativePaths(this->paths());

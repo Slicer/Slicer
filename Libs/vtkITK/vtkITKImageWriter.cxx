@@ -247,13 +247,13 @@ vtkITKImageWriter::~vtkITKImageWriter()
   // get rid of memory allocated for file names
   if (this->FileName)
   {
-    delete [] this->FileName;
+    delete[] this->FileName;
     this->FileName = nullptr;
   }
 
   if (this->ImageIOClassName)
   {
-    delete [] this->ImageIOClassName;
+    delete[] this->ImageIOClassName;
     this->ImageIOClassName = nullptr;
   }
 }
@@ -261,7 +261,7 @@ vtkITKImageWriter::~vtkITKImageWriter()
 //----------------------------------------------------------------------------
 void vtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "FileName: " <<
     (this->FileName ? this->FileName : "(none)") << "\n";
@@ -283,7 +283,7 @@ void vtkITKImageWriter::SetFileName(const char* name)
   }
   if (this->FileName)
   {
-    delete [] this->FileName;
+    delete[] this->FileName;
   }
 
   this->FileName = new char[strlen(name) + 1];

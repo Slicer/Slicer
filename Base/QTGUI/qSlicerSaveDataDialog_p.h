@@ -43,7 +43,7 @@ public:
   void populateItems();
 
   void setMRMLScene(vtkMRMLScene* scene);
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
   /// Helper function for finding a node in the main scene and all scene view scenes.
   /// This method differs from vtkMRMLScene::GetNodeByID in that this method looks for
@@ -66,7 +66,7 @@ protected slots:
   bool saveScene();
   bool saveNodes();
   bool saveHiddenNodes();
-  QFileInfo sceneFile()const; // ### Slicer 4.4: Move as protected
+  QFileInfo sceneFile() const; // ### Slicer 4.4: Move as protected
   void showMoreColumns(bool);
   void updateSize();
   void onSceneFormatChanged();
@@ -94,15 +94,15 @@ protected:
     UIDRole
   };
 
-  int               findSceneRow()const;
-  bool              mustSceneBeSaved()const;
+  int               findSceneRow() const;
+  bool              mustSceneBeSaved() const;
   void              setSceneRootDirectory(const QString& rootDirectory);
   void              updateOptionsWidget(int row);
   void              updateStatusIconFromStorageNode(int row, bool success);
   void              updateStatusIconFromMessageCollection(int row, vtkMRMLMessageCollection* userMessages, bool success);
   void              setStatusIcon(int row, const QIcon& icon, const QString& message);
 
-  QString           sceneFileFormat()const;
+  QString           sceneFileFormat() const;
 
   void              populateScene();
   void              populateNode(vtkMRMLNode* node);
@@ -116,16 +116,16 @@ protected:
   ctkPathLineEdit*  createFileDirectoryWidget(const QFileInfo& fileInfo);
   void              clearUserMessagesInStorageNodes();
 
-  QFileInfo         file(int row)const;
-  vtkObject*        object(int row)const;
-  QString           format(int row)const;
-  QString           type(int row)const;
-  qSlicerIOOptions* options(int row)const;
+  QFileInfo         file(int row) const;
+  vtkObject*        object(int row) const;
+  QString           format(int row) const;
+  QString           type(int row) const;
+  qSlicerIOOptions* options(int row) const;
 
   bool confirmOverwrite(const QString& filepath);
 
   /// Helper function for finding a node in the main scene and all scene view scenes
-  vtkMRMLNode*      getNodeByID(char* id)const;
+  vtkMRMLNode*      getNodeByID(char* id) const;
 
   vtkMRMLScene* MRMLScene;
   QString MRMLSceneRootDirectoryBeforeSaving;

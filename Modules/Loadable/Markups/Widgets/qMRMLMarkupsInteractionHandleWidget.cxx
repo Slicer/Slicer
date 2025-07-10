@@ -30,7 +30,7 @@
 #include <vtkMRMLMarkupsDisplayNode.h>
 
 // --------------------------------------------------------------------------
-class qMRMLMarkupsInteractionHandleWidgetPrivate: public Ui_qMRMLMarkupsInteractionHandleWidget
+class qMRMLMarkupsInteractionHandleWidgetPrivate : public Ui_qMRMLMarkupsInteractionHandleWidget
 {
   Q_DECLARE_PUBLIC(qMRMLMarkupsInteractionHandleWidget);
 protected:

@@ -41,7 +41,7 @@
 class vtkMRMLInteractionEventData;
 class vtkMRMLProceduralColorNode;
 
-class  VTK_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   static vtkMRMLMarkupsDisplayNode* New();

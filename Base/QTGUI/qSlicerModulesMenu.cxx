@@ -49,9 +49,9 @@ public:
   /// Return menus for each subCategories
   QList<QMenu*> categoryMenus(QMenu* topLevelMenu, QStringList subCategories);
 
-  QAction* action(const QVariant& actionData, const QMenu* parentMenu = nullptr)const;
-  QAction* action(const QString& text, const QMenu* parentMenu = nullptr)const;
-  QMenu*   actionMenu(QAction* action, QMenu* parentMenu)const;
+  QAction* action(const QVariant& actionData, const QMenu* parentMenu = nullptr) const;
+  QAction* action(const QString& text, const QMenu* parentMenu = nullptr) const;
+  QMenu*   actionMenu(QAction* action, QMenu* parentMenu) const;
 
   qSlicerModuleManager* ModuleManager;
   QAction*              NoModuleAction; //< Can be used to remove the current module
@@ -112,7 +112,7 @@ void qSlicerModulesMenuPrivate::addDefaultCategories()
 }
 
 //---------------------------------------------------------------------------
-QAction* qSlicerModulesMenuPrivate::action(const QVariant& actionData, const QMenu* parentMenu/*=nullptr*/)const
+QAction* qSlicerModulesMenuPrivate::action(const QVariant& actionData, const QMenu* parentMenu/*=nullptr*/) const
 {
   Q_Q(const qSlicerModulesMenu);
   if (parentMenu == nullptr)
@@ -138,7 +138,7 @@ QAction* qSlicerModulesMenuPrivate::action(const QVariant& actionData, const QMe
 }
 
 //---------------------------------------------------------------------------
-QAction* qSlicerModulesMenuPrivate::action(const QString& text, const QMenu* parentMenu/*=nullptr*/)const
+QAction* qSlicerModulesMenuPrivate::action(const QString& text, const QMenu* parentMenu/*=nullptr*/) const
 {
   Q_Q(const qSlicerModulesMenu);
   if (parentMenu == nullptr)
@@ -343,7 +343,7 @@ QMenu* qSlicerModulesMenuPrivate::menu(QMenu* menu, QStringList subCategories, b
 }
 
 //---------------------------------------------------------------------------
-QMenu* qSlicerModulesMenuPrivate::actionMenu(QAction* action, QMenu* parentMenu)const
+QMenu* qSlicerModulesMenuPrivate::actionMenu(QAction* action, QMenu* parentMenu) const
 {
   Q_Q(const qSlicerModulesMenu);
   QList<QAction*> actions = parentMenu->actions();
@@ -373,7 +373,7 @@ QMenu* qSlicerModulesMenuPrivate::actionMenu(QAction* action, QMenu* parentMenu)
 //---------------------------------------------------------------------------
 qSlicerModulesMenu::qSlicerModulesMenu(const QString& title,
                                                            QWidget* parentWidget)
-  :Superclass(title, parentWidget)
+  : Superclass(title, parentWidget)
   , d_ptr(new qSlicerModulesMenuPrivate(*this))
 {
   Q_D(qSlicerModulesMenu);
@@ -382,7 +382,7 @@ qSlicerModulesMenu::qSlicerModulesMenu(const QString& title,
 
 //---------------------------------------------------------------------------
 qSlicerModulesMenu::qSlicerModulesMenu(QWidget* parentWidget)
- :Superclass(parentWidget)
+ : Superclass(parentWidget)
   , d_ptr(new qSlicerModulesMenuPrivate(*this))
 {
   Q_D(qSlicerModulesMenu);
@@ -400,7 +400,7 @@ void qSlicerModulesMenu::setDuplicateActions(bool duplicate)
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerModulesMenu::duplicateActions()const
+bool qSlicerModulesMenu::duplicateActions() const
 {
   Q_D(const qSlicerModulesMenu);
   return d->DuplicateActions;
@@ -414,7 +414,7 @@ void qSlicerModulesMenu::setShowHiddenModules(bool show)
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerModulesMenu::showHiddenModules()const
+bool qSlicerModulesMenu::showHiddenModules() const
 {
   Q_D(const qSlicerModulesMenu);
   return d->ShowHiddenModules;
@@ -428,7 +428,7 @@ void qSlicerModulesMenu::setTopLevelCategoryOrder(const QStringList& categories)
 }
 
 //---------------------------------------------------------------------------
-QStringList qSlicerModulesMenu::topLevelCategoryOrder()const
+QStringList qSlicerModulesMenu::topLevelCategoryOrder() const
 {
   Q_D(const qSlicerModulesMenu);
   return d->TopLevelCategoryOrder;
@@ -455,7 +455,7 @@ bool qSlicerModulesMenu::removeCategory(const QString& categoryName)
 }
 
 //---------------------------------------------------------------------------
-QString qSlicerModulesMenu::currentModule()const
+QString qSlicerModulesMenu::currentModule() const
 {
   Q_D(const qSlicerModulesMenu);
   return d->CurrentModule;
@@ -495,14 +495,14 @@ void qSlicerModulesMenu::setModuleManager(qSlicerModuleManager* moduleManager)
 }
 
 //---------------------------------------------------------------------------
-qSlicerModuleManager* qSlicerModulesMenu::moduleManager()const
+qSlicerModuleManager* qSlicerModulesMenu::moduleManager() const
 {
   Q_D(const qSlicerModulesMenu);
   return d->ModuleManager;
 }
 
 //---------------------------------------------------------------------------
-QAction* qSlicerModulesMenu::moduleAction(const QString& moduleName)const
+QAction* qSlicerModulesMenu::moduleAction(const QString& moduleName) const
 {
   Q_D(const qSlicerModulesMenu);
   return d->action(QVariant(moduleName));

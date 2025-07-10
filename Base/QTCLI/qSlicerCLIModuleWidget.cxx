@@ -39,7 +39,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWidget& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->CLIModuleUIHelper = nullptr;
   this->CommandLineModuleNode = nullptr;
@@ -50,21 +50,21 @@ qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWid
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerCLIModuleLogic* qSlicerCLIModuleWidgetPrivate::logic()const
+vtkSlicerCLIModuleLogic* qSlicerCLIModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerCLIModuleWidget);
   return vtkSlicerCLIModuleLogic::SafeDownCast(q->logic());
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLCommandLineModuleNode* qSlicerCLIModuleWidgetPrivate::commandLineModuleNode()const
+vtkMRMLCommandLineModuleNode* qSlicerCLIModuleWidgetPrivate::commandLineModuleNode() const
 {
   return vtkMRMLCommandLineModuleNode::SafeDownCast(
     this->MRMLCommandLineModuleNodeSelector->currentNode());
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIModule* qSlicerCLIModuleWidgetPrivate::module()const
+qSlicerCLIModule* qSlicerCLIModuleWidgetPrivate::module() const
 {
   Q_Q(const qSlicerCLIModuleWidget);
   qSlicerAbstractCoreModule* coreModule = const_cast<qSlicerAbstractCoreModule*>(q->module());
@@ -394,7 +394,7 @@ void qSlicerCLIModuleWidget::enter()
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLCommandLineModuleNode* qSlicerCLIModuleWidget::currentCommandLineModuleNode()const
+vtkMRMLCommandLineModuleNode* qSlicerCLIModuleWidget::currentCommandLineModuleNode() const
 {
   Q_D(const qSlicerCLIModuleWidget);
   return d->CommandLineModuleNode;
@@ -617,7 +617,7 @@ double qSlicerCLIModuleWidget::nodeEditable(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModuleWidget::translate(const std::string& sourceText)const
+QString qSlicerCLIModuleWidget::translate(const std::string& sourceText) const
 {
   QString contextName = QStringLiteral("CLI_") + this->moduleName();
   return QCoreApplication::translate(contextName.toStdString().c_str(), sourceText.c_str());

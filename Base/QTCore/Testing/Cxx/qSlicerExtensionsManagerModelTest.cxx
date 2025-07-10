@@ -38,7 +38,7 @@
 #include <iostream>
 
 // ----------------------------------------------------------------------------
-class qSlicerExtensionsManagerModelTester: public QObject
+class qSlicerExtensionsManagerModelTester : public QObject
 {
   Q_OBJECT
   typedef qSlicerExtensionsManagerModelTester Self;
@@ -53,7 +53,7 @@ private:
 
   static ExtensionMetadataType extensionMetadata(const QString& os, int extensionId, bool filtered = false, bool installed = false);
 
-  QStringList expectedExtensionNames()const;
+  QStringList expectedExtensionNames() const;
 
   QString extensionNameFromExtenionId(int extensionId);
 
@@ -171,7 +171,7 @@ const QString qSlicerExtensionsManagerModelTester::QTSCRIPTEDMODULES_LIB_DIR = S
 #endif
 
 // ----------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModelTester::expectedExtensionNames()const
+QStringList qSlicerExtensionsManagerModelTester::expectedExtensionNames() const
 {
   return QStringList()
       << "ImageMaker"
@@ -1884,7 +1884,7 @@ void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated
 namespace
 {
 typedef void (qSlicerExtensionsManagerModel::* QStringSetter)(const QString&);
-typedef QString (qSlicerExtensionsManagerModel::* QStringGetter)()const;
+typedef QString (qSlicerExtensionsManagerModel::* QStringGetter)() const;
 
 // ----------------------------------------------------------------------------
 void testRequirementsHelper(qSlicerExtensionsManagerModel* model,

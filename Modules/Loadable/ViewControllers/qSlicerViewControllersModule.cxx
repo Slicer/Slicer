@@ -45,7 +45,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerViewControllersModule::qSlicerViewControllersModule(QObject* _parent)
-  :Superclass(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerViewControllersModulePrivate)
 {
 }
@@ -54,7 +54,7 @@ qSlicerViewControllersModule::qSlicerViewControllersModule(QObject* _parent)
 qSlicerViewControllersModule::~qSlicerViewControllersModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerViewControllersModule::acknowledgementText()const
+QString qSlicerViewControllersModule::acknowledgementText() const
 {
   return "This module was developed by Jean-Christophe Fillion-Robin, Kitware Inc. "
          "This work was supported by NIH grant 3P41RR013218-12S1, "
@@ -304,7 +304,7 @@ void qSlicerViewControllersModule::writeDefaultPlotViewSettings(vtkMRMLPlotViewN
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerViewControllersModule::contributors()const
+QStringList qSlicerViewControllersModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Wendy Plesniak (SPL, BWH)");

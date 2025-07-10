@@ -13,7 +13,7 @@
 
 class vtkMRMLAnnotationPointDisplayNode;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsNode
   : public vtkMRMLAnnotationNode
 {
 public:
@@ -82,9 +82,9 @@ public:
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.
   /// Returns the old flag state.
-  int InvokePendingModifiedEvent () override
+  int InvokePendingModifiedEvent() override
   {
-    if ( this->GetModifiedEventPending() )
+    if (this->GetModifiedEventPending())
     {
       this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
     }

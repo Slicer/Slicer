@@ -42,11 +42,11 @@ public:
                                            const QPoint& pt, const QWidget* widget) const override;
 
   int pixelMetric(PixelMetric metric, const QStyleOption* option = nullptr,
-                          const QWidget* widget = nullptr)const override;
+                          const QWidget* widget = nullptr) const override;
 
-  QPalette standardPalette()const override;
-  QPalette standardLightPalette()const;
-  QPalette standardDarkPalette()const;
+  QPalette standardPalette() const override;
+  QPalette standardLightPalette() const;
+  QPalette standardDarkPalette() const;
   int styleHint(StyleHint hint, const QStyleOption* opt, const QWidget* widget,
                         QStyleHintReturn* returnData) const override;
 

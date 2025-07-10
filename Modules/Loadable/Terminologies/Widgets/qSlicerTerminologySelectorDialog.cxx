@@ -44,9 +44,9 @@ public:
 public:
   void init();
 private:
-  qSlicerTerminologyNavigatorWidget* NavigatorWidget{nullptr};
-  QPushButton* SelectButton{nullptr};
-  QPushButton* CancelButton{nullptr};
+  qSlicerTerminologyNavigatorWidget* NavigatorWidget{ nullptr };
+  QPushButton* SelectButton{ nullptr };
+  QPushButton* CancelButton{ nullptr };
 
   /// Terminology and other metadata (name, color, auto-generated flags) into which the selection is set
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;

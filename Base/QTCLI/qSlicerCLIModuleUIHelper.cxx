@@ -48,7 +48,7 @@
 qSlicerWidgetValueWrapper::qSlicerWidgetValueWrapper(const QString& _name,
                                                      const QString& _label,
                                                      QObject* parentObject)
-  :QObject(parentObject),Name(_name), Label(_label)
+  : QObject(parentObject),Name(_name), Label(_label)
 {
 }
 
@@ -119,7 +119,7 @@ WIDGET_VALUE_WRAPPER(Measurement, qMRMLNodeComboBox, currentNodeID, setCurrentNo
 
 //-----------------------------------------------------------------------------
 ButtonGroupWidgetWrapper::ButtonGroupWidgetWrapper(QWidget* _parent)
- :QWidget(_parent)
+ : QWidget(_parent)
 {
   this->ButtonGroup = new QButtonGroup(this);
   this->connect(this->ButtonGroup, SIGNAL(buttonClicked(int)),
@@ -127,7 +127,7 @@ ButtonGroupWidgetWrapper::ButtonGroupWidgetWrapper(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-QButtonGroup* ButtonGroupWidgetWrapper::buttonGroup()const
+QButtonGroup* ButtonGroupWidgetWrapper::buttonGroup() const
 {
   return this->ButtonGroup;
 }
@@ -1027,7 +1027,7 @@ bool qSlicerCLIModuleUIHelperPrivate::isOutputChannel(const ModuleParameter& mod
 
 //-----------------------------------------------------------------------------
 qSlicerCLIModuleUIHelper::qSlicerCLIModuleUIHelper(qSlicerCLIModuleWidget* cliModuleWidget)
-  :QObject(cliModuleWidget)
+  : QObject(cliModuleWidget)
   , d_ptr(new qSlicerCLIModuleUIHelperPrivate(*this))
 {
   Q_D(qSlicerCLIModuleUIHelper);

@@ -27,7 +27,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char* argv[] )
+int DoIt(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -69,20 +69,20 @@ int DoIt( int argc, char* argv[] )
   filter->SetInput( 0, reader1->GetOutput() );
   filter->SetOutsideValue(OutsideValue);
 
-  if ( ThresholdType == std::string("Outside") )
+  if (ThresholdType == std::string("Outside"))
   {
     filter->ThresholdOutside(Lower, Upper);
   }
-  else if ( ThresholdType == std::string("Below") )
+  else if (ThresholdType == std::string("Below"))
   {
     filter->ThresholdBelow(ThresholdValue);
   }
-  else if ( ThresholdType == std::string("Above") )
+  else if (ThresholdType == std::string("Above"))
   {
     filter->ThresholdAbove(ThresholdValue);
   }
 
-  if ( Negate )
+  if (Negate)
   {
     InputPixelType outsideValue =
       (filter->GetLower() != itk::NumericTraits<InputPixelType>::NonpositiveMin()) ?
@@ -122,7 +122,7 @@ int DoIt( int argc, char* argv[] )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -134,7 +134,7 @@ int main( int argc, char* argv[] )
   {
     itk::GetImageType(InputVolume, pixelType, componentType);
 
-    switch( componentType )
+    switch (componentType)
     {
       case itk::IOComponentEnum::UCHAR:
         return DoIt<unsigned char>( argc, argv );
@@ -173,7 +173,7 @@ int main( int argc, char* argv[] )
     }
   }
 
-  catch ( itk::ExceptionObject& excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

@@ -36,7 +36,7 @@
 // qSlicerMarkupsSettingsPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerMarkupsSettingsPanelPrivate: public Ui_qSlicerMarkupsSettingsPanel
+class qSlicerMarkupsSettingsPanelPrivate : public Ui_qSlicerMarkupsSettingsPanel
 {
   Q_DECLARE_PUBLIC(qSlicerMarkupsSettingsPanel);
 protected:
@@ -55,7 +55,7 @@ public:
 // --------------------------------------------------------------------------
 qSlicerMarkupsSettingsPanelPrivate
 ::qSlicerMarkupsSettingsPanelPrivate(qSlicerMarkupsSettingsPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 
@@ -86,7 +86,7 @@ qSlicerMarkupsSettingsPanel::~qSlicerMarkupsSettingsPanel() = default;
 
 // --------------------------------------------------------------------------
 vtkSlicerMarkupsLogic* qSlicerMarkupsSettingsPanel
-::markupsLogic()const
+::markupsLogic() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
   return d->MarkupsLogic;
@@ -172,7 +172,7 @@ void qSlicerMarkupsSettingsPanel
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerMarkupsSettingsPanel::defaultGlyphType()const
+QString qSlicerMarkupsSettingsPanel::defaultGlyphType() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -187,7 +187,7 @@ QString qSlicerMarkupsSettingsPanel::defaultGlyphType()const
 }
 
 // --------------------------------------------------------------------------
-QColor qSlicerMarkupsSettingsPanel::defaultUnselectedColor()const
+QColor qSlicerMarkupsSettingsPanel::defaultUnselectedColor() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -197,7 +197,7 @@ QColor qSlicerMarkupsSettingsPanel::defaultUnselectedColor()const
 }
 
 // --------------------------------------------------------------------------
-QColor qSlicerMarkupsSettingsPanel::defaultSelectedColor()const
+QColor qSlicerMarkupsSettingsPanel::defaultSelectedColor() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -207,7 +207,7 @@ QColor qSlicerMarkupsSettingsPanel::defaultSelectedColor()const
 }
 
 // --------------------------------------------------------------------------
-QColor qSlicerMarkupsSettingsPanel::defaultActiveColor()const
+QColor qSlicerMarkupsSettingsPanel::defaultActiveColor() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -217,7 +217,7 @@ QColor qSlicerMarkupsSettingsPanel::defaultActiveColor()const
 }
 
 // --------------------------------------------------------------------------
-double qSlicerMarkupsSettingsPanel::defaultGlyphScale()const
+double qSlicerMarkupsSettingsPanel::defaultGlyphScale() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -227,7 +227,7 @@ double qSlicerMarkupsSettingsPanel::defaultGlyphScale()const
 }
 
 // --------------------------------------------------------------------------
-double qSlicerMarkupsSettingsPanel::defaultTextScale()const
+double qSlicerMarkupsSettingsPanel::defaultTextScale() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 
@@ -237,7 +237,7 @@ double qSlicerMarkupsSettingsPanel::defaultTextScale()const
 }
 
 // --------------------------------------------------------------------------
-double qSlicerMarkupsSettingsPanel::defaultOpacity()const
+double qSlicerMarkupsSettingsPanel::defaultOpacity() const
 {
   Q_D(const qSlicerMarkupsSettingsPanel);
 

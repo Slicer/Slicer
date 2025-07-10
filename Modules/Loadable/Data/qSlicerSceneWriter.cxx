@@ -58,25 +58,25 @@ qSlicerSceneWriter::qSlicerSceneWriter(QObject* parentObject)
 qSlicerSceneWriter::~qSlicerSceneWriter() = default;
 
 //----------------------------------------------------------------------------
-QString qSlicerSceneWriter::description()const
+QString qSlicerSceneWriter::description() const
 {
   return tr("MRML Scene");
 }
 
 //----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerSceneWriter::fileType()const
+qSlicerIO::IOFileType qSlicerSceneWriter::fileType() const
 {
   return QString(/*no tr*/"SceneFile");
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerSceneWriter::canWriteObject(vtkObject* object)const
+bool qSlicerSceneWriter::canWriteObject(vtkObject* object) const
 {
   return vtkMRMLScene::SafeDownCast(object);
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerSceneWriter::extensions(vtkObject* object)const
+QStringList qSlicerSceneWriter::extensions(vtkObject* object) const
 {
   Q_UNUSED(object);
   return QStringList()
@@ -224,7 +224,7 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
     QWidget* mainWindow = app ? app->mainWindow() : nullptr;
     ctkMessageBox* emptyMessageBox = new ctkMessageBox(mainWindow);
     QString error;
-    switch(numFiles)
+    switch (numFiles)
     {
       case -2:
         VTK_FALLTHROUGH;

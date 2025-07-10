@@ -101,43 +101,43 @@ public:
   ~qMRMLSubjectHierarchyComboBox() override;
 
 public:
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
-  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
+  Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode() const;
 
   Q_INVOKABLE void clearSelection();
-  Q_INVOKABLE vtkIdType currentItem()const;
-  Q_INVOKABLE vtkIdType rootItem()const;
+  Q_INVOKABLE vtkIdType currentItem() const;
+  Q_INVOKABLE vtkIdType rootItem() const;
 
   void setShowRootItem(bool show);
-  bool showRootItem()const;
+  bool showRootItem() const;
 
-  bool highlightReferencedItems()const;
+  bool highlightReferencedItems() const;
   void setHighlightReferencedItems(bool highlightOn);
 
-  int maximumNumberOfShownItems()const;
+  int maximumNumberOfShownItems() const;
   void setMaximumNumberOfShownItems(int maxNumberOfShownItems);
 
-  bool alignPopupVertically()const;
+  bool alignPopupVertically() const;
   void setAlignPopupVertically(bool align);
 
-  bool noneEnabled()const;
+  bool noneEnabled() const;
   void setNoneEnabled(bool enable);
 
-  QString noneDisplay()const;
+  QString noneDisplay() const;
   void setNoneDisplay(const QString& displayName);
 
-  bool showCurrentItemParents()const;
+  bool showCurrentItemParents() const;
   void setShowCurrentItemParents(bool enable);
 
-  bool showEmptyHierarchyItems()const;
+  bool showEmptyHierarchyItems() const;
   void setShowEmptyHierarchyItems(bool show);
 
-  QStringList includeItemAttributeNamesFilter()const;
-  QStringList includeNodeAttributeNamesFilter()const;
-  QStringList excludeItemAttributeNamesFilter()const;
-  QStringList excludeNodeAttributeNamesFilter()const;
-  QString attributeValueFilter()const;
-  QString attributeNameFilter()const;
+  QStringList includeItemAttributeNamesFilter() const;
+  QStringList includeNodeAttributeNamesFilter() const;
+  QStringList excludeItemAttributeNamesFilter() const;
+  QStringList excludeNodeAttributeNamesFilter() const;
+  QString attributeValueFilter() const;
+  QString attributeNameFilter() const;
   /// Add single item attribute filter specifying attribute name, value, include/exclude, and class name
   /// \param attributeName Name of the item attribute to filter
   /// \param attributeValue Value of the item attribute to filter
@@ -173,8 +173,8 @@ public:
   /// accepted by the data node type filter. Show all data nodes if empty
   Q_INVOKABLE void setHideChildNodeTypes(const QStringList& types);
 
-  Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel()const;
-  Q_INVOKABLE qMRMLSubjectHierarchyModel* model()const;
+  Q_INVOKABLE qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel() const;
+  Q_INVOKABLE qMRMLSubjectHierarchyModel* model() const;
 
 public:
   /// Provides customized popup window for the tree view

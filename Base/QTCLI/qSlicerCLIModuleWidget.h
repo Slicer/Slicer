@@ -46,14 +46,14 @@ public:
   ~qSlicerCLIModuleWidget() override;
 
   /// Get the current \a commandLineModuleNode
-  Q_INVOKABLE vtkMRMLCommandLineModuleNode* currentCommandLineModuleNode()const;
+  Q_INVOKABLE vtkMRMLCommandLineModuleNode* currentCommandLineModuleNode() const;
 
   // Node editing
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
   double nodeEditable(vtkMRMLNode* node) override;
 
   /// Translate string from source language to current application language
-  QString translate(const std::string& sourceText)const;
+  QString translate(const std::string& sourceText) const;
 
 public slots:
   /// Set the current \a commandLineModuleNode

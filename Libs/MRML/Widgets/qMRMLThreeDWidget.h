@@ -50,22 +50,22 @@ public:
   ~qMRMLThreeDWidget() override;
 
   /// Get slice controller
-  Q_INVOKABLE qMRMLThreeDViewControllerWidget* threeDController()const;
+  Q_INVOKABLE qMRMLThreeDViewControllerWidget* threeDController() const;
   Q_INVOKABLE qMRMLViewControllerBar* controllerWidget() const override;
 
   /// Get the 3D View node observed by view.
-  Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode()const;
-  Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode()const override;
+  Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode() const;
+  Q_INVOKABLE vtkMRMLAbstractViewNode* mrmlAbstractViewNode() const override;
 
   /// \sa qMRMLSliceControllerWidget::viewLogic()
-  Q_INVOKABLE vtkMRMLViewLogic* viewLogic()const;
-  Q_INVOKABLE vtkMRMLAbstractLogic* logic()const override;
+  Q_INVOKABLE vtkMRMLViewLogic* viewLogic() const;
+  Q_INVOKABLE vtkMRMLAbstractLogic* logic() const override;
 
   /// Get a reference to the underlying ThreeD View
   /// Be careful if you change the threeDView, you might
   /// unsynchronize the view from the nodes/logics.
-  Q_INVOKABLE qMRMLThreeDView* threeDView()const;
-  Q_INVOKABLE QWidget* viewWidget()const override;
+  Q_INVOKABLE qMRMLThreeDView* threeDView() const;
+  Q_INVOKABLE QWidget* viewWidget() const override;
 
   /// \sa qMRMLThreeDView::addDisplayableManager
   Q_INVOKABLE void addDisplayableManager(const QString& displayableManager);

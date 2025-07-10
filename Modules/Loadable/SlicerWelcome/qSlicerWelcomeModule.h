@@ -46,13 +46,13 @@ public:
 
   qSlicerGetTitleMacro(tr("Welcome to Slicer"));
 
-  QStringList categories()const override;
-  QIcon icon()const override;
+  QStringList categories() const override;
+  QIcon icon() const override;
 
   /// Help to use the module
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
 protected:
 

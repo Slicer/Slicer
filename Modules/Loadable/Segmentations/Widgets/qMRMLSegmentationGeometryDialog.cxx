@@ -130,7 +130,7 @@ qMRMLSegmentationGeometryDialog::qMRMLSegmentationGeometryDialog(vtkMRMLSegmenta
 qMRMLSegmentationGeometryDialog::~qMRMLSegmentationGeometryDialog() = default;
 
 //-----------------------------------------------------------------------------
-bool qMRMLSegmentationGeometryDialog::editEnabled()const
+bool qMRMLSegmentationGeometryDialog::editEnabled() const
 {
   Q_D(const qMRMLSegmentationGeometryDialog);
   return d->GeometryWidget->editEnabled();
@@ -145,7 +145,7 @@ void qMRMLSegmentationGeometryDialog::setEditEnabled(bool aEditEnabled)
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSegmentationGeometryDialog::resampleLabelmaps()const
+bool qMRMLSegmentationGeometryDialog::resampleLabelmaps() const
 {
   Q_D(const qMRMLSegmentationGeometryDialog);
   return d->ResampleLabelmaps;

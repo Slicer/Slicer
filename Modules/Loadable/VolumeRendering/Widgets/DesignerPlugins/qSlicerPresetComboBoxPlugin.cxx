@@ -39,7 +39,7 @@ QString qSlicerPresetComboBoxPlugin::domXml() const
 {
   return "<widget class=\"qSlicerPresetComboBox\" \
           name=\"PresetComboBox\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

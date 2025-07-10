@@ -35,7 +35,7 @@ int vtkMRMLSceneBatchProcessTest(
   int vtkNotUsed(argc), char* vtkNotUsed(argv) [] )
 {
   /*
-  if ( argc < 2 )
+  if (argc < 2)
     {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;

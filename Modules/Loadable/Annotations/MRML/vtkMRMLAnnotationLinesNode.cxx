@@ -182,7 +182,7 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
     vtkCellArray* lines = this->GetLines();
     lines->InitTraversal();
     os << indent << "linePtsID: " ;
-    for (int i = 0; i < n; i++ )
+    for (int i = 0; i < n; i++)
     {
       vtkIdType npts;
       const vtkIdType* pts = nullptr;
@@ -212,7 +212,7 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
       for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
       {
       os << indent << this->GetAttributeTypesEnumAsString(j) <<": ";
-      for (int i = 0; i < n; i++ )
+      for (int i = 0; i < n; i++)
       {
           os << this->GetAnnotationAttribute(i,j) << " " ;
       }
@@ -335,11 +335,11 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
   vtkIdType cNpts = 0;
   const vtkIdType* nPts = nullptr;
   vtkIdType nNpts = 0;
-  for (int i = 0; i <= id; i++ )
+  for (int i = 0; i <= id; i++)
   {
       lines->GetNextCell(cNpts, cPts);
   }
-  for (int i = id; i < n-1; i++ )
+  for (int i = id; i < n-1; i++)
   {
       lines->GetNextCell(nNpts, nPts);
       if (nNpts != 2 || cNpts != 2)
@@ -388,7 +388,7 @@ int vtkMRMLAnnotationLinesNode::GetEndPointsId(vtkIdType id, vtkIdType ctrlPtsID
   vtkIdType npts = 0;
   const vtkIdType* pts = nullptr;
 
-  for (int i = 0; i < id; i++ )
+  for (int i = 0; i < id; i++)
   {
       lines->GetNextCell(npts, pts);
   }
@@ -472,7 +472,7 @@ int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtId
 
   vtkCellArray* cellLine = this->GetLines();
 
-  if (cellLine->GetNumberOfCells() <= id )
+  if (cellLine->GetNumberOfCells() <= id)
   {
       if (cellLine->GetNumberOfCells())
       {

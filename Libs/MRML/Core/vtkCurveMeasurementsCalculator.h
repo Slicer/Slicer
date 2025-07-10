@@ -117,13 +117,13 @@ protected:
   vtkWeakPointer<vtkMRMLMarkupsNode> InputMarkupsMRMLNode;
 
   /// Flag indicating whether the current curve is closed
-  bool CurveIsClosed{false};
+  bool CurveIsClosed{ false };
 
   /// Flag determining whether the filter should calculate curvature
-  bool CalculateCurvature{false};
+  bool CalculateCurvature{ false };
 
   /// Flag determining whether the filter should calculate torsion
-  bool CalculateTorsion{false};
+  bool CalculateTorsion{ false };
 
   /// Command handling data array modified events
   vtkCallbackCommand* ControlPointArrayModifiedCallbackCommand;

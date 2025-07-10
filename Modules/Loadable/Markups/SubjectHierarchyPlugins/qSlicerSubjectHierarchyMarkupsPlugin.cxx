@@ -92,29 +92,29 @@ public:
   void jumpToPoint(int controlPointIndex);
 
 public:
-  QAction* RenamePointAction{nullptr};
-  QAction* RefocusCameraAction{nullptr};
-  QAction* DeletePointAction{nullptr};
-  QAction* DeleteNodeAction{nullptr};
-  QAction* ToggleSelectPointAction{nullptr};
-  QAction* JumpToPreviousPointAction{nullptr};
-  QAction* JumpToNextPointAction{nullptr};
-  QAction* JumpToClosestPointAction{nullptr};
-  QAction* EditNodeTerminologyAction{nullptr};
-  QAction* ToggleCurrentItemHandleInteractive{nullptr};
-  QAction* ToggleHandleInteractive{nullptr};
+  QAction* RenamePointAction{ nullptr };
+  QAction* RefocusCameraAction{ nullptr };
+  QAction* DeletePointAction{ nullptr };
+  QAction* DeleteNodeAction{ nullptr };
+  QAction* ToggleSelectPointAction{ nullptr };
+  QAction* JumpToPreviousPointAction{ nullptr };
+  QAction* JumpToNextPointAction{ nullptr };
+  QAction* JumpToClosestPointAction{ nullptr };
+  QAction* EditNodeTerminologyAction{ nullptr };
+  QAction* ToggleCurrentItemHandleInteractive{ nullptr };
+  QAction* ToggleHandleInteractive{ nullptr };
 
-  QMenu* CurrentItemHandleVisibilityMenu{nullptr};
-  QAction* CurrentItemHandleVisibilityAction{nullptr};
-  QAction* ToggleCurrentItemTranslateHandleVisible{nullptr};
-  QAction* ToggleCurrentItemRotateHandleVisible{nullptr};
-  QAction* ToggleCurrentItemScaleHandleVisible{nullptr};
+  QMenu* CurrentItemHandleVisibilityMenu{ nullptr };
+  QAction* CurrentItemHandleVisibilityAction{ nullptr };
+  QAction* ToggleCurrentItemTranslateHandleVisible{ nullptr };
+  QAction* ToggleCurrentItemRotateHandleVisible{ nullptr };
+  QAction* ToggleCurrentItemScaleHandleVisible{ nullptr };
 
-  QMenu* HandleVisibilityMenu{nullptr};
-  QAction* HandleVisibilityAction{nullptr};
-  QAction* ToggleTranslateHandleVisible{nullptr};
-  QAction* ToggleRotateHandleVisible{nullptr};
-  QAction* ToggleScaleHandleVisible{nullptr};
+  QMenu* HandleVisibilityMenu{ nullptr };
+  QAction* HandleVisibilityAction{ nullptr };
+  QAction* ToggleTranslateHandleVisible{ nullptr };
+  QAction* ToggleRotateHandleVisible{ nullptr };
+  QAction* ToggleScaleHandleVisible{ nullptr };
 
   QList<vtkWeakPointer<vtkMRMLMarkupsNode>> NodesToDelete;
 
@@ -332,7 +332,7 @@ qSlicerSubjectHierarchyMarkupsPlugin::~qSlicerSubjectHierarchyMarkupsPlugin() = 
 
 //-----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -373,7 +373,7 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //---------------------------------------------------------------------------
-double qSlicerSubjectHierarchyMarkupsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID)const
+double qSlicerSubjectHierarchyMarkupsPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
@@ -425,7 +425,7 @@ double qSlicerSubjectHierarchyMarkupsPlugin::canOwnSubjectHierarchyItem(vtkIdTyp
 }
 
 //---------------------------------------------------------------------------
-const QString qSlicerSubjectHierarchyMarkupsPlugin::roleForPlugin()const
+const QString qSlicerSubjectHierarchyMarkupsPlugin::roleForPlugin() const
 {
   return "Markup";
 }
@@ -480,13 +480,13 @@ void qSlicerSubjectHierarchyMarkupsPlugin::setDisplayColor(vtkIdType itemID, QCo
 }
 
 //-----------------------------------------------------------------------------
-QColor qSlicerSubjectHierarchyMarkupsPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData)const
+QColor qSlicerSubjectHierarchyMarkupsPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData) const
 {
   return this->colorAndTerminologyFromDisplayableNode(itemID, terminologyMetaData, true);
 }
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyMarkupsPlugin::viewContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyMarkupsPlugin);
 

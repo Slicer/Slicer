@@ -41,7 +41,7 @@ QString qMRMLSequenceBrowserPlayWidgetPlugin
 {
   return "<widget class=\"qMRMLSequenceBrowserPlayWidget\" \
           name=\"SequenceBrowserPlayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

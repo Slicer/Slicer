@@ -81,7 +81,7 @@ public:
   QSettings* instantiateSettings(bool useTmp);
 
   /// Return true is this instance of Slicer is running from an installed directory
-  bool isInstalled(const QString& slicerHome)const;
+  bool isInstalled(const QString& slicerHome) const;
 
   /// Given the program name, should return Slicer Home Directory
   QString discoverSlicerHomeDirectory();
@@ -100,7 +100,7 @@ public:
   QString discoverSlicerBinDirectory();
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  QString defaultExtensionsInstallPathForMacOSX()const;
+  QString defaultExtensionsInstallPathForMacOSX() const;
 #endif
 
   /// \brief Return true if application was started using CTKAppLauncher
@@ -113,7 +113,7 @@ public:
   /// macOS   |  true      |  false
   /// Windows |  true      |  true
   ///
-  bool isUsingLauncher()const;
+  bool isUsingLauncher() const;
 
   /// Convenient function used to create a \a path.
   /// If it fails, print an error message using given \a description

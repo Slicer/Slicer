@@ -109,14 +109,14 @@ qSlicerDiffusionTensorVolumeDisplayWidget
 
 // --------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeNode* qSlicerDiffusionTensorVolumeDisplayWidget
-::volumeNode()const
+::volumeNode() const
 {
   Q_D(const qSlicerDiffusionTensorVolumeDisplayWidget);
   return d->VolumeNode;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLDiffusionTensorVolumeDisplayNode* qSlicerDiffusionTensorVolumeDisplayWidget::volumeDisplayNode()const
+vtkMRMLDiffusionTensorVolumeDisplayNode* qSlicerDiffusionTensorVolumeDisplayWidget::volumeDisplayNode() const
 {
   vtkMRMLDiffusionTensorVolumeNode* volumeNode = this->volumeNode();
   return volumeNode ? vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(
@@ -124,7 +124,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode* qSlicerDiffusionTensorVolumeDisplayWidg
 }
 
 // --------------------------------------------------------------------------
-QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> qSlicerDiffusionTensorVolumeDisplayWidget::sliceDisplayNodes()const
+QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> qSlicerDiffusionTensorVolumeDisplayWidget::sliceDisplayNodes() const
 {
   Q_D(const qSlicerDiffusionTensorVolumeDisplayWidget);
   vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode = this->volumeDisplayNode();

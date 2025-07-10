@@ -258,7 +258,7 @@ void qMRMLSubjectHierarchyModel::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSubjectHierarchyModel::mrmlScene()const
+vtkMRMLScene* qMRMLSubjectHierarchyModel::mrmlScene() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->MRMLScene;
@@ -305,14 +305,14 @@ void qMRMLSubjectHierarchyModel::setSubjectHierarchyNode(vtkMRMLSubjectHierarchy
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyNode* qMRMLSubjectHierarchyModel::subjectHierarchyNode()const
+vtkMRMLSubjectHierarchyNode* qMRMLSubjectHierarchyModel::subjectHierarchyNode() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->SubjectHierarchyNode;
 }
 
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSubjectHierarchyModel::subjectHierarchySceneItem()const
+QStandardItem* qMRMLSubjectHierarchyModel::subjectHierarchySceneItem() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   if (!d->SubjectHierarchyNode || this->maxColumnId() == -1)
@@ -337,7 +337,7 @@ QStandardItem* qMRMLSubjectHierarchyModel::subjectHierarchySceneItem()const
 }
 
 //------------------------------------------------------------------------------
-QModelIndex qMRMLSubjectHierarchyModel::subjectHierarchySceneIndex()const
+QModelIndex qMRMLSubjectHierarchyModel::subjectHierarchySceneIndex() const
 {
   QStandardItem* shSceneItem = this->subjectHierarchySceneItem();
   if (shSceneItem == nullptr)
@@ -348,13 +348,13 @@ QModelIndex qMRMLSubjectHierarchyModel::subjectHierarchySceneIndex()const
 }
 
 // -----------------------------------------------------------------------------
-vtkIdType qMRMLSubjectHierarchyModel::subjectHierarchyItemFromIndex(const QModelIndex& index)const
+vtkIdType qMRMLSubjectHierarchyModel::subjectHierarchyItemFromIndex(const QModelIndex& index) const
 {
   return this->subjectHierarchyItemFromItem(this->itemFromIndex(index));
 }
 
 //------------------------------------------------------------------------------
-vtkIdType qMRMLSubjectHierarchyModel::subjectHierarchyItemFromItem(QStandardItem* item)const
+vtkIdType qMRMLSubjectHierarchyModel::subjectHierarchyItemFromItem(QStandardItem* item) const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   if (!d->SubjectHierarchyNode || !item)
@@ -369,7 +369,7 @@ vtkIdType qMRMLSubjectHierarchyModel::subjectHierarchyItemFromItem(QStandardItem
   return item->data(qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole).toLongLong();
 }
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSubjectHierarchyModel::itemFromSubjectHierarchyItem(vtkIdType itemID, int column/*=0*/)const
+QStandardItem* qMRMLSubjectHierarchyModel::itemFromSubjectHierarchyItem(vtkIdType itemID, int column/*=0*/) const
 {
   QModelIndex index = this->indexFromSubjectHierarchyItem(itemID, column);
   QStandardItem* item = this->itemFromIndex(index);
@@ -377,7 +377,7 @@ QStandardItem* qMRMLSubjectHierarchyModel::itemFromSubjectHierarchyItem(vtkIdTyp
 }
 
 //------------------------------------------------------------------------------
-QModelIndex qMRMLSubjectHierarchyModel::indexFromSubjectHierarchyItem(vtkIdType itemID, int column/*=0*/)const
+QModelIndex qMRMLSubjectHierarchyModel::indexFromSubjectHierarchyItem(vtkIdType itemID, int column/*=0*/) const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
 
@@ -436,7 +436,7 @@ QModelIndex qMRMLSubjectHierarchyModel::indexFromSubjectHierarchyItem(vtkIdType 
 }
 
 //------------------------------------------------------------------------------
-QModelIndexList qMRMLSubjectHierarchyModel::indexes(vtkIdType itemID)const
+QModelIndexList qMRMLSubjectHierarchyModel::indexes(vtkIdType itemID) const
 {
   QModelIndex scene = this->subjectHierarchySceneIndex();
   if (scene == QModelIndex())
@@ -462,7 +462,7 @@ QModelIndexList qMRMLSubjectHierarchyModel::indexes(vtkIdType itemID)const
 }
 
 //------------------------------------------------------------------------------
-vtkIdType qMRMLSubjectHierarchyModel::parentSubjectHierarchyItem(vtkIdType itemID)const
+vtkIdType qMRMLSubjectHierarchyModel::parentSubjectHierarchyItem(vtkIdType itemID) const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   if (!d->SubjectHierarchyNode)
@@ -474,7 +474,7 @@ vtkIdType qMRMLSubjectHierarchyModel::parentSubjectHierarchyItem(vtkIdType itemI
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(vtkIdType itemID)const
+int qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(vtkIdType itemID) const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   if (!d->SubjectHierarchyNode)
@@ -491,7 +491,7 @@ int qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(vtkIdType itemID)const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyModel::canBeAChild(vtkIdType itemID)const
+bool qMRMLSubjectHierarchyModel::canBeAChild(vtkIdType itemID) const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   if (!d->SubjectHierarchyNode)
@@ -504,7 +504,7 @@ bool qMRMLSubjectHierarchyModel::canBeAChild(vtkIdType itemID)const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyModel::canBeAParent(vtkIdType itemID)const
+bool qMRMLSubjectHierarchyModel::canBeAParent(vtkIdType itemID) const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   if (!d->SubjectHierarchyNode)
@@ -517,7 +517,7 @@ bool qMRMLSubjectHierarchyModel::canBeAParent(vtkIdType itemID)const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyModel::isAncestorItem(vtkIdType child, vtkIdType ancestor)const
+bool qMRMLSubjectHierarchyModel::isAncestorItem(vtkIdType child, vtkIdType ancestor) const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   if (!d->SubjectHierarchyNode)
@@ -537,7 +537,7 @@ bool qMRMLSubjectHierarchyModel::isAncestorItem(vtkIdType child, vtkIdType ances
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyModel::isAffiliatedItem(vtkIdType itemA, vtkIdType itemB)const
+bool qMRMLSubjectHierarchyModel::isAffiliatedItem(vtkIdType itemA, vtkIdType itemB) const
 {
   return this->isAncestorItem(itemA, itemB) || this->isAncestorItem(itemB, itemA);
 }
@@ -599,7 +599,7 @@ bool qMRMLSubjectHierarchyModel::reparent(vtkIdType itemID, vtkIdType newParentI
   // If default plugin was chosen to reparent virtual item (an item in a virtual branch), or into a virtual branch,
   // then abort reparenting (it means that the actual owner plugin cannot reparent its own virtual item, so it then
   // cannot be reparented).
-  if ( ( ( !d->SubjectHierarchyNode->GetItemAttribute(newParentID,
+  if (( ( !d->SubjectHierarchyNode->GetItemAttribute(newParentID,
              vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str()).empty() )
       || ( !d->SubjectHierarchyNode->GetItemAttribute(oldParentID,
              vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName().c_str()).empty() ) )
@@ -658,7 +658,7 @@ bool qMRMLSubjectHierarchyModel::moveToRow(vtkIdType itemID, int newRow)
 }
 
 //------------------------------------------------------------------------------
-QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)const
+QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes) const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   d->DraggedSubjectHierarchyItems.clear();
@@ -857,7 +857,7 @@ QStandardItem* qMRMLSubjectHierarchyModel::insertSubjectHierarchyItem(vtkIdType 
 }
 
 //------------------------------------------------------------------------------
-QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkIdType itemID, int column)const
+QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkIdType itemID, int column) const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
 
@@ -887,7 +887,7 @@ QFlags<Qt::ItemFlag> qMRMLSubjectHierarchyModel::subjectHierarchyItemFlags(vtkId
   // Drop is also enabled for virtual branches.
   // (a virtual branch is a branch where the children items do not correspond to actual MRML data nodes,
   // but to implicit items contained by the parent MRML node, e.g. in case of Markups or Segmentations)
-  if ( d->SubjectHierarchyNode->HasItemAttribute( itemID,
+  if (d->SubjectHierarchyNode->HasItemAttribute( itemID,
     vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyVirtualBranchAttributeName()) )
   {
     flags |= Qt::ItemIsDropEnabled;
@@ -1077,7 +1077,7 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
     // It should be fine to set the icon even if it is the same, but due
     // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
     // it would fire a superfluous itemChanged() signal.
-    if ( item->data(VisibilityRole).isNull()
+    if (item->data(VisibilityRole).isNull()
       || item->data(VisibilityRole).toInt() != visible )
     {
       item->setData(visible, VisibilityRole);
@@ -1681,13 +1681,13 @@ void qMRMLSubjectHierarchyModel::delayedItemChanged()
 }
 
 //------------------------------------------------------------------------------
-Qt::DropActions qMRMLSubjectHierarchyModel::supportedDropActions()const
+Qt::DropActions qMRMLSubjectHierarchyModel::supportedDropActions() const
 {
   return Qt::MoveAction;
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSubjectHierarchyModel::nameColumn()const
+int qMRMLSubjectHierarchyModel::nameColumn() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->NameColumn;
@@ -1702,7 +1702,7 @@ void qMRMLSubjectHierarchyModel::setNameColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSubjectHierarchyModel::idColumn()const
+int qMRMLSubjectHierarchyModel::idColumn() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->IDColumn;
@@ -1717,7 +1717,7 @@ void qMRMLSubjectHierarchyModel::setIDColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSubjectHierarchyModel::visibilityColumn()const
+int qMRMLSubjectHierarchyModel::visibilityColumn() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->VisibilityColumn;
@@ -1732,7 +1732,7 @@ void qMRMLSubjectHierarchyModel::setVisibilityColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSubjectHierarchyModel::colorColumn()const
+int qMRMLSubjectHierarchyModel::colorColumn() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->ColorColumn;
@@ -1747,7 +1747,7 @@ void qMRMLSubjectHierarchyModel::setColorColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSubjectHierarchyModel::transformColumn()const
+int qMRMLSubjectHierarchyModel::transformColumn() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->TransformColumn;
@@ -1762,7 +1762,7 @@ void qMRMLSubjectHierarchyModel::setTransformColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSubjectHierarchyModel::descriptionColumn()const
+int qMRMLSubjectHierarchyModel::descriptionColumn() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->DescriptionColumn;
@@ -1789,7 +1789,7 @@ void qMRMLSubjectHierarchyModel::setNoneEnabled(bool enable)
 }
 
 //--------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyModel::noneEnabled()const
+bool qMRMLSubjectHierarchyModel::noneEnabled() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->NoneEnabled;
@@ -1812,7 +1812,7 @@ void qMRMLSubjectHierarchyModel::setNoneDisplay(const QString& displayName)
 }
 
 //--------------------------------------------------------------------------
-QString qMRMLSubjectHierarchyModel::noneDisplay()const
+QString qMRMLSubjectHierarchyModel::noneDisplay() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   return d->NoneDisplay;
@@ -1847,7 +1847,7 @@ void qMRMLSubjectHierarchyModel::updateColumnCount()
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSubjectHierarchyModel::maxColumnId()const
+int qMRMLSubjectHierarchyModel::maxColumnId() const
 {
   Q_D(const qMRMLSubjectHierarchyModel);
   int maxId = -1;
@@ -1896,7 +1896,7 @@ void printStandardItem(QStandardItem* item, const QString& offset)
   qDebug() << offset << item << item->index() << item->text()
            << item->data(qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole).toString() << item->row()
            << item->column() << item->rowCount() << item->columnCount();
-  for (int i = 0; i < item->rowCount(); ++i )
+  for (int i = 0; i < item->rowCount(); ++i)
   {
     for (int j = 0; j < item->columnCount(); ++j)
     {

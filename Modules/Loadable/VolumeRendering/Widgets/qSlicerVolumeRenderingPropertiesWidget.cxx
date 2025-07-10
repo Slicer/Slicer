@@ -67,7 +67,7 @@ qSlicerVolumeRenderingPropertiesWidget
 qSlicerVolumeRenderingPropertiesWidget::~qSlicerVolumeRenderingPropertiesWidget() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerVolumeRenderingPropertiesWidget::mrmlNode()const
+vtkMRMLNode* qSlicerVolumeRenderingPropertiesWidget::mrmlNode() const
 {
   return vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
     this->mrmlVolumeRenderingDisplayNode());
@@ -75,7 +75,7 @@ vtkMRMLNode* qSlicerVolumeRenderingPropertiesWidget::mrmlNode()const
 
 //-----------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingPropertiesWidget
-::mrmlVolumeRenderingDisplayNode()const
+::mrmlVolumeRenderingDisplayNode() const
 {
   Q_D(const qSlicerVolumeRenderingPropertiesWidget);
   return d->VolumeRenderingDisplayNode;
@@ -83,7 +83,7 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingPropertiesWidget
 
 //-----------------------------------------------------------------------------
 vtkMRMLVolumeNode* qSlicerVolumeRenderingPropertiesWidget
-::mrmlVolumeNode()const
+::mrmlVolumeNode() const
 {
   Q_D(const qSlicerVolumeRenderingPropertiesWidget);
   return d->VolumeNode;

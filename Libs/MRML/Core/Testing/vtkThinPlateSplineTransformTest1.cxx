@@ -39,7 +39,7 @@ itkThinPlateSplineType::Pointer CreateThinPlateSplineItk(vtkPoints* sourceLandma
   PointSetType::Pointer sourceLandmarksItk = PointSetType::New();
   for (int i = 0; i<sourceLandmarks->GetNumberOfPoints(); i++)
   {
-    double pos[3]={0};
+    double pos[3] = { 0 };
     sourceLandmarks->GetPoint(i, pos);
     itkThinPlateSplineType::InputPointType posItk;
     posItk[0]=pos[0];
@@ -50,7 +50,7 @@ itkThinPlateSplineType::Pointer CreateThinPlateSplineItk(vtkPoints* sourceLandma
   PointSetType::Pointer targetLandmarksItk = PointSetType::New();
   for (int i = 0; i<targetLandmarks->GetNumberOfPoints(); i++)
   {
-    double pos[3]={0};
+    double pos[3] = { 0 };
     targetLandmarks->GetPoint(i, pos);
     itkThinPlateSplineType::InputPointType posItk;
     posItk[0]=pos[0];
@@ -70,7 +70,7 @@ itkThinPlateSplineType::Pointer CreateThinPlateSplineItk(vtkPoints* sourceLandma
 //----------------------------------------------------------------------------
 void AddLandmarkDisplacement(vtkPoints* landmarks, double landmarkIndexX, double landmarkIndexY, double landmarkIndexZ, double dx, double dy, double dz, double dims[3])
 {
-  double landmarkPosition[3] = {0};
+  double landmarkPosition[3] = { 0 };
   int landmarkIndex = (landmarkIndexZ*dims[1]+landmarkIndexY)*dims[0]+landmarkIndexX;
   landmarks->GetPoint(landmarkIndex, landmarkPosition);
   landmarkPosition[0] += dx;
@@ -92,7 +92,7 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkThinPl
   outputPointItk = tpsItk->TransformPoint( inputPointItk );
 
   // VTK
-  double outputPoint[3]={0};
+  double outputPoint[3] = { 0 };
   tpsVtk->TransformPoint( inputPoint, outputPoint );
 
   itk::Point<double,3> inputPointVtk( inputPoint );
@@ -115,14 +115,14 @@ double getTransformedPointDifferenceItkVtk(const double inputPoint[3], itkThinPl
 // Compute transformed point differences between single-precision and double-precision VTK ThinPlateSpline implementations
 double getTransformedPointDifferenceSingleDoubleVtk(const double inputPoint[3], vtkThinPlateSplineTransform* tpsVtk, bool logDetails)
 {
-  double outputPoint[3]={0};
+  double outputPoint[3] = { 0 };
   tpsVtk->TransformPoint( inputPoint, outputPoint );
 
-  float floatInputPoint[3]={0};
+  float floatInputPoint[3] = { 0 };
   floatInputPoint[0]=static_cast<float>(inputPoint[0]);
   floatInputPoint[1]=static_cast<float>(inputPoint[1]);
   floatInputPoint[2]=static_cast<float>(inputPoint[2]);
-  float floatOutputPoint[3]={0};
+  float floatOutputPoint[3] = { 0 };
   tpsVtk->TransformPoint( floatInputPoint, floatOutputPoint );
 
   itk::Point<double,3> outputPointVtk( outputPoint );
@@ -157,9 +157,9 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkThinPlateSplineTrans
     double xPlus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
     xMinus1[row]-=eps;
     xPlus1[row]+=eps;
-    double xMinus1Transformed[3]={0};
+    double xMinus1Transformed[3] = { 0 };
     tpsVtk->TransformPoint( xMinus1, xMinus1Transformed);
-    double xPlus1Transformed[3]={0};
+    double xPlus1Transformed[3] = { 0 };
     tpsVtk->TransformPoint( xPlus1, xPlus1Transformed);
     for (int col = 0; col<3; col++)
     {
@@ -168,7 +168,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkThinPlateSplineTrans
   }
 
   // Jacobian computed by the transform class
-  double outputPoint[3]={0};
+  double outputPoint[3] = { 0 };
   double jacobianVtk[3][3];
   tpsVtk->InternalTransformDerivative( inputPoint, outputPoint, jacobianVtk );
 
@@ -253,7 +253,7 @@ int vtkThinPlateSplineTransformTest1(int, char*[])
   {
     for (int x = 0; x < dims[0]; x++)
     {
-      double landmarkPosition[3]={0};
+      double landmarkPosition[3] = { 0 };
       for (int i = 0; i<3; i++)
       {
         landmarkPosition[i] = origin[i]+x*spacing[0]*direction[i][0]+y*spacing[1]*direction[i][1]+z*spacing[2]*direction[i][2];
@@ -311,14 +311,14 @@ int vtkThinPlateSplineTransformTest1(int, char*[])
         inputPoint[2] = origin[2]+direction[2][0]*spacing[0]*i+direction[2][1]*spacing[1]*j+direction[2][2]*spacing[2]*k;
         // Compare transformation results computed by ITK and VTK.
         double differenceItkVtk = getTransformedPointDifferenceItkVtk(inputPoint, tpsItk, tpsVtk.GetPointer(), false);
-        if ( differenceItkVtk > 1e-6 )
+        if (differenceItkVtk > 1e-6)
         {
           getTransformedPointDifferenceItkVtk(inputPoint, tpsItk, tpsVtk.GetPointer(), true);
           std::cout << "ERROR: Point transform result mismatch between ITK and VTK at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
           numberOfItkVtkPointMismatches++;
         }
         double differenceSingleDoubleVtk = getTransformedPointDifferenceSingleDoubleVtk(inputPoint, tpsVtk.GetPointer(), false);
-        if ( differenceSingleDoubleVtk > 1e-4 )
+        if (differenceSingleDoubleVtk > 1e-4)
         {
           getTransformedPointDifferenceSingleDoubleVtk(inputPoint, tpsVtk.GetPointer(), true);
           std::cout << "ERROR: Point transform result mismatch between single-precision and double-precision VTK computation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
@@ -326,7 +326,7 @@ int vtkThinPlateSplineTransformTest1(int, char*[])
         }
         // Verify VTK derivative
         double derivativeError = getDerivativeErrorVtk(inputPoint, tpsVtk.GetPointer(), false);
-        if ( derivativeError > 1e-6 )
+        if (derivativeError > 1e-6)
         {
           getDerivativeErrorVtk(inputPoint, tpsVtk.GetPointer(), true);
           std::cout << "ERROR: Transform derivative result mismatch between VTK and numerical approximation at grid point ("<<i<<","<<j<<","<<k<<")"<< std::endl;
@@ -334,7 +334,7 @@ int vtkThinPlateSplineTransformTest1(int, char*[])
         }
         // Verify VTK inverse transform
         double inverseError = getInverseErrorVtk(inputPoint, tpsVtk.GetPointer(), false);
-        if ( inverseError > 1e-3 )
+        if (inverseError > 1e-3)
         {
           getInverseErrorVtk(inputPoint, tpsVtk.GetPointer(), true);
           std::cout << "ERROR: Point transformed by forward and inverse transform does not match the original point" << std::endl;

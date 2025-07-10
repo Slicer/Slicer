@@ -91,7 +91,7 @@ void qMRMLSceneModelPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-QModelIndexList qMRMLSceneModelPrivate::indexes(const QString& nodeID)const
+QModelIndexList qMRMLSceneModelPrivate::indexes(const QString& nodeID) const
 {
   Q_Q(const qMRMLSceneModel);
   QModelIndex scene = q->mrmlSceneIndex();
@@ -178,7 +178,7 @@ void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
 }
 
 //------------------------------------------------------------------------------
-QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QString& extraType)const
+QStringList qMRMLSceneModelPrivate::extraItems(QStandardItem* parent, const QString& extraType) const
 {
   QStringList res;
   if (parent == nullptr)
@@ -237,7 +237,7 @@ void qMRMLSceneModelPrivate::removeAllExtraItems(QStandardItem* parent, const QS
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModelPrivate::isExtraItem(const QStandardItem* item)const
+bool qMRMLSceneModelPrivate::isExtraItem(const QStandardItem* item) const
 {
   QString uid =
     item ? item->data(qMRMLSceneModel::UIDRole).toString() : QString();
@@ -305,7 +305,7 @@ void qMRMLSceneModel::setPreItems(const QStringList& extraItems, QStandardItem* 
 }
 
 //------------------------------------------------------------------------------
-QStringList qMRMLSceneModel::preItems(QStandardItem* parent)const
+QStringList qMRMLSceneModel::preItems(QStandardItem* parent) const
 {
   Q_D(const qMRMLSceneModel);
   return d->extraItems(parent, "preItem");
@@ -336,7 +336,7 @@ void qMRMLSceneModel::setPostItems(const QStringList& extraItems, QStandardItem*
 }
 
 //------------------------------------------------------------------------------
-QStringList qMRMLSceneModel::postItems(QStandardItem* parent)const
+QStringList qMRMLSceneModel::postItems(QStandardItem* parent) const
 {
   Q_D(const qMRMLSceneModel);
   return d->extraItems(parent, "postItem");
@@ -376,14 +376,14 @@ void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSceneModel::mrmlScene()const
+vtkMRMLScene* qMRMLSceneModel::mrmlScene() const
 {
   Q_D(const qMRMLSceneModel);
   return d->MRMLScene;
 }
 
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSceneModel::mrmlSceneItem()const
+QStandardItem* qMRMLSceneModel::mrmlSceneItem() const
 {
   Q_D(const qMRMLSceneModel);
   if (d->MRMLScene == nullptr || this->maxColumnId() == -1)
@@ -409,7 +409,7 @@ QStandardItem* qMRMLSceneModel::mrmlSceneItem()const
 }
 
 //------------------------------------------------------------------------------
-QModelIndex qMRMLSceneModel::mrmlSceneIndex()const
+QModelIndex qMRMLSceneModel::mrmlSceneIndex() const
 {
   QStandardItem* scene = this->mrmlSceneItem();
   if (scene == nullptr)
@@ -420,7 +420,7 @@ QModelIndex qMRMLSceneModel::mrmlSceneIndex()const
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem)const
+vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem) const
 {
   Q_D(const qMRMLSceneModel);
   // TODO: fasten by saving the pointer into the data
@@ -437,7 +437,7 @@ vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromItem(QStandardItem* nodeItem)const
     nodeItem->data(qMRMLSceneModel::UIDRole).toString().toUtf8()) : nullptr;
 }
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column)const
+QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column) const
 {
   QModelIndex nodeIndex = this->indexFromNode(node, column);
   QStandardItem* nodeItem = this->itemFromIndex(nodeIndex);
@@ -445,11 +445,11 @@ QStandardItem* qMRMLSceneModel::itemFromNode(vtkMRMLNode* node, int column)const
 }
 
 //------------------------------------------------------------------------------
-QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column)const
+QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column) const
 {
   Q_D(const qMRMLSceneModel);
 
-  if (node == nullptr || node->GetID() == nullptr )
+  if (node == nullptr || node->GetID() == nullptr)
   {
     return QModelIndex();
   }
@@ -512,21 +512,21 @@ QModelIndex qMRMLSceneModel::indexFromNode(vtkMRMLNode* node, int column)const
 }
 
 //------------------------------------------------------------------------------
-QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node)const
+QModelIndexList qMRMLSceneModel::indexes(vtkMRMLNode* node) const
 {
   Q_D(const qMRMLSceneModel);
   return d->indexes(QString(node->GetID()));
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSceneModel::parentNode(vtkMRMLNode* node)const
+vtkMRMLNode* qMRMLSceneModel::parentNode(vtkMRMLNode* node) const
 {
   Q_UNUSED(node);
   return nullptr;
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node)const
+int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node) const
 {
   Q_D(const qMRMLSceneModel);
   if (!d->MRMLScene)
@@ -584,14 +584,14 @@ int qMRMLSceneModel::nodeIndex(vtkMRMLNode* node)const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModel::canBeAChild(vtkMRMLNode* node)const
+bool qMRMLSceneModel::canBeAChild(vtkMRMLNode* node) const
 {
   Q_UNUSED(node);
   return false;
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModel::canBeAParent(vtkMRMLNode* node)const
+bool qMRMLSceneModel::canBeAParent(vtkMRMLNode* node) const
 {
   Q_UNUSED(node);
   return false;
@@ -606,7 +606,7 @@ bool qMRMLSceneModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParent)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModel::isParentNode(vtkMRMLNode* child, vtkMRMLNode* parent)const
+bool qMRMLSceneModel::isParentNode(vtkMRMLNode* child, vtkMRMLNode* parent) const
 {
   for (; child; child = this->parentNode(child))
   {
@@ -620,7 +620,7 @@ bool qMRMLSceneModel::isParentNode(vtkMRMLNode* child, vtkMRMLNode* parent)const
 
 //------------------------------------------------------------------------------
 bool qMRMLSceneModel
-::isAffiliatedNode(vtkMRMLNode* nodeA, vtkMRMLNode* nodeB)const
+::isAffiliatedNode(vtkMRMLNode* nodeA, vtkMRMLNode* nodeB) const
 {
   return this->isParentNode(nodeA, nodeB) || this->isParentNode(nodeB, nodeA);
 }
@@ -638,7 +638,7 @@ void qMRMLSceneModel::setListenNodeModifiedEvent(qMRMLSceneModel::NodeTypes list
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneModel::NodeTypes qMRMLSceneModel::listenNodeModifiedEvent()const
+qMRMLSceneModel::NodeTypes qMRMLSceneModel::listenNodeModifiedEvent() const
 {
   Q_D(const qMRMLSceneModel);
   return d->ListenNodeModifiedEvent;
@@ -656,14 +656,14 @@ void qMRMLSceneModel::setLazyUpdate(bool lazy)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModel::lazyUpdate()const
+bool qMRMLSceneModel::lazyUpdate() const
 {
   Q_D(const qMRMLSceneModel);
   return d->LazyUpdate;
 }
 
 //------------------------------------------------------------------------------
-QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
+QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes) const
 {
   Q_D(const qMRMLSceneModel);
   if (!indexes.size())
@@ -944,7 +944,7 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
 }
 
 //------------------------------------------------------------------------------
-QFlags<Qt::ItemFlag> qMRMLSceneModel::nodeFlags(vtkMRMLNode* node, int column)const
+QFlags<Qt::ItemFlag> qMRMLSceneModel::nodeFlags(vtkMRMLNode* node, int column) const
 {
   QFlags<Qt::ItemFlag> flags = Qt::ItemIsEnabled
                              | Qt::ItemIsSelectable;
@@ -1146,7 +1146,7 @@ void qMRMLSceneModel::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
   vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*>(call_data);
   Q_ASSERT(scene);
   Q_ASSERT(sceneModel);
-  switch(event)
+  switch (event)
   {
     case vtkMRMLScene::NodeAboutToBeAddedEvent:
       Q_ASSERT(node);
@@ -1331,7 +1331,7 @@ void printStandardItem(QStandardItem* item, const QString& offset)
   qDebug() << offset << item << item->index() << item->text()
            << item->data(qMRMLSceneModel::UIDRole).toString() << item->row()
            << item->column() << item->rowCount() << item->columnCount();
-  for (int i = 0; i < item->rowCount(); ++i )
+  for (int i = 0; i < item->rowCount(); ++i)
   {
     for (int j = 0; j < item->columnCount(); ++j)
     {
@@ -1480,7 +1480,7 @@ void qMRMLSceneModel::delayedItemChanged()
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModel::isANode(const QStandardItem* item)const
+bool qMRMLSceneModel::isANode(const QStandardItem* item) const
 {
   Q_D(const qMRMLSceneModel);
   return item
@@ -1544,13 +1544,13 @@ void qMRMLSceneModel::onMRMLSceneEndBatchProcess(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-Qt::DropActions qMRMLSceneModel::supportedDropActions()const
+Qt::DropActions qMRMLSceneModel::supportedDropActions() const
 {
   return Qt::IgnoreAction;
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneModel::nameColumn()const
+int qMRMLSceneModel::nameColumn() const
 {
   Q_D(const qMRMLSceneModel);
   return d->NameColumn;
@@ -1565,7 +1565,7 @@ void qMRMLSceneModel::setNameColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneModel::idColumn()const
+int qMRMLSceneModel::idColumn() const
 {
   Q_D(const qMRMLSceneModel);
   return d->IDColumn;
@@ -1580,7 +1580,7 @@ void qMRMLSceneModel::setIDColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneModel::checkableColumn()const
+int qMRMLSceneModel::checkableColumn() const
 {
   Q_D(const qMRMLSceneModel);
   return d->CheckableColumn;
@@ -1595,7 +1595,7 @@ void qMRMLSceneModel::setCheckableColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneModel::visibilityColumn()const
+int qMRMLSceneModel::visibilityColumn() const
 {
   Q_D(const qMRMLSceneModel);
   return d->VisibilityColumn;
@@ -1610,7 +1610,7 @@ void qMRMLSceneModel::setVisibilityColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneModel::toolTipNameColumn()const
+int qMRMLSceneModel::toolTipNameColumn() const
 {
   Q_D(const qMRMLSceneModel);
   return d->ToolTipNameColumn;
@@ -1625,7 +1625,7 @@ void qMRMLSceneModel::setToolTipNameColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneModel::extraItemColumn()const
+int qMRMLSceneModel::extraItemColumn() const
 {
   Q_D(const qMRMLSceneModel);
   return d->ExtraItemColumn;
@@ -1656,7 +1656,7 @@ void qMRMLSceneModel::updateColumnCount()
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneModel::maxColumnId()const
+int qMRMLSceneModel::maxColumnId() const
 {
   Q_D(const qMRMLSceneModel);
   int maxId = 0; // information (scene, node uid... ) is stored in the 1st column

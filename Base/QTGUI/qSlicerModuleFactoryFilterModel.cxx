@@ -78,7 +78,7 @@ void qSlicerModuleFactoryFilterModelPrivate::decodeDataRecursive(QDataStream& st
 
 // --------------------------------------------------------------------------
 qSlicerModuleFactoryFilterModelPrivate::qSlicerModuleFactoryFilterModelPrivate(qSlicerModuleFactoryFilterModel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->ShowToLoad = true;
   this->ShowLoaded = true;
@@ -104,7 +104,7 @@ qSlicerModuleFactoryFilterModel::qSlicerModuleFactoryFilterModel(QObject* parent
 qSlicerModuleFactoryFilterModel::~qSlicerModuleFactoryFilterModel() = default;
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::showToLoad()const
+bool qSlicerModuleFactoryFilterModel::showToLoad() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->ShowToLoad;
@@ -119,7 +119,7 @@ void qSlicerModuleFactoryFilterModel::setShowToLoad(bool show)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::showToIgnore()const
+bool qSlicerModuleFactoryFilterModel::showToIgnore() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->ShowToIgnore;
@@ -134,7 +134,7 @@ void qSlicerModuleFactoryFilterModel::setShowToIgnore(bool show)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::showLoaded()const
+bool qSlicerModuleFactoryFilterModel::showLoaded() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->ShowLoaded;
@@ -149,7 +149,7 @@ void qSlicerModuleFactoryFilterModel::setShowLoaded(bool show)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::showIgnored()const
+bool qSlicerModuleFactoryFilterModel::showIgnored() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->ShowIgnored;
@@ -164,7 +164,7 @@ void qSlicerModuleFactoryFilterModel::setShowIgnored(bool show)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::showFailed()const
+bool qSlicerModuleFactoryFilterModel::showFailed() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->ShowFailed;
@@ -179,7 +179,7 @@ void qSlicerModuleFactoryFilterModel::setShowFailed(bool show)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::showBuiltIn()const
+bool qSlicerModuleFactoryFilterModel::showBuiltIn() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->ShowBuiltIn;
@@ -194,7 +194,7 @@ void qSlicerModuleFactoryFilterModel::setShowBuiltIn(bool show)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::showHidden()const
+bool qSlicerModuleFactoryFilterModel::showHidden() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->ShowHidden;
@@ -209,7 +209,7 @@ void qSlicerModuleFactoryFilterModel::setShowHidden(bool show)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::showTesting()const
+bool qSlicerModuleFactoryFilterModel::showTesting() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->ShowTesting;
@@ -224,7 +224,7 @@ void qSlicerModuleFactoryFilterModel::setShowTesting(bool show)
 }
 
 // --------------------------------------------------------------------------
-QStringList qSlicerModuleFactoryFilterModel::showModules()const
+QStringList qSlicerModuleFactoryFilterModel::showModules() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->ShowModules;
@@ -253,7 +253,7 @@ void qSlicerModuleFactoryFilterModel::setShowModules(const QStringList& modules)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::hideAllWhenShowModulesIsEmpty()const
+bool qSlicerModuleFactoryFilterModel::hideAllWhenShowModulesIsEmpty() const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   return d->HideAllWhenShowModulesIsEmpty;
@@ -268,7 +268,7 @@ void qSlicerModuleFactoryFilterModel::setHideAllWhenShowModulesIsEmpty(bool hide
 
 // --------------------------------------------------------------------------
 bool qSlicerModuleFactoryFilterModel::lessThan(const QModelIndex& leftIndex,
-                                               const QModelIndex& rightIndex)const
+                                               const QModelIndex& rightIndex) const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   QString leftModule = this->sourceModel()->data(leftIndex, Qt::UserRole).toString();
@@ -282,7 +282,7 @@ bool qSlicerModuleFactoryFilterModel::lessThan(const QModelIndex& leftIndex,
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent)const
+bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   QModelIndex sourceIndex = this->sourceModel()->index(sourceRow, 0, sourceParent);
@@ -348,7 +348,7 @@ bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QMod
 }
 
 // --------------------------------------------------------------------------
-Qt::DropActions qSlicerModuleFactoryFilterModel::supportedDropActions()const
+Qt::DropActions qSlicerModuleFactoryFilterModel::supportedDropActions() const
 {
   return Qt::CopyAction;
 }

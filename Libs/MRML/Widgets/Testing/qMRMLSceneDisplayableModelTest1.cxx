@@ -41,7 +41,7 @@
 // MRML includes
 #include <vtkMRMLDisplayableHierarchyNode.h>
 
-int qMRMLSceneDisplayableModelTest1(int argc, char* argv [])
+int qMRMLSceneDisplayableModelTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -84,15 +84,15 @@ int qMRMLSceneDisplayableModelTest1(int argc, char* argv [])
     sceneFactory.deleteNode();
     sceneFactory.deleteNode();
 
-    for ( int i = 0; i < 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
       sceneFactory.deleteNode();
     }
-    for ( int i = 0; i < 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
       sceneFactory.generateNode();
     }
-    for ( int i = 0; i < 99; ++i)
+    for (int i = 0; i < 99; ++i)
     {
       sceneFactory.deleteNode();
     }
@@ -158,7 +158,7 @@ int qMRMLSceneDisplayableModelTest1(int argc, char* argv [])
   view->show();
   view->resize(500, 800);
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

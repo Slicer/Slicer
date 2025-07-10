@@ -86,7 +86,7 @@ public:
   bool javaScriptConsoleMessageLoggingEnabled() const;
   void setJavaScriptConsoleMessageLoggingEnabled(bool enable);
 
-//  QWebEngineProfile* profile()const;
+//  QWebEngineProfile* profile() const;
 //  void setProfile(QWebEngineProfile* profile);
 
   /// Return a reference to the QWebView used internally.

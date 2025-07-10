@@ -48,12 +48,12 @@ vtkMRMLROIListNode::~vtkMRMLROIListNode()
   }
   if (this->Name)
   {
-    delete [] this->Name;
+    delete[] this->Name;
     this->Name = nullptr;
   }
   if (this->VolumeNodeID)
   {
-    delete [] this->VolumeNodeID;
+    delete[] this->VolumeNodeID;
     this->VolumeNodeID = nullptr;
   }
   return;
@@ -244,7 +244,7 @@ void vtkMRMLROIListNode::Copy(vtkMRMLNode* vtkNotUsed(anode))
 void vtkMRMLROIListNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   //int idx
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   //Fill in
 }
 
@@ -271,7 +271,7 @@ int vtkMRMLROIListNode::GetNumberOfROIs()
 //----------------------------------------------------------------------------
 int vtkMRMLROIListNode::AddROI()
 {
-  if ( !this->Scene )
+  if (!this->Scene)
   {
     vtkErrorMacro ( << "Attempt to add ROI, but no scene set yet");
     return (-1);
@@ -489,7 +489,7 @@ int vtkMRMLROIListNode::SetNthROIXYZ(int n, double x, double y, double z)
       ijkPoint[1] = ijkPoint[1] < dims[1] ? ijkPoint[1] : dims[1];
       ijkPoint[2] = ijkPoint[2] >= 0 ? ijkPoint[2] : 0;
       ijkPoint[2] = ijkPoint[2] < dims[2] ? ijkPoint[2] : dims[2];
-      delete [] dims;
+      delete[] dims;
 
       node->SetIJK(ijkPoint[0], ijkPoint[1], ijkPoint[2]);
     }
@@ -529,7 +529,7 @@ int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
       j = j < dims[1] ? j : dims[1];
       k = k >= 0 ? k : 0;
       k = k < dims[2] ? k : dims[2];
-      delete [] dims;
+      delete[] dims;
 
       node->SetIJK(i,j,k);
 

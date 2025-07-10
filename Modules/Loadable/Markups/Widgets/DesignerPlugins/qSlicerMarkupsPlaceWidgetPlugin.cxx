@@ -44,7 +44,7 @@ QString qSlicerMarkupsPlaceWidgetPlugin
 {
   return "<widget class=\"qSlicerMarkupsPlaceWidget\" \
           name=\"MarkupsPlaceWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

@@ -45,7 +45,7 @@
 #include <vtkNew.h>
 
 // ----------------------------------------------------------------------------
-class qSlicerTransformsModuleWidgetTester: public QObject
+class qSlicerTransformsModuleWidgetTester : public QObject
 {
   Q_OBJECT
 

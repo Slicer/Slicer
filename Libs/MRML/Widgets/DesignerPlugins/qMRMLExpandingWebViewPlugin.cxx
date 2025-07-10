@@ -20,7 +20,7 @@ QString qMRMLExpandingWebViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLExpandingWebView\" \
           name=\"MRMLExpandingWebView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

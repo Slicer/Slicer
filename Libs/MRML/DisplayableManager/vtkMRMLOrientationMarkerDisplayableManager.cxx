@@ -435,11 +435,11 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrient
     const double cameraDistance = 100.0; // any positive number works here, as the position will be adjusted at the end by ResetCamera()
     double y[3] = {0,0, det>0 ? -cameraDistance : cameraDistance};
     // Calculating camer position
-    double position[3] = {0};
+    double position[3] = { 0 };
     sliceToRasOrientation->MultiplyPoint(y,position);
     // Calculating camera viewUp
     const double n[3] = {0,1,0};
-    double viewUp[3] = {0};
+    double viewUp[3] = { 0 };
     sliceToRasOrientation->MultiplyPoint(n,viewUp);
 
     vtkCamera* camera = this->MarkerRenderer->GetActiveCamera();

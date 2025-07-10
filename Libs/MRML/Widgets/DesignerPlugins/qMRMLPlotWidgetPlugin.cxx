@@ -22,7 +22,7 @@
 #include "qMRMLPlotWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLPlotWidgetPlugin::qMRMLPlotWidgetPlugin(QObject* _parent):QObject(_parent)
+qMRMLPlotWidgetPlugin::qMRMLPlotWidgetPlugin(QObject* _parent): QObject(_parent)
 {
 }
 
@@ -46,7 +46,7 @@ QString qMRMLPlotWidgetPlugin::domXml() const
           "   <height>200</height>\n"
           "  </rect>\n"
           " </property>\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

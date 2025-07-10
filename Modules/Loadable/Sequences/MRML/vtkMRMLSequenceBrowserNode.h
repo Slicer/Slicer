@@ -389,23 +389,23 @@ protected:
   std::string GetSynchronizationPostfixFromSequenceID(const char* sequenceNodeID);
 
 protected:
-  bool PlaybackActive{false};
+  bool PlaybackActive{ false };
   double PlaybackRateFps{10.0};
-  bool PlaybackItemSkippingEnabled{true};
-  bool PlaybackLooped{true};
+  bool PlaybackItemSkippingEnabled{ true };
+  bool PlaybackLooped{ true };
   int SelectedItemNumber{-1};
 
   double RecordingTimeOffsetSec; // difference between universal time and index value
   vtkSetMacro(RecordingTimeOffsetSec, double);
   vtkGetMacro(RecordingTimeOffsetSec, double);
 
-  bool RecordingActive{false};
+  bool RecordingActive{ false };
 
   double LastSaveProxyNodesStateTimeSec;
   vtkSetMacro(LastSaveProxyNodesStateTimeSec, double);
   vtkGetMacro(LastSaveProxyNodesStateTimeSec, double);
 
-  bool RecordMasterOnly{false};
+  bool RecordMasterOnly{ false };
   int RecordingSamplingMode{vtkMRMLSequenceBrowserNode::SamplingLimitedToPlaybackFrameRate};
   int IndexDisplayMode{vtkMRMLSequenceBrowserNode::IndexDisplayAsIndexValue};
   std::string IndexDisplayFormat;
@@ -415,7 +415,7 @@ protected:
   std::vector<std::string> SynchronizationPostfixes;
 
   // Counter that is used for generating the unique (only for this class) proxy node postfix strings
-  int LastPostfixIndex{0};
+  int LastPostfixIndex{ 0 };
   vtkSetMacro(LastPostfixIndex, int);
   vtkGetMacro(LastPostfixIndex, int);
 

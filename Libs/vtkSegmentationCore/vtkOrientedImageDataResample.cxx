@@ -314,7 +314,7 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
       isInputImageTransformIdentity = true;
     }
   }
-  if ( isInputImageTransformIdentity
+  if (isInputImageTransformIdentity
     && vtkOrientedImageDataResample::DoGeometriesMatch(inputImage, referenceImage))
   {
     if (vtkOrientedImageDataResample::DoExtentsMatch(inputImage, referenceImage))
@@ -517,7 +517,7 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceGeometry(vtkO
   vtkOrientedImageDataResample::TransformExtent(effectiveInputExtent, referenceImageToInputImageTransform.GetPointer(), outputExtent);
 
   // Return with failure if effective output extent is empty
-  if ( outputExtent[0] > outputExtent[1]
+  if (outputExtent[0] > outputExtent[1]
     || outputExtent[2] > outputExtent[3]
     || outputExtent[4] > outputExtent[5] )
   {
@@ -669,7 +669,7 @@ bool vtkOrientedImageDataResample::CalculateEffectiveExtent(vtkOrientedImageData
   }
 
   // Return with failure if effective input extent is empty
-  if ( effectiveExtent[0] > effectiveExtent[1] || effectiveExtent[2] > effectiveExtent[3] || effectiveExtent[4] > effectiveExtent[5] )
+  if (effectiveExtent[0] > effectiveExtent[1] || effectiveExtent[2] > effectiveExtent[3] || effectiveExtent[4] > effectiveExtent[5])
   {
     return false;
   }
@@ -706,7 +706,7 @@ bool vtkOrientedImageDataResample::DoExtentsMatch(vtkOrientedImageData* image1, 
   image1->GetExtent(image1Extent);
   int image2Extent[6] = {0,-1,0,-1,0,-1};
   image2->GetExtent(image2Extent);
-  if ( image1Extent[0] != image2Extent[0] || image1Extent[1] != image2Extent[1] || image1Extent[2] != image2Extent[2]
+  if (image1Extent[0] != image2Extent[0] || image1Extent[1] != image2Extent[1] || image1Extent[2] != image2Extent[2]
     || image1Extent[3] != image2Extent[3] || image1Extent[4] != image2Extent[4] || image1Extent[5] != image2Extent[5] )
   {
     return false;
@@ -1038,7 +1038,7 @@ bool vtkOrientedImageDataResample::PadImageToContainImage(vtkOrientedImageData* 
   vtkOrientedImageDataResample::TransformExtent(containedExtent, containedImageToInputImageTransform, containedImageExtentInInputImageFrame);
 
   // Return with failure if output extent is invalid
-  if ( containedImageExtentInInputImageFrame[0] > containedImageExtentInInputImageFrame[1]
+  if (containedImageExtentInInputImageFrame[0] > containedImageExtentInInputImageFrame[1]
     || containedImageExtentInInputImageFrame[2] > containedImageExtentInInputImageFrame[3]
     || containedImageExtentInInputImageFrame[4] > containedImageExtentInInputImageFrame[5] )
   {

@@ -72,9 +72,9 @@ inline void ipUpperThreshold(T* data, const int size, const T threshold)
 {
   T* dp = data;
 
-  for ( int i = 0; i < size; i++, dp++ )
+  for (int i = 0; i < size; i++, dp++)
   {
-    if ( *dp < threshold )
+    if (*dp < threshold)
     {
       *dp = (T) 0.0;
     }
@@ -86,9 +86,9 @@ inline void ipLowerThreshold(T* data, const int size, const T threshold)
 {
   T* dp = data;
 
-  for ( int i = 0; i < size; i++, dp++ )
+  for (int i = 0; i < size; i++, dp++)
   {
-    if ( *dp > threshold )
+    if (*dp > threshold)
     {
       *dp = (T) 0.0;
     }
@@ -100,7 +100,7 @@ inline void ipUpperBinaryThreshold(T* data, const int size, const T threshold)
 {
   T* dp = data;
 
-  for ( int i = 0; i < size; i++, dp++ )
+  for (int i = 0; i < size; i++, dp++)
   {
     *dp = (*dp < threshold ? (T) 0.0 : (T) 1.0);
   }
@@ -111,7 +111,7 @@ inline void ipLowerBinaryThreshold(T* data, const int size, const T threshold)
 {
   T* dp = data;
 
-  for ( int i = 0; i < size; i++, dp++ )
+  for (int i = 0; i < size; i++, dp++)
   {
     *dp = (*dp > threshold ? (T) 0.0 : (T) 1.0);
   }

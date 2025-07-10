@@ -115,7 +115,7 @@ void vtkMRMLCropVolumeParametersNode::CopyContent(vtkMRMLNode* anode, bool deepC
 //----------------------------------------------------------------------------
 void vtkMRMLCropVolumeParametersNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(VoxelBased);
   vtkMRMLPrintIntMacro(InterpolationMode);

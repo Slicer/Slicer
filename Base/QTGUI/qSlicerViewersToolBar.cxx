@@ -689,7 +689,7 @@ void qSlicerViewersToolBarPrivate::onSliceDisplayNodeChangedEvent()
 
 //---------------------------------------------------------------------------
 qSlicerViewersToolBar::qSlicerViewersToolBar(const QString& title, QWidget* parentWidget)
-  :Superclass(title, parentWidget)
+  : Superclass(title, parentWidget)
   , d_ptr(new qSlicerViewersToolBarPrivate(*this))
 {
   Q_D(qSlicerViewersToolBar);

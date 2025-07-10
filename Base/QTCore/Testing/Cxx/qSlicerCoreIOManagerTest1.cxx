@@ -87,7 +87,7 @@ int TestLongNodeNameSaving(const char* temporaryDirectory)
   return EXIT_SUCCESS;
 }
 
-int qSlicerCoreIOManagerTest1(int argc, char* argv [])
+int qSlicerCoreIOManagerTest1(int argc, char* argv[])
 {
   // make the core application so that the manager can be instantiated
   qSlicerCoreApplication app(argc, argv);

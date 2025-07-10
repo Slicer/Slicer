@@ -205,7 +205,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray
     {
       rapidjson::Value& codingSchemeDesignator = currentObject["CodingSchemeDesignator"];
       rapidjson::Value& codeValue = currentObject["CodeValue"];
-      if ( codingSchemeDesignator.IsString() && !codeId.CodingSchemeDesignator.compare(codingSchemeDesignator.GetString())
+      if (codingSchemeDesignator.IsString() && !codeId.CodingSchemeDesignator.compare(codingSchemeDesignator.GetString())
         && codeValue.IsString() && !codeId.CodeValue.compare(codeValue.GetString()) )
       {
         foundIndex = index;
@@ -667,7 +667,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     // Note: "The reason for the inner list is that we have one single schema both for input and output. When we provide input metafile,
     //       we can have multiple input files, and each file can have multiple labels, that is why we need to have list of lists"
     segmentAttributes = segmentAttributes[0]; // Enter "innerList"
-    if ( !segmentAttributes.HasMember("SegmentedPropertyCategoryCodeSequence")
+    if (!segmentAttributes.HasMember("SegmentedPropertyCategoryCodeSequence")
       || !segmentAttributes.HasMember("SegmentedPropertyTypeCodeSequence")
       || !segmentAttributes.HasMember("recommendedDisplayRGBValue") )
     {
@@ -1338,7 +1338,7 @@ void vtkSlicerTerminologiesModuleLogic::LoadUserContexts()
     std::string fileName = files->GetValue(index);
 
     // Only load json files
-    if ( userSettingsDir->FileIsDirectory(fileName.c_str())
+    if (userSettingsDir->FileIsDirectory(fileName.c_str())
       || fileName.size() < 5 || fileName.substr(fileName.size()-5).compare(".json") )
     {
       continue;
@@ -2086,7 +2086,7 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
   entry->SetTerminologyContextName(nullptr);
   entry->SetRegionContextName(nullptr);
 
-  if ( !entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject()
+  if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject()
     || !entry->GetRegionObject() || !entry->GetRegionModifierObject() )
   {
     vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Invalid terminology entry given");
@@ -2311,7 +2311,7 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
   {
     return "Invalid terminology";
   }
-  if ( !entry->GetTerminologyContextName()
+  if (!entry->GetTerminologyContextName()
     || !entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue() )
   {
     return "No terminology information";
@@ -2342,7 +2342,7 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
   }
 
   // If region is not selected, then do not show region context name either
-  if ( entry->GetRegionContextName()
+  if (entry->GetRegionContextName()
     && entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue() )
   {
     terminologyStr = terminologyStr + std::string("\n  Region context: ") + std::string(entry->GetRegionContextName());

@@ -47,25 +47,25 @@ public:
   qSlicerGetTitleMacro(tr("Segmentations"));
 
   /// Help to use the module
-  QString helpText()const override;
+  QString helpText() const override;
 
   /// Return acknowledgments
-  QString acknowledgementText()const override;
+  QString acknowledgementText() const override;
 
   /// Return the authors of the module
-  QStringList  contributors()const override;
+  QStringList  contributors() const override;
 
   /// Return module dependencies
-  QStringList dependencies()const override;
+  QStringList dependencies() const override;
 
   /// Return a custom icon for the module
-  QIcon icon()const override;
+  QIcon icon() const override;
 
   /// Return the categories for the module
-  QStringList categories()const override;
+  QStringList categories() const override;
 
   /// Define associated node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 public slots:
   /// Set up MRML scene events

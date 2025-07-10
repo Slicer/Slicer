@@ -24,7 +24,7 @@ QString qMRMLScalarsDisplayWidgetPlugin::domXml() const
           "   <height>20</height>\n"
           "  </rect>\n"
           " </property>\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLScalarsDisplayWidgetPlugin::icon() const

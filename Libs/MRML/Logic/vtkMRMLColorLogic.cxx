@@ -66,7 +66,7 @@ vtkMRMLColorLogic::~vtkMRMLColorLogic()
 
   if (this->UserColorFilePaths)
   {
-    delete [] this->UserColorFilePaths;
+    delete[] this->UserColorFilePaths;
     this->UserColorFilePaths = nullptr;
   }
 }

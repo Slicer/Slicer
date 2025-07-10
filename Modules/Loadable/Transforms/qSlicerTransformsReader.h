@@ -39,11 +39,11 @@ public:
   ~qSlicerTransformsReader() override;
 
   void setTransformLogic(vtkSlicerTransformLogic* transformLogic);
-  vtkSlicerTransformLogic* transformLogic()const;
+  vtkSlicerTransformLogic* transformLogic() const;
 
-  QString description()const override;
-  IOFileType fileType()const override;
-  QStringList extensions()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
+  QStringList extensions() const override;
 
   bool load(const IOProperties& properties) override;
 
@@ -51,7 +51,7 @@ public:
   /// It uses default confidence value except for NIFTI files.
   /// For NIFTI file that contain displacement field, the method returns 0.6 which is
   /// higher than the default (0.5) to make the application prefer reading it as transform.
-  double canLoadFileConfidence(const QString& file)const override;
+  double canLoadFileConfidence(const QString& file) const override;
 
 
 protected:

@@ -80,7 +80,7 @@ bool vtkTopologicalHierarchy::Contains(vtkPolyData* polyOut, vtkPolyData* polyIn
   double extentIn[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
   polyIn->GetBounds(extentIn);
 
-  if ( extentOut[0] < extentIn[0] - this->ContainConstraintFactor * (extentOut[1]-extentOut[0])
+  if (extentOut[0] < extentIn[0] - this->ContainConstraintFactor * (extentOut[1]-extentOut[0])
     && extentOut[1] > extentIn[1] + this->ContainConstraintFactor * (extentOut[1]-extentOut[0])
     && extentOut[2] < extentIn[2] - this->ContainConstraintFactor * (extentOut[3]-extentOut[2])
     && extentOut[3] > extentIn[3] + this->ContainConstraintFactor * (extentOut[3]-extentOut[2])

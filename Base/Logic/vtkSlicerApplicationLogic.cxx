@@ -259,7 +259,7 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
 
         // only handle processing tasks in this thread
         task = (*this->InternalTaskQueue).front();
-        if ( task->GetType() == vtkSlicerTask::Processing )
+        if (task->GetType() == vtkSlicerTask::Processing)
         {
           (*this->InternalTaskQueue).pop();
         }
@@ -319,7 +319,7 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
       {
         // std::cout << "Number of queued tasks: " << (*this->InternalTaskQueue).size() << std::endl;
         task = (*this->InternalTaskQueue).front();
-        if ( task->GetType() == vtkSlicerTask::Networking )
+        if (task->GetType() == vtkSlicerTask::Networking)
         {
           (*this->InternalTaskQueue).pop();
         }

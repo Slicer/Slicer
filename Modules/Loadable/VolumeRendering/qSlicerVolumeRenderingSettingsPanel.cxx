@@ -45,7 +45,7 @@
 // qSlicerVolumeRenderingSettingsPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumeRenderingSettingsPanelPrivate: public Ui_qSlicerVolumeRenderingSettingsPanel
+class qSlicerVolumeRenderingSettingsPanelPrivate : public Ui_qSlicerVolumeRenderingSettingsPanel
 {
   Q_DECLARE_PUBLIC(qSlicerVolumeRenderingSettingsPanel);
 protected:
@@ -69,7 +69,7 @@ public:
 // --------------------------------------------------------------------------
 qSlicerVolumeRenderingSettingsPanelPrivate
 ::qSlicerVolumeRenderingSettingsPanelPrivate(qSlicerVolumeRenderingSettingsPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 
@@ -195,7 +195,7 @@ qSlicerVolumeRenderingSettingsPanel::qSlicerVolumeRenderingSettingsPanel(QWidget
 qSlicerVolumeRenderingSettingsPanel::~qSlicerVolumeRenderingSettingsPanel() = default;
 
 // --------------------------------------------------------------------------
-vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingSettingsPanel::volumeRenderingLogic()const
+vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingSettingsPanel::volumeRenderingLogic() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
   return d->VolumeRenderingLogic;
@@ -247,7 +247,7 @@ void qSlicerVolumeRenderingSettingsPanel::onVolumeRenderingLogicModified()
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerVolumeRenderingSettingsPanel::gpuMemory()const
+QString qSlicerVolumeRenderingSettingsPanel::gpuMemory() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
   return d->GPUMemoryComboBox->currentGPUMemoryAsString();
@@ -292,7 +292,7 @@ void qSlicerVolumeRenderingSettingsPanel::onGPUMemoryChanged()
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerVolumeRenderingSettingsPanel::defaultRenderingMethod()const
+QString qSlicerVolumeRenderingSettingsPanel::defaultRenderingMethod() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
   QString renderingClassName =
@@ -328,7 +328,7 @@ void qSlicerVolumeRenderingSettingsPanel::updateVolumeRenderingLogicDefaultRende
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerVolumeRenderingSettingsPanel::defaultQuality()const
+QString qSlicerVolumeRenderingSettingsPanel::defaultQuality() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
   int qualityIndex = d->QualityControlComboBox->currentIndex();
@@ -374,7 +374,7 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultQualityChanged(int qualityInd
 }
 
 // --------------------------------------------------------------------------
-int qSlicerVolumeRenderingSettingsPanel::defaultInteractiveSpeed()const
+int qSlicerVolumeRenderingSettingsPanel::defaultInteractiveSpeed() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
   int interactiveSpeed = d->InteractiveSpeedSlider->value();
@@ -417,7 +417,7 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultInteractiveSpeedChanged(doubl
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerVolumeRenderingSettingsPanel::defaultSurfaceSmoothing()const
+bool qSlicerVolumeRenderingSettingsPanel::defaultSurfaceSmoothing() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
   bool smoothing = d->SurfaceSmoothingCheckBox->isChecked();
@@ -460,7 +460,7 @@ void qSlicerVolumeRenderingSettingsPanel::onDefaultSurfaceSmoothingChanged(bool 
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerVolumeRenderingSettingsPanel::defaultAutoReleaseGraphicsResources()const
+bool qSlicerVolumeRenderingSettingsPanel::defaultAutoReleaseGraphicsResources() const
 {
   Q_D(const qSlicerVolumeRenderingSettingsPanel);
   bool autoRelease = d->AutoReleaseGraphicsResourcesCheckBox->isChecked();

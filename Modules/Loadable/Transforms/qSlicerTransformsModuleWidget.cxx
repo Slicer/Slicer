@@ -59,7 +59,7 @@ static const int COORDINATE_COMBOBOX_INDEX_WORLD = 0;
 static const int COORDINATE_COMBOBOX_INDEX_LOCAL = 1;
 
 //-----------------------------------------------------------------------------
-class qSlicerTransformsModuleWidgetPrivate: public Ui_qSlicerTransformsModuleWidget
+class qSlicerTransformsModuleWidgetPrivate : public Ui_qSlicerTransformsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTransformsModuleWidget);
 protected:
@@ -67,7 +67,7 @@ protected:
 public:
   qSlicerTransformsModuleWidgetPrivate(qSlicerTransformsModuleWidget& object);
   static QList<vtkSmartPointer<vtkMRMLTransformableNode>> getSelectedNodes(qMRMLTreeView* tree);
-  vtkSlicerTransformLogic*      logic()const;
+  vtkSlicerTransformLogic*      logic() const;
   vtkMRMLTransformNode*         MRMLTransformNode;
   QAction*                      CopyAction;
   QAction*                      PasteAction;
@@ -82,7 +82,7 @@ qSlicerTransformsModuleWidgetPrivate::qSlicerTransformsModuleWidgetPrivate(qSlic
   this->PasteAction = nullptr;
 }
 //-----------------------------------------------------------------------------
-vtkSlicerTransformLogic* qSlicerTransformsModuleWidgetPrivate::logic()const
+vtkSlicerTransformLogic* qSlicerTransformsModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerTransformsModuleWidget);
   return vtkSlicerTransformLogic::SafeDownCast(q->logic());
@@ -638,7 +638,7 @@ void qSlicerTransformsModuleWidget::resetCenterOfTransformation()
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerTransformsModuleWidget::coordinateReference()const
+int qSlicerTransformsModuleWidget::coordinateReference() const
 {
   Q_D(const qSlicerTransformsModuleWidget);
   return (d->TranslateFirstToolButton->isChecked() ? qMRMLTransformSliders::LOCAL : qMRMLTransformSliders::GLOBAL);

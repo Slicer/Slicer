@@ -67,7 +67,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML (MRML) file
@@ -302,7 +302,7 @@ protected:
 
   int ActiveInteractionType{-1};
   int ActiveInteractionIndex{-1};
-  bool InteractionSizeAbsolute{false};
+  bool InteractionSizeAbsolute{ false };
   double InteractionSizeMm{5.0};
   double InteractionScalePercent{15.0};
 

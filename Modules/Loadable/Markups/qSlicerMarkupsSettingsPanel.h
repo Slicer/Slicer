@@ -58,7 +58,7 @@ public:
   /// \sa vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeColor
   /// \sa vtkSlicerMarkupsLogic::SetDefaultMarkupsDisplayNodeSelectedColor
   void setMarkupsLogic(vtkSlicerMarkupsLogic* logic);
-  vtkSlicerMarkupsLogic* markupsLogic()const;
+  vtkSlicerMarkupsLogic* markupsLogic() const;
 
   QString defaultGlyphType() const;
   QColor defaultUnselectedColor() const;

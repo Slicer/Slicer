@@ -204,7 +204,7 @@ void qMRMLWindowLevelWidget::setAutoWindowLevel(ControlMode autoWindowLevel)
 // --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setAutoWindowLevel(int autoWindowLevel)
 {
-  switch(autoWindowLevel)
+  switch (autoWindowLevel)
   {
     case qMRMLWindowLevelWidget::Auto:
       this->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);

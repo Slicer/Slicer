@@ -118,7 +118,7 @@ int DoIt( int argc, char* argv[], T )
   {
     reader->Update();
   }
-  catch ( itk::ExceptionObject& excp )
+  catch (itk::ExceptionObject& excp)
   {
     std::cerr << "Exception thrown while reading the input file" << std::endl;
     std::cerr << excp << std::endl;
@@ -154,9 +154,9 @@ int DoIt( int argc, char* argv[], T )
   outputSpacing[0] = outputPixelSpacing[0];
   outputSpacing[1] = outputPixelSpacing[1];
   outputSpacing[2] = outputPixelSpacing[2];
-  for ( unsigned int i = 0; i < 3; i++ )
+  for (unsigned int i = 0; i < 3; i++)
   {
-    if ( outputSpacing[i] == 0.0 )
+    if (outputSpacing[i] == 0.0)
     {
       outputSpacing[i] = inputSpacing[i];
     }
@@ -173,35 +173,35 @@ int DoIt( int argc, char* argv[], T )
 
   resampler->SetInput( reader->GetOutput() );
   resampler->SetTransform( transform );
-  if ( interpolationType == "linear" )
+  if (interpolationType == "linear")
   {
     resampler->SetInterpolator( linearInterpolator );
   }
-  else if ( interpolationType == "nearestNeighbor" )
+  else if (interpolationType == "nearestNeighbor")
   {
     resampler->SetInterpolator( nearestNeighborInterpolator );
   }
-  else if ( interpolationType == "bspline" )
+  else if (interpolationType == "bspline")
   {
     resampler->SetInterpolator( bsplineInterpolator );
   }
-  else if ( interpolationType == "hamming" )
+  else if (interpolationType == "hamming")
   {
     resampler->SetInterpolator( hammingInterpolator );
   }
-  else if ( interpolationType == "cosine" )
+  else if (interpolationType == "cosine")
   {
     resampler->SetInterpolator( cosineInterpolator );
   }
-  else if ( interpolationType == "welch" )
+  else if (interpolationType == "welch")
   {
     resampler->SetInterpolator( welchInterpolator );
   }
-  else if ( interpolationType == "lanczos" )
+  else if (interpolationType == "lanczos")
   {
     resampler->SetInterpolator( lanczosInterpolator );
   }
-  else if ( interpolationType == "blackman" )
+  else if (interpolationType == "blackman")
   {
     resampler->SetInterpolator( blackmanInterpolator );
   }
@@ -226,7 +226,7 @@ int DoIt( int argc, char* argv[], T )
   {
     seriesWriter->Update();
   }
-  catch ( itk::ExceptionObject& excp )
+  catch (itk::ExceptionObject& excp)
   {
     std::cerr << "Exception thrown while writing the series " << std::endl;
     std::cerr << excp << std::endl;
@@ -237,7 +237,7 @@ int DoIt( int argc, char* argv[], T )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -251,7 +251,7 @@ int main( int argc, char* argv[] )
 
     // This filter handles all types
 
-    switch( componentType )
+    switch (componentType)
     {
       case itk::IOComponentEnum::UCHAR:
         return DoIt( argc, argv, static_cast<unsigned char>(0) );
@@ -289,7 +289,7 @@ int main( int argc, char* argv[] )
         break;
     }
   }
-  catch ( itk::ExceptionObject& excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

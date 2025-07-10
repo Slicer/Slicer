@@ -51,23 +51,23 @@ public:
   qMRMLSortFilterColorProxyModel(QObject* parent = nullptr);
   ~qMRMLSortFilterColorProxyModel() override;
 
-  Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;
+  Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode() const;
 
-  bool showEmptyColors()const;
+  bool showEmptyColors() const;
 
   /// Returns true if the item in the row indicated by the given sourceRow and
   /// sourceParent should be included in the model; otherwise returns false.
   /// This method test each item via \a filterAcceptsItem
-  bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent)const override;
+  bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
 
 public slots:
   void setShowEmptyColors(bool show);
 
 protected:
   /// Filters items to decide which to display in the view
-  virtual bool filterAcceptsItem(int colorIndex)const;
+  virtual bool filterAcceptsItem(int colorIndex) const;
 
-  QStandardItem* sourceItem(const QModelIndex& index)const;
+  QStandardItem* sourceItem(const QModelIndex& index) const;
 
 protected:
   QScopedPointer<qMRMLSortFilterColorProxyModelPrivate> d_ptr;

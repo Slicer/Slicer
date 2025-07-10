@@ -78,7 +78,7 @@ void checkFinalWidgetState2(void* data)
 }
 
 //-----------------------------------------------------------------------------
-int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char* argv [] )
+int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

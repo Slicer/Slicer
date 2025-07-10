@@ -41,7 +41,7 @@ QString qMRMLSequenceBrowserSeekWidgetPlugin
 {
   return "<widget class=\"qMRMLSequenceBrowserSeekWidget\" \
           name=\"SequenceBrowserSeekWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------
