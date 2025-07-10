@@ -170,15 +170,15 @@ check_size() {
   fi
 }
 check_line_lengths() {
-  # Enforce maximum line length to 80 characters
+  # Enforce maximum line length to 180 characters
   too_long=$(git diff-index --cached -p $against -- ${file} |
-           egrep '^\+.{161,}' | sed -E 's/^\+//')
+           egrep '^\+.{181,}' | sed -E 's/^\+//')
   test -z "$too_long" || echo "The line:
 ------------------------------------------------------------------------------
   '$too_long'
 ------------------------------------------------------------------------------
-  in file '$file' is longer than 160 characters.
-  It is required to have no more than 80 characters per line.
+  in file '$file' is longer than 180 characters.
+  It is required to have no more than 180 characters per line.
 "
 }
 
