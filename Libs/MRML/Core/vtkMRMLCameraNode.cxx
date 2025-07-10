@@ -332,16 +332,16 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject* caller,
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->Camera != nullptr &&
-      this->Camera == vtkCamera::SafeDownCast(caller) &&
+  if (this->Camera != nullptr &&                         //
+      this->Camera == vtkCamera::SafeDownCast(caller) && //
       event == vtkCommand::ModifiedEvent)
   {
     this->Modified();
   }
 
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
-  if (this->Camera != nullptr &&
-      tnode == vtkMRMLTransformNode::SafeDownCast(caller) &&
+  if (this->Camera != nullptr &&                             //
+      tnode == vtkMRMLTransformNode::SafeDownCast(caller) && //
       event == vtkMRMLTransformableNode::TransformModifiedEvent)
   {
 

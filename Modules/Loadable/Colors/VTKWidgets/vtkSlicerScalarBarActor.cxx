@@ -352,7 +352,6 @@ void vtkSlicerScalarBarActor::ConfigureTicks()
         this->TextPosition == vtkScalarBarActor::PrecedeScalarBar ?
         this->P->TickBox.Posn[0] + this->P->TickBox.Size[0] :
         this->P->TickBox.Posn[0],
-        //this->P->TickBox.Posn[0],
         val - 0.5 * sizeTextData[1]);
     }
     else

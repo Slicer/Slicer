@@ -116,7 +116,7 @@ int vtkSlicerVolumesLogicTest1(int argc, char* argv[])
 //-----------------------------------------------------------------------------
 bool isImageDataValid(int line, vtkAlgorithmOutput* imageDataConnection)
 {
-  if (!imageDataConnection ||
+  if (!imageDataConnection || //
       !imageDataConnection->GetProducer())
   {
     std::cerr << "Line " << line

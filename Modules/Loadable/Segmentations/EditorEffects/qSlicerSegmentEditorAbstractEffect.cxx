@@ -327,7 +327,7 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
   SlicerRenderBlocker renderBlocker;
 
   vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = modifierLabelmapInput;
-  if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere) ||
+  if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere) || //
     parameterSetNode->GetSourceVolumeIntensityMask())
   {
     vtkNew<vtkOrientedImageData> maskImage;
@@ -381,8 +381,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
 
     vtkSmartPointer<vtkOrientedImageData> segmentLayerLabelmap =
       vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(segmentationNode->GetSegmentation()->GetSourceRepresentationName()));
-    if (segmentLayerLabelmap
-      && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
+    if (segmentLayerLabelmap //
+      && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment //
       && modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove)
     {
       // If we are painting inside a segment, the erase effect can modify the current segment outside the masking region by adding back regions
@@ -422,9 +422,9 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
 
       int segmentThresholdExtent[6] = { 0, -1, 0, -1, 0, -1 };
       segmentThreshold->GetOutput()->GetExtent(segmentThresholdExtent);
-      if (segmentThresholdExtent[0] <= segmentThresholdExtent[1]
-        && segmentThresholdExtent[2] <= segmentThresholdExtent[3]
-        && segmentThresholdExtent[4] <= segmentThresholdExtent[5])
+      if (segmentThresholdExtent[0] <= segmentThresholdExtent[1]    //
+          && segmentThresholdExtent[2] <= segmentThresholdExtent[3] //
+          && segmentThresholdExtent[4] <= segmentThresholdExtent[5])
       {
         vtkNew<vtkOrientedImageData> segmentOutsideMask;
         segmentOutsideMask->ShallowCopy(segmentThreshold->GetOutput());
@@ -530,8 +530,8 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       qCritical() << Q_FUNC_INFO << ": Failed to add modifier labelmap to selected segment";
     }
   }
-  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove
-    || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll)
+  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove //
+           || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll)
   {
     inverter->Update();
     vtkNew<vtkOrientedImageData> invertedModifierLabelmap;
@@ -569,10 +569,10 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
     }
   }
 
-  if (!segmentsToErase.empty() &&
-     ( modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet
-    || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeAdd
-    || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll))
+  if (!segmentsToErase.empty() &&                                                    //
+     (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeSet    //
+      || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeAdd //
+      || modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemoveAll))
   {
     inverter->Update();
     vtkNew<vtkOrientedImageData> invertedModifierLabelmap;
@@ -635,10 +635,10 @@ void qSlicerSegmentEditorAbstractEffect::modifySegmentByLabelmap(vtkMRMLSegmenta
       }
     }
   }
-  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove
-    && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment
-    && this->parameterSetNode()->GetMaskSegmentID()
-    && strcmp(this->parameterSetNode()->GetMaskSegmentID(), segmentID) != 0)
+  else if (modificationMode == qSlicerSegmentEditorAbstractEffect::ModificationModeRemove                        //
+           && this->parameterSetNode()->GetMaskMode() == vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment //
+           && this->parameterSetNode()->GetMaskSegmentID()                                                       //
+           && strcmp(this->parameterSetNode()->GetMaskSegmentID(), segmentID) != 0)
   {
     // In general, we don't try to "add back" areas to other segments when an area is removed from the selected segment.
     // The only exception is when we draw inside one specific segment. In that case erasing adds to the mask segment. It is useful

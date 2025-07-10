@@ -149,7 +149,7 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode* anode)
   /// See also vtkMRMLMarkupsNode::Copy.
   /// TBD: if scene view node reading xml triggers reading the data from
   // storage nodes, this should no longer be necessary.
-  if (this->Scene &&
+  if (this->Scene && //
       this->Scene->IsRestoring())
   {
 #ifndef _NDEBUG
@@ -1200,7 +1200,7 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
     vtkErrorMacro("SetNumberofColors: lookup table is null, set the type first.");
     return;
   }
-  if (this->GetType() != this->User &&
+  if (this->GetType() != this->User && //
       this->GetType() != this->File)
   {
     vtkErrorMacro("SetNumberOfColors: Cannot set number of colors"
@@ -1303,7 +1303,7 @@ int vtkMRMLColorTableNode::SetColors(int firstEntry, int lastEntry, const char* 
     // empty range, nothing to do
     return 1;
   }
-  if (!this->IsValidColorIndex(firstEntry, "SetColors", /*isCallerMethodSet=*/true)
+  if (!this->IsValidColorIndex(firstEntry, "SetColors", /*isCallerMethodSet=*/true) //
       || !this->IsValidColorIndex(lastEntry, "SetColors", /*isCallerMethodSet=*/true))
   {
     return 0;

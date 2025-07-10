@@ -93,9 +93,9 @@ int main(int argc, char* argv[])
     std::cout << "Image data extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " " << extents[3]
       << " " << extents[4] << " " << extents[5] << endl;
   }
-  if (extents[0] >= extents[1] ||
-    extents[2] >= extents[3] ||
-    extents[4] >= extents[5])
+  if (extents[0] >= extents[1] || //
+      extents[2] >= extents[3] || //
+      extents[4] >= extents[5])
   {
     std::cerr << "The volume is not 3D. Image file: " << InputVolume << ", extents: " << extents[0] << " " << extents[1] << " " << extents[2] << " "
       << extents[3] << " " << extents[4] << " " << extents[5] << endl;

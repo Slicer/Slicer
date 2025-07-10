@@ -479,8 +479,8 @@ static void DrawLines(int nx, int ny, int z, int radius,
       y2 = yy1;
     }
 
-    if (x1-rad >= min0 && x1+rad <= max0 &&
-      y1-rad >= min1 && y2+rad <= max1 &&
+    if (x1-rad >= min0 && x1+rad <= max0 && //
+      y1-rad >= min1 && y2+rad <= max1 && //
       x2-rad >= min0 && x2+rad <= max0)
     {
       dx = abs(x2 - x1);
@@ -646,7 +646,7 @@ static void DrawPoints(int nx, int ny, int z, int radius,
     x1 = xPts[i];
     y1 = yPts[i];
 
-    if (x1-r >= min0 && x1+r <= max0 &&
+    if (x1-r >= min0 && x1+r <= max0 && //
       y1-r >= min1 && y1+r <= max1)
     {
       for (y = y1-r; y <= y1+r; y++)
@@ -691,7 +691,7 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
     pt = points->GetPoint(i);
     x = (int)(pt[0]);
     y = (int)(pt[1]);
-    if (x >= outExt[0] && x <= outExt[1] &&
+    if (x >= outExt[0] && x <= outExt[1] && //
       y >= outExt[2] && y <= outExt[3])
     {
       xPts[j] = x;
@@ -768,7 +768,7 @@ int vtkImageFillROI::RequestData(
 
   this->AllocateOutputData(output, outInfo);
 
-  if (!input ||
+  if (!input || //
        input->GetDataObjectType() != VTK_IMAGE_DATA )
   {
     vtkWarningMacro ("was sent non-image data data object");

@@ -108,7 +108,7 @@ bool qMRMLSceneDisplayableModel::canBeAChild(vtkMRMLNode* node) const
   {
     return false;
   }
-  return node->IsA("vtkMRMLDisplayableNode") ||
+  return node->IsA("vtkMRMLDisplayableNode") || //
          node->IsA("vtkMRMLDisplayableHierarchyNode");
 }
 
@@ -135,17 +135,17 @@ QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, in
   Q_D(const qMRMLSceneDisplayableModel);
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
   vtkMRMLNode* displayNode = d->displayNode(node);
-  if (column == this->visibilityColumn() &&
+  if (column == this->visibilityColumn() && //
       displayNode != nullptr)
   {
     flags |= Qt::ItemIsEditable;
   }
-  if (column == this->colorColumn() &&
+  if (column == this->colorColumn() && //
       displayNode != nullptr)
   {
     flags |= Qt::ItemIsEditable;
   }
-  if (column == this->opacityColumn() &&
+  if (column == this->opacityColumn() && //
       displayNode != nullptr)
   {
     flags |= Qt::ItemIsEditable;
@@ -200,9 +200,9 @@ void qMRMLSceneDisplayableModel
         int wasModifying = displayNode->StartModify();
         // QColor looses precision, don't change color/opacity if not "really"
         // changed.
-        QColor oldColor = QColor::fromRgbF(displayNode->GetColor()[0],
-                                           displayNode->GetColor()[1],
-                                           displayNode->GetColor()[2],
+        QColor oldColor = QColor::fromRgbF(displayNode->GetColor()[0], //
+                                           displayNode->GetColor()[1], //
+                                           displayNode->GetColor()[2], //
                                            displayNode->GetOpacity());
         if (oldColor != color)
         {

@@ -509,7 +509,7 @@ QVariant qMRMLColorModel::headerData(int section, Qt::Orientation orientation, i
 {
   QVariant retval =  QStandardItemModel::headerData(section, orientation, role);
 
-  if (orientation == Qt::Vertical &&
+  if (orientation == Qt::Vertical && //
       role == Qt::DisplayRole)
   {
     // for the vertical header, decrement the row number by one, since the
@@ -532,13 +532,13 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
 
   // Get type (with modifier, if any)
   QString type;
-  if (colorNode->GetTerminologyType(colorIndex) != nullptr
-    && colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() != nullptr)
+  if (colorNode->GetTerminologyType(colorIndex) != nullptr //
+      && colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() != nullptr)
   {
     type = colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning();
     QString typeModifier;
-    if (colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr
-      && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
+    if (colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr //
+        && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
     {
       typeModifier = colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning();
     }
@@ -559,13 +559,13 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
 
   // Get region (if any; with modifier, if any)
   QString region;
-  if (colorNode->GetTerminologyRegion(colorIndex) != nullptr
-    && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
+  if (colorNode->GetTerminologyRegion(colorIndex) != nullptr //
+      && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
   {
     region = colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning();
     QString regionModifier;
-    if (colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr
-      && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
+    if (colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr //
+        && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
     {
       regionModifier = colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning();
     }
@@ -611,8 +611,8 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
   // Skip category in simplified mode
   if (!simplified)
   {
-    if (colorNode->GetTerminologyCategory(colorIndex) != nullptr
-      && colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() != nullptr)
+    if (colorNode->GetTerminologyCategory(colorIndex) != nullptr //
+        && colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() != nullptr)
     {
       category = colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning();
     }

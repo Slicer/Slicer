@@ -292,7 +292,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
 
   // Get absolute filename
   QFileInfo sceneFileInfo;
-  if (this->MRMLScene->GetURL() != nullptr &&
+  if (this->MRMLScene->GetURL() != nullptr && //
       strlen(this->MRMLScene->GetURL()) > 0)
   {
     sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
@@ -380,7 +380,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
 {
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
   // Don't show if the node doesn't want to (internal node)
-  if (!storableNode ||
+  if (!storableNode || //
     storableNode->GetHideFromEditors() || !storableNode->GetSaveWithScene())
   {
     return;
@@ -612,7 +612,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   }
   // The existing file name doesn't contain an existing extension, pick the
   // default extension if any
-  if (currentFormat == -1 &&
+  if (currentFormat == -1 && //
       snode->GetDefaultWriteFileExtension() != nullptr)
   {
     for (int i = 0; i < fileFormats->count(); ++i)
@@ -791,7 +791,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     }
 
     // don't save unchecked nodes
-    if (selectItem->checkState() != Qt::Checked ||
+    if (selectItem->checkState() != Qt::Checked || //
         this->FileWidget->isRowHidden(row))
     {
       continue;
@@ -1214,7 +1214,7 @@ void qSlicerSaveDataDialogPrivate::selectModifiedData()
     QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
     Q_ASSERT(selectItem);
     selectItem->setCheckState(
-      statusItem->text() == qSlicerSaveDataDialog::tr("Modified") &&
+      statusItem->text() == qSlicerSaveDataDialog::tr("Modified") && //
       typeItem->data(Self::SceneTypeRole).toString() != qSlicerSaveDataDialog::tr("Scene") ? Qt::Checked : Qt::Unchecked);
   }
 }

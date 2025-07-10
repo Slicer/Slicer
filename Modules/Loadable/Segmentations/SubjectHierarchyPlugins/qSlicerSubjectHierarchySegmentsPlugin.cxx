@@ -162,7 +162,7 @@ double qSlicerSubjectHierarchySegmentsPlugin::canReparentItemInsideSubjectHierar
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return 0.0;
   }
-  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
+  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID //
     || shNode->GetItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName()).empty() )
   {
     // Cannot reparent if item is not a segment or there is no parent
@@ -193,8 +193,8 @@ bool qSlicerSubjectHierarchySegmentsPlugin::reparentItemInsideSubjectHierarchy(v
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return false;
   }
-  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID
-    || shNode->GetItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName()).empty()
+  if (parentItemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID //
+    || shNode->GetItemAttribute(itemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName()).empty() //
     || shNode->GetItemParent(itemID) == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )
   {
     // Cannot reparent if item is not a segment or there is no parent

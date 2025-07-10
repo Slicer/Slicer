@@ -653,8 +653,8 @@ bool qMRMLSegmentEditorWidgetPrivate::updateAlignedSourceVolume()
   vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
   vtkMRMLScalarVolumeNode* sourceVolumeNode = this->ParameterSetNode->GetSourceVolumeNode();
   std::string referenceImageGeometry = this->referenceImageGeometry();
-  if (!segmentationNode || !sourceVolumeNode || !sourceVolumeNode->GetImageData()
-    || !sourceVolumeNode->GetImageData()->GetPointData() || referenceImageGeometry.empty())
+  if (!segmentationNode || !sourceVolumeNode || !sourceVolumeNode->GetImageData() //
+      || !sourceVolumeNode->GetImageData()->GetPointData() || referenceImageGeometry.empty())
   {
     return false;
   }
@@ -666,14 +666,14 @@ bool qMRMLSegmentEditorWidgetPrivate::updateAlignedSourceVolume()
   int* alignedSourceVolumeExtent = this->AlignedSourceVolume->GetExtent();
   // If source volume node and transform nodes did not change and the aligned source volume covers the entire reference geometry
   // then we don't need to update the aligned source volume.
-  if (vtkOrientedImageDataResample::DoGeometriesMatch(referenceImage.GetPointer(), this->AlignedSourceVolume)
-    && alignedSourceVolumeExtent[0] <= referenceImageExtent[0] && alignedSourceVolumeExtent[1] >= referenceImageExtent[1]
-    && alignedSourceVolumeExtent[2] <= referenceImageExtent[2] && alignedSourceVolumeExtent[3] >= referenceImageExtent[3]
-    && alignedSourceVolumeExtent[4] <= referenceImageExtent[4] && alignedSourceVolumeExtent[5] >= referenceImageExtent[5]
-    && vtkOrientedImageDataResample::DoExtentsMatch(referenceImage.GetPointer(), this->AlignedSourceVolume)
-    && this->AlignedSourceVolumeUpdateSourceVolumeNode == sourceVolumeNode
-    && this->AlignedSourceVolumeUpdateSourceVolumeNodeTransform == sourceVolumeNode->GetParentTransformNode()
-    && this->AlignedSourceVolumeUpdateSegmentationNodeTransform == segmentationNode->GetParentTransformNode() )
+  if (vtkOrientedImageDataResample::DoGeometriesMatch(referenceImage.GetPointer(), this->AlignedSourceVolume)               //
+      && alignedSourceVolumeExtent[0] <= referenceImageExtent[0] && alignedSourceVolumeExtent[1] >= referenceImageExtent[1] //
+      && alignedSourceVolumeExtent[2] <= referenceImageExtent[2] && alignedSourceVolumeExtent[3] >= referenceImageExtent[3] //
+      && alignedSourceVolumeExtent[4] <= referenceImageExtent[4] && alignedSourceVolumeExtent[5] >= referenceImageExtent[5] //
+      && vtkOrientedImageDataResample::DoExtentsMatch(referenceImage.GetPointer(), this->AlignedSourceVolume)               //
+      && this->AlignedSourceVolumeUpdateSourceVolumeNode == sourceVolumeNode                                                //
+      && this->AlignedSourceVolumeUpdateSourceVolumeNodeTransform == sourceVolumeNode->GetParentTransformNode()             //
+      && this->AlignedSourceVolumeUpdateSegmentationNodeTransform == segmentationNode->GetParentTransformNode())
   {
     // Extents and nodes are matching, check if they have not been modified since the aligned master
     // volume generation.
@@ -793,7 +793,7 @@ void qMRMLSegmentEditorWidgetPrivate::selectFirstSegment()
   }
 
   vtkMRMLSegmentationNode* segmentationNode = this->ParameterSetNode->GetSegmentationNode();
-  if (segmentationNode
+  if (segmentationNode //
     && segmentationNode->GetSegmentation()->GetNumberOfSegments() > 0 )
   {
     std::vector<std::string> segmentIDs;
@@ -891,9 +891,9 @@ std::string qMRMLSegmentEditorWidgetPrivate::getReferenceImageGeometryFromSegmen
     // Determine extent that contains all segments
     int commonSegmentExtent[6] = { 0, -1, 0, -1, 0, -1 };
     segmentation->DetermineCommonLabelmapExtent(commonSegmentExtent, commonGeometryImage);
-    if (commonSegmentExtent[0] <= commonSegmentExtent[1]
-      && commonSegmentExtent[2] <= commonSegmentExtent[3]
-      && commonSegmentExtent[4] <= commonSegmentExtent[5])
+    if (commonSegmentExtent[0] <= commonSegmentExtent[1]    //
+        && commonSegmentExtent[2] <= commonSegmentExtent[3] //
+        && commonSegmentExtent[4] <= commonSegmentExtent[5])
     {
       // Expand commonGeometryExtent as needed to contain commonSegmentExtent
       int commonGeometryExtent[6] = { 0, -1, 0, -1, 0, -1 };
@@ -1232,9 +1232,9 @@ void qMRMLSegmentEditorWidget::updateWidgetFromMRML()
     selectedSegmentID = QString(d->ParameterSetNode->GetSelectedSegmentID());
 
     // Check if selected segment ID is invalid.
-    if (!d->SegmentationNode
-      || !d->SegmentationNode->GetSegmentation()
-      || d->SegmentationNode->GetSegmentation()->GetSegmentIndex(d->ParameterSetNode->GetSelectedSegmentID()) < 0)
+    if (!d->SegmentationNode                       //
+        || !d->SegmentationNode->GetSegmentation() //
+        || d->SegmentationNode->GetSegmentation()->GetSegmentIndex(d->ParameterSetNode->GetSelectedSegmentID()) < 0)
     {
       selectedSegmentID.clear();
     }
@@ -1334,8 +1334,8 @@ void qMRMLSegmentEditorWidget::updateMaskingSection()
   }
 
   // Initialize mask range if it has never set and intensity masking es enabled
-  if (d->ParameterSetNode->GetSourceVolumeIntensityMask()
-    && d->ParameterSetNode->GetSourceVolumeIntensityMaskRange()[0] == d->ParameterSetNode->GetSourceVolumeIntensityMaskRange()[1])
+  if (d->ParameterSetNode->GetSourceVolumeIntensityMask() //
+      && d->ParameterSetNode->GetSourceVolumeIntensityMaskRange()[0] == d->ParameterSetNode->GetSourceVolumeIntensityMaskRange()[1])
   {
     // threshold was uninitialized, set some default
     double range[2] = { 0.0 };
@@ -1593,8 +1593,8 @@ void qMRMLSegmentEditorWidget::onSourceVolumeImageDataModified()
   Q_D(qMRMLSegmentEditorWidget);
 
   // Update intensity range slider widget
-  if (d->SourceVolumeNode != nullptr && d->SourceVolumeNode->GetImageData() != nullptr
-    && d->SourceVolumeNode->GetImageData()->GetPointData() != nullptr)
+  if (d->SourceVolumeNode != nullptr && d->SourceVolumeNode->GetImageData() != nullptr //
+      && d->SourceVolumeNode->GetImageData()->GetPointData() != nullptr)
   {
     double range[2] = { 0.0, 0.0 };
     d->SourceVolumeNode->GetImageData()->GetScalarRange(range);
@@ -1744,8 +1744,8 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
 
   // Set cursor for active effect, but only when in view/transform node.
   // In other mouse modes, the application sets a custom cursor and the Segment Editor must not override that.
-  if (!d->InteractionNode
-    || d->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform)
+  if (!d->InteractionNode //
+      || d->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::ViewTransform)
   {
     d->setEffectCursor(activeEffect);
   }
@@ -3644,8 +3644,8 @@ void qMRMLSegmentEditorWidget::updateSliceRotateWarningButtonVisibility()
   Q_D(qMRMLSegmentEditorWidget);
   vtkMRMLSegmentationNode* segmentationNode = d->ParameterSetNode ? d->ParameterSetNode->GetSegmentationNode() : nullptr;
   vtkNew<vtkMatrix4x4> segmentationIJKToRAS;
-  if (!segmentationNode || !segmentationNode->GetSegmentation()
-    || !d->segmentationIJKToRAS(segmentationIJKToRAS.GetPointer()))
+  if (!segmentationNode || !segmentationNode->GetSegmentation() //
+      || !d->segmentationIJKToRAS(segmentationIJKToRAS.GetPointer()))
   {
     // segmentation orientation cannot be determined
     d->SliceRotateWarningButton->hide();
@@ -3767,9 +3767,9 @@ void qMRMLSegmentEditorWidget::showSegmentationGeometryDialog()
     vtkNew<vtkMatrix4x4> referenceGeometryMatrix;
     int referenceExtent[6] = { 0,-1,0,-1,0,-1 };
     vtkSegmentationConverter::DeserializeImageGeometry(referenceImageGeometry, referenceGeometryMatrix.GetPointer(), referenceExtent);
-    if (referenceExtent[0] <= referenceExtent[1]
-      && referenceExtent[2] <= referenceExtent[3]
-      && referenceExtent[4] <= referenceExtent[5])
+    if (referenceExtent[0] <= referenceExtent[1]    //
+        && referenceExtent[2] <= referenceExtent[3] //
+        && referenceExtent[4] <= referenceExtent[5])
     {
       // Create new image, allocate memory
       vtkNew<vtkOrientedImageData> blankImage;

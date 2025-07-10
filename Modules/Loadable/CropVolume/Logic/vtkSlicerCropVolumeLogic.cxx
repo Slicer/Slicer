@@ -851,15 +851,15 @@ bool vtkSlicerCropVolumeLogic::IsROIAlignedWithInputVolume(vtkMRMLCropVolumePara
     return true;
   }
 
-  if (parametersNode->GetInputVolumeNode()->GetParentTransformNode()
-    && !parametersNode->GetInputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
+  if (parametersNode->GetInputVolumeNode()->GetParentTransformNode() //
+      && !parametersNode->GetInputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
   {
     // no misalignment, as if input volume is under a non-linear transform then we cannot align a ROI
     return true;
   }
 
-  if (parametersNode->GetROINode()->GetParentTransformNode()
-    && !parametersNode->GetROINode()->GetParentTransformNode()->IsTransformToWorldLinear())
+  if (parametersNode->GetROINode()->GetParentTransformNode() //
+      && !parametersNode->GetROINode()->GetParentTransformNode()->IsTransformToWorldLinear())
   {
     // misaligned, as ROI node is under non-linear transform
     return false;

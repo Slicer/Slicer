@@ -206,8 +206,8 @@ void vtkMRMLNode::CopyReferences(vtkMRMLNode* node)
           referencesAreEqual = false;
           break;
         }
-        if (strcmp(sourceReference->GetReferencedNodeID(), targetReference->GetReferencedNodeID()) != 0
-          || !ArraysEqual(sourceReference->GetStaticEvents(), targetReference->GetStaticEvents()))
+        if (strcmp(sourceReference->GetReferencedNodeID(), targetReference->GetReferencedNodeID()) != 0 //
+            || !ArraysEqual(sourceReference->GetStaticEvents(), targetReference->GetStaticEvents()))
         {
           referencesAreEqual = false;
           break;
@@ -669,8 +669,8 @@ void vtkMRMLNode::ProcessMRMLEvents (vtkObject* caller,
       for (unsigned int i = 0; i<references.size(); i++)
       {
         vtkMRMLNode* node = this->GetNthNodeReference(it->first.c_str(), i);
-        if (node != nullptr && node == vtkMRMLNode::SafeDownCast(caller) &&
-          event ==  vtkCommand::ModifiedEvent)
+        if (node != nullptr && node == vtkMRMLNode::SafeDownCast(caller) && //
+            event == vtkCommand::ModifiedEvent)
         {
           this->InvokeEvent(vtkMRMLNode::ReferencedNodeModifiedEvent, node);
         }
@@ -758,11 +758,9 @@ const char* vtkMRMLNode::GetReferenceRoleFromMRMLAttributeName(const char* attNa
     {
       return nodeReferenceRole.c_str();
     }
-    else if (this->IsReferenceRoleGeneric(nodeReferenceRole.c_str()) &&
-             (attributeName.length() >= nodeMRMLAttributeName.length()) &&
-             attributeName.compare(
-              attributeName.length() - nodeMRMLAttributeName.length(),
-              nodeMRMLAttributeName.length(), nodeMRMLAttributeName) == 0)
+    else if (this->IsReferenceRoleGeneric(nodeReferenceRole.c_str()) &&    //
+             (attributeName.length() >= nodeMRMLAttributeName.length()) && //
+             attributeName.compare(attributeName.length() - nodeMRMLAttributeName.length(), nodeMRMLAttributeName.length(), nodeMRMLAttributeName) == 0)
     {
       // if attName = "lengthUnitRef" and  [refRole,attName] = ["unit/","UnitRef"]
       // then return "unit/length"
@@ -799,7 +797,7 @@ const char* vtkMRMLNode
   {
     const std::string& nodeReferenceRole = it->first;
     const std::string& nodeMRMLAttributeName = it->second;
-    if (this->IsReferenceRoleGeneric(nodeReferenceRole.c_str()) &&
+    if (this->IsReferenceRoleGeneric(nodeReferenceRole.c_str()) && //
         referenceRole.compare(0, nodeReferenceRole.length(),
                               nodeReferenceRole) == 0)
     {
@@ -892,7 +890,7 @@ void vtkMRMLNode::SetAttribute(const char* name, const char* value)
     return;
   }
   const char* oldValue = this->GetAttribute(name);
-  if ((!oldValue && !value) ||
+  if ((!oldValue && !value) || //
       (oldValue && value && !strcmp(oldValue, value)))
   {
     return;
@@ -1193,8 +1191,8 @@ void vtkMRMLNode::UpdateReferences()
     for (unsigned int i = 0; i<it->second.size();)
     {
       vtkMRMLNodeReference* reference = it->second[i];
-      if (reference->GetReferencedNodeID() &&
-          std::string(reference->GetReferencedNodeID()) != "" &&
+      if (reference->GetReferencedNodeID() &&                    //
+          std::string(reference->GetReferencedNodeID()) != "" && //
           this->Scene->GetNodeByID(reference->GetReferencedNodeID()) == nullptr)
       {
         this->RemoveNthNodeReferenceID(reference->GetReferenceRole(), i);
@@ -1379,7 +1377,7 @@ vtkMRMLNode* vtkMRMLNode::GetNthNodeReference(const char* referenceRole, int n)
   // Maybe the node was not yet in the scene when the node ID was set.
   // Check to see if it's now there.
   // Similarly, if the scene is 0, clear the node if not already null.
-  if ((!node || node->GetScene() != this->GetScene()) ||
+  if ((!node || node->GetScene() != this->GetScene()) || //
       (node && this->GetScene() == nullptr))
   {
     this->UpdateNthNodeReference(referenceRole, n);

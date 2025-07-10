@@ -49,7 +49,7 @@ bool vtkMRMLProceduralColorStorageNode::CanReadInReferenceNode(vtkMRMLNode* refN
 {
   // FreeSurfer color nodes are special cases and are treated like
   // color table nodes
-  return (refNode->IsA("vtkMRMLProceduralColorNode") &&
+  return (refNode->IsA("vtkMRMLProceduralColorNode") && //
           !refNode->IsA("vtkMRMLFreeSurferProceduralColorNode"));
 }
 

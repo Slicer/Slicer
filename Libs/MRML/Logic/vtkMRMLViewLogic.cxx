@@ -144,8 +144,8 @@ vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* 
   {
     vtkMRMLViewNode* viewNode =
         vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));
-    if (viewNode &&
-        viewNode->GetLayoutName() &&
+    if (viewNode &&                  //
+        viewNode->GetLayoutName() && //
         !strcmp(viewNode->GetLayoutName(), layoutName))
     {
       return viewNode;

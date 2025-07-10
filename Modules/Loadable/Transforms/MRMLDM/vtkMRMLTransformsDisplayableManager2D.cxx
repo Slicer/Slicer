@@ -497,9 +497,9 @@ void vtkMRMLTransformsDisplayableManager2D::OnMRMLSceneNodeAdded(vtkMRMLNode* no
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager2D::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (node
-    && (!node->IsA("vtkMRMLTransformNode"))
-    && (!node->IsA("vtkMRMLTransformDisplayNode")) )
+  if (node                                    //
+      && (!node->IsA("vtkMRMLTransformNode")) //
+      && (!node->IsA("vtkMRMLTransformDisplayNode")))
   {
     return;
   }

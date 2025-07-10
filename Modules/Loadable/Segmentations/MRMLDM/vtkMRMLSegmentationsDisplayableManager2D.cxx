@@ -351,9 +351,9 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UseDisplayNode(vtkMR
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsVisible(vtkMRMLSegmentationDisplayNode* displayNode)
 {
-  return displayNode
-      && displayNode->GetVisibility(this->External->GetMRMLSliceNode()->GetID())
-      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill())
+  return displayNode //
+      && displayNode->GetVisibility(this->External->GetMRMLSliceNode()->GetID()) //
+      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill()) //
       && (displayNode->GetOpacity2DOutline() > 0 || displayNode->GetOpacity2DFill() > 0);
 }
 
@@ -803,10 +803,10 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       bool segmentCustomDisplay = this->External->HasCustomSegmentRenderer(displayNode->GetID(), segmentID);
 
       double outlineOpacity = hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * genericDisplayNode->GetOpacity();
-      bool segmentOutlineVisible = (!segmentCustomDisplay) && hierarchyVisibility && displayNodeVisible && properties.Visible &&
+      bool segmentOutlineVisible = (!segmentCustomDisplay) && hierarchyVisibility && displayNodeVisible && properties.Visible && //
         properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
       double fillOpacity = hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill() * genericDisplayNode->GetOpacity();
-      bool segmentFillVisible = (!segmentCustomDisplay) && hierarchyVisibility && displayNodeVisible && properties.Visible &&
+      bool segmentFillVisible = (!segmentCustomDisplay) && hierarchyVisibility && displayNodeVisible && properties.Visible && //
         properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
 
       // Turn off image visibility when showing poly data
@@ -823,7 +823,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       }
 
       // Only update slice intersection if it has changed
-      if (pipeline->SliceIntersectionUpdatedTime < polyData->GetMTime()
+      if (pipeline->SliceIntersectionUpdatedTime < polyData->GetMTime() //
         || pipeline->SliceIntersectionUpdatedTime < this->SliceXYToRAS->GetMTime() )
       {
         pipeline->ModelWarper->SetInputData(polyData);
@@ -885,11 +885,11 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         bool segmentCustomDisplay = this->External->HasCustomSegmentRenderer(displayNode->GetID(), segmentId);
 
         double outlineOpacity = properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * displayNode->GetOpacity();
-        outlineVisible |= (!segmentCustomDisplay) && displayNodeVisible && properties.Visible
+        outlineVisible |= (!segmentCustomDisplay) && displayNodeVisible && properties.Visible //
           && properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
 
         double fillOpacity = properties.Opacity2DFill * displayNode->GetOpacity2DFill() * displayNode->GetOpacity();
-        fillVisible |= (!segmentCustomDisplay) && displayNodeVisible && properties.Visible
+        fillVisible |= (!segmentCustomDisplay) && displayNodeVisible && properties.Visible //
           && properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
 
         if (outlineVisible && fillVisible)
@@ -979,7 +979,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         bool segmentCustomDisplay = this->External->HasCustomSegmentRenderer(displayNode->GetID(), segmentId);
 
         double outlineOpacity = hierarchyOpacity * properties.Opacity2DOutline * displayNode->GetOpacity2DOutline() * genericDisplayNode->GetOpacity();
-        bool segmentOutlineVisible = (!segmentCustomDisplay) && displayNodeVisible && properties.Visible
+        bool segmentOutlineVisible = (!segmentCustomDisplay) && displayNodeVisible && properties.Visible //
           && properties.Visible2DOutline && displayNode->GetVisibility2DOutline() && (outlineOpacity > 0.0);
         if (!segmentOutlineVisible)
         {
@@ -987,7 +987,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
         }
 
         double fillOpacity = hierarchyOpacity * properties.Opacity2DFill * displayNode->GetOpacity2DFill() * genericDisplayNode->GetOpacity();
-        bool segmentFillVisible = (!segmentCustomDisplay) && displayNodeVisible && properties.Visible
+        bool segmentFillVisible = (!segmentCustomDisplay) && displayNodeVisible && properties.Visible //
           && properties.Visible2DFill && displayNode->GetVisibility2DFill() && (fillOpacity > 0.0);
         if (!segmentFillVisible)
         {
@@ -1235,7 +1235,7 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
     vtkPolyData* polyData = vtkPolyData::SafeDownCast(segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D()));
     polyData->GetBounds(segmentBounds_Segment);
   }
-  else if (displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() ||
+  else if (displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() || //
     displayNode->GetDisplayRepresentationName2D() == vtkSegmentationConverter::GetFractionalLabelmapRepresentationName())
   {
     vtkOrientedImageData* imageData = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(displayNode->GetDisplayRepresentationName2D()));
@@ -1259,7 +1259,7 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
 
   // if segment does not intersect the slice plane then hide actors
   const double slicePositionTolerance = 0.1;
-  if ((segmentBounds_Slice[4]<-slicePositionTolerance && segmentBounds_Slice[5]<-slicePositionTolerance)
+  if ((segmentBounds_Slice[4]<-slicePositionTolerance && segmentBounds_Slice[5]<-slicePositionTolerance) //
     || (segmentBounds_Slice[4]>slicePositionTolerance && segmentBounds_Slice[5]>slicePositionTolerance))
   {
     visibleInCurrentSlice = false;
@@ -1280,7 +1280,7 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
           segmentBounds_Slice[i * 2 + 1] = endExtent;
         }
       }
-      if (segmentBounds_Slice[0]>segmentBounds_Slice[1]
+      if (segmentBounds_Slice[0]>segmentBounds_Slice[1] //
         || segmentBounds_Slice[2]>segmentBounds_Slice[3])
       {
         visibleInCurrentSlice = false;
@@ -1336,9 +1336,9 @@ void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeAdded(vtkMRMLNode*
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (node
-    && (!node->IsA("vtkMRMLSegmentationNode"))
-    && (!node->IsA("vtkMRMLSegmentationDisplayNode")) )
+  if (node //
+      && (!node->IsA("vtkMRMLSegmentationNode")) //
+      && (!node->IsA("vtkMRMLSegmentationDisplayNode")) )
   {
     return;
   }
@@ -1387,16 +1387,16 @@ void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject*
         this->RequestRender();
       }
     }
-    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)
-           || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent) //
+           || (event == vtkMRMLTransformableNode::TransformModifiedEvent) //
            || (event == vtkSegmentation::RepresentationModified))
     {
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();
     }
     else if ((event == vtkCommand::ModifiedEvent) // segmentation object may be replaced
-           || (event == vtkSegmentation::SegmentAdded)
-           || (event == vtkSegmentation::SegmentModified)
+           || (event == vtkSegmentation::SegmentAdded) //
+           || (event == vtkSegmentation::SegmentModified) //
            || (event == vtkSegmentation::SegmentRemoved) )
     {
       this->Internal->UpdateAllDisplayNodesForSegment(displayableNode);
@@ -1657,8 +1657,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
       worldToOrientedImageIjkToTransform->Concatenate(pipeline->WorldToNodeTransform);
       double* ijkDouble = worldToOrientedImageIjkToTransform->TransformPoint(ras);
       int ijk[3] = { (int)(ijkDouble[0] + 0.5), (int)(ijkDouble[1] + 0.5), (int)(ijkDouble[2] + 0.5) };
-      if (ijk[0] < imageExtent[0] || ijk[0] > imageExtent[1] ||
-        ijk[1] < imageExtent[2] || ijk[1] > imageExtent[3] ||
+      if (ijk[0] < imageExtent[0] || ijk[0] > imageExtent[1] || //
+        ijk[1] < imageExtent[2] || ijk[1] > imageExtent[3] || //
         ijk[2] < imageExtent[4] || ijk[2] > imageExtent[5])
       {
         continue;
@@ -1694,7 +1694,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
         // Get visibility
         vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
         displayNode->GetSegmentDisplayProperties(segmentID, properties);
-        bool segmentVisible = displayNodeVisible && properties.Visible
+        bool segmentVisible = displayNodeVisible && properties.Visible //
           && (properties.Visible2DOutline || properties.Visible2DFill);
         if (!segmentVisible)
         {
@@ -1702,7 +1702,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
         }
 
         int labelmapValue = segment->GetLabelValue();
-        if ((shownRepresenatationName == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() && voxelValue != labelmapValue) ||
+        if ((shownRepresenatationName == vtkSegmentationConverter::GetBinaryLabelmapRepresentationName() && voxelValue != labelmapValue) || //
           segment->GetRepresentation(shownRepresenatationName) != imageData)
         {
           continue;
@@ -1738,8 +1738,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::GetVisibleSegmentsForPosition(dou
         vtkCell* cell = sliceFillPolyData->GetCell(index);
         // If out of bounds, then do not investigate this cell further
         double* bounds = cell->GetBounds();
-        if (ras[0]<bounds[0] - tolerance || ras[0]>bounds[1] + tolerance ||
-          ras[1]<bounds[2] - tolerance || ras[1]>bounds[3] + tolerance ||
+        if (ras[0]<bounds[0] - tolerance || ras[0]>bounds[1] + tolerance || //
+          ras[1]<bounds[2] - tolerance || ras[1]>bounds[3] + tolerance || //
           ras[2]<bounds[4] - tolerance || ras[2]>bounds[5] + tolerance)
         {
           continue;

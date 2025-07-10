@@ -108,7 +108,7 @@ bool CheckNodeIdAndName(int line, vtkMRMLNode* node,
   }
   if (!vtkAddonTestingUtilities::CheckString(
         line, std::string(testName) + ": Unexpected nodeID",
-        node->GetID(), expectedID)
+        node->GetID(), expectedID) //
 
       ||!vtkAddonTestingUtilities::CheckString(
         line, std::string(testName) + ": Unexpected nodeName",
@@ -743,7 +743,7 @@ void vtkMRMLNodeCallback::Execute(vtkObject* vtkcaller,
   {
     return;
   }
-  if (this->Node &&
+  if (this->Node && //
       this->Node != vtkMRMLNode::SafeDownCast(vtkcaller))
   {
     this->SetErrorString("vtkMRMLNodeCallback::Execute - node != vtkcaller");

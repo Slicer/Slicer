@@ -499,8 +499,8 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintPixels(
     };
 
     // Clamp to image extent
-    if (ijk[0] < modifierExtent[0] || ijk[0] > modifierExtent[1] ||
-        ijk[1] < modifierExtent[2] || ijk[1] > modifierExtent[3] ||
+    if (ijk[0] < modifierExtent[0] || ijk[0] > modifierExtent[1] || //
+        ijk[1] < modifierExtent[2] || ijk[1] > modifierExtent[3] || //
         ijk[2] < modifierExtent[4] || ijk[2] > modifierExtent[5])
     {
       continue;
@@ -661,7 +661,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateAbsoluteBrushDiameter()
       + xyToSlice->GetElement(2, 1)*xyToSlice->GetElement(2, 1));
     screenSizePixel = sliceWidget->sliceView()->renderWindow()->GetScreenSize()[1];
   }
-  else if (threeDWidget && threeDWidget->threeDView() && threeDWidget->threeDView()->renderer()
+  else if (threeDWidget && threeDWidget->threeDView() && threeDWidget->threeDView()->renderer() //
     && threeDWidget->threeDView()->renderer()->GetActiveCamera())
   {
     screenSizePixel = threeDWidget->threeDView()->renderWindow()->GetScreenSize()[1];
@@ -773,7 +773,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateBrushModel(qMRMLWidget* viewW
 void qSlicerSegmentEditorPaintEffectPrivate::updateBrush(qMRMLWidget* viewWidget, BrushPipeline* pipeline)
 {
   Q_Q(qSlicerSegmentEditorPaintEffect);
-  if (this->BrushToWorldOriginTransformer->GetNumberOfInputConnections(0) == 0
+  if (this->BrushToWorldOriginTransformer->GetNumberOfInputConnections(0) == 0 //
       || q->integerParameter("BrushPixelMode"))
   {
     pipeline->SetBrushVisibility(false);

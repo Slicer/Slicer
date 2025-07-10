@@ -121,9 +121,9 @@ public:
     const QIcon searchIcon =
       QIcon::fromTheme("edit-find", QPixmap(":/Icons/Search.png"));
     const QIcon clearIcon =
-      QIcon::fromTheme(this->layoutDirection() == Qt::LeftToRight
-                       ? "edit-clear-locationbar-rtl"
-                       : "edit-clear-locationbar-ltr",
+      QIcon::fromTheme(this->layoutDirection() == Qt::LeftToRight //
+                       ? "edit-clear-locationbar-rtl"             //
+                       : "edit-clear-locationbar-ltr",            //
                        this->SearchBox->clearIcon());
 
     const QFontMetrics fm = this->SearchBox->fontMetrics();

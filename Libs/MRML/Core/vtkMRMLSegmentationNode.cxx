@@ -587,9 +587,9 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
     return false;
   }
   referenceGeometry->GetExtent(extent);
-  if (extent[0] > extent[1]
-    || extent[2] > extent[3]
-    || extent[4] > extent[5])
+  if (extent[0] > extent[1]    //
+      || extent[2] > extent[3] //
+      || extent[4] > extent[5])
   {
     // input reference geometry is empty, so we don't need to generate a mask
     return true;
@@ -599,8 +599,8 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
   this->GetSegmentation()->GetSegmentIDs(allSegmentIDs);
 
   std::vector<std::string> visibleSegmentIDs;
-  if (editMode == vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments
-    || editMode == vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments)
+  if (editMode == vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments //
+      || editMode == vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments)
   {
     if (!displayNode)
     {

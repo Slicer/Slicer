@@ -87,7 +87,7 @@ qSlicerIO::IOFileType qSlicerModelsReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerModelsReader::extensions() const
 {
-  return QStringList()
+  return QStringList() //
     << "Model (*.vtk *.vtp *.vtu *.g *.byu *.stl *.ply *.obj *.ucd)";
 }
 
@@ -171,9 +171,9 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
   {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(
       displayNodes->GetItemAsObject(displayNodeIndex));
-    if (displayNode->GetDisplayableNode()
-      && displayNode->GetVisibility()
-      && displayNode->GetDisplayableNode() != node)
+    if (displayNode->GetDisplayableNode() //
+        && displayNode->GetVisibility() //
+        && displayNode->GetDisplayableNode() != node)
     {
       otherNodesAreAlreadyVisible = true;
       break;

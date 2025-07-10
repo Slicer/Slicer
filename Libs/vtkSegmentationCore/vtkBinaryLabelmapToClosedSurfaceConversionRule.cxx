@@ -71,21 +71,33 @@ vtkSegmentationConverterRuleNewMacro(vtkBinaryLabelmapToClosedSurfaceConversionR
 //----------------------------------------------------------------------------
 vtkBinaryLabelmapToClosedSurfaceConversionRule::vtkBinaryLabelmapToClosedSurfaceConversionRule()
 {
-  this->ConversionParameters->SetParameter(GetDecimationFactorParameterName(), "0.0",
+  this->ConversionParameters->SetParameter( //
+    GetDecimationFactorParameterName(),
+    "0.0",
     "Desired reduction in the total number of polygons. Range: 0.0 (no decimation) to 1.0 (as much simplification as possible)."
     " Value of 0.8 typically reduces data set size by 80% without losing too much details.");
-  this->ConversionParameters->SetParameter(GetSmoothingFactorParameterName(), "0.5",
+  this->ConversionParameters->SetParameter( //
+    GetSmoothingFactorParameterName(),
+    "0.5",
     "Smoothing factor. Range: 0.0 (no smoothing) to 1.0 (strong smoothing).");
-  this->ConversionParameters->SetParameter(GetComputeSurfaceNormalsParameterName(), "1",
+  this->ConversionParameters->SetParameter( //
+    GetComputeSurfaceNormalsParameterName(),
+    "1",
     "Compute surface normals. 1 (default) = surface normals are computed. "
     "0 = surface normals are not computed (slightly faster but produces less smooth surface display, not used if vtkSurfaceNets3D is used).");
-  this->ConversionParameters->SetParameter(GetConversionMethodParameterName(), CONVERSION_METHOD_FLYING_EDGES,
+  this->ConversionParameters->SetParameter( //
+    GetConversionMethodParameterName(),
+    CONVERSION_METHOD_FLYING_EDGES,
     "Conversion method. 0 (default) = vtkDiscreteFlyingEdges3D is used to generate closed surface."
     "1 = vtkSurfaceNets3D (more performant than flying edges).");
-  this->ConversionParameters->SetParameter(GetSurfaceNetInternalSmoothingParameterName(), "0",
+  this->ConversionParameters->SetParameter( //
+    GetSurfaceNetInternalSmoothingParameterName(),
+    "0",
     "SurfaceNets smoothing. 0 (default) = Smoothing done by vtkWindowedSincPolyDataFilter"
     "1 = Smoothing done in surface nets filter.");
-  this->ConversionParameters->SetParameter(GetJointSmoothingParameterName(), "0",
+  this->ConversionParameters->SetParameter( //
+    GetJointSmoothingParameterName(),
+    "0",
     "Perform joint smoothing.");
 }
 
@@ -266,9 +278,9 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
 
   // Pad labelmap if it has non-background border voxels
   int* binaryLabelmapExtent = binaryLabelmap->GetExtent();
-  if (binaryLabelmapExtent[0] > binaryLabelmapExtent[1]
-    || binaryLabelmapExtent[2] > binaryLabelmapExtent[3]
-    || binaryLabelmapExtent[4] > binaryLabelmapExtent[5])
+  if (binaryLabelmapExtent[0] > binaryLabelmapExtent[1]    //
+      || binaryLabelmapExtent[2] > binaryLabelmapExtent[3] //
+      || binaryLabelmapExtent[4] > binaryLabelmapExtent[5])
   {
     // empty labelmap
     vtkDebugMacro("Convert: No polygons can be created, input image extent is empty");
@@ -457,6 +469,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrie
     vtkSmartPointer<vtkPolyDataNormals> polyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
     polyDataNormals->SetInputConnection(transformPolyDataFilter->GetOutputPort());
     polyDataNormals->ConsistencyOn(); // discrete marching cubes may generate inconsistent surface
+
     // We almost always perform smoothing, so splitting would not be able to preserve any sharp features
     // (and sharp edges would look like artifacts in the smooth surface).
     polyDataNormals->SplittingOff();
@@ -506,7 +519,9 @@ void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool& paddi
       long offset1 = j * dimensions[0] + offset2;
       for (long i=0; i<dimensions[0]; ++i)
       {
-        if (i!=0 && i!=dimensions[0]-1 && j!=0 && j!=dimensions[1]-1 && k!=0 && k!=dimensions[2]-1)
+        if (i != 0 && i != dimensions[0] - 1    //
+            && j != 0 && j != dimensions[1] - 1 //
+            && k != 0 && k != dimensions[2] - 1)
         {
           // Skip non-border voxels
           continue;

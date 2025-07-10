@@ -206,7 +206,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
           // create storage nodes so can check for supported file types
           vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
           vtkNew<vtkMRMLProceduralColorStorageNode> procColorStorageNode;
-          if (colorStorageNode->SupportedFileType(fileToCheck.c_str()) ||
+          if (colorStorageNode->SupportedFileType(fileToCheck.c_str()) || //
               procColorStorageNode->SupportedFileType(fileToCheck.c_str()))
           {
             vtkDebugMacro("FindColorFiles: Adding " << fileToCheck.c_str() << " to list of potential color files. Type = " << fileType);

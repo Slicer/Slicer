@@ -156,9 +156,9 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
               << orientation[2] << ","
               << orientation[3] << std::endl;
     // test for default
-    if (orientation[0] != 0.0 ||
-        orientation[1] != 0.0 ||
-        orientation[2] != 0.0 ||
+    if (orientation[0] != 0.0 || //
+        orientation[1] != 0.0 || //
+        orientation[2] != 0.0 || //
         orientation[3] != 1.0)
     {
       std::cerr << "Incorrect default orientation for markup " << n
@@ -266,8 +266,8 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
   p0[2] = -9.0;
   node1->SetNthControlPointPosition(2, p0[0], p0[1], p0[2]);
   vtkVector3d p1 = node1->GetNthControlPointPositionVector(2);
-  if (p1.GetX() != p0[0] ||
-      p1.GetY() != p0[1] ||
+  if (p1.GetX() != p0[0] || //
+      p1.GetY() != p0[1] || //
       p1.GetZ() != p0[2])
   {
     std::cerr << "Failed to get back markup 2 point 1 via vector, expected "
@@ -281,8 +281,8 @@ int vtkMRMLMarkupsNodeTest1(int, char*[])
   }
   double p3[3];
   node1->GetNthControlPointPosition(2,p3);
-  if (p3[0] != p0[0] ||
-      p3[1] != p0[1] ||
+  if (p3[0] != p0[0] || //
+      p3[1] != p0[1] || //
       p3[2] != p0[2])
   {
     std::cerr << "Failed to get back markup 2 point 1 via array, expected "

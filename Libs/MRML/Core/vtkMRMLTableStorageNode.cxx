@@ -299,8 +299,8 @@ std::string vtkMRMLTableStorageNode::GenerateSchemaFileName(const char* filePath
   std::string fileName = vtksys::SystemTools::GetFilenameName(filePathStd);
   std::string extension = this->GetSupportedFileExtension(fileName.c_str());
 
-  if (fileName.length() < extension.length() ||
-    fileName.compare(fileName.length() - extension.length(), extension.length(), extension) != 0)
+  if (fileName.length() < extension.length() || //
+      fileName.compare(fileName.length() - extension.length(), extension.length(), extension) != 0)
   {
     // extension not matched to the end of filename
     return "";

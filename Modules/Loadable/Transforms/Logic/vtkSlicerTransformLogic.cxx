@@ -1488,8 +1488,8 @@ vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind
   }
   else if (transformList->GetNumberOfItems() == 2)
   {
-    if (vtkTransform::SafeDownCast(transformList->GetItemAsObject(1))
-      && vtkOrientedBSplineTransform::SafeDownCast(transformList->GetItemAsObject(0)))
+    if (vtkTransform::SafeDownCast(transformList->GetItemAsObject(1)) //
+        && vtkOrientedBSplineTransform::SafeDownCast(transformList->GetItemAsObject(0)))
     {
       // B-spline and bulk transform embedded in a general transform
       // BRAINS returns bspline+bulk transform this way, so we consider it as a bspline transform
@@ -1539,7 +1539,7 @@ void vtkSlicerTransformLogic::GetTransformedNodes(
   {
     vtkMRMLDisplayableNode* node =
       vtkMRMLDisplayableNode::SafeDownCast(nodes[i]);
-    if (node->GetTransformNodeID() &&
+    if (node->GetTransformNodeID() && //
       strcmp(transformNode->GetID(), node->GetTransformNodeID()) == 0)
     {
       transformedNodes.push_back(node);
@@ -1565,8 +1565,8 @@ void vtkSlicerTransformLogic::GetNodesRASBounds(
   {
     double nodeBounds[6];
     nodes[i]->GetRASBounds(nodeBounds);
-    if (nodeBounds[0] <= nodeBounds[1] ||
-        nodeBounds[2] <= nodeBounds[3] ||
+    if (nodeBounds[0] <= nodeBounds[1] || //
+        nodeBounds[2] <= nodeBounds[3] || //
         nodeBounds[4] <= nodeBounds[5])
     {
       box.AddBounds(nodeBounds);
@@ -1585,8 +1585,8 @@ void vtkSlicerTransformLogic::GetNodesBounds(
   {
     double nodeBounds[6];
     nodes[i]->GetBounds(nodeBounds);
-    if (nodeBounds[0] <= nodeBounds[1] ||
-        nodeBounds[2] <= nodeBounds[3] ||
+    if (nodeBounds[0] <= nodeBounds[1] || //
+        nodeBounds[2] <= nodeBounds[3] || //
         nodeBounds[4] <= nodeBounds[5])
     {
       box.AddBounds(nodeBounds);

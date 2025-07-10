@@ -98,7 +98,7 @@ qSlicerIO::IOFileType qSlicerTablesReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerTablesReader::extensions() const
 {
-  return QStringList()
+  return QStringList() //
     << "Table (*.tsv)"
     << "Table (*.csv)"
     << "Table (*.txt)"
@@ -147,9 +147,9 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
       (tr("Table reading failed: no file extension specified: %1").arg(fileName)).toStdString());
     return false;
   }
-  if (!extension.compare(".db")
-      || !extension.compare(".db3")
-      || !extension.compare(".sqlite")
+  if (!extension.compare(".db")        //
+      || !extension.compare(".db3")    //
+      || !extension.compare(".sqlite") //
       || !extension.compare(".sqlite3"))
   {
     uname = "";

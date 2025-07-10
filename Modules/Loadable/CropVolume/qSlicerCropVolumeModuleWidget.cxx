@@ -95,8 +95,8 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
     return false;
   }
 
-  if (this->ParametersNode->GetOutputVolumeNode() && this->ParametersNode->GetInputVolumeNode()
-    && strcmp(this->ParametersNode->GetOutputVolumeNode()->GetClassName(), this->ParametersNode->GetInputVolumeNode()->GetClassName()) != 0)
+  if (this->ParametersNode->GetOutputVolumeNode() && this->ParametersNode->GetInputVolumeNode() //
+      && strcmp(this->ParametersNode->GetOutputVolumeNode()->GetClassName(), this->ParametersNode->GetInputVolumeNode()->GetClassName()) != 0)
   {
     message = qSlicerCropVolumeModuleWidget::tr("Output volume type does not match input volume type.");
     autoFixAvailable = true;
@@ -117,8 +117,8 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
   // Common cropping problems
   if (this->ParametersNode->GetROINode())
   {
-    if (this->ParametersNode->GetROINode()->GetParentTransformNode()
-      && !this->ParametersNode->GetROINode()->GetParentTransformNode()->IsTransformToWorldLinear())
+    if (this->ParametersNode->GetROINode()->GetParentTransformNode() //
+        && !this->ParametersNode->GetROINode()->GetParentTransformNode()->IsTransformToWorldLinear())
     {
       roiTransformValid = false;
       problemsDescription << qSlicerCropVolumeModuleWidget::tr("Input ROI is under a non-linear transform.");
@@ -129,9 +129,9 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
     roiExists = false;
     problemsDescription << qSlicerCropVolumeModuleWidget::tr("Select or create a new input ROI.");
   }
-  if (this->ParametersNode->GetOutputVolumeNode()
-    && this->ParametersNode->GetOutputVolumeNode()->GetParentTransformNode()
-    && !this->ParametersNode->GetOutputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
+  if (this->ParametersNode->GetOutputVolumeNode() //
+      && this->ParametersNode->GetOutputVolumeNode()->GetParentTransformNode() //
+      && !this->ParametersNode->GetOutputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
   {
     outputVolumeTransformValid = false;
     problemsDescription << qSlicerCropVolumeModuleWidget::tr("Output volume is under a non-linear transform.");
@@ -140,9 +140,9 @@ bool qSlicerCropVolumeModuleWidgetPrivate::checkInputs(bool& autoFixAvailable, Q
   // Non-interpolated cropping problem
   if (this->ParametersNode->GetVoxelBased())
   {
-    if (this->ParametersNode->GetInputVolumeNode()
-      && this->ParametersNode->GetInputVolumeNode()->GetParentTransformNode()
-      && !this->ParametersNode->GetInputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
+    if (this->ParametersNode->GetInputVolumeNode() //
+        && this->ParametersNode->GetInputVolumeNode()->GetParentTransformNode() //
+        && !this->ParametersNode->GetInputVolumeNode()->GetParentTransformNode()->IsTransformToWorldLinear())
     {
       inputVolumeTransformValid = false;
       problemsDescription << qSlicerCropVolumeModuleWidget::tr("Interpolation is disabled and input volume is under a non-linear transform");
@@ -378,8 +378,8 @@ void qSlicerCropVolumeModuleWidget::onApply()
 {
   Q_D(qSlicerCropVolumeModuleWidget);
 
-  if (!d->ParametersNode.GetPointer() ||
-    !d->ParametersNode->GetInputVolumeNode() ||
+  if (!d->ParametersNode.GetPointer() || //
+    !d->ParametersNode->GetInputVolumeNode() || //
     !d->ParametersNode->GetROINode())
   {
     qWarning() << Q_FUNC_INFO << ": invalid inputs";

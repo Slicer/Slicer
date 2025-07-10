@@ -247,8 +247,8 @@ int vtkMRMLDisplayableNode::GetDisplayVisibility()
   for (int i = 1; i<ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
-    if (displayNode && displayNode->IsShowModeDefault()
-      && displayNode->GetVisibility() != visible)
+    if (displayNode && displayNode->IsShowModeDefault() //
+        && displayNode->GetVisibility() != visible)
     {
       return 2;
     }
@@ -268,8 +268,8 @@ int vtkMRMLDisplayableNode::GetDisplayClassVisibility(const char* nodeClass)
   for (int i = 0; i<ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
-    if (displayNode && displayNode->IsShowModeDefault()
-      && displayNode->IsA(nodeClass) )
+    if (displayNode && displayNode->IsShowModeDefault() //
+        && displayNode->IsA(nodeClass) )
     {
       visible = displayNode->GetVisibility();
     }
@@ -313,8 +313,8 @@ void vtkMRMLDisplayableNode::SetDisplayClassVisibility(const char* nodeClass, in
   for (int i = 0; i<ndnodes; i++)
   {
     vtkMRMLDisplayNode* displayNode = this->GetNthDisplayNode(i);
-    if (displayNode && displayNode->IsShowModeDefault()
-      && displayNode->IsA(nodeClass))
+    if (displayNode && displayNode->IsShowModeDefault() //
+        && displayNode->IsA(nodeClass))
     {
       displayNode->SetVisibility(visible);
     }

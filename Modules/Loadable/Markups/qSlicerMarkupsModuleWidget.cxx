@@ -1120,8 +1120,8 @@ void qSlicerMarkupsModuleWidget::updateRow(int controlPointIndex)
 {
   Q_D(qSlicerMarkupsModuleWidget);
   vtkMRMLMarkupsNode* markupsNode = this->mrmlMarkupsNode();
-  if (!markupsNode
-    || controlPointIndex >= markupsNode->GetNumberOfControlPoints()) // markup point is already deleted (possible after batch update)
+  if (!markupsNode //
+      || controlPointIndex >= markupsNode->GetNumberOfControlPoints()) // markup point is already deleted (possible after batch update)
   {
     return;
   }
@@ -1261,7 +1261,7 @@ void qSlicerMarkupsModuleWidget::updateRow(int controlPointIndex)
    }
   int rColumnIndex = qSlicerMarkupsModuleWidgetPrivate::RColumn;
   int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(controlPointIndex);
-  bool showCoordinates = (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined ||
+  bool showCoordinates = (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined || //
     mPositionStatus == vtkMRMLMarkupsNode::PositionPreview);
   for (int p = 0; p < 3; p++)
   {
@@ -1301,8 +1301,8 @@ void qSlicerMarkupsModuleWidget::updateRow(int controlPointIndex)
     isNewItem = true;
   }
   int positionStatus = markupsNode->GetNthControlPointPositionStatus(controlPointIndex);
-  if (isNewItem
-    || item->data(Qt::UserRole).toInt() != positionStatus)
+  if (isNewItem //
+      || item->data(Qt::UserRole).toInt() != positionStatus)
   {
     item->setData(Qt::UserRole, positionStatus);
     switch (positionStatus)
@@ -1520,8 +1520,8 @@ void qSlicerMarkupsModuleWidget::onAddControlPointPushButtonClicked()
     return;
   }
 
-  if (d->MarkupsNode->GetMaximumNumberOfControlPoints() >= 0
-    && (d->MarkupsNode->GetNumberOfControlPoints() >= d->MarkupsNode->GetMaximumNumberOfControlPoints()) )
+  if (d->MarkupsNode->GetMaximumNumberOfControlPoints() >= 0 //
+      && (d->MarkupsNode->GetNumberOfControlPoints() >= d->MarkupsNode->GetMaximumNumberOfControlPoints()))
   {
     return;
   }
@@ -2114,14 +2114,14 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
     std::string description = std::string(item->text().toUtf8());
     d->MarkupsNode->SetNthControlPointDescription(n, description);
   }
-  else if (column == qSlicerMarkupsModuleWidgetPrivate::RColumn ||
-           column == qSlicerMarkupsModuleWidgetPrivate::AColumn ||
+  else if (column == qSlicerMarkupsModuleWidgetPrivate::RColumn || //
+           column == qSlicerMarkupsModuleWidgetPrivate::AColumn || //
            column == qSlicerMarkupsModuleWidgetPrivate::SColumn)
   {
     // get the new value
     double newPoint[3] = {0.0, 0.0, 0.0};
-    if (d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::RColumn) == nullptr ||
-        d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::AColumn) == nullptr ||
+    if (d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::RColumn) == nullptr || //
+        d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::AColumn) == nullptr || //
         d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::SColumn) == nullptr)
     {
       // init state, return
@@ -2149,8 +2149,8 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
 
     // changed?
     double minChange = 0.001;
-    if (fabs(newPoint[0] - point[0]) > minChange ||
-        fabs(newPoint[1] - point[1]) > minChange ||
+    if (fabs(newPoint[0] - point[0]) > minChange || //
+        fabs(newPoint[1] - point[1]) > minChange || //
         fabs(newPoint[2] - point[2]) > minChange)
     {
       if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
@@ -2220,7 +2220,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellClicked(QTableWidgetItem
   }
   int column = item->column();
   int row = item->row();
-  if (column == qSlicerMarkupsModuleWidgetPrivate::VisibleColumn ||
+  if (column == qSlicerMarkupsModuleWidgetPrivate::VisibleColumn || //
     column == qSlicerMarkupsModuleWidgetPrivate::LockedColumn)
   {
     // toggle the user role, the icon update is triggered by this change
@@ -2784,8 +2784,8 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject
       if (markupsNode)
       {
         int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(n);
-        if (mPositionStatus == vtkMRMLMarkupsNode::PositionPreview
-          && d->activeMarkupTableWidget->currentRow() != n)
+        if (mPositionStatus == vtkMRMLMarkupsNode::PositionPreview //
+            && d->activeMarkupTableWidget->currentRow() != n)
         {
           d->activeMarkupTableWidget->setCurrentCell(n, 0);
         }
@@ -3038,8 +3038,8 @@ double qSlicerMarkupsModuleWidget::nodeEditable(vtkMRMLNode* node)
     // we only allow editing of visible nodes in this module
     return 0.0;
   }
-  if (vtkMRMLMarkupsNode::SafeDownCast(node)
-    || vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
+  if (vtkMRMLMarkupsNode::SafeDownCast(node) //
+      || vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
   {
     return 0.5;
   }

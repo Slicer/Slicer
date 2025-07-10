@@ -464,24 +464,24 @@ protected:
 
         if (!enabled || !compatible)
         {
-          statusText +=
-            QLatin1String("<p>")+
-            qSlicerExtensionsLocalWidget::tr("Version: %1. Disabled.").arg(installedVersion)
+          statusText +=                                                                      //
+            QLatin1String("<p>") +                                                           //
+            qSlicerExtensionsLocalWidget::tr("Version: %1. Disabled.").arg(installedVersion) //
             + QLatin1String("</p>");
         }
         else
         {
-          statusText +=
-            QLatin1String("<p>") +
-            qSlicerExtensionsLocalWidget::tr("Version: %1").arg(installedVersion)
+          statusText +=                                                           //
+            QLatin1String("<p>") +                                                //
+            qSlicerExtensionsLocalWidget::tr("Version: %1").arg(installedVersion) //
             + QLatin1String("</p>");
         }
       }
       else
       {
-        statusText +=
-          QLatin1String("<p>") +
-          qSlicerExtensionsLocalWidget::tr("Not installed.")
+        statusText +=                                        //
+          QLatin1String("<p>") +                             //
+          qSlicerExtensionsLocalWidget::tr("Not installed.") //
           + QLatin1String("</p>");
       }
     }
@@ -530,10 +530,10 @@ protected:
 
     QAbstractTextDocumentLayout::PaintContext context;
     context.palette = this->palette();
-    if (!this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledRole).toBool()
-      || this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ScheduledForUninstallRole).toBool()
-      || !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::CompatibleRole).toBool()
-      || !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::EnabledRole).toBool())
+    if (!this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledRole).toBool()               //
+        || this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ScheduledForUninstallRole).toBool() //
+        || !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::CompatibleRole).toBool()           //
+        || !this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::EnabledRole).toBool())
     {
       context.palette.setCurrentColorGroup(QPalette::Disabled);
     }
@@ -1195,9 +1195,9 @@ void qSlicerExtensionsLocalWidget::onLinkActivated(const QString& link)
     {
       {
         QString extensionName = link.mid(7); // remove leading "slicer:"
-        url.setPath(url.path() + QString("/view/%1/%2/%3")
-                    .arg(extensionName)
-                    .arg(this->extensionsManagerModel()->slicerRevision())
+        url.setPath(url.path() + QString("/view/%1/%2/%3")                 //
+                    .arg(extensionName)                                    //
+                    .arg(this->extensionsManagerModel()->slicerRevision()) //
                     .arg(this->extensionsManagerModel()->slicerOs()));
       }
     }

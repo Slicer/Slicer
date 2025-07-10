@@ -98,7 +98,7 @@ public:
               break;
             }
           }
-          else if (testStorageNode->GetFileName() != nullptr &&
+          else if (testStorageNode->GetFileName() != nullptr && //
             m_Filename.compare(testStorageNode->GetFileName()) == 0)
           {
             // found the right storage node for a local file
@@ -414,7 +414,7 @@ public:
                   // check for a parent node id in the mapper (as long as it doesn't already
                   // point to the source node), default to the top level one though
                   std::string parentNodeID = std::string(tmhnd->GetID());
-                  if (tcmhd->GetParentNodeID() != nullptr &&
+                  if (tcmhd->GetParentNodeID() != nullptr && //
                       strcmp(tcmhd->GetParentNodeID(),smhnd->GetID()) != 0)
                   {
                     std::map<std::string,std::string>::iterator pIt = parentNodeIDMapper.find(std::string(tcmhd->GetParentNodeID()));

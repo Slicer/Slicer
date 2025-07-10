@@ -32,8 +32,8 @@
 // vtkNew<vtkMRMLSceneViewEventRecorder> callback;
 //  scene->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
 // // action(s) on the scene
-// if (callback->CalledEvents.size() != 1 ||
-//     callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
+// if (callback->CalledEvents.size() != 1 ||                                //
+//     callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 || //
 //     callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent] > mtime)
 //   {
 //   return EXIT_FAILURE;

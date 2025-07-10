@@ -416,8 +416,8 @@ int vtkMRMLSceneTest1(int, char*[])
     const char* nodeAddedFromPrivateSceneID = nodeFromPrivateScene->GetID();
     const char* changedIDFromPrivateScene =
       scene1->GetChangedID(nodeInPrivateSceneID.c_str());
-    if (changedIDFromPrivateScene
-      || nodeInPrivateSceneID.empty() || !nodeAddedFromPrivateSceneID ||
+    if (changedIDFromPrivateScene //
+      || nodeInPrivateSceneID.empty() || !nodeAddedFromPrivateSceneID || //
       !nodeInPrivateSceneID.compare(nodeAddedFromPrivateSceneID) )
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetChangedID()\n"
@@ -447,8 +447,8 @@ int vtkMRMLSceneTest1(int, char*[])
     scene1->Import();
     const char* changedIDFromImportedScene =
       scene1->GetChangedID(importedNodeID);
-    if (!importedNodeID || !changedIDFromImportedScene ||
-      !strcmp(changedIDFromImportedScene, importedNodeID) )
+    if (!importedNodeID || !changedIDFromImportedScene || //
+        !strcmp(changedIDFromImportedScene, importedNodeID) )
     {
       std::cerr << "Line " << __LINE__ << " - Problem with GetChangedID()\n"
                 << "  importedNodeID: " <<

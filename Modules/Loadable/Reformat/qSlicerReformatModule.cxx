@@ -111,7 +111,7 @@ vtkMRMLAbstractLogic* qSlicerReformatModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerReformatModule::associatedNodeTypes() const
 {
-  return QStringList()
+  return QStringList() //
     << "vtkMRMLSliceNode"
     << "vtkMRMLSliceCompositeNode";
 }

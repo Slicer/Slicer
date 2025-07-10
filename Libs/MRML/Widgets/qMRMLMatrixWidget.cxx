@@ -160,7 +160,7 @@ void qMRMLMatrixWidget::updateMatrix()
 void qMRMLMatrixWidget::updateTransformNode()
 {
   Q_D(qMRMLMatrixWidget);
-  if (d->MRMLTransformNode == nullptr ||
+  if (d->MRMLTransformNode == nullptr || //
       !d->UserUpdates)
   {
     return;

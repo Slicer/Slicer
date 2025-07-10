@@ -93,7 +93,7 @@ qSlicerIO::IOFileType qSlicerAnnotationsReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerAnnotationsReader::extensions() const
 {
-  return QStringList()
+  return QStringList() //
     << qSlicerAnnotationsReader::tr("Annotations") + " (*.acsv)";
 }
 

@@ -86,7 +86,7 @@ int TestGetColorNameAsFileName()
   CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("n`a@m&e*w+i=t[h]i;n:v\\a|l\"i<D>c,h/a?rs", "n_a_m_e_w_i_t_h_i_n_v_a_l_i_D_c_h_a_rs"));
   CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("name with \nreturn", "name_with__return"));
   CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName("ÑÂme wïth àçÇénts", "____me_w__th_________nts"));
-  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName(
+  CHECK_EXIT_SUCCESS(TestGetColorNameAsFileName( //
     "very very very very very very very very very very "
     "very very very very very very very very very very "
     "very very very very very very very very very very "

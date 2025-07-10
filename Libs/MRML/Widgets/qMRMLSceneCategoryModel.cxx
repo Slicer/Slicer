@@ -75,8 +75,8 @@ QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category
   for (int i = 0; i < rowCount; ++i)
   {
     QStandardItem* child = this->mrmlSceneItem()->child(i,0);
-    if (child &&
-        child->data(qMRMLSceneModel::UIDRole).toString() == "category" &&
+    if (child && //
+        child->data(qMRMLSceneModel::UIDRole).toString() == "category" && //
         child->text() == category)
     {
       return child;
@@ -140,7 +140,7 @@ QStandardItem* qMRMLSceneCategoryModel::insertNode(vtkMRMLNode* node)
 //------------------------------------------------------------------------------
 bool qMRMLSceneCategoryModel::isANode(const QStandardItem* item) const
 {
-  return this->qMRMLSceneModel::isANode(item)
+  return this->qMRMLSceneModel::isANode(item) //
     && item->data(qMRMLSceneModel::UIDRole).toString() != "category";
 }
 
@@ -191,7 +191,7 @@ void qMRMLSceneCategoryModel::updateNodeFromItem(vtkMRMLNode* node, QStandardIte
   QString category =
     (parentItem != this->mrmlSceneItem()) ? parentItem->text() : QString();
   // If the attribute has never been set, don't set it with an empty string.
-  if (!(node->GetAttribute("Category") == nullptr &&
+  if (!(node->GetAttribute("Category") == nullptr && //
         category.isEmpty()))
   {
     node->SetAttribute("Category", category.toUtf8());

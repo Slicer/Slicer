@@ -53,7 +53,7 @@ void vtkMRMLDisplayableHierarchyLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   // node is useless node. Delete it.
   vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
     vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetMRMLScene(), node->GetID()) );
-  if (displayableHierarchyNode &&
+  if (displayableHierarchyNode && //
       displayableHierarchyNode->GetNumberOfChildrenNodes() == 0)
   {
     this->GetMRMLScene()->RemoveNode(displayableHierarchyNode);

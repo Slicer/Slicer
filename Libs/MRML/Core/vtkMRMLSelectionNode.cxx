@@ -256,7 +256,7 @@ void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char* classNam
   this->PlaceNodeIconNameList.erase(this->PlaceNodeIconNameList.begin()+index);
 
   // was it the active one?
-  if (this->GetActivePlaceNodeClassName() &&
+  if (this->GetActivePlaceNodeClassName() && //
       classNameString.compare(this->GetActivePlaceNodeClassName()) == 0)
   {
     // make it inactive
@@ -303,7 +303,7 @@ void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
   for (NodeReferencesType::const_iterator it = this->NodeReferences.begin();
     it != this->NodeReferences.end(); ++it)
   {
-    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 &&
+    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 && //
         it->second.size() > 0)
     {
       // there is only one referenced node per reference role
@@ -324,7 +324,7 @@ void vtkMRMLSelectionNode::GetUnitNodeIDs(std::vector<const char*>& quantities,
   for (NodeReferencesType::const_iterator it = this->NodeReferences.begin();
     it != this->NodeReferences.end(); ++it)
   {
-    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 &&
+    if (it->first.compare(0, strlen(UNIT_NODE_REFERENCE_ROLE), UNIT_NODE_REFERENCE_ROLE) == 0 && //
         it->second.size() > 0)
     {
       // there is only one referenced node per reference role

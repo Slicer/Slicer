@@ -109,10 +109,10 @@ int vtkSlicerMarkupsLogicTest2(int argc, char* argv[])
   std::string movedDescription = dest->GetNthControlPointDescription(0);
   double movedPoint[3];
   dest->GetNthControlPointPosition(0, movedPoint);
-  if (movedLabel.compare("S1") != 0 ||
-      movedDescription.compare("To be moved") != 0 ||
-      movedPoint[0] != x ||
-      movedPoint[1] != y ||
+  if (movedLabel.compare("S1") != 0 || //
+      movedDescription.compare("To be moved") != 0 || //
+      movedPoint[0] != x || //
+      movedPoint[1] != y || //
       movedPoint[2] != z)
   {
     std::cerr << "MoveNthControlPointToNewListAtIndex: moved fiducial doesn't match source, label = " << movedLabel.c_str()

@@ -131,7 +131,7 @@ void qSlicerAnnotationsModule::showScreenshotDialog()
 //-----------------------------------------------------------------------------
 QStringList qSlicerAnnotationsModule::associatedNodeTypes() const
 {
-  return QStringList()
+  return QStringList() //
     << "vtkMRMLAnnotationNode"
     << "vtkMRMLAnnotationDisplayNode"
     << "vtkMRMLAnnotationStorageNode"

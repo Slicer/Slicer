@@ -623,9 +623,9 @@ int vtkMRMLMarkupsDisplayNode::GetActiveComponentIndex(std::string context/*=Get
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context/*=GetDefaultContextName()*/)
 {
-  if (this->ActiveComponents.find(context) != this->ActiveComponents.end()
-    && this->ActiveComponents[context].Type == componentType
-    && this->ActiveComponents[context].Index == componentIndex )
+  if (this->ActiveComponents.find(context) != this->ActiveComponents.end() //
+      && this->ActiveComponents[context].Type == componentType //
+      && this->ActiveComponents[context].Index == componentIndex )
   {
     // no change
     return;
@@ -686,9 +686,9 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
   // Get index of point to update. If active index is not valid, use the next undefined point,
   // if none, create new point.
   int numberOfControlPoints = markupsNode->GetNumberOfControlPoints();
-  if (controlPointIndex < 0 || controlPointIndex >= numberOfControlPoints
-    || (markupsNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionDefined)
-    || (markupsNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionMissing))
+  if (controlPointIndex < 0 || controlPointIndex >= numberOfControlPoints                                          //
+      || (markupsNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionDefined) //
+      || (markupsNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionMissing))
   {
     if (controlPointIndex < 0 || controlPointIndex >= numberOfControlPoints)
     {
@@ -721,8 +721,8 @@ int vtkMRMLMarkupsDisplayNode::UpdateActiveControlPointWorld(
   //TODO: Allow other interaction contexts to place markups
   bool activeComponentChanged = false;
   std::string interactionContext = eventData->GetInteractionContextName();
-  if (this->ActiveComponents[interactionContext].Index != controlPointIndex
-    || this->ActiveComponents[interactionContext].Type != ComponentControlPoint )
+  if (this->ActiveComponents[interactionContext].Index != controlPointIndex //
+      || this->ActiveComponents[interactionContext].Type != ComponentControlPoint)
   {
     this->ActiveComponents[interactionContext].Type = ComponentControlPoint;
     this->ActiveComponents[interactionContext].Index = controlPointIndex;
@@ -812,8 +812,8 @@ void vtkMRMLMarkupsDisplayNode::GetActiveControlPoints(std::vector<int>& control
 //---------------------------------------------------------------------------
 int vtkMRMLMarkupsDisplayNode::GetActiveControlPoint(std::string context)
 {
-  if (this->ActiveComponents.find(context) != this->ActiveComponents.end()
-    && this->ActiveComponents[context].Type == ComponentControlPoint )
+  if (this->ActiveComponents.find(context) != this->ActiveComponents.end() //
+      && this->ActiveComponents[context].Type == ComponentControlPoint)
   {
     return this->ActiveComponents[context].Index;
   }

@@ -130,15 +130,15 @@ bool vtkMRMLWindowLevelWidget::CanProcessInteractionEvent(vtkMRMLInteractionEven
   }
 
   // If we are currently dragging a point then we interact everywhere
-  if (this->WidgetState == WidgetStateAdjustWindowLevel
-    || this->WidgetState == WidgetStateAdjustWindowLevelAlternative)
+  if (this->WidgetState == WidgetStateAdjustWindowLevel //
+      || this->WidgetState == WidgetStateAdjustWindowLevelAlternative)
   {
     distance2 = 0.0;
     return true;
   }
 
-  if (this->GetInteractionNode()->GetCurrentInteractionMode() != vtkMRMLInteractionNode::AdjustWindowLevel
-    && (widgetEvent < WidgetEventAlwaysOnResetWindowLevel || widgetEvent > WidgetEventAlwaysOnAdjustWindowLevelAlternativeCancel))
+  if (this->GetInteractionNode()->GetCurrentInteractionMode() != vtkMRMLInteractionNode::AdjustWindowLevel //
+      && (widgetEvent < WidgetEventAlwaysOnResetWindowLevel || widgetEvent > WidgetEventAlwaysOnAdjustWindowLevelAlternativeCancel))
   {
     // if we are not in adjust window/level mouse mode then only always-on widget events are processed
     return false;
@@ -187,8 +187,8 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
         this->AdjustMode = ModeAdjust;
       }
       // Control modifier indicates to use the alternative adjustment mode
-      if (widgetEvent == WidgetEventAdjustWindowLevelAlternativeStart
-        || widgetEvent == WidgetEventAlwaysOnAdjustWindowLevelAlternativeStart)
+      if (widgetEvent == WidgetEventAdjustWindowLevelAlternativeStart //
+          || widgetEvent == WidgetEventAlwaysOnAdjustWindowLevelAlternativeStart)
       {
         if (this->AdjustMode == ModeAdjust)
         {
@@ -424,8 +424,8 @@ bool vtkMRMLWindowLevelWidget::ProcessAdjustWindowLevelStart(vtkMRMLInteractionE
     return false;
   }
   int editedLayer = this->GetEditableLayerAtEventPosition(eventData);
-  if (editedLayer != vtkMRMLSliceLogic::LayerForeground
-    && editedLayer != vtkMRMLSliceLogic::LayerBackground)
+  if (editedLayer != vtkMRMLSliceLogic::LayerForeground //
+      && editedLayer != vtkMRMLSliceLogic::LayerBackground)
   {
     return false;
   }
@@ -580,8 +580,8 @@ bool vtkMRMLWindowLevelWidget::ProcessSetWindowLevelFromRegionEnd(vtkMRMLInterac
 //----------------------------------------------------------------------------
 bool vtkMRMLWindowLevelWidget::UpdateWindowLevelFromRectangle(int layer, int cornerPoint1[2], int cornerPoint2[2])
 {
-  if (cornerPoint1[0] == cornerPoint2[0]
-    || cornerPoint1[1] == cornerPoint2[1])
+  if (cornerPoint1[0] == cornerPoint2[0] //
+      || cornerPoint1[1] == cornerPoint2[1])
   {
     // empty box
     return false;

@@ -51,7 +51,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-char vtkMRMLThreeDReformatDisplayableManagerTest1EventLog[] =
+char vtkMRMLThreeDReformatDisplayableManagerTest1EventLog[] = //
   "# StreamVersion 1\n"
   "RenderEvent 0 0 0 0 0 0 0\n"
   "EnterEvent 592 493 0 0 0 0 0\n"
@@ -868,8 +868,7 @@ char vtkMRMLThreeDReformatDisplayableManagerTest1EventLog[] =
   "EnterEvent 593 598 0 0 0 0 0\n"
   "MouseMoveEvent 593 598 0 0 0 0 0\n"
   "MouseMoveEvent 598 595 0 0 0 0 0\n"
-  "LeaveEvent 604 592 0 0 0 0 0\n"
-  ;
+  "LeaveEvent 604 592 0 0 0 0 0\n";
 
 namespace
 {

@@ -113,7 +113,7 @@ private:
 //-----------------------------------------------------------------------------
 void setEnableQtTesting()
 {
-  if (qSlicerApplication::application()->commandOptions()->enableQtTesting() ||
+  if (qSlicerApplication::application()->commandOptions()->enableQtTesting() || //
       qSlicerApplication::application()->userSettings()->value("QtTesting/Enabled").toBool())
   {
     QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
@@ -281,7 +281,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
   {
     window.reset(new SlicerMainWindowType);
   }
-  else if (app.commandOptions()->showPythonConsole()
+  else if (app.commandOptions()->showPythonConsole() //
     && !app.commandOptions()->runPythonAndExit())
   {
     // there is no main window but we need to show Python console

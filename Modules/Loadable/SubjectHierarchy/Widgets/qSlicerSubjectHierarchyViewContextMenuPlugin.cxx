@@ -420,8 +420,8 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   }
 
   d->ToggleTiltLockAction->setVisible(!isSliceViewNode);
-  if (!qSlicerApplication::application()
-    || !qSlicerApplication::application()->layoutManager())
+  if (!qSlicerApplication::application() //
+      || !qSlicerApplication::application()->layoutManager())
   {
     qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
     return;
@@ -465,8 +465,8 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::setInteractionMode(int mode)
 void qSlicerSubjectHierarchyViewContextMenuPlugin::saveScreenshot()
 {
   Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
-  if (!qSlicerApplication::application()
-    || !qSlicerApplication::application()->layoutManager())
+  if (!qSlicerApplication::application() //
+      || !qSlicerApplication::application()->layoutManager())
   {
     qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
     return;
@@ -538,8 +538,8 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::fitSliceView()
 {
   Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
 
-  if (!qSlicerApplication::application()
-    || !qSlicerApplication::application()->layoutManager())
+  if (!qSlicerApplication::application() //
+      || !qSlicerApplication::application()->layoutManager())
   {
     qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
     return;
@@ -563,8 +563,8 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::centerThreeDView()
 {
   Q_D(qSlicerSubjectHierarchyViewContextMenuPlugin);
 
-  if (!qSlicerApplication::application()
-    || !qSlicerApplication::application()->layoutManager())
+  if (!qSlicerApplication::application() //
+      || !qSlicerApplication::application()->layoutManager())
   {
     qWarning() << Q_FUNC_INFO << " failed: cannot get layout manager";
     return;

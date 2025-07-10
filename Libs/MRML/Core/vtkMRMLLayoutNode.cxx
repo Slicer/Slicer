@@ -189,9 +189,9 @@ void vtkMRMLLayoutNode::Reset(vtkMRMLNode* defaultNode)
 void vtkMRMLLayoutNode::SetViewArrangement(int arrNew)
 {
   // if the view arrangement definition has not been changed, return
-  if (this->ViewArrangement == arrNew
-    && this->GetCurrentLayoutDescription()
-    && this->GetCurrentLayoutDescription() == this->GetLayoutDescription(arrNew) )
+  if (this->ViewArrangement == arrNew        //
+      && this->GetCurrentLayoutDescription() //
+      && this->GetCurrentLayoutDescription() == this->GetLayoutDescription(arrNew))
   {
     return;
   }
@@ -287,7 +287,7 @@ void vtkMRMLLayoutNode::UpdateCurrentLayoutDescription()
   }
   int viewArrangement = this->ViewArrangement;
   std::string description = this->GetLayoutDescription(viewArrangement);
-  if (this->GetCurrentLayoutDescription() &&
+  if (this->GetCurrentLayoutDescription() && //
       description == this->GetCurrentLayoutDescription())
   {
     return;

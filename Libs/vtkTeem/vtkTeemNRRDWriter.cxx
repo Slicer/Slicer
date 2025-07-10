@@ -268,10 +268,8 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   }
 
   Nrrd* nrrd = nrrdNew();
-  if (nrrdWrap_nva(nrrd, const_cast<void*> (buffer),
-                   this->VTKToNrrdPixelType( vtkType ),
-                   nrrdDim, size)
-      || nrrdSpaceDimensionSet(nrrd, spaceDim)
+  if (nrrdWrap_nva(nrrd, const_cast<void*>(buffer), this->VTKToNrrdPixelType(vtkType), nrrdDim, size) //
+      || nrrdSpaceDimensionSet(nrrd, spaceDim)                                                        //
       || nrrdSpaceOriginSet(nrrd, origin))
   {
     char* err = biffGetDone(NRRD); // would be nice to free(err)
@@ -380,9 +378,9 @@ void* vtkTeemNRRDWriter::MakeNRRD()
         // per NA-MIC DWI convention
         factor = sqrt(bVal/maxbVal);
         std::stringstream value_stream;
-        value_stream << std::setprecision(17) <<
-                        DoubleConvert(grad[0] * factor) << "   " <<
-                        DoubleConvert(grad[1] * factor) << "   " <<
+        value_stream << std::setprecision(17) <<                    //
+                        DoubleConvert(grad[0] * factor) << "   " << //
+                        DoubleConvert(grad[1] * factor) << "   " << //
                         DoubleConvert(grad[2] * factor);
 
         nrrdKeyValueAdd(nrrd, key_stream.str().c_str(), value_stream.str().c_str());

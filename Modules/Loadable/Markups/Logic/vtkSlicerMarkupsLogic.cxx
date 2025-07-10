@@ -231,8 +231,8 @@ void vtkSlicerMarkupsLogic::ProcessMRMLNodesEvents(vtkObject* caller,
           this->JumpSlicesToNthPointInMarkup(markupsDisplayNode->GetDisplayableNode()->GetID(), componentIndex,
             true /* centered */, viewGroup, sliceNode);
       }
-      else if (callData != nullptr && (componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle
-        || componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle
+      else if (callData != nullptr && (componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle //
+        || componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle //
         || componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle))
       {
         // Jump to the location of the current handle position.
@@ -451,9 +451,9 @@ void vtkSlicerMarkupsLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
   {
     return;
   }
-  if (this->GetMRMLScene() &&
-      (this->GetMRMLScene()->IsImporting() ||
-       this->GetMRMLScene()->IsRestoring() ||
+  if (this->GetMRMLScene() && //
+      (this->GetMRMLScene()->IsImporting() || //
+       this->GetMRMLScene()->IsRestoring() || //
        this->GetMRMLScene()->IsBatchProcessing()))
   {
     return;
@@ -602,8 +602,8 @@ void vtkSlicerMarkupsLogic::SetActiveList(vtkMRMLMarkupsNode* markupsNode)
 
   // check if need to update the current type of node that's being placed
   const char* activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
-  if (!activePlaceNodeClassName ||
-      (activePlaceNodeClassName &&
+  if (!activePlaceNodeClassName || //
+      (activePlaceNodeClassName && //
        strcmp(activePlaceNodeClassName, markupsNode->GetClassName()) != 0))
   {
     // call the set reference to make sure the event is invoked
@@ -611,7 +611,7 @@ void vtkSlicerMarkupsLogic::SetActiveList(vtkMRMLMarkupsNode* markupsNode)
   }
   // set this markup node active if it's not already
   const char* activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
-  if (!activePlaceNodeID ||
+  if (!activePlaceNodeID || //
       (activePlaceNodeID && strcmp(activePlaceNodeID, markupsNode->GetID()) != 0))
   {
     selectionNode->SetReferenceActivePlaceNodeID(markupsNode->GetID());
@@ -1827,8 +1827,8 @@ void vtkSlicerMarkupsLogic::RenameAllControlPointsFromCurrentFormat(vtkMRMLMarku
   const int maxLineLength = 1024;
   std::vector<char> buffVector(maxLineLength);
   char* buff = &(buffVector[0]);
-  if (formatString.find("%d") != std::string::npos ||
-      formatString.find("%g") != std::string::npos ||
+  if (formatString.find("%d") != std::string::npos || //
+      formatString.find("%g") != std::string::npos || //
       formatString.find("%f") != std::string::npos)
   {
     numberInFormat = true;

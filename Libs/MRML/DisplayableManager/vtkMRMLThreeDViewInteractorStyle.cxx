@@ -134,9 +134,9 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
     ed->SetWorldPosition(worldPosition, false);
 
     // update the cursor position on mouse move
-    if (this->GetCameraNode() != nullptr
-      && this->GetCameraNode()->GetScene() != nullptr
-      && inputEventData->GetType() == vtkCommand::MouseMoveEvent)
+    if (this->GetCameraNode() != nullptr                //
+        && this->GetCameraNode()->GetScene() != nullptr //
+        && inputEventData->GetType() == vtkCommand::MouseMoveEvent)
     {
       vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
       vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(scene);
@@ -200,16 +200,16 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
       aProp->GetVolumes(pickList);
     }
 
-    if (pickList->GetNumberOfItems() > 0
-      && this->QuickVolumePicker->Pick(x, y, 0, pokedRenderer))
+    if (pickList->GetNumberOfItems() > 0 //
+        && this->QuickVolumePicker->Pick(x, y, 0, pokedRenderer))
     {
       double volumePickPoint[3] = { 0.0, 0.0, 0.0 };
       this->QuickVolumePicker->GetPickPosition(volumePickPoint);
       double* cameraPosition = this->CameraNode->GetPosition();
       // Use QuickVolumePicker result instead of QuickPicker result if picked volume point
       // is closer to the camera (or QuickPicker did not find anything).
-      if (!quickPicked
-        || vtkMath::Distance2BetweenPoints(volumePickPoint, cameraPosition)
+      if (!quickPicked //
+          || vtkMath::Distance2BetweenPoints(volumePickPoint, cameraPosition)
         < vtkMath::Distance2BetweenPoints(pickPoint, cameraPosition))
       {
         pickPoint[0] = volumePickPoint[0];

@@ -277,7 +277,7 @@ inline bool valid_grad_length(vnl_double_3 grad) {
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradient(int num, const double grad[3])
 {
-  if ((num < 0) ||
+  if ((num < 0) || //
       (num >= this->DiffusionGradients->GetNumberOfTuples()))
   {
     vtkErrorMacro(<< "Gradient number is out of range. "

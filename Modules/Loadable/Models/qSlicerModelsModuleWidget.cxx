@@ -449,8 +449,8 @@ void qSlicerModelsModuleWidget::setDisplaySelectionFromSubjectHierarchyItems(QLi
 
   vtkMRMLNode* firstDataNode = nullptr;
   if (itemIDs.size() > 0
-    // In case of empty selection the only item in the list is the scene
-    && !(itemIDs.size() == 1 && itemIDs[0] == shNode->GetSceneItemID()) )
+      // In case of empty selection the only item in the list is the scene
+      && !(itemIDs.size() == 1 && itemIDs[0] == shNode->GetSceneItemID()))
   {
     firstDataNode = shNode->GetItemDataNode(itemIDs[0]);
   }

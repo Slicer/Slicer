@@ -345,16 +345,16 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
 
   // If we are currently dragging a point then we interact everywhere
   // (we do not let any other widget take away the focus).
-  if (this->WidgetState == WidgetStateMoveCrosshair
-    || this->WidgetState == WidgetStateTranslate
-    || this->WidgetState == WidgetStateRotateIntersectingSlices
-    || this->WidgetState == WidgetStateBlend
-    || this->WidgetState == WidgetStateTranslateSlice
-    || this->WidgetState == WidgetStateZoomSlice
-    || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle
-    || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
-    || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
-    || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle
+  if (this->WidgetState == WidgetStateMoveCrosshair                             //
+      || this->WidgetState == WidgetStateTranslate                              //
+      || this->WidgetState == WidgetStateRotateIntersectingSlices               //
+      || this->WidgetState == WidgetStateBlend                                  //
+      || this->WidgetState == WidgetStateTranslateSlice                         //
+      || this->WidgetState == WidgetStateZoomSlice                              //
+      || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle      //
+      || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle         //
+      || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle //
+      || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle
     )
   {
     distance2 = 0.0;
@@ -365,8 +365,8 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
   // we allow other widgets to perform actions at the same time.
   // For example, this allows markup preview to remain visible in place mode while adjusting slice position
   // with shift + mouse-move.
-  if (this->GetActionEnabled(ActionSetCrosshairPosition)
-    && widgetEvent == WidgetEventSetCrosshairPositionBackground)
+  if (this->GetActionEnabled(ActionSetCrosshairPosition) //
+      && widgetEvent == WidgetEventSetCrosshairPositionBackground)
   {
     this->ProcessSetCrosshairBackground(eventData);
   }
@@ -376,10 +376,10 @@ bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteracti
   if (rep)
   {
     // Currently interacting
-    if (this->WidgetState == WidgetStateTranslate
-      || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
-      || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
-      || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
+    if (this->WidgetState == WidgetStateTranslate                                 //
+        || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle         //
+        || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle //
+        || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
     {
       distance2 = 0.0;
       return true;
@@ -644,15 +644,15 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
 void vtkMRMLSliceIntersectionWidget::Leave(vtkMRMLInteractionEventData* eventData)
 {
   // Ensure that EndInteractionEvent is invoked, even if interrupted by an unexpected event
-  if (this->WidgetState == WidgetStateTranslate
-    || this->WidgetState == WidgetStateTranslateSlice
-    || this->WidgetState == WidgetStateZoomSlice
-    || this->WidgetState == WidgetStateBlend
-    || this->WidgetState == WidgetStateRotateIntersectingSlices
-    || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle
-    || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle
-    || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle
-    || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
+  if (this->WidgetState == WidgetStateTranslate                                 //
+      || this->WidgetState == WidgetStateTranslateSlice                         //
+      || this->WidgetState == WidgetStateZoomSlice                              //
+      || this->WidgetState == WidgetStateBlend                                  //
+      || this->WidgetState == WidgetStateRotateIntersectingSlices               //
+      || this->WidgetState == WidgetStateTranslateIntersectingSlicesHandle      //
+      || this->WidgetState == WidgetStateTranslateSingleIntersectingSliceHandle //
+      || this->WidgetState == WidgetStateRotateIntersectingSlicesHandle         //
+      || this->WidgetState == WidgetStateTranslateIntersectingThickSlabHandle)
   {
     this->ProcessEndMouseDrag(eventData);
   }
@@ -1290,9 +1290,9 @@ vtkMRMLSegmentationDisplayNode* vtkMRMLSliceIntersectionWidget::GetVisibleSegmen
   for (int i = 0; i < nnodes; i++)
   {
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(displayNodes[i]);
-    if (displayNode
-      && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill())
-      && displayNode->IsDisplayableInView(sliceNode->GetID()))
+    if (displayNode                                                                      //
+        && (displayNode->GetVisibility2DOutline() || displayNode->GetVisibility2DFill()) //
+            && displayNode->IsDisplayableInView(sliceNode->GetID()))
     {
       return displayNode;
     }

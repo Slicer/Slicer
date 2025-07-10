@@ -399,9 +399,9 @@ void qSlicerSequencesModule::setAutoShowToolBar(bool autoShow)
 bool  qSlicerSequencesModule::showSequenceBrowser(vtkMRMLSequenceBrowserNode* browserNode)
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  if (!app
-    || !app->moduleManager()
-    || !dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences")) )
+  if (!app //
+      || !app->moduleManager() //
+      || !dynamic_cast<qSlicerSequencesModule*>(app->moduleManager()->module("Sequences")))
   {
     qCritical("Sequences module is not available");
     return false;
@@ -418,7 +418,7 @@ bool  qSlicerSequencesModule::showSequenceBrowser(vtkMRMLSequenceBrowserNode* br
 //-----------------------------------------------------------------------------
 QStringList qSlicerSequencesModule::associatedNodeTypes() const
 {
-  return QStringList()
+  return QStringList() //
     << "vtkMRMLSequenceNode"
     << "vtkMRMLSequenceBrowserNode";
 }

@@ -364,8 +364,8 @@ void vtkMRMLPlotChartNode::ProcessMRMLEvents(vtkObject* caller,
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
     vtkMRMLPlotSeriesNode* pnode = this->GetNthPlotSeriesNode(plotIndex);
-    if (pnode != nullptr && pnode == vtkMRMLPlotSeriesNode::SafeDownCast(caller) &&
-       (event ==  vtkCommand::ModifiedEvent || event == vtkMRMLPlotSeriesNode::TableModifiedEvent))
+    if (pnode != nullptr && pnode == vtkMRMLPlotSeriesNode::SafeDownCast(caller) && //
+        (event ==  vtkCommand::ModifiedEvent || event == vtkMRMLPlotSeriesNode::TableModifiedEvent))
     {
       this->InvokeEvent(vtkMRMLPlotChartNode::PlotModifiedEvent, pnode);
       this->Modified();

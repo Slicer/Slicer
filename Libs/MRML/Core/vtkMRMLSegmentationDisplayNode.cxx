@@ -100,17 +100,17 @@ void vtkMRMLSegmentationDisplayNode::WriteXML(ostream& of, int nIndent)
   for (SegmentDisplayPropertiesMap::iterator propIt = this->SegmentationDisplayProperties.begin();
     propIt != this->SegmentationDisplayProperties.end(); ++propIt)
   {
-    of << vtkMRMLNode::URLEncodeString(propIt->first.c_str())
-      << " OverrideColorR:" << propIt->second.OverrideColor[0]
-      << " OverrideColorG:" << propIt->second.OverrideColor[1]
-      << " OverrideColorB:" << propIt->second.OverrideColor[2]
-      << " Visible:" << (propIt->second.Visible ? "true" : "false")
-      << " Visible3D:" << (propIt->second.Visible3D ? "true" : "false")
-      << " Visible2DFill:" << (propIt->second.Visible2DFill ? "true" : "false")
-      << " Visible2DOutline:" << (propIt->second.Visible2DOutline ? "true" : "false")
-      << " Opacity3D:" << propIt->second.Opacity3D
-      << " Opacity2DFill:" << propIt->second.Opacity2DFill
-      << " Opacity2DOutline:" << propIt->second.Opacity2DOutline
+    of << vtkMRMLNode::URLEncodeString(propIt->first.c_str()) //
+      << " OverrideColorR:" << propIt->second.OverrideColor[0] //
+      << " OverrideColorG:" << propIt->second.OverrideColor[1] //
+      << " OverrideColorB:" << propIt->second.OverrideColor[2] //
+      << " Visible:" << (propIt->second.Visible ? "true" : "false") //
+      << " Visible3D:" << (propIt->second.Visible3D ? "true" : "false") //
+      << " Visible2DFill:" << (propIt->second.Visible2DFill ? "true" : "false") //
+      << " Visible2DOutline:" << (propIt->second.Visible2DOutline ? "true" : "false") //
+      << " Opacity3D:" << propIt->second.Opacity3D //
+      << " Opacity2DFill:" << propIt->second.Opacity2DFill //
+      << " Opacity2DOutline:" << propIt->second.Opacity2DOutline //
       << " Pickable:" << (propIt->second.Pickable ? "true" : "false") << "|";
   }
   of << "\"";
@@ -260,13 +260,19 @@ void vtkMRMLSegmentationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   for (SegmentDisplayPropertiesMap::iterator propIt = this->SegmentationDisplayProperties.begin();
     propIt != this->SegmentationDisplayProperties.end(); ++propIt)
   {
-    os << indent << "   SegmentID=" << propIt->first << ", OverrideColor=("
-       << propIt->second.OverrideColor[0] << "," << propIt->second.OverrideColor[1] << "," << propIt->second.OverrideColor[2]
-       << "), Visible=" << (propIt->second.Visible ? "true" : "false") << ", Visible3D=" << (propIt->second.Visible3D ? "true" : "false")
-       << ", Visible2DFill=" << (propIt->second.Visible2DFill ? "true" : "false") << ", Visible2DOutline="
-       << (propIt->second.Visible2DOutline ? "true" : "false")
-       << ", Opacity3D=" << propIt->second.Opacity3D << ", Opacity2DFill=" << propIt->second.Opacity2DFill
-       << ", Opacity2DOutline=" << propIt->second.Opacity2DOutline << ", Pickable=" << (propIt->second.Pickable ? "true" : "false") << "\n";
+    os << indent << "   SegmentID=" << propIt->first                                    //
+       << ", OverrideColor=(" << propIt->second.OverrideColor[0]                        //
+       << "," << propIt->second.OverrideColor[1]                                        //
+       << "," << propIt->second.OverrideColor[2]                                        //
+       << ")"                                                                           //
+       << ", Visible=" << (propIt->second.Visible ? "true" : "false")                   //
+       << ", Visible3D=" << (propIt->second.Visible3D ? "true" : "false")               //
+       << ", Visible2DFill=" << (propIt->second.Visible2DFill ? "true" : "false")       //
+       << ", Visible2DOutline=" << (propIt->second.Visible2DOutline ? "true" : "false") //
+       << ", Opacity3D=" << propIt->second.Opacity3D                                    //
+       << ", Opacity2DFill=" << propIt->second.Opacity2DFill                            //
+       << ", Opacity2DOutline=" << propIt->second.Opacity2DOutline                      //
+       << ", Pickable=" << (propIt->second.Pickable ? "true" : "false") << "\n";
   }
   vtkMRMLPrintEndMacro();
 }
@@ -802,8 +808,8 @@ void vtkMRMLSegmentationDisplayNode::SetSegmentDisplayPropertiesToDefault(const 
   double color[3] = { 0.0, 0.0, 0.0 };
   segment->GetColor(color);
   // Generate color if default color is the default gray
-  bool generateNewColor = ( color[0] == vtkSegment::SEGMENT_COLOR_INVALID[0]
-                         && color[1] == vtkSegment::SEGMENT_COLOR_INVALID[1]
+  bool generateNewColor = ( color[0] == vtkSegment::SEGMENT_COLOR_INVALID[0] //
+                         && color[1] == vtkSegment::SEGMENT_COLOR_INVALID[1] //
                          && color[2] == vtkSegment::SEGMENT_COLOR_INVALID[2] );
   if (generateNewColor)
   {

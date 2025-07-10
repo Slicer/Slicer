@@ -614,8 +614,8 @@ void qMRMLLayoutManagerPrivate::onSceneClosedEvent()
 //------------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* vtkNotUsed(layoutNode))
 {
-  if (!this->MRMLScene ||
-      this->MRMLScene->IsBatchProcessing() ||
+  if (!this->MRMLScene || //
+      this->MRMLScene->IsBatchProcessing() || //
       !this->Enabled)
   {
     return;

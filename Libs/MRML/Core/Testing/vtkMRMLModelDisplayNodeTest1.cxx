@@ -202,9 +202,9 @@ int TestSetMesh(bool observeMeshBeforeObserveDisplay,
   }
 
   vtkPointSet* displayInputMesh = display->GetInputMesh();
-  if ((meshTypeIsPolyData && displayInputMesh != display->GetInputPolyData()) ||
-      (!meshTypeIsPolyData && displayInputMesh != display->GetInputUnstructuredGrid()) ||
-      displayInputMesh != model->GetMesh() ||
+  if ((meshTypeIsPolyData && displayInputMesh != display->GetInputPolyData()) ||          //
+      (!meshTypeIsPolyData && displayInputMesh != display->GetInputUnstructuredGrid()) || //
+      displayInputMesh != model->GetMesh() ||                                             //
       displayInputMesh != mesh)
   {
     std::cerr << __LINE__ << ": vtkMRMLModelNode::SetAndobserveMesh failed when "

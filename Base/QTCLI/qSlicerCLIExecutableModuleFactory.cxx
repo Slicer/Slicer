@@ -272,7 +272,7 @@ bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file) const
   }
 
   // consider .py files to be executable. interpreter is set in ::instanciator
-  if ((!file.isExecutable()) &&
+  if ((!file.isExecutable()) && //
       (!file.filePath().endsWith(".py", Qt::CaseInsensitive)))
   {
     return false;

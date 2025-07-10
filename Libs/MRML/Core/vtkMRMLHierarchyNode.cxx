@@ -234,7 +234,7 @@ void vtkMRMLHierarchyNode::UpdateReferences()
 void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
 {
   // is it trying to set it's parent to be itself?
-  if (this->GetID() && ref &&
+  if (this->GetID() && ref && //
       !strcmp(this->GetID(), ref))
   {
     vtkErrorMacro("SetParentNode: node "
@@ -244,7 +244,7 @@ void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
     return;
   }
   // is the parent node id already set to ref?
-  if (this->ParentNodeIDReference && ref &&
+  if (this->ParentNodeIDReference && ref && //
       !strcmp(ref, this->ParentNodeIDReference))
   {
     return;
@@ -660,7 +660,7 @@ void vtkMRMLHierarchyNode::GetAssociatedChildrenNodes(vtkCollection* children,
     while (hnode)
     {
       // hnode == this
-      if (hnode->GetID() && this->GetID() &&
+      if (hnode->GetID() && this->GetID() && //
           strcmp(hnode->GetID(), this->GetID()) == 0)
       {
         children->AddItem(mnode);
@@ -772,7 +772,7 @@ vtkMRMLNode* vtkMRMLHierarchyNode::GetAssociatedNode()
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::SetAssociatedNodeID(const char* ref)
 {
-  if ((this->AssociatedNodeIDReference && ref && strcmp(ref, this->AssociatedNodeIDReference)) ||
+  if ((this->AssociatedNodeIDReference && ref && strcmp(ref, this->AssociatedNodeIDReference)) || //
       (this->AssociatedNodeIDReference != ref))
   {
     this->SetAssociatedNodeIDReference(ref);

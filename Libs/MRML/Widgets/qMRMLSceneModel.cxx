@@ -399,7 +399,7 @@ QStandardItem* qMRMLSceneModel::mrmlSceneItem() const
       continue;
     }
     QVariant uid = child->data(qMRMLSceneModel::UIDRole);
-    if (uid.type() == QVariant::String &&
+    if (uid.type() == QVariant::String && //
         uid.toString() == "scene")
     {
       return child;
@@ -929,7 +929,7 @@ void qMRMLSceneModel::updateItemFromNode(QStandardItem* item, vtkMRMLNode* node,
     if (parentItem && parentItem != newParentItem)
     {
       int newIndex = this->nodeIndex(node);
-      if (parentItem != newParentItem ||
+      if (parentItem != newParentItem || //
           newIndex != item->row())
       {
         QList<QStandardItem*> children = parentItem->takeRow(item->row());
@@ -1013,7 +1013,7 @@ void qMRMLSceneModel::updateItemDataFromNode(
     // It should be fine to set the icon even if it is the same, but due
     // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
     // it would fire a superfluous itemChanged() signal.
-    if (item->data(VisibilityRole).isNull() ||
+    if (item->data(VisibilityRole).isNull() || //
         item->data(VisibilityRole).toInt() != visible)
     {
       item->setData(visible, VisibilityRole);
@@ -1235,7 +1235,7 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
     qvtkDisconnect(node, vtkCommand::ModifiedEvent,
                    this, SLOT(onMRMLNodeModified(vtkObject*)));
 
-  Q_ASSERT_X(((d->ListenNodeModifiedEvent == NoNodes) && connectionsRemoved == 0) ||
+  Q_ASSERT_X(((d->ListenNodeModifiedEvent == NoNodes) && connectionsRemoved == 0) || //
              (d->ListenNodeModifiedEvent != NoNodes && connectionsRemoved <= 1),
              "qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved()",
              "A node has been removed from the scene but the scene model has "
@@ -1483,8 +1483,8 @@ void qMRMLSceneModel::delayedItemChanged()
 bool qMRMLSceneModel::isANode(const QStandardItem* item) const
 {
   Q_D(const qMRMLSceneModel);
-  return item
-    && item != this->mrmlSceneItem()
+  return item //
+    && item != this->mrmlSceneItem() //
     && !d->isExtraItem(item);
 }
 

@@ -312,10 +312,10 @@ void qSlicerVolumeRenderingPresetComboBox::applyPreset(vtkMRMLNode* node)
     return;
   }
 
-  if (!presetNode->GetVolumeProperty()
-    || !presetNode->GetVolumeProperty()->GetRGBTransferFunction()
-    || presetNode->GetVolumeProperty()->GetRGBTransferFunction()->GetRange()[0] >
-       presetNode->GetVolumeProperty()->GetRGBTransferFunction()->GetRange()[1] )
+  if (!presetNode->GetVolumeProperty() //
+      || !presetNode->GetVolumeProperty()->GetRGBTransferFunction() //
+      || presetNode->GetVolumeProperty()->GetRGBTransferFunction()->GetRange()[0] >
+         presetNode->GetVolumeProperty()->GetRGBTransferFunction()->GetRange()[1])
   {
     qCritical() << Q_FUNC_INFO << ": Invalid volume property preset node";
     return;

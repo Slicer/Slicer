@@ -210,7 +210,7 @@ void qMRMLCoordinatesWidget::updateWidgetFromUnitNode()
         this->setDecimals(unitNode->GetPrecision());
         this->setSingleStep(pow(10.0, -unitNode->GetPrecision()));
       }
-      if (d->Flags.testFlag(qMRMLCoordinatesWidget::MinimumValue) &&
+      if (d->Flags.testFlag(qMRMLCoordinatesWidget::MinimumValue) && //
           d->Flags.testFlag(qMRMLCoordinatesWidget::MaximumValue))
       {
         this->setRange(unitNode->GetMinimumValue(), unitNode->GetMaximumValue());

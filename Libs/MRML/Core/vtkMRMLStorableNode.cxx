@@ -382,8 +382,8 @@ void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject* caller,
   for (int i = 0; i<numStorageNodes; i++)
   {
     vtkMRMLStorageNode* dnode = this->GetNthStorageNode(i);
-    if (dnode != nullptr && dnode == vtkMRMLStorageNode::SafeDownCast(caller) &&
-      event ==  vtkCommand::ModifiedEvent)
+    if (dnode != nullptr && dnode == vtkMRMLStorageNode::SafeDownCast(caller) && //
+        event ==  vtkCommand::ModifiedEvent)
     {
       vtkDebugMacro("Got a modified event on a storage node, id = " << dnode->GetID());
       // read?

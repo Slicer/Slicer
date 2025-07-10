@@ -555,8 +555,8 @@ bool vtkSlicerMarkupsWidgetRepresentation::GetAllControlPointsVisible()
 
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
   {
-    if (!(markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
-      && (markupsNode->GetNthControlPointVisibility(controlPointIndex))))
+    if (!(markupsNode->GetNthControlPointPositionVisibility(controlPointIndex) //
+        && (markupsNode->GetNthControlPointVisibility(controlPointIndex))))
     {
       return false;
     }
@@ -720,9 +720,9 @@ vtkStringArray* vtkSlicerMarkupsWidgetRepresentation::GetLabels(int controlPoint
 bool vtkSlicerMarkupsWidgetRepresentation::IsDisplayable()
 {
   if (!this->MarkupsDisplayNode
-    || !this->ViewNode
-    || !this->MarkupsDisplayNode->GetVisibility()
-    || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
+      || !this->ViewNode //
+      || !this->MarkupsDisplayNode->GetVisibility() //
+      || !this->MarkupsDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
   {
     return false;
   }

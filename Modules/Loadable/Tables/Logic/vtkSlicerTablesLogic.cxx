@@ -82,9 +82,9 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
     vtkErrorMacro("AddTable: no file extension specified: " << fileName);
     return nullptr;
   }
-  if (!extension.compare(".db")
-      || !extension.compare(".db3")
-      || !extension.compare(".sqlite")
+  if (!extension.compare(".db")        //
+      || !extension.compare(".db3")    //
+      || !extension.compare(".sqlite") //
       || !extension.compare(".sqlite3"))
   {
     // SQLite

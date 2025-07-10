@@ -64,8 +64,8 @@ void vtkMRMLModelHierarchyNode::ReadXMLAttributes(const char** atts)
   {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "modelNodeRef") ||
-        !strcmp(attName, "modelNodeID") )
+    if (!strcmp(attName, "modelNodeRef") || //
+        !strcmp(attName, "modelNodeID"))
     {
       this->SetDisplayableNodeID(attValue);
       //this->Scene->AddReferencedNodeID(this->ModelNodeID, this);
@@ -145,7 +145,7 @@ void vtkMRMLModelHierarchyNode::ProcessMRMLEvents ( vtkObject* caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLModelDisplayNode* dnode = this->GetModelDisplayNode();
-  if (dnode != nullptr && dnode == vtkMRMLModelDisplayNode::SafeDownCast(caller) &&
+  if (dnode != nullptr && dnode == vtkMRMLModelDisplayNode::SafeDownCast(caller) && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);

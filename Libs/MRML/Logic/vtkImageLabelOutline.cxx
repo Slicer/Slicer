@@ -154,11 +154,11 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline* self,
               for (hoodIdx0 = hoodMin0; hoodIdx0 <= hoodMax0; ++hoodIdx0)
               {
                 // handle boundaries
-                if (outIdx0 + hoodIdx0 >= inImageMin0 &&
-                    outIdx0 + hoodIdx0 <= inImageMax0 &&
-                    outIdx1 + hoodIdx1 >= inImageMin1 &&
-                    outIdx1 + hoodIdx1 <= inImageMax1 &&
-                    outIdx2 + hoodIdx2 >= inImageMin2 &&
+                if (outIdx0 + hoodIdx0 >= inImageMin0 && //
+                    outIdx0 + hoodIdx0 <= inImageMax0 && //
+                    outIdx1 + hoodIdx1 >= inImageMin1 && //
+                    outIdx1 + hoodIdx1 <= inImageMax1 && //
+                    outIdx2 + hoodIdx2 >= inImageMin2 && //
                     outIdx2 + hoodIdx2 <= inImageMax2)
                 {
                   // If the neighbor value is not the same label value

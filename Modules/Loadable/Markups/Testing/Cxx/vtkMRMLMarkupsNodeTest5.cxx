@@ -54,41 +54,41 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
 
   if (vtkMath::Dot(xAxisExpected_World, xAxisActual_World) < 1.0 - epsilon)
   {
-    std::cerr << "X-axis: expected: ["
-      << xAxisExpected_World[0] << ", "
-      << xAxisExpected_World[1] << ", "
-      << xAxisExpected_World[2] << ", "
-      << "] got: ["
-      << xAxisActual_World[0] << ", "
-      << xAxisActual_World[1] << ", "
-      << xAxisActual_World[2] << ", "
-      << "]" << std::endl;
+    std::cerr << "X-axis: expected: ["          //
+              << xAxisExpected_World[0] << ", " //
+              << xAxisExpected_World[1] << ", " //
+              << xAxisExpected_World[2] << ", " //
+              << "] got: ["                     //
+              << xAxisActual_World[0] << ", "   //
+              << xAxisActual_World[1] << ", "   //
+              << xAxisActual_World[2] << ", "   //
+              << "]" << std::endl;
     return false;
   }
   if (vtkMath::Dot(yAxisExpected_World, yAxisActual_World) < 1.0 - epsilon)
   {
-    std::cerr << "Y-axis: expected: ["
-      << yAxisExpected_World[0] << ", "
-      << yAxisExpected_World[1] << ", "
-      << yAxisExpected_World[2] << ", "
-      << "] got: ["
-      << yAxisActual_World[0] << ", "
-      << yAxisActual_World[1] << ", "
-      << yAxisActual_World[2] << ", "
-      << "]" << std::endl;
+    std::cerr << "Y-axis: expected: ["          //
+              << yAxisExpected_World[0] << ", " //
+              << yAxisExpected_World[1] << ", " //
+              << yAxisExpected_World[2] << ", " //
+              << "] got: ["                     //
+              << yAxisActual_World[0] << ", "   //
+              << yAxisActual_World[1] << ", "   //
+              << yAxisActual_World[2] << ", "   //
+              << "]" << std::endl;
     return false;
   }
   if (vtkMath::Dot(zAxisExpected_World, zAxisActual_World) < 1.0 - epsilon)
   {
-    std::cerr << "Z-axis: expected: ["
-      << zAxisExpected_World[0] << ", "
-      << zAxisExpected_World[1] << ", "
-      << zAxisExpected_World[2]
-      << "] got: ["
-      << zAxisActual_World[0] << ", "
-      << zAxisActual_World[1] << ", "
-      << zAxisActual_World[2]
-      << "]" << std::endl;
+    std::cerr << "Z-axis: expected: ["          //
+              << zAxisExpected_World[0] << ", " //
+              << zAxisExpected_World[1] << ", " //
+              << zAxisExpected_World[2]         //
+              << "] got: ["                     //
+              << zAxisActual_World[0] << ", "   //
+              << zAxisActual_World[1] << ", "   //
+              << zAxisActual_World[2]           //
+              << "]" << std::endl;
     return false;
   }
 
@@ -99,15 +99,15 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
   vtkMath::Subtract(originExpected_World, originActual_World, originDifference_World);
   if (vtkMath::Norm(originDifference_World) > epsilon)
   {
-    std::cerr << "Center: expected: ["
-      << originExpected_World[0] << ", "
-      << originExpected_World[1] << ", "
-      << originExpected_World[2]
-      << "] got: ["
-      << originActual_World[0] << ", "
-      << originActual_World[1] << ", "
-      << originActual_World[2]
-      << "]" << std::endl;
+    std::cerr << "Center: expected: ["           //
+              << originExpected_World[0] << ", " //
+              << originExpected_World[1] << ", " //
+              << originExpected_World[2]         //
+              << "] got: ["                      //
+              << originActual_World[0] << ", "   //
+              << originActual_World[1] << ", "   //
+              << originActual_World[2]           //
+              << "]" << std::endl;
     return false;
   }
 
@@ -116,20 +116,20 @@ bool CompareROI(double xAxisExpected_World[3], double yAxisExpected_World[3], do
 
   double sizeDifference_World[3] = { 0.0, 0.0, 0.0 };
   vtkMath::Subtract(sizeExpected_World, sizeActual_World, sizeDifference_World);
-  if (std::abs(sizeDifference_World[0]) > EPSILON
-    || std::abs(sizeDifference_World[1]) > EPSILON
-    || std::abs(sizeDifference_World[2]) > EPSILON
+  if (std::abs(sizeDifference_World[0]) > EPSILON    //
+      || std::abs(sizeDifference_World[1]) > EPSILON //
+      || std::abs(sizeDifference_World[2]) > EPSILON //
     )
   {
-    std::cerr << "Size: expected: ["
-      << sizeExpected_World[0] << ", "
-      << sizeExpected_World[1] << ", "
-      << sizeExpected_World[2]
-      << "] got: ["
-      << sizeActual_World[0] << ", "
-      << sizeActual_World[1] << ", "
-      << sizeActual_World[2]
-      << "]" << std::endl;
+    std::cerr << "Size: expected: ["           //
+              << sizeExpected_World[0] << ", " //
+              << sizeExpected_World[1] << ", " //
+              << sizeExpected_World[2]         //
+              << "] got: ["                    //
+              << sizeActual_World[0] << ", "   //
+              << sizeActual_World[1] << ", "   //
+              << sizeActual_World[2]           //
+              << "]" << std::endl;
     return false;
   }
 

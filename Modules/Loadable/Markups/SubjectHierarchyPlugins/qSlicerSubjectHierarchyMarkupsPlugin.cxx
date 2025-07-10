@@ -528,10 +528,10 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
 
   int componentType = d->ViewContextMenuEventData["ComponentType"].toInt();
   bool pointActionsDisabled =
-    componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle ||
-    componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle ||
-    componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle ||
-    componentType == vtkMRMLMarkupsDisplayNode::ComponentPlane ||
+    componentType == vtkMRMLMarkupsDisplayNode::ComponentTranslationHandle || //
+    componentType == vtkMRMLMarkupsDisplayNode::ComponentRotationHandle || //
+    componentType == vtkMRMLMarkupsDisplayNode::ComponentScaleHandle || //
+    componentType == vtkMRMLMarkupsDisplayNode::ComponentPlane || //
     componentType == vtkMRMLMarkupsROIDisplayNode::ComponentROI;
 
   d->RenamePointAction->setVisible(!pointActionsDisabled);
@@ -550,7 +550,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
   d->DeleteNodeAction->setVisible(true);
   d->ToggleSelectPointAction->setVisible(!pointActionsDisabled);
 
-  d->JumpToClosestPointAction->setVisible(componentType == vtkMRMLMarkupsDisplayNode::ComponentLine
+  d->JumpToClosestPointAction->setVisible(componentType == vtkMRMLMarkupsDisplayNode::ComponentLine //
     && d->ViewContextMenuEventData.find("WorldPosition") != d->ViewContextMenuEventData.end());
 
   bool isControlPoint = componentType == vtkMRMLMarkupsDisplayNode::ComponentControlPoint;
@@ -567,7 +567,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     int currentControlPointIndex = d->ViewContextMenuEventData["ComponentIndex"].toInt();
     for (int controlPointIndex = currentControlPointIndex-1; controlPointIndex >= 0; controlPointIndex--)
     {
-      if (associatedNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionDefined
+      if (associatedNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionDefined //
         && associatedNode->GetNthControlPointVisibility(controlPointIndex))
       {
         // found previous control point
@@ -578,7 +578,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showViewContextMenuActionsForItem(vtk
     }
     for (int controlPointIndex = currentControlPointIndex+1; controlPointIndex < associatedNode->GetNumberOfControlPoints(); controlPointIndex++)
     {
-      if (associatedNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionDefined
+      if (associatedNode->GetNthControlPointPositionStatus(controlPointIndex) == vtkMRMLMarkupsNode::PositionDefined //
         && associatedNode->GetNthControlPointVisibility(controlPointIndex))
       {
         // found next control point
@@ -646,7 +646,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::showVisibilityContextMenuActionsForIt
     vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(associatedNode->GetDisplayNode());
     d->ToggleCurrentItemHandleInteractive->setVisible(displayNode != nullptr);
     d->CurrentItemHandleVisibilityAction->setVisible(displayNode != nullptr);
-    d->ToggleCurrentItemScaleHandleVisible->setVisible(vtkMRMLMarkupsROIDisplayNode::SafeDownCast(displayNode) != nullptr
+    d->ToggleCurrentItemScaleHandleVisible->setVisible(vtkMRMLMarkupsROIDisplayNode::SafeDownCast(displayNode) != nullptr //
       || vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(displayNode) != nullptr);
     if (displayNode)
     {

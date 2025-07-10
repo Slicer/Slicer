@@ -496,7 +496,7 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
         break;
     }
 
-    if (item->data(StatusRole).isNull() ||
+    if (item->data(StatusRole).isNull() || //
         item->data(StatusRole).toInt() != status) // Only set if it changed (https://bugreports.qt-project.org/browse/QTBUG-20248)
     {
       item->setData(status, StatusRole);
@@ -544,11 +544,11 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
       // It should be fine to set the icon even if it is the same, but due
       // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
       // it would fire a superfluous itemChanged() signal.
-      if (item->data(VisibilityRole).isNull()
+      if (item->data(VisibilityRole).isNull() //
         || item->data(VisibilityRole).toBool() != visible)
       {
 
-        if (item->data(VisibilityRole).isNull() ||
+        if (item->data(VisibilityRole).isNull() || //
           item->data(VisibilityRole) != visible) // Only set if it changed (https://bugreports.qt-project.org/browse/QTBUG-20248)
         {
           item->setData(visible, VisibilityRole);
@@ -752,8 +752,8 @@ void qMRMLSegmentsModel::onEvent(
 
   // Get segment ID for segmentation node events
   QString segmentID;
-  if (callData && (event == vtkSegmentation::SegmentAdded
-                || event == vtkSegmentation::SegmentRemoved
+  if (callData && (event == vtkSegmentation::SegmentAdded //
+                || event == vtkSegmentation::SegmentRemoved //
                 || event == vtkSegmentation::SegmentModified))
   {
     const char* segmentIDPtr = reinterpret_cast<const char*>(callData);

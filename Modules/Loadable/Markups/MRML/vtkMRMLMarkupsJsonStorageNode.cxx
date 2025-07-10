@@ -1002,7 +1002,7 @@ bool vtkMRMLMarkupsJsonStorageNode::WriteControlPoints(
   vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
 {
   int coordinateSystem = this->GetCoordinateSystem();
-  if (coordinateSystem != vtkMRMLStorageNode::CoordinateSystemRAS
+  if (coordinateSystem != vtkMRMLStorageNode::CoordinateSystemRAS //
     && coordinateSystem != vtkMRMLStorageNode::CoordinateSystemLPS)
   {
     vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),

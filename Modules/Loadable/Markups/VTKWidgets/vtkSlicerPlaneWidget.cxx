@@ -91,7 +91,7 @@ bool vtkSlicerPlaneWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventDat
     distance2 = 0.0;
     return true;
   }
-  else if (eventData->GetType() == vtkCommand::LeftButtonPressEvent &&
+  else if (eventData->GetType() == vtkCommand::LeftButtonPressEvent && //
            !(eventData->GetModifiers() & vtkEvent::ShiftModifier))
   {
     // Because the plane widget is so large, we don't want to interrupt the mouse button down event if it is not necessary,
@@ -277,7 +277,7 @@ bool vtkSlicerPlaneWidget::ProcessUpdatePlaneFromViewNormal(vtkMRMLInteractionEv
 //-------------------------------------------------------------------------
 bool vtkSlicerPlaneWidget::ProcessWidgetSymmetricScaleStart(vtkMRMLInteractionEventData* eventData)
 {
-  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget)
+  if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget) //
     || this->IsAnyControlPointLocked())
   {
     return false;
@@ -303,7 +303,7 @@ bool vtkSlicerPlaneWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eventDa
   bool processed = Superclass::ProcessMouseMove(eventData);
 
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
-  if (planeNode && this->WidgetState == WidgetStateDefine && planeNode->GetPlaneType() == vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal &&
+  if (planeNode && this->WidgetState == WidgetStateDefine && planeNode->GetPlaneType() == vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal && //
       planeNode->GetNumberOfControlPoints() == 1 && this->PreviewPointIndex == 0)
   {
     // If we are using a point-normal plane type, then update the plane so that its normal is aligned with the view normal
@@ -459,7 +459,7 @@ bool vtkSlicerPlaneWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
       return false;
   }
 
-  if (planeNode->GetPlaneType() == vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal &&
+  if (planeNode->GetPlaneType() == vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal && //
     planeNode->GetNumberOfDefinedControlPoints() > 0)
   {
     planeNode->SetNormalPointRequired(false);

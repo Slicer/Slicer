@@ -309,9 +309,9 @@ bool vtkProjectMarkupsCurvePointsFilter::PointProjectionHelper::UpdateAll()
   // by using != instead of say, <, this will catch both if the model is updated
   // and if a different model was set
   vtkMRMLTransformNode* parentTransformNode = this->Model->GetParentTransformNode();
-  if (this->Model->GetMTime() != this->LastModelModifiedTime
-    || (parentTransformNode && parentTransformNode->GetTransformToWorldMTime() != this->LastTransformModifiedTime)
-    || !this->ModelNormalVectorArray)
+  if (this->Model->GetMTime() != this->LastModelModifiedTime                                                         //
+      || (parentTransformNode && parentTransformNode->GetTransformToWorldMTime() != this->LastTransformModifiedTime) //
+      || !this->ModelNormalVectorArray)
   {
     this->LastModelModifiedTime = this->Model->GetMTime();
     this->SurfacePolyData = this->Model->GetPolyData();

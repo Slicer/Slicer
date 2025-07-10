@@ -328,10 +328,10 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
             vtkMRMLDisplayNode* sliceModelDisplayNode = (sliceModelNode ? sliceModelNode->GetDisplayNode() : nullptr);
             if (sliceModelDisplayNode)
             {
-              if (sliceModelDisplayNode->GetVisibility()
-                && sliceModelDisplayNode->GetVisibility3D()
-                && sliceModelDisplayNode->IsDisplayableInView(viewNode->GetID())
-                && this->IsVolumeVisibleInSliceView(sliceLogic->GetSliceCompositeNode(), volumeNode))
+              if (sliceModelDisplayNode->GetVisibility()                           //
+                  && sliceModelDisplayNode->GetVisibility3D()                      //
+                  && sliceModelDisplayNode->IsDisplayableInView(viewNode->GetID()) //
+                  && this->IsVolumeVisibleInSliceView(sliceLogic->GetSliceCompositeNode(), volumeNode))
               {
                 // found a slice view that is displayed in this 3D view and the volume is visible on that slice
                 visible = true;

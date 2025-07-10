@@ -205,8 +205,8 @@ bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UseDisplayNode(vtkMR
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::IsVisible(vtkMRMLSegmentationDisplayNode* displayNode)
 {
-  return displayNode
-    && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID())
+  return displayNode //
+    && displayNode->GetVisibility(this->External->GetMRMLViewNode()->GetID()) //
     && displayNode->GetOpacity3D() > 0;
 }
 
@@ -896,9 +896,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::OnMRMLSceneNodeAdded(vtkMRMLNode*
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager3D::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (node
-    && (!node->IsA("vtkMRMLSegmentationNode"))
-    && (!node->IsA("vtkMRMLSegmentationDisplayNode")) )
+  if (node //
+      && (!node->IsA("vtkMRMLSegmentationNode")) //
+      && (!node->IsA("vtkMRMLSegmentationDisplayNode")))
   {
     return;
   }
@@ -946,17 +946,17 @@ void vtkMRMLSegmentationsDisplayableManager3D::ProcessMRMLNodesEvents(vtkObject*
         this->RequestRender();
       }
     }
-    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)
-           || (event == vtkMRMLTransformableNode::TransformModifiedEvent)
-           || (event == vtkSegmentation::RepresentationModified)
-           || (event == vtkSegmentation::SegmentModified) )
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent) //
+             || (event == vtkMRMLTransformableNode::TransformModifiedEvent) //
+             || (event == vtkSegmentation::RepresentationModified) //
+             || (event == vtkSegmentation::SegmentModified) )
     {
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();
     }
     else if ((event == vtkCommand::ModifiedEvent) // segmentation object may be replaced
-           || (event == vtkSegmentation::SegmentAdded)
-           || (event == vtkSegmentation::SegmentRemoved) )
+             || (event == vtkSegmentation::SegmentAdded) //
+             || (event == vtkSegmentation::SegmentRemoved) )
     {
       this->Internal->UpdateAllDisplayNodesForSegment(displayableNode);
       this->RequestRender();

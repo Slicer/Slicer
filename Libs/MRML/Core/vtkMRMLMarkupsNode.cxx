@@ -197,10 +197,10 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy/*=true*
   // list from being cleared of points and then not repopulated.
   // TBD: if scene view node reading xml triggers reading the data from
   // storage nodes, this should no longer be necessary.
-  if (this->Scene &&
+  if (this->Scene && //
       this->Scene->IsRestoring())
   {
-    if (this->GetNumberOfControlPoints() != 0 &&
+    if (this->GetNumberOfControlPoints() != 0 && //
         source->GetNumberOfControlPoints() == 0)
     {
       // just return for now
@@ -494,8 +494,8 @@ vtkMRMLStorageNode* vtkMRMLMarkupsNode::CreateDefaultStorageNode()
 //-------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::CreateDefaultDisplayNodes()
 {
-  if (this->GetDisplayNode() != nullptr &&
-    vtkMRMLMarkupsDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
+  if (this->GetDisplayNode() != nullptr && //
+      vtkMRMLMarkupsDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
   {
     // display node already exists
     return;
@@ -552,7 +552,7 @@ const char* vtkMRMLMarkupsNode::GetTypeDisplayName()
 vtkMRMLMarkupsDisplayNode* vtkMRMLMarkupsNode::GetMarkupsDisplayNode()
 {
   vtkMRMLDisplayNode* displayNode = this->GetDisplayNode();
-  if (displayNode &&
+  if (displayNode && //
       displayNode->IsA("vtkMRMLMarkupsDisplayNode"))
   {
     return vtkMRMLMarkupsDisplayNode::SafeDownCast(displayNode);
@@ -625,7 +625,7 @@ std::vector<vtkMRMLMarkupsNode::ControlPoint*> * vtkMRMLMarkupsNode::GetControlP
 //-----------------------------------------------------------
 int vtkMRMLMarkupsNode::AddControlPoint(ControlPoint *controlPoint, bool autoLabel/*=true*/)
 {
-  if (this->MaximumNumberOfControlPoints >= 0 &&
+  if (this->MaximumNumberOfControlPoints >= 0 && //
       this->GetNumberOfControlPoints() + 1 > this->MaximumNumberOfControlPoints)
   {
     vtkErrorMacro("AddNControlPoints: number of points major than maximum number of control points allowed.");
@@ -979,8 +979,8 @@ void vtkMRMLMarkupsNode::UpdateCurvePolyFromControlPoints()
 
   for (int i = 0; i < numberOfControlPoints; i++)
   {
-    if (this->ControlPoints[i]->PositionStatus == PositionDefined ||
-      this->ControlPoints[i]->PositionStatus == PositionPreview)
+    if (this->ControlPoints[i]->PositionStatus == PositionDefined || //
+        this->ControlPoints[i]->PositionStatus == PositionPreview)
     {
       points->InsertNextPoint(this->ControlPoints[i]->Position);
     }
@@ -1583,7 +1583,7 @@ int vtkMRMLMarkupsNode::GetControlPointIndexByID(const char* id)
   for (int controlPointIndex = 0; controlPointIndex < this->GetNumberOfControlPoints(); controlPointIndex++)
   {
     ControlPoint *compareControlPoint = this->ControlPoints[controlPointIndex];
-    if (compareControlPoint &&
+    if (compareControlPoint && //
         strcmp(compareControlPoint->ID.c_str(), id) == 0)
     {
       return controlPointIndex;
@@ -1602,7 +1602,7 @@ int vtkMRMLMarkupsNode::GetControlPointIndexByLabel(const char* label)
   for (int controlPointIndex = 0; controlPointIndex < this->GetNumberOfControlPoints(); controlPointIndex++)
   {
     ControlPoint *compareControlPoint = this->ControlPoints[controlPointIndex];
-    if (compareControlPoint &&
+    if (compareControlPoint && //
         strcmp(compareControlPoint->Label.c_str(), label) == 0)
     {
       return controlPointIndex;
@@ -1621,7 +1621,7 @@ int vtkMRMLMarkupsNode::GetControlPointIndexByDescription(const char* descriptio
   for (int controlPointIndex = 0; controlPointIndex < this->GetNumberOfControlPoints(); controlPointIndex++)
   {
     ControlPoint *compareControlPoint = this->ControlPoints[controlPointIndex];
-    if (compareControlPoint &&
+    if (compareControlPoint && //
         strcmp(compareControlPoint->Description.c_str(), description) == 0)
     {
       return controlPointIndex;

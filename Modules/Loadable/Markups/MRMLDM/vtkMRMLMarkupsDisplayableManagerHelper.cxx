@@ -92,7 +92,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent in
     ++widgetIterator)
   {
     os << indent.GetNextIndent() << widgetIterator->first->GetID() << " : widget is " << (widgetIterator->second ? "not null" : "null") << std::endl;
-    if (widgetIterator->second &&
+    if (widgetIterator->second && //
       widgetIterator->second->GetRepresentation())
     {
       vtkSlicerMarkupsWidgetRepresentation* rep =
@@ -219,9 +219,9 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddMarkupsNode(vtkMRMLMarkupsNode* 
     vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
 
     // Check whether DisplayNode should be shown in this view
-    if (!displayNode
-      || !displayNode->IsA("vtkMRMLMarkupsDisplayNode")
-      || !displayNode->IsDisplayableInView(viewNode->GetID()))
+    if (!displayNode                                      //
+        || !displayNode->IsA("vtkMRMLMarkupsDisplayNode") //
+        || !displayNode->IsDisplayableInView(viewNode->GetID()))
     {
       continue;
     }

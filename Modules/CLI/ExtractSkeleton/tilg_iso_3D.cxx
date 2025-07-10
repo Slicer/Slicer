@@ -142,15 +142,15 @@ int Env_Code_3_img(int loc[3], unsigned char* img, int dim[3])
   int _nx = dim[0];
 
   pos = &img[loc[0] + dim[0] * (loc[1] + dim[1] * (loc[2] - 1) )];
-  nc = Q(-1 - _nx, 1) + Q(-_nx, 2) + Q(1 - _nx, 4) + Q(-1, 8) + Q(0, 16)
-    + Q(1, 32) + Q(-1 + _nx, 64) + Q(_nx, 128) + Q(1 + _nx, 256);
+  nc = Q(-1 - _nx, 1) + Q(-_nx, 2) + Q(1 - _nx, 4) + Q(-1, 8) + Q(0, 16) //
+       + Q(1, 32) + Q(-1 + _nx, 64) + Q(_nx, 128) + Q(1 + _nx, 256);
   pos += _nzz;
-  nc +=  Q(-1 - _nx, 512) + Q(-_nx, 1024) + Q(1 - _nx, 2048) + Q(-1, 4096) + Q(0, 8192)
-    + Q(1, 16384) + Q(-1 + _nx, 32768) + Q(_nx, 65536) + Q(1 + _nx, 131072);
+  nc += Q(-1 - _nx, 512) + Q(-_nx, 1024) + Q(1 - _nx, 2048) + Q(-1, 4096) + Q(0, 8192) //
+        + Q(1, 16384) + Q(-1 + _nx, 32768) + Q(_nx, 65536) + Q(1 + _nx, 131072);
   pos += _nzz;
-  nc +=  Q(-1 - _nx, 262144) + Q(-_nx, 524288) + Q(1 - _nx, 1048576) + Q(-1, 2097152)
-    + Q(0, 4194304) + Q(1, 8388608) + Q(-1 + _nx, 16777216) + Q(_nx, 33554432)
-    + Q(1 + _nx, 67108864);
+  nc += Q(-1 - _nx, 262144) + Q(-_nx, 524288) + Q(1 - _nx, 1048576) + Q(-1, 2097152) //
+        + Q(0, 4194304) + Q(1, 8388608) + Q(-1 + _nx, 16777216) + Q(_nx, 33554432)   //
+        + Q(1 + _nx, 67108864);
   return nc;
 }
 
@@ -161,15 +161,15 @@ int Env_Code_3(int i)
   unsigned char* pos;
 
   pos = &result[i - nzz];
-  nc = Q(-1 - nx, 1) + Q(-nx, 2) + Q(1 - nx, 4) + Q(-1, 8) + Q(0, 16)
-    + Q(1, 32) + Q(-1 + nx, 64) + Q(nx, 128) + Q(1 + nx, 256);
+  nc = Q(-1 - nx, 1) + Q(-nx, 2) + Q(1 - nx, 4) + Q(-1, 8) + Q(0, 16) //
+       + Q(1, 32) + Q(-1 + nx, 64) + Q(nx, 128) + Q(1 + nx, 256);
   pos += nzz;
-  nc +=  Q(-1 - nx, 512) + Q(-nx, 1024) + Q(1 - nx, 2048) + Q(-1, 4096) + Q(0, 8192)
-    + Q(1, 16384) + Q(-1 + nx, 32768) + Q(nx, 65536) + Q(1 + nx, 131072);
+  nc += Q(-1 - nx, 512) + Q(-nx, 1024) + Q(1 - nx, 2048) + Q(-1, 4096) + Q(0, 8192) //
+        + Q(1, 16384) + Q(-1 + nx, 32768) + Q(nx, 65536) + Q(1 + nx, 131072);
   pos += nzz;
-  nc +=  Q(-1 - nx, 262144) + Q(-nx, 524288) + Q(1 - nx, 1048576) + Q(-1, 2097152)
-    + Q(0, 4194304) + Q(1, 8388608) + Q(-1 + nx, 16777216) + Q(nx, 33554432)
-    + Q(1 + nx, 67108864);
+  nc += Q(-1 - nx, 262144) + Q(-nx, 524288) + Q(1 - nx, 1048576) + Q(-1, 2097152) //
+        + Q(0, 4194304) + Q(1, 8388608) + Q(-1 + nx, 16777216) + Q(nx, 33554432)  //
+        + Q(1 + nx, 67108864);
   return nc;
 }
 
@@ -368,7 +368,7 @@ int Tilg_Test_3(int c, int d, int type)
       /* fuer Mittelflaechen */
       if ((d == 0) || (d == 1))
       {
-        if (( (dex - dfx) == 1) && ( (dez - dfz) == 1) && ( ( (bcx > 1) &&
+        if (( (dex - dfx) == 1) && ( (dez - dfz) == 1) && ( ( (bcx > 1) && //
                                                               (bcz > 1) ) ) )
         {
           return BG;
@@ -376,7 +376,7 @@ int Tilg_Test_3(int c, int d, int type)
       }
       else if ((d == 2)  || (d == 3))
       {
-        if (( (dey - dfy) == 1) && ( (dez - dfz) == 1) && ( ( (bcy > 1) &&
+        if (( (dey - dfy) == 1) && ( (dez - dfz) == 1) && ( ( (bcy > 1) && //
                                                               (bcz > 1) ) ) )
         {
           return BG;
@@ -384,7 +384,7 @@ int Tilg_Test_3(int c, int d, int type)
       }
       else
       {
-        if (( (dex - dfx) == 1) && ( (dey - dfy) == 1) && ( ( (bcx > 1) &&
+        if (( (dex - dfx) == 1) && ( (dey - dfy) == 1) && ( ( (bcx > 1) && //
                                                               (bcy > 1) ) ) )
         {
           return BG;
@@ -398,7 +398,7 @@ int Tilg_Test_3(int c, int d, int type)
       {
         case 0:
         case 1:
-          if (( (dex - dfx) == 1) && ( (dez - dfz) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dez - dfz) == 1)  && //
                ( ( (bcx > 1) && (bcz > 1) )  || (c & free_mask) )  )
           {
             return BG;
@@ -406,7 +406,7 @@ int Tilg_Test_3(int c, int d, int type)
           break;
         case 2:
         case 3:
-          if (( (dey - dfy) == 1) && ( (dez - dfz) == 1)  &&
+          if (( (dey - dfy) == 1) && ( (dez - dfz) == 1)  && //
                ( ( (bcy > 1) && (bcz > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -414,7 +414,7 @@ int Tilg_Test_3(int c, int d, int type)
           break;
         case 4:
         case 5:
-          if (( (dex - dfx) == 1) && ( (dey - dfy) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dey - dfy) == 1)  && //
                ( ( (bcx > 1) && (bcy > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -441,7 +441,7 @@ int Tilg_Test_3(int c, int d, int type)
           {
             dfx++;
           }
-          if (( (dey - dfy) == 1) && ( (dex - dfx) == 1) &&
+          if (( (dey - dfy) == 1) && ( (dex - dfx) == 1) && //
               ( ( (bcy > 1) && (bcx > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -468,7 +468,7 @@ int Tilg_Test_3(int c, int d, int type)
           {
             dfx++;
           }
-          if (( (dey - dfy) == 1) && ( (dex - dfx) == 1) &&
+          if (( (dey - dfy) == 1) && ( (dex - dfx) == 1) && //
               ( ( (bcy > 1) && (bcx > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -495,7 +495,7 @@ int Tilg_Test_3(int c, int d, int type)
           {
             dfy++;
           }
-          if (( (dex - dfx) == 1) && ( (dey - dfy) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dey - dfy) == 1)  && //
                ( ( (bcx > 1) && (bcy > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -522,7 +522,7 @@ int Tilg_Test_3(int c, int d, int type)
           {
             dfy++;
           }
-          if (( (dex - dfx) == 1) && ( (dey - dfy) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dey - dfy) == 1)  && //
                ( ( (bcx > 1) && (bcy > 1) ) || (c & free_mask) )  )
           {
             return BG;
@@ -549,7 +549,7 @@ int Tilg_Test_3(int c, int d, int type)
           {
             dfx++;
           }
-          if (( (dex - dfx) == 1) && ( (dez - dfz) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dez - dfz) == 1)  && //
                ( ( (bcx > 1) && (bcz > 1) )  || (c & free_mask) )  )
           {
             return BG;
@@ -576,7 +576,7 @@ int Tilg_Test_3(int c, int d, int type)
           {
             dfx++;
           }
-          if (( (dex - dfx) == 1) && ( (dez - dfz) == 1)  &&
+          if (( (dex - dfx) == 1) && ( (dez - dfz) == 1)  && //
                ( ( (bcx > 1) && (bcz > 1) )  || (c & free_mask) )  )
           {
             return BG;

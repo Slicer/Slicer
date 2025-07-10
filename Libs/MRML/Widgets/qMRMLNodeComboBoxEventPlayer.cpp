@@ -41,8 +41,10 @@ bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject* Object,
                                     const QString& Arguments,
                                     bool& Error)
 {
-  if (Command != "nodeAddedByUser" && Command != "currentNodeChanged" &&
-      Command != "nodeAboutToBeRemoved" && Command != "nodeRenamed")
+  if (Command != "nodeAddedByUser"         //
+      && Command != "currentNodeChanged"   //
+      && Command != "nodeAboutToBeRemoved" //
+      && Command != "nodeRenamed")
   {
     return false;
   }

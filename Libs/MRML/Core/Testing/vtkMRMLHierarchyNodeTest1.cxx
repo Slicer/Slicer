@@ -69,21 +69,21 @@ int vtkMRMLHierarchyNodeTest1(int, char*[])
     return EXIT_FAILURE;
   }
   node1->SetParentNodeID("testingValidStringID");
-  if (node1->GetParentNodeID() == nullptr ||
+  if (node1->GetParentNodeID() == nullptr || //
       strcmp(node1->GetParentNodeID(), "testingValidStringID") != 0)
   {
     std::cerr << "Error setting parent node id not null" << std::endl;
     return EXIT_FAILURE;
   }
   node1->SetParentNodeID("testingValidStringID");
-  if (node1->GetParentNodeID() == nullptr ||
+  if (node1->GetParentNodeID() == nullptr || //
       strcmp(node1->GetParentNodeID(), "testingValidStringID") != 0)
   {
     std::cerr << "Error setting parent node id to a valid string a second time" << std::endl;
     return EXIT_FAILURE;
   }
   node1->SetParentNodeID("anotherID");
-  if (node1->GetParentNodeID() == nullptr ||
+  if (node1->GetParentNodeID() == nullptr || //
       strcmp(node1->GetParentNodeID(), "anotherID") != 0)
   {
     std::cerr << "Error setting parent node id to a different valid string" << std::endl;

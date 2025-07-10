@@ -1197,9 +1197,9 @@ void qSlicerCoreApplication::handleCommandLineArguments()
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
 
   QStringList unparsedArguments = options->unparsedArguments();
-  if (unparsedArguments.length() > 0 &&
-      options->pythonScript().isEmpty() &&
-      options->extraPythonScript().isEmpty() &&
+  if (unparsedArguments.length() > 0 && //
+      options->pythonScript().isEmpty() && //
+      options->extraPythonScript().isEmpty() && //
       d->URIArgumentHandlingEnabled)
   {
     this->handleURIArguments(unparsedArguments);
@@ -1255,7 +1255,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     pythonArgc = 0;
 
     // Attempt to load Slicer RC file only if 'display...AndExit' options are not True
-    if (!(options->displayMessageAndExit() ||
+    if (!(options->displayMessageAndExit() || //
         options->ignoreSlicerRC()))
     {
       this->corePythonManager()->executeString("loadSlicerRCFile()");

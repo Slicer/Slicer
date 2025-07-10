@@ -661,8 +661,8 @@ QString qMRMLSequenceEditWidget::onAddCurrentCandidateNode()
         // not at the end of the list, so select the next item
         d->ListWidget_CandidateNodes->setCurrentRow(nextItemRowIndex);
         // update index value from the upcoming node's name
-        if (d->SequenceNode->GetIndexType() != vtkMRMLSequenceNode::NumericIndex
-          && d->CheckBox_UseNodeNameAsIndexValue->isChecked())
+        if (d->SequenceNode->GetIndexType() != vtkMRMLSequenceNode::NumericIndex //
+            && d->CheckBox_UseNodeNameAsIndexValue->isChecked())
         {
           this->candidateNodeItemClicked(d->ListWidget_CandidateNodes->currentItem());
         }

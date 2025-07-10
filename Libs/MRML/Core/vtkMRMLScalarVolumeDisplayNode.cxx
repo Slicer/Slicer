@@ -421,13 +421,13 @@ void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
   {
     this->UpdateLookupTable(cnode);
   }
-  if (vtkAlgorithmOutput::SafeDownCast(caller) == this->GetScalarImageDataConnection() &&
-      this->GetScalarImageDataConnection() &&
+  if (vtkAlgorithmOutput::SafeDownCast(caller) == this->GetScalarImageDataConnection() && //
+      this->GetScalarImageDataConnection() &&                                             //
       event == vtkCommand::ModifiedEvent)
   {
     this->CalculateAutoLevels();
   }
-  if (caller == this && event == vtkCommand::ModifiedEvent &&
+  if (caller == this && event == vtkCommand::ModifiedEvent && //
       !this->IsInCalculateAutoLevels)
   {
     int wasModifying = this->GetDisableModifiedEvent();
@@ -478,7 +478,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetLevel(double level)
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetWindowLevel(double window, double level)
 {
-  if (this->MapToWindowLevelColors->GetWindow() == window &&
+  if (this->MapToWindowLevelColors->GetWindow() == window && //
       this->MapToWindowLevelColors->GetLevel() == level)
   {
     return;
@@ -552,7 +552,7 @@ double vtkMRMLScalarVolumeDisplayNode::GetUpperThreshold()
 //---------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode::SetThreshold(double lowerThreshold, double upperThreshold)
 {
-  if (this->GetLowerThreshold() == lowerThreshold &&
+  if (this->GetLowerThreshold() == lowerThreshold && //
       this->GetUpperThreshold() == upperThreshold)
   {
     return;
@@ -585,8 +585,8 @@ void vtkMRMLScalarVolumeDisplayNode::UpdateLookupTable(vtkMRMLColorNode* newColo
     }
   }
 
-  if (lookupTable && this->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseDirectMapping
-    && (lookupTable->GetRange()[0] != 0.0 || lookupTable->GetRange()[1] != 255.0 || this->GetInvertDisplayScalarRange()))
+  if (lookupTable && this->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseDirectMapping //
+      && (lookupTable->GetRange()[0] != 0.0 || lookupTable->GetRange()[1] != 255.0 || this->GetInvertDisplayScalarRange()))
   {
     // Convert table range to 0, 255 to match the output from MapToWindowLevelColors
     vtkSmartPointer<vtkScalarsToColors> newLookupTable = vtkSmartPointer<vtkScalarsToColors>::Take(lookupTable->NewInstance());
@@ -645,7 +645,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetWindowLevelPresets(const std::vector<Win
     {
       WindowLevelPreset& preset = this->WindowLevelPresets[presetIndex];
       const WindowLevelPreset& srcPreset = srcWindowLevelPresets[presetIndex];
-      if (fabs(preset.Window - srcPreset.Window) > WINDOW_LEVEL_PRESET_TOLERANCE ||
+      if (fabs(preset.Window - srcPreset.Window) > WINDOW_LEVEL_PRESET_TOLERANCE || //
           fabs(preset.Level - srcPreset.Level) > WINDOW_LEVEL_PRESET_TOLERANCE)
       {
         presetsAreEqual = false;
@@ -787,14 +787,14 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
     // doesn't. It's ok if the display node is not yet in the scene: being
     // loaded (vtkMRMLScene::LoadIntoScene)or stored
     // (vtkMRMLSceneViewNode::StoreScene).
-    assert( !this->GetVolumeNode() || !this->GetVolumeNode()->GetImageData() ||
+    assert( !this->GetVolumeNode() || !this->GetVolumeNode()->GetImageData() || //
             !this->GetScene() || this->GetScene()->GetNodeByID(this->GetID()) != this);
     vtkDebugMacro( << "No valid image data, returning default values [0, 255]");
     return;
   }
   this->GetScalarImageDataConnection()->GetProducer()->Update();
   imageData->GetScalarRange(range);
-  if (imageData->GetNumberOfScalarComponents() >=3 &&
+  if (imageData->GetNumberOfScalarComponents() >=3 && //
       fabs(range[0]) < 0.000001 && fabs(range[1]) < 0.000001)
   {
     range[0] = 0;
@@ -827,7 +827,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     this->GetScalarImageDataConnection()->GetProducer()->Update();
   }
 
-  if (!(imageDataScalar->GetPointData()) ||
+  if (!(imageDataScalar->GetPointData()) || //
       !(imageDataScalar->GetPointData()->GetScalars()))
   {
     vtkDebugMacro("CalculateScalarAutoLevels: input image data is null");

@@ -351,8 +351,8 @@ bool qSlicerMarkupsPlaceWidget::currentNodeActive() const
   Q_D(const qSlicerMarkupsPlaceWidget);
 
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
-  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
-      currentMarkupsNode == nullptr || d->InteractionNode == nullptr ||
+  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr || //
+      currentMarkupsNode == nullptr || d->InteractionNode == nullptr || //
       d->SelectionNode == nullptr)
   {
     return false;
@@ -415,7 +415,7 @@ void qSlicerMarkupsPlaceWidget::setPlaceModeEnabled(bool placeEnable)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
 
-  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
+  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr || //
       d->InteractionNode == nullptr || this->currentMarkupsNode() == nullptr)
   {
     if (placeEnable)
@@ -486,7 +486,7 @@ void qSlicerMarkupsPlaceWidget::updateWidget()
   d->IsUpdatingWidgetFromMRML = true;
   vtkMRMLMarkupsNode* currentMarkupsNode = this->currentMarkupsNode();
 
-  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr ||
+  if (d->MarkupsLogic == nullptr || this->mrmlScene() == nullptr || //
     d->InteractionNode == nullptr || currentMarkupsNode == nullptr)
   {
     d->ColorButton->setEnabled(false);

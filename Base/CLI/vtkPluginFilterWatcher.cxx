@@ -25,7 +25,7 @@ public:
         strncpy(this->Watcher->GetProcessInformation()->ProgressMessage,
                 this->Watcher->GetComment().c_str(), 1023);
 
-        if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
+        if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction //
             && this->Watcher->GetProcessInformation()->ProgressCallbackClientData)
         {
           (*(this->Watcher->GetProcessInformation()->ProgressCallbackFunction))(this->Watcher->GetProcessInformation()->ProgressCallbackClientData);
@@ -80,7 +80,7 @@ public:
       {
         this->Watcher->GetProcessInformation()->Progress = 0;
         this->Watcher->GetProcessInformation()->StageProgress = 0;
-        if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
+        if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction //
             && this->Watcher->GetProcessInformation()->ProgressCallbackClientData)
         {
           (*(this->Watcher->GetProcessInformation()->ProgressCallbackFunction))(this->Watcher->GetProcessInformation()->ProgressCallbackClientData);
@@ -145,7 +145,7 @@ public:
           this->Watcher->GetProcessInformation()->StageProgress = 0;
         }
 
-        if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction
+        if (this->Watcher->GetProcessInformation()->ProgressCallbackFunction //
             && this->Watcher->GetProcessInformation()->ProgressCallbackClientData)
         {
           (*(this->Watcher->GetProcessInformation()->ProgressCallbackFunction))(this->Watcher->GetProcessInformation()->ProgressCallbackClientData);

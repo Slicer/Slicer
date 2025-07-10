@@ -284,22 +284,22 @@ bool vtkTeemNRRDReader::GetPointType(Nrrd* nrrdTemp, int& pointDataType, int& nu
   // NOTE: it is the NRRD readers responsibility to make sure that
   // the size (# of components) associated with a specific kind is
   // matches the actual size of the axis.
-  if (rangeAxisKind == nrrdKindDomain
-    || rangeAxisKind == nrrdKindSpace
-    || rangeAxisKind == nrrdKindTime)
+  if (rangeAxisKind == nrrdKindDomain   //
+      || rangeAxisKind == nrrdKindSpace //
+      || rangeAxisKind == nrrdKindTime)
   {
     // Range axis kind seems more like a domain axis than a range axis.
     return false;
   }
 
-  if (rangeAxisKind == nrrdKindStub || rangeAxisKind == nrrdKindScalar || rangeAxisKind == nrrdKind3Color
-    || rangeAxisKind == nrrdKindRGBColor || rangeAxisKind == nrrdKind4Color || rangeAxisKind == nrrdKindRGBAColor
-    || rangeAxisKind == nrrdKindComplex || rangeAxisKind == nrrdKindHSVColor || rangeAxisKind == nrrdKindXYZColor
-    || rangeAxisKind == nrrdKindQuaternion || rangeAxisKind == nrrdKind2DSymMatrix || rangeAxisKind == nrrdKind2DMaskedSymMatrix
-    || rangeAxisKind == nrrdKind2DMatrix || rangeAxisKind == nrrdKind2DMaskedMatrix || rangeAxisKind == nrrdKind2Vector
-    || rangeAxisKind == nrrdKind4Vector || rangeAxisKind == nrrdKindList || rangeAxisKind == nrrdKindPoint
-    || rangeAxisKind == nrrdKind3Vector || rangeAxisKind == nrrdKind3Gradient || rangeAxisKind == nrrdKindVector
-    || rangeAxisKind == nrrdKindCovariantVector)
+  if (rangeAxisKind == nrrdKindStub || rangeAxisKind == nrrdKindScalar || rangeAxisKind == nrrdKind3Color                          //
+      || rangeAxisKind == nrrdKindRGBColor || rangeAxisKind == nrrdKind4Color || rangeAxisKind == nrrdKindRGBAColor                //
+      || rangeAxisKind == nrrdKindComplex || rangeAxisKind == nrrdKindHSVColor || rangeAxisKind == nrrdKindXYZColor                //
+      || rangeAxisKind == nrrdKindQuaternion || rangeAxisKind == nrrdKind2DSymMatrix || rangeAxisKind == nrrdKind2DMaskedSymMatrix //
+      || rangeAxisKind == nrrdKind2DMatrix || rangeAxisKind == nrrdKind2DMaskedMatrix || rangeAxisKind == nrrdKind2Vector          //
+      || rangeAxisKind == nrrdKind4Vector || rangeAxisKind == nrrdKindList || rangeAxisKind == nrrdKindPoint                       //
+      || rangeAxisKind == nrrdKind3Vector || rangeAxisKind == nrrdKind3Gradient || rangeAxisKind == nrrdKindVector                 //
+      || rangeAxisKind == nrrdKindCovariantVector)
   {
     pointDataType = vtkDataSetAttributes::SCALARS;
     numOfComponents = sizeAlongRangeAxis;
@@ -320,8 +320,9 @@ bool vtkTeemNRRDReader::GetPointType(Nrrd* nrrdTemp, int& pointDataType, int& nu
     return true;
   }
 
-  if (rangeAxisKind == nrrdKind3DMaskedSymMatrix || rangeAxisKind == nrrdKind3DSymMatrix
-    || rangeAxisKind == nrrdKind3DMatrix)
+  if (rangeAxisKind == nrrdKind3DMaskedSymMatrix //
+      || rangeAxisKind == nrrdKind3DSymMatrix    //
+      || rangeAxisKind == nrrdKind3DMatrix)
   {
     // NOTE: in case of nrrdKind3DMaskedSymMatrix and nrrdKind3DSymMatrix we will crop
     // out the mask in Read() below and expand the 6 values into 9,
@@ -735,12 +736,13 @@ void vtkTeemNRRDReader::AllocatePointData(vtkImageData* out, vtkInformation* out
   int extent[6] = { 0, -1, 0, -1, 0, -1 };
   out->GetExtent(extent);
 
-  if (pd && pd->GetDataType() == this->DataType
-    && pd->GetReferenceCount() == 1)
+  if (pd && pd->GetDataType() == this->DataType //
+      && pd->GetReferenceCount() == 1)
   {
     pd->SetNumberOfComponents(this->GetNumberOfComponents());
-    pd->SetNumberOfTuples(vtkIdType(extent[1] - extent[0] + 1)*
-      vtkIdType(extent[3] - extent[2] + 1)*
+    pd->SetNumberOfTuples(                   //
+      vtkIdType(extent[1] - extent[0] + 1) * //
+      vtkIdType(extent[3] - extent[2] + 1) * //
       vtkIdType(extent[5] - extent[4] + 1));
     // Since the execute method will be modifying the scalars
     // directly.
@@ -792,8 +794,9 @@ void vtkTeemNRRDReader::AllocatePointData(vtkImageData* out, vtkInformation* out
   pd->SetNumberOfComponents(this->GetNumberOfComponents());
 
   // allocate enough memory
-  pd->SetNumberOfTuples(vtkIdType(extent[1] - extent[0] + 1)*
-    vtkIdType(extent[3] - extent[2] + 1)*
+  pd->SetNumberOfTuples(                   //
+    vtkIdType(extent[1] - extent[0] + 1) * //
+    vtkIdType(extent[3] - extent[2] + 1) * //
     vtkIdType(extent[5] - extent[4] + 1));
 
   switch (this->PointDataType)
@@ -909,10 +912,10 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
 {
   if (this->GetOutputInformation(0))
   {
-    this->GetOutputInformation(0)->Set(
-      vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
-      this->GetOutputInformation(0)->Get(
-        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+    this->GetOutputInformation(0)->Set(                                                     //
+      vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),                                    //
+      this->GetOutputInformation(0)->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), //
+      6);
   }
 
   vtkImageData* imageData = this->AllocateOutputData(output, outInfo);
@@ -983,8 +986,8 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
     }
     // The memory size of the input and output of nrrdAxesPermute is
     // the same; the existing this->nrrd->data is reused.
-    if (nrrdCopy(ntmp, this->nrrd)
-      || nrrdAxesPermute(this->nrrd, ntmp, axmap))
+    if (nrrdCopy(ntmp, this->nrrd) //
+        || nrrdAxesPermute(this->nrrd, ntmp, axmap))
     {
       char* err = biffGetDone(NRRD); // would be nice to free(err)
       vtkErrorMacro("Read: Error permuting independent axis in " << this->GetFileName() << ":\n" << err);
@@ -1006,7 +1009,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
   // In any case, the logic here has the luxury of assuming that the
   // *single* non-scalar axis is the *first* (fastest) axis.
 
-  if (nrrdKind3DMaskedSymMatrix == this->nrrd->axis[0].kind
+  if (nrrdKind3DMaskedSymMatrix == this->nrrd->axis[0].kind //
     || nrrdKind3DSymMatrix == this->nrrd->axis[0].kind)
   {
     if (nrrdKind3DSymMatrix == this->nrrd->axis[0].kind)
@@ -1021,8 +1024,8 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInf
         static_cast<ptrdiff_t>(this->nrrd->axis[2].size - 1),
         static_cast<ptrdiff_t>(this->nrrd->axis[3].size - 1)
       };
-      if (nrrdCopy(ntmp, this->nrrd)
-        || nrrdPad_nva(this->nrrd, ntmp, minIdx, maxIdx, nrrdBoundaryPad, 1.0))
+      if (nrrdCopy(ntmp, this->nrrd) //
+          || nrrdPad_nva(this->nrrd, ntmp, minIdx, maxIdx, nrrdBoundaryPad, 1.0))
       {
         char* err = biffGetDone(NRRD); // would be nice to free(err)
         vtkErrorMacro("Read: Error padding on conf mask in " << this->GetFileName() << ":\n" << err);

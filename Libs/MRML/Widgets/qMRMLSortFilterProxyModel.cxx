@@ -47,6 +47,7 @@ public:
   QString                          HideNodesUnaffiliatedWithNodeID;
   typedef QPair<QString, QVariant> AttributeType;
   QHash<QString, AttributeType>    Attributes;
+
   qMRMLSortFilterProxyModel::FilterType Filter;
 };
 
@@ -126,7 +127,7 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
                                               const QVariant& attributeValue)
 {
   Q_D(qMRMLSortFilterProxyModel);
-  if (!d->NodeTypes.contains(nodeType) ||
+  if (!d->NodeTypes.contains(nodeType) || //
       (d->Attributes.value(nodeType).first == attributeName &&
        d->Attributes.value(nodeType).second == attributeValue))
   {
@@ -142,7 +143,7 @@ void qMRMLSortFilterProxyModel::removeAttribute(const QString& nodeType,
                                               const QString& attributeName)
 {
   Q_D(qMRMLSortFilterProxyModel);
-  if (!d->NodeTypes.contains(nodeType) ||
+  if (!d->NodeTypes.contains(nodeType) || //
       d->Attributes.value(nodeType).first != attributeName)
   {
     return;
@@ -196,8 +197,8 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     acceptRow = this->QSortFilterProxyModel::filterAcceptsRow(source_row,
                                                               source_parent);
   }
-  if (node &&
-      sceneModel->listenNodeModifiedEvent() == qMRMLSceneModel::OnlyVisibleNodes &&
+  if (node &&                                                                       //
+      sceneModel->listenNodeModifiedEvent() == qMRMLSceneModel::OnlyVisibleNodes && //
       accept != Reject)
   {
     sceneModel->observeNode(node);

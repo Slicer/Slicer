@@ -182,7 +182,7 @@ void qSlicerSettingsStylesPanelPrivate::populateStyles()
 // --------------------------------------------------------------------------
 QStringList qSlicerSettingsStylesPanelPrivate::qtStyles()
 {
-  return QStringList()
+  return QStringList() //
       << "Windows"
       << "WindowsCE"
       << "WindowsXP"

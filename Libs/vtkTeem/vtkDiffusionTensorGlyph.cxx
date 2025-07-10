@@ -304,8 +304,8 @@ int vtkDiffusionTensorGlyph::RequestData(
   pd = this->GetSource()->GetPointData();
 
   // generate scalars if eigenvalues are chosen or if scalars exist.
-  if (this->ColorGlyphs &&
-      ((this->ColorMode == COLOR_BY_EIGENVALUES) ||
+  if (this->ColorGlyphs && //
+      ((this->ColorMode == COLOR_BY_EIGENVALUES) || //
        (inScalars && (this->ColorMode == COLOR_BY_SCALARS)) ) )
   {
     newScalars = vtkFloatArray::New();

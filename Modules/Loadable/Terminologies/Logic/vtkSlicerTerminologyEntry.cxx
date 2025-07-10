@@ -82,13 +82,13 @@ void vtkSlicerTerminologyEntry::Initialize()
 //----------------------------------------------------------------------------
 bool vtkSlicerTerminologyEntry::IsValid()
 {
-  if (this->CategoryObject == nullptr || this->CategoryObject->GetCodeMeaning() == nullptr
-    || this->CategoryObject->GetCodingSchemeDesignator() == nullptr || this->CategoryObject->GetCodeValue() == nullptr )
+  if (this->CategoryObject == nullptr || this->CategoryObject->GetCodeMeaning() == nullptr //
+      || this->CategoryObject->GetCodingSchemeDesignator() == nullptr || this->CategoryObject->GetCodeValue() == nullptr )
   {
     return false;
   }
-  if (this->TypeObject == nullptr || this->TypeObject->GetCodeMeaning() == nullptr
-    || this->TypeObject->GetCodingSchemeDesignator() == nullptr || this->TypeObject->GetCodeValue() == nullptr )
+  if (this->TypeObject == nullptr || this->TypeObject->GetCodeMeaning() == nullptr //
+      || this->TypeObject->GetCodingSchemeDesignator() == nullptr || this->TypeObject->GetCodeValue() == nullptr )
   {
     return false;
   }
@@ -193,8 +193,8 @@ void vtkSlicerTerminologyEntry::Copy(vtkSlicerTerminologyEntry* aEntry)
     return;
   }
 
-  if (!aEntry->GetCategoryObject() || !aEntry->GetTypeObject() || !aEntry->GetTypeModifierObject()
-    || !aEntry->GetRegionObject() || !aEntry->GetRegionModifierObject() )
+  if (!aEntry->GetCategoryObject() || !aEntry->GetTypeObject() || !aEntry->GetTypeModifierObject() //
+      || !aEntry->GetRegionObject() || !aEntry->GetRegionModifierObject() )
   {
     vtkErrorMacro("Copy: Invalid terminology entry given");
     // Invalidate whole terminology entry

@@ -223,11 +223,11 @@ QSize qMRMLTreeViewPrivate::sizeHint() const
     ++visibleIndexCount;
   }
   this->TreeViewSizeHint = q->QTreeView::sizeHint();
-  this->TreeViewSizeHint.setHeight(
-    q->frameWidth()
-    + (q->isHeaderHidden() ? 0 : q->header()->sizeHint().height())
-    + visibleIndexCount * q->sizeHintForRow(0)
-    + (q->horizontalScrollBar()->isVisibleTo(const_cast<qMRMLTreeView*>(q)) ? q->horizontalScrollBar()->height() : 0)
+  this->TreeViewSizeHint.setHeight(                                                                                   //
+    q->frameWidth()                                                                                                   //
+    + (q->isHeaderHidden() ? 0 : q->header()->sizeHint().height())                                                    //
+    + visibleIndexCount * q->sizeHintForRow(0)                                                                        //
+    + (q->horizontalScrollBar()->isVisibleTo(const_cast<qMRMLTreeView*>(q)) ? q->horizontalScrollBar()->height() : 0) //
     + q->frameWidth());
   // Add half a line to give some space under the tree
   this->TreeViewSizeHint.rheight() += q->sizeHintForRow(0) / 2;
@@ -247,7 +247,7 @@ void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex& parentIndex)
   // some reference of the deleted node left dangling in the qMRMLSceneModel.
   // As a result, mrmlNodeFromIndex returns a reference to a non-existent node.
   // We do not need to save the tree hierarchy in such cases.
-  if (!parentNode ||
+  if (!parentNode || //
       !q->sortFilterProxyModel()->mrmlScene()->IsNodePresent(parentNode))
   {
     return;
@@ -272,9 +272,9 @@ void qMRMLTreeViewPrivate::scrollTo(const QString& name, bool next)
   Q_Q(qMRMLTreeView);
   this->LastScrollToName = name;
   QModelIndex startIndex = q->model()->index(0,0);
-  QModelIndexList matchingModels = q->model()->match(
-    startIndex,
-    Qt::DisplayRole, name, -1,
+  QModelIndexList matchingModels = q->model()->match( //
+    startIndex,                                       //
+    Qt::DisplayRole, name, -1,                        //
     Qt::MatchContains|Qt::MatchWrap|Qt::MatchRecursive);
   if (!matchingModels.size())
   {
@@ -656,10 +656,9 @@ vtkMRMLNode* qMRMLTreeView::rootNode() const
   Q_D(const qMRMLTreeView);
   vtkMRMLNode* treeRootNode =
     this->sortFilterProxyModel()->mrmlNodeFromIndex(this->rootIndex());
-  if (d->ShowRootNode &&
-      this->mrmlScene() &&
-      this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID()
-        .isEmpty())
+  if (d->ShowRootNode      //
+      && this->mrmlScene() //
+      && this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID().isEmpty())
   {
     return this->mrmlScene()->GetNodeByID(
       this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID().toUtf8());
@@ -999,8 +998,8 @@ void qMRMLTreeView::showEvent(QShowEvent* event)
 {
   Q_D(qMRMLTreeView);
   this->Superclass::showEvent(event);
-  if (d->FitSizeToVisibleIndexes &&
-      !d->TreeViewSizeHint.isValid())
+  if (d->FitSizeToVisibleIndexes //
+      && !d->TreeViewSizeHint.isValid())
   {
     this->updateGeometry();
   }
@@ -1013,10 +1012,9 @@ bool qMRMLTreeView::eventFilter(QObject* object, QEvent* e)
   bool res = this->QTreeView::eventFilter(object, e);
   // When the horizontal scroll bar is shown/hidden, the sizehint should be
   // updated ?
-  if (d->FitSizeToVisibleIndexes &&
-      object == this->horizontalScrollBar() &&
-      (e->type() == QEvent::Show ||
-       e->type() == QEvent::Hide))
+  if (d->FitSizeToVisibleIndexes               //
+      && object == this->horizontalScrollBar() //
+      && (e->type() == QEvent::Show || e->type() == QEvent::Hide))
   {
     d->recomputeSizeHint();
   }

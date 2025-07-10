@@ -64,9 +64,11 @@ qMRMLSpinBoxPrivate::qMRMLSpinBoxPrivate(qMRMLSpinBox& object)
   this->Quantity = "";
   this->MRMLScene = nullptr;
   this->SelectionNode = nullptr;
-  this->Flags = qMRMLSpinBox::Prefix | qMRMLSpinBox::Suffix
-    | qMRMLSpinBox::Precision
-    | qMRMLSpinBox::MinimumValue | qMRMLSpinBox::MaximumValue;
+  this->Flags = qMRMLSpinBox::Prefix         //
+                | qMRMLSpinBox::Suffix       //
+                | qMRMLSpinBox::Precision    //
+                | qMRMLSpinBox::MinimumValue //
+                | qMRMLSpinBox::MaximumValue;
   this->Proxy = new ctkLinearValueProxy();
 }
 

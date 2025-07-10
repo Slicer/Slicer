@@ -244,9 +244,9 @@ std::string vtkMRMLSequenceStorageNode::GetSequenceBaseName(const std::string& f
     recognizedExtensionIt != recognizedExtensions.end(); ++recognizedExtensionIt)
   {
     std::string recognizedExtensionLowercase = vtksys::SystemTools::LowerCase(*recognizedExtensionIt);
-    if (fileNameNameLowercase.length() > recognizedExtensionLowercase.length() &&
-      fileNameNameLowercase.compare(fileNameNameLowercase.length() - recognizedExtensionLowercase.length(),
-      recognizedExtensionLowercase.length(), recognizedExtensionLowercase) == 0)
+    if (fileNameNameLowercase.length() > recognizedExtensionLowercase.length() && //
+        fileNameNameLowercase.compare(fileNameNameLowercase.length() - recognizedExtensionLowercase.length(),
+        recognizedExtensionLowercase.length(), recognizedExtensionLowercase) == 0)
     {
       baseNodeName.erase(baseNodeName.size() - recognizedExtensionLowercase.length(), recognizedExtensionLowercase.length());
       break;

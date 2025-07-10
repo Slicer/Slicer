@@ -220,7 +220,7 @@ public:
     }
     bool operator()(const std::pair<vtkMTimeType, vtkMRMLCommandLineModuleNode*>& p)
     {
-      return (this->Node != nullptr && p.second == this->Node) ||
+      return (this->Node != nullptr && p.second == this->Node) || //
         (this->LastRequestUID != 0 && p.first == this->LastRequestUID);
     }
     vtkMRMLCommandLineModuleNode* Node;
@@ -572,8 +572,8 @@ vtkSlicerCLIModuleLogic
 
   if (tag == "image")
   {
-    if (commandType == CommandLineModule
-         || type == "dynamic-contrast-enhanced"
+    if (commandType == CommandLineModule        //
+         || type == "dynamic-contrast-enhanced" //
          || this->GetAllowInMemoryTransfer() == 0)
     {
       // If running an executable
@@ -856,7 +856,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
   node0.TakeReference(reinterpret_cast<vtkMRMLCommandLineModuleNode*>(clientdata));
 
   // Check to see if this node/task has been cancelled
-  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling ||
+  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelling || //
       node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)
   {
     node0->SetOutputText("", false);
@@ -950,8 +950,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
 
     for (pit = pbeginit; pit != pendit; ++pit)
     {
-      if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry"
-          || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table"
+      if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry"     //
+          || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table" //
           || (*pit).GetTag() == "measurement" || (*pit).GetTag() == "pointfile")
       {
         std::string id = (*pit).GetValue();
@@ -1092,7 +1092,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
       //std::cerr << nd->GetName() << " is " << nd->GetClassName() << std::endl;
 
       // Check if we can transfer the datatype using a direct memory transfer
-      if ((this->GetAllowInMemoryTransfer() == 0) ||
+      if ((this->GetAllowInMemoryTransfer() == 0) || //
           std::find(MemoryTransferPossible.begin(), MemoryTransferPossible.end(),
                     nd->GetClassName()) == MemoryTransferPossible.end())
       {
@@ -1228,7 +1228,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
         storableNode->StorableModified();
       }
     }
-    if (commandType == SharedObjectModule &&
+    if (commandType == SharedObjectModule && //
         sceneToMiniSceneMap.find(nd->GetID()) == sceneToMiniSceneMap.end())
     {
       // If the node is not in the mini-scene, then it means the filter will
@@ -1271,8 +1271,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
   std::vector<std::string> commandLineAsString;
 
   // Command to execute
-  if (node0->GetModuleDescription().GetLocation() != std::string("") &&
-      commandType == CommandLineModule &&
+  if (node0->GetModuleDescription().GetLocation() != std::string("") && //
+      commandType == CommandLineModule &&                               //
       node0->GetModuleDescription().GetLocation() != node0->GetModuleDescription().GetTarget())
   {
       vtkDebugMacro("Setting a location for a command line module: " << node0->GetModuleDescription().GetLocation() <<
@@ -1358,20 +1358,20 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
 
       if (hasFlag)
       {
-        if ((*pit).GetTag() != "boolean"
-            && (*pit).GetTag() != "file" && (*pit).GetTag() != "directory"
-            && (*pit).GetTag() != "string"
-            && (*pit).GetTag() != "integer-vector"
-            && (*pit).GetTag() != "float-vector"
-            && (*pit).GetTag() != "double-vector"
-            && (*pit).GetTag() != "string-vector"
-            && (*pit).GetTag() != "image"
-            && (*pit).GetTag() != "point"
-            && (*pit).GetTag() != "pointfile"
-            && (*pit).GetTag() != "region"
-            && (*pit).GetTag() != "transform"
-            && (*pit).GetTag() != "geometry"
-            && (*pit).GetTag() != "table"
+        if ((*pit).GetTag() != "boolean"                                   //
+            && (*pit).GetTag() != "file" && (*pit).GetTag() != "directory" //
+            && (*pit).GetTag() != "string"                                 //
+            && (*pit).GetTag() != "integer-vector"                         //
+            && (*pit).GetTag() != "float-vector"                           //
+            && (*pit).GetTag() != "double-vector"                          //
+            && (*pit).GetTag() != "string-vector"                          //
+            && (*pit).GetTag() != "image"                                  //
+            && (*pit).GetTag() != "point"                                  //
+            && (*pit).GetTag() != "pointfile"                              //
+            && (*pit).GetTag() != "region"                                 //
+            && (*pit).GetTag() != "transform"                              //
+            && (*pit).GetTag() != "geometry"                               //
+            && (*pit).GetTag() != "table"                                  //
             && (*pit).GetTag() != "measurement")
         {
           // simple parameter, write flag and value
@@ -1387,11 +1387,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
           }
           continue;
         }
-        if ((*pit).GetTag() == "file" || (*pit).GetTag() == "directory"
-            || (*pit).GetTag() == "string"
-            || (*pit).GetTag() == "integer-vector"
-            || (*pit).GetTag() == "float-vector"
-            || (*pit).GetTag() == "double-vector"
+        if ((*pit).GetTag() == "file" || (*pit).GetTag() == "directory" //
+            || (*pit).GetTag() == "string"                              //
+            || (*pit).GetTag() == "integer-vector"                      //
+            || (*pit).GetTag() == "float-vector"                        //
+            || (*pit).GetTag() == "double-vector"                       //
             || (*pit).GetTag() == "string-vector")
         {
           // Only write out the flag if value is not empty
@@ -1402,9 +1402,9 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
           }
           continue;
         }
-        if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry"
-            || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table"
-            || (*pit).GetTag() == "measurement"
+        if ((*pit).GetTag() == "image" || (*pit).GetTag() == "geometry"     //
+            || (*pit).GetTag() == "transform" || (*pit).GetTag() == "table" //
+            || (*pit).GetTag() == "measurement"                             //
             || (*pit).GetTag() == "pointfile")
         {
           std::string fname;
@@ -1557,7 +1557,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
               }
             }
 
-            if (numberOfSelectedRegions == 1
+            if (numberOfSelectedRegions == 1 //
                 || (*pit).GetMultiple() == "true")
             {
               for (int i = 0; i < regions->GetNumberOfROIs(); ++i)
@@ -1647,30 +1647,30 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
     // Most parameter types have a reasonable default. However,
     // parameters like image, geometry, file, and directory have no
     // defaults that are reasonable for index parameters
-    if ((*iit).second.GetTag() != "image"
-        && (*iit).second.GetTag() != "geometry"
-        && (*iit).second.GetTag() != "transform"
-        && (*iit).second.GetTag() != "table"
-        && (*iit).second.GetTag() != "measurement"
-        && (*iit).second.GetTag() != "file"
-        && (*iit).second.GetTag() != "directory"
-        && (*iit).second.GetTag() != "string"
-        && (*iit).second.GetTag() != "point"
-        && (*iit).second.GetTag() != "pointfile"
-        && (*iit).second.GetTag() != "region"
-        && (*iit).second.GetTag() != "integer-vector"
-        && (*iit).second.GetTag() != "float-vector"
-        && (*iit).second.GetTag() != "double-vector"
+    if ((*iit).second.GetTag() != "image"             //
+        && (*iit).second.GetTag() != "geometry"       //
+        && (*iit).second.GetTag() != "transform"      //
+        && (*iit).second.GetTag() != "table"          //
+        && (*iit).second.GetTag() != "measurement"    //
+        && (*iit).second.GetTag() != "file"           //
+        && (*iit).second.GetTag() != "directory"      //
+        && (*iit).second.GetTag() != "string"         //
+        && (*iit).second.GetTag() != "point"          //
+        && (*iit).second.GetTag() != "pointfile"      //
+        && (*iit).second.GetTag() != "region"         //
+        && (*iit).second.GetTag() != "integer-vector" //
+        && (*iit).second.GetTag() != "float-vector"   //
+        && (*iit).second.GetTag() != "double-vector"  //
         && (*iit).second.GetTag() != "string-vector")
     {
       commandLineAsString.push_back((*iit).second.GetValue());
     }
-    else if ((*iit).second.GetTag() == "file"
-             || (*iit).second.GetTag() == "directory"
-             || (*iit).second.GetTag() == "string"
-             || (*iit).second.GetTag() == "integer-vector"
-             || (*iit).second.GetTag() == "float-vector"
-             || (*iit).second.GetTag() == "double-vector"
+    else if ((*iit).second.GetTag() == "file"              //
+             || (*iit).second.GetTag() == "directory"      //
+             || (*iit).second.GetTag() == "string"         //
+             || (*iit).second.GetTag() == "integer-vector" //
+             || (*iit).second.GetTag() == "float-vector"   //
+             || (*iit).second.GetTag() == "double-vector"  //
              || (*iit).second.GetTag() == "string-vector")
     {
       if ((*iit).second.GetValue() != "")
@@ -1689,7 +1689,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
         return;
       }
     }
-    else if ((*iit).second.GetTag() == "point"
+    else if ((*iit).second.GetTag() == "point" //
              || (*iit).second.GetTag() == "region")
     {
       std::string errorText = "Fiducials and ROIs are not currently supported as index arguments to modules.";
@@ -2145,7 +2145,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
     node0->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled, false);
     this->GetApplicationLogic()->RequestModified( node0 );
   }
-  else if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled
+  else if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled //
            && node0->GetStatus() != vtkMRMLCommandLineModuleNode::CompletedWithErrors)
   {
     node0->SetStatus(vtkMRMLCommandLineModuleNode::Completing, false);
@@ -2408,7 +2408,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
   // This is a special case where no output is needed to be read. Usually
   // the CLI node is set to Completed when the Application Logic has finished
   // to process all the requests.
-  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Completing &&
+  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Completing && //
       this->Internal->GetLastRequest(node0) == 0)
   {
     node0->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
@@ -2558,7 +2558,7 @@ void vtkSlicerCLIModuleLogic::ProcessMRMLLogicsEvents(vtkObject* caller,
                                                       unsigned long event,
                                                       void* callData)
 {
-  if (caller->IsA("vtkSlicerApplicationLogic") &&
+  if (caller->IsA("vtkSlicerApplicationLogic") && //
       event == vtkSlicerApplicationLogic::RequestProcessedEvent)
   {
     vtkMTimeType uid = reinterpret_cast<vtkMTimeType>(callData);
@@ -2590,7 +2590,7 @@ void vtkSlicerCLIModuleLogic
   // Observe only the CLI of the logic.
   vtkMRMLCommandLineModuleNode* cliNode =
     vtkMRMLCommandLineModuleNode::SafeDownCast(node);
-  if (cliNode &&
+  if (cliNode && //
       cliNode->GetModuleTitle() ==
         this->Internal->DefaultModuleDescription.GetTitle())
   {
@@ -2603,7 +2603,7 @@ void vtkSlicerCLIModuleLogic
         vtkMTimeType requestTime = reinterpret_cast<vtkMTimeType>(callData);
         // Make sure the CLI node has its AutoRun flag enabled and its mode is
         // valid.
-        bool autoRun = cliNode->GetAutoRun() &&
+        bool autoRun = cliNode->GetAutoRun() && //
           cliNode->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunEnabledMask;
         // 0 is a special value that means the autorun request has just been
         // triggered, therefore the logic should wait to see if other requests

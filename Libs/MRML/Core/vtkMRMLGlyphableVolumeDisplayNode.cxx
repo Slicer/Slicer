@@ -222,7 +222,7 @@ void vtkMRMLGlyphableVolumeDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLColorNode* cnode = this->GetGlyphColorNode();
-  if (cnode != nullptr && cnode == vtkMRMLColorNode::SafeDownCast(caller) &&
+  if (cnode != nullptr && cnode == vtkMRMLColorNode::SafeDownCast(caller) && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);

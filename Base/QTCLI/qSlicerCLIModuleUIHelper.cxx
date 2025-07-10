@@ -584,7 +584,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleP
     // Add all of the other concrete volume node types
     // TODO: it would be nicer to iterate through all the registered node classes in the scene
     // and add all nodes that are derived from vtkMRMLVolumeNode.
-    widget->setNodeTypes(QStringList()
+    widget->setNodeTypes(QStringList() //
       << "vtkMRMLMarkupsFiducialNode"
       << "vtkMRMLMarkupsLineNode"
       << "vtkMRMLMarkupsCurveNode"
@@ -600,7 +600,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleP
 
   // If "type" is specified, only display nodes of type nodeType
   // and don't display subclasses
-  if (!type.isEmpty() &&
+  if (!type.isEmpty() && //
       type != "any")
   {
     widget->setShowChildNodeTypes(false);
@@ -669,7 +669,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
     // Add all of the other concrete volume node types
     // TODO: it would be nicer to iterate through all the registered node classes in the scene
     // and add all nodes that are derived from vtkMRMLVolumeNode.
-    widget->setNodeTypes(QStringList()
+    widget->setNodeTypes(QStringList() //
       << "vtkMRMLScalarVolumeNode"
       << "vtkMRMLLabelMapVolumeNode" << "vtkMRMLSegmentationNode"
       << "vtkMRMLVectorVolumeNode"
@@ -680,7 +680,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   else if (type == "scalar")
   {
     // TODO: it would be nicer to be able to set multiple node types in Self::nodeTypeFromMap
-    widget->setNodeTypes(QStringList()
+    widget->setNodeTypes(QStringList() //
       << "vtkMRMLScalarVolumeNode"
       << "vtkMRMLLabelMapVolumeNode"
       );
@@ -716,7 +716,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   // If "type" is specified, only display nodes of type nodeType
   // (e.g. vtkMRMLScalarVolumeNode), don't display subclasses
   // (e.g. vtkMRMLDiffusionTensorVolumeNode)
-  if (!type.isEmpty() &&
+  if (!type.isEmpty() && //
       type != "any")
   {
     widget->setShowChildNodeTypes(false);
@@ -883,7 +883,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
   {
     // When any kind of transform can be added, allow creating
     // any kind of transform node types.
-    widget->setNodeTypes(QStringList()
+    widget->setNodeTypes(QStringList() //
       << "vtkMRMLTransformNode"
       << "vtkMRMLLinearTransformNode"
       << "vtkMRMLGridTransformNode"
@@ -1064,10 +1064,10 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
   {
     widget = d->createDoubleTagWidget(moduleParameter);
   }
-  else if (moduleParameter.GetTag() == "string" ||
-           moduleParameter.GetTag() == "integer-vector" ||
-           moduleParameter.GetTag() == "float-vector" ||
-           moduleParameter.GetTag() == "double-vector" ||
+  else if (moduleParameter.GetTag() == "string" || //
+           moduleParameter.GetTag() == "integer-vector" || //
+           moduleParameter.GetTag() == "float-vector" || //
+           moduleParameter.GetTag() == "double-vector" || //
            moduleParameter.GetTag() == "string-vector")
   {
     widget = d->createStringTagWidget(moduleParameter);
@@ -1112,9 +1112,9 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
   {
     widget = d->createFileTagWidget(moduleParameter);
   }
-  else if (moduleParameter.GetTag() == "string-enumeration" ||
-          moduleParameter.GetTag() == "integer-enumeration" ||
-          moduleParameter.GetTag() == "float-enumeration" ||
+  else if (moduleParameter.GetTag() == "string-enumeration" || //
+          moduleParameter.GetTag() == "integer-enumeration" || //
+          moduleParameter.GetTag() == "float-enumeration" || //
           moduleParameter.GetTag() == "double-enumeration")
   {
     widget = d->createEnumerationTagWidget(moduleParameter);

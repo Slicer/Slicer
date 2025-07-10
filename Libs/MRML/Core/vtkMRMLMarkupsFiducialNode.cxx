@@ -93,8 +93,8 @@ void vtkMRMLMarkupsFiducialNode::PrintSelf(ostream& os, vtkIndent indent)
 //-------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
 {
-  if (this->GetDisplayNode() != nullptr &&
-    vtkMRMLMarkupsDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
+  if (this->GetDisplayNode() != nullptr && //
+      vtkMRMLMarkupsDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
   {
     // display node already exists
     return;

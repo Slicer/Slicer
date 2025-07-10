@@ -487,9 +487,9 @@ std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const 
     this->RemoveAllSequenceNodes();
     return "";
   }
-  if (this->GetMasterSequenceNode()
-    && this->GetMasterSequenceNode()->GetID()
-    && strcmp(this->GetMasterSequenceNode()->GetID(), sequenceNodeID) == 0)
+  if (this->GetMasterSequenceNode() //
+      && this->GetMasterSequenceNode()->GetID() //
+      && strcmp(this->GetMasterSequenceNode()->GetID(), sequenceNodeID) == 0)
   {
     // no change
     if (!this->SynchronizationPostfixes.empty())
@@ -972,8 +972,8 @@ void vtkMRMLSequenceBrowserNode::SetRecordingActive(bool recording)
   // Before activating the recording, set the initial timestamp to be correct
   this->RecordingTimeOffsetSec = vtkTimerLog::GetUniversalTime();
   int numberOfItems = this->GetNumberOfItems();
-  if (numberOfItems>0
-    && this->GetMasterSequenceNode()->GetIndexType()==vtkMRMLSequenceNode::NumericIndex)
+  if (numberOfItems > 0 //
+      && this->GetMasterSequenceNode()->GetIndexType()==vtkMRMLSequenceNode::NumericIndex)
   {
     std::stringstream timeString;
     timeString << this->GetMasterSequenceNode()->GetNthIndexValue(numberOfItems - 1);

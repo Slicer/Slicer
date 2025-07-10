@@ -68,22 +68,22 @@ bool testAutoRemoveModelFirst()
 
   // vtkSlicerDataModuleLogic should have remove the storage and display
   // nodes from the scene: no zombie.
-  if (scene->IsNodePresent(displayNode1.GetPointer()) ||
-      scene->IsNodePresent(displayNode2.GetPointer()) ||
-      scene->IsNodePresent(storageNode.GetPointer()) ||
-      displayNode1->GetScene() != nullptr ||
-      displayNode2->GetScene() != nullptr ||
+  if (scene->IsNodePresent(displayNode1.GetPointer()) || //
+      scene->IsNodePresent(displayNode2.GetPointer()) || //
+      scene->IsNodePresent(storageNode.GetPointer()) || //
+      displayNode1->GetScene() != nullptr || //
+      displayNode2->GetScene() != nullptr || //
       storageNode->GetScene() != nullptr)
   {
-    std::cout << __LINE__ << ": testAutoRemove() failed"
-              << "Display 1: " << scene->IsNodePresent(
-                displayNode1.GetPointer())
-              << " " << displayNode1->GetScene() << std::endl
-              << "Display 2: " << scene->IsNodePresent(
-                displayNode2.GetPointer())
-              << " " << displayNode2->GetScene() << std::endl
-              << "Storage: " << scene->IsNodePresent(
-                storageNode.GetPointer())
+    std::cout << __LINE__ << ": testAutoRemove() failed" //
+              << "Display 1: " << scene->IsNodePresent( //
+                displayNode1.GetPointer()) //
+              << " " << displayNode1->GetScene() << std::endl //
+              << "Display 2: " << scene->IsNodePresent( //
+                displayNode2.GetPointer()) //
+              << " " << displayNode2->GetScene() << std::endl //
+              << "Storage: " << scene->IsNodePresent( //
+                storageNode.GetPointer()) //
               << " " << storageNode->GetScene() << std::endl;
     return false;
   }
@@ -122,22 +122,22 @@ bool testAutoRemoveDisplayFirst()
 
   // vtkSlicerDataModuleLogic should have remove the storage and display
   // nodes from the scene: no zombie.
-  if (scene->IsNodePresent(displayNode1.GetPointer()) ||
-      scene->IsNodePresent(displayNode2.GetPointer()) ||
-      scene->IsNodePresent(storageNode.GetPointer()) ||
-      displayNode1->GetScene() != nullptr ||
-      displayNode2->GetScene() != nullptr ||
+  if (scene->IsNodePresent(displayNode1.GetPointer()) || //
+      scene->IsNodePresent(displayNode2.GetPointer()) || //
+      scene->IsNodePresent(storageNode.GetPointer()) || //
+      displayNode1->GetScene() != nullptr || //
+      displayNode2->GetScene() != nullptr || //
       storageNode->GetScene() != nullptr)
   {
-    std::cout << __LINE__ << ": testAutoRemove() failed"
-              << "Display 1: " << scene->IsNodePresent(
-                displayNode1.GetPointer())
-              << " " << displayNode1->GetScene() << std::endl
-              << "Display 2: " << scene->IsNodePresent(
-                displayNode2.GetPointer())
-              << " " << displayNode2->GetScene() << std::endl
-              << "Storage: " << scene->IsNodePresent(
-                storageNode.GetPointer())
+    std::cout << __LINE__ << ": testAutoRemove() failed" //
+              << "Display 1: " << scene->IsNodePresent( //
+                displayNode1.GetPointer()) //
+              << " " << displayNode1->GetScene() << std::endl //
+              << "Display 2: " << scene->IsNodePresent( //
+                displayNode2.GetPointer()) //
+              << " " << displayNode2->GetScene() << std::endl //
+              << "Storage: " << scene->IsNodePresent( //
+                storageNode.GetPointer()) //
               << " " << storageNode->GetScene() << std::endl;
     return false;
   }

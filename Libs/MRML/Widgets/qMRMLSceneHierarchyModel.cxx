@@ -272,16 +272,16 @@ bool qMRMLSceneHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
   // mrml node (under it's hierarchy)
   if (hierarchyNode)
   {
-    if (!hierarchyParentNode &&
-        mrmlParentNode &&
-        mrmlParentNode->GetScene() &&
+    if (!hierarchyParentNode && //
+        mrmlParentNode && //
+        mrmlParentNode->GetScene() && //
         mrmlParentNode->GetID())
     {
       // get it's hierarchy node
       hierarchyParentNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(mrmlParentNode->GetScene(), mrmlParentNode->GetID());
     }
     // else use the safe down cast of the parent node
-    if (hierarchyParentNode &&
+    if (hierarchyParentNode && //
         hierarchyParentNode->GetID())
     {
       hierarchyNode->SetParentNodeID(hierarchyParentNode->GetID());
@@ -297,7 +297,7 @@ bool qMRMLSceneHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
   // hierarchy node.
   else if (mrmlNode)
   {
-    if (mrmlNode->GetScene() &&
+    if (mrmlNode->GetScene() && //
         mrmlNode->GetID())
     {
       hierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(mrmlNode->GetScene(), mrmlNode->GetID());
@@ -305,7 +305,7 @@ bool qMRMLSceneHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
       // (hierarchy node types need to match within a hierarchy to avoid "mixing" of hierarchies of different type)
       // Note: This may need to be revised if mixing across classes is to be allowed (e.g. displayable and model,
       //   in which case base classes might be allowed as well)
-      if (!hierarchyNode ||
+      if (!hierarchyNode || //
           (newParent && strcmp(newParent->GetClassName(), hierarchyNode->GetClassName())))
       {
         vtkMRMLHierarchyNode* newHierarchyNode = d->CreateHierarchyNode();
@@ -363,8 +363,8 @@ QFlags<Qt::ItemFlag> qMRMLSceneHierarchyModel::nodeFlags(vtkMRMLNode* node, int 
   {
     return flags;
   }
-  if ((hierarchyNode->GetAssociatedNode() ||
-       (!hierarchyNode->GetAllowMultipleChildren() &&
+  if ((hierarchyNode->GetAssociatedNode() || //
+       (!hierarchyNode->GetAllowMultipleChildren() && //
         hierarchyNode->GetNumberOfChildrenNodes() > 0)))
   {
     flags &= ~Qt::ItemIsDropEnabled;

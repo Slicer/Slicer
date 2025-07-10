@@ -87,7 +87,7 @@ qSlicerIO::IOFileType qSlicerMarkupsReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerMarkupsReader::extensions() const
 {
-  return QStringList()
+  return QStringList() //
          << tr("Markups") + " (*.mrk.json)"
          << tr("Markups") + " (*.json)"
          << tr("Markups Fiducials") + " (*.fcsv)";

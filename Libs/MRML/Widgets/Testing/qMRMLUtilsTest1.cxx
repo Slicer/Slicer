@@ -49,8 +49,8 @@ int qMRMLUtilsTest1(int argc, char* argv[])
   qMRMLUtils::colorToQColor(nullptr, qcolor1);
   qMRMLUtils::qColorToColor(qcolor1, nullptr);
   qMRMLUtils::colorToQColor(color1, qcolor2);
-  if (fabs(qcolor2.redF() - 0.0) > 0.01 ||
-      fabs(qcolor2.greenF() - 1.0) > 0.01 ||
+  if (fabs(qcolor2.redF() - 0.0) > 0.01 || //
+      fabs(qcolor2.greenF() - 1.0) > 0.01 || //
       fabs(qcolor2.blueF() - 0.5) > 0.01)
   {
     qDebug() << QString("colorToQColor, expected 0.0, 1.0, 0.5, but got ")
@@ -60,8 +60,8 @@ int qMRMLUtilsTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
   qMRMLUtils::qColorToColor(qcolor1, color2);
-  if (fabs(color2[0] - 1.0) > 0.01 ||
-      fabs(color2[1] - 0.5) > 0.01 ||
+  if (fabs(color2[0] - 1.0) > 0.01 || //
+      fabs(color2[1] - 0.5) > 0.01 || //
       fabs(color2[2] - 0.0) > 0.01)
   {
     qDebug() << QString("Failed: qColorToColor, expected 1.0, 0.5, 0.0 but got ")

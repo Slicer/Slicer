@@ -218,11 +218,11 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
     int stopIndex = numPoints - 1;
     if (controlPointType == Active)
     {
-      if (activeControlPointIndex >= 0 && activeControlPointIndex < numPoints &&
-          markupsNode->GetNthControlPointPositionVisibility(activeControlPointIndex) &&
-          markupsNode->GetNthControlPointPositionVisibility(activeControlPointIndex) &&
-          ((this->PointsVisibilityOnSlice->GetValue(activeControlPointIndex) &&
-           !this->MarkupsDisplayNode->GetSliceProjection()) ||
+      if (activeControlPointIndex >= 0 && activeControlPointIndex < numPoints && //
+          markupsNode->GetNthControlPointPositionVisibility(activeControlPointIndex) && //
+          markupsNode->GetNthControlPointPositionVisibility(activeControlPointIndex) && //
+          ((this->PointsVisibilityOnSlice->GetValue(activeControlPointIndex) && //
+           !this->MarkupsDisplayNode->GetSliceProjection()) || //
             this->MarkupsDisplayNode->GetSliceProjection())  )
       {
         startIndex = activeControlPointIndex;
@@ -236,13 +236,13 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
       }
     }
 
-    if (controlPointType >= Project &&
+    if (controlPointType >= Project && //
         !this->MarkupsDisplayNode->GetSliceProjection())
     {
       continue;
     }
 
-    if (controlPointType == ProjectBack &&
+    if (controlPointType == ProjectBack && //
         !this->MarkupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane())
     {
       continue;
@@ -251,22 +251,22 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
     for (int pointIndex = startIndex; pointIndex <= stopIndex; pointIndex++)
     {
       if (!(markupsNode->GetNthControlPointPositionVisibility(pointIndex)
-        && markupsNode->GetNthControlPointVisibility(pointIndex)) ||
-          (controlPointType < Active &&
-           !this->PointsVisibilityOnSlice->GetValue(pointIndex)) ||
-          (controlPointType > Active &&
+        && markupsNode->GetNthControlPointVisibility(pointIndex)) || //
+          (controlPointType < Active && //
+           !this->PointsVisibilityOnSlice->GetValue(pointIndex)) || //
+          (controlPointType > Active && //
            this->PointsVisibilityOnSlice->GetValue(pointIndex)))
       {
         continue;
       }
-      if (controlPointType == Project &&
-          this->MarkupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane() &&
+      if (controlPointType == Project && //
+          this->MarkupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane() && //
           !this->IsPointInFrontSlice(markupsNode, pointIndex))
       {
         continue;
       }
-      if (controlPointType == ProjectBack &&
-          this->MarkupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane() &&
+      if (controlPointType == ProjectBack && //
+          this->MarkupsDisplayNode->GetSliceProjectionOutlinedBehindSlicePlane() && //
           !this->IsPointBehindSlice(markupsNode, pointIndex))
       {
         continue;
@@ -323,7 +323,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
     {
       controlPoints->Actor->VisibilityOn();
       // For backward compatibility, we hide labels if text scale is set to 0.
-      controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
+      controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility() //
         && this->MarkupsDisplayNode->GetTextScale() > 0.0);
     }
   }
@@ -393,7 +393,7 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::GetNthControlPointViewVisibility(in
   {
     return false;
   }
-  if (!(markupsNode->GetNthControlPointPositionVisibility(n)
+  if (!(markupsNode->GetNthControlPointPositionVisibility(n) //
     && (markupsNode->GetNthControlPointVisibility(n))))
   {
     return false;
@@ -493,7 +493,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode*
   {
     ControlPointsPipeline2D* controlPoints = reinterpret_cast<ControlPointsPipeline2D*>(this->ControlPoints[controlPointType]);
     // For backward compatibility, we hide labels if text scale is set to 0.
-    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
+    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility() //
       && this->MarkupsDisplayNode->GetTextScale() > 0.0);
     controlPoints->Glypher->SetScaleFactor(this->ControlPointSize);
   }
@@ -581,7 +581,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::CanInteractWithLine(
 
   vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if (!sliceNode || !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1 //
     || !this->GetVisibility() || !interactionEventData )
   {
     return;
@@ -1039,8 +1039,8 @@ bool vtkSlicerMarkupsWidgetRepresentation2D::GetAllControlPointsVisible()
 
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
   {
-    if (!this->PointsVisibilityOnSlice->GetValue(controlPointIndex) ||
-      !(markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
+    if (!this->PointsVisibilityOnSlice->GetValue(controlPointIndex) || //
+      !(markupsNode->GetNthControlPointPositionVisibility(controlPointIndex) //
         && (markupsNode->GetNthControlPointVisibility(controlPointIndex))))
     {
       return false;

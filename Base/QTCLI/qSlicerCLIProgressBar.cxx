@@ -178,10 +178,11 @@ bool qSlicerCLIProgressBarPrivate
   }
   if (visibility == qSlicerCLIProgressBar::VisibleAfterCompletion)
   {
-    return this->CommandLineModuleNode ?
-      (this->CommandLineModuleNode->IsBusy() ||
-       this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::Completed ||
-       this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors) : false;
+    return this->CommandLineModuleNode ?                                                             //
+             (this->CommandLineModuleNode->IsBusy() ||                                               //
+              this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::Completed || //
+              this->CommandLineModuleNode->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors)
+                                       : false;
   }
   return true;
 }
@@ -407,19 +408,19 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
 
   // If user chose to show details then all
   std::string errorText = node->GetErrorText();
-  bool showDetails = (d->DetailsTextExpandButton->isChecked()
-    || (node->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors
-    && !errorText.empty()));
+  bool showDetails = (d->DetailsTextExpandButton->isChecked()                                    //
+                      || (node->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors //
+                          && !errorText.empty()));
   d->DetailsTextBrowser->setVisible(showDetails);
 
   // While the module is running, avoid too frequent updates of the process output
   // as long output can cause slowdowns.
   const double minRefreshTimeMsec = 3000.0;
-  bool updateDetails = showDetails
-    && (
-      (node->GetStatus() != vtkMRMLCommandLineModuleNode::Running)
-      ||
-      (!d->DetailsLastUpdateTime.isValid() || d->DetailsLastUpdateTime.elapsed() > minRefreshTimeMsec));
+  bool updateDetails = showDetails                                                    //
+                       && (                                                           //
+                         (node->GetStatus() != vtkMRMLCommandLineModuleNode::Running) //
+                         ||                                                           //
+                         (!d->DetailsLastUpdateTime.isValid() || d->DetailsLastUpdateTime.elapsed() > minRefreshTimeMsec));
 
   if (showDetails && updateDetails)
   {

@@ -173,9 +173,9 @@ bool vtkMRMLCrosshairDisplayableManager::vtkInternal::HasCrosshairPositionChange
   double* ras = this->CrosshairNode->GetCrosshairRAS();
   double* lastRas = this->CrosshairPosition;
   double eps = 1.0e-12;
-  if (fabs(lastRas[0] - ras[0]) > eps
-    || fabs(lastRas[1] - ras[1]) > eps
-    || fabs(lastRas[2] - ras[2]) > eps)
+  if (fabs(lastRas[0] - ras[0]) > eps    //
+      || fabs(lastRas[1] - ras[1]) > eps //
+      || fabs(lastRas[2] - ras[2]) > eps)
   {
     return true;
   }
@@ -193,10 +193,10 @@ bool vtkMRMLCrosshairDisplayableManager::vtkInternal::HasCrosshairPropertyChange
     return false;
   }
 
-  if (this->CrosshairMode != this->CrosshairNode->GetCrosshairMode()
-      || this->CrosshairThickness != this->CrosshairNode->GetCrosshairThickness()
-      || this->CrosshairColor[0] != this->CrosshairNode->GetCrosshairColor()[0]
-      || this->CrosshairColor[1] != this->CrosshairNode->GetCrosshairColor()[1]
+  if (this->CrosshairMode != this->CrosshairNode->GetCrosshairMode()              //
+      || this->CrosshairThickness != this->CrosshairNode->GetCrosshairThickness() //
+      || this->CrosshairColor[0] != this->CrosshairNode->GetCrosshairColor()[0]   //
+      || this->CrosshairColor[1] != this->CrosshairNode->GetCrosshairColor()[1]   //
       || this->CrosshairColor[2] != this->CrosshairNode->GetCrosshairColor()[2])
   {
     return true;
@@ -275,8 +275,7 @@ vtkMRMLCrosshairNode* vtkMRMLCrosshairDisplayableManager::FindCrosshairNode(vtkM
   {
     vtkMRMLCrosshairNode* crosshairNode =
       vtkMRMLCrosshairNode::SafeDownCast(node);
-    if (crosshairNode
-        && crosshairNode->GetCrosshairName() == std::string("default"))
+    if (crosshairNode && crosshairNode->GetCrosshairName() == std::string("default"))
     {
       return crosshairNode;
     }
@@ -491,7 +490,7 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(
   }
 
   // update the position of the actor
-  if ((this->Internal->HasCrosshairPositionChanged() || builtCrosshair)
+  if ((this->Internal->HasCrosshairPositionChanged() || builtCrosshair) //
       && this->Internal->Actor)
   {
     double xyz[3];

@@ -68,7 +68,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  if (threeDViewFactory->GetRegisteredDisplayableManagerName(-1) != "" ||
+  if (threeDViewFactory->GetRegisteredDisplayableManagerName(-1) != "" || //
       threeDViewFactory->GetRegisteredDisplayableManagerName(0) != "")
   {
     std::cerr << "Line " << __LINE__
@@ -83,7 +83,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   slicerViewFactory->RegisterDisplayableManager("vtkMRMLTestSliceViewDisplayableManager");
   slicerViewFactory->RegisterDisplayableManager("vtkMRMLTestCustomDisplayableManager");
 
-  if (threeDViewFactory->GetRegisteredDisplayableManagerName(0) != "vtkMRMLTestThreeDViewDisplayableManager" ||
+  if (threeDViewFactory->GetRegisteredDisplayableManagerName(0) != "vtkMRMLTestThreeDViewDisplayableManager" || //
       threeDViewFactory->GetRegisteredDisplayableManagerName(1) != "vtkMRMLTestCustomDisplayableManager")
   {
     std::cerr << "Line " << __LINE__

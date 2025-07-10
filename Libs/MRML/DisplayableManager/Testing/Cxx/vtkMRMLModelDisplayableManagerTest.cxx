@@ -49,8 +49,8 @@
 // STD includes
 #include <string>
 
-const char vtkMRMLModelDisplayableManagerTest1EventLog[] =
-"# StreamVersion 1\n";
+const char vtkMRMLModelDisplayableManagerTest1EventLog[] = //
+  "# StreamVersion 1\n";
 
 //----------------------------------------------------------------------------
 int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])

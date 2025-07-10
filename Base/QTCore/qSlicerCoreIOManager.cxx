@@ -711,9 +711,9 @@ bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files
   foreach (qSlicerIO::IOProperties fileProperties, files)
   {
     int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
-    success = this->loadNodes(
-      static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
-      fileProperties, loadedNodes, userMessages)
+    success = this->loadNodes(                                                   //
+      static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()), //
+      fileProperties, loadedNodes, userMessages)                                 //
       && success;
     // Add a separator between nodes
     if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
@@ -902,7 +902,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     return false;
   }
 
-  if (nodes.count() == 0 &&
+  if (nodes.count() == 0 && //
       fileType != QString("SceneFile"))
   {
     // the writer did not report error
@@ -1095,7 +1095,7 @@ bool qSlicerCoreIOManager::exportNodes(
     }
 
       // Pick up any user messages that were saved to temporaryStorableNode's storage node
-      if (userMessages && temporaryStorableNode->GetStorageNode()
+      if (userMessages && temporaryStorableNode->GetStorageNode() //
           && temporaryStorableNode->GetStorageNode()->GetUserMessages())
       {
         userMessages->AddMessages(temporaryStorableNode->GetStorageNode()->GetUserMessages());

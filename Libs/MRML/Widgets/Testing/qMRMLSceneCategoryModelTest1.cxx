@@ -73,7 +73,7 @@ int qMRMLSceneCategoryModelTest1(int argc, char* argv[])
   model.setPreItems(scenePreItems, nullptr);
   model.setPreItems(scenePreItems, model.mrmlSceneItem());
 
-  if (model.itemFromCategory("Second Category") == nullptr ||
+  if (model.itemFromCategory("Second Category") == nullptr || //
       model.itemFromCategory("Second Category") == model.mrmlSceneItem())
   {
     std::cerr << "Wrong category. Item: "

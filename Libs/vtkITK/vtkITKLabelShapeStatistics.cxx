@@ -244,7 +244,7 @@ void vtkITKLabelShapeStatisticsExecute(vtkITKLabelShapeStatistics* self, vtkImag
   using LableShapeFilterType = itk::LabelImageToShapeLabelMapFilter<ImageType, LabelMapType>;
 
   bool computeFeretDiameter = self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::FeretDiameter));
-  bool computePerimeter = self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::Perimeter)) ||
+  bool computePerimeter = self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::Perimeter)) || //
     self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::Roundness));
   bool computeOrientedBoundingBox =
   self->GetComputeShapeStatistic(self->GetShapeStatisticAsString(vtkITKLabelShapeStatistics::ShapeStatistic::OrientedBoundingBox));

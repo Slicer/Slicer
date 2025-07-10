@@ -363,7 +363,7 @@ vtkIdType vtkSubjectHierarchyItem::AddToTree(vtkSubjectHierarchyItem* parent, st
     // Add to cache (DataNode is nullptr, so no need to add to node cache)
     vtkSubjectHierarchyItem::ItemCache[this->ID] = this;
   }
-  else if (! ( (!name.compare("Scene") && !level.compare("Scene"))
+  else if (! ( (!name.compare("Scene") && !level.compare("Scene")) //
             || (!name.compare("UnresolvedItems") && !level.compare("UnresolvedItems")) ) )
   {
     // Only the scene item or the unresolved items parent can have nullptr parent
@@ -1442,8 +1442,8 @@ std::string vtkSubjectHierarchyItem::GetAttributeFromAncestor(std::string attrib
     {
       break;
     }
-    else if (!level.empty()
-      && currentItem->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelAttributeName()).compare(level) )
+    else if (!level.empty() //
+             && currentItem->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelAttributeName()).compare(level))
     {
       continue;
     }
@@ -1472,8 +1472,8 @@ vtkSubjectHierarchyItem* vtkSubjectHierarchyItem::GetAncestorAtLevel(std::string
   while (currentItem && currentItem->Parent)
   {
     currentItem = currentItem->Parent;
-    if (currentItem
-      && !currentItem->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelAttributeName()).compare(level))
+    if (currentItem //
+        && !currentItem->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelAttributeName()).compare(level))
     {
       // Level found
       return currentItem;
@@ -1912,8 +1912,8 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarch
   {
     // Resolve unresolved items. There are unresolved items after importing or restoring a scene
     // (do not perform this consolidation operation while the scene is processing)
-    if (! ( scene->IsBatchProcessing() || scene->IsImporting() || scene->IsRestoring() || scene->IsClosing()
-          || firstShNode == nullptr || firstShNode->Internal->IsResolving )
+    if (! ( scene->IsBatchProcessing() || scene->IsImporting() || scene->IsRestoring() || scene->IsClosing() //
+          || firstShNode == nullptr || firstShNode->Internal->IsResolving ) //
       && !firstShNode->Internal->ResolveUnresolvedItems() )
     {
       // Remove invalid subject hierarchy node so that it can be rebuilt from scratch
@@ -1928,8 +1928,8 @@ vtkMRMLSubjectHierarchyNode* vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarch
   }
 
   // Do not perform merge operations while the scene is processing, simply return the first node
-  if (scene->IsBatchProcessing() || scene->IsImporting() || scene->IsClosing()
-    || firstShNode->Internal->IsResolving )
+  if (scene->IsBatchProcessing() || scene->IsImporting() || scene->IsClosing() //
+      || firstShNode->Internal->IsResolving)
   {
     return firstShNode;
   }
@@ -2186,8 +2186,8 @@ void vtkMRMLSubjectHierarchyNode::SetItemName(vtkIdType itemID, std::string name
   bool nameChanged = false;
   if (item->DataNode)
   {
-    if (!item->DataNode->GetName()
-      || (item->DataNode->GetName() && name.compare(item->DataNode->GetName())) )
+    if (!item->DataNode->GetName() //
+        || (item->DataNode->GetName() && name.compare(item->DataNode->GetName())))
     {
       item->Name = "";
       item->DataNode->SetName(name.c_str());
@@ -3380,9 +3380,9 @@ bool vtkMRMLSubjectHierarchyNode::IsAnyNodeInBranchTransformed(
   if (item->DataNode)
   {
     parentTransformableNode = vtkMRMLTransformableNode::SafeDownCast(item->DataNode);
-    if (parentTransformableNode && parentTransformableNode->GetParentTransformNode()
-      && parentTransformableNode->GetParentTransformNode() != exceptionNode
-      && includeParentItem )
+    if (parentTransformableNode && parentTransformableNode->GetParentTransformNode() //
+        && parentTransformableNode->GetParentTransformNode() != exceptionNode        //
+        && includeParentItem )
     {
       return true;
     }

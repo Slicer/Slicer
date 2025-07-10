@@ -150,8 +150,8 @@ int qMRMLSortFilterSubjectHierarchyProxyModelPrivate::findAttributeFilter(
   int index = 0;
   foreach (AttributeFilter filter, filterList)
   {
-    if (filter.AttributeName == attributeName && filter.AttributeValue == attributeValue
-      && filter.Include == include && filter.ClassName == className)
+    if (filter.AttributeName == attributeName && filter.AttributeValue == attributeValue //
+        && filter.Include == include && filter.ClassName == className)
     {
       return index;
     }

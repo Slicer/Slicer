@@ -89,7 +89,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   // Properties label display
   // Display if there is at least one control point (even if preview)
-  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
     && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
   {
     int controlPointIndex = 0;
@@ -132,7 +132,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
     }
 
     // For backward compatibility, we hide labels if text scale is set to 0.
-    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility()
+    controlPoints->LabelsActor->SetVisibility(this->MarkupsDisplayNode->GetPointLabelsVisibility() //
       && this->MarkupsDisplayNode->GetTextScale() > 0.0);
     controlPoints->GlyphMapper->SetScaleFactor(this->ControlPointSize);
 
@@ -158,14 +158,14 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
   this->LineOccludedActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->OccludedProperty);
-  this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode
-    && this->LineActor->GetVisibility()
+  this->LineOccludedActor->SetVisibility(this->MarkupsDisplayNode //
+    && this->LineActor->GetVisibility() //
     && this->MarkupsDisplayNode->GetOccludedVisibility());
 
   bool allNodesHidden = true;
   for (int controlPointIndex = 0; controlPointIndex < markupsNode->GetNumberOfControlPoints(); controlPointIndex++)
   {
-    if (markupsNode->GetNthControlPointPositionVisibility(controlPointIndex)
+    if (markupsNode->GetNthControlPointPositionVisibility(controlPointIndex) //
       && (markupsNode->GetNthControlPointVisibility(controlPointIndex)))
     {
       allNodesHidden = false;
@@ -358,7 +358,7 @@ void vtkSlicerCurveRepresentation3D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1 //
     || !interactionEventData )
   {
     return;
@@ -413,8 +413,8 @@ void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
   vtkMRMLInteractionEventData* interactionEventData,
   int& foundComponentType, int& componentIndex, double& closestDistance2)
 {
-  if (!this->MarkupsNode || this->MarkupsNode->GetLocked()
-    || this->MarkupsNode->GetNumberOfControlPoints() < 2
+  if (!this->MarkupsNode || this->MarkupsNode->GetLocked() //
+    || this->MarkupsNode->GetNumberOfControlPoints() < 2 //
     || !this->GetVisibility() || !interactionEventData)
   {
     return;

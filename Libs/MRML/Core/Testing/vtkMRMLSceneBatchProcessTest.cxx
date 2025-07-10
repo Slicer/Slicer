@@ -57,7 +57,7 @@ int vtkMRMLSceneBatchProcessTest(
   // 1) StartBatchProcessEvent
   scene->StartState(vtkMRMLScene::BatchProcessState);
 
-  if (callback->CalledEvents.size() != 1 ||
+  if (callback->CalledEvents.size() != 1 || //
       callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1)
   {
     std::cerr << "Wrong fired events: "
@@ -73,7 +73,7 @@ int vtkMRMLSceneBatchProcessTest(
   // 1) EndBatchProcessEvent
   scene->EndState(vtkMRMLScene::BatchProcessState);
 
-  if (callback->CalledEvents.size() != 1 ||
+  if (callback->CalledEvents.size() != 1 || //
       callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1)
   {
     std::cerr << "Wrong fired events: "
@@ -92,8 +92,8 @@ int vtkMRMLSceneBatchProcessTest(
   scene->StartState(vtkMRMLScene::BatchProcessState);
   scene->StartState(vtkMRMLScene::BatchProcessState);
 
-  if (scene->IsBatchProcessing() != true||
-      callback->CalledEvents.size() != 1 ||
+  if (scene->IsBatchProcessing() != true || //
+      callback->CalledEvents.size() != 1 || //
       callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1)
   {
     std::cerr << "Wrong fired events: "
@@ -105,7 +105,7 @@ int vtkMRMLSceneBatchProcessTest(
   callback->CalledEvents.clear();
 
   scene->EndState(vtkMRMLScene::BatchProcessState);
-  if (scene->IsBatchProcessing() != true ||
+  if (scene->IsBatchProcessing() != true || //
       callback->CalledEvents.size() != 0)
   {
     std::cerr << "Wrong fired events: "
@@ -118,8 +118,8 @@ int vtkMRMLSceneBatchProcessTest(
   // 2) EndBatchProcessEvent
   scene->EndState(vtkMRMLScene::BatchProcessState);
 
-  if (scene->IsBatchProcessing() != false ||
-      callback->CalledEvents.size() != 1 ||
+  if (scene->IsBatchProcessing() != false || //
+      callback->CalledEvents.size() != 1 ||  //
       callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1)
   {
     std::cerr << "Wrong fired events: "
@@ -138,11 +138,11 @@ int vtkMRMLSceneBatchProcessTest(
   // 2) StartImportProcessEvent
   scene->StartState(vtkMRMLScene::ImportState);
 
-  if (scene->IsBatchProcessing() != true ||
-      scene->IsImporting() != true ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::StartImportEvent] != 1 ||
+  if (scene->IsBatchProcessing() != true ||                                //
+      scene->IsImporting() != true ||                                      //
+      callback->CalledEvents.size() != 2 ||                                //
+      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 || //
+      callback->CalledEvents[vtkMRMLScene::StartImportEvent] != 1 ||       //
       callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartImportEvent])
   {
@@ -160,11 +160,11 @@ int vtkMRMLSceneBatchProcessTest(
   vtkNew<vtkMRMLModelNode> modelNode;
   scene->AddNode(modelNode.GetPointer());
 
-  if (scene->IsBatchProcessing() != true ||
-      scene->IsImporting() != true ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::NodeAboutToBeAddedEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::NodeAddedEvent] != 1 ||
+  if (scene->IsBatchProcessing() != true ||                                 //
+      scene->IsImporting() != true ||                                       //
+      callback->CalledEvents.size() != 2 ||                                 //
+      callback->CalledEvents[vtkMRMLScene::NodeAboutToBeAddedEvent] != 1 || //
+      callback->CalledEvents[vtkMRMLScene::NodeAddedEvent] != 1 ||          //
       callback->LastEventMTime[vtkMRMLScene::NodeAboutToBeAddedEvent] >
       callback->LastEventMTime[vtkMRMLScene::NodeAddedEvent])
   {
@@ -181,11 +181,11 @@ int vtkMRMLSceneBatchProcessTest(
   // 6) EndBatchProcessEvent
   scene->EndState(vtkMRMLScene::ImportState);
 
-  if (scene->IsBatchProcessing() != false ||
-      scene->IsImporting() != false ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::EndImportEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
+  if (scene->IsBatchProcessing() != false ||                             //
+      scene->IsImporting() != false ||                                   //
+      callback->CalledEvents.size() != 2 ||                              //
+      callback->CalledEvents[vtkMRMLScene::EndImportEvent] != 1 ||       //
+      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 || //
       callback->LastEventMTime[vtkMRMLScene::EndImportEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
   {
@@ -207,11 +207,11 @@ int vtkMRMLSceneBatchProcessTest(
   scene->StartState(vtkMRMLScene::BatchProcessState);
   scene->StartState(vtkMRMLScene::ImportState);
 
-  if (scene->IsBatchProcessing() != true ||
-      scene->IsImporting() != true ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::StartImportEvent] != 1 ||
+  if (scene->IsBatchProcessing() != true ||                                //
+      scene->IsImporting() != true ||                                      //
+      callback->CalledEvents.size() != 2 ||                                //
+      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 || //
+      callback->CalledEvents[vtkMRMLScene::StartImportEvent] != 1 ||       //
       callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartImportEvent])
   {
@@ -227,9 +227,9 @@ int vtkMRMLSceneBatchProcessTest(
   // 3) EndImportProcessEvent
   // 4) EndBatchProcessEvent
   scene->EndState(vtkMRMLScene::ImportState);
-  if (scene->IsBatchProcessing() != true ||
-      scene->IsImporting() != false ||
-      callback->CalledEvents.size() != 1 ||
+  if (scene->IsBatchProcessing() != true || //
+      scene->IsImporting() != false ||      //
+      callback->CalledEvents.size() != 1 || //
       callback->CalledEvents[vtkMRMLScene::EndImportEvent] != 1)
   {
     std::cerr << "Wrong fired events: "
@@ -240,11 +240,11 @@ int vtkMRMLSceneBatchProcessTest(
   }
   scene->EndState(vtkMRMLScene::BatchProcessState);
 
-  if (scene->IsBatchProcessing() != false ||
-      scene->IsImporting() != false ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::EndImportEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
+  if (scene->IsBatchProcessing() != false ||                             //
+      scene->IsImporting() != false ||                                   //
+      callback->CalledEvents.size() != 2 ||                              //
+      callback->CalledEvents[vtkMRMLScene::EndImportEvent] != 1 ||       //
+      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 || //
       callback->LastEventMTime[vtkMRMLScene::EndImportEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
   {
@@ -265,11 +265,11 @@ int vtkMRMLSceneBatchProcessTest(
   // 2) StartCloseProcessEvent
   scene->StartState(vtkMRMLScene::CloseState);
 
-  if (scene->IsBatchProcessing() != true ||
-      scene->IsClosing() != true ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::StartCloseEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
+  if (scene->IsBatchProcessing() != true ||                                //
+      scene->IsClosing() != true ||                                        //
+      callback->CalledEvents.size() != 2 ||                                //
+      callback->CalledEvents[vtkMRMLScene::StartCloseEvent] != 1 ||        //
+      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 || //
       callback->LastEventMTime[vtkMRMLScene::StartCloseEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent])
   {
@@ -286,11 +286,11 @@ int vtkMRMLSceneBatchProcessTest(
   // 4) NodeRemovedEvent
   scene->RemoveNode(modelNode.GetPointer());
 
-  if (scene->IsBatchProcessing() != true ||
-      scene->IsClosing() != true ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::NodeAboutToBeRemovedEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::NodeRemovedEvent] != 1 ||
+  if (scene->IsBatchProcessing() != true ||                                   //
+      scene->IsClosing() != true ||                                           //
+      callback->CalledEvents.size() != 2 ||                                   //
+      callback->CalledEvents[vtkMRMLScene::NodeAboutToBeRemovedEvent] != 1 || //
+      callback->CalledEvents[vtkMRMLScene::NodeRemovedEvent] != 1 ||          //
       callback->LastEventMTime[vtkMRMLScene::NodeAboutToBeRemovedEvent] >
       callback->LastEventMTime[vtkMRMLScene::NodeRemovedEvent])
   {
@@ -307,11 +307,11 @@ int vtkMRMLSceneBatchProcessTest(
   // 6) EndBatchProcessEvent
   scene->EndState(vtkMRMLScene::CloseState);
 
-  if (scene->IsBatchProcessing() != false ||
-      scene->IsClosing() != false ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::EndCloseEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
+  if (scene->IsBatchProcessing() != false ||                             //
+      scene->IsClosing() != false ||                                     //
+      callback->CalledEvents.size() != 2 ||                              //
+      callback->CalledEvents[vtkMRMLScene::EndCloseEvent] != 1 ||        //
+      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 || //
       callback->LastEventMTime[vtkMRMLScene::EndCloseEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
   {
@@ -333,11 +333,11 @@ int vtkMRMLSceneBatchProcessTest(
   scene->StartState(vtkMRMLScene::RestoreState);
   scene->StartState(vtkMRMLScene::RestoreState);
 
-  if (scene->IsBatchProcessing() != true ||
-      scene->IsRestoring() != true ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::StartRestoreEvent] != 1 ||
+  if (scene->IsBatchProcessing() != true ||                                //
+      scene->IsRestoring() != true ||                                      //
+      callback->CalledEvents.size() != 2 ||                                //
+      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 || //
+      callback->CalledEvents[vtkMRMLScene::StartRestoreEvent] != 1 ||      //
       callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartRestoreEvent])
   {
@@ -356,11 +356,11 @@ int vtkMRMLSceneBatchProcessTest(
   scene->EndState(vtkMRMLScene::RestoreState);
   scene->EndState(vtkMRMLScene::RestoreState);
 
-  if (scene->IsBatchProcessing() != false ||
-      scene->IsRestoring() != false ||
-      callback->CalledEvents.size() != 2 ||
-      callback->CalledEvents[vtkMRMLScene::EndRestoreEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
+  if (scene->IsBatchProcessing() != false ||                             //
+      scene->IsRestoring() != false ||                                   //
+      callback->CalledEvents.size() != 2 ||                              //
+      callback->CalledEvents[vtkMRMLScene::EndRestoreEvent] != 1 ||      //
+      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 || //
       callback->LastEventMTime[vtkMRMLScene::EndRestoreEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
   {
@@ -384,15 +384,15 @@ int vtkMRMLSceneBatchProcessTest(
   scene->StartState(vtkMRMLScene::RestoreState);
   scene->StartState(vtkMRMLScene::ImportState);
 
-  if (scene->IsBatchProcessing() != true ||
-      scene->IsRestoring() != true ||
-      scene->IsImporting() != true ||
-      callback->CalledEvents.size() != 3 ||
-      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::StartRestoreEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::StartImportEvent] != 1 ||
+  if (scene->IsBatchProcessing() != true ||                                //
+      scene->IsRestoring() != true ||                                      //
+      scene->IsImporting() != true ||                                      //
+      callback->CalledEvents.size() != 3 ||                                //
+      callback->CalledEvents[vtkMRMLScene::StartBatchProcessEvent] != 1 || //
+      callback->CalledEvents[vtkMRMLScene::StartRestoreEvent] != 1 ||      //
+      callback->CalledEvents[vtkMRMLScene::StartImportEvent] != 1 ||       //
       callback->LastEventMTime[vtkMRMLScene::StartBatchProcessEvent] >
-      callback->LastEventMTime[vtkMRMLScene::StartRestoreEvent] ||
+      callback->LastEventMTime[vtkMRMLScene::StartRestoreEvent] ||         //
       callback->LastEventMTime[vtkMRMLScene::StartRestoreEvent] >
       callback->LastEventMTime[vtkMRMLScene::StartImportEvent])
   {
@@ -412,15 +412,15 @@ int vtkMRMLSceneBatchProcessTest(
   scene->EndState(vtkMRMLScene::ImportState);
   scene->EndState(vtkMRMLScene::RestoreState);
 
-  if (scene->IsBatchProcessing() != false ||
-      scene->IsRestoring() != false ||
-      scene->IsImporting() != false ||
-      callback->CalledEvents.size() != 3 ||
-      callback->CalledEvents[vtkMRMLScene::EndImportEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::EndRestoreEvent] != 1 ||
-      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
+  if (scene->IsBatchProcessing() != false ||                             //
+      scene->IsRestoring() != false ||                                   //
+      scene->IsImporting() != false ||                                   //
+      callback->CalledEvents.size() != 3 ||                              //
+      callback->CalledEvents[vtkMRMLScene::EndImportEvent] != 1 ||       //
+      callback->CalledEvents[vtkMRMLScene::EndRestoreEvent] != 1 ||      //
+      callback->CalledEvents[vtkMRMLScene::EndBatchProcessEvent] != 1 || //
       callback->LastEventMTime[vtkMRMLScene::EndImportEvent] >
-      callback->LastEventMTime[vtkMRMLScene::EndRestoreEvent] ||
+      callback->LastEventMTime[vtkMRMLScene::EndRestoreEvent] ||         //
       callback->LastEventMTime[vtkMRMLScene::EndRestoreEvent] >
       callback->LastEventMTime[vtkMRMLScene::EndBatchProcessEvent])
   {

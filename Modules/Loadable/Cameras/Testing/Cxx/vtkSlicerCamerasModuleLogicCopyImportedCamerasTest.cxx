@@ -157,21 +157,21 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
   vtkMRMLCameraNode* firstCamera = vtkMRMLCameraNode::SafeDownCast(
     scene->GetFirstNodeByClass("vtkMRMLCameraNode"));
 
-  if (camera1->GetPosition()[0] != expectedCamera1Pos[0] ||
-      camera2->GetPosition()[0] != expectedCamera2Pos[0] ||
+  if (camera1->GetPosition()[0] != expectedCamera1Pos[0] || //
+      camera2->GetPosition()[0] != expectedCamera2Pos[0] || //
       firstCamera->GetPosition()[0] != expectedFirstCamera[0])
   {
-    std::cout << "vtkSlicerCamerasModuleLogic::CopyImportedCameras failed.\n"
-              << "Clear: " << clear << "\n"
-              << "Camera 1\n"
-              << "   current: " << camera1->GetPosition()[0] << "\n"
-              << "  expected: " << expectedCamera1Pos[0] << "\n"
-              << "Camera 2\n"
-              << "   current: " << camera2->GetPosition()[0] << "\n"
-              << "  expected: " << expectedCamera2Pos[0] << "\n"
-              << "1st Camera\n"
-              << "   current: " << firstCamera->GetPosition()[0] << "\n"
-              << "  expected: " << expectedFirstCamera[0]
+    std::cout << "vtkSlicerCamerasModuleLogic::CopyImportedCameras failed.\n" //
+              << "Clear: " << clear << "\n" //
+              << "Camera 1\n" //
+              << "   current: " << camera1->GetPosition()[0] << "\n" //
+              << "  expected: " << expectedCamera1Pos[0] << "\n" //
+              << "Camera 2\n" //
+              << "   current: " << camera2->GetPosition()[0] << "\n" //
+              << "  expected: " << expectedCamera2Pos[0] << "\n" //
+              << "1st Camera\n" //
+              << "   current: " << firstCamera->GetPosition()[0] << "\n" //
+              << "  expected: " << expectedFirstCamera[0] //
               << std::endl;
     return false;
   }

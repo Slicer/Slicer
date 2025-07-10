@@ -97,7 +97,7 @@ int vtkMRMLAnnotationSnapshotStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
         imageData->DeepCopy(reader->GetOutput());
       }
     }
-    else if (extension == std::string(".jpg") ||
+    else if (extension == std::string(".jpg") || //
              extension == std::string(".jpeg"))
     {
       vtkNew<vtkJPEGReader> reader;

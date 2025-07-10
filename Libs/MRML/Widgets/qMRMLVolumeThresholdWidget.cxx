@@ -166,7 +166,7 @@ void qMRMLVolumeThresholdWidget::setAutoThreshold(ControlMode autoThreshold)
 
   d->VolumeDisplayNode->EndModify(disabledModify);
 
-  if (oldAuto != d->VolumeDisplayNode->GetAutoThreshold() ||
+  if (oldAuto != d->VolumeDisplayNode->GetAutoThreshold() || //
       oldApply != d->VolumeDisplayNode->GetApplyThreshold())
   {
     emit this->autoThresholdValueChanged(autoThreshold);
@@ -201,7 +201,7 @@ void qMRMLVolumeThresholdWidget::setThreshold(double lowerThreshold, double uppe
     d->VolumeDisplayNode->SetLowerThreshold(lowerThreshold);
     d->VolumeDisplayNode->SetUpperThreshold(upperThreshold);
     bool changed =
-      (oldLowerThreshold != d->VolumeDisplayNode->GetLowerThreshold() ||
+      (oldLowerThreshold != d->VolumeDisplayNode->GetLowerThreshold() || //
        oldUpperThreshold != d->VolumeDisplayNode->GetUpperThreshold());
     if (changed)
     {
@@ -309,9 +309,9 @@ void qMRMLVolumeThresholdWidget::updateWidgetFromMRMLDisplayNode()
   const int autoThresh = d->VolumeDisplayNode->GetAutoThreshold();
   const int applyThresh = d->VolumeDisplayNode->GetApplyThreshold();
   // 0 = auto, 1 = manual, 2 = off
-  ControlMode index = (applyThresh == 0) ? qMRMLVolumeThresholdWidget::Off :
-                      (autoThresh == 1) ? qMRMLVolumeThresholdWidget::Auto :
-                      qMRMLVolumeThresholdWidget::Manual;
+  ControlMode index = (applyThresh == 0) ? qMRMLVolumeThresholdWidget::Off : //
+                        (autoThresh == 1) ? qMRMLVolumeThresholdWidget::Auto
+                                          : qMRMLVolumeThresholdWidget::Manual;
   d->AutoManualComboBox->setCurrentIndex(index);
 
   if (applyThresh)

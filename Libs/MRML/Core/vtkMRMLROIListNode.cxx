@@ -349,9 +349,9 @@ void vtkMRMLROIListNode::ProcessMRMLEvents ( vtkObject* caller,
 //---------------------------------------------------------------------------
 void vtkMRMLROIListNode::SetColor(double r, double g, double b)
 {
-  if (this->Color[0] == r &&
-    this->Color[1] == g &&
-    this->Color[2] == b)
+  if (this->Color[0] == r && //
+      this->Color[1] == g && //
+      this->Color[2] == b)
   {
     return;
   }
@@ -371,9 +371,9 @@ void vtkMRMLROIListNode::SetColor(double r, double g, double b)
 //---------------------------------------------------------------------------
 void vtkMRMLROIListNode::SetSelectedColor(double r, double g, double b)
 {
-  if (this->SelectedColor[0] == r &&
-    this->SelectedColor[1] == g &&
-    this->SelectedColor[2] == b)
+  if (this->SelectedColor[0] == r && //
+      this->SelectedColor[1] == g && //
+      this->SelectedColor[2] == b)
   {
     return;
   }

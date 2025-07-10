@@ -177,8 +177,8 @@ bool vtkMRMLTransformNode::AreTransformsEqual(vtkAbstractTransform* transform1, 
   transformList2->InitTraversal(it2);
   vtkObject* transformComponent1 = nullptr;
   vtkObject* transformComponent2 = nullptr;
-  while ((transformComponent1 = transformList1->GetNextItemAsObject(it1)) != nullptr
-    && (transformComponent2 = transformList2->GetNextItemAsObject(it2)) != nullptr)
+  while ((transformComponent1 = transformList1->GetNextItemAsObject(it1)) != nullptr //
+         && (transformComponent2 = transformList2->GetNextItemAsObject(it2)) != nullptr)
   {
     if (transformComponent1 != transformComponent2)
     {
@@ -492,7 +492,7 @@ int  vtkMRMLTransformNode::IsTransformToNodeLinear(vtkMRMLTransformNode* targetN
   else
   {
     vtkMRMLTransformNode* firstCommonParentNode = this->GetFirstCommonParent(targetNode);
-    if (this->IsTransformToNodeLinear(firstCommonParentNode) &&
+    if (this->IsTransformToNodeLinear(firstCommonParentNode) && //
         targetNode->IsTransformToNodeLinear(firstCommonParentNode) )
     {
       return 1;

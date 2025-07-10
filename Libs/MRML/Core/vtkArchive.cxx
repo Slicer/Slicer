@@ -126,7 +126,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
    * total width of group and devnum/filesize fields be gs_width.
    * If gs_width is too small, grow it.
    */
-  if (archive_entry_filetype(entry) == AE_IFCHR
+  if (archive_entry_filetype(entry) == AE_IFCHR //
       || archive_entry_filetype(entry) == AE_IFBLK)
   {
     sprintf(tmp, "%lu,%lu",

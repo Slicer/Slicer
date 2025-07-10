@@ -100,9 +100,9 @@ void qSlicerExtensionsManagerDialogPrivate::updateButtons()
   qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
   // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
   if (this->PreviousModulesAdditionalPaths
-      != coreApp->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList() ||
+      != coreApp->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList() || //
     this->PreviousExtensionsScheduledForUninstall
-      != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUninstall").toStringList() ||
+      != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUninstall").toStringList() || //
     this->PreviousExtensionsScheduledForUpdate
       != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUpdate").toMap())
   {

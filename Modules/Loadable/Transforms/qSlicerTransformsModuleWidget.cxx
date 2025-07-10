@@ -785,8 +785,8 @@ void qSlicerTransformsModuleWidget::convert()
 void qSlicerTransformsModuleWidget::updateConvertButtonState()
 {
   Q_D(qSlicerTransformsModuleWidget);
-  bool enableConvert = (d->MRMLTransformNode != nullptr
-    && d->ConvertReferenceVolumeNodeComboBox->currentNode() != nullptr
+  bool enableConvert = (d->MRMLTransformNode != nullptr //
+    && d->ConvertReferenceVolumeNodeComboBox->currentNode() != nullptr //
     && d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() != nullptr);
   d->ConvertPushButton->setEnabled(enableConvert);
 }

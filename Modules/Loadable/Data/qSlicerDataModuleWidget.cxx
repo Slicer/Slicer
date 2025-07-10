@@ -359,8 +359,8 @@ void qSlicerDataModuleWidget::onCurrentNodeChanged(vtkMRMLNode* newCurrentNode)
     vtkMRMLTransformableNode::SafeDownCast(newCurrentNode);
   vtkMRMLTransformNode* transformNode =
     transformableNode ? transformableNode->GetParentTransformNode() : nullptr;
-  if (transformNode &&
-      (transformNode->CanApplyNonLinearTransforms() ||
+  if (transformNode && //
+      (transformNode->CanApplyNonLinearTransforms() || //
       transformNode->IsTransformToWorldLinear()))
   {
     d->TransformMRMLTreeView->prependNodeMenuAction(d->HardenTransformAction);

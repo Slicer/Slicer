@@ -59,8 +59,8 @@ bool qSlicerUtils::isCLIExecutable(const QString& filePath)
   }
 
 #ifdef _WIN32
-  return ( filePath.endsWith(".exe", Qt::CaseInsensitive) ||
-           filePath.endsWith(".bat", Qt::CaseInsensitive) );
+  return (filePath.endsWith(".exe", Qt::CaseInsensitive) //
+          || filePath.endsWith(".bat", Qt::CaseInsensitive));
 #else
   return !QFileInfo(filePath).fileName().contains('.');
 #endif
@@ -74,9 +74,9 @@ bool qSlicerUtils::isCLIScriptedExecutable(const QString& filePath)
   QFile scriptFile(filePath);
   QTextStream scriptStream(&scriptFile);
 
-  if ((filePath.endsWith(".py", Qt::CaseInsensitive)) &&
-       (scriptFile.open(QIODevice::ReadOnly))          &&
-       (scriptStream.readLine(2).startsWith("#!")) )
+  if (filePath.endsWith(".py", Qt::CaseInsensitive) //
+      && scriptFile.open(QIODevice::ReadOnly)       //
+      && scriptStream.readLine(2).startsWith("#!"))
   {
     return true;
   }
@@ -265,9 +265,9 @@ bool qSlicerUtils::setPermissionsRecursively(const QString& path,
   {
     if (info.isDir())
     {
-      if (directoryPermissions & QFile::ExeOwner
-             || directoryPermissions & QFile::ExeGroup
-             || directoryPermissions & QFile::ExeOther)
+      if (directoryPermissions & QFile::ExeOwner    //
+          || directoryPermissions & QFile::ExeGroup //
+          || directoryPermissions & QFile::ExeOther)
       {
         // If executable bit is on /a/b/c/d, we should start with a, b, c, then d
         if (!QFile::setPermissions(info.filePath(), directoryPermissions))
@@ -352,10 +352,10 @@ QString qSlicerUtils::replaceDocumentationUrlVersion(const QString& text, const 
     // expression will replace the first occurrence of "/<StringWithLetterOrNumberOrDot>/" or "/<StringWithLetterOrNumberOrDot>#"
     // with "/<version>/" or "/<version>#".
     QString foundURL = rx.cap(0);
-    if (foundURL.contains(hostname)
-      && (replaceFirst(foundURL, "\\/[0-9\\.]+\\/|/latest\\/|/stable\\/", "/" + version + "/") // replace /5.0/
-      || replaceFirst(foundURL, "\\/v[0-9\\.]+\\/", "/" + version + "/")) // replace /v5.0/
-      )
+    if (foundURL.contains(hostname)                                                              //
+        && (replaceFirst(foundURL, "\\/[0-9\\.]+\\/|/latest\\/|/stable\\/", "/" + version + "/") // replace /5.0/
+            || replaceFirst(foundURL, "\\/v[0-9\\.]+\\/", "/" + version + "/"))                  // replace /v5.0/
+    )
     {
       updatedText.replace(pos, rx.matchedLength(), foundURL);
     }

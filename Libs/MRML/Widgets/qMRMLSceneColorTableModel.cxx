@@ -59,7 +59,7 @@ qMRMLSceneColorTableModelPrivate::ColorGradient::ColorGradient()
 //------------------------------------------------------------------------------
 void qMRMLSceneColorTableModelPrivate::ColorGradient::updatePixmap(vtkScalarsToColors* scalarsToColors)
 {
-  if (!scalarsToColors ||
+  if (!scalarsToColors || //
       scalarsToColors->GetNumberOfAvailableColors() <= 0)
   {
     return;
@@ -107,7 +107,7 @@ bool qMRMLSceneColorTableModel::updateGradientFromNode(vtkMRMLColorNode* node) c
   /// between the different qMRMLSceneColorTableModels.
   bool cached = d->GradientCache.contains(node->GetID());
   qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[node->GetID()];
-  if (!node->GetScalarsToColors() ||
+  if (!node->GetScalarsToColors() || //
       (cached && colorGradient.MTime >= node->GetScalarsToColors()->GetMTime()))
   {
     // pixmap is already up-to-date

@@ -591,7 +591,7 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
   d->actionSetBlackBackground->setChecked(backgroundColor == Qt::black);
   d->actionSetWhiteBackground->setChecked(backgroundColor == Qt::white);
   d->actionSetLightBlueBackground->setChecked(
-    !d->actionSetBlackBackground->isChecked() &&
+    !d->actionSetBlackBackground->isChecked() && //
     !d->actionSetWhiteBackground->isChecked());
 
   d->OrthoButton->setChecked(viewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
@@ -1014,7 +1014,7 @@ void qMRMLThreeDViewControllerWidget::setRulerType(int newRulerType)
   d->ViewLogic->EndViewNodeInteraction();
 
   // Switch to orthographic render mode automatically if ruler is enabled
-  if (newRulerType!=vtkMRMLViewNode::RulerTypeNone &&
+  if (newRulerType!=vtkMRMLViewNode::RulerTypeNone && //
     this->mrmlThreeDViewNode()->GetRenderMode()!=vtkMRMLViewNode::Orthographic)
   {
     d->ViewLogic->StartViewNodeInteraction(vtkMRMLViewNode::RenderModeFlag);

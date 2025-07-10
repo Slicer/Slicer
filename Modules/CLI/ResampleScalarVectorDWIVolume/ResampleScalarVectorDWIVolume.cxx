@@ -312,13 +312,13 @@ SetTransformAndOrder( parameters & list,
     else
     {
         // Check if transform is not of type "Rigid3DTransform"
-        if (transformClassName == "Rigid3DTransform" ||
-            transformClassName == "Euler3DTransform" ||
-            transformClassName == "CenteredEuler3DTransform" ||
-            transformClassName == "QuaternionRigidTransform" ||
-            transformClassName == "VersorTransform" ||
-            transformClassName == "ScaleSkewVersor3DTransform" ||
-            transformClassName == "ScaleVersor3DTransform" ||
+        if (transformClassName == "Rigid3DTransform" || //
+            transformClassName == "Euler3DTransform" || //
+            transformClassName == "CenteredEuler3DTransform" || //
+            transformClassName == "QuaternionRigidTransform" || //
+            transformClassName == "VersorTransform" || //
+            transformClassName == "ScaleSkewVersor3DTransform" || //
+            transformClassName == "ScaleVersor3DTransform" || //
             transformClassName == "Similarity3DTransform"
             ) // if rigid3D transform
         {
@@ -455,10 +455,10 @@ void ResampleDeformationField( DeformationImageType::Pointer & field,
   fieldSpacing = field->GetSpacing();
   fieldSize = field->GetLargestPossibleRegion().GetSize();
   fieldDirection = field->GetDirection();
-  if (fieldSize == size
-       && fieldSpacing == spacing
-       && fieldDirection == direction
-       && fieldOrigin == origin
+  if (fieldSize == size //
+       && fieldSpacing == spacing //
+       && fieldDirection == direction //
+       && fieldOrigin == origin //
        )
   {
     return;
@@ -527,11 +527,11 @@ SetAllTransform( parameters & list,
   dummyOutputImage->SetRegions( resampler->GetSize() );
   itk::Point<double> outputImageCenter = ImageCenter<ImageType>( dummyOutputImage );
   // If more than one transform or if hfield, add all transforms and compute the deformation field
-  if (( list.transformationFile.compare( "")
-        && transformFile->GetTransformList()->size() > 1
-        && nonRigidTransforms > 0
-        )
-      || list.deffield.compare( "" )
+  if (( list.transformationFile.compare( "") //
+        && transformFile->GetTransformList()->size() > 1 //
+        && nonRigidTransforms > 0 //
+        ) //
+      || list.deffield.compare( "" ) //
       )
   {
     // Create warp transform
@@ -569,7 +569,7 @@ SetAllTransform( parameters & list,
         itkTransformDeformationFieldFilterType::New();
       transform = SetTransform<ImageType>( list, image, transformFile, outputImageCenter  );
       // check if there is a bspline transform and a bulk transform with it
-      if (!list.notbulk && transform->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3"  &&
+      if (!list.notbulk && transform->GetTransformTypeAsString() == "BSplineDeformableTransform_double_3_3"  && //
           transformFile->GetTransformList()->size() )                                                                                                        //
                                                                                                                                                              // Check
                                                                                                                                                              // if
@@ -624,18 +624,18 @@ SetAllTransform( parameters & list,
       // Check if transform is NOT of type "MatrixOffsetTransformBase<double, 3, 3>"
       // (itself typedef as "MatrixTransformType")
       if (!(
-            transformClassName.find( "AffineTransform" ) != std::string::npos ||
-            transformClassName == "MatrixOffsetTransformBase" ||
-            transformClassName == "Rigid3DTransform" ||
-            transformClassName == "Euler3DTransform" ||
-            transformClassName == "CenteredEuler3DTransform" ||
-            transformClassName == "QuaternionRigidTransform" ||
-            transformClassName == "VersorTransform" ||
-            transformClassName == "VersorRigid3DTransform" ||
-            transformClassName == "ScaleSkewVersor3DTransform" ||
-            transformClassName == "ScaleVersor3DTransform" ||
-            transformClassName == "Similarity3DTransform" ||
-            transformClassName == "ScaleTransform" ||
+            transformClassName.find( "AffineTransform" ) != std::string::npos || //
+            transformClassName == "MatrixOffsetTransformBase" || //
+            transformClassName == "Rigid3DTransform" || //
+            transformClassName == "Euler3DTransform" || //
+            transformClassName == "CenteredEuler3DTransform" || //
+            transformClassName == "QuaternionRigidTransform" || //
+            transformClassName == "VersorTransform" || //
+            transformClassName == "VersorRigid3DTransform" || //
+            transformClassName == "ScaleSkewVersor3DTransform" || //
+            transformClassName == "ScaleVersor3DTransform" || //
+            transformClassName == "Similarity3DTransform" || //
+            transformClassName == "ScaleTransform" || //
             transformClassName == "ScaleLogarithmicTransform"
             )
           )   // should never happen, just for security
@@ -932,17 +932,17 @@ Transform3DPointer InverseTransform( const Transform3DPointer & transform )
     }
     else
     {
-      if (transformClassName == "MatrixOffsetTransformBase" ||
-          transformClassName == "Rigid3DTransform" ||
-          transformClassName == "Euler3DTransform" ||
-          transformClassName == "CenteredEuler3DTransform" ||
-          transformClassName == "QuaternionRigidTransform" ||
-          transformClassName == "VersorTransform" ||
-          transformClassName == "VersorRigid3DTransform" ||
-          transformClassName == "ScaleSkewVersor3DTransform" ||
-          transformClassName == "ScaleVersor3DTransform" ||
-          transformClassName == "Similarity3DTransform" ||
-          transformClassName == "ScaleTransform" ||
+      if (transformClassName == "MatrixOffsetTransformBase" || //
+          transformClassName == "Rigid3DTransform" || //
+          transformClassName == "Euler3DTransform" || //
+          transformClassName == "CenteredEuler3DTransform" || //
+          transformClassName == "QuaternionRigidTransform" || //
+          transformClassName == "VersorTransform" || //
+          transformClassName == "VersorRigid3DTransform" || //
+          transformClassName == "ScaleSkewVersor3DTransform" || //
+          transformClassName == "ScaleVersor3DTransform" || //
+          transformClassName == "Similarity3DTransform" || //
+          transformClassName == "ScaleTransform" || //
           transformClassName == "ScaleLogarithmicTransform"
           ) // if rotation transform
       {
@@ -1342,10 +1342,10 @@ int main(int argc, char* argv[])
   list.transformsOrder = transformsOrder;
   list.notbulk = notbulk;
   // verify if all the vector parameters have the good length
-  if (list.outputImageSpacing.size() != 3 || list.outputImageSize.size() != 3
-      || ( list.outputImageOrigin.size() != 3
-           && list.outputImageOrigin.size() != 0 )
-      || list.directionMatrix.size() != 9 || rotationPoint.size() != 3
+  if (list.outputImageSpacing.size() != 3 || list.outputImageSize.size() != 3 //
+      || ( list.outputImageOrigin.size() != 3 //
+           && list.outputImageOrigin.size() != 0 ) //
+      || list.directionMatrix.size() != 9 || rotationPoint.size() != 3 //
       || list.transformMatrix.size() != 12 )
   {
     std::cerr << "Argument(s) having wrong size" << std::endl;

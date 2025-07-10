@@ -272,8 +272,8 @@ bool TestCollapseLevel0()
     std::cout << "Color or visibility is wrong" << std::endl;
   }
 
-  if (GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() != nullptr ||
-      GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() != hierarchyNode ||
+  if (GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() != nullptr ||       //
+      GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() != hierarchyNode || //
       GetModelHierarchyNode(scene.GetPointer(), 2)->GetCollapsedParentNode() != hierarchyNode)
   {
     std::cout << "CollapsedParentNode is wrong (hierarchy node at level 0 collapsed):" << std::endl
@@ -304,8 +304,8 @@ bool TestCollapseLevel1()
     std::cout << "Color or visibility is wrong" << std::endl;
   }
 
-  if (GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() != nullptr ||
-      GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() != nullptr ||
+  if (GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() != nullptr || //
+      GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() != nullptr || //
       GetModelHierarchyNode(scene.GetPointer(), 2)->GetCollapsedParentNode() != hierarchyNode)
   {
     std::cout << "CollapsedParentNode is wrong (hierarchyNode at level 1 collapsed):" << std::endl
@@ -338,8 +338,8 @@ bool TestCollapseLevels0And1()
     std::cout << "Color or visibility is wrong" << std::endl;
   }
 
-  if (GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() != nullptr ||
-      GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() != hierarchyNode ||
+  if (GetModelHierarchyNode(scene.GetPointer(), 0)->GetCollapsedParentNode() != nullptr ||       //
+      GetModelHierarchyNode(scene.GetPointer(), 1)->GetCollapsedParentNode() != hierarchyNode || //
       GetModelHierarchyNode(scene.GetPointer(), 2)->GetCollapsedParentNode() != hierarchyNode)
   {
     std::cout << "CollapsedParentNode is wrong (hierarchies at levels 0 and 1 collapsed):" << std::endl
@@ -367,8 +367,8 @@ bool TestColors(vtkMRMLScene* scene,
       return true;
     }
     vtkMRMLDisplayNode* modelDisplayNode = modelNode->GetDisplayNode();
-    if (modelDisplayNode->GetColor()[0] != modelColors[level][0] ||
-        modelDisplayNode->GetColor()[1] != modelColors[level][1] ||
+    if (modelDisplayNode->GetColor()[0] != modelColors[level][0] || //
+        modelDisplayNode->GetColor()[1] != modelColors[level][1] || //
         modelDisplayNode->GetColor()[2] != modelColors[level][2])
     {
       std::cout << "Wrong color for node \"" << modelDisplayNode->GetName()
@@ -378,8 +378,8 @@ bool TestColors(vtkMRMLScene* scene,
     vtkMRMLDisplayableHierarchyNode* hierarchyNode = GetHierarchyNode(scene, level);
     assert(hierarchyNode != nullptr);
     vtkMRMLDisplayNode* hierarchyDisplayNode = hierarchyNode->GetDisplayNode();
-    if (hierarchyDisplayNode->GetColor()[0] != hierarchyColors[level][0] ||
-        hierarchyDisplayNode->GetColor()[1] != hierarchyColors[level][1] ||
+    if (hierarchyDisplayNode->GetColor()[0] != hierarchyColors[level][0] || //
+        hierarchyDisplayNode->GetColor()[1] != hierarchyColors[level][1] || //
         hierarchyDisplayNode->GetColor()[2] != hierarchyColors[level][2])
     {
       std::cout << "Wrong color for node \"" << hierarchyDisplayNode->GetName()

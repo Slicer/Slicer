@@ -81,7 +81,7 @@ int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char* vtkNotUsed(argv
   //    |---- vtkMRMLModelNode2  (null polydata / New Model2)
   //               |-- ref [displayNodeRef] to vtkMRMLModelDisplayNode2
 
-  const char scene1XML[] =
+  const char scene1XML[] = //
     "<MRML  version=\"18916\" userTags=\"\">"
     "  <Model id=\"vtkMRMLModelNode1\" name=\"New Model1\" displayNodeRef=\"vtkMRMLModelDisplayNode1\" ></Model>"
     "  <ModelDisplay id=\"vtkMRMLModelDisplayNode1\" name=\"New Display 1\" ></ModelDisplay>"

@@ -106,7 +106,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     item->setForeground(q->palette().color(QPalette::Disabled, QPalette::Text));
   }
   // The module was registered, not ignored, initialized, but failed to be loaded
-  else if (qobject_cast<qSlicerModuleFactoryManager*>(this->FactoryManager) &&
+  else if (qobject_cast<qSlicerModuleFactoryManager*>(this->FactoryManager) && //
            !qobject_cast<qSlicerModuleFactoryManager*>(this->FactoryManager)
            ->loadedModuleNames().contains(moduleName))
   {
@@ -119,7 +119,7 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
   }
   if (this->CheckBoxVisible)
   {
-    if (this->FactoryManager == nullptr ||
+    if (this->FactoryManager == nullptr || //
         this->FactoryManager->modulesToIgnore().contains(moduleName) )
     {
       item->setCheckState(Qt::Unchecked);
@@ -554,7 +554,7 @@ void qSlicerModulesListView::onItemChanged(QStandardItem* item)
 // --------------------------------------------------------------------------
 void qSlicerModulesListView::keyPressEvent(QKeyEvent* event)
 {
-  if (event->key() == Qt::Key_Delete ||
+  if (event->key() == Qt::Key_Delete || //
       event->key() == Qt::Key_Backspace)
   {
     this->hideSelectedModules();

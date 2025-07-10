@@ -233,8 +233,8 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
   // It is important to only change type if it has not been set already
   // because otherwise "User" color node types would be always reverted to
   // read-only "File" type when the scene is saved and reloaded.
-  if (colorNode->GetType() < colorNode->GetFirstType()
-    || colorNode->GetType() > colorNode->GetLastType() )
+  if (colorNode->GetType() < colorNode->GetFirstType() //
+      || colorNode->GetType() > colorNode->GetLastType())
   {
     // no valid type has been set, set it to File
     colorNode->SetTypeToFile();
@@ -446,8 +446,8 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
   // It is important to only change type if it has not been set already
   // because otherwise "User" color node types would be always reverted to
   // read-only "File" type when the scene is saved and reloaded.
-  if (colorNode->GetType() < colorNode->GetFirstType()
-    || colorNode->GetType() > colorNode->GetLastType())
+  if (colorNode->GetType() < colorNode->GetFirstType() //
+      || colorNode->GetType() > colorNode->GetLastType())
   {
     // no valid type has been set, set it to File
     colorNode->SetTypeToFile();
@@ -539,8 +539,8 @@ int vtkMRMLColorTableStorageNode::ReadCtblFile(std::string fullFileName, vtkMRML
     {
       ss >> a;
     }
-    if (!biggerThanOne &&
-      (r > 1.0 || g > 1.0 || b > 1.0))
+    if (!biggerThanOne && //
+        (r > 1.0 || g > 1.0 || b > 1.0))
     {
       biggerThanOne = true;
     }

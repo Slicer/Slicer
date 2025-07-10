@@ -171,8 +171,8 @@ void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject* caller, unsigned long e
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (caller == nullptr ||
-      (event != vtkCommand::ModifiedEvent &&
+  if (caller == nullptr ||                   //
+      (event != vtkCommand::ModifiedEvent && //
        event != vtkMRMLPlotSeriesNode::TableModifiedEvent))
   {
     return;
@@ -180,7 +180,7 @@ void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject* caller, unsigned long e
 
   vtkMRMLTableNode* tnode = this->GetTableNode();
   vtkMRMLTableNode* callerTable = vtkMRMLTableNode::SafeDownCast(caller);
-  if (callerTable != nullptr && tnode != nullptr && tnode == callerTable &&
+  if (callerTable != nullptr && tnode != nullptr && tnode == callerTable && //
       event == vtkCommand::ModifiedEvent)
   {
     this->InvokeCustomModifiedEvent(vtkMRMLPlotSeriesNode::TableModifiedEvent, callerTable);
@@ -383,9 +383,9 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
         continue;
       }
       double* foundColor = seriesNode->GetColor();
-      if (fabs(foundColor[0] - color[0]) < 0.1
-        && fabs(foundColor[1] - color[1]) < 0.1
-        && fabs(foundColor[2] - color[2]) < 0.1)
+      if (fabs(foundColor[0] - color[0]) < 0.1    //
+          && fabs(foundColor[1] - color[1]) < 0.1 //
+          && fabs(foundColor[2] - color[2]) < 0.1)
       {
         isColorUnique = false;
         break;

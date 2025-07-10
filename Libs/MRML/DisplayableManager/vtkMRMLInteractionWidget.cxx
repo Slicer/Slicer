@@ -155,10 +155,10 @@ bool vtkMRMLInteractionWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eve
   }
 
   int state = this->WidgetState;
-  if (state == WidgetStateIdle
-    || state == WidgetStateOnTranslationHandle
-    || state == WidgetStateOnRotationHandle
-    || state == WidgetStateOnScaleHandle)
+  if (state == WidgetStateIdle                   //
+      || state == WidgetStateOnTranslationHandle //
+      || state == WidgetStateOnRotationHandle    //
+      || state == WidgetStateOnScaleHandle)
   {
     // update state
     int foundComponentType = InteractionNone;
@@ -245,10 +245,10 @@ bool vtkMRMLInteractionWidget::CanProcessInteractionEvent(vtkMRMLInteractionEven
   }
 
   // Currently interacting
-  if (this->WidgetState == WidgetStateTranslate
-    || this->WidgetState == WidgetStateRotate
-    || this->WidgetState == WidgetStateScale
-    || this->WidgetState == WidgetStateUniformScale)
+  if (this->WidgetState == WidgetStateTranslate //
+      || this->WidgetState == WidgetStateRotate //
+      || this->WidgetState == WidgetStateScale  //
+      || this->WidgetState == WidgetStateUniformScale)
   {
     distance2 = 0.0;
     return true;
@@ -331,10 +331,10 @@ bool vtkMRMLInteractionWidget::ProcessEndMouseDrag(vtkMRMLInteractionEventData* 
     return false;
   }
 
-  if (this->WidgetState != vtkMRMLInteractionWidget::WidgetStateTranslate
-    && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateScale
-    && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateUniformScale
-    && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateRotate)
+  if (this->WidgetState != vtkMRMLInteractionWidget::WidgetStateTranslate       //
+      && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateScale        //
+      && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateUniformScale //
+      && this->WidgetState != vtkMRMLInteractionWidget::WidgetStateRotate)
   {
     return false;
   }

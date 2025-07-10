@@ -150,7 +150,7 @@ int ImportIDModelHierarchyParentIDConflictTestXMLString()
 
   // Here is the scene that will be imported:
 
-  const char scene1XML[] =
+  const char scene1XML[] = //
     "<MRML >"
     "  <ModelHierarchy id=\"vtkMRMLModelHierarchyNode1\" name=\"vtkMRMLModelHierarchyNode1\"></ModelHierarchy>"
     "  <ModelHierarchy id=\"vtkMRMLModelHierarchyNode2\" name=\"vtkMRMLModelHierarchyNode2\" parentNodeRef=\"vtkMRMLModelHierarchyNode1\"></ModelHierarchy>"

@@ -422,7 +422,7 @@ void qSlicerIOManager::registerDialog(qSlicerFileDialog* dialog)
   }
   else
   {
-    Q_ASSERT(dialog->action() == qSlicerFileDialog::Read ||
+    Q_ASSERT(dialog->action() == qSlicerFileDialog::Read || //
              dialog->action() == qSlicerFileDialog::Write);
   }
   dialog->setParent(this);
@@ -574,9 +574,9 @@ void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMes
     // Do not block the execution with popup windows if testing mode is enabled.
     return;
   }
-  if (overallSuccess
-    && userMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) == 0
-    && userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0)
+  if (overallSuccess                                                            //
+      && userMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) == 0 //
+      && userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0)
   {
     // Everything is OK, no need to show error popup.
     return;

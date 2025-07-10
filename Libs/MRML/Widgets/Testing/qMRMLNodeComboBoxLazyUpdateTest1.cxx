@@ -68,7 +68,7 @@ int qMRMLNodeComboBoxLazyUpdateTest1(int argc, char* argv[])
   vtkNew<vtkMRMLColorTableNode> node;
   scene->AddNode(node.GetPointer());
 
-  if (nodeSelector.nodeCount() != 0 ||
+  if (nodeSelector.nodeCount() != 0 || //
       treeNodeSelector.nodeCount() != 0 )
   {
     std::cerr << "qMRMLSceneModel::LazyUpdate failed when adding a node"
@@ -78,7 +78,7 @@ int qMRMLNodeComboBoxLazyUpdateTest1(int argc, char* argv[])
 
   scene->EndState(vtkMRMLScene::ImportState);
 
-  if (nodeSelector.nodeCount() != 1 ||
+  if (nodeSelector.nodeCount() != 1 || //
       treeNodeSelector.nodeCount() != 1 )
   {
     std::cerr << "qMRMLSceneModel::LazyUpdate failed when updating the scene"
@@ -101,7 +101,7 @@ int qMRMLNodeComboBoxLazyUpdateTest1(int argc, char* argv[])
   nodeSelector2.setMRMLScene(scene.GetPointer());
   treeNodeSelector2.setMRMLScene(scene.GetPointer());
 
-  if (nodeSelector2.nodeCount() != 1 ||
+  if (nodeSelector2.nodeCount() != 1 || //
       treeNodeSelector2.nodeCount() != 1 )
   {
     std::cerr << "qMRMLSceneModel::LazyUpdate failed when updating the scene"

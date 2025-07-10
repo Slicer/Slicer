@@ -79,10 +79,10 @@ bool qSlicerSceneWriter::canWriteObject(vtkObject* object) const
 QStringList qSlicerSceneWriter::extensions(vtkObject* object) const
 {
   Q_UNUSED(object);
-  return QStringList()
-    << tr("MRML Scene") + " (.mrml)"
-    << tr("Medical Reality Bundle") + " (.mrb)"
-    << tr("Slicer Data Bundle") +" (*)";
+  return QStringList()                               //
+         << tr("MRML Scene") + " (.mrml)"            //
+         << tr("Medical Reality Bundle") + " (.mrb)" //
+         << tr("Slicer Data Bundle") + " (*)";
 }
 
 //----------------------------------------------------------------------------

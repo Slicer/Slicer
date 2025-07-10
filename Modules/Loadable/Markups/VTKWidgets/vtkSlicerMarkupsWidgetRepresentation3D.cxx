@@ -281,8 +281,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
 
     for (int pointIndex = 0; pointIndex < numPoints; ++pointIndex)
     {
-      if (!(markupsNode->GetNthControlPointPositionVisibility(pointIndex)
-        && markupsNode->GetNthControlPointVisibility(pointIndex)))
+      if (!(markupsNode->GetNthControlPointPositionVisibility(pointIndex) //
+          && markupsNode->GetNthControlPointVisibility(pointIndex)))
       {
         continue;
       }
@@ -425,15 +425,15 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
     // opaque geometry is rendered but 2D labels are not yet), therefore we do not
     // update its output but just use the last output generated for the last rendering.
     bool pointVisible = false;
-    if (this->MarkupsDisplayNode
-      && this->MarkupsDisplayNode->GetOccludedVisibility()
+    if (this->MarkupsDisplayNode //
+      && this->MarkupsDisplayNode->GetOccludedVisibility() //
       && this->MarkupsDisplayNode->GetOccludedOpacity() > 0.0)
     {
       pointVisible = true;
     }
     for (int controlPointType = 0; controlPointType <= Active && !pointVisible; ++controlPointType)
     {
-      if ((controlPointType == Unselected && markupsNode->GetNthControlPointSelected(i))
+      if ((controlPointType == Unselected && markupsNode->GetNthControlPointSelected(i)) //
         || (controlPointType == Selected && !markupsNode->GetNthControlPointSelected(i)))
       {
         continue;
@@ -513,7 +513,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1 //
     || !this->GetVisibility() || !interactionEventData || !interactionEventData->IsWorldPositionValid() )
   {
     return;
@@ -731,7 +731,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport* viewport)
   if (this->TextActor->GetVisibility() && this->MarkupsNode && this->MarkupsDisplayNode)
   {
     // Only show text actor if at least one of the control points are visible
-    if (this->HideTextActorIfAllPointsOccluded
+    if (this->HideTextActorIfAllPointsOccluded //
       && (!this->MarkupsDisplayNode->GetOccludedVisibility() || this->MarkupsDisplayNode->GetOccludedOpacity() <= 0.0))
     {
       this->TextActorOccluded = true;
@@ -1194,7 +1194,7 @@ bool vtkSlicerMarkupsWidgetRepresentation3D::GetNthControlPointViewVisibility(in
   // update its output but just use the last output generated for the last rendering.
   for (int controlPointType = 0; controlPointType <= Active; ++controlPointType)
   {
-    if ((controlPointType == Unselected && markupsNode->GetNthControlPointSelected(n))
+    if ((controlPointType == Unselected && markupsNode->GetNthControlPointSelected(n)) //
       || (controlPointType == Selected && !markupsNode->GetNthControlPointSelected(n)))
     {
       continue;
@@ -1231,8 +1231,8 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateRelativeCoincidentTopologyOff
 
   Superclass::UpdateRelativeCoincidentTopologyOffsets(occludedMapper);
 
-  if (!this->MarkupsDisplayNode
-    || !this->MarkupsDisplayNode->GetOccludedVisibility()
+  if (!this->MarkupsDisplayNode //
+    || !this->MarkupsDisplayNode->GetOccludedVisibility() //
     || this->MarkupsDisplayNode->GetOccludedOpacity() <= 0.0)
   {
     return;

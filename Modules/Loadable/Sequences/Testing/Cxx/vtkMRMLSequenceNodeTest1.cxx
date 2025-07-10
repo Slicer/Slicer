@@ -182,7 +182,7 @@ bool testAddInvalidFile(const char* filePath)
   int nodeCount = scene->GetNumberOfNodes();
   vtkMRMLTableNode* table = tablesLogic->AddTable(filePath);
 
-  if (table != 0 ||
+  if (table != 0 || //
       scene->GetNumberOfNodes() != nodeCount)
     {
     std::cerr << "Line " << __LINE__
@@ -216,7 +216,7 @@ bool testAddFile(const char* filePath)
   int nodeCount = scene->GetNumberOfNodes();
   table = tablesLogic->AddTable(filePath);
 
-  if (table == 0 ||
+  if (table == 0 || //
       scene->GetNumberOfNodes() != nodeCount + 2)
     {
     std::cerr << "Adding an table should create 2 nodes" << std::endl;

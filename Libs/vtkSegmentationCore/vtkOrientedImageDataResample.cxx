@@ -314,8 +314,8 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceOrientedImage
       isInputImageTransformIdentity = true;
     }
   }
-  if (isInputImageTransformIdentity
-    && vtkOrientedImageDataResample::DoGeometriesMatch(inputImage, referenceImage))
+  if (isInputImageTransformIdentity //
+      && vtkOrientedImageDataResample::DoGeometriesMatch(inputImage, referenceImage))
   {
     if (vtkOrientedImageDataResample::DoExtentsMatch(inputImage, referenceImage))
     {
@@ -517,9 +517,9 @@ bool vtkOrientedImageDataResample::ResampleOrientedImageToReferenceGeometry(vtkO
   vtkOrientedImageDataResample::TransformExtent(effectiveInputExtent, referenceImageToInputImageTransform.GetPointer(), outputExtent);
 
   // Return with failure if effective output extent is empty
-  if (outputExtent[0] > outputExtent[1]
-    || outputExtent[2] > outputExtent[3]
-    || outputExtent[4] > outputExtent[5] )
+  if (outputExtent[0] > outputExtent[1]    //
+      || outputExtent[2] > outputExtent[3] //
+      || outputExtent[4] > outputExtent[5])
   {
     return false;
   }
@@ -566,21 +566,21 @@ bool vtkOrientedImageDataResample::IsEqual(vtkMatrix4x4* lhs, vtkMatrix4x4* rhs)
   {
     return false;
   }
-  return  AreEqualWithTolerance(lhs->GetElement(0,0), rhs->GetElement(0,0)) &&
-          AreEqualWithTolerance(lhs->GetElement(0,1), rhs->GetElement(0,1)) &&
-          AreEqualWithTolerance(lhs->GetElement(0,2), rhs->GetElement(0,2)) &&
-          AreEqualWithTolerance(lhs->GetElement(0,3), rhs->GetElement(0,3)) &&
-          AreEqualWithTolerance(lhs->GetElement(1,0), rhs->GetElement(1,0)) &&
-          AreEqualWithTolerance(lhs->GetElement(1,1), rhs->GetElement(1,1)) &&
-          AreEqualWithTolerance(lhs->GetElement(1,2), rhs->GetElement(1,2)) &&
-          AreEqualWithTolerance(lhs->GetElement(1,3), rhs->GetElement(1,3)) &&
-          AreEqualWithTolerance(lhs->GetElement(2,0), rhs->GetElement(2,0)) &&
-          AreEqualWithTolerance(lhs->GetElement(2,1), rhs->GetElement(2,1)) &&
-          AreEqualWithTolerance(lhs->GetElement(2,2), rhs->GetElement(2,2)) &&
-          AreEqualWithTolerance(lhs->GetElement(2,3), rhs->GetElement(2,3)) &&
-          AreEqualWithTolerance(lhs->GetElement(3,0), rhs->GetElement(3,0)) &&
-          AreEqualWithTolerance(lhs->GetElement(3,1), rhs->GetElement(3,1)) &&
-          AreEqualWithTolerance(lhs->GetElement(3,2), rhs->GetElement(3,2)) &&
+  return  AreEqualWithTolerance(lhs->GetElement(0,0), rhs->GetElement(0,0)) && //
+          AreEqualWithTolerance(lhs->GetElement(0,1), rhs->GetElement(0,1)) && //
+          AreEqualWithTolerance(lhs->GetElement(0,2), rhs->GetElement(0,2)) && //
+          AreEqualWithTolerance(lhs->GetElement(0,3), rhs->GetElement(0,3)) && //
+          AreEqualWithTolerance(lhs->GetElement(1,0), rhs->GetElement(1,0)) && //
+          AreEqualWithTolerance(lhs->GetElement(1,1), rhs->GetElement(1,1)) && //
+          AreEqualWithTolerance(lhs->GetElement(1,2), rhs->GetElement(1,2)) && //
+          AreEqualWithTolerance(lhs->GetElement(1,3), rhs->GetElement(1,3)) && //
+          AreEqualWithTolerance(lhs->GetElement(2,0), rhs->GetElement(2,0)) && //
+          AreEqualWithTolerance(lhs->GetElement(2,1), rhs->GetElement(2,1)) && //
+          AreEqualWithTolerance(lhs->GetElement(2,2), rhs->GetElement(2,2)) && //
+          AreEqualWithTolerance(lhs->GetElement(2,3), rhs->GetElement(2,3)) && //
+          AreEqualWithTolerance(lhs->GetElement(3,0), rhs->GetElement(3,0)) && //
+          AreEqualWithTolerance(lhs->GetElement(3,1), rhs->GetElement(3,1)) && //
+          AreEqualWithTolerance(lhs->GetElement(3,2), rhs->GetElement(3,2)) && //
           AreEqualWithTolerance(lhs->GetElement(3,3), rhs->GetElement(3,3));
 }
 
@@ -706,8 +706,12 @@ bool vtkOrientedImageDataResample::DoExtentsMatch(vtkOrientedImageData* image1, 
   image1->GetExtent(image1Extent);
   int image2Extent[6] = {0,-1,0,-1,0,-1};
   image2->GetExtent(image2Extent);
-  if (image1Extent[0] != image2Extent[0] || image1Extent[1] != image2Extent[1] || image1Extent[2] != image2Extent[2]
-    || image1Extent[3] != image2Extent[3] || image1Extent[4] != image2Extent[4] || image1Extent[5] != image2Extent[5] )
+  if (image1Extent[0] != image2Extent[0]    //
+      || image1Extent[1] != image2Extent[1] //
+      || image1Extent[2] != image2Extent[2] //
+      || image1Extent[3] != image2Extent[3] //
+      || image1Extent[4] != image2Extent[4] //
+      || image1Extent[5] != image2Extent[5])
   {
     return false;
   }
@@ -742,8 +746,8 @@ bool vtkOrientedImageDataResample::DoGeometriesMatchIgnoreOrigin(vtkOrientedImag
 //----------------------------------------------------------------------------
 void vtkOrientedImageDataResample::TransformExtent(const int inputExtent[6], vtkAbstractTransform* inputToOutputTransform, int outputExtent[6])
 {
-  if (!inputToOutputTransform
-    || inputExtent[0] > inputExtent[1] || inputExtent[2] > inputExtent[3] || inputExtent[4] > inputExtent[5])
+  if (!inputToOutputTransform //
+      || inputExtent[0] > inputExtent[1] || inputExtent[2] > inputExtent[3] || inputExtent[4] > inputExtent[5])
   {
     outputExtent[0] = 0;
     outputExtent[1] = -1;
@@ -1009,8 +1013,8 @@ bool vtkOrientedImageDataResample::DoesTransformMatrixContainShear(vtkMatrix4x4*
   vtkVector3d xAxis = vtkVector3d(matrix->GetElement(0,0), matrix->GetElement(1,0), matrix->GetElement(2,0));
   vtkVector3d yAxis = vtkVector3d(matrix->GetElement(0,1), matrix->GetElement(1,1), matrix->GetElement(2,1));
   vtkVector3d zAxis = vtkVector3d(matrix->GetElement(0,2), matrix->GetElement(1,2), matrix->GetElement(2,2));
-  return !AreEqualWithTolerance(xAxis.Dot(yAxis), 0.0)
-      || !AreEqualWithTolerance(xAxis.Dot(zAxis), 0.0)
+  return !AreEqualWithTolerance(xAxis.Dot(yAxis), 0.0) //
+      || !AreEqualWithTolerance(xAxis.Dot(zAxis), 0.0) //
       || !AreEqualWithTolerance(yAxis.Dot(zAxis), 0.0);
 }
 
@@ -1038,9 +1042,9 @@ bool vtkOrientedImageDataResample::PadImageToContainImage(vtkOrientedImageData* 
   vtkOrientedImageDataResample::TransformExtent(containedExtent, containedImageToInputImageTransform, containedImageExtentInInputImageFrame);
 
   // Return with failure if output extent is invalid
-  if (containedImageExtentInInputImageFrame[0] > containedImageExtentInInputImageFrame[1]
-    || containedImageExtentInInputImageFrame[2] > containedImageExtentInInputImageFrame[3]
-    || containedImageExtentInInputImageFrame[4] > containedImageExtentInInputImageFrame[5] )
+  if (containedImageExtentInInputImageFrame[0] > containedImageExtentInInputImageFrame[1]    //
+      || containedImageExtentInInputImageFrame[2] > containedImageExtentInInputImageFrame[3] //
+      || containedImageExtentInInputImageFrame[4] > containedImageExtentInInputImageFrame[5])
   {
     return false;
   }

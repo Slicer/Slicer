@@ -642,9 +642,9 @@ void qSlicerSubjectHierarchyPluginHandler::onSubjectHierarchyNodeEvent(
   }
 
   // Handle subject hierarchy node events
-  if (( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent
-      || event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested )
-      && shNode->GetScene() && !shNode->GetScene()->IsImporting() )
+  if (( event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent //
+      || event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemOwnerPluginSearchRequested ) //
+      && shNode->GetScene() && !shNode->GetScene()->IsImporting())
   {
     // Get item ID
     vtkIdType itemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID;

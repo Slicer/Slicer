@@ -52,7 +52,7 @@
 //-----------------------------------------------------------------------------
 bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
 {
-  if (!imageDataConnection ||
+  if (!imageDataConnection || //
       !imageDataConnection->GetProducer())
   {
     std::cout << "No image data port" << std::endl;
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
     vtkMRMLVectorVolumeNode::SafeDownCast(
       logic->AddArchetypeVolume(fileNameList->GetValue(0).c_str(), "rgbVolume", 0, fileNameList));
 
-  if (!vectorVolume ||
+  if (!vectorVolume || //
       !isImageDataValid(vectorVolume->GetImageDataConnection()))
   {
     std::cerr << "Failed to load RGB image." << std::endl;

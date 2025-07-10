@@ -447,10 +447,10 @@ void vtkMRMLSliceIntersectionRepresentation2D::UpdateSliceIntersectionDisplay(Sl
     return;
   }
   vtkMRMLSliceNode* intersectingSliceNode = pipeline->SliceLogic->GetSliceNode();
-  if (!pipeline->SliceLogic || !this->GetVisibility()
-    || !intersectingSliceNode
-    || this->Internal->SliceNode->GetViewGroup() != intersectingSliceNode->GetViewGroup()
-    || !intersectingSliceNode->IsMappedInLayout())
+  if (!pipeline->SliceLogic || !this->GetVisibility()                                       //
+      || !intersectingSliceNode                                                             //
+      || this->Internal->SliceNode->GetViewGroup() != intersectingSliceNode->GetViewGroup() //
+      || !intersectingSliceNode->IsMappedInLayout())
   {
     pipeline->SetIntersectionVisibility(false);
     pipeline->SetThickSlabVisibility(false);
@@ -795,8 +795,8 @@ void vtkMRMLSliceIntersectionRepresentation2D::TransformIntersectingSlices(vtkMa
   for (std::deque<SliceIntersectionDisplayPipeline*>::iterator sliceIntersectionIt = this->Internal->SliceIntersectionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionDisplayPipelines.end(); ++sliceIntersectionIt)
   {
-    if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
+    if (!(*sliceIntersectionIt) //
+        || !(*sliceIntersectionIt)->GetIntersectionVisibility())
     {
       continue;
     }
@@ -813,8 +813,8 @@ void vtkMRMLSliceIntersectionRepresentation2D::TransformIntersectingSlices(vtkMa
   for (std::deque<SliceIntersectionDisplayPipeline*>::iterator sliceIntersectionIt = this->Internal->SliceIntersectionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionDisplayPipelines.end(); ++sliceIntersectionIt)
   {
-    if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
+    if (!(*sliceIntersectionIt) //
+        || !(*sliceIntersectionIt)->GetIntersectionVisibility())
     {
       continue;
     }

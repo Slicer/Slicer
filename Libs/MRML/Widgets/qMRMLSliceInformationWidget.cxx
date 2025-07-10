@@ -286,7 +286,7 @@ void qMRMLSliceInformationWidget::setSliceSpacingMode(int spacingMode)
 {
   Q_D(qMRMLSliceInformationWidget);
 
-  if (spacingMode != vtkMRMLSliceNode::AutomaticSliceSpacingMode &&
+  if (spacingMode != vtkMRMLSliceNode::AutomaticSliceSpacingMode && //
       spacingMode != vtkMRMLSliceNode::PrescribedSliceSpacingMode)
   {
     qWarning() << "setSliceSpacingMode - Invalid spacingMode:" << spacingMode;

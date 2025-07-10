@@ -250,7 +250,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidge
   }
 
   bool show =
-    sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID())
+    sliceNode->IsDisplayableInThreeDView(this->External->GetMRMLViewNode()->GetID()) //
     && sliceNode->GetSliceVisible() && sliceNode->GetSliceEdgeVisibility3D();
 
   bool isShown = renderer->HasViewProp(rep);
@@ -383,7 +383,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::UpdateFromMRMLScene()
 //---------------------------------------------------------------------------
 void vtkMRMLThreeDSliceEdgeDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* nodeAdded)
 {
-  if (this->GetMRMLScene()->IsBatchProcessing() ||
+  if (this->GetMRMLScene()->IsBatchProcessing() || //
       !nodeAdded->IsA("vtkMRMLSliceNode"))
   {
     return;

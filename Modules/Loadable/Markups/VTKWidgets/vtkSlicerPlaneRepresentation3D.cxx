@@ -185,8 +185,8 @@ void vtkSlicerPlaneRepresentation3D::BuildPlane()
   planeNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
 
   double epsilon = 1e-5;
-  if (vtkMath::Norm(xAxis_World) <= epsilon ||
-      vtkMath::Norm(yAxis_World) <= epsilon ||
+  if (vtkMath::Norm(xAxis_World) <= epsilon || //
+      vtkMath::Norm(yAxis_World) <= epsilon || //
       vtkMath::Norm(zAxis_World) <= epsilon)
   {
     this->PlaneActor->SetVisibility(false);
@@ -293,7 +293,7 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 
   // Properties label display
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
-  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
     && planeNode->GetIsPlaneValid()) // including preview
   {
     planeNode->GetOriginWorld(this->TextActorPositionWorld);
@@ -434,7 +434,7 @@ void vtkSlicerPlaneRepresentation3D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
-  if (!planeNode || planeNode->GetLocked() || !planeNode->GetIsPlaneValid()
+  if (!planeNode || planeNode->GetLocked() || !planeNode->GetIsPlaneValid() //
     || !interactionEventData )
   {
     return;

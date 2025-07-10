@@ -123,7 +123,7 @@ void qSlicerSimpleMarkupsWidget::setup()
   connect( d->MarkupsPlaceWidget, SIGNAL( activeMarkupsPlaceModeChanged(bool) ), this, SIGNAL( activeMarkupsPlaceModeChanged(bool) ) );
 
   d->MarkupsControlPointsTableWidget->setColumnCount( CONTROL_POINT_COLUMNS );
-  d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList()
+  d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList() //
     << tr("Label")
     << tr("R")  //: right
     << tr("A")  //: anterior
@@ -597,7 +597,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     d->MarkupsControlPointsTableWidget->clear();
     d->MarkupsControlPointsTableWidget->setRowCount( currentMarkupsNode->GetNumberOfControlPoints() );
     d->MarkupsControlPointsTableWidget->setColumnCount( CONTROL_POINT_COLUMNS );
-    d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList()
+    d->MarkupsControlPointsTableWidget->setHorizontalHeaderLabels(QStringList() //
       << tr("Label")
       << tr("R")  //: right
       << tr("A")  //: anterior

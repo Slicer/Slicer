@@ -290,8 +290,8 @@ double vtkMRMLVolumeRenderingDisplayNode::GetSampleDistance()
 
   const double minSpacing = volumeNode->GetMinSpacing() > 0 ? volumeNode->GetMinSpacing() : 1.;
   double sampleDistance = minSpacing / firstViewNode->GetVolumeRenderingOversamplingFactor();
-  if (firstViewNode
-    && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Maximum)
+  if (firstViewNode //
+      && firstViewNode->GetVolumeRenderingQuality() == vtkMRMLViewNode::Maximum)
   {
     sampleDistance = minSpacing / 10.; // =10x smaller than pixel is high quality
   }
@@ -306,31 +306,31 @@ void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject* caller,
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLVolumePropertyNode* volumePropertyNode = this->GetVolumePropertyNode();
-  if (volumePropertyNode != nullptr &&
-      volumePropertyNode == vtkMRMLVolumePropertyNode::SafeDownCast(caller) &&
+  if (volumePropertyNode != nullptr && //
+      volumePropertyNode == vtkMRMLVolumePropertyNode::SafeDownCast(caller) && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
   vtkMRMLShaderPropertyNode* shaderPropertyNode = this->GetShaderPropertyNode();
-  if (shaderPropertyNode != nullptr &&
-      shaderPropertyNode == vtkMRMLShaderPropertyNode::SafeDownCast(caller) &&
+  if (shaderPropertyNode != nullptr && //
+      shaderPropertyNode == vtkMRMLShaderPropertyNode::SafeDownCast(caller) && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
   vtkMRMLMarkupsROINode* markupRoiNode = this->GetMarkupsROINode();
-  if (markupRoiNode != nullptr &&
-      markupRoiNode == vtkMRMLMarkupsROINode::SafeDownCast(caller) &&
+  if (markupRoiNode != nullptr && //
+      markupRoiNode == vtkMRMLMarkupsROINode::SafeDownCast(caller) && //
       event == vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
 
-  if (event == vtkCommand::StartEvent ||
-      event == vtkCommand::EndEvent ||
-      event == vtkCommand::StartInteractionEvent ||
-      event == vtkCommand::InteractionEvent ||
+  if (event == vtkCommand::StartEvent || //
+      event == vtkCommand::EndEvent || //
+      event == vtkCommand::StartInteractionEvent || //
+      event == vtkCommand::InteractionEvent || //
       event == vtkCommand::EndInteractionEvent
       )
   {

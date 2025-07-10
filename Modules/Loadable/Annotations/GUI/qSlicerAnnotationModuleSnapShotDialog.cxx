@@ -65,9 +65,9 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
 
   // get the name..
   std::string name;
-  if (this->m_Logic->GetMRMLScene()
-    && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)
-    && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName())
+  if (this->m_Logic->GetMRMLScene()                         //
+      && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId) //
+      && this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName())
   {
     name = this->m_Logic->GetMRMLScene()->GetNodeByID(nodeId)->GetName();
   }
@@ -85,7 +85,7 @@ void qSlicerAnnotationModuleSnapShotDialog::loadNode(const char* nodeId)
 
   // ..and set it in the GUI
   // double check that the screen shot type is in range
-  if (screenshotType < qMRMLScreenShotDialog::ThreeD ||
+  if (screenshotType < qMRMLScreenShotDialog::ThreeD || //
       screenshotType > qMRMLScreenShotDialog::FullLayout)
   {
     // reset to full layout

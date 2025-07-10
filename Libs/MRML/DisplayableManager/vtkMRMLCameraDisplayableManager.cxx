@@ -142,7 +142,7 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndRestore()
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if (this->GetMRMLScene()->IsBatchProcessing() ||
+  if (this->GetMRMLScene()->IsBatchProcessing() || //
       !node->IsA("vtkMRMLCameraNode"))
   {
     return;
@@ -154,7 +154,7 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (this->GetMRMLScene()->IsBatchProcessing() ||
+  if (this->GetMRMLScene()->IsBatchProcessing() || //
       !node->IsA("vtkMRMLCameraNode"))
   {
     return;
@@ -229,9 +229,9 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode*
     return;
   }
   // Do not associate the old camera node anymore with this view
-  if (this->Internal->CameraNode && this->Internal->CameraNode->GetLayoutName()
-    && this->GetMRMLViewNode() && this->GetMRMLViewNode()->GetLayoutName()
-    && strcmp(this->Internal->CameraNode->GetLayoutName(), this->GetMRMLViewNode()->GetLayoutName())==0)
+  if (this->Internal->CameraNode && this->Internal->CameraNode->GetLayoutName() //
+      && this->GetMRMLViewNode() && this->GetMRMLViewNode()->GetLayoutName()    //
+      && strcmp(this->Internal->CameraNode->GetLayoutName(), this->GetMRMLViewNode()->GetLayoutName())==0)
   {
     this->Internal->CameraNode->SetLayoutName(nullptr);
   }

@@ -376,7 +376,7 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode* mod
   }
 
   // check for a remote file
-  if ((this->GetMRMLScene()->GetCacheManager() != nullptr) &&
+  if ((this->GetMRMLScene()->GetCacheManager() != nullptr) && //
       this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename))
   {
     storageNode->SetURI(filename);
@@ -476,8 +476,8 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     // Doing so will avoid updating annotation and fiber bundle node
     // visibility since they derive from vtkMRMLModelNode
     // See https://github.com/Slicer/Slicer/issues/2576
-    if (mrmlNode != nullptr
-        && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode)
+    if (mrmlNode != nullptr //
+        && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode) //
         && strcmp(mrmlNode->GetClassName(), "vtkMRMLModelNode") == 0)
     {
       vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
@@ -488,7 +488,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
       }
     }
 
-    if (flag != 2 && mrmlNode != nullptr
+    if (flag != 2 && mrmlNode != nullptr //
         && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode) )
     {
       vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);

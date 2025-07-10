@@ -307,8 +307,8 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode* m
     return false;
   }
 
-  if (this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemRAS
-    && this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemLPS)
+  if (this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemRAS //
+      && this->GetCoordinateSystem() != vtkMRMLStorageNode::CoordinateSystemLPS)
   {
     vtkGenericWarningMacro("vtkMRMLMarkupsFiducialStorageNode::SetMarkupFromString failed: invalid coordinate system");
     return false;
@@ -809,7 +809,7 @@ std::string vtkMRMLMarkupsFiducialStorageNode::ConvertStringToStorageFormat(std:
   size_t commaPos = output.find(",");
   size_t quotePos = output.find("\"");
 
-  if (commaPos != std::string::npos ||
+  if (commaPos != std::string::npos || //
       quotePos != std::string::npos)
   {
     surroundingQuotesNeeded = true;

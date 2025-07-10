@@ -157,13 +157,13 @@ vtkTypeBool vtkSlicerTestLineRepresentation3D::HasTranslucentPolygonalGeometry()
     return true;
   }
 
-  if (this->TargetOrgan && this->ContourActor->GetVisibility() &&
+  if (this->TargetOrgan && this->ContourActor->GetVisibility() && //
       this->ContourActor->HasTranslucentPolygonalGeometry())
   {
     return true;
   }
 
-  if (this->MiddlePointActor->GetVisibility() &&
+  if (this->MiddlePointActor->GetVisibility() && //
       this->MiddlePointActor->HasTranslucentPolygonalGeometry())
   {
     return true;

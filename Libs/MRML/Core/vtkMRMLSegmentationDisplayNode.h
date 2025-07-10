@@ -81,15 +81,15 @@ public:
           return false;
         }
       }
-      return
-        Visible == rhs.Visible &&
-        Visible3D == rhs.Visible3D &&
-        Visible2DFill == rhs.Visible2DFill &&
-        Visible2DOutline == rhs.Visible2DOutline &&
-        Opacity3D == rhs.Opacity3D &&
-        Opacity2DFill == rhs.Opacity2DFill &&
-        Opacity2DOutline == rhs.Opacity2DOutline &&
-        Pickable == rhs.Pickable;
+      return                                        //
+        Visible == rhs.Visible                      //
+        && Visible3D == rhs.Visible3D               //
+        && Visible2DFill == rhs.Visible2DFill       //
+        && Visible2DOutline == rhs.Visible2DOutline //
+        && Opacity3D == rhs.Opacity3D               //
+        && Opacity2DFill == rhs.Opacity2DFill       //
+        && Opacity2DOutline == rhs.Opacity2DOutline //
+        && Pickable == rhs.Pickable;
     }
   };
 

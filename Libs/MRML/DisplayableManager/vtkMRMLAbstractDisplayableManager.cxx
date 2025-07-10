@@ -678,9 +678,9 @@ void vtkMRMLAbstractDisplayableManager::ProcessMRMLNodesEvents(
         this->OnMRMLDisplayableNodeModifiedEvent(caller);
         return;
       }
-      else if (event == vtkMRMLNode::ReferenceAddedEvent ||
-              event == vtkMRMLNode::ReferenceRemovedEvent ||
-              event == vtkMRMLNode::ReferenceModifiedEvent)
+      else if (event == vtkMRMLNode::ReferenceAddedEvent || //
+               event == vtkMRMLNode::ReferenceRemovedEvent || //
+               event == vtkMRMLNode::ReferenceModifiedEvent)
       {
         // Update interaction node
         vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(this->GetMRMLDisplayableNode());

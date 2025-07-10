@@ -139,7 +139,7 @@ void vtkMRMLPlotViewNode::ProcessMRMLEvents(vtkObject* caller, unsigned long eve
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLPlotChartNode* pnode = this->GetPlotChartNode();
-  if (pnode != nullptr && pnode == vtkMRMLPlotChartNode::SafeDownCast(caller) &&
+  if (pnode != nullptr && pnode == vtkMRMLPlotChartNode::SafeDownCast(caller) && //
      (event ==  vtkCommand::ModifiedEvent || event == vtkMRMLPlotChartNode::PlotModifiedEvent))
   {
     this->InvokeEvent(vtkMRMLPlotViewNode::PlotChartNodeChangedEvent, pnode);

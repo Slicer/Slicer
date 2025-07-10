@@ -537,7 +537,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
     (*this->InternalModifiedQueue).pop();
 
     // pop off any extra copies of the same object to save some updates
-    while (!(*this->InternalModifiedQueue).empty()
+    while (!(*this->InternalModifiedQueue).empty() //
            && (obj == (*this->InternalModifiedQueue).front()))
     {
       (*this->InternalModifiedQueue).pop();
@@ -841,9 +841,9 @@ std::string GetModuleHomeDirectory(const std::string& filePath,
   int offset = 0;
   std::string intDir(".");
   std::string possibleIntDir = components.at(components.size() - 2);
-  if (!itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "Debug") ||
-      !itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "Release") ||
-      !itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "RelWithDebInfo") ||
+  if (!itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "Debug") ||          //
+      !itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "Release") ||        //
+      !itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "RelWithDebInfo") || //
       !itksys::SystemTools::Strucmp(possibleIntDir.c_str(), "MinSizeRel"))
   {
     offset = 1;

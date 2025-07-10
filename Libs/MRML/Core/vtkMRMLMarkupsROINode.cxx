@@ -131,8 +131,8 @@ vtkMRMLStorageNode* vtkMRMLMarkupsROINode::CreateDefaultStorageNode()
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsROINode::CreateDefaultDisplayNodes()
 {
-  if (this->GetDisplayNode() != nullptr &&
-    vtkMRMLMarkupsROIDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
+  if (this->GetDisplayNode() != nullptr && //
+      vtkMRMLMarkupsROIDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
   {
     // display node already exists
     return;
@@ -550,8 +550,8 @@ vtkVector3d GetCenterWorld();
 vtkVector3d vtkMRMLMarkupsROINode::GetCenter()
 {
   vtkVector3d center(
-    this->ObjectToNodeMatrix->GetElement(0, 3),
-    this->ObjectToNodeMatrix->GetElement(1, 3),
+    this->ObjectToNodeMatrix->GetElement(0, 3), //
+    this->ObjectToNodeMatrix->GetElement(1, 3), //
     this->ObjectToNodeMatrix->GetElement(2, 3));
   return center;
 }
@@ -560,8 +560,8 @@ vtkVector3d vtkMRMLMarkupsROINode::GetCenter()
 vtkVector3d vtkMRMLMarkupsROINode::GetCenterWorld()
 {
   vtkVector3d centerWorld(
-    this->ObjectToWorldMatrix->GetElement(0, 3),
-    this->ObjectToWorldMatrix->GetElement(1, 3),
+    this->ObjectToWorldMatrix->GetElement(0, 3), //
+    this->ObjectToWorldMatrix->GetElement(1, 3), //
     this->ObjectToWorldMatrix->GetElement(2, 3));
   return centerWorld;
 }
@@ -624,9 +624,9 @@ void vtkMRMLMarkupsROINode::SetCenter(const double center_Node[3])
     return;
   }
 
-  if (this->ObjectToNodeMatrix->GetElement(0, 3) == center_Node[0] &&
-    this->ObjectToNodeMatrix->GetElement(1, 3) == center_Node[1] &&
-    this->ObjectToNodeMatrix->GetElement(2, 3) == center_Node[2])
+  if (this->ObjectToNodeMatrix->GetElement(0, 3) == center_Node[0] && //
+      this->ObjectToNodeMatrix->GetElement(1, 3) == center_Node[1] && //
+      this->ObjectToNodeMatrix->GetElement(2, 3) == center_Node[2])
   {
     return;
   }

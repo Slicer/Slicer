@@ -209,10 +209,10 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "IJKToRASDirections:\n";
   for (int i = 0; i < 3; i++)
   {
-    os << indent.GetNextIndent()
-      << this->IJKToRASDirections[i][0] << " "
-      << this->IJKToRASDirections[i][1] << " "
-      << this->IJKToRASDirections[i][2] << "\n";
+    os << indent.GetNextIndent()                //
+       << this->IJKToRASDirections[i][0] << " " //
+       << this->IJKToRASDirections[i][1] << " " //
+       << this->IJKToRASDirections[i][2] << "\n";
   }
 
   if (this->GetImageData() != nullptr)
@@ -317,8 +317,8 @@ void vtkMRMLVolumeNode::GetKToRASDirection(double dirs[3])
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetSpacing(double arg1, double arg2, double arg3)
 {
-  if (!vtkMathUtilities::FuzzyCompare<double>(this->Spacing[0], arg1) ||
-      !vtkMathUtilities::FuzzyCompare<double>(this->Spacing[1], arg2) ||
+  if (!vtkMathUtilities::FuzzyCompare<double>(this->Spacing[0], arg1) || //
+      !vtkMathUtilities::FuzzyCompare<double>(this->Spacing[1], arg2) || //
       !vtkMathUtilities::FuzzyCompare<double>(this->Spacing[2], arg3))
   {
     this->Spacing[0] = arg1;
@@ -338,8 +338,8 @@ void vtkMRMLVolumeNode::SetSpacing(double arg[3])
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetOrigin(double arg1, double arg2, double arg3)
 {
-  if (!vtkMathUtilities::FuzzyCompare<double>(this->Origin[0], arg1) ||
-      !vtkMathUtilities::FuzzyCompare<double>(this->Origin[1], arg2) ||
+  if (!vtkMathUtilities::FuzzyCompare<double>(this->Origin[0], arg1) || //
+      !vtkMathUtilities::FuzzyCompare<double>(this->Origin[1], arg2) || //
       !vtkMathUtilities::FuzzyCompare<double>(this->Origin[2], arg3))
   {
     this->Origin[0] = arg1;
@@ -531,61 +531,61 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char* order,
   vtkNew<vtkMatrix4x4> orientMat;
   orientMat->Identity();
 
-  if (!strcmp(order,"IS") ||
-      !strcmp(order,"Axial IS") ||
-      !strcmp(order,  "Axial"))
+  if (!strcmp(order, "IS") ||       //
+      !strcmp(order, "Axial IS") || //
+      !strcmp(order, "Axial"))
   {
-    const double elems[] = { -1,  0,  0,  0,
-                        0, -1,  0,  0,
-                        0,  0,  1,  0,
-                        0,  0,  0,  1};
+    const double elems[] = { -1, 0,  0, 0, //
+                             0,  -1, 0, 0, //
+                             0,  0,  1, 0, //
+                             0,  0,  0, 1 };
     orientMat->DeepCopy(elems);
   }
-  else if (!strcmp(order,"SI") ||
-           !strcmp(order,"Axial SI"))
+  else if (!strcmp(order, "SI") || //
+           !strcmp(order, "Axial SI"))
   {
-    const double elems[] = { -1,  0,  0,  0,
-                        0, -1,  0,  0,
-                        0,  0, -1,  0,
-                        0,  0,  0,  1};
+    const double elems[] = { -1, 0,  0,  0, //
+                             0,  -1, 0,  0, //
+                             0,  0,  -1, 0, //
+                             0,  0,  0,  1 };
     orientMat->DeepCopy(elems);
   }
-  else if (!strcmp(order,"RL") ||
-           !strcmp(order,"Sagittal RL") ||
-           !strcmp(order,  "Sagittal"))
+  else if (!strcmp(order, "RL") ||          //
+           !strcmp(order, "Sagittal RL") || //
+           !strcmp(order, "Sagittal"))
   {
-    const double elems[] = {  0,  0, -1,  0,
-                       -1,  0,  0,  0,
-                        0,  -1,  0,  0,
-                        0,  0,  0,  1};
+    const double elems[] = { 0,  0,  -1, 0, //
+                             -1, 0,  0,  0, //
+                             0,  -1, 0,  0, //
+                             0,  0,  0,  1 };
     orientMat->DeepCopy(elems);
   }
-  else if (!strcmp(order,"LR") ||
-      !strcmp(order,"Sagittal LR") )
+  else if (!strcmp(order, "LR") || //
+           !strcmp(order, "Sagittal LR"))
   {
-    const double elems[] = {  0,  0,  1,  0,
-                       -1,  0,  0,  0,
-                        0, -1,  0,  0,
-                        0,  0,  0,  1};
+    const double elems[] = { 0,  0,  1, 0, //
+                             -1, 0,  0, 0, //
+                             0,  -1, 0, 0, //
+                             0,  0,  0, 1 };
     orientMat->DeepCopy(elems);
   }
-  else if (!strcmp(order,"PA") ||
-      !strcmp(order,"Coronal PA") ||
-      !strcmp(order,  "Coronal"))
+  else if (!strcmp(order, "PA") ||         //
+           !strcmp(order, "Coronal PA") || //
+           !strcmp(order, "Coronal"))
   {
-    const double elems[] = { -1,  0,  0,  0,
-                        0,  0,  1,  0,
-                        0, -1,  0,  0,
-                        0,  0,  0,  1};
+    const double elems[] = { -1, 0,  0, 0, //
+                             0,  0,  1, 0, //
+                             0,  -1, 0, 0, //
+                             0,  0,  0, 1 };
     orientMat->DeepCopy(elems);
   }
-  else if (!strcmp(order,"AP") ||
-      !strcmp(order,"Coronal AP") )
+  else if (!strcmp(order, "AP") || //
+           !strcmp(order, "Coronal AP"))
   {
-    const double elems[] = { -1,  0,  0,  0,
-                        0,  0, -1,  0,
-                        0, -1,  0,  0,
-                        0,  0,  0,  1};
+    const double elems[] = { -1, 0,  0,  0, //
+                             0,  0,  -1, 0, //
+                             0,  -1, 0,  0, //
+                             0,  0,  0,  1 };
     orientMat->DeepCopy(elems);
   }
   else
@@ -595,11 +595,10 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char* order,
 
   vtkMatrix4x4::Multiply4x4(orientMat.GetPointer(), scaleMat.GetPointer(), IJKToRAS);
 
-  const double pnt[] = {
-   static_cast<double>(-dims[0]/2),
-   static_cast<double>(-dims[1]/2),
-   static_cast<double>(-dims[2]/2),
-   static_cast<double>( 0.0 )};
+  const double pnt[] = { static_cast<double>(-dims[0] / 2), //
+                         static_cast<double>(-dims[1] / 2), //
+                         static_cast<double>(-dims[2] / 2), //
+                         static_cast<double>(0.0) };
 
   const double* const pnt1 = IJKToRAS->MultiplyDoublePoint(pnt);
 
@@ -717,13 +716,12 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData* imageData)
   {
     if (!IsImageDataGeometryValid(imageData))
     {
-      vtkWarningMacro(
-        "SetAndObserveImageData: The vtkImageData associated with the Volume node "
-        << (this->GetID() != nullptr ? this->GetID() : "(unknown)")
-        << " does not meet the required properties:"
-        << " Origin must be (0,0,0), Spacing must be (1,1,1),"
-        << " and Direction must be an identity matrix."
-      );
+      vtkWarningMacro(                                                              //
+        "SetAndObserveImageData: The vtkImageData associated with the Volume node " //
+        << (this->GetID() != nullptr ? this->GetID() : "(unknown)")                 //
+        << " does not meet the required properties:"                                //
+        << " Origin must be (0,0,0), Spacing must be (1,1,1),"                      //
+        << " and Direction must be an identity matrix.");
     }
     vtkTrivialProducer* oldProducer = vtkTrivialProducer::SafeDownCast(
       this->GetImageDataConnection() ? this->GetImageDataConnection()->GetProducer() : nullptr);
@@ -859,8 +857,8 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject* caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   // did the image data change?
-  if (this->ImageDataConnection != nullptr &&
-      this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
+  if (this->ImageDataConnection != nullptr && //
+      this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) && //
     event ==  vtkCommand::ModifiedEvent)
   {
     this->InvokeCustomModifiedEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent);
@@ -1024,7 +1022,7 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
 //---------------------------------------------------------------------------
 bool vtkMRMLVolumeNode::GetModifiedSinceRead()
 {
-  return this->Superclass::GetModifiedSinceRead() ||
+  return this->Superclass::GetModifiedSinceRead() || //
     (this->GetImageData() && this->GetImageData()->GetMTime() > this->GetStoredTime());
 }
 
@@ -1149,9 +1147,9 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   double resampledOrigin_RAS[4] = { 0, 0, 0, 0 };
   IJKToRAS->MultiplyPoint(resampledOrigin_IJK, resampledOrigin_RAS);
   double* origin = this->GetOrigin();
-  this->SetOrigin(
-    origin[0] + resampledOrigin_RAS[0],
-    origin[1] + resampledOrigin_RAS[1],
+  this->SetOrigin(                      //
+    origin[0] + resampledOrigin_RAS[0], //
+    origin[1] + resampledOrigin_RAS[1], //
     origin[2] + resampledOrigin_RAS[2]);
   resampleImage->SetOrigin(0, 0, 0);
 
@@ -1187,11 +1185,10 @@ void vtkMRMLVolumeNode::ShiftImageDataExtentToZeroStart()
   // Shift the origin to the extent's start
   vtkSmartPointer<vtkMatrix4x4> ijkToRasMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   this->GetIJKToRASMatrix(ijkToRasMatrix);
-  double shiftedOrigin_IJK[4] = {
-    static_cast<double>(extent[0]),
-    static_cast<double>(extent[2]),
-    static_cast<double>(extent[4]),
-    1.0 };
+  double shiftedOrigin_IJK[4] = { static_cast<double>(extent[0]), //
+                                  static_cast<double>(extent[2]), //
+                                  static_cast<double>(extent[4]), //
+                                  1.0 };
   double shiftedOrigin_RAS[4] = { 0.0, 0.0, 0.0, 1.0 };
   ijkToRasMatrix->MultiplyPoint(shiftedOrigin_IJK, shiftedOrigin_RAS);
   this->SetOrigin(shiftedOrigin_RAS);
@@ -1263,9 +1260,9 @@ bool vtkMRMLVolumeNode::IsCentered()
   double centerPosition[3] = { 0.0, 0.0, 0.0 };
   this->GetCenterPositionRAS(centerPosition);
   double tolerance = this->GetMaxSpacing() * 0.1;
-  bool centered = (fabs(centerPosition[0]) <= tolerance
-    && fabs(centerPosition[1]) <= tolerance
-    && fabs(centerPosition[2]) <= tolerance);
+  bool centered = (fabs(centerPosition[0]) <= tolerance    //
+                   && fabs(centerPosition[1]) <= tolerance //
+                   && fabs(centerPosition[2]) <= tolerance);
   return centered;
 }
 
@@ -1282,13 +1279,10 @@ void vtkMRMLVolumeNode::GetCenterPositionRAS(double* centerPositionRAS, bool use
   }
 
   int* extent = imageData->GetExtent();
-  double centerPositionIJK[4] =
-    {
-    double(extent[0] + extent[1]) / 2.0,
-    double(extent[2] + extent[3]) / 2.0,
-    double(extent[4] + extent[5]) / 2.0,
-    1.0
-    };
+  double centerPositionIJK[4] = { double(extent[0] + extent[1]) / 2.0, //
+                                  double(extent[2] + extent[3]) / 2.0, //
+                                  double(extent[4] + extent[5]) / 2.0, //
+                                  1.0 };
 
   vtkNew<vtkMatrix4x4> ijkToRasMatrix;
   this->GetIJKToRASMatrix(ijkToRasMatrix);

@@ -103,7 +103,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
     modelDisplayNodes.push_back(vtkSmartPointer<vtkMRMLModelDisplayNode>::New());
     scene->AddNode(modelNodes[m]);
     scene->AddNode(modelDisplayNodes[m]);
-    if (!modelNodes[m] || !modelDisplayNodes[m] ||
+    if (!modelNodes[m] || !modelDisplayNodes[m] || //
         !modelDisplayNodes[m]->GetID())
     {
       std::cerr << "Error setting up a display node for the " << m << "th model node\n";
@@ -252,7 +252,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
   std::cout << "Second level hierarchy immediate children after inserting node 6 at index 3:" << std::endl;
   PrintNames(immediateChildren2);
   vtkMRMLHierarchyNode* testInsert = hnode2->GetNthChildNode(3);
-  if (!testInsert ||
+  if (!testInsert || //
       strcmp("MH6", testInsert->GetName()) != 0)
   {
     std::cerr << "Error inserting a hierarchy at index 6, got back nth child named " << testInsert->GetName() << " instead of MH6" << std::endl;

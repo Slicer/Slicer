@@ -190,7 +190,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(int vt
 //----------------------------------------------------------------------------
 bool vtkMRMLVolumeArchetypeStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
-  return refNode->IsA("vtkMRMLScalarVolumeNode") ||
+  return refNode->IsA("vtkMRMLScalarVolumeNode") || //
          refNode->IsA("vtkMRMLVectorVolumeNode" );
 }
 
@@ -281,10 +281,10 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode* storage
   // one of those, then don't send the rest of the list
   //
   std::string fileExt = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if (fileExt != std::string(".hdr")
-      && fileExt != std::string(".img")
-      && fileExt != std::string(".mhd")
-      && fileExt != std::string(".nhdr") )
+  if (fileExt != std::string(".hdr")    //
+      && fileExt != std::string(".img") //
+      && fileExt != std::string(".mhd") //
+      && fileExt != std::string(".nhdr"))
   {
     for (int n = 0; n < storageNode->GetNumberOfFileNames(); n++)
     {
@@ -453,8 +453,8 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
   }
 
-  if (!volNode->IsA("vtkMRMLVectorVolumeNode")
-      && !volNode->IsA("vtkMRMLDiffusionTensorVolumeNode")
+  if (!volNode->IsA("vtkMRMLVectorVolumeNode") //
+      && !volNode->IsA("vtkMRMLDiffusionTensorVolumeNode") //
       && reader->GetNumberOfComponents() != 1)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
@@ -620,7 +620,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     {
       const char* thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
       // skip the dirs
-      if (strcmp(thisFile,".") &&
+      if (strcmp(thisFile,".") && //
           strcmp(thisFile,".."))
       {
         targetPathComponents.emplace_back(thisFile);
@@ -693,8 +693,8 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
     // If voxel values store spatial vectors then we need to convert from LPS to RAS
     bool writeVoxelValuesAsLps = (
-      voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial
-      && volNode->GetImageData()
+      voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial //
+      && volNode->GetImageData()                                   //
       && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
     if (writeVoxelValuesAsLps)
     {
@@ -739,7 +739,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 
   // Display warning if saving TIFF file as 3D image
-  if ((vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".tiff") ||
+  if ((vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".tiff") || //
        vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".tif")))
   {
     // Display warning if saving TIFF file with non-LPS axes or non-zero origin
@@ -757,8 +757,8 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     // Display warning if saving TIFF file with non-unit K spacing (TIFF cannot store spacing along K axis)
     bool unitZSpacing = (fabs(unitScale[2] - 1.0) < 1e-3);
 
-    if (!vtkAddonMathUtilities::MatrixAreEqual(currentIjkToRas, identityIjkToRas)
-      || !unitZSpacing)
+    if (!vtkAddonMathUtilities::MatrixAreEqual(currentIjkToRas, identityIjkToRas) //
+        || !unitZSpacing)
       {
       vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
         vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
@@ -768,8 +768,8 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 
   // Display warnings for Analyze files
-  if (vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".hdr")
-    || vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".img")
+  if (vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".hdr")  //
+    || vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".img") //
     || vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".img.gz"))
   {
     vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
@@ -785,8 +785,8 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
 {
   Superclass::InitializeSupportedWriteFileTypes();
-  if (this->GetScene() &&
-      this->GetScene()->GetDataIOManager() &&
+  if (this->GetScene() &&                     //
+      this->GetScene()->GetDataIOManager() && //
       this->GetScene()->GetDataIOManager()->GetFileFormatHelper())
   {
     vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
@@ -834,8 +834,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   // get the base dir of the destination
   /*
   // get the cache dir and make a subdir in it.
-  if (this->GetScene() &&
-      this->GetScene()->GetCacheManager() &&
+  if (this->GetScene() &&                    //
+      this->GetScene()->GetCacheManager() && //
       this->GetScene()->GetCacheManager()->GetRemoteCacheDirectory())
     {
     vtksys::SystemTools::SplitPath(this->GetScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
@@ -883,8 +883,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   writer->SetUseCompression(this->GetUseCompression());
   if (this->WriteFileFormat)
   {
-    if (this->GetScene() &&
-        this->GetScene()->GetDataIOManager() &&
+    if (this->GetScene() &&                     //
+        this->GetScene()->GetDataIOManager() && //
         this->GetScene()->GetDataIOManager()->GetFileFormatHelper())
     {
       writer->SetImageIOClassName(this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
@@ -902,8 +902,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
   // If voxel values store spatial vectors then we need to convert from LPS to RAS
   bool writeVoxelValuesAsLps = (
-    voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial
-    && volNode->GetImageData()
+    voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial //
+    && volNode->GetImageData()                                   //
     && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
   bool success = true;
   if (writeVoxelValuesAsLps)
@@ -956,14 +956,14 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   }
   else
   {
-    if (volNode->GetScene() != nullptr &&
+    if (volNode->GetScene() != nullptr && //
         strlen(volNode->GetScene()->GetRootDirectory()) )
     {
       // use the scene's root dir, all the files in the list will be
       // relative to it (the relative path is how you go from the root dir to
       // the dir in which the volume is saved)
       std::string rootDir = volNode->GetScene()->GetRootDirectory();
-      if (rootDir.length() != 0 &&
+      if (rootDir.length() != 0 && //
           rootDir.find_last_of("/") == rootDir.length() - 1)
       {
         vtkDebugMacro("UpdateFileList: found trailing slash in : " << rootDir);
@@ -1001,8 +1001,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
     }
   }
   // strip off any trailing slashes
-  if (relativePath.length() != 0 &&
-      relativePath.find_last_of("/")  != std::string::npos &&
+  if (relativePath.length() != 0 &&                           //
+      relativePath.find_last_of("/")  != std::string::npos && //
       relativePath.find_last_of("/") == relativePath.length() - 1)
   {
     vtkDebugMacro("UpdateFileList: stripping off a trailing slash from relativePath '"<< relativePath.c_str() << "'");
@@ -1029,7 +1029,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   {
     // skip the dirs
     const char* thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
-    if (strcmp(thisFile,".") &&
+    if (strcmp(thisFile,".") && //
         strcmp(thisFile,".."))
     {
       vtkDebugMacro("UpdateFileList: adding file number " << fileNum << ", " << thisFile);

@@ -98,9 +98,9 @@ std::vector<std::string> vtkCodedEntry::GetValueSchemeMeaning()
 //----------------------------------------------------------------------------
 std::string vtkCodedEntry::GetAsPrintableString()
 {
-  std::string printable = std::string("(")
-    + (this->CodeValue ? this->CodeValue : "(none)") + ", "
-    + (this->CodingSchemeDesignator ? this->CodingSchemeDesignator : "(none)") + ", \""
+  std::string printable = std::string("(") //
+    + (this->CodeValue ? this->CodeValue : "(none)") + ", " //
+    + (this->CodingSchemeDesignator ? this->CodingSchemeDesignator : "(none)") + ", \"" //
     + (this->CodeMeaning ? this->CodeMeaning : "") + "\")";
   return printable;
 }
@@ -207,8 +207,8 @@ bool vtkCodedEntry::AreEqual(vtkCodedEntry* entry1, vtkCodedEntry* entry2)
     // Only one of them is nullptr
     return false;
   }
-  if (entry2->GetCodingSchemeDesignator() && entry1->GetCodingSchemeDesignator()
-    && strcmp(entry2->GetCodingSchemeDesignator(), entry1->GetCodingSchemeDesignator()) != 0)
+  if (entry2->GetCodingSchemeDesignator() && entry1->GetCodingSchemeDesignator() //
+      && strcmp(entry2->GetCodingSchemeDesignator(), entry1->GetCodingSchemeDesignator()) != 0)
   {
     return false;
   }

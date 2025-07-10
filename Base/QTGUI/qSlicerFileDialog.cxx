@@ -337,7 +337,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     else
     {
       res = false;
-      Q_ASSERT(d->Action == qSlicerFileDialog::Read ||
+      Q_ASSERT(d->Action == qSlicerFileDialog::Read || //
                d->Action == qSlicerFileDialog::Write);
     }
     QApplication::restoreOverrideCursor();

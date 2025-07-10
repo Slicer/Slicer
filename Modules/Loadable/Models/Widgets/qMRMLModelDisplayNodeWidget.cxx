@@ -290,8 +290,8 @@ void qMRMLModelDisplayNodeWidget::setCurrentSubjectHierarchyItemID(vtkIdType cur
 {
   Q_D(qMRMLModelDisplayNodeWidget);
 
-  if (d->CurrentSubjectHierarchyItemIDs.size() == 1
-    && d->CurrentSubjectHierarchyItemIDs[0] == currentItemID )
+  if (d->CurrentSubjectHierarchyItemIDs.size() == 1 //
+      && d->CurrentSubjectHierarchyItemIDs[0] == currentItemID)
   {
     return;
   }
@@ -424,12 +424,12 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   {
     d->DistanceToColorNodeComboBox->setMRMLScene(this->mrmlScene());
   }
-  if (d->CurrentModelDisplayNode
-    && d->DistanceToColorNodeComboBox->currentNodeID() != d->CurrentModelDisplayNode->GetDistanceEncodedProjectionColorNodeID() )
+  if (d->CurrentModelDisplayNode //
+      && d->DistanceToColorNodeComboBox->currentNodeID() != d->CurrentModelDisplayNode->GetDistanceEncodedProjectionColorNodeID())
   {
     d->DistanceToColorNodeComboBox->setCurrentNodeID(d->CurrentModelDisplayNode->GetDistanceEncodedProjectionColorNodeID());
   }
-  d->DistanceToColorNodeComboBox->setEnabled( d->CurrentModelDisplayNode &&
+  d->DistanceToColorNodeComboBox->setEnabled( d->CurrentModelDisplayNode && //
     d->CurrentModelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection );
   d->DistanceToColorNodeComboBox->blockSignals(wasBlocking);
 
@@ -462,7 +462,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   // Enable line width editing in REPRESENTATION_SURFACE mode regardless of edge visibility,
   // because if the model consists only of lines then line width will make a difference
   // even if edge visibility is disabled.
-  bool showLineWidth = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_WIREFRAME
+  bool showLineWidth = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_WIREFRAME //
     || d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE);
   d->LineWidthSliderWidget->setEnabled(showLineWidth);
 
@@ -694,9 +694,9 @@ void qMRMLModelDisplayNodeWidget::setSliceDisplayMode(int newMode)
     int wasModified = modelDisplayNode->StartModify();
     // Select a color node if none is selected yet
     if (modelDisplayNode->GetSliceDisplayMode()
-      != vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection
-      && newMode == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection
-      && modelDisplayNode->GetDistanceEncodedProjectionColorNodeID() == nullptr)
+        != vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection //
+        && newMode == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection //
+        && modelDisplayNode->GetDistanceEncodedProjectionColorNodeID() == nullptr)
     {
       modelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID("vtkMRMLProceduralColorNodeRedGreenBlue");
     }

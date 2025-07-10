@@ -117,13 +117,13 @@ int vtkMRMLClipNode::GetClippingMethodFromString(const char* name)
   {
     return Straight;
   }
-  else if (!strcmp(name, "WholeCells")
-    || !strcmp(name, "Whole Cells"))  // for backward compatibility
+  else if (!strcmp(name, "WholeCells")      //
+           || !strcmp(name, "Whole Cells")) // for backward compatibility
   {
     return WholeCells;
   }
-  else if (!strcmp(name, "WholeCellsWithBoundary")
-    || !strcmp(name, "Whole Cells With Boundary"))  // for backward compatibility
+  else if (!strcmp(name, "WholeCellsWithBoundary")        //
+           || !strcmp(name, "Whole Cells With Boundary")) // for backward compatibility
   {
     return WholeCellsWithBoundary;
   }
@@ -481,9 +481,9 @@ vtkImplicitFunction* vtkMRMLClipNode::GetImplicitFunctionWorld()
 void vtkMRMLClipNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-  if (vtkMRMLClipNode::SafeDownCast(caller)
-    || vtkMRMLTransformableNode::SafeDownCast(caller)
-    || vtkMRMLSliceNode::SafeDownCast(caller))
+  if (vtkMRMLClipNode::SafeDownCast(caller)             //
+      || vtkMRMLTransformableNode::SafeDownCast(caller) //
+      || vtkMRMLSliceNode::SafeDownCast(caller))
   {
     this->UpdateImplicitFunction();
     this->InvokeCustomModifiedEvent(vtkMRMLClipNode::ClipNodeModifiedEvent, caller);

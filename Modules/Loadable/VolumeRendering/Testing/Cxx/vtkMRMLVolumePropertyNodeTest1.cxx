@@ -114,19 +114,19 @@ int readWrite()
     double value2[4];
     int res = scalarOpacity->GetNodeValue(i, value);
     int res2 = scalarOpacity2->GetNodeValue(i, value2);
-    if (res == -1 || res2 == -1
-        || value[0] != value2[0]
-        || value[1] != value2[1]
-        || value[2] != value2[2]
-        || value[3] != value2[3]
+    if (res == -1 || res2 == -1 //
+        || value[0] != value2[0] //
+        || value[1] != value2[1] //
+        || value[2] != value2[2] //
+        || value[3] != value2[3] //
         )
     {
-        std::cout << __FUNCTION__ << ":" << __LINE__ << "failed:" << std::endl
-                  << "  Scalar opacity values are different:" << std::endl
-                  << "     " << res << " " << value[0] << " " << value[1]
-                  << " " << value[2] << " " << value[3] << std::endl
-                  << "  instead of" << std::endl
-                  << "     " << res << " " << value[0] << " " << value[1]
+        std::cout << __FUNCTION__ << ":" << __LINE__ << "failed:" << std::endl //
+                  << "  Scalar opacity values are different:" << std::endl //
+                  << "     " << res << " " << value[0] << " " << value[1] //
+                  << " " << value[2] << " " << value[3] << std::endl //
+                  << "  instead of" << std::endl //
+                  << "     " << res << " " << value[0] << " " << value[1] //
                   << " " << value[2] << " " << value[3] << std::endl;
         return EXIT_FAILURE;
     }
@@ -150,12 +150,12 @@ int piecewiseFunctionFromString()
   {
     double node[4];
     function->GetNodeValue(i, node);
-    if (node[0] != expectedData[i*2] ||
+    if (node[0] != expectedData[i*2] || //
         node[1] != expectedData[i*2+1])
     {
-      std::cout << "Failed to parse value at index " << i << ", "
-                << "found [" << node[0] << "," << node[1] << "] "
-                << "instead of [" << expectedData[i*2] << ","
+      std::cout << "Failed to parse value at index " << i << ", " //
+                << "found [" << node[0] << "," << node[1] << "] " //
+                << "instead of [" << expectedData[i*2] << ","//
                 << expectedData[i*2+1] << "]" << std::endl;
       return EXIT_FAILURE;
     }

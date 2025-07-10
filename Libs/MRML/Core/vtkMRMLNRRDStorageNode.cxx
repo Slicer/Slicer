@@ -115,9 +115,9 @@ void vtkMRMLNRRDStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 bool vtkMRMLNRRDStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
-  return refNode->IsA("vtkMRMLScalarVolumeNode") ||
-         refNode->IsA("vtkMRMLVectorVolumeNode" ) ||
-         refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||
+  return refNode->IsA("vtkMRMLScalarVolumeNode") ||            //
+         refNode->IsA("vtkMRMLVectorVolumeNode") ||            //
+         refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") || //
          refNode->IsA("vtkMRMLDiffusionTensorVolumeNode");
 }
 
@@ -209,8 +209,8 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     {
       return 0;
     }
-    if (! (reader->GetPointDataType() == vtkDataSetAttributes::SCALARS &&
-            !strcmp(value,"DWMRI") ) )
+    if (!(reader->GetPointDataType() == vtkDataSetAttributes::SCALARS && //
+          !strcmp(value, "DWMRI")))
     {
       vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");
       return 0;
@@ -218,8 +218,8 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
   else if (refNode->IsA("vtkMRMLVectorVolumeNode"))
   {
-    if (! (reader->GetPointDataType() == vtkDataSetAttributes::VECTORS
-           || reader->GetPointDataType() == vtkDataSetAttributes::NORMALS))
+    if (!(reader->GetPointDataType() == vtkDataSetAttributes::VECTORS //
+          || reader->GetPointDataType() == vtkDataSetAttributes::NORMALS))
     {
       vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");
       return 0;
@@ -227,7 +227,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   }
   else if (refNode->IsA("vtkMRMLScalarVolumeNode"))
   {
-    if (!(reader->GetPointDataType() == vtkDataSetAttributes::SCALARS &&
+    if (!(reader->GetPointDataType() == vtkDataSetAttributes::SCALARS && //
         (reader->GetNumberOfComponents() == 1 || reader->GetNumberOfComponents()==3) ))
     {
       vtkErrorMacro("ReadData: MRMLVolumeNode does not match file kind");

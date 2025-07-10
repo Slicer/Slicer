@@ -1070,8 +1070,8 @@ class SliceIntersectionInteractionDisplayPipeline
     //----------------------------------------------------------------------
     void SetIntersectionsVisibility(bool visibility)
     {
-      if (static_cast<bool>(this->IntersectionLine1Actor->GetVisibility()) != visibility
-        || static_cast<bool>(this->IntersectionLine2Actor->GetVisibility()) != visibility)
+      if (static_cast<bool>(this->IntersectionLine1Actor->GetVisibility()) != visibility //
+          || static_cast<bool>(this->IntersectionLine2Actor->GetVisibility()) != visibility)
       {
         this->NeedToRender = true;
       }
@@ -1082,9 +1082,9 @@ class SliceIntersectionInteractionDisplayPipeline
     //----------------------------------------------------------------------
     void SetThicknessVisibility(bool visibility)
     {
-      if (static_cast<bool>(this->ThickSlabLine1FirstHalfActor->GetVisibility()) != visibility
-          || static_cast<bool>(this->ThickSlabLine1SecondHalfActor->GetVisibility()) != visibility
-          || static_cast<bool>(this->ThickSlabLine2FirstHalfActor->GetVisibility()) != visibility
+      if (static_cast<bool>(this->ThickSlabLine1FirstHalfActor->GetVisibility()) != visibility     //
+          || static_cast<bool>(this->ThickSlabLine1SecondHalfActor->GetVisibility()) != visibility //
+          || static_cast<bool>(this->ThickSlabLine2FirstHalfActor->GetVisibility()) != visibility  //
           || static_cast<bool>(this->ThickSlabLine2SecondHalfActor->GetVisibility()) != visibility)
       {
         this->NeedToRender = true;
@@ -1099,23 +1099,23 @@ class SliceIntersectionInteractionDisplayPipeline
     //----------------------------------------------------------------------
     void SetIntersectionHandlesVisibility(bool visibility)
     {
-      bool rotationHandle1Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+      bool rotationHandle1Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible) //
         && this->RotationHandlesVisible && this->RotationHandle1Displayable;
-      bool rotationHandle2Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+      bool rotationHandle2Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible) //
         && this->RotationHandlesVisible && this->RotationHandle2Displayable;
-      bool sliceOffsetHandle1Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+      bool sliceOffsetHandle1Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible) //
         && this->TranslationHandlesVisible && this->SliceOffsetHandle1Displayable;
-      bool sliceOffsetHandle2Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+      bool sliceOffsetHandle2Visible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible) //
         && this->TranslationHandlesVisible && this->SliceOffsetHandle2Displayable;
-      bool translationHandleVisible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible)
+      bool translationHandleVisible = visibility && (this->HandlesVisibilityMode != vtkMRMLSliceDisplayNode::NeverVisible) //
         && this->TranslationHandlesVisible && this->SliceIntersectionMode == vtkMRMLSliceDisplayNode::FullLines;
 
-      if (static_cast<bool>(this->RotationHandle1Actor->GetVisibility()) != rotationHandle1Visible
-        || static_cast<bool>(this->RotationHandle2Actor->GetVisibility()) != rotationHandle2Visible
-        || static_cast<bool>(this->SliceOffsetHandle1Actor->GetVisibility()) != sliceOffsetHandle1Visible
-        || static_cast<bool>(this->SliceOffsetHandle2Actor->GetVisibility()) != sliceOffsetHandle2Visible
-        || static_cast<bool>(this->TranslationOuterHandleActor->GetVisibility()) != translationHandleVisible
-        || static_cast<bool>(this->TranslationInnerHandleActor->GetVisibility()) != translationHandleVisible)
+      if (static_cast<bool>(this->RotationHandle1Actor->GetVisibility()) != rotationHandle1Visible             //
+          || static_cast<bool>(this->RotationHandle2Actor->GetVisibility()) != rotationHandle2Visible          //
+          || static_cast<bool>(this->SliceOffsetHandle1Actor->GetVisibility()) != sliceOffsetHandle1Visible    //
+          || static_cast<bool>(this->SliceOffsetHandle2Actor->GetVisibility()) != sliceOffsetHandle2Visible    //
+          || static_cast<bool>(this->TranslationOuterHandleActor->GetVisibility()) != translationHandleVisible //
+          || static_cast<bool>(this->TranslationInnerHandleActor->GetVisibility()) != translationHandleVisible)
       {
         this->NeedToRender = true;
       }
@@ -1135,9 +1135,9 @@ class SliceIntersectionInteractionDisplayPipeline
       bool thickSlabLine2Handle1Visible = visibility && this->ThickSlabHandlesVisible && this->ThickSlabLine2Handle1Displayable;
       bool thickSlabLine2Handle2Visible = visibility && this->ThickSlabHandlesVisible && this->ThickSlabLine2Handle2Displayable;
 
-      if (static_cast<bool>(this->ThickSlabLine1Handle1Actor->GetVisibility()) != thickSlabLine1Handle1Visible
-          || static_cast<bool>(this->ThickSlabLine1Handle2Actor->GetVisibility()) != thickSlabLine1Handle2Visible
-          || static_cast<bool>(this->ThickSlabLine2Handle1Actor->GetVisibility()) != thickSlabLine2Handle1Visible
+      if (static_cast<bool>(this->ThickSlabLine1Handle1Actor->GetVisibility()) != thickSlabLine1Handle1Visible    //
+          || static_cast<bool>(this->ThickSlabLine1Handle2Actor->GetVisibility()) != thickSlabLine1Handle2Visible //
+          || static_cast<bool>(this->ThickSlabLine2Handle1Actor->GetVisibility()) != thickSlabLine2Handle1Visible //
           || static_cast<bool>(this->ThickSlabLine2Handle2Actor->GetVisibility()) != thickSlabLine2Handle2Visible)
       {
         this->NeedToRender = true;
@@ -1487,10 +1487,10 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
     return;
   }
   vtkMRMLSliceNode* intersectingSliceNode = pipeline->SliceLogic->GetSliceNode();
-  if (!pipeline->SliceLogic || !this->GetVisibility()
-    || !intersectingSliceNode
-    || this->Internal->SliceNode->GetViewGroup() != intersectingSliceNode->GetViewGroup()
-    || !intersectingSliceNode->IsMappedInLayout())
+  if (!pipeline->SliceLogic || !this->GetVisibility()                                       //
+      || !intersectingSliceNode                                                             //
+      || this->Internal->SliceNode->GetViewGroup() != intersectingSliceNode->GetViewGroup() //
+      || !intersectingSliceNode->IsMappedInLayout())
   {
     pipeline->SetIntersectionsVisibility(false);
     pipeline->SetThicknessVisibility(false);
@@ -1596,21 +1596,21 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateSliceIntersectionD
   double intersectionOuterLineTip1[3] = { intersectionLineTip1[0], intersectionLineTip1[1], intersectionLineTip1[2] };
   double intersectionOuterLineTip2[3] = { intersectionLineTip2[0], intersectionLineTip2[1], intersectionLineTip2[2] };
   if ((sliceIntersectionPoint[0] > sliceViewBounds[0]) && // If intersection point is within FOV
-      (sliceIntersectionPoint[0] < sliceViewBounds[1]) &&
-      (sliceIntersectionPoint[1] > sliceViewBounds[2]) &&
+      (sliceIntersectionPoint[0] < sliceViewBounds[1]) && //
+      (sliceIntersectionPoint[1] > sliceViewBounds[2]) && //
       (sliceIntersectionPoint[1] < sliceViewBounds[3]))
   {
     if ((intersectionOuterLineTip1[0] < sliceViewBounds[0]) || // If line tip 1 is outside the FOV
-        (intersectionOuterLineTip1[0] > sliceViewBounds[1]) ||
-        (intersectionOuterLineTip1[1] < sliceViewBounds[2]) ||
+        (intersectionOuterLineTip1[0] > sliceViewBounds[1]) || //
+        (intersectionOuterLineTip1[1] < sliceViewBounds[2]) || //
         (intersectionOuterLineTip1[1] > sliceViewBounds[3]))
     {
       this->Helper->GetIntersectionWithSliceViewBoundaries(intersectionOuterLineTip1, sliceIntersectionPoint,
                                                                                   sliceViewBounds, intersectionOuterLineTip1);
     }
     if ((intersectionOuterLineTip2[0] < sliceViewBounds[0]) || // If line tip 2 is outside the FOV
-        (intersectionOuterLineTip2[0] > sliceViewBounds[1]) ||
-        (intersectionOuterLineTip2[1] < sliceViewBounds[2]) ||
+        (intersectionOuterLineTip2[0] > sliceViewBounds[1]) || //
+        (intersectionOuterLineTip2[1] < sliceViewBounds[2]) || //
         (intersectionOuterLineTip2[1] > sliceViewBounds[3]))
     {
       this->Helper->GetIntersectionWithSliceViewBoundaries(intersectionOuterLineTip2, sliceIntersectionPoint,
@@ -2552,8 +2552,8 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::TransformIntersectingSli
     sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
   {
-    if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
+    if (!(*sliceIntersectionIt) //
+        || !(*sliceIntersectionIt)->GetIntersectionVisibility())
     {
       continue;
     }
@@ -2571,8 +2571,8 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::TransformIntersectingSli
     sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
     sliceIntersectionIt != this->Internal->SliceIntersectionInteractionDisplayPipelines.end(); ++sliceIntersectionIt)
   {
-    if (!(*sliceIntersectionIt)
-      || !(*sliceIntersectionIt)->GetIntersectionVisibility())
+    if (!(*sliceIntersectionIt) //
+        || !(*sliceIntersectionIt)->GetIntersectionVisibility())
     {
       continue;
     }
@@ -2653,7 +2653,7 @@ std::string vtkMRMLSliceIntersectionInteractionRepresentation::CanInteract(vtkMR
         bool intersectionLineVisible = (*sliceIntersectionIt)->GetIntersectionVisibility();
         bool intersectionInteractive = displayNode->GetIntersectingSlicesInteractive();
         bool thickSlabLineVisible = (*sliceIntersectionIt)->GetThickSlabVisibility();
-        bool isTranslationHandle = (handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle
+        bool isTranslationHandle = (handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle //
             || handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateSingleIntersectingSliceHandle);
         bool isRotationHandle = handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentRotateIntersectingSlicesHandle;
         bool isThickSlabHandle = handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingThickSlabHandle;
@@ -2683,14 +2683,14 @@ std::string vtkMRMLSliceIntersectionInteractionRepresentation::CanInteract(vtkMR
           if (dist2 < maxPickingDistanceFromControlPoint2)
           {
             handleOpacity = 1.0;
-            if (dist2 < closestDistance2
-              || (handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle
-                && foundComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateSingleIntersectingSliceHandle))
+            if (dist2 < closestDistance2                                                                            //
+                || (handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle //
+                    && foundComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateSingleIntersectingSliceHandle))
             {
               closestDistance2 = dist2;
 
-              if (foundComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle
-                && handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateSingleIntersectingSliceHandle)
+              if (foundComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateIntersectingSlicesHandle //
+                  && handleInfo.ComponentType == vtkMRMLSliceDisplayNode::ComponentTranslateSingleIntersectingSliceHandle)
               {
                 // We have already found an acceptable TranslateIntersectingSlices handle, which has higher priority
                 // than single-slice TranslateSingleIntersectingSlice handle.
@@ -2904,10 +2904,10 @@ bool vtkMRMLSliceIntersectionInteractionRepresentation::IsMouseCursorInSliceView
 
   // Check mouse cursor position
   bool inSliceView;
-  if ((cursorPosition[0] > sliceViewBounds[0]) &&
-    (cursorPosition[0] < sliceViewBounds[1]) &&
-    (cursorPosition[1] > sliceViewBounds[2]) &&
-    (cursorPosition[1] < sliceViewBounds[3]))
+  if ((cursorPosition[0] > sliceViewBounds[0]) && //
+      (cursorPosition[0] < sliceViewBounds[1]) && //
+      (cursorPosition[1] > sliceViewBounds[2]) && //
+      (cursorPosition[1] < sliceViewBounds[3]))
   {
     inSliceView = true;
   }
@@ -2922,10 +2922,10 @@ bool vtkMRMLSliceIntersectionInteractionRepresentation::IsMouseCursorInSliceView
 bool vtkMRMLSliceIntersectionInteractionRepresentation::IsDisplayable()
 {
   vtkMRMLSliceDisplayNode* sliceDisplayNode = this->GetSliceDisplayNode();
-  if (!sliceDisplayNode
-    || !this->ViewNode
-    || !sliceDisplayNode->GetVisibility()
-    || !sliceDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
+  if (!sliceDisplayNode                     //
+      || !this->ViewNode                    //
+      || !sliceDisplayNode->GetVisibility() //
+      || !sliceDisplayNode->IsDisplayableInView(this->ViewNode->GetID()))
   {
     return false;
   }
@@ -2983,9 +2983,9 @@ int vtkMRMLSliceIntersectionInteractionRepresentation::GetTranslateArrowCursor(c
     {
       continue;
     }
-    if (!sliceLogic->GetSliceNode()
-      || !sliceLogic->GetSliceNode()->GetID()
-      || sliceLogic->GetSliceNode()->GetID() != intersectingSliceNodeID)
+    if (!sliceLogic->GetSliceNode()             //
+        || !sliceLogic->GetSliceNode()->GetID() //
+        || sliceLogic->GetSliceNode()->GetID() != intersectingSliceNodeID)
     {
       continue;
     }
@@ -3013,8 +3013,8 @@ int vtkMRMLSliceIntersectionInteractionRepresentation::GetTranslateArrowCursor(c
     // angle of intersection line in the slice view
     // (between -180..180, +x axis = 0 deg, +y axis = 90 deg, -y axis = -90 deg)
     double angle = vtkMath::DegreesFromRadians(atan2(pt1[1] - pt2[1], pt1[0] - pt2[0]));
-    if ((fabs(angle) > 180.0 - 22.5)
-      || (fabs(angle) < 22.5))
+    if ((fabs(angle) > 180.0 - 22.5) //
+        || (fabs(angle) < 22.5))
     {
       return VTK_CURSOR_SIZENS;
     }
@@ -3022,8 +3022,8 @@ int vtkMRMLSliceIntersectionInteractionRepresentation::GetTranslateArrowCursor(c
     {
       return VTK_CURSOR_SIZEWE;
     }
-    if ((fabs(angle - 135.0) < 22.5)
-      || (fabs(angle + 45.0) < 22.5))
+    if ((fabs(angle - 135.0) < 22.5) //
+        || (fabs(angle + 45.0) < 22.5))
     {
       return VTK_CURSOR_SIZENE;
     }

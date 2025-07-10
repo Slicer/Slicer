@@ -188,18 +188,18 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
   // then the static cast may produce invalid results. Also, even if the transform class name is matching,
   // we may cast the transform to a wrong type due to mismatch in dimensions (not 3) or data type (not double or float).
 
-  if (itkTransformClassName.find( "AffineTransform" ) != std::string::npos ||
-      itkTransformClassName == "MatrixOffsetTransformBase" ||
-      itkTransformClassName == "Rigid3DTransform" ||
-      itkTransformClassName == "Euler3DTransform" ||
-      itkTransformClassName == "CenteredEuler3DTransform" ||
-      itkTransformClassName == "QuaternionRigidTransform" ||
-      itkTransformClassName == "VersorTransform" ||
-      itkTransformClassName == "VersorRigid3DTransform" ||
-      itkTransformClassName == "ScaleSkewVersor3DTransform" ||
-      itkTransformClassName == "ScaleVersor3DTransform" ||
-      itkTransformClassName == "Similarity3DTransform" ||
-      itkTransformClassName == "ScaleTransform" ||
+  if (itkTransformClassName.find( "AffineTransform" ) != std::string::npos || //
+      itkTransformClassName == "MatrixOffsetTransformBase" ||                 //
+      itkTransformClassName == "Rigid3DTransform" ||                          //
+      itkTransformClassName == "Euler3DTransform" ||                          //
+      itkTransformClassName == "CenteredEuler3DTransform" ||                  //
+      itkTransformClassName == "QuaternionRigidTransform" ||                  //
+      itkTransformClassName == "VersorTransform" ||                           //
+      itkTransformClassName == "VersorRigid3DTransform" ||                    //
+      itkTransformClassName == "ScaleSkewVersor3DTransform" ||                //
+      itkTransformClassName == "ScaleVersor3DTransform" ||                    //
+      itkTransformClassName == "Similarity3DTransform" ||                     //
+      itkTransformClassName == "ScaleTransform" ||                            //
       itkTransformClassName == "ScaleLogarithmicTransform")
   {
     typename LinearTransformType::Pointer dlt
@@ -1501,7 +1501,7 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
         return nullptr;
       }
 
-      if (singleTransformItk.IsNull()
+      if (singleTransformItk.IsNull() //
           || std::string(singleTransformItk->GetNameOfClass()).find("Transform") == std::string::npos)
       {
         vtkErrorWithObjectMacro(loggerObject, "vtkITKTransformConverter::CreateITKTransformFromVTK failed:"

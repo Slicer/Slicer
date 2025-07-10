@@ -56,14 +56,14 @@ bool qMRMLItemDelegate::isColor(const QModelIndex& index) const
 {
   QVariant editData = index.data(Qt::EditRole);
   QVariant decorationData = index.data(Qt::DecorationRole);
-  if (editData.isNull() &&
+  if (editData.isNull() && //
       decorationData.type() == QVariant::Color)
   {
     return true;
   }
-  else if (editData.isNull() &&
-            decorationData.type() == QVariant::Pixmap &&
-            index.data(qMRMLItemDelegate::ColorRole).type() == QVariant::Color )
+  else if (editData.isNull() && //
+           decorationData.type() == QVariant::Pixmap && //
+           index.data(qMRMLItemDelegate::ColorRole).type() == QVariant::Color )
   {
     return true;
   }

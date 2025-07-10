@@ -426,17 +426,17 @@ QColor qSlicerTerminologyNavigatorWidgetPrivate::terminologyRecommendedColor()
   }
 
   // If color is not defined for the modifier then use the non-modified type object's color
-  if (r == vtkSlicerTerminologyType::INVALID_COLOR[0]
-    && g == vtkSlicerTerminologyType::INVALID_COLOR[1]
-    && b == vtkSlicerTerminologyType::INVALID_COLOR[2])
+  if (r == vtkSlicerTerminologyType::INVALID_COLOR[0]    //
+      && g == vtkSlicerTerminologyType::INVALID_COLOR[1] //
+      && b == vtkSlicerTerminologyType::INVALID_COLOR[2])
   {
     this->CurrentTypeObject->GetRecommendedDisplayRGBValue(r,g,b);
   }
 
   // Use generated color otherwise (i.e. the default invalid color)
-  if (r == vtkSlicerTerminologyType::INVALID_COLOR[0]
-    && g == vtkSlicerTerminologyType::INVALID_COLOR[1]
-    && b == vtkSlicerTerminologyType::INVALID_COLOR[2] )
+  if (r == vtkSlicerTerminologyType::INVALID_COLOR[0]    //
+      && g == vtkSlicerTerminologyType::INVALID_COLOR[1] //
+      && b == vtkSlicerTerminologyType::INVALID_COLOR[2] )
   {
     r = this->GeneratedColor.red();
     g = this->GeneratedColor.green();
@@ -488,10 +488,10 @@ QColor qSlicerTerminologyNavigatorWidgetPrivate::recommendedColorForType(
 
   unsigned char* colorArray = type->GetRecommendedDisplayRGBValue();
   QColor color = QColor::fromRgb(colorArray[0], colorArray[1], colorArray[2]);
-  if (color.isValid()
-    && ( colorArray[0] != vtkSlicerTerminologyType::INVALID_COLOR[0]
-      || colorArray[1] != vtkSlicerTerminologyType::INVALID_COLOR[1]
-      || colorArray[2] != vtkSlicerTerminologyType::INVALID_COLOR[2] ))
+  if (color.isValid() //
+    && ( colorArray[0] != vtkSlicerTerminologyType::INVALID_COLOR[0] //
+      || colorArray[1] != vtkSlicerTerminologyType::INVALID_COLOR[1] //
+      || colorArray[2] != vtkSlicerTerminologyType::INVALID_COLOR[2]))
   {
     return color;
   }
@@ -511,10 +511,10 @@ QColor qSlicerTerminologyNavigatorWidgetPrivate::recommendedColorForType(
     logic->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId, modifierId, typeModifierObject);
     colorArray = typeModifierObject->GetRecommendedDisplayRGBValue();
     color = QColor::fromRgb(colorArray[0], colorArray[1], colorArray[2]);
-    if (color.isValid()
-      && ( colorArray[0] != vtkSlicerTerminologyType::INVALID_COLOR[0]
-        || colorArray[1] != vtkSlicerTerminologyType::INVALID_COLOR[1]
-        || colorArray[2] != vtkSlicerTerminologyType::INVALID_COLOR[2] ))
+    if (color.isValid() //
+      && ( colorArray[0] != vtkSlicerTerminologyType::INVALID_COLOR[0] //
+        || colorArray[1] != vtkSlicerTerminologyType::INVALID_COLOR[1] //
+        || colorArray[2] != vtkSlicerTerminologyType::INVALID_COLOR[2]))
     {
       return color;
     }
@@ -542,8 +542,8 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
   {
     QString codingSchemeDesignator = item->data(qSlicerTerminologyNavigatorWidget::CodingSchemeDesignatorRole).toString();
     QString codeValue = item->data(qSlicerTerminologyNavigatorWidget::CodeValueRole).toString();
-    if (category->GetCodingSchemeDesignator() && !codingSchemeDesignator.compare(category->GetCodingSchemeDesignator())
-      && category->GetCodeValue() && !codeValue.compare(category->GetCodeValue()) )
+    if (category->GetCodingSchemeDesignator() && !codingSchemeDesignator.compare(category->GetCodingSchemeDesignator()) //
+        && category->GetCodeValue() && !codeValue.compare(category->GetCodeValue()) )
     {
       return item;
     }
@@ -572,8 +572,8 @@ QTableWidgetItem* qSlicerTerminologyNavigatorWidgetPrivate::findTableWidgetItemF
   {
     QString codingSchemeDesignator = item->data(qSlicerTerminologyNavigatorWidget::CodingSchemeDesignatorRole).toString();
     QString codeValue = item->data(qSlicerTerminologyNavigatorWidget::CodeValueRole).toString();
-    if (type->GetCodingSchemeDesignator() && !codingSchemeDesignator.compare(type->GetCodingSchemeDesignator())
-      && type->GetCodeValue() && !codeValue.compare(type->GetCodeValue()) )
+    if (type->GetCodingSchemeDesignator() && !codingSchemeDesignator.compare(type->GetCodingSchemeDesignator()) //
+        && type->GetCodeValue() && !codeValue.compare(type->GetCodeValue()))
     {
       return item;
     }
@@ -678,10 +678,10 @@ void qSlicerTerminologyNavigatorWidgetPrivate::populateCategoryTable()
     addedCategoryItem->setData(qSlicerTerminologyNavigatorWidget::CodeValueRole, QString(addedCategoryId.CodeValue.c_str()));
     this->tableWidget_Category->setItem(index, 0, addedCategoryItem);
 
-    if (this->CurrentCategoryObject->GetCodingSchemeDesignator()
-      && !addedCategoryId.CodingSchemeDesignator.compare(this->CurrentCategoryObject->GetCodingSchemeDesignator())
-      && this->CurrentCategoryObject->GetCodeValue()
-      && !addedCategoryId.CodeValue.compare(this->CurrentCategoryObject->GetCodeValue()))
+    if (this->CurrentCategoryObject->GetCodingSchemeDesignator() //
+        && !addedCategoryId.CodingSchemeDesignator.compare(this->CurrentCategoryObject->GetCodingSchemeDesignator()) //
+        && this->CurrentCategoryObject->GetCodeValue() //
+        && !addedCategoryId.CodeValue.compare(this->CurrentCategoryObject->GetCodeValue()))
     {
       selectedItem = addedCategoryItem;
     }
@@ -826,10 +826,10 @@ void qSlicerTerminologyNavigatorWidgetPrivate::populateTypeTable()
     // Insert type item
     this->tableWidget_Type->setItem(typeIndex + noneTypeExists, 0, addedTypeItem);
 
-    if (this->CurrentTypeObject->GetCodingSchemeDesignator()
-      && !addedTypeId.CodingSchemeDesignator.compare(this->CurrentTypeObject->GetCodingSchemeDesignator())
-      && this->CurrentTypeObject->GetCodeValue()
-      && !addedTypeId.CodeValue.compare(this->CurrentTypeObject->GetCodeValue()))
+    if (this->CurrentTypeObject->GetCodingSchemeDesignator() //
+        && !addedTypeId.CodingSchemeDesignator.compare(this->CurrentTypeObject->GetCodingSchemeDesignator()) //
+        && this->CurrentTypeObject->GetCodeValue() //
+        && !addedTypeId.CodeValue.compare(this->CurrentTypeObject->GetCodeValue()))
     {
       selectedItem = addedTypeItem;
     }
@@ -1298,10 +1298,10 @@ void qSlicerTerminologyNavigatorWidgetPrivate::populateRegionTable()
     addedRegionItem->setData(qSlicerTerminologyNavigatorWidget::CodeValueRole, QString(addedRegionId.CodeValue.c_str()));
     this->tableWidget_Region->setItem(index, 0, addedRegionItem);
 
-    if (this->CurrentRegionObject->GetCodingSchemeDesignator()
-      && !addedRegionId.CodingSchemeDesignator.compare(this->CurrentRegionObject->GetCodingSchemeDesignator())
-      && this->CurrentRegionObject->GetCodeValue()
-      && !addedRegionId.CodeValue.compare(this->CurrentRegionObject->GetCodeValue()))
+    if (this->CurrentRegionObject->GetCodingSchemeDesignator() //
+        && !addedRegionId.CodingSchemeDesignator.compare(this->CurrentRegionObject->GetCodingSchemeDesignator()) //
+        && this->CurrentRegionObject->GetCodeValue() //
+        && !addedRegionId.CodeValue.compare(this->CurrentRegionObject->GetCodeValue()))
     {
       selectedItem = addedRegionItem;
     }
@@ -1600,7 +1600,7 @@ void qSlicerTerminologyNavigatorWidget::setTerminologyInfo(TerminologyInfoBundle
 
     d->ColorAutoGenerated = terminologyInfo.ColorAutoGenerated;
 
-    bool enableResetColor = !d->ColorAutoGenerated
+    bool enableResetColor = !d->ColorAutoGenerated //
       || (d->ColorPickerButton_RecommendedRGB->color() != d->terminologyRecommendedColor());
     d->pushButton_ResetColor->setEnabled(enableResetColor && !noneType);
   }
@@ -1623,8 +1623,8 @@ bool qSlicerTerminologyNavigatorWidget::terminologyEntry(vtkSlicerTerminologyEnt
     return false;
   }
 
-  if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject()
-    || !entry->GetRegionObject() || !entry->GetRegionModifierObject() )
+  if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject() //
+      || !entry->GetRegionObject() || !entry->GetRegionModifierObject())
   {
     qCritical() << Q_FUNC_INFO << ": Invalid terminology entry given";
     // Invalidate whole terminology entry
@@ -1884,8 +1884,8 @@ QString qSlicerTerminologyNavigatorWidget::nameFromTerminology(vtkSlicerTerminol
   }
 
   // Try to set name based on '3dSlicerLabel' field in terminology entry
-  if (entry->GetTypeObject()->GetSlicerLabel()
-    && (!entry->GetTypeObject()->GetHasModifiers() || entry->GetTypeModifierObject()->GetCodeValue() == nullptr) )
+  if (entry->GetTypeObject()->GetSlicerLabel() //
+      && (!entry->GetTypeObject()->GetHasModifiers() || entry->GetTypeModifierObject()->GetCodeValue() == nullptr))
   {
     name = entry->GetTypeObject()->GetSlicerLabel();
   }
@@ -1910,11 +1910,11 @@ QString qSlicerTerminologyNavigatorWidget::nameFromTerminology(vtkSlicerTerminol
     }
   }
 
-  if (entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue()
-    && strlen(entry->GetRegionObject()->GetCodeValue()) > 0 )
+  if (entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue() //
+      && strlen(entry->GetRegionObject()->GetCodeValue()) > 0)
   {
-    if (entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeValue()
-      && strlen(entry->GetRegionModifierObject()->GetCodeValue()) > 0 )
+    if (entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeValue() //
+        && strlen(entry->GetRegionModifierObject()->GetCodeValue()) > 0)
     {
       //: For formatting of terminology entry name. %1 is type name (e.g., "Mass"), %2 is region name (e.g., "Kidney"), %2 is region modifier (e.g., "Left")
       name = tr("%1 in %2, %3")
@@ -1942,7 +1942,7 @@ QString qSlicerTerminologyNavigatorWidget::nameFromTerminology(vtkSlicerTerminol
 QString qSlicerTerminologyNavigatorWidget::nameFromCurrentTerminology()
 {
   Q_D(qSlicerTerminologyNavigatorWidget);
-  if (!d->CurrentTypeObject ||
+  if (!d->CurrentTypeObject || //
        (d->CurrentTypeObject->GetHasModifiers() && !d->CurrentTypeModifierObject) )
   {
     // Incomplete terminology selection, name is empty
@@ -2263,8 +2263,8 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
   // Get color index from selected model index
   int colorIndex = d->ColorTableView->selectedColorIndex();
 
-  if (colorNode->GetTerminologyCategory(colorIndex) == nullptr || colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() == nullptr
-    || colorNode->GetTerminologyType(colorIndex) == nullptr || colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() == nullptr)
+  if (colorNode->GetTerminologyCategory(colorIndex) == nullptr || colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() == nullptr //
+      || colorNode->GetTerminologyType(colorIndex) == nullptr || colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() == nullptr)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid terminology in selected color (" << colorNode->GetName() << ": " << colorIndex << ")";
     emit selectionValidityChanged(false);
@@ -2288,8 +2288,8 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
   emit selectionValidityChanged(true);
 
   // Set optional information if any
-  if (colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr
-    && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr )
+  if (colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr //
+      && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
   {
     d->CurrentTypeModifierObject->vtkCodedEntry::Copy(colorNode->GetTerminologyTypeModifier(colorIndex));
   }
@@ -2297,8 +2297,8 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
   {
     d->CurrentTypeModifierObject->Initialize();
   }
-  if (colorNode->GetTerminologyRegion(colorIndex) != nullptr
-    && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr )
+  if (colorNode->GetTerminologyRegion(colorIndex) != nullptr //
+      && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
   {
     d->CurrentRegionObject->vtkCodedEntry::Copy(colorNode->GetTerminologyRegion(colorIndex));
   }
@@ -2306,8 +2306,8 @@ void qSlicerTerminologyNavigatorWidget::onColorSelected(const QItemSelection& se
   {
     d->CurrentRegionObject->Initialize();
   }
-  if (colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr
-    && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr )
+  if (colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr //
+      && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
   {
     d->CurrentRegionModifierObject->vtkCodedEntry::Copy(colorNode->GetTerminologyRegionModifier(colorIndex));
   }

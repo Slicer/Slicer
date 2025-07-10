@@ -251,9 +251,9 @@ void vtkSegmentationConverter::SetConversionParameters(vtkSegmentationConversion
 void vtkSegmentationConverter::SetConversionParameter(const std::string& name, const std::string& value, const std::string& description/*=""*/)
 {
   // Cannot set parameter if any property contains a separator character
-  if (name.find(SERIALIZATION_SEPARATOR) != std::string::npos || name.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos
-    || value.find(SERIALIZATION_SEPARATOR) != std::string::npos || value.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos
-    || description.find(SERIALIZATION_SEPARATOR) != std::string::npos || description.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos )
+  if (name.find(SERIALIZATION_SEPARATOR) != std::string::npos || name.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos      //
+      || value.find(SERIALIZATION_SEPARATOR) != std::string::npos || value.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos //
+      || description.find(SERIALIZATION_SEPARATOR) != std::string::npos || description.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos)
   {
     vtkErrorMacro("SetConversionParameter: Conversion parameter '" << name
       << " name, value, or description contains a separator character so it cannot be set");

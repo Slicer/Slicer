@@ -90,7 +90,7 @@ void vtkMRMLMarkupsDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "DisableInteractorStyleEventsProcessing = " << this->DisableInteractorStyleEventsProcessing << std::endl;
-  if (this->SliceNode &&
+  if (this->SliceNode && //
       this->SliceNode->GetID())
   {
     os << indent << "Slice node id = " << this->SliceNode->GetID() << std::endl;
@@ -644,10 +644,10 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   int eventid = eventData->GetType();
   // We allow mouse move with the shift modifier to be processed while in place mode so that we can continue to update the
   // preview position, even when using shift + mouse-move to adjust the crosshair position.
-  if ((eventid == vtkCommand::MouseMoveEvent
-       && (eventData->GetModifiers() == vtkEvent::NoModifier ||
-          (eventData->GetModifiers() & vtkEvent::ShiftModifier &&
-           interactionNode && interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)))
+  if ((eventid == vtkCommand::MouseMoveEvent //
+       && (eventData->GetModifiers() == vtkEvent::NoModifier || //
+          (eventData->GetModifiers() & vtkEvent::ShiftModifier && //
+           interactionNode && interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place))) //
     || eventid == vtkCommand::Move3DEvent)
   {
     vtkMRMLSelectionNode* selectionNode = this->GetSelectionNode();
@@ -655,7 +655,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
     {
       return false;
     }
-    if (interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place
+    if (interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place //
       && this->IsManageable(selectionNode->GetActivePlaceNodeClassName()))
     {
 
@@ -705,7 +705,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   // Other interactions
   bool canProcess = (this->FindClosestWidget(eventData, closestDistance2) != nullptr);
 
-  if (!canProcess && lastActiveMarkupsWidget != nullptr
+  if (!canProcess && lastActiveMarkupsWidget != nullptr //
     && (eventid == vtkCommand::MouseMoveEvent || eventid == vtkCommand::Move3DEvent) )
   {
     // interaction context (e.g. mouse) is moved away from the widget -> deactivate if it's the same context that activated it
@@ -722,8 +722,8 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   auto lastActiveMarkupsInteractionWidget = vtkSlicerMarkupsInteractionWidget::SafeDownCast(this->LastActiveWidget);
   if (eventid == vtkCommand::LeaveEvent && this->LastActiveWidget != nullptr)
   {
-    if (lastActiveMarkupsInteractionWidget
-     && lastActiveMarkupsInteractionWidget->GetDisplayNode()
+    if (lastActiveMarkupsInteractionWidget //
+     && lastActiveMarkupsInteractionWidget->GetDisplayNode() //
      && lastActiveMarkupsInteractionWidget->GetDisplayNode()->HasActiveComponent())
     {
       // this widget has active component, therefore leave event is relevant
@@ -733,7 +733,7 @@ bool vtkMRMLMarkupsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInterac
   }
 
   // Other interactions
-  if (!canProcess && lastActiveMarkupsInteractionWidget != nullptr
+  if (!canProcess && lastActiveMarkupsInteractionWidget != nullptr //
     && (eventid == vtkCommand::MouseMoveEvent || eventid == vtkCommand::Move3DEvent) )
   {
     // interaction context (e.g. mouse) is moved away from the widget -> deactivate if it's the same context that activated it
@@ -891,7 +891,7 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManager::GetWidgetForPlacement(
     }
   }
 
-  if (activeMarkupsNode && activeMarkupsNode->GetMaximumNumberOfControlPoints() >= 0
+  if (activeMarkupsNode && activeMarkupsNode->GetMaximumNumberOfControlPoints() >= 0 //
     && activeMarkupsNode->GetNumberOfDefinedControlPoints() >= activeMarkupsNode->GetMaximumNumberOfControlPoints())
   {
     // maybe reached maximum number of points - if yes, then create a new widget

@@ -250,8 +250,8 @@ bool qSlicerStyle::eventFilter(QObject* obj, QEvent* event)
   switch (event->type())
   {
     case QEvent::Wheel:
-      if (qobject_cast<QAbstractScrollArea*>(widget) ||
-          qobject_cast<QScrollBar*>(widget) ||
+      if (qobject_cast<QAbstractScrollArea*>(widget) || //
+          qobject_cast<QScrollBar*>(widget) || //
           qobject_cast<QAbstractScrollArea*>(widget->parentWidget()))
       {
         break;

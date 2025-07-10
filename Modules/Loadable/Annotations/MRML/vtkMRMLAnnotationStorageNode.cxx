@@ -48,7 +48,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
      return 1;
  }
 
-  if (lineString.find(preposition + "Color = ") != std::string::npos ||
+  if (lineString.find(preposition + "Color = ") != std::string::npos || //
       lineString.find(preposition + "SelectedColor = ") != std::string::npos)
   {
      std::string str;
@@ -182,7 +182,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode* ref
 {
   vtkDebugMacro("Reading Annotation data");
   // test whether refNode is a valid node to hold a text list
-  if (!refNode ||
+  if (!refNode || //
        !( refNode->IsA("vtkMRMLAnnotationNode"))
      )
   {
@@ -449,7 +449,7 @@ int vtkMRMLAnnotationStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   // special case: if this annotation is in a hierarchy, the hierarchy took
   // care of reading it already
   vtkMRMLHierarchyNode* hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
-  if (hnode &&
+  if (hnode && //
       hnode->GetParentNodeID())
     {
     vtkWarningMacro("ReadData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it read it in already");

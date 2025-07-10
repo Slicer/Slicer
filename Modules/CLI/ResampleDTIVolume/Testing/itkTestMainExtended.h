@@ -330,11 +330,11 @@ int RegressionTestImage(const char* testImageFilename,
   itk::GetImageType( testImageFilename, pixelTypeTestImage, componentTypeTestImage );
   bool diffusion = false;
   // check if the voxels of the image are diffusion tensors
-  if (( pixelTypeBaseline == itk::IOPixelEnum::SYMMETRICSECONDRANKTENSOR
-        || pixelTypeBaseline == itk::IOPixelEnum::DIFFUSIONTENSOR3D
-        )
-      && ( pixelTypeTestImage == itk::IOPixelEnum::SYMMETRICSECONDRANKTENSOR
-           || pixelTypeTestImage == itk::IOPixelEnum::DIFFUSIONTENSOR3D
+  if (( pixelTypeBaseline == itk::IOPixelEnum::SYMMETRICSECONDRANKTENSOR //
+        || pixelTypeBaseline == itk::IOPixelEnum::DIFFUSIONTENSOR3D //
+        ) //
+      && ( pixelTypeTestImage == itk::IOPixelEnum::SYMMETRICSECONDRANKTENSOR //
+           || pixelTypeTestImage == itk::IOPixelEnum::DIFFUSIONTENSOR3D //
            )
       )
   {

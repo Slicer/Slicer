@@ -798,7 +798,7 @@ void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
   {
     bool isActionAFavoriteModule =
       (this->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
-    if (isActionAFavoriteModule &&
+    if (isActionAFavoriteModule && //
       this->FavoriteModules.indexOf(toolBarAction->data().toString()) > index)
     {
       beforeAction = toolBarAction;
@@ -1330,8 +1330,8 @@ void qSlicerMainWindow::pythonConsoleInitialDisplay()
 void qSlicerMainWindow::disclaimer()
 {
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) ||
-      !app->coreCommandOptions()->pythonCode().isEmpty() ||
+  if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) || //
+      !app->coreCommandOptions()->pythonCode().isEmpty() || //
       !app->coreCommandOptions()->pythonScript().isEmpty())
   {
     return;
@@ -1431,7 +1431,7 @@ void qSlicerMainWindow::setupMenuActions()
 #endif
 
 #if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
-  if (app->commandOptions()->enableQtTesting() ||
+  if (app->commandOptions()->enableQtTesting() || //
       app->userSettings()->value("QtTesting/Enabled").toBool())
   {
     d->EditPlayMacroAction->setVisible(true);
@@ -1520,7 +1520,7 @@ void qSlicerMainWindow::onFileSaved(const qSlicerIO::IOProperties& filePropertie
   }
   // Adding every saved file to the recent files list could quickly overwrite the entire list,
   // therefore we only add the scene file.
-  if (fileName.endsWith(".mrml", Qt::CaseInsensitive)
+  if (fileName.endsWith(".mrml", Qt::CaseInsensitive) //
     || fileName.endsWith(".mrb", Qt::CaseInsensitive))
   {
     // Scene file properties do not contain fileType and it contains screenshot,

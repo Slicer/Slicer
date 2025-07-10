@@ -100,15 +100,15 @@ void qMRMLPlotViewPrivate::init()
   qvtkConnect(q->chart(), vtkCommand::SelectionChangedEvent, this, SLOT(emitSelection()));
   qvtkConnect(q->chart(), vtkCommand::InteractionEvent, q, SLOT(updateMRMLChartAxisRangeFromWidget()));
 
-  if (!q->chart()->GetBackgroundBrush() ||
-      !q->chart()->GetTitleProperties() ||
-      !q->chart()->GetLegend()          ||
+  if (!q->chart()->GetBackgroundBrush() || //
+      !q->chart()->GetTitleProperties() || //
+      !q->chart()->GetLegend()          || //
       !q->scene())
   {
     return;
   }
 
-  if (!q->chart()->GetLegend()->GetLabelProperties() ||
+  if (!q->chart()->GetLegend()->GetLabelProperties() || //
       !q->scene()->GetRenderer())
   {
     return;
@@ -678,8 +678,8 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
 {
   Q_Q(qMRMLPlotView);
 
-  if (!this->MRMLScene || !this->MRMLPlotViewNode
-    || !q->isEnabled() || !q->chart() || !q->chart()->GetLegend())
+  if (!this->MRMLScene || !this->MRMLPlotViewNode //
+      || !q->isEnabled() || !q->chart() || !q->chart()->GetLegend())
   {
     return;
   }
@@ -746,9 +746,9 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
 
   // Enable moving of data points by drag-and-drop if point moving is enabled
   // both in the plot chart and view nodes.
-  q->chart()->SetDragPointAlongX(this->MRMLPlotViewNode->GetEnablePointMoveAlongX()
+  q->chart()->SetDragPointAlongX(this->MRMLPlotViewNode->GetEnablePointMoveAlongX() //
     && plotChartNode->GetEnablePointMoveAlongX());
-  q->chart()->SetDragPointAlongY(this->MRMLPlotViewNode->GetEnablePointMoveAlongY()
+  q->chart()->SetDragPointAlongY(this->MRMLPlotViewNode->GetEnablePointMoveAlongY() //
     && plotChartNode->GetEnablePointMoveAlongY());
 
   vtkSmartPointer<vtkCollection> allPlotSeriesNodesInScene = vtkSmartPointer<vtkCollection>::Take

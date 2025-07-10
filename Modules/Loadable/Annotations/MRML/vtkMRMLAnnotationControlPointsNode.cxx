@@ -37,7 +37,7 @@ void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
   // care of writing it already
   vtkMRMLHierarchyNode* hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetScene(), this->GetID());
 
-  if (hnode &&
+  if (hnode && //
   hnode->GetParentNodeID())
   {
   vtkWarningMacro("WriteXML: node " << this->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
@@ -109,7 +109,7 @@ WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
     vtkPoints* points = this->GetPoints();
     int n = points->GetNumberOfPoints();
 
-    if (multipleFlag == false &&
+    if (multipleFlag == false && //
         n > 1)
     {
       vtkWarningMacro("WriteCLI - Ignoring 'multipleFlag' and writing all "
@@ -431,7 +431,7 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
 double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType id)
 {
 
-  if (!this->GetPoints() ||
+  if (!this->GetPoints() || //
       this->GetPoints()->GetNumberOfPoints() <= id)
   {
     vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates() no control point with index" << id) ;
@@ -448,7 +448,7 @@ double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType
 void vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates(vtkIdType id, double* point)
 {
 
-  if (!this->GetPoints() ||
+  if (!this->GetPoints() || //
       this->GetPoints()->GetNumberOfPoints() <= id)
   {
     vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates() no control point with index" << id) ;
@@ -513,8 +513,8 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
   {
     // check if is different to prevent recursive event loops
     double* pnt = points->GetPoint(id);
-    if (pnt && fabs(pnt[0]-newControl[0]) < NUMERIC_ZERO &&
-               fabs(pnt[1]-newControl[1]) < NUMERIC_ZERO &&
+    if (pnt && fabs(pnt[0]-newControl[0]) < NUMERIC_ZERO && //
+               fabs(pnt[1]-newControl[1]) < NUMERIC_ZERO && //
                fabs(pnt[2]-newControl[2]) < NUMERIC_ZERO)
     {
       return 1;

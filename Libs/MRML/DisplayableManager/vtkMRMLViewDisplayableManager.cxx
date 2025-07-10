@@ -424,7 +424,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
 {
   vtkCamera* camera = this->External->GetRenderer() ?
     this->External->GetRenderer()->GetActiveCamera() : nullptr;
-  if (!camera ||
+  if (!camera || //
       !this->External->GetMRMLViewNode())
   {
     return;
@@ -583,8 +583,8 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateBackgroundColor()
                 << backgroundColor[2] << ")");
   this->External->GetRenderer()->SetBackground(backgroundColor);
   this->External->GetRenderer()->SetBackground2(backgroundColor2);
-  bool gradient = backgroundColor[0] != backgroundColor2[0] ||
-                  backgroundColor[1] != backgroundColor2[1] ||
+  bool gradient = backgroundColor[0] != backgroundColor2[0] || //
+                  backgroundColor[1] != backgroundColor2[1] || //
                   backgroundColor[2] != backgroundColor2[2];
   this->External->GetRenderer()->SetGradientBackground(gradient);
 

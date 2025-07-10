@@ -168,8 +168,8 @@ bool vtkSegmentationConverterFactory::DisableConverterRule(std::string sourceRep
   RuleListType rulesCopy = this->Rules;
   for (RuleListType::iterator ruleIt = rulesCopy.begin(); ruleIt != rulesCopy.end(); ++ruleIt)
   {
-    if (!sourceRepresentationName.compare(ruleIt->GetPointer()->GetSourceRepresentationName())
-      && !targetRepresentationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()) )
+    if (!sourceRepresentationName.compare(ruleIt->GetPointer()->GetSourceRepresentationName()) //
+        && !targetRepresentationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()))
     {
       this->UnregisterConverterRule(ruleIt->GetPointer());
       result = true;
@@ -184,8 +184,8 @@ void vtkSegmentationConverterFactory::DisableRepresentation(std::string represen
   RuleListType rulesCopy = this->Rules;
   for (RuleListType::iterator ruleIt = rulesCopy.begin(); ruleIt != rulesCopy.end(); ++ruleIt)
   {
-    if (!representationName.compare(ruleIt->GetPointer()->GetSourceRepresentationName())
-      || !representationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()) )
+    if (!representationName.compare(ruleIt->GetPointer()->GetSourceRepresentationName()) //
+        || !representationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()) )
     {
       this->UnregisterConverterRule(ruleIt->GetPointer());
     }

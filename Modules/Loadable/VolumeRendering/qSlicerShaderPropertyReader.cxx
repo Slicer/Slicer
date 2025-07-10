@@ -92,7 +92,7 @@ qSlicerIO::IOFileType qSlicerShaderPropertyReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerShaderPropertyReader::extensions() const
 {
-  return QStringList()
+  return QStringList() //
     << tr("Shader Property") + " (*.sp)";
 }
 

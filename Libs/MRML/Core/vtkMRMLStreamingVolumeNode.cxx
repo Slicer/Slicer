@@ -76,9 +76,9 @@ void vtkMRMLStreamingVolumeNode::FrameModifiedCallback(vtkObject* caller, unsign
 void vtkMRMLStreamingVolumeNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-  if (this->ImageDataConnection != nullptr &&
-    this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
-    event == vtkCommand::ModifiedEvent)
+  if (this->ImageDataConnection != nullptr &&                                           //
+      this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) && //
+      event == vtkCommand::ModifiedEvent)
   {
     if (!this->FrameDecodingInProgress)
     {
@@ -148,8 +148,8 @@ vtkAlgorithmOutput* vtkMRMLStreamingVolumeNode::GetImageDataConnection()
 //---------------------------------------------------------------------------
 vtkStreamingVolumeCodec* vtkMRMLStreamingVolumeNode::GetCodec()
 {
-  if (!this->Codec ||
-      (this->Codec &&
+  if (!this->Codec || //
+      (this->Codec && //
        this->Codec->GetFourCC() != this->GetCodecFourCC()))
   {
     this->Codec = vtkSmartPointer<vtkStreamingVolumeCodec>::Take(vtkStreamingVolumeCodecFactory::GetInstance()->CreateCodecByFourCC(this->GetCodecFourCC()));
@@ -161,8 +161,7 @@ vtkStreamingVolumeCodec* vtkMRMLStreamingVolumeNode::GetCodec()
 bool vtkMRMLStreamingVolumeNode::HasExternalImageObserver()
 {
   vtkImageData* imageData = Superclass::GetImageData();
-  if ((this->ImageDataConnection != nullptr &&
-       this->ImageDataConnection->GetReferenceCount() > NUMBER_OF_INTERNAL_IMAGEDATACONNECTION_OBSERVERS) ||
+  if ((this->ImageDataConnection != nullptr && this->ImageDataConnection->GetReferenceCount() > NUMBER_OF_INTERNAL_IMAGEDATACONNECTION_OBSERVERS) || //
       (imageData && imageData->GetReferenceCount() > NUMBER_OF_INTERNAL_IMAGEDATA_OBSERVERS))
   {
     return true;

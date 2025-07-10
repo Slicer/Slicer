@@ -253,8 +253,8 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
     normDiffVector[2] = diffVector[2] / diffNorm;
 
     // Local curvature
-    kappa = sqrt( (normDiffVector[0]-prevNormDiffVector[0])*(normDiffVector[0]-prevNormDiffVector[0])
-                + (normDiffVector[1]-prevNormDiffVector[1])*(normDiffVector[1]-prevNormDiffVector[1])
+    kappa = sqrt( (normDiffVector[0]-prevNormDiffVector[0])*(normDiffVector[0]-prevNormDiffVector[0]) //
+                + (normDiffVector[1]-prevNormDiffVector[1])*(normDiffVector[1]-prevNormDiffVector[1]) //
                 + (normDiffVector[2]-prevNormDiffVector[2])*(normDiffVector[2]-prevNormDiffVector[2]) )
             / diffNorm;
     curvatureValues->InsertValue(linePoints->GetId(idx), kappa);
@@ -264,8 +264,8 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
     meanPoint[1] = (currPoint[1]+prevPoint[1]) / 2.0;
     meanPoint[2] = (currPoint[2]+prevPoint[2]) / 2.0;
 
-    currentLength = sqrt( (meanPoint[0]-prevMeanPoint[0])*(meanPoint[0]-prevMeanPoint[0])
-                        + (meanPoint[1]-prevMeanPoint[1])*(meanPoint[1]-prevMeanPoint[1])
+    currentLength = sqrt( (meanPoint[0]-prevMeanPoint[0])*(meanPoint[0]-prevMeanPoint[0]) //
+                        + (meanPoint[1]-prevMeanPoint[1])*(meanPoint[1]-prevMeanPoint[1]) //
                         + (meanPoint[2]-prevMeanPoint[2])*(meanPoint[2]-prevMeanPoint[2]) );
     if (kappa < minKappa)
     {
@@ -301,8 +301,8 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataCurvature(vtkPolyData* pol
       curvatureValues->GetValue(linePoints->GetId(numberOfPoints-2)));
   }
 
-  currentLength = sqrt( (prevPoint[0]-prevMeanPoint[0])*(prevPoint[0]-prevMeanPoint[0])
-                      + (prevPoint[1]-prevMeanPoint[1])*(prevPoint[1]-prevMeanPoint[1])
+  currentLength = sqrt( (prevPoint[0]-prevMeanPoint[0])*(prevPoint[0]-prevMeanPoint[0]) //
+                      + (prevPoint[1]-prevMeanPoint[1])*(prevPoint[1]-prevMeanPoint[1]) //
                       + (prevPoint[2]-prevMeanPoint[2])*(prevPoint[2]-prevMeanPoint[2]) );
   length += currentLength;
   if (length > 0.0)
@@ -451,8 +451,8 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
       normBinormal[2] = binormal[2] / binormalNorm;
 
       // Local torsion
-      torsion = sqrt( (normBinormal[0]-prevNormBinormal[0])*(normBinormal[0]-prevNormBinormal[0])
-                    + (normBinormal[1]-prevNormBinormal[1])*(normBinormal[1]-prevNormBinormal[1])
+      torsion = sqrt( (normBinormal[0]-prevNormBinormal[0])*(normBinormal[0]-prevNormBinormal[0]) //
+                    + (normBinormal[1]-prevNormBinormal[1])*(normBinormal[1]-prevNormBinormal[1]) //
                     + (normBinormal[2]-prevNormBinormal[2])*(normBinormal[2]-prevNormBinormal[2]) )
                 / binormalNorm;
     }
@@ -627,7 +627,7 @@ bool vtkCurveMeasurementsCalculator::InterpolateArray(vtkDoubleArray* inputValue
   vtkIdType lastValidControlPointIndex = (closedCurve ? inputValues->GetNumberOfTuples() : inputValues->GetNumberOfTuples() - 1);
   double pedigreeRange[2] = { 0.0, 0.0 };
   pedigreeIdsArray->GetValueRange(pedigreeRange);
-  if (pedigreeRange[0] * pedigreeIdsValueScale < -VTK_DBL_EPSILON
+  if (pedigreeRange[0] * pedigreeIdsValueScale < -VTK_DBL_EPSILON //
     || pedigreeRange[1] * pedigreeIdsValueScale > lastValidControlPointIndex + VTK_DBL_EPSILON)
   {
     vtkGenericWarningMacro("vtkCurveMeasurementsCalculator::InterpolateArray: pedigreeIdsArray contain values between "

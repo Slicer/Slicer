@@ -295,7 +295,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::PrintSelf(ostream& os, vtkIndent indent
 //----------------------------------------------------------------------------
 bool vtkMRMLVolumeHeaderlessStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
-  return refNode->IsA("vtkMRMLScalarVolumeNode") ||
+  return refNode->IsA("vtkMRMLScalarVolumeNode") || //
          refNode->IsA("vtkMRMLVectorVolumeNode");
 }
 
@@ -488,8 +488,8 @@ void vtkMRMLVolumeHeaderlessStorageNode::InitializeSupportedWriteFileTypes()
 {
   Superclass::InitializeSupportedWriteFileTypes();
 
-  if (this->GetScene() &&
-      this->GetScene()->GetDataIOManager() &&
+  if (this->GetScene() &&                     //
+      this->GetScene()->GetDataIOManager() && //
       this->GetScene()->GetDataIOManager()->GetFileFormatHelper())
   {
     vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
