@@ -194,7 +194,11 @@ for kit in available_kits:
     try:
         exec("from %s import *" % (kit))
     except ImportError as detail:
-        print(detail)
+        # Try kit relative import if installed in as a traditional package
+        try:
+            exec("from .%s import *" % (kit))
+        except ImportError:
+            print(detail)
 
     del kit
 
