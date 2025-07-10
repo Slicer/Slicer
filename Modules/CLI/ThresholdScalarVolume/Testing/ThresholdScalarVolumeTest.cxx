@@ -8,7 +8,7 @@
 #endif
 
 // This will be linked against the ModuleEntryPoint in ThresholdLib
-extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
+extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char*[]);
 
 void RegisterTests()
 {

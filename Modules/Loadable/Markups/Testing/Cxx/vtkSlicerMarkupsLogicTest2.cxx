@@ -25,7 +25,7 @@
 #include <vtkNew.h>
 #include <vtkTestingOutputWindow.h>
 
-static void PrintLabels(vtkMRMLMarkupsNode *m)
+static void PrintLabels(vtkMRMLMarkupsNode* m)
 {
   if (!m)
   {
@@ -37,7 +37,7 @@ static void PrintLabels(vtkMRMLMarkupsNode *m)
   }
 }
 
-int vtkSlicerMarkupsLogicTest2(int argc, char *argv [] )
+int vtkSlicerMarkupsLogicTest2(int argc, char* argv [] )
 {
   std::string tempFolder = ".";
   if (argc > 1)

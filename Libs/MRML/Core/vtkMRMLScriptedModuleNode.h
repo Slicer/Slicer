@@ -27,7 +27,7 @@
 class VTK_MRML_EXPORT vtkMRMLScriptedModuleNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLScriptedModuleNode *New();
+  static vtkMRMLScriptedModuleNode* New();
   vtkTypeMacro(vtkMRMLScriptedModuleNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -88,7 +88,7 @@ protected:
 
   typedef std::map<std::string, std::string> ParameterMap;
   ParameterMap Parameters;
-  char *ModuleName;
+  char* ModuleName;
 };
 
 #endif

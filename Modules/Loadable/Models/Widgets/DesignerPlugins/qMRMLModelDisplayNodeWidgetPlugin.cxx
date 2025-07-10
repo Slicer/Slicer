@@ -23,12 +23,12 @@
 
 //-----------------------------------------------------------------------------
 qMRMLModelDisplayNodeWidgetPlugin::
-  qMRMLModelDisplayNodeWidgetPlugin(QObject *newParent) : QObject(newParent)
+  qMRMLModelDisplayNodeWidgetPlugin(QObject* newParent) : QObject(newParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLModelDisplayNodeWidgetPlugin::createWidget(QWidget *newParent)
+QWidget* qMRMLModelDisplayNodeWidgetPlugin::createWidget(QWidget* newParent)
 {
   qMRMLModelDisplayNodeWidget* newWidget =
     new qMRMLModelDisplayNodeWidget(newParent);

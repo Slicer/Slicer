@@ -32,7 +32,7 @@ void vtkMRMLAnnotationLinesStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLAnnotationLinesStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAnnotationLinesStorageNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
 }
@@ -44,7 +44,7 @@ void vtkMRMLAnnotationLinesStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLineDisplayProperties(vtkMRMLAnnotationLineDisplayNode *refNode, std::string lineString, std::string preposition)
+int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLineDisplayProperties(vtkMRMLAnnotationLineDisplayNode* refNode, std::string lineString, std::string preposition)
 {
   if (refNode == nullptr)
   {
@@ -75,7 +75,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLineDisplayProperties(vtkMR
 
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotationLinesNode *refNode, char line[1024],
+int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotationLinesNode* refNode, char line[1024],
                                    int typeColumn, int startIDColumn, int endIDColumn, int selColumn,  int visColumn, int numColumns)
 {
   if (!refNode)
@@ -159,7 +159,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesData(vtkMRMLAnnotation
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnnotationLinesNode *vtkNotUsed(refNode), char line[1024], int &typeColumn,
+int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnnotationLinesNode* vtkNotUsed(refNode), char line[1024], int& typeColumn,
                                     int& startIDColumn,    int& endIDColumn, int& selColumn, int& visColumn, int& numColumns)
 {
  if (line[0] != '#' || line[1] != ' ')
@@ -186,8 +186,8 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnno
       // reset all of them
       typeColumn= startIDColumn = endIDColumn = selColumn = visColumn = -1;
       numColumns = 0;
-      char *columns = (char *)str.c_str();
-      char *ptr = strtok(columns, "|");
+      char* columns = (char*)str.c_str();
+      char* ptr = strtok(columns, "|");
       while (ptr != nullptr)
       {
       if (strcmp(ptr, "type") == 0)
@@ -223,7 +223,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLinesProperties(vtkMRMLAnno
 
 //----------------------------------------------------------------------------
 // assumes that the node is already reset
-int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode *refNode)
+int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode* refNode)
 {
 
   if (refNode == nullptr)
@@ -245,7 +245,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode
   }
 
 
- vtkMRMLAnnotationLineDisplayNode *aLineDisplayNode = refNode->GetAnnotationLineDisplayNode();
+ vtkMRMLAnnotationLineDisplayNode* aLineDisplayNode = refNode->GetAnnotationLineDisplayNode();
 
 
   // turn off modified events
@@ -304,10 +304,10 @@ bool vtkMRMLAnnotationLinesStorageNode::CanReadInReferenceNode(vtkMRMLNode* refN
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationLinesStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   // cast the input node
-  vtkMRMLAnnotationLinesNode *aNode =
+  vtkMRMLAnnotationLinesNode* aNode =
     vtkMRMLAnnotationLinesNode::SafeDownCast(refNode);
 
   if (aNode == nullptr)
@@ -330,7 +330,7 @@ int vtkMRMLAnnotationLinesStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLineDisplayProperties(fstream& of, vtkMRMLAnnotationLineDisplayNode *refNode, std::string preposition)
+int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLineDisplayProperties(fstream& of, vtkMRMLAnnotationLineDisplayNode* refNode, std::string preposition)
 {
   if (!refNode)
   {
@@ -349,7 +349,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLineDisplayProperties(fstr
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesProperties(fstream& of, vtkMRMLAnnotationLinesNode *refNode)
+int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesProperties(fstream& of, vtkMRMLAnnotationLinesNode* refNode)
 {
    // put down a header
   if (refNode == nullptr)
@@ -358,7 +358,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesProperties(fstream& o
     return 0;
   }
 
-  vtkMRMLAnnotationLineDisplayNode *annDisNode = refNode->GetAnnotationLineDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode* annDisNode = refNode->GetAnnotationLineDisplayNode();
 
   this->WriteAnnotationLineDisplayProperties(of, annDisNode, this->GetAnnotationStorageType());
   of << "# " << this->GetAnnotationStorageType() << "Columns = type|startPointID|endPointID|sel|vis" << endl;
@@ -368,7 +368,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesProperties(fstream& o
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vtkMRMLAnnotationLinesNode *refNode)
+int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vtkMRMLAnnotationLinesNode* refNode)
 {
   if (!refNode)
   {
@@ -387,7 +387,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vtk
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream& of)
+int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream& of)
 {
   int retval = this->Superclass::WriteAnnotationDataInternal(refNode,of);
   if (!retval)
@@ -397,7 +397,7 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *
   }
 
   // cast the input nod
-  vtkMRMLAnnotationLinesNode *aNode = vtkMRMLAnnotationLinesNode::SafeDownCast(refNode);
+  vtkMRMLAnnotationLinesNode* aNode = vtkMRMLAnnotationLinesNode::SafeDownCast(refNode);
 
   if (aNode == nullptr)
   {

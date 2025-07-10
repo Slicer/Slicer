@@ -56,7 +56,7 @@ public:
 
   /// Construct a vertex glyph centered at the origin, scale 1.0, white in
   /// color, filled, with line segment passing through the point.
-  static vtkMarkupsGlyphSource2D *New();
+  static vtkMarkupsGlyphSource2D* New();
 
   /// Set the center of the glyph. By default the center is (0,0,0).
   vtkSetVector3Macro(Center,double);
@@ -146,7 +146,7 @@ protected:
   vtkMarkupsGlyphSource2D();
   ~vtkMarkupsGlyphSource2D() override  = default;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   double Center[3];
   double Scale;
@@ -158,34 +158,34 @@ protected:
   int GlyphType;
   double RotationAngle;
 
-  void TransformGlyph(vtkPoints *pts);
+  void TransformGlyph(vtkPoints* pts);
   void ConvertColor();
   unsigned char RGB[3];
 
-  void CreateVertex(vtkPoints *pts, vtkCellArray *verts,
-                    vtkUnsignedCharArray *colors);
-  void CreateDash(vtkPoints *pts, vtkCellArray *lines,
-                  vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale = 1.0);
-  void CreateCross(vtkPoints *pts, vtkCellArray *lines,
-                   vtkCellArray *polys, vtkUnsignedCharArray *colors, double scale = 1.0, bool dot=false);
-  void CreateThickCross(vtkPoints *pts, vtkCellArray *lines,
-                        vtkCellArray *polys, vtkUnsignedCharArray *colors);
-  void CreateTriangle(vtkPoints *pts, vtkCellArray *lines,
-                      vtkCellArray *polys, vtkUnsignedCharArray *colors);
-  void CreateSquare(vtkPoints *pts, vtkCellArray *lines,
-                    vtkCellArray *polys, vtkUnsignedCharArray *colors);
-  void CreateCircle(vtkPoints *pts, vtkCellArray *lines,
-                    vtkCellArray *polys, vtkUnsignedCharArray *colors);
-  void CreateDiamond(vtkPoints *pts, vtkCellArray *lines,
-                     vtkCellArray *polys, vtkUnsignedCharArray *colors);
-  void CreateArrow(vtkPoints *pts, vtkCellArray *lines,
-                   vtkCellArray *polys, vtkUnsignedCharArray *colors);
-  void CreateThickArrow(vtkPoints *pts, vtkCellArray *lines,
-                        vtkCellArray *polys, vtkUnsignedCharArray *colors);
-  void CreateHookedArrow(vtkPoints *pts, vtkCellArray *lines,
-                         vtkCellArray *polys, vtkUnsignedCharArray *colors);
-  void CreateStarBurst(vtkPoints *pts, vtkCellArray *lines,
-                       vtkCellArray *polys, vtkUnsignedCharArray *colors);
+  void CreateVertex(vtkPoints* pts, vtkCellArray* verts,
+                    vtkUnsignedCharArray* colors);
+  void CreateDash(vtkPoints* pts, vtkCellArray* lines,
+                  vtkCellArray* polys, vtkUnsignedCharArray* colors, double scale = 1.0);
+  void CreateCross(vtkPoints* pts, vtkCellArray* lines,
+                   vtkCellArray* polys, vtkUnsignedCharArray* colors, double scale = 1.0, bool dot=false);
+  void CreateThickCross(vtkPoints* pts, vtkCellArray* lines,
+                        vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateTriangle(vtkPoints* pts, vtkCellArray* lines,
+                      vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateSquare(vtkPoints* pts, vtkCellArray* lines,
+                    vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateCircle(vtkPoints* pts, vtkCellArray* lines,
+                    vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateDiamond(vtkPoints* pts, vtkCellArray* lines,
+                     vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateArrow(vtkPoints* pts, vtkCellArray* lines,
+                   vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateThickArrow(vtkPoints* pts, vtkCellArray* lines,
+                        vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateHookedArrow(vtkPoints* pts, vtkCellArray* lines,
+                         vtkCellArray* polys, vtkUnsignedCharArray* colors);
+  void CreateStarBurst(vtkPoints* pts, vtkCellArray* lines,
+                       vtkCellArray* polys, vtkUnsignedCharArray* colors);
 
 private:
   vtkMarkupsGlyphSource2D(const vtkMarkupsGlyphSource2D&) = delete;

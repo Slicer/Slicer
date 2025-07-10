@@ -24,7 +24,7 @@ class vtkMRMLDisplayableHierarchyNode;
 #include <cstdlib>
 #include <vector>
 
-typedef std::vector< vtkMRMLDisplayableHierarchyNode *> vtkMRMLDisplayableHierarchyNodeList;
+typedef std::vector< vtkMRMLDisplayableHierarchyNode*> vtkMRMLDisplayableHierarchyNodeList;
 
 /// \brief Slicer logic class for hierarchy manipulation.
 ///
@@ -34,22 +34,22 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLDisplayableHierarchyLogic : public vtkMRMLAbs
   public:
 
   /// The Usual vtk class functions
-  static vtkMRMLDisplayableHierarchyLogic *New();
+  static vtkMRMLDisplayableHierarchyLogic* New();
   vtkTypeMacro(vtkMRMLDisplayableHierarchyLogic,vtkMRMLAbstractLogic);
 
   /// Create a 1:1 displayable hierarchy node for this node, add it to the
   /// scene and return the id, null on failure
-  char *AddDisplayableHierarchyNodeForNode(vtkMRMLDisplayableNode *node);
+  char* AddDisplayableHierarchyNodeForNode(vtkMRMLDisplayableNode* node);
 
   /// Create displayable hierarchy nodes as needed to make the child node a
   /// child of the parent node (may need to add 1:1 hierarchy nodes for both
   /// parent and child). Return true on success, false on failure.
-  bool AddChildToParent(vtkMRMLDisplayableNode *child, vtkMRMLDisplayableNode *parent);
+  bool AddChildToParent(vtkMRMLDisplayableNode* child, vtkMRMLDisplayableNode* parent);
 
   /// Delete the passed hierarchy node and all children hierarchy nodes and
   /// the associated nodes to which they point. Return true on success, false
   /// on failure. Gets the mrml scene from the node.
-  bool DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode *hnode);
+  bool DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode* hnode);
 
 protected:
   vtkMRMLDisplayableHierarchyLogic();

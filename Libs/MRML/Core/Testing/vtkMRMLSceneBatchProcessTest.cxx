@@ -32,7 +32,7 @@
 
 //---------------------------------------------------------------------------
 int vtkMRMLSceneBatchProcessTest(
-  int vtkNotUsed(argc), char * vtkNotUsed(argv) [] )
+  int vtkNotUsed(argc), char* vtkNotUsed(argv) [] )
 {
   /*
   if( argc < 2 )

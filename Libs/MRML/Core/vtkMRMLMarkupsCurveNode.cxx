@@ -151,7 +151,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->Measurements->AddItem(curvatureMaxMeasurement);
 
   this->CurvatureMeasurementModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->CurvatureMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->CurvatureMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void*>(this) );
   this->CurvatureMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnCurvatureMeasurementEnabledModified );
   broker->AddObservation(curvatureMeanMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
   broker->AddObservation(curvatureMaxMeasurement, vtkCommand::ModifiedEvent, this, this->CurvatureMeasurementModifiedCallbackCommand);
@@ -167,7 +167,7 @@ vtkMRMLMarkupsCurveNode::vtkMRMLMarkupsCurveNode()
   this->Measurements->AddItem(torsionMaxMeasurement);
 
   this->TorsionMeasurementModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->TorsionMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->TorsionMeasurementModifiedCallbackCommand->SetClientData( reinterpret_cast<void*>(this) );
   this->TorsionMeasurementModifiedCallbackCommand->SetCallback( vtkMRMLMarkupsCurveNode::OnTorsionMeasurementEnabledModified );
   broker->AddObservation(torsionMeanMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);
   broker->AddObservation(torsionMaxMeasurement, vtkCommand::ModifiedEvent, this, this->TorsionMeasurementModifiedCallbackCommand);

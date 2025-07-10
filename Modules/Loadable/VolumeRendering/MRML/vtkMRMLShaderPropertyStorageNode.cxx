@@ -59,7 +59,7 @@ void vtkMRMLShaderPropertyStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLShaderPropertyStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLShaderPropertyStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLShaderPropertyNode");
 }
@@ -68,13 +68,13 @@ namespace
 {
 
 //----------------------------------------------------------------------------
-void DecodeValue(const Json::Value & json, int & value)
+void DecodeValue(const Json::Value & json, int& value)
 {
   value = json.asInt();
 }
 
 //----------------------------------------------------------------------------
-void DecodeValue(const Json::Value & json, float & value)
+void DecodeValue(const Json::Value & json, float& value)
 {
   value = json.asFloat();
 }
@@ -162,7 +162,7 @@ void DecodeValues(const Json::Value & json, vtkUniforms::TupleType tupleType, in
 }
 
 //----------------------------------------------------------------------------
-void ReadUniforms(Json::Value & uniformsJson, vtkUniforms * uniforms)
+void ReadUniforms(Json::Value & uniformsJson, vtkUniforms* uniforms)
 {
   for(Json::ArrayIndex index = 0; index < uniformsJson.size(); ++index)
   {
@@ -190,9 +190,9 @@ void ReadUniforms(Json::Value & uniformsJson, vtkUniforms * uniforms)
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
-int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLShaderPropertyNode *spNode =
+  vtkMRMLShaderPropertyNode* spNode =
     vtkMRMLShaderPropertyNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
@@ -216,7 +216,7 @@ int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   reader.parse(ifs, root, false);
   ifs.close();
 
-  vtkShaderProperty * sp = spNode->GetShaderProperty();
+  vtkShaderProperty* sp = spNode->GetShaderProperty();
 
   // Read vertex shader code
   std::string vertexShaderCode = root["VertexShaderCode"].asString();
@@ -358,7 +358,7 @@ void EncodeValues(const std::vector<scalarT> & values, Json::ArrayIndex nbCompon
 }
 
 //----------------------------------------------------------------------------
-void WriteUniforms(vtkUniforms * uniforms, Json::Value & root)
+void WriteUniforms(vtkUniforms* uniforms, Json::Value & root)
 {
   root.resize(static_cast<Json::ArrayIndex>(uniforms->GetNumberOfUniforms()));
   for(int i = 0; i < uniforms->GetNumberOfUniforms(); ++i)
@@ -400,9 +400,9 @@ void WriteUniforms(vtkUniforms * uniforms, Json::Value & root)
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
-int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLShaderPropertyNode *spNode = vtkMRMLShaderPropertyNode::SafeDownCast(refNode);
+  vtkMRMLShaderPropertyNode* spNode = vtkMRMLShaderPropertyNode::SafeDownCast(refNode);
 
   std::string fullName =  this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -422,7 +422,7 @@ int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   Json::Value root;
 
-  vtkShaderProperty * shaderProperty = spNode->GetShaderProperty();
+  vtkShaderProperty* shaderProperty = spNode->GetShaderProperty();
   if(shaderProperty->HasVertexShaderCode())
   {
     std::string vertexShaderCode(shaderProperty->GetVertexShaderCode());

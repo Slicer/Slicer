@@ -99,7 +99,7 @@ public:
   /// is found and the .* extension exists, return the Qt completeSuffix string.
   /// If .* is not in the complete list of known suffixes, returns an empty suffix.
   /// Always includes the leading dot.
-  Q_INVOKABLE QString completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode *node)const;
+  Q_INVOKABLE QString completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode* node)const;
 
   /// Generate a regular expression that can ensure a filename has a valid
   /// extension. Example of supported extensions:
@@ -278,7 +278,7 @@ public:
   /// for a surface model.
   /// \sa qSlicerDataDialog
   /// \sa qSlicerFileReader
-  Q_INVOKABLE bool examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeEntry, QString &readerDescription, qSlicerIO::IOProperties &ioProperties)const;
+  Q_INVOKABLE bool examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeEntry, QString& readerDescription, qSlicerIO::IOProperties& ioProperties)const;
 
 public slots:
 

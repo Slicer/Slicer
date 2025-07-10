@@ -21,7 +21,7 @@
 
 
 //----------------------------------------------------------------------------
-void AddSliceOrientationPresets(vtkMRMLSliceNode *sliceNode);
+void AddSliceOrientationPresets(vtkMRMLSliceNode* sliceNode);
 
 //----------------------------------------------------------------------------
 int AddSliceOrientationPresetTest();
@@ -37,7 +37,7 @@ int SlabReconstructionTypeTest();
 int SlabReconstructionThicknessTest();
 
 //----------------------------------------------------------------------------
-int vtkMRMLSliceNodeTest1(int , char * [] )
+int vtkMRMLSliceNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLSliceNode> node1;
 
@@ -272,21 +272,21 @@ int GetSliceOrientationPresetTest()
 
   {
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-    vtkMatrix3x3 * current =
+    vtkMatrix3x3* current =
         sliceNode->GetSliceOrientationPreset("");
     TESTING_OUTPUT_ASSERT_ERRORS_END();
     CHECK_NULL(current);
   }
 
   {
-    vtkMatrix3x3 * current =
+    vtkMatrix3x3* current =
         sliceNode->GetSliceOrientationPreset("ones");
     CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(
                  current, expectedOnes.GetPointer()), true);
   }
 
   {
-    vtkMatrix3x3 * current =
+    vtkMatrix3x3* current =
         sliceNode->GetSliceOrientationPreset("twos");
     CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(
                  current, expectedTwos.GetPointer()), true);

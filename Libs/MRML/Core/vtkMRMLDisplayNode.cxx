@@ -265,7 +265,7 @@ void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLDisplayNode *node = vtkMRMLDisplayNode::SafeDownCast(anode);
+  vtkMRMLDisplayNode* node = vtkMRMLDisplayNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -373,7 +373,7 @@ void vtkMRMLDisplayNode::SetSceneReferences()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
+void vtkMRMLDisplayNode::UpdateReferenceID(const char* oldID, const char* newID)
 {
   this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
@@ -467,7 +467,7 @@ void vtkMRMLDisplayNode
 }
 
 //-----------------------------------------------------------
-void vtkMRMLDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
    Superclass::UpdateScene(scene);
 
@@ -525,7 +525,7 @@ vtkMRMLColorNode* vtkMRMLDisplayNode::GetColorNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
+void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char* colorNodeID)
 {
   vtkMRMLColorNode* cnode = nullptr;
   if (this->GetScene() && colorNodeID)
@@ -557,7 +557,7 @@ void vtkMRMLDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* vtkNotUsed(newCo
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLDisplayNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLDisplayNode::ProcessMRMLEvents( vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -674,7 +674,7 @@ bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID)const
 }
 
 //-------------------------------------------------------
-void vtkMRMLDisplayNode::SetDisplayableOnlyInView(const char *viewNodeID)
+void vtkMRMLDisplayNode::SetDisplayableOnlyInView(const char* viewNodeID)
 {
   if (viewNodeID == nullptr)
   {
@@ -878,7 +878,7 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
   int flag = this->GetScalarRangeFlag();
   if (flag == vtkMRMLDisplayNode::UseDataScalarRange)
   {
-    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    vtkDataArray* dataArray = this->GetActiveScalarArray();
     if (dataArray)
     {
       dataArray->GetRange(newScalarRange);
@@ -909,7 +909,7 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
   }
   else if (flag == vtkMRMLDisplayNode::UseDataTypeScalarRange)
   {
-    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    vtkDataArray* dataArray = this->GetActiveScalarArray();
     if (dataArray)
     {
       newScalarRange[0] = dataArray->GetDataTypeMin();
@@ -926,7 +926,7 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLDisplayNode::SetActiveScalar(const char *scalarName, int location)
+void vtkMRMLDisplayNode::SetActiveScalar(const char* scalarName, int location)
 {
   if (location == this->ActiveAttributeLocation
     && ((scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))

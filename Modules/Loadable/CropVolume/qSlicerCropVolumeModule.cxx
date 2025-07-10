@@ -88,7 +88,7 @@ void qSlicerCropVolumeModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerCropVolumeModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerCropVolumeModule::createWidgetRepresentation()
 {
   return new qSlicerCropVolumeModuleWidget;
 }

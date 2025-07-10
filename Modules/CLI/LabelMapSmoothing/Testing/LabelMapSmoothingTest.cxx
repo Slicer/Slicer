@@ -6,7 +6,7 @@
 #define MODULE_IMPORT
 #endif
 
-extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char * []);
+extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char*[]);
 
 void RegisterTests()
 {

@@ -44,7 +44,7 @@ qMRMLSortFilterHierarchyProxyModelPrivate::qMRMLSortFilterHierarchyProxyModelPri
 // qMRMLSortFilterHierarchyProxyModel
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterHierarchyProxyModel::qMRMLSortFilterHierarchyProxyModel(QObject *vparent)
+qMRMLSortFilterHierarchyProxyModel::qMRMLSortFilterHierarchyProxyModel(QObject* vparent)
   : qMRMLSortFilterProxyModel(vparent)
   , d_ptr(new qMRMLSortFilterHierarchyProxyModelPrivate)
 {

@@ -29,7 +29,7 @@ int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* m
 void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelStorageNodeTest1(int argc, char * argv[])
+int vtkMRMLModelStorageNodeTest1(int argc, char* argv[])
 {
   if (argc != 2)
   {
@@ -63,7 +63,7 @@ int vtkMRMLModelStorageNodeTest1(int argc, char * argv[])
 }
 
 //---------------------------------------------------------------------------
-int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkPointSet *mesh, int coordinateSystem, bool cellsMayBeSubdivided/*=false*/)
+int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* mesh, int coordinateSystem, bool cellsMayBeSubdivided/*=false*/)
 {
   std::string fileName = std::string(scene->GetRootDirectory()) +
     std::string("/vtkMRMLModelNodeTest1") +

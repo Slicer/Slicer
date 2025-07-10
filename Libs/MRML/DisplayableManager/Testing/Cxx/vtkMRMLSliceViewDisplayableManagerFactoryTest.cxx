@@ -56,12 +56,12 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   applicationLogic->SetMRMLScene(scene.GetPointer());
 
   // Add ViewNode
-  vtkMRMLSliceNode * viewNode = vtkMRMLSliceNode::New();
+  vtkMRMLSliceNode* viewNode = vtkMRMLSliceNode::New();
   viewNode->SetLayoutName("Red");
   scene->AddNode(viewNode);
   viewNode->Delete();
 
-  vtkMRMLSliceLogic * sliceLogic = vtkMRMLSliceLogic::New();
+  vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::New();
   sliceLogic->SetMRMLScene(scene.GetPointer());
   sliceLogic->SetSliceNode(viewNode);
   sliceLogic->UpdateSliceNode();
@@ -69,7 +69,7 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   sliceLogic->UpdateSliceCompositeNode();
 
   // Factory
-  vtkMRMLSliceViewDisplayableManagerFactory * factory =
+  vtkMRMLSliceViewDisplayableManagerFactory* factory =
     vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
 
   // Check if GetRegisteredDisplayableManagerCount returns 0
@@ -92,7 +92,7 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
     return EXIT_FAILURE;
   }
 
-  vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
+  vtkMRMLDisplayableManagerGroup* displayableManagerGroup =
     factory->InstantiateDisplayableManagers(renderer.GetPointer());
 
   if (!displayableManagerGroup)

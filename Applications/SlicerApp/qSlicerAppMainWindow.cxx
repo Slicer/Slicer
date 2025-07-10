@@ -67,7 +67,7 @@ void qSlicerAppMainWindowPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
+void qSlicerAppMainWindowPrivate::setupUi(QMainWindow* mainWindow)
 {
   //----------------------------------------------------------------------------
   // Add actions
@@ -193,7 +193,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 // qSlicerAppMainWindow methods
 
 //-----------------------------------------------------------------------------
-qSlicerAppMainWindow::qSlicerAppMainWindow(QWidget *_parent)
+qSlicerAppMainWindow::qSlicerAppMainWindow(QWidget* _parent)
   : Superclass(new qSlicerAppMainWindowPrivate(*this), _parent)
 {
   Q_D(qSlicerAppMainWindow);
@@ -221,7 +221,7 @@ void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()
 
   // scan the modules for their actions
   QList<QAction*> moduleActions;
-  qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   foreach(const QString& moduleName, moduleManager->modulesNames())
   {
     qSlicerAbstractModule* module =

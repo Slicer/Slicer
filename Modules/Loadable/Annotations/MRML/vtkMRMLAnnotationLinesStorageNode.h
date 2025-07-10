@@ -16,7 +16,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLinesStorageNo
   : public vtkMRMLAnnotationControlPointsStorageNode
 {
   public:
-  static vtkMRMLAnnotationLinesStorageNode *New();
+  static vtkMRMLAnnotationLinesStorageNode* New();
   vtkTypeMacro(vtkMRMLAnnotationLinesStorageNode,vtkMRMLAnnotationControlPointsStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -32,7 +32,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLinesStorageNo
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   // Description:
   // Get node XML tag name (like Storage, Model)
@@ -49,20 +49,20 @@ protected:
 
   const char* GetAnnotationStorageType() { return "line"; }
 
-  int WriteAnnotationLineDisplayProperties(fstream & of, vtkMRMLAnnotationLineDisplayNode *refNode, std::string preposition);
-  int WriteAnnotationLinesProperties(fstream & of, vtkMRMLAnnotationLinesNode *refNode);
-  int WriteAnnotationLinesData(fstream& of, vtkMRMLAnnotationLinesNode *refNode);
+  int WriteAnnotationLineDisplayProperties(fstream & of, vtkMRMLAnnotationLineDisplayNode* refNode, std::string preposition);
+  int WriteAnnotationLinesProperties(fstream & of, vtkMRMLAnnotationLinesNode* refNode);
+  int WriteAnnotationLinesData(fstream& of, vtkMRMLAnnotationLinesNode* refNode);
 
-  int ReadAnnotation(vtkMRMLAnnotationLinesNode *refNode);
-  int ReadAnnotationLinesData(vtkMRMLAnnotationLinesNode *refNode, char line[1024], int typeColumn, int startIDColumn, int endIDColumn, int selColumn,  int visColumn, int numColumns);
-  int ReadAnnotationLineDisplayProperties(vtkMRMLAnnotationLineDisplayNode *refNode, std::string lineString, std::string preposition);
-  int ReadAnnotationLinesProperties(vtkMRMLAnnotationLinesNode *refNode, char line[1024], int &typeColumn, int& startIDColumn,    int& endIDColumn, int& selColumn, int& visColumn, int& numColumns);
+  int ReadAnnotation(vtkMRMLAnnotationLinesNode* refNode);
+  int ReadAnnotationLinesData(vtkMRMLAnnotationLinesNode* refNode, char line[1024], int typeColumn, int startIDColumn, int endIDColumn, int selColumn,  int visColumn, int numColumns);
+  int ReadAnnotationLineDisplayProperties(vtkMRMLAnnotationLineDisplayNode* refNode, std::string lineString, std::string preposition);
+  int ReadAnnotationLinesProperties(vtkMRMLAnnotationLinesNode* refNode, char line[1024], int& typeColumn, int& startIDColumn,    int& endIDColumn, int& selColumn, int& visColumn, int& numColumns);
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   // Description:
-  int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of) override;
+  int WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream & of) override;
 };
 
 #endif

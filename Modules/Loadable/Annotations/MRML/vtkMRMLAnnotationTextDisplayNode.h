@@ -16,7 +16,7 @@
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
  public:
-  static vtkMRMLAnnotationTextDisplayNode *New (  );
+  static vtkMRMLAnnotationTextDisplayNode* New (  );
   vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent ) override;
 
@@ -37,7 +37,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode* node ) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
@@ -45,7 +45,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
 
   // Description:
   // Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes

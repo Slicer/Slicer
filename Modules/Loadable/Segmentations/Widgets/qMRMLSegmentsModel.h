@@ -74,7 +74,7 @@ public:
   };
 
   typedef QStandardItemModel Superclass;
-  qMRMLSegmentsModel(QObject *parent=nullptr);
+  qMRMLSegmentsModel(QObject* parent=nullptr);
   ~qMRMLSegmentsModel() override;
 
   int nameColumn()const;
@@ -91,7 +91,7 @@ public:
   void setLayerColumn(int layer);
 
   /// Returns the segment ID for the given index
-  QString segmentIDFromIndex(const QModelIndex &index)const;
+  QString segmentIDFromIndex(const QModelIndex& index)const;
   /// Returns the segment ID for the given item
   QString segmentIDFromItem(QStandardItem* item)const;
   /// Returns the index for the given segment ID
@@ -126,7 +126,7 @@ protected slots:
   void updateColumnCount();
 
 protected:
-  qMRMLSegmentsModel(qMRMLSegmentsModelPrivate* pimpl, QObject *parent=nullptr);
+  qMRMLSegmentsModel(qMRMLSegmentsModelPrivate* pimpl, QObject* parent=nullptr);
 
   /// Removes all items and regenerates the model from the segments in the segmentation node
   virtual void rebuildFromSegments();

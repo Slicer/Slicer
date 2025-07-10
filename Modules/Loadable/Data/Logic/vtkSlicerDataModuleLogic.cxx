@@ -60,7 +60,7 @@ void vtkSlicerDataModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerDataModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerDataModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -98,10 +98,10 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 
   /// we can't get the display node directly as it might be 0 because the
   /// displayable node has no longer access to the scene
-  std::vector<vtkMRMLNode *> referencingNodes;
+  std::vector<vtkMRMLNode*> referencingNodes;
   for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
   {
-    vtkMRMLNode *dnode = this->GetMRMLScene()->GetNodeByID(
+    vtkMRMLNode* dnode = this->GetMRMLScene()->GetNodeByID(
       displayableNode->GetNthDisplayNodeID(i));
 
     // make sure no other nodes reference this display node
@@ -115,7 +115,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   }
   for (int i = 0; i < displayableNode->GetNumberOfStorageNodes(); ++i)
   {
-    vtkMRMLNode *snode = this->GetMRMLScene()->GetNodeByID(
+    vtkMRMLNode* snode = this->GetMRMLScene()->GetNodeByID(
       displayableNode->GetNthStorageNodeID(i));
 
     // make sure no other nodes reference this storage node

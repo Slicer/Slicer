@@ -71,7 +71,7 @@ public:
   virtual void init();
 
   void setMRMLScene(vtkMRMLScene* scene);
-  vtkMRMLScene *mrmlScene();
+  vtkMRMLScene* mrmlScene();
 
   bool verifyTableModelAndNode(const char* methodName) const;
 

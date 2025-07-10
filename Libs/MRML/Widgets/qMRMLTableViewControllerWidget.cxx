@@ -137,7 +137,7 @@ void qMRMLTableViewControllerWidgetPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode * node)
+void qMRMLTableViewControllerWidgetPrivate::onTableNodeSelected(vtkMRMLNode* node)
 {
   Q_Q(qMRMLTableViewControllerWidget);
 
@@ -324,7 +324,7 @@ QString qMRMLTableViewControllerWidget::viewLabel()const
 
 // --------------------------------------------------------------------------
 void qMRMLTableViewControllerWidget::setMRMLTableViewNode(
-    vtkMRMLTableViewNode * viewNode)
+    vtkMRMLTableViewNode* viewNode)
 {
   Q_D(qMRMLTableViewControllerWidget);
   this->setMRMLViewNode(viewNode);
@@ -351,7 +351,7 @@ void qMRMLTableViewControllerWidget::updateWidgetFromMRML()
 
   d->ViewLabel->setText(this->mrmlTableViewNode()->GetLayoutLabel());
 
-  vtkMRMLTableNode *tableNode
+  vtkMRMLTableNode* tableNode
     = vtkMRMLTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(this->mrmlTableViewNode()->GetTableNodeID()));
 
   // TableNode selector

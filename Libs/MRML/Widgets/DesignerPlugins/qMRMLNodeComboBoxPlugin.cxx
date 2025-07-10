@@ -21,12 +21,12 @@
 #include "qMRMLNodeComboBoxPlugin.h"
 #include "qMRMLNodeComboBox.h"
 
-qMRMLNodeComboBoxPlugin::qMRMLNodeComboBoxPlugin(QObject *_parent)
+qMRMLNodeComboBoxPlugin::qMRMLNodeComboBoxPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
-QWidget *qMRMLNodeComboBoxPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLNodeComboBoxPlugin::createWidget(QWidget* _parent)
 {
   qMRMLNodeComboBox* _widget = new qMRMLNodeComboBox(_parent);
   return _widget;

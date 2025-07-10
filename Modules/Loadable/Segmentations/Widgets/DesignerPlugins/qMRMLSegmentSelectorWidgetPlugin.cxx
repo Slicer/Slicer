@@ -28,7 +28,7 @@ qMRMLSegmentSelectorWidgetPlugin::qMRMLSegmentSelectorWidgetPlugin(QObject* plug
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentSelectorWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentSelectorWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLSegmentSelectorWidget* pluginWidget =
     new qMRMLSegmentSelectorWidget(parentWidget);

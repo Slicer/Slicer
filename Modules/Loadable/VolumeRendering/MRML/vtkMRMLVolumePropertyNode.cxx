@@ -141,9 +141,9 @@ void vtkMRMLVolumePropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode *anode)
+void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode* anode)
 {
-  vtkMRMLVolumePropertyNode *node = vtkMRMLVolumePropertyNode::SafeDownCast(anode);
+  vtkMRMLVolumePropertyNode* node = vtkMRMLVolumePropertyNode::SafeDownCast(anode);
   if (!node)
   {
     vtkErrorMacro("CopyParameterSet: Invalid input MRML node");
@@ -203,9 +203,9 @@ void vtkMRMLVolumePropertyNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode::ProcessMRMLEvents( vtkObject *caller,
+void vtkMRMLVolumePropertyNode::ProcessMRMLEvents( vtkObject* caller,
                                                    unsigned long event,
-                                                   void *callData )
+                                                   void* callData )
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
   switch (event)
@@ -233,7 +233,7 @@ void vtkMRMLVolumePropertyNode::ProcessMRMLEvents( vtkObject *caller,
 std::string vtkMRMLVolumePropertyNode::DataToString(double* data, int size)
 {
   std::stringstream resultStream;
-  double *it = data;
+  double* it = data;
   // Write header
   resultStream << size;
   resultStream.precision(std::numeric_limits<double>::digits10);
@@ -346,7 +346,7 @@ double vtkMRMLVolumePropertyNode::NextHigher(double value)
 }
 
 //----------------------------------------------------------------------------
-double vtkMRMLVolumePropertyNode::HigherAndUnique(double value, double &previousValue)
+double vtkMRMLVolumePropertyNode::HigherAndUnique(double value, double& previousValue)
 {
   value = std::max(value, previousValue);
   if (value == previousValue)

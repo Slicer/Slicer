@@ -54,7 +54,7 @@ void SkelGraph::ResetGraph()
 // Public Methods
 // -------------------------------------------------------------------------
 
-void SkelGraph::ExtractSkeletalGraph(const unsigned char *image, const int dim[3], const double spacing[3])
+void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3], const double spacing[3])
 // Graph compilation of a thinning skeleton
 {
   ResetGraph();
@@ -518,7 +518,7 @@ void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<C
 // Private Methods
 // -------------------------------------------------------------------------
 
-void SkelGraph::FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned char *image, const int dim[3])
+void SkelGraph::FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned char* image, const int dim[3])
 {
   endPoints.clear();
   for( int z = 1; z < dim[2] - 1; z++ )
@@ -541,7 +541,7 @@ void SkelGraph::FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned cha
   }
 }
 
-int SkelGraph::IsEndpoint(int x, int y, int z, const unsigned char *image, const int dim[3])
+int SkelGraph::IsEndpoint(int x, int y, int z, const unsigned char* image, const int dim[3])
 {
   int nb = 0;
   int pz = z - 1;
@@ -580,7 +580,7 @@ skel_branch* SkelGraph::AddNewBranchToDo(std::list<skel_branch> &branchesToDo)
   return &(branchesToDo.back());
 }
 
-void SkelGraph::GetValidNeighbors(int* label_image, Coord3i &act_point, std::deque<Coord3i> &neighbors, const unsigned char *image, const int dim[3])
+void SkelGraph::GetValidNeighbors(int* label_image, Coord3i &act_point, std::deque<Coord3i> &neighbors, const unsigned char* image, const int dim[3])
 {
   int pz = act_point[2] - 1;
 

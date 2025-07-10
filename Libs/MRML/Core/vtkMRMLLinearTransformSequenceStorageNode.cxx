@@ -50,7 +50,7 @@ vtkMRMLLinearTransformSequenceStorageNode::vtkMRMLLinearTransformSequenceStorage
 vtkMRMLLinearTransformSequenceStorageNode::~vtkMRMLLinearTransformSequenceStorageNode() = default;
 
 //----------------------------------------------------------------------------
-bool vtkMRMLLinearTransformSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLLinearTransformSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLSequenceNode");
 }
@@ -58,7 +58,7 @@ bool vtkMRMLLinearTransformSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNo
 // Add the helper functions
 
 //-------------------------------------------------------
-inline void Trim(std::string &str)
+inline void Trim(std::string& str)
 {
   str.erase(str.find_last_not_of(" \t\r\n") + 1);
   str.erase(0, str.find_first_not_of(" \t\r\n"));
@@ -67,13 +67,13 @@ inline void Trim(std::string &str)
 //----------------------------------------------------------------------------
 /*! Quick and robust string to int conversion */
 template<class T>
-void StringToInt(const char* strPtr, T &result)
+void StringToInt(const char* strPtr, T& result)
 {
   if (strPtr == nullptr || strlen(strPtr) == 0)
   {
     return;
   }
-  char * pEnd = nullptr;
+  char* pEnd = nullptr;
   result = static_cast<int>(strtol(strPtr, &pEnd, 10));
   if (pEnd != strPtr + strlen(strPtr))
   {
@@ -83,9 +83,9 @@ void StringToInt(const char* strPtr, T &result)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const std::string& fileName, vtkMRMLScene *scene,
-  std::deque< vtkSmartPointer<vtkMRMLSequenceNode> > &createdNodes, std::map< int, std::string >& frameNumberToIndexValueMap,
-  std::map< std::string, std::string > &imageMetaData, SequenceFileType fileType/*=METAIMAGE_SEQUENCE_FILE */)
+int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const std::string& fileName, vtkMRMLScene* scene,
+  std::deque< vtkSmartPointer<vtkMRMLSequenceNode> > &createdNodes, std::map<int, std::string >& frameNumberToIndexValueMap,
+  std::map<std::string, std::string > &imageMetaData, SequenceFileType fileType/*=METAIMAGE_SEQUENCE_FILE */)
 {
   int numberOfCreatedNodes = 0;
   // Open in binary mode because we determine the start of the image buffer also during this read
@@ -248,7 +248,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
 
   // Now add all the nodes to the scene
 
-  std::map< std::string, vtkMRMLSequenceNode* > transformSequenceNodes;
+  std::map<std::string, vtkMRMLSequenceNode* > transformSequenceNodes;
 
   for (int currentFrameNumber = 0; currentFrameNumber <= lastFrameNumber; currentFrameNumber++)
   {
@@ -508,8 +508,8 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* ref
 
   std::deque< vtkSmartPointer<vtkMRMLSequenceNode> > createdTransformNodes;
   createdTransformNodes.push_back(seqNode);
-  std::map< int, std::string > frameNumberToIndexValueMap;
-  std::map< std::string, std::string > imageMetaData;
+  std::map<int, std::string > frameNumberToIndexValueMap;
+  std::map<std::string, std::string > imageMetaData;
   if (vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(fullName,
     NULL, /* additional nodes will not be added to the scene */
     createdTransformNodes,
@@ -532,7 +532,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* ref
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* refNode)
 {
   vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(refNode);
   if (sequenceNode == NULL)
@@ -556,7 +556,7 @@ bool vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRM
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(refNode);
   if (sequenceNode == NULL)

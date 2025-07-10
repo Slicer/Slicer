@@ -69,14 +69,14 @@ public:
   * (i.e., not implementing ReleaseGraphicsResources() properly).
   */
   double* GetBounds() VTK_SIZEHINT(6) override { return nullptr; }
-  void GetActors(vtkPropCollection *) override {}
-  void GetActors2D(vtkPropCollection *) override {}
-  void GetVolumes(vtkPropCollection *) override {}
-  void ReleaseGraphicsResources(vtkWindow *) override {}
-  int RenderOverlay(vtkViewport *vtkNotUsed(viewport)) override { return 0; }
-  int RenderOpaqueGeometry(vtkViewport *vtkNotUsed(viewport)) override { return 0; }
-  int RenderTranslucentPolygonalGeometry(vtkViewport *vtkNotUsed(viewport)) override { return 0; }
-  int RenderVolumetricGeometry(vtkViewport *vtkNotUsed(viewport)) override { return 0; }
+  void GetActors(vtkPropCollection*) override {}
+  void GetActors2D(vtkPropCollection*) override {}
+  void GetVolumes(vtkPropCollection*) override {}
+  void ReleaseGraphicsResources(vtkWindow*) override {}
+  int RenderOverlay(vtkViewport* vtkNotUsed(viewport)) override { return 0; }
+  int RenderOpaqueGeometry(vtkViewport* vtkNotUsed(viewport)) override { return 0; }
+  int RenderTranslucentPolygonalGeometry(vtkViewport* vtkNotUsed(viewport)) override { return 0; }
+  int RenderVolumetricGeometry(vtkViewport* vtkNotUsed(viewport)) override { return 0; }
   vtkTypeBool HasTranslucentPolygonalGeometry() override { return 0; }
   //@}
 
@@ -91,7 +91,7 @@ public:
   * in order to avoid reference loops.  Be sure that the representation
   * lifetime does not extend beyond the renderer lifetime.
   */
-  virtual void SetRenderer(vtkRenderer *ren);
+  virtual void SetRenderer(vtkRenderer* ren);
   virtual vtkRenderer* GetRenderer();
   //@}
 
@@ -116,7 +116,7 @@ public:
   * if event is non-zero then a specific update (faster, smaller scope) is performed instead
   * of a full update.
   */
-  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
+  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr);
 
   /// Specify tolerance for performing pick operations of points.
   /// For display renderers it is defined in pixels. The specified value is scaled with ScreenScaleFactor.

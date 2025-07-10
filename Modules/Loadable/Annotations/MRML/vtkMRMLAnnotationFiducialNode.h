@@ -22,7 +22,7 @@ class vtkMRMLStorageNode;
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialNode : public vtkMRMLAnnotationControlPointsNode
 {
 public:
-  static vtkMRMLAnnotationFiducialNode *New();
+  static vtkMRMLAnnotationFiducialNode* New();
   vtkTypeMacro(vtkMRMLAnnotationFiducialNode,vtkMRMLAnnotationControlPointsNode);
 
   //--------------------------------------------------------------------------
@@ -83,7 +83,7 @@ public:
     return this->GetControlPointCoordinates(0);
   }
 
-  void GetFiducialWorldCoordinates(double *point)
+  void GetFiducialWorldCoordinates(double* point)
   {
     this->GetControlPointWorldCoordinates(0, point);
   }

@@ -35,7 +35,7 @@
 
 
 // test the filtering with many cases
-int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
+int qMRMLNodeComboBoxTest7( int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -46,8 +46,8 @@ int qMRMLNodeComboBoxTest7( int argc, char * argv [] )
   vtkNew<vtkMRMLScalarVolumeNode> noAttributeNode;
   scene->AddNode(noAttributeNode.GetPointer());
 
-  const char *testingAttributeName = "testingAttribute";
-  const char *testingAttribute = noAttributeNode->GetAttribute(testingAttributeName);
+  const char* testingAttributeName = "testingAttribute";
+  const char* testingAttribute = noAttributeNode->GetAttribute(testingAttributeName);
   std::cout << "Volume node with no call to SetAttribute, GetAttribute returns " << (testingAttribute ? testingAttribute : "0") << "." << std::endl;
 
   vtkNew<vtkMRMLScalarVolumeNode> emptyStringAttributeNode;

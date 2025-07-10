@@ -42,7 +42,7 @@
 #include "qMRMLLayoutManagerTestHelper.cxx"
 
 // --------------------------------------------------------------------------
-int qMRMLLayoutManagerTest2(int argc, char * argv[] )
+int qMRMLLayoutManagerTest2(int argc, char* argv[] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -191,7 +191,7 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
     return EXIT_FAILURE;
   }
 
-  vtkMRMLScene * scene = layoutManager->mrmlScene();
+  vtkMRMLScene* scene = layoutManager->mrmlScene();
 
   scene->StartState(vtkMRMLScene::ImportState);
   scene->EndState(vtkMRMLScene::ImportState);

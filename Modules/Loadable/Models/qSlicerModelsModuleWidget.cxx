@@ -271,7 +271,7 @@ void qSlicerModelsModuleWidget::showAllModels()
   {
     return;
   }
-  vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (modelsLogic)
   {
     modelsLogic->SetAllModelsVisibility(1);
@@ -285,7 +285,7 @@ void qSlicerModelsModuleWidget::hideAllModels()
   {
     return;
   }
-  vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (modelsLogic)
   {
     modelsLogic->SetAllModelsVisibility(0);

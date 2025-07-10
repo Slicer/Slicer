@@ -70,7 +70,7 @@ public:
   Q_INVOKABLE void addDisplayableManager(const QString& displayableManager);
   /// Get the displayable managers registered in this view
   /// \sa addDisplayableManager
-  Q_INVOKABLE void getDisplayableManagers(vtkCollection *displayableManagers);
+  Q_INVOKABLE void getDisplayableManagers(vtkCollection* displayableManagers);
 
   /// Return a DisplayableManager given its class name
   Q_INVOKABLE  vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
@@ -100,11 +100,11 @@ public:
   Q_INVOKABLE QList<double> convertXYZToRAS(const QList<double> &xyz)const;
 
   /// Set cursor in the view area
-  Q_INVOKABLE void setViewCursor(const QCursor &);
+  Q_INVOKABLE void setViewCursor(const QCursor&);
   /// Restore default cursor in the view area
   Q_INVOKABLE void unsetViewCursor();
   /// Set default cursor in the view area
-  Q_INVOKABLE void setDefaultViewCursor(const QCursor &cursor);
+  Q_INVOKABLE void setDefaultViewCursor(const QCursor& cursor);
 
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dropEvent(QDropEvent* event) override;

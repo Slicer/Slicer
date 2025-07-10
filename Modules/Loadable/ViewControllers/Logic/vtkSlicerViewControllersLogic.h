@@ -40,7 +40,7 @@ class VTK_SLICER_VIEWCONTROLLERS_MODULE_LOGIC_EXPORT vtkSlicerViewControllersLog
   public vtkSlicerModuleLogic
 {
 public:
-  static vtkSlicerViewControllersLogic *New();
+  static vtkSlicerViewControllersLogic* New();
   vtkTypeMacro(vtkSlicerViewControllersLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

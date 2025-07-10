@@ -291,7 +291,7 @@ void qSlicerCropVolumeModuleWidget::enter()
     scene->AddNode(parametersNode.GetPointer());
 
     // Use first background volume node in any of the displayed slice views as input volume
-    qSlicerApplication * app = qSlicerApplication::application();
+    qSlicerApplication* app = qSlicerApplication::application();
     if (app && app->layoutManager())
     {
       foreach(QString sliceViewName, app->layoutManager()->sliceViewNames())
@@ -308,7 +308,7 @@ void qSlicerCropVolumeModuleWidget::enter()
 
     // Use first visible ROI node (or last ROI node, if all are invisible)
     vtkMRMLDisplayableNode* foundROINode = nullptr;
-    std::vector<vtkMRMLNode *> roiNodes;
+    std::vector<vtkMRMLNode*> roiNodes;
 
     scene->GetNodesByClass("vtkMRMLMarkupsROINode", roiNodes);
     for (unsigned int i = 0; i < roiNodes.size(); ++i)
@@ -360,7 +360,7 @@ void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCropVolumeModuleWidget::initializeInputROI(vtkMRMLNode *roiNode)
+void qSlicerCropVolumeModuleWidget::initializeInputROI(vtkMRMLNode* roiNode)
 {
   Q_D(const qSlicerCropVolumeModuleWidget);
   if (!d->ParametersNode || !d->ParametersNode->GetInputVolumeNode())
@@ -394,8 +394,8 @@ void qSlicerCropVolumeModuleWidget::onApply()
     if (d->ParametersNode->GetOutputVolumeNode() != oldOutputNode)
     {
       // New output volume is created, show it in slice viewers
-      vtkSlicerApplicationLogic *appLogic = this->module()->appLogic();
-      vtkMRMLSelectionNode *selectionNode = appLogic->GetSelectionNode();
+      vtkSlicerApplicationLogic* appLogic = this->module()->appLogic();
+      vtkMRMLSelectionNode* selectionNode = appLogic->GetSelectionNode();
       selectionNode->SetActiveVolumeID(d->ParametersNode->GetOutputVolumeNodeID());
       appLogic->PropagateVolumeSelection();
     }
@@ -435,7 +435,7 @@ void qSlicerCropVolumeModuleWidget::setOutputVolume(vtkMRMLNode* volumeNode)
 {
   Q_D(qSlicerCropVolumeModuleWidget);
 
-  vtkMRMLCropVolumeParametersNode *parametersNode = vtkMRMLCropVolumeParametersNode::SafeDownCast(d->ParametersNodeComboBox->currentNode());
+  vtkMRMLCropVolumeParametersNode* parametersNode = vtkMRMLCropVolumeParametersNode::SafeDownCast(d->ParametersNodeComboBox->currentNode());
   if (!parametersNode)
   {
     if (volumeNode != nullptr)
@@ -716,7 +716,7 @@ void qSlicerCropVolumeModuleWidget::updateVolumeInfo()
   }
   if (inputVolumeNode != nullptr && inputVolumeNode->GetImageData() != nullptr)
   {
-    int *dimensions = inputVolumeNode->GetImageData()->GetDimensions();
+    int* dimensions = inputVolumeNode->GetImageData()->GetDimensions();
     d->InputDimensionsWidget->setCoordinates(dimensions[0], dimensions[1], dimensions[2]);
     d->InputSpacingWidget->setCoordinates(inputVolumeNode->GetSpacing());
   }

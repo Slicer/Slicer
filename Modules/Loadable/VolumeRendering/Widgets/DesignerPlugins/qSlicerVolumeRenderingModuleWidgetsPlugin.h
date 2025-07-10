@@ -42,7 +42,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRender
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
-    QList<QDesignerCustomWidgetInterface *> plugins;
+    QList<QDesignerCustomWidgetInterface*> plugins;
     plugins << new qMRMLVolumePropertyNodeWidgetPlugin
             << new qSlicerPresetComboBoxPlugin
             << new qSlicerVolumeRenderingPresetComboBoxPlugin

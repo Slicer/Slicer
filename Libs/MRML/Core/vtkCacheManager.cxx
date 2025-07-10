@@ -52,7 +52,7 @@ vtkCacheManager::~vtkCacheManager()
 
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::GetFileFromURIMap (const char *uri )
+const char* vtkCacheManager::GetFileFromURIMap (const char* uri )
 {
   std::string uriString (uri);
 
@@ -68,7 +68,7 @@ const char* vtkCacheManager::GetFileFromURIMap (const char *uri )
 
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::MapFileToURI ( const char *uri, const char *fname )
+void vtkCacheManager::MapFileToURI ( const char* uri, const char* fname )
 {
   if ( uri == nullptr || fname == nullptr )
   {
@@ -102,7 +102,7 @@ void vtkCacheManager::MapFileToURI ( const char *uri, const char *fname )
 }
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
+void vtkCacheManager::SetRemoteCacheDirectory (const char* dir )
 {
   std::string dirstring = dir ;
   size_t len = (int)dirstring.size();
@@ -138,13 +138,13 @@ void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
 }
 
 //----------------------------------------------------------------------------
-const char *vtkCacheManager::GetRemoteCacheDirectory ()
+const char* vtkCacheManager::GetRemoteCacheDirectory ()
 {
   return ( this->RemoteCacheDirectory.c_str() );
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::IsRemoteReference ( const char *uri )
+int vtkCacheManager::IsRemoteReference ( const char* uri )
 {
   int index;
   std::string uriString (uri);
@@ -180,7 +180,7 @@ int vtkCacheManager::IsRemoteReference ( const char *uri )
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::IsLocalReference ( const char *uri )
+int vtkCacheManager::IsLocalReference ( const char* uri )
 {
   int index;
   std::string uriString (uri);
@@ -215,7 +215,7 @@ int vtkCacheManager::IsLocalReference ( const char *uri )
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::LocalFileExists ( const char *uri )
+int vtkCacheManager::LocalFileExists ( const char* uri )
 {
   int index;
   std::string uriString (uri);
@@ -272,7 +272,7 @@ std::vector< std::string > vtkCacheManager::GetCachedFiles ( ) const
 }
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::GetCachedFileList ( const char *dirname )
+int vtkCacheManager::GetCachedFileList ( const char* dirname )
 {
 
 //  std::string convdir = vtksys::SystemTools::ConvertToOutputPath ( dirname );
@@ -327,7 +327,7 @@ int vtkCacheManager::GetCachedFileList ( const char *dirname )
 
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::EncodeURI ( const char *uri )
+const char* vtkCacheManager::EncodeURI ( const char* uri )
 {
     if (uri == nullptr)
     {
@@ -353,11 +353,11 @@ const char* vtkCacheManager::EncodeURI ( const char *uri )
   vtksys::SystemTools::ReplaceString(kwInString,
                                      "\"", "%22");
 
-  const char *inStr = kwInString.c_str();
-  char *returnString = nullptr;
+  const char* inStr = kwInString.c_str();
+  char* returnString = nullptr;
   size_t n = strlen(inStr) + 1;
-  char *cp1 = new char[n];
-  const char *cp2 = (inStr);
+  char* cp1 = new char[n];
+  const char* cp2 = (inStr);
   returnString = cp1;
   do { *cp1++ = *cp2++; } while ( --n );
   return (returnString);
@@ -366,7 +366,7 @@ const char* vtkCacheManager::EncodeURI ( const char *uri )
 
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::AddCachePathToFilename ( const char *filename )
+const char* vtkCacheManager::AddCachePathToFilename ( const char* filename )
 {
   std::string cachedir ( this->GetRemoteCacheDirectory() );
   if ( cachedir.c_str() != nullptr )
@@ -375,11 +375,11 @@ const char* vtkCacheManager::AddCachePathToFilename ( const char *filename )
     ret += "/";
     ret += filename;
 
-    const char *outStr = ret.c_str();
-    char *absoluteName = nullptr;
+    const char* outStr = ret.c_str();
+    char* absoluteName = nullptr;
     size_t n = strlen(outStr) + 1;
-    char *cp1 = new char[n];
-    const char *cp2 = (outStr);
+    char* cp1 = new char[n];
+    const char* cp2 = (outStr);
     absoluteName = cp1;
     do { *cp1++ = *cp2++; } while ( --n );
     return  absoluteName ;
@@ -393,7 +393,7 @@ const char* vtkCacheManager::AddCachePathToFilename ( const char *filename )
 
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
+const char* vtkCacheManager::GetFilenameFromURI ( const char* uri )
 {
   //--- this method should return the absolute path of the
   //--- file that a storage node will read from in cache
@@ -406,7 +406,7 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
     return "(null)";
   }
 
-  const char *mapcheck = this->GetFileFromURIMap( uri );
+  const char* mapcheck = this->GetFileFromURIMap( uri );
   if ( mapcheck != nullptr )
   {
     return (mapcheck);
@@ -491,11 +491,11 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
   pathComponents.push_back ( newFileName );
   fileName = vtksys::SystemTools::JoinPath ( pathComponents );
 
-  const char *inStr = fileName.c_str();
-  char *returnString = nullptr;
+  const char* inStr = fileName.c_str();
+  char* returnString = nullptr;
   size_t n = strlen(inStr) + 1;
-  char *cp1 = new char[n];
-  const char *cp2 = (inStr);
+  char* cp1 = new char[n];
+  const char* cp2 = (inStr);
   returnString = cp1;
   do { *cp1++ = *cp2++; } while ( --n );
   vtkDebugMacro("GetFilenameFromURI: returning " << returnString);
@@ -523,7 +523,7 @@ void vtkCacheManager::UpdateCacheInformation ( )
 
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::DeleteFromCachedFileList ( const char * target )
+void vtkCacheManager::DeleteFromCachedFileList ( const char* target )
 {
 
   std::string tstring = target;
@@ -548,7 +548,7 @@ void vtkCacheManager::DeleteFromCachedFileList ( const char * target )
 
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::DeleteFromCache( const char *target )
+void vtkCacheManager::DeleteFromCache( const char* target )
 {
   if (target == nullptr)
   {
@@ -676,7 +676,7 @@ void vtkCacheManager::MarkNode ( std::string str )
   //--- so that a user will be prompted to save the
   //--- data elsewhere (since it'll be deleted from cache.)
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLStorableNode" );
-  vtkMRMLStorableNode *node;
+  vtkMRMLStorableNode* node;
   std::string uri;
   for ( int n=0; n < nnodes; n++ )
   {
@@ -701,7 +701,7 @@ void vtkCacheManager::MarkNode ( std::string str )
 
 
 //----------------------------------------------------------------------------
-void vtkCacheManager::MarkNodesBeforeDeletingDataFromCache (const char *target )
+void vtkCacheManager::MarkNodesBeforeDeletingDataFromCache (const char* target )
 {
   //--- Target is a file or directory marked for deletion in cache.
   //--- If target is a file, this method finds any node holding a
@@ -764,7 +764,7 @@ void vtkCacheManager::MarkNodesBeforeDeletingDataFromCache (const char *target )
 
 
 //----------------------------------------------------------------------------
-float vtkCacheManager::ComputeCacheSize( const char *dirName, unsigned long sz )
+float vtkCacheManager::ComputeCacheSize( const char* dirName, unsigned long sz )
 {
 
   //--- Traverses cache directory and computes the combined size
@@ -867,7 +867,7 @@ void vtkCacheManager::FreeCacheBufferCheck()
 
 
 //----------------------------------------------------------------------------
-int vtkCacheManager::CachedFileExists ( const char *filename )
+int vtkCacheManager::CachedFileExists ( const char* filename )
 {
   if ( vtksys::SystemTools::FileExists ( filename ) )
   {
@@ -891,14 +891,14 @@ int vtkCacheManager::CachedFileExists ( const char *filename )
 }
 
 //----------------------------------------------------------------------------
-const char* vtkCacheManager::FindCachedFile ( const char * target, const char *dirname )
+const char* vtkCacheManager::FindCachedFile ( const char* target, const char* dirname )
 {
   std::string testFile;
-  const char *result = nullptr;
-  char *returnString;
+  const char* result = nullptr;
+  char* returnString;
   size_t n;
-  char *cp1;
-  const char *cp2;
+  char* cp1;
+  const char* cp2;
 
   if (target == nullptr || dirname == nullptr)
   {

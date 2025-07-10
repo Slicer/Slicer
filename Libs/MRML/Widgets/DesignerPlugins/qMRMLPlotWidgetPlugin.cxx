@@ -22,12 +22,12 @@
 #include "qMRMLPlotWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLPlotWidgetPlugin::qMRMLPlotWidgetPlugin(QObject *_parent):QObject(_parent)
+qMRMLPlotWidgetPlugin::qMRMLPlotWidgetPlugin(QObject* _parent):QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLPlotWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLPlotWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLPlotWidget* _widget = new qMRMLPlotWidget(_parent);
   return _widget;

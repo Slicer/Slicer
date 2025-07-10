@@ -34,7 +34,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLRemoteIOLogic : public vtkMRMLAbstractLogic
 {
 public:
   /// The Usual vtk class functions
-  static vtkMRMLRemoteIOLogic *New();
+  static vtkMRMLRemoteIOLogic* New();
   vtkTypeMacro(vtkMRMLRemoteIOLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

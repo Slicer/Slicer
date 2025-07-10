@@ -214,7 +214,7 @@ void qSlicerSequencesModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerSequencesModule
+qSlicerAbstractModuleRepresentation* qSlicerSequencesModule
 ::createWidgetRepresentation()
 {
   return new qSlicerSequencesModuleWidget;

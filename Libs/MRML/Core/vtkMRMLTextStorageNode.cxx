@@ -110,7 +110,7 @@ void vtkMRMLTextStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode * refNode)
+int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   if (!this->CanReadInReferenceNode(refNode))
   {
@@ -161,7 +161,7 @@ int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode * refNode)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode * refNode)
+bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* refNode)
 {
   vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(refNode);
   if (textNode == nullptr)
@@ -173,7 +173,7 @@ bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode * refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
+int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(refNode);
   if (textNode == nullptr)

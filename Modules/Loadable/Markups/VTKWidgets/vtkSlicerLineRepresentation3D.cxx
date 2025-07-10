@@ -67,7 +67,7 @@ vtkSlicerLineRepresentation3D::vtkSlicerLineRepresentation3D()
 vtkSlicerLineRepresentation3D::~vtkSlicerLineRepresentation3D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation3D::GetActors(vtkPropCollection *pc)
+void vtkSlicerLineRepresentation3D::GetActors(vtkPropCollection* pc)
 {
   this->Superclass::GetActors(pc);
   this->LineActor->GetActors(pc);
@@ -76,7 +76,7 @@ void vtkSlicerLineRepresentation3D::GetActors(vtkPropCollection *pc)
 
 //----------------------------------------------------------------------
 void vtkSlicerLineRepresentation3D::ReleaseGraphicsResources(
-  vtkWindow *win)
+  vtkWindow* win)
 {
   this->Superclass::ReleaseGraphicsResources(win);
   this->LineActor->ReleaseGraphicsResources(win);
@@ -84,7 +84,7 @@ void vtkSlicerLineRepresentation3D::ReleaseGraphicsResources(
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
   int count=0;
   count = this->Superclass::RenderOverlay(viewport);
@@ -101,7 +101,7 @@ int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport *viewport)
 
 //-----------------------------------------------------------------------------
 int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count=0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
@@ -121,7 +121,7 @@ int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count=0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
@@ -161,7 +161,7 @@ vtkTypeBool vtkSlicerLineRepresentation3D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerLineRepresentation3D::GetBounds()
+double* vtkSlicerLineRepresentation3D::GetBounds()
 {
   vtkBoundingBox boundingBox;
   const std::vector<vtkProp*> actors({ this->LineActor });
@@ -171,7 +171,7 @@ double *vtkSlicerLineRepresentation3D::GetBounds()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -232,7 +232,7 @@ void vtkSlicerLineRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 //----------------------------------------------------------------------
 void vtkSlicerLineRepresentation3D::CanInteract(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();

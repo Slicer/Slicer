@@ -23,7 +23,7 @@
 class VTK_MRML_EXPORT vtkMRMLSceneViewStorageNode : public vtkMRMLStorageNode
 {
 public:
-  static vtkMRMLSceneViewStorageNode *New();
+  static vtkMRMLSceneViewStorageNode* New();
   vtkTypeMacro(vtkMRMLSceneViewStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -40,7 +40,7 @@ public:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Return true if the node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:
   vtkMRMLSceneViewStorageNode();
@@ -51,12 +51,12 @@ protected:
   ///
   /// Read data and set it in the referenced node
   /// NOTE: Subclasses should implement this method
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   ///
   /// Write data from a  referenced node
   /// NOTE: Subclasses should implement this method
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
 };
 

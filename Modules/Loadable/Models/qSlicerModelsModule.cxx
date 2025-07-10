@@ -150,7 +150,7 @@ void qSlicerModelsModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerModelsModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerModelsModule::createWidgetRepresentation()
 {
   qSlicerModelsModuleWidget* widget = new qSlicerModelsModuleWidget;
   return widget;

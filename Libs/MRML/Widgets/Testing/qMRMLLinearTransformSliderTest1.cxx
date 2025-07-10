@@ -9,7 +9,7 @@
 
 // STD includes
 
-int qMRMLLinearTransformSliderTest1( int argc , char * argv [] )
+int qMRMLLinearTransformSliderTest1( int argc , char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

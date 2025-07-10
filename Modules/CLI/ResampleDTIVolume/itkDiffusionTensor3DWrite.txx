@@ -55,7 +55,7 @@ DiffusionTensor3DWrite<TData>
     // Get Measurement Frame
     itk::MetaDataObjectBase::Pointer entry = itr->second;
     MetaDataIntType::Pointer         entryvalue
-      = dynamic_cast<MetaDataIntType *>( entry.GetPointer() );
+      = dynamic_cast<MetaDataIntType*>( entry.GetPointer() );
     if( entryvalue )
     {
       int pos = itr->first.find( "space" );
@@ -81,7 +81,7 @@ DiffusionTensor3DWrite<TData>
     // Get Measurement Frame
     itk::MetaDataObjectBase::Pointer  entry = itr->second;
     MetaDataDoubleVectorType::Pointer entryvalue
-      = dynamic_cast<MetaDataDoubleVectorType *>( entry.GetPointer() );
+      = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
     if( entryvalue )
     {
       int pos = itr->first.find( "NRRD_measurement frame" );
@@ -120,7 +120,7 @@ DiffusionTensor3DWrite<TData>
     writer->Update();
     return 0;
   }
-  catch( itk::ExceptionObject &excep )
+  catch( itk::ExceptionObject& excep )
   {
     std::cerr
     << "DiffusionTensor3DWrite::Write: exception caught !" << std::endl;

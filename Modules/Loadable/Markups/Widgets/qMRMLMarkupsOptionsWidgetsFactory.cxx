@@ -26,7 +26,7 @@
 #include <QString>
 
 //----------------------------------------------------------------------------
-qMRMLMarkupsOptionsWidgetsFactory *qMRMLMarkupsOptionsWidgetsFactory::Instance = nullptr;
+qMRMLMarkupsOptionsWidgetsFactory* qMRMLMarkupsOptionsWidgetsFactory::Instance = nullptr;
 
 //----------------------------------------------------------------------------
 class qMRMLMarkupsOptionsWidgetsFactoryCleanup

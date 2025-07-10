@@ -36,7 +36,7 @@ qSlicerSuperLoadableModuleTemplateModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerSuperLoadableModuleTemplateModule(QObject *parent=0);
+  explicit qSlicerSuperLoadableModuleTemplateModule(QObject* parent=0);
   ~qSlicerSuperLoadableModuleTemplateModule() override;
 
   qSlicerGetTitleMacro(tr("qSlicerSuperLoadableModuleTemplateModule"));
@@ -56,7 +56,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

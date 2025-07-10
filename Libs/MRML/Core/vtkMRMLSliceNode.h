@@ -40,7 +40,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// orientation preset matrices (the default presets are: Axial,
   /// Sagittal and Coronal in default), it is necessary to use
   /// vtkMRMLScene::CreateNodeByClass(const char*)
-  static vtkMRMLSliceNode *New();
+  static vtkMRMLSliceNode* New();
   vtkTypeMacro(vtkMRMLSliceNode,vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -73,7 +73,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// by calling sliceNode->GetSliceToRAS->DeepCopy(...)
   /// followed by sliceNode->UpdateMatrices().
   /// TODO: maybe this should be a quaternion and a translate to avoid shears/scales
-  virtual vtkMatrix4x4 *GetSliceToRAS();
+  virtual vtkMatrix4x4* GetSliceToRAS();
 
   ///
   /// The visibility of the slice in the 3DViewer.
@@ -199,7 +199,7 @@ protected:
 public:
 
   /// \brief Return the sliceToRAS matrix associated with \a name.
-  vtkMatrix3x3 *GetSliceOrientationPreset(const std::string& name);
+  vtkMatrix3x3* GetSliceOrientationPreset(const std::string& name);
 
   /// \brief Return the preset name corresponding to \a orientationMatrix.
   ///
@@ -324,29 +324,29 @@ public:
   ///
   /// Matrix mapping from XY pixel coordinates on an image window
   /// into slice coordinates in mm
-  vtkMatrix4x4 *GetXYToSlice();
+  vtkMatrix4x4* GetXYToSlice();
 
   ///
   /// Matrix mapping from XY pixel coordinates on an image window
   /// into RAS world coordinates
-  vtkMatrix4x4 *GetXYToRAS();
+  vtkMatrix4x4* GetXYToRAS();
 
   ///
   /// Matrix mapping from UVW texture coordinates
   /// into slice coordinates in mm
-  vtkMatrix4x4 *GetUVWToSlice();
+  vtkMatrix4x4* GetUVWToSlice();
 
   ///
   /// Matrix mapping from UVW texture coordinates
   /// into RAS world coordinates
-  vtkMatrix4x4 *GetUVWToRAS();
+  vtkMatrix4x4* GetUVWToRAS();
 
   ///
   /// helper for comparing to matrices
-  bool MatrixAreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2);
+  bool MatrixAreEqual(const vtkMatrix4x4* m1, const vtkMatrix4x4* m2);
 
-  bool MatrixAreEqual(const vtkMatrix4x4 *matrix,
-                      const vtkMatrix3x3 *orientationMatrix);
+  bool MatrixAreEqual(const vtkMatrix4x4* matrix,
+                      const vtkMatrix3x3* orientationMatrix);
   ///
   /// Recalculate XYToSlice and XYToRAS in terms or fov, dim, SliceToRAS
   /// - called when any of the inputs change
@@ -443,7 +443,7 @@ public:
   /// \param forceSlicePlaneToSingleSlice If the volume is single-slice and forceSlicePlaneToSingleSlice
   /// is enabled then slice view will be aligned with the volume's slice plane. If the flag is disabled
   /// or the volume has more than one slice then the slice view will be rotated to the closest orthogonal axis.
-  void RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode, bool forceSlicePlaneToSingleSlice=true);
+  void RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool forceSlicePlaneToSingleSlice=true);
 
   /// Adjusts the slice node to align with the
   /// axes of the provided reference coordinate system
@@ -452,7 +452,7 @@ public:
   /// and for oblique volumes with few slices).
   /// If sliceNormalAxisIndex is >=0 then slice plane normal will
   /// be aligned with that axis.
-  void RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNormalAxisIndex=-1);
+  void RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNormalAxisIndex=-1);
 
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by

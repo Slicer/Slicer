@@ -56,7 +56,7 @@ public:
   qSlicerExtensionsServerWidgetPrivate(qSlicerExtensionsServerWidget& object);
   ~qSlicerExtensionsServerWidgetPrivate() override;
 
-  void setFailurePage(const QStringList &errors);
+  void setFailurePage(const QStringList& errors);
 
   void updateTheme();
   void setDarkThemeEnabled(bool enabled);
@@ -65,7 +65,7 @@ public:
   void initializeWebChannelTransport(QByteArray& webChannelScript) override;
   void registerExtensionsManagerModel(qSlicerExtensionsManagerModel* oldModel, qSlicerExtensionsManagerModel* newModel);
 
-  qSlicerExtensionsManagerModel * ExtensionsManagerModel;
+  qSlicerExtensionsManagerModel* ExtensionsManagerModel;
 
   bool BrowsingEnabled;
 

@@ -36,7 +36,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLColorLogic : public vtkMRMLAbstractLogic
 public:
 
   /// The Usual vtk class functions
-  static vtkMRMLColorLogic *New();
+  static vtkMRMLColorLogic* New();
   vtkTypeMacro(vtkMRMLColorLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -137,46 +137,46 @@ public:
   virtual void RemoveDefaultColorNodes();
 
   /// Return the default color table node id for a given type
-  static const char * GetColorTableNodeID(int type);
+  static const char* GetColorTableNodeID(int type);
 
   /// Return the default dGEMRIC color node id for a given type
-  static const char * GetdGEMRICColorNodeID(int type);
+  static const char* GetdGEMRICColorNodeID(int type);
 
   /// Return the default PET color node id for a given type
-  static const char * GetPETColorNodeID(int type);
+  static const char* GetPETColorNodeID(int type);
 
   /// \brief Return a default color node id for a procedural color node.
   ///
   /// \warning You are responsible to delete the returned string.
-  static const char * GetProceduralColorNodeID(const char *name);
+  static const char* GetProceduralColorNodeID(const char* name);
 
   /// \brief Return a default color node id for a file based node,
   /// based on the file name.
   ///
   /// \warning You are responsible to delete the returned string.
-  static const char * GetFileColorNodeID(const char *fileName);
-  static std::string  GetFileColorNodeSingletonTag(const char * fileName);
+  static const char* GetFileColorNodeID(const char* fileName);
+  static std::string  GetFileColorNodeSingletonTag(const char* fileName);
 
   /// Return a default color node id for a volume
-  virtual const char * GetDefaultVolumeColorNodeID();
+  virtual const char* GetDefaultVolumeColorNodeID();
 
   /// Return a default color node id for a label map
-  virtual const char * GetDefaultLabelMapColorNodeID();
+  virtual const char* GetDefaultLabelMapColorNodeID();
 
   /// Return a default color node id for the editor
-  virtual const char * GetDefaultEditorColorNodeID();
+  virtual const char* GetDefaultEditorColorNodeID();
 
   /// Return a default color node id for a model
-  virtual const char * GetDefaultModelColorNodeID();
+  virtual const char* GetDefaultModelColorNodeID();
 
   /// Return a default color node id for a chart
-  virtual const char * GetDefaultChartColorNodeID();
+  virtual const char* GetDefaultChartColorNodeID();
 
   /// Return a default color node id for a plot
-  virtual const char * GetDefaultPlotColorNodeID();
+  virtual const char* GetDefaultPlotColorNodeID();
 
   /// Add a file to the input list Files, checking first for null, duplicates
-  void AddColorFile(const char *fileName, std::vector<std::string> *Files);
+  void AddColorFile(const char* fileName, std::vector<std::string> *Files);
 
   /// Load in a color file, creating a storage node. Returns a pointer to the
   /// created node on success, 0 on failure (no file, invalid color file). The
@@ -191,7 +191,7 @@ public:
   /// If userType is set to false (default) then the node type is set to "File" (constant, non-editable),
   /// otherwise it is set to "User" (user-editable).
   /// \sa CreateFileNode, CreateProceduralFileNode
-  vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr, bool userType=false);
+  vtkMRMLColorNode* LoadColorFile(const char* fileName, const char* nodeName = nullptr, vtkMRMLMessageCollection* userMessages = nullptr, bool userType=false);
 
   /// Get/Set the user defined paths where to look for extra color files
   vtkGetStringMacro(UserColorFilePaths);
@@ -253,7 +253,7 @@ protected:
 
   /// Return the ID of a node that doesn't belong to a scene.
   /// It is the concatenation of the node class name and its type.
-  static const char * GetColorNodeID(vtkMRMLColorNode* colorNode);
+  static const char* GetColorNodeID(vtkMRMLColorNode* colorNode);
 
   /// a vector holding discovered default color files, found in the
   /// Resources/ColorFiles directory, white space separated with:
@@ -267,7 +267,7 @@ protected:
   /// a string holding delimiter separated (; on win32, : else) paths where to
   /// look for extra color files, set from the return value of
   /// vtkMRMLApplication::GetColorFilePaths
-  char *UserColorFilePaths;
+  char* UserColorFilePaths;
 
   static std::string TempColorNodeID;
 

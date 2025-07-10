@@ -49,11 +49,11 @@ public:
 //    };
 
 //  static int          APIMethodCount;
-//  static const char * APIMethodNames[2];
+//  static const char* APIMethodNames[2];
 
   std::string  PythonSourceFilePath;
-  PyObject *   PythonSelf;
-//  PyObject *   PythonAPIMethods[2];
+  PyObject* PythonSelf;
+//  PyObject* PythonAPIMethods[2];
 };
 
 //----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 ////---------------------------------------------------------------------------
 //void vtkSlicerScriptedLoadableModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 //{
-//  vtkIntArray * sceneEventsAsPointer = 0;
+//  vtkIntArray* sceneEventsAsPointer = 0;
 
 //  // Obtain list of event to listen
 //  PyObject* method =
@@ -132,9 +132,9 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 //}
 
 ////---------------------------------------------------------------------------
-//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLSceneEvents(vtkObject *caller,
+//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLSceneEvents(vtkObject* caller,
 //                                                             unsigned long event,
-//                                                             void *callData)
+//                                                             void* callData)
 //{
 //  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLSceneEventsMethod];
 //  if (!method)
@@ -142,7 +142,7 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 //    return;
 //    }
 
-//  PyObject * arguments = PyTuple_New(3);
+//  PyObject* arguments = PyTuple_New(3);
 //  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
 //  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(event));
 //  PyTuple_SET_ITEM(arguments, 2,
@@ -154,9 +154,9 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 //}
 
 ////---------------------------------------------------------------------------
-//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLNodesEvents(vtkObject *caller,
+//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLNodesEvents(vtkObject* caller,
 //                                                              unsigned long event,
-//                                                              void *callData)
+//                                                              void* callData)
 //{
 //  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
 //  if (!method)
@@ -164,7 +164,7 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 //    return;
 //    }
 
-//  PyObject * arguments = PyTuple_New(3);
+//  PyObject* arguments = PyTuple_New(3);
 //  PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
 //  PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(event));
 //  PyTuple_SET_ITEM(arguments, 2,
@@ -190,11 +190,11 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
   //std::cout << "SetPythonSource - className:" << className << std::endl;
 
   // Get a reference to the main module and global dictionary
-  PyObject * main_module = PyImport_AddModule("__main__");
-  PyObject * global_dict = PyModule_GetDict(main_module);
+  PyObject* main_module = PyImport_AddModule("__main__");
+  PyObject* global_dict = PyModule_GetDict(main_module);
 
   // Load class definition if needed
-  PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
+  PyObject* classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
   if (!classToInstantiate)
   {
     std::ostringstream pyRunStream;
@@ -225,11 +225,11 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
 
   //std::cout << "classToInstantiate:" << classToInstantiate << std::endl;
 
-  PyObject * arguments = PyTuple_New(1);
+  PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(this));
 
   // Attempt to instantiate the associated python class
-  PyObject * self = PyObject_CallObject(classToInstantiate, arguments);
+  PyObject* self = PyObject_CallObject(classToInstantiate, arguments);
   Py_DECREF(arguments);
   if (!self)
   {
@@ -242,7 +242,7 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& fi
 //  for (int i = 0; i < vtkInternal::APIMethodCount; ++i)
 //    {
 //    assert(vtkInternal::APIMethodNames[i]);
-//    PyObject * method = PyObject_GetAttrString(self, vtkInternal::APIMethodNames[i]);
+//    PyObject* method = PyObject_GetAttrString(self, vtkInternal::APIMethodNames[i]);
 //    //std::cout << "method:" << method << std::endl;
 //    this->Internal->PythonAPIMethods[i] = method;
 //    }

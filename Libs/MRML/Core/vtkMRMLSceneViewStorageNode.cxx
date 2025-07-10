@@ -56,13 +56,13 @@ void vtkMRMLSceneViewStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSceneViewStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLSceneViewStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLSceneViewNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   // don't read from disk if restoring
   if (this->GetScene() && this->GetScene()->IsRestoring())
@@ -70,7 +70,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 1;
   }
 
-  vtkMRMLSceneViewNode *sceneViewNode = dynamic_cast <vtkMRMLSceneViewNode *> (refNode);
+  vtkMRMLSceneViewNode* sceneViewNode = dynamic_cast <vtkMRMLSceneViewNode*> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -150,9 +150,9 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(refNode);
+  vtkMRMLSceneViewNode* sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(refNode);
 
   if (sceneViewNode->GetScreenShot() == nullptr)
   {

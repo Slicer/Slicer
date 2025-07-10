@@ -61,7 +61,7 @@ vtkMRMLScalarVolumeNode* vtkMRMLSliceLogicTest5_loadVolume(const char* volume, v
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene);
   displayNode->SetScene(scene);
-  //vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+  //vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
   //displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
   //colorLogic->Delete();
   scene->AddNode(storageNode.GetPointer());
@@ -81,7 +81,7 @@ vtkMRMLScalarVolumeNode* vtkMRMLSliceLogicTest5_loadVolume(const char* volume, v
 }
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
+int vtkMRMLSliceLogicTest5(int argc, char* argv [] )
 {
   itk::itkFactoryRegistration();
 

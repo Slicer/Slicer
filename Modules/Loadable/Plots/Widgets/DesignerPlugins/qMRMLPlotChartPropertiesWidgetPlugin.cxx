@@ -23,15 +23,15 @@
 
 //------------------------------------------------------------------------------
 qMRMLPlotChartPropertiesWidgetPlugin
-::qMRMLPlotChartPropertiesWidgetPlugin(QObject *_parent)
+::qMRMLPlotChartPropertiesWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLPlotChartPropertiesWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLPlotChartPropertiesWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qMRMLPlotChartPropertiesWidget* _widget
     = new qMRMLPlotChartPropertiesWidget(_parent);

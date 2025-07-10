@@ -71,7 +71,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qMRMLScreenShotDialogPrivate::qMRMLScreenShotDialogPrivate(qMRMLScreenShotDialog &object)
+qMRMLScreenShotDialogPrivate::qMRMLScreenShotDialogPrivate(qMRMLScreenShotDialog& object)
   : q_ptr(&object)
 {
   qRegisterMetaType<qMRMLScreenShotDialog::WidgetType>(
@@ -131,7 +131,7 @@ void qMRMLScreenShotDialogPrivate::setWidgetEnabled(bool state)
 // qMRMLScreenShotDialog methods
 
 //-----------------------------------------------------------------------------
-qMRMLScreenShotDialog::qMRMLScreenShotDialog(QWidget * _parent)
+qMRMLScreenShotDialog::qMRMLScreenShotDialog(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qMRMLScreenShotDialogPrivate(*this))
 {
@@ -347,7 +347,7 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
       screenshotWindow == qMRMLScreenShotDialog::ThreeD)
   {
     // use off screen rendering to magnifiy the VTK widget's image without interpolation
-    vtkRenderer *renderer = renderWindow->GetRenderers()->GetFirstRenderer();
+    vtkRenderer* renderer = renderWindow->GetRenderers()->GetFirstRenderer();
     vtkNew<vtkRenderLargeImage> renderLargeImage;
     renderLargeImage->SetInput(renderer);
     renderLargeImage->SetMagnification(scaleFactor);

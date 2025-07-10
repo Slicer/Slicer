@@ -23,8 +23,8 @@ template <class TData, class TCoordRep>
 typename DiffusionTensor3DNearestNeighborInterpolateFunction<TData, TCoordRep>
 ::TensorDataType
 DiffusionTensor3DNearestNeighborInterpolateFunction<TData, TCoordRep>
-::EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const
-// ::Evaluate( const PointType &point )
+::EvaluateAtContinuousIndex( const ContinuousIndexType& index ) const
+// ::Evaluate( const PointType& point )
 {
   if( this->m_Image.IsNotNull() )
   {

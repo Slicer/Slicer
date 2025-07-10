@@ -62,13 +62,13 @@ void vtkMRMLTableSQLiteStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTableSQLiteStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLTableSQLiteStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLTableNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTableSQLiteStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLTableSQLiteStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
 
@@ -77,7 +77,7 @@ int vtkMRMLTableSQLiteStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
   }
-  vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
+  vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
   if (tableNode == nullptr)
   {
     vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a table node");
@@ -122,7 +122,7 @@ int vtkMRMLTableSQLiteStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   if (this->GetFileName() == nullptr)
   {
@@ -136,7 +136,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
+  vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
   if (tableNode == nullptr)
   {
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a valid table node");
@@ -151,7 +151,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   std::string dbname = std::string("sqlite://") + fullName;
 
   //vtkSmartPointer<vtkSQLiteDatabase> database = vtkSmartPointer<vtkSQLiteDatabase>::Take(vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str())));
-  vtkSQLiteDatabase *database = vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str()));
+  vtkSQLiteDatabase* database = vtkSQLiteDatabase::SafeDownCast( vtkSQLiteDatabase::CreateFromURL(dbname.c_str()));
 
   if (!database || !database->Open(this->GetPassword(), vtkSQLiteDatabase::USE_EXISTING_OR_CREATE))
   {
@@ -159,7 +159,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  vtkTable *table = tableNode->GetTable();
+  vtkTable* table = tableNode->GetTable();
   if (!table)
   {
     vtkErrorMacro("ReadData: no table to write for the node '" << std::string(tableNode->GetName()));
@@ -225,7 +225,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   }
 
   //perform the create table query
-  vtkSQLiteQuery *query =
+  vtkSQLiteQuery* query =
     static_cast<vtkSQLiteQuery*>(database->GetQueryInstance());
 
   query->SetQuery(createTableQuery.c_str());
@@ -266,7 +266,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   return 1;
 }
 
-int vtkMRMLTableSQLiteStorageNode::DropTable(char *tableName, vtkSQLiteDatabase* database)
+int vtkMRMLTableSQLiteStorageNode::DropTable(char* tableName, vtkSQLiteDatabase* database)
 {
   if(!tableName || std::string(tableName).empty())
   {
@@ -280,7 +280,7 @@ int vtkMRMLTableSQLiteStorageNode::DropTable(char *tableName, vtkSQLiteDatabase*
     return 0;
   }
 
-  vtkStringArray *tables = database->GetTables();
+  vtkStringArray* tables = database->GetTables();
   vtkSmartPointer<vtkSQLiteQuery> query = vtkSmartPointer<vtkSQLiteQuery>::Take(
                        vtkSQLiteQuery::SafeDownCast( database->GetQueryInstance()));
 

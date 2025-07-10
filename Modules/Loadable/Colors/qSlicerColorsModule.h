@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModule
 
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerColorsModule(QObject *parent=nullptr);
+  qSlicerColorsModule(QObject* parent=nullptr);
   ~qSlicerColorsModule() override;
 
   QStringList categories()const override;
@@ -69,7 +69,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

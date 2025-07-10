@@ -30,9 +30,9 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerGPUMemoryCom
   Q_OBJECT
 
 public:
-  qSlicerGPUMemoryComboBoxPlugin(QObject *_parent = nullptr);
+  qSlicerGPUMemoryComboBoxPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QString  includeFile() const override;
   bool     isContainer() const override;

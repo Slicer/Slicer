@@ -78,7 +78,7 @@ public:
 
 public slots:
 
-  void setMRMLColorNode(vtkMRMLNode * newMRMLColorNode);
+  void setMRMLColorNode(vtkMRMLNode* newMRMLColorNode);
 
   void setCurrentColor(int index);
   void setCurrentColor(const QString& colorName);

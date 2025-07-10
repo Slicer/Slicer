@@ -56,25 +56,25 @@ vtkTransformVisualizerGlyph3D::vtkTransformVisualizerGlyph3D()
 
 //------------------------------------------------------------------------------
 int vtkTransformVisualizerGlyph3D::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
   // get the info objects
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkDataSet *input = vtkDataSet::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkDataSet* input = vtkDataSet::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkPolyData *output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkPointData* outputPD = output->GetPointData();
 
-  vtkDataArray *inVectors = this->GetInputArrayToProcess(ARRAY_INDEX_VECTORS,inputVector);
-  vtkDataArray *inCScalars = this->GetInputArrayToProcess(ARRAY_INDEX_COLORS,inputVector);; // Scalars for Coloring
+  vtkDataArray* inVectors = this->GetInputArrayToProcess(ARRAY_INDEX_VECTORS,inputVector);
+  vtkDataArray* inCScalars = this->GetInputArrayToProcess(ARRAY_INDEX_COLORS,inputVector);; // Scalars for Coloring
   if (inCScalars == nullptr)
   {
-    vtkDataArray *inSScalars = this->GetInputArrayToProcess(ARRAY_INDEX_SCALARS,inputVector); // Scalars for Scaling
+    vtkDataArray* inSScalars = this->GetInputArrayToProcess(ARRAY_INDEX_SCALARS,inputVector); // Scalars for Scaling
     inCScalars = inSScalars;
   }
 
@@ -96,13 +96,13 @@ int vtkTransformVisualizerGlyph3D::RequestData(
   outputPD->CopyNormalsOff();
   outputPD->CopyTCoordsOff();
 
-  vtkPolyData *source = this->GetSource(0, inputVector[1]);
-  vtkPoints *sourcePts = source->GetPoints();
+  vtkPolyData* source = this->GetSource(0, inputVector[1]);
+  vtkPoints* sourcePts = source->GetPoints();
   vtkIdType numSourcePts = sourcePts->GetNumberOfPoints();
   vtkIdType numSourceCells = source->GetNumberOfCells();
 
   // Prepare to copy output.
-  vtkPointData *pd = input->GetPointData();
+  vtkPointData* pd = input->GetPointData();
   outputPD->CopyAllocate(pd,numPts*numSourcePts);
 
   vtkNew<vtkPoints> newPts;
@@ -157,8 +157,8 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     // Copy all topology (transformation independent)
     for (vtkIdType cellId=0; cellId < numSourceCells; cellId++)
     {
-      vtkCell *cell = source->GetCell(cellId);
-      vtkIdList *cellPts = cell->GetPointIds();
+      vtkCell* cell = source->GetCell(cellId);
+      vtkIdList* cellPts = cell->GetPointIds();
       int npts = cellPts->GetNumberOfIds();
       pts->Reset();
       for (vtkIdType i=0; i < npts; i++)

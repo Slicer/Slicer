@@ -79,7 +79,7 @@ public slots:
   /// Save the current plot as vector graphics, in svg file format.
   /// Note that regardless of the file extension in the input fileName,
   /// the extension of the created file will always be ".svg".
-  void saveAsSVG(const QString &fileName);
+  void saveAsSVG(const QString& fileName);
 
 signals:
 

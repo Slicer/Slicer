@@ -240,7 +240,7 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& rea
   int row = this->FileWidget->rowCount();
   this->FileWidget->insertRow(row);
   // File name
-  QTableWidgetItem *fileItem = new QTableWidgetItem(file.absoluteFilePath());
+  QTableWidgetItem* fileItem = new QTableWidgetItem(file.absoluteFilePath());
   fileItem->setFlags( (fileItem->flags() | Qt::ItemIsUserCheckable) & ~Qt::ItemIsEditable);
   fileItem->setCheckState(Qt::Checked);
   this->FileWidget->setItem(row, FileColumn, fileItem);
@@ -599,7 +599,7 @@ bool qSlicerDataDialog::isMimeDataAccepted(const QMimeData* mimeData)const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDataDialog::dropEvent(QDropEvent *event)
+void qSlicerDataDialog::dropEvent(QDropEvent* event)
 {
   Q_D(qSlicerDataDialog);
   bool pathAdded = false;

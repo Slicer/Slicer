@@ -24,13 +24,13 @@
 #include "qMRMLTableView.h"
 
 //------------------------------------------------------------------------------
-qMRMLTableViewPlugin::qMRMLTableViewPlugin(QObject *_parent)
+qMRMLTableViewPlugin::qMRMLTableViewPlugin(QObject* _parent)
 : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLTableViewPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLTableViewPlugin::createWidget(QWidget* _parent)
 {
 qMRMLTableView* _widget = new qMRMLTableView(_parent);
 return _widget;

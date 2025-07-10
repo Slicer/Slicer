@@ -42,7 +42,7 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLShaderPropertyNode
 public:
 
   /// Create a new vtkMRMLShaderPropertyNode
-  static vtkMRMLShaderPropertyNode *New();
+  static vtkMRMLShaderPropertyNode* New();
   vtkTypeMacro(vtkMRMLShaderPropertyNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -51,9 +51,9 @@ public:
   vtkGetObjectMacro(ShaderProperty, vtkShaderProperty);
 
   /// Get the list of user-defined uniform variables.
-  vtkUniforms * GetVertexUniforms();
-  vtkUniforms * GetFragmentUniforms();
-  vtkUniforms * GetGeometryUniforms();
+  vtkUniforms* GetVertexUniforms();
+  vtkUniforms* GetFragmentUniforms();
+  vtkUniforms* GetGeometryUniforms();
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -74,7 +74,7 @@ public:
   const char* GetNodeTagName() override {return "ShaderProperty";}
 
   /// Reimplemented for internal reasons.
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;

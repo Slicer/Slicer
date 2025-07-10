@@ -64,7 +64,7 @@ vtkMRMLCommandLineModuleNode* qSlicerCLIModuleWidgetPrivate::commandLineModuleNo
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIModule * qSlicerCLIModuleWidgetPrivate::module()const
+qSlicerCLIModule* qSlicerCLIModuleWidgetPrivate::module()const
 {
   Q_Q(const qSlicerCLIModuleWidget);
   qSlicerAbstractCoreModule* coreModule = const_cast<qSlicerAbstractCoreModule*>(q->module());
@@ -186,7 +186,7 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
     return;
   }
 
-  vtkMRMLCommandLineModuleNode * node =
+  vtkMRMLCommandLineModuleNode* node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   Q_ASSERT(node);
 
@@ -225,7 +225,7 @@ void qSlicerCLIModuleWidgetPrivate::updateCommandLineModuleNodeFromUi(
   {
     return;
   }
-  vtkMRMLCommandLineModuleNode * node =
+  vtkMRMLCommandLineModuleNode* node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   Q_ASSERT(node);
   this->CLIModuleUIHelper->updateMRMLCommandLineModuleNode(node);
@@ -234,7 +234,7 @@ void qSlicerCLIModuleWidgetPrivate::updateCommandLineModuleNodeFromUi(
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidgetPrivate::setDefaultNodeValue(vtkMRMLNode* commandLineModuleNode)
 {
-  vtkMRMLCommandLineModuleNode * node =
+  vtkMRMLCommandLineModuleNode* node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   Q_ASSERT(node);
   // Note that node will fire a ModifyEvent.
@@ -261,12 +261,12 @@ void qSlicerCLIModuleWidgetPrivate::addParameterGroup(QBoxLayout* _layout,
   Q_Q(qSlicerCLIModuleWidget);
   Q_ASSERT(_layout);
 
-  ctkCollapsibleButton * collapsibleWidget = new ctkCollapsibleButton();
+  ctkCollapsibleButton* collapsibleWidget = new ctkCollapsibleButton();
   collapsibleWidget->setText(q->translate(parameterGroup.GetLabel()));
   collapsibleWidget->setCollapsed(parameterGroup.GetAdvanced() == "true");
 
   // Create a vertical layout and add parameter to it
-  QFormLayout *vbox = new QFormLayout;
+  QFormLayout* vbox = new QFormLayout;
   this->addParameters(vbox, parameterGroup);
   //vbox->addStretch(1);
   vbox->setVerticalSpacing(1);
@@ -315,7 +315,7 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
   QLabel* widgetLabel = new QLabel(_label);
   widgetLabel->setToolTip(description);
 
-  QWidget * widget = this->CLIModuleUIHelper->createTagWidget(moduleParameter);
+  QWidget* widget = this->CLIModuleUIHelper->createTagWidget(moduleParameter);
 
   _layout->addRow(widgetLabel, widget);
 }
@@ -394,7 +394,7 @@ void qSlicerCLIModuleWidget::enter()
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLCommandLineModuleNode * qSlicerCLIModuleWidget::currentCommandLineModuleNode()const
+vtkMRMLCommandLineModuleNode* qSlicerCLIModuleWidget::currentCommandLineModuleNode()const
 {
   Q_D(const qSlicerCLIModuleWidget);
   return d->CommandLineModuleNode;
@@ -405,7 +405,7 @@ void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
   vtkMRMLNode* commandLineModuleNode)
 {
   Q_D(qSlicerCLIModuleWidget);
-  vtkMRMLCommandLineModuleNode * node =
+  vtkMRMLCommandLineModuleNode* node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   if (node == d->CommandLineModuleNode)
   {

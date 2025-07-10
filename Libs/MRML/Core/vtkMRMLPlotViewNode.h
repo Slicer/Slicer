@@ -30,7 +30,7 @@ class vtkMRMLPlotChartNode;
 class VTK_MRML_EXPORT vtkMRMLPlotViewNode : public vtkMRMLAbstractViewNode
 {
 public:
-  static vtkMRMLPlotViewNode *New();
+  static vtkMRMLPlotViewNode* New();
   vtkTypeMacro(vtkMRMLPlotViewNode, vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -67,7 +67,7 @@ public:
 
   ///
   /// Set and Update the PlotChart node id displayed in this PlotView.
-  virtual void SetPlotChartNodeID(const char *PlotChartNodeID);
+  virtual void SetPlotChartNodeID(const char* PlotChartNodeID);
 
   ///
   /// Get the PlotChart node id displayed in this PlotView.
@@ -107,14 +107,14 @@ public:
 
   ///
   /// Convert between interaction mode ID and name
-  static const char *GetInteractionModeAsString(int id);
-  static int GetInteractionModeFromString(const char *name);
+  static const char* GetInteractionModeAsString(int id);
+  static int GetInteractionModeFromString(const char* name);
 
   ///
   /// Method to propagate events generated in mrml.
-  void ProcessMRMLEvents(vtkObject *caller,
+  void ProcessMRMLEvents(vtkObject* caller,
                                  unsigned long event,
-                                 void *callData) override;
+                                 void* callData) override;
 
   /// PlotModifiedEvent is fired when:
   ///  - a new PlotChart node is observed
@@ -144,15 +144,15 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called when a node reference ID is modified.
-  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
   bool DoPropagatePlotChartSelection{true};
 

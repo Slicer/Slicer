@@ -222,7 +222,7 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
   {
     qSlicerApplication* app = qSlicerApplication::application();
     QWidget* mainWindow = app ? app->mainWindow() : nullptr;
-    ctkMessageBox *emptyMessageBox = new ctkMessageBox(mainWindow);
+    ctkMessageBox* emptyMessageBox = new ctkMessageBox(mainWindow);
     QString error;
     switch(numFiles)
     {

@@ -32,7 +32,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_PLUGINS_EXPORT qMRMLSegmentSelectorW
 public:
   qMRMLSegmentSelectorWidgetPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget* parent) override;
+  QWidget* createWidget(QWidget* parent) override;
   QString  domXml() const override;
   QString  includeFile() const override;
   bool     isContainer() const override;

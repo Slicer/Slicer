@@ -67,19 +67,19 @@ void vtkSlicerColorLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-const char *vtkSlicerColorLogic::GetDefaultLabelMapColorNodeID()
+const char* vtkSlicerColorLogic::GetDefaultLabelMapColorNodeID()
 {
   return vtkMRMLColorLogic::GetFileColorNodeID("GenericColors.txt");
 }
 
 //----------------------------------------------------------------------------
-const char *vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
+const char* vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
 {
   return vtkMRMLColorLogic::GetFileColorNodeID("GenericAnatomyColors.txt");
 }
 
 //----------------------------------------------------------------------------
-const char *vtkSlicerColorLogic::GetDefaultChartColorNodeID()
+const char* vtkSlicerColorLogic::GetDefaultChartColorNodeID()
 {
   return vtkMRMLColorLogic::GetFileColorNodeID("DarkBrightChartColors.txt");
 }

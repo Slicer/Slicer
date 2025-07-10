@@ -878,7 +878,7 @@ namespace
 class vtkAbortCommand: public vtkCommand
 {
 public:
-  static vtkAbortCommand *New(){ return new vtkAbortCommand; }
+  static vtkAbortCommand* New(){ return new vtkAbortCommand; }
   void Execute (vtkObject* vtkNotUsed(caller),
                         unsigned long vtkNotUsed(eventId),
                         void* vtkNotUsed(callData)) override
@@ -890,16 +890,16 @@ public:
 class vtkRenderCallback : public vtkCommand
 {
 public:
-  static vtkRenderCallback *New()
+  static vtkRenderCallback* New()
   {
     return new vtkRenderCallback;
   }
-  void Execute(vtkObject *vtkNotUsed(caller), unsigned long vtkNotUsed(eventId), void* vtkNotUsed(callData)) override
+  void Execute(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eventId), void* vtkNotUsed(callData)) override
   {
     this->RenderWindow->Render();
   }
   vtkRenderCallback()  = default;
-  vtkRenderWindow *RenderWindow{nullptr};
+  vtkRenderWindow* RenderWindow{nullptr};
 };
 
 };
@@ -1063,7 +1063,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
     windowToImageFilter->Update();
 
     vtkNew<vtkTesting> testHelper;
-    testHelper->AddArguments(argc, const_cast<const char **>(argv));
+    testHelper->AddArguments(argc, const_cast<const char**>(argv));
 
     std::string screenshootFilename = testHelper->GetDataRoot();
     screenshootFilename += "/Baseline/vtkMRMLThreeDReformatDisplayableManagerTest1.png";

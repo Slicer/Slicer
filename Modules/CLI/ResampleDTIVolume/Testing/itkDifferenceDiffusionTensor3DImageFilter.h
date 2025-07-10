@@ -118,7 +118,7 @@ protected:
 
   void AfterThreadedGenerateData() override;
 
-  InputPixelType ApplyMeasurementFrameToTensor( InputPixelType tensor, const MatrixType & measurementFrame );
+  InputPixelType ApplyMeasurementFrameToTensor( InputPixelType tensor, const MatrixType& measurementFrame );
 
   OutputPixelType m_DifferenceThreshold;
   RealType        m_MeanDifference;

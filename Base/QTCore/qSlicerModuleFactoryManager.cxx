@@ -57,7 +57,7 @@ qSlicerModuleFactoryManagerPrivate
 // qSlicerModuleFactoryManager methods
 
 //-----------------------------------------------------------------------------
-qSlicerModuleFactoryManager::qSlicerModuleFactoryManager(QObject * newParent)
+qSlicerModuleFactoryManager::qSlicerModuleFactoryManager(QObject* newParent)
   : Superclass(newParent), d_ptr(new qSlicerModuleFactoryManagerPrivate(*this))
 {
 }

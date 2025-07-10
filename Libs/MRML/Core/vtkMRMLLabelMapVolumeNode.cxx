@@ -40,7 +40,7 @@ vtkMRMLLabelMapVolumeNode::vtkMRMLLabelMapVolumeNode() = default;
 vtkMRMLLabelMapVolumeNode::~vtkMRMLLabelMapVolumeNode() = default;
 
 //-----------------------------------------------------------
-void vtkMRMLLabelMapVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
+void vtkMRMLLabelMapVolumeNode::CreateNoneNode(vtkMRMLScene* scene)
 {
   vtkNew<vtkImageData> id;
   id->SetDimensions(1, 1, 1);

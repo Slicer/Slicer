@@ -63,7 +63,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplicat
 public:
 
   typedef qSlicerCoreApplication Superclass;
-  qSlicerApplication(int &argc, char **argv);
+  qSlicerApplication(int& argc, char** argv);
   ~qSlicerApplication() override;
 
   /// Return a reference to the application singleton
@@ -80,7 +80,7 @@ public:
   ///
   /// https://stackoverflow.com/questions/13878373/where-am-i-supposed-to-reimplement-qapplicationnotify-function
   ///
-  bool notify(QObject * receiver, QEvent * event) override;
+  bool notify(QObject* receiver, QEvent* event) override;
 
   /// Get commandOptions
   Q_INVOKABLE qSlicerCommandOptions* commandOptions()const;
@@ -90,8 +90,8 @@ public:
 
 #ifdef Slicer_USE_PYTHONQT
   /// Get Python Manager
-  Q_INVOKABLE qSlicerPythonManager * pythonManager();
-  Q_INVOKABLE ctkPythonConsole * pythonConsole();
+  Q_INVOKABLE qSlicerPythonManager* pythonManager();
+  Q_INVOKABLE ctkPythonConsole* pythonConsole();
   /// Log messages at this or higher level will be displayed in the Python console.
   Q_INVOKABLE ctkErrorLogLevel::LogLevel pythonConsoleLogLevel()const;
 #endif
@@ -111,7 +111,7 @@ public:
   /// TODO
   /// See http://doc.trolltech.com/4.6/qapplication.html#commitData
   /// and http://doc.trolltech.com/4.6/qsessionmanager.html#allowsInteraction
-  //virtual void commitData(QSessionManager & manager);
+  //virtual void commitData(QSessionManager& manager);
 
   /// Enable/Disable tooltips
   void setToolTipsEnabled(bool enable);
@@ -121,7 +121,7 @@ public:
   /// found module is returned. Confidence value = 0 means that the found module can
   /// probably not do much with that node, while 1.0 means that the found module is certainly
   /// the best module to manage than node.
-  QString nodeModule(vtkMRMLNode* node, double *confidence=nullptr)const;
+  QString nodeModule(vtkMRMLNode* node, double* confidence=nullptr)const;
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
   Q_INVOKABLE void openSettingsDialog(const QString& settingsPanel=QString());

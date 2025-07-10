@@ -45,7 +45,7 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleRepresentation3D
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerAngleRepresentation3D *New();
+  static vtkSlicerAngleRepresentation3D* New();
 
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkSlicerAngleRepresentation3D,vtkSlicerMarkupsWidgetRepresentation3D);
@@ -54,14 +54,14 @@ public:
   /// Subclasses of vtkMRMLAbstractWidgetRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData=nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData=nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) override;
-  void ReleaseGraphicsResources(vtkWindow *) override;
-  int RenderOverlay(vtkViewport *viewport) override;
-  int RenderOpaqueGeometry(vtkViewport *viewport) override;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  void GetActors(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
+  int RenderOpaqueGeometry(vtkViewport* viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport* viewport) override;
   vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
@@ -70,7 +70,7 @@ public:
   bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
 
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
+    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
 
 protected:
   vtkSlicerAngleRepresentation3D();

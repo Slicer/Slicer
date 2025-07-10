@@ -51,7 +51,7 @@
 #include <itkFactoryRegistration.h>
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
+int vtkMRMLSliceLogicTest2(int argc, char* argv [] )
 {
   itk::itkFactoryRegistration();
 //  vtkMultiThreader::SetGlobalMaximumNumberOfThreads(1);
@@ -95,7 +95,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene.GetPointer());
   displayNode->SetScene(scene.GetPointer());
-  //vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
+  //vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
   //displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
   //colorLogic->Delete();
   scene->AddNode(storageNode.GetPointer());

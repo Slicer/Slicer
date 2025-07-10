@@ -71,7 +71,7 @@ void qMRMLSceneColorTableModelPrivate::ColorGradient::updatePixmap(vtkScalarsToC
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-qMRMLSceneColorTableModel::qMRMLSceneColorTableModel(QObject *vparent)
+qMRMLSceneColorTableModel::qMRMLSceneColorTableModel(QObject* vparent)
   : qMRMLSceneCategoryModel(vparent)
   , d_ptr(new qMRMLSceneColorTableModelPrivate)
 {

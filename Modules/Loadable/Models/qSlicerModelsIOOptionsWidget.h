@@ -36,7 +36,7 @@ class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsIOOptionsWidget
   Q_OBJECT
 public:
   typedef qSlicerIOOptionsWidget Superclass;
-  qSlicerModelsIOOptionsWidget(QWidget *parent=nullptr);
+  qSlicerModelsIOOptionsWidget(QWidget* parent=nullptr);
   ~qSlicerModelsIOOptionsWidget() override;
 
 protected slots:

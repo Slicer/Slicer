@@ -60,7 +60,7 @@ void qMRMLSceneViewMenuPrivate::resetMenu()
   // Clear menu
   q->clear();
 
-  QAction * noSceneViewAction = q->addAction(this->NoSceneViewText);
+  QAction* noSceneViewAction = q->addAction(this->NoSceneViewText);
   noSceneViewAction->setDisabled(true);
 
   // Loop over sceneView nodes and associated menu entry
@@ -72,7 +72,7 @@ void qMRMLSceneViewMenuPrivate::resetMenu()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneViewMenuPrivate::onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject * mrmlNode)
+void qMRMLSceneViewMenuPrivate::onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject* mrmlNode)
 {
   Q_UNUSED(mrmlScene);
 
@@ -121,7 +121,7 @@ void qMRMLSceneViewMenuPrivate::addMenuItem(int index)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSceneViewMenuPrivate::onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject * mrmlNode)
+void qMRMLSceneViewMenuPrivate::onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject* mrmlNode)
 {
   if (!this->MRMLScene || !mrmlNode)
   {
@@ -159,7 +159,7 @@ void qMRMLSceneViewMenuPrivate::removeMenuItem(int index)
 
   if (q->actions().isEmpty())
   {
-    QAction * noSceneViewAction = q->addAction(this->NoSceneViewText);
+    QAction* noSceneViewAction = q->addAction(this->NoSceneViewText);
     noSceneViewAction->setDisabled(true);
   }
 }

@@ -37,32 +37,32 @@ qMRMLNodeComboBoxDelegate::qMRMLNodeComboBoxDelegate(QObject* parent,
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLNodeComboBoxDelegate::isSeparator(const QModelIndex &index)
+bool qMRMLNodeComboBoxDelegate::isSeparator(const QModelIndex& index)
 {
   return index.data(Qt::AccessibleDescriptionRole).toString() ==
                     QLatin1String("separator");
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxDelegate::setSeparator(QAbstractItemModel *model,
-                                             const QModelIndex &index)
+void qMRMLNodeComboBoxDelegate::setSeparator(QAbstractItemModel* model,
+                                             const QModelIndex& index)
 {
   model->setData(index, QString::fromLatin1("separator"),
                  Qt::AccessibleDescriptionRole);
-  if (QStandardItemModel *m = qobject_cast<QStandardItemModel*>(model))
-      if (QStandardItem *item = m->itemFromIndex(index))
+  if (QStandardItemModel* m = qobject_cast<QStandardItemModel*>(model))
+      if (QStandardItem* item = m->itemFromIndex(index))
           item->setFlags(item->flags() & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled));
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxDelegate::paint(QPainter *painter,
-                                      const QStyleOptionViewItem &option,
-                                      const QModelIndex &index) const
+void qMRMLNodeComboBoxDelegate::paint(QPainter* painter,
+                                      const QStyleOptionViewItem& option,
+                                      const QModelIndex& index) const
 {
     if (this->isSeparator(index))
     {
       QRect rect = option.rect;
-      if (const QAbstractItemView *view =
+      if (const QAbstractItemView* view =
           qobject_cast<const QAbstractItemView*>(option.widget))
       {
         rect.setWidth(view->viewport()->width());
@@ -79,8 +79,8 @@ void qMRMLNodeComboBoxDelegate::paint(QPainter *painter,
 }
 
 // --------------------------------------------------------------------------
-QSize qMRMLNodeComboBoxDelegate::sizeHint(const QStyleOptionViewItem &option,
-                       const QModelIndex &index) const
+QSize qMRMLNodeComboBoxDelegate::sizeHint(const QStyleOptionViewItem& option,
+                       const QModelIndex& index) const
 {
   if (this->isSeparator(index))
   {
@@ -92,10 +92,10 @@ QSize qMRMLNodeComboBoxDelegate::sizeHint(const QStyleOptionViewItem &option,
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxDelegate::drawDisplay(QPainter *painter,
-                                            const QStyleOptionViewItem &option,
-                                            const QRect &rect,
-                                            const QString &text) const
+void qMRMLNodeComboBoxDelegate::drawDisplay(QPainter* painter,
+                                            const QStyleOptionViewItem& option,
+                                            const QRect& rect,
+                                            const QString& text) const
 {
    QStyleOptionViewItem option2 = option;
    if (option.state & QStyle::State_HasFocus &&
@@ -115,9 +115,9 @@ void qMRMLNodeComboBoxDelegate::drawDisplay(QPainter *painter,
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxDelegate::drawFocus(QPainter *painter,
-                                          const QStyleOptionViewItem &option,
-                                          const QRect &rect) const
+void qMRMLNodeComboBoxDelegate::drawFocus(QPainter* painter,
+                                          const QStyleOptionViewItem& option,
+                                          const QRect& rect) const
 {
   Q_UNUSED(painter);
   Q_UNUSED(option);

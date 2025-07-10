@@ -22,7 +22,7 @@ class vtkMRMLDisplayNodeTestHelper1 : public vtkMRMLDisplayNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayNodeTestHelper1 *New();
+  static vtkMRMLDisplayNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLDisplayNodeTestHelper1,vtkMRMLDisplayNode);
 
@@ -31,7 +31,7 @@ public:
     return vtkMRMLDisplayNodeTestHelper1::New();
   }
 
-  const char * GetTypeAsString()
+  const char* GetTypeAsString()
   {
     return "vtkMRMLDisplayNodeTestHelper1";
   }
@@ -50,7 +50,7 @@ public:
 vtkStandardNewMacro(vtkMRMLDisplayNodeTestHelper1);
 
 //----------------------------------------------------------------------------
-int vtkMRMLDisplayNodeTest1(int , char * [])
+int vtkMRMLDisplayNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLDisplayNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

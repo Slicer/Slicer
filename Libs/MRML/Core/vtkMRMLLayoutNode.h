@@ -14,7 +14,7 @@ class vtkMRMLAbstractViewNode;
 class VTK_MRML_EXPORT vtkMRMLLayoutNode : public vtkMRMLAbstractLayoutNode
 {
 public:
-  static vtkMRMLLayoutNode *New();
+  static vtkMRMLLayoutNode* New();
   vtkTypeMacro(vtkMRMLLayoutNode,vtkMRMLAbstractLayoutNode);
   vtkMRMLNode* CreateNodeInstance() override;
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -191,7 +191,7 @@ protected:
   int NumberOfCompareViewLightboxRows;
   int NumberOfCompareViewLightboxColumns;
 
-  char *SelectedModule;
+  char* SelectedModule;
 
   int MainPanelSize;
   int SecondaryPanelSize;

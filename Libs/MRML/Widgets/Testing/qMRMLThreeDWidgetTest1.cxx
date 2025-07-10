@@ -43,7 +43,7 @@
 #include <cstdlib>
 #include <iostream>
 
-int qMRMLThreeDWidgetTest1(int argc, char * argv [] )
+int qMRMLThreeDWidgetTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

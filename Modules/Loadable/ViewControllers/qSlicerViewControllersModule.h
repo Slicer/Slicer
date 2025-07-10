@@ -44,7 +44,7 @@ class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerViewControllersModule(QObject *parent=nullptr);
+  qSlicerViewControllersModule(QObject* parent=nullptr);
   ~qSlicerViewControllersModule() override;
 
   qSlicerGetTitleMacro(tr("View Controllers"));
@@ -73,11 +73,11 @@ public:
 
   /// Read default plot view settings from application settings (.ini file)
   /// into defaultViewNode.
-  void readDefaultPlotViewSettings(vtkMRMLPlotViewNode *defaultViewNode);
+  void readDefaultPlotViewSettings(vtkMRMLPlotViewNode* defaultViewNode);
 
   /// Write default plot view settings to application settings (.ini file)
   /// from defaultViewNode.
-  void writeDefaultPlotViewSettings(vtkMRMLPlotViewNode *defaultViewNode);
+  void writeDefaultPlotViewSettings(vtkMRMLPlotViewNode* defaultViewNode);
 
   /// Set MRML scene for the module. Updates the default view settings based on
   /// the application settings.
@@ -88,7 +88,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

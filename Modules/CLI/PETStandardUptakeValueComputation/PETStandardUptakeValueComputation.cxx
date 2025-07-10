@@ -121,7 +121,7 @@ struct parameters
 // ...............................................................................................
 // ...
 
-double ConvertTimeToSeconds(const char *time )
+double ConvertTimeToSeconds(const char* time )
 {
   if( time == nullptr )
   {
@@ -167,7 +167,7 @@ double ConvertTimeToSeconds(const char *time )
 // ...
 // ...............................................................................................
 // ...
-double ConvertWeightUnits(double count, const char *fromunits, const char *tounits )
+double ConvertWeightUnits(double count, const char* fromunits, const char* tounits )
 {
 
   double conversion = count;
@@ -244,7 +244,7 @@ double ConvertWeightUnits(double count, const char *fromunits, const char *touni
 // ...
 // ...............................................................................................
 // ...
-double ConvertRadioactivityUnits(double count, const char *fromunits, const char *tounits )
+double ConvertRadioactivityUnits(double count, const char* fromunits, const char* tounits )
 {
 
   double conversion = count;
@@ -771,10 +771,10 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   std::ofstream ofile;
   std::string  outputStringFile = list.SUVOutputStringFile;
   std::ofstream stringFile;
-  vtkImageData *                    petVolume;
-  vtkImageData *                    voiVolume;
-  vtkITKArchetypeImageSeriesReader *reader1 = nullptr;
-  vtkITKArchetypeImageSeriesReader *reader2 = nullptr;
+  vtkImageData* petVolume;
+  vtkImageData* voiVolume;
+  vtkITKArchetypeImageSeriesReader* reader1 = nullptr;
+  vtkITKArchetypeImageSeriesReader* reader2 = nullptr;
   vtkAlgorithmOutput* petVolumeConnection = nullptr;
   vtkAlgorithmOutput* voiVolumeConnection = nullptr;
 
@@ -846,7 +846,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   // read the DICOM dir to get the radiological data
 
   typedef short PixelValueType;
-  typedef itk::Image< PixelValueType, 3 > VolumeType;
+  typedef itk::Image<PixelValueType, 3 > VolumeType;
   typedef itk::ImageSeriesReader< VolumeType > VolumeReaderType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
 
@@ -1346,7 +1346,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   std::string outputSUVMinString = "SUVMin = ";
 
   // --- find the max and min label in mask
-  vtkImageAccumulate *stataccum = vtkImageAccumulate::New();
+  vtkImageAccumulate* stataccum = vtkImageAccumulate::New();
   stataccum->SetInputConnection( voiVolumeConnection );
   stataccum->Update();
   int lo = static_cast<int>(stataccum->GetMin()[0]);
@@ -1378,7 +1378,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     suvmean = 0.0;
 
     // create the binary volume of the label
-    vtkImageThreshold *thresholder = vtkImageThreshold::New();
+    vtkImageThreshold* thresholder = vtkImageThreshold::New();
     thresholder->SetInputConnection(voiVolumeConnection);
     thresholder->SetInValue(1);
     thresholder->SetOutValue(0);
@@ -1388,11 +1388,11 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     thresholder->Update();
 
     // use vtk's statistics class with the binary labelmap as a stencil
-    vtkImageToImageStencil *stencil = vtkImageToImageStencil::New();
+    vtkImageToImageStencil* stencil = vtkImageToImageStencil::New();
     stencil->SetInputConnection(thresholder->GetOutputPort() );
     stencil->ThresholdBetween(1, 1);
 
-    vtkImageAccumulate *labelstat = vtkImageAccumulate::New();
+    vtkImageAccumulate* labelstat = vtkImageAccumulate::New();
     labelstat->SetInputConnection(petVolumeConnection);
     labelstat->SetInputConnection(1, stencil->GetOutputPort() ); // == SetStencilData()
     labelstat->Update();
@@ -1565,7 +1565,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 // ...
 // ...............................................................................................
 // ...
-int main( int argc, char * argv[] )
+int main( int argc, char* argv[] )
 {
 
   PARSE_ARGS;
@@ -1614,7 +1614,7 @@ int main( int argc, char * argv[] )
     LoadImagesAndComputeSUV( list, static_cast<double>(0) );
   }
 
-  catch( itk::ExceptionObject & excep )
+  catch( itk::ExceptionObject& excep )
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

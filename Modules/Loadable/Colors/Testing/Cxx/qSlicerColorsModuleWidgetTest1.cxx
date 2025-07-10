@@ -42,7 +42,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
+int qSlicerColorsModuleWidgetTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

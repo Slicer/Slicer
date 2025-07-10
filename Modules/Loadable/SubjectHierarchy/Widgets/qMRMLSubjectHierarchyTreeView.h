@@ -110,7 +110,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
 
 public:
   typedef QTreeView Superclass;
-  qMRMLSubjectHierarchyTreeView(QWidget *parent=nullptr);
+  qMRMLSubjectHierarchyTreeView(QWidget* parent=nullptr);
   ~qMRMLSubjectHierarchyTreeView() override;
 
 public:
@@ -183,11 +183,11 @@ public:
 
 
   /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
-  void setLevelFilter(QStringList &levelFilter);
+  void setLevelFilter(QStringList& levelFilter);
   QStringList levelFilter()const;
 
   /// Set name filter that allows showing only items containing a specified string (case-insensitive). Show all items if empty
-  void setNameFilter(QString &nameFilter);
+  void setNameFilter(QString& nameFilter);
   QString nameFilter()const;
 
   /// Set node type filter that allows showing only data nodes of a certain type. Show all data nodes if empty
@@ -383,21 +383,21 @@ signals:
   void nodeAddedByUser(vtkMRMLNode* node);
 
 protected slots:
-  virtual void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Updates subject hierarchy item expanded property when item is expanded
-  virtual void onItemExpanded(const QModelIndex &expandedItemIndex);
+  virtual void onItemExpanded(const QModelIndex& expandedItemIndex);
   /// Updates subject hierarchy item expanded property when item is collapsed
-  virtual void onItemCollapsed(const QModelIndex &collapsedItemIndex);
+  virtual void onItemCollapsed(const QModelIndex& collapsedItemIndex);
 
   /// Update root item to restore view
   /// (e.g. after tree was updated in the model from the subject hierarchy)
   virtual void updateRootItem();
 
   /// Propagate item modified event
-  virtual void onSubjectHierarchyItemModified(vtkObject *caller, void *callData);
+  virtual void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
   /// Propagate item transform modified event
-  virtual void onSubjectHierarchyItemTransformModified(vtkObject *caller, void *callData);
+  virtual void onSubjectHierarchyItemTransformModified(vtkObject* caller, void* callData);
 
   /// Called when scene close is started.
   virtual void onMRMLSceneStartClose(vtkObject* sceneObject);

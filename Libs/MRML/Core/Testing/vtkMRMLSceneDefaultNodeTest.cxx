@@ -17,7 +17,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 
 //------------------------------------------------------------------------------
-int vtkMRMLSceneDefaultNodeTest(int , char * [] )
+int vtkMRMLSceneDefaultNodeTest(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene1;
 

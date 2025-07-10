@@ -65,7 +65,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::OnMRMLDisplayableNodeModifiedE
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLViewNode * vtkMRMLAbstractThreeDViewDisplayableManager::GetMRMLViewNode()
+vtkMRMLViewNode* vtkMRMLAbstractThreeDViewDisplayableManager::GetMRMLViewNode()
 {
   return vtkMRMLViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
 }

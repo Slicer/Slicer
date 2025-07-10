@@ -92,7 +92,7 @@ public slots:
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
 
-  QAction* actionFromPlaceNodeClassName(QString placeNodeClassName, QMenu *menu);
+  QAction* actionFromPlaceNodeClassName(QString placeNodeClassName, QMenu* menu);
 private:
   Q_DECLARE_PRIVATE(qSlicerMouseModeToolBar);
   Q_DISABLE_COPY(qSlicerMouseModeToolBar);

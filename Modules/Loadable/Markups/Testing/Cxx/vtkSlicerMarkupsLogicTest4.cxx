@@ -43,15 +43,15 @@
 #include<vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
-void RegisteredEventDetectionCallback(vtkObject *caller, unsigned long, void*, void*);
-void UnregisteredEventDetectionCallback(vtkObject *caller, unsigned long, void*, void*);
+void RegisteredEventDetectionCallback(vtkObject* caller, unsigned long, void*, void*);
+void UnregisteredEventDetectionCallback(vtkObject* caller, unsigned long, void*, void*);
 
 //------------------------------------------------------------------------------
 bool registeredEventReceived = false;
 bool unregisteredEventReceived = false;
 
 //------------------------------------------------------------------------------
-int vtkSlicerMarkupsLogicTest4(int , char*[])
+int vtkSlicerMarkupsLogicTest4(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
 

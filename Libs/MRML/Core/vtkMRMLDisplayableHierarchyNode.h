@@ -23,7 +23,7 @@ class vtkMRMLDisplayNode;
 class VTK_MRML_EXPORT vtkMRMLDisplayableHierarchyNode : public vtkMRMLHierarchyNode
 {
 public:
-  static vtkMRMLDisplayableHierarchyNode *New();
+  static vtkMRMLDisplayableHierarchyNode* New();
   vtkTypeMacro(vtkMRMLDisplayableHierarchyNode,vtkMRMLHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -44,7 +44,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, DisplayableHierarchy)
@@ -60,11 +60,11 @@ public:
 
   ///
   /// Finds the Displayable node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   ///
   /// String ID of the corresponding displayable MRML node
@@ -78,7 +78,7 @@ public:
     this->SetAssociatedNodeID(ref);
   }
 
-  void SetAndObserveDisplayNodeID(const char *DisplayNodeID);
+  void SetAndObserveDisplayNodeID(const char* DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
 
 
@@ -103,12 +103,12 @@ public:
 
   ///
   /// Find all child displayable nodes in the hierarchy
-  void GetChildrenDisplayableNodes(vtkCollection *children);
+  void GetChildrenDisplayableNodes(vtkCollection* children);
 
   ///
   /// Get Hierarchy node for a given displayable node
-  static vtkMRMLDisplayableHierarchyNode* GetDisplayableHierarchyNode(vtkMRMLScene *scene,
-                                                                      const char *displayableNodeID);
+  static vtkMRMLDisplayableHierarchyNode* GetDisplayableHierarchyNode(vtkMRMLScene* scene,
+                                                                      const char* displayableNodeID);
 
 
   /// Removes immediate children nodes, both hierarchy and corresponding displayable/display nodes
@@ -139,11 +139,11 @@ protected:
   vtkMRMLDisplayableHierarchyNode(const vtkMRMLDisplayableHierarchyNode&);
   void operator=(const vtkMRMLDisplayableHierarchyNode&);
 
-  void SetDisplayNodeID(const char *);
+  void SetDisplayNodeID(const char*);
 
-  char *DisplayNodeID;
+  char* DisplayNodeID;
 
-  vtkMRMLDisplayNode *DisplayNode;
+  vtkMRMLDisplayNode* DisplayNode;
 
   int Expanded;
 

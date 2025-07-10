@@ -54,7 +54,7 @@
 class VTK_Teem_EXPORT vtkTeemNRRDReader : public vtkMedicalImageReader2
 {
 public:
-  static vtkTeemNRRDReader *New();
+  static vtkTeemNRRDReader* New();
 
   vtkTypeMacro(vtkTeemNRRDReader,vtkMedicalImageReader2);
 
@@ -84,7 +84,7 @@ public:
 
   ///
   /// Get a value given a key in the header
-  const char* GetHeaderValue(const char *key);
+  const char* GetHeaderValue(const char* key);
 
   /// Get label for specified axis
   const char* GetAxisLabel(unsigned int axis);
@@ -239,16 +239,16 @@ public:
       break;
   }
   }
-vtkImageData * AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo) override;
-void AllocateOutputData(vtkImageData *out, vtkInformation* outInfo, int *uExtent) override
+vtkImageData* AllocateOutputData(vtkDataObject* out, vtkInformation* outInfo) override;
+void AllocateOutputData(vtkImageData* out, vtkInformation* outInfo, int* uExtent) override
     { Superclass::AllocateOutputData(out, outInfo, uExtent); }
-void AllocatePointData(vtkImageData *out, vtkInformation* outInfo);
+void AllocatePointData(vtkImageData* out, vtkInformation* outInfo);
 
 protected:
   vtkTeemNRRDReader();
   ~vtkTeemNRRDReader() override;
 
-  static bool GetPointType(Nrrd* nrrdTemp, int& pointDataType, int &numOfComponents);
+  static bool GetPointType(Nrrd* nrrdTemp, int& pointDataType, int& numOfComponents);
 
   vtkSmartPointer<vtkMatrix4x4> RasToIjkMatrix;
   vtkSmartPointer<vtkMatrix4x4> MeasurementFrameMatrix;
@@ -273,7 +273,7 @@ protected:
   std::map<unsigned int, std::string> AxisUnits;
 
   void ExecuteInformation() override;
-  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo) override;
+  void ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo) override;
 
   int tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, double SD[9]);
 

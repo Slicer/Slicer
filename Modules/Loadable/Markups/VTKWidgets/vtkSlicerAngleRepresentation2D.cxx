@@ -209,7 +209,7 @@ void vtkSlicerAngleRepresentation2D::BuildArc()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -285,7 +285,7 @@ void vtkSlicerAngleRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 //----------------------------------------------------------------------
 void vtkSlicerAngleRepresentation2D::CanInteract(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
@@ -343,7 +343,7 @@ void vtkSlicerAngleRepresentation2D::CanInteract(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAngleRepresentation2D::GetActors(vtkPropCollection *pc)
+void vtkSlicerAngleRepresentation2D::GetActors(vtkPropCollection* pc)
 {
   this->LineActor->GetActors(pc);
   this->ArcActor->GetActors(pc);
@@ -352,7 +352,7 @@ void vtkSlicerAngleRepresentation2D::GetActors(vtkPropCollection *pc)
 
 //----------------------------------------------------------------------
 void vtkSlicerAngleRepresentation2D::ReleaseGraphicsResources(
-  vtkWindow *win)
+  vtkWindow* win)
 {
   this->LineActor->ReleaseGraphicsResources(win);
   this->ArcActor->ReleaseGraphicsResources(win);
@@ -360,7 +360,7 @@ void vtkSlicerAngleRepresentation2D::ReleaseGraphicsResources(
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerAngleRepresentation2D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerAngleRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
   int count=0;
   if (this->LineActor->GetVisibility())
@@ -378,7 +378,7 @@ int vtkSlicerAngleRepresentation2D::RenderOverlay(vtkViewport *viewport)
 
 //-----------------------------------------------------------------------------
 int vtkSlicerAngleRepresentation2D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count=0;
   if (this->LineActor->GetVisibility())
@@ -396,7 +396,7 @@ int vtkSlicerAngleRepresentation2D::RenderOpaqueGeometry(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerAngleRepresentation2D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count=0;
   if (this->LineActor->GetVisibility())
@@ -431,7 +431,7 @@ vtkTypeBool vtkSlicerAngleRepresentation2D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerAngleRepresentation2D::GetBounds()
+double* vtkSlicerAngleRepresentation2D::GetBounds()
 {
   return nullptr;
 }
@@ -462,7 +462,7 @@ void vtkSlicerAngleRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerAngleRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
+void vtkSlicerAngleRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
   if (this->MarkupsNode != markupsNode)
   {

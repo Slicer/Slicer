@@ -44,7 +44,7 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation2D
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerCurveRepresentation2D *New();
+  static vtkSlicerCurveRepresentation2D* New();
 
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkSlicerCurveRepresentation2D,vtkSlicerMarkupsWidgetRepresentation2D);
@@ -53,29 +53,29 @@ public:
   /// Subclasses of vtkContourCurveRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2) override;
+    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) override;
-  void ReleaseGraphicsResources(vtkWindow *) override;
-  int RenderOverlay(vtkViewport *viewport) override;
-  int RenderOpaqueGeometry(vtkViewport *viewport) override;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  void GetActors(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
+  int RenderOpaqueGeometry(vtkViewport* viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport* viewport) override;
   vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
   /// Return the bounds of the representation
   double* GetBounds() VTK_SIZEHINT(6) override;
 
   void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &componentIndex, double &closestDistance2);
+    int& foundComponentType, int& componentIndex, double& closestDistance2);
 
 protected:
   vtkSlicerCurveRepresentation2D();
   ~vtkSlicerCurveRepresentation2D() override;
 
-  void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode) override;
+  void SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode) override;
 
   void UpdateLineColorMap();
 

@@ -56,7 +56,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedUtils
 public:
   typedef qSlicerScriptedUtils Self;
 
-  static bool loadSourceAsModule(const QString& moduleName, const QString& filePath, PyObject * global_dict, PyObject *local_dict);
+  static bool loadSourceAsModule(const QString& moduleName, const QString& filePath, PyObject* global_dict, PyObject* local_dict);
 
   /// \brief Set the value of the attribute named \a attributeName, for module
   /// named \a moduleName, to the value \a attributeValue.
@@ -69,7 +69,7 @@ public:
                                  PyObject* attributeValue);
 
   /// \sa qSlicerLoadableModule::importModulePythonExtensions
-  static bool importModulePythonExtensions(qSlicerCorePythonManager * pythonManager,
+  static bool importModulePythonExtensions(qSlicerCorePythonManager* pythonManager,
                                            const QString& intDir,
                                            const QString& modulePath,
                                            bool isEmbedded=false);
@@ -95,7 +95,7 @@ public:
 
   PyObject* instantiateClass(QObject* cpp, const QString& className, PyObject* classToInstantiate);
 
-  PyObject * callMethod(int id, PyObject * arguments = nullptr);
+  PyObject* callMethod(int id, PyObject* arguments = nullptr);
 
   PyObject* pythonSelf()const;
 

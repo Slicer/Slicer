@@ -141,7 +141,7 @@ void vtkMRMLCrosshairNode::SetCursorPositionRAS(double ras[3])
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCrosshairNode::SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode *sliceNode)
+void vtkMRMLCrosshairNode::SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode* sliceNode)
 {
   this->CursorPositionXYZ[0]=xyz[0];
   this->CursorPositionXYZ[1]=xyz[1];

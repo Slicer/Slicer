@@ -38,7 +38,7 @@ class VTK_SLICER_TEXTS_MODULE_LOGIC_EXPORT vtkSlicerTextsLogic : public vtkMRMLA
   public:
 
   /// The Usual vtk class functions
-  static vtkSlicerTextsLogic *New();
+  static vtkSlicerTextsLogic* New();
   vtkTypeMacro(vtkSlicerTextsLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override { Superclass::PrintSelf(os, indent); }
 

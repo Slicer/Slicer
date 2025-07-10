@@ -44,7 +44,7 @@ public:
   const QString className() const override {return "qMRMLMarkupsCurveSettingsWidget";}
 
   /// Checks whether a given node can be handled by the widget
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
 
   /// Updates the widget on MRML changes
   void updateWidgetFromMRML() override;
@@ -63,7 +63,7 @@ public slots:
   void setMRMLScene(vtkMRMLScene* scene) override;
 
 protected:
-  qMRMLMarkupsCurveSettingsWidget(QWidget* parent, qMRMLMarkupsCurveSettingsWidgetPrivate &d);
+  qMRMLMarkupsCurveSettingsWidget(QWidget* parent, qMRMLMarkupsCurveSettingsWidgetPrivate& d);
 
 protected:
   void setup();

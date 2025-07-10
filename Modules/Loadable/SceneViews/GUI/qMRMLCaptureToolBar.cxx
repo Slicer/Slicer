@@ -224,7 +224,7 @@ void qMRMLCaptureToolBar::setMRMLScene(vtkMRMLScene* scene)
 
 // --------------------------------------------------------------------------
 void qMRMLCaptureToolBar::setActiveMRMLThreeDViewNode(
-  vtkMRMLViewNode * newActiveMRMLThreeDViewNode)
+  vtkMRMLViewNode* newActiveMRMLThreeDViewNode)
 {
   Q_D(qMRMLCaptureToolBar);
   d->ActiveMRMLThreeDViewNode = newActiveMRMLThreeDViewNode;

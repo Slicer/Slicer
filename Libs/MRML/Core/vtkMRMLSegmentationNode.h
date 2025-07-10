@@ -55,7 +55,7 @@ public:
   // Define constants
   static const char* GetSegmentIDAttributeName() { return "segmentID"; };
 
-  static vtkMRMLSegmentationNode *New();
+  static vtkMRMLSegmentationNode* New();
   vtkTypeMacro(vtkMRMLSegmentationNode, vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

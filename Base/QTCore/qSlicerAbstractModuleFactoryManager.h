@@ -87,7 +87,7 @@ public:
   typedef ctkAbstractFactory<qSlicerAbstractCoreModule> qSlicerModuleFactory;
 
   typedef QObject Superclass;
-  qSlicerAbstractModuleFactoryManager(QObject * newParent = nullptr);
+  qSlicerAbstractModuleFactoryManager(QObject* newParent = nullptr);
 
   /// Destructor, Deallocates resources
   /// Unregister (and delete) all registered factories.

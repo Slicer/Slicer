@@ -51,7 +51,7 @@ int __stdcall WinMain(HINSTANCE hInstance,
   return SlicerAppMain(argc, const_cast< char** >(&argv[0]));
 }
 #else
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   return SlicerAppMain(argc, argv);
 }

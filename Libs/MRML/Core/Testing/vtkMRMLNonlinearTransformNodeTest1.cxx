@@ -30,19 +30,19 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int TestBSplineTransform(const char *filename);
-int TestGridTransform(const char *filename);
-int TestThinPlateSplineTransform(const char *filename);
-int TestCompositeTransformHardenSplit(const char *filename);
-int TestBSplineLinearCompositeTransformSplit(const char *filename);
-int TestRelativeTransforms(const char *filename);
+int TestBSplineTransform(const char* filename);
+int TestGridTransform(const char* filename);
+int TestThinPlateSplineTransform(const char* filename);
+int TestCompositeTransformHardenSplit(const char* filename);
+int TestBSplineLinearCompositeTransformSplit(const char* filename);
+int TestRelativeTransforms(const char* filename);
 int TestGetTransform();
 
-int vtkMRMLNonlinearTransformNodeTest1(int argc, char * argv[] )
+int vtkMRMLNonlinearTransformNodeTest1(int argc, char* argv[] )
 {
   itk::itkFactoryRegistration();
 
-  const char *filename = nullptr;
+  const char* filename = nullptr;
   if (argc > 1)
   {
     filename = argv[1];
@@ -61,7 +61,7 @@ int vtkMRMLNonlinearTransformNodeTest1(int argc, char * argv[] )
 }
 
 //---------------------------------------------------------------------------
-int transformPoints(vtkAbstractTransform *transform, vtkPoints* sourcePoints, vtkPoints* transformedPoints)
+int transformPoints(vtkAbstractTransform* transform, vtkPoints* sourcePoints, vtkPoints* transformedPoints)
 {
   CHECK_NOT_NULL(transform);
   transform->TransformPoints(sourcePoints, transformedPoints);
@@ -83,7 +83,7 @@ bool isSamePointPositions(vtkPoints* sourcePoints, vtkPoints* transformedPoints)
 
 // Checks if the transform changes point positions and inverse transform moves points back to original position
 //---------------------------------------------------------------------------
-int testTransformConsistency(vtkAbstractTransform *xfp, vtkAbstractTransform *xtp, vtkPoints* testPoints,
+int testTransformConsistency(vtkAbstractTransform* xfp, vtkAbstractTransform* xtp, vtkPoints* testPoints,
   vtkPoints* transformedPoints, vtkPoints* transformedPointsBackToTest)
 {
   // Test if transform actually changes point positions
@@ -99,7 +99,7 @@ int testTransformConsistency(vtkAbstractTransform *xfp, vtkAbstractTransform *xt
 
 // Checks if the transform accurate enough by comparing point positions to ground truth
 //---------------------------------------------------------------------------
-int testTransformAccuracy(vtkAbstractTransform *xfp, vtkAbstractTransform *xtp, vtkPoints* testPoints,
+int testTransformAccuracy(vtkAbstractTransform* xfp, vtkAbstractTransform* xtp, vtkPoints* testPoints,
   vtkPoints* transformedPointsGroundTruth, vtkPoints* transformedPointsBackToTestGroundTruth)
 {
   // Test if the copied from parent transform gives the same results as the original
@@ -116,7 +116,7 @@ int testTransformAccuracy(vtkAbstractTransform *xfp, vtkAbstractTransform *xtp, 
 }
 
 //---------------------------------------------------------------------------
-int testTransformConsistencyAndCopy(const char *filename, const char* nodeId, const char* expectedTransformType)
+int testTransformConsistencyAndCopy(const char* filename, const char* nodeId, const char* expectedTransformType)
 {
   // Read a BSpline transform from a scene
   vtkNew<vtkMRMLScene> scene;
@@ -124,7 +124,7 @@ int testTransformConsistencyAndCopy(const char *filename, const char* nodeId, co
   scene->SetURL(filename);
   scene->Import();
 
-  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(scene->GetNodeByID(nodeId));
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(scene->GetNodeByID(nodeId));
   CHECK_NOT_NULL(transformNode);
 
   // Create test point set where the transform will be tested at
@@ -139,8 +139,8 @@ int testTransformConsistencyAndCopy(const char *filename, const char* nodeId, co
   vtkNew<vtkPoints> transformedPointsBackToTest;
 
   // Test if both the transform and its inverse are available
-  vtkAbstractTransform *xfp = transformNode->GetTransformFromParentAs(expectedTransformType);
-  vtkAbstractTransform *xtp = transformNode->GetTransformToParentAs(expectedTransformType);
+  vtkAbstractTransform* xfp = transformNode->GetTransformFromParentAs(expectedTransformType);
+  vtkAbstractTransform* xtp = transformNode->GetTransformToParentAs(expectedTransformType);
 
   CHECK_EXIT_SUCCESS(testTransformConsistency(xfp, xtp, testPoints, transformedPoints.GetPointer(), transformedPointsBackToTest.GetPointer()));
 
@@ -151,8 +151,8 @@ int testTransformConsistencyAndCopy(const char *filename, const char* nodeId, co
   vtkNew<vtkTransform> emptyTransform;
   transformNode->SetAndObserveTransformToParent(emptyTransform.GetPointer());
 
-  vtkAbstractTransform *xfpCopy = transformNodeCopy->GetTransformFromParentAs(expectedTransformType);
-  vtkAbstractTransform *xtpCopy = transformNodeCopy->GetTransformToParentAs(expectedTransformType);
+  vtkAbstractTransform* xfpCopy = transformNodeCopy->GetTransformFromParentAs(expectedTransformType);
+  vtkAbstractTransform* xtpCopy = transformNodeCopy->GetTransformToParentAs(expectedTransformType);
 
   CHECK_EXIT_SUCCESS(testTransformAccuracy(xfpCopy, xtpCopy, testPoints, transformedPoints.GetPointer(), transformedPointsBackToTest.GetPointer()));
 
@@ -162,28 +162,28 @@ int testTransformConsistencyAndCopy(const char *filename, const char* nodeId, co
 }
 
 //---------------------------------------------------------------------------
-int TestBSplineTransform(const char *filename)
+int TestBSplineTransform(const char* filename)
 {
   CHECK_EXIT_SUCCESS(testTransformConsistencyAndCopy(filename, "vtkMRMLBSplineTransformNode1", "vtkOrientedBSplineTransform"));
   return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-int TestGridTransform(const char *filename)
+int TestGridTransform(const char* filename)
 {
   CHECK_EXIT_SUCCESS(testTransformConsistencyAndCopy(filename, "vtkMRMLGridTransformNode1", "vtkOrientedGridTransform"));
   return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-int TestThinPlateSplineTransform(const char *filename)
+int TestThinPlateSplineTransform(const char* filename)
 {
   CHECK_EXIT_SUCCESS(testTransformConsistencyAndCopy(filename, "vtkMRMLTransformNode1", "vtkThinPlateSplineTransform"));
   return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-int TestCompositeTransformHardenSplit(const char *filename)
+int TestCompositeTransformHardenSplit(const char* filename)
 {
   // Read a BSpline transform from a scene
   vtkNew<vtkMRMLScene> scene;
@@ -197,9 +197,9 @@ int TestCompositeTransformHardenSplit(const char *filename)
   // WORLD
   //  |-- gridTransformNode
   //       |-- bsplineTransformNode
-  vtkMRMLBSplineTransformNode *bsplineTransformNode = vtkMRMLBSplineTransformNode::SafeDownCast(
+  vtkMRMLBSplineTransformNode* bsplineTransformNode = vtkMRMLBSplineTransformNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLBSplineTransformNode1"));
-  vtkMRMLGridTransformNode *gridTransformNode = vtkMRMLGridTransformNode::SafeDownCast(
+  vtkMRMLGridTransformNode* gridTransformNode = vtkMRMLGridTransformNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLGridTransformNode1"));
   bsplineTransformNode->SetAndObserveTransformNodeID(gridTransformNode->GetID());
 
@@ -261,7 +261,7 @@ int TestCompositeTransformHardenSplit(const char *filename)
 }
 
 //---------------------------------------------------------------------------
-int TestBSplineLinearCompositeTransformSplit(const char *filename)
+int TestBSplineLinearCompositeTransformSplit(const char* filename)
 {
   // Read a BSpline transform from a scene
   vtkNew<vtkMRMLScene> scene;
@@ -271,7 +271,7 @@ int TestBSplineLinearCompositeTransformSplit(const char *filename)
 
   // Get composite transform
 
-  vtkMRMLTransformNode *compositeBsplineTransformNode = vtkMRMLTransformNode::SafeDownCast(
+  vtkMRMLTransformNode* compositeBsplineTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLTransformNode2"));
 
   // Create test point set where the transform will be tested at
@@ -311,7 +311,7 @@ int TestBSplineLinearCompositeTransformSplit(const char *filename)
 }
 
 //---------------------------------------------------------------------------
-int TestRelativeTransforms(const char *filename)
+int TestRelativeTransforms(const char* filename)
 {
   // Read a BSpline transform from a scene
   vtkNew<vtkMRMLScene> scene;
@@ -331,13 +331,13 @@ int TestRelativeTransforms(const char *filename)
   //              |-- linearTransformNode1
   //              |-- linearTransformNode2
 
-  vtkMRMLTransformNode *gridTransformNode = vtkMRMLTransformNode::SafeDownCast(
+  vtkMRMLTransformNode* gridTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLGridTransformNode1"));
-  vtkMRMLTransformNode *bsplineTransformNode = vtkMRMLTransformNode::SafeDownCast(
+  vtkMRMLTransformNode* bsplineTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLBSplineTransformNode1"));
-  vtkMRMLTransformNode *compositeTransformNode = vtkMRMLTransformNode::SafeDownCast(
+  vtkMRMLTransformNode* compositeTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLTransformNode2"));
-  vtkMRMLTransformNode *tpsTransformNode = vtkMRMLTransformNode::SafeDownCast(
+  vtkMRMLTransformNode* tpsTransformNode = vtkMRMLTransformNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLTransformNode1"));
 
   bsplineTransformNode->SetAndObserveTransformNodeID(gridTransformNode->GetID());

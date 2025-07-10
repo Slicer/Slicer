@@ -28,9 +28,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLClipNodeDisplayWidgetPlugin : public QOb
   Q_OBJECT
 
 public:
-  qMRMLClipNodeDisplayWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLClipNodeDisplayWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

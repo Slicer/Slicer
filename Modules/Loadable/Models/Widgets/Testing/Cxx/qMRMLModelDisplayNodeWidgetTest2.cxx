@@ -39,7 +39,7 @@
 
 // STD includes
 
-int qMRMLModelDisplayNodeWidgetTest2( int argc, char * argv [] )
+int qMRMLModelDisplayNodeWidgetTest2( int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

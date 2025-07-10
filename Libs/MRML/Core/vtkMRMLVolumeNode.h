@@ -68,7 +68,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void CopyOrientation(vtkMRMLVolumeNode *node);
+  void CopyOrientation(vtkMRMLVolumeNode* node);
 
 
   ///
@@ -77,7 +77,7 @@ public:
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   //--------------------------------------------------------------------------
   /// RAS->IJK Matrix Calculation
@@ -89,13 +89,13 @@ public:
   /// This matrix can be computed either from corner points, or just he
   /// scanOrder.
   /// Return true on success, false otherwise
-  static bool ComputeIJKToRASFromScanOrder(const char *order,
+  static bool ComputeIJKToRASFromScanOrder(const char* order,
                                            const double* spacing,
-                                           const int *dims,
+                                           const int* dims,
                                            bool centerImage,
-                                           vtkMatrix4x4 *IJKToRAS);
+                                           vtkMatrix4x4* IJKToRAS);
 
-  static const char* ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *IJKToRAS);
+  static const char* ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* IJKToRAS);
 
   void SetIJKToRASDirections(double dirs[3][3]);
   void SetIJKToRASDirections(double ir, double jr, double kr,
@@ -181,12 +181,12 @@ public:
   /// made to store all information in the MRML node (vtkMRMLVolumeNode::Origin,
   /// vtkMRMLVolumeNode::Spacing, and vtkMRMLVolumeNode::IJKToRASDirections).
   /// \sa GetImageData(), SetImageDataConnection()
-  virtual void SetAndObserveImageData(vtkImageData *ImageData);
+  virtual void SetAndObserveImageData(vtkImageData* ImageData);
   virtual vtkImageData* GetImageData();
   /// Set and observe image data pipeline.
   /// It is propagated to the display nodes.
   /// \sa GetImageDataConnection()
-  virtual void SetImageDataConnection(vtkAlgorithmOutput *inputPort);
+  virtual void SetImageDataConnection(vtkAlgorithmOutput* inputPort);
   /// Return the input image data pipeline.
   vtkGetObjectMacro(ImageDataConnection, vtkAlgorithmOutput);
 
@@ -253,8 +253,8 @@ public:
   vtkSetMacro(VoxelVectorType, int);
 
   /// Convert between voxel type ID and name
-  static const char *GetVoxelVectorTypeAsString(int id);
-  static int GetVoxelVectorTypeFromString(const char *name);
+  static const char* GetVoxelVectorTypeAsString(int id);
+  static int GetVoxelVectorTypeFromString(const char* name);
 
   /// Return true if the IJK coordinate system is right-handed (IJKToRAS matrix determinant is positive).
   /// This is the expectation in Slicer and most medical imaging software.
@@ -276,15 +276,15 @@ protected:
 
   /// Called when a display node is added/removed/modified. Propagate the polydata
   /// to the new display node.
-  virtual void UpdateDisplayNodeImageData(vtkMRMLDisplayNode *dnode);
+  virtual void UpdateDisplayNodeImageData(vtkMRMLDisplayNode* dnode);
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called when a node reference ID is modified.
-  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Return the bounds of the node transformed or not depending on

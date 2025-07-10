@@ -61,7 +61,7 @@ private:
   void operator=(const vtkMRMLTestThreeDViewDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 
 };
 

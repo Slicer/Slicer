@@ -55,7 +55,7 @@ bool ctkFactoryScriptedItem::load()
       {
         modulePathWithoutIntDir.cdUp();
       }
-      qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
+      qSlicerCorePythonManager* pythonManager = qSlicerCoreApplication::application()->corePythonManager();
       pythonManager->appendPythonPaths(QStringList() << modulePathWithoutIntDir.absolutePath());
     }
   }
@@ -73,7 +73,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 
   module->setPath(this->path());
 
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)
   {
     return nullptr;
@@ -159,7 +159,7 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
 
   // Add the default modules directory (based on the slicer
   // installation or build tree) to the user paths
-  QSettings * settings = app->revisionUserSettings();
+  QSettings* settings = app->revisionUserSettings();
   QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList qtModulePaths = additionalModulePaths + defaultQTModulePaths;
 

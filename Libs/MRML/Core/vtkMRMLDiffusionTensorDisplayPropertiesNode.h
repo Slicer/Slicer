@@ -35,7 +35,7 @@ class vtkAlgorithmOutput;
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMRMLColorTableNode
 {
  public:
-  static vtkMRMLDiffusionTensorDisplayPropertiesNode *New();
+  static vtkMRMLDiffusionTensorDisplayPropertiesNode* New();
   vtkTypeMacro(vtkMRMLDiffusionTensorDisplayPropertiesNode,vtkMRMLColorTableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -55,7 +55,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   ///
   /// Copy the node's attributes to this object.
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -152,7 +152,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   ///
   /// Return a text string describing the ScalarInvariant variable
-  virtual const char * GetScalarInvariantAsString();
+  virtual const char* GetScalarInvariantAsString();
 
   //--------------------------------------------------------------------------
   /// Display Information: Types of glyph geometry that can be displayed
@@ -207,8 +207,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   ///
   /// Return a text string describing the GlyphGeometry variable
-  virtual const char * GetGlyphGeometryAsString();
-  virtual const char * GetGlyphGeometryAsString(int);
+  virtual const char* GetGlyphGeometryAsString();
+  virtual const char* GetGlyphGeometryAsString(int);
 
   //--------------------------------------------------------------------------
   /// Display Information: Parameters of glyph geometry
@@ -289,8 +289,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   ///
   /// Return a text string describing GlyphEigenvector variable
-  virtual const char * GetGlyphEigenvectorAsString();
-  virtual const char * GetGlyphEigenvectorAsString(int);
+  virtual const char* GetGlyphEigenvectorAsString();
+  virtual const char* GetGlyphEigenvectorAsString(int);
 
   //--------------------------------------------------------------------------
   /// Display Information: Parameters of Lines glyph geometry
@@ -409,7 +409,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
 
   ///
   /// Return a text string describing the ColorGlyphBy
-  virtual const char * GetColorGlyphByAsString();
+  virtual const char* GetColorGlyphByAsString();
 
   ///
   /// Set scalar invariant to trace (sum of eigenvalues).
@@ -441,7 +441,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   vtkGetObjectMacro( GlyphConnection, vtkAlgorithmOutput );
 
  //Helper function to get the string of Scalar enums
-  static const char *GetScalarEnumAsString(int val);
+  static const char* GetScalarEnumAsString(int val);
   /// Return the lowest and highest integers, for use in looping
   static int GetFirstScalarInvariant();
   static int GetLastScalarInvariant();
@@ -494,7 +494,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMR
   /// and reference count it.
   /// TO DO: is this causing an extra modified event?
   virtual void SetGlyphConnection(vtkAlgorithmOutput* glyphPort);
-  vtkAlgorithmOutput * GlyphConnection;
+  vtkAlgorithmOutput* GlyphConnection;
 
   /// TO DO: add specific lookup tables ranging from 0..1 for or -1 1
   /// for scalar invariants with those ranges

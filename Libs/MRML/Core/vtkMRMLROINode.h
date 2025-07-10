@@ -12,7 +12,7 @@ class vtkPlanes;
 class VTK_MRML_EXPORT vtkMRMLROINode : public vtkMRMLTransformableNode
 {
 public:
-  static vtkMRMLROINode *New();
+  static vtkMRMLROINode* New();
   vtkTypeMacro(vtkMRMLROINode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -25,7 +25,7 @@ public:
   /// Set node attributes
   void ReadXMLAttributes( const char** atts) override;
 
-  virtual void ReadXMLString( const char *keyValuePairs);
+  virtual void ReadXMLString( const char* keyValuePairs);
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -33,7 +33,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -41,7 +41,7 @@ public:
 
   ///
   ///
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// update display node ids
@@ -98,7 +98,7 @@ public:
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
 
   vtkGetStringMacro(VolumeNodeID);
   vtkSetStringMacro(VolumeNodeID);
@@ -110,7 +110,7 @@ public:
 
   /// Description
   /// get transformed planes for the ROI region
-  void GetTransformedPlanes(vtkPlanes *planes);
+  void GetTransformedPlanes(vtkPlanes* planes);
 
 protected:
   vtkMRMLROINode();
@@ -138,11 +138,11 @@ protected:
   /// Control the orientation of the normals
   int InsideOut;
 
-  char *LabelText;
+  char* LabelText;
 
   ///
   /// The ID of the volume associated with the ROI
-  char *VolumeNodeID;
+  char* VolumeNodeID;
 };
 
 #endif

@@ -140,7 +140,7 @@ void vtkMRMLSegmentEditorNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLSegmentEditorNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSegmentEditorNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
   this->DisableModifiedEventOn();

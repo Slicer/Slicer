@@ -131,7 +131,7 @@ void vtkMRMLSegmentationStorageNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLSegmentationStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSegmentationStorageNode::Copy(vtkMRMLNode* anode)
 {
   MRMLNodeModifyBlocker blocker(anode);
   Superclass::Copy(anode);
@@ -243,13 +243,13 @@ void vtkMRMLSegmentationStorageNode::ResetSupportedWriteFileTypes()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSegmentationStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLSegmentationStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLSegmentationNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSegmentationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLSegmentationStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(refNode);
   if (!segmentationNode)
@@ -339,7 +339,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
   {
     reader->Update();
   }
-  catch (itk::ImageFileReaderException &error)
+  catch (itk::ImageFileReaderException& error)
   {
     // Do not report error as the file might contain poly data in which case ReadPolyDataRepresentation will read it alright
     vtkDebugMacro("ReadBinaryLabelmapRepresentation: Failed to load file " << path << " as segmentation. Exception:\n" << error);
@@ -1253,7 +1253,7 @@ int vtkMRMLSegmentationStorageNode::ReadPolyDataRepresentation(vtkMRMLSegmentati
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -1263,7 +1263,7 @@ int vtkMRMLSegmentationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  vtkMRMLSegmentationNode *segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(refNode);
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(refNode);
   if (segmentationNode == nullptr)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLSegmentationStorageNode::WriteDataInternal",

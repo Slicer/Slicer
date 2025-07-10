@@ -591,7 +591,7 @@ bool vtkMRMLApplicationLogic::Unzip(const char* zipFileName, const char* destina
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLApplicationLogic::UnpackSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory)
+std::string vtkMRMLApplicationLogic::UnpackSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory)
 {
   return vtkMRMLScene::UnpackSlicerDataBundle(sdbFilePath, temporaryDirectory);
 }
@@ -667,7 +667,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* s
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLApplicationLogic::CreateUniqueFileName(const std::string &filename, const std::string& knownExtension)
+std::string vtkMRMLApplicationLogic::CreateUniqueFileName(const std::string& filename, const std::string& knownExtension)
 {
   return vtkMRMLScene::CreateUniqueFileName(filename, knownExtension);
 }
@@ -691,11 +691,11 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 //     vtkDebugMacro("\nFindColorFiles: got user color file paths = " << this->UserColorFilePaths);
 //     // parse out the list, breaking at delimiter strings
 // #ifdef _WIN32
-//     const char *delim = ";";
+//     const char* delim = ";";
 // #else
-//     const char *delim = ":";
+//     const char* delim = ":";
 // #endif
-//     char *ptr = strtok(this->UserColorFilePaths, delim);
+//     char* ptr = strtok(this->UserColorFilePaths, delim);
 //     while (ptr != nullptr)
 //       {
 //       std::string dir = std::string(ptr);

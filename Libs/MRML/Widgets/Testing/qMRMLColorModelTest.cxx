@@ -36,7 +36,7 @@ class qMRMLColorModelTester: public QObject
   Q_OBJECT
 private:
 
-  qMRMLColorModel * ColorModel;
+  qMRMLColorModel* ColorModel;
 
 private slots:
   void init();

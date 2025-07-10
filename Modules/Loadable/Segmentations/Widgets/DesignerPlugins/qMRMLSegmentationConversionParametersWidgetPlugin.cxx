@@ -28,7 +28,7 @@ qMRMLSegmentationConversionParametersWidgetPlugin::qMRMLSegmentationConversionPa
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentationConversionParametersWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentationConversionParametersWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLSegmentationConversionParametersWidget* pluginWidget =
     new qMRMLSegmentationConversionParametersWidget(parentWidget);

@@ -90,7 +90,7 @@ private:
   void operator=(const vtkMRMLRulerDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

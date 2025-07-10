@@ -128,7 +128,7 @@ static const char NULL_EFFECT_NAME[] = "NULL";
 class vtkSegmentEditorEventCallbackCommand : public vtkCallbackCommand
 {
 public:
-  static vtkSegmentEditorEventCallbackCommand *New()
+  static vtkSegmentEditorEventCallbackCommand* New()
   {
     return new vtkSegmentEditorEventCallbackCommand;
   }
@@ -1117,7 +1117,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
   foreach (QAbstractButton* button, effectButtons)
   {
     button->hide();
-    QLayoutItem *child;
+    QLayoutItem* child;
     while ((child = d->EffectsGroupBox->layout()->takeAt(0)) != 0);
   }
 
@@ -1785,7 +1785,7 @@ void qMRMLSegmentEditorWidget::setMRMLScene(vtkMRMLScene* newScene)
       this, SLOT(onLayoutChanged(int)));
   }
 
-  vtkMRMLInteractionNode *interactionNode = nullptr;
+  vtkMRMLInteractionNode* interactionNode = nullptr;
   if (newScene)
   {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(newScene->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
@@ -2058,7 +2058,7 @@ void qMRMLSegmentEditorWidget::onSegmentationNodeChanged(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void qMRMLSegmentEditorWidget::onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
   Q_UNUSED(selected);
   Q_UNUSED(deselected);

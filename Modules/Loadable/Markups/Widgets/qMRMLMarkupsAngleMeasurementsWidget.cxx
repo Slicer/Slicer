@@ -37,7 +37,7 @@ class qMRMLMarkupsAngleMeasurementsWidgetPrivate:
 {
 
 public:
-  qMRMLMarkupsAngleMeasurementsWidgetPrivate(qMRMLMarkupsAngleMeasurementsWidget &widget);
+  qMRMLMarkupsAngleMeasurementsWidgetPrivate(qMRMLMarkupsAngleMeasurementsWidget& widget);
   void setupUi(qMRMLMarkupsAngleMeasurementsWidget* widget);
 
 protected:
@@ -74,7 +74,7 @@ void qMRMLMarkupsAngleMeasurementsWidgetPrivate::setupUi(qMRMLMarkupsAngleMeasur
 
 // --------------------------------------------------------------------------
 qMRMLMarkupsAngleMeasurementsWidget::
-qMRMLMarkupsAngleMeasurementsWidget(QWidget *parent)
+qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent)
   : Superclass(parent), d_ptr(new qMRMLMarkupsAngleMeasurementsWidgetPrivate(*this))
 {
   this->setup();
@@ -134,7 +134,7 @@ void qMRMLMarkupsAngleMeasurementsWidget::onRotationAxisChanged()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsAngleMeasurementsWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qMRMLMarkupsAngleMeasurementsWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const
 {
   vtkMRMLMarkupsAngleNode* angleNode = vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode);
   if (!angleNode)

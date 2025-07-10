@@ -35,7 +35,7 @@
 #include <cstdlib>
 #include <cmath>
 
-int qMRMLUtilsTest1( int argc, char * argv [] )
+int qMRMLUtilsTest1( int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

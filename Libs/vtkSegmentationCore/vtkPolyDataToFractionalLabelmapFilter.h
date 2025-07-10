@@ -111,9 +111,9 @@ protected:
   vtkPolyDataToFractionalLabelmapFilter();
   ~vtkPolyDataToFractionalLabelmapFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **,
-                          vtkInformationVector *) override;
-  vtkOrientedImageData *AllocateOutputData(vtkDataObject *out, int* updateExt);
+  int RequestData(vtkInformation*, vtkInformationVector**,
+                          vtkInformationVector*) override;
+  vtkOrientedImageData* AllocateOutputData(vtkDataObject* out, int* updateExt);
   int FillOutputPortInformation(int, vtkInformation*) override;
 
   /// Create a binary image stencil for the closed surface within the current extent
@@ -121,7 +121,7 @@ protected:
   /// \param output Output stencil data
   /// \param closedSurface The input surface to be converted
   /// \param extent The extent region that is being converted
-  void FillImageStencilData(vtkImageStencilData *output, vtkPolyData* closedSurface, int extent[6]);
+  void FillImageStencilData(vtkImageStencilData* output, vtkPolyData* closedSurface, int extent[6]);
 
   /// Add the values of the binary labelmap to the fractional labelmap.
   /// \param binaryLabelMap Binary labelmap that will be added to the fractional labelmap
@@ -133,7 +133,7 @@ protected:
   /// \param input The closed surface that is being cut
   /// \param output Polydata containing the contour lines
   /// \param z The z coordinate for the cutting plane
-  void PolyDataCutter(vtkPolyData *input, vtkPolyData *output,
+  void PolyDataCutter(vtkPolyData* input, vtkPolyData* output,
                              double z);
 
 private:

@@ -58,7 +58,7 @@ protected slots:
   void onHistogramSectionExpanded(bool);
 
 protected:
-  void showEvent(QShowEvent * event) override;
+  void showEvent(QShowEvent* event) override;
 protected:
   QScopedPointer<qSlicerScalarVolumeDisplayWidgetPrivate> d_ptr;
 

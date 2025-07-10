@@ -137,7 +137,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetDefaultColorMap()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
+void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection)
 {
   if (this->GetInputImageDataConnection() == imageDataConnection)
   {
@@ -164,7 +164,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode
-::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
+::SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection)
 {
   this->Threshold->SetInputConnection(imageDataConnection);
 
@@ -186,7 +186,7 @@ void vtkMRMLScalarVolumeDisplayNode
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeDisplayNode
-::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput *imageDataConnection)
+::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* imageDataConnection)
 {
   this->MultiplyAlpha->SetStencilConnection(imageDataConnection);
 }
@@ -373,7 +373,7 @@ void vtkMRMLScalarVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
   MRMLNodeModifyBlocker blocker(this);
 
   // CopyContent updates the color table, so we need to set the display range first
-  vtkMRMLScalarVolumeDisplayNode *node = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(anode);
+  vtkMRMLScalarVolumeDisplayNode* node = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(anode);
   if (node)
   {
     this->SetAutoWindowLevel(node->GetAutoWindowLevel());
@@ -412,9 +412,9 @@ void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
   if (cnode && event == vtkCommand::ModifiedEvent)
@@ -780,7 +780,7 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
   range[0] = 0;
   range[1] = 255.;
 
-  vtkImageData *imageData = this->GetScalarImageData();
+  vtkImageData* imageData = this->GetScalarImageData();
   if (!imageData || !this->GetInputImageData())
   {
     // it's a problem if the volume node has an image data but the display node
@@ -812,7 +812,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
     return;
   }
 
-  vtkImageData *imageDataScalar = this->GetScalarImageData();
+  vtkImageData* imageDataScalar = this->GetScalarImageData();
   if (!imageDataScalar)
   {
     vtkDebugMacro("CalculateScalarAutoLevels: input image data is null");

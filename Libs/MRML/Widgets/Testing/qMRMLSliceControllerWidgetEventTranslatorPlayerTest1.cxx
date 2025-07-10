@@ -61,7 +61,7 @@ void checkFinalWidgetState(void* data)
 }
 
 //-----------------------------------------------------------------------------
-int qMRMLSliceControllerWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLSliceControllerWidgetEventTranslatorPlayerTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

@@ -46,7 +46,7 @@ namespace
 
 //---------------------------------------------------------------------------
 int vtkSceneViewRestoreSceneTest(int vtkNotUsed(argc),
-                                         char * vtkNotUsed(argv)[] )
+                                         char* vtkNotUsed(argv)[] )
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> appLogic;

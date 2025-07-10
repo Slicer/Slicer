@@ -394,7 +394,7 @@ void qSlicerExtensionsServerWidget::onLoadFinished(bool ok)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsServerWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+bool qSlicerExtensionsServerWidget::acceptNavigationRequest(const QUrl& url, QWebEnginePage::NavigationType type, bool isMainFrame)
 {
   Q_D(qSlicerExtensionsServerWidget);
   d->InternalHosts = QStringList() << this->extensionsManagerModel()->frontendServerUrl().host();
@@ -402,7 +402,7 @@ bool qSlicerExtensionsServerWidget::acceptNavigationRequest(const QUrl & url, QW
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsServerWidget::changeEvent(QEvent *e)
+void qSlicerExtensionsServerWidget::changeEvent(QEvent* e)
 {
   Q_D(qSlicerExtensionsServerWidget);
   switch (e->type())

@@ -38,7 +38,7 @@
 #include "qMRMLWidget.h"
 
 
-int qMRMLNodeComboBoxTest6( int argc, char * argv [] )
+int qMRMLNodeComboBoxTest6( int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

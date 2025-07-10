@@ -9,9 +9,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLThreeDViewInformationWidgetPlugin : publ
   Q_OBJECT
 
 public:
-  qMRMLThreeDViewInformationWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLThreeDViewInformationWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModule :
 
 public:
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerSegmentationsModule(QObject *parent=nullptr);
+  explicit qSlicerSegmentationsModule(QObject* parent=nullptr);
   ~qSlicerSegmentationsModule() override;
 
   qSlicerGetTitleMacro(tr("Segmentations"));
@@ -79,7 +79,7 @@ protected:
   vtkMRMLAbstractLogic* createLogic() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
 protected slots:
   /// Called when a node is added to the scene. Makes connections to enable

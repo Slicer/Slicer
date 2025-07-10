@@ -50,7 +50,7 @@ public:
   virtual ~qSlicerMainWindowPrivate();
 
   virtual void init();
-  virtual void setupUi(QMainWindow * mainWindow);
+  virtual void setupUi(QMainWindow* mainWindow);
   virtual void setupStatusBar();
 
   virtual void setupRecentlyLoadedMenu(const QList<qSlicerIO::IOProperties>& fileProperties);

@@ -23,13 +23,13 @@
 #include "qMRMLMarkupsROIWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLMarkupsROIWidgetPlugin::qMRMLMarkupsROIWidgetPlugin(QObject *_parent)
+qMRMLMarkupsROIWidgetPlugin::qMRMLMarkupsROIWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLMarkupsROIWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLMarkupsROIWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLMarkupsROIWidget* _widget = new qMRMLMarkupsROIWidget(_parent);
   return _widget;

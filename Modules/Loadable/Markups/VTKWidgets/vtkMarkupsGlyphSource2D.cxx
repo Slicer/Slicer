@@ -53,27 +53,27 @@ vtkMarkupsGlyphSource2D::vtkMarkupsGlyphSource2D()
 
 //----------------------------------------------------------------------------
 int vtkMarkupsGlyphSource2D::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector),
+  vtkInformationVector* outputVector)
 {
   // get the info object
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   // get the output
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
+  vtkPolyData* output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   //Allocate storage
-  vtkPoints *pts = vtkPoints::New();
+  vtkPoints* pts = vtkPoints::New();
   pts->Allocate(6,6);
-  vtkCellArray *verts = vtkCellArray::New();
+  vtkCellArray* verts = vtkCellArray::New();
   verts->Allocate(verts->EstimateSize(1,1),1);
-  vtkCellArray *lines = vtkCellArray::New();
+  vtkCellArray* lines = vtkCellArray::New();
   lines->Allocate(lines->EstimateSize(4,2),2);
-  vtkCellArray *polys = vtkCellArray::New();
+  vtkCellArray* polys = vtkCellArray::New();
   polys->Allocate(polys->EstimateSize(1,4),4);
-  vtkUnsignedCharArray *colors = vtkUnsignedCharArray::New();
+  vtkUnsignedCharArray* colors = vtkUnsignedCharArray::New();
   colors->SetNumberOfComponents(3);
   colors->Allocate(2,2);
 
@@ -176,7 +176,7 @@ void vtkMarkupsGlyphSource2D::ConvertColor()
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::TransformGlyph(vtkPoints *pts)
+void vtkMarkupsGlyphSource2D::TransformGlyph(vtkPoints* pts)
 {
   double x[3];
   int i;
@@ -210,8 +210,8 @@ void vtkMarkupsGlyphSource2D::TransformGlyph(vtkPoints *pts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateVertex(vtkPoints *pts, vtkCellArray *verts,
-                                           vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateVertex(vtkPoints* pts, vtkCellArray* verts,
+                                           vtkUnsignedCharArray* colors)
 {
   vtkIdType ptIds[1];
   ptIds[0] = pts->InsertNextPoint(0.0,0.0,0.0);
@@ -222,9 +222,9 @@ void vtkMarkupsGlyphSource2D::CreateVertex(vtkPoints *pts, vtkCellArray *verts,
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateCross(vtkPoints *pts, vtkCellArray *lines,
-                                          vtkCellArray *vtkNotUsed(polys),
-                                          vtkUnsignedCharArray *colors,
+void vtkMarkupsGlyphSource2D::CreateCross(vtkPoints* pts, vtkCellArray* lines,
+                                          vtkCellArray* vtkNotUsed(polys),
+                                          vtkUnsignedCharArray* colors,
                                           double scale, bool dot)
 {
   vtkIdType ptIds[4];
@@ -283,8 +283,8 @@ void vtkMarkupsGlyphSource2D::CreateCross(vtkPoints *pts, vtkCellArray *lines,
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateThickCross(vtkPoints *pts, vtkCellArray *lines,
-                                               vtkCellArray *polys, vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateThickCross(vtkPoints* pts, vtkCellArray* lines,
+                                               vtkCellArray* polys, vtkUnsignedCharArray* colors)
 {
   if (this->Filled)
   {
@@ -330,8 +330,8 @@ void vtkMarkupsGlyphSource2D::CreateThickCross(vtkPoints *pts, vtkCellArray *lin
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateTriangle(vtkPoints *pts, vtkCellArray *lines,
-                                             vtkCellArray *polys, vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateTriangle(vtkPoints* pts, vtkCellArray* lines,
+                                             vtkCellArray* polys, vtkUnsignedCharArray* colors)
 {
   vtkIdType ptIds[4];
 
@@ -354,8 +354,8 @@ void vtkMarkupsGlyphSource2D::CreateTriangle(vtkPoints *pts, vtkCellArray *lines
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateSquare(vtkPoints *pts, vtkCellArray *lines,
-                                           vtkCellArray *polys, vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateSquare(vtkPoints* pts, vtkCellArray* lines,
+                                           vtkCellArray* polys, vtkUnsignedCharArray* colors)
 {
   vtkIdType ptIds[5];
 
@@ -379,8 +379,8 @@ void vtkMarkupsGlyphSource2D::CreateSquare(vtkPoints *pts, vtkCellArray *lines,
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateCircle(vtkPoints *pts, vtkCellArray *lines,
-                                           vtkCellArray *polys, vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateCircle(vtkPoints* pts, vtkCellArray* lines,
+                                           vtkCellArray* polys, vtkUnsignedCharArray* colors)
 {
   const unsigned int numberOfPoints = 16;
   vtkIdType ptIds[numberOfPoints+1];
@@ -411,8 +411,8 @@ void vtkMarkupsGlyphSource2D::CreateCircle(vtkPoints *pts, vtkCellArray *lines,
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateDiamond(vtkPoints *pts, vtkCellArray *lines,
-                                            vtkCellArray *polys, vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateDiamond(vtkPoints* pts, vtkCellArray* lines,
+                                            vtkCellArray* polys, vtkUnsignedCharArray* colors)
 {
   vtkIdType ptIds[5];
 
@@ -436,8 +436,8 @@ void vtkMarkupsGlyphSource2D::CreateDiamond(vtkPoints *pts, vtkCellArray *lines,
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateArrow(vtkPoints *pts, vtkCellArray *lines,
-                                          vtkCellArray *vtkNotUsed(polys), vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateArrow(vtkPoints* pts, vtkCellArray* lines,
+                                          vtkCellArray* vtkNotUsed(polys), vtkUnsignedCharArray* colors)
 {
     //stem
     vtkIdType ptIds[3];
@@ -459,8 +459,8 @@ void vtkMarkupsGlyphSource2D::CreateArrow(vtkPoints *pts, vtkCellArray *lines,
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateThickArrow(vtkPoints *pts, vtkCellArray *lines,
-                                               vtkCellArray *polys, vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateThickArrow(vtkPoints* pts, vtkCellArray* lines,
+                                               vtkCellArray* polys, vtkUnsignedCharArray* colors)
 {
   vtkIdType ptIds[8];
 
@@ -499,8 +499,8 @@ void vtkMarkupsGlyphSource2D::CreateThickArrow(vtkPoints *pts, vtkCellArray *lin
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateHookedArrow(vtkPoints *pts, vtkCellArray *lines,
-                                                vtkCellArray *polys, vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateHookedArrow(vtkPoints* pts, vtkCellArray* lines,
+                                                vtkCellArray* polys, vtkUnsignedCharArray* colors)
 {
   if (this->Filled)
   {
@@ -537,9 +537,9 @@ void vtkMarkupsGlyphSource2D::CreateHookedArrow(vtkPoints *pts, vtkCellArray *li
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateStarBurst(vtkPoints *pts, vtkCellArray *lines,
-                                              vtkCellArray *vtkNotUsed(polys),
-                                              vtkUnsignedCharArray *colors)
+void vtkMarkupsGlyphSource2D::CreateStarBurst(vtkPoints* pts, vtkCellArray* lines,
+                                              vtkCellArray* vtkNotUsed(polys),
+                                              vtkUnsignedCharArray* colors)
 {
   vtkIdType ptIds[2];
   const int numberOfLines = 8;
@@ -560,8 +560,8 @@ void vtkMarkupsGlyphSource2D::CreateStarBurst(vtkPoints *pts, vtkCellArray *line
 }
 
 //----------------------------------------------------------------------------
-void vtkMarkupsGlyphSource2D::CreateDash(vtkPoints *pts, vtkCellArray *lines,
-                                         vtkCellArray *polys, vtkUnsignedCharArray *colors,
+void vtkMarkupsGlyphSource2D::CreateDash(vtkPoints* pts, vtkCellArray* lines,
+                                         vtkCellArray* polys, vtkUnsignedCharArray* colors,
                                          double scale)
 {
   vtkIdType ptIds[5];

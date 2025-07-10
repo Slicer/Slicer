@@ -19,7 +19,7 @@
 #include "qMRMLColorLegendDisplayNodeWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLColorLegendDisplayNodeWidgetPlugin::qMRMLColorLegendDisplayNodeWidgetPlugin(QObject *newParent)
+qMRMLColorLegendDisplayNodeWidgetPlugin::qMRMLColorLegendDisplayNodeWidgetPlugin(QObject* newParent)
   : QObject(newParent)
 {
 }
@@ -43,7 +43,7 @@ QString qMRMLColorLegendDisplayNodeWidgetPlugin::whatsThis() const
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLColorLegendDisplayNodeWidgetPlugin::createWidget(QWidget *newParent)
+QWidget* qMRMLColorLegendDisplayNodeWidgetPlugin::createWidget(QWidget* newParent)
 {
   qMRMLColorLegendDisplayNodeWidget* newWidget =
     new qMRMLColorLegendDisplayNodeWidget(newParent);

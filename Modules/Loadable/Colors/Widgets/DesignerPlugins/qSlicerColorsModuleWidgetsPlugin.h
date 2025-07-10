@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_COLORS_WIDGETS_PLUGINS_EXPORT qSlicerColorsModuleWidget
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
-    QList<QDesignerCustomWidgetInterface *> plugins;
+    QList<QDesignerCustomWidgetInterface*> plugins;
     plugins << new qMRMLColorLegendDisplayNodeWidgetPlugin
       << new qMRMLColorListViewPlugin
       << new qMRMLColorTableViewPlugin;

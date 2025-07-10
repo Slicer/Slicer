@@ -35,7 +35,7 @@
 
 /**************************** globale Variablen  *****************************/
 static int            nx, ny, nz, nzz;
-static unsigned char *workbuf, *result;
+static unsigned char* workbuf, *result;
 static int            f_tab[26];
 static unsigned char  p[5][5][5];
 
@@ -132,11 +132,11 @@ int count_components(int nc)
   return count;
 }
 
-int Env_Code_3_img(int loc[3], unsigned char *img, int dim[3])
+int Env_Code_3_img(int loc[3], unsigned char* img, int dim[3])
 /* berechnet den Nachbarschaftscode der 3x3x3-Umgebung von P{i} */
 {
   int            nc;
-  unsigned char *pos;
+  unsigned char* pos;
 
   int _nzz = dim[0] * dim[1];
   int _nx = dim[0];
@@ -158,7 +158,7 @@ int Env_Code_3(int i)
 /* berechnet den Nachbarschaftscode der 3x3x3-Umgebung von P{i} */
 {
   int            nc;
-  unsigned char *pos;
+  unsigned char* pos;
 
   pos = &result[i - nzz];
   nc = Q(-1 - nx, 1) + Q(-nx, 2) + Q(1 - nx, 4) + Q(-1, 8) + Q(0, 16)
@@ -595,8 +595,8 @@ int Tilg_Test_3(int c, int d, int type)
 }
 
 void tilg_iso_3D(int dx, int dy, int dz,
-                 unsigned char *data,
-                 unsigned char *res,
+                 unsigned char* data,
+                 unsigned char* res,
                  int type)
 // dx,dy,dz  are the dimensions of the input (data) and output (res) image
 // output image has to be allocated
@@ -608,7 +608,7 @@ void tilg_iso_3D(int dx, int dy, int dz,
   int nc, x, y, z;
   int end, i, dir, dir_mask;
   // int free_mask;
-  int *list;
+  int* list;
   int  dir_tab[26];
 
   // int b[3][3][3];
@@ -621,7 +621,7 @@ void tilg_iso_3D(int dx, int dy, int dz,
   workbuf = data;
   nzz = nx * ny;
   /* Speicher allozieren */
-  if( (list = (int *) malloc(nzz * nz * sizeof(int) / 4) ) == nullptr )
+  if( (list = (int*) malloc(nzz * nz * sizeof(int) / 4) ) == nullptr )
   {
     printf("out of memory\n");
     return;

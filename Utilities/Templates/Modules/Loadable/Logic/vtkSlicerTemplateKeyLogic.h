@@ -40,7 +40,7 @@ class VTK_SLICER_TEMPLATEKEY_MODULE_LOGIC_EXPORT vtkSlicerTemplateKeyLogic :
 {
 public:
 
-  static vtkSlicerTemplateKeyLogic *New();
+  static vtkSlicerTemplateKeyLogic* New();
   vtkTypeMacro(vtkSlicerTemplateKeyLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

@@ -33,7 +33,7 @@ int ImportIDModelHierarchyConflictTest();
 int ImportModelHierarchyTwiceTest();
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
+int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char* vtkNotUsed(argv) [])
 {
   bool res = true;
   res = res && (ImportIDModelHierarchyConflictTest() == EXIT_SUCCESS);
@@ -179,7 +179,7 @@ int ImportIDModelHierarchyConflictTest()
   CHECK_NODE_ID_AND_NAME(modelNode2->GetDisplayNode(), "vtkMRMLModelDisplayNode3", "New Display 1");
 
   // check that the hierarchies point to the right display nodes
-  vtkMRMLModelHierarchyNode *hierarchyNode2 =
+  vtkMRMLModelHierarchyNode* hierarchyNode2 =
       vtkMRMLModelHierarchyNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelHierarchyNode2"));
 
   vtkMRMLModelDisplayNode* modelDisplayNode2 =

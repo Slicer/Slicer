@@ -177,7 +177,7 @@ QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
 //------------------------------------------------------------------------------
 // qMRMLTableModel
 //------------------------------------------------------------------------------
-qMRMLTableModel::qMRMLTableModel(QObject *_parent)
+qMRMLTableModel::qMRMLTableModel(QObject* _parent)
   : QStandardItemModel(_parent)
   , d_ptr(new qMRMLTableModelPrivate(*this))
 {
@@ -186,7 +186,7 @@ qMRMLTableModel::qMRMLTableModel(QObject *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLTableModel::qMRMLTableModel(qMRMLTableModelPrivate* pimpl, QObject *parentObject)
+qMRMLTableModel::qMRMLTableModel(qMRMLTableModelPrivate* pimpl, QObject* parentObject)
   : QStandardItemModel(parentObject)
   , d_ptr(pimpl)
 {
@@ -605,7 +605,7 @@ void qMRMLTableModel::onMRMLTableNodeModified(vtkObject* node)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTableModel::onItemChanged(QStandardItem * item)
+void qMRMLTableModel::onItemChanged(QStandardItem* item)
 {
   if (item == this->invisibleRootItem())
   {

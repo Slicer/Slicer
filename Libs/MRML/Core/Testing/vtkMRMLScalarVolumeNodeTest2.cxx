@@ -29,7 +29,7 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 
-int vtkMRMLScalarVolumeNodeTest2(int , char * [] )
+int vtkMRMLScalarVolumeNodeTest2(int, char*[])
 {
   vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(256, 256, 1);

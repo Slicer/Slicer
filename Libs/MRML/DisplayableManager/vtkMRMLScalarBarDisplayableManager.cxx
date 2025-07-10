@@ -61,7 +61,7 @@ vtkStandardNewMacro(vtkMRMLScalarBarDisplayableManager );
 class vtkMRMLScalarBarDisplayableManager::vtkInternal
 {
 public:
-  vtkInternal(vtkMRMLScalarBarDisplayableManager * external);
+  vtkInternal(vtkMRMLScalarBarDisplayableManager* external);
   ~vtkInternal();
 
   vtkObserverManager* GetMRMLNodesObserverManager();
@@ -85,7 +85,7 @@ public:
 
 //---------------------------------------------------------------------------
 vtkMRMLScalarBarDisplayableManager::vtkInternal
-::vtkInternal(vtkMRMLScalarBarDisplayableManager * external)
+::vtkInternal(vtkMRMLScalarBarDisplayableManager* external)
 {
   this->External = external;
   this->WindowLevelWidget = vtkSmartPointer<vtkMRMLWindowLevelWidget>::New();
@@ -129,7 +129,7 @@ void vtkMRMLScalarBarDisplayableManager::vtkInternal::UpdateSliceNode()
 
   if (!this->WindowLevelWidget->GetRenderer())
   {
-    vtkMRMLApplicationLogic *mrmlAppLogic = this->External->GetMRMLApplicationLogic();
+    vtkMRMLApplicationLogic* mrmlAppLogic = this->External->GetMRMLApplicationLogic();
     this->WindowLevelWidget->SetMRMLApplicationLogic(mrmlAppLogic);
     this->WindowLevelWidget->CreateDefaultRepresentation();
     this->WindowLevelWidget->SetRenderer(this->External->GetRenderer());
@@ -190,7 +190,7 @@ void vtkMRMLScalarBarDisplayableManager::OnMRMLSliceNodeModifiedEvent()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2)
+bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2)
 {
   int eventid = eventData->GetType();
   if (eventid == vtkCommand::LeaveEvent)

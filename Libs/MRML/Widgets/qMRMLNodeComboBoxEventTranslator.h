@@ -42,7 +42,7 @@ public:
   qMRMLNodeComboBoxEventTranslator(QObject* parent = nullptr);
 
   using Superclass::translateEvent;
-  bool translateEvent(QObject *Object, QEvent *Event, bool &Error) override;
+  bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 private:
   qMRMLNodeComboBoxEventTranslator(const qMRMLNodeComboBoxEventTranslator&); // NOT implemented

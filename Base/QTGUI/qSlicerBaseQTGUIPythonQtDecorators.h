@@ -83,7 +83,7 @@ public slots:
   // qSlicerAbstractModule
 
   //----------------------------------------------------------------------------
-  qSlicerAbstractModule* module(qSlicerAbstractModuleWidget * _moduleWidget)
+  qSlicerAbstractModule* module(qSlicerAbstractModuleWidget* _moduleWidget)
   {
     return dynamic_cast<qSlicerAbstractModule*>(_moduleWidget->module());
   }

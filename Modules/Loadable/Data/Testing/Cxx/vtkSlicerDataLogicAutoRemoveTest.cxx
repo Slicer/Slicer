@@ -34,7 +34,7 @@ bool testAutoRemoveModelFirst();
 bool testAutoRemoveDisplayFirst();
 
 //-----------------------------------------------------------------------------
-int vtkSlicerDataLogicAutoRemoveTest( int , char * [] )
+int vtkSlicerDataLogicAutoRemoveTest(int, char*[])
 {
   bool res = true;
   res = testAutoRemoveModelFirst() && res;

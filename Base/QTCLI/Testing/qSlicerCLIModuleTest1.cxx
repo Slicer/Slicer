@@ -43,11 +43,11 @@
 namespace
 {
 //-----------------------------------------------------------------------------
-qSlicerCLIModule * CLIModule;
+qSlicerCLIModule* CLIModule;
 QString            ErrorString;
 
 //-----------------------------------------------------------------------------
-void runCli(void * data)
+void runCli(void* data)
 {
   Q_ASSERT(CLIModule);
   Q_UNUSED(data);
@@ -61,7 +61,7 @@ void runCli(void * data)
   //outputFile.close();
 
   // Create node
-  vtkMRMLCommandLineModuleNode * cliModuleNode =
+  vtkMRMLCommandLineModuleNode* cliModuleNode =
     CLIModule->cliModuleLogic()->CreateNodeInScene();
 
   // Values
@@ -96,7 +96,7 @@ void runCli(void * data)
 } // end anonymous namespace
 
 //-----------------------------------------------------------------------------
-int qSlicerCLIModuleTest1(int argc, char * argv[])
+int qSlicerCLIModuleTest1(int argc, char* argv[])
 {
   // The CLI4Test module (CLIModule4Test) has already been built as a normal
   // CLI library. It can be found in
@@ -106,7 +106,7 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
   qSlicerApplication::setAttribute(qSlicerApplication::AA_DisablePython);
   qSlicerApplication app(argc, argv);
 
-  qSlicerModuleManager * moduleManager = app.moduleManager();
+  qSlicerModuleManager* moduleManager = app.moduleManager();
   if (!moduleManager)
   {
     std::cerr << "Line " << __LINE__
@@ -144,7 +144,7 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
     moduleFactoryManager->loadModule(name);
   }
 
-  qSlicerAbstractCoreModule * module = moduleManager->module("CLI4Test");
+  qSlicerAbstractCoreModule* module = moduleManager->module("CLI4Test");
   if (!module)
   {
     std::cerr << "Line " << __LINE__
@@ -153,7 +153,7 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  qSlicerCLIModule * cliModule = qobject_cast<qSlicerCLIModule*>(module);
+  qSlicerCLIModule* cliModule = qobject_cast<qSlicerCLIModule*>(module);
   if (!cliModule)
   {
     std::cerr << "Line " << __LINE__
@@ -162,7 +162,7 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  qSlicerAbstractModuleRepresentation * widgetRepresentation = cliModule->widgetRepresentation();
+  qSlicerAbstractModuleRepresentation* widgetRepresentation = cliModule->widgetRepresentation();
   if (!widgetRepresentation)
   {
     std::cerr << "Line " << __LINE__

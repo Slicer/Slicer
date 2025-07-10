@@ -430,7 +430,7 @@ bool vtkMRMLSegmentationDisplayNode::GetSegmentColor(std::string segmentID, doub
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLSegmentationDisplayNode::GetSegmentColor(std::string segmentID, double &r, double &g, double &b)
+bool vtkMRMLSegmentationDisplayNode::GetSegmentColor(std::string segmentID, double& r, double& g, double& b)
 {
   double color[3] = {vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2]};
   if (!this->GetSegmentColor(segmentID, color))
@@ -1004,7 +1004,7 @@ void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double color[3], int c
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double &r, double &g, double &b)
+void vtkMRMLSegmentationDisplayNode::GenerateSegmentColor(double& r, double& g, double& b)
 {
   double color[3] = {0.0, 0.0, 0.0};
   this->GenerateSegmentColor(color);

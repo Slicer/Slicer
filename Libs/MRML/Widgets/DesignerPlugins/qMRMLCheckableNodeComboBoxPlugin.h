@@ -31,7 +31,7 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLCheckableNodeComboBoxPlugin
 public:
   qMRMLCheckableNodeComboBoxPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget* parent) override;
+  QWidget* createWidget(QWidget* parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

@@ -107,7 +107,7 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->NoUpdatesWereFoundText = qSlicerWelcomeModuleWidget::tr("No updates were found.");
 
   // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
-  ctkButtonGroup * group = new ctkButtonGroup(widget);
+  ctkButtonGroup* group = new ctkButtonGroup(widget);
 
   // Add all collabsibleWidgetButton to a button group
   QList<ctkCollapsibleButton*> collapsibles = widget->findChildren<ctkCollapsibleButton*>();
@@ -167,12 +167,12 @@ qSlicerApplicationUpdateManager* qSlicerWelcomeModuleWidgetPrivate::applicationU
 bool qSlicerWelcomeModuleWidgetPrivate::selectModule(const QString& moduleName)
 {
   Q_Q(qSlicerWelcomeModuleWidget);
-  qSlicerModuleManager * moduleManager = qSlicerCoreApplication::application()->moduleManager();
+  qSlicerModuleManager* moduleManager = qSlicerCoreApplication::application()->moduleManager();
   if (!moduleManager)
   {
     return false;
   }
-  qSlicerAbstractCoreModule * module = moduleManager->module(moduleName);
+  qSlicerAbstractCoreModule* module = moduleManager->module(moduleName);
   if(!module)
   {
     QMessageBox::warning(
@@ -181,7 +181,7 @@ bool qSlicerWelcomeModuleWidgetPrivate::selectModule(const QString& moduleName)
           QMessageBox::Ok);
     return false;
   }
-  qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
   {
     return false;
@@ -324,7 +324,7 @@ bool qSlicerWelcomeModuleWidget::loadDicomData()
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::loadNonDicomData()
 {
-  qSlicerIOManager *ioManager = qSlicerApplication::application()->ioManager();
+  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   if (!ioManager)
   {
     return false;

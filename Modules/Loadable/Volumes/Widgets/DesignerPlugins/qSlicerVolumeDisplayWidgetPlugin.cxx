@@ -20,15 +20,15 @@
 
 //------------------------------------------------------------------------------
 qSlicerVolumeDisplayWidgetPlugin
-::qSlicerVolumeDisplayWidgetPlugin(QObject *_parent)
+::qSlicerVolumeDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerVolumeDisplayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerVolumeDisplayWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qSlicerVolumeDisplayWidget* _widget
     = new qSlicerVolumeDisplayWidget(_parent);

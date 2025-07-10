@@ -62,7 +62,7 @@ void qMRMLMarkupsTestLineWidgetPrivate::setupUi(qMRMLMarkupsTestLineWidget* widg
 
 // --------------------------------------------------------------------------
 qMRMLMarkupsTestLineWidget::
-qMRMLMarkupsTestLineWidget(QWidget *parent)
+qMRMLMarkupsTestLineWidget(QWidget* parent)
   : Superclass(parent),
     d_ptr(new qMRMLMarkupsTestLineWidgetPrivate(this))
 {
@@ -94,7 +94,7 @@ void qMRMLMarkupsTestLineWidget::updateWidgetFromMRML()
 
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsTestLineWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qMRMLMarkupsTestLineWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const
 {
   Q_D(const qMRMLMarkupsTestLineWidget);
 

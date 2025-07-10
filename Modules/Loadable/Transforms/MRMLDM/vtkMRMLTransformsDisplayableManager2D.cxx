@@ -84,7 +84,7 @@ public:
   // Transforms
   void AddTransformNode(vtkMRMLTransformNode* displayableNode);
   void RemoveTransformNode(vtkMRMLTransformNode* displayableNode);
-  void UpdateDisplayableTransforms(vtkMRMLTransformNode *node);
+  void UpdateDisplayableTransforms(vtkMRMLTransformNode* node);
 
   // Slice Node
   void SetSliceNode(vtkMRMLSliceNode* sliceNode);
@@ -195,7 +195,7 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::AddTransformNode(vtkMRM
 
   for (int i=0; i<nnodes; i++)
   {
-    vtkMRMLTransformDisplayNode *dnode = vtkMRMLTransformDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
+    vtkMRMLTransformDisplayNode* dnode = vtkMRMLTransformDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
     if ( this->UseDisplayNode(dnode) )
     {
       this->TransformToDisplayNodes[node].insert(dnode);
@@ -538,7 +538,7 @@ void vtkMRMLTransformsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject* ca
 
   if ( displayableNode )
   {
-    vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode *> (callData);
+    vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*> (callData);
     vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(callDataNode);
 
     if ( displayNode && (event == vtkMRMLDisplayableNode::DisplayModifiedEvent) )
@@ -577,7 +577,7 @@ void vtkMRMLTransformsDisplayableManager2D::UpdateFromMRML()
   this->Internal->ClearDisplayableNodes();
 
   vtkMRMLTransformNode* mNode = nullptr;
-  std::vector<vtkMRMLNode *> mNodes;
+  std::vector<vtkMRMLNode*> mNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLTransformNode", mNodes) : 0;
   for (int i=0; i<nnodes; i++)
   {

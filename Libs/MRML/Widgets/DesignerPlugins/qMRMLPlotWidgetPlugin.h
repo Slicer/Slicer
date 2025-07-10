@@ -29,9 +29,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLPlotWidgetPlugin :
   Q_OBJECT
 
 public:
-  qMRMLPlotWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLPlotWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
 //   QIcon    icon() const;
   QString  includeFile() const override;

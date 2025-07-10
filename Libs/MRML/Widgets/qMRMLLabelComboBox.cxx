@@ -26,13 +26,13 @@ protected:
 public:
   qMRMLLabelComboBoxPrivate(qMRMLLabelComboBox& object);
 
-  void setMRMLColorNode(vtkMRMLColorNode *newMRMLColorNode);
+  void setMRMLColorNode(vtkMRMLColorNode* newMRMLColorNode);
 
   QColor colorFromIndex(int index) const;
 
-  ctkComboBox *       ComboBox;
+  ctkComboBox* ComboBox;
   bool                NoneEnabled;
-  vtkMRMLColorNode *  ColorNode;
+  vtkMRMLColorNode* ColorNode;
   int                 CurrentColor;
   int                 MaximumColorCount;
   bool                ColorNameVisible;
@@ -56,7 +56,7 @@ qMRMLLabelComboBoxPrivate::qMRMLLabelComboBoxPrivate(qMRMLLabelComboBox& object)
 }
 
 // ------------------------------------------------------------------------------
-void qMRMLLabelComboBoxPrivate::setMRMLColorNode(vtkMRMLColorNode * newMRMLColorNode)
+void qMRMLLabelComboBoxPrivate::setMRMLColorNode(vtkMRMLColorNode* newMRMLColorNode)
 {
   Q_Q(qMRMLLabelComboBox);
 
@@ -89,7 +89,7 @@ QColor qMRMLLabelComboBoxPrivate::colorFromIndex(int index) const
   }
 
   double colorTable[4];
-  vtkLookupTable *table = this->ColorNode->GetLookupTable();
+  vtkLookupTable* table = this->ColorNode->GetLookupTable();
 
   table->GetTableValue(index, colorTable);
 
@@ -261,7 +261,7 @@ CTK_GET_CPP(qMRMLLabelComboBox, int, maximumColorCount, MaximumColorCount);
 // qMRMLLabelComboBox Slots
 
 // ---------------------------------------------------------------------------------
-void qMRMLLabelComboBox::setMRMLColorNode(vtkMRMLNode *newMRMLColorNode)
+void qMRMLLabelComboBox::setMRMLColorNode(vtkMRMLNode* newMRMLColorNode)
 {
   Q_D(qMRMLLabelComboBox);
   d->setMRMLColorNode(vtkMRMLColorNode::SafeDownCast(newMRMLColorNode));
@@ -300,7 +300,7 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
   }
 
   //LookUpTabletime.start();
-  vtkLookupTable * lookupTable = d->ColorNode->GetLookupTable();
+  vtkLookupTable* lookupTable = d->ColorNode->GetLookupTable();
   Q_ASSERT(lookupTable);
 
   const int numberOfColors = lookupTable->GetNumberOfColors();

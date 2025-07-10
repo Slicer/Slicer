@@ -362,7 +362,7 @@
 
 //----------------------------------------------------------------------------
 /// @defgroup vtkMRMLCopyMacros Helper macros for copying node properties from a source node.
-/// They are To be used in Copy(vtkMRMLNode *anode) method.
+/// They are To be used in Copy(vtkMRMLNode* anode) method.
 /// Arguments of value copying macros:
 /// - propertyName: property name (without quotes); value is get/set using Get/Set(propertyName) methods.
 ///

@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModule
   Q_INTERFACES(qSlicerLoadableModule);
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerDataModule(QObject *parent=nullptr);
+  qSlicerDataModule(QObject* parent=nullptr);
   ~qSlicerDataModule() override;
 
   void setup() override;
@@ -56,7 +56,7 @@ public:
 protected:
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

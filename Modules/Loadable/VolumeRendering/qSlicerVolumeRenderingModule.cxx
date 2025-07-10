@@ -163,7 +163,7 @@ void qSlicerVolumeRenderingModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerVolumeRenderingModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerVolumeRenderingModule::createWidgetRepresentation()
 {
   return new qSlicerVolumeRenderingModuleWidget;
 }

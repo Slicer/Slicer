@@ -45,22 +45,22 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   const char* GetVolumeNodeID();
   vtkMRMLVolumeNode* GetVolumeNode();
 
   const char* GetVolumePropertyNodeID();
-  void SetAndObserveVolumePropertyNodeID(const char *volumePropertyNodeID);
+  void SetAndObserveVolumePropertyNodeID(const char* volumePropertyNodeID);
   vtkMRMLVolumePropertyNode* GetVolumePropertyNode();
 
   const char* GetShaderPropertyNodeID();
-  void SetAndObserveShaderPropertyNodeID(const char *shaderPropertyNodeID);
+  void SetAndObserveShaderPropertyNodeID(const char* shaderPropertyNodeID);
   vtkMRMLShaderPropertyNode* GetShaderPropertyNode();
-  vtkMRMLShaderPropertyNode* GetOrCreateShaderPropertyNode( vtkMRMLScene * mrmlScene );
+  vtkMRMLShaderPropertyNode* GetOrCreateShaderPropertyNode( vtkMRMLScene* mrmlScene );
 
   const char* GetROINodeID();
-  void SetAndObserveROINodeID(const char *roiNodeID);
+  void SetAndObserveROINodeID(const char* roiNodeID);
   vtkMRMLDisplayableNode* GetROINode();
   /// Deprecated. Use GetROINode() instead for retrieving the markups ROI node.
   vtkMRMLAnnotationROINode* GetAnnotationROINode() { return nullptr; };
@@ -129,7 +129,7 @@ protected:
   vtkMRMLVolumeRenderingDisplayNode(const vtkMRMLVolumeRenderingDisplayNode&);
   void operator=(const vtkMRMLVolumeRenderingDisplayNode&);
 
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Check if a fast clipping method can be used with the specified clip node.
   /// Returns true if fast clipping can be utilized, or returns false otherwise.

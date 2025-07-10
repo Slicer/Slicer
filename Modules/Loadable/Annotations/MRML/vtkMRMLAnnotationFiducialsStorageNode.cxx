@@ -20,7 +20,7 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationFiducialsStorageNode);
 
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAnnotationFiducialNode *refNode, char line[1024], int labelColumn, int xColumn, int yColumn, int zColumn,  int selColumn,  int visColumn, int numColumns)
+int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAnnotationFiducialNode* refNode, char line[1024], int labelColumn, int xColumn, int yColumn, int zColumn,  int selColumn,  int visColumn, int numColumns)
 {
   if (!refNode)
   {
@@ -46,7 +46,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
 
   int sel = 1, vis = 1;
   std::string annotation;
-  const char * separatorString = "|";
+  const char* separatorString = "|";
   std::string label = std::string("");
   size_t  startPos = 0;
   size_t  endPos =attValue.find(separatorString,startPos);
@@ -112,7 +112,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtkMRMLAnnotationFiducialNode *refNode, char line[1024], int &labelColumn,
+int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtkMRMLAnnotationFiducialNode* refNode, char line[1024], int& labelColumn,
                                     int& xColumn,    int& yColumn,     int& zColumn, int& selColumn, int& visColumn, int& numColumns)
 {
  if (line[0] != '#' || line[1] != ' ')
@@ -130,7 +130,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtk
   vtkDebugMacro("Have a possible option in line " << line);
   std::string lineString = std::string(line);
 
-  const char * separatorString = "|";
+  const char* separatorString = "|";
 
   if (lineString.find(preposition + "NumberingScheme = ") != std::string::npos)
   {
@@ -149,8 +149,8 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtk
     // reset all of them
     labelColumn= xColumn = yColumn = zColumn = selColumn = visColumn = -1;
     numColumns = 0;
-    char *columns = (char *)str.c_str();
-    char *ptr = strtok(columns, separatorString);
+    char* columns = (char*)str.c_str();
+    char* ptr = strtok(columns, separatorString);
     while (ptr != nullptr)
     {
       if (strcmp(ptr, "label") == 0)
@@ -190,7 +190,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsProperties(vtk
 
 //----------------------------------------------------------------------------
 // assumes that the node is already reset
-int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiducialNode *refNode)
+int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiducialNode* refNode)
 {
 
   if (refNode == nullptr)
@@ -299,15 +299,15 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiduc
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLAnnotationFiducialsStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLAnnotationFiducialsStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLAnnotationFiducialNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationFiducialsStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationFiducialsStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLAnnotationFiducialNode *fiducialNode =
+  vtkMRMLAnnotationFiducialNode* fiducialNode =
     vtkMRMLAnnotationFiducialNode::SafeDownCast(refNode);
 
   int res = this->ReadAnnotation(fiducialNode);
@@ -316,7 +316,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadDataInternal(vtkMRMLNode *refNode
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMRMLAnnotationFiducialNode *refNode)
+int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMRMLAnnotationFiducialNode* refNode)
 {
   if (refNode == nullptr)
   {

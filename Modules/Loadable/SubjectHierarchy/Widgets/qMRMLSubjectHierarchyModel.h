@@ -86,7 +86,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
 
 public:
   typedef QStandardItemModel Superclass;
-  qMRMLSubjectHierarchyModel(QObject *parent=nullptr);
+  qMRMLSubjectHierarchyModel(QObject* parent=nullptr);
   ~qMRMLSubjectHierarchyModel() override;
 
   enum ItemDataRole
@@ -128,8 +128,8 @@ public:
 
   Qt::DropActions supportedDropActions()const override;
   QMimeData* mimeData(const QModelIndexList& indexes)const override;
-  bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-                            int row, int column, const QModelIndex &parent) override;
+  bool dropMimeData(const QMimeData* data, Qt::DropAction action,
+                            int row, int column, const QModelIndex& parent) override;
 
   Q_INVOKABLE virtual void setMRMLScene(vtkMRMLScene* scene);
   Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
@@ -143,7 +143,7 @@ public:
   virtual bool canBeAChild(vtkIdType itemID)const;
   virtual bool canBeAParent(vtkIdType itemID)const;
 
-  vtkIdType subjectHierarchyItemFromIndex(const QModelIndex &index)const;
+  vtkIdType subjectHierarchyItemFromIndex(const QModelIndex& index)const;
   vtkIdType subjectHierarchyItemFromItem(QStandardItem* item)const;
   QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
   QStandardItem* itemFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
@@ -211,7 +211,7 @@ protected slots:
   void updateColumnCount();
 
 protected:
-  qMRMLSubjectHierarchyModel(qMRMLSubjectHierarchyModelPrivate* pimpl, QObject *parent=nullptr);
+  qMRMLSubjectHierarchyModel(qMRMLSubjectHierarchyModelPrivate* pimpl, QObject* parent=nullptr);
 
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);

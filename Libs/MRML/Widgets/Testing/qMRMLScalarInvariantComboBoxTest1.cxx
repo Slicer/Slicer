@@ -37,7 +37,7 @@
 
 // STD includes
 
-int qMRMLScalarInvariantComboBoxTest1(int argc, char * argv [] )
+int qMRMLScalarInvariantComboBoxTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

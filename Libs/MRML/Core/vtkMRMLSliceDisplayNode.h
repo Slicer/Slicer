@@ -28,7 +28,7 @@
 class VTK_MRML_EXPORT vtkMRMLSliceDisplayNode : public vtkMRMLModelDisplayNode
 {
 public:
-  static vtkMRMLSliceDisplayNode *New();
+  static vtkMRMLSliceDisplayNode* New();
   vtkTypeMacro(vtkMRMLSliceDisplayNode,vtkMRMLModelDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

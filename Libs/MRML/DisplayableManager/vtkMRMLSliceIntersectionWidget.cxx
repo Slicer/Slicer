@@ -276,7 +276,7 @@ void vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation()
     // already created
     return;
   }
-  vtkMRMLApplicationLogic *mrmlAppLogic = this->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* mrmlAppLogic = this->GetMRMLApplicationLogic();
   if (!mrmlAppLogic)
   {
     vtkWarningMacro("vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation failed: application logic invalid");
@@ -303,7 +303,7 @@ void vtkMRMLSliceIntersectionWidget::CreateDefaultRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
+bool vtkMRMLSliceIntersectionWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   if (!this->SliceLogic)
   {
@@ -496,7 +496,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
     case WidgetEventBlendStart:
     {
       this->SetWidgetState(WidgetStateBlend);
-      vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+      vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
       this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
       this->LastForegroundOpacity = sliceCompositeNode->GetForegroundOpacity();
       this->LastLabelOpacity = this->GetLabelOpacity();
@@ -532,7 +532,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessInteractionEvent(vtkMRMLInteractionE
       break;
     case WidgetEventToggleForegroundOpacity:
     {
-      vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+      vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
       this->SliceLogic->GetMRMLScene()->SaveStateForUndo();
       double opacity = sliceCompositeNode->GetForegroundOpacity();
       if (opacity != 0.0)
@@ -1212,7 +1212,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessBlend(vtkMRMLInteractionEventData* e
   double newForegroundOpacity =
     this->LastForegroundOpacity + offsetY;
   newForegroundOpacity = std::min(std::max(newForegroundOpacity, 0.), 1.);
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
   if (sliceCompositeNode->GetForegroundVolumeID() != nullptr)
   {
     sliceCompositeNode->SetForegroundOpacity(newForegroundOpacity);
@@ -1239,7 +1239,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessBlend(vtkMRMLInteractionEventData* e
 void vtkMRMLSliceIntersectionWidget::SetLabelOpacity(double opacity)
 {
   // If a labelmap node is selected then adjust opacity of that
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
   if (sliceCompositeNode->GetLabelVolumeID())
   {
     sliceCompositeNode->SetLabelOpacity(opacity);
@@ -1262,7 +1262,7 @@ void vtkMRMLSliceIntersectionWidget::SetLabelOpacity(double opacity)
 double vtkMRMLSliceIntersectionWidget::GetLabelOpacity()
 {
   // If a labelmap node is selected then get opacity of that
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
   if (sliceCompositeNode->GetLabelVolumeID())
   {
     return sliceCompositeNode->GetLabelOpacity();
@@ -1283,7 +1283,7 @@ double vtkMRMLSliceIntersectionWidget::GetLabelOpacity()
 //----------------------------------------------------------------------------
 vtkMRMLSegmentationDisplayNode* vtkMRMLSliceIntersectionWidget::GetVisibleSegmentationDisplayNode()
 {
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
   vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
   std::vector<vtkMRMLNode*> displayNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLSegmentationDisplayNode", displayNodes) : 0;
@@ -1304,7 +1304,7 @@ vtkMRMLSegmentationDisplayNode* vtkMRMLSliceIntersectionWidget::GetVisibleSegmen
 double vtkMRMLSliceIntersectionWidget::GetSliceSpacing()
 {
   double spacing;
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
 
   if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
   {
@@ -1347,16 +1347,16 @@ void vtkMRMLSliceIntersectionWidget::MoveSlice(double delta)
 void vtkMRMLSliceIntersectionWidget::CycleVolumeLayer(int layer, int direction)
 {
   // first, find the current volume index for the given layer (can be nullptr)
-  vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
-  const char *volumeID = nullptr;
+  vtkMRMLScene* scene = this->SliceLogic->GetMRMLScene();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  const char* volumeID = nullptr;
   switch (layer)
   {
     case 0: { volumeID = sliceCompositeNode->GetBackgroundVolumeID(); } break;
     case 1: { volumeID = sliceCompositeNode->GetForegroundVolumeID(); } break;
     case 2: { volumeID = sliceCompositeNode->GetLabelVolumeID(); } break;
   }
-  vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeID));
+  vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeID));
 
   // now figure out which one it is in the list
   int volumeCount = scene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
@@ -1397,7 +1397,7 @@ void vtkMRMLSliceIntersectionWidget::CycleVolumeLayer(int layer, int direction)
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::ProcessTranslateSlice(vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
 
   double xyz[3];
   sliceNode->GetXYZOrigin(xyz);
@@ -1433,7 +1433,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessZoomSlice(vtkMRMLInteractionEventDat
     double newFOVx = this->StartActionFOV[0] * percent;
     double newFOVy = this->StartActionFOV[1] * percent;
     double newFOVz = this->StartActionFOV[2];
-    vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+    vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
     sliceNode->SetFieldOfView(newFOVx, newFOVy, newFOVz);
     sliceNode->UpdateMatrices();
   }
@@ -1451,7 +1451,7 @@ void vtkMRMLSliceIntersectionWidget::ScaleZoom(double zoomScaleFactor, vtkMRMLIn
     return;
   }
   this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::FieldOfViewFlag);
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
   int wasModifying = sliceNode->StartModify();
 
   // Get distance of event position from slice center
@@ -1523,7 +1523,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessSetCrosshair(vtkMRMLInteractionEvent
 //----------------------------------------------------------------------------
 bool vtkMRMLSliceIntersectionWidget::IsEventInsideVolume(bool background, vtkMRMLInteractionEventData* eventData)
 {
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
   if (!sliceNode)
   {
     return false;

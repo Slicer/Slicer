@@ -111,7 +111,7 @@ QStringList qSlicerTextsModule::contributors()const
 //-----------------------------------------------------------------------------
 void qSlicerTextsModule::setup()
 {
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (!app)
   {
     return;

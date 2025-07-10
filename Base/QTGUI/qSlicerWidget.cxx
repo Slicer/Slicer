@@ -51,7 +51,7 @@ qSlicerWidgetPrivate::qSlicerWidgetPrivate(qSlicerWidget& object)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerWidget::qSlicerWidget(QWidget * _parent, Qt::WindowFlags f)
+qSlicerWidget::qSlicerWidget(QWidget* _parent, Qt::WindowFlags f)
   :QWidget(_parent, f)
   , d_ptr(new qSlicerWidgetPrivate(*this))
 {

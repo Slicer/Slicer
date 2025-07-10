@@ -53,7 +53,7 @@ qMRMLSceneCategoryModelPrivate
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-qMRMLSceneCategoryModel::qMRMLSceneCategoryModel(QObject *vparent)
+qMRMLSceneCategoryModel::qMRMLSceneCategoryModel(QObject* vparent)
   :qMRMLSceneModel(new qMRMLSceneCategoryModelPrivate(*this), vparent)
 {
 }
@@ -138,7 +138,7 @@ QStandardItem* qMRMLSceneCategoryModel::insertNode(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneCategoryModel::isANode(const QStandardItem * item)const
+bool qMRMLSceneCategoryModel::isANode(const QStandardItem* item)const
 {
   return this->qMRMLSceneModel::isANode(item)
     && item->data(qMRMLSceneModel::UIDRole).toString() != "category";

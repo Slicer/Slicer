@@ -24,7 +24,7 @@ namespace
   class vtkTestTranslator : public vtkMRMLTranslator
   {
   public:
-    static vtkTestTranslator * New();
+    static vtkTestTranslator* New();
     vtkTypeMacro(vtkTestTranslator, vtkMRMLTranslator);
 
     /// Translation method for testing that returns "translated-(context)(sourceText)" as translation
@@ -37,8 +37,8 @@ namespace
   protected:
     vtkTestTranslator () = default;
     ~vtkTestTranslator () override = default;
-    vtkTestTranslator (const vtkTestTranslator &) = delete;
-    void operator=(const vtkTestTranslator &) = delete;
+    vtkTestTranslator (const vtkTestTranslator&) = delete;
+    void operator=(const vtkTestTranslator&) = delete;
   };
 
   vtkStandardNewMacro(vtkTestTranslator );

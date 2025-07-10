@@ -42,7 +42,7 @@ public:
   qMRMLTreeViewEventTranslator(QObject* parent = nullptr);
 
   using Superclass::translateEvent;
-  bool translateEvent(QObject *Object, QEvent *Event, int EventType, bool &Error) override;
+  bool translateEvent(QObject* Object, QEvent* Event, int EventType, bool& Error) override;
 
 private:
   qMRMLTreeViewEventTranslator(const qMRMLTreeViewEventTranslator&); // NOT implemented

@@ -36,7 +36,7 @@ int piecewiseFunctionFromString();
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLVolumePropertyNodeTest1(int argc, char *[] )
+int vtkMRMLVolumePropertyNodeTest1(int argc, char*[])
 {
   if (argc < 2)
   {

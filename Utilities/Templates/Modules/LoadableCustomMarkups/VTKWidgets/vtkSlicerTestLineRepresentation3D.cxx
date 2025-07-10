@@ -175,7 +175,7 @@ vtkTypeBool vtkSlicerTestLineRepresentation3D::HasTranslucentPolygonalGeometry()
 //----------------------------------------------------------------------
 void vtkSlicerTestLineRepresentation3D::UpdateFromMRML(vtkMRMLNode* caller,
                                                            unsigned long event,
-                                                           void *callData /*=nullptr*/)
+                                                           void* callData /*=nullptr*/)
 {
  this->Superclass::UpdateFromMRML(caller, event, callData);
 

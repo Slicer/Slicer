@@ -103,7 +103,7 @@ bool qSlicerUtils::isLoadableModule(const QString& filePath)
 bool qSlicerUtils::isTestingModule(qSlicerAbstractCoreModule* module)
 {
   const QStringList& categories = module->categories();
-  foreach(const QString & category, categories)
+  foreach(const QString& category, categories)
   {
     if (category.split('.').takeFirst() != "Testing")
     {
@@ -251,7 +251,7 @@ bool qSlicerUtils::pathEndsWith(const QString& inputPath, const QString& path)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerUtils::setPermissionsRecursively(const QString &path,
+bool qSlicerUtils::setPermissionsRecursively(const QString& path,
                                              QFile::Permissions directoryPermissions,
                                              QFile::Permissions filePermissions)
 {
@@ -261,7 +261,7 @@ bool qSlicerUtils::setPermissionsRecursively(const QString &path,
     return false;
   }
 
-  foreach(const QFileInfo &info, QDir(path).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
+  foreach(const QFileInfo& info, QDir(path).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
   {
     if (info.isDir())
     {

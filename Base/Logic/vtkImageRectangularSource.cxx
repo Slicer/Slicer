@@ -107,9 +107,9 @@ void vtkImageRectangularSource::GetWholeExtent(int extent[6])
 
 //----------------------------------------------------------------------------
 int vtkImageRectangularSource::RequestInformation(
-  vtkInformation * vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector),
+  vtkInformationVector* outputVector)
 {
   // get the info objects
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
@@ -148,19 +148,19 @@ void vtkImageRectangularSource::SetCorners(int x1, int y1, int x2, int y2, int x
 
 
 template <class T>
-void vtkImageRectangularSourceExecute(vtkImageRectangularSource *self,
-                                    vtkImageData *data, int ext[6], T *ptr)
+void vtkImageRectangularSourceExecute(vtkImageRectangularSource* self,
+                                    vtkImageData* data, int ext[6], T* ptr)
 {
   int idx0, idx1, idx2;
   vtkIdType inc0, inc1, inc2;
   char InFlag[3];
   T outVal, inVal;
   double grad;
-  int *center, Min[3], Max[3];
+  int* center, Min[3], Max[3];
   unsigned long count = 0;
   unsigned long target;
   int InsideGraySlopeFlag;
-  int *size;
+  int* size;
 
   outVal = (T)(self->GetOutValue());
   inVal = (T)(self->GetInValue());
@@ -222,12 +222,12 @@ int Max(int x1, int x2) {return (x1 > x2 ? x1 : x2);}
 int Max(int x1, int x2, int x3) {return Max(Max(x1,x2),x3); }
 int Max(int x1, int x2, int x3, int x4) {return Max(Max(x1,x2,x3),x4); }
 
-void Sort(int x1, int x2, int &xMin, int &xMax) {
+void Sort(int x1, int x2, int& xMin, int& xMax) {
   if (x1 < x2) { xMin = x1; xMax = x2;
   } else { xMin = x2;  xMax = x1; }
 }
 
-void Sort(int x1, int x2, int x3,int &xMin, int &xMean, int &xMax) {
+void Sort(int x1, int x2, int x3,int& xMin, int& xMean, int& xMax) {
   Sort(x1,x2,xMin,xMean);
   xMax = xMean;
   int xBlub;
@@ -236,7 +236,7 @@ void Sort(int x1, int x2, int x3,int &xMin, int &xMean, int &xMax) {
   Sort(xMax,xBlub,xBlub,xMax);
 }
 
-int DefineX(int *c1, int *c2, int y) {
+int DefineX(int* c1, int* c2, int y) {
   assert(c1[1] != c2[1]);
   if ((Min(c1[1],c2[1]) > y )|| (Max(c1[1],c2[1]) < y )) return -1;
 
@@ -281,7 +281,7 @@ void DefineLine(int MinInX, int MaxInX,int LineLength, T inVal, T outVal, int In
 }
 
 
-  void DefineXMinMaxInTriangleNormal(int *c1, int *c2, int *c3, int y, int &MinX, int &MaxX) {
+  void DefineXMinMaxInTriangleNormal(int* c1, int* c2, int* c3, int y, int& MinX, int& MaxX) {
     // Otherwise does not define a triangle;
     assert((c1[1] != c2[1]) || (c2[1] != c3[1]));
     // It is not part of the triangle
@@ -324,7 +324,7 @@ void DefineLine(int MinInX, int MaxInX,int LineLength, T inVal, T outVal, int In
     if ((MinX == MaxX) && (xBlub > -1)) MinX = xBlub;
   }
 
-void DefineXMinMaxInTriangle(int *c1, int *c2, int *c3, int y, int &MinX, int &MaxX) {
+void DefineXMinMaxInTriangle(int* c1, int* c2, int* c3, int y, int& MinX, int& MaxX) {
   DefineXMinMaxInTriangleNormal(c1, c2, c3, y, MinX, MaxX);
   if (MinX != MaxX) return;
 
@@ -345,7 +345,7 @@ void DefineXMinMaxInTriangle(int *c1, int *c2, int *c3, int y, int &MinX, int &M
 }
 
 template <class T>
-void DefineSlice(int **Corners, int RowLength, int LineLength, T inVal, T outVal, int InsideGraySlopeFlag, T* Result, int IncResultY) {
+void DefineSlice(int** Corners, int RowLength, int LineLength, T inVal, T outVal, int InsideGraySlopeFlag, T* Result, int IncResultY) {
   int  MinInY = Min(Corners[0][1],Corners[1][1], Corners[2][1], Corners[3][1]);
   int  MaxInY = Max(Corners[0][1],Corners[1][1], Corners[2][1], Corners[3][1]);
 
@@ -398,7 +398,7 @@ void DefineSlice(int **Corners, int RowLength, int LineLength, T inVal, T outVal
 }
 
 template <class T>
-void vtkImageRectangularSource_GeneralExecute(vtkImageRectangularSource *self, vtkImageData *data, int ext[6], int** Corners, T *ptr)
+void vtkImageRectangularSource_GeneralExecute(vtkImageRectangularSource* self, vtkImageData* data, int ext[6], int** Corners, T* ptr)
 {
   // Currently only defined in 2D
   assert(!(ext[5] - ext[4]));
@@ -411,12 +411,12 @@ void vtkImageRectangularSource_GeneralExecute(vtkImageRectangularSource *self, v
 
 
 //----------------------------------------------------------------------------
-void vtkImageRectangularSource::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
+void vtkImageRectangularSource::ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo)
 {
-  int *extent;
-  void *ptr;
+  int* extent;
+  void* ptr;
 
-  vtkImageData *data = this->AllocateOutputData(output, outInfo);
+  vtkImageData* data = this->AllocateOutputData(output, outInfo);
   extent = this->GetUpdateExtent();
   ptr = data->GetScalarPointerForExtent(extent);
 

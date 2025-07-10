@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerUnitsModule(QObject *parent=nullptr);
+  explicit qSlicerUnitsModule(QObject* parent=nullptr);
   ~qSlicerUnitsModule() override;
 
   qSlicerGetTitleMacro(tr("Units"));
@@ -63,7 +63,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

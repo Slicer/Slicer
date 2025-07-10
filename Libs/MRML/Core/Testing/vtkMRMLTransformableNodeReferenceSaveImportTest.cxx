@@ -38,7 +38,7 @@ int TestImportIntoSceneWithNodeIdConflict();
 
 //---------------------------------------------------------------------------
 int vtkMRMLTransformableNodeReferenceSaveImportTest(int vtkNotUsed(argc),
-                                       char * vtkNotUsed(argv)[] )
+                                       char* vtkNotUsed(argv)[] )
 {
   CHECK_EXIT_SUCCESS(TestImportIntoEmptyScene());
   CHECK_EXIT_SUCCESS(TestImportIntoSceneWithNodeIdConflict());

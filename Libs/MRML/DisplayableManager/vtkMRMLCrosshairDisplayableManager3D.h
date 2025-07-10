@@ -57,7 +57,7 @@ private:
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

@@ -87,7 +87,7 @@ public:
   ///@}
 
   /// Update the representation from display node
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;
@@ -104,7 +104,7 @@ public:
   /// closestDistance2 is the squared distance in display coordinates from the closest position where interaction is possible.
   /// componentIndex returns index of the found component (e.g., if control point is found then control point index is returned).
   virtual void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2);
+    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
 
   virtual vtkPointPlacer* GetPointPlacer();
 

@@ -23,7 +23,7 @@
 #include <vtkNew.h>
 
 // test more general hierarchy uses, with different displayable node types
-int vtkMRMLDisplayableHierarchyNodeTest2(int , char * [] )
+int vtkMRMLDisplayableHierarchyNodeTest2(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
 

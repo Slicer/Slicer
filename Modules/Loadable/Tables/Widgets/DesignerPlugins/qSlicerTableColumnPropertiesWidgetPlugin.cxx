@@ -23,15 +23,15 @@
 
 //------------------------------------------------------------------------------
 qSlicerTableColumnPropertiesWidgetPlugin
-::qSlicerTableColumnPropertiesWidgetPlugin(QObject *_parent)
+::qSlicerTableColumnPropertiesWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerTableColumnPropertiesWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerTableColumnPropertiesWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qSlicerTableColumnPropertiesWidget* _widget
     = new qSlicerTableColumnPropertiesWidget(_parent);

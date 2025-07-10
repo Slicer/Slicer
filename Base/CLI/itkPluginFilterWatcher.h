@@ -36,8 +36,8 @@ class PluginFilterWatcher: public SimpleFilterWatcher
 {
 public:
   PluginFilterWatcher(itk::ProcessObject* o,
-                      const char *comment="",
-                      ModuleProcessInformation *inf=nullptr,
+                      const char* comment="",
+                      ModuleProcessInformation* inf=nullptr,
                       double fraction = 1.0,
                       double start = 0.0)
     : SimpleFilterWatcher(o, comment)
@@ -198,7 +198,7 @@ void EndFilter() override
 }
 
 
-  ModuleProcessInformation *m_ProcessInformation;
+  ModuleProcessInformation* m_ProcessInformation;
 
   double m_Fraction;
   double m_Start;

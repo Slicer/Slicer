@@ -220,12 +220,12 @@ void vtkMRMLSequenceNode::ReadIndexValues(const std::string& indexText)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLSequenceNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSequenceNode::Copy(vtkMRMLNode* anode)
 {
   int wasModified = this->StartModify();
   Superclass::Copy(anode);
 
-  vtkMRMLSequenceNode *snode = (vtkMRMLSequenceNode *) anode;
+  vtkMRMLSequenceNode* snode = (vtkMRMLSequenceNode*) anode;
   if (!snode)
   {
     vtkErrorMacro("vtkMRMLSequenceNode::Copy failed: invalid input node");
@@ -245,7 +245,7 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode *anode)
   this->SequenceScene=vtkMRMLScene::New();
 
   // Get data node ID in the target scene from the data node ID in the source scene
-  std::map< std::string, std::string > sourceToTargetDataNodeID;
+  std::map<std::string, std::string > sourceToTargetDataNodeID;
 
   if (snode->SequenceScene)
   {
@@ -298,10 +298,10 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSequenceNode::CopySequenceIndex(vtkMRMLNode *anode)
+void vtkMRMLSequenceNode::CopySequenceIndex(vtkMRMLNode* anode)
 {
   int wasModified = this->StartModify();
-  vtkMRMLSequenceNode *snode = (vtkMRMLSequenceNode *)anode;
+  vtkMRMLSequenceNode* snode = (vtkMRMLSequenceNode*)anode;
   this->SetIndexName(snode->GetIndexName());
   this->SetIndexUnit(snode->GetIndexUnit());
   this->SetIndexType(snode->GetIndexType());
@@ -730,7 +730,7 @@ std::string vtkMRMLSequenceNode::GetDefaultStorageNodeClassName(const char* file
 }
 
 //-----------------------------------------------------------
-void vtkMRMLSequenceNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLSequenceNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 
@@ -761,7 +761,7 @@ void vtkMRMLSequenceNode::UpdateSequenceIndex()
 }
 
 //-----------------------------------------------------------
-void vtkMRMLSequenceNode::SetIndexTypeFromString(const char *indexTypeString)
+void vtkMRMLSequenceNode::SetIndexTypeFromString(const char* indexTypeString)
 {
   int indexType=GetIndexTypeFromString(indexTypeString);
   this->SetIndexType(indexType);

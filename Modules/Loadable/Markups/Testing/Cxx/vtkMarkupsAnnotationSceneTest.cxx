@@ -33,7 +33,7 @@
 #include <vtkNew.h>
 #include "vtkPolyData.h"
 
-int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
+int vtkMarkupsAnnotationSceneTest(int argc, char* argv[] )
 {
   // Test reading in a Slicer4 MRML scene with legacy annotation nodes (created using Slicer-4.1.1):
   //
@@ -119,7 +119,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   CHECK_INT(scene->GetNumberOfNodesByClass("vtkMRMLMarkupsLineNode"), 2);
 
   // check the control point positions
-  vtkMRMLMarkupsFiducialNode *mfnode = vtkMRMLMarkupsFiducialNode::SafeDownCast(scene->GetFirstNodeByName("Fiducials List"));
+  vtkMRMLMarkupsFiducialNode* mfnode = vtkMRMLMarkupsFiducialNode::SafeDownCast(scene->GetFirstNodeByName("Fiducials List"));
   CHECK_NOT_NULL(mfnode);
 
   double expectedPosition[3][3] =
@@ -157,7 +157,7 @@ int vtkMarkupsAnnotationSceneTest(int argc, char * argv[] )
   CHECK_INT(scene->GetNumberOfNodesByClass("vtkMRMLAnnotationTextDisplayNode"), 0);
   CHECK_INT(scene->GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialDisplayNode"), 2);
 
-  vtkMRMLMarkupsFiducialDisplayNode *markupsFiducialDisplayNode1 = vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(mfnode->GetDisplayNode());
+  vtkMRMLMarkupsFiducialDisplayNode* markupsFiducialDisplayNode1 = vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(mfnode->GetDisplayNode());
   CHECK_NOT_NULL(markupsFiducialDisplayNode1);
 
   double* color = markupsFiducialDisplayNode1->GetColor();

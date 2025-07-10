@@ -24,7 +24,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-bool validFile(const char *fileName)
+bool validFile(const char* fileName)
 {
   if (!strcmp(fileName, ".")) return true;
   if (!strcmp(fileName, "..")) return true;
@@ -33,7 +33,7 @@ bool validFile(const char *fileName)
   return false;
 }
 
-int vtkArchiveTest1(int argc, char * argv[] )
+int vtkArchiveTest1(int argc, char* argv[] )
 {
   if (argc < 2)
   {

@@ -200,13 +200,13 @@ vtkMRMLAnnotationTextDisplayNode::ReadXMLAttributes(const char** atts)
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
 void
-vtkMRMLAnnotationTextDisplayNode::Copy(vtkMRMLNode *anode)
+vtkMRMLAnnotationTextDisplayNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLAnnotationTextDisplayNode *node =
-      (vtkMRMLAnnotationTextDisplayNode *) anode;
+  vtkMRMLAnnotationTextDisplayNode* node =
+      (vtkMRMLAnnotationTextDisplayNode*) anode;
 
   this->SetTextScale(node->TextScale);
   this->SetUseLineWrap(node->UseLineWrap);
@@ -247,8 +247,8 @@ vtkMRMLAnnotationTextDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //---------------------------------------------------------------------------
 void
-vtkMRMLAnnotationTextDisplayNode::ProcessMRMLEvents(vtkObject *caller,
-    unsigned long event, void *callData)
+vtkMRMLAnnotationTextDisplayNode::ProcessMRMLEvents(vtkObject* caller,
+    unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
@@ -256,7 +256,7 @@ vtkMRMLAnnotationTextDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 
 //-----------------------------------------------------------
 void
-vtkMRMLAnnotationTextDisplayNode::UpdateScene(vtkMRMLScene *scene)
+vtkMRMLAnnotationTextDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 }
@@ -282,7 +282,7 @@ vtkMRMLAnnotationTextDisplayNode::SetTextScale(double scale)
 void vtkMRMLAnnotationTextDisplayNode::CreateBackup()
 {
 
-  vtkMRMLAnnotationTextDisplayNode * backupNode = vtkMRMLAnnotationTextDisplayNode::New();
+  vtkMRMLAnnotationTextDisplayNode* backupNode = vtkMRMLAnnotationTextDisplayNode::New();
 
   int oldMode = backupNode->GetDisableModifiedEvent();
   backupNode->DisableModifiedEventOn();
@@ -340,8 +340,8 @@ std::string vtkMRMLAnnotationTextDisplayNode::GetLineWrappedText(std::string inp
   }
   size_t spaceLeft = maxCharPerLine;
   vtkDebugMacro("spaceLeft = " << spaceLeft );
-  char *line = (char *)(inputText.c_str());
-  char *ptr = strtok(line, " ");
+  char* line = (char*)(inputText.c_str());
+  char* ptr = strtok(line, " ");
   while (ptr != nullptr)
   {
     size_t wordWidth = strlen(ptr);

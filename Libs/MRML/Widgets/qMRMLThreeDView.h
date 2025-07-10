@@ -108,13 +108,13 @@ public:
   Q_INVOKABLE vtkMRMLCameraNode* cameraNode();
 
   /// Set cursor in the view area
-  Q_INVOKABLE void setViewCursor(const QCursor &);
+  Q_INVOKABLE void setViewCursor(const QCursor&);
 
   /// Restore default cursor in the view area
   Q_INVOKABLE void unsetViewCursor();
 
   /// Set default cursor in the view area
-  Q_INVOKABLE void setDefaultViewCursor(const QCursor &cursor);
+  Q_INVOKABLE void setDefaultViewCursor(const QCursor& cursor);
 
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dropEvent(QDropEvent* event) override;

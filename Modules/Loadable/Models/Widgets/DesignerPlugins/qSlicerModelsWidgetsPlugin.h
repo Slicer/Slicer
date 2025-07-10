@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGINS_EXPORT qSlicerModelsWidgetsPlugi
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
-    QList<QDesignerCustomWidgetInterface *> plugins;
+    QList<QDesignerCustomWidgetInterface*> plugins;
     plugins << new qMRMLModelDisplayNodeWidgetPlugin;
     return plugins;
   }

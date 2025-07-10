@@ -19,7 +19,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int qSlicerModuleManagerTest1(int argc, char * argv [] )
+int qSlicerModuleManagerTest1(int argc, char* argv [] )
 {
 
   // By design, a ModuleManager should be instantiated only if a
@@ -36,7 +36,7 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
 
   moduleManager.printAdditionalInfo();
 
-  qSlicerModuleFactory * factory = moduleManager.factory();
+  qSlicerModuleFactory* factory = moduleManager.factory();
 
   if( factory == nullptr )
   {
@@ -70,7 +70,7 @@ int qSlicerModuleManagerTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
   }
 
-  qSlicerAbstractModule * module = moduleManager.module( moduleName );
+  qSlicerAbstractModule* module = moduleManager.module( moduleName );
 
   if( module == nullptr )
   {

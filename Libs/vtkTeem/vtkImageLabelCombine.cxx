@@ -32,14 +32,14 @@ vtkImageLabelCombine::vtkImageLabelCombine()
 //----------------------------------------------------------------------------
 // The output extent is the intersection.
 int vtkImageLabelCombine::RequestInformation (
-  vtkInformation * vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
   // get the info objects
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *inInfo2 = inputVector[1]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* inInfo2 = inputVector[1]->GetInformationObject(0);
 
   int ext[6], ext2[6], idx;
 
@@ -75,10 +75,10 @@ int vtkImageLabelCombine::RequestInformation (
 // This templated function executes the filter for any type of data.
 // Handles the two input operations
 template <class T>
-void vtkImageLabelCombineExecute2(vtkImageLabelCombine *self,
-                                 vtkImageData *in1Data, T *in1Ptr,
-                                 vtkImageData *in2Data, T *in2Ptr,
-                                 vtkImageData *outData, T *outPtr,
+void vtkImageLabelCombineExecute2(vtkImageLabelCombine* self,
+                                 vtkImageData* in1Data, T* in1Ptr,
+                                 vtkImageData* in2Data, T* in2Ptr,
+                                 vtkImageData* outData, T* outPtr,
                                  int outExt[6], int id)
 {
   int idxR, idxY, idxZ;
@@ -176,20 +176,20 @@ void vtkImageLabelCombineExecute2(vtkImageLabelCombine *self,
 // It just executes a switch statement to call the correct function for
 // the data data types.
 void vtkImageLabelCombine::ThreadedRequestData(
-  vtkInformation * vtkNotUsed( request ),
-  vtkInformationVector ** vtkNotUsed( inputVector ),
-  vtkInformationVector * vtkNotUsed( outputVector ),
+  vtkInformation* vtkNotUsed( request ),
+  vtkInformationVector** vtkNotUsed( inputVector ),
+  vtkInformationVector* vtkNotUsed( outputVector ),
   vtkImageData ***inData,
-  vtkImageData **outData,
+  vtkImageData** outData,
   int outExt[6], int id)
 {
-  void *inPtr1;
-  void *outPtr;
+  void* inPtr1;
+  void* outPtr;
 
   inPtr1 = inData[0][0]->GetScalarPointerForExtent(outExt);
   outPtr = outData[0]->GetScalarPointerForExtent(outExt);
 
-  void *inPtr2;
+  void* inPtr2;
 
   if (!inData[1] || ! inData[1][0])
   {

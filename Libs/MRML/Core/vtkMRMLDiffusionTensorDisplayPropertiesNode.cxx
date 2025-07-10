@@ -200,12 +200,12 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::ReadXMLAttributes(const char**
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *node = (vtkMRMLDiffusionTensorDisplayPropertiesNode *) anode;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* node = (vtkMRMLDiffusionTensorDisplayPropertiesNode*) anode;
 
   this->SetScalarInvariant(node->ScalarInvariant);
   this->SetGlyphGeometry(node->GlyphGeometry);
@@ -287,7 +287,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
     case Lines:
     case Tubes:
     {
-      vtkLineSource *line = vtkLineSource::New();
+      vtkLineSource* line = vtkLineSource::New();
 
       // Scaling along x-axis corresponds to major eigenvector, etc.
       // Create a line along the proper axis for scaling:
@@ -313,7 +313,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
       // if we are doing tubes, put a tube on the line
       if (this->GlyphGeometry == Tubes)
       {
-        vtkTubeFilter *tube = vtkTubeFilter::New();
+        vtkTubeFilter* tube = vtkTubeFilter::New();
         tube->SetInputConnection( line->GetOutputPort( ) );
         tube->SetRadius( this->TubeGlyphRadius );
         tube->SetNumberOfSides( this->TubeGlyphNumberOfSides );
@@ -339,7 +339,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
     case Ellipsoids:
 
     {
-      vtkSphereSource *sphere = vtkSphereSource::New();
+      vtkSphereSource* sphere = vtkSphereSource::New();
       sphere->SetThetaResolution( this->EllipsoidGlyphThetaResolution );
       sphere->SetPhiResolution( this->EllipsoidGlyphPhiResolution );
 

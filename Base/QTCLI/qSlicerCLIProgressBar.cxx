@@ -63,15 +63,15 @@ public:
 
 private:
 
-  QGridLayout *  GridLayout;
-  QLabel *       NameLabel;
-  QLabel *       StatusLabelLabel;
-  QLabel *       StatusLabel;
-  ctkExpandButton * DetailsTextExpandButton;
-  QTextBrowser * DetailsTextBrowser;
+  QGridLayout* GridLayout;
+  QLabel* NameLabel;
+  QLabel* StatusLabelLabel;
+  QLabel* StatusLabel;
+  ctkExpandButton* DetailsTextExpandButton;
+  QTextBrowser* DetailsTextBrowser;
   QElapsedTimer DetailsLastUpdateTime;
-  QProgressBar * ProgressBar;
-  QProgressBar * StageProgressBar;
+  QProgressBar* ProgressBar;
+  QProgressBar* StageProgressBar;
 
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
   qSlicerCLIProgressBar::Visibility NameVisibility;
@@ -234,7 +234,7 @@ qSlicerCLIProgressBar::qSlicerCLIProgressBar(QWidget* _parent)
 qSlicerCLIProgressBar::~qSlicerCLIProgressBar() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLCommandLineModuleNode * qSlicerCLIProgressBar::commandLineModuleNode()const
+vtkMRMLCommandLineModuleNode* qSlicerCLIProgressBar::commandLineModuleNode()const
 {
   Q_D(const qSlicerCLIProgressBar);
   return d->CommandLineModuleNode;
@@ -344,7 +344,7 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
 {
   Q_D(qSlicerCLIProgressBar);
   Q_ASSERT(commandLineModuleNode == d->CommandLineModuleNode);
-  vtkMRMLCommandLineModuleNode * node =
+  vtkMRMLCommandLineModuleNode* node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
 
   d->NameLabel->setVisible(d->isVisible(d->NameVisibility));

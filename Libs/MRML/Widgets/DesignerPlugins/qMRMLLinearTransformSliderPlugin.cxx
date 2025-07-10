@@ -1,12 +1,12 @@
 #include "qMRMLLinearTransformSliderPlugin.h"
 #include "qMRMLLinearTransformSlider.h"
 
-qMRMLLinearTransformSliderPlugin::qMRMLLinearTransformSliderPlugin(QObject *_parent)
+qMRMLLinearTransformSliderPlugin::qMRMLLinearTransformSliderPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
-QWidget *qMRMLLinearTransformSliderPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLLinearTransformSliderPlugin::createWidget(QWidget* _parent)
 {
   qMRMLLinearTransformSlider* _widget = new qMRMLLinearTransformSlider(_parent);
   return _widget;

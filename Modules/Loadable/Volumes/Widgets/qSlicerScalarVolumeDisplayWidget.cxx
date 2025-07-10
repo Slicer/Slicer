@@ -433,7 +433,7 @@ void qSlicerScalarVolumeDisplayWidget::updateHistogram()
 }
 
 // -----------------------------------------------------------------------------
-void qSlicerScalarVolumeDisplayWidget::showEvent( QShowEvent * event )
+void qSlicerScalarVolumeDisplayWidget::showEvent( QShowEvent* event )
 {
   this->updateHistogram();
   this->Superclass::showEvent(event);

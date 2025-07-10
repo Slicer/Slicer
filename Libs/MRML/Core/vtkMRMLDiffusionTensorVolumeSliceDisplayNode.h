@@ -32,7 +32,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
   : public vtkMRMLGlyphableVolumeSliceDisplayNode
 {
  public:
-  static vtkMRMLDiffusionTensorVolumeSliceDisplayNode *New (  );
+  static vtkMRMLDiffusionTensorVolumeSliceDisplayNode* New (  );
   vtkTypeMacro ( vtkMRMLDiffusionTensorVolumeSliceDisplayNode,vtkMRMLGlyphableVolumeSliceDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent ) override;
 
@@ -53,7 +53,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
   ///
   /// Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode* node ) override;
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
@@ -66,11 +66,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   ///
   /// alternative method to propagate events generated in Display nodes
@@ -88,15 +88,15 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
   ///
   /// Set ImageData for a volume slice
-  void SetSliceImagePort(vtkAlgorithmOutput *imagePort) override;
+  void SetSliceImagePort(vtkAlgorithmOutput* imagePort) override;
 
   ///
   /// Set slice to RAS transformation
-  void SetSlicePositionMatrix(vtkMatrix4x4 *matrix) override;
+  void SetSlicePositionMatrix(vtkMatrix4x4* matrix) override;
 
   ///
   /// Set slice to IJK transformation
-  void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix) override;
+  void SetSliceGlyphRotationMatrix(vtkMatrix4x4* matrix) override;
 
   //--------------------------------------------------------------------------
   /// Display Information: Geometry to display (not mutually exclusive)
@@ -171,7 +171,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
 
   ///
   /// Set diffusion tensor display MRML object for fiber glyph.
-  void SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID );
+  void SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char* ID );
 
   ///
   /// Get ID of diffusion tensor display MRML object for fiber glyph.
@@ -191,11 +191,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
   void operator= ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
 
-  vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
+  vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 
   /// ALL MRML nodes
-  vtkMRMLDiffusionTensorDisplayPropertiesNode *DiffusionTensorDisplayPropertiesNode;
-  char *DiffusionTensorDisplayPropertiesNodeID;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* DiffusionTensorDisplayPropertiesNode;
+  char* DiffusionTensorDisplayPropertiesNodeID;
 
   void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 

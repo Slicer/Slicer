@@ -26,7 +26,7 @@
 class VTK_MRML_EXPORT vtkMRMLColorTableNode : public vtkMRMLColorNode
 {
 public:
-  static vtkMRMLColorTableNode *New();
+  static vtkMRMLColorTableNode* New();
   vtkTypeMacro(vtkMRMLColorTableNode,vtkMRMLColorNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -46,7 +46,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -60,7 +60,7 @@ public:
   /// By default, all colors in the lookup table are set to "defined" for backward compatibility.
   /// To avoid this, set markAllColorsAsDefined to false.
   /// \sa GetLookupTable()
-  virtual void SetAndObserveLookupTable(vtkLookupTable *newLookupTable, bool markAllColorsAsDefined=true);
+  virtual void SetAndObserveLookupTable(vtkLookupTable* newLookupTable, bool markAllColorsAsDefined=true);
 
   /// \deprecated Kept only for backward compatibility.
   /// Use SetAndObserveLookupTable method instead.
@@ -112,7 +112,7 @@ public:
   void SetTypeToCoolTint3();
 
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
 
   ///
   /// The list of valid table types
@@ -258,7 +258,7 @@ protected:
 
   ///
   /// The look up table, constructed according to the Type.
-  vtkLookupTable *LookupTable;
+  vtkLookupTable* LookupTable;
 
   ///
   /// keep track of where we last added a color.

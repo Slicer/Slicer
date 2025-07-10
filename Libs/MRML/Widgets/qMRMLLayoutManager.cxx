@@ -252,7 +252,7 @@ QWidget* qMRMLLayoutSliceViewFactory::createViewFromNode(vtkMRMLAbstractViewNode
   // there is a unique slice widget per node
   Q_ASSERT(!this->viewWidget(viewNode));
 
-  qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
+  qMRMLSliceWidget* sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
 
   // Set slice logic before setting the slice node in the widget
   // to allow displayable managers to use the slice logic during initialization
@@ -356,7 +356,7 @@ qMRMLTableWidget* qMRMLLayoutManagerPrivate::tableWidget(vtkMRMLTableViewNode* n
 }
 
 //------------------------------------------------------------------------------
-qMRMLPlotWidget *qMRMLLayoutManagerPrivate::plotWidget(vtkMRMLPlotViewNode *node) const
+qMRMLPlotWidget* qMRMLLayoutManagerPrivate::plotWidget(vtkMRMLPlotViewNode* node) const
 {
   Q_Q(const qMRMLLayoutManager);
   return qobject_cast<qMRMLPlotWidget*>(
@@ -781,7 +781,7 @@ qMRMLLayoutManager::~qMRMLLayoutManager()
   Q_D(qMRMLLayoutManager);
 
   // Erase all views (must happen before deleting viewports)
-  foreach(ctkLayoutViewFactory * viewFactory, this->registeredViewFactories())
+  foreach(ctkLayoutViewFactory* viewFactory, this->registeredViewFactories())
   {
     qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
     if (mrmlViewFactory)
@@ -954,7 +954,7 @@ qMRMLTableWidget* qMRMLLayoutManager::tableWidget(int id)const
 }
 
 //------------------------------------------------------------------------------
-qMRMLPlotWidget *qMRMLLayoutManager::plotWidget(int id)const
+qMRMLPlotWidget* qMRMLLayoutManager::plotWidget(int id)const
 {
   qMRMLLayoutViewFactory* viewFactory = this->mrmlViewFactory("vtkMRMLPlotViewNode");
   if (!viewFactory)
@@ -977,7 +977,7 @@ vtkCollection* qMRMLLayoutManager::mrmlSliceLogics()const
 }
 
 //------------------------------------------------------------------------------
-vtkCollection *qMRMLLayoutManager::mrmlViewLogics() const
+vtkCollection* qMRMLLayoutManager::mrmlViewLogics() const
 {
   qMRMLLayoutThreeDViewFactory* viewFactory =
     qobject_cast<qMRMLLayoutThreeDViewFactory*>(this->mrmlViewFactory("vtkMRMLViewNode"));
@@ -1088,7 +1088,7 @@ vtkMRMLTableViewNode* qMRMLLayoutManager::activeMRMLTableViewNode()const
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLPlotViewNode *qMRMLLayoutManager::activeMRMLPlotViewNode()const
+vtkMRMLPlotViewNode* qMRMLLayoutManager::activeMRMLPlotViewNode()const
 {
   return vtkMRMLPlotViewNode::SafeDownCast(
     this->mrmlViewFactory("vtkMRMLPlotViewNode")->activeViewNode());
@@ -1331,7 +1331,7 @@ QWidget* qMRMLLayoutManager::createViewport(const QDomElement& layoutElement, co
 
     // Get application mainwindow
     QMainWindow* mainWindow = nullptr;
-    foreach(QWidget * widget, qApp->topLevelWidgets())
+    foreach(QWidget* widget, qApp->topLevelWidgets())
     {
       mainWindow = qobject_cast<QMainWindow*>(widget);
       if (mainWindow)

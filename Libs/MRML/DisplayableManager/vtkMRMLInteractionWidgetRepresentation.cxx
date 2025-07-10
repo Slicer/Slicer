@@ -135,7 +135,7 @@ double vtkMRMLInteractionWidgetRepresentation::GetMaximumHandlePickingDistance2(
 //-----------------------------------------------------------------------------
 void vtkMRMLInteractionWidgetRepresentation::CanInteract(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = InteractionNone;
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
@@ -174,7 +174,7 @@ void vtkMRMLInteractionWidgetRepresentation::CanInteract(
 void
 vtkMRMLInteractionWidgetRepresentation::CanInteractWithCircleHandle(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2, HandleInfo& handleInfo)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2, HandleInfo& handleInfo)
 {
   vtkMRMLAbstractViewNode* viewNode = this->GetViewNode();
   if (!viewNode || !this->IsDisplayable() || !interactionEventData || !handleInfo.IsVisible() || !interactionEventData->IsDisplayPositionValid())
@@ -387,7 +387,7 @@ bool vtkMRMLInteractionWidgetRepresentation::GetTransformationReferencePoint(dou
 
 //----------------------------------------------------------------------
 void vtkMRMLInteractionWidgetRepresentation::UpdateFromMRML(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void *vtkNotUsed(callData))
+    vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void* vtkNotUsed(callData))
 {
   if (!this->Pipeline)
   {

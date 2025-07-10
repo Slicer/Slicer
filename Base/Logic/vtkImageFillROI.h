@@ -36,7 +36,7 @@ class vtkPoints;
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageFillROI : public vtkImageAlgorithm
 {
 public:
-  static vtkImageFillROI *New();
+  static vtkImageFillROI* New();
   vtkTypeMacro(vtkImageFillROI,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -49,7 +49,7 @@ public:
   void SetShape(int s) {this->Shape = s;};
   int GetShape() {return this->Shape;};
 
-  const char *GetShapeString()
+  const char* GetShapeString()
   {
     switch (this->Shape)
     {
@@ -64,7 +64,7 @@ public:
     }
   }
 
-  void SetShapeString(const char *str) {
+  void SetShapeString(const char* str) {
     if (strcmp(str,"Polygon") == 0)
       this->SetShapeToPolygon();
     else if (strcmp(str,"Lines") == 0)
@@ -83,7 +83,7 @@ protected:
   vtkImageFillROI();
   ~vtkImageFillROI() override;
 
-  vtkPoints *Points;
+  vtkPoints* Points;
   double Value;
   int Radius;
   int Shape;

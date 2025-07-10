@@ -86,7 +86,7 @@ public:
   /// dragEnterEvents can be forwarded to the IOManager, if a registered dialog
   /// supports it, the event is accepted, otherwise ignored.
   /// \sa dropEvent()
-  void dragEnterEvent(QDragEnterEvent *event);
+  void dragEnterEvent(QDragEnterEvent* event);
 
   /// Search, in the list of registered readers, the first dialog that
   /// handles the drop event. If the event is accepted by the dialog (
@@ -94,7 +94,7 @@ public:
   /// otherwise the next dialog is tested. The order in which dialogs are
   /// being tested is the opposite of the dialogs are registered.
   /// \sa dragEnterEvent()
-  void dropEvent(QDropEvent *event);
+  void dropEvent(QDropEvent* event);
 
 public slots:
 

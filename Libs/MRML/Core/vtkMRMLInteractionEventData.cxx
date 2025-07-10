@@ -75,7 +75,7 @@ vtkMRMLInteractionEventData::vtkMRMLInteractionEventData()
 //---------------------------------------------------------------------------
 vtkMRMLInteractionEventData* vtkMRMLInteractionEventData::New()
 {
-  vtkMRMLInteractionEventData *ret = new vtkMRMLInteractionEventData;
+  vtkMRMLInteractionEventData* ret = new vtkMRMLInteractionEventData;
   ret->InitializeObjectBase();
   return ret;
 };
@@ -184,7 +184,7 @@ int vtkMRMLInteractionEventData::GetKeyRepeatCount()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLInteractionEventData::SetKeySym(const std::string &v)
+void vtkMRMLInteractionEventData::SetKeySym(const std::string& v)
 {
   this->KeySym = v;
 }
@@ -388,9 +388,9 @@ bool vtkMRMLInteractionEventData::ComputeAccurateWorldPosition(bool force/*=fals
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLInteractionEventData::Equivalent(const vtkEventData *e) const
+bool vtkMRMLInteractionEventData::Equivalent(const vtkEventData* e) const
 {
-  const vtkMRMLInteractionEventData *edd = static_cast<const vtkMRMLInteractionEventData *>(e);
+  const vtkMRMLInteractionEventData* edd = static_cast<const vtkMRMLInteractionEventData*>(e);
   if (this->Type != edd->Type)
   {
     return false;

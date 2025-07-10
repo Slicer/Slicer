@@ -120,8 +120,8 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
   }
 
   // Get a reference to the main module and global dictionary
-  PyObject * main_module = PyImport_AddModule("__main__");
-  PyObject * global_dict = PyModule_GetDict(main_module);
+  PyObject* main_module = PyImport_AddModule("__main__");
+  PyObject* global_dict = PyModule_GetDict(main_module);
 
   // Get actual module from sys.modules
   PyObject* sysModules = PyImport_GetModuleDict();

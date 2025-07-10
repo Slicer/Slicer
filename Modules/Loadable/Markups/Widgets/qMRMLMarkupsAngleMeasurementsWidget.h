@@ -47,7 +47,7 @@ public:
   const QString className() const override { return "qMRMLMarkupsAngleMeasurementsWidget"; }
 
   /// Checks whether a given node can be handled by the widget
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
 
   /// Set the MRML node of interest
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
@@ -65,7 +65,7 @@ public slots:
   void updateWidgetFromMRML() override;
 
 protected:
-  qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent, qMRMLMarkupsAngleMeasurementsWidgetPrivate &d);
+  qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent, qMRMLMarkupsAngleMeasurementsWidgetPrivate& d);
 
 protected:
   void setup();

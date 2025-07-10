@@ -26,7 +26,7 @@
 using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
+int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
 {
   vtkNew<vtkMRMLColorTableNode> node1;
   {

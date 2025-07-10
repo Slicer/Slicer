@@ -59,7 +59,7 @@ public:
   const QString className() const override {return "qMRMLMarkupsROIWidget";}
 
   /// Checks whether a given node can be handled by the widget
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
 
   /// Get the inside out state.
   bool insideOut();

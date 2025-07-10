@@ -301,7 +301,7 @@ void vtkMRMLThreeDSliceEdgeDisplayableManager::vtkInternal::UpdateSliceEdgeWidge
   {
     return;
   }
-  vtkMRMLApplicationLogic *mrmlAppLogic = this->External->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* mrmlAppLogic = this->External->GetMRMLApplicationLogic();
   vtkMRMLSliceLogic* sliceLogic = (mrmlAppLogic ? mrmlAppLogic->GetSliceLogic(sliceNode) : nullptr);
   vtkMRMLModelNode* sliceModelNode = (sliceLogic ? sliceLogic->GetSliceModelNode() : nullptr);
   if (!sliceModelNode)

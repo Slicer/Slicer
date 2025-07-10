@@ -43,7 +43,7 @@ class qMRMLMarkupsROIWidgetPrivate:
 {
 
 public:
-  qMRMLMarkupsROIWidgetPrivate(qMRMLMarkupsROIWidget &widget);
+  qMRMLMarkupsROIWidgetPrivate(qMRMLMarkupsROIWidget& widget);
   void setupUi(qMRMLMarkupsROIWidget* widget);
 
   bool IsProcessingOnMRMLNodeModified;
@@ -372,7 +372,7 @@ void qMRMLMarkupsROIWidget::updateWidgetFromMRML()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsROIWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qMRMLMarkupsROIWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const
 {
   auto roiNode = vtkMRMLMarkupsROINode::SafeDownCast(markupsNode);
   if (!roiNode)

@@ -32,7 +32,7 @@
 
 //---------------------------------------------------------------------------
 int vtkMRMLSceneIDTest(
-  int vtkNotUsed(argc), char * vtkNotUsed(argv) [] )
+  int vtkNotUsed(argc), char* vtkNotUsed(argv) [] )
 {
   vtkNew<vtkMRMLScene> scene;
 

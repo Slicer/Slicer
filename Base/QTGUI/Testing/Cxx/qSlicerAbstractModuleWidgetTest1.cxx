@@ -22,7 +22,7 @@
 // STD includes
 #include <cstdlib>
 
-int qSlicerAbstractModuleWidgetTest1(int, char * [] )
+int qSlicerAbstractModuleWidgetTest1(int, char*[])
 {
 
 

@@ -27,11 +27,11 @@ public:
   {
     v[0] = v[1] = v[2] = -1;
   }
-  inline int & operator[](int i)
+  inline int& operator[](int i)
   {
     return v[i];
   }
-  inline void conv(double * i)
+  inline void conv(double* i)
   {
     i[0] = v[0]; i[1] = v[1]; i[2] = v[2];
   };
@@ -41,15 +41,15 @@ class Coord3f
 {
   float v[3];
 public:
-  inline float & operator[](int i)
+  inline float& operator[](int i)
   {
     return v[i];
   }
-  inline void conv(float * i)
+  inline void conv(float* i)
   {
     i[0] = v[0]; i[1] = v[1]; i[2] = v[2];
   };
-  inline void conv(double * i)
+  inline void conv(double* i)
   {
     i[0] = v[0]; i[1] = v[1]; i[2] = v[2];
   };
@@ -59,19 +59,19 @@ class Coord3d
 {
   double v[3];
 public:
-  inline double & operator[](int i)
+  inline double& operator[](int i)
   {
     return v[i];
   };
-  inline void conv(int * i)
+  inline void conv(int* i)
   {
     i[0] = (int) v[0]; i[1] = (int) v[1]; i[2] = (int) v[2];
   };
-  inline void conv(float * i)
+  inline void conv(float* i)
   {
     i[0] = static_cast<float>(v[0]); i[1] = static_cast<float>(v[1]); i[2] = static_cast<float>(v[2]);
   };
-  inline void conv(double * i)
+  inline void conv(double* i)
   {
     i[0] = v[0]; i[1] = v[1]; i[2] = v[2];
   };
@@ -88,7 +88,7 @@ inline double pointdistance(Coord3i &p1, Coord3i &p2, const double spacing[3])
   );
 }
 
-inline void normcrossprod(double *v1, double *v2, double *norm)
+inline void normcrossprod(double* v1, double* v2, double* norm)
 // calculate normalized crossproduct
 {
   double absval;
@@ -105,7 +105,7 @@ inline void normcrossprod(double *v1, double *v2, double *norm)
 
 // calculate angle between two vectors (0..M_PI), you might want to adjust to 0..M_PI/2
 // range after call via 'if (angle > M_PI/2) angle = M_PI-angle;'
-inline double vectorangle(double *v1, double *v2)
+inline double vectorangle(double* v1, double* v2)
 {
   double prod = 0, length1 = 0, length2 = 0;
 
@@ -138,19 +138,19 @@ inline double vec_length(Coord3d x)
   return sqrt(sqr(x[0]) + sqr(x[1]) + sqr(x[2]) );
 }
 
-inline double vec_length(double *x)
+inline double vec_length(double* x)
 {
   return sqrt(sqr(x[0]) + sqr(x[1]) + sqr(x[2]) );
 }
 
-inline double vec_length(double *x, double *y)
+inline double vec_length(double* x, double* y)
 {
   return sqrt(sqr(x[0] - y[0]) + sqr(x[1] - y[1]) + sqr(x[2] - y[2]) );
 }
 
 // transform and check index, returns 0 on success and 1 if corrected location
-inline int transWorldToImage(Coord3d loc_world, int *loc_img,
-                             double *origin, int *dims, double voxelsize)
+inline int transWorldToImage(Coord3d loc_world, int* loc_img,
+                             double* origin, int* dims, double voxelsize)
 {
   int adjust = 0;
 
@@ -170,8 +170,8 @@ inline int transWorldToImage(Coord3d loc_world, int *loc_img,
   return adjust;
 }
 
-inline int transWorldToImage(double *loc_world, int *loc_img,
-                             double *origin, int *dims, double voxelsize)
+inline int transWorldToImage(double* loc_world, int* loc_img,
+                             double* origin, int* dims, double voxelsize)
 // transform and check index, returns 0 on success and 1 if corrected location
 {
   int adjust = 0;

@@ -44,7 +44,7 @@ class vtkTable;
 class VTK_MRML_EXPORT vtkMRMLTableStorageNode : public vtkMRMLStorageNode
 {
 public:
-  static vtkMRMLTableStorageNode *New();
+  static vtkMRMLTableStorageNode* New();
   vtkTypeMacro(vtkMRMLTableStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -54,7 +54,7 @@ public:
   const char* GetNodeTagName() override {return "TableStorage";}
 
   /// Return true if the node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// Helper function to write out table to file
   static bool WriteTable(std::string filename, vtkTable* table, std::string delimiter,
@@ -94,10 +94,10 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node. Returns 0 on failure.
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node. Returns 0 on failure.
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
   std::string GenerateSchemaFileName(const char* fileName);
 

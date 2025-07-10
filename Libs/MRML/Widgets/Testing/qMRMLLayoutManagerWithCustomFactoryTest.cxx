@@ -81,7 +81,7 @@ protected:
 
     this->LastNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
 
-    qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
+    qMRMLSliceWidget* sliceWidget = new qMRMLSliceWidget(this->layoutManager()->viewport());
     sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
     QString sliceLayoutName(viewNode->GetLayoutName());
     QString sliceViewLabel(viewNode->GetLayoutLabel());
@@ -102,11 +102,11 @@ protected:
     QLabel* label = new QLabel();
     label->setText("This is a SliceView customization");
 
-    QVBoxLayout * layout = new QVBoxLayout;
+    QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(sliceWidget);
     layout->addWidget(label);
 
-    QWidget * widget = new QWidget(this->layoutManager()->viewport());
+    QWidget* widget = new QWidget(this->layoutManager()->viewport());
     widget->setObjectName("CustomSliceWidget");
     widget->setLayout(layout);
 
@@ -119,7 +119,7 @@ class vtkMRMLCustomViewNode
   : public vtkMRMLAbstractViewNode
 {
 public:
-  static vtkMRMLCustomViewNode *New();
+  static vtkMRMLCustomViewNode* New();
   vtkTypeMacro(vtkMRMLCustomViewNode, vtkMRMLAbstractViewNode);
 
   //--------------------------------------------------------------------------
@@ -182,10 +182,10 @@ protected:
     QLabel* label = new QLabel();
     label->setText("This is a custom view");
 
-    QVBoxLayout * layout = new QVBoxLayout;
+    QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(label);
 
-    QWidget * widget = new QWidget(this->layoutManager()->viewport());
+    QWidget* widget = new QWidget(this->layoutManager()->viewport());
     widget->setObjectName("CustomWidget");
     widget->setLayout(layout);
 
@@ -194,7 +194,7 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
+int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char* argv[] )
 {
   (void)checkViewArrangement; // Fix -Wunused-function warning
 

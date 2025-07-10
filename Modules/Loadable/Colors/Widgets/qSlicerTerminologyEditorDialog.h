@@ -44,7 +44,7 @@ public:
   qSlicerTerminologyEditorDialog(QObject* parent = nullptr);
 #ifndef __VTK_WRAP__
   qSlicerTerminologyEditorDialog(
-    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent = nullptr );
+    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& initialTerminologyInfo, QObject* parent = nullptr );
 #endif
   ~qSlicerTerminologyEditorDialog() override;
 
@@ -56,10 +56,10 @@ public:
   ///   and so their value is valid and should be used by the caller.
   /// \return Success flag
   static bool getTerminology(
-    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo, QObject* parent );
+    qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo, QObject* parent );
 
   /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object
-  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
+  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo);
 #endif
 
   /// Convenience function to start dialog, initialized with a terminology entry.

@@ -69,7 +69,7 @@ public:
   void Reset(vtkMRMLNode* defaultNode) override;
 
   ///
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   /// Set Type to type, then build colors and set names
   virtual void SetType(int type);
@@ -81,7 +81,7 @@ public:
   void SetTypeToUser();
   void SetTypeToFile();
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
 
   /// Return the lowest and highest integers, for use in looping.
   /// Override in subclasses when more enums are added.
@@ -125,14 +125,14 @@ public:
   /// they are replaced as an extra precaution.
   /// The color name is truncated to not be longer than 255 characters.
   /// \a subst can be made of invalid characters and be longer than 1 char
-  std::string GetColorNameAsFileName(int colorIndex, const char *subst = "_");
+  std::string GetColorNameAsFileName(int colorIndex, const char* subst = "_");
 
   /// \deprecated GetColorNameWithoutSpaces
   /// The method is no longer needed and will be removed in the future.
   /// Get the 0th based nth name of this color, replacing the spaces with
   /// subst
   /// \sa GetColorNameAsFileName
-  std::string GetColorNameWithoutSpaces(int ind, const char *subst);
+  std::string GetColorNameWithoutSpaces(int ind, const char* subst);
 
   /// Set the name of the n-th entry.
   /// Note that this sets the Defined flag for the color entry to true.
@@ -143,7 +143,7 @@ public:
   /// The method is no longer needed and will be removed in the future.
   /// Set the name of the n-th entry, replacing the subst character by space.
   /// Returns 1 on success, 0 on failure
-  int SetColorNameWithSpaces(int ind, const char *name, const char *subst);
+  int SetColorNameWithSpaces(int ind, const char* name, const char* subst);
 
   // @{
   /// Get terminology information for a color entry

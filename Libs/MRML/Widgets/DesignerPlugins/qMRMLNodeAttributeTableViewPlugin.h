@@ -30,9 +30,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLNodeAttributeTableViewPlugin
   Q_OBJECT
 
 public:
-  qMRMLNodeAttributeTableViewPlugin(QObject *_parent = nullptr);
+  qMRMLNodeAttributeTableViewPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QString  includeFile() const override;
   bool     isContainer() const override;

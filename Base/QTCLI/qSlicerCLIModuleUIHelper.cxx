@@ -317,10 +317,10 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createIntegerTagWidget(const ModulePar
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
 
-  QWidget * widget = nullptr;
+  QWidget* widget = nullptr;
   if (!withConstraints)
   {
-    QSpinBox * spinBox = new QSpinBox;
+    QSpinBox* spinBox = new QSpinBox;
     spinBox->setSingleStep(step);
     spinBox->setRange(min, max);
     spinBox->setValue(value);
@@ -338,7 +338,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createIntegerTagWidget(const ModulePar
     QString stepAsStr = QString::fromStdString(moduleParameter.GetStep());
     if (!stepAsStr.isEmpty()) { step = stepAsStr.toInt(); }
 
-    ctkSliderWidget * slider = new ctkSliderWidget;
+    ctkSliderWidget* slider = new ctkSliderWidget;
     slider->setDecimals(0);
     slider->setSingleStep(step);
     slider->setTickInterval(step);
@@ -360,7 +360,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createBooleanTagWidget(const ModulePar
   }
 
   QString valueAsStr = QString::fromStdString(moduleParameter.GetValue());
-  QCheckBox * widget = new QCheckBox;
+  QCheckBox* widget = new QCheckBox;
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
   widget->setChecked(valueAsStr == "true");
@@ -389,10 +389,10 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
   QString _name = QString::fromStdString(moduleParameter.GetName());
   int decimals = valueAsStr.indexOf('.') != -1 ? valueAsStr.length() - valueAsStr.indexOf('.') -1 : 2;
 
-  QWidget * widget = nullptr;
+  QWidget* widget = nullptr;
   if (!withConstraints)
   {
-    ctkDoubleSpinBox * spinBox = new ctkDoubleSpinBox;
+    ctkDoubleSpinBox* spinBox = new ctkDoubleSpinBox;
     spinBox->setDecimals(decimals);
     spinBox->setDecimalsOption(
       ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
@@ -434,7 +434,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
       }
     }
 
-    ctkSliderWidget * slider = new ctkSliderWidget;
+    ctkSliderWidget* slider = new ctkSliderWidget;
     slider->setDecimals(decimals);
     slider->spinBox()->setDecimalsOption(
       ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
@@ -469,10 +469,10 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
   QString _name = QString::fromStdString(moduleParameter.GetName());
   int decimals = valueAsStr.indexOf('.') != -1 ? valueAsStr.length() - valueAsStr.indexOf('.') -1 : 2;
 
-  QWidget * widget = nullptr;
+  QWidget* widget = nullptr;
   if (!withConstraints)
   {
-    ctkDoubleSpinBox * spinBox = new ctkDoubleSpinBox;
+    ctkDoubleSpinBox* spinBox = new ctkDoubleSpinBox;
     spinBox->setDecimals(decimals);
     spinBox->setDecimalsOption(
       ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
@@ -513,7 +513,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
         decimals = qMax(decimals, stepAsStr.length() - stepAsStr.indexOf('.') -1);
       }
     }
-    ctkSliderWidget * slider = new ctkSliderWidget;
+    ctkSliderWidget* slider = new ctkSliderWidget;
     slider->setDecimals(decimals);
     slider->spinBox()->setDecimalsOption(
       ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
@@ -531,7 +531,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
 QWidget* qSlicerCLIModuleUIHelperPrivate::createStringTagWidget(const ModuleParameter& moduleParameter)
 {
   QString valueAsStr = QString::fromStdString(moduleParameter.GetValue());
-  QLineEdit * widget = new QLineEdit;
+  QLineEdit* widget = new QLineEdit;
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
   widget->setText(valueAsStr);
@@ -663,7 +663,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
 
   QString type = QString::fromStdString(moduleParameter.GetType());
 
-  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
+  qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   if (type == "any")
   {
     // Add all of the other concrete volume node types
@@ -766,7 +766,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
 
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
+  qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   widget->setShowHidden(false);
   widget->setNodeTypes(QStringList(nodeType));
   widget->setRenameEnabled(true);
@@ -804,7 +804,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
 
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
+  qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));
   widget->setAddEnabled(channel != "input");
@@ -841,7 +841,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createMeasurementTagWidget(const Modul
 
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
+  qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));
   widget->setAddEnabled(channel != "input");
@@ -875,7 +875,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
 
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
+  qMRMLNodeComboBox* widget = new qMRMLNodeComboBox;
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));
   widget->setAddEnabled(channel != "input");
   widget->setRenameEnabled(true);
@@ -980,13 +980,13 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createEnumerationTagWidget(const Modul
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
   ButtonGroupWidgetWrapper * widget = new ButtonGroupWidgetWrapper;
-  ctkFlowLayout * _layout = new ctkFlowLayout(widget);
+  ctkFlowLayout* _layout = new ctkFlowLayout(widget);
   widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 
   for (ElementConstIterator sIt = sBeginIt; sIt != sEndIt; ++sIt)
   {
     QString value = QString::fromStdString(*sIt);
-    QRadioButton * radio = new QRadioButton(this->CLIModuleWidget->translate(value.toStdString()), widget);
+    QRadioButton* radio = new QRadioButton(this->CLIModuleWidget->translate(value.toStdString()), widget);
     _layout->addWidget(radio);
     radio->setChecked(defaultValue == value);
     // enumValue may differ from displayed text when the application is
@@ -1046,7 +1046,7 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
 
   Q_ASSERT(moduleParameter.GetHidden() != "true");
 
-  QWidget * widget = nullptr;
+  QWidget* widget = nullptr;
 
   if (moduleParameter.GetTag() == "integer")
   {

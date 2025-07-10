@@ -182,7 +182,7 @@ protected:
   /// Parameter 'pad' allows to specify (using a value between 0 and 1)
   /// which percentage of the found range(max-min) value should be subtracted/added
   /// to the min/max value found.
-  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
+  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4* mat,
                                                             double pad = 0);
 
 private:

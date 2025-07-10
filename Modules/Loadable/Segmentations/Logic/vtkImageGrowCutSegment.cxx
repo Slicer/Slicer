@@ -37,17 +37,17 @@ public:
   void Reset();
 
   template<typename IntensityPixelType, typename LabelPixelType>
-  bool InitializationAHP(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume, vtkImageData *maskLabelVolume, double distancePenalty);
+  bool InitializationAHP(vtkImageData* intensityVolume, vtkImageData* seedLabelVolume, vtkImageData* maskLabelVolume, double distancePenalty);
 
   template<typename IntensityPixelType, typename LabelPixelType>
-  void DijkstraBasedClassificationAHP(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume, vtkImageData *maskLabelVolume);
+  void DijkstraBasedClassificationAHP(vtkImageData* intensityVolume, vtkImageData* seedLabelVolume, vtkImageData* maskLabelVolume);
 
   template <class SourceVolType>
-  bool ExecuteGrowCut(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume, vtkImageData *maskLabelVolume,
-    vtkImageData *resultLabelVolume, double distancePenalty);
+  bool ExecuteGrowCut(vtkImageData* intensityVolume, vtkImageData* seedLabelVolume, vtkImageData* maskLabelVolume,
+    vtkImageData* resultLabelVolume, double distancePenalty);
 
   template< class SourceVolType, class SeedVolType>
-  bool ExecuteGrowCut2(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume, vtkImageData *maskLabelVolume, double distancePenalty);
+  bool ExecuteGrowCut2(vtkImageData* intensityVolume, vtkImageData* seedLabelVolume, vtkImageData* maskLabelVolume, double distancePenalty);
 
   // Stores the shortest distance from known labels to each point
   // If a point is set to DIST_INF then that point will modified, as a shorter distance path will be found.
@@ -110,9 +110,9 @@ void vtkImageGrowCutSegment::vtkInternal::Reset()
 //-----------------------------------------------------------------------------
 template<typename IntensityPixelType, typename LabelPixelType>
 bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(
-    vtkImageData *vtkNotUsed(intensityVolume),
-    vtkImageData *seedLabelVolume,
-    vtkImageData *maskLabelVolume,
+    vtkImageData* vtkNotUsed(intensityVolume),
+    vtkImageData* seedLabelVolume,
+    vtkImageData* maskLabelVolume,
     double distancePenalty)
 {
   // Release memory before reallocating
@@ -312,9 +312,9 @@ bool vtkImageGrowCutSegment::vtkInternal::InitializationAHP(
 //-----------------------------------------------------------------------------
 template<typename IntensityPixelType, typename LabelPixelType>
 void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(
-    vtkImageData *intensityVolume,
-    vtkImageData *vtkNotUsed(seedLabelVolume),
-    vtkImageData *vtkNotUsed(maskLabelVolume))
+    vtkImageData* intensityVolume,
+    vtkImageData* vtkNotUsed(seedLabelVolume),
+    vtkImageData* vtkNotUsed(maskLabelVolume))
 {
   if (m_Heap == nullptr || m_HeapNodes == nullptr)
   {
@@ -405,8 +405,8 @@ void vtkImageGrowCutSegment::vtkInternal::DijkstraBasedClassificationAHP(
 
 //-----------------------------------------------------------------------------
 template< class IntensityPixelType, class LabelPixelType>
-bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut2(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume,
-  vtkImageData *maskLabelVolume, double distancePenalty)
+bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut2(vtkImageData* intensityVolume, vtkImageData* seedLabelVolume,
+  vtkImageData* maskLabelVolume, double distancePenalty)
 {
   int* imSize = intensityVolume->GetDimensions();
 
@@ -444,8 +444,8 @@ bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut2(vtkImageData *intensit
 
 //----------------------------------------------------------------------------
 template <class SourceVolType>
-bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut(vtkImageData *intensityVolume, vtkImageData *seedLabelVolume,
-  vtkImageData *maskLabelVolume, vtkImageData *resultLabelVolume, double distancePenalty)
+bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut(vtkImageData* intensityVolume, vtkImageData* seedLabelVolume,
+  vtkImageData* maskLabelVolume, vtkImageData* resultLabelVolume, double distancePenalty)
 {
   int* extent = intensityVolume->GetExtent();
   double* spacing = intensityVolume->GetSpacing();
@@ -553,7 +553,7 @@ vtkImageGrowCutSegment::~vtkImageGrowCutSegment()
 }
 
 //-----------------------------------------------------------------------------
-int vtkImageGrowCutSegment::FillInputPortInformation(int port, vtkInformation * info)
+int vtkImageGrowCutSegment::FillInputPortInformation(int port, vtkInformation* info)
 {
   vtkImageAlgorithm::FillInputPortInformation(port, info);
   if (port == 2)
@@ -565,12 +565,12 @@ int vtkImageGrowCutSegment::FillInputPortInformation(int port, vtkInformation * 
 
 //-----------------------------------------------------------------------------
 void vtkImageGrowCutSegment::ExecuteDataWithInformation(
-  vtkDataObject *resultLabelVolumeDataObject, vtkInformation* vtkNotUsed(resultLabelVolumeInfo))
+  vtkDataObject* resultLabelVolumeDataObject, vtkInformation* vtkNotUsed(resultLabelVolumeInfo))
 {
-  vtkImageData *intensityVolume = vtkImageData::SafeDownCast(this->GetInput(0));
-  vtkImageData *seedLabelVolume = vtkImageData::SafeDownCast(this->GetInput(1));
-  vtkImageData *maskLabelVolume = vtkImageData::SafeDownCast(this->GetInput(2));
-  vtkImageData *resultLabelVolume = vtkImageData::SafeDownCast(resultLabelVolumeDataObject);
+  vtkImageData* intensityVolume = vtkImageData::SafeDownCast(this->GetInput(0));
+  vtkImageData* seedLabelVolume = vtkImageData::SafeDownCast(this->GetInput(1));
+  vtkImageData* maskLabelVolume = vtkImageData::SafeDownCast(this->GetInput(2));
+  vtkImageData* resultLabelVolume = vtkImageData::SafeDownCast(resultLabelVolumeDataObject);
 
   vtkNew<vtkTimerLog> logger;
   logger->StartTimer();
@@ -586,12 +586,12 @@ void vtkImageGrowCutSegment::ExecuteDataWithInformation(
 
 //-----------------------------------------------------------------------------
 int vtkImageGrowCutSegment::RequestInformation(
-  vtkInformation * request,
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformation* request,
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
   // get the info objects
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(1);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(1);
   if (inInfo != nullptr)
   {
     this->Superclass::RequestInformation(request, inputVector, outputVector);

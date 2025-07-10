@@ -904,8 +904,8 @@ void vtkMRMLModelDisplayableManager::UpdateModelMesh(vtkMRMLDisplayableNode* dis
           {
             mapper->SetInputConnection(meshConnection);
           }
-          if ((meshType == vtkMRMLModelNode::UnstructuredGridMeshType && mapper->IsA("vtkDataSetMapper"))
-            || (meshType == vtkMRMLModelNode::PolyDataMeshType && mapper->IsA("vtkPolyDataMapper")))
+          if ((meshType == vtkMRMLModelNode::UnstructuredGridMeshType&& mapper->IsA("vtkDataSetMapper"))
+            || (meshType == vtkMRMLModelNode::PolyDataMeshType&& mapper->IsA("vtkPolyDataMapper")))
           {
             mapperUpdateNeeded = false;
           }

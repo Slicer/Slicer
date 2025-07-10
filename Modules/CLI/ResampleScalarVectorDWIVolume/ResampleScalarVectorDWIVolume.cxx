@@ -79,8 +79,8 @@ struct parameters
 
 // To check the image voxel type
 void GetImageType( std::string fileName,
-                   itk::IOPixelEnum & pixelType,
-                   itk::IOComponentEnum & componentType
+                   itk::IOPixelEnum& pixelType,
+                   itk::IOComponentEnum& componentType
                    )
 {
   typedef itk::Image<unsigned char, 3> ImageType;
@@ -238,7 +238,7 @@ SetUpTransform( parameters & list,
         rotation->SetTranslation( vec );
         transform = rotation;
       }
-      catch( itk::ExceptionObject &exp )
+      catch( itk::ExceptionObject& exp )
       {
         std::string exception = exp.GetDescription();
         if( exception.find( "Attempting to set a non-orthogonal rotation matrix" ) != std::string::npos )
@@ -271,13 +271,13 @@ void InitializeThinPlateSplineTransform(itk::Transform<double, 3, 3>::Pointer tr
   std::string transformClassName = transform->GetNameOfClass();
   if (transformClassName == "ThinPlateSplineKernelTransform")
   {
-    typedef itk::ThinPlateSplineKernelTransform< double, 3 > ThinPlateSplineTransformType;
+    typedef itk::ThinPlateSplineKernelTransform<double, 3 > ThinPlateSplineTransformType;
     ThinPlateSplineTransformType* tpsTransform = static_cast<ThinPlateSplineTransformType*>(transform.GetPointer());
     tpsTransform->ComputeWMatrix();
   }
   else if (transformClassName == "CompositeTransform")
   {
-    typedef itk::CompositeTransform< double, 3 > CompositeTransformType;
+    typedef itk::CompositeTransform<double, 3 > CompositeTransformType;
     CompositeTransformType* compositeTransform = static_cast<CompositeTransformType*>(transform.GetPointer());
     for (unsigned int i = 0; i < compositeTransform->GetNumberOfTransforms(); ++i)
     {
@@ -305,7 +305,7 @@ SetTransformAndOrder( parameters & list,
     ::Pointer matrixOffsetTransform;
     if( transformClassName.find("AffineTransform") != std::string::npos ) // if affine transform
     {
-      matrixOffsetTransform = static_cast<AffineTransformType *>( transform.GetPointer() );
+      matrixOffsetTransform = static_cast<AffineTransformType*>( transform.GetPointer() );
       list.transformType.assign( "a" );
       SetListFromTransform<double>( matrixOffsetTransform, list );
     }
@@ -374,12 +374,12 @@ SetTransform( parameters & list,
   {
     if( !list.transformsOrder.compare( "input-to-output" ) )
     {
-      transform = static_cast<TransformType *>
+      transform = static_cast<TransformType*>
         ( transformFile->GetTransformList()->back().GetPointer() );
     }
     else
     {
-      transform = static_cast<TransformType *>
+      transform = static_cast<TransformType*>
         ( transformFile->GetTransformList()->front().GetPointer() );
     }
   }
@@ -582,7 +582,7 @@ SetAllTransform( parameters & list,
         // order=3 for the BSpline seems to be standard among tools in Slicer3 and BRAINTools
         typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
         BSplineDeformableTransformType::Pointer BSplineTransform;
-        BSplineTransform = static_cast<BSplineDeformableTransformType *>(transform.GetPointer() );
+        BSplineTransform = static_cast<BSplineDeformableTransformType*>(transform.GetPointer() );
         typename TransformType::Pointer bulkTransform;
         bulkTransform = SetTransform<ImageType>( list, image, transformFile, outputImageCenter );
         BSplineTransform->SetBulkTransform( bulkTransform );
@@ -646,7 +646,7 @@ SetAllTransform( parameters & list,
         return nullptr;
       }
       typename MatrixTransformType::Pointer localTransform;
-      localTransform = static_cast<MatrixTransformType *>(transform.GetPointer() );
+      localTransform = static_cast<MatrixTransformType*>(transform.GetPointer() );
       matrix = localTransform->GetMatrix();
       vector = localTransform->GetTranslation();
       tempMatrix.SetIdentity();
@@ -925,7 +925,7 @@ Transform3DPointer InverseTransform( const Transform3DPointer & transform )
     }
     if( transformClassName.find( "AffineTransform" ) != std::string::npos )  // Rotation around a selected point
     {
-      AffineTransformType::Pointer affine = static_cast<AffineTransformType *>( transform.GetPointer() );
+      AffineTransformType::Pointer affine = static_cast<AffineTransformType*>( transform.GetPointer() );
       AffineTransformType::Pointer affinetemp = AffineTransformType::New();
       affine->GetInverse( affinetemp );
       inverseTransform = affinetemp;
@@ -946,7 +946,7 @@ Transform3DPointer InverseTransform( const Transform3DPointer & transform )
           transformClassName == "ScaleLogarithmicTransform"
           ) // if rotation transform
       {
-        RotationType::Pointer rigid = static_cast<RotationType *>( transform.GetPointer() );
+        RotationType::Pointer rigid = static_cast<RotationType*>( transform.GetPointer() );
         RotationType::Pointer rigidtemp = RotationType::New();
         rigid->GetInverse( rigidtemp );
         inverseTransform = rigidtemp;
@@ -967,7 +967,7 @@ Transform3DPointer InverseTransform( const Transform3DPointer & transform )
 
 // Read Measurement Frame and set it to identity if inverseTransform is not nullptr
 itk::Matrix<double, 3, 3>
-ReadMeasurementFrame( itk::MetaDataDictionary & dico, const Transform3DPointer & inverseTransform )
+ReadMeasurementFrame( itk::MetaDataDictionary& dico, const Transform3DPointer & inverseTransform )
 {
   itk::Matrix<double, 3, 3> measurementFrame;
   typedef std::vector<std::vector<double> >     DoubleVectorType;
@@ -979,7 +979,7 @@ ReadMeasurementFrame( itk::MetaDataDictionary & dico, const Transform3DPointer &
   {
     itk::MetaDataObjectBase::Pointer  entry = itr->second;
     MetaDataDoubleVectorType::Pointer entryvalue
-      = dynamic_cast<MetaDataDoubleVectorType *>( entry.GetPointer() );
+      = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
     if( entryvalue )
     {
       int pos = itr->first.find( "NRRD_measurement frame" );
@@ -1010,7 +1010,7 @@ ReadMeasurementFrame( itk::MetaDataDictionary & dico, const Transform3DPointer &
 }
 
 // Transform the gradient vectors
-int TransformGradients( itk::MetaDataDictionary & dico,
+int TransformGradients( itk::MetaDataDictionary& dico,
                         const Transform3DPointer & inverseTransform,
                         const itk::Matrix<double, 3, 3> & measurementFrame
                         )
@@ -1023,7 +1023,7 @@ int TransformGradients( itk::MetaDataDictionary & dico,
   {
     itk::MetaDataObjectBase::Pointer entry = itr->second;
     MetaDataStringType::Pointer      entryvalue
-      = dynamic_cast<MetaDataStringType *>( entry.GetPointer() );
+      = dynamic_cast<MetaDataStringType*>( entry.GetPointer() );
     if( entryvalue )
     {
       // get the gradient directions
@@ -1089,7 +1089,7 @@ int TransformGradients( itk::MetaDataDictionary & dico,
   return 0;
 }
 
-int CheckDWMRI( itk::MetaDataDictionary & dico,
+int CheckDWMRI( itk::MetaDataDictionary& dico,
                 const Transform3DPointer & transform
                 )
 {
@@ -1241,7 +1241,7 @@ int Rotate( parameters & list )
     // Separate the vector image into a vector of images
     SeparateImages<PixelType>( reader->GetOutput(), vectorOfImage );
   }
-  catch( itk::ExceptionObject &exception )
+  catch( itk::ExceptionObject& exception )
   {
     std::cerr << exception << std::endl;
     return EXIT_FAILURE;
@@ -1298,7 +1298,7 @@ int Rotate( parameters & list )
     writer->SetFileName( list.outputVolume.c_str() );
     writer->Update();
   }
-  catch( itk::ExceptionObject &exception )
+  catch( itk::ExceptionObject& exception )
   {
     std::cerr << exception << std::endl;
     return EXIT_FAILURE;
@@ -1313,7 +1313,7 @@ int Rotate( parameters & list )
 
 } // end of anonymous namespace
 
-int main( int argc, char * argv[] )
+int main( int argc, char* argv[] )
 {
   PARSE_ARGS;
   parameters list;

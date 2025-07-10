@@ -338,7 +338,7 @@ const char* vtkMRMLMarkupsDisplayNode::GetGlyphTypeAsString()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SetGlyphTypeFromString(const char *glyphString)
+void vtkMRMLMarkupsDisplayNode::SetGlyphTypeFromString(const char* glyphString)
 {
   this->SetGlyphType(vtkMRMLMarkupsDisplayNode::GetGlyphTypeFromString(glyphString));
 }
@@ -529,9 +529,9 @@ void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLMarkupsDisplayNode::ProcessMRMLEvents(vtkObject* caller,
                                                   unsigned long event,
-                                                  void *callData)
+                                                  void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   if (caller == this->TextProperty)
@@ -548,7 +548,7 @@ void vtkMRMLMarkupsDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 }
 
 //-----------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLMarkupsDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
    Superclass::UpdateScene(scene);
 }
@@ -567,31 +567,31 @@ int  vtkMRMLMarkupsDisplayNode::GlyphTypeIs3D(int glyphType)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsDisplayNode::SetLineColorNodeID(const char *lineColorNodeID)
+void vtkMRMLMarkupsDisplayNode::SetLineColorNodeID(const char* lineColorNodeID)
 {
   this->SetNodeReferenceID(this->GetLineColorNodeReferenceRole(), lineColorNodeID);
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLMarkupsDisplayNode::GetLineColorNodeID()
+const char* vtkMRMLMarkupsDisplayNode::GetLineColorNodeID()
 {
   return this->GetNodeReferenceID(this->GetLineColorNodeReferenceRole());
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLProceduralColorNode *vtkMRMLMarkupsDisplayNode::GetLineColorNode()
+vtkMRMLProceduralColorNode* vtkMRMLMarkupsDisplayNode::GetLineColorNode()
 {
   return vtkMRMLProceduralColorNode::SafeDownCast(this->GetNodeReference(this->GetLineColorNodeReferenceRole()));
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLMarkupsDisplayNode::GetLineColorNodeReferenceRole()
+const char* vtkMRMLMarkupsDisplayNode::GetLineColorNodeReferenceRole()
 {
   return vtkMRMLMarkupsDisplayNode::LineColorNodeReferenceRole;
 }
 
 //----------------------------------------------------------------------------
-const char *vtkMRMLMarkupsDisplayNode::GetLineColorNodeReferenceMRMLAttributeName()
+const char* vtkMRMLMarkupsDisplayNode::GetLineColorNodeReferenceMRMLAttributeName()
 {
   return vtkMRMLMarkupsDisplayNode::LineColorNodeReferenceMRMLAttributeName;
 }

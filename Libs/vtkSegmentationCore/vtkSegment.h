@@ -115,7 +115,7 @@ public:
   /// \param tag Name of requested tag
   /// \param value Output argument for the value of the tag if found
   /// \return True if tag is found, false otherwise
-  bool GetTag(std::string tag, std::string &value);
+  bool GetTag(std::string tag, std::string& value);
   /// Determine if a tag is present
   bool HasTag(std::string tag);
   /// Get tags

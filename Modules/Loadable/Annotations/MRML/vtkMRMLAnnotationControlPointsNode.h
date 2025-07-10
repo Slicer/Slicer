@@ -17,7 +17,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsN
   : public vtkMRMLAnnotationNode
 {
 public:
-  static vtkMRMLAnnotationControlPointsNode *New();
+  static vtkMRMLAnnotationControlPointsNode* New();
   vtkTypeMacro(vtkMRMLAnnotationControlPointsNode,vtkMRMLAnnotationNode);
 
   // void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -54,7 +54,7 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLAnnotationControlPointsNode);
 
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
@@ -115,7 +115,7 @@ public:
   /// Also, when queried again it resets all former pointers. Copying is therefore necessary.
   double* GetControlPointCoordinates(vtkIdType id);
 
-  void GetControlPointWorldCoordinates(vtkIdType id, double *point);
+  void GetControlPointWorldCoordinates(vtkIdType id, double* point);
 
   int GetNumberOfControlPoints();
 
@@ -126,7 +126,7 @@ public:
     NUM_CP_ATTRIBUTE_TYPES
   };
 
-  const char *GetAttributeTypesEnumAsString(int val) override;
+  const char* GetAttributeTypesEnumAsString(int val) override;
 
 
   // Description:
@@ -155,7 +155,7 @@ public:
   /// Return a string representing the numbering scheme, set it from a string
   const char* GetNumberingSchemeAsString();
   const char* GetNumberingSchemeAsString(int g);
-  void SetNumberingSchemeFromString(const char *schemeString);
+  void SetNumberingSchemeFromString(const char* schemeString);
 
   void Initialize(vtkMRMLScene* mrmlScene) override;
 

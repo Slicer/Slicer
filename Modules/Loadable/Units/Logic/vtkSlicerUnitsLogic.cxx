@@ -144,7 +144,7 @@ vtkMRMLUnitNode* vtkSlicerUnitsLogic
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerUnitsLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerUnitsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::StartBatchProcessEvent);
@@ -354,8 +354,8 @@ void vtkSlicerUnitsLogic::SaveDefaultUnits()
   // Save selection node units.
   vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
     this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
-  std::vector<const char *> quantities;
-  std::vector<const char *> unitIDs;
+  std::vector<const char*> quantities;
+  std::vector<const char*> unitIDs;
   if (selectionNode)
   {
     selectionNode->GetUnitNodeIDs(quantities, unitIDs);

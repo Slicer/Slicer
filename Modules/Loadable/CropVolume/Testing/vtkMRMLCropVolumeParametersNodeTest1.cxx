@@ -14,7 +14,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLCropVolumeParametersNode.h"
 
-int vtkMRMLCropVolumeParametersNodeTest1(int , char * [] )
+int vtkMRMLCropVolumeParametersNodeTest1(int, char*[])
 {
   vtkNew< vtkMRMLCropVolumeParametersNode > node1;
 

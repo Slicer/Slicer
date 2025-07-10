@@ -39,7 +39,7 @@ public:
   typedef QObject Superclass;
 
   /// Constructor
-  explicit qSlicerWebPythonProxy(QObject *parent = nullptr);
+  explicit qSlicerWebPythonProxy(QObject* parent = nullptr);
   virtual ~qSlicerWebPythonProxy();
 
   /// This enum maps to ctkAbstractPythonManager execution modes Py_eval_input,
@@ -76,7 +76,7 @@ public slots:
   /// running python code from web pages.
   ///
   /// \sa qSlicerWebWidget::initializeWebEngineProfile
-  QString evalPython(const QString &python, int mode = FileInput);
+  QString evalPython(const QString& python, int mode = FileInput);
 
 protected:
   qSlicerWebPythonProxy(qSlicerWebPythonProxyPrivate* pimpl);

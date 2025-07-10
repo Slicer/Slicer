@@ -73,13 +73,13 @@ vtkMRMLPlotSeriesNode::vtkMRMLPlotSeriesNode()
 vtkMRMLPlotSeriesNode::~vtkMRMLPlotSeriesNode() = default;
 
 //----------------------------------------------------------------------------
-const char *vtkMRMLPlotSeriesNode::GetTableNodeReferenceRole()
+const char* vtkMRMLPlotSeriesNode::GetTableNodeReferenceRole()
 {
   return vtkMRMLPlotSeriesNode::TableNodeReferenceRole;
 }
 
 //----------------------------------------------------------------------------
-const char *vtkMRMLPlotSeriesNode::GetTableNodeReferenceMRMLAttributeName()
+const char* vtkMRMLPlotSeriesNode::GetTableNodeReferenceMRMLAttributeName()
 {
   return vtkMRMLPlotSeriesNode::TableNodeReferenceMRMLAttributeName;
 }
@@ -167,7 +167,7 @@ void vtkMRMLPlotSeriesNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -178,8 +178,8 @@ void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject *caller, unsigned long e
     return;
   }
 
-  vtkMRMLTableNode *tnode = this->GetTableNode();
-  vtkMRMLTableNode *callerTable = vtkMRMLTableNode::SafeDownCast(caller);
+  vtkMRMLTableNode* tnode = this->GetTableNode();
+  vtkMRMLTableNode* callerTable = vtkMRMLTableNode::SafeDownCast(caller);
   if (callerTable != nullptr && tnode != nullptr && tnode == callerTable &&
       event == vtkCommand::ModifiedEvent)
   {
@@ -190,33 +190,33 @@ void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject *caller, unsigned long e
 }
 
 //----------------------------------------------------------------------------
-const char *vtkMRMLPlotSeriesNode::GetTableNodeID()
+const char* vtkMRMLPlotSeriesNode::GetTableNodeID()
 {
   return this->GetNodeReferenceID(this->GetTableNodeReferenceRole());
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotSeriesNode::SetAndObserveTableNodeID(const char *tableNodeID)
+void vtkMRMLPlotSeriesNode::SetAndObserveTableNodeID(const char* tableNodeID)
 {
   // Set and Observe the MRMLTable reference
   this->SetAndObserveNodeReferenceID(this->GetTableNodeReferenceRole(), tableNodeID);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotSeriesNode::SetAndObserveTableNodeID(const std::string &tableNodeID)
+void vtkMRMLPlotSeriesNode::SetAndObserveTableNodeID(const std::string& tableNodeID)
 {
   return this->SetAndObserveTableNodeID(tableNodeID.c_str());
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTableNode *vtkMRMLPlotSeriesNode::GetTableNode()
+vtkMRMLTableNode* vtkMRMLPlotSeriesNode::GetTableNode()
 {
   return vtkMRMLTableNode::SafeDownCast(
     this->GetNodeReference(this->GetTableNodeReferenceRole()));
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotSeriesNode::SetPlotType(const char *type)
+void vtkMRMLPlotSeriesNode::SetPlotType(const char* type)
 {
   this->SetPlotType(this->GetPlotTypeFromString(type));
 }

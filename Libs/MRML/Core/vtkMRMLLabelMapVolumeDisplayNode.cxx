@@ -63,15 +63,15 @@ void vtkMRMLLabelMapVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLLabelMapVolumeDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
+void vtkMRMLLabelMapVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection)
 {
   this->MapToColors->SetInputConnection(imageDataConnection);
 }
@@ -101,7 +101,7 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
 {
   Superclass::UpdateImageDataPipeline();
 
-  vtkScalarsToColors *lookupTable = nullptr;
+  vtkScalarsToColors* lookupTable = nullptr;
   if (this->GetColorNode())
   {
     lookupTable = this->GetColorNode()->GetLookupTable();

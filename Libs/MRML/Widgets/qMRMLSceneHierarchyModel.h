@@ -39,7 +39,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModel : public qMRMLSceneModel
 
 public:
   typedef qMRMLSceneModel Superclass;
-  qMRMLSceneHierarchyModel(QObject *parent=nullptr);
+  qMRMLSceneHierarchyModel(QObject* parent=nullptr);
   ~qMRMLSceneHierarchyModel() override;
 
   int expandColumn()const;
@@ -59,7 +59,7 @@ public:
 
 protected:
   qMRMLSceneHierarchyModel(qMRMLSceneHierarchyModelPrivate* pimpl,
-                           QObject *parent=nullptr);
+                           QObject* parent=nullptr);
   QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const override;
 
   void observeNode(vtkMRMLNode* node) override;

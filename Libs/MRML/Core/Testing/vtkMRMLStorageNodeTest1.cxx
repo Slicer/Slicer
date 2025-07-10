@@ -36,7 +36,7 @@ class vtkMRMLStorageNodeTestHelper1 : public vtkMRMLStorageNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLStorageNodeTestHelper1 *New();
+  static vtkMRMLStorageNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLStorageNodeTestHelper1,vtkMRMLStorageNode);
 
@@ -52,11 +52,11 @@ public:
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
 
-  bool CanReadInReferenceNode(vtkMRMLNode * refNode) override
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override
   {
     return refNode->IsA(this->SupportedClass);
   }
-  int ReadDataInternal(vtkMRMLNode * vtkNotUsed(refNode)) override
+  int ReadDataInternal(vtkMRMLNode* vtkNotUsed(refNode)) override
   {
     return this->ReadDataReturnValue;
   }
@@ -75,7 +75,7 @@ int TestWriteData();
 int TestExtensionFormatHelper();
 
 //---------------------------------------------------------------------------
-int vtkMRMLStorageNodeTest1(int , char * [] )
+int vtkMRMLStorageNodeTest1(int, char*[])
 {
   CHECK_EXIT_SUCCESS(TestBasics());
   CHECK_EXIT_SUCCESS(TestReadData());

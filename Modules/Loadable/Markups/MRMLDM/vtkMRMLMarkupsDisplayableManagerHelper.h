@@ -55,7 +55,7 @@ class VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsDisp
 {
 public:
 
-  static vtkMRMLMarkupsDisplayableManagerHelper *New();
+  static vtkMRMLMarkupsDisplayableManagerHelper* New();
   vtkTypeMacro(vtkMRMLMarkupsDisplayableManagerHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -66,9 +66,9 @@ public:
   //void SetAllWidgetsToManipulate();
 
   /// Get a vtkSlicerMarkupsWidget* given a node
-  vtkSlicerMarkupsWidget * GetWidget(vtkMRMLMarkupsDisplayNode * markupsDisplayNode);
+  vtkSlicerMarkupsWidget* GetWidget(vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
   /// Get first visible widget for this markup
-  vtkSlicerMarkupsWidget * GetWidget(vtkMRMLMarkupsNode * markupsNode);
+  vtkSlicerMarkupsWidget* GetWidget(vtkMRMLMarkupsNode* markupsNode);
 
   /// Get a vtkSlicerMarkupsWidget* given a node
   vtkSlicerMarkupsInteractionWidget* GetInteractionWidget(vtkMRMLMarkupsDisplayNode* markupsDisplayNode);

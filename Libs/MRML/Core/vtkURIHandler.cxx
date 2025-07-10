@@ -78,7 +78,7 @@ int vtkURIHandler::ProgressCallback ( FILE * vtkNotUsed(outputFile), double dlto
 
 
 //----------------------------------------------------------------------------
-size_t vtkURIHandler::BufferedWrite ( char *buffer, size_t size, size_t nitems )
+size_t vtkURIHandler::BufferedWrite ( char* buffer, size_t size, size_t nitems )
 {
   if ( this->LocalFile != nullptr )
   {
@@ -102,30 +102,30 @@ size_t vtkURIHandler::BufferedWrite ( char *buffer, size_t size, size_t nitems )
 }
 
 //----------------------------------------------------------------------------
-void vtkURIHandler::StageFileRead ( const char * vtkNotUsed( source ), const char *  vtkNotUsed( destination ))
+void vtkURIHandler::StageFileRead ( const char* vtkNotUsed( source ), const char* vtkNotUsed( destination ))
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkURIHandler::StageFileWrite ( const char * vtkNotUsed( source ), const char *  vtkNotUsed( destination ))
+void vtkURIHandler::StageFileWrite ( const char* vtkNotUsed( source ), const char* vtkNotUsed( destination ))
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkURIHandler::StageFileRead(const char * vtkNotUsed( source ),
-                             const char * vtkNotUsed( destination ),
-                             const char * vtkNotUsed( username ),
-                             const char * vtkNotUsed( password ),
-                             const char * vtkNotUsed( hostname ) )
+void vtkURIHandler::StageFileRead(const char* vtkNotUsed( source ),
+                             const char* vtkNotUsed( destination ),
+                             const char* vtkNotUsed( username ),
+                             const char* vtkNotUsed( password ),
+                             const char* vtkNotUsed( hostname ) )
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkURIHandler::StageFileWrite(const char * vtkNotUsed( source ),
-                              const char * vtkNotUsed( username ),
-                              const char * vtkNotUsed( password ),
-                              const char * vtkNotUsed( hostname ),
-                              const char * vtkNotUsed( sessionID ) )
+void vtkURIHandler::StageFileWrite(const char* vtkNotUsed( source ),
+                              const char* vtkNotUsed( username ),
+                              const char* vtkNotUsed( password ),
+                              const char* vtkNotUsed( hostname ),
+                              const char* vtkNotUsed( sessionID ) )
 {
 }
 

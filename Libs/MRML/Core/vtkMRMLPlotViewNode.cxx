@@ -134,11 +134,11 @@ vtkMRMLPlotChartNode* vtkMRMLPlotViewNode::GetPlotChartNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotViewNode::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLPlotViewNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  vtkMRMLPlotChartNode *pnode = this->GetPlotChartNode();
+  vtkMRMLPlotChartNode* pnode = this->GetPlotChartNode();
   if (pnode != nullptr && pnode == vtkMRMLPlotChartNode::SafeDownCast(caller) &&
      (event ==  vtkCommand::ModifiedEvent || event == vtkMRMLPlotChartNode::PlotModifiedEvent))
   {
@@ -161,7 +161,7 @@ const char* vtkMRMLPlotViewNode::GetPlotChartNodeReferenceMRMLAttributeName()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotViewNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+void vtkMRMLPlotViewNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
 {
   this->Superclass::OnNodeReferenceAdded(reference);
   if (std::string(reference->GetReferenceRole()) == this->PlotChartNodeReferenceRole)
@@ -171,7 +171,7 @@ void vtkMRMLPlotViewNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotViewNode::OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+void vtkMRMLPlotViewNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 {
   this->Superclass::OnNodeReferenceModified(reference);
   if (std::string(reference->GetReferenceRole()) == this->PlotChartNodeReferenceRole)
@@ -181,7 +181,7 @@ void vtkMRMLPlotViewNode::OnNodeReferenceModified(vtkMRMLNodeReference *referenc
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotViewNode::OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
+void vtkMRMLPlotViewNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* reference)
 {
   this->Superclass::OnNodeReferenceRemoved(reference);
   if (std::string(reference->GetReferenceRole()) == this->PlotChartNodeReferenceRole)

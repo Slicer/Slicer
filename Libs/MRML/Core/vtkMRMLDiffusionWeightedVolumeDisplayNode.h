@@ -35,7 +35,7 @@ class vtkImageExtractComponents;
 class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRMLScalarVolumeDisplayNode
 {
   public:
-  static vtkMRMLDiffusionWeightedVolumeDisplayNode *New();
+  static vtkMRMLDiffusionWeightedVolumeDisplayNode* New();
   vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeDisplayNode,vtkMRMLScalarVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -51,7 +51,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -81,13 +81,13 @@ protected:
 
   ///
   /// Set the input of the pipeline
-  void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection) override;
 
   vtkAlgorithmOutput* GetScalarImageDataConnection() override;
 
   /// This property holds the current diffusion component used for display.
   int DiffusionComponent;
-  vtkImageExtractComponents *ExtractComponent;
+  vtkImageExtractComponents* ExtractComponent;
 };
 
 #endif

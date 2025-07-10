@@ -30,7 +30,7 @@ vtkITKDistanceTransform::~vtkITKDistanceTransform() = default;
 
 
 template <class T>
-void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData* input,
+void vtkITKDistanceTransformExecute(vtkITKDistanceTransform* self, vtkImageData* input,
                 vtkImageData* output,
                 T* inPtr, T* vtkNotUsed(outPtr))
 {
@@ -74,7 +74,7 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData*
 
   // Copy to the output
   output->AllocateScalars(VTK_FLOAT, 1);  // in case the image being worked on is not float type
-  void * oPtr = output->GetScalarPointer();
+  void* oPtr = output->GetScalarPointer();
   memcpy(oPtr, dist->GetOutput()->GetBufferPointer(),
          dist->GetOutput()->GetBufferedRegion().GetNumberOfPixels() * sizeof(T));
 
@@ -86,21 +86,21 @@ void vtkITKDistanceTransformExecute(vtkITKDistanceTransform *self, vtkImageData*
 //
 //
 //
-void vtkITKDistanceTransform::SimpleExecute(vtkImageData *input, vtkImageData *output)
+void vtkITKDistanceTransform::SimpleExecute(vtkImageData* input, vtkImageData* output)
 {
   vtkDebugMacro(<< "Executing distance transform");
 
   //
   // Initialize and check input
   //
-  vtkPointData *pd = input->GetPointData();
+  vtkPointData* pd = input->GetPointData();
   pd=input->GetPointData();
   if (pd ==nullptr)
   {
     vtkErrorMacro(<<"PointData is NULL");
     return;
   }
-  vtkDataArray *inScalars=pd->GetScalars();
+  vtkDataArray* inScalars=pd->GetScalars();
   if ( inScalars == nullptr )
   {
     vtkErrorMacro(<<"Scalars must be defined for distance transform");

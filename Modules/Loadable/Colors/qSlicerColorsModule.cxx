@@ -101,7 +101,7 @@ void qSlicerColorsModule::setup()
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
     "vtkMRMLColorLegendDisplayableManager");
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (!app)
   {
     return;

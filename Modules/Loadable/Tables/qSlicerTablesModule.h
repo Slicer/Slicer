@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_TABLES_EXPORT qSlicerTablesModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerTablesModule(QObject *parent=nullptr);
+  explicit qSlicerTablesModule(QObject* parent=nullptr);
   ~qSlicerTablesModule() override;
 
   qSlicerGetTitleMacro(tr("Tables"));
@@ -61,7 +61,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

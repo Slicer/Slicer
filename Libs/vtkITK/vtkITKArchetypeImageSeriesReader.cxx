@@ -339,9 +339,9 @@ itk::ImageIOBase::Pointer vtkITKArchetypeImageSeriesReader::GetImageIO(const cha
 //----------------------------------------------------------------------------
 // This method returns the largest data that can be generated.
 int vtkITKArchetypeImageSeriesReader::RequestInformation(
-  vtkInformation * vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector),
+  vtkInformationVector* outputVector)
 {
   // get the info objects
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
@@ -637,14 +637,14 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
 
       typedef std::vector<std::vector<double> >    DoubleVectorType;
       typedef itk::MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
-      const itk::MetaDataDictionary &        dictionary = imageReader->GetMetaDataDictionary();
+      const itk::MetaDataDictionary& dictionary = imageReader->GetMetaDataDictionary();
       itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
       itk::MetaDataDictionary::ConstIterator end = dictionary.End();
       while( itr != end )
       {
         itk::MetaDataObjectBase::Pointer  entry = itr->second;
         MetaDataDoubleVectorType::Pointer entryvalue1
-          = dynamic_cast<MetaDataDoubleVectorType *>( entry.GetPointer() );
+          = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
         if( entryvalue1 )
         {
           int pos = itr->first.find( "NRRD_measurement frame" );
@@ -1253,7 +1253,7 @@ void vtkITKArchetypeImageSeriesReader::GroupFiles ( int idxSeriesInstanceUID,
   return;
 }
 
-std::string vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(const itk::MetaDataDictionary &dict, const std::string& tag)
+std::string vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces(const itk::MetaDataDictionary& dict, const std::string& tag)
 {
   std::string tagValue;
   itk::ExposeMetaData<std::string>(dict, tag, tagValue);
@@ -1373,7 +1373,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
   {
     gdcmIO->SetFileName( this->AllFileNames[f] );
     gdcmIO->ReadImageInformation();
-    itk::MetaDataDictionary &dict = gdcmIO->GetMetaDataDictionary();
+    itk::MetaDataDictionary& dict = gdcmIO->GetMetaDataDictionary();
     std::string tagValue;
 
     // Use vtkITKArchetypeImageSeriesReader::GetMetaDataWithoutSpaces to remove extra spaces

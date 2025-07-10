@@ -28,7 +28,7 @@ class vtkStringArray;
 class VTK_ITK_EXPORT vtkITKImageThresholdCalculator : public vtkImageAlgorithm
 {
 public:
-  static vtkITKImageThresholdCalculator *New();
+  static vtkITKImageThresholdCalculator* New();
   vtkTypeMacro(vtkITKImageThresholdCalculator,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -72,7 +72,7 @@ public:
   void SetMethodToShanbhag() { this->SetMethod(METHOD_SHANBHAG); }
   void SetMethodToTriangle() { this->SetMethod(METHOD_TRIANGLE); }
   void SetMethodToYen() { this->SetMethod(METHOD_YEN); }
-  static const char *GetMethodAsString(int method);
+  static const char* GetMethodAsString(int method);
   //@}
 
   /// Bring vtkAlgorithm::Update methods here

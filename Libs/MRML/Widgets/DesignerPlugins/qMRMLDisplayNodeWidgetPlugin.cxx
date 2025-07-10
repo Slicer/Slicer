@@ -22,13 +22,13 @@
 #include "qMRMLDisplayNodeWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLDisplayNodeWidgetPlugin::qMRMLDisplayNodeWidgetPlugin(QObject *_parent)
+qMRMLDisplayNodeWidgetPlugin::qMRMLDisplayNodeWidgetPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLDisplayNodeWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLDisplayNodeWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLDisplayNodeWidget* _widget = new qMRMLDisplayNodeWidget(_parent);
   return _widget;

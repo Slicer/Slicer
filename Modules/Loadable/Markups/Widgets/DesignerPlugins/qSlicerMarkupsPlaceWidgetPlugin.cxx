@@ -23,15 +23,15 @@
 
 //------------------------------------------------------------------------------
 qSlicerMarkupsPlaceWidgetPlugin
-::qSlicerMarkupsPlaceWidgetPlugin(QObject *_parent)
+::qSlicerMarkupsPlaceWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerMarkupsPlaceWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerMarkupsPlaceWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qSlicerMarkupsPlaceWidget* _widget
     = new qSlicerMarkupsPlaceWidget(_parent);

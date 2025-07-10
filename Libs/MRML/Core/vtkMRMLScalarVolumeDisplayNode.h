@@ -41,7 +41,7 @@ class vtkScalarsToColors;
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
   public:
-  static vtkMRMLScalarVolumeDisplayNode *New();
+  static vtkMRMLScalarVolumeDisplayNode* New();
   vtkTypeMacro(vtkMRMLScalarVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -158,7 +158,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
                                    void * /*callData*/ ) override;
 
   /// Set the pipeline input
-  void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection) override;
 
   /// Gets the pipeline input
   vtkAlgorithmOutput* GetInputImageDataConnection() override;
@@ -168,7 +168,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   ///
   /// Get/set background mask stencil
-  void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* imageDataConnection) override;
   vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection() override;
 
   ///
@@ -179,7 +179,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   static std::string GetWindowLevelAsPresetString(double window, double level);
   ///
   /// Parse a string with window and level as double|double, and add a preset
-  void AddWindowLevelPresetFromString(const char *preset);
+  void AddWindowLevelPresetFromString(const char* preset);
   ///
   /// Add a window level preset
   void AddWindowLevelPreset(double window, double level);
@@ -228,7 +228,7 @@ protected:
   vtkImageData* GetScalarImageData();
   virtual vtkAlgorithmOutput* GetScalarImageDataConnection();
 
-  void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection) override;
 
   ///
   /// To hold preset values for window and level, so can restore this display
@@ -257,14 +257,14 @@ protected:
   int AutoThreshold;
   int InvertDisplayScalarRange;
 
-  vtkImageLogic *AlphaLogic;
-  vtkImageMapToColors *MapToColors;
-  vtkImageThreshold *Threshold;
-  vtkImageAppendComponents *AppendComponents;
-  vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
-  vtkImageExtractComponents *ExtractRGB;
-  vtkImageExtractComponents *ExtractAlpha;
-  vtkImageStencil *MultiplyAlpha;
+  vtkImageLogic* AlphaLogic;
+  vtkImageMapToColors* MapToColors;
+  vtkImageThreshold* Threshold;
+  vtkImageAppendComponents* AppendComponents;
+  vtkImageMapToWindowLevelColors* MapToWindowLevelColors;
+  vtkImageExtractComponents* ExtractRGB;
+  vtkImageExtractComponents* ExtractAlpha;
+  vtkImageStencil* MultiplyAlpha;
 
   ///
   /// window level presets
@@ -272,7 +272,7 @@ protected:
 
   ///
   /// Used internally in CalculateScalarAutoLevels and CalculateStatisticsAutoLevels
-  vtkImageHistogramStatistics *HistogramStatistics;
+  vtkImageHistogramStatistics* HistogramStatistics;
   bool IsInCalculateAutoLevels;
 };
 

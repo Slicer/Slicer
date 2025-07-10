@@ -31,7 +31,7 @@ namespace
 
 } // end of anonymous namespace
 
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
   PARSE_ARGS;
 
@@ -111,7 +111,7 @@ int main( int argc, char *argv[] )
   {
     writer->Update();
   }
-  catch( itk::ExceptionObject & excep )
+  catch( itk::ExceptionObject& excep )
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;

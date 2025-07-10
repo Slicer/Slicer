@@ -29,7 +29,7 @@ class vtkCollection;
 class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 {
   public:
-  static vtkMRMLSnapshotClipNode *New();
+  static vtkMRMLSnapshotClipNode* New();
   vtkTypeMacro(vtkMRMLSnapshotClipNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -45,7 +45,7 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -54,11 +54,11 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
    ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Add SceneSnapshot node
-  void AddSceneSnapshotNode(vtkMRMLSceneViewNode * node);
+  void AddSceneSnapshotNode(vtkMRMLSceneViewNode* node);
 
   ///
   /// Get number of SceneSnapshot nodes

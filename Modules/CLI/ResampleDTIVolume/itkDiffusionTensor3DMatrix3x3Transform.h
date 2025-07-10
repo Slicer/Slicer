@@ -61,18 +61,18 @@ public:
   void SetCenter( PointType center );
 
   // /Evaluate the position of the transformed tensor in the output image
-  PointType EvaluateTensorPosition( const PointType & point ) override;
+  PointType EvaluateTensorPosition( const PointType& point ) override;
 
   // /Set the 3x3 transform matrix
-  virtual void SetMatrix3x3( MatrixTransformType & matrix );
+  virtual void SetMatrix3x3( MatrixTransformType& matrix );
 
   // /Get the 3x3 transform matrix
   virtual InternalMatrixTransformType GetMatrix3x3();
 
   // /Evaluate the transformed tensor
-  virtual TensorDataType EvaluateTransformedTensor( TensorDataType & tensor );
+  virtual TensorDataType EvaluateTransformedTensor( TensorDataType& tensor );
 
-  TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) override; // dummy
+  TensorDataType EvaluateTransformedTensor( TensorDataType& tensor, PointType& outputPosition ) override; // dummy
                                                                                                            // output
                                                                                                            // position;
                                                                                                            // to be

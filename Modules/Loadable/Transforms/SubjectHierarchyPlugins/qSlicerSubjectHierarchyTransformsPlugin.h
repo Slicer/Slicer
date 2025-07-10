@@ -115,7 +115,7 @@ public:
   /// Get transform context menu item actions to add to tree view.
   /// These item transform context menu actions can be shown in the
   /// implementations of \sa showTransformContextMenuActionsForItem
-  QList<QAction *> transformContextMenuActions() const override;
+  QList<QAction*> transformContextMenuActions() const override;
 
   /// Show context menu actions valid for given subject hierarchy item
   void showTransformContextMenuActionsForItem(vtkIdType itemID) override;

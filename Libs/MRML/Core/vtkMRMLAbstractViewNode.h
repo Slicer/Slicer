@@ -66,8 +66,8 @@ public:
   /// or numbers "1", "2"... to uniquely define the node.
   /// No name (i.e. "") by default.
   /// \sa SetSingletonTag(), SetViewLabel()
-  inline void SetLayoutName(const char *layoutName);
-  inline const char *GetLayoutName();
+  inline void SetLayoutName(const char* layoutName);
+  inline const char* GetLayoutName();
 
   /// An optional identifier to link groups of views. Views that have matching
   /// ViewGroup value are in the same group.
@@ -123,7 +123,7 @@ public:
   vtkMRMLInteractionNode* GetInteractionNode();
   /// Set interaction node reference.
   /// \sa GetInteractionNode()
-  bool SetInteractionNodeID(const char *interactionNodeId);
+  bool SetInteractionNodeID(const char* interactionNodeId);
   /// Set interaction node reference.
   /// \sa GetInteractionNode()
   bool SetInteractionNode(vtkMRMLNode* node);
@@ -141,7 +141,7 @@ public:
   vtkMRMLNode* GetParentLayoutNode();
   /// Set parent layout node reference
   /// \sa GetParentLayoutNode
-  bool SetAndObserveParentLayoutNodeID(const char *layoutNodeId);
+  bool SetAndObserveParentLayoutNodeID(const char* layoutNodeId);
   /// Set parent layout node reference
   /// \sa GetParentLayoutNode
   bool SetAndObserveParentLayoutNode(vtkMRMLNode* node);
@@ -367,13 +367,13 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-void vtkMRMLAbstractViewNode::SetLayoutName(const char *layoutName)
+void vtkMRMLAbstractViewNode::SetLayoutName(const char* layoutName)
 {
   this->SetSingletonTag(layoutName);
 }
 
 //------------------------------------------------------------------------------
-const char *vtkMRMLAbstractViewNode::GetLayoutName()
+const char* vtkMRMLAbstractViewNode::GetLayoutName()
 {
   return this->GetSingletonTag();
 }

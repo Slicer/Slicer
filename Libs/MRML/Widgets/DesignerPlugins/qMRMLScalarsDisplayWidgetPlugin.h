@@ -9,9 +9,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLScalarsDisplayWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLScalarsDisplayWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLScalarsDisplayWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

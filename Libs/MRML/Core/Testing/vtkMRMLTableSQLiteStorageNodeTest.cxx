@@ -33,7 +33,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-static int removeFile(char *fileName)
+static int removeFile(char* fileName)
 {
   int removed = 1;
   if (itksys::SystemTools::FileExists(fileName))
@@ -43,7 +43,7 @@ static int removeFile(char *fileName)
   return removed;
 }
 
-int vtkMRMLTableSQLiteStorageNodeTest(int , char * [] )
+int vtkMRMLTableSQLiteStorageNodeTest(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
 

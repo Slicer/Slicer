@@ -59,7 +59,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
 
 public:
   typedef QObject Superclass;
-  qSlicerSubjectHierarchyPluginLogic(QObject *parent=nullptr);
+  qSlicerSubjectHierarchyPluginLogic(QObject* parent=nullptr);
   ~qSlicerSubjectHierarchyPluginLogic() override;
 
 public:

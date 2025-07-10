@@ -82,7 +82,7 @@ void qMRMLSequenceBrowserPlayWidgetPrivate::init()
 // qMRMLSequenceBrowserPlayWidget methods
 
 //-----------------------------------------------------------------------------
-qMRMLSequenceBrowserPlayWidget::qMRMLSequenceBrowserPlayWidget(QWidget *newParent)
+qMRMLSequenceBrowserPlayWidget::qMRMLSequenceBrowserPlayWidget(QWidget* newParent)
 : Superclass(newParent)
 , d_ptr(new qMRMLSequenceBrowserPlayWidgetPrivate(*this))
 {

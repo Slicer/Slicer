@@ -2,13 +2,13 @@
 #include "qMRMLSliceVerticalControllerWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLSliceVerticalControllerWidgetPlugin::qMRMLSliceVerticalControllerWidgetPlugin(QObject *_parent)
+qMRMLSliceVerticalControllerWidgetPlugin::qMRMLSliceVerticalControllerWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLSliceVerticalControllerWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLSliceVerticalControllerWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLSliceVerticalControllerWidget* _widget = new qMRMLSliceVerticalControllerWidget(_parent);
   return _widget;

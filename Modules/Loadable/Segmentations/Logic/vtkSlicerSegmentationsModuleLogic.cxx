@@ -99,7 +99,7 @@ vtkStandardNewMacro(vtkSlicerSegmentationsModuleLogic);
 vtkSlicerSegmentationsModuleLogic::vtkSlicerSegmentationsModuleLogic()
 {
   this->SubjectHierarchyUIDCallbackCommand = vtkCallbackCommand::New();
-  this->SubjectHierarchyUIDCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->SubjectHierarchyUIDCallbackCommand->SetClientData( reinterpret_cast<void*>(this) );
   this->SubjectHierarchyUIDCallbackCommand->SetCallback( vtkSlicerSegmentationsModuleLogic::OnSubjectHierarchyUIDAdded );
 }
 
@@ -891,7 +891,7 @@ bool vtkSlicerSegmentationsModuleLogic::ExportSegmentsToModels(vtkMRMLSegmentati
   }
 
   // Create a map that can be used for quickly looking up existing models in the hierarchy
-  std::map< std::string, vtkMRMLModelNode* > existingModelNamesToModels;
+  std::map<std::string, vtkMRMLModelNode* > existingModelNamesToModels;
   std::vector<vtkIdType> childItemIDs;
   shNode->GetItemChildren(folderItemId, childItemIDs);
   for (std::vector<vtkIdType>::iterator itemIt=childItemIDs.begin(); itemIt!=childItemIDs.end(); ++itemIt)

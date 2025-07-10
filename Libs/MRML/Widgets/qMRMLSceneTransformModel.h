@@ -30,7 +30,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneTransformModel : public qMRMLSceneModel
   Q_OBJECT
 
 public:
-  qMRMLSceneTransformModel(QObject *parent=nullptr);
+  qMRMLSceneTransformModel(QObject* parent=nullptr);
   ~qMRMLSceneTransformModel() override;
 
   ///

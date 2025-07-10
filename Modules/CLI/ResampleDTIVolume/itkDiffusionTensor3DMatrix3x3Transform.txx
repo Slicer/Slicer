@@ -68,7 +68,7 @@ DiffusionTensor3DMatrix3x3Transform<TData>
 template <class TData>
 void
 DiffusionTensor3DMatrix3x3Transform<TData>
-::SetMatrix3x3( MatrixTransformType & matrix )
+::SetMatrix3x3( MatrixTransformType& matrix )
 {
   m_TransformMatrix = matrix;
   this->Modified();
@@ -77,7 +77,7 @@ DiffusionTensor3DMatrix3x3Transform<TData>
 template <class TData>
 typename DiffusionTensor3DMatrix3x3Transform<TData>::PointType
 DiffusionTensor3DMatrix3x3Transform<TData>
-::EvaluateTensorPosition( const PointType & point )
+::EvaluateTensorPosition( const PointType& point )
 {
   if( m_LatestTime < Object::GetMTime() )
   {
@@ -94,7 +94,7 @@ DiffusionTensor3DMatrix3x3Transform<TData>
 template <class TData>
 typename DiffusionTensor3DMatrix3x3Transform<TData>::TensorDataType
 DiffusionTensor3DMatrix3x3Transform<TData>
-::EvaluateTransformedTensor( TensorDataType & tensor, PointType & itkNotUsed(outputPosition) )
+::EvaluateTransformedTensor( TensorDataType& tensor, PointType& itkNotUsed(outputPosition) )
 {
   return EvaluateTransformedTensor( tensor );
 }
@@ -102,7 +102,7 @@ DiffusionTensor3DMatrix3x3Transform<TData>
 template <class TData>
 typename DiffusionTensor3DMatrix3x3Transform<TData>::TensorDataType
 DiffusionTensor3DMatrix3x3Transform<TData>
-::EvaluateTransformedTensor( TensorDataType & tensor )
+::EvaluateTransformedTensor( TensorDataType& tensor )
 {
   InternalTensorDataType internalTensor = tensor;
 

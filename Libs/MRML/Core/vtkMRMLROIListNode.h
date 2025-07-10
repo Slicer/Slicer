@@ -10,7 +10,7 @@ class vtkCollection;
 class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 {
   public:
-    static vtkMRMLROIListNode *New();
+    static vtkMRMLROIListNode* New();
     vtkTypeMacro(vtkMRMLROIListNode,vtkMRMLNode);
     void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -29,7 +29,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 
     ///
     /// Copy the node's attributes to this object
-    void Copy(vtkMRMLNode *node) override;
+    void Copy(vtkMRMLNode* node) override;
 
     ///
     /// Get node XML tag name (like Volume, Model)
@@ -37,7 +37,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 
     ///
     ///
-    void UpdateScene(vtkMRMLScene *scene) override;
+    void UpdateScene(vtkMRMLScene* scene) override;
 
     ///
     /// update display node ids
@@ -55,33 +55,33 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     /// Get/Set for Nth ROI node Position in RAS coordinates
     /// Note: The ROI Position is the center of the ROI
     int SetNthROIXYZ(int n, double x, double y, double z);
-    double *GetNthROIXYZ(int n);
+    double* GetNthROIXYZ(int n);
     ///
     /// Get/Set for Nth radius of the ROI in RAS coordinates
     int SetNthROIRadiusXYZ(int n, double Radiusx, double Radiusy, double Radiusz);
-    double *GetNthROIRadiusXYZ(int n);
+    double* GetNthROIRadiusXYZ(int n);
     ///
     /// Get/Set for Nth ROI node Position in IJK coordinates
     /// Note: The ROI Position is the center of the ROI
     int SetNthROIIJK(int n, double i, double j, double k);
-    double *GetNthROIIJK(int n);
+    double* GetNthROIIJK(int n);
     ///
     /// Get/Set for Nth radius of the ROI in IJK coordinates
     int SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj, double Radiusk);
-    double *GetNthROIRadiusIJK(int n);
+    double* GetNthROIRadiusIJK(int n);
 
     ///
     /// Get/Set for label text of the Nth ROI
-    int SetNthROILabelText(int n, const char *text);
-    const char *GetNthROILabelText(int n);
+    int SetNthROILabelText(int n, const char* text);
+    const char* GetNthROILabelText(int n);
     ///
     /// Get/Set for selected flag of the Nth ROI
     int SetNthROISelected(int n, int flag);
     int GetNthROISelected(int n);
     ///
     /// Get/Set for ID of the Nth ROI
-    int SetNthROIID(int n, const char *id);
-    const char *GetNthROIID(int n);
+    int SetNthROIID(int n, const char* id);
+    const char* GetNthROIID(int n);
 
     ///
     /// Add an ROI to the list with default values
@@ -93,7 +93,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     /// Remove all ROIs from the list
     void RemoveAllROIs();
 
-    void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+    void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
 
     /// DisplayModifiedEvent is generated when display node parameters is changed
     /// PolyDataModifiedEvent is generated when something else is changed
@@ -179,7 +179,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 
     ///
     /// The collection of ROI that make up this list
-    vtkCollection *ROIList;
+    vtkCollection* ROIList;
 
     double TextScale;
     int Visibility;
@@ -197,7 +197,7 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 
     ///
     /// The ID of the volume node that is associated with the ROI
-    char *VolumeNodeID;
+    char* VolumeNodeID;
 };
 
 #endif

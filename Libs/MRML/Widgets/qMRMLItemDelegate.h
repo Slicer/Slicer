@@ -41,7 +41,7 @@ class QMRML_WIDGETS_EXPORT qMRMLItemDelegate: public QStyledItemDelegate
 {
   Q_OBJECT
 public:
-  qMRMLItemDelegate(QObject *parent = nullptr);
+  qMRMLItemDelegate(QObject* parent = nullptr);
   ~qMRMLItemDelegate() override;
   typedef QStyledItemDelegate Superclass;
 
@@ -57,18 +57,18 @@ public:
   int colorRole(const QModelIndex& index)const;
   bool is0To1Value(const QModelIndex& index)const;
 
-  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem &option,
-                          const QModelIndex &index) const override;
+  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+                          const QModelIndex& index) const override;
 
-  void setEditorData(QWidget* editor, const QModelIndex &index) const override;
+  void setEditorData(QWidget* editor, const QModelIndex& index) const override;
   void setModelData(QWidget* editor, QAbstractItemModel* model,
-                    const QModelIndex &index) const override;
+                    const QModelIndex& index) const override;
 
-  QSize sizeHint(const QStyleOptionViewItem &option,
-                         const QModelIndex &index) const override;
+  QSize sizeHint(const QStyleOptionViewItem& option,
+                         const QModelIndex& index) const override;
 
   void updateEditorGeometry(QWidget* editor,
-    const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
   bool eventFilter(QObject* object, QEvent* event) override;
 

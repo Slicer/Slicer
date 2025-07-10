@@ -202,7 +202,7 @@ vtkMRMLMarkupsNode::ControlPoint* vtkSlicerMarkupsWidgetRepresentation::GetNthCo
 
 //----------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
-  const int displayPos[2], double closestWorldPos[3], int *idx)
+  const int displayPos[2], double closestWorldPos[3], int* idx)
 {
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
   if (!markupsNode)
@@ -362,7 +362,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateCenterOfRotation()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode *markupsDisplayNode)
+void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode* markupsDisplayNode)
 {
   if (this->MarkupsDisplayNode == markupsDisplayNode)
   {
@@ -380,13 +380,13 @@ void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsDisplayNode(vtkMRMLMarkupsD
 }
 
 //----------------------------------------------------------------------
-vtkMRMLMarkupsDisplayNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsDisplayNode()
+vtkMRMLMarkupsDisplayNode* vtkSlicerMarkupsWidgetRepresentation::GetMarkupsDisplayNode()
 {
   return this->MarkupsDisplayNode;
 }
 
 //----------------------------------------------------------------------
-vtkMRMLMarkupsNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsNode()
+vtkMRMLMarkupsNode* vtkSlicerMarkupsWidgetRepresentation::GetMarkupsNode()
 {
   if (!this->MarkupsDisplayNode)
   {
@@ -396,7 +396,7 @@ vtkMRMLMarkupsNode *vtkSlicerMarkupsWidgetRepresentation::GetMarkupsNode()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
+void vtkSlicerMarkupsWidgetRepresentation::SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
   this->MarkupsNode = markupsNode;
 }
@@ -413,7 +413,7 @@ void vtkSlicerMarkupsWidgetRepresentation::PrintSelf(ostream& os,
 //-----------------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation::CanInteract(
   vtkMRMLInteractionEventData* vtkNotUsed(interactionEventData),
-  int &foundComponentType, int &vtkNotUsed(foundComponentIndex), double &vtkNotUsed(closestDistance2))
+  int& foundComponentType, int& vtkNotUsed(foundComponentIndex), double& vtkNotUsed(closestDistance2))
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
 }
@@ -503,7 +503,7 @@ void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRML(
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation::UpdateFromMRMLInternal(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long event, void *vtkNotUsed(callData))
+    vtkMRMLNode* vtkNotUsed(caller), unsigned long event, void* vtkNotUsed(callData))
 {
   if (!event || event == vtkMRMLTransformableNode::TransformModifiedEvent)
   {

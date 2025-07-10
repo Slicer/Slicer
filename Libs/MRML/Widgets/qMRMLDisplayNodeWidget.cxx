@@ -84,7 +84,7 @@ void qMRMLDisplayNodeWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLDisplayNodeWidget::qMRMLDisplayNodeWidget(QWidget *_parent)
+qMRMLDisplayNodeWidget::qMRMLDisplayNodeWidget(QWidget* _parent)
   : QWidget(_parent)
   , d_ptr(new qMRMLDisplayNodeWidgetPrivate(*this))
 {

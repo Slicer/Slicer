@@ -25,7 +25,7 @@ class VTK_MRML_EXPORT vtkMRMLLogic : public vtkObject
 {
 public:
   /// The Usual vtk class functions
-  static vtkMRMLLogic *New();
+  static vtkMRMLLogic* New();
   vtkTypeMacro(vtkMRMLLogic,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override { this->Superclass::PrintSelf(os, indent); }
 

@@ -31,9 +31,9 @@ class Q_SLICER_QTMODULES_COLORS_WIDGETS_PLUGINS_EXPORT qMRMLColorTableViewPlugin
   Q_OBJECT
 
 public:
-  qMRMLColorTableViewPlugin(QObject *_parent = nullptr);
+  qMRMLColorTableViewPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

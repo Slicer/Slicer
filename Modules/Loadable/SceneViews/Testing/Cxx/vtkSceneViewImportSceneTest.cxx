@@ -66,7 +66,7 @@ int populateScene(vtkMRMLScene* scene)
 
 //---------------------------------------------------------------------------
 int vtkSceneViewImportSceneTest(int argc,
-                                       char * argv[] )
+                                       char* argv[] )
 {
   if (argc < 2)
   {

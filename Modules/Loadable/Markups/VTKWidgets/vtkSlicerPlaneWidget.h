@@ -40,7 +40,7 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerPlaneWidget : public 
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerPlaneWidget *New();
+  static vtkSlicerPlaneWidget* New();
 
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkSlicerPlaneWidget,vtkSlicerMarkupsWidget);

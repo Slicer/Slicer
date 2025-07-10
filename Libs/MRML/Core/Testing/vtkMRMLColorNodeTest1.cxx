@@ -24,7 +24,7 @@ class vtkMRMLColorNodeTestHelper1 : public vtkMRMLColorNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLColorNodeTestHelper1 *New();
+  static vtkMRMLColorNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLColorNodeTestHelper1,vtkMRMLColorNode);
 
@@ -33,7 +33,7 @@ public:
     return vtkMRMLColorNodeTestHelper1::New();
   }
 
-  const char * GetTypeAsString() override
+  const char* GetTypeAsString() override
   {
     return "vtkMRMLColorNodeTestHelper1";
   }
@@ -67,7 +67,7 @@ int TestGetColorNameAsFileName(const char* colorName,
                                 const char* substr = "_");
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorNodeTest1(int , char * [] )
+int vtkMRMLColorNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLColorNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -105,7 +105,7 @@ int TestGetColorNameAsFileName()
 }
 
 //---------------------------------------------------------------------------
-int TestGetColorNameAsFileName(const char* colorName, const char * expectedColorFileName, const char* substr)
+int TestGetColorNameAsFileName(const char* colorName, const char* expectedColorFileName, const char* substr)
 {
   vtkNew<vtkMRMLColorNodeTestHelper1> colorNode;
   colorNode->SetNamesFromColors();

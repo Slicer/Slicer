@@ -29,7 +29,7 @@ class vtkMRMLVolumeNodeTestHelper1 : public vtkMRMLVolumeNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLVolumeNodeTestHelper1 *New();
+  static vtkMRMLVolumeNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLVolumeNodeTestHelper1,vtkMRMLVolumeNode);
 
@@ -47,7 +47,7 @@ public:
 vtkStandardNewMacro(vtkMRMLVolumeNodeTestHelper1);
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeNodeTest1(int , char * [])
+int vtkMRMLVolumeNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLVolumeNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -58,7 +58,7 @@ int vtkMRMLVolumeNodeTest1(int , char * [])
 
   // Scan Order
   vtkNew<vtkMatrix4x4> ijkToRAS;
-  const char *scanOrder = node1->ComputeScanOrderFromIJKToRAS(ijkToRAS.GetPointer());
+  const char* scanOrder = node1->ComputeScanOrderFromIJKToRAS(ijkToRAS.GetPointer());
   if (!scanOrder || strcmp(scanOrder, "") == 0)
   {
     std::cerr << "Failed to compute scan order from identity matrix: '" << (scanOrder ? scanOrder : "null") << "'" << std::endl;
@@ -195,7 +195,7 @@ int vtkMRMLVolumeNodeTest1(int , char * [])
     return EXIT_FAILURE;
   }
   node1->SetAndObserveImageData(imageData.GetPointer());
-  vtkImageData *retImageData = node1->GetImageData();
+  vtkImageData* retImageData = node1->GetImageData();
   if (!retImageData)
   {
     std::cerr << "Get image data returned null" << std::endl;

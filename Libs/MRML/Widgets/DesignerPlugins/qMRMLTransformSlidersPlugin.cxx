@@ -1,12 +1,12 @@
 #include "qMRMLTransformSlidersPlugin.h"
 #include "qMRMLTransformSliders.h"
 
-qMRMLTransformSlidersPlugin::qMRMLTransformSlidersPlugin(QObject *_parent)
+qMRMLTransformSlidersPlugin::qMRMLTransformSlidersPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
-QWidget *qMRMLTransformSlidersPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLTransformSlidersPlugin::createWidget(QWidget* _parent)
 {
   qMRMLTransformSliders* _widget = new qMRMLTransformSliders(_parent);
   return _widget;

@@ -78,7 +78,7 @@ public:
   /// Construct object with defaults:
   /// Scaling is by eigenvalues on and scale factor is 1000.
   /// Glyphs are colored with FA scalar invariant.
-  static vtkDiffusionTensorGlyph *New();
+  static vtkDiffusionTensorGlyph* New();
 
   ///
   /// If MaskGlyphs is 1 (On), Mask is used to mask tensors.
@@ -171,7 +171,7 @@ protected:
   vtkDiffusionTensorGlyph();
   ~vtkDiffusionTensorGlyph() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   void ColorGlyphsBy(int measure);
 
@@ -181,10 +181,10 @@ protected:
 
   int DimensionResolution[2];
 
-  vtkMatrix4x4 *VolumePositionMatrix;
-  vtkMatrix4x4 *TensorRotationMatrix;
+  vtkMatrix4x4* VolumePositionMatrix;
+  vtkMatrix4x4* TensorRotationMatrix;
 
-  vtkImageData *Mask;  /// display glyphs at points where mask is nonzero
+  vtkImageData* Mask;  /// display glyphs at points where mask is nonzero
 
 private:
   vtkDiffusionTensorGlyph(const vtkDiffusionTensorGlyph&) = delete;

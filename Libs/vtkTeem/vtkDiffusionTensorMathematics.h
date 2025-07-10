@@ -37,7 +37,7 @@ class vtkImageData;
 class VTK_Teem_EXPORT vtkDiffusionTensorMathematics : public vtkThreadedImageAlgorithm
 {
 public:
-  static vtkDiffusionTensorMathematics *New();
+  static vtkDiffusionTensorMathematics* New();
   vtkTypeMacro(vtkDiffusionTensorMathematics,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -231,10 +231,10 @@ public:
 
   /// Public for access from threads
   static void ModeToRGB(double Mode, double FA,
-                 double &R, double &G, double &B);
+                 double& R, double& G, double& B);
 
   static void RGBToIndex(double R, double G,
-                  double B, double &index);
+                  double B, double& index);
 
   ///
   /// Helper functions to perform operations pixel-wise
@@ -253,22 +253,22 @@ public:
   static double PerpendicularDiffusivity(double w[3]);
   static double MeanDiffusivity(double w[3]);
   static double MinEigenvalue(double w[3]);
-  static double RAIMaxEigenvecX(double **v, double w[3]);
-  static double RAIMaxEigenvecY(double **v, double w[3]);
-  static double RAIMaxEigenvecZ(double **v, double w[3]);
-  static double MaxEigenvecX(double **v, double w[3]);
-  static double MaxEigenvecY(double **v, double w[3]);
-  static double MaxEigenvecZ(double **v, double w[3]);
-  static double MaxEigenvalueProjectionX(double **v, double w[3]);
-  static double MaxEigenvalueProjectionY(double **v, double w[3]);
-  static double MaxEigenvalueProjectionZ(double **v, double w[3]);
+  static double RAIMaxEigenvecX(double** v, double w[3]);
+  static double RAIMaxEigenvecY(double** v, double w[3]);
+  static double RAIMaxEigenvecZ(double** v, double w[3]);
+  static double MaxEigenvecX(double** v, double w[3]);
+  static double MaxEigenvecY(double** v, double w[3]);
+  static double MaxEigenvecZ(double** v, double w[3]);
+  static double MaxEigenvalueProjectionX(double** v, double w[3]);
+  static double MaxEigenvalueProjectionY(double** v, double w[3]);
+  static double MaxEigenvalueProjectionZ(double** v, double w[3]);
   static double Mode(double w[3]);
-  static void ColorByMode(double w[3], double &R,double &G, double &B);
+  static void ColorByMode(double w[3], double& R,double& G, double& B);
 
   //Description
   //Wrap function to teem eigen solver
-  static int TeemEigenSolver(double **m, double *w, double **v);
-  void ComputeTensorIncrements(vtkImageData *imageData, vtkIdType incr[3]);
+  static int TeemEigenSolver(double** m, double* w, double** v);
+  void ComputeTensorIncrements(vtkImageData* imageData, vtkIdType incr[3]);
 
 protected:
   vtkDiffusionTensorMathematics();
@@ -279,21 +279,21 @@ protected:
   int ExtractEigenvalues; /// Boolean controls eigenfunction extraction
 
   int MaskWithScalars;
-  vtkImageData *ScalarMask;
+  vtkImageData* ScalarMask;
   int MaskLabelValue;
 
-  vtkMatrix4x4 *TensorRotationMatrix;
+  vtkMatrix4x4* TensorRotationMatrix;
   int FixNegativeEigenvalues;
 
   int RequestInformation (vtkInformation*,
                                   vtkInformationVector**,
                                   vtkInformationVector*) override;
 
-  void ThreadedRequestData(vtkInformation *request,
-                                   vtkInformationVector **inputVector,
-                                   vtkInformationVector *outputVector,
+  void ThreadedRequestData(vtkInformation* request,
+                                   vtkInformationVector** inputVector,
+                                   vtkInformationVector* outputVector,
                                    vtkImageData ***inData,
-                                   vtkImageData **outData,
+                                   vtkImageData** outData,
                                    int extent[6], int threadId) override;
 
   int FillInputPortInformation(int port, vtkInformation* info) override;

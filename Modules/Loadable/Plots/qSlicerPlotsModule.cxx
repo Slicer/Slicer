@@ -115,7 +115,7 @@ void qSlicerPlotsModule::setup()
 
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerPlotsModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerPlotsModule::createWidgetRepresentation()
 {
   return new qSlicerPlotsModuleWidget;
 }

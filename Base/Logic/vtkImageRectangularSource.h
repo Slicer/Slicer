@@ -14,7 +14,7 @@
 class  VTK_SLICER_BASE_LOGIC_EXPORT vtkImageRectangularSource : public vtkImageAlgorithm
 {
 public:
-  static vtkImageRectangularSource *New();
+  static vtkImageRectangularSource* New();
   vtkTypeMacro(vtkImageRectangularSource,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -24,7 +24,7 @@ public:
   void SetWholeExtent(int minX, int maxX, int minY, int maxY,
                             int minZ, int maxZ);
   void GetWholeExtent(int extent[6]);
-  int *GetWholeExtent() {return this->WholeExtent;}
+  int* GetWholeExtent() {return this->WholeExtent;}
 
   ///
   /// Set/Get the center of the ellipsoid.
@@ -83,7 +83,7 @@ protected:
   vtkImageRectangularSource();
   ~vtkImageRectangularSource() override;
 
-  int **Corners;
+  int** Corners;
 
   int WholeExtent[6];
   int Center[3];
@@ -93,8 +93,8 @@ protected:
   int OutputScalarType;
   int InsideGraySlopeFlag;
 
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  void ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo) override;
 private:
   vtkImageRectangularSource(const vtkImageRectangularSource&) = delete;
   void operator=(const vtkImageRectangularSource&) = delete;

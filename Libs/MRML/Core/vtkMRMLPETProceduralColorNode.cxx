@@ -53,10 +53,10 @@ void vtkMRMLPETProceduralColorNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLPETProceduralColorNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLPETProceduralColorNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
-  //vtkMRMLPETProceduralColorNode *node = (vtkMRMLPETProceduralColorNode *) anode;
+  //vtkMRMLPETProceduralColorNode* node = (vtkMRMLPETProceduralColorNode*) anode;
 }
 
 //----------------------------------------------------------------------------
@@ -73,15 +73,15 @@ void vtkMRMLPETProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //-----------------------------------------------------------
 
-void vtkMRMLPETProceduralColorNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLPETProceduralColorNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLPETProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLPETProceduralColorNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
@@ -124,7 +124,7 @@ void vtkMRMLPETProceduralColorNode::SetTypeToMIP()
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLPETProceduralColorNode::GetTypeAsString()
+const char* vtkMRMLPETProceduralColorNode::GetTypeAsString()
 {
   if (this->Type == this->PETheat)
   {

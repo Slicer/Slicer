@@ -187,7 +187,7 @@ void vtkMRMLSequenceBrowserNode::WriteXML(ostream& of, int nIndent)
   }
   of << "\"";
 
-  for(std::map< std::string, SynchronizationProperties* >::iterator rolePostfixIt=this->SynchronizationPropertiesMap.begin();
+  for(std::map<std::string, SynchronizationProperties* >::iterator rolePostfixIt=this->SynchronizationPropertiesMap.begin();
     rolePostfixIt!=this->SynchronizationPropertiesMap.end(); ++rolePostfixIt)
   {
     if (rolePostfixIt->first.empty() || rolePostfixIt->second == nullptr)
@@ -479,7 +479,7 @@ std::string vtkMRMLSequenceBrowserNode::GenerateSynchronizationPostfix()
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const char *sequenceNodeID)
+std::string vtkMRMLSequenceBrowserNode::SetAndObserveMasterSequenceNodeID(const char* sequenceNodeID)
 {
   if (!sequenceNodeID)
   {
@@ -1512,7 +1512,7 @@ void vtkMRMLSequenceBrowserNode::SetMissingItemMode(vtkMRMLSequenceNode* sequenc
 }
 
 //-----------------------------------------------------------
-void vtkMRMLSequenceBrowserNode::SetRecordingSamplingModeFromString(const char *recordingSamplingModeString)
+void vtkMRMLSequenceBrowserNode::SetRecordingSamplingModeFromString(const char* recordingSamplingModeString)
 {
   int recordingSamplingMode = GetRecordingSamplingModeFromString(recordingSamplingModeString);
   this->SetRecordingSamplingMode(recordingSamplingMode);
@@ -1593,7 +1593,7 @@ void vtkMRMLSequenceBrowserNode::SetIndexDisplayFormat(std::string indexDisplayN
 }
 
 //-----------------------------------------------------------
-void vtkMRMLSequenceBrowserNode::SetIndexDisplayModeFromString(const char *indexDisplayModeString)
+void vtkMRMLSequenceBrowserNode::SetIndexDisplayModeFromString(const char* indexDisplayModeString)
 {
   int indexDisplayMode = GetIndexDisplayModeFromString(indexDisplayModeString);
   this->SetIndexDisplayMode(indexDisplayMode);

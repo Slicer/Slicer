@@ -68,12 +68,12 @@ public slots:
   /// associated with the current scene
   void resetMenu();
 
-  void onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject * mrmlNode);
+  void onMRMLNodeAdded(vtkObject* mrmlScene, vtkObject* mrmlNode);
 
   /// Add menu entry corresponding to \a sceneViewNode
   void addMenuItem(int index);
 
-  void onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject * mrmlNode);
+  void onMRMLNodeRemoved(vtkObject* mrmlScene, vtkObject* mrmlNode);
 
   /// Remove menu entry corresponding to \a sceneViewNode
   void removeMenuItem(int index);

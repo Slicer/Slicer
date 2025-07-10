@@ -275,7 +275,7 @@ bool vtkMRMLSliceNode::SetOrientation(const char* orientation)
     return false;
   }
 
-  vtkMatrix3x3 *orientationPreset = this->GetSliceOrientationPreset(orientation);
+  vtkMatrix3x3* orientationPreset = this->GetSliceOrientationPreset(orientation);
   if (orientationPreset == nullptr)
   {
     return false;
@@ -332,20 +332,20 @@ bool vtkMRMLSliceNode::SetOrientationToCoronal()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4 *m1, const vtkMatrix4x4 *m2)
+bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4* m1, const vtkMatrix4x4* m2)
 {
   return vtkAddonMathUtilities::MatrixAreEqual(m1, m2);
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4 *matrix,
-                                      const vtkMatrix3x3 *orientationMatrix)
+bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4* matrix,
+                                      const vtkMatrix3x3* orientationMatrix)
 {
   return vtkAddonMathUtilities::MatrixAreEqual(matrix, orientationMatrix);
 }
 
 //----------------------------------------------------------------------------
-vtkMatrix3x3 *vtkMRMLSliceNode::GetSliceOrientationPreset(const std::string &name)
+vtkMatrix3x3* vtkMRMLSliceNode::GetSliceOrientationPreset(const std::string& name)
 {
   std::vector< OrientationPresetType >::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
@@ -385,7 +385,7 @@ std::string vtkMRMLSliceNode::GetSliceOrientationPresetName(vtkMatrix3x3* orient
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLSliceNode::GetOrientation(vtkMatrix4x4 *sliceToRAS)
+std::string vtkMRMLSliceNode::GetOrientation(vtkMatrix4x4* sliceToRAS)
 {
   vtkNew<vtkMatrix3x3> orientationMatrix;
   vtkAddonMathUtilities::GetOrientationMatrix(sliceToRAS, orientationMatrix.GetPointer());
@@ -400,7 +400,7 @@ std::string vtkMRMLSliceNode::GetOrientation(vtkMatrix4x4 *sliceToRAS)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::GetSliceOrientationPresetNames(vtkStringArray *presetOrientationNames)
+void vtkMRMLSliceNode::GetSliceOrientationPresetNames(vtkStringArray* presetOrientationNames)
 {
   if (presetOrientationNames == nullptr)
   {
@@ -428,7 +428,7 @@ int vtkMRMLSliceNode::GetNumberOfSliceOrientationPresets() const
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::AddSliceOrientationPreset(const std::string &name, vtkMatrix3x3 *orientationMatrix)
+bool vtkMRMLSliceNode::AddSliceOrientationPreset(const std::string& name, vtkMatrix3x3* orientationMatrix)
 {
   if (name == vtkMRMLSliceNode::GetReformatOrientationName())
   {
@@ -452,7 +452,7 @@ bool vtkMRMLSliceNode::AddSliceOrientationPreset(const std::string &name, vtkMat
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::RemoveSliceOrientationPreset(const std::string &name)
+bool vtkMRMLSliceNode::RemoveSliceOrientationPreset(const std::string& name)
 {
   std::vector< OrientationPresetType >::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
@@ -469,7 +469,7 @@ bool vtkMRMLSliceNode::RemoveSliceOrientationPreset(const std::string &name)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::RenameSliceOrientationPreset(const std::string &name, const std::string &updatedName)
+bool vtkMRMLSliceNode::RenameSliceOrientationPreset(const std::string& name, const std::string& updatedName)
 {
   if (name == vtkMRMLSliceNode::GetReformatOrientationName()
     || updatedName == vtkMRMLSliceNode::GetReformatOrientationName())
@@ -504,7 +504,7 @@ bool vtkMRMLSliceNode::RenameSliceOrientationPreset(const std::string &name, con
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::HasSliceOrientationPreset(const std::string &name)
+bool vtkMRMLSliceNode::HasSliceOrientationPreset(const std::string& name)
 {
   if (name == vtkMRMLSliceNode::GetReformatOrientationName())
   {
@@ -649,7 +649,7 @@ void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bo
     defaultNode.TakeReference(scene->CreateNodeByClass("vtkMRMLSliceNode"));
     scene->AddDefaultNode(defaultNode);
   }
-  vtkMRMLSliceNode * defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(defaultNode);
+  vtkMRMLSliceNode* defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(defaultNode);
   defaultSliceNode->AddSliceOrientationPreset("Axial", axialSliceToRAS);
   defaultSliceNode->AddSliceOrientationPreset("Sagittal", sagittalSliceToRAS);
   defaultSliceNode->AddSliceOrientationPreset("Coronal", coronalSliceToRAS);
@@ -1091,7 +1091,7 @@ void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
-  vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
+  vtkMRMLSliceNode* node = vtkMRMLSliceNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -1188,7 +1188,7 @@ void vtkMRMLSliceNode::Reset(vtkMRMLNode* defaultNode)
 }
 
 //----------------------------------------------------------------------------
-vtkMatrix4x4 *vtkMRMLSliceNode::GetSliceToRAS()
+vtkMatrix4x4* vtkMRMLSliceNode::GetSliceToRAS()
 {
   return this->SliceToRAS;
 }
@@ -1277,13 +1277,13 @@ void vtkMRMLSliceNode::JumpSlice(double r, double a, double s)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
 {
-  vtkMatrix4x4 *sliceToRAS = this->GetSliceToRAS();
+  vtkMatrix4x4* sliceToRAS = this->GetSliceToRAS();
   double sr = sliceToRAS->GetElement(0, 3);
   double sa = sliceToRAS->GetElement(1, 3);
   double ss = sliceToRAS->GetElement(2, 3);
 
   // deduce the slice spacing
-  vtkMatrix4x4 *xyzToRAS = this->GetXYToRAS();
+  vtkMatrix4x4* xyzToRAS = this->GetXYToRAS();
 
   double p1xyz[4] = {0.0,0.0,0.0,1.0};
   double p2xyz[4] = {0.0,0.0,1.0,1.0};
@@ -1309,13 +1309,13 @@ void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::JumpSliceByOffsetting(double r, double a, double s)
 {
-  vtkMatrix4x4 *sliceToRAS = this->GetSliceToRAS();
+  vtkMatrix4x4* sliceToRAS = this->GetSliceToRAS();
   double sr = sliceToRAS->GetElement(0, 3);
   double sa = sliceToRAS->GetElement(1, 3);
   double ss = sliceToRAS->GetElement(2, 3);
 
   // deduce the slice spacing
-  vtkMatrix4x4 *xyzToRAS = this->GetXYToRAS();
+  vtkMatrix4x4* xyzToRAS = this->GetXYToRAS();
 
   double p1xyz[4] = {0.0,0.0,0.0,1.0};
   double p2xyz[4] = {0.0,0.0,1.0,1.0};
@@ -1377,7 +1377,7 @@ void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene, double r, double a, do
   int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
   for (int n=0; n<nnodes; n++)
   {
-    vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(
+    vtkMRMLSliceNode* node = vtkMRMLSliceNode::SafeDownCast(
       scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
     if (node == nullptr || node == exclude)
     {
@@ -1661,25 +1661,25 @@ void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimens
 }
 
 //----------------------------------------------------------------------------
-vtkMatrix4x4 *vtkMRMLSliceNode::GetXYToSlice()
+vtkMatrix4x4* vtkMRMLSliceNode::GetXYToSlice()
 {
   return this->XYToSlice;
 }
 
 //----------------------------------------------------------------------------
-vtkMatrix4x4 *vtkMRMLSliceNode::GetXYToRAS()
+vtkMatrix4x4* vtkMRMLSliceNode::GetXYToRAS()
 {
   return this->XYToRAS;
 }
 
 //----------------------------------------------------------------------------
-vtkMatrix4x4 *vtkMRMLSliceNode::GetUVWToSlice()
+vtkMatrix4x4* vtkMRMLSliceNode::GetUVWToSlice()
 {
   return this->UVWToSlice;
 }
 
 //----------------------------------------------------------------------------
-vtkMatrix4x4 *vtkMRMLSliceNode::GetUVWToRAS()
+vtkMatrix4x4* vtkMRMLSliceNode::GetUVWToRAS()
 {
   return this->UVWToRAS;
 }
@@ -1930,7 +1930,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode, bool forceSlicePlaneToSingleSlice/*=true*/)
+void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool forceSlicePlaneToSingleSlice/*=true*/)
 {
   if (volumeNode == nullptr)
   {
@@ -1941,7 +1941,7 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode, bool f
   volumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
 
   // apply the transform
-  vtkMRMLTransformNode *transformNode  = volumeNode->GetParentTransformNode();
+  vtkMRMLTransformNode* transformNode  = volumeNode->GetParentTransformNode();
   if ( transformNode != nullptr )
   {
     if ( transformNode->IsTransformToWorldLinear() )
@@ -1975,7 +1975,7 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode, bool f
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4 *referenceToRAS, int sliceNormalAxisIndex /*=-1*/)
+void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNormalAxisIndex /*=-1*/)
 {
   if (referenceToRAS == nullptr )
   {

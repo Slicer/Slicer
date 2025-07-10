@@ -60,7 +60,7 @@ static const double RULER_TEXT_MARGIN = 0.015; // horizontal distaace of ruler t
 class vtkRulerRendererUpdateObserver : public vtkCommand
 {
 public:
-  static vtkRulerRendererUpdateObserver *New()
+  static vtkRulerRendererUpdateObserver* New()
   {
     return new vtkRulerRendererUpdateObserver;
   }
@@ -85,7 +85,7 @@ vtkStandardNewMacro(vtkMRMLRulerDisplayableManager );
 class vtkMRMLRulerDisplayableManager::vtkInternal
 {
 public:
-  vtkInternal(vtkMRMLRulerDisplayableManager * external);
+  vtkInternal(vtkMRMLRulerDisplayableManager* external);
   ~vtkInternal();
 
   void SetupMarkerRenderer();
@@ -117,7 +117,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLRulerDisplayableManager::vtkInternal::vtkInternal(vtkMRMLRulerDisplayableManager * external)
+vtkMRMLRulerDisplayableManager::vtkInternal::vtkInternal(vtkMRMLRulerDisplayableManager* external)
 {
   this->External = external;
   this->RendererUpdateObserver = vtkSmartPointer<vtkRulerRendererUpdateObserver>::New();
@@ -286,7 +286,7 @@ void vtkMRMLRulerDisplayableManager::vtkInternal::UpdateRuler()
   }
   else if (threeDViewNode && this->ObservedRenderer)
   {
-    vtkCamera *cam = this->ObservedRenderer->GetActiveCamera();
+    vtkCamera* cam = this->ObservedRenderer->GetActiveCamera();
     if (cam && cam->GetParallelProjection())
     {
       // Viewport: xmin, ymin, xmax, ymax; range: 0.0-1.0; origin is bottom left

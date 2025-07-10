@@ -97,12 +97,12 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ReadXMLAttributes(const char*
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = (vtkMRMLDiffusionTensorVolumeSliceDisplayNode *) anode;
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* node = (vtkMRMLDiffusionTensorVolumeSliceDisplayNode*) anode;
 
   this->SetDiffusionTensorDisplayPropertiesNodeID(node->DiffusionTensorDisplayPropertiesNodeID);
 
@@ -118,14 +118,14 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::PrintSelf(ostream& os, vtkInd
 //  os << indent << "ColorMode:             " << this->ColorMode << "\n";
 }
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix)
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceGlyphRotationMatrix(vtkMatrix4x4* matrix)
 {
   this->DiffusionTensorGlyphFilter->SetTensorRotationMatrix(matrix);
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMatrix4x4 *matrix)
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMatrix4x4* matrix)
 {
   // We need to call vtkDiffusionTensorGlyph::SetVolumePositionMatrix BEFORE
   // calling Superclass::SetSlicePositionMatrix(matrix)
@@ -136,7 +136,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSlicePositionMatrix(vtkMat
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImagePort(vtkAlgorithmOutput *imagePort)
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImagePort(vtkAlgorithmOutput* imagePort)
 {
   this->DiffusionTensorGlyphFilter->SetInputConnection(imagePort);
   this->Superclass::SetSliceImagePort(imagePort);
@@ -155,7 +155,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateAssignedAttribute()
   this->Superclass::UpdateAssignedAttribute();
 
   // set display properties according to the tensor-specific display properties node for glyphs
-  vtkMRMLDiffusionTensorDisplayPropertiesNode * dtDPN =
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* dtDPN =
     this->GetDiffusionTensorDisplayPropertiesNode( );
 
   this->DiffusionTensorGlyphFilter->SetSourceConnection(
@@ -316,7 +316,7 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* vtkMRMLDiffusionTensorVolumeSliceDi
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *id )
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char* id )
 {
   vtkDebugMacro(<< this->GetClassName() << ": Setting and Observing Diffusion Tensor Display Properties ID: " << id  );
 
@@ -336,7 +336,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
   this->SetDiffusionTensorDisplayPropertiesNodeID ( id );
 
   // Get the node corresponding to the ID. This pointer is only to observe the object.
-  vtkMRMLNode *cnode = this->GetDiffusionTensorDisplayPropertiesNode ( );
+  vtkMRMLNode* cnode = this->GetDiffusionTensorDisplayPropertiesNode ( );
 
   // Observe the node using the pointer.
   vtkSetAndObserveMRMLObjectMacro ( this->DiffusionTensorDisplayPropertiesNode , cnode );
@@ -350,9 +350,9 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetAndObserveDiffusionTensorD
 
 }
 //---------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
   this->UpdateAssignedAttribute();
@@ -372,7 +372,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ProcessMRMLEvents ( vtkObject
 }
 
 //-----------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
    Superclass::UpdateScene(scene);
 
@@ -392,7 +392,7 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateReferences()
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
+void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateReferenceID(const char* oldID, const char* newID)
 {
   Superclass::UpdateReferenceID(oldID, newID);
   if (this->DiffusionTensorDisplayPropertiesNodeID && !strcmp(oldID, this->DiffusionTensorDisplayPropertiesNodeID))

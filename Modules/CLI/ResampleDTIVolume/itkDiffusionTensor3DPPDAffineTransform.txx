@@ -39,7 +39,7 @@ DiffusionTensor3DPPDAffineTransform<TData>
 template <class TData>
 typename DiffusionTensor3DPPDAffineTransform<TData>::TensorDataType
 DiffusionTensor3DPPDAffineTransform<TData>
-::EvaluateTransformedTensor( TensorDataType & tensor )
+::EvaluateTransformedTensor( TensorDataType& tensor )
 {
   InternalTensorDataType internalTensor = tensor;
 

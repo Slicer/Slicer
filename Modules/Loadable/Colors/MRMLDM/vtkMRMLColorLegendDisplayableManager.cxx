@@ -61,7 +61,7 @@ class vtkMRMLColorLegendDisplayableManager::vtkInternal
 {
 public:
 
-  vtkInternal(vtkMRMLColorLegendDisplayableManager * external);
+  vtkInternal(vtkMRMLColorLegendDisplayableManager* external);
   virtual ~vtkInternal();
 
   vtkObserverManager* GetMRMLNodesObserverManager();
@@ -100,7 +100,7 @@ public:
   vtkMRMLColorLegendDisplayableManager* External;
 
   /// Map stores color legend display node ID as a key, ScalarBarActor as a value
-  std::map< std::string, vtkSmartPointer<vtkSlicerScalarBarActor> > ColorLegendActorsMap;
+  std::map<std::string, vtkSmartPointer<vtkSlicerScalarBarActor> > ColorLegendActorsMap;
 
   /// For volume nodes we need to observe the slice composite node so that we can show color legend
   /// only for nodes that are visible in the slice view.
@@ -717,7 +717,7 @@ void vtkMRMLColorLegendDisplayableManager::AdditionalInitializeStep()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorLegendDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkMRMLColorLegendDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -829,7 +829,7 @@ void vtkMRMLColorLegendDisplayableManager::UpdateFromMRML()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorLegendDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLColorLegendDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
 

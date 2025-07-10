@@ -145,7 +145,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::updateSliceOffsetSliderVisibilit
 // qMRMLSliceVerticalControllerWidget methods
 
 // --------------------------------------------------------------------------
-qMRMLSliceVerticalControllerWidget::qMRMLSliceVerticalControllerWidget(QWidget *_parent)
+qMRMLSliceVerticalControllerWidget::qMRMLSliceVerticalControllerWidget(QWidget* _parent)
   : qMRMLWidget(_parent)
   , d_ptr(new qMRMLSliceVerticalControllerWidgetPrivate(*this))
 {
@@ -193,7 +193,7 @@ vtkMRMLSliceNode* qMRMLSliceVerticalControllerWidget::mrmlSliceNode()const
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic)
+void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic* newSliceLogic)
 {
   Q_D(qMRMLSliceVerticalControllerWidget);
   if (d->SliceLogic == newSliceLogic)
@@ -215,7 +215,7 @@ void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSl
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceLogic *qMRMLSliceVerticalControllerWidget::sliceLogic()
+vtkMRMLSliceLogic* qMRMLSliceVerticalControllerWidget::sliceLogic()
 {
   Q_D(qMRMLSliceVerticalControllerWidget);
   return d->SliceLogic;

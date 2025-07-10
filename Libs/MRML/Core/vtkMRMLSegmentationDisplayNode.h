@@ -96,7 +96,7 @@ public:
   typedef std::map<std::string, SegmentDisplayProperties> SegmentDisplayPropertiesMap;
 
 public:
-  static vtkMRMLSegmentationDisplayNode *New();
+  static vtkMRMLSegmentationDisplayNode* New();
   vtkTypeMacro(vtkMRMLSegmentationDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -179,7 +179,7 @@ public:
   void GenerateSegmentColor(double color[3], int colorNumber=0);
   /// Python compatibility function for \sa GenerateSegmentColor.
   /// The color with index \sa NumberOfGeneratedColors from generic anatomy color table is returned.
-  void GenerateSegmentColor(double &r, double &g, double &b);
+  void GenerateSegmentColor(double& r, double& g, double& b);
 
   //@{
   /// Get/Set color table node ID that is used for generating default colors for new segments.
@@ -211,7 +211,7 @@ public:
   /// Get segment color by segment ID. If overridden then the override color is returned
   bool GetSegmentColor(std::string segmentID, double* color);
   /// Get segment color by segment ID. If overridden then the override color is returned
-  bool GetSegmentColor(std::string segmentID, double &r, double &g, double &b);
+  bool GetSegmentColor(std::string segmentID, double& r, double& g, double& b);
 
   /// Get segment override color by segment ID. Convenience function for python compatibility.
   /// \return Override color if segment found and color overridden, otherwise the invalid override color (-1,-1,-1)

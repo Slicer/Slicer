@@ -26,7 +26,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLTableViewNodeTest1(int , char * [] )
+int vtkMRMLTableViewNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLTableViewNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

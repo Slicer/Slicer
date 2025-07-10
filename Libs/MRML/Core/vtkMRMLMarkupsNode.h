@@ -224,7 +224,7 @@ public:
    * and only updated (Compute called) as needed.
    */
   void SetNthMeasurement(int id, vtkMRMLMeasurement* measurement);
-  void SetNthMeasurement(int id, const std::string& name, double value, const std::string &units,
+  void SetNthMeasurement(int id, const std::string& name, double value, const std::string& units,
     std::string printFormat = "", const std::string description = "",
     vtkCodedEntry* quantityCode = nullptr, vtkCodedEntry* derivationCode = nullptr,
     vtkCodedEntry* unitsCode = nullptr, vtkCodedEntry* methodCode = nullptr);
@@ -288,7 +288,7 @@ public:
   ///@}
 
   /// Return a cast display node, returns null if none
-  vtkMRMLMarkupsDisplayNode *GetMarkupsDisplayNode();
+  vtkMRMLMarkupsDisplayNode* GetMarkupsDisplayNode();
 
   /// Return true if n is a valid control point, false otherwise.
   bool ControlPointExists(int n);

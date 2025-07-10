@@ -22,13 +22,13 @@
 #include "qMRMLSpinBox.h"
 
 // --------------------------------------------------------------------------
-qMRMLSpinBoxPlugin::qMRMLSpinBoxPlugin(QObject *_parent)
+qMRMLSpinBoxPlugin::qMRMLSpinBoxPlugin(QObject* _parent)
 : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLSpinBoxPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLSpinBoxPlugin::createWidget(QWidget* _parent)
 {
   qMRMLSpinBox* _widget = new qMRMLSpinBox(_parent);
   return _widget;

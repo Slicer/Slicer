@@ -17,7 +17,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLinesNode
   : public vtkMRMLAnnotationControlPointsNode
 {
 public:
-  static vtkMRMLAnnotationLinesNode *New();
+  static vtkMRMLAnnotationLinesNode* New();
   vtkTypeMacro(vtkMRMLAnnotationLinesNode,vtkMRMLAnnotationControlPointsNode);
   // void PrintSelf(ostream& os, vtkIndent indent) override;
   // Description:
@@ -45,7 +45,7 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentDefaultMacro(vtkMRMLAnnotationLinesNode);
 
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
@@ -90,7 +90,7 @@ public:
     NUM_LINE_ATTRIBUTE_TYPES
   };
 
-  const char *GetAttributeTypesEnumAsString(int val) override;
+  const char* GetAttributeTypesEnumAsString(int val) override;
 
   // Description:
   // Initializes all variables associated with annotations

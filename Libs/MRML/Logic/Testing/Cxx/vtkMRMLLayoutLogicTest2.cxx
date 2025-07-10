@@ -12,7 +12,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLLayoutLogicTest2(int , char * [] )
+int vtkMRMLLayoutLogicTest2(int, char*[])
 {
   vtkNew<vtkMRMLLayoutLogic> logic;
   EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());

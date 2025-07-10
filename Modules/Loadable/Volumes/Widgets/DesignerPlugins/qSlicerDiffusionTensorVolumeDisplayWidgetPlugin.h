@@ -27,9 +27,9 @@ qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
   Q_OBJECT
 
 public:
-  qSlicerDiffusionTensorVolumeDisplayWidgetPlugin(QObject *_parent = nullptr);
+  qSlicerDiffusionTensorVolumeDisplayWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

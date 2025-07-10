@@ -39,7 +39,7 @@ public:
 };
 
 
-int qSlicerCoreModuleTest1(int, char * [] )
+int qSlicerCoreModuleTest1(int, char*[])
 {
   qSlicerCoreModule* module = new ACoreModule;
   delete module;

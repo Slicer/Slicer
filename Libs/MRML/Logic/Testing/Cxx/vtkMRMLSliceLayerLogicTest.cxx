@@ -42,7 +42,7 @@ bool testDTIPipeline();
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSliceLayerLogicTest(int , char * [] )
+int vtkMRMLSliceLayerLogicTest(int, char*[])
 {
   // Test setting volume node and then scene
   {

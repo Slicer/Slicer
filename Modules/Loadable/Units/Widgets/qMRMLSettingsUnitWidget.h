@@ -47,7 +47,7 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLSettingsUnitWidget
 
 public:
   typedef QWidget Superclass;
-  qMRMLSettingsUnitWidget(QWidget *parent=nullptr);
+  qMRMLSettingsUnitWidget(QWidget* parent=nullptr);
   ~qMRMLSettingsUnitWidget() override;
 
   /// Set the units logic scene for the preset comboboxes

@@ -44,7 +44,7 @@ VTK_AUTOINIT(MRMLDisplayableManagerCxxTests)
 //----------------------------------------------------------------------------
 int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
-  vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
+  vtkMRMLThreeDViewDisplayableManagerFactory* factory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   if (!factory)
   {
     std::cerr << "Line " << __LINE__ << " - Problem with GetInstance() method" << std::endl;
@@ -200,7 +200,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
   // MRML scene and ViewNode
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLViewNode> viewNode;
-  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode.GetPointer());
+  vtkMRMLNode* nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
   {
     std::cerr << "Line " << __LINE__ << " - Failed to add vtkMRMLViewNode" << std::endl;
@@ -209,7 +209,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   //----------------------------------------------------------------------------
   // Instantiate DisplayableManagerGroup
-  vtkMRMLDisplayableManagerGroup * group =
+  vtkMRMLDisplayableManagerGroup* group =
       factory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!group)
   {
@@ -276,7 +276,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
 
   //----------------------------------------------------------------------------
   // Attempt to get the Registered DisplayableManagers
-  vtkMRMLAbstractDisplayableManager * dm1 =
+  vtkMRMLAbstractDisplayableManager* dm1 =
       group->GetDisplayableManagerByClassName("vtkMRMLViewDisplayableManager");
   if (!dm1)
   {
@@ -293,7 +293,7 @@ int vtkMRMLThreeDViewDisplayableManagerFactoryTest1(int vtkNotUsed(argc), char* 
     std::cerr << "\tCurrent: " << dm1->GetClassName() << std::endl;
   }
 
-  vtkMRMLAbstractDisplayableManager * dm2 =
+  vtkMRMLAbstractDisplayableManager* dm2 =
       group->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager");
   if (!dm2)
   {

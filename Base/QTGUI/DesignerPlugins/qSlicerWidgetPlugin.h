@@ -31,7 +31,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerWidgetPlugin
 public:
   qSlicerWidgetPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget* parentWidget) override;
+  QWidget* createWidget(QWidget* parentWidget) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

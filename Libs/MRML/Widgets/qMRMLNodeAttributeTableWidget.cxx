@@ -111,7 +111,7 @@ qMRMLNodeAttributeTableView* qMRMLNodeAttributeTableWidget::tableView()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLNodeAttributeTableWidget::showEvent(QShowEvent *)
+void qMRMLNodeAttributeTableWidget::showEvent(QShowEvent*)
 {
   // Update the widget, now that it becomes becomes visible
   // (we might have missed some updates, because widget contents is not updated

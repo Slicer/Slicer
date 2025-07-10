@@ -33,9 +33,9 @@ qMRMLTransformDisplayNodeWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLTransformDisplayNodeWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLTransformDisplayNodeWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QString  includeFile() const override;
   bool     isContainer() const override;

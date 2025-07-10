@@ -88,9 +88,9 @@ public:
   virtual void init();
 
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
-  void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
-  void setActiveMRMLTableViewNode(vtkMRMLTableViewNode * node);
-  void setActiveMRMLPlotViewNode(vtkMRMLPlotViewNode * node);
+  void setActiveMRMLThreeDViewNode(vtkMRMLViewNode* node);
+  void setActiveMRMLTableViewNode(vtkMRMLTableViewNode* node);
+  void setActiveMRMLPlotViewNode(vtkMRMLPlotViewNode* node);
 
   /// Enable/disable paint event associated with the TargetWidget
   //bool startUpdateLayout();

@@ -194,7 +194,7 @@ void vtkMRMLROINode::ReadXMLAttributes( const char** atts)
   return;
 }
 
-void vtkMRMLROINode::ReadXMLString(const char *keyValuePairs)
+void vtkMRMLROINode::ReadXMLString(const char* keyValuePairs)
 {
   // used because the ROI list gloms together the point's key and
   // values into one long string, VERY dependent on the order it's written
@@ -251,14 +251,14 @@ void vtkMRMLROINode::ReadXMLString(const char *keyValuePairs)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
+void vtkMRMLROINode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
 
   //  vtkObject::Copy(anode);
-  vtkMRMLROINode *node = (vtkMRMLROINode *) anode;
+  vtkMRMLROINode* node = (vtkMRMLROINode*) anode;
   this->SetXYZ(node->XYZ);
   this->SetRadiusXYZ(node->RadiusXYZ);
   this->SetLabelText(node->GetLabelText());
@@ -273,7 +273,7 @@ void vtkMRMLROINode::Copy(vtkMRMLNode *anode)
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLROINode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
   return;
@@ -287,9 +287,9 @@ void vtkMRMLROINode::UpdateReferences()
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLROINode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLROINode::ProcessMRMLEvents ( vtkObject* caller,
                                         unsigned long event,
-                                        void *callData )
+                                        void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
@@ -380,7 +380,7 @@ bool vtkMRMLROINode::CanApplyNonLinearTransforms()const
 //---------------------------------------------------------------------------
 void vtkMRMLROINode::ApplyTransform(vtkAbstractTransform* transform)
 {
-  double *xyzIn  = this->GetXYZ();
+  double* xyzIn  = this->GetXYZ();
   double xyzOut[3];
   transform->TransformPoint(xyzIn,xyzOut);
   this->SetXYZ(xyzOut);
@@ -392,7 +392,7 @@ void vtkMRMLROINode::ApplyTransform(vtkAbstractTransform* transform)
   c[1] = (a[1] + b[1])/2.0; \
   c[2] = (a[2] + b[2])/2.0;
 
-void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
+void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes* planes)
 {
   double bounds[6];
   int i;
@@ -402,7 +402,7 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
     bounds[2*i  ] = this->XYZ[i] - this->RadiusXYZ[i];
     bounds[2*i+1] = this->XYZ[i] + this->RadiusXYZ[i];
   }
-  vtkPoints *boxPoints = vtkPoints::New(VTK_DOUBLE);
+  vtkPoints* boxPoints = vtkPoints::New(VTK_DOUBLE);
   boxPoints->SetNumberOfPoints(8);
 
   boxPoints->SetPoint(0, bounds[0], bounds[2], bounds[4]);
@@ -414,19 +414,19 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
   boxPoints->SetPoint(6, bounds[1], bounds[3], bounds[5]);
   boxPoints->SetPoint(7, bounds[0], bounds[3], bounds[5]);
 
-  vtkPoints *points = vtkPoints::New(VTK_DOUBLE);
+  vtkPoints* points = vtkPoints::New(VTK_DOUBLE);
   points->SetNumberOfPoints(6);
 
-  double *pts =
-     static_cast<vtkDoubleArray *>(boxPoints->GetData())->GetPointer(0);
-  double *p0 = pts;
-  double *p1 = pts + 3*1;
-  double *p2 = pts + 3*2;
-  double *p3 = pts + 3*3;
-  //double *p4 = pts + 3*4;
-  double *p5 = pts + 3*5;
-  double *p6 = pts + 3*6;
-  double *p7 = pts + 3*7;
+  double* pts =
+     static_cast<vtkDoubleArray*>(boxPoints->GetData())->GetPointer(0);
+  double* p0 = pts;
+  double* p1 = pts + 3*1;
+  double* p2 = pts + 3*2;
+  double* p3 = pts + 3*3;
+  //double* p4 = pts + 3*4;
+  double* p5 = pts + 3*5;
+  double* p6 = pts + 3*6;
+  double* p7 = pts + 3*7;
   double x[3];
 
   VTK_AVERAGE(p0,p7,x);
@@ -445,14 +445,14 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
   planes->SetPoints(points);
 
 
-  vtkDoubleArray *normals = vtkDoubleArray::New();
+  vtkDoubleArray* normals = vtkDoubleArray::New();
   normals->SetNumberOfComponents(3);
   normals->SetNumberOfTuples(6);
 
   p0 = pts;
-  double *px = pts + 3*1;
-  double *py = pts + 3*3;
-  double *pz = pts + 3*4;
+  double* px = pts + 3*1;
+  double* py = pts + 3*3;
+  double* pz = pts + 3*4;
 
   double N[6][3];
   for (i=0; i<3; i++)
@@ -491,7 +491,7 @@ void vtkMRMLROINode::GetTransformedPlanes(vtkPlanes *planes)
     //transformToWorld->Identity();
     //tnode->GetMatrixTransformToWorld(transformToWorld);
 
-    vtkGeneralTransform *transform = vtkGeneralTransform::New();
+    vtkGeneralTransform* transform = vtkGeneralTransform::New();
     tnode->GetTransformFromWorld(transform);
 
     //transform->Inverse();

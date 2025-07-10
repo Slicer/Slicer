@@ -35,7 +35,7 @@
 
 // STD includes
 
-int qSlicerWidgetTest1(int argc, char * argv[] )
+int qSlicerWidgetTest1(int argc, char* argv[] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

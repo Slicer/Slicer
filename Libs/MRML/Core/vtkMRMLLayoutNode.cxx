@@ -348,7 +348,7 @@ void vtkMRMLLayoutNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLLayoutNode *node = (vtkMRMLLayoutNode *) anode;
+  vtkMRMLLayoutNode* node = (vtkMRMLLayoutNode*) anode;
   // Try to copy the registered layout descriptions. However, if the node
   // currently has layout descriptions (more than the default None description)
   // then we don't want to copy them (it would overwrite the descriptions)

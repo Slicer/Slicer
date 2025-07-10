@@ -13,7 +13,7 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   public:
 
   /// The Usual vtk class functions
-  static vtkDataTransfer *New();
+  static vtkDataTransfer* New();
   vtkTypeMacro(vtkDataTransfer, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkGetStringMacro ( SourceURI );
@@ -109,9 +109,9 @@ class VTK_MRML_EXPORT vtkDataTransfer : public vtkObject
   void operator=(const vtkDataTransfer&);
 
   ///
-  char *SourceURI;
-  char *DestinationURI;
-  vtkURIHandler *Handler;
+  char* SourceURI;
+  char* DestinationURI;
+  vtkURIHandler* Handler;
   int TransferStatus;
   int TransferID;
   int TransferType;

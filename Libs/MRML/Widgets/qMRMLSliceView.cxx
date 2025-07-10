@@ -119,7 +119,7 @@ vtkRenderer* qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::Get
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::SetLightBoxRendererManager(vtkLightBoxRendererManager *mgr)
+void qMRMLSliceViewPrivate::vtkInternalLightBoxRendererManagerProxy::SetLightBoxRendererManager(vtkLightBoxRendererManager* mgr)
 {
   this->LightBoxRendererManager = mgr;
 }
@@ -317,7 +317,7 @@ void qMRMLSliceView::addDisplayableManager(const QString& displayableManagerName
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSliceView::getDisplayableManagers(vtkCollection *displayableManagers)
+void qMRMLSliceView::getDisplayableManagers(vtkCollection* displayableManagers)
 {
   Q_D(qMRMLSliceView);
 
@@ -395,7 +395,7 @@ QList<double> qMRMLSliceView::convertDeviceToXYZ(const QList<int>& xy)const
 
   // Grab a displayable manager that is derived from
   // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
-  vtkMRMLCrosshairDisplayableManager *cmgr =
+  vtkMRMLCrosshairDisplayableManager* cmgr =
     vtkMRMLCrosshairDisplayableManager::SafeDownCast(
       d->DisplayableManagerGroup->GetDisplayableManagerByClassName(
         "vtkMRMLCrosshairDisplayableManager"));
@@ -420,7 +420,7 @@ QList<double> qMRMLSliceView::convertRASToXYZ(const QList<double>& ras)const
 
   // Grab a displayable manager that is derived from
   // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
-  vtkMRMLCrosshairDisplayableManager *cmgr =
+  vtkMRMLCrosshairDisplayableManager* cmgr =
     vtkMRMLCrosshairDisplayableManager::SafeDownCast(
       d->DisplayableManagerGroup->GetDisplayableManagerByClassName(
         "vtkMRMLCrosshairDisplayableManager"));
@@ -446,7 +446,7 @@ QList<double> qMRMLSliceView::convertXYZToRAS(const QList<double>& xyz)const
 
   // Grab a displayable manager that is derived from
   // AbstractSliceViewDisplayableManager, like the CrosshairDisplayableManager
-  vtkMRMLCrosshairDisplayableManager *cmgr =
+  vtkMRMLCrosshairDisplayableManager* cmgr =
     vtkMRMLCrosshairDisplayableManager::SafeDownCast(
       d->DisplayableManagerGroup->GetDisplayableManagerByClassName(
         "vtkMRMLCrosshairDisplayableManager"));
@@ -466,7 +466,7 @@ QList<double> qMRMLSliceView::convertXYZToRAS(const QList<double>& xyz)const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceView::setViewCursor(const QCursor &cursor)
+void qMRMLSliceView::setViewCursor(const QCursor& cursor)
 {
   this->setCursor(cursor);
   if (this->VTKWidget() != nullptr)
@@ -488,7 +488,7 @@ void qMRMLSliceView::unsetViewCursor()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceView::setDefaultViewCursor(const QCursor &cursor)
+void qMRMLSliceView::setDefaultViewCursor(const QCursor& cursor)
 {
   if (this->VTKWidget() != nullptr)
   {

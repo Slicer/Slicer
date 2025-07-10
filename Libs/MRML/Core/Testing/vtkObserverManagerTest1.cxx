@@ -24,9 +24,9 @@ struct callBackDataStruct{
   std::string testString;
 };
 
-void TestCallback( vtkObject *caller,
+void TestCallback( vtkObject* caller,
                    unsigned long vtkNotUsed(eid),
-                   void *clientData, void *vtkNotUsed(callData) )
+                   void* clientData, void* vtkNotUsed(callData) )
 {
   std::cout << "TestCallback" << std::endl;
   callBackDataStruct *myCBStruct = (callBackDataStruct*)clientData;
@@ -36,7 +36,7 @@ void TestCallback( vtkObject *caller,
   }
   if (caller != nullptr)
   {
-    vtkMRMLModelNode *callNode = vtkMRMLModelNode::SafeDownCast(caller);
+    vtkMRMLModelNode* callNode = vtkMRMLModelNode::SafeDownCast(caller);
     if (callNode != nullptr)
     {
       std::cout << "Caller name = " << callNode->GetName();
@@ -48,7 +48,7 @@ void TestCallback( vtkObject *caller,
   }
 }
 
-int vtkObserverManagerTest1(int , char * [] )
+int vtkObserverManagerTest1(int, char*[])
 {
   vtkNew<vtkObserverManager> observerManager;
   EXERCISE_BASIC_OBJECT_METHODS(observerManager.GetPointer());
@@ -59,7 +59,7 @@ int vtkObserverManagerTest1(int , char * [] )
   vtkNew<vtkMRMLModelNode> modelNode;
   modelNode->SetName("Owner");
   observerManager->AssignOwner(modelNode.GetPointer());
-  vtkObject *owner = observerManager->GetOwner();
+  vtkObject* owner = observerManager->GetOwner();
   if (vtkMRMLModelNode::SafeDownCast(owner) != modelNode.GetPointer())
   {
     std::cerr << "Error getting owner."  << std::endl;
@@ -106,7 +106,7 @@ int vtkObserverManagerTest1(int , char * [] )
   observed3->SetName("Third node callback");
 
   // not using smart pointers
-  vtkMRMLModelNode *observed4 = vtkMRMLModelNode::New();
+  vtkMRMLModelNode* observed4 = vtkMRMLModelNode::New();
   observerManager->SetAndObserveObjectEvents(vtkObjectPointer( &(observed4)), observed4, events.GetPointer());
   observed4->SetName("Fourth node callback");
   observerManager->SetAndObserveObject(vtkObjectPointer(&(observed4)), nullptr);

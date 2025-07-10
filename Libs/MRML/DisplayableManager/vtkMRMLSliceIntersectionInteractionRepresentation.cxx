@@ -1370,7 +1370,7 @@ vtkMRMLSliceIntersectionInteractionRepresentation::~vtkMRMLSliceIntersectionInte
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentation::GetActors2D(vtkPropCollection * pc)
+void vtkMRMLSliceIntersectionInteractionRepresentation::GetActors2D(vtkPropCollection* pc)
 {
   for (std::deque<SliceIntersectionInteractionDisplayPipeline*>::iterator
     sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
@@ -1381,7 +1381,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::GetActors2D(vtkPropColle
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentation::ReleaseGraphicsResources(vtkWindow * win)
+void vtkMRMLSliceIntersectionInteractionRepresentation::ReleaseGraphicsResources(vtkWindow* win)
 {
   for (std::deque<SliceIntersectionInteractionDisplayPipeline*>::iterator
     sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
@@ -1392,7 +1392,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::ReleaseGraphicsResources
 }
 
 //----------------------------------------------------------------------
-int vtkMRMLSliceIntersectionInteractionRepresentation::RenderOverlay(vtkViewport * viewport)
+int vtkMRMLSliceIntersectionInteractionRepresentation::RenderOverlay(vtkViewport* viewport)
 {
   int count = 0;
 
@@ -1416,7 +1416,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::PrintSelf(ostream & os, 
 
 //----------------------------------------------------------------------
 void vtkMRMLSliceIntersectionInteractionRepresentation::SliceNodeModifiedCallback(
-  vtkObject * caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+  vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkMRMLSliceIntersectionInteractionRepresentation* self = vtkMRMLSliceIntersectionInteractionRepresentation::SafeDownCast((vtkObject*)clientData);
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
@@ -1432,7 +1432,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SliceNodeModifiedCallbac
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentation::SliceNodeModified(vtkMRMLSliceNode * sliceNode)
+void vtkMRMLSliceIntersectionInteractionRepresentation::SliceNodeModified(vtkMRMLSliceNode* sliceNode)
 {
   if (!sliceNode)
   {
@@ -1460,7 +1460,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::SliceNodeModified(vtkMRM
 }
 
 //----------------------------------------------------------------------
-SliceIntersectionInteractionDisplayPipeline* vtkMRMLSliceIntersectionInteractionRepresentation::GetDisplayPipelineFromSliceLogic(vtkMRMLSliceLogic * sliceLogic)
+SliceIntersectionInteractionDisplayPipeline* vtkMRMLSliceIntersectionInteractionRepresentation::GetDisplayPipelineFromSliceLogic(vtkMRMLSliceLogic* sliceLogic)
 {
   for (std::deque<SliceIntersectionInteractionDisplayPipeline*>::iterator
     sliceIntersectionIt = this->Internal->SliceIntersectionInteractionDisplayPipelines.begin();
@@ -2254,7 +2254,7 @@ vtkMRMLSliceDisplayNode* vtkMRMLSliceIntersectionInteractionRepresentation::GetS
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentation::SetSliceNode(vtkMRMLSliceNode * sliceNode)
+void vtkMRMLSliceIntersectionInteractionRepresentation::SetSliceNode(vtkMRMLSliceNode* sliceNode)
 {
   if (sliceNode == this->Internal->SliceNode)
   {
@@ -2350,7 +2350,7 @@ vtkMRMLSliceNode* vtkMRMLSliceIntersectionInteractionRepresentation::GetSliceNod
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentation::AddIntersectingSliceLogic(vtkMRMLSliceLogic * sliceLogic)
+void vtkMRMLSliceIntersectionInteractionRepresentation::AddIntersectingSliceLogic(vtkMRMLSliceLogic* sliceLogic)
 {
   if (!sliceLogic)
   {
@@ -2376,7 +2376,7 @@ void vtkMRMLSliceIntersectionInteractionRepresentation::AddIntersectingSliceLogi
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentation::RemoveIntersectingSliceNode(vtkMRMLSliceNode * sliceNode)
+void vtkMRMLSliceIntersectionInteractionRepresentation::RemoveIntersectingSliceNode(vtkMRMLSliceNode* sliceNode)
 {
   if (!sliceNode)
   {
@@ -2545,7 +2545,7 @@ double* vtkMRMLSliceIntersectionInteractionRepresentation::GetSliceIntersectionP
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentation::TransformIntersectingSlices(vtkMatrix4x4 * rotatedSliceToSliceTransformMatrix)
+void vtkMRMLSliceIntersectionInteractionRepresentation::TransformIntersectingSlices(vtkMatrix4x4* rotatedSliceToSliceTransformMatrix)
 {
   std::deque<int> wasModified;
   for (std::deque<SliceIntersectionInteractionDisplayPipeline*>::iterator
@@ -2948,7 +2948,7 @@ bool vtkMRMLSliceIntersectionInteractionRepresentation::IsDisplayable()
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkMRMLSliceIntersectionInteractionRepresentation::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRML(caller, event, callData);
 

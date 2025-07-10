@@ -24,7 +24,7 @@
 class VTK_MRML_EXPORT vtkMRMLGridTransformNode : public vtkMRMLTransformNode
 {
 public:
-  static vtkMRMLGridTransformNode *New();
+  static vtkMRMLGridTransformNode* New();
   vtkTypeMacro(vtkMRMLGridTransformNode,vtkMRMLTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

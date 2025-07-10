@@ -242,7 +242,7 @@ void vtkMRMLColorLegendDisplayNode::SetAndObservePrimaryDisplayNode(vtkMRMLDispl
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorLegendDisplayNode::ProcessMRMLEvents(vtkObject *caller, unsigned long eventID, void *callData)
+void vtkMRMLColorLegendDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long eventID, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, eventID, callData);
 

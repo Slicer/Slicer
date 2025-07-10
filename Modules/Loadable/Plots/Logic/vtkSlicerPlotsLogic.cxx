@@ -75,7 +75,7 @@ int vtkSlicerPlotsLogic::GetLayoutWithPlot(int currentLayout)
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* source, const char * vtkNotUsed(name))
+vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* source, const char* vtkNotUsed(name))
 {
   if (!source || source->GetScene() == nullptr)
   {
@@ -85,7 +85,7 @@ vtkMRMLPlotSeriesNode* vtkSlicerPlotsLogic::CloneSeries(vtkMRMLPlotSeriesNode* s
 
   vtkSmartPointer<vtkMRMLNode> clonedNode = vtkSmartPointer<vtkMRMLNode>::Take(
     source->GetScene()->CreateNodeByClass("vtkMRMLPlotSeriesNode"));
-  vtkMRMLPlotSeriesNode *clonedSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(clonedNode);
+  vtkMRMLPlotSeriesNode* clonedSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(clonedNode);
   clonedSeriesNode->CopyWithScene(source);
   std::string nodeName(source->GetName() ? source->GetName() : "");
   nodeName += "_Copy";

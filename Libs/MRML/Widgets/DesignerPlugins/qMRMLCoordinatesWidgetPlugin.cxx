@@ -22,13 +22,13 @@
 #include "qMRMLCoordinatesWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLCoordinatesWidgetPlugin::qMRMLCoordinatesWidgetPlugin(QObject *_parent)
+qMRMLCoordinatesWidgetPlugin::qMRMLCoordinatesWidgetPlugin(QObject* _parent)
 : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLCoordinatesWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLCoordinatesWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLCoordinatesWidget* _widget = new qMRMLCoordinatesWidget(_parent);
   return _widget;

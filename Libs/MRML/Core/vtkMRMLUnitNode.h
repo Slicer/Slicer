@@ -33,7 +33,7 @@
 class VTK_MRML_EXPORT vtkMRMLUnitNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLUnitNode *New();
+  static vtkMRMLUnitNode* New();
   vtkTypeMacro(vtkMRMLUnitNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -52,7 +52,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)

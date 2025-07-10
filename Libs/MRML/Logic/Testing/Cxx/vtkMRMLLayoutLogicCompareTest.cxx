@@ -18,7 +18,7 @@ bool TestSetSlicerLayoutCompareGridView();
 bool TestSetSlicerLayoutCompareGridViewEvents();
 
 //----------------------------------------------------------------------------
-int vtkMRMLLayoutLogicCompareTest(int , char * [] )
+int vtkMRMLLayoutLogicCompareTest(int, char*[])
 {
   bool res = true;
   res = TestSetSlicerLayoutCompareGridView() && res;

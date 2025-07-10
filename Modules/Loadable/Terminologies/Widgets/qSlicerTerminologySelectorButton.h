@@ -45,14 +45,14 @@ public:
 
 #ifndef __VTK_WRAP__
   /// Get selected terminology and other metadata (name, color, auto-generated flags) into given info bundle object
-  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
+  void terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo);
 #endif
 
 public slots:
 
 #ifndef __VTK_WRAP__
   /// Set terminology and other metadata (name, color, auto-generated flags)
-  void setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo);
+  void setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo);
 #endif
 
   /// Opens a terminology dialog to select a new terminology.

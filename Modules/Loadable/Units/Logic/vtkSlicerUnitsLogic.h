@@ -43,7 +43,7 @@ class VTK_SLICER_UNITS_MODULE_LOGIC_EXPORT vtkSlicerUnitsLogic
   : public vtkMRMLAbstractLogic
 {
 public:
-  static vtkSlicerUnitsLogic *New();
+  static vtkSlicerUnitsLogic* New();
   typedef vtkSlicerUnitsLogic Self;
   vtkTypeMacro(vtkSlicerUnitsLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;

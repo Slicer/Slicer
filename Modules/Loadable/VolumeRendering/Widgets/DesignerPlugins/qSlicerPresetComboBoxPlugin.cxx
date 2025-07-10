@@ -22,13 +22,13 @@
 #include "qSlicerPresetComboBox.h"
 
 //-----------------------------------------------------------------------------
-qSlicerPresetComboBoxPlugin::qSlicerPresetComboBoxPlugin(QObject *objectParent)
+qSlicerPresetComboBoxPlugin::qSlicerPresetComboBoxPlugin(QObject* objectParent)
   : QObject(objectParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qSlicerPresetComboBoxPlugin::createWidget(QWidget *widgetParent)
+QWidget* qSlicerPresetComboBoxPlugin::createWidget(QWidget* widgetParent)
 {
   qSlicerPresetComboBox* newWidget = new qSlicerPresetComboBox(widgetParent);
   return newWidget;

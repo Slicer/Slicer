@@ -219,7 +219,7 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::di
   }
 
   Q_Q(const qSlicerVolumeRenderingModuleWidget);
-  vtkSlicerVolumeRenderingLogic *logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
+  vtkSlicerVolumeRenderingLogic* logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
   if (!logic)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access volume rendering logic";
@@ -236,7 +236,7 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate::cr
 {
   Q_Q(qSlicerVolumeRenderingModuleWidget);
 
-  vtkSlicerVolumeRenderingLogic *logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
+  vtkSlicerVolumeRenderingLogic* logic = vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
   if (!logic)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access volume rendering logic";

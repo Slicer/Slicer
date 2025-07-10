@@ -29,7 +29,7 @@ class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineWidget
 : public vtkSlicerLineWidget
 {
 public:
-  static vtkSlicerTestLineWidget *New();
+  static vtkSlicerTestLineWidget* New();
   vtkTypeMacro(vtkSlicerTestLineWidget, vtkSlicerLineWidget);
 
   void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,

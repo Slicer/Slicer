@@ -110,7 +110,7 @@ void vtkITKExecuteDataFromSeriesVector(
   filter->UpdateLargestPossibleRegion();
   typename itk::ImportImageContainer<itk::SizeValueType, VectorPixelType>::Pointer PixelContainer;
   PixelContainer = filter->GetOutput()->GetPixelContainer();
-  void *ptr = static_cast<void *> (PixelContainer->GetBufferPointer());
+  void* ptr = static_cast<void*> (PixelContainer->GetBufferPointer());
   DownCast<T>(data->GetPointData()->GetScalars())
     ->SetVoidArray(ptr, PixelContainer->Size(), 0,
                    vtkAOSDataArrayTemplate<T>::VTK_DATA_ARRAY_DELETE);
@@ -120,7 +120,7 @@ void vtkITKExecuteDataFromSeriesVector(
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The data extent/axes
 // are assumed to be the same as the file extent/order.
-void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
+void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo)
 {
   if (!this->Superclass::Archetype)
   {
@@ -128,7 +128,7 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
       this->SetErrorCode(vtkErrorCode::NoFileNameError);
       return;
   }
-  vtkImageData *data = this->AllocateOutputData(output, outInfo);
+  vtkImageData* data = this->AllocateOutputData(output, outInfo);
 
     // If there is only one file in the series, just use an image file reader
   if (this->FileNames.size() == 1)
@@ -158,7 +158,7 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
           this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
       }
     }
-    catch (itk::ExceptionObject & e)
+    catch (itk::ExceptionObject& e)
     {
       vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
       this->SetErrorCode(vtkErrorCode::FileFormatError);
@@ -169,9 +169,9 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteDataWithInformation(vt
 }
 
 
-void vtkITKArchetypeImageSeriesVectorReaderSeries::ReadProgressCallback(itk::Object* obj, const itk::EventObject &, void* data)
+void vtkITKArchetypeImageSeriesVectorReaderSeries::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
-  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject *>(obj));
+  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
   if (p.IsNull())
   {
     return;

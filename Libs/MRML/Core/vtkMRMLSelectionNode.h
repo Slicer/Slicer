@@ -34,7 +34,7 @@ class vtkMRMLUnitNode;
 class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 {
   public:
-  static vtkMRMLSelectionNode *New();
+  static vtkMRMLSelectionNode* New();
   vtkTypeMacro(vtkMRMLSelectionNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -47,7 +47,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Selection";}
@@ -56,19 +56,19 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   const char* GetActiveVolumeID();
   void SetActiveVolumeID(const char* id);
   /// \deprecated Use SetActiveVolumeID instead
-  void SetReferenceActiveVolumeID (const char *id) { this->SetActiveVolumeID(id); };
+  void SetReferenceActiveVolumeID (const char* id) { this->SetActiveVolumeID(id); };
 
   /// the ID of a MRMLVolumeNode (typically foreground)
   const char* GetSecondaryVolumeID();
   void SetSecondaryVolumeID(const char* id);
   /// \deprecated Use SetSecondaryVolumeID instead
-  void SetReferenceSecondaryVolumeID (char *id) { this->SetSecondaryVolumeID(id); };
+  void SetReferenceSecondaryVolumeID (char* id) { this->SetSecondaryVolumeID(id); };
 
   /// the ID of a MRMLVolumeNode
   const char* GetActiveLabelVolumeID();
   void SetActiveLabelVolumeID(const char* id);
   /// \deprecated Use SetActiveLabelVolumeID instead
-  void SetReferenceActiveLabelVolumeID (const char *id) { this->SetActiveLabelVolumeID(id); };
+  void SetReferenceActiveLabelVolumeID (const char* id) { this->SetActiveLabelVolumeID(id); };
 
   /// Get the classname of the active placeNode type.
   /// The active placeNode is used to control what placeNode is being
@@ -84,7 +84,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// ActivePlaceNodeClassNameChangedEvent so that the Mouse mode tool bar
   /// will update.
   /// \sa GetActivePlaceNodeClassName, SetActivePlaceNodeClassName
-  void SetReferenceActivePlaceNodeClassName (const char *className);
+  void SetReferenceActivePlaceNodeClassName (const char* className);
 
   /// Get the ID of the currently active placeNode.
   /// \sa SetActivePlaceNodeID, SetReferenceActivePlaceNodeID
@@ -95,7 +95,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Set the ID of the currently active placeNode and fire the
   /// ActivePlaceNodeIDChangedEvent event.
   /// \sa GetActivePlaceNodeID, SetActivePlaceNodeID
-  void SetReferenceActivePlaceNodeID (const char *id)
+  void SetReferenceActivePlaceNodeID (const char* id)
   { this->SetActivePlaceNodeID(id);
     this->InvokeEvent(vtkMRMLSelectionNode::ActivePlaceNodeIDChangedEvent); };
 
@@ -103,37 +103,37 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   const char* GetActiveROIListID();
   void SetActiveROIListID(const char* id);
   /// \deprecated Use SetActiveROIListID instead
-  void SetReferenceActiveROIListID (const char *id) { this->SetActiveROIListID(id); };
+  void SetReferenceActiveROIListID (const char* id) { this->SetActiveROIListID(id); };
 
   /// the ID of a MRMLCameraNode
   const char* GetActiveCameraID();
   void SetActiveCameraID(const char* id);
   /// \deprecated Use SetActiveCameraID instead
-  void SetReferenceActiveCameraID (const char *id) { this->SetActiveCameraID(id); };
+  void SetReferenceActiveCameraID (const char* id) { this->SetActiveCameraID(id); };
 
   /// the ID of a MRMLTableNode
   const char* GetActiveTableID();
   void SetActiveTableID(const char* id);
   /// \deprecated Use SetActiveTableID instead
-  void SetReferenceActiveTableID (char *id) { this->SetActiveTableID(id); };
+  void SetReferenceActiveTableID (char* id) { this->SetActiveTableID(id); };
 
   /// the ID of a MRMLViewNode
   const char* GetActiveViewID();
   void SetActiveViewID(const char* id );
   /// \deprecated Use SetActiveViewID instead
-  void SetReferenceActiveViewID (const char *id) { this->SetActiveViewID(id); };
+  void SetReferenceActiveViewID (const char* id) { this->SetActiveViewID(id); };
 
   /// the ID of a MRMLLayoutNode
   const char* GetActiveLayoutID();
   void SetActiveLayoutID(const char* id);
   /// \deprecated Use SetActiveLayoutID instead
-  void SetReferenceActiveLayoutID (const char *id) { this->SetActiveLayoutID(id); };
+  void SetReferenceActiveLayoutID (const char* id) { this->SetActiveLayoutID(id); };
 
   /// the ID of a MRMLPlotChartNode
   const char* GetActivePlotChartID();
   void SetActivePlotChartID(const char* id);
   /// \deprecated Use SetActivePlotChartID instead
-  void SetReferenceActivePlotChartID (const char *id) { this->SetActivePlotChartID(id); };
+  void SetReferenceActivePlotChartID (const char* id) { this->SetActivePlotChartID(id); };
 
   /// A list of events that this node can throw
   /// ActivePlaceNodeIDChangedEvent: is no longer observed by the Mouse mode
@@ -158,7 +158,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 
   /// Add a new valid placeNode class name to the list, with optional qt resource
   /// reference string for updating GUI elements
-  void AddNewPlaceNodeClassNameToList(const char *newID, const char *resource = nullptr, const char *iconName = "");
+  void AddNewPlaceNodeClassNameToList(const char* newID, const char* resource = nullptr, const char* iconName = "");
 
   // -- Units --
 
@@ -191,11 +191,11 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Method to propagate events generated in units nodes.
   /// \sa GetNodeReferenceID(), SetAndObserveNodeReferenceID()
   /// \sa UnitModifiedEvent
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Remove a placeNode class name from the list
   /// \sa PlaceNodeClassNameInList
-  void RemovePlaceNodeClassNameFromList(const char *className);
+  void RemovePlaceNodeClassNameFromList(const char* className);
   /// Return nth placeNode class name string from the list,
   /// empty string if out of bounds
   std::string GetPlaceNodeClassNameByIndex(int n);
@@ -228,7 +228,7 @@ protected:
   vtkMRMLSelectionNode(const vtkMRMLSelectionNode&);
   void operator=(const vtkMRMLSelectionNode&);
 
-  char *ActivePlaceNodeClassName;
+  char* ActivePlaceNodeClassName;
   bool ActivePlaceNodePlacementValid;
 
   std::vector<std::string> PlaceNodeClassNameList;

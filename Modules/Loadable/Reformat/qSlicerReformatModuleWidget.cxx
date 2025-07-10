@@ -181,7 +181,7 @@ void qSlicerReformatModuleWidgetPrivate::updateOffsetSlidersGroupBox()
   bool wasBlocking = this->OffsetSlider->blockSignals(true);
 
   // Set the scale increments to match the z spacing (rotated into slice space)
-  const double * sliceSpacing =
+  const double* sliceSpacing =
     this->MRMLSliceLogic->GetLowestVolumeSliceSpacing();
   Q_ASSERT(sliceSpacing);
   double offsetResolution = sliceSpacing ? sliceSpacing[2] : 0;

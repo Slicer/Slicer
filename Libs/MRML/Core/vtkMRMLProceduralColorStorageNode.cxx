@@ -54,12 +54,12 @@ bool vtkMRMLProceduralColorStorageNode::CanReadInReferenceNode(vtkMRMLNode* refN
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
 
   // cast the input node
-  vtkMRMLProceduralColorNode *colorNode =
+  vtkMRMLProceduralColorNode* colorNode =
     vtkMRMLProceduralColorNode::SafeDownCast(refNode);
 
   if (colorNode == nullptr)
@@ -69,7 +69,7 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  vtkColorTransferFunction *ctf = colorNode->GetColorTransferFunction();
+  vtkColorTransferFunction* ctf = colorNode->GetColorTransferFunction();
   if (!ctf)
   {
     vtkErrorMacro("ReadDataInternal: no color transfer function!");
@@ -140,7 +140,7 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -150,10 +150,10 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   }
 
   // cast the input node
-  vtkMRMLProceduralColorNode *colorNode = nullptr;
+  vtkMRMLProceduralColorNode* colorNode = nullptr;
   if ( refNode->IsA("vtkMRMLProceduralColorNode") )
   {
-    colorNode = dynamic_cast <vtkMRMLProceduralColorNode *> (refNode);
+    colorNode = dynamic_cast <vtkMRMLProceduralColorNode*> (refNode);
   }
 
   if (colorNode == nullptr)
@@ -162,7 +162,7 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     return 0;
   }
 
-  vtkColorTransferFunction *ctf = colorNode->GetColorTransferFunction();
+  vtkColorTransferFunction* ctf = colorNode->GetColorTransferFunction();
   if (!ctf)
   {
     vtkErrorMacro("WriteDataInternal: no color transfer function!");

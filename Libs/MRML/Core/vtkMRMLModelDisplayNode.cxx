@@ -165,9 +165,9 @@ void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject* caller,
                                                 unsigned long event,
-                                                void *callData )
+                                                void* callData )
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -336,7 +336,7 @@ void vtkMRMLModelDisplayNode::SetThresholdEnabled(bool enabled)
   if (enabled && this->GetThresholdMin() > this->GetThresholdMax())
   {
     double dataRange[2] = { 0.0, -1.0 };
-    vtkDataArray *dataArray = this->GetActiveScalarArray();
+    vtkDataArray* dataArray = this->GetActiveScalarArray();
     if (dataArray)
     {
       dataArray->GetRange(dataRange);
@@ -396,7 +396,7 @@ double* vtkMRMLModelDisplayNode::GetThresholdRange()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
+void vtkMRMLModelDisplayNode::SetActiveScalarName(const char* scalarName)
 {
   if (scalarName && this->ActiveScalarName && !strcmp(scalarName, this->ActiveScalarName))
   {
@@ -493,7 +493,7 @@ vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
   {
     return nullptr;
   }
-  vtkDataArray *dataArray = attributes->GetArray(this->GetActiveScalarName());
+  vtkDataArray* dataArray = attributes->GetArray(this->GetActiveScalarName());
   return dataArray;
 }
 
@@ -550,7 +550,7 @@ int vtkMRMLModelDisplayNode::GetSliceDisplayModeFromString(const char* name)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLModelDisplayNode::SetAndObserveDistanceEncodedProjectionColorNodeID(const char *colorNodeID)
+void vtkMRMLModelDisplayNode::SetAndObserveDistanceEncodedProjectionColorNodeID(const char* colorNodeID)
 {
   this->SetAndObserveNodeReferenceID(SliceDistanceEncodedProjectionColorNodeReferenceRole, colorNodeID);
 }

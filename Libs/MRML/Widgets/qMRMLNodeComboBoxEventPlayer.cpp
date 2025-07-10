@@ -29,17 +29,17 @@
 #include "vtkMRMLNode.h"
 
 // ----------------------------------------------------------------------------
-qMRMLNodeComboBoxEventPlayer::qMRMLNodeComboBoxEventPlayer(QObject *parent)
+qMRMLNodeComboBoxEventPlayer::qMRMLNodeComboBoxEventPlayer(QObject* parent)
   : pqWidgetEventPlayer(parent)
 {
 
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject *Object,
-                                    const QString &Command,
-                                    const QString &Arguments,
-                                    bool &Error)
+bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject* Object,
+                                    const QString& Command,
+                                    const QString& Arguments,
+                                    bool& Error)
 {
   if (Command != "nodeAddedByUser" && Command != "currentNodeChanged" &&
       Command != "nodeAboutToBeRemoved" && Command != "nodeRenamed")

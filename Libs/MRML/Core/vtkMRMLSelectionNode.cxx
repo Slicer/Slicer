@@ -135,7 +135,7 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSelectionNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
   Superclass::Copy(anode);
@@ -185,7 +185,7 @@ void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char *newClassName, const char *resource, const char *iconName)
+void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char* newClassName, const char* resource, const char* iconName)
 {
   if (newClassName == nullptr)
   {
@@ -234,7 +234,7 @@ void vtkMRMLSelectionNode::AddNewPlaceNodeClassNameToList(const char *newClassNa
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char *className)
+void vtkMRMLSelectionNode::RemovePlaceNodeClassNameFromList(const char* className)
 {
   if (className == nullptr)
   {
@@ -307,7 +307,7 @@ void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
         it->second.size() > 0)
     {
       // there is only one referenced node per reference role
-      vtkMRMLNodeReference * reference = it->second[0];
+      vtkMRMLNodeReference* reference = it->second[0];
       if (reference)
       {
         units.push_back(
@@ -328,7 +328,7 @@ void vtkMRMLSelectionNode::GetUnitNodeIDs(std::vector<const char*>& quantities,
         it->second.size() > 0)
     {
       // there is only one referenced node per reference role
-      vtkMRMLNodeReference * reference = it->second[0];
+      vtkMRMLNodeReference* reference = it->second[0];
       if (reference)
       {
         quantities.push_back(&reference->GetReferenceRole()[strlen(UNIT_NODE_REFERENCE_ROLE)]);
@@ -386,9 +386,9 @@ void vtkMRMLSelectionNode::SetUnitNodeID(const char* quantity, const char* id)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSelectionNode::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLSelectionNode::ProcessMRMLEvents(vtkObject* caller,
                                              unsigned long event,
-                                             void *callData)
+                                             void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -429,7 +429,7 @@ std::string vtkMRMLSelectionNode::GetPlaceNodeResourceByClassName(std::string cl
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSelectionNode::SetReferenceActivePlaceNodeClassName (const char *className)
+void vtkMRMLSelectionNode::SetReferenceActivePlaceNodeClassName (const char* className)
 {
   if (className == this->ActivePlaceNodeClassName)
   {

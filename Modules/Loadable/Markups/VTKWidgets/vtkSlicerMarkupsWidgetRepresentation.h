@@ -87,8 +87,8 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Update the representation from markups node
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
-  virtual void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
+  virtual void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr);
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;
@@ -110,7 +110,7 @@ public:
   virtual vtkMRMLMarkupsNode::ControlPoint *GetNthControlPoint(int n);
 
   /// Set/Get the vtkMRMLMarkupsNode connected with this representation
-  virtual void SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode *markupsDisplayNode);
+  virtual void SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
   virtual vtkMRMLMarkupsDisplayNode* GetMarkupsDisplayNode();
   virtual vtkMRMLMarkupsNode* GetMarkupsNode();
 
@@ -124,9 +124,9 @@ public:
   /// closestDistance2 is the squared distance in display coordinates from the closest position where interaction is possible.
   /// componentIndex returns index of the found component (e.g., if control point is found then control point index is returned).
   virtual void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int &foundComponentType, int &foundComponentIndex, double &closestDistance2);
+    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
 
-  virtual int FindClosestPointOnWidget(const int displayPos[2], double worldPos[3], int *idx);
+  virtual int FindClosestPointOnWidget(const int displayPos[2], double worldPos[3], int* idx);
 
   virtual vtkPointPlacer* GetPointPlacer();
 
@@ -193,7 +193,7 @@ protected:
   // scene length unit (typically millimeters).
   double ControlPointSize;
 
-  virtual void SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode);
+  virtual void SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode);
 
   vtkWeakPointer<vtkMRMLMarkupsDisplayNode> MarkupsDisplayNode;
   vtkWeakPointer<vtkMRMLMarkupsNode> MarkupsNode;

@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_TEXTS_EXPORT qSlicerTextsModule : public qSlicerLoadabl
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerTextsModule(QObject *parent=nullptr);
+  qSlicerTextsModule(QObject* parent=nullptr);
   ~qSlicerTextsModule() override;
 
   /// Icon of the Texts module
@@ -71,7 +71,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

@@ -49,7 +49,7 @@ public:
   /**
    * Instantiate this class.
    */
-  static vtkMRMLWindowLevelWidget *New();
+  static vtkMRMLWindowLevelWidget* New();
 
   enum
   {
@@ -88,7 +88,7 @@ public:
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic) override;
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
 
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;

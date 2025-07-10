@@ -49,7 +49,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget :
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerSegmentationsModuleWidget(QWidget *parent=nullptr);
+  qSlicerSegmentationsModuleWidget(QWidget* parent=nullptr);
   ~qSlicerSegmentationsModuleWidget() override;
 
   void enter() override;
@@ -105,7 +105,7 @@ protected slots:
   void updateCopyMoveButtonStates();
 
   /// Callback function for selection changes in the main segment table view
-  void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Populate source volume label and combobox for export
   void onSegmentationNodeReferenceChanged();

@@ -80,14 +80,14 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerFileDialog::isMimeDataAccepted(const QMimeData *mimeData)const
+bool qSlicerFileDialog::isMimeDataAccepted(const QMimeData* mimeData)const
 {
   Q_UNUSED(mimeData);
   return false;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerFileDialog::dropEvent(QDropEvent *event)
+void qSlicerFileDialog::dropEvent(QDropEvent* event)
 {
   Q_UNUSED(event);
 }

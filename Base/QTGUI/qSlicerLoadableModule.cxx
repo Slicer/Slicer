@@ -53,7 +53,7 @@ qSlicerLoadableModule::~qSlicerLoadableModule() = default;
 
 //-----------------------------------------------------------------------------
 bool qSlicerLoadableModule::importModulePythonExtensions(
-    qSlicerCorePythonManager * pythonManager,
+    qSlicerCorePythonManager* pythonManager,
     const QString& intDir,const QString& modulePath,
     bool isEmbedded)
 {
@@ -70,8 +70,8 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
 
 //-----------------------------------------------------------------------------
 bool qSlicerLoadableModule::addModuleToSlicerModules(
-    qSlicerCorePythonManager * pythonManager,
-    qSlicerAbstractModule * module,
+    qSlicerCorePythonManager* pythonManager,
+    qSlicerAbstractModule* module,
     const QString& moduleName)
 {
 #ifdef Slicer_USE_PYTHONQT
@@ -96,7 +96,7 @@ bool qSlicerLoadableModule::addModuleToSlicerModules(
 
 //-----------------------------------------------------------------------------
 bool qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
-    qSlicerCorePythonManager * pythonManager,
+    qSlicerCorePythonManager* pythonManager,
     const QString& moduleName)
 {
 #ifdef Slicer_USE_PYTHONQT

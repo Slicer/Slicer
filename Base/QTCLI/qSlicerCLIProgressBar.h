@@ -58,11 +58,11 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIProgressBar : public QWidget
 public:
 
   typedef QWidget Superclass;
-  qSlicerCLIProgressBar(QWidget *parent=nullptr);
+  qSlicerCLIProgressBar(QWidget* parent=nullptr);
   ~qSlicerCLIProgressBar() override;
 
   /// Get the \a commandLineModuleNode
-  Q_INVOKABLE vtkMRMLCommandLineModuleNode * commandLineModuleNode()const;
+  Q_INVOKABLE vtkMRMLCommandLineModuleNode* commandLineModuleNode()const;
 
   /// Visibility behavior of the GUI elements of the CLI progress bar.
   enum Visibility

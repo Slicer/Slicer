@@ -227,8 +227,8 @@ public:
   typedef qSlicerCoreApplicationPrivate Superclass;
 
   qSlicerApplicationPrivate(qSlicerApplication& object,
-                            qSlicerCommandOptions * commandOptions,
-                            qSlicerIOManager * ioManager);
+                            qSlicerCommandOptions* commandOptions,
+                            qSlicerIOManager* ioManager);
   ~qSlicerApplicationPrivate() override;
 
   /// Convenient method regrouping all initialization code
@@ -265,8 +265,8 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerApplicationPrivate::qSlicerApplicationPrivate(
     qSlicerApplication& object,
-    qSlicerCommandOptions * commandOptions,
-    qSlicerIOManager * ioManager)
+    qSlicerCommandOptions* commandOptions,
+    qSlicerIOManager* ioManager)
   : qSlicerCoreApplicationPrivate(object, commandOptions, ioManager), q_ptr(&object)
 {
   this->ToolTipTrapper = nullptr;
@@ -423,7 +423,7 @@ void qSlicerApplicationPrivate::init()
   qSlicerSettingsGeneralPanel* generalPanel = new qSlicerSettingsGeneralPanel;
   this->SettingsDialog->addPanel(qSlicerApplication::tr("General"), generalPanel);
 
-  qSlicerSettingsModulesPanel * settingsModulesPanel = new qSlicerSettingsModulesPanel;
+  qSlicerSettingsModulesPanel* settingsModulesPanel = new qSlicerSettingsModulesPanel;
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Modules"), settingsModulesPanel);
 
   qSlicerSettingsStylesPanel* settingsStylesPanel =
@@ -439,7 +439,7 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog->addPanel(qSlicerApplication::tr("User"), settingsUserPanel);
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  qSlicerSettingsExtensionsPanel * settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;
+  qSlicerSettingsExtensionsPanel* settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;
   this->SettingsDialog->addPanel(qSlicerApplication::tr("Extensions"), settingsExtensionsPanel);
 #endif
   qSlicerSettingsCachePanel* cachePanel = new qSlicerSettingsCachePanel;
@@ -522,7 +522,7 @@ CTK_SET_CPP(qSlicerApplication, ctkErrorLogLevel::LogLevel, setPythonConsoleLogL
 #endif
 
 //-----------------------------------------------------------------------------
-qSlicerApplication::qSlicerApplication(int &_argc, char **_argv)
+qSlicerApplication::qSlicerApplication(int& _argc, char** _argv)
   : Superclass(new qSlicerApplicationPrivate(*this, new qSlicerCommandOptions, nullptr), _argc, _argv)
 {
   Q_D(qSlicerApplication);
@@ -569,7 +569,7 @@ qSlicerApplication* qSlicerApplication::application()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
+bool qSlicerApplication::notify(QObject* receiver, QEvent* event)
 {
   try
   {
@@ -711,7 +711,7 @@ qSlicerLayoutManager* qSlicerApplication::layoutManager()const
 //-----------------------------------------------------------------------------
 QMainWindow* qSlicerApplication::mainWindow()const
 {
-  foreach(QWidget * widget, this->topLevelWidgets())
+  foreach(QWidget* widget, this->topLevelWidgets())
   {
     QMainWindow* window = qobject_cast<QMainWindow*>(widget);
     if (window)
@@ -1515,7 +1515,7 @@ void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime, co
   }
   QString prefixedText;
   QStringList lines = text.split('\n');
-  foreach(const QString & line, lines)
+  foreach(const QString& line, lines)
   {
     if (line.isEmpty())
     {

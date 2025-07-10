@@ -41,7 +41,7 @@ class vtkMatrix4x4;
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGlyphableVolumeDisplayNode
 {
   public:
-  static vtkMRMLDiffusionTensorVolumeDisplayNode *New();
+  static vtkMRMLDiffusionTensorVolumeDisplayNode* New();
   vtkTypeMacro(vtkMRMLDiffusionTensorVolumeDisplayNode,vtkMRMLGlyphableVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -57,7 +57,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -72,11 +72,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   ///
   /// alternative method to propagate events generated in Display nodes
@@ -140,7 +140,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
 
   ///
   /// Return a text string describing the ScalarInvariant variable
-  virtual const char * GetScalarInvariantAsString()
+  virtual const char* GetScalarInvariantAsString()
   {
     return vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(this->ScalarInvariant);
   };
@@ -159,7 +159,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   /// Set the measurement frame for the tensors so that any
   /// rotation-dependent calculations, such as ColorByOrientation
   /// can take it into account when rendering.
-  void SetTensorRotationMatrix(vtkMatrix4x4 *);
+  void SetTensorRotationMatrix(vtkMatrix4x4*);
 
   vtkGetObjectMacro(DTIMathematics, vtkDiffusionTensorMathematics);
   vtkGetObjectMacro(DTIMathematicsAlpha, vtkDiffusionTensorMathematics);
@@ -190,7 +190,7 @@ protected:
   void operator=(const vtkMRMLDiffusionTensorVolumeDisplayNode&);
 
   /// Set the input of the pipeline
-  void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection) override;
 
   vtkAlgorithmOutput* GetScalarImageDataConnection() override;
 
@@ -199,15 +199,15 @@ protected:
   vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 
   /// used for main scalar invariant (can be 1 or 3 component)
-  vtkDiffusionTensorMathematics *DTIMathematics;
+  vtkDiffusionTensorMathematics* DTIMathematics;
   /// used for calculating single component magnitude for color images
-  vtkDiffusionTensorMathematics *DTIMathematicsAlpha;
+  vtkDiffusionTensorMathematics* DTIMathematicsAlpha;
 
-  vtkImageShiftScale *ShiftScale;
+  vtkImageShiftScale* ShiftScale;
 
-  vtkImageMathematics *ImageMath;
+  vtkImageMathematics* ImageMath;
 
-  vtkImageCast *ImageCast;
+  vtkImageCast* ImageCast;
 
    /// Scalar display parameters
   int ScalarInvariant;

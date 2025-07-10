@@ -85,7 +85,7 @@ void qMRMLTreeViewPrivate::init()
   this->setSortFilterProxyModel(new qMRMLSortFilterProxyModel(q));
   q->setSceneModelType("Transform");
 
-  //ctkModelTester * tester = new ctkModelTester(p);
+  //ctkModelTester* tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
   //QObject::connect(q, SIGNAL(activated(QModelIndex)),
   //                 q, SLOT(onActivated(QModelIndeK)));
@@ -237,7 +237,7 @@ QSize qMRMLTreeViewPrivate::sizeHint()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex &parentIndex)
+void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex& parentIndex)
 {
   Q_Q(qMRMLTreeView);
   vtkMRMLNode* parentNode = q->sortFilterProxyModel()->mrmlNodeFromIndex(parentIndex);
@@ -297,7 +297,7 @@ void qMRMLTreeViewPrivate::scrollTo(const QString& name, bool next)
 //------------------------------------------------------------------------------
 // qMRMLTreeView
 //------------------------------------------------------------------------------
-qMRMLTreeView::qMRMLTreeView(QWidget *_parent)
+qMRMLTreeView::qMRMLTreeView(QWidget* _parent)
   :QTreeView(_parent)
   , d_ptr(new qMRMLTreeViewPrivate(*this))
 {
@@ -306,7 +306,7 @@ qMRMLTreeView::qMRMLTreeView(QWidget *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLTreeView::qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget *parentObject)
+qMRMLTreeView::qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget* parentObject)
   :Superclass(parentObject)
   , d_ptr(pimpl)
 {
@@ -418,8 +418,8 @@ void qMRMLTreeView::setCurrentNode(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeView::onSelectionChanged(const QItemSelection & selected,
-                                       const QItemSelection & deselected)
+void qMRMLTreeView::onSelectionChanged(const QItemSelection& selected,
+                                       const QItemSelection& deselected)
 {
   Q_UNUSED(deselected);
   Q_D(qMRMLTreeView);

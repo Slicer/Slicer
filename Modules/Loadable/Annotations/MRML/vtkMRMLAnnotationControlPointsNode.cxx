@@ -35,7 +35,7 @@ void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
   /*
   // special case: if this annotation is in a hierarchy, the hierarchy took
   // care of writing it already
-  vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetScene(), this->GetID());
+  vtkMRMLHierarchyNode* hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetScene(), this->GetID());
 
   if (hnode &&
   hnode->GetParentNodeID())
@@ -49,7 +49,7 @@ void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
 
   if (this->GetPoints())
   {
-    vtkPoints *points = this->GetPoints();
+    vtkPoints* points = this->GetPoints();
     int n = points->GetNumberOfPoints();
 
     of << " ctrlPtsCoord=\"";
@@ -106,7 +106,7 @@ WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
 
   if (this->GetPoints())
   {
-    vtkPoints *points = this->GetPoints();
+    vtkPoints* points = this->GetPoints();
     int n = points->GetNumberOfPoints();
 
     if (multipleFlag == false &&
@@ -219,15 +219,15 @@ void vtkMRMLAnnotationControlPointsNode::ReadXMLAttributes(const char** atts)
 
 
 //-----------------------------------------------------------
-void vtkMRMLAnnotationControlPointsNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLAnnotationControlPointsNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLAnnotationControlPointsNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
@@ -258,7 +258,7 @@ void vtkMRMLAnnotationControlPointsNode::PrintAnnotationInfo(ostream& os, vtkInd
   if (this->GetPoints())
   {
     os << indent << "ctrlPtsCoord: " ;
-    vtkPoints *points = this->GetPoints();
+    vtkPoints* points = this->GetPoints();
     int n = points->GetNumberOfPoints();
     for (int i = 0; i < n; i++ )
     {
@@ -297,7 +297,7 @@ void vtkMRMLAnnotationControlPointsNode::PrintAnnotationInfo(ostream& os, vtkInd
 vtkMRMLAnnotationPointDisplayNode* vtkMRMLAnnotationControlPointsNode::GetAnnotationPointDisplayNode()
 {
   int nnodes = this->GetNumberOfDisplayNodes();
-  vtkMRMLAnnotationPointDisplayNode *node = nullptr;
+  vtkMRMLAnnotationPointDisplayNode* node = nullptr;
   for (int n=0; n<nnodes; n++)
   {
       // vtkMRMLDisplayableNode stores the ids in DisplayNodeIDs
@@ -314,7 +314,7 @@ vtkMRMLAnnotationPointDisplayNode* vtkMRMLAnnotationControlPointsNode::GetAnnota
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationControlPointsNode::CreateAnnotationPointDisplayNode()
 {
-  vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode* node = this->GetAnnotationPointDisplayNode();
   if (node) return;
   if (!this->GetScene())
   {
@@ -346,7 +346,7 @@ void vtkMRMLAnnotationControlPointsNode::ResetAnnotations()
 void vtkMRMLAnnotationControlPointsNode::CreatePolyData()
 {
   Superclass::CreatePolyData();
-  vtkPoints *polyPoint = this->GetPoints();
+  vtkPoints* polyPoint = this->GetPoints();
   if (!polyPoint)
   {
     polyPoint = vtkPoints::New();
@@ -379,7 +379,7 @@ int vtkMRMLAnnotationControlPointsNode::GetNumberOfControlPoints()
   {
     this->ResetControlPoints();
   }
-  vtkPoints *points = this->GetPoints();
+  vtkPoints* points = this->GetPoints();
   return points->GetNumberOfPoints();
 }
 
@@ -392,7 +392,7 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
     this->ResetControlPoints();
   }
 
-  vtkPoints *points = this->GetPoints();
+  vtkPoints* points = this->GetPoints();
   int n = points->GetNumberOfPoints();
   if (id< 0 || id > n-1)
   {
@@ -409,7 +409,7 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
 
   for (int j = NUM_TEXT_ATTRIBUTE_TYPES ; j < NUM_CP_ATTRIBUTE_TYPES; j ++)
   {
-      vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(j));
+      vtkBitArray* dataArray = dynamic_cast <vtkBitArray*> (this->GetAnnotationAttributes(j));
       if (!dataArray || dataArray->GetSize() != n)
       {
           vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << this->GetAttributeTypesEnumAsString(j)
@@ -445,7 +445,7 @@ double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType
 /// Return the RAS coordinates in the World coordinates (including all transformations to parents) of point ID.
 /// Try to limit calling this function because it is performance critical.
 /// Also, when queried again it resets all former pointers. Copying is therefore necessary.
-void vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates(vtkIdType id, double *point)
+void vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates(vtkIdType id, double* point)
 {
 
   if (!this->GetPoints() ||
@@ -454,7 +454,7 @@ void vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates(vtkIdTy
     vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates() no control point with index" << id) ;
     return;
   }
-  double *p = this->GetPoints()->GetPoint(id);
+  double* p = this->GetPoints()->GetPoint(id);
   double localPoint[] = {p[0],p[1],p[2],1};
   this->TransformPointToWorld(localPoint, point);
 }
@@ -468,7 +468,7 @@ void vtkMRMLAnnotationControlPointsNode::ResetControlPointsAttributesAll() {
 }
 
 //-------------------------------------------------------------------------
-const char *vtkMRMLAnnotationControlPointsNode::GetAttributeTypesEnumAsString(int val)
+const char* vtkMRMLAnnotationControlPointsNode::GetAttributeTypesEnumAsString(int val)
 {
   if (val < vtkMRMLAnnotationNode::NUM_TEXT_ATTRIBUTE_TYPES) {
     return vtkMRMLAnnotationNode::GetAttributeTypesEnumAsString(val);
@@ -502,7 +502,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
     return 0;
   }
 
-  vtkPoints *points = this->GetPoints();
+  vtkPoints* points = this->GetPoints();
   // Create if not there
   if (!points)
   {
@@ -512,7 +512,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
   else  if (points->GetNumberOfPoints() > id)
   {
     // check if is different to prevent recursive event loops
-    double *pnt = points->GetPoint(id);
+    double* pnt = points->GetPoint(id);
     if (pnt && fabs(pnt[0]-newControl[0]) < NUMERIC_ZERO &&
                fabs(pnt[1]-newControl[1]) < NUMERIC_ZERO &&
                fabs(pnt[2]-newControl[2]) < NUMERIC_ZERO)
@@ -591,7 +591,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
     visibleFlag = 1;
   }
 
-  vtkPoints *points = this->GetPoints();
+  vtkPoints* points = this->GetPoints();
   points->InsertPoint(id, newControl);
   // cout << "New ControlPoints Coord:" << this->GetControlPointCoordinates(id)[0] << " " << this->GetControlPointCoordinates(id)[1] << " " << this->GetControlPointCoordinates(id)[2] << endl;
   //vtkIndent blub;
@@ -620,7 +620,7 @@ int vtkMRMLAnnotationControlPointsNode::AddControlPoint(double newControl[3],int
     this->ResetControlPoints();
   }
 
-  vtkPoints *points = this->GetPoints();
+  vtkPoints* points = this->GetPoints();
   int n = points->GetNumberOfPoints();
   if (this->SetControlPoint(n, newControl,selectedFlag, visibleFlag))
   {
@@ -654,7 +654,7 @@ const char* vtkMRMLAnnotationControlPointsNode::GetNumberingSchemeAsString(int s
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsNode::SetNumberingSchemeFromString(const char *schemeString)
+void vtkMRMLAnnotationControlPointsNode::SetNumberingSchemeFromString(const char* schemeString)
 {
   if (!strcmp(schemeString, "UseID"))
   {

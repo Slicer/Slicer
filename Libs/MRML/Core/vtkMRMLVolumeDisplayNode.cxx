@@ -56,7 +56,7 @@ void vtkMRMLVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=t
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
-  vtkMRMLVolumeDisplayNode *node = vtkMRMLVolumeDisplayNode::SafeDownCast(anode);
+  vtkMRMLVolumeDisplayNode* node = vtkMRMLVolumeDisplayNode::SafeDownCast(anode);
   if (node)
   {
     this->SetInputImageDataConnection(node->GetInputImageDataConnection());
@@ -65,9 +65,9 @@ void vtkMRMLVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=t
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller,
                                                  unsigned long event,
-                                                 void *callData)
+                                                 void* callData)
 {
   if (event ==  vtkCommand::ModifiedEvent)
   {
@@ -83,7 +83,7 @@ void vtkMRMLVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLVolumeDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
   this->Superclass::UpdateScene(scene);
 }
@@ -109,7 +109,7 @@ vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetImageDataConnection()
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode
-::SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection)
+::SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection)
 {
   if (this->GetInputImageDataConnection() == imageDataConnection)
   {
@@ -126,7 +126,7 @@ vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput *vtkNotUsed(imageDataConnection))
+void vtkMRMLVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput* vtkNotUsed(imageDataConnection))
 {
 }
 

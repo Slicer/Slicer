@@ -95,7 +95,7 @@ sdfMargin(itk::SmartPointer<ImageType> labelImage, int backgroundValue, double i
 
 //----------------------------------------------------------------------------
 template <class T>
-void vtkITKImageMarginExecute(vtkITKImageMargin *self, vtkImageData* input,
+void vtkITKImageMarginExecute(vtkITKImageMargin* self, vtkImageData* input,
                 vtkImageData* vtkNotUsed(output),
                 T* inPtr, T* outPtr)
 {
@@ -137,14 +137,14 @@ void vtkITKImageMarginExecute(vtkITKImageMargin *self, vtkImageData* input,
     // Copy to the output
     memcpy(outPtr, outputImage->GetBufferPointer(), outputImage->GetBufferedRegion().GetNumberOfPixels() * sizeof(T));
   }
-  catch (itk::ExceptionObject & err)
+  catch (itk::ExceptionObject& err)
   {
     vtkErrorWithObjectMacro(self, "Failed to compute margin. Details: " << err);
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkITKImageMargin::SimpleExecute(vtkImageData *input, vtkImageData *output)
+void vtkITKImageMargin::SimpleExecute(vtkImageData* input, vtkImageData* output)
 {
   vtkDebugMacro(<< "Executing Image Margin");
 
@@ -156,14 +156,14 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData *input, vtkImageData *output)
   //
   // Initialize and check input
   //
-  vtkPointData *pd = input->GetPointData();
+  vtkPointData* pd = input->GetPointData();
   pd=input->GetPointData();
   if (pd ==nullptr)
   {
     vtkErrorMacro(<<"PointData is NULL");
     return;
   }
-  vtkDataArray *inScalars=pd->GetScalars();
+  vtkDataArray* inScalars=pd->GetScalars();
   if (inScalars == nullptr)
   {
     vtkErrorMacro(<< "Scalars must be defined for image margin");

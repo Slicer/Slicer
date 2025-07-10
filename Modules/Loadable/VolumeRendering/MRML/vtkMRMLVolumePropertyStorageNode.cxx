@@ -44,15 +44,15 @@ void vtkMRMLVolumePropertyStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLVolumePropertyStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLVolumePropertyStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLVolumePropertyNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLVolumePropertyNode *vpNode =
+  vtkMRMLVolumePropertyNode* vpNode =
     vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
@@ -161,9 +161,9 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLVolumePropertyNode *vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
+  vtkMRMLVolumePropertyNode* vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
   std::string fullName =  this->GetFullNameFromFileName();
   if (fullName.empty())

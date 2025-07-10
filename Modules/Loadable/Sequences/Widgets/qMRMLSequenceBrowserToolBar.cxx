@@ -139,7 +139,7 @@ vtkMRMLSequenceBrowserNode* qMRMLSequenceBrowserToolBar::activeBrowserNode()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSequenceBrowserToolBar::setActiveBrowserNode(vtkMRMLSequenceBrowserNode * newActiveBrowserNode)
+void qMRMLSequenceBrowserToolBar::setActiveBrowserNode(vtkMRMLSequenceBrowserNode* newActiveBrowserNode)
 {
   Q_D(qMRMLSequenceBrowserToolBar);
   d->SequenceBrowserNodeSelector->setCurrentNode(newActiveBrowserNode);

@@ -41,7 +41,7 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceEditWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLSequenceEditWidget(QWidget *newParent = 0);
+  qMRMLSequenceEditWidget(QWidget* newParent = 0);
   ~qMRMLSequenceEditWidget() override;
 
   bool isCandidateNodesSectionVisible();

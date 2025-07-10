@@ -64,7 +64,7 @@ class VTK_SLICER_CROPVOLUME_MODULE_LOGIC_EXPORT vtkSlicerCropVolumeLogic
 {
 public:
 
-  static vtkSlicerCropVolumeLogic *New();
+  static vtkSlicerCropVolumeLogic* New();
   vtkTypeMacro(vtkSlicerCropVolumeLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

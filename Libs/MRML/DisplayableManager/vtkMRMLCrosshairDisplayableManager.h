@@ -44,7 +44,7 @@ public:
   // Utility functions (used by 2D and 3D crosshair displayable managers)
   static vtkMRMLCrosshairNode* FindCrosshairNode(vtkMRMLScene* scene);
 
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
   void SetActionsEnabled(int actions);
@@ -82,7 +82,7 @@ private:
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

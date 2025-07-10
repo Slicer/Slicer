@@ -251,7 +251,7 @@ void qSlicerPlotsModuleWidget::onCopyPlotSeriesNodeClicked()
   }
 
 
-  vtkMRMLPlotSeriesNode *clonedSeriesNode = logic->CloneSeries(d->MRMLPlotSeriesNode, nullptr);
+  vtkMRMLPlotSeriesNode* clonedSeriesNode = logic->CloneSeries(d->MRMLPlotSeriesNode, nullptr);
 
   // Add the cloned node to the selected chart node
   if (d->MRMLPlotChartNode!= nullptr)

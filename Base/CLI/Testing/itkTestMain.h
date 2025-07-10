@@ -54,21 +54,21 @@
 
 #define ITK_TEST_DIMENSION_MAX 6
 
-typedef int ( *MainFuncPointer )(int, char *[]);
+typedef int ( *MainFuncPointer )(int, char*[]);
 std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
 
 #define REGISTER_TEST(test)       \
-  extern int test(int, char *[]); \
+  extern int test(int, char*[]); \
   StringToTestFunctionMap[#test] = test
 
-int RegressionTestImage(const char *testImageFilename,
-                        const char *baselineImageFilename,
+int RegressionTestImage(const char* testImageFilename,
+                        const char* baselineImageFilename,
                         int reportErrors,
                         double intensityTolerance,
                         ::itk::SizeValueType numberOfPixelsTolerance = 0,
                         unsigned int radiusTolerance = 0);
 
-std::map<std::string, int> RegressionTestBaselines(char *);
+std::map<std::string, int> RegressionTestBaselines(char*);
 
 void RegisterTests();
 
@@ -85,7 +85,7 @@ void PrintAvailableTests()
   }
 }
 
-int main(int ac, char *av[])
+int main(int ac, char* av[])
 {
   itk::FloatingPointExceptions::Enable();
 
@@ -93,7 +93,7 @@ int main(int ac, char *av[])
   unsigned int numberOfPixelsTolerance = 0;
   unsigned int radiusTolerance = 0;
 
-  typedef std::pair<char *, char *> ComparePairType;
+  typedef std::pair<char*, char*> ComparePairType;
   std::vector<ComparePairType> compareList;
 
   itk::itkFactoryRegistration();
@@ -180,8 +180,8 @@ int main(int ac, char *av[])
       // Make a list of possible baselines
       for( int i = 0; i < static_cast<int>( compareList.size() ); i++ )
       {
-        char *                               baselineFilename = compareList[i].first;
-        char *                               testFilename = compareList[i].second;
+        char* baselineFilename = compareList[i].first;
+        char* testFilename = compareList[i].second;
         std::map<std::string, int>           baselines = RegressionTestBaselines(baselineFilename);
         std::map<std::string, int>::iterator baseline = baselines.begin();
         std::string                          bestBaseline;
@@ -225,13 +225,13 @@ int main(int ac, char *av[])
         result += bestBaselineStatus;
       }
     }
-    catch( const itk::ExceptionObject & e )
+    catch( const itk::ExceptionObject& e )
     {
       std::cerr << "ITK test driver caught an ITK exception:\n";
       e.Print(std::cerr);
       result = -1;
     }
-    catch( const std::exception & e )
+    catch( const std::exception& e )
     {
       std::cerr << "ITK test driver caught an exception:\n";
       std::cerr << e.what() << "\n";
@@ -251,8 +251,8 @@ int main(int ac, char *av[])
 
 // Regression Testing Code
 
-int RegressionTestImage(const char *testImageFilename,
-                        const char *baselineImageFilename,
+int RegressionTestImage(const char* testImageFilename,
+                        const char* baselineImageFilename,
                         int reportErrors,
                         double intensityTolerance,
                         ::itk::SizeValueType numberOfPixelsTolerance,
@@ -272,7 +272,7 @@ int RegressionTestImage(const char *testImageFilename,
   {
     baselineReader->UpdateLargestPossibleRegion();
   }
-  catch( itk::ExceptionObject & e )
+  catch( itk::ExceptionObject& e )
   {
     std::cerr << "Exception detected while reading " << baselineImageFilename << " : "  << e.GetDescription();
     return 1000;
@@ -285,7 +285,7 @@ int RegressionTestImage(const char *testImageFilename,
   {
     testReader->UpdateLargestPossibleRegion();
   }
-  catch( itk::ExceptionObject & e )
+  catch( itk::ExceptionObject& e )
   {
     std::cerr << "Exception detected while reading " << testImageFilename << " : "  << e.GetDescription() << std::endl;
     return 1000;
@@ -369,7 +369,7 @@ int RegressionTestImage(const char *testImageFilename,
       rescale->SetInput( diff->GetOutput() );
       rescale->Update();
     }
-    catch( const std::exception & e )
+    catch( const std::exception& e )
     {
       std::cerr << "Error during rescale of " << diffName.str() << std::endl;
       std::cerr << e.what() << "\n";
@@ -383,7 +383,7 @@ int RegressionTestImage(const char *testImageFilename,
     {
       writer->Update();
     }
-    catch( const std::exception & e )
+    catch( const std::exception& e )
     {
       std::cerr << "Error during write of " << diffName.str() << std::endl;
       std::cerr << e.what() << "\n";
@@ -404,7 +404,7 @@ int RegressionTestImage(const char *testImageFilename,
       rescale->SetInput( baselineReader->GetOutput() );
       rescale->Update();
     }
-    catch( const std::exception & e )
+    catch( const std::exception& e )
     {
       std::cerr << "Error during rescale of " << baseName.str() << std::endl;
       std::cerr << e.what() << "\n";
@@ -418,7 +418,7 @@ int RegressionTestImage(const char *testImageFilename,
       writer->SetFileName( baseName.str().c_str() );
       writer->Update();
     }
-    catch( const std::exception & e )
+    catch( const std::exception& e )
     {
       std::cerr << "Error during write of " << baseName.str() << std::endl;
       std::cerr << e.what() << "\n";
@@ -439,7 +439,7 @@ int RegressionTestImage(const char *testImageFilename,
       rescale->SetInput( testReader->GetOutput() );
       rescale->Update();
     }
-    catch( const std::exception & e )
+    catch( const std::exception& e )
     {
       std::cerr << "Error during rescale of " << testName.str() << std::endl;
       std::cerr << e.what() << "\n";
@@ -453,7 +453,7 @@ int RegressionTestImage(const char *testImageFilename,
       writer->SetFileName( testName.str().c_str() );
       writer->Update();
     }
-    catch( const std::exception & e )
+    catch( const std::exception& e )
     {
       std::cerr << "Error during write of " << testName.str() << std::endl;
       std::cerr << e.what() << "\n";
@@ -479,7 +479,7 @@ int RegressionTestImage(const char *testImageFilename,
 // 3) append the original suffix.
 // It the file exists, increment x and continue
 //
-std::map<std::string, int> RegressionTestBaselines(char *baselineFilename)
+std::map<std::string, int> RegressionTestBaselines(char* baselineFilename)
 {
   std::map<std::string, int> baselines;
   baselines[std::string(baselineFilename)] = 0;

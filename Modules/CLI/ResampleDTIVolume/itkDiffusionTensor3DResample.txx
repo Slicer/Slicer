@@ -69,7 +69,7 @@ DiffusionTensor3DResample<TInput, TOutput>
     itkExceptionMacro( << "Transform not set" );
   }
   // m_Interpolator->SetNumberOfThreads( this->GetNumberOfThreads() ) ;
-  m_Interpolator->SetInputImage( const_cast<InputImageType *>
+  m_Interpolator->SetInputImage( const_cast<InputImageType*>
                                  ( this->GetInput() )  );
   // m_Interpolator->SetDefaultPixelValue( m_DefaultPixelValue ) ;
   m_DefaultTensor.SetIdentity();
@@ -83,7 +83,7 @@ DiffusionTensor3DResample<TInput, TOutput>
 template <class TInput, class TOutput>
 void
 DiffusionTensor3DResample<TInput, TOutput>
-::DynamicThreadedGenerateData( const OutputImageRegionType &outputRegionForThread)
+::DynamicThreadedGenerateData( const OutputImageRegionType& outputRegionForThread)
 {
   OutputImageType*       outputImagePtr = this->GetOutput( 0 );
   IteratorType           it( outputImagePtr, outputRegionForThread );
@@ -189,7 +189,7 @@ DiffusionTensor3DResample<TInput, TOutput>
   }
   // get pointers to the input and output
   InputImagePointerType inputPtr  =
-    const_cast<InputImageType *>( this->GetInput() );
+    const_cast<InputImageType*>( this->GetInput() );
 
   // Request the entire input image
   typename InputImageType::RegionType inputRegion;

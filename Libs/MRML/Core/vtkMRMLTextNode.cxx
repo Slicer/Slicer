@@ -40,7 +40,7 @@ vtkMRMLTextNode::~vtkMRMLTextNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTextNode::SetText(const std::string &text, int encoding/*-1*/)
+void vtkMRMLTextNode::SetText(const std::string& text, int encoding/*-1*/)
 {
   vtkDebugMacro( << this->GetClassName() << " (" << this << "): setting Text to " << text);
 

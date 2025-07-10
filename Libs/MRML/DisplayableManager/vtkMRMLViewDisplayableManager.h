@@ -50,8 +50,8 @@ protected:
   ~vtkMRMLViewDisplayableManager() override;
 
   /// Receives events from the view and the camera nodes.
-  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
-  void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  void ProcessWidgetsEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   void AdditionalInitializeStep() override;
 
@@ -81,7 +81,7 @@ private:
   void operator=(const vtkMRMLViewDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

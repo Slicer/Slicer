@@ -58,7 +58,7 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_LOGIC_EXPORT vtkSlicerVolumeRenderingLog
 {
 public:
 
-  static vtkSlicerVolumeRenderingLogic *New();
+  static vtkSlicerVolumeRenderingLogic* New();
   vtkTypeMacro(vtkSlicerVolumeRenderingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -233,34 +233,34 @@ public:
   /// Can pass a VolumePropertyNode and an ROI node to be the display node.
   /// If they are nullptr and the display node does not already have any, new ones
   /// will be created then set and observed to the display node.
-  void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *displayNode,
-                                       vtkMRMLVolumeNode *volumeNode,
-                                       vtkMRMLVolumePropertyNode *propNode = nullptr,
-                                       vtkMRMLNode *roiNode = nullptr,
+  void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode* displayNode,
+                                       vtkMRMLVolumeNode* volumeNode,
+                                       vtkMRMLVolumePropertyNode* propNode = nullptr,
+                                       vtkMRMLNode* roiNode = nullptr,
                                        bool createROI=true);
 
   ///  Create cropping ROI node, if does not exist yet
   vtkMRMLDisplayableNode* CreateROINode(vtkMRMLVolumeRenderingDisplayNode* displayNode);
 
   /// Remove ViewNode from VolumeRenderingDisplayNode for a VolumeNode,
-  void RemoveViewFromVolumeDisplayNodes(vtkMRMLVolumeNode *volumeNode,
-                                        vtkMRMLViewNode *viewNode);
+  void RemoveViewFromVolumeDisplayNodes(vtkMRMLVolumeNode* volumeNode,
+                                        vtkMRMLViewNode* viewNode);
 
   /// Find volume rendering display node reference in the volume
-  vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeByID(vtkMRMLVolumeNode *volumeNode,
-                                                                    char *displayNodeID);
+  vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeByID(vtkMRMLVolumeNode* volumeNode,
+                                                                    char* displayNodeID);
 
   /// Find volume rendering display node referencing the view node and volume node
   vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeForViewNode(
-                                                        vtkMRMLVolumeNode *volumeNode,
-                                                        vtkMRMLViewNode *viewNode);
+                                                        vtkMRMLVolumeNode* volumeNode,
+                                                        vtkMRMLViewNode* viewNode);
 
   /// Find volume rendering display node referencing the view node in the scene
   vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeForViewNode(
-                                                        vtkMRMLViewNode *viewNode);
+                                                        vtkMRMLViewNode* viewNode);
 
   /// Find first volume rendering display node
-  vtkMRMLVolumeRenderingDisplayNode* GetFirstVolumeRenderingDisplayNode(vtkMRMLVolumeNode *volumeNode);
+  vtkMRMLVolumeRenderingDisplayNode* GetFirstVolumeRenderingDisplayNode(vtkMRMLVolumeNode* volumeNode);
 
   /// Find the first volume rendering display node that uses the ROI
   vtkMRMLVolumeRenderingDisplayNode* GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLNode* roiNode);
@@ -321,7 +321,7 @@ public:
   /// If no presets are found, return 0.
   /// If multiple presets are found, the first one is returned.
   /// \sa GetPresetsScene(), vtkMRMLVolumePropertyNode
-  vtkMRMLVolumePropertyNode* GetPresetByName(const char *presetName);
+  vtkMRMLVolumePropertyNode* GetPresetByName(const char* presetName);
 
   /// Utility function that checks if the piecewise functions are equal
   /// Returns true if different

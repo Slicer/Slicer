@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule
   Q_INTERFACES(qSlicerLoadableModule);
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerCamerasModule(QObject *parent=nullptr);
+  qSlicerCamerasModule(QObject* parent=nullptr);
   ~qSlicerCamerasModule() override;
 
   QStringList categories()const override;
@@ -58,7 +58,7 @@ public:
 protected:
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

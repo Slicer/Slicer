@@ -36,7 +36,7 @@ class VTK_SLICER_DATA_LOGIC_EXPORT vtkSlicerDataModuleLogic :
   public vtkSlicerModuleLogic
 {
 public:
-  static vtkSlicerDataModuleLogic *New();
+  static vtkSlicerDataModuleLogic* New();
   vtkTypeMacro(vtkSlicerDataModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

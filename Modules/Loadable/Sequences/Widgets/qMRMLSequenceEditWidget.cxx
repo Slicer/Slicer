@@ -238,7 +238,7 @@ void qMRMLSequenceEditWidgetPrivate::scrollToDataNodeByIndexValue(const QString&
 // qMRMLSequenceEditWidget methods
 
 //-----------------------------------------------------------------------------
-qMRMLSequenceEditWidget::qMRMLSequenceEditWidget(QWidget *newParent)
+qMRMLSequenceEditWidget::qMRMLSequenceEditWidget(QWidget* newParent)
 : Superclass(newParent)
 , d_ptr(new qMRMLSequenceEditWidgetPrivate(*this))
 {

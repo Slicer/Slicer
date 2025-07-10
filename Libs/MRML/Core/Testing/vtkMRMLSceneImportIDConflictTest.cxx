@@ -33,7 +33,7 @@
 using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
+int vtkMRMLSceneImportIDConflictTest(int vtkNotUsed(argc), char* vtkNotUsed(argv) [])
 {
   vtkNew<vtkMRMLScene> scene;
 

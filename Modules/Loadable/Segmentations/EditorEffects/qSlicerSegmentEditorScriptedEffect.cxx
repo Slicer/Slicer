@@ -110,7 +110,7 @@ qSlicerSegmentEditorScriptedEffectPrivate::~qSlicerSegmentEditorScriptedEffectPr
 // qSlicerSegmentEditorScriptedEffect methods
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScriptedEffect::qSlicerSegmentEditorScriptedEffect(QObject *parent)
+qSlicerSegmentEditorScriptedEffect::qSlicerSegmentEditorScriptedEffect(QObject* parent)
   : Superclass(parent)
   , d_ptr(new qSlicerSegmentEditorScriptedEffectPrivate)
 {
@@ -155,8 +155,8 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
   }
 
   // Get a reference to the main module and global dictionary
-  PyObject * main_module = PyImport_AddModule("__main__");
-  PyObject * global_dict = PyModule_GetDict(main_module);
+  PyObject* main_module = PyImport_AddModule("__main__");
+  PyObject* global_dict = PyModule_GetDict(main_module);
 
   // Get actual module from sys.modules
   PyObject* sysModules = PyImport_GetModuleDict();

@@ -35,7 +35,7 @@ public:
     InterpolationBSpline = 4
   };
 
-  static vtkMRMLCropVolumeParametersNode *New();
+  static vtkMRMLCropVolumeParametersNode* New();
   vtkTypeMacro(vtkMRMLCropVolumeParametersNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -55,27 +55,27 @@ public:
   const char* GetNodeTagName() override {return "CropVolumeParameters";}
 
   /// Set volume node to be cropped
-  void SetInputVolumeNodeID(const char *nodeID);
+  void SetInputVolumeNodeID(const char* nodeID);
   /// Get volume node to be cropped
-  const char *GetInputVolumeNodeID();
+  const char* GetInputVolumeNodeID();
   vtkMRMLVolumeNode* GetInputVolumeNode();
 
   /// Set resulting cropped volume node
-  void SetOutputVolumeNodeID(const char *nodeID);
+  void SetOutputVolumeNodeID(const char* nodeID);
   /// Get resulting cropped volume node
   const char* GetOutputVolumeNodeID();
   vtkMRMLVolumeNode* GetOutputVolumeNode();
 
   /// Set cropping region of interest.
   /// It must be vtkMRMLMarkupsROINode.
-  void SetROINodeID(const char *nodeID);
+  void SetROINodeID(const char* nodeID);
   /// Get cropping region of interest
   const char* GetROINodeID();
   vtkMRMLDisplayableNode* GetROINode();
 
   /// Set transform node that may be used for aligning
   /// the ROI with the input volume.
-  void SetROIAlignmentTransformNodeID(const char *nodeID);
+  void SetROIAlignmentTransformNodeID(const char* nodeID);
   const char* GetROIAlignmentTransformNodeID();
   vtkMRMLTransformNode* GetROIAlignmentTransformNode();
   void DeleteROIAlignmentTransformNode();

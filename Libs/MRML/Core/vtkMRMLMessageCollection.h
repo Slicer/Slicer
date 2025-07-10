@@ -98,7 +98,7 @@ public:
   virtual int GetNumberOfMessagesOfType(unsigned long messageType) const;
 
   /// Get the number of reported messages of the specified event type.
-  virtual int GetNumberOfMessagesOfType(const char *eventName) const;
+  virtual int GetNumberOfMessagesOfType(const char* eventName) const;
 
   /// Get text of a message from the message vector.
   virtual unsigned long GetNthMessageType(int index) const;
@@ -109,7 +109,7 @@ public:
   /// Append a message to the message vector
   /// To mark a message as error or warning, set messageType to
   /// vtkCommand::ErrorEvent or vtkCommand::WarningEvent.
-  virtual void AddMessage(unsigned long messageType, const std::string &messageText);
+  virtual void AddMessage(unsigned long messageType, const std::string& messageText);
 
   /// Add a separator, for example to create message groups.
   /// (internally vtkCommand::PropertyModifiedEvent is used as messageType)
@@ -145,7 +145,7 @@ protected:
   /// A helper class that describes a single message
   struct VTK_MRML_EXPORT Message
   {
-    Message(unsigned long messageType, const std::string &messageText);
+    Message(unsigned long messageType, const std::string& messageText);
 
     unsigned long MessageType;
     std::string MessageText;

@@ -130,7 +130,7 @@ void vtkMRMLTensorVolumeNode::GetMeasurementFrameMatrix(double mf[3][3])
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
+void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4* mf)
 {
   for (int i=0; i<3; i++)
   {
@@ -142,7 +142,7 @@ void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTensorVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
+void vtkMRMLTensorVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4* mf)
 {
 
   mf->Identity();

@@ -37,7 +37,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   /// Standard methods for MRML nodes
   //----------------------------------------------------------------
 
-  static vtkMRMLPlotChartNode *New();
+  static vtkMRMLPlotChartNode* New();
   vtkTypeMacro(vtkMRMLPlotChartNode,vtkMRMLNode);
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -62,9 +62,9 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
 
   ///
   /// Method to propagate events generated in mrml.
-  void ProcessMRMLEvents(vtkObject *caller,
+  void ProcessMRMLEvents(vtkObject* caller,
                                  unsigned long event,
-                                 void *callData) override;
+                                 void* callData) override;
 
   /// PlotModifiedEvent is fired when:
   ///  - a new plot node is observed
@@ -95,7 +95,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   ///
   /// Convenience method that returns the ID of the first plot data node in the chart.
   /// \sa GetNthPlotSeriesNodeID(int), GetPlotSeriesNode()
-  const char *GetPlotSeriesNodeID();
+  const char* GetPlotSeriesNodeID();
 
   ///
   /// Convenience method that returns the first plot data node.
@@ -104,7 +104,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
 
   ///
   /// Return the ID of n-th plot data node ID. Or 0 if no such node exist.
-  const char *GetNthPlotSeriesNodeID(int n);
+  const char* GetNthPlotSeriesNodeID(int n);
 
   ///
   /// Get associated plot data node. Can be 0 in temporary states; e.g. if
@@ -133,12 +133,12 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   ///
   /// Adds a plot data node to the chart.
   /// \sa SetAndObserverNthPlotSeriesNodeID(int, const char*)
-  void AddAndObservePlotSeriesNodeID(const char *plotSeriesNodeID);
+  void AddAndObservePlotSeriesNodeID(const char* plotSeriesNodeID);
 
   ///
   /// Convenience method that sets the first plot data node in the chart.
   /// \sa SetAndObserverNthPlotSeriesNodeID(int, const char*)
-  void SetAndObservePlotSeriesNodeID(const char *plotSeriesNodeID);
+  void SetAndObservePlotSeriesNodeID(const char* plotSeriesNodeID);
 
   ///
   /// Set and observe the Nth plot data node ID in the list.
@@ -146,13 +146,13 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   /// is added at the end of the list. If PlotSeriesNodeID is 0, the node ID is
   /// removed from the list.
   /// \sa SetAndObservePlotSeriesNodeID(const char*),
-  /// AddAndObservePlotSeriesNodeID(const char *), RemoveNthPlotSeriesNodeID(int)
-  void SetAndObserveNthPlotSeriesNodeID(int n, const char *plotSeriesNodeID);
+  /// AddAndObservePlotSeriesNodeID(const char*), RemoveNthPlotSeriesNodeID(int)
+  void SetAndObserveNthPlotSeriesNodeID(int n, const char* plotSeriesNodeID);
 
   ///
   /// Removes a plot data node from the chart.
   /// \sa SetAndObserverNthPlotSeriesNodeID(int, const char*)
-  void RemovePlotSeriesNodeID(const char *plotSeriesNodeID);
+  void RemovePlotSeriesNodeID(const char* plotSeriesNodeID);
 
   ///
   /// Removes n-th plot data node from the chart.
@@ -285,19 +285,19 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called when a node reference ID is modified.
-  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
   static const char* PlotSeriesNodeReferenceRole;
 
-  char *Title{nullptr};
+  char* Title{nullptr};
   int TitleFontSize{20};
   bool TitleVisibility{true};
   bool GridVisibility{true};

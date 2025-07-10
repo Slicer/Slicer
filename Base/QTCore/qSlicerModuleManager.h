@@ -47,7 +47,7 @@ public:
   virtual void printAdditionalInfo();
 
   /// Return a pointer to the current module factory manager
-  Q_INVOKABLE qSlicerModuleFactoryManager * factoryManager()const;
+  Q_INVOKABLE qSlicerModuleFactoryManager* factoryManager()const;
 
   /// Return the list of all the loaded modules
   Q_INVOKABLE QStringList modulesNames()const;

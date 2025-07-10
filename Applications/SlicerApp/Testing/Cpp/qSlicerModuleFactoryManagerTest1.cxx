@@ -29,7 +29,7 @@
 // VTK includes
 #include <vtkNew.h>
 
-int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
+int qSlicerModuleFactoryManagerTest1(int argc, char* argv[])
 {
   qSlicerCoreApplication app(argc, argv);
   Q_UNUSED(app);
@@ -50,7 +50,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   moduleFactoryManager.instantiateModules();
   moduleFactoryManager.loadModules();
 
-  qSlicerAbstractCoreModule * abstractModule =
+  qSlicerAbstractCoreModule* abstractModule =
     moduleFactoryManager.moduleInstance(moduleName);
   if( abstractModule == nullptr )
   {

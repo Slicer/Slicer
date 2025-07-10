@@ -13,7 +13,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationROINode
   : public vtkMRMLAnnotationLinesNode
 {
 public:
-  static vtkMRMLAnnotationROINode *New();
+  static vtkMRMLAnnotationROINode* New();
   vtkTypeMacro(vtkMRMLAnnotationROINode,vtkMRMLAnnotationLinesNode);
   /// Description:
   /// Just prints short summary
@@ -42,7 +42,7 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLAnnotationROINode);
 
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   /// Description:
   /// alternative method to propagate events generated in Display nodes
@@ -77,24 +77,24 @@ public:
 
   /// Description:
   /// get/set the point representation color
-  double *GetPointColor();
+  double* GetPointColor();
   void SetPointColor( double initColor[3]);
 
   /// Description:
   /// get/set the line representation color
-  double *GetLineColor();
+  double* GetLineColor();
   void SetLineColor(double newColor[3]);
 
   /// Description:
   /// get/set the ROI annotation text color
-  double *GetROIAnnotationTextColor();
+  double* GetROIAnnotationTextColor();
   void SetROIAnnotationTextColor(double initColor[3]);
 
   /// Description:
   /// transform utility functions
   void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix) override;
   void ApplyTransform(vtkAbstractTransform* transform) override;
-  virtual void GetTransformedPlanes(vtkPlanes *planes);
+  virtual void GetTransformedPlanes(vtkPlanes* planes);
 
   /// Description:
   /// Add ROI to scene and add display nodes
@@ -183,10 +183,10 @@ protected:
 
   /// LabelText, here for backwards compatibility
   /// No effect on displayableManager side
-  char *LabelText;
+  char* LabelText;
 
   /// The ID of the volume associated with the ROI
-  char *VolumeNodeID;
+  char* VolumeNodeID;
 
 };
 

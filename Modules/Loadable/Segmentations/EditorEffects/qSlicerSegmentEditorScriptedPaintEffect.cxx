@@ -98,7 +98,7 @@ qSlicerSegmentEditorScriptedPaintEffectPrivate::~qSlicerSegmentEditorScriptedPai
 // qSlicerSegmentEditorScriptedPaintEffect methods
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScriptedPaintEffect::qSlicerSegmentEditorScriptedPaintEffect(QObject *parent)
+qSlicerSegmentEditorScriptedPaintEffect::qSlicerSegmentEditorScriptedPaintEffect(QObject* parent)
   : Superclass(parent)
   , d_ptr(new qSlicerSegmentEditorScriptedPaintEffectPrivate)
 {
@@ -141,8 +141,8 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString file
   }
 
   // Get a reference to the main module and global dictionary
-  PyObject * main_module = PyImport_AddModule("__main__");
-  PyObject * global_dict = PyModule_GetDict(main_module);
+  PyObject* main_module = PyImport_AddModule("__main__");
+  PyObject* global_dict = PyModule_GetDict(main_module);
 
   // Get actual module from sys.modules
   PyObject* sysModules = PyImport_GetModuleDict();

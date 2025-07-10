@@ -48,7 +48,7 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
 template <class TInput, class TOutput, int NDimensions>
 void
 TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
-::DynamicThreadedGenerateData( const OutputImageRegionType &outputRegionForThread)
+::DynamicThreadedGenerateData( const OutputImageRegionType& outputRegionForThread)
 {
   OutputDeformationFieldPointerType outputImagePtr = this->GetOutput( 0 );
   InputIteratorType                 it( this->GetInput( 0 ), outputRegionForThread );
@@ -122,7 +122,7 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
   }
   // get pointers to the input and output
   InputDeformationFieldPointerType inputPtr  =
-    const_cast<InputDeformationFieldType *>( this->GetInput() );
+    const_cast<InputDeformationFieldType*>( this->GetInput() );
 
   // Request the entire input image
   typename InputDeformationFieldType::RegionType inputRegion;

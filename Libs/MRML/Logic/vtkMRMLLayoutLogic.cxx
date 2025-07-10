@@ -1261,7 +1261,7 @@ void vtkMRMLLayoutLogic::UpdateLayoutNode()
     // input when the input is a singleton node (vtkMRMLNode::SingletonTag is 1)
     // As we observe the MRML scene, this->MRMLLayoutNode will be set in
     // onNodeAdded
-    vtkMRMLNode * nodeCreated = this->GetMRMLScene()->AddNode(sceneLayoutNode);
+    vtkMRMLNode* nodeCreated = this->GetMRMLScene()->AddNode(sceneLayoutNode);
     // as we checked that there was no vtkMRMLLayoutNode in the scene, the
     // returned node by vtkMRMLScene::AddNode() should be layoutNode
     if (nodeCreated != sceneLayoutNode)
@@ -1831,7 +1831,7 @@ std::string vtkMRMLLayoutLogic::GetMaximizedViewLayoutDescription(vtkMRMLAbstrac
   vtkNew<vtkXMLDataElement> itemElement;
   itemElement->SetName("item");
   viewportElement->AddNestedElement(itemElement);
-  vtkNew< vtkXMLDataElement> viewElement;
+  vtkNew<vtkXMLDataElement> viewElement;
   viewElement->SetName("view");
   viewElement->SetAttribute("class", viewToMaximize->GetClassName());
   viewElement->SetAttribute("singletontag", viewToMaximize->GetSingletonTag());
@@ -2011,7 +2011,7 @@ void vtkMRMLLayoutLogic::CreateMissingViews(vtkXMLDataElement* layoutRootElement
 
 //----------------------------------------------------------------------------
 /*
-vtkCollection* vtkMRMLLayoutLogic::GetViewsFromLayoutDescription(const char * layoutDescription)
+vtkCollection* vtkMRMLLayoutLogic::GetViewsFromLayoutDescription(const char* layoutDescription)
 {
   vtkSmartPointer<vtkXMLDataElement> root;
   root.Take(this->ParseLayout(layoutDescription));

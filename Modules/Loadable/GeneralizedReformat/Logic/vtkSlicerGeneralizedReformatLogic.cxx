@@ -818,7 +818,7 @@ vtkMRMLAbstractVolumeResampler* vtkSlicerGeneralizedReformatLogic::GetVolumeResa
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerGeneralizedReformatLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerGeneralizedReformatLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);

@@ -35,7 +35,7 @@ class vtkImageRGBToHSI;
 class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVolumeDisplayNode
 {
   public:
-  static vtkMRMLVectorVolumeDisplayNode *New();
+  static vtkMRMLVectorVolumeDisplayNode* New();
   vtkTypeMacro(vtkMRMLVectorVolumeDisplayNode,vtkMRMLGlyphableVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -126,15 +126,15 @@ protected:
   void operator=(const vtkMRMLVectorVolumeDisplayNode&);
 
   /// Set the input of the pipeline
-  void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection) override;
   vtkAlgorithmOutput* GetScalarImageDataConnection() override;
 
   int ScalarMode;
   int GlyphMode;
 
-  vtkImageShiftScale *ShiftScale;
-  vtkImageRGBToHSI *RGBToHSI;
-  vtkImageExtractComponents *ExtractIntensity;
+  vtkImageShiftScale* ShiftScale;
+  vtkImageRGBToHSI* RGBToHSI;
+  vtkImageExtractComponents* ExtractIntensity;
 };
 
 #endif

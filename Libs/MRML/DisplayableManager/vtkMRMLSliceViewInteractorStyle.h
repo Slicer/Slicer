@@ -42,7 +42,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceViewInteractorStyle :
   public vtkMRMLViewInteractorStyle
 {
 public:
-  static vtkMRMLSliceViewInteractorStyle *New();
+  static vtkMRMLSliceViewInteractorStyle* New();
   vtkTypeMacro(vtkMRMLSliceViewInteractorStyle,vtkMRMLViewInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -102,7 +102,7 @@ protected:
 
   void SetMouseCursor(int cursor);
 
-  vtkMRMLSliceLogic *SliceLogic;
+  vtkMRMLSliceLogic* SliceLogic;
 
   bool EnableCursorUpdate;
 

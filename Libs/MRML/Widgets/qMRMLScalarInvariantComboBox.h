@@ -44,7 +44,7 @@ class QMRML_WIDGETS_EXPORT qMRMLScalarInvariantComboBox : public QWidget
   Q_PROPERTY(int scalarInvariant READ scalarInvariant WRITE setScalarInvariant)
 
 public:
-  qMRMLScalarInvariantComboBox(QWidget *parent=nullptr);
+  qMRMLScalarInvariantComboBox(QWidget* parent=nullptr);
   ~qMRMLScalarInvariantComboBox() override;
 
   /// Return the optionally set display properties node set
@@ -59,10 +59,10 @@ public slots:
   /// property is externally modified, the combobox is updated with the new
   /// value, on the other hand, if the user graphically select a new menu entry,
   /// the node will be updated with the user choice.
-  void setDisplayPropertiesNode(vtkMRMLDiffusionTensorDisplayPropertiesNode *node);
+  void setDisplayPropertiesNode(vtkMRMLDiffusionTensorDisplayPropertiesNode* node);
 
   /// Utility function to be connected with generic signals
-  void setDisplayPropertiesNode(vtkMRMLNode *node);
+  void setDisplayPropertiesNode(vtkMRMLNode* node);
 
   /// Set the combobox entry to the new scalar invariant value. If a display
   /// properties node is set, it sets to the value to the node.

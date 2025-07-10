@@ -53,7 +53,7 @@ protected:
 public:
   qSlicerDICOMTagEditorWidgetPrivate(qSlicerDICOMTagEditorWidget& object);
   virtual void init();
-  void setupUi(QWidget *qSlicerDICOMTagEditorWidget);
+  void setupUi(QWidget* qSlicerDICOMTagEditorWidget);
 
   /// Clear tags table and add divider rows for patient and study
   void initializeTagsTable();
@@ -119,7 +119,7 @@ void qSlicerDICOMTagEditorWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-void qSlicerDICOMTagEditorWidgetPrivate::setupUi(QWidget *qSlicerDICOMTagEditorWidget)
+void qSlicerDICOMTagEditorWidgetPrivate::setupUi(QWidget* qSlicerDICOMTagEditorWidget)
 {
   if (qSlicerDICOMTagEditorWidget->objectName().isEmpty())
   {
@@ -265,7 +265,7 @@ void qSlicerDICOMTagEditorWidgetPrivate::insertTagsTableRow(unsigned int row)
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-qSlicerDICOMTagEditorWidget::qSlicerDICOMTagEditorWidget(QWidget *parent)
+qSlicerDICOMTagEditorWidget::qSlicerDICOMTagEditorWidget(QWidget* parent)
   : QWidget(parent)
   , d_ptr(new qSlicerDICOMTagEditorWidgetPrivate(*this))
 {

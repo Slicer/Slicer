@@ -166,7 +166,7 @@ vtkMRMLColorLegendDisplayNode* qMRMLColorLegendDisplayNodeWidget::mrmlColorLegen
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLColorLegendDisplayNodeWidget::setMRMLColorLegendDisplayNode(vtkMRMLNode *node)
+void qMRMLColorLegendDisplayNodeWidget::setMRMLColorLegendDisplayNode(vtkMRMLNode* node)
 {
   vtkMRMLColorLegendDisplayNode* colorLegendDisplayNode = vtkMRMLColorLegendDisplayNode::SafeDownCast(node);
   this->setMRMLColorLegendDisplayNode(colorLegendDisplayNode);

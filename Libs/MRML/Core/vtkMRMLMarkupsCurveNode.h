@@ -88,7 +88,7 @@ class vtkTriangleFilter;
 class  VTK_MRML_EXPORT vtkMRMLMarkupsCurveNode : public vtkMRMLMarkupsNode
 {
 public:
-  static vtkMRMLMarkupsCurveNode *New();
+  static vtkMRMLMarkupsCurveNode* New();
   vtkTypeMacro(vtkMRMLMarkupsCurveNode,vtkMRMLMarkupsNode);
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;

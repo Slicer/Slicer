@@ -65,7 +65,7 @@ void checkFinalWidgetState(void* data)
 }
 
 //-----------------------------------------------------------------------------
-int qMRMLNavigationViewEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLNavigationViewEventTranslatorPlayerTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

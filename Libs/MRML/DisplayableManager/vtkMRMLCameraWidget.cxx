@@ -184,7 +184,7 @@ void vtkMRMLCameraWidget::CreateDefaultRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLCameraWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
+bool vtkMRMLCameraWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   if (eventData->GetType() == vtkCommand::LeaveEvent)
   {
@@ -644,7 +644,7 @@ bool vtkMRMLCameraWidget::ProcessRotate(vtkMRMLInteractionEventData* eventData)
     return true;
   }
 
-  const int *size = this->Renderer->GetRenderWindow()->GetSize();
+  const int* size = this->Renderer->GetRenderWindow()->GetSize();
 
   double delta_elevation = -20.0 / size[1];
   double delta_azimuth = -20.0 / size[0];
@@ -695,7 +695,7 @@ bool vtkMRMLCameraWidget::ProcessSpin(vtkMRMLInteractionEventData* eventData)
     return true;
   }
 
-  double *center = this->Renderer->GetCenter();
+  double* center = this->Renderer->GetCenter();
 
   double newAngle =
     atan2((double)eventPosition[1] - (double)center[1],
@@ -707,7 +707,7 @@ bool vtkMRMLCameraWidget::ProcessSpin(vtkMRMLInteractionEventData* eventData)
 
   newAngle = vtkMath::DegreesFromRadians(newAngle);
   oldAngle = vtkMath::DegreesFromRadians(oldAngle);
-  vtkCamera *camera = this->GetCamera();
+  vtkCamera* camera = this->GetCamera();
   if (!camera)
   {
     return false;
@@ -826,7 +826,7 @@ bool vtkMRMLCameraWidget::ProcessScale(vtkMRMLInteractionEventData* eventData)
     return true;
   }
 
-  double *center = this->Renderer->GetCenter();
+  double* center = this->Renderer->GetCenter();
   double dyf = this->MotionFactor * (double)(dy) / (double)(center[1]);
   // Slicer: pull mouse towards you to bring models closer (opposite of vtk)
   this->Dolly(pow((double)1.1, -1. * dyf));

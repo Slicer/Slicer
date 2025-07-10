@@ -37,9 +37,9 @@ qMRMLNodeComboBoxMenuDelegate::qMRMLNodeComboBoxMenuDelegate(QObject* parent,
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxMenuDelegate::paint(QPainter *painter,
-                                          const QStyleOptionViewItem &option,
-                                          const QModelIndex &index) const
+void qMRMLNodeComboBoxMenuDelegate::paint(QPainter* painter,
+                                          const QStyleOptionViewItem& option,
+                                          const QModelIndex& index) const
 {
     QStyleOptionMenuItem opt = this->getStyleOption(option, index);
 #ifndef Q_WS_S60
@@ -50,8 +50,8 @@ void qMRMLNodeComboBoxMenuDelegate::paint(QPainter *painter,
 }
 
 // --------------------------------------------------------------------------
-QSize qMRMLNodeComboBoxMenuDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                              const QModelIndex &index) const
+QSize qMRMLNodeComboBoxMenuDelegate::sizeHint(const QStyleOptionViewItem& option,
+                                              const QModelIndex& index) const
 {
     QStyleOptionMenuItem opt = getStyleOption(option, index);
     return this->mCombo->style()->sizeFromContents(
@@ -60,7 +60,7 @@ QSize qMRMLNodeComboBoxMenuDelegate::sizeHint(const QStyleOptionViewItem &option
 
 // --------------------------------------------------------------------------
 QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
-    const QStyleOptionViewItem &option, const QModelIndex &index) const
+    const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     QStyleOptionMenuItem menuOption;
 

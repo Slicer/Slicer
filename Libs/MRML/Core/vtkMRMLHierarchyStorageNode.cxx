@@ -38,13 +38,13 @@ void vtkMRMLHierarchyStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLHierarchyStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLHierarchyStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLHierarchyNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
 
@@ -55,10 +55,10 @@ int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   }
 
   // cast the input node
-  vtkMRMLHierarchyNode *hierarchyNode = nullptr;
+  vtkMRMLHierarchyNode* hierarchyNode = nullptr;
   if ( refNode->IsA("vtkMRMLHierarchyNode") )
   {
-    hierarchyNode = dynamic_cast <vtkMRMLHierarchyNode *> (refNode);
+    hierarchyNode = dynamic_cast <vtkMRMLHierarchyNode*> (refNode);
   }
 
   if (hierarchyNode == nullptr)
@@ -97,7 +97,7 @@ int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -107,10 +107,10 @@ int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   }
 
   // cast the input node
-  vtkMRMLHierarchyNode *hierarchyNode = nullptr;
+  vtkMRMLHierarchyNode* hierarchyNode = nullptr;
   if ( refNode->IsA("vtkMRMLHierarchyNode") )
   {
-    hierarchyNode = dynamic_cast <vtkMRMLHierarchyNode *> (refNode);
+    hierarchyNode = dynamic_cast <vtkMRMLHierarchyNode*> (refNode);
   }
 
   if (hierarchyNode == nullptr)

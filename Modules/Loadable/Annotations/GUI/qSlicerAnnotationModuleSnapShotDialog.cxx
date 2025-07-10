@@ -108,7 +108,7 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
   // check to see if it's an already used name for a node (redrawing the
   // dialog causes it to reset and calling GetUniqueNameByString increments
   // the number each time).
-  vtkCollection *col =
+  vtkCollection* col =
     this->m_Logic->GetMRMLScene()->GetNodesByName(name.toUtf8());
   if (col->GetNumberOfItems() > 0)
   {

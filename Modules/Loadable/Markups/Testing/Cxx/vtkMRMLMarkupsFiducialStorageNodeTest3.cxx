@@ -28,7 +28,7 @@
 #include <vtkNew.h>
 
 
-int vtkMRMLMarkupsFiducialStorageNodeTest3(int argc, char * argv[] )
+int vtkMRMLMarkupsFiducialStorageNodeTest3(int argc, char* argv[] )
 {
   // Test reading in a Slicer4 Annotation fiducial .acsv file
   vtkNew<vtkMRMLMarkupsFiducialStorageNode> node1;

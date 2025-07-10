@@ -75,7 +75,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
     return 0;
   }
 
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   vtkDataObject* output = outInfo->Get(vtkDataObject::DATA_OBJECT());
   vtkImageData* data = vtkImageData::SafeDownCast(output);
@@ -148,7 +148,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
     filter->UpdateLargestPossibleRegion(); \
     itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer##typeN;\
     PixelContainer##typeN = filter->GetOutput()->GetPixelContainer();\
-    void *ptr = static_cast<void *> (PixelContainer##typeN->GetBufferPointer());\
+    void* ptr = static_cast<void*> (PixelContainer##typeN->GetBufferPointer());\
     DownCast<type>(data->GetPointData()->GetScalars())                \
       ->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0,\
                       vtkAOSDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
@@ -187,7 +187,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
     filter->UpdateLargestPossibleRegion();\
     itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer2##typeN;\
     PixelContainer2##typeN = filter->GetOutput()->GetPixelContainer();\
-    void *ptr = static_cast<void *> (PixelContainer2##typeN->GetBufferPointer());\
+    void* ptr = static_cast<void*> (PixelContainer2##typeN->GetBufferPointer());\
     DownCast<type>(data->GetPointData()->GetScalars())                \
       ->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0,\
                       vtkAOSDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
@@ -254,7 +254,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
       }
     }
   }
-  catch (itk::ExceptionObject & e)
+  catch (itk::ExceptionObject& e)
   {
     vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
     this->SetErrorCode(vtkErrorCode::FileFormatError);
@@ -266,7 +266,7 @@ int vtkITKArchetypeImageSeriesScalarReader::RequestData(
 
 void vtkITKArchetypeImageSeriesScalarReader::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
-  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject *>(obj));
+  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
   if (p.IsNull())
   {
     return;

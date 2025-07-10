@@ -22,13 +22,13 @@
 #include "qMRMLUnitWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLUnitWidgetPlugin::qMRMLUnitWidgetPlugin(QObject *_parent)
+qMRMLUnitWidgetPlugin::qMRMLUnitWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLUnitWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLUnitWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLUnitWidget* _widget = new qMRMLUnitWidget(_parent);
   return _widget;

@@ -44,7 +44,7 @@ public:
 
   void updateWidgetFromMRML() {}
 
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *) const override {return false;}  /// Set the MRML node of interest
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode*) const override {return false;}  /// Set the MRML node of interest
 
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 

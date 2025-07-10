@@ -89,8 +89,8 @@ public:
   bool hideAllWhenShowModulesIsEmpty()const;
   void setHideAllWhenShowModulesIsEmpty(bool hide);
   Qt::DropActions supportedDropActions()const override;
-  bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-                            int row, int column, const QModelIndex &parent) override;
+  bool dropMimeData(const QMimeData* data, Qt::DropAction action,
+                            int row, int column, const QModelIndex& parent) override;
 
 public slots:
   void setShowToLoad(bool show);

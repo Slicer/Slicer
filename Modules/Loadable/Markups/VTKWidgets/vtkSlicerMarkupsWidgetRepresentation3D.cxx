@@ -347,7 +347,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateAllPointsAndLabelsFromMRML()
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
@@ -509,7 +509,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteract(
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
@@ -544,7 +544,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::CanInteractWithLine(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   this->UpdateViewScaleFactor();
   this->UpdateControlPointSize();
@@ -628,11 +628,11 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode*
   /* TODO: implement this for better performance
   if (event == )
     {
-    int *nPtr = nullptr;
+    int* nPtr = nullptr;
     int n = -1;
     if (callData != nullptr)
       {
-      nPtr = reinterpret_cast<int *>(callData);
+      nPtr = reinterpret_cast<int*>(callData);
       if (nPtr)
         {
         n = *nPtr;
@@ -647,7 +647,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode*
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::GetActors(vtkPropCollection *pc)
+void vtkSlicerMarkupsWidgetRepresentation3D::GetActors(vtkPropCollection* pc)
 {
   Superclass::GetActors(pc);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
@@ -663,7 +663,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::GetActors(vtkPropCollection *pc)
 
 //----------------------------------------------------------------------
 void vtkSlicerMarkupsWidgetRepresentation3D::ReleaseGraphicsResources(
-  vtkWindow *win)
+  vtkWindow* win)
 {
   Superclass::ReleaseGraphicsResources(win);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
@@ -678,7 +678,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::ReleaseGraphicsResources(
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerMarkupsWidgetRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
   vtkFloatArray* zBuffer = vtkSlicerMarkupsWidgetRepresentation3D::GetCachedZBuffer(this->Renderer);
   int count = Superclass::RenderOverlay(viewport);
@@ -844,7 +844,7 @@ void vtkSlicerMarkupsWidgetRepresentation3D::UpdateControlPointGlyphOrientation(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   // Recompute glyph size if it is relative to the screen size
   // (it gets smaller/larger as the camera is moved or zoomed)
@@ -906,7 +906,7 @@ int vtkSlicerMarkupsWidgetRepresentation3D::RenderOpaqueGeometry(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerMarkupsWidgetRepresentation3D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count = Superclass::RenderTranslucentPolygonalGeometry(viewport);
   for (int i = 0; i < NumberOfControlPointTypes; i++)
@@ -975,7 +975,7 @@ vtkTypeBool vtkSlicerMarkupsWidgetRepresentation3D::HasTranslucentPolygonalGeome
 }
 
 //-----------------------------------------------------------------------------
-double *vtkSlicerMarkupsWidgetRepresentation3D::GetBounds()
+double* vtkSlicerMarkupsWidgetRepresentation3D::GetBounds()
 {
   vtkBoundingBox boundingBox;
   const std::vector<vtkProp*> actors(
@@ -1067,7 +1067,7 @@ vtkSlicerMarkupsWidgetRepresentation3D::ControlPointsPipeline3D* vtkSlicerMarkup
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerMarkupsWidgetRepresentation3D::SetRenderer(vtkRenderer *ren)
+void vtkSlicerMarkupsWidgetRepresentation3D::SetRenderer(vtkRenderer* ren)
 {
   if (ren == this->Renderer)
   {

@@ -43,7 +43,7 @@ bool TestScenesUnitNodeID(vtkMRMLScene* scene);
 bool TestUnitNodeAttribute(vtkMRMLScene* scene);
 
 //---------------------------------------------------------------------------
-int vtkMRMLUnitNodeTest1(int , char * [] )
+int vtkMRMLUnitNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLUnitNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

@@ -505,7 +505,7 @@ void qMRMLUnitWidget::setUnitFromPreset(vtkMRMLNode* presetNode)
 {
   Q_D(qMRMLUnitWidget);
 
-  vtkMRMLUnitNode *presetUnitNode = vtkMRMLUnitNode::SafeDownCast(presetNode);
+  vtkMRMLUnitNode* presetUnitNode = vtkMRMLUnitNode::SafeDownCast(presetNode);
   if (!presetUnitNode || !d->CurrentUnitNode)
   {
     return;

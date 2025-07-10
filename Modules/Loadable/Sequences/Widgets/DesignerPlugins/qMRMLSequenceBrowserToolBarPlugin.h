@@ -27,9 +27,9 @@ qMRMLSequenceBrowserToolBarPlugin
   Q_OBJECT
 
 public:
-  qMRMLSequenceBrowserToolBarPlugin(QObject *_parent = 0);
+  qMRMLSequenceBrowserToolBarPlugin(QObject* _parent = 0);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

@@ -478,7 +478,7 @@ void qSlicerModulesListView::addModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesListView);
   Q_ASSERT(d->moduleItem(moduleName) == nullptr);
-  QStandardItem * item = new QStandardItem();
+  QStandardItem* item = new QStandardItem();
   item->setData(moduleName, qSlicerModuleFactoryFilterModel::ModuleNameRole);
   d->updateItem(item);
   int index = d->sortedInsertionIndex(moduleName);
@@ -504,7 +504,7 @@ void qSlicerModulesListView::updateModules(const QStringList& moduleNames)
 void qSlicerModulesListView::updateModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesListView);
-  QStandardItem * item = d->moduleItem(moduleName);
+  QStandardItem* item = d->moduleItem(moduleName);
   if (item == nullptr)
   {
     this->addModule(moduleName);
@@ -552,7 +552,7 @@ void qSlicerModulesListView::onItemChanged(QStandardItem* item)
 }
 
 // --------------------------------------------------------------------------
-void qSlicerModulesListView::keyPressEvent(QKeyEvent * event)
+void qSlicerModulesListView::keyPressEvent(QKeyEvent* event)
 {
   if (event->key() == Qt::Key_Delete ||
       event->key() == Qt::Key_Backspace)

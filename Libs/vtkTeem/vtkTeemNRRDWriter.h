@@ -27,7 +27,7 @@ public:
   vtkTypeMacro(vtkTeemNRRDWriter,vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  static vtkTeemNRRDWriter *New();
+  static vtkTeemNRRDWriter* New();
 
   ///
   /// Get the input to this writer.
@@ -109,7 +109,7 @@ protected:
   vtkTeemNRRDWriter();
   ~vtkTeemNRRDWriter() override;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   ///
   /// Write method. It is called by vtkWriter::Write();
@@ -119,7 +119,7 @@ protected:
   /// Flag to set to on when a write error occurred
   int WriteError;
 
-  char *FileName;
+  char* FileName;
 
   vtkDoubleArray* BValues;
   vtkDoubleArray* DiffusionGradients;
@@ -131,9 +131,9 @@ protected:
   int CompressionLevel;
   int FileType;
 
-  AttributeMapType *Attributes;
-  AxisInfoMapType *AxisLabels;
-  AxisInfoMapType *AxisUnits;
+  AttributeMapType* Attributes;
+  AxisInfoMapType* AxisLabels;
+  AxisInfoMapType* AxisUnits;
   int VectorAxisKind;
   int Space;
 
@@ -142,7 +142,7 @@ protected:
 private:
   vtkTeemNRRDWriter(const vtkTeemNRRDWriter&) = delete;
   void operator=(const vtkTeemNRRDWriter&) = delete;
-  void vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &nrrdKind, size_t &numComp, int &vtkType, void **buffer);
+  void vtkImageDataInfoToNrrdInfo(vtkImageData* in, int& nrrdKind, size_t &numComp, int& vtkType, void** buffer);
   int VTKToNrrdPixelType( const int vtkPixelType );
   int DiffusionWeightedData;
 };

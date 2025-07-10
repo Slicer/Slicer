@@ -36,16 +36,16 @@
 #include "vtkMRMLNode.h"
 
 // ----------------------------------------------------------------------------
-qMRMLNodeComboBoxEventTranslator::qMRMLNodeComboBoxEventTranslator(QObject *parent)
+qMRMLNodeComboBoxEventTranslator::qMRMLNodeComboBoxEventTranslator(QObject* parent)
   : pqWidgetEventTranslator(parent)
 {
   this->CurrentObject = nullptr;
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject *Object,
-                                                      QEvent *Event,
-                                                      bool &Error)
+bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject* Object,
+                                                      QEvent* Event,
+                                                      bool& Error)
 {
   Q_UNUSED(Error);
 

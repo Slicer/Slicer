@@ -72,7 +72,7 @@ private:
   void operator=(const vtkMRMLModelSliceDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   friend class vtkInternal;
 
 };

@@ -43,7 +43,7 @@ class qMRMLMarkupsCurveSettingsWidgetPrivate
   : public Ui_qMRMLMarkupsCurveSettingsWidget
 {
 public:
-  qMRMLMarkupsCurveSettingsWidgetPrivate(qMRMLMarkupsCurveSettingsWidget &widget);
+  qMRMLMarkupsCurveSettingsWidgetPrivate(qMRMLMarkupsCurveSettingsWidget& widget);
 
   static QString curveTypeAsDisplayableString(int curveType);
   static QString costFunctionAsDisplayableString(int costFunction);
@@ -181,7 +181,7 @@ QString qMRMLMarkupsCurveSettingsWidgetPrivate::costFunctionAsDisplayableString(
 
 // --------------------------------------------------------------------------
 qMRMLMarkupsCurveSettingsWidget::
-qMRMLMarkupsCurveSettingsWidget(QWidget *parent)
+qMRMLMarkupsCurveSettingsWidget(QWidget* parent)
   : Superclass(parent), d_ptr(new qMRMLMarkupsCurveSettingsWidgetPrivate(*this))
 {
   this->setup();
@@ -202,7 +202,7 @@ void qMRMLMarkupsCurveSettingsWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLMarkupsCurveSettingsWidget);
 
-  vtkMRMLMarkupsCurveNode *curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->MarkupsNode);
+  vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->MarkupsNode);
   if (!curveNode)
   {
     return;
@@ -292,7 +292,7 @@ void qMRMLMarkupsCurveSettingsWidget::onCurveTypeParameterChanged()
 {
   Q_D(qMRMLMarkupsCurveSettingsWidget);
 
-  vtkMRMLMarkupsCurveNode *curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->MarkupsNode);
+  vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->MarkupsNode);
   if (!curveNode)
   {
     return;
@@ -362,7 +362,7 @@ void qMRMLMarkupsCurveSettingsWidget::onProjectCurveMaximumSearchRadiusChanged()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsCurveSettingsWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qMRMLMarkupsCurveSettingsWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const
 {
   Q_D(const qMRMLMarkupsCurveSettingsWidget);
 
@@ -386,7 +386,7 @@ void qMRMLMarkupsCurveSettingsWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* mar
 }
 
 // --------------------------------------------------------------------------
-void qMRMLMarkupsCurveSettingsWidget::setMRMLScene(vtkMRMLScene *mrmlScene)
+void qMRMLMarkupsCurveSettingsWidget::setMRMLScene(vtkMRMLScene* mrmlScene)
 {
   Q_D(qMRMLMarkupsCurveSettingsWidget);
 

@@ -30,7 +30,7 @@ class vtkStringArray;
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public vtkMRMLModelNode
 {
 public:
-  static vtkMRMLAnnotationNode *New();
+  static vtkMRMLAnnotationNode* New();
   vtkTypeMacro(vtkMRMLAnnotationNode,vtkMRMLModelNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   // Description:
@@ -61,7 +61,7 @@ public:
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLAnnotationNode);
 
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
@@ -82,8 +82,8 @@ public:
   /// \sa ApplyTransformMatrix, ApplyTransform
   bool CanApplyNonLinearTransforms()const override {return false;}
 
-  int AddText(const char *newText,int selectedFlag, int visibleFlag);
-  void SetText(int id, const char *newText,int selectedFlag, int visibleFlag);
+  int AddText(const char* newText,int selectedFlag, int visibleFlag);
+  void SetText(int id, const char* newText,int selectedFlag, int visibleFlag);
   std::string GetText(int id);
   int DeleteText(int id);
 
@@ -96,7 +96,7 @@ public:
     NUM_TEXT_ATTRIBUTE_TYPES,
      LockModifiedEvent,
   };
-  virtual const char *GetAttributeTypesEnumAsString(int val);
+  virtual const char* GetAttributeTypesEnumAsString(int val);
   vtkDataArray* GetAnnotationAttributes(int att);
   int GetAnnotationAttribute(vtkIdType id, int att);
   void SetAnnotationAttribute(vtkIdType id, int att, double value);
@@ -153,12 +153,12 @@ protected:
   vtkPoints* GetPoints();
   vtkCellArray* GetLines();
 
-  vtkStringArray *TextList;
-  char *ReferenceNodeID;
+  vtkStringArray* TextList;
+  char* ReferenceNodeID;
 
   int Locked;
 
-  vtkMRMLAnnotationNode * m_Backup;
+  vtkMRMLAnnotationNode* m_Backup;
 
   vtkSmartPointer<vtkMRMLSliceNode> m_RedSliceNode;
   vtkSmartPointer<vtkMRMLSliceNode> m_YellowSliceNode;

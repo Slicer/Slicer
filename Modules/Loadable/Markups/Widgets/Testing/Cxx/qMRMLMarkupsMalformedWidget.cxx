@@ -22,7 +22,7 @@
 
 // --------------------------------------------------------------------------
 qMRMLMarkupsMalformedWidget::
-qMRMLMarkupsMalformedWidget(QWidget *parent)
+qMRMLMarkupsMalformedWidget(QWidget* parent)
   : Superclass(parent)
 {
 }

@@ -29,9 +29,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLCoordinatesWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLCoordinatesWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLCoordinatesWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

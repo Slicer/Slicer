@@ -73,7 +73,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
   }
 
   // Storable node
-  vtkMRMLTableNode *tableNode = nullptr;
+  vtkMRMLTableNode* tableNode = nullptr;
 
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
@@ -97,7 +97,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
       vtkErrorMacro("Failed to read tables from " << fileName);
       return nullptr;
     }
-    vtkStringArray *tables = database->GetTables();
+    vtkStringArray* tables = database->GetTables();
     for (int i=0; i<tables->GetNumberOfTuples(); i++)
     {
       std::string table = tables->GetValue(i);

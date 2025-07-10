@@ -78,7 +78,7 @@ void qMRMLModelInfoWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLModelInfoWidget::qMRMLModelInfoWidget(QWidget *_parent)
+qMRMLModelInfoWidget::qMRMLModelInfoWidget(QWidget* _parent)
   : QWidget(_parent)
   , d_ptr(new qMRMLModelInfoWidgetPrivate(*this))
 {
@@ -116,7 +116,7 @@ void qMRMLModelInfoWidget::setMRMLModelNode(vtkMRMLModelNode* modelNode)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLModelInfoWidget::showEvent(QShowEvent *)
+void qMRMLModelInfoWidget::showEvent(QShowEvent*)
 {
   // Update the widget, now that it becomes becomes visible
   // (we might have missed some updates, because widget contents is not updated
@@ -134,7 +134,7 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
     // so if the widget is not visible then do not update
     return;
   }
-  vtkPointSet *mesh = d->MRMLModelNode ? d->MRMLModelNode->GetMesh() : nullptr;
+  vtkPointSet* mesh = d->MRMLModelNode ? d->MRMLModelNode->GetMesh() : nullptr;
   if (mesh)
   {
     vtkPolyDataAlgorithm* filter;
@@ -199,7 +199,7 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
     d->NumberOfCellsScalarsSpinBox->setValue(0);
   }
 
-  vtkMRMLStorageNode *storageNode = d->MRMLModelNode ? d->MRMLModelNode->GetStorageNode() : nullptr;
+  vtkMRMLStorageNode* storageNode = d->MRMLModelNode ? d->MRMLModelNode->GetStorageNode() : nullptr;
   if (storageNode)
   {
     d->FileNameLineEdit->setText(storageNode->GetFileName());

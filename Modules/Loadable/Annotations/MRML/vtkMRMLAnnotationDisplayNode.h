@@ -27,14 +27,14 @@ virtual void SetAndPropagateSuper##name (type _arg1, type _arg2, type _arg3) \
     this->Super##name[0] = _arg1; \
     this->Super##name[1] = _arg2; \
     this->Super##name[2] = _arg3; \
-    vtkMRMLDisplayableNode *displayableNode = this->GetDisplayableNode(); \
+    vtkMRMLDisplayableNode* displayableNode = this->GetDisplayableNode(); \
     if (!displayableNode) \
     { \
       return; \
     } \
     for (int i=0; i<displayableNode->GetNumberOfDisplayNodes(); i++) \
     { \
-      vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i); \
+      vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i); \
       if (!displayNode || displayNode==this) \
       { \
         continue; \
@@ -57,14 +57,14 @@ virtual void SetAndPropagateSuper##name (type _arg) \
   { \
     this->name = _arg; \
     this->Super##name = _arg; \
-    vtkMRMLDisplayableNode *displayableNode = this->GetDisplayableNode(); \
+    vtkMRMLDisplayableNode* displayableNode = this->GetDisplayableNode(); \
     if (!displayableNode) \
     { \
       return; \
     } \
     for (int i=0; i<displayableNode->GetNumberOfDisplayNodes(); i++) \
     { \
-      vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i); \
+      vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i); \
       if (!displayNode || displayNode==this) \
       { \
         continue; \
@@ -79,7 +79,7 @@ virtual void SetAndPropagateSuper##name (type _arg) \
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : public vtkMRMLModelDisplayNode
 {
  public:
-  static vtkMRMLAnnotationDisplayNode *New (  );
+  static vtkMRMLAnnotationDisplayNode* New (  );
   vtkTypeMacro ( vtkMRMLAnnotationDisplayNode,vtkMRMLModelDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent ) override;
 
@@ -100,7 +100,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : 
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode* node ) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
@@ -108,7 +108,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : 
 
   // Description:
   // Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
@@ -122,7 +122,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : 
   virtual void RestoreBackup(){};
   void ClearBackup();
   /// Returns the associated backup of this node
-  vtkMRMLAnnotationDisplayNode * GetBackup();
+  vtkMRMLAnnotationDisplayNode* GetBackup();
 
   //
   // Set and propagate attributes to all other displayNodes

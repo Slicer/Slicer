@@ -58,7 +58,7 @@ vtkSlicerTerminologiesModuleLogic* terminologiesLogic()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologyItemDelegate::qSlicerTerminologyItemDelegate(QObject *parent)
+qSlicerTerminologyItemDelegate::qSlicerTerminologyItemDelegate(QObject* parent)
   : QStyledItemDelegate(parent)
 {
   // By default do not use terminology selector
@@ -114,7 +114,7 @@ QWidget* qSlicerTerminologyItemDelegate::createEditor(QWidget* parent, const QSt
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+void qSlicerTerminologyItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
   ctkColorPickerButton* colorPickerButton = qobject_cast<ctkColorPickerButton*>(editor);
   qSlicerTerminologySelectorButton* terminologyButton = qobject_cast<qSlicerTerminologySelectorButton*>(editor);
@@ -212,7 +212,7 @@ void qSlicerTerminologyItemDelegate::setEditorData(QWidget *editor, const QModel
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+void qSlicerTerminologyItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
   QLineEdit* lineEdit = qobject_cast<QLineEdit*>(editor);
   ctkColorPickerButton* colorPickerButton = qobject_cast<ctkColorPickerButton*>(editor);
@@ -254,7 +254,7 @@ void qSlicerTerminologyItemDelegate::setModelData(QWidget *editor, QAbstractItem
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+void qSlicerTerminologyItemDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex &/* index */) const
 {
   editor->setGeometry(option.rect);
 }

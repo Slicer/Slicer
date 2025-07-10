@@ -30,9 +30,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLVolumeInfoWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLVolumeInfoWidgetPlugin(QObject *parent = nullptr);
+  qMRMLVolumeInfoWidgetPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget *parent) override;
+  QWidget* createWidget(QWidget* parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

@@ -30,10 +30,10 @@
 #include <vtksys/SystemTools.hxx>
 
 //---------------------------------------------------------------------------
-void BuildShaderProperty( vtkMRMLShaderPropertyNode * psNode );
-int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkMRMLShaderPropertyNode* sp );
+void BuildShaderProperty( vtkMRMLShaderPropertyNode* psNode );
+int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkMRMLShaderPropertyNode* sp );
 
-int vtkMRMLShaderPropertyStorageNodeTest1(int argc, char * argv[])
+int vtkMRMLShaderPropertyStorageNodeTest1(int argc, char* argv[])
 {
   if (argc != 2)
   {
@@ -63,9 +63,9 @@ int vtkMRMLShaderPropertyStorageNodeTest1(int argc, char * argv[])
 }
 
 //---------------------------------------------------------------------------
-void BuildShaderProperty( vtkMRMLShaderPropertyNode * spNode )
+void BuildShaderProperty( vtkMRMLShaderPropertyNode* spNode )
 {
-  vtkShaderProperty * sp = spNode->GetShaderProperty();
+  vtkShaderProperty* sp = spNode->GetShaderProperty();
 
   // Exercise shader replacement code - this is not actually usable code,
   // it is only for the purpose of testing round trip read/write
@@ -78,7 +78,7 @@ void BuildShaderProperty( vtkMRMLShaderPropertyNode * spNode )
 
   // Exercise all combinations of uniforms types:
   // number of tuples{1,many(2)}, tupleType{scalar,vector,matrix}, scalarType{int,float}
-  vtkUniforms * vertexUniforms = sp->GetVertexCustomUniforms();
+  vtkUniforms* vertexUniforms = sp->GetVertexCustomUniforms();
 
   // 1 tuple, scalar
   vertexUniforms->SetUniformf( "var1-1t-sf", 1.2f );
@@ -91,7 +91,7 @@ void BuildShaderProperty( vtkMRMLShaderPropertyNode * spNode )
   vertexUniforms->SetUniform2f("var4-1t-vf",var4);
 
   // We put the next cases in the fragment uniforms
-  vtkUniforms * fragmentUniforms = sp->GetFragmentCustomUniforms();
+  vtkUniforms* fragmentUniforms = sp->GetFragmentCustomUniforms();
 
   // 1 tuple matrix
   float var5[9] = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0 };
@@ -104,7 +104,7 @@ void BuildShaderProperty( vtkMRMLShaderPropertyNode * spNode )
   fragmentUniforms->SetUniform1fv("var8-2t-sf",2,var8);
 
   // We put the next cases in the fragment uniforms
-  vtkUniforms * geometryUniforms = sp->GetGeometryCustomUniforms();
+  vtkUniforms* geometryUniforms = sp->GetGeometryCustomUniforms();
 
   // 2 tuples, vector
   float var9[2][2] = {{1.0f, 2.0f},{3.0f, 4.0f}};
@@ -118,12 +118,12 @@ void BuildShaderProperty( vtkMRMLShaderPropertyNode * spNode )
 }
 
 //---------------------------------------------------------------------------
-int CompareUniforms( vtkUniforms * u1, vtkUniforms * u2 )
+int CompareUniforms( vtkUniforms* u1, vtkUniforms* u2 )
 {
   CHECK_BOOL(u1->GetNumberOfUniforms()==u2->GetNumberOfUniforms(),true);
   for( int i = 0; i < u1->GetNumberOfUniforms(); ++i )
   {
-    const char * name = u1->GetNthUniformName(i);
+    const char* name = u1->GetNthUniformName(i);
     CHECK_BOOL(u1->GetUniformScalarType(name)==VTK_INT || u1->GetUniformScalarType(name)==VTK_FLOAT,true);
     CHECK_BOOL(u1->GetUniformScalarType(name)==u2->GetUniformScalarType(name),true);
     if( u1->GetUniformScalarType(name) == VTK_INT )
@@ -147,11 +147,11 @@ int CompareUniforms( vtkUniforms * u1, vtkUniforms * u2 )
 }
 
 //---------------------------------------------------------------------------
-int CompareShaderProperty( vtkMRMLShaderPropertyNode * n1, vtkMRMLShaderPropertyNode * n2 )
+int CompareShaderProperty( vtkMRMLShaderPropertyNode* n1, vtkMRMLShaderPropertyNode* n2 )
 {
-  vtkShaderProperty * sp1 = n1->GetShaderProperty();
+  vtkShaderProperty* sp1 = n1->GetShaderProperty();
   CHECK_NOT_NULL(sp1);
-  vtkShaderProperty * sp2 = n2->GetShaderProperty();
+  vtkShaderProperty* sp2 = n2->GetShaderProperty();
   CHECK_NOT_NULL(sp2);
 
   // Compare whole shader code
@@ -181,23 +181,23 @@ int CompareShaderProperty( vtkMRMLShaderPropertyNode * n1, vtkMRMLShaderProperty
   }
 
   // Compare uniform variables
-  vtkUniforms * uv1 = sp1->GetVertexCustomUniforms();
-  vtkUniforms * uv2 = sp2->GetVertexCustomUniforms();
+  vtkUniforms* uv1 = sp1->GetVertexCustomUniforms();
+  vtkUniforms* uv2 = sp2->GetVertexCustomUniforms();
   CHECK_EXIT_SUCCESS(CompareUniforms( uv1, uv2 ));
 
-  vtkUniforms * uf1 = sp1->GetFragmentCustomUniforms();
-  vtkUniforms * uf2 = sp2->GetFragmentCustomUniforms();
+  vtkUniforms* uf1 = sp1->GetFragmentCustomUniforms();
+  vtkUniforms* uf2 = sp2->GetFragmentCustomUniforms();
   CHECK_EXIT_SUCCESS(CompareUniforms( uf1, uf2 ));
 
-  vtkUniforms * ug1 = sp1->GetGeometryCustomUniforms();
-  vtkUniforms * ug2 = sp2->GetGeometryCustomUniforms();
+  vtkUniforms* ug1 = sp1->GetGeometryCustomUniforms();
+  vtkUniforms* ug2 = sp2->GetGeometryCustomUniforms();
   CHECK_EXIT_SUCCESS(CompareUniforms( ug1, ug2 ));
 
   return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
-int TestReadWriteData(vtkMRMLScene* scene, const char *extension, vtkMRMLShaderPropertyNode* spNode )
+int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkMRMLShaderPropertyNode* spNode )
 {
   std::string fileName = std::string(scene->GetRootDirectory()) +
     std::string("/vtkMRMLShaderPropertyStorageNodeTest1") +

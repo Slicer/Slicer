@@ -43,10 +43,10 @@ vtkITKLevelTracing3DImageFilter::~vtkITKLevelTracing3DImageFilter() = default;
 
 
 template <class T>
-void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter *vtkNotUsed(self),
+void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter* vtkNotUsed(self),
                                T* scalars, int dims[3], int extent[6],
                                double origin[3], double spacing[3],
-                               unsigned char *oscalars,
+                               unsigned char* oscalars,
                                int seed[3])
 {
 
@@ -95,29 +95,29 @@ void vtkITKLevelTracing3DTrace(vtkITKLevelTracing3DImageFilter *vtkNotUsed(self)
 // Contouring filter specialized for volumes and "short int" data values.
 //
 int vtkITKLevelTracing3DImageFilter::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
   // get the info objects
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkImageData *input = vtkImageData::SafeDownCast(
+  vtkImageData* input = vtkImageData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkImageData *output = vtkImageData::SafeDownCast(
+  vtkImageData* output = vtkImageData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   output->SetExtent(
     outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
   output->AllocateScalars(outInfo);
 
-  vtkUnsignedCharArray *oScalars
+  vtkUnsignedCharArray* oScalars
     = vtkUnsignedCharArray::SafeDownCast(output->GetPointData()->GetScalars());
   void* os = oScalars->GetVoidPointer(0);
 
-  vtkDataArray *inScalars;
+  vtkDataArray* inScalars;
   int dims[3], extent[6];
   double spacing[3], origin[3];
 
@@ -126,7 +126,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
   //
   // Initialize and check input
   //
-  vtkPointData *pd=input->GetPointData();
+  vtkPointData* pd=input->GetPointData();
   if (pd ==nullptr)
   {
     vtkErrorMacro(<<"PointData is NULL");
@@ -189,9 +189,9 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
     }
 
     vtkITKLevelTracing3DTrace(this,
-                              (unsigned char *)grayScalars->GetVoidPointer(0),
+                              (unsigned char*)grayScalars->GetVoidPointer(0),
                               dims, extent, origin, spacing,
-                              (unsigned char *)os, this->Seed);
+                              (unsigned char*)os, this->Seed);
   }
   else
   {
@@ -204,14 +204,14 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
 
 
 int vtkITKLevelTracing3DImageFilter::RequestInformation(
-  vtkInformation *request,
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformation* request,
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
   this->Superclass::RequestInformation(request, inputVector, outputVector);
 
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
 
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_UNSIGNED_CHAR, 1);
 
@@ -224,7 +224,7 @@ int vtkITKLevelTracing3DImageFilter::RequestInformation(
 }
 
 
-int vtkITKLevelTracing3DImageFilter::FillInputPortInformation(int, vtkInformation *info)
+int vtkITKLevelTracing3DImageFilter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
   return 1;

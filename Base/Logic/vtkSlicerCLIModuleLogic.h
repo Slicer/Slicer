@@ -48,7 +48,7 @@ public:
     PythonModule
   };
 
-  static vtkSlicerCLIModuleLogic *New();
+  static vtkSlicerCLIModuleLogic* New();
   vtkTypeMacro(vtkSlicerCLIModuleLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -82,9 +82,9 @@ public:
   vtkMRMLCommandLineModuleNode* CreateNodeInScene();
 
   // TODO: do we need to observe MRML here?
-  virtual void ProcessMrmlEvents(vtkObject * vtkNotUsed(caller),
+  virtual void ProcessMrmlEvents(vtkObject* vtkNotUsed(caller),
                                  unsigned long vtkNotUsed(event),
-                                 void * vtkNotUsed(callData)){}
+                                 void* vtkNotUsed(callData)){}
 
   /// For debugging, control deletion of temp files
   virtual void DeleteTemporaryFilesOn();
@@ -133,12 +133,12 @@ public:
 
 protected:
   /// Reimplemented to observe NodeAddedEvent.
-  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
   /// Reimplemented for AutoRun mode.
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   /// Reimplemented to observe CLI node.
-  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event,
-                                      void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event,
+                                      void* callData) override;
   /// Reimplemented to observe vtkSlicerApplicationLogic.
   void ProcessMRMLLogicsEvents(vtkObject*, long unsigned int, void*) override;
 
@@ -148,15 +148,15 @@ protected:
                                          const std::string& name,
                                      const std::vector<std::string>& extensions,
                                      CommandLineModuleType commandType);
-  std::string ConstructTemporarySceneFileName(vtkMRMLScene *scene);
+  std::string ConstructTemporarySceneFileName(vtkMRMLScene* scene);
   std::string FindHiddenNodeID(const ModuleDescription& d,
                                const ModuleParameter& p);
 
   // The method that runs the command line module
-  void ApplyTask(void *clientdata);
+  void ApplyTask(void* clientdata);
 
   // Communicate progress back to the node
-  static void ProgressCallback(void *);
+  static void ProgressCallback(void*);
 
   /// Remove progress reporting information from process output
   /// (XML data elements, such as filter-progress, filter-stage-progress, filter-name, filter-comment)
@@ -190,7 +190,7 @@ private:
   void operator=(const vtkSlicerCLIModuleLogic&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

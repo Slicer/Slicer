@@ -484,7 +484,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointSelected(int row, int colu
 
   if (d->JumpToSliceEnabled)
   {
-    vtkMRMLMarkupsNode *currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->currentNode());
+    vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->currentNode());
     if (currentMarkupsNode == nullptr)
     {
       return;

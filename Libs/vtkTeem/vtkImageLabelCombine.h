@@ -30,7 +30,7 @@
 class VTK_Teem_EXPORT vtkImageLabelCombine : public vtkThreadedImageAlgorithm
 {
 public:
-  static vtkImageLabelCombine *New();
+  static vtkImageLabelCombine* New();
   vtkTypeMacro(vtkImageLabelCombine,vtkThreadedImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -41,11 +41,11 @@ public:
 
   ///
   /// Set the two inputs to this filter
-  virtual void SetInput1(vtkDataObject *in)
+  virtual void SetInput1(vtkDataObject* in)
   {
       this->SetInputData(0,in);
   }
-  virtual void SetInput2(vtkDataObject *in)
+  virtual void SetInput2(vtkDataObject* in)
   {
       this->SetInputData(1,in);
   }
@@ -56,15 +56,15 @@ protected:
 
   int OverwriteInput;
 
-  int RequestInformation (vtkInformation *,
-                                  vtkInformationVector **,
-                                  vtkInformationVector *) override;
+  int RequestInformation (vtkInformation*,
+                                  vtkInformationVector**,
+                                  vtkInformationVector*) override;
 
-  void ThreadedRequestData(vtkInformation *request,
-                                   vtkInformationVector **inputVector,
-                                   vtkInformationVector *outputVector,
+  void ThreadedRequestData(vtkInformation* request,
+                                   vtkInformationVector** inputVector,
+                                   vtkInformationVector* outputVector,
                                    vtkImageData ***inData,
-                                   vtkImageData **outData,
+                                   vtkImageData** outData,
                                    int extent[6], int threadId) override;
 
   int FillInputPortInformation(int port, vtkInformation* info) override;

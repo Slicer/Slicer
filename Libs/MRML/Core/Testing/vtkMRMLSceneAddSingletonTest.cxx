@@ -28,7 +28,7 @@
 #include <vtkNew.h>
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
+int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char* vtkNotUsed(argv) [])
 {
   vtkNew<vtkMRMLScene> scene;
 

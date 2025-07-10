@@ -56,7 +56,7 @@ vtkMRMLNodeNewMacro(vtkMRMLSubjectHierarchyNode);
 class vtkSubjectHierarchyItem : public vtkObject
 {
 public:
-  static vtkSubjectHierarchyItem *New();
+  static vtkSubjectHierarchyItem* New();
   vtkTypeMacro(vtkSubjectHierarchyItem, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   void ReadXMLAttributes(const char** atts);
@@ -194,7 +194,7 @@ public:
   void FindChildrenByName( std::string name, std::vector<vtkIdType> &foundItemIDs,
                            bool contains=false, bool recursive=true );
   /// Get data nodes (of a certain type) associated to items in the branch of this item
-  void GetDataNodesInBranch(vtkCollection *children, const char* childClass=nullptr);
+  void GetDataNodesInBranch(vtkCollection* children, const char* childClass=nullptr);
   /// Get IDs of all children in the branch recursively
   void GetAllChildren(std::vector<vtkIdType> &childIDs);
   /// Get list of IDs of all direct children of this item
@@ -2060,7 +2060,7 @@ void vtkMRMLSubjectHierarchyNode::WriteNodeBodyXML(ostream& of, int indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSubjectHierarchyNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSubjectHierarchyNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 

@@ -41,7 +41,7 @@
 #include <vtkSmartPointer.h>
 #include "qMRMLWidget.h"
 
-int qMRMLColorTableViewTest1(int argc, char * argv [])
+int qMRMLColorTableViewTest1(int argc, char* argv [])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

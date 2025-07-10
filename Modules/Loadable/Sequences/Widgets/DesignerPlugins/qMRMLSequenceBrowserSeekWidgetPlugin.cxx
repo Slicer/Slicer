@@ -20,15 +20,15 @@
 
 //------------------------------------------------------------------------------
 qMRMLSequenceBrowserSeekWidgetPlugin
-::qMRMLSequenceBrowserSeekWidgetPlugin(QObject *_parent)
+::qMRMLSequenceBrowserSeekWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLSequenceBrowserSeekWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLSequenceBrowserSeekWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qMRMLSequenceBrowserSeekWidget* _widget
     = new qMRMLSequenceBrowserSeekWidget(_parent);

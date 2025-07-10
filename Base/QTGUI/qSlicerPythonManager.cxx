@@ -46,7 +46,7 @@ void qSlicerPythonManager::executeInitializationScripts()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerPythonManager::eventBrokerScriptHandler(const char *script, void *clientData)
+void qSlicerPythonManager::eventBrokerScriptHandler(const char* script, void* clientData)
 {
   Q_UNUSED(script);
   Q_UNUSED(clientData);

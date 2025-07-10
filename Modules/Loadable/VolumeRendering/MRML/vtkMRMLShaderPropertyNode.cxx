@@ -63,19 +63,19 @@ vtkMRMLShaderPropertyNode::~vtkMRMLShaderPropertyNode()
 }
 
 //----------------------------------------------------------------------------
-vtkUniforms * vtkMRMLShaderPropertyNode::GetVertexUniforms()
+vtkUniforms* vtkMRMLShaderPropertyNode::GetVertexUniforms()
 {
   return this->ShaderProperty->GetVertexCustomUniforms();
 }
 
 //----------------------------------------------------------------------------
-vtkUniforms * vtkMRMLShaderPropertyNode::GetFragmentUniforms()
+vtkUniforms* vtkMRMLShaderPropertyNode::GetFragmentUniforms()
 {
   return this->ShaderProperty->GetFragmentCustomUniforms();
 }
 
 //----------------------------------------------------------------------------
-vtkUniforms * vtkMRMLShaderPropertyNode::GetGeometryUniforms()
+vtkUniforms* vtkMRMLShaderPropertyNode::GetGeometryUniforms()
 {
   return this->ShaderProperty->GetGeometryCustomUniforms();
 }
@@ -128,9 +128,9 @@ void vtkMRMLShaderPropertyNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLShaderPropertyNode::ProcessMRMLEvents( vtkObject *caller,
+void vtkMRMLShaderPropertyNode::ProcessMRMLEvents( vtkObject* caller,
                                                    unsigned long event,
-                                                   void *callData)
+                                                   void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
   switch (event)

@@ -675,7 +675,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::updateAbsoluteBrushDiameter()
     double maxY = 1;
     renderer->NormalizedDisplayToDisplay(maxX, maxY);
     int rendererSizeInPixels[2] = { static_cast<int>(maxX - minX), static_cast<int>(maxY - minY) };
-    vtkCamera *cam = renderer->GetActiveCamera();
+    vtkCamera* cam = renderer->GetActiveCamera();
     if (cam->GetParallelProjection())
     {
       // Parallel scale: height of the viewport in world-coordinate distances.
@@ -1318,7 +1318,7 @@ bool qSlicerSegmentEditorPaintEffect::processInteractionEvents(
     {
       // no valid world position (nothing can be picked), hide the brush
       QList<qMRMLWidget*> viewWidgets = d->BrushPipelines.keys();
-      foreach(qMRMLWidget * aViewWidget, viewWidgets)
+      foreach(qMRMLWidget* aViewWidget, viewWidgets)
       {
         bool brushVisibilityChanged = (d->BrushPipelines[aViewWidget]->GetBrushVisibility() != worldPositionValid);
         if (brushVisibilityChanged)

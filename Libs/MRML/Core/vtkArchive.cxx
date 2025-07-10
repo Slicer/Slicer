@@ -70,8 +70,8 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
 {
   char                   tmp[100];
   size_t                         w;
-  const char            *p;
-  const char            *fmt;
+  const char* p;
+  const char* fmt;
   time_t                         tim;
   static time_t          now;
   size_t u_width = 6;
@@ -189,7 +189,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
 long copy_data(struct archive *ar, struct archive *aw)
 {
   long r;
-  const void *buff;
+  const void* buff;
   size_t size;
 #if defined(ARCHIVE_VERSION_NUMBER) && ARCHIVE_VERSION_NUMBER >= 3000000
   __LA_INT64_T offset;
@@ -449,7 +449,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
   while (sit != files.end() && success)
   {
     vtkArchiveTools::Message("Zip: adding:", sit->c_str());
-    const char *fileName = sit->c_str();
+    const char* fileName = sit->c_str();
     ++sit;
 
     //
@@ -603,7 +603,7 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
     else
     {
       // copy data
-      const void *buff;
+      const void* buff;
       size_t size;
 #if defined(ARCHIVE_VERSION_NUMBER) && ARCHIVE_VERSION_NUMBER >= 3000000
       __LA_INT64_T offset;

@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerVolumeRenderingModule(QObject *parent=nullptr);
+  explicit qSlicerVolumeRenderingModule(QObject* parent=nullptr);
   ~qSlicerVolumeRenderingModule() override;
 
   /// Title of the module
@@ -66,7 +66,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

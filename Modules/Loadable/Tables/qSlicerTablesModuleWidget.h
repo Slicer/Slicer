@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_TABLES_EXPORT qSlicerTablesModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerTablesModuleWidget(QWidget *parent=nullptr);
+  qSlicerTablesModuleWidget(QWidget* parent=nullptr);
   ~qSlicerTablesModuleWidget() override;
 
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;

@@ -21,12 +21,12 @@
 #include "qMRMLListWidgetPlugin.h"
 #include "qMRMLListWidget.h"
 
-qMRMLListWidgetPlugin::qMRMLListWidgetPlugin(QObject *_parent)
+qMRMLListWidgetPlugin::qMRMLListWidgetPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
-QWidget *qMRMLListWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLListWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLListWidget* _widget = new qMRMLListWidget(_parent);
   return _widget;

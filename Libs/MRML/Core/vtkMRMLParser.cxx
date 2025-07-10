@@ -209,7 +209,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
   {
     if (node->GetAddToScene())
     {
-      this->NodeCollection->vtkCollection::AddItem((vtkObject *)node);
+      this->NodeCollection->vtkCollection::AddItem((vtkObject*)node);
     }
   }
   else
@@ -221,7 +221,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
 //-----------------------------------------------------------------------------
 
-void vtkMRMLParser::EndElement(const char *name)
+void vtkMRMLParser::EndElement(const char* name)
 {
   if ( !strcmp(name, "MRML") || this->NodeStack.empty() )
   {

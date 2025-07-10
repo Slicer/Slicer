@@ -23,7 +23,7 @@
 #include <vtkTestingOutputWindow.h>
 
 // test copy and swap
-int vtkMRMLMarkupsNodeTest2(int , char * [] )
+int vtkMRMLMarkupsNodeTest2(int, char*[])
 {
   vtkNew<vtkMRMLMarkupsFiducialNode> node1;
   vtkIndent indent;

@@ -48,7 +48,7 @@ public:
   /// Helper function for finding a node in the main scene and all scene view scenes.
   /// This method differs from vtkMRMLScene::GetNodeByID in that this method looks for
   /// node IDs in the internal scene view scenes as well.
-  static vtkMRMLNode* getNodeByID(char *id, vtkMRMLScene* scene);
+  static vtkMRMLNode* getNodeByID(char* id, vtkMRMLScene* scene);
 
   void formatChanged(int row);
 
@@ -125,7 +125,7 @@ protected:
   bool confirmOverwrite(const QString& filepath);
 
   /// Helper function for finding a node in the main scene and all scene view scenes
-  vtkMRMLNode*      getNodeByID(char *id)const;
+  vtkMRMLNode*      getNodeByID(char* id)const;
 
   vtkMRMLScene* MRMLScene;
   QString MRMLSceneRootDirectoryBeforeSaving;
@@ -146,9 +146,9 @@ class qSlicerFileNameItemDelegate : public QStyledItemDelegate
 {
 public:
   typedef QStyledItemDelegate Superclass;
-  qSlicerFileNameItemDelegate( QObject * parent = nullptr );
+  qSlicerFileNameItemDelegate( QObject* parent = nullptr );
   static QString forceFileNameExtension(const QString& fileName, const QString& extension,
-                               vtkMRMLScene *mrmlScene, const QString &nodeID);
+                               vtkMRMLScene* mrmlScene, const QString& nodeID);
 
   vtkMRMLScene* MRMLScene;
 };

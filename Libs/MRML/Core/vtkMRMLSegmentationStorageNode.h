@@ -71,7 +71,7 @@ class VTK_MRML_EXPORT vtkMRMLSegmentationStorageNode : public vtkMRMLStorageNode
 #endif
 
 public:
-  static vtkMRMLSegmentationStorageNode *New();
+  static vtkMRMLSegmentationStorageNode* New();
   vtkTypeMacro(vtkMRMLSegmentationStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -84,7 +84,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   /// Get node XML tag name (like Storage, Model)
   const char* GetNodeTagName() override {return "SegmentationStorage";}
@@ -95,7 +95,7 @@ public:
   const char* GetDefaultWriteFileExtension() override;
 
   /// Return true if the reference node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// Reset supported write file types. Called when source representation is changed
   void ResetSupportedWriteFileTypes();
@@ -122,7 +122,7 @@ protected:
   vtkMRMLSegmentationNode* GetAssociatedDataNode();
 
   /// Write data from a referenced node
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write binary labelmap representation to file
   virtual int WriteBinaryLabelmapRepresentation(vtkMRMLSegmentationNode* segmentationNode, std::string path);
@@ -131,7 +131,7 @@ protected:
   virtual int WritePolyDataRepresentation(vtkMRMLSegmentationNode* segmentationNode, std::string path);
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Read binary labelmap representation from nrrd file (3D spatial + list)
   virtual int ReadBinaryLabelmapRepresentation(vtkMRMLSegmentationNode* segmentationNode, std::string path);

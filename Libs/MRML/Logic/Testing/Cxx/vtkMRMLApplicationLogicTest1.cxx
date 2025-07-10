@@ -42,7 +42,7 @@ int CreateUniqueFileNameTest(std::string tempDir);
 int AddModuleLogicTest();
 
 //-----------------------------------------------------------------------------
-int vtkMRMLApplicationLogicTest1(int argc, char *argv [])
+int vtkMRMLApplicationLogicTest1(int argc, char* argv [])
 {
   if (argc != 2)
   {
@@ -130,7 +130,7 @@ int SliceOrientationPresetInitializationTest()
 
   {
     vtkNew<vtkMRMLScene> scene;
-    vtkMRMLSliceNode * defaultSliceNode =
+    vtkMRMLSliceNode* defaultSliceNode =
         vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
     CHECK_NULL(defaultSliceNode);
   }
@@ -139,7 +139,7 @@ int SliceOrientationPresetInitializationTest()
     vtkNew<vtkMRMLScene> scene;
     vtkNew<vtkMRMLApplicationLogic> appLogic;
     appLogic->SetMRMLScene(scene);
-    vtkMRMLSliceNode * defaultSliceNode =
+    vtkMRMLSliceNode* defaultSliceNode =
         vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
     CHECK_INT(defaultSliceNode->GetNumberOfSliceOrientationPresets(), 3);
   }

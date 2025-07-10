@@ -15,7 +15,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerStorageNo
   : public vtkMRMLAnnotationLinesStorageNode
 {
 public:
-  static vtkMRMLAnnotationRulerStorageNode *New();
+  static vtkMRMLAnnotationRulerStorageNode* New();
   vtkTypeMacro(vtkMRMLAnnotationRulerStorageNode,vtkMRMLAnnotationLinesStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -32,7 +32,7 @@ public:
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   // Description:
   // Get node XML tag name (like Storage, Model)
@@ -40,7 +40,7 @@ public:
 
   /// Read a single ruler from an open list file, called by the hierarchy
   /// storage node
-  int ReadOneRuler(fstream & fstr, vtkMRMLAnnotationRulerNode *refNode);
+  int ReadOneRuler(fstream & fstr, vtkMRMLAnnotationRulerNode* refNode);
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
@@ -53,18 +53,18 @@ protected:
 
   const char* GetAnnotationStorageType() { return "ruler"; }
 
-  int WriteAnnotationRulerProperties(fstream & of, vtkMRMLAnnotationRulerNode *refNode);
-  int WriteAnnotationRulerData(fstream& of, vtkMRMLAnnotationRulerNode *refNode);
+  int WriteAnnotationRulerProperties(fstream & of, vtkMRMLAnnotationRulerNode* refNode);
+  int WriteAnnotationRulerData(fstream& of, vtkMRMLAnnotationRulerNode* refNode);
 
-  int ReadAnnotation(vtkMRMLAnnotationRulerNode *refNode);
-  int ReadAnnotationRulerData(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int typeColumn, int line1IDColumn, int selColumn,  int visColumn, int numColumns);
-  int ReadAnnotationRulerProperties(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int &typeColumn, int& line1IDColumn, int& selColumn, int& visColumn, int& numColumns);
+  int ReadAnnotation(vtkMRMLAnnotationRulerNode* refNode);
+  int ReadAnnotationRulerData(vtkMRMLAnnotationRulerNode* refNode, char line[1024], int typeColumn, int line1IDColumn, int selColumn,  int visColumn, int numColumns);
+  int ReadAnnotationRulerProperties(vtkMRMLAnnotationRulerNode* refNode, char line[1024], int& typeColumn, int& line1IDColumn, int& selColumn, int& visColumn, int& numColumns);
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from the referenced node into the stream
-  int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of) override;
+  int WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream & of) override;
 };
 
 #endif

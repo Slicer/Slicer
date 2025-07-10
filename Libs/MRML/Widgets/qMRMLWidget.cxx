@@ -48,7 +48,7 @@ public:
 // qMRMLWidget methods
 
 //-----------------------------------------------------------------------------
-qMRMLWidget::qMRMLWidget(QWidget * _parent, Qt::WindowFlags f):Superclass(_parent, f)
+qMRMLWidget::qMRMLWidget(QWidget* _parent, Qt::WindowFlags f):Superclass(_parent, f)
   , d_ptr(new qMRMLWidgetPrivate)
 {
 }

@@ -42,7 +42,7 @@
 
 // STD includes
 
-int qMRMLSceneHierarchyModelTest1(int argc, char * argv [])
+int qMRMLSceneHierarchyModelTest1(int argc, char* argv [])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

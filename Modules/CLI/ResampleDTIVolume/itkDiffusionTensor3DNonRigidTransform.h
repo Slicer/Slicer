@@ -50,10 +50,10 @@ public:
   TransformType::Pointer GetTransform() override;
 
   // /Evaluate the position of the transformed tensor in the output image
-  PointType EvaluateTensorPosition( const PointType & point ) override;
+  PointType EvaluateTensorPosition( const PointType& point ) override;
 
   // /Evaluate the transformed tensor
-  TensorDataType EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition ) override;
+  TensorDataType EvaluateTransformedTensor( TensorDataType& tensor, PointType& outputPosition ) override;
 
   void SetAffineTransformType(typename AffineTransform::Pointer transform);
 protected:

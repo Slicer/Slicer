@@ -40,7 +40,7 @@ class VTK_SLICER_SUPERLOADABLEMODULETEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerSuperL
 {
 public:
 
-  static vtkSlicerSuperLoadableModuleTemplateLogic *New();
+  static vtkSlicerSuperLoadableModuleTemplateLogic* New();
   vtkTypeMacro(vtkSlicerSuperLoadableModuleTemplateLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

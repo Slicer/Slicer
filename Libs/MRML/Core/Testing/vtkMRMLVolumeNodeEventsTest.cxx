@@ -33,7 +33,7 @@ class vtkMRMLTestVolumeNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLTestVolumeNode *New();
+  static vtkMRMLTestVolumeNode* New();
   vtkTypeMacro(vtkMRMLTestVolumeNode,vtkMRMLVolumeNode);
   vtkMRMLNode* CreateNodeInstance() override {return  vtkMRMLTestVolumeNode::New();}
   const char* GetNodeTagName() override {return "vtkMRMLTestVolumeNode";}
@@ -41,7 +41,7 @@ public:
 vtkStandardNewMacro(vtkMRMLTestVolumeNode);
 
 //---------------------------------------------------------------------------
-int vtkMRMLVolumeNodeEventsTest(int , char * [] )
+int vtkMRMLVolumeNodeEventsTest(int, char*[])
 {
   vtkNew<vtkMRMLTestVolumeNode> volumeNode;
 

@@ -128,7 +128,7 @@ void qSlicerTerminologySelectorButton::onToggled(bool change)
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorButton::terminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo )
 {
   Q_D(qSlicerTerminologySelectorButton);
   terminologyInfo = d->TerminologyInfo;
@@ -136,7 +136,7 @@ void qSlicerTerminologySelectorButton::terminologyInfo(
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorButton::setTerminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo )
 {
   Q_D(qSlicerTerminologySelectorButton);
 
@@ -146,7 +146,7 @@ void qSlicerTerminologySelectorButton::setTerminologyInfo(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorButton::paintEvent(QPaintEvent *)
+void qSlicerTerminologySelectorButton::paintEvent(QPaintEvent*)
 {
   Q_D(qSlicerTerminologySelectorButton);
   QStylePainter p(this);

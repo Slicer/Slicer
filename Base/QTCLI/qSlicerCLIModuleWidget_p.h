@@ -85,7 +85,7 @@ public:
   vtkMRMLCommandLineModuleNode* commandLineModuleNode()const;
 
   /// Convenient method to cast qSlicerAbstractModule into qSlicerCLIModule
-  qSlicerCLIModule * module()const;
+  qSlicerCLIModule* module()const;
 
 
   typedef std::vector<ModuleParameterGroup>::const_iterator ParameterGroupConstIterator;

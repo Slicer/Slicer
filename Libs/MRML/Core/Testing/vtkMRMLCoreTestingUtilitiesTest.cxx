@@ -34,7 +34,7 @@ bool TestCheckNodeInSceneByID();
 bool TestCheckNodeIdAndName();
 
 //----------------------------------------------------------------------------
-int vtkMRMLCoreTestingUtilitiesTest(int , char * [] )
+int vtkMRMLCoreTestingUtilitiesTest(int, char*[])
 {
   bool res = true;
   res = res && TestCheckNodeInSceneByID();
@@ -49,7 +49,7 @@ namespace
 class vtkMRMLCoreTestingUtilitiesNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLCoreTestingUtilitiesNode *New();
+  static vtkMRMLCoreTestingUtilitiesNode* New();
   vtkTypeMacro(vtkMRMLCoreTestingUtilitiesNode, vtkMRMLNode);
   vtkMRMLNode* CreateNodeInstance() override
   {

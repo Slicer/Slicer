@@ -30,9 +30,9 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_PLUGINS_EXPORT qMRMLModelDisplayNodeWidg
   Q_OBJECT
 
 public:
-  qMRMLModelDisplayNodeWidgetPlugin(QObject * newParent = nullptr);
+  qMRMLModelDisplayNodeWidgetPlugin(QObject* newParent = nullptr);
 
-  QWidget *createWidget(QWidget *newParent) override;
+  QWidget* createWidget(QWidget* newParent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

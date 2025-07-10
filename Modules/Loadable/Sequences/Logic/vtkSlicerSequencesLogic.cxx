@@ -72,7 +72,7 @@ void vtkSlicerSequencesLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSequencesLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerSequencesLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -172,7 +172,7 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename, 
     useURI = this->GetMRMLScene()->GetCacheManager()->IsRemoteReference(filename);
     vtkDebugMacro("AddSequence: file name is remote: " << filename);
   }
-  const char *localFile = 0;
+  const char* localFile = 0;
   if (useURI)
   {
     storageNode->SetURI(filename);
@@ -594,7 +594,7 @@ void vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrows
     vtkErrorMacro("vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes failed: invalid browser node");
     return;
   }
-  vtkMRMLSequenceNode *masterNode = browserNode->GetMasterSequenceNode();
+  vtkMRMLSequenceNode* masterNode = browserNode->GetMasterSequenceNode();
   if (!masterNode)
   {
     vtkErrorMacro("Cannot record node modification: master sequence node is invalid");
@@ -749,9 +749,9 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSynchronizedNode(vtkMRMLNode* s
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSequencesLogic::ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkSlicerSequencesLogic::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
 {
-  vtkMRMLSequenceBrowserNode *browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(caller);
+  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(caller);
   if (browserNode==nullptr)
   {
     vtkErrorMacro("Expected a vtkMRMLSequenceBrowserNode");

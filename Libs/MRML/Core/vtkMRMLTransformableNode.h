@@ -57,7 +57,7 @@ public:
   /// If current node or new parent transform node is not added to the scene yet
   /// then circular reference is not checked and it is the developer's responsibility
   /// no child transform is set as parent.
-  bool SetAndObserveTransformNodeID(const char *transformNodeID);
+  bool SetAndObserveTransformNodeID(const char* transformNodeID);
 
   ///
   /// Associated transform MRML node
@@ -98,7 +98,7 @@ public:
 
   /// Utility function to convert a point position in the node's coordinate system to world coordinate system.
   /// \sa TransformPointToWorld, SetAndObserveTransformNodeID
-  virtual void TransformPointToWorld(const vtkVector3d &inLocal, vtkVector3d &outWorld);
+  virtual void TransformPointToWorld(const vtkVector3d& inLocal, vtkVector3d& outWorld);
 
   /// Utility function to convert a point position in world coordinate system to markup node's coordinate system
   /// \sa TransformPointToWorld, SetAndObserveTransformNodeID
@@ -106,10 +106,10 @@ public:
 
   /// Utility function to convert a point position in world coordinate system to markup node's coordinate system
   /// \sa TransformPointToWorld, SetAndObserveTransformNodeID
-  virtual void TransformPointFromWorld(const vtkVector3d &inWorld, vtkVector3d &outLocal);
+  virtual void TransformPointFromWorld(const vtkVector3d& inWorld, vtkVector3d& outLocal);
 
   /// Get referenced transform node id
-  const char *GetTransformNodeID();
+  const char* GetTransformNodeID();
 
   /// Apply the associated transform to the transformable node. Return true
   /// on success, false otherwise.
@@ -136,15 +136,15 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called when a node reference ID is modified.
-  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
   /// Called when transform node reference added/modified/removed
   virtual void OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode);

@@ -48,10 +48,10 @@ public:
   itkTypeMacro(DiffusionTensor3DTransform, Object);
 
   // /Evaluate the position of the transformed tensor
-  virtual PointType EvaluateTensorPosition( const PointType & point ) = 0;
+  virtual PointType EvaluateTensorPosition( const PointType& point ) = 0;
 
   // /Evaluate the transformed tensor
-  virtual TensorDataType EvaluateTransformedTensor(  TensorDataType & tensor, PointType & outputPosition) = 0;
+  virtual TensorDataType EvaluateTransformedTensor(  TensorDataType& tensor, PointType& outputPosition) = 0;
 
   // /Set the measurement frame of the tensor
   itkSetMacro( MeasurementFrame, MatrixTransformType );

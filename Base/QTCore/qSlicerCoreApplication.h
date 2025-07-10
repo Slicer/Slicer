@@ -114,7 +114,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 public:
 
   typedef QApplication Superclass;
-  qSlicerCoreApplication(int &argc, char **argv);
+  qSlicerCoreApplication(int& argc, char** argv);
   ~qSlicerCoreApplication() override;
 
   /// Return a reference to the application singleton.
@@ -477,7 +477,7 @@ public:
   /// Return the documentation base URL.
   /// By default, {documentationbaseurl}/user_guide/modules/{lowercasemodulename}.html
   /// but it can be changed in the application settings (ModuleDocumentationURL).
-  Q_INVOKABLE QString moduleDocumentationUrl(const QString &moduleName)const;
+  Q_INVOKABLE QString moduleDocumentationUrl(const QString& moduleName)const;
 
   /// Return the copyrights of Slicer
   virtual QString copyrights()const;
@@ -663,7 +663,7 @@ protected:
 
   /// Set MRML Scene
   /// \sa vtkSlicerApplicationLogic::SetMRMLSceneDataIO
-  virtual void setMRMLScene(vtkMRMLScene * scene);
+  virtual void setMRMLScene(vtkMRMLScene* scene);
 
 protected slots:
 
@@ -722,7 +722,7 @@ signals:
   void usageEventLogged(const QString& component, const QString& event);
 
 protected:
-  qSlicerCoreApplication(qSlicerCoreApplicationPrivate* pimpl, int &argc, char **argv);
+  qSlicerCoreApplication(qSlicerCoreApplicationPrivate* pimpl, int& argc, char** argv);
   QScopedPointer<qSlicerCoreApplicationPrivate> d_ptr;
 
 private:

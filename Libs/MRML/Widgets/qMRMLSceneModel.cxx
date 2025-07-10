@@ -258,7 +258,7 @@ void qMRMLSceneModelPrivate::reparentItems(
 //------------------------------------------------------------------------------
 // qMRMLSceneModel
 //------------------------------------------------------------------------------
-qMRMLSceneModel::qMRMLSceneModel(QObject *_parent)
+qMRMLSceneModel::qMRMLSceneModel(QObject* _parent)
   :QStandardItemModel(_parent)
   , d_ptr(new qMRMLSceneModelPrivate(*this))
 {
@@ -267,7 +267,7 @@ qMRMLSceneModel::qMRMLSceneModel(QObject *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLSceneModel::qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parentObject)
+qMRMLSceneModel::qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject* parentObject)
   :QStandardItemModel(parentObject)
   , d_ptr(pimpl)
 {
@@ -690,8 +690,8 @@ QMimeData* qMRMLSceneModel::mimeData(const QModelIndexList& indexes)const
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
-                                   int row, int column, const QModelIndex &parent)
+bool qMRMLSceneModel::dropMimeData(const QMimeData* data, Qt::DropAction action,
+                                   int row, int column, const QModelIndex& parent)
 {
   Q_UNUSED(column);
   // We want to do drag&drop only into the first item of a line (and not on a
@@ -787,7 +787,7 @@ void qMRMLSceneModel::populateScene()
   Q_D(qMRMLSceneModel);
   // Add nodes
   int index = -1;
-  vtkMRMLNode *node = nullptr;
+  vtkMRMLNode* node = nullptr;
   vtkCollectionSimpleIterator it;
   d->MisplacedNodes.clear();
   if (!d->MRMLScene)
@@ -1369,7 +1369,7 @@ void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLNodeIDChanged(vtkObject* node, void* callData)
 {
-  char* oldID = reinterpret_cast<char *>(callData);
+  char* oldID = reinterpret_cast<char*>(callData);
   this->updateNodeItems(vtkMRMLNode::SafeDownCast(node), QString(oldID));
 }
 
@@ -1422,7 +1422,7 @@ void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::onItemChanged(QStandardItem * item)
+void qMRMLSceneModel::onItemChanged(QStandardItem* item)
 {
   Q_D(qMRMLSceneModel);
 
@@ -1480,7 +1480,7 @@ void qMRMLSceneModel::delayedItemChanged()
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModel::isANode(const QStandardItem * item)const
+bool qMRMLSceneModel::isANode(const QStandardItem* item)const
 {
   Q_D(const qMRMLSceneModel);
   return item

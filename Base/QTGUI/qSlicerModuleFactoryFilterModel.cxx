@@ -41,7 +41,7 @@ protected:
 
 public:
   qSlicerModuleFactoryFilterModelPrivate(qSlicerModuleFactoryFilterModel& object);
-  void decodeDataRecursive(QDataStream &stream, QStandardItem *item);
+  void decodeDataRecursive(QDataStream& stream, QStandardItem* item);
   bool ShowToLoad;
   bool ShowToIgnore;
   bool ShowLoaded;
@@ -56,7 +56,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-void qSlicerModuleFactoryFilterModelPrivate::decodeDataRecursive(QDataStream &stream, QStandardItem *item)
+void qSlicerModuleFactoryFilterModelPrivate::decodeDataRecursive(QDataStream& stream, QStandardItem* item)
 {
     int colCount, childCount;
     stream >> *item;
@@ -67,7 +67,7 @@ void qSlicerModuleFactoryFilterModelPrivate::decodeDataRecursive(QDataStream &st
 
     while(childPos > 0) {
         childPos--;
-        QStandardItem *child = new QStandardItem();
+        QStandardItem* child = new QStandardItem();
         decodeDataRecursive(stream, child);
         item->setChild( childPos / colCount, childPos % colCount, child);
     }
@@ -354,8 +354,8 @@ Qt::DropActions qSlicerModuleFactoryFilterModel::supportedDropActions()const
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
-                                      int row, int column, const QModelIndex &parent)
+bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::DropAction action,
+                                      int row, int column, const QModelIndex& parent)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
   // check if the action is supported
@@ -380,12 +380,12 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData *data, Qt::Dr
   int bottom = 0;
   int right = 0;
   QVector<int> rows, columns;
-  QVector<QStandardItem *> items;
+  QVector<QStandardItem*> items;
 
   while (!stream.atEnd())
   {
     int r, c;
-    QStandardItem *item = new QStandardItem;
+    QStandardItem* item = new QStandardItem;
     stream >> r >> c;
     d->decodeDataRecursive(stream, item);
 

@@ -32,7 +32,7 @@
 // STL includes
 #include <sstream>
 
-int vtkMRMLMarkupsNodeTest1(int , char * [] )
+int vtkMRMLMarkupsNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLMarkupsFiducialNode> node1;
   vtkNew<vtkMRMLScene> scene;
@@ -217,7 +217,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   testOrientation[1] = 0.0;
   testOrientation[2] = 1.0;
   testOrientation[3] = 0.0;
-  double *orientationPointer = testOrientation;
+  double* orientationPointer = testOrientation;
   node1->SetNthControlPointOrientation(0, orientationPointer);
   node1->GetNthControlPointOrientation(0, newOrientation);
   for (int r = 0; r < 4; r++)

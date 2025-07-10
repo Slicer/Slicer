@@ -24,7 +24,7 @@
 class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkITKImageToImageFilterFF
 {
  public:
-  static vtkITKGradientAnisotropicDiffusionImageFilter *New();
+  static vtkITKGradientAnisotropicDiffusionImageFilter* New();
   vtkTypeMacro(vtkITKGradientAnisotropicDiffusionImageFilter, vtkITKImageToImageFilterFF);
 
   double GetTimeStep ()

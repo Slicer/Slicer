@@ -36,7 +36,7 @@ namespace
 class vtkMRMLMarkupNodeObserver : public vtkCommand
 {
 public:
-  static vtkMRMLMarkupNodeObserver *New()
+  static vtkMRMLMarkupNodeObserver* New()
   {
     return new vtkMRMLMarkupNodeObserver;
   }
@@ -45,7 +45,7 @@ public:
   {
   }
 
-  void Execute(vtkObject *caller, unsigned long event, void*) override
+  void Execute(vtkObject* caller, unsigned long event, void*) override
   {
     vtkMRMLDisplayableNode* dispNode = vtkMRMLDisplayableNode::SafeDownCast(caller);
     if (!dispNode)

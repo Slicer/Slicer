@@ -46,7 +46,7 @@ public:
   // Allow the helper to call protected methods of displayable manager
   friend class vtkMRMLMarkupsDisplayableManagerHelper;
 
-  static vtkMRMLMarkupsDisplayableManager *New();
+  static vtkMRMLMarkupsDisplayableManager* New();
   vtkTypeMacro(vtkMRMLMarkupsDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -55,11 +55,11 @@ public:
   /// it's a 2d displayable manager
   virtual bool Is2DDisplayableManager();
   /// Get the sliceNode, if registered. This would mean it is a 2D SliceView displayableManager.
-  vtkMRMLSliceNode * GetMRMLSliceNode();
+  vtkMRMLSliceNode* GetMRMLSliceNode();
 
-  vtkMRMLMarkupsDisplayableManagerHelper *  GetHelper() { return this->Helper; };
+  vtkMRMLMarkupsDisplayableManagerHelper* GetHelper() { return this->Helper; };
 
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
   void SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData) override;
@@ -79,14 +79,14 @@ public:
 
   /// Convert device coordinates (display) to XYZ coordinates (viewport).
   /// Parameter \a xyz is double[3]
-  /// \sa ConvertDeviceToXYZ(vtkRenderWindowInteractor *, vtkMRMLSliceNode *, double x, double y, double xyz[3])
+  /// \sa ConvertDeviceToXYZ(vtkRenderWindowInteractor*, vtkMRMLSliceNode*, double x, double y, double xyz[3])
   void ConvertDeviceToXYZ(double x, double y, double xyz[3]);
 
   /// Get the widget of a node.
-  vtkSlicerMarkupsWidget* GetWidget(vtkMRMLMarkupsDisplayNode * node);
+  vtkSlicerMarkupsWidget* GetWidget(vtkMRMLMarkupsDisplayNode* node);
 
   /// Get the interaction widget of a node.
-  vtkSlicerMarkupsInteractionWidget* GetInteractionWidget(vtkMRMLMarkupsDisplayNode * node);
+  vtkSlicerMarkupsInteractionWidget* GetInteractionWidget(vtkMRMLMarkupsDisplayNode* node);
 
 protected:
 
@@ -95,7 +95,7 @@ protected:
 
   vtkMRMLAbstractWidget* FindClosestWidget(vtkMRMLInteractionEventData* callData, double& closestDistance2);
 
-  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Wrap the superclass render request in a check for batch processing
   virtual void RequestRender();

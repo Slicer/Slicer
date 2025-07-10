@@ -20,15 +20,15 @@
 
 //------------------------------------------------------------------------------
 qSlicerLabelMapVolumeDisplayWidgetPlugin
-::qSlicerLabelMapVolumeDisplayWidgetPlugin(QObject *_parent)
+::qSlicerLabelMapVolumeDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerLabelMapVolumeDisplayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerLabelMapVolumeDisplayWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qSlicerLabelMapVolumeDisplayWidget* _widget
     = new qSlicerLabelMapVolumeDisplayWidget(_parent);

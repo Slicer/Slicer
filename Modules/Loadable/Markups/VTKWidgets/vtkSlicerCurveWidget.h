@@ -38,7 +38,7 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveWidget : public 
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerCurveWidget *New();
+  static vtkSlicerCurveWidget* New();
 
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkSlicerCurveWidget, vtkSlicerMarkupsWidget);

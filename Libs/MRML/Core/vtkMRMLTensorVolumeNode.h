@@ -34,7 +34,7 @@ class vtkMatrix4x4;
 class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 {
   public:
-  static vtkMRMLTensorVolumeNode *New();
+  static vtkMRMLTensorVolumeNode* New();
   vtkTypeMacro(vtkMRMLTensorVolumeNode,vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -64,7 +64,7 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 
  /// Description:
  /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override
+  void UpdateReferenceID(const char* oldID, const char* newID) override
     { Superclass::UpdateReferenceID(oldID, newID); }
 
   ///
@@ -84,8 +84,8 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 
   ///
   /// Set/Get the measurement frame matrix from a vtk 4x4 matrix
-  void SetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
-  void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
+  void SetMeasurementFrameMatrix(vtkMatrix4x4* mat);
+  void GetMeasurementFrameMatrix(vtkMatrix4x4* mat);
 
   ///
   /// Create default storage node or nullptr if does not have one

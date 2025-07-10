@@ -21,7 +21,7 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 
-int vtkMRMLModelHierarchyNodeTest1(int , char * [] )
+int vtkMRMLModelHierarchyNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLModelHierarchyNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -40,7 +40,7 @@ int vtkMRMLModelHierarchyNodeTest1(int , char * [] )
   scene->AddNode(mnode.GetPointer());
   node1->SetModelNodeID(mnode->GetID());
 
-  vtkMRMLModelNode * mnode2 = node1->GetModelNode();
+  vtkMRMLModelNode* mnode2 = node1->GetModelNode();
   if (mnode2 != mnode.GetPointer())
   {
     std::cerr << "ERROR setting/getting model node" << std::endl;

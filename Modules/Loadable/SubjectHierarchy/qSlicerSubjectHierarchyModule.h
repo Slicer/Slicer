@@ -44,7 +44,7 @@ class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModule :
 
 public:
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerSubjectHierarchyModule(QObject *parent=nullptr);
+  explicit qSlicerSubjectHierarchyModule(QObject* parent=nullptr);
   ~qSlicerSubjectHierarchyModule() override;
 
   qSlicerGetTitleMacro(tr("Subject Hierarchy"));

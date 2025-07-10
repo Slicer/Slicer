@@ -9,9 +9,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLTransformSlidersPlugin : public QObject,
   Q_OBJECT
 
 public:
-  qMRMLTransformSlidersPlugin(QObject *_parent = nullptr);
+  qMRMLTransformSlidersPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

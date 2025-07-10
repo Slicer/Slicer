@@ -157,7 +157,7 @@ public:
   // given the supplied edgeId, and the return value will be false.  If
   // the edge (i0, i1) is in the list, then edgeId will be set to the
   // stored value and the return value will be true.
-  bool InsertUniqueEdge(vtkIdType i0, vtkIdType i1, vtkIdType &edgeId);
+  bool InsertUniqueEdge(vtkIdType i0, vtkIdType i1, vtkIdType& edgeId);
 
   // Description:
   // A helper function for interpolating a new point along an edge.  It
@@ -165,9 +165,9 @@ public:
   // if a new point was added to the locator.  The values i0, i1, v0, v1
   // are the edge endpoints and scalar values, respectively.
   bool InterpolateEdge(
-    vtkPoints *inPoints, vtkPoints *outPoints,
+    vtkPoints* inPoints, vtkPoints* outPoints,
     vtkIdType i0, vtkIdType i1, double v0, double v1,
-    vtkIdType &i);
+    vtkIdType& i);
 };
 
 void EdgeLocator::Initialize()
@@ -182,7 +182,7 @@ void EdgeLocator::Initialize()
 }
 
 bool EdgeLocator::InsertUniqueEdge(
-  vtkIdType i0, vtkIdType i1, vtkIdType &edgeId)
+  vtkIdType i0, vtkIdType i1, vtkIdType& edgeId)
 {
   // Ensure consistent ordering of edge
   if (i1 < i0)
@@ -231,9 +231,9 @@ bool EdgeLocator::InsertUniqueEdge(
 }
 
 bool EdgeLocator::InterpolateEdge(
-  vtkPoints *points, vtkPoints *outPoints,
+  vtkPoints* points, vtkPoints* outPoints,
   vtkIdType i0, vtkIdType i1, double v0, double v1,
-  vtkIdType &i)
+  vtkIdType& i)
 {
   // This swap guarantees that exactly the same point is computed
   // for both line directions, as long as the endpoints are the same.
@@ -339,9 +339,9 @@ void vtkPolyDataToFractionalLabelmapFilter::SetOutputSpacing(double x, double y,
 
 //----------------------------------------------------------------------------
 vtkOrientedImageData* vtkPolyDataToFractionalLabelmapFilter::AllocateOutputData(
-  vtkDataObject *out, int* uExt)
+  vtkDataObject* out, int* uExt)
 {
-  vtkOrientedImageData *outputData = vtkOrientedImageData::SafeDownCast(out);
+  vtkOrientedImageData* outputData = vtkOrientedImageData::SafeDownCast(out);
   if (!outputData)
   {
     vtkWarningMacro("Call to AllocateOutputData with non vtkOrientedImageData"
@@ -372,21 +372,21 @@ vtkOrientedImageData* vtkPolyDataToFractionalLabelmapFilter::AllocateOutputData(
 
 //----------------------------------------------------------------------------
 int vtkPolyDataToFractionalLabelmapFilter::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
 
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  vtkOrientedImageData *outputData = vtkOrientedImageData::SafeDownCast(
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkOrientedImageData* outputData = vtkOrientedImageData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
     this->AllocateOutputData(
     outputData,
     outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT()));
 
-  vtkInformation *inputInfo = inputVector[0]->GetInformationObject(0);
-  vtkPolyData *inputData = vtkPolyData::SafeDownCast(
+  vtkInformation* inputInfo = inputVector[0]->GetInformationObject(0);
+  vtkPolyData* inputData = vtkPolyData::SafeDownCast(
     inputInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   vtkSmartPointer<vtkMatrix4x4> outputLabelmapImageToWorldMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -533,7 +533,7 @@ void vtkPolyDataToFractionalLabelmapFilter::AddBinaryLabelMapToFractionalLabelMa
 
 //----------------------------------------------------------------------------
 void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
-  vtkImageStencilData *data, vtkPolyData* closedSurface,
+  vtkImageStencilData* data, vtkPolyData* closedSurface,
   int extent[6])
 {
   // Description of algorithm:
@@ -546,8 +546,8 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
   //    and use them to create one z slice of the vtkStencilData
 
   // the spacing and origin of the generated stencil
-  double *spacing = data->GetSpacing();
-  double *origin = data->GetOrigin();
+  double* spacing = data->GetSpacing();
+  double* origin = data->GetOrigin();
 
   // if we have no data then return
   if (!this->GetInput()->GetNumberOfPoints())
@@ -562,7 +562,7 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
   invspacing[2] = 1.0/spacing[2];
 
   // get the input data
-  vtkPolyData *input = closedSurface;
+  vtkPolyData* input = closedSurface;
 
   // the output produced by cutting the polydata with the Z plane
   vtkSmartPointer<vtkPolyData> slice;
@@ -647,7 +647,7 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
       // get the connectivity count for each point
       vtkSmartPointer<vtkCellArray> lines = slice->GetLines();
       vtkIdType npts = 0;
-      const vtkIdType *pointIds = nullptr;
+      const vtkIdType* pointIds = nullptr;
       vtkIdType count = lines->GetNumberOfConnectivityEntries();
       for (vtkIdType loc = 0; loc < count; loc += npts + 1)
       {
@@ -884,13 +884,13 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
 
 //----------------------------------------------------------------------------
 void vtkPolyDataToFractionalLabelmapFilter::PolyDataCutter(
-  vtkPolyData *input, vtkPolyData *output, double z)
+  vtkPolyData* input, vtkPolyData* output, double z)
 {
-  vtkPoints *points = input->GetPoints();
-  vtkPoints *newPoints = vtkPoints::New();
+  vtkPoints* points = input->GetPoints();
+  vtkPoints* newPoints = vtkPoints::New();
   newPoints->SetDataType(points->GetDataType());
   newPoints->Allocate(333);
-  vtkCellArray *newLines = vtkCellArray::New();
+  vtkCellArray* newLines = vtkCellArray::New();
   newLines->Allocate(1000);
 
   // An edge locator to avoid point duplication while clipping
@@ -923,7 +923,7 @@ void vtkPolyDataToFractionalLabelmapFilter::PolyDataCutter(
         continue;
     }
 
-    const vtkIdType *ptIds = nullptr;
+    const vtkIdType* ptIds = nullptr;
     vtkIdType npts;
     input->GetCellPoints(id, npts, ptIds);
     loc += npts + 1;

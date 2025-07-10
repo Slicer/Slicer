@@ -13,7 +13,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 
-int vtkMRMLDiffusionWeightedVolumeDisplayNodeTest1(int , char * [] )
+int vtkMRMLDiffusionWeightedVolumeDisplayNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLDiffusionWeightedVolumeDisplayNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

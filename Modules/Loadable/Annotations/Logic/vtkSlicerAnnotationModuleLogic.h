@@ -23,7 +23,7 @@ public:
     RefreshRequestEvent = vtkCommand::UserEvent,
     HierarchyNodeAddedEvent
   };
-  static vtkSlicerAnnotationModuleLogic *New();
+  static vtkSlicerAnnotationModuleLogic* New();
   vtkTypeMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

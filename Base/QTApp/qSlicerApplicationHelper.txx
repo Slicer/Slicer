@@ -205,8 +205,8 @@ int qSlicerApplicationHelper::postInitializeApplication(
     splashScreen->installEventFilter(&draggable);
   }
 
-  qSlicerModuleManager * moduleManager = app.moduleManager();
-  qSlicerModuleFactoryManager * moduleFactoryManager = moduleManager->factoryManager();
+  qSlicerModuleManager* moduleManager = app.moduleManager();
+  qSlicerModuleFactoryManager* moduleFactoryManager = moduleManager->factoryManager();
   QStringList additionalModulePaths;
   foreach(const QString& extensionOrModulePath, app.commandOptions()->additionalModulePaths())
   {

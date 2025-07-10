@@ -66,7 +66,7 @@ void vtkMRMLTransformHandleWidget::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLTransformHandleWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
+bool vtkMRMLTransformHandleWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   bool canProcess = Superclass::CanProcessInteractionEvent(eventData, distance2);
   if (canProcess)

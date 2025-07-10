@@ -10,10 +10,10 @@ class vtkStringArray;
 
 struct ITKImageFileFormatStruct
 {
-  const char *ClassName;
-  const char *Description;
-  const char *GenericName;
-  const char *Extension;
+  const char* ClassName;
+  const char* Description;
+  const char* GenericName;
+  const char* Extension;
 };
 using ITKImageFileFormat = struct ITKImageFileFormatStruct;
 
@@ -22,7 +22,7 @@ class VTK_MRML_EXPORT vtkDataFileFormatHelper : public vtkObject
   public:
 
   /// The Usual vtk class functions
-  static vtkDataFileFormatHelper *New();
+  static vtkDataFileFormatHelper* New();
   vtkTypeMacro(vtkDataFileFormatHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

@@ -41,7 +41,7 @@ std::string GenerateRandomCapitalLetters(int numberOfCharacters)
 }
 
 template <class Tin>
-int DoIt( int argc, char * argv[])
+int DoIt( int argc, char* argv[])
 {
   PARSE_ARGS;
 
@@ -63,7 +63,7 @@ int DoIt( int argc, char * argv[])
     reader->Update();
     image = reader->GetOutput();
   }
-  catch( itk::ExceptionObject & excp )
+  catch( itk::ExceptionObject& excp )
   {
     std::cerr << "Exception thrown while reading the image file: " << inputVolume << std::endl;
     std::cerr << excp << std::endl;
@@ -514,7 +514,7 @@ int DoIt( int argc, char * argv[])
       writer->SetImageIO(gdcmIO);
       writer->Update();
     }
-    catch( itk::ExceptionObject & excp )
+    catch( itk::ExceptionObject& excp )
     {
       std::cerr << "Exception thrown while writing the file " << std::endl;
       std::cerr << excp << std::endl;
@@ -567,7 +567,7 @@ int main( int argc, char* argv[] )
       return EXIT_FAILURE;
     }
   }
-  catch( itk::ExceptionObject & excep )
+  catch( itk::ExceptionObject& excep )
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

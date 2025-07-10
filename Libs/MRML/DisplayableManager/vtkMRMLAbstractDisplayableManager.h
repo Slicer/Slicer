@@ -48,7 +48,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager
   : public vtkMRMLAbstractLogic
 {
 public:
-  static vtkMRMLAbstractDisplayableManager *New();
+  static vtkMRMLAbstractDisplayableManager* New();
   void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkTypeMacro(vtkMRMLAbstractDisplayableManager, vtkMRMLAbstractLogic);
 
@@ -61,10 +61,10 @@ public:
   /// lightbox pane. The DisplayableManagers use this method to map
   /// coordinates to the proper lightbox pane, e.g. in placing
   /// crosshairs or markups in the proper renderer.
-  virtual void SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy *);
+  virtual void SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy*);
 
   /// Get the LightBoxRendererManagerProxy if one has been provided
-  /// \sa SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy *)
+  /// \sa SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy*)
   virtual vtkMRMLLightBoxRendererManagerProxy* GetLightBoxRendererManagerProxy();
 
   /// Get the default renderer for this displayable manager.
@@ -94,7 +94,7 @@ public:
   /// Return true if the displayable manager can process the event.
   /// Distance2 is the squared distance in display coordinates from the closest interaction position.
   /// The displayable manager with the closest distance will get the chance to process the interaction event.
-  virtual bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2);
+  virtual bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2);
 
   /// Process an interaction event.
   /// Returns true if the event should be aborted (not processed any further by other event observers).
@@ -120,7 +120,7 @@ protected:
   ~vtkMRMLAbstractDisplayableManager() override;
 
   /// Get MRML Displayable Node
-  vtkMRMLNode * GetMRMLDisplayableNode();
+  vtkMRMLNode* GetMRMLDisplayableNode();
 
   /// Access to SetRenderer, SetMRMLDisplayableNode and CreateIfPossible methods
   friend class vtkMRMLDisplayableManagerGroup;
@@ -144,7 +144,7 @@ protected:
 
   void ProcessMRMLNodesEvents(vtkObject* caller,
                                       unsigned long event,
-                                      void * callData) override;
+                                      void* callData) override;
 
   /// Receives all the events fired by any graphical object interacted by the
   /// user (typically vtk widgets).
@@ -160,17 +160,17 @@ protected:
   /// it.
   virtual void ProcessWidgetsEvents(vtkObject* caller,
                                     unsigned long event,
-                                    void * callData);
+                                    void* callData);
 
   /// WidgetsCallback is a static function to relay modified events from the vtk widgets
-  static void WidgetsCallback(vtkObject *caller, unsigned long eid,
-                              void *clientData, void *callData);
+  static void WidgetsCallback(vtkObject* caller, unsigned long eid,
+                              void* clientData, void* callData);
 
   /// Get vtkWidget callbackCommand
-  vtkCallbackCommand * GetWidgetsCallbackCommand();
+  vtkCallbackCommand* GetWidgetsCallbackCommand();
 
   /// Get widget observerManager
-  vtkObserverManager * GetWidgetsObserverManager()const;
+  vtkObserverManager* GetWidgetsObserverManager()const;
 
   /// Called by SetMRMLScene - Used to initialize the Scene
   /// Observe all the events of the scene and call OnMRMLSceneEndClose()
@@ -189,10 +189,10 @@ protected:
 
   /// Set MRML DisplayableNode
   /// Called by vtkMRMLDisplayableManagerFactory
-  void SetAndObserveMRMLDisplayableNode(vtkMRMLNode * newMRMLDisplayableNode);
+  void SetAndObserveMRMLDisplayableNode(vtkMRMLNode* newMRMLDisplayableNode);
 
   /// Get associated DisplayableManager group
-  vtkMRMLDisplayableManagerGroup * GetMRMLDisplayableManagerGroup();
+  vtkMRMLDisplayableManagerGroup* GetMRMLDisplayableManagerGroup();
 
   /// Invoke Create() and set Created flag to True
   /// A no-op if IsCreated() return True

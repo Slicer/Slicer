@@ -43,30 +43,30 @@ vtkImageLabelOutline::~vtkImageLabelOutline() = default;
 // Description:
 // This templated function executes the filter for any type of data.
 template <class T>
-static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
-                     vtkImageData *inData, T *vtkNotUsed(inPtr),
-                     vtkImageData *outData,
+static void vtkImageLabelOutlineExecute(vtkImageLabelOutline* self,
+                     vtkImageData* inData, T* vtkNotUsed(inPtr),
+                     vtkImageData* outData,
                      int outExt[6], int id)
 {
-  int *kernelMiddle, *kernelSize;
+  int* kernelMiddle, *kernelSize;
   // For looping though output (and input) pixels.
   int outMin0, outMax0, outMin1, outMax1, outMin2, outMax2;
   int outIdx0, outIdx1, outIdx2;
   vtkIdType inInc0, inInc1, inInc2;
   vtkIdType outInc0, outInc1, outInc2;
-  T *inPtr0, *inPtr1, *inPtr2;
-  T *outPtr0, *outPtr1, *outPtr2;
+  T* inPtr0, *inPtr1, *inPtr2;
+  T* outPtr0, *outPtr1, *outPtr2;
   // For looping through hood pixels
   int hoodMin0, hoodMax0, hoodMin1, hoodMax1, hoodMin2, hoodMax2;
   int hoodIdx0, hoodIdx1, hoodIdx2;
-  T *hoodPtr0, *hoodPtr1, *hoodPtr2;
+  T* hoodPtr0, *hoodPtr1, *hoodPtr2;
   // The extent of the whole input image
   int inImageMin0, inImageMin1, inImageMin2;
   int inImageMax0, inImageMax1, inImageMax2;
   // Other
   T backgroundLabelValue = (T)(self->GetBackground());
   T inLabelValue;
-  T *outPtr = (T*)outData->GetScalarPointerForExtent(outExt);
+  T* outPtr = (T*)outData->GetScalarPointerForExtent(outExt);
   unsigned long count = 0;
   unsigned long target;
 
@@ -200,13 +200,13 @@ static void vtkImageLabelOutlineExecute(vtkImageLabelOutline *self,
 // algorithm to fill the output from the input.
 // It just executes a switch statement to call the correct function for
 // the data data types.
-void vtkImageLabelOutline::ThreadedExecute(vtkImageData *inData,
-  vtkImageData *outData,
+void vtkImageLabelOutline::ThreadedExecute(vtkImageData* inData,
+  vtkImageData* outData,
   int outExt[6], int id)
 {    int x1;
 
   // Single component input is required
-  vtkImageData *input = this->GetImageDataInput(0);
+  vtkImageData* input = this->GetImageDataInput(0);
   x1 = input->GetNumberOfScalarComponents();
   if (x1 != 1) {
     vtkErrorMacro(<<"Input has "<<x1<<" instead of 1 scalar component.");
@@ -214,52 +214,52 @@ void vtkImageLabelOutline::ThreadedExecute(vtkImageData *inData,
   }
 
 
-  void *inPtr = inData->GetScalarPointerForExtent(outExt);
+  void* inPtr = inData->GetScalarPointerForExtent(outExt);
 
   switch (inData->GetScalarType())
   {
   case VTK_DOUBLE:
-    vtkImageLabelOutlineExecute(this, inData, (double *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (double*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_FLOAT:
-    vtkImageLabelOutlineExecute(this, inData, (float *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (float*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_LONG:
-    vtkImageLabelOutlineExecute(this, inData, (long *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (long*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_UNSIGNED_LONG:
-    vtkImageLabelOutlineExecute(this, inData, (unsigned long *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (unsigned long*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_INT:
-    vtkImageLabelOutlineExecute(this, inData, (int *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (int*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_UNSIGNED_INT:
-    vtkImageLabelOutlineExecute(this, inData, (unsigned int *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (unsigned int*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_SHORT:
-    vtkImageLabelOutlineExecute(this, inData, (short *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (short*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_UNSIGNED_SHORT:
-    vtkImageLabelOutlineExecute(this, inData, (unsigned short *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (unsigned short*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_CHAR:
-    vtkImageLabelOutlineExecute(this, inData, (char *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (char*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_SIGNED_CHAR:
-    vtkImageLabelOutlineExecute(this, inData, (signed char *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (signed char*)(inPtr),
       outData, outExt, id);
     break;
   case VTK_UNSIGNED_CHAR:
-    vtkImageLabelOutlineExecute(this, inData, (unsigned char *)(inPtr),
+    vtkImageLabelOutlineExecute(this, inData, (unsigned char*)(inPtr),
       outData, outExt, id);
     break;
   default:

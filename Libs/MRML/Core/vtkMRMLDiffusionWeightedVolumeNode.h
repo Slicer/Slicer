@@ -34,7 +34,7 @@ class vtkImageExtractComponents;
 class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarVolumeNode
 {
   public:
-  static vtkMRMLDiffusionWeightedVolumeNode *New();
+  static vtkMRMLDiffusionWeightedVolumeNode* New();
   vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeNode,vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -50,7 +50,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -62,14 +62,14 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
 
   ///
   void SetDiffusionGradient(int val, const double g[3]);
-  void SetDiffusionGradients(vtkDoubleArray *grad);
+  void SetDiffusionGradients(vtkDoubleArray* grad);
   double* GetDiffusionGradient(int val) VTK_SIZEHINT(3);
   void GetDiffusionGradient(int val, double g[3]);
   vtkGetObjectMacro(DiffusionGradients,vtkDoubleArray);
 
   ///
   void SetBValue (int val, const double b);
-  void SetBValues (vtkDoubleArray *bValue);
+  void SetBValues (vtkDoubleArray* bValue);
 /// Work around issue that GetBValue is defined as a macro in windows.h
 #ifdef GetBValue
 #undef GetBValue
@@ -85,8 +85,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeNode : public vtkMRMLScalarV
                            const double yr, const double ya, const double ys,
                            const double zr, const double za, const double zs);
 
-  void SetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
-  void GetMeasurementFrameMatrix(vtkMatrix4x4 *mat);
+  void SetMeasurementFrameMatrix(vtkMatrix4x4* mat);
+  void GetMeasurementFrameMatrix(vtkMatrix4x4* mat);
 
   ///
   /// Associated display MRML node
@@ -110,8 +110,8 @@ protected:
 
   double MeasurementFrameMatrix[3][3];
 
-  vtkDoubleArray *DiffusionGradients;
-  vtkDoubleArray *BValues;
+  vtkDoubleArray* DiffusionGradients;
+  vtkDoubleArray* BValues;
 
 };
 

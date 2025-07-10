@@ -44,7 +44,7 @@ public:
   /**
    * Instantiate this class.
    */
-  static vtkMRMLCameraWidget *New();
+  static vtkMRMLCameraWidget* New();
 
   //@{
   /**
@@ -63,7 +63,7 @@ public:
   vtkMRMLCameraNode* GetCameraNode();
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
 
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;

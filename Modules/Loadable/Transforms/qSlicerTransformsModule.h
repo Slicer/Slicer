@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerTransformsModule(QObject *parent=nullptr);
+  qSlicerTransformsModule(QObject* parent=nullptr);
   ~qSlicerTransformsModule() override;
 
   /// Icon of the transform module
@@ -71,7 +71,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

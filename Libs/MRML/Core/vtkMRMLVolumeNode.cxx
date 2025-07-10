@@ -188,7 +188,7 @@ void vtkMRMLVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::CopyOrientation(vtkMRMLVolumeNode *node)
+void vtkMRMLVolumeNode::CopyOrientation(vtkMRMLVolumeNode* node)
 {
   MRMLNodeModifyBlocker blocker(this);
   vtkSmartPointer<vtkMatrix4x4> ijkToRasmatrix = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -510,11 +510,11 @@ void vtkMRMLVolumeNode::GetIJKToRASDirectionMatrix(vtkMatrix4x4* ijkToRASDirecti
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
+bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char* order,
                                                      const double* spacing,
-                                                     const int *dims,
+                                                     const int* dims,
                                                      bool centerImage,
-                                                     vtkMatrix4x4 *IJKToRAS)
+                                                     vtkMatrix4x4* IJKToRAS)
 {
   IJKToRAS->Identity();
   if (order == nullptr)
@@ -601,7 +601,7 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
    static_cast<double>(-dims[2]/2),
    static_cast<double>( 0.0 )};
 
-  const double * const pnt1 = IJKToRAS->MultiplyDoublePoint(pnt);
+  const double* const pnt1 = IJKToRAS->MultiplyDoublePoint(pnt);
 
   if (centerImage)
   {
@@ -614,7 +614,7 @@ bool vtkMRMLVolumeNode::ComputeIJKToRASFromScanOrder(const char *order,
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4 *ijkToRAS)
+const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* ijkToRAS)
 {
   double dir[4]={0,0,1,0};
   double kvec[4];
@@ -700,7 +700,7 @@ bool IsImageDataGeometryValid(vtkImageData* imageData)
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
+void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData* imageData)
 {
   if (imageData == nullptr)
   {
@@ -762,7 +762,7 @@ vtkImageData* vtkMRMLVolumeNode::GetImageData()
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeNode
-::SetImageDataConnection(vtkAlgorithmOutput *newImageDataConnection)
+::SetImageDataConnection(vtkAlgorithmOutput* newImageDataConnection)
 {
   if (newImageDataConnection == this->ImageDataConnection)
   {
@@ -802,7 +802,7 @@ void vtkMRMLVolumeNode
   int ndisp = this->GetNumberOfDisplayNodes();
   for (int n=0; n<ndisp; n++)
   {
-    vtkMRMLVolumeDisplayNode *dnode = vtkMRMLVolumeDisplayNode::SafeDownCast(
+    vtkMRMLVolumeDisplayNode* dnode = vtkMRMLVolumeDisplayNode::SafeDownCast(
       this->GetNthDisplayNode(n));
     if (dnode)
     {
@@ -820,14 +820,14 @@ void vtkMRMLVolumeNode
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+void vtkMRMLVolumeNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
 {
   this->UpdateDisplayNodeImageData(vtkMRMLDisplayNode::SafeDownCast(reference->GetReferencedNode()));
   Superclass::OnNodeReferenceAdded(reference);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode:: OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+void vtkMRMLVolumeNode:: OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 {
   this->UpdateDisplayNodeImageData(vtkMRMLDisplayNode::SafeDownCast(reference->GetReferencedNode()));
   Superclass::OnNodeReferenceModified(reference);
@@ -844,7 +844,7 @@ void vtkMRMLVolumeNode::UpdateDisplayNodeImageData(vtkMRMLDisplayNode* dNode)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 
@@ -852,9 +852,9 @@ void vtkMRMLVolumeNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -936,7 +936,7 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
   vtkMatrix4x4* rasToSlice, bool useTransform, bool useVoxelCenter/*=false*/)
 {
   vtkMath::UninitializeBounds(bounds);
-  vtkImageData *volumeImage = this->GetImageData();
+  vtkImageData* volumeImage = this->GetImageData();
   if (!volumeImage)
   {
     return;
@@ -957,7 +957,7 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
   this->GetIJKToRASMatrix(ijkToRAS.GetPointer());
   transform->Concatenate(ijkToRAS.GetPointer());
 
-  vtkMRMLTransformNode *transformNode = this->GetParentTransformNode();
+  vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
   bool isTransformLinear = true;
 
   if ( useTransform && transformNode )

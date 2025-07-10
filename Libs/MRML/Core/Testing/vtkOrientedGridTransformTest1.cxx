@@ -287,7 +287,7 @@ double getInverseErrorVtk(const double inputPoint[3], vtkOrientedGridTransform* 
 }
 
 //----------------------------------------------------------------------------
-int vtkOrientedGridTransformTest1(int , char * [] )
+int vtkOrientedGridTransformTest1(int, char*[])
 {
   double averageSpacing=100;
   double origin[3] = {-100, -100, -100};

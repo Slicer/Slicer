@@ -234,7 +234,7 @@ void vtkMRMLAnnotationROINode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=t
   Superclass::CopyContent(anode, deepCopy);
 
   //  vtkObject::Copy(anode);
-  vtkMRMLAnnotationROINode *node = vtkMRMLAnnotationROINode::SafeDownCast(anode);
+  vtkMRMLAnnotationROINode* node = vtkMRMLAnnotationROINode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -248,7 +248,7 @@ void vtkMRMLAnnotationROINode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=t
 }
 
 //-----------------------------------------------------------
-void vtkMRMLAnnotationROINode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLAnnotationROINode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 
@@ -258,9 +258,9 @@ void vtkMRMLAnnotationROINode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationROINode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLAnnotationROINode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
@@ -318,7 +318,7 @@ int vtkMRMLAnnotationROINode::AddControlPoint(double newControl[3],int selectedF
 //---------------------------------------------------------------------------
 double vtkMRMLAnnotationROINode::GetROIAnnotationScale()
 {
-  vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationTextDisplayNode* node = this->GetAnnotationTextDisplayNode();
   if (!node)
   {
       return 0;
@@ -329,7 +329,7 @@ double vtkMRMLAnnotationROINode::GetROIAnnotationScale()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::SetROIAnnotationScale(double init)
 {
-  vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationTextDisplayNode* node = this->GetAnnotationTextDisplayNode();
 
   if (!node)
   {
@@ -400,7 +400,7 @@ int vtkMRMLAnnotationROINode::SetControlPoint(int id, double newControl[3])
 //---------------------------------------------------------------------------
 double* vtkMRMLAnnotationROINode::GetPointColor()
 {
-  vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode* node = this->GetAnnotationPointDisplayNode();
   if (!node)
   {
       return nullptr;
@@ -411,7 +411,7 @@ double* vtkMRMLAnnotationROINode::GetPointColor()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::SetPointColor(double initColor[3])
 {
-  vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode* node = this->GetAnnotationPointDisplayNode();
   if (!node)
   {
       vtkErrorMacro("AnnotationROI: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
@@ -423,7 +423,7 @@ void vtkMRMLAnnotationROINode::SetPointColor(double initColor[3])
 //---------------------------------------------------------------------------
 double* vtkMRMLAnnotationROINode::GetROIAnnotationTextColor()
 {
-  vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationTextDisplayNode* node = this->GetAnnotationTextDisplayNode();
   if (!node)
   {
       return nullptr;
@@ -434,7 +434,7 @@ double* vtkMRMLAnnotationROINode::GetROIAnnotationTextColor()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::SetROIAnnotationTextColor(double initColor[3])
 {
-  vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationTextDisplayNode* node = this->GetAnnotationTextDisplayNode();
   if (!node)
   {
       vtkErrorMacro("AnnotationROI: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
@@ -446,7 +446,7 @@ void vtkMRMLAnnotationROINode::SetROIAnnotationTextColor(double initColor[3])
 //---------------------------------------------------------------------------
 double* vtkMRMLAnnotationROINode::GetLineColor()
 {
-  vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode* node = this->GetAnnotationLineDisplayNode();
   if (!node)
   {
       return nullptr;
@@ -457,7 +457,7 @@ double* vtkMRMLAnnotationROINode::GetLineColor()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationROINode::SetLineColor(double initColor[3])
 {
-  vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode* node = this->GetAnnotationLineDisplayNode();
   if (!node)
   {
       vtkErrorMacro("AnnotationROI: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
@@ -523,7 +523,7 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
+void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes* planes)
 {
   double bounds[6];
   int i;
@@ -573,8 +573,8 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::Take(vtkPoints::New(VTK_DOUBLE));
   points->SetNumberOfPoints(6);
 
-  double *pts =
-     static_cast<vtkDoubleArray *>(boxPoints->GetData())->GetPointer(0);
+  double* pts =
+     static_cast<vtkDoubleArray*>(boxPoints->GetData())->GetPointer(0);
 
   // these 3 planes contain pts[0]
   points->SetPoint(0, pts);
@@ -599,12 +599,12 @@ void vtkMRMLAnnotationROINode::GetTransformedPlanes(vtkPlanes *planes)
   vtkVector3d pointV;
   vtkVector3d normal;
 
-  double * p0 = pts;
+  double* p0 = pts;
   origin.Set(p0[0], p0[1], p0[2]);
 
   // x plane
-  double * p1 = pts + 3 * 4; // z offset
-  double * p2 = pts + 3 * 3; // y offset
+  double* p1 = pts + 3 * 4; // z offset
+  double* p2 = pts + 3 * 3; // y offset
   pointU.Set(p1[0], p1[1], p1[2]);
   pointV.Set(p2[0], p2[1], p2[2]);
   pointU = pointU - origin;

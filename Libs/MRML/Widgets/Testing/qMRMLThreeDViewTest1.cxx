@@ -37,7 +37,7 @@
 
 // STD includes
 
-int qMRMLThreeDViewTest1(int argc, char * argv [] )
+int qMRMLThreeDViewTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -69,7 +69,7 @@ int qMRMLThreeDViewTest1(int argc, char * argv [] )
   }
   for (int i = 0; i < numManagers; ++i)
   {
-    vtkMRMLAbstractDisplayableManager *threeDViewDM =
+    vtkMRMLAbstractDisplayableManager* threeDViewDM =
       vtkMRMLAbstractDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
     if (threeDViewDM)
     {

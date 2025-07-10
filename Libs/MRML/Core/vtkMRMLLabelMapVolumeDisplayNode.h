@@ -26,7 +26,7 @@ class vtkImageMapToColors;
 class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
   public:
-  static vtkMRMLLabelMapVolumeDisplayNode *New();
+  static vtkMRMLLabelMapVolumeDisplayNode* New();
   vtkTypeMacro(vtkMRMLLabelMapVolumeDisplayNode,vtkMRMLVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -50,7 +50,7 @@ class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDis
   void SetDefaultColorMap() override;
 
   /// Set the pipeline input
-  void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection) override;
+  void SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection) override;
 
   /// Get the pipeline input
   vtkImageData* GetInputImageData() override;
@@ -66,7 +66,7 @@ protected:
   vtkMRMLLabelMapVolumeDisplayNode(const vtkMRMLLabelMapVolumeDisplayNode&);
   void operator=(const vtkMRMLLabelMapVolumeDisplayNode&);
 
-  vtkImageMapToColors *MapToColors;
+  vtkImageMapToColors* MapToColors;
 
 };
 

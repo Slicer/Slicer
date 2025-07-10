@@ -264,7 +264,7 @@ public:
   /// Checks for action text duplicates and doesn't add them.
   /// Also checks for action text that will be hidden by the default action
   /// texts and doesn't add it.
-  Q_INVOKABLE virtual void addMenuAction(QAction *newAction);
+  Q_INVOKABLE virtual void addMenuAction(QAction* newAction);
 
   virtual QString interactionNodeSingletonTag()const;
   virtual void setInteractionNodeSingletonTag(const QString& tag);
@@ -387,8 +387,8 @@ protected slots:
   void activateExtraItem(const QModelIndex& index);
   void emitCurrentNodeChanged();
   void emitNodeActivated(int currentIndex);
-  void emitNodesAdded(const QModelIndex & parent, int start, int end);
-  void emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end);
+  void emitNodesAdded(const QModelIndex& parent, int start, int end);
+  void emitNodesAboutToBeRemoved(const QModelIndex& parent, int start, int end);
   void refreshIfCurrentNodeHidden();
 
 protected:

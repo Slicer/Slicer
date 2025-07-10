@@ -173,9 +173,9 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char *id)const
+vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char* id)const
 {
-  vtkMRMLNode *node = this->mrmlScene()->GetNodeByID(id);
+  vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id);
   return node;
 }
 

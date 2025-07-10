@@ -6,7 +6,7 @@
 class VTK_MRML_EXPORT vtkMRMLPETProceduralColorNode : public vtkMRMLProceduralColorNode
 {
 public:
-  static vtkMRMLPETProceduralColorNode *New();
+  static vtkMRMLPETProceduralColorNode* New();
   vtkTypeMacro(vtkMRMLPETProceduralColorNode,vtkMRMLProceduralColorNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -26,7 +26,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -34,14 +34,14 @@ public:
 
   ///
   ///
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Get/Set for Type. In SetType, set up the custom color options for this
   /// set of colors
   void SetType(int type) override;
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
 
   /// The list of valid procedural types
   //enum
@@ -78,7 +78,7 @@ public:
   int GetFirstType() override { return this->PETheat; }
   int GetLastType() override { return this->PETMIP; }
 
-  const char *GetTypeAsString() override;
+  const char* GetTypeAsString() override;
   void SetTypeToHeat();
   void SetTypeToRainbow();
   void SetTypeToRainbow2();

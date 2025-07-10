@@ -31,7 +31,7 @@
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-int vtkSlicerApplicationLogicTest1(int , char * [])
+int vtkSlicerApplicationLogicTest1(int, char*[])
 {
   //-----------------------------------------------------------------------------
   // Test GetModuleShareDirectory(const std::string& moduleName, const std::string& filePath);
@@ -309,10 +309,10 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
   }
   for (int i = 0; i < numNodes; i++)
   {
-    vtkMRMLNode *mrmlNode = appLogic->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLModelHierarchyNode");
+    vtkMRMLNode* mrmlNode = appLogic->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLModelHierarchyNode");
     if (mrmlNode && mrmlNode->IsA("vtkMRMLModelHierarchyNode"))
     {
-      vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
+      vtkMRMLModelHierarchyNode* hnode = vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
       std::cout << i << ": Model Hierarchy node named " << hnode->GetName() << " with id " << hnode->GetID() << " has parent node id of " << (hnode->GetParentNodeID() ? hnode->GetParentNodeID() : "null") << std::endl;
       // the second level clashed with the original hierarchy second level node, so below that, the parent node ids have been shifted
       if (strcmp(hnode->GetName(),"1") == 0 &&

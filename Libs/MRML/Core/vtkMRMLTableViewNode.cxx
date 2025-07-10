@@ -85,11 +85,11 @@ void vtkMRMLTableViewNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLTableViewNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLTableViewNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
   Superclass::Copy(anode);
-  vtkMRMLTableViewNode *node = vtkMRMLTableViewNode::SafeDownCast(anode);
+  vtkMRMLTableViewNode* node = vtkMRMLTableViewNode::SafeDownCast(anode);
   if (node)
   {
     this->SetDoPropagateTableSelection (node->GetDoPropagateTableSelection());

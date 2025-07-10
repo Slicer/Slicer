@@ -43,7 +43,7 @@ class vtkSegmentationCore_EXPORT vtkTopologicalHierarchy : public vtkObject
 {
 public:
 
-  static vtkTopologicalHierarchy *New();
+  static vtkTopologicalHierarchy* New();
   vtkTypeMacro(vtkTopologicalHierarchy, vtkObject );
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

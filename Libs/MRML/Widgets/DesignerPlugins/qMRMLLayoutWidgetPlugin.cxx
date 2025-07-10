@@ -1,12 +1,12 @@
 #include "qMRMLLayoutWidgetPlugin.h"
 #include "qMRMLLayoutWidget.h"
 
-qMRMLLayoutWidgetPlugin::qMRMLLayoutWidgetPlugin(QObject *_parent)
+qMRMLLayoutWidgetPlugin::qMRMLLayoutWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
-QWidget *qMRMLLayoutWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLLayoutWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLLayoutWidget* _widget = new qMRMLLayoutWidget(_parent);
   return _widget;

@@ -30,7 +30,7 @@ qMRMLSubjectHierarchyComboBoxPlugin::qMRMLSubjectHierarchyComboBoxPlugin(QObject
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSubjectHierarchyComboBoxPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSubjectHierarchyComboBoxPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLSubjectHierarchyComboBox* pluginWidget =
     new qMRMLSubjectHierarchyComboBox(parentWidget);

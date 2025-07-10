@@ -38,7 +38,7 @@ class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModule :
 public:
 
   typedef qSlicerCoreModule Superclass;
-  qSlicerEventBrokerModule(QObject *parent=nullptr);
+  qSlicerEventBrokerModule(QObject* parent=nullptr);
   ~qSlicerEventBrokerModule() override;
 
   QStringList categories()const override;
@@ -52,7 +52,7 @@ public:
 
 protected:
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

@@ -33,7 +33,7 @@ int main(int argc, char* * argv)
     reader->Update();
     img = reader->GetOutput();
   }
-  catch( itk::ExceptionObject & err )
+  catch( itk::ExceptionObject& err )
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
@@ -53,7 +53,7 @@ int main(int argc, char* * argv)
     readerLabel->Update();
     labelImg = readerLabel->GetOutput();
   }
-  catch( itk::ExceptionObject & err )
+  catch( itk::ExceptionObject& err )
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
@@ -80,7 +80,7 @@ int main(int argc, char* * argv)
   seg.doSegmenation();
 
 //   typedef int PixelType;
-//   typedef itk::Image< PixelType, 3 > ImageType;
+//   typedef itk::Image<PixelType, 3 > ImageType;
 
 //   typedef itk::ImageFileReader< ImageType > ImageReaderType;
 //   ImageReaderType::Pointer reader = ImageReaderType::New();
@@ -93,7 +93,7 @@ int main(int argc, char* * argv)
 //       reader->Update();
 //       img = reader->GetOutput();
 //     }
-//   catch ( itk::ExceptionObject &err)
+//   catch ( itk::ExceptionObject& err)
 //     {
 //       std::cerr<< "ExceptionObject caught !" << std::endl;
 //       std::cerr<< err << std::endl;
@@ -133,7 +133,7 @@ int main(int argc, char* * argv)
   {
     outputWriter->Update();
   }
-  catch( itk::ExceptionObject & err )
+  catch( itk::ExceptionObject& err )
   {
     std::cout << "ExceptionObject caught !" << std::endl;
     std::cout << err << std::endl;

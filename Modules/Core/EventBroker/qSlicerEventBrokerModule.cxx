@@ -39,7 +39,7 @@ qSlicerEventBrokerModule::qSlicerEventBrokerModule(QObject* _parent)
 qSlicerEventBrokerModule::~qSlicerEventBrokerModule() = default;
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerEventBrokerModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerEventBrokerModule::createWidgetRepresentation()
 {
   return new qSlicerEventBrokerModuleWidget;
 }

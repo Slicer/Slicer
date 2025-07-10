@@ -68,7 +68,7 @@ CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, QString, nameFilter, NameFilter);
 CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, QString, textFilter, TextFilter);
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject *vparent)
+qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject* vparent)
  : QSortFilterProxyModel(vparent)
  , d_ptr(new qMRMLSortFilterSegmentsProxyModelPrivate)
 {
@@ -183,7 +183,7 @@ QStandardItem* qMRMLSortFilterSegmentsProxyModel::sourceItem(const QModelIndex& 
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const
+bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent)const
 {
   QStandardItem* parentItem = this->sourceItem(sourceParent);
   if (!parentItem)
@@ -312,7 +312,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID)cons
 }
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLSortFilterSegmentsProxyModel::flags(const QModelIndex & index)const
+Qt::ItemFlags qMRMLSortFilterSegmentsProxyModel::flags(const QModelIndex& index)const
 {
   QString segmentID = this->segmentIDFromIndex(index);
   bool isSelectable = this->filterAcceptsItem(segmentID);

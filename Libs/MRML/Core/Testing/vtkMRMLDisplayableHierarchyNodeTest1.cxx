@@ -36,7 +36,7 @@ int TestHierarchyEvents();
 
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayableHierarchyNodeTest1(int vtkNotUsed(argc),
-                                         char * vtkNotUsed(argv)[])
+                                         char* vtkNotUsed(argv)[])
 {
   CHECK_EXIT_SUCCESS(TestBasics());
   CHECK_EXIT_SUCCESS(TestHierarchyNodeCount());
@@ -49,7 +49,7 @@ class vtkMRMLDisplayableHierarchyNodeTestHelper1 : public vtkMRMLDisplayableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayableHierarchyNodeTestHelper1 *New();
+  static vtkMRMLDisplayableHierarchyNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLDisplayableHierarchyNodeTestHelper1, vtkMRMLDisplayableNode);
 

@@ -52,8 +52,8 @@ public:
 
   QStringList selectedDirectoryList(bool absolutePath = false)const;
 
-  void dragEnterEvent(QDragEnterEvent *event) override;
-  void dropEvent(QDropEvent *event) override;
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dropEvent(QDropEvent* event) override;
 
 public slots:
 

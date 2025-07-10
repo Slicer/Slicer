@@ -123,7 +123,7 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode* anode)
 {
   int wasModifying = this->StartModify();
   this->Superclass::Copy(anode);
@@ -201,7 +201,7 @@ const char* vtkMRMLVolumeRenderingDisplayNode::GetShaderPropertyNodeID()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveShaderPropertyNodeID(const char *shaderPropertyNodeID)
+void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveShaderPropertyNodeID(const char* shaderPropertyNodeID)
 {
     this->SetAndObserveNodeReferenceID(ShaderPropertyNodeReferenceRole, shaderPropertyNodeID);
 }
@@ -214,9 +214,9 @@ vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetShaderPropertyN
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetOrCreateShaderPropertyNode( vtkMRMLScene * mrmlScene )
+vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetOrCreateShaderPropertyNode( vtkMRMLScene* mrmlScene )
 {
-  vtkMRMLShaderPropertyNode * sp = this->GetShaderPropertyNode();
+  vtkMRMLShaderPropertyNode* sp = this->GetShaderPropertyNode();
   if( sp == nullptr )
   {
     vtkNew<vtkMRMLShaderPropertyNode> shaderNode;
@@ -299,9 +299,9 @@ double vtkMRMLVolumeRenderingDisplayNode::GetSampleDistance()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject* caller,
                                                           unsigned long event,
-                                                          void *callData)
+                                                          void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 

@@ -21,12 +21,12 @@
 #include "qMRMLEventBrokerWidgetPlugin.h"
 #include "qMRMLEventBrokerWidget.h"
 
-qMRMLEventBrokerWidgetPlugin::qMRMLEventBrokerWidgetPlugin(QObject *parentWidget)
+qMRMLEventBrokerWidgetPlugin::qMRMLEventBrokerWidgetPlugin(QObject* parentWidget)
   : QObject(parentWidget)
 {
 }
 
-QWidget *qMRMLEventBrokerWidgetPlugin::createWidget(QWidget *parentWidget)
+QWidget* qMRMLEventBrokerWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLEventBrokerWidget* newWidget =
     new qMRMLEventBrokerWidget(parentWidget);

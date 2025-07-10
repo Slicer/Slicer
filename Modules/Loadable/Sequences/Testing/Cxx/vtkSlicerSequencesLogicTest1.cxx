@@ -272,7 +272,7 @@ namespace
   }
 }
 
-int vtkSlicerSequencesLogicTest1(int , char * [] )
+int vtkSlicerSequencesLogicTest1(int, char*[])
 {
   CHECK_EXIT_SUCCESS(TestLogicWithoutScene());
   CHECK_EXIT_SUCCESS(TestAddSequence());

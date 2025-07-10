@@ -180,7 +180,7 @@ void qMRMLTableViewPrivate::updateWidgetFromViewNode()
 }
 
 //------------------------------------------------------------------------------
-qMRMLTableView::qMRMLTableView(QWidget *_parent)
+qMRMLTableView::qMRMLTableView(QWidget* _parent)
   : QTableView(_parent)
   , d_ptr(new qMRMLTableViewPrivate(*this))
 {
@@ -257,7 +257,7 @@ void qMRMLTableView::setTransposed(bool transposed)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTableView::keyPressEvent(QKeyEvent *event)
+void qMRMLTableView::keyPressEvent(QKeyEvent* event)
 {
   if(event->matches(QKeySequence::Copy) )
   {
@@ -331,7 +331,7 @@ void qMRMLTableView::copySelection()
       {
         textToCopy.append('\t');
       }
-      QStandardItem *item = mrmlModel->item(rowIndex, columnIndex);
+      QStandardItem* item = mrmlModel->item(rowIndex, columnIndex);
       if (item->isCheckable())
       {
         textToCopy.append(item->checkState() == Qt::Checked ? "1" : "0");
@@ -602,7 +602,7 @@ void qMRMLTableView::plotSelection()
     {
       continue;
     }
-    vtkMRMLPlotSeriesNode *plotSeriesNode = nullptr;
+    vtkMRMLPlotSeriesNode* plotSeriesNode = nullptr;
     for (int plotIndex = 0; plotIndex < colPlots->GetNumberOfItems(); plotIndex++)
     {
       plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(colPlots->GetItemAsObject(plotIndex));
@@ -859,7 +859,7 @@ QList<int> qMRMLTableView::selectedMRMLTableColumnIndices()const
 }
 
 //---------------------------------------------------------------------------
-void qMRMLTableView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
+void qMRMLTableView::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
   QTableView::selectionChanged(selected, deselected);
   emit selectionChanged();

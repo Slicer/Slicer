@@ -38,7 +38,7 @@
 
 // STD includes
 
-int qMRMLColorPickerWidgetTest1(int argc, char * argv [])
+int qMRMLColorPickerWidgetTest1(int argc, char* argv [])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

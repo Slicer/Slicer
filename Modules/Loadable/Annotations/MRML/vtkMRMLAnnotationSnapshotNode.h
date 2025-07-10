@@ -21,7 +21,7 @@ class vtkMRMLStorageNode;
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLAnnotationNode
 {
 public:
-  static vtkMRMLAnnotationSnapshotNode *New();
+  static vtkMRMLAnnotationSnapshotNode* New();
   vtkTypeMacro(vtkMRMLAnnotationSnapshotNode,vtkMRMLAnnotationNode);
 
   //--------------------------------------------------------------------------

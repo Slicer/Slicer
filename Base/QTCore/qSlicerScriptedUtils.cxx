@@ -36,8 +36,8 @@
 //-----------------------------------------------------------------------------
 bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
                                        const QString& filePath,
-                                       PyObject * global_dict,
-                                       PyObject * local_dict)
+                                       PyObject* global_dict,
+                                       PyObject* local_dict)
 {
   PyObject* pyRes = nullptr;
 
@@ -78,7 +78,7 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
   }
 
   // Import module
-  PyObject * module = PythonQt::self()->getMainModule();
+  PyObject* module = PythonQt::self()->getMainModule();
   if (!moduleName.isEmpty())
   {
     module = PyImport_ImportModule(moduleName.toUtf8());
@@ -101,7 +101,7 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
 
 //-----------------------------------------------------------------------------
 bool qSlicerScriptedUtils::importModulePythonExtensions(
-    qSlicerCorePythonManager * pythonManager,
+    qSlicerCorePythonManager* pythonManager,
     const QString& intDir,const QString& modulePath,
     bool isEmbedded)
 {
@@ -178,7 +178,7 @@ void qSlicerPythonCppAPI::declareMethod(int id, const char* name)
 //-----------------------------------------------------------------------------
 PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& className, PyObject* classToInstantiate)
 {
-  PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(cpp);
+  PyObject* wrappedThis = PythonQt::self()->priv()->wrapQObject(cpp);
   if (!wrappedThis)
   {
     PythonQt::self()->handleError();
@@ -188,7 +188,7 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
     return nullptr;
   }
 
-  PyObject * arguments = PyTuple_New(1);
+  PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, wrappedThis);
 
   // Attempt to instantiate the associated python class
@@ -233,15 +233,15 @@ PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& cla
 }
 
 //-----------------------------------------------------------------------------
-PyObject * qSlicerPythonCppAPI::callMethod(int id, PyObject * arguments)
+PyObject* qSlicerPythonCppAPI::callMethod(int id, PyObject* arguments)
 {
   if (!this->PythonAPIMethods.contains(id))
   {
     return nullptr;
   }
-  PyObject * method = this->PythonAPIMethods.value(id).object();
+  PyObject* method = this->PythonAPIMethods.value(id).object();
   PythonQt::self()->clearError();
-  PyObject * result = PyObject_CallObject(method, arguments);
+  PyObject* result = PyObject_CallObject(method, arguments);
   if (PythonQt::self()->handleError())
   {
     return nullptr;

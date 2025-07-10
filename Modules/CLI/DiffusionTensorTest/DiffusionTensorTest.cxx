@@ -6,7 +6,7 @@
 
 #include "DiffusionTensorTestCLP.h"
 
-int main( int argc, char * argv[] )
+int main( int argc, char* argv[] )
 {
   typedef itk::DiffusionTensor3D<float>         TensorType;
   typedef itk::Image<TensorType, 3>             TensorImageType;
@@ -29,7 +29,7 @@ int main( int argc, char * argv[] )
   std::cout << "Plugin received ComponentType: " << componentType << std::endl;
 
   typedef itk::MetaDataDictionary DictionaryType;
-  const DictionaryType & dictionary = reader->GetMetaDataDictionary();
+  const DictionaryType& dictionary = reader->GetMetaDataDictionary();
 
   DictionaryType::ConstIterator itr = dictionary.Begin();
   DictionaryType::ConstIterator end = dictionary.End();

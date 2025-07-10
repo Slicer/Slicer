@@ -544,7 +544,7 @@ void vtkSlicerMarkupsWidget::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
+bool vtkSlicerMarkupsWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   unsigned long widgetEvent = this->TranslateInteractionEventToWidgetEvent(eventData);
   if (widgetEvent == WidgetEventNone)
@@ -1221,7 +1221,7 @@ bool vtkSlicerMarkupsWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
   this->PreviewPointIndex = -1;
 
   // if this was a one time place, go back to view transform mode
-  vtkMRMLInteractionNode *interactionNode = this->GetInteractionNode();
+  vtkMRMLInteractionNode* interactionNode = this->GetInteractionNode();
 
   if(interactionNode)
   {

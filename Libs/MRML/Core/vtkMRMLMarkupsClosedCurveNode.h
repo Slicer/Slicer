@@ -35,7 +35,7 @@
 class  VTK_MRML_EXPORT vtkMRMLMarkupsClosedCurveNode : public vtkMRMLMarkupsCurveNode
 {
 public:
-  static vtkMRMLMarkupsClosedCurveNode *New();
+  static vtkMRMLMarkupsClosedCurveNode* New();
   vtkTypeMacro(vtkMRMLMarkupsClosedCurveNode, vtkMRMLMarkupsCurveNode);
 
   const char* GetIcon() override {return ":/Icons/MarkupsClosedCurve.png";}

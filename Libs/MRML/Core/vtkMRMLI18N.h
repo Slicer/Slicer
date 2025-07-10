@@ -48,7 +48,7 @@ public:
   static vtkMRMLI18N* New();
 
   /// Translate message with the current translator
-  static std::string Translate(const char *context, const char *sourceText, const char *disambiguation = nullptr, int n = -1);
+  static std::string Translate(const char* context, const char* sourceText, const char* disambiguation = nullptr, int n = -1);
 
   /// Replace placeholders in strings, following Qt internationalization conventions.
   ///

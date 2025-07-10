@@ -73,7 +73,7 @@ void qMRMLSimpleColorTableViewPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLSimpleColorTableView::qMRMLSimpleColorTableView(QWidget *_parent)
+qMRMLSimpleColorTableView::qMRMLSimpleColorTableView(QWidget* _parent)
   : QTableView(_parent)
   , d_ptr(new qMRMLSimpleColorTableViewPrivate(*this))
 {

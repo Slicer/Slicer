@@ -42,7 +42,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingPrope
   QVTK_OBJECT
 public:
   typedef QWidget Superclass;
-  qSlicerVolumeRenderingPropertiesWidget(QWidget *parent=nullptr);
+  qSlicerVolumeRenderingPropertiesWidget(QWidget* parent=nullptr);
   ~qSlicerVolumeRenderingPropertiesWidget() override;
 
   vtkMRMLNode* mrmlNode()const;

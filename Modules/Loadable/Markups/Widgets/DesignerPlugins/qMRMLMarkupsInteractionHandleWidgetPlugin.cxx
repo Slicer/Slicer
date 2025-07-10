@@ -23,13 +23,13 @@
 #include "qMRMLMarkupsInteractionHandleWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLMarkupsInteractionHandleWidgetPlugin::qMRMLMarkupsInteractionHandleWidgetPlugin(QObject *_parent)
+qMRMLMarkupsInteractionHandleWidgetPlugin::qMRMLMarkupsInteractionHandleWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLMarkupsInteractionHandleWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLMarkupsInteractionHandleWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLMarkupsInteractionHandleWidget* _widget = new qMRMLMarkupsInteractionHandleWidget(_parent);
   return _widget;

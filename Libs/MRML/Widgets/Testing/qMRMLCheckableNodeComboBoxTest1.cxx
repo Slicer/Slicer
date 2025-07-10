@@ -36,7 +36,7 @@
 
 // STD includes
 
-int qMRMLCheckableNodeComboBoxTest1( int argc, char * argv [] )
+int qMRMLCheckableNodeComboBoxTest1( int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

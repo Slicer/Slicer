@@ -102,7 +102,7 @@ void vtkMRMLScalarVolumeNode::ReadXMLAttributes(const char** atts)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene *scene)
+void vtkMRMLScalarVolumeNode::CreateNoneNode(vtkMRMLScene* scene)
 {
   // Create a None volume RGBA of 0, 0, 0 so the filters won't complain
   // about missing input

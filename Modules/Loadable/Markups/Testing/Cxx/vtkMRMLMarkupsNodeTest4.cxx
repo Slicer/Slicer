@@ -57,7 +57,7 @@ int ComparePlane(double xAxisExpected_World[3], double yAxisExpected_World[3], d
   return EXIT_SUCCESS;
 }
 
-int vtkMRMLMarkupsNodeTest4(int , char * [] )
+int vtkMRMLMarkupsNodeTest4(int, char*[])
 {
   std::cout << "Testing vtkMRMLMarkupsPlaneNode" << std::endl;
   vtkNew<vtkMRMLScene> scene;

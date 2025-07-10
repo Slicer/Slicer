@@ -29,7 +29,7 @@ qMRMLDisplayNodeViewComboBoxPlugin
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLDisplayNodeViewComboBoxPlugin::createWidget(QWidget *parentWidget)
+QWidget* qMRMLDisplayNodeViewComboBoxPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLDisplayNodeViewComboBox* widget =
     new qMRMLDisplayNodeViewComboBox(parentWidget);

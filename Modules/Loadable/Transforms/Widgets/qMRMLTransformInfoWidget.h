@@ -46,7 +46,7 @@ qMRMLTransformInfoWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLTransformInfoWidget(QWidget *parent=nullptr);
+  qMRMLTransformInfoWidget(QWidget* parent=nullptr);
   ~qMRMLTransformInfoWidget() override;
 
   vtkMRMLTransformNode* mrmlTransformNode()const;
@@ -74,7 +74,7 @@ protected slots:
 
 protected:
 
-  void showEvent(QShowEvent *) override;
+  void showEvent(QShowEvent*) override;
 
   QScopedPointer<qMRMLTransformInfoWidgetPrivate> d_ptr;
 

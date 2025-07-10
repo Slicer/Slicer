@@ -69,7 +69,7 @@ int vtkMRMLSliceLinkLogic::GetBroadcastingEvents()
 
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   // List of events the slice logics should listen
   vtkNew<vtkIntArray> events;
@@ -306,7 +306,7 @@ void vtkMRMLSliceLinkLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceLinkLogic::IsOrientationMatching(vtkMRMLSliceNode *sliceNode1, vtkMRMLSliceNode *sliceNode2,
+bool vtkMRMLSliceLinkLogic::IsOrientationMatching(vtkMRMLSliceNode* sliceNode1, vtkMRMLSliceNode* sliceNode2,
   double comparisonTolerance /* = 0.001 */)
 {
   if (sliceNode1 == nullptr || sliceNode2 == nullptr)
@@ -333,7 +333,7 @@ bool vtkMRMLSliceLinkLogic::IsOrientationMatching(vtkMRMLSliceNode *sliceNode1, 
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
+void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode)
 {
   // only broadcast a slice node event if we are not already actively
   // broadcasting events and we are actively interacting with the node
@@ -385,7 +385,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           & vtkMRMLSliceNode::XYZOriginFlag)
         {
           // Need to copy the SliceOrigin.
-          double *xyzOrigin = sliceNode->GetXYZOrigin();
+          double* xyzOrigin = sliceNode->GetXYZOrigin();
           sNode->SetXYZOrigin( xyzOrigin[0], xyzOrigin[1], xyzOrigin[2] );
         }
 
@@ -563,7 +563,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceCompositeNode *sliceCompositeNode)
+void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceCompositeNode* sliceCompositeNode)
 {
   // only broadcast a slice composite node event if we are not already actively
   // broadcasting events and we actively interacting with the node

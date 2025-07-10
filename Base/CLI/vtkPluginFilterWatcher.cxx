@@ -8,10 +8,10 @@ class vtkPluginWatcherStart : public vtkCommand
 {
 public:
   // generic new method
-  static vtkPluginWatcherStart *New()
+  static vtkPluginWatcherStart* New()
   { return new vtkPluginWatcherStart; }
 
-  void Execute(vtkObject *vtkNotUsed(caller),
+  void Execute(vtkObject* vtkNotUsed(caller),
                        unsigned long event,
                        void* vtkNotUsed(v)) override
   {
@@ -50,13 +50,13 @@ public:
       }
     }
   }
-  void SetWatcher(vtkPluginFilterWatcher *w)
+  void SetWatcher(vtkPluginFilterWatcher* w)
   {
     this->Watcher = w;
   }
 
 private:
-  vtkPluginFilterWatcher *Watcher;
+  vtkPluginFilterWatcher* Watcher;
 
 };
 
@@ -65,12 +65,12 @@ class vtkPluginWatcherEnd : public vtkCommand
 {
 public:
   // generic new method
-  static vtkPluginWatcherEnd *New()
+  static vtkPluginWatcherEnd* New()
   {
     return new vtkPluginWatcherEnd;
   }
 
-  void Execute(vtkObject *vtkNotUsed(caller),
+  void Execute(vtkObject* vtkNotUsed(caller),
                        unsigned long event,
                        void* vtkNotUsed(v)) override
   {
@@ -100,12 +100,12 @@ public:
       }
     }
   }
-  void SetWatcher(vtkPluginFilterWatcher *w)
+  void SetWatcher(vtkPluginFilterWatcher* w)
   {
     this->Watcher = w;
   }
 private:
-  vtkPluginFilterWatcher *Watcher;
+  vtkPluginFilterWatcher* Watcher;
 
 };
 
@@ -114,12 +114,12 @@ class vtkPluginWatcherProgress : public vtkCommand
 {
 public:
   // generic new method
-  static vtkPluginWatcherProgress *New()
+  static vtkPluginWatcherProgress* New()
   {
     return new vtkPluginWatcherProgress;
   }
 
-  void Execute(vtkObject *vtkNotUsed(caller),
+  void Execute(vtkObject* vtkNotUsed(caller),
                        unsigned long event,
                        void* vtkNotUsed(v)) override
   {
@@ -174,7 +174,7 @@ public:
   }
 
   //-----------------------------------------------------------------------------
-  void SetWatcher(vtkPluginFilterWatcher *w)
+  void SetWatcher(vtkPluginFilterWatcher* w)
   {
     this->Watcher = w;
   }
@@ -183,7 +183,7 @@ public:
   void SetQuiet(bool val) {Quiet=val;};
   bool GetQuiet() {return Quiet;};
 private:
-  vtkPluginFilterWatcher *Watcher;
+  vtkPluginFilterWatcher* Watcher;
   bool Quiet;
 
 };
@@ -191,8 +191,8 @@ private:
 //-----------------------------------------------------------------------------
 vtkPluginFilterWatcher
 ::vtkPluginFilterWatcher(vtkAlgorithm* o,
-                         const char *comment,
-                         ModuleProcessInformation *inf,
+                         const char* comment,
+                         ModuleProcessInformation* inf,
                          double fraction,
                          double start)
 {

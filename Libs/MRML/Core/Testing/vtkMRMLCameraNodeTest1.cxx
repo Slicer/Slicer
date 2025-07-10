@@ -23,7 +23,7 @@ int TestGetSetLayoutName();
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLCameraNodeTest1(int , char * [] )
+int vtkMRMLCameraNodeTest1(int, char*[])
 {
   CHECK_EXIT_SUCCESS(ExerciseBasicMethods());
   CHECK_EXIT_SUCCESS(TestGetSetLayoutName());

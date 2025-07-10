@@ -26,7 +26,7 @@ qSlicerModulesListViewPlugin::qSlicerModulesListViewPlugin(QObject* parent)
 {
 }
 
-QWidget *qSlicerModulesListViewPlugin::createWidget(QWidget* parentWidget)
+QWidget* qSlicerModulesListViewPlugin::createWidget(QWidget* parentWidget)
 {
   qSlicerModulesListView* widget = new qSlicerModulesListView(parentWidget);
   return widget;

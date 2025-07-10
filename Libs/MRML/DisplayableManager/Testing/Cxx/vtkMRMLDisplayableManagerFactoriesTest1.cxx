@@ -31,9 +31,9 @@
 int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
 {
   vtkNew<vtkTesting> testHelper;
-  testHelper->AddArguments(argc, const_cast<const char **>(argv));
+  testHelper->AddArguments(argc, const_cast<const char**>(argv));
 
-  vtkMRMLThreeDViewDisplayableManagerFactory * threeDViewFactory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
+  vtkMRMLThreeDViewDisplayableManagerFactory* threeDViewFactory = vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance();
   if (!threeDViewFactory)
   {
     std::cerr << "Line " << __LINE__
@@ -42,7 +42,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  vtkMRMLSliceViewDisplayableManagerFactory * slicerViewFactory = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
+  vtkMRMLSliceViewDisplayableManagerFactory* slicerViewFactory = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance();
   if (!slicerViewFactory)
   {
     std::cerr << "Line " << __LINE__
@@ -105,7 +105,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   ri->SetInteractorStyle(iStyle.GetPointer());
 
   // ThreeD - Instantiate displayable managers
-  vtkMRMLDisplayableManagerGroup * threeDViewGroup = threeDViewFactory->InstantiateDisplayableManagers(rr.GetPointer());
+  vtkMRMLDisplayableManagerGroup* threeDViewGroup = threeDViewFactory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!threeDViewGroup)
   {
     std::cerr << "Line " << __LINE__
@@ -127,7 +127,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
 
   // ThreeD - Instantiate and add node to the scene
   vtkNew<vtkMRMLViewNode> viewNode;
-  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode.GetPointer());
+  vtkMRMLNode* nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
   {
     std::cerr << "Line " << __LINE__ << " - Failed to add vtkMRMLViewNode" << std::endl;
@@ -138,7 +138,7 @@ int vtkMRMLDisplayableManagerFactoriesTest1(int argc, char* argv[])
   threeDViewGroup->SetMRMLDisplayableNode(viewNode.GetPointer());
 
   // Slice - Instantiate displayable managers
-  vtkMRMLDisplayableManagerGroup * sliceViewGroup =
+  vtkMRMLDisplayableManagerGroup* sliceViewGroup =
       slicerViewFactory->InstantiateDisplayableManagers(rr.GetPointer());
   if (!sliceViewGroup)
   {

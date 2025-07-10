@@ -42,7 +42,7 @@ DiffusionTensor3DNonRigidTransform<TData>
 template <class TData>
 typename DiffusionTensor3DNonRigidTransform<TData>::PointType
 DiffusionTensor3DNonRigidTransform<TData>
-::EvaluateTensorPosition( const PointType & point )
+::EvaluateTensorPosition( const PointType& point )
 {
   if( m_Transform.IsNotNull() )
   {
@@ -57,7 +57,7 @@ DiffusionTensor3DNonRigidTransform<TData>
 template <class TData>
 typename DiffusionTensor3DNonRigidTransform<TData>::TensorDataType
 DiffusionTensor3DNonRigidTransform<TData>
-::EvaluateTransformedTensor( TensorDataType & tensor, PointType & outputPosition )
+::EvaluateTransformedTensor( TensorDataType& tensor, PointType& outputPosition )
 {
   if( m_Transform.IsNotNull() && m_Affine.IsNotNull() )
   {

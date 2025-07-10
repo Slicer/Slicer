@@ -36,7 +36,7 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-int qMRMLSceneTransformModelTest2(int argc, char * argv [] )
+int qMRMLSceneTransformModelTest2(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

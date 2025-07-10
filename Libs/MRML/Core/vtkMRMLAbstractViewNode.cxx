@@ -247,7 +247,7 @@ void vtkMRMLAbstractViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 
   vtkMRMLCopyEndMacro();
 
-  vtkMRMLAbstractViewNode *node = vtkMRMLAbstractViewNode::SafeDownCast(anode);
+  vtkMRMLAbstractViewNode* node = vtkMRMLAbstractViewNode::SafeDownCast(anode);
   for (int i=0; i<vtkMRMLAbstractViewNode::AxisLabelsCount; i++)
   {
     this->SetAxisLabel(i,node->GetAxisLabel(i));
@@ -308,7 +308,7 @@ void vtkMRMLAbstractViewNode::PrintSelf(ostream& os, vtkIndent indent)
 //------------------------------------------------------------------------------
 vtkMRMLInteractionNode* vtkMRMLAbstractViewNode::GetInteractionNode()
 {
-  vtkMRMLInteractionNode * interactionNode =
+  vtkMRMLInteractionNode* interactionNode =
       vtkMRMLInteractionNode::SafeDownCast(this->GetNodeReference(this->InteractionNodeReferenceRole));
   if (this->GetScene() && !interactionNode)
   {
@@ -319,7 +319,7 @@ vtkMRMLInteractionNode* vtkMRMLAbstractViewNode::GetInteractionNode()
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLAbstractViewNode::SetInteractionNodeID(const char *interactionNodeId)
+bool vtkMRMLAbstractViewNode::SetInteractionNodeID(const char* interactionNodeId)
 {
   if (!interactionNodeId)
   {
@@ -563,7 +563,7 @@ vtkMRMLNode* vtkMRMLAbstractViewNode::GetParentLayoutNode()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLAbstractViewNode::SetAndObserveParentLayoutNodeID(const char *layoutNodeId)
+bool vtkMRMLAbstractViewNode::SetAndObserveParentLayoutNodeID(const char* layoutNodeId)
 {
   if (!layoutNodeId)
   {

@@ -32,7 +32,7 @@ class qSlicerLoadableHelloWorldModule : public qSlicerLoadableModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerLoadableHelloWorldModule(QObject *parent=nullptr):Superclass(parent){}
+  qSlicerLoadableHelloWorldModule(QObject* parent=nullptr):Superclass(parent){}
   ~qSlicerLoadableHelloWorldModule() override = default;
 
   QString helpText()const override { return QString("helpText"); }
@@ -42,7 +42,7 @@ public:
 
 protected:
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
   {
     return nullptr;
   }
@@ -90,7 +90,7 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleToSlicerModules()
   QFETCH(QString, moduleName);
   QFETCH(bool, expectedResult);
 
-  qSlicerAbstractModule * module = this->Modules.value(moduleName);
+  qSlicerAbstractModule* module = this->Modules.value(moduleName);
   QVERIFY(moduleName.isEmpty() ? true : module != nullptr);
 
   bool currentResult = qSlicerLoadableModule::addModuleToSlicerModules(
