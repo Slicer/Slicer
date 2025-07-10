@@ -41,22 +41,22 @@
 
 //--------------------------------------------------------------------------
 // qMRMLTableWidgetPrivate
-class qMRMLTableWidgetPrivate
-  : public QObject
+class qMRMLTableWidgetPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qMRMLTableWidget);
+
 protected:
   qMRMLTableWidget* const q_ptr;
+
 public:
   qMRMLTableWidgetPrivate(qMRMLTableWidget& object);
   ~qMRMLTableWidgetPrivate() override;
 
   void init();
 
-  qMRMLTableView*       TableView;
+  qMRMLTableView* TableView;
   qMRMLTableViewControllerWidget* TableController;
 };
-
 
 //---------------------------------------------------------------------------
 qMRMLTableWidgetPrivate::qMRMLTableWidgetPrivate(qMRMLTableWidget& object)
@@ -86,10 +86,9 @@ void qMRMLTableWidgetPrivate::init()
 
   this->TableController->setTableView(this->TableView);
 
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->TableView, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->TableController, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->TableView, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(
+    q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->TableController, SLOT(setMRMLScene(vtkMRMLScene*)));
 }
 
 // --------------------------------------------------------------------------
@@ -128,7 +127,7 @@ void qMRMLTableWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewN
   if (newViewNode && !tableViewNode)
   {
     qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
-      << ". Expected node type: vtkMRMLTableViewNode";
+               << ". Expected node type: vtkMRMLTableViewNode";
   }
   this->setMRMLTableViewNode(tableViewNode);
 }

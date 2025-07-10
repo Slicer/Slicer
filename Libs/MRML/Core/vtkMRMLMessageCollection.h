@@ -37,45 +37,45 @@
 /// to the user later).
 
 #ifndef vtkWarningToMessageCollectionMacro
-#define vtkWarningToMessageCollectionMacro(messageCollection, devMsgPrefix, userMsg) \
-  vtkWarningToMessageCollectionWithObjectMacro(this, messageCollection, devMsgPrefix, userMsg)
+# define vtkWarningToMessageCollectionMacro(messageCollection, devMsgPrefix, userMsg) \
+   vtkWarningToMessageCollectionWithObjectMacro(this, messageCollection, devMsgPrefix, userMsg)
 #endif
 
 #ifndef vtkErrorToMessageCollectionMacro
-#define vtkErrorToMessageCollectionMacro(messageCollection, devMsgPrefix, userMsg) \
-  vtkErrorToMessageCollectionWithObjectMacro(this, messageCollection, devMsgPrefix, userMsg)
+# define vtkErrorToMessageCollectionMacro(messageCollection, devMsgPrefix, userMsg) \
+   vtkErrorToMessageCollectionWithObjectMacro(this, messageCollection, devMsgPrefix, userMsg)
 #endif
 
 #ifndef vtkWarningToMessageCollectionWithObjectMacro
-#define vtkWarningToMessageCollectionWithObjectMacro(self, messageCollection, devMsgPrefix, userMsg) \
-  {                                                          \
-  vtkOStreamWrapper::EndlType endl;                          \
-  vtkOStreamWrapper::UseEndl(endl);                          \
-  if (messageCollection)                                     \
-  {                                                          \
-    vtkOStrStreamWrapper userMsgStream;                      \
-    userMsgStream << userMsg;                                \
-    messageCollection->AddMessage(vtkCommand::WarningEvent, userMsgStream.str()); \
-    userMsgStream.rdbuf()->freeze(0);                        \
-  }                                                          \
-  vtkWarningWithObjectMacro(self, << devMsgPrefix << ": " << userMsg);   \
-  }
+# define vtkWarningToMessageCollectionWithObjectMacro(self, messageCollection, devMsgPrefix, userMsg) \
+   {                                                                                                  \
+     vtkOStreamWrapper::EndlType endl;                                                                \
+     vtkOStreamWrapper::UseEndl(endl);                                                                \
+     if (messageCollection)                                                                           \
+     {                                                                                                \
+       vtkOStrStreamWrapper userMsgStream;                                                            \
+       userMsgStream << userMsg;                                                                      \
+       messageCollection->AddMessage(vtkCommand::WarningEvent, userMsgStream.str());                  \
+       userMsgStream.rdbuf()->freeze(0);                                                              \
+     }                                                                                                \
+     vtkWarningWithObjectMacro(self, << devMsgPrefix << ": " << userMsg);                             \
+   }
 #endif
 
 #ifndef vtkErrorToMessageCollectionWithObjectMacro
-#define vtkErrorToMessageCollectionWithObjectMacro(self, messageCollection, devMsgPrefix, userMsg) \
-  {                                                          \
-  vtkOStreamWrapper::EndlType endl;                          \
-  vtkOStreamWrapper::UseEndl(endl);                          \
-  if (messageCollection)                                     \
-  {                                                          \
-    vtkOStrStreamWrapper userMsgStream;                      \
-    userMsgStream << userMsg;                                \
-    messageCollection->AddMessage(vtkCommand::ErrorEvent, userMsgStream.str()); \
-    userMsgStream.rdbuf()->freeze(0);                        \
-  }                                                          \
-  vtkErrorWithObjectMacro(self, << devMsgPrefix << ": " << userMsg);   \
-  }
+# define vtkErrorToMessageCollectionWithObjectMacro(self, messageCollection, devMsgPrefix, userMsg) \
+   {                                                                                                \
+     vtkOStreamWrapper::EndlType endl;                                                              \
+     vtkOStreamWrapper::UseEndl(endl);                                                              \
+     if (messageCollection)                                                                         \
+     {                                                                                              \
+       vtkOStrStreamWrapper userMsgStream;                                                          \
+       userMsgStream << userMsg;                                                                    \
+       messageCollection->AddMessage(vtkCommand::ErrorEvent, userMsgStream.str());                  \
+       userMsgStream.rdbuf()->freeze(0);                                                            \
+     }                                                                                              \
+     vtkErrorWithObjectMacro(self, << devMsgPrefix << ": " << userMsg);                             \
+   }
 #endif
 //@}
 
@@ -117,7 +117,7 @@ public:
 
   /// Copy all messages from another collection.
   /// If prefix is specified then that string is prepended to each copied message.
-  virtual void AddMessages(vtkMRMLMessageCollection* source, const std::string& prefix=std::string());
+  virtual void AddMessages(vtkMRMLMessageCollection* source, const std::string& prefix = std::string());
 
   /// Clear the message vector.
   virtual void ClearMessages();
@@ -128,7 +128,7 @@ public:
   /// Return all messages in a single formatted string.
   /// If optional errorFound or warningFound pointers are set then the caller get information
   /// about presence of warnings or errors in the message list.
-  virtual std::string GetAllMessagesAsString(bool* errorFound=nullptr, bool* warningFound=nullptr);
+  virtual std::string GetAllMessagesAsString(bool* errorFound = nullptr, bool* warningFound = nullptr);
 
   /// Observe error and warnings reported by observedObject.
   /// For example, this can be used to capture errors from VTK classes
@@ -151,8 +151,7 @@ protected:
     std::string MessageText;
   };
 
-  static void CallbackFunction(vtkObject*, long unsigned int,
-    void* clientData, void* callData);
+  static void CallbackFunction(vtkObject*, long unsigned int, void* clientData, void* callData);
 
   vtkSmartPointer<vtkObject> ObservedObject;
   vtkSmartPointer<vtkCallbackCommand> CallbackCommand;

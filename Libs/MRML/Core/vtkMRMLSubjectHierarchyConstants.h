@@ -39,60 +39,64 @@ public:
   //----------------------------------------------------------------------------
 
   /// Data node subject hierarchy attribute
-  static const std::string GetSubjectHierarchyAttributePrefix()
-    { return "SubjectHierarchy."; };
+  static const std::string GetSubjectHierarchyAttributePrefix() { return "SubjectHierarchy."; };
   static const std::string GetSubjectHierarchyExcludeFromTreeAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "ExcludeFromPotentialNodesList"; };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + "ExcludeFromPotentialNodesList";
+  };
 
   //@{
   /// Subject hierarchy item attributes
-  static const std::string GetSubjectHierarchyVirtualBranchAttributeName()
-    { return "VirtualBranch"; };
-  static const std::string GetSubjectHierarchyLevelAttributeName()
-    { return "Level"; };
-  static const std::string GetSubjectHierarchyNewItemNamePrefix()
-    { return "New"; };
+  static const std::string GetSubjectHierarchyVirtualBranchAttributeName() { return "VirtualBranch"; };
+  static const std::string GetSubjectHierarchyLevelAttributeName() { return "Level"; };
+  static const std::string GetSubjectHierarchyNewItemNamePrefix() { return "New"; };
   //@}
   // Non-DICOM levels
-  static const char* GetSubjectHierarchyLevelFolder()
-    { return "Folder"; };
+  static const char* GetSubjectHierarchyLevelFolder() { return "Folder"; };
   // DICOM levels
-  static const std::string GetDICOMLevelPatient()
-    { return "Patient"; };
-  static const std::string GetDICOMLevelStudy()
-    { return "Study"; };
+  static const std::string GetDICOMLevelPatient() { return "Patient"; };
+  static const std::string GetDICOMLevelStudy() { return "Study"; };
 
   // DICOM attributes
-  static const char* GetDICOMUIDName()
-    { return "DICOM"; };
-  static const char* GetDICOMInstanceUIDName()
-    { return "DICOMInstanceUID"; };
-  static const std::string GetDICOMAttributePrefix()
-    { return "DICOM."; };
+  static const char* GetDICOMUIDName() { return "DICOM"; };
+  static const char* GetDICOMInstanceUIDName() { return "DICOMInstanceUID"; };
+  static const std::string GetDICOMAttributePrefix() { return "DICOM."; };
   static std::string GetDICOMReferencedInstanceUIDsAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + "ReferencedInstanceUIDs"; };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + "ReferencedInstanceUIDs";
+  };
 
   // Patient tags
-  static const std::string GetDICOMPatientNameTagName()
-    { return "PatientName"; };
+  static const std::string GetDICOMPatientNameTagName() { return "PatientName"; };
   static const std::string GetDICOMPatientNameAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientNameTagName(); };
-  static const std::string GetDICOMPatientIDTagName()
-    { return "PatientID"; };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientNameTagName();
+  };
+  static const std::string GetDICOMPatientIDTagName() { return "PatientID"; };
   static const std::string GetDICOMPatientIDAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientIDTagName(); };
-  static const std::string GetDICOMPatientSexTagName()
-    { return "PatientSex"; };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientIDTagName();
+  };
+  static const std::string GetDICOMPatientSexTagName() { return "PatientSex"; };
   static const std::string GetDICOMPatientSexAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientSexTagName(); };
-  static const std::string GetDICOMPatientBirthDateTagName()
-    { return "PatientBirthDate"; };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientSexTagName();
+  };
+  static const std::string GetDICOMPatientBirthDateTagName() { return "PatientBirthDate"; };
   static const std::string GetDICOMPatientBirthDateAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientBirthDateTagName(); };
-  static const std::string GetDICOMPatientCommentsTagName()
-    { return "PatientComments"; };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientBirthDateTagName();
+  };
+  static const std::string GetDICOMPatientCommentsTagName() { return "PatientComments"; };
   static const std::string GetDICOMPatientCommentsAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientCommentsTagName(); };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMPatientCommentsTagName();
+  };
 
   /// Get patient tag names (attribute names are these values prefixed!)
   static const std::vector<std::string> GetDICOMPatientTagNames()
@@ -107,26 +111,36 @@ public:
   }
 
   // Study tags
-  static const std::string  GetDICOMStudyInstanceUIDTagName()
-    { return "StudyInstanceUID"; };
-  static const std::string  GetDICOMStudyInstanceUIDAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyInstanceUIDTagName(); };
-  static const std::string  GetDICOMStudyIDTagName()
-    { return "StudyID"; };
-  static const std::string  GetDICOMStudyIDAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyIDTagName(); };
-  static const std::string  GetDICOMStudyDescriptionTagName()
-    { return "StudyDescription"; };
-  static const std::string  GetDICOMStudyDescriptionAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyDescriptionTagName(); };
-  static const std::string GetDICOMStudyDateTagName()
-    { return "StudyDate"; };
+  static const std::string GetDICOMStudyInstanceUIDTagName() { return "StudyInstanceUID"; };
+  static const std::string GetDICOMStudyInstanceUIDAttributeName()
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyInstanceUIDTagName();
+  };
+  static const std::string GetDICOMStudyIDTagName() { return "StudyID"; };
+  static const std::string GetDICOMStudyIDAttributeName()
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyIDTagName();
+  };
+  static const std::string GetDICOMStudyDescriptionTagName() { return "StudyDescription"; };
+  static const std::string GetDICOMStudyDescriptionAttributeName()
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyDescriptionTagName();
+  };
+  static const std::string GetDICOMStudyDateTagName() { return "StudyDate"; };
   static const std::string GetDICOMStudyDateAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyDateTagName(); };
-  static const std::string GetDICOMStudyTimeTagName()
-    { return "StudyTime"; };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyDateTagName();
+  };
+  static const std::string GetDICOMStudyTimeTagName() { return "StudyTime"; };
   static const std::string GetDICOMStudyTimeAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyTimeTagName(); };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMStudyTimeTagName();
+  };
 
   /// Get study tag names (attribute names are these values prefixed!)
   static const std::vector<std::string> GetDICOMStudyTagNames()
@@ -142,17 +156,22 @@ public:
 
   // Series tags
   static const std::string GetDICOMSeriesModalityAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + "Modality"; };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + "Modality";
+  };
   static const std::string GetDICOMSeriesNumberAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + "SeriesNumber"; };
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + "SeriesNumber";
+  };
 
   // FrameOfReferenceUID is not strictly a series-level tag (in theory it could change within a series
   // but for practical applications most likely it will be the same within a sequence)
-  static const std::string GetDICOMFrameOfReferenceUIDTagName()
-    { return "FrameOfReferenceUID"; };
+  static const std::string GetDICOMFrameOfReferenceUIDTagName() { return "FrameOfReferenceUID"; };
   static const std::string GetDICOMFrameOfReferenceUIDAttributeName()
-    { return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix() + vtkMRMLSubjectHierarchyConstants::GetDICOMFrameOfReferenceUIDTagName(); };
-
+  {
+    return vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix()
+           + vtkMRMLSubjectHierarchyConstants::GetDICOMFrameOfReferenceUIDTagName();
+  };
 };
 
 #endif

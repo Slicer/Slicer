@@ -31,8 +31,7 @@
 
 class qSlicerModulePanelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel
-  : public qSlicerAbstractModulePanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel : public qSlicerAbstractModulePanel
 {
   Q_OBJECT
 
@@ -45,7 +44,8 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel
   /// \sa isHelpAndAcknowledgmentVisible()
   /// \sa setHelpAndAcknowledgmentVisible()
   /// \sa qSlicerAbstractCoreModule::helpText(), setModule()
-  Q_PROPERTY(bool helpAndAcknowledgmentVisible READ isHelpAndAcknowledgmentVisible WRITE setHelpAndAcknowledgmentVisible)
+  Q_PROPERTY(
+    bool helpAndAcknowledgmentVisible READ isHelpAndAcknowledgmentVisible WRITE setHelpAndAcknowledgmentVisible)
 
 public:
   typedef qSlicerAbstractModulePanel Superclass;

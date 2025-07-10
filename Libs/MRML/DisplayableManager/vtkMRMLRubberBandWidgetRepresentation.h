@@ -21,7 +21,7 @@
  *
  * @sa
  * vtkSliceIntersectionWidget vtkWidgetRepresentation vtkAbstractWidget
-*/
+ */
 
 #ifndef vtkMRMLRubberBandWidgetRepresentation_h
 #define vtkMRMLRubberBandWidgetRepresentation_h
@@ -29,7 +29,8 @@
 #include "vtkMRMLDisplayableManagerExport.h" // For export macro
 #include "vtkMRMLAbstractWidgetRepresentation.h"
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLRubberBandWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLRubberBandWidgetRepresentation
+  : public vtkMRMLAbstractWidgetRepresentation
 {
 public:
   /**

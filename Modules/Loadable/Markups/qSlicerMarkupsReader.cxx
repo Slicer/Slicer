@@ -36,7 +36,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerMarkupsReaderPrivate
 {
-  public:
+public:
   vtkSmartPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
 };
 
@@ -87,10 +87,8 @@ qSlicerIO::IOFileType qSlicerMarkupsReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerMarkupsReader::extensions() const
 {
-  return QStringList()
-         << tr("Markups") + " (*.mrk.json)"
-         << tr("Markups") + " (*.json)"
-         << tr("Markups Fiducials") + " (*.fcsv)";
+  return QStringList() << tr("Markups") + " (*.mrk.json)" << tr("Markups") + " (*.json)"
+                       << tr("Markups Fiducials") + " (*.fcsv)";
 }
 
 //----------------------------------------------------------------------------

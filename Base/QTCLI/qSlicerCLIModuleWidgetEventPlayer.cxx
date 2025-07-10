@@ -33,7 +33,7 @@ qSlicerCLIModuleWidgetEventPlayer::qSlicerCLIModuleWidgetEventPlayer(QObject* pa
 // ----------------------------------------------------------------------------
 bool qSlicerCLIModuleWidgetEventPlayer::playEvent(QObject* Object,
                                                   const QString& Command,
-                                                  const QString &/*Arguments*/,
+                                                  const QString& /*Arguments*/,
                                                   bool& Error)
 {
   // But in the CLI module under Slicer4 when we activate the button apply,
@@ -46,7 +46,7 @@ bool qSlicerCLIModuleWidgetEventPlayer::playEvent(QObject* Object,
   qSlicerCLIModuleWidget* parent = nullptr;
   for (QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
   {
-      parent = qobject_cast<qSlicerCLIModuleWidget*>(test);
+    parent = qobject_cast<qSlicerCLIModuleWidget*>(test);
   }
   // This Command is mainly use for the QPushButton.
   if (!parent || Object->objectName() != "ApplyPushButton")

@@ -119,15 +119,11 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
   CHECK_INT(scene->GetNumberOfNodesByClass("vtkMRMLMarkupsLineNode"), 2);
 
   // check the control point positions
-  vtkMRMLMarkupsFiducialNode* mfnode = vtkMRMLMarkupsFiducialNode::SafeDownCast(scene->GetFirstNodeByName("Fiducials List"));
+  vtkMRMLMarkupsFiducialNode* mfnode =
+    vtkMRMLMarkupsFiducialNode::SafeDownCast(scene->GetFirstNodeByName("Fiducials List"));
   CHECK_NOT_NULL(mfnode);
 
-  double expectedPosition[3][3] =
-    {
-    { 137.232, 0.0, 85.9229},
-    { 92.4384, 1.0, 54.1599 },
-    { 86.039, 89.2857, 0.0 }
-    };
+  double expectedPosition[3][3] = { { 137.232, 0.0, 85.9229 }, { 92.4384, 1.0, 54.1599 }, { 86.039, 89.2857, 0.0 } };
 
   for (int i = 0; i < 3; i++)
   {
@@ -136,15 +132,10 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
     double diff = vtkMath::Distance2BetweenPoints(expectedPosition[i], actualPosition);
     if (diff > 0.01)
     {
-      std::cerr << "Failed to parse the first fiducial location, expected: "
-        << expectedPosition[i][0] << ","
-        << expectedPosition[i][1] << ","
-        << expectedPosition[i][2] << ","
-        << "\nbut got : "
-        << actualPosition[0] << ","
-        << actualPosition[1] << ","
-        << actualPosition[2]
-        << "\n\tdiff = " << diff << std::endl;
+      std::cerr << "Failed to parse the first fiducial location, expected: " << expectedPosition[i][0] << ","
+                << expectedPosition[i][1] << "," << expectedPosition[i][2] << ","
+                << "\nbut got : " << actualPosition[0] << "," << actualPosition[1] << "," << actualPosition[2]
+                << "\n\tdiff = " << diff << std::endl;
       return EXIT_FAILURE;
     }
   }
@@ -157,7 +148,8 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
   CHECK_INT(scene->GetNumberOfNodesByClass("vtkMRMLAnnotationTextDisplayNode"), 0);
   CHECK_INT(scene->GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialDisplayNode"), 2);
 
-  vtkMRMLMarkupsFiducialDisplayNode* markupsFiducialDisplayNode1 = vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(mfnode->GetDisplayNode());
+  vtkMRMLMarkupsFiducialDisplayNode* markupsFiducialDisplayNode1 =
+    vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(mfnode->GetDisplayNode());
   CHECK_NOT_NULL(markupsFiducialDisplayNode1);
 
   double* color = markupsFiducialDisplayNode1->GetColor();
@@ -165,13 +157,9 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
   double diff = vtkMath::Distance2BetweenPoints(color, expectedColor);
   if (diff > 0.01)
   {
-    std::cerr << "Failed to get color on first display node, expected: "
-              << expectedColor[0] << ","
-              << expectedColor[1] << ","
-              << expectedColor[2] << " but got "
-              << color[0] << ","
-              << color[1] << ","
-              << color[2] << ", diff = " << diff << std::endl;
+    std::cerr << "Failed to get color on first display node, expected: " << expectedColor[0] << "," << expectedColor[1]
+              << "," << expectedColor[2] << " but got " << color[0] << "," << color[1] << "," << color[2]
+              << ", diff = " << diff << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -180,13 +168,9 @@ int vtkMarkupsAnnotationSceneTest(int argc, char* argv[])
   diff = vtkMath::Distance2BetweenPoints(selectedColor, expectedSelectedColor);
   if (diff > 0.01)
   {
-    std::cerr << "Failed to get selected color on first display node, expected: "
-      << expectedSelectedColor[0] << ","
-      << expectedSelectedColor[1] << ","
-      << expectedSelectedColor[2] << " but got "
-      << selectedColor[0] << ","
-      << selectedColor[1] << ","
-      << selectedColor[2] << ", diff = " << diff << std::endl;
+    std::cerr << "Failed to get selected color on first display node, expected: " << expectedSelectedColor[0] << ","
+              << expectedSelectedColor[1] << "," << expectedSelectedColor[2] << " but got " << selectedColor[0] << ","
+              << selectedColor[1] << "," << selectedColor[2] << ", diff = " << diff << std::endl;
     return EXIT_FAILURE;
   }
 

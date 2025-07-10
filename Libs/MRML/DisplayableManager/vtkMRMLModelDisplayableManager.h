@@ -148,8 +148,7 @@ protected:
   void SetModelDisplayProperty(vtkMRMLDisplayableNode* model);
   int GetDisplayedModelsVisibility(vtkMRMLDisplayNode* displayNode);
 
-  const char* GetActiveScalarName(vtkMRMLDisplayNode* displayNode,
-                                  vtkMRMLModelNode* model = nullptr);
+  const char* GetActiveScalarName(vtkMRMLDisplayNode* displayNode, vtkMRMLModelNode* model = nullptr);
 
   /// Returns not null if modified
   vtkAlgorithm* GetClipper(vtkMRMLDisplayNode* dnode,
@@ -160,12 +159,17 @@ protected:
   void RemoveDisplayedID(const std::string& id);
   void ClearDisplayMaps();
 
-  void UpdateMapperProperties(vtkMRMLModelNode* modelNode, vtkMRMLDisplayNode* displayNode,
-    vtkMapper* actor);
-  void UpdateActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* modelDisplayNode, vtkMRMLDisplayNode* displayNode,
-    vtkActor* actor, double opacity);
-  void UpdateCapActorProperties(vtkMRMLModelNode* modelNode, vtkMRMLModelDisplayNode* modelDisplayNode, vtkMRMLDisplayNode* displayNode,
-    vtkActor* capActor, double opacity);
+  void UpdateMapperProperties(vtkMRMLModelNode* modelNode, vtkMRMLDisplayNode* displayNode, vtkMapper* actor);
+  void UpdateActorProperties(vtkMRMLModelNode* modelNode,
+                             vtkMRMLModelDisplayNode* modelDisplayNode,
+                             vtkMRMLDisplayNode* displayNode,
+                             vtkActor* actor,
+                             double opacity);
+  void UpdateCapActorProperties(vtkMRMLModelNode* modelNode,
+                                vtkMRMLModelDisplayNode* modelDisplayNode,
+                                vtkMRMLDisplayNode* displayNode,
+                                vtkActor* capActor,
+                                double opacity);
 
 protected:
   vtkMRMLModelDisplayableManager();

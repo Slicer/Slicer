@@ -30,8 +30,7 @@ qMRMLSegmentationRepresentationsListViewPlugin::qMRMLSegmentationRepresentations
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentationRepresentationsListViewPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentationRepresentationsListView* pluginWidget =
-    new qMRMLSegmentationRepresentationsListView(parentWidget);
+  qMRMLSegmentationRepresentationsListView* pluginWidget = new qMRMLSegmentationRepresentationsListView(parentWidget);
   return pluginWidget;
 }
 
@@ -40,7 +39,7 @@ QString qMRMLSegmentationRepresentationsListViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentationRepresentationsListView\" \
           name=\"SegmentationRepresentationsListView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

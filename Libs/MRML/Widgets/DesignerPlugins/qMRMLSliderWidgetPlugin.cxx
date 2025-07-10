@@ -23,7 +23,7 @@
 
 // --------------------------------------------------------------------------
 qMRMLSliderWidgetPlugin::qMRMLSliderWidgetPlugin(QObject* _parent)
-: QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -37,11 +37,11 @@ QWidget* qMRMLSliderWidgetPlugin::createWidget(QWidget* _parent)
 // --------------------------------------------------------------------------
 QString qMRMLSliderWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSliderWidget\" name=\"MRMLSliderWidget\">\n"
-    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSliderWidget\" name=\"MRMLSliderWidget\">\n"
+         "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

@@ -65,7 +65,6 @@ QIcon qSlicerTransformsModule::icon() const
   return QIcon(":/Icons/Transforms.png");
 }
 
-
 //-----------------------------------------------------------------------------
 QStringList qSlicerTransformsModule::categories() const
 {
@@ -127,19 +126,20 @@ void qSlicerTransformsModule::setup()
   {
     return;
   }
-  vtkSlicerTransformLogic* transformLogic =
-    vtkSlicerTransformLogic::SafeDownCast(this->logic());
+  vtkSlicerTransformLogic* transformLogic = vtkSlicerTransformLogic::SafeDownCast(this->logic());
+  app->coreIOManager()->registerIO(new qSlicerTransformsReader(transformLogic, this));
   app->coreIOManager()->registerIO(
-    new qSlicerTransformsReader(transformLogic, this));
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter(
-    "Transforms", QString("TransformFile"),
-    QStringList() << "vtkMRMLTransformNode", true, this));
+    new qSlicerNodeWriter("Transforms", QString("TransformFile"), QStringList() << "vtkMRMLTransformNode", true, this));
 
   // Register displayable managers
-  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLTransformsDisplayableManager2D");
-  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLLinearTransformsDisplayableManager");
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLTransformsDisplayableManager3D");
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLLinearTransformsDisplayableManager");
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLTransformsDisplayableManager2D");
+  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLLinearTransformsDisplayableManager");
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLTransformsDisplayableManager3D");
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager(
+    "vtkMRMLLinearTransformsDisplayableManager");
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyTransformsPlugin());
@@ -148,7 +148,6 @@ void qSlicerTransformsModule::setup()
 //-----------------------------------------------------------------------------
 QStringList qSlicerTransformsModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLTransformNode"
-    << "vtkMRMLTransformDisplayNode";
+  return QStringList() << "vtkMRMLTransformNode"
+                       << "vtkMRMLTransformDisplayNode";
 }

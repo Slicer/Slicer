@@ -44,8 +44,7 @@ class vtkRenderWindowInteractor;
 /// between MRML display nodes and vtkRenderer/vtkActors. They are responsible
 /// for creating and synchronizing vtkActor, vtkMapper and vtkProperties with
 /// MRML display nodes.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager
-  : public vtkMRMLAbstractLogic
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager : public vtkMRMLAbstractLogic
 {
 public:
   static vtkMRMLAbstractDisplayableManager* New();
@@ -88,8 +87,7 @@ public:
 
   /// Assemble and return info string to display in Data probe for a given viewer XYZ position.
   /// \return Invalid string by default, meaning no information to display.
-  virtual std::string GetDataProbeInfoStringForPosition(
-      double vtkNotUsed(xyz)[3]) { return ""; }
+  virtual std::string GetDataProbeInfoStringForPosition(double vtkNotUsed(xyz)[3]) { return ""; }
 
   /// Return true if the displayable manager can process the event.
   /// Distance2 is the squared distance in display coordinates from the closest interaction position.
@@ -103,7 +101,8 @@ public:
   /// Set if the widget gets/loses focus (interaction events are processed by this displayable manager).
   virtual void SetHasFocus(bool hasFocus, vtkMRMLInteractionEventData* eventData);
 
-  /// Displayable manager can indicate that it would like to get all events (even when mouse pointer is outside the window).
+  /// Displayable manager can indicate that it would like to get all events (even when mouse pointer is outside the
+  /// window).
   virtual bool GetGrabFocus();
 
   /// Displayable manager can indicate that the window is in interactive mode (faster updates).
@@ -115,7 +114,6 @@ public:
   void SetMouseCursor(int cursor);
 
 protected:
-
   vtkMRMLAbstractDisplayableManager();
   ~vtkMRMLAbstractDisplayableManager() override;
 
@@ -133,7 +131,7 @@ protected:
   /// \note Initialization occurs before the MRMLDisplayableNode is set and observed
   /// \warning That function should NOT be used directly !
   /// \sa SetRenderer
-  virtual void AdditionalInitializeStep(){}
+  virtual void AdditionalInitializeStep() {}
 
   /// Subclass can overload this method to specify under which InteractionNode modes
   /// this Displayable Manager InteractorStyle events.
@@ -142,9 +140,7 @@ protected:
   /// the mouse moves set this to include Place and ViewTransform
   virtual int ActiveInteractionModes();
 
-  void ProcessMRMLNodesEvents(vtkObject* caller,
-                                      unsigned long event,
-                                      void* callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Receives all the events fired by any graphical object interacted by the
   /// user (typically vtk widgets).
@@ -158,13 +154,10 @@ protected:
   /// GetWidgetsCallbackCommand().
   /// ProcessWidgetsEvents doesn't do anything by default, you need to reimplement
   /// it.
-  virtual void ProcessWidgetsEvents(vtkObject* caller,
-                                    unsigned long event,
-                                    void* callData);
+  virtual void ProcessWidgetsEvents(vtkObject* caller, unsigned long event, void* callData);
 
   /// WidgetsCallback is a static function to relay modified events from the vtk widgets
-  static void WidgetsCallback(vtkObject* caller, unsigned long eid,
-                              void* clientData, void* callData);
+  static void WidgetsCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   /// Get vtkWidget callbackCommand
   vtkCallbackCommand* GetWidgetsCallbackCommand();
@@ -213,7 +206,7 @@ protected:
 
   /// Called from RequestRender method if UpdateFromMRMLRequested is true
   /// \sa RequestRender() SetUpdateFromMRMLRequested()
-  virtual void UpdateFromMRML(){}
+  virtual void UpdateFromMRML() {}
 
   /// Invoke vtkCommand::UpdateEvent and then call
   /// vtkMRMLThreeDViewDisplayableManagerFactory::RequestRender() which will also
@@ -226,7 +219,7 @@ protected:
   /// Allows to add observer to the current interactor style that will call the
   /// virtual method OnInteractorStyleEvent accordingly.
   /// \sa AdditionalInitializeStep RemoveInteractorStyleObservableEvent
-  void AddInteractorStyleObservableEvent(int eventid, float priority=0.0);
+  void AddInteractorStyleObservableEvent(int eventid, float priority = 0.0);
 
   /// \sa AddInteractorStyleObservableEvent
   void RemoveInteractorStyleObservableEvent(int eventid);
@@ -235,7 +228,7 @@ protected:
   /// Allows to add observer to the current interactor that will call the
   /// virtual method OnInteractorEvent accordingly.
   /// \sa AdditionalInitializeStep RemoveInteractorObservableEvent
-  void AddInteractorObservableEvent(int eventid, float priority=0.0);
+  void AddInteractorObservableEvent(int eventid, float priority = 0.0);
 
   /// \sa AddInteractorObservableEvent
   void RemoveInteractorObservableEvent(int eventid);
@@ -264,7 +257,6 @@ protected:
   virtual void OnInteractorEvent(int eventid);
 
 private:
-
   vtkMRMLAbstractDisplayableManager(const vtkMRMLAbstractDisplayableManager&) = delete;
   void operator=(const vtkMRMLAbstractDisplayableManager&) = delete;
 

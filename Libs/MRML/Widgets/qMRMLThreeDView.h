@@ -45,21 +45,24 @@ class QMRML_WIDGETS_EXPORT qMRMLThreeDView : public ctkVTKRenderView
 {
   Q_OBJECT
   /// Show shadows to improve depth perception.
-  /// Currently, only ambient shadows (screen-space ambient occlusion) method is supported and AmbientShadowsSizeScale and AmbientShadowsVolumeOpacityThreshold
-  /// parameters control its appearance.
+  /// Currently, only ambient shadows (screen-space ambient occlusion) method is supported and AmbientShadowsSizeScale
+  /// and AmbientShadowsVolumeOpacityThreshold parameters control its appearance.
   Q_PROPERTY(bool shadowsVisibility READ shadowsVisibility WRITE setShadowsVisibility)
   /// Ambient shadows size scale.
-  /// Specifies size of features to be emphasized by shadows.The scale is logarithmic, default (0.0) corresponds to object size of about 100
-  /// (in scene physical units).
+  /// Specifies size of features to be emphasized by shadows.The scale is logarithmic, default (0.0) corresponds to
+  /// object size of about 100 (in scene physical units).
   Q_PROPERTY(double ambientShadowsSizeScale READ ambientShadowsSizeScale WRITE setAmbientShadowsSizeScale)
   /// Volume rendering opacity above this value will cast shadows.
-  Q_PROPERTY(double ambientShadowsVolumeOpacityThreshold READ ambientShadowsVolumeOpacityThreshold WRITE setAmbientShadowsVolumeOpacityThreshold)
+  Q_PROPERTY(double ambientShadowsVolumeOpacityThreshold READ ambientShadowsVolumeOpacityThreshold WRITE
+               setAmbientShadowsVolumeOpacityThreshold)
   /// Ambient shadows intensity scale.
   /// Default is 1.0, larger value means stronger darkening.
-  Q_PROPERTY(double ambientShadowsIntensityScale READ ambientShadowsIntensityScale WRITE setAmbientShadowsIntensityScale)
+  Q_PROPERTY(
+    double ambientShadowsIntensityScale READ ambientShadowsIntensityScale WRITE setAmbientShadowsIntensityScale)
   /// Ambient shadows intensity shift.
   /// Default is 0.0, larger value means darkening is only visible where occlusion is stronger.
-  Q_PROPERTY(double ambientShadowsIntensityShift READ ambientShadowsIntensityShift WRITE setAmbientShadowsIntensityShift)
+  Q_PROPERTY(
+    double ambientShadowsIntensityShift READ ambientShadowsIntensityShift WRITE setAmbientShadowsIntensityShift)
 
 public:
   /// Superclass typedef
@@ -88,7 +91,7 @@ public:
   Q_INVOKABLE void getDisplayableManagers(vtkCollection* displayableManagers);
 
   /// Return a DisplayableManager given its class name
-  Q_INVOKABLE  vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
+  Q_INVOKABLE vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
 
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode() const;
@@ -100,9 +103,7 @@ public:
   /// -X, +X, -Y, +Y, -Z, +Z
   Q_INVOKABLE void rotateToViewAxis(unsigned int axisId);
   Q_INVOKABLE void rotateToViewAxis(const std::string& axisLabel);
-  Q_INVOKABLE void resetCamera(bool resetRotation = true,
-                               bool resetTranslation = true,
-                               bool resetDistance = true);
+  Q_INVOKABLE void resetCamera(bool resetRotation = true, bool resetTranslation = true, bool resetDistance = true);
 
   /// Returns camera node of the 3D view
   Q_INVOKABLE vtkMRMLCameraNode* cameraNode();

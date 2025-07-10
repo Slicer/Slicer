@@ -103,8 +103,8 @@ protected:
   /// Handle size, specified in renderer world coordinate system.
   /// For 3D views, renderer world coordinate system is the Slicer world coordinate system, so it is measured in the
   /// scene length unit (typically millimeters).
-  double SliceEdgeSize{2.0};
-  bool Interacting{false};
+  double SliceEdgeSize{ 2.0 };
+  bool Interacting{ false };
 
   virtual void SetupSliceEdgePipeline();
   SliceEdgePipeline* Pipeline;

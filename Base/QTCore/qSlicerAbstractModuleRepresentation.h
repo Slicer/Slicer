@@ -42,7 +42,6 @@ class qSlicerAbstractModuleRepresentationPrivate;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractModuleRepresentation : virtual public qSlicerObject
 {
 public:
-
   typedef qSlicerObject Superclass;
   qSlicerAbstractModuleRepresentation();
   ~qSlicerAbstractModuleRepresentation() override;
@@ -66,8 +65,9 @@ public:
   /// This function is intended only for use in modules that support editing certain types of nodes.
   /// The available roles and associated context description are specific to each module.
   ///
-  /// To enable editing of specific node types, the module must override the qSlicerAbstractCoreModule::associatedNodeTypes()
-  /// method and the module's widget class should override setEditedNode() method.
+  /// To enable editing of specific node types, the module must override the
+  /// qSlicerAbstractCoreModule::associatedNodeTypes() method and the module's widget class should override
+  /// setEditedNode() method.
   ///
   /// Optionally the nodeEditable() method can be overridden to specify a non-default
   /// confidence value. The confidence value should be specified as a decimal number
@@ -83,7 +83,7 @@ public:
   /// (for example, they look into the node contents and decide based on that if the node belongs to
   /// this module).
 
- /// \sa setEditedNode
+  /// \sa setEditedNode
   virtual double nodeEditable(vtkMRMLNode* node);
 
 protected:

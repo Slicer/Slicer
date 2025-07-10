@@ -30,7 +30,8 @@
 
 class qSlicerSubjectHierarchyOpacityPluginPrivate;
 
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyOpacityPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyOpacityPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -42,7 +43,8 @@ public:
 
 public:
   /// Get visibility context menu item actions to add to tree view.
-  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  /// These item visibility context menu actions can be shown in the implementations of \sa
+  /// showVisibilityContextMenuActionsForItem
   QList<QAction*> visibilityContextMenuActions() const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.

@@ -31,8 +31,7 @@
 class qSlicerFileReaderOptions;
 class qSlicerFileReaderPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileReader
-  : public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileReader : public qSlicerIO
 {
   Q_OBJECT
 public:
@@ -83,7 +82,9 @@ public:
   /// Implements the file list examination for the corresponding method in the core
   /// IO manager.
   /// \sa qSlicerCoreIOManager
-  Q_INVOKABLE virtual bool examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, qSlicerIO::IOProperties& ioProperties) const;
+  Q_INVOKABLE virtual bool examineFileInfoList(QFileInfoList& fileInfoList,
+                                               QFileInfo& archetypeFileInfo,
+                                               qSlicerIO::IOProperties& ioProperties) const;
 
 protected:
   /// Must be called in load() on success with the list of nodes added into the

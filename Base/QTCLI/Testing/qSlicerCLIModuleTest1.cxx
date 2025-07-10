@@ -44,7 +44,7 @@ namespace
 {
 //-----------------------------------------------------------------------------
 qSlicerCLIModule* CLIModule;
-QString            ErrorString;
+QString ErrorString;
 
 //-----------------------------------------------------------------------------
 void runCli(void* data)
@@ -58,11 +58,10 @@ void runCli(void* data)
     ErrorString = "Failed to create temporary file";
     return;
   }
-  //outputFile.close();
+  // outputFile.close();
 
   // Create node
-  vtkMRMLCommandLineModuleNode* cliModuleNode =
-    CLIModule->cliModuleLogic()->CreateNodeInScene();
+  vtkMRMLCommandLineModuleNode* cliModuleNode = CLIModule->cliModuleLogic()->CreateNodeInScene();
 
   // Values
   int inputValue1 = 4;
@@ -86,7 +85,9 @@ void runCli(void* data)
   {
     ErrorString = QString("OutputFile doesn't contain the expected result !\n"
                           "\tExpected:%1\n"
-                          "\tCurrent:%2").arg(expectedResult).arg(operationResult);
+                          "\tCurrent:%2")
+                    .arg(expectedResult)
+                    .arg(operationResult);
     return;
   }
 
@@ -109,16 +110,14 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
   qSlicerModuleManager* moduleManager = app.moduleManager();
   if (!moduleManager)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qSlicerApplication::moduleManager()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with qSlicerApplication::moduleManager()" << std::endl;
     return EXIT_FAILURE;
   }
 
   qSlicerModuleFactoryManager* moduleFactoryManager = moduleManager->factoryManager();
   if (!moduleFactoryManager)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qSlicerModuleManager::factoryManager()" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with qSlicerModuleManager::factoryManager()" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -147,8 +146,7 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
   qSlicerAbstractCoreModule* module = moduleManager->module("CLI4Test");
   if (!module)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qSlicerModuleManager::module()"
+    std::cerr << "Line " << __LINE__ << " - Problem with qSlicerModuleManager::module()"
               << " - Failed to retrieve module named '" << qPrintable(cliModuleName) << "'" << std::endl;
     return EXIT_FAILURE;
   }
@@ -156,8 +154,7 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
   qSlicerCLIModule* cliModule = qobject_cast<qSlicerCLIModule*>(module);
   if (!cliModule)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Failed to cast module named '" << qPrintable(cliModuleName) << "' "
+    std::cerr << "Line " << __LINE__ << " - Failed to cast module named '" << qPrintable(cliModuleName) << "' "
               << "from [qSlicerAbstractCoreModule*] into [qSlicerCLIModule*]" << std::endl;
     return EXIT_FAILURE;
   }
@@ -165,19 +162,16 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
   qSlicerAbstractModuleRepresentation* widgetRepresentation = cliModule->widgetRepresentation();
   if (!widgetRepresentation)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qSlicerCLIModule::widgetRepresentation()"
-              << " - Failed to retrieve representation associated with module named '"
-              << qPrintable(cliModuleName) << "'" << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem with qSlicerCLIModule::widgetRepresentation()"
+              << " - Failed to retrieve representation associated with module named '" << qPrintable(cliModuleName)
+              << "'" << std::endl;
     return EXIT_FAILURE;
   }
 
-  qSlicerCLIModuleWidget* cliWidget =
-    dynamic_cast<qSlicerCLIModuleWidget*>(widgetRepresentation);
+  qSlicerCLIModuleWidget* cliWidget = dynamic_cast<qSlicerCLIModuleWidget*>(widgetRepresentation);
   if (!cliWidget)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Failed to cast module '" << qPrintable(cliModuleName) << "' representation "
+    std::cerr << "Line " << __LINE__ << " - Failed to cast module '" << qPrintable(cliModuleName) << "' representation "
               << "from [qSlicerAbstractModuleRepresentation*] into [qSlicerCLIModuleWidget*]" << std::endl;
     return EXIT_FAILURE;
   }
@@ -194,7 +188,7 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
   QTimer::singleShot(0, &callback, SLOT(invoke()));
 
   bool checkResult = false;
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(500, &app, SLOT(quit()));
     checkResult = true;
@@ -209,11 +203,10 @@ int qSlicerCLIModuleTest1(int argc, char* argv[])
 
   if (checkResult && !ErrorString.isEmpty())
   {
-    std::cerr << "Line " << __LINE__ << " - Problem executing command line module - "
-              << qPrintable(ErrorString) << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Problem executing command line module - " << qPrintable(ErrorString)
+              << std::endl;
     return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;
-
 }

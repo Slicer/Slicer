@@ -29,13 +29,13 @@ class qSlicerTerminologiesReaderPrivate;
 class vtkSlicerTerminologiesModuleLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerTerminologiesReader
-  : public qSlicerFileReader
+class qSlicerTerminologiesReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr, QObject* parent = nullptr);
+  qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic = nullptr,
+                             QObject* parent = nullptr);
   ~qSlicerTerminologiesReader() override;
 
   void setTerminologiesLogic(vtkSlicerTerminologiesModuleLogic* terminologiesLogic);

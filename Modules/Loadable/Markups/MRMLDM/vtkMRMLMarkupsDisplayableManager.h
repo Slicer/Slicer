@@ -38,11 +38,10 @@ class vtkSlicerViewerWidget;
 class vtkMRMLMarkupsDisplayNode;
 class vtkAbstractWidget;
 
-class VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsDisplayableManager :
-    public vtkMRMLAbstractDisplayableManager
+class VTK_SLICER_MARKUPS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLMarkupsDisplayableManager
+  : public vtkMRMLAbstractDisplayableManager
 {
 public:
-
   // Allow the helper to call protected methods of displayable manager
   friend class vtkMRMLMarkupsDisplayableManagerHelper;
 
@@ -89,7 +88,6 @@ public:
   vtkSlicerMarkupsInteractionWidget* GetInteractionWidget(vtkMRMLMarkupsDisplayNode* node);
 
 protected:
-
   vtkMRMLMarkupsDisplayableManager();
   ~vtkMRMLMarkupsDisplayableManager() override;
 

@@ -36,7 +36,7 @@ class QDropEvent;
 
 /// Forward declarations
 class qSlicerIOManager;
-//class qSlicerFileDialogPrivate;
+// class qSlicerFileDialogPrivate;
 class qSlicerIOOptions;
 
 //------------------------------------------------------------------------------
@@ -66,20 +66,18 @@ public:
   virtual qSlicerFileDialog::IOAction action() const = 0;
   /// run the dialog to select the file/files/directory
   /// Properties available with IOProperties: fileMode, multipleFiles, fileType.
-  Q_INVOKABLE virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
-                    qSlicerIO::IOProperties()) = 0;
+  Q_INVOKABLE virtual bool exec(const qSlicerIO::IOProperties& ioProperties = qSlicerIO::IOProperties()) = 0;
 
   /// TBD: move in qSlicerCoreIOManager or qSlicerIOManager ?
   /// Return the nameFilters of all the readers in IOManager corresponding to
   /// fileType
-  Q_INVOKABLE static QStringList nameFilters(qSlicerIO::IOFileType fileType =
-                                 QString("NoFile"));
+  Q_INVOKABLE static QStringList nameFilters(qSlicerIO::IOFileType fileType = QString("NoFile"));
 
   /// Accept or ignore mimedata.
   /// Returns false by default.
   /// Can be reimplemented in subclass to support drag&drop.
   /// \sa dropEvent()
-  Q_INVOKABLE virtual bool isMimeDataAccepted(const QMimeData*mimeData) const;
+  Q_INVOKABLE virtual bool isMimeDataAccepted(const QMimeData* mimeData) const;
 
   /// Handle drop events: populate the dialog with the dropped mime data.
   /// Can be reimplemented in subclass to support drag&drop.
@@ -92,8 +90,9 @@ public:
   /// To be reimplemented.
   /// \sa qSlicerFileReader::loadedNodes()
   virtual QStringList loadedNodes() const;
+
 private:
-//  Q_DECLARE_PRIVATE(qSlicerFileDialog);
+  //  Q_DECLARE_PRIVATE(qSlicerFileDialog);
   Q_DISABLE_COPY(qSlicerFileDialog);
 };
 
@@ -103,8 +102,7 @@ class qSlicerStandardFileDialogPrivate;
 class ctkFileDialog;
 
 //------------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStandardFileDialog
-: public qSlicerFileDialog
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStandardFileDialog : public qSlicerFileDialog
 {
   Q_OBJECT
   Q_PROPERTY(qSlicerIO::IOFileType fileType READ fileType WRITE setFileType)
@@ -134,21 +132,18 @@ public:
   /// \sa action, action()
   void setAction(IOAction action);
 
-  bool exec(const qSlicerIO::IOProperties& ioProperties =
-                    qSlicerIO::IOProperties()) override;
+  bool exec(const qSlicerIO::IOProperties& ioProperties = qSlicerIO::IOProperties()) override;
 
   /// Properties available with IOProperties: fileMode, multipleFiles, fileType.
-  Q_INVOKABLE static QStringList getOpenFileName(qSlicerIO::IOProperties ioProperties =
-                                     qSlicerIO::IOProperties());
-  Q_INVOKABLE static QString getExistingDirectory(qSlicerIO::IOProperties ioProperties =
-                                      qSlicerIO::IOProperties());
+  Q_INVOKABLE static QStringList getOpenFileName(qSlicerIO::IOProperties ioProperties = qSlicerIO::IOProperties());
+  Q_INVOKABLE static QString getExistingDirectory(qSlicerIO::IOProperties ioProperties = qSlicerIO::IOProperties());
 
   /// Return the list of nodes created by exec().
   QStringList loadedNodes() const override;
 
 protected:
-  static ctkFileDialog* createFileDialog(const qSlicerIO::IOProperties& ioProperties =
-                                         qSlicerIO::IOProperties(), QWidget* parent = nullptr);
+  static ctkFileDialog* createFileDialog(const qSlicerIO::IOProperties& ioProperties = qSlicerIO::IOProperties(),
+                                         QWidget* parent = nullptr);
 
   qSlicerIOOptions* options(const qSlicerIO::IOProperties& ioProperties) const;
 

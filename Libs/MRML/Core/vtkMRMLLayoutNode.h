@@ -24,7 +24,7 @@ public:
   //--------------------------------------------------------------------------
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -87,7 +87,7 @@ public:
   bool IsMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Layout";}
+  const char* GetNodeTagName() override { return "Layout"; }
 
   enum SlicerLayout
   {
@@ -125,7 +125,8 @@ public:
     SlicerLayoutThreeOverThreePlotView = 40,
     SlicerLayoutDicomBrowserView = 41,
     SlicerLayoutDualMonitorFourUpView = 42,
-    SlicerLayoutFinalView, // special value, must be placed after the last standard view (used for iterating through all the views)
+    SlicerLayoutFinalView, // special value, must be placed after the last standard view (used for iterating through all
+                           // the views)
 
     SlicerLayoutMaximizedView = 98,
     SlicerLayoutCustomView = 99,
@@ -197,8 +198,8 @@ protected:
   int SecondaryPanelSize;
 
   std::map<int, std::string> Layouts;
-  char*                      CurrentLayoutDescription;
-  vtkXMLDataElement*         LayoutRootElement;
+  char* CurrentLayoutDescription;
+  vtkXMLDataElement* LayoutRootElement;
 };
 
 #endif

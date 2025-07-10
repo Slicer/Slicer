@@ -33,7 +33,6 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsFiducialNode::vtkMRMLMarkupsFiducialNode()
 {
@@ -50,7 +49,7 @@ vtkMRMLMarkupsFiducialNode::~vtkMRMLMarkupsFiducialNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  Superclass::WriteXML(of, nIndent);
 
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLIntMacro(maximumNumberOfControlPoints, MaximumNumberOfControlPoints);
@@ -79,7 +78,7 @@ void vtkMRMLMarkupsFiducialNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLMarkupsFiducialNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   Superclass::CopyContent(anode, deepCopy);
 }
@@ -93,8 +92,7 @@ void vtkMRMLMarkupsFiducialNode::PrintSelf(ostream& os, vtkIndent indent)
 //-------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
 {
-  if (this->GetDisplayNode() != nullptr &&
-    vtkMRMLMarkupsDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
+  if (this->GetDisplayNode() != nullptr && vtkMRMLMarkupsDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
   {
     // display node already exists
     return;
@@ -108,7 +106,8 @@ void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
     this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialDisplayNode"));
   if (!dispNode)
   {
-    vtkErrorMacro("vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes failed: unable to create vtkMRMLMarkupsFiducialDisplayNode");
+    vtkErrorMacro("vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes failed: unable to create "
+                  "vtkMRMLMarkupsFiducialDisplayNode");
     return;
   }
   this->SetAndObserveDisplayNodeID(dispNode->GetID());

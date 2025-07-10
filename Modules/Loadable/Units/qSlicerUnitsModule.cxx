@@ -37,15 +37,13 @@ public:
 // qSlicerUnitsModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerUnitsModulePrivate
-::qSlicerUnitsModulePrivate() = default;
+qSlicerUnitsModulePrivate::qSlicerUnitsModulePrivate() = default;
 
 //-----------------------------------------------------------------------------
 // qSlicerUnitsModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerUnitsModule
-::qSlicerUnitsModule(QObject* _parent)
+qSlicerUnitsModule::qSlicerUnitsModule(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerUnitsModulePrivate)
 {
@@ -57,9 +55,8 @@ qSlicerUnitsModule::~qSlicerUnitsModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerUnitsModule::helpText() const
 {
-  QString help =
-    "This module controls the Units of the scene."
-    " It gives the option to create, edit and remove units.<br>";
+  QString help = "This module controls the Units of the scene."
+                 " It gives the option to create, edit and remove units.<br>";
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -67,23 +64,21 @@ QString qSlicerUnitsModule::helpText() const
 //-----------------------------------------------------------------------------
 QString qSlicerUnitsModule::acknowledgementText() const
 {
-  QString acknowledgement = QString(
-    "<center><table border=\"0\"><tr>"
-    "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
-    "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
-    "</tr><tr>"
-    "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
-    "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
-    "</tr></table></center>"
-    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
+  QString acknowledgement = QString("<center><table border=\"0\"><tr>"
+                                    "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
+                                    "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
+                                    "</tr><tr>"
+                                    "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
+                                    "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
+                                    "</tr></table></center>"
+                                    "This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
   return acknowledgement;
 }
 //-----------------------------------------------------------------------------
 QStringList qSlicerUnitsModule::contributors() const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Johan Andruejol (Kitware)")
-    << QString("Julien Finet (Kitware)");
+  moduleContributors << QString("Johan Andruejol (Kitware)") << QString("Julien Finet (Kitware)");
   return moduleContributors;
 }
 
@@ -116,20 +111,17 @@ void qSlicerUnitsModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerUnitsLogic* logic =
-    vtkSlicerUnitsLogic::SafeDownCast(this->logic());
+  vtkSlicerUnitsLogic* logic = vtkSlicerUnitsLogic::SafeDownCast(this->logic());
   if (logic && qSlicerApplication::application())
   {
     qSlicerUnitsSettingsPanel* panel = new qSlicerUnitsSettingsPanel;
-    qSlicerApplication::application()->settingsDialog()->addPanel(
-      "Units", panel);
+    qSlicerApplication::application()->settingsDialog()->addPanel("Units", panel);
     panel->setUnitsLogic(logic);
   }
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerUnitsModule
-::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerUnitsModule::createWidgetRepresentation()
 {
   return nullptr;
 }

@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 // Qt includes
 #include <QApplication>
 #include <QTimer>
@@ -57,7 +56,7 @@ int qMRMLTransformDisplayNodeWidgetTest1(int argc, char* argv[])
   transformDisplay.setMRMLScene(scene.GetPointer());
   transformDisplay.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

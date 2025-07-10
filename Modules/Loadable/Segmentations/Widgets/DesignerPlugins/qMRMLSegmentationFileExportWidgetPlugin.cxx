@@ -30,19 +30,18 @@ qMRMLSegmentationFileExportWidgetPlugin::qMRMLSegmentationFileExportWidgetPlugin
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentationFileExportWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentationFileExportWidget* pluginWidget =
-    new qMRMLSegmentationFileExportWidget(parentWidget);
+  qMRMLSegmentationFileExportWidget* pluginWidget = new qMRMLSegmentationFileExportWidget(parentWidget);
   return pluginWidget;
 }
 
 //-----------------------------------------------------------------------------
 QString qMRMLSegmentationFileExportWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSegmentationFileExportWidget\" name=\"SegmentationDisplayNodeWidget\">\n"
-    "  <property name=\"settingsKey\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSegmentationFileExportWidget\" name=\"SegmentationDisplayNodeWidget\">\n"
+         "  <property name=\"settingsKey\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 //-----------------------------------------------------------------------------

@@ -34,10 +34,7 @@
 vtkStandardNewMacro(vtkSlicerTestLineWidget);
 
 //------------------------------------------------------------------------------
-vtkSlicerTestLineWidget::vtkSlicerTestLineWidget()
-{
-
-}
+vtkSlicerTestLineWidget::vtkSlicerTestLineWidget() {}
 
 //------------------------------------------------------------------------------
 vtkSlicerTestLineWidget::~vtkSlicerTestLineWidget() = default;

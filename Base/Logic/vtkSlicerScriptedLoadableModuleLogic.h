@@ -21,7 +21,6 @@
 #ifndef __vtkSlicerScriptedLoadableModuleLogic_h
 #define __vtkSlicerScriptedLoadableModuleLogic_h
 
-
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
@@ -29,11 +28,9 @@
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerScriptedLoadableModuleLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerScriptedLoadableModuleLogic : public vtkSlicerModuleLogic
 {
 public:
-
   static vtkSlicerScriptedLoadableModuleLogic* New();
   vtkTypeMacro(vtkSlicerScriptedLoadableModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -41,14 +38,12 @@ public:
   bool SetPythonSource(const std::string& filePath);
 
 protected:
-
   vtkSlicerScriptedLoadableModuleLogic();
   ~vtkSlicerScriptedLoadableModuleLogic() override;
 
-//  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+  //  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
 private:
-
   vtkSlicerScriptedLoadableModuleLogic(const vtkSlicerScriptedLoadableModuleLogic&) = delete;
   void operator=(const vtkSlicerScriptedLoadableModuleLogic&) = delete;
 

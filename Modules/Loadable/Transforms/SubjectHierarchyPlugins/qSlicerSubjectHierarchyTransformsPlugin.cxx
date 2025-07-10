@@ -66,8 +66,10 @@
 class qSlicerSubjectHierarchyTransformsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTransformsPlugin);
+
 protected:
   qSlicerSubjectHierarchyTransformsPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyTransformsPluginPrivate(qSlicerSubjectHierarchyTransformsPlugin& object);
   ~qSlicerSubjectHierarchyTransformsPluginPrivate() override;
@@ -138,7 +140,8 @@ const char* qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_T
 // qSlicerSubjectHierarchyTransformsPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyTransformsPluginPrivate::qSlicerSubjectHierarchyTransformsPluginPrivate(qSlicerSubjectHierarchyTransformsPlugin& object)
+qSlicerSubjectHierarchyTransformsPluginPrivate::qSlicerSubjectHierarchyTransformsPluginPrivate(
+  qSlicerSubjectHierarchyTransformsPlugin& object)
   : q_ptr(&object)
 {
   this->TransformIcon = QIcon(":Icons/Transform.png");
@@ -167,59 +170,87 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
 
   this->InvertAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Invert transform"), q);
   this->InvertAction->setObjectName("InvertTransform");
-  q->setActionPosition(this->InvertAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, transformWeight, transformOffset++);
+  q->setActionPosition(
+    this->InvertAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, transformWeight, transformOffset++);
   QObject::connect(this->InvertAction, SIGNAL(triggered()), q, SLOT(invert()));
 
   this->IdentityAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Reset transform to identity"), q);
   this->IdentityAction->setObjectName("ResetToIdentity");
-  q->setActionPosition(this->IdentityAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, transformWeight, transformOffset++);
+  q->setActionPosition(
+    this->IdentityAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, transformWeight, transformOffset++);
   QObject::connect(this->IdentityAction, SIGNAL(triggered()), q, SLOT(identity()));
 
-  this->ResetCenterOfTransformLocalAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Transform origin"), q);
+  this->ResetCenterOfTransformLocalAction =
+    new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Transform origin"), q);
   this->ResetCenterOfTransformLocalAction->setObjectName("ResetCenterOfTransformationLocal");
-  QObject::connect(this->ResetCenterOfTransformLocalAction, SIGNAL(triggered()), q, SLOT(resetCenterOfTransformationLocal()));
+  QObject::connect(
+    this->ResetCenterOfTransformLocalAction, SIGNAL(triggered()), q, SLOT(resetCenterOfTransformationLocal()));
 
-  this->ResetCenterOfTransformAllTransformedNodesBoundsAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Transformed nodes"), q);
-  QObject::connect(this->ResetCenterOfTransformAllTransformedNodesBoundsAction, SIGNAL(triggered()), q,
-    SLOT(resetCenterOfTransformationAllTransformedNodeBounds()));
-  this->ResetCenterOfTransformAllTransformedNodesBoundsAction->setObjectName("ResetCenterOfTransformationAllTransformedNodesBounds");
+  this->ResetCenterOfTransformAllTransformedNodesBoundsAction =
+    new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Transformed nodes"), q);
+  QObject::connect(this->ResetCenterOfTransformAllTransformedNodesBoundsAction,
+                   SIGNAL(triggered()),
+                   q,
+                   SLOT(resetCenterOfTransformationAllTransformedNodeBounds()));
+  this->ResetCenterOfTransformAllTransformedNodesBoundsAction->setObjectName(
+    "ResetCenterOfTransformationAllTransformedNodesBounds");
 
   this->ResetCenterOfTransformationMenu = new QMenu();
   this->ResetCenterOfTransformationMenu->addAction(this->ResetCenterOfTransformLocalAction);
   this->ResetCenterOfTransformationMenu->addAction(this->ResetCenterOfTransformAllTransformedNodesBoundsAction);
   this->ResetCenterOfTransformationMenu->addSeparator();
 
-  this->ResetCenterOfTransformMenuAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Reset center of transformation"));
+  this->ResetCenterOfTransformMenuAction =
+    new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Reset center of transformation"));
   this->ResetCenterOfTransformMenuAction->setObjectName("ResetCenterOfTransformationMenu");
-  q->setActionPosition(this->ResetCenterOfTransformMenuAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, transformWeight, transformOffset++);
+  q->setActionPosition(this->ResetCenterOfTransformMenuAction,
+                       qSlicerSubjectHierarchyAbstractPlugin::SectionNode,
+                       transformWeight,
+                       transformOffset++);
   this->ResetCenterOfTransformMenuAction->setMenu(this->ResetCenterOfTransformationMenu);
 
   this->ResetCenterOfTransformationNodeGroup = new QActionGroup(this->ResetCenterOfTransformMenuAction);
 
   this->ToggleInteractionAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Interaction"), q);
   this->ToggleInteractionAction->setObjectName("ToggleInteractionAction");
-  q->setActionPosition(this->ToggleInteractionAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, transformWeight, transformOffset++);
+  q->setActionPosition(this->ToggleInteractionAction,
+                       qSlicerSubjectHierarchyAbstractPlugin::SectionNode,
+                       transformWeight,
+                       transformOffset++);
   QObject::connect(this->ToggleInteractionAction, SIGNAL(toggled(bool)), q, SLOT(toggleInteractionBox(bool)));
   this->ToggleInteractionAction->setCheckable(true);
   this->ToggleInteractionAction->setChecked(false);
 
-  this->ToggleInteractionTranslationVisibleAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Translate"));
+  this->ToggleInteractionTranslationVisibleAction =
+    new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Translate"));
   this->ToggleInteractionTranslationVisibleAction->setObjectName("ToggleInteractionTranslationVisibleAction");
   this->ToggleInteractionTranslationVisibleAction->setCheckable(true);
-  this->ToggleInteractionTranslationVisibleAction->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, INTERACTION_HANDLE_TYPE_TRANSLATION);
-  QObject::connect(this->ToggleInteractionTranslationVisibleAction, SIGNAL(toggled(bool)), q, SLOT(toggleCurrentItemHandleTypeVisibility(bool)));
+  this->ToggleInteractionTranslationVisibleAction->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY,
+                                                               INTERACTION_HANDLE_TYPE_TRANSLATION);
+  QObject::connect(this->ToggleInteractionTranslationVisibleAction,
+                   SIGNAL(toggled(bool)),
+                   q,
+                   SLOT(toggleCurrentItemHandleTypeVisibility(bool)));
 
   this->ToggleInteractionRotationVisibleAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Rotate"));
   this->ToggleInteractionRotationVisibleAction->setObjectName("ToggleInteractionRotationVisibleAction");
   this->ToggleInteractionRotationVisibleAction->setCheckable(true);
-  this->ToggleInteractionRotationVisibleAction->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, INTERACTION_HANDLE_TYPE_ROTATION);
-  QObject::connect(this->ToggleInteractionRotationVisibleAction, SIGNAL(toggled(bool)), q, SLOT(toggleCurrentItemHandleTypeVisibility(bool)));
+  this->ToggleInteractionRotationVisibleAction->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY,
+                                                            INTERACTION_HANDLE_TYPE_ROTATION);
+  QObject::connect(this->ToggleInteractionRotationVisibleAction,
+                   SIGNAL(toggled(bool)),
+                   q,
+                   SLOT(toggleCurrentItemHandleTypeVisibility(bool)));
 
   this->ToggleInteractionScaleVisibleAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Scale"));
   this->ToggleInteractionScaleVisibleAction->setObjectName("ToggleInteractionScaleVisibleAction");
   this->ToggleInteractionScaleVisibleAction->setCheckable(true);
-  this->ToggleInteractionScaleVisibleAction->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY, INTERACTION_HANDLE_TYPE_SCALE);
-  QObject::connect(this->ToggleInteractionScaleVisibleAction, SIGNAL(toggled(bool)), q, SLOT(toggleCurrentItemHandleTypeVisibility(bool)));
+  this->ToggleInteractionScaleVisibleAction->setProperty(INTERACTION_HANDLE_TYPE_PROPERTY,
+                                                         INTERACTION_HANDLE_TYPE_SCALE);
+  QObject::connect(this->ToggleInteractionScaleVisibleAction,
+                   SIGNAL(toggled(bool)),
+                   q,
+                   SLOT(toggleCurrentItemHandleTypeVisibility(bool)));
 
   this->InteractionOptionsMenu = new QMenu();
   this->InteractionOptionsMenu->setObjectName("InteractionOptionsMenu");
@@ -229,12 +260,14 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
 
   this->InteractionOptionsAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Interaction options"));
   this->InteractionOptionsAction->setObjectName("InteractionOptionsMenuAction");
-  q->setActionPosition(this->InteractionOptionsAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, transformWeight, transformOffset++);
+  q->setActionPosition(this->InteractionOptionsAction,
+                       qSlicerSubjectHierarchyAbstractPlugin::SectionNode,
+                       transformWeight,
+                       transformOffset++);
   this->InteractionOptionsAction->setMenu(this->InteractionOptionsMenu);
 
   // Transforms menu
-  this->TransformInteractionInViewAction =
-    new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Interaction"), q);
+  this->TransformInteractionInViewAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Interaction"), q);
   this->TransformInteractionInViewAction->setObjectName("TransformInteraction");
   this->TransformInteractionInViewAction->setCheckable(true);
   this->TransformInteractionInViewAction->setToolTip(qSlicerSubjectHierarchyTransformsPlugin::tr(
@@ -249,22 +282,20 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::init()
     qSlicerSubjectHierarchyTransformsPlugin::tr("Edit properties of the current transform"));
   QObject::connect(this->TransformEditPropertiesAction, SIGNAL(triggered()), q, SLOT(onTransformEditProperties()));
 
-  this->TransformHardenAction =
-    new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Harden transform"), q);
+  this->TransformHardenAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Harden transform"), q);
   this->TransformHardenAction->setObjectName("TransformHarden");
   this->TransformHardenAction->setToolTip(
     qSlicerSubjectHierarchyTransformsPlugin::tr("Harden current transform on this node and all children nodes"));
   QObject::connect(this->TransformHardenAction, SIGNAL(triggered()), q, SLOT(onHardenTransformOnBranchOfCurrentItem()));
 
-  this->CreateNewTransformAction =
-    new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Create new transform"), q);
+  this->CreateNewTransformAction = new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("Create new transform"), q);
   this->CreateNewTransformAction->setObjectName("TransformCreateNew");
   this->CreateNewTransformAction->setToolTip(
     qSlicerSubjectHierarchyTransformsPlugin::tr("Create and apply new transform"));
   QObject::connect(this->CreateNewTransformAction, SIGNAL(triggered()), q, SLOT(onCreateNewTransform()));
 
-  this->NoTransformAction = new QAction(
-    qSlicerSubjectHierarchyTransformsPlugin::tr("None") /*: Displayed in the transforms submenu */);
+  this->NoTransformAction =
+    new QAction(qSlicerSubjectHierarchyTransformsPlugin::tr("None") /*: Displayed in the transforms submenu */);
   this->NoTransformAction->setObjectName("Transform:None");
   q->setActionPosition(this->NoTransformAction, q->transformListSection());
   this->NoTransformAction->setCheckable(true);
@@ -303,7 +334,8 @@ vtkMRMLTransformNode* qSlicerSubjectHierarchyTransformsPluginPrivate::transformN
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformationLocal(vtkMRMLTransformNode* transformNode)
+void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformationLocal(
+  vtkMRMLTransformNode* transformNode)
 {
   if (!transformNode)
   {
@@ -313,7 +345,8 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformation
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformationWorld(vtkMRMLTransformNode* transformNode)
+void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformationWorld(
+  vtkMRMLTransformNode* transformNode)
 {
   if (!transformNode)
   {
@@ -329,7 +362,8 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformation
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformationAllTransformedNodeBounds(vtkMRMLTransformNode* transformNode)
+void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformationAllTransformedNodeBounds(
+  vtkMRMLTransformNode* transformNode)
 {
   if (!transformNode)
   {
@@ -341,7 +375,8 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformation
   vtkSlicerTransformLogic::GetTransformedNodes(scene, transformNode, transformedNodes);
 
   bool boundsValid = false;
-  double bounds_World[6] = { VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN };
+  double bounds_World[6] = { VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX,
+                             VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN };
 
   for (vtkMRMLDisplayableNode* transformedNode : transformedNodes)
   {
@@ -388,7 +423,8 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::resetCenterOfTransformation
 }
 
 //---------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTransformsPluginPrivate::showResetCenterOfTransformationForTransformedNodesActions(vtkMRMLTransformNode* transformNode)
+void qSlicerSubjectHierarchyTransformsPluginPrivate::showResetCenterOfTransformationForTransformedNodesActions(
+  vtkMRMLTransformNode* transformNode)
 {
   Q_Q(qSlicerSubjectHierarchyTransformsPlugin);
   vtkMRMLScene* scene = transformNode->GetScene();
@@ -429,7 +465,8 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::removeResetCenterOfTransfor
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLTransformNode* qSlicerSubjectHierarchyTransformsPluginPrivate::appliedTransformToItem(vtkIdType itemID, bool& commonToAllChildren)
+vtkMRMLTransformNode* qSlicerSubjectHierarchyTransformsPluginPrivate::appliedTransformToItem(vtkIdType itemID,
+                                                                                             bool& commonToAllChildren)
 {
   commonToAllChildren = false;
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
@@ -568,7 +605,8 @@ qSlicerSubjectHierarchyTransformsPlugin::qSlicerSubjectHierarchyTransformsPlugin
 qSlicerSubjectHierarchyTransformsPlugin::~qSlicerSubjectHierarchyTransformsPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyTransformsPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID) const
+double qSlicerSubjectHierarchyTransformsPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID,
+                                                                                      vtkIdType parentItemID) const
 {
   if (!itemID || !parentItemID)
   {
@@ -593,7 +631,8 @@ double qSlicerSubjectHierarchyTransformsPlugin::canReparentItemInsideSubjectHier
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyTransformsPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)
+bool qSlicerSubjectHierarchyTransformsPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID,
+                                                                                 vtkIdType parentItemID)
 {
   if (!itemID || !parentItemID)
   {
@@ -619,11 +658,12 @@ bool qSlicerSubjectHierarchyTransformsPlugin::reparentItemInsideSubjectHierarchy
   if (shNode->IsAnyNodeInBranchTransformed(itemID))
   {
     QMessageBox::StandardButton answer =
-      QMessageBox::question(nullptr, tr("Some nodes in the branch are already transformed"),
-      tr("Do you want to harden all already applied transforms before setting the new one?\n\n"
-      "  Note: If you choose no, then the applied transform will simply be replaced."),
-      QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
-      QMessageBox::Yes);
+      QMessageBox::question(nullptr,
+                            tr("Some nodes in the branch are already transformed"),
+                            tr("Do you want to harden all already applied transforms before setting the new one?\n\n"
+                               "  Note: If you choose no, then the applied transform will simply be replaced."),
+                            QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+                            QMessageBox::Yes);
     if (answer == QMessageBox::No)
     {
       hardenExistingTransforms = false;
@@ -643,7 +683,8 @@ bool qSlicerSubjectHierarchyTransformsPlugin::reparentItemInsideSubjectHierarchy
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTransformsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+  vtkMRMLNode* node,
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -682,7 +723,7 @@ double qSlicerSubjectHierarchyTransformsPlugin::canOwnSubjectHierarchyItem(vtkId
   }
 
   if (associatedNode && associatedNode->IsA("vtkMRMLDisplayableNode")
-    && !associatedNode->IsA("vtkMRMLMarkupsNode")) // Markups are handled by the Markups plugin
+      && !associatedNode->IsA("vtkMRMLMarkupsNode")) // Markups are handled by the Markups plugin
   {
     return 0.1; // Most other plugins can handle displayable nodes better.
   }
@@ -717,11 +758,9 @@ QString qSlicerSubjectHierarchyTransformsPlugin::tooltip(vtkIdType itemID) const
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(shNode->GetItemDataNode(itemID));
   if (transformNode)
   {
-    QString transformInfo = QString("\n")
-      + tr("Transform to parent:")
-      + QString(" %1\n").arg(transformNode->GetTransformToParentInfo())
-      + tr("Transform from parent:")
-      + QString(" %1").arg(transformNode->GetTransformFromParentInfo());
+    QString transformInfo =
+      QString("\n") + tr("Transform to parent:") + QString(" %1\n").arg(transformNode->GetTransformToParentInfo())
+      + tr("Transform from parent:") + QString(" %1").arg(transformNode->GetTransformFromParentInfo());
     tooltipString.append(transformInfo);
   }
 
@@ -833,7 +872,8 @@ void qSlicerSubjectHierarchyTransformsPlugin::showVisibilityContextMenuActionsFo
 
   if (this->canOwnSubjectHierarchyItem(itemID))
   {
-    vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
+    vtkMRMLTransformableNode* transformableNode =
+      vtkMRMLTransformableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
     if (!transformableNode)
     {
       return;
@@ -845,7 +885,8 @@ void qSlicerSubjectHierarchyTransformsPlugin::showVisibilityContextMenuActionsFo
       transformNode = transformableNode->GetParentTransformNode();
     }
 
-    vtkMRMLTransformDisplayNode* displayNode = transformNode ? vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode()) : nullptr;
+    vtkMRMLTransformDisplayNode* displayNode =
+      transformNode ? vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode()) : nullptr;
 
     d->ToggleInteractionAction->setVisible(true);
 
@@ -873,8 +914,8 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::viewContextMenuActions(
   Q_D(const qSlicerSubjectHierarchyTransformsPlugin);
 
   QList<QAction*> actions;
-  actions << d->InvertAction << d->IdentityAction << d->ResetCenterOfTransformMenuAction
-    << d->ToggleInteractionAction << d->InteractionOptionsAction;
+  actions << d->InvertAction << d->IdentityAction << d->ResetCenterOfTransformMenuAction << d->ToggleInteractionAction
+          << d->InteractionOptionsAction;
   return actions;
 }
 
@@ -915,7 +956,8 @@ void qSlicerSubjectHierarchyTransformsPlugin::showViewContextMenuActionsForItem(
   d->removeResetCenterOfTransformationForTransformedNodesActions();
   d->showResetCenterOfTransformationForTransformedNodesActions(transformNode);
 
-  vtkMRMLTransformDisplayNode* displayNode = transformNode ? vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode()) : nullptr;
+  vtkMRMLTransformDisplayNode* displayNode =
+    transformNode ? vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode()) : nullptr;
 
   QSignalBlocker toggleInteractionBlocker(d->ToggleInteractionAction);
   d->ToggleInteractionAction->setChecked(displayNode ? displayNode->GetEditorVisibility() : false);
@@ -982,7 +1024,8 @@ vtkMRMLTransformNode* qSlicerSubjectHierarchyTransformsPluginPrivate::getTransfo
     return nullptr;
   }
 
-  vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
+  vtkMRMLTransformableNode* transformableNode =
+    vtkMRMLTransformableNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   transformNode = vtkMRMLTransformNode::SafeDownCast(transformableNode);
   if (!transformNode && transformableNode)
   {
@@ -1099,7 +1142,6 @@ void qSlicerSubjectHierarchyTransformsPlugin::toggleInteractionBox(bool visible)
     transformableNode = vtkMRMLTransformableNode::SafeDownCast(shNode->GetItemDataNode(currentItemID));
   }
 
-
   vtkMRMLTransformNode* transformNode = d->getTransformNodeForAction();
   if (!transformNode)
   {
@@ -1118,9 +1160,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::toggleInteractionBox(bool visible)
       double bounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
       displayableNode->GetBounds(bounds);
       transformNode->SetCenterOfTransformation(
-        (bounds[1] + bounds[0]) / 2.0,
-        (bounds[3] + bounds[2]) / 2.0,
-        (bounds[5] + bounds[4]) / 2.0);
+        (bounds[1] + bounds[0]) / 2.0, (bounds[3] + bounds[2]) / 2.0, (bounds[5] + bounds[4]) / 2.0);
     }
 
     transformNode->CreateDefaultDisplayNodes();
@@ -1134,8 +1174,7 @@ void qSlicerSubjectHierarchyTransformsPlugin::toggleInteractionBox(bool visible)
   }
   transformNode->CreateDefaultDisplayNodes();
 
-  vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(
-    transformNode->GetDisplayNode());
+  vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
   if (!displayNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to get transform display node";
@@ -1170,23 +1209,24 @@ void qSlicerSubjectHierarchyTransformsPlugin::toggleCurrentItemHandleTypeVisibil
     return;
   }
 
-  int componentType = sender->property(qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_TYPE_PROPERTY).toInt();
+  int componentType =
+    sender->property(qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_TYPE_PROPERTY).toInt();
   switch (componentType)
   {
-  case qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_TYPE_TRANSLATION:
-    displayNode->SetEditorTranslationEnabled(toggle);
-    displayNode->SetEditorTranslationSliceEnabled(toggle);
-    break;
-  case qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_TYPE_ROTATION:
-    displayNode->SetEditorRotationEnabled(toggle);
-    displayNode->SetEditorRotationSliceEnabled(toggle);
-    break;
-  case qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_TYPE_SCALE:
-    displayNode->SetEditorScalingEnabled(toggle);
-    displayNode->SetEditorScalingSliceEnabled(toggle);
-    break;
-  default:
-    break;
+    case qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_TYPE_TRANSLATION:
+      displayNode->SetEditorTranslationEnabled(toggle);
+      displayNode->SetEditorTranslationSliceEnabled(toggle);
+      break;
+    case qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_TYPE_ROTATION:
+      displayNode->SetEditorRotationEnabled(toggle);
+      displayNode->SetEditorRotationSliceEnabled(toggle);
+      break;
+    case qSlicerSubjectHierarchyTransformsPluginPrivate::INTERACTION_HANDLE_TYPE_SCALE:
+      displayNode->SetEditorScalingEnabled(toggle);
+      displayNode->SetEditorScalingSliceEnabled(toggle);
+      break;
+    default:
+      break;
   }
 }
 
@@ -1239,9 +1279,10 @@ void qSlicerSubjectHierarchyTransformsPlugin::showTransformContextMenuActionsFor
     }
     else
     {
-      vtkMRMLTransformNode* actionTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->GetNodeByID(actionTransformNodeID.c_str()));
+      vtkMRMLTransformNode* actionTransformNode =
+        vtkMRMLTransformNode::SafeDownCast(scene->GetNodeByID(actionTransformNodeID.c_str()));
       if (actionTransformNode && !actionTransformNode->GetHideFromEditors()
-        && actionTransformNode != node /* do not let apply transform to itself */)
+          && actionTransformNode != node /* do not let apply transform to itself */)
       {
         visible = true;
       }
@@ -1351,7 +1392,8 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::transformContextMenuAct
       // always keep the no transform action
       continue;
     }
-    vtkMRMLTransformNode* actionTransformNode = vtkMRMLTransformNode::SafeDownCast(scene->GetNodeByID(actionTransformNodeID.toStdString().c_str()));
+    vtkMRMLTransformNode* actionTransformNode =
+      vtkMRMLTransformNode::SafeDownCast(scene->GetNodeByID(actionTransformNodeID.toStdString().c_str()));
     if (actionTransformNode && !actionTransformNode->GetHideFromEditors())
     {
       // transform node still exists and visible in the scene

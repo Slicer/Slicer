@@ -29,8 +29,8 @@
 #include "vtkMRMLStorageNode.h"
 
 #ifdef SUPPORT_4D_SPATIAL_NRRD
-  // ITK includes
-  #include <itkImageRegionIteratorWithIndex.h>
+// ITK includes
+# include <itkImageRegionIteratorWithIndex.h>
 #endif
 
 class vtkMRMLSegmentationNode;
@@ -65,7 +65,7 @@ class VTK_MRML_EXPORT vtkMRMLSegmentationStorageNode : public vtkMRMLStorageNode
 #ifdef SUPPORT_4D_SPATIAL_NRRD
   // Although internally binary labelmap representations can be of unsigned char, unsigned short
   // or short types, the output file is always unsigned char
-  //TODO: This is a limitation for now
+  // TODO: This is a limitation for now
   typedef itk::Image<unsigned char, 4> BinaryLabelmap4DImageType;
   typedef itk::ImageRegionIteratorWithIndex<BinaryLabelmap4DImageType> BinaryLabelmap4DIteratorType;
 #endif
@@ -78,7 +78,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -87,7 +87,7 @@ public:
   void Copy(vtkMRMLNode* node) override;
 
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "SegmentationStorage";}
+  const char* GetNodeTagName() override { return "SegmentationStorage"; }
 
   /// Return a default file extension for writing
   /// File write extension is determined dynamically
@@ -155,10 +155,15 @@ protected:
   void CreateRepresentationsBySerializedNames(vtkSegmentation* segmentation, std::string representationNames);
 
   /// Get the metadata string for the segment and key from the dictionary
-  static bool GetSegmentMetaDataFromDicitionary(std::string& headerValue, itk::MetaDataDictionary dictionary, int segmentIndex, std::string keyName);
+  static bool GetSegmentMetaDataFromDicitionary(std::string& headerValue,
+                                                itk::MetaDataDictionary dictionary,
+                                                int segmentIndex,
+                                                std::string keyName);
 
   /// Get the metadata string for the segmentation key from the dictionary
-  static bool GetSegmentationMetaDataFromDicitionary(std::string& headerValue, itk::MetaDataDictionary dictionary, std::string keyName);
+  static bool GetSegmentationMetaDataFromDicitionary(std::string& headerValue,
+                                                     itk::MetaDataDictionary dictionary,
+                                                     std::string keyName);
 
   static std::string GetSegmentMetaDataKey(int segmentIndex, const std::string& keyName);
 
@@ -177,7 +182,7 @@ protected:
   static void AddToExtent(int extent[6], int extentToAdd[6]);
 
 protected:
-  bool CropToMinimumExtent{false};
+  bool CropToMinimumExtent{ false };
 
 protected:
   vtkMRMLSegmentationStorageNode();

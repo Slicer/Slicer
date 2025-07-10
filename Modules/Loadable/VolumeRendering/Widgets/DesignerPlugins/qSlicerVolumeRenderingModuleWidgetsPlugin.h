@@ -43,10 +43,8 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
     QList<QDesignerCustomWidgetInterface*> plugins;
-    plugins << new qMRMLVolumePropertyNodeWidgetPlugin
-            << new qSlicerPresetComboBoxPlugin
-            << new qSlicerVolumeRenderingPresetComboBoxPlugin
-            << new qSlicerGPUMemoryComboBoxPlugin;
+    plugins << new qMRMLVolumePropertyNodeWidgetPlugin << new qSlicerPresetComboBoxPlugin
+            << new qSlicerVolumeRenderingPresetComboBoxPlugin << new qSlicerGPUMemoryComboBoxPlugin;
     return plugins;
   }
 };

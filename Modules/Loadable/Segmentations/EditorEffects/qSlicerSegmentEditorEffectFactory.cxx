@@ -34,7 +34,7 @@ qSlicerSegmentEditorEffectFactory* qSlicerSegmentEditorEffectFactory::m_Instance
 class qSlicerSegmentEditorEffectFactoryCleanup
 {
 public:
-  inline void use()   {   }
+  inline void use() {}
 
   ~qSlicerSegmentEditorEffectFactoryCleanup()
   {
@@ -116,7 +116,8 @@ bool qSlicerSegmentEditorEffectFactory::registerEffect(qSlicerSegmentEditorAbstr
 }
 
 //---------------------------------------------------------------------------
-QList<qSlicerSegmentEditorAbstractEffect*> qSlicerSegmentEditorEffectFactory::copyEffects(QList<qSlicerSegmentEditorAbstractEffect*>& effects)
+QList<qSlicerSegmentEditorAbstractEffect*> qSlicerSegmentEditorEffectFactory::copyEffects(
+  QList<qSlicerSegmentEditorAbstractEffect*>& effects)
 {
   QList<qSlicerSegmentEditorAbstractEffect*> copiedEffects;
   foreach (qSlicerSegmentEditorAbstractEffect* effect, m_RegisteredEffects)

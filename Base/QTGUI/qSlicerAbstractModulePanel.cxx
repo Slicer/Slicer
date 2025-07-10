@@ -27,7 +27,7 @@ class qSlicerAbstractModulePanelPrivate
 {
 public:
   qSlicerAbstractModulePanelPrivate() = default;
-  qSlicerModuleManager* ModuleManager{nullptr};
+  qSlicerModuleManager* ModuleManager{ nullptr };
 };
 
 //---------------------------------------------------------------------------

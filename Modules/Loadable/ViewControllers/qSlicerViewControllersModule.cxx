@@ -133,17 +133,22 @@ void qSlicerViewControllersModule::readCommonViewSettings(vtkMRMLAbstractViewNod
   }
   if (settings.contains("RulerType"))
   {
-    defaultViewNode->SetRulerType(vtkMRMLAbstractViewNode::GetRulerTypeFromString(
-      settings.value("RulerType").toString().toUtf8()));
+    defaultViewNode->SetRulerType(
+      vtkMRMLAbstractViewNode::GetRulerTypeFromString(settings.value("RulerType").toString().toUtf8()));
   }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerViewControllersModule::writeCommonViewSettings(vtkMRMLAbstractViewNode* defaultViewNode, QSettings& settings)
+void qSlicerViewControllersModule::writeCommonViewSettings(vtkMRMLAbstractViewNode* defaultViewNode,
+                                                           QSettings& settings)
 {
-  settings.setValue("OrientationMarkerType",vtkMRMLAbstractViewNode::GetOrientationMarkerTypeAsString(defaultViewNode->GetOrientationMarkerType()));
-  settings.setValue("OrientationMarkerSize",vtkMRMLAbstractViewNode::GetOrientationMarkerSizeAsString(defaultViewNode->GetOrientationMarkerSize()));
-  settings.setValue("RulerType",vtkMRMLAbstractViewNode::GetRulerTypeAsString(defaultViewNode->GetRulerType()));
+  settings.setValue(
+    "OrientationMarkerType",
+    vtkMRMLAbstractViewNode::GetOrientationMarkerTypeAsString(defaultViewNode->GetOrientationMarkerType()));
+  settings.setValue(
+    "OrientationMarkerSize",
+    vtkMRMLAbstractViewNode::GetOrientationMarkerSizeAsString(defaultViewNode->GetOrientationMarkerSize()));
+  settings.setValue("RulerType", vtkMRMLAbstractViewNode::GetRulerTypeAsString(defaultViewNode->GetRulerType()));
 }
 
 //-----------------------------------------------------------------------------
@@ -166,7 +171,8 @@ void qSlicerViewControllersModule::readDefaultThreeDViewSettings(vtkMRMLViewNode
   }
   if (settings.contains("UseOrthographicProjection"))
   {
-    defaultViewNode->SetRenderMode(settings.value("UseOrthographicProjection").toBool() ? vtkMRMLViewNode::Orthographic : vtkMRMLViewNode::Perspective);
+    defaultViewNode->SetRenderMode(settings.value("UseOrthographicProjection").toBool() ? vtkMRMLViewNode::Orthographic
+                                                                                        : vtkMRMLViewNode::Perspective);
   }
   if (settings.contains("UseDepthPeeling"))
   {
@@ -182,7 +188,8 @@ void qSlicerViewControllersModule::readDefaultThreeDViewSettings(vtkMRMLViewNode
   }
   if (settings.contains("AmbientShadowsVolumeOpacityThreshold"))
   {
-    defaultViewNode->SetAmbientShadowsVolumeOpacityThreshold(settings.value("AmbientShadowsVolumeOpacityThreshold").toDouble());
+    defaultViewNode->SetAmbientShadowsVolumeOpacityThreshold(
+      settings.value("AmbientShadowsVolumeOpacityThreshold").toDouble());
   }
   if (settings.contains("AmbientShadowsIntensityScale"))
   {
@@ -207,7 +214,7 @@ void qSlicerViewControllersModule::writeDefaultThreeDViewSettings(vtkMRMLViewNod
   settings.beginGroup("Default3DView");
   settings.setValue("BoxVisibility", bool(defaultViewNode->GetBoxVisible()));
   settings.setValue("AxisLabelsVisibility", bool(defaultViewNode->GetAxisLabelsVisible()));
-  settings.setValue("UseOrthographicProjection", defaultViewNode->GetRenderMode()==vtkMRMLViewNode::Orthographic);
+  settings.setValue("UseOrthographicProjection", defaultViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
   settings.setValue("UseDepthPeeling", bool(defaultViewNode->GetUseDepthPeeling()));
   settings.setValue("ShadowsVisibility", defaultViewNode->GetShadowsVisibility());
   settings.setValue("AmbientShadowsSizeScale", defaultViewNode->GetAmbientShadowsSizeScale());
@@ -240,7 +247,8 @@ void qSlicerViewControllersModule::readDefaultSliceViewSettings(vtkMRMLSliceNode
     }
     else
     {
-      qWarning() << Q_FUNC_INFO << ": Unknown DefaultSliceView/Orientation setting " << defaultSliceOrientation << ", using PatientRightIsScreenLeft instead.";
+      qWarning() << Q_FUNC_INFO << ": Unknown DefaultSliceView/Orientation setting " << defaultSliceOrientation
+                 << ", using PatientRightIsScreenLeft instead.";
       vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(this->mrmlScene(), true);
     }
   }

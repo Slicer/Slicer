@@ -41,10 +41,9 @@
 //-----------------------------------------------------------------------------
 class qSlicerAnnotationsReaderPrivate
 {
-  public:
+public:
   vtkSmartPointer<vtkSlicerMarkupsLogic> MarkupsLogic;
 };
-
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -93,8 +92,7 @@ qSlicerIO::IOFileType qSlicerAnnotationsReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerAnnotationsReader::extensions() const
 {
-  return QStringList()
-    << qSlicerAnnotationsReader::tr("Annotations") + " (*.acsv)";
+  return QStringList() << qSlicerAnnotationsReader::tr("Annotations") + " (*.acsv)";
 }
 
 //-----------------------------------------------------------------------------
@@ -136,18 +134,16 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
     fileType = vtkSlicerMarkupsLogic::AnnotationROI;
   }
 
-  char* nodeID = d->MarkupsLogic->LoadAnnotation(
-    fileName.toUtf8(), name.toUtf8(), fileType);
+  char* nodeID = d->MarkupsLogic->LoadAnnotation(fileName.toUtf8(), name.toUtf8(), fileType);
   if (!nodeID)
   {
     this->setLoadedNodes(QStringList());
     return false;
   }
-  this->setLoadedNodes( QStringList(QString(nodeID)) );
+  this->setLoadedNodes(QStringList(QString(nodeID)));
   if (properties.contains("name"))
   {
-    std::string uname = this->mrmlScene()->GetUniqueNameByString(
-      properties["name"].toString().toUtf8());
+    std::string uname = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toUtf8());
     this->mrmlScene()->GetNodeByID(nodeID)->SetName(uname.c_str());
   }
   return true;

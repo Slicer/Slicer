@@ -112,7 +112,6 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(bool isUsageLoggingSupported READ isUsageLoggingSupported CONSTANT)
 
 public:
-
   typedef QApplication Superclass;
   qSlicerCoreApplication(int& argc, char** argv);
   ~qSlicerCoreApplication() override;
@@ -190,7 +189,8 @@ public:
   /// \note If exitWhenDone is True, it's your responsibility to exit the application
   void parseArguments(bool& exitWhenDone);
 
-  enum ReturnCode{
+  enum ReturnCode
+  {
     ExitNotRequested = -1,
     ExitSuccess = EXIT_SUCCESS,
     ExitFailure = EXIT_FAILURE
@@ -556,7 +556,7 @@ public:
 
   /// Print message on console.
   /// If error is true then the message is printed on stderr, otherwise on stdout.
-  Q_INVOKABLE void showConsoleMessage(QString message, bool error=true) const;
+  Q_INVOKABLE void showConsoleMessage(QString message, bool error = true) const;
 
   /// Converts relative path to absolute path using slicerHome directory.
   /// Returns absolute path unchanged.
@@ -585,10 +585,11 @@ public:
   /// The event name must not contain any information about the user or any of the processed data to
   /// alleviate any privacy concerns when handling software usage data. To make it easier to write
   /// filtering expressions for processing of usage data, follow these conventions for naming events:
-  /// Use only use lowercase letters, numbers, and underscore and dot characters in event names. Do not use space character.
-  /// Dot character can be used as separator to organized in a hierarchical structure (following conventions
+  /// Use only use lowercase letters, numbers, and underscore and dot characters in event names. Do not use space
+  /// character. Dot character can be used as separator to organized in a hierarchical structure (following conventions
   /// of logging category names in Qt - see https://doc.qt.io/qt-6/qloggingcategory.html#creating-category-objects).
-  /// For example: 'planning.model_created', 'planning.model_exported', 'segmentation.ct.total', 'segmentation.mr.knee').
+  /// For example: 'planning.model_created', 'planning.model_exported', 'segmentation.ct.total',
+  /// 'segmentation.mr.knee').
   ///
   /// For example, an extension can report usage data like this:
   /// - C++: <code>qSlicerCoreApplication::application()->logUsageEvent("SlicerRT", "dicom.export.sro")</code>
@@ -647,7 +648,7 @@ public slots:
   /// Load files into the application.
   /// \param userMessages if specified then loading errors are returned via this object.
   /// \return Returns true on success.
-  virtual bool loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages=nullptr);
+  virtual bool loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Open URL in the the application.
   /// Emits urlReceived signal that modules (such as DICOM module) can handle.
@@ -655,7 +656,6 @@ public slots:
   virtual void openUrl(const QString& url);
 
 protected:
-
   /// Process command line arguments **before** the application event loop is started.
   /// \sa handleCommandLineArguments()
   /// \sa qSlicerApplication::startupCompleted()
@@ -674,7 +674,7 @@ protected slots:
 
   virtual void onSlicerApplicationLogicModified();
   virtual void onUserInformationModified();
-  void onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long);
+  void onSlicerApplicationLogicRequest(vtkObject*, void*, unsigned long);
   void processAppLogicModified();
   void processAppLogicReadData();
   void processAppLogicWriteData();
@@ -716,8 +716,7 @@ signals:
 
   /// Internal method used to move an invocation from a thread to the main thread.
   /// \sa requestInvokeEvent(), scheduleInvokeEvent()
-  void invokeEventRequested(unsigned int delay, void* caller,
-                            unsigned long event, void* callData);
+  void invokeEventRequested(unsigned int delay, void* caller, unsigned long event, void* callData);
 
   void usageEventLogged(const QString& component, const QString& event);
 

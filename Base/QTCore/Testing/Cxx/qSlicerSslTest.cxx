@@ -33,8 +33,7 @@ void qSlicerSslTester::testSupportsSsl()
 void qSlicerSslTester::testLoadCaCertificates()
 {
   QVERIFY(qSlicerCoreApplication::loadCaCertificates(
-    qSlicerCoreApplication::caCertificatesPath(
-            QProcessEnvironment::systemEnvironment().value("SLICER_HOME"))));
+    qSlicerCoreApplication::caCertificatesPath(QProcessEnvironment::systemEnvironment().value("SLICER_HOME"))));
 }
 
 // ----------------------------------------------------------------------------
@@ -45,7 +44,7 @@ public:
   SslEventLoop() = default;
 public slots:
   void onSslErrors(QNetworkReply* reply, const QList<QSslError>& sslErrors)
-{
+  {
     Q_UNUSED(reply);
     foreach (const QSslError& sslError, sslErrors)
     {
@@ -53,7 +52,8 @@ public slots:
       this->SslErrorStrings << sslError.errorString();
     }
     this->quit();
-}
+  }
+
 public:
   QList<QSslError::SslError> SslErrors;
   QStringList SslErrorStrings;
@@ -70,16 +70,16 @@ void qSlicerSslTester::testHttpsConnection()
   QFETCH(int, expectedStatusCode);
 
   qSlicerCoreApplication::loadCaCertificates(
-    qSlicerCoreApplication::caCertificatesPath(
-        QProcessEnvironment::systemEnvironment().value("SLICER_HOME")));
+    qSlicerCoreApplication::caCertificatesPath(QProcessEnvironment::systemEnvironment().value("SLICER_HOME")));
 
   QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 
   SslEventLoop eventLoop;
-  QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
-                   &eventLoop, SLOT(quit()));
-  QObject::connect(manager, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)),
-            &eventLoop, SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
+  QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
+  QObject::connect(manager,
+                   SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)),
+                   &eventLoop,
+                   SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
 
   QNetworkReply* reply = manager->get(QNetworkRequest(QUrl(url)));
   eventLoop.exec();
@@ -100,24 +100,16 @@ void qSlicerSslTester::testHttpsConnection_data()
   QTest::addColumn<int>("expectedStatusCode");
 
   QTest::newRow("invalid-HostNotFoundError-0")
-      << "http://i.n.v.a.l.i.d"
-      << (QList<QSslError::SslError>())
-      << QNetworkReply::HostNotFoundError << 0;
+    << "http://i.n.v.a.l.i.d" << (QList<QSslError::SslError>()) << QNetworkReply::HostNotFoundError << 0;
 
   QTest::newRow("slicer-clear-with-redirect-NoError-301")
-      << "http://slicer.org"
-      << (QList<QSslError::SslError>())
-      << QNetworkReply::NoError << 301;
+    << "http://slicer.org" << (QList<QSslError::SslError>()) << QNetworkReply::NoError << 301;
 
   QTest::newRow("slicer-secured-MovedPermanently-301")
-      << "https://slicer.org"
-      << (QList<QSslError::SslError>())
-      << QNetworkReply::NoError << 301;
+    << "https://slicer.org" << (QList<QSslError::SslError>()) << QNetworkReply::NoError << 301;
 
   QTest::newRow("other-secured-NoError-200")
-      << "https://www.eff.org/https-everywhere"
-      << (QList<QSslError::SslError>())
-      << QNetworkReply::NoError << 200;
+    << "https://www.eff.org/https-everywhere" << (QList<QSslError::SslError>()) << QNetworkReply::NoError << 200;
 }
 
 // ----------------------------------------------------------------------------

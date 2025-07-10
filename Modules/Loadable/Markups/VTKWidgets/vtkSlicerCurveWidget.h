@@ -22,7 +22,7 @@
  *
  * The vtkSlicerCurveWidget is used to create a curve widget with a set of N points.
  *
-*/
+ */
 
 #ifndef vtkSlicerCurveWidget_h
 #define vtkSlicerCurveWidget_h
@@ -44,7 +44,9 @@ public:
   vtkTypeMacro(vtkSlicerCurveWidget, vtkSlicerMarkupsWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
-  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
+  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                   vtkMRMLAbstractViewNode* viewNode,
+                                   vtkRenderer* renderer) override;
 
   /// Create instance of the markups widget
   vtkSlicerMarkupsWidgetCreateInstanceMacro(vtkSlicerCurveWidget);

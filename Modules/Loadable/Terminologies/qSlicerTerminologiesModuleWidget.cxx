@@ -42,8 +42,8 @@ qSlicerTerminologiesModuleWidgetPrivate::qSlicerTerminologiesModuleWidgetPrivate
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologiesModuleWidget::qSlicerTerminologiesModuleWidget(QWidget* _parent)
-  : Superclass( _parent )
-  , d_ptr( new qSlicerTerminologiesModuleWidgetPrivate )
+  : Superclass(_parent)
+  , d_ptr(new qSlicerTerminologiesModuleWidgetPrivate)
 {
 }
 

@@ -29,27 +29,27 @@ namespace itk
 template <class TData,
           unsigned int VRadius,
           class TWindowFunction = Function::HammingWindowFunction<VRadius>,
-          class TBoundaryCondition = ConstantBoundaryCondition<Image<TData, 3> >,
-          class TCoordRep = double
-          >
+          class TBoundaryCondition = ConstantBoundaryCondition<Image<TData, 3>>,
+          class TCoordRep = double>
 class DiffusionTensor3DWindowedSincInterpolateImageFunction
   : public DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
 {
 public:
-  typedef TData                                                                          DataType;
-  typedef DiffusionTensor3DWindowedSincInterpolateImageFunction                          Self;
+  typedef TData DataType;
+  typedef DiffusionTensor3DWindowedSincInterpolateImageFunction Self;
   typedef DiffusionTensor3DInterpolateImageFunctionReimplementation<DataType, TCoordRep> Superclass;
-  typedef typename Superclass::ImageType                                                 ImageType;
-  typedef SmartPointer<Self>                                                             Pointer;
-  typedef SmartPointer<const Self>                                                       ConstPointer;
-  typedef WindowedSincInterpolateImageFunction<ImageType,
-                                               VRadius, TWindowFunction,
-                                               TBoundaryCondition, TCoordRep> WindowedSincInterpolateImageFunctionType;
+  typedef typename Superclass::ImageType ImageType;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef WindowedSincInterpolateImageFunction<ImageType, VRadius, TWindowFunction, TBoundaryCondition, TCoordRep>
+    WindowedSincInterpolateImageFunctionType;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(DiffusionTensor3DWindowedSincInterpolateImageFunction, DiffusionTensor3DInterpolateImageFunctionReimplementation);
+  itkTypeMacro(DiffusionTensor3DWindowedSincInterpolateImageFunction,
+               DiffusionTensor3DInterpolateImageFunctionReimplementation);
 
   itkNewMacro(Self);
+
 protected:
   void AllocateInterpolator() override;
 
@@ -59,7 +59,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DWindowedSincInterpolateImageFunction.txx"
+# include "itkDiffusionTensor3DWindowedSincInterpolateImageFunction.txx"
 #endif
 
 #endif

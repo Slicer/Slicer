@@ -56,53 +56,86 @@ public:
   /// \param inputImage Oriented image to resample
   /// \param referenceGeometryMatrix Matrix containing the desired geometry
   /// \param outputImage Output image
-  /// \param linearInterpolation True if linear interpolation is requested (fractional labelmap), or false for nearest neighbor (binary labelmap). Default is false.
+  /// \param linearInterpolation True if linear interpolation is requested (fractional labelmap), or false for nearest
+  /// neighbor (binary labelmap). Default is false.
   /// \return Success flag
-  static bool ResampleOrientedImageToReferenceGeometry(vtkOrientedImageData* inputImage, vtkMatrix4x4* referenceGeometryMatrix, vtkOrientedImageData* outputImage, bool linearInterpolation=false);
+  static bool ResampleOrientedImageToReferenceGeometry(vtkOrientedImageData* inputImage,
+                                                       vtkMatrix4x4* referenceGeometryMatrix,
+                                                       vtkOrientedImageData* outputImage,
+                                                       bool linearInterpolation = false);
 
   /// Resample an oriented image data to match the geometry of a reference oriented image data
   /// \param inputImage Oriented image to resample
   /// \param referenceImage Oriented image containing the desired geometry
   /// \param outputImage Output image
-  /// \param linearInterpolation True if linear interpolation is requested (fractional labelmap), or false for nearest neighbor (binary labelmap). Default is false.
-  /// \param padImage If enabled then it is made sure that the input image's extent fits into the resampled reference image, so if part of the extent is transformed
+  /// \param linearInterpolation True if linear interpolation is requested (fractional labelmap), or false for nearest
+  /// neighbor (binary labelmap). Default is false.
+  /// \param padImage If enabled then it is made sure that the input image's extent fits into the resampled reference
+  /// image, so if part of the extent is transformed
   ///          to be outside the reference extent, then it is padded. Disabled by default.
-  /// \param inputImageTransform If specified then inputImage will be transformed with inputImageTransform before resampled into referenceImage.
+  /// \param inputImageTransform If specified then inputImage will be transformed with inputImageTransform before
+  /// resampled into referenceImage.
   /// \return Success flag
-  static bool ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation=false, bool padImage=false, vtkAbstractTransform* inputImageTransform=nullptr, double backgroundValue=0);
+  static bool ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage,
+                                                            vtkOrientedImageData* referenceImage,
+                                                            vtkOrientedImageData* outputImage,
+                                                            bool linearInterpolation = false,
+                                                            bool padImage = false,
+                                                            vtkAbstractTransform* inputImageTransform = nullptr,
+                                                            double backgroundValue = 0);
 
   /// Transform an oriented image data using a transform that can be linear or non-linear.
   /// Linear: simply multiply the geometry matrix with the applied matrix, extent stays the same
   /// Non-linear: calculate new extents and change only the extents when applying deformable transform
   /// \param image Oriented image to transform
   /// \param transform Input transform
-  /// \param geometryOnly Only the geometry of the image is changed according to the transform if this flag is turned on.
-  ///          This flag only has an effect if the transform is non-linear, in which case only the extent is changed. Off by default
+  /// \param geometryOnly Only the geometry of the image is changed according to the transform if this flag is turned
+  /// on.
+  ///          This flag only has an effect if the transform is non-linear, in which case only the extent is changed.
+  ///          Off by default
   /// \param alwaysResample If on, then image data will be resampled even if the applied transform is linear
-  static void TransformOrientedImage(vtkOrientedImageData* image, vtkAbstractTransform* transform, bool geometryOnly=false, bool alwaysResample=false, bool linearInterpolation=false, double backgroundColor[4]=nullptr);
+  static void TransformOrientedImage(vtkOrientedImageData* image,
+                                     vtkAbstractTransform* transform,
+                                     bool geometryOnly = false,
+                                     bool alwaysResample = false,
+                                     bool linearInterpolation = false,
+                                     double backgroundColor[4] = nullptr);
 
-  /// Combines the inputImage and imageToAppend into a new image by max/min operation. The extent will be the union of the two images.
-  /// Extent can be specified to restrict imageToAppend's extent to a smaller region.
-  /// inputImage and imageToAppend must have the same geometry, but they may have different extents.
-  static bool MergeImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* imageToAppend, vtkOrientedImageData* outputImage, int operation,
-    const int extent[6]=nullptr, double maskThreshold = 0, double fillValue = 1, bool* outputModified=nullptr);
+  /// Combines the inputImage and imageToAppend into a new image by max/min operation. The extent will be the union of
+  /// the two images. Extent can be specified to restrict imageToAppend's extent to a smaller region. inputImage and
+  /// imageToAppend must have the same geometry, but they may have different extents.
+  static bool MergeImage(vtkOrientedImageData* inputImage,
+                         vtkOrientedImageData* imageToAppend,
+                         vtkOrientedImageData* outputImage,
+                         int operation,
+                         const int extent[6] = nullptr,
+                         double maskThreshold = 0,
+                         double fillValue = 1,
+                         bool* outputModified = nullptr);
 
   /// Modifies inputImage in-place by combining with modifierImage using max/min operation.
   /// The extent will remain unchanged.
   /// Extent can be specified to restrict modifierImage's extent to a smaller region.
-  /// inputImage and modifierImage must have the same geometry (origin, spacing, directions) and scalar type, but they may have different extents.
-  static bool ModifyImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* modifierImage, int operation,
-    const int extent[6] = nullptr, double maskThreshold = 0, double fillValue = 1);
+  /// inputImage and modifierImage must have the same geometry (origin, spacing, directions) and scalar type, but they
+  /// may have different extents.
+  static bool ModifyImage(vtkOrientedImageData* inputImage,
+                          vtkOrientedImageData* modifierImage,
+                          int operation,
+                          const int extent[6] = nullptr,
+                          double maskThreshold = 0,
+                          double fillValue = 1);
 
   /// Copy image with clipping to the specified extent
-  static bool CopyImage(vtkOrientedImageData* imageToCopy, vtkOrientedImageData* outputImage, const int extent[6]=nullptr);
+  static bool CopyImage(vtkOrientedImageData* imageToCopy,
+                        vtkOrientedImageData* outputImage,
+                        const int extent[6] = nullptr);
 
   /// Prints image information. Does not print lots of irrelevant information that default PrintSelf would print.
   static void PrintImageInformation(vtkImageData* imageData, ostream& os, vtkIndent indent);
 
   /// Fills an image with the specified value
   /// \param extent The whole extent is filled if extent is not specified
-  static void FillImage(vtkImageData* image, double fillValue, const int extent[6]=nullptr);
+  static void FillImage(vtkImageData* image, double fillValue, const int extent[6] = nullptr);
 
 public:
   /// Calculate effective extent of an image: the IJK extent where non-zero voxels are located
@@ -121,14 +154,20 @@ public:
 
   /// Transform input extent to determine output extent of an image. Use all bounding box corners,
   /// may miss part of the extent in case of non-linear transforms are used.
-  static void TransformExtent(const int inputExtent[6], vtkAbstractTransform* inputToOutputTransform, int outputExtent[6]);
+  static void TransformExtent(const int inputExtent[6],
+                              vtkAbstractTransform* inputToOutputTransform,
+                              int outputExtent[6]);
 
   /// Transform input bounds to determine output bounds. Use all bounding box corners,
   /// may miss part of the extent in case of non-linear transforms are used.
-  static void TransformBounds(const double inputBounds[6], vtkAbstractTransform* inputToOutputTransform, double outputBounds[6]);
+  static void TransformBounds(const double inputBounds[6],
+                              vtkAbstractTransform* inputToOutputTransform,
+                              double outputBounds[6]);
 
   /// Transform bounds of oriented image data using a linear or non-linear transform
-  static void TransformOrientedImageDataBounds(vtkOrientedImageData* image, vtkAbstractTransform* transform, double transformedBounds[6]);
+  static void TransformOrientedImageDataBounds(vtkOrientedImageData* image,
+                                               vtkAbstractTransform* transform,
+                                               double transformedBounds[6]);
 
   /// Compare the values (with tolerance) between two 4x4 matrices
   /// \param lhs Left-hand side matrix to compare
@@ -139,15 +178,22 @@ public:
   static bool AreEqualWithTolerance(double a, double b) { return fabs(a - b) < 0.0001; };
 
   /// Calculate transform between two oriented image data
-  static bool GetTransformBetweenOrientedImages(vtkOrientedImageData* image1, vtkOrientedImageData* image2, vtkTransform* image1ToImage2Transform);
+  static bool GetTransformBetweenOrientedImages(vtkOrientedImageData* image1,
+                                                vtkOrientedImageData* image2,
+                                                vtkTransform* image1ToImage2Transform);
 
   /// Pad an image to entirely contain another image using custom extent to contain
-  static bool PadImageToContainImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* containedImage, vtkOrientedImageData* outputImage, const int extent[6]);
+  static bool PadImageToContainImage(vtkOrientedImageData* inputImage,
+                                     vtkOrientedImageData* containedImage,
+                                     vtkOrientedImageData* outputImage,
+                                     const int extent[6]);
   /// Pad an image to entirely contain another image
-  static bool PadImageToContainImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* containedImage, vtkOrientedImageData* outputImage);
+  static bool PadImageToContainImage(vtkOrientedImageData* inputImage,
+                                     vtkOrientedImageData* containedImage,
+                                     vtkOrientedImageData* outputImage);
 
-  /// Determine if a transform is linear and return it if it is. A simple downcast is not enough, as the transform may be
-  /// a general transform, which can be linear if the concatenation it contains consist of all linear transforms.
+  /// Determine if a transform is linear and return it if it is. A simple downcast is not enough, as the transform may
+  /// be a general transform, which can be linear if the concatenation it contains consist of all linear transforms.
   /// \param transform Input transform to assess
   /// \param linearTransform Output transform in case transform is linear
   /// \return True if input is linear, false otherwise.
@@ -162,7 +208,10 @@ public:
   /// \param notMask If on, the mask is passed through a boolean not before it is used to mask the image.
   ///   The effect is to pass the input pixels where the mask is zero, and replace the pixels where the
   ///   mask is non zero
-  static bool ApplyImageMask(vtkOrientedImageData* input, vtkOrientedImageData* mask, double fillValue, bool notMask = false);
+  static bool ApplyImageMask(vtkOrientedImageData* input,
+                             vtkOrientedImageData* mask,
+                             double fillValue,
+                             bool notMask = false);
 
   /// Get the values contained in the labelmap under the mask
   /// \param binaryLabelmap Input image to get values from
@@ -171,8 +220,11 @@ public:
   ///  If nullptr, the extent will be the overlapping extent between the label and mask.
   /// \param labelValues The values found in the binary labelmap underneath the mask
   /// \param maskThreshold Threshold value for the mask. Values above this threshold are considered to be under the mask
-  static void GetLabelValuesInMask(std::vector<int>& labelValues, vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
-    const int extent[6]=nullptr, int maskThreshold = 0);
+  static void GetLabelValuesInMask(std::vector<int>& labelValues,
+                                   vtkOrientedImageData* binaryLabelmap,
+                                   vtkOrientedImageData* mask,
+                                   const int extent[6] = nullptr,
+                                   int maskThreshold = 0);
 
   /// Determine if there is a non-zero value in the labelmap under the mask
   /// \param binaryLabelmap Input image to get values from
@@ -180,8 +232,10 @@ public:
   /// \param extent Can be set to restrict the examined extent to a smaller region.
   ///  If nullptr, the extent will be the overlapping extent between the label and mask.
   /// \param maskThreshold Threshold value for the mask. Values above this threshold are considered to be under the mask
-  static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
-    int extent[6]=nullptr, int maskThreshold=0);
+  static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap,
+                            vtkOrientedImageData* mask,
+                            int extent[6] = nullptr,
+                            int maskThreshold = 0);
 
   enum ImageTypeCheckResult
   {
@@ -194,13 +248,16 @@ public:
 
   /// Determine if the scalar type of the image is valid for representing segmentations.
   /// \param image Image to validate
-  /// \return ImageTypeCheckResult value representing if the image scalar type is valid, and if not, what kind of conversion is needed.
+  /// \return ImageTypeCheckResult value representing if the image scalar type is valid, and if not, what kind of
+  /// conversion is needed.
   /// \sa vtkImageData::GetScalarType()
   static int IsImageScalarTypeValid(vtkImageData* image);
 
   /// Determine the smallest integer type that can contain the specified scalar range.
   /// \param scalarRange Range of the scalar values that should be representable by the image data type
-  /// \return Smallest integer type that can contain the specified scalar range. Possible values are VTK_UNSIGNED_CHAR, VTK_CHAR, VTK_UNSIGNED_SHORT, VTK_SHORT, VTK_UNSIGNED_INT, VTK_INT and -1 if no valid integer type can contain the scalar range.
+  /// \return Smallest integer type that can contain the specified scalar range. Possible values are VTK_UNSIGNED_CHAR,
+  /// VTK_CHAR, VTK_UNSIGNED_SHORT, VTK_SHORT, VTK_UNSIGNED_INT, VTK_INT and -1 if no valid integer type can contain the
+  /// scalar range.
   static int GetSmallestIntegerTypeForSegmentationScalarRange(double scalarRange[2]);
 
   /// Cast the data type of the image to the smallest possible size that can contain the currently stored values

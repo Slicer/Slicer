@@ -45,15 +45,14 @@ int qMRMLVolumePropertyNodeWidgetTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkSmartPointer<vtkMRMLVolumePropertyNode> volumePropertyNode =
-    vtkSmartPointer<vtkMRMLVolumePropertyNode>::New();
+  vtkSmartPointer<vtkMRMLVolumePropertyNode> volumePropertyNode = vtkSmartPointer<vtkMRMLVolumePropertyNode>::New();
 
   qMRMLVolumePropertyNodeWidget widget;
   widget.setMRMLVolumePropertyNode(volumePropertyNode);
 
   widget.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

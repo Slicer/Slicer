@@ -35,11 +35,11 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModel : public qMRMLSceneHierarc
   /// more than one display node and their colors are different, it uses
   /// an invalid color.
   /// A value of -1 (default) hides the column
-  Q_PROPERTY (int colorColumn READ colorColumn WRITE setColorColumn)
+  Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn)
 
   /// This property holds the column ID where the node opacity is shown.
   /// A value of -1 (default) hides the column.
-  Q_PROPERTY (int opacityColumn READ opacityColumn WRITE setOpacityColumn)
+  Q_PROPERTY(int opacityColumn READ opacityColumn WRITE setOpacityColumn)
 
 public:
   typedef qMRMLSceneHierarchyModel Superclass;
@@ -54,15 +54,14 @@ public:
 
   ///
   vtkMRMLNode* parentNode(vtkMRMLNode* node) const override;
-  //virtual int          nodeIndex(vtkMRMLNode* node) const;
+  // virtual int          nodeIndex(vtkMRMLNode* node) const;
   /// fast function that only check the type of the node to know if it can be a child.
-  bool         canBeAChild(vtkMRMLNode* node) const override;
+  bool canBeAChild(vtkMRMLNode* node) const override;
   /// fast function that only check the type of the node to know if it can be a parent.
-  bool         canBeAParent(vtkMRMLNode* node) const override;
+  bool canBeAParent(vtkMRMLNode* node) const override;
 
 protected:
-  qMRMLSceneDisplayableModel(qMRMLSceneDisplayableModelPrivate* pimpl,
-                             QObject* parent = nullptr);
+  qMRMLSceneDisplayableModel(qMRMLSceneDisplayableModelPrivate* pimpl, QObject* parent = nullptr);
 
   /// Reimplemented to listen to the displayable DisplayModifiedEvent event for
   /// visibility check state changes.
@@ -72,6 +71,7 @@ protected:
   void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item) override;
 
   int maxColumnId() const override;
+
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneDisplayableModel);
   Q_DISABLE_COPY(qMRMLSceneDisplayableModel);

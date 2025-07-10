@@ -29,8 +29,8 @@
 class qSlicerSegmentEditorPaintEffectPrivate;
 class vtkPolyData;
 
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorPaintEffect :
-  public qSlicerSegmentEditorAbstractLabelEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorPaintEffect
+  : public qSlicerSegmentEditorAbstractLabelEffect
 {
   Q_OBJECT
 
@@ -59,13 +59,18 @@ public:
   /// \param callerInteractor Interactor object that was observed to catch the event
   /// \param eid Event identifier
   /// \param viewWidget Widget of the Slicer layout view. Can be \sa qMRMLSliceWidget or \sa qMRMLThreeDWidget
-  bool processInteractionEvents(vtkRenderWindowInteractor* callerInteractor, unsigned long eid, qMRMLWidget* viewWidget) override;
+  bool processInteractionEvents(vtkRenderWindowInteractor* callerInteractor,
+                                unsigned long eid,
+                                qMRMLWidget* viewWidget) override;
 
   /// Callback function invoked when view node is modified
-  /// \param callerViewNode View node that was observed to catch the event. Can be either \sa vtkMRMLSliceNode or \sa vtkMRMLViewNode
+  /// \param callerViewNode View node that was observed to catch the event. Can be either \sa vtkMRMLSliceNode or \sa
+  /// vtkMRMLViewNode
   /// \param eid Event identifier
   /// \param viewWidget Widget of the Slicer layout view. Can be \sa qMRMLSliceWidget or \sa qMRMLThreeDWidget
-  void processViewNodeEvents(vtkMRMLAbstractViewNode* callerViewNode, unsigned long eid, qMRMLWidget* viewWidget) override;
+  void processViewNodeEvents(vtkMRMLAbstractViewNode* callerViewNode,
+                             unsigned long eid,
+                             qMRMLWidget* viewWidget) override;
 
   /// Create options frame widgets, make connections, and add them to the main options frame using \sa addOptionsWidget
   void setupOptionsFrame() override;

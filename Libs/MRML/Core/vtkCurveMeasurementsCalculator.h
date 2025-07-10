@@ -100,8 +100,11 @@ public:
   /// using indices pedigreeIdsArray.
   /// pedigreeIdsValueScale is applied to values of pedigreeIdsArray, which can be used
   /// for converting between indices of curve points and curve control points.
-  static bool InterpolateArray(vtkDoubleArray* inputValues, bool closedCurve, vtkDoubleArray* interpolatedValues,
-    vtkDoubleArray* pedigreeIdsArray, double pedigreeIdsValueScale=1.0);
+  static bool InterpolateArray(vtkDoubleArray* inputValues,
+                               bool closedCurve,
+                               vtkDoubleArray* interpolatedValues,
+                               vtkDoubleArray* pedigreeIdsArray,
+                               double pedigreeIdsValueScale = 1.0);
 
 protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);
@@ -117,25 +120,27 @@ protected:
   vtkWeakPointer<vtkMRMLMarkupsNode> InputMarkupsMRMLNode;
 
   /// Flag indicating whether the current curve is closed
-  bool CurveIsClosed{false};
+  bool CurveIsClosed{ false };
 
   /// Flag determining whether the filter should calculate curvature
-  bool CalculateCurvature{false};
+  bool CalculateCurvature{ false };
 
   /// Flag determining whether the filter should calculate torsion
-  bool CalculateTorsion{false};
+  bool CalculateTorsion{ false };
 
   /// Command handling data array modified events
   vtkCallbackCommand* ControlPointArrayModifiedCallbackCommand;
   /// List of observed control point arrays (for removal of observations)
   vtkCollection* ObservedControlPointArrays;
 
-  std::string CurvatureUnits{"mm-1"};
-  std::string TorsionUnits{"mm-1"};
+  std::string CurvatureUnits{ "mm-1" };
+  std::string TorsionUnits{ "mm-1" };
 
 protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
-  int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
+  int RequestData(vtkInformation* request,
+                  vtkInformationVector** inputVector,
+                  vtkInformationVector* outputVector) override;
 
 protected:
   vtkCurveMeasurementsCalculator();

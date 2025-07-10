@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 #ifndef __qMRMLTransformInfoWidget_h
 #define __qMRMLTransformInfoWidget_h
 
@@ -37,9 +36,7 @@ class qMRMLTransformInfoWidgetPrivate;
 class vtkMRMLTransformNode;
 class vtkMRMLNode;
 
-class Q_SLICER_MODULE_TRANSFORMS_WIDGETS_EXPORT
-qMRMLTransformInfoWidget
-  : public qMRMLWidget
+class Q_SLICER_MODULE_TRANSFORMS_WIDGETS_EXPORT qMRMLTransformInfoWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -73,7 +70,6 @@ protected slots:
   void updateTransformVectorDisplayFromMRML();
 
 protected:
-
   void showEvent(QShowEvent*) override;
 
   QScopedPointer<qMRMLTransformInfoWidgetPrivate> d_ptr;

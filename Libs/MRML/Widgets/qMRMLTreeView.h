@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QTreeView>
-//#include <QStyledItemDelegate>
+// #include <QStyledItemDelegate>
 class QShowEvent;
 
 // CTK includes
@@ -61,7 +61,8 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   /// can disable it if you want a lazy update.
   /// OnlyVisibleNodes by default.
   /// \sa qMRMLSceneModel::listenNodeModifiedEvent
-  Q_PROPERTY(qMRMLSceneModel::NodeTypes listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  Q_PROPERTY(
+    qMRMLSceneModel::NodeTypes listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
   /// This property controls which node types are visible in the view.
   /// This behaves as a filter, the nodes that have a type not included in the
   /// list will be hidden.
@@ -298,8 +299,7 @@ signals:
 protected slots:
   /// This slot is being triggered when the current node has changed.
   /// \sa currentNodeChanged()
-  virtual void onSelectionChanged(const QItemSelection& selected,
-                                  const QItemSelection& deselected);
+  virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   void onNumberOfVisibleIndexChanged();
 

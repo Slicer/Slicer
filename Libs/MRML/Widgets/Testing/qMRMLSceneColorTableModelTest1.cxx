@@ -68,7 +68,7 @@ int qMRMLSceneColorTableModelTest1(int argc, char* argv[])
   view->show();
   view->resize(500, 800);
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

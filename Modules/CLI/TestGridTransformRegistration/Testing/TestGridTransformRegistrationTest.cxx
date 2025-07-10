@@ -2,9 +2,9 @@
 #include "itkTestMain.h"
 
 #ifdef _WIN32
-#define MODULE_IMPORT __declspec(dllimport)
+# define MODULE_IMPORT __declspec(dllimport)
 #else
-#define MODULE_IMPORT
+# define MODULE_IMPORT
 #endif
 
 extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char*[]);

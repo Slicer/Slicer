@@ -42,7 +42,8 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : pub
   Q_OBJECT
   QVTK_OBJECT
 
-  Q_PROPERTY(bool clippingConfigurationButtonVisible READ clippingConfigurationButtonVisible WRITE setClippingConfigurationButtonVisible)
+  Q_PROPERTY(bool clippingConfigurationButtonVisible READ clippingConfigurationButtonVisible WRITE
+               setClippingConfigurationButtonVisible)
 
 public:
   typedef qMRMLWidget Superclass;

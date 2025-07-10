@@ -31,15 +31,13 @@
 
 class qSlicerUnitsModulePrivate;
 
-class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerUnitsModule(QObject* parent = nullptr);
   ~qSlicerUnitsModule() override;
@@ -74,7 +72,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerUnitsModule);
   Q_DISABLE_COPY(qSlicerUnitsModule);
-
 };
 
 #endif

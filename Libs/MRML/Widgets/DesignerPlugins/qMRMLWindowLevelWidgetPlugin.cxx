@@ -2,7 +2,7 @@
 #include "qMRMLWindowLevelWidget.h"
 
 qMRMLWindowLevelWidgetPlugin::qMRMLWindowLevelWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -16,15 +16,15 @@ QString qMRMLWindowLevelWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLWindowLevelWidget\" \
           name=\"MRMLWindowLevelWidget\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>20</height>\n"
-          "  </rect>\n"
-          " </property>\n"
-          "</widget>\n";
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>20</height>\n"
+         "  </rect>\n"
+         " </property>\n"
+         "</widget>\n";
 }
 
 QIcon qMRMLWindowLevelWidgetPlugin::icon() const

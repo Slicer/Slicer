@@ -64,9 +64,8 @@ vtkMRMLPlotSeriesNode::vtkMRMLPlotSeriesNode()
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLPlotSeriesNode::TableModifiedEvent);
-  this->AddNodeReferenceRole(this->GetTableNodeReferenceRole(),
-                             this->GetTableNodeReferenceMRMLAttributeName(),
-                             events.GetPointer());
+  this->AddNodeReferenceRole(
+    this->GetTableNodeReferenceRole(), this->GetTableNodeReferenceMRMLAttributeName(), events.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -128,7 +127,7 @@ void vtkMRMLPlotSeriesNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotSeriesNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLPlotSeriesNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -171,17 +170,14 @@ void vtkMRMLPlotSeriesNode::ProcessMRMLEvents(vtkObject* caller, unsigned long e
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (caller == nullptr ||
-      (event != vtkCommand::ModifiedEvent &&
-       event != vtkMRMLPlotSeriesNode::TableModifiedEvent))
+  if (caller == nullptr || (event != vtkCommand::ModifiedEvent && event != vtkMRMLPlotSeriesNode::TableModifiedEvent))
   {
     return;
   }
 
   vtkMRMLTableNode* tnode = this->GetTableNode();
   vtkMRMLTableNode* callerTable = vtkMRMLTableNode::SafeDownCast(caller);
-  if (callerTable != nullptr && tnode != nullptr && tnode == callerTable &&
-      event == vtkCommand::ModifiedEvent)
+  if (callerTable != nullptr && tnode != nullptr && tnode == callerTable && event == vtkCommand::ModifiedEvent)
   {
     this->InvokeCustomModifiedEvent(vtkMRMLPlotSeriesNode::TableModifiedEvent, callerTable);
   }
@@ -211,8 +207,7 @@ void vtkMRMLPlotSeriesNode::SetAndObserveTableNodeID(const std::string& tableNod
 //----------------------------------------------------------------------------
 vtkMRMLTableNode* vtkMRMLPlotSeriesNode::GetTableNode()
 {
-  return vtkMRMLTableNode::SafeDownCast(
-    this->GetNodeReference(this->GetTableNodeReferenceRole()));
+  return vtkMRMLTableNode::SafeDownCast(this->GetNodeReference(this->GetTableNodeReferenceRole()));
 }
 
 //----------------------------------------------------------------------------
@@ -221,16 +216,19 @@ void vtkMRMLPlotSeriesNode::SetPlotType(const char* type)
   this->SetPlotType(this->GetPlotTypeFromString(type));
 }
 
-
 //-----------------------------------------------------------
 const char* vtkMRMLPlotSeriesNode::GetPlotTypeAsString(int id)
 {
   switch (id)
   {
-    case PlotTypeLine: return "Line";
-    case PlotTypeBar: return "Bar";
-    case PlotTypeScatter: return "Scatter";
-    case PlotTypeScatterBar: return "ScatterBar";
+    case PlotTypeLine:
+      return "Line";
+    case PlotTypeBar:
+      return "Bar";
+    case PlotTypeScatter:
+      return "Scatter";
+    case PlotTypeScatterBar:
+      return "ScatterBar";
     default:
       // invalid id
       return "";
@@ -262,12 +260,18 @@ const char* vtkMRMLPlotSeriesNode::GetMarkerStyleAsString(int id)
 {
   switch (id)
   {
-    case MarkerStyleNone: return "none";
-    case MarkerStyleCross: return "cross";
-    case MarkerStylePlus: return "plus";
-    case MarkerStyleSquare: return "square";
-    case MarkerStyleCircle: return "circle";
-    case MarkerStyleDiamond: return "diamond";
+    case MarkerStyleNone:
+      return "none";
+    case MarkerStyleCross:
+      return "cross";
+    case MarkerStylePlus:
+      return "plus";
+    case MarkerStyleSquare:
+      return "square";
+    case MarkerStyleCircle:
+      return "circle";
+    case MarkerStyleDiamond:
+      return "diamond";
     default:
       // invalid id
       return "";
@@ -299,12 +303,18 @@ const char* vtkMRMLPlotSeriesNode::GetLineStyleAsString(int id)
 {
   switch (id)
   {
-    case LineStyleNone: return "none";
-    case LineStyleSolid: return "solid";
-    case LineStyleDash: return "dash";
-    case LineStyleDot: return "dot";
-    case LineStyleDashDot: return "dash-dot";
-    case LineStyleDashDotDot: return "dash-dot-dot";
+    case LineStyleNone:
+      return "none";
+    case LineStyleSolid:
+      return "solid";
+    case LineStyleDash:
+      return "dash";
+    case LineStyleDot:
+      return "dot";
+    case LineStyleDashDot:
+      return "dash-dot";
+    case LineStyleDashDotDot:
+      return "dash-dot-dot";
     default:
       // invalid id
       return "";
@@ -349,11 +359,12 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
   {
     colorTableNodeID = "vtkMRMLColorTableNodeRandom";
   }
-  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->GetScene()->GetNodeByID(colorTableNodeID));
+  vtkMRMLColorTableNode* colorTableNode =
+    vtkMRMLColorTableNode::SafeDownCast(this->GetScene()->GetNodeByID(colorTableNodeID));
   if (colorTableNode == nullptr)
   {
     vtkGenericWarningMacro("vtkMRMLPlotSeriesNode::GenerateUniqueColor failed: color table node by ID "
-      << (colorTableNodeID ? colorTableNodeID : "(none)") << " not found in scene");
+                           << (colorTableNodeID ? colorTableNodeID : "(none)") << " not found in scene");
     return;
   }
   std::vector<vtkMRMLNode*> seriesNodes;
@@ -362,16 +373,17 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
   if (numberOfColors < 1)
   {
     vtkGenericWarningMacro("vtkMRMLPlotSeriesNode::GenerateUniqueColor failed: color table node "
-      << (colorTableNodeID ? colorTableNodeID : "(none)") << " is empty");
+                           << (colorTableNodeID ? colorTableNodeID : "(none)") << " is empty");
     return;
   }
-  double color[4] = { 0,0,0,0 };
+  double color[4] = { 0, 0, 0, 0 };
   bool isColorUnique = false;
   for (int colorIndex = 0; colorIndex < numberOfColors; colorIndex++)
   {
     colorTableNode->GetColor(colorIndex, color);
     isColorUnique = true;
-    for (std::vector<vtkMRMLNode*>::iterator seriesNodeIt = seriesNodes.begin(); seriesNodeIt != seriesNodes.end(); ++seriesNodeIt)
+    for (std::vector<vtkMRMLNode*>::iterator seriesNodeIt = seriesNodes.begin(); seriesNodeIt != seriesNodes.end();
+         ++seriesNodeIt)
     {
       vtkMRMLPlotSeriesNode* seriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(*seriesNodeIt);
       if (!seriesNode)
@@ -383,9 +395,8 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
         continue;
       }
       double* foundColor = seriesNode->GetColor();
-      if (fabs(foundColor[0] - color[0]) < 0.1
-        && fabs(foundColor[1] - color[1]) < 0.1
-        && fabs(foundColor[2] - color[2]) < 0.1)
+      if (fabs(foundColor[0] - color[0]) < 0.1 && fabs(foundColor[1] - color[1]) < 0.1
+          && fabs(foundColor[2] - color[2]) < 0.1)
       {
         isColorUnique = false;
         break;

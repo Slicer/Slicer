@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 // qMRML includes
 #include "qMRMLTransformInfoWidget.h"
 #include "ui_qMRMLTransformInfoWidget.h"
@@ -55,8 +54,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-qMRMLTransformInfoWidgetPrivate
-::qMRMLTransformInfoWidgetPrivate(qMRMLTransformInfoWidget& object)
+qMRMLTransformInfoWidgetPrivate::qMRMLTransformInfoWidgetPrivate(qMRMLTransformInfoWidget& object)
   : q_ptr(&object)
 {
   this->TransformNode = nullptr;
@@ -85,9 +83,11 @@ void qMRMLTransformInfoWidgetPrivate::setAndObserveCrosshairNode()
     crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(this->MRMLScene->GetFirstNodeByClass("vtkMRMLCrosshairNode"));
   }
 
-  q->qvtkReconnect(this->CrosshairNode.GetPointer(), crosshairNode,
-    vtkMRMLCrosshairNode::CursorPositionModifiedEvent,
-    q, SLOT(updateTransformVectorDisplayFromMRML()));
+  q->qvtkReconnect(this->CrosshairNode.GetPointer(),
+                   crosshairNode,
+                   vtkMRMLCrosshairNode::CursorPositionModifiedEvent,
+                   q,
+                   SLOT(updateTransformVectorDisplayFromMRML()));
   this->CrosshairNode = crosshairNode;
   q->updateTransformVectorDisplayFromMRML();
 }
@@ -105,8 +105,7 @@ qMRMLTransformInfoWidget::qMRMLTransformInfoWidget(QWidget* _parent)
 qMRMLTransformInfoWidget::~qMRMLTransformInfoWidget() = default;
 
 //------------------------------------------------------------------------------
-void qMRMLTransformInfoWidget::processEvent(
-  vtkObject* caller, void* callData, unsigned long eventId, void* clientData)
+void qMRMLTransformInfoWidget::processEvent(vtkObject* caller, void* callData, unsigned long eventId, void* clientData)
 {
   Q_UNUSED(caller);
   Q_UNUSED(callData);
@@ -157,10 +156,13 @@ void qMRMLTransformInfoWidget::setMRMLTransformNode(vtkMRMLTransformNode* transf
 {
   Q_D(qMRMLTransformInfoWidget);
 
-  qvtkReconnect(d->TransformNode.GetPointer(), transformNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
-  qvtkReconnect(d->TransformNode.GetPointer(), transformNode, vtkMRMLTransformableNode::TransformModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(
+    d->TransformNode.GetPointer(), transformNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->TransformNode.GetPointer(),
+                transformNode,
+                vtkMRMLTransformableNode::TransformModifiedEvent,
+                this,
+                SLOT(updateWidgetFromMRML()));
   d->TransformNode = transformNode;
 
   this->updateWidgetFromMRML();
@@ -215,7 +217,7 @@ void qMRMLTransformInfoWidget::updateTransformVectorDisplayFromMRML()
 
   if (d->TransformNode.GetPointer() && d->CrosshairNode.GetPointer())
   {
-    double ras[3]={0};
+    double ras[3] = { 0 };
     bool validPosition = d->CrosshairNode->GetCursorPositionRAS(ras);
     if (validPosition)
     {
@@ -229,15 +231,18 @@ void qMRMLTransformInfoWidget::updateTransformVectorDisplayFromMRML()
         vtkAbstractTransform* transformFromParent = d->TransformNode->GetTransformFromParent();
         if (transformFromParent)
         {
-          double* rasDisplacedTransformedBack = transformFromParent->TransformDoublePoint(rasDisplaced[0], rasDisplaced[1], rasDisplaced[2]);
-          static double INVERSE_COMPUTATION_ALLOWED_SQUARED_ERROR=0.1;
-          bool inverseAccurate = vtkMath::Distance2BetweenPoints(ras,rasDisplacedTransformedBack)<INVERSE_COMPUTATION_ALLOWED_SQUARED_ERROR;
+          double* rasDisplacedTransformedBack =
+            transformFromParent->TransformDoublePoint(rasDisplaced[0], rasDisplaced[1], rasDisplaced[2]);
+          static double INVERSE_COMPUTATION_ALLOWED_SQUARED_ERROR = 0.1;
+          bool inverseAccurate = vtkMath::Distance2BetweenPoints(ras, rasDisplacedTransformedBack)
+                                 < INVERSE_COMPUTATION_ALLOWED_SQUARED_ERROR;
 
-          d->ViewerDisplacementVectorRAS->setText(QString("Displacement vector  RAS: (%1, %2, %3)%4").
-            arg(rasDisplaced[0] - ras[0], /* fieldWidth= */ 0, /* format = */ 'f', /* precision= */ 1).
-            arg(rasDisplaced[1] - ras[1], /* fieldWidth= */ 0, /* format = */ 'f', /* precision= */ 1).
-            arg(rasDisplaced[2] - ras[2], /* fieldWidth= */ 0, /* format = */ 'f', /* precision= */ 1).
-            arg(inverseAccurate?"":"   Warning: inverse is inaccurate!") );
+          d->ViewerDisplacementVectorRAS->setText(
+            QString("Displacement vector  RAS: (%1, %2, %3)%4")
+              .arg(rasDisplaced[0] - ras[0], /* fieldWidth= */ 0, /* format = */ 'f', /* precision= */ 1)
+              .arg(rasDisplaced[1] - ras[1], /* fieldWidth= */ 0, /* format = */ 'f', /* precision= */ 1)
+              .arg(rasDisplaced[2] - ras[2], /* fieldWidth= */ 0, /* format = */ 'f', /* precision= */ 1)
+              .arg(inverseAccurate ? "" : "   Warning: inverse is inaccurate!"));
           return;
         }
       }

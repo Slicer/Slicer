@@ -4,7 +4,7 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
-vtkStandardNewMacro ( vtkPermissionPrompter );
+vtkStandardNewMacro(vtkPermissionPrompter);
 
 //----------------------------------------------------------------------------
 vtkPermissionPrompter::vtkPermissionPrompter()
@@ -20,31 +20,30 @@ vtkPermissionPrompter::vtkPermissionPrompter()
 //----------------------------------------------------------------------------
 vtkPermissionPrompter::~vtkPermissionPrompter()
 {
-  if ( this->Username )
+  if (this->Username)
   {
-    this->SetUsername ( nullptr );
+    this->SetUsername(nullptr);
   }
-  if ( this->Password )
+  if (this->Password)
   {
-    this->SetPassword ( nullptr );
+    this->SetPassword(nullptr);
   }
-  if ( this->HostName)
+  if (this->HostName)
   {
-    this->SetHostName ( nullptr );
+    this->SetHostName(nullptr);
   }
-  if ( this->PromptMessage )
+  if (this->PromptMessage)
   {
-    this->SetPromptMessage ( nullptr );
+    this->SetPromptMessage(nullptr);
   }
-  if ( this->PromptTitle!= nullptr )
+  if (this->PromptTitle != nullptr)
   {
-    this->SetPromptTitle ( nullptr );
+    this->SetPromptTitle(nullptr);
   }
 }
 
-
 //----------------------------------------------------------------------------
-int vtkPermissionPrompter::Prompt( const char* vtkNotUsed(message) )
+int vtkPermissionPrompter::Prompt(const char* vtkNotUsed(message))
 {
   // initialize with guest information
   this->Username = const_cast<char*>("");
@@ -53,16 +52,15 @@ int vtkPermissionPrompter::Prompt( const char* vtkNotUsed(message) )
   return -1;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkPermissionPrompter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf ( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Username: " << (this->Username ? this->Username : "(none)") << "\n";
   os << indent << "Password: " << (this->Password ? this->Password : "(none)") << "\n";
   os << indent << "HostName: " << (this->HostName ? this->HostName : "(none)") << "\n";
-  os << indent << "PromptMessage: " << (this->PromptMessage ? this->PromptMessage : "(none)" ) << "\n";
-  os << indent << "PromptTitle: " << (this->PromptTitle ? this->PromptTitle : "(none)" ) << "\n";
+  os << indent << "PromptMessage: " << (this->PromptMessage ? this->PromptMessage : "(none)") << "\n";
+  os << indent << "PromptTitle: " << (this->PromptTitle ? this->PromptTitle : "(none)") << "\n";
   os << indent << "Remember: " << this->Remember << "\n";
 }

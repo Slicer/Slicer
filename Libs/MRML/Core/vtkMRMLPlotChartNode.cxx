@@ -56,35 +56,34 @@ vtkMRMLPlotChartNode::vtkMRMLPlotChartNode()
   this->YAxisRange[0] = 0.0;
   this->YAxisRange[1] = 1.0;
 
-  vtkNew<vtkIntArray>  events;
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLPlotChartNode::PlotModifiedEvent);
   events->InsertNextValue(vtkMRMLPlotSeriesNode::TableModifiedEvent);
   this->AddNodeReferenceRole(this->GetPlotSeriesNodeReferenceRole(), nullptr, events.GetPointer());
 }
 
-
 //----------------------------------------------------------------------------
 vtkMRMLPlotChartNode::~vtkMRMLPlotChartNode()
 {
   if (this->Title)
   {
-    delete [] this->Title;
+    delete[] this->Title;
     this->Title = nullptr;
   }
   if (this->XAxisTitle)
   {
-    delete [] this->XAxisTitle;
+    delete[] this->XAxisTitle;
     this->XAxisTitle = nullptr;
   }
   if (this->YAxisTitle)
   {
-    delete [] this->YAxisTitle;
+    delete[] this->YAxisTitle;
     this->YAxisTitle = nullptr;
   }
   if (this->FontType)
   {
-    delete [] this->FontType;
+    delete[] this->FontType;
     this->FontType = nullptr;
   }
 }
@@ -191,7 +190,7 @@ void vtkMRMLPlotChartNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotChartNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLPlotChartNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -307,7 +306,7 @@ int vtkMRMLPlotChartNode::GetNumberOfPlotSeriesNodes()
 //----------------------------------------------------------------------------
 const char* vtkMRMLPlotChartNode::GetNthPlotSeriesNodeID(int n)
 {
-    return this->GetNthNodeReferenceID(this->GetPlotSeriesNodeReferenceRole(), n);
+  return this->GetNthNodeReferenceID(this->GetPlotSeriesNodeReferenceRole(), n);
 }
 
 //----------------------------------------------------------------------------
@@ -318,13 +317,11 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeIndexFromID(const char* plotSeriesNod
     return -1;
   }
 
-  int numPlotSeriesNodes = this->GetNumberOfNodeReferences(
-    this->GetPlotSeriesNodeReferenceRole());
+  int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
 
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
-    const char* id = this->GetNthNodeReferenceID(
-      this->GetPlotSeriesNodeReferenceRole(), plotIndex);
+    const char* id = this->GetNthNodeReferenceID(this->GetPlotSeriesNodeReferenceRole(), plotIndex);
     if (id && !strcmp(plotSeriesNodeID, id))
     {
       return plotIndex;
@@ -343,8 +340,7 @@ const char* vtkMRMLPlotChartNode::GetPlotSeriesNodeID()
 //----------------------------------------------------------------------------
 vtkMRMLPlotSeriesNode* vtkMRMLPlotChartNode::GetNthPlotSeriesNode(int n)
 {
-  return vtkMRMLPlotSeriesNode::SafeDownCast(
-    this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), n));
+  return vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), n));
 }
 
 //----------------------------------------------------------------------------
@@ -354,9 +350,7 @@ vtkMRMLPlotSeriesNode* vtkMRMLPlotChartNode::GetPlotSeriesNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotChartNode::ProcessMRMLEvents(vtkObject* caller,
-                                              unsigned long event,
-                                              void* callData)
+void vtkMRMLPlotChartNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -364,8 +358,8 @@ void vtkMRMLPlotChartNode::ProcessMRMLEvents(vtkObject* caller,
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
     vtkMRMLPlotSeriesNode* pnode = this->GetNthPlotSeriesNode(plotIndex);
-    if (pnode != nullptr && pnode == vtkMRMLPlotSeriesNode::SafeDownCast(caller) &&
-       (event ==  vtkCommand::ModifiedEvent || event == vtkMRMLPlotSeriesNode::TableModifiedEvent))
+    if (pnode != nullptr && pnode == vtkMRMLPlotSeriesNode::SafeDownCast(caller)
+        && (event == vtkCommand::ModifiedEvent || event == vtkMRMLPlotSeriesNode::TableModifiedEvent))
     {
       this->InvokeEvent(vtkMRMLPlotChartNode::PlotModifiedEvent, pnode);
       this->Modified();
@@ -376,7 +370,7 @@ void vtkMRMLPlotChartNode::ProcessMRMLEvents(vtkObject* caller,
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLPlotChartNode::GetPlotSeriesNodeNames(std::vector<std::string> &plotSeriesNodeNames)
+int vtkMRMLPlotChartNode::GetPlotSeriesNodeNames(std::vector<std::string>& plotSeriesNodeNames)
 {
   plotSeriesNodeNames.clear();
   int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
@@ -394,7 +388,7 @@ int vtkMRMLPlotChartNode::GetPlotSeriesNodeNames(std::vector<std::string> &plotS
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLPlotChartNode::GetPlotSeriesNodeIDs(std::vector<std::string> &plotSeriesNodeIDs)
+int vtkMRMLPlotChartNode::GetPlotSeriesNodeIDs(std::vector<std::string>& plotSeriesNodeIDs)
 {
   plotSeriesNodeIDs.clear();
   int numPlotSeriesNodes = this->GetNumberOfNodeReferences(this->GetPlotSeriesNodeReferenceRole());
@@ -423,7 +417,8 @@ void vtkMRMLPlotChartNode::SetPropertyToAllPlotSeriesNodes(PlotSeriesNodePropert
 
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
-    vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), plotIndex));
+    vtkMRMLPlotSeriesNode* plotSeriesNode =
+      vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), plotIndex));
     if (!plotSeriesNode)
     {
       continue;
@@ -450,7 +445,8 @@ void vtkMRMLPlotChartNode::SetPropertyToAllPlotSeriesNodes(PlotSeriesNodePropert
 
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
-    vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), plotIndex));
+    vtkMRMLPlotSeriesNode* plotSeriesNode =
+      vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), plotIndex));
     if (!plotSeriesNode)
     {
       continue;
@@ -480,7 +476,8 @@ bool vtkMRMLPlotChartNode::GetPropertyFromAllPlotSeriesNodes(PlotSeriesNodePrope
 
   for (int plotIndex = 0; plotIndex < numPlotSeriesNodes; plotIndex++)
   {
-    vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), plotIndex));
+    vtkMRMLPlotSeriesNode* plotSeriesNode =
+      vtkMRMLPlotSeriesNode::SafeDownCast(this->GetNthNodeReference(this->GetPlotSeriesNodeReferenceRole(), plotIndex));
     if (!plotSeriesNode)
     {
       continue;

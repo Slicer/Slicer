@@ -38,8 +38,8 @@ public:
   qSlicerActionsDialog(QWidget* parentWidget = nullptr);
   ~qSlicerActionsDialog() override;
 
-  void addAction(QAction* action, const QString& group=QString());
-  void addActions(const QList<QAction*>& actions, const QString& group=QString());
+  void addAction(QAction* action, const QString& group = QString());
+  void addActions(const QList<QAction*>& actions, const QString& group = QString());
   void clear();
 
   void setActionsWithNoShortcutVisible(bool visible);

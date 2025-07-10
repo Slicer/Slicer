@@ -42,7 +42,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int, char*[])
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  bool flag =  displayableHierarchyLogic->AddChildToParent(nullptr, nullptr);
+  bool flag = displayableHierarchyLogic->AddChildToParent(nullptr, nullptr);
   if (flag != false)
   {
     std::cerr << "AddChildToParent did not fail for null nodes" << std::endl;
@@ -75,7 +75,8 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int, char*[])
   }
   else
   {
-    std::cout << "AddChildToParent added hierarchies to make m1 " << m1->GetID() << " a child of m2 " << m2->GetID() << std::endl;
+    std::cout << "AddChildToParent added hierarchies to make m1 " << m1->GetID() << " a child of m2 " << m2->GetID()
+              << std::endl;
   }
 
   vtkMRMLHierarchyNode* h1 = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(scene.GetPointer(), m1->GetID());
@@ -110,7 +111,8 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int, char*[])
     std::cout << "m2's hierarchy node has " << numChildren << " children nodes" << std::endl;
   }
 
-  bool retval = displayableHierarchyLogic->DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode::SafeDownCast(h2));
+  bool retval =
+    displayableHierarchyLogic->DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode::SafeDownCast(h2));
   if (!retval)
   {
     std::cerr << "Failed to delete hierarchy node and children!" << std::endl;

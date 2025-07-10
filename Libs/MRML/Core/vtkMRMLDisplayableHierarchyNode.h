@@ -35,12 +35,11 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
-
 
   ///
   /// Copy the node's attributes to this object
@@ -48,7 +47,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, DisplayableHierarchy)
-  const char* GetNodeTagName() override {return "DisplayableHierarchy";}
+  const char* GetNodeTagName() override { return "DisplayableHierarchy"; }
 
   /// Set the display node as reference into the scene
   void SetSceneReferences() override;
@@ -68,19 +67,12 @@ public:
 
   ///
   /// String ID of the corresponding displayable MRML node
-  virtual char* GetDisplayableNodeID()
-  {
-    return this->GetAssociatedNodeID();
-  }
+  virtual char* GetDisplayableNodeID() { return this->GetAssociatedNodeID(); }
 
-  virtual void SetDisplayableNodeID(const char* ref)
-  {
-    this->SetAssociatedNodeID(ref);
-  }
+  virtual void SetDisplayableNodeID(const char* ref) { this->SetAssociatedNodeID(ref); }
 
   void SetAndObserveDisplayNodeID(const char* DisplayNodeID);
   vtkGetStringMacro(DisplayNodeID);
-
 
   ///
   /// Get associated displayable MRML node
@@ -89,7 +81,6 @@ public:
   ///
   /// Get associated display MRML node
   vtkMRMLDisplayNode* GetDisplayNode();
-
 
   ///
   /// Indicates if the node is expanded
@@ -110,7 +101,6 @@ public:
   static vtkMRMLDisplayableHierarchyNode* GetDisplayableHierarchyNode(vtkMRMLScene* scene,
                                                                       const char* displayableNodeID);
 
-
   /// Removes immediate children nodes, both hierarchy and corresponding displayable/display nodes
   /// their children are reparented to this parent node.
   void RemoveChildrenNodes();
@@ -119,19 +109,15 @@ public:
   /// including children of children, etc.
   void RemoveAllChildrenNodes();
 
-
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
   {
-      DisplayModifiedEvent = 17000
+    DisplayModifiedEvent = 17000
   };
-
 
 protected:
   vtkMRMLDisplayableHierarchyNode();
@@ -146,8 +132,6 @@ protected:
   vtkMRMLDisplayNode* DisplayNode;
 
   int Expanded;
-
-
 };
 
 #endif

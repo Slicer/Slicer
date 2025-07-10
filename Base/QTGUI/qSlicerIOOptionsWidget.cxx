@@ -31,8 +31,7 @@ qSlicerIOOptionsWidget::qSlicerIOOptionsWidget(QWidget* parentWidget)
 }
 
 //------------------------------------------------------------------------------
-qSlicerIOOptionsWidget
-::qSlicerIOOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parentWidget)
+qSlicerIOOptionsWidget::qSlicerIOOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parentWidget)
   : qSlicerWidget(parentWidget)
   , qSlicerIOOptions(pimpl)
 {

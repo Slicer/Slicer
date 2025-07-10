@@ -77,7 +77,7 @@ public:
   qSlicerFileWriter* writer(vtkObject* object, const QString& extension = QString()) const;
 
   /// Return the file type of the best file writer for the input VTK \a object.
-  Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object, const QString& extension=QString()) const;
+  Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object, const QString& extension = QString()) const;
 
   Q_INVOKABLE QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType) const;
   Q_INVOKABLE QStringList fileWriterExtensions(vtkObject* object) const;
@@ -115,7 +115,7 @@ public:
   /// If the extension is not known then extractKnownExtension() method can be used to get the extension.
   /// If maxLength is not specified, the default maximum length (defaultMaximumFileNameLength) is used.
   /// \sa extractKnownExtension(), defaultMaximumFileNameLength()
-  Q_INVOKABLE QString forceFileNameMaxLength(const QString& filename, int extensionLength, int maxLength=-1);
+  Q_INVOKABLE QString forceFileNameMaxLength(const QString& filename, int extensionLength, int maxLength = -1);
 
   /// Default maximum length for a filename. It is used when maximum filename length is enforced by calling
   /// forceFileNameMaxLength() without providing a specific maximum length value.
@@ -169,8 +169,9 @@ public:
   /// This function is provided for convenience and is equivalent to call
   /// loadNodes function with QString("SceneFile").
   /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
-  Q_INVOKABLE bool loadScene(const QString& fileName, bool clear = true,
-    vtkMRMLMessageCollection* userMessages = nullptr);
+  Q_INVOKABLE bool loadScene(const QString& fileName,
+                             bool clear = true,
+                             vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Convenient function to load a file. All the options (e.g. filetype) are
   /// chosen by default.
@@ -187,44 +188,42 @@ public:
   /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType,
   /// loadNodes(), exportNodes()
   Q_INVOKABLE bool saveNodes(qSlicerIO::IOFileType fileType,
-    const qSlicerIO::IOProperties& parameters,
-    vtkMRMLMessageCollection* userMessages=nullptr,
-    vtkMRMLScene* scene=nullptr
-  );
+                             const qSlicerIO::IOProperties& parameters,
+                             vtkMRMLMessageCollection* userMessages = nullptr,
+                             vtkMRMLScene* scene = nullptr);
 
   /// Export nodes using the registered writers. Return true on success, false otherwise.
-  /// Unlike saveNodes(), this function creates a temporary scene while saving, in order to to avoid modifying storage nodes in the current scene.
-  /// The list \a parameterMaps should consist of maps that each specify a "nodeID" (ID of a node in the main scene),
-  /// a "fileName" (an absolute file path), a "fileFormat" (e.g. "NRRD (.nrrd)"), and any other options that the associated writer may end up using.
-  /// \param parameterMaps For each node to exported, a map of parameters that will get passed to qSlicerCoreIOManager::saveNodes.
+  /// Unlike saveNodes(), this function creates a temporary scene while saving, in order to to avoid modifying storage
+  /// nodes in the current scene. The list \a parameterMaps should consist of maps that each specify a "nodeID" (ID of a
+  /// node in the main scene), a "fileName" (an absolute file path), a "fileFormat" (e.g. "NRRD (.nrrd)"), and any other
+  /// options that the associated writer may end up using.
+  /// \param parameterMaps For each node to exported, a map of parameters that will get passed to
+  /// qSlicerCoreIOManager::saveNodes.
   /// \param hardenTransforms Whether to temporarily apply transform hardening before export.
   /// \param userMessages If a valid pointer is passed, then error messages may be returned in it.
   /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType, vtkMRMLStorageNode, saveNodes().
-  Q_INVOKABLE bool exportNodes(
-    const QList<qSlicerIO::IOProperties>& parameterMaps,
-    bool hardenTransforms,
-    vtkMRMLMessageCollection* userMessages=nullptr
-  );
+  Q_INVOKABLE bool exportNodes(const QList<qSlicerIO::IOProperties>& parameterMaps,
+                               bool hardenTransforms,
+                               vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Export nodes using the registered writers with an API that is usable from Python.
   /// It only allows exporting all nodes with the same parameters.
   /// Return true on success, false otherwise.
   /// \sa exportNodes().
-  Q_INVOKABLE bool exportNodes(
-    const QStringList& nodeIDs,
-    const QStringList& fileNames,
-    const qSlicerIO::IOProperties& commonParameterMap,
-    bool hardenTransforms,
-    vtkMRMLMessageCollection* userMessages = nullptr
-  );
+  Q_INVOKABLE bool exportNodes(const QStringList& nodeIDs,
+                               const QStringList& fileNames,
+                               const qSlicerIO::IOProperties& commonParameterMap,
+                               bool hardenTransforms,
+                               vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Save a scene corresponding to \a fileName
   /// This function is provided for convenience and is equivalent to call
   /// saveNodes function with QString("SceneFile") with the fileName
   /// and screenShot set as properties.
   /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
-  Q_INVOKABLE bool saveScene(const QString& fileName, QImage screenShot,
-    vtkMRMLMessageCollection* userMessages=nullptr);
+  Q_INVOKABLE bool saveScene(const QString& fileName,
+                             QImage screenShot,
+                             vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Create default storage nodes for all storable nodes that are to be saved
   /// with the scene and do not have a storage node already
@@ -278,7 +277,10 @@ public:
   /// for a surface model.
   /// \sa qSlicerDataDialog
   /// \sa qSlicerFileReader
-  Q_INVOKABLE bool examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeEntry, QString& readerDescription, qSlicerIO::IOProperties& ioProperties) const;
+  Q_INVOKABLE bool examineFileInfoList(QFileInfoList& fileInfoList,
+                                       QFileInfo& archetypeEntry,
+                                       QString& readerDescription,
+                                       qSlicerIO::IOProperties& ioProperties) const;
 
 public slots:
 
@@ -307,7 +309,6 @@ signals:
   void fileSaved(const qSlicerIO::IOProperties& savedFileParameters);
 
 protected:
-
   /// Returns the list of registered readers
   const QList<qSlicerFileReader*>& readers() const;
 

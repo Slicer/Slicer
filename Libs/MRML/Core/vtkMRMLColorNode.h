@@ -52,7 +52,7 @@ public:
   //--------------------------------------------------------------------------
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -62,7 +62,7 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLColorNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Color";};
+  const char* GetNodeTagName() override { return "Color"; };
 
   /// Reset node attributes to the initial state as defined in the constructor.
   /// NOTE:   it preserves values several dynamic attributes that may be set by an application: type, name
@@ -81,12 +81,12 @@ public:
   void SetTypeToUser();
   void SetTypeToFile();
 
-  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Return the lowest and highest integers, for use in looping.
   /// Override in subclasses when more enums are added.
-  virtual int GetFirstType () { return this->User; }
-  virtual int GetLastType () { return this->File; }
+  virtual int GetFirstType() { return this->User; }
+  virtual int GetLastType() { return this->File; }
 
   /// Return a text string describing the color look up table type.
   virtual const char* GetTypeAsString();
@@ -162,16 +162,30 @@ public:
   /// Set terminology information for a color entry.
   /// This is mostly for convenience in Python.
   bool SetTerminology(int ind,
-    std::string categoryCodingScheme, std::string categoryCodeValue, std::string categoryCodeMeaning,
-    std::string typeCodingScheme, std::string typeCodeValue, std::string typeCodeMeaning,
-    std::string typeModifierCodingScheme="", std::string typeModifierCodeValue="", std::string typeModifierCodeMeaning="",
-    std::string regionCodingScheme="", std::string regionCodeValue="", std::string regionCodeMeaning="",
-    std::string regionModifierCodingScheme="", std::string regionModifierCodeValue="", std::string regionModifierCodeMeaning="");
+                      std::string categoryCodingScheme,
+                      std::string categoryCodeValue,
+                      std::string categoryCodeMeaning,
+                      std::string typeCodingScheme,
+                      std::string typeCodeValue,
+                      std::string typeCodeMeaning,
+                      std::string typeModifierCodingScheme = "",
+                      std::string typeModifierCodeValue = "",
+                      std::string typeModifierCodeMeaning = "",
+                      std::string regionCodingScheme = "",
+                      std::string regionCodeValue = "",
+                      std::string regionCodeMeaning = "",
+                      std::string regionModifierCodingScheme = "",
+                      std::string regionModifierCodeValue = "",
+                      std::string regionModifierCodeMeaning = "");
 
   /// Convert coded entries to a string.
   static std::string GetTerminologyAsString(std::string terminologyContextName,
-    vtkCodedEntry* category, vtkCodedEntry* type, vtkCodedEntry* typeModifier,
-    std::string regionContextName="", vtkCodedEntry* region=nullptr, vtkCodedEntry* regionModifier=nullptr);
+                                            vtkCodedEntry* category,
+                                            vtkCodedEntry* type,
+                                            vtkCodedEntry* typeModifier,
+                                            std::string regionContextName = "",
+                                            vtkCodedEntry* region = nullptr,
+                                            vtkCodedEntry* regionModifier = nullptr);
 
   /// Get attribute name that indicates if the color table has terminology entries.
   const char* GetContainsTerminologyAttributeName() { return "ContainsTerminology"; };
@@ -204,7 +218,8 @@ public:
     return "(none)";
   }
   /// \deprecated SetNoName
-  /// This method has no effect and kept for backward compatility only. Use GetColorDefined() and SetColorDefined() methods instead.
+  /// This method has no effect and kept for backward compatility only. Use GetColorDefined() and SetColorDefined()
+  /// methods instead.
   /// \sa GetNoName()
   void SetNoName(const char*)
   {
@@ -227,11 +242,13 @@ public:
   }
   void SetNamesInitialised(int)
   {
-    vtkErrorMacro("SetNamesInitialised() method is deprecated and has no effect. Use SetColorName() and SetColorDefined() methods instead.");
+    vtkErrorMacro("SetNamesInitialised() method is deprecated and has no effect. Use SetColorName() and "
+                  "SetColorDefined() methods instead.");
   }
   int GetNamesInitialised(int)
   {
-    vtkErrorMacro("GetNamesInitialised() method is deprecated. Use SetColorName() and SetColorDefined() methods to set and unset color names.");
+    vtkErrorMacro("GetNamesInitialised() method is deprecated. Use SetColorName() and SetColorDefined() methods to set "
+                  "and unset color names.");
     return 1;
   }
   // @}
@@ -305,18 +322,14 @@ protected:
     }
     bool operator==(const PropertyType& other) const
     {
-      return this->Defined == other.Defined &&
-        this->Name == other.Name &&
-        vtkCodedEntry::AreEqual(this->Category, other.Category) &&
-        vtkCodedEntry::AreEqual(this->Type, other.Type) &&
-        vtkCodedEntry::AreEqual(this->TypeModifier, other.TypeModifier) &&
-        vtkCodedEntry::AreEqual(this->Region, other.Region) &&
-        vtkCodedEntry::AreEqual(this->RegionModifier, other.RegionModifier);
+      return this->Defined == other.Defined && this->Name == other.Name
+             && vtkCodedEntry::AreEqual(this->Category, other.Category)
+             && vtkCodedEntry::AreEqual(this->Type, other.Type)
+             && vtkCodedEntry::AreEqual(this->TypeModifier, other.TypeModifier)
+             && vtkCodedEntry::AreEqual(this->Region, other.Region)
+             && vtkCodedEntry::AreEqual(this->RegionModifier, other.RegionModifier);
     }
-    bool operator!=(const PropertyType& other) const
-    {
-      return !(*this == other);
-    }
+    bool operator!=(const PropertyType& other) const { return !(*this == other); }
   };
 
   bool GetProperty(int ind, PropertyType& prop);

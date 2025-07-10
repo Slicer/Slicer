@@ -196,8 +196,8 @@ void qMRMLSliceControllerWidgetTester::testSetBackgroundVolume()
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("BackgroundComboBox"));
   QCOMPARE(comboBox->currentNodeID(), expectedVolumeNodeID);
 
-  //sliceControllerWidget.show();
-  //qApp->exec();
+  // sliceControllerWidget.show();
+  // qApp->exec();
 }
 
 // ----------------------------------------------------------------------------
@@ -229,8 +229,8 @@ void qMRMLSliceControllerWidgetTester::testSetForegroundVolume()
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("ForegroundComboBox"));
   QCOMPARE(comboBox->currentNodeID(), expectedVolumeNodeID);
 
-  //sliceControllerWidget.show();
-  //qApp->exec();
+  // sliceControllerWidget.show();
+  // qApp->exec();
 }
 
 // ----------------------------------------------------------------------------
@@ -262,8 +262,8 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolume()
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
   QCOMPARE(comboBox->currentNodeID(), expectedVolumeNodeID);
 
-  //sliceControllerWidget.show();
-  //qApp->exec();
+  // sliceControllerWidget.show();
+  // qApp->exec();
 }
 
 // ----------------------------------------------------------------------------
@@ -297,12 +297,10 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolumeWithNoLinkedControl()
   labelmapNode2->SetName("Labelmap 2");
   this->MRMLScene->AddNode(labelmapNode2.GetPointer());
 
-  vtkMRMLSliceCompositeNode* sliceCompositeNode =
-    sliceControllerWidget.mrmlSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceControllerWidget.mrmlSliceCompositeNode();
 
   sliceCompositeNode->SetLinkedControl(0);
-  sliceControllerWidget.sliceLogic()->StartSliceCompositeNodeInteraction(
-    vtkMRMLSliceCompositeNode::LabelVolumeFlag);
+  sliceControllerWidget.sliceLogic()->StartSliceCompositeNodeInteraction(vtkMRMLSliceCompositeNode::LabelVolumeFlag);
   sliceCompositeNode->SetLabelVolumeID(labelmapNode2->GetID());
   sliceControllerWidget.sliceLogic()->EndSliceCompositeNodeInteraction();
   sliceCompositeNode->SetLinkedControl(1);
@@ -312,8 +310,8 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolumeWithNoLinkedControl()
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
   QCOMPARE(comboBox->currentNodeID(), QString(labelmapNode2->GetID()));
 
-  //sliceControllerWidget.show();
-  //qApp->exec();
+  // sliceControllerWidget.show();
+  // qApp->exec();
 }
 
 // ----------------------------------------------------------------------------
@@ -327,8 +325,7 @@ void qMRMLSliceControllerWidgetTester::testUpdateSliceOrientationSelector()
   QCOMPARE(sliceControllerWidget.sliceOrientation(), QString("Axial"));
 
   // Update the sliceToRAS matrix
-  vtkMatrix4x4* sliceToRAS =
-      sliceControllerWidget.mrmlSliceNode()->GetSliceToRAS();
+  vtkMatrix4x4* sliceToRAS = sliceControllerWidget.mrmlSliceNode()->GetSliceToRAS();
   sliceToRAS->SetElement(0, 0, 1.2);
   sliceControllerWidget.mrmlSliceNode()->UpdateMatrices();
 
@@ -343,8 +340,7 @@ void qMRMLSliceControllerWidgetTester::testUpdateSliceOrientationSelector()
   QCOMPARE(sliceControllerWidget.sliceOrientation(), QString("Reformat"));
 
   // Check that "Reformat" is the last item in the selector
-  QComboBox* orientationSelector =
-      sliceControllerWidget.findChild<QComboBox*>("SliceOrientationSelector");
+  QComboBox* orientationSelector = sliceControllerWidget.findChild<QComboBox*>("SliceOrientationSelector");
   QVERIFY(orientationSelector != nullptr);
   QStringList items;
   for (int idx = 0; idx < orientationSelector->count(); ++idx)
@@ -356,7 +352,6 @@ void qMRMLSliceControllerWidgetTester::testUpdateSliceOrientationSelector()
   // Set orientation back to "Axial"
   sliceControllerWidget.mrmlSliceNode()->SetOrientation("Axial");
   QCOMPARE(sliceControllerWidget.sliceOrientation(), QString("Axial"));
-
 }
 
 // ----------------------------------------------------------------------------

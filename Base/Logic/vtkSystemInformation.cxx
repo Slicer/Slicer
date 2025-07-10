@@ -91,7 +91,6 @@ int vtkSystemInformation::DoesCPUSupportFeature(long int x)
   return this->SystemInformation.DoesCPUSupportFeature(x);
 }
 
-
 const char* vtkSystemInformation::GetOSName()
 {
   return this->SystemInformation.GetOSName();
@@ -117,12 +116,10 @@ const char* vtkSystemInformation::GetOSPlatform()
   return this->SystemInformation.GetOSPlatform();
 }
 
-
 int vtkSystemInformation::Is64Bits()
 {
   return this->SystemInformation.Is64Bits();
 }
-
 
 unsigned int vtkSystemInformation::GetNumberOfLogicalCPU() // per physical cpu
 {
@@ -134,12 +131,10 @@ unsigned int vtkSystemInformation::GetNumberOfPhysicalCPU()
   return this->SystemInformation.GetNumberOfPhysicalCPU();
 }
 
-
 int vtkSystemInformation::DoesCPUSupportCPUID()
 {
   return this->SystemInformation.DoesCPUSupportCPUID();
 }
-
 
 // Retrieve memory information in megabyte.
 unsigned long vtkSystemInformation::GetTotalVirtualMemory()
@@ -162,7 +157,6 @@ unsigned long vtkSystemInformation::GetTotalPhysicalMemory()
   return this->SystemInformation.GetTotalPhysicalMemory();
 }
 
-
 // Run the different checks
 void vtkSystemInformation::RunCPUCheck()
 {
@@ -179,8 +173,7 @@ void vtkSystemInformation::RunMemoryCheck()
   this->SystemInformation.RunMemoryCheck();
 }
 
-void
-vtkSystemInformation::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSystemInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   // update all values before printing
   this->RunCPUCheck();
@@ -211,7 +204,6 @@ vtkSystemInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "OSVersion: " << this->GetOSVersion() << "\n";
   os << indent << "OSPlatform: " << this->GetOSPlatform() << "\n";
   os << indent << "Is64Bits: " << this->Is64Bits() << "\n";
-
 
   os << indent << "NumberOfLogicalCPU: " << this->GetNumberOfLogicalCPU() << "\n";
   os << indent << "NumberOfPhysicalCPU: " << this->GetNumberOfPhysicalCPU() << "\n";

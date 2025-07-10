@@ -30,17 +30,19 @@
 class qSlicerVolumeRenderingSettingsPanelPrivate;
 class vtkSlicerVolumeRenderingLogic;
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingSettingsPanel
-  : public ctkSettingsPanel
+class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingSettingsPanel : public ctkSettingsPanel
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(QString defaultRenderingMethod READ defaultRenderingMethod WRITE setDefaultRenderingMethod NOTIFY defaultRenderingMethodChanged)
+  Q_PROPERTY(QString defaultRenderingMethod READ defaultRenderingMethod WRITE setDefaultRenderingMethod NOTIFY
+               defaultRenderingMethodChanged)
   Q_PROPERTY(QString defaultQuality READ defaultQuality WRITE setDefaultQuality NOTIFY defaultQualityChanged)
-  Q_PROPERTY(int defaultInteractiveSpeed READ defaultInteractiveSpeed WRITE setDefaultInteractiveSpeed NOTIFY defaultInteractiveSpeedChanged)
-  Q_PROPERTY(bool defaultSurfaceSmoothing READ defaultSurfaceSmoothing WRITE setDefaultSurfaceSmoothing NOTIFY defaultSurfaceSmoothingChanged)
-  Q_PROPERTY(bool defaultAutoReleaseGraphicsResources READ defaultAutoReleaseGraphicsResources \
-    WRITE setDefaultAutoReleaseGraphicsResources NOTIFY defaultAutoReleaseGraphicsResourcesChanged)
+  Q_PROPERTY(int defaultInteractiveSpeed READ defaultInteractiveSpeed WRITE setDefaultInteractiveSpeed NOTIFY
+               defaultInteractiveSpeedChanged)
+  Q_PROPERTY(bool defaultSurfaceSmoothing READ defaultSurfaceSmoothing WRITE setDefaultSurfaceSmoothing NOTIFY
+               defaultSurfaceSmoothingChanged)
+  Q_PROPERTY(bool defaultAutoReleaseGraphicsResources READ defaultAutoReleaseGraphicsResources WRITE
+               setDefaultAutoReleaseGraphicsResources NOTIFY defaultAutoReleaseGraphicsResourcesChanged)
   Q_PROPERTY(QString gpuMemory READ gpuMemory WRITE setGPUMemory NOTIFY gpuMemoryChanged)
 
 public:

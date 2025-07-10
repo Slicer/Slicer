@@ -88,16 +88,19 @@ bool qSlicerTextsReader::load(const IOProperties& properties)
     return false;
   }
 
-  vtkSmartPointer<vtkMRMLTextStorageNode> storageNode = vtkMRMLTextStorageNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLTextStorageNode"));
+  vtkSmartPointer<vtkMRMLTextStorageNode> storageNode =
+    vtkMRMLTextStorageNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLTextStorageNode"));
   if (!storageNode)
   {
     return false;
   }
 
   std::string fileName = properties["fileName"].toString().toStdString();
-  std::string textNodeName = this->mrmlScene()->GetUniqueNameByString(storageNode->GetFileNameWithoutExtension(fileName.c_str()).c_str());
+  std::string textNodeName =
+    this->mrmlScene()->GetUniqueNameByString(storageNode->GetFileNameWithoutExtension(fileName.c_str()).c_str());
 
-  vtkSmartPointer<vtkMRMLTextNode> textNode = vtkMRMLTextNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLTextNode", textNodeName));
+  vtkSmartPointer<vtkMRMLTextNode> textNode =
+    vtkMRMLTextNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLTextNode", textNodeName));
   if (!textNode)
   {
     this->mrmlScene()->RemoveNode(storageNode);

@@ -51,7 +51,9 @@ void vtkSlicerTestLineRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
 }
 // -----------------------------------------------------------------------------
-void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
+void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller,
+                                                       unsigned long event,
+                                                       void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRML(caller, event, callData);
 
@@ -70,7 +72,8 @@ void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsi
 
   // Hide the line actor if it doesn't intersect the current slice
   this->SliceDistance->Update();
-  if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()), this->SliceDistance->GetScalarArrayName()))
+  if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()),
+                                               this->SliceDistance->GetScalarArrayName()))
   {
     this->MiddlePointActor->SetVisibility(false);
   }
@@ -112,10 +115,10 @@ void vtkSlicerTestLineRepresentation2D::ReleaseGraphicsResources(vtkWindow* win)
 //----------------------------------------------------------------------
 int vtkSlicerTestLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->MiddlePointActor->GetVisibility())
   {
-    count +=  this->MiddlePointActor->RenderOverlay(viewport);
+    count += this->MiddlePointActor->RenderOverlay(viewport);
   }
   count += this->Superclass::RenderOverlay(viewport);
   return count;
@@ -124,7 +127,7 @@ int vtkSlicerTestLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 //-----------------------------------------------------------------------------
 int vtkSlicerTestLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->MiddlePointActor->GetVisibility())
   {
     count += this->MiddlePointActor->RenderOpaqueGeometry(viewport);
@@ -136,7 +139,7 @@ int vtkSlicerTestLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewpor
 //-----------------------------------------------------------------------------
 int vtkSlicerTestLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->MiddlePointActor->GetVisibility())
   {
     count += this->MiddlePointActor->RenderTranslucentPolygonalGeometry(viewport);

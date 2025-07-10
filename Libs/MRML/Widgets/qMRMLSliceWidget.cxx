@@ -44,7 +44,6 @@
 #include <vtkCollection.h>
 #include <vtkWeakPointer.h>
 
-
 //--------------------------------------------------------------------------
 // qMRMLSliceWidgetPrivate methods
 
@@ -68,15 +67,19 @@ void qMRMLSliceWidgetPrivate::init()
   this->SliceVerticalController->setSliceLogic(sliceLogic);
   this->SliceView->interactorObserver()->SetSliceLogic(sliceLogic);
 
-  connect(this->SliceView, SIGNAL(resized(QSize)),
-          this, SLOT(setSliceViewSize(QSize)));
+  connect(this->SliceView, SIGNAL(resized(QSize)), this, SLOT(setSliceViewSize(QSize)));
 
-  connect(this->SliceController, SIGNAL(imageDataConnectionChanged(vtkAlgorithmOutput*)),
-          this, SLOT(setImageDataConnection(vtkAlgorithmOutput*)));
-  connect(this->SliceController, SIGNAL(renderRequested()),
-          this->SliceView, SLOT(scheduleRender()), Qt::QueuedConnection);
-  connect(this->SliceVerticalController, SIGNAL(renderRequested()),
-          this->SliceView, SLOT(scheduleRender()), Qt::QueuedConnection);
+  connect(this->SliceController,
+          SIGNAL(imageDataConnectionChanged(vtkAlgorithmOutput*)),
+          this,
+          SLOT(setImageDataConnection(vtkAlgorithmOutput*)));
+  connect(
+    this->SliceController, SIGNAL(renderRequested()), this->SliceView, SLOT(scheduleRender()), Qt::QueuedConnection);
+  connect(this->SliceVerticalController,
+          SIGNAL(renderRequested()),
+          this->SliceView,
+          SLOT(scheduleRender()),
+          Qt::QueuedConnection);
 
   this->updateSliceOffsetSliderOrientation();
 }
@@ -113,7 +116,7 @@ void qMRMLSliceWidgetPrivate::endProcessing()
 // --------------------------------------------------------------------------
 void qMRMLSliceWidgetPrivate::setImageDataConnection(vtkAlgorithmOutput* imageDataConnection)
 {
-  //qDebug() << "qMRMLSliceWidgetPrivate::setImageDataConnection";
+  // qDebug() << "qMRMLSliceWidgetPrivate::setImageDataConnection";
   this->SliceView->setImageDataConnection(imageDataConnection);
 }
 
@@ -121,7 +124,8 @@ void qMRMLSliceWidgetPrivate::setImageDataConnection(vtkAlgorithmOutput* imageDa
 // qMRMLSliceView methods
 
 // --------------------------------------------------------------------------
-qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
+qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent)
+  : Superclass(_parent)
   , d_ptr(new qMRMLSliceWidgetPrivate(*this))
 {
   Q_D(qMRMLSliceWidget);
@@ -129,8 +133,7 @@ qMRMLSliceWidget::qMRMLSliceWidget(QWidget* _parent) : Superclass(_parent)
 }
 
 // --------------------------------------------------------------------------
-qMRMLSliceWidget::qMRMLSliceWidget(qMRMLSliceWidgetPrivate* pimpl,
-                                   QWidget* _parent)
+qMRMLSliceWidget::qMRMLSliceWidget(qMRMLSliceWidgetPrivate* pimpl, QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(pimpl)
 {
@@ -150,9 +153,7 @@ void qMRMLSliceWidget::setMRMLScene(vtkMRMLScene* newScene)
   // In SliceController and  SliceVerticalController widgets
   // the scene is set by signals defined in the .ui file.
 
-  d->qvtkReconnect(
-    this->mrmlScene(), newScene,
-    vtkMRMLScene::EndBatchProcessEvent, d, SLOT(endProcessing()));
+  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent, d, SLOT(endProcessing()));
 }
 
 //---------------------------------------------------------------------------
@@ -172,7 +173,7 @@ void qMRMLSliceWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewN
   if (newViewNode && !sliceViewNode)
   {
     qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
-      << ". Expected node type: vtkMRMLSliceNode";
+               << ". Expected node type: vtkMRMLSliceNode";
   }
   this->setMRMLSliceNode(sliceViewNode);
 }
@@ -379,7 +380,6 @@ void qMRMLSliceWidget::showEvent(QShowEvent* event)
   }
   if (window)
   {
-    connect(window, SIGNAL(screenChanged(QScreen*)),
-            d, SLOT(resetSliceViewSize()), Qt::UniqueConnection);
+    connect(window, SIGNAL(screenChanged(QScreen*)), d, SLOT(resetSliceViewSize()), Qt::UniqueConnection);
   }
 }

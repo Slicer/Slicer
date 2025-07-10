@@ -53,7 +53,8 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLAbstractViewWidget
   Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
   Q_PROPERTY(QString sliceViewLabel READ sliceViewLabel WRITE setSliceViewLabel)
   Q_PROPERTY(QColor sliceViewColor READ sliceViewColor WRITE setSliceViewColor)
-  Q_PROPERTY(Qt::Orientation sliceOffsetSliderOrientation READ sliceOffsetSliderOrientation WRITE setSliceOffsetSliderOrientation)
+  Q_PROPERTY(Qt::Orientation sliceOffsetSliderOrientation READ sliceOffsetSliderOrientation WRITE
+               setSliceOffsetSliderOrientation)
 
 public:
   /// Superclass typedef

@@ -32,8 +32,7 @@ typedef _object PyObject;
 #endif
 class qSlicerScriptedFileDialogPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedFileDialog
-  : public qSlicerStandardFileDialog
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedFileDialog : public qSlicerStandardFileDialog
 {
   Q_OBJECT
 
@@ -46,7 +45,9 @@ public:
 
   /// \warning Setting the source is a no-op. See detailed comment in the source code.
   /// If missingClassIsExpected is true (default) then missing class is expected and not treated as an error.
-  bool setPythonSource(const QString& filePath, const QString& className = QLatin1String(""), bool missingClassIsExpected = true);
+  bool setPythonSource(const QString& filePath,
+                       const QString& className = QLatin1String(""),
+                       bool missingClassIsExpected = true);
 
   /// Convenience method allowing to retrieve the associated scripted instance
   Q_INVOKABLE PyObject* self() const;
@@ -56,8 +57,7 @@ public:
   /// Reimplemented to propagate to python methods
   void dropEvent(QDropEvent* event) override;
   /// Reimplemented to propagate to python methods
-  bool exec(const qSlicerIO::IOProperties& ioProperties =
-                    qSlicerIO::IOProperties()) override;
+  bool exec(const qSlicerIO::IOProperties& ioProperties = qSlicerIO::IOProperties()) override;
 
   /// Return the ioProperties when exec() is being called.
   /// \sa exec()

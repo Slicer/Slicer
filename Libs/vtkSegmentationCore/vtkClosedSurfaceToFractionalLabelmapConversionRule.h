@@ -58,34 +58,41 @@ public:
   vtkDataObject* ConstructRepresentationObjectByClass(std::string className) override;
 
   /// Update the target representation based on the source representation
-  bool Convert(vtkSegment* segment)  override;
+  bool Convert(vtkSegment* segment) override;
 
   /// Overridden to prevent vtkClosedSurfaceToBinaryLabelmapConversionRule::PostConvert
   bool PostConvert(vtkSegmentation* vtkNotUsed(segmentation)) override { return true; };
 
   /// Get the cost of the conversion.
-  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
+  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr,
+                                 vtkDataObject* targetRepresentation = nullptr) override;
 
   /// Human-readable name of the converter rule
-  const char* GetName()  override { return "Closed surface to fractional labelmap (simple image stencil)"; };
+  const char* GetName() override { return "Closed surface to fractional labelmap (simple image stencil)"; };
 
   /// Human-readable name of the source representation
-  const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
+  const char* GetSourceRepresentationName() override
+  {
+    return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName();
+  };
 
   /// Human-readable name of the target representation
-  const char* GetTargetRepresentationName() override { return vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName(); };
+  const char* GetTargetRepresentationName() override
+  {
+    return vtkSegmentationConverter::GetSegmentationFractionalLabelmapRepresentationName();
+  };
 
 protected:
   // Oversampling factor that will be used to calculate the size of the binary labelmap
   int NumberOfOffsets;
 
 protected:
-
   vtkClosedSurfaceToFractionalLabelmapConversionRule();
   ~vtkClosedSurfaceToFractionalLabelmapConversionRule() override;
 
 private:
-  vtkClosedSurfaceToFractionalLabelmapConversionRule(const vtkClosedSurfaceToFractionalLabelmapConversionRule&) = delete;
+  vtkClosedSurfaceToFractionalLabelmapConversionRule(const vtkClosedSurfaceToFractionalLabelmapConversionRule&) =
+    delete;
   void operator=(const vtkClosedSurfaceToFractionalLabelmapConversionRule&) = delete;
 };
 

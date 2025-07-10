@@ -20,7 +20,7 @@
 
 // --------------------------------------------------------------------------
 qMRMLSequenceBrowserToolBarPlugin::qMRMLSequenceBrowserToolBarPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -36,7 +36,7 @@ QString qMRMLSequenceBrowserToolBarPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSequenceBrowserToolBar\" \
           name=\"MRMLSequenceBrowserToolBar\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

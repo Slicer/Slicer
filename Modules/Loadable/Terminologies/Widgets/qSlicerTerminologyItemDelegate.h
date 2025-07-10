@@ -43,7 +43,8 @@ public:
   {
     /// Serialized terminology entry
     TerminologyRole = Qt::UserRole + 9,
-    /// Serialized default terminology entry, which is used to initialize the terminology selector if the segment has no terminology yet
+    /// Serialized default terminology entry, which is used to initialize the terminology selector if the segment has no
+    /// terminology yet
     DefaultTerminologyRole,
     /// Name of the segment (either custom or auto-generated)
     NameRole,
@@ -63,7 +64,9 @@ public:
   void setEditorData(QWidget* editor, const QModelIndex& index) const override;
   void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
 
-  void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+  void updateEditorGeometry(QWidget* editor,
+                            const QStyleOptionViewItem& option,
+                            const QModelIndex& index) const override;
 
   /// This method allow setting a callback function that takes a void* argument and returns bool
   void setUseTerminologySelectorCallback(std::function<bool()> callback);

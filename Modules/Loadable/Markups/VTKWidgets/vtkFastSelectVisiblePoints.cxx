@@ -58,13 +58,15 @@ void vtkFastSelectVisiblePoints::UpdateZBuffer()
   float* zPtr = this->Initialize(true);
 
   this->ZBuffer = vtkSmartPointer<vtkFloatArray>::New();
-  vtkIdType size = (this->InternalSelection[1] - this->InternalSelection[0] + 1) * (this->InternalSelection[3] - this->InternalSelection[2] + 1);
+  vtkIdType size = (this->InternalSelection[1] - this->InternalSelection[0] + 1)
+                   * (this->InternalSelection[3] - this->InternalSelection[2] + 1);
   this->ZBuffer->SetArray(zPtr, size, 0);
 }
 
 //----------------------------------------------------------------------------
 int vtkFastSelectVisiblePoints::RequestData(vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** inputVector, vtkInformationVector* outputVector)
+                                            vtkInformationVector** inputVector,
+                                            vtkInformationVector* outputVector)
 {
   // get the info objects
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);

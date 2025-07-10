@@ -20,7 +20,6 @@
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
-
 #ifndef __vtkSlicerGeneralizedReformatLogic_h
 #define __vtkSlicerGeneralizedReformatLogic_h
 
@@ -45,12 +44,9 @@ class vtkPoints;
 
 #include "vtkSlicerGeneralizedReformatModuleLogicExport.h"
 
-
-class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkSlicerGeneralizedReformatLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkSlicerGeneralizedReformatLogic : public vtkSlicerModuleLogic
 {
 public:
-
   static vtkSlicerGeneralizedReformatLogic* New();
   vtkTypeMacro(vtkSlicerGeneralizedReformatLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -139,7 +135,7 @@ public:
                       vtkMRMLVolumeNode* referenceVolume = nullptr,
                       int interpolationType = vtkMRMLAbstractVolumeResampler::InterpolationTypeLinear,
                       const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters =
-                      vtkMRMLAbstractVolumeResampler::ResamplingParameters());
+                        vtkMRMLAbstractVolumeResampler::ResamplingParameters());
 
   /// @{
   /// Register/unregister resampler.
@@ -163,10 +159,10 @@ protected:
   double TransformSpacingFactor{ 5.0 };
 
   std::map<std::string, vtkSmartPointer<vtkMRMLAbstractVolumeResampler>> Resamplers;
-private:
 
+private:
   vtkSlicerGeneralizedReformatLogic(const vtkSlicerGeneralizedReformatLogic&); // Not implemented
-  void operator=(const vtkSlicerGeneralizedReformatLogic&); // Not implemented
+  void operator=(const vtkSlicerGeneralizedReformatLogic&);                    // Not implemented
 };
 
 #endif

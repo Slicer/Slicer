@@ -74,7 +74,8 @@ public:
   ///
   /// - download the json file from `https://download.slicer.org/find?os=win&stability=release`
   /// - save this json file with the filename `find` in a local folder
-  /// - specify this local folder (such as `file:///c:/temp/slicerupdatetest/`) as `Update server URL` in application settings.
+  /// - specify this local folder (such as `file:///c:/temp/slicerupdatetest/`) as `Update server URL` in application
+  /// settings.
   ///
   Q_INVOKABLE QUrl serverUrl() const;
 

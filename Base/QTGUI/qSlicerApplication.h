@@ -61,7 +61,6 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplication : public qSlicerCoreApplicat
 {
   Q_OBJECT
 public:
-
   typedef qSlicerCoreApplication Superclass;
   qSlicerApplication(int& argc, char** argv);
   ~qSlicerApplication() override;
@@ -96,10 +95,10 @@ public:
   Q_INVOKABLE ctkErrorLogLevel::LogLevel pythonConsoleLogLevel() const;
 #endif
 
-  #ifdef Slicer_USE_QtTesting
+#ifdef Slicer_USE_QtTesting
   /// Get test utility
   Q_INVOKABLE ctkQtTestingUtility* testingUtility();
-  #endif
+#endif
 
   /// Set/Get layout manager
   Q_INVOKABLE qSlicerLayoutManager* layoutManager() const;
@@ -111,7 +110,7 @@ public:
   /// TODO
   /// See http://doc.trolltech.com/4.6/qapplication.html#commitData
   /// and http://doc.trolltech.com/4.6/qsessionmanager.html#allowsInteraction
-  //virtual void commitData(QSessionManager& manager);
+  // virtual void commitData(QSessionManager& manager);
 
   /// Enable/Disable tooltips
   void setToolTipsEnabled(bool enable);
@@ -121,10 +120,10 @@ public:
   /// found module is returned. Confidence value = 0 means that the found module can
   /// probably not do much with that node, while 1.0 means that the found module is certainly
   /// the best module to manage than node.
-  QString nodeModule(vtkMRMLNode* node, double* confidence=nullptr) const;
+  QString nodeModule(vtkMRMLNode* node, double* confidence = nullptr) const;
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog() const;
-  Q_INVOKABLE void openSettingsDialog(const QString& settingsPanel=QString());
+  Q_INVOKABLE void openSettingsDialog(const QString& settingsPanel = QString());
 
   /// Log application information.
   ///
@@ -169,7 +168,7 @@ public slots:
   /// \note qSlicerApplication is a temporary host for the function as it should be
   /// moved into a DataManager where module can register new node
   /// types/modules
-  void openNodeModule(vtkMRMLNode* node, QString role=QString(), QString context=QString());
+  void openNodeModule(vtkMRMLNode* node, QString role = QString(), QString context = QString());
 
   /// Popup a dialog asking the user if the application should be restarted.
   /// If no \a reason is given, the text will default to ""Are you sure you want to restart?"
@@ -259,8 +258,12 @@ protected slots:
 
 #ifdef Slicer_USE_PYTHONQT
   /// Add log message to Python console
-  void logToPythonConsole(const QDateTime& currentDateTime, const QString& threadId,
-    ctkErrorLogLevel::LogLevel logLevel, const QString& origin, const ctkErrorLogContext& context, const QString& text);
+  void logToPythonConsole(const QDateTime& currentDateTime,
+                          const QString& threadId,
+                          ctkErrorLogLevel::LogLevel logLevel,
+                          const QString& origin,
+                          const ctkErrorLogContext& context,
+                          const QString& text);
 #endif
 
 protected:
@@ -281,6 +284,6 @@ private:
 /// Apply the Slicer palette to the \c palette
 /// Note also that the palette parameter is passed by reference and will be
 /// updated using the native palette and applying Slicer specific properties.
-void  Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplyPalette(QPalette& palette);
+void Q_SLICER_BASE_QTGUI_EXPORT qSlicerApplyPalette(QPalette& palette);
 
 #endif

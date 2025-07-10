@@ -23,7 +23,6 @@
 #ifndef vtkPolyDataToFractionalLabelmapFilter_h
 #define vtkPolyDataToFractionalLabelmapFilter_h
 
-
 // VTK includes
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkSmartPointer.h>
@@ -40,35 +39,35 @@
 
 #include "vtkSegmentationCoreConfigure.h"
 
-// Define the datatype and fractional constants for fractional labelmap conversion based on the value of VTK_FRACTIONAL_DATA_TYPE
+// Define the datatype and fractional constants for fractional labelmap conversion based on the value of
+// VTK_FRACTIONAL_DATA_TYPE
 #define VTK_FRACTIONAL_DATA_TYPE VTK_CHAR
 
 #if VTK_FRACTIONAL_DATA_TYPE == VTK_UNSIGNED_CHAR
-  #define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_UNSIGNED_CHAR
-  #define FRACTIONAL_MIN 0
-  #define FRACTIONAL_MAX 216
-  #define FRACTIONAL_STEP_SIZE 1
+# define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_UNSIGNED_CHAR
+# define FRACTIONAL_MIN 0
+# define FRACTIONAL_MAX 216
+# define FRACTIONAL_STEP_SIZE 1
 #elif VTK_FRACTIONAL_DATA_TYPE == VTK_CHAR
-  #define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_CHAR
-  #define FRACTIONAL_MIN -108
-  #define FRACTIONAL_MAX 108
-  #define FRACTIONAL_STEP_SIZE 1
+# define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_CHAR
+# define FRACTIONAL_MIN -108
+# define FRACTIONAL_MAX 108
+# define FRACTIONAL_STEP_SIZE 1
 #elif VTK_FRACTIONAL_DATA_TYPE == VTK_FLOAT
-  #define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_FLOAT
-  #define FRACTIONAL_MIN 0.0
-  #define FRACTIONAL_MAX 1.0
-  #define FRACTIONAL_STEP_SIZE (1.0/216.0)
+# define FRACTIONAL_DATA_TYPE VTK_TYPE_NAME_FLOAT
+# define FRACTIONAL_MIN 0.0
+# define FRACTIONAL_MAX 1.0
+# define FRACTIONAL_STEP_SIZE (1.0 / 216.0)
 #endif
 
-class vtkSegmentationCore_EXPORT vtkPolyDataToFractionalLabelmapFilter :
-  public vtkPolyDataToImageStencil
+class vtkSegmentationCore_EXPORT vtkPolyDataToFractionalLabelmapFilter : public vtkPolyDataToImageStencil
 {
 private:
   std::map<double, vtkSmartPointer<vtkCellArray>> LinesCache;
   std::map<double, vtkSmartPointer<vtkPolyData>> SliceCache;
   std::map<double, vtkIdType*> PointIdsCache;
   std::map<double, vtkIdType> NptsCache;
-  std::map<double,  vtkSmartPointer<vtkIdTypeArray>> PointNeighborCountsCache;
+  std::map<double, vtkSmartPointer<vtkIdTypeArray>> PointNeighborCountsCache;
 
   vtkCellLocator* CellLocator;
 
@@ -111,8 +110,7 @@ protected:
   vtkPolyDataToFractionalLabelmapFilter();
   ~vtkPolyDataToFractionalLabelmapFilter() override;
 
-  int RequestData(vtkInformation*, vtkInformationVector**,
-                          vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   vtkOrientedImageData* AllocateOutputData(vtkDataObject* out, int* updateExt);
   int FillOutputPortInformation(int, vtkInformation*) override;
 
@@ -133,8 +131,7 @@ protected:
   /// \param input The closed surface that is being cut
   /// \param output Polydata containing the contour lines
   /// \param z The z coordinate for the cutting plane
-  void PolyDataCutter(vtkPolyData* input, vtkPolyData* output,
-                             double z);
+  void PolyDataCutter(vtkPolyData* input, vtkPolyData* output, double z);
 
 private:
   vtkPolyDataToFractionalLabelmapFilter(const vtkPolyDataToFractionalLabelmapFilter&) = delete;

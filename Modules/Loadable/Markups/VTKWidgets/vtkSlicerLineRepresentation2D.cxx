@@ -42,7 +42,6 @@
 #include "vtkMRMLMarkupsDisplayNode.h"
 #include "vtkMRMLProceduralColorNode.h"
 
-
 vtkStandardNewMacro(vtkSlicerLineRepresentation2D);
 
 //----------------------------------------------------------------------
@@ -78,7 +77,9 @@ vtkSlicerLineRepresentation2D::vtkSlicerLineRepresentation2D()
 vtkSlicerLineRepresentation2D::~vtkSlicerLineRepresentation2D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
+void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
+                                                           unsigned long event,
+                                                           void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -95,15 +96,17 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 
   // Line display
 
-  double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
-    this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
+  double diameter = (this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter
+                       ? this->MarkupsDisplayNode->GetLineDiameter() / this->ViewScaleFactorMmPerPixel
+                       : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness());
   this->TubeFilter->SetRadius(diameter * 0.5);
 
   this->LineActor->SetVisibility(markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
 
   // Hide the line actor if it doesn't intersect the current slice
   this->SliceDistance->Update();
-  if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()), this->SliceDistance->GetScalarArrayName()))
+  if (!this->IsRepresentationIntersectingSlice(vtkPolyData::SafeDownCast(this->SliceDistance->GetOutput()),
+                                               this->SliceDistance->GetScalarArrayName()))
   {
     this->LineActor->SetVisibility(false);
   }
@@ -130,10 +133,9 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
                           lText * vector3[2] + c[2] };
                           */
     this->TextActor->SetDisplayPosition(static_cast<int>(textPos[0]), static_cast<int>(textPos[1]));
-    this->TextActor->SetVisibility(
-      this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
-      && this->AnyPointVisibilityOnSlice
-      && markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
+    this->TextActor->SetVisibility(this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
+                                   && this->AnyPointVisibilityOnSlice
+                                   && markupsNode->GetNumberOfDefinedControlPoints(true) == 2);
   }
   else
   {
@@ -148,7 +150,8 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
   this->LineActor->SetProperty(this->GetControlPointsPipeline(controlPointType)->Property);
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
 
-  if (this->MarkupsDisplayNode->GetLineColorNode() && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
+  if (this->MarkupsDisplayNode->GetLineColorNode()
+      && this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction())
   {
     // Update the line color mapping from the colorNode stored in the markups display node
     this->LineMapper->SetLookupTable(this->MarkupsDisplayNode->GetLineColorNode()->GetColorTransferFunction());
@@ -162,16 +165,16 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
   }
 }
 
-
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation2D::CanInteract(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+void vtkSlicerLineRepresentation2D::CanInteract(vtkMRMLInteractionEventData* interactionEventData,
+                                                int& foundComponentType,
+                                                int& foundComponentIndex,
+                                                double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
-    || !interactionEventData )
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfDefinedControlPoints(true) < 1
+      || !interactionEventData)
   {
     return;
   }
@@ -202,10 +205,10 @@ void vtkSlicerLineRepresentation2D::ReleaseGraphicsResources(vtkWindow* win)
 //----------------------------------------------------------------------
 int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
-    count +=  this->LineActor->RenderOverlay(viewport);
+    count += this->LineActor->RenderOverlay(viewport);
   }
   count += this->Superclass::RenderOverlay(viewport);
   return count;
@@ -214,7 +217,7 @@ int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 //-----------------------------------------------------------------------------
 int vtkSlicerLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count += this->LineActor->RenderOpaqueGeometry(viewport);
@@ -226,7 +229,7 @@ int vtkSlicerLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 //-----------------------------------------------------------------------------
 int vtkSlicerLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);

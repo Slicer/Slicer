@@ -33,12 +33,9 @@ class vtkMRMLScene;
 class vtkMRMLSequenceBrowserNode;
 class vtkObject;
 
-
 class qSlicerSequencesModulePrivate;
 
-class Q_SLICER_QTMODULES_SEQUENCES_EXPORT
-qSlicerSequencesModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_SEQUENCES_EXPORT qSlicerSequencesModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   QVTK_OBJECT;
@@ -52,7 +49,6 @@ qSlicerSequencesModule
   Q_PROPERTY(bool autoShowToolBar READ autoShowToolBar WRITE setAutoShowToolBar)
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerSequencesModule(QObject* parent = 0);
   ~qSlicerSequencesModule() override;
@@ -83,7 +79,6 @@ public:
   Q_INVOKABLE static bool showSequenceBrowser(vtkMRMLSequenceBrowserNode* browserNode);
 
 protected:
-
   /// Initialize the module. Register the volumes reader/writer
   void setup() override;
 
@@ -110,7 +105,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerSequencesModule);
   Q_DISABLE_COPY(qSlicerSequencesModule);
-
 };
 
 #endif

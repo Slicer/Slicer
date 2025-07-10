@@ -39,7 +39,7 @@ public:
   //--------------------------------------------------------------------------
   /// Methods for user-specified metadata
   //--------------------------------------------------------------------------
-  vtkGetObjectMacro ( UserTagTable, vtkTagTable );
+  vtkGetObjectMacro(UserTagTable, vtkTagTable);
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
@@ -51,7 +51,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -71,9 +71,7 @@ public:
 
   ///
   /// alternative method to propagate events generated in Storage nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   ///
   /// String ID of the storage MRML node
@@ -93,8 +91,8 @@ public:
   /// nodes are created. The method gets applied to any storable data that
   /// should be saved with, and loaded with the scene, including nodes that
   /// are hidden from editors like scalar overlays.
-  void SetSlicerDataType ( const char* type );
-  const char* GetSlicerDataType ();
+  void SetSlicerDataType(const char* type);
+  const char* GetSlicerDataType();
 
   int GetNumberOfStorageNodes();
   const char* GetNthStorageNodeID(int n);
@@ -156,7 +154,7 @@ public:
   /// \sa GetStoredTime() StorableModifiedTime Modified() GetModifiedSinceRead()
   virtual void StorableModified();
 
- protected:
+protected:
   vtkMRMLStorableNode();
   ~vtkMRMLStorableNode() override;
   vtkMRMLStorableNode(const vtkMRMLStorableNode&);

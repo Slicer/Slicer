@@ -60,7 +60,7 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLVolumeThresholdWidgetEventTranslatorPlayerTest1(int argc, char* argv[])

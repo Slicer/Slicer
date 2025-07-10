@@ -64,7 +64,8 @@ protected:
   /// \return Success flag
   bool CalculateComplexityMeasure();
 
-  /// Use fuzzy rules to determine oversampling factor based on calculated relative structure size and complexity measure
+  /// Use fuzzy rules to determine oversampling factor based on calculated relative structure size and complexity
+  /// measure
   /// \return Automatically calculated oversampling factor
   double DetermineOversamplingFactor();
 
@@ -127,7 +128,7 @@ protected:
 private:
   vtkCalculateOversamplingFactor(const vtkCalculateOversamplingFactor&) = delete;
   void operator=(const vtkCalculateOversamplingFactor&) = delete;
-  //ETX
+  // ETX
 };
 
 #endif

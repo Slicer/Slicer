@@ -27,7 +27,6 @@
 #include "vtkSlicerMarkupsModuleMRMLExport.h"
 #include "vtkMRMLMarkupsStorageNode.h"
 
-
 class vtkMRMLJsonElement;
 class vtkMRMLJsonWriter;
 class vtkMRMLMarkupsDisplayNode;
@@ -43,14 +42,16 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Read a markups node from a file.
-  vtkMRMLMarkupsNode* AddNewMarkupsNodeFromFile(const char* filePath, const char* nodeName=nullptr, int markupIndex=0);
+  vtkMRMLMarkupsNode* AddNewMarkupsNodeFromFile(const char* filePath,
+                                                const char* nodeName = nullptr,
+                                                int markupIndex = 0);
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "MarkupsJsonStorage";};
+  const char* GetNodeTagName() override { return "MarkupsJsonStorage"; };
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -89,9 +90,12 @@ protected:
   std::string GetMarkupsClassNameFromMarkupsType(std::string markupsType);
 
   virtual bool UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupObject);
-  virtual bool UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLJsonElement* markupObject);
+  virtual bool UpdateMarkupsDisplayNodeFromJsonValue(vtkMRMLMarkupsDisplayNode* displayNode,
+                                                     vtkMRMLJsonElement* markupObject);
 
-  virtual bool ReadControlPoints(vtkMRMLJsonElement* controlPointsArray, int coordinateSystem, vtkMRMLMarkupsNode* markupsNode);
+  virtual bool ReadControlPoints(vtkMRMLJsonElement* controlPointsArray,
+                                 int coordinateSystem,
+                                 vtkMRMLMarkupsNode* markupsNode);
   virtual bool ReadMeasurements(vtkMRMLJsonElement* measurementsArray, vtkMRMLMarkupsNode* markupsNode);
 
   virtual bool WriteMarkup(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode);

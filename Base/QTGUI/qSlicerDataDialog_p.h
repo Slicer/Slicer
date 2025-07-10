@@ -35,8 +35,9 @@ class qSlicerDataDialogPrivate
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerDataDialog);
+
 public:
-  explicit qSlicerDataDialogPrivate(qSlicerDataDialog* object, QWidget* _parent=nullptr);
+  explicit qSlicerDataDialogPrivate(qSlicerDataDialog* object, QWidget* _parent = nullptr);
   ~qSlicerDataDialogPrivate() override;
 
   void dragEnterEvent(QDragEnterEvent* event) override;
@@ -48,14 +49,14 @@ public slots:
   void addFiles();
   void reset();
   void showOptions(bool);
-  void resetColumnWidths(bool forceFileColumnStretch=false);
+  void resetColumnWidths(bool forceFileColumnStretch = false);
 
 protected slots:
   void onFileTypeChanged(const QString&);
   void onFileTypeActivated(const QString&);
 
-//  void updateCheckBoxes(Qt::Orientation orientation, int first, int last);
-//  void updateCheckBoxHeader(int row, int column);
+  //  void updateCheckBoxes(Qt::Orientation orientation, int first, int last);
+  //  void updateCheckBoxHeader(int row, int column);
 
 protected:
   qSlicerDataDialog* const q_ptr;
@@ -70,9 +71,11 @@ protected:
   void addDirectory(const QDir& directory);
   // addFile doesn't resize the columns to contents (as it might be a bit too
   // time consuming if you do it for every file added).
-  // If a readerDescription is specified then only that reader will be offered. If ioProperties is specified as well then
-  // it will be used to initialize the reader properties widget.
-  void addFile(const QFileInfo& file, const QString& readerDescription=QString(), qSlicerIO::IOProperties* ioProperties=nullptr);
+  // If a readerDescription is specified then only that reader will be offered. If ioProperties is specified as well
+  // then it will be used to initialize the reader properties widget.
+  void addFile(const QFileInfo& file,
+               const QString& readerDescription = QString(),
+               qSlicerIO::IOProperties* ioProperties = nullptr);
   void setFileOptions(int row, const QString& filePath, const QString& fileDescription);
   /// Return the row the last signal comes from.
   int senderRow() const;
@@ -86,9 +89,9 @@ protected:
   bool checkAndHandleArchive(const QFileInfo& file);
   /// A holder for the temporary directory so that it doesn't go out of scope before loading.
   QScopedPointer<QTemporaryDir> temporaryArchiveDirectory;
+
 private:
   friend class qSlicerDataDialog;
 };
-
 
 #endif

@@ -31,7 +31,8 @@
 class qSlicerSubjectHierarchyLabelMapsPluginPrivate;
 class vtkMRMLLabelMapVolumeNode;
 
-class Q_SLICER_VOLUMES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyLabelMapsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_VOLUMES_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyLabelMapsPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -46,19 +47,22 @@ public:
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
   /// \param node Node to be added to the hierarchy
   /// \param parentItemID Prospective parent of the node to add.
-  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
+  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the
+  ///   to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
+  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier
+  ///   attribute)
   double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID ) const override;
+    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const override;
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
   /// set context menu etc.)
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
+  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier
+  ///   attribute)
   double canOwnSubjectHierarchyItem(vtkIdType itemID) const override;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
@@ -83,7 +87,8 @@ public:
   int getDisplayVisibility(vtkIdType itemID) const override;
 
   /// Get visibility context menu item actions to add to tree view.
-  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  /// These item visibility context menu actions can be shown in the implementations of \sa
+  /// showVisibilityContextMenuActionsForItem
   QList<QAction*> visibilityContextMenuActions() const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.

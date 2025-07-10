@@ -36,7 +36,8 @@ class QIcon;
 
 /// \brief Default Subject Hierarchy plugin to exercise features of the abstract plugin.
 ///   This plugin must not be registered as this is the fall back plugin called when there is none found
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyDefaultPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyDefaultPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -52,7 +53,8 @@ public:
   /// set context menu etc.)
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
+  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier
+  ///   attribute)
   double canOwnSubjectHierarchyItem(vtkIdType itemID) const override;
 
   /// Get role that the plugin assigns to the subject hierarchy node.
@@ -70,7 +72,8 @@ public:
   QIcon visibilityIcon(int visible) override;
 
   /// Get visibility context menu item actions to add to tree view.
-  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  /// These item visibility context menu actions can be shown in the implementations of \sa
+  /// showVisibilityContextMenuActionsForItem
   QList<QAction*> visibilityContextMenuActions() const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.

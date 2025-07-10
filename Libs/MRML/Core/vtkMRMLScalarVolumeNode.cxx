@@ -50,11 +50,13 @@ void vtkMRMLScalarVolumeNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
   if (this->GetVoxelValueQuantity())
   {
-    of << " voxelValueQuantity=\"" << vtkMRMLNode::URLEncodeString(this->GetVoxelValueQuantity()->GetAsString().c_str()) << "\"";
+    of << " voxelValueQuantity=\"" << vtkMRMLNode::URLEncodeString(this->GetVoxelValueQuantity()->GetAsString().c_str())
+       << "\"";
   }
   if (this->GetVoxelValueUnits())
   {
-    of << " voxelValueUnits=\"" << vtkMRMLNode::URLEncodeString(this->GetVoxelValueUnits()->GetAsString().c_str()) << "\"";
+    of << " voxelValueUnits=\"" << vtkMRMLNode::URLEncodeString(this->GetVoxelValueUnits()->GetAsString().c_str())
+       << "\"";
   }
 }
 
@@ -150,25 +152,24 @@ vtkMRMLStorageNode* vtkMRMLScalarVolumeNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLVolumeArchetypeStorageNode"));
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes()
 {
-  if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode())!=nullptr)
+  if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
   {
     // display node already exists
     return;
   }
-  if (this->GetScene()==nullptr)
+  if (this->GetScene() == nullptr)
   {
     vtkErrorMacro("vtkMRMLScalarVolumeNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
   }
-  vtkMRMLScalarVolumeDisplayNode* dispNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-    this->GetScene()->AddNewNodeByClass("vtkMRMLScalarVolumeDisplayNode") );
+  vtkMRMLScalarVolumeDisplayNode* dispNode =
+    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->GetScene()->AddNewNodeByClass("vtkMRMLScalarVolumeDisplayNode"));
   // If color node is already specified (via default display node mechanism) then use that,
   // otherwise set the default color specified in this class.
   if (!dispNode->GetColorNodeID())

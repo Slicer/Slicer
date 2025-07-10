@@ -35,6 +35,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerDirectoryListView : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QStringList directoryList READ directoryList WRITE setDirectoryList NOTIFY directoryListChanged);
+
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -91,7 +92,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerDirectoryListView);
   Q_DISABLE_COPY(qSlicerDirectoryListView);
-
 };
 
 #endif

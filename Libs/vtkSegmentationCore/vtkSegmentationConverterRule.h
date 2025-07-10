@@ -35,12 +35,12 @@ class vtkSegment;
 
 /// Helper macro for supporting cloning of rules
 #ifndef vtkSegmentationConverterRuleNewMacro
-#define vtkSegmentationConverterRuleNewMacro(newClass) \
-  vtkStandardNewMacro(newClass); \
-  vtkSegmentationConverterRule* newClass::CreateRuleInstance() \
-  { \
-    return newClass::New(); \
-  }
+# define vtkSegmentationConverterRuleNewMacro(newClass)         \
+   vtkStandardNewMacro(newClass);                               \
+   vtkSegmentationConverterRule* newClass::CreateRuleInstance() \
+   {                                                            \
+     return newClass::New();                                    \
+   }
 #endif
 /// \brief Abstract converter rule class. Subclasses perform conversions between specific
 ///   representation types. They define source and target type and provide ways to create those
@@ -53,13 +53,12 @@ class vtkSegment;
 class vtkSegmentationCore_EXPORT vtkSegmentationConverterRule : public vtkObject
 {
 public:
-
   /// Constant to use for converter rules with "infinite" computational cost (i.e. disabled)
   /// It's about UINT_MAX / 400 (allows us to have a few hundred disabled rules)
   static unsigned int GetConversionInfiniteCost() { return 10000000; };
 
 public:
-  //static vtkSegmentationConverterRule* New();
+  // static vtkSegmentationConverterRule* New();
   vtkTypeMacro(vtkSegmentationConverterRule, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -94,10 +93,12 @@ public:
   virtual bool PostConvert(vtkSegmentation* vtkNotUsed(segmentation)) { return true; };
 
   /// Get the cost of the conversion.
-  /// \return Expected duration of the conversion in milliseconds. If the arguments are omitted, then a rough average can be
-  ///   given just to indicate the relative computational cost of the algorithm. If the objects are given, then a more educated
-  ///   guess can be made based on the object properties (dimensions, number of points, etc).
-  virtual unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr)
+  /// \return Expected duration of the conversion in milliseconds. If the arguments are omitted, then a rough average
+  /// can be
+  ///   given just to indicate the relative computational cost of the algorithm. If the objects are given, then a more
+  ///   educated guess can be made based on the object properties (dimensions, number of points, etc).
+  virtual unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr,
+                                         vtkDataObject* targetRepresentation = nullptr)
   {
     (void)(sourceRepresentation); // unused
     (void)(targetRepresentation); // unused
@@ -116,10 +117,13 @@ public:
   /// Get rule conversion parameters for aggregated path parameters.
   /// Existing values in the provided conversionParameters object overwritten,
   /// missing name and values are added.
-  virtual void GetRuleConversionParameters(vtkSegmentationConversionParameters* conversionParameters) VTK_EXPECTS(conversionParameters != nullptr);
+  virtual void GetRuleConversionParameters(vtkSegmentationConversionParameters* conversionParameters)
+    VTK_EXPECTS(conversionParameters != nullptr);
 
   /// Set a conversion parameter
-  virtual void SetConversionParameter(const std::string& name, const std::string& value, const std::string& description="");
+  virtual void SetConversionParameter(const std::string& name,
+                                      const std::string& value,
+                                      const std::string& description = "");
 
   /// Get a conversion parameter value
   virtual std::string GetConversionParameter(const std::string& name);
@@ -150,7 +154,7 @@ protected:
   /// If true, replaces the target representation of the segment with a new object, even if one already exists
   /// If false, will only create a target representation if one already doesn't exist.
   /// False by default.
-  bool ReplaceTargetRepresentation{false};
+  bool ReplaceTargetRepresentation{ false };
 
   friend class vtkSegmentationConverter;
 };

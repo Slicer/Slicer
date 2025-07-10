@@ -107,16 +107,13 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
   container->layout()->addWidget(this->TreeView);
 
   // Make connections
-  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
-                   q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
-  QObject::connect(this->TreeView, SIGNAL(pressed(QModelIndex)),
-                   q, SLOT(hidePopup()));
-  QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)),
-                   q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
-  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
-                   q, SIGNAL(currentItemChanged(vtkIdType)));
-  QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)),
-                   q, SIGNAL(currentItemModified(vtkIdType)));
+  QObject::connect(
+    this->TreeView, SIGNAL(currentItemChanged(vtkIdType)), q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(pressed(QModelIndex)), q, SLOT(hidePopup()));
+  QObject::connect(
+    this->TreeView, SIGNAL(currentItemModified(vtkIdType)), q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)), q, SIGNAL(currentItemChanged(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)), q, SIGNAL(currentItemModified(vtkIdType)));
 }
 
 // --------------------------------------------------------------------------
@@ -168,7 +165,7 @@ void qMRMLSubjectHierarchyComboBox::setMRMLScene(vtkMRMLScene* scene)
   }
 
   // Connect scene events so that title can be updated
-  qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onMRMLSceneCloseEnded(vtkObject*) ) );
+  qvtkReconnect(scene, vtkMRMLScene::EndCloseEvent, this, SLOT(onMRMLSceneCloseEnded(vtkObject*)));
 
   // Set tree root item to be the new scene, and disable showing it
   d->TreeView->setRootItem(shNode->GetSceneItemID());
@@ -372,7 +369,9 @@ QString qMRMLSubjectHierarchyComboBox::attributeValueFilter() const
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::addItemAttributeFilter(QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/)
+void qMRMLSubjectHierarchyComboBox::addItemAttributeFilter(QString attributeName,
+                                                           QVariant attributeValue /*=QString()*/,
+                                                           bool include /*=true*/)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
   this->sortFilterProxyModel()->addItemAttributeFilter(attributeName, attributeValue, include);
@@ -382,7 +381,9 @@ void qMRMLSubjectHierarchyComboBox::addItemAttributeFilter(QString attributeName
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include)
+void qMRMLSubjectHierarchyComboBox::removeItemAttributeFilter(QString attributeName,
+                                                              QVariant attributeValue,
+                                                              bool include)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
   this->sortFilterProxyModel()->removeItemAttributeFilter(attributeName, attributeValue, include);
@@ -402,8 +403,10 @@ void qMRMLSubjectHierarchyComboBox::removeItemAttributeFilter(QString attributeN
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::addNodeAttributeFilter(
-  QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/, QString className/*=QString()*/)
+void qMRMLSubjectHierarchyComboBox::addNodeAttributeFilter(QString attributeName,
+                                                           QVariant attributeValue /*=QString()*/,
+                                                           bool include /*=true*/,
+                                                           QString className /*=QString()*/)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
   this->sortFilterProxyModel()->addNodeAttributeFilter(attributeName, attributeValue, include, className);
@@ -413,7 +416,10 @@ void qMRMLSubjectHierarchyComboBox::addNodeAttributeFilter(
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className)
+void qMRMLSubjectHierarchyComboBox::removeNodeAttributeFilter(QString attributeName,
+                                                              QVariant attributeValue,
+                                                              bool include,
+                                                              QString className)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
   this->sortFilterProxyModel()->removeNodeAttributeFilter(attributeName, attributeValue, include, className);
@@ -558,8 +564,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   QStyleOptionComboBox opt;
   this->initStyleOption(&opt);
 
-  QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt,
-                                               QStyle::SC_ComboBoxListBoxPopup, this));
+  QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt, QStyle::SC_ComboBoxListBoxPopup, this));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QRect screen = this->screen()->availableGeometry();
 #else
@@ -613,7 +618,8 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
     // Height based on the number of items
     const int numberOfShownShItems = qMin(displayedItemCount, d->MaximumNumberOfShownItems);
     const int numberOfRows = (this->noneEnabled() ? numberOfShownShItems + 1 : numberOfShownShItems);
-    const int referenceRowHeight = (this->noneEnabled() ? d->TreeView->sizeHintForRow(1) : d->TreeView->sizeHintForRow(0));
+    const int referenceRowHeight =
+      (this->noneEnabled() ? d->TreeView->sizeHintForRow(1) : d->TreeView->sizeHintForRow(0));
     popupHeight = numberOfRows * referenceRowHeight;
 
     // Add tree view margins for the height
@@ -641,7 +647,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
     const int offset = listRect.top() - currentItemRect.top();
     listRect.moveTop(above.y() + offset - listRect.top());
 
-    if (listRect.width() > screen.width() )
+    if (listRect.width() > screen.width())
     {
       listRect.setWidth(screen.width());
     }
@@ -650,7 +656,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
       below.setX(screen.x() + screen.width() - listRect.width());
       above.setX(screen.x() + screen.width() - listRect.width());
     }
-    if (mapToGlobal(listRect.topLeft()).x() < screen.x() )
+    if (mapToGlobal(listRect.topLeft()).x() < screen.x())
     {
       below.setX(screen.x());
       above.setX(screen.x());
@@ -669,10 +675,10 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   container->show();
 
   this->view()->setFocus();
-  this->view()->scrollTo( this->view()->currentIndex(),
-                          this->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, this)
-                             ? QAbstractItemView::PositionAtCenter
-                             : QAbstractItemView::EnsureVisible );
+  this->view()->scrollTo(this->view()->currentIndex(),
+                         this->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, this)
+                           ? QAbstractItemView::PositionAtCenter
+                           : QAbstractItemView::EnsureVisible);
   container->update();
 }
 
@@ -759,7 +765,8 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
   {
     if (selectedShItemID != shNode->GetSceneItemID())
     {
-      qCritical() << Q_FUNC_INFO << ": No owner plugin for subject hierarchy item " << shNode->GetItemName(selectedShItemID).c_str();
+      qCritical() << Q_FUNC_INFO << ": No owner plugin for subject hierarchy item "
+                  << shNode->GetItemName(selectedShItemID).c_str();
     }
     this->setDefaultIcon(QIcon());
   }

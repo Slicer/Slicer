@@ -42,8 +42,7 @@ class vtkCallbackCommand;
 /// for the event broker.
 class VTK_MRML_EXPORT vtkObservation : public vtkObject
 {
-  public:
-
+public:
   /// The Usual vtk class functions
   static vtkObservation* New();
   vtkTypeMacro(vtkObservation, vtkObject);
@@ -61,26 +60,26 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   vtkSetMacro(InEventQueue, int);
   vtkGetObjectMacro(ObservationCallbackCommand, vtkCallbackCommand);
   vtkGetObjectMacro(Subject, vtkObject);
-  void AssignSubject(vtkObject* subject) {this->Subject = subject;};
-  vtkGetMacro (Event, unsigned long);
-  vtkSetMacro (Event, unsigned long);
+  void AssignSubject(vtkObject* subject) { this->Subject = subject; };
+  vtkGetMacro(Event, unsigned long);
+  vtkSetMacro(Event, unsigned long);
   virtual void SetCallbackCommand(vtkCallbackCommand* callbackCommand);
   vtkGetObjectMacro(CallbackCommand, vtkCallbackCommand);
   vtkSetStringMacro(Script);
   vtkGetStringMacro(Script);
   vtkGetObjectMacro(Observer, vtkObject);
-  void AssignObserver(vtkObject* observer) {this->Observer = observer;};
+  void AssignObserver(vtkObject* observer) { this->Observer = observer; };
   vtkSetStringMacro(Comment);
   vtkGetStringMacro(Comment);
   vtkSetMacro(Priority, float);
   vtkGetMacro(Priority, float);
 
-  vtkGetMacro (EventTag, unsigned long);
-  vtkSetMacro (EventTag, unsigned long);
-  vtkGetMacro (SubjectDeleteEventTag, unsigned long);
-  vtkSetMacro (SubjectDeleteEventTag, unsigned long);
-  vtkGetMacro (ObserverDeleteEventTag, unsigned long);
-  vtkSetMacro (ObserverDeleteEventTag, unsigned long);
+  vtkGetMacro(EventTag, unsigned long);
+  vtkSetMacro(EventTag, unsigned long);
+  vtkGetMacro(SubjectDeleteEventTag, unsigned long);
+  vtkSetMacro(SubjectDeleteEventTag, unsigned long);
+  vtkGetMacro(ObserverDeleteEventTag, unsigned long);
+  vtkSetMacro(ObserverDeleteEventTag, unsigned long);
 
   /// Description
   /// Elapsed time of last invocation and total elapsed time
@@ -96,7 +95,7 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
     unsigned long EventID;
     void* CallData;
   };
-  std::deque<CallType> *GetCallDataList() {return &(this->CallDataList);};
+  std::deque<CallType>* GetCallDataList() { return &(this->CallDataList); };
 
 protected:
   vtkObservation();
@@ -159,7 +158,6 @@ protected:
 
   double LastElapsedTime;
   double TotalElapsedTime;
-
 };
 
 //----------------------------------------------------------------------------
@@ -168,6 +166,5 @@ vtkObservation::CallType::CallType(unsigned long eventID, void* callData)
   , CallData(callData)
 {
 }
-
 
 #endif

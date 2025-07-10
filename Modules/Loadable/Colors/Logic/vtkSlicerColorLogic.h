@@ -23,11 +23,9 @@ class vtkMRMLColorLegendDisplayNode;
 class vtkMRMLDisplayableNode;
 class vtkMRMLDisplayNode;
 
-class VTK_SLICER_COLORS_MODULE_LOGIC_EXPORT vtkSlicerColorLogic
-  : public vtkMRMLColorLogic
+class VTK_SLICER_COLORS_MODULE_LOGIC_EXPORT vtkSlicerColorLogic : public vtkMRMLColorLogic
 {
 public:
-
   /// The Usual vtk class functions
   static vtkSlicerColorLogic* New();
   vtkTypeMacro(vtkSlicerColorLogic, vtkMRMLColorLogic);

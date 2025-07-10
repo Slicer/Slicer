@@ -25,7 +25,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerMarkupsWidgetRepresentation2D_h
 #define vtkSlicerMarkupsWidgetRepresentation2D_h
@@ -46,7 +46,8 @@ class vtkProperty2D;
 
 class vtkMRMLInteractionEventData;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsWidgetRepresentation2D
+  : public vtkSlicerMarkupsWidgetRepresentation
 {
 public:
   /// Standard methods for instances of this class.
@@ -55,17 +56,21 @@ public:
 
   /// Position is displayed (slice) position
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+                   int& foundComponentType,
+                   int& foundComponentIndex,
+                   double& closestDistance2) override;
 
   /// Checks if interaction with straight line between visible points is possible.
   /// Can be used on the output of CanInteract, as if no better component is found then the input is returned.
   void CanInteractWithLine(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+                           int& foundComponentType,
+                           int& foundComponentIndex,
+                           double& closestDistance2);
 
   /// Subclasses of vtkSlicerMarkupsWidgetRepresentation2D must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData=nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;
@@ -98,7 +103,7 @@ protected:
   vtkSlicerMarkupsWidgetRepresentation2D();
   ~vtkSlicerMarkupsWidgetRepresentation2D() override;
 
-    /// Get MRML view node as slice view node
+  /// Get MRML view node as slice view node
   vtkMRMLSliceNode* GetSliceNode();
 
   void UpdatePlaneFromSliceNode();
@@ -153,8 +158,8 @@ protected:
   ControlPointsPipeline2D* GetControlPointsPipeline(int controlPointType);
 
   vtkSmartPointer<vtkIntArray> PointsVisibilityOnSlice;
-  bool                         CenterVisibilityOnSlice = { false };
-  bool                         AnyPointVisibilityOnSlice = { false };  // at least one point is visible
+  bool CenterVisibilityOnSlice = { false };
+  bool AnyPointVisibilityOnSlice = { false }; // at least one point is visible
 
   vtkSmartPointer<vtkTransform> WorldToSliceTransform;
   vtkSmartPointer<vtkPlane> SlicePlane;

@@ -41,8 +41,7 @@ class vtkMRMLNode;
 class QItemSelection;
 class Ui_qSlicerSegmentationsModule;
 
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -56,7 +55,7 @@ public:
   void exit() override;
 
   /// Support of node editing. Selects node in user interface that the user wants to edit
-  bool setEditedNode(vtkMRMLNode* node, QString role=QString(), QString context=QString()) override;
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 public slots:
   /// Update widget GUI from parameter node
@@ -74,20 +73,24 @@ protected:
 
   /// Get display node of current segmentation node
   /// \param create If on, then create a default display node if missing. False by default
-  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode(bool create=false);
+  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode(bool create = false);
 
   /// Copy segment from one segmentation to another
   /// \param fromSegmentation Source segmentation
   /// \param toSegmentation Target segmentation
   /// \param segmentId ID of segment to copy
-  /// \param removeFromSource If true, then delete segment from source segmentation after copying. Default value is false.
+  /// \param removeFromSource If true, then delete segment from source segmentation after copying. Default value is
+  /// false.
   /// \return Success flag
   bool copySegmentBetweenSegmentations(vtkSegmentation* fromSegmentation,
-    vtkSegmentation* toSegmentation, QString segmentId, bool removeFromSource=false);
+                                       vtkSegmentation* toSegmentation,
+                                       QString segmentId,
+                                       bool removeFromSource = false);
 
   /// Copy segments to/from current segmentation from/to other segmentation.
   /// \param copyFromCurrentSegmentation If true, then copy current->other; otherwise other->current.
-  /// \param removeFromSource If true, then delete segment from source segmentation after copying. Default value is false.
+  /// \param removeFromSource If true, then delete segment from source segmentation after copying. Default value is
+  /// false.
   /// \return Success flag
   bool copySegmentsBetweenSegmentations(bool copyFromCurrentSegmentation, bool removeFromSource = false);
 

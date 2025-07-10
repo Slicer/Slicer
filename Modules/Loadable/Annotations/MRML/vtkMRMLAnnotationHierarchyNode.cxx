@@ -21,7 +21,6 @@ void vtkMRMLAnnotationHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
   Superclass::PrintSelf(os, indent);
-
 }
 
 //----------------------------------------------------------------------------
@@ -30,7 +29,7 @@ const char* vtkMRMLAnnotationHierarchyNode::GetNodeTagName()
   return "AnnotationHierarchyNode";
 }
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationHierarchyNode::ReadXMLAttributes( const char** atts)
+void vtkMRMLAnnotationHierarchyNode::ReadXMLAttributes(const char** atts)
 {
   Superclass::ReadXMLAttributes(atts);
 }
@@ -38,9 +37,8 @@ void vtkMRMLAnnotationHierarchyNode::ReadXMLAttributes( const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationHierarchyNode::WriteXML(ostream& of, int indent)
 {
-  Superclass::WriteXML(of,indent);
+  Superclass::WriteXML(of, indent);
 }
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
@@ -57,15 +55,14 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
 
   vtkMRMLAnnotationHierarchyNode* hnode = nullptr;
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
-  for (int n=0; n < numNodes; n++)
+  for (int n = 0; n < numNodes; n++)
   {
     hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLAnnotationHierarchyNode"));
     vtkDebugMacro("GetChildrenHierarchyNodes: hierarchy node " << n << " has id " << hnode->GetID());
 
     // let's check if the found hnode is a direct child of this node
-    if (hnode->GetID() && this->GetID() && hnode->GetParentNodeID() &&
-        strcmp(hnode->GetID(), this->GetID()) &&
-        !strcmp(hnode->GetParentNodeID(),this->GetID()))
+    if (hnode->GetID() && this->GetID() && hnode->GetParentNodeID() && strcmp(hnode->GetID(), this->GetID())
+        && !strcmp(hnode->GetParentNodeID(), this->GetID()))
     {
       // it is a direct child
 
@@ -74,16 +71,16 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
       {
         // move it to the parent of the hierarchy to be deleted
         hnode->SetParentNodeID(this->GetParentNodeID());
-
       }
       else
       {
         // it must be a 1-1 hierarchy node coming directly with an annotation
-        vtkMRMLAnnotationNode* anode = vtkMRMLAnnotationNode::SafeDownCast(scene->GetNodeByID(hnode->GetDisplayableNodeID()));
+        vtkMRMLAnnotationNode* anode =
+          vtkMRMLAnnotationNode::SafeDownCast(scene->GetNodeByID(hnode->GetDisplayableNodeID()));
         if (anode)
         {
-          //this->GetScene()->RemoveNode(hnode);
-          //this->GetScene()->RemoveNode(anode);
+          // this->GetScene()->RemoveNode(hnode);
+          // this->GetScene()->RemoveNode(anode);
           deleteList->AddItem(hnode);
           deleteList->AddItem(anode);
         }
@@ -95,7 +92,7 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
 
   deleteList->InitTraversal();
 
-  for (int j =0; j<deleteList->GetNumberOfItems();++j)
+  for (int j = 0; j < deleteList->GetNumberOfItems(); ++j)
   {
 
     vtkMRMLNode* dNode = vtkMRMLNode::SafeDownCast(deleteList->GetItemAsObject(j));
@@ -104,7 +101,6 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
     {
       this->GetScene()->RemoveNode(dNode);
     }
-
   }
 }
 
@@ -142,15 +138,14 @@ void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection* children, int le
 
   vtkMRMLAnnotationHierarchyNode* hnode = nullptr;
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
-  for (int n=0; n < numNodes; n++)
+  for (int n = 0; n < numNodes; n++)
   {
     hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLAnnotationHierarchyNode"));
     vtkDebugMacro("GetChildrenHierarchyNodes: hierarchy node " << n << " has id " << hnode->GetID());
 
     // let's check if the found hnode is a direct child of this node
-    if (hnode->GetID() && this->GetID() && hnode->GetParentNodeID() &&
-        strcmp(hnode->GetID(), this->GetID()) &&
-        !strcmp(hnode->GetParentNodeID(),this->GetID()))
+    if (hnode->GetID() && this->GetID() && hnode->GetParentNodeID() && strcmp(hnode->GetID(), this->GetID())
+        && !strcmp(hnode->GetParentNodeID(), this->GetID()))
     {
       // it is a direct child
 
@@ -163,7 +158,8 @@ void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection* children, int le
       else
       {
         // it must be a 1-1 hierarchy node coming directly with an annotation
-        vtkMRMLAnnotationNode* anode = vtkMRMLAnnotationNode::SafeDownCast(scene->GetNodeByID(hnode->GetDisplayableNodeID()));
+        vtkMRMLAnnotationNode* anode =
+          vtkMRMLAnnotationNode::SafeDownCast(scene->GetNodeByID(hnode->GetDisplayableNodeID()));
         if (anode)
         {
           children->AddItem(anode);

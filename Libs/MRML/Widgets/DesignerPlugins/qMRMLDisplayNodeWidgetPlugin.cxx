@@ -23,7 +23,7 @@
 
 //------------------------------------------------------------------------------
 qMRMLDisplayNodeWidgetPlugin::qMRMLDisplayNodeWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -39,7 +39,7 @@ QString qMRMLDisplayNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLDisplayNodeWidget\" \
           name=\"MRMLDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

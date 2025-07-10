@@ -27,8 +27,8 @@ class vtkMRMLTransformNode;
 
 #include "vtkSlicerGeneralizedReformatModuleLogicExport.h"
 
-class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkMRMLScalarVectorDWIVolumeResampler :
-    public vtkMRMLAbstractVolumeResampler
+class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkMRMLScalarVectorDWIVolumeResampler
+  : public vtkMRMLAbstractVolumeResampler
 {
 public:
   static vtkMRMLScalarVectorDWIVolumeResampler* New();

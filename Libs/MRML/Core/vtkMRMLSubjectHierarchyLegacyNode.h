@@ -85,7 +85,9 @@ public:
   /// \param uidName UID string to lookup
   /// \param uidValue UID string that needs to _exactly match_ the UID string of the subject hierarchy node
   /// \sa GetUID()
-  static vtkMRMLSubjectHierarchyLegacyNode* GetSubjectHierarchyLegacyNodeByUID(vtkMRMLScene* scene, const char* uidName, const char* uidValue);
+  static vtkMRMLSubjectHierarchyLegacyNode* GetSubjectHierarchyLegacyNodeByUID(vtkMRMLScene* scene,
+                                                                               const char* uidName,
+                                                                               const char* uidValue);
 
   /// Find subject hierarchy node according to a UID (by containing). For example find UID in instance UID list
   /// \param scene MRML scene
@@ -93,7 +95,9 @@ public:
   /// \param uidValue UID string that needs to be _contained_ in the UID string of the subject hierarchy node
   /// \return First match
   /// \sa GetUID()
-  static vtkMRMLSubjectHierarchyLegacyNode* GetSubjectHierarchyLegacyNodeByUIDList(vtkMRMLScene* scene, const char* uidName, const char* uidValue);
+  static vtkMRMLSubjectHierarchyLegacyNode* GetSubjectHierarchyLegacyNodeByUIDList(vtkMRMLScene* scene,
+                                                                                   const char* uidName,
+                                                                                   const char* uidValue);
 
 public:
   /// Deserialize a UID list string (stored in the UID map) into a vector of UID strings
@@ -125,10 +129,10 @@ public:
 
 protected:
   /// Level identifier (default levels are Subject and Study)
-  char* Level{nullptr};
+  char* Level{ nullptr };
 
   /// Name of the owner plugin that claimed this node
-  char* OwnerPluginName{nullptr};
+  char* OwnerPluginName{ nullptr };
 
   /// List of UIDs of this subject hierarchy node
   /// UIDs can be DICOM UIDs, Girder URLs, etc.

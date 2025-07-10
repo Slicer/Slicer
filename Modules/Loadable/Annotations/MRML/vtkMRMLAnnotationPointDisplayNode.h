@@ -15,10 +15,10 @@
 
 class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
- public:
-  static vtkMRMLAnnotationPointDisplayNode* New (  );
-  vtkTypeMacro ( vtkMRMLAnnotationPointDisplayNode,vtkMRMLAnnotationDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) override;
+public:
+  static vtkMRMLAnnotationPointDisplayNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationPointDisplayNode, vtkMRMLAnnotationDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -28,20 +28,19 @@ class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNod
 
   // Description:
   // Read node attributes from XML (MRML) file
-  void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  void WriteXML ( ostream& of, int indent ) override;
-
+  void WriteXML(ostream& of, int indent) override;
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode* node ) override;
+  void Copy(vtkMRMLNode* node) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  const char* GetNodeTagName() override {return "AnnotationPointDisplay";}
+  const char* GetNodeTagName() override { return "AnnotationPointDisplay"; }
 
   // Description:
   // Finds the storage node and read the data
@@ -49,9 +48,7 @@ class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNod
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Which kind of glyph should be used to display this fiducial?
   /// Vertex2D is supposed to start at 1
@@ -125,51 +122,45 @@ class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNod
   ///\enum ProjectionFlag
   enum ProjectionFlag
   {
-  ProjectionUseFiducialColor = 0x02,
-  ProjectionOutlinedBehindSlicePlane = 0x04
+    ProjectionUseFiducialColor = 0x02,
+    ProjectionOutlinedBehindSlicePlane = 0x04
   };
 
- protected:
+protected:
   vtkMRMLAnnotationPointDisplayNode();
   ~vtkMRMLAnnotationPointDisplayNode() override = default;
-  vtkMRMLAnnotationPointDisplayNode( const vtkMRMLAnnotationPointDisplayNode& );
-  void operator= ( const vtkMRMLAnnotationPointDisplayNode& );
+  vtkMRMLAnnotationPointDisplayNode(const vtkMRMLAnnotationPointDisplayNode&);
+  void operator=(const vtkMRMLAnnotationPointDisplayNode&);
 
   double GlyphScale;
   int GlyphType;
-  static const char* GlyphTypesNames[GlyphMax+2];
+  static const char* GlyphTypesNames[GlyphMax + 2];
 };
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode
-::SliceProjectionUseFiducialColorOn()
+void vtkMRMLAnnotationPointDisplayNode::SliceProjectionUseFiducialColorOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
+  this->SetSliceProjection(this->GetSliceProjection() | vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode
-::SliceProjectionUseFiducialColorOff()
+void vtkMRMLAnnotationPointDisplayNode::SliceProjectionUseFiducialColorOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
+  this->SetSliceProjection(this->GetSliceProjection() & ~vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode
-::SliceProjectionOutlinedBehindSlicePlaneOn()
+void vtkMRMLAnnotationPointDisplayNode::SliceProjectionOutlinedBehindSlicePlaneOn()
 {
-  this->SetSliceProjection( this->GetSliceProjection() |
-                            vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
+  this->SetSliceProjection(this->GetSliceProjection()
+                           | vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode
-::SliceProjectionOutlinedBehindSlicePlaneOff()
+void vtkMRMLAnnotationPointDisplayNode::SliceProjectionOutlinedBehindSlicePlaneOff()
 {
-  this->SetSliceProjection( this->GetSliceProjection() &
-                            ~vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
+  this->SetSliceProjection(this->GetSliceProjection()
+                           & ~vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
 }
 
 #endif

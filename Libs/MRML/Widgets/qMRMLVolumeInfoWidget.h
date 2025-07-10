@@ -21,7 +21,6 @@
 #ifndef __qMRMLVolumeInfoWidget_h
 #define __qMRMLVolumeInfoWidget_h
 
-
 // Qt includes
 #include <QListWidget>
 

@@ -49,11 +49,13 @@ public:
 
   /// Get list of segments visible at selected display position.
   /// segmentValues is optional, if not nullptr then it returns value for each segment for fractional representations
-  virtual void GetVisibleSegmentsForPosition(double ras[3], vtkMRMLSegmentationDisplayNode* displayNode,
-    vtkStringArray* segmentIDs, vtkDoubleArray* segmentValues = nullptr);
+  virtual void GetVisibleSegmentsForPosition(double ras[3],
+                                             vtkMRMLSegmentationDisplayNode* displayNode,
+                                             vtkStringArray* segmentIDs,
+                                             vtkDoubleArray* segmentValues = nullptr);
 
-  /// Specify that a segment is temporarily displayed with a custom renderer, so that this displayable manager should not display it.
-  /// Only one custom renderer can be added for a specific segment for each segmentation display node.
+  /// Specify that a segment is temporarily displayed with a custom renderer, so that this displayable manager should
+  /// not display it. Only one custom renderer can be added for a specific segment for each segmentation display node.
   /// \return An integer tag that can be used for removing the custom renderer using RemoveCustomRenderer().
   ///   If the returned tag value is 0 it means that this segment for this display node has already a custom renderer
   ///   and no additional custom renderer is registered.

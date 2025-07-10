@@ -41,8 +41,7 @@ int qSlicerVolumeRenderingModuleWidgetTest1(int argc, char* argv[])
   module.initialize(nullptr);
 
   qSlicerVolumeRenderingModuleWidget* moduleWidget =
-    dynamic_cast<qSlicerVolumeRenderingModuleWidget*>(
-      module.widgetRepresentation());
+    dynamic_cast<qSlicerVolumeRenderingModuleWidget*>(module.widgetRepresentation());
 
   moduleWidget->show();
 

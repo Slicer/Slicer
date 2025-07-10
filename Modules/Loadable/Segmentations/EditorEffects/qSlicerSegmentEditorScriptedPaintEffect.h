@@ -68,7 +68,7 @@ public:
   /// \sa name
   void setName(QString name) override;
 
-// API: Methods that are to be reimplemented in the effect subclasses
+  // API: Methods that are to be reimplemented in the effect subclasses
 public:
   /// Get icon for effect to be displayed in segment editor
   QIcon icon() override;

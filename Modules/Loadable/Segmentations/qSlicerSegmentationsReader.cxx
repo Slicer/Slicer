@@ -51,7 +51,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentationsReader::qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic, QObject* _parent)
+qSlicerSegmentationsReader::qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic,
+                                                       QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerSegmentationsReaderPrivate)
 {
@@ -84,18 +85,17 @@ QString qSlicerSegmentationsReader::description() const
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerSegmentationsReader::fileType() const
 {
-  return QString(/*no tr*/"SegmentationFile");
+  return QString(/*no tr*/ "SegmentationFile");
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerSegmentationsReader::extensions() const
 {
   QString extensionText = tr("Segmentation");
-  return QStringList()
-    << extensionText + " (*.seg.nrrd)" << extensionText + " (*.seg.nhdr)" << extensionText + " (*.seg.vtm)"
-    << extensionText + " (*.nrrd)" << extensionText + " (*.nhdr)" << extensionText + " (*.vtm)"
-    << extensionText + " (*.nii.gz)" << extensionText + " (*.nii)" << extensionText + " (*.hdr)"
-    << extensionText + " (*.stl)" << extensionText + " (*.obj)";
+  return QStringList() << extensionText + " (*.seg.nrrd)" << extensionText + " (*.seg.nhdr)"
+                       << extensionText + " (*.seg.vtm)" << extensionText + " (*.nrrd)" << extensionText + " (*.nhdr)"
+                       << extensionText + " (*.vtm)" << extensionText + " (*.nii.gz)" << extensionText + " (*.nii)"
+                       << extensionText + " (*.hdr)" << extensionText + " (*.stl)" << extensionText + " (*.obj)";
 }
 
 //-----------------------------------------------------------------------------
@@ -193,17 +193,21 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
 
     vtkNew<vtkSegment> segment;
     segment->SetName(name.toUtf8().constData());
-    segment->AddRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), closedSurfaceRepresentation);
+    segment->AddRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(),
+                               closedSurfaceRepresentation);
 
-    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-      this->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode", this->mrmlScene()->GetUniqueNameByString(name.toUtf8())));
+    vtkMRMLSegmentationNode* segmentationNode =
+      vtkMRMLSegmentationNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass(
+        "vtkMRMLSegmentationNode", this->mrmlScene()->GetUniqueNameByString(name.toUtf8())));
     segmentationNode->SetSourceRepresentationToClosedSurface();
     segmentationNode->CreateDefaultDisplayNodes();
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
+    vtkMRMLSegmentationDisplayNode* displayNode =
+      vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
     if (displayNode)
     {
       // Show slice intersections using closed surface representation (don't create binary labelmap for display)
-      displayNode->SetPreferredDisplayRepresentationName2D(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
+      displayNode->SetPreferredDisplayRepresentationName2D(
+        vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
     }
 
     segmentationNode->GetSegmentation()->AddSegment(segment.GetPointer());
@@ -234,7 +238,7 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       return false;
     }
 
-    this->setLoadedNodes( QStringList(QString(node->GetID())) );
+    this->setLoadedNodes(QStringList(QString(node->GetID())));
   }
 
   return true;

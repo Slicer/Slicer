@@ -30,8 +30,8 @@
 class vtkMRMLCameraNode;
 class vtkMRMLCameraWidget;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCameraDisplayableManager :
-  public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCameraDisplayableManager
+  : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 
 public:
@@ -48,7 +48,7 @@ public:
   /// Events
   enum
   {
-    ActiveCameraChangedEvent   = 30000
+    ActiveCameraChangedEvent = 30000
   };
 
   bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2) override;
@@ -57,7 +57,6 @@ public:
   vtkMRMLCameraWidget* GetCameraWidget();
 
 protected:
-
   vtkMRMLCameraDisplayableManager();
   ~vtkMRMLCameraDisplayableManager() override;
 
@@ -70,9 +69,7 @@ protected:
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
-  void ProcessMRMLNodesEvents(vtkObject* caller,
-                                      unsigned long event,
-                                      void* callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
   void SetAndObserveCameraNode(vtkMRMLCameraNode* newCameraNode);
@@ -80,13 +77,11 @@ protected:
   void SetCameraToRenderer();
 
 private:
-
   vtkMRMLCameraDisplayableManager(const vtkMRMLCameraDisplayableManager&) = delete;
   void operator=(const vtkMRMLCameraDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;
-
 };
 
 #endif

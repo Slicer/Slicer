@@ -53,7 +53,7 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLTransformSlidersEventTranslatorPlayerTest1(int argc, char* argv[])
@@ -72,9 +72,8 @@ int qMRMLTransformSlidersEventTranslatorPlayerTest1(int argc, char* argv[])
   // Test case 1
   QWidget qWidget;
   qMRMLTransformSliders widget(&qWidget);
-  etpWidget.addTestCase(&widget,
-                        xmlDirectory + "qMRMLTransformSlidersEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    &widget, xmlDirectory + "qMRMLTransformSlidersEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

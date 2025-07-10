@@ -68,20 +68,20 @@ namespace
 {
 
 //----------------------------------------------------------------------------
-void DecodeValue(const Json::Value & json, int& value)
+void DecodeValue(const Json::Value& json, int& value)
 {
   value = json.asInt();
 }
 
 //----------------------------------------------------------------------------
-void DecodeValue(const Json::Value & json, float& value)
+void DecodeValue(const Json::Value& json, float& value)
 {
   value = json.asFloat();
 }
 
 //----------------------------------------------------------------------------
-template< typename ScalarType >
-void DecodeTuple(const Json::Value & json, std::vector<ScalarType> & tuple)
+template <typename ScalarType>
+void DecodeTuple(const Json::Value& json, std::vector<ScalarType>& tuple)
 {
   tuple.resize(json.size());
   for (Json::ArrayIndex index = 0; index < json.size(); ++index)
@@ -93,13 +93,13 @@ void DecodeTuple(const Json::Value & json, std::vector<ScalarType> & tuple)
 }
 
 //----------------------------------------------------------------------------
-template< typename ScalarType >
-void DecodeMatrix(const Json::Value & json, std::vector<ScalarType> & values)
+template <typename ScalarType>
+void DecodeMatrix(const Json::Value& json, std::vector<ScalarType>& values)
 {
   Json::ArrayIndex nbRows = json.size();
   for (Json::ArrayIndex rowIndex = 0; rowIndex < nbRows; ++rowIndex)
   {
-    const Json::Value & row = json[rowIndex];
+    const Json::Value& row = json[rowIndex];
 
     Json::ArrayIndex nbCols = row.size();
     for (Json::ArrayIndex columnIndex = 0; columnIndex < nbCols; ++columnIndex)
@@ -112,8 +112,12 @@ void DecodeMatrix(const Json::Value & json, std::vector<ScalarType> & values)
 }
 
 //----------------------------------------------------------------------------
-template< typename ScalarType >
-void DecodeValues(const Json::Value & json, vtkUniforms::TupleType tupleType, int vtkNotUsed(nbComponents), int nbTuples, std::vector<ScalarType> & values)
+template <typename ScalarType>
+void DecodeValues(const Json::Value& json,
+                  vtkUniforms::TupleType tupleType,
+                  int vtkNotUsed(nbComponents),
+                  int nbTuples,
+                  std::vector<ScalarType>& values)
 {
   if (nbTuples == 1)
   {
@@ -162,7 +166,7 @@ void DecodeValues(const Json::Value & json, vtkUniforms::TupleType tupleType, in
 }
 
 //----------------------------------------------------------------------------
-void ReadUniforms(Json::Value & uniformsJson, vtkUniforms* uniforms)
+void ReadUniforms(Json::Value& uniformsJson, vtkUniforms* uniforms)
 {
   for (Json::ArrayIndex index = 0; index < uniformsJson.size(); ++index)
   {
@@ -192,8 +196,7 @@ void ReadUniforms(Json::Value & uniformsJson, vtkUniforms* uniforms)
 //----------------------------------------------------------------------------
 int vtkMRMLShaderPropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLShaderPropertyNode* spNode =
-    vtkMRMLShaderPropertyNode::SafeDownCast(refNode);
+  vtkMRMLShaderPropertyNode* spNode = vtkMRMLShaderPropertyNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -282,8 +285,10 @@ namespace
 {
 
 //----------------------------------------------------------------------------
-template< typename MatrixValueType >
-Json::Value EncodeMatrix(const std::vector<MatrixValueType> & matrix, Json::ArrayIndex matrixWidth, Json::ArrayIndex offset = 0)
+template <typename MatrixValueType>
+Json::Value EncodeMatrix(const std::vector<MatrixValueType>& matrix,
+                         Json::ArrayIndex matrixWidth,
+                         Json::ArrayIndex offset = 0)
 {
   Json::Value json;
   for (Json::ArrayIndex rowIndex = 0; rowIndex < matrixWidth; ++rowIndex)
@@ -299,21 +304,27 @@ Json::Value EncodeMatrix(const std::vector<MatrixValueType> & matrix, Json::Arra
 }
 
 //----------------------------------------------------------------------------
-template< typename TupleValueType >
-Json::Value EncodeTuple(const std::vector<TupleValueType> & tuple, Json::ArrayIndex tupleLength, Json::ArrayIndex offset = 0)
+template <typename TupleValueType>
+Json::Value EncodeTuple(const std::vector<TupleValueType>& tuple,
+                        Json::ArrayIndex tupleLength,
+                        Json::ArrayIndex offset = 0)
 {
   Json::Value json;
   json.resize(tupleLength);
   for (Json::ArrayIndex index = 0; index < tupleLength; ++index)
   {
-    json[index] = tuple[index+offset];
+    json[index] = tuple[index + offset];
   }
   return json;
 }
 
 //----------------------------------------------------------------------------
-template< typename scalarT >
-void EncodeValues(const std::vector<scalarT> & values, Json::ArrayIndex nbComponents, Json::ArrayIndex nbTuples, vtkUniforms::TupleType tt, Json::Value & json)
+template <typename scalarT>
+void EncodeValues(const std::vector<scalarT>& values,
+                  Json::ArrayIndex nbComponents,
+                  Json::ArrayIndex nbTuples,
+                  vtkUniforms::TupleType tt,
+                  Json::Value& json)
 {
   if (nbTuples == 1)
   {
@@ -358,7 +369,7 @@ void EncodeValues(const std::vector<scalarT> & values, Json::ArrayIndex nbCompon
 }
 
 //----------------------------------------------------------------------------
-void WriteUniforms(vtkUniforms* uniforms, Json::Value & root)
+void WriteUniforms(vtkUniforms* uniforms, Json::Value& root)
 {
   root.resize(static_cast<Json::ArrayIndex>(uniforms->GetNumberOfUniforms()));
   for (int i = 0; i < uniforms->GetNumberOfUniforms(); ++i)
@@ -367,7 +378,8 @@ void WriteUniforms(vtkUniforms* uniforms, Json::Value & root)
 
     vtkUniforms::TupleType tupleType = uniforms->GetUniformTupleType(uName.c_str());
     Json::ArrayIndex nbTuples = static_cast<Json::ArrayIndex>(uniforms->GetUniformNumberOfTuples(uName.c_str()));
-    Json::ArrayIndex nbComponents = static_cast<Json::ArrayIndex>(uniforms->GetUniformNumberOfComponents(uName.c_str()));
+    Json::ArrayIndex nbComponents =
+      static_cast<Json::ArrayIndex>(uniforms->GetUniformNumberOfComponents(uName.c_str()));
     int scalarType = uniforms->GetUniformScalarType(uName.c_str());
 
     Json::Value uniformsJson;
@@ -404,7 +416,7 @@ int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLShaderPropertyNode* spNode = vtkMRMLShaderPropertyNode::SafeDownCast(refNode);
 
-  std::string fullName =  this->GetFullNameFromFileName();
+  std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLShaderPropertyStorageNode: File name not specified");
@@ -487,12 +499,14 @@ int vtkMRMLShaderPropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 void vtkMRMLShaderPropertyStorageNode::InitializeSupportedReadFileTypes()
 {
   //: File format name
-  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property") + " (.sp)");
+  this->SupportedReadFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property")
+                                                + " (.sp)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLShaderPropertyStorageNode::InitializeSupportedWriteFileTypes()
 {
   //: File format name
-  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property") + " (.sp)");
+  this->SupportedWriteFileTypes->InsertNextValue(vtkMRMLTr("vtkMRMLShaderPropertyStorageNode", "MRML Shader Property")
+                                                 + " (.sp)");
 }

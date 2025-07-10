@@ -24,7 +24,7 @@
  *
  * The vtkSlicerROIWidget is used to create an ROI widget.
  *
-*/
+ */
 
 #ifndef vtkSlicerROIWidget_h
 #define vtkSlicerROIWidget_h
@@ -42,7 +42,9 @@ public:
   vtkTypeMacro(vtkSlicerROIWidget, vtkSlicerMarkupsWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
-  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
+  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                   vtkMRMLAbstractViewNode* viewNode,
+                                   vtkRenderer* renderer) override;
 
   /// Create instance of the markups widget
   vtkSlicerMarkupsWidgetCreateInstanceMacro(vtkSlicerROIWidget);

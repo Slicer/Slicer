@@ -49,8 +49,7 @@
 // STD includes
 #include <string>
 
-const char vtkMRMLModelDisplayableManagerTest1EventLog[] =
-"# StreamVersion 1\n";
+const char vtkMRMLModelDisplayableManagerTest1EventLog[] = "# StreamVersion 1\n";
 
 //----------------------------------------------------------------------------
 int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
@@ -66,11 +65,11 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
   renderWindow->SetInteractor(renderWindowInteractor.GetPointer());
 
   // Set Interactor Style
-  //vtkNew<vtkMRMLThreeDViewInteractorStyle> iStyle;
-  //renderWindowInteractor->SetInteractorStyle(iStyle.GetPointer());
+  // vtkNew<vtkMRMLThreeDViewInteractorStyle> iStyle;
+  // renderWindowInteractor->SetInteractorStyle(iStyle.GetPointer());
 
   // move back far enough to see the reformat widgets
-  //renderer->GetActiveCamera()->SetPosition(0,0,-500.);
+  // renderer->GetActiveCamera()->SetPosition(0,0,-500.);
 
   // MRML scene
   vtkMRMLScene* scene = vtkMRMLScene::New();
@@ -107,8 +106,8 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
 
   // TODO: Automatically move the camera (simulating movements)
   // to have a good screenshot.
-  renderer->SetBackground(0, 169. / 255, 79. /255);
-  renderer->SetBackground2(0, 83. / 255, 155. /255);
+  renderer->SetBackground(0, 169. / 255, 79. / 255);
+  renderer->SetBackground2(0, 83. / 255, 155. / 255);
   renderer->SetGradientBackground(true);
   renderer->ResetCamera();
 
@@ -117,8 +116,8 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
   for (int i = 0; i < argc; i++)
   {
     disableReplay |= (strcmp("--DisableReplay", argv[i]) == 0);
-    record        |= (strcmp("--Record", argv[i]) == 0);
-    screenshot    |= (strcmp("--Screenshot", argv[i]) == 0);
+    record |= (strcmp("--Record", argv[i]) == 0);
+    screenshot |= (strcmp("--Screenshot", argv[i]) == 0);
   }
   vtkNew<vtkInteractorEventRecorder> recorder;
   recorder->SetInteractor(displayableManagerGroup->GetInteractor());
@@ -141,7 +140,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
   }
 
   int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
-  if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
+  if (record || retval == vtkRegressionTester::DO_INTERACTOR)
   {
     displayableManagerGroup->GetInteractor()->Initialize();
     displayableManagerGroup->GetInteractor()->Start();
@@ -151,7 +150,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
   {
     vtkNew<vtkWindowToImageFilter> windowToImageFilter;
     windowToImageFilter->SetInput(renderWindow.GetPointer());
-    windowToImageFilter->SetScale(1, 1); //set the resolution of the output image
+    windowToImageFilter->SetScale(1, 1); // set the resolution of the output image
     windowToImageFilter->Update();
 
     vtkNew<vtkTesting> testHelper;

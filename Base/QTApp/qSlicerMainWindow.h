@@ -128,11 +128,11 @@ public slots:
   /// - recently loaded files
   ///
   /// \sa restoreGUIState()
-  virtual void saveGUIState(bool force=false);
+  virtual void saveGUIState(bool force = false);
 
   /// Read GUI state from application settings and update the user interface accordingly.
   /// \sa saveGUIState()
-  virtual void restoreGUIState(bool force=false);
+  virtual void restoreGUIState(bool force = false);
 
   virtual void addFileToRecentFiles(const qSlicerIO::IOProperties& fileProperties);
 

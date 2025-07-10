@@ -22,8 +22,7 @@
 #include "qMRMLVolumePropertyNodeWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLVolumePropertyNodeWidgetPlugin
-::qMRMLVolumePropertyNodeWidgetPlugin(QObject* parentObject)
+qMRMLVolumePropertyNodeWidgetPlugin::qMRMLVolumePropertyNodeWidgetPlugin(QObject* parentObject)
   : QObject(parentObject)
 {
 }
@@ -31,8 +30,7 @@ qMRMLVolumePropertyNodeWidgetPlugin
 //------------------------------------------------------------------------------
 QWidget* qMRMLVolumePropertyNodeWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLVolumePropertyNodeWidget* newWidget =
-    new qMRMLVolumePropertyNodeWidget(parentWidget);
+  qMRMLVolumePropertyNodeWidget* newWidget = new qMRMLVolumePropertyNodeWidget(parentWidget);
   return newWidget;
 }
 
@@ -41,7 +39,7 @@ QString qMRMLVolumePropertyNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLVolumePropertyNodeWidget\" \
           name=\"MRMLVolumePropertyNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

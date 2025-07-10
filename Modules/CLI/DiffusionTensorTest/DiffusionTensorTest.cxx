@@ -8,8 +8,8 @@
 
 int main(int argc, char* argv[])
 {
-  typedef itk::DiffusionTensor3D<float>         TensorType;
-  typedef itk::Image<TensorType, 3>             TensorImageType;
+  typedef itk::DiffusionTensor3D<float> TensorType;
+  typedef itk::Image<TensorType, 3> TensorImageType;
   typedef itk::ImageFileReader<TensorImageType> TensorReaderType;
   typedef itk::ImageFileWriter<TensorImageType> TensorWriterType;
 
@@ -18,10 +18,10 @@ int main(int argc, char* argv[])
   TensorReaderType::Pointer reader = TensorReaderType::New();
   TensorWriterType::Pointer writer = TensorWriterType::New();
 
-  reader->SetFileName( inputVolume.c_str() );
+  reader->SetFileName(inputVolume.c_str());
   reader->Update();
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum pixelType;
   itk::IOComponentEnum componentType;
 
   itk::GetImageType(inputVolume, pixelType, componentType);
@@ -34,24 +34,24 @@ int main(int argc, char* argv[])
   DictionaryType::ConstIterator itr = dictionary.Begin();
   DictionaryType::ConstIterator end = dictionary.End();
 
-  while ( itr != end )
+  while (itr != end)
   {
-    if ( itr->first == "DWMRI_b-value" )
+    if (itr->first == "DWMRI_b-value")
     {
       std::string bValueString;
       itk::ExposeMetaData<std::string>(dictionary, itr->first, bValueString);
       std::cout << "DWMRI_b-value(string): " << bValueString << std::endl;
     }
-    else if ( itr->first.find("DWMRI_gradient") != std::string::npos )
+    else if (itr->first.find("DWMRI_gradient") != std::string::npos)
     {
       std::string gradientValueString;
       itk::ExposeMetaData<std::string>(dictionary, itr->first, gradientValueString);
       std::cout << "DWMRI_gradient(string): " << gradientValueString << std::endl;
     }
-    else if ( itr->first.find("NRRD_measurement frame") != std::string::npos )
+    else if (itr->first.find("NRRD_measurement frame") != std::string::npos)
     {
       std::vector<std::vector<double>> measurementFrameValue(3);
-      for ( unsigned int i = 0; i < 3; i++ )
+      for (unsigned int i = 0; i < 3; i++)
       {
         measurementFrameValue[i].resize(3);
       }
@@ -59,9 +59,9 @@ int main(int argc, char* argv[])
       itk::ExposeMetaData<std::vector<std::vector<double>>>(dictionary, itr->first, measurementFrameValue);
 
       std::cout << itr->first << ": " << std::endl;
-      for ( unsigned int i = 0; i < 3; i++ )
+      for (unsigned int i = 0; i < 3; i++)
       {
-        for ( unsigned int j = 0; j < 3; j++ )
+        for (unsigned int j = 0; j < 3; j++)
         {
           std::cout << measurementFrameValue[i][j] << " ";
         }
@@ -78,9 +78,9 @@ int main(int argc, char* argv[])
     ++itr;
   }
 
-  writer->SetFileName( outputVolume.c_str() );
+  writer->SetFileName(outputVolume.c_str());
 
-  writer->SetInput( reader->GetOutput() );
+  writer->SetInput(reader->GetOutput());
 
   writer->Update();
 

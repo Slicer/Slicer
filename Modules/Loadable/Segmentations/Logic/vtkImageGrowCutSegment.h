@@ -12,7 +12,7 @@ class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkImageGrowCutSegment : public vtkI
 public:
   static vtkImageGrowCutSegment* New();
   vtkTypeMacro(vtkImageGrowCutSegment, vtkImageAlgorithm);
-  void PrintSelf(ostream &os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set input grayscale volume (input 0)
   void SetIntensityVolume(vtkImageData* grayscaleImage) { this->SetInputData(0, grayscaleImage); }
@@ -32,7 +32,8 @@ public:
 
   /// Spatial regularization factor, which can force growing in nearby regions.
   /// For each physical unit distance, this much intensity level difference is simulated.
-  /// By default = 0, which means spatial distance does not play a role in the region growing, only intensity value similarity.
+  /// By default = 0, which means spatial distance does not play a role in the region growing, only intensity value
+  /// similarity.
   vtkGetMacro(DistancePenalty, double);
   vtkSetMacro(DistancePenalty, double);
 

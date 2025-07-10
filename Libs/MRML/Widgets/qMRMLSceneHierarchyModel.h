@@ -35,7 +35,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModel : public qMRMLSceneModel
   /// The Expanded property is on vtkMRMLDisplayableHierarchyNode.
   /// \todo Move the Expanded property to vtkMRMLHierarchyNode.
   /// \sa nameColumn, idColumn, checkableColumn, visibilityColumn...
-  Q_PROPERTY (int expandColumn READ expandColumn WRITE setExpandColumn)
+  Q_PROPERTY(int expandColumn READ expandColumn WRITE setExpandColumn)
 
 public:
   typedef qMRMLSceneModel Superclass;
@@ -49,17 +49,16 @@ public:
 
   ///
   vtkMRMLNode* parentNode(vtkMRMLNode* node) const override;
-  int          nodeIndex(vtkMRMLNode* node) const override;
+  int nodeIndex(vtkMRMLNode* node) const override;
   /// fast function that only check the type of the node to know if it can be a child.
-  bool         canBeAChild(vtkMRMLNode* node) const override;
+  bool canBeAChild(vtkMRMLNode* node) const override;
   /// fast function that only check the type of the node to know if it can be a parent.
-  bool         canBeAParent(vtkMRMLNode* node) const override;
+  bool canBeAParent(vtkMRMLNode* node) const override;
   /// if newParent == 0, set the node into the vtkMRMLScene
-  bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent) override;
+  bool reparent(vtkMRMLNode* node, vtkMRMLNode* newParent) override;
 
 protected:
-  qMRMLSceneHierarchyModel(qMRMLSceneHierarchyModelPrivate* pimpl,
-                           QObject* parent = nullptr);
+  qMRMLSceneHierarchyModel(qMRMLSceneHierarchyModelPrivate* pimpl, QObject* parent = nullptr);
   QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column) const override;
 
   void observeNode(vtkMRMLNode* node) override;

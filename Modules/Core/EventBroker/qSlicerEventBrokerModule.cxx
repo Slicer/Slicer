@@ -68,8 +68,8 @@ QString qSlicerEventBrokerModule::helpText() const
 QString qSlicerEventBrokerModule::acknowledgementText() const
 {
   QString acknowledgement = tr("This module was developed by Julien Finet, Kitware Inc. "
-      "This work was supported by NIH grant 3P41RR013218-12S1, "
-      "NA-MIC, NAC and Slicer community.");
+                               "This work was supported by NIH grant 3P41RR013218-12S1, "
+                               "NA-MIC, NAC and Slicer community.");
   return acknowledgement;
 }
 

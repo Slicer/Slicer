@@ -37,8 +37,7 @@ class MRMLIDMap;
 /// using parameters of a \a vtkMRMLCommandLineModuleNode.
 /// While a CLI module logic can run any CLI node, the logic can uniquely be
 /// assigned a specific CLI by setting a DefaultModuleDescription.
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerCLIModuleLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerCLIModuleLogic : public vtkSlicerModuleLogic
 {
 public:
   enum CommandLineModuleType
@@ -84,7 +83,9 @@ public:
   // TODO: do we need to observe MRML here?
   virtual void ProcessMrmlEvents(vtkObject* vtkNotUsed(caller),
                                  unsigned long vtkNotUsed(event),
-                                 void* vtkNotUsed(callData)){}
+                                 void* vtkNotUsed(callData))
+  {
+  }
 
   /// For debugging, control deletion of temp files
   virtual void DeleteTemporaryFilesOn();
@@ -112,7 +113,7 @@ public:
   /// If \a updateDisplay is 'true' the selection node will be updated with the
   /// the created nodes, which would automatically select the created nodes
   /// in the node selectors.
-  void Apply( vtkMRMLCommandLineModuleNode* node, bool updateDisplay = true );
+  void Apply(vtkMRMLCommandLineModuleNode* node, bool updateDisplay = true);
 
   /// Don't start the CLI in a separate thread, but run it in the main thread.
   /// This methods is blocking until the CLI finishes to execute, the UI being
@@ -120,13 +121,13 @@ public:
   /// If \a updateDisplay is 'true' the selection node will be updated with the
   /// the created nodes, which would automatically select the created nodes
   /// in the node selectors.
-  void ApplyAndWait ( vtkMRMLCommandLineModuleNode* node, bool updateDisplay = true);
+  void ApplyAndWait(vtkMRMLCommandLineModuleNode* node, bool updateDisplay = true);
 
   void KillProcesses();
 
-//   void LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject);
-//   void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node)
-//     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
+  //   void LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject);
+  //   void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node)
+  //     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
 
   /// Set the application logic
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* logic) override;
@@ -137,20 +138,17 @@ protected:
   /// Reimplemented for AutoRun mode.
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   /// Reimplemented to observe CLI node.
-  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event,
-                                      void* callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
   /// Reimplemented to observe vtkSlicerApplicationLogic.
   void ProcessMRMLLogicsEvents(vtkObject*, long unsigned int, void*) override;
-
 
   std::string ConstructTemporaryFileName(const std::string& tag,
                                          const std::string& type,
                                          const std::string& name,
-                                     const std::vector<std::string>& extensions,
-                                     CommandLineModuleType commandType);
+                                         const std::vector<std::string>& extensions,
+                                         CommandLineModuleType commandType);
   std::string ConstructTemporarySceneFileName(vtkMRMLScene* scene);
-  std::string FindHiddenNodeID(const ModuleDescription& d,
-                               const ModuleParameter& p);
+  std::string FindHiddenNodeID(const ModuleDescription& d, const ModuleParameter& p);
 
   // The method that runs the command line module
   void ApplyTask(void* clientdata);
@@ -164,13 +162,12 @@ protected:
 
   /// Return true if the commandlinemodule node can update the
   /// selection node with the outputs of the CLI
-  bool IsCommandLineModuleNodeUpdatingDisplay(
-    vtkMRMLCommandLineModuleNode* commandLineModuleNode) const;
+  bool IsCommandLineModuleNodeUpdatingDisplay(vtkMRMLCommandLineModuleNode* commandLineModuleNode) const;
 
   /// Call apply because the node requests it.
   void AutoRun(vtkMRMLCommandLineModuleNode* cliNode);
 
-    /// List of custom events fired by the class.
+  /// List of custom events fired by the class.
   enum Events
   {
     RequestHierarchyEditEvent = vtkCommand::UserEvent + 1
@@ -179,7 +176,10 @@ protected:
   // Add a model hierarchy node and all its descendants to a scene (miniscene to sent to a CLI).
   // The mapping of ids from the original scene to the mini scene is put in (added to) sceneToMiniSceneMap.
   // Any files that will be created by writing out the miniscene are added to filesToDelete (i.e. models)
-  void AddCompleteModelHierarchyToMiniScene(vtkMRMLScene*, vtkMRMLModelHierarchyNode*, MRMLIDMap* sceneToMiniSceneMap, std::set<std::string> &filesToDelete);
+  void AddCompleteModelHierarchyToMiniScene(vtkMRMLScene*,
+                                            vtkMRMLModelHierarchyNode*,
+                                            MRMLIDMap* sceneToMiniSceneMap,
+                                            std::set<std::string>& filesToDelete);
 
   int GetCoordinateSystemFromString(const char* coordinateSystemStr) const;
 

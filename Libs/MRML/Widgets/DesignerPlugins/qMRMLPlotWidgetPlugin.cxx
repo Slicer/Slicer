@@ -22,7 +22,8 @@
 #include "qMRMLPlotWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLPlotWidgetPlugin::qMRMLPlotWidgetPlugin(QObject* _parent): QObject(_parent)
+qMRMLPlotWidgetPlugin::qMRMLPlotWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
@@ -38,15 +39,15 @@ QString qMRMLPlotWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLPlotWidget\" \
           name=\"MRMLPlotViewWidget\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>200</height>\n"
-          "  </rect>\n"
-          " </property>\n"
-          "</widget>\n";
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>200</height>\n"
+         "  </rect>\n"
+         " </property>\n"
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

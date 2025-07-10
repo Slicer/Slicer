@@ -31,9 +31,9 @@ public:
   vtkSetMacro(Plane, int);
   vtkGetMacro(Plane, int);
 
-  void SetPlaneToIJ() {this->SetPlane(2);}
-  void SetPlaneToIK() {this->SetPlane(1);}
-  void SetPlaneToJK() {this->SetPlane(0);}
+  void SetPlaneToIJ() { this->SetPlane(2); }
+  void SetPlaneToIK() { this->SetPlane(1); }
+  void SetPlaneToJK() { this->SetPlane(0); }
 
 protected:
   vtkITKLevelTracingImageFilter();

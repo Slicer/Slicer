@@ -61,12 +61,15 @@
 class qSlicerSubjectHierarchyTablesPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTablesPlugin);
+
 protected:
   qSlicerSubjectHierarchyTablesPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyTablesPluginPrivate(qSlicerSubjectHierarchyTablesPlugin& object);
   ~qSlicerSubjectHierarchyTablesPluginPrivate() override;
   void init();
+
 public:
   QIcon TableIcon;
 };
@@ -75,16 +78,15 @@ public:
 // qSlicerSubjectHierarchyTablesPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyTablesPluginPrivate::qSlicerSubjectHierarchyTablesPluginPrivate(qSlicerSubjectHierarchyTablesPlugin& object)
-: q_ptr(&object)
+qSlicerSubjectHierarchyTablesPluginPrivate::qSlicerSubjectHierarchyTablesPluginPrivate(
+  qSlicerSubjectHierarchyTablesPlugin& object)
+  : q_ptr(&object)
 {
   this->TableIcon = QIcon(":Icons/Table.png");
 }
 
 //------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTablesPluginPrivate::init()
-{
-}
+void qSlicerSubjectHierarchyTablesPluginPrivate::init() {}
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTablesPluginPrivate::~qSlicerSubjectHierarchyTablesPluginPrivate() = default;
@@ -94,8 +96,8 @@ qSlicerSubjectHierarchyTablesPluginPrivate::~qSlicerSubjectHierarchyTablesPlugin
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTablesPlugin::qSlicerSubjectHierarchyTablesPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyTablesPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyTablesPluginPrivate(*this))
 {
   this->m_Name = QString("Tables");
 
@@ -108,7 +110,8 @@ qSlicerSubjectHierarchyTablesPlugin::~qSlicerSubjectHierarchyTablesPlugin() = de
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+  vtkMRMLNode* node,
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -239,8 +242,7 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
     }
 
     // Hide currently shown table and trigger icon update
-    if ( tableViewNode->GetTableNodeID()
-      && strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()) )
+    if (tableViewNode->GetTableNodeID() && strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()))
     {
       vtkIdType tableItemID = shNode->GetItemByDataNode(scene->GetNodeByID(tableViewNode->GetTableNodeID()));
       if (tableItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
@@ -287,8 +289,8 @@ int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkIdType itemID) 
 
   // Return shown if table in table view is the examined node's associated data node
   vtkMRMLTableNode* associatedTableNode = vtkMRMLTableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  if ( associatedTableNode && tableViewNode->GetTableNodeID()
-    && !strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()) )
+  if (associatedTableNode && tableViewNode->GetTableNodeID()
+      && !strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()))
   {
     return 1;
   }
@@ -314,7 +316,7 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode() co
     return nullptr;
   }
 
-  for (int i = 0; i<layoutManager->tableViewCount(); i++)
+  for (int i = 0; i < layoutManager->tableViewCount(); i++)
   {
     qMRMLTableWidget* tableWidget = layoutManager->tableWidget(i);
     if (!tableWidget)

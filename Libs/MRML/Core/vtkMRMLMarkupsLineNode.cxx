@@ -36,7 +36,6 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsLineNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsLineNode::vtkMRMLMarkupsLineNode()
 {
@@ -62,7 +61,7 @@ vtkMRMLMarkupsLineNode::~vtkMRMLMarkupsLineNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsLineNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  Superclass::WriteXML(of, nIndent);
 }
 
 //----------------------------------------------------------------------------
@@ -163,7 +162,7 @@ vtkVector3d vtkMRMLMarkupsLineNode::GetLineEndPosition()
 //---------------------------------------------------------------------------
 vtkVector3d vtkMRMLMarkupsLineNode::GetLineStartPositionWorld()
 {
-  double position[3] = {0.0, 0.0, 0.0};
+  double position[3] = { 0.0, 0.0, 0.0 };
   this->GetNthControlPointPositionWorld(0, position);
   return vtkVector3d(position);
 }
@@ -256,13 +255,13 @@ void vtkMRMLMarkupsLineNode::SetLineEndPositionWorld(double position[3])
   }
 }
 
-
 // Deprecated methods
 
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsLineNode::GetPosition1(double position[3])
 {
-  vtkWarningMacro("vtkMRMLMarkupsLineNode::GetPosition1 method is deprecated. Use GetLineStartPosition method instead.");
+  vtkWarningMacro(
+    "vtkMRMLMarkupsLineNode::GetPosition1 method is deprecated. Use GetLineStartPosition method instead.");
   return this->GetLineStartPosition(position);
 }
 
@@ -276,7 +275,8 @@ bool vtkMRMLMarkupsLineNode::GetPosition2(double position[3])
 //---------------------------------------------------------------------------
 double* vtkMRMLMarkupsLineNode::GetPosition1()
 {
-  vtkWarningMacro("vtkMRMLMarkupsLineNode::GetPosition1 method is deprecated. Use GetLineStartPosition method instead.");
+  vtkWarningMacro(
+    "vtkMRMLMarkupsLineNode::GetPosition1 method is deprecated. Use GetLineStartPosition method instead.");
   if (this->GetNthControlPointPositionStatus(0) == PositionUndefined)
   {
     return nullptr;
@@ -298,7 +298,8 @@ double* vtkMRMLMarkupsLineNode::GetPosition2()
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsLineNode::SetPosition1(double nC1, double nC2, double nC3)
 {
-  vtkWarningMacro("vtkMRMLMarkupsLineNode::SetPosition1 method is deprecated. Use SetLineStartPosition method instead.");
+  vtkWarningMacro(
+    "vtkMRMLMarkupsLineNode::SetPosition1 method is deprecated. Use SetLineStartPosition method instead.");
   double newControl[3] = { nC1, nC2, nC3 };
   this->SetLineStartPosition(newControl);
   return true;
@@ -316,7 +317,8 @@ bool vtkMRMLMarkupsLineNode::SetPosition2(double nC1, double nC2, double nC3)
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsLineNode::SetPosition1(double newControl[3])
 {
-  vtkWarningMacro("vtkMRMLMarkupsLineNode::SetPosition1 method is deprecated. Use SetLineStartPosition method instead.");
+  vtkWarningMacro(
+    "vtkMRMLMarkupsLineNode::SetPosition1 method is deprecated. Use SetLineStartPosition method instead.");
   this->SetLineStartPosition(newControl);
   return true;
 }
@@ -332,7 +334,8 @@ bool vtkMRMLMarkupsLineNode::SetPosition2(double newControl[3])
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsLineNode::GetPositionWorldCoordinates1(double position[3])
 {
-  vtkWarningMacro("vtkMRMLMarkupsLineNode::GetPositionWorldCoordinates1 method is deprecated. Use GetLineStartPositionWorld method instead.");
+  vtkWarningMacro("vtkMRMLMarkupsLineNode::GetPositionWorldCoordinates1 method is deprecated. Use "
+                  "GetLineStartPositionWorld method instead.");
   if (this->GetNthControlPointPositionStatus(0) == PositionUndefined)
   {
     return false;
@@ -344,7 +347,8 @@ bool vtkMRMLMarkupsLineNode::GetPositionWorldCoordinates1(double position[3])
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsLineNode::GetPositionWorldCoordinates2(double position[3])
 {
-  vtkWarningMacro("vtkMRMLMarkupsLineNode::SetPositionWorldCoordinates2 method is deprecated. Use GetLineEndPositionWorld method instead.");
+  vtkWarningMacro("vtkMRMLMarkupsLineNode::SetPositionWorldCoordinates2 method is deprecated. Use "
+                  "GetLineEndPositionWorld method instead.");
   if (this->GetNthControlPointPositionStatus(1) == PositionUndefined)
   {
     return false;
@@ -356,7 +360,8 @@ bool vtkMRMLMarkupsLineNode::GetPositionWorldCoordinates2(double position[3])
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsLineNode::SetPositionWorldCoordinates1(double newControl[3])
 {
-  vtkWarningMacro("vtkMRMLMarkupsLineNode::SetPositionWorldCoordinates1 method is deprecated. Use SetLineStartPositionWorld method instead.");
+  vtkWarningMacro("vtkMRMLMarkupsLineNode::SetPositionWorldCoordinates1 method is deprecated. Use "
+                  "SetLineStartPositionWorld method instead.");
   this->SetLineStartPositionWorld(newControl);
   return true;
 }
@@ -364,7 +369,8 @@ bool vtkMRMLMarkupsLineNode::SetPositionWorldCoordinates1(double newControl[3])
 //---------------------------------------------------------------------------
 bool vtkMRMLMarkupsLineNode::SetPositionWorldCoordinates2(double newControl[3])
 {
-  vtkWarningMacro("vtkMRMLMarkupsLineNode::SetPositionWorldCoordinates2 method is deprecated. Use SetLineEndPositionWorld method instead.");
+  vtkWarningMacro("vtkMRMLMarkupsLineNode::SetPositionWorldCoordinates2 method is deprecated. Use "
+                  "SetLineEndPositionWorld method instead.");
   this->SetLineEndPositionWorld(newControl);
   return true;
 }

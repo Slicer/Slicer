@@ -53,7 +53,7 @@ int qMRMLModelInfoWidgetTest1(int argc, char* argv[])
   modelInfo.setMRMLModelNode(modelNode);
   modelInfo.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

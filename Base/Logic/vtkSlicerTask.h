@@ -33,17 +33,21 @@ public:
     Networking
   };
 
-  vtkSetClampMacro (Type, int, vtkSlicerTask::Undefined, vtkSlicerTask::Networking);
+  vtkSetClampMacro(Type, int, vtkSlicerTask::Undefined, vtkSlicerTask::Networking);
   vtkGetMacro(Type, int);
-  void SetTypeToProcessing() {this->SetType(vtkSlicerTask::Processing);};
-  void SetTypeToNetworking() {this->SetType(vtkSlicerTask::Networking);};
+  void SetTypeToProcessing() { this->SetType(vtkSlicerTask::Processing); };
+  void SetTypeToNetworking() { this->SetType(vtkSlicerTask::Networking); };
 
-  const char* GetTypeAsString( ) {
+  const char* GetTypeAsString()
+  {
     switch (this->Type)
     {
-      case vtkSlicerTask::Undefined: return "Undefined";
-      case vtkSlicerTask::Processing: return "Processing";
-      case vtkSlicerTask::Networking: return "Networking";
+      case vtkSlicerTask::Undefined:
+        return "Undefined";
+      case vtkSlicerTask::Processing:
+        return "Processing";
+      case vtkSlicerTask::Networking:
+        return "Networking";
     }
     return "Unknown";
   }
@@ -60,6 +64,5 @@ private:
   void* TaskClientData;
 
   int Type;
-
 };
 #endif

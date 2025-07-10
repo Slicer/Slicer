@@ -25,22 +25,17 @@
 vtkStandardNewMacro(vtkSegmentationConversionParameters);
 
 //----------------------------------------------------------------------------
-vtkSegmentationConversionParameters::vtkSegmentationConversionParameters()
-{
-}
+vtkSegmentationConversionParameters::vtkSegmentationConversionParameters() {}
 
 //----------------------------------------------------------------------------
-vtkSegmentationConversionParameters::~vtkSegmentationConversionParameters()
-{
-}
+vtkSegmentationConversionParameters::~vtkSegmentationConversionParameters() {}
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConversionParameters::PrintSelf(ostream& os, vtkIndent indent)
 {
   for (const ConversionParameterType& parameter : this->ParameterList)
   {
-    os << indent << parameter.Name << ": " << parameter.Value
-      << " [" << parameter.Description << "]\n";
+    os << indent << parameter.Name << ": " << parameter.Value << " [" << parameter.Description << "]\n";
   }
 }
 
@@ -55,7 +50,8 @@ std::string vtkSegmentationConversionParameters::GetName(int index)
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConversionParameters::SetName(int index, const std::string& name) VTK_EXPECTS(0 <= index && index < GetNumberOfParameters())
+void vtkSegmentationConversionParameters::SetName(int index, const std::string& name)
+  VTK_EXPECTS(0 <= index && index < GetNumberOfParameters())
 {
   if (index < 0 || index >= this->GetNumberOfParameters())
   {
@@ -218,12 +214,13 @@ void vtkSegmentationConversionParameters::RemoveParameter(int index)
     vtkErrorMacro("RemoveParameter failed: invalid index");
     return;
   }
-  this->ParameterList.erase(this->ParameterList.begin()+index);
+  this->ParameterList.erase(this->ParameterList.begin() + index);
 }
 
 //----------------------------------------------------------------------------
 int vtkSegmentationConversionParameters::SetParameter(const std::string& name,
-  const std::string& value, const std::string& description/*=""*/)
+                                                      const std::string& value,
+                                                      const std::string& description /*=""*/)
 {
   int parameterIndex = this->GetIndexFromName(name);
   if (parameterIndex < 0)
@@ -259,8 +256,7 @@ void vtkSegmentationConversionParameters::CopyParameter(vtkSegmentationConversio
     vtkErrorMacro("DeepCopy failed: invalid source object or index");
     return;
   }
-  this->SetParameter(
-    source->ParameterList[sourceIndex].Name,
-    source->ParameterList[sourceIndex].Value,
-    source->ParameterList[sourceIndex].Description);
+  this->SetParameter(source->ParameterList[sourceIndex].Name,
+                     source->ParameterList[sourceIndex].Value,
+                     source->ParameterList[sourceIndex].Description);
 }

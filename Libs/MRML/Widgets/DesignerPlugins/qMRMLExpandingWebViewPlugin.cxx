@@ -3,9 +3,8 @@
 
 //------------------------------------------------------------------------------
 qMRMLExpandingWebViewPlugin::qMRMLExpandingWebViewPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
@@ -20,7 +19,7 @@ QString qMRMLExpandingWebViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLExpandingWebView\" \
           name=\"MRMLExpandingWebView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

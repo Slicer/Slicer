@@ -32,11 +32,13 @@
 class qSlicerTextsModuleWidgetPrivate : public Ui_qSlicerTextsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTextsModuleWidget);
+
 protected:
   qSlicerTextsModuleWidget* const q_ptr;
+
 public:
   qSlicerTextsModuleWidgetPrivate(qSlicerTextsModuleWidget& object);
-  vtkSlicerTextsLogic*      logic() const;
+  vtkSlicerTextsLogic* logic() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -70,10 +72,9 @@ void qSlicerTextsModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTextsModuleWidget::setEditedNode(
-  vtkMRMLNode* node,
-  QString role/*=QString()*/,
-  QString context/*=QString()*/)
+bool qSlicerTextsModuleWidget::setEditedNode(vtkMRMLNode* node,
+                                             QString role /*=QString()*/,
+                                             QString context /*=QString()*/)
 {
   Q_D(qSlicerTextsModuleWidget);
   Q_UNUSED(role);

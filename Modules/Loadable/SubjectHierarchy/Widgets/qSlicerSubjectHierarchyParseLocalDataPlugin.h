@@ -30,7 +30,8 @@
 
 class qSlicerSubjectHierarchyParseLocalDataPluginPrivate;
 
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyParseLocalDataPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyParseLocalDataPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -54,10 +55,11 @@ public slots:
   /// Create subject hierarchy from loaded local directories.
   /// Organizes all items in subject hierarchy that have storable data nodes and has a valid storage node with a file
   /// name (meaning it has been loaded from local disk). Creates patient/study/series hierarchies according to the
-  /// paths of the loaded files, ignoring the part that is identical (if everything has been loaded from the same directory,
-  /// then only creates subject hierarchy nodes for the directories within that directory).
-  //TODO: Port and move this function to SH logic, and add option to perform this parsing step after loading more than
-  // one file. See https://discourse.slicer.org/t/python-called-qslicersubjecthierarchyparselocaldataplugin-function/18600
+  /// paths of the loaded files, ignoring the part that is identical (if everything has been loaded from the same
+  /// directory, then only creates subject hierarchy nodes for the directories within that directory).
+  // TODO: Port and move this function to SH logic, and add option to perform this parsing step after loading more than
+  //  one file. See
+  //  https://discourse.slicer.org/t/python-called-qslicersubjecthierarchyparselocaldataplugin-function/18600
   void createHierarchyFromLoadedDirectoryStructure();
 
 protected:

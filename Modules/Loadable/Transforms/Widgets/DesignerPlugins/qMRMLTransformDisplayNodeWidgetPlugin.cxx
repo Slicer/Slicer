@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 #include "qMRMLTransformDisplayNodeWidgetPlugin.h"
 #include "qMRMLTransformDisplayNodeWidget.h"
 
@@ -42,7 +41,7 @@ QString qMRMLTransformDisplayNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLTransformDisplayNodeWidget\" \
           name=\"MRMLTransformDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

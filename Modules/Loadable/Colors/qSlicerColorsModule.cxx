@@ -63,8 +63,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerColorsModulePrivate::qSlicerColorsModulePrivate()
 {
-  this->ColorDialogPickerWidget =
-    QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(nullptr));
+  this->ColorDialogPickerWidget = QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(nullptr));
 }
 
 //-----------------------------------------------------------------------------
@@ -112,8 +111,8 @@ void qSlicerColorsModule::setup()
     this->appLogic()->SetColorLogic(colorLogic);
   }
   app->coreIOManager()->registerIO(new qSlicerColorsReader(colorLogic, this));
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter("Colors", QString("ColorTableFile"),
-    QStringList() << "vtkMRMLColorNode", true, this));
+  app->coreIOManager()->registerIO(
+    new qSlicerNodeWriter("Colors", QString("ColorTableFile"), QStringList() << "vtkMRMLColorNode", true, this));
 
   QStringList paths = qSlicerCoreApplication::application()->toSlicerHomeAbsolutePaths(
     app->userSettings()->value("QTCoreModules/Colors/ColorFilePaths").toStringList());
@@ -129,9 +128,8 @@ void qSlicerColorsModule::setup()
 
   // Color picker
   d->ColorDialogPickerWidget->setMRMLColorLogic(colorLogic);
-  ctkColorDialog::addDefaultTab(d->ColorDialogPickerWidget.data(),
-                                "Labels", SIGNAL(colorSelected(QColor)),
-                                SIGNAL(colorNameSelected(QString)));
+  ctkColorDialog::addDefaultTab(
+    d->ColorDialogPickerWidget.data(), "Labels", SIGNAL(colorSelected(QColor)), SIGNAL(colorNameSelected(QString)));
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyColorLegendPlugin* colorLegendPlugin = new qSlicerSubjectHierarchyColorLegendPlugin();
@@ -162,21 +160,20 @@ vtkMRMLAbstractLogic* qSlicerColorsModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerColorsModule::helpText() const
 {
-  QString help = tr(
-    "The <b>Colors Module</b> manages color look up tables, stored in Color nodes.<br>"
-    "These tables translate between a numeric value and a color "
-    "for displaying of various data types, such as volumes and models.<br>"
-    "Two lookup table types are available:<br>"
-    "<ul>"
-    "<li>Discrete table: List of named colors are specified (example: GenericAnatomyColors). "
-    "Discrete tables can be used for continuous mapping as well, in this case the colors "
-    "are used as samples at equal distance within the specified range, and smoothly "
-    "interpolating between them (example: Grey).</li>"
-    "<li>Continuous scale: Color is specified for arbitrarily chosen numerical values "
-    "and color value can be computed by smoothly interpolating between these values "
-    "(example: PET-DICOM). No names are specified for colors.</li>"
-    "All built-in color tables are read-only. To edit colors, create a copy "
-    "of the color table by clicking on the 'copy' folder icon.<br>");
+  QString help = tr("The <b>Colors Module</b> manages color look up tables, stored in Color nodes.<br>"
+                    "These tables translate between a numeric value and a color "
+                    "for displaying of various data types, such as volumes and models.<br>"
+                    "Two lookup table types are available:<br>"
+                    "<ul>"
+                    "<li>Discrete table: List of named colors are specified (example: GenericAnatomyColors). "
+                    "Discrete tables can be used for continuous mapping as well, in this case the colors "
+                    "are used as samples at equal distance within the specified range, and smoothly "
+                    "interpolating between them (example: Grey).</li>"
+                    "<li>Continuous scale: Color is specified for arbitrarily chosen numerical values "
+                    "and color value can be computed by smoothly interpolating between these values "
+                    "(example: PET-DICOM). No names are specified for colors.</li>"
+                    "All built-in color tables are read-only. To edit colors, create a copy "
+                    "of the color table by clicking on the 'copy' folder icon.<br>");
   help += this->defaultDocumentationLink();
   return help;
 }

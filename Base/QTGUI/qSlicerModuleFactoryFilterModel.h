@@ -29,8 +29,7 @@
 #include "qSlicerBaseQTGUIExport.h"
 class qSlicerModuleFactoryFilterModelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleFactoryFilterModel
-  : public QSortFilterProxyModel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleFactoryFilterModel : public QSortFilterProxyModel
 {
   Q_OBJECT
   /// True by default
@@ -54,7 +53,8 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleFactoryFilterModel
   /// Empty by default
   Q_PROPERTY(QStringList showModules READ showModules WRITE setShowModules NOTIFY showModulesChanged)
   /// false by default
-  Q_PROPERTY(bool hideAllWhenShowModulesIsEmpty READ hideAllWhenShowModulesIsEmpty WRITE setHideAllWhenShowModulesIsEmpty)
+  Q_PROPERTY(
+    bool hideAllWhenShowModulesIsEmpty READ hideAllWhenShowModulesIsEmpty WRITE setHideAllWhenShowModulesIsEmpty)
 public:
   /// Superclass typedef
   typedef QSortFilterProxyModel Superclass;
@@ -89,8 +89,11 @@ public:
   bool hideAllWhenShowModulesIsEmpty() const;
   void setHideAllWhenShowModulesIsEmpty(bool hide);
   Qt::DropActions supportedDropActions() const override;
-  bool dropMimeData(const QMimeData* data, Qt::DropAction action,
-                            int row, int column, const QModelIndex& parent) override;
+  bool dropMimeData(const QMimeData* data,
+                    Qt::DropAction action,
+                    int row,
+                    int column,
+                    const QModelIndex& parent) override;
 
 public slots:
   void setShowToLoad(bool show);
@@ -106,11 +109,11 @@ public slots:
 
 signals:
   void showModulesChanged(const QStringList&) const;
+
 protected:
   QScopedPointer<qSlicerModuleFactoryFilterModelPrivate> d_ptr;
 
-  bool lessThan(const QModelIndex& leftIndex,
-                        const QModelIndex& rightIndex) const override;
+  bool lessThan(const QModelIndex& leftIndex, const QModelIndex& rightIndex) const override;
   bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
 
 private:

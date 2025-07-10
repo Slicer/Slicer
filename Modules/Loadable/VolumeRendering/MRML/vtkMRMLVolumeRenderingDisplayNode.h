@@ -31,15 +31,14 @@ class vtkMRMLVolumePropertyNode;
 
 /// \name vtkMRMLVolumeRenderingDisplayNode
 /// \brief Abstract MRML node for storing information for Volume Rendering
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode
-  : public vtkMRMLDisplayNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -57,7 +56,7 @@ public:
   const char* GetShaderPropertyNodeID();
   void SetAndObserveShaderPropertyNodeID(const char* shaderPropertyNodeID);
   vtkMRMLShaderPropertyNode* GetShaderPropertyNode();
-  vtkMRMLShaderPropertyNode* GetOrCreateShaderPropertyNode( vtkMRMLScene* mrmlScene );
+  vtkMRMLShaderPropertyNode* GetOrCreateShaderPropertyNode(vtkMRMLScene* mrmlScene);
 
   const char* GetROINodeID();
   void SetAndObserveROINodeID(const char* roiNodeID);
@@ -120,7 +119,7 @@ public:
   /// Returns true if fast clipping can be utilized, or returns false otherwise.
   /// If userMessages is specified, messages will be added to provide reasons for why fast clipping
   /// is not available.
-  bool IsFastClippingAvailable(vtkMRMLMessageCollection* userMessages=nullptr);
+  bool IsFastClippingAvailable(vtkMRMLMessageCollection* userMessages = nullptr);
   //@}
 
 protected:
@@ -135,7 +134,7 @@ protected:
   /// Returns true if fast clipping can be utilized, or returns false otherwise.
   /// If userMessages is specified, messages will be added to provide reasons for why fast clipping
   /// is not available.
-  static bool IsFastClippingAvailable(vtkMRMLClipNode* clipNode, vtkMRMLMessageCollection* userMessages=nullptr);
+  static bool IsFastClippingAvailable(vtkMRMLClipNode* clipNode, vtkMRMLMessageCollection* userMessages = nullptr);
 
   static const char* VolumePropertyNodeReferenceRole;
   static const char* VolumePropertyNodeReferenceMRMLAttributeName;

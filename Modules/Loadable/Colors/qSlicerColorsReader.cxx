@@ -41,8 +41,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerColorsReader::qSlicerColorsReader(
-  vtkSlicerColorLogic* _colorLogic, QObject* _parent)
+qSlicerColorsReader::qSlicerColorsReader(vtkSlicerColorLogic* _colorLogic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerColorsReaderPrivate)
 {

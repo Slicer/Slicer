@@ -48,7 +48,8 @@ void qMRMLNodeObject::modify()
     QApplication::processEvents();
   }
   timer->StopTimer();
-  qDebug() << this->Message << " modified: " << timer->GetElapsedTime() << "seconds. FPS:" << 1. / timer->GetElapsedTime();
+  qDebug() << this->Message << " modified: " << timer->GetElapsedTime()
+           << "seconds. FPS:" << 1. / timer->GetElapsedTime();
   timer->Delete();
 }
 

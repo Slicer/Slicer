@@ -70,22 +70,22 @@ qSlicerModelsModule::~qSlicerModelsModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerModelsModule::helpText() const
 {
-  QString help = tr(
-    "The Models Module loads and adjusts display parameters of models such as Color, Transparency, and Clipping.<br>"
-    "Save models via the File menu, Save button.<br>"
-    "The Add 3D model or a model directory button will allow you to load any "
-    "model that Slicer can read, as well as all the VTK models in a directory. "
-    "Add Scalar Overlay will load a scalar file and associate it with the "
-    "currently active model.<br>You can adjust the display properties of the "
-    "models in the Display pane. Select the model you wish to work on from the "
-    "model selector drop down menu. Scalar overlays are loaded with a default "
-    "color look up table, but can be reassigned manually. Once a new scalar "
-    "overlay is chosen, currently the old color map is still used, so that "
-    "must be adjusted in conjunction with the overlay.<br>"
-    "Clipping is turned on for a model in the Display pane, and the slice "
-    "planes that will clip the model are selected in the Clipping pane.<br>"
-    "The Model Hierarchy pane allows you to group models together and set the "
-    "group's properties.");
+  QString help =
+    tr("The Models Module loads and adjusts display parameters of models such as Color, Transparency, and Clipping.<br>"
+       "Save models via the File menu, Save button.<br>"
+       "The Add 3D model or a model directory button will allow you to load any "
+       "model that Slicer can read, as well as all the VTK models in a directory. "
+       "Add Scalar Overlay will load a scalar file and associate it with the "
+       "currently active model.<br>You can adjust the display properties of the "
+       "models in the Display pane. Select the model you wish to work on from the "
+       "model selector drop down menu. Scalar overlays are loaded with a default "
+       "color look up table, but can be reassigned manually. Once a new scalar "
+       "overlay is chosen, currently the old color map is still used, so that "
+       "must be adjusted in conjunction with the overlay.<br>"
+       "Clipping is turned on for a model in the Display pane, and the slice "
+       "planes that will clip the model are selected in the Clipping pane.<br>"
+       "The Model Hierarchy pane allows you to group models together and set the "
+       "group's properties.");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -132,17 +132,15 @@ void qSlicerModelsModule::setup()
 {
   this->Superclass::setup();
   // Configure models logic
-  vtkSlicerModelsLogic* modelsLogic =
-    vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  vtkSlicerModelsLogic* modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
   if (qSlicerApplication::application())
   {
     // Register IOs
     qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
     ioManager->registerIO(new qSlicerModelsReader(modelsLogic, this));
     ioManager->registerDialog(new qSlicerModelsDialog(this));
-    ioManager->registerIO(new qSlicerNodeWriter(
-      "Models", QString("ModelFile"),
-      QStringList() << "vtkMRMLModelNode", true, this));
+    ioManager->registerIO(
+      new qSlicerNodeWriter("Models", QString("ModelFile"), QStringList() << "vtkMRMLModelNode", true, this));
   }
 
   // Register Subject Hierarchy core plugins
@@ -165,7 +163,6 @@ vtkMRMLAbstractLogic* qSlicerModelsModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerModelsModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLModelNode"
-    << "vtkMRMLModelDisplayNode";
+  return QStringList() << "vtkMRMLModelNode"
+                       << "vtkMRMLModelDisplayNode";
 }

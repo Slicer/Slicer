@@ -39,7 +39,7 @@ QString qSlicerGPUMemoryComboBoxPlugin::domXml() const
 {
   return "<widget class=\"qSlicerGPUMemoryComboBox\" \
           name=\"GPUMemoryComboBox\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

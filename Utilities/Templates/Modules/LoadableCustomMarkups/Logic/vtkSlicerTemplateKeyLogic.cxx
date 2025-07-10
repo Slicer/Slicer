@@ -42,9 +42,7 @@
 vtkStandardNewMacro(vtkSlicerTemplateKeyLogic);
 
 //---------------------------------------------------------------------------
-vtkSlicerTemplateKeyLogic::vtkSlicerTemplateKeyLogic()
-{
-}
+vtkSlicerTemplateKeyLogic::vtkSlicerTemplateKeyLogic() {}
 
 //---------------------------------------------------------------------------
 vtkSlicerTemplateKeyLogic::~vtkSlicerTemplateKeyLogic() = default;

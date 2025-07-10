@@ -42,9 +42,10 @@ public:
 
   enum SliceDisplayModeType
   {
-    SliceDisplayIntersection, ///< Show model in slice view as intersection with slice
-    SliceDisplayProjection, ///< Show full model projected on the slice (similar to MIP view of images)
-    SliceDisplayDistanceEncodedProjection, ///< Show full model projected on the slice, colored by distance from slice plane
+    SliceDisplayIntersection,              ///< Show model in slice view as intersection with slice
+    SliceDisplayProjection,                ///< Show full model projected on the slice (similar to MIP view of images)
+    SliceDisplayDistanceEncodedProjection, ///< Show full model projected on the slice, colored by distance from slice
+                                           ///< plane
     SliceDisplayMode_Last // placeholder after the last valid value, this must be the last in the list of modes
   };
 
@@ -63,7 +64,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "ModelDisplay";}
+  const char* GetNodeTagName() override { return "ModelDisplay"; }
 
   /// Set and observe mesh for this model. It should be the output
   /// mesh connection of the model node.
@@ -188,9 +189,7 @@ protected:
   vtkMRMLModelDisplayNode(const vtkMRMLModelDisplayNode&);
   void operator=(const vtkMRMLModelDisplayNode&);
 
-  void ProcessMRMLEvents(vtkObject* caller,
-                                 unsigned long event,
-                                 void* callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// To be reimplemented in subclasses if the input of the pipeline changes
   virtual void SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection);

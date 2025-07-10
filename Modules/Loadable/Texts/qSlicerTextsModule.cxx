@@ -58,7 +58,6 @@ QIcon qSlicerTextsModule::icon() const
   return QIcon(":/Icons/SlicerTexts.png");
 }
 
-
 //-----------------------------------------------------------------------------
 QStringList qSlicerTextsModule::categories() const
 {
@@ -95,8 +94,7 @@ QString qSlicerTextsModule::helpText() const
 QString qSlicerTextsModule::acknowledgementText() const
 {
   return tr("This work was supported through CANARIE's Research Software Program, and Cancer Care Ontario."
-    " The Texts module was contributed by Kyle Sunderland and Andras Lasso (Perk Lab, Queen's University)");
-
+            " The Texts module was contributed by Kyle Sunderland and Andras Lasso (Perk Lab, Queen's University)");
 }
 
 //-----------------------------------------------------------------------------
@@ -119,7 +117,8 @@ void qSlicerTextsModule::setup()
 
   qSlicerTextsReader* textFileReader = new qSlicerTextsReader(this);
   app->coreIOManager()->registerIO(textFileReader);
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter("TextFileImporter", textFileReader->fileType(), QStringList() << "vtkMRMLTextNode", false, this));
+  app->coreIOManager()->registerIO(new qSlicerNodeWriter(
+    "TextFileImporter", textFileReader->fileType(), QStringList() << "vtkMRMLTextNode", false, this));
 
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyTextsPlugin());
@@ -128,6 +127,5 @@ void qSlicerTextsModule::setup()
 //-----------------------------------------------------------------------------
 QStringList qSlicerTextsModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLTextNode";
+  return QStringList() << "vtkMRMLTextNode";
 }

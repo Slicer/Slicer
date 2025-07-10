@@ -35,8 +35,7 @@ class QTableWidget;
 class qSlicerMarkupsPlaceWidget;
 class qMRMLNodeComboBox;
 
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
-qSlicerSimpleMarkupsWidget : public qSlicerWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qSlicerSimpleMarkupsWidget : public qSlicerWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool enterPlaceModeOnNodeChange READ enterPlaceModeOnNodeChange WRITE setEnterPlaceModeOnNodeChange)
@@ -138,7 +137,8 @@ public slots:
   /// Set the currently selected markups node to be the active markups node in the Slicer scene.
   void activate();
 
-  /// Set the currently selected markups node to be the active markups node in the Slicer scene. The argument \a place is true then also interaction mode is set to place mode.
+  /// Set the currently selected markups node to be the active markups node in the Slicer scene. The argument \a place
+  /// is true then also interaction mode is set to place mode.
   void placeActive(bool place);
 
 protected slots:
@@ -197,7 +197,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerSimpleMarkupsWidget);
   Q_DISABLE_COPY(qSlicerSimpleMarkupsWidget);
-
 };
 
 #endif

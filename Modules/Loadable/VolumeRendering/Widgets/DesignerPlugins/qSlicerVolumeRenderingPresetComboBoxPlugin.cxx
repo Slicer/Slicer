@@ -39,7 +39,7 @@ QString qSlicerVolumeRenderingPresetComboBoxPlugin::domXml() const
 {
   return "<widget class=\"qSlicerVolumeRenderingPresetComboBox\" \
           name=\"VolumeRenderingPresetComboBox\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

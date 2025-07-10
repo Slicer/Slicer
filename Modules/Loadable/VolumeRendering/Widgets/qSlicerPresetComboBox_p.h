@@ -31,6 +31,7 @@
 class qSlicerPresetComboBoxPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerPresetComboBox);
+
 protected:
   qSlicerPresetComboBox* const q_ptr;
 

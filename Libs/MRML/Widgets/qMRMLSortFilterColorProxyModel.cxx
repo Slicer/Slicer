@@ -32,7 +32,6 @@
 #include <QDebug>
 #include <QStandardItem>
 
-
 // -----------------------------------------------------------------------------
 // qMRMLSortFilterColorProxyModelPrivate
 
@@ -42,8 +41,8 @@ class qMRMLSortFilterColorProxyModelPrivate
 public:
   qMRMLSortFilterColorProxyModelPrivate();
 
-  public:
-    bool ShowEmptyColors;
+public:
+  bool ShowEmptyColors;
 };
 
 // -----------------------------------------------------------------------------
@@ -54,8 +53,8 @@ qMRMLSortFilterColorProxyModelPrivate::qMRMLSortFilterColorProxyModelPrivate()
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterColorProxyModel::qMRMLSortFilterColorProxyModel(QObject* vparent)
- : QSortFilterProxyModel(vparent)
- , d_ptr(new qMRMLSortFilterColorProxyModelPrivate)
+  : QSortFilterProxyModel(vparent)
+  , d_ptr(new qMRMLSortFilterColorProxyModelPrivate)
 {
   this->setDynamicSortFilter(true);
 }
@@ -114,7 +113,7 @@ bool qMRMLSortFilterColorProxyModel::filterAcceptsRow(int sourceRow, const QMode
   QStandardItem* item = nullptr;
 
   // Sometimes the row is not complete (DnD), search for a non null item
-  for (int childIndex=0; childIndex < parentItem->columnCount(); ++childIndex)
+  for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
   {
     item = parentItem->child(sourceRow, childIndex);
     if (item)

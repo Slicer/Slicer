@@ -50,7 +50,8 @@ class vtkMRMLDisplayNode;
 ///    its branch. If the user activates it, then all the child displayable nodes use the
 ///    display settings from the display node associated to the folder.
 ///
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyFolderPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyFolderPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -66,12 +67,14 @@ public:
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
   /// \param node Node to be added to the hierarchy
   /// \param parentItemID Prospective parent of the node to add.
-  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
+  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the
+  ///   to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
+  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier
+  ///   attribute)
   double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID ) const override;
+    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const override;
 
   /// Make sure a folder display node that is added externally shows up in the hierarchy
   bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID) override;
@@ -81,7 +84,8 @@ public:
   /// set context menu etc.)
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
+  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier
+  ///   attribute)
   double canOwnSubjectHierarchyItem(vtkIdType itemID) const override;
 
   /// Get role that the plugin assigns to the subject hierarchy item.
@@ -115,7 +119,7 @@ public:
   /// Get display color of an owned subject hierarchy item
   /// In case of folders only color is set but no terminology. The properties are not used directly,
   /// but only if applied to the branch (similarly to how it worked in model hierarchies).
-  QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData) const override;
+  QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant>& terminologyMetaData) const override;
 
   /// Get item context menu item actions to add to tree view
   QList<QAction*> itemContextMenuActions() const override;
@@ -130,7 +134,8 @@ public:
   void showContextMenuActionsForItem(vtkIdType itemID) override;
 
   /// Get visibility context menu item actions to add to tree view.
-  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  /// These item visibility context menu actions can be shown in the implementations of \sa
+  /// showVisibilityContextMenuActionsForItem
   QList<QAction*> visibilityContextMenuActions() const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.
@@ -150,7 +155,8 @@ public:
   vtkMRMLDisplayNode* createDisplayNodeForItem(vtkIdType itemID);
 
   /// Add tree view to the list of view from which empty folders have been created.
-  /// This function is called from the DICOM plugin, which can create patient and study items (which are special folders).
+  /// This function is called from the DICOM plugin, which can create patient and study items (which are special
+  /// folders).
   void emptyFolderCreatedFromTreeView(qMRMLSubjectHierarchyTreeView* treeView);
 
 protected slots:
@@ -163,7 +169,8 @@ protected slots:
   /// Toggle apply color to branch
   void onApplyColorToBranchToggled(bool);
 
-  /// Toggle empty folder visibility (\sa showEmptyHierarchyItems) in the sort filter proxy model of the current tree view.
+  /// Toggle empty folder visibility (\sa showEmptyHierarchyItems) in the sort filter proxy model of the current tree
+  /// view.
   void onShowEmptyFoldersToggled(bool);
 
 protected:

@@ -23,7 +23,6 @@ class AxisInfoMapType;
 class VTK_Teem_EXPORT vtkTeemNRRDWriter : public vtkWriter
 {
 public:
-
   vtkTypeMacro(vtkTeemNRRDWriter, vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -58,10 +57,10 @@ public:
   vtkSetClampMacro(CompressionLevel, int, 0, 9);
   vtkGetMacro(CompressionLevel, int);
 
-  vtkSetClampMacro(FileType,int,VTK_ASCII,VTK_BINARY);
+  vtkSetClampMacro(FileType, int, VTK_ASCII, VTK_BINARY);
   vtkGetMacro(FileType, int);
-  void SetFileTypeToASCII() {this->SetFileType(VTK_ASCII);};
-  void SetFileTypeToBinary() {this->SetFileType(VTK_BINARY);};
+  void SetFileTypeToASCII() { this->SetFileType(VTK_ASCII); };
+  void SetFileTypeToBinary() { this->SetFileType(VTK_BINARY); };
 
   /// Flag that is set by WriteData() if writing fails.
   vtkBooleanMacro(WriteError, int);
@@ -89,15 +88,16 @@ public:
   vtkGetMacro(Space, int);
 
   /// Set coordinate system to RAS
-  void vtkSetSpaceToRAS()  { this->SetSpace(nrrdSpaceRightAnteriorSuperior);  };
-  void vtkSetSpaceToRAST() { this->SetSpace(nrrdSpaceRightAnteriorSuperiorTime);  };
+  void vtkSetSpaceToRAS() { this->SetSpace(nrrdSpaceRightAnteriorSuperior); };
+  void vtkSetSpaceToRAST() { this->SetSpace(nrrdSpaceRightAnteriorSuperiorTime); };
 
   /// Set coordinate system to LPS
-  void vtkSetSpaceToLPS()  { this->SetSpace(nrrdSpaceLeftPosteriorSuperior); };
+  void vtkSetSpaceToLPS() { this->SetSpace(nrrdSpaceLeftPosteriorSuperior); };
   void vtkSetSpaceToLPST() { this->SetSpace(nrrdSpaceLeftPosteriorSuperiorTime); };
 
-  /// Force the addition of a range axis, even when the size of the first image dimension (components, or frame list) is 1.
-  /// This is useful when attempting to write an image sequence with a single frame, as otherwise the range dimension would be omitted.
+  /// Force the addition of a range axis, even when the size of the first image dimension (components, or frame list)
+  /// is 1. This is useful when attempting to write an image sequence with a single frame, as otherwise the range
+  /// dimension would be omitted.
   vtkSetMacro(ForceRangeAxis, bool);
   vtkGetMacro(ForceRangeAxis, bool);
   vtkBooleanMacro(ForceRangeAxis, bool);
@@ -142,8 +142,8 @@ protected:
 private:
   vtkTeemNRRDWriter(const vtkTeemNRRDWriter&) = delete;
   void operator=(const vtkTeemNRRDWriter&) = delete;
-  void vtkImageDataInfoToNrrdInfo(vtkImageData* in, int& nrrdKind, size_t &numComp, int& vtkType, void** buffer);
-  int VTKToNrrdPixelType( const int vtkPixelType );
+  void vtkImageDataInfoToNrrdInfo(vtkImageData* in, int& nrrdKind, size_t& numComp, int& vtkType, void** buffer);
+  int VTKToNrrdPixelType(const int vtkPixelType);
   int DiffusionWeightedData;
 };
 

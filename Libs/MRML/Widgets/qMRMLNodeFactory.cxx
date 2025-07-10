@@ -35,10 +35,7 @@
 class qMRMLNodeFactoryPrivate
 {
 public:
-  qMRMLNodeFactoryPrivate()
-  {
-    this->MRMLScene = nullptr;
-  }
+  qMRMLNodeFactoryPrivate() { this->MRMLScene = nullptr; }
   vtkMRMLScene* MRMLScene;
   QHash<QString, QString> BaseNames;
   QHash<QString, QString> Attributes;
@@ -68,10 +65,9 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     return nullptr;
   }
   vtkSmartPointer<vtkMRMLNode> node;
-  node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toUtf8() ) );
+  node.TakeReference(d->MRMLScene->CreateNodeByClass(className.toUtf8()));
 
-  Q_ASSERT_X(node, "createNode",
-             QString("Failed to create node of type [%1]").arg(className).toUtf8());
+  Q_ASSERT_X(node, "createNode", QString("Failed to create node of type [%1]").arg(className).toUtf8());
 
   if (node == nullptr)
   {
@@ -81,8 +77,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   emit this->nodeInstantiated(node);
 
   QString baseName;
-  if (d->BaseNames.contains(className) &&
-      !d->BaseNames[className].isEmpty())
+  if (d->BaseNames.contains(className) && !d->BaseNames[className].isEmpty())
   {
     baseName = d->BaseNames[className];
   }
@@ -100,8 +95,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   // it's visibility
   foreach (const QString& attributeName, d->Attributes.keys())
   {
-    node->SetAttribute(attributeName.toUtf8(),
-                       d->Attributes[attributeName].toUtf8());
+    node->SetAttribute(attributeName.toUtf8(), d->Attributes[attributeName].toUtf8());
   }
 
   emit this->nodeInitialized(node);
@@ -113,8 +107,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
   if (!node->GetScene() || !node->GetScene()->IsNodePresent(node))
   {
     vtkMRMLNode* nodeAdded = d->MRMLScene->AddNode(node);
-    Q_ASSERT(nodeAdded == node ||
-             node->GetSingletonTag() != nullptr);
+    Q_ASSERT(nodeAdded == node || node->GetSingletonTag() != nullptr);
     node = nodeAdded;
   }
   emit this->nodeAdded(node);
@@ -123,8 +116,9 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& className,
-                                          const QHash<QString,QString>& attributes)
+vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene,
+                                          const QString& className,
+                                          const QHash<QString, QString>& attributes)
 {
   Q_ASSERT(scene);
   QScopedPointer<qMRMLNodeFactory> factory(new qMRMLNodeFactory());

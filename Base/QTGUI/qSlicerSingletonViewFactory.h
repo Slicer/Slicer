@@ -31,10 +31,10 @@ class ctkDICOMBrowser;
 class qSlicerSingletonViewFactoryPrivate;
 
 /// This class provides an interface for C++ and Python classes to register a singleton view replacement widget.
-/// New view widgets can be registered by registering a new qSlicerSingletonViewFactory, and then setting the widget and tag using setWidget(QWidget*) and
-/// setTagName(QString).
-/// The factory will be responsible for deleting the widget.
-/// This factory contains a single pointer to an instance of the widget, so only one view can be created within a given layout.
+/// New view widgets can be registered by registering a new qSlicerSingletonViewFactory, and then setting the widget and
+/// tag using setWidget(QWidget*) and setTagName(QString). The factory will be responsible for deleting the widget. This
+/// factory contains a single pointer to an instance of the widget, so only one view can be created within a given
+/// layout.
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSingletonViewFactory : public ctkLayoutViewFactory
 {
   Q_OBJECT

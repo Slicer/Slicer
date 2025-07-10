@@ -25,7 +25,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerCurveRepresentation2D_h
 #define vtkSlicerCurveRepresentation2D_h
@@ -40,7 +40,8 @@ class vtkTubeFilter;
 
 class vtkMRMLInteractionEventData;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation2D
+  : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:
   /// Instantiate this class.
@@ -55,7 +56,9 @@ public:
   /// communicate with each other.
   void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+                   int& foundComponentType,
+                   int& foundComponentIndex,
+                   double& closestDistance2) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;
@@ -69,7 +72,9 @@ public:
   double* GetBounds() VTK_SIZEHINT(6) override;
 
   void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& componentIndex, double& closestDistance2);
+                            int& foundComponentType,
+                            int& componentIndex,
+                            double& closestDistance2);
 
 protected:
   vtkSlicerCurveRepresentation2D();

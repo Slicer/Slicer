@@ -41,11 +41,14 @@
 class qSlicerSubjectHierarchyTextsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTextsPlugin);
+
 protected:
   qSlicerSubjectHierarchyTextsPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyTextsPluginPrivate(qSlicerSubjectHierarchyTextsPlugin& object);
   ~qSlicerSubjectHierarchyTextsPluginPrivate() override;
+
 public:
   QIcon TextIcon;
 };
@@ -54,8 +57,9 @@ public:
 // qSlicerSubjectHierarchyTextsPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyTextsPluginPrivate::qSlicerSubjectHierarchyTextsPluginPrivate(qSlicerSubjectHierarchyTextsPlugin& object)
-: q_ptr(&object)
+qSlicerSubjectHierarchyTextsPluginPrivate::qSlicerSubjectHierarchyTextsPluginPrivate(
+  qSlicerSubjectHierarchyTextsPlugin& object)
+  : q_ptr(&object)
 {
   this->TextIcon = QIcon(":Icons/Text.png");
 }
@@ -68,8 +72,8 @@ qSlicerSubjectHierarchyTextsPluginPrivate::~qSlicerSubjectHierarchyTextsPluginPr
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTextsPlugin::qSlicerSubjectHierarchyTextsPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyTextsPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyTextsPluginPrivate(*this))
 {
   this->m_Name = QString("Texts");
 }
@@ -79,7 +83,8 @@ qSlicerSubjectHierarchyTextsPlugin::~qSlicerSubjectHierarchyTextsPlugin() = defa
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyTextsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+  vtkMRMLNode* node,
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)

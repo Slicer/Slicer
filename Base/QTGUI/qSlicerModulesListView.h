@@ -36,14 +36,12 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulesListView : public QListView
 {
   Q_OBJECT
   /// False by default
-  Q_PROPERTY(bool checkBoxVisible READ isCheckBoxVisible WRITE setCheckBoxVisible )
+  Q_PROPERTY(bool checkBoxVisible READ isCheckBoxVisible WRITE setCheckBoxVisible)
   Q_PROPERTY(QStringList modules READ modules)
-  Q_PROPERTY(QStringList checkedModules READ checkedModules
-             WRITE setCheckedModules NOTIFY checkedModulesChanged
-             DESIGNABLE false)
-  Q_PROPERTY(QStringList uncheckedModules READ uncheckedModules
-             WRITE setUncheckedModules NOTIFY uncheckedModulesChanged
-             DESIGNABLE false)
+  Q_PROPERTY(QStringList checkedModules READ checkedModules WRITE setCheckedModules NOTIFY checkedModulesChanged
+               DESIGNABLE false)
+  Q_PROPERTY(QStringList uncheckedModules READ uncheckedModules WRITE setUncheckedModules NOTIFY uncheckedModulesChanged
+               DESIGNABLE false)
 public:
   /// Superclass typedef
   typedef QListView Superclass;

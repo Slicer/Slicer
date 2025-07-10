@@ -17,13 +17,12 @@ class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLScalarVolumeNode;
 class qSlicerScalarVolumeDisplayWidgetPrivate;
 
-class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerScalarVolumeDisplayWidget
-  : public qSlicerWidget
+class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerScalarVolumeDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(bool enableColorTableComboBox READ isColorTableComboBoxEnabled WRITE setColorTableComboBoxEnabled )
-  Q_PROPERTY(bool enableMRMLWindowLevelWidget READ isMRMLWindowLevelWidgetEnabled WRITE setMRMLWindowLevelWidgetEnabled )
+  Q_PROPERTY(bool enableColorTableComboBox READ isColorTableComboBoxEnabled WRITE setColorTableComboBoxEnabled)
+  Q_PROPERTY(bool enableMRMLWindowLevelWidget READ isMRMLWindowLevelWidgetEnabled WRITE setMRMLWindowLevelWidgetEnabled)
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
@@ -59,6 +58,7 @@ protected slots:
 
 protected:
   void showEvent(QShowEvent* event) override;
+
 protected:
   QScopedPointer<qSlicerScalarVolumeDisplayWidgetPrivate> d_ptr;
 

@@ -34,7 +34,6 @@
 // VTK includes
 #include "qMRMLWidget.h"
 
-
 // STD includes
 
 int qMRMLModelTest1(int argc, char* argv[])
@@ -79,15 +78,15 @@ int qMRMLModelTest1(int argc, char* argv[])
     sceneFactory.deleteNode();
     sceneFactory.deleteNode();
 
-    for ( int i = 0; i < 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
       sceneFactory.deleteNode();
     }
-    for ( int i = 0; i < 100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
       sceneFactory.generateNode();
     }
-    for ( int i = 0; i < 99; ++i)
+    for (int i = 0; i < 99; ++i)
     {
       sceneFactory.deleteNode();
     }

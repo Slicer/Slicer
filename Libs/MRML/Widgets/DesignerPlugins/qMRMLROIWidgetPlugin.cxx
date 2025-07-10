@@ -22,7 +22,7 @@
 #include "qMRMLROIWidget.h"
 
 qMRMLROIWidgetPlugin::qMRMLROIWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -36,7 +36,7 @@ QString qMRMLROIWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLROIWidget\" \
           name=\"MRMLROIWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLROIWidgetPlugin::icon() const

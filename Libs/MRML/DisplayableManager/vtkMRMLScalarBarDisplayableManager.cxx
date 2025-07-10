@@ -74,18 +74,16 @@ public:
   // Build the crosshair representation
   void BuildScalarBar();
 
-  vtkMRMLScalarBarDisplayableManager*        External;
+  vtkMRMLScalarBarDisplayableManager* External;
 
   vtkSmartPointer<vtkMRMLWindowLevelWidget> WindowLevelWidget;
 };
-
 
 //---------------------------------------------------------------------------
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLScalarBarDisplayableManager::vtkInternal
-::vtkInternal(vtkMRMLScalarBarDisplayableManager* external)
+vtkMRMLScalarBarDisplayableManager::vtkInternal::vtkInternal(vtkMRMLScalarBarDisplayableManager* external)
 {
   this->External = external;
   this->WindowLevelWidget = vtkSmartPointer<vtkMRMLWindowLevelWidget>::New();
@@ -112,8 +110,7 @@ void vtkMRMLScalarBarDisplayableManager::vtkInternal::Modified()
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* vtkMRMLScalarBarDisplayableManager::vtkInternal
-::GetSliceNode()
+vtkMRMLSliceNode* vtkMRMLScalarBarDisplayableManager::vtkInternal::GetSliceNode()
 {
   return this->External->GetMRMLSliceNode();
 }
@@ -181,16 +178,15 @@ void vtkMRMLScalarBarDisplayableManager::Create()
 void vtkMRMLScalarBarDisplayableManager::AdditionalInitializeStep()
 {
   // Build the initial crosshair representation
-  //this->Internal->BuildScalarBar();
+  // this->Internal->BuildScalarBar();
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScalarBarDisplayableManager::OnMRMLSliceNodeModifiedEvent()
-{
-}
+void vtkMRMLScalarBarDisplayableManager::OnMRMLSliceNodeModifiedEvent() {}
 
 //---------------------------------------------------------------------------
-bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2)
+bool vtkMRMLScalarBarDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData,
+                                                                    double& closestDistance2)
 {
   int eventid = eventData->GetType();
   if (eventid == vtkCommand::LeaveEvent)
@@ -236,7 +232,6 @@ bool vtkMRMLScalarBarDisplayableManager::GetAdjustBackgroundWindowLevelEnabled()
 {
   return this->Internal->WindowLevelWidget->GetBackgroundVolumeEditable();
 }
-
 
 //---------------------------------------------------------------------------
 vtkMRMLWindowLevelWidget* vtkMRMLScalarBarDisplayableManager::GetWindowLevelWidget()

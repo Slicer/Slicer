@@ -30,8 +30,7 @@ qMRMLSegmentSelectorWidgetPlugin::qMRMLSegmentSelectorWidgetPlugin(QObject* plug
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentSelectorWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentSelectorWidget* pluginWidget =
-    new qMRMLSegmentSelectorWidget(parentWidget);
+  qMRMLSegmentSelectorWidget* pluginWidget = new qMRMLSegmentSelectorWidget(parentWidget);
   return pluginWidget;
 }
 
@@ -40,7 +39,7 @@ QString qMRMLSegmentSelectorWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentSelectorWidget\" \
           name=\"SegmentSelectorWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

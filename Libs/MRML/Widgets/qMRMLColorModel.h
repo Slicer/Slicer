@@ -125,7 +125,7 @@ public:
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
   /// Assemble human readable text in format ": , in , " from color in color node.
-  static QString terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex, bool simplified=false);
+  static QString terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex, bool simplified = false);
 
   /// Update all items in the row of a given color index.
   void updateRowForColor(int color);
@@ -140,8 +140,8 @@ protected:
   virtual void updateColorFromItem(int color, QStandardItem* item);
   virtual void updateNode();
 
-  static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
-                              void* client_data, void* call_data);
+  static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data);
+
 protected:
   QScopedPointer<qMRMLColorModelPrivate> d_ptr;
 

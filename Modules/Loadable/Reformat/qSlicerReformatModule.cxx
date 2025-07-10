@@ -45,9 +45,9 @@ qSlicerReformatModulePrivate::qSlicerReformatModulePrivate() = default;
 // qSlicerReformatModule methods
 
 //------------------------------------------------------------------------------
-qSlicerReformatModule::
-qSlicerReformatModule(QObject* _parent) : Superclass(_parent),
-  d_ptr(new qSlicerReformatModulePrivate)
+qSlicerReformatModule::qSlicerReformatModule(QObject* _parent)
+  : Superclass(_parent)
+  , d_ptr(new qSlicerReformatModulePrivate)
 {
 }
 
@@ -58,7 +58,8 @@ qSlicerReformatModule::~qSlicerReformatModule() = default;
 QString qSlicerReformatModule::helpText() const
 {
   QString help = tr("The Transforms Reformat Widget Module creates"
-    " and edits the Slice Node transforms.") + QLatin1String("<br>");
+                    " and edits the Slice Node transforms.")
+                 + QLatin1String("<br>");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -96,8 +97,7 @@ void qSlicerReformatModule::setup()
 }
 
 //------------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerReformatModule::
-createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerReformatModule::createWidgetRepresentation()
 {
   return new qSlicerReformatModuleWidget;
 }
@@ -111,7 +111,6 @@ vtkMRMLAbstractLogic* qSlicerReformatModule::createLogic()
 //-----------------------------------------------------------------------------
 QStringList qSlicerReformatModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLSliceNode"
-    << "vtkMRMLSliceCompositeNode";
+  return QStringList() << "vtkMRMLSliceNode"
+                       << "vtkMRMLSliceCompositeNode";
 }

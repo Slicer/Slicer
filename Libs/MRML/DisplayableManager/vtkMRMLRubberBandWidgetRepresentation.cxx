@@ -31,7 +31,13 @@ public:
   vtkInternal(vtkMRMLRubberBandWidgetRepresentation* external);
   ~vtkInternal();
 
-  static int IntersectWithFinitePlane(double n[3], double o[3], double pOrigin[3], double px[3], double py[3], double x0[3], double x1[3]);
+  static int IntersectWithFinitePlane(double n[3],
+                                      double o[3],
+                                      double pOrigin[3],
+                                      double px[3],
+                                      double py[3],
+                                      double x0[3],
+                                      double x1[3]);
 
   vtkMRMLRubberBandWidgetRepresentation* External;
 
@@ -50,8 +56,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLRubberBandWidgetRepresentation::vtkInternal
-::vtkInternal(vtkMRMLRubberBandWidgetRepresentation* external)
+vtkMRMLRubberBandWidgetRepresentation::vtkInternal::vtkInternal(vtkMRMLRubberBandWidgetRepresentation* external)
 {
   this->External = external;
 
@@ -73,7 +78,7 @@ vtkMRMLRubberBandWidgetRepresentation::vtkInternal
     points->InsertNextPoint(0.0, 0.0, 0.0);
     vtkNew<vtkIdList> idList;
     idList->InsertNextId(i);
-    idList->InsertNextId((i+1) % 4);
+    idList->InsertNextId((i + 1) % 4);
     this->PolyData->InsertNextCell(VTK_LINE, idList);
   }
 

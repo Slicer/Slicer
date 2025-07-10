@@ -42,7 +42,8 @@ class vtkTubeFilter;
 
 class vtkMRMLInteractionEventData;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerCurveRepresentation3D
+  : public vtkSlicerMarkupsWidgetRepresentation3D
 {
 public:
   /// Instantiate this class.
@@ -69,10 +70,14 @@ public:
   double* GetBounds() VTK_SIZEHINT(6) override;
 
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+                   int& foundComponentType,
+                   int& foundComponentIndex,
+                   double& closestDistance2) override;
 
   void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& componentIndex, double& closestDistance2);
+                            int& foundComponentType,
+                            int& componentIndex,
+                            double& closestDistance2);
 
 protected:
   vtkSlicerCurveRepresentation3D();
@@ -80,7 +85,7 @@ protected:
 
   void SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode) override;
 
-  vtkSmartPointer<vtkPolyData>   Line;
+  vtkSmartPointer<vtkPolyData> Line;
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
 
   vtkSmartPointer<vtkPolyDataMapper> LineMapper;
@@ -91,7 +96,7 @@ protected:
 
   vtkSmartPointer<vtkCellLocator> CurvePointLocator;
 
-  double PreviousSpecularLightingCoeff{0.0};
+  double PreviousSpecularLightingCoeff{ 0.0 };
 
 private:
   vtkSlicerCurveRepresentation3D(const vtkSlicerCurveRepresentation3D&) = delete;

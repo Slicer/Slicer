@@ -37,9 +37,7 @@ class qMRMLMarkupsFiducialProjectionPropertyWidgetPrivate;
 class vtkMRMLMarkupsDisplayNode;
 class vtkMRMLMarkupsNode;
 
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
-qMRMLMarkupsFiducialProjectionPropertyWidget
-  : public qMRMLWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsFiducialProjectionPropertyWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -67,7 +65,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLMarkupsFiducialProjectionPropertyWidget);
   Q_DISABLE_COPY(qMRMLMarkupsFiducialProjectionPropertyWidget);
-
 };
 
 #endif

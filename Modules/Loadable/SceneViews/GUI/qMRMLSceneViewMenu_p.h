@@ -33,7 +33,7 @@
 //
 
 // Qt includes
-#include<QSignalMapper>
+#include <QSignalMapper>
 
 // qMRML includes
 #include "qMRMLSceneViewMenu.h"
@@ -56,12 +56,13 @@ class qMRMLSceneViewMenuPrivate : public QObject
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLSceneViewMenu);
+
 protected:
   qMRMLSceneViewMenu* const q_ptr;
+
 public:
   typedef QObject Superclass;
   qMRMLSceneViewMenuPrivate(qMRMLSceneViewMenu& object);
-
 
 public slots:
   /// \brief Clear and update menu given the list of existing vtkMRMLSceneViewNode
@@ -84,10 +85,10 @@ public slots:
   void deleteSceneView(int index);
 
 public:
-  vtkSmartPointer<vtkMRMLScene>         MRMLScene;
-  QSignalMapper                         RestoreActionMapper;
-  QSignalMapper                         DeleteActionMapper;
-  QString                               NoSceneViewText;
+  vtkSmartPointer<vtkMRMLScene> MRMLScene;
+  QSignalMapper RestoreActionMapper;
+  QSignalMapper DeleteActionMapper;
+  QString NoSceneViewText;
 
   vtkWeakPointer<vtkSlicerSceneViewsModuleLogic> SceneViewsLogic;
 };

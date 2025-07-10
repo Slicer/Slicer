@@ -75,7 +75,7 @@ public:
   Q_INVOKABLE QString segmentIDFromIndex(const QModelIndex& index) const;
 
   /// Retrieve an index for a given a segment ID
-  Q_INVOKABLE QModelIndex indexFromSegmentID(QString segmentID, int column=0) const;
+  Q_INVOKABLE QModelIndex indexFromSegmentID(QString segmentID, int column = 0) const;
 
   /// Returns true if the item in the row indicated by the given sourceRow and
   /// sourceParent should be included in the model; otherwise returns false.

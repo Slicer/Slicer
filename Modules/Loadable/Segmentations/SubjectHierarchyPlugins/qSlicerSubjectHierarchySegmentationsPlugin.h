@@ -29,7 +29,8 @@
 class qSlicerSubjectHierarchySegmentationsPluginPrivate;
 class vtkMRMLSegmentationNode;
 
-class Q_SLICER_SEGMENTATIONS_PLUGINS_EXPORT qSlicerSubjectHierarchySegmentationsPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_SEGMENTATIONS_PLUGINS_EXPORT qSlicerSubjectHierarchySegmentationsPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -44,10 +45,14 @@ public:
   /// and gets a confidence value for a certain MRML node (usually the type and possibly attributes are checked).
   /// \param node Node to be added to the hierarchy
   /// \param parentItemID Prospective parent of the node to add.
-  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
+  ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the
+  ///   to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID ) const override;
+  ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier
+  ///   attribute)
+  double canAddNodeToSubjectHierarchy(
+    vtkMRMLNode* node,
+    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const override;
 
   /// Creates subject hierarchy item using default method and updates all segments
   bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID) override;
@@ -71,7 +76,8 @@ public:
   /// set context menu etc.)
   /// \param item Item to handle in the subject hierarchy tree
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
-  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier attribute)
+  ///   item, and 1 means that the plugin is the only one that can handle the item (by node type or identifier
+  ///   attribute)
   double canOwnSubjectHierarchyItem(vtkIdType itemID) const override;
 
   /// Get role that the plugin assigns to the subject hierarchy node.
@@ -106,7 +112,8 @@ public:
   void showContextMenuActionsForItem(vtkIdType itemID) override;
 
   /// Get visibility context menu item actions to add to tree view.
-  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  /// These item visibility context menu actions can be shown in the implementations of \sa
+  /// showVisibilityContextMenuActionsForItem
   QList<QAction*> visibilityContextMenuActions() const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.

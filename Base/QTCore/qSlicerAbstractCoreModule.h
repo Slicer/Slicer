@@ -37,10 +37,15 @@ class vtkSlicerApplicationLogic;
 class vtkMRMLScene;
 class qSlicerAbstractCoreModulePrivate;
 
-
-#define qSlicerGetTitleMacro(_TITLE)               \
-  static QString staticTitle() { return _TITLE; }  \
-  QString title() const override { return _TITLE; }
+#define qSlicerGetTitleMacro(_TITLE) \
+  static QString staticTitle()       \
+  {                                  \
+    return _TITLE;                   \
+  }                                  \
+  QString title() const override     \
+  {                                  \
+    return _TITLE;                   \
+  }
 
 /// \brief qSlicerAbstractCoreModule is the base class of any module in Slicer.
 //
@@ -112,9 +117,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// By default, modules can create new widget representations.
   /// \sa isWidgetRepresentationCreationEnabled
   /// \sa setWidgetRepresentationCreationEnabled
-  Q_PROPERTY(bool widgetRepresentationCreationEnabled
-             READ isWidgetRepresentationCreationEnabled
-             WRITE setWidgetRepresentationCreationEnabled)
+  Q_PROPERTY(bool widgetRepresentationCreationEnabled READ isWidgetRepresentationCreationEnabled WRITE
+               setWidgetRepresentationCreationEnabled)
 
   /// This property holds the help of the module.
   /// The help is displayed inside the module as a tab.
@@ -189,7 +193,6 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   Q_PROPERTY(QStringList associatedNodeTypes READ associatedNodeTypes)
 
 public:
-
   typedef QObject Superclass;
   /// Constructor
   /// Warning: If there is no parent given, make sure you delete the object.
@@ -202,7 +205,7 @@ public:
   virtual void printAdditionalInfo();
 
   /// Convenience method to return slicer wiki URL
-  QString slicerWikiUrl() const{ return "https://www.slicer.org/w/index.php"; }
+  QString slicerWikiUrl() const { return "https://www.slicer.org/w/index.php"; }
 
   /// Convenience method that returns a string that can be inserted into the application help text that contains
   /// link to the module's documentation in current Slicer version's documentation on ReadTheDocs.

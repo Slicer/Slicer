@@ -32,7 +32,7 @@ class vtkStringArray;
 /// \brief MRML node for referencing a collection of data to plot.
 class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
 {
- public:
+public:
   //----------------------------------------------------------------
   /// Standard methods for MRML nodes
   //----------------------------------------------------------------
@@ -46,7 +46,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
 
   ///
   /// Set node attributes.
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -58,13 +58,11 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
 
   ///
   /// Get node XML tag name (like Volume, Model).
-  const char* GetNodeTagName() override {return "PlotChart";};
+  const char* GetNodeTagName() override { return "PlotChart"; };
 
   ///
   /// Method to propagate events generated in mrml.
-  void ProcessMRMLEvents(vtkObject* caller,
-                                 unsigned long event,
-                                 void* callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// PlotModifiedEvent is fired when:
   ///  - a new plot node is observed
@@ -119,11 +117,11 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
 
   ///
   /// Get IDs of all associated plot data nodes.
-  virtual int GetPlotSeriesNodeIDs(std::vector<std::string> &plotSeriesNodeIDs);
+  virtual int GetPlotSeriesNodeIDs(std::vector<std::string>& plotSeriesNodeIDs);
 
   ///
   /// Get names of all associated plot data nodes.
-  virtual int GetPlotSeriesNodeNames(std::vector<std::string> &plotSeriesNodeNames);
+  virtual int GetPlotSeriesNodeNames(std::vector<std::string>& plotSeriesNodeNames);
 
   ///
   /// Return the number of plot node IDs (and plot nodes as they always
@@ -166,7 +164,6 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   ///
   /// Return true if PlotSeriesNodeID is in the plot node ID list.
   bool HasPlotSeriesNodeID(const char* plotSeriesNodeID);
-
 
   /// Title of the chart
   vtkSetStringMacro(Title);
@@ -274,7 +271,7 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
   /// value contains the value found in the first plot data node.
   bool GetPropertyFromAllPlotSeriesNodes(PlotSeriesNodeProperty plotProperty, std::string& value);
 
- protected:
+protected:
   //----------------------------------------------------------------
   /// Constructor and destructor
   //----------------------------------------------------------------
@@ -297,27 +294,27 @@ class VTK_MRML_EXPORT vtkMRMLPlotChartNode : public vtkMRMLNode
 
   static const char* PlotSeriesNodeReferenceRole;
 
-  char* Title{nullptr};
-  int TitleFontSize{20};
-  bool TitleVisibility{true};
-  bool GridVisibility{true};
-  bool LegendVisibility{true};
-  int LegendFontSize{16};
-  bool XAxisRangeAuto{true};
-  bool YAxisRangeAuto{true};
+  char* Title{ nullptr };
+  int TitleFontSize{ 20 };
+  bool TitleVisibility{ true };
+  bool GridVisibility{ true };
+  bool LegendVisibility{ true };
+  int LegendFontSize{ 16 };
+  bool XAxisRangeAuto{ true };
+  bool YAxisRangeAuto{ true };
   double XAxisRange[2];
   double YAxisRange[2];
-  bool XAxisLogScale{false};
-  bool YAxisLogScale{false};
-  char* XAxisTitle{nullptr};
-  bool XAxisTitleVisibility{true};
-  char* YAxisTitle{nullptr};
-  bool YAxisTitleVisibility{true};
-  int AxisTitleFontSize{16};
-  int AxisLabelFontSize{12};
-  char* FontType{nullptr};
-  bool EnablePointMoveAlongX{true};
-  bool EnablePointMoveAlongY{true};
+  bool XAxisLogScale{ false };
+  bool YAxisLogScale{ false };
+  char* XAxisTitle{ nullptr };
+  bool XAxisTitleVisibility{ true };
+  char* YAxisTitle{ nullptr };
+  bool YAxisTitleVisibility{ true };
+  int AxisTitleFontSize{ 16 };
+  int AxisLabelFontSize{ 12 };
+  char* FontType{ nullptr };
+  bool EnablePointMoveAlongX{ true };
+  bool EnablePointMoveAlongY{ true };
 };
 
 #endif

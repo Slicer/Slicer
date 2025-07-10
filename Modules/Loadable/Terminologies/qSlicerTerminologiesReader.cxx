@@ -41,7 +41,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologiesReader::qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic, QObject* _parent)
+qSlicerTerminologiesReader::qSlicerTerminologiesReader(vtkSlicerTerminologiesModuleLogic* terminologiesLogic,
+                                                       QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerTerminologiesReaderPrivate)
 {
@@ -106,7 +107,8 @@ double qSlicerTerminologiesReader::canLoadFileConfidence(const QString& fileName
         // or /segment-context-schema.json around position 200, read a bit further
         // to account for slight variations in the header.
         QString line = in.read(400);
-        bool looksLikeTerminology = line.contains("/anatomic-context-schema.json") || line.contains("/segment-context-schema.json");
+        bool looksLikeTerminology =
+          line.contains("/anatomic-context-schema.json") || line.contains("/segment-context-schema.json");
         confidence = (looksLikeTerminology ? 0.6 : 0.4);
       }
     }

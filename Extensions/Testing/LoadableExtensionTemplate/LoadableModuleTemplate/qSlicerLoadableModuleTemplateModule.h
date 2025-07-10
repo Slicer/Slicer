@@ -25,8 +25,7 @@
 
 class qSlicerLoadableModuleTemplateModulePrivate;
 
-class Q_SLICER_QTMODULES_LOADABLEMODULETEMPLATE_EXPORT
-qSlicerLoadableModuleTemplateModule
+class Q_SLICER_QTMODULES_LOADABLEMODULETEMPLATE_EXPORT qSlicerLoadableModuleTemplateModule
   : public qSlicerLoadableModule
 {
   Q_OBJECT
@@ -34,7 +33,6 @@ qSlicerLoadableModuleTemplateModule
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerLoadableModuleTemplateModule(QObject* parent = 0);
   ~qSlicerLoadableModuleTemplateModule() override;
@@ -51,7 +49,6 @@ public:
   QStringList dependencies() const override;
 
 protected:
-
   /// Initialize the module. Register the volumes reader/writer
   void setup() override;
 
@@ -67,7 +64,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerLoadableModuleTemplateModule);
   Q_DISABLE_COPY(qSlicerLoadableModuleTemplateModule);
-
 };
 
 #endif

@@ -34,16 +34,15 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qSlicerRelativePathMapperPrivate::qSlicerRelativePathMapperPrivate()
-{
-}
+qSlicerRelativePathMapperPrivate::qSlicerRelativePathMapperPrivate() {}
 
 // --------------------------------------------------------------------------
 // qSlicerRelativePathMapper methods
 
 // --------------------------------------------------------------------------
-qSlicerRelativePathMapper::qSlicerRelativePathMapper(
-  QObject* targetObject, const QByteArray& property, const QByteArray& signal)
+qSlicerRelativePathMapper::qSlicerRelativePathMapper(QObject* targetObject,
+                                                     const QByteArray& property,
+                                                     const QByteArray& signal)
   : QObject(targetObject)
   , d_ptr(new qSlicerRelativePathMapperPrivate)
 {
@@ -66,9 +65,7 @@ qSlicerRelativePathMapper::qSlicerRelativePathMapper(
 }
 
 // --------------------------------------------------------------------------
-qSlicerRelativePathMapper::~qSlicerRelativePathMapper()
-{
-}
+qSlicerRelativePathMapper::~qSlicerRelativePathMapper() {}
 
 // --------------------------------------------------------------------------
 QByteArray qSlicerRelativePathMapper::propertyName() const

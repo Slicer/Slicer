@@ -54,7 +54,9 @@ public:
 
   /// Returns an instance of the widget
   qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
-  { return new qMRMLMarkupsAngleMeasurementsWidget(); }
+  {
+    return new qMRMLMarkupsAngleMeasurementsWidget();
+  }
 
 public slots:
   /// Change angle mode of current angle markup if combobox selection is made.

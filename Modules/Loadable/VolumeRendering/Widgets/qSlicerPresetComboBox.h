@@ -30,8 +30,7 @@
 class vtkMRMLNode;
 class qSlicerPresetComboBoxPrivate;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerPresetComboBox
-  : public qMRMLNodeComboBox
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerPresetComboBox : public qMRMLNodeComboBox
 {
   Q_OBJECT
   /// Show icons in the combobox and popup window.

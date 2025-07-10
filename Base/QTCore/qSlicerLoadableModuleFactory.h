@@ -33,21 +33,20 @@
 class qSlicerLoadableModuleFactoryPrivate;
 
 //-----------------------------------------------------------------------------
-class qSlicerLoadableModuleFactoryItem
-  : public ctkFactoryPluginItem<qSlicerAbstractCoreModule>
+class qSlicerLoadableModuleFactoryItem : public ctkFactoryPluginItem<qSlicerAbstractCoreModule>
 {
 public:
   qSlicerLoadableModuleFactoryItem();
+
 protected:
   qSlicerAbstractCoreModule* instanciator() override;
 };
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerLoadableModuleFactory :
-  public ctkAbstractPluginFactory<qSlicerAbstractCoreModule>
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerLoadableModuleFactory
+  : public ctkAbstractPluginFactory<qSlicerAbstractCoreModule>
 {
 public:
-
   typedef ctkAbstractPluginFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerLoadableModuleFactory();
   ~qSlicerLoadableModuleFactory() override;

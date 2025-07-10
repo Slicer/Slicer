@@ -56,7 +56,8 @@ public slots:
   /// Set the inspected MRML node
   void setMRMLNode(vtkMRMLNode* node);
 
-  /// Refreshes the widget contents (useful for keeping displayed contents up-to-date without invoking node modified event)
+  /// Refreshes the widget contents (useful for keeping displayed contents up-to-date without invoking node modified
+  /// event)
   void updateWidgetFromMRML();
 
 protected:

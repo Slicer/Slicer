@@ -75,7 +75,8 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow* mainWindow)
   QAction* helpKeyboardShortcutsAction = new QAction(mainWindow);
   helpKeyboardShortcutsAction->setObjectName("HelpKeyboardShortcutsAction");
   helpKeyboardShortcutsAction->setText(qSlicerAppMainWindow::tr("&Keyboard Shortcuts Reference"));
-  helpKeyboardShortcutsAction->setToolTip(qSlicerAppMainWindow::tr("Raise a window that lists commonly-used keyboard shortcuts."));
+  helpKeyboardShortcutsAction->setToolTip(
+    qSlicerAppMainWindow::tr("Raise a window that lists commonly-used keyboard shortcuts."));
 
   QAction* helpDocumentationAction = new QAction(mainWindow);
   helpDocumentationAction->setObjectName("HelpDocumentationAction");
@@ -101,7 +102,8 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow* mainWindow)
   QAction* helpBrowseTutorialsAction = new QAction(mainWindow);
   helpBrowseTutorialsAction->setObjectName("HelpBrowseTutorialsAction");
   helpBrowseTutorialsAction->setText(qSlicerAppMainWindow::tr("Browse Tutorials"));
-  helpBrowseTutorialsAction->setToolTip(qSlicerAppMainWindow::tr("Raise the training pages in your favorite web browser"));
+  helpBrowseTutorialsAction->setToolTip(
+    qSlicerAppMainWindow::tr("Raise the training pages in your favorite web browser"));
 
   QAction* helpJoinUsOnLinkedInAction = new QAction(mainWindow);
   helpJoinUsOnLinkedInAction->setObjectName("HelpJoinUsOnLinkedInAction");
@@ -130,12 +132,14 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow* mainWindow)
   QAction* helpReportBugOrFeatureRequestAction = new QAction(mainWindow);
   helpReportBugOrFeatureRequestAction->setObjectName("HelpReportBugOrFeatureRequestAction");
   helpReportBugOrFeatureRequestAction->setText(qSlicerAppMainWindow::tr("Report a Bug"));
-  helpReportBugOrFeatureRequestAction->setToolTip(qSlicerAppMainWindow::tr("Report error or request enhancement or new feature."));
+  helpReportBugOrFeatureRequestAction->setToolTip(
+    qSlicerAppMainWindow::tr("Report error or request enhancement or new feature."));
 
   QAction* helpAboutSlicerAppAction = new QAction(mainWindow);
   helpAboutSlicerAppAction->setObjectName("HelpAboutSlicerAppAction");
   helpAboutSlicerAppAction->setText(qSlicerAppMainWindow::tr("About 3D Slicer"));
-  helpAboutSlicerAppAction->setToolTip(qSlicerAppMainWindow::tr("Provides a description of the Slicer effort and its support."));
+  helpAboutSlicerAppAction->setToolTip(
+    qSlicerAppMainWindow::tr("Provides a description of the Slicer effort and its support."));
 
   //----------------------------------------------------------------------------
   // Calling "setupUi()" after adding the actions above allows the call
@@ -201,8 +205,7 @@ qSlicerAppMainWindow::qSlicerAppMainWindow(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAppMainWindow::qSlicerAppMainWindow(qSlicerAppMainWindowPrivate* pimpl,
-                                           QWidget* windowParent)
+qSlicerAppMainWindow::qSlicerAppMainWindow(qSlicerAppMainWindowPrivate* pimpl, QWidget* windowParent)
   : Superclass(pimpl, windowParent)
 {
   // init() is called by derived class.
@@ -224,8 +227,7 @@ void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()
   qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   foreach (const QString& moduleName, moduleManager->modulesNames())
   {
-    qSlicerAbstractModule* module =
-      qobject_cast<qSlicerAbstractModule*>(moduleManager->module(moduleName));
+    qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(moduleManager->module(moduleName));
     if (module)
     {
       moduleActions << module->action();
@@ -242,7 +244,8 @@ void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpBrowseTutorialsAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/getting_started.html#tutorials"));
+  QDesktopServices::openUrl(
+    QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/getting_started.html#tutorials"));
 }
 
 //---------------------------------------------------------------------------
@@ -254,19 +257,22 @@ void qSlicerAppMainWindow::on_HelpDocumentationAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpQuickStartAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/getting_started.html#quick-start"));
+  QDesktopServices::openUrl(
+    QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/getting_started.html#quick-start"));
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpGetHelpAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/get_help.html"));
+  QDesktopServices::openUrl(
+    QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/get_help.html"));
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpUserInterfaceAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/user_interface.html"));
+  QDesktopServices::openUrl(
+    QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/user_interface.html"));
 }
 
 //---------------------------------------------------------------------------
@@ -296,19 +302,23 @@ void qSlicerAppMainWindow::on_HelpViewLicenseAction_triggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpHowToCiteAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/about.html#how-to-cite"));
+  QDesktopServices::openUrl(
+    QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/about.html#how-to-cite"));
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpSlicerPublicationsAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl("https://scholar.google.com/scholar?&as_sdt=1%2C22&as_vis=1&q=%28%223D+Slicer%22+OR+%22slicer+org%22+OR+Slicer3D%29+-Slic3r+&btnG="));
+  QDesktopServices::openUrl(
+    QUrl("https://scholar.google.com/"
+         "scholar?&as_sdt=1%2C22&as_vis=1&q=%28%223D+Slicer%22+OR+%22slicer+org%22+OR+Slicer3D%29+-Slic3r+&btnG="));
 }
 
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindow::on_HelpAcknowledgmentsAction_triggered()
 {
-  QDesktopServices::openUrl(QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/about.html#acknowledgments"));
+  QDesktopServices::openUrl(
+    QUrl(qSlicerApplication::application()->documentationBaseUrl() + "/user_guide/about.html#acknowledgments"));
 }
 
 //---------------------------------------------------------------------------

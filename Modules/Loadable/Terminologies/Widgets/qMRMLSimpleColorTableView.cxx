@@ -39,8 +39,10 @@
 class qMRMLSimpleColorTableViewPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLSimpleColorTableView);
+
 protected:
   qMRMLSimpleColorTableView* const q_ptr;
+
 public:
   qMRMLSimpleColorTableViewPrivate(qMRMLSimpleColorTableView& object);
   void init();
@@ -134,12 +136,12 @@ bool qMRMLSimpleColorTableView::selectColorByIndex(int colorIndex)
     return false;
   }
 
-  QModelIndexList foundIndices = colorModel->match(colorModel->index(0,0), qMRMLItemDelegate::ColorEntryRole,
-    colorIndex, 1, Qt::MatchExactly | Qt::MatchRecursive);
+  QModelIndexList foundIndices = colorModel->match(
+    colorModel->index(0, 0), qMRMLItemDelegate::ColorEntryRole, colorIndex, 1, Qt::MatchExactly | Qt::MatchRecursive);
   if (foundIndices.size() == 0)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to find color model index by color index " << colorIndex
-      << " in color node " << colorNode->GetName();
+                << " in color node " << colorNode->GetName();
     return false;
   }
 

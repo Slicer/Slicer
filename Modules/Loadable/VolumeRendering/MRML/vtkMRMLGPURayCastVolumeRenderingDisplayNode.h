@@ -38,7 +38,7 @@ public:
 
   // Description:
   // Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -50,7 +50,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "GPURayCastVolumeRendering";}
+  const char* GetNodeTagName() override { return "GPURayCastVolumeRendering"; }
 
 protected:
   vtkMRMLGPURayCastVolumeRenderingDisplayNode();

@@ -46,7 +46,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Read data from \a FileName and set it in the referenced node.
@@ -88,7 +88,9 @@ public:
   /// if both .nrrd and .seg.nrrd are matched), including dot.
   /// If filename is not specified then the current FileName will be used.
   /// If there is no match then empty is returned.
-  virtual std::string GetSupportedFileExtension(const char* fileName = nullptr, bool includeReadable = true, bool includeWriteable = true);
+  virtual std::string GetSupportedFileExtension(const char* fileName = nullptr,
+                                                bool includeReadable = true,
+                                                bool includeWriteable = true);
 
   ///
   /// return the nth file name, null if doesn't exist
@@ -110,7 +112,7 @@ public:
 
   ///
   /// Propagate Progress Event generated in ReadData
-  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   ///
   /// Possible Read and Write states
@@ -151,7 +153,8 @@ public:
 
   //@{
   /// Get/Set the state of writing.
-  /// This is a transient property (that is expected to change and is not considered as a node change that needs to be stored persistently).
+  /// This is a transient property (that is expected to change and is not considered as a node change that needs to be
+  /// stored persistently).
   vtkGetMacro(WriteState, int);
   void SetWriteState(int writeState);
   void SetWriteStatePending() { this->SetWriteState(this->Pending); };
@@ -202,24 +205,22 @@ public:
 
   //@{
   /// Allow to set specific file format that this node will write output.
-  /// This is a transient property (that is expected to change and is not a reason for saving the node again if modified).
+  /// This is a transient property (that is expected to change and is not a reason for saving the node again if
+  /// modified).
   virtual void SetWriteFileFormat(const char* writeFileFormat);
   vtkGetStringMacro(WriteFileFormat);
   //@}
 
   ///
   /// Add in another file name to the list of file names
-  unsigned int AddFileName (const char* fileName);
+  unsigned int AddFileName(const char* fileName);
   ///
   /// Clear the array of file names
   void ResetFileNameList();
 
   ///
   /// See how many file names were generated during ExecuteInformation
-  int GetNumberOfFileNames() const
-  {
-    return (int)this->FileNameList.size();
-  };
+  int GetNumberOfFileNames() const { return (int)this->FileNameList.size(); };
 
   ///
   /// is filename in the filename list already?
@@ -240,10 +241,7 @@ public:
 
   ///
   /// Return how many URI names this storage node holds in it's list
-  int GetNumberOfURIs()
-  {
-    return (int)this->URIList.size();
-  }
+  int GetNumberOfURIs() { return (int)this->URIList.size(); }
 
   ///
   /// Set a new data directory for all files
@@ -385,12 +383,16 @@ public:
   //@{
   /// Ensures that the file name (excluding the extension) is shorter than the maximum allowed length.
   /// If the filename is shorter than the maximum allowed length then it is returned unchanged.
-  /// If the filename is longer than the maximum allowed length then the filename is shortened by using the following format:
-  /// [first maxFileNameLength-hashLength-1 characters of the base name]_[hashLength long hash code].[extension]
-  /// The full base name of the file will be exactly maxFileNameLength characters long. maxFileNameLength must be 8 or higher.
-  /// If extensionLength is not known then GetSupportedFileExtension() method can be used to get it from the filename.
+  /// If the filename is longer than the maximum allowed length then the filename is shortened by using the following
+  /// format: [first maxFileNameLength-hashLength-1 characters of the base name]_[hashLength long hash code].[extension]
+  /// The full base name of the file will be exactly maxFileNameLength characters long. maxFileNameLength must be 8 or
+  /// higher. If extensionLength is not known then GetSupportedFileExtension() method can be used to get it from the
+  /// filename.
   /// \sa GetSupportedFileExtension()
-  static std::string ClampFileName(const std::string& filename, int extensionLength, int maxFileNameLength, int hashLength = 4);
+  static std::string ClampFileName(const std::string& filename,
+                                   int extensionLength,
+                                   int maxFileNameLength,
+                                   int hashLength = 4);
   //@}
 
   /// Attempts to correct legacy file paths stored in the node's FileName property.
@@ -427,12 +429,12 @@ protected:
   ///
   /// If the URI is not null, fetch it and save it to the node's FileName location or
   /// load directly into the reference node.
-  void StageReadData ( vtkMRMLNode* refNode );
+  void StageReadData(vtkMRMLNode* refNode);
 
   ///
   /// Copy data from the local file location (node->FileName) or node to the remote
   /// location specified by the URI
-  void StageWriteData ( vtkMRMLNode* refNode );
+  void StageWriteData(vtkMRMLNode* refNode);
 
   char* FileName;
   char* TempFileName;

@@ -41,8 +41,10 @@
 class qMRMLColorTableViewPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLColorTableView);
+
 protected:
   qMRMLColorTableView* const q_ptr;
+
 public:
   qMRMLColorTableViewPrivate(qMRMLColorTableView& object);
   void init();
@@ -119,8 +121,9 @@ void qMRMLColorTableView::setMRMLColorNode(vtkMRMLColorNode* node)
   mrmlModel->setMRMLColorNode(node);
   this->sortFilterProxyModel()->invalidate();
 
-  this->setEditTriggers( (node && node->GetType() == vtkMRMLColorTableNode::User) ?
-    QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed : QAbstractItemView::NoEditTriggers);
+  this->setEditTriggers((node && node->GetType() == vtkMRMLColorTableNode::User)
+                          ? QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed
+                          : QAbstractItemView::NoEditTriggers);
 }
 
 //------------------------------------------------------------------------------

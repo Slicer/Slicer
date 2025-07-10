@@ -25,7 +25,7 @@ class vtkMRMLTransformNode;
 /// Storage nodes has methods to read/write transforms to/from disk.
 class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
 {
-  public:
+public:
   static vtkMRMLTransformStorageNode* New();
   vtkTypeMacro(vtkMRMLTransformStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -34,7 +34,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -42,7 +42,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
 
   ///
   /// Get node XML tag name (like Storage, Transform)
-  const char* GetNodeTagName() override {return "TransformStorage";};
+  const char* GetNodeTagName() override { return "TransformStorage"; };
 
   ///
   /// Copy the node's attributes to this object
@@ -60,9 +60,9 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
   /// itk::BSplineDeformableTransform (instead of current itk::BSplineTransform).
   /// If a transform cannot be written to ITKv3 format, then this flag is ignored and the transform
   /// is written in ITKv4 format.
-  vtkGetMacro ( PreferITKv3CompatibleTransforms, int );
-  vtkSetMacro ( PreferITKv3CompatibleTransforms, int );
-  vtkBooleanMacro ( PreferITKv3CompatibleTransforms, int );
+  vtkGetMacro(PreferITKv3CompatibleTransforms, int);
+  vtkSetMacro(PreferITKv3CompatibleTransforms, int);
+  vtkBooleanMacro(PreferITKv3CompatibleTransforms, int);
 
 protected:
   vtkMRMLTransformStorageNode();
@@ -77,11 +77,12 @@ protected:
 
   /// The method calls SetAndObserveTransformFromParent or SetAndObserveTransformToParent, depending on
   /// which one will result in storing a transform that is not inverted (Inverse flag is false).
-  /// For example, if it the transform's Inverse flag is false then it is saved by using SetAndObserveTransformFromParent as is;
-  /// if transform's Inverse flag is true, then the transform is inverted (so that its Inverse flag becomes false)
-  /// and the resulting transform is saved in SetAndObserveTransformToParent.
-  /// It makes the displayed transform information more intuitive.
-  virtual void SetAndObserveTransformFromParentAutoInvert(vtkMRMLTransformNode* transformNode, vtkAbstractTransform* transform);
+  /// For example, if it the transform's Inverse flag is false then it is saved by using
+  /// SetAndObserveTransformFromParent as is; if transform's Inverse flag is true, then the transform is inverted (so
+  /// that its Inverse flag becomes false) and the resulting transform is saved in SetAndObserveTransformToParent. It
+  /// makes the displayed transform information more intuitive.
+  virtual void SetAndObserveTransformFromParentAutoInvert(vtkMRMLTransformNode* transformNode,
+                                                          vtkAbstractTransform* transform);
 
   /// Read data and set it in the referenced node
   int ReadDataInternal(vtkMRMLNode* refNode) override;
@@ -125,7 +126,6 @@ protected:
   static bool RegisterInverseTransformTypesCompleted;
 
 protected:
-
   int PreferITKv3CompatibleTransforms;
 };
 

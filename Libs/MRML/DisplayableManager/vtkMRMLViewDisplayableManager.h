@@ -45,7 +45,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLViewDisplayableManager();
   ~vtkMRMLViewDisplayableManager() override;
 
@@ -76,7 +75,6 @@ protected:
   void UpdateFromCameraNode();
 
 private:
-
   vtkMRMLViewDisplayableManager(const vtkMRMLViewDisplayableManager&) = delete;
   void operator=(const vtkMRMLViewDisplayableManager&) = delete;
 

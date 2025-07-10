@@ -52,32 +52,34 @@ qMRMLUtils::qMRMLUtils(QObject* _parent)
 qMRMLUtils::~qMRMLUtils() = default;
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector)
+void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double>& vector)
 {
-  if (!matrix) { return; }
+  if (!matrix)
+  {
+    return;
+  }
 
   vector.clear();
 
-  for (int i=0; i < 4; i++)
+  for (int i = 0; i < 4; i++)
   {
-    for (int j=0; j < 4; j++)
+    for (int j = 0; j < 4; j++)
     {
-      vector.append(matrix->GetElement(i,j));
+      vector.append(matrix->GetElement(i, j));
     }
   }
 }
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global,
-    vtkTransform* transform)
+void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global, vtkTransform* transform)
 {
-  Self::getTransformInCoordinateSystem(vtkMRMLTransformNode::SafeDownCast( node ),
-    global, transform);
+  Self::getTransformInCoordinateSystem(vtkMRMLTransformNode::SafeDownCast(node), global, transform);
 }
 
 //------------------------------------------------------------------------------
 void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformNode,
-  bool global, vtkTransform* transform)
+                                                bool global,
+                                                vtkTransform* transform)
 {
   Q_ASSERT(transform);
   if (!transform)
@@ -93,7 +95,7 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformN
   }
 
   vtkNew<vtkMatrix4x4> matrix;
-  int matrixDefined=transformNode->GetMatrixTransformToParent(matrix.GetPointer());
+  int matrixDefined = transformNode->GetMatrixTransformToParent(matrix.GetPointer());
   Q_ASSERT(matrixDefined);
   if (!matrixDefined)
   {

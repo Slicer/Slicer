@@ -13,8 +13,7 @@ bool setModuleAttribute(int line,
                         PyObject* expectedAttributeValue,
                         bool expectedResult)
 {
-  bool currentResult = qSlicerScriptedUtils::setModuleAttribute(
-          moduleName, attributeName, expectedAttributeValue);
+  bool currentResult = qSlicerScriptedUtils::setModuleAttribute(moduleName, attributeName, expectedAttributeValue);
   if (currentResult != expectedResult)
   {
     std::cerr << "Line " << line << " - Problem with setModuleAttribute()\n"
@@ -38,8 +37,7 @@ bool setModuleAttribute(int line,
   }
 
   PythonQtObjectPtr currentAttributeValue;
-  currentAttributeValue.setNewRef(
-        PyObject_GetAttrString(module, attributeName.toUtf8()));
+  currentAttributeValue.setNewRef(PyObject_GetAttrString(module, attributeName.toUtf8()));
   if (currentAttributeValue != expectedAttributeValue)
   {
     std::cerr << "Line " << line << " - Problem with setModuleAttribute()\n"

@@ -22,7 +22,7 @@
  *
  * The vtkSlicerLineWidget is used to create a line widget with a set of 2 points.
  *
-*/
+ */
 
 #ifndef vtkSlicerLineWidget_h
 #define vtkSlicerLineWidget_h
@@ -44,7 +44,9 @@ public:
   vtkTypeMacro(vtkSlicerLineWidget, vtkSlicerMarkupsWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
-  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
+  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                   vtkMRMLAbstractViewNode* viewNode,
+                                   vtkRenderer* renderer) override;
 
   /// Create instance of the markups widget
   vtkSlicerMarkupsWidgetCreateInstanceMacro(vtkSlicerLineWidget);

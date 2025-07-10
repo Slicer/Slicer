@@ -48,7 +48,8 @@ public:
   /// Get/Set parameter description
   std::string GetDescription(int index) VTK_EXPECTS(0 <= index && index < GetNumberOfParameters());
   std::string GetDescription(const std::string& name);
-  void SetDescription(int index, const std::string& description) VTK_EXPECTS(0 <= index && index < GetNumberOfParameters());
+  void SetDescription(int index, const std::string& description)
+    VTK_EXPECTS(0 <= index && index < GetNumberOfParameters());
   void SetDescription(const std::string& name, const std::string& description);
   /// @}
 
@@ -85,7 +86,6 @@ public:
   void CopyParameter(vtkSegmentationConversionParameters* source, int sourceIndex);
 
 protected:
-
   struct ConversionParameterType
   {
     std::string Name;

@@ -63,10 +63,13 @@ public:
   Q_PROPERTY(QString textFilter READ textFilter WRITE setTextFilter)
   Q_PROPERTY(bool jumpToSelectedSegmentEnabled READ jumpToSelectedSegmentEnabled WRITE setJumpToSelectedSegmentEnabled)
   Q_PROPERTY(int segmentCount READ segmentCount)
-  Q_PROPERTY(QString useTerminologySelectorSettingsKey READ useTerminologySelectorSettingsKey WRITE setUseTerminologySelectorSettingsKey)
+  Q_PROPERTY(QString useTerminologySelectorSettingsKey READ useTerminologySelectorSettingsKey WRITE
+               setUseTerminologySelectorSettingsKey)
   Q_PROPERTY(bool useTerminologySelector READ useTerminologySelector WRITE setUseTerminologySelector)
-  Q_PROPERTY(bool terminologySelectorOptionVisible READ terminologySelectorOptionVisible WRITE setTerminologySelectorOptionVisible)
-  Q_PROPERTY(bool terminologySelectorAutoDisable READ terminologySelectorAutoDisable WRITE setTerminologySelectorAutoDisable)
+  Q_PROPERTY(bool terminologySelectorOptionVisible READ terminologySelectorOptionVisible WRITE
+               setTerminologySelectorOptionVisible)
+  Q_PROPERTY(
+    bool terminologySelectorAutoDisable READ terminologySelectorAutoDisable WRITE setTerminologySelectorAutoDisable)
 
   typedef qMRMLWidget Superclass;
   /// Constructor
@@ -118,9 +121,9 @@ public:
   /// \sa setTextFilter
   QString textFilter();
 
-  /// The settings key used to specify whether standard terminologies or simple selectors are used for choosing segment name and color.
-  /// Default value is "Segmentations/UseTerminologySelector".
-  /// If set to empty then the option will not be saved to and loaded from application settings.
+  /// The settings key used to specify whether standard terminologies or simple selectors are used for choosing segment
+  /// name and color. Default value is "Segmentations/UseTerminologySelector". If set to empty then the option will not
+  /// be saved to and loaded from application settings.
   /// \sa setUseTerminologySelectorSettingsKey
   QString useTerminologySelectorSettingsKey() const;
 
@@ -128,10 +131,12 @@ public:
   /// If false then simple selectors are used.
   bool useTerminologySelector() const;
 
-  /// Returns true if the user can choose between the standard terminologies selector or the simple selectors for segment name and color.
+  /// Returns true if the user can choose between the standard terminologies selector or the simple selectors for
+  /// segment name and color.
   bool terminologySelectorOptionVisible() const;
 
-  /// Offer automatic disable of using standard terminologies selector if custom segment names or colors are used frequently.
+  /// Offer automatic disable of using standard terminologies selector if custom segment names or colors are used
+  /// frequently.
   bool terminologySelectorAutoDisable() const;
 
   // If the specified status should be shown in the table
@@ -177,7 +182,7 @@ public slots:
   void setJumpToSelectedSegmentEnabled(bool enable);
 
   /// Set the status of the selected segments
-  void setSelectedSegmentsStatus(int status=-1);
+  void setSelectedSegmentsStatus(int status = -1);
 
   /// Erase the contents of the selected segments and set the status to "Not started"
   void clearSelectedSegments();
@@ -195,9 +200,11 @@ public slots:
   void setUseTerminologySelectorSettingsKey(QString settingsKey);
   /// Set if standard terminologies are used for choosing segment name and color.
   void setUseTerminologySelector(bool useTerminologySelector);
-  /// Set if the user can choose between the standard terminologies selector or the simple selectors for segment name and color.
+  /// Set if the user can choose between the standard terminologies selector or the simple selectors for segment name
+  /// and color.
   void setTerminologySelectorOptionVisible(bool visible);
-  /// Offer automatic disable of using standard terminologies selector if custom segment names or colors are used frequently.
+  /// Offer automatic disable of using standard terminologies selector if custom segment names or colors are used
+  /// frequently.
   void setTerminologySelectorAutoDisable(bool autoDisable);
 
   /// Set if the specified status should be shown in the table
@@ -255,11 +262,16 @@ protected slots:
 
 protected:
   /// Convenience function to set segment visibility options from event handlers
-  /// \sa onVisibilityButtonToggled \sa onVisibility3DActionToggled \sa onVisibility2DFillActionToggled \sa onVisibility2DOutlineActionToggled
-  /// \param visible Visibility of the segment referenced from senderObject. If 0, then hide, if 1 then show, otherwise don't change
-  /// \param visible3D Visibility of the segment referenced from senderObject in 3D. If 0, then hide, if 1 then show, otherwise don't change
-  /// \param visible2DFill Visibility of the segment referenced from senderObject for 2D fill. If 0, then hide, if 1 then show, otherwise don't change
-  /// \param visible2DOutline Visibility of the segment referenced from senderObject for 2D outline. If 0, then hide, if 1 then show, otherwise don't change
+  /// \sa onVisibilityButtonToggled \sa onVisibility3DActionToggled \sa onVisibility2DFillActionToggled \sa
+  /// onVisibility2DOutlineActionToggled
+  /// \param visible Visibility of the segment referenced from senderObject. If 0, then hide, if 1 then show, otherwise
+  /// don't change
+  /// \param visible3D Visibility of the segment referenced from senderObject in 3D. If 0, then hide, if 1 then show,
+  /// otherwise don't change
+  /// \param visible2DFill Visibility of the segment referenced from senderObject for 2D fill. If 0, then hide, if 1
+  /// then show, otherwise don't change
+  /// \param visible2DOutline Visibility of the segment referenced from senderObject for 2D outline. If 0, then hide, if
+  /// 1 then show, otherwise don't change
   void setSegmentVisibility(QObject* senderObject, int visible, int visible3D, int visible2DFill, int visible2DOutline);
   void setSegmentVisibility(QString segmentId, int visible, int visible3D, int visible2DFill, int visible2DOutline);
 

@@ -37,7 +37,6 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLoadableModule : public qSlicerAbstractM
   Q_OBJECT
 
 public:
-
   typedef qSlicerLoadableModule Self;
   typedef qSlicerAbstractModule Superclass;
   qSlicerLoadableModule(QObject* parent = nullptr);
@@ -67,7 +66,7 @@ public:
   static bool importModulePythonExtensions(qSlicerCorePythonManager* pythonManager,
                                            const QString& intDir,
                                            const QString& modulePath,
-                                           bool isEmbedded=false);
+                                           bool isEmbedded = false);
 
   /// Set \a module identified by \a moduleName has an attribute of "slicer.modules" module dictionary.
   /// qSlicerCoreApplication::corePythonManager()
@@ -77,8 +76,7 @@ public:
 
   /// Set \a moduleName has an attribute of "slicer.moduleNames" module dictionary.
   /// qSlicerCoreApplication::corePythonManager()
-  static bool addModuleNameToSlicerModuleNames(qSlicerCorePythonManager* pythonManager,
-                                               const QString& moduleName);
+  static bool addModuleNameToSlicerModuleNames(qSlicerCorePythonManager* pythonManager, const QString& moduleName);
 
 protected:
   void setup() override;
@@ -91,7 +89,6 @@ private:
   Q_DISABLE_COPY(qSlicerLoadableModule);
 };
 
-Q_DECLARE_INTERFACE(qSlicerLoadableModule,
-                     "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
+Q_DECLARE_INTERFACE(qSlicerLoadableModule, "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
 
 #endif

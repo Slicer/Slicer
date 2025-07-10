@@ -40,8 +40,12 @@ static const double DISPLACEMENT_SCALE = 0.63;
 
 //----------------------------------------------------------------------------
 void CreateBSplineVtk2(vtkOrientedBSplineTransform* bsplineTransform,
-  double origin[3], double spacing[3], double direction[3][3], double dims[3],
-  const double bulkMatrix[3][3], const double bulkOffset[3])
+                       double origin[3],
+                       double spacing[3],
+                       double direction[3][3],
+                       double dims[3],
+                       const double bulkMatrix[3][3],
+                       const double bulkOffset[3])
 {
   vtkNew<vtkImageData> bsplineCoefficients;
   bsplineCoefficients->SetExtent(0, dims[0] - 1, 0, dims[1] - 1, 0, dims[2] - 1);
@@ -100,13 +104,15 @@ int TestMarkupOrientation(std::vector<PointOrientation> originalOrientations, vt
     markupsNode->GetNthControlPointOrientationMatrix(index, currentControlPointOrientation);
     for (int i = 0; i < 9; ++i)
     {
-      CHECK_DOUBLE_TOLERANCE(currentControlPointOrientation->GetData()[i], pointOrientation.Orientation->GetData()[i], TOLERANCE);
+      CHECK_DOUBLE_TOLERANCE(
+        currentControlPointOrientation->GetData()[i], pointOrientation.Orientation->GetData()[i], TOLERANCE);
     }
 
     // ------------------
     // Check that the matrix orientation in world coordinates matches the expected values
     vtkNew<vtkGeneralTransform> transfromFromNodeToWorld;
-    vtkMRMLTransformNode::GetTransformBetweenNodes(markupsNode->GetParentTransformNode(), nullptr, transfromFromNodeToWorld);
+    vtkMRMLTransformNode::GetTransformBetweenNodes(
+      markupsNode->GetParentTransformNode(), nullptr, transfromFromNodeToWorld);
 
     double xAxisActual_Node[3] = { 1.0, 0.0, 0.0 };
     pointOrientation.Orientation->MultiplyPoint(xAxisActual_Node, xAxisActual_Node);
@@ -118,13 +124,16 @@ int TestMarkupOrientation(std::vector<PointOrientation> originalOrientations, vt
     pointOrientation.Orientation->MultiplyPoint(zAxisActual_Node, zAxisActual_Node);
 
     double xAxisActual_World[3] = { 1.0, 0.0, 0.0 };
-    transfromFromNodeToWorld->TransformVectorAtPoint(pointOrientation.Position.GetData(), xAxisActual_Node, xAxisActual_World);
+    transfromFromNodeToWorld->TransformVectorAtPoint(
+      pointOrientation.Position.GetData(), xAxisActual_Node, xAxisActual_World);
 
     double yAxisActual_World[3] = { 0.0, 1.0, 0.0 };
-    transfromFromNodeToWorld->TransformVectorAtPoint(pointOrientation.Position.GetData(), yAxisActual_Node, yAxisActual_World);
+    transfromFromNodeToWorld->TransformVectorAtPoint(
+      pointOrientation.Position.GetData(), yAxisActual_Node, yAxisActual_World);
 
     double zAxisActual_World[3] = { 0.0, 0.0, 1.0 };
-    transfromFromNodeToWorld->TransformVectorAtPoint(pointOrientation.Position.GetData(), zAxisActual_Node, zAxisActual_World);
+    transfromFromNodeToWorld->TransformVectorAtPoint(
+      pointOrientation.Position.GetData(), zAxisActual_Node, zAxisActual_World);
 
     vtkNew<vtkMatrix3x3> controlPointOrientation_World;
     markupsNode->GetNthControlPointOrientationMatrixWorld(index, controlPointOrientation_World->GetData());
@@ -148,7 +157,7 @@ int TestMarkupOrientation(std::vector<PointOrientation> originalOrientations, vt
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsNodeTest6(int, char* [])
+int vtkMRMLMarkupsNodeTest6(int, char*[])
 {
 
   std::cout << "Testing vtkMarkupsNode orientation transformation" << std::endl;
@@ -177,19 +186,22 @@ int vtkMRMLMarkupsNodeTest6(int, char* [])
 
   PointOrientation po3;
   po3.Position = vtkVector3d(96.0, 93.0, -35.0);
-  double po3Orientation[9] = { -0.216468, 0.0449462, 0.97525, -0.323356, - 0.945858, - 0.0281809, 0.921185, -0.321455, 0.219281};
+  double po3Orientation[9] = { -0.216468,  0.0449462, 0.97525,   -0.323356, -0.945858,
+                               -0.0281809, 0.921185,  -0.321455, 0.219281 };
   po3.Orientation->DeepCopy(po3Orientation);
   pointOrientation.push_back(po3);
 
   PointOrientation po4;
   po4.Position = vtkVector3d(-96.2611, 24.1876, 60.1228);
-  double po4Orientation[9] = { 0.157376, 0.946914, 0.280335, 0.986736, -0.139335, -0.0832936, -0.0398113, 0.289725, -0.956282 };
+  double po4Orientation[9] = { 0.157376,   0.946914,   0.280335, 0.986736, -0.139335,
+                               -0.0832936, -0.0398113, 0.289725, -0.956282 };
   po4.Orientation->DeepCopy(po4Orientation);
   pointOrientation.push_back(po4);
 
   PointOrientation po5;
   po5.Position = vtkVector3d(113.133, -23.2094, 11.3227);
-  double po5Orientation[9] = { -0.167427, -0.635573, -0.753667, -0.826077, 0.507694, -0.244629, 0.538113, 0.581629, -0.610034 };
+  double po5Orientation[9] = { -0.167427, -0.635573, -0.753667, -0.826077, 0.507694,
+                               -0.244629, 0.538113,  0.581629,  -0.610034 };
   po5.Orientation->DeepCopy(po5Orientation);
   pointOrientation.push_back(po5);
 
@@ -222,11 +234,19 @@ int vtkMRMLMarkupsNodeTest6(int, char* [])
   vtkNew<vtkOrientedBSplineTransform> bSplineTransform;
   double bSplineOrigin[3] = { -100, -100, -100 };
   double bSplineSpacing[3] = { 100, 100, 100 };
-  double bSplineDirection[3][3] = { {0.92128500, -0.36017075, -0.146666625}, {0.31722386, 0.91417248, -0.25230478}, {0.22495105, 0.18591857, 0.95646814} };
-  double bSplineDims[3] = { 7,8,7 };
+  double bSplineDirection[3][3] = { { 0.92128500, -0.36017075, -0.146666625 },
+                                    { 0.31722386, 0.91417248, -0.25230478 },
+                                    { 0.22495105, 0.18591857, 0.95646814 } };
+  double bSplineDims[3] = { 7, 8, 7 };
   const double bSplineBulkMatrix[3][3] = { { 0.7, 0.2, 0.1 }, { 0.1, 0.8, 0.1 }, { 0.05, 0.2, 0.9 } };
   const double bSplineBulkOffset[3] = { -5, 3, 6 };
-  CreateBSplineVtk2(bSplineTransform, bSplineOrigin, bSplineSpacing, bSplineDirection, bSplineDims, bSplineBulkMatrix, bSplineBulkOffset);
+  CreateBSplineVtk2(bSplineTransform,
+                    bSplineOrigin,
+                    bSplineSpacing,
+                    bSplineDirection,
+                    bSplineDims,
+                    bSplineBulkMatrix,
+                    bSplineBulkOffset);
 
   vtkNew<vtkMRMLTransformNode> bSplineTransformNode;
   scene->AddNode(bSplineTransformNode);

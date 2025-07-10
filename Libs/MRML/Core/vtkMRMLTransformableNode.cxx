@@ -39,9 +39,8 @@ vtkMRMLTransformableNode::vtkMRMLTransformableNode()
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-  this->AddNodeReferenceRole(this->GetTransformNodeReferenceRole(),
-                             this->GetTransformNodeReferenceMRMLAttributeName(),
-                             events.GetPointer());
+  this->AddNodeReferenceRole(
+    this->GetTransformNodeReferenceRole(), this->GetTransformNodeReferenceMRMLAttributeName(), events.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -75,22 +74,19 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
   this->EndModify(disabledModify);
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
   const char* transformNodeID = this->GetNodeReferenceID(this->GetTransformNodeReferenceRole());
 
-  os << indent << "TransformNodeID: " <<
-    (transformNodeID ? transformNodeID : "(none)") << "\n";
+  os << indent << "TransformNodeID: " << (transformNodeID ? transformNodeID : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLTransformableNode::GetTransformNodeID()
 {
-  this->SetTransformNodeIDInternal(
-    this->GetNodeReferenceID(this->GetTransformNodeReferenceRole()));
+  this->SetTransformNodeIDInternal(this->GetNodeReferenceID(this->GetTransformNodeReferenceRole()));
 
   return this->GetTransformNodeIDInternal();
 }
@@ -98,8 +94,7 @@ const char* vtkMRMLTransformableNode::GetTransformNodeID()
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 {
-  return vtkMRMLTransformNode::SafeDownCast(
-        this->GetNodeReference(this->GetTransformNodeReferenceRole()));
+  return vtkMRMLTransformNode::SafeDownCast(this->GetNodeReference(this->GetTransformNodeReferenceRole()));
 }
 
 //----------------------------------------------------------------------------
@@ -115,7 +110,8 @@ bool vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char* transfor
     {
       if (newParentTransformNode == thisTransform || thisTransform->IsTransformNodeMyChild(newParentTransformNode))
       {
-        vtkErrorMacro("vtkMRMLTransformableNode::SetAndObserveTransformNodeID failed: parent transform cannot be self or a child transform");
+        vtkErrorMacro("vtkMRMLTransformableNode::SetAndObserveTransformNodeID failed: parent transform cannot be self "
+                      "or a child transform");
         return false;
       }
     }
@@ -125,19 +121,15 @@ bool vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char* transfor
   return true;
 }
 
-
 //---------------------------------------------------------------------------
-void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject* caller,
-                                                  unsigned long event,
-                                                  void* callData )
+void vtkMRMLTransformableNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   // as retrieving the parent transform node can be costly (browse the scene)
   // do some checks here to prevent retrieving the node for nothing.
-  if (caller == nullptr ||
-      (event != vtkCommand::ModifiedEvent &&
-      event != vtkMRMLTransformableNode::TransformModifiedEvent))
+  if (caller == nullptr
+      || (event != vtkCommand::ModifiedEvent && event != vtkMRMLTransformableNode::TransformModifiedEvent))
   {
     return;
   }
@@ -147,7 +139,6 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject* caller,
     this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, nullptr);
   }
 }
-
 
 //-----------------------------------------------------------
 bool vtkMRMLTransformableNode::CanApplyNonLinearTransforms() const
@@ -166,7 +157,7 @@ void vtkMRMLTransformableNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatri
 //-----------------------------------------------------------
 void vtkMRMLTransformableNode::ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform))
 {
-  vtkErrorMacro("ApplyTransform is not implemented for node type "<<this->GetClassName());
+  vtkErrorMacro("ApplyTransform is not implemented for node type " << this->GetClassName());
 }
 
 //-----------------------------------------------------------
@@ -240,13 +231,13 @@ void vtkMRMLTransformableNode::TransformPointFromWorld(const double inWorld[3], 
 //---------------------------------------------------------------------------
 void vtkMRMLTransformableNode::TransformPointToWorld(const vtkVector3d& inLocal, vtkVector3d& outWorld)
 {
-  this->TransformPointToWorld(inLocal.GetData(),outWorld.GetData());
+  this->TransformPointToWorld(inLocal.GetData(), outWorld.GetData());
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLTransformableNode::TransformPointFromWorld(const vtkVector3d& inWorld, vtkVector3d& outLocal)
 {
-  this->TransformPointFromWorld(inWorld.GetData(),outLocal.GetData());
+  this->TransformPointFromWorld(inWorld.GetData(), outLocal.GetData());
 }
 
 //---------------------------------------------------------------------------

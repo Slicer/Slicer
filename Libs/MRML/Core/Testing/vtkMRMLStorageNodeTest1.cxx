@@ -23,12 +23,12 @@
 
 namespace
 {
-  enum TestReadReferenceType
-  {
-    NullptrAsReference,
-    TransformNodeAsReference,
-    ModelNodeAsReference
-  };
+enum TestReadReferenceType
+{
+  NullptrAsReference,
+  TransformNodeAsReference,
+  ModelNodeAsReference
+};
 }
 
 //---------------------------------------------------------------------------
@@ -40,29 +40,18 @@ public:
 
   vtkTypeMacro(vtkMRMLStorageNodeTestHelper1, vtkMRMLStorageNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLStorageNodeTestHelper1::New();
-  }
-  const char* GetNodeTagName() override
-  {
-    return "vtkMRMLStorageNodeTestHelper1";
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLStorageNodeTestHelper1::New(); }
+  const char* GetNodeTagName() override { return "vtkMRMLStorageNodeTestHelper1"; }
 
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
 
-  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override
-  {
-    return refNode->IsA(this->SupportedClass);
-  }
-  int ReadDataInternal(vtkMRMLNode* vtkNotUsed(refNode)) override
-  {
-    return this->ReadDataReturnValue;
-  }
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override { return refNode->IsA(this->SupportedClass); }
+  int ReadDataInternal(vtkMRMLNode* vtkNotUsed(refNode)) override { return this->ReadDataReturnValue; }
 
-  const char* SupportedClass{nullptr};
-  int ReadDataReturnValue{0};
+  const char* SupportedClass{ nullptr };
+  int ReadDataReturnValue{ 0 };
+
 protected:
   vtkMRMLStorageNodeTestHelper1() = default;
 };
@@ -94,9 +83,9 @@ int TestBasics()
 
 //---------------------------------------------------------------------------
 int TestReadData(TestReadReferenceType referenceNodeType,
-                  const char* supportedClass,
-                  int readDataReturn,
-                  int expectedRes)
+                 const char* supportedClass,
+                 int readDataReturn,
+                 int expectedRes)
 {
   vtkNew<vtkMRMLStorageNodeTestHelper1> storageNode;
   storageNode->SupportedClass = supportedClass;
@@ -107,9 +96,15 @@ int TestReadData(TestReadReferenceType referenceNodeType,
   vtkMRMLNode* referenceNode = nullptr;
   switch (referenceNodeType)
   {
-    case NullptrAsReference: referenceNode = nullptr; break;
-    case TransformNodeAsReference: referenceNode = transformNode; break;
-    case ModelNodeAsReference: referenceNode = modelNode; break;
+    case NullptrAsReference:
+      referenceNode = nullptr;
+      break;
+    case TransformNodeAsReference:
+      referenceNode = transformNode;
+      break;
+    case ModelNodeAsReference:
+      referenceNode = modelNode;
+      break;
   }
   int res = storageNode->ReadData(referenceNode);
   std::cout << "StoredTime: " << storageNode->GetStoredTime() << std::endl;
@@ -121,43 +116,43 @@ int TestReadData(TestReadReferenceType referenceNodeType,
 int TestReadData()
 {
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(NullptrAsReference, "invalid", /*readDataResult=*/ 0, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(NullptrAsReference, "invalid", /*readDataResult=*/0, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(NullptrAsReference, "invalid", /*readDataResult=*/ 1, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(NullptrAsReference, "invalid", /*readDataResult=*/1, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(NullptrAsReference, "vtkMRMLModelNode", /*readDataResult=*/ 0, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(NullptrAsReference, "vtkMRMLModelNode", /*readDataResult=*/0, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(NullptrAsReference, "vtkMRMLModelNode", /*readDataResult=*/ 1, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(NullptrAsReference, "vtkMRMLModelNode", /*readDataResult=*/1, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(TransformNodeAsReference, "invalid", /*readDataResult=*/ 0, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(TransformNodeAsReference, "invalid", /*readDataResult=*/0, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(TransformNodeAsReference, "invalid", /*readDataResult=*/ 1, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(TransformNodeAsReference, "invalid", /*readDataResult=*/1, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(TransformNodeAsReference, "vtkMRMLModelNode", /*readDataResult=*/ 0, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(TransformNodeAsReference, "vtkMRMLModelNode", /*readDataResult=*/0, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(TransformNodeAsReference, "vtkMRMLModelNode", /*readDataResult=*/ 1, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(TransformNodeAsReference, "vtkMRMLModelNode", /*readDataResult=*/1, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(ModelNodeAsReference, "invalid", /*readDataResult=*/ 0, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(ModelNodeAsReference, "invalid", /*readDataResult=*/0, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(ModelNodeAsReference, "invalid", /*readDataResult=*/ 1, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(ModelNodeAsReference, "invalid", /*readDataResult=*/1, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  CHECK_EXIT_SUCCESS(TestReadData(ModelNodeAsReference, "vtkMRMLModelNode", /*readDataResult=*/ 0, /*success=*/ 0));
+  CHECK_EXIT_SUCCESS(TestReadData(ModelNodeAsReference, "vtkMRMLModelNode", /*readDataResult=*/0, /*success=*/0));
   TESTING_OUTPUT_ASSERT_ERRORS_END();
-  CHECK_EXIT_SUCCESS(TestReadData(ModelNodeAsReference, "vtkMRMLModelNode", /*readDataResult=*/ 1, /*success=*/ 1));
+  CHECK_EXIT_SUCCESS(TestReadData(ModelNodeAsReference, "vtkMRMLModelNode", /*readDataResult=*/1, /*success=*/1));
 
   return EXIT_SUCCESS;
 }

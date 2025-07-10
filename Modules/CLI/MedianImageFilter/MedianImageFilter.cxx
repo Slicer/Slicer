@@ -29,29 +29,27 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char* argv[], T )
+int DoIt(int argc, char* argv[], T)
 {
   PARSE_ARGS;
 
   typedef itk::Image<T, 3> InputImageType;
   typedef itk::Image<T, 3> OutputImageType;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
+  typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
 
-  reader->SetFileName( inputVolume.c_str() );
-  writer->SetFileName( outputVolume.c_str() );
+  reader->SetFileName(inputVolume.c_str());
+  writer->SetFileName(outputVolume.c_str());
 
-  typedef itk::MedianImageFilter<
-    InputImageType, OutputImageType>  FilterType;
+  typedef itk::MedianImageFilter<InputImageType, OutputImageType> FilterType;
 
   typename FilterType::Pointer filter = FilterType::New();
 
-  itk::PluginFilterWatcher watcher(filter, "Median Image Filter",
-                                   CLPProcessInformation);
+  itk::PluginFilterWatcher watcher(filter, "Median Image Filter", CLPProcessInformation);
 
   typename InputImageType::SizeType indexRadius;
 
@@ -59,9 +57,9 @@ int DoIt( int argc, char* argv[], T )
   indexRadius[1] = neighborhood[1]; // radius along y
   indexRadius[2] = neighborhood[2]; // radius along slice
 
-  filter->SetRadius( indexRadius );
-  filter->SetInput( reader->GetOutput() );
-  writer->SetInput( filter->GetOutput() );
+  filter->SetRadius(indexRadius);
+  filter->SetInput(reader->GetOutput());
+  writer->SetInput(filter->GetOutput());
   writer->Update();
   return EXIT_SUCCESS;
 }
@@ -73,7 +71,7 @@ int main(int argc, char* argv[])
 
   PARSE_ARGS;
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum pixelType;
   itk::IOComponentEnum componentType;
 
   try
@@ -82,37 +80,37 @@ int main(int argc, char* argv[])
 
     // This filter handles all types
 
-    switch( componentType )
+    switch (componentType)
     {
       case itk::IOComponentEnum::UCHAR:
-        return DoIt( argc, argv, static_cast<unsigned char>(0) );
+        return DoIt(argc, argv, static_cast<unsigned char>(0));
         break;
       case itk::IOComponentEnum::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0) );
+        return DoIt(argc, argv, static_cast<char>(0));
         break;
       case itk::IOComponentEnum::USHORT:
-        return DoIt( argc, argv, static_cast<unsigned short>(0) );
+        return DoIt(argc, argv, static_cast<unsigned short>(0));
         break;
       case itk::IOComponentEnum::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0) );
+        return DoIt(argc, argv, static_cast<short>(0));
         break;
       case itk::IOComponentEnum::UINT:
-        return DoIt( argc, argv, static_cast<unsigned int>(0) );
+        return DoIt(argc, argv, static_cast<unsigned int>(0));
         break;
       case itk::IOComponentEnum::INT:
-        return DoIt( argc, argv, static_cast<int>(0) );
+        return DoIt(argc, argv, static_cast<int>(0));
         break;
       case itk::IOComponentEnum::ULONG:
-        return DoIt( argc, argv, static_cast<unsigned long>(0) );
+        return DoIt(argc, argv, static_cast<unsigned long>(0));
         break;
       case itk::IOComponentEnum::LONG:
-        return DoIt( argc, argv, static_cast<long>(0) );
+        return DoIt(argc, argv, static_cast<long>(0));
         break;
       case itk::IOComponentEnum::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0) );
+        return DoIt(argc, argv, static_cast<float>(0));
         break;
       case itk::IOComponentEnum::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0) );
+        return DoIt(argc, argv, static_cast<double>(0));
         break;
       case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
       default:
@@ -120,13 +118,13 @@ int main(int argc, char* argv[])
         break;
     }
   }
-  catch ( itk::ExceptionObject& excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
   }
-  catch ( std::exception& excep )
+  catch (std::exception& excep)
   {
     std::cerr << "STD exception caught !" << std::endl;
     std::cerr << excep.what() << std::endl;

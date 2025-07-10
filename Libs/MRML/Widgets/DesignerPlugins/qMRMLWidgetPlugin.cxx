@@ -23,7 +23,8 @@
 #include "qMRMLWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLWidgetPlugin::qMRMLWidgetPlugin(QObject* _parent): QObject(_parent)
+qMRMLWidgetPlugin::qMRMLWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
@@ -39,7 +40,7 @@ QString qMRMLWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLWidget\" \
           name=\"MRMLWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

@@ -21,10 +21,9 @@ public:
   ///
   /// Set/Get the extent of the whole output image.
   void SetWholeExtent(int extent[6]);
-  void SetWholeExtent(int minX, int maxX, int minY, int maxY,
-                            int minZ, int maxZ);
+  void SetWholeExtent(int minX, int maxX, int minY, int maxY, int minZ, int maxZ);
   void GetWholeExtent(int extent[6]);
-  int* GetWholeExtent() {return this->WholeExtent;}
+  int* GetWholeExtent() { return this->WholeExtent; }
 
   ///
   /// Set/Get the center of the ellipsoid.
@@ -55,26 +54,16 @@ public:
   /// Set what type of scalar data this source should generate.
   vtkSetMacro(OutputScalarType, int);
   vtkGetMacro(OutputScalarType, int);
-  void SetOutputScalarTypeToDouble()
-    {this->SetOutputScalarType(VTK_DOUBLE);}
-  void SetOutputScalarTypeToFloat()
-    {this->SetOutputScalarType(VTK_FLOAT);}
-  void SetOutputScalarTypeToLong()
-    {this->SetOutputScalarType(VTK_LONG);}
-  void SetOutputScalarTypeToUnsignedLong()
-    {this->SetOutputScalarType(VTK_UNSIGNED_LONG);};
-  void SetOutputScalarTypeToInt()
-    {this->SetOutputScalarType(VTK_INT);}
-  void SetOutputScalarTypeToUnsignedInt()
-    {this->SetOutputScalarType(VTK_UNSIGNED_INT);}
-  void SetOutputScalarTypeToShort()
-    {this->SetOutputScalarType(VTK_SHORT);}
-  void SetOutputScalarTypeToUnsignedShort()
-    {this->SetOutputScalarType(VTK_UNSIGNED_SHORT);}
-  void SetOutputScalarTypeToChar()
-    {this->SetOutputScalarType(VTK_CHAR);}
-  void SetOutputScalarTypeToUnsignedChar()
-    {this->SetOutputScalarType(VTK_UNSIGNED_CHAR);}
+  void SetOutputScalarTypeToDouble() { this->SetOutputScalarType(VTK_DOUBLE); }
+  void SetOutputScalarTypeToFloat() { this->SetOutputScalarType(VTK_FLOAT); }
+  void SetOutputScalarTypeToLong() { this->SetOutputScalarType(VTK_LONG); }
+  void SetOutputScalarTypeToUnsignedLong() { this->SetOutputScalarType(VTK_UNSIGNED_LONG); };
+  void SetOutputScalarTypeToInt() { this->SetOutputScalarType(VTK_INT); }
+  void SetOutputScalarTypeToUnsignedInt() { this->SetOutputScalarType(VTK_UNSIGNED_INT); }
+  void SetOutputScalarTypeToShort() { this->SetOutputScalarType(VTK_SHORT); }
+  void SetOutputScalarTypeToUnsignedShort() { this->SetOutputScalarType(VTK_UNSIGNED_SHORT); }
+  void SetOutputScalarTypeToChar() { this->SetOutputScalarType(VTK_CHAR); }
+  void SetOutputScalarTypeToUnsignedChar() { this->SetOutputScalarType(VTK_UNSIGNED_CHAR); }
 
   /// If you do no want to define a rectangular with edges of 90 degree
   void SetCorners(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
@@ -95,10 +84,10 @@ protected:
 
   int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   void ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo) override;
+
 private:
   vtkImageRectangularSource(const vtkImageRectangularSource&) = delete;
   void operator=(const vtkImageRectangularSource&) = delete;
 };
-
 
 #endif

@@ -117,8 +117,10 @@ int TestSelectNextItem()
   vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
   sequencesLogic->SetMRMLScene(scene.GetPointer());
 
-  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
-  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
+  vtkMRMLSequenceNode* sequenceNode =
+    vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  vtkMRMLSequenceBrowserNode* browserNode =
+    vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
   CHECK_NOT_NULL(browserNode);
   browserNode->SetAndObserveMasterSequenceNodeID(sequenceNode->GetID());
 
@@ -171,8 +173,10 @@ int TestRemoveItem()
   vtkNew<vtkSlicerSequencesLogic> sequencesLogic;
   sequencesLogic->SetMRMLScene(scene.GetPointer());
 
-  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
-  vtkMRMLSequenceBrowserNode* browserNode = vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
+  vtkMRMLSequenceNode* sequenceNode =
+    vtkMRMLSequenceNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceNode"));
+  vtkMRMLSequenceBrowserNode* browserNode =
+    vtkMRMLSequenceBrowserNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSequenceBrowserNode"));
   CHECK_NOT_NULL(browserNode);
   browserNode->SetAndObserveMasterSequenceNodeID(sequenceNode->GetID());
 
@@ -212,7 +216,7 @@ int TestRemoveItem()
   return EXIT_SUCCESS;
 }
 
-}  // end anonymous namespace
+} // end anonymous namespace
 
 int vtkMRMLSequenceBrowserNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {

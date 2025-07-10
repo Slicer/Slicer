@@ -37,14 +37,14 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerModuleManager::qSlicerModuleManager(QObject* newParent)
-  : Superclass(newParent), d_ptr(new qSlicerModuleManagerPrivate)
+  : Superclass(newParent)
+  , d_ptr(new qSlicerModuleManagerPrivate)
 {
   Q_D(qSlicerModuleManager);
   d->ModuleFactoryManager = new qSlicerModuleFactoryManager(this);
-  connect(d->ModuleFactoryManager, SIGNAL(moduleLoaded(QString)),
-          this, SIGNAL(moduleLoaded(QString)));
-  connect(d->ModuleFactoryManager, SIGNAL(moduleAboutToBeUnloaded(QString)),
-          this, SIGNAL(moduleAboutToBeUnloaded(QString)));
+  connect(d->ModuleFactoryManager, SIGNAL(moduleLoaded(QString)), this, SIGNAL(moduleLoaded(QString)));
+  connect(
+    d->ModuleFactoryManager, SIGNAL(moduleAboutToBeUnloaded(QString)), this, SIGNAL(moduleAboutToBeUnloaded(QString)));
 }
 
 //-----------------------------------------------------------------------------

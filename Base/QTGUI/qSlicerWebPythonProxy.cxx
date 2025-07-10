@@ -96,7 +96,7 @@ QString qSlicerWebPythonProxy::evalPython(const QString& python, int mode)
 {
   Q_D(qSlicerWebPythonProxy);
 
-  ctkAbstractPythonManager::ExecuteStringMode executeStringMode{ctkAbstractPythonManager::FileInput};
+  ctkAbstractPythonManager::ExecuteStringMode executeStringMode{ ctkAbstractPythonManager::FileInput };
   switch (mode)
   {
     case qSlicerWebPythonProxy::EvalInput:

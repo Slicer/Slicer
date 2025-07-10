@@ -22,7 +22,7 @@
  *
  *
  *
-*/
+ */
 
 #ifndef vtkSlicerPointsWidget_h
 #define vtkSlicerPointsWidget_h
@@ -43,7 +43,9 @@ public:
   vtkTypeMacro(vtkSlicerPointsWidget, vtkSlicerMarkupsWidget);
 
   /// Create the default widget representation and initializes the widget and representation.
-  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
+  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                   vtkMRMLAbstractViewNode* viewNode,
+                                   vtkRenderer* renderer) override;
 
   /// Create instance of the markups widget
   vtkSlicerMarkupsWidgetCreateInstanceMacro(vtkSlicerPointsWidget);

@@ -45,7 +45,8 @@ class QMRML_WIDGETS_EXPORT qMRMLScreenShotDialog : public QDialog
 public:
   typedef QDialog Superclass;
 
-  enum WidgetType{
+  enum WidgetType
+  {
     ThreeD = 0,
     Red = 1,
     Yellow = 2,
@@ -97,7 +98,6 @@ protected slots:
 
   /// Present save as dialog to directly save image
   void saveAs();
-
 
 private:
   QString enumToString(int type);

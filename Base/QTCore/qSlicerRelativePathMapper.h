@@ -54,7 +54,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerRelativePathMapper : public QObject
   Q_PROPERTY(QStringList paths READ paths WRITE setPaths NOTIFY pathsChanged)
 
   Q_PROPERTY(QString relativePath READ relativePath WRITE setRelativePath NOTIFY relativePathChanged STORED false)
-  Q_PROPERTY(QStringList relativePaths READ relativePaths WRITE setRelativePaths NOTIFY relativePathsChanged STORED false)
+  Q_PROPERTY(
+    QStringList relativePaths READ relativePaths WRITE setRelativePaths NOTIFY relativePathsChanged STORED false)
 public:
   /// Map the property \a property of the object.
   /// The mapper becomes a child of \a object and will be destructed when

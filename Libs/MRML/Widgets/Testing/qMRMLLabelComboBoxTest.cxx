@@ -35,7 +35,6 @@ class qMRMLLabelComboBoxTester : public QObject
 {
   Q_OBJECT
 private:
-
   vtkSmartPointer<vtkMRMLColorTableNode> ColorTableNode;
 
   qMRMLLabelComboBox* LabelComboBox;

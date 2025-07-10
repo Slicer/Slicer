@@ -85,44 +85,36 @@ void qMRMLTreeViewPrivate::init()
   this->setSortFilterProxyModel(new qMRMLSortFilterProxyModel(q));
   q->setSceneModelType("Transform");
 
-  //ctkModelTester* tester = new ctkModelTester(p);
-  //tester->setModel(this->SortFilterModel);
-  //QObject::connect(q, SIGNAL(activated(QModelIndex)),
-  //                 q, SLOT(onActivated(QModelIndeK)));
-  //QObject::connect(q, SIGNAL(clicked(QModelIndex)),
-  //                 q, SLOT(onActivated(QModelIndex)));
+  // ctkModelTester* tester = new ctkModelTester(p);
+  // tester->setModel(this->SortFilterModel);
+  // QObject::connect(q, SIGNAL(activated(QModelIndex)),
+  //                  q, SLOT(onActivated(QModelIndeK)));
+  // QObject::connect(q, SIGNAL(clicked(QModelIndex)),
+  //                  q, SLOT(onActivated(QModelIndex)));
 
   q->setUniformRowHeights(true);
 
-  QObject::connect(q, SIGNAL(collapsed(QModelIndex)),
-                   q, SLOT(onNumberOfVisibleIndexChanged()));
-  QObject::connect(q, SIGNAL(expanded(QModelIndex)),
-                   q, SLOT(onNumberOfVisibleIndexChanged()));
-//QObject::connect(q->header(), SIGNAL(sectionResized(int,int,int)),
-  //                  q, SLOT(onSectionResized()));
+  QObject::connect(q, SIGNAL(collapsed(QModelIndex)), q, SLOT(onNumberOfVisibleIndexChanged()));
+  QObject::connect(q, SIGNAL(expanded(QModelIndex)), q, SLOT(onNumberOfVisibleIndexChanged()));
+  // QObject::connect(q->header(), SIGNAL(sectionResized(int,int,int)),
+  //                   q, SLOT(onSectionResized()));
   q->horizontalScrollBar()->installEventFilter(q);
 
   this->NodeMenu = new QMenu(q);
   this->NodeMenu->setObjectName("nodeMenuTreeView");
 
   // rename node
-  this->RenameAction =
-    new QAction(qMRMLTreeView::tr("Rename"),this->NodeMenu);
+  this->RenameAction = new QAction(qMRMLTreeView::tr("Rename"), this->NodeMenu);
   this->NodeMenu->addAction(this->RenameAction);
-  QObject::connect(this->RenameAction, SIGNAL(triggered()),
-                   q, SLOT(renameCurrentNode()));
+  QObject::connect(this->RenameAction, SIGNAL(triggered()), q, SLOT(renameCurrentNode()));
 
   // delete node
-  this->DeleteAction =
-    new QAction(qMRMLTreeView::tr("Delete"),this->NodeMenu);
+  this->DeleteAction = new QAction(qMRMLTreeView::tr("Delete"), this->NodeMenu);
   this->NodeMenu->addAction(this->DeleteAction);
-  QObject::connect(this->DeleteAction, SIGNAL(triggered()),
-                   q, SLOT(deleteCurrentNode()));
+  QObject::connect(this->DeleteAction, SIGNAL(triggered()), q, SLOT(deleteCurrentNode()));
   // EditAction is hidden by default
-  this->EditAction =
-    new QAction(qMRMLTreeView::tr("Edit properties..."), this->NodeMenu);
-  QObject::connect(this->EditAction, SIGNAL(triggered()),
-                   q, SLOT(editCurrentNode()));
+  this->EditAction = new QAction(qMRMLTreeView::tr("Edit properties..."), this->NodeMenu);
+  QObject::connect(this->EditAction, SIGNAL(triggered()), q, SLOT(editCurrentNode()));
   this->SceneMenu = new QMenu(q);
   this->SceneMenu->setObjectName("sceneMenuTreeView");
   this->ExpandedNodes->RemoveAllItems();
@@ -144,10 +136,8 @@ void qMRMLTreeViewPrivate::setSceneModel(qMRMLSceneModel* newModel)
 
   this->SceneModel = newModel;
   this->SortFilterModel->setSourceModel(this->SceneModel);
-  QObject::connect(this->SceneModel, SIGNAL(sceneAboutToBeUpdated()),
-                   q, SLOT(saveTreeExpandState()));
-  QObject::connect(this->SceneModel, SIGNAL(sceneUpdated()),
-                   q, SLOT(loadTreeExpandState()));
+  QObject::connect(this->SceneModel, SIGNAL(sceneAboutToBeUpdated()), q, SLOT(saveTreeExpandState()));
+  QObject::connect(this->SceneModel, SIGNAL(sceneUpdated()), q, SLOT(loadTreeExpandState()));
   q->expandToDepth(2);
 }
 
@@ -165,13 +155,14 @@ void qMRMLTreeViewPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* ne
   this->SortFilterModel = newSortModel;
   // Set the input of the view
   // if no filter is given then let's show the scene model directly
-  q->QTreeView::setModel(this->SortFilterModel
-    ? static_cast<QAbstractItemModel*>(this->SortFilterModel)
-    : static_cast<QAbstractItemModel*>(this->SceneModel));
+  q->QTreeView::setModel(this->SortFilterModel ? static_cast<QAbstractItemModel*>(this->SortFilterModel)
+                                               : static_cast<QAbstractItemModel*>(this->SceneModel));
   // Setting a new model to the view resets the selection model. Reobserve
   // the selectionChanged signal. Observing currentRowChanged() is discouraged.
-  QObject::connect(q->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-                   q, SLOT(onSelectionChanged(QItemSelection,QItemSelection)));
+  QObject::connect(q->selectionModel(),
+                   SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+                   q,
+                   SLOT(onSelectionChanged(QItemSelection, QItemSelection)));
   if (!this->SortFilterModel)
   {
     return;
@@ -181,10 +172,12 @@ void qMRMLTreeViewPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* ne
   this->SortFilterModel->setSourceModel(this->SceneModel);
 
   // resize the view if new rows are added/removed
-  QObject::connect(this->SortFilterModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
-                   q, SLOT(onNumberOfVisibleIndexChanged()));
-  QObject::connect(this->SortFilterModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
-                   q, SLOT(onNumberOfVisibleIndexChanged()));
+  QObject::connect(this->SortFilterModel,
+                   SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)),
+                   q,
+                   SLOT(onNumberOfVisibleIndexChanged()));
+  QObject::connect(
+    this->SortFilterModel, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(onNumberOfVisibleIndexChanged()));
 
   q->expandToDepth(2);
   q->onNumberOfVisibleIndexChanged();
@@ -216,23 +209,19 @@ QSize qMRMLTreeViewPrivate::sizeHint() const
     return this->TreeViewSizeHint;
   }
   int visibleIndexCount = 0;
-  for (QModelIndex index = this->SortFilterModel->mrmlSceneIndex();
-      index.isValid();
-      index = q->indexBelow(index))
+  for (QModelIndex index = this->SortFilterModel->mrmlSceneIndex(); index.isValid(); index = q->indexBelow(index))
   {
     ++visibleIndexCount;
   }
   this->TreeViewSizeHint = q->QTreeView::sizeHint();
   this->TreeViewSizeHint.setHeight(
-    q->frameWidth()
-    + (q->isHeaderHidden() ? 0 : q->header()->sizeHint().height())
+    q->frameWidth() + (q->isHeaderHidden() ? 0 : q->header()->sizeHint().height())
     + visibleIndexCount * q->sizeHintForRow(0)
     + (q->horizontalScrollBar()->isVisibleTo(const_cast<qMRMLTreeView*>(q)) ? q->horizontalScrollBar()->height() : 0)
     + q->frameWidth());
   // Add half a line to give some space under the tree
   this->TreeViewSizeHint.rheight() += q->sizeHintForRow(0) / 2;
-  this->TreeViewSizeHint =
-    this->TreeViewSizeHint.expandedTo(this->TreeViewMinSizeHint);
+  this->TreeViewSizeHint = this->TreeViewSizeHint.expandedTo(this->TreeViewMinSizeHint);
   return this->TreeViewSizeHint;
 }
 
@@ -247,23 +236,22 @@ void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex& parentIndex)
   // some reference of the deleted node left dangling in the qMRMLSceneModel.
   // As a result, mrmlNodeFromIndex returns a reference to a non-existent node.
   // We do not need to save the tree hierarchy in such cases.
-  if (!parentNode ||
-      !q->sortFilterProxyModel()->mrmlScene()->IsNodePresent(parentNode))
+  if (!parentNode || !q->sortFilterProxyModel()->mrmlScene()->IsNodePresent(parentNode))
   {
     return;
   }
 
-    if (q->isExpanded(parentIndex))
-    {
-      this->ExpandedNodes->AddItem(parentNode);
-    }
-    // Iterate over children nodes recursively to save their expansion state
-    unsigned int numChildrenRows = q->sortFilterProxyModel()->rowCount(parentIndex);
-    for (unsigned int row = 0; row < numChildrenRows; ++row)
-    {
-      QModelIndex childIndex = q->sortFilterProxyModel()->index(row, 0, parentIndex);
-      this->saveChildrenExpandState(childIndex);
-    }
+  if (q->isExpanded(parentIndex))
+  {
+    this->ExpandedNodes->AddItem(parentNode);
+  }
+  // Iterate over children nodes recursively to save their expansion state
+  unsigned int numChildrenRows = q->sortFilterProxyModel()->rowCount(parentIndex);
+  for (unsigned int row = 0; row < numChildrenRows; ++row)
+  {
+    QModelIndex childIndex = q->sortFilterProxyModel()->index(row, 0, parentIndex);
+    this->saveChildrenExpandState(childIndex);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -271,34 +259,29 @@ void qMRMLTreeViewPrivate::scrollTo(const QString& name, bool next)
 {
   Q_Q(qMRMLTreeView);
   this->LastScrollToName = name;
-  QModelIndex startIndex = q->model()->index(0,0);
-  QModelIndexList matchingModels = q->model()->match(
-    startIndex,
-    Qt::DisplayRole, name, -1,
-    Qt::MatchContains|Qt::MatchWrap|Qt::MatchRecursive);
+  QModelIndex startIndex = q->model()->index(0, 0);
+  QModelIndexList matchingModels =
+    q->model()->match(startIndex, Qt::DisplayRole, name, -1, Qt::MatchContains | Qt::MatchWrap | Qt::MatchRecursive);
   if (!matchingModels.size())
   {
     return;
   }
-  int lastSearch = matchingModels.indexOf(
-    q->selectionModel()->currentIndex());
+  int lastSearch = matchingModels.indexOf(q->selectionModel()->currentIndex());
   if (lastSearch == -1 || next)
   {
     ++lastSearch;
   }
   int newSearch = lastSearch % matchingModels.size();
   QModelIndex modelIndex = matchingModels[newSearch];
-  q->scrollTo(
-    modelIndex, QAbstractItemView::PositionAtTop);
-  q->selectionModel()->setCurrentIndex(
-    modelIndex, QItemSelectionModel::Current);
+  q->scrollTo(modelIndex, QAbstractItemView::PositionAtTop);
+  q->selectionModel()->setCurrentIndex(modelIndex, QItemSelectionModel::Current);
 }
 
 //------------------------------------------------------------------------------
 // qMRMLTreeView
 //------------------------------------------------------------------------------
 qMRMLTreeView::qMRMLTreeView(QWidget* _parent)
-  :QTreeView(_parent)
+  : QTreeView(_parent)
   , d_ptr(new qMRMLTreeViewPrivate(*this))
 {
   Q_D(qMRMLTreeView);
@@ -418,8 +401,7 @@ void qMRMLTreeView::setCurrentNode(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeView::onSelectionChanged(const QItemSelection& selected,
-                                       const QItemSelection& deselected)
+void qMRMLTreeView::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
   Q_UNUSED(deselected);
   Q_D(qMRMLTreeView);
@@ -553,8 +535,7 @@ void qMRMLTreeView::prependSceneMenuAction(QAction* action)
 {
   Q_D(qMRMLTreeView);
   // Prepend the action in the menu
-  QAction* beforeAction =
-    d->SceneMenu->actions().size() ? d->SceneMenu->actions()[0] : 0;
+  QAction* beforeAction = d->SceneMenu->actions().size() ? d->SceneMenu->actions()[0] : 0;
   d->SceneMenu->insertAction(beforeAction, action);
 }
 
@@ -638,15 +619,13 @@ void qMRMLTreeView::setRootNode(vtkMRMLNode* rootNode)
     if (d->ShowRootNode)
     {
       // Hide the siblings of the root node.
-      this->sortFilterProxyModel()->setHideNodesUnaffiliatedWithNodeID(
-        rootNode->GetID());
+      this->sortFilterProxyModel()->setHideNodesUnaffiliatedWithNodeID(rootNode->GetID());
       // The parent of the root node becomes the root for QTreeView.
       treeRootIndex = treeRootIndex.parent();
       rootNode = this->sortFilterProxyModel()->mrmlNodeFromIndex(treeRootIndex);
     }
   }
-  qvtkReconnect(this->rootNode(), rootNode, vtkCommand::ModifiedEvent,
-                this, SLOT(updateRootNode(vtkObject*)));
+  qvtkReconnect(this->rootNode(), rootNode, vtkCommand::ModifiedEvent, this, SLOT(updateRootNode(vtkObject*)));
   this->setRootIndex(treeRootIndex);
 }
 
@@ -654,15 +633,10 @@ void qMRMLTreeView::setRootNode(vtkMRMLNode* rootNode)
 vtkMRMLNode* qMRMLTreeView::rootNode() const
 {
   Q_D(const qMRMLTreeView);
-  vtkMRMLNode* treeRootNode =
-    this->sortFilterProxyModel()->mrmlNodeFromIndex(this->rootIndex());
-  if (d->ShowRootNode &&
-      this->mrmlScene() &&
-      this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID()
-        .isEmpty())
+  vtkMRMLNode* treeRootNode = this->sortFilterProxyModel()->mrmlNodeFromIndex(this->rootIndex());
+  if (d->ShowRootNode && this->mrmlScene() && this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID().isEmpty())
   {
-    return this->mrmlScene()->GetNodeByID(
-      this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID().toUtf8());
+    return this->mrmlScene()->GetNodeByID(this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID().toUtf8());
   }
   return treeRootNode;
 }
@@ -769,10 +743,9 @@ void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
     QModelIndex index = this->indexAt(e->pos());
     QStyleOptionViewItem opt = this->viewOptions();
     opt.rect = this->visualRect(index);
-    qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt,index);
-    QRect decorationElement =
-      this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
-    //decorationElement.translate(this->visualRect(index).topLeft());
+    qobject_cast<qMRMLItemDelegate*>(this->itemDelegate())->initStyleOption(&opt, index);
+    QRect decorationElement = this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
+    // decorationElement.translate(this->visualRect(index).topLeft());
     if (decorationElement.contains(e->pos()))
     {
       if (this->clickDecoration(index))
@@ -792,8 +765,7 @@ void qMRMLTreeView::keyPressEvent(QKeyEvent* e)
   if (e->key() == Qt::Key_Exclam)
   {
     qMRMLSortFilterProxyModel::FilterType filter =
-      static_cast<qMRMLSortFilterProxyModel::FilterType>(
-        (this->sortFilterProxyModel()->filterType() + 1) % 3);
+      static_cast<qMRMLSortFilterProxyModel::FilterType>((this->sortFilterProxyModel()->filterType() + 1) % 3);
     qDebug() << "Filter type: " << filter;
     this->sortFilterProxyModel()->setFilterType(filter);
   }
@@ -835,8 +807,8 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
     displayNode = displayableNode->GetDisplayNode();
   }
 
-  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-    this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode* selectionNode =
+    vtkMRMLSelectionNode::SafeDownCast(this->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
 
   if (selectionNode && displayNode)
   {
@@ -913,9 +885,7 @@ void qMRMLTreeView::renameCurrentNode()
   QString oldName = this->currentNode()->GetName();
 
   bool ok = false;
-  QString newName = QInputDialog::getText(
-    this, "Rename " + oldName, "New name:",
-    QLineEdit::Normal, oldName, &ok);
+  QString newName = QInputDialog::getText(this, "Rename " + oldName, "New name:", QLineEdit::Normal, oldName, &ok);
   if (!ok)
   {
     return;
@@ -927,7 +897,7 @@ void qMRMLTreeView::renameCurrentNode()
 //------------------------------------------------------------------------------
 void qMRMLTreeView::deleteCurrentNode()
 {
-//  Q_D(qMRMLTreeView);
+  //  Q_D(qMRMLTreeView);
 
   if (!this->currentNode())
   {
@@ -999,8 +969,7 @@ void qMRMLTreeView::showEvent(QShowEvent* event)
 {
   Q_D(qMRMLTreeView);
   this->Superclass::showEvent(event);
-  if (d->FitSizeToVisibleIndexes &&
-      !d->TreeViewSizeHint.isValid())
+  if (d->FitSizeToVisibleIndexes && !d->TreeViewSizeHint.isValid())
   {
     this->updateGeometry();
   }
@@ -1013,10 +982,8 @@ bool qMRMLTreeView::eventFilter(QObject* object, QEvent* e)
   bool res = this->QTreeView::eventFilter(object, e);
   // When the horizontal scroll bar is shown/hidden, the sizehint should be
   // updated ?
-  if (d->FitSizeToVisibleIndexes &&
-      object == this->horizontalScrollBar() &&
-      (e->type() == QEvent::Show ||
-       e->type() == QEvent::Hide))
+  if (d->FitSizeToVisibleIndexes && object == this->horizontalScrollBar()
+      && (e->type() == QEvent::Show || e->type() == QEvent::Hide))
   {
     d->recomputeSizeHint();
   }

@@ -25,7 +25,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation3D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerAngleRepresentation3D_h
 #define vtkSlicerAngleRepresentation3D_h
@@ -41,7 +41,8 @@ class vtkTubeFilter;
 
 class vtkMRMLInteractionEventData;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleRepresentation3D : public vtkSlicerMarkupsWidgetRepresentation3D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleRepresentation3D
+  : public vtkSlicerMarkupsWidgetRepresentation3D
 {
 public:
   /// Instantiate this class.
@@ -54,7 +55,7 @@ public:
   /// Subclasses of vtkMRMLAbstractWidgetRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData=nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;
@@ -70,14 +71,16 @@ public:
   bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
 
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+                   int& foundComponentType,
+                   int& foundComponentIndex,
+                   double& closestDistance2) override;
 
 protected:
   vtkSlicerAngleRepresentation3D();
   ~vtkSlicerAngleRepresentation3D() override;
 
-  vtkSmartPointer<vtkPolyData>   Line;
-  vtkSmartPointer<vtkArcSource>  Arc;
+  vtkSmartPointer<vtkPolyData> Line;
+  vtkSmartPointer<vtkArcSource> Arc;
   vtkSmartPointer<vtkTubeFilter> TubeFilter;
   vtkSmartPointer<vtkTubeFilter> ArcTubeFilter;
 

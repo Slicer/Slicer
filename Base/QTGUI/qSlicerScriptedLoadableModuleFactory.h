@@ -37,16 +37,16 @@ class ctkFactoryScriptedItem : public ctkAbstractFactoryFileBasedItem<qSlicerAbs
 {
 public:
   bool load() override;
+
 protected:
   qSlicerAbstractCoreModule* instanciator() override;
 };
 
 //----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModuleFactory :
-  public ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModuleFactory
+  : public ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule>
 {
 public:
-
   typedef ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerScriptedLoadableModuleFactory();
   ~qSlicerScriptedLoadableModuleFactory() override;
@@ -60,8 +60,7 @@ protected:
   QScopedPointer<qSlicerScriptedLoadableModuleFactoryPrivate> d_ptr;
 
   bool isValidFile(const QFileInfo& file) const override;
-  ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
-    createFactoryFileBasedItem() override;
+  ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* createFactoryFileBasedItem() override;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerScriptedLoadableModuleFactory);

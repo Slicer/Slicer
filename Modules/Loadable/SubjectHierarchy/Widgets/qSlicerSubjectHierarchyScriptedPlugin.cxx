@@ -48,7 +48,8 @@ public:
   qSlicerSubjectHierarchyScriptedPluginPrivate();
   virtual ~qSlicerSubjectHierarchyScriptedPluginPrivate();
 
-  enum {
+  enum
+  {
     CanOwnSubjectHierarchyItemMethod = 0,
     RoleForPluginMethod,
     HelpTextMethod,
@@ -99,8 +100,10 @@ qSlicerSubjectHierarchyScriptedPluginPrivate::qSlicerSubjectHierarchyScriptedPlu
   this->PythonCppAPI.declareMethod(Self::ShowViewContextMenuActionsForItemMethod, "showViewContextMenuActionsForItem");
   // Parenting related methods (with default implementation)
   this->PythonCppAPI.declareMethod(Self::CanAddNodeToSubjectHierarchyMethod, "canAddNodeToSubjectHierarchy");
-  this->PythonCppAPI.declareMethod(Self::CanReparentItemInsideSubjectHierarchyMethod, "canReparentItemInsideSubjectHierarchy");
-  this->PythonCppAPI.declareMethod(Self::ReparentItemInsideSubjectHierarchyMethod, "reparentItemInsideSubjectHierarchy");
+  this->PythonCppAPI.declareMethod(Self::CanReparentItemInsideSubjectHierarchyMethod,
+                                   "canReparentItemInsideSubjectHierarchy");
+  this->PythonCppAPI.declareMethod(Self::ReparentItemInsideSubjectHierarchyMethod,
+                                   "reparentItemInsideSubjectHierarchy");
 }
 
 //-----------------------------------------------------------------------------
@@ -153,8 +156,8 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePa
   }
 
   // Get a reference to the main module and global dictionary
-  PyObject * main_module = PyImport_AddModule("__main__");
-  PyObject * global_dict = PyModule_GetDict(main_module);
+  PyObject* main_module = PyImport_AddModule("__main__");
+  PyObject* global_dict = PyModule_GetDict(main_module);
 
   // Get actual module from sys.modules
   PyObject* sysModules = PyImport_GetModuleDict();
@@ -190,7 +193,10 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePa
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSubjectHierarchyScriptedPlugin::setPythonSource - "
                             "Failed to load subject hierarchy scripted plugin: "
-                            "class %1 was not found in %2").arg(className).arg(filePath).toUtf8());
+                            "class %1 was not found in %2")
+                      .arg(className)
+                      .arg(filePath)
+                      .toUtf8());
     PythonQt::self()->handleError();
     return false;
   }
@@ -205,8 +211,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePa
 
   d->PythonSourceFilePath = filePath;
 
-  if (!qSlicerScriptedUtils::setModuleAttribute(
-        "slicer", className, self))
+  if (!qSlicerScriptedUtils::setModuleAttribute("slicer", className, self))
   {
     qCritical() << Q_FUNC_INFO << ": Failed to set" << ("slicer." + className);
   }
@@ -244,7 +249,8 @@ double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(vtkIdTy
   // Parse result
   if (!PyFloat_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO << ": Function 'canOwnSubjectHierarchyItem' is expected to return a floating point number!";
+    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO
+               << ": Function 'canOwnSubjectHierarchyItem' is expected to return a floating point number!";
     return this->Superclass::canOwnSubjectHierarchyItem(itemID);
   }
 
@@ -265,7 +271,8 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::roleForPlugin() const
   // Parse result
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO << ": Function 'roleForPlugin' is expected to return a string!";
+    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO
+               << ": Function 'roleForPlugin' is expected to return a string!";
     return this->Superclass::roleForPlugin();
   }
 
@@ -287,7 +294,8 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::helpText() const
   // Parse result
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO << ": Function 'helpText' is expected to return a string!";
+    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO
+               << ": Function 'helpText' is expected to return a string!";
     return this->Superclass::helpText();
   }
 
@@ -377,7 +385,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions() 
   QList<QAction*> actionList;
   foreach (QVariant actionVariant, resultVariantList)
   {
-    QAction* action = qobject_cast<QAction*>( actionVariant.value<QObject*>() );
+    QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
   }
   return actionList;
@@ -404,7 +412,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::viewContextMenuActions() 
   QList<QAction*> actionList;
   foreach (QVariant actionVariant, resultVariantList)
   {
-    QAction* action = qobject_cast<QAction*>( actionVariant.value<QObject*>() );
+    QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
   }
   return actionList;
@@ -431,7 +439,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()
   QList<QAction*> actionList;
   foreach (QVariant actionVariant, resultVariantList)
   {
-    QAction* action = qobject_cast<QAction*>( actionVariant.value<QObject*>() );
+    QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
   }
   return actionList;
@@ -471,7 +479,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::showViewContextMenuActionsForItem(vt
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(
   vtkMRMLNode* node,
-  vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
@@ -488,7 +496,8 @@ double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(
   // Parse result
   if (!PyFloat_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO << ": Function 'canAddNodeToSubjectHierarchy' is expected to return a floating point number!";
+    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO
+               << ": Function 'canAddNodeToSubjectHierarchy' is expected to return a floating point number!";
     return this->Superclass::canAddNodeToSubjectHierarchy(node, parentItemID);
   }
 
@@ -496,9 +505,8 @@ double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierarchy(
-  vtkIdType itemID,
-  vtkIdType parentItemID) const
+double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID,
+                                                                                    vtkIdType parentItemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
@@ -515,7 +523,8 @@ double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierar
   // Parse result
   if (!PyFloat_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO << ": Function 'canReparentItemInsideSubjectHierarchy' is expected to return a floating point number!";
+    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO
+               << ": Function 'canReparentItemInsideSubjectHierarchy' is expected to return a floating point number!";
     return this->Superclass::canReparentItemInsideSubjectHierarchy(itemID, parentItemID);
   }
 
@@ -523,9 +532,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierar
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(
-  vtkIdType itemID,
-  vtkIdType parentItemID)
+bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
@@ -542,7 +549,8 @@ bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(
   // Parse result
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO << ": Function 'reparentItemInsideSubjectHierarchy' is expected to return a boolean!";
+    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO
+               << ": Function 'reparentItemInsideSubjectHierarchy' is expected to return a boolean!";
     return this->Superclass::reparentItemInsideSubjectHierarchy(itemID, parentItemID);
   }
 
@@ -566,7 +574,8 @@ QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(vtkIdType itemI
   // Parse result
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO << ": Function 'displayedItemName' is expected to return a string!";
+    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO
+               << ": Function 'displayedItemName' is expected to return a string!";
     return this->Superclass::displayedItemName(itemID);
   }
 
@@ -590,7 +599,8 @@ QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkIdType itemID) const
   // Parse result
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO << ": Function 'tooltip' is expected to return a string!";
+    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO
+               << ": Function 'tooltip' is expected to return a string!";
     return this->Superclass::tooltip(itemID);
   }
 
@@ -630,7 +640,8 @@ int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(vtkIdType itemID
   // Parse result
   if (!PyLong_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO << ": Function 'getDisplayVisibility' is expected to return an integer!";
+    qWarning() << d->PythonSourceFilePath << ": " << Q_FUNC_INFO
+               << ": Function 'getDisplayVisibility' is expected to return an integer!";
     return this->Superclass::getDisplayVisibility(itemID);
   }
 

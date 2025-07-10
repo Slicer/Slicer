@@ -13,8 +13,7 @@
 
 class vtkMRMLAnnotationPointDisplayNode;
 
-class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsNode
-  : public vtkMRMLAnnotationNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsNode : public vtkMRMLAnnotationNode
 {
 public:
   static vtkMRMLAnnotationControlPointsNode* New();
@@ -32,11 +31,11 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
   // Description:
   // Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "AnnotationControlPoints";}
+  const char* GetNodeTagName() override { return "AnnotationControlPoints"; }
 
   // Description:
   // Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -47,8 +46,9 @@ public:
   /// coordinateSystemFlag = 0 for RAS, 1 for LPS
   /// multipleFlag = 1 for the whole list, 1 for the first point
   void WriteCLI(std::vector<std::string>& commandLine,
-                        std::string prefix, int coordinateSystem = 0,
-                        int multipleFlag = 1) override;
+                std::string prefix,
+                int coordinateSystem = 0,
+                int multipleFlag = 1) override;
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
@@ -58,14 +58,11 @@ public:
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
-
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   enum
   {
-      ControlPointModifiedEvent = 19010,
+    ControlPointModifiedEvent = 19010,
   };
 
   void Modified() override
@@ -84,7 +81,7 @@ public:
   /// Returns the old flag state.
   int InvokePendingModifiedEvent() override
   {
-    if ( this->GetModifiedEventPending() )
+    if (this->GetModifiedEventPending())
     {
       this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
     }
@@ -99,15 +96,15 @@ public:
   // Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
 
-  int  AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);
+  int AddControlPoint(double newControl[3], int selectedFlag, int visibleFlag);
 
-  int  SetControlPoint(int id, double newControl[3],int selectedFlag, int visibleFlag);
+  int SetControlPoint(int id, double newControl[3], int selectedFlag, int visibleFlag);
 
-  int  SetControlPointWorldCoordinates(int id, double newControl[3], int selectedFlag, int visibleFlag);
+  int SetControlPointWorldCoordinates(int id, double newControl[3], int selectedFlag, int visibleFlag);
 
-  int  SetControlPoint(int id, double newControl[3]);
+  int SetControlPoint(int id, double newControl[3]);
 
-  int  SetControlPointWorldCoordinates(int id, double newControl[3]);
+  int SetControlPointWorldCoordinates(int id, double newControl[3]);
 
   void DeleteControlPoint(int id);
   /// Return the RAS coordinates of point ID.
@@ -121,13 +118,12 @@ public:
 
   enum
   {
-    CP_SELECTED =  vtkMRMLAnnotationNode::NUM_TEXT_ATTRIBUTE_TYPES,
+    CP_SELECTED = vtkMRMLAnnotationNode::NUM_TEXT_ATTRIBUTE_TYPES,
     CP_VISIBLE,
     NUM_CP_ATTRIBUTE_TYPES
   };
 
   const char* GetAttributeTypesEnumAsString(int val) override;
-
 
   // Description:
   // Initializes all variables associated with annotations
@@ -140,13 +136,12 @@ public:
   /// flags to determine how the next fiducial added to the list is labelled
   enum NumberingSchemes
   {
-      SchemeMin = 0,
-      UseID = SchemeMin,
-      UseIndex,
-      UsePrevious,
-      SchemeMax = UsePrevious,
+    SchemeMin = 0,
+    UseID = SchemeMin,
+    UseIndex,
+    UsePrevious,
+    SchemeMax = UsePrevious,
   };
-
 
   /// Flag determining how to number the next added fiducial
   virtual void SetNumberingScheme(int numberingScheme);

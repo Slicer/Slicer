@@ -33,8 +33,7 @@ class qSlicerSceneReaderPrivate;
 /// qSlicerSceneReader is the IO class that handle MRML scene
 /// It internally call vtkMRMLScene::Connect() or vtkMRMLScene::Import()
 /// depending on the clear flag.
-class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneReader
-  : public qSlicerFileReader
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
@@ -56,6 +55,7 @@ public:
   /// QString fileName: the path of the mrml scene to load
   /// bool clear: whether the current should be cleared or not
   bool load(const qSlicerIO::IOProperties& properties) override;
+
 protected:
   QScopedPointer<qSlicerSceneReaderPrivate> d_ptr;
 
@@ -63,6 +63,5 @@ private:
   Q_DECLARE_PRIVATE(qSlicerSceneReader);
   Q_DISABLE_COPY(qSlicerSceneReader);
 };
-
 
 #endif

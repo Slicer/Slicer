@@ -33,14 +33,10 @@
 vtkStandardNewMacro(vtkSlicerSuperLoadableModuleTemplateLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerSuperLoadableModuleTemplateLogic::vtkSlicerSuperLoadableModuleTemplateLogic()
-{
-}
+vtkSlicerSuperLoadableModuleTemplateLogic::vtkSlicerSuperLoadableModuleTemplateLogic() {}
 
 //----------------------------------------------------------------------------
-vtkSlicerSuperLoadableModuleTemplateLogic::~vtkSlicerSuperLoadableModuleTemplateLogic()
-{
-}
+vtkSlicerSuperLoadableModuleTemplateLogic::~vtkSlicerSuperLoadableModuleTemplateLogic() {}
 
 //----------------------------------------------------------------------------
 void vtkSlicerSuperLoadableModuleTemplateLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -71,13 +67,7 @@ void vtkSlicerSuperLoadableModuleTemplateLogic::UpdateFromMRMLScene()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSuperLoadableModuleTemplateLogic
-::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
-{
-}
+void vtkSlicerSuperLoadableModuleTemplateLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node)) {}
 
 //---------------------------------------------------------------------------
-void vtkSlicerSuperLoadableModuleTemplateLogic
-::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
-{
-}
+void vtkSlicerSuperLoadableModuleTemplateLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node)) {}

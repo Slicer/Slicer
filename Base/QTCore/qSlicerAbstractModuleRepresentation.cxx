@@ -29,12 +29,11 @@ class qSlicerAbstractModuleRepresentationPrivate
 public:
   qSlicerAbstractModuleRepresentationPrivate();
   vtkWeakPointer<vtkMRMLAbstractLogic> Logic;
-  qSlicerAbstractCoreModule*           Module;
+  qSlicerAbstractCoreModule* Module;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentationPrivate
-::qSlicerAbstractModuleRepresentationPrivate()
+qSlicerAbstractModuleRepresentationPrivate::qSlicerAbstractModuleRepresentationPrivate()
 {
   this->Module = nullptr;
 }

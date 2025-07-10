@@ -27,7 +27,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerROIRepresentation2D_h
 #define vtkSlicerROIRepresentation2D_h
@@ -46,7 +46,8 @@ class vtkMRMLMarkupsROINode;
 class vtkOutlineFilter;
 class vtkSampleImplicitFunctionFilter;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerROIRepresentation2D : public vtkSlicerMarkupsWidgetRepresentation2D
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerROIRepresentation2D
+  : public vtkSlicerMarkupsWidgetRepresentation2D
 {
 public:
   /// Instantiate this class.
@@ -73,13 +74,16 @@ public:
   double* GetBounds() VTK_SIZEHINT(6) override;
 
   void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+                   int& foundComponentType,
+                   int& foundComponentIndex,
+                   double& closestDistance2) override;
 
   void CanInteractWithROI(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+                          int& foundComponentType,
+                          int& foundComponentIndex,
+                          double& closestDistance2);
 
 protected:
-
   /// Update the cube source filter from the ROI node.
   virtual void UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINode* roiNode);
 
@@ -89,23 +93,23 @@ protected:
 
   void SetROISource(vtkPolyDataAlgorithm* roiSource);
 
-  vtkSmartPointer<vtkPolyDataAlgorithm>       ROISource;
+  vtkSmartPointer<vtkPolyDataAlgorithm> ROISource;
 
-  vtkSmartPointer<vtkPassThrough>       ROIPipelineInputFilter;
-  vtkSmartPointer<vtkTransform>               ROIToWorldTransform;
+  vtkSmartPointer<vtkPassThrough> ROIPipelineInputFilter;
+  vtkSmartPointer<vtkTransform> ROIToWorldTransform;
   vtkSmartPointer<vtkTransformPolyDataFilter> ROIToWorldTransformFilter;
-  vtkSmartPointer<vtkCutter>                  ROIOutlineCutter;
-  vtkSmartPointer<vtkCleanPolyData>           ROIOutlineCleaner;
+  vtkSmartPointer<vtkCutter> ROIOutlineCutter;
+  vtkSmartPointer<vtkCleanPolyData> ROIOutlineCleaner;
   vtkSmartPointer<vtkTransformPolyDataFilter> ROIOutlineWorldToSliceTransformFilter;
-  vtkSmartPointer<vtkContourTriangulator>     ROIIntersectionTriangulator;
+  vtkSmartPointer<vtkContourTriangulator> ROIIntersectionTriangulator;
 
   vtkSmartPointer<vtkPolyDataMapper2D> ROIMapper;
-  vtkSmartPointer<vtkProperty2D>       ROIProperty;
-  vtkSmartPointer<vtkActor2D>          ROIActor;
+  vtkSmartPointer<vtkProperty2D> ROIProperty;
+  vtkSmartPointer<vtkActor2D> ROIActor;
 
   vtkSmartPointer<vtkPolyDataMapper2D> ROIOutlineMapper;
-  vtkSmartPointer<vtkProperty2D>       ROIOutlineProperty;
-  vtkSmartPointer<vtkActor2D>          ROIOutlineActor;
+  vtkSmartPointer<vtkProperty2D> ROIOutlineProperty;
+  vtkSmartPointer<vtkActor2D> ROIOutlineActor;
 
 private:
   vtkSlicerROIRepresentation2D(const vtkSlicerROIRepresentation2D&) = delete;

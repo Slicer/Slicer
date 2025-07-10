@@ -56,7 +56,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -69,7 +69,6 @@ public:
   ///
   /// Copy the node's attributes to this object
   void CopyOrientation(vtkMRMLVolumeNode* node);
-
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -98,9 +97,15 @@ public:
   static const char* ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* IJKToRAS);
 
   void SetIJKToRASDirections(double dirs[3][3]);
-  void SetIJKToRASDirections(double ir, double jr, double kr,
-                             double ia, double ja, double ka,
-                             double is, double js, double ks);
+  void SetIJKToRASDirections(double ir,
+                             double jr,
+                             double kr,
+                             double ia,
+                             double ja,
+                             double ka,
+                             double is,
+                             double js,
+                             double ks);
   void SetIToRASDirection(double ir, double ia, double is);
   void SetJToRASDirection(double jr, double ja, double js);
   void SetKToRASDirection(double kr, double ka, double ks);
@@ -202,9 +207,7 @@ public:
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// ImageDataModifiedEvent is generated when image data is changed
   enum
@@ -214,7 +217,7 @@ public:
 
   ///
   /// Set/Get the ITK MetaDataDictionary
-  void SetMetaDataDictionary( const itk::MetaDataDictionary& );
+  void SetMetaDataDictionary(const itk::MetaDataDictionary&);
   const itk::MetaDataDictionary& GetMetaDataDictionary() const;
 
   bool CanApplyNonLinearTransforms() const override;
@@ -291,11 +294,14 @@ protected:
   /// the useTransform parameter and the rasToSlice transform
   /// If useVoxelCenter is set to false (default) then bounds of voxel sides are returned
   /// (otherwise then bounds of voxels centers are returned).
-  virtual void GetBoundsInternal(double bounds[6], vtkMatrix4x4* rasToSlice, bool useTransform, bool useVoxelCenter = false);
+  virtual void GetBoundsInternal(double bounds[6],
+                                 vtkMatrix4x4* rasToSlice,
+                                 bool useTransform,
+                                 bool useVoxelCenter = false);
 
   /// Returns the origin that would put the volume center in the origin.
   /// If useParentTransform is false then parent transform is ignored.
-  void GetCenterPositionRAS(double* centerPositionRAS, bool useParentTransform=true);
+  void GetCenterPositionRAS(double* centerPositionRAS, bool useParentTransform = true);
 
   /// Returns the interpolation algorithm that should be used for resampling the volume.
   /// The value is one of VTK_NEAREST_INTERPOLATION, VTK_LINEAR_INTERPOLATION, or VTK_CUBIC_INTERPOLATION.

@@ -33,8 +33,7 @@
 class QSettings;
 class qSlicerSettingsPythonPanelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsPythonPanel
-  : public ctkSettingsPanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsPythonPanel : public ctkSettingsPanel
 {
   Q_OBJECT
   Q_PROPERTY(QString consoleLogLevel READ consoleLogLevel WRITE setConsoleLogLevel NOTIFY consoleLogLevelChanged)

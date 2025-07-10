@@ -33,8 +33,8 @@ class qMRMLSubjectHierarchyModel;
 class qSlicerSubjectHierarchyPluginLogic;
 class qSlicerSubjectHierarchyAbstractPlugin;
 
-class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_SUBJECTHIERARCHY_EXPORT qSlicerSubjectHierarchyModuleWidget
+  : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 

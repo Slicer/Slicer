@@ -52,8 +52,7 @@ int qSlicerModelsModuleWidgetTestScene(int argc, char* argv[])
 
   if (argc < 2)
   {
-    std::cerr << "Usage: qSlicerModelsModuleWidgetTest1 sceneFilePath [-I]"
-              << std::endl;
+    std::cerr << "Usage: qSlicerModelsModuleWidgetTest1 sceneFilePath [-I]" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -70,8 +69,7 @@ int qSlicerModelsModuleWidgetTestScene(int argc, char* argv[])
 
   qMRMLThreeDWidget view;
   view.setMRMLScene(scene.GetPointer());
-  view.setMRMLViewNode(vtkMRMLViewNode::SafeDownCast(
-    scene->GetFirstNodeByClass("vtkMRMLViewNode")));
+  view.setMRMLViewNode(vtkMRMLViewNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLViewNode")));
   view.show();
 
   if (argc < 3 || QString(argv[2]) != "-I")

@@ -22,7 +22,7 @@
 #include "qMRMLColorTableView.h"
 
 qMRMLColorTableViewPlugin::qMRMLColorTableViewPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -36,7 +36,7 @@ QString qMRMLColorTableViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLColorTableView\" \
           name=\"MRMLColorTableView\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLColorTableViewPlugin::icon() const

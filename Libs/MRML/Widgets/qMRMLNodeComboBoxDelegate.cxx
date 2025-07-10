@@ -24,34 +24,29 @@
 #include <QPainter>
 #include <QStandardItemModel>
 
-//include
+// include
 #include "qMRMLNodeComboBoxDelegate.h"
 
 // --------------------------------------------------------------------------
-qMRMLNodeComboBoxDelegate::qMRMLNodeComboBoxDelegate(QObject* parent,
-                                                     QComboBox* comboBox)
+qMRMLNodeComboBoxDelegate::qMRMLNodeComboBoxDelegate(QObject* parent, QComboBox* comboBox)
   : QItemDelegate(parent)
   , mCombo(comboBox)
 {
-
 }
 
 // --------------------------------------------------------------------------
 bool qMRMLNodeComboBoxDelegate::isSeparator(const QModelIndex& index)
 {
-  return index.data(Qt::AccessibleDescriptionRole).toString() ==
-                    QLatin1String("separator");
+  return index.data(Qt::AccessibleDescriptionRole).toString() == QLatin1String("separator");
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxDelegate::setSeparator(QAbstractItemModel* model,
-                                             const QModelIndex& index)
+void qMRMLNodeComboBoxDelegate::setSeparator(QAbstractItemModel* model, const QModelIndex& index)
 {
-  model->setData(index, QString::fromLatin1("separator"),
-                 Qt::AccessibleDescriptionRole);
+  model->setData(index, QString::fromLatin1("separator"), Qt::AccessibleDescriptionRole);
   if (QStandardItemModel* m = qobject_cast<QStandardItemModel*>(model))
-      if (QStandardItem* item = m->itemFromIndex(index))
-          item->setFlags(item->flags() & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled));
+    if (QStandardItem* item = m->itemFromIndex(index))
+      item->setFlags(item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
 }
 
 // --------------------------------------------------------------------------
@@ -59,33 +54,29 @@ void qMRMLNodeComboBoxDelegate::paint(QPainter* painter,
                                       const QStyleOptionViewItem& option,
                                       const QModelIndex& index) const
 {
-    if (this->isSeparator(index))
+  if (this->isSeparator(index))
+  {
+    QRect rect = option.rect;
+    if (const QAbstractItemView* view = qobject_cast<const QAbstractItemView*>(option.widget))
     {
-      QRect rect = option.rect;
-      if (const QAbstractItemView* view =
-          qobject_cast<const QAbstractItemView*>(option.widget))
-      {
-        rect.setWidth(view->viewport()->width());
-      }
-      QStyleOption opt;
-      opt.rect = rect;
-      this->mCombo->style()->drawPrimitive(QStyle::PE_IndicatorToolBarSeparator,
-                                           &opt, painter, this->mCombo);
+      rect.setWidth(view->viewport()->width());
     }
-    else
-    {
-      this->Superclass::paint(painter, option, index);
-    }
+    QStyleOption opt;
+    opt.rect = rect;
+    this->mCombo->style()->drawPrimitive(QStyle::PE_IndicatorToolBarSeparator, &opt, painter, this->mCombo);
+  }
+  else
+  {
+    this->Superclass::paint(painter, option, index);
+  }
 }
 
 // --------------------------------------------------------------------------
-QSize qMRMLNodeComboBoxDelegate::sizeHint(const QStyleOptionViewItem& option,
-                       const QModelIndex& index) const
+QSize qMRMLNodeComboBoxDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   if (this->isSeparator(index))
   {
-    int pm = this->mCombo->style()->pixelMetric(QStyle::PM_DefaultFrameWidth,
-                                                nullptr, this->mCombo);
+    int pm = this->mCombo->style()->pixelMetric(QStyle::PM_DefaultFrameWidth, nullptr, this->mCombo);
     return QSize(pm, pm);
   }
   return this->Superclass::sizeHint(option, index);
@@ -97,21 +88,19 @@ void qMRMLNodeComboBoxDelegate::drawDisplay(QPainter* painter,
                                             const QRect& rect,
                                             const QString& text) const
 {
-   QStyleOptionViewItem option2 = option;
-   if (option.state & QStyle::State_HasFocus &&
-       !(option.state & QStyle::State_Selected))
-   {
-     option2.state |= QStyle::State_Selected;
-     QColor unselectedHighlight = option2.palette.color(QPalette::Highlight);
-     unselectedHighlight.setHsv(unselectedHighlight.hue(),
-                                qMax(0, unselectedHighlight.saturation() - 50),
-                                qMin(255,unselectedHighlight.value() + 15));
-     QColor unselectedHighlightedText =
-         option2.palette.color(QPalette::HighlightedText).darker(30);
-     option2.palette.setColor(QPalette::Highlight, unselectedHighlight);
-     option2.palette.setColor(QPalette::HighlightedText, unselectedHighlightedText);
-   }
-   this->Superclass::drawDisplay(painter, option2, rect, text);
+  QStyleOptionViewItem option2 = option;
+  if (option.state & QStyle::State_HasFocus && !(option.state & QStyle::State_Selected))
+  {
+    option2.state |= QStyle::State_Selected;
+    QColor unselectedHighlight = option2.palette.color(QPalette::Highlight);
+    unselectedHighlight.setHsv(unselectedHighlight.hue(),
+                               qMax(0, unselectedHighlight.saturation() - 50),
+                               qMin(255, unselectedHighlight.value() + 15));
+    QColor unselectedHighlightedText = option2.palette.color(QPalette::HighlightedText).darker(30);
+    option2.palette.setColor(QPalette::Highlight, unselectedHighlight);
+    option2.palette.setColor(QPalette::HighlightedText, unselectedHighlightedText);
+  }
+  this->Superclass::drawDisplay(painter, option2, rect, text);
 }
 
 // --------------------------------------------------------------------------

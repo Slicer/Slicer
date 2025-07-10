@@ -38,7 +38,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -48,7 +48,7 @@ public:
   vtkMRMLCopyContentDefaultMacro(vtkMRMLMultiVolumeRenderingDisplayNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MultiVolumeRendering";}
+  const char* GetNodeTagName() override { return "MultiVolumeRendering"; }
 
 protected:
   vtkMRMLMultiVolumeRenderingDisplayNode();

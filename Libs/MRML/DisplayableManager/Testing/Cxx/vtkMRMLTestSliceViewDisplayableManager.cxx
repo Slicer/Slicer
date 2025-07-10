@@ -43,7 +43,7 @@ public:
   vtkInternal(vtkMRMLTestSliceViewDisplayableManager* external);
   ~vtkInternal();
 
-  vtkMRMLTestSliceViewDisplayableManager*             External;
+  vtkMRMLTestSliceViewDisplayableManager* External;
 };
 
 //---------------------------------------------------------------------------
@@ -80,9 +80,7 @@ void vtkMRMLTestSliceViewDisplayableManager::PrintSelf(ostream& os, vtkIndent in
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTestSliceViewDisplayableManager::AdditionnalInitializeStep()
-{
-}
+void vtkMRMLTestSliceViewDisplayableManager::AdditionnalInitializeStep() {}
 
 //---------------------------------------------------------------------------
 void vtkMRMLTestSliceViewDisplayableManager::Create()
@@ -100,6 +98,6 @@ void vtkMRMLTestSliceViewDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* n
     return;
   }
   vtkMRMLTestSliceViewDisplayableManager::NodeAddedCount++;
-  //std::cout << "vtkMRMLTestSliceViewDisplayableManager - NodeAdded - "
-  //          << (node ? node->GetName() : "None")<< std::endl;
+  // std::cout << "vtkMRMLTestSliceViewDisplayableManager - NodeAdded - "
+  //           << (node ? node->GetName() : "None")<< std::endl;
 }

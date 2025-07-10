@@ -25,16 +25,11 @@
 class AModule : public qSlicerAbstractModule
 {
 public:
-  QString title() const override { return "A Title";}
-  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
-  {
-    return nullptr;
-  }
+  QString title() const override { return "A Title"; }
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return nullptr; }
 
-  vtkMRMLAbstractLogic* createLogic() override
-  {
-    return nullptr;
-  }
+  vtkMRMLAbstractLogic* createLogic() override { return nullptr; }
+
 protected:
   void setup() override {}
 };

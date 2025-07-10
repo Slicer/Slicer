@@ -37,6 +37,7 @@
 class qSlicerSettingsExtensionsPanelPrivate : public Ui_qSlicerSettingsExtensionsPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsExtensionsPanel);
+
 protected:
   qSlicerSettingsExtensionsPanel* const q_ptr;
 
@@ -72,7 +73,8 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   }
   else
   {
-    qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI" << app->extensionsManagerModel()->serverAPI();
+    qWarning() << Q_FUNC_INFO << " failed: missing implementation for serverAPI"
+               << app->extensionsManagerModel()->serverAPI();
   }
   this->ExtensionsInstallPathButton->setDirectory(app->defaultExtensionsInstallPath());
 #ifdef Q_OS_MAC
@@ -86,54 +88,82 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   this->OpenExtensionsManagerPushButton->setVisible(extensionsManagerEnabled);
 
   // Register settings
-  q->registerProperty("Extensions/ManagerEnabled", this->ExtensionsManagerEnabledCheckBox,
-                      /*no tr*/"checked", SIGNAL(toggled(bool)),
-                      qSlicerSettingsExtensionsPanel::tr("Enable/Disable extensions manager"), ctkSettingsPanel::OptionRequireRestart,
+  q->registerProperty("Extensions/ManagerEnabled",
+                      this->ExtensionsManagerEnabledCheckBox,
+                      /*no tr*/ "checked",
+                      SIGNAL(toggled(bool)),
+                      qSlicerSettingsExtensionsPanel::tr("Enable/Disable extensions manager"),
+                      ctkSettingsPanel::OptionRequireRestart,
                       app->revisionUserSettings());
-  q->registerProperty("Extensions/ServerUrl", this->ExtensionsServerUrlLineEdit,
-                      /*no tr*/"text", SIGNAL(textChanged(QString)),
-                      QString(), ctkSettingsPanel::OptionNone,
+  q->registerProperty("Extensions/ServerUrl",
+                      this->ExtensionsServerUrlLineEdit,
+                      /*no tr*/ "text",
+                      SIGNAL(textChanged(QString)),
+                      QString(),
+                      ctkSettingsPanel::OptionNone,
                       app->revisionUserSettings());
-  q->registerProperty("Extensions/FrontendServerUrl", this->ExtensionsFrontendServerUrlLineEdit,
-                      /*no tr*/"text", SIGNAL(textChanged(QString)),
-                      QString(), ctkSettingsPanel::OptionNone,
+  q->registerProperty("Extensions/FrontendServerUrl",
+                      this->ExtensionsFrontendServerUrlLineEdit,
+                      /*no tr*/ "text",
+                      SIGNAL(textChanged(QString)),
+                      QString(),
+                      ctkSettingsPanel::OptionNone,
                       app->revisionUserSettings());
 
-  q->registerProperty("Extensions/AutoUpdateCheck", this->AutoUpdateCheckCheckBox, /*no tr*/"checked",
-    SIGNAL(toggled(bool)), qSlicerSettingsExtensionsPanel::tr("Automatic update check"));
-  q->registerProperty("Extensions/AutoUpdateInstall", this->AutoUpdateInstallCheckBox, /*no tr*/"checked",
-    SIGNAL(toggled(bool)), qSlicerSettingsExtensionsPanel::tr("Automatic update install"));
-  q->registerProperty("Extensions/AutoInstallDependencies", this->AutoInstallDependenciesCheckBox, /*no tr*/"checked",
-    SIGNAL(toggled(bool)), qSlicerSettingsExtensionsPanel::tr("Automatic install of dependencies"));
+  q->registerProperty("Extensions/AutoUpdateCheck",
+                      this->AutoUpdateCheckCheckBox,
+                      /*no tr*/ "checked",
+                      SIGNAL(toggled(bool)),
+                      qSlicerSettingsExtensionsPanel::tr("Automatic update check"));
+  q->registerProperty("Extensions/AutoUpdateInstall",
+                      this->AutoUpdateInstallCheckBox,
+                      /*no tr*/ "checked",
+                      SIGNAL(toggled(bool)),
+                      qSlicerSettingsExtensionsPanel::tr("Automatic update install"));
+  q->registerProperty("Extensions/AutoInstallDependencies",
+                      this->AutoInstallDependenciesCheckBox,
+                      /*no tr*/ "checked",
+                      SIGNAL(toggled(bool)),
+                      qSlicerSettingsExtensionsPanel::tr("Automatic install of dependencies"));
 
-  qSlicerRelativePathMapper* relativePathMapper = new qSlicerRelativePathMapper(
-    this->ExtensionsInstallPathButton, "directory", SIGNAL(directoryChanged(QString)));
-  q->registerProperty("Extensions/InstallPath", relativePathMapper,
-                      "relativePath", SIGNAL(relativePathChanged(QString)),
-                      QString(), ctkSettingsPanel::OptionNone,
+  qSlicerRelativePathMapper* relativePathMapper =
+    new qSlicerRelativePathMapper(this->ExtensionsInstallPathButton, "directory", SIGNAL(directoryChanged(QString)));
+  q->registerProperty("Extensions/InstallPath",
+                      relativePathMapper,
+                      "relativePath",
+                      SIGNAL(relativePathChanged(QString)),
+                      QString(),
+                      ctkSettingsPanel::OptionNone,
                       app->revisionUserSettings());
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->ExtensionsManagerEnabledCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(onExtensionsManagerEnabled(bool)));
-  QObject::connect(this->ExtensionsServerUrlLineEdit, SIGNAL(textChanged(QString)),
-    q, SIGNAL(extensionsServerUrlChanged(QString)));
-  QObject::connect(this->ExtensionsFrontendServerUrlLineEdit, SIGNAL(textChanged(QString)),
-    q, SIGNAL(extensionsFrontendServerUrlChanged(QString)));
-  QObject::connect(this->ExtensionsInstallPathButton, SIGNAL(directoryChanged(QString)),
-    q, SLOT(onExtensionsPathChanged(QString)));
-  QObject::connect(this->OpenExtensionsManagerPushButton, SIGNAL(clicked()),
-    app, SLOT(openExtensionsManagerDialog()));
-  QObject::connect(this->OpenExtensionsCatalogWebsitePushButton, SIGNAL(clicked()),
-    app, SLOT(openExtensionsCatalogWebsite()));
-  QObject::connect(app->extensionsManagerModel(), SIGNAL(autoUpdateSettingsChanged()),
-    q, SLOT(updateAutoUpdateWidgetsFromModel()));
-  QObject::connect(this->AutoUpdateCheckCheckBox, SIGNAL(toggled(bool)),
-    app->extensionsManagerModel(), SLOT(setAutoUpdateCheck(bool)));
-  QObject::connect(this->AutoUpdateInstallCheckBox, SIGNAL(toggled(bool)),
-    app->extensionsManagerModel(), SLOT(setAutoUpdateInstall(bool)));
-  QObject::connect(this->AutoInstallDependenciesCheckBox, SIGNAL(toggled(bool)),
-    app->extensionsManagerModel(), SLOT(setAutoInstallDependencies(bool)));
+  QObject::connect(
+    this->ExtensionsManagerEnabledCheckBox, SIGNAL(toggled(bool)), q, SLOT(onExtensionsManagerEnabled(bool)));
+  QObject::connect(
+    this->ExtensionsServerUrlLineEdit, SIGNAL(textChanged(QString)), q, SIGNAL(extensionsServerUrlChanged(QString)));
+  QObject::connect(this->ExtensionsFrontendServerUrlLineEdit,
+                   SIGNAL(textChanged(QString)),
+                   q,
+                   SIGNAL(extensionsFrontendServerUrlChanged(QString)));
+  QObject::connect(
+    this->ExtensionsInstallPathButton, SIGNAL(directoryChanged(QString)), q, SLOT(onExtensionsPathChanged(QString)));
+  QObject::connect(this->OpenExtensionsManagerPushButton, SIGNAL(clicked()), app, SLOT(openExtensionsManagerDialog()));
+  QObject::connect(
+    this->OpenExtensionsCatalogWebsitePushButton, SIGNAL(clicked()), app, SLOT(openExtensionsCatalogWebsite()));
+  QObject::connect(
+    app->extensionsManagerModel(), SIGNAL(autoUpdateSettingsChanged()), q, SLOT(updateAutoUpdateWidgetsFromModel()));
+  QObject::connect(this->AutoUpdateCheckCheckBox,
+                   SIGNAL(toggled(bool)),
+                   app->extensionsManagerModel(),
+                   SLOT(setAutoUpdateCheck(bool)));
+  QObject::connect(this->AutoUpdateInstallCheckBox,
+                   SIGNAL(toggled(bool)),
+                   app->extensionsManagerModel(),
+                   SLOT(setAutoUpdateInstall(bool)));
+  QObject::connect(this->AutoInstallDependenciesCheckBox,
+                   SIGNAL(toggled(bool)),
+                   app->extensionsManagerModel(),
+                   SLOT(setAutoInstallDependencies(bool)));
 }
 
 // --------------------------------------------------------------------------

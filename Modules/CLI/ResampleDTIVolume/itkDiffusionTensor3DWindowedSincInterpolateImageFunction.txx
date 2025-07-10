@@ -19,28 +19,20 @@
 namespace itk
 {
 
-template <class TData,
-          unsigned int VRadius,
-          class TWindowFunction,
-          class TBoundaryCondition,
-          class TCoordRep
-          >
-void
-DiffusionTensor3DWindowedSincInterpolateImageFunction<TData,
-                                                      VRadius,
-                                                      TWindowFunction,
-                                                      TBoundaryCondition,
-                                                      TCoordRep
-                                                      >
-::AllocateInterpolator()
+template <class TData, unsigned int VRadius, class TWindowFunction, class TBoundaryCondition, class TCoordRep>
+void DiffusionTensor3DWindowedSincInterpolateImageFunction<TData,
+                                                           VRadius,
+                                                           TWindowFunction,
+                                                           TBoundaryCondition,
+                                                           TCoordRep>::AllocateInterpolator()
 {
-  for ( int i = 0; i < 6; i++ )
+  for (int i = 0; i < 6; i++)
   {
     windowedSincInterpolator[i] = WindowedSincInterpolateImageFunctionType::New();
     this->m_Interpol[i] = windowedSincInterpolator[i];
   }
 }
 
-} // end itk namespace
+} // namespace itk
 
 #endif

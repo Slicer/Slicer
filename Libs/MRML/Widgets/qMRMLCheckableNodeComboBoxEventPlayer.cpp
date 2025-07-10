@@ -35,9 +35,9 @@ qMRMLCheckableNodeComboBoxEventPlayer::qMRMLCheckableNodeComboBoxEventPlayer(QOb
 
 // ----------------------------------------------------------------------------
 bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject* Object,
-                                    const QString& Command,
-                                    const QString& Arguments,
-                                    bool& Error)
+                                                      const QString& Command,
+                                                      const QString& Arguments,
+                                                      bool& Error)
 {
   if (Command != "check_indexes" && Command != "uncheck_indexes")
   {

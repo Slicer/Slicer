@@ -39,7 +39,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -65,14 +65,12 @@ public:
 
   ///
   /// alternative method to propagate events generated in Transform nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                  unsigned long /*event*/,
-                                  void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// TransformModifiedEvent is send when the parent transform is modified
   enum
   {
-      TransformModifiedEvent = 15000
+    TransformModifiedEvent = 15000
   };
 
   /// Returns true if the transformable node can apply non-linear transforms.
@@ -116,10 +114,10 @@ public:
   bool HardenTransform();
 
   /// Get the implicit function that represents the transformable node in world coordinates.
-  /// This function is used for clipping and other operations that require the detection of inside/outside a transformable node.
-  /// Subclasses should override this method to provide the implicit function that represents the node.
-  /// The implicit function should be set by the node and should be in world coordinates, either by defining
-  /// the implicit function in world coordinates, or by applying a transform.
+  /// This function is used for clipping and other operations that require the detection of inside/outside a
+  /// transformable node. Subclasses should override this method to provide the implicit function that represents the
+  /// node. The implicit function should be set by the node and should be in world coordinates, either by defining the
+  /// implicit function in world coordinates, or by applying a transform.
   virtual vtkImplicitFunction* GetImplicitFunctionWorld() { return nullptr; };
 
 protected:
@@ -153,7 +151,6 @@ private:
   char* TransformNodeIDInternal;
   vtkSetStringMacro(TransformNodeIDInternal);
   vtkGetStringMacro(TransformNodeIDInternal);
-
 };
 
 #endif

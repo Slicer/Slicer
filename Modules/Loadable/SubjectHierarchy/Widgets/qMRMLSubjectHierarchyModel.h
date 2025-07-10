@@ -57,24 +57,24 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
   /// displayed in this column (Qt::DecorationRole).
   /// A value of -1 hides it. First column (0) by default.
   /// If no property is set in a column, nothing is displayed.
-  Q_PROPERTY (int nameColumn READ nameColumn WRITE setNameColumn)
+  Q_PROPERTY(int nameColumn READ nameColumn WRITE setNameColumn)
   /// Control in which column data MRML node visibility are displayed (Qt::DecorationRole).
   /// A value of -1 (default) hides the column
-  Q_PROPERTY (int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
+  Q_PROPERTY(int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
   /// Control in which column data MRML node color is displayed.
   /// A value of -1 (default) hides the column
   Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn)
-    /// Control in which column the parent transforms are displayed
+  /// Control in which column the parent transforms are displayed
   /// A MRML node combobox is displayed in the row of the transformable nodes, in which
   /// the current transform is selected. The user can change the transform using the combobox.
   /// A value of -1 (default) hides the column
-  Q_PROPERTY (int transformColumn READ transformColumn WRITE setTransformColumn)
+  Q_PROPERTY(int transformColumn READ transformColumn WRITE setTransformColumn)
   /// Control in which column the node descriptions are displayed
   /// A value of -1 (default) hides the column
-  Q_PROPERTY (int descriptionColumn READ descriptionColumn WRITE setDescriptionColumn)
+  Q_PROPERTY(int descriptionColumn READ descriptionColumn WRITE setDescriptionColumn)
   /// Control in which column the data MRML node IDs are displayed (Qt::DisplayRole).
   /// A value of -1 hides it. Hidden by default (value of -1)
-  Q_PROPERTY (int idColumn READ idColumn WRITE setIDColumn)
+  Q_PROPERTY(int idColumn READ idColumn WRITE setIDColumn)
 
   /// This property controls whether an extra item is added before any subject hierarchy item under
   /// the scene item for indicating 'None' selection. Especially useful for comboboxes.
@@ -128,8 +128,11 @@ public:
 
   Qt::DropActions supportedDropActions() const override;
   QMimeData* mimeData(const QModelIndexList& indexes) const override;
-  bool dropMimeData(const QMimeData* data, Qt::DropAction action,
-                            int row, int column, const QModelIndex& parent) override;
+  bool dropMimeData(const QMimeData* data,
+                    Qt::DropAction action,
+                    int row,
+                    int column,
+                    const QModelIndex& parent) override;
 
   Q_INVOKABLE virtual void setMRMLScene(vtkMRMLScene* scene);
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
@@ -145,8 +148,8 @@ public:
 
   vtkIdType subjectHierarchyItemFromIndex(const QModelIndex& index) const;
   vtkIdType subjectHierarchyItemFromItem(QStandardItem* item) const;
-  QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0) const;
-  QStandardItem* itemFromSubjectHierarchyItem(vtkIdType itemID, int column=0) const;
+  QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column = 0) const;
+  QStandardItem* itemFromSubjectHierarchyItem(vtkIdType itemID, int column = 0) const;
 
   /// Return all the QModelIndexes (all the columns) for a given subject hierarchy item
   QModelIndexList indexes(vtkIdType itemID) const;
@@ -220,18 +223,14 @@ protected:
   virtual void rebuildFromSubjectHierarchy();
 
   virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID);
-  virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, QStandardItem* parent, int row=-1);
+  virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, QStandardItem* parent, int row = -1);
 
   virtual QFlags<Qt::ItemFlag> subjectHierarchyItemFlags(vtkIdType itemID, int column) const;
 
-  virtual void updateItemFromSubjectHierarchyItem(
-    QStandardItem* item, vtkIdType shItemID, int column );
-  virtual void updateItemDataFromSubjectHierarchyItem(
-    QStandardItem* item, vtkIdType shItemID, int column );
-  virtual void updateSubjectHierarchyItemFromItem(
-    vtkIdType shItemID, QStandardItem* item );
-  virtual void updateSubjectHierarchyItemFromItemData(
-    vtkIdType shItemID, QStandardItem* item );
+  virtual void updateItemFromSubjectHierarchyItem(QStandardItem* item, vtkIdType shItemID, int column);
+  virtual void updateItemDataFromSubjectHierarchyItem(QStandardItem* item, vtkIdType shItemID, int column);
+  virtual void updateSubjectHierarchyItemFromItem(vtkIdType shItemID, QStandardItem* item);
+  virtual void updateSubjectHierarchyItemFromItemData(vtkIdType shItemID, QStandardItem* item);
 
   /// Update the model items associated with the subject hierarchy item
   void updateModelItems(vtkIdType itemID);

@@ -27,18 +27,22 @@
 
 //-----------------------------------------------------------------------------
 qMRMLDoubleSpinBoxDelegate::qMRMLDoubleSpinBoxDelegate(QObject* parent)
-  : QStyledItemDelegate(parent) { }
+  : QStyledItemDelegate(parent)
+{
+}
 
 //-----------------------------------------------------------------------------
-QWidget* qMRMLDoubleSpinBoxDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
+QWidget* qMRMLDoubleSpinBoxDelegate::createEditor(QWidget* parent,
+                                                  const QStyleOptionViewItem& /* option */,
+                                                  const QModelIndex& /* index */) const
 {
   QDoubleSpinBox* editor = new QDoubleSpinBox(parent);
   editor->setMinimum(0.0);
   editor->setMaximum(1.0);
   editor->setSingleStep(0.1);
-  //TODO: Emitting commitData actually closes the editor which we do not want
-  //      Interestingly the same code works in qMRMLItemDelegate where the editor is not closed
-  //connect(editor, SIGNAL(valueChanged(double)), this, SLOT(commitSenderData()));
+  // TODO: Emitting commitData actually closes the editor which we do not want
+  //       Interestingly the same code works in qMRMLItemDelegate where the editor is not closed
+  // connect(editor, SIGNAL(valueChanged(double)), this, SLOT(commitSenderData()));
   return editor;
 }
 
@@ -51,7 +55,9 @@ void qMRMLDoubleSpinBoxDelegate::setEditorData(QWidget* editor, const QModelInde
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLDoubleSpinBoxDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+void qMRMLDoubleSpinBoxDelegate::setModelData(QWidget* editor,
+                                              QAbstractItemModel* model,
+                                              const QModelIndex& index) const
 {
   QDoubleSpinBox* spinBox = static_cast<QDoubleSpinBox*>(editor);
   spinBox->interpretText();
@@ -60,7 +66,9 @@ void qMRMLDoubleSpinBoxDelegate::setModelData(QWidget* editor, QAbstractItemMode
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLDoubleSpinBoxDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex &/* index */) const
+void qMRMLDoubleSpinBoxDelegate::updateEditorGeometry(QWidget* editor,
+                                                      const QStyleOptionViewItem& option,
+                                                      const QModelIndex& /* index */) const
 {
   editor->setGeometry(option.rect);
 }

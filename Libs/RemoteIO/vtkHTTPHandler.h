@@ -15,7 +15,6 @@
 class VTK_RemoteIO_EXPORT vtkHTTPHandler : public vtkURIHandler
 {
 public:
-
   /// The Usual vtk class functions
   static vtkHTTPHandler* New();
   vtkTypeMacro(vtkHTTPHandler, vtkURIHandler);
@@ -23,7 +22,7 @@ public:
 
   /// This methods returns 1 if the handler matches the URI's required
   /// protocol and returns 0 if it's not appropriate for the URI.
-  int CanHandleURI ( const char* uri ) override;
+  int CanHandleURI(const char* uri) override;
 
   /// Some web servers don't handle 'keep alive' socket transactions
   /// in a way that's compatible with curl on windows.  When this flag is set
@@ -53,7 +52,7 @@ protected:
 private:
   class vtkInternal;
   vtkInternal* Internal;
-  char* CaCertificatesPath{nullptr};
+  char* CaCertificatesPath{ nullptr };
 };
 
 #endif

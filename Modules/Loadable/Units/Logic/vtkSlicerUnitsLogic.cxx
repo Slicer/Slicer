@@ -62,12 +62,15 @@ void vtkSlicerUnitsLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLUnitNode* vtkSlicerUnitsLogic
-::AddUnitNode(const char* name, const char* quantity, const char* prefix,
-              const char* suffix, int precision, double min, double max)
+vtkMRMLUnitNode* vtkSlicerUnitsLogic::AddUnitNode(const char* name,
+                                                  const char* quantity,
+                                                  const char* prefix,
+                                                  const char* suffix,
+                                                  int precision,
+                                                  double min,
+                                                  double max)
 {
-  return this->AddUnitNodeToScene(this->GetMRMLScene(), name, quantity,
-    prefix, suffix, precision, min, max);
+  return this->AddUnitNodeToScene(this->GetMRMLScene(), name, quantity, prefix, suffix, precision, min, max);
 }
 
 //----------------------------------------------------------------------------
@@ -77,8 +80,7 @@ vtkMRMLScene* vtkSlicerUnitsLogic::GetUnitsScene() const
 }
 
 //----------------------------------------------------------------------------
-double vtkSlicerUnitsLogic::
-GetSIPrefixCoefficient(const char* prefix)
+double vtkSlicerUnitsLogic::GetSIPrefixCoefficient(const char* prefix)
 {
   if (!prefix)
   {
@@ -111,18 +113,22 @@ GetSIPrefixCoefficient(const char* prefix)
 }
 
 //----------------------------------------------------------------------------
-double vtkSlicerUnitsLogic::GetDisplayCoefficient(const char* prefix, const char* basePrefix, double power/*=1*/)
+double vtkSlicerUnitsLogic::GetDisplayCoefficient(const char* prefix, const char* basePrefix, double power /*=1*/)
 {
   return pow(GetSIPrefixCoefficient(basePrefix) / GetSIPrefixCoefficient(prefix), power);
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLUnitNode* vtkSlicerUnitsLogic
-::AddUnitNodeToScene(vtkMRMLScene* scene, const char* name,
-                     const char* quantity, const char* prefix,
-                     const char* suffix, int precision,
-                     double min, double max,
-                     double displayCoeff, double displayOffset)
+vtkMRMLUnitNode* vtkSlicerUnitsLogic::AddUnitNodeToScene(vtkMRMLScene* scene,
+                                                         const char* name,
+                                                         const char* quantity,
+                                                         const char* prefix,
+                                                         const char* suffix,
+                                                         int precision,
+                                                         double min,
+                                                         double max,
+                                                         double displayCoeff,
+                                                         double displayOffset)
 {
   if (!scene)
   {
@@ -306,13 +312,12 @@ void vtkSlicerUnitsLogic::SetDefaultUnit(const char* quantity, const char* id)
     return;
   }
 
-  vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
-    this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode* selectionNode =
+    vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   if (selectionNode)
   {
     selectionNode->SetUnitNodeID(quantity, id);
-    if (!vtkIsObservedMRMLNodeEventMacro(selectionNode,
-                                         vtkCommand::ModifiedEvent))
+    if (!vtkIsObservedMRMLNodeEventMacro(selectionNode, vtkCommand::ModifiedEvent))
     {
       vtkObserveMRMLNodeMacro(selectionNode);
     }
@@ -346,8 +351,7 @@ void vtkSlicerUnitsLogic::OnMRMLSceneStartBatchProcess()
 //-----------------------------------------------------------------------------
 void vtkSlicerUnitsLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
-  if (vtkMRMLSelectionNode::SafeDownCast(node) &&
-      !this->RestoringDefaultUnits)
+  if (vtkMRMLSelectionNode::SafeDownCast(node) && !this->RestoringDefaultUnits)
   {
     this->RestoreDefaultUnits();
   }
@@ -358,8 +362,8 @@ void vtkSlicerUnitsLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 void vtkSlicerUnitsLogic::SaveDefaultUnits()
 {
   // Save selection node units.
-  vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
-    this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode* selectionNode =
+    vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   std::vector<const char*> quantities;
   std::vector<const char*> unitIDs;
   if (selectionNode)
@@ -369,13 +373,12 @@ void vtkSlicerUnitsLogic::SaveDefaultUnits()
   this->CachedDefaultUnits.clear();
   std::vector<const char*>::const_iterator qIt;
   std::vector<const char*>::const_iterator uIt;
-  for (qIt = quantities.begin(), uIt = unitIDs.begin();
-       uIt != unitIDs.end(); ++qIt, ++uIt)
+  for (qIt = quantities.begin(), uIt = unitIDs.begin(); uIt != unitIDs.end(); ++qIt, ++uIt)
   {
     assert(qIt != quantities.end());
     const char* quantity = *qIt;
     const char* unitID = *uIt;
-    assert( (quantity != nullptr) == (unitID != nullptr) );
+    assert((quantity != nullptr) == (unitID != nullptr));
     if (quantity && unitID)
     {
       this->CachedDefaultUnits[quantity] = unitID;
@@ -387,8 +390,8 @@ void vtkSlicerUnitsLogic::SaveDefaultUnits()
 void vtkSlicerUnitsLogic::RestoreDefaultUnits()
 {
   this->RestoringDefaultUnits = true;
-  vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
-    this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  vtkMRMLSelectionNode* selectionNode =
+    vtkMRMLSelectionNode::SafeDownCast(this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   int wasModifying = 0;
   if (selectionNode)
   {
@@ -396,9 +399,7 @@ void vtkSlicerUnitsLogic::RestoreDefaultUnits()
   }
   // Restore selection node units.
   std::map<std::string, std::string>::const_iterator it;
-  for ( it = this->CachedDefaultUnits.begin() ;
-        it != this->CachedDefaultUnits.end();
-        ++it )
+  for (it = this->CachedDefaultUnits.begin(); it != this->CachedDefaultUnits.end(); ++it)
   {
     this->SetDefaultUnit(it->first.c_str(), it->second.c_str());
   }

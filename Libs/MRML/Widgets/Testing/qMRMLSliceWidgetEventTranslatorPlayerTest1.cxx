@@ -65,7 +65,7 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
@@ -102,7 +102,7 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   for (unsigned int i = 0; i < sliceNodes.size(); ++i)
   {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
-    if (!strcmp(sliceNode->GetLayoutName(), "Red") )
+    if (!strcmp(sliceNode->GetLayoutName(), "Red"))
     {
       redSliceNode = sliceNode;
       break;
@@ -120,9 +120,8 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 
   sliceWidget.setMRMLSliceNode(redSliceNode);
 
-  etpWidget.addTestCase(&sliceWidget,
-                        xmlDirectory + "qMRMLSliceWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    &sliceWidget, xmlDirectory + "qMRMLSliceWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

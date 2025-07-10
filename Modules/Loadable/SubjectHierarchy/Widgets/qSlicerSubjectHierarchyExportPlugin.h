@@ -30,7 +30,8 @@
 
 class qSlicerSubjectHierarchyExportPluginPrivate;
 
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyExportPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyExportPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -39,7 +40,6 @@ public:
   typedef qSlicerSubjectHierarchyAbstractPlugin Superclass;
   qSlicerSubjectHierarchyExportPlugin(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyExportPlugin() override;
-
 
 public:
   /// Get node item context menu actions to add to tree view

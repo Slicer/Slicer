@@ -29,8 +29,7 @@ class qSlicerColorsReaderPrivate;
 class vtkSlicerColorLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerColorsReader
-  : public qSlicerFileReader
+class qSlicerColorsReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
@@ -52,6 +51,7 @@ public:
   double canLoadFileConfidence(const QString& file) const override;
 
   bool load(const IOProperties& properties) override;
+
 protected:
   QScopedPointer<qSlicerColorsReaderPrivate> d_ptr;
 

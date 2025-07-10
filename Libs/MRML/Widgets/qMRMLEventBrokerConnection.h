@@ -30,7 +30,7 @@
 
 class QMRML_WIDGETS_EXPORT qMRMLEventBrokerConnection : public ctkVTKConnection
 {
-Q_OBJECT
+  Q_OBJECT
 
 public:
   typedef ctkVTKConnection Superclass;
@@ -38,7 +38,10 @@ public:
   ~qMRMLEventBrokerConnection() override;
 
 protected:
-  void addObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback, float priority=0.0f) override;
+  void addObserver(vtkObject* caller,
+                   unsigned long vtk_event,
+                   vtkCallbackCommand* callback,
+                   float priority = 0.0f) override;
   void removeObserver(vtkObject* caller, unsigned long vtk_event, vtkCallbackCommand* callback) override;
 
 private:

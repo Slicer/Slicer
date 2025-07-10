@@ -74,7 +74,7 @@ QString qSlicerTerminologiesModule::helpText() const
 QString qSlicerTerminologiesModule::acknowledgementText() const
 {
   return tr("This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program"
-    " and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).");
+            " and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).");
 }
 
 //-----------------------------------------------------------------------------
@@ -102,7 +102,8 @@ void qSlicerTerminologiesModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(this->logic());
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic =
+    vtkSlicerTerminologiesModuleLogic::SafeDownCast(this->logic());
 
   // Register IOs
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();

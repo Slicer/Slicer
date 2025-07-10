@@ -47,7 +47,8 @@ class QMRML_WIDGETS_EXPORT qMRMLSegmentSelectorWidget : public qMRMLWidget
 public:
   Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
   Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
-  Q_PROPERTY(bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
+  Q_PROPERTY(
+    bool segmentationNodeSelectorVisible READ segmentationNodeSelectorVisible WRITE setSegmentationNodeSelectorVisible)
   Q_PROPERTY(bool multiSelection READ multiSelection WRITE setMultiSelection)
   Q_PROPERTY(bool horizontalLayout READ horizontalLayout WRITE setHorizontalLayout)
   Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)

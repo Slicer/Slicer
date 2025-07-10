@@ -33,8 +33,7 @@ typedef _object PyObject;
 class qSlicerScriptedFileReaderPrivate;
 class vtkObject;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileReader
-  : public qSlicerFileReader
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileReader : public qSlicerFileReader
 {
   Q_OBJECT
 
@@ -50,7 +49,9 @@ public:
 
   /// \warning Setting the source is a no-op. See detailed comment in the source code.
   /// If missingClassIsExpected is true (default) then missing class is expected and not treated as an error.
-  bool setPythonSource(const QString& filePath, const QString& className = QLatin1String(""), bool missingClassIsExpected = true);
+  bool setPythonSource(const QString& filePath,
+                       const QString& className = QLatin1String(""),
+                       bool missingClassIsExpected = true);
 
   /// Convenience method allowing to retrieve the associated scripted instance
   Q_INVOKABLE PyObject* self() const;
@@ -82,12 +83,8 @@ public:
   /// Exposes setLoadedNodes, which is protected in superclass
   /// \sa qSlicerFileReader::loadedNodes()
   /// \sa qSlicerFileWriter::writtenNodes()
-  QStringList loadedNodes() const override {
-    return Superclass::loadedNodes();
-  };
-  void setLoadedNodes(const QStringList& nodes) override {
-    Superclass::setLoadedNodes(nodes);
-  };
+  QStringList loadedNodes() const override { return Superclass::loadedNodes(); };
+  void setLoadedNodes(const QStringList& nodes) override { Superclass::setLoadedNodes(nodes); };
 
 protected:
   QScopedPointer<qSlicerScriptedFileReaderPrivate> d_ptr;

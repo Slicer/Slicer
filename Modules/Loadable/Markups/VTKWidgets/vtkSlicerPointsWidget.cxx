@@ -32,8 +32,9 @@ vtkSlicerPointsWidget::vtkSlicerPointsWidget() = default;
 vtkSlicerPointsWidget::~vtkSlicerPointsWidget() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerPointsWidget::CreateDefaultRepresentation(
-  vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+void vtkSlicerPointsWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                                        vtkMRMLAbstractViewNode* viewNode,
+                                                        vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))

@@ -136,7 +136,6 @@ public:
   void setExplicitModules(const QStringList& moduleNames);
   QStringList explicitModules() const;
 
-
   /// Set or get the \a modulesToIgnore list.
   ///
   /// If list is modified, the signal
@@ -223,6 +222,7 @@ public slots:
   /// \sa setVerboseModuleDiscovery()
   void setIsVerbose(bool flag);
   bool isVerbose() const;
+
 protected:
   QScopedPointer<qSlicerAbstractModuleFactoryManagerPrivate> d_ptr;
 

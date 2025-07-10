@@ -29,7 +29,7 @@ public:
   /// Mask that defines area of interest in the neighborhood.
   /// Value is 1 for voxels of interest, 0 otherwise.
   /// This should be used when looping through neighborhood.
-  unsigned char* GetMaskPointer() {return Mask;}
+  unsigned char* GetMaskPointer() { return Mask; }
 
   ///
   /// Use 4 or 8 neighbor connectivity in neighborhood around pixel
@@ -46,8 +46,7 @@ public:
   /// Get the neighborhood extent, where the max/min numbers are
   /// offsets from the current voxel.  (So these numbers may be negative.)
   /// For use when looping through the neighborhood.
-  void GetRelativeHoodExtent(int& hoodMin0, int& hoodMax0, int& hoodMin1,
-                 int& hoodMax1, int& hoodMin2, int& hoodMax2);
+  void GetRelativeHoodExtent(int& hoodMin0, int& hoodMax0, int& hoodMin1, int& hoodMax1, int& hoodMin2, int& hoodMax2);
 
   ///
   /// Get the increments to use when looping through the mask.

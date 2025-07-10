@@ -49,22 +49,21 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentsModel : public Q
   QVTK_OBJECT
 
   /// Control in which column the segment name is displayed
-  Q_PROPERTY (int nameColumn READ nameColumn WRITE setNameColumn)
+  Q_PROPERTY(int nameColumn READ nameColumn WRITE setNameColumn)
   /// Control in which column the segment visibility is displayed (Qt::DecorationRole).
   /// A value of -1 (default) hides the column
-  Q_PROPERTY (int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
+  Q_PROPERTY(int visibilityColumn READ visibilityColumn WRITE setVisibilityColumn)
   /// Control in which column the segment color is displayed (qMRMLSegmentsModel::VisibilityRole).
   /// A value of -1 (default) hides the column
   Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn)
   /// Control in which column the segment opacity is displayed (Qt::EditRole).
-  Q_PROPERTY (int opacityColumn READ opacityColumn WRITE setOpacityColumn)
+  Q_PROPERTY(int opacityColumn READ opacityColumn WRITE setOpacityColumn)
   /// Control in which column the segment status is displayed (qMRMLSegmentsModel::StatusRole).
   Q_PROPERTY(int statusColumn READ statusColumn WRITE setStatusColumn)
   /// Control in which column the segment layer is displayed (qMRMLSegmentsModel::LayerRole).
   Q_PROPERTY(int layerColumn READ layerColumn WRITE setLayerColumn)
 
 public:
-
   enum SegmentTableItemDataRole
   {
     SegmentIDRole = Qt::UserRole + 1,
@@ -95,9 +94,9 @@ public:
   /// Returns the segment ID for the given item
   QString segmentIDFromItem(QStandardItem* item) const;
   /// Returns the index for the given segment ID
-  QModelIndex indexFromSegmentID(QString segmentID, int column=0) const;
+  QModelIndex indexFromSegmentID(QString segmentID, int column = 0) const;
   /// Returns the item for the given segment ID
-  QStandardItem* itemFromSegmentID(QString segmentID, int column=0) const;
+  QStandardItem* itemFromSegmentID(QString segmentID, int column = 0) const;
 
   /// Return all the QModelIndexes (all the columns) for a given segment ID
   QModelIndexList indexes(QString segmentID) const;
@@ -136,13 +135,13 @@ protected:
   virtual Qt::ItemFlags segmentFlags(QString segmentID, int column) const;
 
   /// Update QStandardItem associated using segmentID and column
-  virtual void updateItemFromSegment(QStandardItem* item, QString segmentID, int column );
+  virtual void updateItemFromSegment(QStandardItem* item, QString segmentID, int column);
   /// Update QStandardItem data associated using segmentID and column
-  virtual void updateItemDataFromSegment(QStandardItem* item, QString segmentID, int column );
+  virtual void updateItemDataFromSegment(QStandardItem* item, QString segmentID, int column);
   /// Update a segment in the MRML node using the associated QStandardItem
-  virtual void updateSegmentFromItem(QString segmentID, QStandardItem* item );
+  virtual void updateSegmentFromItem(QString segmentID, QStandardItem* item);
   /// Update a segment in the MRML node using the associated QStandardItem data
-  virtual void updateSegmentFromItemData(QString segmentID, QStandardItem* item );
+  virtual void updateSegmentFromItemData(QString segmentID, QStandardItem* item);
   /// Update all of the the QStandardItem associated with a column
   void updateItemsFromColumnIndex(int column);
   /// Update all of the the QStandardItem associated with a segment ID

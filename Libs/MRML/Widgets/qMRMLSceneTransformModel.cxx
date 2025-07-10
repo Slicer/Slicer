@@ -31,8 +31,7 @@
 vtkMRMLNode* qMRMLSceneTransformModel::parentNode(vtkMRMLNode* node) const
 {
   // MRML Transformable nodes
-  vtkMRMLTransformableNode* transformableNode =
-    vtkMRMLTransformableNode::SafeDownCast(node);
+  vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(node);
   if (transformableNode)
   {
     return transformableNode->GetParentTransformNode();
@@ -95,17 +94,16 @@ bool qMRMLSceneTransformModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
   }
   Q_ASSERT(newParent != node);
   // MRML Transformable Nodes
-  vtkMRMLTransformableNode* transformableNode =
-    vtkMRMLTransformableNode::SafeDownCast(node);
-  vtkMRMLTransformNode* transformNode =
-    vtkMRMLTransformNode::SafeDownCast(newParent);
+  vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(node);
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(newParent);
   if (transformableNode)
   {
-    if (transformNode && !transformNode->IsTransformToWorldLinear() && !transformableNode->CanApplyNonLinearTransforms())
+    if (transformNode && !transformNode->IsTransformToWorldLinear()
+        && !transformableNode->CanApplyNonLinearTransforms())
     {
       return false;
     }
-    transformableNode->SetAndObserveTransformNodeID( newParent ? newParent->GetID() : nullptr );
+    transformableNode->SetAndObserveTransformNodeID(newParent ? newParent->GetID() : nullptr);
     return true;
   }
   return false;
@@ -116,24 +114,22 @@ class qMRMLSceneTransformModelPrivate : public qMRMLSceneModelPrivate
 {
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneTransformModel);
+
 public:
   qMRMLSceneTransformModelPrivate(qMRMLSceneTransformModel& object);
-
 };
 
 //------------------------------------------------------------------------------
-qMRMLSceneTransformModelPrivate
-::qMRMLSceneTransformModelPrivate(qMRMLSceneTransformModel& object)
+qMRMLSceneTransformModelPrivate::qMRMLSceneTransformModelPrivate(qMRMLSceneTransformModel& object)
   : qMRMLSceneModelPrivate(object)
 {
-
 }
 
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 qMRMLSceneTransformModel::qMRMLSceneTransformModel(QObject* vparent)
-  :qMRMLSceneModel(new qMRMLSceneTransformModelPrivate(*this), vparent)
+  : qMRMLSceneModel(new qMRMLSceneTransformModelPrivate(*this), vparent)
 {
 }
 

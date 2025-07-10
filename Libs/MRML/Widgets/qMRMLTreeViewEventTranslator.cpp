@@ -47,10 +47,7 @@ qMRMLTreeViewEventTranslator::qMRMLTreeViewEventTranslator(QObject* parent)
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object,
-                                             QEvent* Event,
-                                             int EventType,
-                                             bool& Error)
+bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, int EventType, bool& Error)
 {
   Q_UNUSED(Error);
 
@@ -59,7 +56,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object,
   {
     treeView = qobject_cast<qMRMLTreeView*>(test);
   }
-//  qMRMLTreeView* treeView = qobject_cast<qMRMLTreeView*>(Object);
+  //  qMRMLTreeView* treeView = qobject_cast<qMRMLTreeView*>(Object);
   if (!treeView)
   {
     return false;
@@ -67,7 +64,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object,
 
   // For the custom action when we have a right click
   QMenu* menu = nullptr;
-  for (QObject* test = Object; menu == nullptr && test != nullptr ; test = test->parent())
+  for (QObject* test = Object; menu == nullptr && test != nullptr; test = test->parent())
   {
     menu = qobject_cast<QMenu*>(test);
   }
@@ -86,7 +83,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object,
           {
             which = action->text();
           }
-          if (which != "Rename" && which != "Delete" )
+          if (which != "Rename" && which != "Delete")
           {
             emit recordEvent(menu, "activate", which);
           }
@@ -106,7 +103,7 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object,
           {
             which = action->text();
           }
-          if (which != "Rename" && which != "Delete" )
+          if (which != "Rename" && which != "Delete")
           {
             emit recordEvent(menu, "activate", which);
           }
@@ -139,19 +136,18 @@ bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object,
       }
       this->CurrentObject = Object;
 
-      connect(treeView, SIGNAL(destroyed(QObject*)),
-              this, SLOT(onDestroyed(QObject*)));
-      connect(treeView, SIGNAL(currentNodeRenamed(QString)),
-              this, SLOT(onCurrentNodeRenamed(QString)));
+      connect(treeView, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
+      connect(treeView, SIGNAL(currentNodeRenamed(QString)), this, SLOT(onCurrentNodeRenamed(QString)));
 
       // Can be better to do it on the model to recover the QModelIndex
-      connect(treeView, SIGNAL(currentNodeDeleted(const QModelIndex&)),
-              this, SLOT(onCurrentNodeDeleted(const QModelIndex&)));
-      connect(treeView, SIGNAL(decorationClicked(QModelIndex)),
-              this, SLOT(onDecorationClicked(QModelIndex)));
+      connect(
+        treeView, SIGNAL(currentNodeDeleted(const QModelIndex&)), this, SLOT(onCurrentNodeDeleted(const QModelIndex&)));
+      connect(treeView, SIGNAL(decorationClicked(QModelIndex)), this, SLOT(onDecorationClicked(QModelIndex)));
 
-      connect(treeView->sceneModel(), SIGNAL(aboutToReparentByDragAndDrop(vtkMRMLNode*,vtkMRMLNode*)),
-              this, SLOT(onAboutToReparentByDnD(vtkMRMLNode*,vtkMRMLNode*)));
+      connect(treeView->sceneModel(),
+              SIGNAL(aboutToReparentByDragAndDrop(vtkMRMLNode*, vtkMRMLNode*)),
+              this,
+              SLOT(onAboutToReparentByDnD(vtkMRMLNode*, vtkMRMLNode*)));
     }
     return this->Superclass::translateEvent(Object, Event, EventType, Error);
   }
@@ -190,14 +186,12 @@ void qMRMLTreeViewEventTranslator::onDecorationClicked(const QModelIndex& index)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTreeViewEventTranslator::onAboutToReparentByDnD(vtkMRMLNode* node , vtkMRMLNode* newParent )
+void qMRMLTreeViewEventTranslator::onAboutToReparentByDnD(vtkMRMLNode* node, vtkMRMLNode* newParent)
 {
   if (node)
   {
     QString parentID = newParent ? QString::fromUtf8(newParent->GetID()) : nullptr;
-    QString args = QString("%1.%2").arg(
-        QString::fromUtf8(node->GetID()),
-        parentID);
+    QString args = QString("%1.%2").arg(QString::fromUtf8(node->GetID()), parentID);
     emit recordEvent(this->CurrentObject, "reParentByDragnDrop", args);
   }
 }

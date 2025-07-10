@@ -24,7 +24,7 @@
  *
  * The vtkSlicerPlaneWidget is used to create a plane widget with a set of 3 points.
  *
-*/
+ */
 
 #ifndef vtkSlicerPlaneWidget_h
 #define vtkSlicerPlaneWidget_h
@@ -52,7 +52,7 @@ public:
   enum
   {
     WidgetStateTranslatePlane = WidgetStateMarkups_Last, // translating the plane
-    WidgetStateSymmetricScale, // Scaling the plane without moving the center
+    WidgetStateSymmetricScale,                           // Scaling the plane without moving the center
     WidgetStateMarkupsPlane_Last
   };
 
@@ -69,7 +69,9 @@ public:
   };
 
   /// Create the default widget representation and initializes the widget and representation.
-  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
+  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                   vtkMRMLAbstractViewNode* viewNode,
+                                   vtkRenderer* renderer) override;
 
   bool PlacePoint(vtkMRMLInteractionEventData* eventData) override;
   virtual bool PlacePlaneNormal(vtkMRMLInteractionEventData* eventData);

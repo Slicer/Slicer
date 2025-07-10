@@ -37,8 +37,7 @@ class vtkMRMLAbstractViewNode;
 /// scene view node list. View nodes can be vtkMRMLViewNode for the 3D view
 /// or vtkMRMLSliceNode for the 2d case, or vtkMRMLPlotChartViewNodes for charts
 /// \sa vtkMRMLDisplayNode::GetNthViewNodeID()
-class QMRML_WIDGETS_EXPORT qMRMLDisplayNodeViewComboBox
-  : public qMRMLCheckableNodeComboBox
+class QMRML_WIDGETS_EXPORT qMRMLDisplayNodeViewComboBox : public qMRMLCheckableNodeComboBox
 {
   Q_OBJECT
   QVTK_OBJECT

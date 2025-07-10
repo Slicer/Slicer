@@ -39,8 +39,7 @@
 class qMRMLMarkupsCurveSettingsWidget;
 
 // --------------------------------------------------------------------------
-class qMRMLMarkupsCurveSettingsWidgetPrivate
-  : public Ui_qMRMLMarkupsCurveSettingsWidget
+class qMRMLMarkupsCurveSettingsWidgetPrivate : public Ui_qMRMLMarkupsCurveSettingsWidget
 {
 public:
   qMRMLMarkupsCurveSettingsWidgetPrivate(qMRMLMarkupsCurveSettingsWidget& widget);
@@ -78,39 +77,34 @@ void qMRMLMarkupsCurveSettingsWidgetPrivate::setupUi(qMRMLMarkupsCurveSettingsWi
   this->curveTypeComboBox->clear();
   for (int curveType = 0; curveType < vtkCurveGenerator::CURVE_TYPE_LAST; ++curveType)
   {
-    this->curveTypeComboBox->addItem(
-      qMRMLMarkupsCurveSettingsWidgetPrivate::curveTypeAsDisplayableString(curveType), curveType
-    );
+    this->curveTypeComboBox->addItem(qMRMLMarkupsCurveSettingsWidgetPrivate::curveTypeAsDisplayableString(curveType),
+                                     curveType);
   }
 
   this->costFunctionComboBox->clear();
   for (int costFunction = 0; costFunction < vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_LAST; ++costFunction)
   {
     this->costFunctionComboBox->addItem(
-      qMRMLMarkupsCurveSettingsWidgetPrivate::costFunctionAsDisplayableString(costFunction), costFunction
-    );
+      qMRMLMarkupsCurveSettingsWidgetPrivate::costFunctionAsDisplayableString(costFunction), costFunction);
   }
 
   this->editScalarFunctionDelay = new QTimer(q);
   this->editScalarFunctionDelay->setInterval(500);
   this->editScalarFunctionDelay->setSingleShot(true);
 
-
-
-  QObject::connect(this->editScalarFunctionDelay, SIGNAL(timeout()),
-                   q, SLOT(onCurveTypeParameterChanged()));
-  QObject::connect(this->curveTypeComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onCurveTypeParameterChanged()));
-  QObject::connect(this->modelNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-                   q, SLOT(onCurveTypeParameterChanged()));
-  QObject::connect(this->costFunctionComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onCurveTypeParameterChanged()));
-  QObject::connect(this->scalarFunctionLineEdit, SIGNAL(textChanged(QString)),
-                   this->editScalarFunctionDelay, SLOT(start()));
-  QObject::connect(this->projectCurveMaxSearchRadiusSliderWidget, SIGNAL(valueChanged(double)),
-                   q, SLOT(onProjectCurveMaximumSearchRadiusChanged()));
-  QObject::connect(this->resampleCurveButton, SIGNAL(clicked()),
-                   q, SLOT(onApplyCurveResamplingPushButtonClicked()));
+  QObject::connect(this->editScalarFunctionDelay, SIGNAL(timeout()), q, SLOT(onCurveTypeParameterChanged()));
+  QObject::connect(this->curveTypeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onCurveTypeParameterChanged()));
+  QObject::connect(
+    this->modelNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(onCurveTypeParameterChanged()));
+  QObject::connect(
+    this->costFunctionComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onCurveTypeParameterChanged()));
+  QObject::connect(
+    this->scalarFunctionLineEdit, SIGNAL(textChanged(QString)), this->editScalarFunctionDelay, SLOT(start()));
+  QObject::connect(this->projectCurveMaxSearchRadiusSliderWidget,
+                   SIGNAL(valueChanged(double)),
+                   q,
+                   SLOT(onProjectCurveMaximumSearchRadiusChanged()));
+  QObject::connect(this->resampleCurveButton, SIGNAL(clicked()), q, SLOT(onApplyCurveResamplingPushButtonClicked()));
 
   q_ptr->setEnabled(q_ptr->MarkupsNode != nullptr);
 }
@@ -180,9 +174,9 @@ QString qMRMLMarkupsCurveSettingsWidgetPrivate::costFunctionAsDisplayableString(
 // qMRMLMarkupsCurveSettingsWidget methods
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsCurveSettingsWidget::
-qMRMLMarkupsCurveSettingsWidget(QWidget* parent)
-  : Superclass(parent), d_ptr(new qMRMLMarkupsCurveSettingsWidgetPrivate(*this))
+qMRMLMarkupsCurveSettingsWidget::qMRMLMarkupsCurveSettingsWidget(QWidget* parent)
+  : Superclass(parent)
+  , d_ptr(new qMRMLMarkupsCurveSettingsWidgetPrivate(*this))
 {
   this->setup();
 }
@@ -243,7 +237,8 @@ void qMRMLMarkupsCurveSettingsWidget::updateWidgetFromMRML()
   d->scalarFunctionLineEdit->blockSignals(wasBlocked);
 
   wasBlocked = d->projectCurveMaxSearchRadiusSliderWidget->blockSignals(true);
-  d->projectCurveMaxSearchRadiusSliderWidget->setValue(curveNode->GetSurfaceConstraintMaximumSearchRadiusTolerance() * 100.);
+  d->projectCurveMaxSearchRadiusSliderWidget->setValue(curveNode->GetSurfaceConstraintMaximumSearchRadiusTolerance()
+                                                       * 100.);
   d->projectCurveMaxSearchRadiusSliderWidget->blockSignals(wasBlocked);
 
   if (costFunction == vtkSlicerDijkstraGraphGeodesicPath::COST_FUNCTION_TYPE_DISTANCE)
@@ -323,7 +318,8 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
     return;
   }
   bool isClosed = inputNode->GetCurveClosed();
-  vtkMRMLMarkupsCurveNode* outputNode = vtkMRMLMarkupsCurveNode::SafeDownCast(d->resampleCurveOutputNodeSelector->currentNode());
+  vtkMRMLMarkupsCurveNode* outputNode =
+    vtkMRMLMarkupsCurveNode::SafeDownCast(d->resampleCurveOutputNodeSelector->currentNode());
   if (!outputNode)
   {
     outputNode = inputNode;
@@ -382,7 +378,7 @@ void qMRMLMarkupsCurveSettingsWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* mar
   Q_D(qMRMLMarkupsCurveSettingsWidget);
 
   this->MarkupsNode = vtkMRMLMarkupsCurveNode::SafeDownCast(markupsNode);
-  this->setEnabled(this->MarkupsNode!= nullptr);
+  this->setEnabled(this->MarkupsNode != nullptr);
 }
 
 // --------------------------------------------------------------------------

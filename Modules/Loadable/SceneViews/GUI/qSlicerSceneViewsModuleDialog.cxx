@@ -28,8 +28,10 @@
 class qSlicerSceneViewsModuleDialogPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerSceneViewsModuleDialog);
+
 protected:
   qSlicerSceneViewsModuleDialog* const q_ptr;
+
 public:
   qSlicerSceneViewsModuleDialogPrivate(qSlicerSceneViewsModuleDialog& object);
 
@@ -65,8 +67,9 @@ void qSlicerSceneViewsModuleDialogPrivate::setupUi(QDialog* dialog)
   this->UpdateExistingNodesCheckBox = new QCheckBox(dialog);
   this->UpdateExistingNodesCheckBox->setObjectName(QString::fromUtf8("UpdateExistingNodesCheckBox"));
   this->UpdateExistingNodesCheckBox->setText(qSlicerSceneViewsModuleDialog::tr("Update existing nodes"));
-  this->UpdateExistingNodesCheckBox->setToolTip(qSlicerSceneViewsModuleDialog::tr(
-    "If checked, the nodes already contained in the scene view will be updated to match the current state of the scene."));
+  this->UpdateExistingNodesCheckBox->setToolTip(
+    qSlicerSceneViewsModuleDialog::tr("If checked, the nodes already contained in the scene view will be updated to "
+                                      "match the current state of the scene."));
 
   gridLayout->addWidget(this->UpdateExistingNodesCheckBox, newRowIndex++, 0, 1, 2);
 
@@ -98,7 +101,7 @@ void qSlicerSceneViewsModuleDialogPrivate::setupUi(QDialog* dialog)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog(QWidget* parent/*=nullptr*/)
+qSlicerSceneViewsModuleDialog::qSlicerSceneViewsModuleDialog(QWidget* parent /*=nullptr*/)
   : qMRMLScreenShotDialog(parent)
   , d_ptr(new qSlicerSceneViewsModuleDialogPrivate(*this))
 {
@@ -232,27 +235,28 @@ void qSlicerSceneViewsModuleDialog::accept()
   if (index < 0)
   {
     // this is a new SceneView
-    this->m_Logic->CreateSceneView(
-      nameBytes.data(), descriptionBytes.data(), screenshotType, this->imageData(),
-      d->CaptureDisplayNodesCheckBox->isChecked(),
-      d->CaptureViewNodesCheckBox->isChecked());
+    this->m_Logic->CreateSceneView(nameBytes.data(),
+                                   descriptionBytes.data(),
+                                   screenshotType,
+                                   this->imageData(),
+                                   d->CaptureDisplayNodesCheckBox->isChecked(),
+                                   d->CaptureViewNodesCheckBox->isChecked());
   }
   else
   {
-    if (d->UpdateExistingNodesCheckBox->isChecked()
-      || d->CaptureDisplayNodesCheckBox->isChecked()
-      || d->CaptureViewNodesCheckBox->isChecked())
+    if (d->UpdateExistingNodesCheckBox->isChecked() || d->CaptureDisplayNodesCheckBox->isChecked()
+        || d->CaptureViewNodesCheckBox->isChecked())
     {
       // update the nodes saved in the scene view
       this->m_Logic->UpdateNthSceneView(index,
-        d->UpdateExistingNodesCheckBox->isChecked(),
-        d->CaptureDisplayNodesCheckBox->isChecked(),
-        d->CaptureViewNodesCheckBox->isChecked());
+                                        d->UpdateExistingNodesCheckBox->isChecked(),
+                                        d->CaptureDisplayNodesCheckBox->isChecked(),
+                                        d->CaptureViewNodesCheckBox->isChecked());
     }
 
     // update the name and description
-    this->m_Logic->ModifyNthSceneView(index, nameBytes.data(), descriptionBytes.data(),
-      screenshotType, this->imageData());
+    this->m_Logic->ModifyNthSceneView(
+      index, nameBytes.data(), descriptionBytes.data(), screenshotType, this->imageData());
   }
   this->Superclass::accept();
 }

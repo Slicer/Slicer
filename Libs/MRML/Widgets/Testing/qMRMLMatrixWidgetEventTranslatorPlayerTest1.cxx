@@ -51,12 +51,12 @@ void checkFinalWidgetState(void* data)
 {
   qMRMLMatrixWidget* widget = reinterpret_cast<qMRMLMatrixWidget*>(data);
 
-  CTKCOMPARE(widget->value(0,0), 0.5);
-  CTKCOMPARE(widget->value(1,0), 5.0);
-  CTKCOMPARE(widget->value(2,0), 10.00);
-  CTKCOMPARE(widget->value(3,0), -3.88);
+  CTKCOMPARE(widget->value(0, 0), 0.5);
+  CTKCOMPARE(widget->value(1, 0), 5.0);
+  CTKCOMPARE(widget->value(2, 0), 10.00);
+  CTKCOMPARE(widget->value(3, 0), -3.88);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLMatrixWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
@@ -76,9 +76,8 @@ int qMRMLMatrixWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   QWidget qWidget;
   qMRMLMatrixWidget* widget = new qMRMLMatrixWidget(&qWidget);
   widget->setEnabled(true);
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLMatrixWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(
+    widget, xmlDirectory + "qMRMLMatrixWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

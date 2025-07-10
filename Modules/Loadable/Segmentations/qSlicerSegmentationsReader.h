@@ -29,13 +29,13 @@ class qSlicerSegmentationsReaderPrivate;
 class vtkSlicerSegmentationsModuleLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerSegmentationsReader
-  : public qSlicerFileReader
+class qSlicerSegmentationsReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic = nullptr, QObject* parent = nullptr);
+  qSlicerSegmentationsReader(vtkSlicerSegmentationsModuleLogic* segmentationsLogic = nullptr,
+                             QObject* parent = nullptr);
   ~qSlicerSegmentationsReader() override;
 
   void setSegmentationsLogic(vtkSlicerSegmentationsModuleLogic* segmentationsLogic);

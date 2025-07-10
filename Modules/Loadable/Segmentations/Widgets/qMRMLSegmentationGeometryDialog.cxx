@@ -46,13 +46,17 @@
 class qMRMLSegmentationGeometryDialogPrivate : public QDialog
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationGeometryDialog);
+
 protected:
   qMRMLSegmentationGeometryDialog* const q_ptr;
+
 public:
   qMRMLSegmentationGeometryDialogPrivate(qMRMLSegmentationGeometryDialog& object);
   ~qMRMLSegmentationGeometryDialogPrivate() override;
+
 public:
   void init();
+
 private:
   vtkMRMLSegmentationNode* SegmentationNode;
   bool ResampleLabelmaps;
@@ -60,7 +64,6 @@ private:
   qMRMLSegmentationGeometryWidget* GeometryWidget;
   QPushButton* OKButton;
   QPushButton* CancelButton;
-
 };
 
 //-----------------------------------------------------------------------------
@@ -92,7 +95,7 @@ void qMRMLSegmentationGeometryDialogPrivate::init()
   this->GeometryWidget->setSegmentationNode(this->SegmentationNode);
   layout->addWidget(this->GeometryWidget);
 
-  //layout->addStretch(1);
+  // layout->addStretch(1);
 
   QHBoxLayout* buttonsLayout = new QHBoxLayout();
   buttonsLayout->setSpacing(4);
@@ -116,7 +119,8 @@ void qMRMLSegmentationGeometryDialogPrivate::init()
 // qMRMLSegmentationGeometryDialog methods
 
 //-----------------------------------------------------------------------------
-qMRMLSegmentationGeometryDialog::qMRMLSegmentationGeometryDialog(vtkMRMLSegmentationNode* segmentationNode, QObject* parent)
+qMRMLSegmentationGeometryDialog::qMRMLSegmentationGeometryDialog(vtkMRMLSegmentationNode* segmentationNode,
+                                                                 QObject* parent)
   : QObject(parent)
   , d_ptr(new qMRMLSegmentationGeometryDialogPrivate(*this))
 {

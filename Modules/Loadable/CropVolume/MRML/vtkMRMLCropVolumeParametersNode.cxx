@@ -42,18 +42,14 @@ vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()
   vtkNew<vtkIntArray> inputVolumeEvents;
   inputVolumeEvents->InsertNextValue(vtkCommand::ModifiedEvent);
   inputVolumeEvents->InsertNextValue(vtkMRMLVolumeNode::ImageDataModifiedEvent);
-  this->AddNodeReferenceRole(InputVolumeNodeReferenceRole,
-    InputVolumeNodeReferenceMRMLAttributeName,
-    inputVolumeEvents.GetPointer());
+  this->AddNodeReferenceRole(
+    InputVolumeNodeReferenceRole, InputVolumeNodeReferenceMRMLAttributeName, inputVolumeEvents.GetPointer());
 
   vtkNew<vtkIntArray> roiEvents;
   roiEvents->InsertNextValue(vtkCommand::ModifiedEvent);
-  this->AddNodeReferenceRole(ROINodeReferenceRole,
-    ROINodeReferenceMRMLAttributeName,
-    roiEvents.GetPointer());
+  this->AddNodeReferenceRole(ROINodeReferenceRole, ROINodeReferenceMRMLAttributeName, roiEvents.GetPointer());
 
-  this->AddNodeReferenceRole(OutputVolumeNodeReferenceRole,
-    OutputVolumeNodeReferenceMRMLAttributeName);
+  this->AddNodeReferenceRole(OutputVolumeNodeReferenceRole, OutputVolumeNodeReferenceMRMLAttributeName);
 
   this->VoxelBased = false;
   this->InterpolationMode = vtkMRMLCropVolumeParametersNode::InterpolationLinear;
@@ -98,7 +94,7 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLCropVolumeParametersNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLCropVolumeParametersNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);

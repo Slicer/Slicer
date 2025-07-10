@@ -82,13 +82,14 @@ void vtkSlicerTerminologyEntry::Initialize()
 //----------------------------------------------------------------------------
 bool vtkSlicerTerminologyEntry::IsValid()
 {
-  if ( this->CategoryObject == nullptr || this->CategoryObject->GetCodeMeaning() == nullptr
-    || this->CategoryObject->GetCodingSchemeDesignator() == nullptr || this->CategoryObject->GetCodeValue() == nullptr )
+  if (this->CategoryObject == nullptr || this->CategoryObject->GetCodeMeaning() == nullptr
+      || this->CategoryObject->GetCodingSchemeDesignator() == nullptr
+      || this->CategoryObject->GetCodeValue() == nullptr)
   {
     return false;
   }
-  if ( this->TypeObject == nullptr || this->TypeObject->GetCodeMeaning() == nullptr
-    || this->TypeObject->GetCodingSchemeDesignator() == nullptr || this->TypeObject->GetCodeValue() == nullptr )
+  if (this->TypeObject == nullptr || this->TypeObject->GetCodeMeaning() == nullptr
+      || this->TypeObject->GetCodingSchemeDesignator() == nullptr || this->TypeObject->GetCodeValue() == nullptr)
   {
     return false;
   }
@@ -134,7 +135,8 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "TerminologyContextName:   " << (this->TerminologyContextName?this->TerminologyContextName:"NULL") << "\n";
+  os << indent << "TerminologyContextName:   " << (this->TerminologyContextName ? this->TerminologyContextName : "NULL")
+     << "\n";
 
   os << indent << "CategoryObject: ";
   if (this->CategoryObject)
@@ -164,7 +166,7 @@ void vtkSlicerTerminologyEntry::PrintSelf(ostream& os, vtkIndent indent)
     os << indent.GetNextIndent() << "NULL\n";
   }
 
-  os << indent << "RegionContextName:   " << (this->RegionContextName?this->RegionContextName:"NULL") << "\n";
+  os << indent << "RegionContextName:   " << (this->RegionContextName ? this->RegionContextName : "NULL") << "\n";
   os << indent << "RegionObject: ";
   if (this->RegionObject)
   {
@@ -194,7 +196,7 @@ void vtkSlicerTerminologyEntry::Copy(vtkSlicerTerminologyEntry* aEntry)
   }
 
   if (!aEntry->GetCategoryObject() || !aEntry->GetTypeObject() || !aEntry->GetTypeModifierObject()
-    || !aEntry->GetRegionObject() || !aEntry->GetRegionModifierObject() )
+      || !aEntry->GetRegionObject() || !aEntry->GetRegionModifierObject())
   {
     vtkErrorMacro("Copy: Invalid terminology entry given");
     // Invalidate whole terminology entry

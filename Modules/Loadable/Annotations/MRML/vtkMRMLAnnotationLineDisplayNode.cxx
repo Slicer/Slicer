@@ -19,11 +19,11 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
   this->LabelVisibility = 0;
   this->TickSpacing = 10.0;
   this->MaxTicks = 99;
-  this->SliceProjection = (vtkMRMLAnnotationDisplayNode::ProjectionOff |
-                           vtkMRMLAnnotationLineDisplayNode::ProjectionDashed |
-                           vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel |
-                           vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop |
-                           vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
+  this->SliceProjection =
+    (vtkMRMLAnnotationDisplayNode::ProjectionOff | vtkMRMLAnnotationLineDisplayNode::ProjectionDashed
+     | vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel
+     | vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop
+     | vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
 
   this->UnderLineThickness = 1.0;
   this->OverLineThickness = 3.0;
@@ -45,8 +45,7 @@ void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " maxTicks=\"" << this->MaxTicks << "\"";
   of << " sliceProjection=\"" << this->SliceProjection << "\"";
 
-  of << " projectedColor=\"" << this->ProjectedColor[0] << " "
-     << this->ProjectedColor[1] << " "
+  of << " projectedColor=\"" << this->ProjectedColor[0] << " " << this->ProjectedColor[1] << " "
      << this->ProjectedColor[2] << "\"";
 
   of << " projectedOpacity=\"" << this->ProjectedOpacity << "\"";
@@ -68,41 +67,41 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-      if (!strcmp(attName, "lineThickness"))
-      {
+    if (!strcmp(attName, "lineThickness"))
+    {
       std::stringstream ss;
       ss << attValue;
       ss >> this->LineThickness;
-      }
-      else if (!strcmp(attName, "labelPosition"))
+    }
+    else if (!strcmp(attName, "labelPosition"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->LabelPosition;
+    }
+    else if (!strcmp(attName, "labelVisibility"))
+    {
+      if (!strcmp(attValue, "true"))
       {
-        std::stringstream ss;
-        ss << attValue;
-        ss >> this->LabelPosition;
+        this->LabelVisibility = 1;
       }
-      else if (!strcmp(attName, "labelVisibility"))
+      else
       {
-        if (!strcmp(attValue,"true"))
-        {
-          this->LabelVisibility = 1;
-        }
-        else
-        {
-          this->LabelVisibility = 0;
-        }
+        this->LabelVisibility = 0;
       }
-      else if (!strcmp(attName, "tickSpacing"))
-      {
-        std::stringstream ss;
-        ss << attValue;
-        ss >> this->TickSpacing;
-      }
-      else if (!strcmp(attName, "maxTicks"))
-      {
-        std::stringstream ss;
-        ss << attValue;
-        ss >> this->MaxTicks;
-      }
+    }
+    else if (!strcmp(attName, "tickSpacing"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->TickSpacing;
+    }
+    else if (!strcmp(attName, "maxTicks"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->MaxTicks;
+    }
     else if (!strcmp(attName, "sliceProjection"))
     {
       std::stringstream ss;
@@ -147,7 +146,7 @@ void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode* anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLAnnotationLineDisplayNode* node = (vtkMRMLAnnotationLineDisplayNode*) anode;
+  vtkMRMLAnnotationLineDisplayNode* node = (vtkMRMLAnnotationLineDisplayNode*)anode;
   this->SetLineThickness(node->LineThickness);
   this->SetLabelPosition(node->LabelPosition);
   this->SetLabelVisibility(node->LabelVisibility);
@@ -172,9 +171,7 @@ void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Tick Spacing     : " << this->TickSpacing << "\n";
   os << indent << "Max Ticks        : " << this->MaxTicks << "\n";
   os << indent << "Slice Projection : " << this->SliceProjection << "\n";
-  os << indent << "Projected Color : ("
-     << this->ProjectedColor[0] << ","
-     << this->ProjectedColor[1] << ","
+  os << indent << "Projected Color : (" << this->ProjectedColor[0] << "," << this->ProjectedColor[1] << ","
      << this->ProjectedColor[2] << ")" << "\n";
   os << indent << "Projected Opacity: " << this->ProjectedOpacity << "\n";
   os << indent << "Under Line Thickness: " << this->UnderLineThickness << "\n";
@@ -182,9 +179,7 @@ void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
-                                           unsigned long event,
-                                           void* callData )
+void vtkMRMLAnnotationLineDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
@@ -193,24 +188,24 @@ void vtkMRMLAnnotationLineDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
 //-----------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
-   Superclass::UpdateScene(scene);
+  Superclass::UpdateScene(scene);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode::SetLineThickness(double thickness)
 {
-    if (this->LineThickness == thickness)
-    {
-      return;
-    }
-    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LineThickness to " << thickness);
-    this->LineThickness = thickness;
+  if (this->LineThickness == thickness)
+  {
+    return;
+  }
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LineThickness to " << thickness);
+  this->LineThickness = thickness;
 
-    //if (!this->GetDisableModifiedEvent())
-    //  {
-      // invoke a display modified event
-      // KP this->InvokeEvent(vtkMRMLAnnotationLineDisplayNode::DisplayModifiedEvent);
-    //  }
+  // if (!this->GetDisableModifiedEvent())
+  //   {
+  //  invoke a display modified event
+  //  KP this->InvokeEvent(vtkMRMLAnnotationLineDisplayNode::DisplayModifiedEvent);
+  //  }
   this->Modified();
 }
 

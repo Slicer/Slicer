@@ -35,8 +35,7 @@ class vtkStringArray;
 /// \brief Abstract MRML node to represent a view.
 /// The class holds the properties common to any view type (3D, slice, chart..)
 /// Views are not hidden from editors by default (HideFromEditor is 0)
-class VTK_MRML_EXPORT vtkMRMLAbstractViewNode
-  : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLAbstractViewNode : public vtkMRMLNode
 {
 public:
   vtkTypeMacro(vtkMRMLAbstractViewNode, vtkMRMLNode);
@@ -47,7 +46,7 @@ public:
   //--------------------------------------------------------------------------
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -88,8 +87,8 @@ public:
   vtkGetStringMacro(LayoutLabel);
 
   /// Indicates whether or not the view is active
-  vtkGetMacro(Active, int );
-  vtkSetMacro(Active, int );
+  vtkGetMacro(Active, int);
+  vtkSetMacro(Active, int);
 
   /// \brief Indicates whether or not the view is visible.
   ///
@@ -168,7 +167,6 @@ public:
   vtkGetVector3Macro(BackgroundColor2, double);
   vtkSetVector3Macro(BackgroundColor2, double);
 
-
   /// Color for view header in layout as RGB
   /// Gray by default
   vtkSetVector3Macro(LayoutColor, double);
@@ -202,7 +200,8 @@ public:
   static const char* GetOrientationMarkerTypeAsString(int id);
   static int GetOrientationMarkerTypeFromString(const char* name);
 
-  /// Get/Set orientation marker is size. There are a few predefined marker sizes, defined by an enumerated value (e.g., small, medium, large).
+  /// Get/Set orientation marker is size. There are a few predefined marker sizes, defined by an enumerated value (e.g.,
+  /// small, medium, large).
   vtkSetMacro(OrientationMarkerSize, int);
   vtkGetMacro(OrientationMarkerSize, int);
 
@@ -213,7 +212,7 @@ public:
   /// Enum to specify orientation marker types
   enum OrientationMarkerTypeType
   {
-    OrientationMarkerTypeNone=0,
+    OrientationMarkerTypeNone = 0,
     OrientationMarkerTypeCube,
     OrientationMarkerTypeHuman,
     OrientationMarkerTypeAxes,
@@ -222,7 +221,7 @@ public:
 
   enum OrientationMarkerSizeType
   {
-    OrientationMarkerSizeSmall=0,
+    OrientationMarkerSizeSmall = 0,
     OrientationMarkerSizeMedium,
     OrientationMarkerSizeLarge,
     OrientationMarkerSize_Last // insert valid types above this line
@@ -243,7 +242,7 @@ public:
   /// Enum to specify ruler types
   enum RulerTypeType
   {
-    RulerTypeNone=0,
+    RulerTypeNone = 0,
     RulerTypeThin,
     RulerTypeThick,
     RulerType_Last // insert valid types above this line
@@ -260,7 +259,7 @@ public:
   /// Enum to specify ruler colors
   enum RulerColorType
   {
-    RulerColorWhite=0,
+    RulerColorWhite = 0,
     RulerColorBlack,
     RulerColorYellow,
     RulerColor_Last // insert valid types above this line
@@ -279,7 +278,7 @@ public:
   /// the positive x axis label "R".
   /// toleranceDeg specifies the tolerance when when determining if the direction
   /// is parallel with an axis.
-  std::string GetDirectionLabel(double direction[3], bool positive=true, double toleranceDeg=1.0);
+  std::string GetDirectionLabel(double direction[3], bool positive = true, double toleranceDeg = 1.0);
 
   /// Total number of coordinate system axis labels
   static const int AxisLabelsCount;
@@ -309,21 +308,21 @@ protected:
 
   ///
   /// Views with the same ViewGroup value are in the same group.
-  int ViewGroup{0};
+  int ViewGroup{ 0 };
 
   ///
   /// Label to show for the view (shortcut for the name)
-  char* LayoutLabel{nullptr};
+  char* LayoutLabel{ nullptr };
 
   ///
   /// Indicates whether or not the View is visible.
   /// Invisible (0) by default.
-  int Visibility{1};
+  int Visibility{ 1 };
 
   ///
   /// Indicates whether or not the View is active.
   /// Inactive by default.
-  int Active{0};
+  int Active{ 0 };
 
   ///
   /// Background colors
@@ -337,18 +336,18 @@ protected:
   ///
   /// For views that supports orientation marker display (where OrientationMarkerEnabled=true)
   /// these parameters define how to display the orientation marker.
-  bool OrientationMarkerEnabled{false};
-  int OrientationMarkerType{OrientationMarkerTypeNone};
-  int OrientationMarkerSize{OrientationMarkerSizeMedium};
+  bool OrientationMarkerEnabled{ false };
+  int OrientationMarkerType{ OrientationMarkerTypeNone };
+  int OrientationMarkerSize{ OrientationMarkerSizeMedium };
 
   static const char* OrientationMarkerHumanModelReferenceRole;
 
   ///
   /// For views that supports ruler display (where RulerEnabled=true)
   /// these parameters define how to display the ruler.
-  bool RulerEnabled{false};
-  int RulerType{RulerTypeNone};
-  int RulerColor{RulerColorWhite};
+  bool RulerEnabled{ false };
+  int RulerType{ RulerTypeNone };
+  int RulerColor{ RulerColorWhite };
 
   /// Default glyph scale used to be 3.0 (in Slicer-4.10 and earlier).
   /// This display scale factor value produces similar appearance of markup points.

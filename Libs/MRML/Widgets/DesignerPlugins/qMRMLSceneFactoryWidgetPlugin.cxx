@@ -27,7 +27,7 @@
 
 // --------------------------------------------------------------------------
 qMRMLSceneFactoryWidgetPlugin::qMRMLSceneFactoryWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -43,7 +43,7 @@ QString qMRMLSceneFactoryWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSceneFactoryWidget\" \
           name=\"MRMLSceneFactoryWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------

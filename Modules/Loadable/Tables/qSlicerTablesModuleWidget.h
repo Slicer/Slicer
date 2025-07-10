@@ -33,13 +33,11 @@ class vtkMatrix4x4;
 class vtkMRMLNode;
 class qSlicerTablesModuleWidgetPrivate;
 
-class Q_SLICER_QTMODULES_TABLES_EXPORT qSlicerTablesModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_TABLES_EXPORT qSlicerTablesModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTablesModuleWidget(QWidget* parent = nullptr);
   ~qSlicerTablesModuleWidget() override;
@@ -51,7 +49,6 @@ public slots:
   void setCurrentTableNode(vtkMRMLNode*);
 
 protected:
-
   void setup() override;
 
 protected slots:
@@ -63,7 +60,7 @@ protected slots:
 protected:
   ///
   /// Convenient method to return the coordinate system currently selected
-  //int coordinateReference() const;
+  // int coordinateReference() const;
 
 protected:
   QScopedPointer<qSlicerTablesModuleWidgetPrivate> d_ptr;

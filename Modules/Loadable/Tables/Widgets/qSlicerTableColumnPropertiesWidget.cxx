@@ -23,7 +23,7 @@
 #include "ui_qSlicerTableColumnPropertiesWidget.h"
 
 // Markups includes
-//#include <vtkSlicerTablesLogic.h>
+// #include <vtkSlicerTablesLogic.h>
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -44,15 +44,15 @@
 static const char SCHEMA_PROPERTY_NAME[] = "SchemaPropertyName";
 
 //-----------------------------------------------------------------------------
-class qSlicerTableColumnPropertiesWidgetPrivate
-  : public Ui_qSlicerTableColumnPropertiesWidget
+class qSlicerTableColumnPropertiesWidgetPrivate : public Ui_qSlicerTableColumnPropertiesWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTableColumnPropertiesWidget);
+
 protected:
   qSlicerTableColumnPropertiesWidget* const q_ptr;
 
 public:
-  qSlicerTableColumnPropertiesWidgetPrivate( qSlicerTableColumnPropertiesWidget& object);
+  qSlicerTableColumnPropertiesWidgetPrivate(qSlicerTableColumnPropertiesWidget& object);
   ~qSlicerTableColumnPropertiesWidgetPrivate();
   virtual void setupUi(qSlicerTableColumnPropertiesWidget*);
 
@@ -68,7 +68,8 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qSlicerTableColumnPropertiesWidgetPrivate::qSlicerTableColumnPropertiesWidgetPrivate( qSlicerTableColumnPropertiesWidget& object)
+qSlicerTableColumnPropertiesWidgetPrivate::qSlicerTableColumnPropertiesWidgetPrivate(
+  qSlicerTableColumnPropertiesWidget& object)
   : q_ptr(&object)
   , ColumnNameVisible(true)
   , ConfirmTypeChange(true)
@@ -84,13 +85,12 @@ void qSlicerTableColumnPropertiesWidgetPrivate::setupUi(qSlicerTableColumnProper
   this->Ui_qSlicerTableColumnPropertiesWidget::setupUi(widget);
 }
 
-
 //-----------------------------------------------------------------------------
 // qSlicerTableColumnPropertiesWidget methods
 
 //-----------------------------------------------------------------------------
 qSlicerTableColumnPropertiesWidget::qSlicerTableColumnPropertiesWidget(QWidget* parentWidget)
-  : Superclass( parentWidget )
+  : Superclass(parentWidget)
   , d_ptr(new qSlicerTableColumnPropertiesWidgetPrivate(*this))
 {
   this->setup();
@@ -126,16 +126,15 @@ void qSlicerTableColumnPropertiesWidget::setup()
   d->PropertyEditWidgets << d->ComponentCountLineEdit;
   d->PropertyEditWidgets << d->ComponentNamesLineEdit;
 
-  connect(d->DataTypeComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(onDataTypeChanged(const QString&)));
+  connect(
+    d->DataTypeComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(onDataTypeChanged(const QString&)));
   foreach (QLineEdit* widget, d->PropertyEditWidgets)
   {
     connect(widget, SIGNAL(textEdited(const QString&)), this, SLOT(onPropertyChanged(const QString&)));
   }
   connect(d->ApplyTypeChangeButton, SIGNAL(clicked()), this, SLOT(onApplyTypeChange()));
   connect(d->CancelTypeChangeButton, SIGNAL(clicked()), this, SLOT(onCancelTypeChange()));
-
 }
-
 
 //------------------------------------------------------------------------------
 void qSlicerTableColumnPropertiesWidget::setMRMLTableNode(vtkMRMLNode* node)
@@ -183,7 +182,8 @@ void qSlicerTableColumnPropertiesWidget::setColumnProperty(QString propertyName,
   }
   foreach (const QString& columnName, d->ColumnNames)
   {
-    d->CurrentTableNode->SetColumnProperty(columnName.toUtf8().constData(), propertyName.toUtf8().constData(), propertyValue.toUtf8().constData());
+    d->CurrentTableNode->SetColumnProperty(
+      columnName.toUtf8().constData(), propertyName.toUtf8().constData(), propertyValue.toUtf8().constData());
   }
 }
 
@@ -200,10 +200,12 @@ QString qSlicerTableColumnPropertiesWidget::columnProperty(QString propertyName)
   {
     return "";
   }
-  std::string commonPropertyValue = d->CurrentTableNode->GetColumnProperty(d->ColumnNames[0].toUtf8().constData(), propertyName.toUtf8().constData());
+  std::string commonPropertyValue =
+    d->CurrentTableNode->GetColumnProperty(d->ColumnNames[0].toUtf8().constData(), propertyName.toUtf8().constData());
   foreach (const QString& columnName, d->ColumnNames)
   {
-    std::string currentPropertyValue = d->CurrentTableNode->GetColumnProperty(columnName.toUtf8().constData(), propertyName.toUtf8().constData());
+    std::string currentPropertyValue =
+      d->CurrentTableNode->GetColumnProperty(columnName.toUtf8().constData(), propertyName.toUtf8().constData());
     if (currentPropertyValue != commonPropertyValue)
     {
       // not all column types are the same

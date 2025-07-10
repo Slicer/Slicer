@@ -67,12 +67,13 @@ signals:
   void userSetCustomNameOrColor();
 
 protected slots:
-  void onToggled(bool toggled=true);
+  void onToggled(bool toggled = true);
 
 protected:
   void paintEvent(QPaintEvent* event) override;
 
   QScopedPointer<qSlicerTerminologyEditorButtonPrivate> d_ptr;
+
 private:
   Q_DECLARE_PRIVATE(qSlicerTerminologyEditorButton);
   Q_DISABLE_COPY(qSlicerTerminologyEditorButton);

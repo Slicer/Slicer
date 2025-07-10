@@ -29,8 +29,7 @@ class qSlicerModelsReaderPrivate;
 class vtkSlicerModelsLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerModelsReader
-  : public qSlicerFileReader
+class qSlicerModelsReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:

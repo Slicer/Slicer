@@ -30,11 +30,14 @@
 class qSlicerSubjectHierarchyModuleWidgetPrivate : public Ui_qSlicerSubjectHierarchyModule
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyModuleWidget);
+
 protected:
   qSlicerSubjectHierarchyModuleWidget* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyModuleWidgetPrivate(qSlicerSubjectHierarchyModuleWidget& object);
   ~qSlicerSubjectHierarchyModuleWidgetPrivate();
+
 public:
   /// Subject hierarchy plugin logic
   qSlicerSubjectHierarchyPluginLogic* PluginLogic;
@@ -44,7 +47,8 @@ public:
 // qSlicerSubjectHierarchyModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyModuleWidgetPrivate::qSlicerSubjectHierarchyModuleWidgetPrivate(qSlicerSubjectHierarchyModuleWidget& object)
+qSlicerSubjectHierarchyModuleWidgetPrivate::qSlicerSubjectHierarchyModuleWidgetPrivate(
+  qSlicerSubjectHierarchyModuleWidget& object)
   : q_ptr(&object)
   , PluginLogic(nullptr)
 {
@@ -58,8 +62,8 @@ qSlicerSubjectHierarchyModuleWidgetPrivate::~qSlicerSubjectHierarchyModuleWidget
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModuleWidget::qSlicerSubjectHierarchyModuleWidget(QWidget* _parent)
-  : Superclass( _parent )
-  , d_ptr( new qSlicerSubjectHierarchyModuleWidgetPrivate(*this) )
+  : Superclass(_parent)
+  , d_ptr(new qSlicerSubjectHierarchyModuleWidgetPrivate(*this))
 {
 }
 

@@ -32,8 +32,7 @@
 
 class vtkImageData;
 
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLShaderPropertyStorageNode
-  : public vtkMRMLStorageNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLShaderPropertyStorageNode : public vtkMRMLStorageNode
 {
 public:
   static vtkMRMLShaderPropertyStorageNode* New();
@@ -44,7 +43,7 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Transform)
-  const char* GetNodeTagName() override {return "ShaderPropertyStorage";}
+  const char* GetNodeTagName() override { return "ShaderPropertyStorage"; }
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
@@ -66,7 +65,6 @@ protected:
 
   /// Write data from a  referenced node
   int WriteDataInternal(vtkMRMLNode* refNode) override;
-
 };
 
 #endif

@@ -51,7 +51,7 @@ public slots:
   void setLocked(bool);
 
 protected slots:
-  void onToggled(bool toggled=true);
+  void onToggled(bool toggled = true);
   void onEnableSurfaceSmoothingToggled(bool smoothingEnabled);
   void onEnableSurfaceNetsToggled(bool surfaceNetsEnabled);
   void onEnableSurfaceNetsSmoothingToggled(bool surfaceNetsSmoothingEnabled);
@@ -60,6 +60,7 @@ protected slots:
 
 protected:
   QScopedPointer<qMRMLSegmentationShow3DButtonPrivate> d_ptr;
+
 private:
   Q_DECLARE_PRIVATE(qMRMLSegmentationShow3DButton);
   Q_DISABLE_COPY(qMRMLSegmentationShow3DButton);

@@ -52,14 +52,12 @@ void vtkMRMLDisplayableHierarchyLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   // A displayable hierarchy node without children as well as a displayable
   // node is useless node. Delete it.
   vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
-    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetMRMLScene(), node->GetID()) );
-  if (displayableHierarchyNode &&
-      displayableHierarchyNode->GetNumberOfChildrenNodes() == 0)
+    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetMRMLScene(), node->GetID()));
+  if (displayableHierarchyNode && displayableHierarchyNode->GetNumberOfChildrenNodes() == 0)
   {
     this->GetMRMLScene()->RemoveNode(displayableHierarchyNode);
   }
 }
-
 
 //----------------------------------------------------------------------------
 char* vtkMRMLDisplayableHierarchyLogic::AddDisplayableHierarchyNodeForNode(vtkMRMLDisplayableNode* node)
@@ -129,7 +127,7 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode* 
   // does the parent already have a hierarchy node associated with it?
   char* parentHierarchyNodeID = nullptr;
   vtkMRMLDisplayableHierarchyNode* hierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
-    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(parent->GetScene(), parent->GetID()) );
+    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(parent->GetScene(), parent->GetID()));
   if (!hierarchyNode)
   {
     // create one and add to the scene
@@ -141,13 +139,14 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode* 
   }
   if (!parentHierarchyNodeID)
   {
-    vtkWarningMacro("AddChildToParent: unable to add or find a hierarchy node for the parent node " << parent->GetID() << ", so unable to place the child in a hierarchy");
+    vtkWarningMacro("AddChildToParent: unable to add or find a hierarchy node for the parent node "
+                    << parent->GetID() << ", so unable to place the child in a hierarchy");
     return false;
   }
 
   // does the child already have a hierarchy node associated with it?
   vtkMRMLDisplayableHierarchyNode* childHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
-    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(child->GetScene(), child->GetID()) );
+    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(child->GetScene(), child->GetID()));
   if (!childHierarchyNode)
   {
     char* childHierarchyNodeID = this->AddDisplayableHierarchyNodeForNode(child);
@@ -162,7 +161,8 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode* 
   }
   if (childHierarchyNode)
   {
-    std::cout << "AddChildToParent: parentHierarchyID = " << parentHierarchyNodeID << ", childHierarchyNodeID = " << childHierarchyNode->GetID() << std::endl;
+    std::cout << "AddChildToParent: parentHierarchyID = " << parentHierarchyNodeID
+              << ", childHierarchyNodeID = " << childHierarchyNode->GetID() << std::endl;
     // disable modified events on the parent
     vtkMRMLNode* parentNode = childHierarchyNode->GetScene()->GetNodeByID(parentHierarchyNodeID);
     parentNode->SetDisableModifiedEvent(1);
@@ -173,7 +173,8 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode* 
   }
   else
   {
-    vtkWarningMacro("AddChildToParent: unable to add or find a hierarchy node for the child node " << child->GetID() << ", so unable to place it in a hierarchy");
+    vtkWarningMacro("AddChildToParent: unable to add or find a hierarchy node for the child node "
+                    << child->GetID() << ", so unable to place it in a hierarchy");
     return false;
   }
   return false;
@@ -226,7 +227,8 @@ bool vtkMRMLDisplayableHierarchyLogic::DeleteHierarchyNodeAndChildren(vtkMRMLDis
   bool retval = true;
   if (hnode->GetNumberOfChildrenNodes() != 0)
   {
-    vtkErrorMacro("Failed to delete all children hierarchy nodes! Still have " << hnode->GetNumberOfChildrenNodes() << " left");
+    vtkErrorMacro("Failed to delete all children hierarchy nodes! Still have " << hnode->GetNumberOfChildrenNodes()
+                                                                               << " left");
     retval = false;
   }
   // delete it's display node

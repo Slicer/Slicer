@@ -58,7 +58,6 @@ int testAddVolumePropertyFromFile(const std::string& temporaryDirectory)
 
   std::cout << "temporaryDirectory = " << temporaryDirectory.c_str() << std::endl;
 
-
   // write out a defaults file
   vtkNew<vtkMRMLVolumePropertyNode> defaultVolumePropertyNode;
   vtkNew<vtkMRMLVolumePropertyStorageNode> volumePropertyStorageNode;

@@ -30,8 +30,8 @@ int main(int argc, char* argv[])
 
   // tease apart the scene files and the nodes
   std::string::size_type loc;
-  std::string            transform1Filename, transform2Filename;
-  std::string            transform1ID, transform2ID;
+  std::string transform1Filename, transform2Filename;
+  std::string transform1ID, transform2ID;
 
   if (transform1.empty())
   {
@@ -48,8 +48,7 @@ int main(int argc, char* argv[])
   loc = transform1.find_last_of("#");
   if (loc != std::string::npos)
   {
-    transform1Filename = std::string(transform1.begin(),
-                                     transform1.begin() + loc);
+    transform1Filename = std::string(transform1.begin(), transform1.begin() + loc);
     loc++;
 
     transform1ID = std::string(transform1.begin() + loc, transform1.end());
@@ -58,8 +57,7 @@ int main(int argc, char* argv[])
   loc = transform2.find_last_of("#");
   if (loc != std::string::npos)
   {
-    transform2Filename = std::string(transform2.begin(),
-                                     transform2.begin() + loc);
+    transform2Filename = std::string(transform2.begin(), transform2.begin() + loc);
     loc++;
 
     transform2ID = std::string(transform2.begin() + loc, transform2.end());
@@ -72,8 +70,8 @@ int main(int argc, char* argv[])
 
   if (transform1Filename != transform2Filename)
   {
-    std::cerr << "Module only accepts transforms from the same scene. Two scenes were specified: "
-              << transform1Filename << " and " << transform2Filename << std::endl;
+    std::cerr << "Module only accepts transforms from the same scene. Two scenes were specified: " << transform1Filename
+              << " and " << transform2Filename << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -117,7 +115,7 @@ int main(int argc, char* argv[])
     fiducialStorageNode->SetFileName(seedsFile.c_str());
     fiducialStorageNode->ReadData(fiducialNode.GetPointer());
     std::cout << "Number of fids read = " << fiducialNode->GetNumberOfControlPoints()
-      << ", coordinate system flag = " << fiducialStorageNode->GetCoordinateSystem() << std::endl;
+              << ", coordinate system flag = " << fiducialStorageNode->GetCoordinateSystem() << std::endl;
     for (int i = 0; i < fiducialNode->GetNumberOfControlPoints(); ++i)
     {
       double pos[3];
@@ -132,7 +130,8 @@ int main(int argc, char* argv[])
   copiedFiducialNode->SetName("seedsCopy");
   for (unsigned int i = 0; i < seed.size(); ++i)
   {
-    std::cout << "Copying seed list to output file list: " << seed[i][0] << ", " << seed[i][1] << ", " << seed[i][2] << std::endl;
+    std::cout << "Copying seed list to output file list: " << seed[i][0] << ", " << seed[i][1] << ", " << seed[i][2]
+              << std::endl;
     copiedFiducialNode->AddControlPoint(vtkVector3d(seed[i][0], seed[i][1], seed[i][2]));
     // toggle some settings
     if (i == 0)
@@ -168,16 +167,16 @@ int main(int argc, char* argv[])
     table = tsvReader->GetOutput();
     std::cout << "number of rows:" << table->GetNumberOfRows() << std::endl;
     std::cout << "number of cols:" << table->GetNumberOfColumns() << std::endl;
-    if (table->GetNumberOfRows()<1)
+    if (table->GetNumberOfRows() < 1)
     {
       table->InsertNextBlankRow();
     }
-    table->SetValue(0,0,vtkVariant("Computed first"));
-    if (table->GetNumberOfRows()<2)
+    table->SetValue(0, 0, vtkVariant("Computed first"));
+    if (table->GetNumberOfRows() < 2)
     {
       table->InsertNextBlankRow();
     }
-    table->SetValue(1,0,vtkVariant("Computed second"));
+    table->SetValue(1, 0, vtkVariant("Computed second"));
   }
 
   if (!outputDT.empty())
@@ -192,7 +191,7 @@ int main(int argc, char* argv[])
   if (!regions.empty())
   {
     std::cout << "Regions:" << std::endl;
-    for (const std::vector<float> &region : regions)
+    for (const std::vector<float>& region : regions)
     {
       std::cout << "  region:" << std::endl;
       std::cout << "    center: " << region[0] << ", " << region[1] << ", " << region[2] << std::endl;
@@ -209,7 +208,7 @@ int main(int argc, char* argv[])
 
   // Write out the return parameters in "name = value" form
   std::ofstream rts;
-  rts.open(returnParameterFile.c_str() );
+  rts.open(returnParameterFile.c_str());
   rts << "anintegerreturn =  10" << std::endl;
   rts << "abooleanreturn = true" << std::endl;
   rts << "afloatreturn = 34.2" << std::endl;

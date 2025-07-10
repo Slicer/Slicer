@@ -33,23 +33,34 @@ vtkStandardNewMacro(vtkSlicerCurveWidget);
 //----------------------------------------------------------------------
 vtkSlicerCurveWidget::vtkSlicerCurveWidget()
 {
-  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
-  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget,
+                                        vtkCommand::LeftButtonPressEvent,
+                                        vtkEvent::AltModifier,
+                                        WidgetStateRotate,
+                                        WidgetEventRotateStart,
+                                        WidgetEventRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget,
+                                        vtkCommand::RightButtonPressEvent,
+                                        vtkEvent::AltModifier,
+                                        WidgetStateScale,
+                                        WidgetEventScaleStart,
+                                        WidgetEventScaleEnd);
 
   // Accept Ctrl+MouseMove (and process as simple mouse move) so that this widget keeps the focus when the user moves
   // the mouse while holding down Ctrl key for inserting a point.
-  this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::MouseMoveEvent, vtkEvent::ControlModifier, WidgetEventMouseMove);
-  this->SetEventTranslation(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier, WidgetEventControlPointInsert);
+  this->SetEventTranslation(
+    WidgetStateOnWidget, vtkCommand::MouseMoveEvent, vtkEvent::ControlModifier, WidgetEventMouseMove);
+  this->SetEventTranslation(
+    WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier, WidgetEventControlPointInsert);
 }
 
 //----------------------------------------------------------------------
 vtkSlicerCurveWidget::~vtkSlicerCurveWidget() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveWidget::CreateDefaultRepresentation(
-  vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+void vtkSlicerCurveWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
+                                                       vtkMRMLAbstractViewNode* viewNode,
+                                                       vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
@@ -81,7 +92,8 @@ bool vtkSlicerCurveWidget::ProcessControlPointInsert(vtkMRMLInteractionEventData
   int foundComponentIndex = -1;
   double closestDistance2 = 0.0;
 
-  // Force finding closest line (CanInteract() method would not tell near control points which side of the markup we are at)
+  // Force finding closest line (CanInteract() method would not tell near control points which side of the markup we are
+  // at)
   vtkSlicerCurveRepresentation2D* rep2d = vtkSlicerCurveRepresentation2D::SafeDownCast(this->WidgetRep);
   vtkSlicerCurveRepresentation3D* rep3d = vtkSlicerCurveRepresentation3D::SafeDownCast(this->WidgetRep);
   if (rep2d)

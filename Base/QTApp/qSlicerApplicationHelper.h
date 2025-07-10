@@ -49,11 +49,10 @@ public:
   /// Perform initialization steps on the application.
   /// \return If return value is non-zero then the application will terminate using
   /// the returned value as exit code.
-  template<typename SlicerMainWindowType>
-  static int postInitializeApplication(
-      qSlicerApplication& app,
-      QScopedPointer<QSplashScreen>& splashScreen,
-      QScopedPointer<SlicerMainWindowType>& window);
+  template <typename SlicerMainWindowType>
+  static int postInitializeApplication(qSlicerApplication& app,
+                                       QScopedPointer<QSplashScreen>& splashScreen,
+                                       QScopedPointer<SlicerMainWindowType>& window);
 
   static void setupModuleFactoryManager(qSlicerModuleFactoryManager* moduleFactoryManager);
 

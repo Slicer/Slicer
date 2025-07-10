@@ -46,6 +46,7 @@ class qMRMLVolumeWidgetPrivate : public QObject
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLVolumeWidget);
+
 protected:
   qMRMLVolumeWidget* const q_ptr;
 

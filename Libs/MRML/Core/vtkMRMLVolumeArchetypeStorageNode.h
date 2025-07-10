@@ -36,7 +36,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Do a temp write to update the file list in this storage node with all
@@ -46,7 +46,7 @@ public:
   /// write.
   /// If move is false then the temporary directory is removed
   /// and an empty string is returned.
-  std::string UpdateFileList(vtkMRMLNode* refNode, bool move=false);
+  std::string UpdateFileList(vtkMRMLNode* refNode, bool move = false);
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -58,7 +58,7 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "VolumeArchetypeStorage";}
+  const char* GetNodeTagName() override { return "VolumeArchetypeStorage"; }
 
   ///
   /// Center image on read
@@ -131,7 +131,6 @@ protected:
   int SingleFile;
   int UseOrientationFromFile;
   bool ForceRightHandedIJKCoordinateSystem;
-
 };
 
 #endif

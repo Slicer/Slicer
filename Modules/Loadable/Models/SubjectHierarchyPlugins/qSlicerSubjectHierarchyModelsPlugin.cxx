@@ -56,12 +56,15 @@
 class qSlicerSubjectHierarchyModelsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyModelsPlugin);
+
 protected:
   qSlicerSubjectHierarchyModelsPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyModelsPluginPrivate(qSlicerSubjectHierarchyModelsPlugin& object);
   ~qSlicerSubjectHierarchyModelsPluginPrivate() override;
   void init();
+
 public:
   QIcon ModelIcon;
 };
@@ -70,16 +73,15 @@ public:
 // qSlicerSubjectHierarchyModelsPluginPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyModelsPluginPrivate::qSlicerSubjectHierarchyModelsPluginPrivate(qSlicerSubjectHierarchyModelsPlugin& object)
-: q_ptr(&object)
-, ModelIcon(QIcon(":Icons/Model.png"))
+qSlicerSubjectHierarchyModelsPluginPrivate::qSlicerSubjectHierarchyModelsPluginPrivate(
+  qSlicerSubjectHierarchyModelsPlugin& object)
+  : q_ptr(&object)
+  , ModelIcon(QIcon(":Icons/Model.png"))
 {
 }
 
 //------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModelsPluginPrivate::init()
-{
-}
+void qSlicerSubjectHierarchyModelsPluginPrivate::init() {}
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModelsPluginPrivate::~qSlicerSubjectHierarchyModelsPluginPrivate() = default;
@@ -89,8 +91,8 @@ qSlicerSubjectHierarchyModelsPluginPrivate::~qSlicerSubjectHierarchyModelsPlugin
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyModelsPlugin::qSlicerSubjectHierarchyModelsPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyModelsPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyModelsPluginPrivate(*this))
 {
   this->m_Name = QString("Models");
 
@@ -103,7 +105,8 @@ qSlicerSubjectHierarchyModelsPlugin::~qSlicerSubjectHierarchyModelsPlugin() = de
 
 //----------------------------------------------------------------------------
 double qSlicerSubjectHierarchyModelsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+  vtkMRMLNode* node,
+  vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -211,17 +214,20 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID) const
 
   // Get basic tooltip from abstract plugin
   QString tooltipString = QString("%1: %2").arg(Superclass::tooltip(itemID)).arg(dataType);
-  tooltipString.append( QString("\n  (") + tr("Points: %1  Cells: %2")
-    .arg(data->GetNumberOfPoints()).arg(data->GetNumberOfCells()) );
+  tooltipString.append(QString("\n  (")
+                       + tr("Points: %1  Cells: %2").arg(data->GetNumberOfPoints()).arg(data->GetNumberOfCells()));
 
   vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
   if (displayNode && modelNode->GetDisplayVisibility() > 0)
   {
-    double color[3] = {0.0,0.0,0.0};
+    double color[3] = { 0.0, 0.0, 0.0 };
     displayNode->GetColor(color);
-    tooltipString.append( QString("  ") + tr("Color: %1,%2,%3  Opacity: %4%")
-      .arg(int(color[0]*255.0)).arg(int(color[1]*255.0)).arg(int(color[2]*255.0))
-      .arg(int(displayNode->GetOpacity()*100.0)) );
+    tooltipString.append(QString("  ")
+                         + tr("Color: %1,%2,%3  Opacity: %4%")
+                             .arg(int(color[0] * 255.0))
+                             .arg(int(color[1] * 255.0))
+                             .arg(int(color[2] * 255.0))
+                             .arg(int(displayNode->GetOpacity() * 100.0)));
   }
   tooltipString.append(QString(")"));
 
@@ -229,13 +235,16 @@ QString qSlicerSubjectHierarchyModelsPlugin::tooltip(vtkIdType itemID) const
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID, QColor color, QMap<int, QVariant> terminologyMetaData)
+void qSlicerSubjectHierarchyModelsPlugin::setDisplayColor(vtkIdType itemID,
+                                                          QColor color,
+                                                          QMap<int, QVariant> terminologyMetaData)
 {
   this->setColorAndTerminologyToDisplayableNode(itemID, color, terminologyMetaData, false, true);
 }
 
 //-----------------------------------------------------------------------------
-QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData) const
+QColor qSlicerSubjectHierarchyModelsPlugin::getDisplayColor(vtkIdType itemID,
+                                                            QMap<int, QVariant>& terminologyMetaData) const
 {
   return this->colorAndTerminologyFromDisplayableNode(itemID, terminologyMetaData, false);
 }

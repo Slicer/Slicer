@@ -33,6 +33,7 @@
 class qSlicerExtensionsManagerDialogPrivate : public Ui_qSlicerExtensionsManagerDialog
 {
   Q_DECLARE_PUBLIC(qSlicerExtensionsManagerDialog);
+
 protected:
   qSlicerExtensionsManagerDialog* const q_ptr;
 
@@ -62,8 +63,7 @@ void qSlicerExtensionsManagerDialogPrivate::init()
 
   this->setupUi(q);
 
-  QObject::connect(this->ExtensionsManagerWidget, SIGNAL(inBatchProcessing(bool)),
-    q, SLOT(onBatchProcessingChanged()));
+  QObject::connect(this->ExtensionsManagerWidget, SIGNAL(inBatchProcessing(bool)), q, SLOT(onBatchProcessingChanged()));
 
   QPushButton* restartButton = this->ButtonBox->button(QDialogButtonBox::Ok);
   restartButton->setText(qSlicerExtensionsManagerDialog::tr("Restart"));
@@ -75,19 +75,20 @@ void qSlicerExtensionsManagerDialogPrivate::init()
   // only if it applies. Note also that keep track of "EnvironmentVariables/PYTHONPATH'
   // isn't required, "Modules/AdditionalPaths" is enough to know if we should restart.
   QSettings* settings = qSlicerCoreApplication::application()->revisionUserSettings();
-    // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
+  // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
   this->PreviousModulesAdditionalPaths = settings->value("Modules/AdditionalPaths").toStringList();
   this->PreviousExtensionsScheduledForUninstall = settings->value("Extensions/ScheduledForUninstall").toStringList();
   this->PreviousExtensionsScheduledForUpdate = settings->value("Extensions/ScheduledForUpdate").toMap();
 
-  qSlicerSettingsExtensionsPanel* extensionsPanel =
-      qobject_cast<qSlicerSettingsExtensionsPanel*>(
-        qSlicerApplication::application()->settingsDialog()->panel("Extensions"));
+  qSlicerSettingsExtensionsPanel* extensionsPanel = qobject_cast<qSlicerSettingsExtensionsPanel*>(
+    qSlicerApplication::application()->settingsDialog()->panel("Extensions"));
   Q_ASSERT(extensionsPanel);
   if (extensionsPanel)
   {
-    QObject::connect(extensionsPanel, SIGNAL(extensionsServerUrlChanged(QString)),
-                     this->ExtensionsManagerWidget, SLOT(refreshInstallWidget()));
+    QObject::connect(extensionsPanel,
+                     SIGNAL(extensionsServerUrlChanged(QString)),
+                     this->ExtensionsManagerWidget,
+                     SLOT(refreshInstallWidget()));
   }
 }
 
@@ -100,11 +101,11 @@ void qSlicerExtensionsManagerDialogPrivate::updateButtons()
   qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
   // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
   if (this->PreviousModulesAdditionalPaths
-      != coreApp->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList() ||
-    this->PreviousExtensionsScheduledForUninstall
-      != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUninstall").toStringList() ||
-    this->PreviousExtensionsScheduledForUpdate
-      != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUpdate").toMap())
+        != coreApp->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList()
+      || this->PreviousExtensionsScheduledForUninstall
+           != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUninstall").toStringList()
+      || this->PreviousExtensionsScheduledForUpdate
+           != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUpdate").toMap())
   {
     shouldRestart = true;
   }
@@ -153,20 +154,13 @@ void qSlicerExtensionsManagerDialog::setExtensionsManagerModel(qSlicerExtensions
   if (model)
   {
     this->onModelUpdated();
-    connect(model, SIGNAL(modelUpdated()),
-            this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(extensionInstalled(QString)),
-            this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(extensionScheduledForUninstall(QString)),
-            this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(extensionCancelledScheduleForUninstall(QString)),
-            this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(extensionScheduledForUpdate(QString)),
-            this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(extensionCancelledScheduleForUpdate(QString)),
-            this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(extensionEnabledChanged(QString,bool)),
-            this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(modelUpdated()), this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionInstalled(QString)), this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionScheduledForUninstall(QString)), this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionCancelledScheduleForUninstall(QString)), this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionScheduledForUpdate(QString)), this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionCancelledScheduleForUpdate(QString)), this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionEnabledChanged(QString, bool)), this, SLOT(onModelUpdated()));
   }
 }
 

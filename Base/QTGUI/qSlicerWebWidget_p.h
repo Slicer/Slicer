@@ -40,6 +40,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebEnginePage : public QWebEnginePage
 {
   friend class qSlicerWebWidget;
   friend class qSlicerWebWidgetPrivate;
+
 public:
   qSlicerWebEnginePage(QWebEngineProfile* profile, QObject* parent = nullptr);
   ~qSlicerWebEnginePage() override;
@@ -70,7 +71,10 @@ protected:
     return false;
   }
 
-  void javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level, const QString& message, int lineNumber, const QString& sourceID) override
+  void javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level,
+                                const QString& message,
+                                int lineNumber,
+                                const QString& sourceID) override
   {
     if (this->JavaScriptConsoleMessageLoggingEnabled)
     {
@@ -96,10 +100,13 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidgetPrivate : public QObject, Ui_qSlicerWebWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidgetPrivate
+  : public QObject
+  , Ui_qSlicerWebWidget
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerWebWidget);
+
 protected:
   qSlicerWebWidget* const q_ptr;
 
@@ -152,7 +159,6 @@ protected slots:
   void onAppAboutToQuit();
 
 public:
-
   QElapsedTimer DownloadTime;
   bool HandleExternalUrlWithDesktopService;
   bool NavigationRequestAccepted;

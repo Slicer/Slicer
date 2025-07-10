@@ -30,7 +30,8 @@ class vtkMRMLViewNode;
 class vtkMRMLAbstractViewNode;
 class vtkMRMLDisplayNode;
 
-class Q_SLICER_COLORS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyColorLegendPlugin : public qSlicerSubjectHierarchyAbstractPlugin
+class Q_SLICER_COLORS_SUBJECT_HIERARCHY_PLUGINS_EXPORT qSlicerSubjectHierarchyColorLegendPlugin
+  : public qSlicerSubjectHierarchyAbstractPlugin
 {
 public:
   Q_OBJECT
@@ -41,9 +42,9 @@ public:
   ~qSlicerSubjectHierarchyColorLegendPlugin() override;
 
 public:
-
   /// Get visibility context menu item actions to add to tree view.
-  /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
+  /// These item visibility context menu actions can be shown in the implementations of \sa
+  /// showVisibilityContextMenuActionsForItem
   QList<QAction*> visibilityContextMenuActions() const override;
 
   /// Show visibility context menu actions valid for a given subject hierarchy item.
@@ -51,14 +52,14 @@ public:
   void showVisibilityContextMenuActionsForItem(vtkIdType itemID) override;
 
   /// Show an item in a selected view.
-  /// Calls Volumes plugin's showItemInView implementation and adds support for showing a color legend in 2D and 3D views.
-  /// Returns true on success.
+  /// Calls Volumes plugin's showItemInView implementation and adds support for showing a color legend in 2D and 3D
+  /// views. Returns true on success.
   bool showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow) override;
 
   /// Show/hide color legend in a view.
   /// If viewNode is nullptr then it is displayed in all views in the current layout.
-  bool showColorLegendInView( bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode=nullptr);
-  bool showColorLegendInSlice( bool show, vtkIdType itemID, vtkMRMLSliceNode* sliceNode=nullptr);
+  bool showColorLegendInView(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode = nullptr);
+  bool showColorLegendInSlice(bool show, vtkIdType itemID, vtkMRMLSliceNode* sliceNode = nullptr);
 
 protected slots:
   /// Toggle color legend option for current volume item

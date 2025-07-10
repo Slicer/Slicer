@@ -50,9 +50,7 @@ public:
   /// Set directions only
   void SetDirections(double dirs[3][3]);
   /// Set directions only
-  void SetDirections(double ir, double ia, double is,
-                     double jr, double ja, double js,
-                     double kr, double ka, double ks);
+  void SetDirections(double ir, double ia, double is, double jr, double ja, double js, double kr, double ka, double ks);
 
   void GetDirections(double dirs[3][3]);
 

@@ -77,7 +77,8 @@ void qMRMLColorModelPrivate::init()
   }
 
   q->setHorizontalHeaderLabels(headerLabels);
-  QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)), q, SLOT(onItemChanged(QStandardItem*)), Qt::UniqueConnection);
+  QObject::connect(
+    q, SIGNAL(itemChanged(QStandardItem*)), q, SLOT(onItemChanged(QStandardItem*)), Qt::UniqueConnection);
 }
 
 //------------------------------------------------------------------------------
@@ -248,7 +249,6 @@ void qMRMLColorModel::setCheckableColumn(int column)
   d->updateColumnCount();
 }
 
-
 //------------------------------------------------------------------------------
 int qMRMLColorModel::colorFromItem(QStandardItem* colorItem) const
 {
@@ -273,16 +273,16 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column) const
   {
     return nullptr;
   }
-  QModelIndexList indexes = this->match(this->index(0,0), qMRMLItemDelegate::ColorEntryRole,
-                                        color, 1, Qt::MatchExactly | Qt::MatchRecursive);
+  QModelIndexList indexes =
+    this->match(this->index(0, 0), qMRMLItemDelegate::ColorEntryRole, color, 1, Qt::MatchExactly | Qt::MatchRecursive);
   while (indexes.size())
   {
     if (indexes[0].column() == column)
     {
       return this->itemFromIndex(indexes[0]);
     }
-    indexes = this->match(indexes[0], qMRMLItemDelegate::ColorEntryRole, color, 1,
-                          Qt::MatchExactly | Qt::MatchRecursive);
+    indexes =
+      this->match(indexes[0], qMRMLItemDelegate::ColorEntryRole, color, 1, Qt::MatchExactly | Qt::MatchRecursive);
   }
   return nullptr;
 }
@@ -290,8 +290,8 @@ QStandardItem* qMRMLColorModel::itemFromColor(int color, int column) const
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLColorModel::indexes(int color) const
 {
-  return this->match(this->index(0,0), qMRMLItemDelegate::ColorEntryRole, color, -1,
-                     Qt::MatchExactly | Qt::MatchRecursive);
+  return this->match(
+    this->index(0, 0), qMRMLItemDelegate::ColorEntryRole, color, -1, Qt::MatchExactly | Qt::MatchRecursive);
 }
 
 //------------------------------------------------------------------------------
@@ -374,7 +374,7 @@ void qMRMLColorModel::updateRowForColor(int color)
     if (!colorItem)
     {
       colorItem = new QStandardItem();
-      this->invisibleRootItem()->setChild(color + startIndex,col,colorItem);
+      this->invisibleRootItem()->setChild(color + startIndex, col, colorItem);
     }
     this->updateItemFromColor(colorItem, color, col);
   }
@@ -424,12 +424,13 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
   {
     double rgba[4] = { 0., 0., 0., 1. };
     d->MRMLColorNode->GetColor(color, rgba);
-    item->setData(QString::number(rgba[3],'f',2), Qt::DisplayRole);
+    item->setData(QString::number(rgba[3], 'f', 2), Qt::DisplayRole);
   }
   if (column == d->TerminologyColumn)
   {
     item->setText(qMRMLColorModel::terminologyTextForColor(d->MRMLColorNode, color));
-    item->setData(QVariant::fromValue(reinterpret_cast<long long>(d->MRMLColorNode.GetPointer())), qMRMLItemDelegate::PointerRole);
+    item->setData(QVariant::fromValue(reinterpret_cast<long long>(d->MRMLColorNode.GetPointer())),
+                  qMRMLItemDelegate::PointerRole);
   }
   if (column == d->CheckableColumn)
   {
@@ -443,7 +444,7 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
   Q_D(qMRMLColorModel);
   if (d->IsUpdatingWidgetFromMRML)
   {
-    return;  // Updating widget from MRML is in progress, do not do the reverse update
+    return; // Updating widget from MRML is in progress, do not do the reverse update
   }
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(d->MRMLColorNode);
   if (color < 0 || !colorTableNode)
@@ -466,14 +467,16 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLColorModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
-                                      void* client_data, void* vtkNotUsed(call_data))
+void qMRMLColorModel::onMRMLNodeEvent(vtkObject* vtk_obj,
+                                      unsigned long event,
+                                      void* client_data,
+                                      void* vtkNotUsed(call_data))
 {
   vtkMRMLColorNode* colorNode = reinterpret_cast<vtkMRMLColorNode*>(vtk_obj);
   qMRMLColorModel* colorModel = reinterpret_cast<qMRMLColorModel*>(client_data);
   Q_ASSERT(colorNode);
   Q_ASSERT(colorModel);
-  switch(event)
+  switch (event)
   {
     default:
     case vtkCommand::ModifiedEvent:
@@ -507,10 +510,9 @@ void qMRMLColorModel::onItemChanged(QStandardItem* item)
 //------------------------------------------------------------------------------
 QVariant qMRMLColorModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-  QVariant retval =  QStandardItemModel::headerData(section, orientation, role);
+  QVariant retval = QStandardItemModel::headerData(section, orientation, role);
 
-  if (orientation == Qt::Vertical &&
-      role == Qt::DisplayRole)
+  if (orientation == Qt::Vertical && role == Qt::DisplayRole)
   {
     // for the vertical header, decrement the row number by one, since the
     // rows start from 1 and the indices start from 0 in the color look up
@@ -519,11 +521,12 @@ QVariant qMRMLColorModel::headerData(int section, Qt::Orientation orientation, i
   }
 
   return retval;
-
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex, bool simplified/*=false*/)
+QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode,
+                                                 int colorIndex,
+                                                 bool simplified /*=false*/)
 {
   if (colorNode == nullptr || colorIndex >= colorNode->GetNumberOfColors())
   {
@@ -533,12 +536,12 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
   // Get type (with modifier, if any)
   QString type;
   if (colorNode->GetTerminologyType(colorIndex) != nullptr
-    && colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() != nullptr)
+      && colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() != nullptr)
   {
     type = colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning();
     QString typeModifier;
     if (colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr
-      && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
+        && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
     {
       typeModifier = colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning();
     }
@@ -546,12 +549,14 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
     {
       if (simplified)
       {
-        //: For formatting of terminology entry with a modifier in simplified mode. %1 is structure name (e.g., "Kidney"), %2 is modifier (e.g., "Left")
+        //: For formatting of terminology entry with a modifier in simplified mode. %1 is structure name (e.g.,
+        //: "Kidney"), %2 is modifier (e.g., "Left")
         type = tr("%2 %1").arg(type).arg(typeModifier);
       }
       else
       {
-        //: For formatting of terminology entry with a modifier. %1 is structure name (e.g., "Kidney"), %2 is modifier (e.g., "Left")
+        //: For formatting of terminology entry with a modifier. %1 is structure name (e.g., "Kidney"), %2 is modifier
+        //: (e.g., "Left")
         type = tr("%1, %2").arg(type).arg(typeModifier);
       }
     }
@@ -559,13 +564,13 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
 
   // Get region (if any; with modifier, if any)
   QString region;
-  if ( colorNode->GetTerminologyRegion(colorIndex) != nullptr
-    && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
+  if (colorNode->GetTerminologyRegion(colorIndex) != nullptr
+      && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
   {
     region = colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning();
     QString regionModifier;
     if (colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr
-      && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
+        && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
     {
       regionModifier = colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning();
     }
@@ -573,12 +578,14 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
     {
       if (simplified)
       {
-        //: For formatting of terminology entry name in simplified mode. %1 is region name (e.g., "Kidney"), %2 is region modifier (e.g., "Left")
+        //: For formatting of terminology entry name in simplified mode. %1 is region name (e.g., "Kidney"), %2 is
+        //: region modifier (e.g., "Left")
         region = tr("%2 %1").arg(region).arg(regionModifier);
       }
       else
       {
-        //: For formatting of terminology entry name. %1 is region name (e.g., "Kidney"), %2 is region modifier (e.g., "Left")
+        //: For formatting of terminology entry name. %1 is region name (e.g., "Kidney"), %2 is region modifier (e.g.,
+        //: "Left")
         region = tr("%1, %2").arg(region).arg(regionModifier);
       }
     }
@@ -612,7 +619,7 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
   if (!simplified)
   {
     if (colorNode->GetTerminologyCategory(colorIndex) != nullptr
-      && colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() != nullptr)
+        && colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() != nullptr)
     {
       category = colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning();
     }
@@ -621,7 +628,8 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
   {
     if (!typeInRegion.isEmpty())
     {
-      //: For formatting of terminology entry name. %1 is category name (e.g., "Morphologically Altered Structure"), %2 is the type in region ("Mass in Liver")
+      //: For formatting of terminology entry name. %1 is category name (e.g., "Morphologically Altered Structure"), %2
+      //: is the type in region ("Mass in Liver")
       typeInRegionWithCategory = tr("%1: %2").arg(category).arg(typeInRegion);
     }
     else

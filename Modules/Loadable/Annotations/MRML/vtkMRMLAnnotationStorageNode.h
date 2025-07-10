@@ -24,7 +24,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "AnnotationStorage";}
+  const char* GetNodeTagName() override { return "AnnotationStorage"; }
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
@@ -35,21 +35,38 @@ protected:
   vtkMRMLAnnotationStorageNode(const vtkMRMLAnnotationStorageNode&);
   void operator=(const vtkMRMLAnnotationStorageNode&);
 
-  int WriteAnnotationDisplayProperties(fstream & of, vtkMRMLAnnotationDisplayNode* refNode, std::string preposition);
-  int WriteAnnotationTextDisplayProperties(fstream & of, vtkMRMLAnnotationTextDisplayNode* refNode, std::string preposition);
+  int WriteAnnotationDisplayProperties(fstream& of, vtkMRMLAnnotationDisplayNode* refNode, std::string preposition);
+  int WriteAnnotationTextDisplayProperties(fstream& of,
+                                           vtkMRMLAnnotationTextDisplayNode* refNode,
+                                           std::string preposition);
 
-  int WriteAnnotationTextProperties(fstream & of, vtkMRMLAnnotationNode* refNode);
+  int WriteAnnotationTextProperties(fstream& of, vtkMRMLAnnotationNode* refNode);
   int WriteAnnotationData(fstream& of, vtkMRMLAnnotationNode* refNode);
   int OpenFileToWrite(fstream& of);
 
   // Description:
   // Read data related to vtkMRMLAnnotationDisplayNode
-  int ReadAnnotationDisplayProperties(vtkMRMLAnnotationDisplayNode* annotationDisplayNode, std::string lineString, std::string preposition);
-  int ReadAnnotationTextDisplayProperties(vtkMRMLAnnotationTextDisplayNode* annotationDisplayNode, std::string lineString, std::string preposition);
+  int ReadAnnotationDisplayProperties(vtkMRMLAnnotationDisplayNode* annotationDisplayNode,
+                                      std::string lineString,
+                                      std::string preposition);
+  int ReadAnnotationTextDisplayProperties(vtkMRMLAnnotationTextDisplayNode* annotationDisplayNode,
+                                          std::string lineString,
+                                          std::string preposition);
 
-  int ReadAnnotationTextData(vtkMRMLAnnotationNode* refNode, char line[1024], int typeColumn, int textColumn,  int selColumn,
-              int visColumn, int numColumns);
-  int ReadAnnotationTextProperties(vtkMRMLAnnotationNode* annotationNode, char line[1024], int& typeColumn, int& annotationColumn, int& selColumn, int& visColumn, int& columnNumber);
+  int ReadAnnotationTextData(vtkMRMLAnnotationNode* refNode,
+                             char line[1024],
+                             int typeColumn,
+                             int textColumn,
+                             int selColumn,
+                             int visColumn,
+                             int numColumns);
+  int ReadAnnotationTextProperties(vtkMRMLAnnotationNode* annotationNode,
+                                   char line[1024],
+                                   int& typeColumn,
+                                   int& annotationColumn,
+                                   int& selColumn,
+                                   int& visColumn,
+                                   int& columnNumber);
   // Description:
   // assumes that ResetAnnotations is executed
   int ReadAnnotation(vtkMRMLAnnotationNode* refNode);
@@ -69,8 +86,7 @@ protected:
   /// Write data from a referenced node
   int WriteDataInternal(vtkMRMLNode* refNode) override;
   /// Write data from a referenced node into a passed stream
-  virtual int WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream &of);
-
+  virtual int WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream& of);
 };
 
 #endif

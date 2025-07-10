@@ -45,7 +45,7 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -76,8 +76,8 @@ public:
   /// If DoPropagateTableSelection set to false then this
   /// view will not be affected by PropagateTableSelection.
   /// Default value is true.
-  vtkSetMacro (DoPropagateTableSelection, bool );
-  vtkGetMacro (DoPropagateTableSelection, bool );
+  vtkSetMacro(DoPropagateTableSelection, bool);
+  vtkGetMacro(DoPropagateTableSelection, bool);
 
   virtual const char* GetTableNodeReferenceRole();
 
@@ -92,7 +92,7 @@ protected:
   static const char* TableNodeReferenceRole;
   static const char* TableNodeReferenceMRMLAttributeName;
 
-  bool DoPropagateTableSelection{true};
+  bool DoPropagateTableSelection{ true };
 };
 
 #endif

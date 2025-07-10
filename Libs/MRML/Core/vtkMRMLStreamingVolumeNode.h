@@ -38,9 +38,9 @@ Care Ontario.
 #include <vtkUnsignedCharArray.h>
 
 /// \brief MRML node for representing a single compressed video frame that can be decoded to an image representation
-/// In this context, a frame is considered to be a compressed image that may require additional frames to decode to an image,
-/// and an image is the uncompressed pixel based representation.
-/// A video codec can be used to decode and encode between frame and image representations
+/// In this context, a frame is considered to be a compressed image that may require additional frames to decode to an
+/// image, and an image is the uncompressed pixel based representation. A video codec can be used to decode and encode
+/// between frame and image representations
 class VTK_MRML_EXPORT vtkMRMLStreamingVolumeNode : public vtkMRMLVectorVolumeNode
 {
 public:
@@ -63,11 +63,11 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLStreamingVolumeNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override
-  {return "StreamingVolume";}
+  const char* GetNodeTagName() override { return "StreamingVolume"; }
 
   /// Set/Get the observed image data object and and image data connections
-  /// \sa vtkMRMLVolumeNode::SetAndObserveImageData(), vtkMRMLVolumeNode::GetImageData(), vtkMRMLVolumeNode::GetImageDataConnection()
+  /// \sa vtkMRMLVolumeNode::SetAndObserveImageData(), vtkMRMLVolumeNode::GetImageData(),
+  /// vtkMRMLVolumeNode::GetImageDataConnection()
   void SetAndObserveImageData(vtkImageData* imageData) override;
   vtkImageData* GetImageData() override;
   vtkAlgorithmOutput* GetImageDataConnection() override;
@@ -77,7 +77,7 @@ public:
   void SetAndObserveFrame(vtkStreamingVolumeFrame* frame);
 
   /// Returns a pointer to the current frame
-  vtkStreamingVolumeFrame* GetFrame(){return this->Frame.GetPointer();};
+  vtkStreamingVolumeFrame* GetFrame() { return this->Frame.GetPointer(); };
 
   /// Encodes the current vtkImageData as a compressed frame using the specified codec
   /// Returns true if the image is successfully encoded
@@ -88,7 +88,8 @@ public:
   virtual bool DecodeFrame();
 
   /// Returns true if the current frame is a keyframe
-  /// KeyFrames are not interpolated and don't require any additional frames in order to be decoded to an uncompressed image
+  /// KeyFrames are not interpolated and don't require any additional frames in order to be decoded to an uncompressed
+  /// image
   virtual bool IsKeyFrame();
 
   /// Callback that is called if the current frame is modified
@@ -122,17 +123,17 @@ protected:
   /// Allocates the vtkImageData so that the compressed image data can be decoded
   void AllocateImageForFrame(vtkImageData* imageData);
 
-  /// Returns true if the number of observers on the ImageData or ImageDataConnection is greater than the default expected number
+  /// Returns true if the number of observers on the ImageData or ImageDataConnection is greater than the default
+  /// expected number
   bool HasExternalImageObserver();
 
 protected:
   vtkSmartPointer<vtkStreamingVolumeCodec> Codec;
-  std::string                              CodecFourCC;
+  std::string CodecFourCC;
   vtkSmartPointer<vtkStreamingVolumeFrame> Frame;
-  bool                                     FrameDecoded{false};
-  bool                                     FrameDecodingInProgress{false};
-  vtkSmartPointer<vtkCallbackCommand>      FrameModifiedCallbackCommand;
-
+  bool FrameDecoded{ false };
+  bool FrameDecodingInProgress{ false };
+  vtkSmartPointer<vtkCallbackCommand> FrameModifiedCallbackCommand;
 };
 
 #endif

@@ -41,7 +41,7 @@ class qMRMLSortFilterSegmentsProxyModelPrivate
 public:
   qMRMLSortFilterSegmentsProxyModelPrivate();
 
-  bool FilterEnabled{false};
+  bool FilterEnabled{ false };
   QString NameFilter;
   QString TextFilter;
   bool ShowStatus[vtkSlicerSegmentationsModuleLogic::LastStatus];
@@ -69,8 +69,8 @@ CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, QString, textFilter, TextFilter);
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject* vparent)
- : QSortFilterProxyModel(vparent)
- , d_ptr(new qMRMLSortFilterSegmentsProxyModelPrivate)
+  : QSortFilterProxyModel(vparent)
+  , d_ptr(new qMRMLSortFilterSegmentsProxyModelPrivate)
 {
   this->setDynamicSortFilter(true);
 }
@@ -161,7 +161,7 @@ void qMRMLSortFilterSegmentsProxyModel::setShowStatus(int status, bool shown)
 QString qMRMLSortFilterSegmentsProxyModel::segmentIDFromIndex(const QModelIndex& index) const
 {
   qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
-  return segmentsModel->segmentIDFromIndex( this->mapToSource(index) );
+  return segmentsModel->segmentIDFromIndex(this->mapToSource(index));
 }
 
 //-----------------------------------------------------------------------------
@@ -193,7 +193,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QM
   QStandardItem* item = nullptr;
 
   // Sometimes the row is not complete (DnD), search for a non null item
-  for (int childIndex=0; childIndex < parentItem->columnCount(); ++childIndex)
+  for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
   {
     item = parentItem->child(sourceRow, childIndex);
     if (item)
@@ -254,7 +254,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID) con
     QString segmentName(segment->GetName());
     if (!segmentName.contains(d->NameFilter, Qt::CaseInsensitive))
     {
-        return false;
+      return false;
     }
   }
 

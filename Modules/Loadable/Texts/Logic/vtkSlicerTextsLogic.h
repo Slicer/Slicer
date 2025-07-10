@@ -35,8 +35,7 @@
 
 class VTK_SLICER_TEXTS_MODULE_LOGIC_EXPORT vtkSlicerTextsLogic : public vtkMRMLAbstractLogic
 {
-  public:
-
+public:
   /// The Usual vtk class functions
   static vtkSlicerTextsLogic* New();
   vtkTypeMacro(vtkSlicerTextsLogic, vtkMRMLAbstractLogic);

@@ -50,20 +50,17 @@ namespace vtkMRMLCoreTestingUtilities
 {
 
 VTK_MRML_EXPORT
-bool CheckNodeInSceneByID(int line, vtkMRMLScene* scene,
-                          const char* nodeID, vtkMRMLNode* expected);
+bool CheckNodeInSceneByID(int line, vtkMRMLScene* scene, const char* nodeID, vtkMRMLNode* expected);
 
 VTK_MRML_EXPORT
-bool CheckNodeIdAndName(int line, vtkMRMLNode* node,
-                        const char* expectedID, const char* expectedName);
+bool CheckNodeIdAndName(int line, vtkMRMLNode* node, const char* expectedID, const char* expectedName);
 
-template<typename Type>
+template <typename Type>
 std::string ToString(Type value);
 
 /// Return list of node that should be added to the scene
 VTK_MRML_EXPORT
-int GetExpectedNodeAddedClassNames(
-    const char* sceneFilePath, std::vector<std::string>& expectedNodeAddedClassNames);
+int GetExpectedNodeAddedClassNames(const char* sceneFilePath, std::vector<std::string>& expectedNodeAddedClassNames);
 
 /// Test basic VTK object methods (print, superclass, etc.)
 VTK_MRML_EXPORT
@@ -121,7 +118,7 @@ int ExerciseSceneLoadingMethods(const char* sceneFilePath, vtkMRMLScene* inputSc
 class VTK_MRML_EXPORT vtkMRMLNodeCallback : public vtkCallbackCommand
 {
 public:
-  static vtkMRMLNodeCallback* New() {return new vtkMRMLNodeCallback;}
+  static vtkMRMLNodeCallback* New() { return new vtkMRMLNodeCallback; }
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void Execute(vtkObject* caller, unsigned long eid, void* callData) override;
@@ -146,7 +143,7 @@ protected:
 
   void SetErrorString(int line, const char* error);
 
-  vtkMRMLNode* Node{nullptr};
+  vtkMRMLNode* Node{ nullptr };
   std::string ErrorString;
   std::map<unsigned long, unsigned int> ReceivedEvents;
 };

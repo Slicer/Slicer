@@ -45,10 +45,10 @@
 #include <limits>
 
 //-----------------------------------------------------------------------------
-qSlicerWidgetValueWrapper::qSlicerWidgetValueWrapper(const QString& _name,
-                                                     const QString& _label,
-                                                     QObject* parentObject)
-  : QObject(parentObject),Name(_name), Label(_label)
+qSlicerWidgetValueWrapper::qSlicerWidgetValueWrapper(const QString& _name, const QString& _label, QObject* parentObject)
+  : QObject(parentObject)
+  , Name(_name)
+  , Label(_label)
 {
 }
 
@@ -56,36 +56,35 @@ qSlicerWidgetValueWrapper::qSlicerWidgetValueWrapper(const QString& _name,
 qSlicerWidgetValueWrapper::~qSlicerWidgetValueWrapper() = default;
 
 //-----------------------------------------------------------------------------
-#define WIDGET_VALUE_WRAPPER(_NAME, _WIDGET, _GETTER, _SETTER, _CONVERTER, _NOTIFY) \
-  namespace{                                                            \
-    class _NAME##WidgetValueWrapper: public qSlicerWidgetValueWrapper   \
-    {                                                                   \
-    public:                                                             \
-      _NAME##WidgetValueWrapper(const QString& _name,                   \
-                                const QString& _label, _WIDGET * _widget): \
-        qSlicerWidgetValueWrapper(_name, _label, _widget)               \
-      {                                                                 \
-        Q_ASSERT(_widget);                                              \
-        this->Widget = _widget;                                         \
-        this->connect(this->Widget, SIGNAL(_NOTIFY),                    \
-                      this, SIGNAL(valueChanged()));                    \
-      }                                                                 \
-      virtual QVariant value()                                          \
-      {                                                                 \
-        QVariant _value(this->Widget->_GETTER());                       \
-        return _value;                                                  \
-      }                                                                 \
-      virtual void setValue(const QString& _value)                      \
-      {                                                                 \
-        /* setting a value have side effects (such as caret moving to the end of the widget) */ \
-        /* so only modify a widget if the value is actually changed */  \
-        if (this->Widget->_GETTER() != qSlicerWidgetValueWrapper::to##_CONVERTER(_value))\
-        {                                                               \
-          this->Widget->_SETTER(qSlicerWidgetValueWrapper::to##_CONVERTER(_value)); \
-        }                                                               \
-      }                                                                 \
-      _WIDGET* Widget;                                                  \
-    };                                                                  \
+#define WIDGET_VALUE_WRAPPER(_NAME, _WIDGET, _GETTER, _SETTER, _CONVERTER, _NOTIFY)           \
+  namespace                                                                                   \
+  {                                                                                           \
+  class _NAME##WidgetValueWrapper : public qSlicerWidgetValueWrapper                          \
+  {                                                                                           \
+  public:                                                                                     \
+    _NAME##WidgetValueWrapper(const QString& _name, const QString& _label, _WIDGET* _widget)  \
+      : qSlicerWidgetValueWrapper(_name, _label, _widget)                                     \
+    {                                                                                         \
+      Q_ASSERT(_widget);                                                                      \
+      this->Widget = _widget;                                                                 \
+      this->connect(this->Widget, SIGNAL(_NOTIFY), this, SIGNAL(valueChanged()));             \
+    }                                                                                         \
+    virtual QVariant value()                                                                  \
+    {                                                                                         \
+      QVariant _value(this->Widget->_GETTER());                                               \
+      return _value;                                                                          \
+    }                                                                                         \
+    virtual void setValue(const QString& _value)                                              \
+    {                                                                                         \
+      /* setting a value have side effects (such as caret moving to the end of the widget) */ \
+      /* so only modify a widget if the value is actually changed */                          \
+      if (this->Widget->_GETTER() != qSlicerWidgetValueWrapper::to##_CONVERTER(_value))       \
+      {                                                                                       \
+        this->Widget->_SETTER(qSlicerWidgetValueWrapper::to##_CONVERTER(_value));             \
+      }                                                                                       \
+    }                                                                                         \
+    _WIDGET* Widget;                                                                          \
+  };                                                                                          \
   }
 
 //-----------------------------------------------------------------------------
@@ -98,32 +97,50 @@ WIDGET_VALUE_WRAPPER(DoubleWithoutConstraints, ctkDoubleSpinBox, value, setValue
 WIDGET_VALUE_WRAPPER(DoubleWithConstraints, ctkSliderWidget, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(String, QLineEdit, text, setText, String, textChanged(const QString&));
 WIDGET_VALUE_WRAPPER(Point, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
-WIDGET_VALUE_WRAPPER(PointFile, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(PointFile,
+                     qMRMLNodeComboBox,
+                     currentNodeID,
+                     setCurrentNodeID,
+                     String,
+                     currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Region, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Image, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
-WIDGET_VALUE_WRAPPER(Geometry, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(Geometry,
+                     qMRMLNodeComboBox,
+                     currentNodeID,
+                     setCurrentNodeID,
+                     String,
+                     currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Table, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
-WIDGET_VALUE_WRAPPER(Transform, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(Transform,
+                     qMRMLNodeComboBox,
+                     currentNodeID,
+                     setCurrentNodeID,
+                     String,
+                     currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Directory, ctkDirectoryButton, directory, setDirectory, String, directoryChanged(QString));
 WIDGET_VALUE_WRAPPER(File, ctkPathLineEdit, currentPath, setCurrentPath, String, currentPathChanged(QString));
 WIDGET_VALUE_WRAPPER(Enumeration, ButtonGroupWidgetWrapper, checkedValue, setCheckedValue, String, valueChanged());
-WIDGET_VALUE_WRAPPER(Measurement, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(Measurement,
+                     qMRMLNodeComboBox,
+                     currentNodeID,
+                     setCurrentNodeID,
+                     String,
+                     currentNodeIDChanged(QString));
 
 //-----------------------------------------------------------------------------
-#define INSTANCIATE_WIDGET_VALUE_WRAPPER(_NAME, _PARAM_NAME, _LABEL, _WIDGET_INSTANCE) \
-  qSlicerWidgetValueWrapper* wrapper =                                                 \
-    new _NAME##WidgetValueWrapper(_PARAM_NAME, _LABEL, _WIDGET_INSTANCE);              \
-  Q_Q(qSlicerCLIModuleUIHelper);                                                       \
-  QObject::connect(wrapper, SIGNAL(valueChanged()), q, SLOT(onValueChanged()));        \
+#define INSTANCIATE_WIDGET_VALUE_WRAPPER(_NAME, _PARAM_NAME, _LABEL, _WIDGET_INSTANCE)                       \
+  qSlicerWidgetValueWrapper* wrapper = new _NAME##WidgetValueWrapper(_PARAM_NAME, _LABEL, _WIDGET_INSTANCE); \
+  Q_Q(qSlicerCLIModuleUIHelper);                                                                             \
+  QObject::connect(wrapper, SIGNAL(valueChanged()), q, SLOT(onValueChanged()));                              \
   this->WidgetValueWrappers.push_back(wrapper);
 
 //-----------------------------------------------------------------------------
 ButtonGroupWidgetWrapper::ButtonGroupWidgetWrapper(QWidget* _parent)
- : QWidget(_parent)
+  : QWidget(_parent)
 {
   this->ButtonGroup = new QButtonGroup(this);
-  this->connect(this->ButtonGroup, SIGNAL(buttonClicked(int)),
-                this, SIGNAL(valueChanged()));
+  this->connect(this->ButtonGroup, SIGNAL(buttonClicked(int)), this, SIGNAL(valueChanged()));
 }
 
 //-----------------------------------------------------------------------------
@@ -136,10 +153,12 @@ QButtonGroup* ButtonGroupWidgetWrapper::buttonGroup() const
 QString ButtonGroupWidgetWrapper::checkedValue()
 {
   QAbstractButton* button = this->ButtonGroup->checkedButton();
-  if (button) {
+  if (button)
+  {
     return button->property("EnumeratedValue").toString();
   }
-  else {
+  else
+  {
     // Handle case where <string-enumeration> has no <default> element
     return QString("");
   }
@@ -162,15 +181,17 @@ void ButtonGroupWidgetWrapper::setCheckedValue(const QString& value)
 class qSlicerCLIModuleUIHelperPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerCLIModuleUIHelper);
+
 protected:
   qSlicerCLIModuleUIHelper* const q_ptr;
+
 public:
   typedef qSlicerCLIModuleUIHelperPrivate Self;
   qSlicerCLIModuleUIHelperPrivate(qSlicerCLIModuleUIHelper& object);
 
   /// Convenient typedefs
   typedef std::vector<std::string>::const_iterator ElementConstIterator;
-  typedef std::vector<std::string>::iterator       ElementIterator;
+  typedef std::vector<std::string>::iterator ElementIterator;
 
   ///
   /// Create widget corresponding to the different parameters
@@ -237,8 +258,7 @@ QHash<QString, QString> qSlicerCLIModuleUIHelperPrivate::TableTypeAttributeToNod
 QHash<QString, QString> qSlicerCLIModuleUIHelperPrivate::TransformTypeAttributeToNodeType;
 
 //-----------------------------------------------------------------------------
-qSlicerCLIModuleUIHelperPrivate::
-  qSlicerCLIModuleUIHelperPrivate(qSlicerCLIModuleUIHelper& object)
+qSlicerCLIModuleUIHelperPrivate::qSlicerCLIModuleUIHelperPrivate(qSlicerCLIModuleUIHelper& object)
   : q_ptr(&object)
 {
   this->CLIModuleWidget = nullptr;
@@ -246,8 +266,9 @@ qSlicerCLIModuleUIHelperPrivate::
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIModuleUIHelperPrivate::nodeTypeFromMap(
-  const QHash<QString, QString>& map, const QString& attribute, const QString& defaultValue)
+QString qSlicerCLIModuleUIHelperPrivate::nodeTypeFromMap(const QHash<QString, QString>& map,
+                                                         const QString& attribute,
+                                                         const QString& defaultValue)
 {
   QHash<QString, QString>::const_iterator i = map.constFind(attribute);
 
@@ -330,13 +351,22 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createIntegerTagWidget(const ModulePar
   else
   {
     QString minAsStr = QString::fromStdString(moduleParameter.GetMinimum());
-    if (!minAsStr.isEmpty()) { min = minAsStr.toInt(); }
+    if (!minAsStr.isEmpty())
+    {
+      min = minAsStr.toInt();
+    }
 
     QString maxAsStr = QString::fromStdString(moduleParameter.GetMaximum());
-    if (!maxAsStr.isEmpty()) { max = maxAsStr.toInt(); }
+    if (!maxAsStr.isEmpty())
+    {
+      max = maxAsStr.toInt();
+    }
 
     QString stepAsStr = QString::fromStdString(moduleParameter.GetStep());
-    if (!stepAsStr.isEmpty()) { step = stepAsStr.toInt(); }
+    if (!stepAsStr.isEmpty())
+    {
+      step = stepAsStr.toInt();
+    }
 
     ctkSliderWidget* slider = new ctkSliderWidget;
     slider->setDecimals(0);
@@ -387,15 +417,14 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  int decimals = valueAsStr.indexOf('.') != -1 ? valueAsStr.length() - valueAsStr.indexOf('.') -1 : 2;
+  int decimals = valueAsStr.indexOf('.') != -1 ? valueAsStr.length() - valueAsStr.indexOf('.') - 1 : 2;
 
   QWidget* widget = nullptr;
   if (!withConstraints)
   {
     ctkDoubleSpinBox* spinBox = new ctkDoubleSpinBox;
     spinBox->setDecimals(decimals);
-    spinBox->setDecimalsOption(
-      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
+    spinBox->setDecimalsOption(ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts);
     spinBox->setSingleStep(step);
     spinBox->setRange(min, max);
     spinBox->setValue(value);
@@ -410,7 +439,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
       min = minAsStr.toFloat();
       if (minAsStr.indexOf('.') != -1)
       {
-        decimals = qMax(decimals, minAsStr.length() - minAsStr.indexOf('.') -1);
+        decimals = qMax(decimals, minAsStr.length() - minAsStr.indexOf('.') - 1);
       }
     }
 
@@ -420,7 +449,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
       max = maxAsStr.toFloat();
       if (maxAsStr.indexOf('.') != -1)
       {
-        decimals = qMax(decimals, maxAsStr.length() - maxAsStr.indexOf('.') -1);
+        decimals = qMax(decimals, maxAsStr.length() - maxAsStr.indexOf('.') - 1);
       }
     }
 
@@ -430,14 +459,13 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
       step = stepAsStr.toFloat();
       if (stepAsStr.indexOf('.') != -1)
       {
-        decimals = qMax(decimals, stepAsStr.length() - stepAsStr.indexOf('.') -1);
+        decimals = qMax(decimals, stepAsStr.length() - stepAsStr.indexOf('.') - 1);
       }
     }
 
     ctkSliderWidget* slider = new ctkSliderWidget;
     slider->setDecimals(decimals);
-    slider->spinBox()->setDecimalsOption(
-      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
+    slider->spinBox()->setDecimalsOption(ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts);
     slider->setTickInterval(step);
     slider->setSingleStep(step);
     slider->setRange(min, max);
@@ -467,15 +495,14 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
   bool withConstraints = !QString::fromStdString(moduleParameter.GetConstraints()).isEmpty();
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  int decimals = valueAsStr.indexOf('.') != -1 ? valueAsStr.length() - valueAsStr.indexOf('.') -1 : 2;
+  int decimals = valueAsStr.indexOf('.') != -1 ? valueAsStr.length() - valueAsStr.indexOf('.') - 1 : 2;
 
   QWidget* widget = nullptr;
   if (!withConstraints)
   {
     ctkDoubleSpinBox* spinBox = new ctkDoubleSpinBox;
     spinBox->setDecimals(decimals);
-    spinBox->setDecimalsOption(
-      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
+    spinBox->setDecimalsOption(ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts);
     spinBox->setSingleStep(step);
     spinBox->setRange(min, max);
     spinBox->setValue(value);
@@ -490,7 +517,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
       min = minAsStr.toFloat();
       if (minAsStr.indexOf('.') != -1)
       {
-        decimals = qMax(decimals, minAsStr.length() - minAsStr.indexOf('.') -1);
+        decimals = qMax(decimals, minAsStr.length() - minAsStr.indexOf('.') - 1);
       }
     }
 
@@ -500,7 +527,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
       max = maxAsStr.toFloat();
       if (maxAsStr.indexOf('.') != -1)
       {
-        decimals = qMax(decimals, maxAsStr.length() - maxAsStr.indexOf('.') -1);
+        decimals = qMax(decimals, maxAsStr.length() - maxAsStr.indexOf('.') - 1);
       }
     }
 
@@ -510,13 +537,12 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
       step = stepAsStr.toFloat();
       if (stepAsStr.indexOf('.') != -1)
       {
-        decimals = qMax(decimals, stepAsStr.length() - stepAsStr.indexOf('.') -1);
+        decimals = qMax(decimals, stepAsStr.length() - stepAsStr.indexOf('.') - 1);
       }
     }
     ctkSliderWidget* slider = new ctkSliderWidget;
     slider->setDecimals(decimals);
-    slider->spinBox()->setDecimalsOption(
-      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
+    slider->spinBox()->setDecimalsOption(ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts);
     slider->setSingleStep(step);
     slider->setTickInterval(step);
     slider->setRange(min, max);
@@ -553,7 +579,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
   nodeTypes += "vtkMRMLMarkupsFiducialNode";
 
   widget->setNodeTypes(nodeTypes);
-  //TODO - title + " FiducialList"
+  // TODO - title + " FiducialList"
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));
   widget->setBaseName(_label);
   // Markups can be added without switching to another module
@@ -563,8 +589,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
   widget->setRenameEnabled(true);
 
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(
+    this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Point, _name, _label, widget);
 
@@ -584,13 +610,11 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleP
     // Add all of the other concrete volume node types
     // TODO: it would be nicer to iterate through all the registered node classes in the scene
     // and add all nodes that are derived from vtkMRMLVolumeNode.
-    widget->setNodeTypes(QStringList()
-      << "vtkMRMLMarkupsFiducialNode"
-      << "vtkMRMLMarkupsLineNode"
-      << "vtkMRMLMarkupsCurveNode"
-      << "vtkMRMLMarkupsClosedCurveNode"
-      << "vtkMRMLMarkupsAngleNode"
-      );
+    widget->setNodeTypes(QStringList() << "vtkMRMLMarkupsFiducialNode"
+                                       << "vtkMRMLMarkupsLineNode"
+                                       << "vtkMRMLMarkupsCurveNode"
+                                       << "vtkMRMLMarkupsClosedCurveNode"
+                                       << "vtkMRMLMarkupsAngleNode");
   }
   else
   {
@@ -600,13 +624,12 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleP
 
   // If "type" is specified, only display nodes of type nodeType
   // and don't display subclasses
-  if (!type.isEmpty() &&
-      type != "any")
+  if (!type.isEmpty() && type != "any")
   {
     widget->setShowChildNodeTypes(false);
   }
 
-  //TODO - title + " FiducialList"
+  // TODO - title + " FiducialList"
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));
   widget->setBaseName(_label);
   // Markups can be added without switching to another module
@@ -616,8 +639,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointFileTagWidget(const ModuleP
   widget->setRenameEnabled(true);
 
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(
+    this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(PointFile, _name, _label, widget);
 
@@ -634,7 +657,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
   nodeTypes += "vtkMRMLMarkupsROINode";
   nodeTypes += "vtkMRMLROIListNode";
   widget->setNodeTypes(QStringList(nodeTypes));
-  //TODO - title + " RegionList"
+  // TODO - title + " RegionList"
   widget->setNoneEnabled(this->isNoneEnabled(moduleParameter));
   widget->setBaseName(_label);
   // Region can be added without switching to another module
@@ -643,8 +666,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createRegionTagWidget(const ModulePara
   widget->setRenameEnabled(true);
 
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(
+    this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Region, _name, _label, widget);
 
@@ -669,21 +692,17 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
     // Add all of the other concrete volume node types
     // TODO: it would be nicer to iterate through all the registered node classes in the scene
     // and add all nodes that are derived from vtkMRMLVolumeNode.
-    widget->setNodeTypes(QStringList()
-      << "vtkMRMLScalarVolumeNode"
-      << "vtkMRMLLabelMapVolumeNode" << "vtkMRMLSegmentationNode"
-      << "vtkMRMLVectorVolumeNode"
-      << "vtkMRMLDiffusionTensorVolumeNode"
-      << "vtkMRMLDiffusionWeightedVolumeNode"
-      );
+    widget->setNodeTypes(QStringList() << "vtkMRMLScalarVolumeNode"
+                                       << "vtkMRMLLabelMapVolumeNode" << "vtkMRMLSegmentationNode"
+                                       << "vtkMRMLVectorVolumeNode"
+                                       << "vtkMRMLDiffusionTensorVolumeNode"
+                                       << "vtkMRMLDiffusionWeightedVolumeNode");
   }
   else if (type == "scalar")
   {
     // TODO: it would be nicer to be able to set multiple node types in Self::nodeTypeFromMap
-    widget->setNodeTypes(QStringList()
-      << "vtkMRMLScalarVolumeNode"
-      << "vtkMRMLLabelMapVolumeNode"
-      );
+    widget->setNodeTypes(QStringList() << "vtkMRMLScalarVolumeNode"
+                                       << "vtkMRMLLabelMapVolumeNode");
   }
   else
   {
@@ -716,8 +735,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   // If "type" is specified, only display nodes of type nodeType
   // (e.g. vtkMRMLScalarVolumeNode), don't display subclasses
   // (e.g. vtkMRMLDiffusionTensorVolumeNode)
-  if (!type.isEmpty() &&
-      type != "any")
+  if (!type.isEmpty() && type != "any")
   {
     widget->setShowChildNodeTypes(false);
   }
@@ -731,8 +749,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   widget->setBaseName(imageLabel);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
 
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(
+    this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Image, imageName, imageLabel, widget);
 
@@ -743,9 +761,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
 QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModuleParameter& moduleParameter)
 {
   QString type = QString::fromStdString(moduleParameter.GetType());
-  QString nodeType = Self::nodeTypeFromMap(Self::GeometryTypeAttributeToNodeType,
-                                           type,
-                                           "vtkMRMLModelNode");
+  QString nodeType = Self::nodeTypeFromMap(Self::GeometryTypeAttributeToNodeType, type, "vtkMRMLModelNode");
 
   bool multiple = (moduleParameter.GetMultiple() == "true");
   bool aggregate = (moduleParameter.GetAggregate() == "true");
@@ -774,8 +790,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
   widget->setAddEnabled(channel != "input");
   widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(
+    this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Geometry, _name, _label, widget);
 
@@ -811,8 +827,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTableTagWidget(const ModuleParam
   widget->setRenameEnabled(true);
   widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(
+    this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Table, _name, _label, widget);
 
@@ -848,8 +864,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createMeasurementTagWidget(const Modul
   widget->setRenameEnabled(true);
   widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(
+    this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Measurement, _name, _label, widget);
 
@@ -868,9 +884,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
 
   QString type = QString::fromStdString(moduleParameter.GetType());
 
-    QString defaultNodeType = "vtkMRMLTransformNode";
-    QString nodeType = Self::nodeTypeFromMap(Self::TransformTypeAttributeToNodeType,
-      type, defaultNodeType);
+  QString defaultNodeType = "vtkMRMLTransformNode";
+  QString nodeType = Self::nodeTypeFromMap(Self::TransformTypeAttributeToNodeType, type, defaultNodeType);
   // TODO - title + " Transform"
 
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
@@ -883,12 +898,10 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
   {
     // When any kind of transform can be added, allow creating
     // any kind of transform node types.
-    widget->setNodeTypes(QStringList()
-      << "vtkMRMLTransformNode"
-      << "vtkMRMLLinearTransformNode"
-      << "vtkMRMLGridTransformNode"
-      << "vtkMRMLBSplineTransformNode"
-      );
+    widget->setNodeTypes(QStringList() << "vtkMRMLTransformNode"
+                                       << "vtkMRMLLinearTransformNode"
+                                       << "vtkMRMLGridTransformNode"
+                                       << "vtkMRMLBSplineTransformNode");
   }
   else
   {
@@ -896,8 +909,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createTransformTagWidget(const ModuleP
   }
   widget->setBaseName(_label);
   widget->setMRMLScene(this->CLIModuleWidget->mrmlScene());
-  QObject::connect(this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(
+    this->CLIModuleWidget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(Transform, _name, _label, widget);
 
@@ -930,14 +943,13 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
   if (!fileExtensionsStd.empty())
   {
     QString customFilter(qSlicerCLIModuleUIHelper::tr("Compatible Files") + " (");
-    for (std::vector<std::string>::const_iterator it = fileExtensionsStd.begin();
-      it != fileExtensionsStd.end(); ++it)
+    for (std::vector<std::string>::const_iterator it = fileExtensionsStd.begin(); it != fileExtensionsStd.end(); ++it)
     {
       if (it != fileExtensionsStd.begin())
       {
         customFilter.append(" ");
       }
-      customFilter.append(QString("*")+it->c_str());
+      customFilter.append(QString("*") + it->c_str());
     }
     customFilter.append(")");
     fileExtensions << customFilter;
@@ -945,8 +957,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
   fileExtensions << QString(qSlicerCLIModuleUIHelper::tr("All Files") + " (*.*)");
 
   QWidget* widget = new QWidget;
-  ctkPathLineEdit* pathLineEdit =
-    new ctkPathLineEdit(name, fileExtensions, ctkPathLineEdit::Files, widget);
+  ctkPathLineEdit* pathLineEdit = new ctkPathLineEdit(name, fileExtensions, ctkPathLineEdit::Files, widget);
 
   if (isOutputChannel(moduleParameter))
   {
@@ -956,7 +967,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
   INSTANCIATE_WIDGET_VALUE_WRAPPER(File, name, label, pathLineEdit);
 
   QHBoxLayout* hBoxLayout = new QHBoxLayout;
-  hBoxLayout->setContentsMargins(0,0,0,0);
+  hBoxLayout->setContentsMargins(0, 0, 0, 0);
   hBoxLayout->addWidget(pathLineEdit);
   widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
   widget->setLayout(hBoxLayout);
@@ -979,7 +990,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createEnumerationTagWidget(const Modul
 
   QString _label = this->CLIModuleWidget->translate(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  ButtonGroupWidgetWrapper * widget = new ButtonGroupWidgetWrapper;
+  ButtonGroupWidgetWrapper* widget = new ButtonGroupWidgetWrapper;
   ctkFlowLayout* _layout = new ctkFlowLayout(widget);
   widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 
@@ -1016,7 +1027,8 @@ bool qSlicerCLIModuleUIHelperPrivate::isOutputChannel(const ModuleParameter& mod
   QString channel = QString::fromStdString(moduleParameter.GetChannel());
   if (!channel.isEmpty() && channel != "input" && channel != "output")
   {
-    qWarning() << moduleParameter.GetName().c_str() << " - Unknown channel: " << qPrintable(channel) << " - assuming input channel";
+    qWarning() << moduleParameter.GetName().c_str() << " - Unknown channel: " << qPrintable(channel)
+               << " - assuming input channel";
     return false;
   }
   return channel == "output";
@@ -1064,11 +1076,9 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
   {
     widget = d->createDoubleTagWidget(moduleParameter);
   }
-  else if (moduleParameter.GetTag() == "string" ||
-           moduleParameter.GetTag() == "integer-vector" ||
-           moduleParameter.GetTag() == "float-vector" ||
-           moduleParameter.GetTag() == "double-vector" ||
-           moduleParameter.GetTag() == "string-vector")
+  else if (moduleParameter.GetTag() == "string" || moduleParameter.GetTag() == "integer-vector"
+           || moduleParameter.GetTag() == "float-vector" || moduleParameter.GetTag() == "double-vector"
+           || moduleParameter.GetTag() == "string-vector")
   {
     widget = d->createStringTagWidget(moduleParameter);
   }
@@ -1112,10 +1122,8 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
   {
     widget = d->createFileTagWidget(moduleParameter);
   }
-  else if (moduleParameter.GetTag() == "string-enumeration" ||
-          moduleParameter.GetTag() == "integer-enumeration" ||
-          moduleParameter.GetTag() == "float-enumeration" ||
-          moduleParameter.GetTag() == "double-enumeration")
+  else if (moduleParameter.GetTag() == "string-enumeration" || moduleParameter.GetTag() == "integer-enumeration"
+           || moduleParameter.GetTag() == "float-enumeration" || moduleParameter.GetTag() == "double-enumeration")
   {
     widget = d->createEnumerationTagWidget(moduleParameter);
   }
@@ -1132,8 +1140,7 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(
-  vtkMRMLCommandLineModuleNode* commandLineModuleNode)
+void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(vtkMRMLCommandLineModuleNode* commandLineModuleNode)
 {
   Q_D(qSlicerCLIModuleUIHelper);
   Q_ASSERT(commandLineModuleNode);
@@ -1143,38 +1150,33 @@ void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(
 
   foreach (qSlicerWidgetValueWrapper* widgetValueWrapper, d->WidgetValueWrappers)
   {
-    this->setCommandLineModuleParameter(commandLineModuleNode,
-                                        widgetValueWrapper->name(),
-                                        widgetValueWrapper->value());
+    this->setCommandLineModuleParameter(commandLineModuleNode, widgetValueWrapper->name(), widgetValueWrapper->value());
   }
   // Just in case setCommandLineModuleParameter() has not generated any
   // blocked modify event.
   // TODO: ensure it is really useful to force a modify event
-  //commandLineModuleNode->Modified();
+  // commandLineModuleNode->Modified();
   commandLineModuleNode->EndModify(disabledModify);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCLIModuleUIHelper
-::setCommandLineModuleParameter(vtkMRMLCommandLineModuleNode* commandLineModuleNode,
-                                const QString& name, const QVariant& value)
+void qSlicerCLIModuleUIHelper::setCommandLineModuleParameter(vtkMRMLCommandLineModuleNode* commandLineModuleNode,
+                                                             const QString& name,
+                                                             const QVariant& value)
 {
   Q_D(qSlicerCLIModuleUIHelper);
   QVariant::Type type = value.type();
   if (type == QVariant::Bool)
   {
-    commandLineModuleNode->SetParameterAsBool(name.toUtf8(),
-                                              value.toBool());
+    commandLineModuleNode->SetParameterAsBool(name.toUtf8(), value.toBool());
   }
   else if (type == QVariant::Int)
   {
-    commandLineModuleNode->SetParameterAsInt(name.toUtf8(),
-                                             value.toInt());
+    commandLineModuleNode->SetParameterAsInt(name.toUtf8(), value.toInt());
   }
   else if (type == QVariant::Double)
   {
-    commandLineModuleNode->SetParameterAsDouble(name.toUtf8(),
-                                                value.toDouble());
+    commandLineModuleNode->SetParameterAsDouble(name.toUtf8(), value.toDouble());
   }
   else if (type == QVariant::String)
   {
@@ -1184,7 +1186,7 @@ void qSlicerCLIModuleUIHelper
     {
       if (d->CLIModuleWidget->mrmlScene())
       {
-        node =  d->CLIModuleWidget->mrmlScene()->GetNodeByID(valueAsString.toUtf8());
+        node = d->CLIModuleWidget->mrmlScene()->GetNodeByID(valueAsString.toUtf8());
       }
       else
       {
@@ -1193,12 +1195,11 @@ void qSlicerCLIModuleUIHelper
     }
     if (node)
     {
-      commandLineModuleNode->SetParameterAsNode(name.toUtf8(),node);
+      commandLineModuleNode->SetParameterAsNode(name.toUtf8(), node);
     }
     else
     {
-      commandLineModuleNode->SetParameterAsString(name.toUtf8(),
-                                                  value.toString().toStdString());
+      commandLineModuleNode->SetParameterAsString(name.toUtf8(), value.toString().toStdString());
     }
   }
   else
@@ -1220,7 +1221,7 @@ void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLin
     {
       continue;
     }
-    widget->setEnabled(commandLineModuleNode!=nullptr);
+    widget->setEnabled(commandLineModuleNode != nullptr);
   }
 
   if (!commandLineModuleNode)
@@ -1230,8 +1231,7 @@ void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLin
 
   foreach (qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
   {
-    QString value = QString::fromStdString(
-      commandLineModuleNode->GetParameterAsString(valueWrapper->name().toUtf8()));
+    QString value = QString::fromStdString(commandLineModuleNode->GetParameterAsString(valueWrapper->name().toUtf8()));
     valueWrapper->setValue(value);
   }
 }

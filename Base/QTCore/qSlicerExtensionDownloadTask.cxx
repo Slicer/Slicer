@@ -45,7 +45,7 @@ public:
   QString ExtensionName;
   QString ArchiveName;
   QVariantMap Metadata;
-  bool InstallDependencies{true};
+  bool InstallDependencies{ true };
 };
 
 /*
@@ -54,19 +54,17 @@ public:
 */
 
 //-----------------------------------------------------------------------------
-qSlicerExtensionDownloadTask::qSlicerExtensionDownloadTask(
-  QNetworkReply* reply, QObject* parent)
-  : QObject(parent), d_ptr(new qSlicerExtensionDownloadTaskPrivate)
+qSlicerExtensionDownloadTask::qSlicerExtensionDownloadTask(QNetworkReply* reply, QObject* parent)
+  : QObject(parent)
+  , d_ptr(new qSlicerExtensionDownloadTaskPrivate)
 {
   Q_D(qSlicerExtensionDownloadTask);
 
   reply->setParent(this);
 
-  connect(reply, SIGNAL(downloadProgress(qint64,qint64)),
-          this, SLOT(emitProgress(qint64,qint64)));
+  connect(reply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(emitProgress(qint64, qint64)));
   connect(reply, SIGNAL(finished()), this, SLOT(emitFinished()));
-  connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
-          this, SLOT(emitError(QNetworkReply::NetworkError)));
+  connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(emitError(QNetworkReply::NetworkError)));
 
   d->Reply = reply;
 }

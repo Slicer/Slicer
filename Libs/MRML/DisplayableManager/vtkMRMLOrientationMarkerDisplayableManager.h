@@ -39,7 +39,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLOrientationMarkerDisplayableManager();
   ~vtkMRMLOrientationMarkerDisplayableManager() override;
 
@@ -58,7 +57,6 @@ protected:
   void UpdateFromRenderer();
 
 private:
-
   vtkMRMLOrientationMarkerDisplayableManager(const vtkMRMLOrientationMarkerDisplayableManager&) = delete;
   void operator=(const vtkMRMLOrientationMarkerDisplayableManager&) = delete;
 

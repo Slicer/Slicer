@@ -47,18 +47,22 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
 
   /// This property controls whether the root item (folder, an item for a data node, or the scene itself),
   /// if any is visible. When the root item is visible, it appears as a top-level item,
-  /// if it is hidden only its children are top-level items. It doesn't have any effect if \a rootItem() is invalid. Shown by default.
+  /// if it is hidden only its children are top-level items. It doesn't have any effect if \a rootItem() is invalid.
+  /// Shown by default.
   /// \sa setShowRootItem(), showRootItem(), setRootItem(), setRootIndex()
   Q_PROPERTY(bool showRootItem READ showRootItem WRITE setShowRootItem)
   /// Flag determining whether to highlight items referenced by DICOM. Storing DICOM references:
-  ///   Referenced SOP instance UIDs (in attribute named vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
-  ///   -> SH item instance UIDs (serialized string lists in subject hierarchy UID vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
+  ///   Referenced SOP instance UIDs (in attribute named
+  ///   vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName())
+  ///   -> SH item instance UIDs (serialized string lists in subject hierarchy UID
+  ///   vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName())
   Q_PROPERTY(bool highlightReferencedItems READ highlightReferencedItems WRITE setHighlightReferencedItems)
   /// Flag determining whether context menu is enabled
   Q_PROPERTY(bool contextMenuEnabled READ contextMenuEnabled WRITE setContextMenuEnabled)
   /// This property controls whether the Edit properties context menu action is visible. Visible by default
   Q_PROPERTY(bool editMenuActionVisible READ editMenuActionVisible WRITE setEditMenuActionVisible)
-  /// This property controls whether the add node context menu of the scene is visible for node types specified in "nodeTypes" property.
+  /// This property controls whether the add node context menu of the scene is visible for node types specified in
+  /// "nodeTypes" property.
   Q_PROPERTY(bool addNodeMenuActionVisible READ addNodeMenuActionVisible WRITE setAddNodeMenuActionVisible)
   /// This property controls whether the Select role context menu sub-menu is visible. Visible by default
   Q_PROPERTY(bool selectRoleSubMenuVisible READ selectRoleSubMenuVisible WRITE setSelectRoleSubMenuVisible)
@@ -85,24 +89,29 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
   Q_PROPERTY(QString noneDisplay READ noneDisplay WRITE setNoneDisplay)
 
   /// Filter to show only items that contain any of the given attributes with this name. Empty by default
-  Q_PROPERTY(QStringList includeItemAttributeNamesFilter READ includeItemAttributeNamesFilter WRITE setIncludeItemAttributeNamesFilter)
+  Q_PROPERTY(QStringList includeItemAttributeNamesFilter READ includeItemAttributeNamesFilter WRITE
+               setIncludeItemAttributeNamesFilter)
   /// Filter to show only items for data nodes that contain any of the given attributes with this name. Empty by default
-  Q_PROPERTY(QStringList includeNodeAttributeNamesFilter READ includeNodeAttributeNamesFilter WRITE setIncludeNodeAttributeNamesFilter)
+  Q_PROPERTY(QStringList includeNodeAttributeNamesFilter READ includeNodeAttributeNamesFilter WRITE
+               setIncludeNodeAttributeNamesFilter)
   /// Filter to hide items that contain any of the given attributes with this name. Empty by default
   /// Overrides \sa includeItemAttributeNamesFilter
-  Q_PROPERTY(QStringList excludeItemAttributeNamesFilter READ excludeItemAttributeNamesFilter WRITE setExcludeItemAttributeNamesFilter)
+  Q_PROPERTY(QStringList excludeItemAttributeNamesFilter READ excludeItemAttributeNamesFilter WRITE
+               setExcludeItemAttributeNamesFilter)
   /// Filter to hide items for data nodes that contain any of the given attributes with this name. Empty by default
   /// Overrides \sa includeNodeAttributeNamesFilter
-  Q_PROPERTY(QStringList excludeNodeAttributeNamesFilter READ excludeNodeAttributeNamesFilter WRITE setExcludeNodeAttributeNamesFilter)
+  Q_PROPERTY(QStringList excludeNodeAttributeNamesFilter READ excludeNodeAttributeNamesFilter WRITE
+               setExcludeNodeAttributeNamesFilter)
 
   /// Filter to show only items that contain an item attribute with this name. Empty by default.
   /// Sets and returns the first attribute in \sa includeItemAttributeNamesFilter.
-  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter() instead.
+  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter()
+  /// instead.
   Q_PROPERTY(QString attributeNameFilter READ attributeNameFilter WRITE setAttributeNameFilter)
-  /// Filter to show only items that contain any item attribute given in \sa includeItemAttributeNamesFilter with the value.
-  /// If empty, then existence of the attributes is enough to show.
-  /// Exact match is required. Empty by default.
-  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter() instead.
+  /// Filter to show only items that contain any item attribute given in \sa includeItemAttributeNamesFilter with the
+  /// value. If empty, then existence of the attributes is enough to show. Exact match is required. Empty by default.
+  /// \deprecated Kept only for backwards compatibility. Use addItemAttributeFilter() or removeItemAttributeFilter()
+  /// instead.
   Q_PROPERTY(QString attributeValueFilter READ attributeValueFilter WRITE setAttributeValueFilter)
 
   /// Double-clicking the color will show a standard terminology selector if true, otherwise show simple color picker
@@ -152,7 +161,7 @@ public:
   /// \param attributeName Name of the attribute by which the items are filtered
   /// \param attributeValue Value of the specified attribute that needs to match this given value in order
   ///   for it to be shown. If empty, then existence of the attribute is enough to show. Empty by default
-  Q_INVOKABLE void setAttributeFilter(const QString& attributeName, const QVariant& attributeValue=QVariant());
+  Q_INVOKABLE void setAttributeFilter(const QString& attributeName, const QVariant& attributeValue = QVariant());
   /// Remove item attribute filtering \sa setAttribute
   Q_INVOKABLE void removeAttributeFilter();
   /// Add single item attribute filter specifying attribute name, value, include/exclude, and class name
@@ -162,7 +171,9 @@ public:
   ///   - Include filter means that only the items are shown that match the filter.
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
-  Q_INVOKABLE void addItemAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true);
+  Q_INVOKABLE void addItemAttributeFilter(QString attributeName,
+                                          QVariant attributeValue = QString(),
+                                          bool include = true);
   /// Remove single item attribute filter specifying each attribute \sa addAttributeFilter
   Q_INVOKABLE void removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include);
   /// Remove all item attribute filters specifying a given attribute name and include flag
@@ -175,18 +186,24 @@ public:
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
   /// \param className Only filter attributes on a certain type. Empty by default (i.e. allow all classes)
-  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true, QString className=QString());
+  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName,
+                                          QVariant attributeValue = QString(),
+                                          bool include = true,
+                                          QString className = QString());
   /// Remove single node attribute filter specifying each attribute \sa addAttributeFilter
-  Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className);
+  Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName,
+                                             QVariant attributeValue,
+                                             bool include,
+                                             QString className);
   /// Remove all node attribute filters specifying a given attribute name and include flag
   Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, bool include);
-
 
   /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
   void setLevelFilter(QStringList& levelFilter);
   QStringList levelFilter() const;
 
-  /// Set name filter that allows showing only items containing a specified string (case-insensitive). Show all items if empty
+  /// Set name filter that allows showing only items containing a specified string (case-insensitive). Show all items if
+  /// empty
   void setNameFilter(QString& nameFilter);
   QString nameFilter() const;
 
@@ -349,9 +366,10 @@ public slots:
   }
 
   /// Show hint to user about context menus
-  /// \param visibility True if visibility context menu hint is to be shown, false for general context menu. False by default
+  /// \param visibility True if visibility context menu hint is to be shown, false for general context menu. False by
+  /// default
   /// \return Flag indicating whether hint could be shown (i.e. there was an item in the tree is displayable)
-  bool showContextMenuHint(bool visibility=false);
+  bool showContextMenuHint(bool visibility = false);
 
   void setHighlightReferencedItems(bool highlightOn);
   void setContextMenuEnabled(bool enabled);

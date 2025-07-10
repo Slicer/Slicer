@@ -35,7 +35,7 @@ int qMRMLListWidgetTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  qMRMLListWidget   mrmlItem;
+  qMRMLListWidget mrmlItem;
 
   return EXIT_SUCCESS;
 }
