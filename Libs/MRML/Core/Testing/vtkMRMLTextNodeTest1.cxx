@@ -22,7 +22,7 @@
 #include "vtkMRMLTextNode.h"
 #include "vtkMRMLScene.h"
 
-int vtkMRMLTextNodeTest1(int , char * [] )
+int vtkMRMLTextNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLTextNode> textNode;
   vtkNew<vtkMRMLScene> scene;

@@ -72,7 +72,7 @@ vtkSlicerCurveRepresentation3D::vtkSlicerCurveRepresentation3D()
 vtkSlicerCurveRepresentation3D::~vtkSlicerCurveRepresentation3D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -248,7 +248,7 @@ void vtkSlicerCurveRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveRepresentation3D::GetActors(vtkPropCollection *pc)
+void vtkSlicerCurveRepresentation3D::GetActors(vtkPropCollection* pc)
 {
   this->Superclass::GetActors(pc);
   this->LineActor->GetActors(pc);
@@ -257,7 +257,7 @@ void vtkSlicerCurveRepresentation3D::GetActors(vtkPropCollection *pc)
 
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation3D::ReleaseGraphicsResources(
-  vtkWindow *win)
+  vtkWindow* win)
 {
   this->Superclass::ReleaseGraphicsResources(win);
   this->LineActor->ReleaseGraphicsResources(win);
@@ -265,7 +265,7 @@ void vtkSlicerCurveRepresentation3D::ReleaseGraphicsResources(
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerCurveRepresentation3D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerCurveRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
   int count=0;
   count = this->Superclass::RenderOverlay(viewport);
@@ -282,7 +282,7 @@ int vtkSlicerCurveRepresentation3D::RenderOverlay(vtkViewport *viewport)
 
 //-----------------------------------------------------------------------------
 int vtkSlicerCurveRepresentation3D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count=0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
@@ -302,7 +302,7 @@ int vtkSlicerCurveRepresentation3D::RenderOpaqueGeometry(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerCurveRepresentation3D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count=0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
@@ -342,7 +342,7 @@ vtkTypeBool vtkSlicerCurveRepresentation3D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerCurveRepresentation3D::GetBounds()
+double* vtkSlicerCurveRepresentation3D::GetBounds()
 {
   vtkBoundingBox boundingBox;
   const std::vector<vtkProp*> actors({ this->LineActor });
@@ -354,7 +354,7 @@ double *vtkSlicerCurveRepresentation3D::GetBounds()
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation3D::CanInteract(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
@@ -389,7 +389,7 @@ void vtkSlicerCurveRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerCurveRepresentation3D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
+void vtkSlicerCurveRepresentation3D::SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
   if (this->MarkupsNode != markupsNode)
   {
@@ -411,7 +411,7 @@ void vtkSlicerCurveRepresentation3D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsN
 //----------------------------------------------------------------------
 void vtkSlicerCurveRepresentation3D::CanInteractWithCurve(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &componentIndex, double &closestDistance2)
+  int& foundComponentType, int& componentIndex, double& closestDistance2)
 {
   if (!this->MarkupsNode || this->MarkupsNode->GetLocked()
     || this->MarkupsNode->GetNumberOfControlPoints() < 2

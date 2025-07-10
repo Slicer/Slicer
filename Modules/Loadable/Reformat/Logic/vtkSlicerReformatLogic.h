@@ -42,7 +42,7 @@ class VTK_SLICER_REFORMAT_MODULE_LOGIC_EXPORT
 vtkSlicerReformatLogic : public vtkSlicerModuleLogic
 {
 public:
-  static vtkSlicerReformatLogic *New();
+  static vtkSlicerReformatLogic* New();
   typedef vtkSlicerReformatLogic Self;
   vtkTypeMacro(vtkSlicerReformatLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;

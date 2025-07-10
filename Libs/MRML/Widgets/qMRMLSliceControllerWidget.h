@@ -133,7 +133,7 @@ public:
 
   /// Set \a newSliceLogic
   /// Use if two instances of the controller need to observe the same logic.
-  Q_INVOKABLE void setSliceLogic(vtkMRMLSliceLogic * newSliceLogic);
+  Q_INVOKABLE void setSliceLogic(vtkMRMLSliceLogic* newSliceLogic);
 
   /// Set controller widget group
   /// All controllers of a same group will be set visible or hidden if at least
@@ -302,7 +302,7 @@ public slots:
 
 signals:
   /// This signal is emitted when the given \a imageData is modified.
-  void imageDataConnectionChanged(vtkAlgorithmOutput * imageDataConnection);
+  void imageDataConnectionChanged(vtkAlgorithmOutput* imageDataConnection);
 
   void renderRequested();
 

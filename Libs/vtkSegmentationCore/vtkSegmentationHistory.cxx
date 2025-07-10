@@ -45,7 +45,7 @@ vtkSegmentationHistory::vtkSegmentationHistory()
   this->RestoreStateInProgress = false;
 
   this->SegmentationModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->SegmentationModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->SegmentationModifiedCallbackCommand->SetClientData( reinterpret_cast<void*>(this) );
   this->SegmentationModifiedCallbackCommand->SetCallback(vtkSegmentationHistory::OnSegmentationModified);
 }
 

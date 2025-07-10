@@ -20,15 +20,15 @@
 
 //------------------------------------------------------------------------------
 qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
-::qSlicerDiffusionTensorVolumeDisplayWidgetPlugin(QObject *_parent)
+::qSlicerDiffusionTensorVolumeDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerDiffusionTensorVolumeDisplayWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qSlicerDiffusionTensorVolumeDisplayWidget* _widget
     = new qSlicerDiffusionTensorVolumeDisplayWidget(_parent);

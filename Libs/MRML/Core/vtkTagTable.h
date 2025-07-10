@@ -15,7 +15,7 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
 {
   public:
   /// The Usual vtk class functions
-  static vtkTagTable *New();
+  static vtkTagTable* New();
   vtkTypeMacro(vtkTagTable, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -34,47 +34,47 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
 
   ///
   /// Add a tag column to the TagTable
-  virtual void AddOrUpdateTag ( const char *attribute, const char *value );
+  virtual void AddOrUpdateTag ( const char* attribute, const char* value );
   ///
   /// Add a tag column to the TagTable
-  virtual void AddOrUpdateTag ( const char *attribute, const char *value, int selected );
+  virtual void AddOrUpdateTag ( const char* attribute, const char* value, int selected );
   ///
   /// Add a tag column to the TagTable
-  virtual void AddUniqueTag ( const char *attribute, const char *value );
+  virtual void AddUniqueTag ( const char* attribute, const char* value );
   ///
   /// Replace a tag column in the TagTable
-  virtual int UpdateTag ( const char *attribute, const char *value );
-  virtual int UpdateTag ( const char *attribute, const char *value, int selected );
+  virtual int UpdateTag ( const char* attribute, const char* value );
+  virtual int UpdateTag ( const char* attribute, const char* value, int selected );
 
   ///
   /// Get the attribute at a particular index in the TagTable.
-  virtual const char *GetTagAttribute ( int index);
+  virtual const char* GetTagAttribute ( int index);
 
   ///
   /// Get the value of a tag in the TagTable
-  virtual const char *GetTagValue ( int index );
+  virtual const char* GetTagValue ( int index );
 
   ///
   /// Get the value of a tag in the TagTable
-  virtual const char *GetTagValue ( const char* attribute);
+  virtual const char* GetTagValue ( const char* attribute);
 
   ///
   /// Checks TagTable to see if a attribute already exists.
   /// Returns index of attribute if found, or -1 if it's not found.
-  virtual int CheckTableForTag ( const char *attribute, const char *value );
+  virtual int CheckTableForTag ( const char* attribute, const char* value );
 
   ///
   /// Returns index of table for which tag exists, or returns -1
-  virtual int CheckTableForTag ( const char *attribute );
+  virtual int CheckTableForTag ( const char* attribute );
 
-  virtual void SelectTag ( const char *attribute );
-  virtual void DeselectTag ( const char *attribute );
-  virtual int IsTagSelected ( const char *attribute );
+  virtual void SelectTag ( const char* attribute );
+  virtual void DeselectTag ( const char* attribute );
+  virtual int IsTagSelected ( const char* attribute );
 
 
   ///
   /// Deletes a column with the name matching "attribute" in the TagTable
-  virtual void DeleteTag ( const char *attribute );
+  virtual void DeleteTag ( const char* attribute );
 
   ///
   /// Clears all tags out of table.
@@ -85,7 +85,7 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
   virtual int GetNumberOfTags ( );
 
   ///
-  virtual void Copy( vtkTagTable *t);
+  virtual void Copy( vtkTagTable* t);
 
   /// describes attribute value pairs
   std::map<std::string, std::string> TagTable;
@@ -93,7 +93,7 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
   std::map<std::string, int > TagSelectionTable;
 
  private:
-  char *Name;
+  char* Name;
   int RestoreSelectionState;
 
  protected:

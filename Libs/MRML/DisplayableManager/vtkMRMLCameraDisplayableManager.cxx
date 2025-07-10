@@ -167,9 +167,9 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
+void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller,
                                                         unsigned long event,
-                                                        void *callData)
+                                                        void* callData)
 {
   switch(event)
   {
@@ -214,7 +214,7 @@ vtkMRMLCameraNode* vtkMRMLCameraDisplayableManager::GetCameraNode()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode * newCameraNode)
+void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode* newCameraNode)
 {
   // If a camera node already points to me. Do I already have it?
   if (newCameraNode == this->Internal->CameraNode)
@@ -250,7 +250,7 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode 
 
   this->SetCameraToRenderer();
   this->InvokeEvent(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent, newCameraNode);
-  vtkMRMLViewNode *viewNode = this->GetMRMLViewNode();
+  vtkMRMLViewNode* viewNode = this->GetMRMLViewNode();
   if (viewNode)
   {
     viewNode->Modified(); // update vtkCamera from view node (perspective/parallel, etc)
@@ -329,7 +329,7 @@ void vtkMRMLCameraDisplayableManager::SetCameraToRenderer()
   {
     return;
   }
-  vtkCamera *camera = this->Internal->CameraNode ? this->Internal->CameraNode->GetCamera() : nullptr;
+  vtkCamera* camera = this->Internal->CameraNode ? this->Internal->CameraNode->GetCamera() : nullptr;
   this->GetRenderer()->SetActiveCamera(camera);
   if (camera)
   {
@@ -341,7 +341,7 @@ void vtkMRMLCameraDisplayableManager::SetCameraToRenderer()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLCameraDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2)
+bool vtkMRMLCameraDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2)
 {
   // The CameraWidget does not have representation, so it cannot use the usual representation->GetInteractionNode()
   // method to get the interactor, therefore we make sure here that the view node is passed to it.

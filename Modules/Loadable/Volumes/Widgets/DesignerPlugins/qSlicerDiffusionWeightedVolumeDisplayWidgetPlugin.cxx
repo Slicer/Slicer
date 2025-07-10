@@ -20,15 +20,15 @@
 
 //------------------------------------------------------------------------------
 qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
-::qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin(QObject *_parent)
+::qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerDiffusionWeightedVolumeDisplayWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qSlicerDiffusionWeightedVolumeDisplayWidget* _widget
     = new qSlicerDiffusionWeightedVolumeDisplayWidget(_parent);

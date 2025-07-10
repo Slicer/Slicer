@@ -47,7 +47,7 @@
 class VTK_MRML_EXPORT vtkMRMLSequenceNode : public vtkMRMLStorableNode
 {
 public:
-  static vtkMRMLSequenceNode *New();
+  static vtkMRMLSequenceNode* New();
   vtkTypeMacro(vtkMRMLSequenceNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -66,7 +66,7 @@ public:
 
   /// Copy sequence index information (index name, unit, type, values, etc)
   /// Does not copy data nodes.
-  virtual void CopySequenceIndex(vtkMRMLNode *node);
+  virtual void CopySequenceIndex(vtkMRMLNode* node);
 
   /// Update sequence index to point to nodes
   void UpdateSequenceIndex();
@@ -86,7 +86,7 @@ public:
 
   /// Set the type of the index (numeric, text, ...)
   void SetIndexType(int indexType);
-  void SetIndexTypeFromString(const char *indexTypeString);
+  void SetIndexTypeFromString(const char* indexTypeString);
   /// Get the type of the index (numeric, text, ...)
   vtkGetMacro(IndexType, int);
   virtual std::string GetIndexTypeAsString();
@@ -99,7 +99,7 @@ public:
 
   /// Helper functions for converting between string and code representation of the index type
   static std::string GetIndexTypeAsString(int indexType);
-  static int GetIndexTypeFromString(const std::string &indexTypeString);
+  static int GetIndexTypeFromString(const std::string& indexTypeString);
 
   /// Add a copy of the provided node to this sequence as a data node.
   /// If a sequence item is not found by that index, a new item is added.
@@ -158,7 +158,7 @@ public:
   std::string GetDefaultStorageNodeClassName(const char* filename = nullptr) override;
 
   /// Update node IDs in case of node ID conflicts on scene import
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   /// Type of the index. Controls the behavior of sorting, finding, etc.
   /// Additional types may be added in the future, such as tag cloud, two-dimensional index, ...

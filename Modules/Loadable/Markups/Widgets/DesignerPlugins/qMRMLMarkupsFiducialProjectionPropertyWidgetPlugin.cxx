@@ -27,15 +27,15 @@
 
 //------------------------------------------------------------------------------
 qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
-::qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin(QObject *_parent)
+::qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qMRMLMarkupsFiducialProjectionPropertyWidget* _widget
     = new qMRMLMarkupsFiducialProjectionPropertyWidget(_parent);

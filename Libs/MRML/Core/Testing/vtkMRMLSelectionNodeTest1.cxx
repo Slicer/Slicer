@@ -18,7 +18,7 @@
 int TestUnit(vtkMRMLSelectionNode* node1);
 
 // ---------------------------------------------------------------------------
-int vtkMRMLSelectionNodeTest1(int , char * [] )
+int vtkMRMLSelectionNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLSelectionNode> node1;
 

@@ -28,7 +28,7 @@ qSlicerTerminologyNavigatorWidgetPlugin::qSlicerTerminologyNavigatorWidgetPlugin
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qSlicerTerminologyNavigatorWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qSlicerTerminologyNavigatorWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qSlicerTerminologyNavigatorWidget* pluginWidget =
     new qSlicerTerminologyNavigatorWidget(parentWidget);

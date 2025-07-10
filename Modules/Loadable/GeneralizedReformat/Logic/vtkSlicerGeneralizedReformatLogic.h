@@ -51,7 +51,7 @@ class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkSlicerGeneralizedRef
 {
 public:
 
-  static vtkSlicerGeneralizedReformatLogic *New();
+  static vtkSlicerGeneralizedReformatLogic* New();
   vtkTypeMacro(vtkSlicerGeneralizedReformatLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

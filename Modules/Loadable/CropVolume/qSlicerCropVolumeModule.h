@@ -18,7 +18,7 @@ class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerCropVolumeModule(QObject *parent=nullptr);
+  explicit qSlicerCropVolumeModule(QObject* parent=nullptr);
   ~qSlicerCropVolumeModule() override;
 
   qSlicerGetTitleMacro(tr("Crop Volume"));
@@ -41,7 +41,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

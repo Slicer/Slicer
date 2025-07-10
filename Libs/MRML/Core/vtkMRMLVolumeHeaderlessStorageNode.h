@@ -26,7 +26,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode
   : public vtkMRMLStorageNode
 {
 public:
-  static vtkMRMLVolumeHeaderlessStorageNode *New();
+  static vtkMRMLVolumeHeaderlessStorageNode* New();
   vtkTypeMacro(vtkMRMLVolumeHeaderlessStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -42,7 +42,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
@@ -114,8 +114,8 @@ public:
   vtkSetMacro(CenterImage, int);
 
   /// Return true if node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
-  bool CanWriteFromReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
+  bool CanWriteFromReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:
 
@@ -128,12 +128,12 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
-  char *FileScanOrder;
+  char* FileScanOrder;
   int FileScalarType;
   int FileNumberOfScalarComponents;
   int FileLittleEndian;

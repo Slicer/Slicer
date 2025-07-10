@@ -35,7 +35,7 @@ vtkMatrix4x4* CreateTransformMatrix(double translateX, double translateY, double
   return matrix;
 }
 
-int vtkMRMLTransformNodeTest1(int , char * [] )
+int vtkMRMLTransformNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLTransformNode> node1;
   vtkNew<vtkMRMLScene> scene;

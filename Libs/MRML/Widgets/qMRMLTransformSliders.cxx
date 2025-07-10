@@ -256,7 +256,7 @@ void qMRMLTransformSliders::updateRangeFromTransform(vtkMRMLTransformNode* trans
   qMRMLUtils::getTransformInCoordinateSystem(transformNode,
       this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform.GetPointer());
 
-  vtkMatrix4x4 * matrix = transform->GetMatrix();
+  vtkMatrix4x4* matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
   if (!matrix) { return; }
 
@@ -520,7 +520,7 @@ void qMRMLTransformSliders::onISSliderPositionChanged(double position)
 
 //-----------------------------------------------------------------------------
 QPair<double, double> qMRMLTransformSliders::extractMinMaxTranslationValue(
-                                             vtkMatrix4x4 * mat, double pad)
+                                             vtkMatrix4x4* mat, double pad)
 {
   QPair<double, double> minmax;
   if (!mat)

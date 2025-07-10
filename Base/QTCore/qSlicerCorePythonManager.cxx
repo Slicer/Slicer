@@ -87,7 +87,7 @@ void qSlicerCorePythonManager::preInitialization()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtkObject * object)
+void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtkObject* object)
 {
   // Split name using '.'
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))

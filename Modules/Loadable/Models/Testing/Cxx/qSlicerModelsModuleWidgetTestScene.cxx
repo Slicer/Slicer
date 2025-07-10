@@ -44,7 +44,7 @@
 #include "qMRMLWidget.h"
 
 //-----------------------------------------------------------------------------
-int qSlicerModelsModuleWidgetTestScene( int argc, char * argv[] )
+int qSlicerModelsModuleWidgetTestScene( int argc, char* argv[] )
 {
   qMRMLWidget::preInitializeApplication();
   qSlicerApplication app(argc, argv);

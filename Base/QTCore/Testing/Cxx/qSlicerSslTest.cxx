@@ -73,7 +73,7 @@ void qSlicerSslTester::testHttpsConnection()
     qSlicerCoreApplication::caCertificatesPath(
         QProcessEnvironment::systemEnvironment().value("SLICER_HOME")));
 
-  QNetworkAccessManager * manager = new QNetworkAccessManager(this);
+  QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 
   SslEventLoop eventLoop;
   QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
@@ -81,7 +81,7 @@ void qSlicerSslTester::testHttpsConnection()
   QObject::connect(manager, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)),
             &eventLoop, SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
 
-  QNetworkReply * reply = manager->get(QNetworkRequest(QUrl(url)));
+  QNetworkReply* reply = manager->get(QNetworkRequest(QUrl(url)));
   eventLoop.exec();
 
   QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);

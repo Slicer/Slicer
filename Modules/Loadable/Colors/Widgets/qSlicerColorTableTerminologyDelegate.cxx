@@ -67,7 +67,7 @@ vtkSlicerTerminologiesModuleLogic* terminologiesLogic()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerColorTableTerminologyDelegate::qSlicerColorTableTerminologyDelegate(QObject *parent)
+qSlicerColorTableTerminologyDelegate::qSlicerColorTableTerminologyDelegate(QObject* parent)
   : QStyledItemDelegate(parent)
 {
 }
@@ -84,7 +84,7 @@ QWidget* qSlicerColorTableTerminologyDelegate::createEditor(QWidget* parent, con
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerColorTableTerminologyDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+void qSlicerColorTableTerminologyDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
   qSlicerTerminologyEditorButton* editorButton = qobject_cast<qSlicerTerminologyEditorButton*>(editor);
   if (editorButton)
@@ -148,7 +148,7 @@ void qSlicerColorTableTerminologyDelegate::setEditorData(QWidget *editor, const 
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerColorTableTerminologyDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex &index) const
+void qSlicerColorTableTerminologyDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
   vtkSlicerTerminologiesModuleLogic* logic = terminologiesLogic();
   if (!logic)
@@ -195,7 +195,7 @@ void qSlicerColorTableTerminologyDelegate::setModelData(QWidget* editor, QAbstra
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerColorTableTerminologyDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+void qSlicerColorTableTerminologyDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex &/* index */) const
 {
   editor->setGeometry(option.rect);
 }

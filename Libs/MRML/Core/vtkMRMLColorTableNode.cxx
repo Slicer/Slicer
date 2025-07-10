@@ -139,7 +139,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLColorTableNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLColorTableNode::Copy(vtkMRMLNode* anode)
 {
   /// BUG 3992: when custom color tables appear in scene views,
   /// the color information is saved in a file on disk and not
@@ -160,7 +160,7 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLColorTableNode *node = (vtkMRMLColorTableNode *) anode;
+  vtkMRMLColorTableNode* node = (vtkMRMLColorTableNode*) anode;
 
   // Deep copy LookupTable
   if (node->GetLookupTable() != nullptr)
@@ -566,9 +566,9 @@ const char* vtkMRMLColorTableNode::GetTypeAsString()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorTableNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLColorTableNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -597,7 +597,7 @@ void vtkMRMLColorTableNode::SetType(int type)
   if (this->GetLookupTable() == nullptr)
   {
     vtkDebugMacro("SetType Creating a new lookup table (was null) of type " << this->GetTypeAsString() << "\n");
-    vtkLookupTable *table = vtkLookupTable::New();
+    vtkLookupTable* table = vtkLookupTable::New();
     this->SetAndObserveLookupTable(table);
     table->Delete();
     // as a FullRainbow, set the table range to 255
@@ -991,7 +991,7 @@ void vtkMRMLColorTableNode::SetType(int type)
     // to make sure -1 is represented by blue
 
     // From green to blue
-    vtkLookupTable *neg = vtkLookupTable::New();
+    vtkLookupTable* neg = vtkLookupTable::New();
     neg->SetNumberOfTableValues(23);
     neg->SetHueRange(0.5, 0.66667);
     neg->SetSaturationRange( 1, 1);
@@ -1000,7 +1000,7 @@ void vtkMRMLColorTableNode::SetType(int type)
     neg->Build();
 
     // From red to yellow
-    vtkLookupTable *pos = vtkLookupTable::New();
+    vtkLookupTable* pos = vtkLookupTable::New();
     pos->SetNumberOfTableValues(20);
     pos->SetHueRange(0,0.16667);
     pos->SetSaturationRange(1,1);
@@ -1483,7 +1483,7 @@ vtkLookupTable* vtkMRMLColorTableNode::GetLookupTable()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorTableNode::SetAndObserveLookupTable(vtkLookupTable *lut, bool markAllColorsAsDefined/*=true*/)
+void vtkMRMLColorTableNode::SetAndObserveLookupTable(vtkLookupTable* lut, bool markAllColorsAsDefined/*=true*/)
 {
   if (lut != this->LookupTable)
   {

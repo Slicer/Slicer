@@ -52,7 +52,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic
 {
 public:
 
-  static vtkMRMLApplicationLogic *New();
+  static vtkMRMLApplicationLogic* New();
   void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkTypeMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
 
@@ -194,7 +194,7 @@ public:
   /// It is necessary to provide extension, because there is no reliable way of correctly
   /// determining extension automatically (for example, file extension of some.file.nii.gz
   /// could be gz, nii.gz, or file.nii.gz and only one of them is correct).
-  static std::string CreateUniqueFileName(const std::string &filename, const std::string& knownExtension="");
+  static std::string CreateUniqueFileName(const std::string& filename, const std::string& knownExtension="");
 
   /// List of custom events fired by the class.
   enum Events{
@@ -304,7 +304,7 @@ protected:
   vtkMRMLApplicationLogic();
   ~vtkMRMLApplicationLogic() override;
 
-  void SetMRMLSceneInternal(vtkMRMLScene *newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   void SetSelectionNode(vtkMRMLSelectionNode* );
   void SetInteractionNode(vtkMRMLInteractionNode* );

@@ -146,7 +146,7 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 QString qSlicerCLILoadableModuleFactoryItem::resolveXMLModuleDescriptionSymbol()
 {
   // Resolves symbol
-  const char* xmlDescription = const_cast<const char *>(reinterpret_cast<char*>(
+  const char* xmlDescription = const_cast<const char*>(reinterpret_cast<char*>(
     this->symbolAddress("XMLModuleDescription")));
 
   // Retrieve
@@ -219,7 +219,7 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
   }
   else if(resolvedModuleLogoImageSymbol)
   {
-    logoImage = reinterpret_cast<const char *>(resolvedModuleLogoImageSymbol);
+    logoImage = reinterpret_cast<const char*>(resolvedModuleLogoImageSymbol);
     QStringList expectedSymbols;
     expectedSymbols << "ModuleLogoWidth" << "ModuleLogoHeight"
                     << "ModuleLogoPixelSize" << "ModuleLogoLength";
@@ -238,10 +238,10 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
     }
     if (resolvedSymbols.count() == 4)
     {
-      width = *reinterpret_cast<int *>(resolvedSymbols.at(0));
-      height = *reinterpret_cast<int *>(resolvedSymbols.at(1));
-      pixelSize = *reinterpret_cast<int *>(resolvedSymbols.at(2));
-      bufferLength = *reinterpret_cast<unsigned long *>(resolvedSymbols.at(3));
+      width = *reinterpret_cast<int*>(resolvedSymbols.at(0));
+      height = *reinterpret_cast<int*>(resolvedSymbols.at(1));
+      pixelSize = *reinterpret_cast<int*>(resolvedSymbols.at(2));
+      bufferLength = *reinterpret_cast<unsigned long*>(resolvedSymbols.at(3));
     }
   }
 

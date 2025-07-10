@@ -23,12 +23,12 @@
 #include "qMRMLWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLWidgetPlugin::qMRMLWidgetPlugin(QObject *_parent):QObject(_parent)
+qMRMLWidgetPlugin::qMRMLWidgetPlugin(QObject* _parent):QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLWidget* _widget = new qMRMLWidget(_parent);
   return _widget;

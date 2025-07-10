@@ -69,7 +69,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-int qSlicerAbstractCoreModuleTest1(int, char * [] )
+int qSlicerAbstractCoreModuleTest1(int, char*[])
 {
   AModule module;
 

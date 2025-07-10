@@ -31,7 +31,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerModulePanelPlugin
 public:
   qSlicerModulePanelPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

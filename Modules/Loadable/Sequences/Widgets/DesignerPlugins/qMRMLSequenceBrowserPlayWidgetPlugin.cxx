@@ -20,15 +20,15 @@
 
 //------------------------------------------------------------------------------
 qMRMLSequenceBrowserPlayWidgetPlugin
-::qMRMLSequenceBrowserPlayWidgetPlugin(QObject *_parent)
+::qMRMLSequenceBrowserPlayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLSequenceBrowserPlayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLSequenceBrowserPlayWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qMRMLSequenceBrowserPlayWidget* _widget
     = new qMRMLSequenceBrowserPlayWidget(_parent);

@@ -12,8 +12,8 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
 {
 public:
   /// The Usual vtk class functions
-  //static vtkURIHandler *New() { return nullptr; };
-    static vtkURIHandler *New();
+  //static vtkURIHandler* New() { return nullptr; };
+    static vtkURIHandler* New();
   vtkTypeMacro(vtkURIHandler, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -23,37 +23,37 @@ public:
   ///
   /// virtual methods to be defined in subclasses.
   /// (Maybe these should be defined to handle default file operations)
-  virtual void StageFileRead ( const char *source, const char * destination );
-  virtual void StageFileWrite ( const char *source, const char * destination );
+  virtual void StageFileRead ( const char* source, const char* destination );
+  virtual void StageFileWrite ( const char* source, const char* destination );
 
   ///
   /// various Read/Write method footprints useful to redefine in specific handlers.
-  virtual void StageFileRead(const char * source,
-                             const char * destination,
-                             const char *username,
-                             const char *password,
-                             const char *hostname);
+  virtual void StageFileRead(const char* source,
+                             const char* destination,
+                             const char* username,
+                             const char* password,
+                             const char* hostname);
 
-  virtual void StageFileWrite(const char *source,
-                              const char *username,
-                              const char *password,
-                              const char *hostname,
-                              const char *sessionID );
+  virtual void StageFileWrite(const char* source,
+                              const char* username,
+                              const char* password,
+                              const char* hostname,
+                              const char* sessionID );
 
   /// need something that goes the other way too...
 
   ///
   /// Determine whether protocol is appropriate for this handler.
   /// NOTE: Subclasses should implement this method
-  virtual int CanHandleURI ( const char * vtkNotUsed(uri) ) { return 0; };
+  virtual int CanHandleURI ( const char* vtkNotUsed(uri) ) { return 0; };
 
   ///
   /// This function writes the downloaded data in a buffered manner
-  size_t BufferedWrite ( char *buffer, size_t size, size_t nitems );
+  size_t BufferedWrite ( char* buffer, size_t size, size_t nitems );
 
   ///
   /// Use this function to set LocalFile
-  //virtual void SetLocalFile ( std::ofstream * localFile );
+  //virtual void SetLocalFile ( std::ofstream* localFile );
   virtual void SetLocalFile (FILE *localFile);
 
   ///
@@ -80,7 +80,7 @@ public:
   }
 
   int RequiresPermission;
-  vtkPermissionPrompter *PermissionPrompter;
+  vtkPermissionPrompter* PermissionPrompter;
 
 
  protected:
@@ -93,9 +93,9 @@ public:
   /// local file, it gets passed to C functions in the CURL library
   //std::ofstream* LocalFile;
   FILE *LocalFile;
-  char *Prefix;
-  char *Name;
-  char *HostName;
+  char* Prefix;
+  char* Name;
+  char* HostName;
 
 };
 

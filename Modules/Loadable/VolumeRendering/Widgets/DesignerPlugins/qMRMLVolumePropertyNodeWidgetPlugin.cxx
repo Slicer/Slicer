@@ -23,13 +23,13 @@
 
 //------------------------------------------------------------------------------
 qMRMLVolumePropertyNodeWidgetPlugin
-::qMRMLVolumePropertyNodeWidgetPlugin(QObject *parentObject)
+::qMRMLVolumePropertyNodeWidgetPlugin(QObject* parentObject)
   : QObject(parentObject)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLVolumePropertyNodeWidgetPlugin::createWidget(QWidget *parentWidget)
+QWidget* qMRMLVolumePropertyNodeWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLVolumePropertyNodeWidget* newWidget =
     new qMRMLVolumePropertyNodeWidget(parentWidget);

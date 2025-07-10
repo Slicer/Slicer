@@ -42,7 +42,7 @@ int testScene(vtkMRMLScene* scene);
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int , char * [] )
+int vtkMRMLTransformableNodeOnNodeReferenceAddTest(int, char*[])
 {
   // Test with a freshly created scene (node reference added _after_ node added to the scene)
   vtkNew<vtkMRMLScene> scene;

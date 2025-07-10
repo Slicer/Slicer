@@ -95,7 +95,7 @@ void vtkMRMLTransformStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLTransformStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLTransformStorageNode::Copy(vtkMRMLNode* anode)
 {
   if (!anode)
   {
@@ -104,7 +104,7 @@ void vtkMRMLTransformStorageNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLTransformStorageNode *node = vtkMRMLTransformStorageNode::SafeDownCast(anode);
+  vtkMRMLTransformStorageNode* node = vtkMRMLTransformStorageNode::SafeDownCast(anode);
 
   this->SetPreferITKv3CompatibleTransforms(node->GetPreferITKv3CompatibleTransforms());
 
@@ -121,19 +121,19 @@ void vtkMRMLTransformStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLTransformNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode* refNode)
 {
   typedef itk::TransformFileReaderTemplate<double> TransformReaderType;
   typedef TransformReaderType::TransformListType TransformListType;
   typedef TransformReaderType::TransformType TransformType;
 
-  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
   if (transformNode==nullptr)
   {
     vtkErrorMacro("vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile failed: expected a transform node as input");
@@ -151,7 +151,7 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
   {
     reader->Update();
   }
-  catch (itk::ExceptionObject &exc)
+  catch (itk::ExceptionObject& exc)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile",
       "Error while reading transform file '" << fullName << "'. ITK exception:\n" << exc);
@@ -165,7 +165,7 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
   }
 
   // For now, grab the first two transforms from the file.
-  TransformListType *transforms = reader->GetTransformList();
+  TransformListType* transforms = reader->GetTransformList();
   if (transforms->size() == 0)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile",
@@ -222,9 +222,9 @@ int vtkMRMLTransformStorageNode::ReadFromITKv3BSplineTransformFile(vtkMRMLNode *
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode* refNode)
 {
-  vtkMRMLTransformNode *tn = vtkMRMLTransformNode::SafeDownCast(refNode);
+  vtkMRMLTransformNode* tn = vtkMRMLTransformNode::SafeDownCast(refNode);
   if (tn==nullptr)
   {
     vtkErrorMacro("vtkMRMLTransformStorageNode::ReadGridTransform failed: expected a transform node as input");
@@ -267,7 +267,7 @@ int vtkMRMLTransformStorageNode::ReadFromImageFile(vtkMRMLNode *refNode)
       return 0;
   }
 
-  const itk::MetaDataDictionary & metadata = gridImage_Lps->GetMetaDataDictionary();
+  const itk::MetaDataDictionary& metadata = gridImage_Lps->GetMetaDataDictionary();
   std::string niftiIntentCode;
   if (itk::ExposeMetaData<std::string>(metadata, "intent_code", niftiIntentCode))
   {
@@ -314,7 +314,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
   {
     reader->Update();
   }
-  catch (itk::ExceptionObject &exc)
+  catch (itk::ExceptionObject& exc)
   {
     vtkErrorToMessageCollectionWithObjectMacro(loggerObject, userMessages, "vtkMRMLTransformStorageNode::ReadFromTransformFile",
       "Error while reading transform file '" << fullName << "'. ITK exception:\n" << exc);
@@ -327,7 +327,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
     return nullptr;
   }
 
-  TransformListType *transforms = reader->GetTransformList();
+  TransformListType* transforms = reader->GetTransformList();
   if (transforms==nullptr || transforms->empty())
   {
     vtkErrorToMessageCollectionWithObjectMacro(loggerObject, userMessages, "vtkMRMLTransformStorageNode::ReadFromTransformFile",
@@ -346,7 +346,7 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
       << fullName);
     return nullptr;
   }
-  TransformType *firstTransform = transforms->front();
+  TransformType* firstTransform = transforms->front();
   if (firstTransform==nullptr)
   {
     vtkErrorToMessageCollectionWithObjectMacro(loggerObject, userMessages, "vtkMRMLTransformStorageNode::ReadFromTransformFile",
@@ -422,9 +422,9 @@ vtkAbstractTransform* ReadFromTransformFile(vtkObject* loggerObject, const std::
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode* refNode)
 {
-  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
   if (transformNode == nullptr)
   {
     vtkErrorMacro("Unexpected node type, cannot read transform from file");
@@ -470,7 +470,7 @@ int vtkMRMLTransformStorageNode::ReadFromTransformFile(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName =  this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -511,9 +511,9 @@ int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode* refNode)
 {
-  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
   if (transformNode == nullptr)
   {
     vtkErrorMacro("Unexpected node type, cannot read transform from file");
@@ -558,7 +558,7 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
   {
     writer->Update();
   }
-  catch (itk::ExceptionObject &exc)
+  catch (itk::ExceptionObject& exc)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::WriteToTransformFile",
       "Error while reading transform file '" << fullName << "'. ITK exception:\n" << exc);
@@ -575,9 +575,9 @@ int vtkMRMLTransformStorageNode::WriteToTransformFile(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode* refNode)
 {
-  vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
   if (transformNode == nullptr)
   {
     vtkErrorMacro("Unexpected node type, cannot read transform from file");
@@ -619,7 +619,7 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
   {
     writer->Update();
   }
-  catch (itk::ExceptionObject &exc)
+  catch (itk::ExceptionObject& exc)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTransformStorageNode::WriteToImageFile",
       "Failed to save grid transform to file: '" << fullName << "'."
@@ -638,7 +638,7 @@ int vtkMRMLTransformStorageNode::WriteToImageFile(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName =  this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -679,7 +679,7 @@ void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTransformStorageNode::IsImageFile(const std::string &filename)
+bool vtkMRMLTransformStorageNode::IsImageFile(const std::string& filename)
 {
   // determine file type
   std::string extension = this->GetSupportedFileExtension(filename.c_str());
@@ -704,7 +704,7 @@ bool vtkMRMLTransformStorageNode::IsImageFile(const std::string &filename)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformStorageNode::SetAndObserveTransformFromParentAutoInvert(vtkMRMLTransformNode* transformNode, vtkAbstractTransform *transform)
+void vtkMRMLTransformStorageNode::SetAndObserveTransformFromParentAutoInvert(vtkMRMLTransformNode* transformNode, vtkAbstractTransform* transform)
 {
   bool allInvertedTransforms = true;
 

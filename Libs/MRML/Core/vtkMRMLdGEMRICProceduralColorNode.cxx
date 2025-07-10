@@ -61,10 +61,10 @@ void vtkMRMLdGEMRICProceduralColorNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLdGEMRICProceduralColorNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLdGEMRICProceduralColorNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
-  //vtkMRMLdGEMRICProceduralColorNode *node = (vtkMRMLdGEMRICProceduralColorNode *) anode;
+  //vtkMRMLdGEMRICProceduralColorNode* node = (vtkMRMLdGEMRICProceduralColorNode*) anode;
 }
 
 //----------------------------------------------------------------------------
@@ -80,15 +80,15 @@ void vtkMRMLdGEMRICProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLdGEMRICProceduralColorNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLdGEMRICProceduralColorNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLdGEMRICProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLdGEMRICProceduralColorNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
@@ -107,7 +107,7 @@ void vtkMRMLdGEMRICProceduralColorNode::SetTypeTo3T()
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLdGEMRICProceduralColorNode::GetTypeAsString()
+const char* vtkMRMLdGEMRICProceduralColorNode::GetTypeAsString()
 {
   if (this->Type == this->dGEMRIC15T)
   {

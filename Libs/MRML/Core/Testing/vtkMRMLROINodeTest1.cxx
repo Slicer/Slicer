@@ -14,7 +14,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLROINode.h"
 
-int vtkMRMLROINodeTest1(int , char * [] )
+int vtkMRMLROINodeTest1(int, char*[])
 {
   vtkNew< vtkMRMLROINode > node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

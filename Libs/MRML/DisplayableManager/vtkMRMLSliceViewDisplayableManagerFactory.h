@@ -48,7 +48,7 @@ public:
   /// reference to a vtkMRMLSliceViewDisplayableManagerFactory object per process. Clients that
   /// call this must call Delete on the object so that the reference counting will work.
   /// The single instance will be unreferenced when the program exits.
-  static vtkMRMLSliceViewDisplayableManagerFactory *New();
+  static vtkMRMLSliceViewDisplayableManagerFactory* New();
 
   /// Return the singleton instance with no reference counting.
   static vtkMRMLSliceViewDisplayableManagerFactory* GetInstance();

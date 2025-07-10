@@ -23,7 +23,7 @@ Care Ontario.
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStreamingVolumeNode.h"
 
-int vtkMRMLStreamingVolumeNodeTest1(int , char * [] )
+int vtkMRMLStreamingVolumeNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLStreamingVolumeNode> node1;
   vtkNew<vtkMRMLScene> scene;

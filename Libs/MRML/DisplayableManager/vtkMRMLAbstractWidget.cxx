@@ -135,7 +135,7 @@ int vtkMRMLAbstractWidget::GetNumberOfEventTranslators()
 }
 
 //-------------------------------------------------------------------------
-void vtkMRMLAbstractWidget::SetRepresentation(vtkMRMLAbstractWidgetRepresentation *rep)
+void vtkMRMLAbstractWidget::SetRepresentation(vtkMRMLAbstractWidgetRepresentation* rep)
 {
   if (rep == this->WidgetRep)
   {
@@ -173,7 +173,7 @@ vtkMRMLAbstractWidgetRepresentation* vtkMRMLAbstractWidget::GetRepresentation()
 }
 
 //-------------------------------------------------------------------------
-void vtkMRMLAbstractWidget::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData/*=nullptr*/)
+void vtkMRMLAbstractWidget::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData/*=nullptr*/)
 {
   if (!this->WidgetRep)
   {
@@ -274,7 +274,7 @@ unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLAbstractWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* vtkNotUsed(eventData), double &vtkNotUsed(distance2))
+bool vtkMRMLAbstractWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* vtkNotUsed(eventData), double& vtkNotUsed(distance2))
 {
   return false;
 }
@@ -405,12 +405,12 @@ const char* vtkMRMLAbstractWidget::GetAssociatedNodeID(vtkMRMLInteractionEventDa
     return nullptr;
   }
   // find the slice composite node in the scene with the matching layout name
-  vtkMRMLApplicationLogic *mrmlAppLogic = this->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* mrmlAppLogic = this->GetMRMLApplicationLogic();
   if (!mrmlAppLogic)
   {
     return nullptr;
   }
-  vtkMRMLSliceLogic *sliceLogic = mrmlAppLogic->GetSliceLogic(sliceNode);
+  vtkMRMLSliceLogic* sliceLogic = mrmlAppLogic->GetSliceLogic(sliceNode);
   if (!sliceLogic)
   {
     return nullptr;

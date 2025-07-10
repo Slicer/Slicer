@@ -279,7 +279,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
 }
 
 //---------------------------------------------------------------------------
-void qSlicerIOManager::dragEnterEvent(QDragEnterEvent *event)
+void qSlicerIOManager::dragEnterEvent(QDragEnterEvent* event)
 {
   Q_D(qSlicerIOManager);
   foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
@@ -293,7 +293,7 @@ void qSlicerIOManager::dragEnterEvent(QDragEnterEvent *event)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerIOManager::dropEvent(QDropEvent *event)
+void qSlicerIOManager::dropEvent(QDropEvent* event)
 {
   Q_D(qSlicerIOManager);
   QStringList supportedReaders;
@@ -519,9 +519,9 @@ void qSlicerIOManager::openScreenshotDialog()
 {
   Q_D(qSlicerIOManager);
   // try opening the Annotation module's screen shot
-  qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
 
-  qSlicerAbstractCoreModule *modulePointer = nullptr;
+  qSlicerAbstractCoreModule* modulePointer = nullptr;
   if (moduleManager)
   {
     modulePointer = moduleManager->module("Annotations");
@@ -549,14 +549,14 @@ void qSlicerIOManager::openScreenshotDialog()
 void qSlicerIOManager::openSceneViewsDialog()
 {
 //  Q_D(qSlicerIOManager);
-  qSlicerModuleManager *moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   if (!moduleManager)
   {
     qWarning() << "qSlicerIOManager::openSceneViewsDialog: unable to get module manager, can't get at the Scene Views module";
     return;
   }
 
-  qSlicerAbstractCoreModule *modulePointer = moduleManager->module("SceneViews");
+  qSlicerAbstractCoreModule* modulePointer = moduleManager->module("SceneViews");
   if (modulePointer == nullptr)
   {
     qWarning() << "qSlicerIOManager::openSceneViewsDialog: Unable to get at the SceneViews module (sceneviews).";

@@ -52,7 +52,7 @@ QIcon qSlicerCamerasModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerCamerasModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerCamerasModule::createWidgetRepresentation()
 {
   return new qSlicerCamerasModuleWidget;
 }

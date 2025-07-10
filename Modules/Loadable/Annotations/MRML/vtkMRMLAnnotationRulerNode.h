@@ -11,7 +11,7 @@ class vtkMRMLScene;
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerNode : public vtkMRMLAnnotationLinesNode
 {
 public:
-  static vtkMRMLAnnotationRulerNode *New();
+  static vtkMRMLAnnotationRulerNode* New();
   vtkTypeMacro(vtkMRMLAnnotationRulerNode,vtkMRMLAnnotationLinesNode);
   // Description:
   // Just prints short summary
@@ -39,9 +39,9 @@ public:
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
@@ -142,17 +142,17 @@ public:
 
   // Description:
   // get/set the point representation color
-  double *GetPointColor();
+  double* GetPointColor();
   void SetPointColor( double initColor[3]);
 
   // Description:
   // get/set the line representation color
-  double *GetLineColor();
+  double* GetLineColor();
   void SetLineColor(double newColor[3]);
 
   // Description:
   // get/set the distance annotation text color
-  double *GetDistanceAnnotationTextColor();
+  double* GetDistanceAnnotationTextColor();
   void SetDistanceAnnotationTextColor(double initColor[3]);
 
   // Description:
@@ -198,8 +198,8 @@ protected:
 
   /// the model ids for the models that the ends of the ruler are constrained
   /// to
-  char *ModelID1;
-  char *ModelID2;
+  char* ModelID1;
+  char* ModelID2;
 };
 
 #endif

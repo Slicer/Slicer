@@ -96,7 +96,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHier
 
 public:
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterSubjectHierarchyProxyModel(QObject *parent=nullptr);
+  qMRMLSortFilterSubjectHierarchyProxyModel(QObject* parent=nullptr);
   ~qMRMLSortFilterSubjectHierarchyProxyModel() override;
 
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
@@ -161,9 +161,9 @@ public:
   /// Returns true if the item in the row indicated by the given sourceRow and
   /// sourceParent should be included in the model; otherwise returns false.
   /// This method test each item via \a filterAcceptsItem
-  bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const override;
+  bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent)const override;
 
-  Qt::ItemFlags flags(const QModelIndex & index)const override;
+  Qt::ItemFlags flags(const QModelIndex& index)const override;
 
 public slots:
   void setNameFilter(QString filter);

@@ -29,9 +29,9 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_PLUGINS_EXPORT qMRMLUnitWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLUnitWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLUnitWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

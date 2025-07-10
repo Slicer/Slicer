@@ -34,7 +34,7 @@ class Q_SLICER_QTMODULES_SUPERLOADABLEMODULETEMPLATE_EXPORT qSlicerSuperLoadable
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerSuperLoadableModuleTemplateModuleWidget(QWidget *parent=0);
+  qSlicerSuperLoadableModuleTemplateModuleWidget(QWidget* parent=0);
   virtual ~qSlicerSuperLoadableModuleTemplateModuleWidget();
 
 public slots:

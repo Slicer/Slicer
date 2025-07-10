@@ -101,7 +101,7 @@ public slots:
   void onMarkersSizeChanged(double size);
 
   /// Change line style for Line and Scatter plots.
-  void onLineStyleChanged(const QString &style);
+  void onLineStyleChanged(const QString& style);
 
   /// Change line width for Line and Scatter plots.
   void onLineWidthChanged(double width);

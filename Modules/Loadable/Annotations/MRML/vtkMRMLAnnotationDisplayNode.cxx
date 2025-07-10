@@ -73,7 +73,7 @@ void vtkMRMLAnnotationDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLAnnotationDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAnnotationDisplayNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
 }
@@ -85,16 +85,16 @@ void vtkMRMLAnnotationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLAnnotationDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
 }
 
 //-----------------------------------------------------------
-void vtkMRMLAnnotationDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLAnnotationDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
    Superclass::UpdateScene(scene);
 }
@@ -112,7 +112,7 @@ void vtkMRMLAnnotationDisplayNode::ClearBackup()
 
 //----------------------------------------------------------------------------
 // Returns the backup of this node.
-vtkMRMLAnnotationDisplayNode * vtkMRMLAnnotationDisplayNode::GetBackup()
+vtkMRMLAnnotationDisplayNode* vtkMRMLAnnotationDisplayNode::GetBackup()
 {
 
   return this->m_Backup;

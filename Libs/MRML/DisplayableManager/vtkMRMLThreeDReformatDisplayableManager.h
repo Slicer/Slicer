@@ -47,7 +47,7 @@ protected:
   void Create() override;
 
   /// WidgetCallback is a static function to relay modified events from the Logic
-  void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessWidgetsEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   void UnobserveMRMLScene() override;
   void UpdateFromMRMLScene() override;

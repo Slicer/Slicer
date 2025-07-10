@@ -77,7 +77,7 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
     //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
     return false;
   }
-  vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = this->SliceLogic->GetSliceNode();
   if (!sliceNode)
   {
     return false;
@@ -106,7 +106,7 @@ bool vtkMRMLSliceViewInteractorStyle::DelegateInteractionEventToDisplayableManag
     0.0,
     1.0
     };
-  vtkMatrix4x4 * xyToRasMatrix = sliceNode->GetXYToRAS();
+  vtkMatrix4x4* xyToRasMatrix = sliceNode->GetXYToRAS();
   double worldPosition[4] = { 0.0, 0.0, 0.0, 1.0 };
   xyToRasMatrix->MultiplyPoint(displayPosition, worldPosition);
 

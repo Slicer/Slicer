@@ -114,7 +114,7 @@ void qMRMLVolumeInfoWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLVolumeInfoWidget::qMRMLVolumeInfoWidget(QWidget *_parent)
+qMRMLVolumeInfoWidget::qMRMLVolumeInfoWidget(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qMRMLVolumeInfoWidgetPrivate(*this))
 {
@@ -417,11 +417,11 @@ void qMRMLVolumeInfoWidget::setScalarType(int index)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLVolumeInfoWidget::setWindowLevelFromPreset(QListWidgetItem *presetItem)
+void qMRMLVolumeInfoWidget::setWindowLevelFromPreset(QListWidgetItem* presetItem)
 {
   Q_D(qMRMLVolumeInfoWidget);
-  vtkMRMLScalarVolumeNode *scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( d->VolumeNode );
-  vtkMRMLScalarVolumeDisplayNode *displayNode = scalarNode ? scalarNode->GetScalarVolumeDisplayNode() : nullptr;
+  vtkMRMLScalarVolumeNode* scalarNode = vtkMRMLScalarVolumeNode::SafeDownCast( d->VolumeNode );
+  vtkMRMLScalarVolumeDisplayNode* displayNode = scalarNode ? scalarNode->GetScalarVolumeDisplayNode() : nullptr;
   if (displayNode == nullptr)
   {
     return;

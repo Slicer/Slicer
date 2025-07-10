@@ -121,7 +121,7 @@ void qSlicerSubjectHierarchyModule::setup()
 {
   this->Superclass::setup();
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (app)
   {
     // Register settings panel

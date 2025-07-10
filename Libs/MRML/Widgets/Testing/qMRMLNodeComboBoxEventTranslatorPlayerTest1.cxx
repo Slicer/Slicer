@@ -63,7 +63,7 @@ void checkFinalWidgetState(void* data)
 }
 
 //-----------------------------------------------------------------------------
-int qMRMLNodeComboBoxEventTranslatorPlayerTest1(int argc, char * argv [] )
+int qMRMLNodeComboBoxEventTranslatorPlayerTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

@@ -166,7 +166,7 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
 
 
 //-----------------------------------------------------------
-//void vtkMRMLDiffusionImageVolumeNode::UpdateScene(vtkMRMLScene *scene)
+//void vtkMRMLDiffusionImageVolumeNode::UpdateScene(vtkMRMLScene* scene)
 //{
 //  Superclass::UpdateScene(scene);
 
@@ -177,7 +177,7 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
 //}
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionImageVolumeNode::UpdateReferenceID(const char *oldID, const char *newID)
+void vtkMRMLDiffusionImageVolumeNode::UpdateReferenceID(const char* oldID, const char* newID)
 {
   this->Superclass::UpdateReferenceID(oldID,newID);
   if (this->BaselineNodeID && !strcmp(oldID, this->BaselineNodeID))
@@ -214,9 +214,9 @@ if (this->DiffusionWeightedNodeID != nullptr && this->Scene->GetNodeByID(this->D
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLDiffusionImageVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLDiffusionImageVolumeNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }

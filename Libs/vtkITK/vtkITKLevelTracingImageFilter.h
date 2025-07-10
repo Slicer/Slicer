@@ -19,7 +19,7 @@
 class VTK_ITK_EXPORT vtkITKLevelTracingImageFilter : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkITKLevelTracingImageFilter *New();
+  static vtkITKLevelTracingImageFilter* New();
   vtkTypeMacro(vtkITKLevelTracingImageFilter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -39,8 +39,8 @@ protected:
   vtkITKLevelTracingImageFilter();
   ~vtkITKLevelTracingImageFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   int Seed[3];
   int Plane;

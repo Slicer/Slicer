@@ -27,15 +27,15 @@
 
 //------------------------------------------------------------------------------
 qSlicerSimpleMarkupsWidgetPlugin
-::qSlicerSimpleMarkupsWidgetPlugin(QObject *_parent)
+::qSlicerSimpleMarkupsWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerSimpleMarkupsWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerSimpleMarkupsWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qSlicerSimpleMarkupsWidget* _widget
     = new qSlicerSimpleMarkupsWidget(_parent);

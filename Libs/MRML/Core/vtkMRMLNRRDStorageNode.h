@@ -26,7 +26,7 @@ class vtkTeemNRRDReader;
 class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
 {
   public:
-  static vtkMRMLNRRDStorageNode *New();
+  static vtkMRMLNRRDStorageNode* New();
   vtkTypeMacro(vtkMRMLNRRDStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -42,7 +42,7 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Storage, Model)
@@ -55,10 +55,10 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
 
   ///
   /// Access the nrrd header fields to create a diffusion gradient table
-  int ParseDiffusionInformation(vtkTeemNRRDReader *reader,vtkDoubleArray *grad,vtkDoubleArray *bvalues);
+  int ParseDiffusionInformation(vtkTeemNRRDReader* reader,vtkDoubleArray* grad,vtkDoubleArray* bvalues);
 
   /// Return true if the node can be read in.
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   ///
   /// Configure the storage node for data exchange. This is an
@@ -86,10 +86,10 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
   /// Convert compression parameter string to gzip compression level
   int GetGzipCompressionLevelFromCompressionParameter(std::string parameter);

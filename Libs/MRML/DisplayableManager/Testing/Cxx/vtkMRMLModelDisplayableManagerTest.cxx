@@ -155,7 +155,7 @@ int vtkMRMLModelDisplayableManagerTest(int argc, char* argv[])
     windowToImageFilter->Update();
 
     vtkNew<vtkTesting> testHelper;
-    testHelper->AddArguments(argc, const_cast<const char **>(argv));
+    testHelper->AddArguments(argc, const_cast<const char**>(argv));
 
     std::string screenshootFilename = testHelper->GetDataRoot();
     screenshootFilename += "/Baseline/vtkMRMLCameraDisplayableManagerTest1.png";

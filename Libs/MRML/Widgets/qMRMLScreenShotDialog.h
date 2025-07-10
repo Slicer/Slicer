@@ -53,7 +53,7 @@ public:
     FullLayout = 4
   };
 
-  qMRMLScreenShotDialog(QWidget *parent = nullptr);
+  qMRMLScreenShotDialog(QWidget* parent = nullptr);
   ~qMRMLScreenShotDialog() override;
 
   /// Set/Get layout manager

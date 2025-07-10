@@ -267,7 +267,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const
+bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, qSlicerIO::IOProperties& ioProperties)const
 {
 
   //
@@ -286,7 +286,7 @@ bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList &fileInfoList, QFil
       QMutableListIterator<QFileInfo> fileInfoIterator(fileInfoList);
       while (fileInfoIterator.hasNext())
       {
-        const QString &path = fileInfoIterator.next().absoluteFilePath();
+        const QString& path = fileInfoIterator.next().absoluteFilePath();
         if (path == archetypeFileInfo.absoluteFilePath())
         {
           continue;

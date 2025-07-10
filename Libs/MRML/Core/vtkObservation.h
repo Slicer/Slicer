@@ -45,7 +45,7 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   public:
 
   /// The Usual vtk class functions
-  static vtkObservation *New();
+  static vtkObservation* New();
   vtkTypeMacro(vtkObservation,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -106,12 +106,12 @@ protected:
 
   ///
   /// EventBroker that 'owns' this observation
-  vtkEventBroker *EventBroker;
+  vtkEventBroker* EventBroker;
 
   ///
   /// Holder for callback that this object wants called when either
   /// the subject or the observer triggers and event
-  vtkCallbackCommand *ObservationCallbackCommand;
+  vtkCallbackCommand* ObservationCallbackCommand;
 
   ///
   /// Flag that tells the broker that this observation
@@ -121,7 +121,7 @@ protected:
 
   ///
   /// Holder for Subject
-  vtkObject *Subject;
+  vtkObject* Subject;
 
   ///
   /// Holder for Event
@@ -129,11 +129,11 @@ protected:
 
   ///
   /// Holder for Observer
-  vtkObject *Observer;
+  vtkObject* Observer;
 
   ///
   /// Holder for callback that the Observer wants to have run when Event happens
-  vtkCallbackCommand *CallbackCommand;
+  vtkCallbackCommand* CallbackCommand;
 
   ///
   /// data passed to the observation by the subject
@@ -141,11 +141,11 @@ protected:
 
   ///
   /// Holder for script as an alternative to the callback command
-  char *Script;
+  char* Script;
 
   ///
   /// Holder for comment string
-  char *Comment;
+  char* Comment;
 
   /// Priority of the observer
   float Priority;

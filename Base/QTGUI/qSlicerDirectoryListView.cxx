@@ -75,7 +75,7 @@ void qSlicerDirectoryListViewPrivate::init()
   this->ListView->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->ListView->setSelectionMode(QAbstractItemView::ExtendedSelection);
   this->ListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  QHBoxLayout * layout = new QHBoxLayout();
+  QHBoxLayout* layout = new QHBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(this->ListView);
   q->setLayout(layout);
@@ -92,7 +92,7 @@ void qSlicerDirectoryListViewPrivate::addDirectory(const QString& path)
   {
     return;
   }
-  QStandardItem * item = new QStandardItem(path);
+  QStandardItem* item = new QStandardItem(path);
   item->setData(QVariant(absolutePath), Qt::ToolTipRole);
   item->setData(QVariant(absolutePath), qSlicerDirectoryListViewPrivate::AbsolutePathRole);
   this->DirectoryListModel.appendRow(item);
@@ -245,7 +245,7 @@ void qSlicerDirectoryListView::setDirectoryList(const QStringList& paths)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerDirectoryListView::dragEnterEvent(QDragEnterEvent *event)
+void qSlicerDirectoryListView::dragEnterEvent(QDragEnterEvent* event)
 {
   event->mimeData()->hasFormat("text/uri-list");
   {
@@ -254,7 +254,7 @@ void qSlicerDirectoryListView::dragEnterEvent(QDragEnterEvent *event)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerDirectoryListView::dropEvent(QDropEvent *event)
+void qSlicerDirectoryListView::dropEvent(QDropEvent* event)
 {
   foreach(QUrl url, event->mimeData()->urls())
   {

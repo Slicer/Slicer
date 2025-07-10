@@ -47,7 +47,7 @@ public:
   /// Data types supported by the table. Used in qMRMLTableModel for visualization.
 
 public:
-  static vtkMRMLTableNode *New();
+  static vtkMRMLTableNode* New();
   vtkTypeMacro(vtkMRMLTableNode,vtkMRMLStorableNode);
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -76,7 +76,7 @@ public:
 
   ///
   /// Method to propagate events generated in mrml
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   //----------------------------------------------------------------
   /// Get and Set Macros
@@ -188,7 +188,7 @@ public:
   /// Get column index of the first column by the specified name.
   /// Returns -1 if no such column is found.
   int GetColumnIndex(const char* columnName);
-  int GetColumnIndex(const std::string &columnName);
+  int GetColumnIndex(const std::string& columnName);
   ///@}
 
   /// Get column index from column pointer.

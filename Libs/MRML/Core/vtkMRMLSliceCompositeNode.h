@@ -28,7 +28,7 @@ class vtkMRMLVolumeNode;
 class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLSliceCompositeNode *New();
+  static vtkMRMLSliceCompositeNode* New();
   vtkTypeMacro(vtkMRMLSliceCompositeNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -52,7 +52,7 @@ public:
   /// \sa GetNthLayerVolumeID
   const char* GetBackgroundVolumeID();
   void SetBackgroundVolumeID(const char* id);
-  void SetReferenceBackgroundVolumeID(const char *id) { this->SetBackgroundVolumeID(id); }
+  void SetReferenceBackgroundVolumeID(const char* id) { this->SetBackgroundVolumeID(id); }
   /// @}
 
   /// @{
@@ -60,7 +60,7 @@ public:
   /// \sa GetNthLayerVolumeID
   const char* GetForegroundVolumeID();
   void SetForegroundVolumeID(const char* id);
-  void SetReferenceForegroundVolumeID(const char *id) { this->SetForegroundVolumeID(id); }
+  void SetReferenceForegroundVolumeID(const char* id) { this->SetForegroundVolumeID(id); }
   /// @}
 
   /// @{
@@ -68,7 +68,7 @@ public:
   /// \sa GetNthLayerVolumeID
   const char* GetLabelVolumeID();
   void SetLabelVolumeID(const char* id);
-  void SetReferenceLabelVolumeID(const char *id) { this->SetLabelVolumeID(id); }
+  void SetReferenceLabelVolumeID(const char* id) { this->SetLabelVolumeID(id); }
   /// @}
 
   enum
@@ -177,10 +177,10 @@ public:
   /// No name (i.e. "") by default. Typical names are colors:
   /// "Red", "Green", "Yellow"... to uniquely define the slice node
   /// \sa vtkMRMLSliceNode::SetLayoutName
-  void SetLayoutName(const char *layoutName) {
+  void SetLayoutName(const char* layoutName) {
     this->SetSingletonTag(layoutName);
   }
-  char *GetLayoutName() {
+  char* GetLayoutName() {
     return this->GetSingletonTag();
   }
   /// @}

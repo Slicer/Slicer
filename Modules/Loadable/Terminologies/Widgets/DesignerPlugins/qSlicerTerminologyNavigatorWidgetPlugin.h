@@ -32,7 +32,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_PLUGINS_EXPORT qSlicerTerminologyNav
 public:
   qSlicerTerminologyNavigatorWidgetPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget* parent) override;
+  QWidget* createWidget(QWidget* parent) override;
   QString  domXml() const override;
   QString  includeFile() const override;
   bool     isContainer() const override;

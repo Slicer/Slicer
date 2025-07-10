@@ -473,9 +473,9 @@ bool readFileIntoString(const char* filename, std::string& output)
 class vtkRenderRequestCallback : public vtkCommand
 {
 public:
-  static vtkRenderRequestCallback *New()
+  static vtkRenderRequestCallback* New()
     { return new vtkRenderRequestCallback; }
-  void SetRenderer(vtkRenderer *renderer)
+  void SetRenderer(vtkRenderer* renderer)
     { this->Renderer =  renderer; }
   int GetRenderRequestCount()
     { return this->RenderRequestCount; }
@@ -487,7 +487,7 @@ public:
   }
 protected:
   vtkRenderRequestCallback() = default;
-  vtkRenderer * Renderer{nullptr};
+  vtkRenderer* Renderer{nullptr};
   int           RenderRequestCount{0};
 };
 
@@ -520,7 +520,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   vtkNew<vtkMRMLViewNode> viewNode;
   viewNode->SetLayoutName("1");
   viewNode->SetLayoutLabel("1");
-  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode.GetPointer());
+  vtkMRMLNode* nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
   {
     std::cerr << "Failed to add vtkMRMLViewNode" << std::endl;
@@ -552,7 +552,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   }
 
   /*// Check if GetDisplayableManagerByClassName works as expected
-  vtkMRMLCameraDisplayableManager * cameraDM2 =
+  vtkMRMLCameraDisplayableManager* cameraDM2 =
       vtkMRMLCameraDisplayableManager::SafeDownCast(
           factory->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
   if (cameraDM2 != cameraDM)
@@ -562,7 +562,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  vtkMRMLViewDisplayableManager * viewDM2 =
+  vtkMRMLViewDisplayableManager* viewDM2 =
       vtkMRMLViewDisplayableManager::SafeDownCast(
           factory->GetDisplayableManagerByClassName("vtkMRMLViewDisplayableManager"));
   if (viewDM2 != viewDM)
@@ -615,7 +615,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   }
 
   // Interactor style should be vtkMRMLThreeDViewInteractorStyle
-  vtkInteractorObserver * currentInteractoryStyle = ri->GetInteractorStyle();
+  vtkInteractorObserver* currentInteractoryStyle = ri->GetInteractorStyle();
   if (!vtkInteractorStyle3D::SafeDownCast(currentInteractoryStyle))
   {
     std::cerr << "Expected interactorStyle: vtkInteractorStyle3D" << std::endl;
@@ -626,7 +626,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 
   // Save current scene
   vtkNew<vtkTesting> testHelper;
-  testHelper->AddArguments(argc, const_cast<const char **>(argv));
+  testHelper->AddArguments(argc, const_cast<const char**>(argv));
   std::string savedScene = testHelper->GetTempDirectory();
   savedScene += "/vtkMRMLCameraDisplayableManagerTest1_saved.mrml";
   scene->SetVersion("Slicer4.4.0"); // Force scene version to be the same as in the baseline scene file

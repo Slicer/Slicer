@@ -29,7 +29,7 @@ qSlicerWidgetPlugin::qSlicerWidgetPlugin(QObject* parent)
 }
 
 // --------------------------------------------------------------------------
-QWidget *qSlicerWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qSlicerWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qSlicerWidget* widget = new qSlicerWidget(parentWidget);
   QPalette slicerPalette = widget->palette();

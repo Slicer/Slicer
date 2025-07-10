@@ -33,13 +33,13 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
   int n = this->GetNumberOfLines();
   if (n)
   {
-    vtkCellArray *lines = this->GetLines();
+    vtkCellArray* lines = this->GetLines();
     lines->InitTraversal();
     of << " linePtsID=\"";
     for (int i = 0; i < n; i++)
     {
       vtkIdType npts = 0;
-      const vtkIdType *pts = nullptr;
+      const vtkIdType* pts = nullptr;
       lines->GetNextCell(npts, pts);
       for (int j= 0; j < npts; j++)
       {
@@ -141,7 +141,7 @@ void vtkMRMLAnnotationLinesNode::ReadXMLAttributes(const char** atts)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLAnnotationLinesNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLAnnotationLinesNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 
@@ -150,9 +150,9 @@ void vtkMRMLAnnotationLinesNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationLinesNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLAnnotationLinesNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -179,13 +179,13 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
   int n = this->GetNumberOfLines();
   if (n)
   {
-    vtkCellArray *lines = this->GetLines();
+    vtkCellArray* lines = this->GetLines();
     lines->InitTraversal();
     os << indent << "linePtsID: " ;
     for (int i = 0; i < n; i++ )
     {
       vtkIdType npts;
-      const vtkIdType *pts = nullptr;
+      const vtkIdType* pts = nullptr;
       lines->GetNextCell(npts, pts);
       if (!pts)
       {
@@ -235,7 +235,7 @@ vtkMRMLAnnotationLineDisplayNode* vtkMRMLAnnotationLinesNode::GetAnnotationLineD
   int nnodes = this->GetNumberOfDisplayNodes();
   for (int n=0; n<nnodes; n++)
   {
-    vtkMRMLAnnotationLineDisplayNode * node = vtkMRMLAnnotationLineDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
+    vtkMRMLAnnotationLineDisplayNode* node = vtkMRMLAnnotationLineDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
 
     if (node && node->IsA("vtkMRMLAnnotationLineDisplayNode"))
     {
@@ -249,7 +249,7 @@ vtkMRMLAnnotationLineDisplayNode* vtkMRMLAnnotationLinesNode::GetAnnotationLineD
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesNode::CreateAnnotationLineDisplayNode()
 {
-  vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode* node = this->GetAnnotationLineDisplayNode();
   if (node) return;
   if (!this->GetScene())
   {
@@ -280,9 +280,9 @@ void vtkMRMLAnnotationLinesNode::CreatePolyData()
 
   if (!this->GetLines() || !this->InitializeLinesFlag)
   {
-    // Remember vtkCellArray *polyLines = this->PolyData->GetLines() is never
+    // Remember vtkCellArray* polyLines = this->PolyData->GetLines() is never
     // null as it is a static variable !
-    vtkCellArray *polyLines = vtkCellArray::New();
+    vtkCellArray* polyLines = vtkCellArray::New();
     this->GetPolyData()->SetLines(polyLines);
     polyLines->Delete();
     this->InitializeLinesFlag = true;
@@ -317,7 +317,7 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
     this->ResetLines();
   }
 
-  vtkCellArray *lines = this->GetLines();
+  vtkCellArray* lines = this->GetLines();
   int n = this->GetNumberOfLines();
   if (id< 0 || id > n-1)
   {
@@ -331,9 +331,9 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
   lines->InitTraversal();
   // cellLine->SetTraversalLocation(id);
 
-  const vtkIdType *cPts = nullptr;
+  const vtkIdType* cPts = nullptr;
   vtkIdType cNpts = 0;
-  const vtkIdType *nPts = nullptr;
+  const vtkIdType* nPts = nullptr;
   vtkIdType nNpts = 0;
   for (int i = 0; i <= id; i++ )
   {
@@ -353,7 +353,7 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
 
   for (int j = NUM_CP_ATTRIBUTE_TYPES ; j < NUM_LINE_ATTRIBUTE_TYPES; j ++)
   {
-      vtkBitArray *dataArray = dynamic_cast <vtkBitArray *> (this->GetAnnotationAttributes(j));
+      vtkBitArray* dataArray = dynamic_cast <vtkBitArray*> (this->GetAnnotationAttributes(j));
       if (!dataArray || dataArray->GetSize() != n)
       {
           vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << this->GetAttributeTypesEnumAsString(j) << " is out of sync with number of lines" );
@@ -386,7 +386,7 @@ int vtkMRMLAnnotationLinesNode::GetEndPointsId(vtkIdType id, vtkIdType ctrlPtsID
   lines->InitTraversal();
 
   vtkIdType npts = 0;
-  const vtkIdType *pts = nullptr;
+  const vtkIdType* pts = nullptr;
 
   for (int i = 0; i < id; i++ )
   {
@@ -415,7 +415,7 @@ void vtkMRMLAnnotationLinesNode::ResetLinesAttributesAll() {
 }
 
 //-------------------------------------------------------------------------
-const char *vtkMRMLAnnotationLinesNode::GetAttributeTypesEnumAsString(int val)
+const char* vtkMRMLAnnotationLinesNode::GetAttributeTypesEnumAsString(int val)
 {
   if (val < vtkMRMLAnnotationControlPointsNode::NUM_CP_ATTRIBUTE_TYPES) {
     return vtkMRMLAnnotationControlPointsNode::GetAttributeTypesEnumAsString(val);
@@ -454,7 +454,7 @@ int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtId
     return 0;
   }
 
-  vtkPoints *points = this->GetPoints();
+  vtkPoints* points = this->GetPoints();
   if (!points->GetPoint(ctrlPtIdStart) || !points->GetPoint(ctrlPtIdEnd))
   {
     vtkErrorMacro("At least one control point does not exists");

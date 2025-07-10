@@ -54,7 +54,7 @@ bool SequenceSortedByIndex(vtkMRMLSequenceNode* seqNode)
 }
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSequenceNodeTest1( int, char * [] )
+int vtkMRMLSequenceNodeTest1( int, char*[])
 {
   vtkNew< vtkMRMLSequenceNode > seqNode;
   EXERCISE_ALL_BASIC_MRML_METHODS(seqNode.GetPointer());
@@ -173,7 +173,7 @@ int vtkMRMLSequenceNodeTest1( int, char * [] )
 
 /*
 //-----------------------------------------------------------------------------
-bool testAddInvalidFile(const char * filePath)
+bool testAddInvalidFile(const char* filePath)
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkSlicerTablesLogic> tablesLogic;
@@ -197,7 +197,7 @@ bool testAddInvalidFile(const char * filePath)
 }
 
 //-----------------------------------------------------------------------------
-bool testAddFile(const char * filePath)
+bool testAddFile(const char* filePath)
 {
   vtkNew<vtkSlicerTablesLogic> tablesLogic;
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();

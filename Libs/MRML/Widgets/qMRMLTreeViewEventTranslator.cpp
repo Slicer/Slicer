@@ -40,17 +40,17 @@
 #include <vtkMRMLScene.h>
 
 // ----------------------------------------------------------------------------
-qMRMLTreeViewEventTranslator::qMRMLTreeViewEventTranslator(QObject *parent)
+qMRMLTreeViewEventTranslator::qMRMLTreeViewEventTranslator(QObject* parent)
   : Superclass(parent)
 {
   this->CurrentObject = nullptr;
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLTreeViewEventTranslator::translateEvent(QObject *Object,
-                                             QEvent *Event,
+bool qMRMLTreeViewEventTranslator::translateEvent(QObject* Object,
+                                             QEvent* Event,
                                              int EventType,
-                                             bool &Error)
+                                             bool& Error)
 {
   Q_UNUSED(Error);
 
@@ -166,7 +166,7 @@ void qMRMLTreeViewEventTranslator::onDestroyed(QObject* /*Object*/)
 }
 
 // ----------------------------------------------------------------------------
-void qMRMLTreeViewEventTranslator::onCurrentNodeRenamed(const QString & newName)
+void qMRMLTreeViewEventTranslator::onCurrentNodeRenamed(const QString& newName)
 {
   emit recordEvent(this->CurrentObject, "currentNodeRenamed", newName);
 }

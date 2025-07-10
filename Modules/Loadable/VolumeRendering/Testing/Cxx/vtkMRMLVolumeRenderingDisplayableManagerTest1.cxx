@@ -68,7 +68,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   {
     std::cerr << "Must pass share directory as first argument to test" << std::endl;
   }
-  const char *moduleShareDirectory = argv[1];
+  const char* moduleShareDirectory = argv[1];
 
   // Renderer, RenderWindow and Interactor
   vtkNew<vtkRenderer> renderer;
@@ -205,7 +205,7 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
     windowToImageFilter->Update();
 
     vtkNew<vtkTesting> testHelper;
-    testHelper->AddArguments(argc, const_cast<const char **>(argv));
+    testHelper->AddArguments(argc, const_cast<const char**>(argv));
 
     std::string screenshootFilename = testHelper->GetDataRoot();
     screenshootFilename += "/Baseline/vtkMRMLCameraDisplayableManagerTest1.png";

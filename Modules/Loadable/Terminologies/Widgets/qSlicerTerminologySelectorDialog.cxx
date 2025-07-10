@@ -113,7 +113,7 @@ qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(QObject* pare
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologySelectorDialog::qSlicerTerminologySelectorDialog(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent)
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& initialTerminologyInfo, QObject* parent)
   : QObject(parent)
   , d_ptr(new qSlicerTerminologySelectorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
 {
@@ -148,7 +148,7 @@ bool qSlicerTerminologySelectorDialog::exec()
 
 //-----------------------------------------------------------------------------
 bool qSlicerTerminologySelectorDialog::getTerminology(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo, QObject* parent)
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo, QObject* parent)
 {
   // Open terminology dialog and store result
   qSlicerTerminologySelectorDialog dialog(terminologyInfo, parent);
@@ -176,7 +176,7 @@ bool qSlicerTerminologySelectorDialog::getTerminology(vtkSlicerTerminologyEntry*
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologySelectorDialog::terminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo )
 {
   Q_D(qSlicerTerminologySelectorDialog);
   terminologyInfo = d->TerminologyInfo;

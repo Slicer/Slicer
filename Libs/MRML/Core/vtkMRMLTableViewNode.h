@@ -33,7 +33,7 @@ class vtkMRMLTableNode;
 class VTK_MRML_EXPORT vtkMRMLTableViewNode : public vtkMRMLAbstractViewNode
 {
 public:
-  static vtkMRMLTableViewNode *New();
+  static vtkMRMLTableViewNode* New();
   vtkTypeMacro(vtkMRMLTableViewNode, vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -53,7 +53,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -61,11 +61,11 @@ public:
 
   ///
   /// Set the Table node id displayed in this Table View
-  void SetTableNodeID(const char *);
+  void SetTableNodeID(const char*);
 
   ///
   /// Get the Table node id displayed in this Table View
-  const char * GetTableNodeID();
+  const char* GetTableNodeID();
 
   ///
   /// Get the Table node displayed in this Table View

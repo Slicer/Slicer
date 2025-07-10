@@ -486,7 +486,7 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
     bool isEmpty = attributeExist.second;
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attributeExist.first).isEmpty(), isEmpty);
 
-    const char * inspectedNodeAttributeValue
+    const char* inspectedNodeAttributeValue
         = this->NodeAttributeTableView->inspectedNode()->GetAttribute(attributeExist.first.toUtf8());
     if (isEmpty)
     {

@@ -45,15 +45,15 @@ qSlicerStyle::qSlicerStyle()
 qSlicerStyle::~qSlicerStyle() = default;
 
 //------------------------------------------------------------------------------
-QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const QStyleOptionComplex *opt,
-                                                       const QPoint &pt, const QWidget *widget) const
+QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const QStyleOptionComplex* opt,
+                                                       const QPoint& pt, const QWidget* widget) const
 {
   SubControl sc = SC_None;
   switch (cc) {
   // Hot area for the groove shall be the entire height of the widget
 #ifndef QT_NO_SLIDER
     case CC_Slider:
-        if (const QStyleOptionSlider *slider = qstyleoption_cast<const QStyleOptionSlider *>(opt)) {
+        if (const QStyleOptionSlider* slider = qstyleoption_cast<const QStyleOptionSlider*>(opt)) {
             QRect r = proxy()->subControlRect(cc, slider, SC_SliderHandle, widget);
             if (r.isValid() && r.contains(pt))
             {
@@ -92,8 +92,8 @@ QStyle::SubControl qSlicerStyle::hitTestComplexControl(ComplexControl cc, const 
 }
 
 // --------------------------------------------------------------------------
-int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption * option,
-                              const QWidget * widget)const
+int qSlicerStyle::pixelMetric(PixelMetric metric, const QStyleOption* option,
+                              const QWidget* widget)const
 {
   switch(metric)
   {
@@ -213,8 +213,8 @@ QPalette qSlicerStyle::standardDarkPalette()const
 }
 
 //------------------------------------------------------------------------------
-int qSlicerStyle::styleHint(StyleHint hint, const QStyleOption *opt, const QWidget *widget,
-                             QStyleHintReturn *returnData) const
+int qSlicerStyle::styleHint(StyleHint hint, const QStyleOption* opt, const QWidget* widget,
+                             QStyleHintReturn* returnData) const
 {
   int res;
   switch(hint)

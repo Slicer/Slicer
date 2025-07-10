@@ -26,7 +26,7 @@ class vtkPointSet;
 class VTK_MRML_EXPORT vtkMRMLModelStorageNode : public vtkMRMLStorageNode
 {
 public:
-  static vtkMRMLModelStorageNode *New();
+  static vtkMRMLModelStorageNode* New();
   vtkTypeMacro(vtkMRMLModelStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -43,7 +43,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Return true if the reference node can be read in
-  bool CanReadInReferenceNode(vtkMRMLNode *refNode) override;
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// Get/Set flag that controls if points are to be written in various coordinate systems
   vtkSetClampMacro(CoordinateSystem, int, 0, vtkMRMLStorageNode::CoordinateSystemType_Last-1);
@@ -71,10 +71,10 @@ protected:
   vtkMRMLModelNode* GetAssociatedDataNode();
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   /// Write data from a  referenced node
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
   static int GetCoordinateSystemFromFileHeader(const char* header);
 

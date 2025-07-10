@@ -177,7 +177,7 @@ void vtkSlicerCropVolumeLogic::RegisterNodes()
 //----------------------------------------------------------------------------
 int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 {
-  vtkMRMLScene *scene = this->GetMRMLScene();
+  vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
   {
     vtkErrorMacro("CropVolume: Invalid scene");
@@ -205,7 +205,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   }
 
   // Check/create output volume
-  vtkMRMLVolumeNode *outputVolume =
+  vtkMRMLVolumeNode* outputVolume =
     vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(pnode->GetOutputVolumeNodeID()));
   if (outputVolume)
   {
@@ -237,7 +237,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
       vtkErrorMacro("CropVolume: failed to create output volume");
       return -2;
     }
-    vtkMRMLTransformNode *outputTransform = outputVolume->GetParentTransformNode();
+    vtkMRMLTransformNode* outputTransform = outputVolume->GetParentTransformNode();
     if (outputTransform && !outputTransform->IsTransformToWorldLinear())
     {
       // Output node must not be under non-linear transform
@@ -492,8 +492,8 @@ int vtkSlicerCropVolumeLogic::CropInterpolated(vtkMRMLDisplayableNode* roi, vtkM
   outputIJKToRAS->SetElement(2, 3, roiXYZ[2] - roiRadius[2]);
 
   // account for the ROI parent transform, if present
-  vtkMRMLTransformNode *roiTransform = roi->GetParentTransformNode();
-  vtkMRMLTransformNode *outputTransform = outputVolume->GetParentTransformNode();
+  vtkMRMLTransformNode* roiTransform = roi->GetParentTransformNode();
+  vtkMRMLTransformNode* outputTransform = outputVolume->GetParentTransformNode();
   if (roiTransform && !roiTransform->IsTransformToWorldLinear())
   {
     // We can only display a If ROI is transformed with a warping transform then we ignore the transformation because non-linear

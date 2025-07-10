@@ -14,7 +14,7 @@
 #include "vtkMRMLDiffusionImageVolumeNode.h"
 #include "vtkMRMLScene.h"
 
-int vtkMRMLDiffusionImageVolumeNodeTest1(int , char * [] )
+int vtkMRMLDiffusionImageVolumeNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLDiffusionImageVolumeNode> node1;
   vtkNew<vtkMRMLScene> scene;

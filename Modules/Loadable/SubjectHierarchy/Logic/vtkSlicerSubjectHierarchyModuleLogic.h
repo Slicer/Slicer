@@ -45,7 +45,7 @@ public:
   static const char* CLONED_NODE_NAME_POSTFIX;
 
 public:
-  static vtkSlicerSubjectHierarchyModuleLogic *New();
+  static vtkSlicerSubjectHierarchyModuleLogic* New();
   vtkTypeMacro(vtkSlicerSubjectHierarchyModuleLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

@@ -23,7 +23,7 @@ vtkITKMorphologicalContourInterpolator::~vtkITKMorphologicalContourInterpolator(
 
 
 template <class T>
-void vtkITKMorphologicalContourInterpolatorExecute(vtkITKMorphologicalContourInterpolator *self, vtkImageData* input,
+void vtkITKMorphologicalContourInterpolatorExecute(vtkITKMorphologicalContourInterpolator* self, vtkImageData* input,
                 vtkImageData* vtkNotUsed(output),
                 T* inPtr, T* outPtr)
 {
@@ -77,20 +77,20 @@ void vtkITKMorphologicalContourInterpolatorExecute(vtkITKMorphologicalContourInt
 //
 //
 //
-void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData *input, vtkImageData *output)
+void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData* input, vtkImageData* output)
 {
   vtkDebugMacro(<< "Executing distance transform");
 
   //
   // Initialize and check input
   //
-  vtkPointData *pd = input->GetPointData();
+  vtkPointData* pd = input->GetPointData();
   if (pd ==nullptr)
   {
     vtkErrorMacro(<<"PointData is NULL");
     return;
   }
-  vtkDataArray *inScalars=pd->GetScalars();
+  vtkDataArray* inScalars=pd->GetScalars();
   if ( inScalars == nullptr )
   {
     vtkErrorMacro(<<"Scalars must be defined for distance transform");

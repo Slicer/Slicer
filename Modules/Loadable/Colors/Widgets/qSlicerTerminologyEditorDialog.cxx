@@ -112,7 +112,7 @@ qSlicerTerminologyEditorDialog::qSlicerTerminologyEditorDialog(QObject* parent)
 
 //-----------------------------------------------------------------------------
 qSlicerTerminologyEditorDialog::qSlicerTerminologyEditorDialog(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &initialTerminologyInfo, QObject* parent)
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& initialTerminologyInfo, QObject* parent)
   : QObject(parent)
   , d_ptr(new qSlicerTerminologyEditorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
 {
@@ -147,7 +147,7 @@ bool qSlicerTerminologyEditorDialog::exec()
 
 //-----------------------------------------------------------------------------
 bool qSlicerTerminologyEditorDialog::getTerminology(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo, QObject* parent)
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo, QObject* parent)
 {
   // Open terminology dialog and store result
   qSlicerTerminologyEditorDialog dialog(terminologyInfo, parent);
@@ -174,7 +174,7 @@ bool qSlicerTerminologyEditorDialog::getTerminology(vtkSlicerTerminologyEntry* t
 
 //-----------------------------------------------------------------------------
 void qSlicerTerminologyEditorDialog::terminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo )
 {
   Q_D(qSlicerTerminologyEditorDialog);
   terminologyInfo = d->TerminologyInfo;

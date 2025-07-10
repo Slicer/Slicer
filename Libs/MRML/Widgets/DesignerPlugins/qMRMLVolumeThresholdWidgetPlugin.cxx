@@ -1,12 +1,12 @@
 #include "qMRMLVolumeThresholdWidgetPlugin.h"
 #include "qMRMLVolumeThresholdWidget.h"
 
-qMRMLVolumeThresholdWidgetPlugin::qMRMLVolumeThresholdWidgetPlugin(QObject *_parent)
+qMRMLVolumeThresholdWidgetPlugin::qMRMLVolumeThresholdWidgetPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
-QWidget *qMRMLVolumeThresholdWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLVolumeThresholdWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLVolumeThresholdWidget* _widget = new qMRMLVolumeThresholdWidget(_parent);
   return _widget;

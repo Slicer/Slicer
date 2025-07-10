@@ -47,19 +47,19 @@
 
 //-----------------------------------------------------------------------------
 bool isImageDataValid(int line, vtkAlgorithmOutput* imageDataConnection);
-vtkMRMLScalarVolumeNode * TestScalarVolumeLoading( const char* volumeName,
+vtkMRMLScalarVolumeNode* TestScalarVolumeLoading( const char* volumeName,
                                                    vtkSlicerVolumesLogic* logic );
-vtkMRMLLabelMapVolumeNode * TestLabelMapVolumeLoading( const char* volumeName,
+vtkMRMLLabelMapVolumeNode* TestLabelMapVolumeLoading( const char* volumeName,
                                                        vtkSlicerVolumesLogic* logic );
 int TestCheckForLabelVolumeValidity( vtkMRMLScalarVolumeNode* scalarVolume,
                                      vtkMRMLLabelMapVolumeNode* labelMapVolume,
                                      vtkSlicerVolumesLogic* logic );
 int TestCloneVolume( vtkMRMLScalarVolumeNode* scalarVolume,
                      vtkMRMLScene* scene,
-                     vtkSlicerVolumesLogic *logic);
+                     vtkSlicerVolumesLogic* logic);
 
 //-----------------------------------------------------------------------------
-int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
+int vtkSlicerVolumesLogicTest1( int argc, char* argv[] )
 {
   itk::itkFactoryRegistration();
 
@@ -88,10 +88,10 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
   logic->SetMRMLScene(scene.GetPointer());
   const char* volumeName = argv[1];
 
-  vtkMRMLScalarVolumeNode * scalarVolume = TestScalarVolumeLoading(volumeName, logic.GetPointer());
+  vtkMRMLScalarVolumeNode* scalarVolume = TestScalarVolumeLoading(volumeName, logic.GetPointer());
   CHECK_NOT_NULL(scalarVolume);
 
-  vtkMRMLLabelMapVolumeNode * labelMapVolume = TestLabelMapVolumeLoading(volumeName, logic.GetPointer());
+  vtkMRMLLabelMapVolumeNode* labelMapVolume = TestLabelMapVolumeLoading(volumeName, logic.GetPointer());
   CHECK_NOT_NULL(labelMapVolume);
   CHECK_INT(labelMapVolume->GetVolumeDisplayNode()->GetSliceIntersectionThickness(), 3);
 
@@ -134,7 +134,7 @@ bool isImageDataValid(int line, vtkAlgorithmOutput* imageDataConnection)
     return false;
   }
 
-  vtkInformation *scalarInfo = vtkDataObject::GetActiveFieldInformation(info,
+  vtkInformation* scalarInfo = vtkDataObject::GetActiveFieldInformation(info,
     vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
   if (!scalarInfo)
   {
@@ -147,7 +147,7 @@ bool isImageDataValid(int line, vtkAlgorithmOutput* imageDataConnection)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode * TestScalarVolumeLoading( const char* volumeName,
+vtkMRMLScalarVolumeNode* TestScalarVolumeLoading( const char* volumeName,
                                                    vtkSlicerVolumesLogic* logic )
 {
   vtkMRMLVolumeNode* volume =
@@ -164,7 +164,7 @@ vtkMRMLScalarVolumeNode * TestScalarVolumeLoading( const char* volumeName,
     return nullptr;
   }
 
-  vtkMRMLScalarVolumeNode *scalarVolume =
+  vtkMRMLScalarVolumeNode* scalarVolume =
     vtkMRMLScalarVolumeNode::SafeDownCast(volume);
   if(!scalarVolume)
   {
@@ -177,7 +177,7 @@ vtkMRMLScalarVolumeNode * TestScalarVolumeLoading( const char* volumeName,
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLLabelMapVolumeNode * TestLabelMapVolumeLoading( const char* volumeName,
+vtkMRMLLabelMapVolumeNode* TestLabelMapVolumeLoading( const char* volumeName,
                                                        vtkSlicerVolumesLogic* logic )
 {
   vtkMRMLVolumeNode* volume =
@@ -194,7 +194,7 @@ vtkMRMLLabelMapVolumeNode * TestLabelMapVolumeLoading( const char* volumeName,
     return nullptr;
   }
 
-  vtkMRMLLabelMapVolumeNode *labelMapVolume =
+  vtkMRMLLabelMapVolumeNode* labelMapVolume =
     vtkMRMLLabelMapVolumeNode::SafeDownCast(volume);
   if(!labelMapVolume)
   {

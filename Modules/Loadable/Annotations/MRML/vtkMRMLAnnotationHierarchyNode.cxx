@@ -46,7 +46,7 @@ void vtkMRMLAnnotationHierarchyNode::WriteXML(ostream& of, int indent)
 void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
 {
 
-  vtkMRMLScene *scene = this->GetScene();
+  vtkMRMLScene* scene = this->GetScene();
   if (scene == nullptr)
   {
     vtkErrorMacro("GetChildrenDisplayableNodes: scene is null, cannot find children of this node");
@@ -55,7 +55,7 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
 
   vtkCollection* deleteList = vtkCollection::New();
 
-  vtkMRMLAnnotationHierarchyNode *hnode = nullptr;
+  vtkMRMLAnnotationHierarchyNode* hnode = nullptr;
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
   for (int n=0; n < numNodes; n++)
   {
@@ -109,19 +109,19 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationHierarchyNode::GetDirectChildren(vtkCollection *children)
+void vtkMRMLAnnotationHierarchyNode::GetDirectChildren(vtkCollection* children)
 {
   this->GetChildren(children, 1);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationHierarchyNode::GetAllChildren(vtkCollection *children)
+void vtkMRMLAnnotationHierarchyNode::GetAllChildren(vtkCollection* children)
 {
   this->GetChildren(children, -1);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection *children, int level)
+void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection* children, int level)
 {
   if (children == nullptr)
   {
@@ -133,14 +133,14 @@ void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection *children, int le
     return;
   }
 
-  vtkMRMLScene *scene = this->GetScene();
+  vtkMRMLScene* scene = this->GetScene();
   if (scene == nullptr)
   {
     vtkErrorMacro("GetChildrenDisplayableNodes: scene is null, cannot find children of this node");
     return;
   }
 
-  vtkMRMLAnnotationHierarchyNode *hnode = nullptr;
+  vtkMRMLAnnotationHierarchyNode* hnode = nullptr;
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
   for (int n=0; n < numNodes; n++)
   {

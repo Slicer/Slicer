@@ -41,22 +41,22 @@ class QMRML_WIDGETS_EXPORT qMRMLModelInfoWidget
   QVTK_OBJECT
 
 public:
-  qMRMLModelInfoWidget(QWidget *parent=nullptr);
+  qMRMLModelInfoWidget(QWidget* parent=nullptr);
   ~qMRMLModelInfoWidget() override;
 
   vtkMRMLModelNode* mrmlModelNode()const;
 
 public slots:
   /// Utility function to be connected with generic signals
-  void setMRMLModelNode(vtkMRMLNode *node);
+  void setMRMLModelNode(vtkMRMLNode* node);
   /// Set the Model node to display
-  void setMRMLModelNode(vtkMRMLModelNode *node);
+  void setMRMLModelNode(vtkMRMLModelNode* node);
 
 protected slots:
   void updateWidgetFromMRML();
 
 protected:
-  void showEvent(QShowEvent *) override;
+  void showEvent(QShowEvent*) override;
   QScopedPointer<qMRMLModelInfoWidgetPrivate> d_ptr;
 
 private:

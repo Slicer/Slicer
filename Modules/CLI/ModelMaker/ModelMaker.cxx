@@ -62,7 +62,7 @@ Version:   $Revision$
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
 
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
@@ -174,7 +174,7 @@ int main(int argc, char * argv[])
   }
 
   // make sure we have a model hierarchy node
-  vtkMRMLNode *                              rnd = modelScene->GetNodeByID(modelHierarchyID);
+  vtkMRMLNode* rnd = modelScene->GetNodeByID(modelHierarchyID);
   vtkSmartPointer<vtkMRMLModelHierarchyNode> rtnd;
   if (!rnd)
   {
@@ -197,7 +197,7 @@ int main(int argc, char * argv[])
   }
 
   // if there's a color based model hierarchy file, import it into the model scene
-  vtkMRMLModelHierarchyNode *topColorHierarchyNode = nullptr;
+  vtkMRMLModelHierarchyNode* topColorHierarchyNode = nullptr;
   if (ModelHierarchyFile.length() > 0)
   {
     // only try importing if the scene file exists
@@ -220,7 +220,7 @@ int main(int argc, char * argv[])
     }
 
     // make sure we have a new model hierarchy node
-    vtkMRMLNode * mnode = modelScene->GetNthNodeByClass(1,"vtkMRMLModelHierarchyNode");
+    vtkMRMLNode* mnode = modelScene->GetNthNodeByClass(1,"vtkMRMLModelHierarchyNode");
     if (mnode != nullptr)
     {
       topColorHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(mnode);
@@ -271,7 +271,7 @@ int main(int argc, char * argv[])
 
   // vtk and helper variables
   vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader;
-  vtkImageData *                                    image;
+  vtkImageData* image;
   vtkSmartPointer<vtkDiscreteFlyingEdges3D>         cubes;
   vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smoother;
   bool                                              makeMultiple = false;
@@ -575,8 +575,8 @@ int main(int argc, char * argv[])
       watchImageAccumulate.QuietOn();
     }
     hist->Update();
-    double *max = hist->GetMax();
-    double *min = hist->GetMin();
+    double* max = hist->GetMax();
+    double* min = hist->GetMin();
     if (min[0] == 0)
     {
       if (debug)
@@ -757,8 +757,8 @@ int main(int argc, char * argv[])
         watchImageAccumulate.QuietOn();
         }
       hist->Update();
-      double *max = hist->GetMax();
-      double *min = hist->GetMin();
+      double* max = hist->GetMax();
+      double* min = hist->GetMin();
       if (min[0] == 0)
         {
         if (debug)
@@ -1637,7 +1637,7 @@ int main(int argc, char * argv[])
         }
         vtkNew<vtkMRMLModelDisplayNode> dnode;
         dnode->SetColor(0.5, 0.5, 0.5);
-        double *rgba;
+        double* rgba;
         if (colorNode != nullptr)
         {
           rgba = colorNode->GetLookupTable()->GetTableValue(i);
@@ -1688,7 +1688,7 @@ int main(int argc, char * argv[])
             std::cout << "No color node, guessing at color name being same as label number " << colorName.c_str() << std::endl;
           }
         }
-        vtkMRMLNode *mrmlNode = nullptr;
+        vtkMRMLNode* mrmlNode = nullptr;
         if (colorName.compare("") != 0)
         {
           mrmlNode = modelScene->GetFirstNodeByName(colorName.c_str());
@@ -1709,7 +1709,7 @@ int main(int argc, char * argv[])
         else
         {
           // use the template color hierarchy
-          vtkMRMLModelHierarchyNode *colorHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
+          vtkMRMLModelHierarchyNode* colorHierarchyNode = vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
           if (colorHierarchyNode)
           {
             colorHierarchyNode->SetAssociatedNodeID(mnode->GetID());
@@ -1785,7 +1785,7 @@ int main(int argc, char * argv[])
           }
           if (vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i]) != nullptr)
           {
-            vtkMRMLDisplayNode *hierarchyDisplayNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i])->GetDisplayNode();
+            vtkMRMLDisplayNode* hierarchyDisplayNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i])->GetDisplayNode();
             if (hierarchyDisplayNode)
             {
               if (debug)

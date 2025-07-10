@@ -32,7 +32,7 @@ public:
   typedef T                                    ComponentType;
   typedef vnl_matrix_fixed<T, NRows, NColumns> InternalMatrixType;
   MatrixExtended();
-  MatrixExtended( const InternalMatrixType & matrix );
+  MatrixExtended( const InternalMatrixType& matrix );
   MatrixExtended( const Self & matrix );
   MatrixExtended( const Superclass & matrix );
   // /Cast the matrix
@@ -42,7 +42,7 @@ public:
 
   Self operator=( const Superclass & matrix );
 
-  Self operator=( const InternalMatrixType & matrix );
+  Self operator=( const InternalMatrixType& matrix );
 
 };
 

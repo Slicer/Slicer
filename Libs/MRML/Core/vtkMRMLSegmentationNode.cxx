@@ -67,7 +67,7 @@ vtkMRMLNodeNewMacro(vtkMRMLSegmentationNode);
 vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
 {
   this->SegmentationModifiedCallbackCommand = vtkSmartPointer<vtkCallbackCommand>::New();
-  this->SegmentationModifiedCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
+  this->SegmentationModifiedCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
   this->SegmentationModifiedCallbackCommand->SetCallback(vtkMRMLSegmentationNode::SegmentationModifiedCallback);
 
   this->SegmentCenterTmp[0] = 0.0;

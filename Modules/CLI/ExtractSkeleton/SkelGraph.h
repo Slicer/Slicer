@@ -57,7 +57,7 @@ public:
   // If image spacing is highly anisotropic then longest path computation
   // may not give optimal results, and sampling distance (when calling
   // SampleAlongMaximalPath) may be uneven.
-  void ExtractSkeletalGraph(const unsigned char *image, const int dim[3], const double spacing[3]);
+  void ExtractSkeletalGraph(const unsigned char* image, const int dim[3], const double spacing[3]);
 
   // Extract maximal path between 2 points in the m_Graph
   void FindMaximalPath();
@@ -74,14 +74,14 @@ private:
   skel_branch* AddNewBranchToDo(std::list<skel_branch> &branchesToDo);
 
   // find all endpoints in image
-  void FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned char *image, const int dim[3]);
+  void FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned char* image, const int dim[3]);
 
   // tests whether (x,y,z) is an endpoint
-  int IsEndpoint(int x, int y, int z, const unsigned char *image, const int dim[3]);
+  int IsEndpoint(int x, int y, int z, const unsigned char* image, const int dim[3]);
 
   // returns a list of valid neighbors at act_point
   // points that exist in skeleton, but are yet unlabeled
-  void GetValidNeighbors(int* label_image, Coord3i &act_point, std::deque<Coord3i> &neighbors, const unsigned char *image, const int dim[3]);
+  void GetValidNeighbors(int* label_image, Coord3i &act_point, std::deque<Coord3i> &neighbors, const unsigned char* image, const int dim[3]);
 
   void ResetGraph();
 

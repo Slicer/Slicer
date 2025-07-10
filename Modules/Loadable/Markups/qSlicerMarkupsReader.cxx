@@ -144,12 +144,12 @@ bool qSlicerMarkupsReader::load(const IOProperties& properties)
 
   // pass to logic to do the loading
   this->userMessages()->ClearMessages();
-  char * nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toUtf8(), name.toUtf8(), this->userMessages());
+  char* nodeIDs = d->MarkupsLogic->LoadMarkups(fileName.toUtf8(), name.toUtf8(), this->userMessages());
   if (nodeIDs)
   {
     // returned a comma separated list of ids of the nodes that were loaded
     QStringList nodeIDList;
-    char *ptr = strtok(nodeIDs, ",");
+    char* ptr = strtok(nodeIDs, ",");
 
     while (ptr)
     {

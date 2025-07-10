@@ -55,7 +55,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
   public:
 
   /// The Usual vtk class functions
-  static vtkSlicerTransformLogic *New();
+  static vtkSlicerTransformLogic* New();
   vtkTypeMacro(vtkSlicerTransformLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override { Superclass::PrintSelf(os, indent); }
 
@@ -67,7 +67,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
 
   ///
   /// Read transform from file
-  vtkMRMLTransformNode* AddTransform(const char* filename, vtkMRMLScene *scene, vtkMRMLMessageCollection* userMessages=nullptr);
+  vtkMRMLTransformNode* AddTransform(const char* filename, vtkMRMLScene* scene, vtkMRMLMessageCollection* userMessages=nullptr);
 
   /// Generate polydata for 2D transform visualization
   /// Return true on success.
@@ -168,7 +168,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
   /// Returns TRANSFORM_GRID if the node contains a simple grid transform.
   /// Returns TRANSFORM_THINPLATESPLINE if the node contains a simple thin plate spline transform.
   /// Returns TRANSFORM_OTHER in all other cases.
-  static TransformKind GetTransformKind(vtkMRMLTransformNode *transformNode);
+  static TransformKind GetTransformKind(vtkMRMLTransformNode* transformNode);
 
 protected:
   vtkSlicerTransformLogic();

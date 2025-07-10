@@ -52,7 +52,7 @@ void vtkUserTagTable::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, const char *value)
+int vtkUserTagTable::AddKeywordValuePair ( const char* keyword, const char* value)
 {
 
   if ( this->TagTable && keyword != nullptr )
@@ -70,7 +70,7 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, const char *valu
     //--- add a new column whose name is
     //--- the new keyword, and whose value
     //--- is given by 'value'.
-    vtkStringArray *a = vtkStringArray::New();
+    vtkStringArray* a = vtkStringArray::New();
     a->SetName (keyword );
     a->SetNumberOfValues ( 1 );
     a->SetValue ( 0, value );
@@ -82,7 +82,7 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, const char *valu
 
 
 //----------------------------------------------------------------------------
-int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, void *value)
+int vtkUserTagTable::AddKeywordValuePair ( const char* keyword, void* value)
 {
 
   if ( this->TagTable && keyword != nullptr )
@@ -105,7 +105,7 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, void *value)
     //--- add a new column whose name is
     //--- the new keyword, and whose value
     //--- is given by 'value'.
-    vtkStringArray *a = vtkStringArray::New();
+    vtkStringArray* a = vtkStringArray::New();
     a->SetName (keyword );
     a->SetNumberOfValues ( 1 );
     a->SetValue ( 0, ss.str().c_str() );
@@ -119,7 +119,7 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, void *value)
 
 
 //----------------------------------------------------------------------------
-const char * vtkUserTagTable::GetUserTagKeyword ( int index)
+const char* vtkUserTagTable::GetUserTagKeyword ( int index)
 {
   if ( this->TagTable )
   {
@@ -156,10 +156,10 @@ int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
 
 
 //----------------------------------------------------------------------------
- const char * vtkUserTagTable::GetUserTagValue ( int index)
+ const char* vtkUserTagTable::GetUserTagValue ( int index)
  {
-  char * returnString = nullptr;
-  const char *val;
+  char* returnString = nullptr;
+  const char* val;
   vtkVariant d;
   std::string s;
 
@@ -173,7 +173,7 @@ int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
       s = d.ToString();
       size_t n = strlen(s.c_str()) + 1;
       val = s.c_str();
-      char *cptr = new char[n];
+      char* cptr = new char[n];
       returnString = cptr;
       do { *cptr++ = *val++; } while ( --n );
     }
@@ -183,10 +183,10 @@ int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
 
 
 //----------------------------------------------------------------------------
-const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
+const char* vtkUserTagTable::GetUserTagValue ( const char* keyword)
 {
-  char * returnString = nullptr;
-  const char *val;
+  char* returnString = nullptr;
+  const char* val;
   vtkVariant d;
   std::string ss;
 
@@ -197,7 +197,7 @@ const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
     {
       //--- get each column in table and check to see if
       //--- its name matches the keyword.
-      vtkStringArray *s =  vtkStringArray::SafeDownCast ( this->TagTable->GetColumn(i) );
+      vtkStringArray* s =  vtkStringArray::SafeDownCast ( this->TagTable->GetColumn(i) );
       if ( !strcmp (keyword,  s->GetName() ) )
       {
         //--- if we have a match, return the keyword's value
@@ -206,7 +206,7 @@ const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
         val = ss.c_str();
         size_t n = strlen(ss.c_str()) + 1;
         val = ss.c_str();
-        char *cptr = new char[n];
+        char* cptr = new char[n];
         returnString = cptr;
         do { *cptr++ = *val++; } while ( --n );
       }
@@ -217,7 +217,7 @@ const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
 
 
 //----------------------------------------------------------------------------
- int vtkUserTagTable::CheckTableForKeyword ( const char *keyword)
+ int vtkUserTagTable::CheckTableForKeyword ( const char* keyword)
  {
   if ( this->TagTable )
   {
@@ -227,7 +227,7 @@ const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
     {
       //--- get each column in table and check to see if
       //--- its name matches the keyword.
-      vtkStringArray *s =  vtkStringArray::SafeDownCast ( this->TagTable->GetColumn(i) );
+      vtkStringArray* s =  vtkStringArray::SafeDownCast ( this->TagTable->GetColumn(i) );
       ss << s->GetName ( );
       if ( !strcmp (keyword,  ss.str().c_str() ) )
       {
@@ -273,7 +273,7 @@ int vtkUserTagTable::GetNumberOfColumns ()
 
 
 //----------------------------------------------------------------------------
-int vtkUserTagTable::DeleteKeywordValuePair ( const char *keyword  )
+int vtkUserTagTable::DeleteKeywordValuePair ( const char* keyword  )
 {
   if ( this->TagTable )
   {

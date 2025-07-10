@@ -81,7 +81,7 @@ public:
   qSlicerExtensionsLocalWidgetPrivate(qSlicerExtensionsLocalWidget& object);
   void init();
 
-  QListWidgetItem* extensionItem(const QString &extensionName) const;
+  QListWidgetItem* extensionItem(const QString& extensionName) const;
 
   // Add/update/remove extension item
   QListWidgetItem* updateExtensionItem(const QString& extensionName);
@@ -196,16 +196,16 @@ public:
 class qSlicerExtensionsItemDelegate : public QStyledItemDelegate
 {
 public:
-  qSlicerExtensionsItemDelegate(qSlicerExtensionsLocalWidget * list,
-                                QObject * parent = nullptr)
+  qSlicerExtensionsItemDelegate(qSlicerExtensionsLocalWidget* list,
+                                QObject* parent = nullptr)
     : QStyledItemDelegate(parent), List(list) {}
 
   // --------------------------------------------------------------------------
-  void paint(QPainter * painter, const QStyleOptionViewItem& option,
+  void paint(QPainter* painter, const QStyleOptionViewItem& option,
                      const QModelIndex& index) const override
   {
     QStyleOptionViewItem modifiedOption = option;
-    QListWidgetItem * const item = this->List->itemFromIndex(index);
+    QListWidgetItem* const item = this->List->itemFromIndex(index);
     if (item && !item->data(qSlicerExtensionsLocalWidgetPrivate::EnabledRole).toBool())
     {
       modifiedOption.state &= ~QStyle::State_Enabled;
@@ -214,7 +214,7 @@ public:
   }
 
 protected:
-  qSlicerExtensionsLocalWidget * const List;
+  qSlicerExtensionsLocalWidget* const List;
 };
 
 // --------------------------------------------------------------------------
@@ -502,7 +502,7 @@ protected:
   }
 
   // --------------------------------------------------------------------------
-  void paintEvent(QPaintEvent *) override
+  void paintEvent(QPaintEvent*) override
   {
     QPainter painter(this);
     const QRect cr = this->contentsRect();
@@ -567,7 +567,7 @@ protected:
   }
 
   // --------------------------------------------------------------------------
-  void mouseMoveEvent(QMouseEvent * e) override
+  void mouseMoveEvent(QMouseEvent* e) override
   {
     Superclass::mouseMoveEvent(e);
 
@@ -588,7 +588,7 @@ protected:
   }
 
   // --------------------------------------------------------------------------
-  void mouseReleaseEvent(QMouseEvent * e) override
+  void mouseReleaseEvent(QMouseEvent* e) override
   {
     Superclass::mouseReleaseEvent(e);
     if (e->button() == Qt::LeftButton)
@@ -1149,7 +1149,7 @@ void qSlicerExtensionsLocalWidget::setExtensionInstallDownloadProgress(
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsLocalWidget::onModelExtensionEnabledChanged(const QString &extensionName, bool enabled)
+void qSlicerExtensionsLocalWidget::onModelExtensionEnabledChanged(const QString& extensionName, bool enabled)
 {
   Q_UNUSED(enabled);
   Q_D(qSlicerExtensionsLocalWidget);

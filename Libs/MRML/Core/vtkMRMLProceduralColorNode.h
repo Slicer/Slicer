@@ -27,7 +27,7 @@ class vtkColorTransferFunction;
 class VTK_MRML_EXPORT vtkMRMLProceduralColorNode : public vtkMRMLColorNode
 {
 public:
-  static vtkMRMLProceduralColorNode *New();
+  static vtkMRMLProceduralColorNode* New();
   vtkTypeMacro(vtkMRMLProceduralColorNode,vtkMRMLColorNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -47,7 +47,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -55,13 +55,13 @@ public:
 
   ///
   ///
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// return a text string describing the color look up table type
-  const char * GetTypeAsString() override;
+  const char* GetTypeAsString() override;
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
 
   /// The list of valid procedural types
   //enum
@@ -82,7 +82,7 @@ public:
 
   /// Set the color transfer function
   /// \sa ColorTransferFunction, GetColorTransferFunction()
-  virtual void SetAndObserveColorTransferFunction(vtkColorTransferFunction *ctf);
+  virtual void SetAndObserveColorTransferFunction(vtkColorTransferFunction* ctf);
 
   /// Compare two color transfer functions
   /// Only compares the color map (x->RGB mapping)
@@ -92,7 +92,7 @@ public:
   /// the continuous color transfer function to a look up table
   /// with a number of entries defined by NumberOfTableValues
   /// \sa ConvertedCTFtoLUT, SetNumberOfTableValues()
-  vtkLookupTable * GetLookupTable() override;
+  vtkLookupTable* GetLookupTable() override;
 
   /// Reimplemented vtkMRMLColorNode::GetScalarsToColors() to return the
   /// transfer function instead of the empty lookup table
@@ -131,12 +131,12 @@ protected:
 
   /// a color transfer function built up by calls to AddRGBPoint and Build
   /// \sa SetAndObserveColorTransferFunction(), GetColorTransferFunction()
-  vtkColorTransferFunction *ColorTransferFunction;
+  vtkColorTransferFunction* ColorTransferFunction;
 
   /// A lookup table created by discretizing
   /// the continuous color transfer function
   /// \sa GetLookupTable(), NumberOfTableValues
-  vtkLookupTable *ConvertedCTFtoLUT;
+  vtkLookupTable* ConvertedCTFtoLUT;
 
   /// Number of entries to use when discretizing
   /// the color transfer function into a lookup table

@@ -318,7 +318,7 @@ void qMRMLThreeDView::addDisplayableManager(const QString& displayableManagerNam
 //------------------------------------------------------------------------------
 vtkMRMLCameraNode* qMRMLThreeDView::cameraNode()
 {
-  vtkMRMLCameraDisplayableManager * cameraDM = vtkMRMLCameraDisplayableManager::SafeDownCast(
+  vtkMRMLCameraDisplayableManager* cameraDM = vtkMRMLCameraDisplayableManager::SafeDownCast(
         this->displayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
   if (!cameraDM)
   {
@@ -500,7 +500,7 @@ void qMRMLThreeDView::resetFocalPoint()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLThreeDView::getDisplayableManagers(vtkCollection *displayableManagers)
+void qMRMLThreeDView::getDisplayableManagers(vtkCollection* displayableManagers)
 {
   Q_D(qMRMLThreeDView);
 
@@ -523,7 +523,7 @@ vtkMRMLAbstractDisplayableManager* qMRMLThreeDView::displayableManagerByClassNam
 }
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDView::setViewCursor(const QCursor &cursor)
+void qMRMLThreeDView::setViewCursor(const QCursor& cursor)
 {
   this->setCursor(cursor);
   if (this->VTKWidget() != nullptr)
@@ -545,7 +545,7 @@ void qMRMLThreeDView::unsetViewCursor()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLThreeDView::setDefaultViewCursor(const QCursor &cursor)
+void qMRMLThreeDView::setDefaultViewCursor(const QCursor& cursor)
 {
   if (this->VTKWidget() != nullptr)
   {

@@ -69,7 +69,7 @@ void vtkMRMLMarkupsStorageNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMarkupsStorageNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
@@ -83,7 +83,7 @@ void vtkMRMLMarkupsStorageNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLMarkupsStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLMarkupsNode");
 }

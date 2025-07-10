@@ -40,7 +40,7 @@ int vtkMRMLTestThreeDViewDisplayableManager::NodeAddedCount = 0;
 class vtkMRMLTestThreeDViewDisplayableManager::vtkInternal
 {
 public:
-  vtkInternal(vtkMRMLTestThreeDViewDisplayableManager * external);
+  vtkInternal(vtkMRMLTestThreeDViewDisplayableManager* external);
   ~vtkInternal();
 
   vtkMRMLTestThreeDViewDisplayableManager*             External;
@@ -50,7 +50,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLTestThreeDViewDisplayableManager::vtkInternal::vtkInternal(vtkMRMLTestThreeDViewDisplayableManager * external)
+vtkMRMLTestThreeDViewDisplayableManager::vtkInternal::vtkInternal(vtkMRMLTestThreeDViewDisplayableManager* external)
 {
   this->External = external;
 }
@@ -94,7 +94,7 @@ void vtkMRMLTestThreeDViewDisplayableManager::Create()
 //---------------------------------------------------------------------------
 void vtkMRMLTestThreeDViewDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  vtkMRMLCameraNode * cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
+  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
   if (!cameraNode)
   {
     return;

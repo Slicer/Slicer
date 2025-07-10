@@ -65,7 +65,7 @@ void qSlicerExtensionsManagerDialogPrivate::init()
   QObject::connect(this->ExtensionsManagerWidget, SIGNAL(inBatchProcessing(bool)),
     q, SLOT(onBatchProcessingChanged()));
 
-  QPushButton * restartButton = this->ButtonBox->button(QDialogButtonBox::Ok);
+  QPushButton* restartButton = this->ButtonBox->button(QDialogButtonBox::Ok);
   restartButton->setText(qSlicerExtensionsManagerDialog::tr("Restart"));
 
   q->setRestartRequested(false);
@@ -74,13 +74,13 @@ void qSlicerExtensionsManagerDialogPrivate::init()
   // keeping track of settings will allow us to display the "RestartRequestedLabel"
   // only if it applies. Note also that keep track of "EnvironmentVariables/PYTHONPATH'
   // isn't required, "Modules/AdditionalPaths" is enough to know if we should restart.
-  QSettings * settings = qSlicerCoreApplication::application()->revisionUserSettings();
+  QSettings* settings = qSlicerCoreApplication::application()->revisionUserSettings();
     // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
   this->PreviousModulesAdditionalPaths = settings->value("Modules/AdditionalPaths").toStringList();
   this->PreviousExtensionsScheduledForUninstall = settings->value("Extensions/ScheduledForUninstall").toStringList();
   this->PreviousExtensionsScheduledForUpdate = settings->value("Extensions/ScheduledForUpdate").toMap();
 
-  qSlicerSettingsExtensionsPanel * extensionsPanel =
+  qSlicerSettingsExtensionsPanel* extensionsPanel =
       qobject_cast<qSlicerSettingsExtensionsPanel*>(
         qSlicerApplication::application()->settingsDialog()->panel("Extensions"));
   Q_ASSERT(extensionsPanel);
@@ -97,7 +97,7 @@ void qSlicerExtensionsManagerDialogPrivate::updateButtons()
   Q_Q(qSlicerExtensionsManagerDialog);
   Q_ASSERT(q->extensionsManagerModel());
   bool shouldRestart = false;
-  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
   // this->PreviousModulesAdditionalPaths contain the raw (relative or absolute) paths, not converted to absolute
   if (this->PreviousModulesAdditionalPaths
       != coreApp->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList() ||
@@ -118,7 +118,7 @@ void qSlicerExtensionsManagerDialogPrivate::updateButtons()
 // qSlicerExtensionsManagerDialog methods
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerDialog::qSlicerExtensionsManagerDialog(QWidget *_parent)
+qSlicerExtensionsManagerDialog::qSlicerExtensionsManagerDialog(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerExtensionsManagerDialogPrivate(*this))
 {

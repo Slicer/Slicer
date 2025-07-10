@@ -189,7 +189,7 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLMarkupsDisplayNodeWidget::qMRMLMarkupsDisplayNodeWidget(QWidget *_parent)
+qMRMLMarkupsDisplayNodeWidget::qMRMLMarkupsDisplayNodeWidget(QWidget* _parent)
   : qMRMLWidget(_parent)
   , d_ptr(new qMRMLMarkupsDisplayNodeWidgetPrivate(*this))
 {
@@ -412,7 +412,7 @@ void qMRMLMarkupsDisplayNodeWidget::updateWidgetFromMRML()
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLSelectionNode* qMRMLMarkupsDisplayNodeWidget::getSelectionNode(vtkMRMLScene *mrmlScene)
+vtkMRMLSelectionNode* qMRMLMarkupsDisplayNodeWidget::getSelectionNode(vtkMRMLScene* mrmlScene)
 {
   vtkMRMLSelectionNode* selectionNode = nullptr;
   if (mrmlScene)

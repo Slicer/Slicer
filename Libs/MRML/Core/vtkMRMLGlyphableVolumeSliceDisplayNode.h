@@ -35,7 +35,7 @@ class vtkImageData;
 class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLModelDisplayNode
 {
  public:
-  static vtkMRMLGlyphableVolumeSliceDisplayNode *New (  );
+  static vtkMRMLGlyphableVolumeSliceDisplayNode* New (  );
   vtkTypeMacro ( vtkMRMLGlyphableVolumeSliceDisplayNode,vtkMRMLModelDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent ) override;
 
@@ -56,7 +56,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
 
   ///
   /// Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode* node ) override;
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
@@ -67,12 +67,12 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// when the node is deleted in the scene
   void UpdateReferences() override;
 
-  void UpdateReferenceID(const char *oldID, const char *newID) override
+  void UpdateReferenceID(const char* oldID, const char* newID) override
     { Superclass::UpdateReferenceID(oldID, newID); }
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
 
   ///
@@ -107,7 +107,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// Set imageData of a volume slice. This is used as the input of the display
   /// pipeline instead of SetInputPolyData().
   /// \sa GetOutputPolyData(), SetInputPolyData()
-  virtual void SetSliceImagePort(vtkAlgorithmOutput *imagePort);
+  virtual void SetSliceImagePort(vtkAlgorithmOutput* imagePort);
   vtkGetObjectMacro(SliceImagePort, vtkAlgorithmOutput);
   /// Return the glyph output transformed to slice XY.
   /// Return the output of the glyph producer for the entire volume.
@@ -116,11 +116,11 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
 
   ///
   /// Set slice to RAS transformation
-  virtual void SetSlicePositionMatrix(vtkMatrix4x4 *matrix);
+  virtual void SetSlicePositionMatrix(vtkMatrix4x4* matrix);
 
   ///
   /// Set slice to IJK transformation
-  virtual void SetSliceGlyphRotationMatrix(vtkMatrix4x4 *matrix);
+  virtual void SetSliceGlyphRotationMatrix(vtkMatrix4x4* matrix);
 
   //--------------------------------------------------------------------------
   /// Display Information: Geometry to display (not mutually exclusive)
@@ -199,10 +199,10 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// Ignore input polydata as it takes a volume slice as input.
   virtual void SetInputToPolyDataPipeline(vtkAlgorithmOutput* glyphPolyData);
 
-    vtkAlgorithmOutput       *SliceImagePort;
-    vtkTransform             *SliceToXYTransform;
-    vtkTransformPolyDataFilter *SliceToXYTransformer;
-    vtkMatrix4x4             *SliceToXYMatrix;
+    vtkAlgorithmOutput* SliceImagePort;
+    vtkTransform* SliceToXYTransform;
+    vtkTransformPolyDataFilter* SliceToXYTransformer;
+    vtkMatrix4x4* SliceToXYMatrix;
 
 
     /// Enumerated

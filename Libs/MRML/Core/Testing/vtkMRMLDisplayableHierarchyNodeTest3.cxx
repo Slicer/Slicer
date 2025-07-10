@@ -24,7 +24,7 @@
 #include <sstream>
 
 // helper methods to check children ordering
-static void PrintNames(std::vector< vtkMRMLHierarchyNode *> kids)
+static void PrintNames(std::vector< vtkMRMLHierarchyNode*> kids)
 {
   for (unsigned int i = 0; i < kids.size(); i++)
   {
@@ -38,7 +38,7 @@ static void PrintNames(std::vector< vtkMRMLHierarchyNode *> kids)
 }
 
 // test more ordered node hierarchy uses
-int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
+int vtkMRMLDisplayableHierarchyNodeTest3(int, char*[])
 {
 
   vtkNew<vtkMRMLScene> scene;
@@ -130,7 +130,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   std::cout << "Model hierarchy nodes size = " << modelHierarchyNodes.size() << std::endl;
 
   // check that the top level hierarchy returns all the children
-  std::vector< vtkMRMLHierarchyNode *> allChildren;
+  std::vector< vtkMRMLHierarchyNode*> allChildren;
   hnode1->GetAllChildrenNodes(allChildren);
   std::cout << "Top level hierarchy children:" << std::endl;
   PrintNames(allChildren);
@@ -145,7 +145,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   }
 
   // check for the immediate children of the top level
-  std::vector< vtkMRMLHierarchyNode *> immediateChildren = hnode1->GetChildrenNodes();
+  std::vector< vtkMRMLHierarchyNode*> immediateChildren = hnode1->GetChildrenNodes();
   std::cout << "Top level hierarchy immediate children:" << std::endl;
   PrintNames(immediateChildren);
   if (immediateChildren.size() != 1)
@@ -159,7 +159,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   }
 
   // check that the second level hierarchy returns all the children
-  std::vector< vtkMRMLHierarchyNode *> allChildren2;
+  std::vector< vtkMRMLHierarchyNode*> allChildren2;
   hnode2->GetAllChildrenNodes(allChildren2);
   std::cout << "Second level hierarchy children:" << std::endl;
   PrintNames(allChildren2);
@@ -174,7 +174,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   }
 
   // check for the immediate children of the second level
-  std::vector< vtkMRMLHierarchyNode *> immediateChildren2 = hnode2->GetChildrenNodes();
+  std::vector< vtkMRMLHierarchyNode*> immediateChildren2 = hnode2->GetChildrenNodes();
   std::cout << "Second level hierarchy immediate children:" << std::endl;
   PrintNames(immediateChildren2);
   if (immediateChildren2.size() != numModels)

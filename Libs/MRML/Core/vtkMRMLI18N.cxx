@@ -134,7 +134,7 @@ void vtkMRMLI18N::classFinalize()
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLI18N::Translate(const char *context, const char *sourceText, const char *disambiguation/*=nullptr*/, int n/*=-1*/)
+std::string vtkMRMLI18N::Translate(const char* context, const char* sourceText, const char* disambiguation/*=nullptr*/, int n/*=-1*/)
 {
   vtkMRMLI18N* i18n = vtkMRMLI18N::GetInstance();
   vtkMRMLTranslator* translator = i18n ? i18n->GetTranslator() : nullptr;

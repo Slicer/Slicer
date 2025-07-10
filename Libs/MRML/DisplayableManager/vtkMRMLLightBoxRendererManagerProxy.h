@@ -39,7 +39,7 @@ public:
 
   /// Method to query the mapping from an id of a LightBox frame to
   /// the Renderer for that frame
-  virtual vtkRenderer *GetRenderer(int vtkNotUsed(id)) { return nullptr; };
+  virtual vtkRenderer* GetRenderer(int vtkNotUsed(id)) { return nullptr; };
 
 protected:
   vtkMRMLLightBoxRendererManagerProxy() ;

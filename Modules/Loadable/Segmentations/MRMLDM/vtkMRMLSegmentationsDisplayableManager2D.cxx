@@ -264,7 +264,7 @@ public:
   void RemoveSegmentationNode(vtkMRMLSegmentationNode* displayableNode);
 
   // Transforms
-  void UpdateDisplayableTransforms(vtkMRMLSegmentationNode *node);
+  void UpdateDisplayableTransforms(vtkMRMLSegmentationNode* node);
   void GetNodeTransformToWorld(vtkMRMLTransformableNode* node, vtkGeneralTransform* transformToWorld, vtkGeneralTransform* transformFromWorld);
 
   // Slice Node
@@ -291,7 +291,7 @@ public:
   bool UseDisplayNode(vtkMRMLSegmentationDisplayNode* displayNode);
   bool UseDisplayableNode(vtkMRMLSegmentationNode* node);
   void ClearDisplayableNodes();
-  bool IsSegmentVisibleInCurrentSlice(vtkMRMLSegmentationDisplayNode* displayNode, Pipeline* pipeline, const std::string &segmentID);
+  bool IsSegmentVisibleInCurrentSlice(vtkMRMLSegmentationDisplayNode* displayNode, Pipeline* pipeline, const std::string& segmentID);
 
   struct CustomSegmentRendererType
   {
@@ -420,7 +420,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddSegmentationNode(
 
   for (int i=0; i<nnodes; i++)
   {
-    vtkMRMLSegmentationDisplayNode *dnode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
+    vtkMRMLSegmentationDisplayNode* dnode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
     if ( this->UseDisplayNode(dnode) )
     {
       this->SegmentationToDisplayNodes[node].insert(dnode);
@@ -479,8 +479,8 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayableTra
 {
   // Update the NodeToWorld matrix for all tracked DisplayableNode
   PipelinesCacheType::iterator pipelinesIter;
-  std::set<vtkMRMLSegmentationDisplayNode *> displayNodes = this->SegmentationToDisplayNodes[mNode];
-  std::set<vtkMRMLSegmentationDisplayNode *>::iterator dnodesIter;
+  std::set<vtkMRMLSegmentationDisplayNode*> displayNodes = this->SegmentationToDisplayNodes[mNode];
+  std::set<vtkMRMLSegmentationDisplayNode*>::iterator dnodesIter;
   for ( dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++ )
   {
     if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
@@ -605,15 +605,15 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNode(vt
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateAllDisplayNodesForSegment(vtkMRMLSegmentationNode* segmentationNode)
 {
-  std::set<vtkMRMLSegmentationDisplayNode *> displayNodes = this->SegmentationToDisplayNodes[segmentationNode];
-  for (std::set<vtkMRMLSegmentationDisplayNode *>::iterator dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++)
+  std::set<vtkMRMLSegmentationDisplayNode*> displayNodes = this->SegmentationToDisplayNodes[segmentationNode];
+  for (std::set<vtkMRMLSegmentationDisplayNode*>::iterator dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++)
   {
     this->UpdateDisplayNode(*dnodesIter);
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelines(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType &pipelines)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelines(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType& pipelines)
 {
   // Get segmentation
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(displayNode->GetDisplayableNode());
@@ -688,7 +688,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateSegmentPipelin
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePipeline(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType &pipelines)
+void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePipeline(vtkMRMLSegmentationDisplayNode* displayNode, PipelineMapType& pipelines)
 {
   // Sets visibility, set pipeline polydata input, update color calculate and set pipeline segments.
   if (!displayNode)
@@ -1074,7 +1074,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UpdateDisplayNodePip
       pipeline->Reslice->SetInterpolationModeToNearestNeighbor();
       vtkIntArray* interpolationType = vtkIntArray::SafeDownCast(
         imageData->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetInterpolationTypeFieldName()));
-      if (interpolationType && interpolationType->GetNumberOfValues() == 1)
+      if (interpolationType&& interpolationType->GetNumberOfValues() == 1)
       {
         pipeline->Reslice->SetInterpolationMode(interpolationType->GetValue(0));
       }
@@ -1209,7 +1209,7 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::UseDisplayableNode(v
 
 //---------------------------------------------------------------------------
 bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCurrentSlice(
-  vtkMRMLSegmentationDisplayNode* displayNode, Pipeline* pipeline, const std::string &segmentID)
+  vtkMRMLSegmentationDisplayNode* displayNode, Pipeline* pipeline, const std::string& segmentID)
 {
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
     displayNode->GetDisplayableNode() );
@@ -1379,7 +1379,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::ProcessMRMLNodesEvents(vtkObject*
   {
     if (event == vtkMRMLDisplayableNode::DisplayModifiedEvent)
     {
-      vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode *> (callData);
+      vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*> (callData);
       vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(callDataNode);
       if (displayNode)
       {
@@ -1428,7 +1428,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::UpdateFromMRML()
   this->Internal->ClearDisplayableNodes();
 
   vtkMRMLSegmentationNode* mNode = nullptr;
-  std::vector<vtkMRMLNode *> mNodes;
+  std::vector<vtkMRMLNode*> mNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLSegmentationNode", mNodes) : 0;
   for (int i=0; i<nnodes; i++)
   {

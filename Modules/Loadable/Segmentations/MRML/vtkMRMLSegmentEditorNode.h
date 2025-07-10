@@ -66,7 +66,7 @@ public:
   };
 
 public:
-  static vtkMRMLSegmentEditorNode *New();
+  static vtkMRMLSegmentEditorNode* New();
   vtkTypeMacro(vtkMRMLSegmentEditorNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -80,7 +80,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override { return "SegmentEditor"; }

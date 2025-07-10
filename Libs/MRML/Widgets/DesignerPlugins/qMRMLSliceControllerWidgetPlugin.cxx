@@ -2,13 +2,13 @@
 #include "qMRMLSliceControllerWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLSliceControllerWidgetPlugin::qMRMLSliceControllerWidgetPlugin(QObject *_parent)
+qMRMLSliceControllerWidgetPlugin::qMRMLSliceControllerWidgetPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLSliceControllerWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLSliceControllerWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLSliceControllerWidget* _widget = new qMRMLSliceControllerWidget(_parent);
   return _widget;

@@ -143,7 +143,7 @@ void qSlicerTerminologyEditorWidgetPrivate::updateTerminologyFromGUI()
 }
 
 //------------------------------------------------------------------------------
-qSlicerTerminologyEditorWidget::qSlicerTerminologyEditorWidget(QWidget *_parent)
+qSlicerTerminologyEditorWidget::qSlicerTerminologyEditorWidget(QWidget* _parent)
   : QWidget(_parent)
   , d_ptr(new qSlicerTerminologyEditorWidgetPrivate(*this))
 {
@@ -155,7 +155,7 @@ qSlicerTerminologyEditorWidget::qSlicerTerminologyEditorWidget(QWidget *_parent)
 qSlicerTerminologyEditorWidget::~qSlicerTerminologyEditorWidget() = default;
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyEditorWidget::terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo)
+void qSlicerTerminologyEditorWidget::terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorWidget);
   d->updateTerminologyFromGUI();
@@ -163,7 +163,7 @@ void qSlicerTerminologyEditorWidget::terminologyInfo(qSlicerTerminologyNavigator
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyEditorWidget::setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo)
+void qSlicerTerminologyEditorWidget::setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorWidget);
   d->TerminologyInfo = terminologyInfo;

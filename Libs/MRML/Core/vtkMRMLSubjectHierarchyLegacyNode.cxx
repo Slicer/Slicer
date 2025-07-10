@@ -165,7 +165,7 @@ void vtkMRMLSubjectHierarchyLegacyNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSubjectHierarchyLegacyNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLSubjectHierarchyLegacyNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 

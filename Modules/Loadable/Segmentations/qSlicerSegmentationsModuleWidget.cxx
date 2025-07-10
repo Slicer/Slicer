@@ -437,7 +437,7 @@ void qSlicerSegmentationsModuleWidget::selectSegmentationNode(vtkMRMLSegmentatio
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSegmentationsModuleWidget::onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void qSlicerSegmentationsModuleWidget::onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
   Q_UNUSED(selected);
   Q_UNUSED(deselected);

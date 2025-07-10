@@ -39,17 +39,17 @@ public:
 
   ///
   /// Set the Input of the filter.
-  virtual void SetInput1(vtkImageData *Input)
+  virtual void SetInput1(vtkImageData* Input)
   {
     this->SetInput ( Input );
   };
-  virtual void SetInput2(vtkImageData *Input)
+  virtual void SetInput2(vtkImageData* Input)
   {
     this->vtkImageAlgorithm::SetInput(1, Input);
     this->vtkExporter1->SetInputData(Input);
   };
 
-  virtual vtkImageData *GetOutput() { return this->append->GetOutput(); };
+  virtual vtkImageData* GetOutput() { return this->append->GetOutput(); };
 
 protected:
 

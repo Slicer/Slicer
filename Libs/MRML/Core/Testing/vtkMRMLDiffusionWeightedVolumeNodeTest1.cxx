@@ -14,7 +14,7 @@
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLScene.h"
 
-int vtkMRMLDiffusionWeightedVolumeNodeTest1(int , char * [] )
+int vtkMRMLDiffusionWeightedVolumeNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLDiffusionWeightedVolumeNode> node1;
   vtkNew<vtkMRMLScene> scene;

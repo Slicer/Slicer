@@ -222,7 +222,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
   for (std::vector<std::string>::iterator it = plotSeriesNodesIDs.begin();
     it != plotSeriesNodesIDs.end(); ++it)
   {
-    vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast
+    vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast
       (q->mrmlScene()->GetNodeByID(it->c_str()));
     if (plotSeriesNode == nullptr)
     {
@@ -235,7 +235,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::updateWidgetFromMRML()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::setFontType(const QString &type)
+void qMRMLPlotChartPropertiesWidget::setFontType(const QString& type)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
@@ -303,7 +303,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::onPlotSeriesNodesSelected()
   // loop over arrays in the widget
   for (int idx = 0; idx < this->plotSeriesComboBox->nodeCount(); idx++)
   {
-    vtkMRMLPlotSeriesNode *dn = vtkMRMLPlotSeriesNode::SafeDownCast(this->plotSeriesComboBox->nodeFromIndex(idx));
+    vtkMRMLPlotSeriesNode* dn = vtkMRMLPlotSeriesNode::SafeDownCast(this->plotSeriesComboBox->nodeFromIndex(idx));
 
     bool checked = (this->plotSeriesComboBox->checkState(dn) == Qt::Checked);
 
@@ -336,14 +336,14 @@ void qMRMLPlotChartPropertiesWidgetPrivate::onPlotSeriesNodesSelected()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidgetPrivate::onPlotSeriesNodeAdded(vtkMRMLNode *node)
+void qMRMLPlotChartPropertiesWidgetPrivate::onPlotSeriesNodeAdded(vtkMRMLNode* node)
 {
   Q_Q(qMRMLPlotChartPropertiesWidget);
   if (!this->PlotChartNode)
   {
     return;
   }
-  vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(node);
+  vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(node);
   if (!plotSeriesNode)
   {
     return;
@@ -422,7 +422,7 @@ void qMRMLPlotChartPropertiesWidget::setLegendVisibility(bool show)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::setTitle(const QString &str)
+void qMRMLPlotChartPropertiesWidget::setTitle(const QString& str)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
@@ -433,7 +433,7 @@ void qMRMLPlotChartPropertiesWidget::setTitle(const QString &str)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::setXAxisLabel(const QString &str)
+void qMRMLPlotChartPropertiesWidget::setXAxisLabel(const QString& str)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)
@@ -444,7 +444,7 @@ void qMRMLPlotChartPropertiesWidget::setXAxisLabel(const QString &str)
 }
 
 //---------------------------------------------------------------------------
-void qMRMLPlotChartPropertiesWidget::setYAxisLabel(const QString &str)
+void qMRMLPlotChartPropertiesWidget::setYAxisLabel(const QString& str)
 {
   Q_D(qMRMLPlotChartPropertiesWidget);
   if (!d->PlotChartNode)

@@ -36,7 +36,7 @@
 #include "qMRMLItemDelegate.h"
 
 //------------------------------------------------------------------------------
-qMRMLItemDelegate::qMRMLItemDelegate(QObject *parent)
+qMRMLItemDelegate::qMRMLItemDelegate(QObject* parent)
   : QStyledItemDelegate(parent)
 {
   this->DummySpinBox = new ctkDoubleSpinBox(nullptr);
@@ -100,7 +100,7 @@ bool qMRMLItemDelegate::is0To1Value(const QModelIndex& index)const
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget* qMRMLItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   if (this->isColor(index))
   {
@@ -123,7 +123,7 @@ QWidget* qMRMLItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     slider->popup()->layout()->setSizeConstraint(QLayout::SetMinimumSize);
     slider->setParent(parent);
 
-    ctkDoubleSpinBox *spinBox = slider->spinBox();
+    ctkDoubleSpinBox* spinBox = slider->spinBox();
     spinBox->setFrame(false);
     QObject::connect(slider, SIGNAL(valueChanged(double)), this, SLOT(commitSenderData()));
     return slider;
@@ -132,7 +132,7 @@ QWidget* qMRMLItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 }
 
 //------------------------------------------------------------------------------
-void qMRMLItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+void qMRMLItemDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
   if (this->isColor(index))
   {
@@ -156,7 +156,7 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
   }
   else if (this->is0To1Value(index))
   {
-    ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
+    ctkSliderWidget* sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
     double value = index.data(Qt::EditRole).toDouble();
     if (sliderWidget) // sliderWidget may be nullptr, don't make the application crash when that happens
     {
@@ -174,7 +174,7 @@ void qMRMLItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+void qMRMLItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
   if (this->isColor(index))
   {
@@ -186,7 +186,7 @@ void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
   }
   else if (this->is0To1Value(index))
   {
-    ctkSliderWidget *sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
+    ctkSliderWidget* sliderWidget = qobject_cast<ctkSliderWidget*>(editor);
     QString value = QString::number(sliderWidget->value(), 'f', 2);
     model->setData(index, value, Qt::EditRole);
   }
@@ -212,7 +212,7 @@ void qMRMLItemDelegate::commitAndClose()
 }
 
 //------------------------------------------------------------------------------
-QSize qMRMLItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize qMRMLItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   if (this->is0To1Value(index))
   {
@@ -223,7 +223,7 @@ QSize qMRMLItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
 
 //------------------------------------------------------------------------------
 void qMRMLItemDelegate::updateEditorGeometry(
-  QWidget *editor, const QStyleOptionViewItem &option,const QModelIndex &index) const
+  QWidget* editor, const QStyleOptionViewItem& option,const QModelIndex& index) const
 {
   if (this->isColor(index))
   {
@@ -240,7 +240,7 @@ void qMRMLItemDelegate::updateEditorGeometry(
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLItemDelegate::eventFilter(QObject *object, QEvent *event)
+bool qMRMLItemDelegate::eventFilter(QObject* object, QEvent* event)
 {
   ctkSliderWidget* editor = qobject_cast<ctkSliderWidget*>(object);
   if (editor && (event->type() == QEvent::FocusOut || (event->type() == QEvent::Hide && editor->isWindow())))

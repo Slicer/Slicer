@@ -23,7 +23,7 @@ class vtkMRMLStorableNodeTestHelper1 : public vtkMRMLStorableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLStorableNodeTestHelper1 *New();
+  static vtkMRMLStorableNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLStorableNodeTestHelper1,vtkMRMLStorableNode);
 
@@ -43,7 +43,7 @@ public:
 vtkStandardNewMacro(vtkMRMLStorableNodeTestHelper1);
 
 //---------------------------------------------------------------------------
-int vtkMRMLStorableNodeTest1(int , char * [] )
+int vtkMRMLStorableNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLStorableNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

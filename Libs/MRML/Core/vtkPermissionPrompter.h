@@ -12,7 +12,7 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
   public:
 
   /// The Usual vtk class functions
-  static vtkPermissionPrompter *New();
+  static vtkPermissionPrompter* New();
   vtkTypeMacro(vtkPermissionPrompter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -46,15 +46,15 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
   //--- method should return -1 for empty fields
   //--- return 0 for a cancel
   //--- and return 1 for everything looks ok.
-  virtual int Prompt(const char *message );
+  virtual int Prompt(const char* message );
 
  private:
-  char *Username;
-  char *HostName;
-  char *Password;
+  char* Username;
+  char* HostName;
+  char* Password;
   int Remember;
-  char *PromptMessage;
-  char *PromptTitle;
+  char* PromptMessage;
+  char* PromptTitle;
 
  protected:
   vtkPermissionPrompter();

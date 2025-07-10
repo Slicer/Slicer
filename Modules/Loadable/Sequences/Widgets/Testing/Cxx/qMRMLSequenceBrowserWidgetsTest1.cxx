@@ -37,7 +37,7 @@
 // VTK includes
 #include <vtkNew.h>
 
-int qMRMLSequenceBrowserWidgetsTest1( int argc, char * argv [] )
+int qMRMLSequenceBrowserWidgetsTest1( int argc, char* argv [] )
 {
   QApplication app(argc, argv);
 

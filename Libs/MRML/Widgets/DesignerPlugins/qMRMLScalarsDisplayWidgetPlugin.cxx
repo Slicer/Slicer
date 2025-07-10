@@ -1,12 +1,12 @@
 #include "qMRMLScalarsDisplayWidgetPlugin.h"
 #include "qMRMLScalarsDisplayWidget.h"
 
-qMRMLScalarsDisplayWidgetPlugin::qMRMLScalarsDisplayWidgetPlugin(QObject *_parent)
+qMRMLScalarsDisplayWidgetPlugin::qMRMLScalarsDisplayWidgetPlugin(QObject* _parent)
  : QObject(_parent)
 {
 }
 
-QWidget *qMRMLScalarsDisplayWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLScalarsDisplayWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLScalarsDisplayWidget* _widget = new qMRMLScalarsDisplayWidget(_parent);
   return _widget;

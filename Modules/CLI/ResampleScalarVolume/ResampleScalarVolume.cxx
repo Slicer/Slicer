@@ -63,7 +63,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char * argv[], T )
+int DoIt( int argc, char* argv[], T )
 {
   PARSE_ARGS;
   const unsigned int InputDimension = 3;
@@ -118,7 +118,7 @@ int DoIt( int argc, char * argv[], T )
   {
     reader->Update();
   }
-  catch( itk::ExceptionObject & excp )
+  catch( itk::ExceptionObject& excp )
   {
     std::cerr << "Exception thrown while reading the input file" << std::endl;
     std::cerr << excp << std::endl;
@@ -226,7 +226,7 @@ int DoIt( int argc, char * argv[], T )
   {
     seriesWriter->Update();
   }
-  catch( itk::ExceptionObject & excp )
+  catch( itk::ExceptionObject& excp )
   {
     std::cerr << "Exception thrown while writing the series " << std::endl;
     std::cerr << excp << std::endl;
@@ -237,7 +237,7 @@ int DoIt( int argc, char * argv[], T )
 
 } // end of anonymous namespace
 
-int main( int argc, char * argv[] )
+int main( int argc, char* argv[] )
 {
 
   PARSE_ARGS;
@@ -289,7 +289,7 @@ int main( int argc, char * argv[] )
         break;
     }
   }
-  catch( itk::ExceptionObject & excep )
+  catch( itk::ExceptionObject& excep )
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

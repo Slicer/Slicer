@@ -51,7 +51,7 @@ bool testGetSIPrefixCoefficient();
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerUnitsLogicTest1( int argc , char * argv[] )
+int vtkSlicerUnitsLogicTest1( int argc , char* argv[] )
 {
   bool res = true;
   res = res && testScene();

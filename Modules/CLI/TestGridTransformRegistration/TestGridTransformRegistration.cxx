@@ -38,7 +38,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char * argv[], T )
+int DoIt( int argc, char* argv[], T )
 {
   PARSE_ARGS;
 
@@ -154,7 +154,7 @@ int DoIt( int argc, char * argv[], T )
     {
       gridWriter->Update();
     }
-    catch( itk::ExceptionObject & exp )
+    catch( itk::ExceptionObject& exp )
     {
       std::cerr << "Exception caught !" << std::endl;
       std::cerr << exp << std::endl;
@@ -171,17 +171,17 @@ int DoIt( int argc, char * argv[], T )
 
 } // end of anonymous namespace
 
-int main( int argc, char * argv[] )
+int main( int argc, char* argv[] )
 {
 
   // Print out the arguments (need to add --echo to the argument list
   //
-  std::vector<char *> vargsNew;
+  std::vector<char*> vargsNew;
   for( int vi = 0; vi < argc; ++vi )
   {
     vargsNew.push_back(argv[vi]);
   }
-  vargsNew.push_back(const_cast<char *>("--echo") );
+  vargsNew.push_back(const_cast<char*>("--echo") );
 
   argc = vargsNew.size();
   argv = &(vargsNew[0]);
@@ -219,7 +219,7 @@ int main( int argc, char * argv[] )
         break;
     }
   }
-  catch( itk::ExceptionObject & excep )
+  catch( itk::ExceptionObject& excep )
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

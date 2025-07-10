@@ -313,7 +313,7 @@ void qMRMLMarkupsPlaneWidget::onNormalOpacitySliderChanged()
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLMarkupsPlaneWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const
+bool qMRMLMarkupsPlaneWidget::canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const
 {
   Q_D(const qMRMLMarkupsPlaneWidget);
 

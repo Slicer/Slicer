@@ -69,7 +69,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
 
   this->setupUi(q);
 
-  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
   qSlicerAbstractModuleFactoryManager* factoryManager = coreApp->moduleManager()->factoryManager();
 
   // Show Hidden
@@ -242,7 +242,7 @@ void qSlicerSettingsModulesPanel::setModulesToAlwaysIgnore(const QStringList& mo
 
   // Ensure the ModulesListView observing the factoryManager is updated
   // when settings are restored.
-  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
   coreApp->moduleManager()->factoryManager()->setModulesToIgnore(moduleNames);
 
   // Update the list of modules to ignore removing the one
@@ -315,7 +315,7 @@ void qSlicerSettingsModulesPanel::onAdditionalModulePathsChanged()
 void qSlicerSettingsModulesPanel::onAddModulesAdditionalPathClicked()
 {
   Q_D(qSlicerSettingsModulesPanel);
-  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
   QString mostRecentPath = coreApp->toSlicerHomeAbsolutePath(
     coreApp->revisionUserSettings()->value("Modules/MostRecentlySelectedPath").toString());
   QString path = QFileDialog::getExistingDirectory(

@@ -27,12 +27,12 @@ protected:
   CommandIterationUpdate() = default;
 public:
 
-  void Execute(itk::Object *caller, const itk::EventObject & event) override
+  void Execute(itk::Object* caller, const itk::EventObject& event) override
   {
-    Execute( (const itk::Object *) caller, event);
+    Execute( (const itk::Object*) caller, event);
   }
 
-  void Execute(const itk::Object * object, const itk::EventObject & event) override
+  void Execute(const itk::Object* object, const itk::EventObject& event) override
   {
     const TFilter * filter =
       dynamic_cast<const TFilter *>( object );
@@ -292,7 +292,7 @@ int main(int argc, char* * argv)
     itk::PluginFilterWatcher watchN4(correcter, "N4 Bias field correction", CLPProcessInformation, 1.0 / 1.0, 0.0);
     correcter->Update();
   }
-  catch( itk::ExceptionObject & err )
+  catch( itk::ExceptionObject& err )
   {
     std::cerr << err << std::endl;
     return EXIT_FAILURE;
@@ -395,11 +395,11 @@ int main(int argc, char* * argv)
 
       // This filter handles all types on input, but only produces
       // signed types
-      const char *fname = outputImageName.c_str();
+      const char* fname = outputImageName.c_str();
 
       return SaveIt(cropper->GetOutput(), fname);
     }
-    catch( itk::ExceptionObject & e )
+    catch( itk::ExceptionObject& e )
     {
       std::cerr << "Failed to save the data: " << e << std::endl;
       return EXIT_FAILURE;

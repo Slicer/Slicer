@@ -59,7 +59,7 @@ WarpTransform3D<FieldData>
 template <class FieldData>
 typename WarpTransform3D<FieldData>::OutputPointType
 WarpTransform3D<FieldData>
-::TransformPoint( const InputPointType & inputPoint ) const
+::TransformPoint( const InputPointType& inputPoint ) const
 {
   OutputPointType      transformedPoint;
   DeformationPixelType displacement;
@@ -78,7 +78,7 @@ WarpTransform3D<FieldData>
 template <class FieldData>
 void
 WarpTransform3D<FieldData>
-::ComputeJacobianWithRespectToParameters( const InputPointType & inputPoint, JacobianType & jacobian ) const
+::ComputeJacobianWithRespectToParameters( const InputPointType& inputPoint, JacobianType& jacobian ) const
 {
 
 //  ZeroFluxNeumannBoundaryCondition< DeformationImageType > nbc;

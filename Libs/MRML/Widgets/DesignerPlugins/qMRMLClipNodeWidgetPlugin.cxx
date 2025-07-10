@@ -28,7 +28,7 @@ qMRMLClipNodeWidgetPlugin::qMRMLClipNodeWidgetPlugin(QObject* pluginParent)
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLClipNodeWidgetPlugin::createWidget(QWidget* widgetParent)
+QWidget* qMRMLClipNodeWidgetPlugin::createWidget(QWidget* widgetParent)
 {
   qMRMLClipNodeWidget* newWidget = new qMRMLClipNodeWidget(widgetParent);
   return newWidget;

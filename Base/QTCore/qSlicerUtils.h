@@ -181,7 +181,7 @@ public:
   /// traversing will be aborted and the permission already set won't be reverted.
   /// \return \c true on success, \c false otherwise.
   /// \sa QFile::setPermissions()
-  static bool setPermissionsRecursively(const QString &path,
+  static bool setPermissionsRecursively(const QString& path,
                                         QFile::Permissions directoryPermissions,
                                         QFile::Permissions filePermissions);
 

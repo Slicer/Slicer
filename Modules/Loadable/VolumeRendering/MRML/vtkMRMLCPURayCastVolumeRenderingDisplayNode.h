@@ -30,7 +30,7 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLCPURayCastVolumeRende
   : public vtkMRMLVolumeRenderingDisplayNode
 {
 public:
-  static vtkMRMLCPURayCastVolumeRenderingDisplayNode *New();
+  static vtkMRMLCPURayCastVolumeRenderingDisplayNode* New();
   vtkTypeMacro(vtkMRMLCPURayCastVolumeRenderingDisplayNode,vtkMRMLVolumeRenderingDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

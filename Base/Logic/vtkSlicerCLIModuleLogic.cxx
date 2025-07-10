@@ -76,18 +76,18 @@ struct DigitsToCharacters
   }
 };
 
-typedef std::pair<vtkSlicerCLIModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
+typedef std::pair<vtkSlicerCLIModuleLogic*, vtkMRMLCommandLineModuleNode*> LogicNodePair;
 class MRMLIDMap : public std::map<std::string, std::string> {};
 
 //---------------------------------------------------------------------------
 class vtkSlicerCLIRescheduleCallback : public vtkCallbackCommand
 {
 public:
-  static vtkSlicerCLIRescheduleCallback *New()
+  static vtkSlicerCLIRescheduleCallback* New()
   {
     return new vtkSlicerCLIRescheduleCallback;
   }
-  void Execute(vtkObject* caller, unsigned long eid, void *callData) override
+  void Execute(vtkObject* caller, unsigned long eid, void* callData) override
   {
     if (std::find(this->ThreadIDs.begin(), this->ThreadIDs.end(),
                   vtkMultiThreader::GetCurrentThreadID()) != this->ThreadIDs.end())
@@ -160,18 +160,18 @@ protected:
 class vtkSlicerCLIOneShotCallbackCallback : public vtkCallbackCommand
 {
 public:
-  static vtkSlicerCLIOneShotCallbackCallback *New()
+  static vtkSlicerCLIOneShotCallbackCallback* New()
   {
     return new vtkSlicerCLIOneShotCallbackCallback;
   }
-  void Execute(vtkObject* caller, unsigned long eid, void *callData) override
+  void Execute(vtkObject* caller, unsigned long eid, void* callData) override
   {
     if (callData)
     {
-      vtkObject *object = reinterpret_cast<vtkObject *>(callData);
+      vtkObject* object = reinterpret_cast<vtkObject*>(callData);
       if (object)
       {
-        vtkCallbackCommand *callback = vtkCallbackCommand::SafeDownCast(object);
+        vtkCallbackCommand* callback = vtkCallbackCommand::SafeDownCast(object);
         if (callback)
         {
           callback->Execute(caller, eid, nullptr);
@@ -462,7 +462,7 @@ int vtkSlicerCLIModuleLogic::GetRedirectModuleStreams() const
 //----------------------------------------------------------------------------
 std::string
 vtkSlicerCLIModuleLogic
-::ConstructTemporarySceneFileName(vtkMRMLScene *scene)
+::ConstructTemporarySceneFileName(vtkMRMLScene* scene)
 {
   std::string fname;
   std::ostringstream fnameString;
@@ -596,7 +596,7 @@ vtkSlicerCLIModuleLogic
 
       // Must be large enough to hold slicer:, #, an ascii
       // representation of the scene pointer and the MRML node ID.
-      char *tname = new char[name.size() + 100];
+      char* tname = new char[name.size() + 100];
 
       sprintf(tname, "slicer:%p#%s", this->GetMRMLScene(), name.c_str());
 
@@ -841,7 +841,7 @@ void vtkSlicerCLIModuleLogic
 // Modified() can update the GUI, the ApplyTask must be careful not to
 // modify a MRML node.
 //
-void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
+void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
 {
   // check if MRML node is present
   if (clientdata == nullptr)
@@ -992,7 +992,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         if ((*pit).GetTag() == "pointfile")
         {
           std::string coordinateSystemStr = (*pit).GetCoordinateSystem();
-          vtkMRMLNode *nodeToFlag = this->GetMRMLScene()->GetNodeByID(id.c_str());
+          vtkMRMLNode* nodeToFlag = this->GetMRMLScene()->GetNodeByID(id.c_str());
           if (nodeToFlag)
           {
             // Disable modified event, because we would not want to emit a node modified event from this
@@ -1033,13 +1033,13 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
        id2fn0 != nodesToWrite.end();
        ++id2fn0)
   {
-    vtkMRMLNode *nd
+    vtkMRMLNode* nd
       = this->GetMRMLScene()->GetNodeByID( (*id2fn0).first.c_str() );
 
     vtkSmartPointer<vtkMRMLStorageNode> out = nullptr;
     vtkSmartPointer<vtkMRMLStorageNode> defaultOut = nullptr;
 
-    vtkMRMLStorableNode *sn = dynamic_cast<vtkMRMLStorableNode *>(nd);
+    vtkMRMLStorableNode* sn = dynamic_cast<vtkMRMLStorableNode*>(nd);
     if (sn)
     {
 
@@ -1101,7 +1101,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
     }
 
-    vtkMRMLTransformNode *tnd = vtkMRMLTransformNode::SafeDownCast(nd);
+    vtkMRMLTransformNode* tnd = vtkMRMLTransformNode::SafeDownCast(nd);
     if (tnd)
     {
       // Transform nodes will use either a storage node OR a miniscene
@@ -1117,7 +1117,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           // the node
           out = nullptr;  // don't use the storage node
 
-          vtkMRMLNode *cp = miniscene->CopyNode(nd);
+          vtkMRMLNode* cp = miniscene->CopyNode(nd);
 
           // Keep track what scene node corresponds to what miniscene node
           sceneToMiniSceneMap[nd->GetID()] = cp->GetID();
@@ -1126,7 +1126,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     }
 
     // Add model hierarchies to the miniscene
-    vtkMRMLModelHierarchyNode *mhnd = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
+    vtkMRMLModelHierarchyNode* mhnd = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
     if (mhnd)
     {
       this->AddCompleteModelHierarchyToMiniScene(miniscene.GetPointer(), mhnd, &sceneToMiniSceneMap, filesToDelete);
@@ -1157,12 +1157,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
        id2fn0 != nodesToReload.end();
        ++id2fn0)
   {
-    vtkMRMLNode *nd
+    vtkMRMLNode* nd
       = this->GetMRMLScene()->GetNodeByID( (*id2fn0).first.c_str() );
 
-    vtkMRMLTransformNode *tnd
+    vtkMRMLTransformNode* tnd
       = vtkMRMLTransformNode::SafeDownCast(nd);
-    vtkMRMLModelHierarchyNode *mhnd
+    vtkMRMLModelHierarchyNode* mhnd
       = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
 
     if (tnd || mhnd)
@@ -1175,7 +1175,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         if (extension == ".mrml")
         {
           // put this transform node in the miniscene
-          vtkMRMLNode *cp = miniscene->CopyNode(nd);
+          vtkMRMLNode* cp = miniscene->CopyNode(nd);
 
           // Keep track what scene node corresponds to what miniscene node
           sceneToMiniSceneMap[nd->GetID()] = cp->GetID();
@@ -1185,24 +1185,24 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     else if (mhnd)
     {
       // always put model hierarchy nodes in the miniscene
-      vtkMRMLNode *cp = miniscene->CopyNode(nd);
+      vtkMRMLNode* cp = miniscene->CopyNode(nd);
 
       // Keep track what scene node corresponds to what miniscene node
       sceneToMiniSceneMap[nd->GetID()] = cp->GetID();
 
       // try casting to a DisplayableNode, if successful, add the
       // display node if there is one
-      vtkMRMLDisplayableNode *dable = vtkMRMLDisplayableNode::SafeDownCast(nd);
+      vtkMRMLDisplayableNode* dable = vtkMRMLDisplayableNode::SafeDownCast(nd);
       if (dable)
       {
-        vtkMRMLDisplayNode *dnd = dable->GetDisplayNode();
+        vtkMRMLDisplayNode* dnd = dable->GetDisplayNode();
         if (dnd)
         {
-          vtkMRMLNode *dcp = miniscene->CopyNode(dnd);
+          vtkMRMLNode* dcp = miniscene->CopyNode(dnd);
 
-          vtkMRMLDisplayableNode *dablecp
+          vtkMRMLDisplayableNode* dablecp
             = vtkMRMLDisplayableNode::SafeDownCast(cp);
-          vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(dcp);
+          vtkMRMLDisplayNode* d = vtkMRMLDisplayNode::SafeDownCast(dcp);
 
           dablecp->SetAndObserveDisplayNodeID( d->GetID() );
         }
@@ -1249,7 +1249,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       miniscene->Commit( minisceneFilename.c_str() );
 
       // tell the storage nodes in the miniscene to write their data
-      vtkCollection *nodes = miniscene->GetNodes();
+      vtkCollection* nodes = miniscene->GetNodes();
       for (int n=0; n < nodes->GetNumberOfItems(); n++)
       {
         vtkMRMLNode* node = (vtkMRMLNode*) nodes->GetItemAsObject(n);
@@ -1450,10 +1450,10 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           // get coordinate system
           int coordinateSystem = this->GetCoordinateSystemFromString((*pit).GetCoordinateSystem().c_str());
           // get the fiducial list node
-          vtkMRMLNode *node
+          vtkMRMLNode* node
             = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
-          vtkMRMLDisplayableHierarchyNode *points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
-          vtkMRMLDisplayableNode *markups = vtkMRMLDisplayableNode::SafeDownCast(node);
+          vtkMRMLDisplayableHierarchyNode* points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+          vtkMRMLDisplayableNode* markups = vtkMRMLDisplayableNode::SafeDownCast(node);
           if (markups && markups->IsA("vtkMRMLMarkupsNode"))
           {
             int multipleFlag = 1;
@@ -1480,12 +1480,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             {
               // the hierarchy nodes have a sorting index that's respected by
               // GetNthChildNode
-              vtkMRMLHierarchyNode *nthHierarchyNode = points->GetNthChildNode(c);
+              vtkMRMLHierarchyNode* nthHierarchyNode = points->GetNthChildNode(c);
               // then get the displayable node from that hierarchy node
               if (nthHierarchyNode)
               {
-                vtkMRMLDisplayableHierarchyNode *nthDisplayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(nthHierarchyNode);
-                vtkMRMLDisplayableNode *displayableNode = nullptr;
+                vtkMRMLDisplayableHierarchyNode* nthDisplayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(nthHierarchyNode);
+                vtkMRMLDisplayableNode* displayableNode = nullptr;
                 if (nthDisplayableHierarchyNode)
                 {
                   displayableNode = nthDisplayableHierarchyNode->GetDisplayableNode();
@@ -1510,15 +1510,15 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           // get coordinate system
           int coordinateSystem = this->GetCoordinateSystemFromString((*pit).GetCoordinateSystem().c_str());
           // get the fiducial list node
-          vtkMRMLNode *node
+          vtkMRMLNode* node
             = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
-          vtkMRMLDisplayableNode *markups = vtkMRMLDisplayableNode::SafeDownCast(node);
+          vtkMRMLDisplayableNode* markups = vtkMRMLDisplayableNode::SafeDownCast(node);
           if (markups && markups->IsA("vtkMRMLMarkupsNode"))
           {
-            vtkMRMLStorageNode *mrmlStorageNode = markups->GetStorageNode();
+            vtkMRMLStorageNode* mrmlStorageNode = markups->GetStorageNode();
             if (mrmlStorageNode)
             {
-              vtkMRMLMarkupsStorageNode *markupsStorageNode = vtkMRMLMarkupsStorageNode::SafeDownCast(mrmlStorageNode);
+              vtkMRMLMarkupsStorageNode* markupsStorageNode = vtkMRMLMarkupsStorageNode::SafeDownCast(mrmlStorageNode);
               if (markupsStorageNode)
               {
                 markupsStorageNode->SetCoordinateSystem(coordinateSystem);
@@ -1538,12 +1538,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           }
 
           // get the region node
-          vtkMRMLNode *node
+          vtkMRMLNode* node
             = this->GetMRMLScene()->GetNodeByID((*pit).GetValue().c_str());
-          vtkMRMLROIListNode *regions = vtkMRMLROIListNode::SafeDownCast(node);
+          vtkMRMLROIListNode* regions = vtkMRMLROIListNode::SafeDownCast(node);
 
-          vtkMRMLDisplayableHierarchyNode *points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
-          vtkMRMLDisplayableNode *roi = vtkMRMLDisplayableNode::SafeDownCast(node);
+          vtkMRMLDisplayableHierarchyNode* points = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+          vtkMRMLDisplayableNode* roi = vtkMRMLDisplayableNode::SafeDownCast(node);
 
           if (regions)
           {
@@ -1562,8 +1562,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             {
               for (int i=0; i < regions->GetNumberOfROIs(); ++i)
               {
-                double *pt;
-                double *Radius;
+                double* pt;
+                double* Radius;
                 std::ostringstream roiAsString;
 
                 if (regions->GetNthROISelected(i))
@@ -1595,12 +1595,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             {
               // the hierarchy nodes have a sorting index that's respected by
               // GetNthChildNode
-              vtkMRMLHierarchyNode *nthHierarchyNode = points->GetNthChildNode(c);
+              vtkMRMLHierarchyNode* nthHierarchyNode = points->GetNthChildNode(c);
               // then get the displayable node from that hierarchy node
               if (nthHierarchyNode)
               {
-                vtkMRMLDisplayableHierarchyNode *nthDisplayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(nthHierarchyNode);
-                vtkMRMLDisplayableNode *displayableNode = nullptr;
+                vtkMRMLDisplayableHierarchyNode* nthDisplayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(nthHierarchyNode);
+                vtkMRMLDisplayableNode* displayableNode = nullptr;
                 if (nthDisplayableHierarchyNode)
                 {
                   displayableNode = nthDisplayableHierarchyNode->GetDisplayableNode();
@@ -1757,7 +1757,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 
   // copy the command line arguments into an array of pointers to
   // chars
-  char **command = new char*[commandLineAsString.size()+1];
+  char** command = new char*[commandLineAsString.size()+1];
   for (std::vector<std::string>::size_type i=0; i < commandLineAsString.size(); ++i)
   {
     command[i] = const_cast<char*>(commandLineAsString[i].c_str());
@@ -1800,7 +1800,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
      itksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", saveITKAutoLoadPath);
      std::string emptyString("ITK_AUTOLOAD_PATH=");
      int putSuccess =
-       itksys::SystemTools::PutEnv(const_cast <char *> (emptyString.c_str()));
+       itksys::SystemTools::PutEnv(const_cast <char*> (emptyString.c_str()));
      if (!putSuccess)
      {
        vtkErrorMacro( "Unable to reset ITK_AUTOLOAD_PATH.");
@@ -1808,7 +1808,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     //
     // now run the process
     //
-    itksysProcess *process = itksysProcess_New();
+    itksysProcess* process = itksysProcess_New();
 
     this->Internal->Processes.push_back(process);
 
@@ -1828,14 +1828,14 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     std::string putEnvString = ("ITK_AUTOLOAD_PATH=");
     putEnvString = putEnvString + saveITKAutoLoadPath;
     putSuccess =
-      itksys::SystemTools::PutEnv(const_cast <char *> (putEnvString.c_str()));
+      itksys::SystemTools::PutEnv(const_cast <char*> (putEnvString.c_str()));
     if (!putSuccess)
     {
       vtkErrorMacro( "Unable to restore ITK_AUTOLOAD_PATH. ");
     }
 
     // Wait for the command to finish
-    char *tbuffer;
+    char* tbuffer;
     int length;
     int pipe;
     const double timeoutlimit = 0.1;    // tenth of a second
@@ -2299,14 +2299,14 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               // If the parameter is an image or a model, then the parameter is placed in subject hierarchy at the same
               // level as the reference.
 
-              vtkMRMLNode *refNode = this->GetMRMLScene()->GetNodeByID(reference.c_str());
+              vtkMRMLNode* refNode = this->GetMRMLScene()->GetNodeByID(reference.c_str());
               if (refNode)
               {
                 if ((*pit).GetTag() == "transform")
                 {
                   std::string transformNodeID = (*pit).GetValue();
                   // is the reference a transformable node?
-                  vtkMRMLTransformableNode *trefNode = vtkMRMLTransformableNode::SafeDownCast(refNode);
+                  vtkMRMLTransformableNode* trefNode = vtkMRMLTransformableNode::SafeDownCast(refNode);
                   // Multiple transform nodes can refer to the same transformable node (e.g., linear or bspline transform
                   // can be computed, whichever is computed should transform the moving volume),
                   // we only want to use the transform that is not None.
@@ -2417,7 +2417,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::ProgressCallback ( void *who )
+void vtkSlicerCLIModuleLogic::ProgressCallback ( void* who )
 {
   LogicNodePair *lnp = reinterpret_cast<LogicNodePair*>(who);
 
@@ -2448,12 +2448,12 @@ vtkSlicerCLIModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
           {
             // go to the display node for the reference parameter and
             // get its color node
-            vtkMRMLDisplayableNode *rn
+            vtkMRMLDisplayableNode* rn
               = vtkMRMLDisplayableNode::SafeDownCast(this->GetMRMLScene()
                                             ->GetNodeByID(reference.c_str()));
             if (rn)
             {
-              vtkMRMLDisplayNode *dn = rn->GetDisplayNode();
+              vtkMRMLDisplayNode* dn = rn->GetDisplayNode();
               if (dn)
               {
                 // get the id of the color node
@@ -2532,7 +2532,7 @@ bool vtkSlicerCLIModuleLogic
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerCLIModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -2556,7 +2556,7 @@ void vtkSlicerCLIModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 //----------------------------------------------------------------------------
 void vtkSlicerCLIModuleLogic::ProcessMRMLLogicsEvents(vtkObject* caller,
                                                       unsigned long event,
-                                                      void * callData)
+                                                      void* callData)
 {
   if (caller->IsA("vtkSlicerApplicationLogic") &&
       event == vtkSlicerApplicationLogic::RequestProcessedEvent)
@@ -2582,8 +2582,8 @@ void vtkSlicerCLIModuleLogic::ProcessMRMLLogicsEvents(vtkObject* caller,
 
 //---------------------------------------------------------------------------
 void vtkSlicerCLIModuleLogic
-::ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event,
-                         void *callData)
+::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event,
+                         void* callData)
 {
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(caller);
   assert(node);
@@ -2686,7 +2686,7 @@ void vtkSlicerCLIModuleLogic
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene *miniscene, vtkMRMLModelHierarchyNode *mhnd,
+void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene* miniscene, vtkMRMLModelHierarchyNode* mhnd,
                                                                    MRMLIDMap *sceneToMiniSceneMap, std::set<std::string> &filesToDelete)
 {
   if (!mhnd)
@@ -2702,8 +2702,8 @@ void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene 
   // copy the entire hierarchy into the miniscene, we assume the nodes are ordered such that parents appear before children
   for (std::vector<vtkMRMLHierarchyNode*>::iterator it = hnodes.begin(); it != hnodes.end(); ++it)
   {
-    vtkMRMLNode *tnd = *it;
-    vtkMRMLModelHierarchyNode *tmhnd = vtkMRMLModelHierarchyNode::SafeDownCast(tnd);
+    vtkMRMLNode* tnd = *it;
+    vtkMRMLModelHierarchyNode* tmhnd = vtkMRMLModelHierarchyNode::SafeDownCast(tnd);
 
     if (!tmhnd)
     {
@@ -2712,11 +2712,11 @@ void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene 
     }
 
     // model hierarchy nodes need to get put in a scene
-    vtkMRMLNode *cp = miniscene->CopyNode(tnd);
-    vtkMRMLModelHierarchyNode *mhcp  = vtkMRMLModelHierarchyNode::SafeDownCast(cp);
+    vtkMRMLNode* cp = miniscene->CopyNode(tnd);
+    vtkMRMLModelHierarchyNode* mhcp  = vtkMRMLModelHierarchyNode::SafeDownCast(cp);
 
     // wire the parent relationship (again, we assume the parents appeared in the list before the children)
-    vtkMRMLNode *p = tmhnd->GetParentNode();
+    vtkMRMLNode* p = tmhnd->GetParentNode();
     if (p)
     {
       // find parent in the sceneToMiniSceneMap
@@ -2731,11 +2731,11 @@ void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene 
     (*sceneToMiniSceneMap)[tnd->GetID()] = cp->GetID();
 
     // also add any display node
-    vtkMRMLDisplayNode *dnd = tmhnd->GetDisplayNode();
+    vtkMRMLDisplayNode* dnd = tmhnd->GetDisplayNode();
     if (dnd)
     {
-      vtkMRMLNode *dcp = miniscene->CopyNode(dnd);
-      vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(dcp);
+      vtkMRMLNode* dcp = miniscene->CopyNode(dnd);
+      vtkMRMLDisplayNode* d = vtkMRMLDisplayNode::SafeDownCast(dcp);
       mhcp->SetAndObserveDisplayNodeID( d->GetID() );
     }
 
@@ -2743,9 +2743,9 @@ void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene 
     vtkMRMLModelNode* mnd = vtkMRMLModelNode::SafeDownCast(tmhnd->GetDisplayableNode());
     if (mnd)
     {
-      vtkMRMLNode *mcp = miniscene->CopyNode(mnd);
+      vtkMRMLNode* mcp = miniscene->CopyNode(mnd);
 
-      vtkMRMLModelNode *tmcp = vtkMRMLModelNode::SafeDownCast(mcp);
+      vtkMRMLModelNode* tmcp = vtkMRMLModelNode::SafeDownCast(mcp);
       if (tmcp)
       {
         mhcp->SetAssociatedNodeID(tmcp->GetID());
@@ -2754,19 +2754,19 @@ void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene 
         int ndn = mnd->GetNumberOfDisplayNodes();
         for (int i=0; i<ndn; i++)
         {
-          vtkMRMLDisplayNode *mdnd = mnd->GetNthDisplayNode(i);
+          vtkMRMLDisplayNode* mdnd = mnd->GetNthDisplayNode(i);
           if (mdnd)
           {
-            vtkMRMLDisplayNode *d = vtkMRMLDisplayNode::SafeDownCast(miniscene->CopyNode(mdnd));
+            vtkMRMLDisplayNode* d = vtkMRMLDisplayNode::SafeDownCast(miniscene->CopyNode(mdnd));
             tmcp->AddAndObserveDisplayNodeID(d->GetID());
           }
         }
 
         // add the storage node for the model to the miniscene
-        vtkMRMLStorageNode *msnd = mnd->GetStorageNode();
+        vtkMRMLStorageNode* msnd = mnd->GetStorageNode();
         if (msnd)
         {
-          vtkMRMLModelStorageNode *s = vtkMRMLModelStorageNode::SafeDownCast(miniscene->CopyNode(msnd));
+          vtkMRMLModelStorageNode* s = vtkMRMLModelStorageNode::SafeDownCast(miniscene->CopyNode(msnd));
           std::string fname = this->ConstructTemporaryFileName("geometry", "", tmcp->GetID(), std::vector<std::string>(), CommandLineModule);
           s->SetFileName(fname.c_str());
           filesToDelete.insert(fname);

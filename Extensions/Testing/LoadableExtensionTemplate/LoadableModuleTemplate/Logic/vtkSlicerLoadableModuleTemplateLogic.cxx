@@ -49,7 +49,7 @@ void vtkSlicerLoadableModuleTemplateLogic::PrintSelf(ostream& os, vtkIndent inde
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerLoadableModuleTemplateLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerLoadableModuleTemplateLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);

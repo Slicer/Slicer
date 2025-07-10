@@ -143,7 +143,7 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
       // absolute one here so that any future saves in different scene root
       // directories will be able to compute the correct relative path.
 
-      const char * absFilePath = this->GetAbsoluteFilePath(this->FileName);
+      const char* absFilePath = this->GetAbsoluteFilePath(this->FileName);
       if (absFilePath)
       {
         vtkDebugMacro("WriteXML: going back to absolute path for file name " << this->FileName << ", using " << absFilePath);
@@ -169,7 +169,7 @@ void vtkMRMLStorageNode::WriteXML(ostream& of, int nIndent)
     if (this->GetScene() && this->IsFilePathRelative(this->GetNthFileName(i)))
     {
       // go back to absolute
-      const char *absFilePath = this->GetAbsoluteFilePath(this->GetNthFileName(i));
+      const char* absFilePath = this->GetAbsoluteFilePath(this->GetNthFileName(i));
       if (absFilePath)
       {
         vtkDebugMacro("WriteXML: going back to absolute path for file name " << this->GetNthFileName(i) << ", using " << absFilePath);
@@ -330,12 +330,12 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLStorageNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLStorageNode *node = (vtkMRMLStorageNode *) anode;
+  vtkMRMLStorageNode* node = (vtkMRMLStorageNode*) anode;
   this->SetFileName(node->FileName);
   this->FileNameList = node->FileNameList; // a loop on AddFileName would be n log(n)
   this->SetURI(node->URI);
@@ -402,7 +402,7 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller), unsigned long event, void *callData )
+void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject* vtkNotUsed(caller), unsigned long event, void* callData )
 {
   if (event ==  vtkCommand::ProgressEvent)
   {
@@ -411,7 +411,7 @@ void vtkMRMLStorageNode::ProcessMRMLEvents ( vtkObject *vtkNotUsed(caller), unsi
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
+void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode* refNode )
 {
   // if the URI is null, or empty assume the file name is set and return
   if ( this->Scene )
@@ -448,8 +448,8 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
     return;
   }
 
-  vtkCacheManager *cacheManager = this->Scene->GetCacheManager();
-  const char *fname = nullptr;
+  vtkCacheManager* cacheManager = this->Scene->GetCacheManager();
+  const char* fname = nullptr;
   if ( cacheManager != nullptr )
   {
     fname = cacheManager->GetFilenameFromURI( this->GetURI() );
@@ -471,7 +471,7 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
   }
 
   // Get the data io manager
-  vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
+  vtkDataIOManager* iomanager = this->Scene->GetDataIOManager();
   if (iomanager != nullptr)
   {
     if (this->GetReadState() == this->Idle)
@@ -512,7 +512,7 @@ void vtkMRMLStorageNode::StageReadData ( vtkMRMLNode *refNode )
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
+void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode* refNode )
 {
   if ( this->Scene )
   {
@@ -553,7 +553,7 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
   }
 
    // Get the data io manager
-   vtkDataIOManager *iomanager = this->Scene->GetDataIOManager();
+   vtkDataIOManager* iomanager = this->Scene->GetDataIOManager();
    if (iomanager != nullptr)
    {
      if (this->GetWriteState() == this->Idle)
@@ -587,7 +587,7 @@ void vtkMRMLStorageNode::StageWriteData ( vtkMRMLNode *refNode )
 }
 
 //----------------------------------------------------------------------------
-const char * vtkMRMLStorageNode::GetStateAsString(int state)
+const char* vtkMRMLStorageNode::GetStateAsString(int state)
 {
   if (state == this->Pending)
   {
@@ -630,7 +630,7 @@ std::string vtkMRMLStorageNode::GetFullNameFromFileName()
 std::string vtkMRMLStorageNode::GetFullNameFromNthFileName(int n)
 {
   std::string fullName = std::string("");
-  const char *fileName;
+  const char* fileName;
   if (n == -1)
   {
     // special case, use the archetype
@@ -696,7 +696,7 @@ std::string vtkMRMLStorageNode::GetFullNameFromNthFileName(int n)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLStorageNode::SupportedFileType(const char *fileName)
+int vtkMRMLStorageNode::SupportedFileType(const char* fileName)
 {
   // check to see which file name we need to check
   std::string name;
@@ -735,7 +735,7 @@ int vtkMRMLStorageNode::SupportedFileType(const char *fileName)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLStorageNode::FileNameIsInList(const char *fileName)
+int vtkMRMLStorageNode::FileNameIsInList(const char* fileName)
 {
   if (fileName == nullptr)
   {
@@ -743,7 +743,7 @@ int vtkMRMLStorageNode::FileNameIsInList(const char *fileName)
   }
   const std::string fileNameString(fileName);
   const int fileNameIsRelative =  this->IsFilePathRelative(fileName);
-  const char *rootDir = this->Scene ? this->Scene->GetRootDirectory() : ".";
+  const char* rootDir = this->Scene ? this->Scene->GetRootDirectory() : ".";
   const std::string relativeFileName = fileNameIsRelative ?
     fileNameString : vtksys::SystemTools::RelativePath(rootDir, fileName);
 
@@ -800,7 +800,7 @@ void vtkMRMLStorageNode::ResetFileNameList( )
 }
 
 //----------------------------------------------------------------------------
-const char * vtkMRMLStorageNode::GetNthFileName(int n) const
+const char* vtkMRMLStorageNode::GetNthFileName(int n) const
 {
   if (n < 0 || n >= this->GetNumberOfFileNames())
   {
@@ -854,7 +854,7 @@ void vtkMRMLStorageNode::ResetURIList( )
 }
 
 //----------------------------------------------------------------------------
-const char * vtkMRMLStorageNode::GetNthURI(int n)
+const char* vtkMRMLStorageNode::GetNthURI(int n)
 {
   if (this->GetNumberOfURIs() < n)
   {
@@ -887,7 +887,7 @@ void vtkMRMLStorageNode::ResetNthURI(int n, const char* uri)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorageNode::SetDataDirectory(const char *dataDirName)
+void vtkMRMLStorageNode::SetDataDirectory(const char* dataDirName)
 {
   if (dataDirName == nullptr)
   {
@@ -929,7 +929,7 @@ void vtkMRMLStorageNode::SetDataDirectory(const char *dataDirName)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorageNode::SetURIPrefix(const char *uriPrefix)
+void vtkMRMLStorageNode::SetURIPrefix(const char* uriPrefix)
 {
   if (uriPrefix == nullptr)
   {
@@ -1104,7 +1104,7 @@ void vtkMRMLStorageNode::InitializeSupportedWriteFileTypes()
 }
 
 //------------------------------------------------------------------------------
-int vtkMRMLStorageNode::IsFilePathRelative(const char * filepath)
+int vtkMRMLStorageNode::IsFilePathRelative(const char* filepath)
 {
   if (filepath == nullptr)
   {
@@ -1123,7 +1123,7 @@ int vtkMRMLStorageNode::IsFilePathRelative(const char * filepath)
 }
 
 //------------------------------------------------------------------------------
-const char *vtkMRMLStorageNode::GetAbsoluteFilePath(const char *inputPath)
+const char* vtkMRMLStorageNode::GetAbsoluteFilePath(const char* inputPath)
 {
   if (inputPath == nullptr)
   {
@@ -1172,14 +1172,14 @@ vtkTimeStamp vtkMRMLStorageNode::GetStoredTime()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   // Must be reimplemented in subclass;
   return refNode->IsA("vtkMRMLStorableNode");
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* refNode)
 {
   return this->CanReadInReferenceNode(refNode);
 }

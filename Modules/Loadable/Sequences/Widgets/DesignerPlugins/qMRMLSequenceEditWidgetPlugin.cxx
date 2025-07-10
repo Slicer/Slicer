@@ -20,15 +20,15 @@
 
 //------------------------------------------------------------------------------
 qMRMLSequenceEditWidgetPlugin
-::qMRMLSequenceEditWidgetPlugin(QObject *_parent)
+::qMRMLSequenceEditWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLSequenceEditWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLSequenceEditWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qMRMLSequenceEditWidget* _widget
     = new qMRMLSequenceEditWidget(_parent);

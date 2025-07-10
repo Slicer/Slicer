@@ -32,7 +32,7 @@
 
 // STD includes
 
-int qSlicerModulePanelTest2(int argc, char * argv[] )
+int qSlicerModulePanelTest2(int argc, char* argv[] )
 {
   QApplication::setDesktopSettingsAware(false);
   QApplication::setStyle(new qSlicerStyle);

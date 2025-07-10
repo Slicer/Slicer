@@ -111,7 +111,7 @@ void vtkMRMLWindowLevelWidget::CreateDefaultRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLWindowLevelWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2)
+bool vtkMRMLWindowLevelWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2)
 {
   vtkMRMLSliceLogic* sliceLogic = this->GetSliceLogic();
   if (!sliceLogic)
@@ -174,7 +174,7 @@ bool vtkMRMLWindowLevelWidget::ProcessInteractionEvent(vtkMRMLInteractionEventDa
     case WidgetEventAlwaysOnAdjustWindowLevelStart:
     case WidgetEventAlwaysOnAdjustWindowLevelAlternativeStart:
     {
-      vtkMRMLInteractionNode * interactionNode = this->GetInteractionNode();
+      vtkMRMLInteractionNode* interactionNode = this->GetInteractionNode();
       this->AdjustMode = -1;
       if (interactionNode)
       {
@@ -418,7 +418,7 @@ bool vtkMRMLWindowLevelWidget::ProcessAdjustWindowLevelStart(vtkMRMLInteractionE
     return false;
   }
   this->WindowLevelAdjustedLayer = vtkMRMLSliceLogic::LayerNone;
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
   if (!sliceCompositeNode)
   {
     return false;
@@ -459,7 +459,7 @@ vtkMRMLVolumeNode* vtkMRMLWindowLevelWidget::GetVolumeNodeFromSliceLayer(int edi
   {
     return nullptr;
   }
-  vtkMRMLSliceCompositeNode *sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
   if (!sliceCompositeNode)
   {
     return nullptr;
@@ -591,7 +591,7 @@ bool vtkMRMLWindowLevelWidget::UpdateWindowLevelFromRectangle(int layer, int cor
   {
     return false;
   }
-  vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = sliceLogic->GetSliceNode();
   if (!sliceNode)
   {
     return false;

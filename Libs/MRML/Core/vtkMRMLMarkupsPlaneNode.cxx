@@ -1246,7 +1246,7 @@ void vtkMRMLMarkupsPlaneNode::GetPlaneCornerPointsWorld(vtkPoints* points_World)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsPlaneNode::CalculatePlaneCornerPoints(vtkPoints * points, double xAxis[3], double yAxis[3], double center[3], double size[2])
+void vtkMRMLMarkupsPlaneNode::CalculatePlaneCornerPoints(vtkPoints* points, double xAxis[3], double yAxis[3], double center[3], double size[2])
 {
   if (!points)
   {

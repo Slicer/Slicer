@@ -37,7 +37,7 @@
 // VTK includes
 #include <vtkNew.h>
 
-int qMRMLColorListViewTest1(int argc, char * argv [])
+int qMRMLColorListViewTest1(int argc, char* argv [])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

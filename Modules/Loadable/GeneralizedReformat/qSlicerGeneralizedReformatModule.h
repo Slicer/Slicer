@@ -37,7 +37,7 @@ qSlicerGeneralizedReformatModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerGeneralizedReformatModule(QObject *parent=nullptr);
+  explicit qSlicerGeneralizedReformatModule(QObject* parent=nullptr);
   ~qSlicerGeneralizedReformatModule() override;
 
   qSlicerGetTitleMacro(tr("GeneralizedReformat"));
@@ -57,7 +57,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

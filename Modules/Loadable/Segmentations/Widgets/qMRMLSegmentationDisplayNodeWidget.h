@@ -100,7 +100,7 @@ public slots:
   void onClipNodeChanged(vtkMRMLNode*);
 
   /// Handles segment selection changes when connecting directly to a \sa qMRMLSegmentsTableView
-  void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 protected:
   /// Update visibility and opacity section for selected segment

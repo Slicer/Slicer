@@ -94,11 +94,11 @@ vtkObservation* qMRMLEventBrokerWidgetPrivate::observation(QTreeWidgetItem* item
 
   QTreeWidgetItem* subjectItem = eventItem->parent();
   vtkObject* subject = static_cast<vtkObject*>(
-    reinterpret_cast<void *>(
+    reinterpret_cast<void*>(
       subjectItem->data(0, Qt::UserRole).toLongLong()));
 
   vtkObject* observer = static_cast<vtkObject*>(
-    reinterpret_cast<void *>(
+    reinterpret_cast<void*>(
       item->data(0, Qt::UserRole).toLongLong()));
 
   vtkEventBroker::ObservationVector observations =
@@ -118,7 +118,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromSubject(vtkObject* subje
   for (int i = 0; i < this->ConnectionsTreeWidget->topLevelItemCount(); ++i)
   {
     QTreeWidgetItem* topLevelItem = this->ConnectionsTreeWidget->topLevelItem(i);
-    if (static_cast<vtkObject*>(reinterpret_cast<void *>(
+    if (static_cast<vtkObject*>(reinterpret_cast<void*>(
       topLevelItem->data(0, Qt::UserRole).toLongLong())) == subject)
     {
       return topLevelItem;
@@ -174,7 +174,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservati
     if ((observation->GetScript() && userData == 0 &&
          observationItem->toolTip(NameColumn) == observation->GetScript()) ||
         (observation->GetObserver() && userData != 0 &&
-         static_cast<vtkObject*>(reinterpret_cast<void *>(userData)) == observation->GetObserver()))
+         static_cast<vtkObject*>(reinterpret_cast<void*>(userData)) == observation->GetObserver()))
     {
       return observationItem;
     }

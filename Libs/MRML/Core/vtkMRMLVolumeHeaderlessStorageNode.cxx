@@ -246,12 +246,12 @@ void vtkMRMLVolumeHeaderlessStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLVolumeHeaderlessStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLVolumeHeaderlessStorageNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLVolumeHeaderlessStorageNode *node = (vtkMRMLVolumeHeaderlessStorageNode *) anode;
+  vtkMRMLVolumeHeaderlessStorageNode* node = (vtkMRMLVolumeHeaderlessStorageNode*) anode;
 
   this->SetFileScanOrder(node->FileScanOrder);
   this->SetFileSpacing(node->FileSpacing);
@@ -293,14 +293,14 @@ void vtkMRMLVolumeHeaderlessStorageNode::PrintSelf(ostream& os, vtkIndent indent
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLVolumeHeaderlessStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLVolumeHeaderlessStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLScalarVolumeNode") ||
          refNode->IsA("vtkMRMLVectorVolumeNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   // Skip file loading for empty volume, for which no file was saved
   if (this->GetWriteState() == SkippedNoData)
@@ -309,16 +309,16 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 1;
   }
 
-  vtkMRMLVolumeNode *volNode = nullptr;
+  vtkMRMLVolumeNode* volNode = nullptr;
 
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
   {
-    volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+    volNode = dynamic_cast <vtkMRMLScalarVolumeNode*> (refNode);
   }
 #ifdef MRML_USE_vtkTeem
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") )
   {
-    volNode = dynamic_cast <vtkMRMLVectorVolumeNode *> (refNode);
+    volNode = dynamic_cast <vtkMRMLVectorVolumeNode*> (refNode);
   }
 #endif
   if (volNode->GetImageData())
@@ -431,15 +431,15 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLVolumeHeaderlessStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLVolumeHeaderlessStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLScalarVolumeNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
+  vtkMRMLVolumeNode* volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
 
   if (volNode->GetImageData() == nullptr)
   {

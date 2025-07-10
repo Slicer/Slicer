@@ -174,7 +174,7 @@ void vtkMRMLTableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTableNode::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData )
+void vtkMRMLTableNode::ProcessMRMLEvents( vtkObject* caller, unsigned long event, void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   vtkTable* callerTable = vtkTable::SafeDownCast(caller);
@@ -394,7 +394,7 @@ int vtkMRMLTableNode::GetColumnIndex(const char* columnName)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTableNode::GetColumnIndex(const std::string &columnName)
+int vtkMRMLTableNode::GetColumnIndex(const std::string& columnName)
 {
   return this->GetColumnIndex(columnName.c_str());
 }

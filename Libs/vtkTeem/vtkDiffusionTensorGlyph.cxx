@@ -141,58 +141,58 @@ void vtkDiffusionTensorGlyph::ColorGlyphsBy(int invariant) {
 // TO DO: make input mask a point data object or scalars
 
 int vtkDiffusionTensorGlyph::RequestData(
-                                         vtkInformation *vtkNotUsed(request),
-                                         vtkInformationVector **inputVector,
-                                         vtkInformationVector *outputVector)
+                                         vtkInformation* vtkNotUsed(request),
+                                         vtkInformationVector** inputVector,
+                                         vtkInformationVector* outputVector)
 {
   // get the info objects
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *sourceInfo = inputVector[1]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* sourceInfo = inputVector[1]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkDataSet *input = vtkDataSet::SafeDownCast(
+  vtkDataSet* input = vtkDataSet::SafeDownCast(
                                                inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *source = vtkPolyData::SafeDownCast(
+  vtkPolyData* source = vtkPolyData::SafeDownCast(
                                                   sourceInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
+  vtkPolyData* output = vtkPolyData::SafeDownCast(
                                                   outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkDataArray *inTensors;
-  vtkDataArray *inScalars;
+  vtkDataArray* inTensors;
+  vtkDataArray* inScalars;
   vtkIdType numPts, numSourcePts, numSourceCells, inPtId, i;
   int j;
-  vtkPoints *sourcePts;
-  vtkDataArray *sourceNormals;
-  vtkCellArray *sourceCells, *cells;
-  vtkPoints *newPts;
-  vtkFloatArray *newScalars=nullptr;
-  vtkFloatArray *newNormals=nullptr;
+  vtkPoints* sourcePts;
+  vtkDataArray* sourceNormals;
+  vtkCellArray* sourceCells, *cells;
+  vtkPoints* newPts;
+  vtkFloatArray* newScalars=nullptr;
+  vtkFloatArray* newNormals=nullptr;
   double x[3], x2[3], s;
-  vtkTransform *trans;
-  vtkCell *cell;
-  vtkIdList *cellPts;
+  vtkTransform* trans;
+  vtkCell* cell;
+  vtkIdList* cellPts;
   int npts;
-  vtkIdType *pts;
+  vtkIdType* pts;
   vtkIdType cellId;
   vtkIdType subIncr;
   int numDirs, dir, eigen_dir, symmetric_dir;
-  vtkMatrix4x4 *matrix;
-  double *m[3], w[3], *v[3];
+  vtkMatrix4x4* matrix;
+  double* m[3], w[3], *v[3];
   double m0[3], m1[3], m2[3];
   double v0[3], v1[3], v2[3];
   double xv[3], yv[3], zv[3];
   double maxScale;
-  vtkPointData *pd, *outPD;
+  vtkPointData* pd, *outPD;
 
   // Keeps track of the number of points added to the output polydata so far.
   // this replaces variable ptIncr in superclass vtkTensorGlyph.
   vtkIdType ptOffset = 0;
 
   // coordinate systems for DTI
-  vtkTransform *userVolumeTransform = nullptr;
+  vtkTransform* userVolumeTransform = nullptr;
   // masking of glyphs
-  vtkDataArray *inMask;
+  vtkDataArray* inMask;
   // glyph timing
 #ifndef NDEBUG
   clock_t tStart = clock();
@@ -390,7 +390,7 @@ int vtkDiffusionTensorGlyph::RequestData(
       }
     }
 
-    inTensors->GetTuple(inPtId, (double *)tensor);
+    inTensors->GetTuple(inPtId, (double*)tensor);
 
     // Decide whether this tensor will be glyphed:
     // Threshold by trace ( must be > 0)

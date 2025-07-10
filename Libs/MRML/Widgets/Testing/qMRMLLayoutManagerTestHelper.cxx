@@ -11,7 +11,7 @@ namespace
 
 // --------------------------------------------------------------------------
 bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
-                          vtkMRMLLayoutNode * layoutNode, int expectedViewArrangement)
+                          vtkMRMLLayoutNode* layoutNode, int expectedViewArrangement)
 {
   // Ignore deprecated arrangements (that are not expected to be available)
   if (expectedViewArrangement == 5     // SlicerLayoutOneUpSliceView

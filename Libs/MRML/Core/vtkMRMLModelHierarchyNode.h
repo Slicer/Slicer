@@ -23,7 +23,7 @@ class vtkMRMLModelNode;
 class VTK_MRML_EXPORT vtkMRMLModelHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {
 public:
-  static vtkMRMLModelHierarchyNode *New();
+  static vtkMRMLModelHierarchyNode* New();
   vtkTypeMacro(vtkMRMLModelHierarchyNode,vtkMRMLDisplayableHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -44,7 +44,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, ModelHierarchy)
@@ -57,11 +57,11 @@ public:
 
   ///
   /// Finds the model node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   ///
   /// String ID of the model MRML node
@@ -70,7 +70,7 @@ public:
     this->SetDisplayableNodeID(id);
   }
 
-  char *GetModelNodeID()
+  char* GetModelNodeID()
   {
     return this->GetDisplayableNodeID();
   }
@@ -96,7 +96,7 @@ public:
 
   ///
   /// Find all child model nodes in the hierarchy
-  void GetChildrenModelNodes(vtkCollection *models);
+  void GetChildrenModelNodes(vtkCollection* models);
 
   ///
   /// alternative method to propagate events generated in Display nodes
@@ -114,7 +114,7 @@ protected:
 
   /// Data
 
-  vtkMRMLModelDisplayNode *ModelDisplayNode;
+  vtkMRMLModelDisplayNode* ModelDisplayNode;
 
 };
 

@@ -508,7 +508,7 @@ vtkMRMLAbstractDisplayableManager::vtkMRMLAbstractDisplayableManager()
   this->AddMRMLDisplayableManagerEvent(vtkMRMLNode::ReferenceModifiedEvent);
 
   // Setup widgets callback
-  vtkObserverManager * widgetsObserver = this->Internal->WidgetsObserverManager;
+  vtkObserverManager* widgetsObserver = this->Internal->WidgetsObserverManager;
   widgetsObserver->AssignOwner(this);
   widgetsObserver->GetCallbackCommand()->SetClientData(this);
   widgetsObserver->GetCallbackCommand()->SetCallback(
@@ -532,7 +532,7 @@ void vtkMRMLAbstractDisplayableManager::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableManagerGroup * vtkMRMLAbstractDisplayableManager
+vtkMRMLDisplayableManagerGroup* vtkMRMLAbstractDisplayableManager
 ::GetMRMLDisplayableManagerGroup()
 {
   return this->Internal->DisplayableManagerGroup;
@@ -569,7 +569,7 @@ void vtkMRMLAbstractDisplayableManager::Create()
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager
-::SetMRMLDisplayableManagerGroup(vtkMRMLDisplayableManagerGroup * group)
+::SetMRMLDisplayableManagerGroup(vtkMRMLDisplayableManagerGroup* group)
 {
   // Sanity checks
   if (this->Internal->DisplayableManagerGroup == group)
@@ -625,13 +625,13 @@ bool vtkMRMLAbstractDisplayableManager::IsCreated()
 }
 
 //---------------------------------------------------------------------------
-vtkRenderer * vtkMRMLAbstractDisplayableManager::GetRenderer()
+vtkRenderer* vtkMRMLAbstractDisplayableManager::GetRenderer()
 {
   return this->Internal->Renderer;
 }
 
 //---------------------------------------------------------------------------
-vtkRenderWindowInteractor * vtkMRMLAbstractDisplayableManager::GetInteractor()
+vtkRenderWindowInteractor* vtkMRMLAbstractDisplayableManager::GetInteractor()
 {
 
   if (!this->Internal->Interactor)
@@ -657,7 +657,7 @@ vtkMRMLSelectionNode* vtkMRMLAbstractDisplayableManager::GetSelectionNode()
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLNode * vtkMRMLAbstractDisplayableManager::GetMRMLDisplayableNode()
+vtkMRMLNode* vtkMRMLAbstractDisplayableManager::GetMRMLDisplayableNode()
 {
   return this->Internal->MRMLDisplayableNode;
 }
@@ -669,7 +669,7 @@ int vtkMRMLAbstractDisplayableManager::ActiveInteractionModes() {
 
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::ProcessMRMLNodesEvents(
-  vtkObject* caller, unsigned long event, void * callData)
+  vtkObject* caller, unsigned long event, void* callData)
 {
   if (caller == this->GetMRMLDisplayableNode())
   {
@@ -706,9 +706,9 @@ void vtkMRMLAbstractDisplayableManager
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager
-::ProcessWidgetsEvents(vtkObject *vtkNotUsed(caller),
+::ProcessWidgetsEvents(vtkObject* vtkNotUsed(caller),
                        unsigned long vtkNotUsed(event),
-                       void *vtkNotUsed(callData))
+                       void* vtkNotUsed(callData))
 {
 }
 
@@ -716,13 +716,13 @@ void vtkMRMLAbstractDisplayableManager
 // Description:
 // the WidgetCallback is a static function to relay modified events from the
 // observed vtk widgets back into the mrml node for further processing
-void vtkMRMLAbstractDisplayableManager::WidgetsCallback(vtkObject *caller,
+void vtkMRMLAbstractDisplayableManager::WidgetsCallback(vtkObject* caller,
                                                         unsigned long eid,
-                                                        void *clientData,
-                                                        void *callData)
+                                                        void* clientData,
+                                                        void* callData)
 {
   vtkMRMLAbstractDisplayableManager* self =
-    reinterpret_cast<vtkMRMLAbstractDisplayableManager *>(clientData);
+    reinterpret_cast<vtkMRMLAbstractDisplayableManager*>(clientData);
   assert(!caller->IsA("vtkMRMLNode"));
   self->ProcessWidgetsEvents(caller, eid, callData);
 }
@@ -777,17 +777,17 @@ void vtkMRMLAbstractDisplayableManager::AddMRMLDisplayableManagerEvent(int event
 
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLDisplayableNode(
-    vtkMRMLNode * newMRMLDisplayableNode)
+    vtkMRMLNode* newMRMLDisplayableNode)
 {
   // Observe scene associated with the MRML DisplayableNode
-  vtkMRMLScene * sceneToObserve = nullptr;
+  vtkMRMLScene* sceneToObserve = nullptr;
   vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(newMRMLDisplayableNode);
   if (viewNode)
   {
     sceneToObserve = viewNode->GetScene();
 
     // Observe InteractionNode
-    vtkMRMLInteractionNode *interactionNode = viewNode->GetInteractionNode();
+    vtkMRMLInteractionNode* interactionNode = viewNode->GetInteractionNode();
     this->Internal->SetAndObserveMRMLInteractionNode(interactionNode);
     if (interactionNode)
     {
@@ -911,7 +911,7 @@ vtkRenderer* vtkMRMLAbstractDisplayableManager::GetRenderer(int idx)
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLAbstractDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* vtkNotUsed(eventData), double &distance2)
+bool vtkMRMLAbstractDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* vtkNotUsed(eventData), double& distance2)
 {
   distance2 = VTK_DOUBLE_MAX;
   return false;

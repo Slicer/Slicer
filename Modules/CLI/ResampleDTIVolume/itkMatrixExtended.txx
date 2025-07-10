@@ -40,7 +40,7 @@ MatrixExtended<T, NRows, NColumns>
 
 template <class T, unsigned int NRows, unsigned int NColumns>
 MatrixExtended<T, NRows, NColumns>
-::MatrixExtended( const InternalMatrixType & matrix )
+::MatrixExtended( const InternalMatrixType& matrix )
   : Matrix<T, NRows, NColumns>( matrix )
 {
 }
@@ -94,7 +94,7 @@ MatrixExtended<T, NRows, NColumns>
 template <class T, unsigned int NRows, unsigned int NColumns>
 MatrixExtended<T, NRows, NColumns>
 MatrixExtended<T, NRows, NColumns>
-::operator=( const InternalMatrixType & matrix )
+::operator=( const InternalMatrixType& matrix )
 {
   for( unsigned int i = 0; i < NRows; i++ )
   {

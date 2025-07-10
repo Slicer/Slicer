@@ -117,7 +117,7 @@ vtkStandardNewMacro(vtkMRMLOrientationMarkerDisplayableManager );
 class vtkMRMLOrientationMarkerDisplayableManager::vtkInternal
 {
 public:
-  vtkInternal(vtkMRMLOrientationMarkerDisplayableManager * external);
+  vtkInternal(vtkMRMLOrientationMarkerDisplayableManager* external);
   ~vtkInternal();
 
   void SetupMarkerRenderer();
@@ -159,7 +159,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::vtkInternal(vtkMRMLOrientationMarkerDisplayableManager * external)
+vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::vtkInternal(vtkMRMLOrientationMarkerDisplayableManager* external)
 {
   this->External = external;
   this->RendererUpdateObserver = vtkSmartPointer<vtkRendererUpdateObserver>::New();
@@ -453,7 +453,7 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrient
   vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(viewNode);
   if (threeDViewNode && this->ObservedRenderer)
   {
-    vtkCamera *cam = this->ObservedRenderer->GetActiveCamera();
+    vtkCamera* cam = this->ObservedRenderer->GetActiveCamera();
     double pos[3], fp[3], viewup[3];
     cam->GetPosition( pos );
     cam->GetFocalPoint( fp );

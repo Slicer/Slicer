@@ -69,7 +69,7 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
     return;
   }
 
-  vtkMRMLScene *scene = this->GetMRMLScene();
+  vtkMRMLScene* scene = this->GetMRMLScene();
 
   //
   // The core nodes
@@ -174,7 +174,7 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
       return;
     }
 
-    vtkMRMLAnnotationSnapshotNode * newSnapshotNode =
+    vtkMRMLAnnotationSnapshotNode* newSnapshotNode =
         vtkMRMLAnnotationSnapshotNode::New();
     newSnapshotNode->SetScene(this->GetMRMLScene());
     if (std::string(name) != "")

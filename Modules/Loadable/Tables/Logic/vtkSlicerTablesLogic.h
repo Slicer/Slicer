@@ -43,7 +43,7 @@ class VTK_SLICER_TABLES_MODULE_LOGIC_EXPORT vtkSlicerTablesLogic
 {
 public:
 
-  static vtkSlicerTablesLogic *New();
+  static vtkSlicerTablesLogic* New();
   vtkTypeMacro(vtkSlicerTablesLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

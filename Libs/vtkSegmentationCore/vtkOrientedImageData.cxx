@@ -65,7 +65,7 @@ void vtkOrientedImageData::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkOrientedImageData::ShallowCopy(vtkDataObject *dataObject)
+void vtkOrientedImageData::ShallowCopy(vtkDataObject* dataObject)
 {
   // Copy orientation information
   this->CopyDirections(dataObject);
@@ -75,7 +75,7 @@ void vtkOrientedImageData::ShallowCopy(vtkDataObject *dataObject)
 }
 
 //----------------------------------------------------------------------------
-void vtkOrientedImageData::DeepCopy(vtkDataObject *dataObject)
+void vtkOrientedImageData::DeepCopy(vtkDataObject* dataObject)
 {
   // Copy orientation information
   this->CopyDirections(dataObject);
@@ -85,9 +85,9 @@ void vtkOrientedImageData::DeepCopy(vtkDataObject *dataObject)
 }
 
 //----------------------------------------------------------------------------
-void vtkOrientedImageData::CopyDirections(vtkDataObject *dataObject)
+void vtkOrientedImageData::CopyDirections(vtkDataObject* dataObject)
 {
-  vtkOrientedImageData *orientedImageData = vtkOrientedImageData::SafeDownCast(dataObject);
+  vtkOrientedImageData* orientedImageData = vtkOrientedImageData::SafeDownCast(dataObject);
   if (orientedImageData != nullptr)
   {
     double dirs[3][3] = {{0.0, 0.0, 0.0},

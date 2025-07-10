@@ -227,7 +227,7 @@ double getInverseErrorVtk(const double inputPoint[3], vtkThinPlateSplineTransfor
 }
 
 //----------------------------------------------------------------------------
-int vtkThinPlateSplineTransformTest1(int , char * [] )
+int vtkThinPlateSplineTransformTest1(int, char*[])
 {
   // we want to transform a 300x400x300 image, with grid points 100
   // pixels apart. So, we need 4x5x4 "interior" grid points. Since the

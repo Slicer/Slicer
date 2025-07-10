@@ -18,7 +18,7 @@
 #include "vtkNew.h"
 
 //----------------------------------------------------------------------------
-int vtkCodedEntryTest1(int , char * [] )
+int vtkCodedEntryTest1(int, char*[])
 {
   vtkNew<vtkCodedEntry> codedEntry;
 

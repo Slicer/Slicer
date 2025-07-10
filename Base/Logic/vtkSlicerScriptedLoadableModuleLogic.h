@@ -34,7 +34,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerScriptedLoadableModuleLogic :
 {
 public:
 
-  static vtkSlicerScriptedLoadableModuleLogic *New();
+  static vtkSlicerScriptedLoadableModuleLogic* New();
   vtkTypeMacro(vtkSlicerScriptedLoadableModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -53,7 +53,7 @@ private:
   void operator=(const vtkSlicerScriptedLoadableModuleLogic&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

@@ -30,9 +30,9 @@ qSlicerMarkupsPlaceWidgetPlugin
   Q_OBJECT
 
 public:
-  qSlicerMarkupsPlaceWidgetPlugin(QObject *_parent = nullptr);
+  qSlicerMarkupsPlaceWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

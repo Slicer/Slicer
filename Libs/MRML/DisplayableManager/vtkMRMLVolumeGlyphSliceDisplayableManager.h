@@ -59,7 +59,7 @@ private:
   void operator=(const vtkMRMLVolumeGlyphSliceDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   friend class vtkInternal;
 };
 

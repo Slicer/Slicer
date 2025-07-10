@@ -669,7 +669,7 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
       qCritical() << Q_FUNC_INFO << ": Failed to get renderer";
       return false;
     }
-    vtkCamera *camera = renderer->GetActiveCamera();
+    vtkCamera* camera = renderer->GetActiveCamera();
     if (!camera)
     {
       qCritical() << Q_FUNC_INFO << ": Failed to get camera";

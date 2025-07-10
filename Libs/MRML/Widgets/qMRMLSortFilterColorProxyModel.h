@@ -48,7 +48,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterColorProxyModel : public QSortFilterPr
 
 public:
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterColorProxyModel(QObject *parent=nullptr);
+  qMRMLSortFilterColorProxyModel(QObject* parent=nullptr);
   ~qMRMLSortFilterColorProxyModel() override;
 
   Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;
@@ -58,7 +58,7 @@ public:
   /// Returns true if the item in the row indicated by the given sourceRow and
   /// sourceParent should be included in the model; otherwise returns false.
   /// This method test each item via \a filterAcceptsItem
-  bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const override;
+  bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent)const override;
 
 public slots:
   void setShowEmptyColors(bool show);

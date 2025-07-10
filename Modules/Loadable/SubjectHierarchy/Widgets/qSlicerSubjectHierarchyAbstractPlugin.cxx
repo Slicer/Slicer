@@ -53,7 +53,7 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyAbstractPlugin::qSlicerSubjectHierarchyAbstractPlugin(QObject *parent)
+qSlicerSubjectHierarchyAbstractPlugin::qSlicerSubjectHierarchyAbstractPlugin(QObject* parent)
   : Superclass(parent)
   , m_Name(QString())
 {

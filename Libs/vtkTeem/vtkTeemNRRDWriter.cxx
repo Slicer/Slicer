@@ -72,7 +72,7 @@ vtkImageData* vtkTeemNRRDWriter::GetInput(int port)
 
 //----------------------------------------------------------------------------
 int vtkTeemNRRDWriter::FillInputPortInformation(
-  int vtkNotUsed(port), vtkInformation *info)
+  int vtkNotUsed(port), vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
   return 1;
@@ -81,11 +81,11 @@ int vtkTeemNRRDWriter::FillInputPortInformation(
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
-void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, size_t &numComp, int &vtkType, void **buffer)
+void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData* in, int& kind, size_t &numComp, int& vtkType, void** buffer)
 {
-  vtkDataArray *array = nullptr;
+  vtkDataArray* array = nullptr;
   this->DiffusionWeightedData = 0;
-  if ((array = static_cast<vtkDataArray *> (in->GetPointData()->GetScalars())))
+  if ((array = static_cast<vtkDataArray*> (in->GetPointData()->GetScalars())))
   {
     numComp = array->GetNumberOfComponents();
     vtkType = array->GetDataType();
@@ -119,20 +119,20 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, 
         }
     }
   }
-   else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetVectors())))
+   else if ((array = static_cast<vtkDataArray*> ( in->GetPointData()->GetVectors())))
    {
      *buffer = array->GetVoidPointer(0);
      vtkType = array->GetDataType();
      kind = nrrdKindVector;
    }
-   else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetNormals())))
+   else if ((array = static_cast<vtkDataArray*> ( in->GetPointData()->GetNormals())))
    {
      *buffer = array->GetVoidPointer(0);
      vtkType = array->GetDataType();
      kind = nrrdKindVector;
      numComp = array->GetNumberOfComponents();
    }
-   else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetTensors())))
+   else if ((array = static_cast<vtkDataArray*> ( in->GetPointData()->GetTensors())))
    {
      *buffer = array->GetVoidPointer(0);
      vtkType = array->GetDataType();
@@ -268,13 +268,13 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   }
 
   Nrrd* nrrd = nrrdNew();
-  if (nrrdWrap_nva(nrrd, const_cast<void *> (buffer),
+  if (nrrdWrap_nva(nrrd, const_cast<void*> (buffer),
                    this->VTKToNrrdPixelType( vtkType ),
                    nrrdDim, size)
       || nrrdSpaceDimensionSet(nrrd, spaceDim)
       || nrrdSpaceOriginSet(nrrd, origin))
   {
-    char *err = biffGetDone(NRRD); // would be nice to free(err)
+    char* err = biffGetDone(NRRD); // would be nice to free(err)
     vtkErrorMacro("Write: Error wrapping nrrd for "
                       << this->GetFileName() << ":\n" << err);
     // Free the nrrd struct but don't touch nrrd->data
@@ -442,7 +442,7 @@ void vtkTeemNRRDWriter::WriteData()
   // Write the nrrd to file.
   if (nrrdSave(this->GetFileName(), nrrd, nio))
   {
-    char *err = biffGetDone(NRRD); // would be nice to free(err)
+    char* err = biffGetDone(NRRD); // would be nice to free(err)
     vtkErrorMacro("Write: Error writing "
                       << this->GetFileName() << ":\n" << err);
     this->WriteErrorOn();

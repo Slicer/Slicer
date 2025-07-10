@@ -45,7 +45,7 @@ vtkCurveMeasurementsCalculator::vtkCurveMeasurementsCalculator()
   this->SetNumberOfInputPorts(1);
 
   this->ControlPointArrayModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->ControlPointArrayModifiedCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->ControlPointArrayModifiedCallbackCommand->SetClientData( reinterpret_cast<void*>(this) );
   this->ControlPointArrayModifiedCallbackCommand->SetCallback( vtkCurveMeasurementsCalculator::OnControlPointArrayModified );
 
   this->ObservedControlPointArrays = vtkCollection::New();
@@ -82,7 +82,7 @@ vtkCurveMeasurementsCalculator::~vtkCurveMeasurementsCalculator()
 }
 
 //------------------------------------------------------------------------------
-void vtkCurveMeasurementsCalculator::PrintSelf(std::ostream &os, vtkIndent indent)
+void vtkCurveMeasurementsCalculator::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
   os << indent << "CalculateCurvature: " << this->CalculateCurvature << std::endl;
@@ -432,7 +432,7 @@ bool vtkCurveMeasurementsCalculator::CalculatePolyDataTorsion(vtkPolyData* polyD
   }
   double normBinormal[3] = { 0.0, 0.0, 0.0 };
   double torsion = 0.0;
-  double *tangent = nullptr;
+  double* tangent = nullptr;
   double currentLength = 0.0;
   double length = 0.0;
 

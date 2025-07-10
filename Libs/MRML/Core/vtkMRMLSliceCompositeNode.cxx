@@ -130,7 +130,7 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLSliceCompositeNode *node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
+  vtkMRMLSliceCompositeNode* node = vtkMRMLSliceCompositeNode::SafeDownCast(anode);
 
   vtkMRMLCopyBeginMacro(node);
   vtkMRMLCopyIntMacro(Compositing);

@@ -201,7 +201,7 @@ std::string vtkMRMLDisplayableManagerFactory::GetRegisteredDisplayableManagerNam
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDisplayableManagers(
-    vtkRenderer * newRenderer)
+    vtkRenderer* newRenderer)
 {
   // Sanity checks
   if (!newRenderer)
@@ -210,7 +210,7 @@ vtkMRMLDisplayableManagerGroup* vtkMRMLDisplayableManagerFactory::InstantiateDis
     return nullptr;
   }
 
-  vtkMRMLDisplayableManagerGroup * displayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
+  vtkMRMLDisplayableManagerGroup* displayableManagerGroup = vtkMRMLDisplayableManagerGroup::New();
   displayableManagerGroup->Initialize(this, newRenderer);
   return displayableManagerGroup;
 }
