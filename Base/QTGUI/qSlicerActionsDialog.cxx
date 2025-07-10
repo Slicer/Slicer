@@ -33,7 +33,7 @@
 #include "ui_qSlicerActionsDialog.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerActionsDialogPrivate: public Ui_qSlicerActionsDialog
+class qSlicerActionsDialogPrivate : public Ui_qSlicerActionsDialog
 {
   Q_DECLARE_PUBLIC(qSlicerActionsDialog);
 protected:

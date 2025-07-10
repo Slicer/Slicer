@@ -41,7 +41,7 @@ public:
   qMRMLSceneFactoryWidget(QWidget* parent = nullptr);
   ~qMRMLSceneFactoryWidget() override;
 
-  vtkMRMLScene* mrmlScene()const;
+  vtkMRMLScene* mrmlScene() const;
 
 public slots:
   void generateScene();

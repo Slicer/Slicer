@@ -61,8 +61,8 @@ public:
     return this->ReadDataReturnValue;
   }
 
-  const char* SupportedClass{nullptr};
-  int ReadDataReturnValue{0};
+  const char* SupportedClass{ nullptr };
+  int ReadDataReturnValue{ 0 };
 protected:
   vtkMRMLStorageNodeTestHelper1() = default;
 };

@@ -72,21 +72,21 @@ qSlicerNodeWriter::qSlicerNodeWriter(const QString& description,
 qSlicerNodeWriter::~qSlicerNodeWriter() = default;
 
 //----------------------------------------------------------------------------
-QString qSlicerNodeWriter::description()const
+QString qSlicerNodeWriter::description() const
 {
   Q_D(const qSlicerNodeWriter);
   return d->Description;
 }
 
 //----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerNodeWriter::fileType()const
+qSlicerIO::IOFileType qSlicerNodeWriter::fileType() const
 {
   Q_D(const qSlicerNodeWriter);
   return d->FileType;
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerNodeWriter::canWriteObject(vtkObject* object)const
+bool qSlicerNodeWriter::canWriteObject(vtkObject* object) const
 {
   Q_D(const qSlicerNodeWriter);
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(object);
@@ -104,7 +104,7 @@ bool qSlicerNodeWriter::canWriteObject(vtkObject* object)const
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerNodeWriter::extensions(vtkObject* object)const
+QStringList qSlicerNodeWriter::extensions(vtkObject* object) const
 {
   QStringList supportedExtensions;
   vtkMRMLStorageNode* snode =
@@ -173,7 +173,7 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char* id)const
+vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char* id) const
 {
   vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id);
   return node;
@@ -187,7 +187,7 @@ void qSlicerNodeWriter::setNodeClassNames(const QStringList& nodeClassNames)
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerNodeWriter::nodeClassNames()const
+QStringList qSlicerNodeWriter::nodeClassNames() const
 {
   Q_D(const qSlicerNodeWriter);
   return d->NodeClassNames;
@@ -201,13 +201,13 @@ void qSlicerNodeWriter::setSupportUseCompression(bool support)
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerNodeWriter::supportUseCompression()const
+bool qSlicerNodeWriter::supportUseCompression() const
 {
   Q_D(const qSlicerNodeWriter);
   return d->SupportUseCompression;
 }
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerNodeWriter::options()const
+qSlicerIOOptions* qSlicerNodeWriter::options() const
 {
   Q_D(const qSlicerNodeWriter);
   qSlicerNodeWriterOptionsWidget* options = new qSlicerNodeWriterOptionsWidget;

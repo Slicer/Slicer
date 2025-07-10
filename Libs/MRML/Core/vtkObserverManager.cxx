@@ -95,7 +95,7 @@ void vtkObserverManager::SetObject(vtkObject** nodePtr, vtkObject* node)
 
   *nodePtr  = node ;
 
-  if ( node )
+  if (node)
   {
     vtkDebugMacro (<< "registering " << node << " with " << this << "\n");
     node->Register(this);
@@ -230,14 +230,14 @@ void vtkObserverManager::ObserveObject(vtkObject* node, float priority/*=0.0*/, 
 //----------------------------------------------------------------------------
 void vtkObserverManager::AddObjectEvents(vtkObject* nodePtr, vtkIntArray* events, vtkFloatArray* priorities, bool logWarningIfSameObservationExists/*=true*/)
 {
-  if ( (priorities && !events) )
+  if ((priorities && !events))
   {
     vtkWarningMacro(<< "Need events if given priorities");
     return;
   }
   // check whether no priorities are provided or the same number of
   // events and priorities are provided
-  if ( (events && priorities) && (events->GetNumberOfTuples() != priorities->GetNumberOfTuples()) )
+  if ((events && priorities) && (events->GetNumberOfTuples() != priorities->GetNumberOfTuples()))
   {
     vtkWarningMacro(<< "Given events and priorities, but the number of events (" << events->GetNumberOfTuples()
                     << ") doesn't match number of priorities ("

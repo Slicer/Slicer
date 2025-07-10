@@ -107,16 +107,16 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
   std::vector<std::string> keys = dict.GetKeys();
   MatrixType               measurementFrame;
   measurementFrame.SetIdentity();
-  for ( std::vector<std::string>::const_iterator it = keys.begin();
+  for (std::vector<std::string>::const_iterator it = keys.begin();
        it != keys.end(); ++it )
   {
-    if ( it->find("measurement frame") != std::string::npos )
+    if (it->find("measurement frame") != std::string::npos)
     {
       DoubleVectorType tagvalue;
       itk::ExposeMetaData<DoubleVectorType>( dict, *it, tagvalue );
-      for ( int i = 0; i < 3; i++ )
+      for (int i = 0; i < 3; i++)
       {
-        for ( int j = 0; j < 3; j++ )
+        for (int j = 0; j < 3; j++)
         {
           measurementFrame[i][j] = tagvalue.at( j ).at( i );
         }
@@ -160,18 +160,18 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
 {
   MatrixType matrixTensor;
 
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
-    for ( int j = 0; j < 3; j++ )
+    for (int j = 0; j < 3; j++)
     {
       matrixTensor[i][j] = static_cast<double>( tensor(i, j ) );
     }
   }
   MatrixType transformedMatrix;
   transformedMatrix = measurementFrame * matrixTensor * measurementFrame.GetTranspose();
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
-    for ( int j = 0; j < 3; j++ )
+    for (int j = 0; j < 3; j++)
     {
       tensor(i, j ) = static_cast<typename InputPixelType::RealValueType>(transformedMatrix[i][j] );
     }
@@ -207,7 +207,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
 
   // Create a radius of pixels.
   RadiusType radius;
-  if ( m_ToleranceRadius > 0 )
+  if (m_ToleranceRadius > 0)
   {
     radius.Fill(m_ToleranceRadius);
   }
@@ -223,15 +223,15 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
   // Support progress methods/callbacks.
   ProgressReporter progress(this, threadId, threadRegion.GetNumberOfPixels() );
   // Process the internal face and each of the boundary faces.
-  for ( FaceListIterator face = faceList.begin(); face != faceList.end(); ++face )
+  for (FaceListIterator face = faceList.begin(); face != faceList.end(); ++face)
   {
     SmartIterator  test(radius, testImage, *face); // Iterate over test image.
     InputIterator  valid(validImage, *face);       // Iterate over valid image.
     OutputIterator out(outputPtr, *face);          // Iterate over output image.
-    if ( !test.GetNeedToUseBoundaryCondition() || !m_IgnoreBoundaryPixels )
+    if (!test.GetNeedToUseBoundaryCondition() || !m_IgnoreBoundaryPixels)
     {
       test.OverrideBoundaryCondition(&nbc);
-      for ( valid.GoToBegin(), test.GoToBegin(), out.GoToBegin();
+      for (valid.GoToBegin(), test.GoToBegin(), out.GoToBegin();
            !valid.IsAtEnd();
            ++valid, ++test, ++out )
       {
@@ -244,10 +244,10 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
         typename InputPixelType::Iterator ittest;
         RealType       sumdifference = NumericTraits<RealType>::ZeroValue();
         InputPixelType centerTensor = ApplyMeasurementFrameToTensor( test.GetCenterPixel(), m_MeasurementFrameTest );
-        for ( it = t.Begin(), ittest = centerTensor.Begin(); it != t.End(); ++it, ++ittest )
+        for (it = t.Begin(), ittest = centerTensor.Begin(); it != t.End(); ++it, ++ittest)
         {
           RealType difference = static_cast<RealType>( (*it) ) - (*ittest);
-          if ( NumericTraits<RealType>::IsNegative( difference ) )
+          if (NumericTraits<RealType>::IsNegative( difference ))
           {
             difference = -difference;
           }
@@ -255,21 +255,21 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
         }
         OutputPixelType minimumDifference = static_cast<OutputPixelType>(sumdifference);
         // If center pixel isn't good enough, then test the neighborhood
-        if ( minimumDifference > m_DifferenceThreshold )
+        if (minimumDifference > m_DifferenceThreshold)
         {
           unsigned int neighborhoodSize = test.Size();
           // Find the closest-valued pixel in the neighborhood of the test
           // image.
-          for ( unsigned int i = 0; i < neighborhoodSize; ++i )
+          for (unsigned int i = 0; i < neighborhoodSize; ++i)
           {
             // Use the RealType for the difference to make sure we get the
             // sign.
             sumdifference = NumericTraits<RealType>::ZeroValue();
             InputPixelType tensor = ApplyMeasurementFrameToTensor( test.GetPixel(i), m_MeasurementFrameTest );
-            for ( it = t.Begin(), ittest = tensor.Begin(); it != t.End(); ++it, ++ittest )
+            for (it = t.Begin(), ittest = tensor.Begin(); it != t.End(); ++it, ++ittest)
             {
               RealType difference = static_cast<RealType>( *it ) - (*ittest);
-              if ( NumericTraits<RealType>::IsNegative( difference ) )
+              if (NumericTraits<RealType>::IsNegative( difference ))
               {
                 difference = -difference;
               }
@@ -277,10 +277,10 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
             }
 
             OutputPixelType d = static_cast<OutputPixelType>(sumdifference);
-            if ( d < minimumDifference )
+            if (d < minimumDifference)
             {
               minimumDifference = d;
-              if ( minimumDifference <= m_DifferenceThreshold )
+              if (minimumDifference <= m_DifferenceThreshold)
               {
                 break;
               }
@@ -289,7 +289,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
         }
 
         // Check if difference is above threshold.
-        if ( minimumDifference > m_DifferenceThreshold )
+        if (minimumDifference > m_DifferenceThreshold)
         {
           // Store the minimum difference value in the output image.
           out.Set(minimumDifference);
@@ -309,7 +309,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
     }
     else
     {
-      for ( out.GoToBegin(); !out.IsAtEnd(); ++out )
+      for (out.GoToBegin(); !out.IsAtEnd(); ++out)
       {
         out.Set(NumericTraits<OutputPixelType>::ZeroValue());
         progress.CompletedPixel();
@@ -327,7 +327,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
   // Set statistics about difference image.
   int numberOfThreads = this->GetNumberOfWorkUnits();
 
-  for ( int i = 0; i < numberOfThreads; ++i )
+  for (int i = 0; i < numberOfThreads; ++i)
   {
     m_TotalDifference += m_ThreadDifferenceSum[i];
     m_NumberOfPixelsWithDifferences += m_ThreadNumberOfPixels[i];

@@ -49,9 +49,9 @@ public:
   explicit qSlicerDiffusionWeightedVolumeDisplayWidget(QWidget* parent = nullptr);
   ~qSlicerDiffusionWeightedVolumeDisplayWidget() override;
 
-  vtkMRMLDiffusionWeightedVolumeNode* volumeNode()const;
-  vtkMRMLDiffusionWeightedVolumeDisplayNode* volumeDisplayNode()const;
-  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes()const;
+  vtkMRMLDiffusionWeightedVolumeNode* volumeNode() const;
+  vtkMRMLDiffusionWeightedVolumeDisplayNode* volumeDisplayNode() const;
+  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> sliceDisplayNodes() const;
 public slots:
 
   /// Set the MRML node of interest

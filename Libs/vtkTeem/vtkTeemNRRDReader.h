@@ -157,7 +157,7 @@ public:
 
   int NrrdToVTKScalarType( const int nrrdPixelType ) const
   {
-  switch( nrrdPixelType )
+  switch (nrrdPixelType)
   {
     default:
     case nrrdTypeDefault:
@@ -201,7 +201,7 @@ public:
 
   int VTKToNrrdPixelType( const int vtkPixelType ) const
   {
-  switch( vtkPixelType )
+  switch (vtkPixelType)
   {
     default:
     case VTK_VOID:

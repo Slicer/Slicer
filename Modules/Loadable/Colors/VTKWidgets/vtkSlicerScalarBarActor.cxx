@@ -60,7 +60,7 @@ vtkSlicerScalarBarActor::~vtkSlicerScalarBarActor() = default;
 //----------------------------------------------------------------------------
 void vtkSlicerScalarBarActor::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "UseAnnotationAsLabel:   " << this->UseAnnotationAsLabel << "\n";
   os << indent << "CenterLabel:            " << this->CenterLabel << "\n";
@@ -100,7 +100,7 @@ void vtkSlicerScalarBarActor::LayoutTicks()
     // default in case of error with the annotations
     SNPRINTF(labelString, 511, "(none)");
 
-    if ( isLogTable )
+    if (isLogTable)
     {
       double lval;
       if (this->NumberOfLabels > 1)
@@ -226,7 +226,7 @@ void vtkSlicerScalarBarActor::LayoutTicks()
     int targetWidth, targetHeight;
 
     this->P->TickBox.Posn = this->P->ScalarBarBox.Posn;
-    if ( this->Orientation == VTK_ORIENT_VERTICAL )
+    if (this->Orientation == VTK_ORIENT_VERTICAL)
     { // NB. Size[0] = width, Size[1] = height
       // Ticks share the width with the scalar bar
       this->P->TickBox.Size[0] =

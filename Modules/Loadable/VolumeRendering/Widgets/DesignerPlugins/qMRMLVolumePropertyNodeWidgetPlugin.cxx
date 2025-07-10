@@ -41,7 +41,7 @@ QString qMRMLVolumePropertyNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLVolumePropertyNodeWidget\" \
           name=\"MRMLVolumePropertyNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

@@ -185,7 +185,7 @@ void vtkMRMLSegmentationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 //----------------------------------------------------------------------------
 void vtkMRMLSegmentationNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Segmentation:";
   if (this->Segmentation)

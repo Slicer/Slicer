@@ -34,7 +34,7 @@
 // qSlicerSettingsExtensionsPanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsExtensionsPanelPrivate: public Ui_qSlicerSettingsExtensionsPanel
+class qSlicerSettingsExtensionsPanelPrivate : public Ui_qSlicerSettingsExtensionsPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsExtensionsPanel);
 protected:
@@ -50,7 +50,7 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerSettingsExtensionsPanelPrivate::qSlicerSettingsExtensionsPanelPrivate(qSlicerSettingsExtensionsPanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
 }
 

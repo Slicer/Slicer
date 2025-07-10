@@ -37,7 +37,7 @@
 #include "qMRMLWidgetCxxTests.h"
 
 // ----------------------------------------------------------------------------
-class qMRMLNodeAttributeTableViewTester: public QObject
+class qMRMLNodeAttributeTableViewTester : public QObject
 {
   Q_OBJECT
   qMRMLNodeAttributeTableView* NodeAttributeTableView;

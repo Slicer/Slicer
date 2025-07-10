@@ -66,7 +66,7 @@ bool checkNumberOfItems(int line, qMRMLLayoutManager* layoutManager, int expecte
 } // end of anonymous namespace
 
 // --------------------------------------------------------------------------
-int qMRMLLayoutManagerTest3(int argc, char* argv[] )
+int qMRMLLayoutManagerTest3(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

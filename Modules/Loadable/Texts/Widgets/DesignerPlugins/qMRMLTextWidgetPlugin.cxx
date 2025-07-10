@@ -39,7 +39,7 @@ QString qMRMLTextWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLTextWidget\" \
           name=\"TextWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

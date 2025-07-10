@@ -42,7 +42,7 @@ public:
   qSlicerScriptedFileDialog(QObject* parent = nullptr);
   ~qSlicerScriptedFileDialog() override;
 
-  QString pythonSource()const;
+  QString pythonSource() const;
 
   /// \warning Setting the source is a no-op. See detailed comment in the source code.
   /// If missingClassIsExpected is true (default) then missing class is expected and not treated as an error.
@@ -52,7 +52,7 @@ public:
   Q_INVOKABLE PyObject* self() const;
 
   /// Reimplemented to propagate to python methods
-  bool isMimeDataAccepted(const QMimeData* mimeData)const override;
+  bool isMimeDataAccepted(const QMimeData* mimeData) const override;
   /// Reimplemented to propagate to python methods
   void dropEvent(QDropEvent* event) override;
   /// Reimplemented to propagate to python methods
@@ -61,13 +61,13 @@ public:
 
   /// Return the ioProperties when exec() is being called.
   /// \sa exec()
-  Q_INVOKABLE const qSlicerIO::IOProperties& ioProperties()const;
+  Q_INVOKABLE const qSlicerIO::IOProperties& ioProperties() const;
   /// Return the dragEnterEvent when dragEnterEvent() is being called.
   /// \sa dragEnterEvent()
-  Q_INVOKABLE const QMimeData* mimeData()const;
+  Q_INVOKABLE const QMimeData* mimeData() const;
   /// Return the dropEvent when dropEvent() is being called.
   /// \sa dropEvent()
-  Q_INVOKABLE QDropEvent* dropEvent()const;
+  Q_INVOKABLE QDropEvent* dropEvent() const;
 
 public Q_SLOTS:
   void acceptMimeData(bool accept);

@@ -103,7 +103,7 @@ protected:
   /// because pre-calculating the geometry of the output image data is not trivial and should be done
   /// only when there is a specific reason to do that (such as doing the conversion for sub-volumes and
   /// then stitching them back together).
-  bool UseOutputImageDataGeometry{false};
+  bool UseOutputImageDataGeometry{ false };
 
 protected:
   vtkClosedSurfaceToBinaryLabelmapConversionRule();

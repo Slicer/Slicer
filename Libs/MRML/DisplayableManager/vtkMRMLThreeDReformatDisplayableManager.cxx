@@ -440,7 +440,7 @@ ProcessWidgetsEvents(vtkObject* caller,
 
   // Broadcast widget transformation
   vtkMRMLSliceLogic* sliceLogic = this->GetMRMLApplicationLogic()->GetSliceLogic(sliceNode);
-  if (event == vtkCommand::StartInteractionEvent && sliceLogic )
+  if (event == vtkCommand::StartInteractionEvent && sliceLogic)
   {
     sliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::MultiplanarReformatFlag);
     return;

@@ -59,7 +59,7 @@
 #include "ctkVTKWidgetsUtils.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyViewContextMenuPluginPrivate: public QObject
+class qSlicerSubjectHierarchyViewContextMenuPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyViewContextMenuPlugin);
 protected:
@@ -278,7 +278,7 @@ qSlicerSubjectHierarchyViewContextMenuPlugin::qSlicerSubjectHierarchyViewContext
 qSlicerSubjectHierarchyViewContextMenuPlugin::~qSlicerSubjectHierarchyViewContextMenuPlugin() = default;
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyViewContextMenuPlugin);
   QList<QAction*> actions;

@@ -33,7 +33,7 @@ class VTK_MRML_EXPORT vtkMRMLColorTableStorageNode : public vtkMRMLStorageNode
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override  {return "ColorTableStorage";};
+  const char* GetNodeTagName() override {return "ColorTableStorage";};
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;

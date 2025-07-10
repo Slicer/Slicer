@@ -50,7 +50,7 @@
     std::cerr << "Failed to catch expected exception" << std::endl;  \
     return EXIT_FAILURE;  \
   }  \
-  catch ( itk::ExceptionObject& excp )  \
+  catch (itk::ExceptionObject& excp )  \
   {  \
     std::cout << "Caught expected exception" << std::endl;  \
     std::cout << excp << std::endl; \
@@ -64,7 +64,7 @@
     std::cout << "Trying " << #command << std::endl; \
     command;  \
   }  \
-  catch ( itk::ExceptionObject& excp )  \
+  catch (itk::ExceptionObject& excp )  \
   {  \
     std::cerr << excp << std::endl; \
     return EXIT_FAILURE;  \
@@ -73,7 +73,7 @@
 // ----------------------------------------------------------------------------
 /// test itk set/get
 #define TEST_ITK_SET_GET( variable, command ) \
-  if ( variable.GetPointer() != command )   \
+  if (variable.GetPointer() != command )   \
   {   \
     std::cerr << "Error in " << #command << std::endl; \
     std::cerr << "Expected " << variable.GetPointer() << std::endl; \
@@ -84,7 +84,7 @@
 // ----------------------------------------------------------------------------
 /// test itk set/get
 #define TEST_ITK_SET_GET_VALUE( variable, command ) \
-  if ( variable != command )   \
+  if (variable != command )   \
   {   \
     std::cerr << "Error in " << #command << std::endl; \
     std::cerr << "Expected " << variable << std::endl; \
@@ -97,25 +97,25 @@
 #define TEST_SET_GET_BOOLEAN( object, variable ) \
   object->Set##variable( false ); \
   object->Set##variable( true ); \
-  if ( object->Get##variable() == 0 ) \
+  if (object->Get##variable() == 0 ) \
   {   \
     std::cerr << "Error in Set/Get"#variable << ", Get"#variable << " returned zero while it is expected to return non-zero" << std::endl; \
     return EXIT_FAILURE; \
   } \
   object->Set##variable( false ); \
-  if ( object->Get##variable() != 0 ) \
+  if (object->Get##variable() != 0 ) \
   {   \
     std::cerr << "Error in Set/Get"#variable << ", Get"#variable << " returned " << object->Get##variable() << " instead of 0" << std::endl; \
     return EXIT_FAILURE; \
   } \
   object->variable##On(); \
-  if ( object->Get##variable() == 0 ) \
+  if (object->Get##variable() == 0 ) \
   {   \
     std::cerr << "Error in On/Get"#variable << ", Get"#variable << " returned zero while it is expected to return non-zero" << std::endl; \
     return EXIT_FAILURE; \
   } \
   object->variable##Off(); \
-  if ( object->Get##variable() != 0 ) \
+  if (object->Get##variable() != 0 ) \
   {   \
     std::cerr << "Error in Off/Get"#variable << ", Get"#variable << " returned " << object->Get##variable() << " while 0 is expected" << std::endl; \
     return EXIT_FAILURE; \
@@ -127,7 +127,7 @@
 #define TEST_SET_GET_INT( object, variable, value )        \
   {                                                        \
     object->Set##variable( value );                        \
-    if ( object->Get##variable() != value )                 \
+    if (object->Get##variable() != value )                 \
     {                                                    \
       std::cerr << "Error in Set/Get"#variable << " using value " << value << std::endl; \
       return EXIT_FAILURE;                                 \
@@ -165,7 +165,7 @@
   {                                                         \
     int val = (int)(vtkMath::Random() * max);               \
     object->Set##variable( val );                           \
-    if ( object->Get##variable() != val )                    \
+    if (object->Get##variable() != val )                    \
     {                                                     \
       std::cerr << "Error in Set/Get"#variable << " using random value " << val << std::endl; \
       return EXIT_FAILURE;                                  \
@@ -202,7 +202,7 @@
 #define TEST_SET_GET_DOUBLE( object, variable, value )          \
   {                                                             \
     object->Set##variable( value );                             \
-    if ( object->Get##variable() != value )                      \
+    if (object->Get##variable() != value )                      \
     {                                                         \
       std::cerr << "Error in Set/Get"#variable << " using value " << value << std::endl; \
       return EXIT_FAILURE;                                      \
@@ -240,7 +240,7 @@
   {                                             \
     double val = vtkMath::Random() * max;       \
     object->Set##variable( val );               \
-    if ( object->Get##variable() != val )        \
+    if (object->Get##variable() != val )        \
     {                                         \
       std::cerr << "Error in  Set/Get"#variable << ", using random value " << val << std::endl; \
       return EXIT_FAILURE;                      \
@@ -250,7 +250,7 @@
 // ----------------------------------------------------------------------------
 /// test an object variable via Get
 #define TEST_GET_OBJECT(object,variable) \
-  if ( !object->Get##variable() )        \
+  if (!object->Get##variable() )        \
   {                                    \
     std::cerr << "Error in  Get"#variable << ", non null value is expected " << std::endl; \
     return EXIT_FAILURE;                 \
@@ -277,7 +277,7 @@
   {                                                                 \
     object->Set##variable( x, y, z );                               \
     double* val = object->Get##variable();                          \
-    if ( val == nullptr || val[0] != x || val[1] != y || val[2] != z )  \
+    if (val == nullptr || val[0] != x || val[1] != y || val[2] != z )  \
     {                                                             \
       std::cerr << "Error in Set/Get"#variable << std::endl;        \
       return EXIT_FAILURE;                                          \
@@ -314,7 +314,7 @@
     object->Set##variable( x, y, z );                                \
     double val[3] = {0.0, 0.0, 0.0};                                 \
     object->Get##variable(val);                                      \
-    if ( val[0] != x || val[1] != y || val[2] != z )                  \
+    if (val[0] != x || val[1] != y || val[2] != z )                  \
     {                                                              \
       std::cerr << "Error in Set/Get"#variable << " with " << x << ", " << y << ", " << z << std::endl; \
       return EXIT_FAILURE;                                           \
@@ -327,31 +327,31 @@
   { \
   const char* originalStringPointer = object->Get##variable(); \
   std::string originalString; \
-  if ( originalStringPointer != nullptr ) \
+  if (originalStringPointer != nullptr ) \
   { \
     originalString = originalStringPointer; \
   } \
   object->Set##variable( "testing with a const char");                  \
-  if ( strcmp(object->Get##variable(), "testing with a const char") != 0) \
+  if (strcmp(object->Get##variable(), "testing with a const char") != 0) \
   {                                                                   \
     std::cerr << "Error in Set/Get"#variable << " with a string literal" << std::endl; \
     return EXIT_FAILURE;                                                \
   }                                                                   \
   std::string string1 = "testingIsGood"; \
   object->Set##variable( string1.c_str() ); \
-  if ( object->Get##variable() != string1 ) \
+  if (object->Get##variable() != string1 ) \
   {   \
     std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string1.c_str() << " but got " << (object->Get##variable() ? object->Get##variable() : "null") << std::endl; \
     return EXIT_FAILURE; \
   } \
   std::string string2 = "moreTestingIsBetter"; \
   object->Set##variable( string2.c_str() ); \
-  if ( object->Get##variable() != string2 ) \
+  if (object->Get##variable() != string2 ) \
   {   \
     std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string2.c_str() << " but got " << (object->Get##variable() ? object->Get##variable() : "null") << std::endl; \
     return EXIT_FAILURE; \
   } \
-  if ( originalStringPointer != nullptr ) \
+  if (originalStringPointer != nullptr ) \
   { \
     object->Set##variable( originalString.c_str() );  \
   } \
@@ -367,21 +367,21 @@
   { \
   std::string originalString = object->Get##variable(); \
   object->Set##variable( "testing with a const char");                  \
-  if ( object->Get##variable() != "testing with a const char" ) \
+  if (object->Get##variable() != "testing with a const char" ) \
   {                                                                   \
     std::cerr << "Error in Set/Get"#variable << " with a string literal" << std::endl; \
     return EXIT_FAILURE;                                                \
   }                                                                   \
   std::string string1 = "testingIsGood"; \
   object->Set##variable( string1 ); \
-  if ( object->Get##variable() != string1 ) \
+  if (object->Get##variable() != string1 ) \
   {   \
     std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string1 << " but got " << object->Get##variable() << std::endl; \
     return EXIT_FAILURE; \
   } \
   std::string string2 = "moreTestingIsBetter"; \
   object->Set##variable( string2 ); \
-  if ( object->Get##variable() != string2 ) \
+  if (object->Get##variable() != string2 ) \
   {   \
     std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string2 << " but got " << object->Get##variable() << std::endl; \
     return EXIT_FAILURE; \

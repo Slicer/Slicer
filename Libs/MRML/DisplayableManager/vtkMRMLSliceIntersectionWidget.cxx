@@ -947,7 +947,7 @@ bool vtkMRMLSliceIntersectionWidget::ProcessTouchTranslate(vtkMRMLInteractionEve
 //----------------------------------------------------------------------------------
 void vtkMRMLSliceIntersectionWidget::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------------

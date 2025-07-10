@@ -239,7 +239,7 @@ private:
 
 //-----------------------------------------------------------------------------
 qSlicerCLIExecutableModuleFactoryPrivate::qSlicerCLIExecutableModuleFactoryPrivate(qSlicerCLIExecutableModuleFactory& object)
-:q_ptr(&object)
+: q_ptr(&object)
 {
   this->TempDirectory = QDir::tempPath();
 }
@@ -264,7 +264,7 @@ void qSlicerCLIExecutableModuleFactory::registerItems()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file)const
+bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file) const
 {
   if (!this->Superclass::isValidFile(file))
   {
@@ -289,7 +289,7 @@ ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLIExecutableModuleFac
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCLIExecutableModuleFactory::fileNameToKey(const QString& executableName)const
+QString qSlicerCLIExecutableModuleFactory::fileNameToKey(const QString& executableName) const
 {
   return qSlicerUtils::extractModuleNameFromLibraryName(executableName);
 }

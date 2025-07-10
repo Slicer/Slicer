@@ -39,7 +39,7 @@ vtkMRMLStorableNode::vtkMRMLStorableNode()
 //----------------------------------------------------------------------------
 vtkMRMLStorableNode::~vtkMRMLStorableNode()
 {
-  if ( this->UserTagTable )
+  if (this->UserTagTable)
   {
     this->UserTagTable->Delete();
     this->UserTagTable = nullptr;
@@ -129,26 +129,26 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
   std::stringstream ss;
 
   //---write any user tags.
-  if ( this->GetUserTagTable() != nullptr )
+  if (this->GetUserTagTable() != nullptr)
   {
     ss.clear();
     ss.str ( "" );
     int numc = this->GetUserTagTable()->GetNumberOfTags();
     const char* kwd, *val;
-    for (int i = 0; i < numc; i++ )
+    for (int i = 0; i < numc; i++)
     {
       kwd = this->GetUserTagTable()->GetTagAttribute(i);
       val = this->GetUserTagTable()->GetTagValue (i);
       if (kwd != nullptr && val != nullptr)
       {
         ss << kwd << "=" << val;
-        if ( i < (numc-1) )
+        if (i < (numc-1))
         {
           ss << " ";
         }
       }
     }
-    if ( ss.str().c_str()!= nullptr )
+    if (ss.str().c_str()!= nullptr)
     {
       of << " userTags=\"" << ss.str().c_str() << "\"";
     }
@@ -172,7 +172,7 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
     //---Read any user tags
     if (!strcmp (attName, "userTags"))
     {
-      if ( this->GetUserTagTable() == nullptr )
+      if (this->GetUserTagTable() == nullptr)
       {
         this->UserTagTable = vtkTagTable::New();
       }
@@ -185,14 +185,14 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
         std::string tags;
         ss >> tags;
         //--- now pull apart individual tags
-        if ( tags.c_str() != nullptr )
+        if (tags.c_str() != nullptr)
         {
           i = tags.find("=");
-          if ( i != std::string::npos)
+          if (i != std::string::npos)
           {
             kwd = tags.substr(0, i);
             val = tags.substr(i+1, std::string::npos );
-            if ( kwd.c_str() != nullptr && val.c_str() != nullptr )
+            if (kwd.c_str() != nullptr && val.c_str() != nullptr)
             {
               this->GetUserTagTable()->AddOrUpdateTag ( kwd.c_str(), val.c_str(), 0 );
             }
@@ -234,10 +234,10 @@ void vtkMRMLStorableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/
   //---
   //--- Copy any user tags
   //---
-  if ( node->GetUserTagTable() != nullptr )
+  if (node->GetUserTagTable() != nullptr)
   {
     //--- make sure the destination node has a TagTable.
-    if ( this->GetUserTagTable() == nullptr )
+    if (this->GetUserTagTable() == nullptr)
     {
       this->UserTagTable = vtkTagTable::New();
     }
@@ -246,12 +246,12 @@ void vtkMRMLStorableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/
     int numc = node->GetUserTagTable()->GetNumberOfTags();
     const char* kwd, *val;
     int sel;
-    for ( int j = 0; j < numc; j++ )
+    for (int j = 0; j < numc; j++)
     {
       kwd = node->GetUserTagTable()->GetTagAttribute(j);
       val = node->GetUserTagTable()->GetTagValue (j);
       sel = node->GetUserTagTable()->IsTagSelected ( kwd );
-      if (kwd != nullptr && val != nullptr && sel >= 0 )
+      if (kwd != nullptr && val != nullptr && sel >= 0)
       {
         this->UserTagTable->AddOrUpdateTag ( kwd, val, sel );
       }
@@ -265,7 +265,7 @@ void vtkMRMLStorableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/
 void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   if (this->UserTagTable->GetNumberOfTags() > 0)
   {
     os << indent << "UserTagTable:\n";
@@ -353,7 +353,7 @@ vtkMRMLStorageNode* vtkMRMLStorableNode::GetStorageNode()
 
 
 /*
-std::vector<vtkMRMLStorageNode*> vtkMRMLStorableNode::GetStorageNodes()const
+std::vector<vtkMRMLStorageNode*> vtkMRMLStorableNode::GetStorageNodes() const
 {
 }
 
@@ -361,7 +361,7 @@ std::vector<vtkMRMLStorageNode*> vtkMRMLStorableNode::GetStorageNodes()const
 vtkMRMLStorageNode* vtkMRMLStorableNode::GetStorageNode()
 {
   vtkMRMLStorageNode* node = nullptr;
-  if (this->GetScene() && this->GetStorageNodeID() )
+  if (this->GetScene() && this->GetStorageNodeID())
     {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->StorageNodeID);
     node = vtkMRMLStorageNode::SafeDownCast(snode);

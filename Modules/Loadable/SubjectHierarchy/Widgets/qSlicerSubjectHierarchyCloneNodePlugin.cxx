@@ -40,7 +40,7 @@
 #include <QAction>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyCloneNodePluginPrivate: public QObject
+class qSlicerSubjectHierarchyCloneNodePluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyCloneNodePlugin);
 protected:
@@ -97,7 +97,7 @@ qSlicerSubjectHierarchyCloneNodePlugin::qSlicerSubjectHierarchyCloneNodePlugin(Q
 qSlicerSubjectHierarchyCloneNodePlugin::~qSlicerSubjectHierarchyCloneNodePlugin() = default;
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyCloneNodePlugin::itemContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyCloneNodePlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyCloneNodePlugin);
 

@@ -41,11 +41,11 @@ public:
   qSlicerDataDialog(QObject* parent = nullptr);
   ~qSlicerDataDialog() override;
 
-  qSlicerIO::IOFileType fileType()const override;
-  QString description()const override;
-  qSlicerFileDialog::IOAction action()const override;
+  qSlicerIO::IOFileType fileType() const override;
+  QString description() const override;
+  qSlicerFileDialog::IOAction action() const override;
 
-  bool isMimeDataAccepted(const QMimeData* mimeData)const override;
+  bool isMimeDataAccepted(const QMimeData* mimeData) const override;
   void dropEvent(QDropEvent* event) override;
 
   /// run the dialog to select the file/files/directory

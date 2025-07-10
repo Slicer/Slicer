@@ -44,8 +44,8 @@ protected:
   void EndElement (const char* name) override;
 
 private:
-  vtkMRMLScene* MRMLScene{nullptr};
-  vtkCollection* NodeCollection{nullptr};
+  vtkMRMLScene* MRMLScene{ nullptr };
+  vtkCollection* NodeCollection{ nullptr };
   std::stack<vtkMRMLNode*> NodeStack;
 };
 

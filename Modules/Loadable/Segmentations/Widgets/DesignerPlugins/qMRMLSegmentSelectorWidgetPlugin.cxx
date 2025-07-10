@@ -40,7 +40,7 @@ QString qMRMLSegmentSelectorWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentSelectorWidget\" \
           name=\"SegmentSelectorWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

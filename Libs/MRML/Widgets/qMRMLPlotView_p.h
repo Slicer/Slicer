@@ -58,7 +58,7 @@ class vtkPlot;
 class vtkStringArray;
 
 //-----------------------------------------------------------------------------
-class qMRMLPlotViewPrivate: public QObject
+class qMRMLPlotViewPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT

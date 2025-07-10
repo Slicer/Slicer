@@ -33,7 +33,7 @@
 // VTK includes
 
 //------------------------------------------------------------------------------
-class qMRMLSceneCategoryModelPrivate: public qMRMLSceneModelPrivate
+class qMRMLSceneCategoryModelPrivate : public qMRMLSceneModelPrivate
 {
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneCategoryModel);
@@ -62,7 +62,7 @@ qMRMLSceneCategoryModel::qMRMLSceneCategoryModel(QObject* vparent)
 qMRMLSceneCategoryModel::~qMRMLSceneCategoryModel() = default;
 
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category)const
+QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category) const
 {
   if (category.isEmpty())
   {
@@ -86,7 +86,7 @@ QStandardItem* qMRMLSceneCategoryModel::itemFromCategory(const QString& category
 }
 
 //------------------------------------------------------------------------------
-int qMRMLSceneCategoryModel::categoryCount()const
+int qMRMLSceneCategoryModel::categoryCount() const
 {
   return this->match(ctk::modelChildIndex(const_cast<qMRMLSceneCategoryModel*>(this), this->mrmlSceneIndex(), 0, 0),
                      qMRMLSceneModel::UIDRole,
@@ -138,7 +138,7 @@ QStandardItem* qMRMLSceneCategoryModel::insertNode(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneCategoryModel::isANode(const QStandardItem* item)const
+bool qMRMLSceneCategoryModel::isANode(const QStandardItem* item) const
 {
   return this->qMRMLSceneModel::isANode(item)
     && item->data(qMRMLSceneModel::UIDRole).toString() != "category";

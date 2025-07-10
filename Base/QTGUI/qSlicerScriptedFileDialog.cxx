@@ -90,7 +90,7 @@ qSlicerScriptedFileDialog::qSlicerScriptedFileDialog(QObject* parent)
 qSlicerScriptedFileDialog::~qSlicerScriptedFileDialog() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileDialog::pythonSource()const
+QString qSlicerScriptedFileDialog::pythonSource() const
 {
   Q_D(const qSlicerScriptedFileDialog);
   return d->PythonSourceFilePath;
@@ -225,7 +225,7 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData)const
+bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData) const
 {
   Q_D(const qSlicerScriptedFileDialog);
   d->MimeData = mimeData;
@@ -248,21 +248,21 @@ void qSlicerScriptedFileDialog::dropEvent(QDropEvent* event)
 }
 
 //-----------------------------------------------------------------------------
-const qSlicerIO::IOProperties& qSlicerScriptedFileDialog::ioProperties()const
+const qSlicerIO::IOProperties& qSlicerScriptedFileDialog::ioProperties() const
 {
   Q_D(const qSlicerScriptedFileDialog);
   return d->Properties;
 }
 
 //-----------------------------------------------------------------------------
-const QMimeData* qSlicerScriptedFileDialog::mimeData()const
+const QMimeData* qSlicerScriptedFileDialog::mimeData() const
 {
   Q_D(const qSlicerScriptedFileDialog);
   return d->MimeData;
 }
 
 //-----------------------------------------------------------------------------
-QDropEvent* qSlicerScriptedFileDialog::dropEvent()const
+QDropEvent* qSlicerScriptedFileDialog::dropEvent() const
 {
   Q_D(const qSlicerScriptedFileDialog);
   return d->DropEvent;

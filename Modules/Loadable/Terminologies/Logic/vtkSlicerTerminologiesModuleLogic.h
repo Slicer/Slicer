@@ -439,7 +439,7 @@ protected:
 
 protected:
   /// The path from which the json files are automatically loaded on startup
-  char* UserContextsPath{nullptr};
+  char* UserContextsPath{ nullptr };
 
 private:
   vtkSlicerTerminologiesModuleLogic(const vtkSlicerTerminologiesModuleLogic&) = delete;

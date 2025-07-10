@@ -78,7 +78,7 @@ public:
   /// Returns true if the transformable node can apply non-linear transforms.
   /// A transformable node is always expected to apply linear transforms.
   /// \sa ApplyTransformMatrix, ApplyTransform
-  virtual bool CanApplyNonLinearTransforms()const;
+  virtual bool CanApplyNonLinearTransforms() const;
 
   /// Convenience function to allow transforming a node by specifying a
   /// transformation matrix.

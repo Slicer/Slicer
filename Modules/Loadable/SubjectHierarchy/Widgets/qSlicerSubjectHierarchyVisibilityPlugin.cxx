@@ -45,7 +45,7 @@
 #include <QAction>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyVisibilityPluginPrivate: public QObject
+class qSlicerSubjectHierarchyVisibilityPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyVisibilityPlugin);
 protected:
@@ -112,7 +112,7 @@ qSlicerSubjectHierarchyVisibilityPlugin::qSlicerSubjectHierarchyVisibilityPlugin
 qSlicerSubjectHierarchyVisibilityPlugin::~qSlicerSubjectHierarchyVisibilityPlugin() = default;
 
 //---------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyVisibilityPlugin::visibilityContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyVisibilityPlugin::visibilityContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyVisibilityPlugin);
 

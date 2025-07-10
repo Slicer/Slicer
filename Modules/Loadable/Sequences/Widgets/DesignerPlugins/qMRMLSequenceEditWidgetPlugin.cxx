@@ -41,7 +41,7 @@ QString qMRMLSequenceEditWidgetPlugin
 {
   return "<widget class=\"qMRMLSequenceEditWidget\" \
           name=\"SequenceEditWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

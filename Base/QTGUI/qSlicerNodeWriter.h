@@ -45,18 +45,18 @@ public:
   ~qSlicerNodeWriter() override;
 
   void setSupportUseCompression(bool useCompression);
-  bool supportUseCompression()const;
+  bool supportUseCompression() const;
 
-  QString description()const override;
-  IOFileType fileType()const override;
+  QString description() const override;
+  IOFileType fileType() const override;
 
   /// Return true if this class can write the input object.
-  bool canWriteObject(vtkObject* object)const override;
+  bool canWriteObject(vtkObject* object) const override;
 
   /// Return a list of the supported extensions for a particular object.
   /// Please read QFileDialog::nameFilters for the allowed formats
   /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
-  QStringList extensions(vtkObject* object)const override;
+  QStringList extensions(vtkObject* object) const override;
 
   /// Write the node referenced by "nodeID" into the "fileName" file.
   /// Optionally, "useCompression" can be specified.
@@ -64,14 +64,14 @@ public:
   /// Create a storage node if the storable node doesn't have any.
   bool write(const qSlicerIO::IOProperties& properties) override;
 
-  virtual vtkMRMLNode* getNodeByID(const char* id)const;
+  virtual vtkMRMLNode* getNodeByID(const char* id) const;
 
   /// Return a qSlicerNodeWriterOptionsWidget
-  qSlicerIOOptions* options()const override;
+  qSlicerIOOptions* options() const override;
 
 protected:
   void setNodeClassNames(const QStringList& nodeClassNames);
-  QStringList nodeClassNames()const;
+  QStringList nodeClassNames() const;
 
 protected:
   QScopedPointer<qSlicerNodeWriterPrivate> d_ptr;

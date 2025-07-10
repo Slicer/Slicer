@@ -34,7 +34,7 @@
 #include "ui_qSlicerErrorReportDialog.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerErrorReportDialogPrivate: public Ui_qSlicerErrorReportDialog
+class qSlicerErrorReportDialogPrivate : public Ui_qSlicerErrorReportDialog
 {
 public:
 };

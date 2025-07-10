@@ -162,7 +162,7 @@ void vtkMRMLVectorVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCo
 //----------------------------------------------------------------------------
 void vtkMRMLVectorVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Scalar Mode:   " << this->ScalarMode << "\n";
   os << indent << "Glyph Mode:    " << this->GlyphMode << "\n";

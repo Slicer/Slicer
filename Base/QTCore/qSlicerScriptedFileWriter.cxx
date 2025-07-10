@@ -87,7 +87,7 @@ qSlicerScriptedFileWriter::qSlicerScriptedFileWriter(QObject* parent)
 qSlicerScriptedFileWriter::~qSlicerScriptedFileWriter() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileWriter::pythonSource()const
+QString qSlicerScriptedFileWriter::pythonSource() const
 {
   Q_D(const qSlicerScriptedFileWriter);
   return d->PythonSource;
@@ -168,7 +168,7 @@ PyObject* qSlicerScriptedFileWriter::self() const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerScriptedFileWriter::description()const
+QString qSlicerScriptedFileWriter::description() const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
@@ -189,7 +189,7 @@ QString qSlicerScriptedFileWriter::description()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType()const
+qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType() const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
@@ -209,7 +209,7 @@ qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
+bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object) const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
@@ -233,7 +233,7 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object)const
 }
 
 //-----------------------------------------------------------------------------
-double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object)const
+double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object) const
 {
   Q_D(const qSlicerScriptedFileWriter);
 
@@ -257,7 +257,7 @@ double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object)con
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object)const
+QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object) const
 {
   Q_D(const qSlicerScriptedFileWriter);
 

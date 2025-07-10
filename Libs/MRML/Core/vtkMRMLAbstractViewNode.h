@@ -309,21 +309,21 @@ protected:
 
   ///
   /// Views with the same ViewGroup value are in the same group.
-  int ViewGroup{0};
+  int ViewGroup{ 0 };
 
   ///
   /// Label to show for the view (shortcut for the name)
-  char* LayoutLabel{nullptr};
+  char* LayoutLabel{ nullptr };
 
   ///
   /// Indicates whether or not the View is visible.
   /// Invisible (0) by default.
-  int Visibility{1};
+  int Visibility{ 1 };
 
   ///
   /// Indicates whether or not the View is active.
   /// Inactive by default.
-  int Active{0};
+  int Active{ 0 };
 
   ///
   /// Background colors
@@ -337,18 +337,18 @@ protected:
   ///
   /// For views that supports orientation marker display (where OrientationMarkerEnabled=true)
   /// these parameters define how to display the orientation marker.
-  bool OrientationMarkerEnabled{false};
-  int OrientationMarkerType{OrientationMarkerTypeNone};
-  int OrientationMarkerSize{OrientationMarkerSizeMedium};
+  bool OrientationMarkerEnabled{ false };
+  int OrientationMarkerType{ OrientationMarkerTypeNone };
+  int OrientationMarkerSize{ OrientationMarkerSizeMedium };
 
   static const char* OrientationMarkerHumanModelReferenceRole;
 
   ///
   /// For views that supports ruler display (where RulerEnabled=true)
   /// these parameters define how to display the ruler.
-  bool RulerEnabled{false};
-  int RulerType{RulerTypeNone};
-  int RulerColor{RulerColorWhite};
+  bool RulerEnabled{ false };
+  int RulerType{ RulerTypeNone };
+  int RulerColor{ RulerColorWhite };
 
   /// Default glyph scale used to be 3.0 (in Slicer-4.10 and earlier).
   /// This display scale factor value produces similar appearance of markup points.

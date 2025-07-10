@@ -135,7 +135,7 @@ bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::displayHelpAndExit()const
+bool qSlicerCoreCommandOptions::displayHelpAndExit() const
 {
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value(/*no tr*/"help").toBool();
@@ -149,7 +149,7 @@ bool qSlicerCoreCommandOptions::ignoreRest() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::ignoreSlicerRC()const
+bool qSlicerCoreCommandOptions::ignoreSlicerRC() const
 {
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("ignore-slicerrc").toBool() ||
@@ -157,7 +157,7 @@ bool qSlicerCoreCommandOptions::ignoreSlicerRC()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCoreCommandOptions::additionalModulePaths()const
+QStringList qSlicerCoreCommandOptions::additionalModulePaths() const
 {
   Q_D(const qSlicerCoreCommandOptions);
   QStringList allAdditionalModulePaths;
@@ -224,14 +224,14 @@ bool qSlicerCoreCommandOptions::disableBuiltInLoadableModules() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::disableScriptedLoadableModules()const
+bool qSlicerCoreCommandOptions::disableScriptedLoadableModules() const
 {
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("disable-scripted-loadable-modules").toBool();
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::disableBuiltInScriptedLoadableModules()const
+bool qSlicerCoreCommandOptions::disableBuiltInScriptedLoadableModules() const
 {
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("disable-builtin-scripted-loadable-modules").toBool();
@@ -335,7 +335,7 @@ bool qSlicerCoreCommandOptions::verboseModuleDiscovery() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::verbose()const
+bool qSlicerCoreCommandOptions::verbose() const
 {
   return !this->runPythonAndExit();
 }
@@ -348,7 +348,7 @@ bool qSlicerCoreCommandOptions::disableMessageHandlers() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::disableTerminalOutputs()const
+bool qSlicerCoreCommandOptions::disableTerminalOutputs() const
 {
   Q_D(const qSlicerCoreCommandOptions);
 #if defined (Q_OS_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)

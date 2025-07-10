@@ -45,7 +45,7 @@
 /// \endcode
 /// will use the icon in the XLarge subdirectory instead of the icon in the
 /// Medium subdirectory.
-class Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT qSlicerIconEnginePlugin: public ctkIconEnginePlugin
+class Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT qSlicerIconEnginePlugin : public ctkIconEnginePlugin
 {
   Q_OBJECT
 public:

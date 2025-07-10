@@ -367,7 +367,7 @@ void vtkMRMLLinearTransformsDisplayableManager::ProcessMRMLNodesEvents(vtkObject
       }
     }
   }
-  else if ( vtkMRMLAbstractViewNode::SafeDownCast(caller) )
+  else if (vtkMRMLAbstractViewNode::SafeDownCast(caller))
   {
       this->RequestRender();
 

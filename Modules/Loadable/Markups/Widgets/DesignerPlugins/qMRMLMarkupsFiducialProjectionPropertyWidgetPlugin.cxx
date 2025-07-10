@@ -48,7 +48,7 @@ QString qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
 {
   return "<widget class=\"qMRMLMarkupsFiducialProjectionPropertyWidget\" \
           name=\"MRMLMarkupsFiducialProjectionPropertyWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

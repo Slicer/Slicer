@@ -62,7 +62,7 @@ void vtkMRMLLinearTransformNode::WriteXML(ostream& of, int nIndent)
           ss << " ";
         }
       }
-      if ( row != 3 )
+      if (row != 3)
       {
         ss << " ";
       }
@@ -147,7 +147,7 @@ void vtkMRMLLinearTransformNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   if (this->IsLinear())
   {

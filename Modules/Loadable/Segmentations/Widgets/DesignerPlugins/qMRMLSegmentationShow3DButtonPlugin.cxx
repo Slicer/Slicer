@@ -32,7 +32,7 @@ QString qMRMLSegmentationShow3DButtonPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSegmentationShow3DButton\" \
           name=\"SegmentationShow3DButton\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------------
 qSlicerAnnotationModuleSnapShotDialog
 ::qSlicerAnnotationModuleSnapShotDialog(QWidget* parentWidget)
-  :Superclass(parentWidget)
+  : Superclass(parentWidget)
 {
   this->m_Logic = nullptr;
   this->setLayoutManager(qSlicerApplication::application()->layoutManager());

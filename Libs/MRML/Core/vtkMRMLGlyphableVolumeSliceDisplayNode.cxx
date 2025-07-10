@@ -120,7 +120,7 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::PrintSelf(ostream& os, vtkIndent in
 {
  //int idx;
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "ColorMode:             " << this->ColorMode << "\n";
 }
 //----------------------------------------------------------------------------

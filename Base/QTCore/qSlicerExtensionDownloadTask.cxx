@@ -45,7 +45,7 @@ public:
   QString ExtensionName;
   QString ArchiveName;
   QVariantMap Metadata;
-  bool InstallDependencies{true};
+  bool InstallDependencies{ true };
 };
 
 /*

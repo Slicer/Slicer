@@ -229,7 +229,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::Copy(vtkMRMLNode* anode)
 void vtkMRMLDiffusionTensorDisplayPropertiesNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "ScalarInvariant:             " << this->ScalarInvariant << "\n";
   os << indent << "GlyphGeometry:             " << this->GlyphGeometry << "\n";
   os << indent << "ColorGlyphBy:             " << this->ColorGlyphBy << "\n";
@@ -282,7 +282,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
 
   // Create a new glyph source according to current settings
 
-  switch ( this->GlyphGeometry )
+  switch (this->GlyphGeometry)
   {
     case Lines:
     case Tubes:
@@ -291,7 +291,7 @@ void vtkMRMLDiffusionTensorDisplayPropertiesNode::UpdateGlyphSource ( )
 
       // Scaling along x-axis corresponds to major eigenvector, etc.
       // Create a line along the proper axis for scaling:
-      switch ( this->GlyphEigenvector )
+      switch (this->GlyphEigenvector)
       {
         case Major:
           line->SetPoint1( -1, 0, 0 );

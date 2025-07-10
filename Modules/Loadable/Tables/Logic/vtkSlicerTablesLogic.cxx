@@ -77,12 +77,12 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
 
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
-  if ( extension.empty() )
+  if (extension.empty())
   {
     vtkErrorMacro("AddTable: no file extension specified: " << fileName);
     return nullptr;
   }
-  if (   !extension.compare(".db")
+  if (!extension.compare(".db")
       || !extension.compare(".db3")
       || !extension.compare(".sqlite")
       || !extension.compare(".sqlite3"))

@@ -59,7 +59,7 @@ public:
 
 // --------------------------------------------------------------------------
 qMRMLSpinBoxPrivate::qMRMLSpinBoxPrivate(qMRMLSpinBox& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->Quantity = "";
   this->MRMLScene = nullptr;
@@ -139,14 +139,14 @@ void qMRMLSpinBox::setQuantity(const QString& quantity)
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSpinBox::quantity()const
+QString qMRMLSpinBox::quantity() const
 {
   Q_D(const qMRMLSpinBox);
   return d->Quantity;
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLScene* qMRMLSpinBox::mrmlScene()const
+vtkMRMLScene* qMRMLSpinBox::mrmlScene() const
 {
   Q_D(const qMRMLSpinBox);
   return d->MRMLScene;
@@ -169,7 +169,7 @@ void qMRMLSpinBox::setMRMLScene(vtkMRMLScene* scene)
 }
 
 // --------------------------------------------------------------------------
-qMRMLSpinBox::UnitAwareProperties qMRMLSpinBox::unitAwareProperties()const
+qMRMLSpinBox::UnitAwareProperties qMRMLSpinBox::unitAwareProperties() const
 {
   Q_D(const qMRMLSpinBox);
   return d->Flags;

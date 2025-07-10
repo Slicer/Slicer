@@ -53,7 +53,7 @@ class vtkPlanes;
 ///   - World: Patient coordinate system (RAS). Transform between Node and World
 ///     coordinate systems are defined by the parent transform of the node.
 ///
-class  VTK_MRML_EXPORT vtkMRMLMarkupsROINode : public vtkMRMLMarkupsNode
+class VTK_MRML_EXPORT vtkMRMLMarkupsROINode : public vtkMRMLMarkupsNode
 {
 public:
   static vtkMRMLMarkupsROINode* New();
@@ -297,17 +297,17 @@ protected:
 
   double Size[3]{ 0.0, 0.0, 0.0 };
 
-  bool IsUpdatingControlPointsFromROI{false};
-  bool IsUpdatingROIFromControlPoints{false};
-  bool IsUpdatingInteractionHandleToWorldMatrix{false};
-  bool InsideOut{false};
+  bool IsUpdatingControlPointsFromROI{ false };
+  bool IsUpdatingROIFromControlPoints{ false };
+  bool IsUpdatingInteractionHandleToWorldMatrix{ false };
+  bool InsideOut{ false };
   bool GetObjectToNodeMatrixRotated();
 
-  vtkSmartPointer<vtkMatrix4x4> ObjectToNodeMatrix { nullptr };
-  vtkSmartPointer<vtkMatrix4x4> ObjectToWorldMatrix { nullptr };
+  vtkSmartPointer<vtkMatrix4x4> ObjectToNodeMatrix{ nullptr };
+  vtkSmartPointer<vtkMatrix4x4> ObjectToWorldMatrix{ nullptr };
 
-  vtkSmartPointer<vtkImplicitFunction> ImplicitFunction { nullptr };
-  vtkSmartPointer<vtkImplicitFunction> ImplicitFunctionWorld { nullptr };
+  vtkSmartPointer<vtkImplicitFunction> ImplicitFunction{ nullptr };
+  vtkSmartPointer<vtkImplicitFunction> ImplicitFunctionWorld{ nullptr };
 
   /// Fills the specified vtkPoints with the points for all of the box ROI corners
   void GenerateBoxBounds(double bounds[6], double xAxis[3], double yAxis[3], double zAxis[3], double center[3], double size[3]);

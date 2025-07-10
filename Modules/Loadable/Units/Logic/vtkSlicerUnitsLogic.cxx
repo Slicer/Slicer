@@ -390,7 +390,7 @@ void vtkSlicerUnitsLogic::RestoreDefaultUnits()
   }
   // Restore selection node units.
   std::map<std::string, std::string>::const_iterator it;
-  for ( it = this->CachedDefaultUnits.begin() ;
+  for (it = this->CachedDefaultUnits.begin() ;
         it != this->CachedDefaultUnits.end();
         ++it )
   {

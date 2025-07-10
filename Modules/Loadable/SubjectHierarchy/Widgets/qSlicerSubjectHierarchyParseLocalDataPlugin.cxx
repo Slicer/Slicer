@@ -45,7 +45,7 @@
 #include <vtkCollection.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerSubjectHierarchyParseLocalDataPluginPrivate: public QObject
+class qSlicerSubjectHierarchyParseLocalDataPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyParseLocalDataPlugin);
 protected:
@@ -99,7 +99,7 @@ qSlicerSubjectHierarchyParseLocalDataPlugin::qSlicerSubjectHierarchyParseLocalDa
 qSlicerSubjectHierarchyParseLocalDataPlugin::~qSlicerSubjectHierarchyParseLocalDataPlugin() = default;
 
 //-----------------------------------------------------------------------------
-QList<QAction*> qSlicerSubjectHierarchyParseLocalDataPlugin::sceneContextMenuActions()const
+QList<QAction*> qSlicerSubjectHierarchyParseLocalDataPlugin::sceneContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyParseLocalDataPlugin);
 
@@ -128,10 +128,10 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForItem(
     vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
     vtkSmartPointer<vtkCollection> storableNodes = vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLStorableNode") );
     vtkObject* nextObject = nullptr;
-    for (storableNodes->InitTraversal(); (nextObject = storableNodes->GetNextItemAsObject()); )
+    for (storableNodes->InitTraversal(); (nextObject = storableNodes->GetNextItemAsObject());)
     {
       vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nextObject);
-      if ( storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors() )
+      if (storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors())
       {
         QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
           qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingNodeToSubjectHierarchy(storableNode);
@@ -166,10 +166,10 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
   // Get all file paths from the storable nodes into the list
   vtkSmartPointer<vtkCollection> storableNodes = vtkSmartPointer<vtkCollection>::Take( scene->GetNodesByClass("vtkMRMLStorableNode") );
   vtkObject* nextObject = nullptr;
-  for (storableNodes->InitTraversal(); (nextObject = storableNodes->GetNextItemAsObject()); )
+  for (storableNodes->InitTraversal(); (nextObject = storableNodes->GetNextItemAsObject());)
   {
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nextObject);
-    if ( storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors() )
+    if (storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors())
     {
       vtkIdType shItemID = shNode->GetItemByDataNode(storableNode);
       if (!shItemID)
@@ -184,7 +184,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
       }
       // Add storable node to the list (cannot parse if loaded from multiple files - in which case there is a non-empty file list)
       vtkMRMLStorageNode* storageNode = storableNode->GetStorageNode();
-      if ( storageNode->GetNumberOfFileNames() == 0 && storageNode->GetFileName() )
+      if (storageNode->GetNumberOfFileNames() == 0 && storageNode->GetFileName())
       {
         QString filePath(storageNode->GetFileName());
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))

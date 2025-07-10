@@ -37,7 +37,7 @@ void vtkCodedEntry::Initialize()
 //----------------------------------------------------------------------------
 void vtkCodedEntry::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "CodeValue: " << (this->CodeValue?this->CodeValue:"(none)") << "\n";
   os << indent << "CodingSchemeDesignator: " << (this->CodingSchemeDesignator ? this->CodingSchemeDesignator : "(none)") << "\n";
   os << indent << "CodeMeaning: " << (this->CodeMeaning ? this->CodeMeaning : "(none)") << "\n";

@@ -135,7 +135,7 @@ int significantDecimals(double value, int defaultDecimals = -1)
     {
       // If we are here, that means that the right number of significant
       // decimals for the number has not been figured out yet.
-      if (previousRepeat > 2 && !(only0s && isUnit) )
+      if (previousRepeat > 2 && !(only0s && isUnit))
       {
         return i - previousRepeat;
       }
@@ -188,7 +188,7 @@ int orderOfMagnitude(double value)
   }
 
   double epsilon = std::numeric_limits<double>::epsilon();
-  while ( (magnitudeStep > 0 && value >= magnitude) ||
+  while ((magnitudeStep > 0 && value >= magnitude) ||
           (magnitudeStep < 0 && value < magnitude - epsilon))
   {
     magnitude *= magnitudeFactor;
@@ -554,7 +554,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
   }
 
   bool labelMap = false;
-  if ( loadingOptions & 1 )    // labelMap is true
+  if (loadingOptions & 1 )    // labelMap is true
   {
     labelMap = true;
   }
@@ -887,7 +887,7 @@ vtkSlicerVolumesLogic::CreateLabelVolumeFromVolume(vtkMRMLScene* scene,
 vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::CreateScalarVolumeFromVolume(
   vtkMRMLScene* scene, vtkMRMLScalarVolumeNode* outputVolume, vtkMRMLVolumeNode* inputVolume)
 {
-  if ( scene == nullptr || outputVolume == nullptr
+  if (scene == nullptr || outputVolume == nullptr
     || inputVolume == nullptr || inputVolume->GetImageData() == nullptr )
   {
     return nullptr;
@@ -1036,11 +1036,11 @@ vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode* volumeNode
       const char* transformID1, *transformID2;
       transformID1 = volumeNode1->GetTransformNodeID();
       transformID2 = volumeNode2->GetTransformNodeID();
-      if ( transformID1 && transformID2 && !strcmp(transformID1,transformID2) )
+      if (transformID1 && transformID2 && !strcmp(transformID1,transformID2))
       {
         warnings << "Transform mismatch\n";
       }
-      else if ( transformID1 != transformID2 )
+      else if (transformID1 != transformID2)
       {
         warnings << "Transform mismatch\n";
       }
@@ -1151,7 +1151,7 @@ vtkMRMLVolumeNode*
 vtkSlicerVolumesLogic::
 CloneVolumeGeneric (vtkMRMLScene* scene, vtkMRMLVolumeNode* volumeNode, const char* name, bool cloneImageData/*=true*/)
 {
-  if ( scene == nullptr || volumeNode == nullptr )
+  if (scene == nullptr || volumeNode == nullptr)
   {
     vtkGenericWarningMacro("vtkSlicerVolumesLogic::CloneVolumeGeneric failed: invalid scene or input volume node");
     return nullptr;
@@ -1160,7 +1160,7 @@ CloneVolumeGeneric (vtkMRMLScene* scene, vtkMRMLVolumeNode* volumeNode, const ch
   // clone the volume node
   vtkSmartPointer<vtkMRMLVolumeNode> clonedVolumeNode;
   clonedVolumeNode.TakeReference(vtkMRMLVolumeNode::SafeDownCast(scene->CreateNodeByClass(volumeNode->GetClassName())));
-  if ( !clonedVolumeNode.GetPointer() )
+  if (!clonedVolumeNode.GetPointer())
   {
     vtkErrorWithObjectMacro(volumeNode, "Could not clone volume");
     return nullptr;

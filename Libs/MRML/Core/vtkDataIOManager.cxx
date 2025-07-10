@@ -39,20 +39,20 @@ vtkDataIOManager::vtkDataIOManager()
 vtkDataIOManager::~vtkDataIOManager()
 {
 
-  if ( this->TransferUpdateCommand )
+  if (this->TransferUpdateCommand)
   {
     this->TransferUpdateCommand->Delete();
     this->TransferUpdateCommand = nullptr;
   }
 
-  if ( this->DataTransferCollection )
+  if (this->DataTransferCollection)
   {
     this->DataTransferCollection->RemoveAllItems();
     this->DataTransferCollection->Delete();
     this->DataTransferCollection = nullptr;
   }
 
-  if ( this->CacheManager )
+  if (this->CacheManager)
   {
     this->CacheManager->Delete();
     this->CacheManager = nullptr;
@@ -72,7 +72,7 @@ void vtkDataIOManager::TransferUpdateCallback ( vtkObject* caller,
                                        unsigned long eid, void* clientData, void* callData )
 {
   vtkDataIOManager* self = reinterpret_cast<vtkDataIOManager*>(clientData);
-  if ( self->GetInUpdateCallbackFlag())
+  if (self->GetInUpdateCallbackFlag())
   {
     return;
   }
@@ -107,9 +107,9 @@ void vtkDataIOManager::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkDataIOManager::SetTransferStatus(vtkDataTransfer* transfer, int status)
 {
-  if ( transfer != nullptr )
+  if (transfer != nullptr)
   {
-    if ( transfer->GetTransferStatus() != status )
+    if (transfer->GetTransferStatus() != status)
     {
       transfer->SetTransferStatus(status);
     }
@@ -119,7 +119,7 @@ void vtkDataIOManager::SetTransferStatus(vtkDataTransfer* transfer, int status)
 //----------------------------------------------------------------------------
 int vtkDataIOManager::GetNumberOfDataTransfers()
 {
-  if ( this->DataTransferCollection == nullptr )
+  if (this->DataTransferCollection == nullptr)
   {
     this->DataTransferCollection = vtkCollection::New();
   }
@@ -170,7 +170,7 @@ vtkDataTransfer* vtkDataIOManager::AddNewDataTransfer ( vtkMRMLNode* node )
 //----------------------------------------------------------------------------
 void vtkDataIOManager::AddNewDataTransfer ( vtkDataTransfer* transfer, vtkMRMLNode* node )
 {
-  if (node != nullptr && transfer != nullptr )
+  if (node != nullptr && transfer != nullptr)
   {
     this->AddDataTransfer ( transfer );
     this->InvokeEvent (vtkDataIOManager::NewTransferEvent, transfer );
@@ -182,17 +182,17 @@ void vtkDataIOManager::AddNewDataTransfer ( vtkDataTransfer* transfer, vtkMRMLNo
 //----------------------------------------------------------------------------
 void vtkDataIOManager::AllTransfersClearedFromCache()
 {
-  if ( this->DataTransferCollection == nullptr )
+  if (this->DataTransferCollection == nullptr)
   {
     this->DataTransferCollection = vtkCollection::New();
   }
 
   vtkDataTransfer* dt;
   int n = this->DataTransferCollection->GetNumberOfItems();
-  for ( int i = 0; i < n; i++ )
+  for (int i = 0; i < n; i++)
   {
     dt = vtkDataTransfer::SafeDownCast (this->DataTransferCollection->GetItemAsObject ( i ) );
-    if ( dt != nullptr )
+    if (dt != nullptr)
     {
       dt->SetTransferCached(0);
     }
@@ -210,7 +210,7 @@ void vtkDataIOManager::AddDataTransfer ( vtkDataTransfer* transfer )
     vtkErrorMacro("AddDataTransfer: can't add a null transfer");
     return;
   }
-  if ( this->DataTransferCollection == nullptr )
+  if (this->DataTransferCollection == nullptr)
   {
     this->DataTransferCollection = vtkCollection::New();
   }
@@ -223,11 +223,11 @@ void vtkDataIOManager::AddDataTransfer ( vtkDataTransfer* transfer )
 //----------------------------------------------------------------------------
 void vtkDataIOManager::RemoveDataTransfer ( vtkDataTransfer* transfer)
 {
-  if ( this->DataTransferCollection == nullptr )
+  if (this->DataTransferCollection == nullptr)
   {
     this->DataTransferCollection = vtkCollection::New();
   }
-  if ( transfer != nullptr )
+  if (transfer != nullptr)
   {
     // remove observer before deleting
     transfer->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand*)this->TransferUpdateCommand );
@@ -242,18 +242,18 @@ void vtkDataIOManager::RemoveDataTransfer ( vtkDataTransfer* transfer)
 void vtkDataIOManager::RemoveDataTransfer ( int transferID )
 {
   vtkDataTransfer* dt;
-  if ( this->DataTransferCollection == nullptr )
+  if (this->DataTransferCollection == nullptr)
   {    // remove observer before deleting
     this->DataTransferCollection = vtkCollection::New();
   }
 
   int n = this->DataTransferCollection->GetNumberOfItems();
-  for ( int i = 0; i < n; i++ )
+  for (int i = 0; i < n; i++)
   {
     dt = vtkDataTransfer::SafeDownCast (this->DataTransferCollection->GetItemAsObject ( i ) );
-    if ( dt != nullptr )
+    if (dt != nullptr)
     {
-      if ( dt->GetTransferID() == transferID )
+      if (dt->GetTransferID() == transferID)
       {
         // remove observer before deleting
         dt->RemoveObservers ( vtkCommand::ModifiedEvent, (vtkCommand*)this->TransferUpdateCallback );
@@ -271,16 +271,16 @@ vtkDataTransfer* vtkDataIOManager::GetDataTransfer ( int transferID )
 
   vtkDataTransfer* dt;
 
-  if ( this->DataTransferCollection == nullptr )
+  if (this->DataTransferCollection == nullptr)
   {
     this->DataTransferCollection = vtkCollection::New();
   }
 
   int n = this->DataTransferCollection->GetNumberOfItems();
-  for ( int i = 0; i < n; i++ )
+  for (int i = 0; i < n; i++)
   {
     dt = vtkDataTransfer::SafeDownCast ( this->DataTransferCollection->GetItemAsObject (i) );
-    if ( transferID == dt->GetTransferID() )
+    if (transferID == dt->GetTransferID())
     {
       return ( dt );
     }
@@ -294,7 +294,7 @@ vtkDataTransfer* vtkDataIOManager::GetDataTransfer ( int transferID )
 void vtkDataIOManager::ClearDataTransfers( )
 {
 
-  if ( this->DataTransferCollection == nullptr )
+  if (this->DataTransferCollection == nullptr)
   {
     this->DataTransferCollection = vtkCollection::New();
   }
@@ -306,7 +306,7 @@ void vtkDataIOManager::ClearDataTransfers( )
 //----------------------------------------------------------------------------
 void vtkDataIOManager::SetEnableAsynchronousIO ( int val )
 {
-  if ( val == 1 || val == 0 )
+  if (val == 1 || val == 0)
   {
     this->EnableAsynchronousIO = val;
     this->InvokeEvent ( vtkDataIOManager::SettingsUpdateEvent );
@@ -361,7 +361,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
     return;
   }
   vtkCacheManager* cm = this->GetCacheManager();
-  if ( cm != nullptr )
+  if (cm != nullptr)
   {
     dest = cm->GetFilenameFromURI(source);
     if (dest == nullptr)
@@ -377,7 +377,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
     //--- check to see if FreeBufferSize is exceeded.
 
     //--- if force redownload is enabled, remove the old file from cache.
-    if (cm->GetEnableForceRedownload () )
+    if (cm->GetEnableForceRedownload ())
     {
       vtkDebugMacro("QueueRead: Calling remove from cache");
       this->GetCacheManager()->DeleteFromCache ( dest );
@@ -397,13 +397,13 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
     //--- ***The risk with this implementation  is that they may
     //--- forget to adjust the cache size, but aren't notified again...
     float bufsize = (cm->GetRemoteCacheLimit() * 1000000.0) -  (cm->GetRemoteCacheFreeBufferSize() * 1000000.0);
-    if ( (cm->GetCurrentCacheSize()*1000000.0) >= bufsize )
+    if ((cm->GetCurrentCacheSize()*1000000.0) >= bufsize)
     {
       //--- No space left in cache. Don't trigger logic to download;
       //--- by invoking a RemoteReadEvent.
       //--- And trigger GUI to post a pop-up dialog to inform user.
       //--- Mark the node cancelled.
-      if ( cm->GetInsufficientFreeBufferNotificationFlag() == 0 )
+      if (cm->GetInsufficientFreeBufferNotificationFlag() == 0)
       {
         cm->InvokeEvent ( vtkCacheManager::InsufficientFreeBufferEvent );
         cm->SetInsufficientFreeBufferNotificationFlag(1);
@@ -415,7 +415,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode* node )
       //--- reset the cachemanager's flag if it's set.
       //--- since it appears there's enough cache space
       //--- to do the download.
-      if ( cm->GetInsufficientFreeBufferNotificationFlag() == 1 )
+      if (cm->GetInsufficientFreeBufferNotificationFlag() == 1)
       {
         cm->SetInsufficientFreeBufferNotificationFlag(0);
       }
@@ -505,19 +505,19 @@ int vtkDataIOManager::GetUniqueTransferID ( )
   int exists = 0;
   vtkDataTransfer* dt;
 
-  if ( this->DataTransferCollection == nullptr )
+  if (this->DataTransferCollection == nullptr)
   {
     this->DataTransferCollection = vtkCollection::New();
   }
 
   // loop until found or return.
-  while ( !exists )
+  while (!exists)
   {
 
     // loop thru the existing data transfers
     int n = this->DataTransferCollection->GetNumberOfItems();
     vtkDebugMacro("GetUniqueTransferID: in loop, id = " << id << ", n = " << n);
-    for ( int i = 0; i < n; i++ )
+    for (int i = 0; i < n; i++)
     {
       dt = vtkDataTransfer::SafeDownCast(this->DataTransferCollection->GetItemAsObject ( i ) );
       if  ( dt != nullptr && id == dt->GetTransferID() )
@@ -527,7 +527,7 @@ int vtkDataIOManager::GetUniqueTransferID ( )
       }
     }
     // finished looping -- did we find the id?
-    if ( exists )
+    if (exists)
     {
       // if so, try a new id
       id++;

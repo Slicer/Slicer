@@ -44,7 +44,7 @@ public:
 
   vtkMRMLClipNode* mrmlClipNode() const;
 
-  int clipType()const;
+  int clipType() const;
   void setClipType(int);
 
   int clipState(vtkMRMLNode* node) const;

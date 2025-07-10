@@ -198,7 +198,7 @@ void qSlicerSimpleMarkupsWidget::setCurrentNode(vtkMRMLNode* currentNode)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLInteractionNode* qSlicerSimpleMarkupsWidget::interactionNode()const
+vtkMRMLInteractionNode* qSlicerSimpleMarkupsWidget::interactionNode() const
 {
   Q_D(const qSlicerSimpleMarkupsWidget);
   return d->MarkupsPlaceWidget->interactionNode();
@@ -327,7 +327,7 @@ int qSlicerSimpleMarkupsWidget::viewGroup() const
 void qSlicerSimpleMarkupsWidget::highlightNthControlPoint(int n)
 {
   Q_D(qSlicerSimpleMarkupsWidget);
-  if ( n >= 0 && n < d->MarkupsControlPointsTableWidget->rowCount() )
+  if (n >= 0 && n < d->MarkupsControlPointsTableWidget->rowCount())
   {
     d->MarkupsControlPointsTableWidget->selectRow(n);
     d->MarkupsControlPointsTableWidget->setCurrentCell(n,0);
@@ -422,20 +422,20 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
   int currentControlPoint = d->MarkupsControlPointsTableWidget->currentRow();
   vtkMRMLMarkupsNode* currentNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsNodeComboBox->currentNode() );
 
-  if ( currentNode == nullptr )
+  if (currentNode == nullptr)
   {
     return;
   }
 
   // Only do this for non-null node
-  if ( selectedAction == deleteAction )
+  if (selectedAction == deleteAction)
   {
     QItemSelectionModel* selectionModel = d->MarkupsControlPointsTableWidget->selectionModel();
     std::vector<int> deleteControlPoints;
     // Need to find selected before removing because removing automatically refreshes the table
-    for ( int i = 0; i < d->MarkupsControlPointsTableWidget->rowCount(); i++ )
+    for (int i = 0; i < d->MarkupsControlPointsTableWidget->rowCount(); i++)
     {
-      if ( selectionModel->rowIntersectsSelection( i, d->MarkupsControlPointsTableWidget->rootIndex() ) )
+      if (selectionModel->rowIntersectsSelection( i, d->MarkupsControlPointsTableWidget->rootIndex() ))
       {
         deleteControlPoints.push_back( i );
       }
@@ -443,7 +443,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
     // Do this in batch mode
     int wasModifying = currentNode->StartModify();
     //Traversing this way should be more efficient and correct
-    for ( int i = static_cast<int>(deleteControlPoints.size()) - 1; i >= 0; i-- )
+    for (int i = static_cast<int>(deleteControlPoints.size()) - 1; i >= 0; i--)
     {
       // remove the point at that row
       currentNode->RemoveNthControlPoint(deleteControlPoints.at( static_cast<size_t>(i) ));
@@ -452,23 +452,23 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointsTableContextMenu(const QP
   }
 
 
-  if ( selectedAction == upAction )
+  if (selectedAction == upAction)
   {
-    if ( currentControlPoint > 0 )
+    if (currentControlPoint > 0)
     {
       currentNode->SwapControlPoints(currentControlPoint, currentControlPoint - 1 );
     }
   }
 
-  if ( selectedAction == downAction )
+  if (selectedAction == downAction)
   {
-    if ( currentControlPoint < currentNode->GetNumberOfControlPoints() - 1 )
+    if (currentControlPoint < currentNode->GetNumberOfControlPoints() - 1)
     {
       currentNode->SwapControlPoints( currentControlPoint, currentControlPoint + 1 );
     }
   }
 
-  if ( selectedAction == jumpAction )
+  if (selectedAction == jumpAction)
   {
     d->MarkupsLogic->JumpSlicesToNthPointInMarkup(this->currentNode()->GetID(), currentControlPoint, true /* centered */, d->ViewGroup);
   }
@@ -510,7 +510,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column
 
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( this->currentNode() );
 
-  if ( currentMarkupsNode == nullptr )
+  if (currentMarkupsNode == nullptr)
   {
     return;
   }
@@ -524,7 +524,7 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column
   QTableWidgetItem* qItem = d->MarkupsControlPointsTableWidget->item( row, column );
   QString qText = qItem->text();
 
-  if ( column == CONTROL_POINT_LABEL_COLUMN )
+  if (column == CONTROL_POINT_LABEL_COLUMN)
   {
     currentMarkupsNode->SetNthControlPointLabel( row, qText.toStdString() );
   }
@@ -533,15 +533,15 @@ void qSlicerSimpleMarkupsWidget::onMarkupsControlPointEdited(int row, int column
   double newControlPointPosition = qText.toDouble();
 
   // Change the position values
-  if ( column == CONTROL_POINT_X_COLUMN )
+  if (column == CONTROL_POINT_X_COLUMN)
   {
     currentControlPointPosition[ 0 ] = newControlPointPosition;
   }
-  if ( column == CONTROL_POINT_Y_COLUMN )
+  if (column == CONTROL_POINT_Y_COLUMN)
   {
     currentControlPointPosition[ 1 ] = newControlPointPosition;
   }
-  if ( column == CONTROL_POINT_Z_COLUMN )
+  if (column == CONTROL_POINT_Z_COLUMN)
   {
     currentControlPointPosition[ 2 ] = newControlPointPosition;
   }
@@ -562,7 +562,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
   }
 
   vtkMRMLMarkupsNode* currentMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast( d->MarkupsNodeComboBox->currentNode() );
-  if ( currentMarkupsNode == nullptr || d->MarkupsLogic == nullptr)
+  if (currentMarkupsNode == nullptr || d->MarkupsLogic == nullptr)
   {
     d->MarkupsControlPointsTableWidget->clear();
     d->MarkupsControlPointsTableWidget->setRowCount( 0 );
@@ -582,7 +582,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
     // don't recreate the table if the number of items is not changed to preserve selection state
     double controlPointPosition[ 3 ] = { 0, 0, 0 };
     std::string controlPointLabel;
-    for ( int i = 0; i < currentMarkupsNode->GetNumberOfControlPoints(); i++ )
+    for (int i = 0; i < currentMarkupsNode->GetNumberOfControlPoints(); i++)
     {
       controlPointLabel = currentMarkupsNode->GetNthControlPointLabel(i);
       currentMarkupsNode->GetNthControlPointPosition(i, controlPointPosition);
@@ -610,7 +610,7 @@ void qSlicerSimpleMarkupsWidget::updateWidget()
 
     double controlPointPosition[ 3 ] = { 0, 0, 0 };
     std::string controlPointLabel;
-    for ( int i = 0; i < currentMarkupsNode->GetNumberOfControlPoints(); i++ )
+    for (int i = 0; i < currentMarkupsNode->GetNumberOfControlPoints(); i++)
     {
       controlPointLabel = currentMarkupsNode->GetNthControlPointLabel( i );
       currentMarkupsNode->GetNthControlPointPosition( i, controlPointPosition );

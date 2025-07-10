@@ -24,9 +24,9 @@ void
 DiffusionTensor3DAffineTransform<TData>
 ::SetTransform( typename AffineTransformType::Pointer transform )
 {
-/*  for ( int i = 0 ; i < 3 ; i++ )
+/*  for (int i = 0 ; i < 3 ; i++)
     {
-    for ( int j = 0 ; j < 3 ; j++ )
+    for (int j = 0 ; j < 3 ; j++)
       {
       this->m_TransformMatrix[ i ][ j ] = transform->GetParameters().GetElement( i * 3 + j ) ;
       }
@@ -53,9 +53,9 @@ void
 DiffusionTensor3DAffineTransform<TData>
 ::SetMatrix4x4( MatrixTransform4x4Type matrix )
 {
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
-    for ( int j = 0; j < 3; j++ )
+    for (int j = 0; j < 3; j++)
     {
       this->m_TransformMatrix[i][j] = matrix[i][j];
     }

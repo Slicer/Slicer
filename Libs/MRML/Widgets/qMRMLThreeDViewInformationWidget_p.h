@@ -50,7 +50,7 @@ class vtkMRMLSliceNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
-class qMRMLThreeDViewInformationWidgetPrivate: public QObject,
+class qMRMLThreeDViewInformationWidgetPrivate : public QObject,
                                    public Ui_qMRMLThreeDViewInformationWidget
 {
   Q_OBJECT

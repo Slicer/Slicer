@@ -114,7 +114,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   float GetCurrentCacheSize();
   float GetFreeCacheSpaceRemaining();
 
-  std::vector<std::string> GetCachedFiles()const;
+  std::vector<std::string> GetCachedFiles() const;
 
   ///
   vtkGetMacro ( RemoteCacheLimit, int );

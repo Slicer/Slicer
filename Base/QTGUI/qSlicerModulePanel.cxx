@@ -35,7 +35,7 @@
 #include "qSlicerUtils.h"
 
 //---------------------------------------------------------------------------
-class qSlicerModulePanelPrivate: public Ui_qSlicerModulePanel
+class qSlicerModulePanelPrivate : public Ui_qSlicerModulePanel
 {
 public:
   void setupUi(qSlicerWidget* widget);
@@ -60,7 +60,7 @@ qSlicerModulePanel::~qSlicerModulePanel()
 }
 
 //---------------------------------------------------------------------------
-qSlicerAbstractCoreModule* qSlicerModulePanel::currentModule()const
+qSlicerAbstractCoreModule* qSlicerModulePanel::currentModule() const
 {
   Q_D(const qSlicerModulePanel);
   QBoxLayout* scrollAreaLayout =
@@ -75,7 +75,7 @@ qSlicerAbstractCoreModule* qSlicerModulePanel::currentModule()const
 }
 
 //---------------------------------------------------------------------------
-QString qSlicerModulePanel::currentModuleName()const
+QString qSlicerModulePanel::currentModuleName() const
 {
   qSlicerAbstractCoreModule* module = this->currentModule();
   return module ? module->name() : QString();
@@ -273,7 +273,7 @@ void qSlicerModulePanel::setHelpAndAcknowledgmentVisible(bool value)
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerModulePanel::isHelpAndAcknowledgmentVisible()const
+bool qSlicerModulePanel::isHelpAndAcknowledgmentVisible() const
 {
   Q_D(const qSlicerModulePanel);
   return d->HelpAndAcknowledgmentVisible;
@@ -293,7 +293,7 @@ bool qSlicerModulePanel::eventFilter(QObject* watchedModule, QEvent* event)
 }
 
 //---------------------------------------------------------------------------
-QSize qSlicerModulePanel::minimumSizeHint()const
+QSize qSlicerModulePanel::minimumSizeHint() const
 {
   Q_D(const qSlicerModulePanel);
   // QScrollArea::minumumSizeHint is wrong. QScrollArea are not meant to

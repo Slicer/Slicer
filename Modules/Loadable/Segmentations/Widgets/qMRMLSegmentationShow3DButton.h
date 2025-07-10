@@ -60,7 +60,7 @@ protected slots:
 
 protected:
   QScopedPointer<qMRMLSegmentationShow3DButtonPrivate> d_ptr;
-private :
+private:
   Q_DECLARE_PRIVATE(qMRMLSegmentationShow3DButton);
   Q_DISABLE_COPY(qMRMLSegmentationShow3DButton);
 };

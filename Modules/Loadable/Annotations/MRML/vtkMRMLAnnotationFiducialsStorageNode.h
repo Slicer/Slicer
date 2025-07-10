@@ -11,7 +11,7 @@
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationFiducialNode;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStorageNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStorageNode
   : public vtkMRMLAnnotationControlPointsStorageNode
 {
   public:

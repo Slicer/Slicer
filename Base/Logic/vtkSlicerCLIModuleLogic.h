@@ -55,7 +55,7 @@ public:
   /// The default module description is used when creating new nodes.
   /// \sa CreateNode()
   void SetDefaultModuleDescription(const ModuleDescription& moduleDescription);
-  const ModuleDescription& GetDefaultModuleDescription()const;
+  const ModuleDescription& GetDefaultModuleDescription() const;
 
   /// Set the value of the parameter \a name.
   /// Return true if the parameter is found and different than \a value,
@@ -165,7 +165,7 @@ protected:
   /// Return true if the commandlinemodule node can update the
   /// selection node with the outputs of the CLI
   bool IsCommandLineModuleNodeUpdatingDisplay(
-    vtkMRMLCommandLineModuleNode* commandLineModuleNode)const;
+    vtkMRMLCommandLineModuleNode* commandLineModuleNode) const;
 
   /// Call apply because the node requests it.
   void AutoRun(vtkMRMLCommandLineModuleNode* cliNode);
@@ -181,7 +181,7 @@ protected:
   // Any files that will be created by writing out the miniscene are added to filesToDelete (i.e. models)
   void AddCompleteModelHierarchyToMiniScene(vtkMRMLScene*, vtkMRMLModelHierarchyNode*, MRMLIDMap* sceneToMiniSceneMap, std::set<std::string> &filesToDelete);
 
-  int GetCoordinateSystemFromString(const char* coordinateSystemStr)const;
+  int GetCoordinateSystemFromString(const char* coordinateSystemStr) const;
 
 private:
   vtkSlicerCLIModuleLogic();

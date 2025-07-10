@@ -71,26 +71,26 @@ void qSlicerShaderPropertyReader::setVolumeRenderingLogic(vtkSlicerVolumeRenderi
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerVolumeRenderingLogic* qSlicerShaderPropertyReader::volumeRenderingLogic()const
+vtkSlicerVolumeRenderingLogic* qSlicerShaderPropertyReader::volumeRenderingLogic() const
 {
   Q_D(const qSlicerShaderPropertyReader);
   return d->VolumeRenderingLogic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerShaderPropertyReader::description()const
+QString qSlicerShaderPropertyReader::description() const
 {
   return tr("GPU Shader Property");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerShaderPropertyReader::fileType()const
+qSlicerIO::IOFileType qSlicerShaderPropertyReader::fileType() const
 {
   return QString("ShaderPropertyFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerShaderPropertyReader::extensions()const
+QStringList qSlicerShaderPropertyReader::extensions() const
 {
   return QStringList()
     << tr("Shader Property") + " (*.sp)";

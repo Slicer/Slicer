@@ -41,7 +41,7 @@
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
-class qMRMLSegmentationDisplayNodeWidgetPrivate: public Ui_qMRMLSegmentationDisplayNodeWidget
+class qMRMLSegmentationDisplayNodeWidgetPrivate : public Ui_qMRMLSegmentationDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationDisplayNodeWidget);
 

@@ -44,7 +44,7 @@ vtkImageFillROI::~vtkImageFillROI()
 //----------------------------------------------------------------------------
 void vtkImageFillROI::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Value: "  << this->Value << "\n";
   os << indent << "Radius: " << this->Radius << "\n";
@@ -308,7 +308,7 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int* xPts, int*
   delete active;
 
   // Free array of edge pointers.
-  delete [] edges;
+  delete[] edges;
 }
 
 // This corresponds to "DrawLine" in vtkImageDrawROI.cxx. Both are
@@ -740,8 +740,8 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
     break;
   }
 
-  delete [] xPts;
-  delete [] yPts;
+  delete[] xPts;
+  delete[] yPts;
 }
 
 //----------------------------------------------------------------------------
@@ -760,7 +760,7 @@ int vtkImageFillROI::RequestData(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   // Make sure the Input has been set.
-  if ( input == nullptr )
+  if (input == nullptr)
   {
     vtkErrorMacro(<< "ExecuteData: Input is not set.");
     return 0;
@@ -768,7 +768,7 @@ int vtkImageFillROI::RequestData(
 
   this->AllocateOutputData(output, outInfo);
 
-  if ( !input ||
+  if (!input ||
        input->GetDataObjectType() != VTK_IMAGE_DATA )
   {
     vtkWarningMacro ("was sent non-image data data object");

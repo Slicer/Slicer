@@ -104,7 +104,7 @@ protected:
   /// For 3D views, renderer world coordinate system is the Slicer world coordinate system, so it is measured in the
   /// scene length unit (typically millimeters).
   double SliceEdgeSize{2.0};
-  bool Interacting{false};
+  bool Interacting{ false };
 
   virtual void SetupSliceEdgePipeline();
   SliceEdgePipeline* Pipeline;

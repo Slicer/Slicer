@@ -47,10 +47,10 @@ public:
   explicit qSlicerLabelMapVolumeDisplayWidget(QWidget* parent);
   ~qSlicerLabelMapVolumeDisplayWidget() override;
 
-  vtkMRMLScalarVolumeNode* volumeNode()const;
-  vtkMRMLLabelMapVolumeDisplayNode* volumeDisplayNode()const;
+  vtkMRMLScalarVolumeNode* volumeNode() const;
+  vtkMRMLLabelMapVolumeDisplayNode* volumeDisplayNode() const;
 
-  int sliceIntersectionThickness()const;
+  int sliceIntersectionThickness() const;
 
 public slots:
 

@@ -28,7 +28,7 @@
 
 // STD includes
 
-int qSlicerApplicationTest1(int argc, char* argv[] )
+int qSlicerApplicationTest1(int argc, char* argv[])
 {
   qSlicerApplication app(argc, argv);
 

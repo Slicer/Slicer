@@ -64,7 +64,7 @@ vtkMRMLSubjectHierarchyLegacyNode::~vtkMRMLSubjectHierarchyLegacyNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyLegacyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << " Level=\""
     << (this->Level ? this->Level : "NULL" ) << "\n";
@@ -128,7 +128,7 @@ void vtkMRMLSubjectHierarchyLegacyNode::ReadXMLAttributes(const char** atts)
         valueStr = valueStr.substr(itemSeparatorPosition + vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_ITEM_SEPARATOR.size());
         itemSeparatorPosition = valueStr.find(vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_ITEM_SEPARATOR);
       }
-      if (! valueStr.empty() )
+      if (! valueStr.empty())
       {
         std::string itemStr = valueStr.substr(0, itemSeparatorPosition);
         size_t tagLevelSeparatorPosition = itemStr.find(vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR);
@@ -195,7 +195,7 @@ std::string vtkMRMLSubjectHierarchyLegacyNode::GetUID(std::string uidName)
 }
 
 //----------------------------------------------------------------------------
-std::map<std::string, std::string> vtkMRMLSubjectHierarchyLegacyNode::GetUIDs()const
+std::map<std::string, std::string> vtkMRMLSubjectHierarchyLegacyNode::GetUIDs() const
 {
   return this->UIDs;
 }

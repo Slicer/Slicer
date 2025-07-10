@@ -42,7 +42,7 @@ int CreateUniqueFileNameTest(std::string tempDir);
 int AddModuleLogicTest();
 
 //-----------------------------------------------------------------------------
-int vtkMRMLApplicationLogicTest1(int argc, char* argv [])
+int vtkMRMLApplicationLogicTest1(int argc, char* argv[])
 {
   if (argc != 2)
   {

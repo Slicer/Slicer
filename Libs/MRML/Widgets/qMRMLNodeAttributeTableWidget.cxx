@@ -32,7 +32,7 @@
 #include <sstream>
 
 // --------------------------------------------------------------------------
-class qMRMLNodeAttributeTableWidgetPrivate: public Ui_qMRMLNodeAttributeTableWidget
+class qMRMLNodeAttributeTableWidgetPrivate : public Ui_qMRMLNodeAttributeTableWidget
 {
   Q_DECLARE_PUBLIC(qMRMLNodeAttributeTableWidget);
 protected:
@@ -78,7 +78,7 @@ qMRMLNodeAttributeTableWidget::qMRMLNodeAttributeTableWidget(QWidget* _parent)
 qMRMLNodeAttributeTableWidget::~qMRMLNodeAttributeTableWidget() = default;
 
 // --------------------------------------------------------------------------
-vtkMRMLNode* qMRMLNodeAttributeTableWidget::mrmlNode()const
+vtkMRMLNode* qMRMLNodeAttributeTableWidget::mrmlNode() const
 {
   Q_D(const qMRMLNodeAttributeTableWidget);
   return d->MRMLNode.GetPointer();

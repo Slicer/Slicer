@@ -31,7 +31,7 @@ void
 DiffusionTensor3DBSplineInterpolateImageFunction<TData, TCoordRep>
 ::AllocateInterpolator()
 {
-  for ( int i = 0; i < 6; i++ )
+  for (int i = 0; i < 6; i++)
   {
     bSplineInterpolateFunction[i] = BSplineInterpolateFunction::New();
     bSplineInterpolateFunction[i]->SetSplineOrder( m_SplineOrder );

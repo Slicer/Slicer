@@ -41,7 +41,7 @@ QString qSlicerDTISliceDisplayWidgetPlugin
 {
   return "<widget class=\"qSlicerDTISliceDisplayWidget\" \
           name=\"VolumeDisplayWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

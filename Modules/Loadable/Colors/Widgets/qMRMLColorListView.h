@@ -43,11 +43,11 @@ public:
   qMRMLColorListView(QWidget* parent = nullptr);
   ~qMRMLColorListView() override;
 
-  vtkMRMLColorNode* mrmlColorNode()const;
-  qMRMLColorModel* colorModel()const;
-  qMRMLSortFilterColorProxyModel* sortFilterProxyModel()const;
+  vtkMRMLColorNode* mrmlColorNode() const;
+  qMRMLColorModel* colorModel() const;
+  qMRMLSortFilterColorProxyModel* sortFilterProxyModel() const;
 
-  bool showOnlyNamedColors()const;
+  bool showOnlyNamedColors() const;
 
 public slots:
   void setMRMLColorNode(vtkMRMLColorNode* colorNode);

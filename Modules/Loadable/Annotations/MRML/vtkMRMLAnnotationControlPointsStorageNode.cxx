@@ -21,7 +21,7 @@ vtkMRMLAnnotationControlPointsStorageNode::~vtkMRMLAnnotationControlPointsStorag
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationControlPointsStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLStorageNode::PrintSelf(os,indent);
+  vtkMRMLStorageNode::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -145,7 +145,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(v
     columnNumber ++;
   }
 
-  if (refNode->AddControlPoint(coord, sel, vis) < 0 )
+  if (refNode->AddControlPoint(coord, sel, vis) < 0)
   {
     vtkErrorMacro("Error adding control point to list, coord = " << coord[0] << " " << coord[1] << " " << coord[2]);
     return -1;
@@ -284,7 +284,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotation(vtkMRMLAnnotationC
         {
             if (!this->ReadAnnotationControlPointsProperties(refNode, line, typePointColumn, xPointColumn, yPointColumn,  zPointColumn, selPointColumn, visPointColumn, numPointColumns))
             {
-            if (this->ReadAnnotationPointDisplayProperties(aPointDisplayNode, line,this->GetAnnotationStorageType()) < 0 )
+            if (this->ReadAnnotationPointDisplayProperties(aPointDisplayNode, line,this->GetAnnotationStorageType()) < 0)
             {
                 return 0;
             }

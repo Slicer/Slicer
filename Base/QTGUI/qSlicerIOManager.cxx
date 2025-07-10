@@ -44,7 +44,7 @@ protected:
 public:
   qSlicerIOManagerPrivate(qSlicerIOManager& object);
 
-  vtkMRMLScene* currentScene()const;
+  vtkMRMLScene* currentScene() const;
 
   /// Return true if a dialog is created, false if a dialog already existed
   bool startProgressDialog(int steps = 1);
@@ -56,7 +56,7 @@ public:
                                  const qSlicerIO::IOProperties&);
 
   qSlicerFileDialog* findDialog(qSlicerIO::IOFileType fileType,
-                                qSlicerFileDialog::IOAction)const;
+                                qSlicerFileDialog::IOAction) const;
 
   QStringList History;
   QList<QUrl> Favorites;
@@ -64,10 +64,10 @@ public:
   QList<qSlicerFileDialog*> WriteDialogs;
 
   QSharedPointer<ctkScreenshotDialog> ScreenshotDialog;
-  QProgressDialog* ProgressDialog{nullptr};
+  QProgressDialog* ProgressDialog{ nullptr };
 
   /// File dialog that next call of execDelayedFileDialog signal will execute
-  qSlicerFileDialog* DelayedFileDialog{nullptr};
+  qSlicerFileDialog* DelayedFileDialog{ nullptr };
 };
 
 //-----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* qSlicerIOManagerPrivate::currentScene()const
+vtkMRMLScene* qSlicerIOManagerPrivate::currentScene() const
 {
   return qSlicerCoreApplication::application()->mrmlScene();
 }
@@ -188,7 +188,7 @@ createUniqueDialogName(qSlicerIO::IOFileType fileType,
 //-----------------------------------------------------------------------------
 qSlicerFileDialog* qSlicerIOManagerPrivate
 ::findDialog(qSlicerIO::IOFileType fileType,
-             qSlicerFileDialog::IOAction action)const
+             qSlicerFileDialog::IOAction action) const
 {
   const QList<qSlicerFileDialog*>& dialogs =
     (action == qSlicerFileDialog::Read)? this->ReadDialogs : this->WriteDialogs;
@@ -374,7 +374,7 @@ void qSlicerIOManager::addHistory(const QString& path)
 }
 
 //-----------------------------------------------------------------------------
-const QStringList& qSlicerIOManager::history()const
+const QStringList& qSlicerIOManager::history() const
 {
   Q_D(const qSlicerIOManager);
   return d->History;
@@ -393,7 +393,7 @@ void qSlicerIOManager::setFavorites(const QList<QUrl>& urls)
 }
 
 //-----------------------------------------------------------------------------
-const QList<QUrl>& qSlicerIOManager::favorites()const
+const QList<QUrl>& qSlicerIOManager::favorites() const
 {
   Q_D(const qSlicerIOManager);
   return d->Favorites;

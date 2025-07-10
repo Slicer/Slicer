@@ -59,7 +59,7 @@ int TestCloneVolume( vtkMRMLScalarVolumeNode* scalarVolume,
                      vtkSlicerVolumesLogic* logic);
 
 //-----------------------------------------------------------------------------
-int vtkSlicerVolumesLogicTest1( int argc, char* argv[] )
+int vtkSlicerVolumesLogicTest1(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 

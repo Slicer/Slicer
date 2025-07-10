@@ -37,7 +37,7 @@ public:
     const TFilter * filter =
       dynamic_cast<const TFilter *>( object );
 
-    if ( typeid( event ) != typeid( itk::IterationEvent ) )
+    if (typeid( event ) != typeid( itk::IterationEvent ))
     {
       return;
     }
@@ -83,7 +83,7 @@ int main(int argc, char* * argv)
    * handle he mask image
    */
 
-  if ( maskImageName != "" )
+  if (maskImageName != "")
   {
     typedef itk::ImageFileReader<MaskImageType> ReaderType;
     ReaderType::Pointer maskreader = ReaderType::New();
@@ -93,22 +93,22 @@ int main(int argc, char* * argv)
     itk::ImageRegionConstIterator<MaskImageType> IM(
       maskImage, maskImage->GetBufferedRegion() );
     MaskImageType::PixelType maskLabel = 0;
-    for ( IM.GoToBegin(); !IM.IsAtEnd(); ++IM )
+    for (IM.GoToBegin(); !IM.IsAtEnd(); ++IM)
     {
-      if ( IM.Get() )
+      if (IM.Get())
       {
         maskLabel = IM.Get();
         break;
       }
     }
-    if ( !maskLabel )
+    if (!maskLabel)
     {
       return EXIT_FAILURE;
     }
     correcter->SetMaskLabel(maskLabel);
   }
 
-  if ( !maskImage )
+  if (!maskImage)
   {
     std::cout << "Mask no read.  Creating Otsu mask." << std::endl;
     typedef itk::OtsuThresholdImageFilter<ImageType, MaskImageType>
@@ -125,7 +125,7 @@ int main(int argc, char* * argv)
 
   ImageType::Pointer weightImage = nullptr;
 
-  if ( weightImageName != "" )
+  if (weightImageName != "")
   {
     typedef itk::ImageFileReader<ImageType> ReaderType;
     ReaderType::Pointer weightreader = ReaderType::New();
@@ -137,11 +137,11 @@ int main(int argc, char* * argv)
   /**
    * convergence options
    */
-  if ( numberOfIterations.size() > 1 && numberOfIterations[0] )
+  if (numberOfIterations.size() > 1 && numberOfIterations[0])
   {
     CorrecterType::VariableSizeArrayType
     maximumNumberOfIterations( numberOfIterations.size() );
-    for ( unsigned d = 0; d < numberOfIterations.size(); d++ )
+    for (unsigned d = 0; d < numberOfIterations.size(); d++)
     {
       maximumNumberOfIterations[d] = numberOfIterations[d];
     }
@@ -152,7 +152,7 @@ int main(int argc, char* * argv)
     correcter->SetNumberOfFittingLevels( numberOfFittingLevels );
   }
 
-  if ( convergenceThreshold )
+  if (convergenceThreshold)
   {
     correcter->SetConvergenceThreshold( convergenceThreshold );
   }
@@ -169,18 +169,18 @@ int main(int argc, char* * argv)
 
   ImageType::PointType newOrigin = inputImage->GetOrigin();
 
-  if ( bsplineOrder )
+  if (bsplineOrder)
   {
     correcter->SetSplineOrder(bsplineOrder);
   }
 
   CorrecterType::ArrayType numberOfControlPoints;
-  if ( splineDistance )
+  if (splineDistance)
   {
 
     itk::SizeValueType lowerBound[ImageDimension];
     itk::SizeValueType upperBound[ImageDimension];
-    for ( unsigned  d = 0; d < 3; d++ )
+    for (unsigned  d = 0; d < 3; d++)
     {
       float domain = static_cast<RealType>( inputImage->
                                             GetLargestPossibleRegion().GetSize()[d] - 1 ) * inputImage->GetSpacing()[d];
@@ -214,7 +214,7 @@ int main(int argc, char* * argv)
     maskPadder->Update();
     maskImage = maskPadder->GetOutput();
 
-    if ( weightImage )
+    if (weightImage)
     {
       PadderType::Pointer weightPadder = PadderType::New();
       weightPadder->SetInput( weightImage );
@@ -226,9 +226,9 @@ int main(int argc, char* * argv)
     }
     correcter->SetNumberOfControlPoints( numberOfControlPoints );
   }
-  else if ( initialMeshResolution.size() == 3 )
+  else if (initialMeshResolution.size() == 3)
   {
-    for ( unsigned d = 0; d < 3; d++ )
+    for (unsigned d = 0; d < 3; d++)
     {
       numberOfControlPoints[d] = static_cast<unsigned int>( initialMeshResolution[d] )
         + correcter->GetSplineOrder();
@@ -256,7 +256,7 @@ int main(int argc, char* * argv)
 
   correcter->SetInput( shrinker->GetOutput() );
   correcter->SetMaskImage( maskshrinker->GetOutput() );
-  if ( weightImage )
+  if (weightImage)
   {
     typedef itk::ShrinkImageFilter<ImageType, ImageType> WeightShrinkerType;
     WeightShrinkerType::Pointer weightshrinker = WeightShrinkerType::New();
@@ -274,15 +274,15 @@ int main(int argc, char* * argv)
   /**
    * histogram sharpening options
    */
-  if ( bfFWHM )
+  if (bfFWHM)
   {
     correcter->SetBiasFieldFullWidthAtHalfMaximum( bfFWHM );
   }
-  if ( wienerFilterNoise )
+  if (wienerFilterNoise)
   {
     correcter->SetWienerFilterNoise( wienerFilterNoise );
   }
-  if ( nHistogramBins )
+  if (nHistogramBins)
   {
     correcter->SetNumberOfHistogramBins( nHistogramBins );
   }
@@ -292,12 +292,12 @@ int main(int argc, char* * argv)
     itk::PluginFilterWatcher watchN4(correcter, "N4 Bias field correction", CLPProcessInformation, 1.0 / 1.0, 0.0);
     correcter->Update();
   }
-  catch ( itk::ExceptionObject& err )
+  catch (itk::ExceptionObject& err)
   {
     std::cerr << err << std::endl;
     return EXIT_FAILURE;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cerr << "Unknown Exception caught." << std::endl;
     return EXIT_FAILURE;
@@ -311,7 +311,7 @@ int main(int argc, char* * argv)
   /**
    * output
    */
-  if ( outputImageName != "" )
+  if (outputImageName != "")
   {
     /**
      * Reconsruct the bias field at full image resoluion.  Divide
@@ -342,7 +342,7 @@ int main(int argc, char* * argv)
       bspliner->GetOutput()->GetLargestPossibleRegion() );
     itk::ImageRegionIterator<ImageType> IF( logField,
                                             logField->GetLargestPossibleRegion() );
-    for ( IB.GoToBegin(), IF.GoToBegin(); !IB.IsAtEnd(); ++IB, ++IF )
+    for (IB.GoToBegin(), IF.GoToBegin(); !IB.IsAtEnd(); ++IB, ++IF)
     {
       IF.Set( IB.Get()[0] );
     }
@@ -375,7 +375,7 @@ int main(int argc, char* * argv)
     biasFieldCropper->SetDirectionCollapseToSubmatrix();
     biasFieldCropper->Update();
 
-    if ( outputBiasFieldName != "" )
+    if (outputBiasFieldName != "")
     {
       typedef itk::ImageFileWriter<ImageType> WriterType;
       WriterType::Pointer writer = WriterType::New();
@@ -399,7 +399,7 @@ int main(int argc, char* * argv)
 
       return SaveIt(cropper->GetOutput(), fname);
     }
-    catch ( itk::ExceptionObject& e )
+    catch (itk::ExceptionObject& e)
     {
       std::cerr << "Failed to save the data: " << e << std::endl;
       return EXIT_FAILURE;

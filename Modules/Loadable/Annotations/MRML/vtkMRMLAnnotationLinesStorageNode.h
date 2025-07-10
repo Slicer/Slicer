@@ -12,7 +12,7 @@
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkMRMLAnnotationLinesNode;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLinesStorageNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLinesStorageNode
   : public vtkMRMLAnnotationControlPointsStorageNode
 {
   public:

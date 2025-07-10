@@ -117,7 +117,7 @@ vtkMRMLApplicationLogic::vtkInternal::~vtkInternal() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::vtkInternal::PropagateVolumeSelection(int layer, int fit)
 {
-  if ( !this->SelectionNode || !this->External->GetMRMLScene() )
+  if (!this->SelectionNode || !this->External->GetMRMLScene())
   {
     return;
   }
@@ -180,13 +180,13 @@ void vtkMRMLApplicationLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLSelectionNode* vtkMRMLApplicationLogic::GetSelectionNode()const
+vtkMRMLSelectionNode* vtkMRMLApplicationLogic::GetSelectionNode() const
 {
   return this->Internal->SelectionNode;
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLInteractionNode* vtkMRMLApplicationLogic::GetInteractionNode()const
+vtkMRMLInteractionNode* vtkMRMLApplicationLogic::GetInteractionNode() const
 {
   return this->Internal->InteractionNode;
 }
@@ -199,13 +199,13 @@ void vtkMRMLApplicationLogic::SetColorLogic(vtkMRMLColorLogic* colorLogic)
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLColorLogic* vtkMRMLApplicationLogic::GetColorLogic()const
+vtkMRMLColorLogic* vtkMRMLApplicationLogic::GetColorLogic() const
 {
   return this->Internal->ColorLogic;
 }
 
 //----------------------------------------------------------------------------
-vtkCollection* vtkMRMLApplicationLogic::GetSliceLogics()const
+vtkCollection* vtkMRMLApplicationLogic::GetSliceLogics() const
 {
   return this->Internal->SliceLogics;
 }
@@ -266,7 +266,7 @@ GetSliceLogicByLayoutName(const char* layoutName) const
   {
     if (logic->GetSliceNode())
     {
-      if ( !strcmp( logic->GetSliceNode()->GetLayoutName(), layoutName) )
+      if (!strcmp( logic->GetSliceNode()->GetLayoutName(), layoutName))
       {
         return logic;
       }
@@ -363,7 +363,7 @@ GetViewLogicByLayoutName(const char* layoutName) const
   {
     if (logic->GetViewNode())
     {
-      if ( !strcmp( logic->GetViewNode()->GetLayoutName(), layoutName) )
+      if (!strcmp( logic->GetViewNode()->GetLayoutName(), layoutName))
       {
         return logic;
       }
@@ -479,7 +479,7 @@ void vtkMRMLApplicationLogic::PropagateVolumeSelection(int layer, int fit)
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::PropagateTableSelection()
 {
-  if ( !this->Internal->SelectionNode || !this->GetMRMLScene() )
+  if (!this->Internal->SelectionNode || !this->GetMRMLScene())
   {
     return;
   }
@@ -502,7 +502,7 @@ void vtkMRMLApplicationLogic::PropagateTableSelection()
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::PropagatePlotChartSelection()
 {
-  if ( !this->Internal->SelectionNode || !this->GetMRMLScene() )
+  if (!this->Internal->SelectionNode || !this->GetMRMLScene())
   {
     return;
   }
@@ -616,7 +616,7 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char* sdbFilePath, cons
   }
 
   std::string mrmlFile = this->UnpackSlicerDataBundle(sdbFilePath, temporaryDirectory);
-  if ( mrmlFile.empty() )
+  if (mrmlFile.empty())
   {
     if (userMessages)
     {
@@ -629,7 +629,7 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char* sdbFilePath, cons
 
   this->GetMRMLScene()->SetURL( mrmlFile.c_str() );
   int success = this->GetMRMLScene()->Connect(userMessages);
-  if ( !success )
+  if (!success)
   {
     vtkErrorMacro("Failed to read the scene");
     return false;

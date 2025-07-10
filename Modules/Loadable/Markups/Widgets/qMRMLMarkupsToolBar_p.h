@@ -101,9 +101,9 @@ public:
   vtkWeakPointer<vtkMRMLSelectionNode>     SelectionNode;
 
   QString DefaultPlaceClassName;
-  QAction* NodeSelectorAction{nullptr};
-  qMRMLNodeComboBox* MarkupsNodeSelector{nullptr};
-  qSlicerMarkupsPlaceWidget* MarkupsPlaceWidget{nullptr};
+  QAction* NodeSelectorAction{ nullptr };
+  qMRMLNodeComboBox* MarkupsNodeSelector{ nullptr };
+  qSlicerMarkupsPlaceWidget* MarkupsPlaceWidget{ nullptr };
 };
 
 #endif

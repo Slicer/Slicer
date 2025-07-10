@@ -32,16 +32,16 @@ DiffusionTensor3DFSAffineTransform<TData>
   vnl_matrix_fixed<std::complex<double>, 3, 3 > D( 3, 3 );
   vnl_matrix_fixed<std::complex<double>, 3, 3 > vnl_sqrMatrix( 3, 3 );
   D.fill( NumericTraits<TData>::ZeroValue() );
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
     D.put( i, i, std::pow( eig.D.get( i, i ), 0.5 ) );
   }
   vnl_sqrMatrix = eig.V * D * vnl_matrix_inverse<std::complex<double>>( eig.V ).as_matrix();
   vnl_matrix_fixed<double, 3, 3> vnl_sqrMatrix_real( 3, 3 );
   vnl_sqrMatrix_real = vnl_real( vnl_sqrMatrix );
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
-    for ( int j = 0; j < 3; j++ )
+    for (int j = 0; j < 3; j++)
     {
       sqrMatrix[i][j] = vnl_sqrMatrix_real.get( i, j );
     }
@@ -84,7 +84,7 @@ DiffusionTensor3DFSAffineTransform<TData>
     matrix = ComputeMatrixSquareRoot(
         this->m_TransformMatrix * TransformMatrixTranspose ).GetInverse();
   }
-  catch ( ... )
+  catch (...)
   {
     itkExceptionMacro(<< "Matrix is not invertible while computing rotation matrix" );
   }

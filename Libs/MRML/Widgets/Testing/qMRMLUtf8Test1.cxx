@@ -70,7 +70,7 @@ void saveScene(void* vtkNotUsed(data))
 }
 
 //------------------------------------------------------------------------------
-int qMRMLUtf8Test1(int argc, char* argv [] )
+int qMRMLUtf8Test1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

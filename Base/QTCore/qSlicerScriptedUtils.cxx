@@ -154,7 +154,7 @@ qSlicerPythonCppAPI::~qSlicerPythonCppAPI()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerPythonCppAPI::objectName()const
+QString qSlicerPythonCppAPI::objectName() const
 {
   return this->ObjectName;
 }
@@ -250,7 +250,7 @@ PyObject* qSlicerPythonCppAPI::callMethod(int id, PyObject* arguments)
 }
 
 //-----------------------------------------------------------------------------
-PyObject* qSlicerPythonCppAPI::pythonSelf()const
+PyObject* qSlicerPythonCppAPI::pythonSelf() const
 {
   // returned object needs to get an extra ref count!
   // Without increasing the ref count, the reference count would be decreased

@@ -33,7 +33,7 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
 {
   DiffusionTensor3DInterpolateImageFunction<DataType>::SetInputImage( inputImage );   // separateFilter->GetOutput( 0 )
                                                                                       // ) ;
-  if ( !inputImage )
+  if (!inputImage)
   {
     return;
   }
@@ -43,7 +43,7 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
   separateFilter->SetNumberOfWorkUnits( this->m_NumberOfThreads );
   separateFilter->Update();
   AllocateInterpolator();
-  for ( int i = 0; i < 6; i++ )
+  for (int i = 0; i < 6; i++)
   {
     m_Interpol[i]->SetInputImage( separateFilter->GetOutput( i ) );
   }
@@ -58,10 +58,10 @@ DiffusionTensor3DInterpolateImageFunctionReimplementation<TData, TCoordRep>
 ::EvaluateAtContinuousIndex( const ContinuousIndexType& index ) const
 // ::Evaluate( const PointType& point )
 {
-  if ( this->m_Image.IsNotNull() ) // If input image has been set
+  if (this->m_Image.IsNotNull() ) // If input image has been set
   {
     TensorDataType pixelValue;
-    for ( int i = 0; i < 6; i++ )
+    for (int i = 0; i < 6; i++)
     {
       pixelValue[i] = ( DataType ) m_Interpol[i]->EvaluateAtContinuousIndex( index );
     }

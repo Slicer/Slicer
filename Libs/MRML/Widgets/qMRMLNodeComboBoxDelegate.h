@@ -42,7 +42,7 @@ class QComboBox;
 class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxDelegate : public QItemDelegate
 {
   Q_OBJECT
-public :
+public:
   typedef QItemDelegate Superclass;
   qMRMLNodeComboBoxDelegate(QObject* parent, QComboBox* comboBox);
 

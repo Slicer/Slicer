@@ -40,7 +40,7 @@ QString qMRMLMarkupsROIWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLMarkupsROIWidget\" \
           name=\"MRMLMarkupsROIWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

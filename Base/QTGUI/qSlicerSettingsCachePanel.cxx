@@ -39,7 +39,7 @@
 // qSlicerSettingsCachePanelPrivate
 
 //-----------------------------------------------------------------------------
-class qSlicerSettingsCachePanelPrivate: public Ui_qSlicerSettingsCachePanel
+class qSlicerSettingsCachePanelPrivate : public Ui_qSlicerSettingsCachePanel
 {
   Q_DECLARE_PUBLIC(qSlicerSettingsCachePanel);
 protected:
@@ -57,7 +57,7 @@ public:
 
 // --------------------------------------------------------------------------
 qSlicerSettingsCachePanelPrivate::qSlicerSettingsCachePanelPrivate(qSlicerSettingsCachePanel& object)
-  :q_ptr(&object)
+  : q_ptr(&object)
 {
   this->CacheManager = nullptr;
 }

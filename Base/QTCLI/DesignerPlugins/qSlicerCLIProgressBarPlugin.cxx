@@ -39,7 +39,7 @@ QString qSlicerCLIProgressBarPlugin::domXml() const
 {
   return "<widget class=\"qSlicerCLIProgressBar\" \
           name=\"CLIProgressBar\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

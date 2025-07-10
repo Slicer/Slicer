@@ -95,7 +95,7 @@ void vtkMRMLMarkupsAngleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsAngleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintEnumMacro(AngleMeasurementMode);
@@ -208,7 +208,7 @@ double vtkMRMLMarkupsAngleNode::GetAngleDegrees()
   this->GetNthControlPointPositionWorld(1, c);
   this->GetNthControlPointPositionWorld(2, p2);
 
-  if ( vtkMath::Distance2BetweenPoints(p1, c) <= VTK_DBL_EPSILON
+  if (vtkMath::Distance2BetweenPoints(p1, c) <= VTK_DBL_EPSILON
     && vtkMath::Distance2BetweenPoints(p2, c) <= VTK_DBL_EPSILON )
   {
     return 0.0;

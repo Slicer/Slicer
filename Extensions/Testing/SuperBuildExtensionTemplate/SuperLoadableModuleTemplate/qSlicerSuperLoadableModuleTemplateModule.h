@@ -41,13 +41,13 @@ public:
 
   qSlicerGetTitleMacro(tr("qSlicerSuperLoadableModuleTemplateModule"));
 
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
-  QIcon icon()const override;
+  QIcon icon() const override;
 
-  QStringList categories()const override;
+  QStringList categories() const override;
   QStringList dependencies() const override;
 
 protected:

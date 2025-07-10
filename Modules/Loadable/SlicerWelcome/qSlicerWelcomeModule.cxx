@@ -39,25 +39,25 @@ qSlicerWelcomeModule::qSlicerWelcomeModule(QObject* _parent)
 qSlicerWelcomeModule::~qSlicerWelcomeModule() = default;
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerWelcomeModule::categories()const
+QStringList qSlicerWelcomeModule::categories() const
 {
   return QStringList() << "";
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerWelcomeModule::icon()const
+QIcon qSlicerWelcomeModule::icon() const
 {
   return QIcon(":/Icons/SlicerWelcome.png");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerWelcomeModule::helpText()const
+QString qSlicerWelcomeModule::helpText() const
 {
   return QString();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerWelcomeModule::acknowledgementText()const
+QString qSlicerWelcomeModule::acknowledgementText() const
 {
   return tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC and the Slicer Community. "
       "See <a href=\"https://www.slicer.org\">https://www.slicer.org</a> for details. We would also like to express our sincere "
@@ -67,7 +67,7 @@ QString qSlicerWelcomeModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerWelcomeModule::contributors()const
+QStringList qSlicerWelcomeModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Wendy Plesniak (SPL, BWH)");

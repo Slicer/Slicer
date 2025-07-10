@@ -100,9 +100,9 @@ protected:
   void operator=(const vtkCodedEntry&);
 
 protected:
-  char* CodeValue{nullptr};
-  char* CodingSchemeDesignator{nullptr};
-  char* CodeMeaning{nullptr};
+  char* CodeValue{ nullptr };
+  char* CodingSchemeDesignator{ nullptr };
+  char* CodeMeaning{ nullptr };
 };
 
 #endif

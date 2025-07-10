@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDTISliceDisplayWidget
 {
   Q_OBJECT
   QVTK_OBJECT
-  Q_PROPERTY(bool visibilityHidden READ isVisibilityHidden WRITE setVisibilityHidden )
+  Q_PROPERTY(bool visibilityHidden READ isVisibilityHidden WRITE setVisibilityHidden)
 
 public:
   /// Constructors
@@ -48,11 +48,11 @@ public:
   explicit qSlicerDTISliceDisplayWidget(QWidget* parent = nullptr);
   ~qSlicerDTISliceDisplayWidget() override;
 
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* displayNode()const;
-  vtkMRMLDiffusionTensorDisplayPropertiesNode* displayPropertiesNode()const;
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* displayNode() const;
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* displayPropertiesNode() const;
 
   /// True by default
-  bool isVisibilityHidden()const;
+  bool isVisibilityHidden() const;
   void setVisibilityHidden(bool hide);
 
 public slots:

@@ -444,7 +444,7 @@ protected:
   /// If \sa VolumeRenderingQuality is set to maximum quality, then a fix oversampling factor of 10 is used.
   double VolumeRenderingOversamplingFactor;
 
-  bool ShadowsVisibility{false};
+  bool ShadowsVisibility{ false };
   double AmbientShadowsSizeScale{0.3};
   double AmbientShadowsVolumeOpacityThreshold{0.25};
   double AmbientShadowsIntensityScale{ 1.0 };

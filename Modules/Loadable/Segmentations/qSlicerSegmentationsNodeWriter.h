@@ -38,7 +38,7 @@ public:
   ~qSlicerSegmentationsNodeWriter() override;
 
   /// Return a new qSlicerSegmentationsNodeWriterOptionsWidget
-  qSlicerIOOptions* options()const override;
+  qSlicerIOOptions* options() const override;
 
   /// Write the node referenced by "nodeID" into the "fileName" file.
   /// Optionally, "useCompression" and "useReferenceGeometry" can be specified.

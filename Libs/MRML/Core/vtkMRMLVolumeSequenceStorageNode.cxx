@@ -370,7 +370,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
 
   vtkNew<vtkMatrix4x4> firstVolumeIjkToRas;
-  int frameVolumeDimensions[3] = {0};
+  int frameVolumeDimensions[3] = { 0 };
   int frameVolumeScalarType = VTK_VOID;
   int numberOfFrameVolumes = volSequenceNode->GetNumberOfDataNodes();
   if (numberOfFrameVolumes > 0)
@@ -410,7 +410,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Geometry of all volumes in the sequence must be the same."));
       return 0;
     }
-    int currentFrameVolumeDimensions[3] = {0};
+    int currentFrameVolumeDimensions[3] = { 0 };
     int currentFrameVolumeScalarType = VTK_VOID;
     if (frameVolume->GetImageData())
     {
@@ -539,7 +539,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Geometry of all volumes in the sequence must be the same."));
       return 0;
     }
-    int currentFrameVolumeDimensions[3] = {0};
+    int currentFrameVolumeDimensions[3] = { 0 };
     int currentFrameVolumeScalarType = VTK_VOID;
     if (frameVolume->GetImageData())
     {

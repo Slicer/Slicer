@@ -132,7 +132,7 @@ void vtkMRMLDisplayableHierarchyNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "DisplayNodeID: " <<
     (this->DisplayNodeID ? this->DisplayNodeID : "(none)") << "\n";
@@ -186,7 +186,7 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayableHierarchyNode::GetDisplayableNode()
 vtkMRMLDisplayNode* vtkMRMLDisplayableHierarchyNode::GetDisplayNode()
 {
   vtkMRMLDisplayNode* node = nullptr;
-  if (this->GetScene() && this->GetDisplayNodeID() )
+  if (this->GetScene() && this->GetDisplayNodeID())
   {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->DisplayNodeID);
     node = vtkMRMLDisplayNode::SafeDownCast(snode);

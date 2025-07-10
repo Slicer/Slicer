@@ -41,7 +41,7 @@
 #include <vtkSmartPointer.h>
 #include "qMRMLWidget.h"
 
-int qMRMLColorTableViewTest1(int argc, char* argv [])
+int qMRMLColorTableViewTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -91,7 +91,7 @@ int qMRMLColorTableViewTest1(int argc, char* argv [])
   colorTableView.setMRMLColorNode(userNode);
   colorTableView.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

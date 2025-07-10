@@ -104,7 +104,7 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
     for (int j = 0; j<3; j++)
     {
       ss << this->IJKToRASDirections[i][j] << " ";
-      if ( i != 2 && j != 2 )
+      if (i != 2 && j != 2)
       {
         ss << "  ";
       }
@@ -632,10 +632,10 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* ijkToR
     }
   }
 
-  switch(max_comp)
+  switch (max_comp)
   {
     case 0:
-      if (kvec[max_comp] > 0 )
+      if (kvec[max_comp] > 0)
       {
         return "LR";
       } else
@@ -644,7 +644,7 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* ijkToR
       }
       break;
     case 1:
-      if (kvec[max_comp] > 0 )
+      if (kvec[max_comp] > 0)
       {
         return "PA";
       } else
@@ -653,7 +653,7 @@ const char* vtkMRMLVolumeNode::ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* ijkToR
       }
       break;
     case 2:
-      if (kvec[max_comp] > 0 )
+      if (kvec[max_comp] > 0)
       {
         return "IS";
       } else
@@ -960,7 +960,7 @@ void vtkMRMLVolumeNode::GetBoundsInternal(double bounds[6],
   vtkMRMLTransformNode* transformNode = this->GetParentTransformNode();
   bool isTransformLinear = true;
 
-  if ( useTransform && transformNode )
+  if (useTransform && transformNode)
   {
     isTransformLinear = transformNode->IsTransformToWorldLinear();
     vtkNew<vtkGeneralTransform> worldTransform;
@@ -1029,7 +1029,7 @@ bool vtkMRMLVolumeNode::GetModifiedSinceRead()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLVolumeNode::CanApplyNonLinearTransforms()const
+bool vtkMRMLVolumeNode::CanApplyNonLinearTransforms() const
 {
   return true;
 }

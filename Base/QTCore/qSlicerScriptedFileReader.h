@@ -46,7 +46,7 @@ public:
   qSlicerScriptedFileReader(QObject* parent = nullptr);
   ~qSlicerScriptedFileReader() override;
 
-  QString pythonSource()const;
+  QString pythonSource() const;
 
   /// \warning Setting the source is a no-op. See detailed comment in the source code.
   /// If missingClassIsExpected is true (default) then missing class is expected and not treated as an error.
@@ -57,23 +57,23 @@ public:
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerIO::description()
-  QString description()const override;
+  QString description() const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerIO::fileType()
-  IOFileType fileType()const override;
+  IOFileType fileType() const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileReader::extensions()
-  QStringList extensions()const override;
+  QStringList extensions() const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileReader::canLoadFile()
-  bool canLoadFile(const QString& file)const override;
+  bool canLoadFile(const QString& file) const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileReader::canLoadFileConfidence()
-  double canLoadFileConfidence(const QString& file)const override;
+  double canLoadFileConfidence(const QString& file) const override;
 
   /// \sa qSlicerFileReader::write()
   bool load(const qSlicerIO::IOProperties& properties) override;
@@ -82,7 +82,7 @@ public:
   /// Exposes setLoadedNodes, which is protected in superclass
   /// \sa qSlicerFileReader::loadedNodes()
   /// \sa qSlicerFileWriter::writtenNodes()
-  QStringList loadedNodes()const override {
+  QStringList loadedNodes() const override {
     return Superclass::loadedNodes();
   };
   void setLoadedNodes(const QStringList& nodes) override {

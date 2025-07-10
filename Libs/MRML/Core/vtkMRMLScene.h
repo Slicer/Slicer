@@ -624,20 +624,20 @@ public:
   ///
   /// \sa IsBatchProcessing, IsClosing, IsImporting, IsRestoring
   /// \sa StartState, EndState
-  int GetStates()const;
+  int GetStates() const;
 
   /// Return true if the scene is in BatchProcess state, false otherwise
-  inline bool IsBatchProcessing()const;
+  inline bool IsBatchProcessing() const;
   /// Return true if the scene is in Close state, false otherwise
-  inline bool IsClosing()const;
+  inline bool IsClosing() const;
   /// Return true if the scene is in Import state, false otherwise
-  inline bool IsImporting()const;
+  inline bool IsImporting() const;
   /// Return true if the scene is in Restore state, false otherwise
-  inline bool IsRestoring()const;
+  inline bool IsRestoring() const;
   /// Return true if the scene is in Undo state (in the process of undoing node changes), false otherwise
-  inline bool IsUndoing()const;
+  inline bool IsUndoing() const;
   /// Return true if the scene is in Redo state (in the process of redoing node changes), false otherwise
-  inline bool IsRedoing()const;
+  inline bool IsRedoing() const;
 
   /// \brief Flag the scene as being in a \a state mode.
   ///
@@ -884,7 +884,7 @@ protected:
   std::string GenerateUniqueID(vtkMRMLNode* node);
   std::string GenerateUniqueID(const std::string& baseID);
   int GetUniqueIDIndex(const std::string& baseID);
-  std::string BuildID(const std::string& baseID, int idIndex)const;
+  std::string BuildID(const std::string& baseID, int idIndex) const;
 
   /// Return a unique name for a MRML node. It uses the node tag as the base.
   std::string GenerateUniqueName(vtkMRMLNode* node);
@@ -897,7 +897,7 @@ protected:
   int GetUniqueNameIndex(const std::string& baseName);
 
   /// Combine a basename and an index to produce a full name.
-  std::string BuildName(const std::string& baseName, int nameIndex)const;
+  std::string BuildName(const std::string& baseName, int nameIndex) const;
 
   /// \brief Synchronize NodeIDs map used to speedup GetByID() method with the
   /// \a Nodes collection.
@@ -1012,42 +1012,42 @@ private:
 };
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::IsBatchProcessing()const
+bool vtkMRMLScene::IsBatchProcessing() const
 {
   return (this->GetStates() & vtkMRMLScene::BatchProcessState)
          == vtkMRMLScene::BatchProcessState;
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::IsClosing()const
+bool vtkMRMLScene::IsClosing() const
 {
   return (this->GetStates() & vtkMRMLScene::CloseState)
          == vtkMRMLScene::CloseState;
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::IsImporting()const
+bool vtkMRMLScene::IsImporting() const
 {
   return (this->GetStates() & vtkMRMLScene::ImportState)
          == vtkMRMLScene::ImportState;
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::IsRestoring()const
+bool vtkMRMLScene::IsRestoring() const
 {
   return (this->GetStates() & vtkMRMLScene::RestoreState)
          == vtkMRMLScene::RestoreState;
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::IsUndoing()const
+bool vtkMRMLScene::IsUndoing() const
 {
   return (this->GetStates() & vtkMRMLScene::UndoState)
     == vtkMRMLScene::UndoState;
 }
 
 //------------------------------------------------------------------------------
-bool vtkMRMLScene::IsRedoing()const
+bool vtkMRMLScene::IsRedoing() const
 {
   return (this->GetStates() & vtkMRMLScene::RedoState)
     == vtkMRMLScene::RedoState;

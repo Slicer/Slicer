@@ -55,10 +55,10 @@ void
 DiffusionTensor3DMatrix3x3Transform<TData>
 ::ComputeOffset()
 {
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
     m_Offset[i] = m_Translation[i] + m_Center[i];
-    for ( int j = 0; j < 3; j++ )
+    for (int j = 0; j < 3; j++)
     {
       m_Offset[i] -= m_TransformMatrix[i][j] * m_Center[j];
     }
@@ -79,10 +79,10 @@ typename DiffusionTensor3DMatrix3x3Transform<TData>::PointType
 DiffusionTensor3DMatrix3x3Transform<TData>
 ::EvaluateTensorPosition( const PointType& point )
 {
-  if ( m_LatestTime < Object::GetMTime() )
+  if (m_LatestTime < Object::GetMTime())
   {
     m_Lock.lock();
-    if ( m_LatestTime < Object::GetMTime() )
+    if (m_LatestTime < Object::GetMTime())
     {
       PreCompute();
     }
@@ -106,10 +106,10 @@ DiffusionTensor3DMatrix3x3Transform<TData>
 {
   InternalTensorDataType internalTensor = tensor;
 
-  if ( m_LatestTime < Object::GetMTime() )
+  if (m_LatestTime < Object::GetMTime())
   {
     m_Lock.lock();
-    if ( m_LatestTime < Object::GetMTime() )
+    if (m_LatestTime < Object::GetMTime())
     {
       PreCompute();
     }
@@ -129,10 +129,10 @@ typename DiffusionTensor3DMatrix3x3Transform<TData>::
 InternalMatrixTransformType
 DiffusionTensor3DMatrix3x3Transform<TData>::GetMatrix3x3()
 {
-  if ( m_LatestTime < Object::GetMTime() )
+  if (m_LatestTime < Object::GetMTime())
   {
     m_Lock.lock();
-    if ( m_LatestTime < Object::GetMTime() )
+    if (m_LatestTime < Object::GetMTime())
     {
       PreCompute();
     }
@@ -146,10 +146,10 @@ typename DiffusionTensor3DMatrix3x3Transform<TData>::
 VectorType
 DiffusionTensor3DMatrix3x3Transform<TData>::GetTranslation()
 {
-  if ( m_LatestTime < Object::GetMTime() )
+  if (m_LatestTime < Object::GetMTime())
   {
     m_Lock.lock();
-    if ( m_LatestTime < Object::GetMTime() )
+    if (m_LatestTime < Object::GetMTime())
     {
       PreCompute();
     }

@@ -71,7 +71,7 @@ int TestWriteReadSequence(const std::string& tempDir, vtkMRMLSequenceNode* seque
 }
 
 //-----------------------------------------------------------------------------
-int vtkMRMLSequenceStorageNodeTest1( int argc, char* argv[] )
+int vtkMRMLSequenceStorageNodeTest1(int argc, char* argv[])
 {
   std::string tempDir = ".";
   if (argc > 1)

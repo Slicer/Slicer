@@ -35,7 +35,7 @@
 
 
 // test the filtering with many cases
-int qMRMLNodeComboBoxTest7( int argc, char* argv [] )
+int qMRMLNodeComboBoxTest7(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

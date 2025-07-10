@@ -55,8 +55,8 @@ public:
   qMRMLSceneDisplayableModelPrivate(qMRMLSceneDisplayableModel& object);
   void init() override;
 
-  vtkMRMLHierarchyNode* CreateHierarchyNode()const override;
-  vtkMRMLDisplayNode* displayNode(vtkMRMLNode* node)const;
+  vtkMRMLHierarchyNode* CreateHierarchyNode() const override;
+  vtkMRMLDisplayNode* displayNode(vtkMRMLNode* node) const;
 
   int ColorColumn;
   int OpacityColumn;

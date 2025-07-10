@@ -28,7 +28,7 @@
 // MRMLWidgets includes
 #include "qMRMLWidgetsExport.h"
 
-class QMRML_WIDGETS_EXPORT qMRMLEventBrokerConnection: public ctkVTKConnection
+class QMRML_WIDGETS_EXPORT qMRMLEventBrokerConnection : public ctkVTKConnection
 {
 Q_OBJECT
 
@@ -46,10 +46,10 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLConnectionFactory: public ctkVTKConnectionFactory
+class QMRML_WIDGETS_EXPORT qMRMLConnectionFactory : public ctkVTKConnectionFactory
 {
 public:
-  ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*)const override;
+  ctkVTKConnection* createConnection(ctkVTKObjectEventsObserver*) const override;
 };
 
 #endif

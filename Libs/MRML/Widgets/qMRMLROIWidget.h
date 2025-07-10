@@ -45,7 +45,7 @@ public:
   ~qMRMLROIWidget() override;
 
   /// Returns the current MRML ROI node
-  vtkMRMLROINode* mrmlROINode()const;
+  vtkMRMLROINode* mrmlROINode() const;
 
   void setExtent(double min, double max);
 public slots:

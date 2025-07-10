@@ -11,7 +11,7 @@
 
 class vtkAbstractTransform;
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {
 public:
   static vtkMRMLAnnotationHierarchyNode* New();
@@ -54,7 +54,7 @@ public:
   virtual void DeleteDirectChildren();
 
   /// From Transformable superclass
-  virtual bool CanApplyNonLinearTransforms()const;
+  virtual bool CanApplyNonLinearTransforms() const;
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
 protected:

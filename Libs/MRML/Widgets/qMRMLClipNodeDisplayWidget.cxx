@@ -47,7 +47,7 @@ public:
   void init();
 
   vtkWeakPointer<vtkMRMLDisplayNode> MRMLDisplayNode;
-  bool                               IsUpdatingWidgetFromMRML{false};
+  bool                               IsUpdatingWidgetFromMRML{ false };
 };
 
 //------------------------------------------------------------------------------

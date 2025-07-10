@@ -423,7 +423,7 @@ public:
   {
     for (unsigned int k = 0; k < GetNumberOfSeriesInstanceUIDs(); k++)
     {
-      if ( this->SeriesInstanceUIDs[k].find(SeriesInstanceUID) != std::string::npos )
+      if (this->SeriesInstanceUIDs[k].find(SeriesInstanceUID) != std::string::npos)
       {
         return k;
       }
@@ -435,7 +435,7 @@ public:
   {
       for (unsigned int k = 0; k < GetNumberOfContentTime(); k++)
       {
-        if ( this->ContentTime[k].find(contentTime) != std::string::npos )
+        if (this->ContentTime[k].find(contentTime) != std::string::npos)
         {
           return k;
         }
@@ -447,7 +447,7 @@ public:
   {
       for (unsigned int k = 0; k < GetNumberOfTriggerTime(); k++)
       {
-        if ( this->TriggerTime[k].find(triggerTime) != std::string::npos )
+        if (this->TriggerTime[k].find(triggerTime) != std::string::npos)
         {
           return k;
         }
@@ -459,7 +459,7 @@ public:
   {
       for (unsigned int k = 0; k < GetNumberOfEchoNumbers(); k++)
       {
-        if ( this->EchoNumbers[k].find(echoNumbers) != std::string::npos )
+        if (this->EchoNumbers[k].find(echoNumbers) != std::string::npos)
         {
           return k;
         }
@@ -486,7 +486,7 @@ public:
         }
         c = fabs(c)/sqrt(a*b);
 
-        if ( c > 0.99999 )
+        if (c > 0.99999)
         {
           return k;
         }
@@ -521,14 +521,14 @@ public:
         std::vector<float> aVec = ImageOrientationPatient[k];
         a = sqrt( aVec[0]*aVec[0] + aVec[1]*aVec[1] + aVec[2]*aVec[2] );
         float b = (directionCosine[0]*aVec[0] + directionCosine[1]*aVec[1] + directionCosine[2]*aVec[2])/a;
-        if ( b < 0.99999 )
+        if (b < 0.99999)
         {
           continue;
         }
 
         a = sqrt( aVec[3]*aVec[3] + aVec[4]*aVec[4] + aVec[5]*aVec[5] );
         b = (directionCosine[3]*aVec[3] + directionCosine[4]*aVec[4] + directionCosine[5]*aVec[5])/a;
-        if ( b > 0.99999 )
+        if (b > 0.99999)
         {
           return k;
         }
@@ -554,7 +554,7 @@ public:
           c += this->ImagePositionPatient[k][n] * ipp[n];
         }
         c = fabs(c)/sqrt(a*b);
-        if ( c > 0.99999 )
+        if (c > 0.99999)
         {
           return k;
         }
@@ -565,7 +565,7 @@ public:
   /// methods to get N-th discriminator
   const char* GetNthSeriesInstanceUID( unsigned int n )
   {
-      if ( n >= this->GetNumberOfSeriesInstanceUIDs() )
+      if (n >= this->GetNumberOfSeriesInstanceUIDs())
       {
         return nullptr;
       }
@@ -574,7 +574,7 @@ public:
 
   const char* GetNthContentTime( unsigned int n )
   {
-      if ( n >= this->GetNumberOfContentTime() )
+      if (n >= this->GetNumberOfContentTime())
       {
         return nullptr;
       }
@@ -583,7 +583,7 @@ public:
 
   const char* GetNthTriggerTime( unsigned int n )
   {
-      if ( n >= this->GetNumberOfTriggerTime() )
+      if (n >= this->GetNumberOfTriggerTime())
       {
         return nullptr;
       }
@@ -592,7 +592,7 @@ public:
 
   const char* GetNthEchoNumbers( unsigned int n )
   {
-      if ( n >= this->GetNumberOfEchoNumbers() )
+      if (n >= this->GetNumberOfEchoNumbers())
       {
         return nullptr;
       }
@@ -601,7 +601,7 @@ public:
 
   float* GetNthDiffusionGradientOrientation( unsigned int n )
   {
-      if ( n >= this->GetNumberOfDiffusionGradientOrientation() )
+      if (n >= this->GetNumberOfDiffusionGradientOrientation())
       {
         return nullptr;
       }
@@ -615,7 +615,7 @@ public:
 
   float GetNthSliceLocation( unsigned int n )
   {
-      if ( n >= this->GetNumberOfSliceLocation() )
+      if (n >= this->GetNumberOfSliceLocation())
       {
         return this->SliceLocation[0];
       }
@@ -624,7 +624,7 @@ public:
 
   float* GetNthImageOrientationPatient( unsigned int n )
   {
-      if ( n >= this->GetNumberOfImageOrientationPatient() )
+      if (n >= this->GetNumberOfImageOrientationPatient())
       {
         return nullptr;
       }
@@ -638,7 +638,7 @@ public:
 
   float* GetNthImagePositionPatient( unsigned int n )
   {
-      if (n >= this->GetNumberOfImagePositionPatient() )
+      if (n >= this->GetNumberOfImagePositionPatient())
       {
         return nullptr;
       }
@@ -655,7 +655,7 @@ public:
   int InsertSeriesInstanceUIDs ( const char* aUID )
   {
       int k = ExistSeriesInstanceUID( aUID );
-      if ( k >= 0 )
+      if (k >= 0)
       {
         return k;
       }
@@ -668,7 +668,7 @@ public:
   int InsertContentTime ( const char* aTime )
   {
       int k = ExistContentTime( aTime );
-      if ( k >= 0 )
+      if (k >= 0)
       {
         return k;
       }
@@ -681,7 +681,7 @@ public:
   int InsertTriggerTime ( const char* aTime )
   {
       int k = ExistTriggerTime( aTime );
-      if ( k >= 0 )
+      if (k >= 0)
       {
         return k;
       }
@@ -694,7 +694,7 @@ public:
   int InsertEchoNumbers ( const char* aEcho )
   {
       int k = ExistEchoNumbers( aEcho );
-      if ( k >= 0 )
+      if (k >= 0)
       {
         return k;
       }
@@ -707,7 +707,7 @@ public:
   int InsertDiffusionGradientOrientation ( float* a )
   {
       int k = ExistDiffusionGradientOrientation( a );
-      if ( k >= 0 )
+      if (k >= 0)
       {
         return k;
       }
@@ -728,7 +728,7 @@ public:
   int InsertSliceLocation ( float a )
   {
       int k = ExistSliceLocation( a );
-      if ( k >= 0 )
+      if (k >= 0)
       {
         return k;
       }
@@ -749,7 +749,7 @@ public:
   int InsertImageOrientationPatient ( float* a )
   {
       int k = ExistImageOrientationPatient( a );
-      if ( k >= 0 )
+      if (k >= 0)
       {
         return k;
       }
@@ -769,13 +769,13 @@ public:
   int InsertImagePositionPatient ( float* a )
   {
       int k = ExistImagePositionPatient( a );
-      if ( k >= 0 )
+      if (k >= 0)
       {
         return k;
       }
 
       std::vector<float> aVector(3);
-      for ( unsigned int i = 0; i < 3; i++ ) aVector[i] = a[i];
+      for (unsigned int i = 0; i < 3; i++ ) aVector[i] = a[i];
       this->ImagePositionPatient.push_back( aVector );
       return (this->ImagePositionPatient.size()-1);
   }

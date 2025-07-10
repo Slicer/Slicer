@@ -39,7 +39,7 @@ void
 vtkMRMLMessageCollection
 ::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "Messages: " << &this->Messages << "\n";
   for (int i = 0; i < this->GetNumberOfMessages(); i++)
   {

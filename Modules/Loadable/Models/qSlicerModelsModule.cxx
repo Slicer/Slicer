@@ -68,7 +68,7 @@ qSlicerModelsModule::qSlicerModelsModule(QObject* _parent)
 qSlicerModelsModule::~qSlicerModelsModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerModelsModule::helpText()const
+QString qSlicerModelsModule::helpText() const
 {
   QString help = tr(
     "The Models Module loads and adjusts display parameters of models such as Color, Transparency, and Clipping.<br>"
@@ -91,13 +91,13 @@ QString qSlicerModelsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModelsModule::acknowledgementText()const
+QString qSlicerModelsModule::acknowledgementText() const
 {
   return tr("This work was partially funded by NIH grants 3P41RR013218-12S1 and R01CA184354.");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerModelsModule::contributors()const
+QStringList qSlicerModelsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Julien Finet (Kitware)");
@@ -108,7 +108,7 @@ QStringList qSlicerModelsModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerModelsModule::icon()const
+QIcon qSlicerModelsModule::icon() const
 {
   return QIcon(":/Icons/Large/SlicerModels.png");
 }

@@ -108,7 +108,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Get number of View Node ID's for the view to display this node in.
   /// If 0, display in all views
   /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
-  int GetNumberOfThreeDViewIDs()const;
+  int GetNumberOfThreeDViewIDs() const;
   /// Get View Node ID's for the view to display this node in.
   /// If nullptr, display in all views
   /// \sa ThreeDViewIDs, GetThreeDViewIDs(), AddThreeDViewID()
@@ -116,16 +116,16 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Get all View Node ID's for the view to display this node in.
   /// If empty, display in all views
   /// \sa ThreeDViewIDs, GetNthThreeDViewID(), AddThreeDViewID()
-  inline std::vector<std::string> GetThreeDViewIDs()const;
+  inline std::vector<std::string> GetThreeDViewIDs() const;
   /// True if the view node id is present in the ThreeDViewID list
   /// false if not found
   /// \sa ThreeDViewIDs, IsDisplayableInView(), AddThreeDViewID()
-  bool IsThreeDViewIDPresent(const char* ThreeDViewID)const;
+  bool IsThreeDViewIDPresent(const char* ThreeDViewID) const;
   /// Returns true if the ThreeDViewID is present in the ThreeDViewID list
   /// or there is no ThreeDViewID in the list (meaning all the views display the
   /// node)
   /// \sa ThreeDViewIDs, IsThreeDViewIDPresent(), AddThreeDViewID()
-  bool IsDisplayableInThreeDView(const char* viewNodeID)const;
+  bool IsDisplayableInThreeDView(const char* viewNodeID) const;
 
   /// The ImplicitPlane widget mode
   /// this lock the normal of the plane to the camera's one
@@ -633,7 +633,7 @@ protected:
 };
 
 //----------------------------------------------------------------------------
-std::vector<std::string> vtkMRMLSliceNode::GetThreeDViewIDs()const
+std::vector<std::string> vtkMRMLSliceNode::GetThreeDViewIDs() const
 {
   return this->ThreeDViewIDs;
 }

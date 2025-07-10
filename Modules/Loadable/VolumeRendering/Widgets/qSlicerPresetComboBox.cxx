@@ -52,7 +52,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerIconComboBox::qSlicerIconComboBox(QWidget* parentWidget)
-  :Superclass(parentWidget)
+  : Superclass(parentWidget)
 {
   QListView* listView = new QListView(nullptr);
   listView->setViewMode(QListView::IconMode);
@@ -275,7 +275,7 @@ void qSlicerPresetComboBox::updateComboBoxTitleAndIcon(vtkMRMLNode* node)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerPresetComboBox::showIcons()const
+bool qSlicerPresetComboBox::showIcons() const
 {
   Q_D(const qSlicerPresetComboBox);
   return d->ShowIcons;
@@ -290,7 +290,7 @@ void qSlicerPresetComboBox::setShowIcons(bool show)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerPresetComboBox::showLabelsInPopup()const
+bool qSlicerPresetComboBox::showLabelsInPopup() const
 {
   Q_D(const qSlicerPresetComboBox);
   return d->ShowLabelsInPopup;
@@ -305,7 +305,7 @@ void qSlicerPresetComboBox::setShowLabelsInPopup(bool show)
 }
 
 // --------------------------------------------------------------------------
-QSize qSlicerPresetComboBox::iconSizeInPopup()const
+QSize qSlicerPresetComboBox::iconSizeInPopup() const
 {
   Q_D(const qSlicerPresetComboBox);
   return d->IconSizeInPopup;

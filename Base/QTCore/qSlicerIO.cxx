@@ -75,7 +75,7 @@ qSlicerIO::qSlicerIO(QObject* parentObject)
 qSlicerIO::~qSlicerIO() = default;
 
 //----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerIO::options()const
+qSlicerIOOptions* qSlicerIO::options() const
 {
   return nullptr;
 }

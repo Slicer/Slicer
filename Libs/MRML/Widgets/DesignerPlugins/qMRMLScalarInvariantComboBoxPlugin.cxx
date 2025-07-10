@@ -40,7 +40,7 @@ QString qMRMLScalarInvariantComboBoxPlugin::domXml() const
 {
   return "<widget class=\"qMRMLScalarInvariantComboBox\" \
           name=\"MRMLScalarInvariantComboBox\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

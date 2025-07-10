@@ -94,7 +94,7 @@ void vtkMRMLModelHierarchyNode::Copy(vtkMRMLNode* anode)
 void vtkMRMLModelHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   if (this->ModelDisplayNode)
   {

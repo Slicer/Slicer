@@ -165,7 +165,7 @@ void qMRMLSceneViewMenuPrivate::removeMenuItem(int index)
 }
 
 // --------------------------------------------------------------------------
-bool qMRMLSceneViewMenuPrivate::hasNoSceneViewItem()const
+bool qMRMLSceneViewMenuPrivate::hasNoSceneViewItem() const
 {
   Q_Q(const qMRMLSceneViewMenu);
   QList<QAction*> actions = q->actions();
@@ -233,7 +233,7 @@ vtkMRMLScene* qMRMLSceneViewMenu::mrmlScene() const
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSceneViewMenu::noSceneViewText()const
+QString qMRMLSceneViewMenu::noSceneViewText() const
 {
   Q_D(const qMRMLSceneViewMenu);
   return d->NoSceneViewText;

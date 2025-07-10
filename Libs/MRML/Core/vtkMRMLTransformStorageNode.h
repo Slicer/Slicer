@@ -42,7 +42,7 @@ class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
 
   ///
   /// Get node XML tag name (like Storage, Transform)
-  const char* GetNodeTagName() override  {return "TransformStorage";};
+  const char* GetNodeTagName() override {return "TransformStorage";};
 
   ///
   /// Copy the node's attributes to this object

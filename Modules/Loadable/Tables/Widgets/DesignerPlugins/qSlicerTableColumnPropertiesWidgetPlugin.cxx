@@ -44,7 +44,7 @@ QString qSlicerTableColumnPropertiesWidgetPlugin
 {
   return "<widget class=\"qSlicerTableColumnPropertiesWidget\" \
           name=\"SlicerTableColumnPropertiesWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

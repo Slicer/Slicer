@@ -28,7 +28,7 @@
 #include "qSlicerPersistentCookieJar.h"
 
 // ----------------------------------------------------------------------------
-class qSlicerPersistentCookieJarTester: public QObject
+class qSlicerPersistentCookieJarTester : public QObject
 {
   Q_OBJECT
   typedef qSlicerPersistentCookieJarTester Self;

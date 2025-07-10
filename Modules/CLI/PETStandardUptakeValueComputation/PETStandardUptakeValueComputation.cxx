@@ -123,7 +123,7 @@ struct parameters
 
 double ConvertTimeToSeconds(const char* time )
 {
-  if ( time == nullptr )
+  if (time == nullptr)
   {
     std::cerr << "ConvertTimeToSeconds got a nullptr time string." << std::endl;
     return -1.0;
@@ -138,7 +138,7 @@ double ConvertTimeToSeconds(const char* time )
   double minutes;
   double seconds;
 
-  if ( time == nullptr )
+  if (time == nullptr)
   {
     return 0.0;
   }
@@ -172,12 +172,12 @@ double ConvertWeightUnits(double count, const char* fromunits, const char* touni
 
   double conversion = count;
 
-  if ( fromunits == nullptr )
+  if (fromunits == nullptr)
   {
     std::cout << "Got nullptr parameter fromunits. A bad param was probably specified." << std::endl;
     return -1.0;
   }
-  if ( tounits == nullptr )
+  if (tounits == nullptr)
   {
     std::cout << "Got nullptr parameter from tounits. A bad parameter was probably specified." << std::endl;
     return -1.0;
@@ -192,47 +192,47 @@ double ConvertWeightUnits(double count, const char* fromunits, const char* touni
   */
 
   // --- kg to...
-  if ( !strcmp(fromunits, "kg") )
+  if (!strcmp(fromunits, "kg"))
   {
-    if ( !strcmp(tounits, "kg") )
+    if (!strcmp(tounits, "kg"))
     {
       return conversion;
     }
-    else if ( !strcmp(tounits, "g") )
+    else if (!strcmp(tounits, "g"))
     {
       conversion *= 1000.0;
     }
-    else if ( !strcmp(tounits, "lb") )
+    else if (!strcmp(tounits, "lb"))
     {
       conversion *= 2.2;
     }
   }
-  else if ( !strcmp(fromunits, "g") )
+  else if (!strcmp(fromunits, "g"))
   {
-    if ( !strcmp(tounits, "kg") )
+    if (!strcmp(tounits, "kg"))
     {
       conversion /= 1000.0;
     }
-    else if ( !strcmp(tounits, "g") )
+    else if (!strcmp(tounits, "g"))
     {
       return conversion;
     }
-    else if ( !strcmp(tounits, "lb") )
+    else if (!strcmp(tounits, "lb"))
     {
       conversion *= .0022;
     }
   }
-  else if ( !strcmp(fromunits, "lb") )
+  else if (!strcmp(fromunits, "lb"))
   {
-    if ( !strcmp(tounits, "kg") )
+    if (!strcmp(tounits, "kg"))
     {
       conversion *= 0.45454545454545453;
     }
-    else if ( !strcmp(tounits, "g") )
+    else if (!strcmp(tounits, "g"))
     {
       conversion *= 454.54545454545453;
     }
-    else if ( !strcmp(tounits, "lb") )
+    else if (!strcmp(tounits, "lb"))
     {
       return conversion;
     }
@@ -249,12 +249,12 @@ double ConvertRadioactivityUnits(double count, const char* fromunits, const char
 
   double conversion = count;
 
-  if ( fromunits == nullptr )
+  if (fromunits == nullptr)
   {
     std::cout << "Got nullptr parameter in fromunits. A bad parameter was probably specified." << std::endl;
     return -1.0;
   }
-  if ( tounits == nullptr )
+  if (tounits == nullptr)
   {
     std::cout << "Got nullptr parameter in tounits. A bad parameter was probably specified." << std::endl;
     return -1.0;
@@ -276,441 +276,441 @@ double ConvertRadioactivityUnits(double count, const char* fromunits, const char
 */
 
   // --- MBq to...
-  if ( !strcmp(fromunits, "MBq" ) )
+  if (!strcmp(fromunits, "MBq" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       return conversion;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       conversion *= 1000.0;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       conversion *= 1000000.0;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       conversion *= 1000000000.0;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       conversion *= 1000000000000.0;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       conversion *= 0.000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       conversion *= 0.000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       conversion *= 0.000027027027027027;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       conversion *= 0.027027027027027;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       conversion *= 27.027027027;
     }
   }
   // --- kBq to...
-  else if ( !strcmp(fromunits, "kBq" ) )
+  else if (!strcmp(fromunits, "kBq" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       conversion *= .001;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       return conversion;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       conversion *= 1000.0;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       conversion *= 1000000.0;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       conversion *= 1000000000.0;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       conversion *= 0.000000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       conversion *= 0.000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       conversion *= 0.000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       conversion *= 0.000027027027027027;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       conversion *= 0.027027027027027;
     }
   }
   // --- Bq to...
-  else if ( !strcmp(fromunits, "Bq" ) )
+  else if (!strcmp(fromunits, "Bq" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       conversion *= 0.000001;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       conversion *= 0.001;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       return conversion;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       conversion *= 1000.0;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       conversion *= 1000000.0;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       conversion *= 0.000000000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       conversion *=  0.000000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       conversion *= 0.000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       conversion *= 0.000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       conversion *= 0.000027027027027027;
     }
   }
   // --- mBq to...
-  else if ( !strcmp(fromunits, "mBq" ) )
+  else if (!strcmp(fromunits, "mBq" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       conversion *= 0.000000001;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       conversion *= 0.000001;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       conversion *= 0.001;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       return conversion;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       conversion *= 1000.0;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       conversion *= 0.00000000000000000002702702702702;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       conversion *= 0.000000000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       conversion *= 0.000000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       conversion *= 0.000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       conversion *= 0.000000027027027027027;
     }
   }
   // --- uBq to...
-  else if ( !strcmp(fromunits, "uBq" ) )
+  else if (!strcmp(fromunits, "uBq" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       conversion *= 0.000000000001;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       conversion *= 0.000000001;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       conversion *= 0.000001;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       conversion *= 0.001;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       return conversion;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       conversion *= 0.000000000000000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       conversion *= 0.000000000000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       conversion *= 0.000000000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       conversion *= 0.000000000000027027027027027;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       conversion *= 0.000000000027027027027027;
     }
   }
   // --- MCi to...
-  else if ( !strcmp(fromunits, "MCi" ) )
+  else if (!strcmp(fromunits, "MCi" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       conversion *= 37000000000.0;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       conversion *= 37000000000000.0;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       conversion *= 37000000000000000.0;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       conversion *= 37000000000000000000.0;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       conversion *=  37000000000000000000848.0;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       return conversion;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       conversion *= 1000.0;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       conversion *= 1000000.0;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       conversion *= 1000000000.0;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       conversion *= 1000000000000.0;
     }
   }
   // --- kCi to...
-  else if ( !strcmp(fromunits, "kCi" ) )
+  else if (!strcmp(fromunits, "kCi" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       conversion *= 37000000.0;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       conversion *= 37000000000.0;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       conversion *= 37000000000000.0;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       conversion *= 37000000000000000.0;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       conversion *= 37000000000000000000.0;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       conversion *= 0.001;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       return conversion;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       conversion *= 1000.0;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       conversion *= 1000000.0;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       conversion *= 1000000000.0;
     }
   }
   // --- Ci to...
-  else if ( !strcmp(fromunits, "Ci" ) )
+  else if (!strcmp(fromunits, "Ci" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       conversion *= 37000.0;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       conversion *= 37000000.0;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       conversion *= 37000000000.0;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       conversion *= 37000000000000.0;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       conversion *= 37000000000000000.0;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       conversion *= 0.0000010;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       conversion *= 0.001;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       return conversion;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       conversion *= 1000.0;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       conversion *= 1000000.0;
     }
   }
   // --- mCi to...
-  else if ( !strcmp(fromunits, "mCi" ) )
+  else if (!strcmp(fromunits, "mCi" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       conversion *= 37.0;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       conversion *= 37000.0;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       conversion *= 37000000.0;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       conversion *= 37000000000.0;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       conversion *= 37000000000000.0;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       conversion *= 0.0000000010;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       conversion *= 0.0000010;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       conversion *= 0.001;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       return conversion;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       conversion *= 1000.0;
     }
   }
   // --- uCi to...
-  else if ( !strcmp(fromunits, " uCi" ) )
+  else if (!strcmp(fromunits, " uCi" ))
   {
-    if ( !(strcmp(tounits, "MBq" ) ) )
+    if (!(strcmp(tounits, "MBq" ) ))
     {
       conversion *= 0.037;
     }
-    else if ( !(strcmp(tounits, "kBq" ) ) )
+    else if (!(strcmp(tounits, "kBq" ) ))
     {
       conversion *= 37.0;
     }
-    else if ( !(strcmp(tounits, "Bq" ) ) )
+    else if (!(strcmp(tounits, "Bq" ) ))
     {
       conversion *= 37000.0;
     }
-    else if ( !(strcmp(tounits, "mBq" ) ) )
+    else if (!(strcmp(tounits, "mBq" ) ))
     {
       conversion *= 37000000.0;
     }
-    else if ( !(strcmp(tounits, " uBq" ) ) )
+    else if (!(strcmp(tounits, " uBq" ) ))
     {
       conversion *= 37000000000.0;
     }
-    else if ( !(strcmp(tounits, "MCi" ) ) )
+    else if (!(strcmp(tounits, "MCi" ) ))
     {
       conversion *= 0.0000000000010;
     }
-    else if ( !(strcmp(tounits, "kCi" ) ) )
+    else if (!(strcmp(tounits, "kCi" ) ))
     {
       conversion *= 0.0000000010;
     }
-    else if ( !(strcmp(tounits, "Ci" ) ) )
+    else if (!(strcmp(tounits, "Ci" ) ))
     {
       conversion *= 0.0000010;
     }
-    else if ( !(strcmp(tounits, "mCi" ) ) )
+    else if (!(strcmp(tounits, "mCi" ) ))
     {
       conversion *= 0.001;
     }
-    else if ( !(strcmp(tounits, "uCi" ) ) )
+    else if (!(strcmp(tounits, "uCi" ) ))
     {
       return conversion;
     }
@@ -747,7 +747,7 @@ std::string MapLabelIDtoColorName( int id, std::string colorFile )
   vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
   colorStorageNode->SetFileName(colorFile.c_str() );
 
-  if ( !colorStorageNode->ReadData(colorNode.GetPointer()) )
+  if (!colorStorageNode->ReadData(colorNode.GetPointer()))
   {
     std::cerr << "Error reading color file " << colorStorageNode->GetFileName() << endl;
   }
@@ -781,7 +781,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   // check for the input files
   FILE * petfile;
   petfile = fopen(list.PETVolumeName.c_str(), "r");
-  if ( petfile == nullptr )
+  if (petfile == nullptr)
   {
     std::cerr << "ERROR: cannot open input volume file '" << list.PETVolumeName.c_str() << "'" << endl;
     return EXIT_FAILURE;
@@ -790,7 +790,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
   FILE * voifile;
   voifile = fopen(list.VOIVolumeName.c_str(), "r");
-  if ( voifile == nullptr )
+  if (voifile == nullptr)
   {
     std::cerr << "ERROR: cannot open ROI Volume  file '" << list.VOIVolumeName.c_str() << "'" << endl;
     return EXIT_FAILURE;
@@ -830,14 +830,14 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   // COMPUTE SUV ///////////////////////////////////////////////////////////////////////////////RSNA CHANGE//////////////////////////
   //
 
-  if ( petVolume == nullptr )
+  if (petVolume == nullptr)
   {
     std::cerr << "No input PET volume found." << std::endl;
     return EXIT_FAILURE;
   }
 
   // find input labelmap volume
-  if ( voiVolume == nullptr )
+  if (voiVolume == nullptr)
   {
     std::cerr <<  "No input VOI volume found" << std::endl;
     return EXIT_FAILURE;
@@ -850,7 +850,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   typedef itk::ImageSeriesReader<VolumeType> VolumeReaderType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
 
-  if ( !list.PETDICOMPath.compare(""))
+  if (!list.PETDICOMPath.compare(""))
   {
     std::cerr << "GetParametersFromDicomHeader:Got empty list.PETDICOMPath." << std::endl;
     return EXIT_FAILURE;
@@ -875,7 +875,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     notDICOM = 1;
   }
   gfn->Delete();
-  if ( notDICOM )
+  if (notDICOM)
   {
     std::cerr << "PET Dicom parameter doesn't point to a dicom directory!" << std::endl;
     return EXIT_FAILURE;
@@ -940,7 +940,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         //---1. "070907.0705" represents a time of 7 hours, 9 minutes and 7.0705 seconds.
         //---2. "1010" represents a time of 10 hours, and 10 minutes.
         //---3. "021" is an invalid value.
-        if ( tag.c_str() == nullptr || *(tag.c_str()) == '\0' )
+        if (tag.c_str() == nullptr || *(tag.c_str()) == '\0')
         {
           list.injectionTime  = "MODULE_INIT_NO_VALUE" ;
         }
@@ -950,7 +950,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           hourstr.clear();
           minutestr.clear();
           secondstr.clear();
-          if ( len >= 2 )
+          if (len >= 2)
           {
             hourstr = tag.substr(0, 2);
           }
@@ -958,7 +958,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           {
             hourstr = "00";
           }
-          if ( len >= 4 )
+          if (len >= 4)
           {
             minutestr = tag.substr(2, 2);
           }
@@ -966,7 +966,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           {
             minutestr = "00";
           }
-          if ( len >= 6 )
+          if (len >= 6)
           {
             secondstr = tag.substr(4);
           }
@@ -1035,63 +1035,63 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           list.radioactivityUnits= "Bq";
           list.tissueRadioactivityUnits = "Bq";
         }
-        else if ( ( units.find ("MBq") != std::string::npos) ||
+        else if (( units.find ("MBq") != std::string::npos) ||
                   ( units.find ("MBQ") != std::string::npos) )
         {
           list.radioactivityUnits = "MBq";
           list.tissueRadioactivityUnits = "MBq";
         }
-        else if ( (units.find ("kBq") != std::string::npos) ||
+        else if ((units.find ("kBq") != std::string::npos) ||
                   (units.find ("kBQ") != std::string::npos) ||
                   (units.find ("KBQ") != std::string::npos) )
         {
           list.radioactivityUnits = "kBq";
           list.tissueRadioactivityUnits = "kBq";
         }
-        else if ( (units.find ("mBq") != std::string::npos) ||
+        else if ((units.find ("mBq") != std::string::npos) ||
                   (units.find ("mBQ") != std::string::npos) )
         {
           list.radioactivityUnits = "mBq";
           list.tissueRadioactivityUnits = "mBq";
         }
-        else if ( (units.find ("uBq") != std::string::npos) ||
+        else if ((units.find ("uBq") != std::string::npos) ||
                   (units.find ("uBQ") != std::string::npos) )
         {
           list.radioactivityUnits = "uBq";
           list.tissueRadioactivityUnits = "uBq";
         }
-        else if ( (units.find ("Bq") != std::string::npos) ||
+        else if ((units.find ("Bq") != std::string::npos) ||
                   (units.find ("BQ") != std::string::npos) )
         {
           list.radioactivityUnits = "Bq";
           list.tissueRadioactivityUnits = "Bq";
         }
-        else if ( (units.find ("MCi") != std::string::npos) ||
+        else if ((units.find ("MCi") != std::string::npos) ||
                   ( units.find ("MCI") != std::string::npos) )
         {
           list.radioactivityUnits = "MCi";
           list.tissueRadioactivityUnits = "MCi";
         }
-        else if ( (units.find ("kCi") != std::string::npos) ||
+        else if ((units.find ("kCi") != std::string::npos) ||
                   (units.find ("kCI") != std::string::npos)  ||
                   (units.find ("KCI") != std::string::npos) )
         {
           list.radioactivityUnits = "kCi";
           list.tissueRadioactivityUnits = "kCi";
         }
-        else if ( (units.find ("mCi") != std::string::npos) ||
+        else if ((units.find ("mCi") != std::string::npos) ||
                   (units.find ("mCI") != std::string::npos) )
         {
           list.radioactivityUnits = "mCi";
           list.tissueRadioactivityUnits = "mCi";
         }
-        else if ( (units.find ("uCi") != std::string::npos) ||
+        else if ((units.find ("uCi") != std::string::npos) ||
                   (units.find ("uCI") != std::string::npos) )
         {
           list.radioactivityUnits = "uCi";
           list.tissueRadioactivityUnits = "uCi";
         }
-        else if ( (units.find ("Ci") != std::string::npos) ||
+        else if ((units.find ("Ci") != std::string::npos) ||
                   (units.find ("CI") != std::string::npos) )
         {
           list.radioactivityUnits = "Ci";
@@ -1139,7 +1139,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         daystr.clear();
         monthstr.clear();
         len = tag.length();
-        if ( len >= 4 )
+        if (len >= 4)
         {
           yearstr = tag.substr(0, 4);
           // this->Year = atoi(yearstr.c_str() );
@@ -1149,7 +1149,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           yearstr = "????";
           // this->Year = 0;
         }
-        if ( len >= 6 )
+        if (len >= 6)
         {
           monthstr = tag.substr(4, 2);
           // this->Month = atoi ( monthstr.c_str() );
@@ -1159,7 +1159,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           monthstr = "??";
           // this->Month = 0;
         }
-        if ( len >= 8 )
+        if (len >= 8)
         {
           daystr = tag.substr (6, 2);
 //            this->Day = atoi ( daystr.c_str() );
@@ -1237,7 +1237,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         minutestr.clear();
         secondstr.clear();
         len = tag.length();
-        if ( len >= 2 )
+        if (len >= 2)
         {
           hourstr = tag.substr(0, 2);
         }
@@ -1245,7 +1245,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         {
           hourstr = "00";
         }
-        if ( len >= 4 )
+        if (len >= 4)
         {
           minutestr = tag.substr(2, 2);
         }
@@ -1253,7 +1253,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         {
           minutestr = "00";
         }
-        if ( len >= 6 )
+        if (len >= 6)
         {
           secondstr = tag.substr(4);
         }
@@ -1301,7 +1301,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
 
     // check.... did we get all params we need for computation?
-    if ( (parsingDICOM) &&
+    if ((parsingDICOM) &&
          (list.injectedDose != 0.0) &&
          (list.patientWeight != 0.0) &&
          (list.seriesReferenceTime.compare("MODULE_INIT_NO_VALUE") != 0) &&
@@ -1325,12 +1325,12 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
 
   // convert from input units.
-  if ( list.radioactivityUnits.c_str() == nullptr )
+  if (list.radioactivityUnits.c_str() == nullptr)
   {
     std::cerr << "ComputeSUV: Got nullptr radioactivity units. No computation done." << std::endl;
     return EXIT_FAILURE;
   }
-  if ( list.weightUnits.c_str() == nullptr )
+  if (list.weightUnits.c_str() == nullptr)
   {
     std::cerr << "ComputeSUV: Got nullptr weight units. No computation could be done." << std::endl;
     return EXIT_FAILURE;
@@ -1355,10 +1355,10 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
   std::string labelName;
   int         NumberOfVOIs = 0;
-  for ( int i = lo; i <= hi; i++ )
+  for (int i = lo; i <= hi; i++)
   {
     std::stringstream ss;
-    if ( i == 0 )
+    if (i == 0)
     {
       // --- eliminate 0 (background) label.
       continue;
@@ -1366,7 +1366,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
     labelName.clear();
     labelName = MapLabelIDtoColorName(i, list.VOIVolumeColorTableFile);
-    if ( labelName.empty() )
+    if (labelName.empty())
     {
       labelName.clear();
       labelName = "unknown";
@@ -1402,7 +1402,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     // --- For how many labels was SUV computed?
 
     int voxNumber = labelstat->GetVoxelCount();
-    if ( voxNumber > 0 )
+    if (voxNumber > 0)
     {
       NumberOfVOIs++;
 
@@ -1419,17 +1419,17 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       double dose = list.injectedDose;
 
       // --- do some error checking and reporting.
-      if ( list.radioactivityUnits.c_str() == nullptr )
+      if (list.radioactivityUnits.c_str() == nullptr)
       {
         std::cerr << "ComputeSUV: Got null radioactivityUnits." << std::endl;
         return EXIT_FAILURE;
       }
-      if ( dose == 0.0 )
+      if (dose == 0.0)
       {
         std::cerr << "ComputeSUV: Got nullptr dose!" << std::endl;
         return EXIT_FAILURE;
       }
-      if ( weight == 0.0 )
+      if (weight == 0.0)
       {
         std::cerr << "ComputeSUV: got zero weight!" << std::endl;
         return EXIT_FAILURE;
@@ -1441,7 +1441,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       weight = ConvertWeightUnits( weight, list.weightUnits.c_str(), "kg");
 
       // --- check a possible multiply by slope -- take intercept into account?
-      if ( dose == 0.0 )
+      if (dose == 0.0)
       {
         // oops, weight by dose is infinity. make a ridiculous number.
         suvmin = 99999999999999999.;
@@ -1486,7 +1486,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       if (outputFile.compare("") != 0)
       {
         ofile.open( outputFile.c_str(), ios::out | ios::app );
-        if ( !ofile.is_open() )
+        if (!ofile.is_open())
         {
           // report error, clean up, and get out.
           std::cerr << "ERROR: cannot open nuclear medicine output csv parameter file '" << outputFile.c_str() << "', see return strings for values" << std::endl;
@@ -1529,7 +1529,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     ss << outputSUVMinString << std::endl;
     std::string stringOutput = ss.str();
     stringFile.open(outputStringFile.c_str());
-    if (!stringFile.is_open() )
+    if (!stringFile.is_open())
     {
       // report error, clean up
       std::cerr << "ERROR: cannot open nuclear medicine output string parameter file '" << outputStringFile.c_str() << "', output string was:\n" << stringOutput.c_str() << std::endl;
@@ -1565,7 +1565,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 // ...
 // ...............................................................................................
 // ...
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -1614,7 +1614,7 @@ int main( int argc, char* argv[] )
     LoadImagesAndComputeSUV( list, static_cast<double>(0) );
   }
 
-  catch ( itk::ExceptionObject& excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

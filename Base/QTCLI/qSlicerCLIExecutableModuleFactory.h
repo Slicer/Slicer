@@ -67,12 +67,12 @@ public:
   /// For example:
   ///  Threshold.exe -> threshold
   ///  Threshold -> threshold
-  QString fileNameToKey(const QString& fileName)const override;
+  QString fileNameToKey(const QString& fileName) const override;
 
   void setTempDirectory(const QString& newTempDirectory);
 
 protected:
-  bool isValidFile(const QFileInfo& file)const override;
+  bool isValidFile(const QFileInfo& file) const override;
 
   ctkAbstractFactoryItem<qSlicerAbstractCoreModule>*
     createFactoryFileBasedItem() override;

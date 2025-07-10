@@ -66,5 +66,5 @@ void vtkMRMLGridTransformNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLGridTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }

@@ -21,10 +21,10 @@
 #include "qSlicerCoreModule.h"
 
 
-class ACoreModule: public qSlicerCoreModule
+class ACoreModule : public qSlicerCoreModule
 {
 public:
-  QString title()const override
+  QString title() const override
   {
     return "A title \n\t#$%^&*";
   }

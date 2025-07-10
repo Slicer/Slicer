@@ -71,11 +71,11 @@ struct vtkMRMLSequenceBrowserNode::SynchronizationProperties
   void FromString( std::string str );
   std::string ToString();
 
-  bool Playback{true};
-  bool Recording{false};
-  bool OverwriteProxyName{false}; // change proxy node name during replay (includes index value)
-  bool SaveChanges{false}; // save proxy node changes into the sequence
-  MissingItemModeType MissingItemMode{MissingItemCreateFromPrevious};
+  bool Playback{ true };
+  bool Recording{ false };
+  bool OverwriteProxyName{ false }; // change proxy node name during replay (includes index value)
+  bool SaveChanges{ false }; // save proxy node changes into the sequence
+  MissingItemModeType MissingItemMode{ MissingItemCreateFromPrevious };
 };
 
 void vtkMRMLSequenceBrowserNode::SynchronizationProperties::FromString( std::string str )
@@ -683,7 +683,7 @@ vtkMRMLNode* vtkMRMLSequenceBrowserNode::AddProxyNode(vtkMRMLNode* sourceProxyNo
   std::string proxyNodeRef = PROXY_NODE_REFERENCE_ROLE_BASE+rolePostfix;
   // Create a new one from scratch in the new scene to make sure only the needed parts are copied
   vtkMRMLNode* proxyNode = sourceProxyNode;
-  if ( copy )
+  if (copy)
   {
     proxyNode = sourceProxyNode->CreateNodeInstance();
     std::string proxyNodeName = sequenceNode->GetName();

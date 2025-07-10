@@ -117,7 +117,7 @@ qSlicerSegmentEditorScriptedLabelEffect::qSlicerSegmentEditorScriptedLabelEffect
 qSlicerSegmentEditorScriptedLabelEffect::~qSlicerSegmentEditorScriptedLabelEffect() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSegmentEditorScriptedLabelEffect::pythonSource()const
+QString qSlicerSegmentEditorScriptedLabelEffect::pythonSource() const
 {
   Q_D(const qSlicerSegmentEditorScriptedLabelEffect);
   return d->PythonSourceFilePath;
@@ -251,7 +251,7 @@ QIcon qSlicerSegmentEditorScriptedLabelEffect::icon()
 }
 
 //-----------------------------------------------------------------------------
-const QString qSlicerSegmentEditorScriptedLabelEffect::helpText()const
+const QString qSlicerSegmentEditorScriptedLabelEffect::helpText() const
 {
   Q_D(const qSlicerSegmentEditorScriptedLabelEffect);
   PyObject* result = d->PythonCppAPI.callMethod(d->HelpTextMethod);

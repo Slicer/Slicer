@@ -93,7 +93,7 @@ int DoIt( int argc, char* argv[], T )
 
 } // end of anonymous namespace
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
 
   PARSE_ARGS;
@@ -108,7 +108,7 @@ int main( int argc, char* argv[] )
     // This filter handles all types on input, but only produces
     // signed types
 
-    switch( componentType )
+    switch (componentType)
     {
       case itk::IOComponentEnum::UCHAR:
       case itk::IOComponentEnum::CHAR:
@@ -138,7 +138,7 @@ int main( int argc, char* argv[] )
         break;
     }
   }
-  catch ( itk::ExceptionObject& excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

@@ -2318,8 +2318,8 @@ bool vtkMRMLSliceIntersectionInteractionRepresentation::DistanceFromSliceInterse
     if (intersectingSlice == (*sliceIntersectionIt)->SliceLogic->GetSliceNode())
     {
       // First get the points defining the slice intersection line
-      double point1_XY[3] ={0};
-      double point2_XY[3]= {0};
+      double point1_XY[3] = { 0 };
+      double point2_XY[3] = { 0 };
       (*sliceIntersectionIt)->IntersectionLine1->GetPoint1(point1_XY);
       (*sliceIntersectionIt)->IntersectionLine1->GetPoint2(point2_XY);
 

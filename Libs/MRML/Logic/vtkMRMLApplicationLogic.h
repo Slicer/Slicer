@@ -57,14 +57,14 @@ public:
   vtkTypeMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
 
   /// Get default Selection node
-  vtkMRMLSelectionNode* GetSelectionNode()const;
+  vtkMRMLSelectionNode* GetSelectionNode() const;
 
   /// Get default Interaction node
-  vtkMRMLInteractionNode* GetInteractionNode()const;
+  vtkMRMLInteractionNode* GetInteractionNode() const;
 
   /// All the slice logics in the application
   void SetSliceLogics(vtkCollection* sliceLogics);
-  vtkCollection* GetSliceLogics()const;
+  vtkCollection* GetSliceLogics() const;
   vtkMRMLSliceLogic* GetSliceLogic(vtkMRMLSliceNode* sliceNode) const;
   vtkMRMLSliceLogic* GetSliceLogicByLayoutName(const char* layoutName) const;
   /// Get slice logic from slice model display node
@@ -72,7 +72,7 @@ public:
 
   /// All the view logics in the application
   void SetViewLogics(vtkCollection* viewLogics);
-  vtkCollection* GetViewLogics()const;
+  vtkCollection* GetViewLogics() const;
   vtkMRMLViewLogic* GetViewLogic(vtkMRMLViewNode* viewNode) const;
   vtkMRMLViewLogic* GetViewLogicByLayoutName(const char* layoutName) const;
 
@@ -81,7 +81,7 @@ public:
   /// vtkSlicerColorLogic) that contains default color nodes.
   /// By default, a vtkMRMLColorLogic is instantiated.
   void SetColorLogic(vtkMRMLColorLogic* newColorLogic);
-  vtkMRMLColorLogic* GetColorLogic()const;
+  vtkMRMLColorLogic* GetColorLogic() const;
 
   /// Apply the active volumes in the SelectionNode to the slice composite nodes
   /// Perform the default behavior related to selecting a volume
@@ -208,13 +208,13 @@ public:
   struct InvokeRequest{
     InvokeRequest();
     /// 100ms by default.
-    unsigned int Delay{100};
+    unsigned int Delay{ 100 };
     /// the caller to call InvokeEvent() on.
-    vtkObject* Caller{nullptr};
+    vtkObject* Caller{ nullptr };
     /// The event id of InvokeEvent. ModifiedEvent by default.
     unsigned long EventID{vtkCommand::ModifiedEvent};
     /// Optional call data. 0 by default.
-    void* CallData{nullptr};
+    void* CallData{ nullptr };
   };
   /// Conveniently calls an InvokeEvent on an object with a delay.
   void InvokeEventWithDelay(unsigned int delayInMs,

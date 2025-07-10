@@ -52,7 +52,7 @@ vtkSlicerDICOMExportable::~vtkSlicerDICOMExportable() = default;
 //----------------------------------------------------------------------------
 void vtkSlicerDICOMExportable::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Name:   " << (this->Name?this->Name:"NULL") << "\n";
   os << indent << "Tooltip:   " << (this->Tooltip?this->Tooltip:"NULL") << "\n";
@@ -61,7 +61,7 @@ void vtkSlicerDICOMExportable::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Directory:   " << (this->Directory?this->Directory:"NULL") << "\n";
   os << indent << "Confidence:   " << this->Confidence << "\n";
   os << indent << "Tags:   " << "\n";
-  for ( std::map<std::string, std::string>::iterator it=this->Tags.begin();
+  for (std::map<std::string, std::string>::iterator it=this->Tags.begin();
     it != this->Tags.end(); ++it )
   {
     os << indent << "  " << it->first << ", " << it->second << "\n";

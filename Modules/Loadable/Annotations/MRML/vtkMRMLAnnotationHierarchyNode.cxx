@@ -20,7 +20,7 @@ vtkMRMLAnnotationHierarchyNode::~vtkMRMLAnnotationHierarchyNode() = default;
 void vtkMRMLAnnotationHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
 }
 
@@ -176,7 +176,7 @@ void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection* children, int le
 }
 
 //-------------------------------------------------------------------------
-bool vtkMRMLAnnotationHierarchyNode::CanApplyNonLinearTransforms()const
+bool vtkMRMLAnnotationHierarchyNode::CanApplyNonLinearTransforms() const
 {
   return true;
 }

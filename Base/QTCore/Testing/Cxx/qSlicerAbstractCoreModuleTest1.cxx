@@ -44,17 +44,17 @@ public:
   static int Count;
 
 protected:
-  void setup () override {}
+  void setup() override {}
 
 };
 
 int AModuleWidgetRepresentation::Count = 0;
 
 //-----------------------------------------------------------------------------
-class AModule: public qSlicerAbstractCoreModule
+class AModule : public qSlicerAbstractCoreModule
 {
 public:
-  QString title()const override { return "A Title";}
+  QString title() const override { return "A Title";}
   qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
   {
     return new AModuleWidgetRepresentation();
@@ -65,7 +65,7 @@ public:
     return nullptr;
   }
 protected:
-  void setup () override {}
+  void setup() override {}
 };
 
 //-----------------------------------------------------------------------------

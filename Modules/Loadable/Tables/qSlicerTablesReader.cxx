@@ -77,26 +77,26 @@ void qSlicerTablesReader::setLogic(vtkSlicerTablesLogic* logic)
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerTablesLogic* qSlicerTablesReader::logic()const
+vtkSlicerTablesLogic* qSlicerTablesReader::logic() const
 {
   Q_D(const qSlicerTablesReader);
   return d->Logic.GetPointer();
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTablesReader::description()const
+QString qSlicerTablesReader::description() const
 {
   return "Table";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerTablesReader::fileType()const
+qSlicerIO::IOFileType qSlicerTablesReader::fileType() const
 {
   return QString("TableFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTablesReader::extensions()const
+QStringList qSlicerTablesReader::extensions() const
 {
   return QStringList()
     << "Table (*.tsv)"
@@ -110,7 +110,7 @@ QStringList qSlicerTablesReader::extensions()const
 }
 
 //----------------------------------------------------------------------------
-double qSlicerTablesReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerTablesReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 
@@ -141,13 +141,13 @@ bool qSlicerTablesReader::load(const IOProperties& properties)
 
   // Check if the file is sqlite
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName.toStdString());
-  if ( extension.empty() )
+  if (extension.empty())
   {
     this->userMessages()->AddMessage(vtkCommand::ErrorEvent,
       (tr("Table reading failed: no file extension specified: %1").arg(fileName)).toStdString());
     return false;
   }
-  if (   !extension.compare(".db")
+  if (!extension.compare(".db")
       || !extension.compare(".db3")
       || !extension.compare(".sqlite")
       || !extension.compare(".sqlite3"))

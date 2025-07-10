@@ -134,42 +134,42 @@ void qMRMLTableWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewN
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLTableViewNode* qMRMLTableWidget::mrmlTableViewNode()const
+vtkMRMLTableViewNode* qMRMLTableWidget::mrmlTableViewNode() const
 {
   Q_D(const qMRMLTableWidget);
   return d->TableView->mrmlTableViewNode();
 }
 
 // --------------------------------------------------------------------------
-vtkMRMLAbstractViewNode* qMRMLTableWidget::mrmlAbstractViewNode()const
+vtkMRMLAbstractViewNode* qMRMLTableWidget::mrmlAbstractViewNode() const
 {
   Q_D(const qMRMLTableWidget);
   return this->mrmlTableViewNode();
 }
 
 // --------------------------------------------------------------------------
-qMRMLTableView* qMRMLTableWidget::tableView()const
+qMRMLTableView* qMRMLTableWidget::tableView() const
 {
   Q_D(const qMRMLTableWidget);
   return d->TableView;
 }
 
 // --------------------------------------------------------------------------
-QWidget* qMRMLTableWidget::viewWidget()const
+QWidget* qMRMLTableWidget::viewWidget() const
 {
   Q_D(const qMRMLTableWidget);
   return this->tableView();
 }
 
 // --------------------------------------------------------------------------
-qMRMLTableViewControllerWidget* qMRMLTableWidget::tableController()const
+qMRMLTableViewControllerWidget* qMRMLTableWidget::tableController() const
 {
   Q_D(const qMRMLTableWidget);
   return d->TableController;
 }
 
 // --------------------------------------------------------------------------
-qMRMLViewControllerBar* qMRMLTableWidget::controllerWidget()const
+qMRMLViewControllerBar* qMRMLTableWidget::controllerWidget() const
 {
   Q_D(const qMRMLTableWidget);
   return this->tableController();

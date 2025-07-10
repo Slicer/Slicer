@@ -88,7 +88,7 @@ public:
 
   /// Returns true if the transformable node can apply non linear transforms
   /// \sa ApplyTransform
-  bool CanApplyNonLinearTransforms()const override;
+  bool CanApplyNonLinearTransforms() const override;
 
   /// Apply a transform matrix on the segmentation
   /// \sa SetAndObserveTransformNodeID, ApplyTransform, CanApplyNonLinearTransforms

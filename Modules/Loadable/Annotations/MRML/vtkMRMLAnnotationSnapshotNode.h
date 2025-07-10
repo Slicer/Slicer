@@ -18,7 +18,7 @@ class vtkMRMLStorageNode;
 // STD includes
 #include <string>
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLAnnotationNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotNode : public vtkMRMLAnnotationNode
 {
 public:
   static vtkMRMLAnnotationSnapshotNode* New();

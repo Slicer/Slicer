@@ -252,7 +252,7 @@ void vtkMRMLSceneViewNode::Copy(vtkMRMLNode* anode)
     this->SnapshotScene->ClearNodeIDs();
   }
   vtkMRMLNode* node = nullptr;
-  if ( snode->SnapshotScene != nullptr )
+  if (snode->SnapshotScene != nullptr)
   {
     int n;
     for (n=0; n < snode->SnapshotScene->GetNodes()->GetNumberOfItems(); n++)
@@ -270,7 +270,7 @@ void vtkMRMLSceneViewNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------

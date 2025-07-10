@@ -28,7 +28,7 @@
 #include <vtkMRMLTransformNode.h>
 
 //------------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSceneTransformModel::parentNode(vtkMRMLNode* node)const
+vtkMRMLNode* qMRMLSceneTransformModel::parentNode(vtkMRMLNode* node) const
 {
   // MRML Transformable nodes
   vtkMRMLTransformableNode* transformableNode =
@@ -42,7 +42,7 @@ vtkMRMLNode* qMRMLSceneTransformModel::parentNode(vtkMRMLNode* node)const
 
 /*
 //------------------------------------------------------------------------------
-int qMRMLSceneTransformModel::nodeIndex(vtkMRMLNode* node)const
+int qMRMLSceneTransformModel::nodeIndex(vtkMRMLNode* node) const
 {
   const char* nodeId = node ? node->GetID() : 0;
   if (nodeId == 0)
@@ -74,13 +74,13 @@ int qMRMLSceneTransformModel::nodeIndex(vtkMRMLNode* node)const
 */
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneTransformModel::canBeAChild(vtkMRMLNode* node)const
+bool qMRMLSceneTransformModel::canBeAChild(vtkMRMLNode* node) const
 {
   return node ? node->IsA("vtkMRMLTransformableNode") : false;
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneTransformModel::canBeAParent(vtkMRMLNode* node)const
+bool qMRMLSceneTransformModel::canBeAParent(vtkMRMLNode* node) const
 {
   return node ? node->IsA("vtkMRMLTransformNode") : false;
 }
@@ -112,7 +112,7 @@ bool qMRMLSceneTransformModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
 }
 
 //------------------------------------------------------------------------------
-class qMRMLSceneTransformModelPrivate: public qMRMLSceneModelPrivate
+class qMRMLSceneTransformModelPrivate : public qMRMLSceneModelPrivate
 {
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneTransformModel);
@@ -141,7 +141,7 @@ qMRMLSceneTransformModel::qMRMLSceneTransformModel(QObject* vparent)
 qMRMLSceneTransformModel::~qMRMLSceneTransformModel() = default;
 
 //------------------------------------------------------------------------------
-Qt::DropActions qMRMLSceneTransformModel::supportedDropActions()const
+Qt::DropActions qMRMLSceneTransformModel::supportedDropActions() const
 {
   return Qt::MoveAction;
 }

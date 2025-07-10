@@ -70,12 +70,12 @@ vtkMRMLHierarchyNode::~vtkMRMLHierarchyNode()
 {
   if (this->ParentNodeIDReference)
   {
-    delete [] this->ParentNodeIDReference;
+    delete[] this->ParentNodeIDReference;
     this->ParentNodeIDReference = nullptr;
   }
   if (this->AssociatedNodeIDReference)
   {
-    delete [] this->AssociatedNodeIDReference;
+    delete[] this->AssociatedNodeIDReference;
     this->AssociatedNodeIDReference = nullptr;
   }
 }
@@ -180,7 +180,7 @@ void vtkMRMLHierarchyNode::Copy(vtkMRMLNode* anode)
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << indent << "AssociatedNodeID: " <<
     (this->AssociatedNodeIDReference ? this->AssociatedNodeIDReference : "(none)") << "\n";
   os << indent << "ParentNodeID: " <<
@@ -193,7 +193,7 @@ void vtkMRMLHierarchyNode::PrintSelf(ostream& os, vtkIndent indent)
 vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetParentNode()
 {
   vtkMRMLHierarchyNode* node = nullptr;
-  if (this->GetScene() && this->ParentNodeIDReference != nullptr )
+  if (this->GetScene() && this->ParentNodeIDReference != nullptr)
   {
     vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ParentNodeIDReference);
     node = vtkMRMLHierarchyNode::SafeDownCast(snode);
@@ -762,7 +762,7 @@ int vtkMRMLHierarchyNode::UpdateAssociatedToHierarchyMap(vtkMRMLScene* scene)
 vtkMRMLNode* vtkMRMLHierarchyNode::GetAssociatedNode()
 {
   vtkMRMLNode* node = nullptr;
-  if (this->GetScene() && this->GetAssociatedNodeID() )
+  if (this->GetScene() && this->GetAssociatedNodeID())
   {
     node = this->GetScene()->GetNodeByID(this->AssociatedNodeIDReference);
   }

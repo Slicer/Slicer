@@ -405,7 +405,7 @@ qMRMLPlotSeriesPropertiesWidget::~qMRMLPlotSeriesPropertiesWidget() = default;
 
 
 //---------------------------------------------------------------------------
- vtkMRMLPlotSeriesNode* qMRMLPlotSeriesPropertiesWidget::mrmlPlotSeriesNode()const
+ vtkMRMLPlotSeriesNode* qMRMLPlotSeriesPropertiesWidget::mrmlPlotSeriesNode() const
  {
   Q_D(const qMRMLPlotSeriesPropertiesWidget);
   return d->PlotSeriesNode;

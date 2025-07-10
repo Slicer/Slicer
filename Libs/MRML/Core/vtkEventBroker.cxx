@@ -109,7 +109,7 @@ vtkEventBroker::~vtkEventBroker()
   this->DetachObservations();
 
   // close the event log if needed
-  if ( this->LogFile.is_open() )
+  if (this->LogFile.is_open())
   {
     this->CloseLogFile();
     this->EventLoggingOff();
@@ -165,7 +165,7 @@ vtkObservation* vtkEventBroker::AddObservation (
 
   this->AttachObservation( observation );
 
-  if ( this->EventLogging && this->LogFile.is_open() )
+  if (this->EventLogging && this->LogFile.is_open())
   {
     this->LogFile << "# AddObservation: (subject) " \
           << observation->GetSubject()->GetClassName() << observation->GetSubject()
@@ -192,7 +192,7 @@ vtkObservation* vtkEventBroker::AddObservation (
   // figure out event either as a predefined string, or
   // as an ascii number
   unsigned long eventID = vtkCommand::GetEventIdFromString( event );
-  if ( eventID == vtkCommand::NoEvent )
+  if (eventID == vtkCommand::NoEvent)
   {
     eventID = static_cast<unsigned long> (atoi( event ));
   }
@@ -201,7 +201,7 @@ vtkObservation* vtkEventBroker::AddObservation (
 
   this->AttachObservation( observation );
 
-  if ( this->EventLogging && this->LogFile.is_open() )
+  if (this->EventLogging && this->LogFile.is_open())
   {
     this->LogFile << "# AddObservation: (subject) " \
           << observation->GetSubject()->GetClassName() << observation->GetSubject()
@@ -231,7 +231,7 @@ void vtkEventBroker::AttachObservation ( vtkObservation* observation )
   tag = observation->GetSubject()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand());
   observation->SetSubjectDeleteEventTag( tag );
 
-  if ( observation->GetObserver() != nullptr && (observation->GetSubject() != observation->GetObserver()) )
+  if (observation->GetObserver() != nullptr && (observation->GetSubject() != observation->GetObserver()))
   {
     // there may be no Observer (e.g. for a Script)
     tag = observation->GetObserver()->AddObserver( vtkCommand::DeleteEvent, observation->GetObservationCallbackCommand() );
@@ -250,19 +250,19 @@ void vtkEventBroker::DetachObservation ( vtkObservation* observation )
   // if the observation is attached, detach it
   //
 
-  if ( observation->GetSubjectDeleteEventTag() )
+  if (observation->GetSubjectDeleteEventTag())
   {
     observation->GetSubject()->RemoveObserver( observation->GetSubjectDeleteEventTag() );
     observation->SetSubjectDeleteEventTag( 0 );
   }
 
-  if ( observation->GetObserverDeleteEventTag() )
+  if (observation->GetObserverDeleteEventTag())
   {
     observation->GetObserver()->RemoveObserver( observation->GetObserverDeleteEventTag() );
     observation->SetObserverDeleteEventTag( 0 );
   }
 
-  if ( observation->GetEventTag() )
+  if (observation->GetEventTag())
   {
     observation->GetSubject()->RemoveObserver( observation->GetEventTag() );
     observation->SetEventTag( 0 );
@@ -392,7 +392,7 @@ vtkEventBroker::ObservationVector vtkEventBroker::GetObservations (
       obsIter != subjectList.end();
       ++obsIter)
   {
-    if ( (observer == nullptr || (*obsIter)->GetObserver() == observer) &&
+    if ((observer == nullptr || (*obsIter)->GetObserver() == observer) &&
          //(subject == 0 || (*obsIter)->GetSubject() == subject) &&
          (event == 0 || (*obsIter)->GetEvent() == event) &&
          (notify == nullptr || (*obsIter)->GetCallbackCommand() == notify))
@@ -429,7 +429,7 @@ vtkEventBroker::ObservationVector vtkEventBroker::GetObservationsForSubjectByTag
        obsIter != subjectList.end(); obsIter++)
   {
     vtkObservation* obs = *obsIter;
-    if ( ( obs->GetSubject() == subject ) &&
+    if (( obs->GetSubject() == subject ) &&
          ( (tag == 0) || (obs->GetEventTag() == tag) ) )
     {
       observationList.insert( obs );
@@ -446,7 +446,7 @@ vtkCollection* vtkEventBroker::GetObservationsForSubject ( vtkObject* subject )
   for (ObservationVector::iterator iter=subjectList.begin();
       iter != subjectList.end(); iter++)
   {
-    if ( (*iter)->GetSubject() == subject )
+    if ((*iter)->GetSubject() == subject)
     {
       collection->AddItem( *iter );
     }
@@ -462,7 +462,7 @@ vtkCollection* vtkEventBroker::GetObservationsForObserver ( vtkObject* observer 
   for (ObservationVector::iterator iter = observerList.begin();
        iter != observerList.end(); iter++)
   {
-    if ( (*iter)->GetObserver() == observer )
+    if ((*iter)->GetObserver() == observer)
     {
       collection->AddItem( *iter );
     }
@@ -480,7 +480,7 @@ vtkCollection* vtkEventBroker::GetObservationsForCallback ( vtkCallbackCommand* 
     ObservationVector::iterator iter;
     for (iter=it->second.begin(); iter != it->second.end(); iter++)
     {
-      if ( *iter && (*iter)->GetCallbackCommand() == callback )
+      if (*iter && (*iter)->GetCallbackCommand() == callback)
       {
         collection->AddItem( *iter );
       }
@@ -504,7 +504,7 @@ int vtkEventBroker::GetNumberOfObservations ( )
 //----------------------------------------------------------------------------
 vtkObservation* vtkEventBroker::GetNthObservation ( int n )
 {
-  if ( n < 0 )
+  if (n < 0)
   {
     return nullptr;
   }
@@ -513,7 +513,7 @@ vtkObservation* vtkEventBroker::GetNthObservation ( int n )
   ObjectToObservationVectorMap::iterator iter;
   for (iter=this->SubjectMap.begin(); iter != this->SubjectMap.end(); iter++)
   {
-    if ( static_cast<size_t>(n) < count + iter->second.size())
+    if (static_cast<size_t>(n) < count + iter->second.size())
     {
       ObservationVector::iterator it=iter->second.begin();
       std::advance(it, n-count);
@@ -534,7 +534,7 @@ int vtkEventBroker::GenerateGraphFile ( const char* graphFile )
 
   file.open( graphFile, std::ios::out );
 
-  if ( file.fail() )
+  if (file.fail())
   {
     vtkErrorMacro( "could not write to " << graphFile );
     return 1;
@@ -548,7 +548,7 @@ int vtkEventBroker::GenerateGraphFile ( const char* graphFile )
   {
     observation = this->GetNthObservation( count );
     file << "# " << observation->GetReferenceCount() << "\n";
-    if ( observation->GetScript() != nullptr )
+    if (observation->GetScript() != nullptr)
     {
       file << " " \
           << "\"" << observation->GetScript() << "\""
@@ -587,7 +587,7 @@ void vtkEventBroker::OpenLogFile ()
 //----------------------------------------------------------------------------
 void vtkEventBroker::CloseLogFile ()
 {
-  if ( this->LogFile.is_open() )
+  if (this->LogFile.is_open())
   {
     this->LogFile << "}\n";
     this->LogFile.close();
@@ -597,20 +597,20 @@ void vtkEventBroker::CloseLogFile ()
 //----------------------------------------------------------------------------
 void vtkEventBroker::LogEvent ( vtkObservation* observation )
 {
-  if ( this->LogFileName == nullptr )
+  if (this->LogFileName == nullptr)
   {
     // if we don't have a log file, we can't do anything
     return;
   }
 
   // start an event log if needed
-  if ( this->EventLogging && !this->LogFile.is_open() )
+  if (this->EventLogging && !this->LogFile.is_open())
   {
     this->OpenLogFile();
   }
 
   // close the log if done
-  if ( !this->EventLogging && this->LogFile.is_open() )
+  if (!this->EventLogging && this->LogFile.is_open())
   {
     this->CloseLogFile();
     return;
@@ -618,7 +618,7 @@ void vtkEventBroker::LogEvent ( vtkObservation* observation )
 
   char eventString[BUFSIZ];
   const char* eventStringPointer;
-  if ( this->EventLogging && observation != nullptr )
+  if (this->EventLogging && observation != nullptr)
   {
 
     // indent to indicate nesting
@@ -628,14 +628,14 @@ void vtkEventBroker::LogEvent ( vtkObservation* observation )
     }
 
     eventStringPointer = vtkCommand::GetStringFromEventId( observation->GetEvent() );
-    if ( !strcmp (eventStringPointer, "NoEvent") )
+    if (!strcmp (eventStringPointer, "NoEvent"))
     {
       sprintf (eventString, "%ld", observation->GetEvent());
       eventStringPointer = eventString;
     }
 
     // log the actual event
-    if ( observation->GetScript() != nullptr )
+    if (observation->GetScript() != nullptr)
     {
       this->LogFile << " " \
           << observation->GetSubject()->GetClassName()
@@ -648,7 +648,7 @@ void vtkEventBroker::LogEvent ( vtkObservation* observation )
     else
     {
       const char* observerClass = "No observer class";
-      if ( observation->GetObserver() )
+      if (observation->GetObserver())
       {
         observerClass = observation->GetObserver()->GetClassName();
       }
@@ -684,13 +684,13 @@ void vtkEventBroker::ProcessEvent ( vtkObservation* observation, vtkObject* call
   // - if the observer did ask to observe delete events, pass them through
   //   right away even in async mode - this way things can clean up
   //
-  if ( eid == observation->GetEvent() || observation->GetEvent() == vtkCommand::AnyEvent )
+  if (eid == observation->GetEvent() || observation->GetEvent() == vtkCommand::AnyEvent)
   {
-    if ( this->EventMode == vtkEventBroker::Synchronous || eid == vtkCommand::DeleteEvent )
+    if (this->EventMode == vtkEventBroker::Synchronous || eid == vtkCommand::DeleteEvent)
     {
       this->InvokeObservation( observation, eid, callData );
     }
-    else if ( this->EventMode == vtkEventBroker::Asynchronous )
+    else if (this->EventMode == vtkEventBroker::Asynchronous)
     {
       this->QueueObservation( observation, eid, callData );
     }
@@ -708,24 +708,24 @@ void vtkEventBroker::ProcessEvent ( vtkObservation* observation, vtkObject* call
   //   and any that were connected to the object that is
   //   going to be deleted.
   //
-  if ( eid == vtkCommand::DeleteEvent )
+  if (eid == vtkCommand::DeleteEvent)
   {
     // iterate list of observations for the deleted object (caller) as subject
     ObservationVector::iterator obsIter;
     ObservationVector& subjectList = this->SubjectMap[caller];
     for (obsIter=subjectList.begin(); obsIter != subjectList.end(); ++obsIter)
     {
-      if ( (*obsIter)->GetEvent() == vtkCommand::DeleteEvent )
+      if ((*obsIter)->GetEvent() == vtkCommand::DeleteEvent)
       {
         this->InvokeObservation( observation, eid, callData );
       }
     }
-    if ( caller == observation->GetSubject() )
+    if (caller == observation->GetSubject())
     {
       // Remove all observations for this subject (0 matches all tags)
       this->RemoveObservationsForSubjectByTag (observation->GetSubject(), 0);
     }
-    else if ( caller == observation->GetObserver() )
+    else if (caller == observation->GetObserver())
     {
       // Remove all observations for this observer
       this->RemoveObservations (observation->GetObserver());
@@ -756,7 +756,7 @@ void vtkEventBroker::QueueObservation ( vtkObservation* observation,
   // If the event is not currently in the queue, add it and keep a flag.
   //
   vtkObservation::CallType call(eid, callData);
-  if ( this->GetCompressCallData() &&
+  if (this->GetCompressCallData() &&
        observation->GetEvent() != vtkCommand::AnyEvent)
   {
     observation->GetCallDataList()->clear();
@@ -767,19 +767,19 @@ void vtkEventBroker::QueueObservation ( vtkObservation* observation,
     std::deque<vtkObservation::CallType>::const_iterator dataIter;
     for (dataIter=observation->GetCallDataList()->begin();dataIter != observation->GetCallDataList()->end(); dataIter++)
     {
-      if ( call.EventID == dataIter->EventID &&
+      if (call.EventID == dataIter->EventID &&
            call.CallData == dataIter->CallData)
       {
         break;
       }
     }
-    if ( dataIter == observation->GetCallDataList()->end() )
+    if (dataIter == observation->GetCallDataList()->end())
     {
       observation->GetCallDataList()->push_back( call );
     }
   }
 
-  if ( !observation->GetInEventQueue() )
+  if (!observation->GetInEventQueue())
   {
     this->EventQueue.push_back( observation );
     observation->SetInEventQueue(1);
@@ -795,7 +795,7 @@ int vtkEventBroker::GetNumberOfQueuedObservations ()
 //----------------------------------------------------------------------------
 vtkObservation* vtkEventBroker::GetNthQueuedObservation ( int n )
 {
-  if ( n < 0 || n >= this->GetNumberOfQueuedObservations() )
+  if (n < 0 || n >= this->GetNumberOfQueuedObservations())
   {
     return nullptr;
   }
@@ -826,9 +826,9 @@ void vtkEventBroker::InvokeObservation ( vtkObservation* observation,
   // - run script if available, otherwise run callback command
   //  -- pass back the client data to the script handler (for
   //     example it could be the interpreter to use)
-  if ( observation->GetScript() != nullptr )
+  if (observation->GetScript() != nullptr)
   {
-    if ( this->ScriptHandler )
+    if (this->ScriptHandler)
     {
       (*(this->ScriptHandler)) (
           observation->GetScript(), this->ScriptHandlerClientData );
@@ -864,18 +864,18 @@ void vtkEventBroker::ProcessEventQueue ()
   // - if the observation is no longer in the queue, stop processing events
   // - unregister before after dequeuing in case the observation should go away
   //
-  while ( this->GetNumberOfQueuedObservations() > 0 )
+  while (this->GetNumberOfQueuedObservations() > 0)
   {
     vtkObservation* observation = this->EventQueue.front();
     observation->Register( this );
     int finished = 0;
-    while ( !finished )
+    while (!finished)
     {
       vtkObservation::CallType call = observation->GetCallDataList()->front();
       observation->GetCallDataList()->pop_front();
       finished = (observation->GetCallDataList()->size() == 0);
       this->InvokeObservation( observation, call.EventID, call.CallData );
-      if ( !observation->GetInEventQueue() )
+      if (!observation->GetInEventQueue())
       {
         observation->GetCallDataList()->clear();
         finished = 1;

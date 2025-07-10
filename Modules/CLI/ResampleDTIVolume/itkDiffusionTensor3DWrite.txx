@@ -44,22 +44,22 @@ void
 DiffusionTensor3DWrite<TData>
 ::SetSpace(int space)
 {
-  if ( space < 0 || space > NRRD_SPACE_MAX + 1 )
+  if (space < 0 || space > NRRD_SPACE_MAX + 1)
   {
     return;
   }
   DictionaryType::ConstIterator itr = m_MetaDataDictionary.Begin();
   DictionaryType::ConstIterator end = m_MetaDataDictionary.End();
-  while ( itr != end )
+  while (itr != end)
   {
     // Get Measurement Frame
     itk::MetaDataObjectBase::Pointer entry = itr->second;
     MetaDataIntType::Pointer         entryvalue
       = dynamic_cast<MetaDataIntType*>( entry.GetPointer() );
-    if ( entryvalue )
+    if (entryvalue)
     {
       int pos = itr->first.find( "space" );
-      if ( pos != -1 )
+      if (pos != -1)
       {
         entryvalue->SetMetaDataObjectValue( nrrdSpace->str[space] );
       }
@@ -76,23 +76,23 @@ DiffusionTensor3DWrite<TData>
   DictionaryType::ConstIterator itr = m_MetaDataDictionary.Begin();
   DictionaryType::ConstIterator end = m_MetaDataDictionary.End();
 
-  while ( itr != end )
+  while (itr != end)
   {
     // Get Measurement Frame
     itk::MetaDataObjectBase::Pointer  entry = itr->second;
     MetaDataDoubleVectorType::Pointer entryvalue
       = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
-    if ( entryvalue )
+    if (entryvalue)
     {
       int pos = itr->first.find( "NRRD_measurement frame" );
-      if ( pos != -1 )
+      if (pos != -1)
       {
         DoubleVectorType tagvalue;
         tagvalue.resize( 3 );
-        for ( int i = 0; i < 3; i++ )
+        for (int i = 0; i < 3; i++)
         {
           tagvalue[i].resize( 3 );
-          for ( int j = 0; j < 3; j++ )
+          for (int j = 0; j < 3; j++)
           {
 //            tagvalue[ i ][ j ] = measurementFrame[ i ][ j ] ;
             tagvalue[i][j] = measurementFrame[j][i];
@@ -120,7 +120,7 @@ DiffusionTensor3DWrite<TData>
     writer->Update();
     return 0;
   }
-  catch ( itk::ExceptionObject& excep )
+  catch (itk::ExceptionObject& excep)
   {
     std::cerr
     << "DiffusionTensor3DWrite::Write: exception caught !" << std::endl;

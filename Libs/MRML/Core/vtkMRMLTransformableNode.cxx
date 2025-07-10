@@ -79,7 +79,7 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   const char* transformNodeID = this->GetNodeReferenceID(this->GetTransformNodeReferenceRole());
 
   os << indent << "TransformNodeID: " <<
@@ -150,7 +150,7 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject* caller,
 
 
 //-----------------------------------------------------------
-bool vtkMRMLTransformableNode::CanApplyNonLinearTransforms()const
+bool vtkMRMLTransformableNode::CanApplyNonLinearTransforms() const
 {
   return false;
 }

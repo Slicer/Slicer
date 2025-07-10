@@ -79,7 +79,7 @@ void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller,
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //-----------------------------------------------------------

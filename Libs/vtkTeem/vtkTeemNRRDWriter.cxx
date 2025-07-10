@@ -15,7 +15,7 @@
 #include "itkNumberToString.h"
 
 
-class AttributeMapType: public std::map<std::string, std::string> {};
+class AttributeMapType : public std::map<std::string, std::string> {};
 class AxisInfoMapType : public std::map<unsigned int, std::string> {};
 
 vtkStandardNewMacro(vtkTeemNRRDWriter);
@@ -155,7 +155,7 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData* in, int& kind, 
 
 int vtkTeemNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
 {
-  switch( vtkPixelType )
+  switch (vtkPixelType)
   {
     default:
     case VTK_VOID:
@@ -415,7 +415,7 @@ void vtkTeemNRRDWriter::WriteData()
   NrrdIoState *nio = nrrdIoStateNew();
 
   // set encoding for data: compressed (raw), (uncompressed) raw, or ascii
-  if ( this->GetUseCompression() && nrrdEncodingGzip->available() )
+  if (this->GetUseCompression() && nrrdEncodingGzip->available())
   {
     // this is necessarily gzip-compressed *raw* data
     nio->encoding = nrrdEncodingGzip;
@@ -424,7 +424,7 @@ void vtkTeemNRRDWriter::WriteData()
   else
   {
     int fileType = this->GetFileType();
-    switch ( fileType )
+    switch (fileType)
     {
       default:
       case VTK_BINARY:
@@ -454,12 +454,12 @@ void vtkTeemNRRDWriter::WriteData()
 
 void vtkTeemNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "RAS to IJK Matrix: ";
-     this->IJKToRASMatrix->PrintSelf(os,indent);
+     this->IJKToRASMatrix->PrintSelf(os, indent);
   os << indent << "Measurement frame: ";
-     this->MeasurementFrameMatrix->PrintSelf(os,indent);
+     this->MeasurementFrameMatrix->PrintSelf(os, indent);
 }
 
 void vtkTeemNRRDWriter::SetAttribute(const std::string& name, const std::string& value)

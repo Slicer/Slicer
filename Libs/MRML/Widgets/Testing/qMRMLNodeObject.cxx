@@ -59,7 +59,7 @@ void qMRMLNodeObject::setProcessEvents(bool process)
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLNodeObject::processEvents()const
+bool qMRMLNodeObject::processEvents() const
 {
   return this->ProcessEvents;
 }
@@ -71,7 +71,7 @@ void qMRMLNodeObject::setMessage(const QString& message)
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLNodeObject::message()const
+QString qMRMLNodeObject::message() const
 {
   return this->Message;
 }

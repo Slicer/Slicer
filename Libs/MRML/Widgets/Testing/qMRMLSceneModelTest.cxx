@@ -35,7 +35,7 @@
 #include <vtkNew.h>
 
 // ----------------------------------------------------------------------------
-class qMRMLSceneModelTester: public QObject
+class qMRMLSceneModelTester : public QObject
 {
   Q_OBJECT
   void setColumns(qMRMLSceneModel& model);

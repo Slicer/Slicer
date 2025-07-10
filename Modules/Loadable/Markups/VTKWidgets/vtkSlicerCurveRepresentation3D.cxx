@@ -358,7 +358,7 @@ void vtkSlicerCurveRepresentation3D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
-  if ( !markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
+  if (!markupsNode || markupsNode->GetLocked() || markupsNode->GetNumberOfControlPoints() < 1
     || !interactionEventData )
   {
     return;

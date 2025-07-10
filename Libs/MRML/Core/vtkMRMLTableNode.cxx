@@ -197,7 +197,7 @@ void vtkMRMLTableNode::ProcessMRMLEvents( vtkObject* caller, unsigned long event
 //----------------------------------------------------------------------------
 void vtkMRMLTableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "\nLocked: " << this->GetLocked();
   os << indent << "\nUseColumnTitleAsColumnHeader: " << this->GetUseColumnTitleAsColumnHeader();
   os << indent << "\nUseFirstColumnAsRowHeader: " << this->GetUseFirstColumnAsRowHeader();

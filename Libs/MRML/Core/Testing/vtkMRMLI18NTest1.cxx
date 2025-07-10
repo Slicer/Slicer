@@ -36,7 +36,7 @@ namespace
 
   protected:
     vtkTestTranslator () = default;
-    ~vtkTestTranslator () override = default;
+    ~vtkTestTranslator() override = default;
     vtkTestTranslator (const vtkTestTranslator&) = delete;
     void operator=(const vtkTestTranslator&) = delete;
   };

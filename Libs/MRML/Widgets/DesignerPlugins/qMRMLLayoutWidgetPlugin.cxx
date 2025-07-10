@@ -24,7 +24,7 @@ QString qMRMLLayoutWidgetPlugin::domXml() const
           "   <height>200</height>\n"
           "  </rect>\n"
           " </property>\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 QIcon qMRMLLayoutWidgetPlugin::icon() const

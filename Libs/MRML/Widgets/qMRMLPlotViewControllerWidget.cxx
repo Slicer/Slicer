@@ -281,7 +281,7 @@ void qMRMLPlotViewControllerWidget::setViewLabel(const QString& newViewLabel)
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLPlotViewControllerWidget::viewLabel()const
+QString qMRMLPlotViewControllerWidget::viewLabel() const
 {
   if (!this->mrmlPlotViewNode())
   {
@@ -300,7 +300,7 @@ void qMRMLPlotViewControllerWidget::setMRMLPlotViewNode(
 }
 
 //---------------------------------------------------------------------------
- vtkMRMLPlotViewNode* qMRMLPlotViewControllerWidget::mrmlPlotViewNode()const
+ vtkMRMLPlotViewNode* qMRMLPlotViewControllerWidget::mrmlPlotViewNode() const
  {
   Q_D(const qMRMLPlotViewControllerWidget);
   return vtkMRMLPlotViewNode::SafeDownCast(this->mrmlViewNode());

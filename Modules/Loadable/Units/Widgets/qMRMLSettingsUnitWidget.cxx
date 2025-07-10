@@ -43,7 +43,7 @@
 #include <vector>
 
 //-----------------------------------------------------------------------------
-class qMRMLSettingsUnitWidgetPrivate: public Ui_qMRMLSettingsUnitWidget
+class qMRMLSettingsUnitWidgetPrivate : public Ui_qMRMLSettingsUnitWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSettingsUnitWidget);
 protected:

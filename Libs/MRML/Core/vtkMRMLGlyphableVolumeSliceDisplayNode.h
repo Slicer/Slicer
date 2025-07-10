@@ -43,7 +43,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML (MRML) file
@@ -60,7 +60,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
-  const char* GetNodeTagName () override {return "GlyphableVolumeSliceDisplayNode";}
+  const char* GetNodeTagName() override {return "GlyphableVolumeSliceDisplayNode";}
 
   ///
   /// Updates this node if it depends on other nodes

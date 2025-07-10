@@ -171,7 +171,7 @@ void vtkMRMLCameraDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller,
                                                         unsigned long event,
                                                         void* callData)
 {
-  switch(event)
+  switch (event)
   {
     // Maybe something external removed the view/camera link, make sure the
     // view observes a camera node, create a new camera node if needed

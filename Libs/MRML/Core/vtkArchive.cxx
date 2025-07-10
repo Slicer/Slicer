@@ -230,7 +230,7 @@ vtkArchive::~vtkArchive() = default;
 //----------------------------------------------------------------------------
 void vtkArchive::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 }
 
 //-----------------------------------------------------------------------------
@@ -296,7 +296,7 @@ bool vtkArchive::ExtractTar(const char* tarFileName, bool verbose, bool extract,
       vtkArchiveTools::Error("Problem with archive_read_next_header(): ",
                            archive_error_string(a));
     }
-    if ( extract && extracted_files)
+    if (extract && extracted_files)
     {
       extracted_files->push_back(archive_entry_pathname(entry));
     }
@@ -487,7 +487,7 @@ bool vtkArchive::Zip(const char* zipFileName, const char* directoryToZip)
     else
     {
       size_t len = fread(buff, sizeof(char), sizeof(buff), fd);
-      while ( len > 0 )
+      while (len > 0)
       {
         if (archive_write_data(zipArchive, buff, len) < 0)
         {
@@ -529,19 +529,19 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
   // - cd back to original directory
   //
 
-  if ( !zipFileName || !destinationDirectory )
+  if (!zipFileName || !destinationDirectory)
   {
     vtkArchiveTools::Error("Unzip:", "Invalid zipfile or directory");
     return false;
   }
 
-  if ( !vtksys::SystemTools::FileExists(zipFileName) )
+  if (!vtksys::SystemTools::FileExists(zipFileName))
   {
     vtkArchiveTools::Error("Unzip:", "Zip file does not exist");
     return false;
   }
 
-  if ( !vtksys::SystemTools::FileIsDirectory(destinationDirectory) )
+  if (!vtksys::SystemTools::FileIsDirectory(destinationDirectory))
   {
     vtkArchiveTools::Error("Unzip:", "Destination is not a directory");
     return false;
@@ -549,7 +549,7 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
 
   std::string cwd = vtksys::SystemTools::GetCurrentWorkingDirectory();
 
-  if ( !vtksys::SystemTools::ChangeDirectory(destinationDirectory) )
+  if (!vtksys::SystemTools::ChangeDirectory(destinationDirectory))
   {
     vtkArchiveTools::Error("Unzip:", "could not change to destination directory");
     return false;
@@ -658,7 +658,7 @@ bool vtkArchive::UnZip(const char* zipFileName, const char* destinationDirectory
     return false;
   }
 
-  if ( !vtksys::SystemTools::ChangeDirectory(cwd.c_str()) )
+  if (!vtksys::SystemTools::ChangeDirectory(cwd.c_str()))
   {
     vtkArchiveTools::Error("Unzip:", "could not change back to working directory");
     return false;

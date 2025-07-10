@@ -249,7 +249,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix,
     std::string sname = filename;
     if (!itksys::SystemTools::FileIsDirectory(filename))
     {
-      if ( sname.find(ssuf) != std::string::npos )
+      if (sname.find(ssuf) != std::string::npos)
       {
         std::string fullPath = std::string(dir.GetPath())
             + "/" + filename;

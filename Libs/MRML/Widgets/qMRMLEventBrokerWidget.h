@@ -36,7 +36,7 @@ class vtkMRMLNode;
 class vtkMRMLScene;
 class vtkObject;
 
-class QMRML_WIDGETS_EXPORT qMRMLEventBrokerWidget: public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLEventBrokerWidget : public QWidget
 {
   Q_OBJECT
 public:

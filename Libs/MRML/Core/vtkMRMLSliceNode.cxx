@@ -247,7 +247,7 @@ const char* vtkMRMLSliceNode::GetNthThreeDViewID(unsigned int index)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID)const
+bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID) const
 {
   if (viewNodeID == nullptr)
   {
@@ -260,7 +260,7 @@ bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID)const
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::IsDisplayableInThreeDView(const char* viewNodeID)const
+bool vtkMRMLSliceNode::IsDisplayableInThreeDView(const char* viewNodeID) const
 {
   return this->GetNumberOfThreeDViewIDs() == 0
     || this->IsThreeDViewIDPresent(viewNodeID);
@@ -812,7 +812,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
     bool modified = false;
 
     // check to see if the matrix actually changed
-    if ( !MatrixAreEqual(xyToRAS.GetPointer(), this->XYToRAS) )
+    if (!MatrixAreEqual(xyToRAS.GetPointer(), this->XYToRAS))
     {
       this->XYToSlice->DeepCopy(xyToSlice.GetPointer());
       this->XYToRAS->DeepCopy(xyToRAS.GetPointer());
@@ -895,7 +895,7 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
       for (int j = 0; j<3; j++)
       {
         ss << it->second->GetElement(i, j);
-        if ( !( i==2 && j==2) )
+        if (!( i==2 && j==2))
         {
           ss << " ";
         }
@@ -1196,7 +1196,7 @@ vtkMatrix4x4* vtkMRMLSliceNode::GetSliceToRAS()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
 
   vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintVectorMacro(FieldOfView, double, 3);
@@ -1410,7 +1410,7 @@ void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene, double r, double a, do
 void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
 {
   bool modified = false;
-  if ( x != this->FieldOfView[0] ||
+  if (x != this->FieldOfView[0] ||
        y != this->FieldOfView[1] ||
        z != this->FieldOfView[2] )
   {
@@ -1429,7 +1429,7 @@ void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetXYZOrigin(double x, double y, double z)
 {
-  if ( x != this->XYZOrigin[0] ||
+  if (x != this->XYZOrigin[0] ||
        y != this->XYZOrigin[1] ||
        z != this->XYZOrigin[2] )
   {
@@ -1443,7 +1443,7 @@ void vtkMRMLSliceNode::SetXYZOrigin(double x, double y, double z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWOrigin(double x, double y, double z)
 {
-  if ( x != this->UVWOrigin[0] ||
+  if (x != this->UVWOrigin[0] ||
        y != this->UVWOrigin[1] ||
        z != this->UVWOrigin[2] )
   {
@@ -1457,7 +1457,7 @@ void vtkMRMLSliceNode::SetUVWOrigin(double x, double y, double z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetDimensions(int x, int y, int z)
 {
-  if ( x != this->Dimensions[0] ||
+  if (x != this->Dimensions[0] ||
        y != this->Dimensions[1] ||
        z != this->Dimensions[2] )
   {
@@ -1471,7 +1471,7 @@ void vtkMRMLSliceNode::SetDimensions(int x, int y, int z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWExtents (double x, double y, double z)
 {
-  if ( x != this->UVWExtents[0] ||
+  if (x != this->UVWExtents[0] ||
        y != this->UVWExtents[1] ||
        z != this->UVWExtents[2] )
   {
@@ -1532,7 +1532,7 @@ void vtkMRMLSliceNode::SetUVWOrigin (double xyz[3])
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWMaximumDimensions(int x, int y, int z)
 {
-  if ( x != this->UVWMaximumDimensions[0] || y != this->UVWMaximumDimensions[1]
+  if (x != this->UVWMaximumDimensions[0] || y != this->UVWMaximumDimensions[1]
        || z != this->UVWMaximumDimensions[2] )
   {
     this->UVWMaximumDimensions[0] = x;
@@ -1545,7 +1545,7 @@ void vtkMRMLSliceNode::SetUVWMaximumDimensions(int x, int y, int z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetUVWDimensions(int x, int y, int z)
 {
-  if ( x != this->UVWDimensions[0] ||
+  if (x != this->UVWDimensions[0] ||
        y != this->UVWDimensions[1] ||
        z != this->UVWDimensions[2] )
   {
@@ -1585,7 +1585,7 @@ void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
   if (this->SliceResolutionMode != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
       this->SliceResolutionMode != vtkMRMLSliceNode::SliceResolutionCustom)
   {
-    if ( u != this->UVWOrigin[0] ||
+    if (u != this->UVWOrigin[0] ||
          v != this->UVWOrigin[1] ||
          w != this->UVWOrigin[2] )
     {
@@ -1595,7 +1595,7 @@ void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
       modified = true;
     }
   }
-  if ( x != this->XYZOrigin[0] ||
+  if (x != this->XYZOrigin[0] ||
        y != this->XYZOrigin[1] ||
        z != this->XYZOrigin[2] )
   {
@@ -1622,7 +1622,7 @@ void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimens
 {
   bool modified = false;
 
-  if ( extents[0] != this->UVWExtents[0] ||
+  if (extents[0] != this->UVWExtents[0] ||
        extents[1] != this->UVWExtents[1] ||
        extents[2] != this->UVWExtents[2] )
   {
@@ -1632,7 +1632,7 @@ void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimens
     this->UVWExtents[2] = extents[2];
   }
 
-  if ( dimensions[0] != this->UVWDimensions[0] ||
+  if (dimensions[0] != this->UVWDimensions[0] ||
        dimensions[1] != this->UVWDimensions[1] ||
        dimensions[2] != this->UVWDimensions[2] )
   {
@@ -1691,7 +1691,7 @@ void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
   // code. Should the adjustments to Dimensions and FieldOfView be
   // pulled out the SetLayoutGrid*() methods and put in the logic/gui
   // level?
-  if (( rows != this->LayoutGridRows )
+  if (( rows != this->LayoutGridRows)
       || ( columns != this->LayoutGridColumns ))
   {
     // Calculate the scaling and "scaling magnitudes"
@@ -1750,7 +1750,7 @@ void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
   // code. Should the adjustments to Dimensions and FieldOfView be
   // pulled out the SetLayoutGrid*() methods and put in the logic/gui
   // level?
-  if ( rows != this->LayoutGridRows )
+  if (rows != this->LayoutGridRows)
   {
     // Calculate the scaling
     double scaling;
@@ -1788,7 +1788,7 @@ void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
   // code. Should the adjustments to Dimensions and FieldOfView be
   // pulled out the SetLayoutGrid*() methods and put in the logic/gui
   // level?
-  if ( cols != this->LayoutGridColumns )
+  if (cols != this->LayoutGridColumns)
   {
     // Calculate the scaling
     double scaling;
@@ -1915,7 +1915,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
 
   // if the translation has changed, update the rest of the matrices
   double eps = 1.0e-6;
-  if ( fabs(v1[0] - v3[0]) > eps ||
+  if (fabs(v1[0] - v3[0]) > eps ||
        fabs(v1[1] - v3[1]) > eps ||
        fabs(v1[2] - v3[2]) > eps )
   {
@@ -1942,9 +1942,9 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool f
 
   // apply the transform
   vtkMRMLTransformNode* transformNode  = volumeNode->GetParentTransformNode();
-  if ( transformNode != nullptr )
+  if (transformNode != nullptr)
   {
-    if ( transformNode->IsTransformToWorldLinear() )
+    if (transformNode->IsTransformToWorldLinear())
     {
       vtkNew<vtkMatrix4x4> rasToRAS;
       transformNode->GetMatrixTransformToWorld(rasToRAS.GetPointer());
@@ -1977,7 +1977,7 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool f
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNormalAxisIndex /*=-1*/)
 {
-  if (referenceToRAS == nullptr )
+  if (referenceToRAS == nullptr)
   {
     return;
   }

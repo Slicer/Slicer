@@ -45,20 +45,20 @@ qSlicerFileReader::qSlicerFileReader(QObject* _parent)
 qSlicerFileReader::~qSlicerFileReader() = default;
 
 //----------------------------------------------------------------------------
-QStringList qSlicerFileReader::extensions()const
+QStringList qSlicerFileReader::extensions() const
 {
   return QStringList() << "*.*";
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerFileReader::canLoadFile(const QString& fileName)const
+bool qSlicerFileReader::canLoadFile(const QString& fileName) const
 {
   QStringList res = this->supportedNameFilters(fileName);
   return res.count() > 0;
 }
 
 //----------------------------------------------------------------------------
-double qSlicerFileReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerFileReader::canLoadFileConfidence(const QString& fileName) const
 {
   if (!this->canLoadFile(fileName))
   {
@@ -74,7 +74,7 @@ double qSlicerFileReader::canLoadFileConfidence(const QString& fileName)const
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr /* =nullptr */)const
+QStringList qSlicerFileReader::supportedNameFilters(const QString& fileName, int* longestExtensionMatchPtr /* =nullptr */) const
 {
   if (longestExtensionMatchPtr)
   {
@@ -128,14 +128,14 @@ void qSlicerFileReader::setLoadedNodes(const QStringList& nodes)
 }
 
 //----------------------------------------------------------------------------
-QStringList qSlicerFileReader::loadedNodes()const
+QStringList qSlicerFileReader::loadedNodes() const
 {
   Q_D(const qSlicerFileReader);
   return d->LoadedNodes;
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerFileReader::examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, qSlicerIO::IOProperties& ioProperties)const
+bool qSlicerFileReader::examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, qSlicerIO::IOProperties& ioProperties) const
 {
   Q_UNUSED(fileInfoList);
   Q_UNUSED(archetypeFileInfo);

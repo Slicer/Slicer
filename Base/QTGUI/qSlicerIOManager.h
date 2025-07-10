@@ -48,10 +48,10 @@ public:
                               vtkCollection* loadedNodes = nullptr);
 
   void addHistory(const QString& path);
-  const QStringList& history()const;
+  const QStringList& history() const;
 
   void setFavorites(const QList<QUrl>& urls);
-  const QList<QUrl>& favorites()const;
+  const QList<QUrl>& favorites() const;
 
   /// Takes ownership. Any previously set dialog corresponding to the same
   /// fileType (only 1 dialog per filetype) is overridden.

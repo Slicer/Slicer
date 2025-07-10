@@ -39,7 +39,7 @@
 
 // STD includes
 
-int qMRMLModelDisplayNodeWidgetTest2( int argc, char* argv [] )
+int qMRMLModelDisplayNodeWidgetTest2(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -71,7 +71,7 @@ int qMRMLModelDisplayNodeWidgetTest2( int argc, char* argv [] )
   ctkVTKDataSetArrayComboBox dataSetModel;
   dataSetModel.setDataSet(modelDisplayNode->GetInputMesh());
 
-  if (argc < 3 || QString(argv[2]) != "-I" )
+  if (argc < 3 || QString(argv[2]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

@@ -585,7 +585,7 @@ public:
   /// Get number of View Node ID's for the view to display this node in.
   /// If 0, display in all views
   /// \sa ViewNodeIDs, GetViewNodeIDs(), AddViewNodeID()
-  inline int GetNumberOfViewNodeIDs()const;
+  inline int GetNumberOfViewNodeIDs() const;
   /// Get View Node ID's for the view to display this node in.
   /// If nullptr, display in all views
   /// \sa ViewNodeIDs, GetViewNodeIDs(), AddViewNodeID()
@@ -593,16 +593,16 @@ public:
   /// Get all View Node ID's for the view to display this node in.
   /// If empty, display in all views
   /// \sa ViewNodeIDs, GetNthViewNodeID(), AddViewNodeID()
-  inline std::vector<std::string> GetViewNodeIDs()const;
+  inline std::vector<std::string> GetViewNodeIDs() const;
   /// True if the view node id is present in the viewNodeID list
   /// false if not found
   /// \sa ViewNodeIDs, IsDisplayableInView(), AddViewNodeID()
-  bool IsViewNodeIDPresent(const char* viewNodeID)const;
+  bool IsViewNodeIDPresent(const char* viewNodeID) const;
   /// Returns true if the viewNodeID is present in the ViewNodeId list
   /// or there is no ViewNodeId in the list (meaning all the views display the
   /// node)
   /// \sa ViewNodeIDs, IsViewNodeIDPresent(), AddViewNodeID()
-  bool IsDisplayableInView(const char* viewNodeID)const;
+  bool IsDisplayableInView(const char* viewNodeID) const;
   /// Set the View Node ID as the only view to display this node in.
   /// If the view node id does not exist, the node will show in all views.
   /// Uses a disable/enable modified event block to avoid flicker.
@@ -893,13 +893,13 @@ private:
 };
 
 //----------------------------------------------------------------------------
-int vtkMRMLDisplayNode::GetNumberOfViewNodeIDs()const
+int vtkMRMLDisplayNode::GetNumberOfViewNodeIDs() const
 {
   return static_cast<int>(this->ViewNodeIDs.size());
 }
 
 //----------------------------------------------------------------------------
-std::vector<std::string> vtkMRMLDisplayNode::GetViewNodeIDs()const
+std::vector<std::string> vtkMRMLDisplayNode::GetViewNodeIDs() const
 {
   return this->ViewNodeIDs;
 }

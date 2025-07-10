@@ -64,7 +64,7 @@ qMRMLSortFilterColorProxyModel::qMRMLSortFilterColorProxyModel(QObject* vparent)
 qMRMLSortFilterColorProxyModel::~qMRMLSortFilterColorProxyModel() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLSortFilterColorProxyModel::mrmlColorNode()const
+vtkMRMLColorNode* qMRMLSortFilterColorProxyModel::mrmlColorNode() const
 {
   qMRMLColorModel* model = qobject_cast<qMRMLColorModel*>(this->sourceModel());
   if (!model)
@@ -75,7 +75,7 @@ vtkMRMLColorNode* qMRMLSortFilterColorProxyModel::mrmlColorNode()const
 }
 
 //-----------------------------------------------------------------------------
-bool qMRMLSortFilterColorProxyModel::showEmptyColors()const
+bool qMRMLSortFilterColorProxyModel::showEmptyColors() const
 {
   Q_D(const qMRMLSortFilterColorProxyModel);
   return d->ShowEmptyColors;
@@ -94,7 +94,7 @@ void qMRMLSortFilterColorProxyModel::setShowEmptyColors(bool show)
 }
 
 //-----------------------------------------------------------------------------
-QStandardItem* qMRMLSortFilterColorProxyModel::sourceItem(const QModelIndex& sourceIndex)const
+QStandardItem* qMRMLSortFilterColorProxyModel::sourceItem(const QModelIndex& sourceIndex) const
 {
   qMRMLColorModel* model = qobject_cast<qMRMLColorModel*>(this->sourceModel());
   if (!model)
@@ -104,7 +104,7 @@ QStandardItem* qMRMLSortFilterColorProxyModel::sourceItem(const QModelIndex& sou
   return sourceIndex.isValid() ? model->itemFromIndex(sourceIndex) : model->invisibleRootItem();
 }
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterColorProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent)const
+bool qMRMLSortFilterColorProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
   QStandardItem* parentItem = this->sourceItem(sourceParent);
   if (!parentItem)
@@ -133,7 +133,7 @@ bool qMRMLSortFilterColorProxyModel::filterAcceptsRow(int sourceRow, const QMode
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterColorProxyModel::filterAcceptsItem(int colorIndex)const
+bool qMRMLSortFilterColorProxyModel::filterAcceptsItem(int colorIndex) const
 {
   Q_D(const qMRMLSortFilterColorProxyModel);
 

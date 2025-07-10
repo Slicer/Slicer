@@ -17,7 +17,7 @@ vtkMRMLNodeNewMacro(vtkMRMLROINode);
 //----------------------------------------------------------------------------
 void vtkMRMLROINode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkObject::PrintSelf(os,indent);
+  vtkObject::PrintSelf(os, indent);
 
   os << "XYZ:\n";
   os << indent << XYZ[0] << " " << XYZ[1] << " " << XYZ[2] << "\n";
@@ -51,17 +51,17 @@ vtkMRMLROINode::~vtkMRMLROINode()
 {
   if (this->LabelText)
   {
-    delete [] this->LabelText;
+    delete[] this->LabelText;
     this->LabelText = nullptr;
   }
   if (this->ID)
   {
-    delete [] this->ID;
+    delete[] this->ID;
     this->ID = nullptr;
   }
   if (this->VolumeNodeID)
   {
-    delete [] this->VolumeNodeID;
+    delete[] this->VolumeNodeID;
     this->VolumeNodeID = nullptr;
   }
   return;
@@ -218,7 +218,7 @@ void vtkMRMLROINode::ReadXMLString(const char* keyValuePairs)
     char* IDValue = new char[1024];
     ss >> IDValue;
     this->SetVolumeNodeID(IDValue);
-    delete [] IDValue;
+    delete[] IDValue;
     vtkDebugMacro("ReadXMLString: got VolumeNodeID " << this->VolumeNodeID);
   }
   else
@@ -372,7 +372,7 @@ void vtkMRMLROINode::SetRadiusIJK(double* radiusIJK)
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLROINode::CanApplyNonLinearTransforms()const
+bool vtkMRMLROINode::CanApplyNonLinearTransforms() const
 {
   return true;
 }

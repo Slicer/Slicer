@@ -48,11 +48,11 @@ public:
   ~qSlicerAbstractModuleRepresentation() override;
 
   /// Set/Get module name
-  QString moduleName()const;
+  QString moduleName() const;
 
   /// Returns the module the representation belongs to.
   /// The module is set right before setup() is called.
-  qSlicerAbstractCoreModule* module()const;
+  qSlicerAbstractCoreModule* module() const;
 
   /// \brief Select input or output nodes in the module's GUI.
   ///

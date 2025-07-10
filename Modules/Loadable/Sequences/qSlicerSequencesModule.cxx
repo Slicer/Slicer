@@ -62,8 +62,8 @@ public:
   virtual ~qSlicerSequencesModulePrivate();
   QTimer UpdateAllVirtualOutputNodesTimer;
   qMRMLSequenceBrowserToolBar* ToolBar;
-  bool SequencesModuleOwnsToolBar{true};
-  bool AutoShowToolBar{true};
+  bool SequencesModuleOwnsToolBar{ true };
+  bool AutoShowToolBar{ true };
   vtkWeakPointer<vtkMRMLSequenceBrowserNode> SequenceBrowserToShow;
 
 };
@@ -162,19 +162,19 @@ qSlicerSequencesModule::qSlicerSequencesModule(QObject* _parent)
 qSlicerSequencesModule::~qSlicerSequencesModule() = default;
 
 //-----------------------------------------------------------------------------
-QString qSlicerSequencesModule::helpText()const
+QString qSlicerSequencesModule::helpText() const
 {
   return tr("This is a module for creating, recording, and replaying node sequences.");
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSequencesModule::acknowledgementText()const
+QString qSlicerSequencesModule::acknowledgementText() const
 {
   return tr("This work was funded by CCO ACRU and OCAIRO grants.");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSequencesModule::contributors()const
+QStringList qSlicerSequencesModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Andras Lasso (PerkLab, Queen's), Matthew Holden (PerkLab, Queen's), Kevin Wang (PMH)");
@@ -182,7 +182,7 @@ QStringList qSlicerSequencesModule::contributors()const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerSequencesModule::icon()const
+QIcon qSlicerSequencesModule::icon() const
 {
   return QIcon(":/Icons/Sequences.png");
 }

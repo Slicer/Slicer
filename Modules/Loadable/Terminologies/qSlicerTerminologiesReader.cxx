@@ -59,32 +59,32 @@ void qSlicerTerminologiesReader::setTerminologiesLogic(vtkSlicerTerminologiesMod
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerTerminologiesModuleLogic* qSlicerTerminologiesReader::terminologiesLogic()const
+vtkSlicerTerminologiesModuleLogic* qSlicerTerminologiesReader::terminologiesLogic() const
 {
   Q_D(const qSlicerTerminologiesReader);
   return d->TerminologiesLogic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTerminologiesReader::description()const
+QString qSlicerTerminologiesReader::description() const
 {
   return tr("Terminology");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerTerminologiesReader::fileType()const
+qSlicerIO::IOFileType qSlicerTerminologiesReader::fileType() const
 {
   return QString("TerminologyFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTerminologiesReader::extensions()const
+QStringList qSlicerTerminologiesReader::extensions() const
 {
   return QStringList() << "Terminology (*.term.json)" << "Terminology (*.json)";
 }
 
 //----------------------------------------------------------------------------
-double qSlicerTerminologiesReader::canLoadFileConfidence(const QString& fileName)const
+double qSlicerTerminologiesReader::canLoadFileConfidence(const QString& fileName) const
 {
   double confidence = Superclass::canLoadFileConfidence(fileName);
 

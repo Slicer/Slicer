@@ -299,7 +299,7 @@ void qMRMLSliceView::setInteractor(vtkRenderWindowInteractor* interactor)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLSliceViewInteractorStyle* qMRMLSliceView::interactorObserver()const
+vtkMRMLSliceViewInteractorStyle* qMRMLSliceView::interactorObserver() const
 {
   Q_D(const qMRMLSliceView);
   return d->InteractorObserver;
@@ -375,21 +375,21 @@ void qMRMLSliceView::setMRMLSliceNode(vtkMRMLSliceNode* newSliceNode)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode* qMRMLSliceView::mrmlSliceNode()const
+vtkMRMLSliceNode* qMRMLSliceView::mrmlSliceNode() const
 {
   Q_D(const qMRMLSliceView);
   return d->MRMLSliceNode;
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceViewInteractorStyle* qMRMLSliceView::sliceViewInteractorStyle()const
+vtkMRMLSliceViewInteractorStyle* qMRMLSliceView::sliceViewInteractorStyle() const
 {
   qWarning("qMRMLSliceView::sliceViewInteractorStyle is deprecated. Use interactorObserver instead.");
   return this->interactorObserver();
 }
 
 // --------------------------------------------------------------------------
-QList<double> qMRMLSliceView::convertDeviceToXYZ(const QList<int>& xy)const
+QList<double> qMRMLSliceView::convertDeviceToXYZ(const QList<int>& xy) const
 {
   Q_D(const qMRMLSliceView);
 
@@ -414,7 +414,7 @@ QList<double> qMRMLSliceView::convertDeviceToXYZ(const QList<int>& xy)const
 }
 
 // --------------------------------------------------------------------------
-QList<double> qMRMLSliceView::convertRASToXYZ(const QList<double>& ras)const
+QList<double> qMRMLSliceView::convertRASToXYZ(const QList<double>& ras) const
 {
   Q_D(const qMRMLSliceView);
 
@@ -440,7 +440,7 @@ QList<double> qMRMLSliceView::convertRASToXYZ(const QList<double>& ras)const
 }
 
 // --------------------------------------------------------------------------
-QList<double> qMRMLSliceView::convertXYZToRAS(const QList<double>& xyz)const
+QList<double> qMRMLSliceView::convertXYZToRAS(const QList<double>& xyz) const
 {
   Q_D(const qMRMLSliceView);
 

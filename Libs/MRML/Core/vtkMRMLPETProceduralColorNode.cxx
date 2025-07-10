@@ -63,7 +63,7 @@ void vtkMRMLPETProceduralColorNode::Copy(vtkMRMLNode* anode)
 void vtkMRMLPETProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   if (this->ColorTransferFunction != nullptr)
   {
     os << indent << "ColorTransferFunction:" << endl;
@@ -138,15 +138,15 @@ const char* vtkMRMLPETProceduralColorNode::GetTypeAsString()
   {
     return "PET-Rainbow2";
   }
-  else if ( this->Type == this->PETMIP )
+  else if (this->Type == this->PETMIP)
   {
     return "PET-MaximumIntensityProjection";
   }
-  else if ( this->Type == this->PETDICOM )
+  else if (this->Type == this->PETDICOM)
   {
     return "PET-DICOM";
   }
-  else if ( this->Type == this->PEThotMetalBlue )
+  else if (this->Type == this->PEThotMetalBlue)
   {
     return "PET-HotMetalBlue";
   }

@@ -79,7 +79,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEven
   if (interactorStyle)
   {
 
-  switch(eventid)
+  switch (eventid)
   {
     case vtkCommand::ExposeEvent:
       interactorStyle->OnExpose();

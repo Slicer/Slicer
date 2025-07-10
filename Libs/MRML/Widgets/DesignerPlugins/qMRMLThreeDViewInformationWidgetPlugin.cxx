@@ -19,7 +19,7 @@ QString qMRMLThreeDViewInformationWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLThreeDViewInformationWidget\" \
           name=\"MRMLThreeDViewInformationWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 // --------------------------------------------------------------------------
