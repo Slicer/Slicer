@@ -137,10 +137,27 @@ set(Tests_UtilityFiles
   qMRMLNodeObject.h
   )
 
+set(KIT_TEST_GENERATE_MOC_SRCS
+  qMRMLCheckableNodeComboBoxTest.cxx
+  qMRMLCollapsibleButtonTest.cxx
+  qMRMLColorModelTest.cxx
+  qMRMLDisplayNodeViewComboBoxTest.cxx
+  qMRMLLabelComboBoxTest.cxx
+  qMRMLLayoutManagerWithCustomFactoryTest.cxx
+  qMRMLNodeAttributeTableViewTest.cxx
+  qMRMLNodeAttributeTableWidgetTest.cxx
+  qMRMLSceneModelTest.cxx
+  qMRMLSliceControllerWidgetTest.cxx
+  )
+  add_definitions(-DMRML_WIDGETS_HAVE_QT5)
+  set(Tests_MOC_CXX ${Tests_MOC_SRCS})
+  set(KIT_TEST_SRCS "")
+  list(APPEND KIT_TEST_SRCS ${KIT_TEST_GENERATE_MOC_SRCS})
+
 include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR})
 
-ctk_add_executable_utf8(${KIT}CxxTests ${Tests} ${Tests_UtilityFiles})
+ctk_add_executable_utf8(${KIT}CxxTests ${Tests} ${KIT_TEST_SRCS} ${Tests_MOC_CXX} ${Tests_UtilityFiles})
 target_link_libraries(${KIT}CxxTests ${KIT})
 
 set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
