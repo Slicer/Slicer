@@ -295,7 +295,7 @@ public:
   /// determine the extension name.
   ///
   /// \sa installExtension(const QString&,ExtensionMetadataType,const QString&)
-  Q_INVOKABLE bool installExtension(const QString &archiveFile, bool installDependencies = true, bool waitForCompletion = false);
+  Q_INVOKABLE bool installExtension(const QString& archiveFile, bool installDependencies = true, bool waitForCompletion = false);
 
   /// Install extension.
   ///
@@ -306,7 +306,7 @@ public:
   /// \sa isExtensionScheduledForUninstall, extensionScheduledForUninstall
   Q_INVOKABLE bool installExtension(const QString& extensionName,
                                     ExtensionMetadataType extensionMetadata,
-                                    const QString &archiveFile, bool installDependencies = true,
+                                    const QString& archiveFile, bool installDependencies = true,
                                     bool waitForCompletion = false);
 
   /// \brief Uninstall \a extensionName
@@ -319,10 +319,10 @@ public:
   /// \brief Extract \a archiveFile into \a destinationPath/extensionName directory
   Q_INVOKABLE bool extractExtensionArchive(const QString& extensionName,
                                            const QString& archiveFile,
-                                           const QString &destinationPath);
+                                           const QString& destinationPath);
 
   /// Return the item model used internally
-  Q_INVOKABLE const QStandardItemModel * model()const;
+  Q_INVOKABLE const QStandardItemModel* model()const;
 
   /// Return time of last successful update of extensions metadata from the server.
   /// If there has not been any updates then it the object is set to null.
@@ -337,7 +337,7 @@ public:
 
   /// Convert server keys to extensions manager model keys.
   /// \sa serverToExtensionDescriptionKey()
-  static ExtensionMetadataType convertExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI);
+  static ExtensionMetadataType convertExtensionMetadata(const ExtensionMetadataType& extensionMetadata, int serverAPI);
 
   /// Server metadata fields that should not be copied to the extensions manager model.
   /// \sa filterExtensionMetadata()
@@ -345,7 +345,7 @@ public:
 
   /// Remove server metadata fields that should be ignored.
   /// \sa serverKeysToIgnore()
-  static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata, int serverAPI);
+  static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType& extensionMetadata, int serverAPI);
 
   static QStringList readArrayValues(QSettings& settings,
                                      const QString& arrayName, const QString fieldName);
@@ -462,7 +462,7 @@ public slots:
   /// \return \c true if all scheduled extensions are successfully updated.
   ///
   /// \sa scheduleExtensionForUpdate, isExtensionScheduledForUpdate
-  bool updateScheduledExtensions(QStringList &updatedExtensions);
+  bool updateScheduledExtensions(QStringList& updatedExtensions);
 
   /// Update extensions scheduled for update.
   ///
@@ -479,7 +479,7 @@ public slots:
   /// \return \c true if all scheduled extensions are successfully uninstalled.
   ///
   /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall,
-  bool uninstallScheduledExtensions(QStringList &uninstalledExtensions);
+  bool uninstallScheduledExtensions(QStringList& uninstalledExtensions);
 
   /// Uninstall extensions scheduled for uninstall.
   ///
@@ -515,9 +515,9 @@ public slots:
 
 signals:
 
-  void downloadStarted(QNetworkReply * reply);
+  void downloadStarted(QNetworkReply* reply);
 
-  void downloadFinished(QNetworkReply * reply);
+  void downloadFinished(QNetworkReply* reply);
 
   void updateDownloadProgress(const QString& extensionName,
                               qint64 received, qint64 total);

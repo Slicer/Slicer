@@ -37,7 +37,7 @@ public:
   /// color legend orientation preset on a view node
   enum OrientationType : int { Horizontal = 0, Vertical, Orientation_Last };
 
-  static vtkMRMLColorLegendDisplayNode *New();
+  static vtkMRMLColorLegendDisplayNode* New();
   vtkTypeMacro(vtkMRMLColorLegendDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -152,7 +152,7 @@ public:
   //@}
 
   /// Handles events registered in the observer manager
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long eventID, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long eventID, void* callData) override;
 
 protected:
   vtkMRMLColorLegendDisplayNode();

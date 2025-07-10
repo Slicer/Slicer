@@ -71,14 +71,14 @@ public:
   vtkTypeMacro(vtkSlicerTestLineRepresentation2D, vtkSlicerLineRepresentation2D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData=nullptr) override;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData=nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
-  void GetActors(vtkPropCollection *) override;
-  void ReleaseGraphicsResources(vtkWindow *) override;
-  int RenderOverlay(vtkViewport *viewport) override;
-  int RenderOpaqueGeometry(vtkViewport *viewport) override;
-  int RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  void GetActors(vtkPropCollection*) override;
+  void ReleaseGraphicsResources(vtkWindow*) override;
+  int RenderOverlay(vtkViewport* viewport) override;
+  int RenderOpaqueGeometry(vtkViewport* viewport) override;
+  int RenderTranslucentPolygonalGeometry(vtkViewport* viewport) override;
   vtkTypeBool HasTranslucentPolygonalGeometry() override;
 
 protected:

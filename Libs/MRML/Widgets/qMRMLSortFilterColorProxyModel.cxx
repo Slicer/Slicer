@@ -53,7 +53,7 @@ qMRMLSortFilterColorProxyModelPrivate::qMRMLSortFilterColorProxyModelPrivate()
 }
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterColorProxyModel::qMRMLSortFilterColorProxyModel(QObject *vparent)
+qMRMLSortFilterColorProxyModel::qMRMLSortFilterColorProxyModel(QObject* vparent)
  : QSortFilterProxyModel(vparent)
  , d_ptr(new qMRMLSortFilterColorProxyModelPrivate)
 {
@@ -104,7 +104,7 @@ QStandardItem* qMRMLSortFilterColorProxyModel::sourceItem(const QModelIndex& sou
   return sourceIndex.isValid() ? model->itemFromIndex(sourceIndex) : model->invisibleRootItem();
 }
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterColorProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const
+bool qMRMLSortFilterColorProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent)const
 {
   QStandardItem* parentItem = this->sourceItem(sourceParent);
   if (!parentItem)

@@ -522,7 +522,7 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   if (this->MRMLScene)
   {
     // Watch the crosshairs
-    vtkMRMLNode *node;
+    vtkMRMLNode* node;
     vtkCollectionSimpleIterator it;
     vtkSmartPointer<vtkCollection> crosshairs;
     crosshairs.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
@@ -553,7 +553,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
 {
   Q_ASSERT(this->MRMLScene);
 
-  vtkMRMLNode *node;
+  vtkMRMLNode* node;
   vtkCollectionSimpleIterator it;
   vtkMRMLCrosshairNode* crosshairNode = nullptr;
   vtkSmartPointer<vtkCollection> crosshairs;
@@ -575,7 +575,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
     // jump slices
     if (this->CrosshairJumpSlicesMapper->mapping(crosshairNode->GetCrosshairBehavior()) != nullptr)
     {
-      QAction* action = (QAction *)(this->CrosshairJumpSlicesMapper->mapping(crosshairNode->GetCrosshairBehavior()));
+      QAction* action = (QAction*)(this->CrosshairJumpSlicesMapper->mapping(crosshairNode->GetCrosshairBehavior()));
       if (action)
       {
         action->setChecked(true);
@@ -585,7 +585,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
     // style of crosshair
     if (this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()) != nullptr)
     {
-      QAction* action = (QAction *)(this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()));
+      QAction* action = (QAction*)(this->CrosshairMapper->mapping(crosshairNode->GetCrosshairMode()));
       if (action)
       {
         action->setChecked(true);
@@ -595,7 +595,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
     // thickness
     if (this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()) != nullptr)
     {
-      QAction* action = (QAction *)(this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()));
+      QAction* action = (QAction*)(this->CrosshairThicknessMapper->mapping(crosshairNode->GetCrosshairThickness()));
       if (action)
       {
         action->setChecked(true);

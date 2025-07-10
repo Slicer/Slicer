@@ -120,7 +120,7 @@ bool CheckNodeIdAndName(int line, vtkMRMLNode* node,
 }
 
 // ----------------------------------------------------------------------------
-int GetExpectedNodeAddedClassNames(const char * sceneFilePath, std::vector<std::string>& expectedNodeAddedClassNames)
+int GetExpectedNodeAddedClassNames(const char* sceneFilePath, std::vector<std::string>& expectedNodeAddedClassNames)
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkXMLDataParser> xmlParser;
@@ -172,7 +172,7 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
   CHECK_EXIT_SUCCESS(ExerciseBasicObjectMethods(node));
 
   //  Test CreateNodeInstance()
-  vtkMRMLNode * newNode = node->CreateNodeInstance();
+  vtkMRMLNode* newNode = node->CreateNodeInstance();
   CHECK_NOT_NULL(newNode);
   newNode->Delete();
 
@@ -232,7 +232,7 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
   CHECK_STRING(node1->URLDecodeString("Thou%20Shall%20Test%20!"), "Thou Shall Test !");
 
   //  Test ReadXMLAttributes()
-  const char *atts[] = {
+  const char* atts[] = {
             "name", "MyName",
             "description", "Testing a mrml node",
             "hideFromEditors", "false",
@@ -345,7 +345,7 @@ int ExerciseBasicDisplayMRMLMethods(vtkMRMLDisplayNode* node)
   TEST_SET_GET_BOOLEAN(node, AutoScalarRange);
   double expectedRange[2] = {-10, 10};
   node->SetScalarRange(expectedRange);
-  double *scalarRange = node->GetScalarRange();
+  double* scalarRange = node->GetScalarRange();
   CHECK_NOT_NULL(scalarRange);
   if (scalarRange[0] != expectedRange[0] || scalarRange[1] != expectedRange[1])
   {
@@ -353,10 +353,10 @@ int ExerciseBasicDisplayMRMLMethods(vtkMRMLDisplayNode* node)
     return EXIT_FAILURE;
   }
 
-  const char *red = "vtkMRMLSliceNodeRed";
-  const char *green = "vtkMRMLSliceNodeGreen";
-  const char *yellow = "vtkMRMLSliceNodeYellow";
-  const char *threeD = "vtkMRMLViewNode1";
+  const char* red = "vtkMRMLSliceNodeRed";
+  const char* green = "vtkMRMLSliceNodeGreen";
+  const char* yellow = "vtkMRMLSliceNodeYellow";
+  const char* threeD = "vtkMRMLViewNode1";
   CHECK_INT(node->GetNumberOfViewNodeIDs(), 0);
   CHECK_BOOL(node->IsDisplayableInView(red), true);
   CHECK_BOOL(node->IsDisplayableInView(green), true);
@@ -396,12 +396,12 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   errorWarningObserver->Clear();
 
   TEST_SET_GET_STRING(node, FileName);
-  const char *f0 = node->GetNthFileName(0);
+  const char* f0 = node->GetNthFileName(0);
   std::cout << "Filename 0 = " << (f0 == nullptr ? "NULL" : f0) << std::endl;
   TEST_SET_GET_BOOLEAN(node, UseCompression);
   TEST_SET_GET_STRING(node, URI);
 
-  vtkURIHandler *handler = vtkURIHandler::New();
+  vtkURIHandler* handler = vtkURIHandler::New();
   node->SetURIHandler(nullptr);
   CHECK_NULL(node->GetURIHandler());
   node->SetURIHandler(handler);
@@ -410,7 +410,7 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   handler->Delete();
 
   TEST_SET_GET_INT_RANGE(node, ReadState, 0, 5);
-  const char *rstate = node->GetReadStateAsString();
+  const char* rstate = node->GetReadStateAsString();
   std::cout << "Read state, after int test = " << rstate << std::endl;
   node->SetReadStatePending();
   rstate = node->GetReadStateAsString();
@@ -432,7 +432,7 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   std::cout << "Read state, Cancelled = " << rstate << std::endl;
 
   TEST_SET_GET_INT_RANGE(node, WriteState, 0, 5);
-  const char *wstate = node->GetWriteStateAsString();
+  const char* wstate = node->GetWriteStateAsString();
   std::cout << "Write state, after int test = " << wstate << std::endl;
   node->SetWriteStatePending();
   wstate = node->GetWriteStateAsString();
@@ -458,7 +458,7 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   std::string fullName0 = node->GetFullNameFromNthFileName(0);
   std::cout << "fullName0 = " << fullName0.c_str() << std::endl;
 
-  vtkStringArray *types = node->GetSupportedWriteFileTypes();
+  vtkStringArray* types = node->GetSupportedWriteFileTypes();
   std::cout << "Supported write types:" << std::endl;
   for (vtkIdType i = 0; i < types->GetNumberOfValues(); i++)
   {
@@ -499,17 +499,17 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   node->ResetNthURI(0, "https://www.nowhere.com/newfilename.txt");
   node->ResetNthURI(100, "ftp://not.in.list");
   node->ResetNthURI(100, nullptr);
-  const char *dataDirName = "/test-ing/a/dir ect.ory";
+  const char* dataDirName = "/test-ing/a/dir ect.ory";
   node->SetDataDirectory(dataDirName);
   node->SetFileName("/tmp/file.txt");
   node->SetDataDirectory(dataDirName);
   CHECK_STRING(node->GetFileName(), "/test-ing/a/dir ect.ory/file.txt");
 
   std::cout << "Resetting Data Directory to " << dataDirName << " succeeded, got new file name of " << node->GetFileName() << std::endl;
-  const char *uriPrefix = "https://www.somewhere.com/";
+  const char* uriPrefix = "https://www.somewhere.com/";
   node->SetURIPrefix(uriPrefix);
 
-  const char *defaultExt = node->GetDefaultWriteFileExtension();
+  const char* defaultExt = node->GetDefaultWriteFileExtension();
   std::cout << "Default write extension = " << (defaultExt == nullptr ? "null" : defaultExt) << std::endl;
 
   std::cout << "Is null file path relative? " << node->IsFilePathRelative(nullptr) << std::endl;
@@ -603,7 +603,7 @@ int ExerciseAllBasicMRMLMethods(vtkMRMLNode* node)
 }
 
 // ----------------------------------------------------------------------------
-int ExerciseSceneLoadingMethods(const char * sceneFilePath, vtkMRMLScene* inputScene /* = nullptr */)
+int ExerciseSceneLoadingMethods(const char* sceneFilePath, vtkMRMLScene* inputScene /* = nullptr */)
 {
   vtkSmartPointer<vtkMRMLScene> scene;
   if (inputScene)
@@ -735,8 +735,8 @@ void vtkMRMLNodeCallback::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLNodeCallback::Execute(vtkObject *vtkcaller,
-  unsigned long eid, void *vtkNotUsed(calldata))
+void vtkMRMLNodeCallback::Execute(vtkObject* vtkcaller,
+  unsigned long eid, void* vtkNotUsed(calldata))
 {
   // Let's return if an error already occurred
   if (this->ErrorString.size() > 0)

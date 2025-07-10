@@ -61,7 +61,7 @@ public:
   ///   The nodes are created automatically for supported data types when adding
   ///   the data nodes. To set up the node (name, level, parent, associated data)
   ///   call \sa CreateSubjectHierarchyNode method.
-  static vtkMRMLSubjectHierarchyLegacyNode *New();
+  static vtkMRMLSubjectHierarchyLegacyNode* New();
   vtkTypeMacro(vtkMRMLSubjectHierarchyLegacyNode,vtkMRMLHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -74,7 +74,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   /// Get node XML tag name (like Volume, Contour)
   const char* GetNodeTagName() override;

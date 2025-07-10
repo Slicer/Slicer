@@ -250,7 +250,7 @@ void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
-  vtkMRMLTransformDisplayNode *node = vtkMRMLTransformDisplayNode::SafeDownCast(anode);
+  vtkMRMLTransformDisplayNode* node = vtkMRMLTransformDisplayNode::SafeDownCast(anode);
   if (!node)
   {
     return;
@@ -346,7 +346,7 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData )
+void vtkMRMLTransformDisplayNode::ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData )
 {
   if (caller!=nullptr
     && (event==vtkCommand::ModifiedEvent || event==vtkMRMLTransformableNode::TransformModifiedEvent)

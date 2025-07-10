@@ -10,9 +10,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLSliceWidgetPlugin :
   Q_OBJECT
 
 public:
-  qMRMLSliceWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLSliceWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
 //   QIcon    icon() const;
   QString  includeFile() const override;

@@ -65,7 +65,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::OnMRMLDisplayableNodeModifiedEv
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceNode * vtkMRMLAbstractSliceViewDisplayableManager::GetMRMLSliceNode()
+vtkMRMLSliceNode* vtkMRMLAbstractSliceViewDisplayableManager::GetMRMLSliceNode()
 {
   return vtkMRMLSliceNode::SafeDownCast(this->GetMRMLDisplayableNode());
 }
@@ -78,7 +78,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(double x, do
 
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
-    vtkRenderWindowInteractor * interactor, vtkMRMLSliceNode * sliceNode,
+    vtkRenderWindowInteractor* interactor, vtkMRMLSliceNode* sliceNode,
     double x, double y, double xyz[3])
 {
   if (xyz == nullptr || interactor == nullptr || sliceNode == nullptr)
@@ -106,7 +106,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
 
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
-    vtkRenderer * renderer, vtkMRMLSliceNode * sliceNode,
+    vtkRenderer* renderer, vtkMRMLSliceNode* sliceNode,
     double x, double y, double xyz[3])
 {
   if (xyz == nullptr || renderer == nullptr || sliceNode == nullptr)
@@ -138,7 +138,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(double ras[3], 
 
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(
-    vtkMRMLSliceNode * sliceNode, double ras[3], double xyz[3])
+    vtkMRMLSliceNode* sliceNode, double ras[3], double xyz[3])
 {
   if (sliceNode == nullptr)
   {
@@ -161,7 +161,7 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(double xyz[3], 
 
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(
-    vtkMRMLSliceNode * sliceNode, double xyz[3], double ras[3])
+    vtkMRMLSliceNode* sliceNode, double xyz[3], double ras[3])
 {
   if (sliceNode == nullptr)
   {

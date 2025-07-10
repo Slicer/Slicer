@@ -8,7 +8,7 @@
 // STD includes
 #include <sstream>
 
-const char *vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+2] =
+const char* vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+2] =
 {
   "GlyphMin",
   "Vertex2D",
@@ -111,12 +111,12 @@ void vtkMRMLAnnotationPointDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLAnnotationPointDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAnnotationPointDisplayNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLAnnotationPointDisplayNode *node = (vtkMRMLAnnotationPointDisplayNode *) anode;
+  vtkMRMLAnnotationPointDisplayNode* node = (vtkMRMLAnnotationPointDisplayNode*) anode;
   this->SetGlyphType(node->GlyphType);
   this->SetGlyphScale(node->GlyphScale);
   this->SetSliceProjection(node->SliceProjection);
@@ -143,7 +143,7 @@ const char* vtkMRMLAnnotationPointDisplayNode::GetGlyphTypeAsString(int glyphTyp
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode::SetGlyphTypeFromString(const char *glyphString)
+void vtkMRMLAnnotationPointDisplayNode::SetGlyphTypeFromString(const char* glyphString)
 {
   for (int ID = GlyphMin; ID <= GlyphMax; ID++)
   {
@@ -174,16 +174,16 @@ void vtkMRMLAnnotationPointDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLAnnotationPointDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
 }
 
 //-----------------------------------------------------------
-void vtkMRMLAnnotationPointDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLAnnotationPointDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
    Superclass::UpdateScene(scene);
 }
@@ -231,7 +231,7 @@ void vtkMRMLAnnotationPointDisplayNode::SetGlyphScale(double scale)
 void vtkMRMLAnnotationPointDisplayNode::CreateBackup()
 {
 
-  vtkMRMLAnnotationPointDisplayNode * backupNode = vtkMRMLAnnotationPointDisplayNode::New();
+  vtkMRMLAnnotationPointDisplayNode* backupNode = vtkMRMLAnnotationPointDisplayNode::New();
 
   int oldMode = backupNode->GetDisableModifiedEvent();
   backupNode->DisableModifiedEventOn();

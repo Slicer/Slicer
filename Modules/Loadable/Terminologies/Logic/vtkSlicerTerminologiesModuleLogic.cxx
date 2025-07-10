@@ -77,7 +77,7 @@ public:
   /// Utility function to get code in Json array
   /// \param foundIndex Output parameter for index of found object in input array. -1 if not found
   /// \return Json object if found, otherwise null Json object
-  rapidjson::Value& GetCodeInArray(CodeIdentifier codeId, rapidjson::Value& jsonArray, int &foundIndex);
+  rapidjson::Value& GetCodeInArray(CodeIdentifier codeId, rapidjson::Value& jsonArray, int& foundIndex);
 
   /// Get root Json value for the terminology with given name
   rapidjson::Value& GetTerminologyRootByName(std::string terminologyName);
@@ -189,7 +189,7 @@ vtkSlicerTerminologiesModuleLogic::vtkInternal::~vtkInternal()
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray(CodeIdentifier codeId, rapidjson::Value &jsonArray, int &foundIndex)
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray(CodeIdentifier codeId, rapidjson::Value &jsonArray, int& foundIndex)
 {
   if (!jsonArray.IsArray())
   {

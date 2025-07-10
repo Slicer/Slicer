@@ -97,7 +97,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
 
 public:
   typedef ctkComboBox Superclass;
-  qMRMLSubjectHierarchyComboBox(QWidget *parent=nullptr);
+  qMRMLSubjectHierarchyComboBox(QWidget* parent=nullptr);
   ~qMRMLSubjectHierarchyComboBox() override;
 
 public:
@@ -166,7 +166,7 @@ public:
 
 
   /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
-  Q_INVOKABLE void setLevelFilter(QStringList &levelFilter);
+  Q_INVOKABLE void setLevelFilter(QStringList& levelFilter);
   /// Set node type filter that allows showing only data nodes of a certain type. Show all data nodes if empty
   Q_INVOKABLE void setNodeTypes(const QStringList& types);
   /// Set child node types filter that allows hiding certain data node subclasses that would otherwise be

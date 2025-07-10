@@ -44,7 +44,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerGroup : public
 {
 public:
 
-  static vtkMRMLDisplayableManagerGroup *New();
+  static vtkMRMLDisplayableManagerGroup* New();
   vtkTypeMacro(vtkMRMLDisplayableManagerGroup,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -52,18 +52,18 @@ public:
   /// then instantiate and add all displayable managers registered within the \a factory.
   /// \sa SetAndObserveDisplayableManagerFactory SetRenderer
   /// \sa AddDisplayableManager InstantiateDisplayableManager
-  void Initialize(vtkMRMLDisplayableManagerFactory * factory, vtkRenderer * renderer);
+  void Initialize(vtkMRMLDisplayableManagerFactory* factory, vtkRenderer* renderer);
 
   /// Set and observe DisplayableManager factory
-  void SetAndObserveDisplayableManagerFactory(vtkMRMLDisplayableManagerFactory * factory);
+  void SetAndObserveDisplayableManagerFactory(vtkMRMLDisplayableManagerFactory* factory);
 
   /// Add a DisplayableManager and initialize it if required
-  void AddDisplayableManager(vtkMRMLAbstractDisplayableManager * displayableManager);
+  void AddDisplayableManager(vtkMRMLAbstractDisplayableManager* displayableManager);
 
   /// Return the number of DisplayableManager already added to the group
   int GetDisplayableManagerCount();
 
-  vtkMRMLAbstractDisplayableManager *GetNthDisplayableManager(int n);
+  vtkMRMLAbstractDisplayableManager* GetNthDisplayableManager(int n);
 
   /// Return a DisplayableManager given its class name
   vtkMRMLAbstractDisplayableManager*
@@ -111,10 +111,10 @@ public:
   /// the Nth lightbox pane. The DisplayableManagers use this method
   /// to map coordinates to the proper lightbox pane, e.g. in placing
   /// crosshairs or markups in the proper renderer.
-  virtual void SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy *);
+  virtual void SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy*);
 
   /// Get the LightBoxRendererManagerProxy if one has been provided.
-  /// \sa SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy *)
+  /// \sa SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy*)
   virtual vtkMRMLLightBoxRendererManagerProxy* GetLightBoxRendererManagerProxy();
 
 protected:

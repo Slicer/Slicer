@@ -16,7 +16,7 @@
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
  public:
-  static vtkMRMLAnnotationPointDisplayNode *New (  );
+  static vtkMRMLAnnotationPointDisplayNode* New (  );
   vtkTypeMacro ( vtkMRMLAnnotationPointDisplayNode,vtkMRMLAnnotationDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent ) override;
 
@@ -37,7 +37,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode *node ) override;
+  void Copy ( vtkMRMLNode* node ) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
@@ -45,7 +45,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
 
   // Description:
   // Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
@@ -88,7 +88,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   /// Return a string representing the glyph type, set it from a string
   const char* GetGlyphTypeAsString();
   const char* GetGlyphTypeAsString(int g);
-  void SetGlyphTypeFromString(const char *glyphString);
+  void SetGlyphTypeFromString(const char* glyphString);
 
   /// Get/Set for Symbol scale
   ///  vtkSetMacro(GlyphScale,double);

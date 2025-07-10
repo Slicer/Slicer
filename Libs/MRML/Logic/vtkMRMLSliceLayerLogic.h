@@ -63,14 +63,14 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLayerLogic
 public:
 
   /// The Usual vtk class functions
-  static vtkMRMLSliceLayerLogic *New();
+  static vtkMRMLSliceLayerLogic* New();
   vtkTypeMacro(vtkMRMLSliceLayerLogic,vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
   /// The volume node to operate on
   vtkGetObjectMacro (VolumeNode, vtkMRMLVolumeNode);
-  void SetVolumeNode (vtkMRMLVolumeNode *VolumeNode);
+  void SetVolumeNode (vtkMRMLVolumeNode* VolumeNode);
 
   ///
   /// The volume display node has the render properties of the volume
@@ -82,7 +82,7 @@ public:
   ///
   /// The slice node that defines the view
   vtkGetObjectMacro (SliceNode, vtkMRMLSliceNode);
-  void SetSliceNode (vtkMRMLSliceNode *SliceNode);
+  void SetSliceNode (vtkMRMLSliceNode* SliceNode);
 
   ///
   /// The image reslice or slice being used
@@ -102,13 +102,13 @@ public:
 
   ///
   /// Get the output of the pipeline for this layer
-  vtkImageData *GetImageData();
-  vtkAlgorithmOutput *GetImageDataConnection();
+  vtkImageData* GetImageData();
+  vtkAlgorithmOutput* GetImageDataConnection();
 
   ///
   /// Get the output of the texture UVW pipeline for this layer
-  vtkImageData *GetImageDataUVW();
-  vtkAlgorithmOutput *GetImageDataConnectionUVW();
+  vtkImageData* GetImageDataUVW();
+  vtkAlgorithmOutput* GetImageDataConnectionUVW();
 
   void UpdateImageDisplay();
 
@@ -142,7 +142,7 @@ protected:
   void operator=(const vtkMRMLSliceLayerLogic&);
 
   // Initialize listening to MRML events
-  void SetMRMLSceneInternal(vtkMRMLScene * newScene) override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   ///
   /// provide the virtual method that updates this Logic based
@@ -163,26 +163,26 @@ protected:
 
   ///
   /// the MRML Nodes that define this Logic's parameters
-  vtkMRMLVolumeNode *VolumeNode;
-  vtkMRMLVolumeDisplayNode *VolumeDisplayNode;
-  vtkMRMLVolumeDisplayNode *VolumeDisplayNodeUVW;
-  vtkMRMLVolumeDisplayNode *VolumeDisplayNodeObserved;
-  vtkMRMLSliceNode *SliceNode;
+  vtkMRMLVolumeNode* VolumeNode;
+  vtkMRMLVolumeDisplayNode* VolumeDisplayNode;
+  vtkMRMLVolumeDisplayNode* VolumeDisplayNodeUVW;
+  vtkMRMLVolumeDisplayNode* VolumeDisplayNodeObserved;
+  vtkMRMLSliceNode* SliceNode;
 
   ///
   /// the VTK class instances that implement this Logic's operations
-  vtkImageReslice *Reslice;
-  vtkImageReslice *ResliceUVW;
-  vtkImageLabelOutline *LabelOutline;
-  vtkImageLabelOutline *LabelOutlineUVW;
+  vtkImageReslice* Reslice;
+  vtkImageReslice* ResliceUVW;
+  vtkImageLabelOutline* LabelOutline;
+  vtkImageLabelOutline* LabelOutlineUVW;
 
   vtkAssignAttribute* AssignAttributeTensorsToScalars;
   vtkAssignAttribute* AssignAttributeScalarsToTensors;
   vtkAssignAttribute* AssignAttributeScalarsToTensorsUVW;
 
   /// TODO: make this a vtkAbstractTransform for non-linear
-  vtkGeneralTransform *XYToIJKTransform;
-  vtkGeneralTransform *UVWToIJKTransform;
+  vtkGeneralTransform* XYToIJKTransform;
+  vtkGeneralTransform* UVWToIJKTransform;
 
   int IsLabelLayer;
 

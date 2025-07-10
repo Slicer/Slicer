@@ -136,9 +136,9 @@ char TestCopyImageDataEventLog[] =
 class vtkChangeImageCallback : public vtkCommand
 {
 public:
-  static vtkChangeImageCallback *New(){return new vtkChangeImageCallback;}
+  static vtkChangeImageCallback* New(){return new vtkChangeImageCallback;}
   vtkChangeImageCallback();
-  void Execute(vtkObject *caller, unsigned long, void*) override;
+  void Execute(vtkObject* caller, unsigned long, void*) override;
 
   enum ChangeImageBehavior
   {

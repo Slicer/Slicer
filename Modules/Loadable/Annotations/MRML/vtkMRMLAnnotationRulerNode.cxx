@@ -113,11 +113,11 @@ void vtkMRMLAnnotationRulerNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationRulerNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAnnotationRulerNode::Copy(vtkMRMLNode* anode)
 {
 
   Superclass::Copy(anode);
-  //vtkMRMLAnnotationRulerNode *node = (vtkMRMLAnnotationRulerNode *) anode;
+  //vtkMRMLAnnotationRulerNode* node = (vtkMRMLAnnotationRulerNode*) anode;
 
   //this->SetPosition1(node->GetPosition1());
   //this->SetPosition2(node->GetPosition2());
@@ -127,7 +127,7 @@ void vtkMRMLAnnotationRulerNode::Copy(vtkMRMLNode *anode)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLAnnotationRulerNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLAnnotationRulerNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 
@@ -137,9 +137,9 @@ void vtkMRMLAnnotationRulerNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationRulerNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLAnnotationRulerNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -192,7 +192,7 @@ int vtkMRMLAnnotationRulerNode::AddControlPoint(double newControl[3],int selecte
 //---------------------------------------------------------------------------
 double vtkMRMLAnnotationRulerNode::GetDistanceAnnotationScale()
 {
-  vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationTextDisplayNode* node = this->GetAnnotationTextDisplayNode();
   if (!node)
   {
       return 0;
@@ -203,7 +203,7 @@ double vtkMRMLAnnotationRulerNode::GetDistanceAnnotationScale()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerNode::SetDistanceAnnotationScale(double init)
 {
-  vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationTextDisplayNode* node = this->GetAnnotationTextDisplayNode();
 
   if (!node)
   {
@@ -268,7 +268,7 @@ int vtkMRMLAnnotationRulerNode::SetControlPoint(int id, double newControl[3])
 //---------------------------------------------------------------------------
 double* vtkMRMLAnnotationRulerNode::GetPointColor()
 {
-  vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode* node = this->GetAnnotationPointDisplayNode();
   if (!node)
   {
       return nullptr;
@@ -279,7 +279,7 @@ double* vtkMRMLAnnotationRulerNode::GetPointColor()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerNode::SetPointColor(double initColor[3])
 {
-  vtkMRMLAnnotationPointDisplayNode *node = this->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode* node = this->GetAnnotationPointDisplayNode();
   if (!node)
   {
       vtkErrorMacro("AnnotationRuler: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
@@ -291,7 +291,7 @@ void vtkMRMLAnnotationRulerNode::SetPointColor(double initColor[3])
 //---------------------------------------------------------------------------
 double* vtkMRMLAnnotationRulerNode::GetDistanceAnnotationTextColor()
 {
-  vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationTextDisplayNode* node = this->GetAnnotationTextDisplayNode();
   if (!node)
   {
       return nullptr;
@@ -302,7 +302,7 @@ double* vtkMRMLAnnotationRulerNode::GetDistanceAnnotationTextColor()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerNode::SetDistanceAnnotationTextColor(double initColor[3])
 {
-  vtkMRMLAnnotationTextDisplayNode *node = this->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationTextDisplayNode* node = this->GetAnnotationTextDisplayNode();
   if (!node)
   {
       vtkErrorMacro("AnnotationRuler: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
@@ -314,7 +314,7 @@ void vtkMRMLAnnotationRulerNode::SetDistanceAnnotationTextColor(double initColor
 //---------------------------------------------------------------------------
 double* vtkMRMLAnnotationRulerNode::GetLineColor()
 {
-  vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode* node = this->GetAnnotationLineDisplayNode();
   if (!node)
   {
       return nullptr;
@@ -325,7 +325,7 @@ double* vtkMRMLAnnotationRulerNode::GetLineColor()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerNode::SetLineColor(double initColor[3])
 {
-  vtkMRMLAnnotationLineDisplayNode *node = this->GetAnnotationLineDisplayNode();
+  vtkMRMLAnnotationLineDisplayNode* node = this->GetAnnotationLineDisplayNode();
   if (!node)
   {
       vtkErrorMacro("AnnotationRuler: "<< this->GetName() << " cannot get AnnotationPointDisplayNode");
@@ -339,7 +339,7 @@ void vtkMRMLAnnotationRulerNode::ApplyTransform(vtkAbstractTransform* transform)
 {
   double xyzIn[3];
   double xyzOut[3];
-  double *p;
+  double* p;
 
   // first point
   p = this->GetPosition1();
@@ -397,7 +397,7 @@ double vtkMRMLAnnotationRulerNode::GetDistanceMeasurement()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerNode::GetPosition1(double position[3])
 {
-  double * tmp = this->GetControlPointCoordinates(0);
+  double* tmp = this->GetControlPointCoordinates(0);
   if (!tmp)
   {
     vtkErrorMacro("AnnotationRuler - Failed to get first control point");
@@ -412,7 +412,7 @@ void vtkMRMLAnnotationRulerNode::GetPosition1(double position[3])
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationRulerNode::GetPosition2(double position[3])
 {
-  double * tmp = this->GetControlPointCoordinates(1);
+  double* tmp = this->GetControlPointCoordinates(1);
   if (!tmp)
   {
     vtkErrorMacro("AnnotationRuler - Failed to get second control point");

@@ -106,7 +106,7 @@ public:
   /// Create a list of orientation containing the regular presets and also
   /// the "Reformat" string if sliceToRAS is different one of the preset.
   static void updateSliceOrientationSelector(
-      vtkMRMLSliceNode* sliceNode, QComboBox *sliceOrientationSelector);
+      vtkMRMLSliceNode* sliceNode, QComboBox* sliceOrientationSelector);
 
 public slots:
   /// Update widget state when the scene is modified

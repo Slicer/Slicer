@@ -43,7 +43,7 @@ vtkStandardNewMacro(vtkITKImageWriter);
 
 // helper function
 template <class TPixelType, int Dimension>
-void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
+void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {
   typedef itk::Image<TPixelType, Dimension> ImageType;
@@ -164,7 +164,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   {
     typedef std::vector<std::vector<double> > DoubleVectorType;
     typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
-    const itk::MetaDataDictionary &dictionary = itkImageWriter->GetMetaDataDictionary();
+    const itk::MetaDataDictionary& dictionary = itkImageWriter->GetMetaDataDictionary();
 
     itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
     itk::MetaDataDictionary::ConstIterator end = dictionary.End();
@@ -215,7 +215,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 
 //----------------------------------------------------------------------------
 template <class TPixelType>
-void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
+void ITKWriteVTKImage(vtkITKImageWriter* self, vtkImageData* inputImage, char* fileName,
                       vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=nullptr)
 {
   std::string fileExtension = vtksys::SystemTools::LowerCase( vtksys::SystemTools::GetFilenameLastExtension(fileName) );
@@ -271,7 +271,7 @@ void vtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
 
 //----------------------------------------------------------------------------
 // This function sets the name of the file.
-void vtkITKImageWriter::SetFileName(const char *name)
+void vtkITKImageWriter::SetFileName(const char* name)
 {
   if (this->FileName && name && (!strcmp(this->FileName,name)))
   {

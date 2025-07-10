@@ -152,7 +152,7 @@ bool vtkSlicerPlaneRepresentation2D::GetTransformationReferencePoint(double refe
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerPlaneRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerPlaneRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -294,7 +294,7 @@ void vtkSlicerPlaneRepresentation2D::UpdatePlaneOutlineColorMap(vtkDiscretizable
 //----------------------------------------------------------------------
 void vtkSlicerPlaneRepresentation2D::CanInteract(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsPlaneNode* markupsNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
@@ -402,7 +402,7 @@ void vtkSlicerPlaneRepresentation2D::CanInteractWithPlane(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerPlaneRepresentation2D::GetActors(vtkPropCollection *pc)
+void vtkSlicerPlaneRepresentation2D::GetActors(vtkPropCollection* pc)
 {
   this->PlaneFillActor->GetActors(pc);
   this->PlaneOutlineActor->GetActors(pc);
@@ -412,7 +412,7 @@ void vtkSlicerPlaneRepresentation2D::GetActors(vtkPropCollection *pc)
 
 //----------------------------------------------------------------------
 void vtkSlicerPlaneRepresentation2D::ReleaseGraphicsResources(
-  vtkWindow *win)
+  vtkWindow* win)
 {
   this->PlaneFillActor->ReleaseGraphicsResources(win);
   this->PlaneOutlineActor->ReleaseGraphicsResources(win);
@@ -421,7 +421,7 @@ void vtkSlicerPlaneRepresentation2D::ReleaseGraphicsResources(
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerPlaneRepresentation2D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerPlaneRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
   int count = Superclass::RenderOverlay(viewport);
   if (this->PlaneFillActor->GetVisibility())
@@ -443,7 +443,7 @@ int vtkSlicerPlaneRepresentation2D::RenderOverlay(vtkViewport *viewport)
 
 //-----------------------------------------------------------------------------
 int vtkSlicerPlaneRepresentation2D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count = Superclass::RenderOpaqueGeometry(viewport);
   if (this->PlaneFillActor->GetVisibility())
@@ -465,7 +465,7 @@ int vtkSlicerPlaneRepresentation2D::RenderOpaqueGeometry(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerPlaneRepresentation2D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count = Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->PlaneFillActor->GetVisibility())
@@ -508,7 +508,7 @@ vtkTypeBool vtkSlicerPlaneRepresentation2D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerPlaneRepresentation2D::GetBounds()
+double* vtkSlicerPlaneRepresentation2D::GetBounds()
 {
   return nullptr;
 }

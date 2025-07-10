@@ -37,7 +37,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qSlicerTerminologyItemDelegat
 public:
   Q_PROPERTY(bool useDecorationRole READ useDecorationRole WRITE setUseDecorationRole)
 
-  qSlicerTerminologyItemDelegate(QObject *parent = nullptr);
+  qSlicerTerminologyItemDelegate(QObject* parent = nullptr);
 
   enum TerminologyItemDataRole
   {
@@ -58,12 +58,12 @@ public:
     GeneratedColorRole
   };
 
-  QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-  void setEditorData(QWidget *editor, const QModelIndex &index) const override;
-  void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
+  void setEditorData(QWidget* editor, const QModelIndex& index) const override;
+  void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
 
-  void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
   /// This method allow setting a callback function that takes a void* argument and returns bool
   void setUseTerminologySelectorCallback(std::function<bool()> callback);

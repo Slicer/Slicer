@@ -123,8 +123,8 @@ void qMRMLROIWidget::onMRMLNodeModified()
   d->InteractiveModeCheckBox->setChecked(interactive);
 
   // ROI
-  double *xyz = d->ROINode->GetXYZ();
-  double *rxyz = d->ROINode->GetRadiusXYZ();
+  double* xyz = d->ROINode->GetXYZ();
+  double* rxyz = d->ROINode->GetRadiusXYZ();
   double bounds[6];
   for (int i=0; i < 3; ++i)
   {

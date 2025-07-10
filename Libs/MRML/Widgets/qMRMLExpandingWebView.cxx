@@ -30,7 +30,7 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
-const char *htmlPreamble =
+const char* htmlPreamble =
   "<!DOCTYPE html>"
   "<html>"
   "<head>"
@@ -38,7 +38,7 @@ const char *htmlPreamble =
   "</head>"
   "<body>";
 
-const char *htmlPostscript =
+const char* htmlPostscript =
   "</body>"
   "</html>";
 
@@ -167,7 +167,7 @@ void qMRMLExpandingWebView::updateWidgetFromMRML()
 
   /*
   // get a node
-  char *nodeid = 0;
+  char* nodeid = 0;
 
   if (!nodeid)
     {

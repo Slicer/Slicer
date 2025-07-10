@@ -15,7 +15,7 @@
 #include "vtkMRMLScene.h"
 
 //---------------------------------------------------------------------------
-int vtkMRMLLinearTransformNodeTest1(int , char * [] )
+int vtkMRMLLinearTransformNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLLinearTransformNode> node1;
   vtkNew<vtkMRMLScene> scene;

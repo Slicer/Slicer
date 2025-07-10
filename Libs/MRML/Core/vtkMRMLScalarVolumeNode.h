@@ -34,7 +34,7 @@ class vtkCodedEntry;
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 {
   public:
-  static vtkMRMLScalarVolumeNode *New();
+  static vtkMRMLScalarVolumeNode* New();
   vtkTypeMacro(vtkMRMLScalarVolumeNode,vtkMRMLVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -58,7 +58,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
   ///
   /// Make a 'None' volume node with blank image data
-  static void CreateNoneNode(vtkMRMLScene *scene);
+  static void CreateNoneNode(vtkMRMLScene* scene);
 
   ///
   /// Associated display MRML node

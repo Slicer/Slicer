@@ -28,7 +28,7 @@ class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayableNodeTestHelper1 *New();
+  static vtkMRMLDisplayableNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLDisplayableNodeTestHelper1, vtkMRMLDisplayableNode);
 
@@ -66,7 +66,7 @@ class vtkMRMLDisplayNodeTestHelper : public vtkMRMLDisplayNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLDisplayNodeTestHelper *New();
+  static vtkMRMLDisplayNodeTestHelper* New();
 
   vtkTypeMacro(vtkMRMLDisplayNodeTestHelper, vtkMRMLDisplayNode);
 
@@ -94,7 +94,7 @@ int TestReferences();
 int TestImportIntoSceneWithNodeIdConflict();
 
 //----------------------------------------------------------------------------
-int vtkMRMLDisplayableNodeTest1(int , char * [] )
+int vtkMRMLDisplayableNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLDisplayableNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1);

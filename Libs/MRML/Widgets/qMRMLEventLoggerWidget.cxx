@@ -49,7 +49,7 @@ public:
     this, SLOT(on##_EVENT_NAME##Event()));
 
 //------------------------------------------------------------------------------
-qMRMLEventLoggerWidget::qMRMLEventLoggerWidget(QWidget *_parent):Superclass(_parent)
+qMRMLEventLoggerWidget::qMRMLEventLoggerWidget(QWidget* _parent):Superclass(_parent)
   , d_ptr(new qMRMLEventLoggerWidgetPrivate)
 {
   Q_D(qMRMLEventLoggerWidget);
@@ -102,7 +102,7 @@ void qMRMLEventLoggerWidget::onNodeAddedEvent(vtkObject* caller,
 {
   Q_UNUSED(caller);
   Q_D(qMRMLEventLoggerWidget);
-  vtkMRMLNode * node = vtkMRMLNode::SafeDownCast(call_data);
+  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(call_data);
   Q_ASSERT(node);
   d->log(QString("NodeAdded: %1").arg(node->GetClassName()));
 }
@@ -113,7 +113,7 @@ void qMRMLEventLoggerWidget::onNodeRemovedEvent(vtkObject* caller,
 {
   Q_UNUSED(caller);
   Q_D(qMRMLEventLoggerWidget);
-  vtkMRMLNode * node = vtkMRMLNode::SafeDownCast(call_data);
+  vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(call_data);
   Q_ASSERT(node);
   d->log(QString("NodeRemoved: %1").arg(node->GetClassName()));
 }

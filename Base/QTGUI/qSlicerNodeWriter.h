@@ -64,7 +64,7 @@ public:
   /// Create a storage node if the storable node doesn't have any.
   bool write(const qSlicerIO::IOProperties& properties) override;
 
-  virtual vtkMRMLNode* getNodeByID(const char *id)const;
+  virtual vtkMRMLNode* getNodeByID(const char* id)const;
 
   /// Return a qSlicerNodeWriterOptionsWidget
   qSlicerIOOptions* options()const override;

@@ -39,7 +39,7 @@ class QMRML_WIDGETS_EXPORT qMRMLDisplayNodeWidget : public QWidget
   Q_OBJECT
   QVTK_OBJECT
 public:
-  qMRMLDisplayNodeWidget(QWidget *parent=nullptr);
+  qMRMLDisplayNodeWidget(QWidget* parent=nullptr);
   ~qMRMLDisplayNodeWidget() override;
 
   vtkMRMLDisplayNode* mrmlDisplayNode()const;
@@ -54,9 +54,9 @@ public:
 
 public slots:
   /// Set the volume node to display
-  void setMRMLDisplayNode(vtkMRMLDisplayNode *node);
+  void setMRMLDisplayNode(vtkMRMLDisplayNode* node);
   /// Utility function to be connected with generic signals
-  void setMRMLDisplayNode(vtkMRMLNode *node);
+  void setMRMLDisplayNode(vtkMRMLNode* node);
   /// Utility function to be connected with generic signals,
   /// it internally shows the 1st display node.
   void setMRMLDisplayableNode(vtkMRMLNode* displayableNode);

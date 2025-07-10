@@ -51,7 +51,7 @@ vtkStandardNewMacro(vtkMRMLCrosshairDisplayableManager3D );
 class vtkMRMLCrosshairDisplayableManager3D::vtkInternal
 {
 public:
-  vtkInternal(vtkMRMLCrosshairDisplayableManager3D * external);
+  vtkInternal(vtkMRMLCrosshairDisplayableManager3D* external);
   ~vtkInternal();
 
   vtkObserverManager* GetMRMLNodesObserverManager();
@@ -81,7 +81,7 @@ public:
 
 //---------------------------------------------------------------------------
 vtkMRMLCrosshairDisplayableManager3D::vtkInternal
-::vtkInternal(vtkMRMLCrosshairDisplayableManager3D * external)
+::vtkInternal(vtkMRMLCrosshairDisplayableManager3D* external)
 {
   this->External = external;
   this->CrosshairMode = -1;
@@ -155,7 +155,7 @@ void vtkMRMLCrosshairDisplayableManager3D::vtkInternal::BuildCrosshair()
   this->CrosshairWidget->SetInteractor(interactor);
   this->CrosshairWidget->EnabledOn();
 
-  const int *screenSize = interactor->GetRenderWindow()->GetScreenSize();
+  const int* screenSize = interactor->GetRenderWindow()->GetScreenSize();
 
   // Handle size is defined a percentage of screen size to accommodate high-DPI screens
   double handleSizeInScreenSizePercent = 5;
@@ -255,8 +255,8 @@ void vtkMRMLCrosshairDisplayableManager3D::OnMRMLNodeModified(vtkMRMLNode* node)
   }
 
   // update the position of the actor
-  double *ras = this->Internal->CrosshairNode->GetCrosshairRAS();
-  double *lastRas = this->Internal->CrosshairPosition;
+  double* ras = this->Internal->CrosshairNode->GetCrosshairRAS();
+  double* lastRas = this->Internal->CrosshairPosition;
   double eps = 1.0e-12;
   if (fabs(lastRas[0] - ras[0]) > eps
     || fabs(lastRas[1] - ras[1]) > eps

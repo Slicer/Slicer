@@ -59,7 +59,7 @@
 // Build the slicer rendering infrastructure to render data from volume file
 // into the given render window.  Populate the scene and return the slice logic.
 //
-vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, const char *archetype)
+vtkMRMLSliceLogic* setupSliceDisplay(vtkMRMLScene* scene, vtkRenderWindow* rw, const char* archetype)
 {
   // Add default slice orientation presets
   vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(scene);
@@ -67,10 +67,10 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
   //
   // allocate needed nodes, add them to the scene, and connect them together
   //
-  vtkMRMLScalarVolumeNode *volumeNode = vtkMRMLScalarVolumeNode::New();
-  vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::New();
-  vtkMRMLVolumeArchetypeStorageNode *storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
-  vtkMRMLColorTableNode *colorNode = vtkMRMLColorTableNode::New();
+  vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::New();
+  vtkMRMLScalarVolumeDisplayNode* displayNode = vtkMRMLScalarVolumeDisplayNode::New();
+  vtkMRMLVolumeArchetypeStorageNode* storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
+  vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::New();
 
   volumeNode->SetScene( scene );
   displayNode->SetScene( scene );
@@ -96,30 +96,30 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
   //
   // Create the slice logic to create the slice image
   //
-  vtkMRMLSliceLogic *sliceLogic = vtkMRMLSliceLogic::New();
+  vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::New();
   sliceLogic->SetMRMLScene(scene);
   sliceLogic->AddSliceNode("Image Viewer");
 
-  vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = sliceLogic->GetSliceNode();
   sliceNode->SetOrientationToCoronal();
 
-  vtkMRMLSliceCompositeNode *compositeNode = sliceLogic->GetSliceCompositeNode();
+  vtkMRMLSliceCompositeNode* compositeNode = sliceLogic->GetSliceCompositeNode();
   compositeNode->SetBackgroundVolumeID( volumeNode->GetID() );
 
   //
   // get the output slice and put it into the render window
   //
-  // vtkImageData *slice = 0;
-  vtkAlgorithmOutput *slicePort = sliceLogic->GetImageDataConnection();
+  // vtkImageData* slice = 0;
+  vtkAlgorithmOutput* slicePort = sliceLogic->GetImageDataConnection();
 
-  vtkImageMapper *mapper = vtkImageMapper::New();
+  vtkImageMapper* mapper = vtkImageMapper::New();
   mapper->SetColorWindow( 255. );
   mapper->SetColorLevel ( 127.5 );
   mapper->SetInputConnection( slicePort );
-  vtkActor2D *actor = vtkActor2D::New();
+  vtkActor2D* actor = vtkActor2D::New();
   actor->SetMapper( mapper );
   actor->GetProperty()->SetDisplayLocationToBackground();
-  vtkRenderer *renderer = vtkRenderer::New();
+  vtkRenderer* renderer = vtkRenderer::New();
   renderer->AddActor2D( actor );
   rw->AddRenderer( renderer );
 
@@ -135,7 +135,7 @@ vtkMRMLSliceLogic *setupSliceDisplay(vtkMRMLScene *scene, vtkRenderWindow *rw, c
   return( sliceLogic );
 }
 
-int qSlicerWidgetTest2(int argc, char * argv[] )
+int qSlicerWidgetTest2(int argc, char* argv[] )
 {
   if (argc != 2 && argc != 3)
   {
@@ -169,7 +169,7 @@ int qSlicerWidgetTest2(int argc, char * argv[] )
   widget->setParent(&parentWidget);
   vbox.addWidget(widget);
 
-  QVTKOpenGLNativeWidget * vtkWidget = new QVTKOpenGLNativeWidget;
+  QVTKOpenGLNativeWidget* vtkWidget = new QVTKOpenGLNativeWidget;
   vtkWidget->setEnableHiDPI(true);
 
   vtkWidget->setParent(&parentWidget);

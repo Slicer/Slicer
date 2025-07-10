@@ -62,7 +62,7 @@ qMRMLSortFilterProxyModelPrivate::qMRMLSortFilterProxyModelPrivate()
 // qMRMLSortFilterProxyModel
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterProxyModel::qMRMLSortFilterProxyModel(QObject *vparent)
+qMRMLSortFilterProxyModel::qMRMLSortFilterProxyModel(QObject* vparent)
   :QSortFilterProxyModel(vparent)
   , d_ptr(new qMRMLSortFilterProxyModelPrivate)
 {
@@ -161,10 +161,10 @@ QVariant qMRMLSortFilterProxyModel::attributeFilter(const QString& nodeType,
 }
 
 //------------------------------------------------------------------------------
-//bool qMRMLSortFilterProxyModel::filterAcceptsColumn(int source_column, const QModelIndex & source_parent)const;
+//bool qMRMLSortFilterProxyModel::filterAcceptsColumn(int source_column, const QModelIndex& source_parent)const;
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent)const
+bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent)const
 {
   QStandardItem* parentItem = this->sourceItem(source_parent);
   if (parentItem == nullptr)
@@ -302,7 +302,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
         SLOT(invalidate()),0., Qt::UniqueConnection);
 
       QString attributeName = d->Attributes[nodeType].first;
-      const char *nodeAttribute = node->GetAttribute(attributeName.toUtf8());
+      const char* nodeAttribute = node->GetAttribute(attributeName.toUtf8());
       QString nodeAttributeQString = node->GetAttribute(attributeName.toUtf8());
       QString testAttribute = d->Attributes[nodeType].second.toString();
 

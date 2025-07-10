@@ -328,7 +328,7 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
     {
       extraItems.append(qMRMLNodeComboBox::tr("Delete current ")  + label);
     }
-    foreach (QAction *action, this->UserMenuActions)
+    foreach (QAction* action, this->UserMenuActions)
     {
       extraItems.append(action->text());
     }
@@ -365,7 +365,7 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
       QStyle::SH_ComboBox_Popup, &opt, this->ComboBox))
   {
       if (force ||
-          qobject_cast<qMRMLNodeComboBoxDelegate *>(this->ComboBox->itemDelegate()))
+          qobject_cast<qMRMLNodeComboBoxDelegate*>(this->ComboBox->itemDelegate()))
       {
         this->ComboBox->setItemDelegate(
             new qMRMLNodeComboBoxMenuDelegate(q->parent(), q->comboBox()));
@@ -374,7 +374,7 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
   else
   {
       if (force ||
-          qobject_cast<qMRMLNodeComboBoxMenuDelegate *>(this->ComboBox->itemDelegate()))
+          qobject_cast<qMRMLNodeComboBoxMenuDelegate*>(this->ComboBox->itemDelegate()))
       {
         this->ComboBox->setItemDelegate(
             new qMRMLNodeComboBoxDelegate(q->parent(), q->comboBox()));
@@ -490,7 +490,7 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
   else
   {
     // check for user added items
-    foreach (QAction *action, d->UserMenuActions)
+    foreach (QAction* action, d->UserMenuActions)
     {
       if (data.startsWith(action->text()))
       {
@@ -616,7 +616,7 @@ vtkMRMLNode* qMRMLNodeComboBox::addNode(QString nodeType)
     return nullptr;
   }
   // Create the MRML node via the MRML Scene
-  vtkMRMLNode * newNode = d->MRMLNodeFactory->createNode(nodeType);
+  vtkMRMLNode* newNode = d->MRMLNodeFactory->createNode(nodeType);
   // The created node is appended at the bottom of the current list
   if (newNode==nullptr)
   {
@@ -918,7 +918,7 @@ void qMRMLNodeComboBox::setCurrentNodeID(const QString& nodeID)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxPrivate::setCurrentNodeIDInternal(const QString & nodeID)
+void qMRMLNodeComboBoxPrivate::setCurrentNodeIDInternal(const QString& nodeID)
 {
   Q_Q(qMRMLNodeComboBox);
   // A straight forward implementation of setCurrentNode would be:
@@ -1239,7 +1239,7 @@ QComboBox* qMRMLNodeComboBox::comboBox()const
 }
 
 //--------------------------------------------------------------------------
-void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex & parent, int start, int end)
+void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex& parent, int start, int end)
 {
   Q_D(qMRMLNodeComboBox);
   Q_ASSERT(this->model());
@@ -1254,7 +1254,7 @@ void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex & parent, int start, in
 }
 
 //--------------------------------------------------------------------------
-void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex & parent, int start, int end)
+void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex& parent, int start, int end)
 {
   Q_D(qMRMLNodeComboBox);
   Q_ASSERT(this->model());
@@ -1297,7 +1297,7 @@ void qMRMLNodeComboBox::setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy policy)
 }
 
 //--------------------------------------------------------------------------
-void qMRMLNodeComboBox::changeEvent(QEvent *event)
+void qMRMLNodeComboBox::changeEvent(QEvent* event)
 {
   Q_D(qMRMLNodeComboBox);
   if(event->type() == QEvent::StyleChange)
@@ -1308,12 +1308,12 @@ void qMRMLNodeComboBox::changeEvent(QEvent *event)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBox::addMenuAction(QAction *newAction)
+void qMRMLNodeComboBox::addMenuAction(QAction* newAction)
 {
   Q_D(qMRMLNodeComboBox);
 
   // is an action with the same text already in the user list?
-  foreach (QAction *action, d->UserMenuActions)
+  foreach (QAction* action, d->UserMenuActions)
   {
     if (action->text() == newAction->text())
     {

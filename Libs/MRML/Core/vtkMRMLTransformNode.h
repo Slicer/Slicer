@@ -33,7 +33,7 @@ class vtkTransform;
 class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLDisplayableNode
 {
 public:
-  static vtkMRMLTransformNode *New();
+  static vtkMRMLTransformNode* New();
   vtkTypeMacro(vtkMRMLTransformNode,vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -57,7 +57,7 @@ public:
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override
+  void UpdateScene(vtkMRMLScene* scene) override
   {
      Superclass::UpdateScene(scene);
   };
@@ -211,12 +211,12 @@ public:
   /// the old transform by calling SetAndObserveTransformToParent(nullptr)
   /// and then set the matrix.
   /// \sa SetMatrixTransformFromParent
-  virtual int SetMatrixTransformToParent(vtkMatrix4x4 *matrix);
+  virtual int SetMatrixTransformToParent(vtkMatrix4x4* matrix);
 
   ///
   /// Set a new matrix transform of this node from parent node.
   /// \sa SetMatrixTransformToParent
-  virtual int SetMatrixTransformFromParent(vtkMatrix4x4 *matrix);
+  virtual int SetMatrixTransformFromParent(vtkMatrix4x4* matrix);
 
   ///
   /// Applies a transformation matrix to the current matrix.
@@ -233,13 +233,13 @@ public:
   /// Set a new matrix transform of this node to parent node.
   /// Returns 0 if the current transform is not linear.
   /// \deprecated Use SetMatrixTransformToParent instead.
-  virtual int SetAndObserveMatrixTransformToParent(vtkMatrix4x4 *matrix);
+  virtual int SetAndObserveMatrixTransformToParent(vtkMatrix4x4* matrix);
 
   ///
   /// Set a new matrix transform of this node from parent node.
   /// Returns 0 if the current transform is not linear.
   /// \deprecated Use SetMatrixTransformToParent instead.
-  virtual int SetAndObserveMatrixTransformFromParent(vtkMatrix4x4 *matrix);
+  virtual int SetAndObserveMatrixTransformFromParent(vtkMatrix4x4* matrix);
 
   /// Reimplemented from vtkMRMLTransformableNode
   bool CanApplyNonLinearTransforms()const override;
@@ -303,14 +303,14 @@ public:
   /// vtkMRMLTransformableNode::TransformModifiedEvent is fired.
   /// ModifiedEvent() and TransformModifiedEvent() are fired after the transform
   /// is set.
-  void SetAndObserveTransformToParent(vtkAbstractTransform *transform);
+  void SetAndObserveTransformToParent(vtkAbstractTransform* transform);
 
   /// Set and observe a new transform of this node from parent node.
   /// Each time the transform is modified,
   /// vtkMRMLTransformableNode::TransformModifiedEvent is fired.
   /// ModifiedEvent() and TransformModifiedEvent() are fired after the transform
   /// is set.
-  void SetAndObserveTransformFromParent(vtkAbstractTransform *transform);
+  void SetAndObserveTransformFromParent(vtkAbstractTransform* transform);
 
   /// alternative method to propagate events generated in Transform nodes
   void ProcessMRMLEvents ( vtkObject * /*caller*/,
@@ -389,7 +389,7 @@ protected:
 
   ///
   /// Sets and observes a transform and deletes the inverse (so that the inverse will be computed automatically)
-  virtual void SetAndObserveTransform(vtkAbstractTransform** originalTransformPtr, vtkAbstractTransform** inverseTransformPtr, vtkAbstractTransform *transform);
+  virtual void SetAndObserveTransform(vtkAbstractTransform** originalTransformPtr, vtkAbstractTransform** inverseTransformPtr, vtkAbstractTransform* transform);
 
   ///
   /// These transforms store the transforms that were set externally.

@@ -270,9 +270,9 @@ void vtkMRMLUnitNode::SetName(const char* name)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLUnitNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLUnitNode::Copy(vtkMRMLNode* anode)
 {
-  vtkMRMLUnitNode *node = vtkMRMLUnitNode::SafeDownCast(anode);
+  vtkMRMLUnitNode* node = vtkMRMLUnitNode::SafeDownCast(anode);
   if (!node)
   {
     return;

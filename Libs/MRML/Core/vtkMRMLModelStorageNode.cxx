@@ -149,13 +149,13 @@ int vtkMRMLModelStorageNode::GetCoordinateSystemFromString(const char* name)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLModelStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLModelStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLModelNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   if (this->GetWriteState() == SkippedNoData)
   {
@@ -163,7 +163,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 1;
   }
 
-  vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
+  vtkMRMLModelNode* modelNode = dynamic_cast <vtkMRMLModelNode*> (refNode);
   if (!modelNode)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
@@ -331,14 +331,14 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         readerSH->SetFileName(fullName.c_str());
         readerSH->Update();
         MeshReaderType::GroupType::Pointer group = readerSH->GetGroup();
-        MeshReaderType::GroupType::ObjectListType * objList =  group->GetChildren(1,nullptr);
+        MeshReaderType::GroupType::ObjectListType* objList =  group->GetChildren(1,nullptr);
 
         MeshReaderType::GroupType::ObjectListType::iterator it = objList->begin();
         itk::SpatialObject<3> * curObj = *it;
         MeshSpatialObjectType::Pointer  SOMesh = dynamic_cast<MeshSpatialObjectType*> (curObj);
         surfaceMesh = SOMesh->GetMesh();
       }
-      catch(itk::ExceptionObject &ex)
+      catch(itk::ExceptionObject& ex)
       {
         vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
           "Failed to load model from ITK .meta file " << fullName << ": " << ex.GetDescription());
@@ -483,7 +483,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       // is there an active scalar array?
       if (displayNode && displayNode->GetScalarRangeFlag() == vtkMRMLDisplayNode::UseDataScalarRange)
       {
-        double *scalarRange = modelNode->GetMesh()->GetScalarRange();
+        double* scalarRange = modelNode->GetMesh()->GetScalarRange();
         if (scalarRange)
         {
           vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
@@ -496,9 +496,9 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())

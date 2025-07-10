@@ -482,7 +482,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::PostConvert(vtkSegmentation
 
 //----------------------------------------------------------------------------
 template<class ImageScalarType>
-void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool &paddingNecessary)
+void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool& paddingNecessary)
 {
   if (!binaryLabelmap)
   {

@@ -19,7 +19,7 @@
 #include <vtkNew.h>
 
 //---------------------------------------------------------------------------
-int vtkMRMLLinearTransformNodeEventsTest(int , char * [] )
+int vtkMRMLLinearTransformNodeEventsTest(int, char*[])
 {
   vtkNew< vtkMRMLLinearTransformNode > linearTransformNode;
 

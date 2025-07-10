@@ -67,7 +67,7 @@ bool CompareBounds(double b[6], double e[6])
 }// end namespace
 
 //-----------------------------------------------------------------------------
-int vtkSlicerTransformLogicTest3(int argc, char * argv [])
+int vtkSlicerTransformLogicTest3(int argc, char* argv [])
 {
   if(argc < 2)
   {

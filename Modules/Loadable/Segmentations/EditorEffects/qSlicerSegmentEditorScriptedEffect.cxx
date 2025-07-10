@@ -110,7 +110,7 @@ qSlicerSegmentEditorScriptedEffectPrivate::~qSlicerSegmentEditorScriptedEffectPr
 // qSlicerSegmentEditorScriptedEffect methods
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScriptedEffect::qSlicerSegmentEditorScriptedEffect(QObject *parent)
+qSlicerSegmentEditorScriptedEffect::qSlicerSegmentEditorScriptedEffect(QObject* parent)
   : Superclass(parent)
   , d_ptr(new qSlicerSegmentEditorScriptedEffectPrivate)
 {

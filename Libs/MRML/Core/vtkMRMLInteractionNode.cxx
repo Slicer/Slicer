@@ -29,7 +29,7 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
 vtkMRMLInteractionNode::~vtkMRMLInteractionNode() = default;
 
 //----------------------------------------------------------------------------
-int vtkMRMLInteractionNode::GetInteractionModeByString ( const char * modeString )
+int vtkMRMLInteractionNode::GetInteractionModeByString ( const char* modeString )
 {
   if (modeString == nullptr)
   {
@@ -232,12 +232,12 @@ void vtkMRMLInteractionNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLInteractionNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLInteractionNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLInteractionNode *node = (vtkMRMLInteractionNode *) anode;
+  vtkMRMLInteractionNode* node = (vtkMRMLInteractionNode*) anode;
 
   this->SetCurrentInteractionMode (node->GetCurrentInteractionMode());
   this->SetPlaceModePersistence (node->GetPlaceModePersistence());
@@ -260,7 +260,7 @@ void vtkMRMLInteractionNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-const char * vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
+const char* vtkMRMLInteractionNode::GetInteractionModeAsString(int mode)
 {
   if (mode == this->Place)
   {

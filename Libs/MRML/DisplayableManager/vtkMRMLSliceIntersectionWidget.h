@@ -46,7 +46,7 @@ public:
   /**
    * Instantiate this class.
    */
-  static vtkMRMLSliceIntersectionWidget *New();
+  static vtkMRMLSliceIntersectionWidget* New();
 
   //@{
   /**
@@ -69,7 +69,7 @@ public:
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic) override;
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
 
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;

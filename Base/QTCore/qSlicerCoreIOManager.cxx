@@ -65,7 +65,7 @@ public:
   QList<qSlicerFileReader*> readers(const QString& fileName)const;
 
   QList<qSlicerFileWriter*> writers(
-    const qSlicerIO::IOFileType &fileType,
+    const qSlicerIO::IOFileType& fileType,
     const qSlicerIO::IOProperties& parameters,
     vtkMRMLScene* scene = nullptr
   ) const;
@@ -401,7 +401,7 @@ QStringList qSlicerCoreIOManager::allWritableFileExtensions()const
   int numRegisteredNodeClasses = d->currentScene()->GetNumberOfRegisteredNodeClasses();
   for (int i = 0; i < numRegisteredNodeClasses; ++i)
   {
-    vtkMRMLNode *mrmlNode = d->currentScene()->GetNthRegisteredNodeClass(i);
+    vtkMRMLNode* mrmlNode = d->currentScene()->GetNthRegisteredNodeClass(i);
     if (mrmlNode && mrmlNode->IsA("vtkMRMLStorageNode"))
     {
       vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(mrmlNode);
@@ -438,7 +438,7 @@ QStringList qSlicerCoreIOManager::allReadableFileExtensions()const
   int numRegisteredNodeClasses = d->currentScene()->GetNumberOfRegisteredNodeClasses();
   for (int i = 0; i < numRegisteredNodeClasses; ++i)
   {
-    vtkMRMLNode *mrmlNode = d->currentScene()->GetNthRegisteredNodeClass(i);
+    vtkMRMLNode* mrmlNode = d->currentScene()->GetNthRegisteredNodeClass(i);
     if (mrmlNode && mrmlNode->IsA("vtkMRMLStorageNode"))
     {
       vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(mrmlNode);
@@ -569,7 +569,7 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode *node)const
+QString qSlicerCoreIOManager::completeSlicerWritableFileNameSuffix(vtkMRMLStorableNode* node)const
 {
   vtkMRMLStorageNode* storageNode = node->GetStorageNode();
   if (!storageNode)
@@ -1226,7 +1226,7 @@ void qSlicerCoreIOManager::setDefaultSceneFileType(QString fileType)
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, QString &readerDescription, qSlicerIO::IOProperties &ioProperties)const
+bool qSlicerCoreIOManager::examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, QString& readerDescription, qSlicerIO::IOProperties& ioProperties)const
 {
   Q_D(const qSlicerCoreIOManager);
   QList<qSlicerFileReader*> res;

@@ -26,7 +26,7 @@ class ModuleDescription;
 class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLCommandLineModuleNode *New();
+  static vtkMRMLCommandLineModuleNode* New();
   vtkTypeMacro(vtkMRMLCommandLineModuleNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -275,7 +275,7 @@ public:
 
   std::string GetParameterAsString(const char* name) const;
 
-  void SetModuleDescription(const char *name);
+  void SetModuleDescription(const char* name);
   std::string GetModuleVersion() const;
   std::string GetModuleTitle() const;
   std::string GetModuleTarget() const;
@@ -323,8 +323,8 @@ public:
   void Modified() override;
 protected:
   void AbortProcess();
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event,
-                                 void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event,
+                                 void* callData) override;
 
   int ContinuousOutputUpdateInProgressCount{0};
 
@@ -335,7 +335,7 @@ private:
   void operator=(const vtkMRMLCommandLineModuleNode&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

@@ -17,7 +17,7 @@
 class VTK_ITK_EXPORT vtkITKMorphologicalContourInterpolator : public vtkSimpleImageToImageFilter
 {
 public:
-  static vtkITKMorphologicalContourInterpolator *New();
+  static vtkITKMorphologicalContourInterpolator* New();
   vtkTypeMacro(vtkITKMorphologicalContourInterpolator, vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

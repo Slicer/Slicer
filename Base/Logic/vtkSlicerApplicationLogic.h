@@ -50,7 +50,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   public:
 
   /// The Usual vtk class functions
-  static vtkSlicerApplicationLogic *New();
+  static vtkSlicerApplicationLogic* New();
   vtkTypeMacro(vtkSlicerApplicationLogic, vtkMRMLApplicationLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -61,9 +61,9 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// method to hook them into the scene.
   /// \sa qSlicerCoreApplicationPrivate::initDataIO()
   /// \sa vtkMRMLRemoteIOLogic::AddDataIOToScene()
-  void SetMRMLSceneDataIO(vtkMRMLScene *scene,
-                          vtkMRMLRemoteIOLogic *remoteIOLogic,
-                          vtkDataIOManagerLogic *dataIOManagerLogic);
+  void SetMRMLSceneDataIO(vtkMRMLScene* scene,
+                          vtkMRMLRemoteIOLogic* remoteIOLogic,
+                          vtkDataIOManagerLogic* dataIOManagerLogic);
 
 
   /// Create a thread for processing
@@ -98,7 +98,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered.
   /// \todo Fire RequestProcessedEvent when processing Modified requests.
   /// \sa RequestReadData(), RequestWriteData()
-  vtkMTimeType RequestModified(vtkObject *);
+  vtkMTimeType RequestModified(vtkObject*);
 
   /// Request that data be read from a file and set it on the referenced
   /// node.  The request will be sent to the main thread which will be
@@ -108,7 +108,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered. When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
-  vtkMTimeType RequestReadFile(const char *refNode, const char *filename,
+  vtkMTimeType RequestReadFile(const char* refNode, const char* filename,
     int displayData = false, int deleteFile = false);
 
   /// Request setting of parent transform.
@@ -117,7 +117,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered. When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
-  vtkMTimeType RequestUpdateParentTransform(const std::string &updatedNode, const std::string& parentTransformNode);
+  vtkMTimeType RequestUpdateParentTransform(const std::string& updatedNode, const std::string& parentTransformNode);
 
   /// Request setting of subject hierarchy location (will have the same parent and same level as sibling node).
   /// The request will executed on the main thread.
@@ -125,7 +125,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered. When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
-  vtkMTimeType RequestUpdateSubjectHierarchyLocation(const std::string &updatedNode, const std::string& siblingNode);
+  vtkMTimeType RequestUpdateSubjectHierarchyLocation(const std::string& updatedNode, const std::string& siblingNode);
 
   /// Request adding a node reference
   /// The request will executed on the main thread.
@@ -133,7 +133,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered. When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
-  vtkMTimeType RequestAddNodeReference(const std::string &referencingNode, const std::string& referencedNode, const std::string& role);
+  vtkMTimeType RequestAddNodeReference(const std::string& referencingNode, const std::string& referencedNode, const std::string& role);
 
   /// Return the number of items that need to be read from the queue
   /// (this allows code that invokes command line modules to know when
@@ -146,7 +146,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// the request failed to be registered.  When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
   /// \sa RequestReadData(), RequestReadScene()
-  vtkMTimeType RequestWriteData(const char *refNode, const char *filename);
+  vtkMTimeType RequestWriteData(const char* refNode, const char* filename);
 
   /// Request that a scene be read from a file. Mappings of node IDs in
   /// the file (sourceIDs) to node IDs in the main scene

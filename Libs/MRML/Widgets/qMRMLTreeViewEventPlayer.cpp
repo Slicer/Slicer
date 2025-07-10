@@ -32,7 +32,7 @@
 
 //-----------------------------------------------------------------------------
 QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index,
-  QTreeView* treeView, bool &error)
+  QTreeView* treeView, bool& error)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QStringList indices = str_index.split(".", Qt::SkipEmptyParts);
@@ -56,17 +56,17 @@ QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index,
 }
 
 // ----------------------------------------------------------------------------
-qMRMLTreeViewEventPlayer::qMRMLTreeViewEventPlayer(QObject *parent)
+qMRMLTreeViewEventPlayer::qMRMLTreeViewEventPlayer(QObject* parent)
   : Superclass(parent)
 {
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLTreeViewEventPlayer::playEvent(QObject *Object,
-                                    const QString &Command,
-                                    const QString &Arguments,
+bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object,
+                                    const QString& Command,
+                                    const QString& Arguments,
                                     int EventType,
-                                    bool &Error)
+                                    bool& Error)
 {
   if(Command != "currentNodeRenamed" && Command != "currentNodeDeleted" &&
      Command != "editNodeRequested" && Command != "decorationClicked" &&

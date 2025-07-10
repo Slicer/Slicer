@@ -738,7 +738,7 @@ QTableView* qMRMLSegmentsTableView::tableWidget()
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentsTableView::onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void qMRMLSegmentsTableView::onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
   Q_D(qMRMLSegmentsTableView);
   if (d->JumpToSelectedSegmentEnabled)
@@ -966,7 +966,7 @@ bool qMRMLSegmentsTableView::eventFilter(QObject* target, QEvent* event)
     // widget in the tab order)
     if (event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* keyEvent = static_cast<QKeyEvent *>(event);
+      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       QAbstractItemModel* model = d->SegmentsTable->model();
       QModelIndex currentIndex = d->SegmentsTable->currentIndex();
 

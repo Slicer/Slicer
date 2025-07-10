@@ -35,16 +35,16 @@ class vtkMatrix4x4;
 class vtkSegmentationCore_EXPORT vtkOrientedImageData : public vtkImageData
 {
 public:
-  static vtkOrientedImageData *New();
+  static vtkOrientedImageData* New();
   vtkTypeMacro(vtkOrientedImageData,vtkImageData);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Shallow copy
-  void ShallowCopy(vtkDataObject *src) override;
+  void ShallowCopy(vtkDataObject* src) override;
   /// Deep copy
-  void DeepCopy(vtkDataObject *src) override;
+  void DeepCopy(vtkDataObject* src) override;
   /// Copy orientation information only
-  virtual void CopyDirections(vtkDataObject *src);
+  virtual void CopyDirections(vtkDataObject* src);
 
 public:
   /// Set directions only

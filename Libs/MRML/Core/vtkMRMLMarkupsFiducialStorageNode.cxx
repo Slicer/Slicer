@@ -55,7 +55,7 @@ public:
   CsvCodec()  = default;
   ~CsvCodec()  = default;
 
-  void ReadFromString(const std::string &row)
+  void ReadFromString(const std::string& row)
   {
     CSVState state = UnquotedField;
     this->Fields.clear();
@@ -142,7 +142,7 @@ public:
   }
 
 
-  bool GetStringField(int fieldIndex, std::string &fieldValue)
+  bool GetStringField(int fieldIndex, std::string& fieldValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
     {
@@ -152,7 +152,7 @@ public:
     return true;
   }
 
-  bool GetDoubleField(int fieldIndex, double &fieldValue)
+  bool GetDoubleField(int fieldIndex, double& fieldValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
     {
@@ -163,7 +163,7 @@ public:
     return v.IsValid();
   }
 
-  bool GetDoubleField(int fieldIndex, double &fieldValue, double defaultValue)
+  bool GetDoubleField(int fieldIndex, double& fieldValue, double defaultValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields() || this->Fields[fieldIndex].empty())
     {
@@ -180,7 +180,7 @@ public:
     return true;
   }
 
-  bool GetIntField(int fieldIndex, int &fieldValue)
+  bool GetIntField(int fieldIndex, int& fieldValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields())
     {
@@ -191,7 +191,7 @@ public:
     return v.IsValid();
   }
 
-  bool GetIntField(int fieldIndex, int &fieldValue, int defaultValue)
+  bool GetIntField(int fieldIndex, int& fieldValue, int defaultValue)
   {
     if (fieldIndex < 0 || fieldIndex >= this->GetNumberOfFields() || this->Fields[fieldIndex].empty())
     {
@@ -275,19 +275,19 @@ void vtkMRMLMarkupsFiducialStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMarkupsFiducialStorageNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsFiducialStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLMarkupsFiducialStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLMarkupsNode");
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *markupsNode, int pointIndex, const char* line)
+bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode* markupsNode, int pointIndex, const char* line)
 {
   if (!markupsNode)
   {
@@ -441,7 +441,7 @@ bool vtkMRMLMarkupsFiducialStorageNode::SetPointFromString(vtkMRMLMarkupsNode *m
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNode *markupsNode, int pointIndex)
+std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNode* markupsNode, int pointIndex)
 {
   if (!markupsNode)
   {
@@ -505,7 +505,7 @@ std::string vtkMRMLMarkupsFiducialStorageNode::GetPointAsString(vtkMRMLMarkupsNo
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   if (!refNode)
   {
@@ -522,7 +522,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   }
 
   // cast the input node
-  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(refNode);
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(refNode);
   if (!markupsNode)
   {
     return 0;
@@ -714,7 +714,7 @@ int vtkMRMLMarkupsFiducialStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -725,10 +725,10 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkDebugMacro("WriteDataInternal: have file name " << fullName.c_str());
 
   // cast the input node
-  vtkMRMLMarkupsNode *markupsNode = nullptr;
+  vtkMRMLMarkupsNode* markupsNode = nullptr;
   if (refNode->IsA("vtkMRMLMarkupsNode"))
   {
-    markupsNode = dynamic_cast <vtkMRMLMarkupsNode *> (refNode);
+    markupsNode = dynamic_cast <vtkMRMLMarkupsNode*> (refNode);
   }
 
   if (markupsNode == nullptr)

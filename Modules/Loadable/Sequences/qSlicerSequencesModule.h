@@ -54,7 +54,7 @@ qSlicerSequencesModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerSequencesModule(QObject *parent=0);
+  explicit qSlicerSequencesModule(QObject* parent=0);
   ~qSlicerSequencesModule() override;
 
   qSlicerGetTitleMacro(tr("Sequences"));
@@ -88,7 +88,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

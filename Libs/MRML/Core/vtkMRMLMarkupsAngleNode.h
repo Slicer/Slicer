@@ -35,7 +35,7 @@
 class  VTK_MRML_EXPORT vtkMRMLMarkupsAngleNode : public vtkMRMLMarkupsNode
 {
 public:
-  static vtkMRMLMarkupsAngleNode *New();
+  static vtkMRMLMarkupsAngleNode* New();
   vtkTypeMacro(vtkMRMLMarkupsAngleNode,vtkMRMLMarkupsNode);
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;

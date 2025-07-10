@@ -60,9 +60,9 @@ protected:
   void UnobserveMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  void ProcessMRMLNodesEvents(vtkObject *caller,
+  void ProcessMRMLNodesEvents(vtkObject* caller,
                                       unsigned long event,
-                                      void *callData) override;
+                                      void* callData) override;
 
   /// Called when the SliceNode or Three3DViewNode are modified. May cause ColorLegend to remap its position on screen.
   void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;

@@ -15,7 +15,7 @@
 #include "vtkMRMLScene.h"
 #include "vtkMRMLViewNode.h"
 
-int vtkMRMLViewNodeTest1(int , char * [] )
+int vtkMRMLViewNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLViewNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

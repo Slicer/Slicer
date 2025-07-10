@@ -147,7 +147,7 @@ void qSlicerMarkupsModulePrivate::addToolBar()
   mainWindow->addToolBarBreak();
   mainWindow->addToolBar(this->ToolBar);
   this->MarkupsModuleOwnsToolBar = false;
-  foreach(QMenu * toolBarMenu, mainWindow->findChildren<QMenu*>())
+  foreach(QMenu* toolBarMenu, mainWindow->findChildren<QMenu*>())
   {
     if (toolBarMenu->objectName() == QString("WindowToolBarsMenu"))
     {
@@ -232,7 +232,7 @@ void qSlicerMarkupsModule::setup()
   Q_D(qSlicerMarkupsModule);
   this->Superclass::setup();
 
-  vtkSlicerMarkupsLogic *logic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
+  vtkSlicerMarkupsLogic* logic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic());
   if (!logic)
   {
     qCritical() << Q_FUNC_INFO << ": cannot get Markups logic.";

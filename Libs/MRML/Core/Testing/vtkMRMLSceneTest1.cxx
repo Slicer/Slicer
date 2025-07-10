@@ -23,7 +23,7 @@ class vtkMRMLCustomNode
   : public vtkMRMLNode
 {
 public:
-  static vtkMRMLCustomNode *New();
+  static vtkMRMLCustomNode* New();
   vtkTypeMacro(vtkMRMLCustomNode, vtkMRMLNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -52,7 +52,7 @@ class vtkMRMLAnotherCustomNode
   : public vtkMRMLNode
 {
 public:
-  static vtkMRMLAnotherCustomNode *New();
+  static vtkMRMLAnotherCustomNode* New();
   vtkTypeMacro(vtkMRMLAnotherCustomNode, vtkMRMLNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -69,7 +69,7 @@ protected:
 vtkMRMLNodeNewMacro(vtkMRMLAnotherCustomNode);
 
 //------------------------------------------------------------------------------
-int vtkMRMLSceneTest1(int , char * [] )
+int vtkMRMLSceneTest1(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene1;
 

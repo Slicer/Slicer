@@ -41,7 +41,7 @@
 
 // STD includes
 
-int qMRMLNavigationViewTest1(int argc, char * argv [] )
+int qMRMLNavigationViewTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

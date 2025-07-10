@@ -25,7 +25,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 class VTK_MRML_EXPORT vtkArchive : public vtkObject
 {
 public:
-  static vtkArchive *New();
+  static vtkArchive* New();
   vtkTypeMacro(vtkArchive, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -41,7 +41,7 @@ public:
 
   // unzips zip file into specified directory
   // (internally this supports many formats of archive, not just zip)
-  static bool UnZip(const char* zipFileName, const char *destinationDirectory);
+  static bool UnZip(const char* zipFileName, const char* destinationDirectory);
 
 protected:
   vtkArchive();

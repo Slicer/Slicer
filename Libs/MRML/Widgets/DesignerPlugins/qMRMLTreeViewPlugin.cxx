@@ -23,12 +23,12 @@
 #include "qMRMLTreeView.h"
 
 // --------------------------------------------------------------------------
-qMRMLTreeViewPlugin::qMRMLTreeViewPlugin(QObject *_parent):QObject(_parent)
+qMRMLTreeViewPlugin::qMRMLTreeViewPlugin(QObject* _parent):QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLTreeViewPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLTreeViewPlugin::createWidget(QWidget* _parent)
 {
   qMRMLTreeView* _widget = new qMRMLTreeView(_parent);
   return _widget;

@@ -115,8 +115,8 @@ void qSlicerColorsModuleWidgetPrivate::setDefaultColorNode()
   {
     return;
   }
-  const char *defaultID = this->colorLogic()->GetDefaultLabelMapColorNodeID();
-  vtkMRMLColorNode *defaultNode = vtkMRMLColorNode::SafeDownCast(
+  const char* defaultID = this->colorLogic()->GetDefaultLabelMapColorNodeID();
+  vtkMRMLColorNode* defaultNode = vtkMRMLColorNode::SafeDownCast(
     q->mrmlScene()->GetNodeByID(defaultID));
   this->ColorTableComboBox->setCurrentNode(defaultNode);
 }
@@ -175,7 +175,7 @@ void qSlicerColorsModuleWidget::setup()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerColorsModuleWidget::setMRMLScene(vtkMRMLScene *scene)
+void qSlicerColorsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qSlicerColorsModuleWidget);
   this->qSlicerAbstractModuleWidget::setMRMLScene(scene);
@@ -210,8 +210,8 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
 
   d->CopyColorNodeButton->setEnabled(true);
 
-  vtkMRMLColorTableNode *colorTableNode = vtkMRMLColorTableNode::SafeDownCast(colorNode);
-  vtkMRMLProceduralColorNode *procColorNode = vtkMRMLProceduralColorNode::SafeDownCast(colorNode);
+  vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(colorNode);
+  vtkMRMLProceduralColorNode* procColorNode = vtkMRMLProceduralColorNode::SafeDownCast(colorNode);
   if (colorTableNode && !procColorNode)
   {
     // hide the procedural display, show the color table
@@ -233,7 +233,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     d->RemoveCurrentColorButton->setEnabled(editable);
 
     // set the range and the input for the color widget depending on if it's a freesurfer node or a color table node
-    double *range = nullptr;
+    double* range = nullptr;
     d->LUTRangeWidget->setEnabled(editable);
     if (colorTableNode && colorTableNode->GetLookupTable())
     {
@@ -322,7 +322,7 @@ void qSlicerColorsModuleWidget::setLookupTableRange(double min, double max)
 {
   Q_D(qSlicerColorsModuleWidget);
 
-  vtkMRMLNode *currentNode = d->ColorTableComboBox->currentNode();
+  vtkMRMLNode* currentNode = d->ColorTableComboBox->currentNode();
   if (!currentNode)
   {
     return;
@@ -349,7 +349,7 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
     return;
   }
 
-  vtkMRMLColorNode *colorNode = nullptr;
+  vtkMRMLColorNode* colorNode = nullptr;
   if (currentNode->IsA("vtkMRMLColorTableNode") ||
       currentNode->IsA("vtkMRMLFreeSurferProceduralColorNode"))
   {

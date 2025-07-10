@@ -42,7 +42,7 @@
 #include <vtkTable.h>
 #include "qMRMLWidget.h"
 
-int qSlicerTableColumnPropertiesWidgetTest1( int argc, char * argv [] )
+int qSlicerTableColumnPropertiesWidgetTest1( int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

@@ -107,7 +107,7 @@ void qSlicerViewControllersModule::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerViewControllersModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerViewControllersModule::createWidgetRepresentation()
 {
   return new qSlicerViewControllersModuleWidget;
 }

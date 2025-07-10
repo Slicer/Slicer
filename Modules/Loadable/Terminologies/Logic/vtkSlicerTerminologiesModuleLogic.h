@@ -40,7 +40,7 @@ class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologiesModuleLogic :
   public vtkSlicerModuleLogic
 {
 public:
-  static vtkSlicerTerminologiesModuleLogic *New();
+  static vtkSlicerTerminologiesModuleLogic* New();
   vtkTypeMacro(vtkSlicerTerminologiesModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -187,7 +187,7 @@ public:
     std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
     std::vector<std::string> preferredTerminologyNames,
     std::string& foundTerminologyName,
-    std::string &foundColorNodeID,
+    std::string& foundColorNodeID,
     int& foundColorIndex);
 
   /// Return list of region context names containing the specified region.

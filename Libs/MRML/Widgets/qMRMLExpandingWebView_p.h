@@ -39,7 +39,7 @@ public:
   virtual void init();
 
   void setMRMLScene(vtkMRMLScene* scene);
-  vtkMRMLScene *mrmlScene();
+  vtkMRMLScene* mrmlScene();
 
 public slots:
   /// Handle MRML scene events

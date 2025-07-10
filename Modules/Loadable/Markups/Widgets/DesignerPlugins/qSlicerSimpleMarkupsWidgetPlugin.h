@@ -34,9 +34,9 @@ qSlicerSimpleMarkupsWidgetPlugin
   Q_OBJECT
 
 public:
-  qSlicerSimpleMarkupsWidgetPlugin(QObject *_parent = nullptr);
+  qSlicerSimpleMarkupsWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

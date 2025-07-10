@@ -106,7 +106,7 @@ void vtkMRMLFolderDisplayNode::SetScene(vtkMRMLScene* scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 

@@ -582,7 +582,7 @@ CTK_GET_CPP(qMRMLSubjectHierarchyTreeView, QStringList, pluginBlockList, PluginB
 //------------------------------------------------------------------------------
 // qMRMLSubjectHierarchyTreeView
 //------------------------------------------------------------------------------
-qMRMLSubjectHierarchyTreeView::qMRMLSubjectHierarchyTreeView(QWidget *parent)
+qMRMLSubjectHierarchyTreeView::qMRMLSubjectHierarchyTreeView(QWidget* parent)
   : QTreeView(parent)
   , d_ptr(new qMRMLSubjectHierarchyTreeViewPrivate(*this))
 {
@@ -1218,7 +1218,7 @@ void qMRMLSubjectHierarchyTreeView::removeNodeAttributeFilter(QString attributeN
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::setLevelFilter(QStringList &levelFilter)
+void qMRMLSubjectHierarchyTreeView::setLevelFilter(QStringList& levelFilter)
 {
   this->sortFilterProxyModel()->setLevelFilter(levelFilter);
 
@@ -1233,7 +1233,7 @@ QStringList qMRMLSubjectHierarchyTreeView::levelFilter()const
 }
 
 //--------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::setNameFilter(QString &nameFilter)
+void qMRMLSubjectHierarchyTreeView::setNameFilter(QString& nameFilter)
 {
   this->sortFilterProxyModel()->setNameFilter(nameFilter);
 
@@ -1491,7 +1491,7 @@ void qMRMLSubjectHierarchyTreeView::onSelectionChanged(const QItemSelection& sel
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::onItemExpanded(const QModelIndex &expandedItemIndex)
+void qMRMLSubjectHierarchyTreeView::onItemExpanded(const QModelIndex& expandedItemIndex)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
   if (!d->SubjectHierarchyNode || !d->SortFilterModel)
@@ -1507,7 +1507,7 @@ void qMRMLSubjectHierarchyTreeView::onItemExpanded(const QModelIndex &expandedIt
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::onItemCollapsed(const QModelIndex &collapsedItemIndex)
+void qMRMLSubjectHierarchyTreeView::onItemCollapsed(const QModelIndex& collapsedItemIndex)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
   if (!d->SubjectHierarchyNode || !d->SortFilterModel)
@@ -1564,7 +1564,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
 
   // "Add new ..." node actions
   bool addNodeActionsVisible = d->AddNodeMenuActionVisible && (!currentItemID || currentItemID == d->SubjectHierarchyNode->GetSceneItemID());
-  foreach(QAction * addNodeAction, d->AddNodeActions)
+  foreach(QAction* addNodeAction, d->AddNodeActions)
   {
     addNodeAction->setVisible(addNodeActionsVisible);
   }
@@ -2112,7 +2112,7 @@ vtkIdType qMRMLSubjectHierarchyTreeView::firstSelectedSubjectHierarchyItemInBran
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *caller, void *callData)
+void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject* caller, void* callData)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
 
@@ -2142,7 +2142,7 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject *ca
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemTransformModified(vtkObject *caller, void *callData)
+void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemTransformModified(vtkObject* caller, void* callData)
 {
   Q_D(qMRMLSubjectHierarchyTreeView);
   Q_UNUSED(callData);

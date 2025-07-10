@@ -41,7 +41,7 @@ class VTK_SLICER_COLORS_VTKWIDGETS_EXPORT vtkSlicerScalarBarActor
 {
 public:
   // The usual VTK class functions
-  static vtkSlicerScalarBarActor *New();
+  static vtkSlicerScalarBarActor* New();
   vtkTypeMacro(vtkSlicerScalarBarActor,vtkScalarBarActor);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

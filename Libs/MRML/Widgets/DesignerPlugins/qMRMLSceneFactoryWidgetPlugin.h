@@ -29,9 +29,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLSceneFactoryWidgetPlugin : public QObjec
   Q_OBJECT
 
 public:
-  qMRMLSceneFactoryWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLSceneFactoryWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

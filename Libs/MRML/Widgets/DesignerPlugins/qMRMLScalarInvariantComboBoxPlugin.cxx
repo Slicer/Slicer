@@ -29,7 +29,7 @@ qMRMLScalarInvariantComboBoxPlugin
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLScalarInvariantComboBoxPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLScalarInvariantComboBoxPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLScalarInvariantComboBox* newWidget = new qMRMLScalarInvariantComboBox(parentWidget);
   return newWidget;

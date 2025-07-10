@@ -46,7 +46,7 @@ public:
   qSlicerFileDialog::IOAction action()const override;
 
   bool isMimeDataAccepted(const QMimeData* mimeData)const override;
-  void dropEvent(QDropEvent *event) override;
+  void dropEvent(QDropEvent* event) override;
 
   /// run the dialog to select the file/files/directory
   Q_INVOKABLE bool exec(const qSlicerIO::IOProperties& readerProperties =

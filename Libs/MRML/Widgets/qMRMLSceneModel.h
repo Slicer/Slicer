@@ -95,7 +95,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   Q_PROPERTY( int extraItemColumn READ extraItemColumn WRITE setExtraItemColumn)
 public:
   typedef QStandardItemModel Superclass;
-  qMRMLSceneModel(QObject *parent=nullptr);
+  qMRMLSceneModel(QObject* parent=nullptr);
   ~qMRMLSceneModel() override;
 
   enum NodeTypes
@@ -131,7 +131,7 @@ public:
 
   /// Return the vtkMRMLNode associated to the node index.
   /// 0 if the node index is not a MRML node (i.e. vtkMRMLScene, extra item...)
-  inline vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex &nodeIndex)const;
+  inline vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& nodeIndex)const;
   vtkMRMLNode* mrmlNodeFromItem(QStandardItem* nodeItem)const;
   QModelIndex indexFromNode(vtkMRMLNode* node, int column = 0)const;
   // Utility function
@@ -183,8 +183,8 @@ public:
   /// actions though.
   Qt::DropActions supportedDropActions()const override;
   QMimeData* mimeData(const QModelIndexList& indexes)const override;
-  bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-                            int row, int column, const QModelIndex &parent) override;
+  bool dropMimeData(const QMimeData* data, Qt::DropAction action,
+                            int row, int column, const QModelIndex& parent) override;
 
   /// Returns the parent node of the node, 0 otherwise (the parent is the scene).
   /// Must be reimplemented in derived classes. If reimplemented, you might
@@ -237,7 +237,7 @@ protected slots:
   /// The node has its ID changed. The scene model needs to update the UIDRole
   /// associated with the node in order to keep being in sync.
   void onMRMLNodeIDChanged(vtkObject* node, void* callData);
-  virtual void onItemChanged(QStandardItem * item);
+  virtual void onItemChanged(QStandardItem* item);
   virtual void delayedItemChanged();
 
   /// Recompute the number of columns in the model.
@@ -261,7 +261,7 @@ signals:
   void sceneUpdated();
 
 protected:
-  qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parent=nullptr);
+  qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject* parent=nullptr);
 
   virtual void updateScene();
   virtual void populateScene();
@@ -338,7 +338,7 @@ Q_DECLARE_METATYPE(qMRMLSceneModel::NodeTypes)
 void printStandardItem(QStandardItem* item, const QString& offset);
 
 // -----------------------------------------------------------------------------
-vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromIndex(const QModelIndex &nodeIndex)const
+vtkMRMLNode* qMRMLSceneModel::mrmlNodeFromIndex(const QModelIndex& nodeIndex)const
 {
   return this->mrmlNodeFromItem(this->itemFromIndex(nodeIndex));
 }

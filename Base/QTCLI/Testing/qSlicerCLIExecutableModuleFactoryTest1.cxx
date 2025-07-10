@@ -27,7 +27,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int qSlicerCLIExecutableModuleFactoryTest1(int, char * [] )
+int qSlicerCLIExecutableModuleFactoryTest1(int, char*[])
 {
   QStringList executableNames;
   executableNames << "Threshold.exe"

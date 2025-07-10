@@ -142,12 +142,12 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLAnnotationLineDisplayNode *node = (vtkMRMLAnnotationLineDisplayNode *) anode;
+  vtkMRMLAnnotationLineDisplayNode* node = (vtkMRMLAnnotationLineDisplayNode*) anode;
   this->SetLineThickness(node->LineThickness);
   this->SetLabelPosition(node->LabelPosition);
   this->SetLabelVisibility(node->LabelVisibility);
@@ -182,16 +182,16 @@ void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLAnnotationLineDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
 }
 
 //-----------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLAnnotationLineDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
    Superclass::UpdateScene(scene);
 }
@@ -218,7 +218,7 @@ void vtkMRMLAnnotationLineDisplayNode::SetLineThickness(double thickness)
 // Create a backup of this node and store it with the node.
 void vtkMRMLAnnotationLineDisplayNode::CreateBackup()
 {
-  vtkMRMLAnnotationLineDisplayNode * backupNode = vtkMRMLAnnotationLineDisplayNode::New();
+  vtkMRMLAnnotationLineDisplayNode* backupNode = vtkMRMLAnnotationLineDisplayNode::New();
 
   int oldMode = backupNode->GetDisableModifiedEvent();
   backupNode->DisableModifiedEventOn();

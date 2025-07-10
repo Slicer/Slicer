@@ -49,9 +49,9 @@ public:
 
 private:
 
-  void dumpExtensionMetatype(const char * varname, const ExtensionMetadataType& extensionMetadata);
+  void dumpExtensionMetatype(const char* varname, const ExtensionMetadataType& extensionMetadata);
 
-  static ExtensionMetadataType extensionMetadata(const QString &os, int extensionId, bool filtered = false, bool installed = false);
+  static ExtensionMetadataType extensionMetadata(const QString& os, int extensionId, bool filtered = false, bool installed = false);
 
   QStringList expectedExtensionNames()const;
 
@@ -61,9 +61,9 @@ private:
 
   bool prepareJson(const QString& jsonFile, qSlicerExtensionsManagerModel::ServerAPI serverAPI);
 
-  void installHelper(qSlicerExtensionsManagerModel *model, const QString &os, int extensionId, const QString &tmp);
+  void installHelper(qSlicerExtensionsManagerModel* model, const QString& os, int extensionId, const QString& tmp);
 
-  bool uninstallHelper(qSlicerExtensionsManagerModel *model, const QString& extensionName);
+  bool uninstallHelper(qSlicerExtensionsManagerModel* model, const QString& extensionName);
 
   bool resetTmp();
   QDir Tmp;
@@ -246,7 +246,7 @@ bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile,
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManagerModel * model,
+void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManagerModel* model,
                                                         const QString& os,
                                                         int extensionId,
                                                         const QString& tmp)
@@ -310,7 +310,7 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
 }
 
 // ----------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModelTester::uninstallHelper(qSlicerExtensionsManagerModel *model, const QString& extensionName)
+bool qSlicerExtensionsManagerModelTester::uninstallHelper(qSlicerExtensionsManagerModel* model, const QString& extensionName)
 {
   bool success = model->scheduleExtensionForUninstall(extensionName);
   success = success && model->uninstallScheduledExtensions();
@@ -335,7 +335,7 @@ bool qSlicerExtensionsManagerModelTester::resetTmp()
 
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::dumpExtensionMetatype(
-    const char * varname, const ExtensionMetadataType& extensionMetadata)
+    const char* varname, const ExtensionMetadataType& extensionMetadata)
 {
   std::cout << "[" << varname << "]" << std::endl;
   foreach(const QString& key, extensionMetadata.keys())
@@ -347,7 +347,7 @@ void qSlicerExtensionsManagerModelTester::dumpExtensionMetatype(
 
 // ----------------------------------------------------------------------------
 qSlicerExtensionsManagerModelTester::ExtensionMetadataType
-qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int extensionId, bool filtered, bool installed)
+qSlicerExtensionsManagerModelTester::extensionMetadata(const QString& os, int extensionId, bool filtered, bool installed)
 {
   int serverAPI = qSlicerExtensionsManagerModel::Girder_v1;
 
@@ -1887,10 +1887,10 @@ typedef void (qSlicerExtensionsManagerModel::* QStringSetter)(const QString&);
 typedef QString (qSlicerExtensionsManagerModel::* QStringGetter)()const;
 
 // ----------------------------------------------------------------------------
-void testRequirementsHelper(qSlicerExtensionsManagerModel * model,
+void testRequirementsHelper(qSlicerExtensionsManagerModel* model,
                             QStringSetter qStringSetterFuncPtr,
                             QStringGetter qStringGetterFuncPtr,
-                            const char * changedPropertySignal
+                            const char* changedPropertySignal
                             )
 {
   QFETCH(QStringList, valuesToSet);

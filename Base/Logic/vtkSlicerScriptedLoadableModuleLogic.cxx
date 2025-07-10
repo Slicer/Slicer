@@ -49,7 +49,7 @@ public:
 //    };
 
 //  static int          APIMethodCount;
-//  static const char * APIMethodNames[2];
+//  static const char* APIMethodNames[2];
 
   std::string  PythonSourceFilePath;
   PyObject *   PythonSelf;
@@ -112,7 +112,7 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 ////---------------------------------------------------------------------------
 //void vtkSlicerScriptedLoadableModuleLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 //{
-//  vtkIntArray * sceneEventsAsPointer = 0;
+//  vtkIntArray* sceneEventsAsPointer = 0;
 
 //  // Obtain list of event to listen
 //  PyObject* method =
@@ -132,9 +132,9 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 //}
 
 ////---------------------------------------------------------------------------
-//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLSceneEvents(vtkObject *caller,
+//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLSceneEvents(vtkObject* caller,
 //                                                             unsigned long event,
-//                                                             void *callData)
+//                                                             void* callData)
 //{
 //  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLSceneEventsMethod];
 //  if (!method)
@@ -154,9 +154,9 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 //}
 
 ////---------------------------------------------------------------------------
-//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLNodesEvents(vtkObject *caller,
+//void vtkSlicerScriptedLoadableModuleLogic::ProcessMRMLNodesEvents(vtkObject* caller,
 //                                                              unsigned long event,
-//                                                              void *callData)
+//                                                              void* callData)
 //{
 //  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
 //  if (!method)

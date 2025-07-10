@@ -41,7 +41,7 @@
 
 // STD includes
 
-int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
+int qMRMLSceneCategoryModelTest1(int argc, char* argv [])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

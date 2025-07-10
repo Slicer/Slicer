@@ -90,22 +90,22 @@ public:
 //  void setProfile(QWebEngineProfile* profile);
 
   /// Return a reference to the QWebView used internally.
-  Q_INVOKABLE QWebEngineView * webView();
+  Q_INVOKABLE QWebEngineView* webView();
 
   /// Convenient function to evaluate JS in main frame context
   /// from C++ or Python code
-  Q_INVOKABLE QString evalJS(const QString &js);
+  Q_INVOKABLE QString evalJS(const QString& js);
 
   /// Convenience for setting the internal webView QUrl from a QString
   Q_INVOKABLE QString url();
 
   /// Convenience for setting the internal webView html from a QString
-  Q_INVOKABLE void setHtml(const QString &html, const QUrl &baseUrl = QUrl());
+  Q_INVOKABLE void setHtml(const QString& html, const QUrl& baseUrl = QUrl());
 
 public slots:
 
   /// Convenience for setting the internal webView QUrl from a QString
-  void setUrl(const QString &url);
+  void setUrl(const QString& url);
 
   void onDownloadStarted(QNetworkReply* reply);
 
@@ -136,7 +136,7 @@ signals:
   void loadFinished(bool ok);
 
   /// signal passed through from QWebEnginePage
-  void pdfPrintingFinished(const QString &filePath, bool success);
+  void pdfPrintingFinished(const QString& filePath, bool success);
 
 protected slots:
   virtual void initJavascript();
@@ -149,7 +149,7 @@ protected:
   qSlicerWebWidget(qSlicerWebWidgetPrivate* pimpl, QWidget* parent = nullptr);
   QScopedPointer<qSlicerWebWidgetPrivate> d_ptr;
 
-  virtual bool acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame);
+  virtual bool acceptNavigationRequest(const QUrl& url, QWebEnginePage::NavigationType type, bool isMainFrame);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerWebWidget);

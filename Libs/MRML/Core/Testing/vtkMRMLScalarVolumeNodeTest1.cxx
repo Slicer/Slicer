@@ -14,7 +14,7 @@
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 
-int vtkMRMLScalarVolumeNodeTest1(int , char * [] )
+int vtkMRMLScalarVolumeNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLScalarVolumeNode> node1;
   vtkNew<vtkMRMLScene> scene;

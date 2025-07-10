@@ -73,7 +73,7 @@ void qMRMLListWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLListWidget::qMRMLListWidget(QWidget *_parent)
+qMRMLListWidget::qMRMLListWidget(QWidget* _parent)
   : QListView(_parent)
   , d_ptr(new qMRMLListWidgetPrivate(*this))
 {

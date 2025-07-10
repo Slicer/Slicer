@@ -41,7 +41,7 @@
 
 // STD includes
 
-int qMRMLWindowLevelWidgetTest1(int argc, char * argv [] )
+int qMRMLWindowLevelWidgetTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

@@ -27,9 +27,9 @@ qSlicerScalarVolumeDisplayWidgetPlugin
   Q_OBJECT
 
 public:
-  qSlicerScalarVolumeDisplayWidgetPlugin(QObject *_parent = nullptr);
+  qSlicerScalarVolumeDisplayWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

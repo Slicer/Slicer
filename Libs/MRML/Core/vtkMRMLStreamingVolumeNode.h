@@ -44,13 +44,13 @@ Care Ontario.
 class  VTK_MRML_EXPORT vtkMRMLStreamingVolumeNode : public vtkMRMLVectorVolumeNode
 {
 public:
-  static vtkMRMLStreamingVolumeNode *New();
+  static vtkMRMLStreamingVolumeNode* New();
   vtkTypeMacro(vtkMRMLStreamingVolumeNode,vtkMRMLVectorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Set node attributes
   void ReadXMLAttributes(const char** atts) override;
@@ -93,7 +93,7 @@ public:
 
   /// Callback that is called if the current frame is modified
   /// Invokes FrameModifiedEvent
-  static void FrameModifiedCallback(vtkObject *caller, unsigned long eid, void* clientData, void* callData);
+  static void FrameModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
   enum
   {
     FrameModifiedEvent = 18002

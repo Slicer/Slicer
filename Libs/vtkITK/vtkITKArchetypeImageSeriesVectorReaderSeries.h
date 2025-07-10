@@ -21,18 +21,18 @@ namespace itk
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderSeries : public vtkITKArchetypeImageSeriesReader
 {
 public:
-  static vtkITKArchetypeImageSeriesVectorReaderSeries *New();
+  static vtkITKArchetypeImageSeriesVectorReaderSeries* New();
   vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderSeries,vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static void ReadProgressCallback(itk::Object* obj,
-                                   const itk::EventObject &,
+                                   const itk::EventObject&,
                                    void* data);
 protected:
   vtkITKArchetypeImageSeriesVectorReaderSeries();
   ~vtkITKArchetypeImageSeriesVectorReaderSeries() override;
 
-  void ExecuteDataWithInformation(vtkDataObject *output, vtkInformation *outInfo) override;
+  void ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo) override;
 
 private:
   vtkITKArchetypeImageSeriesVectorReaderSeries(const vtkITKArchetypeImageSeriesVectorReaderSeries&) = delete;

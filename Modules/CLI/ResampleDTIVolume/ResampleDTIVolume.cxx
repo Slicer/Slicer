@@ -93,8 +93,8 @@ bool VectorIsNul( std::vector<double> vec )
 
 // What pixeltype is the image
 void GetImageType( std::string fileName,
-                   itk::IOPixelEnum & pixelType,
-                   itk::IOComponentEnum & componentType )
+                   itk::IOPixelEnum& pixelType,
+                   itk::IOComponentEnum& componentType )
 {
   typedef itk::Image<unsigned char, 3> ImageType;
   itk::ImageFileReader<ImageType>::Pointer imageReader =
@@ -328,7 +328,7 @@ ComputeTransformMatrix( const parameters & list,
 
 template <class PixelType>
 typename itk::DiffusionTensor3DAffineTransform<PixelType>::Pointer
-FSOrPPD( const std::string & ppd, itk::Matrix<double, 4, 4> *matrix = nullptr )
+FSOrPPD( const std::string& ppd, itk::Matrix<double, 4, 4> *matrix = nullptr )
 {
   typedef itk::DiffusionTensor3DFSAffineTransform<PixelType>
   FSAffineTransformType;
@@ -431,7 +431,7 @@ SetTransformAndOrder( parameters & list,
     if( transformClassName.find("AffineTransform") != std::string::npos ) // if affine transform
     {
       matrixOffsetTransform = static_cast<
-          typename FSAffineTransformType::Superclass::AffineTransformType *>
+          typename FSAffineTransformType::Superclass::AffineTransformType*>
         ( transform.GetPointer() );
       list.transformType.assign( "a" );
       SetListFromTransform<double>( matrixOffsetTransform, list );
@@ -451,7 +451,7 @@ SetTransformAndOrder( parameters & list,
           list.transformType.assign( "rt" );
           precisionChecking = false;
           matrixOffsetTransform = static_cast<
-              typename RigidTransformType::Rigid3DTransformType *>
+              typename RigidTransformType::Rigid3DTransformType*>
             ( transform.GetPointer() );;
           SetListFromTransform<double>( matrixOffsetTransform, list );
         }
@@ -461,7 +461,7 @@ SetTransformAndOrder( parameters & list,
           { // if non rigid Transform loaded
             list.transformType.assign( "nr" );
             nonRigidFile = static_cast<
-                typename NonRigidTransformType::TransformType *>
+                typename NonRigidTransformType::TransformType*>
               ( transform.GetPointer() );
           }
           else // something else
@@ -504,12 +504,12 @@ SetTransform( parameters & list,
   {
     if( !list.transformsOrder.compare( "input-to-output" ) )
     {
-      transform = static_cast<TransformType *>
+      transform = static_cast<TransformType*>
         ( transformFile->GetTransformList()->back().GetPointer() );
     }
     else
     {
-      transform = static_cast<TransformType *>
+      transform = static_cast<TransformType*>
         ( transformFile->GetTransformList()->front().GetPointer() );
     }
   }
@@ -791,7 +791,7 @@ int Do( parameters list )
       measurementFrame = reader->GetOutput()->GetDirection() ;
     }
   }
-  catch( itk::ExceptionObject & Except )
+  catch( itk::ExceptionObject& Except )
   {
     std::cerr << "Reading input image: Exception caught!"
               << std::endl;
@@ -914,7 +914,7 @@ int Do( parameters list )
         {
           typedef itk::BSplineDeformableTransform<double, 3, 3> BSplineDeformableTransformType;
           BSplineDeformableTransformType::Pointer BSplineTransform;
-          BSplineTransform = static_cast<BSplineDeformableTransformType *>(transform->GetTransform().GetPointer() );
+          BSplineTransform = static_cast<BSplineDeformableTransformType*>(transform->GetTransform().GetPointer() );
           typename TransformType::Pointer bulkTransform;
           bulkTransform = SetTransform<PixelType>( list, image, transformFile, outputImageCenter  );
           BSplineTransform->SetBulkTransform( bulkTransform->GetTransform() );
@@ -966,7 +966,7 @@ int Do( parameters list )
                   << std::endl;
         return EXIT_FAILURE;
       }
-      localTransform = static_cast<MatrixTransformType *>(transform.GetPointer() );
+      localTransform = static_cast<MatrixTransformType*>(transform.GetPointer() );
       matrix = localTransform->GetMatrix3x3();
       vector = localTransform->GetTranslation();
       tempMatrix.SetIdentity();
@@ -1076,7 +1076,7 @@ int Do( parameters list )
   {
     writer->Update( list.outputVolume.c_str() );
   }
-  catch( itk::ExceptionObject & Except )
+  catch( itk::ExceptionObject& Except )
   {
     std::cerr << "Writing output image: Exception caught!"
               << std::endl;
@@ -1088,7 +1088,7 @@ int Do( parameters list )
 
 } // end of anonymous namespace
 
-int main( int argc, char * argv[] )
+int main( int argc, char* argv[] )
 {
   PARSE_ARGS;
   parameters list;

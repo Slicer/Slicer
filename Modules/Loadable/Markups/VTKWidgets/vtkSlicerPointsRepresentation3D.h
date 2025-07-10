@@ -37,7 +37,7 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerPointsRepresentation3
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerPointsRepresentation3D *New();
+  static vtkSlicerPointsRepresentation3D* New();
 
   /// Standard methods for instances of this class.
   vtkTypeMacro(vtkSlicerPointsRepresentation3D,vtkSlicerMarkupsWidgetRepresentation3D);

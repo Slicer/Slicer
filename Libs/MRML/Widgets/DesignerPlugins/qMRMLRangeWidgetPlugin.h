@@ -29,9 +29,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLRangeWidgetPlugin : public QObject,
   Q_OBJECT
 
 public:
-  qMRMLRangeWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLRangeWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

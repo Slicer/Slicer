@@ -49,7 +49,7 @@ void vtkSlicerTemplateKeyLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTemplateKeyLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerTemplateKeyLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);

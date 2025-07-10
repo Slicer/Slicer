@@ -38,7 +38,7 @@ class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerAngleWidget : public 
 {
 public:
   /// Instantiate this class.
-  static vtkSlicerAngleWidget *New();
+  static vtkSlicerAngleWidget* New();
 
   /// Standard methods for a VTK class.
   vtkTypeMacro(vtkSlicerAngleWidget,vtkSlicerMarkupsWidget);

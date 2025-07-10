@@ -93,7 +93,7 @@ public:
   virtual void SetActiveComponentIndex(int index);
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
 
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;

@@ -51,7 +51,7 @@ void vtkSlicerTestLineRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
 }
 // -----------------------------------------------------------------------------
-void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRML(caller, event, callData);
 
@@ -96,21 +96,21 @@ void vtkSlicerTestLineRepresentation2D::UpdateFromMRML(vtkMRMLNode* caller, unsi
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerTestLineRepresentation2D::GetActors(vtkPropCollection *pc)
+void vtkSlicerTestLineRepresentation2D::GetActors(vtkPropCollection* pc)
 {
   this->MiddlePointActor->GetActors(pc);
   this->Superclass::GetActors(pc);
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerTestLineRepresentation2D::ReleaseGraphicsResources(vtkWindow *win)
+void vtkSlicerTestLineRepresentation2D::ReleaseGraphicsResources(vtkWindow* win)
 {
   this->MiddlePointActor->ReleaseGraphicsResources(win);
   this->Superclass::ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerTestLineRepresentation2D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerTestLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
   int count=0;
   if (this->MiddlePointActor->GetVisibility())
@@ -122,7 +122,7 @@ int vtkSlicerTestLineRepresentation2D::RenderOverlay(vtkViewport *viewport)
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerTestLineRepresentation2D::RenderOpaqueGeometry(vtkViewport *viewport)
+int vtkSlicerTestLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
   int count=0;
   if (this->MiddlePointActor->GetVisibility())
@@ -134,7 +134,7 @@ int vtkSlicerTestLineRepresentation2D::RenderOpaqueGeometry(vtkViewport *viewpor
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerTestLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport *viewport)
+int vtkSlicerTestLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
   int count=0;
   if (this->MiddlePointActor->GetVisibility())

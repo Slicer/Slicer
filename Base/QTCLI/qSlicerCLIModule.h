@@ -43,7 +43,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModule : public qSlicerAbstractModule
 public:
 
   typedef qSlicerAbstractModule Superclass;
-  qSlicerCLIModule(QWidget *parent=nullptr);
+  qSlicerCLIModule(QWidget* parent=nullptr);
   ~qSlicerCLIModule() override;
 
   ///
@@ -109,7 +109,7 @@ protected:
 
   ///
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   ///
   /// Create and return the logic associated to this module

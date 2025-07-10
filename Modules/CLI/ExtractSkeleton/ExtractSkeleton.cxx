@@ -93,9 +93,9 @@ int main(int argc, char * *argv)
     dim[1] = itkSize[1];
     dim[2] = itkSize[2];
 
-    InputPixelType * inputImageBuffer = inputImage->GetBufferPointer();
+    InputPixelType* inputImageBuffer = inputImage->GetBufferPointer();
 
-    OutputPixelType * outputImageBuffer = outputImage->GetBufferPointer();
+    OutputPixelType* outputImageBuffer = outputImage->GetBufferPointer();
     memset(outputImageBuffer, 0, dim[0] * dim[1] * dim[2] * sizeof(OutputPixelType) );
 
     std::cout << "Initialized output image." << std::endl;
@@ -189,7 +189,7 @@ int main(int argc, char * *argv)
     }
 
   }
-  catch( itk::ExceptionObject & excep )
+  catch( itk::ExceptionObject& excep )
   {
 
     std::cerr << argv[0] << " : Exception caught!" << std::endl;

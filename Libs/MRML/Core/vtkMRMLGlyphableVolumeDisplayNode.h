@@ -30,7 +30,7 @@ class vtkMRMLVolumeNode;
 class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVolumeDisplayNode
 {
   public:
-  static vtkMRMLGlyphableVolumeDisplayNode *New();
+  static vtkMRMLGlyphableVolumeDisplayNode* New();
   vtkTypeMacro(vtkMRMLGlyphableVolumeDisplayNode,vtkMRMLScalarVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -46,7 +46,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -54,7 +54,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -93,11 +93,11 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// String ID of the color MRML node
-  void SetAndObserveGlyphColorNodeID(const char *GlyphColorNodeID);
+  void SetAndObserveGlyphColorNodeID(const char* GlyphColorNodeID);
   void SetAndObserveGlyphColorNodeID(std::string GlyphColorNodeID);
   vtkGetStringMacro(GlyphColorNodeID);
 
@@ -145,11 +145,11 @@ protected:
   vtkMRMLGlyphableVolumeDisplayNode(const vtkMRMLGlyphableVolumeDisplayNode&);
   void operator=(const vtkMRMLGlyphableVolumeDisplayNode&);
 
-  char *GlyphColorNodeID;
+  char* GlyphColorNodeID;
 
   void SetGlyphColorNodeID(const char* id);
 
-  vtkMRMLColorNode *GlyphColorNode;
+  vtkMRMLColorNode* GlyphColorNode;
 
   int VisualizationMode;
 

@@ -66,7 +66,7 @@ QString jsQuote(QString text)
 #endif
 
 // --------------------------------------------------------------------------
-void invalidateSizeHint(QToolButton * button)
+void invalidateSizeHint(QToolButton* button)
 {
   // Invalidate cached size hint of QToolButton... this seems to be necessary
   // to get the initially visible button to have the correct hint for having a
@@ -101,7 +101,7 @@ void setThemeIcon(QAction* action, const QString& name)
 class qSlicerExtensionsActionsWidget : public QStackedWidget, public Ui_qSlicerExtensionsActionsWidget
 {
 public:
-  qSlicerExtensionsActionsWidget(QWidget * parent = nullptr) : QStackedWidget(parent)
+  qSlicerExtensionsActionsWidget(QWidget* parent = nullptr) : QStackedWidget(parent)
   {
     this->setupUi(this);
   }
@@ -111,7 +111,7 @@ public:
 class qSlicerExtensionsToolsWidget : public QWidget, public Ui_qSlicerExtensionsToolsWidget
 {
 public:
-  qSlicerExtensionsToolsWidget(QWidget * parent = nullptr) : QWidget(parent)
+  qSlicerExtensionsToolsWidget(QWidget* parent = nullptr) : QWidget(parent)
   {
     this->setupUi(this);
 
@@ -135,7 +135,7 @@ public:
     this->SearchBox->setFixedWidth(searchWidth);
 
     // manage
-    QMenu * configureMenu = new QMenu(this);
+    QMenu* configureMenu = new QMenu(this);
     configureMenu->addAction(this->CheckForUpdatesAction);
     configureMenu->addAction(this->AutoUpdateCheckAction);
     configureMenu->addAction(this->AutoUpdateInstallAction);
@@ -211,7 +211,7 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   this->ExtensionsManageBrowser->webView()->load(QUrl(/*no tr*/"about:"));
 #endif
 
-  qSlicerExtensionsActionsWidget * actionsWidget = new qSlicerExtensionsActionsWidget;
+  qSlicerExtensionsActionsWidget* actionsWidget = new qSlicerExtensionsActionsWidget;
 
   // Back and forward buttons
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
@@ -425,7 +425,7 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
 
   int foundNonInstalledBookmarkedExtension = 0;
   QStringList bookmarkedExtensions = this->extensionsManagerModel()->bookmarkedExtensions();
-  foreach(const QString & extensionName, bookmarkedExtensions)
+  foreach(const QString& extensionName, bookmarkedExtensions)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
     {
@@ -671,7 +671,7 @@ void qSlicerExtensionsManagerWidget::onInstallUpdatesTriggered()
   // Save last update check time
   bool wasBatchProcessing = d->setBatchProcessing(true);
   QStringList extensionNames = this->extensionsManagerModel()->availableUpdateExtensions();
-  foreach(const QString & extensionName, extensionNames)
+  foreach(const QString& extensionName, extensionNames)
   {
     this->extensionsManagerModel()->scheduleExtensionForUpdate(extensionName);
   }
@@ -685,7 +685,7 @@ void qSlicerExtensionsManagerWidget::onInstallBookmarkedTriggered()
   bool wasBatchProcessing = d->setBatchProcessing(true);
   // Save last update check time
   QStringList extensionNames = this->extensionsManagerModel()->bookmarkedExtensions();
-  foreach(const QString & extensionName, extensionNames)
+  foreach(const QString& extensionName, extensionNames)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
     {
@@ -725,7 +725,7 @@ void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
 
   bool wasBatchProcessing = d->setBatchProcessing(true);
   qSlicerExtensionsManagerModel* const model = this->extensionsManagerModel();
-  foreach(const QString & archiveName, archiveNames)
+  foreach(const QString& archiveName, archiveNames)
   {
     model->installExtension(archiveName);
   }

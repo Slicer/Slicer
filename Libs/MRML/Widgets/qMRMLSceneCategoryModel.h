@@ -30,7 +30,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneCategoryModel : public qMRMLSceneModel
   Q_OBJECT
 
 public:
-  qMRMLSceneCategoryModel(QObject *parent=nullptr);
+  qMRMLSceneCategoryModel(QObject* parent=nullptr);
   ~qMRMLSceneCategoryModel() override;
 
   QStandardItem* itemFromCategory(const QString& category)const;
@@ -39,7 +39,7 @@ public:
 protected:
   QStandardItem* insertNode(vtkMRMLNode* node) override;
   using qMRMLSceneModel::insertNode;
-  bool isANode(const QStandardItem * item)const override;
+  bool isANode(const QStandardItem* item)const override;
   void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column) override;
   void updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item) override;
 

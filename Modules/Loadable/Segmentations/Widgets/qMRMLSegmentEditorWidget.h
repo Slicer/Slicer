@@ -476,7 +476,7 @@ protected slots:
   /// Handles changing of the current source volume MRML node
   void onSourceVolumeNodeChanged(vtkMRMLNode* node);
   /// Handles segment selection changes
-  void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Handles mouse mode changes (view / place markups)
   void onInteractionNodeModified();

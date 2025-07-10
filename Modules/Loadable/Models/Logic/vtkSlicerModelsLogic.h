@@ -38,7 +38,7 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   public:
 
   /// The Usual vtk class functions
-  static vtkSlicerModelsLogic *New();
+  static vtkSlicerModelsLogic* New();
   vtkTypeMacro(vtkSlicerModelsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -77,14 +77,14 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   ///   the coordinate system specified in the storage node will be used.
   /// \param userMessages User-displayable warning or error messages can be received if userMessages object is
   ///   specified.
-  int SaveModel(const char* filename, vtkMRMLModelNode *modelNode, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS,
+  int SaveModel(const char* filename, vtkMRMLModelNode* modelNode, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemLPS,
     vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Transform models's polydata
-  static void TransformModel(vtkMRMLTransformNode *tnode,
-                              vtkMRMLModelNode *modelNode,
+  static void TransformModel(vtkMRMLTransformNode* tnode,
+                              vtkMRMLModelNode* modelNode,
                               int transformNormals,
-                              vtkMRMLModelNode *modelOut);
+                              vtkMRMLModelNode* modelOut);
 
   /// Iterate through all models in the scene, find all their display nodes
   /// and set their visibility flag to flag. Does not touch model hierarchy

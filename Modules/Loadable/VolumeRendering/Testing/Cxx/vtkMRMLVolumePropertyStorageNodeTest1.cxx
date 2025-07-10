@@ -13,7 +13,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLVolumePropertyStorageNode.h"
 
-int vtkMRMLVolumePropertyStorageNodeTest1(int , char * [] )
+int vtkMRMLVolumePropertyStorageNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLVolumePropertyStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

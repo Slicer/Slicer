@@ -121,7 +121,7 @@ int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
   int nnodes = scene->GetNumberOfNodesByClass(className);
   for (int n = 0; n < nnodes; n++)
   {
-    vtkMRMLViewNode * node = vtkMRMLViewNode::SafeDownCast(scene->GetNthNodeByClass(n, className));
+    vtkMRMLViewNode* node = vtkMRMLViewNode::SafeDownCast(scene->GetNthNodeByClass(n, className));
     if (node && node->GetVisibility())
     {
       numberOfVisibleNodes++;
@@ -131,7 +131,7 @@ int qMRMLUtils::countVisibleViewNode(vtkMRMLScene* scene)
 }
 
 // ----------------------------------------------------------------
-QPixmap qMRMLUtils::createColorPixmap(QStyle * style, const QColor &color)
+QPixmap qMRMLUtils::createColorPixmap(QStyle* style, const QColor& color)
 {
   if (!style)
   {
@@ -167,7 +167,7 @@ bool qMRMLUtils::vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLUtils::colorToQColor(const double* color, QColor &qcolor)
+void qMRMLUtils::colorToQColor(const double* color, QColor& qcolor)
 {
   if (color)
   {
@@ -176,7 +176,7 @@ void qMRMLUtils::colorToQColor(const double* color, QColor &qcolor)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLUtils::qColorToColor(const QColor &qcolor, double* color)
+void qMRMLUtils::qColorToColor(const QColor& qcolor, double* color)
 {
   if (color)
   {

@@ -103,7 +103,7 @@ int qMRMLColorModelPrivate::maxColumnId()const
 //------------------------------------------------------------------------------
 // qMRMLColorModel
 //------------------------------------------------------------------------------
-qMRMLColorModel::qMRMLColorModel(QObject *_parent)
+qMRMLColorModel::qMRMLColorModel(QObject* _parent)
   : QStandardItemModel(_parent)
   , d_ptr(new qMRMLColorModelPrivate(*this))
 {
@@ -112,7 +112,7 @@ qMRMLColorModel::qMRMLColorModel(QObject *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLColorModel::qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parentObject)
+qMRMLColorModel::qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject* parentObject)
   : QStandardItemModel(parentObject)
   , d_ptr(pimpl)
 {
@@ -494,7 +494,7 @@ void qMRMLColorModel::onMRMLColorNodeModified(vtkObject* node)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLColorModel::onItemChanged(QStandardItem * item)
+void qMRMLColorModel::onItemChanged(QStandardItem* item)
 {
   if (item == this->invisibleRootItem())
   {

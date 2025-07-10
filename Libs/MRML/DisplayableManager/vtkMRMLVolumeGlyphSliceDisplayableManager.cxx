@@ -53,7 +53,7 @@ public:
   typedef std::map<vtkMRMLDisplayableNode*, std::vector<vtkMRMLDisplayNode*> > DisplayNodesType;
   typedef std::map<vtkMRMLDisplayNode*, vtkProp*> DisplayActorsType;
 
-  vtkInternal(vtkMRMLVolumeGlyphSliceDisplayableManager * external);
+  vtkInternal(vtkMRMLVolumeGlyphSliceDisplayableManager* external);
   ~vtkInternal();
 
   vtkObserverManager* GetMRMLNodesObserverManager()const;
@@ -112,7 +112,7 @@ public:
 
 //---------------------------------------------------------------------------
 vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
-::vtkInternal(vtkMRMLVolumeGlyphSliceDisplayableManager * external)
+::vtkInternal(vtkMRMLVolumeGlyphSliceDisplayableManager* external)
 {
   this->External = external;
   this->SliceCompositeNode = nullptr;
@@ -604,7 +604,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager
   {
     if (vtkMRMLDisplayableNode::SafeDownCast(caller))
     {
-        if (callData == nullptr || vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast((vtkObject *)callData) !=nullptr ) // a display node is added/removed/modified
+        if (callData == nullptr || vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast((vtkObject*)callData) !=nullptr ) // a display node is added/removed/modified
         {
         this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
         }

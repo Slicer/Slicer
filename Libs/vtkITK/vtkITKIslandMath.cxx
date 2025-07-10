@@ -48,12 +48,12 @@ void vtkITKIslandMath::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 // Note: local function not method - conforms to signature in itkCommand.h
-void vtkITKIslandMathHandleProgressEvent (itk::Object *caller,
+void vtkITKIslandMathHandleProgressEvent (itk::Object* caller,
                                           const itk::EventObject& vtkNotUsed(eventObject),
-                                          void *clientdata)
+                                          void* clientdata)
 {
-  itk::ProcessObject *itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
-  vtkAlgorithm *vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
+  itk::ProcessObject* itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
+  vtkAlgorithm* vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
   if ( itkFilter && vtkFilter )
   {
     vtkFilter->UpdateProgress ( itkFilter->GetProgress() );
@@ -61,7 +61,7 @@ void vtkITKIslandMathHandleProgressEvent (itk::Object *caller,
 };
 
 template <class T>
-void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
+void vtkITKIslandMathExecute(vtkITKIslandMath* self, vtkImageData* input,
                 vtkImageData* vtkNotUsed(output),
                 T* inPtr, T* outPtr)
 {
@@ -90,7 +90,7 @@ void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
 
   // set up the progress callback
   itk::CStyleCommand::Pointer progressCommand = itk::CStyleCommand::New();
-  progressCommand->SetClientData( static_cast<void *>(self) );
+  progressCommand->SetClientData( static_cast<void*>(self) );
   progressCommand->SetCallback( vtkITKIslandMathHandleProgressEvent );
 
 
@@ -124,21 +124,21 @@ void vtkITKIslandMathExecute(vtkITKIslandMath *self, vtkImageData* input,
 //
 //
 //
-void vtkITKIslandMath::SimpleExecute(vtkImageData *input, vtkImageData *output)
+void vtkITKIslandMath::SimpleExecute(vtkImageData* input, vtkImageData* output)
 {
   vtkDebugMacro(<< "Executing Island Math");
 
   //
   // Initialize and check input
   //
-  vtkPointData *pd = input->GetPointData();
+  vtkPointData* pd = input->GetPointData();
   pd=input->GetPointData();
   if (pd ==nullptr)
   {
     vtkErrorMacro(<<"PointData is NULL");
     return;
   }
-  vtkDataArray *inScalars=pd->GetScalars();
+  vtkDataArray* inScalars=pd->GetScalars();
   if ( inScalars == nullptr )
   {
     vtkErrorMacro(<<"Scalars must be defined for island math");

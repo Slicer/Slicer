@@ -25,16 +25,16 @@
 #include "qSlicerCLIModuleWidgetEventPlayer.h"
 
 // ----------------------------------------------------------------------------
-qSlicerCLIModuleWidgetEventPlayer::qSlicerCLIModuleWidgetEventPlayer(QObject *parent)
+qSlicerCLIModuleWidgetEventPlayer::qSlicerCLIModuleWidgetEventPlayer(QObject* parent)
   : pqWidgetEventPlayer(parent)
 {
 }
 
 // ----------------------------------------------------------------------------
-bool qSlicerCLIModuleWidgetEventPlayer::playEvent(QObject *Object,
-                                                  const QString &Command,
+bool qSlicerCLIModuleWidgetEventPlayer::playEvent(QObject* Object,
+                                                  const QString& Command,
                                                   const QString &/*Arguments*/,
-                                                  bool &Error)
+                                                  bool& Error)
 {
   // But in the CLI module under Slicer4 when we activate the button apply,
   // we want to do apply and wait instead of apply !

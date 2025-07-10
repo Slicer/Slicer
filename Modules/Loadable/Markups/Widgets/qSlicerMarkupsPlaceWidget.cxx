@@ -618,7 +618,7 @@ void qSlicerMarkupsPlaceWidget::setMRMLScene(vtkMRMLScene* scene)
   this->Superclass::setMRMLScene(scene);
 
   vtkMRMLSelectionNode* selectionNode = nullptr;
-  vtkMRMLInteractionNode *interactionNode = nullptr;
+  vtkMRMLInteractionNode* interactionNode = nullptr;
 
   if (d->MarkupsLogic != nullptr && d->MarkupsLogic->GetMRMLScene() != nullptr)
   {
@@ -744,7 +744,7 @@ QToolButton* qSlicerMarkupsPlaceWidget::deleteButton() const
 bool qSlicerMarkupsPlaceWidget::buttonsVisible() const
 {
   Q_D(const qSlicerMarkupsPlaceWidget);
-  foreach( QWidget *w, d->OptionsWidgets )
+  foreach( QWidget* w, d->OptionsWidgets )
   {
     if (!w->isVisible())
     {
@@ -758,7 +758,7 @@ bool qSlicerMarkupsPlaceWidget::buttonsVisible() const
 void qSlicerMarkupsPlaceWidget::setButtonsVisible(bool visible)
 {
   Q_D(qSlicerMarkupsPlaceWidget);
-  foreach( QWidget *w, d->OptionsWidgets )
+  foreach( QWidget* w, d->OptionsWidgets )
   {
     w->setVisible(visible);
   }

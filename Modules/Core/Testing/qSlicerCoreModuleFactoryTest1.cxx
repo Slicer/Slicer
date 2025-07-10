@@ -27,7 +27,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int qSlicerCoreModuleFactoryTest1(int, char * [] )
+int qSlicerCoreModuleFactoryTest1(int, char*[])
 {
   QString className = "qSlicerEventBrokerModule";
   QString expectedModuleName = "EventBroker";

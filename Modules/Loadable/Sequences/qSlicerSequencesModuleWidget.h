@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_SEQUENCES_EXPORT qSlicerSequencesModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerSequencesModuleWidget(QWidget *parent=0);
+  qSlicerSequencesModuleWidget(QWidget* parent=0);
   ~qSlicerSequencesModuleWidget() override;
 
   /// Set up the GUI from mrml when entering

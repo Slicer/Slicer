@@ -28,16 +28,16 @@
 #include "qMRMLCheckableNodeComboBoxEventPlayer.h"
 
 // ----------------------------------------------------------------------------
-qMRMLCheckableNodeComboBoxEventPlayer::qMRMLCheckableNodeComboBoxEventPlayer(QObject *parent)
+qMRMLCheckableNodeComboBoxEventPlayer::qMRMLCheckableNodeComboBoxEventPlayer(QObject* parent)
   : pqWidgetEventPlayer(parent)
 {
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject *Object,
-                                    const QString &Command,
-                                    const QString &Arguments,
-                                    bool &Error)
+bool qMRMLCheckableNodeComboBoxEventPlayer::playEvent(QObject* Object,
+                                    const QString& Command,
+                                    const QString& Arguments,
+                                    bool& Error)
 {
   if(Command != "check_indexes" && Command != "uncheck_indexes")
   {

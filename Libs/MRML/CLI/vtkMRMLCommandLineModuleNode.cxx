@@ -189,9 +189,9 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
   std::string moduleTitle;
   std::string moduleVersion;
 
-  const char **tatts = atts;
-  const char *attName = nullptr;
-  const char *attValue;
+  const char** tatts = atts;
+  const char* attName = nullptr;
+  const char* attValue;
   while (*tatts)
   {
     attName = *(tatts++);
@@ -343,8 +343,8 @@ void vtkMRMLCommandLineModuleNode::SetModuleDescription(const ModuleDescription&
 
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode
-::ProcessMRMLEvents(vtkObject *caller, unsigned long event,
-                    void *vtkNotUsed(callData) )
+::ProcessMRMLEvents(vtkObject* caller, unsigned long event,
+                    void* vtkNotUsed(callData) )
 {
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(caller);
   if (!node)
@@ -366,7 +366,7 @@ void vtkMRMLCommandLineModuleNode
       eventType |= vtkMRMLCommandLineModuleNode::AutoRunOnOtherInputEvents;
     }
     bool autoRun = false;
-    if (eventType & this->GetAutoRunMode())
+    if (eventType& this->GetAutoRunMode())
     {
       this->Internal->InputMTime.Modified();
       autoRun = true;
@@ -510,7 +510,7 @@ bool vtkMRMLCommandLineModuleNode
 
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode
-::SetParameterAsFloat(const char *name, float value)
+::SetParameterAsFloat(const char* name, float value)
 {
   std::ostringstream strvalue;
   strvalue << value;
@@ -535,7 +535,7 @@ bool vtkMRMLCommandLineModuleNode
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLCommandLineModuleNode::GetParameterAsString(const char *name) const
+std::string vtkMRMLCommandLineModuleNode::GetParameterAsString(const char* name) const
 {
   return this->Internal->ModuleDescriptionObject.GetParameterValue(name);
 }
@@ -760,7 +760,7 @@ void vtkMRMLCommandLineModuleNode
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLCommandLineModuleNode::SetModuleDescription ( const char *name )
+void vtkMRMLCommandLineModuleNode::SetModuleDescription ( const char* name )
 {
   this->SetModuleDescription ( this->GetRegisteredModuleDescription ( name ) );
 }

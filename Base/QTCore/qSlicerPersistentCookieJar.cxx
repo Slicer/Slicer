@@ -64,7 +64,7 @@ void qSlicerPersistentCookieJarPrivate::init()
 // qSlicerPersistentCookieJar methods
 
 //-----------------------------------------------------------------------------
-qSlicerPersistentCookieJar::qSlicerPersistentCookieJar(QObject * parent)
+qSlicerPersistentCookieJar::qSlicerPersistentCookieJar(QObject* parent)
   :Superclass(parent), d_ptr(new qSlicerPersistentCookieJarPrivate(*this))
 {
   Q_D(qSlicerPersistentCookieJar);
@@ -89,7 +89,7 @@ void qSlicerPersistentCookieJar::setFilePath(const QString& filePath)
 }
 
 //-----------------------------------------------------------------------------
-QList<QNetworkCookie> qSlicerPersistentCookieJar::cookiesForUrl( const QUrl & url)const
+QList<QNetworkCookie> qSlicerPersistentCookieJar::cookiesForUrl( const QUrl& url)const
 {
   Q_D(const qSlicerPersistentCookieJar);
   QSettings settings(d->FilePath, QSettings::IniFormat);
@@ -105,7 +105,7 @@ QList<QNetworkCookie> qSlicerPersistentCookieJar::cookiesForUrl( const QUrl & ur
 
 //-----------------------------------------------------------------------------
 bool qSlicerPersistentCookieJar::
-setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, const QUrl & url)
+setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, const QUrl& url)
 {
   Q_D(qSlicerPersistentCookieJar);
   QSettings settings(d->FilePath, QSettings::IniFormat);

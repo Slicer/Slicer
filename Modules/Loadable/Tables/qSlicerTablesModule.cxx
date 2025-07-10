@@ -126,7 +126,7 @@ void qSlicerTablesModule::setup()
 
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerTablesModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerTablesModule::createWidgetRepresentation()
 {
   return new qSlicerTablesModuleWidget;
 }

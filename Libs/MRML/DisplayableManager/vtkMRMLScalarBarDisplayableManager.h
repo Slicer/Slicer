@@ -41,7 +41,7 @@ public:
                        vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
   void SetAdjustForegroundWindowLevelEnabled(bool enabled);
@@ -73,7 +73,7 @@ private:
   void UpdateFromMRMLScene() override;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

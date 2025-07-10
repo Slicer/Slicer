@@ -105,7 +105,7 @@ public:
   virtual int AddNodeOnWidget(const int displayPos[2]);
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
 
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;

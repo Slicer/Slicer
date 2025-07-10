@@ -27,7 +27,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int qSlicerLoadableModuleFactoryTest1(int, char * [] )
+int qSlicerLoadableModuleFactoryTest1(int, char*[])
 {
   QStringList libraryNames;
   libraryNames << "ThresholdLib.dll"

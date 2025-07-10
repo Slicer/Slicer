@@ -82,13 +82,13 @@ void vtkMRMLMarkupsJsonStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsJsonStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMarkupsJsonStorageNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLMarkupsJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLMarkupsNode");
 }
@@ -219,7 +219,7 @@ vtkMRMLMarkupsNode* vtkMRMLMarkupsJsonStorageNode::AddNewMarkupsNodeFromFile(con
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsJsonStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLMarkupsJsonStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   if (!refNode)
   {
@@ -289,7 +289,7 @@ int vtkMRMLMarkupsJsonStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsJsonStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLMarkupsJsonStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -301,10 +301,10 @@ int vtkMRMLMarkupsJsonStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkDebugMacro("WriteDataInternal: have file name " << fullName.c_str());
 
   // cast the input node
-  vtkMRMLMarkupsNode *markupsNode = nullptr;
+  vtkMRMLMarkupsNode* markupsNode = nullptr;
   if (refNode->IsA("vtkMRMLMarkupsNode"))
   {
-    markupsNode = dynamic_cast <vtkMRMLMarkupsNode *> (refNode);
+    markupsNode = dynamic_cast <vtkMRMLMarkupsNode*> (refNode);
   }
 
   if (markupsNode == nullptr)

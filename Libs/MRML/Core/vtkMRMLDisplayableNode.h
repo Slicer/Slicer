@@ -75,17 +75,17 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Convenience method that sets the first display node ID.
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
-  void SetAndObserveDisplayNodeID(const char *displayNodeID);
+  void SetAndObserveDisplayNodeID(const char* displayNodeID);
 
   ///
   /// Convenience method that adds a display node ID at the end of the list.
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
-  void AddAndObserveDisplayNodeID(const char *displayNodeID);
+  void AddAndObserveDisplayNodeID(const char* displayNodeID);
 
   ///
   /// Convenience method that removes the Nth display node ID from the list
@@ -109,8 +109,8 @@ public:
   /// (automatically done when loading a scene). Get(Nth)DisplayNode() also
   /// scan the scene if the node was not yet cached.
   /// \sa SetAndObserveDisplayNodeID(const char*),
-  /// AddAndObserveDisplayNodeID(const char *), RemoveNthDisplayNodeID(int)
-  void SetAndObserveNthDisplayNodeID(int n, const char *displayNodeID);
+  /// AddAndObserveDisplayNodeID(const char*), RemoveNthDisplayNodeID(int)
+  void SetAndObserveNthDisplayNodeID(int n, const char* displayNodeID);
 
   ///
   /// Return true if displayNodeID is in the display node ID list.
@@ -126,12 +126,12 @@ public:
   /// node exist.
   /// Warning, a temporary char generated from a std::string::c_str()
   /// is returned.
-  const char *GetNthDisplayNodeID(int n);
+  const char* GetNthDisplayNodeID(int n);
 
   ///
   /// Utility function that returns the first display node id.
   /// \sa GetNthDisplayNodeID(int), GetDisplayNode()
-  const char *GetDisplayNodeID();
+  const char* GetDisplayNodeID();
 
   ///
   /// Get associated display MRML node. Can be 0 in temporary states; e.g. if
@@ -230,20 +230,20 @@ protected:
 
   ///
   /// Called when a node reference ID is added (list size increased).
-  void OnNodeReferenceAdded(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called when a node reference ID is modified.
-  void OnNodeReferenceModified(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
 
   ///
   /// Called after a node reference ID is removed (list size decreased).
-  void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference) override;
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
 private:
   /// Internally cached list of display nodes used ONLY to return the vector of node in GetDisplayNodes()
   /// DON'T USE this variable anywhere else
-  std::vector<vtkMRMLDisplayNode *> DisplayNodes;
+  std::vector<vtkMRMLDisplayNode*> DisplayNodes;
 };
 
 #endif

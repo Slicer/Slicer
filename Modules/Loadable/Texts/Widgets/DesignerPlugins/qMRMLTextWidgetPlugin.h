@@ -28,9 +28,9 @@ class Q_SLICER_MODULE_TEXTS_WIDGETS_PLUGINS_EXPORT qMRMLTextWidgetPlugin : publi
   Q_OBJECT
 
 public:
-  qMRMLTextWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLTextWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QString  includeFile() const override;
   bool     isContainer() const override;

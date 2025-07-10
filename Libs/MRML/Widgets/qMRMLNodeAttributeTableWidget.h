@@ -60,7 +60,7 @@ public slots:
   void updateWidgetFromMRML();
 
 protected:
-  void showEvent(QShowEvent *) override;
+  void showEvent(QShowEvent*) override;
 
   QScopedPointer<qMRMLNodeAttributeTableWidgetPrivate> d_ptr;
 

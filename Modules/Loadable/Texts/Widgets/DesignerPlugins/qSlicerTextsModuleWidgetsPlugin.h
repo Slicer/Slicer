@@ -42,7 +42,7 @@ public:
   /// Return designer plugins created by the module
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
-    QList<QDesignerCustomWidgetInterface *> plugins;
+    QList<QDesignerCustomWidgetInterface*> plugins;
     plugins << new qMRMLTextWidgetPlugin;
 
     return plugins;

@@ -28,7 +28,7 @@ qMRMLSegmentationDisplayNodeWidgetPlugin::qMRMLSegmentationDisplayNodeWidgetPlug
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentationDisplayNodeWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentationDisplayNodeWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLSegmentationDisplayNodeWidget* pluginWidget =
     new qMRMLSegmentationDisplayNodeWidget(parentWidget);

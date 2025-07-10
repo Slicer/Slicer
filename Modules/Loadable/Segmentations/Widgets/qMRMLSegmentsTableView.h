@@ -209,15 +209,15 @@ public slots:
 
 signals:
   /// Emitted if selection changes
-  void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Emitted when a segment property (e.g., name) is about to be changed.
   /// Can be used for capturing the current state of the segment, before it is modified.
-  void segmentAboutToBeModified(const QString &segmentID);
+  void segmentAboutToBeModified(const QString& segmentID);
 
 protected slots:
   /// Forwards selection changed events. In case of batch update of items, selected and deselected are empty.
-  void onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+  void onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   /// Handles actions on table cell (visibility)
   void onVisibility3DActionToggled(bool visible);

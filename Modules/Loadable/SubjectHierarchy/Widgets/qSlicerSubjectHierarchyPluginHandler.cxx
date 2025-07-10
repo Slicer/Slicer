@@ -43,7 +43,7 @@
 #include <vtkCallbackCommand.h>
 
 //----------------------------------------------------------------------------
-qSlicerSubjectHierarchyPluginHandler *qSlicerSubjectHierarchyPluginHandler::m_Instance = nullptr;
+qSlicerSubjectHierarchyPluginHandler* qSlicerSubjectHierarchyPluginHandler::m_Instance = nullptr;
 
 //----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyPluginHandlerCleanup
@@ -464,7 +464,7 @@ void qSlicerSubjectHierarchyPluginHandler::setPluginLogic(qSlicerSubjectHierarch
   {
     foreach(qSlicerSubjectHierarchyAbstractPlugin* pluginToRegister, this->m_RegisteredPlugins)
     {
-      foreach(QAction * action, pluginToRegister->viewContextMenuActions())
+      foreach(QAction* action, pluginToRegister->viewContextMenuActions())
       {
         if (action != nullptr && action->objectName().isEmpty())
         {

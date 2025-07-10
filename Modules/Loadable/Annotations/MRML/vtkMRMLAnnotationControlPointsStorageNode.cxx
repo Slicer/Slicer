@@ -25,7 +25,7 @@ void vtkMRMLAnnotationControlPointsStorageNode::PrintSelf(ostream& os, vtkIndent
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayProperties(vtkMRMLAnnotationPointDisplayNode *refNode, std::string lineString, std::string preposition)
+int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayProperties(vtkMRMLAnnotationPointDisplayNode* refNode, std::string lineString, std::string preposition)
 {
   if (refNode == nullptr)
   {
@@ -66,7 +66,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayPropert
 
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(vtkMRMLAnnotationControlPointsNode *refNode, char line[1024],
+int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(vtkMRMLAnnotationControlPointsNode* refNode, char line[1024],
                                    int typeColumn, int xColumn, int yColumn, int zColumn,  int selColumn,  int visColumn, int numColumns)
 {
   if (!refNode)
@@ -154,8 +154,8 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(v
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode *refNode,
-                                    char line[1024], int &typeColumn,
+int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode* refNode,
+                                    char line[1024], int& typeColumn,
                                     int& xColumn,    int& yColumn,     int& zColumn,
                                     int& selColumn, int& visColumn, int& numColumns)
 {
@@ -192,8 +192,8 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProper
       // reset all of them
       typeColumn= xColumn = yColumn = zColumn = selColumn = visColumn = -1;
       numColumns = 0;
-      char *columns = (char *)str.c_str();
-      char *ptr = strtok(columns, "|");
+      char* columns = (char*)str.c_str();
+      char* ptr = strtok(columns, "|");
       while (ptr != nullptr)
       {
       if (strcmp(ptr, "type") == 0)
@@ -233,7 +233,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsProper
 
 //----------------------------------------------------------------------------
 // assumes that the node is already reset
-int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotation(vtkMRMLAnnotationControlPointsNode *refNode)
+int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotation(vtkMRMLAnnotationControlPointsNode* refNode)
 {
 
   if (refNode == nullptr)
@@ -255,7 +255,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotation(vtkMRMLAnnotationC
   }
 
 
- vtkMRMLAnnotationPointDisplayNode *aPointDisplayNode = refNode->GetAnnotationPointDisplayNode();
+ vtkMRMLAnnotationPointDisplayNode* aPointDisplayNode = refNode->GetAnnotationPointDisplayNode();
 
 
   // turn off modified events
@@ -308,16 +308,16 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotation(vtkMRMLAnnotationC
 
 }
 //----------------------------------------------------------------------------
-bool vtkMRMLAnnotationControlPointsStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLAnnotationControlPointsStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLAnnotationControlPointsNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationControlPointsStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   // cast the input node
-  vtkMRMLAnnotationControlPointsNode *aCPNode =
+  vtkMRMLAnnotationControlPointsNode* aCPNode =
     vtkMRMLAnnotationControlPointsNode::SafeDownCast(refNode);
 
   if (aCPNode == nullptr)
@@ -340,7 +340,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadDataInternal(vtkMRMLNode *ref
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationPointDisplayProperties(fstream& of, vtkMRMLAnnotationPointDisplayNode *refNode, std::string preposition)
+int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationPointDisplayProperties(fstream& of, vtkMRMLAnnotationPointDisplayNode* refNode, std::string preposition)
 {
   if (!refNode)
   {
@@ -360,7 +360,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationPointDisplayProper
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsProperties(fstream& of, vtkMRMLAnnotationControlPointsNode *refNode)
+int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsProperties(fstream& of, vtkMRMLAnnotationControlPointsNode* refNode)
 {
    // put down a header
   if (refNode == nullptr)
@@ -369,7 +369,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsPrope
     return 0;
   }
 
-  vtkMRMLAnnotationPointDisplayNode *annPointDisNode = refNode->GetAnnotationPointDisplayNode();
+  vtkMRMLAnnotationPointDisplayNode* annPointDisNode = refNode->GetAnnotationPointDisplayNode();
 
   of << "# " << this->GetAnnotationStorageType() << "NumberingScheme = " << refNode->GetNumberingScheme() << endl;
   if (!this->WriteAnnotationPointDisplayProperties(of, annPointDisNode, this->GetAnnotationStorageType()))
@@ -383,7 +383,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsPrope
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsData(fstream& of, vtkMRMLAnnotationControlPointsNode *refNode)
+int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsData(fstream& of, vtkMRMLAnnotationControlPointsNode* refNode)
 {
   if (!refNode)
   {
@@ -392,7 +392,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsData(
   }
   for (int i = 0; i < refNode->GetNumberOfControlPoints(); i++)
   {
-    double *coord = refNode->GetControlPointCoordinates(i);
+    double* coord = refNode->GetControlPointCoordinates(i);
     int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationControlPointsNode::CP_SELECTED);
     int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationControlPointsNode::CP_VISIBLE);
     of << this->GetAnnotationStorageType() << "|" << coord[0] << "|" << coord[1] << "|" << coord[2] << "|" << sel << "|" << vis << endl;
@@ -402,7 +402,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsData(
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNode,  fstream &of)
+int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* refNode,  fstream &of)
 {
   if (!Superclass::WriteAnnotationDataInternal(refNode,of))
   {
@@ -410,7 +410,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationDataInternal(vtkMR
   }
 
   // cast the input node
-  vtkMRMLAnnotationControlPointsNode *annCPNode = dynamic_cast <vtkMRMLAnnotationControlPointsNode *> (refNode);
+  vtkMRMLAnnotationControlPointsNode* annCPNode = dynamic_cast <vtkMRMLAnnotationControlPointsNode*> (refNode);
 
   if (annCPNode == nullptr)
   {

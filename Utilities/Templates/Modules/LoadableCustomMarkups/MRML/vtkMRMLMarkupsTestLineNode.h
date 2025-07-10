@@ -68,7 +68,7 @@ protected:
   void operator=(const vtkMRMLMarkupsTestLineNode&);
 
 private:
-  vtkPolyData *TargetOrgan = nullptr;
+  vtkPolyData* TargetOrgan = nullptr;
 };
 
 #endif

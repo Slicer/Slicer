@@ -111,7 +111,7 @@ void qMRMLSliceWidgetPrivate::endProcessing()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceWidgetPrivate::setImageDataConnection(vtkAlgorithmOutput * imageDataConnection)
+void qMRMLSliceWidgetPrivate::setImageDataConnection(vtkAlgorithmOutput* imageDataConnection)
 {
   //qDebug() << "qMRMLSliceWidgetPrivate::setImageDataConnection";
   this->SliceView->setImageDataConnection(imageDataConnection);
@@ -345,7 +345,7 @@ qMRMLViewControllerBar* qMRMLSliceWidget::controllerWidget()const
 }
 
 // --------------------------------------------------------------------------
-qMRMLSliceVerticalControllerWidget *qMRMLSliceWidget::sliceVerticalController() const
+qMRMLSliceVerticalControllerWidget* qMRMLSliceWidget::sliceVerticalController() const
 {
   Q_D(const qMRMLSliceWidget);
   return d->SliceVerticalController;

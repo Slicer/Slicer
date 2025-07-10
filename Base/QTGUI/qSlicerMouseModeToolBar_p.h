@@ -117,7 +117,7 @@ public:
   ctkSignalMapper* AdjustWindowLevelModeMapper;
 
   /// Place Persistence
-  QAction *PersistenceAction;
+  QAction* PersistenceAction;
 
   /// Group interaction modes together so that they're exclusive
   QActionGroup* InteractionModesActionGroup;

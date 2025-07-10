@@ -83,14 +83,14 @@ void vtkMRMLRemoteIOLogic::AddDataIOToScene()
   this->GetMRMLScene()->SetCacheManager(this->CacheManager);
   this->GetMRMLScene()->SetDataIOManager(this->DataIOManager);
 
-  vtkCollection *uriHandlerCollection = vtkCollection::New();
+  vtkCollection* uriHandlerCollection = vtkCollection::New();
   // add some new handlers
   this->GetMRMLScene()->SetURIHandlerCollection( uriHandlerCollection );
   uriHandlerCollection->Delete();
 
 #if !defined(REMOTEIO_DEBUG)
   // register all existing uri handlers (add to collection)
-  vtkHTTPHandler *httpHandler = vtkHTTPHandler::New();
+  vtkHTTPHandler* httpHandler = vtkHTTPHandler::New();
   httpHandler->SetPrefix("http://");
   httpHandler->SetName("HTTPHandler");
   httpHandler->SetCaCertificatesPath(this->GetCaCertificatesPath());
@@ -98,7 +98,7 @@ void vtkMRMLRemoteIOLogic::AddDataIOToScene()
   httpHandler->Delete();
 
   //add something to hold user tags
-  vtkTagTable *userTagTable = vtkTagTable::New();
+  vtkTagTable* userTagTable = vtkTagTable::New();
   this->GetMRMLScene()->SetUserTagTable( userTagTable );
   userTagTable->Delete();
 #endif

@@ -27,9 +27,9 @@ qMRMLSequenceEditWidgetPlugin
   Q_OBJECT
 
 public:
-  qMRMLSequenceEditWidgetPlugin(QObject *_parent = 0);
+  qMRMLSequenceEditWidgetPlugin(QObject* _parent = 0);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

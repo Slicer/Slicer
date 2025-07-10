@@ -70,13 +70,13 @@ public:
   Edge() {this->next = nullptr;};
   int yUpper;
   int dx, dy, dy2, dx2, dydx2, r, xInc, x;
-  Edge *next;
+  Edge* next;
 };
 
 // Inserts edge into list in order of increasing x field
-void InsertEdge(Edge *list, Edge *edge)
+void InsertEdge(Edge* list, Edge* edge)
 {
-  Edge *p, *q = list;
+  Edge* p, *q = list;
 
   p = q->next;
   while (p != nullptr)
@@ -99,7 +99,7 @@ void InsertEdge(Edge *list, Edge *edge)
 // Adjust and store upper-y coordinate for edges that are the
 // lower member of a monotonically increasing or decreasing
 // pair of edges.
-void MakeEdgeRec(int x1, int y1, int x2, int y2, Edge *edge, Edge *edges[])
+void MakeEdgeRec(int x1, int y1, int x2, int y2, Edge* edge, Edge* edges[])
 {
   // p1 is lower than p2
   edge->dx = abs(x2 - x1);
@@ -134,9 +134,9 @@ void MakeEdgeRec(int x1, int y1, int x2, int y2, Edge *edge, Edge *edges[])
   InsertEdge(edges[y1], edge);
 }
 
-void BuildEdgeList(int nPts, int *xPts, int *yPts, Edge *edges[])
+void BuildEdgeList(int nPts, int* xPts, int* yPts, Edge* edges[])
 {
-  Edge *edge;
+  Edge* edge;
   int i, x1, x2, y1, y2;
 
   x1 = xPts[nPts-1];
@@ -168,18 +168,18 @@ void BuildEdgeList(int nPts, int *xPts, int *yPts, Edge *edges[])
 }
 
 template <class T>
-static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int *yPts,
-    T value, T *outPtr)
+static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int* xPts, int* yPts,
+    T value, T* outPtr)
 {
   int    i, scan, done;
-  Edge *active, *p, *q, *del;
+  Edge* active, *p, *q, *del;
   int x, x1, x2;
-  T *ptr;
+  T* ptr;
 
   // Build a list of edges for each pixel in y direction.
   // The max possible number of edges is then the
   // height of the image, so allocate this many edge pointers.
-  Edge **edges = new Edge*[ny];
+  Edge** edges = new Edge*[ny];
 
   for (i=0; i<ny; i++)
   {
@@ -191,7 +191,7 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int 
 
   for (scan=0; scan < ny; scan++)
   {
-    // BuildActiveList(int scan, Edge *active, Edge *edges[])
+    // BuildActiveList(int scan, Edge* active, Edge* edges[])
     p = edges[scan]->next;
     while (p)
     {
@@ -203,7 +203,7 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int 
     if (active->next)
     {
 
-      // DeleteFromActiveList(int scan, Edge *active)
+      // DeleteFromActiveList(int scan, Edge* active)
       q = active;
       p = active->next;
       while (p)
@@ -224,7 +224,7 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int 
         }
       }
 
-      // FillScan(int nx, int scan, Edge *active, T value, T *outPtr)
+      // FillScan(int nx, int scan, Edge* active, T value, T* outPtr)
       p = active->next;
       ptr = &outPtr[scan*nx];
       while (p)
@@ -247,7 +247,7 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int 
         p = q->next;
       }
 
-      // UpdateActiveList(int scan, Edge *active)
+      // UpdateActiveList(int scan, Edge* active)
       // Update 'x' field
       q = active;
       p = active->next;
@@ -288,7 +288,7 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int 
         p = p->next;
       }
 
-      // ResortActiveList(Edge *active)
+      // ResortActiveList(Edge* active)
       p = active->next;
       active->next = nullptr;
       while (p)
@@ -314,8 +314,8 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int *xPts, int 
 // This corresponds to "DrawLine" in vtkImageDrawROI.cxx. Both are
 // used to draw the "Polygons" shape (before and after the shape is Applied).
 template <class T>
-static void DrawLinesFast(int nx, int ny, int nPts, int *xPts, int *yPts,
-                          T value, T *outPtr)
+static void DrawLinesFast(int nx, int ny, int nPts, int* xPts, int* yPts,
+                          T value, T* outPtr)
 {
   int i, x, y, x1, y1, x2, y2, xx1, xx2, yy1, yy2;
   int n = nPts;
@@ -442,13 +442,13 @@ static void DrawLinesFast(int nx, int ny, int nPts, int *xPts, int *yPts,
 // used to draw the "Lines" shape (before and after the lines are Applied).
 template <class T>
 static void DrawLines(int nx, int ny, int z, int radius,
-                       int nPts, int *xPts, int *yPts,
-                       T value, vtkImageData *outData)
+                       int nPts, int* xPts, int* yPts,
+                       T value, vtkImageData* outData)
 {
   int i, x, y, x1, y1, x2, y2, xx1, xx2, yy1, yy2;
   int min0, max0, min1, max1, min2, max2;
   outData->GetExtent(min0, max0, min1, max1, min2, max2);
-  T *outPtr;
+  T* outPtr;
   int n = nPts;
   int rad = radius;
   //int d = 2*rad+1;
@@ -629,11 +629,11 @@ static void DrawLines(int nx, int ny, int z, int radius,
 
 template <class T>
 static void DrawPoints(int nx, int ny, int z, int radius,
-        int nPts, int *xPts, int *yPts,
-        T value, vtkImageData *outData)
+        int nPts, int* xPts, int* yPts,
+        T value, vtkImageData* outData)
 {
   int i, x, y, x1, y1;
-  T *outPtr;
+  T* outPtr;
   int min0, max0, min1, max1, min2, max2;
   outData->GetExtent(min0, max0, min1, max1, min2, max2);
   int n = nPts;
@@ -664,15 +664,15 @@ static void DrawPoints(int nx, int ny, int z, int radius,
 
 template <class T>
 static void vtkImageFillROIExecute(vtkImageFillROI* self,
-                                   vtkImageData *outData, T* outPtr)
+                                   vtkImageData* outData, T* outPtr)
 {
   T value = (T)(self->GetValue());
   int r = self->GetRadius();
   int i, j, x, y, z, nPts, nx, ny, outExt[6];
-  int *xPts, *yPts;
-  double *pt;
+  int* xPts, *yPts;
+  double* pt;
 
-  vtkPoints *points = self->GetPoints();
+  vtkPoints* points = self->GetPoints();
   if (points == nullptr)
     return;
 
@@ -746,17 +746,17 @@ static void vtkImageFillROIExecute(vtkImageFillROI* self,
 
 //----------------------------------------------------------------------------
 int vtkImageFillROI::RequestData(
-   vtkInformation *vtkNotUsed(request),
-   vtkInformationVector **inputVector,
-   vtkInformationVector *outputVector)
+   vtkInformation* vtkNotUsed(request),
+   vtkInformationVector** inputVector,
+   vtkInformationVector* outputVector)
 {
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   // Get the image data.
-  vtkImageData *input = vtkImageData::SafeDownCast(
+  vtkImageData* input = vtkImageData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkImageData *output = vtkImageData::SafeDownCast(
+  vtkImageData* output = vtkImageData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   // Make sure the Input has been set.
@@ -775,7 +775,7 @@ int vtkImageFillROI::RequestData(
     return 0;
   }
 
-  void *ptr = nullptr;
+  void* ptr = nullptr;
   int x1, inExt[6];
 
   // ensure 1 component data

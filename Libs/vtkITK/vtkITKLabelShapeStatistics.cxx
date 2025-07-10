@@ -156,12 +156,12 @@ bool vtkITKLabelShapeStatistics::GetComputeShapeStatistic(std::string statisticN
 
 //----------------------------------------------------------------------------
 // Note: local function not method - conforms to signature in itkCommand.h
-void vtkITKLabelShapeStatisticsHandleProgressEvent (itk::Object *caller,
+void vtkITKLabelShapeStatisticsHandleProgressEvent (itk::Object* caller,
                                           const itk::EventObject& vtkNotUsed(eventObject),
-                                          void *clientdata)
+                                          void* clientdata)
 {
-  itk::ProcessObject *itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
-  vtkAlgorithm *vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
+  itk::ProcessObject* itkFilter = dynamic_cast<itk::ProcessObject*>(caller);
+  vtkAlgorithm* vtkFilter = reinterpret_cast<vtkAlgorithm*>(clientdata);
   if ( itkFilter && vtkFilter )
   {
     vtkFilter->UpdateProgress ( itkFilter->GetProgress() );
@@ -377,13 +377,13 @@ int vtkITKLabelShapeStatistics::RequestData(
   //
   // Initialize and check input
   //
-  vtkPointData *pd = input->GetPointData();
+  vtkPointData* pd = input->GetPointData();
   if (pd ==nullptr)
   {
     vtkErrorMacro(<<"PointData is NULL");
     return 0;
   }
-  vtkDataArray *inScalars=pd->GetScalars();
+  vtkDataArray* inScalars=pd->GetScalars();
   if ( inScalars == nullptr )
   {
     vtkErrorMacro(<<"Scalars must be defined for island math");

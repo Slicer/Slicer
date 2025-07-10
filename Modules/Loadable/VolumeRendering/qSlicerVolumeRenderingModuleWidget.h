@@ -46,7 +46,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModuleWidg
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerVolumeRenderingModuleWidget(QWidget *parent=nullptr);
+  qSlicerVolumeRenderingModuleWidget(QWidget* parent=nullptr);
   ~qSlicerVolumeRenderingModuleWidget() override;
 
   Q_INVOKABLE vtkMRMLVolumeNode* mrmlVolumeNode()const;

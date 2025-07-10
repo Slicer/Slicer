@@ -85,7 +85,7 @@ private:
   void operator=(const vtkMRMLLinearTransformsDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   friend class vtkInternal;
 };
 

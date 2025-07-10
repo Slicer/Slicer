@@ -135,7 +135,7 @@ QStringList qSlicerFileReader::loadedNodes()const
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerFileReader::examineFileInfoList(QFileInfoList &fileInfoList, QFileInfo &archetypeFileInfo, qSlicerIO::IOProperties &ioProperties)const
+bool qSlicerFileReader::examineFileInfoList(QFileInfoList& fileInfoList, QFileInfo& archetypeFileInfo, qSlicerIO::IOProperties& ioProperties)const
 {
   Q_UNUSED(fileInfoList);
   Q_UNUSED(archetypeFileInfo);

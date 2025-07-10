@@ -43,7 +43,7 @@ public:
   static int INVALID_COLOR[3];
 
 public:
-  static vtkSlicerTerminologyType *New();
+  static vtkSlicerTerminologyType* New();
   vtkTypeMacro(vtkSlicerTerminologyType, vtkCodedEntry);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

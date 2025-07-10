@@ -128,18 +128,18 @@ vtkMRMLPlotChartNode* qMRMLPlotViewControllerWidgetPrivate::GetPlotChartNodeFrom
   }
 
   // Get the current PlotChart node
-  vtkMRMLPlotChartNode *PlotChartNodeFromViewNode
+  vtkMRMLPlotChartNode* PlotChartNodeFromViewNode
     = vtkMRMLPlotChartNode::SafeDownCast(q->mrmlScene()->GetNodeByID(q->mrmlPlotViewNode()->GetPlotChartNodeID()));
 
   return PlotChartNodeFromViewNode;
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotViewControllerWidgetPrivate::onPlotChartNodeSelected(vtkMRMLNode *node)
+void qMRMLPlotViewControllerWidgetPrivate::onPlotChartNodeSelected(vtkMRMLNode* node)
 {
   Q_Q(qMRMLPlotViewControllerWidget);
 
-  vtkMRMLPlotChartNode *mrmlPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(node);
+  vtkMRMLPlotChartNode* mrmlPlotChartNode = vtkMRMLPlotChartNode::SafeDownCast(node);
 
   if (!q->mrmlPlotViewNode() || this->PlotChartNode == mrmlPlotChartNode)
   {
@@ -174,7 +174,7 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotSeriesNodesSelected()
   // loop over arrays in the widget
   for (int idx = 0; idx < this->plotSeriesComboBox->nodeCount(); idx++)
   {
-    vtkMRMLPlotSeriesNode *dn = vtkMRMLPlotSeriesNode::SafeDownCast(this->plotSeriesComboBox->nodeFromIndex(idx));
+    vtkMRMLPlotSeriesNode* dn = vtkMRMLPlotSeriesNode::SafeDownCast(this->plotSeriesComboBox->nodeFromIndex(idx));
 
     bool checked = (this->plotSeriesComboBox->checkState(dn) == Qt::Checked);
 
@@ -207,14 +207,14 @@ void qMRMLPlotViewControllerWidgetPrivate::onPlotSeriesNodesSelected()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotViewControllerWidgetPrivate::onPlotSeriesNodeAdded(vtkMRMLNode *node)
+void qMRMLPlotViewControllerWidgetPrivate::onPlotSeriesNodeAdded(vtkMRMLNode* node)
 {
   Q_Q(qMRMLPlotViewControllerWidget);
   if (!this->PlotChartNode || !q->mrmlScene())
   {
     return;
   }
-  vtkMRMLPlotSeriesNode *plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(node);
+  vtkMRMLPlotSeriesNode* plotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(node);
   if (!plotSeriesNode)
   {
     return;
@@ -293,7 +293,7 @@ QString qMRMLPlotViewControllerWidget::viewLabel()const
 
 //---------------------------------------------------------------------------
 void qMRMLPlotViewControllerWidget::setMRMLPlotViewNode(
-    vtkMRMLPlotViewNode * viewNode)
+    vtkMRMLPlotViewNode* viewNode)
 {
   Q_D(qMRMLPlotViewControllerWidget);
   this->setMRMLViewNode(viewNode);

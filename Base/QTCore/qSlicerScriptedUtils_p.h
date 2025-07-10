@@ -69,7 +69,7 @@ public:
                                  PyObject* attributeValue);
 
   /// \sa qSlicerLoadableModule::importModulePythonExtensions
-  static bool importModulePythonExtensions(qSlicerCorePythonManager * pythonManager,
+  static bool importModulePythonExtensions(qSlicerCorePythonManager* pythonManager,
                                            const QString& intDir,
                                            const QString& modulePath,
                                            bool isEmbedded=false);

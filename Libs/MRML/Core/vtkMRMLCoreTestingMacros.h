@@ -50,7 +50,7 @@
     std::cerr << "Failed to catch expected exception" << std::endl;  \
     return EXIT_FAILURE;  \
   }  \
-  catch( itk::ExceptionObject & excp )  \
+  catch( itk::ExceptionObject& excp )  \
   {  \
     std::cout << "Caught expected exception" << std::endl;  \
     std::cout << excp << std::endl; \
@@ -64,7 +64,7 @@
     std::cout << "Trying " << #command << std::endl; \
     command;  \
   }  \
-  catch( itk::ExceptionObject & excp )  \
+  catch( itk::ExceptionObject& excp )  \
   {  \
     std::cerr << excp << std::endl; \
     return EXIT_FAILURE;  \
@@ -276,7 +276,7 @@
 #define TEST_SET_GET_VECTOR3_DOUBLE( object, variable, x, y, z )    \
   {                                                                 \
     object->Set##variable( x, y, z );                               \
-    double *val = object->Get##variable();                          \
+    double* val = object->Get##variable();                          \
     if( val == nullptr || val[0] != x || val[1] != y || val[2] != z )  \
     {                                                             \
       std::cerr << "Error in Set/Get"#variable << std::endl;        \
@@ -325,7 +325,7 @@
 /// test a string variable on the object by calling Set/Get
 #define TEST_SET_GET_STRING( object, variable ) \
   { \
-  const char * originalStringPointer = object->Get##variable(); \
+  const char* originalStringPointer = object->Get##variable(); \
   std::string originalString; \
   if( originalStringPointer != nullptr ) \
   { \

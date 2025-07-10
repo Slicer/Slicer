@@ -105,7 +105,7 @@ private:
   void operator=(const vtkMRMLSegmentationsDisplayableManager2D&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   friend class vtkInternal;
 };
 

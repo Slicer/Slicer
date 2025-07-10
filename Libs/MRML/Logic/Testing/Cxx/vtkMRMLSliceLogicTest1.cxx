@@ -27,7 +27,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLSliceLogicTest1(int , char * [] )
+int vtkMRMLSliceLogicTest1(int, char*[])
 {
   vtkNew<vtkMRMLSliceLogic> logic;
   EXERCISE_BASIC_OBJECT_METHODS(logic.GetPointer());

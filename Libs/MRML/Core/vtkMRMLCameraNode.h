@@ -29,7 +29,7 @@ class vtkRenderer;
 class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLTransformableNode
 {
 public:
-  static vtkMRMLCameraNode *New();
+  static vtkMRMLCameraNode* New();
   vtkTypeMacro(vtkMRMLCameraNode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -65,7 +65,7 @@ public:
   /// Set the camera active tag, i.e. the tag for which object (view) this
   /// camera is active.
   const char* GetActiveTag();
-  virtual void SetActiveTag(const char *);
+  virtual void SetActiveTag(const char*);
 
   ///
   /// Name of the layout widget that this camera is used in.

@@ -82,7 +82,7 @@
 #endif
 
 //----------------------------------------------------------------------------
-qSlicerApplicationHelper::qSlicerApplicationHelper(QObject * parent) : Superclass(parent)
+qSlicerApplicationHelper::qSlicerApplicationHelper(QObject* parent) : Superclass(parent)
 {
 }
 
@@ -125,7 +125,7 @@ void qSlicerApplicationHelper::preInitializeApplication(
 }
 
 //----------------------------------------------------------------------------
-void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager)
+void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryManager* moduleFactoryManager)
 {
   qSlicerApplication* app = qSlicerApplication::application();
   // Register module factories
@@ -265,7 +265,7 @@ bool qSlicerApplicationHelper::checkRenderingCapabilities()
     .arg(qSlicerApplication::application()->documentationBaseUrl());
   details += systemInfo->GetRenderingCapabilitiesDetails().c_str();
 
-  ctkMessageBox *messageBox = new ctkMessageBox(nullptr);
+  ctkMessageBox* messageBox = new ctkMessageBox(nullptr);
   messageBox->setAttribute(Qt::WA_DeleteOnClose, true);
   messageBox->setIcon(QMessageBox::Warning);
   messageBox->setWindowTitle(tr("Insufficient graphics capability"));

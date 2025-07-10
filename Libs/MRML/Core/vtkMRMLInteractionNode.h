@@ -8,7 +8,7 @@ class vtkMRMLInteractionEventData;
 class VTK_MRML_EXPORT vtkMRMLInteractionNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLInteractionNode *New();
+  static vtkMRMLInteractionNode* New();
   vtkTypeMacro(vtkMRMLInteractionNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -21,7 +21,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "Interaction";}
@@ -67,11 +67,11 @@ public:
   };
 
   /// Return a text string describing the mode
-  const char *GetInteractionModeAsString(int mode);
-  const char *GetInteractionModeAsString() { return this->GetInteractionModeAsString(this->CurrentInteractionMode); } ;
+  const char* GetInteractionModeAsString(int mode);
+  const char* GetInteractionModeAsString() { return this->GetInteractionModeAsString(this->CurrentInteractionMode); } ;
 
   /// Return the mode given a text string.
-  int GetInteractionModeByString ( const char * modeString );
+  int GetInteractionModeByString ( const char* modeString );
 
   /// Convenience methods for the mouse mode tool bar to call
   void SwitchToPersistentPlaceMode();

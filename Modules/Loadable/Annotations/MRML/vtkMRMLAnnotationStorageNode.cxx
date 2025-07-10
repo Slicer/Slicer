@@ -28,7 +28,7 @@ void vtkMRMLAnnotationStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotationDisplayNode *annotationDisplayNode, std::string lineString, std::string preposition)
+int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotationDisplayNode* annotationDisplayNode, std::string lineString, std::string preposition)
 {
   if (annotationDisplayNode == nullptr)
   {
@@ -63,8 +63,8 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
      vtkDebugMacro("Getting colors, substr = " << str.c_str());
      // the rgb values are separated by commas
      float r = 0.0, g = 0.0, b = 0.0;
-     char *ptr;
-     char *colors = (char *)(str.c_str());
+     char* ptr;
+     char* colors = (char*)(str.c_str());
      ptr = strtok(colors, ",");
      if (ptr != nullptr)
      {
@@ -149,7 +149,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnnotationTextDisplayNode *annotationDisplayNode, std::string lineString, std::string preposition)
+int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnnotationTextDisplayNode* annotationDisplayNode, std::string lineString, std::string preposition)
 {
   if (annotationDisplayNode == nullptr)
   {
@@ -178,7 +178,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnn
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *refNode)
+int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode* refNode)
 {
   vtkDebugMacro("Reading Annotation data");
   // test whether refNode is a valid node to hold a text list
@@ -225,7 +225,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToRead(fstream& fstr, vtkMRMLNode *ref
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode *refNode, char line[1024], int typeColumn, int annotationColumn,  int selColumn,  int visColumn, int numColumns)
+int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode* refNode, char line[1024], int typeColumn, int annotationColumn,  int selColumn,  int visColumn, int numColumns)
 {
   if (!refNode)
   {
@@ -306,7 +306,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode *
 }
 //----------------------------------------------------------------------------
 
-int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotationNode *refNode, char line[1024], int &typeColumn,
+int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotationNode* refNode, char line[1024], int& typeColumn,
                                int& annotationColumn, int& selColumn, int& visColumn, int& numColumns)
 {
   if (!refNode)
@@ -348,8 +348,8 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotation
       // reset all of them
       typeColumn= annotationColumn = selColumn = visColumn = -1;
       numColumns = 0;
-      char *columns = (char *)str.c_str();
-      char *ptr = strtok(columns, "|");
+      char* columns = (char*)str.c_str();
+      char* ptr = strtok(columns, "|");
       while (ptr != nullptr)
       {
       if (strcmp(ptr, "type") == 0)
@@ -380,7 +380,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextProperties(vtkMRMLAnnotation
 
 //----------------------------------------------------------------------------
 // assumes that ResetAnnotations is executed
-int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotationNode)
+int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode* annotationNode)
 {
   if (annotationNode == nullptr)
   {
@@ -443,12 +443,12 @@ bool vtkMRMLAnnotationStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   /*
   // special case: if this annotation is in a hierarchy, the hierarchy took
   // care of reading it already
-  vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
+  vtkMRMLHierarchyNode* hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
   if (hnode &&
       hnode->GetParentNodeID())
     {
@@ -457,7 +457,7 @@ int vtkMRMLAnnotationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   */
   // cast the input node
-  vtkMRMLAnnotationNode *annotationNode =
+  vtkMRMLAnnotationNode* annotationNode =
     vtkMRMLAnnotationNode::SafeDownCast (refNode);
 
   if (annotationNode == nullptr)
@@ -479,7 +479,7 @@ int vtkMRMLAnnotationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::WriteAnnotationDisplayProperties(fstream& of, vtkMRMLAnnotationDisplayNode *refNode, std::string preposition)
+int vtkMRMLAnnotationStorageNode::WriteAnnotationDisplayProperties(fstream& of, vtkMRMLAnnotationDisplayNode* refNode, std::string preposition)
 {
  if (!refNode)
  {
@@ -487,7 +487,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationDisplayProperties(fstream& of, 
  }
  preposition.insert(0,"# ");
  of << preposition + "Visibility = " << refNode->GetVisibility() << endl;
- double *color = refNode->GetColor();
+ double* color = refNode->GetColor();
  of << preposition + "Color = " << color[0] << "," << color[1] << "," << color[2] << endl;
  color = refNode->GetSelectedColor();
  of << preposition + "SelectedColor = " << color[0] << "," << color[1] << "," << color[2] << endl;
@@ -501,7 +501,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationDisplayProperties(fstream& of, 
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::WriteAnnotationTextDisplayProperties(fstream& of, vtkMRMLAnnotationTextDisplayNode *refNode, std::string preposition)
+int vtkMRMLAnnotationStorageNode::WriteAnnotationTextDisplayProperties(fstream& of, vtkMRMLAnnotationTextDisplayNode* refNode, std::string preposition)
 {
  if (!refNode)
  {
@@ -521,7 +521,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationTextDisplayProperties(fstream& 
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::WriteAnnotationTextProperties(fstream& of, vtkMRMLAnnotationNode *refNode)
+int vtkMRMLAnnotationStorageNode::WriteAnnotationTextProperties(fstream& of, vtkMRMLAnnotationNode* refNode)
 {
   // put down a header
   if (refNode == nullptr)
@@ -529,7 +529,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationTextProperties(fstream& of, vtk
     vtkWarningMacro("WriteAnnotationTextProperties: reference node is null");
     return 0;
   }
-  vtkMRMLAnnotationTextDisplayNode *annDisNode = refNode->GetAnnotationTextDisplayNode();
+  vtkMRMLAnnotationTextDisplayNode* annDisNode = refNode->GetAnnotationTextDisplayNode();
   if (annDisNode == nullptr)
   {
     vtkWarningMacro("WriteAnnotationTextProperties: annotation text display node is null");
@@ -544,7 +544,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationTextProperties(fstream& of, vtk
 }
 
 //--------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnotationNode *refNode)
+int vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnotationNode* refNode)
 {
   if (!refNode)
   {
@@ -595,12 +595,12 @@ int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream &of)
+int vtkMRMLAnnotationStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream &of)
 {
   vtkDebugMacro("vtkMRMLAnnotationStorageNode::WriteData");
 
   // cast the input node
-  vtkMRMLAnnotationNode *annotationNode =
+  vtkMRMLAnnotationNode* annotationNode =
     vtkMRMLAnnotationNode::SafeDownCast(refNode);
 
   if (annotationNode == nullptr)
@@ -622,7 +622,7 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNo
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   if (!refNode)
   {

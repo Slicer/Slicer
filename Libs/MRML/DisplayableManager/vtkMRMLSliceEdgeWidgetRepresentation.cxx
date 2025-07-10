@@ -81,7 +81,7 @@ void vtkMRMLSliceEdgeWidgetRepresentation::PrintSelf(ostream& os,
 
 //----------------------------------------------------------------------
 void vtkMRMLSliceEdgeWidgetRepresentation::UpdateFromMRML(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void *vtkNotUsed(callData))
+    vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void* vtkNotUsed(callData))
 {
   if (!this->Pipeline)
   {
@@ -270,7 +270,7 @@ void vtkMRMLSliceEdgeWidgetRepresentation::GetSliceEdgeColor(double color[4])
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceEdgeWidgetRepresentation::setSliceNode(vtkMRMLSliceNode *sliceNode)
+void vtkMRMLSliceEdgeWidgetRepresentation::setSliceNode(vtkMRMLSliceNode* sliceNode)
 {
   if (!sliceNode || this->SliceNode == sliceNode)
   {
@@ -288,7 +288,7 @@ vtkMRMLSliceNode* vtkMRMLSliceEdgeWidgetRepresentation::GetSliceNode()
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceEdgeWidgetRepresentation::setSliceModelNode(vtkMRMLModelNode *sliceModelNode)
+void vtkMRMLSliceEdgeWidgetRepresentation::setSliceModelNode(vtkMRMLModelNode* sliceModelNode)
 {
   if (!this->Pipeline || this->SliceModelNode == sliceModelNode)
   {

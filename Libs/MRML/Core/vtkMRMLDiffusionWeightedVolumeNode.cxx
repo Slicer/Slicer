@@ -197,7 +197,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
+void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4* mf)
 {
   if (!mf)
   {
@@ -213,7 +213,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
+void vtkMRMLDiffusionWeightedVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4* mf)
 {
   if (!mf)
   {
@@ -298,7 +298,7 @@ void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradient(int num, const dou
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradients(vtkDoubleArray *grad)
+void vtkMRMLDiffusionWeightedVolumeNode::SetDiffusionGradients(vtkDoubleArray* grad)
 {
   // gradients must all be length 0 (baseline) or 1.
   vnl_double_3 tmp_grad;
@@ -331,18 +331,18 @@ void vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionGradient(int num,double gra
 }
 
 //----------------------------------------------------------------------------
-double *vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionGradient(int num)
+double* vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionGradient(int num)
 {
   if (num < 0 || num >= this->DiffusionGradients->GetNumberOfTuples())
   {
     vtkErrorMacro(<< "Gradient number is out of range.");
     return nullptr;
   }
-  return static_cast <double *> (this->DiffusionGradients->GetVoidPointer(num*3));
+  return static_cast <double*> (this->DiffusionGradients->GetVoidPointer(num*3));
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionWeightedVolumeNode::SetBValues(vtkDoubleArray *bValues)
+void vtkMRMLDiffusionWeightedVolumeNode::SetBValues(vtkDoubleArray* bValues)
 {
   this->BValues->DeepCopy(bValues);
   this->Modified();
@@ -375,12 +375,12 @@ double vtkMRMLDiffusionWeightedVolumeNode::GetBValue(int num)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLDiffusionWeightedVolumeNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLDiffusionWeightedVolumeNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLDiffusionWeightedVolumeNode *node = (vtkMRMLDiffusionWeightedVolumeNode *) anode;
+  vtkMRMLDiffusionWeightedVolumeNode* node = (vtkMRMLDiffusionWeightedVolumeNode*) anode;
 
   // Matrices
   for(int i=0; i<3; i++)

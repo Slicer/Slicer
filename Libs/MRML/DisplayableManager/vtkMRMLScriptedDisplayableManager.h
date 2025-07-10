@@ -43,8 +43,8 @@ protected:
 
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
-  void ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event, void *callData) override;
-  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLSceneEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   void Create() override;
 
@@ -61,7 +61,7 @@ private:
   void operator=(const vtkMRMLScriptedDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

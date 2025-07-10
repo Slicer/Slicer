@@ -110,7 +110,7 @@ qSlicerSubjectHierarchyScriptedPluginPrivate::~qSlicerSubjectHierarchyScriptedPl
 // qSlicerSubjectHierarchyScriptedPlugin methods
 
 //-----------------------------------------------------------------------------
-qSlicerSubjectHierarchyScriptedPlugin::qSlicerSubjectHierarchyScriptedPlugin(QObject *parent)
+qSlicerSubjectHierarchyScriptedPlugin::qSlicerSubjectHierarchyScriptedPlugin(QObject* parent)
   : Superclass(parent)
   , d_ptr(new qSlicerSubjectHierarchyScriptedPluginPrivate)
 {

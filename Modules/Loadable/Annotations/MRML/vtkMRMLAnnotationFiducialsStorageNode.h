@@ -15,7 +15,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStora
   : public vtkMRMLAnnotationControlPointsStorageNode
 {
   public:
-  static vtkMRMLAnnotationFiducialsStorageNode *New();
+  static vtkMRMLAnnotationFiducialsStorageNode* New();
   vtkTypeMacro(vtkMRMLAnnotationFiducialsStorageNode,vtkMRMLAnnotationControlPointsStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -26,7 +26,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStora
 
   /// utility method called by the annotation hierarchy node to let this
   /// storage node read a single fiducial's data from an already open file
-  int ReadOneFiducial(fstream & fstr, vtkMRMLAnnotationFiducialNode *fiducialNode);
+  int ReadOneFiducial(fstream & fstr, vtkMRMLAnnotationFiducialNode* fiducialNode);
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
@@ -37,10 +37,10 @@ protected:
   vtkMRMLAnnotationFiducialsStorageNode(const vtkMRMLAnnotationFiducialsStorageNode&);
   void operator=(const vtkMRMLAnnotationFiducialsStorageNode&);
 
-  int ReadAnnotation(vtkMRMLAnnotationFiducialNode *refNode);
-  int ReadAnnotationFiducialsData(vtkMRMLAnnotationFiducialNode *refNode, char line[1024], int labelColumn, int xColumn, int yColumn, int zColumn,
+  int ReadAnnotation(vtkMRMLAnnotationFiducialNode* refNode);
+  int ReadAnnotationFiducialsData(vtkMRMLAnnotationFiducialNode* refNode, char line[1024], int labelColumn, int xColumn, int yColumn, int zColumn,
                       int selColumn,  int visColumn, int numColumns);
-  int ReadAnnotationFiducialsProperties(vtkMRMLAnnotationFiducialNode *refNode, char line[1024], int &labelColumn,
+  int ReadAnnotationFiducialsProperties(vtkMRMLAnnotationFiducialNode* refNode, char line[1024], int& labelColumn,
                         int& xColumn,    int& yColumn,     int& zColumn, int& selColumn, int& visColumn, int& numColumns);
 
   // Description:
@@ -48,7 +48,7 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   // Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
 };
 

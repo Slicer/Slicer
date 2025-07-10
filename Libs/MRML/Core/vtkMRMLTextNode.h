@@ -54,7 +54,7 @@ public:
   /// Set text node contents and encoding.
   /// If the encoding is not specified, then it will not be changed from the current value.
   /// \sa SetEncoding()
-  void SetText(const std::string &text, int encoding=-1);
+  void SetText(const std::string& text, int encoding=-1);
   vtkGetMacro(Text, std::string);
 
   ///

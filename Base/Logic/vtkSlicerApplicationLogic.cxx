@@ -87,7 +87,7 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
   this->ModifiedQueueLock.lock();
   while (!(*this->InternalModifiedQueue).empty())
   {
-    vtkObject *obj = (*this->InternalModifiedQueue).front();
+    vtkObject* obj = (*this->InternalModifiedQueue).front();
     (*this->InternalModifiedQueue).pop();
     obj->Delete(); // decrement ref count
   }
@@ -107,8 +107,8 @@ unsigned int vtkSlicerApplicationLogic::GetReadDataQueueSize()
 
 //-----------------------------------------------------------------------------
 void vtkSlicerApplicationLogic::SetMRMLSceneDataIO(vtkMRMLScene* newMRMLScene,
-                                                   vtkMRMLRemoteIOLogic *remoteIOLogic,
-                                                   vtkDataIOManagerLogic *dataIOManagerLogic)
+                                                   vtkMRMLRemoteIOLogic* remoteIOLogic,
+                                                   vtkDataIOManagerLogic* dataIOManagerLogic)
 {
   if (remoteIOLogic)
   {
@@ -344,7 +344,7 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
+int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask* task )
 {
   // only schedule a task if the processing task is up
   this->ProcessingThreadActiveLock.lock();
@@ -362,7 +362,7 @@ int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask *task )
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject *obj)
+vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject* obj)
 {
   // only request a Modified if the Modified queue is up
   this->ModifiedQueueActiveLock.lock();
@@ -384,7 +384,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject *obj)
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char *refNode, const char *filename, int displayData, int deleteFile)
+vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char* refNode, const char* filename, int displayData, int deleteFile)
 {
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock.lock();
@@ -406,7 +406,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char *refNode, con
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateParentTransform(const std::string &refNode, const std::string& parentTransformNode)
+vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateParentTransform(const std::string& refNode, const std::string& parentTransformNode)
 {
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock.lock();
@@ -427,7 +427,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateParentTransform(const std::
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateSubjectHierarchyLocation(const std::string &updatedNode, const std::string& siblingNode)
+vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateSubjectHierarchyLocation(const std::string& updatedNode, const std::string& siblingNode)
 {
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock.lock();
@@ -448,7 +448,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestUpdateSubjectHierarchyLocation(co
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestAddNodeReference(const std::string &referencingNode, const std::string& referencedNode, const std::string& role)
+vtkMTimeType vtkSlicerApplicationLogic::RequestAddNodeReference(const std::string& referencingNode, const std::string& referencedNode, const std::string& role)
 {
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock.lock();
@@ -469,7 +469,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestAddNodeReference(const std::strin
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char *refNode, const char *filename)
+vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char* refNode, const char* filename)
 {
   // only request to write a file if the WriteData queue is up
   this->WriteDataQueueActiveLock.lock();

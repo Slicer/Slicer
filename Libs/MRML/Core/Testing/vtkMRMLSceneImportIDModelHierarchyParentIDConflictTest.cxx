@@ -37,7 +37,7 @@ int ImportIDModelHierarchyParentIDConflictTestXMLString();
 int ImportIDModelHierarchyParentIDConflictTestFile();
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
+int vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest(int vtkNotUsed(argc), char* vtkNotUsed(argv) [])
 {
   bool res = true;
   res = res && (ImportIDModelHierarchyParentIDConflictTestXMLString() == EXIT_SUCCESS);
@@ -47,7 +47,7 @@ int vtkMRMLSceneImportIDModelHierarchyParentIDConflictTest(int vtkNotUsed(argc),
 
 //---------------------------------------------------------------------------
 // add a 5 deep model hierarchy to a scene
-int PopulateScene(vtkMRMLScene *scene)
+int PopulateScene(vtkMRMLScene* scene)
 {
   CHECK_INT(scene->GetNumberOfNodes(), 0);
 
@@ -88,7 +88,7 @@ int PopulateScene(vtkMRMLScene *scene)
 
 //---------------------------------------------------------------------------
 // Print out the model hierarchy nodes in a scene
-void PrintModelHierarchyNodes(int line, vtkMRMLScene *scene)
+void PrintModelHierarchyNodes(int line, vtkMRMLScene* scene)
 {
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
 
@@ -96,10 +96,10 @@ void PrintModelHierarchyNodes(int line, vtkMRMLScene *scene)
 
   for (int i = 0; i < numNodes; i++)
   {
-    vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(i, "vtkMRMLModelHierarchyNode");
+    vtkMRMLNode* mrmlNode = scene->GetNthNodeByClass(i, "vtkMRMLModelHierarchyNode");
     if (mrmlNode && mrmlNode->IsA("vtkMRMLModelHierarchyNode"))
     {
-      vtkMRMLModelHierarchyNode *hnode =
+      vtkMRMLModelHierarchyNode* hnode =
           vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
       std::cerr << "  " << i << ": Model Hierarchy node"
                 << " named [" << (hnode->GetName() ? hnode->GetName() : "null")
@@ -330,7 +330,7 @@ int ImportIDModelHierarchyParentIDConflictTestFile()
 
   CHECK_INT(scene3->GetNumberOfNodes(), 7);
 
-  vtkMRMLModelHierarchyNode *hierarchyNode2 =
+  vtkMRMLModelHierarchyNode* hierarchyNode2 =
       vtkMRMLModelHierarchyNode::SafeDownCast(scene3->GetNodeByID("vtkMRMLModelHierarchyNode2"));
 
   CHECK_NOT_NULL_ADD_REPORT(hierarchyNode2, PrintModelHierarchyNodes(__LINE__, scene3.GetPointer()));

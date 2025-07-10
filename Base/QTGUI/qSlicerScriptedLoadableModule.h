@@ -51,7 +51,7 @@ public:
 
   typedef qSlicerLoadableModule Superclass;
   typedef qSlicerScriptedLoadableModulePrivate Pimpl;
-  qSlicerScriptedLoadableModule(QObject *parent=nullptr);
+  qSlicerScriptedLoadableModule(QObject* parent=nullptr);
   ~qSlicerScriptedLoadableModule() override;
 
   QString pythonSource()const;

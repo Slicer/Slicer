@@ -44,7 +44,7 @@ class VTK_SLICER_SEQUENCES_MODULE_LOGIC_EXPORT vtkSlicerSequencesLogic :
 {
 public:
 
-  static vtkSlicerSequencesLogic *New();
+  static vtkSlicerSequencesLogic* New();
   vtkTypeMacro(vtkSlicerSequencesLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -114,7 +114,7 @@ protected:
   void UpdateFromMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-  void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   bool IsDataConnectorNode(vtkMRMLNode*);
 

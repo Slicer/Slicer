@@ -40,7 +40,7 @@ class vtkIntArray;
 class VTK_SLICER_SEQUENCES_MODULE_MRML_EXPORT vtkMRMLSequenceBrowserNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLSequenceBrowserNode *New();
+  static vtkMRMLSequenceBrowserNode* New();
   vtkTypeMacro(vtkMRMLSequenceBrowserNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -93,14 +93,14 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void CopyContent(vtkMRMLNode *node, bool deepCopy=true) override;
+  void CopyContent(vtkMRMLNode* node, bool deepCopy=true) override;
 
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "SequenceBrowser";};
 
   /// Set the sequence data node.
   /// Returns the new proxy node postfix.
-  std::string SetAndObserveMasterSequenceNodeID(const char *sequenceNodeID);
+  std::string SetAndObserveMasterSequenceNodeID(const char* sequenceNodeID);
   /// Get the sequence data node
   vtkMRMLSequenceNode* GetMasterSequenceNode();
 
@@ -193,7 +193,7 @@ public:
   //@{
   /// Get/set the recording sampling mode
   vtkSetMacro(RecordingSamplingMode, int);
-  void SetRecordingSamplingModeFromString(const char *recordingSamplingModeString);
+  void SetRecordingSamplingModeFromString(const char* recordingSamplingModeString);
   vtkGetMacro(RecordingSamplingMode, int);
   virtual std::string GetRecordingSamplingModeAsString();
   //@}
@@ -201,7 +201,7 @@ public:
   //@{
   /// Helper functions for converting between string and code representation of recording sampling modes
   static std::string GetRecordingSamplingModeAsString(int recordingSamplingMode);
-  static int GetRecordingSamplingModeFromString(const std::string &recordingSamplingModeString);
+  static int GetRecordingSamplingModeFromString(const std::string& recordingSamplingModeString);
   //@}
 
   //@{
@@ -213,7 +213,7 @@ public:
   //@{
   /// Get/set index display mode
   vtkSetMacro(IndexDisplayMode, int);
-  void SetIndexDisplayModeFromString(const char *indexDisplayModeString);
+  void SetIndexDisplayModeFromString(const char* indexDisplayModeString);
   vtkGetMacro(IndexDisplayMode, int);
   virtual std::string GetIndexDisplayModeAsString();
   //@}
@@ -227,7 +227,7 @@ public:
   //@{
   /// Helper functions for converting between string and code representation of index display modes
   static std::string GetIndexDisplayModeAsString(int indexDisplayMode);
-  static int GetIndexDisplayModeFromString(const std::string &indexDisplayModeString);
+  static int GetIndexDisplayModeFromString(const std::string& indexDisplayModeString);
   //@}
 
   //@{
@@ -353,7 +353,7 @@ public:
   //@}
 
   /// Process MRML node events for recording of the proxy nodes
-  void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents( vtkObject* caller, unsigned long event, void* callData ) override;
 
   /// Save state of all proxy nodes that recording is enabled for
   virtual void SaveProxyNodesState();
@@ -421,7 +421,7 @@ protected:
 
 private:
   struct SynchronizationProperties;
-  std::map< std::string, SynchronizationProperties* > SynchronizationPropertiesMap;
+  std::map<std::string, SynchronizationProperties* > SynchronizationPropertiesMap;
   SynchronizationProperties* GetSynchronizationPropertiesForSequence(vtkMRMLSequenceNode* sequenceNode);
   SynchronizationProperties* GetSynchronizationPropertiesForPostfix(const std::string& rolePostfix);
 };

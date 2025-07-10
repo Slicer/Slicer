@@ -101,7 +101,7 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
 
 //-----------------------------------------------------------------------------
 bool qSlicerScriptedUtils::importModulePythonExtensions(
-    qSlicerCorePythonManager * pythonManager,
+    qSlicerCorePythonManager* pythonManager,
     const QString& intDir,const QString& modulePath,
     bool isEmbedded)
 {

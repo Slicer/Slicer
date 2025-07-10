@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerWelcomeModule(QObject *parent=nullptr);
+  qSlicerWelcomeModule(QObject* parent=nullptr);
   ~qSlicerWelcomeModule() override;
 
   qSlicerGetTitleMacro(tr("Welcome to Slicer"));
@@ -57,7 +57,7 @@ public:
 protected:
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

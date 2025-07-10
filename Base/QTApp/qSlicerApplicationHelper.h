@@ -41,7 +41,7 @@ public:
   typedef QObject Superclass;
   typedef qSlicerApplicationHelper Self;
 
-  qSlicerApplicationHelper(QObject * parent = nullptr);
+  qSlicerApplicationHelper(QObject* parent = nullptr);
   ~qSlicerApplicationHelper() override;
 
   static void preInitializeApplication(const char* argv0, ctkProxyStyle* style);
@@ -55,7 +55,7 @@ public:
       QScopedPointer<QSplashScreen>& splashScreen,
       QScopedPointer<SlicerMainWindowType>& window);
 
-  static void setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager);
+  static void setupModuleFactoryManager(qSlicerModuleFactoryManager* moduleFactoryManager);
 
   static void showMRMLEventLoggerWidget();
 

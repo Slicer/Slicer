@@ -23,13 +23,13 @@
 #include "qMRMLNodeAttributeTableView.h"
 
 //-----------------------------------------------------------------------------
-qMRMLNodeAttributeTableViewPlugin::qMRMLNodeAttributeTableViewPlugin(QObject *_parent)
+qMRMLNodeAttributeTableViewPlugin::qMRMLNodeAttributeTableViewPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLNodeAttributeTableViewPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLNodeAttributeTableViewPlugin::createWidget(QWidget* _parent)
 {
   qMRMLNodeAttributeTableView* _widget = new qMRMLNodeAttributeTableView(_parent);
   return _widget;

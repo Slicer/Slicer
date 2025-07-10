@@ -52,7 +52,7 @@ vtkMRMLMessageCollection
 
 //----------------------------------------------------------------------------
 vtkMRMLMessageCollection::Message
-::Message(unsigned long messageType, const std::string &messageText)
+::Message(unsigned long messageType, const std::string& messageText)
   : MessageType(messageType), MessageText(messageText)
 {
 }
@@ -84,7 +84,7 @@ vtkMRMLMessageCollection
 //----------------------------------------------------------------------------
 int
 vtkMRMLMessageCollection
-::GetNumberOfMessagesOfType(const char *eventName) const
+::GetNumberOfMessagesOfType(const char* eventName) const
 {
   return GetNumberOfMessagesOfType(vtkCommand::GetEventIdFromString(eventName));
 }
@@ -108,7 +108,7 @@ vtkMRMLMessageCollection
 //----------------------------------------------------------------------------
 void
 vtkMRMLMessageCollection
-::AddMessage(unsigned long messageType, const std::string &messageText)
+::AddMessage(unsigned long messageType, const std::string& messageText)
 {
   this->Messages.push_back({messageType, messageText});
 }

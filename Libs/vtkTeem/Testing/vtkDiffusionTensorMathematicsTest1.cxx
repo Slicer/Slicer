@@ -40,7 +40,7 @@ int vtkDiffusionTensorMathematicsTest1(int vtkNotUsed(argc), char* vtkNotUsed(ar
   tensorImage->SetSpacing(1.5, 10., 100.);
   tensorImage->SetOrigin(-10., 40, 0.1);
 
-  vtkDataArray *scalars = vtkDataArray::CreateDataArray(VTK_FLOAT);
+  vtkDataArray* scalars = vtkDataArray::CreateDataArray(VTK_FLOAT);
   scalars->SetNumberOfComponents(9);
   scalars->SetName("tensors");
   scalars->SetNumberOfTuples(dimensions[0]*dimensions[1]*dimensions[2]);

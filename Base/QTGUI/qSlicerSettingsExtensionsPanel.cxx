@@ -61,7 +61,7 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 
   this->setupUi(q);
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
 
   // Default values
   this->ExtensionsManagerEnabledCheckBox->setChecked(true);

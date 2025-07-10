@@ -49,7 +49,7 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerMarkupsModule(QObject *parent=nullptr);
+  explicit qSlicerMarkupsModule(QObject* parent=nullptr);
   ~qSlicerMarkupsModule() override;
 
   qSlicerGetTitleMacro(tr("Markups"));
@@ -94,7 +94,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

@@ -31,7 +31,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char * argv[], T )
+int DoIt( int argc, char* argv[], T )
 {
 
   PARSE_ARGS;
@@ -98,7 +98,7 @@ int DoIt( int argc, char * argv[], T )
 
 } // end of anonymous namespace
 
-int main( int argc, char * argv[] )
+int main( int argc, char* argv[] )
 {
 
   PARSE_ARGS;
@@ -152,7 +152,7 @@ int main( int argc, char * argv[] )
     // signed types
 
   }
-  catch( itk::ExceptionObject & excep )
+  catch( itk::ExceptionObject& excep )
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

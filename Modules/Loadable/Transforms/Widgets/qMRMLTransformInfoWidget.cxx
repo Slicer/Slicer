@@ -93,7 +93,7 @@ void qMRMLTransformInfoWidgetPrivate::setAndObserveCrosshairNode()
 }
 
 //------------------------------------------------------------------------------
-qMRMLTransformInfoWidget::qMRMLTransformInfoWidget(QWidget *_parent)
+qMRMLTransformInfoWidget::qMRMLTransformInfoWidget(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qMRMLTransformInfoWidgetPrivate(*this))
 {
@@ -167,7 +167,7 @@ void qMRMLTransformInfoWidget::setMRMLTransformNode(vtkMRMLTransformNode* transf
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTransformInfoWidget::showEvent(QShowEvent *)
+void qMRMLTransformInfoWidget::showEvent(QShowEvent*)
 {
   // Update the widget, now that it becomes becomes visible
   // (we might have missed some updates, because widget contents is not updated

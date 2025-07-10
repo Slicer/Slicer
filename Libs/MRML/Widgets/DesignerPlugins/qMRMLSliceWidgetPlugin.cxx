@@ -4,12 +4,12 @@
 #include "qMRMLSliceWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLSliceWidgetPlugin::qMRMLSliceWidgetPlugin(QObject *_parent):QObject(_parent)
+qMRMLSliceWidgetPlugin::qMRMLSliceWidgetPlugin(QObject* _parent):QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSliceWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLSliceWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLSliceWidget* _widget = new qMRMLSliceWidget(_parent);
   return _widget;

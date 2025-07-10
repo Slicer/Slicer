@@ -50,7 +50,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSortFilterSegmentsProxyM
 
 public:
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterSegmentsProxyModel(QObject *parent=nullptr);
+  qMRMLSortFilterSegmentsProxyModel(QObject* parent=nullptr);
   ~qMRMLSortFilterSegmentsProxyModel() override;
 
   /// Returns the segmentation node in the source model
@@ -80,13 +80,13 @@ public:
   /// Returns true if the item in the row indicated by the given sourceRow and
   /// sourceParent should be included in the model; otherwise returns false.
   /// This method tests each item via \a filterAcceptsItem
-  bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const override;
+  bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent)const override;
 
   /// Filters items to decide which to display in the view
   virtual bool filterAcceptsItem(QString segmentID)const;
 
   /// Returns the flags for the current index
-  Qt::ItemFlags flags(const QModelIndex & index)const override;
+  Qt::ItemFlags flags(const QModelIndex& index)const override;
 
   /// Set filter to show segments with the specified state
   /// If the flags for all states are false, than no filtering is performed

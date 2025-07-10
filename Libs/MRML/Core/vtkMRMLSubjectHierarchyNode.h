@@ -101,7 +101,7 @@ public:
   };
 
 public:
-  static vtkMRMLSubjectHierarchyNode *New();
+  static vtkMRMLSubjectHierarchyNode* New();
   vtkTypeMacro(vtkMRMLSubjectHierarchyNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -115,7 +115,7 @@ public:
   void WriteNodeBodyXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   /// Get node XML tag name (like Volume, Contour)
   const char* GetNodeTagName() override;

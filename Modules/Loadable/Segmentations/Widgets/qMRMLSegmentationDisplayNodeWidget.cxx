@@ -577,7 +577,7 @@ void qMRMLSegmentationDisplayNodeWidget::onRepresentation2DChanged(int index)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentationDisplayNodeWidget::onSegmentSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void qMRMLSegmentationDisplayNodeWidget::onSegmentSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
   Q_UNUSED(selected);
   Q_UNUSED(deselected);

@@ -82,11 +82,11 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::ReadXMLAttributes(const char** a
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLDiffusionWeightedVolumeDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLDiffusionWeightedVolumeDisplayNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
-  vtkMRMLDiffusionWeightedVolumeDisplayNode *node = (vtkMRMLDiffusionWeightedVolumeDisplayNode *) anode;
+  vtkMRMLDiffusionWeightedVolumeDisplayNode* node = (vtkMRMLDiffusionWeightedVolumeDisplayNode*) anode;
   this->SetDiffusionComponent(node->DiffusionComponent);
   this->Superclass::Copy(anode);
 
@@ -106,7 +106,7 @@ void vtkMRMLDiffusionWeightedVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionWeightedVolumeDisplayNode
-::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
+::SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection)
 {
   this->ExtractComponent->SetInputConnection(imageDataConnection);
 }

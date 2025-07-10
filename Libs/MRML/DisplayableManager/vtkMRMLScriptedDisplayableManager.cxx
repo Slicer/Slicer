@@ -59,7 +59,7 @@ public:
   };
 
   static int          APIMethodCount;
-  static const char * APIMethodNames[8];
+  static const char* APIMethodNames[8];
 
   std::string  PythonSourceFilePath;
   PyObject *   PythonSelf;
@@ -144,7 +144,7 @@ void vtkMRMLScriptedDisplayableManager::Create()
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
-  vtkIntArray * sceneEventsAsPointer = nullptr;
+  vtkIntArray* sceneEventsAsPointer = nullptr;
 
   // Obtain list of event to listen
   PyObject* method =
@@ -166,9 +166,9 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
 
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager
-::ProcessMRMLSceneEvents(vtkObject *caller,
+::ProcessMRMLSceneEvents(vtkObject* caller,
                          unsigned long event,
-                         void *callData)
+                         void* callData)
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLSceneEventsMethod];
   if (!method)
@@ -189,9 +189,9 @@ void vtkMRMLScriptedDisplayableManager
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
+void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller,
                                                         unsigned long event,
-                                                        void *vtkNotUsed(callData))
+                                                        void* vtkNotUsed(callData))
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
   if (!method)

@@ -170,7 +170,7 @@ public:
   vtkTypeMacro(vtkQtTranslator, vtkMRMLTranslator);
 
   /// Translation function for logic classes
-  std::string Translate(const char *context, const char *sourceText, const char *disambiguation = nullptr, int n = -1) override
+  std::string Translate(const char* context, const char* sourceText, const char* disambiguation = nullptr, int n = -1) override
   {
     return QCoreApplication::translate(context, sourceText, disambiguation, n).toStdString();
   }
@@ -206,8 +206,8 @@ wchar_t* QStringToPythonWCharPointer(QString str)
 //-----------------------------------------------------------------------------
 qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   qSlicerCoreApplication& object,
-  qSlicerCoreCommandOptions * coreCommandOptions,
-  qSlicerCoreIOManager * coreIOManager) : q_ptr(&object)
+  qSlicerCoreCommandOptions* coreCommandOptions,
+  qSlicerCoreIOManager* coreIOManager) : q_ptr(&object)
 {
   qRegisterMetaType<qSlicerCoreApplication::ReturnCode>("qSlicerCoreApplication::ReturnCode");
   this->DefaultSettings = nullptr;
@@ -487,7 +487,7 @@ void qSlicerCoreApplicationPrivate::init()
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 
-  qSlicerExtensionsManagerModel * model = new qSlicerExtensionsManagerModel(q);
+  qSlicerExtensionsManagerModel* model = new qSlicerExtensionsManagerModel(q);
   model->setExtensionsSettingsFilePath(q->slicerRevisionUserSettingsFilePath());
   model->setSlicerRequirements(q->revision(), q->os(), q->arch());
   q->setExtensionsManagerModel(model);
@@ -963,7 +963,7 @@ QStringList qSlicerCoreApplicationPrivate::findTranslationFiles(const QString& d
 // qSlicerCoreApplication methods
 
 //-----------------------------------------------------------------------------
-qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Superclass(_argc, _argv)
+qSlicerCoreApplication::qSlicerCoreApplication(int& _argc, char** _argv):Superclass(_argc, _argv)
   , d_ptr(new qSlicerCoreApplicationPrivate(*this, new qSlicerCoreCommandOptions, new qSlicerCoreIOManager))
 {
   Q_D(qSlicerCoreApplication);
@@ -972,7 +972,7 @@ qSlicerCoreApplication::qSlicerCoreApplication(int &_argc, char **_argv):Supercl
 
 //-----------------------------------------------------------------------------
 qSlicerCoreApplication::qSlicerCoreApplication(
-  qSlicerCoreApplicationPrivate* pimpl, int &argc, char **argv)
+  qSlicerCoreApplicationPrivate* pimpl, int& argc, char** argv)
   : Superclass(argc, argv), d_ptr(pimpl)
 {
   // Note: You are responsible to call init() in the constructor of derived class.
@@ -1939,7 +1939,7 @@ QSharedPointer<ctkDICOMDatabase> qSlicerCoreApplication::dicomDatabaseShared()co
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::restart()
 {
-  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
   bool launcherAvailable = QFile::exists(coreApp->launcherExecutableFilePath());
   QStringList arguments = coreApp->arguments();
   arguments.removeFirst(); // Remove program name
@@ -2034,7 +2034,7 @@ void qSlicerCoreApplication
   Q_ASSERT(d->AppLogic.GetPointer() == vtkSlicerApplicationLogic::SafeDownCast(appLogic));
   Q_UNUSED(appLogic);
   Q_UNUSED(d);
-  int delayInMs = *reinterpret_cast<int *>(delay);
+  int delayInMs = *reinterpret_cast<int*>(delay);
   switch(event)
   {
     case vtkSlicerApplicationLogic::RequestModifiedEvent:
@@ -2108,7 +2108,7 @@ void qSlicerCoreApplication::onAboutToQuit()
 void qSlicerCoreApplication::loadTranslations(const QString& dir)
 {
 #ifdef Slicer_BUILD_I18N_SUPPORT
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   Q_ASSERT(app);
 
   QStringList qmFiles = qSlicerCoreApplicationPrivate::findTranslationFiles(dir, app->applicationLocaleName());

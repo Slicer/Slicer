@@ -63,7 +63,7 @@ private:
   void operator=(const vtkMRMLOrientationMarkerDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

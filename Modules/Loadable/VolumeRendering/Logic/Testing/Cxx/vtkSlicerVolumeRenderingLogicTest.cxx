@@ -36,7 +36,7 @@
 
 //----------------------------------------------------------------------------
 int testDefaultRenderingMethod(const std::string& moduleShareDirectory);
-int testPresets(const std::string &moduleShareDirectory);
+int testPresets(const std::string& moduleShareDirectory);
 
 //----------------------------------------------------------------------------
 int vtkSlicerVolumeRenderingLogicTest(int argc, char* argv[])

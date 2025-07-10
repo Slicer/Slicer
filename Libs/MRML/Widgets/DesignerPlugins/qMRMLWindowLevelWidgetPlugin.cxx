@@ -1,12 +1,12 @@
 #include "qMRMLWindowLevelWidgetPlugin.h"
 #include "qMRMLWindowLevelWidget.h"
 
-qMRMLWindowLevelWidgetPlugin::qMRMLWindowLevelWidgetPlugin(QObject *_parent)
+qMRMLWindowLevelWidgetPlugin::qMRMLWindowLevelWidgetPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
-QWidget *qMRMLWindowLevelWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLWindowLevelWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLWindowLevelWidget* _widget = new qMRMLWindowLevelWidget(_parent);
   return _widget;

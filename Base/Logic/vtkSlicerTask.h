@@ -9,7 +9,7 @@
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerTask : public vtkObject
 {
 public:
-  static vtkSlicerTask *New();
+  static vtkSlicerTask* New();
   vtkTypeMacro(vtkSlicerTask,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -17,7 +17,7 @@ public:
 
   ///
   /// Set the function and object to call for the task.
-  void SetTaskFunction(vtkMRMLAbstractLogic*, TaskFunctionPointer, void *clientdata);
+  void SetTaskFunction(vtkMRMLAbstractLogic*, TaskFunctionPointer, void* clientdata);
 
   ///
   /// Execute the task.
@@ -57,7 +57,7 @@ protected:
 private:
   vtkSmartPointer<vtkMRMLAbstractLogic> TaskObject;
   vtkMRMLAbstractLogic::TaskFunctionPointer TaskFunction;
-  void *TaskClientData;
+  void* TaskClientData;
 
   int Type;
 

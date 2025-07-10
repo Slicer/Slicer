@@ -23,7 +23,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLPlotViewNodeTest1(int , char * [] )
+int vtkMRMLPlotViewNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLPlotViewNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

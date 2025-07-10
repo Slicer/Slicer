@@ -38,7 +38,7 @@
 
 //---------------------------------------------------------------------------
 int vtkSceneViewEventsTest(
-  int vtkNotUsed(argc), char * vtkNotUsed(argv)[])
+  int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> appLogic;

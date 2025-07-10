@@ -13,7 +13,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
 
-int vtkMRMLGlyphableVolumeSliceDisplayNodeTest1(int , char * [] )
+int vtkMRMLGlyphableVolumeSliceDisplayNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLGlyphableVolumeSliceDisplayNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

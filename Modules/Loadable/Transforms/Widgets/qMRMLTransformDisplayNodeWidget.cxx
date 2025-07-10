@@ -206,7 +206,7 @@ void qMRMLTransformDisplayNodeWidgetPrivate
 
 //-----------------------------------------------------------------------------
 qMRMLTransformDisplayNodeWidget
-::qMRMLTransformDisplayNodeWidget(QWidget *newParent) :
+::qMRMLTransformDisplayNodeWidget(QWidget* newParent) :
     Superclass(newParent)
   , d_ptr(new qMRMLTransformDisplayNodeWidgetPrivate(*this))
 {

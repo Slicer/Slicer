@@ -21,12 +21,12 @@
 #include "qMRMLMatrixWidgetPlugin.h"
 #include "qMRMLMatrixWidget.h"
 
-qMRMLMatrixWidgetPlugin::qMRMLMatrixWidgetPlugin(QObject *_parent)
+qMRMLMatrixWidgetPlugin::qMRMLMatrixWidgetPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
-QWidget *qMRMLMatrixWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLMatrixWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLMatrixWidget* _widget = new qMRMLMatrixWidget(_parent);
   return _widget;

@@ -86,7 +86,7 @@ public:
   /// Do nothing by default.
   /// If it does something, acceptProposedAction() or accept() must be called.
   /// \sa isMimeDataAccepted()
-  Q_INVOKABLE virtual void dropEvent(QDropEvent *event);
+  Q_INVOKABLE virtual void dropEvent(QDropEvent* event);
 
   /// Return the list of nodes created by exec().
   /// To be reimplemented.

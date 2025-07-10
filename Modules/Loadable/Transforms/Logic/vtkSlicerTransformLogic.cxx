@@ -99,7 +99,7 @@ bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transfor
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename, vtkMRMLScene *scene,
+vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename, vtkMRMLScene* scene,
   vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
   vtkNew<vtkMRMLTransformStorageNode> storageNode;
@@ -117,7 +117,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
     useURI = scene->GetCacheManager()->IsRemoteReference(filename);
   }
 
-  const char *localFile;
+  const char* localFile;
   if (useURI)
   {
     vtkDebugMacro("AddTransforn: file name is remote: " << filename);
@@ -1432,7 +1432,7 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind(vtkMRMLTransformNode *transformNode)
+vtkSlicerTransformLogic::TransformKind vtkSlicerTransformLogic::GetTransformKind(vtkMRMLTransformNode* transformNode)
 {
   if (transformNode == nullptr)
   {

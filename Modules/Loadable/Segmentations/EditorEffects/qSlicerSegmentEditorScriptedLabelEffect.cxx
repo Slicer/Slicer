@@ -106,7 +106,7 @@ qSlicerSegmentEditorScriptedLabelEffectPrivate::~qSlicerSegmentEditorScriptedLab
 // qSlicerSegmentEditorScriptedLabelEffect methods
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScriptedLabelEffect::qSlicerSegmentEditorScriptedLabelEffect(QObject *parent)
+qSlicerSegmentEditorScriptedLabelEffect::qSlicerSegmentEditorScriptedLabelEffect(QObject* parent)
   : Superclass(parent)
   , d_ptr(new qSlicerSegmentEditorScriptedLabelEffectPrivate)
 {

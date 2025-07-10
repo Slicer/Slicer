@@ -73,7 +73,7 @@ namespace
 
 //---------------------------------------------------------------------------
 int vtkSlicerSubjectHierarchyModuleLogicTest( int vtkNotUsed(argc),
-                                              char * vtkNotUsed(argv)[] )
+                                              char* vtkNotUsed(argv)[] )
 {
   if (!TestExpand())
   {

@@ -88,7 +88,7 @@ void qMRMLColorPickerWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLColorPickerWidget::qMRMLColorPickerWidget(QWidget *_parent)
+qMRMLColorPickerWidget::qMRMLColorPickerWidget(QWidget* _parent)
   : qMRMLWidget(_parent)
   , d_ptr(new qMRMLColorPickerWidgetPrivate(*this))
 {
@@ -244,7 +244,7 @@ bool qMRMLColorPickerWidget::eventFilter(QObject* target, QEvent* event)
     }
     if (event->type() == QEvent::KeyPress)
     {
-      QKeyEvent* keyEvent = static_cast<QKeyEvent *>(event);
+      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
       if (keyEvent->key() == Qt::Key_Up ||
           keyEvent->key() == Qt::Key_Down)
       {

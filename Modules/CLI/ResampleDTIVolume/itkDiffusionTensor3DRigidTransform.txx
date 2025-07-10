@@ -82,7 +82,7 @@ DiffusionTensor3DRigidTransform<TData>
 template <class TData>
 void
 DiffusionTensor3DRigidTransform<TData>
-::SetMatrix3x3( MatrixTransformType & matrix )
+::SetMatrix3x3( MatrixTransformType& matrix )
 {
   Matrix<double, 3, 3> result;
   result = matrix * matrix.GetTranspose();
@@ -132,7 +132,7 @@ DiffusionTensor3DRigidTransform<TData>
 template <class TData>
 double
 DiffusionTensor3DRigidTransform<TData>
-::GetDet( MatrixTransformType & matrix )
+::GetDet( MatrixTransformType& matrix )
 {
   double det = 0;
 

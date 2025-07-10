@@ -98,7 +98,7 @@ qSlicerSegmentEditorScriptedPaintEffectPrivate::~qSlicerSegmentEditorScriptedPai
 // qSlicerSegmentEditorScriptedPaintEffect methods
 
 //-----------------------------------------------------------------------------
-qSlicerSegmentEditorScriptedPaintEffect::qSlicerSegmentEditorScriptedPaintEffect(QObject *parent)
+qSlicerSegmentEditorScriptedPaintEffect::qSlicerSegmentEditorScriptedPaintEffect(QObject* parent)
   : Superclass(parent)
   , d_ptr(new qSlicerSegmentEditorScriptedPaintEffectPrivate)
 {

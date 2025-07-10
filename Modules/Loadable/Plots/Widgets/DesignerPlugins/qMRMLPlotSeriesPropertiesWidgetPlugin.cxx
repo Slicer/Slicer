@@ -23,15 +23,15 @@
 
 //------------------------------------------------------------------------------
 qMRMLPlotSeriesPropertiesWidgetPlugin
-::qMRMLPlotSeriesPropertiesWidgetPlugin(QObject *_parent)
+::qMRMLPlotSeriesPropertiesWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLPlotSeriesPropertiesWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLPlotSeriesPropertiesWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qMRMLPlotSeriesPropertiesWidget* _widget
     = new qMRMLPlotSeriesPropertiesWidget(_parent);

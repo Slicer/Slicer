@@ -38,7 +38,7 @@
 
 // STD includes
 
-int qMRMLModelInfoWidgetTest1(int argc, char * argv [] )
+int qMRMLModelInfoWidgetTest1(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

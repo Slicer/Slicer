@@ -45,7 +45,7 @@ class vtkMatrix4x4;
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageAlgorithm
 {
 public:
-  static vtkITKArchetypeImageSeriesReader *New();
+  static vtkITKArchetypeImageSeriesReader* New();
   vtkTypeMacro(vtkITKArchetypeImageSeriesReader,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -265,7 +265,7 @@ public:
 
   ///
   /// Return the MetaDataDictionary from the ITK layer
-  const itk::MetaDataDictionary &GetMetaDataDictionary() const;
+  const itk::MetaDataDictionary& GetMetaDataDictionary() const;
   std::vector<std::string> Tags;
   std::vector<std::string> TagValues;
   void ParseDictionary();
@@ -502,7 +502,7 @@ public:
       std::distance(this->SliceLocation.begin(), iter) : -1;
   }
 
-  int ExistImageOrientationPatient( float * directionCosine )
+  int ExistImageOrientationPatient( float* directionCosine )
   {
       /// input has to have six elements
       float a = sqrt( directionCosine[0]*directionCosine[0] + directionCosine[1]*directionCosine[1] + directionCosine[2]*directionCosine[2] );
@@ -605,7 +605,7 @@ public:
       {
         return nullptr;
       }
-      float *dgo = new float [3];
+      float* dgo = new float [3];
       for (int k = 0; k <3; k++)
       {
         dgo[k] = this->DiffusionGradientOrientation[n][k];
@@ -628,7 +628,7 @@ public:
       {
         return nullptr;
       }
-      float *dgo = new float [6];
+      float* dgo = new float [6];
       for (int k = 0; k <6; k++)
       {
         dgo[k] = this->ImageOrientationPatient[n][k];
@@ -642,7 +642,7 @@ public:
       {
         return nullptr;
       }
-      float *ipp = new float [3];
+      float* ipp = new float [3];
       for (int k = 0; k <3; k++)
       {
         ipp[k] = this->ImagePositionPatient[n][k];
@@ -652,7 +652,7 @@ public:
 
   /// insert unique item into array. Duplicate code for TCL wrapping.
   /// TODO: need to clean up
-  int InsertSeriesInstanceUIDs ( const char * aUID )
+  int InsertSeriesInstanceUIDs ( const char* aUID )
   {
       int k = ExistSeriesInstanceUID( aUID );
       if ( k >= 0 )
@@ -665,7 +665,7 @@ public:
       return (this->SeriesInstanceUIDs.size()-1);
   }
 
-  int InsertContentTime ( const char * aTime )
+  int InsertContentTime ( const char* aTime )
   {
       int k = ExistContentTime( aTime );
       if ( k >= 0 )
@@ -678,7 +678,7 @@ public:
       return (this->ContentTime.size()-1);
   }
 
-  int InsertTriggerTime ( const char * aTime )
+  int InsertTriggerTime ( const char* aTime )
   {
       int k = ExistTriggerTime( aTime );
       if ( k >= 0 )
@@ -691,7 +691,7 @@ public:
       return (this->TriggerTime.size()-1);
   }
 
-  int InsertEchoNumbers ( const char * aEcho )
+  int InsertEchoNumbers ( const char* aEcho )
   {
       int k = ExistEchoNumbers( aEcho );
       if ( k >= 0 )
@@ -704,7 +704,7 @@ public:
       return (this->EchoNumbers.size()-1);
   }
 
-  int InsertDiffusionGradientOrientation ( float *a )
+  int InsertDiffusionGradientOrientation ( float* a )
   {
       int k = ExistDiffusionGradientOrientation( a );
       if ( k >= 0 )
@@ -746,7 +746,7 @@ public:
     return size;
   }
 
-  int InsertImageOrientationPatient ( float *a )
+  int InsertImageOrientationPatient ( float* a )
   {
       int k = ExistImageOrientationPatient( a );
       if ( k >= 0 )
@@ -766,7 +766,7 @@ public:
       return (this->ImageOrientationPatient.size()-1);
   }
 
-  int InsertImagePositionPatient ( float *a )
+  int InsertImagePositionPatient ( float* a )
   {
       int k = ExistImagePositionPatient( a );
       if ( k >= 0 )
@@ -808,12 +808,12 @@ protected:
   ~vtkITKArchetypeImageSeriesReader() override;
 
   /// Get MetaData from dictionary, removing all whitespaces from the string.
-  static std::string GetMetaDataWithoutSpaces(const itk::MetaDataDictionary &dict, const std::string& tag);
+  static std::string GetMetaDataWithoutSpaces(const itk::MetaDataDictionary& dict, const std::string& tag);
 
   /// Get the image IO for the specified filename
   itk::ImageIOBase::Pointer GetImageIO(const char* filename);
 
-  char *Archetype;
+  char* Archetype;
   int SingleFile;
   int UseOrientationFromFile;
   int DataExtent[6];
@@ -859,7 +859,7 @@ protected:
   std::vector<std::string> FileNames;
   std::vector<std::pair <double, int> > FileNameSliceKey;
   CoordinateOrientationCode DesiredCoordinateOrientation;
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   itk::MetaDataDictionary Dictionary;
 
