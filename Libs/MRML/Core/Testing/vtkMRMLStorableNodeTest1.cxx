@@ -25,7 +25,7 @@ public:
   // Provide a concrete New.
   static vtkMRMLStorableNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLStorableNodeTestHelper1,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLStorableNodeTestHelper1, vtkMRMLStorableNode);
 
   vtkMRMLNode* CreateNodeInstance() override
   {

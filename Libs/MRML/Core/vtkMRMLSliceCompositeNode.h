@@ -29,7 +29,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 {
 public:
   static vtkMRMLSliceCompositeNode* New();
-  vtkTypeMacro(vtkMRMLSliceCompositeNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLSliceCompositeNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -97,15 +97,15 @@ public:
   /// @{
   /// Compositing mode for foreground and background can be alpha
   /// blending, reverse alpha blending, addition, or subtraction
-  vtkGetMacro (Compositing, int);
-  vtkSetMacro (Compositing, int);
+  vtkGetMacro(Compositing, int);
+  vtkSetMacro(Compositing, int);
   /// @}
 
   /// @{
   /// Configures the behavior for blending layers.
   /// The default value is true, indicating that the layers will be clipped to fit the background.
-  vtkGetMacro (ClipToBackgroundVolume, bool);
-  vtkSetMacro (ClipToBackgroundVolume, bool);
+  vtkGetMacro(ClipToBackgroundVolume, bool);
+  vtkSetMacro(ClipToBackgroundVolume, bool);
   /// @}
 
   /// @{

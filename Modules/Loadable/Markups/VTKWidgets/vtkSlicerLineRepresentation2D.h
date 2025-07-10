@@ -45,7 +45,7 @@ public:
   static vtkSlicerLineRepresentation2D* New();
 
   /// Standard methods for instances of this class.
-  vtkTypeMacro(vtkSlicerLineRepresentation2D,vtkSlicerMarkupsWidgetRepresentation2D);
+  vtkTypeMacro(vtkSlicerLineRepresentation2D, vtkSlicerMarkupsWidgetRepresentation2D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Subclasses of vtkContourCurveRepresentation must implement these methods. These

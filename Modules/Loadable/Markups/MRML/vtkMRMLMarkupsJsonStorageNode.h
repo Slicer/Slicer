@@ -37,7 +37,7 @@ class VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsJsonStorageNode : publ
 {
 public:
   static vtkMRMLMarkupsJsonStorageNode* New();
-  vtkTypeMacro(vtkMRMLMarkupsJsonStorageNode,vtkMRMLMarkupsStorageNode);
+  vtkTypeMacro(vtkMRMLMarkupsJsonStorageNode, vtkMRMLMarkupsStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

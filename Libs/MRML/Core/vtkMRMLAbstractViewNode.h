@@ -39,7 +39,7 @@ class VTK_MRML_EXPORT vtkMRMLAbstractViewNode
   : public vtkMRMLNode
 {
 public:
-  vtkTypeMacro(vtkMRMLAbstractViewNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLAbstractViewNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------

@@ -471,7 +471,7 @@ const char* vtkMRMLMarkupsDisplayNode::GetCurveLineSizeModeAsString(int id)
 void vtkMRMLMarkupsDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-  vtkMRMLPrintBeginMacro(os,indent);
+  vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintBooleanMacro(PropertiesLabelVisibility);
   vtkMRMLPrintBooleanMacro(PointLabelsVisibility);
   vtkMRMLPrintFloatMacro(TextScale);

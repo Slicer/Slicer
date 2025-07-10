@@ -26,7 +26,7 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
 {
   public:
   static vtkMRMLVectorVolumeNode* New();
-  vtkTypeMacro(vtkMRMLVectorVolumeNode,vtkMRMLTensorVolumeNode);
+  vtkTypeMacro(vtkMRMLVectorVolumeNode, vtkMRMLTensorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

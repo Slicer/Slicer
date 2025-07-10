@@ -77,10 +77,10 @@ public:
   virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr);
 
   /// Convenient method to change what state the widget is in.
-  vtkSetMacro(WidgetState,int);
+  vtkSetMacro(WidgetState, int);
 
   /// Convenient method to determine the state of the method
-  vtkGetMacro(WidgetState,int);
+  vtkGetMacro(WidgetState, int);
 
   /// The state of the widget
   enum

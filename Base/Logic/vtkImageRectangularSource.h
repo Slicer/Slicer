@@ -15,7 +15,7 @@ class  VTK_SLICER_BASE_LOGIC_EXPORT vtkImageRectangularSource : public vtkImageA
 {
 public:
   static vtkImageRectangularSource* New();
-  vtkTypeMacro(vtkImageRectangularSource,vtkImageAlgorithm);
+  vtkTypeMacro(vtkImageRectangularSource, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   ///
@@ -38,23 +38,23 @@ public:
 
   ///
   /// Set/Get the inside pixel values.
-  vtkSetMacro(InValue,float);
-  vtkGetMacro(InValue,float);
+  vtkSetMacro(InValue, float);
+  vtkGetMacro(InValue, float);
 
   ///
   /// Set/Get the outside pixel values.
-  vtkSetMacro(OutValue,float);
-  vtkGetMacro(OutValue,float);
+  vtkSetMacro(OutValue, float);
+  vtkGetMacro(OutValue, float);
 
   ///
   /// If the flag is set the inside of the rectangular slowly adjust its intensity from outside to inside
-  vtkSetMacro(InsideGraySlopeFlag,int);
-  vtkGetMacro(InsideGraySlopeFlag,int);
+  vtkSetMacro(InsideGraySlopeFlag, int);
+  vtkGetMacro(InsideGraySlopeFlag, int);
 
   ///
   /// Set what type of scalar data this source should generate.
-  vtkSetMacro(OutputScalarType,int);
-  vtkGetMacro(OutputScalarType,int);
+  vtkSetMacro(OutputScalarType, int);
+  vtkGetMacro(OutputScalarType, int);
   void SetOutputScalarTypeToDouble()
     {this->SetOutputScalarType(VTK_DOUBLE);}
   void SetOutputScalarTypeToFloat()

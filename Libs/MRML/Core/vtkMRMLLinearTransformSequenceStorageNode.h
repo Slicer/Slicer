@@ -32,7 +32,7 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformSequenceStorageNode : public vtkMRML
   public:
 
   static vtkMRMLLinearTransformSequenceStorageNode* New();
-  vtkTypeMacro(vtkMRMLLinearTransformSequenceStorageNode,vtkMRMLNRRDStorageNode);
+  vtkTypeMacro(vtkMRMLLinearTransformSequenceStorageNode, vtkMRMLNRRDStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
 

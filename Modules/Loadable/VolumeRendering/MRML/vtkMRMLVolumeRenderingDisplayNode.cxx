@@ -148,7 +148,7 @@ void vtkMRMLVolumeRenderingDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 
-  vtkMRMLPrintBeginMacro(os,indent);
+  vtkMRMLPrintBeginMacro(os, indent);
   vtkMRMLPrintIntMacro(CroppingEnabled);
   vtkMRMLPrintVectorMacro(Threshold, double, 2);
   vtkMRMLPrintVectorMacro(WindowLevel, double, 2);

@@ -38,7 +38,7 @@ class  VTK_MRML_EXPORT vtkMRMLMarkupsFiducialNode : public vtkMRMLMarkupsNode
 {
 public:
   static vtkMRMLMarkupsFiducialNode* New();
-  vtkTypeMacro(vtkMRMLMarkupsFiducialNode,vtkMRMLMarkupsNode);
+  vtkTypeMacro(vtkMRMLMarkupsFiducialNode, vtkMRMLMarkupsNode);
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

@@ -22,7 +22,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotNode :
 {
 public:
   static vtkMRMLAnnotationSnapshotNode* New();
-  vtkTypeMacro(vtkMRMLAnnotationSnapshotNode,vtkMRMLAnnotationNode);
+  vtkTypeMacro(vtkMRMLAnnotationSnapshotNode, vtkMRMLAnnotationNode);
 
   //--------------------------------------------------------------------------
   // MRMLNode methods

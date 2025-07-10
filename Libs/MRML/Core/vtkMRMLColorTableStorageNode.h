@@ -27,7 +27,7 @@ class VTK_MRML_EXPORT vtkMRMLColorTableStorageNode : public vtkMRMLStorageNode
 {
   public:
   static vtkMRMLColorTableStorageNode* New();
-  vtkTypeMacro(vtkMRMLColorTableStorageNode,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLColorTableStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

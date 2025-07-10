@@ -43,7 +43,7 @@
 #include <cassert>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLCameraDisplayableManager );
+vtkStandardNewMacro(vtkMRMLCameraDisplayableManager);
 
 //---------------------------------------------------------------------------
 class vtkMRMLCameraDisplayableManager::vtkInternal

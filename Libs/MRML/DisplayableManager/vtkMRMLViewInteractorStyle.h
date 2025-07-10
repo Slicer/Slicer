@@ -44,7 +44,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewInteractorStyle :
 {
 public:
   static vtkMRMLViewInteractorStyle* New();
-  vtkTypeMacro(vtkMRMLViewInteractorStyle,vtkObject);
+  vtkTypeMacro(vtkMRMLViewInteractorStyle, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Mouse functions

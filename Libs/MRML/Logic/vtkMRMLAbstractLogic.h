@@ -33,7 +33,7 @@ class vtkFloatArray;
 //----------------------------------------------------------------------------
 // It removes all the event observations associated with the old value.
 #ifndef vtkSetMRMLNodeMacro
-#define vtkSetMRMLNodeMacro(node,value)  {                                    \
+#define vtkSetMRMLNodeMacro(node, value)  {                                    \
   vtkObject* _oldNode = (node);                                               \
   this->GetMRMLNodesObserverManager()->SetObject(                             \
     vtkObjectPointer(&(node)), (value));                                      \
@@ -63,7 +63,7 @@ class vtkFloatArray;
 /// \endcode
 /// \sa vtkMRMLAbstractLogic::ProcessMRMLNodesEvents(),
 /// vtkMRMLAbstractLogic::OnMRMLNodeModified()
-#define vtkSetAndObserveMRMLNodeMacro(node,value) {                           \
+#define vtkSetAndObserveMRMLNodeMacro(node, value) {                           \
   vtkObject* _oldNode = (node);                                               \
   this->GetMRMLNodesObserverManager()->SetAndObserveObject(                   \
     vtkObjectPointer(&(node)), (value));                                      \

@@ -41,7 +41,7 @@ public:
   static vtkSlicerAngleWidget* New();
 
   /// Standard methods for a VTK class.
-  vtkTypeMacro(vtkSlicerAngleWidget,vtkSlicerMarkupsWidget);
+  vtkTypeMacro(vtkSlicerAngleWidget, vtkSlicerMarkupsWidget);
 
   /// Create instance of the markups widget
   vtkSlicerMarkupsWidgetCreateInstanceMacro(vtkSlicerAngleWidget);

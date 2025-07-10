@@ -37,7 +37,7 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLShaderPropertyStorage
 {
 public:
   static vtkMRMLShaderPropertyStorageNode* New();
-  vtkTypeMacro(vtkMRMLShaderPropertyStorageNode,vtkMRMLStorageNode);
+  vtkTypeMacro(vtkMRMLShaderPropertyStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

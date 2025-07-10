@@ -31,7 +31,7 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
 {
   public:
   static vtkMRMLGlyphableVolumeDisplayNode* New();
-  vtkTypeMacro(vtkMRMLGlyphableVolumeDisplayNode,vtkMRMLScalarVolumeDisplayNode);
+  vtkTypeMacro(vtkMRMLGlyphableVolumeDisplayNode, vtkMRMLScalarVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

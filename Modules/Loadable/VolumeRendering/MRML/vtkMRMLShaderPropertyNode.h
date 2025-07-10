@@ -43,7 +43,7 @@ public:
 
   /// Create a new vtkMRMLShaderPropertyNode
   static vtkMRMLShaderPropertyNode* New();
-  vtkTypeMacro(vtkMRMLShaderPropertyNode,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLShaderPropertyNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Don't change its scalarOpacity, gradientOpacity or color on the volume property

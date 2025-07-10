@@ -15,7 +15,7 @@ class VTK_MRML_EXPORT vtkMRMLLayoutNode : public vtkMRMLAbstractLayoutNode
 {
 public:
   static vtkMRMLLayoutNode* New();
-  vtkTypeMacro(vtkMRMLLayoutNode,vtkMRMLAbstractLayoutNode);
+  vtkTypeMacro(vtkMRMLLayoutNode, vtkMRMLAbstractLayoutNode);
   vtkMRMLNode* CreateNodeInstance() override;
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

@@ -31,7 +31,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationNode : public 
 {
 public:
   static vtkMRMLAnnotationNode* New();
-  vtkTypeMacro(vtkMRMLAnnotationNode,vtkMRMLModelNode);
+  vtkTypeMacro(vtkMRMLAnnotationNode, vtkMRMLModelNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
   // Description:
   // Just prints short summary
@@ -120,8 +120,8 @@ public:
 
   // Description:
   // Reference of this annotation - can be an image, model, scene ,  ...
-  vtkGetStringMacro (ReferenceNodeID);
-  vtkSetStringMacro (ReferenceNodeID);
+  vtkGetStringMacro(ReferenceNodeID);
+  vtkSetStringMacro(ReferenceNodeID);
 
   /// If set to 1 then parameters should not be changed.
   /// Fires vtkMRMLAnnotationNode::LockModifiedEvent if changed except if

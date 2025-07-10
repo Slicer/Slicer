@@ -62,7 +62,7 @@ public:
   ///   the data nodes. To set up the node (name, level, parent, associated data)
   ///   call \sa CreateSubjectHierarchyNode method.
   static vtkMRMLSubjectHierarchyLegacyNode* New();
-  vtkTypeMacro(vtkMRMLSubjectHierarchyLegacyNode,vtkMRMLHierarchyNode);
+  vtkTypeMacro(vtkMRMLSubjectHierarchyLegacyNode, vtkMRMLHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

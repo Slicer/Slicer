@@ -36,7 +36,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCameraDisplayableManager :
 
 public:
   static vtkMRMLCameraDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLCameraDisplayableManager,vtkMRMLAbstractThreeDViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLCameraDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void RemoveMRMLObservers() override;

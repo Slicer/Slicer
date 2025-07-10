@@ -35,7 +35,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLDisplayableHierarchyLogic : public vtkMRMLAbs
 
   /// The Usual vtk class functions
   static vtkMRMLDisplayableHierarchyLogic* New();
-  vtkTypeMacro(vtkMRMLDisplayableHierarchyLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLDisplayableHierarchyLogic, vtkMRMLAbstractLogic);
 
   /// Create a 1:1 displayable hierarchy node for this node, add it to the
   /// scene and return the id, null on failure

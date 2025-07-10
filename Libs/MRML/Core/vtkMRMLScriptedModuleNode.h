@@ -28,7 +28,7 @@ class VTK_MRML_EXPORT vtkMRMLScriptedModuleNode : public vtkMRMLNode
 {
 public:
   static vtkMRMLScriptedModuleNode* New();
-  vtkTypeMacro(vtkMRMLScriptedModuleNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLScriptedModuleNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -48,8 +48,8 @@ public:
 
   /// The name of the Module - this is used to
   /// customize the node selectors and other things
-  vtkGetStringMacro (ModuleName);
-  vtkSetStringMacro (ModuleName);
+  vtkGetStringMacro(ModuleName);
+  vtkSetStringMacro(ModuleName);
 
   /// Whether the parameter has been set.
   ///

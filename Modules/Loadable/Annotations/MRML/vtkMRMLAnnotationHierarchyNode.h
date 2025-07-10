@@ -15,7 +15,7 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationHierarchyNode 
 {
 public:
   static vtkMRMLAnnotationHierarchyNode* New();
-  vtkTypeMacro(vtkMRMLAnnotationHierarchyNode,vtkMRMLDisplayableHierarchyNode);
+  vtkTypeMacro(vtkMRMLAnnotationHierarchyNode, vtkMRMLDisplayableHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

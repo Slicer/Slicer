@@ -24,7 +24,7 @@ public:
     HierarchyNodeAddedEvent
   };
   static vtkSlicerAnnotationModuleLogic* New();
-  vtkTypeMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
+  vtkTypeMacro(vtkSlicerAnnotationModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.

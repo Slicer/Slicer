@@ -26,7 +26,7 @@ class VTK_MRML_EXPORT vtkMRMLViewNode
 {
 public:
   static vtkMRMLViewNode* New();
-  vtkTypeMacro(vtkMRMLViewNode,vtkMRMLAbstractViewNode);
+  vtkTypeMacro(vtkMRMLViewNode, vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------

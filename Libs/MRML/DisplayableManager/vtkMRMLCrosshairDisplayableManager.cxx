@@ -58,7 +58,7 @@
 #include <cassert>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro(vtkMRMLCrosshairDisplayableManager );
+vtkStandardNewMacro(vtkMRMLCrosshairDisplayableManager);
 
 //---------------------------------------------------------------------------
 class vtkMRMLCrosshairDisplayableManager::vtkInternal

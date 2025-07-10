@@ -21,11 +21,11 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
 
   ///
   /// Get the vtkTable that contains user-defined attribute/value pairs.
-  vtkGetStringMacro ( Name );
-  vtkSetStringMacro ( Name );
+  vtkGetStringMacro(Name);
+  vtkSetStringMacro(Name);
 
-  vtkGetMacro ( RestoreSelectionState, int);
-  vtkSetMacro ( RestoreSelectionState, int);
+  vtkGetMacro(RestoreSelectionState, int);
+  vtkSetMacro(RestoreSelectionState, int);
 
   ///
   /// Method that sets up default and required tags for a service.

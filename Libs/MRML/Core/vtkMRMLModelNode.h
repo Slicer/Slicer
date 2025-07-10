@@ -44,7 +44,7 @@ class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLDisplayableNode
 {
 public:
   static vtkMRMLModelNode* New();
-  vtkTypeMacro(vtkMRMLModelNode,vtkMRMLDisplayableNode);
+  vtkTypeMacro(vtkMRMLModelNode, vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
@@ -101,7 +101,7 @@ public:
 
   /// Return the input mesh pipeline.
   /// \sa GetPolyDataConnection(), GetUnstructuredGridConnection()
-  vtkGetObjectMacro(MeshConnection,vtkAlgorithmOutput);
+  vtkGetObjectMacro(MeshConnection, vtkAlgorithmOutput);
 
   /// Return the input mesh pipeline if the mesh
   /// is a polydata.

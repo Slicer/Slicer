@@ -32,7 +32,7 @@ class vtkMatrix4x4;
 class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLStorableNode
 {
 public:
-  vtkTypeMacro(vtkMRMLTransformableNode,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLTransformableNode, vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override = 0;

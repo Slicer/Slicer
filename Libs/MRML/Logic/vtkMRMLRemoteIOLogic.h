@@ -35,7 +35,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLRemoteIOLogic : public vtkMRMLAbstractLogic
 public:
   /// The Usual vtk class functions
   static vtkMRMLRemoteIOLogic* New();
-  vtkTypeMacro(vtkMRMLRemoteIOLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLRemoteIOLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void AddDataIOToScene();
@@ -48,9 +48,9 @@ public:
   /// and RemoveDataIOFromScene
   /// The Get methods can be used elsewhere, but the set methods
   /// should only be used for debugging
-  vtkGetObjectMacro (CacheManager, vtkCacheManager);
+  vtkGetObjectMacro(CacheManager, vtkCacheManager);
   virtual void SetCacheManager(vtkCacheManager*);
-  vtkGetObjectMacro (DataIOManager, vtkDataIOManager);
+  vtkGetObjectMacro(DataIOManager, vtkDataIOManager);
   virtual void SetDataIOManager(vtkDataIOManager*);
 
   /// CA Certificates path for https protocol.

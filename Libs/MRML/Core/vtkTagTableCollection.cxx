@@ -6,7 +6,7 @@
 #include <vtkObjectFactory.h>
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro ( vtkTagTableCollection );
+vtkStandardNewMacro(vtkTagTableCollection);
 
 //---------------------------------------------------------------------------
 vtkTagTableCollection::vtkTagTableCollection ( )  = default;

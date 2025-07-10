@@ -37,7 +37,7 @@ public:
 
   /// The Usual vtk class functions
   static vtkMRMLColorLogic* New();
-  vtkTypeMacro(vtkMRMLColorLogic,vtkMRMLAbstractLogic);
+  vtkTypeMacro(vtkMRMLColorLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// \brief Add default color nodes.

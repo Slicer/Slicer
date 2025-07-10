@@ -36,7 +36,7 @@ class vtkSegmentationCore_EXPORT vtkOrientedImageData : public vtkImageData
 {
 public:
   static vtkOrientedImageData* New();
-  vtkTypeMacro(vtkOrientedImageData,vtkImageData);
+  vtkTypeMacro(vtkOrientedImageData, vtkImageData);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Shallow copy

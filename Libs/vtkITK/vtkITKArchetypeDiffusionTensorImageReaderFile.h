@@ -20,7 +20,7 @@ class VTK_ITK_EXPORT vtkITKArchetypeDiffusionTensorImageReaderFile
 {
  public:
   static vtkITKArchetypeDiffusionTensorImageReaderFile* New();
-  vtkTypeMacro(vtkITKArchetypeDiffusionTensorImageReaderFile,vtkITKArchetypeImageSeriesReader);
+  vtkTypeMacro(vtkITKArchetypeDiffusionTensorImageReaderFile, vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
  protected:

@@ -59,7 +59,7 @@ typedef void (*fp)();
 static const int INTERACTION_RENDERER_LAYER = 1;
 
 //---------------------------------------------------------------------------
-vtkStandardNewMacro (vtkMRMLMarkupsDisplayableManager);
+vtkStandardNewMacro(vtkMRMLMarkupsDisplayableManager);
 
 //---------------------------------------------------------------------------
 // vtkMRMLMarkupsDisplayableManager methods

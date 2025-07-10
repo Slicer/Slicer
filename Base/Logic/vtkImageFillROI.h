@@ -37,7 +37,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageFillROI : public vtkImageAlgorithm
 {
 public:
   static vtkImageFillROI* New();
-  vtkTypeMacro(vtkImageFillROI,vtkImageAlgorithm);
+  vtkTypeMacro(vtkImageFillROI, vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSetMacro(Value, double);

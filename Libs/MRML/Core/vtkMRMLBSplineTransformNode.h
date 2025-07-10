@@ -28,7 +28,7 @@ class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLTransformNode
 {
   public:
   static vtkMRMLBSplineTransformNode* New();
-  vtkTypeMacro(vtkMRMLBSplineTransformNode,vtkMRMLTransformNode);
+  vtkTypeMacro(vtkMRMLBSplineTransformNode, vtkMRMLTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;

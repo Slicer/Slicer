@@ -36,7 +36,7 @@ public:
   };
 
   static vtkMRMLCropVolumeParametersNode* New();
-  vtkTypeMacro(vtkMRMLCropVolumeParametersNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLCropVolumeParametersNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
@@ -80,13 +80,13 @@ public:
   vtkMRMLTransformNode* GetROIAlignmentTransformNode();
   void DeleteROIAlignmentTransformNode();
 
-  vtkSetMacro(IsotropicResampling,bool);
-  vtkGetMacro(IsotropicResampling,bool);
-  vtkBooleanMacro(IsotropicResampling,bool);
+  vtkSetMacro(IsotropicResampling, bool);
+  vtkGetMacro(IsotropicResampling, bool);
+  vtkBooleanMacro(IsotropicResampling, bool);
 
-  vtkSetMacro(VoxelBased,bool);
-  vtkGetMacro(VoxelBased,bool);
-  vtkBooleanMacro(VoxelBased,bool);
+  vtkSetMacro(VoxelBased, bool);
+  vtkGetMacro(VoxelBased, bool);
+  vtkBooleanMacro(VoxelBased, bool);
 
   vtkSetMacro(InterpolationMode, int);
   vtkGetMacro(InterpolationMode, int);

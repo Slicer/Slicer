@@ -43,7 +43,7 @@ public:
   static vtkSlicerPlaneWidget* New();
 
   /// Standard methods for a VTK class.
-  vtkTypeMacro(vtkSlicerPlaneWidget,vtkSlicerMarkupsWidget);
+  vtkTypeMacro(vtkSlicerPlaneWidget, vtkSlicerMarkupsWidget);
 
   /// Create instance of the markups widget
   vtkSlicerMarkupsWidgetCreateInstanceMacro(vtkSlicerPlaneWidget);

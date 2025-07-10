@@ -137,7 +137,7 @@ public:
 
   typedef std::vector<ControlPoint*> ControlPointsListType;
 
-  vtkTypeMacro(vtkMRMLMarkupsNode,vtkMRMLDisplayableNode);
+  vtkTypeMacro(vtkMRMLMarkupsNode, vtkMRMLDisplayableNode);
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
