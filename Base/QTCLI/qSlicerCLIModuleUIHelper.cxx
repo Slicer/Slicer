@@ -148,7 +148,7 @@ QString ButtonGroupWidgetWrapper::checkedValue()
 //-----------------------------------------------------------------------------
 void ButtonGroupWidgetWrapper::setCheckedValue(const QString& value)
 {
-  foreach(QAbstractButton* button, this->ButtonGroup->buttons())
+  foreach (QAbstractButton* button, this->ButtonGroup->buttons())
   {
     if (button->property("EnumeratedValue").toString() == value)
     {
@@ -1112,7 +1112,7 @@ QWidget* qSlicerCLIModuleUIHelper::createTagWidget(const ModuleParameter& module
   {
     widget = d->createFileTagWidget(moduleParameter);
   }
-  else if(moduleParameter.GetTag() == "string-enumeration" ||
+  else if (moduleParameter.GetTag() == "string-enumeration" ||
           moduleParameter.GetTag() == "integer-enumeration" ||
           moduleParameter.GetTag() == "float-enumeration" ||
           moduleParameter.GetTag() == "double-enumeration")
@@ -1141,7 +1141,7 @@ void qSlicerCLIModuleUIHelper::updateMRMLCommandLineModuleNode(
   // Block ModifyEvent to be fired, only fire 1 event at the end.
   int disabledModify = commandLineModuleNode->StartModify();
 
-  foreach(qSlicerWidgetValueWrapper* widgetValueWrapper, d->WidgetValueWrappers)
+  foreach (qSlicerWidgetValueWrapper* widgetValueWrapper, d->WidgetValueWrappers)
   {
     this->setCommandLineModuleParameter(commandLineModuleNode,
                                         widgetValueWrapper->name(),
@@ -1213,7 +1213,7 @@ void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLin
   Q_D(qSlicerCLIModuleUIHelper);
 
   // Disable widgets if no module node is selected
-  foreach(qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
+  foreach (qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
   {
     QWidget* widget = dynamic_cast<QWidget*>(valueWrapper->parent());
     if (!widget)
@@ -1228,7 +1228,7 @@ void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLin
     return;
   }
 
-  foreach(qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
+  foreach (qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
   {
     QString value = QString::fromStdString(
       commandLineModuleNode->GetParameterAsString(valueWrapper->name().toUtf8()));
@@ -1240,7 +1240,7 @@ void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLin
 void qSlicerCLIModuleUIHelper::setValue(const QString& name, const QVariant& value)
 {
   Q_D(qSlicerCLIModuleUIHelper);
-  foreach(qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
+  foreach (qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
   {
     if (name == valueWrapper->name())
     {

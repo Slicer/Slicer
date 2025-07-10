@@ -20,9 +20,9 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
 {
   unsigned long latestTime = Object::GetMTime();
 
-  if( m_Transform.IsNotNull() )
+  if ( m_Transform.IsNotNull() )
   {
-    if( latestTime < m_Transform->GetMTime() )
+    if ( latestTime < m_Transform->GetMTime() )
     {
       latestTime = m_Transform->GetMTime();
     }
@@ -35,11 +35,11 @@ void
 TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
 ::BeforeThreadedGenerateData()
 {
-  if( m_Transform.IsNull() )
+  if ( m_Transform.IsNull() )
   {
     itkExceptionMacro( << "Transform not set" );
   }
-  if( !this->GetInput( 0 ) )
+  if ( !this->GetInput( 0 ) )
   {
     itkExceptionMacro( << "Input deformation field not set" );
   }
@@ -58,18 +58,18 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
   itk::Point<double, NDimensions> point;
   itk::Point<double, NDimensions> tempPoint;
   itk::Point<double, NDimensions> outputPoint;
-  for( it.GoToBegin(), out.GoToBegin(); !it.IsAtEnd(); ++it, ++out )
+  for ( it.GoToBegin(), out.GoToBegin(); !it.IsAtEnd(); ++it, ++out )
   {
     index = it.GetIndex();
     InputDeformationPixelType vector = it.Get();
     this->GetInput( 0 )->TransformIndexToPhysicalPoint( index, point );
-    for( int i = 0; i < NDimensions; i++ )
+    for ( int i = 0; i < NDimensions; i++ )
     {
       tempPoint[i] = point[i] + static_cast<double>( vector[i] );
     }
     outputPoint = m_Transform->TransformPoint( tempPoint );
     OutputDeformationPixelType outputVector;
-    for( int i = 0; i < NDimensions; i++ )
+    for ( int i = 0; i < NDimensions; i++ )
     {
       outputVector[i] = static_cast<OutputDataType>( outputPoint[i] - point[i] );
     }
@@ -89,7 +89,7 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
   Superclass::GenerateOutputInformation();
   // get pointers to the input and output
   OutputDeformationFieldPointerType outputPtr = this->GetOutput( 0 );
-  if( !outputPtr )
+  if ( !outputPtr )
   {
     return;
   }
@@ -116,7 +116,7 @@ TransformDeformationFieldFilter<TInput, TOutput, NDimensions>
   // call the superclass's implementation of this method
   Superclass::GenerateInputRequestedRegion();
 
-  if( !this->GetInput() )
+  if ( !this->GetInput() )
   {
     return;
   }

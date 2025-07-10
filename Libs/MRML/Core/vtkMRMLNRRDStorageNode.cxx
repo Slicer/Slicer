@@ -591,7 +591,7 @@ int vtkMRMLNRRDStorageNode::GetGzipCompressionLevelFromCompressionParameter(std:
   {
     return 1;
   }
-  else if(compressionParameter == this->GetCompressionParameterNormal())
+  else if (compressionParameter == this->GetCompressionParameterNormal())
   {
     return 6;
   }

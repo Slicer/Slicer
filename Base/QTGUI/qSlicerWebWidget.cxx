@@ -459,7 +459,7 @@ bool qSlicerWebWidget::acceptNavigationRequest(const QUrl& url, QWebEnginePage::
 {
   Q_D(qSlicerWebWidget);
   Q_ASSERT(d->WebEnginePage);
-  if(d->InternalHosts.contains(url.host())
+  if (d->InternalHosts.contains(url.host())
     || url.scheme() == "data" // QWebEngineView::setHtml creates a special URL, which encodes data in the URL, always internal
     || !d->HandleExternalUrlWithDesktopService // all requests are internal
     )
@@ -468,7 +468,7 @@ bool qSlicerWebWidget::acceptNavigationRequest(const QUrl& url, QWebEnginePage::
   }
   else
   {
-    if(!QDesktopServices::openUrl(url))
+    if (!QDesktopServices::openUrl(url))
     {
       qWarning() << "Failed to open url:" << url;
     }

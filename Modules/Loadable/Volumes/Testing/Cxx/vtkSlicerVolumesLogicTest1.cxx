@@ -152,21 +152,21 @@ vtkMRMLScalarVolumeNode* TestScalarVolumeLoading( const char* volumeName,
 {
   vtkMRMLVolumeNode* volume =
     logic->AddArchetypeVolume(volumeName, "volume", 0);
-  if(!volume)
+  if (!volume)
   {
     std::cerr << "Line " << __LINE__
               << " - Failed to load as scalar volume !" << std::endl;
     return nullptr;
   }
 
-  if(!isImageDataValid(__LINE__, volume->GetImageDataConnection()))
+  if (!isImageDataValid(__LINE__, volume->GetImageDataConnection()))
   {
     return nullptr;
   }
 
   vtkMRMLScalarVolumeNode* scalarVolume =
     vtkMRMLScalarVolumeNode::SafeDownCast(volume);
-  if(!scalarVolume)
+  if (!scalarVolume)
   {
     std::cerr << "Line " << __LINE__
               << " - Failed to read as scalar volume !" << std::endl;
@@ -182,21 +182,21 @@ vtkMRMLLabelMapVolumeNode* TestLabelMapVolumeLoading( const char* volumeName,
 {
   vtkMRMLVolumeNode* volume =
     logic->AddArchetypeVolume(volumeName, "volume", 1 /* bit 0: label map */);
-  if(!volume)
+  if (!volume)
   {
     std::cerr << "Line " << __LINE__
               << " - Failed to load as scalar volume !" << std::endl;
     return nullptr;
   }
 
-  if(!isImageDataValid(__LINE__, volume->GetImageDataConnection()))
+  if (!isImageDataValid(__LINE__, volume->GetImageDataConnection()))
   {
     return nullptr;
   }
 
   vtkMRMLLabelMapVolumeNode* labelMapVolume =
     vtkMRMLLabelMapVolumeNode::SafeDownCast(volume);
-  if(!labelMapVolume)
+  if (!labelMapVolume)
   {
     std::cerr << "Line " << __LINE__
               << " - Failed to read as label map volume !" << std::endl;

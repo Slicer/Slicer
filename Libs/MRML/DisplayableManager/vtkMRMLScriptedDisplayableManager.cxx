@@ -157,7 +157,7 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
   }
   vtkSmartPointer<vtkIntArray> sceneEvents;
   sceneEvents.TakeReference(sceneEventsAsPointer);
-  //for(int i = 0; i < sceneEvents->GetNumberOfTuples(); i++)
+  //for (int i = 0; i < sceneEvents->GetNumberOfTuples(); i++)
   //  {
   //  std::cout << "eventid:" << sceneEvents->GetValue(i) << std::endl;
   //  }
@@ -276,7 +276,7 @@ void vtkMRMLScriptedDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkOb
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& filePath)
 {
-  if(filePath.find(".py") == std::string::npos &&
+  if (filePath.find(".py") == std::string::npos &&
      filePath.find(".pyc") == std::string::npos)
   {
     return;

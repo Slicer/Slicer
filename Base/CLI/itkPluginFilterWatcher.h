@@ -76,7 +76,7 @@ void ShowProgress() override
             = this->GetTimeProbe().GetMean()
             * this->GetTimeProbe().GetNumberOfStops();
         }
-        catch(...)
+        catch (...)
         {
           // ignore time probe exceptions
         }

@@ -964,7 +964,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::jumpSlices()
     // Application is closing
     return;
   }
-  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+  foreach (QString sliceViewName, layoutManager->sliceViewNames())
   {
     // Check if segmentation is visible in this view
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);

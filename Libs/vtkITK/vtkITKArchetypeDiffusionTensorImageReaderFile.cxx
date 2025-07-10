@@ -108,7 +108,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
     const DiffusionTensor3DPixelType tensor = it.Get();
     for (int i=0; i<3; i++)
     {
-      for(int j=0; j<3; j++)
+      for (int j=0; j<3; j++)
       {
         value[i + 3 * j] = float(tensor(i, j));
       }

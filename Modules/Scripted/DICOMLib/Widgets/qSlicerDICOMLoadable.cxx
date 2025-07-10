@@ -139,12 +139,12 @@ void qSlicerDICOMLoadable::copyToVtkLoadable(vtkSlicerDICOMLoadable* vtkLoadable
   vtkLoadable->SetConfidence(d->Confidence);
   vtkLoadable->SetLoadSuccess(d->LoadSuccess);
 
-  foreach(QString file, d->Files)
+  foreach (QString file, d->Files)
   {
     vtkLoadable->AddFile(file.toUtf8().constData());
   }
 
-  foreach(QString referencedInstanceUID, d->ReferencedInstanceUIDs)
+  foreach (QString referencedInstanceUID, d->ReferencedInstanceUIDs)
   {
     vtkLoadable->AddReferencedInstanceUID(referencedInstanceUID.toUtf8().constData());
   }

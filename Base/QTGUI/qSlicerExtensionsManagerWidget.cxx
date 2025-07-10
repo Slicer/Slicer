@@ -425,7 +425,7 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
 
   int foundNonInstalledBookmarkedExtension = 0;
   QStringList bookmarkedExtensions = this->extensionsManagerModel()->bookmarkedExtensions();
-  foreach(const QString& extensionName, bookmarkedExtensions)
+  foreach (const QString& extensionName, bookmarkedExtensions)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
     {
@@ -671,7 +671,7 @@ void qSlicerExtensionsManagerWidget::onInstallUpdatesTriggered()
   // Save last update check time
   bool wasBatchProcessing = d->setBatchProcessing(true);
   QStringList extensionNames = this->extensionsManagerModel()->availableUpdateExtensions();
-  foreach(const QString& extensionName, extensionNames)
+  foreach (const QString& extensionName, extensionNames)
   {
     this->extensionsManagerModel()->scheduleExtensionForUpdate(extensionName);
   }
@@ -685,7 +685,7 @@ void qSlicerExtensionsManagerWidget::onInstallBookmarkedTriggered()
   bool wasBatchProcessing = d->setBatchProcessing(true);
   // Save last update check time
   QStringList extensionNames = this->extensionsManagerModel()->bookmarkedExtensions();
-  foreach(const QString& extensionName, extensionNames)
+  foreach (const QString& extensionName, extensionNames)
   {
     if (this->extensionsManagerModel()->isExtensionInstalled(extensionName))
     {
@@ -725,7 +725,7 @@ void qSlicerExtensionsManagerWidget::onInstallFromFileTriggered()
 
   bool wasBatchProcessing = d->setBatchProcessing(true);
   qSlicerExtensionsManagerModel* const model = this->extensionsManagerModel();
-  foreach(const QString& archiveName, archiveNames)
+  foreach (const QString& archiveName, archiveNames)
   {
     model->installExtension(archiveName);
   }

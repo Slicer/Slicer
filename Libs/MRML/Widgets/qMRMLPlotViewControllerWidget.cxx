@@ -310,7 +310,7 @@ void qMRMLPlotViewControllerWidget::setMRMLPlotViewNode(
 void qMRMLPlotViewControllerWidget::fitPlotToAxes()
 {
   Q_D(qMRMLPlotViewControllerWidget);
-  if(!d->PlotView)
+  if (!d->PlotView)
   {
     return;
   }
@@ -321,7 +321,7 @@ void qMRMLPlotViewControllerWidget::fitPlotToAxes()
 void qMRMLPlotViewControllerWidget::onExportButton()
 {
   Q_D(qMRMLPlotViewControllerWidget);
-  if(!d->PlotView || !this->mrmlPlotViewNode())
+  if (!d->PlotView || !this->mrmlPlotViewNode())
   {
     return;
   }

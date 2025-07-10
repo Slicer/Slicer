@@ -406,7 +406,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
   // This prevents desynchronized update of displayable managers during user interaction
   // (ie. slice intersection widget or segmentations lagging behind during slice translation)
   vtkMRMLApplicationLogic* appLogic = this->FocusedDisplayableManager->GetMRMLApplicationLogic();
-  if(appLogic)
+  if (appLogic)
   {
     this->FocusedDisplayableManager->GetMRMLApplicationLogic()->PauseRender();
   }
@@ -417,7 +417,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
     cursor = this->FocusedDisplayableManager->GetMouseCursor();
   }
   this->FocusedDisplayableManager->SetMouseCursor(cursor);
-  if(appLogic)
+  if (appLogic)
   {
     this->FocusedDisplayableManager->GetMRMLApplicationLogic()->ResumeRender();
   }

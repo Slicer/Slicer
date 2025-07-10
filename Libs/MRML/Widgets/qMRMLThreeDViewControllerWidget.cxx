@@ -409,7 +409,7 @@ void qMRMLThreeDViewControllerWidget::setThreeDView(qMRMLThreeDView* view)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
   d->ThreeDView = view;
-  if(d->ThreeDView != nullptr)
+  if (d->ThreeDView != nullptr)
   {
     d->actionSwitchToQuadBufferStereo->setEnabled(
           d->ThreeDView->renderWindow()->GetStereoCapableWindow());
@@ -472,7 +472,7 @@ void qMRMLThreeDViewControllerWidget::setViewLink(bool linked)
   }
 
   vtkMRMLViewNode* viewNode = nullptr;
-  for(viewNodes->InitTraversal();
+  for (viewNodes->InitTraversal();
       (viewNode = vtkMRMLViewNode::SafeDownCast(
         viewNodes->GetNextItemAsObject()));)
   {
@@ -546,7 +546,7 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRMLView()
     << d->ZoomInButton << d->ZoomOutButton << d->ShadowsButton
     << d->RockButton << d->SpinButton << d->MoreToolButton
     << d->OrientationMarkerButton; // RulerButton enable state is not set here (it depends on render mode)
-  foreach(QWidget* w, widgets)
+  foreach (QWidget* w, widgets)
   {
     w->setEnabled(viewNode != nullptr);
   }

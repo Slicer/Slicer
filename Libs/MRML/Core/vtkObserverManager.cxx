@@ -39,7 +39,7 @@ vtkObserverManager::~vtkObserverManager()
 {
   // Remove all the observations associated to the callback
   std::map< vtkObject*, vtkUnsignedLongArray*>::iterator iter;
-  for(iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)
+  for (iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)
   {
     this->RemoveObjectEvents(iter->first);
     vtkUnsignedLongArray* objTags = iter->second;
@@ -66,7 +66,7 @@ void vtkObserverManager::PrintSelf(ostream& os, vtkIndent indent)
   this->vtkObject::PrintSelf(os, indent);
 
   std::map< vtkObject*, vtkUnsignedLongArray*>::iterator iter;
-  for(iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)
+  for (iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)
   {
     vtkUnsignedLongArray* objTags = iter->second;
     os << indent << "Observer tags:             " << objTags << "\n";

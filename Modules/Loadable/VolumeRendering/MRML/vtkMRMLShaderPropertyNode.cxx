@@ -53,7 +53,7 @@ vtkMRMLShaderPropertyNode::vtkMRMLShaderPropertyNode()
 //----------------------------------------------------------------------------
 vtkMRMLShaderPropertyNode::~vtkMRMLShaderPropertyNode()
 {
-  if(this->ShaderProperty)
+  if (this->ShaderProperty)
   {
     vtkUnObserveMRMLObjectMacro(this->ShaderProperty->GetVertexCustomUniforms());
     vtkUnObserveMRMLObjectMacro(this->ShaderProperty->GetFragmentCustomUniforms());

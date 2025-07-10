@@ -299,7 +299,7 @@ int vtkCacheManager::GetCachedFileList ( const char* dirname )
 
           //--- if the file is a directory, have to go inside and
           //--- do some recursive thing to add those files to cached list
-          if(vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
+          if (vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
           {
             if ( ! this->GetCachedFileList ( fullName.c_str() ) )
             {
@@ -957,7 +957,7 @@ const char* vtkCacheManager::FindCachedFile ( const char* target, const char* di
 
         //--- if no match, and the file is a directory, go inside and
         //--- do some recursive thing to add those files to cached list
-        if(vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
+        if (vtksys::SystemTools::FileIsDirectory(fullName.c_str()))
         {
           ///---compute dir and filename for recursive hunt
           if ( (result = this->FindCachedFile ( target, fullName.c_str() )) != nullptr )

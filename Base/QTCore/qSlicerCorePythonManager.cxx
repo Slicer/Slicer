@@ -126,7 +126,7 @@ void qSlicerCorePythonManager::appendPythonPath(const QString& path)
 //-----------------------------------------------------------------------------
 void qSlicerCorePythonManager::appendPythonPaths(const QStringList& paths)
 {
-  foreach(const QString& path, paths)
+  foreach (const QString& path, paths)
   {
     this->appendPythonPath(path);
   }

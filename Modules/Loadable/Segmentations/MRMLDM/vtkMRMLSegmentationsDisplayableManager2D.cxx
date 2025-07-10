@@ -439,7 +439,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::RemoveSegmentationNo
   }
   vtkInternal::SegmentationToDisplayCacheType::iterator displayableIt =
     this->SegmentationToDisplayNodes.find(node);
-  if(displayableIt == this->SegmentationToDisplayNodes.end())
+  if (displayableIt == this->SegmentationToDisplayNodes.end())
   {
     return;
   }
@@ -1194,7 +1194,7 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsNodeObserved(vtkMR
 //---------------------------------------------------------------------------
 void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::ClearDisplayableNodes()
 {
-  while(this->SegmentationToDisplayNodes.size() > 0)
+  while (this->SegmentationToDisplayNodes.size() > 0)
   {
     this->RemoveSegmentationNode(this->SegmentationToDisplayNodes.begin()->first);
   }

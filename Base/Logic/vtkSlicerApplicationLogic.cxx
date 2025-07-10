@@ -755,7 +755,7 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
     }
     canonicalPathWithoutRoot = itksys::SystemTools::GetParentDirectory(canonicalPathWithoutRoot.c_str());
   }
-  while(!canonicalPathWithoutRoot.empty());
+  while (!canonicalPathWithoutRoot.empty());
 
   return true;
 }
@@ -955,7 +955,7 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
       processingThreadPriority = std::stoi(priorityStr);
       isPriorityEnvSet = true;
     }
-    catch(...)
+    catch (...)
     {
       vtkWarningMacro("vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground failed: " \
         "Invalid SLICER_BACKGROUND_THREAD_PRIORITY value (" << priorityStr << "), expected an integer");

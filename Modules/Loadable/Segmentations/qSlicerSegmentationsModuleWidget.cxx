@@ -865,7 +865,7 @@ bool qSlicerSegmentationsModuleWidget::copySegmentsBetweenSegmentations(bool cop
 
   // Copy/move segments
   bool success = true;
-  foreach(QString segmentId, selectedSegmentIds)
+  foreach (QString segmentId, selectedSegmentIds)
   {
     success = success && this->copySegmentBetweenSegmentations(sourceSegmentation,
       targetSegmentation, segmentId, removeFromSource);

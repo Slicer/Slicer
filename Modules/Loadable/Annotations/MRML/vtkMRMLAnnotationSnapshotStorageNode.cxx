@@ -73,7 +73,7 @@ int vtkMRMLAnnotationSnapshotStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if( extension.empty() )
+  if ( extension.empty() )
   {
     vtkErrorMacro("ReadData: no file extension specified: " << fullName.c_str());
     return 0;

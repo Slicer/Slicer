@@ -347,7 +347,7 @@ void qMRMLSliceControllerWidgetTester::testUpdateSliceOrientationSelector()
       sliceControllerWidget.findChild<QComboBox*>("SliceOrientationSelector");
   QVERIFY(orientationSelector != nullptr);
   QStringList items;
-  for(int idx = 0; idx < orientationSelector->count(); ++idx)
+  for (int idx = 0; idx < orientationSelector->count(); ++idx)
   {
     items << orientationSelector->itemText(idx);
   }

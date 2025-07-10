@@ -37,9 +37,9 @@ vtkStandardNewMacro(vtkOrientedImageData);
 vtkOrientedImageData::vtkOrientedImageData()
 {
   int i=0,j=0;
-  for(i=0; i<3; i++)
+  for (i=0; i<3; i++)
   {
-    for(j=0; j<3; j++)
+    for (j=0; j<3; j++)
     {
       this->Directions[i][j] = (i == j) ? 1.0 : 0.0;
     }
@@ -150,7 +150,7 @@ double vtkOrientedImageData::GetMinSpacing()
     return 0;
   }
   double minSpace = this->GetSpacing()[0];
-  for(int i = 1; i < 3; ++i)
+  for (int i = 1; i < 3; ++i)
   {
     minSpace = std::min(this->GetSpacing()[i], minSpace);
   }
@@ -165,7 +165,7 @@ double vtkOrientedImageData::GetMaxSpacing()
     return 0;
   }
   double maxSpace = this->GetSpacing()[0];
-  for(int i = 1; i < 3; ++i)
+  for (int i = 1; i < 3; ++i)
   {
     maxSpace = std::max(this->GetSpacing()[i], maxSpace);
   }

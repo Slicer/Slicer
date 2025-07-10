@@ -167,7 +167,7 @@ void qSlicerSettingsStylesPanelPrivate::populateStyles()
   bool wasBlocking = this->StyleComboBox->blockSignals(true);
   // Re-populate styles
   this->StyleComboBox->clear();
-  foreach(const QString& style, q->availableSlicerStyles())
+  foreach (const QString& style, q->availableSlicerStyles())
   {
     this->StyleComboBox->addItem(toCamelCase(style));
   }
@@ -226,14 +226,14 @@ void qSlicerSettingsStylesPanel::onAdditionalStylePathsChanged()
   Q_D(qSlicerSettingsStylesPanel);
 
   // Remove old paths
-  foreach(const QString& path, d->AdditionalPaths)
+  foreach (const QString& path, d->AdditionalPaths)
   {
     QCoreApplication::removeLibraryPath(path);
   }
 
   // Add new ones
   d->AdditionalPaths = d->AdditionalStylePathsView->directoryList(true);
-  foreach(const QString&  path, d->AdditionalPaths)
+  foreach (const QString&  path, d->AdditionalPaths)
   {
     QCoreApplication::addLibraryPath(path);
   }
@@ -271,7 +271,7 @@ void qSlicerSettingsStylesPanel::onRemoveStyleAdditionalPathClicked()
 QStringList qSlicerSettingsStylesPanel::availableSlicerStyles()
 {
   QStringList styles;
-  foreach(const QString& style, QStyleFactory::keys())
+  foreach (const QString& style, QStyleFactory::keys())
   {
     if (qSlicerSettingsStylesPanelPrivate::isQtStyle(style))
     {

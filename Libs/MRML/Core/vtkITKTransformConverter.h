@@ -489,7 +489,7 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(
   const unsigned int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
   const unsigned int actualNumberOfParameters = bsplineItk->GetNumberOfParameters();
 
-  if( actualNumberOfParameters != expectedNumberOfParameters )
+  if ( actualNumberOfParameters != expectedNumberOfParameters )
   {
     vtkErrorWithObjectMacro(loggerObject,"Mismatch in number of BSpline parameters in the transform file and the MRML node");
     return false;
@@ -537,7 +537,7 @@ template <typename T> bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Gener
   }
 
   // Set the bulk transform
-  if( bulkTransformItk )
+  if ( bulkTransformItk )
   {
     std::string bulkTransformItkTransformName = bulkTransformItk->GetNameOfClass();
 
@@ -687,7 +687,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
 
   const unsigned int expectedNumberOfVectors = gridSize[0]*gridSize[1]*gridSize[2];
   const unsigned int expectedNumberOfParameters = expectedNumberOfVectors*VTKDimension;
-  if( bsplineItk->GetNumberOfParameters() != expectedNumberOfParameters )
+  if ( bsplineItk->GetNumberOfParameters() != expectedNumberOfParameters )
   {
     vtkErrorWithObjectMacro(loggerObject,"Mismatch in number of BSpline parameters in the ITK transform and the VTK transform");
     return false;
@@ -1036,7 +1036,7 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(vtkObject
   double* displacementVectors_Ras = reinterpret_cast<double*>(gridImage_Ras->GetScalarPointer());
   itk::ImageRegionConstIterator<GridImageType> inputIt(gridImage_Lps, gridImage_Lps->GetRequestedRegion());
   inputIt.GoToBegin();
-  while( !inputIt.IsAtEnd() )
+  while ( !inputIt.IsAtEnd() )
   {
     typename GridImageType::PixelType displacementVectorLps=inputIt.Get();
     *(displacementVectors_Ras++) = -displacementVectorLps[0];
@@ -1132,7 +1132,7 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
   if (gridImage_Ras->GetScalarType()==VTK_DOUBLE)
   {
     double* displacementVectors_Ras = reinterpret_cast<double*>(gridImage_Ras->GetScalarPointer());
-    while( !gridImageIt_Lps.IsAtEnd() )
+    while ( !gridImageIt_Lps.IsAtEnd() )
     {
       displacementVectorLps[0] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
       displacementVectorLps[1] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
@@ -1144,7 +1144,7 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
   else if (gridImage_Ras->GetScalarType()==VTK_FLOAT)
   {
     float* displacementVectors_Ras = reinterpret_cast<float*>(gridImage_Ras->GetScalarPointer());
-  while( !gridImageIt_Lps.IsAtEnd() )
+  while ( !gridImageIt_Lps.IsAtEnd() )
   {
     displacementVectorLps[0] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
     displacementVectorLps[1] = -( displacementScale * (*(displacementVectors_Ras++)) + displacementShift );
@@ -1215,7 +1215,7 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
 
   vtkNew<vtkPoints> sourceLandmarksVtk_Ras;
   unsigned int numberOfSourceLandmarks = sourceLandmarksItk_Lps->GetNumberOfPoints();
-  for(unsigned int i = 0; i < numberOfSourceLandmarks; i++)
+  for (unsigned int i = 0; i < numberOfSourceLandmarks; i++)
   {
     typename ThinPlateSplineTransformType::InputPointType pointItk_Lps;
     bool pointExists = sourceLandmarksItk_Lps->GetPoint(i, &pointItk_Lps);
@@ -1232,7 +1232,7 @@ bool vtkITKTransformConverter::SetVTKThinPlateSplineTransformFromITK(vtkObject* 
 
   vtkNew<vtkPoints> targetLandmarksVtk_Ras;
   unsigned int numberOfTargetLandmarks = targetLandmarksItk_Lps->GetNumberOfPoints();
-  for(unsigned int i = 0; i < numberOfTargetLandmarks; i++)
+  for (unsigned int i = 0; i < numberOfTargetLandmarks; i++)
   {
     typename ThinPlateSplineTransformType::InputPointType pointItk_Lps;
     bool pointExists = targetLandmarksItk_Lps->GetPoint(i, &pointItk_Lps);

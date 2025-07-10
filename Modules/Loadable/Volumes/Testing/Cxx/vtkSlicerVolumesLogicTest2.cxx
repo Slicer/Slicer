@@ -81,7 +81,7 @@ int main( int argc, char* argv[] )
 {
   itk::itkFactoryRegistration();
 
-  if(argc<2)
+  if (argc<2)
   {
     std::cerr << "Usage: <testName> <temporary dir path>" << std::endl;
     return EXIT_FAILURE;
@@ -92,7 +92,7 @@ int main( int argc, char* argv[] )
 
   vtkSmartPointer<vtkStringArray> fileNameList = vtkSmartPointer<vtkStringArray>::New();
   // create two RGB images and save as PNG
-  for(int i=0;i<5;i++)
+  for (int i=0;i<5;i++)
   {
 
     std::ostringstream sstr;

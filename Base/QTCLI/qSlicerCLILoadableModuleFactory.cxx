@@ -209,7 +209,7 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
   SymbolAddressType resolvedGetModuleLogoSymbol = item->symbolAddress("GetModuleLogo");
   SymbolAddressType resolvedModuleLogoImageSymbol = item->symbolAddress("ModuleLogoImage");
 
-  if(resolvedGetModuleLogoSymbol)
+  if (resolvedGetModuleLogoSymbol)
   {
     typedef const char * (*ModuleLogoFunction)(
           int* /*width*/, int* /*height*/, int* /*pixel_size*/, unsigned long * /*bufferLength*/);
@@ -217,14 +217,14 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
         reinterpret_cast<ModuleLogoFunction>(resolvedGetModuleLogoSymbol);
     logoImage = (*logoFunction)(&width, &height, &pixelSize, &bufferLength);
   }
-  else if(resolvedModuleLogoImageSymbol)
+  else if (resolvedModuleLogoImageSymbol)
   {
     logoImage = reinterpret_cast<const char*>(resolvedModuleLogoImageSymbol);
     QStringList expectedSymbols;
     expectedSymbols << "ModuleLogoWidth" << "ModuleLogoHeight"
                     << "ModuleLogoPixelSize" << "ModuleLogoLength";
     QList<SymbolAddressType> resolvedSymbols;
-    foreach(const QString& symbol, expectedSymbols)
+    foreach (const QString& symbol, expectedSymbols)
     {
       SymbolAddressType resolvedSymbol = item->symbolAddress(symbol);
       if (resolvedSymbol)
@@ -245,7 +245,7 @@ bool qSlicerCLILoadableModuleFactoryItem::updateLogo(qSlicerCLILoadableModuleFac
     }
   }
 
-  if(resolvedGetModuleLogoSymbol || resolvedModuleLogoImageSymbol)
+  if (resolvedGetModuleLogoSymbol || resolvedModuleLogoImageSymbol)
   {
     logo.SetLogo(logoImage, width, height, pixelSize, bufferLength, 0);
     return true;

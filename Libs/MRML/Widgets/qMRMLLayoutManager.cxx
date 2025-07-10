@@ -181,7 +181,7 @@ void qMRMLLayoutPlotViewFactory::setColorLogic(vtkMRMLColorLogic* colorLogic)
 {
   this->ColorLogic = colorLogic;
   /*
-  foreach(QWidget* view, this->registeredViews())
+  foreach (QWidget* view, this->registeredViews())
     {
     qMRMLPlotWidget* plotWidget = qobject_cast<qMRMLPlotWidget*>(view);
     plotWidget->setColorLogic(this->colorLogic());
@@ -525,7 +525,7 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
     // No explicit parent layout node means that view is handled by the main Slicer layout
     if (!viewNode->GetParentLayoutNode())
     {
-      foreach(qMRMLLayoutViewFactory* mrmlViewFactory, q->mrmlViewFactories())
+      foreach (qMRMLLayoutViewFactory* mrmlViewFactory, q->mrmlViewFactories())
       {
         mrmlViewFactory->onViewNodeAdded(viewNode);
       }
@@ -558,7 +558,7 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
     vtkMRMLAbstractViewNode::SafeDownCast(node);
   if (viewNode)
   {
-    foreach(qMRMLLayoutViewFactory* mrmlViewFactory, q->mrmlViewFactories())
+    foreach (qMRMLLayoutViewFactory* mrmlViewFactory, q->mrmlViewFactories())
     {
       mrmlViewFactory->onViewNodeRemoved(viewNode);
     }
@@ -627,7 +627,7 @@ void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* vtkNotUsed(
 void qMRMLLayoutManagerPrivate::updateLayoutFromMRMLScene()
 {
   Q_Q(qMRMLLayoutManager);
-  foreach(qMRMLLayoutViewFactory* viewFactory, q->mrmlViewFactories())
+  foreach (qMRMLLayoutViewFactory* viewFactory, q->mrmlViewFactories())
   {
     viewFactory->onSceneModified();
   }
@@ -737,7 +737,7 @@ void qMRMLLayoutManagerPrivate::updateSegmentationControls()
 {
   Q_Q(qMRMLLayoutManager);
 
-  foreach(const QString& viewName, q->sliceViewNames())
+  foreach (const QString& viewName, q->sliceViewNames())
   {
     q->sliceWidget(viewName)->sliceController()->updateSegmentationControlsVisibility();
   }
@@ -781,7 +781,7 @@ qMRMLLayoutManager::~qMRMLLayoutManager()
   Q_D(qMRMLLayoutManager);
 
   // Erase all views (must happen before deleting viewports)
-  foreach(ctkLayoutViewFactory* viewFactory, this->registeredViewFactories())
+  foreach (ctkLayoutViewFactory* viewFactory, this->registeredViewFactories())
   {
     qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
     if (mrmlViewFactory)
@@ -791,7 +791,7 @@ qMRMLLayoutManager::~qMRMLLayoutManager()
   }
 
   // Delete detached viewports if they are not owned by the application mainWindow
-  foreach(qMRMLLayoutManagerPrivate::ViewportInfo viewport, d->DetachedViewports)
+  foreach (qMRMLLayoutManagerPrivate::ViewportInfo viewport, d->DetachedViewports)
   {
     if (viewport.Window && !viewport.Window->parent())
     {
@@ -819,7 +819,7 @@ void qMRMLLayoutManager::setEnabled(bool enable)
 QList<qMRMLLayoutViewFactory*> qMRMLLayoutManager::mrmlViewFactories()const
 {
   QList<qMRMLLayoutViewFactory*> res;
-  foreach(ctkLayoutViewFactory* viewFactory, this->registeredViewFactories())
+  foreach (ctkLayoutViewFactory* viewFactory, this->registeredViewFactories())
   {
     qMRMLLayoutViewFactory* mrmlViewFactory = qobject_cast<qMRMLLayoutViewFactory*>(viewFactory);
     if (mrmlViewFactory)
@@ -834,7 +834,7 @@ QList<qMRMLLayoutViewFactory*> qMRMLLayoutManager::mrmlViewFactories()const
 qMRMLLayoutViewFactory* qMRMLLayoutManager
 ::mrmlViewFactory(const QString& viewClassName)const
 {
-  foreach(qMRMLLayoutViewFactory* viewFactory, this->mrmlViewFactories())
+  foreach (qMRMLLayoutViewFactory* viewFactory, this->mrmlViewFactories())
   {
     if (viewFactory->viewClassName() == viewClassName)
     {
@@ -1059,7 +1059,7 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
   d->qvtkReconnect(oldScene, scene, vtkMRMLScene::EndCloseEvent,
                    d, SLOT(onSceneClosedEvent()));
 
-  foreach(qMRMLLayoutViewFactory* viewFactory, this->mrmlViewFactories())
+  foreach (qMRMLLayoutViewFactory* viewFactory, this->mrmlViewFactories())
   {
     viewFactory->setMRMLScene(d->MRMLScene);
   }
@@ -1192,7 +1192,7 @@ void qMRMLLayoutManager::setLayoutNumberOfCompareViewColumns(int num)
 //------------------------------------------------------------------------------
 void qMRMLLayoutManager::resetThreeDViews()
 {
-  for(int idx = 0; idx < this->threeDViewCount(); ++idx)
+  for (int idx = 0; idx < this->threeDViewCount(); ++idx)
   {
     qMRMLThreeDView* threeDView = this->threeDWidget(idx)->threeDView();
     threeDView->resetFocalPoint();
@@ -1203,7 +1203,7 @@ void qMRMLLayoutManager::resetThreeDViews()
 //------------------------------------------------------------------------------
 void qMRMLLayoutManager::resetSliceViews()
 {
-  foreach(const QString& viewName, this->sliceViewNames())
+  foreach (const QString& viewName, this->sliceViewNames())
   {
     this->sliceWidget(viewName)->sliceController()->fitSliceToBackground();
   }
@@ -1331,7 +1331,7 @@ QWidget* qMRMLLayoutManager::createViewport(const QDomElement& layoutElement, co
 
     // Get application mainwindow
     QMainWindow* mainWindow = nullptr;
-    foreach(QWidget* widget, qApp->topLevelWidgets())
+    foreach (QWidget* widget, qApp->topLevelWidgets())
     {
       mainWindow = qobject_cast<QMainWindow*>(widget);
       if (mainWindow)

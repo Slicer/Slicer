@@ -70,11 +70,11 @@ vtkDiffusionTensorMathematics::vtkDiffusionTensorMathematics()
 //----------------------------------------------------------------------------
  vtkDiffusionTensorMathematics::~vtkDiffusionTensorMathematics()
  {
-   if( this->TensorRotationMatrix )
+   if ( this->TensorRotationMatrix )
    {
      this->TensorRotationMatrix->Delete();
    }
-   if( this->ScalarMask )
+   if ( this->ScalarMask )
    {
      this->ScalarMask->Delete();
    }
@@ -917,7 +917,7 @@ void vtkDiffusionTensorMathematics::ThreadedRequestData(
 int  vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
 {
 
-  if(w[2]<0) {
+  if (w[2]<0) {
      w[1] += (-w[2]);
      w[0] += (-w[2]);
      w[2] = 0;
@@ -938,9 +938,9 @@ int  vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
  //Check for cardinality of negative eigenvalues
  if (w[0]<0 && w[1]<0 && w[2] <0)
    cardinality = 3;
- else if(w[1]<0 && w[2]<0)
+ else if (w[1]<0 && w[2]<0)
    cardinality = 2;
- else if(w[2]<0)
+ else if (w[2]<0)
    cardinality = 1;
  else
    cardinality = 0;
@@ -966,7 +966,7 @@ int  vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(double w[3])
             w[0]=wtmp[0];
             w[1]=wtmp[1];
         }
-        else if(wtmp[1]< 0) {
+        else if (wtmp[1]< 0) {
             w[0] = w[0]+0.5*(w[1]+w[2]);
             if (w[0]<0)
               w[0]=0;

@@ -130,7 +130,7 @@ bool qSlicerModelsDialog::exec(const qSlicerIO::IOProperties& readerProperties)
     return res;
   }
   QStringList files = d->SelectedFiles;
-  foreach(QString file, files)
+  foreach (QString file, files)
   {
     qSlicerIO::IOProperties properties = readerProperties;
     properties["fileName"] = file;

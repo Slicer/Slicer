@@ -61,9 +61,9 @@ void vtkURIHandler::SetLocalFile (FILE *localFile )
 int vtkURIHandler::ProgressCallback ( FILE * vtkNotUsed(outputFile), double dltotal,
                               double dlnow, double ultotal, double ulnow )
 {
-    if(ultotal == 0)
+    if (ultotal == 0)
     {
-    if(dltotal > 0)
+    if (dltotal > 0)
     {
       std::cout << "<filter-progress>" << dlnow/dltotal
                 << "</filter-progress>" << std::endl;

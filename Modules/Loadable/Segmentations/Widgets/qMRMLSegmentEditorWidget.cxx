@@ -360,7 +360,7 @@ qMRMLSegmentEditorWidgetPrivate::~qMRMLSegmentEditorWidgetPrivate()
   Q_Q(qMRMLSegmentEditorWidget);
   q->removeViewObservations();
 
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, this->RegisteredEffects)
+  foreach (qSlicerSegmentEditorAbstractEffect* effect, this->RegisteredEffects)
   {
     effect->cleanup();
     delete effect;
@@ -506,7 +506,7 @@ void qMRMLSegmentEditorWidgetPrivate::init()
 QToolButton* qMRMLSegmentEditorWidgetPrivate::toolButton(qSlicerSegmentEditorAbstractEffect* effect)
 {
   QList<QAbstractButton*> effectButtons = this->EffectButtonGroup.buttons();
-  foreach(QAbstractButton* effectButton, effectButtons)
+  foreach (QAbstractButton* effectButton, effectButtons)
   {
     qSlicerSegmentEditorAbstractEffect* foundEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
       effectButton->property("Effect").value<QObject*>());
@@ -529,7 +529,7 @@ void qMRMLSegmentEditorWidgetPrivate::notifyEffectsOfReferenceGeometryChange(con
   }
   this->LastNotifiedReferenceImageGeometry = geometry;
 
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, this->RegisteredEffects)
+  foreach (qSlicerSegmentEditorAbstractEffect* effect, this->RegisteredEffects)
   {
     effect->referenceGeometryChanged();
   }
@@ -538,7 +538,7 @@ void qMRMLSegmentEditorWidgetPrivate::notifyEffectsOfReferenceGeometryChange(con
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidgetPrivate::notifyEffectsOfSourceVolumeNodeChange()
 {
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, this->RegisteredEffects)
+  foreach (qSlicerSegmentEditorAbstractEffect* effect, this->RegisteredEffects)
   {
     effect->sourceVolumeNodeChanged();
     effect->masterVolumeNodeChanged(); // for backward compatibility
@@ -548,7 +548,7 @@ void qMRMLSegmentEditorWidgetPrivate::notifyEffectsOfSourceVolumeNodeChange()
 //-----------------------------------------------------------------------------
 void qMRMLSegmentEditorWidgetPrivate::notifyEffectsOfLayoutChange()
 {
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, this->RegisteredEffects)
+  foreach (qSlicerSegmentEditorAbstractEffect* effect, this->RegisteredEffects)
   {
     effect->layoutChanged();
   }
@@ -818,7 +818,7 @@ void qMRMLSegmentEditorWidgetPrivate::setEffectCursor(qSlicerSegmentEditorAbstra
   // We update the default cursor as well so that if the user hovers the mouse over
   // a markup, the cursor shape is then restored to the effect cursor.
 
-  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+  foreach (QString sliceViewName, layoutManager->sliceViewNames())
   {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
     QString viewNodeID = QString::fromStdString(sliceWidget->mrmlSliceNode()->GetID());
@@ -1070,7 +1070,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
   QList<qSlicerSegmentEditorAbstractEffect*> addedEffects = qSlicerSegmentEditorEffectFactory::instance()->copyEffects(d->RegisteredEffects);
 
   // Set up effect connections and options frame for all newly added effects
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, addedEffects)
+  foreach (qSlicerSegmentEditorAbstractEffect* effect, addedEffects)
   {
     // Connect callbacks that allow effects to send requests to the editor widget without
     // introducing a direct dependency of the effect on the widget.
@@ -1128,7 +1128,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
   displayedEffects << nullptr;
 
   // Add effects in the requested order
-  foreach(QString effectName, d->EffectNameOrder)
+  foreach (QString effectName, d->EffectNameOrder)
   {
     qSlicerSegmentEditorAbstractEffect* effect = this->effectByName(effectName);
     if (effect)
@@ -1146,7 +1146,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
   // Add buttons of displayed effect to layout
   int rowIndex = 0;
   int columnIndex = 0;
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, displayedEffects)
+  foreach (qSlicerSegmentEditorAbstractEffect* effect, displayedEffects)
   {
     QToolButton* effectButton = d->toolButton(effect);
     if (!effectButton)
@@ -1157,7 +1157,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
     effectButton->show();
     auto gridLayout = dynamic_cast<QGridLayout*>(d->EffectsGroupBox->layout());
     gridLayout->addWidget(effectButton, rowIndex, columnIndex);
-    if(columnIndex == d->EffectColumnCount - 1)
+    if (columnIndex == d->EffectColumnCount - 1)
     {
       columnIndex = 0;
       ++rowIndex;
@@ -1172,7 +1172,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
   rowIndex = 0;
   columnIndex = 0;
   QList<QAbstractButton*> undoRedoButtons = d->UndoRedoButtonGroup.buttons();
-  foreach(QAbstractButton* button, undoRedoButtons)
+  foreach (QAbstractButton* button, undoRedoButtons)
   {
     auto undoRedoGridLayout = dynamic_cast<QGridLayout*>(d->UndoRedoGroupBox->layout());
     undoRedoGridLayout->addWidget(button, rowIndex, columnIndex);
@@ -1182,7 +1182,7 @@ void qMRMLSegmentEditorWidget::updateEffectList()
       toolButton->setToolButtonStyle(d->EffectButtonStyle);
     }
 
-    if(columnIndex == d->EffectColumnCount - 1)
+    if (columnIndex == d->EffectColumnCount - 1)
     {
       columnIndex = 0;
       ++rowIndex;
@@ -1660,7 +1660,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
     QString selectedSegmentID(d->ParameterSetNode->GetSelectedSegmentID());
     bool segmentSelected = !selectedSegmentID.isEmpty();
     QList<QAbstractButton*> effectButtons = d->EffectButtonGroup.buttons();
-    foreach(QAbstractButton* effectButton, effectButtons)
+    foreach (QAbstractButton* effectButton, effectButtons)
     {
       qSlicerSegmentEditorAbstractEffect* effect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
         effectButton->property("Effect").value<QObject*>());
@@ -1730,7 +1730,7 @@ void qMRMLSegmentEditorWidget::updateEffectsSectionFromMRML()
     effectName = activeEffect->name();
   }
   QList<QAbstractButton*> effectButtons = d->EffectButtonGroup.buttons();
-  foreach(QAbstractButton* effectButton, effectButtons)
+  foreach (QAbstractButton* effectButton, effectButtons)
   {
     bool checked = effectButton->isChecked();
     bool needToBeChecked = (effectButton->objectName().compare(effectName) == 0);
@@ -1913,7 +1913,7 @@ void qMRMLSegmentEditorWidget::initializeParameterSetNode()
   MRMLNodeModifyBlocker blocker(d->ParameterSetNode);
 
   // Set parameter set node to all effects
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, d->RegisteredEffects)
+  foreach (qSlicerSegmentEditorAbstractEffect* effect, d->RegisteredEffects)
   {
     effect->setParameterSetNode(d->ParameterSetNode);
     effect->setMRMLDefaults();
@@ -2537,7 +2537,7 @@ qSlicerSegmentEditorAbstractEffect* qMRMLSegmentEditorWidget::effectByName(QStri
 
   // Find effect with name
   qSlicerSegmentEditorAbstractEffect* currentEffect = nullptr;
-  foreach(currentEffect, d->RegisteredEffects)
+  foreach (currentEffect, d->RegisteredEffects)
   {
     if (currentEffect->name().compare(name) == 0)
     {
@@ -2608,7 +2608,7 @@ QStringList qMRMLSegmentEditorWidget::availableEffectNames()
 {
   Q_D(qMRMLSegmentEditorWidget);
   QStringList availableEffectNames;
-  foreach(qSlicerSegmentEditorAbstractEffect* effect, d->RegisteredEffects)
+  foreach (qSlicerSegmentEditorAbstractEffect* effect, d->RegisteredEffects)
   {
     availableEffectNames << effect->name();
   }
@@ -3262,7 +3262,7 @@ void qMRMLSegmentEditorWidget::installKeyboardShortcuts(QWidget* parent /*=nullp
 void qMRMLSegmentEditorWidget::uninstallKeyboardShortcuts()
 {
   Q_D(qMRMLSegmentEditorWidget);
-  foreach(QShortcut* shortcut, d->KeyboardShortcuts)
+  foreach (QShortcut* shortcut, d->KeyboardShortcuts)
   {
     shortcut->disconnect(SIGNAL(activated()));
     shortcut->setParent(nullptr);
@@ -3412,13 +3412,13 @@ void qMRMLSegmentEditorWidget::setEffectButtonStyle(Qt::ToolButtonStyle toolButt
   }
   d->EffectButtonStyle = toolButtonStyle;
   QList<QAbstractButton*> effectButtons = d->EffectButtonGroup.buttons();
-  foreach(QAbstractButton* button, effectButtons)
+  foreach (QAbstractButton* button, effectButtons)
   {
     QToolButton* toolButton = dynamic_cast<QToolButton*>(button);
     toolButton->setToolButtonStyle(d->EffectButtonStyle);
   }
   QList<QAbstractButton*> undoRedoButtons = d->UndoRedoButtonGroup.buttons();
-  foreach(QAbstractButton* button, undoRedoButtons)
+  foreach (QAbstractButton* button, undoRedoButtons)
   {
     QToolButton* toolButton = qobject_cast<QToolButton*>(button);
     if (toolButton)
@@ -3661,7 +3661,7 @@ void qMRMLSegmentEditorWidget::updateSliceRotateWarningButtonVisibility()
   }
 
   // Check if any of the slices are rotated
-  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+  foreach (QString sliceViewName, layoutManager->sliceViewNames())
   {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
     if (!d->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))
@@ -3722,7 +3722,7 @@ void qMRMLSegmentEditorWidget::rotateSliceViewsToSegmentation()
     d->SliceRotateWarningButton->hide();
     return;
   }
-  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+  foreach (QString sliceViewName, layoutManager->sliceViewNames())
   {
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
     if (!d->segmentationDisplayableInView(sliceWidget->mrmlSliceNode()))

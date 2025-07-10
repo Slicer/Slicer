@@ -297,7 +297,7 @@ qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
   }
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  if(this->ExtensionsManagerDialog)
+  if (this->ExtensionsManagerDialog)
   {
     this->ExtensionsManagerDialog->setParent(nullptr);
     delete this->ExtensionsManagerDialog;
@@ -350,7 +350,7 @@ void qSlicerApplicationPrivate::init()
       << "slicer.mrmlScene"
       << "qt.QPushButton";
     q->pythonConsole()->completer()->setAutocompletePreferenceList(autocompletePreferenceList);
-    foreach(QAction* action, q->pythonConsole()->actions())
+    foreach (QAction* action, q->pythonConsole()->actions())
     {
       if (action->shortcut() == QKeySequence("Ctrl+H"))
       {
@@ -575,7 +575,7 @@ bool qSlicerApplication::notify(QObject* receiver, QEvent* event)
   {
     return QApplication::notify(receiver, event);
   }
-  catch( std::bad_alloc& exception )
+  catch ( std::bad_alloc& exception )
   {
     QString errorMessage;
     errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
@@ -611,7 +611,7 @@ bool qSlicerApplication::notify(QObject* receiver, QEvent* event)
       QMessageBox::critical(this->mainWindow(),tr("Application Error"), errorMessage);
     }
   }
-  catch( std::exception& exception )
+  catch ( std::exception& exception )
   {
     QString errorMessage;
     errorMessage = tr("%1 has caught an application error, ").arg(this->applicationName());
@@ -711,7 +711,7 @@ qSlicerLayoutManager* qSlicerApplication::layoutManager()const
 //-----------------------------------------------------------------------------
 QMainWindow* qSlicerApplication::mainWindow()const
 {
-  foreach(QWidget* widget, this->topLevelWidgets())
+  foreach (QWidget* widget, this->topLevelWidgets())
   {
     QMainWindow* window = qobject_cast<QMainWindow*>(widget);
     if (window)
@@ -822,7 +822,7 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=n
 
   // Modules that support a parent class of the node
   QStringList classNames = this->allModuleAssociatedNodeTypes();
-  foreach(const QString& className, classNames)
+  foreach (const QString& className, classNames)
   {
     if (node->IsA(className.toUtf8()))
     {
@@ -830,7 +830,7 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node, double* confidence/*=n
     }
   }
 
-  foreach(const QString& moduleName, moduleNames)
+  foreach (const QString& moduleName, moduleNames)
   {
     qSlicerAbstractCoreModule* module = this->moduleManager()->module(moduleName);
     if (!module)
@@ -963,7 +963,7 @@ void qSlicerApplication::openExtensionsManagerDialog()
 
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 
-  if(!d->ExtensionsManagerDialog)
+  if (!d->ExtensionsManagerDialog)
   {
     d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(this->mainWindow());
   }
@@ -1154,7 +1154,7 @@ void qSlicerApplication::logApplicationInformation() const
       << "Additional module paths ";
 
   int titleWidth = 0;
-  foreach(const QString& title, titles)
+  foreach (const QString& title, titles)
   {
     if (title.length() > titleWidth)
     {
@@ -1342,7 +1342,7 @@ void qSlicerApplication::logApplicationInformation() const
       this->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList();
 
   qSlicerModuleFactoryManager* moduleFactoryManager = this->moduleManager()->factoryManager();
-  foreach(const QString& extensionOrModulePath, this->commandOptions()->additionalModulePaths())
+  foreach (const QString& extensionOrModulePath, this->commandOptions()->additionalModulePaths())
   {
     QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
     if (!modulePaths.empty())
@@ -1515,7 +1515,7 @@ void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime, co
   }
   QString prefixedText;
   QStringList lines = text.split('\n');
-  foreach(const QString& line, lines)
+  foreach (const QString& line, lines)
   {
     if (line.isEmpty())
     {

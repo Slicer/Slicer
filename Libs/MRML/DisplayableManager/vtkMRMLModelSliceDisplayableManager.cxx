@@ -271,7 +271,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::RemoveDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
   PipelinesCacheType::iterator actorsIt = this->DisplayPipelines.find(displayNode);
-  if(actorsIt == this->DisplayPipelines.end())
+  if (actorsIt == this->DisplayPipelines.end())
   {
     return;
   }
@@ -670,7 +670,7 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::ClearDisplayableNodes()
 {
-  while(this->ModelToDisplayNodes.size() > 0)
+  while (this->ModelToDisplayNodes.size() > 0)
   {
     this->External->RemoveDisplayableNode(this->ModelToDisplayNodes.begin()->first);
   }
@@ -758,7 +758,7 @@ void vtkMRMLModelSliceDisplayableManager
   }
   vtkInternal::ModelToDisplayCacheType::iterator displayableIt =
     this->Internal->ModelToDisplayNodes.find(node);
-  if(displayableIt == this->Internal->ModelToDisplayNodes.end())
+  if (displayableIt == this->Internal->ModelToDisplayNodes.end())
   {
     return;
   }

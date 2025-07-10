@@ -153,7 +153,7 @@ void qMRMLMarkupsROIWidget::setDisplayClippingBox(bool visible)
   int numberOfDisplayNodes = roiNode->GetNumberOfDisplayNodes();
 
   std::vector<int> wasModifying(numberOfDisplayNodes);
-  for(int index = 0; index < numberOfDisplayNodes; index++)
+  for (int index = 0; index < numberOfDisplayNodes; index++)
   {
     vtkMRMLDisplayNode* displayNode = roiNode->GetNthDisplayNode(index);
     if (!displayNode)
@@ -165,7 +165,7 @@ void qMRMLMarkupsROIWidget::setDisplayClippingBox(bool visible)
 
   this->MarkupsNode->SetDisplayVisibility(visible);
 
-  for(int index = 0; index < numberOfDisplayNodes; index++)
+  for (int index = 0; index < numberOfDisplayNodes; index++)
   {
     vtkMRMLDisplayNode* displayNode = roiNode->GetNthDisplayNode(index);
     if (!displayNode)
