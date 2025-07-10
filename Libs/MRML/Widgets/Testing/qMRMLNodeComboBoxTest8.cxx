@@ -236,7 +236,7 @@ int qMRMLNodeComboBoxTest8( int argc, char* argv [] )
   //  * "Edit current "
   //  * "Rename current "
   //  * "Create and rename "
-  foreach(const QString& actionPrefix,
+  foreach (const QString& actionPrefix,
           QStringList()\
             << "Create new "
             << "Delete current "

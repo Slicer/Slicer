@@ -614,7 +614,7 @@ void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
     return;
   }
   std::vector<std::string> viewNodeIDs;
-  for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+  for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
   {
     if (std::string(viewNodeID) != this->ViewNodeIDs[i])
     {
@@ -634,7 +634,7 @@ void vtkMRMLDisplayNode::RemoveAllViewNodeIDs()
 {
   if (this->Scene!=nullptr)
   {
-    for(unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
     {
       this->Scene->RemoveReferencedNodeID(ViewNodeIDs[i].c_str(), this);
     }

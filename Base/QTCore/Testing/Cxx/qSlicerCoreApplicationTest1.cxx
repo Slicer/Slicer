@@ -52,7 +52,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv [] )
 
   qSlicerCoreApplication* aptr = app.application();
 
-  if( aptr != (&app) )
+  if ( aptr != (&app) )
   {
     std::cerr << "Problem with the application() singleton" << std::endl;
     return EXIT_FAILURE;
@@ -75,7 +75,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv [] )
   }
 
   QSettings* settings = app.userSettings();
-  if( settings == nullptr )
+  if ( settings == nullptr )
   {
     std::cerr << "Problem with settings()" << std::endl;
     return EXIT_FAILURE;
@@ -115,7 +115,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv [] )
   // Since initialize has been called, the module manager should be available
   qSlicerModuleManager* moduleManager1 = app.moduleManager();
 
-  if( !moduleManager1 )
+  if ( !moduleManager1 )
   {
     std::cerr << "Problem with moduleManager()" << std::endl;
     return EXIT_FAILURE;
@@ -133,7 +133,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv [] )
 
   vtkSlicerApplicationLogic* logic1 = app.applicationLogic();
 
-  if( logic1 == nullptr )
+  if ( logic1 == nullptr )
   {
     std::cerr << "Error in appLogic() " << std::endl;
     return EXIT_FAILURE;
@@ -141,7 +141,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv [] )
 
   vtkMRMLScene* scene1 = app.mrmlScene();
 
-  if( scene1 == nullptr )
+  if ( scene1 == nullptr )
   {
     std::cerr << "Error in mrmlScene() " << std::endl;
     return EXIT_FAILURE;

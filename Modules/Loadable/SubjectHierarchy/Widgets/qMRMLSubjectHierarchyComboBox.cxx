@@ -631,7 +631,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   popupHeight += margins.top() + margins.bottom();
 
   // Position of the container
-  if(d->AlignPopupVertically)
+  if (d->AlignPopupVertically)
   {
     // Position horizontally
     listRect.moveLeft(above.x());

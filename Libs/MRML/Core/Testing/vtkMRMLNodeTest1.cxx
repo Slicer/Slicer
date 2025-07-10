@@ -167,7 +167,7 @@ public:
   int ReadDataInternal(vtkMRMLNode* refNode) override
   {
     vtkMRMLNodeTestHelper1* node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
-    if(!node)
+    if (!node)
     {
       vtkErrorMacro("ReadData: Reference node is expected to be a vtkMRMLNodeTestHelper1");
       return 0;
@@ -177,7 +177,7 @@ public:
   int WriteDataInternal(vtkMRMLNode* refNode) override
   {
     vtkMRMLNodeTestHelper1* node = vtkMRMLNodeTestHelper1::SafeDownCast(refNode);
-    if(!node)
+    if (!node)
     {
       vtkErrorMacro("WriteData: Reference node is expected to be a vtkMRMLNodeTestHelper1");
       return 0;
@@ -577,7 +577,7 @@ bool CheckNthNodeReferenceID(int line, const char* function,
   {
     different = !(currentNodeReferenceID == nullptr && expectedNodeReferenceID == nullptr);
   }
-  else if(strcmp(currentNodeReferenceID, expectedNodeReferenceID) == 0)
+  else if (strcmp(currentNodeReferenceID, expectedNodeReferenceID) == 0)
   {
     different = false;
   }
@@ -2601,7 +2601,7 @@ bool TestNodeReferenceSerialization()
     return false;
   }
 
-  if(!CheckString(
+  if (!CheckString(
        __LINE__,
        std::string("Scene2-referencingNodeImported-GetNthNodeReferenceID-n:0-role:") + role1,
        referencingNodeImported->GetNthNodeReferenceID(role1.c_str(), 0),
@@ -2617,7 +2617,7 @@ bool TestNodeReferenceSerialization()
     return false;
   }
 
-  if(!CheckString(
+  if (!CheckString(
        __LINE__,
        std::string("Scene2-referencingNodeImported-GetNthNodeReferenceID-n:0-role:") + role2,
        referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 0),
@@ -2633,7 +2633,7 @@ bool TestNodeReferenceSerialization()
     return false;
   }
 
-  if(!CheckString(
+  if (!CheckString(
        __LINE__,
        std::string("Scene2-referencingNodeImported-GetNthNodeReferenceID-n:1-role:") + role2,
        referencingNodeImported->GetNthNodeReferenceID(role2.c_str(), 1),

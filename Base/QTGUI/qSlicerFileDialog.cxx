@@ -65,9 +65,9 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
   QStringList extensions;
   QList<qSlicerFileReader*> readers =
     qSlicerApplication::application()->ioManager()->readers(fileType);
-  foreach(const qSlicerFileReader* reader, readers)
+  foreach (const qSlicerFileReader* reader, readers)
   {
-    foreach(const QString& filter, reader->extensions())
+    foreach (const QString& filter, reader->extensions())
     {
       QString nameFilter = filter.contains('(') ? filter :
         reader->description() + " (" + filter + ")";
@@ -179,7 +179,7 @@ QStringList qSlicerStandardFileDialog::loadedNodes()const
 ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
     const qSlicerIO::IOProperties& ioProperties, QWidget* parent/*=nullptr*/)
 {
-  if(ioProperties["objectName"].toString().isEmpty())
+  if (ioProperties["objectName"].toString().isEmpty())
   {
     qWarning() << "Impossible to create the ctkFileDialog - No object name has been set";
     return nullptr;
@@ -188,7 +188,7 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   ctkFileDialog* fileDialog = new ctkFileDialog(parent);
 
-  if(ioProperties["fileType"].toBool())
+  if (ioProperties["fileType"].toBool())
   {
     fileDialog->setNameFilters(
       qSlicerFileDialog::nameFilters(
@@ -330,7 +330,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
       }
       res = !d->LoadedNodes.isEmpty();
     }
-    else if(d->Action == qSlicerFileDialog::Write)
+    else if (d->Action == qSlicerFileDialog::Write)
     {
       res = ioManager->saveNodes(this->fileType(), properties);
     }
@@ -371,7 +371,7 @@ QStringList qSlicerStandardFileDialog::getOpenFileName(
                                 ioProperties, mainWindow);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
-  if(fileDialog->exec() == QDialog::Accepted)
+  if (fileDialog->exec() == QDialog::Accepted)
   {
     files = fileDialog->selectedFiles();
   }

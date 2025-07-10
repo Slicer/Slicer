@@ -261,12 +261,12 @@ void qMRMLTransformSliders::updateRangeFromTransform(vtkMRMLTransformNode* trans
   if (!matrix) { return; }
 
   QPair<double, double> minmax = this->extractMinMaxTranslationValue(matrix, 0.0);
-  if(minmax.first < this->minimum())
+  if (minmax.first < this->minimum())
   {
     minmax.first = minmax.first - 0.3 * fabs(minmax.first);
     this->setMinimum(minmax.first);
   }
-  if(minmax.second > this->maximum())
+  if (minmax.second > this->maximum())
   {
     minmax.second = minmax.second + 0.3 * fabs(minmax.second);
     this->setMaximum(minmax.second);

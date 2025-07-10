@@ -67,7 +67,7 @@ void vtkSlicerTestLineWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayN
 vtkSlicerMarkupsWidget* vtkSlicerTestLineWidget::CreateInstance() const
 {
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkSlicerTestLineWidget");
-  if(ret)
+  if (ret)
   {
     return static_cast<vtkSlicerTestLineWidget*>(ret);
   }

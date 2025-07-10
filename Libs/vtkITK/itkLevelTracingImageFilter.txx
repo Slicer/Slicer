@@ -332,16 +332,16 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   // Look for the 4 connected neighbor that is background. Save it as
   // the zeroIndex.
   bool found = false;
-  for(zeroIndex = 1; zeroIndex<8; zeroIndex+=2)
+  for (zeroIndex = 1; zeroIndex<8; zeroIndex+=2)
   {
     offsetX = neighbors[zeroIndex][0];
     offsetY = neighbors[zeroIndex][1];
     pixTemp[0] = pix[0] + offsetX;
     pixTemp[1] = pix[1] + offsetY;
-    if(region.IsInside(pixTemp))
+    if (region.IsInside(pixTemp))
     {
       val = inputImage->GetPixel(pixTemp);
-      if(val < threshold)
+      if (val < threshold)
       {
         found = true;
         break;
@@ -357,16 +357,16 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   {
     // only need to check the corners since we already checked the 4
     // connected neighbors
-    for(zeroIndex = 0; zeroIndex<8; zeroIndex+=2)
+    for (zeroIndex = 0; zeroIndex<8; zeroIndex+=2)
     {
       offsetX = neighbors[zeroIndex][0];
       offsetY = neighbors[zeroIndex][1];
       pixTemp[0] = pix[0] + offsetX;
       pixTemp[1] = pix[1] + offsetY;
-      if(region.IsInside(pixTemp))
+      if (region.IsInside(pixTemp))
       {
         val = inputImage->GetPixel(pixTemp);
-        if(val < threshold)
+        if (val < threshold)
         {
           found = true;
           break;
@@ -410,13 +410,13 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   outputImage->SetPixel(pix, NumericTraits<OutputImagePixelType>::OneValue());
   do
   {
-    for(int s = 0; s<8; s++)
+    for (int s = 0; s<8; s++)
     {
       offsetX = neighbors[(s + zeroIndex + 1)%8][0];
       offsetY = neighbors[(s + zeroIndex + 1)%8][1];
       pixTemp[0] = pix[0] + offsetX;
       pixTemp[1] = pix[1] + offsetY;
-      if(region.IsInside(pixTemp))
+      if (region.IsInside(pixTemp))
       {
         val = inputImage->GetPixel(pixTemp);
         if (val >= threshold)
@@ -483,7 +483,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   IteratorType it ( outputImage, function, m_Seed );
   it.GoToBegin();
 
-  while( !it.IsAtEnd())
+  while ( !it.IsAtEnd())
   {
     it.Set(NumericTraits<OutputImagePixelType>::OneValue());
     ++it;

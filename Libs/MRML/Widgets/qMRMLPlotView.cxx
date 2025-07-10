@@ -726,7 +726,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   if (!plotChartNode)
   {
     // Clean all the plots in vtkChartXY
-    while(q->chart()->GetNumberOfPlots() > 0)
+    while (q->chart()->GetNumberOfPlots() > 0)
     {
       // This if is necessary for a BUG at VTK level:
       // in the case of a plot removed with corner ID 0,

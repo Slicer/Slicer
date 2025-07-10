@@ -190,7 +190,7 @@ void qSlicerModuleFinderDialog::onSelectionChanged(const QItemSelection& selecte
     // Categories
     QStringList categories = module->categories();
     QStringList filteredCategories;
-    foreach(QString category, categories)
+    foreach (QString category, categories)
     {
       if (category.isEmpty())
       {

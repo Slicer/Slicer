@@ -33,9 +33,9 @@ DiffusionTensor3DRigidTransform<TData>
 {
   MatrixTransformType matrix3x3;
 
-  for( int i = 0; i < 3; i++ )
+  for ( int i = 0; i < 3; i++ )
   {
-    for( int j = 0; j < 3; j++ )
+    for ( int j = 0; j < 3; j++ )
     {
       matrix3x3[i][j] = transform->GetParameters().GetElement( i * 3 + j );
     }
@@ -63,9 +63,9 @@ DiffusionTensor3DRigidTransform<TData>
 {
   MatrixTransformType matrix3x3;
 
-  for( int i = 0; i < 3; i++ )
+  for ( int i = 0; i < 3; i++ )
   {
-    for( int j = 0; j < 3; j++ )
+    for ( int j = 0; j < 3; j++ )
     {
       matrix3x3[i][j] = matrix[i][j];
     }
@@ -73,7 +73,7 @@ DiffusionTensor3DRigidTransform<TData>
   SetMatrix3x3(matrix3x3);
   // We set the translation after SetMatrix3x3 in case it throws an exception and in that case we do not want to set the
   // new translation
-  for( int i = 0; i < 3; i++ )
+  for ( int i = 0; i < 3; i++ )
   {
     this->m_Translation[i] = matrix[i][3];
   }
@@ -87,33 +87,33 @@ DiffusionTensor3DRigidTransform<TData>
   Matrix<double, 3, 3> result;
   result = matrix * matrix.GetTranspose();
   bool ok = true;
-  if( m_PrecisionChecking )
+  if ( m_PrecisionChecking )
   {
-    for( int i = 0; i < 3; i++ )
+    for ( int i = 0; i < 3; i++ )
     {
-      for( int j = 0; j < 3; j++ )
+      for ( int j = 0; j < 3; j++ )
       {
-        if( i != j && result[i][j] > PRECISION )
+        if ( i != j && result[i][j] > PRECISION )
         {
           ok = false;
           break;
         }
-        else if( i == j && ( result[i][j] < 1.0 - PRECISION || result[i][j] > 1.0 + PRECISION ) )
+        else if ( i == j && ( result[i][j] < 1.0 - PRECISION || result[i][j] > 1.0 + PRECISION ) )
         {
           ok = false;
           break;
         }
       }
-      if( !ok )
+      if ( !ok )
       {
         break;
       }
     }
   }
-  if( ok )
+  if ( ok )
   {
     double det = this->GetDet( matrix );
-    if( det > 1 - PRECISION && det < 1 + PRECISION )
+    if ( det > 1 - PRECISION && det < 1 + PRECISION )
     {
       this->m_TransformMatrix = matrix;
     }

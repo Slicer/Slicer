@@ -150,7 +150,7 @@ void qMRMLMarkupsAngleMeasurementsWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode*
 {
   this->MarkupsNode = vtkMRMLMarkupsAngleNode::SafeDownCast(markupsNode);
 
-  if(!this->MarkupsNode)
+  if (!this->MarkupsNode)
   {
     return;
   }

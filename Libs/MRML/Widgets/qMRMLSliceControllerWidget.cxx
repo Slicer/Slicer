@@ -2143,7 +2143,7 @@ void qMRMLSliceControllerWidget::setSliceLink(bool linked)
     return;
   }
   vtkMRMLSliceCompositeNode* sliceCompositeNode = nullptr;
-  for(sliceCompositeNodes->InitTraversal();
+  for (sliceCompositeNodes->InitTraversal();
       (sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(
         sliceCompositeNodes->GetNextItemAsObject()));)
   {
@@ -2162,7 +2162,7 @@ void qMRMLSliceControllerWidget::setHotLinked(bool linked)
     return;
   }
   vtkMRMLSliceCompositeNode* sliceCompositeNode = nullptr;
-  for(sliceCompositeNodes->InitTraversal();
+  for (sliceCompositeNodes->InitTraversal();
       (sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(
         sliceCompositeNodes->GetNextItemAsObject()));)
   {
@@ -2208,7 +2208,7 @@ void qMRMLSliceControllerWidget::rotateSliceToLowestVolumeAxes()
 {
   Q_D(qMRMLSliceControllerWidget);
   vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
-  if(!nodes.GetPointer())
+  if (!nodes.GetPointer())
   {
     return;
   }
@@ -2406,7 +2406,7 @@ void qMRMLSliceControllerWidget::showReformatWidget(bool show)
       node->SetWidgetVisible(show);
     }
   }
-  if(show)
+  if (show)
   {
     this->setSliceVisible(true);
   }

@@ -78,23 +78,23 @@ int qSlicerScriptedUtilsTest1(int, char*[])
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "moduleA", "attrA", nullptr, false))
+  if (!setModuleAttribute(__LINE__, "moduleA", "attrA", nullptr, false))
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "moduleA", "attrA", attrA, true))
+  if (!setModuleAttribute(__LINE__, "moduleA", "attrA", attrA, true))
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "moduleA.moduleB", "attrB", attrB, true))
+  if (!setModuleAttribute(__LINE__, "moduleA.moduleB", "attrB", attrB, true))
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "__main__", "attrMain", attrMain, true))
+  if (!setModuleAttribute(__LINE__, "__main__", "attrMain", attrMain, true))
   {
     return EXIT_FAILURE;
   }
-  if(!setModuleAttribute(__LINE__, "", "attrMain2", attrMain2, true))
+  if (!setModuleAttribute(__LINE__, "", "attrMain2", attrMain2, true))
   {
     return EXIT_FAILURE;
   }

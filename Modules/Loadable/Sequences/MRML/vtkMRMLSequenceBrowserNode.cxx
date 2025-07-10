@@ -175,7 +175,7 @@ void vtkMRMLSequenceBrowserNode::WriteXML(ostream& of, int nIndent)
   of << indent << "indexDisplayFormat=\"" << this->GetIndexDisplayFormat() << "\"";
 
   of << indent << " virtualNodePostfixes=\""; // TODO: Change to "synchronizationPostfixes", but need backwards-compatibility with "virtualNodePostfixes"
-  for(std::vector<std::string>::iterator roleNameIt=this->SynchronizationPostfixes.begin();
+  for (std::vector<std::string>::iterator roleNameIt=this->SynchronizationPostfixes.begin();
     roleNameIt!=this->SynchronizationPostfixes.end(); ++roleNameIt)
   {
     if (roleNameIt!=this->SynchronizationPostfixes.begin())
@@ -187,7 +187,7 @@ void vtkMRMLSequenceBrowserNode::WriteXML(ostream& of, int nIndent)
   }
   of << "\"";
 
-  for(std::map<std::string, SynchronizationProperties* >::iterator rolePostfixIt=this->SynchronizationPropertiesMap.begin();
+  for (std::map<std::string, SynchronizationProperties* >::iterator rolePostfixIt=this->SynchronizationPropertiesMap.begin();
     rolePostfixIt!=this->SynchronizationPropertiesMap.end(); ++rolePostfixIt)
   {
     if (rolePostfixIt->first.empty() || rolePostfixIt->second == nullptr)

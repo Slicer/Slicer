@@ -154,7 +154,7 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSequence(const char* filename, 
   {
     storageNode = sequenceStorageNode;
   }
-  else if(volumeSequenceStorageNode->SupportedFileType(filename))
+  else if (volumeSequenceStorageNode->SupportedFileType(filename))
   {
     storageNode = volumeSequenceStorageNode;
   }
@@ -348,7 +348,7 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
       vtkErrorMacro("Synchronized sequence node is invalid");
       continue;
     }
-    if(!browserNode->GetPlayback(synchronizedSequenceNode))
+    if (!browserNode->GetPlayback(synchronizedSequenceNode))
     {
       continue;
     }

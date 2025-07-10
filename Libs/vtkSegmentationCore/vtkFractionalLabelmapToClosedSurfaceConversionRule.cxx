@@ -190,7 +190,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
   {
     marchingCubes->Update();
   }
-  catch(...)
+  catch (...)
   {
     vtkErrorMacro("Convert: Error while running marching cubes!");
     return false;

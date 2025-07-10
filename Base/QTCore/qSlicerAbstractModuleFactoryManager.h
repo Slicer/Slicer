@@ -254,7 +254,7 @@ void qSlicerAbstractModuleFactoryManager::addSearchPath(const QString& path)
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModuleFactoryManager::removeSearchPaths(const QStringList& paths)
 {
-  foreach(const QString& path, paths)
+  foreach (const QString& path, paths)
   {
     this->removeSearchPath(path);
   }

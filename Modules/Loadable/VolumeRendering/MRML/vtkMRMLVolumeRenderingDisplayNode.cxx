@@ -217,7 +217,7 @@ vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetShaderPropertyN
 vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetOrCreateShaderPropertyNode( vtkMRMLScene* mrmlScene )
 {
   vtkMRMLShaderPropertyNode* sp = this->GetShaderPropertyNode();
-  if( sp == nullptr )
+  if ( sp == nullptr )
   {
     vtkNew<vtkMRMLShaderPropertyNode> shaderNode;
     mrmlScene->AddNode(shaderNode);

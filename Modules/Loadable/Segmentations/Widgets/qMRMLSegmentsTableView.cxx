@@ -152,7 +152,7 @@ struct SegmentListFilterParameters
       {
         this->TextFilter = value;
       }
-      else if(key == this->StatusFilterKey)
+      else if (key == this->StatusFilterKey)
       {
         QStringList statusFilters = value.split(this->ValueSeparator);
         for (QString statusString : statusFilters)
@@ -1508,7 +1508,7 @@ void qMRMLSegmentsTableView::jumpSlices()
     // application is closing
     return;
   }
-  foreach(QString sliceViewName, layoutManager->sliceViewNames())
+  foreach (QString sliceViewName, layoutManager->sliceViewNames())
   {
     // Check if segmentation is visible in this view
     qMRMLSliceWidget* sliceWidget = layoutManager->sliceWidget(sliceViewName);
@@ -1610,7 +1610,7 @@ void qMRMLSegmentsTableView::moveSelectedSegmentsDown()
 
   QModelIndexList segmentModelIndices;
   QList<int> selectedRows;
-  foreach(QString segmentID, selectedSegmentIDs)
+  foreach (QString segmentID, selectedSegmentIDs)
   {
     QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
     segmentModelIndices << index;

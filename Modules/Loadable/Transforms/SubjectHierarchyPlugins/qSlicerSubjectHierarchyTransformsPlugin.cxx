@@ -421,7 +421,7 @@ void qSlicerSubjectHierarchyTransformsPluginPrivate::showResetCenterOfTransforma
 void qSlicerSubjectHierarchyTransformsPluginPrivate::removeResetCenterOfTransformationForTransformedNodesActions()
 {
   QList<QAction*> transformActions = this->ResetCenterOfTransformationNodeGroup->actions();
-  foreach(QAction* transformAction, transformActions)
+  foreach (QAction* transformAction, transformActions)
   {
     this->ResetCenterOfTransformationNodeGroup->removeAction(transformAction);
     this->ResetCenterOfTransformationMenu->removeAction(transformAction);
@@ -1311,7 +1311,7 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::transformContextMenuAct
     }
 
     QAction* transformAction = nullptr;
-    foreach(QAction* foundTransformAction, originalTransformActions)
+    foreach (QAction* foundTransformAction, originalTransformActions)
     {
       if (foundTransformAction->data().toString().toStdString() == transformNode->GetID())
       {
@@ -1343,7 +1343,7 @@ QList<QAction*> qSlicerSubjectHierarchyTransformsPlugin::transformContextMenuAct
   }
 
   // Remove actions that belong to deleted transform nodes
-  foreach(QAction* transformAction, originalTransformActions)
+  foreach (QAction* transformAction, originalTransformActions)
   {
     QString actionTransformNodeID = transformAction->data().toString();
     if (actionTransformNodeID.isEmpty())

@@ -83,11 +83,11 @@ int main( int argc, char* argv[] )
   confidenceConnected->SetReplaceValue( labelvalue );
   confidenceConnected->SetInitialNeighborhoodRadius( neighborhood );
 
-  if( seed.size() > 0 )
+  if ( seed.size() > 0 )
   {
     InternalImageType::PointType lpsPoint;
     InternalImageType::IndexType index;
-    for( ::size_t i = 0; i < seed.size(); ++i )
+    for ( ::size_t i = 0; i < seed.size(); ++i )
     {
       // seeds come in ras, convert to lps
       lpsPoint[0] = -seed[i][0];
@@ -111,7 +111,7 @@ int main( int argc, char* argv[] )
   {
     writer->Update();
   }
-  catch( itk::ExceptionObject& excep )
+  catch ( itk::ExceptionObject& excep )
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;

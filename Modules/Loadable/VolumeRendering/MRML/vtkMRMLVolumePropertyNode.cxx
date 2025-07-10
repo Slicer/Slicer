@@ -61,7 +61,7 @@ vtkMRMLVolumePropertyNode::vtkMRMLVolumePropertyNode()
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode::~vtkMRMLVolumePropertyNode()
 {
-  if(this->VolumeProperty)
+  if (this->VolumeProperty)
   {
     vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetScalarOpacity());
     vtkUnObserveMRMLObjectMacro(this->VolumeProperty->GetGradientOpacity());
@@ -259,7 +259,7 @@ int vtkMRMLVolumePropertyNode::DataFromString(const std::string& dataString, dou
     return 0;
   }
   data = new double[size];
-  for(int i=0; i < size; ++i)
+  for (int i=0; i < size; ++i)
   {
     std::string s;
     stream >> s;

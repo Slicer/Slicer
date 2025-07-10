@@ -581,7 +581,7 @@ void vtkITKImageWriter::Write()
         vtkFloatArray* in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
         float inValue[9];
         float outValue[6];
-        for(int i=0; i<out->GetNumberOfTuples(); i++)
+        for (int i=0; i<out->GetNumberOfTuples(); i++)
         {
           in->GetTypedTuple(i, inValue);
           //ITK expect tensors saved in upper-triangular format

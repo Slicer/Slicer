@@ -113,11 +113,11 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QObject::connect(ViewFindModuleAction, SIGNAL(triggered()),
                    q, SLOT(showModuleFinder()));
   QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
-  foreach(QMenu* toolBarMenu, mainWindow->findChildren<QMenu*>())
+  foreach (QMenu* toolBarMenu, mainWindow->findChildren<QMenu*>())
   {
     if (toolBarMenu->objectName() == QString("ViewMenu"))
     {
-      foreach(QAction* action, toolBarMenu->actions())
+      foreach (QAction* action, toolBarMenu->actions())
       {
         if (action->objectName() == QString("ViewExtensionsManagerAction"))
         {
