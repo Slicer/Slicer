@@ -43,7 +43,7 @@ public:
   ~qSlicerCorePythonManager() override;
 
   /// Convenient function allowing to add a VTK object to the interpreter main module
-  Q_INVOKABLE void addVTKObjectToPythonMain(const QString& name, vtkObject * object);
+  Q_INVOKABLE void addVTKObjectToPythonMain(const QString& name, vtkObject* object);
 
   /// Append \a path to \a sys.path
   /// \todo Add these methods to ctkAbstractPythonManager

@@ -21,12 +21,12 @@
 #include "qMRMLROIWidgetPlugin.h"
 #include "qMRMLROIWidget.h"
 
-qMRMLROIWidgetPlugin::qMRMLROIWidgetPlugin(QObject *_parent)
+qMRMLROIWidgetPlugin::qMRMLROIWidgetPlugin(QObject* _parent)
         : QObject(_parent)
 {
 }
 
-QWidget *qMRMLROIWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLROIWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLROIWidget* _widget = new qMRMLROIWidget(_parent);
   return _widget;

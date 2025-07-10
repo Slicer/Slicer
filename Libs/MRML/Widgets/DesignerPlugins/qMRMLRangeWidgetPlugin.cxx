@@ -21,12 +21,12 @@
 #include "qMRMLRangeWidgetPlugin.h"
 #include "qMRMLRangeWidget.h"
 
-qMRMLRangeWidgetPlugin::qMRMLRangeWidgetPlugin(QObject *parentWidget)
+qMRMLRangeWidgetPlugin::qMRMLRangeWidgetPlugin(QObject* parentWidget)
         : QObject(parentWidget)
 {
 }
 
-QWidget *qMRMLRangeWidgetPlugin::createWidget(QWidget *parentWidget)
+QWidget* qMRMLRangeWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLRangeWidget* newWidget = new qMRMLRangeWidget(parentWidget);
   return newWidget;

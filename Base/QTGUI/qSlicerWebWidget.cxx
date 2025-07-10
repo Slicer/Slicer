@@ -55,7 +55,7 @@ namespace
 class qSlicerWebEngineView : public QWebEngineView
 {
 public:
-  qSlicerWebEngineView(QWidget *parent = Q_NULLPTR) : QWebEngineView(parent){}
+  qSlicerWebEngineView(QWidget* parent = Q_NULLPTR) : QWebEngineView(parent){}
   ~qSlicerWebEngineView() override = default;
   QSize sizeHint() const override
   {
@@ -66,7 +66,7 @@ public:
 }
 
 // --------------------------------------------------------------------------
-qSlicerWebEnginePage::qSlicerWebEnginePage(QWebEngineProfile *profile, QObject *parent)
+qSlicerWebEnginePage::qSlicerWebEnginePage(QWebEngineProfile* profile, QObject* parent)
   : QWebEnginePage(profile, parent),
     WebWidget(nullptr),
     JavaScriptConsoleMessageLoggingEnabled(false)
@@ -246,7 +246,7 @@ void qSlicerWebWidgetPrivate::handleDownload(QWebEngineDownloadItem* download)
     return;
   }
 
-  qSlicerWebDownloadWidget *downloader = new qSlicerWebDownloadWidget(q);
+  qSlicerWebDownloadWidget* downloader = new qSlicerWebDownloadWidget(q);
   downloader->setAttribute(Qt::WA_DeleteOnClose);
   downloader->show();
   downloader->handleDownload(download);
@@ -323,7 +323,7 @@ qSlicerWebWidget::webView()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerWebWidget::evalJS(const QString &js)
+QString qSlicerWebWidget::evalJS(const QString& js)
 {
   Q_D(qSlicerWebWidget);
 
@@ -332,7 +332,7 @@ QString qSlicerWebWidget::evalJS(const QString &js)
   // the script evaluation is completed.
   // Connect to the "evalResult(QString,QString)" signal to get
   // results from the WebView.
-  d->WebView->page()->runJavaScript(js, [this,js](const QVariant &v) {
+  d->WebView->page()->runJavaScript(js, [this,js](const QVariant& v) {
 //    qDebug() << js << " returns " << v.toString();
     emit evalResult(js, v.toString());
   });
@@ -341,7 +341,7 @@ QString qSlicerWebWidget::evalJS(const QString &js)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerWebWidget::setHtml(const QString &html, const QUrl &baseUrl)
+void qSlicerWebWidget::setHtml(const QString& html, const QUrl& baseUrl)
 {
   Q_D(qSlicerWebWidget);
 
@@ -349,7 +349,7 @@ void qSlicerWebWidget::setHtml(const QString &html, const QUrl &baseUrl)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerWebWidget::setUrl(const QString &url)
+void qSlicerWebWidget::setUrl(const QString& url)
 {
   Q_D(qSlicerWebWidget);
 
@@ -455,7 +455,7 @@ void qSlicerWebWidget::onLoadFinished(bool ok)
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerWebWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage::NavigationType type, bool isMainFrame)
+bool qSlicerWebWidget::acceptNavigationRequest(const QUrl& url, QWebEnginePage::NavigationType type, bool isMainFrame)
 {
   Q_D(qSlicerWebWidget);
   Q_ASSERT(d->WebEnginePage);

@@ -210,7 +210,7 @@ vtkSlicerTerminologiesModuleLogic* qMRMLSubjectHierarchyModelPrivate::terminolog
 //------------------------------------------------------------------------------
 // qMRMLSubjectHierarchyModel
 //------------------------------------------------------------------------------
-qMRMLSubjectHierarchyModel::qMRMLSubjectHierarchyModel(QObject *_parent)
+qMRMLSubjectHierarchyModel::qMRMLSubjectHierarchyModel(QObject* _parent)
   :QStandardItemModel(_parent)
   , d_ptr(new qMRMLSubjectHierarchyModelPrivate(*this))
 {
@@ -348,7 +348,7 @@ QModelIndex qMRMLSubjectHierarchyModel::subjectHierarchySceneIndex()const
 }
 
 // -----------------------------------------------------------------------------
-vtkIdType qMRMLSubjectHierarchyModel::subjectHierarchyItemFromIndex(const QModelIndex &index)const
+vtkIdType qMRMLSubjectHierarchyModel::subjectHierarchyItemFromIndex(const QModelIndex& index)const
 {
   return this->subjectHierarchyItemFromItem(this->itemFromIndex(index));
 }
@@ -698,8 +698,8 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSubjectHierarchyModel::dropMimeData( const QMimeData *data, Qt::DropAction action,
-                                            int row, int column, const QModelIndex &parent )
+bool qMRMLSubjectHierarchyModel::dropMimeData( const QMimeData* data, Qt::DropAction action,
+                                            int row, int column, const QModelIndex& parent )
 {
   Q_D(qMRMLSubjectHierarchyModel);
   Q_UNUSED(column);

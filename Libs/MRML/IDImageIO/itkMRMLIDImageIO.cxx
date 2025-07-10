@@ -48,7 +48,7 @@ bool
 MRMLIDImageIO
 ::IsAVolumeNode(const char* filename)
 {
-  vtkMRMLVolumeNode *node;
+  vtkMRMLVolumeNode* node;
 
   node = this->FileNameToVolumeNodePtr(filename);
 
@@ -104,7 +104,7 @@ MRMLIDImageIO
     }
 
     // now pull off the scene
-    vtkMRMLScene *scene = nullptr;
+    vtkMRMLScene* scene = nullptr;
     hloc = fname.find("#", loc);
     if (hloc == std::string::npos)
     {
@@ -135,11 +135,11 @@ MRMLIDImageIO
     // so far so good.  now lookup the node in the scene and see if we
     // can cast down to a MRMLVolumeNode
     //
-    vtkMRMLNode *node = scene->GetNodeByID(this->m_NodeID.c_str());
+    vtkMRMLNode* node = scene->GetNodeByID(this->m_NodeID.c_str());
 
     if (node)
     {
-      vtkMRMLVolumeNode *vnode = vtkMRMLVolumeNode::SafeDownCast(node);
+      vtkMRMLVolumeNode* vnode = vtkMRMLVolumeNode::SafeDownCast(node);
 
       if (vnode)
       {
@@ -165,7 +165,7 @@ void
 MRMLIDImageIO
 ::ReadImageInformation()
 {
-  vtkMRMLVolumeNode *node;
+  vtkMRMLVolumeNode* node;
 
   node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
   if (node)
@@ -176,10 +176,10 @@ MRMLIDImageIO
     // Get spacing, origin and directions from node. The node keeps
     // these in RAS, ITK needs them in LPS.
 
-    vtkMatrix4x4 *rasToIjk = vtkMatrix4x4::New();
+    vtkMatrix4x4* rasToIjk = vtkMatrix4x4::New();
     node->GetRASToIJKMatrix(rasToIjk);
 
-    vtkMatrix4x4 *ijkToRas = vtkMatrix4x4::New();
+    vtkMatrix4x4* ijkToRas = vtkMatrix4x4::New();
 
     vtkMatrix4x4::Invert(rasToIjk, ijkToRas);
     ijkToRas->Transpose();
@@ -313,7 +313,7 @@ MRMLIDImageIO
     // diffusion gradients, and b-values
     if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != nullptr)
     {
-      vtkMRMLDiffusionImageVolumeNode *di
+      vtkMRMLDiffusionImageVolumeNode* di
         = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
 
       // throw the measurement frame into the meta-data dictionary
@@ -327,7 +327,7 @@ MRMLIDImageIO
     }
     else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != nullptr)
     {
-      vtkMRMLDiffusionWeightedVolumeNode *dw
+      vtkMRMLDiffusionWeightedVolumeNode* dw
         = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
 
       // throw the measurement frame, diffusion gradients, and bvalue
@@ -352,9 +352,9 @@ MRMLIDImageIO
 // Read from the MRML scene
 void
 MRMLIDImageIO
-::Read(void *buffer)
+::Read(void* buffer)
 {
-  vtkMRMLVolumeNode *node;
+  vtkMRMLVolumeNode* node;
 
   node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
   if (node)
@@ -395,8 +395,8 @@ MRMLIDImageIO
 //----------------------------------------------------------------------------
 void
 MRMLIDImageIO
-::WriteImageInformation(vtkMRMLVolumeNode *node, vtkImageData *img,
-                        int *scalarType, int *numberOfScalarComponents)
+::WriteImageInformation(vtkMRMLVolumeNode* node, vtkImageData* img,
+                        int* scalarType, int* numberOfScalarComponents)
 {
   unsigned int i, j;
 
@@ -500,7 +500,7 @@ MRMLIDImageIO
   }
   else
   {
-    vtkDataArray *tensors = vtkDataArray::CreateDataArray(img->GetScalarType());
+    vtkDataArray* tensors = vtkDataArray::CreateDataArray(img->GetScalarType());
 
     // number of components in VTK is 9 for tensors but for ITK it is 6
     // NOTE: VTK requires that the number of components be set on a
@@ -518,7 +518,7 @@ MRMLIDImageIO
   // diffusion gradients, and bvalues from values in the MetaDataDictionary
   if (vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node) != nullptr)
   {
-    vtkMRMLDiffusionImageVolumeNode *di
+    vtkMRMLDiffusionImageVolumeNode* di
       = vtkMRMLDiffusionImageVolumeNode::SafeDownCast(node);
 
     MetaDataDictionary &thisDic = this->GetMetaDataDictionary();
@@ -527,7 +527,7 @@ MRMLIDImageIO
   }
   else if (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node) != nullptr)
   {
-    vtkMRMLDiffusionWeightedVolumeNode *dw
+    vtkMRMLDiffusionWeightedVolumeNode* dw
       = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(node);
 
     MetaDataDictionary &thisDic = this->GetMetaDataDictionary();
@@ -545,9 +545,9 @@ MRMLIDImageIO
 // Write to the MRML scene
 void
 MRMLIDImageIO
-::Write(const void *buffer)
+::Write(const void* buffer)
 {
-  vtkMRMLVolumeNode *node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
+  vtkMRMLVolumeNode* node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
   if (!node)
   {
     return;
@@ -571,7 +571,7 @@ MRMLIDImageIO
   // Need to create a VTK ImageData to hang off the node if there is
   // not one already there
   //
-  vtkImageData *img = node->GetImageData();
+  vtkImageData* img = node->GetImageData();
   if (!img)
   {
     img = vtkImageData::New();
@@ -614,8 +614,8 @@ MRMLIDImageIO
 
     // Tensors coming from ITK will be 6 components.  Need to
     // convert to 9 components for VTK
-    void *mptr = img->GetPointData()->GetTensors()->GetVoidPointer(0);
-    const void *bptr = buffer;
+    void* mptr = img->GetPointData()->GetTensors()->GetVoidPointer(0);
+    const void* bptr = buffer;
 
     short csize =img->GetPointData()->GetTensors()->GetDataTypeSize();
     for (unsigned long i=0; i < imagesizeinpixels; ++i)
@@ -694,7 +694,7 @@ MRMLIDImageIO
 void
 MRMLIDImageIO
 ::SetDWDictionaryValues(MetaDataDictionary &dict,
-                        vtkMRMLDiffusionWeightedVolumeNode *dw)
+                        vtkMRMLDiffusionWeightedVolumeNode* dw)
 {
   // Measurement frame
   std::string measurementFrameKey = "NRRD_measurement frame";
@@ -755,7 +755,7 @@ MRMLIDImageIO
   for (int i=0; i < dw->GetNumberOfGradients(); ++i)
   {
     std::vector<double> gradient(3);
-    double *g;
+    double* g;
 
     g = dw->GetDiffusionGradient(i);
 
@@ -781,7 +781,7 @@ MRMLIDImageIO
 //----------------------------------------------------------------------------
 void
 MRMLIDImageIO
-::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode *dw,
+::SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode* dw,
                   MetaDataDictionary &dict)
 {
   // Measurement frame
@@ -892,7 +892,7 @@ MRMLIDImageIO
 void
 MRMLIDImageIO
 ::SetDTDictionaryValues(MetaDataDictionary &dict,
-                        vtkMRMLDiffusionImageVolumeNode *di)
+                        vtkMRMLDiffusionImageVolumeNode* di)
 {
   // Measurement frame
   std::string measurementFrameKey = "NRRD_measurement frame";
@@ -931,7 +931,7 @@ MRMLIDImageIO
 //----------------------------------------------------------------------------
 void
 MRMLIDImageIO
-::SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di,
+::SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode* di,
                   MetaDataDictionary &dict)
 {
   // Measurement frame

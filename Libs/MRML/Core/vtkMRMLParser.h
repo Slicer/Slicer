@@ -25,7 +25,7 @@ class vtkCollection;
 class VTK_MRML_EXPORT vtkMRMLParser : public vtkXMLParser
 {
 public:
-  static vtkMRMLParser *New();
+  static vtkMRMLParser* New();
   vtkTypeMacro(vtkMRMLParser,vtkXMLParser);
 
   vtkMRMLScene* GetMRMLScene() {return this->MRMLScene;};
@@ -41,12 +41,12 @@ protected:
   void operator=(const vtkMRMLParser&);
 
   void StartElement(const char* name, const char** atts) override;
-  void EndElement (const char *name) override;
+  void EndElement (const char* name) override;
 
 private:
   vtkMRMLScene* MRMLScene{nullptr};
   vtkCollection* NodeCollection{nullptr};
-  std::stack< vtkMRMLNode *> NodeStack;
+  std::stack< vtkMRMLNode*> NodeStack;
 };
 
 #endif

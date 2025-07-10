@@ -25,7 +25,7 @@
 class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 {
   public:
-  static vtkMRMLCrosshairNode *New();
+  static vtkMRMLCrosshairNode* New();
   vtkTypeMacro(vtkMRMLCrosshairNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -94,7 +94,7 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
   /// Set cursor position in a 2D slice view.
   /// The method also computes the RAS position.
   /// This method should be called whenever the mouse moves in a slice viewer.
-  void SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode *sliceNode);
+  void SetCursorPositionXYZ(double xyz[3], vtkMRMLSliceNode* sliceNode);
 
   /// Invalidates the cursor position. This should be called whenever the mouse moves out of a view.
   void SetCursorPositionInvalid();
@@ -126,10 +126,10 @@ class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 
   ///
   /// Name of the layout
-  void SetCrosshairName(const char *name) {
+  void SetCrosshairName(const char* name) {
     this->SetSingletonTag(name);
   }
-  char *GetCrosshairName() {
+  char* GetCrosshairName() {
     return this->GetSingletonTag();
   }
 

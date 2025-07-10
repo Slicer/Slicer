@@ -102,7 +102,7 @@ typename DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>::Matr
 DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
 ::GetMetaDataDictionary( const InputImageType* image )
 {
-  const itk::MetaDataDictionary & dict = image->GetMetaDataDictionary();
+  const itk::MetaDataDictionary& dict = image->GetMetaDataDictionary();
 
   std::vector<std::string> keys = dict.GetKeys();
   MatrixType               measurementFrame;
@@ -156,7 +156,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 typename DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>::InputPixelType
 DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
-::ApplyMeasurementFrameToTensor( InputPixelType tensor, const MatrixType & measurementFrame )
+::ApplyMeasurementFrameToTensor( InputPixelType tensor, const MatrixType& measurementFrame )
 {
   MatrixType matrixTensor;
 
@@ -183,7 +183,7 @@ DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 DifferenceDiffusionTensor3DImageFilter<TInputImage, TOutputImage>
-::ThreadedGenerateData(const OutputImageRegionType &threadRegion, ThreadIdType threadId)
+::ThreadedGenerateData(const OutputImageRegionType& threadRegion, ThreadIdType threadId)
 {
   typedef ConstNeighborhoodIterator<InputImageType> SmartIterator;
   typedef ImageRegionConstIterator<InputImageType>  InputIterator;

@@ -110,7 +110,7 @@ void qSlicerTerminologiesModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerTerminologiesModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerTerminologiesModule::createWidgetRepresentation()
 {
   return new qSlicerTerminologiesModuleWidget;
 }

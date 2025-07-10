@@ -20,15 +20,15 @@
 
 //------------------------------------------------------------------------------
 qMRMLMarkupsDisplayNodeWidgetPlugin
-::qMRMLMarkupsDisplayNodeWidgetPlugin(QObject *_parent)
+::qMRMLMarkupsDisplayNodeWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLMarkupsDisplayNodeWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qMRMLMarkupsDisplayNodeWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qMRMLMarkupsDisplayNodeWidget* _widget
     = new qMRMLMarkupsDisplayNodeWidget(_parent);

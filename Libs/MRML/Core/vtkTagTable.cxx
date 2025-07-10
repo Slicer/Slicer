@@ -65,7 +65,7 @@ void vtkTagTable::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value)
+void vtkTagTable::AddOrUpdateTag ( const char* attribute, const char* value)
 {
   //--- add a attribute value pair. If the attribute
   //--- already exists in the table, overwrite its value and parentID.
@@ -95,7 +95,7 @@ void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value)
 }
 
 //----------------------------------------------------------------------------
-void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value, int selected)
+void vtkTagTable::AddOrUpdateTag ( const char* attribute, const char* value, int selected)
 {
   //--- add a attribute value pair. If the attribute
   //--- already exists in the table, overwrite its value and parentID.
@@ -129,7 +129,7 @@ void vtkTagTable::AddOrUpdateTag ( const char *attribute, const char *value, int
 
 
 //----------------------------------------------------------------------------
-void vtkTagTable::Copy( vtkTagTable *t)
+void vtkTagTable::Copy( vtkTagTable* t)
 {
   std::string att;
   std::string val;
@@ -161,7 +161,7 @@ void vtkTagTable::Copy( vtkTagTable *t)
 
 
 //----------------------------------------------------------------------------
-void vtkTagTable::AddUniqueTag ( const char *attribute, const char *value )
+void vtkTagTable::AddUniqueTag ( const char* attribute, const char* value )
 {
   //--- add a attribute value pair.
   //--- update the tag if it's present in the table.
@@ -202,7 +202,7 @@ void vtkTagTable::AddUniqueTag ( const char *attribute, const char *value )
 
 
 //----------------------------------------------------------------------------
-int vtkTagTable::UpdateTag ( const char *attribute, const char *value )
+int vtkTagTable::UpdateTag ( const char* attribute, const char* value )
 {
 
   std::string att = attribute;
@@ -233,7 +233,7 @@ int vtkTagTable::UpdateTag ( const char *attribute, const char *value )
 
 
 //----------------------------------------------------------------------------
-int vtkTagTable::UpdateTag ( const char *attribute, const char *value, int selected )
+int vtkTagTable::UpdateTag ( const char* attribute, const char* value, int selected )
 {
 
   std::string att = attribute;
@@ -275,7 +275,7 @@ int vtkTagTable::UpdateTag ( const char *attribute, const char *value, int selec
 
 
 //----------------------------------------------------------------------------
-void vtkTagTable::SelectTag ( const char *attribute )
+void vtkTagTable::SelectTag ( const char* attribute )
 {
     std::string att (attribute);
 
@@ -293,7 +293,7 @@ void vtkTagTable::SelectTag ( const char *attribute )
 
 
 //----------------------------------------------------------------------------
-void vtkTagTable::DeselectTag ( const char *attribute)
+void vtkTagTable::DeselectTag ( const char* attribute)
 {
 
     std::string att (attribute);
@@ -313,7 +313,7 @@ void vtkTagTable::DeselectTag ( const char *attribute)
 
 
 //----------------------------------------------------------------------------
-int vtkTagTable::IsTagSelected ( const char *attribute )
+int vtkTagTable::IsTagSelected ( const char* attribute )
 {
 
     std::string att (attribute);
@@ -342,7 +342,7 @@ int vtkTagTable::IsTagSelected ( const char *attribute )
 
 
 //----------------------------------------------------------------------------
-const char * vtkTagTable::GetTagAttribute ( int index)
+const char* vtkTagTable::GetTagAttribute ( int index)
 {
 
     std::map<std::string, std::string>::iterator iter;
@@ -364,7 +364,7 @@ const char * vtkTagTable::GetTagAttribute ( int index)
 
 
 //----------------------------------------------------------------------------
- const char * vtkTagTable::GetTagValue ( int index)
+ const char* vtkTagTable::GetTagValue ( int index)
  {
 
     std::map<std::string, std::string>::iterator iter;
@@ -383,7 +383,7 @@ const char * vtkTagTable::GetTagAttribute ( int index)
 
 
 //----------------------------------------------------------------------------
-const char * vtkTagTable::GetTagValue ( const char* attribute)
+const char* vtkTagTable::GetTagValue ( const char* attribute)
 {
   std::string att(attribute);
   std::map<std::string, std::string>::iterator iter;
@@ -403,7 +403,7 @@ const char * vtkTagTable::GetTagValue ( const char* attribute)
 
 
 //----------------------------------------------------------------------------
-int vtkTagTable::CheckTableForTag ( const char *attribute )
+int vtkTagTable::CheckTableForTag ( const char* attribute )
 {
   std::string att;
   std::string lowatt;
@@ -428,7 +428,7 @@ int vtkTagTable::CheckTableForTag ( const char *attribute )
 
 
 //----------------------------------------------------------------------------
- int vtkTagTable::CheckTableForTag ( const char *attribute, const char *value)
+ int vtkTagTable::CheckTableForTag ( const char* attribute, const char* value)
  {
   std::string att;
   std::string val;
@@ -480,7 +480,7 @@ void vtkTagTable::ClearTagTable ( )
 
 
 //----------------------------------------------------------------------------
-void vtkTagTable::DeleteTag ( const char *attribute  )
+void vtkTagTable::DeleteTag ( const char* attribute  )
 {
 
   std::string att(attribute);

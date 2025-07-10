@@ -71,7 +71,7 @@ namespace
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject * parent )
+qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject* parent )
   : Superclass(parent)
 {
   this->MRMLScene = nullptr;
@@ -191,7 +191,7 @@ void qSlicerSaveDataDialogPrivate::setMRMLScene(vtkMRMLScene* scene)
 {
   this->MRMLScene = scene;
 
-  qSlicerFileNameItemDelegate * fileNameItemDelegate =
+  qSlicerFileNameItemDelegate* fileNameItemDelegate =
       dynamic_cast<qSlicerFileNameItemDelegate*>(this->FileWidget->itemDelegateForColumn(Self::FileNameColumn));
   Q_ASSERT(fileNameItemDelegate);
   fileNameItemDelegate->MRMLScene = scene;
@@ -256,10 +256,10 @@ void qSlicerSaveDataDialogPrivate::populateItems()
 
   // get all storable nodes in the main scene
   // and store them in the map by ID to avoid duplicates for the scene views
-  std::map<std::string, vtkMRMLNode *> storableNodes;
-  std::vector<vtkMRMLNode *> nodes;
+  std::map<std::string, vtkMRMLNode*> storableNodes;
+  std::vector<vtkMRMLNode*> nodes;
   this->MRMLScene->GetNodesByClass("vtkMRMLStorableNode", nodes);
-  std::vector<vtkMRMLNode *>::iterator it;
+  std::vector<vtkMRMLNode*>::iterator it;
 
   for (it = nodes.begin(); it != nodes.end(); it++)
   {
@@ -416,15 +416,15 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   this->FileWidget->insertRow(row);
 
   // Node name
-  QTableWidgetItem *nodeNameItem = this->createNodeNameItem(storableNode);
+  QTableWidgetItem* nodeNameItem = this->createNodeNameItem(storableNode);
   this->FileWidget->setItem(row, NodeNameColumn, nodeNameItem);
 
   // Node type
-  QTableWidgetItem *nodeTypeItem = this->createNodeTypeItem(storableNode);
+  QTableWidgetItem* nodeTypeItem = this->createNodeTypeItem(storableNode);
   this->FileWidget->setItem(row, NodeTypeColumn, nodeTypeItem);
 
   // Node status
-  QTableWidgetItem *nodeModifiedItem = this->createNodeStatusItem(storableNode, fileInfo);
+  QTableWidgetItem* nodeModifiedItem = this->createNodeStatusItem(storableNode, fileInfo);
   this->FileWidget->setItem(row, NodeStatusColumn, nodeModifiedItem);
 
   // File format
@@ -435,7 +435,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
     fileFormatsWidget->currentIndex()).toString();
 
   // File name
-  QTableWidgetItem *fileNameItem = this->createFileNameItem(fileInfo, extension, QString(node->GetID()));
+  QTableWidgetItem* fileNameItem = this->createFileNameItem(fileInfo, extension, QString(node->GetID()));
   this->FileWidget->setItem(row, FileNameColumn, fileNameItem);
 
   // File Directory
@@ -582,7 +582,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
       "and should be marked for save by default. Please take care when saving data.";
     }
   */
-  QTableWidgetItem *nodeModifiedItem =
+  QTableWidgetItem* nodeModifiedItem =
     new QTableWidgetItem(node->GetModifiedSinceRead() ?
                          qSlicerSaveDataDialog::tr("Modified") : qSlicerSaveDataDialog::tr("Not Modified"));
   nodeModifiedItem->setFlags( nodeModifiedItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsEnabled);
@@ -1061,20 +1061,20 @@ vtkObject* qSlicerSaveDataDialogPrivate::object(int row)const
 
   /// \todo support mrmlScene row
   QStringList nodeIDs = nodeNameItem->data(Qt::ToolTipRole).toString().split(" ");
-  vtkMRMLNode *node = this->getNodeByID(nodeIDs[0].toUtf8().data());
+  vtkMRMLNode* node = this->getNodeByID(nodeIDs[0].toUtf8().data());
   return node;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id)const
+vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char* id)const
 {
   return qSlicerSaveDataDialogPrivate::getNodeByID(id, this->MRMLScene);
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id, vtkMRMLScene* scene)
+vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char* id, vtkMRMLScene* scene)
 {
-  vtkMRMLNode *node = scene->GetNodeByID(id);
+  vtkMRMLNode* node = scene->GetNodeByID(id);
   return node;
 }
 
@@ -1351,7 +1351,7 @@ void qSlicerSaveDataDialogPrivate::updateOptionsWidget(int row)
 //-----------------------------------------------------------------------------
 void qSlicerSaveDataDialogPrivate::updateStatusIconFromStorageNode(int row, bool success)
 {
-  vtkMRMLStorableNode * const node = vtkMRMLStorableNode::SafeDownCast(this->object(row));
+  vtkMRMLStorableNode* const node = vtkMRMLStorableNode::SafeDownCast(this->object(row));
   vtkMRMLMessageCollection* userMessages = nullptr;
   if (node && node->GetStorageNode())
   {

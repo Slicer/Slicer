@@ -61,21 +61,21 @@ class VTK_MRML_EXPORT vtkMRMLScene : public vtkObject
   friend class vtkMRMLSceneViewNode;
 
 public:
-  static vtkMRMLScene *New();
+  static vtkMRMLScene* New();
   vtkTypeMacro(vtkMRMLScene, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set URL (file name) of the scene
-  void SetURL(const char *url);
+  void SetURL(const char* url);
 
   /// Get URL (file name) of the scene
-  const char *GetURL();
+  const char* GetURL();
 
   /// Set Root directory, where URL is pointing
-  void SetRootDirectory(const char *dir);
+  void SetRootDirectory(const char* dir);
 
   /// Get Root directory, where URL is pointing
-  const char *GetRootDirectory();
+  const char* GetRootDirectory();
 
   /// \brief Create new scene from URL
   /// If userMessages is not nullptr then the method may add messages to it about issues
@@ -166,10 +166,10 @@ public:
   void RegisterAbstractNodeClass(std::string className, std::string typeDisplayName);
 
   /// Add a path to the list.
-  const char* GetClassNameByTag(const char *tagName);
+  const char* GetClassNameByTag(const char* tagName);
 
   /// Add a path to the list.
-  const char* GetTagByClassName(const char *className);
+  const char* GetTagByClassName(const char* className);
 
   /// Get type display name which is shown in the GUI.
   std::string GetTypeDisplayNameByClassName(std::string className);
@@ -198,7 +198,7 @@ public:
   /// same singleton tag already exists in the scene, \a nodeToAdd is NOT
   /// added but its properties are copied (c.f. vtkMRMLNode::CopyWithScene())
   /// into the already existing singleton node. That node is then returned.
-  vtkMRMLNode* AddNode(vtkMRMLNode *nodeToAdd);
+  vtkMRMLNode* AddNode(vtkMRMLNode* nodeToAdd);
 
   /// \brief Instantiate and add a node to the scene.
   ///
@@ -227,21 +227,21 @@ public:
   vtkMRMLNode* AddNewNodeByClassWithID(std::string className, std::string nodeBaseName, std::string nodeID);
 
   /// Add a copy of a node to the scene.
-  vtkMRMLNode* CopyNode(vtkMRMLNode *n);
+  vtkMRMLNode* CopyNode(vtkMRMLNode* n);
 
   /// \brief Invoke a vtkMRMLScene::NodeAddedEvent.
   ///
   /// This function is used after adding a bunch of nodes with AddNodeNoNotify()
-  void NodeAdded(vtkMRMLNode *n);
+  void NodeAdded(vtkMRMLNode* n);
   void NodeAdded() {this->NodeAdded(nullptr);}
 
   /// Remove a path from the list.
-  void RemoveNode(vtkMRMLNode *n);
+  void RemoveNode(vtkMRMLNode* n);
 
   /// \brief Determine whether a particular node is present.
   ///
   /// Returns its position in the list.
-  int IsNodePresent(vtkMRMLNode *n);
+  int IsNodePresent(vtkMRMLNode* n);
 
   /// \deprecated This method is deprecated, kept for backward compatibility but it will be
   /// removed in the future.
@@ -259,7 +259,7 @@ public:
   /// use the node collection's internal iterator.
   /// Use other methods instead (GetNodes(), GetNodesByClass(), etc.)
   /// or traverse collection returned by GetNodes() using a collection iterator.
-  vtkMRMLNode *GetNextNode();
+  vtkMRMLNode* GetNextNode();
 
   /// \deprecated This method is deprecated, kept for backward compatibility but it will be
   /// removed in the future.
@@ -268,11 +268,11 @@ public:
   /// use the node collection's internal iterator.
   /// Use other methods instead (GetNodes(), GetNodesByClass(), etc.)
   /// or traverse collection returned by GetNodes() using a collection iterator.
-  vtkMRMLNode *GetNextNodeByClass(const char* className);
+  vtkMRMLNode* GetNextNodeByClass(const char* className);
 
   /// Get nodes having the specified name
-  vtkCollection *GetNodesByName(const char* name);
-  vtkMRMLNode *GetFirstNodeByName(const char* name);
+  vtkCollection* GetNodesByName(const char* name);
+  vtkMRMLNode* GetFirstNodeByName(const char* name);
 
   /// \brief Return the first node in the scene that matches the filtering
   /// criteria if specified.
@@ -285,17 +285,17 @@ public:
   /// \a byHideFromEditors is set, the function will only return the
   /// nodes that are either hidden from editors or the nodes that are
   /// visible in editors.
-  vtkMRMLNode *GetFirstNode(const char* byName = nullptr, const char* byClass = nullptr,
+  vtkMRMLNode* GetFirstNode(const char* byName = nullptr, const char* byClass = nullptr,
                             const int* byHideFromEditors = nullptr,
                             bool exactNameMatch = true);
 
   /// Get node given a unique ID
-  vtkMRMLNode *GetNodeByID(const char* name);
-  vtkMRMLNode *GetNodeByID(std::string name);
+  vtkMRMLNode* GetNodeByID(const char* name);
+  vtkMRMLNode* GetNodeByID(std::string name);
 
   /// Get nodes of a specified class having the specified name.
   /// \warning You are responsible for deleting the collection.
-  vtkCollection *GetNodesByClassByName(const char* className, const char* name);
+  vtkCollection* GetNodesByClassByName(const char* className, const char* name);
 
   /// Get number of nodes in the scene
   int GetNumberOfNodes();
@@ -312,10 +312,10 @@ public:
   int GetNumberOfNodesByClass(const char* className);
 
   /// Get vector of nodes of a specified class in the scene
-  int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
+  int GetNodesByClass(const char* className, std::vector<vtkMRMLNode*> &nodes);
 
   /// \warning You are responsible for deleting the returned collection.
-  vtkCollection* GetNodesByClass(const char *className);
+  vtkCollection* GetNodesByClass(const char* className);
 
   /// \brief Search and return the singleton of type className with a
   /// \a singletonTag tag.
@@ -338,7 +338,7 @@ public:
   int GetNumberOfRegisteredNodeClasses();
   /// Get the nth registered node class, returns nullptr if n is out of the range 0-GetNumberOfRegisteredNodeClasses
   /// Useful for iterating through nodes to find all the possible storage nodes.
-  vtkMRMLNode * GetNthRegisteredNodeClass(int n);
+  vtkMRMLNode* GetNthRegisteredNodeClass(int n);
 
   /// \brief Return True if \a className is a registered node.
   ///
@@ -368,9 +368,9 @@ public:
   const char* GetUniqueNameByString(const char* baseName);
 
   /// insert a node in the scene after a specified node
-  vtkMRMLNode* InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *newItem);
+  vtkMRMLNode* InsertAfterNode(vtkMRMLNode* item, vtkMRMLNode* newItem);
   /// insert a node in the scene before a specified node
-  vtkMRMLNode* InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *newItem);
+  vtkMRMLNode* InsertBeforeNode(vtkMRMLNode* item, vtkMRMLNode* newItem);
 
   /// Set undo on/off
   void SetUndoOn() {UndoFlag=true;}
@@ -404,15 +404,15 @@ public:
   /// Storing of only selected nodes may result in incomplete saving of
   /// important changes in the scene. Instead, each node's UndoEnabled flag
   /// will tell if that node's state must be stored or not.
-  void SaveStateForUndo(vtkMRMLNode *node);
+  void SaveStateForUndo(vtkMRMLNode* node);
 
   /// Save current state of the nodes in the undo buffer
   /// \deprecated Use SaveStateForUndo() instead.
   /// Storing of only selected nodes may result in incomplete saving of
   /// important changes in the scene. Instead, each node's UndoEnabled flag
   /// will tell if that node's state must be stored or not.
-  void SaveStateForUndo(vtkCollection *nodes);
-  void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
+  void SaveStateForUndo(vtkCollection* nodes);
+  void SaveStateForUndo(std::vector<vtkMRMLNode*> nodes);
 
   /// The Scene maintains a map (NodeReferences) to keep track of the relationship
   /// between node IDs and the nodes referencing those IDs.  Each
@@ -420,7 +420,7 @@ public:
   /// that is 'has an interest' in the given ID so that the scene
   /// can notify that node when the ID has been remapped.   It does
   /// this notification through the UpdateNodeReferences() call.
-  void AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
+  void AddReferencedNodeID(const char* id, vtkMRMLNode* refrencingNode);
   bool IsNodeReferencingNodeID(vtkMRMLNode* referencingNode, const char* id);
 
   /// \brief Get the total number of node references (number of ReferencedID-ReferencingNode pairs).
@@ -434,11 +434,11 @@ public:
   /// Only for testing and debugging.
   const char* GetNthReferencedID(int n);
 
-  void RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
+  void RemoveReferencedNodeID(const char* id, vtkMRMLNode* refrencingNode);
 
-  void RemoveNodeReferences(vtkMRMLNode *node);
+  void RemoveNodeReferences(vtkMRMLNode* node);
 
-  void RemoveReferencesToNode(vtkMRMLNode *node);
+  void RemoveReferencesToNode(vtkMRMLNode* node);
 
   /// \brief Notify nodes about node ID changes.
   ///
@@ -449,9 +449,9 @@ public:
   /// part of the checkNodes collection.
   void UpdateNodeReferences(vtkCollection* checkNodes=nullptr);
 
-  void CopyNodeReferences(vtkMRMLScene *scene);
+  void CopyNodeReferences(vtkMRMLScene* scene);
 
-  void CopyNodeChangedIDs(vtkMRMLScene *scene);
+  void CopyNodeChangedIDs(vtkMRMLScene* scene);
 
   /// Change node IDs based on the ReferencedIDChanges list.
   void UpdateNodeChangedIDs();
@@ -480,7 +480,7 @@ public:
 
   bool IsReservedID(const std::string& id);
 
-  void AddReservedID(const char *id);
+  void AddReservedID(const char* id);
 
   void RemoveReservedIDs();
 
@@ -502,10 +502,10 @@ public:
   /// \warning You are responsible for deleting the returned collection.
   ///
   /// \sa GetReferencedSubScene()
-  vtkCollection* GetReferencedNodes(vtkMRMLNode *node, bool recursive=true);
+  vtkCollection* GetReferencedNodes(vtkMRMLNode* node, bool recursive=true);
 
   /// Get vector of nodes containing references to an input node
-  void GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<vtkMRMLNode *> &referencingNodes);
+  void GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<vtkMRMLNode*> &referencingNodes);
 
   /// \brief Get a sub-scene containing all nodes directly or indirectly
   /// referenced by the input node.
@@ -513,9 +513,9 @@ public:
   /// \note GetReferencedNodes() is internally called.
   ///
   /// \sa AddReferencedNodeID(), GetReferencedNodes()
-  void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene);
+  void GetReferencedSubScene(vtkMRMLNode* node, vtkMRMLScene* newScene);
 
-  int IsFilePathRelative(const char * filepath);
+  int IsFilePathRelative(const char* filepath);
 
   /// \brief This property controls whether Import() loads a scene from an XML
   /// string or from an XML file.
@@ -542,7 +542,7 @@ public:
   /// GetLoadFromXMLString() is true.
   ///
   /// \sa Import(), GetLoadFromXMLString(), GetSceneXMLString()
-  void SetSceneXMLString(const std::string &xmlString);
+  void SetSceneXMLString(const std::string& xmlString);
 
   /// \brief Returns the saved scene with an XML format if \a SaveToXMLString
   /// is true and Commit() was called prior.
@@ -565,11 +565,11 @@ public:
   /// passed URI.
   ///
   /// Returns nullptr on failure
-  vtkURIHandler *FindURIHandler(const char *URI);
+  vtkURIHandler* FindURIHandler(const char* URI);
   /// Returns a URIHandler of a specific type if its name is known.
-  vtkURIHandler *FindURIHandlerByName (const char *name);
+  vtkURIHandler* FindURIHandlerByName (const char* name);
   /// Add a URI handler to the collection.
-  void AddURIHandler(vtkURIHandler *handler);
+  void AddURIHandler(vtkURIHandler* handler);
 
   /// The state of the scene reflects what the scene is doing.
   /// The scene is in \link vtkMRMLScene::BatchProcessState BatchProcessState \endlink
@@ -761,13 +761,13 @@ public:
   static bool ParseVersion(const char* versionString, std::string& application, int& major, int& minor, int& patch, int& revision);
 
   /// Copies all registered nodes into the parameter scene.
-  void CopyRegisteredNodesToScene(vtkMRMLScene *scene);
+  void CopyRegisteredNodesToScene(vtkMRMLScene* scene);
 
   /// Copies all singleton nodes into the parameter scene.
-  void CopySingletonNodesToScene(vtkMRMLScene *scene);
+  void CopySingletonNodesToScene(vtkMRMLScene* scene);
 
   /// Copies all default nodes into the parameter scene. Does not remove existing default nodes.
-  void CopyDefaultNodesToScene(vtkMRMLScene *scene);
+  void CopyDefaultNodesToScene(vtkMRMLScene* scene);
 
   /// \brief Returns true if the scene has been "significantly" modified
   /// since the last saved state.
@@ -854,7 +854,7 @@ public:
 
 protected:
 
-  typedef std::map< std::string, std::set<std::string> > NodeReferencesType;
+  typedef std::map<std::string, std::set<std::string> > NodeReferencesType;
 
   vtkMRMLScene();
   ~vtkMRMLScene() override;
@@ -862,24 +862,24 @@ protected:
   void PushIntoUndoStack();
   void PushIntoRedoStack();
 
-  void CopyNodeInUndoStack(vtkMRMLNode *node);
-  void CopyNodeInRedoStack(vtkMRMLNode *node);
+  void CopyNodeInUndoStack(vtkMRMLNode* node);
+  void CopyNodeInRedoStack(vtkMRMLNode* node);
 
   /// Add a node to the scene without invoking a vtkMRMLScene::NodeAddedEvent event.
   ///
   /// \warning Use with extreme caution as it might unsynchronize observer.
-  vtkMRMLNode* AddNodeNoNotify(vtkMRMLNode *n);
+  vtkMRMLNode* AddNodeNoNotify(vtkMRMLNode* n);
 
   /// Get referenced nodes
   /// \param recursive All referenced nodes recursively if true,
   ///   only directly referenced nodes if false. Default is true.
-  void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes, bool recursive=true);
+  void AddReferencedNodes(vtkMRMLNode* node, vtkCollection* refNodes, bool recursive=true);
 
   /// Remove invalid node references after scene import
   void RemoveInvalidNodeReferences(vtkCollection* checkNodes, const std::set<std::string> &validNodeIDs);
 
   /// Handle vtkMRMLScene::DeleteEvent: clear the scene.
-  static void SceneCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
+  static void SceneCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
 
   std::string GenerateUniqueID(vtkMRMLNode* node);
   std::string GenerateUniqueID(const std::string& baseID);
@@ -904,10 +904,10 @@ protected:
   void UpdateNodeIDs();
 
   /// Add node to \a NodeIDs map used to speedup GetByID() method.
-  void AddNodeID(vtkMRMLNode *node);
+  void AddNodeID(vtkMRMLNode* node);
 
   /// Remove node from \a NodeIDs map used to speedup GetByID() method.
-  void RemoveNodeID(char *nodeID);
+  void RemoveNodeID(char* nodeID);
 
   /// Clear NodeIDs map used to speedup GetByID() method.
   void ClearNodeIDs();
@@ -942,10 +942,10 @@ protected:
   vtkWeakPointer<vtkMRMLSubjectHierarchyNode> SubjectHierarchyNode;
 
   /// data i/o handling members
-  vtkCacheManager *  CacheManager;
-  vtkDataIOManager * DataIOManager;
-  vtkCollection *    URIHandlerCollection;
-  vtkTagTable *      UserTagTable;
+  vtkCacheManager* CacheManager;
+  vtkDataIOManager* DataIOManager;
+  vtkCollection* URIHandlerCollection;
+  vtkTagTable* UserTagTable;
 
   std::vector<unsigned long> States;
 
@@ -964,16 +964,16 @@ protected:
 
   std::vector< vtkMRMLNode* > RegisteredNodeClasses;
   std::vector< std::string >  RegisteredNodeTags;
-  std::map< std::string, std::string > RegisteredAbstractNodeClassTypeDisplayNames; // map class name to type display name
+  std::map<std::string, std::string > RegisteredAbstractNodeClassTypeDisplayNames; // map class name to type display name
 
   NodeReferencesType NodeReferences; // ReferencedIDs (string), ReferencingNodes (node pointer)
-  std::map< std::string, std::string > ReferencedIDChanges;
-  std::map< std::string, vtkSmartPointer<vtkMRMLNode> > NodeIDs;
+  std::map<std::string, std::string > ReferencedIDChanges;
+  std::map<std::string, vtkSmartPointer<vtkMRMLNode> > NodeIDs;
 
   // Stores default nodes. If a class is created or reset (using CreateNodeByClass or Clear) and
   // a default node is defined for it then the content of the default node will be used to initialize
   // the class. It is useful for overriding default values that are set in a node's constructor.
-  std::map< std::string, vtkSmartPointer<vtkMRMLNode> > DefaultNodes;
+  std::map<std::string, vtkSmartPointer<vtkMRMLNode> > DefaultNodes;
 
   std::string SceneXMLString;
 
@@ -993,7 +993,7 @@ protected:
   char* LastLoadedVersion;
   char* LastLoadedExtensions;
 
-  vtkCallbackCommand *DeleteEventCallback;
+  vtkCallbackCommand* DeleteEventCallback;
 
   std::default_random_engine RandomGenerator;
 

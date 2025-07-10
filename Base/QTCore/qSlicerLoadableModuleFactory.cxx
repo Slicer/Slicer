@@ -44,11 +44,11 @@ qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem() = default;
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
 {
-  qSlicerAbstractCoreModule * module =
+  qSlicerAbstractCoreModule* module =
       ctkFactoryPluginItem<qSlicerAbstractCoreModule>::instanciator();
   module->setPath(this->path());
 
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (!app)
   {
     return nullptr;
@@ -118,7 +118,7 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
     }
   }
 
-  QSettings * settings = app->revisionUserSettings();
+  QSettings* settings = app->revisionUserSettings();
   QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
   QStringList qtModulePaths =  additionalModulePaths + defaultQTModulePaths;
 

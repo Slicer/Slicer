@@ -30,9 +30,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLScalarInvariantComboBoxPlugin
   Q_OBJECT
 
 public:
-  qMRMLScalarInvariantComboBoxPlugin(QObject *_parent = nullptr);
+  qMRMLScalarInvariantComboBoxPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
   QIcon    icon() const override;
   QString  includeFile() const override;

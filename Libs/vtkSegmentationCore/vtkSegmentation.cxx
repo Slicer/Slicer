@@ -84,11 +84,11 @@ vtkSegmentation::vtkSegmentation()
   this->Converter = vtkSegmentationConverter::New();
 
   this->SegmentCallbackCommand = vtkCallbackCommand::New();
-  this->SegmentCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->SegmentCallbackCommand->SetClientData( reinterpret_cast<void*>(this) );
   this->SegmentCallbackCommand->SetCallback( vtkSegmentation::OnSegmentModified );
 
   this->SourceRepresentationCallbackCommand = vtkCallbackCommand::New();
-  this->SourceRepresentationCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
+  this->SourceRepresentationCallbackCommand->SetClientData( reinterpret_cast<void*>(this) );
   this->SourceRepresentationCallbackCommand->SetCallback( vtkSegmentation::OnSourceRepresentationModified );
 
   this->SourceRepresentationModifiedEnabled = true;

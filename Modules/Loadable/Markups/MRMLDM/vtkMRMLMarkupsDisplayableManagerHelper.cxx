@@ -95,7 +95,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent in
     if (widgetIterator->second &&
       widgetIterator->second->GetRepresentation())
     {
-      vtkSlicerMarkupsWidgetRepresentation * rep =
+      vtkSlicerMarkupsWidgetRepresentation* rep =
         vtkSlicerMarkupsWidgetRepresentation::SafeDownCast(widgetIterator->second->GetRepresentation());
       int numberOfNodes = 0;
       if (rep)
@@ -112,7 +112,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent in
 };
 
 //---------------------------------------------------------------------------
-vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRMLMarkupsNode * markupsNode)
+vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRMLMarkupsNode* markupsNode)
 {
   if (!markupsNode)
   {
@@ -131,7 +131,7 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRM
     widgetIterator != this->MarkupsDisplayNodesToWidgets.end();
     ++widgetIterator)
   {
-    vtkMRMLMarkupsDisplayNode *markupsDisplayNode = widgetIterator->first;
+    vtkMRMLMarkupsDisplayNode* markupsDisplayNode = widgetIterator->first;
     if (markupsDisplayNode->GetDisplayableNode() == markupsNode)
     {
       return widgetIterator->second;
@@ -142,7 +142,7 @@ vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRM
 }
 
 //---------------------------------------------------------------------------
-vtkSlicerMarkupsWidget * vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRMLMarkupsDisplayNode * node)
+vtkSlicerMarkupsWidget* vtkMRMLMarkupsDisplayableManagerHelper::GetWidget(vtkMRMLMarkupsDisplayNode* node)
 {
   if (!node)
   {
@@ -216,7 +216,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::AddMarkupsNode(vtkMRMLMarkupsNode* 
   int nnodes = node->GetNumberOfDisplayNodes();
   for (int i = 0; i<nnodes; i++)
   {
-    vtkMRMLMarkupsDisplayNode *displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
+    vtkMRMLMarkupsDisplayNode* displayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
 
     // Check whether DisplayNode should be shown in this view
     if (!displayNode
@@ -254,7 +254,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::RemoveMarkupsNode(vtkMRMLMarkupsNod
     widgetIterator != this->MarkupsDisplayNodesToWidgets.end();
     /*upon deletion the increment is done already, so don't increment here*/)
   {
-    vtkMRMLMarkupsDisplayNode *markupsDisplayNode = widgetIterator->first;
+    vtkMRMLMarkupsDisplayNode* markupsDisplayNode = widgetIterator->first;
     if (markupsDisplayNode->GetDisplayableNode() != node)
     {
       ++widgetIterator;
@@ -275,7 +275,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::RemoveMarkupsNode(vtkMRMLMarkupsNod
     widgetIterator != this->MarkupsDisplayNodesToInteractionWidgets.end();
     /*upon deletion the increment is done already, so don't increment here*/)
   {
-    vtkMRMLMarkupsDisplayNode *markupsDisplayNode = widgetIterator->first;
+    vtkMRMLMarkupsDisplayNode* markupsDisplayNode = widgetIterator->first;
     if (markupsDisplayNode->GetDisplayableNode() != node)
     {
       ++widgetIterator;

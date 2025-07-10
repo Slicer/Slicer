@@ -365,7 +365,7 @@ QString qSlicerExportNodeDialogPrivate::defaultFilename(vtkMRMLNode* node, QStri
 template <typename T>
 bool qSlicerExportNodeDialogPrivate::setDifferenceIsNonempty(const QList<T>& a, const QList<T>& b)
 {
-  for (const T & item : a)
+  for (const T& item : a)
   {
     if (!b.contains(item))
     {
@@ -650,7 +650,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
         this->NodeTypeToNodeTypeWidgetSet[nodeType] = nodeTypeWidgetSet;
         connect(nodeTypeWidgetSet->exportFormatComboBox, &QComboBox::currentTextChanged, this, &qSlicerExportNodeDialogPrivate::formatChangedSlot);
       }
-      catch(std::runtime_error & error)
+      catch(std::runtime_error& error)
       {
         qCritical() << Q_FUNC_INFO << "failed: Encountered NodeTypeWidgetSet constructor error:" << error.what();
         return false;
@@ -1285,7 +1285,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
       qCritical() << Q_FUNC_INFO << ": Received node ID " << selectedNodeID << ", but unable to get an associated storable node.";
     }
   }
-  for (const QVariant & childID : childIdsNonrecursive)
+  for (const QVariant& childID : childIdsNonrecursive)
   {
     QString childIDString = childID.toString();
     vtkMRMLStorableNode* n = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(childIDString.toUtf8().constData()));
@@ -1298,7 +1298,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
       qCritical() << Q_FUNC_INFO << ": Received node ID " << childIDString << ", but unable to get an associated storable node.";
     }
   }
-  for (const QVariant & childID : childIdsRecursive)
+  for (const QVariant& childID : childIdsRecursive)
   {
     QString childIDString = childID.toString();
     vtkMRMLStorableNode* n = vtkMRMLStorableNode::SafeDownCast(scene->GetNodeByID(childIDString.toUtf8().constData()));

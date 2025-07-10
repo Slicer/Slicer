@@ -77,7 +77,7 @@ vtkMRMLDisplayNode* qMRMLSceneDisplayableModelPrivate
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(QObject *vparent)
+qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(QObject* vparent)
   :Superclass(new qMRMLSceneDisplayableModelPrivate(*this), vparent)
 {
   Q_D(qMRMLSceneDisplayableModel);
@@ -86,7 +86,7 @@ qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(QObject *vparent)
 
 //------------------------------------------------------------------------------
 qMRMLSceneDisplayableModel::qMRMLSceneDisplayableModel(
-  qMRMLSceneDisplayableModelPrivate* pimpl, QObject *vparent)
+  qMRMLSceneDisplayableModelPrivate* pimpl, QObject* vparent)
   :Superclass(pimpl, vparent)
 {
 }
@@ -134,7 +134,7 @@ QFlags<Qt::ItemFlag> qMRMLSceneDisplayableModel::nodeFlags(vtkMRMLNode* node, in
 {
   Q_D(const qMRMLSceneDisplayableModel);
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
-  vtkMRMLNode *displayNode = d->displayNode(node);
+  vtkMRMLNode* displayNode = d->displayNode(node);
   if (column == this->visibilityColumn() &&
       displayNode != nullptr)
   {

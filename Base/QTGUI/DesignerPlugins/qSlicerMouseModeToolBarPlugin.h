@@ -31,7 +31,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerMouseModeToolBarPlugin
 public:
   qSlicerMouseModeToolBarPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget* parent) override;
+  QWidget* createWidget(QWidget* parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

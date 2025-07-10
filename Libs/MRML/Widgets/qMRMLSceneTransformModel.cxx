@@ -132,7 +132,7 @@ qMRMLSceneTransformModelPrivate
 //----------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-qMRMLSceneTransformModel::qMRMLSceneTransformModel(QObject *vparent)
+qMRMLSceneTransformModel::qMRMLSceneTransformModel(QObject* vparent)
   :qMRMLSceneModel(new qMRMLSceneTransformModelPrivate(*this), vparent)
 {
 }

@@ -44,7 +44,7 @@ class vtkMRMLProceduralColorNode;
 class  VTK_MRML_EXPORT vtkMRMLMarkupsDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-  static vtkMRMLMarkupsDisplayNode *New();
+  static vtkMRMLMarkupsDisplayNode* New();
   vtkTypeMacro(vtkMRMLMarkupsDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -402,7 +402,7 @@ public:
   /// Setting a line color node allows to define any arbitrary color mapping.
   /// Setting a line color node will overwrite the settings given by the
   /// color, opacity and LineColorFading variables of the displayNode.
-  virtual void SetLineColorNodeID(const char *lineColorNodeID);
+  virtual void SetLineColorNodeID(const char* lineColorNodeID);
 
   /// Get the line color node ID used for the projection on the line actors on the 2D viewers.
   const char* GetLineColorNodeID();

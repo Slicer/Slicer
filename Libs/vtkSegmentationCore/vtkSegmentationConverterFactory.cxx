@@ -145,7 +145,7 @@ void vtkSegmentationConverterFactory::UnregisterConverterRule(vtkSegmentationCon
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverterFactory::CopyConverterRules(RuleListType &rules)
+void vtkSegmentationConverterFactory::CopyConverterRules(RuleListType& rules)
 {
   rules.clear();
   for (RuleListType::iterator ruleIt = this->Rules.begin(); ruleIt != this->Rules.end(); ++ruleIt)

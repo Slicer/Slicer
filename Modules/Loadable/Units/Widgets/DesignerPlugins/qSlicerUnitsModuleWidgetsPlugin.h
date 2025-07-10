@@ -39,7 +39,7 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_PLUGINS_EXPORT qSlicerUnitsModuleWidgetsPlug
 public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const override
   {
-    QList<QDesignerCustomWidgetInterface *> plugins;
+    QList<QDesignerCustomWidgetInterface*> plugins;
     plugins << new qMRMLUnitWidgetPlugin;
     return plugins;
   }

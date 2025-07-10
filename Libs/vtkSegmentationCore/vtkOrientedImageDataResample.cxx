@@ -52,8 +52,8 @@ vtkStandardNewMacro(vtkOrientedImageDataResample);
 // This templated function executes the filter for any type of data.
 template <class BaseImageScalarType, class ModifierImageScalarType>
 void MergeImageGeneric2(
-    vtkImageData *baseImage,
-    vtkImageData *modifierImage,
+    vtkImageData* baseImage,
+    vtkImageData* modifierImage,
     int operation,
     const int extent[6]/*=nullptr*/,
     double maskThreshold,
@@ -231,8 +231,8 @@ void MergeImageGeneric2(
 //----------------------------------------------------------------------------
 template <class BaseImageScalarType>
 void MergeImageGeneric(
-    vtkImageData *baseImage,
-    vtkImageData *modifierImage,
+    vtkImageData* baseImage,
+    vtkImageData* modifierImage,
     int operation,
     const int extent[6]/*=nullptr*/,
     double maskThreshold,
@@ -588,7 +588,7 @@ bool vtkOrientedImageDataResample::IsEqual(vtkMatrix4x4* lhs, vtkMatrix4x4* rhs)
 template <typename T> void CalculateEffectiveExtentGeneric(vtkOrientedImageData* image, int effectiveExtent[6], T threshold)
 {
   // Get increments to march through image
-  int *wholeExt = image->GetExtent();
+  int* wholeExt = image->GetExtent();
 
   effectiveExtent[0] = wholeExt[1]+1;
   effectiveExtent[1] = wholeExt[0]-1;
@@ -1110,7 +1110,7 @@ bool vtkOrientedImageDataResample::MergeImage(
     const int extent[6]/*=nullptr*/,
     double maskThreshold /*=0*/,
     double fillValue /*=1*/,
-    bool *outputModified /*=nullptr*/)
+    bool* outputModified /*=nullptr*/)
 {
   if (outputModified != nullptr)
   {
@@ -1374,7 +1374,7 @@ template <typename T> void FillImageGeneric(vtkImageData* image, T fillValue, co
     return;
   }
   // Use the whole extent if extent is not specified
-  const int *wholeExt = extent ? extent : image->GetExtent();
+  const int* wholeExt = extent ? extent : image->GetExtent();
   if (wholeExt[0]>wholeExt[1] || wholeExt[2]>wholeExt[3] || wholeExt[4]>wholeExt[5])
   {
     // empty image
@@ -1697,7 +1697,7 @@ void vtkOrientedImageDataResample::GetLabelValuesInMask(std::vector<int>& labelV
 //----------------------------------------------------------------------------
 template <class ImageScalarType, class MaskScalarType>
 void IsLabelInMaskGeneric2(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
-  int extent[6]/*=nullptr*/, int maskThreshold, bool &inMask)
+  int extent[6]/*=nullptr*/, int maskThreshold, bool& inMask)
 {
   // Compute update extent as intersection of base and mask image extents (extent can be further reduced by specifying a smaller extent)
   int updateExt[6] = { 0, -1, 0, -1, 0, -1 };
@@ -1769,7 +1769,7 @@ void IsLabelInMaskGeneric2(vtkOrientedImageData* binaryLabelmap, vtkOrientedImag
 //----------------------------------------------------------------------------
 template <class ImageScalarType>
 void IsLabelInMaskGeneric(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
-  int extent[6]/*=nullptr*/, int maskThreshold, bool &inMask)
+  int extent[6]/*=nullptr*/, int maskThreshold, bool& inMask)
 {
   switch (mask->GetScalarType())
   {

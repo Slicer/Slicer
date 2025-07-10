@@ -244,9 +244,9 @@ void vtkMRMLMarkupsNode::CopyContent(vtkMRMLNode* aSource, bool deepCopy/*=true*
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject *caller,
+void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject* caller,
                                            unsigned long event,
-                                           void *callData)
+                                           void* callData)
 {
   if (caller != nullptr && event == vtkMRMLTransformableNode::TransformModifiedEvent)
   {
@@ -549,9 +549,9 @@ const char* vtkMRMLMarkupsNode::GetTypeDisplayName()
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLMarkupsDisplayNode *vtkMRMLMarkupsNode::GetMarkupsDisplayNode()
+vtkMRMLMarkupsDisplayNode* vtkMRMLMarkupsNode::GetMarkupsDisplayNode()
 {
-  vtkMRMLDisplayNode *displayNode = this->GetDisplayNode();
+  vtkMRMLDisplayNode* displayNode = this->GetDisplayNode();
   if (displayNode &&
       displayNode->IsA("vtkMRMLMarkupsDisplayNode"))
   {
@@ -2707,7 +2707,7 @@ void vtkMRMLMarkupsNode::AddMeasurement(vtkMRMLMeasurement* measurement)
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::SetNthMeasurement(int id,
-  const std::string& name, double value, const std::string &units,
+  const std::string& name, double value, const std::string& units,
   std::string printFormat/*=""*/, std::string description/*=""*/,
   vtkCodedEntry* quantityCode/*=nullptr*/, vtkCodedEntry* derivationCode/*=nullptr*/,
   vtkCodedEntry* unitsCode/*=nullptr*/, vtkCodedEntry* methodCode/*=nullptr*/)
@@ -3117,7 +3117,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionWorldFromArray(
 
 //-----------------------------------------------------------
 void vtkMRMLMarkupsNode::SetNthControlPointPositionFromPointer(const int pointIndex,
-                                                               const double * pos)
+                                                               const double* pos)
 {
   vtkWarningMacro("vtkMRMLMarkupsNode::SetNthControlPointPositionFromPointer method is deprecated, please use SetNthControlPointPosition instead");
   if (!pos)
@@ -3130,7 +3130,7 @@ void vtkMRMLMarkupsNode::SetNthControlPointPositionFromPointer(const int pointIn
 }
 
 //-----------------------------------------------------------
-void vtkMRMLMarkupsNode::SetCenterOfRotationFromPointer(const double *pos)
+void vtkMRMLMarkupsNode::SetCenterOfRotationFromPointer(const double* pos)
 {
   vtkWarningMacro("vtkMRMLMarkupsNode::SetCenterOfRotationFromPointer method is deprecated, please use SetCenterOfRotation instead");
   if (!pos)
@@ -3143,7 +3143,7 @@ void vtkMRMLMarkupsNode::SetCenterOfRotationFromPointer(const double *pos)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLMarkupsNode::SetNthControlPointOrientationFromPointer(int n, const double *orientation)
+void vtkMRMLMarkupsNode::SetNthControlPointOrientationFromPointer(int n, const double* orientation)
 {
   vtkWarningMacro("vtkMRMLMarkupsNode::SetNthControlPointOrientationFromPointer method is deprecated, please use SetNthControlPointOrientation instead");
   if (!orientation)

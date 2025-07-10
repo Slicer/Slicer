@@ -95,13 +95,13 @@ void vtkMRMLTableStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTableStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLTableStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLTableNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   std::string fullName = this->GetFullNameFromFileName();
 
@@ -111,7 +111,7 @@ int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       "File name not specified.");
     return 0;
   }
-  vtkMRMLTableNode *tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
+  vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(refNode);
   if (tableNode == nullptr)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTableStorageNode::ReadData",
@@ -153,7 +153,7 @@ int vtkMRMLTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLTableStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   if (this->GetFileName() == nullptr)
   {
@@ -353,7 +353,7 @@ std::vector<vtkMRMLTableStorageNode::ColumnInfo> vtkMRMLTableStorageNode::GetCol
 
   // Maps name of column to column index.
   // It is used for preserving the order of columns in the table.
-  std::map < std::string, int > columnOrder;
+  std::map <std::string, int > columnOrder;
 
   // Populate the output table column details.
   // If the schema exists, read the contents and determine column data type/component names/component arrays

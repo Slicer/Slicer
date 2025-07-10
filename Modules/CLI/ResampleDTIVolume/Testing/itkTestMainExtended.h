@@ -59,21 +59,21 @@
 
 #define ITK_TEST_DIMENSION_MAX 6
 
-typedef int (*MainFuncPointer)(int, char * [] );
+typedef int (*MainFuncPointer)(int, char*[]);
 std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
 
 #define REGISTER_TEST(test) \
-  extern int test(int, char * [] ); \
+  extern int test(int, char*[]); \
   StringToTestFunctionMap[#test] = test
 
-int RegressionTestImage(const char *testImageFilename,
-                        const char *baselineImageFilename,
+int RegressionTestImage(const char* testImageFilename,
+                        const char* baselineImageFilename,
                         int reportErrors,
                         double intensityTolerance = 2.0,
                         ::itk::SizeValueType numberOfPixelsTolerance = 0,
                         unsigned int radiusTolerance = 0);
 
-std::map<std::string, int> RegressionTestBaselines(char *);
+std::map<std::string, int> RegressionTestBaselines(char*);
 
 void RegisterTests();
 
@@ -98,7 +98,7 @@ int main(int ac, char* av[] )
   unsigned int numberOfPixelsTolerance = 0;
   unsigned int radiusTolerance = 0;
 
-  typedef std::pair<char *, char *> ComparePairType;
+  typedef std::pair<char*, char*> ComparePairType;
   std::vector<ComparePairType> compareList;
 
   itk::itkFactoryRegistration();
@@ -185,8 +185,8 @@ int main(int ac, char* av[] )
       // Make a list of possible baselines
       for( int i = 0; i < static_cast<int>(compareList.size() ); i++ )
       {
-        char *                               baselineFilename = compareList[i].first;
-        char *                               testFilename = compareList[i].second;
+        char* baselineFilename = compareList[i].first;
+        char* testFilename = compareList[i].second;
         std::map<std::string, int>           baselines = RegressionTestBaselines(baselineFilename);
         std::map<std::string, int>::iterator baseline = baselines.begin();
         std::string                          bestBaseline;
@@ -309,8 +309,8 @@ int ReadImages(  const char* baselineImageFilename,
   return 0;
 }
 
-int RegressionTestImage(const char *testImageFilename,
-                        const char *baselineImageFilename,
+int RegressionTestImage(const char* testImageFilename,
+                        const char* baselineImageFilename,
                         int reportErrors,
                         double intensityTolerance,
                         ::itk::SizeValueType  numberOfPixelsTolerance,
@@ -616,7 +616,7 @@ int RegressionTestImage(const char *testImageFilename,
 // 3) append the original suffix.
 // It the file exists, increment x and continue
 //
-std::map<std::string, int> RegressionTestBaselines(char *baselineFilename)
+std::map<std::string, int> RegressionTestBaselines(char* baselineFilename)
 {
   std::map<std::string, int> baselines;
   baselines[std::string(baselineFilename)] = 0;

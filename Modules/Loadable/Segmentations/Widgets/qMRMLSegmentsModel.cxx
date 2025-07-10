@@ -188,7 +188,7 @@ QString qMRMLSegmentsModelPrivate::getTerminologyUserDataForSegment(vtkSegment* 
 //------------------------------------------------------------------------------
 // qMRMLSegmentsModel
 //------------------------------------------------------------------------------
-qMRMLSegmentsModel::qMRMLSegmentsModel(QObject *_parent)
+qMRMLSegmentsModel::qMRMLSegmentsModel(QObject* _parent)
   :QStandardItemModel(_parent)
   , d_ptr(new qMRMLSegmentsModelPrivate(*this))
 {
@@ -245,7 +245,7 @@ vtkMRMLSegmentationNode* qMRMLSegmentsModel::segmentationNode()const
 }
 
 // -----------------------------------------------------------------------------
-QString qMRMLSegmentsModel::segmentIDFromIndex(const QModelIndex &index)const
+QString qMRMLSegmentsModel::segmentIDFromIndex(const QModelIndex& index)const
 {
   return this->segmentIDFromItem(this->itemFromIndex(index));
 }

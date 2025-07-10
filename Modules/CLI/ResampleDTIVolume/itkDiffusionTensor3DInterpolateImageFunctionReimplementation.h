@@ -56,10 +56,10 @@ public:
 
   /** Evaluate the interpolated tensor at a position
    */
-  // TensorDataType Evaluate( const PointType &point ) ;
-  TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType & index ) const override;
+  // TensorDataType Evaluate( const PointType& point ) ;
+  TensorDataType EvaluateAtContinuousIndex( const ContinuousIndexType& index ) const override;
 
-  void SetInputImage( const DiffusionImageType *inputImage ) override;
+  void SetInputImage( const DiffusionImageType* inputImage ) override;
 
   itkSetMacro( NumberOfThreads, int );
 protected:

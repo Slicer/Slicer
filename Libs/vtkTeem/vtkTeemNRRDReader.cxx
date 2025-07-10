@@ -123,7 +123,7 @@ const std::vector<std::string> vtkTeemNRRDReader::GetHeaderKeysVector()
 }
 
 //----------------------------------------------------------------------------
-const char* vtkTeemNRRDReader::GetHeaderValue(const char *key)
+const char* vtkTeemNRRDReader::GetHeaderValue(const char* key)
 {
   std::map<std::string,std::string>::iterator i = HeaderKeyValue.find(key);
   if (i != HeaderKeyValue.end())
@@ -243,7 +243,7 @@ int vtkTeemNRRDReader::CanReadFile(const char* filename)
 }
 
 //----------------------------------------------------------------------------
-bool vtkTeemNRRDReader::GetPointType(Nrrd* nrrdTemp, int& pointDataType, int &numOfComponents)
+bool vtkTeemNRRDReader::GetPointType(Nrrd* nrrdTemp, int& pointDataType, int& numOfComponents)
 {
   // vtkTeemNRRDReader only supports 3 or 4 dimensional image with scalar, vector,
   // normal or tensor data. Other dimensionality is considered a multicomponent scalar field.
@@ -370,7 +370,7 @@ void vtkTeemNRRDReader::ExecuteInformation()
 
   if (nrrdLoad(this->nrrd, this->GetFileName(), nio) != 0)
   {
-    char *err = biffGetDone(NRRD);
+    char* err = biffGetDone(NRRD);
     vtkErrorMacro("Error reading " << this->GetFileName() << ": " << err);
     free(err); // err points to malloc'd data!!
     err = nullptr;
@@ -601,8 +601,8 @@ void vtkTeemNRRDReader::ExecuteInformation()
   // Push extra key/value pair data into std::map
   for (unsigned int i = 0; i < nrrdKeyValueSize(this->nrrd); i++)
   {
-    char *key = nullptr;
-    char *val = nullptr;
+    char* key = nullptr;
+    char* val = nullptr;
     nrrdKeyValueIndex(this->nrrd, &key, &val, i);
     HeaderKeyValue[std::string(key)] = std::string(val);
     free(key);  // key and val point to malloc'd data!!
@@ -679,9 +679,9 @@ void vtkTeemNRRDReader::ExecuteInformation()
 }
 
 //----------------------------------------------------------------------------
-vtkImageData *vtkTeemNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInformation* outInfo)
+vtkImageData* vtkTeemNRRDReader::AllocateOutputData(vtkDataObject* out, vtkInformation* outInfo)
 {
-  vtkImageData *res = vtkImageData::SafeDownCast(out);
+  vtkImageData* res = vtkImageData::SafeDownCast(out);
   if (!res)
   {
     vtkWarningMacro("Call to AllocateOutputData with non vtkImageData output");
@@ -702,7 +702,7 @@ vtkImageData *vtkTeemNRRDReader::AllocateOutputData(vtkDataObject *out, vtkInfor
 }
 
 //----------------------------------------------------------------------------
-void vtkTeemNRRDReader::AllocatePointData(vtkImageData *out, vtkInformation* outInfo)
+void vtkTeemNRRDReader::AllocatePointData(vtkImageData* out, vtkInformation* outInfo)
 {
   // if the scalar type has not been set then we have a problem
   if (this->DataType == VTK_VOID)
@@ -870,7 +870,7 @@ int vtkTeemNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, doub
   {
     case VTK_FLOAT:
     {
-      float *tdata = (float*)(nout->data);
+      float* tdata = (float*)(nout->data);
       for (size_t ii=0; ii<nn; ii++)
       {
         TEN_T2M(tenMeasr, tdata);
@@ -883,7 +883,7 @@ int vtkTeemNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, doub
       break;
     case VTK_DOUBLE:
     {
-      double *tdata = (double*)(nout->data);
+      double* tdata = (double*)(nout->data);
       for (size_t ii = 0; ii<nn; ii++)
       {
         TEN_T2M(tenMeasr, tdata);
@@ -905,7 +905,7 @@ int vtkTeemNRRDReader::tenSpaceDirectionReduce(Nrrd *nout, const Nrrd *nin, doub
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The data extent/axes
 // are assumed to be the same as the file extent/order.
-void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInformation* outInfo)
+void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject* output, vtkInformation* outInfo)
 {
   if (this->GetOutputInformation(0))
   {
@@ -915,7 +915,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
         vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
   }
 
-  vtkImageData *imageData = this->AllocateOutputData(output, outInfo);
+  vtkImageData* imageData = this->AllocateOutputData(output, outInfo);
 
   if (this->GetFileName() == nullptr)
   {
@@ -927,7 +927,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
   // twice: once by ExecuteInformation, and once here
   if ( nrrdLoad(this->nrrd, this->GetFileName(), nullptr) != 0 )
   {
-    char *err =  biffGetDone(NRRD); // would be nice to free(err)
+    char* err =  biffGetDone(NRRD); // would be nice to free(err)
     vtkErrorMacro("Read: Error reading " << this->GetFileName() << ":\n" << err);
     return;
   }
@@ -938,7 +938,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
     return;
   }
 
-  void *ptr = nullptr;
+  void* ptr = nullptr;
   switch(this->PointDataType)
   {
     case vtkDataSetAttributes::SCALARS:
@@ -986,7 +986,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
     if (nrrdCopy(ntmp, this->nrrd)
       || nrrdAxesPermute(this->nrrd, ntmp, axmap))
     {
-      char *err = biffGetDone(NRRD); // would be nice to free(err)
+      char* err = biffGetDone(NRRD); // would be nice to free(err)
       vtkErrorMacro("Read: Error permuting independent axis in " << this->GetFileName() << ":\n" << err);
       return;
     }
@@ -1024,7 +1024,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
       if (nrrdCopy(ntmp, this->nrrd)
         || nrrdPad_nva(this->nrrd, ntmp, minIdx, maxIdx, nrrdBoundaryPad, 1.0))
       {
-        char *err = biffGetDone(NRRD); // would be nice to free(err)
+        char* err = biffGetDone(NRRD); // would be nice to free(err)
         vtkErrorMacro("Read: Error padding on conf mask in " << this->GetFileName() << ":\n" << err);
         return;
       }
@@ -1035,7 +1035,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
     // Set up threshold to -1 to avoid this
     Nrrd *ntmp = nrrdNew();
     int errorCode = 0;
-    const char *key = NRRD;
+    const char* key = NRRD;
     errorCode |= nrrdCopy(ntmp, this->nrrd);
     if (!errorCode)
     {
@@ -1086,7 +1086,7 @@ void vtkTeemNRRDReader::ExecuteDataWithInformation(vtkDataObject *output, vtkInf
     }
     if (errorCode)
     {
-      char *err = biffGetDone(key); // would be nice to free(err)
+      char* err = biffGetDone(key); // would be nice to free(err)
       vtkErrorMacro("Read: Error copying, crapping or cropping:\n" << err);
       return;
     }

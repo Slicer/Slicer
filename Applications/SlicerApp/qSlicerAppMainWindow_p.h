@@ -41,7 +41,7 @@ public:
 
   void init() override;
   /// Reimplemented for custom behavior
-  void setupUi(QMainWindow * mainWindow) override;
+  void setupUi(QMainWindow* mainWindow) override;
 };
 
 #endif

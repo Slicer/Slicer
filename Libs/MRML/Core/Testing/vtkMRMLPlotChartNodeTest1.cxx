@@ -29,7 +29,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLPlotChartNodeTest1(int , char * [] )
+int vtkMRMLPlotChartNodeTest1(int, char*[])
 {
   // Create a PlotChart node
   vtkNew<vtkMRMLScene> scene;

@@ -54,7 +54,7 @@ public:
   const QString className() const override { return "qMRMLMarkupsPlaneWidget"; }
 
   /// Checks whether a given node can be handled by the widget
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
 
 public slots:
   /// Updates the widget based on information from MRML.

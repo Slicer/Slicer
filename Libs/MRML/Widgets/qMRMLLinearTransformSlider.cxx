@@ -175,7 +175,7 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
       d->CoordinateReference == qMRMLLinearTransformSlider::GLOBAL, transform.GetPointer());
   }
 
-  vtkMatrix4x4 * matrix = transform->GetMatrix();
+  vtkMatrix4x4* matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
   if (!matrix) { return; }
 
@@ -262,7 +262,7 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
      transform->Translate(centerOfTransformation);
   }
 
-  vtkMatrix4x4 * matrix = transform->GetMatrix();
+  vtkMatrix4x4* matrix = transform->GetMatrix();
   Q_ASSERT(matrix);
   if (!matrix)
   {

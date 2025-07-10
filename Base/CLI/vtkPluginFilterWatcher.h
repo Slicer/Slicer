@@ -57,8 +57,8 @@ public:
   /** Constructor. Takes a vtkAlgorithm to monitor and an optional
    * comment string that is prepended to each event message. */
   vtkPluginFilterWatcher(vtkAlgorithm* o,
-                         const char *comment="",
-                         ModuleProcessInformation *inf=nullptr,
+                         const char* comment="",
+                         ModuleProcessInformation* inf=nullptr,
                          double fraction = 1.0,
                          double start = 0.0);
 
@@ -67,7 +67,7 @@ public:
 
   /** Method to get the name of the class be monitored by this
    *  vtkPluginFilterWatcher */
-  const char *GetNameOfClass ()
+  const char* GetNameOfClass ()
   {
       return (Process ? Process->GetClassName() : "None");
   }
@@ -80,7 +80,7 @@ public:
 
   /** Methods to access member data */
   /** Get a pointer to the process object being watched. */
-  vtkAlgorithm *GetProcess () {return Process;};
+  vtkAlgorithm* GetProcess () {return Process;};
 
   /** Set/Get the steps completed. */
   void SetSteps(int val) {Steps=val;};
@@ -99,7 +99,7 @@ public:
   std::string GetComment() {return Comment;};
 
   /** Get the pointer for the process information. */
-  ModuleProcessInformation *GetProcessInformation() {return this->ProcessInformation;};
+  ModuleProcessInformation* GetProcessInformation() {return this->ProcessInformation;};
 
 
 protected:
@@ -108,15 +108,15 @@ private:
   int Steps;
   bool Quiet;
   std::string Comment;
-  vtkAlgorithm *Process;
+  vtkAlgorithm* Process;
 
-  ModuleProcessInformation *ProcessInformation;
+  ModuleProcessInformation* ProcessInformation;
   double Fraction;
   double Start;
 
-  vtkPluginWatcherStart *StartFilterCommand;
-  vtkPluginWatcherEnd *EndFilterCommand;
-  vtkPluginWatcherProgress *ProgressFilterCommand;
+  vtkPluginWatcherStart* StartFilterCommand;
+  vtkPluginWatcherEnd* EndFilterCommand;
+  vtkPluginWatcherProgress* ProgressFilterCommand;
 
   unsigned long StartTag;
   unsigned long EndTag;

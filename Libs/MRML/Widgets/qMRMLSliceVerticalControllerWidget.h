@@ -73,7 +73,7 @@ public:
   Q_INVOKABLE vtkMRMLSliceLogic* sliceLogic();
 
   /// Set \a newSliceLogic
-  Q_INVOKABLE void setSliceLogic(vtkMRMLSliceLogic * newSliceLogic);
+  Q_INVOKABLE void setSliceLogic(vtkMRMLSliceLogic* newSliceLogic);
 
   /// Get the slice slider widget (shown in the controller bar).
   Q_INVOKABLE qMRMLSliderWidget* sliceVerticalOffsetSlider();

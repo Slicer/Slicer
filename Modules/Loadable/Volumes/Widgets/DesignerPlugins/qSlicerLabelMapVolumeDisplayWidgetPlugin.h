@@ -27,9 +27,9 @@ qSlicerLabelMapVolumeDisplayWidgetPlugin
   Q_OBJECT
 
 public:
-  qSlicerLabelMapVolumeDisplayWidgetPlugin(QObject *_parent = nullptr);
+  qSlicerLabelMapVolumeDisplayWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

@@ -22,9 +22,9 @@
 #include "misc.h"
 #include "string.h"
 
-void * ipAllocateData(const int size, const size_t elemsize)
+void* ipAllocateData(const int size, const size_t elemsize)
 {
-  void *data = nullptr;
+  void* data = nullptr;
 
   if( !(data = malloc(size * elemsize) ) )
   {

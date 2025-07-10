@@ -78,7 +78,7 @@ void qMRMLMarkupsFiducialProjectionPropertyWidgetPrivate
 
 //-----------------------------------------------------------------------------
 qMRMLMarkupsFiducialProjectionPropertyWidget
-::qMRMLMarkupsFiducialProjectionPropertyWidget(QWidget *newParent) :
+::qMRMLMarkupsFiducialProjectionPropertyWidget(QWidget* newParent) :
     Superclass(newParent)
   , d_ptr(new qMRMLMarkupsFiducialProjectionPropertyWidgetPrivate(*this))
 {

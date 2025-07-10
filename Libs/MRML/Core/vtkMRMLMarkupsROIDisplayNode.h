@@ -31,7 +31,7 @@
 class  VTK_MRML_EXPORT vtkMRMLMarkupsROIDisplayNode : public vtkMRMLMarkupsDisplayNode
 {
 public:
-  static vtkMRMLMarkupsROIDisplayNode *New();
+  static vtkMRMLMarkupsROIDisplayNode* New();
   vtkTypeMacro ( vtkMRMLMarkupsROIDisplayNode,vtkMRMLMarkupsDisplayNode );
 
   //--------------------------------------------------------------------------

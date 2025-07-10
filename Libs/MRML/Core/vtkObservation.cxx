@@ -42,7 +42,7 @@ vtkObservation::vtkObservation()
 
   this->ObservationCallbackCommand = vtkCallbackCommand::New();
   this->ObservationCallbackCommand->SetCallback( vtkEventBroker::Callback );
-  this->ObservationCallbackCommand->SetClientData( reinterpret_cast<void *> (this) );
+  this->ObservationCallbackCommand->SetClientData( reinterpret_cast<void*> (this) );
 
   this->LastElapsedTime = 0.0;
   this->TotalElapsedTime = 0.0;

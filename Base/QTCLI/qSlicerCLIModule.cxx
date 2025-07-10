@@ -79,7 +79,7 @@ void qSlicerCLIModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerCLIModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerCLIModule::createWidgetRepresentation()
 {
   return new qSlicerCLIModuleWidget;
 }
@@ -130,11 +130,11 @@ QStringList qSlicerCLIModule::categories()const
   // "Registration.Specialized", we translate "Registration" and "Specialized").
   QStringList translatedCategoryList;
   QStringList categoryList = QString::fromStdString(d->Desc.GetCategory()).split(';');
-  foreach(const QString & category, categoryList)
+  foreach(const QString& category, categoryList)
   {
     QStringList translatedCategoryComponentList;
     QStringList categoryComponentList = category.split('.');
-    foreach(const QString & categoryComponent, categoryComponentList)
+    foreach(const QString& categoryComponent, categoryComponentList)
     {
       translatedCategoryComponentList << QCoreApplication::translate("qSlicerAbstractCoreModule", categoryComponent.toStdString().c_str());
     }

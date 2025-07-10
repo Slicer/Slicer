@@ -26,14 +26,14 @@
 #include <vtkNew.h>
 #include <vtkPolyData.h>
 
-int vtkMRMLMarkupsFiducialNodeTest1(int , char * [] )
+int vtkMRMLMarkupsFiducialNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLMarkupsFiducialNode> node1;
   vtkNew<vtkMRMLScene> scene;
   scene->AddNode(node1.GetPointer());
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  vtkMRMLMarkupsDisplayNode *dispNode = node1->GetMarkupsDisplayNode();
+  vtkMRMLMarkupsDisplayNode* dispNode = node1->GetMarkupsDisplayNode();
   std::cout << "Get MarkupsDisplayNode returned " << (dispNode ? "valid" : "null") << " pointer" << std::endl;
 
   // set position

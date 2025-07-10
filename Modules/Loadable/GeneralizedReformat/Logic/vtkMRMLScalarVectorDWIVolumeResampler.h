@@ -31,7 +31,7 @@ class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkMRMLScalarVectorDWIV
     public vtkMRMLAbstractVolumeResampler
 {
 public:
-  static vtkMRMLScalarVectorDWIVolumeResampler *New();
+  static vtkMRMLScalarVectorDWIVolumeResampler* New();
   vtkTypeMacro(vtkMRMLScalarVectorDWIVolumeResampler, vtkMRMLAbstractVolumeResampler);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

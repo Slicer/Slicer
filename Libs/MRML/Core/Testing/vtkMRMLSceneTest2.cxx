@@ -48,7 +48,7 @@ std::vector<std::string> vector_diff(const std::vector<std::string>& v1,
 class vtkMRMLSceneCallback : public vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback
 {
 public:
-  static vtkMRMLSceneCallback *New() {return new vtkMRMLSceneCallback;}
+  static vtkMRMLSceneCallback* New() {return new vtkMRMLSceneCallback;}
 
   int NumberOfSingletonNodes;
 
@@ -62,7 +62,7 @@ public:
     this->NodeAddedClassNames.clear();
   }
 
-  void Execute(vtkObject* caller, unsigned long eid, void *calldata) override
+  void Execute(vtkObject* caller, unsigned long eid, void* calldata) override
   {
     vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback::Execute(caller, eid, calldata);
 
@@ -182,7 +182,7 @@ protected:
 }; //namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLSceneTest2(int argc, char * argv [] )
+int vtkMRMLSceneTest2(int argc, char* argv [] )
 {
   if( argc < 2 )
   {
@@ -325,14 +325,14 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   //---------------------------------------------------------------------------
   // Print content
   //---------------------------------------------------------------------------
-  vtkCollection * collection = scene->GetNodes();
+  vtkCollection* collection = scene->GetNodes();
   std::cout << "Collection GetNumberOfItems() = ";
   std::cout << collection->GetNumberOfItems() << std::endl;
 
   std::cout << "List of Node Names in this Scene" << std::endl;
   vtkCollectionSimpleIterator it;
   vtkMRMLNode* node = nullptr;
-  vtkCollection *nodes = scene->GetNodes();
+  vtkCollection* nodes = scene->GetNodes();
   for (nodes->InitTraversal(it);
     (node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
   {

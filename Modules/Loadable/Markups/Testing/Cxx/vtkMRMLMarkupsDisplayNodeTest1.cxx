@@ -19,7 +19,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLMarkupsDisplayNode.h"
 
-int vtkMRMLMarkupsDisplayNodeTest1(int , char * [] )
+int vtkMRMLMarkupsDisplayNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLMarkupsDisplayNode> node1;
   TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();

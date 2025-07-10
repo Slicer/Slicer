@@ -57,7 +57,7 @@ private:
   void operator=(const vtkMRMLTestCustomDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 
 };
 

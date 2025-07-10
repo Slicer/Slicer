@@ -64,7 +64,7 @@ void qMRMLSequenceBrowserSeekWidgetPrivate::init()
 // qMRMLSequenceBrowserSeekWidget methods
 
 //-----------------------------------------------------------------------------
-qMRMLSequenceBrowserSeekWidget::qMRMLSequenceBrowserSeekWidget(QWidget *newParent)
+qMRMLSequenceBrowserSeekWidget::qMRMLSequenceBrowserSeekWidget(QWidget* newParent)
   : Superclass(newParent)
   , d_ptr(new qMRMLSequenceBrowserSeekWidgetPrivate(*this))
 {

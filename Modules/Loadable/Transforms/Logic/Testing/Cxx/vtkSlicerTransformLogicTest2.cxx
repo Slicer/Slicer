@@ -42,7 +42,7 @@ vtkSmartPointer<vtkMRMLModelNode> LoadModelInScene
 } // end namespace
 
 //-----------------------------------------------------------------------------
-int vtkSlicerTransformLogicTest2(int argc, char * argv [])
+int vtkSlicerTransformLogicTest2(int argc, char* argv [])
 {
   if(argc < 2)
   {

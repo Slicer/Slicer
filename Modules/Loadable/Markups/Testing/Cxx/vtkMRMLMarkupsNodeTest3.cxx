@@ -94,7 +94,7 @@ int CheckCurvePointDistances(vtkMRMLMarkupsCurveNode* curveNode, double expected
   }
 }
 
-int vtkMRMLMarkupsNodeTest3(int , char * [] )
+int vtkMRMLMarkupsNodeTest3(int, char*[])
 {
   //
   // Test curve interpolation

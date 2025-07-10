@@ -13,7 +13,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLCrosshairNode.h"
 
-int vtkMRMLCrosshairNodeTest1(int , char * [] )
+int vtkMRMLCrosshairNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLCrosshairNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

@@ -55,14 +55,14 @@ DiffusionTensor3DRead<TData>
     m_Reader->SetFileName( input );
     m_Reader->SetNumberOfWorkUnits(m_NumberOfThreads);
     m_Reader->Update();
-    const DictionaryType &        dictionary = m_Reader->GetMetaDataDictionary();
+    const DictionaryType& dictionary = m_Reader->GetMetaDataDictionary();
     DictionaryType::ConstIterator itr = dictionary.Begin();
     DictionaryType::ConstIterator end = dictionary.End();
     while( itr != end )
     {
       itk::MetaDataObjectBase::Pointer  entry = itr->second;
       MetaDataDoubleVectorType::Pointer entryvalue1
-        = dynamic_cast<MetaDataDoubleVectorType *>( entry.GetPointer() );
+        = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
       if( entryvalue1 )
       {
         int pos = itr->first.find( "NRRD_measurement frame" );
@@ -81,7 +81,7 @@ DiffusionTensor3DRead<TData>
       }
       // get the space orientation
       MetaDataStringType::Pointer entryvalue2
-        = dynamic_cast<MetaDataStringType *>( entry.GetPointer() );
+        = dynamic_cast<MetaDataStringType*>( entry.GetPointer() );
       if( entryvalue2 )
       {
         int pos = itr->first.find( "NRRD_space" );
@@ -95,7 +95,7 @@ DiffusionTensor3DRead<TData>
 
     return 0;
   }
-  catch( itk::ExceptionObject & excep )
+  catch( itk::ExceptionObject& excep )
   {
     std::cerr << "DiffusionTensor3DRead::Load:  exception caught!" << std::endl;
     std::cerr << excep << std::endl;

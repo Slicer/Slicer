@@ -40,7 +40,7 @@ class Q_SLICER_MODULE_TERMINOLOGIES_WIDGETS_EXPORT qMRMLSimpleColorTableView : p
 {
   Q_OBJECT
 public:
-  qMRMLSimpleColorTableView(QWidget *parent=nullptr);
+  qMRMLSimpleColorTableView(QWidget* parent=nullptr);
   ~qMRMLSimpleColorTableView() override;
 
   Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;

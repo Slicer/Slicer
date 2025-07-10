@@ -134,12 +134,12 @@ void vtkMRMLVolumeArchetypeStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLVolumeArchetypeStorageNode *node = (vtkMRMLVolumeArchetypeStorageNode *) anode;
+  vtkMRMLVolumeArchetypeStorageNode* node = (vtkMRMLVolumeArchetypeStorageNode*) anode;
 
   this->SetCenterImage(node->CenterImage);
   this->SetSingleFile(node->SingleFile);
@@ -188,14 +188,14 @@ int vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(int vt
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLVolumeArchetypeStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLVolumeArchetypeStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLScalarVolumeNode") ||
          refNode->IsA("vtkMRMLVectorVolumeNode" );
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLVolumeArchetypeStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLVolumeArchetypeStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLScalarVolumeNode");
 }
@@ -264,8 +264,8 @@ namespace
 {
 
 //----------------------------------------------------------------------------
-void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode * storageNode,
-                                      vtkITKArchetypeImageSeriesReader * reader,
+void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode* storageNode,
+                                      vtkITKArchetypeImageSeriesReader* reader,
                                       const std::string& fullName)
 {
   // TODO: this is a workaround for an issue in itk::ImageSeriesReader
@@ -301,7 +301,7 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode * storag
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   // Skip file loading for empty volume, for which no file was saved
   if (this->GetWriteState() == SkippedNoData)
@@ -335,7 +335,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   //                  |---vtkMRMLVectorVolumeNode
   //
 
-  vtkMRMLScalarVolumeNode * volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
+  vtkMRMLScalarVolumeNode* volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
   if (volNode == nullptr)
   {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal: Reference node is expected to be a vtkMRMLScalarVolumeNode");
@@ -481,7 +481,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       // include the archetype, file 0, in the storage node's file list
       for (unsigned int n = 0; n < reader->GetNumberOfFileNames(); n++)
       {
-        const char *thisFileName = reader->GetFileName(n);
+        const char* thisFileName = reader->GetFileName(n);
 #ifndef NDEBUG
         int currentSize =
 #endif
@@ -550,11 +550,11 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   int result = 1;
 
-  vtkMRMLVolumeNode *volNode = vtkMRMLVolumeNode::SafeDownCast(refNode);
+  vtkMRMLVolumeNode* volNode = vtkMRMLVolumeNode::SafeDownCast(refNode);
   if (!volNode)
   {
     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal: File writing failed: refNode is invalid");
@@ -618,7 +618,7 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtksys::SystemTools::SplitPath(moveFromDir.c_str(), sourcePathComponents);
     for (fileNum = 0; fileNum <  dir.GetNumberOfFiles(); ++fileNum)
     {
-      const char *thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
+      const char* thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
       // skip the dirs
       if (strcmp(thisFile,".") &&
           strcmp(thisFile,".."))
@@ -799,7 +799,7 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode, bool move)
+std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNode, bool move)
 {
   // test whether refNode is a valid node to hold a volume
   if (!refNode->IsA("vtkMRMLScalarVolumeNode") )
@@ -808,7 +808,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     return "";
   }
 
-  vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
+  vtkMRMLVolumeNode* volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
 
   if (volNode == nullptr || volNode->GetImageData() == nullptr)
   {
@@ -1028,7 +1028,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   for (size_t fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
   {
     // skip the dirs
-    const char *thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
+    const char* thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
     if (strcmp(thisFile,".") &&
         strcmp(thisFile,".."))
     {
@@ -1088,7 +1088,7 @@ void vtkMRMLVolumeArchetypeStorageNode::ConfigureForDataExchange()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeArchetypeStorageNode::SetMetaDataDictionaryFromReader(vtkMRMLVolumeNode *volNode, vtkITKArchetypeImageSeriesReader *reader)
+void vtkMRMLVolumeArchetypeStorageNode::SetMetaDataDictionaryFromReader(vtkMRMLVolumeNode* volNode, vtkITKArchetypeImageSeriesReader* reader)
 {
   if (volNode && reader)
   {

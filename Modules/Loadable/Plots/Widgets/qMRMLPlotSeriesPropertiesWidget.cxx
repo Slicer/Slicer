@@ -249,9 +249,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotSeriesNodeChanged(vtkMRMLNode *node)
+void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotSeriesNodeChanged(vtkMRMLNode* node)
 {
-  vtkMRMLPlotSeriesNode *mrmlPlotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(node);
+  vtkMRMLPlotSeriesNode* mrmlPlotSeriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(node);
 
   if (this->PlotSeriesNode == mrmlPlotSeriesNode)
   {
@@ -267,9 +267,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotSeriesNodeChanged(vtkMRMLNode
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotSeriesPropertiesWidgetPrivate::onInputTableNodeChanged(vtkMRMLNode *node)
+void qMRMLPlotSeriesPropertiesWidgetPrivate::onInputTableNodeChanged(vtkMRMLNode* node)
 {
-  vtkMRMLTableNode *mrmlTableNode = vtkMRMLTableNode::SafeDownCast(node);
+  vtkMRMLTableNode* mrmlTableNode = vtkMRMLTableNode::SafeDownCast(node);
 
   if (!this->PlotSeriesNode || this->PlotSeriesNode->GetTableNode() == mrmlTableNode)
   {
@@ -331,7 +331,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotTypeChanged(int index)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotSeriesPropertiesWidgetPrivate::onMarkersStyleChanged(const QString &style)
+void qMRMLPlotSeriesPropertiesWidgetPrivate::onMarkersStyleChanged(const QString& style)
 {
   if (!this->PlotSeriesNode)
   {
@@ -354,7 +354,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onMarkersSizeChanged(double size)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotSeriesPropertiesWidgetPrivate::onLineStyleChanged(const QString &style)
+void qMRMLPlotSeriesPropertiesWidgetPrivate::onLineStyleChanged(const QString& style)
 {
   if (!this->PlotSeriesNode)
   {
@@ -377,7 +377,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::onLineWidthChanged(double width)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotSeriesColorChanged(const QColor & color)
+void qMRMLPlotSeriesPropertiesWidgetPrivate::onPlotSeriesColorChanged(const QColor& color)
 {
   if (!this->PlotSeriesNode)
   {

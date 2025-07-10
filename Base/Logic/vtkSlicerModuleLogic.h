@@ -25,7 +25,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic
 {
 public:
   /// The Usual vtk class functions
-  static vtkSlicerModuleLogic *New();
+  static vtkSlicerModuleLogic* New();
   vtkTypeMacro(vtkSlicerModuleLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

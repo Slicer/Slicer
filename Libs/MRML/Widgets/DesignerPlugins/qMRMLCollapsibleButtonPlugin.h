@@ -30,9 +30,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLCollapsibleButtonPlugin :
   Q_OBJECT
 
 public:
-  qMRMLCollapsibleButtonPlugin(QObject *_parent = nullptr);
+  qMRMLCollapsibleButtonPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString  domXml() const override;
 //   QIcon    icon() const;
   QString  includeFile() const override;

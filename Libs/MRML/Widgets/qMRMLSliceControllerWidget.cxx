@@ -1154,7 +1154,7 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromUnitNode()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNode * node)
+void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNode* node)
 {
   //Q_Q(qMRMLSliceControllerWidget);
   //qDebug() << "qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected - sliceView:"
@@ -1174,7 +1174,7 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNode * node)
+void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNode* node)
 {
   //Q_Q(qMRMLSliceControllerWidget);
   //qDebug() << "qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected - sliceView:"
@@ -1299,7 +1299,7 @@ void qMRMLSliceControllerWidgetPrivate::updateSegmentationOutlineFillButton()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * node)
+void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode* node)
 {
   //Q_Q(qMRMLSliceControllerWidget);
   //qDebug() << "qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected - sliceView:"
@@ -1452,7 +1452,7 @@ void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceL
   Q_Q(qMRMLSliceControllerWidget);
   // TODO, update the QAction when the display node is modified
   vtkMRMLVolumeNode* volumeNode = sliceLogic->GetForegroundLayer()->GetVolumeNode();
-  vtkMRMLScalarVolumeDisplayNode *displayNode = volumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+  vtkMRMLScalarVolumeDisplayNode* displayNode = volumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
     volumeNode->GetVolumeDisplayNode()) : nullptr;
   if (displayNode)
   {
@@ -1460,7 +1460,7 @@ void qMRMLSliceControllerWidgetPrivate::setForegroundInterpolation(vtkMRMLSliceL
     displayNode->SetInterpolate(linear);
   }
   // historic code that doesn't seem to work
-  // vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+  // vtkMRMLScalarVolumeDisplayNode* displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
   //   sliceLogic->GetForegroundLayer()->GetVolumeDisplayNode());
   // if (displayNode)
   //   {
@@ -1480,7 +1480,7 @@ void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceL
   Q_Q(qMRMLSliceControllerWidget);
   // TODO, update the QAction when the display node is modified
   vtkMRMLVolumeNode* volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode();
-  vtkMRMLScalarVolumeDisplayNode *displayNode = volumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+  vtkMRMLScalarVolumeDisplayNode* displayNode = volumeNode ? vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
     volumeNode->GetVolumeDisplayNode()) : nullptr;
   if (displayNode)
   {
@@ -1488,7 +1488,7 @@ void qMRMLSliceControllerWidgetPrivate::setBackgroundInterpolation(vtkMRMLSliceL
     displayNode->SetInterpolate(linear);
   }
   // historic code that doesn't seem to work
-  // vtkMRMLScalarVolumeDisplayNode *displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
+  // vtkMRMLScalarVolumeDisplayNode* displayNode = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
   //   sliceLogic->GetBackgroundLayer()->GetVolumeDisplayNode());
   // if (displayNode)
   //   {
@@ -1783,7 +1783,7 @@ vtkMRMLSliceNode* qMRMLSliceControllerWidget::mrmlSliceNode()const
 }
 
 //---------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setSliceLogic(vtkMRMLSliceLogic * newSliceLogic)
+void qMRMLSliceControllerWidget::setSliceLogic(vtkMRMLSliceLogic* newSliceLogic)
 {
   Q_D(qMRMLSliceControllerWidget);
   if (d->SliceLogic == newSliceLogic)
@@ -2740,7 +2740,7 @@ void qMRMLSliceControllerWidget::setLightbox(int rows, int columns)
     disableFidsMsgBox.setWindowTitle("Disable fiducials?");
     QString labelText = QString("Fiducials are disabled in light box mode. Press Continue to enter light box mode without fiducials.");
     disableFidsMsgBox.setText(labelText);
-    QPushButton *continueButton =
+    QPushButton* continueButton =
        disableFidsMsgBox.addButton(tr("Continue"), QMessageBox::AcceptRole);
     disableFidsMsgBox.addButton(QMessageBox::Cancel);
     disableFidsMsgBox.setIcon(QMessageBox::Question);

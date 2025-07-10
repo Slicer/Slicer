@@ -31,7 +31,7 @@ class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerDirectoryListViewPlugin
 public:
   qSlicerDirectoryListViewPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

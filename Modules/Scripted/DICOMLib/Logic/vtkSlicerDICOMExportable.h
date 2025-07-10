@@ -37,7 +37,7 @@
 class VTK_SLICER_DICOMLIB_MODULE_LOGIC_EXPORT vtkSlicerDICOMExportable : public vtkObject
 {
 public:
-  static vtkSlicerDICOMExportable *New();
+  static vtkSlicerDICOMExportable* New();
   vtkTypeMacro(vtkSlicerDICOMExportable, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

@@ -127,13 +127,13 @@ void qSlicerMainWindowPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
+void qSlicerMainWindowPrivate::setupUi(QMainWindow* mainWindow)
 {
   Q_Q(qSlicerMainWindow);
 
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
 
   //----------------------------------------------------------------------------
   // Recently loaded files
@@ -165,7 +165,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // ModuleManager
   //----------------------------------------------------------------------------
   // Update the list of modules when they are loaded
-  qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
+  qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   if (!moduleManager)
   {
     qWarning() << "No module manager is created.";
@@ -281,7 +281,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    this->ModuleSelectorToolBar, SLOT(selectModule(QString)));
 
   // Add menus for configuring compare view
-  QMenu *compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
+  QMenu* compareMenu = new QMenu(qSlicerMainWindow::tr("Select number of viewers..."), mainWindow);
   compareMenu->setObjectName("CompareMenuView");
   compareMenu->addAction(this->ViewLayoutCompare_2_viewersAction);
   compareMenu->addAction(this->ViewLayoutCompare_3_viewersAction);
@@ -537,7 +537,7 @@ void qSlicerMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IO
     {
       continue;
     }
-    QAction * action = this->RecentlyLoadedMenu->addAction(
+    QAction* action = this->RecentlyLoadedMenu->addAction(
       fileName, q, SLOT(onFileRecentLoadedActionTriggered()));
     action->setProperty("fileParameters", filePropertie);
     action->setEnabled(QFile::exists(fileName));
@@ -545,7 +545,7 @@ void qSlicerMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IO
 
   // Add separator and clear action
   this->RecentlyLoadedMenu->addSeparator();
-  QAction * clearAction = this->RecentlyLoadedMenu->addAction(
+  QAction* clearAction = this->RecentlyLoadedMenu->addAction(
     qSlicerMainWindow::tr("Clear History"), q, SLOT(onFileRecentLoadedActionTriggered()));
   clearAction->setProperty("clearMenu", QVariant(true));
 }
@@ -782,7 +782,7 @@ void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
     return;
   }
 
-  QAction * action = module->action();
+  QAction* action = module->action();
   if (!action || action->icon().isNull())
   {
     return;
@@ -813,7 +813,7 @@ void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
 // qSlicerMainWindow methods
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent)
+qSlicerMainWindow::qSlicerMainWindow(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerMainWindowPrivate(*this))
 {
@@ -913,7 +913,7 @@ ctkErrorLogWidget* qSlicerMainWindow::errorLogWidget()const
 }
 
 //---------------------------------------------------------------------------
-QDockWidget *qSlicerMainWindow::errorLogDockWidget() const
+QDockWidget* qSlicerMainWindow::errorLogDockWidget() const
 {
   Q_D(const qSlicerMainWindow);
   return d->ErrorLogDockWidget;
@@ -1240,7 +1240,7 @@ void qSlicerMainWindow::onFileRecentLoadedActionTriggered()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindow::closeEvent(QCloseEvent *event)
+void qSlicerMainWindow::closeEvent(QCloseEvent* event)
 {
   Q_D(qSlicerMainWindow);
 
@@ -1275,7 +1275,7 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindow::showEvent(QShowEvent *event)
+void qSlicerMainWindow::showEvent(QShowEvent* event)
 {
   Q_D(qSlicerMainWindow);
   this->Superclass::showEvent(event);
@@ -1314,7 +1314,7 @@ void qSlicerMainWindow::pythonConsoleInitialDisplay()
 {
   Q_D(qSlicerMainWindow);
 #ifdef Slicer_USE_PYTHONQT
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
   {
     return;
@@ -1329,7 +1329,7 @@ void qSlicerMainWindow::pythonConsoleInitialDisplay()
 //-----------------------------------------------------------------------------
 void qSlicerMainWindow::disclaimer()
 {
-  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (app->testAttribute(qSlicerCoreApplication::AA_EnableTesting) ||
       !app->coreCommandOptions()->pythonCode().isEmpty() ||
       !app->coreCommandOptions()->pythonScript().isEmpty())
@@ -1420,7 +1420,7 @@ void qSlicerMainWindow::setupMenuActions()
   }
 #endif
 
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   d->ViewExtensionsManagerAction->setVisible(
@@ -1445,7 +1445,7 @@ void qSlicerMainWindow::setupMenuActions()
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::on_LoadDICOMAction_triggered()
 {
-  qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
+  qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
   if (!layoutManager)
   {
     return;
@@ -1588,7 +1588,7 @@ void qSlicerMainWindow::on_CutAction_triggered()
 void qSlicerMainWindow::on_ViewExtensionsManagerAction_triggered()
 {
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   app->openExtensionsManagerDialog();
 #endif
 }
@@ -1723,13 +1723,13 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::dragEnterEvent(QDragEnterEvent *event)
+void qSlicerMainWindow::dragEnterEvent(QDragEnterEvent* event)
 {
   qSlicerApplication::application()->ioManager()->dragEnterEvent(event);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::dropEvent(QDropEvent *event)
+void qSlicerMainWindow::dropEvent(QDropEvent* event)
 {
   qSlicerApplication::application()->ioManager()->dropEvent(event);
 }

@@ -54,7 +54,7 @@ class VTK_ITK_EXPORT vtkITKImageToImageFilter
   : public vtkImageAlgorithm
 {
 public:
-  static vtkITKImageToImageFilter *New()
+  static vtkITKImageToImageFilter* New()
   {
      vtkITKImageToImageFilter* result = new vtkITKImageToImageFilter;
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
@@ -136,15 +136,15 @@ public:
   /// This method returns the cache to make a connection
   /// It just feeds the request to the sub filter.
   void SetOutput ( vtkDataObject* d ) override { this->vtkImporter->SetOutput ( d ); };
-  virtual vtkImageData *GetOutput() { return this->vtkImporter->GetOutput(); };
-  virtual vtkImageData *GetOutput(int idx)
+  virtual vtkImageData* GetOutput() { return this->vtkImporter->GetOutput(); };
+  virtual vtkImageData* GetOutput(int idx)
   {
-    return (vtkImageData *) this->vtkImporter->GetOutput(idx);
+    return (vtkImageData*) this->vtkImporter->GetOutput(idx);
   };
 
   ///
   /// Set the Input of the filter.
-  virtual void SetInput(vtkImageData *Input)
+  virtual void SetInput(vtkImageData* Input)
   {
     this->vtkCast->SetInputData(Input);
   };
@@ -200,7 +200,7 @@ public:
 
   /// BTX
   /// Dummy ExecuteData
-  void ExecuteData (vtkDataObject *) override
+  void ExecuteData (vtkDataObject*) override
   {
     vtkWarningMacro(<< "This filter does not respond to Update(). Doing a GetOutput->Update() instead.");
   }

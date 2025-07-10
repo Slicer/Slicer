@@ -67,7 +67,7 @@ int DEFAULT_HIERARCHY_VISIBILITY[3] = {1, 1, 1};
 
 //---------------------------------------------------------------------------
 int vtkMRMLDisplayableHierarchyNodeDisplayPropertiesTest(int vtkNotUsed(argc),
-                                                         char * vtkNotUsed(argv)[] )
+                                                         char* vtkNotUsed(argv)[] )
 {
   if (!TestExpand())
   {

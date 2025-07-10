@@ -36,7 +36,7 @@
 #include <vtkNew.h>
 
 
-int vtkSlicerMarkupsLogicTest3(int , char * [] )
+int vtkSlicerMarkupsLogicTest3(int, char*[])
 {
   vtkNew<vtkSlicerMarkupsLogic> logic1;
   vtkNew<vtkMRMLScene> scene;
@@ -116,7 +116,7 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
 //  vtkIndent indent;
 //  for (int n = 0; n < numMarkupsFiducials; ++n)
 //    {
-//    vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(n, "vtkMRMLMarkupsFiducialNode");
+//    vtkMRMLNode* mrmlNode = scene->GetNthNodeByClass(n, "vtkMRMLMarkupsFiducialNode");
 //    std::cout << "\nConverted Markups node " << n << ":" << std::endl;
 //    mrmlNode->PrintSelf(std::cout, indent);
 //    }
@@ -128,10 +128,10 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
   applicationLogic->Delete();
 
   // check the second list
-  vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(1, "vtkMRMLMarkupsFiducialNode");
+  vtkMRMLNode* mrmlNode = scene->GetNthNodeByClass(1, "vtkMRMLMarkupsFiducialNode");
   if (mrmlNode)
   {
-    vtkMRMLMarkupsFiducialNode *markupsFid = vtkMRMLMarkupsFiducialNode::SafeDownCast(mrmlNode);
+    vtkMRMLMarkupsFiducialNode* markupsFid = vtkMRMLMarkupsFiducialNode::SafeDownCast(mrmlNode);
     if (markupsFid)
     {
       std::string desc = markupsFid->GetNthControlPointDescription(3);
@@ -157,7 +157,7 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
                   << pos[0] << "," << pos[1] << "," << pos[2] << std::endl;
         return EXIT_FAILURE;
       }
-      vtkMRMLMarkupsDisplayNode *dispNode = markupsFid->GetMarkupsDisplayNode();
+      vtkMRMLMarkupsDisplayNode* dispNode = markupsFid->GetMarkupsDisplayNode();
       if (dispNode)
       {
         double col[3];

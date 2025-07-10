@@ -53,7 +53,7 @@ int storePerformance(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneV
 
 //---------------------------------------------------------------------------
 int vtkSceneViewStoreSceneTest(int vtkNotUsed(argc),
-                                       char * vtkNotUsed(argv)[] )
+                                       char* vtkNotUsed(argv)[] )
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> appLogic;

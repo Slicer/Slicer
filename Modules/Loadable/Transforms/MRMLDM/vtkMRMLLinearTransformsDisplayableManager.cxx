@@ -337,7 +337,7 @@ void vtkMRMLLinearTransformsDisplayableManager::ProcessMRMLNodesEvents(vtkObject
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(caller);
   if (transformNode)
   {
-    vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode *> (callData);
+    vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*> (callData);
     vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(callDataNode);
 
     if (displayNode && (event == vtkMRMLDisplayableNode::DisplayModifiedEvent))
@@ -399,14 +399,14 @@ void vtkMRMLLinearTransformsDisplayableManager::UpdateFromMRML()
   this->Internal->RemoveAllObservations();
   this->Internal->ClearPipelines();
 
-  std::vector<vtkMRMLNode *> displayNodes;
+  std::vector<vtkMRMLNode*> displayNodes;
   scene->GetNodesByClass("vtkMRMLTransformDisplayNode", displayNodes);
   for (auto displayNode : displayNodes)
   {
     this->Internal->UpdatePipelineFromDisplayNode(vtkMRMLTransformDisplayNode::SafeDownCast(displayNode));
   }
 
-  std::vector<vtkMRMLNode *> transformNodes;
+  std::vector<vtkMRMLNode*> transformNodes;
   scene->GetNodesByClass("vtkMRMLTransformNode", transformNodes);
   for (auto node : transformNodes)
   {
@@ -509,7 +509,7 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::SetupRenderer()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLLinearTransformsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2)
+bool vtkMRMLLinearTransformsDisplayableManager::CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2)
 {
   // New point can be placed anywhere
   int eventid = eventData->GetType();

@@ -28,7 +28,7 @@ qMRMLSegmentationRepresentationsListViewPlugin::qMRMLSegmentationRepresentations
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentationRepresentationsListViewPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentationRepresentationsListViewPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLSegmentationRepresentationsListView* pluginWidget =
     new qMRMLSegmentationRepresentationsListView(parentWidget);

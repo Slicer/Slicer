@@ -26,7 +26,7 @@ vtkTagTableCollection::~vtkTagTableCollection ( )
 
 
 //---------------------------------------------------------------------------
-void vtkTagTableCollection::AddTableByName ( vtkTagTable *t, const char *name )
+void vtkTagTableCollection::AddTableByName ( vtkTagTable* t, const char* name )
 {
   if ( name == nullptr )
   {
@@ -39,7 +39,7 @@ void vtkTagTableCollection::AddTableByName ( vtkTagTable *t, const char *name )
 
 
 //---------------------------------------------------------------------------
-void vtkTagTableCollection::DeleteTableByName ( const char *name )
+void vtkTagTableCollection::DeleteTableByName ( const char* name )
 {
 
   if ( name == nullptr )
@@ -47,7 +47,7 @@ void vtkTagTableCollection::DeleteTableByName ( const char *name )
     vtkErrorMacro ( "vtkTagTableCollection::DeleteTableByName got nullptr name." );
     return;
   }
-  vtkTagTable *t;
+  vtkTagTable* t;
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
   {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
@@ -71,7 +71,7 @@ void vtkTagTableCollection::SetRestoreSelectionStateForAllTables ( int val )
     vtkWarningMacro ( "vtkTagTableColleciton::SetRestoreSelectionSTateForAllTables: got inappropriate value for state (not 1 or 0)." );
     return;
   }
-  vtkTagTable *t;
+  vtkTagTable* t;
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
   {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
@@ -83,13 +83,13 @@ void vtkTagTableCollection::SetRestoreSelectionStateForAllTables ( int val )
 }
 
 //---------------------------------------------------------------------------
-vtkTagTable *vtkTagTableCollection::GetNextTable()
+vtkTagTable* vtkTagTableCollection::GetNextTable()
 {
   return vtkTagTable::SafeDownCast(this->GetNextItemAsObject());
 }
 
 //---------------------------------------------------------------------------
-vtkTagTable *vtkTagTableCollection::GetNextTable(vtkCollectionSimpleIterator &cookie)
+vtkTagTable* vtkTagTableCollection::GetNextTable(vtkCollectionSimpleIterator& cookie)
 {
   return vtkTagTable::SafeDownCast(this->GetNextItemAsObject(cookie));
 }
@@ -97,7 +97,7 @@ vtkTagTable *vtkTagTableCollection::GetNextTable(vtkCollectionSimpleIterator &co
 //---------------------------------------------------------------------------
 void vtkTagTableCollection::ClearAllTagTables ( )
 {
-  vtkTagTable *t;
+  vtkTagTable* t;
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
   {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
@@ -111,7 +111,7 @@ void vtkTagTableCollection::ClearAllTagTables ( )
 
 
 //---------------------------------------------------------------------------
-vtkTagTable *vtkTagTableCollection::FindTagTableByName (const char *name )
+vtkTagTable* vtkTagTableCollection::FindTagTableByName (const char* name )
 {
 
   if ( name == nullptr )
@@ -119,7 +119,7 @@ vtkTagTable *vtkTagTableCollection::FindTagTableByName (const char *name )
     vtkErrorMacro ( "vtkTagTableCollection::FindTagTableByName got nullptr name." );
     return nullptr;
   }
-  vtkTagTable *t;
+  vtkTagTable* t;
   for ( int i=0; i < this->GetNumberOfItems(); i++ )
   {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));

@@ -79,7 +79,7 @@ public:
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
   bool EvaluateAtContinuousIndex(
-    const ContinuousIndexType & index ) const override
+    const ContinuousIndexType& index ) const override
   {
       IndexType nindex;
 
@@ -95,7 +95,7 @@ public:
    *
    * ImageFunction::IsInsideBuffer() can be used to check bounds before
    * calling the method. */
-  bool EvaluateAtIndex( const IndexType & index ) const override
+  bool EvaluateAtIndex( const IndexType& index ) const override
   {
       // Create an N-d neighborhood kernel, using a zeroflux boundary condition
       ConstNeighborhoodIterator<InputImageType>
@@ -226,7 +226,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   Superclass::GenerateInputRequestedRegion();
   if ( this->GetInput() )
   {
-    InputImagePointer image = const_cast< InputImageType * >( this->GetInput() );
+    InputImagePointer image = const_cast< InputImageType*>( this->GetInput() );
     image->SetRequestedRegionToLargestPossibleRegion();
   }
 }

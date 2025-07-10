@@ -209,7 +209,7 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 {
   Q_D(qSlicerScriptedFileDialog);
   d->Properties = ioProperties;
-  PyObject * result = d->PythonCppAPI.callMethod(d->ExecMethod);
+  PyObject* result = d->PythonCppAPI.callMethod(d->ExecMethod);
   if (!result)
   {
     return false;
@@ -230,7 +230,7 @@ bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData)con
   Q_D(const qSlicerScriptedFileDialog);
   d->MimeData = mimeData;
   d->MimeDataAccepted = false;
-  PyObject * result = d->PythonCppAPI.callMethod(d->IsMimeDataAcceptedMethod);
+  PyObject* result = d->PythonCppAPI.callMethod(d->IsMimeDataAcceptedMethod);
   if (!result)
   {
     return false;

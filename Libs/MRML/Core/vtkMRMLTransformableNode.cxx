@@ -103,7 +103,7 @@ vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transformNodeID)
+bool vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char* transformNodeID)
 {
   // Prevent circular reference in transform tree
   vtkMRMLTransformNode* newParentTransformNode = vtkMRMLTransformNode::SafeDownCast(
@@ -127,9 +127,9 @@ bool vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
 
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject* caller,
                                                   unsigned long event,
-                                                  void *callData )
+                                                  void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -141,7 +141,7 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
   {
     return;
   }
-  vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
+  vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
   if (tnode == caller)
   {
     this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, nullptr);
@@ -238,19 +238,19 @@ void vtkMRMLTransformableNode::TransformPointFromWorld(const double inWorld[3], 
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformableNode::TransformPointToWorld(const vtkVector3d &inLocal, vtkVector3d &outWorld)
+void vtkMRMLTransformableNode::TransformPointToWorld(const vtkVector3d& inLocal, vtkVector3d& outWorld)
 {
   this->TransformPointToWorld(inLocal.GetData(),outWorld.GetData());
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformableNode::TransformPointFromWorld(const vtkVector3d &inWorld, vtkVector3d &outLocal)
+void vtkMRMLTransformableNode::TransformPointFromWorld(const vtkVector3d& inWorld, vtkVector3d& outLocal)
 {
   this->TransformPointFromWorld(inWorld.GetData(),outLocal.GetData());
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformableNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+void vtkMRMLTransformableNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
 {
   Superclass::OnNodeReferenceAdded(reference);
   if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
@@ -260,7 +260,7 @@ void vtkMRMLTransformableNode::OnNodeReferenceAdded(vtkMRMLNodeReference *refere
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformableNode::OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+void vtkMRMLTransformableNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
 {
   Superclass::OnNodeReferenceModified(reference);
   if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)
@@ -270,7 +270,7 @@ void vtkMRMLTransformableNode::OnNodeReferenceModified(vtkMRMLNodeReference *ref
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformableNode::OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
+void vtkMRMLTransformableNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* reference)
 {
   Superclass::OnNodeReferenceRemoved(reference);
   if (std::string(reference->GetReferenceRole()) == this->TransformNodeReferenceRole)

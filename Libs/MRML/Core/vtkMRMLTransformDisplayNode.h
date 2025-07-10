@@ -43,7 +43,7 @@ class vtkMRMLVolumeNode;
 class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
 {
  public:
-  static vtkMRMLTransformDisplayNode *New (  );
+  static vtkMRMLTransformDisplayNode* New (  );
   vtkTypeMacro ( vtkMRMLTransformDisplayNode,vtkMRMLDisplayNode );
   void PrintSelf ( ostream& os, vtkIndent indent ) override;
 

@@ -28,7 +28,7 @@ class vtkImageData;
 class VTK_MRML_LOGIC_EXPORT vtkImageLabelOutline : public vtkImageNeighborhoodFilter
 {
 public:
-  static vtkImageLabelOutline *New();
+  static vtkImageLabelOutline* New();
   vtkTypeMacro(vtkImageLabelOutline,vtkImageNeighborhoodFilter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -49,7 +49,7 @@ protected:
   float Background;
   int Outline;
 
-  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
+  void ThreadedExecute(vtkImageData* inData, vtkImageData* outData,
                        int extent[6], int id) override;
 
 private:

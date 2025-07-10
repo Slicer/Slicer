@@ -88,7 +88,7 @@ public:
   InputImagePixelType GetMinIntensity() {return m_Min;}
 
   /// Get the output as a ChainCodePath.  This output is only generated in the 2D case.
-  ChainCodePathType *GetPathOutput() { return static_cast<ChainCodePathType*>(this->ProcessObject::GetOutput(1)); }
+  ChainCodePathType* GetPathOutput() { return static_cast<ChainCodePathType*>(this->ProcessObject::GetOutput(1)); }
 
 protected:
   LevelTracingImageFilter();

@@ -76,7 +76,7 @@ public:
   /// It returns a vtkMRMLDisplayableManagerGroup representing a list of DisplayableManager
   /// Internally, the factory keep track of all the Group and will invoke the ModifiedEvent
   /// of each group.
-  vtkMRMLDisplayableManagerGroup* InstantiateDisplayableManagers(vtkRenderer * newRenderer);
+  vtkMRMLDisplayableManagerGroup* InstantiateDisplayableManagers(vtkRenderer* newRenderer);
 
   /// Set the application logic. It will be passed to displayable
   /// managers and groups to be created.

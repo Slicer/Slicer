@@ -31,7 +31,7 @@
 class VTK_ITK_EXPORT vtkITKImageMargin : public vtkSimpleImageToImageFilter
 {
  public:
-  static vtkITKImageMargin *New();
+  static vtkITKImageMargin* New();
   vtkTypeMacro(vtkITKImageMargin, vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

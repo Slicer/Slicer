@@ -143,7 +143,7 @@ protected slots:
   void onRegionSearchTextChanged(QString);
 
   void onColorSelected(const QItemSelection& selected, const QItemSelection& deselected);
-  void onColorRowDoubleClicked(const QModelIndex &index);
+  void onColorRowDoubleClicked(const QModelIndex& index);
 
   void onNameChanged(QString);
   void onResetNameClicked();

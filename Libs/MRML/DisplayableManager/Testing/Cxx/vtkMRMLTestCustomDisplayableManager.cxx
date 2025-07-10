@@ -43,7 +43,7 @@ int vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView = 0;
 class vtkMRMLTestCustomDisplayableManager::vtkInternal
 {
 public:
-  vtkInternal(vtkMRMLTestCustomDisplayableManager * external);
+  vtkInternal(vtkMRMLTestCustomDisplayableManager* external);
   ~vtkInternal();
 
   vtkMRMLTestCustomDisplayableManager*             External;
@@ -53,7 +53,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLTestCustomDisplayableManager::vtkInternal::vtkInternal(vtkMRMLTestCustomDisplayableManager * external)
+vtkMRMLTestCustomDisplayableManager::vtkInternal::vtkInternal(vtkMRMLTestCustomDisplayableManager* external)
 {
   this->External = external;
 }
@@ -104,7 +104,7 @@ void vtkMRMLTestCustomDisplayableManager::Create()
 //---------------------------------------------------------------------------
 void vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  vtkMRMLCameraNode * cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
+  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
   if (!cameraNode)
   {
     return;

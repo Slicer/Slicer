@@ -14,7 +14,7 @@ class vtkAbstractTransform;
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {
 public:
-  static vtkMRMLAnnotationHierarchyNode *New();
+  static vtkMRMLAnnotationHierarchyNode* New();
   vtkTypeMacro(vtkMRMLAnnotationHierarchyNode,vtkMRMLDisplayableHierarchyNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -36,17 +36,17 @@ public:
 
   // Description:
   // Get all top level children associated to this node.
-  virtual void GetDirectChildren(vtkCollection *children);
+  virtual void GetDirectChildren(vtkCollection* children);
 
   /// Add into \a children all the children of the hierarchy node.
   /// \sa GetDirectChildren(), GetChildren()
-  virtual void GetAllChildren(vtkCollection *children);
+  virtual void GetAllChildren(vtkCollection* children);
 
   /// Add into \a children all children of the hierarchy node of the first
   /// \a level nodes.
   /// If \a level is <0, then all levels are added.
   /// \sa GetAllChildren(), GetDirectChildren()
-  virtual void GetChildren(vtkCollection *children, int level);
+  virtual void GetChildren(vtkCollection* children, int level);
 
   // Description:
   // Delete all children of this node

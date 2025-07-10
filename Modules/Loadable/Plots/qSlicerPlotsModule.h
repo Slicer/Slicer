@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_PLOTS_EXPORT qSlicerPlotsModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerPlotsModule(QObject *parent=nullptr);
+  explicit qSlicerPlotsModule(QObject* parent=nullptr);
   ~qSlicerPlotsModule() override;
 
   qSlicerGetTitleMacro(tr("Plots"));
@@ -61,7 +61,7 @@ protected:
   void setup() override;
 
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

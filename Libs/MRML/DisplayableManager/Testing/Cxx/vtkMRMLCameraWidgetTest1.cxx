@@ -122,7 +122,7 @@ int vtkMRMLCameraWidgetTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   iObserver->SetDisplayableManagers(group);
   iObserver->SetInteractor(ri);
 
-  vtkMRMLCameraDisplayableManager * cameraDisplayableManager =vtkMRMLCameraDisplayableManager::SafeDownCast(
+  vtkMRMLCameraDisplayableManager* cameraDisplayableManager =vtkMRMLCameraDisplayableManager::SafeDownCast(
     group->GetDisplayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
   CHECK_NOT_NULL(cameraDisplayableManager);
 

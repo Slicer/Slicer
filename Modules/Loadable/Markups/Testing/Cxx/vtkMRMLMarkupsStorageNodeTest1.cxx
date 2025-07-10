@@ -63,7 +63,7 @@ int TestMarkupsStorageNode(vtkMRMLMarkupsStorageNode* node1)
 
 }
 
-int vtkMRMLMarkupsStorageNodeTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
+int vtkMRMLMarkupsStorageNodeTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[] )
 {
   // vtkMRMLMarkupsStorageNodeTest is an abstract class, therefore we test it
   // by instantiating child classes.

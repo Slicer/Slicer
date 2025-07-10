@@ -71,7 +71,7 @@ class QMRML_WIDGETS_EXPORT qMRMLColorModel : public QStandardItemModel
 
 public:
   typedef QAbstractItemModel Superclass;
-  qMRMLColorModel(QObject *parent=nullptr);
+  qMRMLColorModel(QObject* parent=nullptr);
   ~qMRMLColorModel() override;
 
   void setMRMLColorNode(vtkMRMLColorNode* node);
@@ -100,7 +100,7 @@ public:
   /// Return the color entry associated to the index.
   /// -1 if the index is not in the model.
   /// \sa colorFromItem(), nameFromColor(), colorFromName()
-  inline int colorFromIndex(const QModelIndex &index)const;
+  inline int colorFromIndex(const QModelIndex& index)const;
   /// Return the color entry associated to the item.
   /// -1 if the item is not in the model.
   /// \sa colorFromIndex(), nameFromColor(), colorFromName()
@@ -132,10 +132,10 @@ public:
 
 protected slots:
   void onMRMLColorNodeModified(vtkObject* node);
-  void onItemChanged(QStandardItem * item);
+  void onItemChanged(QStandardItem* item);
 
 protected:
-  qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parent=nullptr);
+  qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject* parent=nullptr);
   virtual void updateItemFromColor(QStandardItem* item, int color, int column);
   virtual void updateColorFromItem(int color, QStandardItem* item);
   virtual void updateNode();
@@ -151,13 +151,13 @@ private:
 };
 
 // -----------------------------------------------------------------------------
-int qMRMLColorModel::colorFromIndex(const QModelIndex &nodeIndex)const
+int qMRMLColorModel::colorFromIndex(const QModelIndex& nodeIndex)const
 {
   return this->colorFromItem(this->itemFromIndex(nodeIndex));
 }
 
 // -----------------------------------------------------------------------------
-QColor qMRMLColorModel::qcolorFromIndex(const QModelIndex &nodeIndex)const
+QColor qMRMLColorModel::qcolorFromIndex(const QModelIndex& nodeIndex)const
 {
   return this->qcolorFromItem(this->itemFromIndex(nodeIndex));
 }

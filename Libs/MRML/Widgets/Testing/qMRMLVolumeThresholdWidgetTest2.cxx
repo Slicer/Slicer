@@ -47,7 +47,7 @@
 
 // STD includes
 
-int qMRMLVolumeThresholdWidgetTest2(int argc, char * argv [] )
+int qMRMLVolumeThresholdWidgetTest2(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

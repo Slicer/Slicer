@@ -107,7 +107,7 @@ void vtkMRMLColorNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLColorNode *node = vtkMRMLColorNode::SafeDownCast(anode);
+  vtkMRMLColorNode* node = vtkMRMLColorNode::SafeDownCast(anode);
   if (!node)
     {
     return;
@@ -192,19 +192,19 @@ void vtkMRMLColorNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLColorNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLColorNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorNode::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLColorNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //---------------------------------------------------------------------------
-const char * vtkMRMLColorNode::GetTypeAsString()
+const char* vtkMRMLColorNode::GetTypeAsString()
 {
   if (this->Type == this->User)
   {
@@ -328,7 +328,7 @@ void vtkMRMLColorNode::SetColorDefined(int ind, bool defined)
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLColorNode::GetColorName(int index)
+const char* vtkMRMLColorNode::GetColorName(int index)
 {
   // Do not use GetProperty because the content of the locally copied property's std::string does not survive the return
   if (index < 0 || index >= (int)this->Properties.size())
@@ -618,7 +618,7 @@ bool vtkMRMLColorNode::SetTerminology(int ind,
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorNode::GetColorIndexByName(const char *name)
+int vtkMRMLColorNode::GetColorIndexByName(const char* name)
 {
   if (name == nullptr)
   {
@@ -638,7 +638,7 @@ int vtkMRMLColorNode::GetColorIndexByName(const char *name)
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *subst)
+std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char* subst)
 {
   std::string name = std::string(this->GetColorName(ind));
   if (strstr(name.c_str(), " ") != nullptr)
@@ -655,7 +655,7 @@ std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *sub
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char *subst)
+std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char* subst)
 {
   std::string fileName(this->GetColorName(colorIndex));
   std::string validCharacters =
@@ -698,7 +698,7 @@ int vtkMRMLColorNode::SetColorName(int ind, const char* name)
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const char *subst)
+int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char* name, const char* subst)
 {
   std::string nameString = std::string(name);
   std::string substString = std::string(subst);

@@ -40,7 +40,7 @@
 // Common test driver includes
 #include "qMRMLLayoutManagerTestHelper.cxx"
 
-int qMRMLLayoutManagerTest4(int argc, char * argv[] )
+int qMRMLLayoutManagerTest4(int argc, char* argv[] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

@@ -136,7 +136,7 @@ bool qSlicerAnnotationsReader::load(const IOProperties& properties)
     fileType = vtkSlicerMarkupsLogic::AnnotationROI;
   }
 
-  char * nodeID = d->MarkupsLogic->LoadAnnotation(
+  char* nodeID = d->MarkupsLogic->LoadAnnotation(
     fileName.toUtf8(), name.toUtf8(), fileType);
   if (!nodeID)
   {

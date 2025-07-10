@@ -28,7 +28,7 @@
 #include <QDebug>
 
 //----------------------------------------------------------------------------
-qSlicerSegmentEditorEffectFactory *qSlicerSegmentEditorEffectFactory::m_Instance = nullptr;
+qSlicerSegmentEditorEffectFactory* qSlicerSegmentEditorEffectFactory::m_Instance = nullptr;
 
 //----------------------------------------------------------------------------
 class qSlicerSegmentEditorEffectFactoryCleanup

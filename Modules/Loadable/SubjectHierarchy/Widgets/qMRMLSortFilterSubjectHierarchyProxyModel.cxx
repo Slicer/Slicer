@@ -204,7 +204,7 @@ CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QStringList, nodeTypes, N
 CTK_GET_CPP(qMRMLSortFilterSubjectHierarchyProxyModel, QStringList, hideChildNodeTypes, HideChildNodeTypes);
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyModel(QObject *vparent)
+qMRMLSortFilterSubjectHierarchyProxyModel::qMRMLSortFilterSubjectHierarchyProxyModel(QObject* vparent)
  : QSortFilterProxyModel(vparent)
  , d_ptr(new qMRMLSortFilterSubjectHierarchyProxyModelPrivate)
 {
@@ -660,7 +660,7 @@ QStandardItem* qMRMLSortFilterSubjectHierarchyProxyModel::sourceItem(const QMode
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const
+bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent)const
 {
   QStandardItem* parentItem = this->sourceItem(sourceParent);
   if (!parentItem)
@@ -1048,7 +1048,7 @@ qMRMLSortFilterSubjectHierarchyProxyModel::AcceptType qMRMLSortFilterSubjectHier
 }
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLSortFilterSubjectHierarchyProxyModel::flags(const QModelIndex & index)const
+Qt::ItemFlags qMRMLSortFilterSubjectHierarchyProxyModel::flags(const QModelIndex& index)const
 {
   vtkIdType itemID = this->subjectHierarchyItemFromIndex(index);
   if (!itemID)

@@ -319,7 +319,7 @@ void qMRMLScalarsDisplayWidget::setScalarsDisplayRange(double min, double max)
 
   foreach (vtkMRMLDisplayNode* displayNode, d->CurrentDisplayNodes)
   {
-    double *range = displayNode->GetScalarRange();
+    double* range = displayNode->GetScalarRange();
     if (range[0] == min && range[1] == max)
     {
       return;

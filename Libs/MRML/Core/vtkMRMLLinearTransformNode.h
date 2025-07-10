@@ -31,7 +31,7 @@ class InternalTransformToParentMatrix;
 class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
 {
   public:
-  static vtkMRMLLinearTransformNode *New();
+  static vtkMRMLLinearTransformNode* New();
   vtkTypeMacro(vtkMRMLLinearTransformNode,vtkMRMLTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

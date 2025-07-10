@@ -49,7 +49,7 @@ bool TestProceduralCopy();
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLColorLogicTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
+int vtkMRMLColorLogicTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[] )
 {
   bool res = true;
   res = TestPerformance() && res;
@@ -210,7 +210,7 @@ bool TestCopy()
   originalNode->SetColor(4, "four", 0.75, 0.0, 1.0, 0.7);
   originalNode->SetColor(5, "five and done", 1.0, 1.0, 1.0, 1.0);
 
-  vtkMRMLColorTableNode *copiedNode = colorLogic->CopyNode(originalNode.GetPointer(), "Copied Generic");
+  vtkMRMLColorTableNode* copiedNode = colorLogic->CopyNode(originalNode.GetPointer(), "Copied Generic");
   if (!copiedNode)
   {
     std::cerr << "Line " << __LINE__
@@ -249,8 +249,8 @@ bool TestCopy()
                 << std::endl;
       return false;
     }
-    const char *originalColorName = originalNode->GetColorName(i);
-    const char *copyColorName = copiedNode->GetColorName(i);
+    const char* originalColorName = originalNode->GetColorName(i);
+    const char* copyColorName = copiedNode->GetColorName(i);
     if (originalColorName != nullptr && copyColorName != nullptr &&
         strcmp(originalColorName, copyColorName) != 0)
     {
@@ -276,7 +276,7 @@ bool TestProceduralCopy()
   originalNode->SetTypeToFile();
   originalNode->SetAttribute("Category", "Continuous");
 
-  vtkColorTransferFunction *func = originalNode->GetColorTransferFunction();
+  vtkColorTransferFunction* func = originalNode->GetColorTransferFunction();
   func->SetColorSpaceToRGB();
   func->AddRGBPoint(-3.0, 1.0, 0.0, 0.0);
   func->AddRGBPoint(0.0, 0.0, 1.0, 0.0);
@@ -285,7 +285,7 @@ bool TestProceduralCopy()
 
   originalNode->SetNamesFromColors();
 
-  vtkMRMLProceduralColorNode *copiedNode = colorLogic->CopyProceduralNode(originalNode.GetPointer(), "Copied Proc");
+  vtkMRMLProceduralColorNode* copiedNode = colorLogic->CopyProceduralNode(originalNode.GetPointer(), "Copied Proc");
   if (!copiedNode)
   {
     std::cerr << "Line " << __LINE__
@@ -324,8 +324,8 @@ bool TestProceduralCopy()
                 << std::endl;
       return false;
     }
-    const char *originalColorName = originalNode->GetColorName(i);
-    const char *copyColorName = copiedNode->GetColorName(i);
+    const char* originalColorName = originalNode->GetColorName(i);
+    const char* copyColorName = copiedNode->GetColorName(i);
     if (originalColorName != nullptr && copyColorName != nullptr &&
         strcmp(originalColorName, copyColorName) != 0)
     {

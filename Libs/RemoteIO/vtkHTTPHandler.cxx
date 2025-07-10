@@ -47,7 +47,7 @@ vtkHTTPHandler::vtkInternal::~vtkInternal()
 vtkStandardNewMacro ( vtkHTTPHandler );
 
 //----------------------------------------------------------------------------
-size_t read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
+size_t read_callback(void* ptr, size_t size, size_t nmemb, FILE *stream)
 {
   size_t retcode;
 
@@ -62,7 +62,7 @@ size_t read_callback(void *ptr, size_t size, size_t nmemb, FILE *stream)
 }
 
 //----------------------------------------------------------------------------
-size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream)
+size_t write_callback(void* ptr, size_t size, size_t nmemb, void* stream)
 {
   if (stream == nullptr)
   {
@@ -110,7 +110,7 @@ void vtkHTTPHandler::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkHTTPHandler::CanHandleURI ( const char *uri )
+int vtkHTTPHandler::CanHandleURI ( const char* uri )
 {
   //--- What's the best way to determine whether this handler
   //--- speaks the correct protocol?
@@ -183,7 +183,7 @@ int vtkHTTPHandler::CloseTransfer( )
 
 
 //----------------------------------------------------------------------------
-void vtkHTTPHandler::StageFileRead(const char * source, const char * destination)
+void vtkHTTPHandler::StageFileRead(const char* source, const char* destination)
 {
   if (source == nullptr || destination == nullptr)
   {
@@ -248,7 +248,7 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
   }
   else
   {
-    const char *stringError = curl_easy_strerror(retval);
+    const char* stringError = curl_easy_strerror(retval);
     vtkErrorMacro("StageFileRead: error running curl: " << stringError);
     //--- in case the permissions were not correct and that's
     //--- the reason the read command failed,
@@ -274,7 +274,7 @@ void vtkHTTPHandler::StageFileRead(const char * source, const char * destination
 
 
 //----------------------------------------------------------------------------
-void vtkHTTPHandler::StageFileWrite(const char * source, const char * destination)
+void vtkHTTPHandler::StageFileWrite(const char* source, const char* destination)
 {
   //--- check these arguments...
   /*
@@ -315,7 +315,7 @@ void vtkHTTPHandler::StageFileWrite(const char * source, const char * destinatio
    }
    else
    {
-    const char *stringError = curl_easy_strerror(retval);
+    const char* stringError = curl_easy_strerror(retval);
     vtkErrorMacro("StageFileWrite: error running curl: " << stringError);
     //--- in case the permissions were not correct and that's
     //--- the reason the read command failed,

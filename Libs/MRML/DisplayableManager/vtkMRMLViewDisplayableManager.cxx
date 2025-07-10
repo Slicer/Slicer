@@ -58,14 +58,14 @@ vtkStandardNewMacro(vtkMRMLViewDisplayableManager );
 class vtkMRMLViewDisplayableManager::vtkInternal
 {
 public:
-  vtkInternal(vtkMRMLViewDisplayableManager * external);
+  vtkInternal(vtkMRMLViewDisplayableManager* external);
   ~vtkInternal();
 
   vtkMRMLCameraNode* CameraNode;
 
   void CreateAxis();
-  void AddAxis(vtkRenderer * renderer);
-  void UpdateAxis(vtkRenderer * renderer, vtkMRMLViewNode * viewNode);
+  void AddAxis(vtkRenderer* renderer);
+  void UpdateAxis(vtkRenderer* renderer, vtkMRMLViewNode* viewNode);
   void UpdateRASBounds(double bounds[6]);
 
   void UpdateAxisVisibility();
@@ -92,7 +92,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLViewDisplayableManager::vtkInternal::vtkInternal(vtkMRMLViewDisplayableManager * external)
+vtkMRMLViewDisplayableManager::vtkInternal::vtkInternal(vtkMRMLViewDisplayableManager* external)
 {
   this->External = external;
   this->BoxAxisBoundingBox = new vtkBoundingBox();
@@ -163,7 +163,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::CreateAxis()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLViewDisplayableManager::vtkInternal::AddAxis(vtkRenderer * renderer)
+void vtkMRMLViewDisplayableManager::vtkInternal::AddAxis(vtkRenderer* renderer)
 {
   assert(renderer);
 
@@ -186,13 +186,13 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
   {
     return;
   }
-  vtkMRMLScene *scene = this->External->GetMRMLViewNode()->GetScene();
+  vtkMRMLScene* scene = this->External->GetMRMLViewNode()->GetScene();
   if (scene == nullptr)
   {
     return;
   }
 
-  std::vector<vtkMRMLNode *> nodes;
+  std::vector<vtkMRMLNode*> nodes;
   int nnodes = scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
   for (int n=0; n < nnodes; n++)
   {
@@ -248,8 +248,8 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * renderer,
-                                                            vtkMRMLViewNode * viewNode)
+void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer* renderer,
+                                                            vtkMRMLViewNode* viewNode)
 {
   if (!renderer || !renderer->IsActiveCameraCreated() || !viewNode)
   {
@@ -422,7 +422,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisColor()
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
 {
-  vtkCamera *camera = this->External->GetRenderer() ?
+  vtkCamera* camera = this->External->GetRenderer() ?
     this->External->GetRenderer()->GetActiveCamera() : nullptr;
   if (!camera ||
       !this->External->GetMRMLViewNode())
@@ -517,7 +517,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRenderMode()
     return;
   }
 
-  vtkCamera *cam = this->External->GetRenderer()->GetActiveCamera();
+  vtkCamera* cam = this->External->GetRenderer()->GetActiveCamera();
   if (this->External->GetMRMLViewNode()->GetRenderMode() == vtkMRMLViewNode::Perspective)
   {
     cam->ParallelProjectionOff();
@@ -535,7 +535,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateStereoType()
   vtkDebugWithObjectMacro(this->External, << "UpdateStereoType:" <<
                 this->External->GetMRMLViewNode()->GetStereoType());
 
-  vtkRenderWindow * renderWindow = this->External->GetRenderer()->GetRenderWindow();
+  vtkRenderWindow* renderWindow = this->External->GetRenderer()->GetRenderWindow();
   int stereoType = this->External->GetMRMLViewNode()->GetStereoType();
   if (stereoType == vtkMRMLViewNode::RedBlue)
   {
@@ -643,7 +643,7 @@ void vtkMRMLViewDisplayableManager::Create()
   this->Internal->AddAxis(this->GetRenderer());
 
   // CameraNodeDisplayableManager is expected to be instantiated !
-  vtkMRMLCameraDisplayableManager * cameraDisplayableManager =
+  vtkMRMLCameraDisplayableManager* cameraDisplayableManager =
       vtkMRMLCameraDisplayableManager::SafeDownCast(
           this->GetMRMLDisplayableManagerGroup()->GetDisplayableManagerByClassName(
               "vtkMRMLCameraDisplayableManager"));
@@ -699,9 +699,9 @@ void vtkMRMLViewDisplayableManager::UpdateFromCameraNode()
 
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager
-::ProcessMRMLNodesEvents(vtkObject * caller,
+::ProcessMRMLNodesEvents(vtkObject* caller,
                          unsigned long event,
-                         void * callData)
+                         void* callData)
 {
   if (vtkMRMLViewNode::SafeDownCast(caller))
   {
@@ -725,9 +725,9 @@ void vtkMRMLViewDisplayableManager
 
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager
-::ProcessWidgetsEvents(vtkObject * caller,
+::ProcessWidgetsEvents(vtkObject* caller,
                        unsigned long event,
-                       void *callData)
+                       void* callData)
 {
   if (vtkMRMLCameraDisplayableManager::SafeDownCast(caller))
   {

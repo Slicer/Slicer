@@ -33,7 +33,7 @@ vtkMRMLDiffusionTensorVolumeNode::vtkMRMLDiffusionTensorVolumeNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
+void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char* displayNodeID)
 {
   this->Superclass::SetAndObserveDisplayNodeID(displayNodeID);
   // Make sure the node added is a DiffusionTensorVolumeDisplayNode

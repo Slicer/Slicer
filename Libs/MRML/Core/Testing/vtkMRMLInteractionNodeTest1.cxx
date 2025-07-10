@@ -15,7 +15,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLInteractionNodeTest1(int , char * [] )
+int vtkMRMLInteractionNodeTest1(int, char*[])
 {
   vtkNew< vtkMRMLInteractionNode > node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -35,7 +35,7 @@ int vtkMRMLInteractionNodeTest1(int , char * [] )
 
   node1->NormalizeAllMouseModes();
 
-  const char *modeStr = node1->GetInteractionModeAsString();
+  const char* modeStr = node1->GetInteractionModeAsString();
   std::cout << "Interaction mode = " << (modeStr ? modeStr : "null") << std::endl;
   for (int m = 0; m < 9; m++)
   {

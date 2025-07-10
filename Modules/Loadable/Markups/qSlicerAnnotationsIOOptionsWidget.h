@@ -34,7 +34,7 @@ class qSlicerAnnotationsIOOptionsWidget :
 {
   Q_OBJECT
 public:
-  qSlicerAnnotationsIOOptionsWidget(QWidget *parent=nullptr);
+  qSlicerAnnotationsIOOptionsWidget(QWidget* parent=nullptr);
   ~qSlicerAnnotationsIOOptionsWidget() override;
 
   QButtonGroup* FileTypeButtonGroup;

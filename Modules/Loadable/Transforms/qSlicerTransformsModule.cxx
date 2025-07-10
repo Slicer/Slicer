@@ -122,7 +122,7 @@ QStringList qSlicerTransformsModule::contributors()const
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::setup()
 {
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (!app)
   {
     return;

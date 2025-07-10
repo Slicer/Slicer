@@ -57,14 +57,14 @@ public:
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Sets ImageData for background mask
   /// Must be reimplemented in deriving class if they need it.
   /// GetBackgroundImageStencilDataConnection() returns 0 if the background image data
   /// is not used.
-  virtual void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput * imageDataConnection);
+  virtual void SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* imageDataConnection);
   virtual vtkAlgorithmOutput* GetBackgroundImageStencilDataConnection();
   virtual vtkImageStencilData* GetBackgroundImageStencilData();
 
@@ -85,7 +85,7 @@ public:
   /// Filters can be applied to the input image data. The output image data
   /// is the one used by the mappers.
   /// It internally calls SetInputImageDataPipeline that can be reimplemented.
-  virtual void SetInputImageDataConnection(vtkAlgorithmOutput *imageDataConnection);
+  virtual void SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection);
   virtual vtkAlgorithmOutput* GetInputImageDataConnection();
 
   /// Gets the pipeline input. To be reimplemented in subclasses.
@@ -118,7 +118,7 @@ protected:
   vtkMRMLVolumeDisplayNode(const vtkMRMLVolumeDisplayNode&);
   void operator=(const vtkMRMLVolumeDisplayNode&);
 
-  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection);
+  virtual void SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection);
 };
 
 #endif

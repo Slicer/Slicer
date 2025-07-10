@@ -78,7 +78,7 @@ vtkSlicerLineRepresentation2D::vtkSlicerLineRepresentation2D()
 vtkSlicerLineRepresentation2D::~vtkSlicerLineRepresentation2D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -166,7 +166,7 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 //----------------------------------------------------------------------
 void vtkSlicerLineRepresentation2D::CanInteract(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
@@ -186,21 +186,21 @@ void vtkSlicerLineRepresentation2D::CanInteract(
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation2D::GetActors(vtkPropCollection *pc)
+void vtkSlicerLineRepresentation2D::GetActors(vtkPropCollection* pc)
 {
   this->LineActor->GetActors(pc);
   this->Superclass::GetActors(pc);
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerLineRepresentation2D::ReleaseGraphicsResources(vtkWindow *win)
+void vtkSlicerLineRepresentation2D::ReleaseGraphicsResources(vtkWindow* win)
 {
   this->LineActor->ReleaseGraphicsResources(win);
   this->Superclass::ReleaseGraphicsResources(win);
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
   int count=0;
   if (this->LineActor->GetVisibility())
@@ -212,7 +212,7 @@ int vtkSlicerLineRepresentation2D::RenderOverlay(vtkViewport *viewport)
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerLineRepresentation2D::RenderOpaqueGeometry(vtkViewport *viewport)
+int vtkSlicerLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
   int count=0;
   if (this->LineActor->GetVisibility())
@@ -224,7 +224,7 @@ int vtkSlicerLineRepresentation2D::RenderOpaqueGeometry(vtkViewport *viewport)
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport *viewport)
+int vtkSlicerLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
   int count=0;
   if (this->LineActor->GetVisibility())
@@ -250,7 +250,7 @@ vtkTypeBool vtkSlicerLineRepresentation2D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerLineRepresentation2D::GetBounds()
+double* vtkSlicerLineRepresentation2D::GetBounds()
 {
   return nullptr;
 }
@@ -271,7 +271,7 @@ void vtkSlicerLineRepresentation2D::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerLineRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode *markupsNode)
+void vtkSlicerLineRepresentation2D::SetMarkupsNode(vtkMRMLMarkupsNode* markupsNode)
 {
   if (this->MarkupsNode != markupsNode)
   {

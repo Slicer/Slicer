@@ -36,7 +36,7 @@ class Q_SLICER_QTMODULES_TEMPLATEKEY_EXPORT qSlicerTemplateKeyModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerTemplateKeyModule(QObject *parent=nullptr);
+  explicit qSlicerTemplateKeyModule(QObject* parent=nullptr);
   ~qSlicerTemplateKeyModule() override;
 
   qSlicerGetTitleMacro(tr("TemplateKey"));

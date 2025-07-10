@@ -68,13 +68,13 @@ public:
 
   /// Set the representation.
   /// The widget takes over the ownership of this actor.
-  virtual void SetRepresentation(vtkMRMLAbstractWidgetRepresentation *r);
+  virtual void SetRepresentation(vtkMRMLAbstractWidgetRepresentation* r);
 
   /// Get the representation
-  virtual vtkMRMLAbstractWidgetRepresentation *GetRepresentation();
+  virtual vtkMRMLAbstractWidgetRepresentation* GetRepresentation();
 
   /// Build the actors of the representation with the info stored in the MRML scene
-  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr);
+  virtual void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr);
 
   /// Convenient method to change what state the widget is in.
   vtkSetMacro(WidgetState,int);
@@ -127,7 +127,7 @@ public:
   /// Return true if the widget can process the event.
   /// Distance2 is the squared distance in display coordinates from the closest interaction position.
   /// The displayable manager with the closest distance will get the chance to process the interaction event.
-  virtual bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2);
+  virtual bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2);
 
   /// Allows injecting interaction events for processing, without directly observing window interactor events.
   /// Return true if the widget processed the event.

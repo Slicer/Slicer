@@ -28,7 +28,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLPlotSeriesNodeTest1(int , char * [] )
+int vtkMRMLPlotSeriesNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLPlotSeriesNode> plotSeriesNode;

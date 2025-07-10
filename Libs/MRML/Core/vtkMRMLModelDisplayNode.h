@@ -36,7 +36,7 @@ class vtkUnstructuredGrid;
 class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-  static vtkMRMLModelDisplayNode *New();
+  static vtkMRMLModelDisplayNode* New();
   vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -106,7 +106,7 @@ public:
   /// are removed, therefore if a GUI or other component observes the mesh, then it will detect that
   /// the scalar is deleted and so it may deactivate the selected scalar.
   /// \sa SetActiveAttributeLocation()
-  void SetActiveScalarName(const char *scalarName) override;
+  void SetActiveScalarName(const char* scalarName) override;
 
   /// Reimplemented to update pipeline with new value
   /// \sa SetActiveScalarName()
@@ -151,7 +151,7 @@ public:
   /// Model that is projected to the slice will be colored based on the
   /// projected point distance from the slice.
   /// \sa GetDistanceEncodedProjectionColorNodeID(), GetDistanceEncodedProjectionColorNode()
-  virtual void SetAndObserveDistanceEncodedProjectionColorNodeID(const char *colorNodeID);
+  virtual void SetAndObserveDistanceEncodedProjectionColorNodeID(const char* colorNodeID);
   /// Get color node for distance encoded slice projection.
   /// \sa SetDistanceEncodedProjectionColorNodeID(), SetDistanceEncodedProjectionColorNode()
   virtual const char* GetDistanceEncodedProjectionColorNodeID();
@@ -188,9 +188,9 @@ protected:
   vtkMRMLModelDisplayNode(const vtkMRMLModelDisplayNode&);
   void operator=(const vtkMRMLModelDisplayNode&);
 
-  void ProcessMRMLEvents(vtkObject *caller,
+  void ProcessMRMLEvents(vtkObject* caller,
                                  unsigned long event,
-                                 void *callData) override;
+                                 void* callData) override;
 
   /// To be reimplemented in subclasses if the input of the pipeline changes
   virtual void SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection);

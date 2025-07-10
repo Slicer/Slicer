@@ -71,7 +71,7 @@ public slots:
   void resetSliceViewSize();
   void endProcessing();
   /// Set the image data to the slice view
-  void setImageDataConnection(vtkAlgorithmOutput * imageDataConnection);
+  void setImageDataConnection(vtkAlgorithmOutput* imageDataConnection);
 };
 
 #endif

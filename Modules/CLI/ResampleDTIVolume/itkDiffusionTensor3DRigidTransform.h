@@ -52,7 +52,7 @@ public:
 
   itkNewMacro( Self );
   // /Set the 3x3 rotation matrix
-  void SetMatrix3x3( MatrixTransformType & matrix ) override;
+  void SetMatrix3x3( MatrixTransformType& matrix ) override;
 
   void DisablePrecision();
 
@@ -60,7 +60,7 @@ public:
 protected:
   DiffusionTensor3DRigidTransform();
   bool m_PrecisionChecking;
-  double GetDet( MatrixTransformType & matrix );
+  double GetDet( MatrixTransformType& matrix );
 
   void PreCompute() override;
 

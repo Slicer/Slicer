@@ -23,7 +23,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
+int vtkMRMLDisplayableHierarchyLogicTest1(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
   vtkMRMLDisplayableHierarchyLogic* displayableHierarchyLogic = vtkMRMLDisplayableHierarchyLogic::New();
@@ -33,7 +33,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
 
   // test null pointers
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  char *id = displayableHierarchyLogic->AddDisplayableHierarchyNodeForNode(nullptr);
+  char* id = displayableHierarchyLogic->AddDisplayableHierarchyNodeForNode(nullptr);
   if (id != nullptr)
   {
     std::cerr << "AddDisplayableHierarchyNodeForNode did not return null for a null node" << std::endl;
@@ -51,9 +51,9 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   // make a couple of nodes
-  vtkMRMLModelNode *m1 = vtkMRMLModelNode::New();
+  vtkMRMLModelNode* m1 = vtkMRMLModelNode::New();
   scene->AddNode(m1);
-  vtkMRMLModelNode *m2 = vtkMRMLModelNode::New();
+  vtkMRMLModelNode* m2 = vtkMRMLModelNode::New();
   scene->AddNode(m2);
 
   id = displayableHierarchyLogic->AddDisplayableHierarchyNodeForNode(m1);

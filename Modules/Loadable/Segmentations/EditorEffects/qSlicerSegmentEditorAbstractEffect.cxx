@@ -1666,7 +1666,7 @@ void qSlicerSegmentEditorAbstractEffect::scheduleRender(qMRMLWidget* viewWidget)
 double qSlicerSegmentEditorAbstractEffect::sliceSpacing(qMRMLSliceWidget* sliceWidget)
 {
   // Implementation copied from vtkMRMLSliceViewInteractorStyle::GetSliceSpacing()
-  vtkMRMLSliceNode *sliceNode = sliceWidget->sliceLogic()->GetSliceNode();
+  vtkMRMLSliceNode* sliceNode = sliceWidget->sliceLogic()->GetSliceNode();
   double spacing = 1.0;
   if (sliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::PrescribedSliceSpacingMode)
   {

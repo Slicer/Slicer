@@ -49,7 +49,7 @@ void vtkMRMLAbstractLayoutNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, LabelText, ID
-void vtkMRMLAbstractLayoutNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAbstractLayoutNode::Copy(vtkMRMLNode* anode)
 {
   //int disabledModify = this->StartModify();
 

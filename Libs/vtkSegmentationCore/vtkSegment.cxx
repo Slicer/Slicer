@@ -366,7 +366,7 @@ void vtkSegment::RemoveTag(std::string tag)
 }
 
 //---------------------------------------------------------------------------
-bool vtkSegment::GetTag(std::string tag, std::string &value)
+bool vtkSegment::GetTag(std::string tag, std::string& value)
 {
   std::map<std::string,std::string>::iterator tagIt = this->Tags.find(tag);
   if (tagIt == this->Tags.end())

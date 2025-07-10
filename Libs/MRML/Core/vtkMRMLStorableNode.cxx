@@ -60,19 +60,19 @@ const char* vtkMRMLStorableNode::GetStorageNodeReferenceMRMLAttributeName()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorableNode::SetAndObserveStorageNodeID(const char *storageNodeID)
+void vtkMRMLStorableNode::SetAndObserveStorageNodeID(const char* storageNodeID)
 {
   this->SetAndObserveNodeReferenceID(this->GetStorageNodeReferenceRole(), storageNodeID);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorableNode::AddAndObserveStorageNodeID(const char *storageNodeID)
+void vtkMRMLStorableNode::AddAndObserveStorageNodeID(const char* storageNodeID)
 {
   this->AddAndObserveNodeReferenceID(this->GetStorageNodeReferenceRole(), storageNodeID);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorableNode::SetAndObserveNthStorageNodeID(int n, const char *storageNodeID)
+void vtkMRMLStorableNode::SetAndObserveNthStorageNodeID(int n, const char* storageNodeID)
 {
   this->SetAndObserveNthNodeReferenceID(this->GetStorageNodeReferenceRole(), n, storageNodeID);
 }
@@ -84,7 +84,7 @@ bool vtkMRMLStorableNode::HasStorageNodeID(const char* storageNodeID)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStorableNode::SetSlicerDataType ( const char *type )
+void vtkMRMLStorableNode::SetSlicerDataType ( const char* type )
 {
   this->SlicerDataType.clear();
   this->SlicerDataType = type;
@@ -134,7 +134,7 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
     ss.clear();
     ss.str ( "" );
     int numc = this->GetUserTagTable()->GetNumberOfTags();
-    const char *kwd, *val;
+    const char* kwd, *val;
     for (int i=0; i < numc; i++ )
     {
       kwd = this->GetUserTagTable()->GetTagAttribute(i);
@@ -210,7 +210,7 @@ void vtkMRMLStorableNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLStorableNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLStorableNode *node = (vtkMRMLStorableNode *) anode;
+  vtkMRMLStorableNode* node = (vtkMRMLStorableNode*) anode;
   if (!node)
   {
     return;
@@ -225,7 +225,7 @@ void vtkMRMLStorableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
-  vtkMRMLStorableNode *node = (vtkMRMLStorableNode *) anode;
+  vtkMRMLStorableNode* node = (vtkMRMLStorableNode*) anode;
   if (!node)
   {
     return;
@@ -244,7 +244,7 @@ void vtkMRMLStorableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/
 
     //--- copy.
     int numc = node->GetUserTagTable()->GetNumberOfTags();
-    const char *kwd, *val;
+    const char* kwd, *val;
     int sel;
     for ( int j=0; j < numc; j++ )
     {
@@ -276,7 +276,7 @@ void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
 
   for (int i=0; i < numStorageNodes; i++)
   {
-    const char * id = this->GetNthNodeReferenceID(this->GetStorageNodeReferenceRole(), i);
+    const char* id = this->GetNthNodeReferenceID(this->GetStorageNodeReferenceRole(), i);
     os << indent << "StorageNodeIDs[" << i << "]: " <<
       (id ? id : "(none)") << "\n";
   }
@@ -284,7 +284,7 @@ void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //-----------------------------------------------------------
-void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 
@@ -300,7 +300,7 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
   for (int i=0; i < numStorageNodes; i++)
   {
     vtkDebugMacro("UpdateScene: getting storage node at i = " << i);
-    vtkMRMLStorageNode *pnode = this->GetNthStorageNode(i);
+    vtkMRMLStorageNode* pnode = this->GetNthStorageNode(i);
 
     std::string fname = std::string("(null)");
     if (pnode)
@@ -371,9 +371,9 @@ vtkMRMLStorageNode* vtkMRMLStorableNode::GetStorageNode()
 */
 
 //---------------------------------------------------------------------------
-void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject* caller,
                                            unsigned long event,
-                                           void *callData )
+                                           void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -381,7 +381,7 @@ void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject *caller,
 
   for (int i=0; i<numStorageNodes; i++)
   {
-    vtkMRMLStorageNode *dnode = this->GetNthStorageNode(i);
+    vtkMRMLStorageNode* dnode = this->GetNthStorageNode(i);
     if (dnode != nullptr && dnode == vtkMRMLStorageNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
@@ -420,7 +420,7 @@ vtkTimeStamp vtkMRMLStorableNode::GetStoredTime()
 
   for (int i = 0; i < numStorageNodes; ++i)
   {
-    vtkMRMLStorageNode *dnode = this->GetNthStorageNode(i);
+    vtkMRMLStorageNode* dnode = this->GetNthStorageNode(i);
     if (dnode != nullptr && storedTime < dnode->GetStoredTime())
     {
       storedTime = dnode->GetStoredTime();

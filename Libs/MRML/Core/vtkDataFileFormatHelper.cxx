@@ -133,7 +133,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   typedef std::vector< std::string >              ArrayOfITKExtensionsType;
 #endif
 
-//  std::map< std::string, ITKImageFileFormat >    itkWriteFormatsMap;
+//  std::map<std::string, ITKImageFileFormat >    itkWriteFormatsMap;
   typedef itk::ImageIOBase                        IOBaseType;
   typedef std::list<itk::LightObject::Pointer>    ArrayOfImageIOType;
   ArrayOfImageIOType allobjects = itk::ObjectFactoryBase::CreateAllInstance("itkImageIOBase");
@@ -141,7 +141,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   ArrayOfImageIOType::iterator itr = allobjects.begin();
   while( itr != allobjects.end() )
   {
-    IOBaseType * io = dynamic_cast< IOBaseType * >( itr->GetPointer() );
+    IOBaseType* io = dynamic_cast< IOBaseType*>( itr->GetPointer() );
     if( ! io )
     {
       continue;
@@ -152,7 +152,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
       std::string ioClassName = io->GetNameOfClass();
       ITKIOClassNames.insert(ioClassName);
 #else
-      const ArrayOfITKExtensionsType & writeExtensions = io->GetSupportedWriteExtensions();
+      const ArrayOfITKExtensionsType& writeExtensions = io->GetSupportedWriteExtensions();
       ArrayOfITKExtensionsType::const_iterator writeItr = writeExtensions.begin();
 
       while( writeItr != writeExtensions.end() )

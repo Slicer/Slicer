@@ -426,9 +426,9 @@ vtkSlicerVolumesLogic::vtkSlicerVolumesLogic()
 vtkSlicerVolumesLogic::~vtkSlicerVolumesLogic() = default;
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::ProcessMRMLNodesEvents(vtkObject *vtkNotUsed(caller),
+void vtkSlicerVolumesLogic::ProcessMRMLNodesEvents(vtkObject* vtkNotUsed(caller),
                                             unsigned long event,
-                                            void *callData)
+                                            void* callData)
 {
   if (event ==  vtkCommand::ProgressEvent)
   {
@@ -438,7 +438,7 @@ void vtkSlicerVolumesLogic::ProcessMRMLNodesEvents(vtkObject *vtkNotUsed(caller)
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic
-::SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode * displayNode,
+::SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode* displayNode,
                                   int labelMap, const char* vtkNotUsed(filename))
 {
   if (displayNode->GetColorNodeID())
@@ -464,7 +464,7 @@ void vtkSlicerVolumesLogic
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::InitializeStorageNode(
-  vtkMRMLStorageNode * storageNode, const char * filename, vtkStringArray *fileList, vtkMRMLScene * mrmlScene)
+  vtkMRMLStorageNode* storageNode, const char* filename, vtkStringArray* fileList, vtkMRMLScene* mrmlScene)
 {
   bool useURI = false;
 
@@ -520,14 +520,14 @@ void vtkSlicerVolumesLogic::InitializeStorageNode(
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume(
     const char* filename, const char* volname,
-    int loadingOptions, vtkStringArray *fileList)
+    int loadingOptions, vtkStringArray* fileList)
 {
   return this->AddArchetypeVolume(this->VolumeRegistry, filename, volname, loadingOptions, fileList);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume(
-    const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList)
+    const char* filename, const char* volname, int loadingOptions, vtkStringArray* fileList)
 {
   NodeSetFactoryRegistry nodeSetFactoryRegistry;
   nodeSetFactoryRegistry.push_back(&ScalarVolumeNodeSetFactory);
@@ -545,7 +545,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume(
 vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
     const NodeSetFactoryRegistry& volumeRegistry,
     const char* filename, const char* volname, int loadingOptions,
-    vtkStringArray *fileList)
+    vtkStringArray* fileList)
 {
   if (this->GetMRMLScene() == nullptr)
   {
@@ -691,17 +691,17 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode *volumeNode)
+int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode* volumeNode)
 {
   if (volumeNode == nullptr || filename == nullptr)
   {
     return 0;
   }
 
-  vtkMRMLNRRDStorageNode *storageNode1 = nullptr;
-  vtkMRMLVolumeArchetypeStorageNode *storageNode2 = nullptr;
-  vtkMRMLStorageNode *storageNode = nullptr;
-  vtkMRMLStorageNode *snode = volumeNode->GetStorageNode();
+  vtkMRMLNRRDStorageNode* storageNode1 = nullptr;
+  vtkMRMLVolumeArchetypeStorageNode* storageNode2 = nullptr;
+  vtkMRMLStorageNode* storageNode = nullptr;
+  vtkMRMLStorageNode* snode = volumeNode->GetStorageNode();
 
   if (snode != nullptr)
   {
@@ -769,16 +769,16 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
 
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeNode* vtkSlicerVolumesLogic
-::CreateAndAddLabelVolume(vtkMRMLVolumeNode *volumeNode, const char *name)
+::CreateAndAddLabelVolume(vtkMRMLVolumeNode* volumeNode, const char* name)
 {
   return this->CreateAndAddLabelVolume(this->GetMRMLScene(), volumeNode, name);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeNode *
-vtkSlicerVolumesLogic::CreateAndAddLabelVolume(vtkMRMLScene *scene,
-                                               vtkMRMLVolumeNode *volumeNode,
-                                               const char *name)
+vtkSlicerVolumesLogic::CreateAndAddLabelVolume(vtkMRMLScene* scene,
+                                               vtkMRMLVolumeNode* volumeNode,
+                                               const char* name)
 {
   if (scene == nullptr || volumeNode == nullptr || name == nullptr)
   {
@@ -801,8 +801,8 @@ vtkSlicerVolumesLogic::CreateAndAddLabelVolume(vtkMRMLScene *scene,
 
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeNode* vtkSlicerVolumesLogic
-::CreateLabelVolume(vtkMRMLVolumeNode *volumeNode,
-                    const char *name)
+::CreateLabelVolume(vtkMRMLVolumeNode* volumeNode,
+                    const char* name)
 {
   vtkWarningMacro("Deprecated, please use CreateAndAddLabelVolume instead");
   return this->CreateAndAddLabelVolume(volumeNode, name);
@@ -811,8 +811,8 @@ vtkMRMLLabelMapVolumeNode* vtkSlicerVolumesLogic
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeNode* vtkSlicerVolumesLogic
 ::CreateLabelVolume(vtkMRMLScene* scene,
-                    vtkMRMLVolumeNode *volumeNode,
-                    const char *name)
+                    vtkMRMLVolumeNode* volumeNode,
+                    const char* name)
 {
   vtkWarningMacro("Deprecated, please use CreateAndAddLabelVolume instead");
   return this->CreateAndAddLabelVolume(scene, volumeNode, name);
@@ -820,17 +820,17 @@ vtkMRMLLabelMapVolumeNode* vtkSlicerVolumesLogic
 
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeNode *
-vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLLabelMapVolumeNode *labelNode,
-                                                   vtkMRMLVolumeNode *templateNode)
+vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLLabelMapVolumeNode* labelNode,
+                                                   vtkMRMLVolumeNode* templateNode)
 {
   return Self::FillLabelVolumeFromTemplate(this->GetMRMLScene(), labelNode, templateNode);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeNode *
-vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
-                                                   vtkMRMLLabelMapVolumeNode *labelNode,
-                                                   vtkMRMLVolumeNode *templateNode)
+vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene* scene,
+                                                   vtkMRMLLabelMapVolumeNode* labelNode,
+                                                   vtkMRMLVolumeNode* templateNode)
 {
   this->CreateLabelVolumeFromVolume(scene, labelNode, templateNode);
 
@@ -842,9 +842,9 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
 
 //----------------------------------------------------------------------------
 vtkMRMLLabelMapVolumeNode*
-vtkSlicerVolumesLogic::CreateLabelVolumeFromVolume(vtkMRMLScene *scene,
-                                                   vtkMRMLLabelMapVolumeNode *outputVolume,
-                                                   vtkMRMLVolumeNode *inputVolume)
+vtkSlicerVolumesLogic::CreateLabelVolumeFromVolume(vtkMRMLScene* scene,
+                                                   vtkMRMLLabelMapVolumeNode* outputVolume,
+                                                   vtkMRMLVolumeNode* inputVolume)
 {
   if (scene == nullptr || outputVolume == nullptr || inputVolume == nullptr)
   {
@@ -885,7 +885,7 @@ vtkSlicerVolumesLogic::CreateLabelVolumeFromVolume(vtkMRMLScene *scene,
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::CreateScalarVolumeFromVolume(
-  vtkMRMLScene *scene, vtkMRMLScalarVolumeNode *outputVolume, vtkMRMLVolumeNode *inputVolume)
+  vtkMRMLScene* scene, vtkMRMLScalarVolumeNode* outputVolume, vtkMRMLVolumeNode* inputVolume)
 {
   if ( scene == nullptr || outputVolume == nullptr
     || inputVolume == nullptr || inputVolume->GetImageData() == nullptr )
@@ -918,7 +918,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::CreateScalarVolumeFromVolume(
 
 //----------------------------------------------------------------------------
 void
-vtkSlicerVolumesLogic::ClearVolumeImageData(vtkMRMLVolumeNode *volumeNode)
+vtkSlicerVolumesLogic::ClearVolumeImageData(vtkMRMLVolumeNode* volumeNode)
 {
   if (volumeNode == nullptr)
   {
@@ -942,8 +942,8 @@ vtkSlicerVolumesLogic::ClearVolumeImageData(vtkMRMLVolumeNode *volumeNode)
 
 //----------------------------------------------------------------------------
 std::string
-vtkSlicerVolumesLogic::CheckForLabelVolumeValidity(vtkMRMLScalarVolumeNode *volumeNode,
-                                                   vtkMRMLLabelMapVolumeNode *labelNode)
+vtkSlicerVolumesLogic::CheckForLabelVolumeValidity(vtkMRMLScalarVolumeNode* volumeNode,
+                                                   vtkMRMLLabelMapVolumeNode* labelNode)
 {
   std::stringstream warnings;
   warnings << "";
@@ -998,8 +998,8 @@ void vtkSlicerVolumesLogic::SetCompareVolumeGeometryEpsilon(double epsilon)
 
 //----------------------------------------------------------------------------
 std::string
-vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode1,
-                                             vtkMRMLScalarVolumeNode *volumeNode2)
+vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode* volumeNode1,
+                                             vtkMRMLScalarVolumeNode* volumeNode2)
 {
   std::stringstream warnings;
   if (!volumeNode1 || !volumeNode2)
@@ -1015,8 +1015,8 @@ vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode
   }
   else
   {
-    vtkImageData *volumeImage1 = volumeNode1->GetImageData();
-    vtkImageData *volumeImage2  = volumeNode2->GetImageData();
+    vtkImageData* volumeImage1 = volumeNode1->GetImageData();
+    vtkImageData* volumeImage2  = volumeNode2->GetImageData();
     if (!volumeImage1 || !volumeImage2)
     {
       if (!volumeImage1)
@@ -1033,7 +1033,7 @@ vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode
 
       // warning if one ID is set and not the other,
       // or if both are set but have different strings
-      const char *transformID1, *transformID2;
+      const char* transformID1, *transformID2;
       transformID1 = volumeNode1->GetTransformNodeID();
       transformID2 = volumeNode2->GetTransformNodeID();
       if ( transformID1 && transformID2 && !strcmp(transformID1,transformID2) )
@@ -1105,8 +1105,8 @@ vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode
         }
       }
 
-      vtkMatrix4x4 *volumeIJKToRAS1 = vtkMatrix4x4::New();
-      vtkMatrix4x4 *volumeIJKToRAS2 = vtkMatrix4x4::New();
+      vtkMatrix4x4* volumeIJKToRAS1 = vtkMatrix4x4::New();
+      vtkMatrix4x4* volumeIJKToRAS2 = vtkMatrix4x4::New();
       volumeNode1->GetIJKToRASMatrix(volumeIJKToRAS1);
       volumeNode2->GetIJKToRASMatrix(volumeIJKToRAS2);
       for (row = 0; row < 4; row++)
@@ -1133,7 +1133,7 @@ vtkSlicerVolumesLogic::CompareVolumeGeometry(vtkMRMLScalarVolumeNode *volumeNode
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode*
-vtkSlicerVolumesLogic::CloneVolume(vtkMRMLVolumeNode *volumeNode, const char *name)
+vtkSlicerVolumesLogic::CloneVolume(vtkMRMLVolumeNode* volumeNode, const char* name)
 {
   return Self::CloneVolume(this->GetMRMLScene(), volumeNode, name);
 }
@@ -1141,7 +1141,7 @@ vtkSlicerVolumesLogic::CloneVolume(vtkMRMLVolumeNode *volumeNode, const char *na
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode*
 vtkSlicerVolumesLogic::
-CloneVolume(vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name, bool cloneImageData/*=true*/)
+CloneVolume(vtkMRMLScene* scene, vtkMRMLVolumeNode* volumeNode, const char* name, bool cloneImageData/*=true*/)
 {
   return vtkMRMLScalarVolumeNode::SafeDownCast(vtkSlicerVolumesLogic::CloneVolumeGeneric(scene, volumeNode, name, cloneImageData));
 }
@@ -1149,7 +1149,7 @@ CloneVolume(vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode*
 vtkSlicerVolumesLogic::
-CloneVolumeGeneric (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name, bool cloneImageData/*=true*/)
+CloneVolumeGeneric (vtkMRMLScene* scene, vtkMRMLVolumeNode* volumeNode, const char* name, bool cloneImageData/*=true*/)
 {
   if ( scene == nullptr || volumeNode == nullptr )
   {
@@ -1227,7 +1227,7 @@ CloneVolumeGeneric (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const ch
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode*
 vtkSlicerVolumesLogic::
-CloneVolumeWithoutImageData(vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name)
+CloneVolumeWithoutImageData(vtkMRMLScene* scene, vtkMRMLVolumeNode* volumeNode, const char* name)
 {
   return vtkSlicerVolumesLogic::CloneVolume(scene, volumeNode, name, /*cloneImageData:*/ false );
 }
@@ -1267,8 +1267,8 @@ int vtkSlicerVolumesLogic::IsFreeSurferVolume (const char* filename)
 }
 
 //-------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode *VNode,
-                                                                       vtkMatrix4x4 *M )
+void vtkSlicerVolumesLogic::ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode* VNode,
+                                                                       vtkMatrix4x4* M )
 {
     double dC, dS, dR;
     double Nc, Ns, Nr;
@@ -1284,7 +1284,7 @@ void vtkSlicerVolumesLogic::ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode *VNode
       vtkErrorMacro("ComputeTkRegVox2RASMatrix: input matrix is null");
       return;
     }
-    double *spacing = VNode->GetSpacing();
+    double* spacing = VNode->GetSpacing();
     dC = spacing[0];
     dR = spacing[1];
     dS = spacing[2];
@@ -1330,13 +1330,13 @@ void vtkSlicerVolumesLogic
   origin[1] = 0.;
   origin[2] = 0.;
 
-  vtkImageData *imageData = volumeNode ? volumeNode->GetImageData() : nullptr;
+  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : nullptr;
   if (!imageData)
   {
     return;
   }
 
-  int *dims = imageData->GetDimensions();
+  int* dims = imageData->GetDimensions();
   double dimsH[4];
   dimsH[0] = dims[0] - 1;
   dimsH[1] = dims[1] - 1;
@@ -1354,10 +1354,10 @@ void vtkSlicerVolumesLogic
 }
 
 //-------------------------------------------------------------------------
-void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix( vtkMRMLVolumeNode *V1Node,
-                                                                       vtkMRMLVolumeNode *V2Node,
-                                                                       vtkMatrix4x4 *FSRegistrationMatrix,
-                                                                       vtkMatrix4x4 *RAS2RASMatrix)
+void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix( vtkMRMLVolumeNode* V1Node,
+                                                                       vtkMRMLVolumeNode* V2Node,
+                                                                       vtkMatrix4x4* FSRegistrationMatrix,
+                                                                       vtkMatrix4x4* RAS2RASMatrix)
 {
   if  ( V1Node  && V2Node && FSRegistrationMatrix  && RAS2RASMatrix )
   {

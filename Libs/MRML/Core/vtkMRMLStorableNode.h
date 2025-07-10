@@ -67,7 +67,7 @@ public:
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// alternative method to propagate events generated in Storage nodes
@@ -77,9 +77,9 @@ public:
 
   ///
   /// String ID of the storage MRML node
-  void SetAndObserveStorageNodeID(const char *storageNodeID);
-  void AddAndObserveStorageNodeID(const char *storageNodeID);
-  void SetAndObserveNthStorageNodeID(int n, const char *storageNodeID);
+  void SetAndObserveStorageNodeID(const char* storageNodeID);
+  void AddAndObserveStorageNodeID(const char* storageNodeID);
+  void SetAndObserveNthStorageNodeID(int n, const char* storageNodeID);
 
   ///
   /// Return true if storageNodeID is in the storage node ID list.
@@ -93,12 +93,12 @@ public:
   /// nodes are created. The method gets applied to any storable data that
   /// should be saved with, and loaded with the scene, including nodes that
   /// are hidden from editors like scalar overlays.
-  void SetSlicerDataType ( const char *type );
-  const char *GetSlicerDataType ();
+  void SetSlicerDataType ( const char* type );
+  const char* GetSlicerDataType ();
 
   int GetNumberOfStorageNodes();
-  const char *GetNthStorageNodeID(int n);
-  const char *GetStorageNodeID();
+  const char* GetNthStorageNodeID(int n);
+  const char* GetStorageNodeID();
 
   ///
   /// Get associated display MRML node
@@ -168,7 +168,7 @@ public:
   virtual const char* GetStorageNodeReferenceRole();
   virtual const char* GetStorageNodeReferenceMRMLAttributeName();
 
-  vtkTagTable *UserTagTable;
+  vtkTagTable* UserTagTable;
 
   ///
   /// SlicerDataType records the kind of storage node that

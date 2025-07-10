@@ -63,7 +63,7 @@ public:
   Q_INVOKABLE static int countVisibleViewNode(vtkMRMLScene* scene);
 
   /// Create Icon using the given color
-  Q_INVOKABLE static QPixmap createColorPixmap(QStyle * style, const QColor& color);
+  Q_INVOKABLE static QPixmap createColorPixmap(QStyle* style, const QColor& color);
 
   /// Convert vtkImageData to QImage
   Q_INVOKABLE static bool vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img);
@@ -72,10 +72,10 @@ public:
   Q_INVOKABLE static bool qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage);
 
   /// Convert C++ RGB array to QColor
-  Q_INVOKABLE static void colorToQColor(const double *color, QColor &qcolor);
+  Q_INVOKABLE static void colorToQColor(const double* color, QColor& qcolor);
 
   /// Convert QColor to C++ RGB array
-  Q_INVOKABLE static void qColorToColor(const QColor &qcolor, double* color);
+  Q_INVOKABLE static void qColorToColor(const QColor& qcolor, double* color);
 
   Q_INVOKABLE static void mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vtkIdList* idList);
 

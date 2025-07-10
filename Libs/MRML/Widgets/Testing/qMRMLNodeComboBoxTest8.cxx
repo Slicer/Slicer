@@ -57,7 +57,7 @@ bool checkActionCount(int line, qMRMLSceneModel* sceneModel, int expected)
 
 // --------------------------------------------------------------------------
 // test the adding of user menu actions
-int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
+int qMRMLNodeComboBoxTest8( int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -84,7 +84,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
 
   std::cout << "Before adding new actions size policy = " << nodeSelector.sizeAdjustPolicy() << std::endl;
 
-  qMRMLSceneModel *sceneModel = nodeSelector.sceneModel();
+  qMRMLSceneModel* sceneModel = nodeSelector.sceneModel();
 
   int startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
 
@@ -139,7 +139,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
   }
 
   // add a new action with duplicate text
-  QAction *action3 = new QAction("Action one", &nodeSelector);
+  QAction* action3 = new QAction("Action one", &nodeSelector);
   nodeSelector.addMenuAction(action3);
 
   actionsPlusOne  = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
@@ -156,7 +156,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
   }
 
   // add a valid action
-  QAction *action4 = new QAction("Another action text addition", &nodeSelector);
+  QAction* action4 = new QAction("Another action text addition", &nodeSelector);
   nodeSelector.addMenuAction(action4);
 
   int actionsPlusTwo  = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
@@ -246,7 +246,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
     startingActions = sceneModel->postItems(sceneModel->mrmlSceneItem()).size();
 
     QString actionName = QString("%1node using custom action").arg(actionPrefix);
-    QAction *action = new QAction(actionName, &nodeSelector);
+    QAction* action = new QAction(actionName, &nodeSelector);
     nodeSelector.addMenuAction(action);
 
     expected = startingActions + 1;
@@ -345,7 +345,7 @@ int qMRMLNodeComboBoxTest8( int argc, char * argv [] )
   nodeSelector2.setShowHidden(true);
   nodeSelector2.setMRMLScene(scene.GetPointer());
 
-  qMRMLSceneModel *sceneModel2 = nodeSelector2.sceneModel();
+  qMRMLSceneModel* sceneModel2 = nodeSelector2.sceneModel();
 
   QAction* action = new QAction("Rename current node using custom action", &nodeSelector2);
 

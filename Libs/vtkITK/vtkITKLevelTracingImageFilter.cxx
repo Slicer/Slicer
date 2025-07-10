@@ -45,10 +45,10 @@ vtkITKLevelTracingImageFilter::~vtkITKLevelTracingImageFilter() = default;
 
 
 template <class T>
-void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T* scalars,
+void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self), T* scalars,
                              int dims[3], int extent[6], double origin[3], double spacing[3],
-                             vtkPoints *newPoints,
-                             vtkCellArray *newPolys,
+                             vtkPoints* newPoints,
+                             vtkCellArray* newPolys,
                              int seed[3], int plane)
 {
 
@@ -143,7 +143,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
     return;
   }
 
-  vtkIdType * ptIds;
+  vtkIdType* ptIds;
   ptIds = new vtkIdType [numberChain];
 
   unsigned int i=0;
@@ -189,24 +189,24 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter *vtkNotUsed(self), T*
 // Contouring filter specialized for volumes and "short int" data values.
 //
 int vtkITKLevelTracingImageFilter::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
   // get the info objects
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkImageData *input = vtkImageData::SafeDownCast(
+  vtkImageData* input = vtkImageData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
+  vtkPolyData* output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkPoints *newPts;
-  vtkCellArray *newPolys;
-  vtkPointData *pd;
-  vtkDataArray *inScalars;
+  vtkPoints* newPts;
+  vtkCellArray* newPolys;
+  vtkPointData* pd;
+  vtkDataArray* inScalars;
   int dims[3], extent[6];
   int estimatedSize;
   double spacing[3], origin[3];
@@ -295,7 +295,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
     }
 
     vtkITKLevelTracingTrace(this,
-                            (unsigned char *)grayScalars->GetVoidPointer(0),
+                            (unsigned char*)grayScalars->GetVoidPointer(0),
                             dims, extent, origin, spacing,
                             newPts, newPolys, this->Seed, this->Plane);
   }
@@ -324,7 +324,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
 
 
 
-int vtkITKLevelTracingImageFilter::FillInputPortInformation(int, vtkInformation *info)
+int vtkITKLevelTracingImageFilter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
   return 1;

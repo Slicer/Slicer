@@ -28,7 +28,7 @@ qMRMLSegmentationFileExportWidgetPlugin::qMRMLSegmentationFileExportWidgetPlugin
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentationFileExportWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentationFileExportWidgetPlugin::createWidget(QWidget* parentWidget)
 {
   qMRMLSegmentationFileExportWidget* pluginWidget =
     new qMRMLSegmentationFileExportWidget(parentWidget);

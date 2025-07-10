@@ -39,7 +39,7 @@ public:
   {
     this->MRMLScene = nullptr;
   }
-  vtkMRMLScene * MRMLScene;
+  vtkMRMLScene* MRMLScene;
   QHash<QString, QString> BaseNames;
   QHash<QString, QString> Attributes;
 };

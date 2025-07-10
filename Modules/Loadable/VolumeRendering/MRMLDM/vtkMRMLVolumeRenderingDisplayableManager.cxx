@@ -207,7 +207,7 @@ public:
   // Transforms
   // Return with true if pipelines may have changed.
   // If node==nullptr then all pipelines are updated.
-  bool UpdatePipelineTransforms(vtkMRMLVolumeNode *node);
+  bool UpdatePipelineTransforms(vtkMRMLVolumeNode* node);
   bool GetVolumeTransformToWorld(vtkMRMLVolumeNode* node, vtkMatrix4x4* ijkToWorldMatrix, bool& ijkToWorldLinear);
 
   // ROIs
@@ -525,7 +525,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::AddVolumeNode(vtkMRM
 
   for (int i=0; i<numDisplayNodes; i++)
   {
-    vtkMRMLVolumeRenderingDisplayNode *displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
+    vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
     if (this->UseDisplayNode(displayNode))
     {
       this->AddDisplayNode(displayNode);
@@ -1793,7 +1793,7 @@ void vtkMRMLVolumeRenderingDisplayableManager::ProcessMRMLNodesEvents(vtkObject*
   {
     if (event == vtkMRMLDisplayableNode::DisplayModifiedEvent)
     {
-      vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode *> (callData);
+      vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*> (callData);
       vtkMRMLVolumeRenderingDisplayNode* displayNode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(callDataNode);
       if (displayNode)
       {

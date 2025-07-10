@@ -95,27 +95,27 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const override;
 
   /** Write the image information to the node and specified image */
-  virtual void WriteImageInformation(vtkMRMLVolumeNode *, vtkImageData*,
-                                     int *scalarType, int *numberOfScalarComponents);
+  virtual void WriteImageInformation(vtkMRMLVolumeNode*, vtkImageData*,
+                                     int* scalarType, int* numberOfScalarComponents);
 
   /** Take information in a Slicer node and transfer it the
    *  MetaDataDictionary in ITK */
   void SetDWDictionaryValues(MetaDataDictionary &dict,
-                             vtkMRMLDiffusionWeightedVolumeNode *dw);
+                             vtkMRMLDiffusionWeightedVolumeNode* dw);
 
   /** Take information in a Slicer node and transfer it the
    *  MetaDataDictionary in ITK */
   void SetDTDictionaryValues(MetaDataDictionary &dict,
-                             vtkMRMLDiffusionImageVolumeNode *di);
+                             vtkMRMLDiffusionImageVolumeNode* di);
 
   /** Take information from the MetaDataDictionary that is needed to
    *  transfer this volume to a Slicer node */
-  void SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode *dw,
+  void SetDWNodeValues(vtkMRMLDiffusionWeightedVolumeNode* dw,
                        MetaDataDictionary &dict);
 
   /** Take information from the MetaDataDictionary that is needed to
    *  transfer this volume to a Slicer node */
-  void SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode *di,
+  void SetDTNodeValues(vtkMRMLDiffusionImageVolumeNode* di,
                        MetaDataDictionary &dict);
 
   void RequestModified(vtkMRMLNode* modifiedObject);

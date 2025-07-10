@@ -37,12 +37,12 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractThreeDViewDisplayableMan
 {
 public:
 
-  static vtkMRMLAbstractThreeDViewDisplayableManager *New();
+  static vtkMRMLAbstractThreeDViewDisplayableManager* New();
   void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkTypeMacro(vtkMRMLAbstractThreeDViewDisplayableManager, vtkMRMLAbstractDisplayableManager);
 
   /// Get MRML ViewNode
-  vtkMRMLViewNode * GetMRMLViewNode();
+  vtkMRMLViewNode* GetMRMLViewNode();
 
 
   /// Find display node managed by the displayable manager at a specified world RAS position.

@@ -142,13 +142,13 @@ void qSlicerMarkupsSettingsPanel
     }
 
 
-  double *unselectedColor = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeColor();
+  double* unselectedColor = d->MarkupsLogic->GetDefaultMarkupsDisplayNodeColor();
   QObject::connect(d->defaultUnselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                    this, SLOT(onDefaultUnselectedColorChanged(QColor)));
   QColor qcolor = QColor::fromRgbF(unselectedColor[0], unselectedColor[1], unselectedColor[2]);
   d->defaultUnselectedColorPickerButton->setColor(qcolor);
 
-  double *selectedColor =  d->MarkupsLogic->GetDefaultMarkupsDisplayNodeSelectedColor();
+  double* selectedColor =  d->MarkupsLogic->GetDefaultMarkupsDisplayNodeSelectedColor();
   QObject::connect(d->defaultSelectedColorPickerButton, SIGNAL(colorChanged(QColor)),
                    this, SLOT(onDefaultSelectedColorChanged(QColor)),Qt::UniqueConnection);
   qcolor = QColor::fromRgbF(selectedColor[0], selectedColor[1], selectedColor[2]);

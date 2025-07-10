@@ -347,7 +347,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(const char* filename,
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *modelNode,
+int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode* modelNode,
   int coordinateSystem/*=-1*/, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
 {
    if (modelNode == nullptr || filename == nullptr)
@@ -358,8 +358,8 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
      return 0;
    }
 
-  vtkMRMLModelStorageNode *storageNode = nullptr;
-  vtkMRMLStorageNode *snode = modelNode->GetStorageNode();
+  vtkMRMLModelStorageNode* storageNode = nullptr;
+  vtkMRMLStorageNode* snode = modelNode->GetStorageNode();
   if (snode != nullptr)
   {
     storageNode = vtkMRMLModelStorageNode::SafeDownCast(snode);
@@ -406,10 +406,10 @@ void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
-                                          vtkMRMLModelNode *modelNode,
+void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode* tnode,
+                                          vtkMRMLModelNode* modelNode,
                                           int transformNormals,
-                                          vtkMRMLModelNode *modelOut)
+                                          vtkMRMLModelNode* modelOut)
 {
   if (!modelNode || !modelOut || !tnode)
   {
@@ -421,9 +421,9 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
 
   poly->DeepCopy(modelNode->GetPolyData());
 
-  vtkMRMLTransformNode *mtnode = modelNode->GetParentTransformNode();
+  vtkMRMLTransformNode* mtnode = modelNode->GetParentTransformNode();
 
-  vtkAbstractTransform *transform = tnode->GetTransformToParent();
+  vtkAbstractTransform* transform = tnode->GetTransformToParent();
   modelOut->ApplyTransform(transform);
 
   if (transformNormals)
@@ -470,7 +470,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
   this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
   for (int i = 0; i < numModels; i++)
   {
-    vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLModelNode");
+    vtkMRMLNode* mrmlNode = this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLModelNode");
     // Exclude volume slice model nodes.
     // Exclude vtkMRMLModelNode subclasses by comparing classname.
     // Doing so will avoid updating annotation and fiber bundle node
@@ -480,7 +480,7 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
         && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode)
         && strcmp(mrmlNode->GetClassName(), "vtkMRMLModelNode") == 0)
     {
-      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
+      vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
       if (modelNode)
       {
         // have a "real" model node, set the display visibility
@@ -491,11 +491,11 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
     if (flag != 2 && mrmlNode != nullptr
         && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode) )
     {
-      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
+      vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
       int ndnodes = modelNode->GetNumberOfDisplayNodes();
       for (int i=0; i<ndnodes; i++)
       {
-        vtkMRMLDisplayNode *displayNode = modelNode->GetNthDisplayNode(i);
+        vtkMRMLDisplayNode* displayNode = modelNode->GetNthDisplayNode(i);
         if (displayNode && displayNode->IsShowModeDefault())
         {
           displayNode->SetVisibility(flag);

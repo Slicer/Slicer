@@ -423,9 +423,9 @@ OnMRMLNodeModified(vtkMRMLNode* node)
 
 //----------------------------------------------------------------------------
 void vtkMRMLThreeDReformatDisplayableManager::
-ProcessWidgetsEvents(vtkObject *caller,
+ProcessWidgetsEvents(vtkObject* caller,
                     unsigned long event,
-                    void *vtkNotUsed(callData))
+                    void* vtkNotUsed(callData))
 {
   vtkImplicitPlaneWidget2* planeWidget =
     vtkImplicitPlaneWidget2::SafeDownCast(caller);

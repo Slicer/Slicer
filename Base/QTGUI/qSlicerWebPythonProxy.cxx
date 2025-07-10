@@ -92,7 +92,7 @@ qSlicerWebPythonProxy::qSlicerWebPythonProxy(qSlicerWebPythonProxyPrivate* pimpl
 qSlicerWebPythonProxy::~qSlicerWebPythonProxy() = default;
 
 // --------------------------------------------------------------------------
-QString qSlicerWebPythonProxy::evalPython(const QString &python, int mode)
+QString qSlicerWebPythonProxy::evalPython(const QString& python, int mode)
 {
   Q_D(qSlicerWebPythonProxy);
 
@@ -117,7 +117,7 @@ QString qSlicerWebPythonProxy::evalPython(const QString &python, int mode)
 #ifdef Slicer_USE_PYTHONQT
   if (d->isPythonEvaluationAllowed())
   {
-    qSlicerPythonManager *pythonManager = qSlicerApplication::application()->pythonManager();
+    qSlicerPythonManager* pythonManager = qSlicerApplication::application()->pythonManager();
     result = pythonManager->executeString(python, executeStringMode).toString();
     if (this->verbose())
     {

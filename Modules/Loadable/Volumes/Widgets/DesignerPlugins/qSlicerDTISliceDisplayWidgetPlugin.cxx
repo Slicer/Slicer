@@ -20,15 +20,15 @@
 
 //------------------------------------------------------------------------------
 qSlicerDTISliceDisplayWidgetPlugin
-::qSlicerDTISliceDisplayWidgetPlugin(QObject *_parent)
+::qSlicerDTISliceDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 
 }
 
 //------------------------------------------------------------------------------
-QWidget *qSlicerDTISliceDisplayWidgetPlugin
-::createWidget(QWidget *_parent)
+QWidget* qSlicerDTISliceDisplayWidgetPlugin
+::createWidget(QWidget* _parent)
 {
   qSlicerDTISliceDisplayWidget* _widget
     = new qSlicerDTISliceDisplayWidget(_parent);

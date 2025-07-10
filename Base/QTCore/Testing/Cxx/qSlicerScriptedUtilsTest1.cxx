@@ -53,7 +53,7 @@ bool setModuleAttribute(int line,
 }
 
 //-----------------------------------------------------------------------------
-int qSlicerScriptedUtilsTest1(int, char * [] )
+int qSlicerScriptedUtilsTest1(int, char*[])
 {
   qSlicerCorePythonManager pythonManager;
   pythonManager.initialize();

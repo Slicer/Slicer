@@ -62,7 +62,7 @@ void qMRMLColorListViewPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-qMRMLColorListView::qMRMLColorListView(QWidget *_parent)
+qMRMLColorListView::qMRMLColorListView(QWidget* _parent)
   : QListView(_parent)
   , d_ptr(new qMRMLColorListViewPrivate(*this))
 {
@@ -122,7 +122,7 @@ bool qMRMLColorListView::showOnlyNamedColors()const
 }
 
 //------------------------------------------------------------------------------
-void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModelIndex &previous)
+void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModelIndex& previous)
 {
   if (current.isValid())
   {

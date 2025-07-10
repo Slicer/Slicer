@@ -137,7 +137,7 @@ public:
   Qt::Orientation sliceOffsetSliderOrientation() const;
 
 public slots:
-  void setMRMLScene(vtkMRMLScene * newScene) override;
+  void setMRMLScene(vtkMRMLScene* newScene) override;
 
   /// \sa qMRMLSliceControllerWidget::setMRMLSliceNode()
   /// \sa mrmlSliceNode()
@@ -164,7 +164,7 @@ signals:
   void nodeAboutToBeEdited(vtkMRMLNode* node);
 
 protected:
-  void showEvent(QShowEvent *) override;
+  void showEvent(QShowEvent*) override;
 
   QScopedPointer<qMRMLSliceWidgetPrivate> d_ptr;
 

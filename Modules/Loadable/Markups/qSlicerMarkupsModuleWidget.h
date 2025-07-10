@@ -44,7 +44,7 @@ class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerMarkupsModuleWidget(QWidget *parent=nullptr);
+  qSlicerMarkupsModuleWidget(QWidget* parent=nullptr);
   ~qSlicerMarkupsModuleWidget() override;
 
   /// Set up the GUI from mrml when entering
@@ -54,7 +54,7 @@ public:
   void exit() override;
 
   /// Get the logic in the proper class
-  vtkSlicerMarkupsLogic *markupsLogic();
+  vtkSlicerMarkupsLogic* markupsLogic();
 
   /// Refresh the gui from the currently active markup node as determined by
   /// the selection node
@@ -150,13 +150,13 @@ public slots:
 
   /// Update the selection node from the tree view
   void onActiveMarkupItemChanged(vtkIdType);
-  void onActiveMarkupMRMLNodeChanged(vtkMRMLNode *markupsNode);
+  void onActiveMarkupMRMLNodeChanged(vtkMRMLNode* markupsNode);
   /// Update the combo box from the selection node
   void onSelectionNodeActivePlaceNodeIDChanged();
 
   /// When the user clicks in the combo box to create a new markups node,
   /// make sure that a display node is added
-  void onActiveMarkupMRMLNodeAdded(vtkMRMLNode *markupsNode);
+  void onActiveMarkupMRMLNodeAdded(vtkMRMLNode* markupsNode);
 
   /// Create markups node by class.
   void onCreateMarkupByClass(const QString& className);
@@ -191,7 +191,7 @@ public slots:
   /// Provide a right click menu in the table
   void onRightClickActiveMarkupTableWidget(QPoint pos);
   /// Add the coordinates of the currently selected markups as strings to the given menu, then add a separator
-  void addSelectedCoordinatesToMenu(QMenu *menu);
+  void addSelectedCoordinatesToMenu(QMenu* menu);
   /// Jump slices action slot
   void onJumpSlicesActionTriggered();
   /// Refocus cameras action slot
@@ -200,7 +200,7 @@ public slots:
   /// Build a string list of the names of other nodes with the same
   /// class name as thisMarkup. Return an empty string list if no other
   /// markups in the scene
-  QStringList getOtherMarkupNames(vtkMRMLNode *thisMarkup);
+  QStringList getOtherMarkupNames(vtkMRMLNode* thisMarkup);
 
   void cutSelectedToClipboard();
   void copySelectedToClipboard();
@@ -209,11 +209,11 @@ public slots:
   /// Update table when markups node is modified
   void onActiveMarkupsNodeModifiedEvent();
   /// Update the table with the modified point information if the node is active
-  void onActiveMarkupsNodePointModifiedEvent(vtkObject *caller, void *callData);
+  void onActiveMarkupsNodePointModifiedEvent(vtkObject* caller, void* callData);
   /// Update the table with the new point information if the node is active
   void onActiveMarkupsNodePointAddedEvent();
   /// Update the table for the removed point if the node is active
-  void onActiveMarkupsNodePointRemovedEvent(vtkObject *caller, void *callData);
+  void onActiveMarkupsNodePointRemovedEvent(vtkObject* caller, void* callData);
   /// Update the display properties widgets when the display node is modified
   void onActiveMarkupsNodeDisplayModifiedEvent();
   /// Update the transform related elements of the gui when the transform node is modified

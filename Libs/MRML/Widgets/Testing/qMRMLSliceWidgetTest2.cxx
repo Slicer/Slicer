@@ -82,7 +82,7 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   return scalarNode.GetPointer();
 }
 
-int qMRMLSliceWidgetTest2(int argc, char * argv [] )
+int qMRMLSliceWidgetTest2(int argc, char* argv [] )
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -139,7 +139,7 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
                   << "vtkMRMLOrientationMarkerDisplayableManager"
                   << "vtkMRMLRulerDisplayableManager"
                   << "vtkMRMLScalarBarDisplayableManager";
-  qMRMLSliceView *sliceView = const_cast<qMRMLSliceView*>(sliceWidget.sliceView());
+  qMRMLSliceView* sliceView = const_cast<qMRMLSliceView*>(sliceWidget.sliceView());
   vtkNew<vtkCollection> collection;
   sliceView->getDisplayableManagers(collection.GetPointer());
   int numManagers = collection->GetNumberOfItems();
@@ -154,7 +154,7 @@ int qMRMLSliceWidgetTest2(int argc, char * argv [] )
   }
   for (int i = 0; i < numManagers; ++i)
   {
-    vtkMRMLAbstractDisplayableManager *sliceViewDM =
+    vtkMRMLAbstractDisplayableManager* sliceViewDM =
       vtkMRMLAbstractDisplayableManager::SafeDownCast(collection->GetItemAsObject(i));
     if (sliceViewDM)
     {

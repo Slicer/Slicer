@@ -38,23 +38,23 @@ typedef enum
 
 typedef union
 {
-  void *_void;
-  unsigned char *_byte;
-  short *_short;
-  int *_int;
-  float *_float;
-  double *_double;
+  void* _void;
+  unsigned char* _byte;
+  short* _short;
+  int* _int;
+  float* _float;
+  double* _double;
 } ipDataUnion;
 
 // memory allocation & handling
 size_t ipGetDataSize(const ipDataType type);
 
-void * ipAllocateData(const int size, const size_t elemsize);
+void* ipAllocateData(const int size, const size_t elemsize);
 
 // misc functions
 
 template <class T>
-inline void ipSwap(T *a, T *b)
+inline void ipSwap(T* a, T* b)
 {
   T temp = *a; *a = *b; *b = temp;
 
@@ -68,9 +68,9 @@ inline T sqr(T x)
 
 // thresholding operators
 template <class T>
-inline void ipUpperThreshold(T *data, const int size, const T threshold)
+inline void ipUpperThreshold(T* data, const int size, const T threshold)
 {
-  T *dp = data;
+  T* dp = data;
 
   for( int i = 0; i < size; i++, dp++ )
   {
@@ -82,9 +82,9 @@ inline void ipUpperThreshold(T *data, const int size, const T threshold)
 }
 
 template <class T>
-inline void ipLowerThreshold(T *data, const int size, const T threshold)
+inline void ipLowerThreshold(T* data, const int size, const T threshold)
 {
-  T *dp = data;
+  T* dp = data;
 
   for( int i = 0; i < size; i++, dp++ )
   {
@@ -96,9 +96,9 @@ inline void ipLowerThreshold(T *data, const int size, const T threshold)
 }
 
 template <class T>
-inline void ipUpperBinaryThreshold(T *data, const int size, const T threshold)
+inline void ipUpperBinaryThreshold(T* data, const int size, const T threshold)
 {
-  T *dp = data;
+  T* dp = data;
 
   for( int i = 0; i < size; i++, dp++ )
   {
@@ -107,9 +107,9 @@ inline void ipUpperBinaryThreshold(T *data, const int size, const T threshold)
 }
 
 template <class T>
-inline void ipLowerBinaryThreshold(T *data, const int size, const T threshold)
+inline void ipLowerBinaryThreshold(T* data, const int size, const T threshold)
 {
-  T *dp = data;
+  T* dp = data;
 
   for( int i = 0; i < size; i++, dp++ )
   {

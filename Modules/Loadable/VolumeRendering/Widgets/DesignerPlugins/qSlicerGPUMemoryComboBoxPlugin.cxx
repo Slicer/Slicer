@@ -22,13 +22,13 @@
 #include "qSlicerGPUMemoryComboBox.h"
 
 //-----------------------------------------------------------------------------
-qSlicerGPUMemoryComboBoxPlugin::qSlicerGPUMemoryComboBoxPlugin(QObject *objectParent)
+qSlicerGPUMemoryComboBoxPlugin::qSlicerGPUMemoryComboBoxPlugin(QObject* objectParent)
   : QObject(objectParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qSlicerGPUMemoryComboBoxPlugin::createWidget(QWidget *widgetParent)
+QWidget* qSlicerGPUMemoryComboBoxPlugin::createWidget(QWidget* widgetParent)
 {
   qSlicerGPUMemoryComboBox* newWidget = new qSlicerGPUMemoryComboBox(widgetParent);
   return newWidget;

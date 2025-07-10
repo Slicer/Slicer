@@ -36,7 +36,7 @@ public:
   };
 
   /// Create a new vtkMRMLVolumePropertyNode
-  static vtkMRMLVolumePropertyNode *New();
+  static vtkMRMLVolumePropertyNode* New();
   vtkTypeMacro(vtkMRMLVolumePropertyNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -105,7 +105,7 @@ public:
   /// Put parameters described in a string into an existing vtkPiecewiseFunction.
   /// To be used with GetPiecewiseFunctionString()
   /// \sa GetPiecewiseFunctionString(), GetPiecewiseFunctionFromString()
-  static inline void GetPiecewiseFunctionFromString(const char *str,
+  static inline void GetPiecewiseFunctionFromString(const char* str,
                                                     vtkPiecewiseFunction* result);
 
   /// Utility function:
@@ -113,7 +113,7 @@ public:
   /// vtkColorTransferFunction.
   /// To be used with GetColorTransferFunctionString()
   /// \sa GetColorTransferFunctionFromString()
-  static inline void GetColorTransferFunctionFromString(const char *str,
+  static inline void GetColorTransferFunctionFromString(const char* str,
                                                         vtkColorTransferFunction* result);
 
   /// Utility function:
@@ -124,7 +124,7 @@ public:
   /// Return the value or the nearest higher value if the value is equal
   /// to previousValue. Update previousValue with the new higher value.
   /// \sa NextHigher()
-  static double HigherAndUnique(double value, double & previousValue);
+  static double HigherAndUnique(double value, double& previousValue);
 
   /// Set effective range
   void SetEffectiveRange(double min, double max);
@@ -153,13 +153,13 @@ public:
 
   /// Copy only the parameter set (like volume properties, piecewise functions
   /// etc. as deep copy, but no references etc.)
-  void CopyParameterSet(vtkMRMLNode *node);
+  void CopyParameterSet(vtkMRMLNode* node);
 
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "VolumeProperty";}
 
   /// Reimplemented for internal reasons.
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
@@ -226,7 +226,7 @@ private:
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode
-::GetPiecewiseFunctionFromString(const char *str,
+::GetPiecewiseFunctionFromString(const char* str,
                                  vtkPiecewiseFunction* result)
 {
   vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(
@@ -235,7 +235,7 @@ void vtkMRMLVolumePropertyNode
 
 //---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode
-::GetColorTransferFunctionFromString(const char *str,
+::GetColorTransferFunctionFromString(const char* str,
                                      vtkColorTransferFunction* result)
 {
   vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(

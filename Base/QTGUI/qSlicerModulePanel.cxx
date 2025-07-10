@@ -93,7 +93,7 @@ void qSlicerModulePanel::setModule(const QString& moduleName)
   // we knew which module was active.
   qDebug() << "Switch to module: " << moduleName;
 
-  qSlicerAbstractCoreModule * module = nullptr;
+  qSlicerAbstractCoreModule* module = nullptr;
   if (!moduleName.isEmpty())
   {
     module = this->moduleManager()->module(moduleName);
@@ -211,7 +211,7 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractCoreModule* module)
 {
   Q_ASSERT(module);
 
-  qSlicerAbstractModuleWidget * moduleWidget =
+  qSlicerAbstractModuleWidget* moduleWidget =
     dynamic_cast<qSlicerAbstractModuleWidget*>(module->widgetRepresentation());
   Q_ASSERT(moduleWidget);
 
@@ -309,7 +309,7 @@ QSize qSlicerModulePanel::minimumSizeHint()const
 // qSlicerModulePanelPrivate methods
 
 //---------------------------------------------------------------------------
-void qSlicerModulePanelPrivate::setupUi(qSlicerWidget * widget)
+void qSlicerModulePanelPrivate::setupUi(qSlicerWidget* widget)
 {
   this->Ui_qSlicerModulePanel::setupUi(widget);
   this->HelpLabel->setOpenExternalLinks(true);

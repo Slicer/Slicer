@@ -37,7 +37,7 @@ private:
 
   /// This is the callback helper function that isolates the event broker from
   /// knowing about any particular scripting implementation of observations code.
-  static void eventBrokerScriptHandler(const char *script, void *clientData);
+  static void eventBrokerScriptHandler(const char* script, void* clientData);
 
 };
 

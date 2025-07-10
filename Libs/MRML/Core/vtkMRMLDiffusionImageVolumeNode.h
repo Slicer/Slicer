@@ -30,7 +30,7 @@ class vtkMRMLDiffusionWeightedVolumeNode;
 class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolumeNode
 {
   public:
-  static vtkMRMLDiffusionImageVolumeNode *New();
+  static vtkMRMLDiffusionImageVolumeNode* New();
   vtkTypeMacro(vtkMRMLDiffusionImageVolumeNode,vtkMRMLTensorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -85,11 +85,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
 
   ///
   /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char *oldID, const char *newID) override;
+  void UpdateReferenceID(const char* oldID, const char* newID) override;
 
    ///
   /// Finds the storage node and read the data
-  //void UpdateScene(vtkMRMLScene *scene);
+  //void UpdateScene(vtkMRMLScene* scene);
 
   ///
   /// Updates this node if it depends on other nodes
@@ -116,9 +116,9 @@ protected:
   vtkMRMLDiffusionImageVolumeNode(const vtkMRMLDiffusionImageVolumeNode&);
   void operator=(const vtkMRMLDiffusionImageVolumeNode&);
 
-  char *BaselineNodeID;
-  char *MaskNodeID;
-  char *DiffusionWeightedNodeID;
+  char* BaselineNodeID;
+  char* MaskNodeID;
+  char* DiffusionWeightedNodeID;
 
 };
 

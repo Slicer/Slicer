@@ -28,9 +28,9 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLExpandingWebViewPlugin
   Q_OBJECT
 
 public:
-  qMRMLExpandingWebViewPlugin(QObject *_parent = nullptr);
+  qMRMLExpandingWebViewPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;

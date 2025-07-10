@@ -26,7 +26,7 @@ class vtkMRMLTransformableNodeTestHelper1 : public vtkMRMLTransformableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLTransformableNodeTestHelper1 *New();
+  static vtkMRMLTransformableNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLTransformableNodeTestHelper1,vtkMRMLTransformableNode);
 
@@ -45,7 +45,7 @@ vtkStandardNewMacro(vtkMRMLTransformableNodeTestHelper1);
 int TestSetAndObserveTransformNodeID();
 
 //---------------------------------------------------------------------------
-int vtkMRMLTransformableNodeTest1(int , char * [] )
+int vtkMRMLTransformableNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLTransformableNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

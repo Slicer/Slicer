@@ -50,7 +50,7 @@ vtkStandardNewMacro(vtkITKImageThresholdCalculator);
 
 // helper function
 template <class TPixelType>
-void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkImageData *inputImage, double& computedThreshold)
+void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator* self, vtkImageData* inputImage, double& computedThreshold)
 {
   typedef itk::Image<TPixelType, 3> ImageType;
   typedef itk::Statistics::ImageToHistogramFilter<ImageType> HistogramGeneratorType;
@@ -103,7 +103,7 @@ void ITKComputeThresholdFromVTKImage(vtkITKImageThresholdCalculator *self, vtkIm
   {
     calculator->Update();
   }
-  catch (itk::ExceptionObject &err)
+  catch (itk::ExceptionObject& err)
   {
     vtkErrorWithObjectMacro(self, "Failed to compute threshold value using method " << self->GetMethodAsString(self->GetMethod())
       << ". Details: " << err);
@@ -134,7 +134,7 @@ void vtkITKImageThresholdCalculator::PrintSelf(ostream& os, vtkIndent indent)
 // Writes all the data from the input.
 void vtkITKImageThresholdCalculator::Update()
 {
-  vtkImageData *inputImage = this->GetImageDataInput(0);
+  vtkImageData* inputImage = this->GetImageDataInput(0);
   vtkPointData* pointData = nullptr;
   if (inputImage)
   {
@@ -178,7 +178,7 @@ void vtkITKImageThresholdCalculator::Update()
 }
 
 //----------------------------------------------------------------------------
-const char *vtkITKImageThresholdCalculator::GetMethodAsString(int method)
+const char* vtkITKImageThresholdCalculator::GetMethodAsString(int method)
 {
   switch (method)
   {

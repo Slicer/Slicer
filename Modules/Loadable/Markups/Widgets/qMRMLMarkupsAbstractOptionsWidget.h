@@ -68,7 +68,7 @@ public:
   /// Checks whether a given node can be handled by the widget. This allows
   /// using complex logics to determine whether the widget can manage a given
   /// markups node or not.
-  virtual bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const = 0;
+  virtual bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const = 0;
 
   /// Clone options widget . Override to return a new instance of the options widget
   virtual qMRMLMarkupsAbstractOptionsWidget* createInstance() const = 0;

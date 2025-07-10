@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerModelsModuleWidget : public qSlice
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerModelsModuleWidget(QWidget *parent=nullptr);
+  qSlicerModelsModuleWidget(QWidget* parent=nullptr);
   ~qSlicerModelsModuleWidget() override;
 
   void enter() override;

@@ -64,7 +64,7 @@ public:
 
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* newScene);
-  void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
+  void setActiveMRMLThreeDViewNode(vtkMRMLViewNode* newActiveMRMLThreeDViewNode);
 
   /// Set flag to time out pop ups, set from the qSlicerAppMainWindow according to the
   /// AA_EnableTesting attribute

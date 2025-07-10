@@ -40,7 +40,7 @@ public:
 
   typedef qSlicerLoadableModule Self;
   typedef qSlicerAbstractModule Superclass;
-  qSlicerLoadableModule(QObject *parent=nullptr);
+  qSlicerLoadableModule(QObject* parent=nullptr);
   ~qSlicerLoadableModule() override;
 
   /// Return help/acknowledgement text
@@ -64,20 +64,20 @@ public:
   /// if it applies.
   ///
   /// \sa qSlicerCoreApplication::intDir(), qSlicerCoreApplication::corePythonManager()
-  static bool importModulePythonExtensions(qSlicerCorePythonManager * pythonManager,
+  static bool importModulePythonExtensions(qSlicerCorePythonManager* pythonManager,
                                            const QString& intDir,
                                            const QString& modulePath,
                                            bool isEmbedded=false);
 
   /// Set \a module identified by \a moduleName has an attribute of "slicer.modules" module dictionary.
   /// qSlicerCoreApplication::corePythonManager()
-  static bool addModuleToSlicerModules(qSlicerCorePythonManager * pythonManager,
-                                       qSlicerAbstractModule *module,
+  static bool addModuleToSlicerModules(qSlicerCorePythonManager* pythonManager,
+                                       qSlicerAbstractModule* module,
                                        const QString& moduleName);
 
   /// Set \a moduleName has an attribute of "slicer.moduleNames" module dictionary.
   /// qSlicerCoreApplication::corePythonManager()
-  static bool addModuleNameToSlicerModuleNames(qSlicerCorePythonManager * pythonManager,
+  static bool addModuleNameToSlicerModuleNames(qSlicerCorePythonManager* pythonManager,
                                                const QString& moduleName);
 
 protected:

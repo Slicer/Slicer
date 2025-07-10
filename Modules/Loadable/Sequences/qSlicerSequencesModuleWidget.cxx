@@ -242,7 +242,7 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
   int numberOfDataNodes = sequenceNode->GetNumberOfDataNodes();
   this->ChartTable->SetNumberOfRows(numberOfDataNodes);
 
-  vtkMRMLScalarVolumeNode *vNode = vtkMRMLScalarVolumeNode::SafeDownCast(sequenceNode->GetNthDataNode(0));
+  vtkMRMLScalarVolumeNode* vNode = vtkMRMLScalarVolumeNode::SafeDownCast(sequenceNode->GetNthDataNode(0));
   if (vNode)
   {
     int numOfScalarComponents = 0;
@@ -253,7 +253,7 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
     }
     vtkNew<vtkGeneralTransform> worldTransform;
     worldTransform->Identity();
-    vtkMRMLTransformNode *transformNode = transformableProxyNode ? transformableProxyNode->GetParentTransformNode() : nullptr;
+    vtkMRMLTransformNode* transformNode = transformableProxyNode ? transformableProxyNode->GetParentTransformNode() : nullptr;
     if ( transformNode )
     {
       transformNode->GetTransformFromWorld(worldTransform.GetPointer());
@@ -273,7 +273,7 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
       worldToIjkTransform->Concatenate(rasToIjkMatrix.GetPointer());
       worldToIjkTransform->Concatenate(worldTransform.GetPointer());
 
-      double *crosshairPositionDouble_IJK = worldToIjkTransform->TransformDoublePoint(croshairPosition_RAS);
+      double* crosshairPositionDouble_IJK = worldToIjkTransform->TransformDoublePoint(croshairPosition_RAS);
       int croshairPosition_IJK[3]={vtkMath::Round(crosshairPositionDouble_IJK[0]),
         vtkMath::Round(crosshairPositionDouble_IJK[1]), vtkMath::Round(crosshairPositionDouble_IJK[2])};
       int* imageExtent = vNode->GetImageData()->GetExtent();
@@ -309,7 +309,7 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
     }
   }
 
-  vtkMRMLTransformNode *tNode = vtkMRMLTransformNode::SafeDownCast(sequenceNode->GetNthDataNode(0));
+  vtkMRMLTransformNode* tNode = vtkMRMLTransformNode::SafeDownCast(sequenceNode->GetNthDataNode(0));
   if (tNode)
   {
     for (int i = 0; i<numberOfDataNodes; i++)

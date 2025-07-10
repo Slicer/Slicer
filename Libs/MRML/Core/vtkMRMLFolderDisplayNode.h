@@ -54,7 +54,7 @@ class vtkMRMLDisplayableNode;
 class VTK_MRML_EXPORT vtkMRMLFolderDisplayNode : public vtkMRMLDisplayNode
 {
 public:
-  static vtkMRMLFolderDisplayNode *New();
+  static vtkMRMLFolderDisplayNode* New();
   vtkTypeMacro(vtkMRMLFolderDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -77,7 +77,7 @@ public:
   void SetScene(vtkMRMLScene* scene) override;
 
   /// Process events from the MRML scene
-  void ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents( vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Overridden to be able to call modified on branch if necessary
   void Modified() override;

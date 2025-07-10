@@ -32,7 +32,7 @@ void vtkMRMLAnnotationRulerStorageNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLAnnotationRulerStorageNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLAnnotationRulerStorageNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
 }
@@ -44,7 +44,7 @@ void vtkMRMLAnnotationRulerStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotationRulerNode *refNode, char line[1024],
+int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotationRulerNode* refNode, char line[1024],
                                    int typeColumn, int line1IDColumn, int selColumn,  int visColumn, int numColumns)
 {
   if (!refNode)
@@ -126,7 +126,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotation
 
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int &typeColumn,
+int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnnotationRulerNode* refNode, char line[1024], int& typeColumn,
                                      int& line1IDColumn, int& selColumn, int& visColumn, int& numColumns)
 {
   // cout << "vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties " << line << endl;
@@ -159,8 +159,8 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
       // reset all of them
       typeColumn= line1IDColumn = selColumn = visColumn = -1;
       numColumns = 0;
-      char *columns = (char *)str.c_str();
-      char *ptr = strtok(columns, "|");
+      char* columns = (char*)str.c_str();
+      char* ptr = strtok(columns, "|");
       while (ptr != nullptr)
       {
       if (strcmp(ptr, "type") == 0)
@@ -194,7 +194,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerProperties(vtkMRMLAnno
 
 //----------------------------------------------------------------------------
 // assumes that the node is already reset
-int vtkMRMLAnnotationRulerStorageNode::ReadAnnotation(vtkMRMLAnnotationRulerNode *refNode)
+int vtkMRMLAnnotationRulerStorageNode::ReadAnnotation(vtkMRMLAnnotationRulerNode* refNode)
 {
 
   if (refNode == nullptr)
@@ -261,10 +261,10 @@ bool vtkMRMLAnnotationRulerStorageNode::CanReadInReferenceNode(vtkMRMLNode* refN
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationRulerStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   // cast the input node
-  vtkMRMLAnnotationRulerNode *aNode =
+  vtkMRMLAnnotationRulerNode* aNode =
     vtkMRMLAnnotationRulerNode::SafeDownCast(refNode);
 
   if (aNode == nullptr)
@@ -287,7 +287,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::ReadOneRuler(fstream & fstr, vtkMRMLAnnotationRulerNode *refNode)
+int vtkMRMLAnnotationRulerStorageNode::ReadOneRuler(fstream & fstr, vtkMRMLAnnotationRulerNode* refNode)
 {
 
   if (refNode == nullptr)
@@ -315,7 +315,7 @@ int vtkMRMLAnnotationRulerStorageNode::ReadOneRuler(fstream & fstr, vtkMRMLAnnot
 
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerProperties(fstream& of, vtkMRMLAnnotationRulerNode *refNode)
+int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerProperties(fstream& of, vtkMRMLAnnotationRulerNode* refNode)
 {
    // put down a header
   if (refNode == nullptr)
@@ -332,7 +332,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerProperties(fstream& o
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vtkMRMLAnnotationRulerNode *refNode)
+int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vtkMRMLAnnotationRulerNode* refNode)
 {
   if (!refNode)
   {
@@ -347,7 +347,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vtk
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream& of)
+int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* refNode, fstream& of)
 {
 
   int retval = this->Superclass::WriteAnnotationDataInternal(refNode,of);
@@ -366,7 +366,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *
 
 
   // cast the input nod
-  vtkMRMLAnnotationRulerNode *aNode = dynamic_cast <vtkMRMLAnnotationRulerNode *> (refNode);
+  vtkMRMLAnnotationRulerNode* aNode = dynamic_cast <vtkMRMLAnnotationRulerNode*> (refNode);
 
   if (aNode == nullptr)
   {

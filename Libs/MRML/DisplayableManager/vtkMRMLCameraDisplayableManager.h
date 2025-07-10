@@ -51,7 +51,7 @@ public:
     ActiveCameraChangedEvent   = 30000
   };
 
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &closestDistance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2) override;
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
   vtkMRMLCameraWidget* GetCameraWidget();
@@ -70,12 +70,12 @@ protected:
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 
-  void ProcessMRMLNodesEvents(vtkObject *caller,
+  void ProcessMRMLNodesEvents(vtkObject* caller,
                                       unsigned long event,
-                                      void *callData) override;
+                                      void* callData) override;
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
 
-  void SetAndObserveCameraNode(vtkMRMLCameraNode * newCameraNode);
+  void SetAndObserveCameraNode(vtkMRMLCameraNode* newCameraNode);
   void AdditionalInitializeStep() override;
   void SetCameraToRenderer();
 
@@ -85,7 +85,7 @@ private:
   void operator=(const vtkMRMLCameraDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 
 };
 

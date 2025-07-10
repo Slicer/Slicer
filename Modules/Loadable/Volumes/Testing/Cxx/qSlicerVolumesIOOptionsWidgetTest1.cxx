@@ -39,7 +39,7 @@
 #include "qMRMLWidget.h"
 
 //-----------------------------------------------------------------------------
-int qSlicerVolumesIOOptionsWidgetTest1( int argc, char * argv[] )
+int qSlicerVolumesIOOptionsWidgetTest1( int argc, char* argv[] )
 {
   qMRMLWidget::preInitializeApplication();
   qSlicerApplication app(argc, argv);

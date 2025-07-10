@@ -83,7 +83,7 @@ protected:
   /// Check if file is an archive, and if so, give the user
   /// the option to unpack it and load the contents.
   /// Currently only zip files with the extension .zip are handled.
-  bool checkAndHandleArchive(const QFileInfo &file);
+  bool checkAndHandleArchive(const QFileInfo& file);
   /// A holder for the temporary directory so that it doesn't go out of scope before loading.
   QScopedPointer<QTemporaryDir> temporaryArchiveDirectory;
 private:

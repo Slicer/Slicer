@@ -40,7 +40,7 @@ class vtkMRMLTestLogic: public vtkMRMLAbstractLogic
 {
 public:
   vtkTypeMacro(vtkMRMLTestLogic, vtkMRMLAbstractLogic);
-  static vtkMRMLTestLogic *New();
+  static vtkMRMLTestLogic* New();
 
   void SetMRMLSceneInternal(vtkMRMLScene* scene) override;
   void UnobserveMRMLScene() override;
@@ -223,7 +223,7 @@ void vtkMRMLTestLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* nodeRemoved)
 
 //---------------------------------------------------------------------------
 int vtkMRMLAbstractLogicSceneEventsTest(
-  int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
+  int vtkNotUsed(argc), char* vtkNotUsed(argv)[] )
 {
   vtkNew<vtkMRMLScene> scene;
   vtkMRMLTestLogic* testLogic = vtkMRMLTestLogic::New();

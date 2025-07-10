@@ -47,15 +47,15 @@ void vtkMRMLSequenceStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLSequenceNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLSequenceNode *sequenceNode = dynamic_cast <vtkMRMLSequenceNode *> (refNode);
+  vtkMRMLSequenceNode* sequenceNode = dynamic_cast <vtkMRMLSequenceNode*> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -128,9 +128,9 @@ int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLSequenceNode *sequenceNode = vtkMRMLSequenceNode::SafeDownCast(refNode);
+  vtkMRMLSequenceNode* sequenceNode = vtkMRMLSequenceNode::SafeDownCast(refNode);
 
   // Custom nodes (such as vtkMRMLSceneView node) must be registered in the sequence scene,
   // otherwise we could not create default storage nodes.
@@ -158,7 +158,7 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   if (extension == ".mrb")
   {
     this->ForceUniqueDataNodeFileNames(sequenceNode); // Prevents storable nodes' files from being overwritten due to the same node name
-    vtkMRMLScene *sequenceScene=sequenceNode->GetSequenceScene();
+    vtkMRMLScene* sequenceScene=sequenceNode->GetSequenceScene();
 
     // Save sequence index information in the bundle file so that users can load
     // a sequence just from a .seq.mrb file

@@ -48,7 +48,7 @@ public:
   void updateWidgetFromMRML() override;
 
   /// Checks whether a given node can be handled by the widget
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *markupsNode) const override;
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
 
   /// Returns an instance of the widget
   qMRMLMarkupsAbstractOptionsWidget* createInstance() const override

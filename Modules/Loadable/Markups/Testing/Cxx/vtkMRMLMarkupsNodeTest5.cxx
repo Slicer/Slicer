@@ -171,7 +171,7 @@ void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsNodeTest5(int , char * [])
+int vtkMRMLMarkupsNodeTest5(int, char*[])
 {
   std::cout << "Testing vtkMRMLMarkupsROINode" << std::endl;
   vtkNew<vtkMRMLScene> scene;

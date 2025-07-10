@@ -116,9 +116,9 @@ void qSlicerDataModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerDataModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerDataModule::createWidgetRepresentation()
 {
-  qSlicerDataModuleWidget *widget = new qSlicerDataModuleWidget;
+  qSlicerDataModuleWidget* widget = new qSlicerDataModuleWidget;
   return widget;
 }
 

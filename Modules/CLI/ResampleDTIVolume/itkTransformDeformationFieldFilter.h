@@ -68,7 +68,7 @@ public:
 protected:
   TransformDeformationFieldFilter();
 
-  void DynamicThreadedGenerateData( const OutputImageRegionType & outputRegionForThread) override;
+  void DynamicThreadedGenerateData( const OutputImageRegionType& outputRegionForThread) override;
 
   void BeforeThreadedGenerateData() override;
 

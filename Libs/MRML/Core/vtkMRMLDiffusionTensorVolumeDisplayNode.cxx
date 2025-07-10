@@ -64,7 +64,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode
  this->ImageMath->SetConstantK(255);
 
  this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
- vtkSphereSource *sphere = vtkSphereSource::New();
+ vtkSphereSource* sphere = vtkSphereSource::New();
  this->DiffusionTensorGlyphFilter->SetSourceConnection( sphere->GetOutputPort() );
  sphere->Delete();
 
@@ -123,13 +123,13 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLDiffusionTensorVolumeDisplayNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLDiffusionTensorVolumeDisplayNode::Copy(vtkMRMLNode* anode)
 {
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLDiffusionTensorVolumeDisplayNode *node =
-    (vtkMRMLDiffusionTensorVolumeDisplayNode *) anode;
+  vtkMRMLDiffusionTensorVolumeDisplayNode* node =
+    (vtkMRMLDiffusionTensorVolumeDisplayNode*) anode;
   this->SetScalarInvariant(node->ScalarInvariant);
 
   this->EndModify(disabledModify);
@@ -146,13 +146,13 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
 
 //---------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode
-::ProcessMRMLEvents( vtkObject *caller, unsigned long event, void *callData )
+::ProcessMRMLEvents( vtkObject* caller, unsigned long event, void* callData )
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //-----------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
   this->Superclass::UpdateScene(scene);
 }
@@ -166,7 +166,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateReferences()
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode
-::UpdateReferenceID(const char *oldID, const char *newID)
+::UpdateReferenceID(const char* oldID, const char* newID)
 {
   this->Superclass::UpdateReferenceID(oldID, newID);
 }
@@ -229,7 +229,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
 
 //----------------------------------------------------------------------------
 void
-vtkMRMLDiffusionTensorVolumeDisplayNode::SetTensorRotationMatrix(vtkMatrix4x4 *rotationMatrix)
+vtkMRMLDiffusionTensorVolumeDisplayNode::SetTensorRotationMatrix(vtkMatrix4x4* rotationMatrix)
 {
   this->DTIMathematics->SetTensorRotationMatrix(rotationMatrix);
   this->DTIMathematicsAlpha->SetTensorRotationMatrix(rotationMatrix);
@@ -242,7 +242,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::GetSliceGlyphDisplayNodes(
 {
   std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes;
   int nnodes = volumeNode->GetNumberOfDisplayNodes();
-  vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node = nullptr;
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode* node = nullptr;
   for (int n=0; n<nnodes; n++)
   {
     node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast(
@@ -263,7 +263,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
     this->GetSliceGlyphDisplayNodes( volumeNode );
   if (nodes.size() == 0)
   {
-    vtkMRMLDiffusionTensorDisplayPropertiesNode *glyphDTDPN =
+    vtkMRMLDiffusionTensorDisplayPropertiesNode* glyphDTDPN =
       vtkMRMLDiffusionTensorDisplayPropertiesNode::New();
     this->GetScene()->AddNode(glyphDTDPN);
     int modifyState = glyphDTDPN->StartModify();
@@ -275,7 +275,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
     {
       if (this->GetScene())
       {
-        vtkMRMLDiffusionTensorVolumeSliceDisplayNode *node =
+        vtkMRMLDiffusionTensorVolumeSliceDisplayNode* node =
           vtkMRMLDiffusionTensorVolumeSliceDisplayNode::New();
         if (i == 0)
         {
@@ -311,7 +311,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
 
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeDisplayNode
-::SetInputToImageDataPipeline(vtkAlgorithmOutput *imageDataConnection)
+::SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection)
 {
   this->DTIMathematics->SetInputConnection(imageDataConnection);
   this->DTIMathematicsAlpha->SetInputConnection(imageDataConnection);

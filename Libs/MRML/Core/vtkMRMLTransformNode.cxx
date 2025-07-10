@@ -135,12 +135,12 @@ void vtkMRMLTransformNode::FlattenGeneralTransform(vtkCollection* outputTransfor
   // Write out all the transforms on the stack
   while (!tstack.empty())
   {
-    vtkAbstractTransform *transform = tstack.top();
+    vtkAbstractTransform* transform = tstack.top();
     tstack.pop();
     if (transform->IsA("vtkGeneralTransform"))
     {
       // Decompose general transforms
-      vtkGeneralTransform *gtrans = (vtkGeneralTransform *)transform;
+      vtkGeneralTransform* gtrans = (vtkGeneralTransform*)transform;
       gtrans->Update();
       int n = gtrans->GetNumberOfConcatenatedTransforms();
       while (n > 0)
@@ -1113,14 +1113,14 @@ vtkAbstractTransform* vtkMRMLTransformNode::GetAbstractTransformAs(vtkAbstractTr
 vtkAbstractTransform* vtkMRMLTransformNode::GetTransformToParentAs(const char* transformClassName,
   bool logErrorIfFails/* =true */, bool modifiableOnly/* =false */)
 {
-  vtkAbstractTransform *transform = nullptr;
+  vtkAbstractTransform* transform = nullptr;
   if (this->TransformToParent)
   {
     transform = GetAbstractTransformAs(this->TransformToParent, transformClassName, logErrorIfFails);
   }
   else if (this->TransformFromParent)
   {
-    vtkAbstractTransform *inverseTransform = GetAbstractTransformAs(this->TransformFromParent, transformClassName, logErrorIfFails);
+    vtkAbstractTransform* inverseTransform = GetAbstractTransformAs(this->TransformFromParent, transformClassName, logErrorIfFails);
     if (inverseTransform != nullptr)
     {
       transform = inverseTransform->GetInverse();
@@ -1145,14 +1145,14 @@ vtkAbstractTransform* vtkMRMLTransformNode::GetTransformToParentAs(const char* t
 vtkAbstractTransform* vtkMRMLTransformNode::GetTransformFromParentAs(const char* transformClassName,
   bool logErrorIfFails/* =true */, bool modifiableOnly/* =false */)
 {
-  vtkAbstractTransform *transform = nullptr;
+  vtkAbstractTransform* transform = nullptr;
   if (this->TransformFromParent)
   {
     transform = GetAbstractTransformAs(this->TransformFromParent, transformClassName, logErrorIfFails);
   }
   else if (this->TransformToParent)
   {
-    vtkAbstractTransform *inverseTransform = GetAbstractTransformAs(this->TransformToParent, transformClassName, logErrorIfFails);
+    vtkAbstractTransform* inverseTransform = GetAbstractTransformAs(this->TransformToParent, transformClassName, logErrorIfFails);
     if (inverseTransform != nullptr)
     {
       transform = inverseTransform->GetInverse();
@@ -1174,7 +1174,7 @@ vtkAbstractTransform* vtkMRMLTransformNode::GetTransformFromParentAs(const char*
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** originalTransformPtr, vtkAbstractTransform** inverseTransformPtr, vtkAbstractTransform *transform)
+void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** originalTransformPtr, vtkAbstractTransform** inverseTransformPtr, vtkAbstractTransform* transform)
 {
   if ((*originalTransformPtr)==transform)
   {
@@ -1210,21 +1210,21 @@ void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** origina
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformNode::SetAndObserveTransformToParent(vtkAbstractTransform *transform)
+void vtkMRMLTransformNode::SetAndObserveTransformToParent(vtkAbstractTransform* transform)
 {
   SetAndObserveTransform(&(this->TransformToParent), &(this->TransformFromParent), transform);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformNode::SetAndObserveTransformFromParent(vtkAbstractTransform *transform)
+void vtkMRMLTransformNode::SetAndObserveTransformFromParent(vtkAbstractTransform* transform)
 {
   SetAndObserveTransform(&(this->TransformFromParent), &(this->TransformToParent), transform);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTransformNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLTransformNode::ProcessMRMLEvents ( vtkObject* caller,
                                                     unsigned long event,
-                                                    void *callData )
+                                                    void* callData )
 {
   Superclass::ProcessMRMLEvents ( caller, event, callData );
 
@@ -1287,7 +1287,7 @@ vtkMTimeType vtkMRMLTransformNode::GetTransformToWorldMTime()
     latestMTime=transformToParent->GetMTime();
   }
 
-  vtkMRMLTransformNode *parent = this->GetParentTransformNode();
+  vtkMRMLTransformNode* parent = this->GetParentTransformNode();
   if (parent != nullptr)
   {
     vtkMTimeType parentMTime=parent->GetTransformToWorldMTime();
@@ -1575,7 +1575,7 @@ vtkMatrix4x4* vtkMRMLTransformNode::GetMatrixTransformFromParent()
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformNode::SetMatrixTransformToParent(vtkMatrix4x4 *matrix)
+int vtkMRMLTransformNode::SetMatrixTransformToParent(vtkMatrix4x4* matrix)
 {
   if (!this->IsLinear())
   {
@@ -1635,7 +1635,7 @@ int vtkMRMLTransformNode::SetMatrixTransformToParent(vtkMatrix4x4 *matrix)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformNode::SetMatrixTransformFromParent(vtkMatrix4x4 *matrix)
+int vtkMRMLTransformNode::SetMatrixTransformFromParent(vtkMatrix4x4* matrix)
 {
   vtkNew<vtkMatrix4x4> inverseMatrix;
   vtkMatrix4x4::Invert(matrix, inverseMatrix.GetPointer());
@@ -1670,7 +1670,7 @@ void vtkMRMLTransformNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix)
 
 // Deprecated method - kept temporarily for compatibility with extensions that are not yet updated
 //----------------------------------------------------------------------------
-int vtkMRMLTransformNode::SetAndObserveMatrixTransformToParent(vtkMatrix4x4 *matrix)
+int vtkMRMLTransformNode::SetAndObserveMatrixTransformToParent(vtkMatrix4x4* matrix)
 {
   vtkWarningMacro("vtkMRMLTransformNode::SetAndObserveMatrixTransformToParent method is deprecated. Use vtkMRMLTransformNode::SetMatrixTransformToParent instead");
   return SetMatrixTransformToParent(matrix);
@@ -1678,7 +1678,7 @@ int vtkMRMLTransformNode::SetAndObserveMatrixTransformToParent(vtkMatrix4x4 *mat
 
 // Deprecated method - kept temporarily for compatibility with extensions that are not yet updated
 //----------------------------------------------------------------------------
-int vtkMRMLTransformNode::SetAndObserveMatrixTransformFromParent(vtkMatrix4x4 *matrix)
+int vtkMRMLTransformNode::SetAndObserveMatrixTransformFromParent(vtkMatrix4x4* matrix)
 {
   vtkWarningMacro("vtkMRMLTransformNode::SetAndObserveMatrixTransformFromParent method is deprecated. Use vtkMRMLTransformNode::SetMatrixTransformFromParent instead");
   return SetMatrixTransformFromParent(matrix);
@@ -1715,12 +1715,12 @@ bool vtkMRMLTransformNode::IsGeneralTransformLinear(vtkAbstractTransform* inputT
   // Put all the transforms on the stack
   while (!tstack.empty())
   {
-    vtkAbstractTransform *transform = tstack.top();
+    vtkAbstractTransform* transform = tstack.top();
     tstack.pop();
     if (transform->IsA("vtkGeneralTransform"))
     {
       // Decompose general transforms
-      vtkGeneralTransform *gtrans = (vtkGeneralTransform *)transform;
+      vtkGeneralTransform* gtrans = (vtkGeneralTransform*)transform;
       gtrans->Update();
       int n = gtrans->GetNumberOfConcatenatedTransforms();
       while (n > 0)

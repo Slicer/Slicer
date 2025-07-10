@@ -53,15 +53,15 @@ void vtkMRMLAnnotationSnapshotStorageNode::PrintSelf(ostream& os, vtkIndent inde
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLAnnotationSnapshotStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLAnnotationSnapshotStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLAnnotationSnapshotNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationSnapshotStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationSnapshotStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLAnnotationSnapshotNode *sceneViewNode =
+  vtkMRMLAnnotationSnapshotNode* sceneViewNode =
     vtkMRMLAnnotationSnapshotNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
@@ -148,9 +148,9 @@ int vtkMRMLAnnotationSnapshotStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLAnnotationSnapshotNode *sceneViewNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(refNode);
+  vtkMRMLAnnotationSnapshotNode* sceneViewNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(refNode);
 
   if (sceneViewNode->GetScreenShot() == nullptr)
   {

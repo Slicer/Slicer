@@ -13,7 +13,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLSliceCompositeNode.h"
 
-int vtkMRMLSliceCompositeNodeTest1(int , char * [] )
+int vtkMRMLSliceCompositeNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLSliceCompositeNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

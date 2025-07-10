@@ -18,7 +18,7 @@ class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModuleWidget :
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerCropVolumeModuleWidget(QWidget *parent=nullptr);
+  qSlicerCropVolumeModuleWidget(QWidget* parent=nullptr);
   ~qSlicerCropVolumeModuleWidget() override;
 
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;

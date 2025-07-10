@@ -66,7 +66,7 @@ bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
     std::cout << "No output information" << std::endl;
     return false;
   }
-  vtkInformation *scalarInfo = vtkDataObject::GetActiveFieldInformation(info,
+  vtkInformation* scalarInfo = vtkDataObject::GetActiveFieldInformation(info,
     vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
   if (!scalarInfo)
   {
@@ -77,7 +77,7 @@ bool isImageDataValid(vtkAlgorithmOutput* imageDataConnection)
 }
 
 //-----------------------------------------------------------------------------
-int main( int argc, char * argv[] )
+int main( int argc, char* argv[] )
 {
   itk::itkFactoryRegistration();
 

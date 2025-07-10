@@ -48,7 +48,7 @@ template <class T>
 void vtkITKExecuteDataFromFileDiffusionTensor3D(
   vtkITKArchetypeDiffusionTensorImageReaderFile* self,
   vtkFloatArray* tensors,
-  vtkImageData *data)
+  vtkImageData* data)
 {
   typedef itk::DiffusionTensor3D<T> DiffusionTensor3DPixelType;
   typedef itk::Image<DiffusionTensor3DPixelType,3> ImageType;
@@ -121,9 +121,9 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
 // This function reads a data from a file.  The data extent/axes
 // are assumed to be the same as the file extent/order.
 int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector),
+  vtkInformationVector* outputVector)
 {
   if (!this->Superclass::Archetype)
   {
@@ -166,7 +166,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
       this->SetErrorCode(vtkErrorCode::FileFormatError);
     }
   }
-  catch (itk::InvalidArgumentError & e)
+  catch (itk::InvalidArgumentError& e)
   {
     vtkDebugMacro(<< "Could not read file as tensor" << e);
     this->SetErrorCode(vtkErrorCode::FileFormatError);
@@ -176,7 +176,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
     // (at least not as used in vtkMRMLStorageNodes).
     return 1;
   }
-  catch (itk::ExceptionObject & e)
+  catch (itk::ExceptionObject& e)
   {
     vtkErrorMacro(<< "Exception from vtkITK MegaMacro: " << e << "\n");
     this->SetErrorCode(vtkErrorCode::FileFormatError);
@@ -189,7 +189,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
 void vtkITKArchetypeDiffusionTensorImageReaderFile
 ::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
-  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject *>(obj));
+  itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
   if (p.IsNull())
   {
     return;

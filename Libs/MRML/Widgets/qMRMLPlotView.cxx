@@ -246,7 +246,7 @@ vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkM
   {
     return nullptr;
   }
-  vtkTable *table = tableNode->GetTable();
+  vtkTable* table = tableNode->GetTable();
   std::string yColumnName = plotSeriesNode->GetYColumnName();
   if (yColumnName.empty())
   {
@@ -403,7 +403,7 @@ vtkSmartPointer<vtkPlot> qMRMLPlotViewPrivate::updatePlotFromPlotSeriesNode(vtkM
     newPlot->SetLabel(yColumnName);
   }
 
-  // TODO: set labels as axis text using vtkAxis::SetCustomTickPositions(vtkDoubleArray *positions, vtkStringArray *labels)
+  // TODO: set labels as axis text using vtkAxis::SetCustomTickPositions(vtkDoubleArray* positions, vtkStringArray* labels)
 
   return newPlot;
 }
@@ -429,7 +429,7 @@ vtkMRMLScene* qMRMLPlotViewPrivate::mrmlScene()
 // --------------------------------------------------------------------------
 void qMRMLPlotViewPrivate::onPlotChartNodeChanged()
 {
-  vtkMRMLPlotChartNode *newPlotChartNode = nullptr;
+  vtkMRMLPlotChartNode* newPlotChartNode = nullptr;
 
   if (this->MRMLScene && this->MRMLPlotViewNode && this->MRMLPlotViewNode->GetPlotChartNodeID())
   {
@@ -628,7 +628,7 @@ void qMRMLPlotViewPrivate::emitSelection()
     return;
   }
 
-  const char *PlotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
+  const char* PlotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
 
   vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast
     (this->MRMLScene->GetNodeByID(PlotChartNodeID));
@@ -642,12 +642,12 @@ void qMRMLPlotViewPrivate::emitSelection()
 
   for (int plotIndex = 0; plotIndex < q->chart()->GetNumberOfPlots(); plotIndex++)
   {
-    vtkPlot *plot = q->chart()->GetPlot(plotIndex);
+    vtkPlot* plot = q->chart()->GetPlot(plotIndex);
     if (!plot)
     {
       continue;
     }
-    vtkIdTypeArray *selection = plot->GetSelection();
+    vtkIdTypeArray* selection = plot->GetSelection();
     if (!selection)
     {
       continue;
@@ -721,7 +721,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   }
 
   // Get the PlotChartNode
-  const char *plotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
+  const char* plotChartNodeID = this->MRMLPlotViewNode->GetPlotChartNodeID();
   vtkMRMLPlotChartNode* plotChartNode = vtkMRMLPlotChartNode::SafeDownCast(this->MRMLScene->GetNodeByID(plotChartNodeID));
   if (!plotChartNode)
   {
@@ -765,7 +765,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   // Remove plots from chart that are no longer needed or available
   for (int chartPlotSeriesNodesIndex = q->chart()->GetNumberOfPlots()-1; chartPlotSeriesNodesIndex >= 0; chartPlotSeriesNodesIndex--)
   {
-    vtkPlot *plot = q->chart()->GetPlot(chartPlotSeriesNodesIndex);
+    vtkPlot* plot = q->chart()->GetPlot(chartPlotSeriesNodesIndex);
     if (!plot)
     {
       continue;
@@ -860,7 +860,7 @@ void qMRMLPlotViewPrivate::updateWidgetFromMRML()
   for (unsigned int axisIndex = 0; axisIndex < numberOfAxisIDs; ++axisIndex)
   {
     int axisID = axisIDs[axisIndex];
-    vtkAxis *axis = q->chart()->GetAxis(axisID);
+    vtkAxis* axis = q->chart()->GetAxis(axisID);
     if (!axis)
     {
       continue;
@@ -1037,7 +1037,7 @@ QSize qMRMLPlotView::sizeHint()const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotView::keyPressEvent(QKeyEvent *event)
+void qMRMLPlotView::keyPressEvent(QKeyEvent* event)
 {
   Q_D(qMRMLPlotView);
   this->Superclass::keyPressEvent(event);
@@ -1057,7 +1057,7 @@ void qMRMLPlotView::keyPressEvent(QKeyEvent *event)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLPlotView::keyReleaseEvent(QKeyEvent *event)
+void qMRMLPlotView::keyReleaseEvent(QKeyEvent* event)
 {
   Q_D(qMRMLPlotView);
   this->Superclass::keyPressEvent(event);
@@ -1097,14 +1097,14 @@ void qMRMLPlotView::updateMRMLChartAxisRangeFromWidget()
   }
   int wasModified = d->MRMLPlotChartNode->StartModify();
   // Setting Axes
-  vtkAxis *bottomAxis = this->chart()->GetAxis(vtkAxis::BOTTOM);
+  vtkAxis* bottomAxis = this->chart()->GetAxis(vtkAxis::BOTTOM);
   if (bottomAxis)
   {
     double range[2] = { 0, 1 };
     bottomAxis->GetUnscaledRange(range);
     d->MRMLPlotChartNode->SetXAxisRange(range);
   }
-  vtkAxis *leftAxis = this->chart()->GetAxis(vtkAxis::LEFT);
+  vtkAxis* leftAxis = this->chart()->GetAxis(vtkAxis::LEFT);
   if (leftAxis)
   {
     double range[2] = { 0, 1 };
@@ -1115,7 +1115,7 @@ void qMRMLPlotView::updateMRMLChartAxisRangeFromWidget()
 }
 
 // ----------------------------------------------------------------------------
-void qMRMLPlotView::saveAsSVG(const QString & fileName)
+void qMRMLPlotView::saveAsSVG(const QString& fileName)
 {
   QFileInfo fileInfo(fileName);
   QString filePathPrefix = fileInfo.absoluteDir().filePath(fileInfo.completeBaseName());

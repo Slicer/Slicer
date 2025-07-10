@@ -183,8 +183,8 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
       vtkDebugMacro("ReadXMLAttributes: found a ROI list: " << attValue << endl);
       // need to add ROI and parse out the list of ROI points
       // assume ID is first, extract that part of the attValue
-      char *ROI = const_cast<char *>(attValue);
-      char *IDPtr;
+      char* ROI = const_cast<char*>(attValue);
+      char* IDPtr;
       IDPtr = strstr (ROI,"ROINodeID ");
       vtkDebugMacro( "ReadXMLAttributes: Starting to parse out the ROI list, setting it up for tokenisation\n");
       while (IDPtr != nullptr)
@@ -209,7 +209,7 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
         // now make a new point
         int ROIIndex = this->AddROI();
         vtkDebugMacro( "new ROI index = " << ROIIndex << endl);
-        vtkMRMLROINode *newROINode = this->GetNthROINode(ROIIndex);
+        vtkMRMLROINode* newROINode = this->GetNthROINode(ROIIndex);
 
         if (newROINode != nullptr)
         {
@@ -234,7 +234,7 @@ void vtkMRMLROIListNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLROIListNode::Copy(vtkMRMLNode * vtkNotUsed(anode))
+void vtkMRMLROIListNode::Copy(vtkMRMLNode* vtkNotUsed(anode))
 {
   //Fill in
   return;
@@ -249,7 +249,7 @@ void vtkMRMLROIListNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLROIListNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLROIListNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
   return;
@@ -279,7 +279,7 @@ int vtkMRMLROIListNode::AddROI()
 
   // create a vtkMRMLROI and return the ROI number for later
   // access
-  vtkMRMLROINode * ROINode = vtkMRMLROINode::New();
+  vtkMRMLROINode* ROINode = vtkMRMLROINode::New();
 
   // give the point a unique name based on the list name
   std::stringstream ss;
@@ -327,7 +327,7 @@ void vtkMRMLROIListNode::RemoveAllROIs()
   {
     // as remove them from the end of the list, the size of the list
     // will shrink as the iterator f reduces
-    vtkMRMLROIListNode *ROINode = vtkMRMLROIListNode::SafeDownCast(this->ROIList->vtkCollection::GetItemAsObject(r));
+    vtkMRMLROIListNode* ROINode = vtkMRMLROIListNode::SafeDownCast(this->ROIList->vtkCollection::GetItemAsObject(r));
     this->ROIList->vtkCollection::RemoveItem(r);
     if (ROINode != nullptr)
     {
@@ -339,9 +339,9 @@ void vtkMRMLROIListNode::RemoveAllROIs()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLROIListNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLROIListNode::ProcessMRMLEvents ( vtkObject* caller,
                                             unsigned long event,
-                                            void *callData )
+                                            void* callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
@@ -461,7 +461,7 @@ void vtkMRMLROIListNode::SetOpacity(double opacity)
 //----------------------------------------------------------------------------
 int vtkMRMLROIListNode::SetNthROIXYZ(int n, double x, double y, double z)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node == nullptr)
   {
     vtkErrorMacro("Unable to get ROI number " << n);
@@ -472,7 +472,7 @@ int vtkMRMLROIListNode::SetNthROIXYZ(int n, double x, double y, double z)
   //Update IJK
   if (this->VolumeNodeID != nullptr)
   {
-    vtkMRMLVolumeNode *volumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    vtkMRMLVolumeNode* volumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (volumeNode)
     {
       double rasPoint[4] = { x, y, z, 1.0 };
@@ -509,7 +509,7 @@ int vtkMRMLROIListNode::SetNthROIXYZ(int n, double x, double y, double z)
 //----------------------------------------------------------------------------
 int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node == nullptr)
   {
     vtkErrorMacro("Unable to get ROI number " << n);
@@ -517,7 +517,7 @@ int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
   }
   if (this->VolumeNodeID != nullptr)
   {
-    vtkMRMLVolumeNode *volumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    vtkMRMLVolumeNode* volumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (volumeNode)
     {
 
@@ -554,12 +554,12 @@ int vtkMRMLROIListNode::SetNthROIIJK(int n, double i, double j, double k)
 }
 
 //----------------------------------------------------------------------------
-double * vtkMRMLROIListNode::GetNthROIXYZ(int n)
+double* vtkMRMLROIListNode::GetNthROIXYZ(int n)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node != nullptr)
   {
-    double * xyz = node->GetXYZ();
+    double* xyz = node->GetXYZ();
     node = nullptr;
     return xyz;
   }
@@ -570,12 +570,12 @@ double * vtkMRMLROIListNode::GetNthROIXYZ(int n)
 }
 
 //----------------------------------------------------------------------------
-double * vtkMRMLROIListNode::GetNthROIIJK(int n)
+double* vtkMRMLROIListNode::GetNthROIIJK(int n)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node != nullptr)
   {
-    double * ijk = node->GetIJK();
+    double* ijk = node->GetIJK();
     node = nullptr;
     return ijk;
   }
@@ -588,7 +588,7 @@ double * vtkMRMLROIListNode::GetNthROIIJK(int n)
 //----------------------------------------------------------------------------
 int vtkMRMLROIListNode::SetNthROIRadiusXYZ(int n, double Radiusx, double Radiusy, double Radiusz)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node == nullptr)
   {
     vtkErrorMacro("Unable to get ROI number " << n);
@@ -599,7 +599,7 @@ int vtkMRMLROIListNode::SetNthROIRadiusXYZ(int n, double Radiusx, double Radiusy
    //Update RadiusIJK
   if (this->VolumeNodeID != nullptr)
   {
-    vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    vtkMRMLVolumeNode* VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (VolumeNode)
     {
       double* spacing = VolumeNode->GetSpacing();
@@ -620,7 +620,7 @@ int vtkMRMLROIListNode::SetNthROIRadiusXYZ(int n, double Radiusx, double Radiusy
 //----------------------------------------------------------------------------
 int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj, double Radiusk)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node == nullptr)
   {
     vtkErrorMacro("Unable to get ROI number " << n);
@@ -631,7 +631,7 @@ int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj
    //Update RadiusXYZ
   if (this->VolumeNodeID != nullptr)
   {
-    vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+    vtkMRMLVolumeNode* VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
     if (VolumeNode)
     {
       double* spacing = VolumeNode->GetSpacing();
@@ -651,12 +651,12 @@ int vtkMRMLROIListNode::SetNthROIRadiusIJK(int n, double Radiusi, double Radiusj
 }
 
 //----------------------------------------------------------------------------
-double * vtkMRMLROIListNode::GetNthROIRadiusXYZ(int n)
+double* vtkMRMLROIListNode::GetNthROIRadiusXYZ(int n)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node != nullptr)
   {
-    double * Radiusxyz = node->GetRadiusXYZ();
+    double* Radiusxyz = node->GetRadiusXYZ();
     node = nullptr;
     return Radiusxyz;
   }
@@ -667,12 +667,12 @@ double * vtkMRMLROIListNode::GetNthROIRadiusXYZ(int n)
 }
 
 //----------------------------------------------------------------------------
-double * vtkMRMLROIListNode::GetNthROIRadiusIJK(int n)
+double* vtkMRMLROIListNode::GetNthROIRadiusIJK(int n)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node != nullptr)
   {
-    double * Radiusijk = node->GetRadiusIJK();
+    double* Radiusijk = node->GetRadiusIJK();
     node = nullptr;
     return Radiusijk;
   }
@@ -683,9 +683,9 @@ double * vtkMRMLROIListNode::GetNthROIRadiusIJK(int n)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLROIListNode::SetNthROILabelText(int n, const char *text)
+int vtkMRMLROIListNode::SetNthROILabelText(int n, const char* text)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node == nullptr)
   {
     vtkErrorMacro("Unable to get ROI number " << n);
@@ -699,12 +699,12 @@ int vtkMRMLROIListNode::SetNthROILabelText(int n, const char *text)
 }
 
 //----------------------------------------------------------------------------
-const char *vtkMRMLROIListNode::GetNthROILabelText(int n)
+const char* vtkMRMLROIListNode::GetNthROILabelText(int n)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node != nullptr)
   {
-    const char *txt = node->GetLabelText();
+    const char* txt = node->GetLabelText();
     node = nullptr;
     return txt;
   }
@@ -717,7 +717,7 @@ const char *vtkMRMLROIListNode::GetNthROILabelText(int n)
 //----------------------------------------------------------------------------
 int vtkMRMLROIListNode::SetNthROISelected(int n, int flag)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node == nullptr)
   {
     vtkErrorMacro("Unable to get ROI number " << n);
@@ -733,7 +733,7 @@ int vtkMRMLROIListNode::SetNthROISelected(int n, int flag)
 //----------------------------------------------------------------------------
 int vtkMRMLROIListNode::GetNthROISelected(int n)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node != nullptr)
   {
     int selected = node->GetSelected();
@@ -747,9 +747,9 @@ int vtkMRMLROIListNode::GetNthROISelected(int n)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLROIListNode::SetNthROIID(int n, const char * vtkNotUsed(id))
+int vtkMRMLROIListNode::SetNthROIID(int n, const char* vtkNotUsed(id))
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node == nullptr)
   {
     vtkErrorMacro("Unable to get ROI number " << n);
@@ -763,12 +763,12 @@ int vtkMRMLROIListNode::SetNthROIID(int n, const char * vtkNotUsed(id))
 }
 
 //----------------------------------------------------------------------------
-const char *vtkMRMLROIListNode::GetNthROIID(int n)
+const char* vtkMRMLROIListNode::GetNthROIID(int n)
 {
-  vtkMRMLROINode *node = this->GetNthROINode(n);
+  vtkMRMLROINode* node = this->GetNthROINode(n);
   if (node != nullptr)
   {
-    const char *id = node->GetID();
+    const char* id = node->GetID();
     node = nullptr;
     return id;
   }
@@ -805,7 +805,7 @@ void vtkMRMLROIListNode::SetAllVolumeNodeID()
   for (int n = 0; n < numROIs; ++n)
   {
     // Set the Volume ID for each ROI
-     vtkMRMLROINode *node = this->GetNthROINode(n);
+     vtkMRMLROINode* node = this->GetNthROINode(n);
      node->SetVolumeNodeID(this->VolumeNodeID);
   }
   // the list contents have been modified
@@ -818,15 +818,15 @@ void vtkMRMLROIListNode::SetAllVolumeNodeID()
 void vtkMRMLROIListNode::UpdateIJK()
 {
   int numROIs = this->GetNumberOfROIs();
-  vtkMRMLVolumeNode *VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
+  vtkMRMLVolumeNode* VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
 
   if(VolumeNode != nullptr)
   {
     for (int n = 0; n < numROIs; ++n)
     {
-      double *xyz = this->GetNthROIXYZ(n);
+      double* xyz = this->GetNthROIXYZ(n);
       this->SetNthROIXYZ(n, xyz[0], xyz[1], xyz[2]);
-      double *Radiusxzy = this->GetNthROIRadiusXYZ(n);
+      double* Radiusxzy = this->GetNthROIRadiusXYZ(n);
       this->SetNthROIRadiusXYZ(n, Radiusxzy[0], Radiusxzy[1], Radiusxzy[2]);
     }
   }

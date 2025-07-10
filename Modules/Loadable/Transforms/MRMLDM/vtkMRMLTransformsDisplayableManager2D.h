@@ -70,7 +70,7 @@ private:
   void operator=(const vtkMRMLTransformsDisplayableManager2D&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   friend class vtkInternal;
 };
 

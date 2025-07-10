@@ -40,7 +40,7 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceEdgeWidgetRepresentation
 {
 public:
   /// Instantiate this class.
-  static vtkMRMLSliceEdgeWidgetRepresentation *New();
+  static vtkMRMLSliceEdgeWidgetRepresentation* New();
 
   ///@{
   /// Standard VTK class macros.
@@ -49,7 +49,7 @@ public:
   ///@}
 
   /// Update the representation from display node
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void *callData = nullptr) override;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;

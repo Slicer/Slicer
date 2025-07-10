@@ -22,7 +22,7 @@ class vtkMRMLHierarchyNodeTestHelper1 : public vtkMRMLHierarchyNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLHierarchyNodeTestHelper1 *New();
+  static vtkMRMLHierarchyNodeTestHelper1* New();
 
   vtkTypeMacro(vtkMRMLHierarchyNodeTestHelper1,vtkMRMLHierarchyNode);
 
@@ -39,7 +39,7 @@ public:
 vtkStandardNewMacro(vtkMRMLHierarchyNodeTestHelper1);
 
 //---------------------------------------------------------------------------
-int vtkMRMLHierarchyNodeTest1(int , char * [] )
+int vtkMRMLHierarchyNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLHierarchyNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

@@ -156,7 +156,7 @@ bool vtkMRMLThreeDViewInteractorStyle::DelegateInteractionEventToDisplayableMana
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLThreeDViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *interactor)
+void vtkMRMLThreeDViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor* interactor)
 {
   if (interactor)
   {
@@ -223,8 +223,8 @@ bool vtkMRMLThreeDViewInteractorStyle::QuickPick(int x, int y, double pickPoint[
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDViewInteractorStyle::ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager * displayableManager,
-                                     unsigned long event, void *callData)
+void vtkMRMLThreeDViewInteractorStyle::ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager* displayableManager,
+                                     unsigned long event, void* callData)
 {
   this->Superclass::ProcessDisplayableManagerEvents(displayableManager, event, callData);
 

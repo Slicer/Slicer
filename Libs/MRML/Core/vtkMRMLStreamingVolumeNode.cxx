@@ -46,7 +46,7 @@ vtkMRMLStreamingVolumeNode::vtkMRMLStreamingVolumeNode()
   , Frame(nullptr)
   , FrameModifiedCallbackCommand(vtkSmartPointer<vtkCallbackCommand>::New())
 {
-  this->FrameModifiedCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
+  this->FrameModifiedCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
   this->FrameModifiedCallbackCommand->SetCallback(vtkMRMLStreamingVolumeNode::FrameModifiedCallback);
 }
 
@@ -54,7 +54,7 @@ vtkMRMLStreamingVolumeNode::vtkMRMLStreamingVolumeNode()
 vtkMRMLStreamingVolumeNode::~vtkMRMLStreamingVolumeNode() = default;
 
 //---------------------------------------------------------------------------
-void vtkMRMLStreamingVolumeNode::FrameModifiedCallback(vtkObject *caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+void vtkMRMLStreamingVolumeNode::FrameModifiedCallback(vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkMRMLStreamingVolumeNode* self = reinterpret_cast<vtkMRMLStreamingVolumeNode*>(clientData);
   if (!self)
@@ -73,7 +73,7 @@ void vtkMRMLStreamingVolumeNode::FrameModifiedCallback(vtkObject *caller, unsign
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLStreamingVolumeNode::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLStreamingVolumeNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   if (this->ImageDataConnection != nullptr &&

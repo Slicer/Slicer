@@ -48,7 +48,7 @@ class vtkPoints;
 class VTK_ITK_EXPORT vtkITKLabelShapeStatistics : public vtkTableAlgorithm
 {
 public:
-  static vtkITKLabelShapeStatistics *New();
+  static vtkITKLabelShapeStatistics* New();
   vtkTypeMacro(vtkITKLabelShapeStatistics, vtkTableAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 

@@ -106,7 +106,7 @@ vtkSlicerROIRepresentation3D::vtkSlicerROIRepresentation3D()
 vtkSlicerROIRepresentation3D::~vtkSlicerROIRepresentation3D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerROIRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerROIRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -217,7 +217,7 @@ void vtkSlicerROIRepresentation3D::UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINod
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerROIRepresentation3D::GetActors(vtkPropCollection *pc)
+void vtkSlicerROIRepresentation3D::GetActors(vtkPropCollection* pc)
 {
   this->ROIActor->GetActors(pc);
   this->ROIOccludedActor->GetActors(pc);
@@ -228,7 +228,7 @@ void vtkSlicerROIRepresentation3D::GetActors(vtkPropCollection *pc)
 
 //----------------------------------------------------------------------
 void vtkSlicerROIRepresentation3D::ReleaseGraphicsResources(
-  vtkWindow *win)
+  vtkWindow* win)
 {
   this->ROIActor->ReleaseGraphicsResources(win);
   this->ROIOccludedActor->ReleaseGraphicsResources(win);
@@ -238,7 +238,7 @@ void vtkSlicerROIRepresentation3D::ReleaseGraphicsResources(
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerROIRepresentation3D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerROIRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
   int count = 0;
   if (this->ROIActor->GetVisibility())
@@ -263,7 +263,7 @@ int vtkSlicerROIRepresentation3D::RenderOverlay(vtkViewport *viewport)
 
 //-----------------------------------------------------------------------------
 int vtkSlicerROIRepresentation3D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count = 0;
   if (this->ROIActor->GetVisibility())
@@ -288,7 +288,7 @@ int vtkSlicerROIRepresentation3D::RenderOpaqueGeometry(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerROIRepresentation3D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->ROIActor->GetVisibility())
@@ -342,7 +342,7 @@ vtkTypeBool vtkSlicerROIRepresentation3D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerROIRepresentation3D::GetBounds()
+double* vtkSlicerROIRepresentation3D::GetBounds()
 {
   vtkBoundingBox boundingBox;
   const std::vector<vtkProp*> actors({ this->ROIActor });

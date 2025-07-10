@@ -261,7 +261,7 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::createNewWidgetR
   Q_ASSERT(currentLogic == this->logic());
 #endif
 
-  qSlicerAbstractModuleRepresentation *newWidgetRepresentation;
+  qSlicerAbstractModuleRepresentation* newWidgetRepresentation;
   newWidgetRepresentation = this->createWidgetRepresentation();
 
   if (newWidgetRepresentation == nullptr)
@@ -312,7 +312,7 @@ vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::logic()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractCoreModule::representationDeleted(qSlicerAbstractModuleRepresentation *representation)
+void qSlicerAbstractCoreModule::representationDeleted(qSlicerAbstractModuleRepresentation* representation)
 {
   Q_D(qSlicerAbstractCoreModule);
 

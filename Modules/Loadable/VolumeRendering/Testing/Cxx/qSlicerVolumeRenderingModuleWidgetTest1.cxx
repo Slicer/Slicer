@@ -32,7 +32,7 @@
 // MRML includes
 
 //-----------------------------------------------------------------------------
-int qSlicerVolumeRenderingModuleWidgetTest1( int argc, char * argv[] )
+int qSlicerVolumeRenderingModuleWidgetTest1( int argc, char* argv[] )
 {
   qSlicerApplication app(argc, argv);
 

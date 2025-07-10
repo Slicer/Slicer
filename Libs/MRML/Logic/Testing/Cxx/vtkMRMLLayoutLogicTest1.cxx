@@ -12,7 +12,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLLayoutLogicTest1(int , char * [] )
+int vtkMRMLLayoutLogicTest1(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
 

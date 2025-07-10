@@ -39,7 +39,7 @@ protected:
   void setup () override {}
 };
 
-int qSlicerAbstractModuleTest1(int, char * [] )
+int qSlicerAbstractModuleTest1(int, char*[])
 {
   AModule module;
 

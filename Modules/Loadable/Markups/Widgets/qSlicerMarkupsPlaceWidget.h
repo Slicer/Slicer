@@ -57,7 +57,7 @@ qSlicerMarkupsPlaceWidget : public qSlicerWidget
 
 public:
   typedef qSlicerWidget Superclass;
-  qSlicerMarkupsPlaceWidget(QWidget *parent=nullptr);
+  qSlicerMarkupsPlaceWidget(QWidget* parent=nullptr);
   ~qSlicerMarkupsPlaceWidget() override;
 
   enum PlaceMultipleMarkupsType

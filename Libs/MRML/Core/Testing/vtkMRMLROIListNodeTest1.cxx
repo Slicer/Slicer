@@ -13,7 +13,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLROIListNode.h"
 
-int vtkMRMLROIListNodeTest1(int , char * [] )
+int vtkMRMLROIListNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLROIListNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

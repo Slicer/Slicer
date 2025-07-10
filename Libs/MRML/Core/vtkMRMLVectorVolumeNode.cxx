@@ -47,10 +47,10 @@ void vtkMRMLVectorVolumeNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLVectorVolumeNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLVectorVolumeNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
-  //vtkMRMLVectorVolumeNode *node = (vtkMRMLVectorVolumeNode *) anode;
+  //vtkMRMLVectorVolumeNode* node = (vtkMRMLVectorVolumeNode*) anode;
 }
 
 //----------------------------------------------------------------------------

@@ -47,7 +47,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModule
 public:
 
   typedef qSlicerAbstractCoreModule Superclass;
-  qSlicerAbstractModule(QObject *parent=nullptr);
+  qSlicerAbstractModule(QObject* parent=nullptr);
   ~qSlicerAbstractModule() override;
 
   /// Icon of the module. Anytime a graphical representation of the module
@@ -66,7 +66,7 @@ public:
   /// (QAction::property("index").toInt()).
   /// It is typically used in the module selector menu;
   /// triggering the QAction will make the module current.
-  Q_INVOKABLE QAction * action();
+  Q_INVOKABLE QAction* action();
 protected:
   QScopedPointer<qSlicerAbstractModulePrivate> d_ptr;
 

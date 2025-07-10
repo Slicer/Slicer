@@ -25,7 +25,7 @@
 class VTK_MRML_EXPORT vtkMRMLdGEMRICProceduralColorNode : public vtkMRMLProceduralColorNode
 {
 public:
-  static vtkMRMLdGEMRICProceduralColorNode *New();
+  static vtkMRMLdGEMRICProceduralColorNode* New();
   vtkTypeMacro(vtkMRMLdGEMRICProceduralColorNode,vtkMRMLProceduralColorNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -45,7 +45,7 @@ public:
 
   ///
   /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -53,14 +53,14 @@ public:
 
   ///
   ///
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   ///
   /// Get/Set for Type. In SetType, set up the custom color options for this
   /// set of colors
   void SetType(int type) override;
 
-  void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData ) override;
+  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
 
   /// The list of valid procedural types
   //enum
@@ -94,7 +94,7 @@ public:
   int GetFirstType() override { return this->dGEMRIC15T; }
   int GetLastType() override { return this->dGEMRIC3T; }
 
-  const char *GetTypeAsString() override;
+  const char* GetTypeAsString() override;
   void SetTypeTo15T();
   void SetTypeTo3T();
 

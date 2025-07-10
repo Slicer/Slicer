@@ -72,7 +72,7 @@ public:
   virtual void init();
 
   void setMRMLScene(vtkMRMLScene* scene);
-  vtkMRMLScene *mrmlScene();
+  vtkMRMLScene* mrmlScene();
 
   vtkMRMLPlotSeriesNode* plotSeriesNodeFromPlot(vtkPlot* plot);
 

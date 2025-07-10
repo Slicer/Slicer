@@ -181,7 +181,7 @@ void vtkSlicerAngleRepresentation3D::BuildArc()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAngleRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerAngleRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -229,7 +229,7 @@ void vtkSlicerAngleRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerAngleRepresentation3D::GetActors(vtkPropCollection *pc)
+void vtkSlicerAngleRepresentation3D::GetActors(vtkPropCollection* pc)
 {
   this->Superclass::GetActors(pc);
   this->LineActor->GetActors(pc);
@@ -240,7 +240,7 @@ void vtkSlicerAngleRepresentation3D::GetActors(vtkPropCollection *pc)
 
 //----------------------------------------------------------------------
 void vtkSlicerAngleRepresentation3D::ReleaseGraphicsResources(
-  vtkWindow *win)
+  vtkWindow* win)
 {
   this->Superclass::ReleaseGraphicsResources(win);
   this->LineActor->ReleaseGraphicsResources(win);
@@ -248,7 +248,7 @@ void vtkSlicerAngleRepresentation3D::ReleaseGraphicsResources(
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerAngleRepresentation3D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerAngleRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
   int count=0;
   count = this->Superclass::RenderOverlay(viewport);
@@ -273,7 +273,7 @@ int vtkSlicerAngleRepresentation3D::RenderOverlay(vtkViewport *viewport)
 
 //-----------------------------------------------------------------------------
 int vtkSlicerAngleRepresentation3D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count=0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
@@ -302,7 +302,7 @@ int vtkSlicerAngleRepresentation3D::RenderOpaqueGeometry(
 
 //-----------------------------------------------------------------------------
 int vtkSlicerAngleRepresentation3D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+  vtkViewport* viewport)
 {
   int count=0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
@@ -364,7 +364,7 @@ vtkTypeBool vtkSlicerAngleRepresentation3D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerAngleRepresentation3D::GetBounds()
+double* vtkSlicerAngleRepresentation3D::GetBounds()
 {
   vtkBoundingBox boundingBox;
   const std::vector<vtkProp*> actors({ this->LineActor, this->ArcActor });
@@ -376,7 +376,7 @@ double *vtkSlicerAngleRepresentation3D::GetBounds()
 //----------------------------------------------------------------------
 void vtkSlicerAngleRepresentation3D::CanInteract(
   vtkMRMLInteractionEventData* interactionEventData,
-  int &foundComponentType, int &foundComponentIndex, double &closestDistance2)
+  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
