@@ -69,7 +69,7 @@ qSlicerErrorReportDialog::qSlicerErrorReportDialog(QWidget* parentWidget)
   }
   QLocale locale = qSlicerCoreApplication::application()->applicationLocale();
   QStringList logFilePaths = qSlicerApplication::application()->recentLogFiles();
-  foreach(const QString& path, logFilePaths)
+  foreach (const QString& path, logFilePaths)
   {
     QTableWidgetItem* itemApp = new QTableWidgetItem(path);
     QTableWidgetItem* itemVersion = new QTableWidgetItem(path);

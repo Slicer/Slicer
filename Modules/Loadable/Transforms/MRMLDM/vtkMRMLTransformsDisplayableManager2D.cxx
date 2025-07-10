@@ -214,7 +214,7 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::RemoveTransformNode(vtk
   }
   vtkInternal::TransformToDisplayCacheType::iterator displayableIt =
     this->TransformToDisplayNodes.find(node);
-  if(displayableIt == this->TransformToDisplayNodes.end())
+  if (displayableIt == this->TransformToDisplayNodes.end())
   {
     return;
   }
@@ -250,7 +250,7 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::UpdateDisplayableTransf
 void vtkMRMLTransformsDisplayableManager2D::vtkInternal::RemoveDisplayNode(vtkMRMLTransformDisplayNode* displayNode)
 {
   PipelinesCacheType::iterator actorsIt = this->DisplayPipelines.find(displayNode);
-  if(actorsIt == this->DisplayPipelines.end())
+  if (actorsIt == this->DisplayPipelines.end())
   {
     return;
   }
@@ -439,7 +439,7 @@ bool vtkMRMLTransformsDisplayableManager2D::vtkInternal::IsNodeObserved(vtkMRMLT
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager2D::vtkInternal::ClearDisplayableNodes()
 {
-  while(this->TransformToDisplayNodes.size() > 0)
+  while (this->TransformToDisplayNodes.size() > 0)
   {
     this->RemoveTransformNode(this->TransformToDisplayNodes.begin()->first);
   }

@@ -58,7 +58,7 @@ vtkDataIOManager::~vtkDataIOManager()
     this->CacheManager = nullptr;
   }
 
-  if(this->FileFormatHelper)
+  if (this->FileFormatHelper)
   {
     this->FileFormatHelper->Delete();
     this->FileFormatHelper =  nullptr;
@@ -547,7 +547,7 @@ int vtkDataIOManager::GetUniqueTransferID ( )
 //----------------------------------------------------------------------------
 vtkDataFileFormatHelper* vtkDataIOManager:: GetFileFormatHelper()
 {
-  if(!this->FileFormatHelper)
+  if (!this->FileFormatHelper)
   {
     this->FileFormatHelper = vtkDataFileFormatHelper::New();
   }

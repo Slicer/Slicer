@@ -101,7 +101,7 @@ int main(int argc, char * *argv)
     std::cout << "Initialized output image." << std::endl;
 
     int extract2DSheet = 0;
-    if( SkeletonType == "2D" )
+    if ( SkeletonType == "2D" )
     {
       extract2DSheet = 1;
     }
@@ -138,7 +138,7 @@ int main(int argc, char * *argv)
 
     int i = 0;
     std::deque<Coord3i>::iterator iter = axisPoints.begin();
-    while( iter != axisPoints.end() )
+    while ( iter != axisPoints.end() )
     {
       position_IJK[0] = (*iter)[0];
       position_IJK[1] = (*iter)[1];
@@ -189,7 +189,7 @@ int main(int argc, char * *argv)
     }
 
   }
-  catch( itk::ExceptionObject& excep )
+  catch ( itk::ExceptionObject& excep )
   {
 
     std::cerr << argv[0] << " : Exception caught!" << std::endl;

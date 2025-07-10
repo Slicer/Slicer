@@ -142,7 +142,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a valid table node");
     return 0;
   }
-  if(!this->TableName || std::string(this->TableName).empty())
+  if (!this->TableName || std::string(this->TableName).empty())
   {
     vtkErrorMacro(<<"No table name specified!");
     return 0;
@@ -187,7 +187,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   //get the columns from the vtkTable to finish the query
   vtkIdType numColumns = table->GetNumberOfColumns();
-  for(vtkIdType i = 0; i < numColumns; i++)
+  for (vtkIdType i = 0; i < numColumns; i++)
   {
     //get this column's name
     std::string columnName = table->GetColumn(i)->GetName();
@@ -197,13 +197,13 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     //figure out what type of data is stored in this column
     std::string columnType = table->GetColumn(i)->GetClassName();
 
-    if( (columnType.find("String") != std::string::npos) ||
+    if ( (columnType.find("String") != std::string::npos) ||
         (columnType.find("Data") != std::string::npos) ||
         (columnType.find("Variant") != std::string::npos) )
     {
       createTableQuery += " TEXT";
     }
-    else if( (columnType.find("Double") != std::string::npos) ||
+    else if ( (columnType.find("Double") != std::string::npos) ||
              (columnType.find("Float") != std::string::npos) )
     {
       createTableQuery += " REAL";
@@ -212,7 +212,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     {
       createTableQuery += " INTEGER";
     }
-    if(i == numColumns - 1)
+    if (i == numColumns - 1)
     {
       createTableQuery += ");";
       insertPreamble += ") VALUES (";
@@ -230,20 +230,20 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   query->SetQuery(createTableQuery.c_str());
   cout << "creating the table" << endl;
-  if(!query->Execute())
+  if (!query->Execute())
   {
     vtkErrorMacro(<<"Error performing 'create table' query");
   }
 
   //iterate over the rows of the vtkTable to complete the insert query
   vtkIdType numRows = table->GetNumberOfRows();
-  for(vtkIdType i = 0; i < numRows; i++)
+  for (vtkIdType i = 0; i < numRows; i++)
   {
     std::string insertQuery = insertPreamble;
     for (vtkIdType j = 0; j < numColumns; j++)
     {
       insertQuery += "'" + table->GetValue(i, j).ToString() + "'";
-      if(j < numColumns - 1)
+      if (j < numColumns - 1)
       {
         insertQuery += ", ";
       }
@@ -251,7 +251,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     insertQuery += ");";
     //perform the insert query for this row
     query->SetQuery(insertQuery.c_str());
-    if(!query->Execute())
+    if (!query->Execute())
     {
       vtkErrorMacro(<<"Error performing 'insert' query");
     }
@@ -268,7 +268,7 @@ int vtkMRMLTableSQLiteStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
 int vtkMRMLTableSQLiteStorageNode::DropTable(char* tableName, vtkSQLiteDatabase* database)
 {
-  if(!tableName || std::string(tableName).empty())
+  if (!tableName || std::string(tableName).empty())
   {
     std::cerr <<"No table name specified!";
     return 0;

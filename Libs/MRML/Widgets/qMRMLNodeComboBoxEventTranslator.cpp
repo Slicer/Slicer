@@ -50,20 +50,20 @@ bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject* Object,
   Q_UNUSED(Error);
 
   qMRMLNodeComboBox* widget = nullptr;
-  for(QObject* test = Object; widget == nullptr && test != nullptr; test = test->parent())
+  for (QObject* test = Object; widget == nullptr && test != nullptr; test = test->parent())
   {
     widget = qobject_cast<qMRMLNodeComboBox*>(test);
   }
-  if(!widget)
+  if (!widget)
   {
     return false;
   }
 
-  if(Event->type() == QEvent::Enter && Object == widget)
+  if (Event->type() == QEvent::Enter && Object == widget)
   {
-    if(this->CurrentObject != Object)
+    if (this->CurrentObject != Object)
     {
-      if(this->CurrentObject)
+      if (this->CurrentObject)
       {
         disconnect(this->CurrentObject, nullptr, this, nullptr);
       }
@@ -77,7 +77,7 @@ bool qMRMLNodeComboBoxEventTranslator::translateEvent(QObject* Object,
       connect(widget, SIGNAL(currentNodeRenamed(QString)),
               this, SLOT(onCurrentNodeRenamed(QString)));
     }
-    if(this->CurrentObject)
+    if (this->CurrentObject)
     {
       connect(this->CurrentObject, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
               this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)), Qt::UniqueConnection);
@@ -104,7 +104,7 @@ void qMRMLNodeComboBoxEventTranslator::onRowsInserted()
 // ----------------------------------------------------------------------------
 void qMRMLNodeComboBoxEventTranslator::onCurrentNodeChanged(vtkMRMLNode* node)
 {
-  if(node)
+  if (node)
   {
     emit recordEvent(this->CurrentObject, "currentNodeChanged", QString(node->GetID()));
   }
@@ -117,7 +117,7 @@ void qMRMLNodeComboBoxEventTranslator::onCurrentNodeChanged(vtkMRMLNode* node)
 // ----------------------------------------------------------------------------
 void qMRMLNodeComboBoxEventTranslator::onNodeAboutToBeRemoved(vtkMRMLNode* node)
 {
-  if(node)
+  if (node)
   {
     disconnect(this->CurrentObject, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)));

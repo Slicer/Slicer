@@ -297,7 +297,7 @@ static void vtkImageFillROIDrawPolygon(int nx, int ny, int nPts, int* xPts, int*
         InsertEdge(active, p);
         p = q;
       }
-    }//if(active->next)
+    }//if (active->next)
   }//for
 
   // Free edge records that have been allocated

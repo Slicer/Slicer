@@ -900,7 +900,7 @@ void qSlicerVolumeRenderingModuleWidget::onROICropDisplayCheckBoxToggled(bool to
 
   std::vector<int> wasModifying(numberOfDisplayNodes);
 
-  for(int index = 0; index < numberOfDisplayNodes; index++)
+  for (int index = 0; index < numberOfDisplayNodes; index++)
   {
     vtkMRMLNode* node = roiNode->GetNthDisplayNode(index);
     if (!node)
@@ -919,7 +919,7 @@ void qSlicerVolumeRenderingModuleWidget::onROICropDisplayCheckBoxToggled(bool to
     displayNode->SetCroppingEnabled(toggle);
   }
 
-  for(int index = 0; index < numberOfDisplayNodes; index++)
+  for (int index = 0; index < numberOfDisplayNodes; index++)
   {
     vtkMRMLNode* node = roiNode->GetNthDisplayNode(index);
     if (!node)

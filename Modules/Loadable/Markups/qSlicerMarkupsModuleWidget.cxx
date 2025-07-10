@@ -244,7 +244,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->Ui_qSlicerMarkupsModule::setupUi(widget);
 
   QStringList registeredMarkups;
-  for(const auto& name: q->markupsLogic()->GetRegisteredMarkupsTypes())
+  for (const auto& name: q->markupsLogic()->GetRegisteredMarkupsTypes())
   {
     vtkMRMLMarkupsNode* markupsNode = q->markupsLogic()->GetNodeByMarkupsType(name.c_str());
     if (markupsNode)
@@ -737,7 +737,7 @@ bool qSlicerMarkupsModuleWidgetPrivate::getPersistanceModeEnabled()
 //-----------------------------------------------------------
 void qSlicerMarkupsModuleWidgetPrivate::updateMarkupsOptionsWidgets()
 {
-  foreach(auto widget, this->MarkupsOptionsWidgets)
+  foreach (auto widget, this->MarkupsOptionsWidgets)
   {
     widget->setParent(nullptr);
   }
@@ -746,7 +746,7 @@ void qSlicerMarkupsModuleWidgetPrivate::updateMarkupsOptionsWidgets()
 
   // Create the markups options widgets registered in qMRMLMarkupsOptionsWidgetsFactory.
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
-  foreach(const auto& widgetClassName, factory->registeredOptionsWidgetsClassNames())
+  foreach (const auto& widgetClassName, factory->registeredOptionsWidgetsClassNames())
   {
     this->MarkupsOptionsWidgets.append(factory->createWidget(widgetClassName));
   }
@@ -758,7 +758,7 @@ void qSlicerMarkupsModuleWidgetPrivate::placeMarkupsOptionsWidgets()
   Q_Q(qSlicerMarkupsModuleWidget);
 
   // Add the options widgets
-  foreach(const auto& widget, this->MarkupsOptionsWidgets)
+  foreach (const auto& widget, this->MarkupsOptionsWidgets)
   {
     // If the parent is different from the qSlicerMarkupsModule widget, then add the widget.
     if (widget->parentWidget() != q)
@@ -797,7 +797,7 @@ void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
 
   unsigned int i=0;
 
-  for(const auto& markupName: q->markupsLogic()->GetRegisteredMarkupsTypes())
+  for (const auto& markupName: q->markupsLogic()->GetRegisteredMarkupsTypes())
   {
     vtkMRMLMarkupsNode* markupsNode =
       markupsLogic->GetNodeByMarkupsType(markupName.c_str());
@@ -912,7 +912,7 @@ void qSlicerMarkupsModuleWidget::enter()
     this->setMRMLMarkupsNode(markupsNode);
     vtkIdType itemID = shNode->GetItemByDataNode(markupsNode);
     QModelIndex itemIndex = d->activeMarkupTreeView->sortFilterProxyModel()->indexFromSubjectHierarchyItem(itemID);
-    if(itemIndex.row()>=0)
+    if (itemIndex.row()>=0)
     {
       d->activeMarkupTreeView->scrollTo(itemIndex);
       d->activeMarkupTreeView->setCurrentNode(markupsNode);
@@ -1040,7 +1040,7 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     this->updateRows();
   }
   // Update options widgets
-  foreach(const auto& widget, d->MarkupsOptionsWidgets)
+  foreach (const auto& widget, d->MarkupsOptionsWidgets)
   {
     widget->updateWidgetFromMRML();
   }
@@ -2654,7 +2654,7 @@ void qSlicerMarkupsModuleWidget::pasteSelectedFromClipboard()
   // SetPointFromString calls various events reporting the id of the point modified.
   // However, already for > 200 points, it gets bad performance. Therefore, we call a simply modified call at the end.
   MRMLNodeModifyBlocker blocker(d->MarkupsNode);
-  foreach(QString line, lines)
+  foreach (QString line, lines)
   {
     line = line.trimmed();
     if (line.isEmpty() || line.startsWith('#'))
@@ -2725,7 +2725,7 @@ void qSlicerMarkupsModuleWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsN
   // Setting the internal Markups node
   d->MarkupsNode = markupsNode;
 
-  foreach(const auto& widget, d->MarkupsOptionsWidgets)
+  foreach (const auto& widget, d->MarkupsOptionsWidgets)
   {
     widget->setMRMLMarkupsNode(markupsNode);
     widget->setVisible(widget->canManageMRMLMarkupsNode(markupsNode));
@@ -2960,7 +2960,7 @@ void qSlicerMarkupsModuleWidget::onHideCoordinateColumnsToggled(int index)
   d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::AColumn, hide);
   d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::SColumn, hide);
 
-  if(hide)
+  if (hide)
   {
     d->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::NameColumn, 60);
     d->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn, 120);

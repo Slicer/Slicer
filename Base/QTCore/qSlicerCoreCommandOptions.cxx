@@ -117,7 +117,7 @@ bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
   }
   if (!extraPythonScript.isEmpty())
   {
-    if(!this->pythonScript().isEmpty())
+    if (!this->pythonScript().isEmpty())
     {
       qWarning() << "Ignore script specified using '--python-script'";
     }
@@ -259,7 +259,7 @@ QString qSlicerCoreCommandOptions::pythonCode() const
 {
   Q_D(const qSlicerCoreCommandOptions);
   QString pythonCode = d->ParsedArgs.value("python-code").toString();
-  if(!pythonCode.isEmpty())
+  if (!pythonCode.isEmpty())
   {
     return pythonCode;
   }

@@ -133,7 +133,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
 
   qSlicerCommandOptions* options = qSlicerApplication::application()->commandOptions();
 
-  if(options->disableModules())
+  if (options->disableModules())
   {
     return;
   }
@@ -218,7 +218,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     app->revisionUserSettings()->value("Modules/IgnoreModules").toStringList();
   QStringList modulesToTemporarlyIgnore = options->modulesToIgnore();
   // Discard modules already listed in the settings
-  foreach(const QString& moduleToAlwaysIgnore, modulesToAlwaysIgnore)
+  foreach (const QString& moduleToAlwaysIgnore, modulesToAlwaysIgnore)
   {
     modulesToTemporarlyIgnore.removeAll(moduleToAlwaysIgnore);
   }

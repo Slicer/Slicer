@@ -203,7 +203,7 @@ void vtkMRMLSliceNode::RemoveThreeDViewID(char* viewNodeID)
     return;
   }
   std::vector<std::string> viewNodeIDs;
-  for(unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
+  for (unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
   {
     if (std::string(viewNodeID) != this->ThreeDViewIDs[i])
     {
@@ -226,7 +226,7 @@ void vtkMRMLSliceNode::RemoveThreeDViewID(char* viewNodeID)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::RemoveAllThreeDViewIDs()
 {
-  for(unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
+  for (unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
   {
     this->Scene->RemoveReferencedNodeID(ThreeDViewIDs[i].c_str(), this);
   }

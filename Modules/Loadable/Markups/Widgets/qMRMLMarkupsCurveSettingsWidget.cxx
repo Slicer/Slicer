@@ -328,7 +328,7 @@ void qMRMLMarkupsCurveSettingsWidget::onApplyCurveResamplingPushButtonClicked()
   {
     outputNode = inputNode;
   }
-  if(outputNode != inputNode)
+  if (outputNode != inputNode)
   {
     MRMLNodeModifyBlocker blocker(outputNode);
     vtkNew<vtkPoints> originalControlPoints;

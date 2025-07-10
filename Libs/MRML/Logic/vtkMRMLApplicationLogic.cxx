@@ -133,7 +133,7 @@ void vtkMRMLApplicationLogic::vtkInternal::PropagateVolumeSelection(int layer, i
   {
     cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
       this->External->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
-    if(!cnode->GetDoPropagateVolumeSelection())
+    if (!cnode->GetDoPropagateVolumeSelection())
     {
       continue;
     }
@@ -225,7 +225,7 @@ void vtkMRMLApplicationLogic::SetSliceLogics(vtkCollection* sliceLogics)
 vtkMRMLSliceLogic* vtkMRMLApplicationLogic::
 GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
 {
-  if(!sliceNode || !this->Internal->SliceLogics)
+  if (!sliceNode || !this->Internal->SliceLogics)
   {
     return nullptr;
   }
@@ -252,7 +252,7 @@ GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
 vtkMRMLSliceLogic* vtkMRMLApplicationLogic::
 GetSliceLogicByLayoutName(const char* layoutName) const
 {
-  if(!layoutName || !this->Internal->SliceLogics)
+  if (!layoutName || !this->Internal->SliceLogics)
   {
     return nullptr;
   }
@@ -322,7 +322,7 @@ vtkCollection* vtkMRMLApplicationLogic::GetViewLogics() const
 vtkMRMLViewLogic* vtkMRMLApplicationLogic::
 GetViewLogic(vtkMRMLViewNode* viewNode) const
 {
-  if(!viewNode || !this->Internal->ViewLogics)
+  if (!viewNode || !this->Internal->ViewLogics)
   {
     return nullptr;
   }
@@ -349,7 +349,7 @@ GetViewLogic(vtkMRMLViewNode* viewNode) const
 vtkMRMLViewLogic* vtkMRMLApplicationLogic::
 GetViewLogicByLayoutName(const char* layoutName) const
 {
-  if(!layoutName || !this->Internal->ViewLogics)
+  if (!layoutName || !this->Internal->ViewLogics)
   {
     return nullptr;
   }
@@ -491,7 +491,7 @@ void vtkMRMLApplicationLogic::PropagateTableSelection()
   {
     vtkMRMLTableViewNode* tnode = vtkMRMLTableViewNode::SafeDownCast (
       this->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLTableViewNode" ) );
-    if(!tnode->GetDoPropagateTableSelection())
+    if (!tnode->GetDoPropagateTableSelection())
     {
       continue;
     }
@@ -514,7 +514,7 @@ void vtkMRMLApplicationLogic::PropagatePlotChartSelection()
   {
     vtkMRMLPlotViewNode* pnode = vtkMRMLPlotViewNode::SafeDownCast (
       this->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLPlotViewNode" ) );
-    if(!pnode->GetDoPropagatePlotChartSelection())
+    if (!pnode->GetDoPropagatePlotChartSelection())
     {
       continue;
     }
@@ -531,7 +531,7 @@ void vtkMRMLApplicationLogic::FitSliceToContent(bool all, bool onlyIfPropagateVo
   }
   vtkMRMLSliceLogic* sliceLogic = nullptr;
   vtkCollectionSimpleIterator it;
-  for(this->Internal->SliceLogics->InitTraversal(it);
+  for (this->Internal->SliceLogics->InitTraversal(it);
       (sliceLogic = vtkMRMLSliceLogic::SafeDownCast(
         this->Internal->SliceLogics->GetNextItemAsObject(it)));)
   {

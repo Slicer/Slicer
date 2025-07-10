@@ -231,7 +231,7 @@ void qSlicerUnitsSettingsPanelPrivate
 // ---------------------------------------------------------------------------
 void qSlicerUnitsSettingsPanelPrivate::resize(bool showall)
 {
-  if(showall)
+  if (showall)
   {
     this->scrollArea->setMinimumSize(QSize(0, 700));
   }
@@ -298,7 +298,7 @@ void qSlicerUnitsSettingsPanel::setQuantities(const QStringList& newQuantities)
 {
   Q_D(qSlicerUnitsSettingsPanel);
 
-  foreach(QString newQuantity, newQuantities)
+  foreach (QString newQuantity, newQuantities)
   {
     if (!d->Quantities.contains(newQuantity))
     {

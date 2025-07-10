@@ -41,7 +41,7 @@ unsigned int vtkEventBrokerInitialize::Count;
 //----------------------------------------------------------------------------
 vtkEventBrokerInitialize::vtkEventBrokerInitialize()
 {
-  if(++Self::Count == 1)
+  if (++Self::Count == 1)
   {
     vtkEventBroker::classInitialize();
   }
@@ -50,7 +50,7 @@ vtkEventBrokerInitialize::vtkEventBrokerInitialize()
 //----------------------------------------------------------------------------
 vtkEventBrokerInitialize::~vtkEventBrokerInitialize()
 {
-  if(--Self::Count == 0)
+  if (--Self::Count == 0)
   {
     vtkEventBroker::classFinalize();
   }
@@ -71,12 +71,12 @@ vtkEventBroker* vtkEventBroker::New()
 // Return the single instance of the vtkEventBroker
 vtkEventBroker* vtkEventBroker::GetInstance()
 {
-  if(!vtkEventBrokerInstance)
+  if (!vtkEventBrokerInstance)
   {
     // Try the factory first
     vtkEventBrokerInstance = (vtkEventBroker*)vtkObjectFactory::CreateInstance("vtkEventBroker");
     // if the factory did not provide one, then create it here
-    if(!vtkEventBrokerInstance)
+    if (!vtkEventBrokerInstance)
     {
       vtkEventBrokerInstance = new vtkEventBroker;
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
@@ -137,7 +137,7 @@ void vtkEventBroker::DetachObservations()
   for (mapiter = this->SubjectMap.begin(); mapiter != this->SubjectMap.end(); mapiter++)
   {
     // clear out all the observation records
-    for(oiter=(mapiter->second).begin(); oiter != (mapiter->second).end(); oiter++)
+    for (oiter=(mapiter->second).begin(); oiter != (mapiter->second).end(); oiter++)
     {
       this->DetachObservation (*oiter);
       // Ideally the observation should be removed from SubjectMap and
@@ -294,14 +294,14 @@ void vtkEventBroker::RemoveObservations (ObservationVector observations)
 
   ObservationVector::iterator inObsIter;
 
-  for(inObsIter=observations.begin(); inObsIter != observations.end(); inObsIter++)
+  for (inObsIter=observations.begin(); inObsIter != observations.end(); inObsIter++)
   {
     vtkObservation* inObs = (*inObsIter);
     ObservationVector& subjectObservations = this->SubjectMap[(*inObsIter)->GetSubject()];
     subjectObservations.erase(subjectObservations.find(inObs));
   }
 
-  for(inObsIter=observations.begin(); inObsIter != observations.end(); inObsIter++)
+  for (inObsIter=observations.begin(); inObsIter != observations.end(); inObsIter++)
   {
     vtkObservation* inObs = (*inObsIter);
     ObservationVector& observerObservations = this->ObserverMap[inObs->GetObserver()];
@@ -310,7 +310,7 @@ void vtkEventBroker::RemoveObservations (ObservationVector observations)
 
   // remove from event queue
   std::deque<vtkObservation*>::iterator queueIter;
-  for(queueIter=this->EventQueue.begin(); queueIter != this->EventQueue.end();)
+  for (queueIter=this->EventQueue.begin(); queueIter != this->EventQueue.end();)
   {
     // foreach of the broker's observations see if it is in the list of items to be removed
     if (observations.find(*queueIter)!=observations.end())
@@ -325,7 +325,7 @@ void vtkEventBroker::RemoveObservations (ObservationVector observations)
   }
 
   // detach and delete each of the observations
-  for(ObservationVector::iterator removeIter=observations.begin(); removeIter != observations.end(); removeIter++)
+  for (ObservationVector::iterator removeIter=observations.begin(); removeIter != observations.end(); removeIter++)
   {
     (*removeIter)->SetInEventQueue( 0 );
     this->DetachObservation( *removeIter );
@@ -388,7 +388,7 @@ vtkEventBroker::ObservationVector vtkEventBroker::GetObservations (
   // find matching observations to remove
   ObservationVector& subjectList = this->SubjectMap[subject];
 
-  for(ObservationVector::iterator obsIter = subjectList.begin();
+  for (ObservationVector::iterator obsIter = subjectList.begin();
       obsIter != subjectList.end();
       ++obsIter)
   {
@@ -443,7 +443,7 @@ vtkCollection* vtkEventBroker::GetObservationsForSubject ( vtkObject* subject )
 {
   vtkCollection* collection = vtkCollection::New();
   ObservationVector& subjectList = this->SubjectMap[subject];
-  for(ObservationVector::iterator iter=subjectList.begin();
+  for (ObservationVector::iterator iter=subjectList.begin();
       iter != subjectList.end(); iter++)
   {
     if ( (*iter)->GetSubject() == subject )
@@ -478,7 +478,7 @@ vtkCollection* vtkEventBroker::GetObservationsForCallback ( vtkCallbackCommand* 
   for (it = this->ObserverMap.begin(); it != this->ObserverMap.end(); ++it)
   {
     ObservationVector::iterator iter;
-    for(iter=it->second.begin(); iter != it->second.end(); iter++)
+    for (iter=it->second.begin(); iter != it->second.end(); iter++)
     {
       if ( *iter && (*iter)->GetCallbackCommand() == callback )
       {
@@ -494,7 +494,7 @@ int vtkEventBroker::GetNumberOfObservations ( )
 {
   size_t count = 0;
   ObjectToObservationVectorMap::iterator iter;
-  for(iter=this->SubjectMap.begin(); iter != this->SubjectMap.end(); iter++)
+  for (iter=this->SubjectMap.begin(); iter != this->SubjectMap.end(); iter++)
   {
     count += iter->second.size();
   }
@@ -511,7 +511,7 @@ vtkObservation* vtkEventBroker::GetNthObservation ( int n )
 
   size_t count = 0;
   ObjectToObservationVectorMap::iterator iter;
-  for(iter=this->SubjectMap.begin(); iter != this->SubjectMap.end(); iter++)
+  for (iter=this->SubjectMap.begin(); iter != this->SubjectMap.end(); iter++)
   {
     if ( static_cast<size_t>(n) < count + iter->second.size())
     {
@@ -713,7 +713,7 @@ void vtkEventBroker::ProcessEvent ( vtkObservation* observation, vtkObject* call
     // iterate list of observations for the deleted object (caller) as subject
     ObservationVector::iterator obsIter;
     ObservationVector& subjectList = this->SubjectMap[caller];
-    for(obsIter=subjectList.begin(); obsIter != subjectList.end(); ++obsIter)
+    for (obsIter=subjectList.begin(); obsIter != subjectList.end(); ++obsIter)
     {
       if ( (*obsIter)->GetEvent() == vtkCommand::DeleteEvent )
       {
@@ -765,7 +765,7 @@ void vtkEventBroker::QueueObservation ( vtkObservation* observation,
   else
   {
     std::deque<vtkObservation::CallType>::const_iterator dataIter;
-    for(dataIter=observation->GetCallDataList()->begin();dataIter != observation->GetCallDataList()->end(); dataIter++)
+    for (dataIter=observation->GetCallDataList()->begin();dataIter != observation->GetCallDataList()->end(); dataIter++)
     {
       if ( call.EventID == dataIter->EventID &&
            call.CallData == dataIter->CallData)

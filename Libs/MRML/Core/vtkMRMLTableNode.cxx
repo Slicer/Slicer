@@ -163,7 +163,7 @@ void vtkMRMLTableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
     newTable->DeepCopy(node->GetTable());
     this->SetAndObserveTable(newTable.GetPointer());
   }
-  else if(this->GetTable() != nullptr && node->GetTable() != nullptr)
+  else if (this->GetTable() != nullptr && node->GetTable() != nullptr)
   {
     this->GetTable()->DeepCopy(node->GetTable());
     this->Table->Modified();

@@ -51,20 +51,20 @@ Version:   $Revision: 1.14 $
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode::vtkMRMLVolumeNode()
 {
-  for(int i=0; i<3; i++)
+  for (int i=0; i<3; i++)
   {
-    for(int j=0; j<3; j++)
+    for (int j=0; j<3; j++)
     {
       this->IJKToRASDirections[i][j] = (i == j) ? 1.0 : 0.0;
     }
   }
 
-  for(int i=0; i<3; i++)
+  for (int i=0; i<3; i++)
   {
     this->Spacing[i] = 1.0;
   }
 
-  for(int i=0; i<3; i++)
+  for (int i=0; i<3; i++)
   {
     this->Origin[i] = 0.0;
   }
@@ -99,9 +99,9 @@ void vtkMRMLVolumeNode::WriteXML(ostream& of, int nIndent)
 
   // IJKToRASDirections 3x3 C array
   std::stringstream ss;
-  for(int i=0; i<3; i++)
+  for (int i=0; i<3; i++)
   {
-    for(int j=0; j<3; j++)
+    for (int j=0; j<3; j++)
     {
       ss << this->IJKToRASDirections[i][j] << " ";
       if ( i != 2 && j != 2 )
@@ -140,9 +140,9 @@ void vtkMRMLVolumeNode::ReadXMLAttributes(const char** atts)
       double val;
       ss << attValue;
       double dirs[3][3];
-      for(int i=0; i<3; i++)
+      for (int i=0; i<3; i++)
       {
-        for(int j=0; j<3; j++)
+        for (int j=0; j<3; j++)
         {
           ss >> val;
           dirs[i][j] = val;
@@ -364,7 +364,7 @@ double vtkMRMLVolumeNode::GetMinSpacing()
     return 0;
   }
   double minSpace = this->GetSpacing()[0];
-  for(int i = 1; i < 3; ++i)
+  for (int i = 1; i < 3; ++i)
   {
     minSpace = std::min(this->GetSpacing()[i], minSpace);
   }
@@ -379,7 +379,7 @@ double vtkMRMLVolumeNode::GetMaxSpacing()
     return 0;
   }
   double maxSpace = this->GetSpacing()[0];
-  for(int i = 1; i < 3; ++i)
+  for (int i = 1; i < 3; ++i)
   {
     maxSpace = std::max(this->GetSpacing()[i], maxSpace);
   }

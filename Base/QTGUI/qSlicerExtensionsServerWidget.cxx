@@ -121,7 +121,7 @@ void qSlicerExtensionsServerWidgetPrivate::setFailurePage(const QStringList& err
       "</div>";
 
   QStringList htmlErrors;
-  foreach(const QString& error, errors)
+  foreach (const QString& error, errors)
   {
     htmlErrors << QString("<li>%1</li>").arg(error);
   }
@@ -139,7 +139,7 @@ void qSlicerExtensionsServerWidgetPrivate::updateTheme()
 void qSlicerExtensionsServerWidgetPrivate::setDarkThemeEnabled(bool enabled)
 {
   Q_Q(qSlicerExtensionsServerWidget);
-  if(!this->BrowsingEnabled)
+  if (!this->BrowsingEnabled)
   {
     return;
   }
@@ -281,7 +281,7 @@ void qSlicerExtensionsServerWidget::refresh()
 void qSlicerExtensionsServerWidget::onExtensionInstalled(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsServerWidget);
-  if(d->BrowsingEnabled)
+  if (d->BrowsingEnabled)
   {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
@@ -299,7 +299,7 @@ void qSlicerExtensionsServerWidget::onExtensionInstalled(const QString& extensio
 void qSlicerExtensionsServerWidget::onExtensionScheduledForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsServerWidget);
-  if(d->BrowsingEnabled)
+  if (d->BrowsingEnabled)
   {
     int serverAPI = d->ExtensionsManagerModel->serverAPI();
     if (serverAPI == qSlicerExtensionsManagerModel::Girder_v1)
@@ -333,7 +333,7 @@ void qSlicerExtensionsServerWidget::onSlicerRequirementsChanged()
 void qSlicerExtensionsServerWidget::onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level)
 {
   Q_D(qSlicerExtensionsServerWidget);
-  if(!d->BrowsingEnabled)
+  if (!d->BrowsingEnabled)
   {
     return;
   }
@@ -345,7 +345,7 @@ void qSlicerExtensionsServerWidget::onMessageLogged(const QString& text, ctkErro
     delay = "10000";
     state = "warning";
   }
-  else if(level == ctkErrorLogLevel::Critical || level == ctkErrorLogLevel::Fatal)
+  else if (level == ctkErrorLogLevel::Critical || level == ctkErrorLogLevel::Fatal)
   {
     delay = "10000";
     state = "error";
@@ -382,7 +382,7 @@ void qSlicerExtensionsServerWidget::onLoadFinished(bool ok)
 {
   Q_D(qSlicerExtensionsServerWidget);
   this->Superclass::onLoadFinished(ok);
-  if(!ok && d->NavigationRequestAccepted)
+  if (!ok && d->NavigationRequestAccepted)
   {
     d->setFailurePage(QStringList() << QString("Failed to load extension page using this URL: <strong>%1</strong>")
                       .arg(this->extensionsManagerModel()->extensionsListUrl().toString()));

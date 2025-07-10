@@ -385,7 +385,7 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
 // --------------------------------------------------------------------------
 bool qMRMLNodeComboBoxPrivate::hasPostItem(const QString& name)const
 {
-  foreach(const QString& item,
+  foreach (const QString& item,
           this->MRMLSceneModel->postItems(this->MRMLSceneModel->mrmlSceneItem()))
   {
     if (item.startsWith(name))
@@ -1243,7 +1243,7 @@ void qMRMLNodeComboBox::emitNodesAdded(const QModelIndex& parent, int start, int
 {
   Q_D(qMRMLNodeComboBox);
   Q_ASSERT(this->model());
-  for(int i = start; i <= end; ++i)
+  for (int i = start; i <= end; ++i)
   {
     vtkMRMLNode* node = d->mrmlNodeFromIndex(this->model()->index(start, 0, parent));
     if (node)
@@ -1258,7 +1258,7 @@ void qMRMLNodeComboBox::emitNodesAboutToBeRemoved(const QModelIndex& parent, int
 {
   Q_D(qMRMLNodeComboBox);
   Q_ASSERT(this->model());
-  for(int i = start; i <= end; ++i)
+  for (int i = start; i <= end; ++i)
   {
     vtkMRMLNode* node = d->mrmlNodeFromIndex(this->model()->index(start, 0, parent));
     if (node)
@@ -1300,7 +1300,7 @@ void qMRMLNodeComboBox::setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy policy)
 void qMRMLNodeComboBox::changeEvent(QEvent* event)
 {
   Q_D(qMRMLNodeComboBox);
-  if(event->type() == QEvent::StyleChange)
+  if (event->type() == QEvent::StyleChange)
   {
     d->updateDelegate();
   }

@@ -130,7 +130,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(vtkMRMLScene* scene, const QString& cl
   QScopedPointer<qMRMLNodeFactory> factory(new qMRMLNodeFactory());
   factory->setMRMLScene(scene);
   // Loop over attribute map and update the factory
-  foreach(const QString& key, attributes.keys())
+  foreach (const QString& key, attributes.keys())
   {
     factory->addAttribute(key, attributes.value(key));
   }

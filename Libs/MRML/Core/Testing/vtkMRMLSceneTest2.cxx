@@ -184,7 +184,7 @@ protected:
 //---------------------------------------------------------------------------
 int vtkMRMLSceneTest2(int argc, char* argv [] )
 {
-  if( argc < 2 )
+  if ( argc < 2 )
   {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;
@@ -265,7 +265,7 @@ int vtkMRMLSceneTest2(int argc, char* argv [] )
   if (!unexpectedAddedNodeNames.empty())
   {
     std::cerr << "line " << __LINE__ << " - unexpectedAddedNodeNames: ";
-    for(size_t i = 0; i < unexpectedAddedNodeNames.size(); ++i)
+    for (size_t i = 0; i < unexpectedAddedNodeNames.size(); ++i)
     {
       std::cerr << unexpectedAddedNodeNames[i] << " ";
     }

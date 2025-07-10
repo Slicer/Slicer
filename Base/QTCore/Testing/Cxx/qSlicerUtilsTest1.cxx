@@ -104,14 +104,14 @@ int isExecutableNameTest()
                   << "Threshold.py" << "Threshold.tcl"
                   << "Threshold.m" << "Threshold.exe";
 
-  foreach(const QString& executableName, executableNames)
+  foreach (const QString& executableName, executableNames)
   {
     CHECK_BOOL(qSlicerUtils::isExecutableName(executableName), true);
   }
 
   QStringList notExecutableNames;
   notExecutableNames << "Threshold.ini" << "Threshold.txt" << "Threshold";
-  foreach(const QString& notExecutableName, notExecutableNames)
+  foreach (const QString& notExecutableName, notExecutableNames)
   {
     CHECK_BOOL(qSlicerUtils::isExecutableName(notExecutableName), false);
   }
@@ -251,7 +251,7 @@ int isLoadableModuleTest()
 
     createFile(__LINE__, tmp1, ".", "CMakeCache.txt");
 
-    foreach(const QString& relativePath,
+    foreach (const QString& relativePath,
             QStringList() << debug << release << relWithDebInfo << minSizeRel << foo << fooDebug
                           << fooRelease << fooBar << fooBarDebug << fooBarRelease)
     {
@@ -335,7 +335,7 @@ int isLoadableModuleTest()
     tmp3.mkdir(temporaryDirName);
     tmp3.cd(temporaryDirName);
 
-    foreach(const QString& relativePath, QStringList() << foo << fooBar)
+    foreach (const QString& relativePath, QStringList() << foo << fooBar)
     {
       createFile(__LINE__, tmp1, relativePath, "plugin.txt");
     }
@@ -423,7 +423,7 @@ int isLoadableModuleTest()
 #endif
 
     // Clean temporary directories
-    foreach(const QString& dir, directoriesToRemove)
+    foreach (const QString& dir, directoriesToRemove)
     {
       ctk::removeDirRecursively(dir);
     }
@@ -720,7 +720,7 @@ int isLoadableModuleTest()
     createFile(__LINE__, tmp, path2, "sol.txt");
 
     // Let's confirm that created file are readable
-    foreach(const QString& relativeFilepath, QStringList()
+    foreach (const QString& relativeFilepath, QStringList()
             << path1 + "/sol.txt"
             << path1 + "/la.txt"
             << path2 + "/si.txt"
@@ -739,7 +739,7 @@ int isLoadableModuleTest()
     //  https://qt.gitorious.org/qt/qt/blobs/092cd760d5fddf9640a310214fe01929f0fff3a8/src/corelib/io/qfsfileengine_win.cpp#line1781
 
     // Since directory are *NOT* executable, files should *NOT* be readable
-    foreach(const QString& relativeFilepath, QStringList()
+    foreach (const QString& relativeFilepath, QStringList()
             << path1 + "/sol.txt"
             << path1 + "/la.txt"
             << path2 + "/si.txt"
@@ -752,7 +752,7 @@ int isLoadableModuleTest()
     CHECK_BOOL(qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner, QFile::ReadOwner), true);
 
     // Since directory are executable, files should be readable
-    foreach(const QString& relativeFilepath, QStringList()
+    foreach (const QString& relativeFilepath, QStringList()
             << path1 + "/sol.txt"
             << path1 + "/la.txt"
             << path2 + "/si.txt"
@@ -766,7 +766,7 @@ int isLoadableModuleTest()
     CHECK_BOOL(ctk::removeDirRecursively(tmp.path()), false);
 #endif
 
-    foreach(const QString& relativeFilepath, QStringList()
+    foreach (const QString& relativeFilepath, QStringList()
             << path1 + "/sol.txt"
             << path1 + "/la.txt"
             << path2 + "/si.txt"
@@ -781,7 +781,7 @@ int isLoadableModuleTest()
       QFile::ReadOwner | QFile::ExeOwner | QFile::WriteOwner, QFile::ReadOwner | QFile::WriteOwner), true);
 
     // Make sure files are readable and writable
-    foreach(const QString& relativeFilepath, QStringList()
+    foreach (const QString& relativeFilepath, QStringList()
             << path1 + "/sol.txt"
             << path1 + "/la.txt"
             << path2 + "/si.txt"

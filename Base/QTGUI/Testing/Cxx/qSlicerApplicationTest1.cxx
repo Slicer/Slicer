@@ -58,7 +58,7 @@ int qSlicerApplicationTest1(int argc, char* argv[] )
   app.setCoreIOManager(ioManager);
 
   qSlicerIOManager* ioManager2 = app.ioManager();
-  if(ioManager2 != ioManager)
+  if (ioManager2 != ioManager)
   {
     std::cerr << "Problem with setIOManager()/ioManager()" << std::endl;
     return EXIT_FAILURE;

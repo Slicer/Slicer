@@ -111,7 +111,7 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
   vtkNew<vtkMRMLModelNode> node;
 
   QFETCH(QList<AttributeType>, attributes);
-  foreach(const AttributeType& attribute, attributes)
+  foreach (const AttributeType& attribute, attributes)
   {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
   }
@@ -289,7 +289,7 @@ void qMRMLNodeAttributeTableViewTester::testSelect()
     QFETCH(QList<AttributeType>, attributes);
     vtkNew<vtkMRMLModelNode> node;
 
-    foreach(const AttributeType& attribute, attributes)
+    foreach (const AttributeType& attribute, attributes)
     {
       node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
     }
@@ -354,7 +354,7 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
   vtkNew<vtkMRMLModelNode> node;
 
   QFETCH(QList<AttributeType>, attributes);
-  foreach(const AttributeType& attribute, attributes)
+  foreach (const AttributeType& attribute, attributes)
   {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
   }
@@ -466,7 +466,7 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
 
   vtkNew<vtkMRMLModelNode> node;
 
-  foreach(const AttributeType& attribute, attributesToAdd)
+  foreach (const AttributeType& attribute, attributesToAdd)
   {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
   }
@@ -481,7 +481,7 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
   this->NodeAttributeTableView->removeSelectedAttributes();
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributeCountAfterRemove);
 
-  foreach(const AttributeEmptyType& attributeExist, expectedExistingAttributesAfterRemove)
+  foreach (const AttributeEmptyType& attributeExist, expectedExistingAttributesAfterRemove)
   {
     bool isEmpty = attributeExist.second;
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attributeExist.first).isEmpty(), isEmpty);
@@ -532,7 +532,7 @@ void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
   QFETCH(QList<AttributeType>, attributes);
   vtkNew<vtkMRMLModelNode> node;
 
-  foreach(const AttributeType& attribute, attributes)
+  foreach (const AttributeType& attribute, attributes)
   {
     node->SetAttribute(attribute.first.toUtf8(), attribute.second.toUtf8());
   }

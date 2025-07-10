@@ -294,7 +294,7 @@ void qSlicerCropVolumeModuleWidget::enter()
     qSlicerApplication* app = qSlicerApplication::application();
     if (app && app->layoutManager())
     {
-      foreach(QString sliceViewName, app->layoutManager()->sliceViewNames())
+      foreach (QString sliceViewName, app->layoutManager()->sliceViewNames())
       {
         qMRMLSliceWidget* sliceWidget = app->layoutManager()->sliceWidget(sliceViewName);
         const char* backgroundVolumeNodeID = sliceWidget->sliceLogic()->GetSliceCompositeNode()->GetBackgroundVolumeID();
@@ -378,7 +378,7 @@ void qSlicerCropVolumeModuleWidget::onApply()
 {
   Q_D(qSlicerCropVolumeModuleWidget);
 
-  if(!d->ParametersNode.GetPointer() ||
+  if (!d->ParametersNode.GetPointer() ||
     !d->ParametersNode->GetInputVolumeNode() ||
     !d->ParametersNode->GetROINode())
   {
@@ -529,19 +529,19 @@ void qSlicerCropVolumeModuleWidget::onInterpolationModeChanged()
   {
     return;
   }
-  if(d->NNRadioButton->isChecked())
+  if (d->NNRadioButton->isChecked())
   {
     d->ParametersNode->SetInterpolationMode(vtkMRMLCropVolumeParametersNode::InterpolationNearestNeighbor);
   }
-  if(d->LinearRadioButton->isChecked())
+  if (d->LinearRadioButton->isChecked())
   {
     d->ParametersNode->SetInterpolationMode(vtkMRMLCropVolumeParametersNode::InterpolationLinear);
   }
-  if(d->WSRadioButton->isChecked())
+  if (d->WSRadioButton->isChecked())
   {
     d->ParametersNode->SetInterpolationMode(vtkMRMLCropVolumeParametersNode::InterpolationWindowedSinc);
   }
-  if(d->BSRadioButton->isChecked())
+  if (d->BSRadioButton->isChecked())
   {
     d->ParametersNode->SetInterpolationMode(vtkMRMLCropVolumeParametersNode::InterpolationBSpline);
   }

@@ -65,7 +65,7 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
   int size_image = dim[0] * dim[1] * dim[2];
 
   int* label_image = new int[size_image];
-  for( int i = 0; i < size_image; i++ )
+  for ( int i = 0; i < size_image; i++ )
   {
     label_image[i] = 0;
   }
@@ -117,12 +117,12 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
         std::deque<Coord3i> neighbors;
         GetValidNeighbors(label_image, act_point, neighbors, image, dim);
         const size_t num_nb = neighbors.size();
-        if( num_nb == 0 )
+        if ( num_nb == 0 )
         {
           //    branch ends                        -> stop, next
           branch_done = true;
         }
-        else if( num_nb == 1 )
+        else if ( num_nb == 1 )
         {
           //    following of branch has 1 neighbor -> label, cont
           Coord3i pt = *(neighbors.begin());
@@ -164,11 +164,11 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
             act_branch->end_2_neighbors.push_back(newElem->branchID);
           }
           // update ends of new branches with each other
-          for( size_t ii = 0; ii < num_nb; ii++ )
+          for ( size_t ii = 0; ii < num_nb; ii++ )
           {
-            for( size_t jj = 0; jj < num_nb; jj++ )
+            for ( size_t jj = 0; jj < num_nb; jj++ )
             {
-              if( ii != jj )
+              if ( ii != jj )
               {
                 neighborBranches[ii]->end_1_neighbors.push_back(neighborBranches[jj]->branchID);
               }
@@ -205,16 +205,16 @@ void SkelGraph::PrintGraph()
   std::cout << "Graph : " << std::endl;
   int cnt = 0;
   std::cout << "Number: Branch Br.ID | N 1 | N 2 | Length | End1 | End2 " << std::endl;
-  while( act_graph != m_Graph.end() )
+  while ( act_graph != m_Graph.end() )
   {
     cnt++;
     std::cout << cnt << ": Br. " << act_graph->branchID;
 
-    if( !act_graph->end_1_neighbors.empty() )
+    if ( !act_graph->end_1_neighbors.empty() )
     {
       act_nb = act_graph->end_1_neighbors.begin();
       std::cout << "| ";
-      while( act_nb != act_graph->end_1_neighbors.end() )
+      while ( act_nb != act_graph->end_1_neighbors.end() )
       {
         std::cout << *act_nb << ", ";
         act_nb++;
@@ -225,11 +225,11 @@ void SkelGraph::PrintGraph()
       std::cout << "| None";
     }
 
-    if(!act_graph->end_2_neighbors.empty())
+    if (!act_graph->end_2_neighbors.empty())
     {
       act_nb = act_graph->end_2_neighbors.begin();
       std::cout << "| ";
-      while( act_nb != act_graph->end_2_neighbors.end() )
+      while ( act_nb != act_graph->end_2_neighbors.end() )
       {
         std::cout << *act_nb << ", ";
         act_nb++;
@@ -282,7 +282,7 @@ void SkelGraph::FindMaximalPath()
     // do cost traversal
     std::deque<skel_branch*> wait_list;
     wait_list.push_back(&(*act_endbranch));
-    while( !wait_list.empty() )
+    while ( !wait_list.empty() )
     {
       // get next entry in wait_list
       skel_branch * act_node = *(wait_list.begin());
@@ -297,16 +297,16 @@ void SkelGraph::FindMaximalPath()
       // we can use advance for random access
       advance(act_pos_list, act_pos_id - 1);
       // std::cout << "A " << act_pos_id  << std::endl;
-      for( int i = 0; i < 2; i++ )
+      for ( int i = 0; i < 2; i++ )
       {
         std::deque<int> * cont_end = nullptr;
         Coord3i cont_end_point;
-        if( i == 0 )
+        if ( i == 0 )
         {
           cont_end = &(act_node->end_2_neighbors);
           cont_end_point = act_node->end_2_point;
         }
-        else if( i == 1 )
+        else if ( i == 1 )
         {
           cont_end = &(act_node->end_1_neighbors);
           cont_end_point = act_node->end_1_point;
@@ -317,7 +317,7 @@ void SkelGraph::FindMaximalPath()
         }
 
         // add all neighbors to wait_list that are not yet treated
-        for(std::deque<int>::iterator neighbors = cont_end->begin(); neighbors != cont_end->end(); ++neighbors)
+        for (std::deque<int>::iterator neighbors = cont_end->begin(); neighbors != cont_end->end(); ++neighbors)
         {
           // get neighbors entry
           int distance = *neighbors - act_pos_id;
@@ -521,13 +521,13 @@ void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<C
 void SkelGraph::FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned char* image, const int dim[3])
 {
   endPoints.clear();
-  for( int z = 1; z < dim[2] - 1; z++ )
+  for ( int z = 1; z < dim[2] - 1; z++ )
   {
-    for( int y = 1; y < dim[1] - 1; y++ )
+    for ( int y = 1; y < dim[1] - 1; y++ )
     {
-      for( int x = 1; x < dim[0] - 1; x++ )
+      for ( int x = 1; x < dim[0] - 1; x++ )
       {
-        if( image[x + dim[0] * ( y + dim[1] * z )] && IsEndpoint(x, y, z, image, dim) )
+        if ( image[x + dim[0] * ( y + dim[1] * z )] && IsEndpoint(x, y, z, image, dim) )
         {
           // x,y,z is an endpoint
           Coord3i elem;
@@ -548,12 +548,12 @@ int SkelGraph::IsEndpoint(int x, int y, int z, const unsigned char* image, const
   for (int i = 0; i < 3; i++)
   {
     int py = y - 1;
-    for( int j = 0; j < 3; j++ )
+    for ( int j = 0; j < 3; j++ )
     {
       int px = x - 1;
-      for( int k = 0; k < 3; k++ )
+      for ( int k = 0; k < 3; k++ )
       {
-        if( image[px + dim[0] * ( py + dim[1] * pz )] )
+        if ( image[px + dim[0] * ( py + dim[1] * pz )] )
         {
           if (nb == 2)
           {
@@ -584,15 +584,15 @@ void SkelGraph::GetValidNeighbors(int* label_image, Coord3i &act_point, std::deq
 {
   int pz = act_point[2] - 1;
 
-  for( int i = 0; i < 3; i++ )
+  for ( int i = 0; i < 3; i++ )
   {
     int py = act_point[1] - 1;
-    for( int j = 0; j < 3; j++ )
+    for ( int j = 0; j < 3; j++ )
     {
       int px = act_point[0] - 1;
-      for( int k = 0; k < 3; k++ )
+      for ( int k = 0; k < 3; k++ )
       {
-        if( image[px + dim[0] * ( py + dim[1] * pz )] &&
+        if ( image[px + dim[0] * ( py + dim[1] * pz )] &&
             !label_image[px + dim[0] * ( py + dim[1] * pz )] )
         {
           // point exist in skeleton, but is yet unlabeled

@@ -177,7 +177,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::RemoveTransformNode(vtk
   }
   vtkInternal::TransformToDisplayCacheType::iterator displayableIt =
     this->TransformToDisplayNodes.find(node);
-  if(displayableIt == this->TransformToDisplayNodes.end())
+  if (displayableIt == this->TransformToDisplayNodes.end())
   {
     return;
   }
@@ -213,7 +213,7 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayableTransf
 void vtkMRMLTransformsDisplayableManager3D::vtkInternal::RemoveDisplayNode(vtkMRMLTransformDisplayNode* displayNode)
 {
   PipelinesCacheType::iterator actorsIt = this->DisplayPipelines.find(displayNode);
-  if(actorsIt == this->DisplayPipelines.end())
+  if (actorsIt == this->DisplayPipelines.end())
   {
     return;
   }
@@ -377,7 +377,7 @@ bool vtkMRMLTransformsDisplayableManager3D::vtkInternal::IsNodeObserved(vtkMRMLT
 //---------------------------------------------------------------------------
 void vtkMRMLTransformsDisplayableManager3D::vtkInternal::ClearDisplayableNodes()
 {
-  while(this->TransformToDisplayNodes.size() > 0)
+  while (this->TransformToDisplayNodes.size() > 0)
   {
     this->RemoveTransformNode(this->TransformToDisplayNodes.begin()->first);
   }

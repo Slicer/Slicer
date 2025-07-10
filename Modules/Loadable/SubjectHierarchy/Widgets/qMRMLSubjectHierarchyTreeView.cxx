@@ -344,7 +344,7 @@ void qMRMLSubjectHierarchyTreeViewPrivate::updateSceneMenuActions()
 
   this->AddNodeActions.clear();
   QStringList nodeTypes = q->nodeTypes();
-  foreach(QString nodeType, q->nodeTypes())
+  foreach (QString nodeType, q->nodeTypes())
   {
     QString label = q->nodeTypeLabel(nodeType);
     QAction* addNodeAction = new QAction(qMRMLSubjectHierarchyTreeView::tr("Create new %1").arg(label), nullptr);
@@ -743,7 +743,7 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(QList<vtkIdType> items)
   QSet<QModelIndex> previouslySelectedItems(previouslySelectedItemsList.begin(), previouslySelectedItemsList.end());
 
   // Deselect items that were previously selected but not requested anymore
-  foreach(QModelIndex itemIndex, previouslySelectedItems)
+  foreach (QModelIndex itemIndex, previouslySelectedItems)
   {
     if (itemIndex.isValid() && !requestedSelectedItems.contains(itemIndex))
     {
@@ -752,7 +752,7 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(QList<vtkIdType> items)
   }
 
   // Select items that are requested but have not been previously selected
-  foreach(QModelIndex itemIndex, requestedSelectedItems)
+  foreach (QModelIndex itemIndex, requestedSelectedItems)
   {
     if (!previouslySelectedItems.contains(itemIndex))
     {
@@ -1564,7 +1564,7 @@ void qMRMLSubjectHierarchyTreeView::populateContextMenuForItem(vtkIdType itemID)
 
   // "Add new ..." node actions
   bool addNodeActionsVisible = d->AddNodeMenuActionVisible && (!currentItemID || currentItemID == d->SubjectHierarchyNode->GetSceneItemID());
-  foreach(QAction* addNodeAction, d->AddNodeActions)
+  foreach (QAction* addNodeAction, d->AddNodeActions)
   {
     addNodeAction->setVisible(addNodeActionsVisible);
   }
@@ -2502,7 +2502,7 @@ void qMRMLSubjectHierarchyTreeView::setBaseName(const QString& baseName, const Q
     qWarning("qMRMLSubjectHierarchyTreeView::setBaseName failed: no node types have been set yet");
     return;
   }
-  foreach(QString aNodeType, nodeTypes)
+  foreach (QString aNodeType, nodeTypes)
   {
     d->MRMLNodeFactory->setBaseName(aNodeType, baseName);
   }

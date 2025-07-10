@@ -76,7 +76,7 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
   scanOrders.emplace_back("LR");
   scanOrders.emplace_back("PA");
   scanOrders.emplace_back("AP");
-  for(std::vector<std::string>::iterator it = scanOrders.begin();
+  for (std::vector<std::string>::iterator it = scanOrders.begin();
       it != scanOrders.end();
       ++it)
   {

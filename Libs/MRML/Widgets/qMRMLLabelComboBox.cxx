@@ -294,7 +294,7 @@ void qMRMLLabelComboBox::updateWidgetFromMRML()
 
   d->ComboBox->clear();
 
-  if(d->NoneEnabled)
+  if (d->NoneEnabled)
   {
     d->ComboBox->insertItem(0, "None");
   }

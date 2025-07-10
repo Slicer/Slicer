@@ -23,7 +23,7 @@ template <class T>
 DiffusionTensor3DExtended<T>
 ::DiffusionTensor3DExtended( const Superclass & tensor )
 {
-  for( int i = 0; i < 6; i++ )
+  for ( int i = 0; i < 6; i++ )
   {
     this->SetElement( i, tensor.GetElement( i ) );
   }
@@ -36,9 +36,9 @@ DiffusionTensor3DExtended<T>
 {
   MatrixType matrix;
 
-  for( int i = 0; i < 3; i++ )
+  for ( int i = 0; i < 3; i++ )
   {
-    for( int j = 0; j < 3; j++ )
+    for ( int j = 0; j < 3; j++ )
     {
       matrix[i][j] = ( *this )( i, j );
     }
@@ -52,9 +52,9 @@ void
 DiffusionTensor3DExtended<T>
 ::SetTensorFromMatrix( Matrix<C, 3, 3> matrix )
 {
-  for( int i = 0; i < 3; i++ )
+  for ( int i = 0; i < 3; i++ )
   {
-    for( int j = i; j < 3; j++ )
+    for ( int j = i; j < 3; j++ )
     {
       ( *this )( i, j ) = static_cast<T>( matrix[i][j] );
     }
@@ -67,7 +67,7 @@ DiffusionTensor3DExtended<T>
 ::operator DiffusionTensor3DExtended<C> const ()
 {
   DiffusionTensor3DExtended<C> tmp;
-  for( int i = 0; i < 6; i++ )
+  for ( int i = 0; i < 6; i++ )
   {
     tmp.SetElement( i, ( C ) ( this->GetElement( i ) ) );
   }

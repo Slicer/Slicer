@@ -124,7 +124,7 @@ int vtkProjectMarkupsCurvePointsFilter::RequestData(
   // If we have a surface node, project, otherwise the copy was enough
   if (this->InputCurveNode->GetSurfaceConstraintNode())
   {
-    if(!this->ProjectPointsToSurface(
+    if (!this->ProjectPointsToSurface(
          this->InputCurveNode->GetSurfaceConstraintNode(), this->GetMaximumSearchRadiusTolerance(), inputPoints,
          outputPoints))
     {
@@ -186,14 +186,14 @@ bool vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurfaceImpl(vtkOBBTree
     vtkIdType cellId = 0;
     vtkNew <vtkGenericCell> cell;
     int foundIntersection = surfaceObbTree->IntersectWithLine(rayEndPoint, originalPoint, tolerance, t, exteriorPoint, pcoords, subId, cellId, cell);
-    if(foundIntersection == 0)
+    if (foundIntersection == 0)
     {
       // If no intersection, reverse direction of normal vector ray
       rayEndPoint[0] = originalPoint[0] + rayDirection[0] * -rayLength;
       rayEndPoint[1] = originalPoint[1] + rayDirection[1] * -rayLength;
       rayEndPoint[2] = originalPoint[2] + rayDirection[2] * -rayLength;
       int foundIntersection = surfaceObbTree->IntersectWithLine(originalPoint, rayEndPoint, tolerance, t, exteriorPoint, pcoords, subId, cellId, cell);
-      if(foundIntersection == 0)
+      if (foundIntersection == 0)
       {
         // If no intersection in either direction, use closest mesh point
         vtkIdType closestPointId = pointLocator->FindClosestPoint(originalPoint);
@@ -236,7 +236,7 @@ bool vtkProjectMarkupsCurvePointsFilter::ProjectPointsToSurface(
 {
   this->PointProjection.SetModel(modelNode);
   vtkSmartPointer<vtkPolyData> surfacePolydata = this->PointProjection.GetSurfacePolyData();
-  if(!surfacePolydata)
+  if (!surfacePolydata)
   {
     vtkErrorMacro("vtkProjectMarkupsCurvePointsFilter::ProjectPointsToSurface failed: Constraint surface polydata is not valid");
     return false;

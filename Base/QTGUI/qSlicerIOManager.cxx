@@ -192,7 +192,7 @@ qSlicerFileDialog* qSlicerIOManagerPrivate
 {
   const QList<qSlicerFileDialog*>& dialogs =
     (action == qSlicerFileDialog::Read)? this->ReadDialogs : this->WriteDialogs;
-  foreach(qSlicerFileDialog* dialog, dialogs)
+  foreach (qSlicerFileDialog* dialog, dialogs)
   {
     if (dialog->fileType() == fileType)
     {
@@ -262,7 +262,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
   bool res = dialog->exec(properties);
   if (loadedNodes)
   {
-    foreach(const QString& nodeID, dialog->loadedNodes())
+    foreach (const QString& nodeID, dialog->loadedNodes())
     {
       vtkMRMLNode* node = d->currentScene()->GetNodeByID(nodeID.toUtf8());
       if (node)
@@ -282,7 +282,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
 void qSlicerIOManager::dragEnterEvent(QDragEnterEvent* event)
 {
   Q_D(qSlicerIOManager);
-  foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
+  foreach (qSlicerFileDialog* dialog, d->ReadDialogs)
   {
     if (dialog->isMimeDataAccepted(event->mimeData()))
     {
@@ -298,7 +298,7 @@ void qSlicerIOManager::dropEvent(QDropEvent* event)
   Q_D(qSlicerIOManager);
   QStringList supportedReaders;
   QStringList genericReaders; // those must be last in the choice menu
-  foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
+  foreach (qSlicerFileDialog* dialog, d->ReadDialogs)
   {
     if (dialog->isMimeDataAccepted(event->mimeData()))
     {
@@ -338,7 +338,7 @@ void qSlicerIOManager::dropEvent(QDropEvent* event)
   {
     return;
   }
-  foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
+  foreach (qSlicerFileDialog* dialog, d->ReadDialogs)
   {
     if (dialog->description() == selectedReader)
     {
@@ -385,7 +385,7 @@ void qSlicerIOManager::setFavorites(const QList<QUrl>& urls)
 {
   Q_D(qSlicerIOManager);
   QList<QUrl> newFavorites;
-  foreach(const QUrl& url, urls)
+  foreach (const QUrl& url, urls)
   {
     newFavorites << url;
   }
@@ -472,7 +472,7 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
   SlicerRenderBlocker renderBlocker;
   bool needStop = d->startProgressDialog(files.count());
   bool success = true;
-  foreach(qSlicerIO::IOProperties fileProperties, files)
+  foreach (qSlicerIO::IOProperties fileProperties, files)
   {
     int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
     success = this->loadNodes(

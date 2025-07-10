@@ -50,11 +50,11 @@ public:
   static void Error(const char* m1, const char* m2)
   {
     std::string message = "vtkArchive Error: ";
-    if(m1)
+    if (m1)
     {
       message += m1;
     }
-    if(m2)
+    if (m2)
     {
       message += " ";
       message += m2;
@@ -277,7 +277,7 @@ bool vtkArchive::ExtractTar(const char* tarFileName, bool verbose, bool extract,
   archive_read_support_format_all(a);
   struct archive_entry *entry;
   int r = archive_read_open_filename(a, tarFileName, 10240);
-  if(r)
+  if (r)
   {
     vtkArchiveTools::Error("Problem with archive_read_open_filename(): ",
                          archive_error_string(a));
@@ -305,15 +305,15 @@ bool vtkArchive::ExtractTar(const char* tarFileName, bool verbose, bool extract,
       message += "x ";
       message += +archive_entry_pathname(entry);
     }
-    if(verbose && !extract)
+    if (verbose && !extract)
     {
       list_item_verbose(stdout, entry);
     }
-    else if(!extract)
+    else if (!extract)
     {
       message += archive_entry_pathname(entry);
     }
-    if(extract)
+    if (extract)
     {
       r = archive_write_disk_set_options(ext, ARCHIVE_EXTRACT_TIME);
       if (r != ARCHIVE_OK)

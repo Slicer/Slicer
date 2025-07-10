@@ -113,7 +113,7 @@ void qSlicerSequencesModulePrivate::addToolBar()
   this->SequencesModuleOwnsToolBar = false;
   foreach (QMenu* toolBarMenu,mainWindow->findChildren<QMenu*>())
   {
-    if(toolBarMenu->objectName()==QString("WindowToolBarsMenu"))
+    if (toolBarMenu->objectName()==QString("WindowToolBarsMenu"))
     {
       toolBarMenu->addAction(this->ToolBar->toggleViewAction());
       break;

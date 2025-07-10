@@ -62,7 +62,7 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLCameraNode> camera1;
   camera1->SetName("Default Scene Camera");
-  if(!legacy)
+  if (!legacy)
   {
     camera1->SetSingletonTag("1");
   }
@@ -70,7 +70,7 @@ bool TestCopyImportedCameras(bool clear, bool legacy)
   scene->AddNode(camera1.GetPointer());
 
   vtkNew<vtkMRMLCameraNode> camera2;
-  if(!legacy)
+  if (!legacy)
   {
     camera2->SetSingletonTag("2");
   }

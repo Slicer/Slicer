@@ -248,7 +248,7 @@ QStringList qSlicerModulesListViewPrivate
 ::indexListToModules(const QModelIndexList& indexes)const
 {
   QStringList modules;
-  foreach(const QModelIndex& index, indexes)
+  foreach (const QModelIndex& index, indexes)
   {
     modules << index.data(qSlicerModuleFactoryFilterModel::ModuleNameRole).toString();
   }
@@ -261,7 +261,7 @@ void qSlicerModulesListViewPrivate
                        Qt::CheckState checkState)
 {
   Q_Q(qSlicerModulesListView);
-  foreach(const QString& moduleName, q->modules())
+  foreach (const QString& moduleName, q->modules())
   {
     QStandardItem* moduleItem = this->moduleItem(moduleName);
     if (moduleItem == nullptr)
@@ -417,7 +417,7 @@ void qSlicerModulesListView::hideSelectedModules()
   QStringList newShowModules = d->FilterModel->showModules();
   QStringList modulesToHide = d->indexListToModules(
     this->selectionModel()->selectedIndexes());
-  foreach(const QString& moduleToHide, modulesToHide)
+  foreach (const QString& moduleToHide, modulesToHide)
   {
     newShowModules.removeAll(moduleToHide);
   }
@@ -443,7 +443,7 @@ void qSlicerModulesListView::moveSelectedModules(int offset)
   QStringList newShowModules = d->FilterModel->showModules();
   QStringList modulesToMove = d->indexListToModules(
     this->selectionModel()->selectedIndexes());
-  foreach(const QString& moduleToMove, modulesToMove)
+  foreach (const QString& moduleToMove, modulesToMove)
   {
     int moduleIndex = newShowModules.indexOf(moduleToMove);
     if (moduleIndex != -1)
@@ -467,7 +467,7 @@ void qSlicerModulesListView::scrollToSelectedModules()
 // --------------------------------------------------------------------------
 void qSlicerModulesListView::addModules(const QStringList& moduleNames)
 {
-  foreach(const QString& moduleName, moduleNames)
+  foreach (const QString& moduleName, moduleNames)
   {
     this->addModule(moduleName);
   }
@@ -494,7 +494,7 @@ void qSlicerModulesListView::updateModules()
 // --------------------------------------------------------------------------
 void qSlicerModulesListView::updateModules(const QStringList& moduleNames)
 {
-  foreach(const QString& moduleName, moduleNames)
+  foreach (const QString& moduleName, moduleNames)
   {
     this->updateModule(moduleName);
   }
@@ -531,7 +531,7 @@ void qSlicerModulesListView::onItemChanged(QStandardItem* item)
     // ensure dependencies are checked
     if (module)
     {
-      foreach(const QString& dependency, module->dependencies())
+      foreach (const QString& dependency, module->dependencies())
       {
         d->FactoryManager->removeModuleToIgnore(dependency);
       }
@@ -543,7 +543,7 @@ void qSlicerModulesListView::onItemChanged(QStandardItem* item)
     // ensure dependent modules are unchecked
     if (module)
     {
-      foreach(const QString& dependentModule, d->FactoryManager->dependentModules(moduleName))
+      foreach (const QString& dependentModule, d->FactoryManager->dependentModules(moduleName))
       {
         d->FactoryManager->addModuleToIgnore(dependentModule);
       }

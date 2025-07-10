@@ -91,7 +91,7 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
   QString currentExtension = storageNode ?
     coreIOManager->completeSlicerWritableFileNameSuffix(storableNode) : QString(".");
   int suggestedFormatIndex = -1; // will be index corresponding to format corresponding to currentExtension
-  foreach(QString nameFilter, coreIOManager->fileWriterExtensions(storableNode))
+  foreach (QString nameFilter, coreIOManager->fileWriterExtensions(storableNode))
   {
     // extract extension (e.g. ".ext") from format description string (e.g. "Blahblahblah (.ext)")
     QString extension = QString::fromStdString(
@@ -650,7 +650,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
         this->NodeTypeToNodeTypeWidgetSet[nodeType] = nodeTypeWidgetSet;
         connect(nodeTypeWidgetSet->exportFormatComboBox, &QComboBox::currentTextChanged, this, &qSlicerExportNodeDialogPrivate::formatChangedSlot);
       }
-      catch(std::runtime_error& error)
+      catch (std::runtime_error& error)
       {
         qCritical() << Q_FUNC_INFO << "failed: Encountered NodeTypeWidgetSet constructor error:" << error.what();
         return false;

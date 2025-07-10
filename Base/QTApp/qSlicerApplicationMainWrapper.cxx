@@ -40,7 +40,7 @@ int __stdcall WinMain(HINSTANCE hInstance,
 
   std::vector< const char* > argv(argc); // usual const char** array used in main() functions
   std::vector<std::string> argvString(argc); // this stores the strings that the argv pointers point to
-  for(int i=0; i<argc; i++)
+  for (int i=0; i<argc; i++)
   {
     argvString[i] = vtksys::Encoding::ToNarrow(argvStringW[i]);
     argv[i] = argvString[i].c_str();

@@ -44,7 +44,7 @@ bool qSlicerCLIModuleWidgetEventPlayer::playEvent(QObject* Object,
   }
 
   qSlicerCLIModuleWidget* parent = nullptr;
-  for(QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
+  for (QObject* test = Object; parent == nullptr && test != nullptr; test = test->parent())
   {
       parent = qobject_cast<qSlicerCLIModuleWidget*>(test);
   }

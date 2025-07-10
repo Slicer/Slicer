@@ -40,7 +40,7 @@ unsigned int vtkMRMLI18NInitialize::Count;
 //----------------------------------------------------------------------------
 vtkMRMLI18NInitialize::vtkMRMLI18NInitialize()
 {
-  if(++Self::Count == 1)
+  if (++Self::Count == 1)
   {
     vtkMRMLI18N::classInitialize();
   }
@@ -49,7 +49,7 @@ vtkMRMLI18NInitialize::vtkMRMLI18NInitialize()
 //----------------------------------------------------------------------------
 vtkMRMLI18NInitialize::~vtkMRMLI18NInitialize()
 {
-  if(--Self::Count == 0)
+  if (--Self::Count == 0)
   {
     vtkMRMLI18N::classFinalize();
   }
@@ -70,12 +70,12 @@ vtkMRMLI18N* vtkMRMLI18N::New()
 // Return the single instance of the vtkMRMLI18N
 vtkMRMLI18N* vtkMRMLI18N::GetInstance()
 {
-  if(!vtkMRMLI18NInstance)
+  if (!vtkMRMLI18NInstance)
   {
     // Try the factory first
     vtkMRMLI18NInstance = (vtkMRMLI18N*)vtkObjectFactory::CreateInstance("vtkMRMLI18N");
     // if the factory did not provide one, then create it here
-    if(!vtkMRMLI18NInstance)
+    if (!vtkMRMLI18NInstance)
     {
       vtkMRMLI18NInstance = new vtkMRMLI18N;
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE

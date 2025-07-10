@@ -119,7 +119,7 @@ QAction* qSlicerModulesMenuPrivate::action(const QVariant& actionData, const QMe
   {
     parentMenu = q;
   }
-  foreach(QAction* action, parentMenu->actions())
+  foreach (QAction* action, parentMenu->actions())
   {
     if (action->data() == actionData)
     {
@@ -145,7 +145,7 @@ QAction* qSlicerModulesMenuPrivate::action(const QString& text, const QMenu* par
   {
     parentMenu = q;
   }
-  foreach(QAction* action, parentMenu->actions())
+  foreach (QAction* action, parentMenu->actions())
   {
     if (action->text() == text)
     {
@@ -186,7 +186,7 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
     index = 65535; // big enough
   }
   // Search where moduleAction should be inserted. Before what action.
-  foreach(QAction* action, actions)
+  foreach (QAction* action, actions)
   {
     Q_ASSERT(action);
     int actionIndex = action->property("index").toInt(&ok);
@@ -242,7 +242,7 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
   {
     // look for third separator (second, as the first one was removed above)
     int separatorCount = 0;
-    foreach(QAction* action, actions)
+    foreach (QAction* action, actions)
     {
       Q_ASSERT(action);
       if (action->isSeparator())
@@ -296,7 +296,7 @@ QList<QMenu*> qSlicerModulesMenuPrivate::categoryMenus(QMenu* topLevelMenu, QStr
   {
     return QList<QMenu*>();
   }
-  foreach(QAction* action, topLevelMenu->actions())
+  foreach (QAction* action, topLevelMenu->actions())
   {
     if (action->text() == category)
     {
@@ -323,7 +323,7 @@ QMenu* qSlicerModulesMenuPrivate::menu(QMenu* menu, QStringList subCategories, b
     return menu;
   }
   // The actions are inserted alphabetically
-  foreach(QAction* action, menu->actions())
+  foreach (QAction* action, menu->actions())
   {
     if (action->text() == category)
     {
@@ -356,7 +356,7 @@ QMenu* qSlicerModulesMenuPrivate::actionMenu(QAction* action, QMenu* parentMenu)
   {
     actions.removeFirst();//remove All Modules menu
   }
-  foreach(QAction* subAction, actions)
+  foreach (QAction* subAction, actions)
   {
     if (subAction->menu())
     {
@@ -559,7 +559,7 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
   QObject::connect(moduleAction, SIGNAL(triggered(bool)),
                    this, SLOT(onActionTriggered()));
 
-  foreach(const QString& category, module->categories())
+  foreach (const QString& category, module->categories())
   {
     QMenu* menu = d->menu(this, category.split('.'), module->isBuiltIn());
     if (!menu)

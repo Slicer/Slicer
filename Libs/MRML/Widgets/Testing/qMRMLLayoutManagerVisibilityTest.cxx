@@ -102,7 +102,7 @@ bool checkViews(int line,
                 qMRMLLayoutManager* layoutManager,
                 QHash<vtkMRMLAbstractViewNode*, QList<bool>> viewNodesToExpectedVisibility)
 {
-  foreach(vtkMRMLAbstractViewNode* viewNode, viewNodesToExpectedVisibility.keys())
+  foreach (vtkMRMLAbstractViewNode* viewNode, viewNodesToExpectedVisibility.keys())
   {
 
     bool expectedNodeVisibility = viewNodesToExpectedVisibility[viewNode].at(0);

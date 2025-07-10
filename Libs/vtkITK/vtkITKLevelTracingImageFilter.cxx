@@ -178,7 +178,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self), T*
     chainTemp[1] = chainTemp[1] + offset[1];
     //vtkGenericWarningMacro( << "Chain point: "  << chainTemp );
   }
-  while( i < numberChain );
+  while ( i < numberChain );
 
   newPolys->InsertNextCell( i, ptIds );
 

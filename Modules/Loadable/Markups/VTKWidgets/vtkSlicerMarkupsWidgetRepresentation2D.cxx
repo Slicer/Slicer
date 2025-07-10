@@ -274,7 +274,7 @@ void vtkSlicerMarkupsWidgetRepresentation2D::UpdateAllPointsAndLabelsFromMRML(do
       if (controlPointType < Active)
       {
         bool thisNodeSelected = (markupsNode->GetNthControlPointSelected(pointIndex) != 0);
-        if((controlPointType == Selected) != thisNodeSelected)
+        if ((controlPointType == Selected) != thisNodeSelected)
         {
           continue;
         }

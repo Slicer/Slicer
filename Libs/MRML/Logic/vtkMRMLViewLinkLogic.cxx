@@ -217,7 +217,7 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
     {
       int wasModifying = cameraNode->StartModify();
 
-      if(cameraNode->GetParentTransformNode())
+      if (cameraNode->GetParentTransformNode())
       {
         vtkNew<vtkTransform> cameraTransform;
         vtkNew<vtkMatrix4x4> cameraTransformMatrix;
@@ -288,7 +288,7 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
     {
       int wasModifying = cameraNode->StartModify();
 
-      if(cameraNode->GetParentTransformNode())
+      if (cameraNode->GetParentTransformNode())
       {
         vtkNew<vtkTransform> cameraTransform;
         vtkNew<vtkMatrix4x4> cameraTransformMatrix;
@@ -316,7 +316,7 @@ void vtkMRMLViewLinkLogic::BroadcastCameraNodeEvent(vtkMRMLCameraNode* sourceCam
     {
       int wasModifying = cameraNode->StartModify();
 
-      if(cameraNode->GetParentTransformNode())
+      if (cameraNode->GetParentTransformNode())
       {
         vtkNew<vtkTransform> cameraTransform;
         vtkNew<vtkMatrix4x4> cameraTransformMatrix;

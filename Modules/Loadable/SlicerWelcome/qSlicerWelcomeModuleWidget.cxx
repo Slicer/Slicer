@@ -111,14 +111,14 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // Add all collabsibleWidgetButton to a button group
   QList<ctkCollapsibleButton*> collapsibles = widget->findChildren<ctkCollapsibleButton*>();
-  foreach(ctkCollapsibleButton* collapsible, collapsibles)
+  foreach (ctkCollapsibleButton* collapsible, collapsibles)
   {
     group->addButton(collapsible);
   }
 
   // Update occurrences of documentation URLs
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  foreach(QWidget* widget, QWidgetList()
+  foreach (QWidget* widget, QWidgetList()
           << this->FeedbackCollapsibleWidget
           << this->WelcomeAndAboutCollapsibleWidget
           << this->OtherUsefulHintsCollapsibleWidget
@@ -173,7 +173,7 @@ bool qSlicerWelcomeModuleWidgetPrivate::selectModule(const QString& moduleName)
     return false;
   }
   qSlicerAbstractCoreModule* module = moduleManager->module(moduleName);
-  if(!module)
+  if (!module)
   {
     QMessageBox::warning(
           q, qSlicerWelcomeModuleWidget::tr("Raising %1 Module:").arg(moduleName),

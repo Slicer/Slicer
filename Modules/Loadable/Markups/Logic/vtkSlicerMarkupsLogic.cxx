@@ -588,7 +588,7 @@ void vtkSlicerMarkupsLogic::SetActiveList(vtkMRMLMarkupsNode* markupsNode)
       selectionNode->SetReferenceActivePlaceNodeID(nullptr);
       vtkSmartPointer<vtkCollection> interactionNodes = vtkSmartPointer<vtkCollection>::Take
         (this->GetMRMLScene()->GetNodesByClass("vtkMRMLInteractionNode"));
-      for(int interactionNodeIndex = 0; interactionNodeIndex < interactionNodes->GetNumberOfItems(); ++interactionNodeIndex)
+      for (int interactionNodeIndex = 0; interactionNodeIndex < interactionNodes->GetNumberOfItems(); ++interactionNodeIndex)
       {
         vtkMRMLInteractionNode* interactionNode = vtkMRMLInteractionNode::SafeDownCast(interactionNodes->GetItemAsObject(interactionNodeIndex));
         if (interactionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
@@ -900,7 +900,7 @@ char* vtkSlicerMarkupsLogic::LoadMarkups(const char* fileName, const char* nodeN
 
   // get file extension
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fileName);
-  if( extension.empty() )
+  if ( extension.empty() )
   {
     vtkErrorMacro("vtkSlicerMarkupsLogic::LoadMarkups failed: no file extension specified: " << fileName);
     return nullptr;
@@ -956,7 +956,7 @@ char* vtkSlicerMarkupsLogic::LoadMarkupsFromJson(const char* fileName, const cha
   this->GetMRMLScene()->RemoveNode(tempStorageNode);
 
   vtkMRMLMarkupsNode* importedMarkupsNode = nullptr;
-  for(unsigned int markupsIndex = 0; markupsIndex < markupsTypes.size(); ++markupsIndex)
+  for (unsigned int markupsIndex = 0; markupsIndex < markupsTypes.size(); ++markupsIndex)
   {
     std::string markupsType = markupsTypes[markupsIndex];
     vtkMRMLMarkupsJsonStorageNode* storageNode = this->AddNewJsonStorageNodeForMarkupsType(markupsType);
@@ -1568,7 +1568,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationLinesROIsToMarkups(vtkStringArray* 
 
       // Copy node attributes to preserve as much information as possible
       const std::vector<std::string>& attributeNames = annotationNode->GetAttributeNames();
-      for(const std::string& attributeName : attributeNames)
+      for (const std::string& attributeName : attributeNames)
       {
         markupsNode->SetAttribute(attributeName.c_str(), annotationNode->GetAttribute(attributeName.c_str()));
       }

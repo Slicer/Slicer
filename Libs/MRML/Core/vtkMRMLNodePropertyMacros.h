@@ -282,7 +282,7 @@
     vectorType vector; \
     std::string valueString(xmlReadAttValue); \
     size_t separatorPosition = valueString.find(" "); \
-    while(separatorPosition != std::string::npos) \
+    while (separatorPosition != std::string::npos) \
     { \
       std::string attributeValue = valueString.substr(0, separatorPosition); \
       vtkVariant variantValue(attributeValue); \
@@ -305,7 +305,7 @@
     vectorType vector; \
     std::string valueString(xmlReadAttValue); \
     size_t separatorPosition = valueString.find(" "); \
-    while(separatorPosition != std::string::npos) \
+    while (separatorPosition != std::string::npos) \
     { \
       std::string attributeValue = valueString.substr(0, separatorPosition); \
       vtkVariant variantValue(attributeValue); \

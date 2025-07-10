@@ -820,7 +820,7 @@ void vtkMRMLROIListNode::UpdateIJK()
   int numROIs = this->GetNumberOfROIs();
   vtkMRMLVolumeNode* VolumeNode  = vtkMRMLVolumeNode::SafeDownCast(this->Scene->GetNodeByID(this->VolumeNodeID));
 
-  if(VolumeNode != nullptr)
+  if (VolumeNode != nullptr)
   {
     for (int n = 0; n < numROIs; ++n)
     {

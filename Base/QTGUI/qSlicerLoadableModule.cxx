@@ -75,7 +75,7 @@ bool qSlicerLoadableModule::addModuleToSlicerModules(
     const QString& moduleName)
 {
 #ifdef Slicer_USE_PYTHONQT
-  if(!pythonManager || !module || moduleName.isEmpty())
+  if (!pythonManager || !module || moduleName.isEmpty())
   {
     return false;
   }
@@ -100,7 +100,7 @@ bool qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
     const QString& moduleName)
 {
 #ifdef Slicer_USE_PYTHONQT
-  if(!pythonManager || moduleName.isEmpty())
+  if (!pythonManager || moduleName.isEmpty())
   {
     return false;
   }

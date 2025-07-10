@@ -120,19 +120,19 @@ int main( int argc, char* argv[] )
         break;
     }
   }
-  catch( itk::ExceptionObject& excep )
+  catch ( itk::ExceptionObject& excep )
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
   }
-  catch( std::exception& excep )
+  catch ( std::exception& excep )
   {
     std::cerr << "STD exception caught !" << std::endl;
     std::cerr << excep.what() << std::endl;
     return EXIT_FAILURE;
   }
-  catch( ... )
+  catch ( ... )
   {
     std::cerr << "Unknown exception caught !" << std::endl;
     return EXIT_FAILURE;

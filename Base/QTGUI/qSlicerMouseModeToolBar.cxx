@@ -254,7 +254,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromMRML()
   // Find action corresponding to current interaction mode
   int currentInteractionMode = interactionNode->GetCurrentInteractionMode();
   QAction* currentAction = nullptr;
-  foreach(QAction* action, this->InteractionModesActionGroup->actions())
+  foreach (QAction* action, this->InteractionModesActionGroup->actions())
   {
     if (action->data().toInt() == currentInteractionMode)
     {
@@ -409,7 +409,7 @@ void qSlicerMouseModeToolBarPrivate::updateCursor()
     else
     {
       // Find action corresponding to current interaction mode
-      foreach(QAction* action, this->InteractionModesActionGroup->actions())
+      foreach (QAction* action, this->InteractionModesActionGroup->actions())
       {
         if (action->data().toInt() == currentInteractionMode)
         {
@@ -567,7 +567,7 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
   }
 
   // Updated all mapped slicer viewers
-  foreach(const QString& viewerName, layoutManager->sliceViewNames())
+  foreach (const QString& viewerName, layoutManager->sliceViewNames())
   {
     qMRMLSliceView* sliceView = layoutManager->sliceWidget(viewerName)->sliceView();
 
@@ -602,7 +602,7 @@ void qSlicerMouseModeToolBar::switchPlaceMode()
 //---------------------------------------------------------------------------
 QAction* qSlicerMouseModeToolBar::actionFromPlaceNodeClassName(QString placeNodeClassName, QMenu* menu)
 {
-  foreach(QAction* action, menu->actions())
+  foreach (QAction* action, menu->actions())
   {
     if (action->objectName() == placeNodeClassName)
     {
@@ -726,7 +726,7 @@ void qSlicerMouseModeToolBar::toggleMarkupsToolBar()
     qDebug("qSlicerMouseModeToolBar::toggleMarkupsToolBar: no main window is available, toolbar is not added");
     return;
   }
-  foreach(QToolBar* toolBar, mainWindow->findChildren<QToolBar*>())
+  foreach (QToolBar* toolBar, mainWindow->findChildren<QToolBar*>())
   {
     if (toolBar->objectName() == QString("MarkupsToolBar"))
     {

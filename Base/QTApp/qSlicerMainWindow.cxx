@@ -569,7 +569,7 @@ QList<qSlicerIO::IOProperties> qSlicerMainWindowPrivate::readRecentlyLoadedFiles
 
   QSettings settings;
   int size = settings.beginReadArray("RecentlyLoadedFiles/RecentFiles");
-  for(int i = 0; i < size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     settings.setArrayIndex(i);
     QVariant file = settings.value("file");
@@ -754,7 +754,7 @@ void qSlicerMainWindowPrivate::setErrorLogIconHighlighted(bool highlighted)
   Q_Q(qSlicerMainWindow);
   QIcon defaultIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
   QIcon icon = defaultIcon;
-  if(!highlighted)
+  if (!highlighted)
   {
     QIcon disabledIcon;
     disabledIcon.addPixmap(
@@ -794,7 +794,7 @@ void qSlicerMainWindowPrivate::addFavoriteModule(const QString& moduleName)
   // find the location of where to add the action.
   // Note: FavoriteModules is sorted
   QAction* beforeAction = nullptr; // 0 means insert at end
-  foreach(QAction* toolBarAction, this->ModuleToolBar->actions())
+  foreach (QAction* toolBarAction, this->ModuleToolBar->actions())
   {
     bool isActionAFavoriteModule =
       (this->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
@@ -1457,7 +1457,7 @@ void qSlicerMainWindow::on_LoadDICOMAction_triggered()
 void qSlicerMainWindow::onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel)
 {
   Q_D(qSlicerMainWindow);
-  if(logLevel > ctkErrorLogLevel::Info)
+  if (logLevel > ctkErrorLogLevel::Info)
   {
     d->setErrorLogIconHighlighted(true);
   }
@@ -1614,7 +1614,7 @@ void qSlicerMainWindow::onModuleAboutToBeUnloaded(const QString& moduleName)
     d->ModuleSelectorToolBar->selectModule("");
   }
 
-  foreach(QAction* action, d->ModuleToolBar->actions())
+  foreach (QAction* action, d->ModuleToolBar->actions())
   {
     if (action->data().toString() == moduleName)
     {
@@ -1645,7 +1645,7 @@ void qSlicerMainWindow::onLayoutActionTriggered(QAction* action)
   Q_D(qSlicerMainWindow);
   bool found = false;
   // std::cerr << "onLayoutActionTriggered: " << action->text().toStdString() << std::endl;
-  foreach(QAction* maction, d->LayoutMenu->actions())
+  foreach (QAction* maction, d->LayoutMenu->actions())
   {
     if (action->text() == maction->text())
     {
@@ -1713,7 +1713,7 @@ void qSlicerMainWindow::onLayoutChanged(int layout)
   // data assigned, so they should never be triggered (they could be triggered
   // at startup, when layout is set to SlicerLayoutInitialView = 0).
 
-  foreach(QAction* action, d->LayoutMenu->actions())
+  foreach (QAction* action, d->LayoutMenu->actions())
   {
     if (!action->menu() && action->data().toInt() == layout)
     {
@@ -1756,7 +1756,7 @@ void qSlicerMainWindow::restoreGUIState(bool force/*=false*/)
   settings.endGroup();
   d->FavoriteModules << settings.value("Modules/FavoriteModules").toStringList();
 
-  foreach(const qSlicerIO::IOProperties& fileProperty, qSlicerMainWindowPrivate::readRecentlyLoadedFiles())
+  foreach (const qSlicerIO::IOProperties& fileProperty, qSlicerMainWindowPrivate::readRecentlyLoadedFiles())
   {
     d->RecentlyLoadedFileProperties.enqueue(fileProperty);
   }
@@ -1876,7 +1876,7 @@ void qSlicerMainWindow::on_FavoriteModulesChanged()
 
   // Update favorite module toolbar
   d->ModuleToolBar->clear();
-  foreach(QString moduleName, d->FavoriteModules)
+  foreach (QString moduleName, d->FavoriteModules)
   {
     if (d->FavoriteModules.contains(moduleName))
     {

@@ -349,7 +349,7 @@ bool vtkSlicerCropVolumeLogic::GetVoxelBasedCropOutputExtent(vtkMRMLDisplayableN
 int vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLDisplayableNode* roi,
   vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputVolume, bool limitToInputExtent/*=true*/, double fillValue/*=0.0*/)
 {
-  if(!roi || !inputVolume || !outputVolume)
+  if (!roi || !inputVolume || !outputVolume)
   {
     return -1;
   }

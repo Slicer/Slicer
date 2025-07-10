@@ -69,20 +69,20 @@ int DoIt( int argc, char* argv[] )
   filter->SetInput( 0, reader1->GetOutput() );
   filter->SetOutsideValue(OutsideValue);
 
-  if( ThresholdType == std::string("Outside") )
+  if ( ThresholdType == std::string("Outside") )
   {
     filter->ThresholdOutside(Lower, Upper);
   }
-  else if( ThresholdType == std::string("Below") )
+  else if ( ThresholdType == std::string("Below") )
   {
     filter->ThresholdBelow(ThresholdValue);
   }
-  else if( ThresholdType == std::string("Above") )
+  else if ( ThresholdType == std::string("Above") )
   {
     filter->ThresholdAbove(ThresholdValue);
   }
 
-  if( Negate )
+  if ( Negate )
   {
     InputPixelType outsideValue =
       (filter->GetLower() != itk::NumericTraits<InputPixelType>::NonpositiveMin()) ?
@@ -173,7 +173,7 @@ int main( int argc, char* argv[] )
     }
   }
 
-  catch( itk::ExceptionObject& excep )
+  catch ( itk::ExceptionObject& excep )
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

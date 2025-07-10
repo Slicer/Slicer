@@ -221,7 +221,7 @@ void qMRMLColorPickerWidget::onTextChanged(const QString& colorText)
                                         d->SearchBox->text(), 1,
                                         Qt::MatchContains);
     }
-    if(indexList.count() > 0 )
+    if (indexList.count() > 0 )
     {
       newCurrentIndex = indexList[0];
     }

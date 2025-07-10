@@ -131,7 +131,7 @@ int GetExpectedNodeAddedClassNames(const char* sceneFilePath, std::vector<std::s
 
   // Loop though all expected node and populate expectedNodeAddedClassNames vector
   // Note that node that can't be instantiated using CreateNodeByClass are not expected
-  for(int i=0; i < xmlParser->GetRootElement()->GetNumberOfNestedElements(); ++i)
+  for (int i=0; i < xmlParser->GetRootElement()->GetNumberOfNestedElements(); ++i)
   {
     std::string className = "vtkMRML";
     className += xmlParser->GetRootElement()->GetNestedElement(i)->GetName();
@@ -703,7 +703,7 @@ int vtkMRMLNodeCallback::GetTotalNumberOfEvents()
 std::vector<unsigned long> vtkMRMLNodeCallback::GetReceivedEvents()
 {
   std::vector<unsigned long> receivedEvents;
-  for(std::map<unsigned long,unsigned int>::iterator it = this->ReceivedEvents.begin();
+  for (std::map<unsigned long,unsigned int>::iterator it = this->ReceivedEvents.begin();
       it != this->ReceivedEvents.end();
       ++it)
   {
@@ -726,7 +726,7 @@ void vtkMRMLNodeCallback::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "NumberOfModified: " << this->GetNumberOfModified() << "\n";
   std::vector<unsigned long> receivedEvent = this->GetReceivedEvents();
   os << indent << "ReceivedEvents: \n";
-  for(std::vector<unsigned long>::iterator it = receivedEvent.begin();
+  for (std::vector<unsigned long>::iterator it = receivedEvent.begin();
       it != receivedEvent.end();
       ++it)
   {

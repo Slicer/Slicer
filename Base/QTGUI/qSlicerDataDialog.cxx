@@ -144,7 +144,7 @@ void qSlicerDataDialogPrivate::addFiles()
   qSlicerStandardFileDialog fileDialog;
   QStringList files = fileDialog.getOpenFileName();
 
-  foreach(QString file, files)
+  foreach (QString file, files)
   {
     this->addFile(file);
   }
@@ -177,7 +177,7 @@ void qSlicerDataDialogPrivate::addDirectory(const QDir& directory)
   // now add any files and directories that weren't filtered
   // out by the ioManager
   //
-  foreach(QFileInfo entry, fileInfoList)
+  foreach (QFileInfo entry, fileInfoList)
   {
     if (entry.isFile())
     {
@@ -246,7 +246,7 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file, const QString& rea
   this->FileWidget->setItem(row, FileColumn, fileItem);
   // Description
   QComboBox* descriptionComboBox = new QComboBox(this->FileWidget);
-  foreach(const QString& fileDescription, fileDescriptions)
+  foreach (const QString& fileDescription, fileDescriptions)
   {
     descriptionComboBox->addItem(fileDescription,
                                  QVariant(coreIOManager->fileTypeFromDescription(fileDescription)));
@@ -396,7 +396,7 @@ void qSlicerDataDialogPrivate::onFileTypeActivated(const QString& description)
   int activatedRow = this->senderRow();
   if (this->propagateChange(activatedRow))
   {
-    for(int row = 0; row < this->FileWidget->rowCount(); ++row)
+    for (int row = 0; row < this->FileWidget->rowCount(); ++row)
     {
       if (!this->haveSameTypeOption(activatedRow, row))
       {
@@ -603,7 +603,7 @@ void qSlicerDataDialog::dropEvent(QDropEvent* event)
 {
   Q_D(qSlicerDataDialog);
   bool pathAdded = false;
-  foreach(QUrl url, event->mimeData()->urls())
+  foreach (QUrl url, event->mimeData()->urls())
   {
     if (!url.isValid() || url.isEmpty())
     {
@@ -639,7 +639,7 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   if (readerProperties.contains("fileNames"))
   {
     QStringList fileNames = readerProperties["fileNames"].toStringList();
-    foreach(QString fileName, fileNames)
+    foreach (QString fileName, fileNames)
     {
       d->addFile(QFileInfo(fileName));
     }

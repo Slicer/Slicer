@@ -216,7 +216,7 @@ QSize qMRMLTreeViewPrivate::sizeHint()const
     return this->TreeViewSizeHint;
   }
   int visibleIndexCount = 0;
-  for(QModelIndex index = this->SortFilterModel->mrmlSceneIndex();
+  for (QModelIndex index = this->SortFilterModel->mrmlSceneIndex();
       index.isValid();
       index = q->indexBelow(index))
   {
@@ -259,7 +259,7 @@ void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex& parentIndex)
     }
     // Iterate over children nodes recursively to save their expansion state
     unsigned int numChildrenRows = q->sortFilterProxyModel()->rowCount(parentIndex);
-    for(unsigned int row = 0; row < numChildrenRows; ++row)
+    for (unsigned int row = 0; row < numChildrenRows; ++row)
     {
       QModelIndex childIndex = q->sortFilterProxyModel()->index(row, 0, parentIndex);
       this->saveChildrenExpandState(childIndex);
@@ -866,7 +866,7 @@ void qMRMLTreeView::saveTreeExpandState()
       d->ExpandedNodes->AddItem(sceneNode);
   }
   unsigned int numChildrenRows = this->sortFilterProxyModel()->rowCount(sceneIndex);
-  for(unsigned int row = 0; row < numChildrenRows; ++row)
+  for (unsigned int row = 0; row < numChildrenRows; ++row)
   {
     QModelIndex childIndex = this->sortFilterProxyModel()->index(row, 0, sceneIndex);
     d->saveChildrenExpandState(childIndex);
@@ -885,7 +885,7 @@ void qMRMLTreeView::loadTreeExpandState()
   }
   // Iterate over the vtkCollection of expanded nodes
   vtkCollectionIterator* iter = d->ExpandedNodes->NewIterator();
-  for(iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
+  for (iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
   {
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(iter->GetCurrentObject());
     // Check if the node is currently present in the scene.
@@ -942,7 +942,7 @@ void qMRMLTreeView::deleteCurrentNode()
 bool qMRMLTreeView::isAncestor(const QModelIndex& index, const QModelIndex& potentialAncestor)
 {
   QModelIndex ancestor = index.parent();
-  while(ancestor.isValid())
+  while (ancestor.isValid())
   {
     if (ancestor == potentialAncestor)
     {
@@ -956,7 +956,7 @@ bool qMRMLTreeView::isAncestor(const QModelIndex& index, const QModelIndex& pote
 //------------------------------------------------------------------------------
 QModelIndex qMRMLTreeView::findAncestor(const QModelIndex& index, const QModelIndexList& potentialAncestors)
 {
-  foreach(const QModelIndex& potentialAncestor, potentialAncestors)
+  foreach (const QModelIndex& potentialAncestor, potentialAncestors)
   {
     if (qMRMLTreeView::isAncestor(index, potentialAncestor))
     {
@@ -970,7 +970,7 @@ QModelIndex qMRMLTreeView::findAncestor(const QModelIndex& index, const QModelIn
 QModelIndexList qMRMLTreeView::removeChildren(const QModelIndexList& indexes)
 {
   QModelIndexList noAncestorIndexList;
-  foreach(QModelIndex index, indexes)
+  foreach (QModelIndex index, indexes)
   {
     if (!qMRMLTreeView::findAncestor(index, indexes).isValid())
     {

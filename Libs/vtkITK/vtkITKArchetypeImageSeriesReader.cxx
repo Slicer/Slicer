@@ -640,20 +640,20 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       const itk::MetaDataDictionary& dictionary = imageReader->GetMetaDataDictionary();
       itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
       itk::MetaDataDictionary::ConstIterator end = dictionary.End();
-      while( itr != end )
+      while ( itr != end )
       {
         itk::MetaDataObjectBase::Pointer  entry = itr->second;
         MetaDataDoubleVectorType::Pointer entryvalue1
           = dynamic_cast<MetaDataDoubleVectorType*>( entry.GetPointer() );
-        if( entryvalue1 )
+        if ( entryvalue1 )
         {
           int pos = itr->first.find( "NRRD_measurement frame" );
-          if( pos != -1 )
+          if ( pos != -1 )
           {
             DoubleVectorType tagvalue = entryvalue1->GetMetaDataObjectValue();
-            for( int i = 0; i < 3; i++ )
+            for ( int i = 0; i < 3; i++ )
             {
-              for( int j = 0; j < 3; j++ )
+              for ( int j = 0; j < 3; j++ )
               {
                 this->MeasurementFrameMatrix->SetElement(i,j, tagvalue.at( j ).at( i ));
               }
@@ -845,7 +845,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       else
       {
         double min = 0, max = 0;
-        for( unsigned int f = 0; f < this->FileNames.size(); f++ )
+        for ( unsigned int f = 0; f < this->FileNames.size(); f++ )
         {
           imageIO->SetFileName( this->FileNames[f] );
           imageIO->ReadImageInformation();
@@ -907,29 +907,29 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         {
           throw std::string("Invalid voxel value range");
         }
-        if( min >= 0 ) // unsigned
+        if ( min >= 0 ) // unsigned
         {
-          if( max <= std::numeric_limits<uint8_t>::max() )
+          if ( max <= std::numeric_limits<uint8_t>::max() )
           {
             scalarType = VTK_UNSIGNED_CHAR;
           }
-          else if( max <= std::numeric_limits<uint16_t>::max() )
+          else if ( max <= std::numeric_limits<uint16_t>::max() )
           {
             scalarType = VTK_UNSIGNED_SHORT;
           }
-          else if( max <= std::numeric_limits<uint32_t>::max() )
+          else if ( max <= std::numeric_limits<uint32_t>::max() )
           {
             scalarType = VTK_UNSIGNED_INT;
           }
-          else if( max <= static_cast<double>(std::numeric_limits<uint64_t>::max()) )
+          else if ( max <= static_cast<double>(std::numeric_limits<uint64_t>::max()) )
           {
             scalarType = VTK_UNSIGNED_LONG;
           }
-          else if( max <= std::numeric_limits<float>::max() )
+          else if ( max <= std::numeric_limits<float>::max() )
           {
             scalarType = VTK_FLOAT;
           }
-          else if( max <= std::numeric_limits<double>::max() )
+          else if ( max <= std::numeric_limits<double>::max() )
           {
             scalarType = VTK_DOUBLE;
           }
@@ -940,22 +940,22 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
         }
         else
         {
-          if( max <= std::numeric_limits<int8_t>::max()
+          if ( max <= std::numeric_limits<int8_t>::max()
             && min >= std::numeric_limits<int8_t>::min() )
           {
             scalarType = VTK_CHAR;
           }
-          else if( max <= std::numeric_limits<int16_t>::max()
+          else if ( max <= std::numeric_limits<int16_t>::max()
             && min >= std::numeric_limits<int16_t>::min() )
           {
             scalarType = VTK_SHORT;
           }
-          else if( max <= std::numeric_limits<int32_t>::max()
+          else if ( max <= std::numeric_limits<int32_t>::max()
             && min >= std::numeric_limits<int32_t>::min() )
           {
             scalarType = VTK_INT;
           }
-          else if( max <= std::numeric_limits<int64_t>::max()
+          else if ( max <= std::numeric_limits<int64_t>::max()
             && min >= std::numeric_limits<int64_t>::min() )
           {
             scalarType = VTK_LONG;
@@ -965,7 +965,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
           {
             scalarType = VTK_FLOAT;
           }
-          else if( max <= std::numeric_limits<double>::max()
+          else if ( max <= std::numeric_limits<double>::max()
             && min >= -std::numeric_limits<double>::max() )
           {
             scalarType = VTK_DOUBLE;
@@ -1206,7 +1206,7 @@ const char* vtkITKArchetypeImageSeriesReader::GetNthFileName ( int idxSeriesInst
       {
         return this->AllFileNames[k].c_str();
       }
-      else if( count == 0 )
+      else if ( count == 0 )
       {
         FirstName = this->AllFileNames[k];
         count ++;

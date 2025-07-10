@@ -403,7 +403,7 @@ void vtkMRMLScene::RemoveAllNodes(bool removeSingletons)
       removeNodeIds.emplace_back(node->GetID());
     }
   }
-  for(std::deque<std::string>::iterator nodeIt=removeNodeIds.begin(); nodeIt!=removeNodeIds.end(); ++nodeIt)
+  for (std::deque<std::string>::iterator nodeIt=removeNodeIds.begin(); nodeIt!=removeNodeIds.end(); ++nodeIt)
   {
     vtkMRMLNode* node=this->GetNodeByID(*nodeIt);
     if (node)
@@ -425,7 +425,7 @@ void vtkMRMLScene::ResetNodes()
   {
     nodes.push_back(node);
   }
-  for(unsigned int i=0; i<nodes.size(); i++)
+  for (unsigned int i=0; i<nodes.size(); i++)
   {
     nodes[i]->Reset(GetDefaultNodeByClass(nodes[i]->GetClassName()));
   }
@@ -507,7 +507,7 @@ vtkMRMLNode* vtkMRMLScene::CreateNodeByClass(const char* className)
   if (node == nullptr)
   {
     vtkObject* ret = vtkObjectFactory::CreateInstance(className);
-    if(ret)
+    if (ret)
     {
       node = static_cast<vtkMRMLNode*>(ret);
       // Clean memory
@@ -1206,7 +1206,7 @@ int vtkMRMLScene::Commit(const char* url, vtkMRMLMessageCollection* userMessages
     vtkIndent vindent(indent);
     *os << vindent << "<" << node->GetNodeTagName() << "\n ";
 
-    if(indent<=0)
+    if (indent<=0)
       indent = 1;
 
     vtkNew<vtkMRMLMessageCollection> nodeWritingMessages;
@@ -2005,7 +2005,7 @@ vtkMRMLNode* vtkMRMLScene::GetSingletonNode(vtkMRMLNode* n)
 //------------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLScene::GetNthNode(int n)
 {
-  if(n < 0 || n >= this->Nodes->GetNumberOfItems())
+  if (n < 0 || n >= this->Nodes->GetNumberOfItems())
   {
     return nullptr;
   }
@@ -3065,7 +3065,7 @@ void vtkMRMLScene::Undo()
   // copy back changes and add deleted nodes to the current scene
   std::vector<vtkMRMLNode*> addNodes;
 
-  for(iterID=undoIDs.begin(), iterNode = undoNodes.begin(); iterID != undoIDs.end(); iterID++, iterNode++)
+  for (iterID=undoIDs.begin(), iterNode = undoNodes.begin(); iterID != undoIDs.end(); iterID++, iterNode++)
   {
     curIterID = std::find(currentIDs.begin(), currentIDs.end(), *iterID);
     curIterNode = currentNodes.begin() + std::distance(currentIDs.begin(), curIterID);
@@ -3085,7 +3085,7 @@ void vtkMRMLScene::Undo()
 
   // remove new nodes created before Undo
   std::vector<vtkMRMLNode*> removeNodes;
-  for(curIterID=currentIDs.begin(), curIterNode = currentNodes.begin(); curIterID != currentIDs.end(); curIterID++, curIterNode++)
+  for (curIterID=currentIDs.begin(), curIterNode = currentNodes.begin(); curIterID != currentIDs.end(); curIterID++, curIterNode++)
   {
     iterID = std::find(undoIDs.begin(),undoIDs.end(), *curIterID);
     // Remove only if the node is not present in the previous state.
@@ -3194,7 +3194,7 @@ void vtkMRMLScene::Redo()
 
   // copy back changes and add deleted nodes to the current scene
   std::vector<vtkWeakPointer<vtkMRMLNode>> addNodes;
-  for(iter=undoMap.begin(); iter != undoMap.end(); iter++)
+  for (iter=undoMap.begin(); iter != undoMap.end(); iter++)
   {
     curIter = currentMap.find(iter->first);
     if ( curIter == currentMap.end() )
@@ -3217,7 +3217,7 @@ void vtkMRMLScene::Redo()
 
   // remove new nodes created before Undo
   std::vector<vtkWeakPointer<vtkMRMLNode>> removeNodes;
-  for(curIter=currentMap.begin(); curIter != currentMap.end(); curIter++)
+  for (curIter=currentMap.begin(); curIter != currentMap.end(); curIter++)
   {
     if (!curIter->second)
     {
@@ -3256,7 +3256,7 @@ void vtkMRMLScene::Redo()
 void vtkMRMLScene::ClearUndoStack()
 {
   std::list<vtkCollection*>::iterator iter;
-  for(iter=this->UndoStack.begin(); iter != this->UndoStack.end(); iter++)
+  for (iter=this->UndoStack.begin(); iter != this->UndoStack.end(); iter++)
   {
     (*iter)->RemoveAllItems();
     (*iter)->Delete();
@@ -3268,7 +3268,7 @@ void vtkMRMLScene::ClearUndoStack()
 void vtkMRMLScene::ClearRedoStack()
 {
   std::list<vtkCollection*>::iterator iter;
-  for(iter=this->RedoStack.begin(); iter != this->RedoStack.end(); iter++)
+  for (iter=this->RedoStack.begin(); iter != this->RedoStack.end(); iter++)
   {
     (*iter)->RemoveAllItems();
     (*iter)->Delete();
@@ -3984,7 +3984,7 @@ void vtkMRMLScene::SetMaximumNumberOfSavedUndoStates(int stackSize)
 void vtkMRMLScene::TrimUndoStack()
 {
   std::list<vtkSmartPointer<vtkCollection>> removedStacks;
-  while(static_cast<int>(this->UndoStack.size()) > this->MaximumNumberOfSavedUndoStates)
+  while (static_cast<int>(this->UndoStack.size()) > this->MaximumNumberOfSavedUndoStates)
   {
     removedStacks.emplace_back(this->UndoStack.front());
     this->UndoStack.pop_front();

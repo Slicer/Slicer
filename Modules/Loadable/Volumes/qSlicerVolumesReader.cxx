@@ -211,7 +211,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
   if (properties.contains("fileNames"))
   {
     fileList = vtkSmartPointer<vtkStringArray>::New();
-    foreach(QString file, properties["fileNames"].toStringList())
+    foreach (QString file, properties["fileNames"].toStringList())
     {
       fileList->InsertNextValue(file.toUtf8());
     }
@@ -274,7 +274,7 @@ bool qSlicerVolumesReader::examineFileInfoList(QFileInfoList& fileInfoList, QFil
   // Check each file to see if it's recognized as part of a series.  If so,
   // keep it as the archetype and remove all the others from the list
   //
-  foreach(QFileInfo fileInfo, fileInfoList)
+  foreach (QFileInfo fileInfo, fileInfoList)
   {
     itk::ArchetypeSeriesFileNames::Pointer seriesNames = itk::ArchetypeSeriesFileNames::New();
     std::vector<std::string> candidateFiles;

@@ -101,7 +101,7 @@ private:
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
 #define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
   vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
-  if(ret) \
+  if (ret) \
   { \
     return static_cast<type *>(ret); \
   } \

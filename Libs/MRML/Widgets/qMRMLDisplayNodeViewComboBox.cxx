@@ -198,7 +198,7 @@ void qMRMLDisplayNodeViewComboBox::updateMRMLFromWidget()
 QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes()const
 {
   QList<vtkMRMLAbstractViewNode*> res;
-  foreach(vtkMRMLNode* checkedNode, this->checkedNodes())
+  foreach (vtkMRMLNode* checkedNode, this->checkedNodes())
   {
     res << vtkMRMLAbstractViewNode::SafeDownCast(checkedNode);
   }
@@ -209,7 +209,7 @@ QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::checkedViewNodes()
 QList<vtkMRMLAbstractViewNode*> qMRMLDisplayNodeViewComboBox::uncheckedViewNodes()const
 {
   QList<vtkMRMLAbstractViewNode*> res;
-  foreach(vtkMRMLNode* uncheckedNode, this->uncheckedNodes())
+  foreach (vtkMRMLNode* uncheckedNode, this->uncheckedNodes())
   {
     res << vtkMRMLAbstractViewNode::SafeDownCast(uncheckedNode);
   }

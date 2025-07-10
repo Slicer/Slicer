@@ -54,7 +54,7 @@ static qMRMLMarkupsOptionsWidgetsFactoryCleanup qMRMLMarkupsOptionsWidgetsFactor
 //-----------------------------------------------------------------------------
 qMRMLMarkupsOptionsWidgetsFactory* qMRMLMarkupsOptionsWidgetsFactory::instance()
 {
-  if(!qMRMLMarkupsOptionsWidgetsFactory::Instance)
+  if (!qMRMLMarkupsOptionsWidgetsFactory::Instance)
   {
     qMRMLMarkupsOptionsWidgetsFactoryCleanupGlobal.use();
     qMRMLMarkupsOptionsWidgetsFactory::Instance = new qMRMLMarkupsOptionsWidgetsFactory();
@@ -136,7 +136,7 @@ bool qMRMLMarkupsOptionsWidgetsFactory::unregisterOptionsWidget(qMRMLMarkupsAbst
 
   delete widget;
 
-  if(this->unregisterOptionsWidget(className))
+  if (this->unregisterOptionsWidget(className))
   {
     // Emit registered signal
     emit optionsWidgetUnregistered();
@@ -193,7 +193,7 @@ qMRMLMarkupsAbstractOptionsWidget* qMRMLMarkupsOptionsWidgetsFactory::createWidg
 //-----------------------------------------------------------------------------
 void qMRMLMarkupsOptionsWidgetsFactory::unregisterAll()
 {
-  foreach(auto widget, this->RegisteredWidgets)
+  foreach (auto widget, this->RegisteredWidgets)
   {
     if (widget)
     {

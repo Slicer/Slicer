@@ -734,7 +734,7 @@ void qMRMLModelDisplayNodeWidget::setBackfaceHueOffset(double newOffset)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
   QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
-  foreach(vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
+  foreach (vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
   {
     vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
     if (!modelDisplayNode)
@@ -752,7 +752,7 @@ void qMRMLModelDisplayNodeWidget::setBackfaceSaturationOffset(double newOffset)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
   QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
-  foreach(vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
+  foreach (vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
   {
     vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
     if (!modelDisplayNode)
@@ -770,7 +770,7 @@ void qMRMLModelDisplayNodeWidget::setBackfaceBrightnessOffset(double newOffset)
 {
   Q_D(qMRMLModelDisplayNodeWidget);
   QList<vtkMRMLDisplayNode*> displayNodesInSelection = d->displayNodesFromSelection();
-  foreach(vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
+  foreach (vtkMRMLDisplayNode* displayNode, displayNodesInSelection)
   {
     vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
     if (!modelDisplayNode)

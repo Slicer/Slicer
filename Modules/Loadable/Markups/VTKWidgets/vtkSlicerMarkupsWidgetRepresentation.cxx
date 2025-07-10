@@ -254,7 +254,7 @@ int vtkSlicerMarkupsWidgetRepresentation::FindClosestPointOnWidget(
   double p4[4] = {0.0, 0.0, 0.0, 1.0};
   vtkPoints* curvePointsWorld = this->GetMarkupsNode()->GetCurvePointsWorld();
   vtkIdType numberOfPoints = curvePointsWorld->GetNumberOfPoints();
-  for(vtkIdType i = 0; i < numberOfPoints; i++)
+  for (vtkIdType i = 0; i < numberOfPoints; i++)
   {
     curvePointsWorld->GetPoint(i, p3);
     if (i + 1 < numberOfPoints)

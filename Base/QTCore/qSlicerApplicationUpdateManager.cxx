@@ -167,7 +167,7 @@ bool qSlicerApplicationUpdateManagerPrivate::validateReleaseInfo(const QVariantM
       << "product_name"
       << "revision"
       << "version";
-  foreach(const QString& key, requiredNonEmptyKeys)
+  foreach (const QString& key, requiredNonEmptyKeys)
   {
     if (releaseInfo.value(key).toString().isEmpty())
     {

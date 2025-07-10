@@ -127,7 +127,7 @@ void qSlicerTableColumnPropertiesWidget::setup()
   d->PropertyEditWidgets << d->ComponentNamesLineEdit;
 
   connect(d->DataTypeComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(onDataTypeChanged(const QString&)));
-  foreach(QLineEdit* widget, d->PropertyEditWidgets)
+  foreach (QLineEdit* widget, d->PropertyEditWidgets)
   {
     connect(widget, SIGNAL(textEdited(const QString&)), this, SLOT(onPropertyChanged(const QString&)));
   }
@@ -181,7 +181,7 @@ void qSlicerTableColumnPropertiesWidget::setColumnProperty(QString propertyName,
     qWarning() << Q_FUNC_INFO << " failed: table column names are not specified";
     return;
   }
-  foreach(const QString& columnName, d->ColumnNames)
+  foreach (const QString& columnName, d->ColumnNames)
   {
     d->CurrentTableNode->SetColumnProperty(columnName.toUtf8().constData(), propertyName.toUtf8().constData(), propertyValue.toUtf8().constData());
   }
@@ -201,7 +201,7 @@ QString qSlicerTableColumnPropertiesWidget::columnProperty(QString propertyName)
     return "";
   }
   std::string commonPropertyValue = d->CurrentTableNode->GetColumnProperty(d->ColumnNames[0].toUtf8().constData(), propertyName.toUtf8().constData());
-  foreach(const QString& columnName, d->ColumnNames)
+  foreach (const QString& columnName, d->ColumnNames)
   {
     std::string currentPropertyValue = d->CurrentTableNode->GetColumnProperty(columnName.toUtf8().constData(), propertyName.toUtf8().constData());
     if (currentPropertyValue != commonPropertyValue)
@@ -239,7 +239,7 @@ void qSlicerTableColumnPropertiesWidget::updateWidget()
   int columnTypeIndex = d->DataTypeComboBox->findText(columnType);
   d->DataTypeComboBox->setCurrentIndex(columnTypeIndex);
 
-  foreach(QLineEdit* widget, d->PropertyEditWidgets)
+  foreach (QLineEdit* widget, d->PropertyEditWidgets)
   {
     widget->setText(this->columnProperty(widget->property(SCHEMA_PROPERTY_NAME).toString()));
   }
@@ -306,7 +306,7 @@ void qSlicerTableColumnPropertiesWidget::tableViewSelectionChanged()
   {
     vtkMRMLTableNode* tableNode = d->TableViewForSelection->mrmlTableNode();
     QList<int> selectedColumns = d->TableViewForSelection->selectedMRMLTableColumnIndices();
-    foreach(int columnIndex, selectedColumns)
+    foreach (int columnIndex, selectedColumns)
     {
       selectedColumnNames << tableNode->GetColumnName(columnIndex).c_str();
     }

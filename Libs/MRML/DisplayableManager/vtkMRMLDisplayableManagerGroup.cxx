@@ -105,7 +105,7 @@ vtkMRMLDisplayableManagerGroup::~vtkMRMLDisplayableManagerGroup()
   this->SetAndObserveDisplayableManagerFactory(nullptr);
   this->SetMRMLDisplayableNode(nullptr);
 
-  for(size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
+  for (size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
   {
     this->Internal->DisplayableManagers[i]->Delete();
   }
@@ -208,7 +208,7 @@ void vtkMRMLDisplayableManagerGroup::Initialize(vtkMRMLDisplayableManagerFactory
   this->SetAndObserveDisplayableManagerFactory(factory);
   this->SetRenderer(renderer);
 
-  for(int i=0; i < factory->GetRegisteredDisplayableManagerCount(); ++i)
+  for (int i=0; i < factory->GetRegisteredDisplayableManagerCount(); ++i)
   {
     std::string classOrScriptName = factory->GetRegisteredDisplayableManagerName(i);
     vtkSmartPointer<vtkMRMLAbstractDisplayableManager> displayableManager;
@@ -335,7 +335,7 @@ void vtkMRMLDisplayableManagerGroup::SetRenderer(vtkRenderer* newRenderer)
                 << "initializing DisplayableManagerGroup using Renderer: " << newRenderer);
 
   // Loop though DisplayableManager and initialize
-  for(size_t i = 0; i < this->Internal->DisplayableManagers.size(); ++i)
+  for (size_t i = 0; i < this->Internal->DisplayableManagers.size(); ++i)
   {
     vtkMRMLAbstractDisplayableManager* displayableManager = this->Internal->DisplayableManagers[i];
     displayableManager->SetRenderer(newRenderer);
@@ -385,7 +385,7 @@ vtkMRMLNode* vtkMRMLDisplayableManagerGroup::GetMRMLDisplayableNode()
 void vtkMRMLDisplayableManagerGroup::SetMRMLDisplayableNode(
     vtkMRMLNode* newMRMLDisplayableNode)
 {
-  for(std::size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
+  for (std::size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
   {
     vtkMRMLAbstractDisplayableManager* displayableManager = this->Internal->DisplayableManagers[i];
 
@@ -496,7 +496,7 @@ void vtkMRMLDisplayableManagerGroup::SetLightBoxRendererManagerProxy(vtkMRMLLigh
 {
   this->Internal->LightBoxRendererManagerProxy = mgr;
 
-  for(size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
+  for (size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
   {
     this->Internal->DisplayableManagers[i]->SetLightBoxRendererManagerProxy(this->Internal->LightBoxRendererManagerProxy);
   }

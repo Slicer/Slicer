@@ -259,12 +259,12 @@ void qMRMLTableView::setTransposed(bool transposed)
 //------------------------------------------------------------------------------
 void qMRMLTableView::keyPressEvent(QKeyEvent* event)
 {
-  if(event->matches(QKeySequence::Copy) )
+  if (event->matches(QKeySequence::Copy) )
   {
     this->copySelection();
     return;
   }
-  if(event->matches(QKeySequence::Paste) )
+  if (event->matches(QKeySequence::Paste) )
   {
     this->pasteSelection();
     return;
@@ -409,11 +409,11 @@ void qMRMLTableView::pasteSelection()
   }
   mrmlModel->updateModelFromMRML();
 
-  foreach(QString line, lines)
+  foreach (QString line, lines)
   {
     int columnIndex = startColumnIndex;
     QStringList cells = line.split('\t');
-    foreach(QString cell, cells)
+    foreach (QString cell, cells)
     {
       // Pre-allocate new columns (enough for at least for storing all the items in the current row)
       if (columnIndex >= mrmlModel->columnCount())
@@ -456,7 +456,7 @@ void qMRMLTableView::plotSelection()
 
   vtkMRMLTableNode* tableNode = mrmlTableNode();
 
-  if(!this->mrmlScene())
+  if (!this->mrmlScene())
   {
     qWarning() << "qMRMLTableView::plotSelection failed: no mrmlScene available";
     return;
@@ -846,7 +846,7 @@ QList<int> qMRMLTableView::selectedMRMLTableColumnIndices()const
   QModelIndexList selection = selectionModel()->selectedIndexes();
   qMRMLTableModel* tableModel = this->tableModel();
   QModelIndex index;
-  foreach(index, selection)
+  foreach (index, selection)
   {
     int mrmlColumnIndex = tableModel->mrmlTableColumnIndex(index);
     if (!mrmlColumnIndexList.contains(mrmlColumnIndex))

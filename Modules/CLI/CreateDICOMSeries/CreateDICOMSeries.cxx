@@ -63,7 +63,7 @@ int DoIt( int argc, char* argv[])
     reader->Update();
     image = reader->GetOutput();
   }
-  catch( itk::ExceptionObject& excp )
+  catch ( itk::ExceptionObject& excp )
   {
     std::cerr << "Exception thrown while reading the image file: " << inputVolume << std::endl;
     std::cerr << excp << std::endl;
@@ -76,7 +76,7 @@ int DoIt( int argc, char* argv[])
 
   // Shift scale the data if necessary based on the rescale slope and
   // rescale interscept prescribed.
-  if( fabs(rescaleIntercept) > itk::NumericTraits<double>::epsilon()
+  if ( fabs(rescaleIntercept) > itk::NumericTraits<double>::epsilon()
       || fabs(rescaleSlope - 1.0) > itk::NumericTraits<double>::epsilon() )
   {
     reader->ReleaseDataFlagOn();
@@ -85,7 +85,7 @@ int DoIt( int argc, char* argv[])
     shiftScale->SetInput( reader->GetOutput() );
     shiftScale->SetShift( -rescaleIntercept );
 
-    if( fabs(rescaleSlope) < itk::NumericTraits<double>::epsilon() )
+    if ( fabs(rescaleSlope) < itk::NumericTraits<double>::epsilon() )
     {
       // too close to zero, ignore
       std::cerr << "Rescale slope too close to zero (" << rescaleSlope
@@ -378,7 +378,7 @@ int DoIt( int argc, char* argv[])
   // For each slice
 
   float progress = 1.0 / (float) numberOfSlices;
-  for( unsigned int i = 0; i < numberOfSlices; i++ )
+  for ( unsigned int i = 0; i < numberOfSlices; i++ )
   {
     std::cout << "<filter-progress>"
               << (i + 1) * progress
@@ -428,7 +428,7 @@ int DoIt( int argc, char* argv[])
     typename Image3DType::IndexType  extractIndex;
     extractSize = image->GetLargestPossibleRegion().GetSize();
     extractIndex.Fill(0);
-    if( reverseImages )
+    if ( reverseImages )
     {
       extractIndex[2] = numberOfSlices - i - 1;
     }
@@ -458,14 +458,14 @@ int DoIt( int argc, char* argv[])
       itk::ImageRegionIterator<Image2DType> it( extract->GetOutput(), extract->GetOutput()->GetLargestPossibleRegion() );
       typename Image2DType::PixelType                minValue = itk::NumericTraits<typename Image2DType::PixelType>::max();
       typename Image2DType::PixelType                maxValue = itk::NumericTraits<typename Image2DType::PixelType>::min();
-      for( it.GoToBegin(); !it.IsAtEnd(); ++it )
+      for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
       {
         typename Image2DType::PixelType p = it.Get();
-        if( p > maxValue )
+        if ( p > maxValue )
         {
           maxValue = p;
         }
-        if( p < minValue )
+        if ( p < minValue )
         {
           minValue = p;
         }
@@ -514,7 +514,7 @@ int DoIt( int argc, char* argv[])
       writer->SetImageIO(gdcmIO);
       writer->Update();
     }
-    catch( itk::ExceptionObject& excp )
+    catch ( itk::ExceptionObject& excp )
     {
       std::cerr << "Exception thrown while writing the file " << std::endl;
       std::cerr << excp << std::endl;
@@ -537,27 +537,27 @@ int main( int argc, char* argv[] )
 
   try
   {
-    if( Type == std::string("Char") )
+    if ( Type == std::string("Char") )
     {
       return DoIt<char>( argc, argv);
     }
-    else if( Type == std::string("UnsignedChar") )
+    else if ( Type == std::string("UnsignedChar") )
     {
       return DoIt<unsigned char>( argc, argv);
     }
-    else if( Type == std::string("Short") )
+    else if ( Type == std::string("Short") )
     {
       return DoIt<short>( argc, argv);
     }
-    else if( Type == std::string("UnsignedShort") )
+    else if ( Type == std::string("UnsignedShort") )
     {
       return DoIt<unsigned short>( argc, argv);
     }
-    else if( Type == std::string("Int") )
+    else if ( Type == std::string("Int") )
     {
       return DoIt<int>( argc, argv);
     }
-    else if( Type == std::string("UnsignedInt") )
+    else if ( Type == std::string("UnsignedInt") )
     {
       return DoIt<unsigned int>( argc, argv);
     }
@@ -567,7 +567,7 @@ int main( int argc, char* argv[] )
       return EXIT_FAILURE;
     }
   }
-  catch( itk::ExceptionObject& excep )
+  catch ( itk::ExceptionObject& excep )
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

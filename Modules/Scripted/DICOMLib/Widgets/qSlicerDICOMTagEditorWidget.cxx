@@ -246,7 +246,7 @@ void qSlicerDICOMTagEditorWidgetPrivate::insertTagsTableRow(unsigned int row)
 
   // Update those series header row indices above which the row is inserted
   QMap<unsigned int, qSlicerDICOMExportable*> updatedSeriesTagsHeaderRows;
-  foreach(unsigned int seriesHeaderRow, this->SeriesTagsHeaderRows.keys())
+  foreach (unsigned int seriesHeaderRow, this->SeriesTagsHeaderRows.keys())
   {
     // If inserted above the series header then increase it
     if (row <= seriesHeaderRow)

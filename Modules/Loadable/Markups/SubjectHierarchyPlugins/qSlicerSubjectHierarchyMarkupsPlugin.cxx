@@ -782,7 +782,7 @@ void qSlicerSubjectHierarchyMarkupsPlugin::removeNodesToBeDeleted()
     return;
   }
 
-  foreach(vtkWeakPointer<vtkMRMLMarkupsNode> markupsNode, d->NodesToDelete)
+  foreach (vtkWeakPointer<vtkMRMLMarkupsNode> markupsNode, d->NodesToDelete)
   {
     if (!markupsNode)
     {

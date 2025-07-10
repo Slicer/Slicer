@@ -235,7 +235,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
   if (!d->ShowHidden && node->GetHideFromEditors())
   {
     bool hide = true;
-    foreach(const QString& nodeType, d->ShowHiddenForTypes)
+    foreach (const QString& nodeType, d->ShowHiddenForTypes)
     {
       if (node->IsA(nodeType.toUtf8()))
       {
@@ -266,7 +266,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
     // Apply filter if any
     return AcceptButPotentiallyRejectable;
   }
-  foreach(const QString& nodeType, d->NodeTypes)
+  foreach (const QString& nodeType, d->NodeTypes)
   {
     // filter by node type
     if (!node->IsA(nodeType.toUtf8().data()))
@@ -283,7 +283,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
     // filter by HideChildNodeType
     if (d->ShowChildNodeTypes)
     {
-      foreach(const QString& hideChildNodeType, d->HideChildNodeTypes)
+      foreach (const QString& hideChildNodeType, d->HideChildNodeTypes)
       {
         if (node->IsA(hideChildNodeType.toUtf8().data()))
         {

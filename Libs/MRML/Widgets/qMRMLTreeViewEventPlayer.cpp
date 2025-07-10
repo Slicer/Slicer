@@ -68,24 +68,24 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object,
                                     int EventType,
                                     bool& Error)
 {
-  if(Command != "currentNodeRenamed" && Command != "currentNodeDeleted" &&
+  if (Command != "currentNodeRenamed" && Command != "currentNodeDeleted" &&
      Command != "editNodeRequested" && Command != "decorationClicked" &&
      Command != "reParentByDragnDrop")
   {
     return this->Superclass::playEvent(Object, Command, Arguments, EventType, Error);
   }
 
-  if(qMRMLTreeView* const treeView =
+  if (qMRMLTreeView* const treeView =
      qobject_cast<qMRMLTreeView*>(Object))
   {
-    if(Command == "currentNodeRenamed")
+    if (Command == "currentNodeRenamed")
     {
       treeView->currentNode()->SetName(Arguments.toUtf8());
       // for improvement, see the method qMRMLTreeView::renameCurrentNode()
       // and set the name in the line edit, then simulate a OK
       return true;
     }
-    if(Command == "currentNodeDeleted")
+    if (Command == "currentNodeDeleted")
     {
       QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(Arguments, treeView, Error);
       if (index.isValid())
@@ -96,17 +96,17 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object,
       }
 //      return false;
     }
-    if(Command == "editNodeRequested")
+    if (Command == "editNodeRequested")
     {
 //      vtkMRMLNode* node = treeView->mrmlScene()->GetNodeByID(Arguments.toUtf8());
 //      emit treeView->editNodeRequested(node);
       treeView->editCurrentNode();
       return true;
     }
-    if(Command == "reParentByDragnDrop")
+    if (Command == "reParentByDragnDrop")
     {
       QStringList nodes = Arguments.split(".");
-      if(nodes.count() != 2)
+      if (nodes.count() != 2)
       {
         return false;
       }
@@ -115,7 +115,7 @@ bool qMRMLTreeViewEventPlayer::playEvent(QObject* Object,
       treeView->sceneModel()->reparent(node, nodeParent);
       return true;
     }
-    if(Command == "decorationClicked")
+    if (Command == "decorationClicked")
     {
       QString str_index = Arguments;
       QModelIndex index = ::qMRMLTreeViewEventPlayerGetIndex(str_index, treeView, Error);

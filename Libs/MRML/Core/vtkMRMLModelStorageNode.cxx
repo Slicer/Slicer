@@ -189,7 +189,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   // compute file prefix
   std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
-  if( extension.empty() )
+  if ( extension.empty() )
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
       "Model file '" << fullName.c_str() << "' has no file extension while trying to read node (" << (this->ID ? this->ID : "(unknown)") << ").");
@@ -338,7 +338,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
         MeshSpatialObjectType::Pointer  SOMesh = dynamic_cast<MeshSpatialObjectType*> (curObj);
         surfaceMesh = SOMesh->GetMesh();
       }
-      catch(itk::ExceptionObject& ex)
+      catch (itk::ExceptionObject& ex)
       {
         vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",
           "Failed to load model from ITK .meta file " << fullName << ": " << ex.GetDescription());
@@ -354,7 +354,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       // iterate over all the points in the itk mesh filling in
       // the vtkPoints object as we go
       floatMesh::PointsContainer::Pointer points = surfaceMesh->GetPoints();
-      for(floatMesh::PointsContainer::Iterator i = points->Begin();
+      for (floatMesh::PointsContainer::Iterator i = points->Begin();
         i != points->End(); ++i)
       {
         // Get the point index from the point container iterator

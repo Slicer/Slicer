@@ -76,9 +76,9 @@ size_t write_callback(void* ptr, size_t size, size_t nmemb, void* stream)
 //----------------------------------------------------------------------------
 size_t ProgressCallback(FILE* vtkNotUsed( outputFile ), double dltotal, double dlnow, double ultotal, double ulnow)
 {
-  if(ultotal == 0)
+  if (ultotal == 0)
   {
-    if(dltotal > 0)
+    if (dltotal > 0)
     {
       std::cout << "<filter-progress>" << dlnow/dltotal
                 << "</filter-progress>" << std::endl;

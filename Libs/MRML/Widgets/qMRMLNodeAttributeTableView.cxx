@@ -331,7 +331,7 @@ QTableWidgetItem* qMRMLNodeAttributeTableView::findAttributeNameItem(const QStri
   QTableWidgetItem* item = nullptr;
   int numberOfAttributesFound = 0;
   QList<QTableWidgetItem*> itemList = d->NodeAttributesTable->findItems(attributeName, Qt::MatchFixedString);
-  foreach(QTableWidgetItem* currentItem, itemList)
+  foreach (QTableWidgetItem* currentItem, itemList)
   {
     // Check if found item is in the name column (there may be values containing the same text)
     if (currentItem != nullptr && currentItem->column() == 0)

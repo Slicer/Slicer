@@ -103,7 +103,7 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
     return false;
   }
 
-  if(!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
+  if (!filePath.endsWith(".py") && !filePath.endsWith(".pyc"))
   {
     return false;
   }

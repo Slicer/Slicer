@@ -85,7 +85,7 @@ int vtkMRMLSliceLogicTest5(int argc, char* argv [] )
 {
   itk::itkFactoryRegistration();
 
-  if( argc < 2 )
+  if ( argc < 2 )
   {
     std::cerr << "Error: missing arguments" << std::endl;
     std::cerr << "Usage: " << std::endl;

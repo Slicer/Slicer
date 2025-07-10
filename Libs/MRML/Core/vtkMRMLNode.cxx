@@ -1271,7 +1271,7 @@ void vtkMRMLNode::RemoveNodeReferenceIDs(const char* referenceRole)
   }
 
   int wasModifying = this->StartModify();
-  while(this->GetNumberOfNodeReferences(referenceRole) > 0)
+  while (this->GetNumberOfNodeReferences(referenceRole) > 0)
   {
     this->RemoveNthNodeReferenceID(referenceRole, 0);
   }
@@ -1961,7 +1961,7 @@ int vtkMRMLNode::GetNumberOfNodeReferences(const char* referenceRole)
 vtkMRMLNode::vtkMRMLNodeReference* vtkMRMLNode::vtkMRMLNodeReference::New()
 {
   vtkObject* ret = vtkObjectFactory::CreateInstance("vtkMRMLNodeReference");
-  if(ret)
+  if (ret)
   {
     return static_cast<vtkMRMLNode::vtkMRMLNodeReference*>(ret);
   }

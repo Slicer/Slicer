@@ -108,7 +108,7 @@ int DoIt( int argc, char* argv[], T )
     fixedImageReader->GetOutput()->GetLargestPossibleRegion();
   typename InputImageType::SizeType fixedImageSize =
     fixedRegion.GetSize();
-  for( unsigned int r = 0; r < ImageDimension; r++ )
+  for ( unsigned int r = 0; r < ImageDimension; r++ )
   {
     spacing[r] *= floor( static_cast<double>(fixedImageSize[r] - 1)
                          / static_cast<double>(gridSize - 1) );
@@ -135,14 +135,14 @@ int DoIt( int argc, char* argv[], T )
     p[0] = 6;
     p[1] = 0;
     p[2] = 0;
-    for( int x = 0; x < gridSize; ++x )
+    for ( int x = 0; x < gridSize; ++x )
     {
       index[0] = x;
       grid->SetPixel( index, p );
     }
   }
 
-  if( OutputTransform != "" )
+  if ( OutputTransform != "" )
   {
     typedef itk::ImageFileWriter<GridType> GridWriterType;
 
@@ -154,7 +154,7 @@ int DoIt( int argc, char* argv[], T )
     {
       gridWriter->Update();
     }
-    catch( itk::ExceptionObject& exp )
+    catch ( itk::ExceptionObject& exp )
     {
       std::cerr << "Exception caught !" << std::endl;
       std::cerr << exp << std::endl;
@@ -177,7 +177,7 @@ int main( int argc, char* argv[] )
   // Print out the arguments (need to add --echo to the argument list
   //
   std::vector<char*> vargsNew;
-  for( int vi = 0; vi < argc; ++vi )
+  for ( int vi = 0; vi < argc; ++vi )
   {
     vargsNew.push_back(argv[vi]);
   }
@@ -219,7 +219,7 @@ int main( int argc, char* argv[] )
         break;
     }
   }
-  catch( itk::ExceptionObject& excep )
+  catch ( itk::ExceptionObject& excep )
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

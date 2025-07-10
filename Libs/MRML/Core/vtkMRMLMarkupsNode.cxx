@@ -440,7 +440,7 @@ void vtkMRMLMarkupsNode::RemoveAllControlPoints()
 
   bool definedPointsExisted = false;
   bool missingPointsExisted = false;
-  for(unsigned int i = 0; i < this->ControlPoints.size(); i++)
+  for (unsigned int i = 0; i < this->ControlPoints.size(); i++)
   {
     if (this->ControlPoints[i]->PositionStatus == vtkMRMLMarkupsNode::PositionDefined)
     {
@@ -531,7 +531,7 @@ void vtkMRMLMarkupsNode::SetLocked(int locked)
 //----------------------------------------------------------------------------
 const char* vtkMRMLMarkupsNode::GetDefaultNodeNamePrefix()
 {
-  if(this->DefaultNodeNamePrefix.empty())
+  if (this->DefaultNodeNamePrefix.empty())
   {
     this->DefaultNodeNamePrefix = vtkMRMLTr("vtkMRMLMarkupsNode", "M");
   }
@@ -541,7 +541,7 @@ const char* vtkMRMLMarkupsNode::GetDefaultNodeNamePrefix()
 //----------------------------------------------------------------------------
 const char* vtkMRMLMarkupsNode::GetTypeDisplayName()
 {
-  if(this->TypeDisplayName.empty())
+  if (this->TypeDisplayName.empty())
   {
     this->TypeDisplayName = vtkMRMLTr("vtkMRMLMarkupsNode", "Markup");
   }

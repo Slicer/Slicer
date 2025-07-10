@@ -1223,14 +1223,14 @@ bool vtkSlicerMarkupsWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
   // if this was a one time place, go back to view transform mode
   vtkMRMLInteractionNode* interactionNode = this->GetInteractionNode();
 
-  if(interactionNode)
+  if (interactionNode)
   {
     bool hasRequiredPoints = markupsNode->GetRequiredNumberOfControlPoints() > 0;
     bool hasRequiredPointNumber = markupsNode->GetNumberOfControlPoints() >= markupsNode->GetRequiredNumberOfControlPoints();
     bool requiredPointsReached = hasRequiredPoints && hasRequiredPointNumber && !bool(markupsNode->GetNumberOfUndefinedControlPoints() > 0);
     bool lockedPointsReached = markupsNode->GetFixedNumberOfControlPoints() && !bool(markupsNode->GetNumberOfUndefinedControlPoints() > 0);
 
-    if((requiredPointsReached && !interactionNode->GetPlaceModePersistence())
+    if ((requiredPointsReached && !interactionNode->GetPlaceModePersistence())
       || (!hasRequiredPoints && !interactionNode->GetPlaceModePersistence()) || lockedPointsReached)
     {
       vtkDebugMacro("End of one time place, place mode persistence = " << interactionNode->GetPlaceModePersistence());

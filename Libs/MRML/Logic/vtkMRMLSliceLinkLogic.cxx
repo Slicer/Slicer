@@ -148,7 +148,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     if (sliceNode)
     {
       SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(node->GetID());
-      if(it != this->SliceNodeInteractionStatus.end())
+      if (it != this->SliceNodeInteractionStatus.end())
       {
         this->SliceNodeInteractionStatus.erase(it);
       }

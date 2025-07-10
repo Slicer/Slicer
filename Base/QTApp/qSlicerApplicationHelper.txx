@@ -208,7 +208,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
   qSlicerModuleManager* moduleManager = app.moduleManager();
   qSlicerModuleFactoryManager* moduleFactoryManager = moduleManager->factoryManager();
   QStringList additionalModulePaths;
-  foreach(const QString& extensionOrModulePath, app.commandOptions()->additionalModulePaths())
+  foreach (const QString& extensionOrModulePath, app.commandOptions()->additionalModulePaths())
   {
     QStringList modulePaths = moduleFactoryManager->modulePaths(extensionOrModulePath);
     if (!modulePaths.empty())
@@ -224,7 +224,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
   qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
 
   // Set list of modules to ignore
-  foreach(const QString& moduleToIgnore, app.commandOptions()->modulesToIgnore())
+  foreach (const QString& moduleToIgnore, app.commandOptions()->modulesToIgnore())
   {
     moduleFactoryManager->addModuleToIgnore(moduleToIgnore);
   }
@@ -263,7 +263,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
   if (!failedToBeInstantiatedModuleNames.isEmpty())
   {
     qCritical() << "The following modules failed to be instantiated:";
-    foreach(const QString& moduleName, failedToBeInstantiatedModuleNames)
+    foreach (const QString& moduleName, failedToBeInstantiatedModuleNames)
     {
       qCritical().noquote() << "  " << moduleName;
     }
@@ -296,7 +296,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
   }
 
   // Load all available modules
-  foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
+  foreach (const QString& name, moduleFactoryManager->instantiatedModuleNames())
   {
     Q_ASSERT(!name.isNull());
     splashMessage(splashScreen, qSlicerApplication::tr("Loading module \"%1\"...").arg(name));

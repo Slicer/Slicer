@@ -69,7 +69,7 @@ bool CompareBounds(double b[6], double e[6])
 //-----------------------------------------------------------------------------
 int vtkSlicerTransformLogicTest3(int argc, char* argv [])
 {
-  if(argc < 2)
+  if (argc < 2)
   {
     std::cerr << "Missing transform file name." << std::endl;
     return EXIT_FAILURE;

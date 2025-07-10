@@ -1339,7 +1339,7 @@ void vtkOrientedImageDataResample::PrintImageInformation(vtkImageData* imageData
       << imageData->GetSpacing()[1] << " "
       << imageData->GetSpacing()[2] << "\n";
     os << indent << "Extent:";
-    for(int j=0; j<6; j++)
+    for (int j=0; j<6; j++)
     {
       os << " " << imageData->GetExtent()[j];
     }
@@ -1353,10 +1353,10 @@ void vtkOrientedImageDataResample::PrintImageInformation(vtkImageData* imageData
     os << indent << "IJKToRASDirections:\n";
     vtkNew<vtkMatrix4x4> directions;
     orientedImageData->GetDirectionMatrix(directions.GetPointer());
-    for(int i=0; i<3; i++)
+    for (int i=0; i<3; i++)
     {
       os << indent.GetNextIndent();
-      for(int j=0; j<3; j++)
+      for (int j=0; j<3; j++)
       {
         os << directions->GetElement(i,j) << " ";
       }

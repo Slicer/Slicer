@@ -80,7 +80,7 @@ void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
       ss >> scaleFactor;
       this->SetScaleFactor(scaleFactor);
     }
-    else if(!strcmp(attName, "snapshotDescription"))
+    else if (!strcmp(attName, "snapshotDescription"))
     {
       std::stringstream ss;
       ss << attValue;

@@ -137,7 +137,7 @@ void vtkMRMLSliceCompositeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
   vtkMRMLCopyBooleanMacro(ClipToBackgroundVolume);
   vtkMRMLCopyFloatMacro(ForegroundOpacity);
   vtkMRMLCopyFloatMacro(LabelOpacity);
-  for(int additionalLayerIndex = 0; additionalLayerIndex < node->GetNumberOfAdditionalLayers(); ++additionalLayerIndex)
+  for (int additionalLayerIndex = 0; additionalLayerIndex < node->GetNumberOfAdditionalLayers(); ++additionalLayerIndex)
   {
     int layerIndex = vtkMRMLSliceCompositeNode::Layer_Last + additionalLayerIndex;
     this->SetNthLayerOpacity(layerIndex, node->GetNthLayerOpacity(layerIndex));
@@ -166,7 +166,7 @@ void vtkMRMLSliceCompositeNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintBooleanMacro(ClipToBackgroundVolume);
   vtkMRMLPrintFloatMacro(ForegroundOpacity);
   vtkMRMLPrintFloatMacro(LabelOpacity);
-  for(int additionalLayerIndex = 0; additionalLayerIndex < this->GetNumberOfAdditionalLayers(); ++additionalLayerIndex)
+  for (int additionalLayerIndex = 0; additionalLayerIndex < this->GetNumberOfAdditionalLayers(); ++additionalLayerIndex)
   {
     printOutputStream << printOutputIndent
                       << "Additional Layer Opacity (N=" << additionalLayerIndex << "): "

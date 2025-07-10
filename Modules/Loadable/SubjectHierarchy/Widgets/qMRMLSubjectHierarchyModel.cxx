@@ -669,7 +669,7 @@ QMimeData* qMRMLSubjectHierarchyModel::mimeData(const QModelIndexList& indexes)c
   }
   QList<QUrl> selectedShItemUrls;
   QModelIndexList allColumnsIndexes;
-  foreach(const QModelIndex& index, indexes)
+  foreach (const QModelIndex& index, indexes)
   {
     QModelIndex parent = index.parent();
     for (int column = 0; column < this->columnCount(parent); ++column)
@@ -1546,7 +1546,7 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemRemoved(vtkIdType removed
   }
   // The removed item may have had children, if they haven't been updated, they are likely to be lost
   // (not reachable when browsing the model), we need to reparent them.
-  foreach(QList<QStandardItem*> orphans, d->Orphans)
+  foreach (QList<QStandardItem*> orphans, d->Orphans)
   {
     QStandardItem* orphan = orphans[0];
     // Make sure that the orphans have not already been reparented.
@@ -1662,7 +1662,7 @@ void qMRMLSubjectHierarchyModel::delayedItemChanged()
   Q_D(qMRMLSubjectHierarchyModel);
 
   // Update each dropped item
-  foreach(vtkIdType draggedShItemID, d->DraggedSubjectHierarchyItems)
+  foreach (vtkIdType draggedShItemID, d->DraggedSubjectHierarchyItems)
   {
     this->updateSubjectHierarchyItemFromItem(
       draggedShItemID, this->itemFromSubjectHierarchyItem(draggedShItemID) );
@@ -1896,7 +1896,7 @@ void printStandardItem(QStandardItem* item, const QString& offset)
   qDebug() << offset << item << item->index() << item->text()
            << item->data(qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole).toString() << item->row()
            << item->column() << item->rowCount() << item->columnCount();
-  for(int i = 0; i < item->rowCount(); ++i )
+  for (int i = 0; i < item->rowCount(); ++i )
   {
     for (int j = 0; j < item->columnCount(); ++j)
     {

@@ -127,7 +127,7 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
       ss >> screenshotType;
       this->SetScreenShotType(screenshotType);
     }
-    else if(!strcmp(attName, "sceneViewDescription"))
+    else if (!strcmp(attName, "sceneViewDescription"))
     {
       // can have spaces in the description, don't use stringstream
       std::string sceneViewDescription = std::string(attValue);
@@ -568,7 +568,7 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
       removedNodes.push(vtkSmartPointer<vtkMRMLNode>(node));
     }
   }
-  while(!removedNodes.empty())
+  while (!removedNodes.empty())
   {
     vtkMRMLNode* nodeToRemove = removedNodes.top().GetPointer();
     // Remove the node only if it's not part of the scene.
@@ -649,7 +649,7 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
   }
 
   //this->Scene->SetIsClosing(0);
-  for(n=0; n<addedNodes.size(); n++)
+  for (n=0; n<addedNodes.size(); n++)
   {
     //addedNodes[n]->UpdateScene(this->Scene);
     //this->Scene->InvokeEvent(vtkMRMLScene::NodeAddedEvent, addedNodes[n] );

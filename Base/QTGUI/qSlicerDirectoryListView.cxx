@@ -124,7 +124,7 @@ QStringList qSlicerDirectoryListView::directoryList(bool absolutePath)const
   {
     role = qSlicerDirectoryListViewPrivate::AbsolutePathRole;
   }
-  for(int i = 0; i < d->DirectoryListModel.rowCount(); ++i)
+  for (int i = 0; i < d->DirectoryListModel.rowCount(); ++i)
   {
     directoryList << d->DirectoryListModel.data(d->DirectoryListModel.index(i, 0), role).toString();
   }
@@ -142,7 +142,7 @@ QStringList qSlicerDirectoryListView::selectedDirectoryList(bool absolutePath)co
     role = qSlicerDirectoryListViewPrivate::AbsolutePathRole;
   }
   QModelIndexList selectedIndexes = d->ListView->selectionModel()->selectedRows();
-  foreach(const QModelIndex& index, selectedIndexes)
+  foreach (const QModelIndex& index, selectedIndexes)
   {
     directoryList << d->DirectoryListModel.data(index, role).toString();
   }
@@ -189,7 +189,7 @@ void qSlicerDirectoryListView::removeSelectedDirectories()
 
   QModelIndexList selectedIndexes = d->ListView->selectionModel()->selectedRows();
   bool selectedCount = selectedIndexes.count();
-  while(selectedIndexes.count() > 0)
+  while (selectedIndexes.count() > 0)
   {
     d->DirectoryListModel.removeRow(selectedIndexes.at(0).row());
     selectedIndexes = d->ListView->selectionModel()->selectedRows();
@@ -222,7 +222,7 @@ void qSlicerDirectoryListView::setDirectoryList(const QStringList& paths)
   if (paths.count() == this->directoryList().count())
   {
     int found = 0;
-    foreach(const QString& path, paths)
+    foreach (const QString& path, paths)
     {
       if (this->hasDirectory(path))
       {
@@ -237,7 +237,7 @@ void qSlicerDirectoryListView::setDirectoryList(const QStringList& paths)
 
   d->DirectoryListModel.removeRows(0, d->DirectoryListModel.rowCount());
 
-  foreach(const QString& path, paths)
+  foreach (const QString& path, paths)
   {
     d->addDirectory(path);
   }
@@ -256,7 +256,7 @@ void qSlicerDirectoryListView::dragEnterEvent(QDragEnterEvent* event)
 //-----------------------------------------------------------------------------
 void qSlicerDirectoryListView::dropEvent(QDropEvent* event)
 {
-  foreach(QUrl url, event->mimeData()->urls())
+  foreach (QUrl url, event->mimeData()->urls())
   {
     if (!url.isValid() || url.isEmpty())
     {

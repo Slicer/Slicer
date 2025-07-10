@@ -26,7 +26,7 @@ DiffusionTensor3DNearestNeighborInterpolateFunction<TData, TCoordRep>
 ::EvaluateAtContinuousIndex( const ContinuousIndexType& index ) const
 // ::Evaluate( const PointType& point )
 {
-  if( this->m_Image.IsNotNull() )
+  if ( this->m_Image.IsNotNull() )
   {
     typename DiffusionImageType::IndexType pixelIndex;
     this->ConvertContinuousIndexToNearestIndex( index, pixelIndex );

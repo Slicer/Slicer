@@ -64,7 +64,7 @@ static qSlicerSubjectHierarchyPluginHandlerCleanup qSlicerSubjectHierarchyPlugin
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPluginHandler* qSlicerSubjectHierarchyPluginHandler::instance()
 {
-  if(!qSlicerSubjectHierarchyPluginHandler::m_Instance)
+  if (!qSlicerSubjectHierarchyPluginHandler::m_Instance)
   {
     qSlicerSubjectHierarchyPluginHandlerCleanupGlobal.use();
     qSlicerSubjectHierarchyPluginHandler::m_Instance = new qSlicerSubjectHierarchyPluginHandler();
@@ -144,7 +144,7 @@ bool qSlicerSubjectHierarchyPluginHandler::registerPlugin(qSlicerSubjectHierarch
   // Add view menu actions from plugin to plugin logic
   if (this->m_PluginLogic)
   {
-    foreach(QAction* action, pluginToRegister->viewContextMenuActions())
+    foreach (QAction* action, pluginToRegister->viewContextMenuActions())
     {
       if (action != nullptr && action->objectName().isEmpty())
       {
@@ -462,9 +462,9 @@ void qSlicerSubjectHierarchyPluginHandler::setPluginLogic(qSlicerSubjectHierarch
   // Register view menu actions of those plugins that were registered before the PluginLogic was set.
   if (this->m_PluginLogic)
   {
-    foreach(qSlicerSubjectHierarchyAbstractPlugin* pluginToRegister, this->m_RegisteredPlugins)
+    foreach (qSlicerSubjectHierarchyAbstractPlugin* pluginToRegister, this->m_RegisteredPlugins)
     {
-      foreach(QAction* action, pluginToRegister->viewContextMenuActions())
+      foreach (QAction* action, pluginToRegister->viewContextMenuActions())
       {
         if (action != nullptr && action->objectName().isEmpty())
         {
@@ -745,7 +745,7 @@ QString qSlicerSubjectHierarchyPluginHandler::dumpContextMenuActions()
 
   info.append("=== Item context menu ===\n");
   actions.clear();
-  foreach(qSlicerSubjectHierarchyAbstractPlugin* plugin, this->m_RegisteredPlugins)
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, this->m_RegisteredPlugins)
   {
     actions << plugin->itemContextMenuActions();
   }
@@ -753,7 +753,7 @@ QString qSlicerSubjectHierarchyPluginHandler::dumpContextMenuActions()
 
   info.append("\n=== Scene context menu ===\n");
   actions.clear();
-  foreach(qSlicerSubjectHierarchyAbstractPlugin* plugin, this->m_RegisteredPlugins)
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, this->m_RegisteredPlugins)
   {
     actions << plugin->sceneContextMenuActions();
   }
@@ -761,7 +761,7 @@ QString qSlicerSubjectHierarchyPluginHandler::dumpContextMenuActions()
 
   info.append("\n=== Visibility context menu ===\n");
   actions.clear();
-  foreach(qSlicerSubjectHierarchyAbstractPlugin* plugin, this->m_RegisteredPlugins)
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, this->m_RegisteredPlugins)
   {
     actions << plugin->visibilityContextMenuActions();
   }
@@ -769,7 +769,7 @@ QString qSlicerSubjectHierarchyPluginHandler::dumpContextMenuActions()
 
   info.append("\n=== View context menu ===\n");
   actions.clear();
-  foreach(qSlicerSubjectHierarchyAbstractPlugin* plugin, this->m_RegisteredPlugins)
+  foreach (qSlicerSubjectHierarchyAbstractPlugin* plugin, this->m_RegisteredPlugins)
   {
     actions << plugin->viewContextMenuActions();
   }
