@@ -166,8 +166,8 @@ int vtkDiffusionTensorGlyph::RequestData(
   vtkDataArray* sourceNormals;
   vtkCellArray* sourceCells, *cells;
   vtkPoints* newPts;
-  vtkFloatArray* newScalars=nullptr;
-  vtkFloatArray* newNormals=nullptr;
+  vtkFloatArray* newScalars = nullptr;
+  vtkFloatArray* newNormals = nullptr;
   double x[3], x2[3], s;
   vtkTransform* trans;
   vtkCell* cell;
@@ -800,7 +800,7 @@ void vtkDiffusionTensorGlyph::PrintSelf(ostream& os, vtkIndent indent)
 //
 vtkMTimeType vtkDiffusionTensorGlyph::GetMTime()
 {
-  vtkMTimeType mTime=this->vtkObject::GetMTime();
+  vtkMTimeType mTime = this->vtkObject::GetMTime();
   vtkMTimeType time;
 
   if ( this->Mask != nullptr )

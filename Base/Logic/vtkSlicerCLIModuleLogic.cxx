@@ -185,8 +185,8 @@ public:
     }
   }
   protected:
-  vtkSlicerCLIOneShotCallbackCallback()  = default;
-  ~vtkSlicerCLIOneShotCallbackCallback() override  = default;
+  vtkSlicerCLIOneShotCallbackCallback() = default;
+  ~vtkSlicerCLIOneShotCallbackCallback() override = default;
 };
 
 //----------------------------------------------------------------------------
@@ -262,7 +262,7 @@ public:
       vtkMRMLDisplayableNode::SafeDownCast(node);
     if (displayableNode)
     {
-      for (int i=0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
+      for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
       {
         vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
         this->StartRescheduleNodeEvents(displayNode);
@@ -282,7 +282,7 @@ public:
       vtkMRMLDisplayableNode::SafeDownCast(node);
     if (displayableNode)
     {
-      for (int i=0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
+      for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
       {
         vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
         this->StopRescheduleNodeEvents(displayNode);
@@ -1250,7 +1250,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
 
       // tell the storage nodes in the miniscene to write their data
       vtkCollection* nodes = miniscene->GetNodes();
-      for (int n=0; n < nodes->GetNumberOfItems(); n++)
+      for (int n = 0; n < nodes->GetNumberOfItems(); n++)
       {
         vtkMRMLNode* node = (vtkMRMLNode*) nodes->GetItemAsObject(n);
 
@@ -1549,7 +1549,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
           {
             // check to see if module can handle more than one region
             long numberOfSelectedRegions=0;
-            for (int i=0; i < regions->GetNumberOfROIs(); ++i)
+            for (int i = 0; i < regions->GetNumberOfROIs(); ++i)
             {
               if (regions->GetNthROISelected(i))
               {
@@ -1560,7 +1560,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
             if (numberOfSelectedRegions == 1
                 || (*pit).GetMultiple() == "true")
             {
-              for (int i=0; i < regions->GetNumberOfROIs(); ++i)
+              for (int i = 0; i < regions->GetNumberOfROIs(); ++i)
               {
                 double* pt;
                 double* Radius;
@@ -2752,7 +2752,7 @@ void vtkSlicerCLIModuleLogic::AddCompleteModelHierarchyToMiniScene(vtkMRMLScene*
 
         // add the display nodes for the model to the miniscene
         int ndn = mnd->GetNumberOfDisplayNodes();
-        for (int i=0; i<ndn; i++)
+        for (int i = 0; i<ndn; i++)
         {
           vtkMRMLDisplayNode* mdnd = mnd->GetNthDisplayNode(i);
           if (mdnd)

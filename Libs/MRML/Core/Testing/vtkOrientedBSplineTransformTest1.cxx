@@ -25,7 +25,7 @@
 
 typedef itk::BSplineDeformableTransform<double,3,3> itkBSplineType;
 
-double DisplacementScale=0.63;
+double DisplacementScale = 0.63;
 
 //----------------------------------------------------------------------------
 void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
@@ -56,9 +56,9 @@ void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
 
   vtkNew<vtkMatrix4x4> bulkTransform;
   vtkNew<vtkMatrix4x4> gridOrientation;
-  for (int row=0; row<3; row++)
+  for (int row = 0; row<3; row++)
   {
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
       bulkTransform->SetElement(row,col,bulkMatrix[row][col]);
       gridOrientation->SetElement(row,col,direction[row][col]);
@@ -77,7 +77,7 @@ void CreateBSplineVtk(vtkOrientedBSplineTransform* bsplineTransform,
 //----------------------------------------------------------------------------
 void SetBSplineNodeVtk(vtkOrientedBSplineTransform* bsplineTransform,int nodeIndex[3], double nodeValue[3])
 {
-  vtkImageData* bsplineCoefficients=bsplineTransform->GetCoefficientData();
+  vtkImageData* bsplineCoefficients = bsplineTransform->GetCoefficientData();
 
   bsplineCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],0, nodeValue[0]);
   bsplineCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],1, nodeValue[1]);
@@ -95,7 +95,7 @@ itkBSplineType::Pointer CreateBSplineItk(
   itkBSplineType::RegionType::SizeType sz;
   itkBSplineType::DirectionType directionItk;
 
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     originItk[i] = origin[i];
     spacinItk[i] = spacing[i];
@@ -120,9 +120,9 @@ itkBSplineType::Pointer CreateBSplineItk(
   typedef itk::AffineTransform<double,3> BulkTransformType;
   const BulkTransformType::Pointer bulkTransform = BulkTransformType::New();
   BulkTransformType::MatrixType m;
-  for (int row=0; row<3; row++)
+  for (int row = 0; row<3; row++)
   {
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
       m[row][col]=bulkMatrix[row][col];
     }
@@ -234,8 +234,8 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
 {
   // Jacobian estimated using central difference
   double jacobianEstimation[3][3];
-  double eps=1e-3; // step size
-  for (int row=0; row<3; row++)
+  double eps = 1e-3; // step size
+  for (int row = 0; row<3; row++)
   {
     double xMinus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
     double xPlus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
@@ -245,7 +245,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
     bsplineVtk->TransformPoint( xMinus1, xMinus1Transformed);
     double xPlus1Transformed[3]={0};
     bsplineVtk->TransformPoint( xPlus1, xPlus1Transformed);
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
       jacobianEstimation[col][row] = (xPlus1Transformed[col]-xMinus1Transformed[col])/(2*eps);
     }
@@ -263,11 +263,11 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedBSplineTrans
   }
 
   double maxDifference = 0;
-  for (int row=0; row<3; row++)
+  for (int row = 0; row<3; row++)
   {
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
-      double difference=fabs(jacobianVtk[row][col]-jacobianEstimation[row][col]);
+      double difference = fabs(jacobianVtk[row][col]-jacobianEstimation[row][col]);
       if (difference>maxDifference)
       {
         maxDifference = difference;
@@ -351,7 +351,7 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
   double modifiedBSplineNodeValue3[3] = {50.0, 70.0, -60.0};
 
   // Create an ITK BSpline transform. It'll serve as the reference.
-  itkBSplineType::Pointer bsplineItk=CreateBSplineItk(origin, spacing, direction, dims, bulkMatrix, bulkOffset);
+  itkBSplineType::Pointer bsplineItk = CreateBSplineItk(origin, spacing, direction, dims, bulkMatrix, bulkOffset);
   // Modify a BSpline node
   SetBSplineNodeItk(bsplineItk, modifiedBSplineNodeIndex1, modifiedBSplineNodeValue1);
   SetBSplineNodeItk(bsplineItk, modifiedBSplineNodeIndex2, modifiedBSplineNodeValue2);
@@ -365,18 +365,18 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
   SetBSplineNodeVtk(bsplineVtk.GetPointer(), modifiedBSplineNodeIndex2, modifiedBSplineNodeValue2);
   SetBSplineNodeVtk(bsplineVtk.GetPointer(), modifiedBSplineNodeIndex3, modifiedBSplineNodeValue3);
 
-  int numberOfPointsTested=0;
-  int numberOfItkVtkPointMismatches=0;
-  int numberOfSingleDoubleVtkPointMismatches=0;
-  int numberOfDerivativeMismatches=0;
-  int numberOfInverseMismatches=0;
+  int numberOfPointsTested = 0;
+  int numberOfItkVtkPointMismatches = 0;
+  int numberOfSingleDoubleVtkPointMismatches = 0;
+  int numberOfDerivativeMismatches = 0;
+  int numberOfInverseMismatches = 0;
 
   // We take samples in the bspline region (first node + 2 < node < last node - 1)
   // because the boundaries are handled differently in ITK and VTK (in ITK there is an
   // abrupt change to 0, while in VTK it is smoothly converges to zero)
-  const int numberOfSamplesPerAxis=25;
-  const double startMargin=2;
-  const double endMargin=1;
+  const int numberOfSamplesPerAxis = 25;
+  const double startMargin = 2;
+  const double endMargin = 1;
   const double startI = startMargin;
   const double endI = (dims[0]-1)-endMargin;
   const double startJ = startMargin;
@@ -386,11 +386,11 @@ int vtkOrientedBSplineTransformTest1(int, char*[])
   const double incI=(endI-startI)/numberOfSamplesPerAxis;
   const double incJ=(endJ-startJ)/numberOfSamplesPerAxis;
   const double incK=(endK-startK)/numberOfSamplesPerAxis;
-  for (double k=startK+incK; k<=endK-incK; k+=incK)
+  for (double k = startK+incK; k<=endK-incK; k+=incK)
   {
-    for (double j=startJ+incJ; j<=endJ-incJ; j+=incJ)
+    for (double j = startJ+incJ; j<=endJ-incJ; j+=incJ)
     {
-      for (double i=startI+incI; i<=endI-incI; i+=incI)
+      for (double i = startI+incI; i<=endI-incI; i+=incI)
       {
         numberOfPointsTested++;
         double inputPoint[3];

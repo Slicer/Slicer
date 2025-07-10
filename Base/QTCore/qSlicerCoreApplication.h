@@ -556,7 +556,7 @@ public:
 
   /// Print message on console.
   /// If error is true then the message is printed on stderr, otherwise on stdout.
-  Q_INVOKABLE void showConsoleMessage(QString message, bool error=true) const;
+  Q_INVOKABLE void showConsoleMessage(QString message, bool error = true) const;
 
   /// Converts relative path to absolute path using slicerHome directory.
   /// Returns absolute path unchanged.
@@ -647,7 +647,7 @@ public slots:
   /// Load files into the application.
   /// \param userMessages if specified then loading errors are returned via this object.
   /// \return Returns true on success.
-  virtual bool loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages=nullptr);
+  virtual bool loadFiles(const QStringList& filePaths, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Open URL in the the application.
   /// Emits urlReceived signal that modules (such as DICOM module) can handle.

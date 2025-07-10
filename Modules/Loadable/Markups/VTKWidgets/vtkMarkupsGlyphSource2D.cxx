@@ -180,7 +180,7 @@ void vtkMarkupsGlyphSource2D::TransformGlyph(vtkPoints* pts)
 {
   double x[3];
   int i;
-  int numPts=pts->GetNumberOfPoints();
+  int numPts = pts->GetNumberOfPoints();
 
   if (this->RotationAngle == 0.0)
   {
@@ -389,7 +389,7 @@ void vtkMarkupsGlyphSource2D::CreateCircle(vtkPoints* pts, vtkCellArray* lines,
   // generate points in a circle
   x[2] = 0.0;
   double theta = 2.0 * vtkMath::Pi() / static_cast<double>(numberOfPoints);
-  for (unsigned int i=0; i < numberOfPoints; i++)
+  for (unsigned int i = 0; i < numberOfPoints; i++)
   {
     x[0] = 0.5 * cos(static_cast<double>(i) * theta);
     x[1] = 0.5 * sin(static_cast<double>(i) * theta);

@@ -84,7 +84,7 @@ int vtkMRMLLinearTransformNodeEventsTest(int, char*[])
   callback->ResetNumberOfEvents();
 
   // Update matrix, as the matrix is not observed we expect that the output will not be updated
-  double originalElement03=matrix->Element[0][3];
+  double originalElement03 = matrix->Element[0][3];
   matrix->Element[0][3]=originalElement03+1234.3456;
   matrix->Modified();
   if (!callback->GetErrorString().empty() ||

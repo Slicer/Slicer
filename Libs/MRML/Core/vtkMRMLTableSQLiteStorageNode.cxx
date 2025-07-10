@@ -284,7 +284,7 @@ int vtkMRMLTableSQLiteStorageNode::DropTable(char* tableName, vtkSQLiteDatabase*
   vtkSmartPointer<vtkSQLiteQuery> query = vtkSmartPointer<vtkSQLiteQuery>::Take(
                        vtkSQLiteQuery::SafeDownCast( database->GetQueryInstance()));
 
-  for (int i=0; i<tables->GetNumberOfValues(); i++)
+  for (int i = 0; i<tables->GetNumberOfValues(); i++)
   {
     if (!tables->GetValue(i).compare(tableName))
     {

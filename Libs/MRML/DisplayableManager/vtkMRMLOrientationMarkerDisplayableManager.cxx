@@ -82,8 +82,8 @@ public:
   }
 
 protected:
-  vtkCenteredAxesActor()  = default;
-  ~vtkCenteredAxesActor() override  = default;
+  vtkCenteredAxesActor() = default;
+  ~vtkCenteredAxesActor() override = default;
 };
 
 vtkStandardNewMacro(vtkCenteredAxesActor);
@@ -307,7 +307,7 @@ vtkProp3D* vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::GetAxesActor
       this->AxesActor->GetYAxisCaptionActor2D(),
       this->AxesActor->GetZAxisCaptionActor2D()
       };
-    for (int i=0; i<3; i++)
+    for (int i = 0; i<3; i++)
     {
       captionActors[i]->GetTextActor()->SetTextScaleModeToViewport();
       captionActors[i]->GetTextActor()->SetNonLinearFontScale( 0.9, 24 );
@@ -424,9 +424,9 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerOrient
     // Calculate the camera position and viewup based on XYToRAS matrix
     vtkMatrix4x4* sliceToRas = sliceNode->GetSliceToRAS();
     vtkNew<vtkMatrix3x3> sliceToRasOrientation;
-    for (int r=0; r<3; r++)
+    for (int r = 0; r<3; r++)
     {
-      for (int c=0; c<3; c++)
+      for (int c = 0; c<3; c++)
       {
         sliceToRasOrientation->SetElement(r,c,sliceToRas->GetElement(r,c));
       }

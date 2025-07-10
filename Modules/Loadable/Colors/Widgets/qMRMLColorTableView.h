@@ -45,7 +45,7 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorTableView : public QTableV
   /// \sa showOnlyNamedColors(), setShowOnlyNamedColors()
   Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
-  qMRMLColorTableView(QWidget* parent=nullptr);
+  qMRMLColorTableView(QWidget* parent = nullptr);
   ~qMRMLColorTableView() override;
 
   Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;

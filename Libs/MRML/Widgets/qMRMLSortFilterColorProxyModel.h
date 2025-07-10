@@ -48,7 +48,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterColorProxyModel : public QSortFilterPr
 
 public:
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterColorProxyModel(QObject* parent=nullptr);
+  qMRMLSortFilterColorProxyModel(QObject* parent = nullptr);
   ~qMRMLSortFilterColorProxyModel() override;
 
   Q_INVOKABLE vtkMRMLColorNode* mrmlColorNode()const;

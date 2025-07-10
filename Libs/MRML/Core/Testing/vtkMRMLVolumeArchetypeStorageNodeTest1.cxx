@@ -23,7 +23,7 @@
 #include <vtksys/SystemTools.hxx>
 #include <vtkTransform.h>
 
-std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove=false)
+std::string tempFilename(std::string tempDir, std::string suffix, std::string fileExtension, bool remove = false)
 {
   std::string filename = tempDir + "/vtkMRMLVolumeArchetypeStorageNodeTest1_" + suffix + "." + fileExtension;
   // remove file if exists

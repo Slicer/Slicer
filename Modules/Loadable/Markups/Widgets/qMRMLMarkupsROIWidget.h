@@ -44,7 +44,7 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsROIWidget
 
 public:
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsROIWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsROIWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsROIWidget() override;
 
   /// Returns the current MRML ROI node

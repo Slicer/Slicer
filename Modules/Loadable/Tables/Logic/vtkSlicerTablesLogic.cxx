@@ -98,7 +98,7 @@ vtkMRMLTableNode* vtkSlicerTablesLogic
       return nullptr;
     }
     vtkStringArray* tables = database->GetTables();
-    for (int i=0; i<tables->GetNumberOfTuples(); i++)
+    for (int i = 0; i<tables->GetNumberOfTuples(); i++)
     {
       std::string table = tables->GetValue(i);
 

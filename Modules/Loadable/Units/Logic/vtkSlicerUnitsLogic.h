@@ -126,7 +126,7 @@ public:
   /// \sa GetSIPrefixCoefficient()
   /// \sa AddUnitNodeToScene()
   /// \sa AddDefaultsUnits(), AddBuiltInUnits()
-  static double GetDisplayCoefficient(const char* displayPrefix, const char* valuePrefix = "", double power=1);
+  static double GetDisplayCoefficient(const char* displayPrefix, const char* valuePrefix = "", double power = 1);
 
 protected:
   vtkSlicerUnitsLogic();

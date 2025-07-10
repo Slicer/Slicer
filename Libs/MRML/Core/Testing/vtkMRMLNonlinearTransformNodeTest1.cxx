@@ -71,7 +71,7 @@ int transformPoints(vtkAbstractTransform* transform, vtkPoints* sourcePoints, vt
 //---------------------------------------------------------------------------
 bool isSamePointPositions(vtkPoints* sourcePoints, vtkPoints* transformedPoints)
 {
-  for (int i=0; i<sourcePoints->GetNumberOfPoints(); i++)
+  for (int i = 0; i<sourcePoints->GetNumberOfPoints(); i++)
   {
     if (vtkMath::Distance2BetweenPoints(sourcePoints->GetPoint(i), transformedPoints->GetPoint(i))>0.1*0.1)
     {

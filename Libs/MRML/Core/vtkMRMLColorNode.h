@@ -171,7 +171,7 @@ public:
   /// Convert coded entries to a string.
   static std::string GetTerminologyAsString(std::string terminologyContextName,
     vtkCodedEntry* category, vtkCodedEntry* type, vtkCodedEntry* typeModifier,
-    std::string regionContextName="", vtkCodedEntry* region=nullptr, vtkCodedEntry* regionModifier=nullptr);
+    std::string regionContextName="", vtkCodedEntry* region = nullptr, vtkCodedEntry* regionModifier = nullptr);
 
   /// Get attribute name that indicates if the color table has terminology entries.
   const char* GetContainsTerminologyAttributeName() { return "ContainsTerminology"; };

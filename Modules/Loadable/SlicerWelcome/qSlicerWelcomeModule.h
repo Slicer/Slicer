@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerWelcomeModule(QObject* parent=nullptr);
+  qSlicerWelcomeModule(QObject* parent = nullptr);
   ~qSlicerWelcomeModule() override;
 
   qSlicerGetTitleMacro(tr("Welcome to Slicer"));

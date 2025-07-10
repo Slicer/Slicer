@@ -253,7 +253,7 @@ std::string vtkSlicerSegmentationGeometryLogic::CalculateOutputGeometryFromImage
     int newExtent[6] = {0,-1,0,-1,0,-1};
     int extent[6] = {0,-1,0,-1,0,-1};
     this->OutputGeometryImageData->GetExtent(extent);
-    for (unsigned int axis=0; axis<3; ++axis)
+    for (unsigned int axis = 0; axis<3; ++axis)
     {
       double oversamplingForAxis = spacing[this->SourceAxisIndexForInputAxis[axis]] / minSpacing;
       int dimension = extent[axis*2+1] - extent[axis*2] + 1;
@@ -527,10 +527,10 @@ void vtkSlicerSegmentationGeometryLogic::ComputeSourceAxisIndexForInputAxis()
     // Find the axis that is best aligned with each source axis
     double scale[3] = { 1.0 };
     vtkAddonMathUtilities::NormalizeOrientationMatrixColumns(inputLabelmapIJKToSource, scale);
-    for (int sourceAxisIndex=0; sourceAxisIndex<3; sourceAxisIndex++)
+    for (int sourceAxisIndex = 0; sourceAxisIndex<3; sourceAxisIndex++)
     {
       double largestComponentValue = 0.0;
-      for (int labelmapIJKAxisIndex=0; labelmapIJKAxisIndex<3; labelmapIJKAxisIndex++)
+      for (int labelmapIJKAxisIndex = 0; labelmapIJKAxisIndex<3; labelmapIJKAxisIndex++)
       {
         double currentComponentValue = fabs(inputLabelmapIJKToSource->GetElement(sourceAxisIndex, labelmapIJKAxisIndex));
         if (currentComponentValue > largestComponentValue)
@@ -543,7 +543,7 @@ void vtkSlicerSegmentationGeometryLogic::ComputeSourceAxisIndexForInputAxis()
   }
 
   // Calculate inverse permutation
-  for (int i=0; i<3; ++i)
+  for (int i = 0; i<3; ++i)
   {
     this->SourceAxisIndexForInputAxis[this->InputAxisIndexForSourceAxis[i]] = i;
   }

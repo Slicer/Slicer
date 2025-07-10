@@ -97,7 +97,7 @@ public:
   /// \return Expected duration of the conversion in milliseconds. If the arguments are omitted, then a rough average can be
   ///   given just to indicate the relative computational cost of the algorithm. If the objects are given, then a more educated
   ///   guess can be made based on the object properties (dimensions, number of points, etc).
-  virtual unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr)
+  virtual unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr, vtkDataObject* targetRepresentation = nullptr)
   {
     (void)(sourceRepresentation); // unused
     (void)(targetRepresentation); // unused

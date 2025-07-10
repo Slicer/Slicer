@@ -596,7 +596,7 @@ vtkMRMLAnnotationTextDisplayNode* vtkMRMLAnnotationNode::GetAnnotationTextDispla
 {
   int nnodes = this->GetNumberOfDisplayNodes();
   vtkMRMLAnnotationTextDisplayNode* node = nullptr;
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
     node = vtkMRMLAnnotationTextDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
     if (node && node->IsA("vtkMRMLAnnotationTextDisplayNode"))

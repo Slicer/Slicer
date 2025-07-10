@@ -118,7 +118,7 @@ namespace {
 class EdgeLocatorNode
 {
 public:
-  EdgeLocatorNode()  = default;
+  EdgeLocatorNode() = default;
 
   // Free the list that this node is the head of
   void FreeList() {

@@ -936,7 +936,7 @@ void vtkSlicerVolumeRenderingLogic::RemoveViewFromVolumeDisplayNodes(
   }
 
   int ndnodes = volumeNode->GetNumberOfDisplayNodes();
-  for (int i=0; i<ndnodes; i++)
+  for (int i = 0; i<ndnodes; i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
       volumeNode->GetNthDisplayNode(i));
@@ -959,7 +959,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
   }
 
   int ndnodes = volumeNode->GetNumberOfDisplayNodes();
-  for (int i=0; i<ndnodes; i++)
+  for (int i = 0; i<ndnodes; i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
       volumeNode->GetNthDisplayNode(i));
@@ -1014,7 +1014,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
     return nullptr;
   }
   int ndnodes = volumeNode->GetNumberOfDisplayNodes();
-  for (int i=0; i<ndnodes; i++)
+  for (int i = 0; i<ndnodes; i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
 
@@ -1039,7 +1039,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::GetVolumeRende
   std::vector<vtkMRMLNode*> nodes;
   viewNode->GetScene()->GetNodesByClass("vtkMRMLVolumeRenderingDisplayNode", nodes);
 
-  for (unsigned int i=0; i<nodes.size(); i++)
+  for (unsigned int i = 0; i<nodes.size(); i++)
   {
     vtkMRMLVolumeRenderingDisplayNode* dnode = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(nodes[i]);
     if (dnode && dnode->IsViewNodeIDPresent(viewNode->GetID()))

@@ -60,7 +60,7 @@ class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkI
 protected:
   typedef itk::GradientAnisotropicDiffusionImageFilter<Superclass::InputImageType,Superclass::InputImageType> ImageFilterType;
   vtkITKGradientAnisotropicDiffusionImageFilter() : Superclass ( ImageFilterType::New() ){};
-  ~vtkITKGradientAnisotropicDiffusionImageFilter() override  = default;
+  ~vtkITKGradientAnisotropicDiffusionImageFilter() override = default;
   ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
 
 

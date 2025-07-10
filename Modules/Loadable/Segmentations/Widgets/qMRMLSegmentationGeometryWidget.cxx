@@ -154,9 +154,9 @@ void qMRMLSegmentationGeometryWidgetPrivate::updateGeometryWidgets()
 
   vtkNew<vtkMatrix4x4> directions;
   geometryImageData->GetDirectionMatrix(directions.GetPointer());
-  for (int i=0; i<3; ++i)
+  for (int i = 0; i<3; ++i)
   {
-    for (int j=0; j<3; ++j)
+    for (int j = 0; j<3; ++j)
     {
       this->MatrixWidget_Directions->setValue(i, j, directions->GetElement(i,j));
     }

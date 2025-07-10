@@ -93,7 +93,7 @@ public:
   void WriteXML(ostream& of, int indent) override;
 
   /// Copy the node's attributes to this object
-  void CopyContent(vtkMRMLNode* node, bool deepCopy=true) override;
+  void CopyContent(vtkMRMLNode* node, bool deepCopy = true) override;
 
   /// Get unique node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "SequenceBrowser";};
@@ -121,8 +121,8 @@ public:
 
   //@{
   /// Returns all synchronized sequence nodes (does not include the master sequence node)
-  void GetSynchronizedSequenceNodes(std::vector<vtkMRMLSequenceNode*> &synchronizedDataNodes, bool includeMasterNode=false);
-  void GetSynchronizedSequenceNodes(vtkCollection* synchronizedDataNodes, bool includeMasterNode=false);
+  void GetSynchronizedSequenceNodes(std::vector<vtkMRMLSequenceNode*> &synchronizedDataNodes, bool includeMasterNode = false);
+  void GetSynchronizedSequenceNodes(vtkCollection* synchronizedDataNodes, bool includeMasterNode = false);
   //@}
 
   /// Returns number of synchronized sequence nodes
@@ -232,7 +232,7 @@ public:
 
   //@{
   /// Selects a sequence item for display, returns current selected item number.
-  int SelectNextItem(int selectionIncrement=1);
+  int SelectNextItem(int selectionIncrement = 1);
   int SelectFirstItem();
   int SelectLastItem();
   //@}
@@ -241,7 +241,7 @@ public:
   int GetNumberOfItems();
 
   /// Adds proxy nodes from another scene (typically from the main scene). The data node is optionally copied.
-  vtkMRMLNode* AddProxyNode(vtkMRMLNode* sourceProxyNode, vtkMRMLSequenceNode* sequenceNode, bool copy=true);
+  vtkMRMLNode* AddProxyNode(vtkMRMLNode* sourceProxyNode, vtkMRMLSequenceNode* sequenceNode, bool copy = true);
 
   /// Get proxy corresponding to a sequence node.
   vtkMRMLNode* GetProxyNode(vtkMRMLSequenceNode* sequenceNode);

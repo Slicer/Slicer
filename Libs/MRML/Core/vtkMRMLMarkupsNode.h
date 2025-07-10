@@ -298,7 +298,7 @@ public:
   /// Return the number of unlocked control points with defined position in this node
   int GetNumberOfMovableControlPoints();
   /// Return the number of control points that are already placed (not being previewed or undefined).
-  int GetNumberOfDefinedControlPoints(bool includePreview=false);
+  int GetNumberOfDefinedControlPoints(bool includePreview = false);
   /// Return the number of control points that have not been placed (not being previewed or skipped).
   int GetNumberOfUndefinedControlPoints(bool includePreview = false);
 
@@ -323,7 +323,7 @@ public:
   /// New control points are added if needed.
   /// Existing control points are updated with the new positions.
   /// Any extra existing control points are removed.
-  void SetControlPointPositionsWorld(vtkPoints* points, bool setUndefinedPoints=true);
+  void SetControlPointPositionsWorld(vtkPoints* points, bool setUndefinedPoints = true);
 
   /// Get a copy of all control point positions in world coordinate system
   void GetControlPointPositionsWorld(vtkPoints* points);
@@ -340,7 +340,7 @@ public:
   /// Markups node takes over ownership of the pointer (markups node will delete it)
   /// \param autoLabel: if enabled (by default it is) then empty point label will be
   /// replaced with automatically generated label.
-  int AddControlPoint(ControlPoint *controlPoint, bool autoLabel=true);
+  int AddControlPoint(ControlPoint *controlPoint, bool autoLabel = true);
 
   ///@{
   /// Add a new control point, defined in the world coordinate system.
@@ -698,7 +698,7 @@ public:
 
   /// Get the index of the closest control point to the world coordinates.
   /// If visibleOnly is set to true then index of the closest visible control point will be returned.
-  int GetClosestControlPointIndexToPositionWorld(double pos[3], bool visibleOnly=false);
+  int GetClosestControlPointIndexToPositionWorld(double pos[3], bool visibleOnly = false);
 
   /// 4x4 matrix detailing the orientation and position in world coordinates of the interaction handles.
   virtual vtkMatrix4x4* GetInteractionHandleToWorldMatrix();

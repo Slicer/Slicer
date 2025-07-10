@@ -168,9 +168,9 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
   ijkToRASDir->SetElement(2,2,-0.8);
   node1->SetIJKToRASDirectionMatrix(ijkToRASDir.GetPointer());
   node1->GetIJKToRASDirectionMatrix(retIJKToRASDir.GetPointer());
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       if (retIJKToRASDir->GetElement(i,j) != ijkToRASDir->GetElement(i,j))
       {

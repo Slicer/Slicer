@@ -599,7 +599,7 @@ void qSlicerSubjectHierarchySegmentsPlugin::setDisplayColor(vtkIdType itemID, QC
   segment->GetColor(oldColor);
   double newColor[3] = { color.redF(), color.greenF(), color.blueF() };
   bool colorChanged = false;
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     if (!(oldColor[i] >= 0.0))  // use ! >= instead of < to include NaN values
     {

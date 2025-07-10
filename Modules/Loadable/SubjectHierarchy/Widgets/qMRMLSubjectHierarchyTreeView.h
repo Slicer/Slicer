@@ -110,7 +110,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyTreeV
 
 public:
   typedef QTreeView Superclass;
-  qMRMLSubjectHierarchyTreeView(QWidget* parent=nullptr);
+  qMRMLSubjectHierarchyTreeView(QWidget* parent = nullptr);
   ~qMRMLSubjectHierarchyTreeView() override;
 
 public:
@@ -152,7 +152,7 @@ public:
   /// \param attributeName Name of the attribute by which the items are filtered
   /// \param attributeValue Value of the specified attribute that needs to match this given value in order
   ///   for it to be shown. If empty, then existence of the attribute is enough to show. Empty by default
-  Q_INVOKABLE void setAttributeFilter(const QString& attributeName, const QVariant& attributeValue=QVariant());
+  Q_INVOKABLE void setAttributeFilter(const QString& attributeName, const QVariant& attributeValue = QVariant());
   /// Remove item attribute filtering \sa setAttribute
   Q_INVOKABLE void removeAttributeFilter();
   /// Add single item attribute filter specifying attribute name, value, include/exclude, and class name
@@ -162,7 +162,7 @@ public:
   ///   - Include filter means that only the items are shown that match the filter.
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
-  Q_INVOKABLE void addItemAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true);
+  Q_INVOKABLE void addItemAttributeFilter(QString attributeName, QVariant attributeValue = QString(), bool include = true);
   /// Remove single item attribute filter specifying each attribute \sa addAttributeFilter
   Q_INVOKABLE void removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include);
   /// Remove all item attribute filters specifying a given attribute name and include flag
@@ -175,7 +175,7 @@ public:
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
   /// \param className Only filter attributes on a certain type. Empty by default (i.e. allow all classes)
-  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true, QString className=QString());
+  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName, QVariant attributeValue = QString(), bool include = true, QString className = QString());
   /// Remove single node attribute filter specifying each attribute \sa addAttributeFilter
   Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className);
   /// Remove all node attribute filters specifying a given attribute name and include flag
@@ -351,7 +351,7 @@ public slots:
   /// Show hint to user about context menus
   /// \param visibility True if visibility context menu hint is to be shown, false for general context menu. False by default
   /// \return Flag indicating whether hint could be shown (i.e. there was an item in the tree is displayable)
-  bool showContextMenuHint(bool visibility=false);
+  bool showContextMenuHint(bool visibility = false);
 
   void setHighlightReferencedItems(bool highlightOn);
   void setContextMenuEnabled(bool enabled);

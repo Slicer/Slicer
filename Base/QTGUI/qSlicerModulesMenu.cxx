@@ -49,8 +49,8 @@ public:
   /// Return menus for each subCategories
   QList<QMenu*> categoryMenus(QMenu* topLevelMenu, QStringList subCategories);
 
-  QAction* action(const QVariant& actionData, const QMenu* parentMenu=nullptr)const;
-  QAction* action(const QString& text, const QMenu* parentMenu=nullptr)const;
+  QAction* action(const QVariant& actionData, const QMenu* parentMenu = nullptr)const;
+  QAction* action(const QString& text, const QMenu* parentMenu = nullptr)const;
   QMenu*   actionMenu(QAction* action, QMenu* parentMenu)const;
 
   qSlicerModuleManager* ModuleManager;

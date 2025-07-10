@@ -140,7 +140,7 @@ public:
   /// \param scalarType If specified then scalar type will be set to the requested value, otherwise current value will be kept.
   /// \param numberOfScalarsComponents If specified then the number of scalar components will be set to the requested value, otherwise current value will be kept.
   /// \return Success flag
-  static bool DeserializeImageGeometry(std::string geometryString, vtkOrientedImageData* orientedImageData, bool allocateScalars=true, int scalarType=VTK_VOID, int numberOfScalarsComponents=-1);
+  static bool DeserializeImageGeometry(std::string geometryString, vtkOrientedImageData* orientedImageData, bool allocateScalars = true, int scalarType = VTK_VOID, int numberOfScalarsComponents=-1);
 
   /// Utility function for de-serializing reference image geometry into a matrix and a dimensions vector
   /// \param geometryString String containing the serialized image geometry

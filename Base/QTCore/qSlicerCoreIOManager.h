@@ -77,7 +77,7 @@ public:
   qSlicerFileWriter* writer(vtkObject* object, const QString& extension = QString())const;
 
   /// Return the file type of the best file writer for the input VTK \a object.
-  Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object, const QString& extension=QString())const;
+  Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object, const QString& extension = QString())const;
 
   Q_INVOKABLE QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
   Q_INVOKABLE QStringList fileWriterExtensions(vtkObject* object)const;
@@ -188,8 +188,8 @@ public:
   /// loadNodes(), exportNodes()
   Q_INVOKABLE bool saveNodes(qSlicerIO::IOFileType fileType,
     const qSlicerIO::IOProperties& parameters,
-    vtkMRMLMessageCollection* userMessages=nullptr,
-    vtkMRMLScene* scene=nullptr
+    vtkMRMLMessageCollection* userMessages = nullptr,
+    vtkMRMLScene* scene = nullptr
   );
 
   /// Export nodes using the registered writers. Return true on success, false otherwise.
@@ -203,7 +203,7 @@ public:
   Q_INVOKABLE bool exportNodes(
     const QList<qSlicerIO::IOProperties>& parameterMaps,
     bool hardenTransforms,
-    vtkMRMLMessageCollection* userMessages=nullptr
+    vtkMRMLMessageCollection* userMessages = nullptr
   );
 
   /// Export nodes using the registered writers with an API that is usable from Python.
@@ -224,7 +224,7 @@ public:
   /// and screenShot set as properties.
   /// If a valid pointer is passed to userMessages additional error or warning information may be returned in it.
   Q_INVOKABLE bool saveScene(const QString& fileName, QImage screenShot,
-    vtkMRMLMessageCollection* userMessages=nullptr);
+    vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Create default storage nodes for all storable nodes that are to be saved
   /// with the scene and do not have a storage node already

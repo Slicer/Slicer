@@ -661,7 +661,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInAllViews(
 
   vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  for (int i=0; i<numberOfCompositeNodes; i++)
+  for (int i = 0; i<numberOfCompositeNodes; i++)
   {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
     if (layer & vtkMRMLApplicationLogic::BackgroundLayer)
@@ -781,7 +781,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::hideVolumeFromAllViews(vtkMRMLScalarV
   char* volumeNodeID = node->GetID();
   vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  for (int i=0; i<numberOfCompositeNodes; i++)
+  for (int i = 0; i<numberOfCompositeNodes; i++)
   {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
     const char* backgroundVolumeID = compositeNode->GetBackgroundVolumeID();
@@ -857,7 +857,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::collectShownVolumes( QSet<vtkIdType>&
 
   vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   const int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  for (int i=0; i<numberOfCompositeNodes; i++)
+  for (int i = 0; i<numberOfCompositeNodes; i++)
   {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
     if ( layer & vtkMRMLApplicationLogic::BackgroundLayer
@@ -972,7 +972,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
   vtkSmartPointer<vtkCollection> childVolumeNodes = vtkSmartPointer<vtkCollection>::New();
   shNode->GetDataNodesInBranch(currentItemID, childVolumeNodes, "vtkMRMLScalarVolumeNode");
   childVolumeNodes->InitTraversal();
-  for (int i=0; i<childVolumeNodes->GetNumberOfItems(); ++i)
+  for (int i = 0; i<childVolumeNodes->GetNumberOfItems(); ++i)
   {
     vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(childVolumeNodes->GetItemAsObject(i));
     if (volumeNode)
@@ -999,7 +999,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumesInBranch()
         // Make sure the secondary volume is shown in a semi-transparent way
         vtkMRMLSliceCompositeNode* compositeNode = nullptr;
         int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-        for (int i=0; i<numberOfCompositeNodes; i++)
+        for (int i = 0; i<numberOfCompositeNodes; i++)
         {
           compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
           if (compositeNode && compositeNode->GetForegroundOpacity() == 0.0)
@@ -1047,7 +1047,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::showVolumeInForeground()
   // Make sure the secondary volume is shown in a semi-transparent way
   vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  for (int i=0; i<numberOfCompositeNodes; i++)
+  for (int i = 0; i<numberOfCompositeNodes; i++)
   {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
     if (compositeNode && compositeNode->GetForegroundOpacity() == 0.0)
@@ -1078,7 +1078,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::onLayoutChanged()
   // updated when volumes are shown/hidden from outside subject hierarchy
   vtkMRMLSliceCompositeNode* compositeNode = nullptr;
   int numberOfCompositeNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceCompositeNode");
-  for (int i=0; i<numberOfCompositeNodes; i++)
+  for (int i = 0; i<numberOfCompositeNodes; i++)
   {
     compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
     qvtkReconnect(compositeNode, vtkCommand::ModifiedEvent, this, SLOT(onSliceCompositeNodeModified()));
@@ -1106,7 +1106,7 @@ void qSlicerSubjectHierarchyVolumesPlugin::onSliceCompositeNodeModified()
 
   vtkMRMLScalarVolumeNode* volumeNode = nullptr;
   int numberOfVolumeNodes = scene->GetNumberOfNodesByClass("vtkMRMLScalarVolumeNode");
-  for (int i=0; i<numberOfVolumeNodes; i++)
+  for (int i = 0; i<numberOfVolumeNodes; i++)
   {
     volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLScalarVolumeNode"));
     vtkIdType volumeItemID = shNode->GetItemByDataNode(volumeNode);

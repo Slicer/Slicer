@@ -21,7 +21,7 @@ class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationsModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerAnnotationsModule(QObject* parent=nullptr);
+  qSlicerAnnotationsModule(QObject* parent = nullptr);
   ~qSlicerAnnotationsModule() override;
 
   /// Return the help and acknowledgement text for the Annotation module.

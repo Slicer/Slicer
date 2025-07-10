@@ -72,7 +72,7 @@ public:
   static bool importModulePythonExtensions(qSlicerCorePythonManager* pythonManager,
                                            const QString& intDir,
                                            const QString& modulePath,
-                                           bool isEmbedded=false);
+                                           bool isEmbedded = false);
 
 private:
   /// Not implemented

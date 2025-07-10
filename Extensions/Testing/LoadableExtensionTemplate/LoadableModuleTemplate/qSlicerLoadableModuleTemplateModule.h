@@ -36,7 +36,7 @@ qSlicerLoadableModuleTemplateModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerLoadableModuleTemplateModule(QObject* parent=0);
+  explicit qSlicerLoadableModuleTemplateModule(QObject* parent = 0);
   ~qSlicerLoadableModuleTemplateModule() override;
 
   qSlicerGetTitleMacro(tr("qSlicerLoadableModuleTemplateModule"));

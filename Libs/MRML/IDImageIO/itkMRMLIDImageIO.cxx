@@ -704,9 +704,9 @@ MRMLIDImageIO
   dw->GetMeasurementFrameMatrix(measurementFrame);
 
 //    std::cout << "Sending measurement frame" << std::endl;
-//    for (unsigned int i=0; i < 3; i++)
+//    for (unsigned int i = 0; i < 3; i++)
 //      {
-//      for (unsigned int j=0; j < 3; j++)
+//      for (unsigned int j = 0; j < 3; j++)
 //        {
 //        std::cout << measurementFrame[i][j] << " ";
 //        }
@@ -716,10 +716,10 @@ MRMLIDImageIO
   // copy into something we can serialize, e.g. something with a
   // copy constructor.
   double rasToLPS[] = {-1.0, -1.0, 1.0};
-  for (unsigned int i=0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; i++)
   {
     measurementFrameValue[i].resize(3);
-    for (unsigned int j=0; j < 3; j++)
+    for (unsigned int j = 0; j < 3; j++)
     {
       measurementFrameValue[i][j] = rasToLPS[j]*measurementFrame[j][i];
     }
@@ -734,7 +734,7 @@ MRMLIDImageIO
   // or itkMRMLIDImageIO
   std::string bValueKey = "DWMRI_b-value";
   double maxBValue = itk::NumericTraits<double>::NonpositiveMin();
-  for (int i=0; i < dw->GetNumberOfGradients(); ++i)
+  for (int i = 0; i < dw->GetNumberOfGradients(); ++i)
   {
     if (dw->GetBValue(i) > maxBValue)
     {
@@ -752,14 +752,14 @@ MRMLIDImageIO
   // itkNRRDImageIO or itkMRMLIDImageIO
   std::string diffusionGradientKey = "DWMRI_gradient_";
 
-  for (int i=0; i < dw->GetNumberOfGradients(); ++i)
+  for (int i = 0; i < dw->GetNumberOfGradients(); ++i)
   {
     std::vector<double> gradient(3);
     double* g;
 
     g = dw->GetDiffusionGradient(i);
 
-    for (unsigned int j=0; j < 3; ++j)
+    for (unsigned int j = 0; j < 3; ++j)
     {
         gradient[j] = g[j];
     }
@@ -789,7 +789,7 @@ MRMLIDImageIO
   double measurementFrame[3][3];
   std::vector<std::vector<double>> measurementFrameValue(3);
 
-  for (unsigned int i=0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; i++)
   {
     measurementFrameValue[i].resize(3);
   }
@@ -800,9 +800,9 @@ MRMLIDImageIO
 
   // convert from a dictionary value to a data format for the node
   double lpsToRAS[] = {-1.0, -1.0, 1.0};
-  for (unsigned int i=0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; i++)
   {
-    for (unsigned int j=0; j < 3; j++)
+    for (unsigned int j = 0; j < 3; j++)
     {
       measurementFrame[i][j] = lpsToRAS[i] * measurementFrameValue[j][i];
     }
@@ -811,9 +811,9 @@ MRMLIDImageIO
   dw->SetMeasurementFrameMatrix(measurementFrame);
 
 //    std::cout << "Received measurement frame" << std::endl;
-//    for (unsigned int i=0; i < 3; i++)
+//    for (unsigned int i = 0; i < 3; i++)
 //      {
-//      for (unsigned int j=0; j < 3; j++)
+//      for (unsigned int j = 0; j < 3; j++)
 //        {
 //        std::cout << measurementFrame[i][j] << " ";
 //        }
@@ -864,7 +864,7 @@ MRMLIDImageIO
 
       // gradient length is the b-value / max_b-value
       double sum = 0.0;
-      for (unsigned int i=0; i < 3; ++i)
+      for (unsigned int i = 0; i < 3; ++i)
       {
         sum += (gradient[i] * gradient[i]);
       }
@@ -880,7 +880,7 @@ MRMLIDImageIO
   // convert gradients
   int disabledModify = dw->StartModify();
   dw->SetNumberOfGradients( gradients.size() );
-  for (unsigned int i=0; i < gradients.size(); ++i)
+  for (unsigned int i = 0; i < gradients.size(); ++i)
   {
     dw->SetBValue(i, bvalues[i]);
     dw->SetDiffusionGradient(i, &gradients[i][0]);
@@ -902,9 +902,9 @@ MRMLIDImageIO
   di->GetMeasurementFrameMatrix(measurementFrame);
 
 //    std::cout << "Sending measurement frame" << std::endl;
-//    for (unsigned int i=0; i < 3; i++)
+//    for (unsigned int i = 0; i < 3; i++)
 //      {
-//      for (unsigned int j=0; j < 3; j++)
+//      for (unsigned int j = 0; j < 3; j++)
 //        {
 //        std::cout << measurementFrame[i][j] << " ";
 //        }
@@ -914,10 +914,10 @@ MRMLIDImageIO
   // copy into something we can serialize, e.g. something with a
   // copy constructor.
   double rasToLPS[] = {-1.0, -1.0, 1.0};
-  for (unsigned int i=0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; i++)
   {
     measurementFrameValue[i].resize(3);
-    for (unsigned int j=0; j < 3; j++)
+    for (unsigned int j = 0; j < 3; j++)
     {
       measurementFrameValue[i][j] = rasToLPS[j]*measurementFrame[j][i];
     }
@@ -939,7 +939,7 @@ MRMLIDImageIO
   double measurementFrame[3][3];
   std::vector<std::vector<double>> measurementFrameValue(3);
 
-  for (unsigned int i=0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; i++)
   {
     measurementFrameValue[i].resize(3);
   }
@@ -950,9 +950,9 @@ MRMLIDImageIO
 
   // convert from a dictionary value to a data format for the node
   double lpsToRAS[] = {-1.0, -1.0, 1.0};
-  for (unsigned int i=0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; i++)
   {
-    for (unsigned int j=0; j < 3; j++)
+    for (unsigned int j = 0; j < 3; j++)
     {
       measurementFrame[i][j] = lpsToRAS[i] * measurementFrameValue[j][i];
     }
@@ -961,9 +961,9 @@ MRMLIDImageIO
   di->SetMeasurementFrameMatrix(measurementFrame);
 
 //    std::cout << "Received measurement frame" << std::endl;
-//    for (unsigned int i=0; i < 3; i++)
+//    for (unsigned int i = 0; i < 3; i++)
 //      {
-//      for (unsigned int j=0; j < 3; j++)
+//      for (unsigned int j = 0; j < 3; j++)
 //        {
 //        std::cout << measurementFrame[i][j] << " ";
 //        }

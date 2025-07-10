@@ -138,7 +138,7 @@ void vtkTagTable::Copy( vtkTagTable* t)
   {
     this->ClearTagTable();
     this->SetName ( t->GetName() );
-    for ( int i=0; i < t->GetNumberOfTags(); i++ )
+    for ( int i = 0; i < t->GetNumberOfTags(); i++ )
     {
       att.clear();
       val.clear();
@@ -175,7 +175,7 @@ void vtkTagTable::AddUniqueTag ( const char* attribute, const char* value )
     std::string att (attribute);
     std::string val (value);
     std::map<std::string, std::string>::iterator iter;
-    int unique=1;
+    int unique = 1;
     for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++)
@@ -346,7 +346,7 @@ const char* vtkTagTable::GetTagAttribute ( int index)
 {
 
     std::map<std::string, std::string>::iterator iter;
-    int i=0;
+    int i = 0;
     for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++, i++)
@@ -368,7 +368,7 @@ const char* vtkTagTable::GetTagAttribute ( int index)
  {
 
     std::map<std::string, std::string>::iterator iter;
-    int i=0;
+    int i = 0;
     for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();
           iter++, i++)
@@ -387,7 +387,7 @@ const char* vtkTagTable::GetTagValue ( const char* attribute)
 {
   std::string att(attribute);
   std::map<std::string, std::string>::iterator iter;
-  int i=0;
+  int i = 0;
 
   for ( iter = this->TagTable.begin();
           iter != this->TagTable.end();

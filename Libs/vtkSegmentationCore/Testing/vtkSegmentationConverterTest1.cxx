@@ -60,8 +60,8 @@ public: \
   virtual bool Convert( \
     vtkSegment* vtkNotUsed(segment)) override { return true; } \
   virtual unsigned int GetConversionCost( \
-    vtkDataObject* sourceRepresentation=nullptr, \
-    vtkDataObject* targetRepresentation=nullptr)  override \
+    vtkDataObject* sourceRepresentation = nullptr, \
+    vtkDataObject* targetRepresentation = nullptr)  override \
   { \
     (void)sourceRepresentation; \
     (void)targetRepresentation; \
@@ -99,7 +99,7 @@ RULE(E, D, 1);
 
 void PrintPath(vtkSegmentationConversionPath* path)
 {
-  for (int i=0; i < path->GetNumberOfRules(); i++)
+  for (int i = 0; i < path->GetNumberOfRules(); i++)
   {
     vtkSegmentationConverterRule* rule = path->GetRule(i);
     std::cout << "      " << rule->GetName() << "(" << rule->GetConversionCost() << ")" << std::endl;

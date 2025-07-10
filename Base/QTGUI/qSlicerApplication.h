@@ -121,10 +121,10 @@ public:
   /// found module is returned. Confidence value = 0 means that the found module can
   /// probably not do much with that node, while 1.0 means that the found module is certainly
   /// the best module to manage than node.
-  QString nodeModule(vtkMRMLNode* node, double* confidence=nullptr)const;
+  QString nodeModule(vtkMRMLNode* node, double* confidence = nullptr)const;
 
   Q_INVOKABLE ctkSettingsDialog* settingsDialog()const;
-  Q_INVOKABLE void openSettingsDialog(const QString& settingsPanel=QString());
+  Q_INVOKABLE void openSettingsDialog(const QString& settingsPanel = QString());
 
   /// Log application information.
   ///
@@ -169,7 +169,7 @@ public slots:
   /// \note qSlicerApplication is a temporary host for the function as it should be
   /// moved into a DataManager where module can register new node
   /// types/modules
-  void openNodeModule(vtkMRMLNode* node, QString role=QString(), QString context=QString());
+  void openNodeModule(vtkMRMLNode* node, QString role = QString(), QString context = QString());
 
   /// Popup a dialog asking the user if the application should be restarted.
   /// If no \a reason is given, the text will default to ""Are you sure you want to restart?"

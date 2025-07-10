@@ -36,7 +36,7 @@ vtkStandardNewMacro(vtkOrientedImageData);
 //----------------------------------------------------------------------------
 vtkOrientedImageData::vtkOrientedImageData()
 {
-  int i=0,j=0;
+  int i = 0,j=0;
   for (i=0; i<3; i++)
   {
     for (j=0; j<3; j++)
@@ -102,9 +102,9 @@ void vtkOrientedImageData::CopyDirections(vtkDataObject* dataObject)
 void vtkOrientedImageData::SetDirections(double dirs[3][3])
 {
   bool isModified = false;
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       if (!vtkMathUtilities::FuzzyCompare<double>(this->Directions[i][j], dirs[i][j]))
       {
@@ -133,9 +133,9 @@ void vtkOrientedImageData::SetDirections(double ir, double jr, double kr,
 //----------------------------------------------------------------------------
 void vtkOrientedImageData::GetDirections(double dirs[3][3])
 {
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       dirs[i][j] = this->Directions[i][j];
     }
@@ -184,11 +184,11 @@ void vtkOrientedImageData::SetImageToWorldMatrix(vtkMatrix4x4* argMat)
   bool isModified = false;
 
   // normalize direction vectors
-  int col=0;
+  int col = 0;
   for (col=0; col<3; col++)
   {
-    double len=0.0;
-    int row=0;
+    double len = 0.0;
+    int row = 0;
     for (row=0; row<3; row++)
     {
       len += mat->GetElement(row, col) * mat->GetElement(row, col);
@@ -208,9 +208,9 @@ void vtkOrientedImageData::SetImageToWorldMatrix(vtkMatrix4x4* argMat)
     }
   }
 
-  for (int row=0; row<3; row++)
+  for (int row = 0; row<3; row++)
   {
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
       if (!vtkMathUtilities::FuzzyCompare<double>(this->Directions[row][col], mat->GetElement(row, col)))
       {
@@ -250,7 +250,7 @@ void vtkOrientedImageData::GetImageToWorldMatrix(vtkMatrix4x4* mat)
 
   // this is the full matrix including the spacing and origin
   mat->Identity();
-  int row=0,col=0;
+  int row = 0,col=0;
   for (row=0; row<3; row++)
   {
     for (col=0; col<3; col++)
@@ -274,9 +274,9 @@ void vtkOrientedImageData::SetDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMat
   double dirs[3][3] = {{0.0, 0.0, 0.0},
                        {0.0, 0.0, 0.0},
                        {0.0, 0.0, 0.0}};
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       dirs[i][j] = ijkToRASDirectionMatrix->Element[i][j];
     }
@@ -291,9 +291,9 @@ void vtkOrientedImageData::GetDirectionMatrix(vtkMatrix4x4* ijkToRASDirectionMat
                        {0.0, 0.0, 0.0},
                        {0.0, 0.0, 0.0}};
   this->GetDirections(dirs);
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j<3; j++)
     {
       ijkToRASDirectionMatrix->Element[i][j] = dirs[i][j];
     }
@@ -326,11 +326,11 @@ void vtkOrientedImageData::ComputeBounds()
   this->GetImageToWorldMatrix(geometryMatrix.GetPointer());
 
   vtkBoundingBox boundingBox;
-  for (int xSide=0; xSide<2; ++xSide)
+  for (int xSide = 0; xSide<2; ++xSide)
   {
-    for (int ySide=0; ySide<2; ++ySide)
+    for (int ySide = 0; ySide<2; ++ySide)
     {
-      for (int zSide=0; zSide<2; ++zSide)
+      for (int zSide = 0; zSide<2; ++zSide)
       {
         // Get corner point. Loop variables are either 0 or 1, so coordinate is
         // either low or high extent bound along that axis

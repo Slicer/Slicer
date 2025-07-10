@@ -40,7 +40,7 @@ public:
     m_UID = uid;
   }
 
-  virtual ~DataRequest()  = default;
+  virtual ~DataRequest() = default;
 
   virtual void Execute(vtkSlicerApplicationLogic*) {};
 
@@ -381,7 +381,7 @@ public:
           // hopefully the parents will have been read first, but if not
           // keep a list of model hierarchy nodes that failed to have their parent node reference remapped
           std::vector<vtkMRMLModelHierarchyNode*> childNodesThatNeedParentsIDsRemapped;
-          for (int n=0;
+          for (int n = 0;
                n<miniscene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
                n++)
           {

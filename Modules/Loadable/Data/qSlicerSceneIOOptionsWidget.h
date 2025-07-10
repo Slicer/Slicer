@@ -34,7 +34,7 @@ class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneIOOptionsWidget
 {
   Q_OBJECT
 public:
-  qSlicerSceneIOOptionsWidget(QWidget* parent=nullptr);
+  qSlicerSceneIOOptionsWidget(QWidget* parent = nullptr);
   ~qSlicerSceneIOOptionsWidget() override;
 
   // Update checkboxes in the widget based on

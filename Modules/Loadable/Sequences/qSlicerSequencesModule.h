@@ -54,7 +54,7 @@ qSlicerSequencesModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerSequencesModule(QObject* parent=0);
+  explicit qSlicerSequencesModule(QObject* parent = 0);
   ~qSlicerSequencesModule() override;
 
   qSlicerGetTitleMacro(tr("Sequences"));

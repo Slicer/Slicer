@@ -248,7 +248,7 @@ public:
   static vtkMRMLScalarVolumeNode* CloneVolume(vtkMRMLScene* scene,
                                               vtkMRMLVolumeNode* volumeNode,
                                               const char* name,
-                                              bool cloneImageData=true);
+                                              bool cloneImageData = true);
   /// Create a deep copy of a \a volumeNode and add it to the \a scene
   static vtkMRMLVolumeNode* CloneVolumeGeneric(vtkMRMLScene* scene,
     vtkMRMLVolumeNode* volumeNode,

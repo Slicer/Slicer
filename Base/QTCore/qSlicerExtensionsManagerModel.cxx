@@ -3152,7 +3152,7 @@ QStringList qSlicerExtensionsManagerModel::readArrayValues(
   Q_ASSERT(!fieldName.isEmpty());
   QStringList listOfValues;
   int size = settings.beginReadArray(arrayName);
-  for (int i=0; i < size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     settings.setArrayIndex(i);
     listOfValues << settings.value(fieldName).toString();
@@ -3169,7 +3169,7 @@ void qSlicerExtensionsManagerModel::writeArrayValues(QSettings& settings, const 
   Q_ASSERT(!fieldName.isEmpty());
   settings.remove(arrayName);
   settings.beginWriteArray(arrayName);
-  for (int i=0; i < values.size(); ++i)
+  for (int i = 0; i < values.size(); ++i)
   {
     settings.setArrayIndex(i);
     settings.setValue(fieldName, values.at(i));

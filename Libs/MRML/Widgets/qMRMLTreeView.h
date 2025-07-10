@@ -118,7 +118,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
 public:
   typedef QTreeView Superclass;
 
-  qMRMLTreeView(QWidget* parent=nullptr);
+  qMRMLTreeView(QWidget* parent = nullptr);
   ~qMRMLTreeView() override;
 
   vtkMRMLScene* mrmlScene()const;
@@ -318,7 +318,7 @@ protected slots:
   void onCustomContextMenu(const QPoint& point);
 
 protected:
-  qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget* parent=nullptr);
+  qMRMLTreeView(qMRMLTreeViewPrivate* pimpl, QWidget* parent = nullptr);
 
 protected:
   QScopedPointer<qMRMLTreeViewPrivate> d_ptr;

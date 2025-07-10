@@ -67,7 +67,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
 
   ///
   /// Read transform from file
-  vtkMRMLTransformNode* AddTransform(const char* filename, vtkMRMLScene* scene, vtkMRMLMessageCollection* userMessages=nullptr);
+  vtkMRMLTransformNode* AddTransform(const char* filename, vtkMRMLScene* scene, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Generate polydata for 2D transform visualization
   /// Return true on success.
@@ -91,7 +91,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
   /// If glyphPointsNode is specified and display mode is glyphs then the region is ignored and glyphs are drawn at the markup control points.
   /// Return true on success.
   static bool GetVisualization3d(vtkPolyData* output_RAS, vtkMRMLTransformDisplayNode* displayNode,
-    vtkMRMLNode* regionNode, vtkMRMLMarkupsNode* glyphPointsNode=nullptr);
+    vtkMRMLNode* regionNode, vtkMRMLMarkupsNode* glyphPointsNode = nullptr);
 
   /// Name of the scalar array that stores the displacement magnitude values
   /// in polydata returned by GetVisualization2d and GetVisualization3d.
@@ -136,7 +136,7 @@ class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public
   static void GetTransformedNodes(
     vtkMRMLScene* scene, vtkMRMLTransformNode* transformNode,
     std::vector<vtkMRMLDisplayableNode*>& transformedNodes,
-    bool recursive=true);
+    bool recursive = true);
 
   /// Return the RAS bounding box around the list of given nodes
   /// using GetRASBounds. Only the nodes with a valid bounding box are taken
@@ -207,7 +207,7 @@ protected:
   static int GetGridSubdivision(vtkMRMLTransformDisplayNode* displayNode);
 
   /// Add lines to the gridPolyData to make it a grid. If warpedGrid is specified then a warped grid is generated, too.
-  static void CreateGrid(vtkPolyData* outputGrid_RAS, vtkMRMLTransformDisplayNode* displayNode, int numGridPoints[3], vtkPolyData* outputWarpedGrid_RAS=nullptr);
+  static void CreateGrid(vtkPolyData* outputGrid_RAS, vtkMRMLTransformDisplayNode* displayNode, int numGridPoints[3], vtkPolyData* outputWarpedGrid_RAS = nullptr);
 
   /// Takes samples from the displacement field specified by a point set
   /// and stores it in an unstructured grid.
@@ -236,7 +236,7 @@ protected:
   /// and stores it in an unstructured grid.
   /// pointGroupSize: the number of points will be N*pointGroupSize (the actual number will be returned in numGridPoints[3])
   static void GetTransformedPointSamplesOnRoi(vtkPointSet* outputPointSet_RAS, vtkMRMLTransformNode* inputTransformNode,
-    vtkMatrix4x4* roiToRAS, int* roiSize, double pointSpacingMm, int pointGroupSize=1, int* numGridPoints=nullptr);
+    vtkMatrix4x4* roiToRAS, int* roiSize, double pointSpacingMm, int pointGroupSize = 1, int* numGridPoints = nullptr);
 
   /// Get markup points as vtkPoints in RAS coordinate system.
   static void  GetMarkupsAsPoints(vtkMRMLMarkupsNode* markupsNode, vtkPoints* samplePoints_RAS);

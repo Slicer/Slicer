@@ -52,8 +52,8 @@ static const int FIELD_AUTOCREATED = 15;
 class CsvCodec
 {
 public:
-  CsvCodec()  = default;
-  ~CsvCodec()  = default;
+  CsvCodec() = default;
+  ~CsvCodec() = default;
 
   void ReadFromString(const std::string& row)
   {

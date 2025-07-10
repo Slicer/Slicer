@@ -49,14 +49,14 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget :
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerSegmentationsModuleWidget(QWidget* parent=nullptr);
+  qSlicerSegmentationsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerSegmentationsModuleWidget() override;
 
   void enter() override;
   void exit() override;
 
   /// Support of node editing. Selects node in user interface that the user wants to edit
-  bool setEditedNode(vtkMRMLNode* node, QString role=QString(), QString context=QString()) override;
+  bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 public slots:
   /// Update widget GUI from parameter node
@@ -74,7 +74,7 @@ protected:
 
   /// Get display node of current segmentation node
   /// \param create If on, then create a default display node if missing. False by default
-  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode(bool create=false);
+  vtkMRMLSegmentationDisplayNode* segmentationDisplayNode(bool create = false);
 
   /// Copy segment from one segmentation to another
   /// \param fromSegmentation Source segmentation
@@ -83,7 +83,7 @@ protected:
   /// \param removeFromSource If true, then delete segment from source segmentation after copying. Default value is false.
   /// \return Success flag
   bool copySegmentBetweenSegmentations(vtkSegmentation* fromSegmentation,
-    vtkSegmentation* toSegmentation, QString segmentId, bool removeFromSource=false);
+    vtkSegmentation* toSegmentation, QString segmentId, bool removeFromSource = false);
 
   /// Copy segments to/from current segmentation from/to other segmentation.
   /// \param copyFromCurrentSegmentation If true, then copy current->other; otherwise other->current.

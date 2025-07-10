@@ -71,7 +71,7 @@ public:
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
   double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
+    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
 
   /// Make sure a folder display node that is added externally shows up in the hierarchy
   bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID) override;

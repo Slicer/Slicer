@@ -135,7 +135,7 @@ void vtkMRMLStorableNode::WriteXML(ostream& of, int nIndent)
     ss.str ( "" );
     int numc = this->GetUserTagTable()->GetNumberOfTags();
     const char* kwd, *val;
-    for (int i=0; i < numc; i++ )
+    for (int i = 0; i < numc; i++ )
     {
       kwd = this->GetUserTagTable()->GetTagAttribute(i);
       val = this->GetUserTagTable()->GetTagValue (i);
@@ -246,7 +246,7 @@ void vtkMRMLStorableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/
     int numc = node->GetUserTagTable()->GetNumberOfTags();
     const char* kwd, *val;
     int sel;
-    for ( int j=0; j < numc; j++ )
+    for ( int j = 0; j < numc; j++ )
     {
       kwd = node->GetUserTagTable()->GetTagAttribute(j);
       val = node->GetUserTagTable()->GetTagValue (j);
@@ -274,7 +274,7 @@ void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
 
   int numStorageNodes = this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
 
-  for (int i=0; i < numStorageNodes; i++)
+  for (int i = 0; i < numStorageNodes; i++)
   {
     const char* id = this->GetNthNodeReferenceID(this->GetStorageNodeReferenceRole(), i);
     os << indent << "StorageNodeIDs[" << i << "]: " <<
@@ -297,7 +297,7 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene* scene)
 
   int numStorageNodes = this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
   vtkDebugMacro("UpdateScene: going through the storage node ids: " <<  numStorageNodes);
-  for (int i=0; i < numStorageNodes; i++)
+  for (int i = 0; i < numStorageNodes; i++)
   {
     vtkDebugMacro("UpdateScene: getting storage node at i = " << i);
     vtkMRMLStorageNode* pnode = this->GetNthStorageNode(i);
@@ -379,7 +379,7 @@ void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject* caller,
 
   int numStorageNodes = this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
 
-  for (int i=0; i<numStorageNodes; i++)
+  for (int i = 0; i<numStorageNodes; i++)
   {
     vtkMRMLStorageNode* dnode = this->GetNthStorageNode(i);
     if (dnode != nullptr && dnode == vtkMRMLStorageNode::SafeDownCast(caller) &&

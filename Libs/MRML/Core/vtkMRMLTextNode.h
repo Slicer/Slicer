@@ -81,7 +81,7 @@ public:
 
   /// Determines the most appropriate storage node class for the
   /// provided file name and node content.
-  std::string GetDefaultStorageNodeClassName(const char* filename=nullptr) override;
+  std::string GetDefaultStorageNodeClassName(const char* filename = nullptr) override;
 
   enum
   {

@@ -90,7 +90,7 @@ void vtkITKMorphologicalContourInterpolator::SimpleExecute(vtkImageData* input, 
     vtkErrorMacro(<<"PointData is NULL");
     return;
   }
-  vtkDataArray* inScalars=pd->GetScalars();
+  vtkDataArray* inScalars = pd->GetScalars();
   if ( inScalars == nullptr )
   {
     vtkErrorMacro(<<"Scalars must be defined for distance transform");

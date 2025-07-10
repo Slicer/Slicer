@@ -1255,7 +1255,7 @@ int vtkMRMLSegmentationNode::ConvertMaskModeFromString(const char* modeStr)
   {
     return -1;
   }
-  for (int i=0; i<EditAllowed_Last; i++)
+  for (int i = 0; i<EditAllowed_Last; i++)
   {
     if (strcmp(modeStr, vtkMRMLSegmentationNode::ConvertMaskModeToString(i)) == 0)
     {

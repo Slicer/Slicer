@@ -87,7 +87,7 @@ void vtkMRMLSceneViewNode::WriteNodeBodyXML(ostream& of, int nIndent)
   this->SnapshotScene->SetRootDirectory(this->GetScene()->GetRootDirectory());
   this->SetAbsentStorageFileNames();
 
-  for (int n=0; n < this->SnapshotScene->GetNodes()->GetNumberOfItems(); n++)
+  for (int n = 0; n < this->SnapshotScene->GetNodes()->GetNumberOfItems(); n++)
   {
     vtkMRMLNode* node = (vtkMRMLNode*)this->SnapshotScene->GetNodes()->GetItemAsObject(n);
     if (node && !node->IsA("vtkMRMLSceneViewNode") && node->GetSaveWithScene())
@@ -399,7 +399,7 @@ void vtkMRMLSceneViewNode::StoreScene()
 
   /// \todo: GetNumberOfNodes/GetNthNode is slow, fasten by using collection
   /// iterators.
-  for (int n=0; n < this->Scene->GetNumberOfNodes(); n++)
+  for (int n = 0; n < this->Scene->GetNumberOfNodes(); n++)
   {
     vtkMRMLNode* node = this->Scene->GetNthNode(n);
     if (this->IncludeNodeInSceneView(node) &&

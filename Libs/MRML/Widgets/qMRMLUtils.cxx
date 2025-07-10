@@ -58,9 +58,9 @@ void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vect
 
   vector.clear();
 
-  for (int i=0; i < 4; i++)
+  for (int i = 0; i < 4; i++)
   {
-    for (int j=0; j < 4; j++)
+    for (int j = 0; j < 4; j++)
     {
       vector.append(matrix->GetElement(i,j));
     }
@@ -93,7 +93,7 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLTransformNode* transformN
   }
 
   vtkNew<vtkMatrix4x4> matrix;
-  int matrixDefined=transformNode->GetMatrixTransformToParent(matrix.GetPointer());
+  int matrixDefined = transformNode->GetMatrixTransformToParent(matrix.GetPointer());
   Q_ASSERT(matrixDefined);
   if (!matrixDefined)
   {

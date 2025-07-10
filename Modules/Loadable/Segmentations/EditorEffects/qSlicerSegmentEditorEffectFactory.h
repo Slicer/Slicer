@@ -70,7 +70,7 @@ private:
   static void cleanup();
 
 private:
-  qSlicerSegmentEditorEffectFactory(QObject* parent=nullptr);
+  qSlicerSegmentEditorEffectFactory(QObject* parent = nullptr);
   ~qSlicerSegmentEditorEffectFactory() override;
 
   Q_DISABLE_COPY(qSlicerSegmentEditorEffectFactory);

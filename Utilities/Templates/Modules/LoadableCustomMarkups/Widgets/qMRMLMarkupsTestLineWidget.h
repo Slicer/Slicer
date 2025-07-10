@@ -38,7 +38,7 @@ qMRMLMarkupsTestLineWidget : public qMRMLMarkupsAbstractOptionsWidget
 public:
 
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsTestLineWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsTestLineWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsTestLineWidget() override;
 
   /// Gets the name of the additional options widget type

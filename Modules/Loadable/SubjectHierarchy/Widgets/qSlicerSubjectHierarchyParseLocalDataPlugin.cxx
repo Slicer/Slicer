@@ -230,7 +230,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
     if (firstComponentMatch)
     {
       qDebug() << Q_FUNC_INFO << ": First component (" << firstComponent << ") matches in all paths, removing";
-      for (int i=0; i<loadedFilePaths.count(); ++i)
+      for (int i = 0; i<loadedFilePaths.count(); ++i)
       {
         QStringList currentFilePath = loadedFilePaths[i];
         currentFilePath.removeFirst();
@@ -242,10 +242,10 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
 
   // Create hierarchy
   QList<vtkIdType> createdItemIDs;
-  for (int nodeIndex=0; nodeIndex<loadedNodes.count(); ++nodeIndex)
+  for (int nodeIndex = 0; nodeIndex<loadedNodes.count(); ++nodeIndex)
   {
     vtkIdType parentItemID = shNode->GetSceneItemID(); // Start from the scene
-    for (int componentIndex=0; componentIndex<loadedFilePaths[nodeIndex].count(); ++componentIndex)
+    for (int componentIndex = 0; componentIndex<loadedFilePaths[nodeIndex].count(); ++componentIndex)
     {
       QString currentComponent = loadedFilePaths[nodeIndex][componentIndex];
       vtkIdType itemID = shNode->GetItemChildWithName(parentItemID, currentComponent.toUtf8().constData());

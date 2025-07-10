@@ -279,7 +279,7 @@ public:
   /// the positive x axis label "R".
   /// toleranceDeg specifies the tolerance when when determining if the direction
   /// is parallel with an axis.
-  std::string GetDirectionLabel(double direction[3], bool positive=true, double toleranceDeg=1.0);
+  std::string GetDirectionLabel(double direction[3], bool positive = true, double toleranceDeg = 1.0);
 
   /// Total number of coordinate system axis labels
   static const int AxisLabelsCount;

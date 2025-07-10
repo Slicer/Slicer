@@ -131,7 +131,7 @@ int GetExpectedNodeAddedClassNames(const char* sceneFilePath, std::vector<std::s
 
   // Loop though all expected node and populate expectedNodeAddedClassNames vector
   // Note that node that can't be instantiated using CreateNodeByClass are not expected
-  for (int i=0; i < xmlParser->GetRootElement()->GetNumberOfNestedElements(); ++i)
+  for (int i = 0; i < xmlParser->GetRootElement()->GetNumberOfNestedElements(); ++i)
   {
     std::string className = "vtkMRML";
     className += xmlParser->GetRootElement()->GetNestedElement(i)->GetName();

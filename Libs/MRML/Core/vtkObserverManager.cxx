@@ -163,7 +163,7 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject** nodePtr, vtkObjec
     if (existingEvents->GetNumberOfTuples() == numberOfEvents && existingEvents->GetNumberOfTuples() == existingPriorities->GetNumberOfTuples())
     {
       bool eventsEqual = true;
-      for (int i=0; i<numberOfEvents; i++)
+      for (int i = 0; i<numberOfEvents; i++)
       {
         if (existingEvents->GetValue(i) != events->GetValue(i))
         {
@@ -202,7 +202,7 @@ void vtkObserverManager::RemoveObjectEvents(vtkObject* nodePtr)
     if (it != this->ObserverTags.end())
     {
       vtkUnsignedLongArray* objTags = it->second;
-      for (int i=0; i < objTags->GetNumberOfTuples(); i++)
+      for (int i = 0; i < objTags->GetNumberOfTuples(); i++)
       {
         broker->RemoveObservationsForSubjectByTag( nodePtr, objTags->GetValue(i) );
       }
@@ -263,7 +263,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject* nodePtr, vtkIntArray* events
     vtkObject* observer = this->GetObserver();
     if (events)
     {
-      for (int i=0; i<events->GetNumberOfTuples(); i++)
+      for (int i = 0; i<events->GetNumberOfTuples(); i++)
       {
         // Make sure we are not adding an already existing connection. It's
         // not a big issue but it just shows poor design.
@@ -292,7 +292,7 @@ void vtkObserverManager::AddObjectEvents(vtkObject* nodePtr, vtkIntArray* events
         {
           continue;
         }
-        vtkObservation* observation=nullptr;
+        vtkObservation* observation = nullptr;
         if (!priorities)
         {
           observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand );
@@ -339,7 +339,7 @@ void vtkObserverManager::GetObjectEvents(vtkObject* nodePtr, vtkIntArray* events
   }
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
   vtkUnsignedLongArray* objTags = it->second;
-  for (int i=0; i < objTags->GetNumberOfTuples(); i++)
+  for (int i = 0; i < objTags->GetNumberOfTuples(); i++)
   {
     vtkEventBroker::ObservationVector observations = broker->GetObservationsForSubjectByTag ( nodePtr, objTags->GetValue(i) );
     for (vtkEventBroker::ObservationVector::iterator observationIt = observations.begin(); observationIt != observations.end(); ++observationIt)

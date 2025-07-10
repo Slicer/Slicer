@@ -335,7 +335,7 @@ double vtkCalculateOversamplingFactor::DetermineOversamplingFactor()
     // Calculate area and center of mass for each consequent
     double currentNode[4] = {0.0,0.0,0.0,0.0};
     double nextNode[4] = {0.0,0.0,0.0,0.0};
-    for (int nodeIndex=0; nodeIndex<currentMembershipFunction->GetSize()-1; ++nodeIndex)
+    for (int nodeIndex = 0; nodeIndex<currentMembershipFunction->GetSize()-1; ++nodeIndex)
     {
       // Calculate area of each trapezoid (may be triangle, rectangle, or actual trapezoid)
       currentMembershipFunction->GetNodeValue(nodeIndex, currentNode);
@@ -402,7 +402,7 @@ void vtkCalculateOversamplingFactor::ClipMembershipFunction(vtkPiecewiseFunction
   double currentNode[4] = {0.0,0.0,0.0,0.0};
   double nextNode[4] = {0.0,0.0,0.0,0.0};
   std::vector<double> newNodeParameterValues;
-  for (int nodeIndex=0; nodeIndex<membershipFunction->GetSize()-1; ++nodeIndex)
+  for (int nodeIndex = 0; nodeIndex<membershipFunction->GetSize()-1; ++nodeIndex)
   {
     membershipFunction->GetNodeValue(nodeIndex, currentNode);
     membershipFunction->GetNodeValue(nodeIndex+1, nextNode);
@@ -415,7 +415,7 @@ void vtkCalculateOversamplingFactor::ClipMembershipFunction(vtkPiecewiseFunction
   }
 
   // Move nodes down to clip value that hold value greater than clip value.
-  for (int nodeIndex=0; nodeIndex<membershipFunction->GetSize(); ++nodeIndex)
+  for (int nodeIndex = 0; nodeIndex<membershipFunction->GetSize(); ++nodeIndex)
   {
     double currentNode[4] = {0.0,0.0,0.0,0.0};
     membershipFunction->GetNodeValue(nodeIndex, currentNode);
@@ -460,7 +460,7 @@ void vtkCalculateOversamplingFactor::ApplyOversamplingOnImageGeometry(vtkOriente
   double newSpacing[3] = {0.0,0.0,0.0};
   double spacing[3] = {0.0,0.0,0.0};
   imageData->GetSpacing(spacing);
-  for (unsigned int axis=0; axis<3; ++axis)
+  for (unsigned int axis = 0; axis<3; ++axis)
   {
     int dimension = extent[axis*2+1] - extent[axis*2] + 1;
     int extentMin = static_cast<int>(ceil(oversamplingFactor * extent[axis * 2]));

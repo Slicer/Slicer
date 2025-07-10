@@ -210,7 +210,7 @@ void vtkSegmentationModifier::GetExtentIntersection(const int extentA[6], const 
   bool validExtentB = extentB && extentB[0]<=extentB[1] && extentB[2]<=extentB[3] && extentB[4]<=extentB[5];
   if (!validExtentA && !validExtentB)
   {
-    for (int axis=0; axis<3; axis++)
+    for (int axis = 0; axis<3; axis++)
     {
       extentIntersection[axis*2] = 0;
       extentIntersection[axis*2+1] = -1;
@@ -218,7 +218,7 @@ void vtkSegmentationModifier::GetExtentIntersection(const int extentA[6], const 
   }
   else if (validExtentA && validExtentB)
   {
-    for (int axis=0; axis<3; axis++)
+    for (int axis = 0; axis<3; axis++)
     {
       extentIntersection[axis*2] = std::max(extentA[axis*2], extentB[axis*2]);
       extentIntersection[axis*2+1] = std::min(extentA[axis*2+1], extentB[axis*2+1]);
@@ -226,14 +226,14 @@ void vtkSegmentationModifier::GetExtentIntersection(const int extentA[6], const 
   }
   else if (validExtentA)
   {
-    for (int i=0; i<6; i++)
+    for (int i = 0; i<6; i++)
     {
       extentIntersection[i] = extentA[i];
     }
   }
   else // validExtentB
   {
-    for (int i=0; i<6; i++)
+    for (int i = 0; i<6; i++)
     {
       extentIntersection[i] = extentB[i];
     }

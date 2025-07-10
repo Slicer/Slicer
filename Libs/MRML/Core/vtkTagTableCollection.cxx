@@ -9,7 +9,7 @@
 vtkStandardNewMacro(vtkTagTableCollection);
 
 //---------------------------------------------------------------------------
-vtkTagTableCollection::vtkTagTableCollection ( )  = default;
+vtkTagTableCollection::vtkTagTableCollection ( ) = default;
 
 
 //----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ void vtkTagTableCollection::DeleteTableByName ( const char* name )
     return;
   }
   vtkTagTable* t;
-  for ( int i=0; i < this->GetNumberOfItems(); i++ )
+  for ( int i = 0; i < this->GetNumberOfItems(); i++ )
   {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
     if ( t != nullptr )
@@ -72,7 +72,7 @@ void vtkTagTableCollection::SetRestoreSelectionStateForAllTables ( int val )
     return;
   }
   vtkTagTable* t;
-  for ( int i=0; i < this->GetNumberOfItems(); i++ )
+  for ( int i = 0; i < this->GetNumberOfItems(); i++ )
   {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
     if ( t != nullptr )
@@ -98,7 +98,7 @@ vtkTagTable* vtkTagTableCollection::GetNextTable(vtkCollectionSimpleIterator& co
 void vtkTagTableCollection::ClearAllTagTables ( )
 {
   vtkTagTable* t;
-  for ( int i=0; i < this->GetNumberOfItems(); i++ )
+  for ( int i = 0; i < this->GetNumberOfItems(); i++ )
   {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
     if ( t != nullptr )
@@ -120,7 +120,7 @@ vtkTagTable* vtkTagTableCollection::FindTagTableByName (const char* name )
     return nullptr;
   }
   vtkTagTable* t;
-  for ( int i=0; i < this->GetNumberOfItems(); i++ )
+  for ( int i = 0; i < this->GetNumberOfItems(); i++ )
   {
     t = vtkTagTable::SafeDownCast (this->GetItemAsObject(i));
     if ( t != nullptr )

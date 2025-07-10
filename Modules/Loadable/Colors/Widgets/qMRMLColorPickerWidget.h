@@ -45,7 +45,7 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorPickerWidget : public qMRM
   Q_OBJECT
   QVTK_OBJECT
 public:
-  qMRMLColorPickerWidget(QWidget* parent=nullptr);
+  qMRMLColorPickerWidget(QWidget* parent = nullptr);
   ~qMRMLColorPickerWidget() override;
 
   /// A color logic is needed to select the color default nodes.

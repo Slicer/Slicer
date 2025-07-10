@@ -112,7 +112,7 @@ void vtkSlicerTestLineRepresentation2D::ReleaseGraphicsResources(vtkWindow* win)
 //----------------------------------------------------------------------
 int vtkSlicerTestLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->MiddlePointActor->GetVisibility())
   {
     count +=  this->MiddlePointActor->RenderOverlay(viewport);
@@ -124,7 +124,7 @@ int vtkSlicerTestLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
 //-----------------------------------------------------------------------------
 int vtkSlicerTestLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->MiddlePointActor->GetVisibility())
   {
     count += this->MiddlePointActor->RenderOpaqueGeometry(viewport);
@@ -136,7 +136,7 @@ int vtkSlicerTestLineRepresentation2D::RenderOpaqueGeometry(vtkViewport* viewpor
 //-----------------------------------------------------------------------------
 int vtkSlicerTestLineRepresentation2D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->MiddlePointActor->GetVisibility())
   {
     count += this->MiddlePointActor->RenderTranslucentPolygonalGeometry(viewport);

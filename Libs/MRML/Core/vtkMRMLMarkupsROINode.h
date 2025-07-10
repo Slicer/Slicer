@@ -273,7 +273,7 @@ public:
 
   /// Legacy method from vtkMRMLAnnotationROINode
   /// \sa GetPlanes(), GetPlanesWorld(), vtkMRMLAnnotationROINode::GetTransformedPlanes()
-  void GetTransformedPlanes(vtkPlanes* planes, bool insideOut=false);
+  void GetTransformedPlanes(vtkPlanes* planes, bool insideOut = false);
 
   //@{
   /// Helper method for generating an orthogonal right handed matrix from axes.

@@ -315,7 +315,7 @@ int vtkMRMLColorTableStorageNode::ReadCsvFile(std::string fullFileName, vtkMRMLC
 
   // do a little sanity check, if never get an rgb bigger than 1.0, report
   // it as a possibly miswritten file
-  for (vtkIdType row=0; row < numberOfTuples; ++row)
+  for (vtkIdType row = 0; row < numberOfTuples; ++row)
   {
     vtkIdType lineNumber = row + 2;  // +1 because 1-based index, +1 because first row is header
     if (validLabelValues[row] == this->MaximumColorID + 1)
@@ -697,7 +697,7 @@ int vtkMRMLColorTableStorageNode::WriteCsvFile(std::string fullFileName, vtkMRML
     nameArray->SetValue(rowIndex, colorNode->GetColorName(colorIdx));
     colorArray->SetTuple(rowIndex, rgba255);
 
-    for (unsigned int idx=0; idx<TERMINOLOGY_COLUMN_NAMES.size(); ++idx)
+    for (unsigned int idx = 0; idx<TERMINOLOGY_COLUMN_NAMES.size(); ++idx)
     {
       GetEntryFuncPtr getTerminologyEntry = terminologyGetEntryFuncVector[idx];
       vtkCodedEntry* terminologyEntry = (colorNode->*getTerminologyEntry)(colorIdx);

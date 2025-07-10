@@ -477,7 +477,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   if (modelNode->GetMesh() != nullptr)
   {
-    for (int i=0; i<modelNode->GetNumberOfDisplayNodes(); ++i)
+    for (int i = 0; i<modelNode->GetNumberOfDisplayNodes(); ++i)
     {
       vtkMRMLDisplayNode* displayNode = modelNode->GetNthDisplayNode(i);
       // is there an active scalar array?
@@ -846,7 +846,7 @@ vtkMRMLModelNode* vtkMRMLModelStorageNode::GetAssociatedDataNode()
 
   std::vector<vtkMRMLNode*> nodes;
   unsigned int numberOfNodes = this->GetScene()->GetNodesByClass("vtkMRMLModelNode", nodes);
-  for (unsigned int nodeIndex=0; nodeIndex<numberOfNodes; nodeIndex++)
+  for (unsigned int nodeIndex = 0; nodeIndex<numberOfNodes; nodeIndex++)
   {
     vtkMRMLModelNode* node = vtkMRMLModelNode::SafeDownCast(nodes[nodeIndex]);
     if (node)

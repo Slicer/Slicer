@@ -593,7 +593,7 @@ int vtkDataIOManagerLogic::QueueWrite ( vtkMRMLNode* node )
   std::vector<std::string> pathComponents;
 
   // schedule the write of each
-  for ( int n=0; n < numFiles; n++ )
+  for ( int n = 0; n < numFiles; n++ )
   {
     if ( n == 0 )
     {

@@ -140,7 +140,7 @@ public:
 };
 
 //----------------------------------------------------------------------------
-vtkSlicerCropVolumeLogic::vtkInternal::vtkInternal()=default;
+vtkSlicerCropVolumeLogic::vtkInternal::vtkInternal() = default;
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerCropVolumeLogic);

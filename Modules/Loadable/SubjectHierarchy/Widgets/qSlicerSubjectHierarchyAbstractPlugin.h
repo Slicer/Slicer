@@ -196,7 +196,7 @@ public:
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
   Q_INVOKABLE virtual double canAddNodeToSubjectHierarchy(
-    vtkMRMLNode* node, vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
+    vtkMRMLNode* node, vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const;
 
   /// Add a node to subject hierarchy under a specified parent. This is basically a convenience function to
   /// call \sa vtkMRMLSubjectHierarchyNode::CreateItem

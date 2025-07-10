@@ -85,7 +85,7 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLUnitWidget : public qMRMLWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLUnitWidget(QWidget* parent=nullptr);
+  qMRMLUnitWidget(QWidget* parent = nullptr);
   ~qMRMLUnitWidget() override;
 
   /// Return the name property value.

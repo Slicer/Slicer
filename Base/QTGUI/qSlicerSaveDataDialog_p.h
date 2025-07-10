@@ -37,7 +37,7 @@ class qSlicerSaveDataDialogPrivate
   Q_OBJECT
 public:
   typedef qSlicerSaveDataDialogPrivate Self;
-  explicit qSlicerSaveDataDialogPrivate(QWidget* _parent=nullptr);
+  explicit qSlicerSaveDataDialogPrivate(QWidget* _parent = nullptr);
   ~qSlicerSaveDataDialogPrivate() override;
 
   void populateItems();

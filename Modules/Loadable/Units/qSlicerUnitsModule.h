@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerUnitsModule(QObject* parent=nullptr);
+  explicit qSlicerUnitsModule(QObject* parent = nullptr);
   ~qSlicerUnitsModule() override;
 
   qSlicerGetTitleMacro(tr("Units"));

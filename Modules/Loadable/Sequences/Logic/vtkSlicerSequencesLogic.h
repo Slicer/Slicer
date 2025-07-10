@@ -54,7 +54,7 @@ public:
   /// A storage node is also added into the scene.
   /// User-displayable warning or error messages can be received if userMessages object is
   /// specified.
-  vtkMRMLSequenceNode* AddSequence(const char* filename, vtkMRMLMessageCollection* userMessages=nullptr);
+  vtkMRMLSequenceNode* AddSequence(const char* filename, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Refreshes the output of all the active browser nodes. Called regularly by a timer.
   void UpdateAllProxyNodes();

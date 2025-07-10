@@ -429,7 +429,7 @@ void qMRMLSegmentSelectorWidget::setSelectedSegmentIDs(QStringList segmentIDList
 
   // Update checkbox states in checkable combobox
   bool wasBlocked = d->CheckableComboBox_Segment->blockSignals(true);
-  for (int row=0; row<d->CheckableComboBox_Segment->model()->rowCount(); ++row)
+  for (int row = 0; row<d->CheckableComboBox_Segment->model()->rowCount(); ++row)
   {
     QModelIndex index = d->CheckableComboBox_Segment->model()->index(row,0);
     QString segmentID = d->CheckableComboBox_Segment->itemData(row).toString();

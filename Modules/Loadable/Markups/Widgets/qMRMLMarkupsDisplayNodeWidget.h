@@ -42,7 +42,7 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsDisplayNodeWidget : pub
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLMarkupsDisplayNodeWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsDisplayNodeWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsDisplayNodeWidget() override;
 
   vtkMRMLMarkupsDisplayNode* mrmlMarkupsDisplayNode()const;

@@ -383,7 +383,7 @@ int vtkITKLabelShapeStatistics::RequestData(
     vtkErrorMacro(<<"PointData is NULL");
     return 0;
   }
-  vtkDataArray* inScalars=pd->GetScalars();
+  vtkDataArray* inScalars = pd->GetScalars();
   if ( inScalars == nullptr )
   {
     vtkErrorMacro(<<"Scalars must be defined for island math");

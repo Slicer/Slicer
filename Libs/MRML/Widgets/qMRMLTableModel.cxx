@@ -707,7 +707,7 @@ int qMRMLTableModel::removeSelectionFromMRML(QModelIndexList selection, bool rem
         vtkTable* table = d->MRMLTableNode->GetTable();
         if (table)
         {
-          for (int columnIndex=0; columnIndex<table->GetNumberOfColumns(); columnIndex++)
+          for (int columnIndex = 0; columnIndex<table->GetNumberOfColumns(); columnIndex++)
           {
               vtkAbstractArray* column = table->GetColumn(columnIndex);
               if (!column)

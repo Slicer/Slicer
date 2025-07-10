@@ -117,7 +117,7 @@ public:
 
   /// Copy all messages from another collection.
   /// If prefix is specified then that string is prepended to each copied message.
-  virtual void AddMessages(vtkMRMLMessageCollection* source, const std::string& prefix=std::string());
+  virtual void AddMessages(vtkMRMLMessageCollection* source, const std::string& prefix = std::string());
 
   /// Clear the message vector.
   virtual void ClearMessages();
@@ -128,7 +128,7 @@ public:
   /// Return all messages in a single formatted string.
   /// If optional errorFound or warningFound pointers are set then the caller get information
   /// about presence of warnings or errors in the message list.
-  virtual std::string GetAllMessagesAsString(bool* errorFound=nullptr, bool* warningFound=nullptr);
+  virtual std::string GetAllMessagesAsString(bool* errorFound = nullptr, bool* warningFound = nullptr);
 
   /// Observe error and warnings reported by observedObject.
   /// For example, this can be used to capture errors from VTK classes

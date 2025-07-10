@@ -40,7 +40,7 @@ public:
 
   typedef qSlicerLoadableModule Self;
   typedef qSlicerAbstractModule Superclass;
-  qSlicerLoadableModule(QObject* parent=nullptr);
+  qSlicerLoadableModule(QObject* parent = nullptr);
   ~qSlicerLoadableModule() override;
 
   /// Return help/acknowledgement text
@@ -67,7 +67,7 @@ public:
   static bool importModulePythonExtensions(qSlicerCorePythonManager* pythonManager,
                                            const QString& intDir,
                                            const QString& modulePath,
-                                           bool isEmbedded=false);
+                                           bool isEmbedded = false);
 
   /// Set \a module identified by \a moduleName has an attribute of "slicer.modules" module dictionary.
   /// qSlicerCoreApplication::corePythonManager()

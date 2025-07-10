@@ -39,7 +39,7 @@ class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModule
 
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerColorsModule(QObject* parent=nullptr);
+  qSlicerColorsModule(QObject* parent = nullptr);
   ~qSlicerColorsModule() override;
 
   QStringList categories()const override;

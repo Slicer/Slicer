@@ -365,7 +365,7 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   int result = 1;
 
-  for (unsigned int i=0; i<names.size(); i++)
+  for (unsigned int i = 0; i<names.size(); i++)
   {
     archNames->InsertNextValue(names[i].c_str());
     reader->SetFileName(names[i].c_str());
@@ -494,7 +494,7 @@ void vtkMRMLVolumeHeaderlessStorageNode::InitializeSupportedWriteFileTypes()
   {
     vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
       GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
-    for (int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
+    for (int i = 0; i<supportedFormats->GetNumberOfTuples(); i++)
     {
       this->SupportedWriteFileTypes->InsertNextValue(
               supportedFormats->GetValue(i));

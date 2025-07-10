@@ -110,7 +110,7 @@ int significantDecimals(double value, int defaultDecimals = -1)
     return -1;
   }
   char previous = ' ';
-  int previousRepeat=0;
+  int previousRepeat = 0;
   bool only0s = true;
   bool isUnit = value > -1. && value < 1.;
   for (size_t i = 0; i < fractional.length(); ++i)

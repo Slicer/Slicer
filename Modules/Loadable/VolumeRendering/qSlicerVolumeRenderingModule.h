@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModule :
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerVolumeRenderingModule(QObject* parent=nullptr);
+  explicit qSlicerVolumeRenderingModule(QObject* parent = nullptr);
   ~qSlicerVolumeRenderingModule() override;
 
   /// Title of the module

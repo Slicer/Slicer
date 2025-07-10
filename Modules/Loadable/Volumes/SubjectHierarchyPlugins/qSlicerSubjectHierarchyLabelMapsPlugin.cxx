@@ -338,7 +338,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::toggle2DOutlineVisibility(bool chec
   vtkMRMLSliceNode* sliceNode = nullptr;
   const int numberOfSliceNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
 
-  for (int i=0; i<numberOfSliceNodes; i++)
+  for (int i = 0; i<numberOfSliceNodes; i++)
   {
     sliceNode = vtkMRMLSliceNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceNode" ) );
     sliceNode->SetUseLabelOutline(checked);

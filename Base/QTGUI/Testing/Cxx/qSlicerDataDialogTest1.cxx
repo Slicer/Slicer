@@ -36,7 +36,7 @@ class qSlicerDummyIOOptionsWidget
   : public qSlicerIOOptionsWidget
 {
 public:
-  qSlicerDummyIOOptionsWidget(QWidget* parent=nullptr): qSlicerIOOptionsWidget(parent){}
+  qSlicerDummyIOOptionsWidget(QWidget* parent = nullptr): qSlicerIOOptionsWidget(parent){}
   ~qSlicerDummyIOOptionsWidget() override = default;
   QSize minimumSizeHint()const override {return QSize(300, 30);}
   QSize sizeHint()const override{return QSize(500,30);}

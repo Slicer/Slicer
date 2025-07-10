@@ -569,7 +569,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToItems()
   std::string dicomAttributePrefix = vtkMRMLSubjectHierarchyConstants::GetDICOMAttributePrefix();
 
   // Commit changes to series
-  for (int row=d->topSeriesHeaderRow(); row<d->TagsTable->rowCount(); ++row)
+  for (int row = d->topSeriesHeaderRow(); row<d->TagsTable->rowCount(); ++row)
   {
     qSlicerDICOMExportable* exportable = d->exportableForRowIndex(row);
     if (!exportable) // Header row
@@ -593,7 +593,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToItems()
     return;
   }
   // Write tags from study section to study item
-  for (unsigned int row=d->StudyTagsHeaderRow+1; row<d->topSeriesHeaderRow(); ++row)
+  for (unsigned int row = d->StudyTagsHeaderRow+1; row<d->topSeriesHeaderRow(); ++row)
   {
     QString tagName = d->TagsTable->item(row, 0)->text();
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;
@@ -608,7 +608,7 @@ void qSlicerDICOMTagEditorWidget::commitChangesToItems()
     return;
   }
   // Write tags from patient table to patient item
-  for (unsigned int row=1; row<d->StudyTagsHeaderRow; ++row)
+  for (unsigned int row = 1; row<d->StudyTagsHeaderRow; ++row)
   {
     QString tagName = d->TagsTable->item(row, 0)->text();
     QString tagAttributeName = QString(dicomAttributePrefix.c_str()) + tagName;

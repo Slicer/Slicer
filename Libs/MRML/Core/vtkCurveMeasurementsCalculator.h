@@ -101,7 +101,7 @@ public:
   /// pedigreeIdsValueScale is applied to values of pedigreeIdsArray, which can be used
   /// for converting between indices of curve points and curve control points.
   static bool InterpolateArray(vtkDoubleArray* inputValues, bool closedCurve, vtkDoubleArray* interpolatedValues,
-    vtkDoubleArray* pedigreeIdsArray, double pedigreeIdsValueScale=1.0);
+    vtkDoubleArray* pedigreeIdsArray, double pedigreeIdsValueScale = 1.0);
 
 protected:
   bool CalculatePolyDataCurvature(vtkPolyData* polyData);

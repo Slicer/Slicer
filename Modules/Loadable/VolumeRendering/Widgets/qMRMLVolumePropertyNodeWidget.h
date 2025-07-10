@@ -49,7 +49,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidg
 public:
   /// Constructors
   typedef QWidget Superclass;
-  explicit qMRMLVolumePropertyNodeWidget(QWidget* parent=nullptr);
+  explicit qMRMLVolumePropertyNodeWidget(QWidget* parent = nullptr);
   ~qMRMLVolumePropertyNodeWidget() override;
 
   /// Return the VTK volume property associated with the MRML volume property

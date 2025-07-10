@@ -308,7 +308,7 @@ void qMRMLTransformDisplayNodeWidget
   }
 
   // Update ColorMap
-  vtkColorTransferFunction* colorTransferFunctionInNode=d->TransformDisplayNode->GetColorMap();
+  vtkColorTransferFunction* colorTransferFunctionInNode = d->TransformDisplayNode->GetColorMap();
   if (colorTransferFunctionInNode)
   {
     if (!vtkMRMLProceduralColorNode::IsColorMapEqual(d->ColorTransferFunction,colorTransferFunctionInNode))
@@ -640,7 +640,7 @@ void qMRMLTransformDisplayNodeWidget::setGlyphDisplayRangeMm(double min, double 
   {
     return;
   }
-  int oldModify=d->TransformDisplayNode->StartModify();
+  int oldModify = d->TransformDisplayNode->StartModify();
   d->TransformDisplayNode->SetGlyphDisplayRangeMinMm(min);
   d->TransformDisplayNode->SetGlyphDisplayRangeMaxMm(max);
   d->TransformDisplayNode->EndModify(oldModify);
@@ -989,7 +989,7 @@ void qMRMLTransformDisplayNodeWidget::colorUpdateRange()
     return;
   }
   // Rescale the chart so that all the points are visible
-  vtkColorTransferFunction* colorMap=d->TransformDisplayNode->GetColorMap();
+  vtkColorTransferFunction* colorMap = d->TransformDisplayNode->GetColorMap();
   if (colorMap==nullptr)
   {
     return;

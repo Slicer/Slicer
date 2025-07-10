@@ -1333,7 +1333,7 @@ void vtkSlicerTerminologiesModuleLogic::LoadUserContexts()
   vtkSmartPointer<vtkDirectory> userSettingsDir = vtkSmartPointer<vtkDirectory>::New();
   userSettingsDir->Open(this->UserContextsPath);
   vtkStringArray* files = userSettingsDir->GetFiles();
-  for (int index=0; index<files->GetNumberOfValues(); ++index)
+  for (int index = 0; index<files->GetNumberOfValues(); ++index)
   {
     std::string fileName = files->GetValue(index);
 

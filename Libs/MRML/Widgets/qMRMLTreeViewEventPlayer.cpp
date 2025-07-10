@@ -40,7 +40,7 @@ QModelIndex qMRMLTreeViewEventPlayerGetIndex(const QString& str_index,
   QStringList indices = str_index.split(".",QString::SkipEmptyParts);
 #endif
   QModelIndex index;
-  for (int cc=0; (cc+1) < indices.size(); cc+=2)
+  for (int cc = 0; (cc+1) < indices.size(); cc+=2)
   {
     index = treeView->model()->index(indices[cc].toInt(), indices[cc+1].toInt(),
       index);

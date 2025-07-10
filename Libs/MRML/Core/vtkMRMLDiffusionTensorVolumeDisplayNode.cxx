@@ -243,7 +243,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::GetSliceGlyphDisplayNodes(
   std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes;
   int nnodes = volumeNode->GetNumberOfDisplayNodes();
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode* node = nullptr;
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
     node = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast(
       volumeNode->GetNthDisplayNode(n));
@@ -271,7 +271,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
     glyphDTDPN->EndModify(modifyState);
     glyphDTDPN->Delete();
 
-    for (int i=0; i<3; i++)
+    for (int i = 0; i<3; i++)
     {
       if (this->GetScene())
       {

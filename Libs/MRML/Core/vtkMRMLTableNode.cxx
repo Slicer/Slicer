@@ -298,7 +298,7 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
       if (numberOfColumnsToAddToTable>0)
       {
         // Table is shorter than the array, add empty rows to the table.
-        for (int i=0; i<numberOfColumnsToAddToTable; i++)
+        for (int i = 0; i<numberOfColumnsToAddToTable; i++)
         {
           this->InsertNextBlankRowWithNullValues(this->Table);
         }
@@ -311,7 +311,7 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
         vtkNew<vtkTable> augmentingTable;
         augmentingTable->AddColumn(newColumn);
         int numberOfColumnsToAddToArray = -numberOfColumnsToAddToTable;
-        for (int i=0; i<numberOfColumnsToAddToArray; i++)
+        for (int i = 0; i<numberOfColumnsToAddToArray; i++)
         {
           this->InsertNextBlankRowWithNullValues(augmentingTable.GetPointer());
         }
@@ -349,7 +349,7 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
       // This will create a valid variant for char types, numeric types, and bit
       emptyCell = vtkVariant(0);
     }
-    for (int i=0; i<numberOfRows; i++)
+    for (int i = 0; i<numberOfRows; i++)
     {
       newColumn->SetVariantValue(i, emptyCell);
     }
@@ -359,7 +359,7 @@ vtkAbstractArray* vtkMRMLTableNode::AddColumn(vtkAbstractArray* column)
   if (!newColumn->GetName())
   {
     std::string newColumnName;
-    int i=1;
+    int i = 1;
     do
     {
       std::stringstream ss;
@@ -1347,7 +1347,7 @@ std::vector<std::string> vtkMRMLTableNode::GetComponentNamesFromArray(vtkAbstrac
     }
 
     // Generate a unique component name
-    int i=0;
+    int i = 0;
     std::string tempComponentName = componentName;
     while (std::find(componentNames.begin(), componentNames.end(), componentName) != componentNames.end())
     {

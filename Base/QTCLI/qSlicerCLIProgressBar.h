@@ -58,7 +58,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIProgressBar : public QWidget
 public:
 
   typedef QWidget Superclass;
-  qSlicerCLIProgressBar(QWidget* parent=nullptr);
+  qSlicerCLIProgressBar(QWidget* parent = nullptr);
   ~qSlicerCLIProgressBar() override;
 
   /// Get the \a commandLineModuleNode

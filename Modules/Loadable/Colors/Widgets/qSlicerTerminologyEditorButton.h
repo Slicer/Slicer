@@ -41,7 +41,7 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qSlicerTerminologyEditorButton : pub
   Q_OBJECT
 
 public:
-  explicit qSlicerTerminologyEditorButton(QWidget* parent=nullptr);
+  explicit qSlicerTerminologyEditorButton(QWidget* parent = nullptr);
   ~qSlicerTerminologyEditorButton() override;
 
 #ifndef __VTK_WRAP__
@@ -67,7 +67,7 @@ signals:
   void userSetCustomNameOrColor();
 
 protected slots:
-  void onToggled(bool toggled=true);
+  void onToggled(bool toggled = true);
 
 protected:
   void paintEvent(QPaintEvent* event) override;

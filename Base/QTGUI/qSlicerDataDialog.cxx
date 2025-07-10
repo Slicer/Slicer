@@ -483,7 +483,7 @@ bool qSlicerDataDialogPrivate::haveSameTypeOption(int row1, int row2)const
   {
     return false;
   }
-  for (int i=0; i < comboBox1->count(); ++i)
+  for (int i = 0; i < comboBox1->count(); ++i)
   {
     if (comboBox1->itemText(i) != comboBox2->itemText(i))
     {

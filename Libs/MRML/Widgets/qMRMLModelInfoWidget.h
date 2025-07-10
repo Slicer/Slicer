@@ -41,7 +41,7 @@ class QMRML_WIDGETS_EXPORT qMRMLModelInfoWidget
   QVTK_OBJECT
 
 public:
-  qMRMLModelInfoWidget(QWidget* parent=nullptr);
+  qMRMLModelInfoWidget(QWidget* parent = nullptr);
   ~qMRMLModelInfoWidget() override;
 
   vtkMRMLModelNode* mrmlModelNode()const;

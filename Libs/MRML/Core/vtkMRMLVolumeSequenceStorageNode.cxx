@@ -391,7 +391,7 @@ int vtkMRMLVolumeSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
 #ifndef NRRD_CHUNK_IO_AVAILABLE
   vtkNew<vtkImageAppendComponents> appender;
-  for (int frameIndex=0; frameIndex<numberOfFrameVolumes; frameIndex++)
+  for (int frameIndex = 0; frameIndex<numberOfFrameVolumes; frameIndex++)
   {
     vtkMRMLVolumeNode* frameVolume = vtkMRMLVolumeNode::SafeDownCast(volSequenceNode->GetNthDataNode(frameIndex));
     if (frameVolume==nullptr)

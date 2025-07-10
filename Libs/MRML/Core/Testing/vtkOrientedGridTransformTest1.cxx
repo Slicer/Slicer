@@ -55,9 +55,9 @@ void CreateGridTransformVtk(vtkOrientedGridTransform* gridTransform,
   }
 
   vtkNew<vtkMatrix4x4> gridOrientation;
-  for (int row=0; row<3; row++)
+  for (int row = 0; row<3; row++)
   {
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
       gridOrientation->SetElement(row,col,direction[row][col]);
     }
@@ -72,7 +72,7 @@ void CreateGridTransformVtk(vtkOrientedGridTransform* gridTransform,
 //----------------------------------------------------------------------------
 void SetGridNodeVtk(vtkOrientedGridTransform* gridTransform,int nodeIndex[3], double nodeValue[3])
 {
-  vtkImageData* gridCoefficients=gridTransform->GetDisplacementGrid();
+  vtkImageData* gridCoefficients = gridTransform->GetDisplacementGrid();
 
   gridCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],0, nodeValue[0]);
   gridCoefficients->SetScalarComponentFromDouble(nodeIndex[0],nodeIndex[1],nodeIndex[2],1, nodeValue[1]);
@@ -88,7 +88,7 @@ itkGridTransformType::Pointer CreateGridTransformItk(
   itkDisplacementFieldType::RegionType::SizeType sz;
   itkDisplacementFieldType::DirectionType directionItk;
 
-  for (int i=0; i<3; i++)
+  for (int i = 0; i<3; i++)
   {
     spacinItk[i] = spacing[i];
     sz[i]=dims[i];
@@ -209,8 +209,8 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedGridTransfor
 {
   // Jacobian estimated using central difference
   double jacobianEstimation[3][3];
-  double eps=1e-1; // step size
-  for (int row=0; row<3; row++)
+  double eps = 1e-1; // step size
+  for (int row = 0; row<3; row++)
   {
     double xMinus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
     double xPlus1[3]={inputPoint[0],inputPoint[1],inputPoint[2]};
@@ -220,7 +220,7 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedGridTransfor
     gridVtk->TransformPoint( xMinus1, xMinus1Transformed);
     double xPlus1Transformed[3]={0};
     gridVtk->TransformPoint( xPlus1, xPlus1Transformed);
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
       jacobianEstimation[col][row] = (xPlus1Transformed[col]-xMinus1Transformed[col])/(2*eps);
     }
@@ -238,11 +238,11 @@ double getDerivativeErrorVtk(const double inputPoint[3], vtkOrientedGridTransfor
   }
 
   double maxDifference = 0;
-  for (int row=0; row<3; row++)
+  for (int row = 0; row<3; row++)
   {
-    for (int col=0; col<3; col++)
+    for (int col = 0; col<3; col++)
     {
-      double difference=fabs(jacobianVtk[row][col]-jacobianEstimation[row][col]);
+      double difference = fabs(jacobianVtk[row][col]-jacobianEstimation[row][col]);
       if (difference>maxDifference)
       {
         maxDifference = difference;
@@ -289,7 +289,7 @@ double getInverseErrorVtk(const double inputPoint[3], vtkOrientedGridTransform* 
 //----------------------------------------------------------------------------
 int vtkOrientedGridTransformTest1(int, char*[])
 {
-  double averageSpacing=100;
+  double averageSpacing = 100;
   double origin[3] = {-100, -100, -100};
   double spacing[3] = {averageSpacing, averageSpacing, averageSpacing};
   double direction[3][3] = {{0.92128500, -0.36017075, -0.146666625}, {0.31722386, 0.91417248, -0.25230478}, {0.22495105, 0.18591857, 0.95646814}};
@@ -305,7 +305,7 @@ int vtkOrientedGridTransformTest1(int, char*[])
   double modifiedGridNodeValue3[3] = {50.0, 70.0, -60.0};
 
   // Create an ITK grid transform. It'll serve as the reference.
-  itkGridTransformType::Pointer gridItk=CreateGridTransformItk(origin, spacing, direction, dims);
+  itkGridTransformType::Pointer gridItk = CreateGridTransformItk(origin, spacing, direction, dims);
   // Modify a grid node
   SetGridNodeItk(gridItk, modifiedGridNodeIndex1, modifiedGridNodeValue1);
   SetGridNodeItk(gridItk, modifiedGridNodeIndex2, modifiedGridNodeValue2);
@@ -319,18 +319,18 @@ int vtkOrientedGridTransformTest1(int, char*[])
   SetGridNodeVtk(gridVtk.GetPointer(), modifiedGridNodeIndex2, modifiedGridNodeValue2);
   SetGridNodeVtk(gridVtk.GetPointer(), modifiedGridNodeIndex3, modifiedGridNodeValue3);
 
-  int numberOfPointsTested=0;
-  int numberOfItkVtkPointMismatches=0;
-  int numberOfSingleDoubleVtkPointMismatches=0;
-  int numberOfDerivativeMismatches=0;
-  int numberOfInverseMismatches=0;
+  int numberOfPointsTested = 0;
+  int numberOfItkVtkPointMismatches = 0;
+  int numberOfSingleDoubleVtkPointMismatches = 0;
+  int numberOfDerivativeMismatches = 0;
+  int numberOfInverseMismatches = 0;
 
   // We take samples in the grid region (first node + 2 < node < last node - 1)
   // because the boundaries are handled differently in ITK and VTK (in ITK there is an
   // abrupt change to 0, while in VTK it is smoothly converges to zero)
-  const int numberOfSamplesPerAxis=25;
-  const double startMargin=0.5;
-  const double endMargin=0.5;
+  const int numberOfSamplesPerAxis = 25;
+  const double startMargin = 0.5;
+  const double endMargin = 0.5;
   const double startI = startMargin;
   const double endI = (dims[0]-1)-endMargin;
   const double startJ = startMargin;
@@ -343,11 +343,11 @@ int vtkOrientedGridTransformTest1(int, char*[])
 
   // The default ITK interpolator is linear, compare the results to that
   gridVtk->SetInterpolationModeToLinear();
-  for (double k=startK+incK; k<=endK-incK; k+=incK)
+  for (double k = startK+incK; k<=endK-incK; k+=incK)
   {
-    for (double j=startJ+incJ; j<=endJ-incJ; j+=incJ)
+    for (double j = startJ+incJ; j<=endJ-incJ; j+=incJ)
     {
-      for (double i=startI+incI; i<=endI-incI; i+=incI)
+      for (double i = startI+incI; i<=endI-incI; i+=incI)
       {
         numberOfPointsTested++;
         double inputPoint[3];
@@ -367,11 +367,11 @@ int vtkOrientedGridTransformTest1(int, char*[])
   }
 
   gridVtk->SetInterpolationModeToCubic();
-  for (double k=startK+incK; k<=endK-incK; k+=incK)
+  for (double k = startK+incK; k<=endK-incK; k+=incK)
   {
-    for (double j=startJ+incJ; j<=endJ-incJ; j+=incJ)
+    for (double j = startJ+incJ; j<=endJ-incJ; j+=incJ)
     {
-      for (double i=startI+incI; i<=endI-incI; i+=incI)
+      for (double i = startI+incI; i<=endI-incI; i+=incI)
       {
         numberOfPointsTested++;
         double inputPoint[3];

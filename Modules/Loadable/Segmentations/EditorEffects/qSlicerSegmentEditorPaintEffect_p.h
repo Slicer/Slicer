@@ -83,7 +83,7 @@ public:
   /// it up with a marker for later painting.
   /// If lastBrushPosition_World is specified then multiple points are added along a line
   /// that connects the current and last brush position, to ensure a smooth and continuous brush stroke.
-  void paintAddPoint(qMRMLWidget* viewWidget, double pixelPositionWorld[3], double* lastBrushPosition_World=nullptr);
+  void paintAddPoint(qMRMLWidget* viewWidget, double pixelPositionWorld[3], double* lastBrushPosition_World = nullptr);
 
   /// Update paint circle glyph
   void updateBrush(qMRMLWidget* viewWidget, BrushPipeline* brush);

@@ -224,7 +224,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   if (size[0] > 1 || this->ForceRangeAxis)
   {
     // the range axis has no space direction
-    for (unsigned int saxi=0; saxi < spaceDim; saxi++)
+    for (unsigned int saxi = 0; saxi < spaceDim; saxi++)
     {
       spaceDir[0][saxi] = AIR_NAN;
     }
@@ -255,13 +255,13 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   vtkMatrix4x4::Multiply4x4(rasToSpaceMatrix, this->IJKToRASMatrix, ijkToSpaceMatrix);
 
   double origin[NRRD_DIM_MAX] = { 0.0 };
-  for (unsigned int axi=0; axi < spaceDim; axi++)
+  for (unsigned int axi = 0; axi < spaceDim; axi++)
   {
     size[axi+baseDim] = this->GetInput()->GetDimensions()[axi];
     kind[axi+baseDim] = nrrdKindDomain;
     origin[axi] = ijkToSpaceMatrix->GetElement((int) axi,3);
 
-    for (unsigned int saxi=0; saxi < spaceDim; saxi++)
+    for (unsigned int saxi = 0; saxi < spaceDim; saxi++)
     {
       spaceDir[axi+baseDim][saxi] = ijkToSpaceMatrix->GetElement(saxi,axi);
     }
@@ -330,9 +330,9 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   // 1. Measurement Frame
   if (this->MeasurementFrameMatrix)
   {
-    for (unsigned int saxi=0; saxi < nrrd->spaceDim; saxi++)
+    for (unsigned int saxi = 0; saxi < nrrd->spaceDim; saxi++)
     {
-      for (unsigned int saxj=0; saxj < nrrd->spaceDim; saxj++)
+      for (unsigned int saxj = 0; saxj < nrrd->spaceDim; saxj++)
       {
         // Note the transpose: each entry in the nrrd measurementFrame
         // is a column of the matrix

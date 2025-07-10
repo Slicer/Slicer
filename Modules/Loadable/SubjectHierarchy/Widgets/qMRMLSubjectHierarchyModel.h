@@ -86,7 +86,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
 
 public:
   typedef QStandardItemModel Superclass;
-  qMRMLSubjectHierarchyModel(QObject* parent=nullptr);
+  qMRMLSubjectHierarchyModel(QObject* parent = nullptr);
   ~qMRMLSubjectHierarchyModel() override;
 
   enum ItemDataRole
@@ -145,8 +145,8 @@ public:
 
   vtkIdType subjectHierarchyItemFromIndex(const QModelIndex& index)const;
   vtkIdType subjectHierarchyItemFromItem(QStandardItem* item)const;
-  QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
-  QStandardItem* itemFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
+  QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column = 0)const;
+  QStandardItem* itemFromSubjectHierarchyItem(vtkIdType itemID, int column = 0)const;
 
   /// Return all the QModelIndexes (all the columns) for a given subject hierarchy item
   QModelIndexList indexes(vtkIdType itemID)const;
@@ -211,7 +211,7 @@ protected slots:
   void updateColumnCount();
 
 protected:
-  qMRMLSubjectHierarchyModel(qMRMLSubjectHierarchyModelPrivate* pimpl, QObject* parent=nullptr);
+  qMRMLSubjectHierarchyModel(qMRMLSubjectHierarchyModelPrivate* pimpl, QObject* parent = nullptr);
 
   /// Set the subject hierarchy node found in the given scene. Called only internally.
   virtual void setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode* shNode);

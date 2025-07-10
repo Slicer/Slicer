@@ -130,11 +130,11 @@ public:
   /// \param numberOfCurvePoints if specified then distances up to the first n points are computed.
   ///   If <0 then all the points are used.
   /// \return sum of distances between the curve points, returns 0 in case of an error
-  double GetCurveLengthWorld(vtkIdType startCurvePointIndex=0, vtkIdType numberOfCurvePoints=-1);
+  double GetCurveLengthWorld(vtkIdType startCurvePointIndex = 0, vtkIdType numberOfCurvePoints=-1);
 
   /// Utility function to get curve length from a point list.
   /// \sa GetCurveLengthWorld
-  static double GetCurveLength(vtkPoints* curvePoints, bool closedCurve, vtkIdType startCurvePointIndex=0, vtkIdType numberOfCurvePoints=-1);
+  static double GetCurveLength(vtkPoints* curvePoints, bool closedCurve, vtkIdType startCurvePointIndex = 0, vtkIdType numberOfCurvePoints=-1);
 
   /// Get length of a section of the curve between startPointIndex and endPointIndex.
   /// If endPointIndex < startPointIndex then length outside of the section is computed.
@@ -164,7 +164,7 @@ public:
   // Fractional point index is a value between the point indices of the two original points it was between, the fractional part
   // specifies the distance from those two points. It can be used for interpolating point data.
   static bool ResamplePoints(vtkPoints* originalPoints, vtkPoints* interpolatedPoints,
-    double samplingDistance, bool closedCurve, vtkDoubleArray* pedigreeIdsArray=nullptr);
+    double samplingDistance, bool closedCurve, vtkDoubleArray* pedigreeIdsArray = nullptr);
 
   /// Resample static control point measurements using linear interpolation, based on fractional pedigreeIds.
   static bool ResampleStaticControlPointMeasurements(vtkCollection* measurements, vtkDoubleArray* curvePointsPedigreeIdsArray,
@@ -192,7 +192,7 @@ public:
   /// \param posWorld: input position
   /// \param closestPosWorld: output found closest position
   /// \param pointLocator: point locator for points. Optional, if not specified then closest point is found by a slow method (iterating through all the points).
-  static vtkIdType GetClosestPointPositionAlongCurve(vtkPoints* points, const double pos[3], double closestPos[3], vtkPointLocator* pointLocator=nullptr);
+  static vtkIdType GetClosestPointPositionAlongCurve(vtkPoints* points, const double pos[3], double closestPos[3], vtkPointLocator* pointLocator = nullptr);
 
   /// Get index of the farthest curve point from the specified reference point in world coordinates.
   /// Distance is Euclidean distance, not distance along the curve.
@@ -257,7 +257,7 @@ public:
   void SetCurveTypeToCardinalSpline();
   void SetCurveTypeToKochanekSpline();
   void SetCurveTypeToPolynomial();
-  void SetCurveTypeToShortestDistanceOnSurface(vtkMRMLModelNode* modelNode=nullptr);
+  void SetCurveTypeToShortestDistanceOnSurface(vtkMRMLModelNode* modelNode = nullptr);
 
   /// \deprecated GetShortestDistanceSurfaceNodeReferenceRole
   /// \sa GetSurfaceConstraintNodeReferenceRole

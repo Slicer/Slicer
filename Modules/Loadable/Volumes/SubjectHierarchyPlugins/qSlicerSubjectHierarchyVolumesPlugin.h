@@ -68,7 +68,7 @@ public:
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
   double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
+    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
@@ -114,7 +114,7 @@ public:
   /// Show volume in all slice views. The argument node replaces any volume shown on the specified layer
   /// \param node Volume node to show
   /// \param layer Layer to show volume on. Only one layer can be specified. By default it's the background layer
-  void showVolumeInAllViews(vtkMRMLScalarVolumeNode* node, int layer=vtkMRMLApplicationLogic::BackgroundLayer);
+  void showVolumeInAllViews(vtkMRMLScalarVolumeNode* node, int layer = vtkMRMLApplicationLogic::BackgroundLayer);
 
   /// Hide given volume from all layers of all slice views
   void hideVolumeFromAllViews(vtkMRMLScalarVolumeNode* node);
@@ -123,7 +123,7 @@ public:
   /// \param shownVolumeItemIDs Output argument for subject hierarchy item IDs of shown volumes
   /// \param layer Layer(s) from which the shown volumes are collected. By default it's all layers
   void collectShownVolumes( QSet<vtkIdType>& shownVolumeItemIDs,
-    int layer=vtkMRMLApplicationLogic::BackgroundLayer | vtkMRMLApplicationLogic::ForegroundLayer | vtkMRMLApplicationLogic::LabelLayer )const;
+    int layer = vtkMRMLApplicationLogic::BackgroundLayer | vtkMRMLApplicationLogic::ForegroundLayer | vtkMRMLApplicationLogic::LabelLayer )const;
 
 protected slots:
   /// Show volumes in study. The first two scalar volumes are shown if there are more.

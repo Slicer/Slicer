@@ -106,7 +106,7 @@ void vtkTopologicalHierarchy::Update()
   unsigned int numberOfPolyData = this->InputPolyDataCollection->GetNumberOfItems();
 
   // Check input polydata collection
-  for (unsigned int polyOutIndex=0; polyOutIndex<numberOfPolyData; ++polyOutIndex)
+  for (unsigned int polyOutIndex = 0; polyOutIndex<numberOfPolyData; ++polyOutIndex)
   {
     vtkPolyData* polyOut = vtkPolyData::SafeDownCast(this->InputPolyDataCollection->GetItemAsObject(polyOutIndex));
     if (!polyOut)
@@ -123,11 +123,11 @@ void vtkTopologicalHierarchy::Update()
 
   // Step 1: Set level of polydata containing no other polydata to 0
   this->InputPolyDataCollection->InitTraversal();
-  for (unsigned int polyOutIndex=0; polyOutIndex<numberOfPolyData; ++polyOutIndex)
+  for (unsigned int polyOutIndex = 0; polyOutIndex<numberOfPolyData; ++polyOutIndex)
   {
     vtkPolyData* polyOut = vtkPolyData::SafeDownCast(this->InputPolyDataCollection->GetItemAsObject(polyOutIndex));
 
-    for (unsigned int polyInIndex=0; polyInIndex<numberOfPolyData; ++polyInIndex)
+    for (unsigned int polyInIndex = 0; polyInIndex<numberOfPolyData; ++polyInIndex)
     {
       if (polyOutIndex==polyInIndex)
       {
@@ -158,7 +158,7 @@ void vtkTopologicalHierarchy::Update()
     outputLevelsSnapshot->DeepCopy(this->OutputLevels);
 
     // Step 3: For all polydata without level value assigned
-    for (unsigned int polyOutIndex=0; polyOutIndex<numberOfPolyData; ++polyOutIndex)
+    for (unsigned int polyOutIndex = 0; polyOutIndex<numberOfPolyData; ++polyOutIndex)
     {
       if (this->OutputLevels->GetValue(polyOutIndex) > -1)
       {
@@ -210,7 +210,7 @@ void vtkTopologicalHierarchy::Update()
   }
 
   // Step 5: Set maximum level to all polydata that has no level value assigned
-  for (unsigned int polyOutIndex=0; polyOutIndex<numberOfPolyData; ++polyOutIndex)
+  for (unsigned int polyOutIndex = 0; polyOutIndex<numberOfPolyData; ++polyOutIndex)
   {
     if (this->OutputLevels->GetValue(polyOutIndex) == -1)
     {
@@ -227,7 +227,7 @@ bool vtkTopologicalHierarchy::OutputContainsEmptyLevels()
     return false;
   }
 
-  for (int i=0; i<this->OutputLevels->GetNumberOfTuples(); ++i)
+  for (int i = 0; i<this->OutputLevels->GetNumberOfTuples(); ++i)
   {
     if (this->OutputLevels->GetValue(i) == -1)
     {

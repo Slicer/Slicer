@@ -32,7 +32,7 @@ virtual void SetAndPropagateSuper##name (type _arg1, type _arg2, type _arg3) \
     { \
       return; \
     } \
-    for (int i=0; i<displayableNode->GetNumberOfDisplayNodes(); i++) \
+    for (int i = 0; i<displayableNode->GetNumberOfDisplayNodes(); i++) \
     { \
       vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i); \
       if (!displayNode || displayNode==this) \
@@ -62,7 +62,7 @@ virtual void SetAndPropagateSuper##name (type _arg) \
     { \
       return; \
     } \
-    for (int i=0; i<displayableNode->GetNumberOfDisplayNodes(); i++) \
+    for (int i = 0; i<displayableNode->GetNumberOfDisplayNodes(); i++) \
     { \
       vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i); \
       if (!displayNode || displayNode==this) \

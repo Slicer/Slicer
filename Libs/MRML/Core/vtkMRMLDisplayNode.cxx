@@ -366,7 +366,7 @@ void vtkMRMLDisplayNode::SetSceneReferences()
     return;
   }
   this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
-  for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+  for (unsigned int i = 0; i<this->ViewNodeIDs.size(); i++)
   {
     this->Scene->AddReferencedNodeID(this->ViewNodeIDs[i].c_str(), this);
   }
@@ -383,7 +383,7 @@ void vtkMRMLDisplayNode::UpdateReferenceID(const char* oldID, const char* newID)
   else
   {
     bool modified = false;
-    for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    for (unsigned int i = 0; i<this->ViewNodeIDs.size(); i++)
     {
       if ( std::string(oldID) == this->ViewNodeIDs[i])
       {
@@ -491,7 +491,7 @@ void vtkMRMLDisplayNode::UpdateReferences()
 
   std::vector<std::string> viewNodeIDs;
 
-  for (unsigned int i=0; i < this->ViewNodeIDs.size(); i++)
+  for (unsigned int i = 0; i < this->ViewNodeIDs.size(); i++)
   {
     if (this->Scene->GetNodeByID(this->ViewNodeIDs[i]) != nullptr)
     {
@@ -614,7 +614,7 @@ void vtkMRMLDisplayNode::RemoveViewNodeID(char* viewNodeID)
     return;
   }
   std::vector<std::string> viewNodeIDs;
-  for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+  for (unsigned int i = 0; i<this->ViewNodeIDs.size(); i++)
   {
     if (std::string(viewNodeID) != this->ViewNodeIDs[i])
     {
@@ -634,7 +634,7 @@ void vtkMRMLDisplayNode::RemoveAllViewNodeIDs()
 {
   if (this->Scene!=nullptr)
   {
-    for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    for (unsigned int i = 0; i<this->ViewNodeIDs.size(); i++)
     {
       this->Scene->RemoveReferencedNodeID(ViewNodeIDs[i].c_str(), this);
     }

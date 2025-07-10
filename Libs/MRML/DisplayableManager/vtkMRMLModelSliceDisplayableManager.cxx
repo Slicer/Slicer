@@ -736,7 +736,7 @@ void vtkMRMLModelSliceDisplayableManager::AddDisplayableNode(
 
   this->Internal->AddObservations(node);
 
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i<nnodes; i++)
   {
     vtkMRMLDisplayNode* dnode = node->GetNthDisplayNode(i);
     if ( this->Internal->UseDisplayNode(dnode) )
@@ -924,7 +924,7 @@ void vtkMRMLModelSliceDisplayableManager::UpdateFromMRML()
   vtkMRMLDisplayableNode* mNode = nullptr;
   std::vector<vtkMRMLNode*> mNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLDisplayableNode", mNodes) : 0;
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i<nnodes; i++)
   {
     mNode  = vtkMRMLDisplayableNode::SafeDownCast(mNodes[i]);
     if (mNode && this->Internal->UseDisplayableNode(mNode))

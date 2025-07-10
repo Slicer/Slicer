@@ -229,7 +229,7 @@ int vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(const char* modeStr
   {
     return -1;
   }
-  for (int i=0; i<Overwrite_Last; i++)
+  for (int i = 0; i<Overwrite_Last; i++)
   {
     if (strcmp(modeStr, vtkMRMLSegmentEditorNode::ConvertOverwriteModeToString(i))==0)
     {

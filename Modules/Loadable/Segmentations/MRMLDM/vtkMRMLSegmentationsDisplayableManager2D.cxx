@@ -103,12 +103,12 @@ void SnapToPermuteMatrix(vtkTransform* transform)
   bool modified = false;
   vtkNew<vtkMatrix4x4> transformMatrix;
   linearTransform->GetMatrix(transformMatrix.GetPointer());
-  for (int c=0; c<3; c++)
+  for (int c = 0; c<3; c++)
   {
     double absValues[3] = {fabs(transformMatrix->Element[0][c]), fabs(transformMatrix->Element[1][c]), fabs(transformMatrix->Element[2][c])};
     double maxValue = std::max(absValues[0], std::max(absValues[1], absValues[2]));
     double zeroThreshold = SUPPRESSION_FACTOR * maxValue;
-    for (int r=0; r<3; r++)
+    for (int r = 0; r<3; r++)
     {
       if (absValues[r]!=0 && absValues[r]<zeroThreshold)
       {
@@ -418,7 +418,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::AddSegmentationNode(
 
   this->AddObservations(node);
 
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i<nnodes; i++)
   {
     vtkMRMLSegmentationDisplayNode* dnode = vtkMRMLSegmentationDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
     if ( this->UseDisplayNode(dnode) )
@@ -1267,7 +1267,7 @@ bool vtkMRMLSegmentationsDisplayableManager2D::vtkInternal::IsSegmentVisibleInCu
   else
   {
     int outlineWidth = displayNode->GetSliceIntersectionThickness();
-      for (int i=0; i<3; i++)
+      for (int i = 0; i<3; i++)
       {
         int startExtent = int(floor(segmentBounds_Slice[i * 2]) - outlineWidth);
         int endExtent = int(ceil(segmentBounds_Slice[i * 2 + 1]) + outlineWidth);
@@ -1430,7 +1430,7 @@ void vtkMRMLSegmentationsDisplayableManager2D::UpdateFromMRML()
   vtkMRMLSegmentationNode* mNode = nullptr;
   std::vector<vtkMRMLNode*> mNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLSegmentationNode", mNodes) : 0;
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i<nnodes; i++)
   {
     mNode  = vtkMRMLSegmentationNode::SafeDownCast(mNodes[i]);
     if (mNode && this->Internal->UseDisplayableNode(mNode))

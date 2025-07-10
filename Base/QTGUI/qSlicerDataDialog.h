@@ -38,7 +38,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerDataDialog : public qSlicerFileDialog
   Q_OBJECT
 public:
   typedef qSlicerFileDialog Superclass;
-  qSlicerDataDialog(QObject* parent =nullptr);
+  qSlicerDataDialog(QObject* parent = nullptr);
   ~qSlicerDataDialog() override;
 
   qSlicerIO::IOFileType fileType()const override;

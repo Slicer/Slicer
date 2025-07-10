@@ -161,7 +161,7 @@ public:
 
 protected:
   vtkMRMLAnnotationControlPointsNode();
-  ~vtkMRMLAnnotationControlPointsNode() override  = default;
+  ~vtkMRMLAnnotationControlPointsNode() override = default;
   vtkMRMLAnnotationControlPointsNode(const vtkMRMLAnnotationControlPointsNode&);
   void operator=(const vtkMRMLAnnotationControlPointsNode&);
 

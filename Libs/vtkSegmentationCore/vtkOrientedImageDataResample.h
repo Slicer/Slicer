@@ -58,7 +58,7 @@ public:
   /// \param outputImage Output image
   /// \param linearInterpolation True if linear interpolation is requested (fractional labelmap), or false for nearest neighbor (binary labelmap). Default is false.
   /// \return Success flag
-  static bool ResampleOrientedImageToReferenceGeometry(vtkOrientedImageData* inputImage, vtkMatrix4x4* referenceGeometryMatrix, vtkOrientedImageData* outputImage, bool linearInterpolation=false);
+  static bool ResampleOrientedImageToReferenceGeometry(vtkOrientedImageData* inputImage, vtkMatrix4x4* referenceGeometryMatrix, vtkOrientedImageData* outputImage, bool linearInterpolation = false);
 
   /// Resample an oriented image data to match the geometry of a reference oriented image data
   /// \param inputImage Oriented image to resample
@@ -69,7 +69,7 @@ public:
   ///          to be outside the reference extent, then it is padded. Disabled by default.
   /// \param inputImageTransform If specified then inputImage will be transformed with inputImageTransform before resampled into referenceImage.
   /// \return Success flag
-  static bool ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation=false, bool padImage=false, vtkAbstractTransform* inputImageTransform=nullptr, double backgroundValue=0);
+  static bool ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation = false, bool padImage = false, vtkAbstractTransform* inputImageTransform = nullptr, double backgroundValue = 0);
 
   /// Transform an oriented image data using a transform that can be linear or non-linear.
   /// Linear: simply multiply the geometry matrix with the applied matrix, extent stays the same
@@ -79,13 +79,13 @@ public:
   /// \param geometryOnly Only the geometry of the image is changed according to the transform if this flag is turned on.
   ///          This flag only has an effect if the transform is non-linear, in which case only the extent is changed. Off by default
   /// \param alwaysResample If on, then image data will be resampled even if the applied transform is linear
-  static void TransformOrientedImage(vtkOrientedImageData* image, vtkAbstractTransform* transform, bool geometryOnly=false, bool alwaysResample=false, bool linearInterpolation=false, double backgroundColor[4]=nullptr);
+  static void TransformOrientedImage(vtkOrientedImageData* image, vtkAbstractTransform* transform, bool geometryOnly = false, bool alwaysResample = false, bool linearInterpolation = false, double backgroundColor[4]=nullptr);
 
   /// Combines the inputImage and imageToAppend into a new image by max/min operation. The extent will be the union of the two images.
   /// Extent can be specified to restrict imageToAppend's extent to a smaller region.
   /// inputImage and imageToAppend must have the same geometry, but they may have different extents.
   static bool MergeImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* imageToAppend, vtkOrientedImageData* outputImage, int operation,
-    const int extent[6]=nullptr, double maskThreshold = 0, double fillValue = 1, bool* outputModified=nullptr);
+    const int extent[6]=nullptr, double maskThreshold = 0, double fillValue = 1, bool* outputModified = nullptr);
 
   /// Modifies inputImage in-place by combining with modifierImage using max/min operation.
   /// The extent will remain unchanged.
@@ -181,7 +181,7 @@ public:
   ///  If nullptr, the extent will be the overlapping extent between the label and mask.
   /// \param maskThreshold Threshold value for the mask. Values above this threshold are considered to be under the mask
   static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
-    int extent[6]=nullptr, int maskThreshold=0);
+    int extent[6]=nullptr, int maskThreshold = 0);
 
   enum ImageTypeCheckResult
   {

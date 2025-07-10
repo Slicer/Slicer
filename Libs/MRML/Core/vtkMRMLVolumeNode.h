@@ -295,7 +295,7 @@ protected:
 
   /// Returns the origin that would put the volume center in the origin.
   /// If useParentTransform is false then parent transform is ignored.
-  void GetCenterPositionRAS(double* centerPositionRAS, bool useParentTransform=true);
+  void GetCenterPositionRAS(double* centerPositionRAS, bool useParentTransform = true);
 
   /// Returns the interpolation algorithm that should be used for resampling the volume.
   /// The value is one of VTK_NEAREST_INTERPOLATION, VTK_LINEAR_INTERPOLATION, or VTK_CUBIC_INTERPOLATION.

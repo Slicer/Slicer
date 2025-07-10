@@ -528,7 +528,7 @@ QPair<double, double> qMRMLTransformSliders::extractMinMaxTranslationValue(
     Q_ASSERT(mat);
     return minmax;
   }
-  for (int i=0; i <3; i++)
+  for (int i = 0; i <3; i++)
   {
     minmax.first = qMin(minmax.first, mat->GetElement(i,3));
     minmax.second = qMax(minmax.second, mat->GetElement(i,3));

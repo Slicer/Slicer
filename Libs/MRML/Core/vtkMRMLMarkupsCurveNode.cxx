@@ -733,7 +733,7 @@ bool vtkMRMLMarkupsCurveNode::GetPositionAndClosestPointIndexAlongCurve(double f
     if (remainingDistanceFromStartPoint <= 0)
     {
       // reached the requested distance (and probably a bit more)
-      for (int i=0; i<3; i++)
+      for (int i = 0; i<3; i++)
       {
         foundCurvePosition[i] = nextPoint[i] +
           remainingDistanceFromStartPoint * (nextPoint[i] - previousPoint[i]) / lastSegmentLength;
@@ -975,7 +975,7 @@ bool vtkMRMLMarkupsCurveNode::GetCurvePointToWorldTransformAtPointIndex(vtkIdTyp
   double* binormal = binormals->GetTuple3(curvePointIndex);
   double* tangent = tangents->GetTuple3(curvePointIndex);
   double* position = curvePoly->GetPoint(curvePointIndex);
-  for (int row=0; row<3; row++)
+  for (int row = 0; row<3; row++)
   {
     curvePointToWorld->SetElement(row, 0, normal[row]);
     curvePointToWorld->SetElement(row, 1, binormal[row]);

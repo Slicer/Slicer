@@ -70,7 +70,7 @@ public:
 
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
-  void ScaleWidget(double eventPos[2], bool uniformScale=false) override;
+  void ScaleWidget(double eventPos[2], bool uniformScale = false) override;
   virtual void ScaleWidgetPlane(double eventPos[2], bool symmetricScale);
   virtual void FlipPlaneHandles(bool flipLRHandle, bool flipPAHandle);
   virtual void ScaleWidgetROI(double eventPos[2], bool symmetricScale);

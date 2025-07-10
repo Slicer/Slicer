@@ -772,7 +772,7 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(vtkIdList* items)
   }
 
   QList<vtkIdType> itemsToSelect;
-  for (int index=0; index<items->GetNumberOfIds(); ++index)
+  for (int index = 0; index<items->GetNumberOfIds(); ++index)
   {
     itemsToSelect.append(items->GetId(index));
   }
@@ -1967,7 +1967,7 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
     {
       vtkSmartPointer<vtkCollection> referencedNodes;
       referencedNodes.TakeReference(scene->GetReferencedNodes(node, false));
-      for (int index=0; index!=referencedNodes->GetNumberOfItems(); ++index)
+      for (int index = 0; index!=referencedNodes->GetNumberOfItems(); ++index)
       {
         vtkIdType nodeItemID = d->SubjectHierarchyNode->GetItemByDataNode(
           vtkMRMLNode::SafeDownCast(referencedNodes->GetItemAsObject(index)) );
@@ -1998,7 +1998,7 @@ void qMRMLSubjectHierarchyTreeView::applyReferenceHighlightForItems(QList<vtkIdT
     }
 
     // Highlight recursively referenced items
-    for (int index=0; index!=recursivelyReferencedNodes->GetNumberOfItems(); ++index)
+    for (int index = 0; index!=recursivelyReferencedNodes->GetNumberOfItems(); ++index)
     {
       vtkIdType referencedItem = d->SubjectHierarchyNode->GetItemByDataNode(
         vtkMRMLNode::SafeDownCast(recursivelyReferencedNodes->GetItemAsObject(index)) );

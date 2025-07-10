@@ -40,7 +40,7 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsAngleMeasurementsWidget
 
 public:
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsAngleMeasurementsWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsAngleMeasurementsWidget() override;
 
   /// Gets the name of the additional options widget type

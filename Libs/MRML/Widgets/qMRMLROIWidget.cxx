@@ -126,7 +126,7 @@ void qMRMLROIWidget::onMRMLNodeModified()
   double* xyz = d->ROINode->GetXYZ();
   double* rxyz = d->ROINode->GetRadiusXYZ();
   double bounds[6];
-  for (int i=0; i < 3; ++i)
+  for (int i = 0; i < 3; ++i)
   {
     bounds[i]   = xyz[i]-rxyz[i];
     bounds[3+i] = xyz[i]+rxyz[i];

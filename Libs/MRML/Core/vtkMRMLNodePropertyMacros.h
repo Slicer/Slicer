@@ -77,7 +77,7 @@
     vectorType* vectorPtr = Get##propertyName(); \
     if (vectorPtr != nullptr) \
     { \
-      for (int i=0; i<vectorSize; i++) \
+      for (int i = 0; i<vectorSize; i++) \
       { \
         if (i > 0) \
         { \
@@ -266,7 +266,7 @@
     vectorType vectorValue[vectorSize] = {0}; \
     std::stringstream ss; \
     ss << xmlReadAttValue; \
-    for (int i=0; i<vectorSize; i++) \
+    for (int i = 0; i<vectorSize; i++) \
     { \
       vectorType val; \
       ss >> val; \
@@ -497,7 +497,7 @@
   vectorType* vectorValue = this->Get##propertyName(); \
   if (vectorValue) \
   { \
-    for (int i=0; i<vectorSize; i++) \
+    for (int i = 0; i<vectorSize; i++) \
     { \
       if (i > 0) \
       { \

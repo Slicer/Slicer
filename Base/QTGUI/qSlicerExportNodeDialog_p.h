@@ -114,7 +114,7 @@ class qSlicerExportNodeDialogPrivate
   Q_OBJECT
 public:
   typedef qSlicerExportNodeDialogPrivate Self;
-  explicit qSlicerExportNodeDialogPrivate(QWidget* _parent=nullptr);
+  explicit qSlicerExportNodeDialogPrivate(QWidget* _parent = nullptr);
   ~qSlicerExportNodeDialogPrivate() override;
 
   /* Set the nodes being exported and fill out the dialog widgets with a reasonable initial state.
@@ -199,7 +199,7 @@ protected:
 
   // Get an entry from the hash map nodeTypeToNodeTypeWidgetSet, but make sure the key
   // is in the table, returning nullptr if not. Enabling logError prints a message into Qt message handling.
-  NodeTypeWidgetSet* getNodeTypeWidgetSetSafe(NodeTypeWidgetSet::NodeType nodeType, bool logError=false) const;
+  NodeTypeWidgetSet* getNodeTypeWidgetSetSafe(NodeTypeWidgetSet::NodeType nodeType, bool logError = false) const;
 
   // Validate that there is exactly one node to export, and get that node
   // error if validation fails, returning null result; use this only when it is guaranteed to succeed

@@ -97,7 +97,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyCombo
 
 public:
   typedef ctkComboBox Superclass;
-  qMRMLSubjectHierarchyComboBox(QWidget* parent=nullptr);
+  qMRMLSubjectHierarchyComboBox(QWidget* parent = nullptr);
   ~qMRMLSubjectHierarchyComboBox() override;
 
 public:
@@ -145,7 +145,7 @@ public:
   ///   - Include filter means that only the items are shown that match the filter.
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
-  Q_INVOKABLE void addItemAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true);
+  Q_INVOKABLE void addItemAttributeFilter(QString attributeName, QVariant attributeValue = QString(), bool include = true);
   /// Remove single item attribute filter specifying each attribute \sa addAttributeFilter
   Q_INVOKABLE void removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include);
   /// Remove all item attribute filters specifying a given attribute name and include flag
@@ -158,7 +158,7 @@ public:
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
   /// \param className Only filter attributes on a certain type. Empty by default (i.e. allow all classes)
-  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true, QString className=QString());
+  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName, QVariant attributeValue = QString(), bool include = true, QString className = QString());
   /// Remove single node attribute filter specifying each attribute \sa addAttributeFilter
   Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className);
   /// Remove all node attribute filters specifying a given attribute name and include flag

@@ -323,7 +323,7 @@ void vtkMRMLHierarchyNode::GetAllChildrenNodes(std::vector<vtkMRMLHierarchyNode*
   {
     return;
   }
-  for (unsigned int i=0; i<iter->second.size(); i++)
+  for (unsigned int i = 0; i<iter->second.size(); i++)
   {
     childrenNodes.push_back(iter->second[i]);
     iter->second[i]->GetAllChildrenNodes(childrenNodes);
@@ -350,7 +350,7 @@ std::vector<vtkMRMLHierarchyNode*> vtkMRMLHierarchyNode::GetChildrenNodes()
   {
     return childrenNodes;
   }
-  for (unsigned int i=0; i<iter->second.size(); i++)
+  for (unsigned int i = 0; i<iter->second.size(); i++)
   {
     childrenNodes.push_back(iter->second[i]);
   }
@@ -389,7 +389,7 @@ int vtkMRMLHierarchyNode::GetIndexInParent()
   else
   {
     std::vector<vtkMRMLHierarchyNode*> childrenNodes = pnode->GetChildrenNodes();
-    for (unsigned int i=0; i<childrenNodes.size(); i++)
+    for (unsigned int i = 0; i<childrenNodes.size(); i++)
     {
       if (childrenNodes[i] == this)
       {
@@ -469,7 +469,7 @@ void vtkMRMLHierarchyNode::MoveInParent(int increment)
     int incr1 = increment > 0 ? 1:-1;
     int index1 = oldIndex;
     int index2 = oldIndex + incr1;
-    for (int i=0; i<incr1*increment; i++)
+    for (int i = 0; i<incr1*increment; i++)
     {
       // swap pair of sort values
       childrenNodes = pnode->GetChildrenNodes();
@@ -501,11 +501,11 @@ void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
   vtkMRMLHierarchyNode* parentNode = this->GetParentNode();
 
   std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
-  for (unsigned int i=0; i<children.size(); i++)
+  for (unsigned int i = 0; i<children.size(); i++)
   {
     vtkMRMLHierarchyNode* child = children[i];
     std::vector<vtkMRMLHierarchyNode*> childChildren = child->GetChildrenNodes();
-    for (unsigned int j=0; j<childChildren.size(); j++)
+    for (unsigned int j = 0; j<childChildren.size(); j++)
     {
       childChildren[j]->SetParentNodeID(parentID);
     }
@@ -526,11 +526,11 @@ void vtkMRMLHierarchyNode::RemoveAllHierarchyChildrenNodes()
   }
 
   std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
-  for (unsigned int i=0; i<children.size(); i++)
+  for (unsigned int i = 0; i<children.size(); i++)
   {
     vtkMRMLHierarchyNode* child = children[i];
     std::vector<vtkMRMLHierarchyNode*> childChildren = child->GetChildrenNodes();
-    for (unsigned int j=0; j<childChildren.size(); j++)
+    for (unsigned int j = 0; j<childChildren.size(); j++)
     {
       childChildren[j]->RemoveAllHierarchyChildrenNodes();
     }
@@ -589,7 +589,7 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
 
     double maxSortingValue = this->MaximumSortingValue;
 
-    for (int i=0; i<nnodes; i++)
+    for (int i = 0; i<nnodes; i++)
     {
       vtkMRMLHierarchyNode* node =  vtkMRMLHierarchyNode::SafeDownCast(nodes[i]);
       if (node)
@@ -652,7 +652,7 @@ void vtkMRMLHierarchyNode::GetAssociatedChildrenNodes(vtkCollection* children,
   }
 
   int numNodes = scene->GetNumberOfNodesByClass(nodeClass.c_str());
-  for (int n=0; n < numNodes; n++)
+  for (int n = 0; n < numNodes; n++)
   {
     mnode = scene->GetNthNodeByClass(n, nodeClass.c_str());
     // check for a hierarchy node for this displayble node
@@ -741,7 +741,7 @@ int vtkMRMLHierarchyNode::UpdateAssociatedToHierarchyMap(vtkMRMLScene* scene)
     std::vector<vtkMRMLNode*> nodes;
     int nnodes = scene->GetNodesByClass("vtkMRMLHierarchyNode", nodes);
 
-    for (int i=0; i<nnodes; i++)
+    for (int i = 0; i<nnodes; i++)
     {
       vtkMRMLHierarchyNode* node =  vtkMRMLHierarchyNode::SafeDownCast(nodes[i]);
       if (node)

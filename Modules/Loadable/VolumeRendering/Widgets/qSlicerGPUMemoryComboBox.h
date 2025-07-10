@@ -39,7 +39,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPUMemoryComboBox
 public:
   /// Constructors
   typedef QComboBox Superclass;
-  explicit qSlicerGPUMemoryComboBox(QWidget* parent=nullptr);
+  explicit qSlicerGPUMemoryComboBox(QWidget* parent = nullptr);
   ~qSlicerGPUMemoryComboBox() override;
 
   /// Return total memory available in the GPU

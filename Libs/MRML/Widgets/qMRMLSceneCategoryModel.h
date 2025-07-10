@@ -30,7 +30,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneCategoryModel : public qMRMLSceneModel
   Q_OBJECT
 
 public:
-  qMRMLSceneCategoryModel(QObject* parent=nullptr);
+  qMRMLSceneCategoryModel(QObject* parent = nullptr);
   ~qMRMLSceneCategoryModel() override;
 
   QStandardItem* itemFromCategory(const QString& category)const;

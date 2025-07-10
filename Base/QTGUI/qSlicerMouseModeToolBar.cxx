@@ -549,7 +549,7 @@ void qSlicerMouseModeToolBar::changeCursorTo(QCursor cursor)
   }
 
   // Updated all mapped 3D viewers
-  for (int i=0; i < layoutManager->threeDViewCount(); ++i)
+  for (int i = 0; i < layoutManager->threeDViewCount(); ++i)
   {
     qMRMLThreeDView* threeDView = layoutManager->threeDWidget(i)->threeDView();
 

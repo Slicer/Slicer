@@ -209,7 +209,7 @@ public:
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
   /// \param dataNode Associated data MRML node
   /// \return ID of the item in the hierarchy that was assigned automatically when adding
-  vtkIdType CreateItem(vtkIdType parentItemID, vtkMRMLNode* dataNode, const char* ownerPluginName=nullptr);
+  vtkIdType CreateItem(vtkIdType parentItemID, vtkMRMLNode* dataNode, const char* ownerPluginName = nullptr);
   /// Generic function to create hierarchy items of given level. Convenience functions are available for frequently used levels
   /// \sa CreateSubjectItem, \sa CreateStudyItem, \sa CreateFolderItem
   /// \param parentItemID Parent item under which the created item is inserted. If top-level then use \sa GetSceneItemID
@@ -239,21 +239,21 @@ public:
   /// \param itemID Item to remove
   /// \param removeDataNode Flag determining whether to remove associated data node from the scene if any. On by default
   /// \param recursive Flag determining whether to remove children recursively (the whole branch). On by default
-  bool RemoveItem(vtkIdType itemID, bool removeDataNode=true, bool recursive=true);
+  bool RemoveItem(vtkIdType itemID, bool removeDataNode = true, bool recursive = true);
   /// Remove child items of a subject hierarchy item
   /// \param itemID Parent of items to remove
   /// \param removeDataNodes Flag determining whether to remove associated data nodes from the scene if any. On by default
   /// \param recursive Flag determining whether to remove children recursively, or just the direct children. On by default
-  bool RemoveItemChildren(vtkIdType itemID, bool removeDataNodes=true, bool recursive=true);
+  bool RemoveItemChildren(vtkIdType itemID, bool removeDataNodes = true, bool recursive = true);
   /// Remove all items from hierarchy
   /// \param removeDataNode Flag determining whether to remove associated data node from the scene if any. False by default,
   ///   because as opposed to the method \sa RemoveItem that is usually initiated by the user, this method is
   ///   called when subject hierarchy is re-built from the scene
-  void RemoveAllItems(bool removeDataNode=false);
+  void RemoveAllItems(bool removeDataNode = false);
 
   /// Set the parent of a subject hierarchy item
   /// \param enableCircularCheck Option to do a safety check for circular parenthood in performance-critical cases. On by default.
-  void SetItemParent(vtkIdType itemID, vtkIdType parentItemID, bool enableCircularCheck=true);
+  void SetItemParent(vtkIdType itemID, vtkIdType parentItemID, bool enableCircularCheck = true);
   /// Get ID of the parent of a subject hierarchy item
   /// \return Parent item ID, INVALID_ITEM_ID if there is no parent
   vtkIdType GetItemParent(vtkIdType itemID);
@@ -268,9 +268,9 @@ public:
   /// \param childIDs Output vector containing the children. It will not contain the given item itself.
   ///   The order of the items is depth-first, in a way that the child of an item in the vector always comes after the item.
   /// \param recursive If false then collect direct children, if true then the whole branch. False by default
-  void GetItemChildren(vtkIdType itemID, std::vector<vtkIdType>& childIDs, bool recursive=false);
+  void GetItemChildren(vtkIdType itemID, std::vector<vtkIdType>& childIDs, bool recursive = false);
   /// Python accessibility function to get children of a subject hierarchy item
-  void GetItemChildren(vtkIdType itemID, vtkIdList* childIDs, bool recursive=false);
+  void GetItemChildren(vtkIdType itemID, vtkIdList* childIDs, bool recursive = false);
 
   /// Set new parent to a subject hierarchy item under item associated to specified data node
   /// \return Success flag
@@ -311,26 +311,26 @@ public:
   /// \param contains Flag whether string containment is enough to determine match. True means a substring is searched
   ///   (case insensitive), false means that the name needs to match exactly (case sensitive). False by default.
   /// \return Item ID of the first item found by name using exact match. Warning is logged if more than one found
-  void GetItemsByName(std::string name, vtkIdList* foundItemIds, bool contains=false);
+  void GetItemsByName(std::string name, vtkIdList* foundItemIds, bool contains = false);
 
   /// Get child subject hierarchy item with specific name
   /// \param parent Parent subject hierarchy item to start from
   /// \param name Name to find
   /// \param recursive Flag determining whether search is recursive or not. False by default
   /// \return Child item ID whose name is the same as the given string
-  vtkIdType GetItemChildWithName(vtkIdType parentItemID, std::string name, bool recursive=false);
+  vtkIdType GetItemChildWithName(vtkIdType parentItemID, std::string name, bool recursive = false);
 
   /// Find all associated data nodes of a specified class in a branch of the hierarchy.
   /// \param itemID Parent item of the branch
   /// \param dataNodeCollection Collection updated with the list of data nodes
   /// \param childClass Name of the class we are looking for. nullptr returns associated data nodes of any kind
-  void GetDataNodesInBranch(vtkIdType itemID, vtkCollection* dataNodeCollection, const char* childClass=nullptr);
+  void GetDataNodesInBranch(vtkIdType itemID, vtkCollection* dataNodeCollection, const char* childClass = nullptr);
 
   /// Get data node associated to the parent of the item associated to a data node.
   /// \param recursive Flag determining whether only the direct parent is considered (false), or
   ///   also further up in the tree (true). Default is false
   /// \return Data node associated to the parent of the given data node's item
-  vtkMRMLNode* GetParentDataNode(vtkMRMLNode* dataNode, bool recursive=false);
+  vtkMRMLNode* GetParentDataNode(vtkMRMLNode* dataNode, bool recursive = false);
 
 // Utility functions
 public:
@@ -378,7 +378,7 @@ public:
   /// Determine if any of the children of this item is transformed (has a parent transform applied), except for an optionally given node
   /// \param includeParentItem Determine whether the given item (the parent of the branch) should be included in the search. True by default
   /// \param exceptionNode The function returns false if the only applied transform found is this specified node.
-  bool IsAnyNodeInBranchTransformed(vtkIdType itemID, bool includeParentItem=true, vtkMRMLTransformNode* exceptionNode=nullptr);
+  bool IsAnyNodeInBranchTransformed(vtkIdType itemID, bool includeParentItem = true, vtkMRMLTransformNode* exceptionNode = nullptr);
 
   /// Deserialize a UID list string (stored in the UID map) into a vector of UID strings
   static void DeserializeUIDList(std::string uidListString, std::vector<std::string>& deserializedUIDList);
@@ -409,7 +409,7 @@ public:
 
   /// Get number of children for an item
   /// \param recursive If true, then get total number of items in the branch, only direct children otherwise. False by default
-  int GetNumberOfItemChildren(vtkIdType itemID, bool recursive=false);
+  int GetNumberOfItemChildren(vtkIdType itemID, bool recursive = false);
 
   /// Print subject hierarchy item info on stream
   void PrintItem(vtkIdType itemID, ostream& os, vtkIndent indent);

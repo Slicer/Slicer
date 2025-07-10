@@ -250,7 +250,7 @@ void vtkSlicerAngleRepresentation3D::ReleaseGraphicsResources(
 //----------------------------------------------------------------------
 int vtkSlicerAngleRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderOverlay(viewport);
   if (this->LineActor->GetVisibility())
   {
@@ -275,7 +275,7 @@ int vtkSlicerAngleRepresentation3D::RenderOverlay(vtkViewport* viewport)
 int vtkSlicerAngleRepresentation3D::RenderOpaqueGeometry(
   vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   double diameter = ( this->MarkupsDisplayNode->GetCurveLineSizeMode() == vtkMRMLMarkupsDisplayNode::UseLineDiameter ?
     this->MarkupsDisplayNode->GetLineDiameter() : this->ControlPointSize * this->MarkupsDisplayNode->GetLineThickness() );
@@ -304,7 +304,7 @@ int vtkSlicerAngleRepresentation3D::RenderOpaqueGeometry(
 int vtkSlicerAngleRepresentation3D::RenderTranslucentPolygonalGeometry(
   vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {

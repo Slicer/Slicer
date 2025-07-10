@@ -44,7 +44,7 @@ class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsPlaneWidget : public qM
 
 public:
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsPlaneWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsPlaneWidget(QWidget* parent = nullptr);
   ~qMRMLMarkupsPlaneWidget() override;
 
   /// Returns the current MRML Plane node

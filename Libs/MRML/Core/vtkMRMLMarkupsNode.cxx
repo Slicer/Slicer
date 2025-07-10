@@ -2764,7 +2764,7 @@ void vtkMRMLMarkupsNode::RemoveAllMeasurements()
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsNode::ClearValueForAllMeasurements()
 {
-  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+  for (int index = 0; index<this->Measurements->GetNumberOfItems(); ++index)
   {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
       this->Measurements->GetItemAsObject(index) );
@@ -2791,7 +2791,7 @@ void vtkMRMLMarkupsNode::UpdateMeasurementsInternal()
 {
   // Calculate enabled measurements
   bool wasModify = this->StartModify();
-  for (int index=0; index<this->Measurements->GetNumberOfItems(); ++index)
+  for (int index = 0; index<this->Measurements->GetNumberOfItems(); ++index)
   {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(index));
     if (currentMeasurement && currentMeasurement->GetEnabled() && !currentMeasurement->IsA("vtkMRMLStaticMeasurement"))

@@ -86,7 +86,7 @@ void vtkSlicerLineRepresentation3D::ReleaseGraphicsResources(
 //----------------------------------------------------------------------
 int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderOverlay(viewport);
   if (this->LineActor->GetVisibility())
   {
@@ -103,7 +103,7 @@ int vtkSlicerLineRepresentation3D::RenderOverlay(vtkViewport* viewport)
 int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(
   vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {
@@ -123,7 +123,7 @@ int vtkSlicerLineRepresentation3D::RenderOpaqueGeometry(
 int vtkSlicerLineRepresentation3D::RenderTranslucentPolygonalGeometry(
   vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->LineActor->GetVisibility())
   {

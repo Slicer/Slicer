@@ -298,7 +298,7 @@ vtkMRMLAnnotationPointDisplayNode* vtkMRMLAnnotationControlPointsNode::GetAnnota
 {
   int nnodes = this->GetNumberOfDisplayNodes();
   vtkMRMLAnnotationPointDisplayNode* node = nullptr;
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
       // vtkMRMLDisplayableNode stores the ids in DisplayNodeIDs
     node = vtkMRMLAnnotationPointDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));

@@ -898,7 +898,7 @@ public:
   {
     this->RenderWindow->Render();
   }
-  vtkRenderCallback()  = default;
+  vtkRenderCallback() = default;
   vtkRenderWindow* RenderWindow{nullptr};
 };
 

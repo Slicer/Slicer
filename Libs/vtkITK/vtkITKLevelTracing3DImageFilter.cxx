@@ -126,7 +126,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
   //
   // Initialize and check input
   //
-  vtkPointData* pd=input->GetPointData();
+  vtkPointData* pd = input->GetPointData();
   if (pd ==nullptr)
   {
     vtkErrorMacro(<<"PointData is NULL");
@@ -179,7 +179,7 @@ int vtkITKLevelTracing3DImageFilter::RequestData(
 
     double in[3];
     unsigned char out;
-    for (vtkIdType i=0; i < inScalars->GetNumberOfTuples(); ++i)
+    for (vtkIdType i = 0; i < inScalars->GetNumberOfTuples(); ++i)
     {
       inScalars->GetTuple(i, in);
 

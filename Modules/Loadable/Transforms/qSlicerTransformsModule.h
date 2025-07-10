@@ -40,7 +40,7 @@ class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  qSlicerTransformsModule(QObject* parent=nullptr);
+  qSlicerTransformsModule(QObject* parent = nullptr);
   ~qSlicerTransformsModule() override;
 
   /// Icon of the transform module
