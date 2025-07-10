@@ -408,6 +408,19 @@ public:
   /// to be called explicitly.
   void FixFileName();
 
+  ///
+  /// Prepare files for writing by creating a unique temporary directory and files.
+  /// This method generates a unique temporary subdirectory in the target directory,
+  /// using the process ID and current time to avoid conflicts. It returns the paths
+  /// to the temporary files that should be written, and the temporary directory path.
+  bool CreateUniqueTempFilesForWrite(vtkStringArray* fullFileNames, std::string& tempDir, vtkStringArray* tempFiles);
+
+  ///
+  /// Move all files in the source directory to their final destinations with file-based locking.
+  /// This method attempts to acquire a file lock for each file, moves the source files to the final destinations,
+  /// and cleans up the source directory. It ensures that concurrent writes do not corrupt the files.
+  bool MoveFilesWithLocking(const std::string& sourceDir, const std::string& targetDir);
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode() override;
