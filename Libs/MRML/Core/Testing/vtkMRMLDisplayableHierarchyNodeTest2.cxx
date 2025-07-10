@@ -27,7 +27,7 @@ int vtkMRMLDisplayableHierarchyNodeTest2(int, char*[])
 {
   vtkNew<vtkMRMLScene> scene;
 
-  vtkNew< vtkMRMLDisplayableHierarchyNode > hnode1;
+  vtkNew<vtkMRMLDisplayableHierarchyNode> hnode1;
   scene->AddNode(hnode1.GetPointer());
 
   vtkNew<vtkMRMLModelDisplayNode> hdnode1;

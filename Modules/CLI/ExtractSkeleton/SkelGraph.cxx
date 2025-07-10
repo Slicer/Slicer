@@ -280,7 +280,7 @@ void SkelGraph::FindMaximalPath()
     }
 
     // do cost traversal
-    std::deque< skel_branch* > wait_list;
+    std::deque<skel_branch*> wait_list;
     wait_list.push_back(&(*act_endbranch));
     while( !wait_list.empty() )
     {

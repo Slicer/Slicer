@@ -116,7 +116,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   /// Get all View Node ID's for the view to display this node in.
   /// If empty, display in all views
   /// \sa ThreeDViewIDs, GetNthThreeDViewID(), AddThreeDViewID()
-  inline std::vector< std::string > GetThreeDViewIDs()const;
+  inline std::vector<std::string> GetThreeDViewIDs()const;
   /// True if the view node id is present in the ThreeDViewID list
   /// false if not found
   /// \sa ThreeDViewIDs, IsDisplayableInView(), AddThreeDViewID()
@@ -579,8 +579,8 @@ protected:
   vtkSmartPointer<vtkMatrix4x4> UVWToSlice;
   vtkSmartPointer<vtkMatrix4x4> UVWToRAS;
 
-  typedef std::pair <std::string, vtkSmartPointer<vtkMatrix3x3> > OrientationPresetType;
-  std::vector< OrientationPresetType > OrientationMatrices;
+  typedef std::pair <std::string, vtkSmartPointer<vtkMatrix3x3>> OrientationPresetType;
+  std::vector<OrientationPresetType> OrientationMatrices;
 
   int JumpMode;
 
@@ -627,13 +627,13 @@ protected:
 
   int IsUpdatingMatrices;
 
-  std::vector< std::string > ThreeDViewIDs;
+  std::vector<std::string> ThreeDViewIDs;
 
   vtkSmartPointer<vtkPlane> ImplicitFunction;
 };
 
 //----------------------------------------------------------------------------
-std::vector< std::string > vtkMRMLSliceNode::GetThreeDViewIDs()const
+std::vector<std::string> vtkMRMLSliceNode::GetThreeDViewIDs()const
 {
   return this->ThreeDViewIDs;
 }

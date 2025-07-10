@@ -81,7 +81,7 @@ WarpTransform3D<FieldData>
 ::ComputeJacobianWithRespectToParameters( const InputPointType& inputPoint, JacobianType& jacobian ) const
 {
 
-//  ZeroFluxNeumannBoundaryCondition< DeformationImageType > nbc;
+//  ZeroFluxNeumannBoundaryCondition<DeformationImageType> nbc;
   ConstNeighborhoodIteratorType bit;
 
   itk::ImageRegion<3> region;

@@ -170,7 +170,7 @@ protected:
   ~vtkSegmentationConverter() override;
 
 protected:
-  typedef std::vector< vtkSmartPointer<vtkSegmentationConverterRule> > ConverterRulesListType;
+  typedef std::vector<vtkSmartPointer<vtkSegmentationConverterRule>> ConverterRulesListType;
 
   /// Converter rules. When the class is created it contains just the default converter rules but then
   /// rules may be customized with parameters and may store segment-specific information.

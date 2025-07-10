@@ -235,7 +235,7 @@ vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetCollapsedPa
   vtkMRMLDisplayableHierarchyNode* node = nullptr;
 
   // build up a vector of collapsed parents
-  std::vector< vtkMRMLDisplayableHierarchyNode*> collapsedParents;
+  std::vector<vtkMRMLDisplayableHierarchyNode*> collapsedParents;
   if (!this->GetExpanded())
   {
     collapsedParents.push_back(this);
@@ -271,13 +271,13 @@ void vtkMRMLDisplayableHierarchyNode::RemoveChildrenNodes()
     return;
   }
 
-  std::vector< vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
+  std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
   for (unsigned int i=0; i<children.size(); i++)
   {
     vtkMRMLDisplayableHierarchyNode* child = vtkMRMLDisplayableHierarchyNode::SafeDownCast(children[i]);
     if (child)
     {
-      std::vector< vtkMRMLHierarchyNode*> childChildern = child->GetChildrenNodes();
+      std::vector<vtkMRMLHierarchyNode*> childChildern = child->GetChildrenNodes();
       vtkMRMLDisplayableNode* dnode = child->GetDisplayableNode();
       if (dnode)
       {
@@ -301,7 +301,7 @@ void vtkMRMLDisplayableHierarchyNode::RemoveAllChildrenNodes()
     return;
   }
 
-  std::vector< vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
+  std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
   for (unsigned int i=0; i<children.size(); i++)
   {
     vtkMRMLDisplayableHierarchyNode* child = vtkMRMLDisplayableHierarchyNode::SafeDownCast(children[i]);
@@ -309,7 +309,7 @@ void vtkMRMLDisplayableHierarchyNode::RemoveAllChildrenNodes()
     {
       child->RemoveAllChildrenNodes();
 
-      std::vector< vtkMRMLHierarchyNode*> childChildern = child->GetChildrenNodes();
+      std::vector<vtkMRMLHierarchyNode*> childChildern = child->GetChildrenNodes();
       vtkMRMLDisplayableNode* dnode = child->GetDisplayableNode();
       if (dnode)
       {

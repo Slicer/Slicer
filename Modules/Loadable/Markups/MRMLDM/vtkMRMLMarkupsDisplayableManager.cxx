@@ -142,7 +142,7 @@ void vtkMRMLMarkupsDisplayableManager::UpdateFromMRML()
 
   std::vector<vtkMRMLNode*> markupNodes;
   this->GetMRMLScene()->GetNodesByClass("vtkMRMLMarkupsNode", markupNodes);
-  for (std::vector< vtkMRMLNode* >::iterator nodeIt = markupNodes.begin(); nodeIt != markupNodes.end(); ++nodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator nodeIt = markupNodes.begin(); nodeIt != markupNodes.end(); ++nodeIt)
   {
     vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(*nodeIt);
     if (!markupsNode)
@@ -159,7 +159,7 @@ void vtkMRMLMarkupsDisplayableManager::UpdateFromMRML()
 
   std::vector<vtkMRMLNode*> markupsDisplayNodes;
   this->GetMRMLScene()->GetNodesByClass("vtkMRMLMarkupsDisplayNode", markupsDisplayNodes);
-  for (std::vector< vtkMRMLNode* >::iterator nodeIt = markupsDisplayNodes.begin(); nodeIt != markupsDisplayNodes.end(); ++nodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator nodeIt = markupsDisplayNodes.begin(); nodeIt != markupsDisplayNodes.end(); ++nodeIt)
   {
     vtkMRMLMarkupsDisplayNode* markupsDisplayNode = vtkMRMLMarkupsDisplayNode::SafeDownCast(*nodeIt);
     if (!markupsDisplayNode)

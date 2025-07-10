@@ -1261,10 +1261,10 @@ void vtkMRMLSegmentationDisplayNode::UpdateSegmentList(bool removeUnusedDisplayP
 
   // Add missing segment display properties
   // Get segment list of segments that do not have display properties.
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
   std::vector<std::string> missingSegmentIDs;
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
   {
     if (this->SegmentationDisplayProperties.find(*segmentIdIt) == this->SegmentationDisplayProperties.end())
     {

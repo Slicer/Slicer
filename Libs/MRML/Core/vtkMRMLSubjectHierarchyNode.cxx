@@ -63,7 +63,7 @@ public:
   void WriteXML(ostream& of, int indent, vtkMRMLNode* xmlEncoderNode);
   void DeepCopy(vtkSubjectHierarchyItem* item, bool copyChildren=true);
 
-  typedef std::vector<vtkSmartPointer<vtkSubjectHierarchyItem> > ChildVector;
+  typedef std::vector<vtkSmartPointer<vtkSubjectHierarchyItem>> ChildVector;
 
 public:
   /// Incremental unique identifier of the subject hierarchy item.
@@ -105,8 +105,8 @@ public:
 
   /// Item and data node cache to speed up lookups that are needed many times.
   /// It can be static as the item IDs are unique in one application session.
-  static std::map<vtkIdType, vtkWeakPointer<vtkSubjectHierarchyItem> > ItemCache;
-  static std::map<vtkMRMLNode*, vtkWeakPointer<vtkSubjectHierarchyItem> > DataNodeCache;
+  static std::map<vtkIdType, vtkWeakPointer<vtkSubjectHierarchyItem>> ItemCache;
+  static std::map<vtkMRMLNode*, vtkWeakPointer<vtkSubjectHierarchyItem>> DataNodeCache;
 
 // Get/set functions
 public:
@@ -257,10 +257,10 @@ vtkStandardNewMacro(vtkSubjectHierarchyItem);
 
 vtkIdType vtkSubjectHierarchyItem::NextSubjectHierarchyItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID + 1;
 
-std::map<vtkIdType, vtkWeakPointer<vtkSubjectHierarchyItem> > vtkSubjectHierarchyItem::ItemCache =
-  std::map<vtkIdType, vtkWeakPointer<vtkSubjectHierarchyItem> >();
-std::map<vtkMRMLNode*, vtkWeakPointer<vtkSubjectHierarchyItem> > vtkSubjectHierarchyItem::DataNodeCache =
-  std::map<vtkMRMLNode*, vtkWeakPointer<vtkSubjectHierarchyItem> >();
+std::map<vtkIdType, vtkWeakPointer<vtkSubjectHierarchyItem>> vtkSubjectHierarchyItem::ItemCache =
+  std::map<vtkIdType, vtkWeakPointer<vtkSubjectHierarchyItem>>();
+std::map<vtkMRMLNode*, vtkWeakPointer<vtkSubjectHierarchyItem>> vtkSubjectHierarchyItem::DataNodeCache =
+  std::map<vtkMRMLNode*, vtkWeakPointer<vtkSubjectHierarchyItem>>();
 
 //---------------------------------------------------------------------------
 // vtkSubjectHierarchyItem methods
@@ -730,7 +730,7 @@ vtkSubjectHierarchyItem* vtkSubjectHierarchyItem::FindChildByID(vtkIdType itemID
   }
 
   // Try to find item in cache
-  std::map<vtkIdType, vtkWeakPointer<vtkSubjectHierarchyItem> >::iterator itemIt = vtkSubjectHierarchyItem::ItemCache.find(itemID);
+  std::map<vtkIdType, vtkWeakPointer<vtkSubjectHierarchyItem>>::iterator itemIt = vtkSubjectHierarchyItem::ItemCache.find(itemID);
   if (itemIt != vtkSubjectHierarchyItem::ItemCache.end())
   {
     if (itemIt->second != nullptr)

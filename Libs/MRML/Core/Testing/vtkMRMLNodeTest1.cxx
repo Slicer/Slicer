@@ -2451,7 +2451,7 @@ bool TestSetNodeReferenceIDToZeroOrEmptyString()
 
   // The following code adds 8 referenced nodes
 
-  std::vector< vtkWeakPointer<vtkMRMLNodeTestHelper1> > referencingNodes;
+  std::vector<vtkWeakPointer<vtkMRMLNodeTestHelper1>> referencingNodes;
 
   int referencingNodeCount = 8;
   for (int idx = 0; idx < referencingNodeCount; idx++)

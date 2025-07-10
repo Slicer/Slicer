@@ -193,10 +193,10 @@ public:
   };
 
   //-------------------------------------------------------------------------
-  typedef std::vector< Pipeline* > PipelineListType;
+  typedef std::vector<Pipeline*> PipelineListType;
   PipelineListType DisplayPipelines;
 
-  std::vector< vtkWeakPointer<vtkMRMLVolumeNode> > ObservedVolumeNodes;
+  std::vector<vtkWeakPointer<vtkMRMLVolumeNode>> ObservedVolumeNodes;
 
   vtkVolumeMapper* GetVolumeMapper(vtkMRMLVolumeRenderingDisplayNode* displayNode);
 

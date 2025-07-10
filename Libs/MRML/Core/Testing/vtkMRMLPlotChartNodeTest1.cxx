@@ -94,7 +94,7 @@ int vtkMRMLPlotChartNodeTest1(int, char*[])
   CHECK_POINTER(node->GetPlotSeriesNode(), plotSeriesNode2.GetPointer());
 
   // Verify that Copy method creates a true independent copy
-  vtkSmartPointer< vtkMRMLPlotChartNode > nodeCopy = vtkSmartPointer< vtkMRMLPlotChartNode >::New();
+  vtkSmartPointer<vtkMRMLPlotChartNode> nodeCopy = vtkSmartPointer<vtkMRMLPlotChartNode>::New();
   nodeCopy->Copy(node.GetPointer());
 
   CHECK_STD_STRING(node->GetName(), nodeCopy->GetName());

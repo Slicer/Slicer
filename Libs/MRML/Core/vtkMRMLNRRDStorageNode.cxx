@@ -128,19 +128,19 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
   {
-    volNode = dynamic_cast <vtkMRMLDiffusionTensorVolumeNode*> (refNode);
+    volNode = dynamic_cast<vtkMRMLDiffusionTensorVolumeNode*> (refNode);
   }
   else if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
   {
-    volNode = dynamic_cast <vtkMRMLDiffusionWeightedVolumeNode*> (refNode);
+    volNode = dynamic_cast<vtkMRMLDiffusionWeightedVolumeNode*> (refNode);
   }
   else if ( refNode->IsA("vtkMRMLVectorVolumeNode") )
   {
-    volNode = dynamic_cast <vtkMRMLVectorVolumeNode*> (refNode);
+    volNode = dynamic_cast<vtkMRMLVectorVolumeNode*> (refNode);
   }
   else if ( refNode->IsA("vtkMRMLScalarVolumeNode") )
   {
-    volNode = dynamic_cast <vtkMRMLScalarVolumeNode*> (refNode);
+    volNode = dynamic_cast<vtkMRMLScalarVolumeNode*> (refNode);
   }
   else if ( refNode->IsA("vtkMRMLVolumeNode") )
   {
@@ -251,7 +251,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
     else
     {
-      //dynamic_cast <vtkMRMLTensorVolumeNode*> (volNode)->SetMeasurementFrameMatrix(mat2);
+      //dynamic_cast<vtkMRMLTensorVolumeNode*> (volNode)->SetMeasurementFrameMatrix(mat2);
       (vtkMRMLTensorVolumeNode::SafeDownCast(volNode))->SetMeasurementFrameMatrix(mat2);
     }
   }
@@ -264,7 +264,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
     else
     {
-      //dynamic_cast <vtkMRMLTensorVolumeNode*> (volNode)->SetMeasurementFrameMatrix(mat2);
+      //dynamic_cast<vtkMRMLTensorVolumeNode*> (volNode)->SetMeasurementFrameMatrix(mat2);
       (vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(volNode))->SetMeasurementFrameMatrix(mat2);
     }
   }
@@ -279,8 +279,8 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
       vtkErrorMacro("vtkMRMLDiffusionWeightedVolumeNode: Cannot parse Diffusion Information");
       return 0;
     }
-    dynamic_cast <vtkMRMLDiffusionWeightedVolumeNode*> (volNode)->SetDiffusionGradients(grad.GetPointer());
-    dynamic_cast <vtkMRMLDiffusionWeightedVolumeNode*> (volNode)->SetBValues(bvalue.GetPointer());
+    dynamic_cast<vtkMRMLDiffusionWeightedVolumeNode*> (volNode)->SetDiffusionGradients(grad.GetPointer());
+    dynamic_cast<vtkMRMLDiffusionWeightedVolumeNode*> (volNode)->SetBValues(bvalue.GetPointer());
   }
 
   // parse non-specific key-value pairs

@@ -214,9 +214,9 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
 
     // Add items for each segment
     vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-    std::vector< std::string > segmentIDs;
+    std::vector<std::string> segmentIDs;
     segmentation->GetSegmentIDs(segmentIDs);
-    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
       QString segmentId(segmentIdIt->c_str());
       vtkSegment* segment = segmentation->GetSegment(*segmentIdIt);
@@ -247,9 +247,9 @@ void qMRMLSegmentSelectorWidget::populateSegmentCombobox()
 
     // Add items for each segment
     vtkSegmentation* segmentation = d->SegmentationNode->GetSegmentation();
-    std::vector< std::string > segmentIDs;
+    std::vector<std::string> segmentIDs;
     segmentation->GetSegmentIDs(segmentIDs);
-    for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+    for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
     {
       QString segmentId(segmentIdIt->c_str());
       // Segment name

@@ -87,8 +87,8 @@ public:
   typedef std::map<vtkSmartPointer<vtkMRMLMarkupsDisplayNode>, vtkSlicerMarkupsInteractionWidget*>::iterator DisplayNodeToInteractionWidgetIt;
   DisplayNodeToInteractionWidgetType MarkupsDisplayNodesToInteractionWidgets;  // display nodes with widgets assigned
 
-  typedef std::set < vtkSmartPointer<vtkMRMLMarkupsNode> > MarkupsNodesType;
-  typedef std::set < vtkSmartPointer<vtkMRMLMarkupsNode> >::iterator MarkupsNodesIt;
+  typedef std::set < vtkSmartPointer<vtkMRMLMarkupsNode>> MarkupsNodesType;
+  typedef std::set < vtkSmartPointer<vtkMRMLMarkupsNode>>::iterator MarkupsNodesIt;
   MarkupsNodesType MarkupsNodes; // observed markups nodes
 
   void AddMarkupsNode(vtkMRMLMarkupsNode* node);
@@ -116,7 +116,7 @@ private:
 
   /// Keep a record of the current glyph type for the handles in the widget
   /// associated with this node, prevents changing them unnecessarily
-  std::map<vtkMRMLNode*, std::vector<int> > NodeGlyphTypes;
+  std::map<vtkMRMLNode*, std::vector<int>> NodeGlyphTypes;
 
   bool AddingMarkupsNode;
 

@@ -88,19 +88,19 @@ int DoIt( int argc, char* argv[], T )
 #define RADIUS 3
 
   typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::HammingWindowFunction<RADIUS> >
+                                                    itk::Function::HammingWindowFunction<RADIUS>>
    HammingInterpolatorType;
   typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::CosineWindowFunction<RADIUS> >
+                                                    itk::Function::CosineWindowFunction<RADIUS>>
    CosineInterpolatorType;
   typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::WelchWindowFunction<RADIUS> >
+                                                    itk::Function::WelchWindowFunction<RADIUS>>
    WelchInterpolatorType;
   typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::LanczosWindowFunction<RADIUS> >
+                                                    itk::Function::LanczosWindowFunction<RADIUS>>
    LanczosInterpolatorType;
   typedef itk::WindowedSincInterpolateImageFunction<InputImageType, RADIUS,
-                                                    itk::Function::BlackmanWindowFunction<RADIUS> >
+                                                    itk::Function::BlackmanWindowFunction<RADIUS>>
    BlackmanInterpolatorType;
 
   typedef itk::ResampleImageFilter<InputImageType, InputImageType>

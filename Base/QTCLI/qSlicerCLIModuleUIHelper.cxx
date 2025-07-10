@@ -926,11 +926,11 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
   QString name = QString::fromStdString(moduleParameter.GetName());
 
   QStringList fileExtensions;
-  const std::vector< std::string > fileExtensionsStd = moduleParameter.GetFileExtensions();
+  const std::vector<std::string> fileExtensionsStd = moduleParameter.GetFileExtensions();
   if (!fileExtensionsStd.empty())
   {
     QString customFilter(qSlicerCLIModuleUIHelper::tr("Compatible Files") + " (");
-    for (std::vector< std::string >::const_iterator it = fileExtensionsStd.begin();
+    for (std::vector<std::string>::const_iterator it = fileExtensionsStd.begin();
       it != fileExtensionsStd.end(); ++it)
     {
       if (it != fileExtensionsStd.begin())

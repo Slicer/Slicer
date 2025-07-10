@@ -55,7 +55,7 @@ bool vtkMRMLSequenceStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLSequenceStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLSequenceNode* sequenceNode = dynamic_cast <vtkMRMLSequenceNode*> (refNode);
+  vtkMRMLSequenceNode* sequenceNode = dynamic_cast<vtkMRMLSequenceNode*> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())

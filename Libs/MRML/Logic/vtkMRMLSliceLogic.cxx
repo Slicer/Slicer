@@ -2489,9 +2489,9 @@ void vtkMRMLSliceLogic::SnapSliceOffsetToIJK()
 
 
 //----------------------------------------------------------------------------
-std::vector< vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
+std::vector<vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
 {
-  std::vector< vtkMRMLDisplayNode*> nodes;
+  std::vector<vtkMRMLDisplayNode*> nodes;
   std::vector<vtkMRMLSliceLayerLogic*> layerLogics;
   layerLogics.push_back(this->GetBackgroundLayer());
   layerLogics.push_back(this->GetForegroundLayer());
@@ -2513,7 +2513,7 @@ std::vector< vtkMRMLDisplayNode*> vtkMRMLSliceLogic::GetPolyDataDisplayNodes()
       vtkMRMLGlyphableVolumeDisplayNode* displayNode = vtkMRMLGlyphableVolumeDisplayNode::SafeDownCast( layerLogic->GetVolumeNode()->GetDisplayNode() );
       if (displayNode)
       {
-        std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> dnodes  = displayNode->GetSliceGlyphDisplayNodes(volumeNode);
+        std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> dnodes  = displayNode->GetSliceGlyphDisplayNodes(volumeNode);
         for (unsigned int n=0; n<dnodes.size(); n++)
         {
           vtkMRMLGlyphableVolumeSliceDisplayNode* dnode = dnodes[n];

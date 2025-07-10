@@ -366,7 +366,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode* 
 
 
   // cast the input nod
-  vtkMRMLAnnotationRulerNode* aNode = dynamic_cast <vtkMRMLAnnotationRulerNode*> (refNode);
+  vtkMRMLAnnotationRulerNode* aNode = dynamic_cast<vtkMRMLAnnotationRulerNode*> (refNode);
 
   if (aNode == nullptr)
   {

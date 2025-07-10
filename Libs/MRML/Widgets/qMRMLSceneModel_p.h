@@ -100,7 +100,7 @@ public:
   QList<vtkMRMLNode*> MisplacedNodes;
   // We keep a list of QStandardItem instead of vtkMRMLNode* because they are
   // likely to be unreachable when browsing the model
-  QList<QList<QStandardItem*> > Orphans;
+  QList<QList<QStandardItem*>> Orphans;
 
   // Map from MRML node to row.
   // It just stores the result of the latest lookup by indexFromNode,

@@ -106,7 +106,7 @@ void vtkMRMLSequenceNode::WriteXML(ostream& of, int nIndent)
   of << indent << " numericIndexValueTolerance=\"" << this->NumericIndexValueTolerance << "\"";
 
   of << indent << " indexValues=\"";
-  for(std::deque< IndexEntryType >::iterator indexIt=this->IndexEntries.begin(); indexIt!=this->IndexEntries.end(); ++indexIt)
+  for(std::deque<IndexEntryType>::iterator indexIt=this->IndexEntries.begin(); indexIt!=this->IndexEntries.end(); ++indexIt)
   {
     if (indexIt!=this->IndexEntries.begin())
     {
@@ -268,7 +268,7 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode* anode)
   bool mapDataNodeIds = !sourceToTargetDataNodeID.empty();
 
   this->IndexEntries.clear();
-  for(std::deque< IndexEntryType >::iterator sourceIndexIt=snode->IndexEntries.begin(); sourceIndexIt!=snode->IndexEntries.end(); ++sourceIndexIt)
+  for(std::deque<IndexEntryType>::iterator sourceIndexIt=snode->IndexEntries.begin(); sourceIndexIt!=snode->IndexEntries.end(); ++sourceIndexIt)
   {
     IndexEntryType seqItem;
     seqItem.IndexValue=sourceIndexIt->IndexValue;
@@ -309,7 +309,7 @@ void vtkMRMLSequenceNode::CopySequenceIndex(vtkMRMLNode* anode)
   if (this->IndexEntries.size() > 0 || snode->IndexEntries.size() > 0)
   {
     this->IndexEntries.clear();
-    for (std::deque< IndexEntryType >::iterator sourceIndexIt = snode->IndexEntries.begin(); sourceIndexIt != snode->IndexEntries.end(); ++sourceIndexIt)
+    for (std::deque<IndexEntryType>::iterator sourceIndexIt = snode->IndexEntries.begin(); sourceIndexIt != snode->IndexEntries.end(); ++sourceIndexIt)
     {
       IndexEntryType seqItem;
       seqItem.IndexValue = sourceIndexIt->IndexValue;
@@ -746,7 +746,7 @@ void vtkMRMLSequenceNode::UpdateSequenceIndex()
     // nothing to update
     return;
   }
-  for (std::deque< IndexEntryType >::iterator indexIt = this->IndexEntries.begin(); indexIt != this->IndexEntries.end(); ++indexIt)
+  for (std::deque<IndexEntryType>::iterator indexIt = this->IndexEntries.begin(); indexIt != this->IndexEntries.end(); ++indexIt)
   {
     if (indexIt->DataNode == nullptr)
     {

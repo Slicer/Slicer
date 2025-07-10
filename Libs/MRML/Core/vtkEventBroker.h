@@ -52,7 +52,7 @@ public:
   vtkTypeMacro(vtkEventBroker, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  typedef std::set< vtkObservation*> ObservationVector;
+  typedef std::set<vtkObservation*> ObservationVector;
 
   ///
   /// Return the singleton instance with no reference counting.
@@ -284,7 +284,7 @@ protected:
   ObjectToObservationVectorMap ObserverMap;
 
   /// The event queue of triggered but not-yet-invoked observations
-  std::deque< vtkObservation*> EventQueue;
+  std::deque<vtkObservation*> EventQueue;
 
   void (*ScriptHandler) (const char* script, void* clientData);
   void* ScriptHandlerClientData;

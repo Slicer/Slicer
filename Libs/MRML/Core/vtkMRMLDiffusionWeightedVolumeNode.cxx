@@ -338,7 +338,7 @@ double* vtkMRMLDiffusionWeightedVolumeNode::GetDiffusionGradient(int num)
     vtkErrorMacro(<< "Gradient number is out of range.");
     return nullptr;
   }
-  return static_cast <double*> (this->DiffusionGradients->GetVoidPointer(num*3));
+  return static_cast<double*> (this->DiffusionGradients->GetVoidPointer(num*3));
 }
 
 //----------------------------------------------------------------------------

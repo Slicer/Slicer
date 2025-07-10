@@ -57,7 +57,7 @@ void vtkITKExecuteDataFromFileVector(
   typedef itk::VectorImage<T,3> image2;
   typedef itk::ImageSource<image2> FilterType;
   typename FilterType::Pointer filter;
-  typedef itk::ImageFileReader< image2 > ReaderType;
+  typedef itk::ImageFileReader<image2> ReaderType;
   typename ReaderType::Pointer reader2 = ReaderType::New();
   reader2->SetFileName(self->GetFileName(0));
   if (self->GetUseNativeCoordinateOrientation())

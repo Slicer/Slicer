@@ -116,7 +116,7 @@ public:
   QAction* ToggleRotateHandleVisible{nullptr};
   QAction* ToggleScaleHandleVisible{nullptr};
 
-  QList< vtkWeakPointer<vtkMRMLMarkupsNode> > NodesToDelete;
+  QList<vtkWeakPointer<vtkMRMLMarkupsNode>> NodesToDelete;
 
   QVariantMap ViewContextMenuEventData;
 };

@@ -130,7 +130,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   typedef std::set<std::string>              ArrayOfITKIOClassName;
   ArrayOfITKIOClassName ITKIOClassNames;
 #else
-  typedef std::vector< std::string >              ArrayOfITKExtensionsType;
+  typedef std::vector<std::string>              ArrayOfITKExtensionsType;
 #endif
 
 //  std::map<std::string, ITKImageFileFormat >    itkWriteFormatsMap;
@@ -141,7 +141,7 @@ void vtkDataFileFormatHelper::PopulateITKSupportedWriteFileTypes()
   ArrayOfImageIOType::iterator itr = allobjects.begin();
   while( itr != allobjects.end() )
   {
-    IOBaseType* io = dynamic_cast< IOBaseType*>( itr->GetPointer() );
+    IOBaseType* io = dynamic_cast<IOBaseType*>( itr->GetPointer() );
     if( ! io )
     {
       continue;

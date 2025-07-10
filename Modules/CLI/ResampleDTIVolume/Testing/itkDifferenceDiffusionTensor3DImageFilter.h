@@ -63,7 +63,7 @@ public:
   typedef typename NumericTraits<OutputPixelType>::RealType RealType;
   typedef typename NumericTraits<RealType>::AccumulateType  AccumulateType;
 
-  typedef std::vector<std::vector<double> >     DoubleVectorType;
+  typedef std::vector<std::vector<double>>     DoubleVectorType;
   typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
   typedef itk::Matrix<double, 3, 3>             MatrixType;
 

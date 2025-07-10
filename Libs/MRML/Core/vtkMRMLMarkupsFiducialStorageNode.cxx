@@ -728,7 +728,7 @@ int vtkMRMLMarkupsFiducialStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkMRMLMarkupsNode* markupsNode = nullptr;
   if (refNode->IsA("vtkMRMLMarkupsNode"))
   {
-    markupsNode = dynamic_cast <vtkMRMLMarkupsNode*> (refNode);
+    markupsNode = dynamic_cast<vtkMRMLMarkupsNode*> (refNode);
   }
 
   if (markupsNode == nullptr)

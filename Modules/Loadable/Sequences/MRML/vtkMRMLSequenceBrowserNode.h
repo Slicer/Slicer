@@ -121,7 +121,7 @@ public:
 
   //@{
   /// Returns all synchronized sequence nodes (does not include the master sequence node)
-  void GetSynchronizedSequenceNodes(std::vector< vtkMRMLSequenceNode* > &synchronizedDataNodes, bool includeMasterNode=false);
+  void GetSynchronizedSequenceNodes(std::vector<vtkMRMLSequenceNode*> &synchronizedDataNodes, bool includeMasterNode=false);
   void GetSynchronizedSequenceNodes(vtkCollection* synchronizedDataNodes, bool includeMasterNode=false);
   //@}
 
@@ -286,7 +286,7 @@ public:
   /// Get sequence node corresponding to a proxy node.
   vtkMRMLSequenceNode* GetSequenceNode(vtkMRMLNode* proxyNode);
 
-  void GetAllProxyNodes(std::vector< vtkMRMLNode* > &nodes);
+  void GetAllProxyNodes(std::vector<vtkMRMLNode*> &nodes);
   void GetAllProxyNodes(vtkCollection* nodes);
 
   /// Deprecated method!
@@ -412,7 +412,7 @@ protected:
 
   // Unique postfixes for storing references to sequence nodes, proxy nodes, and properties
   // For example, a sequence node reference role name is SEQUENCE_NODE_REFERENCE_ROLE_BASE+synchronizationPostfix
-  std::vector< std::string > SynchronizationPostfixes;
+  std::vector<std::string> SynchronizationPostfixes;
 
   // Counter that is used for generating the unique (only for this class) proxy node postfix strings
   int LastPostfixIndex{0};

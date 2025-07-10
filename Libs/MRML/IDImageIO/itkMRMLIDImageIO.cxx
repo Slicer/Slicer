@@ -321,7 +321,7 @@ MRMLIDImageIO
       //
       MetaDataDictionary &thisDic = this->GetMetaDataDictionary();
 
-      EncapsulateMetaData<std::string >(thisDic, "modality", "DWMRI");
+      EncapsulateMetaData<std::string>(thisDic, "modality", "DWMRI");
 
       this->SetDTDictionaryValues(thisDic, di);
     }
@@ -335,7 +335,7 @@ MRMLIDImageIO
       //
       MetaDataDictionary &thisDic = this->GetMetaDataDictionary();
 
-      EncapsulateMetaData<std::string >(thisDic, "modality", "DWMRI");
+      EncapsulateMetaData<std::string>(thisDic, "modality", "DWMRI");
 
       this->SetDWDictionaryValues(thisDic, dw);
     }
@@ -699,7 +699,7 @@ MRMLIDImageIO
   // Measurement frame
   std::string measurementFrameKey = "NRRD_measurement frame";
   double measurementFrame[3][3];
-  std::vector<std::vector<double> > measurementFrameValue(3);
+  std::vector<std::vector<double>> measurementFrameValue(3);
 
   dw->GetMeasurementFrameMatrix(measurementFrame);
 
@@ -725,7 +725,7 @@ MRMLIDImageIO
     }
   }
 
-  EncapsulateMetaData<std::vector<std::vector<double> > >(dict,
+  EncapsulateMetaData<std::vector<std::vector<double>> >(dict,
                                            measurementFrameKey,
                                          measurementFrameValue);
 
@@ -771,7 +771,7 @@ MRMLIDImageIO
     ss.width(4);
     ss << i << endl;
 
-    // EncapsulateMetaData<std::vector<double> >(dict, ss.str(), gradient);
+    // EncapsulateMetaData<std::vector<double>>(dict, ss.str(), gradient);
     std::stringstream gradientss;
     gradientss << gradient[0] << " " << gradient[1] << " " << gradient[2];
     EncapsulateMetaData<std::string>(dict, ss.str(),gradientss.str());
@@ -787,14 +787,14 @@ MRMLIDImageIO
   // Measurement frame
   std::string measurementFrameKey = "NRRD_measurement frame";
   double measurementFrame[3][3];
-  std::vector<std::vector<double> > measurementFrameValue(3);
+  std::vector<std::vector<double>> measurementFrameValue(3);
 
   for (unsigned int i=0; i < 3; i++)
   {
     measurementFrameValue[i].resize(3);
   }
 
-  ExposeMetaData<std::vector<std::vector<double> > >(dict,
+  ExposeMetaData<std::vector<std::vector<double>> >(dict,
                                                      measurementFrameKey,
                                                      measurementFrameValue);
 
@@ -844,7 +844,7 @@ MRMLIDImageIO
   std::vector<std::string> keys = dict.GetKeys();
 
   std::vector<double> bvalues;
-  std::vector<std::vector<double> > gradients;
+  std::vector<std::vector<double>> gradients;
   for (std::vector<std::string>::iterator it = keys.begin();
        it != keys.end(); ++it)
   {
@@ -853,7 +853,7 @@ MRMLIDImageIO
       // found a gradient
       std::string gradientString;
       std::vector<double> gradient(3);
-      // ExposeMetaData<std::vector<double> >(dict, *it, gradient);
+      // ExposeMetaData<std::vector<double>>(dict, *it, gradient);
       ExposeMetaData<std::string>(dict, *it, gradientString);
 
       std::stringstream gradientSS;
@@ -897,7 +897,7 @@ MRMLIDImageIO
   // Measurement frame
   std::string measurementFrameKey = "NRRD_measurement frame";
   double measurementFrame[3][3];
-  std::vector<std::vector<double> > measurementFrameValue(3);
+  std::vector<std::vector<double>> measurementFrameValue(3);
 
   di->GetMeasurementFrameMatrix(measurementFrame);
 
@@ -923,7 +923,7 @@ MRMLIDImageIO
     }
   }
 
-  EncapsulateMetaData<std::vector<std::vector<double> > >(dict,
+  EncapsulateMetaData<std::vector<std::vector<double>> >(dict,
                                            measurementFrameKey,
                                          measurementFrameValue);
 }
@@ -937,14 +937,14 @@ MRMLIDImageIO
   // Measurement frame
   std::string measurementFrameKey = "NRRD_measurement frame";
   double measurementFrame[3][3];
-  std::vector<std::vector<double> > measurementFrameValue(3);
+  std::vector<std::vector<double>> measurementFrameValue(3);
 
   for (unsigned int i=0; i < 3; i++)
   {
     measurementFrameValue[i].resize(3);
   }
 
-  ExposeMetaData<std::vector<std::vector<double> > >(dict,
+  ExposeMetaData<std::vector<std::vector<double>> >(dict,
                                                      measurementFrameKey,
                                                      measurementFrameValue);
 

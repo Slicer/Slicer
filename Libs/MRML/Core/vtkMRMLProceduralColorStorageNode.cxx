@@ -153,7 +153,7 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkMRMLProceduralColorNode* colorNode = nullptr;
   if ( refNode->IsA("vtkMRMLProceduralColorNode") )
   {
-    colorNode = dynamic_cast <vtkMRMLProceduralColorNode*> (refNode);
+    colorNode = dynamic_cast<vtkMRMLProceduralColorNode*> (refNode);
   }
 
   if (colorNode == nullptr)

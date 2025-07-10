@@ -635,7 +635,7 @@ int vtkITKArchetypeImageSeriesReader::RequestInformation(
       extent[4] = region.GetIndex()[2];
       extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
 
-      typedef std::vector<std::vector<double> >    DoubleVectorType;
+      typedef std::vector<std::vector<double>>    DoubleVectorType;
       typedef itk::MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
       const itk::MetaDataDictionary& dictionary = imageReader->GetMetaDataDictionary();
       itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();

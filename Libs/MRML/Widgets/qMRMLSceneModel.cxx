@@ -64,7 +64,7 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
 
   this->DraggedItem = nullptr;
 
-  qRegisterMetaType<QStandardItem* >("QStandardItem*");
+  qRegisterMetaType<QStandardItem*>("QStandardItem*");
 }
 
 //------------------------------------------------------------------------------

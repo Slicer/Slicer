@@ -42,7 +42,7 @@ public:
   typedef ImageFileWriter<DiffusionImageType> WriterType;
   typedef SmartPointer<Self>                  Pointer;
   typedef SmartPointer<const Self>            ConstPointer;
-  typedef std::vector<std::vector<double> >   DoubleVectorType;
+  typedef std::vector<std::vector<double>>   DoubleVectorType;
   typedef MetaDataObject<DoubleVectorType>    MetaDataDoubleVectorType;
   typedef MetaDataObject<std::string>         MetaDataIntType;
 

@@ -171,7 +171,7 @@ void vtkSegmentation::DeepCopy(vtkSegmentation* aSegmentation)
 
   // Deep copy segments list
   std::map<vtkDataObject*, vtkDataObject*> copiedDataObjects;
-  for (std::deque< std::string >::iterator segmentIdIt = aSegmentation->SegmentIds.begin(); segmentIdIt != aSegmentation->SegmentIds.end(); ++segmentIdIt)
+  for (std::deque<std::string>::iterator segmentIdIt = aSegmentation->SegmentIds.begin(); segmentIdIt != aSegmentation->SegmentIds.end(); ++segmentIdIt)
   {
     vtkSmartPointer<vtkSegment> segment = vtkSmartPointer<vtkSegment>::New();
     vtkSegmentation::CopySegment(segment, aSegmentation->Segments[*segmentIdIt], nullptr, copiedDataObjects);
@@ -197,7 +197,7 @@ void vtkSegmentation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "SourceRepresentationName:  " << this->SourceRepresentationName << "\n";
   os << indent << "Number of segments: " << this->Segments.size() << "\n";
   os << indent << "Segments:\n";
-  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin();
+  for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin();
     segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
   {
     os << indent.GetNextIndent() << (*segmentIdIt) << ":\n";
@@ -629,7 +629,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
   if (!representationsCreated)
   {
     SegmentMap::iterator segmentIt = std::find_if(this->Segments.begin(), this->Segments.end(),
-      [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment> >& segmentIdPtr) { return segmentIdPtr.second == segment; });
+      [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment>>& segmentIdPtr) { return segmentIdPtr.second == segment; });
     if (segmentIt != this->Segments.end())
     {
       this->Segments.erase(segmentIt);
@@ -658,7 +658,7 @@ bool vtkSegmentation::AddSegment(vtkSegment* segment, std::string segmentId/*=""
   }
   else
   {
-    std::deque< std::string >::iterator insertionPosition = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), insertBeforeSegmentId);
+    std::deque<std::string>::iterator insertionPosition = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), insertBeforeSegmentId);
     this->SegmentIds.insert(insertionPosition, key);
   }
 
@@ -695,7 +695,7 @@ void vtkSegmentation::RemoveSegment(vtkSegment* segment)
   }
 
   SegmentMap::iterator segmentIt = std::find_if(this->Segments.begin(), this->Segments.end(),
-    [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment> >& segmentIdPtr) { return segmentIdPtr.second == segment; });
+    [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment>>& segmentIdPtr) { return segmentIdPtr.second == segment; });
   if (segmentIt == this->Segments.end())
   {
     vtkWarningMacro("RemoveSegment: Segment to remove cannot be found!");
@@ -804,7 +804,7 @@ void vtkSegmentation::OnSourceRepresentationModified(vtkObject* vtkNotUsed(calle
 //---------------------------------------------------------------------------
 void vtkSegmentation::UpdateSourceRepresentationObservers()
 {
-  std::set<vtkSmartPointer<vtkDataObject> > newSourceRepresentations;
+  std::set<vtkSmartPointer<vtkDataObject>> newSourceRepresentations;
   // Add/remove observation of source representation in all segments
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
   {
@@ -890,7 +890,7 @@ std::string vtkSegmentation::GetNthSegmentID(unsigned int index) const
 //---------------------------------------------------------------------------
 int vtkSegmentation::GetSegmentIndex(const std::string& segmentId)
 {
-  std::deque< std::string >::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
+  std::deque<std::string>::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
   if (foundIt == this->SegmentIds.end())
   {
     return -1;
@@ -907,7 +907,7 @@ bool vtkSegmentation::SetSegmentIndex(const std::string& segmentId, unsigned int
       << " is out of range [0," << this->SegmentIds.size()-1 << "]");
     return false;
   }
-  std::deque< std::string >::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
+  std::deque<std::string>::iterator foundIt = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), segmentId);
   if (foundIt == this->SegmentIds.end())
   {
     vtkErrorMacro("vtkSegmentation::SetSegmentIndex failed: segment not found by ID " << segmentId);
@@ -929,7 +929,7 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
   }
 
   // Remove all segmentIdsToMove from the segment ID list
-  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
+  for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end();
     /*upon deletion the increment is done already, so don't increment here*/)
   {
     std::string t = *segmentIdIt;
@@ -938,7 +938,7 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
     {
       // this segment gets a new position, so remove it from current position
       // ### Slicer 4.4: Simplify this logic when adding support for C++11 across all supported platform/compilers
-      std::deque< std::string >::iterator segmentIdItToRemove = segmentIdIt;
+      std::deque<std::string>::iterator segmentIdItToRemove = segmentIdIt;
       ++segmentIdIt;
       this->SegmentIds.erase(segmentIdItToRemove);
       if (this->SegmentIds.empty())
@@ -954,7 +954,7 @@ void vtkSegmentation::ReorderSegments(std::vector<std::string> segmentIdsToMove,
   }
 
   // Find insert position
-  std::deque< std::string >::iterator insertPosition = this->SegmentIds.end();
+  std::deque<std::string>::iterator insertPosition = this->SegmentIds.end();
   if (!insertBeforeSegmentId.empty())
   {
     insertPosition = std::find(this->SegmentIds.begin(), this->SegmentIds.end(), insertBeforeSegmentId);
@@ -993,7 +993,7 @@ std::string vtkSegmentation::GetSegmentIdBySegment(vtkSegment* segment)
   }
 
   SegmentMap::iterator segmentIt = std::find_if(this->Segments.begin(), this->Segments.end(),
-    [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment> >& segmentIdPtr) { return segmentIdPtr.second == segment; });
+    [&segment](const std::pair<std::string, vtkSmartPointer<vtkSegment>>& segmentIdPtr) { return segmentIdPtr.second == segment; });
   if (segmentIt == this->Segments.end())
   {
     vtkDebugMacro("GetSegmentIdBySegment: Segment cannot be found!");
@@ -1050,7 +1050,7 @@ std::vector<vtkSegment*> vtkSegmentation::GetSegmentsByTag(std::string tag, std:
 void vtkSegmentation::GetSegmentIDs(std::vector<std::string> &segmentIds)
 {
   segmentIds.clear();
-  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
+  for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
   {
     segmentIds.push_back(*segmentIdIt);
   }
@@ -1064,7 +1064,7 @@ void vtkSegmentation::GetSegmentIDs(vtkStringArray* segmentIds)
     return;
   }
   segmentIds->Initialize();
-  for (std::deque< std::string >::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
+  for (std::deque<std::string>::iterator segmentIdIt = this->SegmentIds.begin(); segmentIdIt != this->SegmentIds.end(); ++segmentIdIt)
   {
     segmentIds->InsertNextValue(segmentIdIt->c_str());
   }
@@ -1339,7 +1339,7 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
 
   // Perform conversion on all segments (no overwrites)
   // Delay segment modified event invocation until all segments have the new representation.
-  std::deque< std::string > modifiedSegmentIds;
+  std::deque<std::string> modifiedSegmentIds;
 
   bool wasSegmentModifiedEnabled = this->SetSegmentModifiedEnabled(false);
   std::map<std::string, vtkDataObject*> representationsBefore;
@@ -1371,7 +1371,7 @@ bool vtkSegmentation::CreateRepresentation(const std::string& targetRepresentati
   this->SetSegmentModifiedEnabled(wasSegmentModifiedEnabled);
 
   // All the updates are completed, now invoke modified events
-  for (std::deque< std::string >::iterator segmentIdIt = modifiedSegmentIds.begin();
+  for (std::deque<std::string>::iterator segmentIdIt = modifiedSegmentIds.begin();
     segmentIdIt != modifiedSegmentIds.end(); ++segmentIdIt)
   {
     const char* segmentId = segmentIdIt->c_str();
@@ -1425,7 +1425,7 @@ void vtkSegmentation::RemoveRepresentation(const std::string& representationName
   // We temporarily disable modification of segments to avoid invoking events
   // when segmentation is in an inconsistent state (when segments have different
   // representations). We call Modified events after all the updates are completed.
-  std::deque< vtkSegment* > modifiedSegments;
+  std::deque<vtkSegment*> modifiedSegments;
   bool wasSegmentModifiedEnabled = this->SetSegmentModifiedEnabled(false);
   for (SegmentMap::iterator segmentIt = this->Segments.begin(); segmentIt != this->Segments.end(); ++segmentIt)
   {
@@ -1437,7 +1437,7 @@ void vtkSegmentation::RemoveRepresentation(const std::string& representationName
   this->SetSegmentModifiedEnabled(wasSegmentModifiedEnabled);
 
   // All the updates are completed, now invoke modified events
-  for (std::deque< vtkSegment* >::iterator segmentIt = modifiedSegments.begin(); segmentIt != modifiedSegments.end();
+  for (std::deque<vtkSegment*>::iterator segmentIt = modifiedSegments.begin(); segmentIt != modifiedSegments.end();
     ++segmentIt)
   {
     (*segmentIt)->Modified();
@@ -2517,7 +2517,7 @@ void vtkSegmentation::CollapseBinaryLabelmaps(bool forceToSingleLayer/*=false*/)
     return;
   }
 
-  typedef std::pair<vtkSmartPointer<vtkOrientedImageData>, std::vector<std::string> > LayerType;
+  typedef std::pair<vtkSmartPointer<vtkOrientedImageData>, std::vector<std::string>> LayerType;
   typedef std::vector<LayerType> LayerListType;
   std::map<std::string, int> newLabelmapValues;
   LayerListType newLayers;

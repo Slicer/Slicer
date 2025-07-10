@@ -47,8 +47,8 @@ int qMRMLClipNodeWidgetTest1(int argc, char* argv[])
 
   vtkNew<vtkMRMLScene> scene;
 
-  vtkSmartPointer< vtkMRMLClipModelsNode > clipNode =
-    vtkSmartPointer< vtkMRMLClipModelsNode >::New();
+  vtkSmartPointer<vtkMRMLClipModelsNode> clipNode =
+    vtkSmartPointer<vtkMRMLClipModelsNode>::New();
   scene->AddNode(clipNode);
 
   vtkSmartPointer<vtkMRMLSliceNode> redSlice = vtkSmartPointer<vtkMRMLSliceNode>::New();

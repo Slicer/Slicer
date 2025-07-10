@@ -36,7 +36,7 @@ DiffusionTensor3DFSAffineTransform<TData>
   {
     D.put( i, i, std::pow( eig.D.get( i, i ), 0.5 ) );
   }
-  vnl_sqrMatrix = eig.V * D * vnl_matrix_inverse<std::complex<double> >( eig.V ).as_matrix();
+  vnl_sqrMatrix = eig.V * D * vnl_matrix_inverse<std::complex<double>>( eig.V ).as_matrix();
   vnl_matrix_fixed<double, 3, 3> vnl_sqrMatrix_real( 3, 3 );
   vnl_sqrMatrix_real = vnl_real( vnl_sqrMatrix );
   for( int i = 0; i < 3; i++ )

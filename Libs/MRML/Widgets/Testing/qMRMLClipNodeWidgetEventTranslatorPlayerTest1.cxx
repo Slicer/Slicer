@@ -75,8 +75,8 @@ int qMRMLClipNodeWidgetEventTranslatorPlayerTest1(int argc, char* argv [] )
   // Test case 1
   qMRMLClipNodeWidget* widget = new qMRMLClipNodeWidget();
 
-  vtkSmartPointer< vtkMRMLClipModelsNode > clipNode =
-    vtkSmartPointer< vtkMRMLClipModelsNode >::New();
+  vtkSmartPointer<vtkMRMLClipModelsNode> clipNode =
+    vtkSmartPointer<vtkMRMLClipModelsNode>::New();
 
   widget->setMRMLClipNode(clipNode);
 

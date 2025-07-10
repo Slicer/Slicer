@@ -73,7 +73,7 @@ protected:
   vtkMRMLSnapshotClipNode(const vtkMRMLSnapshotClipNode&);
   void operator=(const vtkMRMLSnapshotClipNode&);
 
-  std::vector< std::string > SceneSnapshotNodeIDs;
+  std::vector<std::string> SceneSnapshotNodeIDs;
   vtkCollection* SceneSnapshotNodes;
 
 };

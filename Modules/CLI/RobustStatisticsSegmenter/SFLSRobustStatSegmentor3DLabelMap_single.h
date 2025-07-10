@@ -70,9 +70,9 @@ public:
 protected:
   /* data */
   TLabelImagePointer              m_inputLabelImage;
-  std::vector<std::vector<long> > m_seeds; // in IJK
+  std::vector<std::vector<long>> m_seeds; // in IJK
 
-  std::vector<std::vector<double> > m_featureAtTheSeeds;
+  std::vector<std::vector<double>> m_featureAtTheSeeds;
 
   long m_statNeighborX;
   long m_statNeighborY;
@@ -113,7 +113,7 @@ protected:
   TPixel m_inputImageIntensityMax;
   void computeMinMax();
 
-  std::vector<std::vector<double> > m_PDFlearnedFromSeeds;  // each feature corresponds to a inner std::vector<double>
+  std::vector<std::vector<double>> m_PDFlearnedFromSeeds;  // each feature corresponds to a inner std::vector<double>
   void estimatePDFs();
 
   // void getFeatureAt(TDoubleImage::IndexType idx, std::vector<double>& f);

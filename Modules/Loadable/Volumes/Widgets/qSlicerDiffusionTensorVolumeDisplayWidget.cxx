@@ -169,7 +169,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
   vtkMRMLGlyphableVolumeSliceDisplayNode* glyphableVolumeSliceNode = nullptr;
   if (newVolumeDisplayNode)
   {
-    std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> dtiSliceDisplayNodes =
+    std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> dtiSliceDisplayNodes =
       newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
     if (dtiSliceDisplayNodes.size() == 0)
     {

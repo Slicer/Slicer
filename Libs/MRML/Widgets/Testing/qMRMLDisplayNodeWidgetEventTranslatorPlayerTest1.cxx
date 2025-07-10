@@ -79,8 +79,8 @@ int qMRMLDisplayNodeWidgetEventTranslatorPlayerTest1(int argc, char* argv [] )
   // Test case 1
   qMRMLDisplayNodeWidget* widget = new qMRMLDisplayNodeWidget();
 
-  vtkSmartPointer< vtkMRMLModelDisplayNode > displayNode =
-    vtkSmartPointer< vtkMRMLModelDisplayNode >::New();
+  vtkSmartPointer<vtkMRMLModelDisplayNode> displayNode =
+    vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
 
   widget->setMRMLDisplayNode(displayNode);
 

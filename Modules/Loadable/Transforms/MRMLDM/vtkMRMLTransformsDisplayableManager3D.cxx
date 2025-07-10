@@ -69,7 +69,7 @@ public:
   typedef std::map < vtkMRMLTransformDisplayNode*, const Pipeline* > PipelinesCacheType;
   PipelinesCacheType DisplayPipelines;
 
-  typedef std::map < vtkMRMLTransformNode*, std::set< vtkMRMLTransformDisplayNode* > > TransformToDisplayCacheType;
+  typedef std::map < vtkMRMLTransformNode*, std::set<vtkMRMLTransformDisplayNode*>> TransformToDisplayCacheType;
   TransformToDisplayCacheType TransformToDisplayNodes;
 
   // Transforms
@@ -198,8 +198,8 @@ void vtkMRMLTransformsDisplayableManager3D::vtkInternal::UpdateDisplayableTransf
   // Update the pipeline for all tracked DisplayableNode
 
   PipelinesCacheType::iterator pipelinesIter;
-  std::set< vtkMRMLTransformDisplayNode* > displayNodes = this->TransformToDisplayNodes[mNode];
-  std::set< vtkMRMLTransformDisplayNode* >::iterator dnodesIter;
+  std::set<vtkMRMLTransformDisplayNode*> displayNodes = this->TransformToDisplayNodes[mNode];
+  std::set<vtkMRMLTransformDisplayNode*>::iterator dnodesIter;
   for ( dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++ )
   {
     if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )

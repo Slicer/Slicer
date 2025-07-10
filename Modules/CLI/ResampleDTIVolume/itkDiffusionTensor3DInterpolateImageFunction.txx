@@ -31,14 +31,14 @@ DiffusionTensor3DInterpolateImageFunction<TData, TCoordRep>
 /*
 template< class TData >
 void
-DiffusionTensor3DInterpolateImageFunction< TData >
+DiffusionTensor3DInterpolateImageFunction<TData>
 ::SetDefaultPixelValue( TensorRealType defaultPixelValue )
 {
   m_DefaultPixelValue = defaultPixelValue ;
   m_DefaultPixel.SetIdentity() ;
   for( unsigned int i = 0 ; i < 3 ; i++ )
     {
-    m_DefaultPixel( i , i ) *= static_cast< TData >( this->m_DefaultPixelValue ) ;
+    m_DefaultPixel( i , i ) *= static_cast<TData>( this->m_DefaultPixelValue ) ;
     }
 }
 */

@@ -133,7 +133,7 @@ void qMRMLNodeAttributeTableView::populateAttributeTable()
     return;
   }
 
-  std::vector< std::string > attributeNames = d->InspectedNode->GetAttributeNames();
+  std::vector<std::string> attributeNames = d->InspectedNode->GetAttributeNames();
   if (attributeNames.size() == 0)
   {
     d->NodeAttributesTable->setRowCount(0);
@@ -143,7 +143,7 @@ void qMRMLNodeAttributeTableView::populateAttributeTable()
     d->NodeAttributesTable->setRowCount(attributeNames.size());
 
     int row = 0;
-    for (std::vector< std::string >::iterator iter = attributeNames.begin();
+    for (std::vector<std::string>::iterator iter = attributeNames.begin();
         iter != attributeNames.end(); ++iter, ++row)
     {
       // attribute name

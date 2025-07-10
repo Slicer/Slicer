@@ -50,7 +50,7 @@ vtkStandardNewMacro(vtkMRMLVolumeGlyphSliceDisplayableManager );
 class vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
 {
 public:
-  typedef std::map<vtkMRMLDisplayableNode*, std::vector<vtkMRMLDisplayNode*> > DisplayNodesType;
+  typedef std::map<vtkMRMLDisplayableNode*, std::vector<vtkMRMLDisplayNode*>> DisplayNodesType;
   typedef std::map<vtkMRMLDisplayNode*, vtkProp*> DisplayActorsType;
 
   vtkInternal(vtkMRMLVolumeGlyphSliceDisplayableManager* external);

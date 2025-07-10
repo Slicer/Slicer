@@ -711,7 +711,7 @@ public:
       {
         return k;
       }
-      std::vector< float > aVector(3);
+      std::vector<float> aVector(3);
       float aMag = sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
       for (k = 0; k < 3; k++)
       {
@@ -753,7 +753,7 @@ public:
       {
         return k;
       }
-      std::vector< float > aVector(6);
+      std::vector<float> aVector(6);
       float aMag = sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
       float bMag = sqrt(a[3]*a[3]+a[4]*a[4]+a[5]*a[5]);
       for (k = 0; k < 3; k++)
@@ -774,7 +774,7 @@ public:
         return k;
       }
 
-      std::vector< float > aVector(3);
+      std::vector<float> aVector(3);
       for ( unsigned int i = 0; i < 3; i++ ) aVector[i] = a[i];
       this->ImagePositionPatient.push_back( aVector );
       return (this->ImagePositionPatient.size()-1);
@@ -886,10 +886,10 @@ protected:
   std::vector<std::string> ContentTime;
   std::vector<std::string> TriggerTime;
   std::vector<std::string> EchoNumbers;
-  std::vector< std::vector<float> > DiffusionGradientOrientation;
+  std::vector<std::vector<float>> DiffusionGradientOrientation;
   std::vector<float> SliceLocation;
-  std::vector< std::vector<float> > ImageOrientationPatient;
-  std::vector< std::vector<float> > ImagePositionPatient;
+  std::vector<std::vector<float>> ImageOrientationPatient;
+  std::vector<std::vector<float>> ImagePositionPatient;
 
   /// index of each dicom file into the above arrays
   std::vector<long int> IndexSeriesInstanceUIDs;

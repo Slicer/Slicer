@@ -138,8 +138,8 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testPopulate_data()
 {
-  QTest::addColumn<QList<AttributeType> >("attributes");
-  QTest::addColumn<QList<AttributeType> >("expectedAttributes");
+  QTest::addColumn<QList<AttributeType>>("attributes");
+  QTest::addColumn<QList<AttributeType>>("expectedAttributes");
 
   QTest::newRow("empty")
     << QList<AttributeType>() << QList<AttributeType>();
@@ -323,8 +323,8 @@ void qMRMLNodeAttributeTableViewTester::testSelect()
 void qMRMLNodeAttributeTableViewTester::testSelect_data()
 {
   QTest::addColumn<bool>("null");
-  QTest::addColumn<QList<AttributeType> >("attributes");
-  QTest::addColumn<QList<int> >("rangeToSelect"); // top, left, bottom, right
+  QTest::addColumn<QList<AttributeType>>("attributes");
+  QTest::addColumn<QList<int>>("rangeToSelect"); // top, left, bottom, right
   QTest::addColumn<int>("expectedSelectedCellCount");
 
   QTest::newRow("null")
@@ -381,8 +381,8 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testAdd_data()
 {
-  QTest::addColumn<QList<AttributeType> >("attributes");
-  QTest::addColumn<QList<AttributeType> >("expectedAttributes");
+  QTest::addColumn<QList<AttributeType>>("attributes");
+  QTest::addColumn<QList<AttributeType>>("expectedAttributes");
 
   QTest::newRow("empty attribute")
     << ( QList<AttributeType>() << AttributeType("", "") )
@@ -504,10 +504,10 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testRemove_data()
 {
-  QTest::addColumn<QList<AttributeType> >("attributesToAdd");
-  QTest::addColumn<QList<int> >("rangeToSelect"); // top, left, bottom, right
+  QTest::addColumn<QList<AttributeType>>("attributesToAdd");
+  QTest::addColumn<QList<int>>("rangeToSelect"); // top, left, bottom, right
   QTest::addColumn<int>("expectedAttributeCountAfterRemove");
-  QTest::addColumn<QList<AttributeEmptyType> >("expectedExistingAttributesAfterRemove");
+  QTest::addColumn<QList<AttributeEmptyType>>("expectedExistingAttributesAfterRemove");
 
   {
   QTest::newRow("0") << ( QList<AttributeType>()
@@ -566,9 +566,9 @@ void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testSelectAndAdd_data()
 {
-  QTest::addColumn<QList<AttributeType> >("attributes");
-  QTest::addColumn<QList<int> >("rangeToSelect"); // top, left, bottom, right
-  QTest::addColumn<QList<AttributeType> >("expectedAttributes");
+  QTest::addColumn<QList<AttributeType>>("attributes");
+  QTest::addColumn<QList<int>>("rangeToSelect"); // top, left, bottom, right
+  QTest::addColumn<QList<AttributeType>>("expectedAttributes");
 
   QTest::newRow("attribute name selected")
     << ( QList<AttributeType>()

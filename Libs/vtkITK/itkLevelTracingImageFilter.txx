@@ -226,7 +226,7 @@ LevelTracingImageFilter<TInputImage,TOutputImage>
   Superclass::GenerateInputRequestedRegion();
   if ( this->GetInput() )
   {
-    InputImagePointer image = const_cast< InputImageType*>( this->GetInput() );
+    InputImagePointer image = const_cast<InputImageType*>( this->GetInput() );
     image->SetRequestedRegionToLargestPossibleRegion();
   }
 }

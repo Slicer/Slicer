@@ -17,7 +17,7 @@
 
 int vtkMRMLInteractionNodeTest1(int, char*[])
 {
-  vtkNew< vtkMRMLInteractionNode > node1;
+  vtkNew<vtkMRMLInteractionNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   TEST_SET_GET_INT( node1, CurrentInteractionMode, vtkMRMLInteractionNode::Place);

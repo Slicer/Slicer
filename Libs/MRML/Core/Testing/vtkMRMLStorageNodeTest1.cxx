@@ -87,7 +87,7 @@ int vtkMRMLStorageNodeTest1(int, char*[])
 //---------------------------------------------------------------------------
 int TestBasics()
 {
-  vtkNew< vtkMRMLStorageNodeTestHelper1 > node1;
+  vtkNew<vtkMRMLStorageNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
   return EXIT_SUCCESS;
 }

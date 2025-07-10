@@ -50,7 +50,7 @@ public:
   QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes()const;
 
 public:
-  QList< vtkWeakPointer<vtkMRMLDisplayNode> > CurrentDisplayNodes;
+  QList<vtkWeakPointer<vtkMRMLDisplayNode>> CurrentDisplayNodes;
 
   // Store what data range was used to automatically slider range of display range,
   // to prevent resetting slider range when user moves the slider.

@@ -14,7 +14,7 @@ class vtkCallbackCommand;
 class vtkCollection;
 
 #ifndef vtkObjectPointer
-#define vtkObjectPointer(xx) (reinterpret_cast <vtkObject**>( (xx) ))
+#define vtkObjectPointer(xx) (reinterpret_cast<vtkObject**>( (xx) ))
 #endif
 
 class VTK_MRML_EXPORT vtkDataIOManager : public vtkObject

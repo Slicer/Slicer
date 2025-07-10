@@ -122,10 +122,10 @@ public:
   vtkSmartPointer<vtkCallbackCommand>       DeleteCallBackCommand;
   vtkRenderWindowInteractor*                Interactor;
   vtkSmartPointer<vtkCallbackCommand>       InteractorCallBackCommand;
-  std::vector<std::pair<int,float> >        InteractorObservableEvents;
+  std::vector<std::pair<int,float>>        InteractorObservableEvents;
   vtkInteractorObserver*                    InteractorStyle;
   vtkSmartPointer<vtkCallbackCommand>       InteractorStyleCallBackCommand;
-  std::vector<std::pair<int,float> >        InteractorStyleObservableEvents;
+  std::vector<std::pair<int,float>>        InteractorStyleObservableEvents;
   vtkWeakPointer<vtkMRMLLightBoxRendererManagerProxy> LightBoxRendererManagerProxy;
 
 };

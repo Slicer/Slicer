@@ -95,7 +95,7 @@ void qSlicerSslTester::testHttpsConnection()
 void qSlicerSslTester::testHttpsConnection_data()
 {
   QTest::addColumn<QString>("url");
-  QTest::addColumn<QList<QSslError::SslError> >("expectedSslErrors");
+  QTest::addColumn<QList<QSslError::SslError>>("expectedSslErrors");
   QTest::addColumn<QNetworkReply::NetworkError>("expectedNetworkError");
   QTest::addColumn<int>("expectedStatusCode");
 

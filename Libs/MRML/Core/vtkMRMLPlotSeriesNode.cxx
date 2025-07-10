@@ -356,7 +356,7 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
       << (colorTableNodeID ? colorTableNodeID : "(none)") << " not found in scene");
     return;
   }
-  std::vector< vtkMRMLNode* > seriesNodes;
+  std::vector<vtkMRMLNode*> seriesNodes;
   this->GetScene()->GetNodesByClass("vtkMRMLPlotSeriesNode", seriesNodes);
   int numberOfColors = colorTableNode->GetNumberOfColors();
   if (numberOfColors < 1)
@@ -371,7 +371,7 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
   {
     colorTableNode->GetColor(colorIndex, color);
     isColorUnique = true;
-    for (std::vector< vtkMRMLNode* >::iterator seriesNodeIt = seriesNodes.begin(); seriesNodeIt != seriesNodes.end(); ++seriesNodeIt)
+    for (std::vector<vtkMRMLNode*>::iterator seriesNodeIt = seriesNodes.begin(); seriesNodeIt != seriesNodes.end(); ++seriesNodeIt)
     {
       vtkMRMLPlotSeriesNode* seriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(*seriesNodeIt);
       if (!seriesNode)

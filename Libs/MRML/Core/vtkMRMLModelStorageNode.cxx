@@ -163,7 +163,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 1;
   }
 
-  vtkMRMLModelNode* modelNode = dynamic_cast <vtkMRMLModelNode*> (refNode);
+  vtkMRMLModelNode* modelNode = dynamic_cast<vtkMRMLModelNode*> (refNode);
   if (!modelNode)
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLModelStorageNode::ReadDataInternal",

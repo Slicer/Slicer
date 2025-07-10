@@ -878,7 +878,7 @@ CSFLSSegmentor3D<TPixel>
 
   // find interface and mark as 0, create Lz
   char defaultLabel = 0;
-  //  mp_label.reset(new cArray3D< char >(m_nx, m_ny, m_nz, defaultLabel) );
+  //  mp_label.reset(new cArray3D<char>(m_nx, m_ny, m_nz, defaultLabel) );
 
   mp_label = LabelImageType::New();
   TRegion region = mp_img->GetLargestPossibleRegion();
@@ -907,7 +907,7 @@ CSFLSSegmentor3D<TPixel>
   }
 
   double arbitraryInitPhi = 1000;
-  //  mp_phi.reset(new cArray3D< double >(m_nx, m_ny, m_nz, arbitraryInitPhi) );
+  //  mp_phi.reset(new cArray3D<double>(m_nx, m_ny, m_nz, arbitraryInitPhi) );
 
   mp_phi = LSImageType::New();
   TRegion region = mp_img->GetLargestPossibleRegion();
@@ -1256,13 +1256,13 @@ CSFLSSegmentor3D<TPixel>
 //    doSegmenation    */
 // template< typename TPixel >
 // void
-// CSFLSSegmentor3D< TPixel >
+// CSFLSSegmentor3D<TPixel>
 // ::doSegmenation()
 // {
 // //   double arbitraryInitPhi = 1000;
-// //   mp_phi.reset(new cArray3D< double >(m_nx, m_ny, m_nz, arbitraryInitPhi) );
+// //   mp_phi.reset(new cArray3D<double>(m_nx, m_ny, m_nz, arbitraryInitPhi) );
 
-//   // douher::saveAsImage3< double >(mp_phi, "init0.nrrd");
+//   // douher::saveAsImage3<double>(mp_phi, "init0.nrrd");
 
 //   /*============================================================
 //    * From the initial mask, generate: 1. SFLS, 2. mp_label and
@@ -1270,7 +1270,7 @@ CSFLSSegmentor3D<TPixel>
 //    */
 //   initializeSFLS();
 
-//   //douher::saveAsImage3< double >(mp_phi, "initPhi.nrrd");
+//   //douher::saveAsImage3<double>(mp_phi, "initPhi.nrrd");
 
 //   for (unsigned int it = 0; it < m_numIter; ++it)
 //     {
@@ -1289,7 +1289,7 @@ CSFLSSegmentor3D<TPixel>
 //       normalizeForce();
 
 //       //         // debug
-//       //         for (std::list< double >::const_iterator itf = this->m_force.begin(); itf != this->m_force.end();
+//       //         for (std::list<double>::const_iterator itf = this->m_force.begin(); itf != this->m_force.end();
 // ++itf)
 //       //           {
 //       //             std::cout<<(*itf)<<", ";
@@ -1316,7 +1316,7 @@ CSFLSSegmentor3D<TPixel>
 //       //         // debug
 //       //         labelsCoherentCheck1();
 
-//       //        douher::saveAsImage3< double >(mp_phi, "temp.nrrd");
+//       //        douher::saveAsImage3<double>(mp_phi, "temp.nrrd");
 
 // updateInsideVoxelCount();
 //     }

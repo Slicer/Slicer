@@ -100,7 +100,7 @@ public:
   vtkMRMLColorLegendDisplayableManager* External;
 
   /// Map stores color legend display node ID as a key, ScalarBarActor as a value
-  std::map<std::string, vtkSmartPointer<vtkSlicerScalarBarActor> > ColorLegendActorsMap;
+  std::map<std::string, vtkSmartPointer<vtkSlicerScalarBarActor>> ColorLegendActorsMap;
 
   /// For volume nodes we need to observe the slice composite node so that we can show color legend
   /// only for nodes that are visible in the slice view.

@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
     topColorHierarchyNode->SetParentNodeID(rtnd->GetID());
     // there's also a chance that the parent node refs weren't reset when the top color hierarchy node was re-id'd
     // go through all the hierarchy nodes that are right under the rtnd and reset them to be under the topColorHierarchyNode
-    std::vector< vtkMRMLHierarchyNode* > children = rtnd->GetChildrenNodes();
+    std::vector<vtkMRMLHierarchyNode*> children = rtnd->GetChildrenNodes();
     for (unsigned int i = 0; i < children.size(); i++)
     {
       // don't touch the top color hierarchy node since you don't want to reset it's parent to itself
@@ -1771,7 +1771,7 @@ int main(int argc, char* argv[])
     if (topColorHierarchyNode != nullptr)
     {
       // get all the hierarchies under it, recursively
-      std::vector< vtkMRMLHierarchyNode* > allChildren;
+      std::vector<vtkMRMLHierarchyNode*> allChildren;
       topColorHierarchyNode->GetAllChildrenNodes(allChildren);
       for (unsigned int i = 0; i < allChildren.size(); i++)
       {

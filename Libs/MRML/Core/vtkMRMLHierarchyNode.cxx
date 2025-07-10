@@ -28,7 +28,7 @@ Version:   $Revision: 1.14 $
 vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, ParentNodeIDReference);
 vtkCxxSetReferenceStringMacro(vtkMRMLHierarchyNode, AssociatedNodeIDReference);
 
-typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode*> > HierarchyChildrenNodesType;
+typedef std::map<std::string, std::vector<vtkMRMLHierarchyNode*>> HierarchyChildrenNodesType;
 
 std::map< vtkMRMLScene*, HierarchyChildrenNodesType> vtkMRMLHierarchyNode::SceneHierarchyChildrenNodes = std::map< vtkMRMLScene*, HierarchyChildrenNodesType>();
 std::map< vtkMRMLScene*, vtkMTimeType> vtkMRMLHierarchyNode::SceneHierarchyChildrenNodesMTime = std::map< vtkMRMLScene*, vtkMTimeType>();
@@ -305,7 +305,7 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetTopParentNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLHierarchyNode::GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode*> &childrenNodes)
+void vtkMRMLHierarchyNode::GetAllChildrenNodes(std::vector<vtkMRMLHierarchyNode*> &childrenNodes)
 {
   if (this->GetScene() == nullptr)
   {
@@ -331,9 +331,9 @@ void vtkMRMLHierarchyNode::GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode
 }
 
 //----------------------------------------------------------------------------
-std::vector< vtkMRMLHierarchyNode*> vtkMRMLHierarchyNode::GetChildrenNodes()
+std::vector<vtkMRMLHierarchyNode*> vtkMRMLHierarchyNode::GetChildrenNodes()
 {
-  std::vector< vtkMRMLHierarchyNode*> childrenNodes;
+  std::vector<vtkMRMLHierarchyNode*> childrenNodes;
   if (this->GetScene() == nullptr)
   {
     return childrenNodes;
@@ -364,7 +364,7 @@ std::vector< vtkMRMLHierarchyNode*> vtkMRMLHierarchyNode::GetChildrenNodes()
 //----------------------------------------------------------------------------
 vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetNthChildNode(int index)
 {
-  std::vector< vtkMRMLHierarchyNode*> childrenNodes = this->GetChildrenNodes();
+  std::vector<vtkMRMLHierarchyNode*> childrenNodes = this->GetChildrenNodes();
   if (index < 0 || index > (int)(childrenNodes.size()-1))
   {
     vtkErrorMacro("vtkMRMLHierarchyNode::GetNthChildNode() index " << index << " outside the range 0-" << childrenNodes.size()-1 );
@@ -388,7 +388,7 @@ int vtkMRMLHierarchyNode::GetIndexInParent()
   }
   else
   {
-    std::vector< vtkMRMLHierarchyNode*> childrenNodes = pnode->GetChildrenNodes();
+    std::vector<vtkMRMLHierarchyNode*> childrenNodes = pnode->GetChildrenNodes();
     for (unsigned int i=0; i<childrenNodes.size(); i++)
     {
       if (childrenNodes[i] == this)
@@ -412,7 +412,7 @@ void vtkMRMLHierarchyNode::SetIndexInParent(int index)
   }
   else
   {
-    std::vector< vtkMRMLHierarchyNode*> childrenNodes = pnode->GetChildrenNodes();
+    std::vector<vtkMRMLHierarchyNode*> childrenNodes = pnode->GetChildrenNodes();
     if (index < 0 || index >= (int)childrenNodes.size())
     {
       vtkErrorMacro("vtkMRMLHierarchyNode::SetIndexInParent() index " << index << ", outside the range 0-" << childrenNodes.size()-1);
@@ -459,7 +459,7 @@ void vtkMRMLHierarchyNode::MoveInParent(int increment)
   }
   else
   {
-    std::vector< vtkMRMLHierarchyNode*> childrenNodes = pnode->GetChildrenNodes();
+    std::vector<vtkMRMLHierarchyNode*> childrenNodes = pnode->GetChildrenNodes();
     int oldIndex = this->GetIndexInParent();
     if (oldIndex + increment < 0 || oldIndex + increment >= (int)childrenNodes.size())
     {
@@ -500,11 +500,11 @@ void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
   char* parentID = this->GetParentNodeID();
   vtkMRMLHierarchyNode* parentNode = this->GetParentNode();
 
-  std::vector< vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
+  std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
   for (unsigned int i=0; i<children.size(); i++)
   {
     vtkMRMLHierarchyNode* child = children[i];
-    std::vector< vtkMRMLHierarchyNode*> childChildren = child->GetChildrenNodes();
+    std::vector<vtkMRMLHierarchyNode*> childChildren = child->GetChildrenNodes();
     for (unsigned int j=0; j<childChildren.size(); j++)
     {
       childChildren[j]->SetParentNodeID(parentID);
@@ -525,11 +525,11 @@ void vtkMRMLHierarchyNode::RemoveAllHierarchyChildrenNodes()
     return;
   }
 
-  std::vector< vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
+  std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
   for (unsigned int i=0; i<children.size(); i++)
   {
     vtkMRMLHierarchyNode* child = children[i];
-    std::vector< vtkMRMLHierarchyNode*> childChildren = child->GetChildrenNodes();
+    std::vector<vtkMRMLHierarchyNode*> childChildren = child->GetChildrenNodes();
     for (unsigned int j=0; j<childChildren.size(); j++)
     {
       childChildren[j]->RemoveAllHierarchyChildrenNodes();
@@ -562,7 +562,7 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
   std::map< vtkMRMLScene*, vtkMTimeType>::iterator titer =
         SceneHierarchyChildrenNodesMTime.find(this->GetScene());
 
-  std::map<std::string, std::vector< vtkMRMLHierarchyNode*> >::iterator iter;
+  std::map<std::string, std::vector<vtkMRMLHierarchyNode*>>::iterator iter;
   if (this->GetScene() == nullptr)
   {
     for (iter  = siter->second.begin();
@@ -604,7 +604,7 @@ void vtkMRMLHierarchyNode::UpdateChildrenMap()
           iter = siter->second.find(std::string(pnode->GetID()));
           if (iter == siter->second.end())
           {
-            std::vector< vtkMRMLHierarchyNode*> children;
+            std::vector<vtkMRMLHierarchyNode*> children;
             children.push_back(node);
             siter->second[std::string(pnode->GetID())] = children;
           }
@@ -840,7 +840,7 @@ void vtkMRMLHierarchyNode::InvokeHierarchyModifiedEvent(vtkMRMLNode* node)
     if (this->GetNumberOfChildrenNodes())
       {
       // invoke it on the top level children
-      std::vector< vtkMRMLHierarchyNode* > children = this->GetChildrenNodes();
+      std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
       for (unsigned int i = 0; i < children.size(); ++i)
         {
         vtkDebugMacro("InvokeHierarchyModifiedEvent: child " << i << ", id = " << children[i]->GetID());

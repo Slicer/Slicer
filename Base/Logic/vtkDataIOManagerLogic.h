@@ -17,7 +17,7 @@
 
 
 #ifndef vtkObjectPointer
-#define vtkObjectPointer(xx) (reinterpret_cast <vtkObject**>( (xx) ))
+#define vtkObjectPointer(xx) (reinterpret_cast<vtkObject**>( (xx) ))
 #endif
 
 

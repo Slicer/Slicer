@@ -105,10 +105,10 @@ class VTK_MRML_EXPORT vtkMRMLVectorVolumeDisplayNode : public vtkMRMLGlyphableVo
   ///
   /// get associated slice glyph display node
   /// TODO: return empty list for now, later add glyphs
-  std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
+  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*>
     GetSliceGlyphDisplayNodes( vtkMRMLVolumeNode* vtkNotUsed(node) ) override
   {
-    return std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>();
+    return std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*>();
   }
 
   ///

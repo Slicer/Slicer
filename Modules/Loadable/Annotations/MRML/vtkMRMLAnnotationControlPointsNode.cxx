@@ -409,7 +409,7 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
 
   for (int j = NUM_TEXT_ATTRIBUTE_TYPES ; j < NUM_CP_ATTRIBUTE_TYPES; j ++)
   {
-      vtkBitArray* dataArray = dynamic_cast <vtkBitArray*> (this->GetAnnotationAttributes(j));
+      vtkBitArray* dataArray = dynamic_cast<vtkBitArray*> (this->GetAnnotationAttributes(j));
       if (!dataArray || dataArray->GetSize() != n)
       {
           vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << this->GetAttributeTypesEnumAsString(j)

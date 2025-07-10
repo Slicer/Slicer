@@ -202,10 +202,10 @@ int main(int argc, char* argv[])
   PointsContainerConstIterator mitr = movingPoints.begin();
   PointsContainerConstIterator fitr = fixedPoints.begin();
 
-  AffineTransform::OutputVectorType::RealValueType sum = itk::NumericTraits< double >::ZeroValue();
+  AffineTransform::OutputVectorType::RealValueType sum = itk::NumericTraits<double>::ZeroValue();
   AffineTransform::OutputVectorType errortr;
   AffineTransform::OutputPointType movingPointInFixed;
-  int counter = itk::NumericTraits< int >::ZeroValue();
+  int counter = itk::NumericTraits<int>::ZeroValue();
   while( mitr != movingPoints.end() )
   {
     movingPointInFixed = movingToFixedT->TransformPoint( *mitr );

@@ -197,7 +197,7 @@ bool vtkMRMLDisplayableHierarchyLogic::DeleteHierarchyNodeAndChildren(vtkMRMLDis
   this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
   // get all the children nodes
-  std::vector< vtkMRMLHierarchyNode*> allChildren;
+  std::vector<vtkMRMLHierarchyNode*> allChildren;
   hnode->GetAllChildrenNodes(allChildren);
 
   // and loop over them

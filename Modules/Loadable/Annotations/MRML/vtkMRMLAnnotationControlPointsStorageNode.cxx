@@ -410,7 +410,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationDataInternal(vtkMR
   }
 
   // cast the input node
-  vtkMRMLAnnotationControlPointsNode* annCPNode = dynamic_cast <vtkMRMLAnnotationControlPointsNode*> (refNode);
+  vtkMRMLAnnotationControlPointsNode* annCPNode = dynamic_cast<vtkMRMLAnnotationControlPointsNode*> (refNode);
 
   if (annCPNode == nullptr)
   {

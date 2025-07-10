@@ -236,11 +236,11 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::SetTensorRotationMatrix(vtkMatrix4x4* r
 }
 
 //----------------------------------------------------------------------------
-std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*>
+std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*>
 vtkMRMLDiffusionTensorVolumeDisplayNode::GetSliceGlyphDisplayNodes(
   vtkMRMLVolumeNode* volumeNode )
 {
-  std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes;
+  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes;
   int nnodes = volumeNode->GetNumberOfDisplayNodes();
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode* node = nullptr;
   for (int n=0; n<nnodes; n++)
@@ -259,7 +259,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::GetSliceGlyphDisplayNodes(
 void vtkMRMLDiffusionTensorVolumeDisplayNode
 ::AddSliceGlyphDisplayNodes( vtkMRMLVolumeNode* volumeNode )
 {
-  std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes =
+  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> nodes =
     this->GetSliceGlyphDisplayNodes( volumeNode );
   if (nodes.size() == 0)
   {

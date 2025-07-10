@@ -412,7 +412,7 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(
       << VTKDimension << ", actual = " << warpTransformItk->GetOutputSpaceDimension() << ")");
     return false;
   }
-  bsplineItk = static_cast< BSplineTransformType* >( warpTransformItk.GetPointer() );
+  bsplineItk = static_cast<BSplineTransformType*>( warpTransformItk.GetPointer() );
 
   // now get the fixed parameters and map them to the vtk analogs
 
@@ -1387,7 +1387,7 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
   vtkAbstractTransform* transformVtk, itk::Object::Pointer& secondaryTransformItk, int preferITKv3CompatibleTransforms, bool initialize /*= true*/,
   double center_LocalRAS[3] /*=nullptr*/)
 {
-  typedef itk::CompositeTransform< double > CompositeTransformType;
+  typedef itk::CompositeTransform<double> CompositeTransformType;
 
   if (transformVtk==nullptr)
   {
@@ -1509,7 +1509,7 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
         return nullptr;
       }
       CompositeTransformType::TransformType::Pointer singleTransformItkTypeChecked =
-        static_cast< CompositeTransformType::TransformType* >( singleTransformItk.GetPointer() );
+        static_cast<CompositeTransformType::TransformType*>( singleTransformItk.GetPointer() );
       compositeTransformItk->AddTransform(singleTransformItkTypeChecked.GetPointer());
     }
     return primaryTransformItk;

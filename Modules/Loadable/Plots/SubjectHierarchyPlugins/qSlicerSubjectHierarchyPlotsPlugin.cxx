@@ -304,17 +304,17 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
   {
     return;
   }
-  std::vector< vtkMRMLNode* > chartNodes;
+  std::vector<vtkMRMLNode*> chartNodes;
   scene->GetNodesByClass("vtkMRMLPlotChartNode", chartNodes);
-  for (std::vector< vtkMRMLNode* >::iterator chartIt = chartNodes.begin(); chartIt != chartNodes.end(); ++chartIt)
+  for (std::vector<vtkMRMLNode*>::iterator chartIt = chartNodes.begin(); chartIt != chartNodes.end(); ++chartIt)
   {
     vtkMRMLPlotChartNode* chartNode = vtkMRMLPlotChartNode::SafeDownCast(*chartIt);
     vtkIdType chartNodeId = shNode->GetItemByDataNode(chartNode);
     shNode->ItemModified(chartNodeId);
   }
-  std::vector< vtkMRMLNode* > seriesNodes;
+  std::vector<vtkMRMLNode*> seriesNodes;
   scene->GetNodesByClass("vtkMRMLPlotSeriesNode", seriesNodes);
-  for (std::vector< vtkMRMLNode* >::iterator seriesIt = seriesNodes.begin(); seriesIt != seriesNodes.end(); ++seriesIt)
+  for (std::vector<vtkMRMLNode*>::iterator seriesIt = seriesNodes.begin(); seriesIt != seriesNodes.end(); ++seriesIt)
   {
     vtkMRMLPlotSeriesNode* seriesNode = vtkMRMLPlotSeriesNode::SafeDownCast(*seriesIt);
     vtkIdType seriesNodeId = shNode->GetItemByDataNode(seriesNode);

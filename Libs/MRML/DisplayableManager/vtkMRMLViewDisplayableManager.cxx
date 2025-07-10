@@ -80,9 +80,9 @@ public:
 
   void UpdateBackgroundColor();
 
-  std::vector<vtkSmartPointer<vtkFollower> > AxisLabelActors;
-  std::vector<vtkSmartPointer<vtkVectorText> > AxisLabelTexts;
-  std::vector<vtkSmartPointer<vtkTransformPolyDataFilter> > CenterAxisLabelTexts;
+  std::vector<vtkSmartPointer<vtkFollower>> AxisLabelActors;
+  std::vector<vtkSmartPointer<vtkVectorText>> AxisLabelTexts;
+  std::vector<vtkSmartPointer<vtkTransformPolyDataFilter>> CenterAxisLabelTexts;
   vtkSmartPointer<vtkActor>                  BoxAxisActor;
   vtkBoundingBox*                            BoxAxisBoundingBox;
   vtkMRMLViewDisplayableManager*             External;

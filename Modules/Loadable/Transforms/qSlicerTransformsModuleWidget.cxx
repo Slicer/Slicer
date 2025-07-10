@@ -66,7 +66,7 @@ protected:
   qSlicerTransformsModuleWidget* const q_ptr;
 public:
   qSlicerTransformsModuleWidgetPrivate(qSlicerTransformsModuleWidget& object);
-  static QList<vtkSmartPointer<vtkMRMLTransformableNode> > getSelectedNodes(qMRMLTreeView* tree);
+  static QList<vtkSmartPointer<vtkMRMLTransformableNode>> getSelectedNodes(qMRMLTreeView* tree);
   vtkSlicerTransformLogic*      logic()const;
   vtkMRMLTransformNode*         MRMLTransformNode;
   QAction*                      CopyAction;
@@ -89,14 +89,14 @@ vtkSlicerTransformLogic* qSlicerTransformsModuleWidgetPrivate::logic()const
 }
 
 //-----------------------------------------------------------------------------
-QList<vtkSmartPointer<vtkMRMLTransformableNode> > qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(qMRMLTreeView* tree)
+QList<vtkSmartPointer<vtkMRMLTransformableNode>> qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(qMRMLTreeView* tree)
 {
   QModelIndexList selectedIndexes =
     tree->selectionModel()->selectedRows();
   selectedIndexes = qMRMLTreeView::removeChildren(selectedIndexes);
 
   // Return the list of nodes
-  QList<vtkSmartPointer<vtkMRMLTransformableNode> > selectedNodes;
+  QList<vtkSmartPointer<vtkMRMLTransformableNode>> selectedNodes;
   foreach(QModelIndex selectedIndex, selectedIndexes)
   {
     vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
@@ -660,7 +660,7 @@ void qSlicerTransformsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 void qSlicerTransformsModuleWidget::transformSelectedNodes()
 {
   Q_D(qSlicerTransformsModuleWidget);
-  QList<vtkSmartPointer<vtkMRMLTransformableNode> > nodesToTransform =
+  QList<vtkSmartPointer<vtkMRMLTransformableNode>> nodesToTransform =
     qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(d->TransformableTreeView);
   foreach(vtkSmartPointer<vtkMRMLTransformableNode> node, nodesToTransform)
   {
@@ -672,7 +672,7 @@ void qSlicerTransformsModuleWidget::transformSelectedNodes()
 void qSlicerTransformsModuleWidget::untransformSelectedNodes()
 {
   Q_D(qSlicerTransformsModuleWidget);
-  QList<vtkSmartPointer<vtkMRMLTransformableNode> > nodesToTransform =
+  QList<vtkSmartPointer<vtkMRMLTransformableNode>> nodesToTransform =
     qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(d->TransformedTreeView);
   foreach(vtkSmartPointer<vtkMRMLTransformableNode> node, nodesToTransform)
   {
@@ -684,7 +684,7 @@ void qSlicerTransformsModuleWidget::untransformSelectedNodes()
 void qSlicerTransformsModuleWidget::hardenSelectedNodes()
 {
   Q_D(qSlicerTransformsModuleWidget);
-  QList<vtkSmartPointer<vtkMRMLTransformableNode> > nodesToTransform =
+  QList<vtkSmartPointer<vtkMRMLTransformableNode>> nodesToTransform =
     qSlicerTransformsModuleWidgetPrivate::getSelectedNodes(d->TransformedTreeView);
   QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   foreach(vtkSmartPointer<vtkMRMLTransformableNode> node, nodesToTransform)

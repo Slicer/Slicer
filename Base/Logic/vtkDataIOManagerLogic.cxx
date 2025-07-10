@@ -113,7 +113,7 @@ void vtkDataIOManagerLogic::ProcessDataIOManagerEvents(
   unsigned long event, void* callData)
 {
   assert(vtkDataIOManager::SafeDownCast( caller ));
-  vtkMRMLNode* node = reinterpret_cast <vtkMRMLNode*> (callData);
+  vtkMRMLNode* node = reinterpret_cast<vtkMRMLNode*> (callData);
   // ignore node events that aren't volumes or slice nodes
   if ( (node != nullptr) && (event == vtkDataIOManager::RemoteReadEvent ) )
   {
@@ -679,7 +679,7 @@ void vtkDataIOManagerLogic::ApplyTransfer( void* clientdata )
   }
 
   //--- get the DataTransfer from the clientdata
-  vtkDataTransfer* dt = reinterpret_cast < vtkDataTransfer*> (clientdata);
+  vtkDataTransfer* dt = reinterpret_cast<vtkDataTransfer*> (clientdata);
   if ( dt == nullptr )
   {
     vtkErrorMacro("ApplyTransfer: data transfer is null");

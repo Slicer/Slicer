@@ -1314,7 +1314,7 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
 
   // Get the hash map that attributes to each node a subject hierarchy path
   QHash<QString,QVariant> nodeIdToSubjectHierarchyPath;
-  if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert< QHash<QString,QVariant> >())
+  if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert<QHash<QString,QVariant>>())
   {
     nodeIdToSubjectHierarchyPath = properties["nodeIdToSubjectHierarchyPath"].toHash();
   }

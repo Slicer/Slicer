@@ -854,7 +854,7 @@ public:
 
 protected:
 
-  typedef std::map<std::string, std::set<std::string> > NodeReferencesType;
+  typedef std::map<std::string, std::set<std::string>> NodeReferencesType;
 
   vtkMRMLScene();
   ~vtkMRMLScene() override;
@@ -934,7 +934,7 @@ protected:
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
   bool SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode* storableNode, std::string& dataDir,
-    std::map<vtkMRMLStorageNode*, std::vector<std::string> > &originalStorageNodeFileNames, vtkMRMLMessageCollection* userMessages);
+    std::map<vtkMRMLStorageNode*, std::vector<std::string>> &originalStorageNodeFileNames, vtkMRMLMessageCollection* userMessages);
 
   vtkCollection*  Nodes;
 
@@ -952,8 +952,8 @@ protected:
   int  MaximumNumberOfSavedUndoStates;
   bool UndoFlag;
 
-  std::list< vtkCollection* >  UndoStack;
-  std::list< vtkCollection* >  RedoStack;
+  std::list<vtkCollection*>  UndoStack;
+  std::list<vtkCollection*>  RedoStack;
 
   std::string                 URL;
   std::string                 RootDirectory;
@@ -962,18 +962,18 @@ protected:
   std::map<std::string, int> UniqueNames;
   std::set<std::string>   ReservedIDs;
 
-  std::vector< vtkMRMLNode* > RegisteredNodeClasses;
-  std::vector< std::string >  RegisteredNodeTags;
+  std::vector<vtkMRMLNode*> RegisteredNodeClasses;
+  std::vector<std::string>  RegisteredNodeTags;
   std::map<std::string, std::string > RegisteredAbstractNodeClassTypeDisplayNames; // map class name to type display name
 
   NodeReferencesType NodeReferences; // ReferencedIDs (string), ReferencingNodes (node pointer)
   std::map<std::string, std::string > ReferencedIDChanges;
-  std::map<std::string, vtkSmartPointer<vtkMRMLNode> > NodeIDs;
+  std::map<std::string, vtkSmartPointer<vtkMRMLNode>> NodeIDs;
 
   // Stores default nodes. If a class is created or reset (using CreateNodeByClass or Clear) and
   // a default node is defined for it then the content of the default node will be used to initialize
   // the class. It is useful for overriding default values that are set in a node's constructor.
-  std::map<std::string, vtkSmartPointer<vtkMRMLNode> > DefaultNodes;
+  std::map<std::string, vtkSmartPointer<vtkMRMLNode>> DefaultNodes;
 
   std::string SceneXMLString;
 

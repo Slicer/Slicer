@@ -84,7 +84,7 @@ void StringToInt(const char* strPtr, T& result)
 
 //----------------------------------------------------------------------------
 int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const std::string& fileName, vtkMRMLScene* scene,
-  std::deque< vtkSmartPointer<vtkMRMLSequenceNode> > &createdNodes, std::map<int, std::string >& frameNumberToIndexValueMap,
+  std::deque<vtkSmartPointer<vtkMRMLSequenceNode>> &createdNodes, std::map<int, std::string >& frameNumberToIndexValueMap,
   std::map<std::string, std::string > &imageMetaData, SequenceFileType fileType/*=METAIMAGE_SEQUENCE_FILE */)
 {
   int numberOfCreatedNodes = 0;
@@ -104,7 +104,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
   // This structure contains all the transform nodes that are read from the file.
   // The nodes are not added immediately to the scene to allow them properly named, using the timestamp index value.
   // Maps the frame number to a vector of transform nodes that belong to that frame.
-  std::map<int, std::vector<vtkMRMLLinearTransformNode*> > importedTransformNodes;
+  std::map<int, std::vector<vtkMRMLLinearTransformNode*>> importedTransformNodes;
 
   // It contains the largest frame number. It will be used to iterate through all the frame numbers from 0 to lastFrameNumber
   int lastFrameNumber = -1;
@@ -252,7 +252,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
 
   for (int currentFrameNumber = 0; currentFrameNumber <= lastFrameNumber; currentFrameNumber++)
   {
-    std::map<int, std::vector<vtkMRMLLinearTransformNode*> >::iterator transformsForCurrentFrame = importedTransformNodes.find(currentFrameNumber);
+    std::map<int, std::vector<vtkMRMLLinearTransformNode*>>::iterator transformsForCurrentFrame = importedTransformNodes.find(currentFrameNumber);
     if (transformsForCurrentFrame == importedTransformNodes.end())
     {
       // no transforms for this frame
@@ -319,7 +319,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
   std::string fileNameName = vtksys::SystemTools::GetFilenameName(fileName);
   std::string shortestBaseNodeName;
   int transformNodeIndex = 0;
-  for (std::deque< vtkSmartPointer<vtkMRMLSequenceNode> >::iterator createdTransformNodeIt = createdNodes.begin();
+  for (std::deque<vtkSmartPointer<vtkMRMLSequenceNode>>::iterator createdTransformNodeIt = createdNodes.begin();
     createdTransformNodeIt != createdNodes.end() && transformNodeIndex < numberOfCreatedNodes; ++createdTransformNodeIt, transformNodeIndex++)
   {
     // strip known file extensions from filename to get base name
@@ -361,8 +361,8 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
 
 //----------------------------------------------------------------------------
 bool vtkMRMLLinearTransformSequenceStorageNode::WriteSequenceMetafileTransforms(
-  const std::string& fileName, std::deque< vtkMRMLSequenceNode* > &transformSequenceNodes,
-  std::deque< std::string > &transformNames, vtkMRMLSequenceNode* masterNode, vtkMRMLSequenceNode* imageNode)
+  const std::string& fileName, std::deque<vtkMRMLSequenceNode*> &transformSequenceNodes,
+  std::deque<std::string> &transformNames, vtkMRMLSequenceNode* masterNode, vtkMRMLSequenceNode* imageNode)
 {
   vtkMRMLSequenceNode* masterSequenceNode = vtkMRMLSequenceNode::SafeDownCast(masterNode);
   if (masterSequenceNode == nullptr)
@@ -506,7 +506,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* ref
     return 0;
   }
 
-  std::deque< vtkSmartPointer<vtkMRMLSequenceNode> > createdTransformNodes;
+  std::deque<vtkSmartPointer<vtkMRMLSequenceNode>> createdTransformNodes;
   createdTransformNodes.push_back(seqNode);
   std::map<int, std::string > frameNumberToIndexValueMap;
   std::map<std::string, std::string > imageMetaData;
@@ -573,9 +573,9 @@ int vtkMRMLLinearTransformSequenceStorageNode::WriteDataInternal(vtkMRMLNode* re
     return 0;
   }
 
-  std::deque< vtkMRMLSequenceNode* > transformSequenceNodes;
+  std::deque<vtkMRMLSequenceNode*> transformSequenceNodes;
   transformSequenceNodes.push_back(sequenceNode);
-  std::deque< std::string > transformNames;
+  std::deque<std::string> transformNames;
   std::string transformName = "Unknown1ToUnknown2";
   if (refNode->GetAttribute("Sequences.Source"))
   {

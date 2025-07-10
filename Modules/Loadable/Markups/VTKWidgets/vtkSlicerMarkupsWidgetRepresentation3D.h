@@ -156,7 +156,7 @@ protected:
   bool HideTextActorIfAllPointsOccluded;
   double OccludedRelativeOffset;
 
-  static std::map<vtkRenderer*, vtkSmartPointer<vtkFloatArray> > CachedZBuffers;
+  static std::map<vtkRenderer*, vtkSmartPointer<vtkFloatArray>> CachedZBuffers;
 
   vtkSmartPointer<vtkCallbackCommand> RenderCompletedCallback;
   static void OnRenderCompleted(vtkObject* caller, unsigned long event, void* clientData, void* callData);

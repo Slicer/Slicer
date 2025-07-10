@@ -48,7 +48,7 @@ int qMRMLTransformDisplayNodeWidgetTest1(int argc, char* argv [] )
   qMRMLWidget::postInitializeApplication();
 
   vtkNew<vtkMRMLScene> scene;
-  vtkNew< vtkMRMLTransformNode > transformNode;
+  vtkNew<vtkMRMLTransformNode> transformNode;
   scene->AddNode(transformNode.GetPointer());
   transformNode->CreateDefaultDisplayNodes();
 

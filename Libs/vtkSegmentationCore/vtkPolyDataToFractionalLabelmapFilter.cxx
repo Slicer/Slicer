@@ -53,11 +53,11 @@ vtkPolyDataToFractionalLabelmapFilter::vtkPolyDataToFractionalLabelmapFilter()
 {
   this->NumberOfOffsets = 6;
 
-  this->LinesCache = std::map<double, vtkSmartPointer<vtkCellArray> >();
-  this->SliceCache = std::map<double, vtkSmartPointer<vtkPolyData> >();
+  this->LinesCache = std::map<double, vtkSmartPointer<vtkCellArray>>();
+  this->SliceCache = std::map<double, vtkSmartPointer<vtkPolyData>>();
   this->PointIdsCache = std::map<double, vtkIdType*>();
   this->NptsCache = std::map<double, vtkIdType>();
-  this->PointNeighborCountsCache = std::map<double,  vtkSmartPointer<vtkIdTypeArray> >();
+  this->PointNeighborCountsCache = std::map<double,  vtkSmartPointer<vtkIdTypeArray>>();
 
   this->CellLocator = vtkCellLocator::New();
 
@@ -824,7 +824,7 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
 
         this->LinesCache.insert(std::pair<double, vtkCellArray*>(z, lines));
         this->NptsCache.insert(std::pair<double, vtkIdType>(z, npts));
-        this->PointNeighborCountsCache.insert(std::pair<double, vtkSmartPointer<vtkIdTypeArray> >(z, pointNeighborCountsArray));
+        this->PointNeighborCountsCache.insert(std::pair<double, vtkSmartPointer<vtkIdTypeArray>>(z, pointNeighborCountsArray));
 
     }
 

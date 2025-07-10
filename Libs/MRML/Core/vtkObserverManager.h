@@ -30,7 +30,7 @@ class vtkFloatArray;
 class vtkUnsignedLongArray;
 
 #ifndef vtkObjectPointer
-#define vtkObjectPointer(xx) (reinterpret_cast <vtkObject**>( (xx) ))
+#define vtkObjectPointer(xx) (reinterpret_cast<vtkObject**>( (xx) ))
 #endif
 
 /// \brief Manages adding and deleting of observers with events.
