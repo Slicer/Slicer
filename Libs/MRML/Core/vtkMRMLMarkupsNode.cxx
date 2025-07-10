@@ -617,7 +617,7 @@ vtkMRMLMarkupsNode::ControlPoint* vtkMRMLMarkupsNode::GetNthControlPoint(int n)
 }
 
 //-----------------------------------------------------------
-std::vector< vtkMRMLMarkupsNode::ControlPoint* > * vtkMRMLMarkupsNode::GetControlPoints()
+std::vector<vtkMRMLMarkupsNode::ControlPoint*> * vtkMRMLMarkupsNode::GetControlPoints()
 {
   return &this->ControlPoints;
 }

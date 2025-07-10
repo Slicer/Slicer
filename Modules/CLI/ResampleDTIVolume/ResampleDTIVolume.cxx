@@ -908,7 +908,7 @@ int Do( parameters list )
                                                                                                                                                                              // a
                                                                                                                                                                              // BSpline
       {
-        // transform = SetTransform< PixelType > ( list , image , transformFile , outputImageCenter ) ;
+        // transform = SetTransform<PixelType> ( list , image , transformFile , outputImageCenter ) ;
         // order=3 for the BSpline seems to be standard among tools in Slicer and BRAINTools
         if( std::string(transform->GetTransform()->GetNameOfClass()) == "BSplineDeformableTransform" )
         {

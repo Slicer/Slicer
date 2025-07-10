@@ -569,7 +569,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
   archetypeImageReader->SetUseNativeOriginOn();
 
   int numberOfSegments = 0;
-  std::map<int, std::vector<int> > segmentIndexInLayer;
+  std::map<int, std::vector<int>> segmentIndexInLayer;
   std::string containedRepresentationNames;
   vtkMatrix4x4* rasToFileIjk = nullptr;
   int imageExtentInFile[6] = { 0, -1, 0, -1, 0, -1 };
@@ -757,8 +757,8 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation(vtkMRMLSegm
   // Get metadata for current segment
   itk::MetaDataDictionary dictionary = archetypeImageReader->GetMetaDataDictionary();
 
-  std::vector<vtkSmartPointer<vtkSegment> > segments(numberOfSegments);
-  std::map<int, vtkSmartPointer<vtkOrientedImageData> > layerToImage;
+  std::vector<vtkSmartPointer<vtkSegment>> segments(numberOfSegments);
+  std::map<int, vtkSmartPointer<vtkOrientedImageData>> layerToImage;
   for (int frameIndex = 0; frameIndex < numberOfFrames; ++frameIndex)
   {
     // Create binary labelmap volume
@@ -1316,9 +1316,9 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
 
   vtkIdType scalarType = VTK_UNSIGNED_CHAR;
   vtkIdType scalarSize = 0;
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt)
   {
     std::string currentSegmentID = *segmentIdIt;
     vtkSegment* currentSegment = segmentation->GetSegment(*segmentIdIt);
@@ -1407,7 +1407,7 @@ int vtkMRMLSegmentationStorageNode::WriteBinaryLabelmapRepresentation(vtkMRMLSeg
 
   // Dimensions of the output 4D NRRD file: (i, j, k, segment)
   unsigned int segmentIndex = 0;
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt, ++segmentIndex)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt, ++segmentIndex)
   {
     std::string currentSegmentID = *segmentIdIt;
     vtkSegment* currentSegment = segmentation->GetSegment(*segmentIdIt);
@@ -1554,10 +1554,10 @@ int vtkMRMLSegmentationStorageNode::WritePolyDataRepresentation(vtkMRMLSegmentat
   multiBlockDataset->SetNumberOfBlocks(segmentation->GetNumberOfSegments());
 
   // Add segment polydata objects to dataset
-  std::vector< std::string > segmentIDs;
+  std::vector<std::string> segmentIDs;
   segmentation->GetSegmentIDs(segmentIDs);
   unsigned int segmentIndex = 0;
-  for (std::vector< std::string >::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt, ++segmentIndex)
+  for (std::vector<std::string>::const_iterator segmentIdIt = segmentIDs.begin(); segmentIdIt != segmentIDs.end(); ++segmentIdIt, ++segmentIndex)
   {
     std::string currentSegmentID = *segmentIdIt;
     vtkSegment* currentSegment = segmentation->GetSegment(*segmentIdIt);

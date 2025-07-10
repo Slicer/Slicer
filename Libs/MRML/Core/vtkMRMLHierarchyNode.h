@@ -85,13 +85,13 @@ public:
 
   ///
   /// Given this hierarchy node returns all it's children recursively.
-  void GetAllChildrenNodes(std::vector< vtkMRMLHierarchyNode*> &childrenNodes);
+  void GetAllChildrenNodes(std::vector<vtkMRMLHierarchyNode*> &childrenNodes);
 
   ///
   /// Given this hierarchy node returns all it's 1st level children (not recursive).
   /// Note: Most compilers don't make a copy of the list if you call the function like that:
-  /// std::vector< vtkMRMLHierarchyNode* > children = this->GetChildrenNodes();
-  std::vector< vtkMRMLHierarchyNode*> GetChildrenNodes();
+  /// std::vector<vtkMRMLHierarchyNode*> children = this->GetChildrenNodes();
+  std::vector<vtkMRMLHierarchyNode*> GetChildrenNodes();
 
   /// Returns the number of immediate children in the hierarchy
   int GetNumberOfChildrenNodes()
@@ -194,7 +194,7 @@ protected:
   void SetAssociatedNodeIDReference(const char*);
   vtkGetStringMacro(AssociatedNodeIDReference);
 
-  typedef std::map<std::string, std::vector< vtkMRMLHierarchyNode*> > HierarchyChildrenNodesType;
+  typedef std::map<std::string, std::vector<vtkMRMLHierarchyNode*>> HierarchyChildrenNodesType;
 
   static std::map< vtkMRMLScene*, HierarchyChildrenNodesType> SceneHierarchyChildrenNodes;
   static std::map< vtkMRMLScene*, vtkMTimeType> SceneHierarchyChildrenNodesMTime;

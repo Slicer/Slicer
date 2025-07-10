@@ -342,7 +342,7 @@ void vtkMRMLAnnotationNode::ResetAttributes(int id) {
   }
 
 
-  vtkBitArray* attArray = dynamic_cast <  vtkBitArray*> (this->GetAnnotationAttributes(id));
+  vtkBitArray* attArray = dynamic_cast<vtkBitArray*> (this->GetAnnotationAttributes(id));
   if (!attArray) {
     attArray =  vtkBitArray::New();
     attArray->SetName(this->GetAttributeTypesEnumAsString(id));
@@ -369,7 +369,7 @@ vtkDataArray* vtkMRMLAnnotationNode::GetAnnotationAttributes(int att)
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationNode::GetAnnotationAttribute(vtkIdType id, int att)
 {
-  vtkBitArray* attArray = dynamic_cast <  vtkBitArray*> (this->GetAnnotationAttributes(att));
+  vtkBitArray* attArray = dynamic_cast<vtkBitArray*> (this->GetAnnotationAttributes(att));
   if (attArray)
   {
       return attArray->GetValue(id);
@@ -381,7 +381,7 @@ int vtkMRMLAnnotationNode::GetAnnotationAttribute(vtkIdType id, int att)
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::SetAnnotationAttribute(vtkIdType id, int att, double value)
 {
-  vtkBitArray* attArray = dynamic_cast <  vtkBitArray*> (this->GetAnnotationAttributes(att));
+  vtkBitArray* attArray = dynamic_cast<vtkBitArray*> (this->GetAnnotationAttributes(att));
   if (!attArray)
   {
       return;
@@ -397,7 +397,7 @@ void vtkMRMLAnnotationNode::SetAnnotationAttribute(vtkIdType id, int att, double
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationNode::DeleteAttribute(vtkIdType idEntry, vtkIdType idAtt)
 {
-  vtkBitArray* dataArray = dynamic_cast <vtkBitArray*> (this->GetAnnotationAttributes(idAtt));
+  vtkBitArray* dataArray = dynamic_cast<vtkBitArray*> (this->GetAnnotationAttributes(idAtt));
   if (!dataArray)
   {
       vtkErrorMacro("Annotation " << this->GetName() << " Attribute " << idAtt << " does not exist");
@@ -476,11 +476,11 @@ void vtkMRMLAnnotationNode::SetText(int id, const char* newText,int selectedFlag
 
 void vtkMRMLAnnotationNode::SetAttributeSize(vtkIdType  id, vtkIdType n)
 {
-  vtkBitArray* dataArray = dynamic_cast <vtkBitArray*> (this->GetAnnotationAttributes(id));
+  vtkBitArray* dataArray = dynamic_cast<vtkBitArray*> (this->GetAnnotationAttributes(id));
   if (!dataArray)
   {
       this->ResetAttributes(id);
-      dataArray = dynamic_cast <vtkBitArray*> (this->GetAnnotationAttributes(id));
+      dataArray = dynamic_cast<vtkBitArray*> (this->GetAnnotationAttributes(id));
   }
   dataArray->Resize(n);
 }
@@ -538,11 +538,11 @@ int  vtkMRMLAnnotationNode::DeleteText(int id)
 
   for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++)
   {
-      vtkBitArray* dataArray = dynamic_cast <vtkBitArray*> (this->GetAnnotationAttributes(j));
+      vtkBitArray* dataArray = dynamic_cast<vtkBitArray*> (this->GetAnnotationAttributes(j));
       if (!dataArray)
       {
       this->ResetAttributes(j);
-      dataArray = dynamic_cast <vtkBitArray*> (this->GetAnnotationAttributes(j));
+      dataArray = dynamic_cast<vtkBitArray*> (this->GetAnnotationAttributes(j));
       dataArray->Resize(this->GetNumberOfTexts());
       }
       else

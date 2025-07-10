@@ -117,7 +117,7 @@ itkBSplineType::Pointer CreateBSplineItk(
   bspline->SetGridSpacing( spacinItk );
   bspline->SetGridDirection( directionItk );
 
-  typedef itk::AffineTransform<double,3 > BulkTransformType;
+  typedef itk::AffineTransform<double,3> BulkTransformType;
   const BulkTransformType::Pointer bulkTransform = BulkTransformType::New();
   BulkTransformType::MatrixType m;
   for (int row=0; row<3; row++)

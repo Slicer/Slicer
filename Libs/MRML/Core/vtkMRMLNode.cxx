@@ -950,9 +950,9 @@ const char* vtkMRMLNode::GetAttribute(const char* name)
 }
 
 //----------------------------------------------------------------------------
-std::vector< std::string > vtkMRMLNode::GetAttributeNames()
+std::vector<std::string> vtkMRMLNode::GetAttributeNames()
 {
-  std::vector< std::string > attributeNamesVector;
+  std::vector<std::string> attributeNamesVector;
   for ( AttributesType::iterator iter = this->Attributes.begin(); iter != this->Attributes.end(); ++iter )
   {
     attributeNamesVector.push_back(iter->first);

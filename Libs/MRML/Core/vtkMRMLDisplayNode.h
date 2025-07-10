@@ -593,7 +593,7 @@ public:
   /// Get all View Node ID's for the view to display this node in.
   /// If empty, display in all views
   /// \sa ViewNodeIDs, GetNthViewNodeID(), AddViewNodeID()
-  inline std::vector< std::string > GetViewNodeIDs()const;
+  inline std::vector<std::string> GetViewNodeIDs()const;
   /// True if the view node id is present in the viewNodeID list
   /// false if not found
   /// \sa ViewNodeIDs, IsDisplayableInView(), AddViewNodeID()
@@ -611,7 +611,7 @@ public:
   /// Set all the view node IDs at once. Only trigger Modified() if the
   /// new vector is different from the existing vector.
   /// \sa GetViewNodeIDs(), AddViewNodeID()
-  void SetViewNodeIDs(const std::vector< std::string >& viewNodeIDs);
+  void SetViewNodeIDs(const std::vector<std::string>& viewNodeIDs);
 
   /// Converts attribute location (point or cell data) to string
   static const char* GetAttributeLocationAsString(int id);
@@ -869,7 +869,7 @@ protected:
   /// GetNumberOfViewNodeIDs(), GetViewNodeIDs(), IsViewNodeIDPresent(),
   /// IsDisplayableInView(),
   /// vtkMRMLAbstractDisplayableManager
-  std::vector< std::string > ViewNodeIDs;
+  std::vector<std::string> ViewNodeIDs;
 
   /// A flag to determine which scalar range will be used when mapping
   /// scalars to colors.
@@ -899,7 +899,7 @@ int vtkMRMLDisplayNode::GetNumberOfViewNodeIDs()const
 }
 
 //----------------------------------------------------------------------------
-std::vector< std::string > vtkMRMLDisplayNode::GetViewNodeIDs()const
+std::vector<std::string> vtkMRMLDisplayNode::GetViewNodeIDs()const
 {
   return this->ViewNodeIDs;
 }

@@ -39,7 +39,7 @@ int __stdcall WinMain(HINSTANCE hInstance,
   LPWSTR* argvStringW = CommandLineToArgvW(GetCommandLineW(), &argc);
 
   std::vector< const char* > argv(argc); // usual const char** array used in main() functions
-  std::vector< std::string > argvString(argc); // this stores the strings that the argv pointers point to
+  std::vector<std::string> argvString(argc); // this stores the strings that the argv pointers point to
   for(int i=0; i<argc; i++)
   {
     argvString[i] = vtksys::Encoding::ToNarrow(argvStringW[i]);
@@ -48,7 +48,7 @@ int __stdcall WinMain(HINSTANCE hInstance,
 
   LocalFree(argvStringW);
 
-  return SlicerAppMain(argc, const_cast< char** >(&argv[0]));
+  return SlicerAppMain(argc, const_cast<char**>(&argv[0]));
 }
 #else
 int main(int argc, char* argv[])

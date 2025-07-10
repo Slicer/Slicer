@@ -533,8 +533,8 @@ void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey()
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey_data()
 {
-  QTest::addColumn<QList<QString> >("expectedServerKeys");
-  QTest::addColumn<QList<QString> >("expectedExtensionDescriptionKeys");
+  QTest::addColumn<QList<QString>>("expectedServerKeys");
+  QTest::addColumn<QList<QString>>("expectedExtensionDescriptionKeys");
   QTest::addColumn<qSlicerExtensionsManagerModel::ServerAPI>("serverAPI");
 
   {
@@ -1014,7 +1014,7 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall_data
   QTest::addColumn<QString>("operatingSystem");
   QTest::addColumn<QString>("architecture");
   QTest::addColumn<QString>("slicerRevision");
-  QTest::addColumn<QList<int> >("extensionIdsToInstall");
+  QTest::addColumn<QList<int>>("extensionIdsToInstall");
   QTest::addColumn<QStringList>("extensionNamesToScheduleForUninstall");
   QTest::addColumn<QStringList>("expectedExtensionNamesScheduledForUninstall");
 
@@ -1113,7 +1113,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
   QTest::addColumn<QString>("operatingSystem");
   QTest::addColumn<QString>("architecture");
   QTest::addColumn<QString>("slicerRevision");
-  QTest::addColumn<QList<int> >("extensionIdsToInstall");
+  QTest::addColumn<QList<int>>("extensionIdsToInstall");
   QTest::addColumn<QStringList>("extensionNamesToScheduleForUninstall");
   QTest::addColumn<QStringList>("extensionNamesToCancelScheduledForUninstall");
   QTest::addColumn<int>("expectedSpyExtensionCancelledScheduleForUninstallCount");
@@ -1369,7 +1369,7 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensionsCount_data()
   QTest::addColumn<QString>("operatingSystem");
   QTest::addColumn<QString>("architecture");
   QTest::addColumn<QString>("slicerRevision");
-  QTest::addColumn<QList<int> >("extensionIdsToInstall");
+  QTest::addColumn<QList<int>>("extensionIdsToInstall");
   QTest::addColumn<int>("expectedInstalledExtensionsCount");
 
   QString operatingSystem = Slicer_OS_LINUX_NAME;
@@ -1432,7 +1432,7 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensions_data()
   QTest::addColumn<QString>("operatingSystem");
   QTest::addColumn<QString>("architecture");
   QTest::addColumn<QString>("slicerRevision");
-  QTest::addColumn<QList<int> >("extensionIdsToInstall");
+  QTest::addColumn<QList<int>>("extensionIdsToInstall");
   QTest::addColumn<QStringList>("expectedInstalledExtensionNames");
 
   QString operatingSystem = Slicer_OS_LINUX_NAME;
@@ -1530,7 +1530,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled_data()
   QTest::addColumn<QString>("operatingSystem");
   QTest::addColumn<QString>("architecture");
   QTest::addColumn<QString>("slicerRevision");
-  QTest::addColumn<QList<int> >("extensionIdsToInstall");
+  QTest::addColumn<QList<int>>("extensionIdsToInstall");
   QTest::addColumn<QStringList>("expectedEnabledExtensionNames");
   QTest::addColumn<QStringList>("extensionNamesToDisable");
   QTest::addColumn<QStringList>("expectedEnabledExtensionNamesAfterDisable");
@@ -2024,8 +2024,8 @@ void qSlicerExtensionsManagerModelTester::testSetSlicerRequirements()
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::testSetSlicerRequirements_data()
 {
-  QTest::addColumn<QList<QStringList> >("requirementsToSetList");
-  QTest::addColumn<QList<int> >("expectedSlicerRequirementsChangedCounts");
+  QTest::addColumn<QList<QStringList>>("requirementsToSetList");
+  QTest::addColumn<QList<int>>("expectedSlicerRequirementsChangedCounts");
   QTest::addColumn<QStringList>("finalExpectedSlicerRequirement");
 
   QList<QStringList> requirementsToSetList = QList<QStringList>()

@@ -152,9 +152,9 @@ private:
   /// SeedWidget for point placement
   vtkSmartPointer<vtkSeedWidget> SeedWidget;
   /// List of Handles for the SeedWidget
-  std::vector<vtkSmartPointer<vtkHandleWidget> > HandleWidgetList;
+  std::vector<vtkSmartPointer<vtkHandleWidget>> HandleWidgetList;
   /// .. and its associated convenient typedef
-  typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleWidgetListIt;
+  typedef std::vector<vtkSmartPointer<vtkHandleWidget>>::iterator HandleWidgetListIt;
 };
 
 #endif

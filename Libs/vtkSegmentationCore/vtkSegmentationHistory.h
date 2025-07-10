@@ -103,7 +103,7 @@ protected:
   vtkSegmentationHistory();
   ~vtkSegmentationHistory() override;
 
-  typedef std::map<std::string, vtkSmartPointer<vtkSegment> > SegmentsMap;
+  typedef std::map<std::string, vtkSmartPointer<vtkSegment>> SegmentsMap;
 
   struct SegmentationState
   {

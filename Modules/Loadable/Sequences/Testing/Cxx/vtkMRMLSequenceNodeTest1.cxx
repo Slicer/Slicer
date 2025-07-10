@@ -56,7 +56,7 @@ bool SequenceSortedByIndex(vtkMRMLSequenceNode* seqNode)
 //-----------------------------------------------------------------------------
 int vtkMRMLSequenceNodeTest1( int, char*[])
 {
-  vtkNew< vtkMRMLSequenceNode > seqNode;
+  vtkNew<vtkMRMLSequenceNode> seqNode;
   EXERCISE_ALL_BASIC_MRML_METHODS(seqNode.GetPointer());
 
   seqNode->SetIndexType(vtkMRMLSequenceNode::NumericIndex);

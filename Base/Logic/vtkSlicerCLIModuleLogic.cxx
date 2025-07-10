@@ -2343,14 +2343,14 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
           }
         }
         // does parameter have forward references?
-        std::map<std::string,std::vector<std::string> > forwardReferences;
+        std::map<std::string,std::vector<std::string>> forwardReferences;
         (*pit).GetForwardReferences(forwardReferences);
         if (forwardReferences.size() > 0)
         {
           std::string referencingNodeID = (*pit).GetValue();
           if (referencingNodeID.size() > 0)
           {
-            std::map<std::string,std::vector<std::string> >::const_iterator frit;
+            std::map<std::string,std::vector<std::string>>::const_iterator frit;
             for (frit = forwardReferences.begin(); frit != forwardReferences.end(); ++frit)
             {
               std::string role = frit->first;

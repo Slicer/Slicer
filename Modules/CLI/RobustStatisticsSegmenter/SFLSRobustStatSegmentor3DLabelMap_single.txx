@@ -325,7 +325,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
 // #ifndef NDEBUG
 //   std::ofstream dbgf("/tmp/dbgo.txt", std::ios_base::app);
 // #endif
-// douher::saveAsImage2< double >(mp_phi, "initPhi.nrrd");
+// douher::saveAsImage2<double>(mp_phi, "initPhi.nrrd");
   for( unsigned int it = 0; it < this->m_numIter; ++it )
   // for (unsigned int it = 0; ; ++it)
   {
@@ -547,7 +547,7 @@ CSFLSRobustStatSegmentor3DLabelMap<TPixel>
   }
 
   long                            n = m_seeds.size();
-  std::vector<std::vector<long> > newSeeds;
+  std::vector<std::vector<long>> newSeeds;
 
   if( n == 0 )
   {

@@ -99,7 +99,7 @@ bool TestNodeIDs()
 
   std::vector<vtkMRMLNode*> nodes;
   scene->GetNodesByClass("vtkMRMLColorTableNode", nodes);
-  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
   {
     vtkMRMLColorTableNode* colorNode =
       vtkMRMLColorTableNode::SafeDownCast(*nodeIt);
@@ -115,7 +115,7 @@ bool TestNodeIDs()
   }
 
   scene->GetNodesByClass("vtkMRMLPETProceduralColorNode", nodes);
-  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
   {
     vtkMRMLPETProceduralColorNode* colorNode =
       vtkMRMLPETProceduralColorNode::SafeDownCast(*nodeIt);
@@ -131,7 +131,7 @@ bool TestNodeIDs()
   }
 
   scene->GetNodesByClass("vtkMRMLdGEMRICProceduralColorNode", nodes);
-  for (std::vector< vtkMRMLNode* >::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
+  for (std::vector<vtkMRMLNode*>::iterator nodeIt = nodes.begin(); nodeIt != nodes.end(); ++nodeIt)
   {
     vtkMRMLdGEMRICProceduralColorNode* colorNode =
       vtkMRMLdGEMRICProceduralColorNode::SafeDownCast(*nodeIt);

@@ -741,7 +741,7 @@ void qSlicerSubjectHierarchyPluginHandler::showItemsInView(vtkIdList* itemIDsToS
 QString qSlicerSubjectHierarchyPluginHandler::dumpContextMenuActions()
 {
   QString info;
-  QList< QAction* > actions;
+  QList<QAction*> actions;
 
   info.append("=== Item context menu ===\n");
   actions.clear();

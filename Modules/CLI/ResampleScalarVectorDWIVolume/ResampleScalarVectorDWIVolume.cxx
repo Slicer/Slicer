@@ -970,7 +970,7 @@ itk::Matrix<double, 3, 3>
 ReadMeasurementFrame( itk::MetaDataDictionary& dico, const Transform3DPointer & inverseTransform )
 {
   itk::Matrix<double, 3, 3> measurementFrame;
-  typedef std::vector<std::vector<double> >     DoubleVectorType;
+  typedef std::vector<std::vector<double>>     DoubleVectorType;
   typedef itk::MetaDataObject<DoubleVectorType> MetaDataDoubleVectorType;
   itk::MetaDataDictionary::ConstIterator itr = dico.Begin();
   itk::MetaDataDictionary::ConstIterator end = dico.End();

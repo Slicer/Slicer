@@ -42,7 +42,7 @@ void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 //---------------------------------------------------------------------------
 int vtkMRMLModelDisplayNodeTest1(int, char*[])
 {
-  vtkSmartPointer< vtkMRMLModelDisplayNode > node1 = vtkSmartPointer< vtkMRMLModelDisplayNode >::New();
+  vtkSmartPointer<vtkMRMLModelDisplayNode> node1 = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
   vtkNew<vtkUnstructuredGrid> ug;

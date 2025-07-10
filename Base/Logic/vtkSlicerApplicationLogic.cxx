@@ -48,8 +48,8 @@
 #include "vtkSlicerApplicationLogicRequests.h"
 
 //----------------------------------------------------------------------------
-class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};
-class ModifiedQueue : public std::queue<vtkSmartPointer<vtkObject> > {};
+class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask>> {};
+class ModifiedQueue : public std::queue<vtkSmartPointer<vtkObject>> {};
 class ReadDataQueue : public std::queue<DataRequest*> {};
 class WriteDataQueue : public std::queue<DataRequest*> {};
 
