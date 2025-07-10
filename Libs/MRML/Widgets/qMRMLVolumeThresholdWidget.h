@@ -36,7 +36,7 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget
 public:
   /// Constructors
   typedef qMRMLVolumeWidget Superclass;
-  explicit qMRMLVolumeThresholdWidget(QWidget* parent=nullptr);
+  explicit qMRMLVolumeThresholdWidget(QWidget* parent = nullptr);
   ~qMRMLVolumeThresholdWidget() override;
 
   enum ControlMode

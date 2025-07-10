@@ -362,7 +362,7 @@ void vtkSlicerAngleRepresentation2D::ReleaseGraphicsResources(
 //----------------------------------------------------------------------
 int vtkSlicerAngleRepresentation2D::RenderOverlay(vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count +=  this->LineActor->RenderOverlay(viewport);
@@ -380,7 +380,7 @@ int vtkSlicerAngleRepresentation2D::RenderOverlay(vtkViewport* viewport)
 int vtkSlicerAngleRepresentation2D::RenderOpaqueGeometry(
   vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count += this->LineActor->RenderOpaqueGeometry(viewport);
@@ -398,7 +398,7 @@ int vtkSlicerAngleRepresentation2D::RenderOpaqueGeometry(
 int vtkSlicerAngleRepresentation2D::RenderTranslucentPolygonalGeometry(
   vtkViewport* viewport)
 {
-  int count=0;
+  int count = 0;
   if (this->LineActor->GetVisibility())
   {
     count += this->LineActor->RenderTranslucentPolygonalGeometry(viewport);

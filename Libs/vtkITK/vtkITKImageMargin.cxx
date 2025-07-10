@@ -163,7 +163,7 @@ void vtkITKImageMargin::SimpleExecute(vtkImageData* input, vtkImageData* output)
     vtkErrorMacro(<<"PointData is NULL");
     return;
   }
-  vtkDataArray* inScalars=pd->GetScalars();
+  vtkDataArray* inScalars = pd->GetScalars();
   if (inScalars == nullptr)
   {
     vtkErrorMacro(<< "Scalars must be defined for image margin");

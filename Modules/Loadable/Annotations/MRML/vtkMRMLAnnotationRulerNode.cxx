@@ -403,7 +403,7 @@ void vtkMRMLAnnotationRulerNode::GetPosition1(double position[3])
     vtkErrorMacro("AnnotationRuler - Failed to get first control point");
     return;
   }
-  for (int i=0; i < 3; ++i)
+  for (int i = 0; i < 3; ++i)
   {
     position[i] = tmp[i];
   }
@@ -418,5 +418,5 @@ void vtkMRMLAnnotationRulerNode::GetPosition2(double position[3])
     vtkErrorMacro("AnnotationRuler - Failed to get second control point");
     return;
   }
-  for (int i=0; i < 3; ++i){ position[i] = tmp[i]; }
+  for (int i = 0; i < 3; ++i){ position[i] = tmp[i]; }
 }

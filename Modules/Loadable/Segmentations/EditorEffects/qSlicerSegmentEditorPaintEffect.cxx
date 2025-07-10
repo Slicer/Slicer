@@ -348,7 +348,7 @@ void qSlicerSegmentEditorPaintEffectPrivate::paintAddPoint(qMRMLWidget* viewWidg
     if (maximumDistanceBetweenPoints > 0.0)
     {
       int numberOfPointsToAdd = static_cast<int>(strokeLength / maximumDistanceBetweenPoints)-1;
-      for (int pointIndex=0; pointIndex < numberOfPointsToAdd; pointIndex++)
+      for (int pointIndex = 0; pointIndex < numberOfPointsToAdd; pointIndex++)
       {
         double lastPointWeight = static_cast<double>(pointIndex+1) / static_cast<double>(numberOfPointsToAdd+1);
         this->PaintCoordinates_World->InsertNextPoint(
@@ -1048,7 +1048,7 @@ bool qSlicerSegmentEditorPaintEffectPrivate::brushPositionInWorld(qMRMLWidget* v
       renderer->GetActiveCamera()->GetPosition(cameraPosition);
       pickPositions->GetPoint(0, brushPosition_World);
       double minDist2 = vtkMath::Distance2BetweenPoints(brushPosition_World, cameraPosition);
-      for (int i=1; i<numberOfPickedPositions; i++)
+      for (int i = 1; i<numberOfPickedPositions; i++)
       {
         double currentMinDist2 = vtkMath::Distance2BetweenPoints(pickPositions->GetPoint(i), cameraPosition);
         if (currentMinDist2<minDist2)

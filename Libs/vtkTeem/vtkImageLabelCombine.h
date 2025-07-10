@@ -52,7 +52,7 @@ public:
 
 protected:
   vtkImageLabelCombine();
-  ~vtkImageLabelCombine() override  = default;
+  ~vtkImageLabelCombine() override = default;
 
   int OverwriteInput;
 

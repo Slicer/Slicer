@@ -54,7 +54,7 @@ public:
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
   double canAddNodeToSubjectHierarchy(
     vtkMRMLNode* node,
-    vtkIdType parentItemID=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
+    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID )const override;
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,

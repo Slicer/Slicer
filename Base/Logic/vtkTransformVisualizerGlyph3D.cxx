@@ -37,10 +37,10 @@
 #include <vtkPointData.h>
 #include <vtkTransform.h>
 
-static const int ARRAY_INDEX_SCALARS=0;
-static const int ARRAY_INDEX_VECTORS=1;
-// static const int ARRAY_INDEX_NORMALS=2; // unused
-static const int ARRAY_INDEX_COLORS=3;
+static const int ARRAY_INDEX_SCALARS = 0;
+static const int ARRAY_INDEX_VECTORS = 1;
+// static const int ARRAY_INDEX_NORMALS = 2; // unused
+static const int ARRAY_INDEX_COLORS = 3;
 
 vtkStandardNewMacro(vtkTransformVisualizerGlyph3D);
 
@@ -127,10 +127,10 @@ int vtkTransformVisualizerGlyph3D::RequestData(
 
   // Traverse all Input points, transforming Source points and copying
   // point attributes.
-  vtkIdType ptIncr=0;
-  vtkIdType cellIncr=0;
+  vtkIdType ptIncr = 0;
+  vtkIdType cellIncr = 0;
   double v[3] = {0};
-  for (vtkIdType inPtId=0; inPtId < numPts; inPtId++)
+  for (vtkIdType inPtId = 0; inPtId < numPts; inPtId++)
   {
     if ( ! (inPtId % 10000) )
     {
@@ -155,13 +155,13 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     trans->Identity();
 
     // Copy all topology (transformation independent)
-    for (vtkIdType cellId=0; cellId < numSourceCells; cellId++)
+    for (vtkIdType cellId = 0; cellId < numSourceCells; cellId++)
     {
       vtkCell* cell = source->GetCell(cellId);
       vtkIdList* cellPts = cell->GetPointIds();
       int npts = cellPts->GetNumberOfIds();
       pts->Reset();
-      for (vtkIdType i=0; i < npts; i++)
+      for (vtkIdType i = 0; i < npts; i++)
       {
         pts->InsertId(i,cellPts->GetId(i) + ptIncr);
       }
@@ -232,7 +232,7 @@ int vtkTransformVisualizerGlyph3D::RequestData(
     }
 
     // Copy point data from source
-    for (vtkIdType i=0; i < numSourcePts; i++)
+    for (vtkIdType i = 0; i < numSourcePts; i++)
     {
       outputPD->CopyTuple(inCScalars, newScalars, inPtId, ptIncr+i);
     }

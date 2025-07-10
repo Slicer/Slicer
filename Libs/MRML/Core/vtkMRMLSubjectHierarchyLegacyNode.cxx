@@ -212,7 +212,7 @@ vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubject
 
   std::vector<vtkMRMLNode*> subjectHierarchyNodes;
   unsigned int numberOfNodes = scene->GetNodesByClass("vtkMRMLSubjectHierarchyLegacyNode", subjectHierarchyNodes);
-  for (unsigned int shNodeIndex=0; shNodeIndex<numberOfNodes; shNodeIndex++)
+  for (unsigned int shNodeIndex = 0; shNodeIndex<numberOfNodes; shNodeIndex++)
   {
     vtkMRMLSubjectHierarchyLegacyNode* node = vtkMRMLSubjectHierarchyLegacyNode::SafeDownCast(subjectHierarchyNodes[shNodeIndex]);
     if (node)
@@ -241,7 +241,7 @@ vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubject
 
   std::vector<vtkMRMLNode*> subjectHierarchyNodes;
   unsigned int numberOfNodes = scene->GetNodesByClass("vtkMRMLSubjectHierarchyLegacyNode", subjectHierarchyNodes);
-  for (unsigned int shNodeIndex=0; shNodeIndex<numberOfNodes; shNodeIndex++)
+  for (unsigned int shNodeIndex = 0; shNodeIndex<numberOfNodes; shNodeIndex++)
   {
     vtkMRMLSubjectHierarchyLegacyNode* node = vtkMRMLSubjectHierarchyLegacyNode::SafeDownCast(subjectHierarchyNodes[shNodeIndex]);
     if (node)

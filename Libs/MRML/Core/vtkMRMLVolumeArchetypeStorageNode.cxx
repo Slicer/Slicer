@@ -280,7 +280,7 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode* storage
   // check for Analyze and similar format- if the archetype is
   // one of those, then don't send the rest of the list
   //
-  std::string fileExt=vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  std::string fileExt = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
   if ( fileExt != std::string(".hdr")
       && fileExt != std::string(".img")
       && fileExt != std::string(".mhd")
@@ -791,7 +791,7 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
   {
     vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
       GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
-    for (int i=0; i<supportedFormats->GetNumberOfTuples(); i++)
+    for (int i = 0; i<supportedFormats->GetNumberOfTuples(); i++)
     {
       this->SupportedWriteFileTypes->InsertNextValue(supportedFormats->GetValue(i));
     }

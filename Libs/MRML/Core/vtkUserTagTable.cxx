@@ -32,7 +32,7 @@ vtkUserTagTable::~vtkUserTagTable()
   if ( this->TagTable )
   {
     int numcols = this->TagTable->GetNumberOfColumns();
-    for ( int i=numcols-1; i >= 0; i-- )
+    for ( int i = numcols-1; i >= 0; i-- )
     {
       this->TagTable->RemoveColumn ( i );
     }
@@ -141,7 +141,7 @@ int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
   if ( this->TagTable )
   {
     int numcols = this->TagTable->GetNumberOfColumns();
-    for ( int i=0; i < numcols; i++ )
+    for ( int i = 0; i < numcols; i++ )
     {
       if ( !strcmp ( this->TagTable->GetColumnName( i ), keyword ))
       {
@@ -193,7 +193,7 @@ const char* vtkUserTagTable::GetUserTagValue ( const char* keyword)
   if ( this->TagTable )
   {
     int numcols = this->TagTable->GetNumberOfColumns();
-    for ( int i=0; i < numcols; i++ )
+    for ( int i = 0; i < numcols; i++ )
     {
       //--- get each column in table and check to see if
       //--- its name matches the keyword.
@@ -223,7 +223,7 @@ const char* vtkUserTagTable::GetUserTagValue ( const char* keyword)
   {
     std::stringstream ss;
     int numcols = this->TagTable->GetNumberOfColumns();
-    for ( int i=0; i < numcols; i++ )
+    for ( int i = 0; i < numcols; i++ )
     {
       //--- get each column in table and check to see if
       //--- its name matches the keyword.
@@ -279,7 +279,7 @@ int vtkUserTagTable::DeleteKeywordValuePair ( const char* keyword  )
   {
     std::stringstream ss;
     int numcols = this->TagTable->GetNumberOfColumns();
-    for ( int i=0; i < numcols; i++ )
+    for ( int i = 0; i < numcols; i++ )
     {
       //--- find what column keyword is in
       int col = this->GetKeywordColumn ( keyword );

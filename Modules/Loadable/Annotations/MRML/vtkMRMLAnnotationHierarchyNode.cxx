@@ -57,7 +57,7 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
 
   vtkMRMLAnnotationHierarchyNode* hnode = nullptr;
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
-  for (int n=0; n < numNodes; n++)
+  for (int n = 0; n < numNodes; n++)
   {
     hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLAnnotationHierarchyNode"));
     vtkDebugMacro("GetChildrenHierarchyNodes: hierarchy node " << n << " has id " << hnode->GetID());
@@ -142,7 +142,7 @@ void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection* children, int le
 
   vtkMRMLAnnotationHierarchyNode* hnode = nullptr;
   int numNodes = scene->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
-  for (int n=0; n < numNodes; n++)
+  for (int n = 0; n < numNodes; n++)
   {
     hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLAnnotationHierarchyNode"));
     vtkDebugMacro("GetChildrenHierarchyNodes: hierarchy node " << n << " has id " << hnode->GetID());

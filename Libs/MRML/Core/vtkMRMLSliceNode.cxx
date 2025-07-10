@@ -203,7 +203,7 @@ void vtkMRMLSliceNode::RemoveThreeDViewID(char* viewNodeID)
     return;
   }
   std::vector<std::string> viewNodeIDs;
-  for (unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
+  for (unsigned int i = 0; i<this->ThreeDViewIDs.size(); i++)
   {
     if (std::string(viewNodeID) != this->ThreeDViewIDs[i])
     {
@@ -226,7 +226,7 @@ void vtkMRMLSliceNode::RemoveThreeDViewID(char* viewNodeID)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::RemoveAllThreeDViewIDs()
 {
-  for (unsigned int i=0; i<this->ThreeDViewIDs.size(); i++)
+  for (unsigned int i = 0; i<this->ThreeDViewIDs.size(); i++)
   {
     this->Scene->RemoveReferencedNodeID(ThreeDViewIDs[i].c_str(), this);
   }
@@ -890,9 +890,9 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     std::stringstream ss;
-    for (int i=0; i<3; i++)
+    for (int i = 0; i<3; i++)
     {
-      for (int j=0; j<3; j++)
+      for (int j = 0; j<3; j++)
       {
         ss << it->second->GetElement(i, j);
         if ( !( i==2 && j==2) )
@@ -997,9 +997,9 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     vtkNew<vtkMatrix3x3> orientationMatrix;
     orientationMatrix->Identity();
     ss << xmlReadAttValue;
-    for (int i=0; i<3; i++)
+    for (int i = 0; i<3; i++)
     {
-      for (int j=0; j<3; j++)
+      for (int j = 0; j<3; j++)
       {
         ss >> val;
         orientationMatrix->SetElement(i, j, val);
@@ -1375,7 +1375,7 @@ void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene, double r, double a, do
   }
 
   int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
-  for (int n=0; n<nnodes; n++)
+  for (int n = 0; n<nnodes; n++)
   {
     vtkMRMLSliceNode* node = vtkMRMLSliceNode::SafeDownCast(
       scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
@@ -1572,9 +1572,9 @@ void vtkMRMLSliceNode::SetUVWDimensions(int x, int y, int z)
 void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
 {
   bool modified = false;
-  double u=x;
-  double v=y;
-  double w=z;
+  double u = x;
+  double v = y;
+  double w = z;
 
   if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatchVolumes)
   {
@@ -1914,7 +1914,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
   sliceToRAS->MultiplyPoint(v2, v3);
 
   // if the translation has changed, update the rest of the matrices
-  double eps=1.0e-6;
+  double eps = 1.0e-6;
   if ( fabs(v1[0] - v3[0]) > eps ||
        fabs(v1[1] - v3[1]) > eps ||
        fabs(v1[2] - v3[2]) > eps )

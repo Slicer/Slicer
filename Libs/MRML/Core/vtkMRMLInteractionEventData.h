@@ -161,7 +161,7 @@ protected:
   bool Equivalent(const vtkEventData* e) const override;
 
   vtkMRMLInteractionEventData();
-  ~vtkMRMLInteractionEventData() override  = default;
+  ~vtkMRMLInteractionEventData() override = default;
 
 private:
   vtkMRMLInteractionEventData(const vtkMRMLInteractionEventData& c) = delete;

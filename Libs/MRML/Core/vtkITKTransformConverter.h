@@ -167,7 +167,7 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
 
   vtkSmartPointer<vtkMatrix4x4> transformVtk_LPS = vtkSmartPointer<vtkMatrix4x4>::New();
 
-  bool convertedToVtkMatrix=false;
+  bool convertedToVtkMatrix = false;
 
   std::string itkTransformClassName = transformItk_LPS->GetNameOfClass();
 
@@ -205,9 +205,9 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
     typename LinearTransformType::Pointer dlt
       = static_cast<LinearTransformType*>( transformItk_LPS.GetPointer() );
     convertedToVtkMatrix=true;
-    for (unsigned int i=0; i < D; i++)
+    for (unsigned int i = 0; i < D; i++)
     {
-      for (unsigned int j=0; j < D; j++)
+      for (unsigned int j = 0; j < D; j++)
       {
         transformVtk_LPS->SetElement(i, j, dlt->GetMatrix()[i][j]);
       }
@@ -236,7 +236,7 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
     typename ScaleTransformType::Pointer dst
       = static_cast<ScaleTransformType*>( transformItk_LPS.GetPointer() );
     convertedToVtkMatrix=true;
-    for (unsigned int i=0; i < D; i++)
+    for (unsigned int i = 0; i < D; i++)
     {
       transformVtk_LPS->SetElement(i, i, dst->GetScale()[i]);
     }
@@ -248,7 +248,7 @@ bool vtkITKTransformConverter::SetVTKLinearTransformFromITK(
     typename TranslateTransformType::Pointer dtt
       = static_cast<TranslateTransformType*>( transformItk_LPS.GetPointer());
     convertedToVtkMatrix=true;
-    for (unsigned int i=0; i < D; i++)
+    for (unsigned int i = 0; i < D; i++)
     {
       transformVtk_LPS->SetElement(i, D, dtt->GetOffset()[i]);
     }
@@ -314,9 +314,9 @@ bool vtkITKTransformConverter::SetITKLinearTransformFromVTK(vtkObject* loggerObj
   MatrixType itkmat;
   OffsetType itkoffset;
 
-  for (unsigned int i=0; i < VTKDimension; i++)
+  for (unsigned int i = 0; i < VTKDimension; i++)
   {
-    for (unsigned int j=0; j < VTKDimension; j++)
+    for (unsigned int j = 0; j < VTKDimension; j++)
     {
       itkmat[i][j] = vtkmat->GetElement(i, j);
     }
@@ -384,7 +384,7 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(
     vtkErrorWithObjectMacro(loggerObject, "vtkMRMLTransformStorageNode::SetVTKBSplineFromITKv4 failed: bsplineVtk is invalid");
     return false;
   }
-  bool isDoublePrecisionInput=true;
+  bool isDoublePrecisionInput = true;
   if (sizeof(T)==sizeof(float))
   {
     isDoublePrecisionInput=false;
@@ -441,9 +441,9 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(
     coefficientImages[0]->GetDirection();
 
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
-  for (unsigned int row=0; row<VTKDimension; row++)
+  for (unsigned int row = 0; row<VTKDimension; row++)
   {
-    for (unsigned int column=0; column<VTKDimension; column++)
+    for (unsigned int column = 0; column<VTKDimension; column++)
     {
       gridDirectionMatrix_LPS->SetElement(row,column,direction[row][column]);
     }
@@ -477,7 +477,7 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(
   double gridOrigin_RAS[3]={-origin[0], -origin[1], origin[2]};
   bsplineCoefficients->SetOrigin(gridOrigin_RAS);
 
-  int bsplineCoefficientsScalarType=VTK_FLOAT;
+  int bsplineCoefficientsScalarType = VTK_FLOAT;
   if (isDoublePrecisionInput)
   {
     bsplineCoefficientsScalarType=VTK_DOUBLE;
@@ -496,7 +496,7 @@ bool vtkITKTransformConverter::SetVTKBSplineParametersFromITKGeneric(
   }
   const T* itkBSplineParams_LPS = static_cast<const T*>(bsplineItk->GetParameters().data_block());
   T* vtkBSplineParams_RAS=static_cast<T*>(bsplineCoefficients->GetScalarPointer());
-  for (unsigned int i=0; i<expectedNumberOfVectors; i++)
+  for (unsigned int i = 0; i<expectedNumberOfVectors; i++)
   {
     *(vtkBSplineParams_RAS++) =  - (*(itkBSplineParams_LPS                          ));
     *(vtkBSplineParams_RAS++) =  - (*(itkBSplineParams_LPS+expectedNumberOfVectors  ));
@@ -547,9 +547,9 @@ template <typename T> bool vtkITKTransformConverter::SetVTKBSplineFromITKv3Gener
     {
       BulkTransformType* bulkItkAffine = static_cast<BulkTransformType*> (bulkTransformItk.GetPointer());
       vtkNew<vtkMatrix4x4> bulkMatrix_LPS;
-      for (unsigned int i=0; i < VTKDimension; i++)
+      for (unsigned int i = 0; i < VTKDimension; i++)
       {
-        for (unsigned int j=0; j < VTKDimension; j++)
+        for (unsigned int j = 0; j < VTKDimension; j++)
         {
           bulkMatrix_LPS->SetElement(i,j, bulkItkAffine->GetMatrix()[i][j]);
         }
@@ -623,7 +623,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
     vtkErrorWithObjectMacro(loggerObject, "vtkMRMLTransformStorageNode::SetITKBSplineFromVTK failed: bsplineVtk is invalid");
     return false;
   }
-  vtkImageData* bsplineCoefficients_RAS=bsplineVtk->GetCoefficientData();
+  vtkImageData* bsplineCoefficients_RAS = bsplineVtk->GetCoefficientData();
   if (bsplineCoefficients_RAS==nullptr)
   {
     vtkErrorWithObjectMacro(loggerObject, "Cannot write BSpline transform to file: coefficients are not specified");
@@ -639,22 +639,22 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
   // * mesh spacing X, Y, Z
   // * mesh direction 3x3 matrix (first row, second row, third row)
   typename BSplineTransformType::FixedParametersType transformFixedParamsItk;
-  const unsigned int numberOfFixedParameters=VTKDimension*(VTKDimension+3);
+  const unsigned int numberOfFixedParameters = VTKDimension*(VTKDimension+3);
   transformFixedParamsItk.SetSize(numberOfFixedParameters);
 
-  int* gridExtent=bsplineCoefficients_RAS->GetExtent();
+  int* gridExtent = bsplineCoefficients_RAS->GetExtent();
   int gridSize[3]={gridExtent[1]-gridExtent[0]+1, gridExtent[3]-gridExtent[2]+1, gridExtent[5]-gridExtent[4]+1};
   transformFixedParamsItk[0]=gridSize[0];
   transformFixedParamsItk[1]=gridSize[1];
   transformFixedParamsItk[2]=gridSize[2];
 
-  double* gridOrigin_RAS=bsplineCoefficients_RAS->GetOrigin();
+  double* gridOrigin_RAS = bsplineCoefficients_RAS->GetOrigin();
   double gridOrigin_LPS[3]={-gridOrigin_RAS[0], -gridOrigin_RAS[1], gridOrigin_RAS[2]};
   transformFixedParamsItk[3]=gridOrigin_LPS[0];
   transformFixedParamsItk[4]=gridOrigin_LPS[1];
   transformFixedParamsItk[5]=gridOrigin_LPS[2];
 
-  double* gridSpacing=bsplineCoefficients_RAS->GetSpacing();
+  double* gridSpacing = bsplineCoefficients_RAS->GetSpacing();
   transformFixedParamsItk[6]=gridSpacing[0];
   transformFixedParamsItk[7]=gridSpacing[1];
   transformFixedParamsItk[8]=gridSpacing[2];
@@ -672,10 +672,10 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
   rasToLps->SetElement(1,1,-1);
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
   vtkMatrix4x4::Multiply4x4(rasToLps.GetPointer(), gridDirectionMatrix_RAS.GetPointer(), gridDirectionMatrix_LPS.GetPointer());
-  int fpIndex=9;
-  for (unsigned int row=0; row<VTKDimension; row++)
+  int fpIndex = 9;
+  for (unsigned int row = 0; row<VTKDimension; row++)
   {
-    for (unsigned int column=0; column<VTKDimension; column++)
+    for (unsigned int column = 0; column<VTKDimension; column++)
     {
       transformFixedParamsItk[fpIndex++]=gridDirectionMatrix_LPS->GetElement(row,column);
     }
@@ -697,7 +697,7 @@ template <typename BSplineTransformType> bool vtkITKTransformConverter::SetITKBS
   T* itkBSplineParams_LPS = static_cast<T*>(transformParamsItk.data_block());
   T* vtkBSplineParams_RAS=static_cast<T*>(bsplineCoefficients_RAS->GetScalarPointer());
   double coefficientScale = bsplineVtk->GetDisplacementScale();
-  for (unsigned int i=0; i<expectedNumberOfVectors; i++)
+  for (unsigned int i = 0; i<expectedNumberOfVectors; i++)
   {
     *(itkBSplineParams_LPS                          ) = -coefficientScale * (*(vtkBSplineParams_RAS++));
     *(itkBSplineParams_LPS+expectedNumberOfVectors  ) = -coefficientScale * (*(vtkBSplineParams_RAS++));
@@ -739,7 +739,7 @@ template <typename T> bool vtkITKTransformConverter::SetITKv3BSplineFromVTKGener
     return false;
   }
 
-  vtkMatrix4x4* bulkMatrix_RAS=bsplineVtk->GetBulkTransformMatrix();
+  vtkMatrix4x4* bulkMatrix_RAS = bsplineVtk->GetBulkTransformMatrix();
   if (bulkMatrix_RAS || alwaysAddBulkTransform)
   {
     vtkNew<vtkMatrix4x4> lpsToRas;
@@ -762,9 +762,9 @@ template <typename T> bool vtkITKTransformConverter::SetITKv3BSplineFromVTKGener
 
     typename BulkTransformType::MatrixType affineMatrix;
     typename BulkTransformType::OffsetType affineOffset;
-    for (unsigned int i=0; i < VTKDimension; i++)
+    for (unsigned int i = 0; i < VTKDimension; i++)
     {
-      for (unsigned int j=0; j < VTKDimension; j++)
+      for (unsigned int j = 0; j < VTKDimension; j++)
       {
         affineMatrix[i][j]=bulkMatrix_LPS->GetElement(i,j);
       }
@@ -818,7 +818,7 @@ bool vtkITKTransformConverter::SetITKv3BSplineFromVTK(vtkObject* loggerObject, i
     return false;
   }
 
-  vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficientData();
+  vtkImageData* bsplineCoefficients = bsplineVtk->GetCoefficientData();
 
   if (bsplineCoefficients==nullptr)
   {
@@ -871,7 +871,7 @@ bool vtkITKTransformConverter::SetITKv4BSplineFromVTK(vtkObject* loggerObject,
     return false;
   }
 
-  vtkImageData* bsplineCoefficients=bsplineVtk->GetCoefficientData();
+  vtkImageData* bsplineCoefficients = bsplineVtk->GetCoefficientData();
 
   if (bsplineCoefficients==nullptr)
   {
@@ -1007,9 +1007,9 @@ bool vtkITKTransformConverter::SetVTKOrientedGridTransformFromITKImage(vtkObject
 
   // Direction
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_LPS;
-  for (unsigned int row=0; row<VTKDimension; row++)
+  for (unsigned int row = 0; row<VTKDimension; row++)
   {
-    for (unsigned int column=0; column<VTKDimension; column++)
+    for (unsigned int column = 0; column<VTKDimension; column++)
     {
       gridDirectionMatrix_LPS->SetElement(row,column,gridImage_Lps->GetDirection()(row,column));
     }
@@ -1103,9 +1103,9 @@ bool vtkITKTransformConverter::SetITKImageFromVTKOrientedGridTransform(vtkObject
   vtkNew<vtkMatrix4x4> gridDirectionMatrix_Lps;
   vtkMatrix4x4::Multiply4x4(rasToLps.GetPointer(), gridDirectionMatrix_Ras.GetPointer(), gridDirectionMatrix_Lps.GetPointer());
   GridImageDoubleType::DirectionType gridDirectionMatrixItk_Lps;
-  for (unsigned int row=0; row<VTKDimension; row++)
+  for (unsigned int row = 0; row<VTKDimension; row++)
   {
-    for (unsigned int column=0; column<VTKDimension; column++)
+    for (unsigned int column = 0; column<VTKDimension; column++)
     {
       gridDirectionMatrixItk_Lps(row,column) = gridDirectionMatrix_Lps->GetElement(row,column);
     }
@@ -1279,10 +1279,10 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
   }
 
   ThinPlateSplineTransformDoubleType::PointSetType::Pointer sourceLandmarksItk_Lps = ThinPlateSplineTransformDoubleType::PointSetType::New();
-  vtkPoints* sourceLandmarksVtk_Ras=transformVtk_RAS->GetSourceLandmarks();
+  vtkPoints* sourceLandmarksVtk_Ras = transformVtk_RAS->GetSourceLandmarks();
   if (sourceLandmarksVtk_Ras!=nullptr)
   {
-    for (int i=0; i<sourceLandmarksVtk_Ras->GetNumberOfPoints(); i++)
+    for (int i = 0; i<sourceLandmarksVtk_Ras->GetNumberOfPoints(); i++)
     {
       double posVtk_Ras[3]={0};
       sourceLandmarksVtk_Ras->GetPoint(i, posVtk_Ras);
@@ -1294,10 +1294,10 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
     }
   }
   ThinPlateSplineTransformDoubleType::PointSetType::Pointer targetLandmarksItk_Lps = ThinPlateSplineTransformDoubleType::PointSetType::New();
-  vtkPoints* targetLandmarksVtk_Ras=transformVtk_RAS->GetTargetLandmarks();
+  vtkPoints* targetLandmarksVtk_Ras = transformVtk_RAS->GetTargetLandmarks();
   if (targetLandmarksVtk_Ras!=nullptr)
   {
-    for (int i=0; i<targetLandmarksVtk_Ras->GetNumberOfPoints(); i++)
+    for (int i = 0; i<targetLandmarksVtk_Ras->GetNumberOfPoints(); i++)
     {
       double posVtk_Ras[3]={0};
       targetLandmarksVtk_Ras->GetPoint(i, posVtk_Ras);

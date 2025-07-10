@@ -795,7 +795,7 @@ void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
     return;
   }
 
-  unsigned int i=0;
+  unsigned int i = 0;
 
   for (const auto& markupName: q->markupsLogic()->GetRegisteredMarkupsTypes())
   {
@@ -938,7 +938,7 @@ void qSlicerMarkupsModuleWidget::exit()
   Q_D(qSlicerMarkupsModuleWidget);
   if (d->MarkupsNode)
   {
-    for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+    for (int i = 0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
     {
       vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
         d->MarkupsNode->Measurements->GetItemAsObject(i) );
@@ -3105,7 +3105,7 @@ void qSlicerMarkupsModuleWidget::observeMeasurementsInCurrentMarkupsNode()
     return;
   }
 
-  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  for (int i = 0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
   {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
       d->MarkupsNode->Measurements->GetItemAsObject(i) );
@@ -3162,7 +3162,7 @@ void qSlicerMarkupsModuleWidget::updateMeasurementsDescriptionLabel()
   }
 
   QString measurementsString;
-  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  for (int i = 0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
   {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
       d->MarkupsNode->Measurements->GetItemAsObject(i) );
@@ -3204,7 +3204,7 @@ void qSlicerMarkupsModuleWidget::populateMeasurementSettingsTable()
 
   d->measurementSettingsTableWidget->setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Enabled"));
   d->measurementSettingsTableWidget->setRowCount(d->MarkupsNode->Measurements->GetNumberOfItems());
-  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  for (int i = 0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
   {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
       d->MarkupsNode->Measurements->GetItemAsObject(i) );
@@ -3239,7 +3239,7 @@ void qSlicerMarkupsModuleWidget::onMeasurementEnabledCheckboxToggled(bool on)
   QString measurementName = checkbox->property(NAME_PROPERTY).toString();
 
   // Enable/disable measurement with name
-  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  for (int i = 0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
   {
     vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
       d->MarkupsNode->Measurements->GetItemAsObject(i) );

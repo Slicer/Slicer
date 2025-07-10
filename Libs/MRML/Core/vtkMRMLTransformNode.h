@@ -288,14 +288,14 @@ public:
   /// Retrieves the transform as the specified transform class.
   /// If modifiableOnly is set to true then nullptr will be returned for transforms that cannot be modified (e.g., because it is computed from its inverse).
   /// Returns nullptr if the transform is not a kind of transform that was requested.
-  /// Example usage: vtkOrientedBSplineTransform* bsplineTransform=vtkOrientedBSplineTransform::SafeDownCast(GetTransformToParentAs("vtkOrientedBSplineTransform"));
+  /// Example usage: vtkOrientedBSplineTransform* bsplineTransform = vtkOrientedBSplineTransform::SafeDownCast(GetTransformToParentAs("vtkOrientedBSplineTransform"));
   vtkAbstractTransform* GetTransformToParentAs(const char* transformType, bool logErrorIfFails = true, bool modifiableOnly = false);
 
   ///
   /// Retrieves the transform as the specified transform class.
   /// If modifiableOnly is set to true then nullptr will be returned for transforms that cannot be modified (e.g., because it is computed from its inverse).
   /// Returns nullptr if the transform is not a kind of transform that was requested.
-  /// Example usage: vtkOrientedBSplineTransform* bsplineTransform=vtkOrientedBSplineTransform::SafeDownCast(GetTransformFromParentAs("vtkOrientedBSplineTransform"));
+  /// Example usage: vtkOrientedBSplineTransform* bsplineTransform = vtkOrientedBSplineTransform::SafeDownCast(GetTransformFromParentAs("vtkOrientedBSplineTransform"));
   vtkAbstractTransform* GetTransformFromParentAs(const char* transformType, bool logErrorIfFails = true, bool modifiableOnly = false);
 
   /// Set and observe a new transform of this node to parent node.
@@ -332,7 +332,7 @@ public:
   /// with true if all the transform components are linear.
   /// If concatenatedLinearTransform is specified and the transform is linear then it returns the concatenated linear
   /// transformation matrix.
-  static bool IsGeneralTransformLinear(vtkAbstractTransform* inputTransform, vtkTransform* concatenatedLinearTransform=nullptr);
+  static bool IsGeneralTransformLinear(vtkAbstractTransform* inputTransform, vtkTransform* concatenatedLinearTransform = nullptr);
 
   ///
   /// Utility function that determines if a transform is computed from its inverse.

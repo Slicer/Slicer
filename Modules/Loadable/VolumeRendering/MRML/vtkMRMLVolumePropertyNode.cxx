@@ -160,7 +160,7 @@ void vtkMRMLVolumePropertyNode::CopyParameterSet(vtkMRMLNode* anode)
   this->VolumeProperty->SetInterpolationType(node->VolumeProperty->GetInterpolationType());
   this->VolumeProperty->SetUseClippedVoxelIntensity(node->VolumeProperty->GetUseClippedVoxelIntensity());
 
-  for (int i=0; i<VTK_MAX_VRCOMP; i++)
+  for (int i = 0; i<VTK_MAX_VRCOMP; i++)
   {
     this->VolumeProperty->SetComponentWeight(i,node->GetVolumeProperty()->GetComponentWeight(i));
     //TODO: No set method for GrayTransferFunction, ColorChannels, and DefaultGradientOpacity
@@ -237,7 +237,7 @@ std::string vtkMRMLVolumePropertyNode::DataToString(double* data, int size)
   // Write header
   resultStream << size;
   resultStream.precision(std::numeric_limits<double>::digits10);
-  for (int i=0; i < size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     resultStream << " ";
     resultStream << *it;
@@ -252,14 +252,14 @@ int vtkMRMLVolumePropertyNode::DataFromString(const std::string& dataString, dou
   std::stringstream stream;
   stream << dataString;
 
-  int size=0;
+  int size = 0;
   stream >> size;
   if (size==0)
   {
     return 0;
   }
   data = new double[size];
-  for (int i=0; i < size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     std::string s;
     stream >> s;

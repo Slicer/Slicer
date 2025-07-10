@@ -52,7 +52,7 @@ public:
       AttributeFilter(QString attributeName)
         : AttributeName(attributeName) { };
 
-      AttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className=QString())
+      AttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className = QString())
         : AttributeName(attributeName), AttributeValue(attributeValue), Include(include), ClassName(className) { };
 
       /// Name of the attribute to filter
@@ -670,7 +670,7 @@ bool qMRMLSortFilterSubjectHierarchyProxyModel::filterAcceptsRow(int sourceRow, 
   QStandardItem* item = nullptr;
 
   // Sometimes the row is not complete (DnD), search for a non null item
-  for (int childIndex=0; childIndex < parentItem->columnCount(); ++childIndex)
+  for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
   {
     item = parentItem->child(sourceRow, childIndex);
     if (item)

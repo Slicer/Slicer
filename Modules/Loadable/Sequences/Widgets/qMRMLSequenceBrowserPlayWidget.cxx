@@ -127,9 +127,9 @@ void qMRMLSequenceBrowserPlayWidget::updateWidgetFromMRML()
   vcrPlaybackControls
     << d->pushButton_VcrFirst << d->pushButton_VcrLast << d->pushButton_VcrLoop
     << d->pushButton_VcrNext << d->pushButton_VcrPlayPause << d->pushButton_VcrPrevious;
-  bool vcrControlsEnabled=false;
+  bool vcrControlsEnabled = false;
 
-  int numberOfDataNodes=sequenceNode->GetNumberOfDataNodes();
+  int numberOfDataNodes = sequenceNode->GetNumberOfDataNodes();
   if (numberOfDataNodes>0 && !d->SequenceBrowserNode->GetRecordingActive())
   {
     vcrControlsEnabled=true;

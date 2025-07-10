@@ -41,7 +41,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModule :
 
 public:
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerSegmentationsModule(QObject* parent=nullptr);
+  explicit qSlicerSegmentationsModule(QObject* parent = nullptr);
   ~qSlicerSegmentationsModule() override;
 
   qSlicerGetTitleMacro(tr("Segmentations"));

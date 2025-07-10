@@ -33,7 +33,7 @@ vtkMRMLMarkupsTestLineNode::vtkMRMLMarkupsTestLineNode()
 }
 
 //--------------------------------------------------------------------------------
-vtkMRMLMarkupsTestLineNode::~vtkMRMLMarkupsTestLineNode()=default;
+vtkMRMLMarkupsTestLineNode::~vtkMRMLMarkupsTestLineNode() = default;
 
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsTestLineNode::PrintSelf(ostream& os, vtkIndent indent)

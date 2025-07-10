@@ -133,7 +133,7 @@ void vtkMRMLSnapshotClipNode::UpdateScene(vtkMRMLScene* scene)
   Superclass::UpdateReferences();
   this->SceneSnapshotNodes->RemoveAllItems();
 
-  for (unsigned int n=0; n<this->SceneSnapshotNodeIDs.size(); n++)
+  for (unsigned int n = 0; n<this->SceneSnapshotNodeIDs.size(); n++)
   {
     vtkMRMLSceneViewNode* node = vtkMRMLSceneViewNode::SafeDownCast(scene->GetNodeByID(this->SceneSnapshotNodeIDs[n]));
     this->SceneSnapshotNodes->AddItem(node);

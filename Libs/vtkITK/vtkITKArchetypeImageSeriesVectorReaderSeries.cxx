@@ -176,7 +176,7 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ReadProgressCallback(itk::Obj
   {
     return;
   }
-  vtkITKArchetypeImageSeriesVectorReaderSeries* me=reinterpret_cast<vtkITKArchetypeImageSeriesVectorReaderSeries*>(data);
+  vtkITKArchetypeImageSeriesVectorReaderSeries* me = reinterpret_cast<vtkITKArchetypeImageSeriesVectorReaderSeries*>(data);
   me->Progress = p->GetProgress();
   me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
 }

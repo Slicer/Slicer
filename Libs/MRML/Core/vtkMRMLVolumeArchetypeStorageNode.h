@@ -46,7 +46,7 @@ public:
   /// write.
   /// If move is false then the temporary directory is removed
   /// and an empty string is returned.
-  std::string UpdateFileList(vtkMRMLNode* refNode, bool move=false);
+  std::string UpdateFileList(vtkMRMLNode* refNode, bool move = false);
 
   ///
   /// Write this node's information to a MRML file in XML format.

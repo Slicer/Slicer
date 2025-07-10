@@ -146,7 +146,7 @@ void vtkITKLevelTracingTrace(vtkITKLevelTracingImageFilter* vtkNotUsed(self), T*
   vtkIdType* ptIds;
   ptIds = new vtkIdType [numberChain];
 
-  unsigned int i=0;
+  unsigned int i = 0;
   typename ImageType::IndexType chain3D;
 
   do
@@ -285,7 +285,7 @@ int vtkITKLevelTracingImageFilter::RequestData(
 
     double in[3];
     unsigned char out;
-    for (vtkIdType i=0; i < inScalars->GetNumberOfTuples(); ++i)
+    for (vtkIdType i = 0; i < inScalars->GetNumberOfTuples(); ++i)
     {
       inScalars->GetTuple(i, in);
 

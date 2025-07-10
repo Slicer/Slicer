@@ -340,7 +340,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
   // update its display node list.
   int nnodes = volume->GetNumberOfDisplayNodes();
   std::vector<vtkMRMLDisplayNode*> displayNodes;
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i<nnodes; i++)
   {
     if (!volume->GetNthDisplayNode(i))
     {

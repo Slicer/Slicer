@@ -32,8 +32,8 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStora
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
 protected:
-  vtkMRMLAnnotationFiducialsStorageNode()  = default;
-  ~vtkMRMLAnnotationFiducialsStorageNode() override  = default;
+  vtkMRMLAnnotationFiducialsStorageNode() = default;
+  ~vtkMRMLAnnotationFiducialsStorageNode() override = default;
   vtkMRMLAnnotationFiducialsStorageNode(const vtkMRMLAnnotationFiducialsStorageNode&);
   void operator=(const vtkMRMLAnnotationFiducialsStorageNode&);
 

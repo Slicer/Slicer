@@ -85,7 +85,7 @@ public:
   ///   Additional devices, such as virtual reality controllers can specify additional context names.
   ///   This mechanism allows interacting with multiple markups at the same time (user can grab
   ///   different markup points with each controller at the same time).
-  int GetActiveComponentType(std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
+  int GetActiveComponentType(std::string context = vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
   enum ComponentType
   {
     ComponentNone = 0,
@@ -112,11 +112,11 @@ public:
   /// Index of active component (that the mouse or other interaction context is hovered over).
   /// This property is computed on-the-fly and saved to file.
   /// \param context Name of the interaction context. By default it is empty string, meaning mouse
-  int GetActiveComponentIndex(std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
+  int GetActiveComponentIndex(std::string context = vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
 
   /// Set active component type and index for interaction context (empty by default, meaning mouse)
   void SetActiveComponent(int componentType, int componentIndex,
-                          std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
+                          std::string context = vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
 
   /// Query if there is an active component for any interaction context
   bool HasActiveComponent();
@@ -142,7 +142,7 @@ public:
   /// Returns index of active control point for interaction context if active component type is
   /// ComponentControlPoint, -1 otherwise.
   /// \param context Name of the interaction context. By default it is empty string, meaning mouse
-  int GetActiveControlPoint(std::string context=vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
+  int GetActiveControlPoint(std::string context = vtkMRMLMarkupsDisplayNode::GetDefaultContextName());
 
   ///@{
   /// Constants representing the context in which a Markups control point is being moved.

@@ -36,7 +36,7 @@ qSlicerReformatModuleWidget : public qSlicerAbstractModuleWidget
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerReformatModuleWidget(QWidget* parent=nullptr);
+  qSlicerReformatModuleWidget(QWidget* parent = nullptr);
   ~qSlicerReformatModuleWidget() override;
 
   enum OriginReferenceType {ONPLANE, INVOLUME};

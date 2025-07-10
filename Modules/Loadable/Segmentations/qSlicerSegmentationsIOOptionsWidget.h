@@ -36,7 +36,7 @@ class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsIOOptionsWidge
 {
   Q_OBJECT
 public:
-  qSlicerSegmentationsIOOptionsWidget(QWidget* parent=nullptr);
+  qSlicerSegmentationsIOOptionsWidget(QWidget* parent = nullptr);
   ~qSlicerSegmentationsIOOptionsWidget() override;
 
 protected slots:

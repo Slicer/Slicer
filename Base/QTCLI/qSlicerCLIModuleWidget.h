@@ -42,7 +42,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIModuleWidget : public qSlicerAbstract
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerCLIModuleWidget(QWidget* parent=nullptr);
+  qSlicerCLIModuleWidget(QWidget* parent = nullptr);
   ~qSlicerCLIModuleWidget() override;
 
   /// Get the current \a commandLineModuleNode

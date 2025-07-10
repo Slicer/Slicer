@@ -92,7 +92,7 @@ int main( int argc, char* argv[] )
 
   vtkSmartPointer<vtkStringArray> fileNameList = vtkSmartPointer<vtkStringArray>::New();
   // create two RGB images and save as PNG
-  for (int i=0;i<5;i++)
+  for (int i = 0;i<5;i++)
   {
 
     std::ostringstream sstr;

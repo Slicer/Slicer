@@ -870,7 +870,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
   }
 
   QStringList nodes;
-  bool writeSuccess=false;
+  bool writeSuccess = false;
   foreach (qSlicerFileWriter* writer, writers)
   {
     writer->setMRMLScene(scene);

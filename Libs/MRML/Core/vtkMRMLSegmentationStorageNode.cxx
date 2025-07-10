@@ -200,7 +200,7 @@ vtkMRMLSegmentationNode* vtkMRMLSegmentationStorageNode::GetAssociatedDataNode()
 
   std::vector<vtkMRMLNode*> segmentationNodes;
   unsigned int numberOfNodes = this->GetScene()->GetNodesByClass("vtkMRMLSegmentationNode", segmentationNodes);
-  for (unsigned int nodeIndex=0; nodeIndex<numberOfNodes; nodeIndex++)
+  for (unsigned int nodeIndex = 0; nodeIndex<numberOfNodes; nodeIndex++)
   {
     vtkMRMLSegmentationNode* node = vtkMRMLSegmentationNode::SafeDownCast(segmentationNodes[nodeIndex]);
     if (node)
@@ -394,9 +394,9 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
   double origin[3] = {itkOrigin[0], itkOrigin[1], itkOrigin[2]};
   double spacing[3] = {itkSpacing[0], itkSpacing[1], itkSpacing[2]};
   double directions[3][3] = {{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}};
-  for (unsigned int col=0; col<3; col++)
+  for (unsigned int col = 0; col<3; col++)
   {
-    for (unsigned int row=0; row<3; row++)
+    for (unsigned int row = 0; row<3; row++)
     {
       directions[row][col] = itkDirections[row][col];
     }

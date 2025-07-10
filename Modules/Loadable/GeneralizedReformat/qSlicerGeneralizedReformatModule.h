@@ -37,7 +37,7 @@ qSlicerGeneralizedReformatModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerGeneralizedReformatModule(QObject* parent=nullptr);
+  explicit qSlicerGeneralizedReformatModule(QObject* parent = nullptr);
   ~qSlicerGeneralizedReformatModule() override;
 
   qSlicerGetTitleMacro(tr("GeneralizedReformat"));

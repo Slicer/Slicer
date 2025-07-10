@@ -80,7 +80,7 @@ public:
 
 protected:
   vtkTransformVisualizerGlyph3D();
-  ~vtkTransformVisualizerGlyph3D() override  = default;
+  ~vtkTransformVisualizerGlyph3D() override = default;
 
   bool ScaleDirectional;
 

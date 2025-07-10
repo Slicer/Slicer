@@ -96,7 +96,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSortFilterSubjectHier
 
 public:
   typedef QSortFilterProxyModel Superclass;
-  qMRMLSortFilterSubjectHierarchyProxyModel(QObject* parent=nullptr);
+  qMRMLSortFilterSubjectHierarchyProxyModel(QObject* parent = nullptr);
   ~qMRMLSortFilterSubjectHierarchyProxyModel() override;
 
   Q_INVOKABLE vtkMRMLSubjectHierarchyNode* subjectHierarchyNode()const;
@@ -119,7 +119,7 @@ public:
   ///   - Include filter means that only the items are shown that match the filter.
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
-  Q_INVOKABLE void addItemAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true);
+  Q_INVOKABLE void addItemAttributeFilter(QString attributeName, QVariant attributeValue = QString(), bool include = true);
   /// Remove single item attribute filter specifying each attribute \sa addAttributeFilter
   Q_INVOKABLE void removeItemAttributeFilter(QString attributeName, QVariant attributeValue, bool include);
   /// Remove all item attribute filters specifying a given attribute name and include flag
@@ -132,7 +132,7 @@ public:
   ///   - Exclude filter hides items that match the filter. Overrides include filters.
   ///   True by default (i.e. include filter).
   /// \param className Only filter attributes on a certain type. Empty by default (i.e. allow all classes)
-  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName, QVariant attributeValue=QString(), bool include=true, QString className=QString());
+  Q_INVOKABLE void addNodeAttributeFilter(QString attributeName, QVariant attributeValue = QString(), bool include = true, QString className = QString());
   /// Remove single node attribute filter specifying each attribute \sa addAttributeFilter
   Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, QVariant attributeValue, bool include, QString className);
   /// Remove all node attribute filters specifying a given attribute name and include flag
@@ -151,12 +151,12 @@ public:
   Q_INVOKABLE vtkIdType subjectHierarchyItemFromIndex(const QModelIndex& index)const;
 
   /// Retrieve an index for a given a subject hierarchy item ID
-  Q_INVOKABLE QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column=0)const;
+  Q_INVOKABLE QModelIndex indexFromSubjectHierarchyItem(vtkIdType itemID, int column = 0)const;
 
   /// Determine the number of accepted (shown) items
   /// \param rootItemID Ancestor item of branch in which the accepted items are counted.
   ///                   If no item is given, then the scene item is used (all items)
-  Q_INVOKABLE int acceptedItemCount(vtkIdType rootItemID=0)const;
+  Q_INVOKABLE int acceptedItemCount(vtkIdType rootItemID = 0)const;
 
   /// Returns true if the item in the row indicated by the given sourceRow and
   /// sourceParent should be included in the model; otherwise returns false.
@@ -194,7 +194,7 @@ protected:
   };
 
   /// Filters items to decide which to display in the view
-  virtual AcceptType filterAcceptsItem(vtkIdType itemID, bool canAcceptIfAnyChildIsAccepted=true)const;
+  virtual AcceptType filterAcceptsItem(vtkIdType itemID, bool canAcceptIfAnyChildIsAccepted = true)const;
 
   QStandardItem* sourceItem(const QModelIndex& index)const;
 

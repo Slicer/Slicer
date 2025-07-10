@@ -193,7 +193,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QM
   QStandardItem* item = nullptr;
 
   // Sometimes the row is not complete (DnD), search for a non null item
-  for (int childIndex=0; childIndex < parentItem->columnCount(); ++childIndex)
+  for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
   {
     item = parentItem->child(sourceRow, childIndex);
     if (item)

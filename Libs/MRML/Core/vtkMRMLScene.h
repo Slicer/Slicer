@@ -91,20 +91,20 @@ public:
   /// \sa SetURL(), GetLoadFromXMLString(), SetSceneXMLString()
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
-  int Import(vtkMRMLMessageCollection* userMessages=nullptr);
+  int Import(vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Save scene into URL
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
   /// Returns nonzero on success
-  int Commit(const char* url=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
+  int Commit(const char* url = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Remove nodes and clear undo/redo stacks.
   /// \param removeSingletons If set to true then it removes
   /// all singleton nodes (interaction, color, view nodes etc.)
   /// from the scene. If it is set to false then it just resets
   /// singleton nodes to their default state.
-  void Clear(int removeSingletons=0);
+  void Clear(int removeSingletons = 0);
 
   /// Reset all nodes to their constructor's state
   void ResetNodes();
@@ -447,7 +447,7 @@ public:
   ///
   /// If \a checkNodes is not nullptr, then only those nodes are notified that are
   /// part of the checkNodes collection.
-  void UpdateNodeReferences(vtkCollection* checkNodes=nullptr);
+  void UpdateNodeReferences(vtkCollection* checkNodes = nullptr);
 
   void CopyNodeReferences(vtkMRMLScene* scene);
 
@@ -502,7 +502,7 @@ public:
   /// \warning You are responsible for deleting the returned collection.
   ///
   /// \sa GetReferencedSubScene()
-  vtkCollection* GetReferencedNodes(vtkMRMLNode* node, bool recursive=true);
+  vtkCollection* GetReferencedNodes(vtkMRMLNode* node, bool recursive = true);
 
   /// Get vector of nodes containing references to an input node
   void GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<vtkMRMLNode*> &referencingNodes);
@@ -772,7 +772,7 @@ public:
   /// \brief Returns true if the scene has been "significantly" modified
   /// since the last saved state.
   /// If modifiedNodes is provided then it returns the list of nodes that have been found to be modified.
-  bool GetModifiedSinceRead(vtkCollection* modifiedNodes=nullptr);
+  bool GetModifiedSinceRead(vtkCollection* modifiedNodes = nullptr);
 
   /// Timestamp of the scene's last saved state.
   vtkGetMacro(StoredTime, vtkMTimeType);
@@ -810,26 +810,26 @@ public:
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
   /// Returns false if the save failed
-  bool WriteToMRB(const char* filename, vtkImageData* thumbnail=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
+  bool WriteToMRB(const char* filename, vtkImageData* thumbnail = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// \brief Read the scene from a MRML scene bundle (.mrb) file
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
-  bool ReadFromMRB(const char* fullName, bool clear=false, vtkMRMLMessageCollection* userMessages = nullptr);
+  bool ReadFromMRB(const char* fullName, bool clear = false, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// \brief Unpack the file into a temp directory and return the scene file
   /// inside. Note that the first mrml file found in the extracted
   /// directory will be used.
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
-  static std::string UnpackSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory, vtkMRMLMessageCollection* userMessages=nullptr);
+  static std::string UnpackSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// \brief Save the scene into a self contained directory, sdbDir
   /// If thumbnail image is provided then it is saved in the scene's root folder.
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
   /// Returns false if the save failed
-  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* thumbnail=nullptr, vtkMRMLMessageCollection* userMessages=nullptr);
+  bool SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* thumbnail = nullptr, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// \brief Utility function to write the scene thumbnail to a file in the scene's root folder.
   void SaveSceneScreenshot(vtkImageData* thumbnail);
@@ -873,7 +873,7 @@ protected:
   /// Get referenced nodes
   /// \param recursive All referenced nodes recursively if true,
   ///   only directly referenced nodes if false. Default is true.
-  void AddReferencedNodes(vtkMRMLNode* node, vtkCollection* refNodes, bool recursive=true);
+  void AddReferencedNodes(vtkMRMLNode* node, vtkCollection* refNodes, bool recursive = true);
 
   /// Remove invalid node references after scene import
   void RemoveInvalidNodeReferences(vtkCollection* checkNodes, const std::set<std::string> &validNodeIDs);
@@ -1005,7 +1005,7 @@ private:
   /// If userMessages is not nullptr then the method may add messages to it about issues
   /// encountered during the operation.
   /// Returns nonzero on success.
-  int LoadIntoScene(vtkCollection* scene, vtkMRMLMessageCollection* userMessages=nullptr);
+  int LoadIntoScene(vtkCollection* scene, vtkMRMLMessageCollection* userMessages = nullptr);
 
   /// Time when the scene was last read or written.
   vtkTimeStamp StoredTime;

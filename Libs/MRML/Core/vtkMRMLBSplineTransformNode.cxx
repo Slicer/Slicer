@@ -31,9 +31,9 @@ vtkMRMLBSplineTransformNode::vtkMRMLBSplineTransformNode()
   vtkNew<vtkImageData> bsplineCoefficients;
   bsplineCoefficients->SetExtent(0, gridSize[0]-1, 0, gridSize[1]-1, 0, gridSize[2]-1);
   bsplineCoefficients->AllocateScalars(VTK_DOUBLE, 3);
-  double* bsplineParams=static_cast<double*>(bsplineCoefficients->GetScalarPointer());
+  double* bsplineParams = static_cast<double*>(bsplineCoefficients->GetScalarPointer());
   const unsigned int numberOfParams = 3*gridSize[0]*gridSize[1]*gridSize[2];
-  for (unsigned int i=0; i<numberOfParams; i++)
+  for (unsigned int i = 0; i<numberOfParams; i++)
   {
     *(bsplineParams++) =  0.0;
   }

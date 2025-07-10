@@ -80,12 +80,12 @@ void SnapToPermuteMatrix(vtkTransform* transform)
   bool modified = false;
   vtkNew<vtkMatrix4x4> transformMatrix;
   linearTransform->GetMatrix(transformMatrix.GetPointer());
-  for (int c=0; c<3; c++)
+  for (int c = 0; c<3; c++)
   {
     double absValues[3] = {fabs(transformMatrix->Element[0][c]), fabs(transformMatrix->Element[1][c]), fabs(transformMatrix->Element[2][c])};
     double maxValue = std::max(absValues[0], std::max(absValues[1], absValues[2]));
     double zeroThreshold = SUPPRESSION_FACTOR * maxValue;
-    for (int r=0; r<3; r++)
+    for (int r = 0; r<3; r++)
     {
       if (absValues[r]!=0 && absValues[r]<zeroThreshold)
       {
@@ -877,7 +877,7 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
   }
   int displayNodesModified = 0;
   std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> dnodes  = displayNode->GetSliceGlyphDisplayNodes( this->VolumeNode );
-  for (unsigned int n=0; n<dnodes.size(); n++)
+  for (unsigned int n = 0; n<dnodes.size(); n++)
   {
     vtkMRMLGlyphableVolumeSliceDisplayNode* dnode = dnodes[n];
     if (this->GetSliceNode() != nullptr &&
@@ -899,9 +899,9 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
       this->VolumeNode->GetIJKToRASDirections(dirs);
       vtkNew<vtkMatrix4x4> trot;
       //trot->Identity(); unnecessary, trot is already identity
-      for (int i=0; i<3; i++)
+      for (int i = 0; i<3; i++)
       {
-        for (int j=0; j<3; j++)
+        for (int j = 0; j<3; j++)
         {
           trot->SetElement(i, j, dirs[i][j]);
         }

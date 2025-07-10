@@ -380,7 +380,7 @@ void vtkMRMLStorageNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ReadState:  " << this->GetReadStateAsString() << "\n";
   os << indent << "WriteState: " << this->GetWriteStateAsString() << "\n";
   os << indent << "SupportedWriteFileTypes: \n";
-  for (int i=0; i<this->SupportedWriteFileTypes->GetNumberOfTuples(); i++)
+  for (int i = 0; i<this->SupportedWriteFileTypes->GetNumberOfTuples(); i++)
   {
     os << indent << "FileType: " <<
       this->SupportedWriteFileTypes->GetValue(i) << "\n";

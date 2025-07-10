@@ -2717,7 +2717,7 @@ void qMRMLSegmentEditorWidget::setupViewObservations()
   }
 
   // 3D views
-  for (int threeDViewId=0; threeDViewId<layoutManager->threeDViewCount(); ++threeDViewId)
+  for (int threeDViewId = 0; threeDViewId<layoutManager->threeDViewCount(); ++threeDViewId)
   {
     // Create command for 3D view
     qMRMLThreeDWidget* threeDWidget = layoutManager->threeDWidget(threeDViewId);

@@ -694,7 +694,7 @@ void qSlicerSequencesModuleWidget::setMasterSequenceNode(vtkMRMLSequenceNode* se
   }
   if (sequenceNode!=d->ActiveBrowserNode->GetMasterSequenceNode())
   {
-    bool oldModify=d->ActiveBrowserNode->StartModify();
+    bool oldModify = d->ActiveBrowserNode->StartModify();
 
     // Reconnect the input node's Modified() event observer
     this->qvtkReconnect(d->ActiveBrowserNode->GetMasterSequenceNode(), sequenceNode, vtkCommand::ModifiedEvent,
@@ -832,7 +832,7 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
 
 
   // Clear the table
-  for (int row=0; row<d->tableWidget_SynchronizedSequenceNodes->rowCount(); row++)
+  for (int row = 0; row<d->tableWidget_SynchronizedSequenceNodes->rowCount(); row++)
   {
     QCheckBox* playbackCheckbox = dynamic_cast<QCheckBox*>(d->tableWidget_SynchronizedSequenceNodes->cellWidget(row, SYNCH_NODES_PLAYBACK_COLUMN));
     disconnect(playbackCheckbox, SIGNAL(stateChanged(int)), this, SLOT(synchronizedSequenceNodePlaybackStateChanged(int)));
@@ -868,7 +868,7 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
   d->tableWidget_SynchronizedSequenceNodes->setRowCount(syncedNodes->GetNumberOfItems()); // +1 because we add the master as well
 
   // Create line for the compatible nodes
-  for (int i=0; i<syncedNodes->GetNumberOfItems(); ++i)
+  for (int i = 0; i<syncedNodes->GetNumberOfItems(); ++i)
   {
     vtkMRMLSequenceNode* syncedNode = vtkMRMLSequenceNode::SafeDownCast( syncedNodes->GetItemAsObject(i) );
     if (!syncedNode)

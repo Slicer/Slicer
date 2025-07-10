@@ -63,7 +63,7 @@ public:
 
   /// Show/hide volume rendering in a view.
   /// If viewNode is nullptr then it is displayed in all 3D views in the current layout.
-  Q_INVOKABLE bool showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode=nullptr);
+  Q_INVOKABLE bool showVolumeRendering(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode = nullptr);
 
 protected slots:
   /// Toggle volume rendering option for current volume item
@@ -74,7 +74,7 @@ protected slots:
 protected:
   QScopedPointer<qSlicerSubjectHierarchyVolumeRenderingPluginPrivate> d_ptr;
 
-  void resetFieldOfView(vtkMRMLDisplayNode* displayNode, vtkMRMLViewNode* viewNode=nullptr);
+  void resetFieldOfView(vtkMRMLDisplayNode* displayNode, vtkMRMLViewNode* viewNode = nullptr);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerSubjectHierarchyVolumeRenderingPlugin);

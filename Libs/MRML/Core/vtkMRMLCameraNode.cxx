@@ -84,9 +84,9 @@ void vtkMRMLCameraNode::WriteXML(ostream& of, int nIndent)
   if (this->GetAppliedTransform())
   {
     std::stringstream ss;
-    for (int row=0; row<4; row++)
+    for (int row = 0; row<4; row++)
     {
-      for (int col=0; col<4; col++)
+      for (int col = 0; col<4; col++)
       {
         ss << this->AppliedTransform->GetElement(row, col);
         if (!(row==3 && col==3))
@@ -145,9 +145,9 @@ void vtkMRMLCameraNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for (int row=0; row<4; row++)
+      for (int row = 0; row<4; row++)
       {
-        for (int col=0; col<4; col++)
+        for (int col = 0; col<4; col++)
         {
           ss >> val;
           this->GetAppliedTransform()->SetElement(row, col, val);

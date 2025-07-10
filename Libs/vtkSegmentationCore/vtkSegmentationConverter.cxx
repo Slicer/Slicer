@@ -139,15 +139,15 @@ std::string vtkSegmentationConverter::SerializeImageGeometry(vtkMatrix4x4* geome
 
   vtkNumberToString numberToString;
   std::stringstream geometryStream;
-  for (int i=0; i<4; i++)
+  for (int i = 0; i<4; i++)
   {
-    for (int j=0; j<4; j++)
+    for (int j = 0; j<4; j++)
     {
       geometryStream << numberToString.Convert(geometryMatrix->GetElement(i, j)) << SERIALIZED_GEOMETRY_SEPARATOR;
     }
   }
 
-  for (int i=0; i<6; i++)
+  for (int i = 0; i<6; i++)
   {
     geometryStream << extent[i] << SERIALIZED_GEOMETRY_SEPARATOR;
   }
@@ -164,9 +164,9 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
   }
 
   size_t separatorPosition = geometryString.find(SERIALIZED_GEOMETRY_SEPARATOR);
-  for (int i=0; i<4; i++)
+  for (int i = 0; i<4; i++)
   {
-    for (int j=0; j<4; j++)
+    for (int j = 0; j<4; j++)
     {
       if (separatorPosition == std::string::npos)
       {
@@ -183,7 +183,7 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
   }
 
   // Parse image extent
-  for (int i=0; i<6; i++)
+  for (int i = 0; i<6; i++)
   {
     if (separatorPosition == std::string::npos)
     {

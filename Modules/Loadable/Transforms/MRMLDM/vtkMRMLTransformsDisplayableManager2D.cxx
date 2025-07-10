@@ -193,7 +193,7 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::AddTransformNode(vtkMRM
 
   this->AddObservations(node);
 
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i<nnodes; i++)
   {
     vtkMRMLTransformDisplayNode* dnode = vtkMRMLTransformDisplayNode::SafeDownCast(node->GetNthDisplayNode(i));
     if ( this->UseDisplayNode(dnode) )
@@ -373,7 +373,7 @@ void vtkMRMLTransformsDisplayableManager2D::vtkInternal::UpdateDisplayNodePipeli
   bool scalarVisibility = false;
   if (displayNode->GetScalarVisibility())
   {
-    vtkColorTransferFunction* colorTransferFunction=displayNode->GetColorMap();
+    vtkColorTransferFunction* colorTransferFunction = displayNode->GetColorMap();
     if (colorTransferFunction != nullptr && colorTransferFunction->GetSize()>0)
     {
       // Copy the transfer function to not share them between multiple mappers
@@ -579,7 +579,7 @@ void vtkMRMLTransformsDisplayableManager2D::UpdateFromMRML()
   vtkMRMLTransformNode* mNode = nullptr;
   std::vector<vtkMRMLNode*> mNodes;
   int nnodes = scene ? scene->GetNodesByClass("vtkMRMLTransformNode", mNodes) : 0;
-  for (int i=0; i<nnodes; i++)
+  for (int i = 0; i<nnodes; i++)
   {
     mNode  = vtkMRMLTransformNode::SafeDownCast(mNodes[i]);
     if (mNode && this->Internal->UseDisplayableNode(mNode))

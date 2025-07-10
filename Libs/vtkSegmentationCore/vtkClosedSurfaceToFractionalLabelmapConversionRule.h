@@ -64,7 +64,7 @@ public:
   bool PostConvert(vtkSegmentation* vtkNotUsed(segmentation)) override { return true; };
 
   /// Get the cost of the conversion.
-  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
+  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr, vtkDataObject* targetRepresentation = nullptr) override;
 
   /// Human-readable name of the converter rule
   const char* GetName()  override { return "Closed surface to fractional labelmap (simple image stencil)"; };

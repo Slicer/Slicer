@@ -158,7 +158,7 @@ int vtkMRMLSequenceStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   if (extension == ".mrb")
   {
     this->ForceUniqueDataNodeFileNames(sequenceNode); // Prevents storable nodes' files from being overwritten due to the same node name
-    vtkMRMLScene* sequenceScene=sequenceNode->GetSequenceScene();
+    vtkMRMLScene* sequenceScene = sequenceNode->GetSequenceScene();
 
     // Save sequence index information in the bundle file so that users can load
     // a sequence just from a .seq.mrb file

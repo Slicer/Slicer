@@ -764,11 +764,11 @@ void vtkOrientedImageDataResample::TransformExtent(const int inputExtent[6], vtk
   // Apply transform on all eight corners and determine output extent based on these transformed corners
   double outputIjkExtentCorner[3] = {0.0, 0.0, 0.0};
   double outputExtentDouble[6] = {VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN};
-  for (int i=0; i<2; ++i)
+  for (int i = 0; i<2; ++i)
   {
-    for (int j=0; j<2; ++j)
+    for (int j = 0; j<2; ++j)
     {
-      for (int k=0; k<2; ++k)
+      for (int k = 0; k<2; ++k)
       {
         double inputBoxCorner[3] = { inputCorners[i], inputCorners[2 + j], inputCorners[4 + k] };
         inputToOutputTransform->TransformPoint(inputBoxCorner, outputIjkExtentCorner);
@@ -801,7 +801,7 @@ void vtkOrientedImageDataResample::TransformExtent(const int inputExtent[6], vtk
   }
 
   // Round to the 6th decimal so that these small values do not shift the extent by a whole voxel (especially in case of zeroes)
-  for (int index=0; index<6; ++index)
+  for (int index = 0; index<6; ++index)
   {
     long long multiplier = 1000000;
     double roundedExtentElement = (long long)(outputExtentDouble[index] * multiplier + 0.5);
@@ -881,7 +881,7 @@ void vtkOrientedImageDataResample::TransformOrientedImageDataBounds(vtkOrientedI
 
   // Append transformed side planes poly data to one model and get bounds
   vtkNew<vtkAppendPolyData> appendPolyData;
-  for (int i=0; i<6; i++)
+  for (int i = 0; i<6; i++)
   {
     int normalAxis = i/2; // Axis along which the plane is constant
     double currentPlaneOriginImage[4] = {
@@ -976,7 +976,7 @@ bool vtkOrientedImageDataResample::IsTransformLinear(vtkAbstractTransform* input
   vtkGeneralTransform* generalTransform = vtkGeneralTransform::SafeDownCast(inputTransform);
   if (generalTransform)
   {
-    for (int transformIndex=0; transformIndex<generalTransform->GetNumberOfConcatenatedTransforms(); ++transformIndex)
+    for (int transformIndex = 0; transformIndex<generalTransform->GetNumberOfConcatenatedTransforms(); ++transformIndex)
     {
       vtkLinearTransform* currentLinearTransform = vtkLinearTransform::SafeDownCast(
         generalTransform->GetConcatenatedTransform(transformIndex) );
@@ -1339,7 +1339,7 @@ void vtkOrientedImageDataResample::PrintImageInformation(vtkImageData* imageData
       << imageData->GetSpacing()[1] << " "
       << imageData->GetSpacing()[2] << "\n";
     os << indent << "Extent:";
-    for (int j=0; j<6; j++)
+    for (int j = 0; j<6; j++)
     {
       os << " " << imageData->GetExtent()[j];
     }
@@ -1353,10 +1353,10 @@ void vtkOrientedImageDataResample::PrintImageInformation(vtkImageData* imageData
     os << indent << "IJKToRASDirections:\n";
     vtkNew<vtkMatrix4x4> directions;
     orientedImageData->GetDirectionMatrix(directions.GetPointer());
-    for (int i=0; i<3; i++)
+    for (int i = 0; i<3; i++)
     {
       os << indent.GetNextIndent();
-      for (int j=0; j<3; j++)
+      for (int j = 0; j<3; j++)
       {
         os << directions->GetElement(i,j) << " ";
       }

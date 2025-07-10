@@ -92,7 +92,7 @@ public:
   typedef ctkLayoutFactory Superclass;
 
   /// Constructors
-  explicit qMRMLLayoutManager(QObject* parent=nullptr);
+  explicit qMRMLLayoutManager(QObject* parent = nullptr);
   explicit qMRMLLayoutManager(QWidget* viewport, QObject* parent);
   ~qMRMLLayoutManager() override;
 

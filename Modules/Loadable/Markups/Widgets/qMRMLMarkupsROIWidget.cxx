@@ -337,7 +337,7 @@ void qMRMLMarkupsROIWidget::updateWidgetFromMRML()
   roiNode->GetRadiusXYZ(rxyz);
 
   double bounds[6];
-  for (int i=0; i < 3; ++i)
+  for (int i = 0; i < 3; ++i)
   {
     bounds[i]   = xyz[i]-rxyz[i];
     bounds[3+i] = xyz[i]+rxyz[i];

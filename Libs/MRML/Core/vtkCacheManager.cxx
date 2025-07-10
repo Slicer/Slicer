@@ -678,7 +678,7 @@ void vtkCacheManager::MarkNode ( std::string str )
   int nnodes = this->MRMLScene->GetNumberOfNodesByClass ( "vtkMRMLStorableNode" );
   vtkMRMLStorableNode* node;
   std::string uri;
-  for ( int n=0; n < nnodes; n++ )
+  for ( int n = 0; n < nnodes; n++ )
   {
     node = vtkMRMLStorableNode::SafeDownCast ( this->MRMLScene->GetNthNodeByClass (n, "vtkMRMLStorableNode" ));
     if ( node != nullptr )

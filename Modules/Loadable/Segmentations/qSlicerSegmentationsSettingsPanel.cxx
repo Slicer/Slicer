@@ -204,7 +204,7 @@ void qSlicerSegmentationsSettingsPanel::setDefaultTerminologyEntry(QString termi
 {
   Q_D(qSlicerSegmentationsSettingsPanel);
   d->DefaultTerminologyString = terminologyStr;
-  QString buttonText=tr("(set)");
+  QString buttonText = tr("(set)");
   if (d->TerminologiesLogic && !terminologyStr.isEmpty())
   {
     vtkNew<vtkSlicerTerminologyEntry> entry;

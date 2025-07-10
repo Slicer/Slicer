@@ -267,7 +267,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     indexArray->SetNumberOfValues(numberOfColors);
     vtkNew<vtkStringArray> stringArray;
     stringArray->SetNumberOfValues(numberOfColors);
-    for (int colorIndex=0; colorIndex<numberOfColors; ++colorIndex)
+    for (int colorIndex = 0; colorIndex<numberOfColors; ++colorIndex)
     {
       indexArray->SetValue(colorIndex, colorIndex);
       stringArray->SetValue(colorIndex, colorNode->GetColorName(colorIndex));

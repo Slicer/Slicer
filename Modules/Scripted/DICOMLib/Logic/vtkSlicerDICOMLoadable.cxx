@@ -69,7 +69,7 @@ void vtkSlicerDICOMLoadable::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Files:   " << (this->Files?"":"NULL") << "\n";
   if (this->Files)
   {
-    for (int fileIndex=0; fileIndex<this->Files->GetNumberOfValues(); ++fileIndex)
+    for (int fileIndex = 0; fileIndex<this->Files->GetNumberOfValues(); ++fileIndex)
     {
       os << indent << "  " << this->Files->GetValue(fileIndex) << "\n";
     }
@@ -80,7 +80,7 @@ void vtkSlicerDICOMLoadable::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "LoadSuccess:   " << (this->LoadSuccess?"true":"false") << "\n";
   if (this->ReferencedInstanceUIDs)
   {
-    for (int fileIndex=0; fileIndex<this->ReferencedInstanceUIDs->GetNumberOfValues(); ++fileIndex)
+    for (int fileIndex = 0; fileIndex<this->ReferencedInstanceUIDs->GetNumberOfValues(); ++fileIndex)
     {
       os << indent << "  " << this->ReferencedInstanceUIDs->GetValue(fileIndex) << "\n";
     }

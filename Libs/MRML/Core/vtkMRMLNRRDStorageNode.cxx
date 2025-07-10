@@ -549,7 +549,7 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(
   */
   bvalues_array->SetNumberOfTuples(tmp_grads->GetNumberOfTuples());
   // calculate the b-values
-  for (int i=0; i < tmp_grads->GetNumberOfTuples(); i++)
+  for (int i = 0; i < tmp_grads->GetNumberOfTuples(); i++)
   {
     vnl_double_3 cur_grad(0,0,0);
     cur_grad.copy_in(tmp_grads->GetTuple3(i));

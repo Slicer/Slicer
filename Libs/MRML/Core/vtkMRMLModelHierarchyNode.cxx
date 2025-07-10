@@ -177,7 +177,7 @@ void vtkMRMLModelHierarchyNode:: GetChildrenModelNodes(vtkCollection* models)
   vtkMRMLScene* scene = this->GetScene();
   vtkMRMLNode* mnode = nullptr;
   vtkMRMLModelHierarchyNode* hnode = nullptr;
-  for (int n=0; n < scene->GetNumberOfNodes(); n++)
+  for (int n = 0; n < scene->GetNumberOfNodes(); n++)
   {
     mnode = scene->GetNthNode(n);
     if (mnode->IsA("vtkMRMLModelNode"))

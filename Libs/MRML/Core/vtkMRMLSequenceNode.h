@@ -146,7 +146,7 @@ public:
   /// Return the internal scene that stores all the data nodes.
   /// If autoCreate is enabled then the sequence scene is created
   /// (if it has not been created already).
-  vtkMRMLScene* GetSequenceScene(bool autoCreate=true);
+  vtkMRMLScene* GetSequenceScene(bool autoCreate = true);
 
   /// Create default storage node. Uses vtkMRMLSequenceStorageNode unless the data node
   /// requests a more specific storage node class.

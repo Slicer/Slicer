@@ -320,7 +320,7 @@ QStandardItem* qMRMLSubjectHierarchyModel::subjectHierarchySceneItem()const
     return nullptr;
   }
   int count = this->invisibleRootItem()->rowCount();
-  for (int row=0; row<count; ++row)
+  for (int row = 0; row<count; ++row)
   {
     QStandardItem* child = this->invisibleRootItem()->child(row);
     if (!child)
@@ -454,7 +454,7 @@ QModelIndexList qMRMLSubjectHierarchyModel::indexes(vtkIdType itemID)const
   const int row = shItemIndexes[0].row();
   QModelIndex shItemParentIndex = shItemIndexes[0].parent();
   const int sceneColumnCount = this->columnCount(shItemParentIndex);
-  for (int col=1; col<sceneColumnCount; ++col)
+  for (int col = 1; col<sceneColumnCount; ++col)
   {
     shItemIndexes << this->index(row, col, shItemParentIndex);
   }
@@ -777,7 +777,7 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
   if (d->NoneEnabled)
   {
     QList<QStandardItem*> items;
-    for (int col=0; col<this->columnCount(); ++col)
+    for (int col = 0; col<this->columnCount(); ++col)
     {
       QStandardItem* newItem = new QStandardItem();
       newItem->setData(d->extraItemIdentifier(), Qt::WhatsThisRole);
@@ -839,7 +839,7 @@ QStandardItem* qMRMLSubjectHierarchyModel::insertSubjectHierarchyItem(vtkIdType 
   }
 
   QList<QStandardItem*> items;
-  for (int col=0; col<this->columnCount(); ++col)
+  for (int col = 0; col<this->columnCount(); ++col)
   {
     QStandardItem* newItem = new QStandardItem();
     this->updateItemFromSubjectHierarchyItem(newItem, itemID, col);
@@ -1211,7 +1211,7 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItem(vtkIdType sh
   // if there is no child yet for a given column, it will get there next time updateNodeFromItem is called).
   // updateNodeFromItem is called for every item drag&dropped (we ensure that all the indexes of the row are
   // reparented when entering the d&d function)
-  for (int col=0; col<columnCount; ++col)
+  for (int col = 0; col<columnCount; ++col)
   {
     if (parentItem->child(item->row(), col) == nullptr)
     {
@@ -1405,7 +1405,7 @@ void qMRMLSubjectHierarchyModel::updateModelItems(vtkIdType itemID)
     return;
   }
 
-  for (int currentIndex=0; currentIndex<itemIndexes.size(); ++currentIndex)
+  for (int currentIndex = 0; currentIndex<itemIndexes.size(); ++currentIndex)
   {
     // Note: If this loop is changed to foreach update after reparenting stops working.
     //   Apparently foreach makes a deep copy of itemIndexes, and as the indices change after the

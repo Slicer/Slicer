@@ -37,7 +37,7 @@ class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qSlicerTerminologyEditorWidget : pub
   Q_OBJECT
   // Q_PROPERTY(bool showOnlyNamedColors READ showOnlyNamedColors WRITE setShowOnlyNamedColors)
 public:
-  qSlicerTerminologyEditorWidget(QWidget* parent=nullptr);
+  qSlicerTerminologyEditorWidget(QWidget* parent = nullptr);
   ~qSlicerTerminologyEditorWidget() override;
 
   /// Get selection from widget: terminology and meta-data (name, color, auto-generated flags)
