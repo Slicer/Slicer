@@ -546,7 +546,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   bool success = true;
 
-  if (extension == ".vtk" &&
+  if (extension == ".vtk" && //
     (modelNode->GetMeshType() == vtkMRMLModelNode::PolyDataMeshType
     || modelNode->GetMeshType() == vtkMRMLModelNode::UnstructuredGridMeshType))
   {

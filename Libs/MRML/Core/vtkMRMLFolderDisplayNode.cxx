@@ -110,8 +110,8 @@ void vtkMRMLFolderDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned lon
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent
-    && vtkMRMLSubjectHierarchyNode::SafeDownCast(caller) )
+  if (event == vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent //
+      && vtkMRMLSubjectHierarchyNode::SafeDownCast(caller))
   {
     // No-op if this folder node does not apply display properties on its branch
     if (!this->ApplyDisplayPropertiesOnBranch)

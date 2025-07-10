@@ -150,10 +150,10 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal
 bool vtkMRMLModelSliceDisplayableManager::vtkInternal::UseDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
   // Check whether DisplayNode should be shown in this view
-  bool show = displayNode
-              && displayNode->IsA("vtkMRMLModelDisplayNode")
-              && ( !displayNode->IsA("vtkMRMLFiberBundleLineDisplayNode") )
-              && ( !displayNode->IsA("vtkMRMLFiberBundleGlyphDisplayNode") ) ;
+  bool show = displayNode                                                   //
+              && displayNode->IsA("vtkMRMLModelDisplayNode")                //
+              && ( !displayNode->IsA("vtkMRMLFiberBundleLineDisplayNode") ) //
+              && ( !displayNode->IsA("vtkMRMLFiberBundleGlyphDisplayNode") );
   return show;
 }
 
@@ -443,8 +443,8 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   this->SetSlicePlaneFromMatrix(this->SliceXYToRAS, pipeline->Plane);
   pipeline->Plane->Modified();
 
-  if (modelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayProjection
-    || modelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection)
+  if (modelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayProjection //
+      || modelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection)
   {
 
     if (modelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayProjection)
@@ -797,8 +797,8 @@ void vtkMRMLModelSliceDisplayableManager
 void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (node && !node->IsA("vtkMRMLModelNode")
-       && !node->IsA("vtkMRMLModelDisplayNode") )
+  if (node && !node->IsA("vtkMRMLModelNode") //
+      && !node->IsA("vtkMRMLModelDisplayNode"))
   {
     return;
   }
@@ -846,7 +846,7 @@ void vtkMRMLModelSliceDisplayableManager
       this->Internal->UpdateDisplayNode(displayNode);
       this->RequestRender();
     }
-    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent)
+    else if ((event == vtkMRMLDisplayableNode::TransformModifiedEvent) //
              || (event == vtkMRMLModelNode::PolyDataModifiedEvent))
     {
       this->Internal->UpdateDisplayableTransforms(displayableNode);

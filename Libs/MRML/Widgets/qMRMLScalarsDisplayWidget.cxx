@@ -444,8 +444,8 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
   bool resetSliderRange = false;
   if (dataRange[0] < dataRange[1])
   {
-    if (d->DataRangeUsedForAutoDisplayRange[0] != dataRange[0]
-      || d->DataRangeUsedForAutoDisplayRange[1] != dataRange[1])
+    if (d->DataRangeUsedForAutoDisplayRange[0] != dataRange[0] //
+        || d->DataRangeUsedForAutoDisplayRange[1] != dataRange[1])
     {
       d->DataRangeUsedForAutoDisplayRange[0] = dataRange[0];
       d->DataRangeUsedForAutoDisplayRange[1] = dataRange[1];

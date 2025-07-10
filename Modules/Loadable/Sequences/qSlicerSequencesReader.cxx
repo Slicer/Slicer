@@ -91,7 +91,7 @@ qSlicerIO::IOFileType qSlicerSequencesReader::fileType() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerSequencesReader::extensions() const
 {
-  return QStringList()
+  return QStringList() //
     << tr("Sequence") + " (*.seq.mrb *.mrb)"
     << tr("Volume Sequence") + " (*.seq.nrrd *.seq.nhdr)"
     << tr("Volume Sequence") + " (*.nrrd *.nhdr)";

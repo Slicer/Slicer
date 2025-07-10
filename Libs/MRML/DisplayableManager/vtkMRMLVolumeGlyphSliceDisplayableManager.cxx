@@ -168,7 +168,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateSliceNode()
 vtkMRMLSliceCompositeNode* vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
 ::FindSliceCompositeNode()
 {
-  if (this->External->GetMRMLScene() == nullptr ||
+  if (this->External->GetMRMLScene() == nullptr || //
       !this->GetSliceNode())
   {
     return nullptr;
@@ -537,8 +537,8 @@ bool vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::IsDisplayable(
 {
   // Currently only support DTI Slice display nodes, add here more type if
   // needed
-  return displayNode
-    && displayNode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode")
+  return displayNode //
+    && displayNode->IsA("vtkMRMLDiffusionTensorVolumeSliceDisplayNode") //
     && (std::string(displayNode->GetName()) == this->GetSliceNode()->GetLayoutName());
 }
 
@@ -546,7 +546,7 @@ bool vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::IsDisplayable(
 bool vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::IsVisible(
   vtkMRMLDisplayNode* displayNode)
 {
-  return displayNode->GetVisibility() && displayNode->GetVisibility2D() &&
+  return displayNode->GetVisibility() && displayNode->GetVisibility2D() && //
          displayNode->GetScalarVisibility();
 }
 

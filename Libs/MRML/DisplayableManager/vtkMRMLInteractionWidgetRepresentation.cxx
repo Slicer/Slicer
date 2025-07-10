@@ -710,8 +710,8 @@ int vtkMRMLInteractionWidgetRepresentation::RenderTranslucentPolygonalGeometry(v
 vtkTypeBool vtkMRMLInteractionWidgetRepresentation::HasTranslucentPolygonalGeometry()
 {
   vtkProp* actor = this->GetInteractionActor();
-  if (actor && actor->GetVisibility() &&
-    actor->HasTranslucentPolygonalGeometry())
+  if (actor && actor->GetVisibility() && //
+      actor->HasTranslucentPolygonalGeometry())
   {
     return true;
   }

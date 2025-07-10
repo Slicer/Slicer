@@ -340,7 +340,7 @@ void vtkSlicerUnitsLogic::OnMRMLSceneStartBatchProcess()
 //-----------------------------------------------------------------------------
 void vtkSlicerUnitsLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
-  if (vtkMRMLSelectionNode::SafeDownCast(node) &&
+  if (vtkMRMLSelectionNode::SafeDownCast(node) && //
       !this->RestoringDefaultUnits)
   {
     this->RestoreDefaultUnits();

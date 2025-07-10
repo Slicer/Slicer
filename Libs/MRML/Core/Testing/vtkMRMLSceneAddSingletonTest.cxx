@@ -78,7 +78,7 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char* vtkNotUsed(argv) []
 
   // SingletonNodeA: singleton node referencing another singleton node and a regular node
   // vtkMRMLScriptedModuleNode1: regular node referencing a singleton node and another regular node
-  const char scene1XML[] =
+  const char scene1XML[] = //
     "<MRML>"
     "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonA\" name=\"Scene1SingletonNodeA\" singletonTag=\"SingletonA\""
       " references=\"ReferenceB:vtkMRMLScriptedModuleNodeSingletonB;Reference1:vtkMRMLScriptedModuleNode1;\" > </ScriptedModule>"
@@ -121,7 +121,7 @@ int vtkMRMLSceneAddSingletonTest(int vtkNotUsed(argc), char* vtkNotUsed(argv) []
   // SingletonNodeA: singleton node referencing another singleton node and a regular node
   // SingletonNodeB: singleton node, ID clash with a node in scene 1
   // vtkMRMLScriptedModuleNode1: regular node referencing a singleton node and another regular node; ID clash with a node in scene 1
-  const char scene2XML[] =
+  const char scene2XML[] = //
     "<MRML>"
     "<ScriptedModule id=\"vtkMRMLScriptedModuleNodeSingletonA\" name=\"Scene2SingletonNodeA\" singletonTag=\"SingletonA\""
       " references=\"ReferenceB:vtkMRMLScriptedModuleNodeSingletonB;Reference1:vtkMRMLScriptedModuleNode1;\" > </ScriptedModule>"

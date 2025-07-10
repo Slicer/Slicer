@@ -967,7 +967,7 @@ void qSlicerApplication::openExtensionsManagerDialog()
   {
     d->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(this->mainWindow());
   }
-  if (!d->ExtensionsManagerDialog->extensionsManagerModel() &&
+  if (!d->ExtensionsManagerDialog->extensionsManagerModel() && //
       this->mainWindow())
   {
     // The first time the dialog is open, resize it.

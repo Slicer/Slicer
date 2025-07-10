@@ -119,8 +119,8 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
 {
   Q_D(qSlicerModuleFactoryManager);
 
-  if (dependee.isEmpty()
-      && !this->explicitModules().isEmpty()
+  if (dependee.isEmpty()                    //
+      && !this->explicitModules().isEmpty() //
       && !this->explicitModules().contains(name))
   {
     return false;
@@ -133,7 +133,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
   }
 
   // A module should be registered when attempting to load it
-  if (!this->isRegistered(name) ||
+  if (!this->isRegistered(name) || //
       !this->isInstantiated(name))
   {
     //Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));

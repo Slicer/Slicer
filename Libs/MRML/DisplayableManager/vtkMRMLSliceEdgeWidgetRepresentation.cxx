@@ -187,8 +187,8 @@ int vtkMRMLSliceEdgeWidgetRepresentation::RenderTranslucentPolygonalGeometry(vtk
 vtkTypeBool vtkMRMLSliceEdgeWidgetRepresentation::HasTranslucentPolygonalGeometry()
 {
   vtkProp* actor = this->GetSliceEdgeActor();
-  if (actor && actor->GetVisibility() &&
-    actor->HasTranslucentPolygonalGeometry())
+  if (actor && actor->GetVisibility() && //
+      actor->HasTranslucentPolygonalGeometry())
   {
     return true;
   }
@@ -321,9 +321,9 @@ void vtkMRMLSliceEdgeWidgetRepresentation::UpdateSliceEdgeFromSliceNode()
   prop->GetColor(rgb);
   double* layoutColor = this->GetSliceNode()->GetLayoutColor();
   const double tolerance = 1.e-6;
-  if (fabs(layoutColor[0] - rgb[0]) < tolerance &&
-    fabs(layoutColor[1] - rgb[1]) < tolerance &&
-    fabs(layoutColor[2] - rgb[2]) < tolerance)
+  if (fabs(layoutColor[0] - rgb[0]) < tolerance && //
+      fabs(layoutColor[1] - rgb[1]) < tolerance && //
+      fabs(layoutColor[2] - rgb[2]) < tolerance)
   {
     // no change
     return;

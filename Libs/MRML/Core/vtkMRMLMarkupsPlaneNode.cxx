@@ -802,16 +802,16 @@ void vtkMRMLMarkupsPlaneNode::SetAxes(const double xAxis_Node[3], const double y
   vtkMath::Cross(yAxis_Node, zAxis_Node, tempX);
   vtkMath::Cross(zAxis_Node, xAxis_Node, tempY);
   vtkMath::Cross(xAxis_Node, yAxis_Node, tempZ);
-  if (vtkMath::Dot(tempX, xAxis_Node) <= 1.0 - epsilon ||
-      vtkMath::Dot(tempY, yAxis_Node) <= 1.0 - epsilon ||
+  if (vtkMath::Dot(tempX, xAxis_Node) <= 1.0 - epsilon || //
+      vtkMath::Dot(tempY, yAxis_Node) <= 1.0 - epsilon || //
       vtkMath::Dot(tempZ, zAxis_Node) <= 1.0 - epsilon)
   {
     vtkErrorMacro("SetAxes: Invalid direction vectors!");
     return;
   }
 
-  if (fabs(vtkMath::Dot(xAxis_Node, yAxis_Node)) >= epsilon ||
-      fabs(vtkMath::Dot(yAxis_Node, zAxis_Node)) >= epsilon ||
+  if (fabs(vtkMath::Dot(xAxis_Node, yAxis_Node)) >= epsilon || //
+      fabs(vtkMath::Dot(yAxis_Node, zAxis_Node)) >= epsilon || //
       fabs(vtkMath::Dot(zAxis_Node, xAxis_Node)) >= epsilon)
   {
     vtkErrorMacro("SetAxes: Invalid vectors");
@@ -1025,8 +1025,8 @@ void vtkMRMLMarkupsPlaneNode::SetSizeWorld(double sizeX_World, double sizeY_Worl
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::SetPlaneBounds(double x0, double x1, double y0, double y1)
 {
-  if (this->PlaneBounds[0] == x0 && this->PlaneBounds[1] == x1
-    && this->PlaneBounds[2] == y0 && this->PlaneBounds[3] == y1)
+  if (this->PlaneBounds[0] == x0 && this->PlaneBounds[1] == x1 //
+      && this->PlaneBounds[2] == y0 && this->PlaneBounds[3] == y1)
   {
     return;
   }
@@ -1142,8 +1142,8 @@ vtkMRMLStorageNode* vtkMRMLMarkupsPlaneNode::CreateDefaultStorageNode()
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsPlaneNode::CreateDefaultDisplayNodes()
 {
-  if (this->GetDisplayNode() != nullptr &&
-    vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
+  if (this->GetDisplayNode() != nullptr && //
+      vtkMRMLMarkupsPlaneDisplayNode::SafeDownCast(this->GetDisplayNode()) != nullptr)
   {
     // display node already exists
     return;

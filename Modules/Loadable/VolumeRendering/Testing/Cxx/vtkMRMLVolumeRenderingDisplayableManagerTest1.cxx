@@ -58,8 +58,8 @@
 // STD includes
 #include <string>
 
-const char vtkMRMLVolumeRenderingDisplayableManagerTest1EventLog[] =
-"# StreamVersion 1\n";
+const char vtkMRMLVolumeRenderingDisplayableManagerTest1EventLog[] = //
+  "# StreamVersion 1\n";
 
 //----------------------------------------------------------------------------
 int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])

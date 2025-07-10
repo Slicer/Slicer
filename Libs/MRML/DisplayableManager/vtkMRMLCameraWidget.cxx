@@ -209,11 +209,11 @@ bool vtkMRMLCameraWidget::CanProcessInteractionEvent(vtkMRMLInteractionEventData
   }
 
   // If we are currently dragging a point then we interact everywhere
-  if (this->WidgetState == WidgetStateTranslate
-    || this->WidgetState == WidgetStateRotate
-    || this->WidgetState == WidgetStateScale
-    || this->WidgetState == WidgetStateMoveCrosshair
-    || this->WidgetState == WidgetStateSpin)
+  if (this->WidgetState == WidgetStateTranslate        //
+      || this->WidgetState == WidgetStateRotate        //
+      || this->WidgetState == WidgetStateScale         //
+      || this->WidgetState == WidgetStateMoveCrosshair //
+      || this->WidgetState == WidgetStateSpin)
   {
     distance2 = 0.0;
     return true;

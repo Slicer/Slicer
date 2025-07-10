@@ -109,8 +109,8 @@ void vtkMRMLTableNode::ReadXMLAttributes(const char** atts)
     {
       this->SetLocked(strcmp(attValue,"true")?false:true);
     }
-    else if (!strcmp(attName, "useColumnTitleAsColumnHeader")
-      || !strcmp(attName, "useColumnNameAsColumnHeader")) // in legacy scenes
+    else if (!strcmp(attName, "useColumnTitleAsColumnHeader") //
+      || !strcmp(attName, "useColumnNameAsColumnHeader"))     // in legacy scenes
     {
       this->SetUseColumnTitleAsColumnHeader(strcmp(attValue,"true")?false:true);
     }
@@ -178,8 +178,8 @@ void vtkMRMLTableNode::ProcessMRMLEvents( vtkObject* caller, unsigned long event
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   vtkTable* callerTable = vtkTable::SafeDownCast(caller);
-  if (event == vtkCommand::ModifiedEvent &&  callerTable != nullptr
-    && (this->Table == callerTable || this->Schema == callerTable))
+  if (event == vtkCommand::ModifiedEvent &&  callerTable != nullptr //
+      && (this->Table == callerTable || this->Schema == callerTable))
   {
     // this indicates that the table model (that is stored in a separate file) is modified
     // and therefore the object will be marked as changed for file saving
@@ -463,8 +463,8 @@ void vtkMRMLTableNode::CopyAllColumnProperties(const std::string& sourceColumnNa
   for (int schemaColumnIndex = 0; schemaColumnIndex < numberOfSchemaColumns; schemaColumnIndex++)
   {
     vtkStringArray* column = vtkStringArray::SafeDownCast(this->Schema->GetColumn(schemaColumnIndex));
-    if (column == nullptr || column->GetName() == nullptr // invalid column
-      || !std::string(column->GetName()).compare(SCHEMA_COLUMN_NAME)) // columnName column
+    if (column == nullptr || column->GetName() == nullptr               // invalid column
+        || !std::string(column->GetName()).compare(SCHEMA_COLUMN_NAME)) // columnName column
     {
       continue;
     }
@@ -911,7 +911,7 @@ void vtkMRMLTableNode::SetColumnPropertyInternal(const std::string& columnName, 
 //----------------------------------------------------------------------------
 void vtkMRMLTableNode::RemoveColumnProperty(const std::string& propertyName)
 {
-  if (propertyName == SCHEMA_COLUMN_NAME || propertyName == SCHEMA_COLUMN_TYPE
+  if (propertyName == SCHEMA_COLUMN_NAME || propertyName == SCHEMA_COLUMN_TYPE //
     || propertyName == SCHEMA_COMPONENT_NAMES || propertyName == COMPONENT_COUNT_PROPERTY)
   {
     vtkErrorMacro("vtkMRMLTableNode::RemoveColumnProperty failed: reserved propertyName: " << propertyName);

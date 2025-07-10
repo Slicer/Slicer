@@ -107,12 +107,12 @@ void vtkMRMLSegmentEditorNode::ReadXMLAttributes(const char** atts)
     {
       this->SetMaskSegmentID(attValue);
     }
-    else if (!strcmp(attName, "masterVolumeIntensityMask")
+    else if (!strcmp(attName, "masterVolumeIntensityMask") //
       || !strcmp(attName, "sourceVolumeIntensityMask")) // for future compatibility
     {
       this->SetSourceVolumeIntensityMask(!strcmp(attValue,"true"));
     }
-    else if (!strcmp(attName, "masterVolumeIntensityMaskRange")
+    else if (!strcmp(attName, "masterVolumeIntensityMaskRange") //
       || !strcmp(attName, "sourceVolumeIntensityMaskRange")) // for future compatibility)
     {
       std::stringstream ss;

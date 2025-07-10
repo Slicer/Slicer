@@ -277,8 +277,8 @@ void qSlicerSequencesModuleWidgetPrivate::updateInteractiveCharting()
       int croshairPosition_IJK[3]={vtkMath::Round(crosshairPositionDouble_IJK[0]),
         vtkMath::Round(crosshairPositionDouble_IJK[1]), vtkMath::Round(crosshairPositionDouble_IJK[2])};
       int* imageExtent = vNode->GetImageData()->GetExtent();
-      bool isCrosshairInsideImage = imageExtent[0]<=croshairPosition_IJK[0] && croshairPosition_IJK[0]<=imageExtent[1]
-          && imageExtent[2]<=croshairPosition_IJK[1] && croshairPosition_IJK[1]<=imageExtent[3]
+      bool isCrosshairInsideImage = imageExtent[0]<=croshairPosition_IJK[0] && croshairPosition_IJK[0]<=imageExtent[1] //
+          && imageExtent[2]<=croshairPosition_IJK[1] && croshairPosition_IJK[1]<=imageExtent[3] //
           && imageExtent[4]<=croshairPosition_IJK[2] && croshairPosition_IJK[2]<=imageExtent[5];
       if (isCrosshairInsideImage)
       {
@@ -657,8 +657,8 @@ void qSlicerSequencesModuleWidget::setActiveBrowserNode(vtkMRMLSequenceBrowserNo
   {
     return;
   }
-  if (d->ActiveBrowserNode == browserNode
-    && browserNode != nullptr) // always update if browserNode is nullptr (needed for proper update during scene close)
+  if (d->ActiveBrowserNode == browserNode //
+      && browserNode != nullptr) // always update if browserNode is nullptr (needed for proper update during scene close)
   {
     // no change
     return;
@@ -822,7 +822,7 @@ void qSlicerSequencesModuleWidget::refreshSynchronizedSequenceNodesTable()
 {
   Q_D(qSlicerSequencesModuleWidget);
 
-  if (d->ActiveBrowserNode != nullptr &&
+  if (d->ActiveBrowserNode != nullptr && //
     (d->ActiveBrowserNode->GetRecordingActive() || d->ActiveBrowserNode->GetPlaybackActive()))
   {
     // this is an expensive operation, we cannot afford to do it while recording or replaying
@@ -1097,8 +1097,8 @@ void qSlicerSequencesModuleWidget::onProxyNodeChanged(vtkMRMLNode* newProxyNode)
   vtkMRMLSequenceNode* synchronizedNode = vtkMRMLSequenceNode::SafeDownCast( this->mrmlScene()->GetNodeByID(synchronizedNodeID) );
 
   // If name sync is enabled between sequence and proxy node then update the sequence node name based on the proxy node
-  if (newProxyNode && newProxyNode->GetName() != nullptr
-    && synchronizedNode && d->ActiveBrowserNode->GetOverwriteProxyName(synchronizedNode))
+  if (newProxyNode && newProxyNode->GetName() != nullptr //
+      && synchronizedNode && d->ActiveBrowserNode->GetOverwriteProxyName(synchronizedNode))
   {
     std::string baseName = "Data";
     if (newProxyNode->GetAttribute("Sequences.BaseName") != 0)
@@ -1166,8 +1166,8 @@ void qSlicerSequencesModuleWidget::setActiveSequenceNode(vtkMRMLSequenceNode* ne
   Q_D(qSlicerSequencesModuleWidget);
   d->SequenceEditWidget->setMRMLSequenceNode(newActiveSequenceNode);
 
-  if (d->mainTabWidget->currentWidget() == d->editSequenceTab
-    && newActiveSequenceNode && newActiveSequenceNode->GetNumberOfDataNodes() == 0)
+  if (d->mainTabWidget->currentWidget() == d->editSequenceTab //
+      && newActiveSequenceNode && newActiveSequenceNode->GetNumberOfDataNodes() == 0)
   {
     // If an empty sequence is selected then show the candidate nodes section
     // because it is likely that the user wants to add data nodes to the sequence now.

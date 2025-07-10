@@ -343,7 +343,7 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
   double scaleFactor = d->scaleFactorSpinBox->value();
 
   vtkNew<vtkImageData> newImageData;
-  if (!qFuzzyCompare(scaleFactor, 1.0) &&
+  if (!qFuzzyCompare(scaleFactor, 1.0) && //
       screenshotWindow == qMRMLScreenShotDialog::ThreeD)
   {
     // use off screen rendering to magnifiy the VTK widget's image without interpolation

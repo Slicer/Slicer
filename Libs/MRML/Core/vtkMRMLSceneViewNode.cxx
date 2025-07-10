@@ -143,7 +143,7 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
   // is that the storage node will get set after, so GetStorageNode returns
   // null right now
   std::string screenCapturePath;
-  if (this->GetScene() &&
+  if (this->GetScene() && //
       this->GetScene()->GetRootDirectory())
   {
     screenCapturePath += this->GetScene()->GetRootDirectory();
@@ -377,7 +377,7 @@ void vtkMRMLSceneViewNode::StoreScene()
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nodes[i]);
     if (storableNode)
     {
-      if (this->IncludeNodeInSceneView(storableNode) &&
+      if (this->IncludeNodeInSceneView(storableNode) && //
           storableNode->GetSaveWithScene() )
       {
         if (!storableNode->GetStorageNode())
@@ -402,7 +402,7 @@ void vtkMRMLSceneViewNode::StoreScene()
   for (int n = 0; n < this->Scene->GetNumberOfNodes(); n++)
   {
     vtkMRMLNode* node = this->Scene->GetNthNode(n);
-    if (this->IncludeNodeInSceneView(node) &&
+    if (this->IncludeNodeInSceneView(node) && //
         node->GetSaveWithScene() )
     {
       vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(node->CreateNodeInstance());
@@ -470,8 +470,8 @@ void vtkMRMLSceneViewNode::AddMissingNodes()
     std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
     // ignore scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
     // sceneview nodes nor top level scene view hierarchy nodes
-    if (iter == snapshotMap.end() &&
-        this->IncludeNodeInSceneView(node) &&
+    if (iter == snapshotMap.end() &&          //
+        this->IncludeNodeInSceneView(node) && //
         node->GetSaveWithScene())
     {
       vtkDebugMacro("AddMissingNodes: Adding node with id " << node->GetID());
@@ -561,8 +561,8 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
     std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
     // don't remove the scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
     // sceneview nodes nor top level scene view hierarchy nodes
-    if (iter == snapshotMap.end() &&
-        this->IncludeNodeInSceneView(node) &&
+    if (iter == snapshotMap.end() &&          //
+        this->IncludeNodeInSceneView(node) && //
         node->GetSaveWithScene())
     {
       removedNodes.push(vtkSmartPointer<vtkMRMLNode>(node));
@@ -819,10 +819,10 @@ bool vtkMRMLSceneViewNode::IncludeNodeInSceneView(vtkMRMLNode* node)
   // storage nodes to load content, therefore we do not include them in scene views
   // (except camera, which is a storable node but actually does not require a
   // storage node and it is important to save in scene views).
-  if (node->IsA("vtkMRMLSceneViewNode") ||
-      node->IsA("vtkMRMLSceneViewStorageNode") ||
-      node->IsA("vtkMRMLSnapshotClipNode") ||
-      (node->IsA("vtkMRMLStorableNode") && !node->IsA("vtkMRMLCameraNode")) )
+  if (node->IsA("vtkMRMLSceneViewNode") ||        //
+      node->IsA("vtkMRMLSceneViewStorageNode") || //
+      node->IsA("vtkMRMLSnapshotClipNode") ||     //
+      (node->IsA("vtkMRMLStorableNode") && !node->IsA("vtkMRMLCameraNode")))
   {
     includeInView = false;
   }

@@ -276,8 +276,8 @@ void vtkMRMLScriptedDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkOb
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& filePath)
 {
-  if (filePath.find(".py") == std::string::npos &&
-     filePath.find(".pyc") == std::string::npos)
+  if (filePath.find(".py") == std::string::npos && //
+      filePath.find(".pyc") == std::string::npos)
   {
     return;
   }

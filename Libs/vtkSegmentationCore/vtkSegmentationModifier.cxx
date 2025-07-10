@@ -248,9 +248,9 @@ bool vtkSegmentationModifier::IsExtentValid(int extent[6])
     return false;
   }
 
-  if (extent[0] > extent[1]
-    || extent[2] > extent[3]
-    || extent[4] > extent[5])
+  if (extent[0] > extent[1]    //
+      || extent[2] > extent[3] //
+      || extent[4] > extent[5])
   {
     return false;
   }
@@ -279,8 +279,8 @@ bool vtkSegmentationModifier::AppendLabelmapToSegment(vtkOrientedImageData* labe
   }
 
   int* segmentLabelmapExtent = segmentLabelmap->GetExtent();
-  bool segmentLabelmapEmpty = (segmentLabelmapExtent[0] > segmentLabelmapExtent[1] ||
-    segmentLabelmapExtent[2] > segmentLabelmapExtent[3] ||
+  bool segmentLabelmapEmpty = (segmentLabelmapExtent[0] > segmentLabelmapExtent[1] || //
+    segmentLabelmapExtent[2] > segmentLabelmapExtent[3] || //
     segmentLabelmapExtent[4] > segmentLabelmapExtent[5]);
   if (segmentLabelmapEmpty)
   {

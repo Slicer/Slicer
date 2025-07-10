@@ -97,7 +97,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
   {
     const itk::Index<3u> index = it.GetIndex();
     vtkIdType position = data->FindPoint(index[0], index[1], index[2]);
-    if (position == static_cast<vtkIdType>(-1) ||
+    if (position == static_cast<vtkIdType>(-1) || //
         position >= tensors->GetNumberOfTuples())
     {
       itkGenericExceptionMacro(<< "Can't find index " << index

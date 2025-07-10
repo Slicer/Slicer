@@ -104,7 +104,7 @@ qSlicerIO::IOFileType qSlicerVolumesReader::fileType() const
 QStringList qSlicerVolumesReader::extensions() const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
-  return QStringList()
+  return QStringList() //
     << tr("Volume") + " (*.hdr *.nhdr *.nrrd *.mhd *.mha *.mnc *.nii *.nii.gz *.mgh *.mgz *.mgh.gz *.img *.img.gz *.pic)"
     << tr("Dicom") + " (*.dcm *.ima)"
     << tr("Image") + " (*.png *.tif *.tiff *.jpg *.jpeg)"

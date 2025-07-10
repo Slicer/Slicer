@@ -782,7 +782,7 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
               }
 
               // check if new candidate is better than previous one
-              if ((checkOnHull && !isOnHull) ||
+              if ((checkOnHull && !isOnHull) || //
                   (checkOnHull == isOnHull && dotprod > maxval*distance2))
               {
                 firstIndex = i;
@@ -858,7 +858,7 @@ void vtkPolyDataToFractionalLabelmapFilter::FillImageStencilData(
           points->GetPoint(pointId1, point1);
 
           // make sure points aren't flagged for removal
-          if (pointNeighborCounts[pointId0] > 0 &&
+          if (pointNeighborCounts[pointId0] > 0 && //
               pointNeighborCounts[pointId1] > 0)
           {
             raster.InsertLine(point0, point1);
@@ -917,7 +917,7 @@ void vtkPolyDataToFractionalLabelmapFilter::PolyDataCutter(
 
     vtkIdType id = cells->GetId(cellId);
 
-    if (input->GetCellType(id) != VTK_TRIANGLE &&
+    if (input->GetCellType(id) != VTK_TRIANGLE && //
         input->GetCellType(id) != VTK_TRIANGLE_STRIP)
     {
         continue;

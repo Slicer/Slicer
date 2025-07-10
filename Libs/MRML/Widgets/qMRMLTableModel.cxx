@@ -152,10 +152,10 @@ QString qMRMLTableModelPrivate::columnTooltipText(int tableCol)
   for (vtkIdType i = 0; i < numberOfProperties; ++i)
   {
     std::string propertyName = propertyNames->GetValue(i);
-    if (propertyName.empty()
-      || propertyName == /*no tr*/"title"
-      || propertyName == /*no tr*/"description"
-      || propertyName == /*no tr*/"unitLabel")
+    if (propertyName.empty()                       //
+        || propertyName == /*no tr*/ "title"       //
+        || propertyName == /*no tr*/ "description" //
+        || propertyName == /*no tr*/ "unitLabel")
     {
       continue;
     }

@@ -68,9 +68,9 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
   int* referenceVolumeExtent = referenceVolumeNode->GetImageData()->GetExtent();
-  if (referenceVolumeExtent[0]>= referenceVolumeExtent[1]
-    || referenceVolumeExtent[2] >= referenceVolumeExtent[3]
-    || referenceVolumeExtent[4] >= referenceVolumeExtent[5])
+  if (referenceVolumeExtent[0] >= referenceVolumeExtent[1]    //
+      || referenceVolumeExtent[2] >= referenceVolumeExtent[3] //
+      || referenceVolumeExtent[4] >= referenceVolumeExtent[5])
   {
     std::cerr << "Empty input volume file " << InputVolume << std::endl;
     return EXIT_FAILURE;

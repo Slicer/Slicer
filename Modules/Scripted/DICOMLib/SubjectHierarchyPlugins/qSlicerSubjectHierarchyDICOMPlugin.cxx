@@ -502,8 +502,8 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
   else // Item belongs to a data node (i.e. series)
   {
     vtkIdType studyItemID = shNode->GetItemParent(currentItemID);
-    if (studyItemID && shNode->IsItemLevel(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy())
-      && shNode->IsItemLevel(shNode->GetItemParent(studyItemID), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()) )
+    if (studyItemID && shNode->IsItemLevel(studyItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()) //
+        && shNode->IsItemLevel(shNode->GetItemParent(studyItemID), vtkMRMLSubjectHierarchyConstants::GetDICOMLevelPatient()))
     {
       // Valid if current item is a series and has a study parent which has a patient parent
       validSelection = true;

@@ -93,7 +93,7 @@ qSlicerIO::IOFileType qSlicerVolumeRenderingReader::fileType() const
 QStringList qSlicerVolumeRenderingReader::extensions() const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
-  return QStringList()
+  return QStringList() //
     << tr("Transfer Function") + " (*.vp)";
 }
 

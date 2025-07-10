@@ -315,25 +315,25 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
       vtkMRMLModelHierarchyNode* hnode = vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
       std::cout << i << ": Model Hierarchy node named " << hnode->GetName() << " with id " << hnode->GetID() << " has parent node id of " << (hnode->GetParentNodeID() ? hnode->GetParentNodeID() : "null") << std::endl;
       // the second level clashed with the original hierarchy second level node, so below that, the parent node ids have been shifted
-      if (strcmp(hnode->GetName(),"1") == 0 &&
+      if (strcmp(hnode->GetName(),"1") == 0 && //
           strcmp(hnode->GetParentNodeID(), "vtkMRMLModelHierarchyNode1") != 0)
       {
         std::cerr << "Hierarchy node has incorrect parent node id, expected vtkMRMLModelHierarchyNode1" << std::endl;
         return EXIT_FAILURE;
       }
-      if (strcmp(hnode->GetName(),"2") == 0 &&
+      if (strcmp(hnode->GetName(),"2") == 0 && //
           strcmp(hnode->GetParentNodeID(), "vtkMRMLModelHierarchyNode3") != 0)
       {
         std::cerr << "Hierarchy node has incorrect parent node id, expected vtkMRMLModelHierarchyNode3" << std::endl;
         return EXIT_FAILURE;
       }
-      if (strcmp(hnode->GetName(),"3") == 0 &&
+      if (strcmp(hnode->GetName(),"3") == 0 && //
           strcmp(hnode->GetParentNodeID(), "vtkMRMLModelHierarchyNode4") != 0)
       {
         std::cerr << "Hierarchy node has incorrect parent node id, expected vtkMRMLModelHierarchyNode4" << std::endl;
         return EXIT_FAILURE;
       }
-      if (strcmp(hnode->GetName(),"4") == 0 &&
+      if (strcmp(hnode->GetName(),"4") == 0 && //
           strcmp(hnode->GetParentNodeID(), "vtkMRMLModelHierarchyNode5") != 0)
       {
         std::cerr << "Hierarchy node has incorrect parent node id, expected vtkMRMLModelHierarchyNode5" << std::endl;

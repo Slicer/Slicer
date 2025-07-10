@@ -200,7 +200,7 @@ void vtkMRMLAnnotationNode::ProcessMRMLEvents( vtkObject* caller,
                                                void* callData )
 {
   /// Display properties are saved in file, mark data as dirty.
-  if (vtkMRMLDisplayNode::SafeDownCast(caller) &&
+  if (vtkMRMLDisplayNode::SafeDownCast(caller) && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->StorableModifiedTime.Modified();
@@ -443,10 +443,10 @@ void vtkMRMLAnnotationNode::SetText(int id, const char* newText,int selectedFlag
   }
 
   // check if the same as before
-  if (((this->TextList->GetNumberOfValues() == 0) && (newText == nullptr || newString == "")) ||
-      ((this->TextList->GetNumberOfValues() > id) &&
-       (this->TextList->GetValue(id) == newString) &&
-       (this->GetAnnotationAttribute(id, TEXT_SELECTED) == selectedFlag) &&
+  if (((this->TextList->GetNumberOfValues() == 0) && (newText == nullptr || newString == "")) || //
+      ((this->TextList->GetNumberOfValues() > id) && //
+       (this->TextList->GetValue(id) == newString) && //
+       (this->GetAnnotationAttribute(id, TEXT_SELECTED) == selectedFlag) && //
        (this->GetAnnotationAttribute(id, TEXT_VISIBLE) == visibleFlag) ) )
   {
     return;

@@ -112,7 +112,7 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->Ui_qSlicerSceneViewsModuleWidget::setupUi(widget);
 
   this->SceneViewTableWidget->setColumnCount(SCENE_VIEW_NUMBER_OF_COLUMNS);
-  this->SceneViewTableWidget->setHorizontalHeaderLabels(QStringList()
+  this->SceneViewTableWidget->setHorizontalHeaderLabels(QStringList() //
     << qSlicerSceneViewsModuleWidget::tr("Thumbnail")
     << qSlicerSceneViewsModuleWidget::tr("Description")
     << qSlicerSceneViewsModuleWidget::tr("Actions"));

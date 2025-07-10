@@ -173,7 +173,7 @@ const QString qSlicerExtensionsManagerModelTester::QTSCRIPTEDMODULES_LIB_DIR = S
 // ----------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModelTester::expectedExtensionNames() const
 {
-  return QStringList()
+  return QStringList() //
       << "ImageMaker"
       << "MarkupsToModel"
       << "CurveMaker";
@@ -194,16 +194,16 @@ QString qSlicerExtensionsManagerModelTester::slicerVersion(const QString& operat
 {
   QString osExtensionId = QString("%1-%2").arg(operatingSystem).arg(extensionId);
 
-  if (osExtensionId == "linux-0" ||
-      osExtensionId == "linux-1" ||
-      osExtensionId == "linux-2"
+  if (osExtensionId == "linux-0" || //
+      osExtensionId == "linux-1" || //
+      osExtensionId == "linux-2"    //
       )
   {
     return QLatin1String("5.1");
   }
-  else if (osExtensionId == "macosx-0" ||
-      osExtensionId == "macosx-1" ||
-      osExtensionId == "macosx-2"
+  else if (osExtensionId == "macosx-0" || //
+      osExtensionId == "macosx-1" ||      //
+      osExtensionId == "macosx-2"         //
       )
   {
     return QLatin1String("5.1");
@@ -501,7 +501,7 @@ void qSlicerExtensionsManagerModelTester::testServerKeysToIgnore_data()
   QTest::addColumn<QStringList>("expectedServerKeysToIgnore");
   QTest::addColumn<qSlicerExtensionsManagerModel::ServerAPI>("serverAPI");
 
-  QTest::newRow("0") << (QStringList()
+  QTest::newRow("0") << (QStringList() //
                          << "baseParentId"
                          << "baseParentType"
                          << "created"
@@ -915,7 +915,7 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
       this->installHelper(&model, operatingSystem, extensionId, this->Tmp.absolutePath());
     }
 
-    foreach (const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList() //
             << "MarkupsToModel")
     {
       QVERIFY(this->uninstallHelper(&model, extensionName));
@@ -928,20 +928,20 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.updateModel();
 
-    foreach (const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList() //
             << "ImageMaker"
             << "CurveMaker")
     {
       QVERIFY(model.isExtensionInstalled(extensionName));
     }
 
-    foreach (const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList() //
             << "MarkupsToModel")
     {
       QVERIFY(!model.isExtensionInstalled(extensionName));
     }
 
-    foreach (const QString& extensionName, QStringList()
+    foreach (const QString& extensionName, QStringList() //
             << "MarkupsToModel")
     {
       this->installHelper(&model, operatingSystem, this->expectedExtensionNames().indexOf(extensionName), this->Tmp.absolutePath());

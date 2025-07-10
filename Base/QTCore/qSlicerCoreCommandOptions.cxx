@@ -152,7 +152,7 @@ bool qSlicerCoreCommandOptions::ignoreRest() const
 bool qSlicerCoreCommandOptions::ignoreSlicerRC() const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("ignore-slicerrc").toBool() ||
+  return d->ParsedArgs.value("ignore-slicerrc").toBool() || //
       this->isTestingEnabled();
 }
 
@@ -312,11 +312,11 @@ bool qSlicerCoreCommandOptions::displayTemporaryPathAndExit() const
 bool qSlicerCoreCommandOptions::displayMessageAndExit() const
 {
   return
-      this->displayHelpAndExit()
-      || this->displayVersionAndExit()
-      || this->displayProgramPathAndExit()
-      || this->displayHomePathAndExit()
-      || this->displaySettingsPathAndExit()
+      this->displayHelpAndExit()            //
+      || this->displayVersionAndExit()      //
+      || this->displayProgramPathAndExit()  //
+      || this->displayHomePathAndExit()     //
+      || this->displaySettingsPathAndExit() //
       || this->displayTemporaryPathAndExit();
 }
 
@@ -362,7 +362,7 @@ bool qSlicerCoreCommandOptions::disableTerminalOutputs() const
 bool qSlicerCoreCommandOptions::settingsDisabled() const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("disable-settings").toBool() ||
+  return d->ParsedArgs.value("disable-settings").toBool() || //
       this->isTestingEnabled();
 }
 

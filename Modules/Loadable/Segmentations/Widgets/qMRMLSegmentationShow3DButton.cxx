@@ -248,9 +248,9 @@ void qMRMLSegmentationShow3DButton::updateWidgetFromMRML()
   if (d->SegmentationNode && d->SegmentationNode->GetSegmentation())
   {
     // Enable button if there is at least one segment in the segmentation
-    this->setEnabled(!d->Locked
-      && d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() > 0
-      && d->SegmentationNode->GetSegmentation()->GetSourceRepresentationName() !=
+    this->setEnabled(!d->Locked //
+      && d->SegmentationNode->GetSegmentation()->GetNumberOfSegments() > 0 //
+      && d->SegmentationNode->GetSegmentation()->GetSourceRepresentationName() != //
         vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName());
 
     // Change button state based on whether it contains closed surface representation
@@ -303,7 +303,7 @@ void qMRMLSegmentationShow3DButton::updateWidgetFromMRML()
   wasBlocked = d->SurfaceNetsSmoothingEnableAction->blockSignals(true);
   d->SurfaceNetsSmoothingEnableAction->setChecked(surfaceNetinternalSmoothing == 1);
   d->SurfaceNetsSmoothingEnableAction->setEnabled(
-        surfaceSmoothingFactor >= 0.0
+        surfaceSmoothingFactor >= 0.0 //
         && conversionMethod == vtkBinaryLabelmapToClosedSurfaceConversionRule::CONVERSION_METHOD_SURFACE_NETS);
   d->SurfaceNetsSmoothingEnableAction->blockSignals(wasBlocked);
 }

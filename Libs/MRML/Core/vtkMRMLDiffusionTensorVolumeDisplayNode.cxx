@@ -199,7 +199,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       this->ShiftScale->SetScale ( 255. / (this->GetWindow()) );
 
       this->ExtractRGB->SetInputConnection(this->ShiftScale->GetOutputPort());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutputPort() ||
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutputPort() || //
           this->AppendComponents->GetInputConnection(0, 1) != this->Threshold->GetOutputPort())
       {
         this->AppendComponents->RemoveAllInputs();
@@ -213,7 +213,7 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       this->Threshold->SetInputConnection( this->DTIMathematics->GetOutputPort());
       this->MapToWindowLevelColors->SetInputConnection( this->DTIMathematics->GetOutputPort());
       this->ExtractRGB->SetInputConnection(this->MapToColors->GetOutputPort());
-      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutputPort() ||
+      if (this->AppendComponents->GetInputConnection(0, 0) != this->ExtractRGB->GetOutputPort() || //
           this->AppendComponents->GetInputConnection(0, 1) != this->AlphaLogic->GetOutputPort())
       {
         this->AppendComponents->RemoveAllInputs();

@@ -252,7 +252,7 @@ void qMRMLWindowLevelWidget::setWindowLevel(double window, double level)
 
   int disabledModify = d->VolumeDisplayNode->StartModify();
   d->VolumeDisplayNode->SetWindowLevel(window, level);
-  if (!qFuzzyCompare(oldWindow, d->VolumeDisplayNode->GetWindow()) ||
+  if (!qFuzzyCompare(oldWindow, d->VolumeDisplayNode->GetWindow()) || //
       !qFuzzyCompare(oldLevel, d->VolumeDisplayNode->GetLevel()))
   {
     if (this->autoWindowLevel() == qMRMLWindowLevelWidget::Auto)

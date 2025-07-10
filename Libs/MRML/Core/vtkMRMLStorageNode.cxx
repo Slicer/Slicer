@@ -237,8 +237,8 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
 
       // convert to absolute filename
       std::string name;
-      if (this->GetScene() &&
-          this->GetScene()->GetRootDirectory() &&
+      if (this->GetScene() &&                     //
+          this->GetScene()->GetRootDirectory() && //
           this->IsFilePathRelative(filename.c_str()))
       {
         name = this->GetScene()->GetRootDirectory();
@@ -268,8 +268,8 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
 
       // convert to absolute filename
       std::string name;
-      if (this->GetScene() &&
-          this->GetScene()->GetRootDirectory() &&
+      if (this->GetScene() &&                     //
+          this->GetScene()->GetRootDirectory() && //
           this->IsFilePathRelative(filename.c_str()))
       {
         name = this->GetScene()->GetRootDirectory();
@@ -659,8 +659,8 @@ std::string vtkMRMLStorageNode::GetFullNameFromNthFileName(int n)
 
   vtkDebugMacro("GetFullNameFromNthFileName: n = " << n << ", using file name '" << fileName << "'");
 
-  if (this->Scene != nullptr &&
-      this->Scene->GetRootDirectory() != nullptr &&
+  if (this->Scene != nullptr &&                     //
+      this->Scene->GetRootDirectory() != nullptr && //
       this->IsFilePathRelative(fileName))
   {
     vtkDebugMacro("GetFullNameFromNthFileName: n = " << n << ", scene root dir = '" << this->Scene->GetRootDirectory() << "'");
@@ -1044,8 +1044,8 @@ std::string vtkMRMLStorageNode::GetSupportedFileExtension(const char* fileName /
     std::string foundExt;
     if (ext != ".*")
     {
-      if (fileNameStr.length() > ext.length() &&
-        fileNameStr.compare(fileNameStr.length() - ext.length(), ext.length(), ext) == 0)
+      if (fileNameStr.length() > ext.length() && //
+          fileNameStr.compare(fileNameStr.length() - ext.length(), ext.length(), ext) == 0)
       {
         foundExt = ext;
       }
@@ -1135,7 +1135,7 @@ const char* vtkMRMLStorageNode::GetAbsoluteFilePath(const char* inputPath)
     // the path is already absolute, return it
     return inputPath;
   }
-  if (!this->GetScene() ||
+  if (!this->GetScene() || //
       !this->GetScene()->GetRootDirectory())
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLStorageNode::GetAbsoluteFilePath",
@@ -1144,7 +1144,7 @@ const char* vtkMRMLStorageNode::GetAbsoluteFilePath(const char* inputPath)
   }
 
   std::string path = this->GetScene()->GetRootDirectory();
-  if (path.size() > 0 &&
+  if (path.size() > 0 && //
       path[path.size()-1] != '/')
   {
     path = path + std::string("/");
@@ -1303,8 +1303,8 @@ int vtkMRMLStorageNode::WriteData(vtkMRMLNode* refNode)
   int success = this->WriteDataInternal(refNode);
 
   // If there were error messages, then do not return that we were successful
-  if (success
-      && this->GetUserMessages()
+  if (success                    //
+      && this->GetUserMessages() //
       && this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent)>0)
   {
     success = 0;
@@ -1361,8 +1361,8 @@ std::string vtkMRMLStorageNode::GetFileNameWithoutExtension(const char* filePath
   std::string fileName = vtksys::SystemTools::GetFilenameName(filePathStd);
   std::string extension = this->GetSupportedFileExtension(fileName.c_str());
 
-  if (fileName.length() < extension.length() ||
-    fileName.compare(fileName.length() - extension.length(), extension.length(), extension) != 0)
+  if (fileName.length() < extension.length() || //
+      fileName.compare(fileName.length() - extension.length(), extension.length(), extension) != 0)
   {
     // extension not matched to the end of filename
     return fileName;
@@ -1452,8 +1452,8 @@ vtkMRMLStorableNode* vtkMRMLStorageNode::GetStorableNode()
   // is cached. If it is still valid then we use it.
   if (this->LastFoundStorableNode != nullptr)
   {
-    if (this->LastFoundStorableNode->GetScene() == this->Scene
-      && this->LastFoundStorableNode->HasStorageNodeID(this->GetID()))
+    if (this->LastFoundStorableNode->GetScene() == this->Scene //
+        && this->LastFoundStorableNode->HasStorageNodeID(this->GetID()))
     {
       return this->LastFoundStorableNode;
     }

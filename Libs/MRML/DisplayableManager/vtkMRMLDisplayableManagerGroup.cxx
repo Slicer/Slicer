@@ -136,7 +136,7 @@ bool vtkMRMLDisplayableManagerGroup
   // Check if displayableManagerName is a valid displayable manager
   vtkSmartPointer<vtkObject> objectSmartPointer;
   objectSmartPointer.TakeReference(vtkObjectFactory::CreateInstance(displayableManagerName));
-  if (objectSmartPointer.GetPointer() &&
+  if (objectSmartPointer.GetPointer() && //
       objectSmartPointer->IsA("vtkMRMLAbstractDisplayableManager"))
   {
     return true;

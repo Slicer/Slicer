@@ -148,7 +148,7 @@ void qSlicerTransformsModule::setup()
 //-----------------------------------------------------------------------------
 QStringList qSlicerTransformsModule::associatedNodeTypes() const
 {
-  return QStringList()
+  return QStringList() //
     << "vtkMRMLTransformNode"
     << "vtkMRMLTransformDisplayNode";
 }

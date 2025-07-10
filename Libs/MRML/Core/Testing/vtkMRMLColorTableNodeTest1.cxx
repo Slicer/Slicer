@@ -37,9 +37,9 @@ int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
 
   if (argc != 3)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Missing parameters !\n"
-              << "Usage: " << argv[0] << " /path/to/temp /path/to/TestData"
+    std::cerr << "Line " << __LINE__                                        //
+              << " - Missing parameters !\n"                                //
+              << "Usage: " << argv[0] << " /path/to/temp /path/to/TestData" //
               << std::endl;
     return EXIT_FAILURE;
   }

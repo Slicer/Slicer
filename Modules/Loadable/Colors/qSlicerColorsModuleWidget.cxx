@@ -109,8 +109,8 @@ vtkSlicerColorLogic* qSlicerColorsModuleWidgetPrivate::colorLogic() const
 void qSlicerColorsModuleWidgetPrivate::setDefaultColorNode()
 {
   Q_Q(qSlicerColorsModuleWidget);
-  if (!q->mrmlScene() ||
-      !this->ColorTableComboBox ||
+  if (!q->mrmlScene() || //
+      !this->ColorTableComboBox || //
       this->ColorTableComboBox->currentNode() != nullptr)
   {
     return;
@@ -350,7 +350,7 @@ void qSlicerColorsModuleWidget::copyCurrentColorNode()
   }
 
   vtkMRMLColorNode* colorNode = nullptr;
-  if (currentNode->IsA("vtkMRMLColorTableNode") ||
+  if (currentNode->IsA("vtkMRMLColorTableNode") || //
       currentNode->IsA("vtkMRMLFreeSurferProceduralColorNode"))
   {
     colorNode = d->colorLogic()->CopyNode(currentNode, newColorName.toUtf8());

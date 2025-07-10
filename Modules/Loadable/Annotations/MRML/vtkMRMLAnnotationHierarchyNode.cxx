@@ -63,8 +63,8 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
     vtkDebugMacro("GetChildrenHierarchyNodes: hierarchy node " << n << " has id " << hnode->GetID());
 
     // let's check if the found hnode is a direct child of this node
-    if (hnode->GetID() && this->GetID() && hnode->GetParentNodeID() &&
-        strcmp(hnode->GetID(), this->GetID()) &&
+    if (hnode->GetID() && this->GetID() && hnode->GetParentNodeID() && //
+        strcmp(hnode->GetID(), this->GetID()) && //
         !strcmp(hnode->GetParentNodeID(),this->GetID()))
     {
       // it is a direct child
@@ -148,8 +148,8 @@ void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection* children, int le
     vtkDebugMacro("GetChildrenHierarchyNodes: hierarchy node " << n << " has id " << hnode->GetID());
 
     // let's check if the found hnode is a direct child of this node
-    if (hnode->GetID() && this->GetID() && hnode->GetParentNodeID() &&
-        strcmp(hnode->GetID(), this->GetID()) &&
+    if (hnode->GetID() && this->GetID() && hnode->GetParentNodeID() && //
+        strcmp(hnode->GetID(), this->GetID()) && //
         !strcmp(hnode->GetParentNodeID(),this->GetID()))
     {
       // it is a direct child

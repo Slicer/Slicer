@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
     // Checking conditions.
 
-  if (fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 ||
+  if (fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 || //
     fixedLandmarks.size() != movingLandmarks.size() )
   {
     std::cerr << "Fixed and moving landmark lists must be of the same size "

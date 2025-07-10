@@ -543,8 +543,10 @@ void vtkMRMLOrientationMarkerDisplayableManager::vtkInternal::UpdateMarkerSize()
     if (newViewport[3]>1.0) newViewport[3] = 1.0;
 
     // Update the viewport
-    if (newViewport[0] != viewport[0] || newViewport[1] != viewport[1]
-      || newViewport[2] != viewport[2] || newViewport[3] != viewport[3])
+    if (newViewport[0] != viewport[0]    //
+        || newViewport[1] != viewport[1] //
+        || newViewport[2] != viewport[2] //
+        || newViewport[3] != viewport[3])
     {
       this->MarkerRenderer->SetViewport(newViewport);
     }

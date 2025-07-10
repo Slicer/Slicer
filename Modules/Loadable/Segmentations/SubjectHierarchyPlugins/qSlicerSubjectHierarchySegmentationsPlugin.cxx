@@ -538,7 +538,7 @@ void qSlicerSubjectHierarchySegmentationsPlugin::showContextMenuActionsForItem(v
   // Owned Segmentation or Segment (segments plugin shows all segmentations plugin functions in segment context menu)
   qSlicerSubjectHierarchySegmentsPlugin* segmentsPlugin = qobject_cast<qSlicerSubjectHierarchySegmentsPlugin*>(
     qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Segments") );
-  if ((this->canOwnSubjectHierarchyItem(itemID) && this->isThisPluginOwnerOfItem(itemID))
+  if ((this->canOwnSubjectHierarchyItem(itemID) && this->isThisPluginOwnerOfItem(itemID)) //
     || (segmentsPlugin->canOwnSubjectHierarchyItem(itemID) && segmentsPlugin->isThisPluginOwnerOfItem(itemID)) )
   {
     d->ExportBinaryLabelmapAction->setVisible(true);

@@ -89,7 +89,7 @@ void ShowProgress() override
           m_ProcessInformation->StageProgress = 0;
         }
 
-        if (m_ProcessInformation->ProgressCallbackFunction
+        if (m_ProcessInformation->ProgressCallbackFunction //
             && m_ProcessInformation->ProgressCallbackClientData)
         {
           (*(m_ProcessInformation->ProgressCallbackFunction))(m_ProcessInformation->ProgressCallbackClientData);
@@ -130,7 +130,7 @@ void StartFilter() override
       strncpy(m_ProcessInformation->ProgressMessage,
               this->GetComment().c_str(), 1023);
 
-      if (m_ProcessInformation->ProgressCallbackFunction
+      if (m_ProcessInformation->ProgressCallbackFunction //
           && m_ProcessInformation->ProgressCallbackClientData)
       {
         (*(m_ProcessInformation->ProgressCallbackFunction))(m_ProcessInformation->ProgressCallbackClientData);
@@ -172,7 +172,7 @@ void EndFilter() override
         = this->GetTimeProbe().GetMean()
         * this->GetTimeProbe().GetNumberOfStops();
 
-      if (m_ProcessInformation->ProgressCallbackFunction
+      if (m_ProcessInformation->ProgressCallbackFunction //
           && m_ProcessInformation->ProgressCallbackClientData)
       {
         (*(m_ProcessInformation->ProgressCallbackFunction))(m_ProcessInformation->ProgressCallbackClientData);

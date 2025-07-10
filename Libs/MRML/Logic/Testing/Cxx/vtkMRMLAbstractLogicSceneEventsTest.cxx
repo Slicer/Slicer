@@ -233,19 +233,18 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   //---------------------------------------------------------------------------
   testLogic->SetMRMLScene(scene.GetPointer());
 
-  if (testLogic->GetMRMLScene() != scene.GetPointer() ||
-      testLogic->CalledMethods.size() != 4 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Set] != 1 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Observe] != 1 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Register] != 1 ||
+  if (testLogic->GetMRMLScene() != scene.GetPointer() ||           //
+      testLogic->CalledMethods.size() != 4 ||                      //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Set] != 1 ||      //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Observe] != 1 ||  //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Register] != 1 || //
       testLogic->CalledMethods[vtkMRMLTestLogic::Update] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Set] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Observe] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Register] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Update]
+    std::cerr << "Wrong fired events: " << testLogic->CalledMethods.size() << " event(s) fired." << std::endl //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Set] << " "                                       //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Observe] << " "                                   //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Register] << " "                                  //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Update]                                           //
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -257,21 +256,21 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   vtkNew<vtkMRMLScene> scene2;
   testLogic->SetMRMLScene(scene2.GetPointer());
 
-  if (testLogic->GetMRMLScene() != scene2.GetPointer() ||
-      testLogic->CalledMethods.size() != 5 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Unobserve] != 1 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Set] != 1 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Observe] != 1 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Register] != 1 ||
+  if (testLogic->GetMRMLScene() != scene2.GetPointer() ||           //
+      testLogic->CalledMethods.size() != 5 ||                       //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Unobserve] != 1 || //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Set] != 1 ||       //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Observe] != 1 ||   //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Register] != 1 ||  //
       testLogic->CalledMethods[vtkMRMLTestLogic::Update] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Unobserve] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Set] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Observe] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Register] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Update]
+    std::cerr << "Wrong fired events: "                                             //
+              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Unobserve] << " "       //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Set] << " "             //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Observe] << " "         //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Register] << " "        //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Update]                 //
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -282,15 +281,15 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   //---------------------------------------------------------------------------
   testLogic->SetMRMLScene(nullptr);
 
-  if (testLogic->GetMRMLScene() != nullptr ||
-      testLogic->CalledMethods.size() != 2 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Unobserve] != 1 ||
+  if (testLogic->GetMRMLScene() != nullptr ||                       //
+      testLogic->CalledMethods.size() != 2 ||                       //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Unobserve] != 1 || //
       testLogic->CalledMethods[vtkMRMLTestLogic::Set] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Unobserve] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Set]
+    std::cerr << "Wrong fired events: "                                             //
+              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Unobserve] << " "       //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Set]                    //
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -301,19 +300,19 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   //---------------------------------------------------------------------------
   testLogic->SetMRMLScene(scene.GetPointer());
 
-  if (testLogic->GetMRMLScene() != scene.GetPointer() ||
-      testLogic->CalledMethods.size() != 4 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Set] != 1 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Observe] != 1 ||
-      testLogic->CalledMethods[vtkMRMLTestLogic::Register] != 1 ||
+  if (testLogic->GetMRMLScene() != scene.GetPointer() ||           //
+      testLogic->CalledMethods.size() != 4 ||                      //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Set] != 1 ||      //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Observe] != 1 ||  //
+      testLogic->CalledMethods[vtkMRMLTestLogic::Register] != 1 || //
       testLogic->CalledMethods[vtkMRMLTestLogic::Update] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Set] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Observe] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Register] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Update]
+    std::cerr << "Wrong fired events: "                                             //
+              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Set] << " "             //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Observe] << " "         //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Register] << " "        //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Update]                 //
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -324,14 +323,14 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   //---------------------------------------------------------------------------
   scene->StartState(vtkMRMLScene::ImportState);
 
-  if (testLogic->CalledMethods.size() != 2 ||
-      testLogic->CalledMethods[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
+  if (testLogic->CalledMethods.size() != 2 ||                                //
+      testLogic->CalledMethods[vtkMRMLScene::StartBatchProcessEvent] != 1 || //
       testLogic->CalledMethods[vtkMRMLScene::StartImportEvent] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl
-              << testLogic->CalledMethods[vtkMRMLScene::StartBatchProcessEvent] << " "
-              << testLogic->CalledMethods[vtkMRMLScene::StartImportEvent]
+    std::cerr << "Wrong fired events: "                                                //
+              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl    //
+              << testLogic->CalledMethods[vtkMRMLScene::StartBatchProcessEvent] << " " //
+              << testLogic->CalledMethods[vtkMRMLScene::StartImportEvent]              //
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -341,12 +340,12 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
   scene->AddNode(volumeNode.GetPointer());
 
-  if (testLogic->CalledMethods.size() != 1 ||
+  if (testLogic->CalledMethods.size() != 1 || //
       testLogic->CalledMethods[vtkMRMLScene::NodeAddedEvent] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl
-              << testLogic->CalledMethods[vtkMRMLScene::NodeAddedEvent]
+    std::cerr << "Wrong fired events: "                                             //
+              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl //
+              << testLogic->CalledMethods[vtkMRMLScene::NodeAddedEvent]             //
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -355,16 +354,16 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   // end of the import
   scene->EndState(vtkMRMLScene::ImportState);
 
-  if (testLogic->CalledMethods.size() != 3 ||
-      testLogic->CalledMethods[vtkMRMLScene::EndImportEvent] != 1 ||
-      testLogic->CalledMethods[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
+  if (testLogic->CalledMethods.size() != 3 ||                              //
+      testLogic->CalledMethods[vtkMRMLScene::EndImportEvent] != 1 ||       //
+      testLogic->CalledMethods[vtkMRMLScene::EndBatchProcessEvent] != 1 || //
       testLogic->CalledMethods[vtkMRMLTestLogic::Update] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl
-              << testLogic->CalledMethods[vtkMRMLScene::EndBatchProcessEvent] << " "
-              << testLogic->CalledMethods[vtkMRMLScene::EndImportEvent] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Update]
+    std::cerr << "Wrong fired events: "                                              //
+              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl  //
+              << testLogic->CalledMethods[vtkMRMLScene::EndBatchProcessEvent] << " " //
+              << testLogic->CalledMethods[vtkMRMLScene::EndImportEvent] << " "       //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Update]                  //
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -375,12 +374,12 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   //---------------------------------------------------------------------------
   vtkNew<vtkMRMLModelNode> modelNode;
   scene->AddNode(modelNode.GetPointer());
-  if (testLogic->CalledMethods.size() != 1 ||
+  if (testLogic->CalledMethods.size() != 1 || //
       testLogic->CalledMethods[vtkMRMLScene::NodeAddedEvent] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl
-              << testLogic->CalledMethods[vtkMRMLScene::NodeAddedEvent]
+    std::cerr << "Wrong fired events: "                                             //
+              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl //
+              << testLogic->CalledMethods[vtkMRMLScene::NodeAddedEvent]             //
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -390,22 +389,22 @@ int vtkMRMLAbstractLogicSceneEventsTest(
   // Close
   //---------------------------------------------------------------------------
   scene->Clear(false);
-  if (testLogic->CalledMethods.size() != 6 ||
-      testLogic->CalledMethods[vtkMRMLScene::StartBatchProcessEvent] != 1 ||
-      testLogic->CalledMethods[vtkMRMLScene::StartCloseEvent] != 1 ||
-      testLogic->CalledMethods[vtkMRMLScene::NodeRemovedEvent] != 2 ||
-      testLogic->CalledMethods[vtkMRMLScene::EndCloseEvent] != 1 ||
-      testLogic->CalledMethods[vtkMRMLScene::EndBatchProcessEvent] != 1 ||
+  if (testLogic->CalledMethods.size() != 6 ||                                //
+      testLogic->CalledMethods[vtkMRMLScene::StartBatchProcessEvent] != 1 || //
+      testLogic->CalledMethods[vtkMRMLScene::StartCloseEvent] != 1 ||        //
+      testLogic->CalledMethods[vtkMRMLScene::NodeRemovedEvent] != 2 ||       //
+      testLogic->CalledMethods[vtkMRMLScene::EndCloseEvent] != 1 ||          //
+      testLogic->CalledMethods[vtkMRMLScene::EndBatchProcessEvent] != 1 ||   //
       testLogic->CalledMethods[vtkMRMLTestLogic::Update] != 1)
   {
-    std::cerr << "Wrong fired events: "
-              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl
-              << testLogic->CalledMethods[vtkMRMLScene::StartBatchProcessEvent] << " "
-              << testLogic->CalledMethods[vtkMRMLScene::StartCloseEvent] << " "
-              << testLogic->CalledMethods[vtkMRMLScene::NodeRemovedEvent] << " "
-              << testLogic->CalledMethods[vtkMRMLScene::EndCloseEvent] << " "
-              << testLogic->CalledMethods[vtkMRMLScene::EndBatchProcessEvent] << " "
-              << testLogic->CalledMethods[vtkMRMLTestLogic::Update] << " "
+    std::cerr << "Wrong fired events: "                                                //
+              << testLogic->CalledMethods.size() << " event(s) fired." << std::endl    //
+              << testLogic->CalledMethods[vtkMRMLScene::StartBatchProcessEvent] << " " //
+              << testLogic->CalledMethods[vtkMRMLScene::StartCloseEvent] << " "        //
+              << testLogic->CalledMethods[vtkMRMLScene::NodeRemovedEvent] << " "       //
+              << testLogic->CalledMethods[vtkMRMLScene::EndCloseEvent] << " "          //
+              << testLogic->CalledMethods[vtkMRMLScene::EndBatchProcessEvent] << " "   //
+              << testLogic->CalledMethods[vtkMRMLTestLogic::Update] << " "             //
               << std::endl;
     return EXIT_FAILURE;
   }

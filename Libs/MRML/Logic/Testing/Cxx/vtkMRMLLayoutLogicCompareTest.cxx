@@ -91,7 +91,7 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
   layoutNode->AddObserver(vtkCommand::AnyEvent, spy.GetPointer());
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutCompareGridView);
-  if (spy->GetTotalNumberOfEvents() != 1 ||
+  if (spy->GetTotalNumberOfEvents() != 1 || //
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1)
   {
     std::cout << __LINE__ << ": SetViewArrangement failed. "
@@ -107,7 +107,7 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
   //  once when updating the layout description by the logic
   // Ideally, it should be 1 event.
   layoutNode->SetNumberOfCompareViewRows(2);
-  if (spy->GetTotalNumberOfEvents() != 2 ||
+  if (spy->GetTotalNumberOfEvents() != 2 || //
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 2)
   {
     std::cout << __LINE__ << ": SetViewArrangement failed. "
@@ -124,7 +124,7 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
   //  once when updating the layout description by the logic
   // Ideally, it should be 1 event.
   layoutNode->SetNumberOfCompareViewColumns(2);
-  if (spy->GetTotalNumberOfEvents() != 2 ||
+  if (spy->GetTotalNumberOfEvents() != 2 || //
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 2)
   {
     std::cout << __LINE__ << ": SetViewArrangement failed. "
@@ -136,7 +136,7 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
   spy->ResetNumberOfEvents();
 
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
-  if (spy->GetTotalNumberOfEvents() != 1 ||
+  if (spy->GetTotalNumberOfEvents() != 1 || //
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1)
   {
     std::cout << __LINE__ << ": SetViewArrangement failed. "
@@ -152,7 +152,7 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
   //  once when updating the layout description by the logic
   // Ideally, it should be 1 event.
   layoutNode->SetNumberOfCompareViewRows(3);
-  if (spy->GetTotalNumberOfEvents() != 2 ||
+  if (spy->GetTotalNumberOfEvents() != 2 || //
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 2)
   {
     std::cout << __LINE__ << ": SetViewArrangement failed. "

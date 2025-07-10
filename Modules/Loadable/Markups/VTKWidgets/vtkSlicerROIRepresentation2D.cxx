@@ -150,8 +150,8 @@ void vtkSlicerROIRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, u
 
   // Properties label display
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
-  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
-    && this->AnyPointVisibilityOnSlice
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
+    && this->AnyPointVisibilityOnSlice //
     && roiNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
   {
     double textPos[3] = { 0.0,  0.0, 0.0 };
@@ -340,10 +340,10 @@ void vtkSlicerROIRepresentation2D::CanInteractWithROI(
   int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(this->MarkupsNode);
-  if (!roiNode
-    || !this->Visibility
-    || !this->ROIActor->GetVisibility()
-    || !this->ROISource)
+  if (!roiNode //
+      || !this->Visibility //
+      || !this->ROIActor->GetVisibility() //
+      || !this->ROISource)
   {
     return;
   }

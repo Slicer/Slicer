@@ -205,7 +205,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
   // this->markersStyleComboBox->setCurrentText(plotMarkersStyle);
   this->markersStyleComboBox->setCurrentIndex(this->markersStyleComboBox->findText(plotMarkersStyle));
   this->markersStyleComboBox->setEnabled(
-    this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeScatter
+    this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeScatter //
     || this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeLine);
   this->markersStyleComboBox->blockSignals(wasBlocked);
 
@@ -213,7 +213,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
   wasBlocked = this->markersSizeDoubleSpinBox->blockSignals(true);
   this->markersSizeDoubleSpinBox->setValue(this->PlotSeriesNode->GetMarkerSize());
   this->markersSizeDoubleSpinBox->setEnabled(
-    this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeScatter
+    this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeScatter //
     || this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeLine);
   this->markersSizeDoubleSpinBox->blockSignals(wasBlocked);
 
@@ -224,7 +224,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
   // this->markersStyleComboBox->setCurrentText(plotMarkersStyle);
   this->lineStyleComboBox->setCurrentIndex(this->lineStyleComboBox->findText(plotLineStyle));
   this->lineStyleComboBox->setEnabled(
-    this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeScatter
+    this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeScatter //
     || this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeLine);
   this->lineStyleComboBox->blockSignals(wasBlocked);
 
@@ -232,7 +232,7 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::updateWidgetFromMRML()
   wasBlocked = this->lineWidthDoubleSpinBox->blockSignals(true);
   this->lineWidthDoubleSpinBox->setValue(this->PlotSeriesNode->GetLineWidth());
   this->lineWidthDoubleSpinBox->setEnabled(
-    this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeScatter
+    this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeScatter //
     || this->PlotSeriesNode->GetPlotType() == vtkMRMLPlotSeriesNode::PlotTypeLine);
   this->lineWidthDoubleSpinBox->blockSignals(wasBlocked);
 

@@ -201,9 +201,9 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   }
 
   // Properties label display
-  if (visible && this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
-    && this->AnyPointVisibilityOnSlice
-    && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
+  if (visible && this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
+      && this->AnyPointVisibilityOnSlice //
+      && markupsNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
   {
     double textPos[3] = { 0.0,  0.0, 0.0 };
     this->GetNthControlPointDisplayPosition(0, textPos);
@@ -225,8 +225,8 @@ void vtkSlicerPlaneRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   {
     controlPointType = Active;
   }
-  else if ((markupsNode->GetNumberOfControlPoints() > 0 && !markupsNode->GetNthControlPointSelected(0)) ||
-           (markupsNode->GetNumberOfControlPoints() > 1 && !markupsNode->GetNthControlPointSelected(1)) ||
+  else if ((markupsNode->GetNumberOfControlPoints() > 0 && !markupsNode->GetNthControlPointSelected(0)) || //
+           (markupsNode->GetNumberOfControlPoints() > 1 && !markupsNode->GetNthControlPointSelected(1)) || //
            (markupsNode->GetNumberOfControlPoints() > 2 && !markupsNode->GetNthControlPointSelected(2)))
   {
     controlPointType = Unselected;
@@ -298,8 +298,8 @@ void vtkSlicerPlaneRepresentation2D::CanInteract(
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsPlaneNode* markupsNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
-  if (!markupsNode || markupsNode->GetLocked() || !markupsNode->GetIsPlaneValid()
-    || !this->GetVisibility() || !interactionEventData )
+  if (!markupsNode || markupsNode->GetLocked() || !markupsNode->GetIsPlaneValid() //
+      || !this->GetVisibility() || !interactionEventData )
   {
     return;
   }
@@ -319,9 +319,9 @@ void vtkSlicerPlaneRepresentation2D::CanInteractWithPlane(
   int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->MarkupsNode);
-  if (!planeNode
-    || !this->Visibility
-    || !this->PlaneOutlineActor->GetVisibility())
+  if (!planeNode //
+      || !this->Visibility //
+      || !this->PlaneOutlineActor->GetVisibility())
   {
     return;
   }
@@ -557,8 +557,8 @@ void vtkSlicerPlaneRepresentation2D::BuildPlane()
   planeNode->GetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
 
   double epsilon = 1e-5;
-  if (vtkMath::Norm(xAxis_World) <= epsilon ||
-      vtkMath::Norm(yAxis_World) <= epsilon ||
+  if (vtkMath::Norm(xAxis_World) <= epsilon || //
+      vtkMath::Norm(yAxis_World) <= epsilon || //
       vtkMath::Norm(zAxis_World) <= epsilon)
   {
     this->PlaneFillMapper->SetInputData(vtkNew<vtkPolyData>());

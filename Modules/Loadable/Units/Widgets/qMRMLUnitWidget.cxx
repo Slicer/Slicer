@@ -141,7 +141,7 @@ void qMRMLUnitWidgetPrivate::updatePropertyWidgets()
     this->EditableProperties.testFlag(qMRMLUnitWidget::Preset));
 
   this->SeparationLine->setVisible(
-    this->DisplayFlags.testFlag(qMRMLUnitWidget::Preset)
+    this->DisplayFlags.testFlag(qMRMLUnitWidget::Preset) //
     && this->DisplayFlags > qMRMLUnitWidget::Preset);
 
   this->NameLineEdit->setVisible(

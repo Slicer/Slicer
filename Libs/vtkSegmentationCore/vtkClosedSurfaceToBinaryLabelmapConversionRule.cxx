@@ -57,19 +57,27 @@ vtkClosedSurfaceToBinaryLabelmapConversionRule::vtkClosedSurfaceToBinaryLabelmap
   this->ReplaceTargetRepresentation = true;
 
   // Reference image geometry parameter
-  this->ConversionParameters->SetParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), "",
+  this->ConversionParameters->SetParameter( //
+    vtkSegmentationConverter::GetReferenceImageGeometryParameterName(),
+    "",
     "Image geometry description string determining the geometry of the labelmap that is created in course of conversion."
     " Can be copied from a volume, using the button.");
   // Oversampling factor parameter
-  this->ConversionParameters->SetParameter(GetOversamplingFactorParameterName(), "1",
+  this->ConversionParameters->SetParameter( //
+    GetOversamplingFactorParameterName(),
+    "1",
     "Determines the oversampling of the reference image geometry. If it's a number, then all segments are oversampled"
     " with the same value (value of 1 means no oversampling). If it has the value \"A\", then automatic oversampling is calculated.");
   // Crop to reference geometry parameter
-  this->ConversionParameters->SetParameter(GetCropToReferenceImageGeometryParameterName(), "0",
+  this->ConversionParameters->SetParameter( //
+    GetCropToReferenceImageGeometryParameterName(),
+    "0",
     "Crop the model to the extent of reference geometry. 0 (default) = created labelmap will contain the entire model."
     " 1 = created labelmap extent will be within reference image extent.");
   // Collapse labelmaps parameter
-  this->ConversionParameters->SetParameter(GetCollapseLabelmapsParameterName(), "1",
+  this->ConversionParameters->SetParameter( //
+    GetCollapseLabelmapsParameterName(),
+    "1",
     "Merge the labelmaps into as few shared labelmaps as possible"
     " 1 = created labelmaps will be shared if possible without overwriting each other.");
 }
@@ -425,12 +433,9 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   geometryMatrix->SetElement(2, 2, spacing);
 
   // Set extent
-  int extent[6] =
-    {
-    0, (int)((bounds[1] - bounds[0]) / spacing),
-    0, (int)((bounds[3] - bounds[2]) / spacing),
-    0, (int)((bounds[5] - bounds[4]) / spacing)
-    };
+  int extent[6] = { 0, (int)((bounds[1] - bounds[0]) / spacing), //
+                    0, (int)((bounds[3] - bounds[2]) / spacing), //
+                    0, (int)((bounds[5] - bounds[4]) / spacing) };
 
   // Serialize geometry
   std::string serializedGeometry = vtkSegmentationConverter::SerializeImageGeometry(geometryMatrix, extent);

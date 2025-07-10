@@ -161,8 +161,8 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 {
   // Update from SliceNode
   vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
-  if (sliceNode && sliceNode->GetID()
-    && this->GetMRMLScene() && !this->GetMRMLScene()->IsBatchProcessing() )
+  if (sliceNode && sliceNode->GetID() //
+      && this->GetMRMLScene() && !this->GetMRMLScene()->IsBatchProcessing())
   {
     SliceNodeStatusMap::iterator it = this->SliceNodeInteractionStatus.find(sliceNode->GetID());
     // if this is not the node that we are interacting with, short circuit
@@ -173,7 +173,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
       if (it != this->SliceNodeInteractionStatus.end() && it->second.Interacting)
       {
         vtkMRMLSliceCompositeNode* compositeNode = this->GetCompositeNode(sliceNode);
-        if (!compositeNode->GetHotLinkedControl() &&
+        if (!compositeNode->GetHotLinkedControl() && //
             sliceNode->GetInteractionFlags() == vtkMRMLSliceNode::MultiplanarReformatFlag)
         {
           this->BroadcastSliceNodeEvent(sliceNode);
@@ -200,7 +200,7 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
         this->UpdateSliceNodeInteractionStatus(sliceNode);
       }
 
-      if (compositeNode->GetHotLinkedControl() ||
+      if (compositeNode->GetHotLinkedControl() || //
           sliceNode->GetInteractionFlags() != vtkMRMLSliceNode::MultiplanarReformatFlag)
       {
         this->BroadcastSliceNodeEvent(sliceNode);
@@ -322,9 +322,9 @@ bool vtkMRMLSliceLinkLogic::IsOrientationMatching(vtkMRMLSliceNode* sliceNode1, 
     double axisVector2[3] = { sliceToRAS2->Element[0][axisIndex], sliceToRAS2->Element[1][axisIndex], sliceToRAS2->Element[2][axisIndex] };
     vtkMath::Normalize(axisVector1);
     vtkMath::Normalize(axisVector2);
-    if ((fabs(axisVector1[0] - axisVector2[0]) > comparisonTolerance)
-      || (fabs(axisVector1[1] - axisVector2[1]) > comparisonTolerance)
-      || (fabs(axisVector1[2] - axisVector2[2]) > comparisonTolerance))
+    if ((fabs(axisVector1[0] - axisVector2[0]) > comparisonTolerance)    //
+        || (fabs(axisVector1[1] - axisVector2[1]) > comparisonTolerance) //
+        || (fabs(axisVector1[2] - axisVector2[2]) > comparisonTolerance))
     {
       return false;
     }
@@ -407,10 +407,9 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode)
       if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
         & vtkMRMLSliceNode::FieldOfViewFlag)
       {
-        sNode->SetFieldOfView(sliceNode->GetFieldOfView()[0],
-          sliceNode->GetFieldOfView()[0]
-          * sNode->GetFieldOfView()[1]
-          / sNode->GetFieldOfView()[0],
+        sNode->SetFieldOfView(                                                                      //
+          sliceNode->GetFieldOfView()[0],                                                           //
+          sliceNode->GetFieldOfView()[0] * sNode->GetFieldOfView()[1] / sNode->GetFieldOfView()[0], //
           sNode->GetFieldOfView()[2]);
       }
 
@@ -440,9 +439,8 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode)
         sNode->SetOrientationToDefault();
       }
 
-      if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
-        & vtkMRMLSliceNode::RotateToBackgroundVolumePlaneFlag)
-        && this->GetMRMLApplicationLogic()->GetSliceLogics())
+      if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier() & vtkMRMLSliceNode::RotateToBackgroundVolumePlaneFlag) //
+          && this->GetMRMLApplicationLogic()->GetSliceLogics())
       {
         vtkMRMLSliceLogic* logic = this->GetMRMLApplicationLogic()->GetSliceLogic(sNode);
         if (logic)
@@ -453,9 +451,8 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode)
 
       // Resetting the field of view does not require the
       // orientations to match
-      if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
-        & vtkMRMLSliceNode::ResetFieldOfViewFlag)
-        && this->GetMRMLApplicationLogic()->GetSliceLogics())
+      if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier() & vtkMRMLSliceNode::ResetFieldOfViewFlag) //
+          && this->GetMRMLApplicationLogic()->GetSliceLogics())
       {
         // need the logic for this slice (sNode)
         vtkMRMLSliceLogic* logic = this->GetMRMLApplicationLogic()->GetSliceLogic(sNode);
@@ -684,9 +681,9 @@ void vtkMRMLSliceLinkLogic::BroadcastLastRotation(vtkMRMLSliceNode* sliceNode,
   double cross[3], dot, rotation;
   vtkNew<vtkTransform> transform;
   vtkMatrix4x4* sNodeToRAS = sNode->GetSliceToRAS();
-  double sliceNormal[3] = {sliceNode->GetSliceToRAS()->GetElement(0,2),
-                           sliceNode->GetSliceToRAS()->GetElement(1,2),
-                           sliceNode->GetSliceToRAS()->GetElement(2,2)};
+  double sliceNormal[3] = { sliceNode->GetSliceToRAS()->GetElement(0, 2), //
+                            sliceNode->GetSliceToRAS()->GetElement(1, 2), //
+                            sliceNode->GetSliceToRAS()->GetElement(2, 2) };
 
   // Rotate the sliceNode to match the planeWidget normal
   vtkMath::Cross(it->second.LastNormal,sliceNormal, cross);

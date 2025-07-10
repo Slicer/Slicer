@@ -287,9 +287,9 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
         std::string transformName = transform->GetName();
         // Strip "Transform" from the end of the transform name
         std::string transformPostfix = "Transform";
-        if (transformName.length() > transformPostfix.length() &&
-          transformName.compare(transformName.length() - transformPostfix.length(),
-          transformPostfix.length(), transformPostfix) == 0)
+        if (transformName.length() > transformPostfix.length() && //
+            transformName.compare(transformName.length() - transformPostfix.length(),
+            transformPostfix.length(), transformPostfix) == 0)
         {
           // ends with "Transform" (SomethingToSomethingElseTransform),
           // remove it (to have SomethingToSomethingElse)

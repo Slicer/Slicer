@@ -286,8 +286,8 @@ int vtkCacheManager::GetCachedFileList ( const char* dirname )
     for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
     {
       {
-        if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
-            strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
+        if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".") //
+            && strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".."))
         {
           std::string fullName = dirname;
           //--- add backslash to end if not present.
@@ -481,7 +481,7 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char* uri )
   }
 
   //--- Create absolute path
-  if (this->GetRemoteCacheDirectory() == nullptr ||
+  if (this->GetRemoteCacheDirectory() == nullptr || //
       strcmp(this->GetRemoteCacheDirectory(), "") == 0)
   {
     vtkErrorMacro("GetFilenameFromURI: remote cache dir is not set! The file will appear in the current working dir.");
@@ -726,8 +726,8 @@ void vtkCacheManager::MarkNodesBeforeDeletingDataFromCache (const char* target )
       //--- get files in cache dir and add to vector of strings.
       for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
       {
-        if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
-            strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
+        if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".") //
+            && strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".."))
         {
           //--- test to see if the file is a directory;
           //--- if so, go inside and count up file sizes, return value
@@ -787,8 +787,8 @@ float vtkCacheManager::ComputeCacheSize( const char* dirName, unsigned long sz )
     //--- get files in cache dir and add to vector of strings.
     for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
     {
-      if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
-          strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
+      if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".") //
+          && strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".."))
       {
         //--- test to see if the file is a directory;
         //--- if so, go inside and count up file sizes, return value
@@ -916,8 +916,8 @@ const char* vtkCacheManager::FindCachedFile ( const char* target, const char* di
     //--- get files in cache dir and add to vector of strings.
     for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
     {
-      if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
-          strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
+      if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".") //
+          && strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)), ".."))
       {
         testFile = dir.GetFile (static_cast<unsigned long>(fileNum));
         //--- Check for match to target

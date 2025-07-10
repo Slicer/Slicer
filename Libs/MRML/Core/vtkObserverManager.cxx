@@ -48,7 +48,7 @@ vtkObserverManager::~vtkObserverManager()
 
   if (this->CallbackCommand)
   {
-    if (this->Owner &&
+    if (this->Owner && //
         this->CallbackCommand->GetReferenceCount() > 1)
     {
       // It is possible to externally use the callback command, it is not

@@ -246,8 +246,8 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
   this->updateSettingsFromWidget();
 
   vtkSmartPointer<vtkStringArray> segmentIds;
-  if (d->VisibleSegmentsOnlyCheckBox->isChecked()
-    && d->SegmentationNode != nullptr
+  if (d->VisibleSegmentsOnlyCheckBox->isChecked() //
+    && d->SegmentationNode != nullptr //
     && vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode()) != nullptr)
   {
     segmentIds = vtkSmartPointer<vtkStringArray>::New();
@@ -288,7 +288,7 @@ void qMRMLSegmentationFileExportWidget::exportToFiles()
     }
 
     vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ReferenceVolumeComboBox->currentNode());
-    if (referenceVolumeNode && d->SegmentationNode &&
+    if (referenceVolumeNode && d->SegmentationNode && //
       vtkSlicerSegmentationsModuleLogic::IsEffectiveExentOutsideReferenceVolume(
         referenceVolumeNode, d->SegmentationNode, segmentIds))
     {

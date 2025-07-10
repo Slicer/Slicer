@@ -239,8 +239,8 @@ void qSlicerSubjectHierarchyTablesPlugin::setDisplayVisibility(vtkIdType itemID,
     }
 
     // Hide currently shown table and trigger icon update
-    if (tableViewNode->GetTableNodeID()
-      && strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()) )
+    if (tableViewNode->GetTableNodeID() //
+        && strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()))
     {
       vtkIdType tableItemID = shNode->GetItemByDataNode(scene->GetNodeByID(tableViewNode->GetTableNodeID()));
       if (tableItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
@@ -287,8 +287,8 @@ int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkIdType itemID) 
 
   // Return shown if table in table view is the examined node's associated data node
   vtkMRMLTableNode* associatedTableNode = vtkMRMLTableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  if (associatedTableNode && tableViewNode->GetTableNodeID()
-    && !strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()) )
+  if (associatedTableNode && tableViewNode->GetTableNodeID() //
+      && !strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()))
   {
     return 1;
   }

@@ -433,16 +433,16 @@ void vtkSlicerSequencesLogic::UpdateProxyNodesFromSequences(vtkMRMLSequenceBrows
         // Since we are not saving changes, we don't need to create missing item, we just need to display the current node.
         sourceDataNode = synchronizedSequenceNode->GetDataNodeAtValue(indexValue, /* exactMatchRequired= */ false);
       }
-      if (missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemCreateFromDefault
-        || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemSetToDefault
-        || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemIgnore
-        || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden)
+      if (missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemCreateFromDefault //
+          || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemSetToDefault   //
+          || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemIgnore         //
+          || missingItemMode == vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden)
       {
         // We are not saving changes, but we may need to reset the proxy node to the default
         sourceDataNode = synchronizedSequenceNode->GetDataNodeAtValue(indexValue, /* exactMatchRequired= */ true);
-        if (!sourceDataNode
-          && missingItemMode != vtkMRMLSequenceBrowserNode::MissingItemIgnore
-          && missingItemMode != vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden)
+        if (!sourceDataNode                                                     //
+            && missingItemMode != vtkMRMLSequenceBrowserNode::MissingItemIgnore //
+            && missingItemMode != vtkMRMLSequenceBrowserNode::MissingItemDisplayHidden)
         {
           // item is missing, use an empty node as source node for the proxy node
           sourceDataNode = synchronizedSequenceNode->GetNthDataNode(0);
@@ -618,8 +618,8 @@ void vtkSlicerSequencesLogic::UpdateSequencesFromProxyNodes(vtkMRMLSequenceBrows
     if (browserNode->GetRecordMasterOnly())
     {
       vtkMRMLNode* masterProxyNode = browserNode->GetProxyNode(masterNode);
-      if (masterProxyNode != nullptr && masterProxyNode->GetID() != nullptr
-        && strcmp(proxyNode->GetID(), masterProxyNode->GetID()) == 0)
+      if (masterProxyNode != nullptr && masterProxyNode->GetID() != nullptr //
+          && strcmp(proxyNode->GetID(), masterProxyNode->GetID()) == 0)
       {
         // master proxy node is changed
         saveState = true;
@@ -720,8 +720,8 @@ vtkMRMLSequenceNode* vtkSlicerSequencesLogic::AddSynchronizedNode(vtkMRMLNode* s
   }
 
   // Check if the sequence node to add is compatible with the master
-  if (browserNode->GetMasterSequenceNode() != nullptr
-    && !IsNodeCompatibleForBrowsing(browserNode->GetMasterSequenceNode(), sequenceNode) )
+  if (browserNode->GetMasterSequenceNode() != nullptr //
+      && !IsNodeCompatibleForBrowsing(browserNode->GetMasterSequenceNode(), sequenceNode))
   {
     vtkWarningMacro("vtkSlicerSequencesLogic::AddSynchronizedNode failed: incompatible index name or unit");
     return nullptr; // Not compatible - exit
@@ -767,8 +767,8 @@ void vtkSlicerSequencesLogic::ProcessMRMLNodesEvents(vtkObject* caller, unsigned
     // During import proxy node may change but we don't want to modify the sequence node with it
     // because the saved proxy node might be obsolete (for example, not saved when the scene was saved).
     // It might be useful to update all proxy nodes on SceneEndImport/Restore to make sure the state is consistent.
-    if (this->GetMRMLScene() &&
-      !this->GetMRMLScene()->IsImporting() &&
+    if (this->GetMRMLScene() && //
+      !this->GetMRMLScene()->IsImporting() && //
       !this->GetMRMLScene()->IsRestoring())
     {
       // One of the proxy nodes changed, update the sequence as needed
@@ -779,8 +779,8 @@ void vtkSlicerSequencesLogic::ProcessMRMLNodesEvents(vtkObject* caller, unsigned
   }
   else if (event == vtkMRMLSequenceBrowserNode::SequenceNodeModifiedEvent)
   {
-    if (this->GetMRMLScene() &&
-      !this->GetMRMLScene()->IsImporting() &&
+    if (this->GetMRMLScene() && //
+      !this->GetMRMLScene()->IsImporting() && //
       !this->GetMRMLScene()->IsRestoring())
     {
       // One of the sequence nodes was modified, update the proxy nodes as needed
@@ -835,8 +835,8 @@ void vtkSlicerSequencesLogic::GetCompatibleNodesFromScene(vtkCollection* compati
 //---------------------------------------------------------------------------
 bool vtkSlicerSequencesLogic::IsNodeCompatibleForBrowsing(vtkMRMLSequenceNode* masterNode, vtkMRMLSequenceNode* testedNode)
 {
-  bool compatible = (masterNode->GetIndexName() == testedNode->GetIndexName()
-    && masterNode->GetIndexUnit() == testedNode->GetIndexUnit()
+  bool compatible = (masterNode->GetIndexName() == testedNode->GetIndexName() //
+    && masterNode->GetIndexUnit() == testedNode->GetIndexUnit() //
     && masterNode->GetIndexType() == testedNode->GetIndexType());
   return compatible;
 }

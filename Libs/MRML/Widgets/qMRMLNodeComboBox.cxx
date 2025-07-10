@@ -111,7 +111,7 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
   this->MRMLNodeFactory = new qMRMLNodeFactory(q);
 
   QAbstractItemModel* rootModel = model;
-  while (qobject_cast<QAbstractProxyModel*>(rootModel) &&
+  while (qobject_cast<QAbstractProxyModel*>(rootModel) && //
          qobject_cast<QAbstractProxyModel*>(rootModel)->sourceModel())
   {
     rootModel = qobject_cast<QAbstractProxyModel*>(rootModel)->sourceModel();
@@ -299,8 +299,11 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
     }
     QString label = q->nodeTypeLabel(nodeType);
 
-    if (this->AddEnabled || this->RemoveEnabled || this->EditEnabled
-        || this->RenameEnabled || !this->UserMenuActions.empty())
+    if (this->AddEnabled       //
+        || this->RemoveEnabled //
+        || this->EditEnabled   //
+        || this->RenameEnabled //
+        || !this->UserMenuActions.empty())
     {
       extraItems.append("separator");
     }
@@ -364,8 +367,8 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
   if (this->ComboBox->style()->styleHint(
       QStyle::SH_ComboBox_Popup, &opt, this->ComboBox))
   {
-      if (force ||
-          qobject_cast<qMRMLNodeComboBoxDelegate*>(this->ComboBox->itemDelegate()))
+      if (force //
+          || qobject_cast<qMRMLNodeComboBoxDelegate*>(this->ComboBox->itemDelegate()))
       {
         this->ComboBox->setItemDelegate(
             new qMRMLNodeComboBoxMenuDelegate(q->parent(), q->comboBox()));
@@ -373,8 +376,8 @@ void qMRMLNodeComboBoxPrivate::updateDelegate(bool force)
   }
   else
   {
-      if (force ||
-          qobject_cast<qMRMLNodeComboBoxMenuDelegate*>(this->ComboBox->itemDelegate()))
+      if (force //
+          || qobject_cast<qMRMLNodeComboBoxMenuDelegate*>(this->ComboBox->itemDelegate()))
       {
         this->ComboBox->setItemDelegate(
             new qMRMLNodeComboBoxDelegate(q->parent(), q->comboBox()));
@@ -1324,11 +1327,11 @@ void qMRMLNodeComboBox::addMenuAction(QAction* newAction)
     }
   }
   if ((d->AddEnabled
-       && newAction->text().startsWith(createNew)) ||
+       && newAction->text().startsWith(createNew)) || //
       (d->RemoveEnabled
-       && newAction->text().startsWith(tr("Delete current "))) ||
+       && newAction->text().startsWith(tr("Delete current "))) || //
       (d->EditEnabled
-       && newAction->text().startsWith(tr("Edit current "))) ||
+       && newAction->text().startsWith(tr("Edit current "))) || //
       (d->RenameEnabled
        && newAction->text().startsWith(tr("Rename current "))))
   {

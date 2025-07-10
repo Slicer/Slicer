@@ -178,8 +178,8 @@ void vtkSlicerScriptedLoadableModuleLogic::PrintSelf(ostream& os, vtkIndent inde
 //---------------------------------------------------------------------------
 bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& filePath)
 {
-  if (filePath.find(".py") == std::string::npos &&
-     filePath.find(".pyc") == std::string::npos)
+  if (filePath.find(".py") == std::string::npos && //
+      filePath.find(".pyc") == std::string::npos)
   {
     return false;
   }

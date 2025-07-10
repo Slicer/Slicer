@@ -456,15 +456,15 @@ bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut(vtkImageData* intensity
   const double compareTolerance = (spacing[0]+spacing[1]+spacing[2])/3.0 * 0.01;
 
   // Return with error if intensity volume geometry differs from seed label volume geometry
-  if (seedExtent[0] != extent[0] || seedExtent[1] != extent[1]
-    || seedExtent[2] != extent[2] || seedExtent[3] != extent[3]
-    || seedExtent[4] != extent[4] || seedExtent[5] != extent[5]
-    || fabs(seedOrigin[0] - origin[0]) > compareTolerance
-    || fabs(seedOrigin[1] - origin[1]) > compareTolerance
-    || fabs(seedOrigin[2] - origin[2]) > compareTolerance
-    || fabs(seedSpacing[0] - spacing[0]) > compareTolerance
-    || fabs(seedSpacing[1] - spacing[1]) > compareTolerance
-    || fabs(seedSpacing[2] - spacing[2]) > compareTolerance)
+  if (seedExtent[0] != extent[0] || seedExtent[1] != extent[1]    //
+      || seedExtent[2] != extent[2] || seedExtent[3] != extent[3] //
+      || seedExtent[4] != extent[4] || seedExtent[5] != extent[5] //
+      || fabs(seedOrigin[0] - origin[0]) > compareTolerance       //
+      || fabs(seedOrigin[1] - origin[1]) > compareTolerance       //
+      || fabs(seedOrigin[2] - origin[2]) > compareTolerance       //
+      || fabs(seedSpacing[0] - spacing[0]) > compareTolerance     //
+      || fabs(seedSpacing[1] - spacing[1]) > compareTolerance     //
+      || fabs(seedSpacing[2] - spacing[2]) > compareTolerance)
   {
     vtkGenericWarningMacro("vtkImageGrowCutSegment: Seed label volume geometry does not match intensity volume geometry");
     return false;
@@ -476,15 +476,15 @@ bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut(vtkImageData* intensity
     int* maskExtent = maskLabelVolume->GetExtent();
     double* maskSpacing = maskLabelVolume->GetSpacing();
     double* maskOrigin = maskLabelVolume->GetOrigin();
-    if (maskExtent[0] != extent[0] || maskExtent[1] != extent[1]
-      || maskExtent[2] != extent[2] || maskExtent[3] != extent[3]
-      || maskExtent[4] != extent[4] || maskExtent[5] != extent[5]
-      || fabs(maskOrigin[0] - origin[0]) > compareTolerance
-      || fabs(maskOrigin[1] - origin[1]) > compareTolerance
-      || fabs(maskOrigin[2] - origin[2]) > compareTolerance
-      || fabs(maskSpacing[0] - spacing[0]) > compareTolerance
-      || fabs(maskSpacing[1] - spacing[1]) > compareTolerance
-      || fabs(maskSpacing[2] - spacing[2]) > compareTolerance)
+    if (maskExtent[0] != extent[0] || maskExtent[1] != extent[1]    //
+        || maskExtent[2] != extent[2] || maskExtent[3] != extent[3] //
+        || maskExtent[4] != extent[4] || maskExtent[5] != extent[5] //
+        || fabs(maskOrigin[0] - origin[0]) > compareTolerance       //
+        || fabs(maskOrigin[1] - origin[1]) > compareTolerance       //
+        || fabs(maskOrigin[2] - origin[2]) > compareTolerance       //
+        || fabs(maskSpacing[0] - spacing[0]) > compareTolerance     //
+        || fabs(maskSpacing[1] - spacing[1]) > compareTolerance     //
+        || fabs(maskSpacing[2] - spacing[2]) > compareTolerance)
     {
       vtkGenericWarningMacro("vtkImageGrowCutSegment: Mask label volume geometry does not match intensity volume geometry");
       return false;
@@ -500,16 +500,16 @@ bool vtkImageGrowCutSegment::vtkInternal::ExecuteGrowCut(vtkImageData* intensity
   int* outExtent = m_ResultLabelVolume->GetExtent();
   double* outSpacing = m_ResultLabelVolume->GetSpacing();
   double* outOrigin = m_ResultLabelVolume->GetOrigin();
-  if (outExtent[0] != extent[0] || outExtent[1] != extent[1]
-    || outExtent[2] != extent[2] || outExtent[3] != extent[3]
-    || outExtent[4] != extent[4] || outExtent[5] != extent[5]
-    || fabs(outOrigin[0] - origin[0]) > compareTolerance
-    || fabs(outOrigin[1] - origin[1]) > compareTolerance
-    || fabs(outOrigin[2] - origin[2]) > compareTolerance
-    || fabs(outSpacing[0] - spacing[0]) > compareTolerance
-    || fabs(outSpacing[1] - spacing[1]) > compareTolerance
-    || fabs(outSpacing[2] - spacing[2]) > compareTolerance
-    || fabs(distancePenalty - m_DistancePenalty) > compareTolerance)
+  if (outExtent[0] != extent[0] || outExtent[1] != extent[1]    //
+      || outExtent[2] != extent[2] || outExtent[3] != extent[3] //
+      || outExtent[4] != extent[4] || outExtent[5] != extent[5] //
+      || fabs(outOrigin[0] - origin[0]) > compareTolerance      //
+      || fabs(outOrigin[1] - origin[1]) > compareTolerance      //
+      || fabs(outOrigin[2] - origin[2]) > compareTolerance      //
+      || fabs(outSpacing[0] - spacing[0]) > compareTolerance    //
+      || fabs(outSpacing[1] - spacing[1]) > compareTolerance    //
+      || fabs(outSpacing[2] - spacing[2]) > compareTolerance    //
+      || fabs(distancePenalty - m_DistancePenalty) > compareTolerance)
   {
     this->Reset();
   }

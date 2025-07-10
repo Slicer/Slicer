@@ -2121,7 +2121,7 @@ bool qMRMLSliceControllerWidget::isLinked() const
   // mrml slice composite node LinkedControl property has been changed but the
   // modified event has not been yet fired, updateWidgetFromMRMLSliceCompositeNode not having been
   // called yet, the slicelinkbutton state is not up to date.
-  //Q_ASSERT(!d->MRMLSliceCompositeNode ||
+  //Q_ASSERT(!d->MRMLSliceCompositeNode || //
   //        d->MRMLSliceCompositeNode->GetLinkedControl() ==
   //         d->SliceLinkButton->isChecked());
   return d->MRMLSliceCompositeNode ? d->MRMLSliceCompositeNode->GetLinkedControl() : d->SliceLinkButton->isChecked();
@@ -2765,8 +2765,8 @@ void qMRMLSliceControllerWidget::setLightbox(int rows, int columns)
                                    nodes->GetNextItemAsObject(it)));)
   {
     // only coronal layouts can be lightboxes ?
-    if (node == this->mrmlSliceNode() ||
-        (this->isLinked() && this->isCompareView() &&
+    if (node == this->mrmlSliceNode() || //
+        (this->isLinked() && this->isCompareView() && //
          QString(node->GetLayoutName()).startsWith("Compare")))
     {
       node->SetLayoutGrid(rows, columns);

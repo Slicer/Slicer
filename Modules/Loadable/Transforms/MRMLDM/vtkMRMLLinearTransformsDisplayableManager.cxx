@@ -110,18 +110,18 @@ vtkMRMLAbstractViewNode* vtkMRMLLinearTransformsDisplayableManager::vtkInternal:
 //---------------------------------------------------------------------------
 bool vtkMRMLLinearTransformsDisplayableManager::vtkInternal::UseDisplayNode(vtkMRMLTransformDisplayNode* displayNode)
 {
-  return displayNode
-      && displayNode->GetScene()
-      && displayNode->GetEditorVisibility()
-      && (this->GetAbstractViewNode()->IsA("vtkMRMLSliceNode") ? displayNode->GetEditorSliceIntersectionVisibility() : displayNode->GetEditorVisibility3D())
+  return displayNode //
+      && displayNode->GetScene() //
+      && displayNode->GetEditorVisibility() //
+      && (this->GetAbstractViewNode()->IsA("vtkMRMLSliceNode") ? displayNode->GetEditorSliceIntersectionVisibility() : displayNode->GetEditorVisibility3D()) //
       && displayNode->IsDisplayableInView(this->GetAbstractViewNode()->GetID());
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLLinearTransformsDisplayableManager::vtkInternal::UseTransformNode(vtkMRMLTransformNode* transformNode)
 {
-  return transformNode
-      && transformNode->GetScene()
+  return transformNode //
+      && transformNode->GetScene() //
       && transformNode->IsLinear();
 }
 
@@ -139,7 +139,7 @@ void vtkMRMLLinearTransformsDisplayableManager::vtkInternal::UpdatePipelineFromD
   // window. The interaction renderer instantiated below is not supported in VR.
 
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
-  bool visible = this->UseTransformNode(transformNode)
+  bool visible = this->UseTransformNode(transformNode) //
               && this->UseDisplayNode(displayNode);
 
   vtkSmartPointer<vtkMRMLTransformHandleWidget> widget;
@@ -261,9 +261,9 @@ void vtkMRMLLinearTransformsDisplayableManager::PrintSelf(ostream& os, vtkIndent
 //---------------------------------------------------------------------------
 void vtkMRMLLinearTransformsDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if (!node
-    || (!node->IsA("vtkMRMLTransformNode")
-    && !node->IsA("vtkMRMLTransformDisplayNode")))
+  if (!node //
+      || (!node->IsA("vtkMRMLTransformNode") //
+      && !node->IsA("vtkMRMLTransformDisplayNode")))
   {
     return;
   }
@@ -294,9 +294,9 @@ void vtkMRMLLinearTransformsDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode
 //---------------------------------------------------------------------------
 void vtkMRMLLinearTransformsDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if (!node
-    || (!node->IsA("vtkMRMLTransformNode")
-    && !node->IsA("vtkMRMLTransformDisplayNode")))
+  if (!node //
+      || (!node->IsA("vtkMRMLTransformNode") //
+      && !node->IsA("vtkMRMLTransformDisplayNode")))
   {
     return;
   }
@@ -516,8 +516,8 @@ bool vtkMRMLLinearTransformsDisplayableManager::CanProcessInteractionEvent(vtkMR
 
   if (eventid == vtkCommand::LeaveEvent && this->Internal->LastActiveWidget != nullptr)
   {
-    if (this->Internal->LastActiveWidget->GetDisplayNode()
-      && this->Internal->LastActiveWidget->GetDisplayNode()->GetActiveInteractionType() > vtkMRMLTransformHandleWidget::InteractionNone)
+    if (this->Internal->LastActiveWidget->GetDisplayNode() //
+        && this->Internal->LastActiveWidget->GetDisplayNode()->GetActiveInteractionType() > vtkMRMLTransformHandleWidget::InteractionNone)
     {
       // this widget has active component, therefore leave event is relevant
       closestDistance2 = 0.0;
@@ -527,8 +527,8 @@ bool vtkMRMLLinearTransformsDisplayableManager::CanProcessInteractionEvent(vtkMR
 
   // Other interactions
   bool canProcess = (this->Internal->FindClosestWidget(eventData, closestDistance2) != nullptr);
-  if (!canProcess && this->Internal->LastActiveWidget != nullptr
-    && (eventid == vtkCommand::MouseMoveEvent || eventid == vtkCommand::Move3DEvent) )
+  if (!canProcess && this->Internal->LastActiveWidget != nullptr //
+      && (eventid == vtkCommand::MouseMoveEvent || eventid == vtkCommand::Move3DEvent))
   {
     // TODO: handle multiple contexts
     this->Internal->LastActiveWidget->Leave(eventData);

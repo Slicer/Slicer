@@ -214,8 +214,8 @@ void vtkMRMLSliceLayerLogic::ProcessMRMLSceneEvents(vtkObject* caller,
                                                     void* callData)
 {
   // ignore node events that aren't the observed volume or slice node
-  if (vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene()
-    && (event == vtkMRMLScene::NodeAddedEvent ||
+  if (vtkMRMLScene::SafeDownCast(caller) == this->GetMRMLScene() //
+    && (event == vtkMRMLScene::NodeAddedEvent || //
         event == vtkMRMLScene::NodeRemovedEvent ) )
   {
     vtkMRMLNode* node =  reinterpret_cast<vtkMRMLNode*> (callData);
@@ -279,7 +279,7 @@ void vtkMRMLSliceLayerLogic::OnMRMLNodeModified(vtkMRMLNode* node)
     this->Modified();
     this->EndModify(wasModifying);
   }
-  else if (node == this->SliceNode ||
+  else if (node == this->SliceNode || //
            node == this->VolumeNode)
   {
     this->UpdateLogic();
@@ -394,16 +394,16 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
     }
   }
 
-    if (displayNode != this->VolumeDisplayNodeObserved &&
-         this->VolumeDisplayNode != nullptr)
+    if (displayNode != this->VolumeDisplayNodeObserved && //
+        this->VolumeDisplayNode != nullptr)
     {
       vtkDebugMacro("vtkMRMLSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == nullptr ? "null" : "valid") << endl);
       this->VolumeDisplayNode->Delete();
       this->VolumeDisplayNode = nullptr;
     }
 
-    if (displayNode != this->VolumeDisplayNodeObserved &&
-         this->VolumeDisplayNodeUVW != nullptr)
+    if (displayNode != this->VolumeDisplayNodeObserved && //
+        this->VolumeDisplayNodeUVW != nullptr)
     {
       vtkDebugMacro("vtkMRMLSliceLayerLogic::UpdateNodeReferences: new display node = " << (displayNode == nullptr ? "null" : "valid") << endl);
       this->VolumeDisplayNodeUVW->Delete();
@@ -423,20 +423,20 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLayerLogic::UpdateVolumeDisplayNode()
 {
-  if (this->VolumeDisplayNode == nullptr &&
+  if (this->VolumeDisplayNode == nullptr && //
       this->VolumeDisplayNodeObserved != nullptr)
   {
     this->VolumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(
       this->VolumeDisplayNodeObserved->CreateNodeInstance());
   }
-  if (this->VolumeDisplayNodeUVW == nullptr &&
+  if (this->VolumeDisplayNodeUVW == nullptr && //
       this->VolumeDisplayNodeObserved != nullptr)
   {
     this->VolumeDisplayNodeUVW = vtkMRMLVolumeDisplayNode::SafeDownCast(
       this->VolumeDisplayNodeObserved->CreateNodeInstance());
   }
-  if (this->VolumeDisplayNode == nullptr ||
-      this->VolumeDisplayNodeUVW == nullptr ||
+  if (this->VolumeDisplayNode == nullptr ||    //
+      this->VolumeDisplayNodeUVW == nullptr || //
       this->VolumeDisplayNodeObserved == nullptr)
   {
     return;
@@ -566,14 +566,14 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
   /***
   // Optimisation: If there is no volume, calling or not Modified() won't
   // have any visual impact. the transform has no sense if there is no volume
-  bool transformModified = this->VolumeNode &&
+  bool transformModified = this->VolumeNode && //
     !AreMatricesEqual(this->XYToIJKTransform->GetMatrix(), xyToIJK.GetPointer());
   if (transformModified)
     {
     this->XYToIJKTransform->SetMatrix(xyToIJK.GetPointer());
     }
 
-  bool transformModifiedUVW = this->VolumeNode &&
+  bool transformModifiedUVW = this->VolumeNode && //
     !AreMatricesEqual(this->UVWToIJKTransform->GetMatrix(), uvwToIJK.GetPointer());
   if (transformModifiedUVW)
     {
@@ -652,8 +652,8 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
   }
 
   vtkImageData* imageData = this->VolumeNode->GetImageData();
-  if (imageData != nullptr &&
-      (imageData->GetScalarType() == VTK_LONG_LONG ||
+  if (imageData != nullptr &&                         //
+      (imageData->GetScalarType() == VTK_LONG_LONG || //
        imageData->GetScalarType() == VTK_UNSIGNED_LONG_LONG))
   {
     vtkErrorMacro("Reslicing can only be done on types representable as double.  Node " <<
@@ -667,7 +667,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
   vtkMTimeType oldLabel = this->LabelOutline->GetMTime();
   vtkMTimeType oldLabelUVW = this->LabelOutlineUVW->GetMTime();
 
-  if ((this->VolumeNode->GetImageData() && labelMapVolumeDisplayNode) ||
+  if ((this->VolumeNode->GetImageData() && labelMapVolumeDisplayNode) || //
        (scalarVolumeDisplayNode && scalarVolumeDisplayNode->GetInterpolate() == 0))
   {
     this->Reslice->SetInterpolationModeToNearestNeighbor();
@@ -765,8 +765,8 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     // use the label outline if we have a label map volume, this is the label
     // layer (turned on in slice logic when the label layer is instantiated)
     // and the slice node is set to use it.
-    if (this->GetIsLabelLayer() &&
-        labelMapVolumeDisplayNode &&
+    if (this->GetIsLabelLayer() &&   //
+        labelMapVolumeDisplayNode && //
         this->SliceNode && this->SliceNode->GetUseLabelOutline() )
     {
       vtkDebugMacro("UpdateImageDisplay: volume node (not diff tensor), using label outline");
@@ -809,15 +809,14 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     }
   }
 
-  if (oldReSliceMTime != this->Reslice->GetMTime() ||
-       oldReSliceUVWMTime != this->ResliceUVW->GetMTime() ||
-       oldAssign != this->AssignAttributeTensorsToScalars->GetMTime() ||
-       oldLabel != this->LabelOutline->GetMTime() ||
-       oldLabelUVW != this->LabelOutlineUVW->GetMTime() ||
-       (volumeNode != nullptr && (volumeNode->GetMTime() > oldReSliceMTime)) ||
-       (volumeDisplayNode != nullptr && (volumeDisplayNode->GetMTime() > oldReSliceMTime)) ||
-       (volumeDisplayNodeUVW != nullptr && (volumeDisplayNodeUVW->GetMTime() > oldReSliceUVWMTime))
-       )
+  if (oldReSliceMTime != this->Reslice->GetMTime() ||                                        //
+      oldReSliceUVWMTime != this->ResliceUVW->GetMTime() ||                                  //
+      oldAssign != this->AssignAttributeTensorsToScalars->GetMTime() ||                      //
+      oldLabel != this->LabelOutline->GetMTime() ||                                          //
+      oldLabelUVW != this->LabelOutlineUVW->GetMTime() ||                                    //
+      (volumeNode != nullptr && (volumeNode->GetMTime() > oldReSliceMTime)) ||               //
+      (volumeDisplayNode != nullptr && (volumeDisplayNode->GetMTime() > oldReSliceMTime)) || //
+      (volumeDisplayNodeUVW != nullptr && (volumeDisplayNodeUVW->GetMTime() > oldReSliceUVWMTime)))
   {
     this->Modified();
   }
@@ -826,8 +825,8 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLSliceLayerLogic::GetSliceImageDataConnection()
 {
-  if (this->GetIsLabelLayer() &&
-      vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode)&&
+  if (this->GetIsLabelLayer() &&                                                 //
+      vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNode) && //
       this->SliceNode && this->SliceNode->GetUseLabelOutline() )
   {
     return this->LabelOutline->GetOutputPort();
@@ -848,8 +847,8 @@ vtkAlgorithmOutput* vtkMRMLSliceLayerLogic::GetSliceImageDataConnectionUVW()
     return nullptr;
   }
 
-  if (this->GetIsLabelLayer() &&
-      vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNodeUVW)&&
+  if (this->GetIsLabelLayer() &&                                                    //
+      vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNodeUVW) && //
       this->SliceNode && this->SliceNode->GetUseLabelOutline() )
   {
     return this->LabelOutlineUVW->GetOutputPort();
@@ -880,7 +879,7 @@ void vtkMRMLSliceLayerLogic::UpdateGlyphs()
   for (unsigned int n = 0; n<dnodes.size(); n++)
   {
     vtkMRMLGlyphableVolumeSliceDisplayNode* dnode = dnodes[n];
-    if (this->GetSliceNode() != nullptr &&
+    if (this->GetSliceNode() != nullptr && //
         !strcmp(this->GetSliceNode()->GetLayoutName(), dnode->GetName()) )
     {
       vtkMRMLTransformNode* tnode = this->VolumeNode->GetParentTransformNode();

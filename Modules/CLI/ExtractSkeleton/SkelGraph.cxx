@@ -105,7 +105,7 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
     {
       std::list<skel_branch>::iterator act_branch = branchesToDo.begin();
 
-      // act_branch != branchesToDo->end() &&
+      // act_branch != branchesToDo->end() && //
       // if  (while) branchesToDo list non-empty -> follow branches
       bool branch_done = false;
       Coord3i act_point = act_branch->end_2_point;
@@ -592,7 +592,7 @@ void SkelGraph::GetValidNeighbors(int* label_image, Coord3i &act_point, std::deq
       int px = act_point[0] - 1;
       for (int k = 0; k < 3; k++)
       {
-        if (image[px + dim[0] * ( py + dim[1] * pz )] &&
+        if (image[px + dim[0] * ( py + dim[1] * pz )] && //
             !label_image[px + dim[0] * ( py + dim[1] * pz )] )
         {
           // point exist in skeleton, but is yet unlabeled

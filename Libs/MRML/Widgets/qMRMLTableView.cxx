@@ -169,8 +169,8 @@ void qMRMLTableViewPrivate::updateWidgetFromViewNode()
     // this view is used without view node (table node is set directly)
     return;
   }
-  if (!this->MRMLScene
-    || this->MRMLScene != this->MRMLTableViewNode->GetScene())
+  if (!this->MRMLScene //
+      || this->MRMLScene != this->MRMLTableViewNode->GetScene())
   {
     // the view node is not in the scene anymore, do not show the table
     q->setMRMLTableNode((vtkMRMLNode*)nullptr);
@@ -274,11 +274,12 @@ void qMRMLTableView::keyPressEvent(QKeyEvent* event)
   // at the edge of the table (without this: if the current cell is in the top
   // row and user press the Up key, the focus goes from the table to the previous
   // widget in the tab order)
-  if (model() && (
-    (event->key() == Qt::Key_Left && currentIndex().column() == 0)
-    || (event->key() == Qt::Key_Up && currentIndex().row() == 0)
-    || (event->key() == Qt::Key_Right && currentIndex().column() == model()->columnCount()-1)
-    || (event->key() == Qt::Key_Down && currentIndex().row() == model()->rowCount()-1) ) )
+  if (model()
+      && (                                                                                          //
+        (event->key() == Qt::Key_Left && currentIndex().column() == 0)                              //
+        || (event->key() == Qt::Key_Up && currentIndex().row() == 0)                                //
+        || (event->key() == Qt::Key_Right && currentIndex().column() == model()->columnCount() - 1) //
+        || (event->key() == Qt::Key_Down && currentIndex().row() == model()->rowCount() - 1)))
   {
     return;
   }
@@ -471,8 +472,8 @@ void qMRMLTableView::plotSelection()
   {
     QModelIndex index = selectedColumns.at(i);
     int columnIndex = index.column();
-    if (std::find(columnIndices.begin(), columnIndices.end(), columnIndex) == columnIndices.end()
-      && columnIndex != stringColumnIndex)
+    if (std::find(columnIndices.begin(), columnIndices.end(), columnIndex) == columnIndices.end() //
+        && columnIndex != stringColumnIndex)
     {
       // found new column in selection
       vtkAbstractArray* column = tableNode->GetTable()->GetColumn(columnIndex);
@@ -560,10 +561,10 @@ void qMRMLTableView::plotSelection()
     return;
   }
   int viewArray = layoutNode->GetViewArrangement();
-  if (viewArray != vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView  &&
-      viewArray != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView        &&
-      viewArray != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView   &&
-      viewArray != vtkMRMLLayoutNode::SlicerLayoutOneUpPlotView         &&
+  if (viewArray != vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView && //
+      viewArray != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotView &&       //
+      viewArray != vtkMRMLLayoutNode::SlicerLayoutFourUpPlotTableView &&  //
+      viewArray != vtkMRMLLayoutNode::SlicerLayoutOneUpPlotView &&        //
       viewArray != vtkMRMLLayoutNode::SlicerLayoutThreeOverThreePlotView)
   {
     layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalPlotView);

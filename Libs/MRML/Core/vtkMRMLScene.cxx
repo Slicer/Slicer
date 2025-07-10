@@ -159,16 +159,18 @@ vtkMRMLScene::vtkMRMLScene()
   this->LastLoadedExtensions = nullptr;
   this->Version = nullptr;
   this->Extensions = nullptr;
+
   // versionHexMajorMinorPatch stores version number as 0xXXYYZZ (XX=major, YY=minor, ZZ=patch)
   const int versionHexMajorMinorPatch = MRML_APPLICATION_VERSION;
   std::stringstream versionStream; // Example: Slicer 4.11.0 123456
-  versionStream << MRML_APPLICATION_NAME
-    << " "
-    << (versionHexMajorMinorPatch >> 16) << "."
-    << ((versionHexMajorMinorPatch >> 8) & 0xFF) << "."
-    << (versionHexMajorMinorPatch & 0xFF)
-    << " "
-    << MRML_APPLICATION_REVISION;
+
+  versionStream << MRML_APPLICATION_NAME                            //
+                << " "                                              //
+                << (versionHexMajorMinorPatch >> 16) << "."         //
+                << ((versionHexMajorMinorPatch >> 8) & 0xFF) << "." //
+                << (versionHexMajorMinorPatch & 0xFF)               //
+                << " "                                              //
+                << MRML_APPLICATION_REVISION;                       //
   this->SetVersion(versionStream.str().c_str());
 
   this->DeleteEventCallback = vtkCallbackCommand::New();
@@ -743,7 +745,7 @@ void vtkMRMLScene::StartState(unsigned long state, int anticipatedMaxProgress)
   {
     this->InvokeEvent( StateEvent | StartEvent | BatchProcessState);
   }
-  if (state != vtkMRMLScene::BatchProcessState &&
+  if (state != vtkMRMLScene::BatchProcessState && //
       !wasInState)
   {
     this->InvokeEvent( StateEvent | StartEvent | state,
@@ -767,13 +769,13 @@ void vtkMRMLScene::EndState(unsigned long state)
 
   bool isInState = ((this->GetStates() & state) == state);
   // vtkMRMLScene::BatchProcessState is handled after
-  if (state != vtkMRMLScene::BatchProcessState &&
+  if (state != vtkMRMLScene::BatchProcessState && //
       !isInState)
   {
     this->InvokeEvent( StateEvent | EndEvent | state );
   }
 
-  if ((state & vtkMRMLScene::BatchProcessState) &&
+  if ((state & vtkMRMLScene::BatchProcessState) && //
       !this->IsBatchProcessing())
   {
     this->InvokeEvent( StateEvent | EndEvent |
@@ -1009,7 +1011,7 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection, vtkMRMLMessageCol
     userMessages = vtkSmartPointer<vtkMRMLMessageCollection>::New();
   }
 
-  if ((this->URL == "" && this->GetLoadFromXMLString()==0) ||
+  if ((this->URL == "" && this->GetLoadFromXMLString()==0) || //
       (this->GetLoadFromXMLString() == 1 && this->GetSceneXMLString().empty()))
   {
     vtkErrorToMessageCollectionMacro(userMessages, "vtkMRMLScene::LoadIntoScene", "No URL specified");
@@ -1308,8 +1310,8 @@ vtkMRMLNode* vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode* n)
       // their references.
       std::string newId(sn->GetID());
       std::string oldId(n->GetID() ? n->GetID() : sn->GetID());
-      if ((this->IsImporting() || this->IsRestoring())
-        && (oldId != newId && n->GetID()) )
+      if ((this->IsImporting() || this->IsRestoring()) //
+          && (oldId != newId && n->GetID()))
       {
         this->ReferencedIDChanges[oldId] = newId;
       }
@@ -1340,8 +1342,8 @@ vtkMRMLNode* vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode* n)
 
     vtkDebugMacro("AddNodeNoNotify: got unique id for new " << n->GetClassName() << " node: " << n->GetID() << endl);
     std::string newID(n->GetID() ? n->GetID() : "");
-    if ((this->IsImporting() || this->IsRestoring())
-      && (oldID != newID && !oldID.empty()) )
+    if ((this->IsImporting() || this->IsRestoring()) //
+        && (oldID != newID && !oldID.empty()))
     {
       this->ReferencedIDChanges[oldID] = newID;
     }
@@ -1359,7 +1361,7 @@ vtkMRMLNode* vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode* n)
   this->AddNodeID(n);
 
   // Keep the SH up-to-date
-  if (vtkMRMLSubjectHierarchyNode::SafeDownCast(n) != nullptr &&
+  if (vtkMRMLSubjectHierarchyNode::SafeDownCast(n) != nullptr && //
     !(this->IsImporting() || this->IsRestoring()) )
   {
     // This should rarely ever be called, but just in case someone added a SH node manually, let's make sure it works
@@ -1396,7 +1398,7 @@ vtkMRMLNode* vtkMRMLScene::AddNode(vtkMRMLNode* n)
   // it is effectively added to know if NodeAboutToBeAddedEvent needs to be
   // fired.
   bool add = true;
-  if (n->GetSingletonTag() != nullptr &&
+  if (n->GetSingletonTag() != nullptr && //
       this->GetSingletonNode(n) != nullptr)
   {
     // if the node is a singleton, then it won't be added, just replaced
@@ -1473,8 +1475,8 @@ vtkMRMLNode* vtkMRMLScene::AddNewNodeByClassWithID(std::string className, std::s
     return nullptr;
   }
 
-  bool isUnique = ((this->GetNodeByID(nodeID) == nullptr) &&
-                   (!this->IsReservedID(nodeID)) &&
+  bool isUnique = ((this->GetNodeByID(nodeID) == nullptr) && //
+                   (!this->IsReservedID(nodeID)) && //
                    (!this->IsNodeIDReservedByUndo(nodeID)));
   if (!isUnique)
   {
@@ -1953,8 +1955,8 @@ vtkMRMLNode* vtkMRMLScene::GetSingletonNode(const char* singletonTag, const char
   for (this->Nodes->InitTraversal(it);
        (node = (vtkMRMLNode*)this->Nodes->GetNextItemAsObject(it)) ;)
   {
-    if (node->IsA(className) &&
-        node->GetSingletonTag() != nullptr &&
+    if (node->IsA(className) && //
+        node->GetSingletonTag() != nullptr && //
         strcmp(node->GetSingletonTag(), singletonTag) == 0)
     {
       return node;
@@ -2084,12 +2086,12 @@ vtkMRMLNode* vtkMRMLScene::GetFirstNode(const char* byName,
        (node= vtkMRMLNode::SafeDownCast(
           this->Nodes->GetNextItemAsObject(it))) ;)
   {
-    if (exactNameMatch && byName &&
+    if (exactNameMatch && byName && //
         node->GetName() != nullptr && strcmp(node->GetName(), byName) != 0)
     {
       continue;
     }
-    if (!exactNameMatch && byName &&
+    if (!exactNameMatch && byName && //
         node->GetName() != nullptr && !vtksys::RegularExpression(byName).find(node->GetName()))
     {
       continue;
@@ -2588,8 +2590,8 @@ int vtkMRMLScene::GetUniqueIDIndex(const std::string& baseID)
     ++index;
     std::string candidateID = this->BuildID(baseID, index);
     isUnique =
-      (this->GetNodeByID(candidateID) == nullptr) &&
-      (!this->IsReservedID(candidateID)) &&
+      (this->GetNodeByID(candidateID) == nullptr) && //
+      (!this->IsReservedID(candidateID)) && //
       (!this->IsNodeIDReservedByUndo(candidateID));
   }
   return index;
@@ -3685,7 +3687,7 @@ vtkURIHandler* vtkMRMLScene::FindURIHandler(const char* URI)
   const int numberOfItems = this->GetURIHandlerCollection()->GetNumberOfItems();
   for (int i = 0; i < numberOfItems; i++)
   {
-    if (vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i)) &&
+    if (vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i)) && //
         vtkURIHandler::SafeDownCast(this->GetURIHandlerCollection()->GetItemAsObject(i))->CanHandleURI(URI))
     {
       vtkDebugMacro("FindURIHandler: found a handler for URI " << URI << " at index " << i << " in the handler collection");
@@ -3869,7 +3871,7 @@ bool vtkMRMLScene
        (storableNode= vtkMRMLStorableNode::SafeDownCast(
           storableNodes->GetNextItemAsObject(it))) ;)
   {
-    if (!storableNode->GetHideFromEditors() &&
+    if (!storableNode->GetHideFromEditors() && //
          storableNode->GetModifiedSinceRead())
     {
       if (!storableNode->GetStorageNode() && storableNode->GetDefaultStorageNodeClassName().empty())
@@ -3906,7 +3908,7 @@ SetStorableNodesModifiedSinceRead(vtkCollection* storableNodes)
        (storableNode = vtkMRMLStorableNode::SafeDownCast(
           storableNodes->GetNextItemAsObject(it))) ;)
   {
-    if (!storableNode->GetHideFromEditors() &&
+    if (!storableNode->GetHideFromEditors() && //
         !storableNode->GetModifiedSinceRead())
     {
       storableNode->StorableModified();
@@ -4020,8 +4022,8 @@ bool vtkMRMLScene::WriteToMRB(const char* filename, vtkImageData* thumbnail/*=nu
   std::string mrbBaseName = vtksys::SystemTools::GetFilenameWithoutLastExtension(mrbFilePath);
 
   std::string tempBaseDir;
-  if (this->GetDataIOManager()
-    && this->GetDataIOManager()->GetCacheManager()
+  if (this->GetDataIOManager() //
+    && this->GetDataIOManager()->GetCacheManager() //
     && this->GetDataIOManager()->GetCacheManager()->GetRemoteCacheDirectory())
   {
     tempBaseDir = this->GetDataIOManager()->GetCacheManager()->GetRemoteCacheDirectory();
@@ -4105,8 +4107,8 @@ bool vtkMRMLScene::ReadFromMRB(const char* fullName, bool clear/*=false*/, vtkMR
   }
 
   std::string tempBaseDir;
-  if (this->GetDataIOManager()
-    && this->GetDataIOManager()->GetCacheManager()
+  if (this->GetDataIOManager() //
+    && this->GetDataIOManager()->GetCacheManager() //
     && this->GetDataIOManager()->GetCacheManager()->GetRemoteCacheDirectory())
   {
     tempBaseDir = this->GetDataIOManager()->GetCacheManager()->GetRemoteCacheDirectory();
@@ -4682,9 +4684,9 @@ std::string vtkMRMLScene::PercentEncode(std::string s)
   for (size_t i = 0; i < s.size(); i++)
   {
     if ((s[i] >= 'A' && s[i] <= 'z')
-      ||
+      || //
       (s[i] >= '0' && s[i] <= '9')
-      ||
+      || //
       (validchars.find(s[i]) != std::string::npos))
     {
       result << s[i];

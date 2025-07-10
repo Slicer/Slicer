@@ -119,8 +119,8 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject* caller,
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (this->MeshConnection &&
-      this->MeshConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
+  if (this->MeshConnection &&                                                      //
+      this->MeshConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) && //
       event ==  vtkCommand::ModifiedEvent)
   {
     this->UpdateImplicitDistanceFunction();
@@ -276,7 +276,7 @@ vtkPolyData* vtkMRMLModelNode::GetPolyData()
                     << "with SetUnstructuredGridConnection() instead of "
                     << "SetPolyDataConnection().");
   }
-  else if (!poly && this->MeshType == vtkMRMLModelNode::PolyDataMeshType &&
+  else if (!poly && this->MeshType == vtkMRMLModelNode::PolyDataMeshType && //
            vtkUnstructuredGrid::SafeDownCast(mesh))
   {
     vtkWarningMacro("GetPolyData() correctly returned a null pointer "
@@ -302,7 +302,7 @@ vtkUnstructuredGrid* vtkMRMLModelNode::GetUnstructuredGrid()
                     << "with SetPolyDataConnection() instead of "
                     << "SetUnstructuredGridConnection().");
   }
-  else if (!ug && this->MeshType == vtkMRMLModelNode::UnstructuredGridMeshType &&
+  else if (!ug && this->MeshType == vtkMRMLModelNode::UnstructuredGridMeshType && //
            vtkPolyData::SafeDownCast(mesh))
   {
     vtkWarningMacro("GetUnstructuredGrid() correctly returned a null pointer "
@@ -452,7 +452,7 @@ void vtkMRMLModelNode::RemoveScalars(const char* scalarName)
 //---------------------------------------------------------------------------
 const char* vtkMRMLModelNode::GetActivePointScalarName(int type)
 {
-  if (this->GetMesh() == nullptr ||
+  if (this->GetMesh() == nullptr || //
       this->GetMesh()->GetPointData() == nullptr)
   {
     return nullptr;
@@ -465,7 +465,7 @@ const char* vtkMRMLModelNode::GetActivePointScalarName(int type)
 //---------------------------------------------------------------------------
 const char* vtkMRMLModelNode::GetActiveCellScalarName(int type)
 {
-  if (this->GetMesh() == nullptr ||
+  if (this->GetMesh() == nullptr || //
       this->GetMesh()->GetCellData() == nullptr)
   {
     return nullptr;
@@ -478,7 +478,7 @@ const char* vtkMRMLModelNode::GetActiveCellScalarName(int type)
 //---------------------------------------------------------------------------
 bool vtkMRMLModelNode::HasPointScalarName(const char* scalarName)
 {
-  if (this->GetMesh() == nullptr ||
+  if (this->GetMesh() == nullptr || //
       this->GetMesh()->GetPointData() == nullptr)
   {
     return false;
@@ -490,7 +490,7 @@ bool vtkMRMLModelNode::HasPointScalarName(const char* scalarName)
 //---------------------------------------------------------------------------
 bool vtkMRMLModelNode::HasCellScalarName(const char* scalarName)
 {
-  if (this->GetMesh() == nullptr ||
+  if (this->GetMesh() == nullptr || //
       this->GetMesh()->GetCellData() == nullptr)
   {
     return false;
@@ -555,7 +555,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
 
     bool haveCurvScalars = false;
     // is there a curv scalar in the composite?
-    if (strstr(backgroundName, "curv") != nullptr ||
+    if (strstr(backgroundName, "curv") != nullptr || //
         strstr(overlayName, "curv") != nullptr)
     {
       haveCurvScalars = true;
@@ -563,7 +563,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
 
     // get the scalars to composite, putting any curv file in scalars 1
     vtkDataArray* scalars1, *scalars2;
-    if (!haveCurvScalars ||
+    if (!haveCurvScalars || //
         strstr(backgroundName, "curv") != nullptr)
     {
       scalars1 = this->GetMesh()->GetPointData()->GetScalars(backgroundName);
@@ -629,7 +629,7 @@ int vtkMRMLModelNode::CompositeScalars(const char* backgroundName, const char* o
       }
 
       // Insert the appropriate color into the composed array.
-      if (overlay < overlayMin &&
+      if (overlay < overlayMin && //
           overlay > -overlayMin )
       {
         composedScalars->InsertNextValue( background );
@@ -1026,7 +1026,7 @@ void vtkMRMLModelNode
 //---------------------------------------------------------------------------
 bool vtkMRMLModelNode::GetModifiedSinceRead()
 {
-  return this->Superclass::GetModifiedSinceRead() ||
+  return this->Superclass::GetModifiedSinceRead() || //
     (this->GetMesh() && this->GetMesh()->GetMTime() > this->GetStoredTime());
 }
 

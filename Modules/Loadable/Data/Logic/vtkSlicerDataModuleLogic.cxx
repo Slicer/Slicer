@@ -107,7 +107,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     // make sure no other nodes reference this display node
     this->GetMRMLScene()->GetReferencingNodes(dnode, referencingNodes);
 
-    if (referencingNodes.size() == 0 ||
+    if (referencingNodes.size() == 0 || //
         (referencingNodes.size() == 1 && referencingNodes[0] == node) )
     {
       nodesToRemove.emplace_back(dnode);
@@ -121,7 +121,7 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     // make sure no other nodes reference this storage node
     this->GetMRMLScene()->GetReferencingNodes(snode, referencingNodes);
 
-    if (referencingNodes.size() == 0 ||
+    if (referencingNodes.size() == 0 || //
         (referencingNodes.size() == 1 && referencingNodes[0] == node) )
     {
       nodesToRemove.emplace_back(snode);

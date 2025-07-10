@@ -153,7 +153,7 @@ void qMRMLColorPickerWidget::onNodeAdded(vtkObject* scene, vtkObject* nodeObject
   Q_D(qMRMLColorPickerWidget);
   Q_UNUSED(scene);
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
-  if (node != nullptr && d->ColorLogic.GetPointer() != nullptr &&
+  if (node != nullptr && d->ColorLogic.GetPointer() != nullptr && //
       QString(node->GetID()) == d->ColorLogic->GetDefaultEditorColorNodeID())
   {
     this->setCurrentColorNode(node);
@@ -245,7 +245,7 @@ bool qMRMLColorPickerWidget::eventFilter(QObject* target, QEvent* event)
     if (event->type() == QEvent::KeyPress)
     {
       QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-      if (keyEvent->key() == Qt::Key_Up ||
+      if (keyEvent->key() == Qt::Key_Up || //
           keyEvent->key() == Qt::Key_Down)
       {
         // give the Focus to MRMLColorListView

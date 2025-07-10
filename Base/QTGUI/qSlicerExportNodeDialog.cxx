@@ -1247,9 +1247,9 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
 
   // The following case occurs for example when trying to export a folder item that has children,
   // but none of its descendant items are storable nodes.
-  if (!properties.contains("childIdsNonrecursive") &&
-      !properties.contains("childIdsRecursive") &&
-      !properties.contains("selectedNodeID"))
+  if (!properties.contains("childIdsNonrecursive") //
+      && !properties.contains("childIdsRecursive") //
+      && !properties.contains("selectedNodeID"))
   {
     QMessageBox::critical(d, tr("Export error"), tr("There is nothing to export."));
     return false;

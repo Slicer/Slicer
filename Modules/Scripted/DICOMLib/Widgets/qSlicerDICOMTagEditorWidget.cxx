@@ -502,8 +502,8 @@ QString qSlicerDICOMTagEditorWidget::setExportables(QList<qSlicerDICOMExportable
     foreach (QString tagName, exportableTagsMap.keys())
     {
       // Only use series tags
-      if (vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(tagName.toUtf8().constData())
-        || vtkSlicerSubjectHierarchyModuleLogic::IsStudyTag(tagName.toUtf8().constData()) )
+      if (vtkSlicerSubjectHierarchyModuleLogic::IsPatientTag(tagName.toUtf8().constData()) //
+          || vtkSlicerSubjectHierarchyModuleLogic::IsStudyTag(tagName.toUtf8().constData()))
       {
         continue;
       }

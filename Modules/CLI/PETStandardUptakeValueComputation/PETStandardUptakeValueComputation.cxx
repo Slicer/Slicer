@@ -1035,63 +1035,63 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           list.radioactivityUnits= "Bq";
           list.tissueRadioactivityUnits = "Bq";
         }
-        else if (( units.find ("MBq") != std::string::npos) ||
+        else if (( units.find ("MBq") != std::string::npos) || //
                   ( units.find ("MBQ") != std::string::npos) )
         {
           list.radioactivityUnits = "MBq";
           list.tissueRadioactivityUnits = "MBq";
         }
-        else if ((units.find ("kBq") != std::string::npos) ||
-                  (units.find ("kBQ") != std::string::npos) ||
+        else if ((units.find ("kBq") != std::string::npos) || //
+                  (units.find ("kBQ") != std::string::npos) || //
                   (units.find ("KBQ") != std::string::npos) )
         {
           list.radioactivityUnits = "kBq";
           list.tissueRadioactivityUnits = "kBq";
         }
-        else if ((units.find ("mBq") != std::string::npos) ||
+        else if ((units.find ("mBq") != std::string::npos) || //
                   (units.find ("mBQ") != std::string::npos) )
         {
           list.radioactivityUnits = "mBq";
           list.tissueRadioactivityUnits = "mBq";
         }
-        else if ((units.find ("uBq") != std::string::npos) ||
+        else if ((units.find ("uBq") != std::string::npos) || //
                   (units.find ("uBQ") != std::string::npos) )
         {
           list.radioactivityUnits = "uBq";
           list.tissueRadioactivityUnits = "uBq";
         }
-        else if ((units.find ("Bq") != std::string::npos) ||
+        else if ((units.find ("Bq") != std::string::npos) || //
                   (units.find ("BQ") != std::string::npos) )
         {
           list.radioactivityUnits = "Bq";
           list.tissueRadioactivityUnits = "Bq";
         }
-        else if ((units.find ("MCi") != std::string::npos) ||
+        else if ((units.find ("MCi") != std::string::npos) || //
                   ( units.find ("MCI") != std::string::npos) )
         {
           list.radioactivityUnits = "MCi";
           list.tissueRadioactivityUnits = "MCi";
         }
-        else if ((units.find ("kCi") != std::string::npos) ||
-                  (units.find ("kCI") != std::string::npos)  ||
+        else if ((units.find ("kCi") != std::string::npos) || //
+                  (units.find ("kCI") != std::string::npos)  || //
                   (units.find ("KCI") != std::string::npos) )
         {
           list.radioactivityUnits = "kCi";
           list.tissueRadioactivityUnits = "kCi";
         }
-        else if ((units.find ("mCi") != std::string::npos) ||
+        else if ((units.find ("mCi") != std::string::npos) || //
                   (units.find ("mCI") != std::string::npos) )
         {
           list.radioactivityUnits = "mCi";
           list.tissueRadioactivityUnits = "mCi";
         }
-        else if ((units.find ("uCi") != std::string::npos) ||
+        else if ((units.find ("uCi") != std::string::npos) || //
                   (units.find ("uCI") != std::string::npos) )
         {
           list.radioactivityUnits = "uCi";
           list.tissueRadioactivityUnits = "uCi";
         }
-        else if ((units.find ("Ci") != std::string::npos) ||
+        else if ((units.find ("Ci") != std::string::npos) || //
                   (units.find ("CI") != std::string::npos) )
         {
           list.radioactivityUnits = "Ci";
@@ -1301,11 +1301,11 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
 
     // check.... did we get all params we need for computation?
-    if ((parsingDICOM) &&
-         (list.injectedDose != 0.0) &&
-         (list.patientWeight != 0.0) &&
-         (list.seriesReferenceTime.compare("MODULE_INIT_NO_VALUE") != 0) &&
-         (list.injectionTime.compare("MODULE_INIT_NO_VALUE") != 0) &&
+    if ((parsingDICOM) && //
+         (list.injectedDose != 0.0) && //
+         (list.patientWeight != 0.0) && //
+         (list.seriesReferenceTime.compare("MODULE_INIT_NO_VALUE") != 0) && //
+         (list.injectionTime.compare("MODULE_INIT_NO_VALUE") != 0) && //
          (list.radionuclideHalfLife.compare("MODULE_INIT_NO_VALUE") != 0) )
     {
       std::cout << "Input parameters okay..." << std::endl;

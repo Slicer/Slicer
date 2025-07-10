@@ -172,7 +172,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservati
     QTreeWidgetItem* observationItem = eventItem->child(i);
     unsigned long long userData = observationItem->data(NameColumn, Qt::UserRole).toLongLong() ;
     if ((observation->GetScript() && userData == 0 &&
-         observationItem->toolTip(NameColumn) == observation->GetScript()) ||
+         observationItem->toolTip(NameColumn) == observation->GetScript()) || //
         (observation->GetObserver() && userData != 0 &&
          static_cast<vtkObject*>(reinterpret_cast<void*>(userData)) == observation->GetObserver()))
     {
