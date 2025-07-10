@@ -78,10 +78,8 @@ if(BUILD_TESTING)
       )
   endif()
 
-    if(KIT_TEST_GENERATE_MOC_SRCS)
-      QT5_GENERATE_MOCS(${KIT_TEST_GENERATE_MOC_SRCS})
-    endif()
-    QT5_ADD_RESOURCES(Tests Resources/${KIT}Testing.qrc)
+  list(APPEND Tests ${KIT_TEST_GENERATE_MOC_SRCS})
+  list(APPEND Tests Resources/${KIT}Testing.qrc)
 
   ctk_add_executable_utf8(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${KIT})
