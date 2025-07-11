@@ -1121,10 +1121,12 @@ void vtkMRMLVolumeNode::ApplyNonLinearTransform(vtkAbstractTransform* transform)
   reslice->SetOutputOrigin(transformedBounds[0] + 0.5 * spacing[0], transformedBounds[2] + 0.5 * spacing[1], transformedBounds[4] + 0.5 * spacing[2]);
   reslice->SetOutputSpacing(spacing);
   const double voxelExpandTolerance = 1e-3; // do not expand the volume with a new voxel if only expanding by 1/1000th of a voxel
+  // clang-format off
   reslice->SetOutputExtent(
     0, ceil((transformedBounds[1] - transformedBounds[0]) / spacing[0] - voxelExpandTolerance) - 1,
     0, ceil((transformedBounds[3] - transformedBounds[2]) / spacing[1] - voxelExpandTolerance) - 1,
     0, ceil((transformedBounds[5] - transformedBounds[4]) / spacing[2] - voxelExpandTolerance) - 1);
+  // clang-format on
 
   // Keep output spacing (1,1,1)
   reslice->TransformInputSamplingOff();

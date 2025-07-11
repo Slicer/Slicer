@@ -385,12 +385,14 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
     // Set effective extent to be maximum as large as the reference extent (less memory needed if the extent only covers the non-zero region)
     int referenceExtent[6] = { 0, -1, 0, -1, 0, -1 };
     geometryImageData->GetExtent(referenceExtent);
+    // clang-format off
     if (surfaceExtent[0] > referenceExtent[0]) { referenceExtent[0] = surfaceExtent[0]; }
     if (surfaceExtent[1] < referenceExtent[1]) { referenceExtent[1] = surfaceExtent[1]; }
     if (surfaceExtent[2] > referenceExtent[2]) { referenceExtent[2] = surfaceExtent[2]; }
     if (surfaceExtent[3] < referenceExtent[3]) { referenceExtent[3] = surfaceExtent[3]; }
     if (surfaceExtent[4] > referenceExtent[4]) { referenceExtent[4] = surfaceExtent[4]; }
     if (surfaceExtent[5] < referenceExtent[5]) { referenceExtent[5] = surfaceExtent[5]; }
+    // clang-format on
     geometryImageData->SetExtent(referenceExtent);
   }
   else

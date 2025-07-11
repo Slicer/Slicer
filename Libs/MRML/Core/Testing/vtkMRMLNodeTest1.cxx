@@ -406,6 +406,7 @@ int TestAttribute()
   //                                                                 B: expectedModified
   //                                                                 C: totalNumberOfEvent
   //                    (line    , attribute   , value   , expected, A, B, C
+  // clang-format off
   res = TestSetAttribute(__LINE__, nullptr           , nullptr       , nullptr       , 1, 0, 2) && res;
   res = TestSetAttribute(__LINE__, nullptr           , ""      , nullptr       , 1, 0, 2) && res;
   res = TestSetAttribute(__LINE__, nullptr           , "Value1", nullptr       , 1, 0, 2) && res;
@@ -419,6 +420,7 @@ int TestAttribute()
   res = TestSetAttribute(__LINE__, "Attribute0", ""      , ""      , 1, 1) && res;
   res = TestSetAttribute(__LINE__, "Attribute0", "Value1", "Value1", 1, 1) && res;
   res = TestSetAttribute(__LINE__, "Attribute0", "Value0", "Value0", 1, 0) && res;
+  // clang-format on
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 

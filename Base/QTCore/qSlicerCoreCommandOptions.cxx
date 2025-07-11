@@ -39,10 +39,12 @@ public:
 
   void init();
 
+  // clang-format off
   QHash<QString, QVariant> ParsedArgs;
   QString                  ExtraPythonScript;
   int                      ExtraPythonScriptProcessedArgumentsCount;
   bool                     RunPythonAndExit;
+  // clang-format on
 };
 
 //-----------------------------------------------------------------------------

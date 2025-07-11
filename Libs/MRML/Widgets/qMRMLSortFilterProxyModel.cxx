@@ -37,6 +37,7 @@ class qMRMLSortFilterProxyModelPrivate
 public:
   qMRMLSortFilterProxyModelPrivate();
 
+  // clang-format off
   QStringList                      NodeTypes;
   bool                             ShowHidden;
   QStringList                      ShowHiddenForTypes;
@@ -47,6 +48,7 @@ public:
   QString                          HideNodesUnaffiliatedWithNodeID;
   typedef QPair<QString, QVariant> AttributeType;
   QHash<QString, AttributeType>    Attributes;
+  // clang-format on
 
   qMRMLSortFilterProxyModel::FilterType Filter;
 };

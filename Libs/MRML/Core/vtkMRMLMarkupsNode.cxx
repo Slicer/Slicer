@@ -283,6 +283,7 @@ int vtkMRMLMarkupsNode::EndModify(int previousDisableModifiedEventState)
 {
   // Event PointAboutToBeRemovedEvent is not listed below because the event does
   // not indicate an actual modification yet.
+  // clang-format off
   bool processPendingPointModifiedEvents = !previousDisableModifiedEventState &&
     (this->GetModifiedEventPending() > 0
     || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointModifiedEvent) > 0
@@ -292,6 +293,7 @@ int vtkMRMLMarkupsNode::EndModify(int previousDisableModifiedEventState)
     || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointPositionUndefinedEvent) > 0
     || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointPositionMissingEvent) > 0
     || this->GetCustomModifiedEventPending(vtkMRMLMarkupsNode::PointPositionNonMissingEvent) > 0);
+  // clang-format on
   if (processPendingPointModifiedEvents)
   {
     this->UpdateCurvePolyFromControlPoints();
