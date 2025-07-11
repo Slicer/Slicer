@@ -104,6 +104,7 @@ public:
   vtkMRMLModelDisplayableManager* External;
 
   // For the following maps, the key is the display node ID.
+  // clang-format off
   std::map<std::string, vtkSmartPointer<vtkProp3D>>             DisplayedActors;
   std::map<std::string, vtkWeakPointer<vtkMRMLDisplayNode>>     DisplayedNodes;
   std::map<std::string, int>                                    DisplayedClipState;
@@ -113,19 +114,24 @@ public:
   std::map<std::string, vtkSmartPointer<vtkCapPolyData>>        Cappers;
   std::map<std::string, vtkSmartPointer<vtkProp3D>>             DisplayedCapActors;
   std::map<std::string, vtkSmartPointer<vtkTransformFilter>>    DisplayNodeCapTransformFilters;
+  // clang-format on
 
   bool IsUpdatingModelsFromMRML;
 
+  // clang-format off
   vtkSmartPointer<vtkWorldPointPicker> WorldPointPicker;
   vtkSmartPointer<vtkPropPicker>       PropPicker;
   vtkSmartPointer<vtkCellPicker>       CellPicker;
   vtkSmartPointer<vtkPointPicker>      PointPicker;
+  // clang-format on
 
   // Information about a pick event
+  // clang-format off
   std::string  PickedDisplayNodeID;
   double       PickedRAS[3];
   vtkIdType    PickedCellID;
   vtkIdType    PickedPointID;
+  // clang-format on
 
   // Used for caching the node pointer so that we do not have to search in the scene each time.
   // We do not add an observer therefore we can let the selection node deleted without our knowledge.

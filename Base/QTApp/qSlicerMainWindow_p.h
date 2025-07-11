@@ -71,6 +71,7 @@ public:
   // Add module action to the favorite modules toolbar
   void addFavoriteModule(const QString& moduleName);
 
+  // clang-format off
 #ifdef Slicer_USE_PYTHONQT
   QDockWidget*                    PythonConsoleDockWidget{ nullptr };
   QAction*                        PythonConsoleToggleViewAction{ nullptr };
@@ -91,6 +92,7 @@ public:
 
   bool                            WindowInitialShowCompleted{ false };
   bool                            IsClosing{ false };
+  // clang-format on
 };
 
 #endif

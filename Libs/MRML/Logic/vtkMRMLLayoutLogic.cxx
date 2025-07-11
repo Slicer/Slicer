@@ -1299,7 +1299,9 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
 
   // Horizontal compare viewers
   std::stringstream compareView;
-  compareView << "<layout type=\"vertical\" split=\"true\" >"
+  compareView <<
+    // clang-format off
+    "<layout type=\"vertical\" split=\"true\" >"
     " <item>"
     "  <layout type=\"horizontal\">"
     "   <item>"
@@ -1316,10 +1318,12 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " </item>"
     " <item>"
     "  <layout type=\"vertical\">";
+  // clang-format on
 
   for (int i = 1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
   {
     compareView <<
+      // clang-format off
       "   <item>"
       "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< i << "\">"
       "     <property name=\"orientation\" action=\"default\">Axial</property>"
@@ -1331,6 +1335,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
       "     <property name=\"lightboxcolumns\" action=\"relayout\">" << this->LayoutNode->GetNumberOfCompareViewLightboxColumns() << "</property>"
       "    </view>"
       "   </item>";
+    // clang-format on
   }
   compareView << //
     "  </layout>"
@@ -1350,7 +1355,9 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
 
   // Vertical compare viewers
   std::stringstream compareWidescreenView;
-  compareWidescreenView <<   "<layout type=\"horizontal\" split=\"true\" >"
+  compareWidescreenView <<
+    // clang-format off
+    "<layout type=\"horizontal\" split=\"true\" >"
     " <item>"
     "  <layout type=\"vertical\">"
     "   <item>"
@@ -1367,10 +1374,12 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " </item>"
     " <item>"
     "  <layout type=\"horizontal\">";
+  // clang-format on
 
   for (int i = 1; i <= this->LayoutNode->GetNumberOfCompareViewColumns(); ++i)
   {
     compareWidescreenView <<
+      // clang-format off
       "   <item>"
       "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< i<< "\">"
       "     <property name=\"orientation\" action=\"default\">Axial</property>"
@@ -1382,6 +1391,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
       "     <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
       "    </view>"
       "   </item>";
+    // clang-format on
   }
   compareWidescreenView << //
     "  </layout>"
@@ -1401,7 +1411,9 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
 
   // Grid compare viewers
   std::stringstream compareViewGrid;
-  compareViewGrid << "<layout type=\"vertical\" split=\"true\" >"
+  compareViewGrid <<
+    // clang-format off
+    "<layout type=\"vertical\" split=\"true\" >"
     " <item>"
     "  <layout type=\"horizontal\">"
     "   <item>"
@@ -1418,6 +1430,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " </item>"
     " <item>"
     "  <layout type=\"vertical\">";
+  // clang-format on
 
   for (int i = 1, k=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
   {
@@ -1428,6 +1441,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
          ++j,++k)
     {
       compareViewGrid <<
+        // clang-format off
         "     <item>"
         "      <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< k << "\">"
         "       <property name=\"orientation\" action=\"default\">Axial</property>"
@@ -1439,6 +1453,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
         "       <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
         "      </view>"
         "     </item>";
+      // clang-format on
     }
     compareViewGrid << //
       "     </layout>"
@@ -1509,6 +1524,7 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
     return;
   }
   int wasModifying = this->LayoutNode->StartModify();
+  // clang-format off
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutInitialView,
                                          fourUpView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutDefaultView,
@@ -1567,6 +1583,7 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          threeByThreeSliceView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutDualMonitorFourUpView,
                                          dualMonitorFourUpView);
+  // clang-format on
 
   // add the CompareView modes which are defined programmatically
   this->UpdateCompareViewLayoutDefinitions();

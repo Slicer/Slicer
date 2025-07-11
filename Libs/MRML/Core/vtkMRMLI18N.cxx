@@ -171,6 +171,7 @@ std::string vtkMRMLI18N::Format(const std::string& input,
       else if (std::isdigit(nextChar))
       {
         // Found a valid placeholder (e.g., %1, %2, %3, ..., %9)
+        // clang-format off
         if (nextChar == '1' && arg1) { output += arg1; }
         else if (nextChar == '2' && arg2) { output += arg2; }
         else if (nextChar == '3' && arg3) { output += arg3; }
@@ -180,6 +181,7 @@ std::string vtkMRMLI18N::Format(const std::string& input,
         else if (nextChar == '7' && arg7) { output += arg7; }
         else if (nextChar == '8' && arg8) { output += arg8; }
         else if (nextChar == '9' && arg9) { output += arg9; }
+        // clang-format on
         ++it;
         continue;
       }

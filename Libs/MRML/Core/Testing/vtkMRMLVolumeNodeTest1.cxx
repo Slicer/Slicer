@@ -127,9 +127,11 @@ int vtkMRMLVolumeNodeTest1(int, char*[])
   TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, JToRASDirection, 5.0);
   TEST_SET_GET_VECTOR3_DOUBLE_RANDOM(node1, KToRASDirection, 25.0);
 
+  // clang-format off
   node1->SetIJKToRASDirections(-0.03164, -0.0606374, 5.92996,
                                -0.448103, 0.00428152, -0.418707,
                                0.0, -0.445087, -0.811908);
+  // clang-format on
 
   TEST_SET_GET_VECTOR3_DOUBLE_RANGE(node1, Spacing, 0.0, 10.0);
   TEST_SET_GET_VECTOR3_DOUBLE_RANGE(node1, Origin, -100.0, 100.0);

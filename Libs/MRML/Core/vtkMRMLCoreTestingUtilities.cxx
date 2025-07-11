@@ -232,13 +232,16 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
   CHECK_STRING(node1->URLDecodeString("Thou%20Shall%20Test%20!"), "Thou Shall Test !");
 
   //  Test ReadXMLAttributes()
+  // clang-format off
   const char* atts[] = {
-            "name", "MyName",
-            "description", "Testing a mrml node",
-            "hideFromEditors", "false",
-            "selectable", "true",
-            "selected", "true",
-            nullptr};
+                         "name", "MyName",
+                         "description", "Testing a mrml node",
+                         "hideFromEditors", "false",
+                         "selectable", "true",
+                         "selected", "true",
+                         nullptr
+  };
+  // clang-format on
   node->ReadXMLAttributes(atts);
 
   //  Test WriteXML

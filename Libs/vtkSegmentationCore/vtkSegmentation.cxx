@@ -2217,8 +2217,10 @@ std::string vtkSegmentation::DetermineCommonLabelmapGeometry(int extentComputati
       commonGeometryImage->GetExtent(referenceGeometryExtent);
       for (int i = 0; i < 3; ++i)
       {
-        commonGeometryExtent[2*i]   = std::min(commonGeometryExtent[2*i],   referenceGeometryExtent[2*i]);
-        commonGeometryExtent[2*i+1] = std::max(commonGeometryExtent[2*i+1], referenceGeometryExtent[2*i+1]);
+        // clang-format off
+        commonGeometryExtent[2 * i]     = std::min(commonGeometryExtent[2 * i],     referenceGeometryExtent[2 * i]);
+        commonGeometryExtent[2 * i + 1] = std::max(commonGeometryExtent[2 * i + 1], referenceGeometryExtent[2 * i + 1]);
+        // clang-format on
       }
     }
     commonGeometryImage->SetExtent(commonGeometryExtent);
@@ -2301,16 +2303,20 @@ void vtkSegmentation::DetermineCommonLabelmapExtent(int commonGeometryExtent[6],
         // empty commonGeometryExtent
         for (int i = 0; i < 3; i++)
         {
-          commonGeometryExtent[i * 2] = currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2];
+          // clang-format off
+          commonGeometryExtent[i * 2]     = currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2];
           commonGeometryExtent[i * 2 + 1] = currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2 + 1];
+          // clang-format on
         }
       }
       else
       {
         for (int i = 0; i < 3; i++)
         {
-          commonGeometryExtent[i * 2] = std::min(currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2], commonGeometryExtent[i * 2]);
+          // clang-format off
+          commonGeometryExtent[i * 2]     = std::min(currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2],     commonGeometryExtent[i * 2]);
           commonGeometryExtent[i * 2 + 1] = std::max(currentBinaryLabelmapExtentInCommonGeometryImageFrame[i * 2 + 1], commonGeometryExtent[i * 2 + 1]);
+          // clang-format on
         }
       }
     }

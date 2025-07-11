@@ -1181,14 +1181,17 @@ void vtkDiffusionTensorMathematics::ModeToRGB(double Mode, double FA,
    Hue *= 4.0/6.0;
    sextant = (int) floor(Hue);
    frac = Hue - sextant;
-   switch (sextant) {
-   case 0: { R = 1;      G = frac;   B = 0;      break; }
-   case 1: { R = 1-frac; G = 1;      B = 0;      break; }
-   case 2: { R = 0;      G = 1;      B = frac;   break; }
-   case 3: { R = 0;      G = 1-frac; B = 1;      break; }
-   case 4: { R = frac;   G = 0;      B = 1;      break; }
-   case 5: { R = 1;      G = 0;      B = 1-frac; break; }
+   // clang-format off
+   switch (sextant)
+   {
+     case 0: { R = 1;        G = frac;     B = 0;        break; }
+     case 1: { R = 1 - frac; G = 1;        B = 0;        break; }
+     case 2: { R = 0;        G = 1;        B = frac;     break; }
+     case 3: { R = 0;        G = 1 - frac; B = 1;        break; }
+     case 4: { R = frac;     G = 0;        B = 1;        break; }
+     case 5: { R = 1;        G = 0;        B = 1 - frac; break; }
    }
+   // clang-format on
    // FA controls lerp between gray and color
    //R = FA*R + (1-FA)*0.5;
    //G = FA*G + (1-FA)*0.5;
@@ -1255,33 +1258,39 @@ void vtkDiffusionTensorMathematics::RGBToIndex(double R, double G,
 
   // now using the inverse sextants, map this into an index.
   // switch (sextant) {
-  //   case 0: { R = 1;      G = frac;   B = 0;      break; }
-  //   case 1: { R = 1-frac; G = 1;      B = 0;      break; }
-  //   case 2: { R = 0;      G = 1;      B = frac;   break; }
-  //   case 3: { R = 0;      G = 1-frac; B = 1;      break; }
-  //   case 4: { R = frac;   G = 0;      B = 1;      break; }
-  //   case 5: { R = 1;      G = 0;      B = 1-frac; break; }
+  //   // clang-format off
+  //   case 0: { R = 1;        G = frac;     B = 0;        break; }
+  //   case 1: { R = 1 - frac; G = 1;        B = 0;        break; }
+  //   case 2: { R = 0;        G = 1;        B = frac;     break; }
+  //   case 3: { R = 0;        G = 1 - frac; B = 1;        break; }
+  //   case 4: { R = frac;     G = 0;        B = 1;        break; }
+  //   case 5: { R = 1;        G = 0;        B = 1 - frac; break; }
+  //   // clang-format on
   // }
   int sextant = 0;
+  // clang-format off
   if (maxIdx == 0 && minIdx == 2) sextant = 0;
   if (maxIdx == 1 && minIdx == 2) sextant = 1;
   if (maxIdx == 1 && minIdx == 0) sextant = 2;
   if (maxIdx == 2 && minIdx == 0) sextant = 3;
   if (maxIdx == 2 && minIdx == 1) sextant = 4;
   if (maxIdx == 0 && minIdx == 1) sextant = 5;
+  // clang-format on
 
   double offset;
   offset = 256/6;
 
+  // clang-format off
   switch (sextant)
   {
-    case 0: { index =  G*offset;     break; }
-    case 1: { index = offset + (1-R)*offset;      break; }
-    case 2: { index = offset*2 + B*offset;   break; }
-    case 3: { index = offset*3 + (1-G)*offset;      break; }
-    case 4: { index = offset*4 + R*offset;      break; }
-    case 5: { index = offset*5 + (1-B)*offset; break; }
+    case 0: { index = G * offset;                    break; }
+    case 1: { index = offset     + (1 - R) * offset; break; }
+    case 2: { index = offset * 2 + B       * offset; break; }
+    case 3: { index = offset * 3 + (1 - G) * offset; break; }
+    case 4: { index = offset * 4 + R       * offset; break; }
+    case 5: { index = offset * 5 + (1 - B) * offset; break; }
   }
+  // clang-format on
 
 }
 

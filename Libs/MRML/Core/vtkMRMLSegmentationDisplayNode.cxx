@@ -165,11 +165,14 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
         }
         std::string propertyName = segmentDisplayPropertyString.substr(0, colonIndex); // "OverrideColorR"
         std::stringstream propertyValue(segmentDisplayPropertyString.substr(colonIndex + 1)); // "0.2"
+        // clang-format off
         if (propertyName == "OverrideColorR") { propertyValue >> props.OverrideColor[0]; }
         else if (propertyName == "OverrideColorG") { propertyValue >> props.OverrideColor[1]; }
         else if (propertyName == "OverrideColorB") { propertyValue >> props.OverrideColor[2]; }
+        // clang-format on
 
         // for backward compatibility
+        // clang-format off
         else if (propertyName == "ColorR") { propertyValue >> props.OverrideColor[0]; }
         else if (propertyName == "ColorG") { propertyValue >> props.OverrideColor[1]; }
         else if (propertyName == "ColorB") { propertyValue >> props.OverrideColor[2]; }
@@ -177,16 +180,19 @@ void vtkMRMLSegmentationDisplayNode::ReadXMLAttributes(const char** atts)
         else if (propertyName == "Opacity3D") { propertyValue >> props.Opacity3D; }
         else if (propertyName == "Opacity2DFill") { propertyValue >> props.Opacity2DFill; }
         else if (propertyName == "Opacity2DOutline") { propertyValue >> props.Opacity2DOutline; }
+        // clang-format off
         else
         {
           // boolean values
           std::string booleanValueString;
           propertyValue >> booleanValueString;
           bool booleanValue = booleanValueString.compare("true") ? false : true;
+          // clang-format off
           if (propertyName == "Visible") { props.Visible = booleanValue; }
           else if (propertyName == "Visible3D") { props.Visible3D = booleanValue; }
           else if (propertyName == "Visible2DFill") { props.Visible2DFill = booleanValue; }
           else if (propertyName == "Visible2DOutline") { props.Visible2DOutline = booleanValue; }
+          // clang-format on
           else if (propertyName == "Pickable")
           {
             // Pickable property needs to be set to true if not specified

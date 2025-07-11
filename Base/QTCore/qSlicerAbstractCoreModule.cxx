@@ -43,6 +43,7 @@ public:
   qSlicerAbstractCoreModulePrivate();
   virtual ~qSlicerAbstractCoreModulePrivate();
 
+  // clang-format off
   bool                                       Hidden;
   QString                                    Name;
   QString                                    Path;
@@ -54,6 +55,7 @@ public:
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
   vtkSmartPointer<vtkMRMLAbstractLogic>      Logic;
+  // clang-format on
 };
 
 //-----------------------------------------------------------------------------

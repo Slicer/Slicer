@@ -99,6 +99,7 @@ void qSlicerSslTester::testHttpsConnection_data()
   QTest::addColumn<QNetworkReply::NetworkError>("expectedNetworkError");
   QTest::addColumn<int>("expectedStatusCode");
 
+  // clang-format off
   QTest::newRow("invalid-HostNotFoundError-0")
       << "http://i.n.v.a.l.i.d"
       << (QList<QSslError::SslError>())
@@ -118,6 +119,7 @@ void qSlicerSslTester::testHttpsConnection_data()
       << "https://www.eff.org/https-everywhere"
       << (QList<QSslError::SslError>())
       << QNetworkReply::NoError << 200;
+  // clang-format on
 }
 
 // ----------------------------------------------------------------------------

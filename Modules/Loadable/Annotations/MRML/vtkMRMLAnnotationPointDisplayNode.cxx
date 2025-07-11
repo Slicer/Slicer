@@ -8,8 +8,8 @@
 // STD includes
 #include <sstream>
 
-const char* vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+2] =
-{
+const char* vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax + 2] = {
+  // clang-format off
   "GlyphMin",
   "Vertex2D",
   "Dash2D",
@@ -24,6 +24,7 @@ const char* vtkMRMLAnnotationPointDisplayNode::GlyphTypesNames[GlyphMax+2] =
   "HookedArrow2D",
   "StarBurst2D",
   "Sphere3D"
+  // clang-format on
 };
 //  "Diamond3D"
 

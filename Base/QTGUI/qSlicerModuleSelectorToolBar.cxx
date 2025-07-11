@@ -60,6 +60,7 @@ public:
 #endif
   qSlicerModulesMenu* ModulesMenu;
 
+  // clang-format off
   QToolButton*      ModuleFinderButton;
   ctkMenuComboBox*  ModulesComboBox;
   QMenu*            HistoryMenu;
@@ -68,6 +69,7 @@ public:
   QMenu*            PreviousHistoryMenu;
   QToolButton*      NextButton;
   QMenu*            NextHistoryMenu;
+  // clang-format on
 };
 
 
