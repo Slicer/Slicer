@@ -62,8 +62,10 @@ class qMRMLTableViewPrivate : public QObject
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLTableView);
+
 protected:
   qMRMLTableView* const q_ptr;
+
 public:
   qMRMLTableViewPrivate(qMRMLTableView& object);
   ~qMRMLTableViewPrivate() override;
@@ -83,18 +85,17 @@ public slots:
   void updateWidgetFromViewNode();
 
   /// slot when the view is configured to look at a different table node
-  //void onTableNodeChanged();
+  // void onTableNodeChanged();
 
 protected:
-
   // Generate a string of options for a bar table
   QString barOptions(vtkMRMLTableNode*);
 
-  vtkMRMLScene*                      MRMLScene;
-  vtkMRMLTableViewNode*              MRMLTableViewNode;
+  vtkMRMLScene* MRMLScene;
+  vtkMRMLTableViewNode* MRMLTableViewNode;
 
-  QToolButton*                       PinButton;
-  ctkPopupWidget*                    PopupWidget;
+  QToolButton* PinButton;
+  ctkPopupWidget* PopupWidget;
 };
 
 #endif

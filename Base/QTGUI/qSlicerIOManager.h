@@ -27,6 +27,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOManager : public qSlicerCoreIOManager
 {
   Q_OBJECT;
   QVTK_OBJECT;
+
 public:
   typedef qSlicerCoreIOManager Superclass;
   qSlicerIOManager(QObject* parent = nullptr);
@@ -68,13 +69,14 @@ public:
   /// There is no way to know in advance how long the loading will take, so the
   /// progress dialog listens to the scene and increment the progress anytime
   /// a node is added.
-  Q_INVOKABLE bool loadNodes(const qSlicerIO::IOFileType& fileType, const qSlicerIO::IOProperties& parameters,
-    vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr) override;
+  Q_INVOKABLE bool loadNodes(const qSlicerIO::IOFileType& fileType,
+                             const qSlicerIO::IOProperties& parameters,
+                             vtkCollection* loadedNodes = nullptr,
+                             vtkMRMLMessageCollection* userMessages = nullptr) override;
   /// If you have a list of nodes to load, it's best to use this function
   /// in order to have a unique progress dialog instead of multiple ones.
   /// It internally calls loadNodes() for each file.
-  bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr,
-    vtkMRMLMessageCollection* userMessages = nullptr) override;
+  bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr) override;
 
   /// Helper function to display result of loadNodes.
   /// If success is set false then an error popup is displayed.
@@ -122,6 +124,7 @@ protected slots:
 protected:
   friend class qSlicerFileDialog;
   using qSlicerCoreIOManager::readers;
+
 protected:
   QScopedPointer<qSlicerIOManagerPrivate> d_ptr;
 

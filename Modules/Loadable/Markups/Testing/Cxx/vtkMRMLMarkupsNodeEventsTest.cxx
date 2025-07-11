@@ -36,14 +36,9 @@ namespace
 class vtkMRMLMarkupNodeObserver : public vtkCommand
 {
 public:
-  static vtkMRMLMarkupNodeObserver* New()
-  {
-    return new vtkMRMLMarkupNodeObserver;
-  }
+  static vtkMRMLMarkupNodeObserver* New() { return new vtkMRMLMarkupNodeObserver; }
 
-  vtkMRMLMarkupNodeObserver()
-  {
-  }
+  vtkMRMLMarkupNodeObserver() {}
 
   void Execute(vtkObject* caller, unsigned long event, void*) override
   {
@@ -76,15 +71,14 @@ void addEventsToObserver(vtkMRMLMarkupsNode* node, vtkMRMLMarkupNodeObserver* ob
 
 bool containsEvent(vtkMRMLMarkupNodeObserver* observer, int eventId)
 {
-  bool found = std::find(observer->invokedEvents.begin(), observer->invokedEvents.end(),
-    eventId) != observer->invokedEvents.end();
+  bool found = std::find(observer->invokedEvents.begin(), observer->invokedEvents.end(), eventId) != observer->invokedEvents.end();
   observer->invokedEvents.clear();
   return found;
 }
 
-}
+} // namespace
 
-int vtkMRMLMarkupsNodeEventsTest(int, char* [])
+int vtkMRMLMarkupsNodeEventsTest(int, char*[])
 {
   vtkNew<vtkMRMLMarkupsFiducialNode> node;
   vtkNew<vtkMRMLScene> scene;

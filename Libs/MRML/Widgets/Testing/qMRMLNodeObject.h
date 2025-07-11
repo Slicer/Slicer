@@ -41,8 +41,8 @@ public slots:
 
 protected:
   vtkMRMLNode* Node;
-  bool         ProcessEvents;
-  QString      Message;
+  bool ProcessEvents;
+  QString Message;
 };
 
 #endif

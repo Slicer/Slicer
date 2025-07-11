@@ -69,7 +69,7 @@ int vtkMRMLTableSQLiteStorageNodeTest(int, char*[])
 
   // add few  points...
   int numPoints = 29;
-  float inc = 7.0 / (numPoints-1);
+  float inc = 7.0 / (numPoints - 1);
   table->SetNumberOfRows(numPoints);
   for (int i = 0; i < numPoints; ++i)
   {
@@ -99,14 +99,14 @@ int vtkMRMLTableSQLiteStorageNodeTest(int, char*[])
 
   if (tableNode->GetNumberOfColumns() != 3)
   {
-    std::cerr << "Unable to read table columns from the database " << storageNode->GetFileName() <<std::endl;
+    std::cerr << "Unable to read table columns from the database " << storageNode->GetFileName() << std::endl;
     removeFile(storageNode->GetFileName());
     return EXIT_FAILURE;
   }
 
   if (tableNode->GetNumberOfRows() != numPoints)
   {
-    std::cerr << "Unable to read table rows from the database " << storageNode->GetFileName() <<std::endl;
+    std::cerr << "Unable to read table rows from the database " << storageNode->GetFileName() << std::endl;
     removeFile(storageNode->GetFileName());
     return EXIT_FAILURE;
   }

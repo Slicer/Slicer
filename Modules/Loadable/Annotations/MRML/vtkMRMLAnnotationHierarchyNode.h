@@ -20,11 +20,11 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
 
-  virtual const char* GetIcon() {return ":/Icons/Medium/SlicerHierarchy.png";};
+  virtual const char* GetIcon() { return ":/Icons/Medium/SlicerHierarchy.png"; };
 
   // Description:
   // Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -62,7 +62,6 @@ protected:
   ~vtkMRMLAnnotationHierarchyNode() override;
   vtkMRMLAnnotationHierarchyNode(const vtkMRMLAnnotationHierarchyNode&);
   void operator=(const vtkMRMLAnnotationHierarchyNode&);
-
 };
 
 #endif

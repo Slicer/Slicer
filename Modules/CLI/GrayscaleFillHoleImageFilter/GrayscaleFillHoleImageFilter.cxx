@@ -12,7 +12,7 @@
 
 ==========================================================================*/
 #if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+# pragma warning(disable : 4786)
 #endif
 
 #include "itkImageFileWriter.h"
@@ -31,7 +31,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char* argv[], T )
+int DoIt(int argc, char* argv[], T)
 {
   PARSE_ARGS;
 
@@ -44,40 +44,36 @@ int DoIt( int argc, char* argv[], T )
   typedef T InputPixelType;
   typedef T OutputPixelType;
 
-  typedef itk::Image<InputPixelType,  Dimension> InputImageType;
+  typedef itk::Image<InputPixelType, Dimension> InputImageType;
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
   // readers/writers
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
+  typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
   // define the fillhole filter
-  typedef itk::GrayscaleFillholeImageFilter<
-    InputImageType,
-    OutputImageType>  FillholeFilterType;
+  typedef itk::GrayscaleFillholeImageFilter<InputImageType, OutputImageType> FillholeFilterType;
 
   // Creation of Reader and Writer filters
   typename ReaderType::Pointer reader = ReaderType::New();
-  typename WriterType::Pointer writer  = WriterType::New();
+  typename WriterType::Pointer writer = WriterType::New();
 
   // Create the filter
-  typename FillholeFilterType::Pointer  fillhole = FillholeFilterType::New();
-  itk::PluginFilterWatcher watcher(fillhole, "Fill Hole",
-                                   CLPProcessInformation);
+  typename FillholeFilterType::Pointer fillhole = FillholeFilterType::New();
+  itk::PluginFilterWatcher watcher(fillhole, "Fill Hole", CLPProcessInformation);
 
   // Setup the input and output files
-  reader->SetFileName( inputVolume.c_str() );
-  writer->SetFileName( outputVolume.c_str() );
+  reader->SetFileName(inputVolume.c_str());
+  writer->SetFileName(outputVolume.c_str());
 
   // Setup the fillhole method
-  fillhole->SetInput(  reader->GetOutput() );
+  fillhole->SetInput(reader->GetOutput());
 
   // Write the output
-  writer->SetInput( fillhole->GetOutput() );
+  writer->SetInput(fillhole->GetOutput());
   writer->Update();
 
   return EXIT_SUCCESS;
-
 }
 
 } // end of anonymous namespace
@@ -87,7 +83,7 @@ int main(int argc, char* argv[])
 
   PARSE_ARGS;
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum pixelType;
   itk::IOComponentEnum componentType;
 
   try
@@ -97,40 +93,18 @@ int main(int argc, char* argv[])
     // This filter handles all types
     switch (componentType)
     {
-      case itk::IOComponentEnum::UCHAR:
-        return DoIt( argc, argv, static_cast<unsigned char>(0) );
-        break;
-      case itk::IOComponentEnum::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0) );
-        break;
-      case itk::IOComponentEnum::USHORT:
-        return DoIt( argc, argv, static_cast<unsigned short>(0) );
-        break;
-      case itk::IOComponentEnum::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0) );
-        break;
-      case itk::IOComponentEnum::UINT:
-        return DoIt( argc, argv, static_cast<unsigned int>(0) );
-        break;
-      case itk::IOComponentEnum::INT:
-        return DoIt( argc, argv, static_cast<int>(0) );
-        break;
-      case itk::IOComponentEnum::ULONG:
-        return DoIt( argc, argv, static_cast<unsigned long>(0) );
-        break;
-      case itk::IOComponentEnum::LONG:
-        return DoIt( argc, argv, static_cast<long>(0) );
-        break;
-      case itk::IOComponentEnum::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0) );
-        break;
-      case itk::IOComponentEnum::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0) );
-        break;
+      case itk::IOComponentEnum::UCHAR: return DoIt(argc, argv, static_cast<unsigned char>(0)); break;
+      case itk::IOComponentEnum::CHAR: return DoIt(argc, argv, static_cast<char>(0)); break;
+      case itk::IOComponentEnum::USHORT: return DoIt(argc, argv, static_cast<unsigned short>(0)); break;
+      case itk::IOComponentEnum::SHORT: return DoIt(argc, argv, static_cast<short>(0)); break;
+      case itk::IOComponentEnum::UINT: return DoIt(argc, argv, static_cast<unsigned int>(0)); break;
+      case itk::IOComponentEnum::INT: return DoIt(argc, argv, static_cast<int>(0)); break;
+      case itk::IOComponentEnum::ULONG: return DoIt(argc, argv, static_cast<unsigned long>(0)); break;
+      case itk::IOComponentEnum::LONG: return DoIt(argc, argv, static_cast<long>(0)); break;
+      case itk::IOComponentEnum::FLOAT: return DoIt(argc, argv, static_cast<float>(0)); break;
+      case itk::IOComponentEnum::DOUBLE: return DoIt(argc, argv, static_cast<double>(0)); break;
       case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
-      default:
-        std::cout << "unknown component type" << std::endl;
-        break;
+      default: std::cout << "unknown component type" << std::endl; break;
     }
   }
 

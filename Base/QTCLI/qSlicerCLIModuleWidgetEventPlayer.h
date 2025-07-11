@@ -39,7 +39,7 @@ public:
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
-  qSlicerCLIModuleWidgetEventPlayer(const qSlicerCLIModuleWidgetEventPlayer&); // NOT implemented
+  qSlicerCLIModuleWidgetEventPlayer(const qSlicerCLIModuleWidgetEventPlayer&);            // NOT implemented
   qSlicerCLIModuleWidgetEventPlayer& operator=(const qSlicerCLIModuleWidgetEventPlayer&); // NOT implemented
 };
 

@@ -31,7 +31,7 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "SceneViewStorage";}
+  const char* GetNodeTagName() override { return "SceneViewStorage"; }
 
   /// Initialize all the supported read file types
   void InitializeSupportedReadFileTypes() override;
@@ -57,7 +57,6 @@ protected:
   /// Write data from a  referenced node
   /// NOTE: Subclasses should implement this method
   int WriteDataInternal(vtkMRMLNode* refNode) override;
-
 };
 
 #endif

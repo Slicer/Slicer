@@ -54,10 +54,11 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceWidgetPrivate
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLSliceWidget);
+
 protected:
   qMRMLSliceWidget* const q_ptr;
 
-  Qt::Orientation SliceOffsetSliderOrientation{Qt::Horizontal};
+  Qt::Orientation SliceOffsetSliderOrientation{ Qt::Horizontal };
 
 public:
   qMRMLSliceWidgetPrivate(qMRMLSliceWidget& object);

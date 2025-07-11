@@ -73,7 +73,7 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentEditorWidget : pu
   Q_PROPERTY(bool addRemoveSegmentButtonsVisible READ addRemoveSegmentButtonsVisible WRITE setAddRemoveSegmentButtonsVisible)
   Q_PROPERTY(bool autoShowSourceVolumeNode READ autoShowSourceVolumeNode WRITE setAutoShowSourceVolumeNode)
   Q_PROPERTY(bool masterVolumeNodeSelectorVisible READ masterVolumeNodeSelectorVisible WRITE setMasterVolumeNodeSelectorVisible) // deprecated
-  Q_PROPERTY(bool autoShowMasterVolumeNode READ autoShowMasterVolumeNode WRITE setAutoShowMasterVolumeNode) // deprecated
+  Q_PROPERTY(bool autoShowMasterVolumeNode READ autoShowMasterVolumeNode WRITE setAutoShowMasterVolumeNode)                      // deprecated
   Q_PROPERTY(bool switchToSegmentationsButtonVisible READ switchToSegmentationsButtonVisible WRITE setSwitchToSegmentationsButtonVisible)
   Q_PROPERTY(bool undoEnabled READ undoEnabled WRITE setUndoEnabled)
   Q_PROPERTY(int maximumNumberOfUndoStates READ maximumNumberOfUndoStates WRITE setMaximumNumberOfUndoStates)
@@ -223,38 +223,29 @@ public:
 
   /// Add node type attribute that filter the segmentation nodes to display.
   /// \sa qMRMLNodeComboBox::addAttribute
-  Q_INVOKABLE void segmentationNodeSelectorAddAttribute(const QString& nodeType,
-    const QString& attributeName,
-    const QVariant& attributeValue = QVariant());
+  Q_INVOKABLE void segmentationNodeSelectorAddAttribute(const QString& nodeType, const QString& attributeName, const QVariant& attributeValue = QVariant());
   /// Remove node type attribute filtering the displayed segmentation nodes.
   /// \sa qMRMLNodeComboBox::addAttribute
-  Q_INVOKABLE void segmentationNodeSelectorRemoveAttribute(const QString& nodeType,
-    const QString& attributeName);
+  Q_INVOKABLE void segmentationNodeSelectorRemoveAttribute(const QString& nodeType, const QString& attributeName);
 
   /// Add node type attribute that filter the source volume nodes to display.
   /// \sa qMRMLNodeComboBox::addAttribute
-  Q_INVOKABLE void sourceVolumeNodeSelectorAddAttribute(const QString& nodeType,
-    const QString& attributeName,
-    const QVariant& attributeValue = QVariant());
+  Q_INVOKABLE void sourceVolumeNodeSelectorAddAttribute(const QString& nodeType, const QString& attributeName, const QVariant& attributeValue = QVariant());
   /// Remove node type attribute filtering the displayed reference volume nodes.
   /// \sa qMRMLNodeComboBox::addAttribute
-  Q_INVOKABLE void sourceVolumeNodeSelectorRemoveAttribute(const QString& nodeType,
-    const QString& attributeName);
+  Q_INVOKABLE void sourceVolumeNodeSelectorRemoveAttribute(const QString& nodeType, const QString& attributeName);
 
   /// Deprecated use sourceVolumeNodeSelectorAddAttribute method instead.
-  Q_INVOKABLE void masterVolumeNodeSelectorAddAttribute(const QString& nodeType,
-    const QString& attributeName,
-    const QVariant& attributeValue = QVariant())
+  Q_INVOKABLE void masterVolumeNodeSelectorAddAttribute(const QString& nodeType, const QString& attributeName, const QVariant& attributeValue = QVariant())
   {
     qWarning("qMRMLSegmentEditorWidget::masterVolumeNodeSelectorAddAttribute is deprecated, use sourceVolumeNodeSelectorAddAttribute method instead.");
     this->sourceVolumeNodeSelectorAddAttribute(nodeType, attributeName, attributeValue);
   }
   /// Deprecated use sourceVolumeNodeSelectorRemoveAttribute method instead.
-  Q_INVOKABLE void masterVolumeNodeSelectorRemoveAttribute(const QString& nodeType,
-    const QString& attributeName)
+  Q_INVOKABLE void masterVolumeNodeSelectorRemoveAttribute(const QString& nodeType, const QString& attributeName)
   {
     qWarning("qMRMLSegmentEditorWidget::masterVolumeNodeSelectorRemoveAttribute is deprecated,"
-      " use sourceVolumeNodeSelectorRemoveAttribute instead.");
+             " use sourceVolumeNodeSelectorRemoveAttribute instead.");
     this->sourceVolumeNodeSelectorRemoveAttribute(nodeType, attributeName);
   }
 
@@ -446,10 +437,10 @@ public slots:
   /// Select the segment offset from the currently selected one in the table (skipping segments that are not visible)
   /// Positive offset will move down the table
   /// Negative offset will move up the table
-  void selectSegmentAtOffset (int offset);
+  void selectSegmentAtOffset(int offset);
 
   /// Jump position of all slice views to show the segment's center.
-/// Segment's center is determined as the center of bounding box.
+  /// Segment's center is determined as the center of bounding box.
   void jumpSlices();
 
   /// Enables automatic jumping to current segment when selection is changed.

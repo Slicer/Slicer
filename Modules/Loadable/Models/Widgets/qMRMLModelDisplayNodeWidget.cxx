@@ -51,7 +51,9 @@ static const int REPRESENTATION_WIREFRAME = 1;
 static const int REPRESENTATION_SURFACE = 2;
 
 //------------------------------------------------------------------------------
-class qMRMLModelDisplayNodeWidgetPrivate : public QWidget, public Ui_qMRMLModelDisplayNodeWidget
+class qMRMLModelDisplayNodeWidgetPrivate
+  : public QWidget
+  , public Ui_qMRMLModelDisplayNodeWidget
 {
   Q_DECLARE_PUBLIC(qMRMLModelDisplayNodeWidget);
 
@@ -95,59 +97,39 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
   this->setupUi(q);
 
   this->MaterialPropertyWidget->setProperty(this->Property);
-  q->qvtkConnect(this->Property, vtkCommand::ModifiedEvent,
-    q, SLOT(updateDisplayNodesFromProperty()));
+  q->qvtkConnect(this->Property, vtkCommand::ModifiedEvent, q, SLOT(updateDisplayNodesFromProperty()));
 
-  q->connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(setVisibility(bool)));
-  q->connect(this->ClippingCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(setClipping(bool)));
-  q->connect(this->ConfigureClippingPushButton, SIGNAL(clicked()),
-    q, SIGNAL(clippingConfigurationButtonClicked()));
+  q->connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility(bool)));
+  q->connect(this->ClippingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setClipping(bool)));
+  q->connect(this->ConfigureClippingPushButton, SIGNAL(clicked()), q, SIGNAL(clippingConfigurationButtonClicked()));
   this->ConfigureClippingPushButton->setVisible(false);
 
-  q->connect(this->SliceIntersectionVisibilityCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(setSliceIntersectionVisible(bool)));
-  q->connect(this->SliceDisplayModeComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(setSliceDisplayMode(int)));
-  q->connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)),
-    q, SLOT(setSliceIntersectionThickness(int)));
-  q->connect(this->SliceIntersectionOpacitySlider, SIGNAL(valueChanged(double)),
-    q, SLOT(setSliceIntersectionOpacity(double)));
-  q->connect(this->DistanceToColorNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    q, SLOT(setDistanceToColorNode(vtkMRMLNode*)));
+  q->connect(this->SliceIntersectionVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setSliceIntersectionVisible(bool)));
+  q->connect(this->SliceDisplayModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setSliceDisplayMode(int)));
+  q->connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setSliceIntersectionThickness(int)));
+  q->connect(this->SliceIntersectionOpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(setSliceIntersectionOpacity(double)));
+  q->connect(this->DistanceToColorNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(setDistanceToColorNode(vtkMRMLNode*)));
 
-  q->connect(this->RepresentationComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(setRepresentation(int)));
-  q->connect(this->PointSizeSliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(setPointSize(double)));
-  q->connect(this->LineWidthSliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(setLineWidth(double)));
-  q->connect(this->ShowFacesComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(setShowFaces(int)));
-  q->connect(this->ColorPickerButton, SIGNAL(colorChanged(QColor)),
-    q, SLOT(setColor(QColor)));
-  q->connect(this->OpacitySliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(setOpacity(double)));
-  q->connect(this->EdgeColorPickerButton, SIGNAL(colorChanged(QColor)),
-    q, SLOT(setEdgeColor(QColor)));
+  q->connect(this->RepresentationComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setRepresentation(int)));
+  q->connect(this->PointSizeSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(setPointSize(double)));
+  q->connect(this->LineWidthSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(setLineWidth(double)));
+  q->connect(this->ShowFacesComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setShowFaces(int)));
+  q->connect(this->ColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(setColor(QColor)));
+  q->connect(this->OpacitySliderWidget, SIGNAL(valueChanged(double)), q, SLOT(setOpacity(double)));
+  q->connect(this->EdgeColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(setEdgeColor(QColor)));
 
-  q->connect(this->BackfaceHueOffsetSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(setBackfaceHueOffset(double)));
-  q->connect(this->BackfaceSaturationOffsetSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(setBackfaceSaturationOffset(double)));
-  q->connect(this->BackfaceBrightnessOffsetSpinBox, SIGNAL(valueChanged(double)),
-    q, SLOT(setBackfaceBrightnessOffset(double)));
+  q->connect(this->BackfaceHueOffsetSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setBackfaceHueOffset(double)));
+  q->connect(this->BackfaceSaturationOffsetSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setBackfaceSaturationOffset(double)));
+  q->connect(this->BackfaceBrightnessOffsetSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setBackfaceBrightnessOffset(double)));
 
-  q->connect(this->LightingCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(setLighting(bool)));
-  q->connect(this->InterpolationComboBox, SIGNAL(currentIndexChanged(int)),
-    q, SLOT(setInterpolation(int)));
+  q->connect(this->LightingCheckBox, SIGNAL(toggled(bool)), q, SLOT(setLighting(bool)));
+  q->connect(this->InterpolationComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(setInterpolation(int)));
 
-  q->connect(this->ScalarsDisplayWidget, SIGNAL(scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType)),
-    q, SIGNAL(scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType)));
-  q->connect(this->ScalarsDisplayWidget, SIGNAL(displayNodeChanged()),
-    q, SIGNAL(displayNodeChanged()));
+  q->connect(this->ScalarsDisplayWidget,
+             SIGNAL(scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType)),
+             q,
+             SIGNAL(scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType)));
+  q->connect(this->ScalarsDisplayWidget, SIGNAL(displayNodeChanged()), q, SIGNAL(displayNodeChanged()));
 
   if (this->CurrentModelDisplayNode.GetPointer())
   {
@@ -178,8 +160,7 @@ QList<vtkMRMLModelDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::modelDisplay
     if (modelNode)
     {
       // Note: Formerly the last display node was chosen that was model display node type (or the proper fiber type)
-      vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(
-        modelNode->GetDisplayNode());
+      vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
       if (modelDisplayNode)
       {
         modelDisplayNodes << modelDisplayNode;
@@ -251,8 +232,7 @@ void qMRMLModelDisplayNodeWidget::setMRMLScene(vtkMRMLScene* newScene)
   }
 
   this->Superclass::setMRMLScene(newScene);
-  this->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT(updateWidgetFromMRML()));
 
   if (this->mrmlScene())
   {
@@ -321,8 +301,7 @@ void qMRMLModelDisplayNodeWidget::setCurrentSubjectHierarchyItemID(vtkIdType cur
   }
 
   // get folder plugin (can fail if subject hierarchy logic is not instantiated)
-  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
+  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder"));
   if (folderPlugin && folderPlugin->canOwnSubjectHierarchyItem(currentItemID) > 0.0)
   {
     displayNode = folderPlugin->createDisplayNodeForItem(currentItemID);
@@ -429,19 +408,15 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   {
     d->DistanceToColorNodeComboBox->setCurrentNodeID(d->CurrentModelDisplayNode->GetDistanceEncodedProjectionColorNodeID());
   }
-  d->DistanceToColorNodeComboBox->setEnabled( d->CurrentModelDisplayNode && //
-    d->CurrentModelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection );
+  d->DistanceToColorNodeComboBox->setEnabled(d->CurrentModelDisplayNode && //
+                                             d->CurrentModelDisplayNode->GetSliceDisplayMode() == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection);
   d->DistanceToColorNodeComboBox->blockSignals(wasBlocking);
 
   // Representation
   switch (d->CurrentDisplayNode->GetRepresentation())
   {
-    case REPRESENTATION_POINTS:
-      d->RepresentationComboBox->setCurrentIndex(0);
-      break;
-    case REPRESENTATION_WIREFRAME:
-      d->RepresentationComboBox->setCurrentIndex(1);
-      break;
+    case REPRESENTATION_POINTS: d->RepresentationComboBox->setCurrentIndex(0); break;
+    case REPRESENTATION_WIREFRAME: d->RepresentationComboBox->setCurrentIndex(1); break;
     case REPRESENTATION_SURFACE:
       if (d->CurrentDisplayNode->GetEdgeVisibility())
       {
@@ -463,7 +438,7 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   // because if the model consists only of lines then line width will make a difference
   // even if edge visibility is disabled.
   bool showLineWidth = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_WIREFRAME //
-    || d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE);
+                        || d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE);
   d->LineWidthSliderWidget->setEnabled(showLineWidth);
 
   if (!d->CurrentDisplayNode->GetFrontfaceCulling() && d->CurrentDisplayNode->GetBackfaceCulling())
@@ -489,10 +464,8 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
 
   d->OpacitySliderWidget->setValue(d->CurrentDisplayNode->GetOpacity());
   double* ec = d->CurrentDisplayNode->GetEdgeColor();
-  d->EdgeColorPickerButton->setColor(
-    QColor::fromRgbF(qMin(ec[0], 1.), qMin(ec[1], 1.), qMin(ec[2], 1.)));
-  bool showEdgeColor =
-    (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE && d->CurrentDisplayNode->GetEdgeVisibility());
+  d->EdgeColorPickerButton->setColor(QColor::fromRgbF(qMin(ec[0], 1.), qMin(ec[1], 1.), qMin(ec[2], 1.)));
+  bool showEdgeColor = (d->CurrentDisplayNode->GetRepresentation() == REPRESENTATION_SURFACE && d->CurrentDisplayNode->GetEdgeVisibility());
   d->EdgeColorPickerButton->setEnabled(showEdgeColor);
 
   if (d->CurrentModelDisplayNode)
@@ -693,9 +666,8 @@ void qMRMLModelDisplayNodeWidget::setSliceDisplayMode(int newMode)
   {
     int wasModified = modelDisplayNode->StartModify();
     // Select a color node if none is selected yet
-    if (modelDisplayNode->GetSliceDisplayMode()
-        != vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection //
-        && newMode == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection //
+    if (modelDisplayNode->GetSliceDisplayMode() != vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection //
+        && newMode == vtkMRMLModelDisplayNode::SliceDisplayDistanceEncodedProjection                              //
         && modelDisplayNode->GetDistanceEncodedProjectionColorNodeID() == nullptr)
     {
       modelDisplayNode->SetAndObserveDistanceEncodedProjectionColorNodeID("vtkMRMLProceduralColorNodeRedGreenBlue");
@@ -891,8 +863,7 @@ void qMRMLModelDisplayNodeWidget::setInterpolation(int newInterpolation)
     case vtkMRMLDisplayNode::GouraudInterpolation: d->Property->SetInterpolationToGouraud(); break;
     case vtkMRMLDisplayNode::PhongInterpolation: d->Property->SetInterpolationToPhong(); break;
     case vtkMRMLDisplayNode::PBRInterpolation: d->Property->SetInterpolationToPBR(); break;
-    default:
-      qWarning() << Q_FUNC_INFO << " failed: invalid interpolation mode " << newInterpolation;
+    default: qWarning() << Q_FUNC_INFO << " failed: invalid interpolation mode " << newInterpolation;
   }
 }
 

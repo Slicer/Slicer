@@ -40,7 +40,6 @@ class qSlicerApplicationUpdateManagerTester : public QObject
   typedef qSlicerApplicationUpdateManagerTester Self;
 
 private:
-
   bool prepareJson(const QString& jsonFile);
 
   bool resetTmp();
@@ -99,16 +98,13 @@ void qSlicerApplicationUpdateManagerTester::initTestCase()
 
   QVERIFY(QDir::temp().exists());
 
-  this->TemporaryDirName =
-      QString("qSlicerApplicationUpdateManagerTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+  this->TemporaryDirName = QString("qSlicerApplicationUpdateManagerTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
 
   QSettings().clear();
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerApplicationUpdateManagerTester::init()
-{
-}
+void qSlicerApplicationUpdateManagerTester::init() {}
 
 // ----------------------------------------------------------------------------
 void qSlicerApplicationUpdateManagerTester::cleanup()
@@ -163,8 +159,7 @@ void qSlicerApplicationUpdateManagerTester::testUpdateCheck()
   QFETCH(QString, expectedLatestReleaseVersion);
   QFETCH(QString, expectedLatestReleaseRevision);
 
-  QVERIFY2(this->prepareJson(jsonFile),
-           QString("Failed to prepare json file: %1").arg(jsonFile).toUtf8());
+  QVERIFY2(this->prepareJson(jsonFile), QString("Failed to prepare json file: %1").arg(jsonFile).toUtf8());
 
   QSettings().setValue("ApplicationUpdate/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
 

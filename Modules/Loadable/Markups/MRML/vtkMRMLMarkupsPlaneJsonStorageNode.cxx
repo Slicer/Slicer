@@ -34,9 +34,7 @@
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsPlaneJsonStorageNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsPlaneJsonStorageNode::vtkMRMLMarkupsPlaneJsonStorageNode()
-{
-}
+vtkMRMLMarkupsPlaneJsonStorageNode::vtkMRMLMarkupsPlaneJsonStorageNode() {}
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsPlaneJsonStorageNode::~vtkMRMLMarkupsPlaneJsonStorageNode() = default;
@@ -48,8 +46,7 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::CanReadInReferenceNode(vtkMRMLNode* ref
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteBasicProperties(
-  vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
+bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteBasicProperties(vtkMRMLJsonWriter* writer, vtkMRMLMarkupsNode* markupsNode)
 {
   if (!vtkMRMLMarkupsJsonStorageNode::WriteBasicProperties(writer, markupsNode))
   {
@@ -129,8 +126,7 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::WriteBasicProperties(
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(
-  vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupObject)
+bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(vtkMRMLMarkupsNode* markupsNode, vtkMRMLJsonElement* markupObject)
 {
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(markupsNode);
   if (!planeNode)
@@ -163,9 +159,8 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(
     double objectToBase[16] = { 0.0 };
     if (!markupObject->GetVectorProperty("objectToBase", objectToBase, 16))
     {
-      vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-        "vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue",
-        "File reading failed: objectToBase 16-element numeric array.");
+      vtkErrorToMessageCollectionWithObjectMacro(
+        this, this->GetUserMessages(), "vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue", "File reading failed: objectToBase 16-element numeric array.");
       return false;
     }
     if (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS)
@@ -183,14 +178,12 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(
     double baseToNode[16] = { 0.0 };
     if (!markupObject->GetMatrix4x4Property("baseToNode", baseToNode, coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS))
     {
-      vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-        "vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue",
-        "File reading failed: baseToNode 16-element numeric array.");
+      vtkErrorToMessageCollectionWithObjectMacro(
+        this, this->GetUserMessages(), "vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue", "File reading failed: baseToNode 16-element numeric array.");
       return false;
     }
     planeNode->GetBaseToNodeMatrix()->DeepCopy(baseToNode);
   }
-
 
   if (markupObject->HasMember("sizeMode"))
   {
@@ -207,9 +200,8 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(
     double size[3] = { 0.0, 0.0, 0.0 };
     if (!markupObject->GetVectorProperty("size", size))
     {
-      vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-        "vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue",
-        "File reading failed: size 3-element numeric array.");
+      vtkErrorToMessageCollectionWithObjectMacro(
+        this, this->GetUserMessages(), "vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue", "File reading failed: size 3-element numeric array.");
       return false;
     }
     planeNode->SetSize(size);
@@ -220,9 +212,8 @@ bool vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue(
     double planeBounds[4] = { 0.0, 0.0, 0.0, 0.0 };
     if (!markupObject->GetVectorProperty("planeBounds", planeBounds, 4))
     {
-      vtkErrorToMessageCollectionWithObjectMacro(this, this->GetUserMessages(),
-        "vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue",
-        "File reading failed: planeBounds 4-element numeric array.");
+      vtkErrorToMessageCollectionWithObjectMacro(
+        this, this->GetUserMessages(), "vtkMRMLMarkupsPlaneJsonStorageNode::UpdateMarkupsNodeFromJsonValue", "File reading failed: planeBounds 4-element numeric array.");
       return false;
     }
     planeNode->SetPlaneBounds(planeBounds);

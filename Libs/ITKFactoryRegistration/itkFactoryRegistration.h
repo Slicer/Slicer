@@ -6,7 +6,8 @@
 #include "itkFactoryRegistrationConfigure.h"
 #include "itkNamespace.h"
 
-namespace itk {
+namespace itk
+{
 
 ITKFactoryRegistration_EXPORT void itkFactoryRegistration();
 }

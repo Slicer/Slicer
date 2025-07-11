@@ -38,7 +38,7 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -50,7 +50,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "ColorTable";}
+  const char* GetNodeTagName() override { return "ColorTable"; }
 
   /// Access lookup table object that stores table values.
   /// \sa SetAndObserveLookupTable()
@@ -65,15 +65,12 @@ public:
   /// \deprecated Kept only for backward compatibility.
   /// Use SetAndObserveLookupTable method instead.
   /// \sa SetAndObserveLookupTable()
-  virtual void SetLookupTable(vtkLookupTable* newLookupTable)
-  {
-    this->SetAndObserveLookupTable(newLookupTable, /*markAllColorsAsDefined=*/true);
-  }
+  virtual void SetLookupTable(vtkLookupTable* newLookupTable) { this->SetAndObserveLookupTable(newLookupTable, /*markAllColorsAsDefined=*/true); }
 
   ///
   /// Get/Set for Type
   void SetType(int type) override;
-  //GetType is defined in ColorTableNode class via macro.
+  // GetType is defined in ColorTableNode class via macro.
   void SetTypeToFullRainbow();
   void SetTypeToGrey();
   void SetTypeToIron();
@@ -111,8 +108,7 @@ public:
   void SetTypeToCoolTint2();
   void SetTypeToCoolTint3();
 
-
-  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   ///
   /// The list of valid table types
@@ -146,43 +142,43 @@ public:
   ///       complimentary to WarmSTint#
   enum
   {
-      FullRainbow = 0,
-      Grey = 1,
-      Iron = 2,
-      Rainbow = 3,
-      Ocean = 4,
-      Desert = 5,
-      InvGrey = 6,
-      ReverseRainbow = 7,
-      FMRI = 8,
-      FMRIPA = 9,
-      Labels = 10,
-      Obsolete = 11,
-      Random = 12,
-      Red = 15,
-      Green = 16,
-      Blue = 17,
-      Yellow = 18,
-      Cyan = 19,
-      Magenta = 20,
-      Warm1 = 21,
-      Warm2 = 22,
-      Warm3 = 23,
-      Cool1 = 24,
-      Cool2 = 25,
-      Cool3 = 26,
-      WarmShade1 = 27,
-      WarmShade2 = 28,
-      WarmShade3 = 29,
-      CoolShade1 = 30,
-      CoolShade2 = 31,
-      CoolShade3 = 32,
-      WarmTint1 = 33,
-      WarmTint2 = 34,
-      WarmTint3 = 35,
-      CoolTint1 = 36,
-      CoolTint2 = 37,
-      CoolTint3 = 38
+    FullRainbow = 0,
+    Grey = 1,
+    Iron = 2,
+    Rainbow = 3,
+    Ocean = 4,
+    Desert = 5,
+    InvGrey = 6,
+    ReverseRainbow = 7,
+    FMRI = 8,
+    FMRIPA = 9,
+    Labels = 10,
+    Obsolete = 11,
+    Random = 12,
+    Red = 15,
+    Green = 16,
+    Blue = 17,
+    Yellow = 18,
+    Cyan = 19,
+    Magenta = 20,
+    Warm1 = 21,
+    Warm2 = 22,
+    Warm3 = 23,
+    Cool1 = 24,
+    Cool2 = 25,
+    Cool3 = 26,
+    WarmShade1 = 27,
+    WarmShade2 = 28,
+    WarmShade3 = 29,
+    CoolShade1 = 30,
+    CoolShade2 = 31,
+    CoolShade3 = 32,
+    WarmTint1 = 33,
+    WarmTint2 = 34,
+    WarmTint3 = 35,
+    CoolTint1 = 36,
+    CoolTint2 = 37,
+    CoolTint3 = 38
   };
 
   ///
@@ -262,7 +258,7 @@ protected:
 
   ///
   /// keep track of where we last added a color.
-  int LastAddedColor{-1};
+  int LastAddedColor{ -1 };
 };
 
 #endif

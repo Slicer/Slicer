@@ -25,7 +25,7 @@
 #include "qSlicerSceneViewsModuleExport.h"
 
 // Qt includes
-//#include <QSignalMapper>
+// #include <QSignalMapper>
 #include <QToolBar>
 
 // CTK includes

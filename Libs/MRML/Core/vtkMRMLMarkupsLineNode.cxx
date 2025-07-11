@@ -36,7 +36,6 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsLineNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsLineNode::vtkMRMLMarkupsLineNode()
 {
@@ -62,7 +61,7 @@ vtkMRMLMarkupsLineNode::~vtkMRMLMarkupsLineNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsLineNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  Superclass::WriteXML(of, nIndent);
 }
 
 //----------------------------------------------------------------------------
@@ -163,7 +162,7 @@ vtkVector3d vtkMRMLMarkupsLineNode::GetLineEndPosition()
 //---------------------------------------------------------------------------
 vtkVector3d vtkMRMLMarkupsLineNode::GetLineStartPositionWorld()
 {
-  double position[3] = {0.0, 0.0, 0.0};
+  double position[3] = { 0.0, 0.0, 0.0 };
   this->GetNthControlPointPositionWorld(0, position);
   return vtkVector3d(position);
 }
@@ -255,7 +254,6 @@ void vtkMRMLMarkupsLineNode::SetLineEndPositionWorld(double position[3])
     this->SetNthControlPointPositionWorld(1, position);
   }
 }
-
 
 // Deprecated methods
 

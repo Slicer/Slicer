@@ -59,13 +59,16 @@
 class qSlicerSubjectHierarchyDICOMPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDICOMPlugin);
+
 protected:
   qSlicerSubjectHierarchyDICOMPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyDICOMPluginPrivate(qSlicerSubjectHierarchyDICOMPlugin& object);
   ~qSlicerSubjectHierarchyDICOMPluginPrivate() override;
   void init();
   void onHierarchyItemCreated();
+
 public:
   QIcon PatientIcon;
   QIcon StudyIcon;
@@ -82,7 +85,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDICOMPluginPrivate::qSlicerSubjectHierarchyDICOMPluginPrivate(qSlicerSubjectHierarchyDICOMPlugin& object)
-: q_ptr(&object)
+  : q_ptr(&object)
 {
   this->PatientIcon = QIcon(":Icons/Patient.png");
   this->StudyIcon = QIcon(":Icons/Study.png");
@@ -103,31 +106,26 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::init()
   const int folderActionsBaseWeight = 20;
 
   this->CreatePatientAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Create new subject"), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreatePatientAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreatePatientAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight);
   QObject::connect(this->CreatePatientAction, SIGNAL(triggered()), q, SLOT(createSubjectItem()));
 
   this->CreateStudyAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Create child study"), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreateStudyAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight+1);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreateStudyAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight + 1);
   QObject::connect(this->CreateStudyAction, SIGNAL(triggered()), q, SLOT(createChildStudyUnderCurrentItem()));
 
   this->ConvertFolderToPatientAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Convert folder to subject"), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConvertFolderToPatientAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight+2);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConvertFolderToPatientAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight + 2);
   QObject::connect(this->ConvertFolderToPatientAction, SIGNAL(triggered()), q, SLOT(convertCurrentItemToPatient()));
 
   this->ConvertFolderToStudyAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Convert folder to study"), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConvertFolderToStudyAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight+3);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConvertFolderToStudyAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, folderActionsBaseWeight + 3);
   QObject::connect(this->ConvertFolderToStudyAction, SIGNAL(triggered()), q, SLOT(convertCurrentItemToStudy()));
 
   this->OpenDICOMExportDialogAction = new QAction(qSlicerSubjectHierarchyDICOMPlugin::tr("Export to DICOM..."), q);
   // Place DICOM export action lower in the default actions section because it is
   // better to have export features towards the end (after editing and importing actions).
   const int dicomExportActionWeight = 30;
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->OpenDICOMExportDialogAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, dicomExportActionWeight);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->OpenDICOMExportDialogAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, dicomExportActionWeight);
   QObject::connect(this->OpenDICOMExportDialogAction, SIGNAL(triggered()), q, SLOT(openDICOMExportDialog()));
 }
 
@@ -139,8 +137,7 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::onHierarchyItemCreated()
 {
   // Make sure empty folders are shown in the tree view it was created in
   qMRMLSubjectHierarchyTreeView* currentTreeView = qSlicerSubjectHierarchyPluginHandler::instance()->currentTreeView();
-  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder"));
+  qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder"));
   if (currentTreeView && folderPlugin)
   {
     qMRMLSortFilterSubjectHierarchyProxyModel* sortFilterProxyModel = currentTreeView->sortFilterProxyModel();
@@ -154,8 +151,8 @@ void qSlicerSubjectHierarchyDICOMPluginPrivate::onHierarchyItemCreated()
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyDICOMPlugin::qSlicerSubjectHierarchyDICOMPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyDICOMPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyDICOMPluginPrivate(*this))
 {
   this->m_Name = QString("DICOM");
 
@@ -167,8 +164,7 @@ qSlicerSubjectHierarchyDICOMPlugin::qSlicerSubjectHierarchyDICOMPlugin(QObject* 
 qSlicerSubjectHierarchyDICOMPlugin::~qSlicerSubjectHierarchyDICOMPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyDICOMPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+double qSlicerSubjectHierarchyDICOMPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(node);
   Q_UNUSED(parentItemID);
@@ -241,27 +237,26 @@ const QString qSlicerSubjectHierarchyDICOMPlugin::roleForPlugin() const
 //---------------------------------------------------------------------------
 const QString qSlicerSubjectHierarchyDICOMPlugin::helpText() const
 {
-  return QString(
-    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
-    "Create new Subject from scratch"
-    "</span>"
-    "</p>"
-    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
-    "Right-click the top-level item 'Scene' (or the empty area if scene item is not visible) and select 'Create new subject'."
-    "</span>"
-    "</p>\n"
-    "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
-    "Create new hierarchy item"
-    "</span>"
-    "</p>"
-    "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-    "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
-    "Right-click on an existing item and select 'Create ...'. The possible types depend on the parent."
-    "</span>"
-    "</p>");
+  return QString("<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+                 "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+                 "Create new Subject from scratch"
+                 "</span>"
+                 "</p>"
+                 "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+                 "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+                 "Right-click the top-level item 'Scene' (or the empty area if scene item is not visible) and select 'Create new subject'."
+                 "</span>"
+                 "</p>\n"
+                 "<p style=\" margin-top:4px; margin-bottom:1px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+                 "<span style=\" font-family:'sans-serif'; font-size:9pt; font-weight:600; color:#000000;\">"
+                 "Create new hierarchy item"
+                 "</span>"
+                 "</p>"
+                 "<p style=\" margin-top:0px; margin-bottom:11px; margin-left:26px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
+                 "<span style=\" font-family:'sans-serif'; font-size:9pt; color:#000000;\">"
+                 "Right-click on an existing item and select 'Create ...'. The possible types depend on the parent."
+                 "</span>"
+                 "</p>");
 }
 
 //---------------------------------------------------------------------------
@@ -356,7 +351,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForItem(vtkIdType
   // Study
   else if (shNode->IsItemLevel(itemID, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy()))
   {
-    //if (this->canBeExported(node)) //TODO:
+    // if (this->canBeExported(node)) //TODO:
     {
       d->OpenDICOMExportDialogAction->setVisible(true);
     }
@@ -364,7 +359,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForItem(vtkIdType
   // Data node (Series)
   else if (shNode->GetItemDataNode(itemID))
   {
-    //if (this->canBeExported(node)) //TODO:
+    // if (this->canBeExported(node)) //TODO:
     {
       d->OpenDICOMExportDialogAction->setVisible(true);
     }
@@ -375,7 +370,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::showContextMenuActionsForItem(vtkIdType
 void qSlicerSubjectHierarchyDICOMPlugin::editProperties(vtkIdType itemID)
 {
   Q_UNUSED(itemID);
-  //TODO: Show DICOM tag editor?
+  // TODO: Show DICOM tag editor?
 }
 
 //---------------------------------------------------------------------------
@@ -512,12 +507,11 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
   if (!validSelection)
   {
     QString message = tr("Data to export need to be under a study item, placed under a patient item in the subject hierarchy.\n"
-      "Default patient and study will be created and the selected data and its related datasets "
-      "will be moved in it for export.\n\n"
-      "Click Cancel, to create the patient/study hierarchy manually and drag-and-drop the exportable data under the study.");
+                         "Default patient and study will be created and the selected data and its related datasets "
+                         "will be moved in it for export.\n\n"
+                         "Click Cancel, to create the patient/study hierarchy manually and drag-and-drop the exportable data under the study.");
     QMessageBox::StandardButton answer =
-      QMessageBox::question(nullptr, tr("Create new patient and study for DICOM export?"), message,
-      QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
+      QMessageBox::question(nullptr, tr("Create new patient and study for DICOM export?"), message, QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Ok);
     if (answer == QMessageBox::Ok)
     {
 
@@ -536,7 +530,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
         // MRML references available in SH
         vtkSmartPointer<vtkCollection> referencedNodes;
         referencedNodes.TakeReference(shNode->GetScene()->GetReferencedNodes(shNode->GetItemDataNode(currentItemID)));
-        for (int index = 0; index!=referencedNodes->GetNumberOfItems(); ++index)
+        for (int index = 0; index != referencedNodes->GetNumberOfItems(); ++index)
         {
           vtkIdType nodeItemID = shNode->GetItemByDataNode(vtkMRMLNode::SafeDownCast(referencedNodes->GetItemAsObject(index)));
           if (nodeItemID && (std::find(referencedItems.begin(), referencedItems.end(), nodeItemID) == referencedItems.end()))
@@ -547,10 +541,9 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
 
         // Check if referenced items are already in a study, and use that if found
         vtkIdType studyItemID = 0;
-        for (std::vector<vtkIdType>::iterator itemIt=referencedItems.begin(); itemIt!=referencedItems.end(); itemIt++)
+        for (std::vector<vtkIdType>::iterator itemIt = referencedItems.begin(); itemIt != referencedItems.end(); itemIt++)
         {
-          vtkIdType currentParentStudyItemID = shNode->GetItemAncestorAtLevel(
-            *itemIt, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy() );
+          vtkIdType currentParentStudyItemID = shNode->GetItemAncestorAtLevel(*itemIt, vtkMRMLSubjectHierarchyConstants::GetDICOMLevelStudy());
           if (currentParentStudyItemID && !studyItemID)
           {
             studyItemID = currentParentStudyItemID;
@@ -558,7 +551,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
           else if (currentParentStudyItemID)
           {
             qWarning() << Q_FUNC_INFO << ": Items referenced by '" << shNode->GetItemName(currentItemID).c_str()
-              << "' are in multiple studies. The first found study will be used as parent for referenced data";
+                       << "' are in multiple studies. The first found study will be used as parent for referenced data";
           }
         }
 
@@ -580,7 +573,7 @@ void qSlicerSubjectHierarchyDICOMPlugin::openDICOMExportDialog()
 
         // Move selected item and all items it references under the study
         shNode->SetItemParent(currentItemID, studyItemID);
-        for (std::vector<vtkIdType>::iterator itemIt=referencedItems.begin(); itemIt!=referencedItems.end(); itemIt++)
+        for (std::vector<vtkIdType>::iterator itemIt = referencedItems.begin(); itemIt != referencedItems.end(); itemIt++)
         {
           shNode->SetItemParent(*itemIt, studyItemID);
         }

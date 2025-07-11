@@ -10,13 +10,11 @@ class qSlicerCropVolumeModuleWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLCropVolumeParametersNode;
 
-class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerCropVolumeModuleWidget(QWidget* parent = nullptr);
   ~qSlicerCropVolumeModuleWidget() override;

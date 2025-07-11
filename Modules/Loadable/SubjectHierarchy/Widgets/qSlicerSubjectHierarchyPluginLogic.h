@@ -45,8 +45,9 @@ class qSlicerSubjectHierarchyAbstractPlugin;
 
 /// \brief Qt-based logic class to exercise Qt-related logic functions. The Subject
 ///   hierarchy plugin mechanism and those are Qt classes
-class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPluginLogic :
-  public QObject, public virtual qSlicerObject
+class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPluginLogic
+  : public QObject
+  , public virtual qSlicerObject
 {
   Q_OBJECT
   QVTK_OBJECT

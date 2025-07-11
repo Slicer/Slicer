@@ -52,7 +52,8 @@ public:
   qMRMLTableModel(QObject* parent = nullptr);
   ~qMRMLTableModel() override;
 
-  enum ItemDataRole{
+  enum ItemDataRole
+  {
     SortRole = Qt::UserRole + 1
   };
 
@@ -87,11 +88,10 @@ protected slots:
   void onItemChanged(QStandardItem* item);
 
 protected:
-
   qMRMLTableModel(qMRMLTableModelPrivate* pimpl, QObject* parent = nullptr);
 
-  static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
-                              void* client_data, void* call_data);
+  static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data);
+
 protected:
   QScopedPointer<qMRMLTableModelPrivate> d_ptr;
 

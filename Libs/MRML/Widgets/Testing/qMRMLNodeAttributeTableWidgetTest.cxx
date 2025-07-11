@@ -47,7 +47,6 @@ private slots:
   void testSetNode();
 };
 
-
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableWidgetTester::init()
 {

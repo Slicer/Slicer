@@ -20,7 +20,6 @@
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
-
 #ifndef __vtkSlicerMarkupsLogic_h
 #define __vtkSlicerMarkupsLogic_h
 
@@ -56,11 +55,9 @@ class vtkPolyData;
 
 #include "vtkSlicerMarkupsModuleLogicExport.h"
 
-class VTK_SLICER_MARKUPS_MODULE_LOGIC_EXPORT vtkSlicerMarkupsLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_MARKUPS_MODULE_LOGIC_EXPORT vtkSlicerMarkupsLogic : public vtkSlicerModuleLogic
 {
 public:
-
   enum Events
   {
     MarkupRegistered = vtkCommand::UserEvent + 1,
@@ -71,9 +68,7 @@ public:
   vtkTypeMacro(vtkSlicerMarkupsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  void ProcessMRMLNodesEvents(vtkObject* caller,
-                                      unsigned long event,
-                                      void* callData ) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Utility method to return the id of the selection node. Checks
   /// the mrml application logic if set, otherwise checks the scene
@@ -183,8 +178,7 @@ public:
   /// to the end of the new list
   /// \sa vtkMRMLMarkupsNode::AddControlPoint
   /// Returns true on success, false on failure
-  bool CopyNthControlPointToNewList(int n, vtkMRMLMarkupsNode* markupsNode,
-                              vtkMRMLMarkupsNode* newMarkupsNode);
+  bool CopyNthControlPointToNewList(int n, vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsNode* newMarkupsNode);
 
   /// utility method to move a control point from one list to another, trying to
   /// insert it at the given new index. If the new index is larger than the
@@ -193,8 +187,7 @@ public:
   /// that index.
   /// \sa vtkMRMLMarkupsNode::InsertControlPoint
   /// Returns true on success, false on failure
-  bool MoveNthControlPointToNewListAtIndex(int n, vtkMRMLMarkupsNode* markupsNode,
-                                   vtkMRMLMarkupsNode* newMarkupsNode, int newIndex);
+  bool MoveNthControlPointToNewListAtIndex(int n, vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsNode* newMarkupsNode, int newIndex);
 
   /// Searches the scene for annotation fiducial nodes, collecting a list
   /// of annotation hierarchy nodes. Then iterates through those hierarchy nodes
@@ -295,7 +288,7 @@ public:
   /// Unregister a markup and its corresponding widget. This will trigger the
   /// vtkSlicerMarkupsLogic::MarkupUnregistered event.
   /// \param markupsNode MRMLMarkups node to be unregistered.
-  void UnregisterMarkupsNode(vtkMRMLMarkupsNode*  markupsNode);
+  void UnregisterMarkupsNode(vtkMRMLMarkupsNode* markupsNode);
 
   /// Returns true if the provided class name is a known markups class
   /// (it has been registered in the logic using RegisterMarkupsNode).
@@ -326,11 +319,9 @@ public:
 
   /// Import markups control points from table node
   /// Column names: label, r, a, s, (or l, p, s), defined, selected, visible, locked, description.
-  static bool ImportControlPointsFromTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode,
-    int startRow = 0, int numberOfRows = -1);
+  static bool ImportControlPointsFromTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode, int startRow = 0, int numberOfRows = -1);
 
-  static bool ExportControlPointsToTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode,
-    int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS);
+  static bool ExportControlPointsToTable(vtkMRMLMarkupsNode* markupsNode, vtkMRMLTableNode* tableNode, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS);
 
   /// Export markups node control points to CSV file.
   /// \param markupsNode Node that the control points are exported to.
@@ -349,15 +340,13 @@ public:
   // These methods are deprecated because they use old terms (markup instead of control point),
 
   /// \deprecated Use CopyNthControlPointToNewList instead.
-  bool CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode* markupsNode,
-                              vtkMRMLMarkupsNode* newMarkupsNode)
+  bool CopyNthMarkupToNewList(int n, vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsNode* newMarkupsNode)
   {
     vtkWarningMacro("vtkSlicerMarkupsLogic::CopyNthMarkupToNewList method is deprecated, please use CopyNthControlPointToNewList instead");
     return this->CopyNthControlPointToNewList(n, markupsNode, newMarkupsNode);
   }
   /// \deprecated Use MoveNthControlPointToNewList instead.
-  bool MoveNthMarkupToNewList(int n, vtkMRMLMarkupsNode* markupsNode,
-                              vtkMRMLMarkupsNode* newMarkupsNode, int newIndex)
+  bool MoveNthMarkupToNewList(int n, vtkMRMLMarkupsNode* markupsNode, vtkMRMLMarkupsNode* newMarkupsNode, int newIndex)
   {
     vtkWarningMacro("vtkSlicerMarkupsLogic::MoveNthMarkupToNewList method is deprecated, please use MoveNthControlPointToNewListAtIndex instead");
     return this->MoveNthControlPointToNewListAtIndex(n, markupsNode, newMarkupsNode, newIndex);
@@ -420,7 +409,6 @@ public:
   //@}
 
 protected:
-
   vtkSlicerMarkupsLogic();
   ~vtkSlicerMarkupsLogic() override;
 
@@ -440,7 +428,6 @@ protected:
   void OnMRMLSceneEndImport() override;
 
 private:
-
   vtkSlicerMarkupsLogic(const vtkSlicerMarkupsLogic&) = delete;
   void operator=(const vtkSlicerMarkupsLogic&) = delete;
 

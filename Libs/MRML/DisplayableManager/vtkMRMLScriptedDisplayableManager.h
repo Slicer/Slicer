@@ -26,8 +26,7 @@
 
 #include "vtkMRMLDisplayableManagerExport.h"
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLScriptedDisplayableManager :
-  public vtkMRMLAbstractDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLScriptedDisplayableManager : public vtkMRMLAbstractDisplayableManager
 {
 
 public:

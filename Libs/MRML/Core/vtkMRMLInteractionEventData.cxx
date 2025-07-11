@@ -99,7 +99,7 @@ int vtkMRMLInteractionEventData::GetModifiers()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLInteractionEventData::SetWorldPosition(const double p[3], bool accurate/*=true*/)
+void vtkMRMLInteractionEventData::SetWorldPosition(const double p[3], bool accurate /*=true*/)
 {
   this->WorldPosition[0] = p[0];
   this->WorldPosition[1] = p[1];
@@ -208,7 +208,10 @@ vtkMRMLAbstractViewNode* vtkMRMLInteractionEventData::GetViewNode() const
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLInteractionEventData::SetComponentType(int componentType) { this->ComponentType = componentType; }
+void vtkMRMLInteractionEventData::SetComponentType(int componentType)
+{
+  this->ComponentType = componentType;
+}
 
 //---------------------------------------------------------------------------
 int vtkMRMLInteractionEventData::GetComponentType() const
@@ -341,7 +344,7 @@ const std::string& vtkMRMLInteractionEventData::GetInteractionContextName()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLInteractionEventData::ComputeAccurateWorldPosition(bool force/*=false*/)
+bool vtkMRMLInteractionEventData::ComputeAccurateWorldPosition(bool force /*=false*/)
 {
   if (this->IsWorldPositionAccurate())
   {
@@ -369,7 +372,7 @@ bool vtkMRMLInteractionEventData::ComputeAccurateWorldPosition(bool force/*=fals
     return false;
   }
   // There may be multiple picked positions, choose the one closest to the camera
-  double cameraPosition[3] = { 0,0,0 };
+  double cameraPosition[3] = { 0, 0, 0 };
   this->Renderer->GetActiveCamera()->GetPosition(cameraPosition);
   pickPositions->GetPoint(0, this->WorldPosition);
   double minDist2 = vtkMath::Distance2BetweenPoints(this->WorldPosition, cameraPosition);
@@ -461,18 +464,15 @@ void vtkMRMLInteractionEventData::WorldToDisplay(const double worldPosition[3], 
   }
   if (!this->WorldToViewTransformMatrixValid)
   {
-    vtkMatrix4x4::DeepCopy(this->WorldToViewTransformMatrix,
-      this->Renderer->GetActiveCamera()->
-      GetCompositeProjectionTransformMatrix(
-        this->Renderer->GetTiledAspectRatio(),0,1));
+    vtkMatrix4x4::DeepCopy(this->WorldToViewTransformMatrix, this->Renderer->GetActiveCamera()->GetCompositeProjectionTransformMatrix(this->Renderer->GetTiledAspectRatio(), 0, 1));
     this->WorldToViewTransformMatrixValid = true;
   }
 
-  //get view to display scaling and put in 4x4 matrix
+  // get view to display scaling and put in 4x4 matrix
   const double* viewport = this->Renderer->GetViewport();
   const int* displaySize = this->Renderer->GetVTKWindow()->GetSize();
 
-  const double homogeneousWorldPosition[] = {worldPosition[0], worldPosition[1], worldPosition[2], 1.0};
+  const double homogeneousWorldPosition[] = { worldPosition[0], worldPosition[1], worldPosition[2], 1.0 };
   double viewPosition[4];
 
   vtkMatrix4x4::MultiplyPoint(this->WorldToViewTransformMatrix, homogeneousWorldPosition, viewPosition);
@@ -485,9 +485,7 @@ void vtkMRMLInteractionEventData::WorldToDisplay(const double worldPosition[3], 
   }
 
   // view to display
-  displayPosition[0] = (viewPosition[0] + 1.0) * (displaySize[0] * (viewport[2] - viewport[0])) / 2.0
-    + displaySize[0] * viewport[0];
-  displayPosition[1] = (viewPosition[1] + 1.0) * (displaySize[1] * (viewport[3] - viewport[1])) / 2.0
-    + displaySize[1] * viewport[1];
+  displayPosition[0] = (viewPosition[0] + 1.0) * (displaySize[0] * (viewport[2] - viewport[0])) / 2.0 + displaySize[0] * viewport[0];
+  displayPosition[1] = (viewPosition[1] + 1.0) * (displaySize[1] * (viewport[3] - viewport[1])) / 2.0 + displaySize[1] * viewport[1];
   displayPosition[2] = 0.0;
 }

@@ -61,8 +61,7 @@ bool vtkMRMLAnnotationSnapshotStorageNode::CanReadInReferenceNode(vtkMRMLNode* r
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationSnapshotStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLAnnotationSnapshotNode* sceneViewNode =
-    vtkMRMLAnnotationSnapshotNode::SafeDownCast(refNode);
+  vtkMRMLAnnotationSnapshotNode* sceneViewNode = vtkMRMLAnnotationSnapshotNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -172,7 +171,7 @@ int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode* refNode
   {
     vtkNew<vtkPNGWriter> writer;
     writer->SetFileName(fullName.c_str());
-    writer->SetInputData( sceneViewNode->GetScreenShot() );
+    writer->SetInputData(sceneViewNode->GetScreenShot());
     try
     {
       writer->Write();
@@ -186,7 +185,7 @@ int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode* refNode
   {
     vtkNew<vtkJPEGWriter> writer;
     writer->SetFileName(fullName.c_str());
-    writer->SetInputData( sceneViewNode->GetScreenShot() );
+    writer->SetInputData(sceneViewNode->GetScreenShot());
     try
     {
       writer->Write();
@@ -200,7 +199,7 @@ int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode* refNode
   {
     vtkNew<vtkTIFFWriter> writer;
     writer->SetFileName(fullName.c_str());
-    writer->SetInputData( sceneViewNode->GetScreenShot() );
+    writer->SetInputData(sceneViewNode->GetScreenShot());
     try
     {
       writer->Write();
@@ -214,7 +213,7 @@ int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode* refNode
   {
     vtkNew<vtkBMPWriter> writer;
     writer->SetFileName(fullName.c_str());
-    writer->SetInputData( sceneViewNode->GetScreenShot() );
+    writer->SetInputData(sceneViewNode->GetScreenShot());
     try
     {
       writer->Write();
@@ -227,7 +226,7 @@ int vtkMRMLAnnotationSnapshotStorageNode::WriteDataInternal(vtkMRMLNode* refNode
   else
   {
     result = 0;
-    vtkErrorMacro( << "No file extension recognized: " << fullName.c_str() );
+    vtkErrorMacro(<< "No file extension recognized: " << fullName.c_str());
   }
 
   return result;

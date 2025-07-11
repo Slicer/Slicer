@@ -46,8 +46,10 @@ static int UserRoleValueType = Qt::UserRole + 1;
 class qMRMLTableModelPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLTableModel);
+
 protected:
   qMRMLTableModel* const q_ptr;
+
 public:
   qMRMLTableModelPrivate(qMRMLTableModel& object);
   virtual ~qMRMLTableModelPrivate();
@@ -60,7 +62,7 @@ public:
   QString columnTooltipText(int tableCol);
 
   vtkSmartPointer<vtkCallbackCommand> CallBack;
-  vtkSmartPointer<vtkMRMLTableNode>   MRMLTableNode;
+  vtkSmartPointer<vtkMRMLTableNode> MRMLTableNode;
   bool Transposed;
 };
 
@@ -96,10 +98,10 @@ QString qMRMLTableModelPrivate::columnNameFromIndex(int index)
 {
   static const char base26Chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   QString returnValue;
-  while (index>=0)
+  while (index >= 0)
   {
     returnValue.prepend(base26Chars[index % 26]);
-    index = index/26 - 1;
+    index = index / 26 - 1;
   };
   return returnValue;
 }
@@ -229,7 +231,7 @@ void qMRMLTableModel::updateModelFromMRML()
 
   vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(d->MRMLTableNode);
   vtkTable* table = (tableNode ? tableNode->GetTable() : nullptr);
-  if (table==nullptr || table->GetNumberOfColumns()==0)
+  if (table == nullptr || table->GetNumberOfColumns() == 0)
   {
     beginResetModel();
     // setRowCount and setColumnCount to 0 would not be enough, it's necessary to remove the header as well
@@ -251,13 +253,13 @@ void qMRMLTableModel::updateModelFromMRML()
   vtkIdType tableRowOffset = useColumnTitleAsColumnHeader ? 0 : -1;
   if (d->Transposed)
   {
-    setRowCount(static_cast<int>(numberOfTableColumns-tableColOffset));
-    setColumnCount(static_cast<int>(numberOfTableRows-tableRowOffset));
+    setRowCount(static_cast<int>(numberOfTableColumns - tableColOffset));
+    setColumnCount(static_cast<int>(numberOfTableRows - tableRowOffset));
   }
   else
   {
-    setRowCount(static_cast<int>(numberOfTableRows-tableRowOffset));
-    setColumnCount(static_cast<int>(numberOfTableColumns-tableColOffset));
+    setRowCount(static_cast<int>(numberOfTableRows - tableRowOffset));
+    setColumnCount(static_cast<int>(numberOfTableColumns - tableColOffset));
   }
 
   // Setup items for each table column
@@ -307,16 +309,16 @@ void qMRMLTableModel::updateModelFromMRML()
       }
       QStandardItem* item = existingItem;
       // Create item if did not exist
-      if (item==nullptr)
+      if (item == nullptr)
       {
         item = new QStandardItem();
       }
 
       // Items in first row use bold font, the others regular
-      if (tableRow>=0)
+      if (tableRow >= 0)
       {
         vtkVariant variant = table->GetValue(tableRow, tableCol);
-        if (tableRow==0)
+        if (tableRow == 0)
         {
           // the first row might have been bold earlier, make sure
           // it is reset to non-bold
@@ -395,7 +397,7 @@ void qMRMLTableModel::updateModelFromMRML()
       }
 
       // Add item if just created
-      if (item!=existingItem)
+      if (item != existingItem)
       {
         if (d->Transposed)
         {
@@ -415,18 +417,19 @@ void qMRMLTableModel::updateModelFromMRML()
     QString rowLabel;
     if (labelInFirstTableColumn)
     {
-      if (tableRow>=0)
+      if (tableRow >= 0)
       {
         rowLabel = QString(table->GetValue(tableRow, 0).ToString().c_str());
       }
       else
       {
-        rowLabel = QString(table->GetColumnName(0));;
+        rowLabel = QString(table->GetColumnName(0));
+        ;
       }
     }
     else
     {
-      rowLabel = QString::number(modelRow+1);
+      rowLabel = QString::number(modelRow + 1);
     }
     setHeaderData(modelRow, d->Transposed ? Qt::Horizontal : Qt::Vertical, rowLabel);
   }
@@ -465,13 +468,13 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
     return;
   }
   vtkMRMLTableNode* tableNode = vtkMRMLTableNode::SafeDownCast(d->MRMLTableNode);
-  if (tableNode==nullptr)
+  if (tableNode == nullptr)
   {
     qCritical("qMRMLTableModel::updateMRMLFromModel failed: tableNode is invalid");
     return;
   }
   vtkTable* table = tableNode->GetTable();
-  if (table==nullptr)
+  if (table == nullptr)
   {
     qCritical("qMRMLTableModel::updateMRMLFromModel failed: table is invalid");
     return;
@@ -480,7 +483,7 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
   int tableRow = mrmlTableRowIndex(item->index());
   int tableCol = mrmlTableColumnIndex(item->index());
 
-  if (tableRow>=0)
+  if (tableRow >= 0)
   {
     // Get item value according to type
     int widgetType = item->data(UserRoleValueType).toInt();
@@ -543,7 +546,7 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
       else
       {
         vtkVariant valueInTableBefore = table->GetValue(tableRow, tableCol); // restore this value if new value is invalid
-        vtkVariant itemText(item->text().toUtf8().constData()); // the vtkVariant constructor makes a copy of the input buffer, so using constData is safe
+        vtkVariant itemText(item->text().toUtf8().constData());              // the vtkVariant constructor makes a copy of the input buffer, so using constData is safe
         table->SetValue(tableRow, tableCol, itemText);
         vtkVariant valueInTableAfter = table->GetValue(tableRow, tableCol);
         if (valueInTableBefore == valueInTableAfter)
@@ -567,8 +570,8 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
     vtkAbstractArray* column = table->GetColumn(tableCol);
     if (column)
     {
-      QString valueBefore = QString::fromStdString(column->GetName()?column->GetName():"");
-      if (valueBefore!=item->text())
+      QString valueBefore = QString::fromStdString(column->GetName() ? column->GetName() : "");
+      if (valueBefore != item->text())
       {
         tableNode->RenameColumn(tableCol, item->text().toUtf8().constData());
       }
@@ -577,8 +580,7 @@ void qMRMLTableModel::updateMRMLFromModel(QStandardItem* item)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTableModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
-                                      void* client_data, void* vtkNotUsed(call_data))
+void qMRMLTableModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* vtkNotUsed(call_data))
 {
   vtkMRMLTableNode* tableNode = reinterpret_cast<vtkMRMLTableNode*>(vtk_obj);
   qMRMLTableModel* tableModel = reinterpret_cast<qMRMLTableModel*>(client_data);
@@ -587,9 +589,7 @@ void qMRMLTableModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
   switch (event)
   {
     default:
-    case vtkCommand::ModifiedEvent:
-      tableModel->onMRMLTableNodeModified(tableNode);
-      break;
+    case vtkCommand::ModifiedEvent: tableModel->onMRMLTableNodeModified(tableNode); break;
   }
 }
 
@@ -644,11 +644,11 @@ int qMRMLTableModel::mrmlTableRowIndex(QModelIndex modelIndex) const
   }
   if (d->Transposed)
   {
-    return d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() ? modelIndex.column() : modelIndex.column()-1;
+    return d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() ? modelIndex.column() : modelIndex.column() - 1;
   }
   else
   {
-    return d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() ? modelIndex.row() : modelIndex.row()-1;
+    return d->MRMLTableNode->GetUseColumnTitleAsColumnHeader() ? modelIndex.row() : modelIndex.row() - 1;
   }
 }
 
@@ -663,11 +663,11 @@ int qMRMLTableModel::mrmlTableColumnIndex(QModelIndex modelIndex) const
   }
   if (d->Transposed)
   {
-    return d->MRMLTableNode->GetUseFirstColumnAsRowHeader() ? modelIndex.row()+1 : modelIndex.row();
+    return d->MRMLTableNode->GetUseFirstColumnAsRowHeader() ? modelIndex.row() + 1 : modelIndex.row();
   }
   else
   {
-    return d->MRMLTableNode->GetUseFirstColumnAsRowHeader() ? modelIndex.column()+1 : modelIndex.column();
+    return d->MRMLTableNode->GetUseFirstColumnAsRowHeader() ? modelIndex.column() + 1 : modelIndex.column();
   }
 }
 
@@ -701,21 +701,21 @@ int qMRMLTableModel::removeSelectionFromMRML(QModelIndexList selection, bool rem
   {
     if (removeMRMLRows)
     {
-      if (mrmlIndex==-1)
+      if (mrmlIndex == -1)
       {
         // the header row is deleted, move up the first line to header
         vtkTable* table = d->MRMLTableNode->GetTable();
         if (table)
         {
-          for (int columnIndex = 0; columnIndex<table->GetNumberOfColumns(); columnIndex++)
+          for (int columnIndex = 0; columnIndex < table->GetNumberOfColumns(); columnIndex++)
           {
-              vtkAbstractArray* column = table->GetColumn(columnIndex);
-              if (!column)
-              {
-                qCritical("qMRMLTableModel::updateMRMLFromModel failed: column %d is invalid", columnIndex);
-                continue;
-              }
-              d->MRMLTableNode->RenameColumn(columnIndex, table->GetValue(0, columnIndex).ToString().c_str());
+            vtkAbstractArray* column = table->GetColumn(columnIndex);
+            if (!column)
+            {
+              qCritical("qMRMLTableModel::updateMRMLFromModel failed: column %d is invalid", columnIndex);
+              continue;
+            }
+            d->MRMLTableNode->RenameColumn(columnIndex, table->GetValue(0, columnIndex).ToString().c_str());
           }
           d->MRMLTableNode->RemoveRow(0);
         }

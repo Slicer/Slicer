@@ -22,70 +22,69 @@
 class Coord3i
 {
   int v[3];
+
 public:
-  Coord3i()
-  {
-    v[0] = v[1] = v[2] = -1;
-  }
-  inline int& operator[](int i)
-  {
-    return v[i];
-  }
+  Coord3i() { v[0] = v[1] = v[2] = -1; }
+  inline int& operator[](int i) { return v[i]; }
   inline void conv(double* i)
   {
-    i[0] = v[0]; i[1] = v[1]; i[2] = v[2];
+    i[0] = v[0];
+    i[1] = v[1];
+    i[2] = v[2];
   };
 };
 
 class Coord3f
 {
   float v[3];
+
 public:
-  inline float& operator[](int i)
-  {
-    return v[i];
-  }
+  inline float& operator[](int i) { return v[i]; }
   inline void conv(float* i)
   {
-    i[0] = v[0]; i[1] = v[1]; i[2] = v[2];
+    i[0] = v[0];
+    i[1] = v[1];
+    i[2] = v[2];
   };
   inline void conv(double* i)
   {
-    i[0] = v[0]; i[1] = v[1]; i[2] = v[2];
+    i[0] = v[0];
+    i[1] = v[1];
+    i[2] = v[2];
   };
 };
 
 class Coord3d
 {
   double v[3];
+
 public:
-  inline double& operator[](int i)
-  {
-    return v[i];
-  };
+  inline double& operator[](int i) { return v[i]; };
   inline void conv(int* i)
   {
-    i[0] = (int) v[0]; i[1] = (int) v[1]; i[2] = (int) v[2];
+    i[0] = (int)v[0];
+    i[1] = (int)v[1];
+    i[2] = (int)v[2];
   };
   inline void conv(float* i)
   {
-    i[0] = static_cast<float>(v[0]); i[1] = static_cast<float>(v[1]); i[2] = static_cast<float>(v[2]);
+    i[0] = static_cast<float>(v[0]);
+    i[1] = static_cast<float>(v[1]);
+    i[2] = static_cast<float>(v[2]);
   };
   inline void conv(double* i)
   {
-    i[0] = v[0]; i[1] = v[1]; i[2] = v[2];
+    i[0] = v[0];
+    i[1] = v[1];
+    i[2] = v[2];
   };
 };
 
 // Euclidean distance between two points
 // TODO: use image pixel spacing
-inline double pointdistance(Coord3i &p1, Coord3i &p2, const double spacing[3])
+inline double pointdistance(Coord3i& p1, Coord3i& p2, const double spacing[3])
 {
-  return sqrt(
-      sqr((p1[0] - p2[0]) * spacing[0])
-    + sqr((p1[1] - p2[1]) * spacing[1])
-    + sqr((p1[2] - p2[2]) * spacing[2])
-  );
+  return sqrt(sqr((p1[0] - p2[0]) * spacing[0]) + sqr((p1[1] - p2[1]) * spacing[1]) + sqr((p1[2] - p2[2]) * spacing[2]));
 }
 
 inline void normcrossprod(double* v1, double* v2, double* norm)
@@ -115,7 +114,7 @@ inline double vectorangle(double* v1, double* v2)
     length1 += v1[k] * v1[k];
     length2 += v2[k] * v2[k];
   }
-  return acos(prod / sqrt(length1 * length2) );
+  return acos(prod / sqrt(length1 * length2));
 }
 
 // calculate angle between two vectors (0..M_PI), you might want to adjust to 0..M_PI/2
@@ -130,62 +129,64 @@ inline double vectorangle(Coord3d v1, Coord3d v2)
     length1 += v1[k] * v1[k];
     length2 += v2[k] * v2[k];
   }
-  return acos(prod / sqrt(length1 * length2) );
+  return acos(prod / sqrt(length1 * length2));
 }
 
 inline double vec_length(Coord3d x)
 {
-  return sqrt(sqr(x[0]) + sqr(x[1]) + sqr(x[2]) );
+  return sqrt(sqr(x[0]) + sqr(x[1]) + sqr(x[2]));
 }
 
 inline double vec_length(double* x)
 {
-  return sqrt(sqr(x[0]) + sqr(x[1]) + sqr(x[2]) );
+  return sqrt(sqr(x[0]) + sqr(x[1]) + sqr(x[2]));
 }
 
 inline double vec_length(double* x, double* y)
 {
-  return sqrt(sqr(x[0] - y[0]) + sqr(x[1] - y[1]) + sqr(x[2] - y[2]) );
+  return sqrt(sqr(x[0] - y[0]) + sqr(x[1] - y[1]) + sqr(x[2] - y[2]));
 }
 
 // transform and check index, returns 0 on success and 1 if corrected location
-inline int transWorldToImage(Coord3d loc_world, int* loc_img,
-                             double* origin, int* dims, double voxelsize)
+inline int transWorldToImage(Coord3d loc_world, int* loc_img, double* origin, int* dims, double voxelsize)
 {
   int adjust = 0;
 
   for (int i = 0; i < 3; i++)
   {
-    loc_img[i] = (int) ( (loc_world[i] - origin[i]) / voxelsize);
+    loc_img[i] = (int)((loc_world[i] - origin[i]) / voxelsize);
     if (loc_img[i] < 0)
     {
-      adjust = 1; loc_img[i] = 0;
+      adjust = 1;
+      loc_img[i] = 0;
     }
     if (loc_img[i] >= dims[i])
     {
-      loc_img[i] = dims[i] - 1; adjust = 1;
+      loc_img[i] = dims[i] - 1;
+      adjust = 1;
     }
   }
 
   return adjust;
 }
 
-inline int transWorldToImage(double* loc_world, int* loc_img,
-                             double* origin, int* dims, double voxelsize)
+inline int transWorldToImage(double* loc_world, int* loc_img, double* origin, int* dims, double voxelsize)
 // transform and check index, returns 0 on success and 1 if corrected location
 {
   int adjust = 0;
 
   for (int i = 0; i < 3; i++)
   {
-    loc_img[i] = (int) ( (loc_world[i] - origin[i]) / voxelsize);
+    loc_img[i] = (int)((loc_world[i] - origin[i]) / voxelsize);
     if (loc_img[i] < 0)
     {
-      adjust = 1; loc_img[i] = 0;
+      adjust = 1;
+      loc_img[i] = 0;
     }
     if (loc_img[i] >= dims[i])
     {
-      loc_img[i] = dims[i] - 1; adjust = 1;
+      loc_img[i] = dims[i] - 1;
+      adjust = 1;
     }
   }
 

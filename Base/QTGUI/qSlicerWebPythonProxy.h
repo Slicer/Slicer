@@ -29,8 +29,7 @@
 
 class qSlicerWebPythonProxyPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebPythonProxy
-  : public QObject
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebPythonProxy : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(bool verbose READ verbose WRITE setVerbose)
@@ -51,11 +50,11 @@ public:
   ///
   /// \sa ctkAbstractPythonManager::ExecuteStringMode
   enum EvalPythonMode
-    {
+  {
     EvalInput = 0,
     FileInput,
     SingleInput
-    };
+  };
   Q_ENUMS(EvalPythonMode);
 
   /// Enabled detailed logging during Python evaluation.

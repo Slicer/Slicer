@@ -48,7 +48,6 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModule : public qSlicerL
   Q_PROPERTY(int index READ index WRITE setIndex)
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
   typedef qSlicerScriptedLoadableModulePrivate Pimpl;
   qSlicerScriptedLoadableModule(QObject* parent = nullptr);
@@ -93,7 +92,6 @@ public:
   void setHidden(bool hidden);
 
 protected:
-
   void setup() override;
 
   void registerFileDialog();

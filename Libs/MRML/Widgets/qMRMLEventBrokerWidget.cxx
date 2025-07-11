@@ -44,13 +44,13 @@
 
 namespace
 {
-  enum ColumnType
-  {
-    NameColumn = 0,
-    ElapsedTimeColumn,
-    TotalTimeColumn,
-    CommentColumn
-  };
+enum ColumnType
+{
+  NameColumn = 0,
+  ElapsedTimeColumn,
+  TotalTimeColumn,
+  CommentColumn
+};
 }
 
 //-----------------------------------------------------------------------------
@@ -93,16 +93,11 @@ vtkObservation* qMRMLEventBrokerWidgetPrivate::observation(QTreeWidgetItem* item
   unsigned long event = eventItem->text(NameColumn).toInt();
 
   QTreeWidgetItem* subjectItem = eventItem->parent();
-  vtkObject* subject = static_cast<vtkObject*>(
-    reinterpret_cast<void*>(
-      subjectItem->data(0, Qt::UserRole).toLongLong()));
+  vtkObject* subject = static_cast<vtkObject*>(reinterpret_cast<void*>(subjectItem->data(0, Qt::UserRole).toLongLong()));
 
-  vtkObject* observer = static_cast<vtkObject*>(
-    reinterpret_cast<void*>(
-      item->data(0, Qt::UserRole).toLongLong()));
+  vtkObject* observer = static_cast<vtkObject*>(reinterpret_cast<void*>(item->data(0, Qt::UserRole).toLongLong()));
 
-  vtkEventBroker::ObservationVector observations =
-    vtkEventBroker::GetInstance()->GetObservations(subject, event, observer, nullptr, 1);
+  vtkEventBroker::ObservationVector observations = vtkEventBroker::GetInstance()->GetObservations(subject, event, observer, nullptr, 1);
   Q_ASSERT(observations.size());
   return observations.size() ? (*observations.begin()) : 0;
 }
@@ -118,8 +113,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromSubject(vtkObject* subje
   for (int i = 0; i < this->ConnectionsTreeWidget->topLevelItemCount(); ++i)
   {
     QTreeWidgetItem* topLevelItem = this->ConnectionsTreeWidget->topLevelItem(i);
-    if (static_cast<vtkObject*>(reinterpret_cast<void*>(
-      topLevelItem->data(0, Qt::UserRole).toLongLong())) == subject)
+    if (static_cast<vtkObject*>(reinterpret_cast<void*>(topLevelItem->data(0, Qt::UserRole).toLongLong())) == subject)
     {
       return topLevelItem;
     }
@@ -164,17 +158,15 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservati
     return nullptr;
   }
 
-  QTreeWidgetItem* subjectItem  = this->itemFromSubject(observation->GetSubject());
+  QTreeWidgetItem* subjectItem = this->itemFromSubject(observation->GetSubject());
   QTreeWidgetItem* eventItem = this->itemFromEvent(subjectItem, observation->GetEvent());
 
   for (int i = 0; i < eventItem->childCount(); ++i)
   {
     QTreeWidgetItem* observationItem = eventItem->child(i);
-    unsigned long long userData = observationItem->data(NameColumn, Qt::UserRole).toLongLong() ;
-    if ((observation->GetScript() && userData == 0 &&
-         observationItem->toolTip(NameColumn) == observation->GetScript()) || //
-        (observation->GetObserver() && userData != 0 &&
-         static_cast<vtkObject*>(reinterpret_cast<void*>(userData)) == observation->GetObserver()))
+    unsigned long long userData = observationItem->data(NameColumn, Qt::UserRole).toLongLong();
+    if ((observation->GetScript() && userData == 0 && observationItem->toolTip(NameColumn) == observation->GetScript()) || //
+        (observation->GetObserver() && userData != 0 && static_cast<vtkObject*>(reinterpret_cast<void*>(userData)) == observation->GetObserver()))
     {
       return observationItem;
     }
@@ -185,8 +177,7 @@ QTreeWidgetItem* qMRMLEventBrokerWidgetPrivate::itemFromObservation(vtkObservati
 //------------------------------------------------------------------------------
 void qMRMLEventBrokerWidgetPrivate::setObjectToItem(QTreeWidgetItem* item, vtkObject* object) const
 {
-  item->setData(NameColumn, Qt::UserRole,
-    QVariant::fromValue(reinterpret_cast<long long>(object)));
+  item->setData(NameColumn, Qt::UserRole, QVariant::fromValue(reinterpret_cast<long long>(object)));
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(object);
   if (node)
   {
@@ -202,8 +193,7 @@ void qMRMLEventBrokerWidgetPrivate::setObjectToItem(QTreeWidgetItem* item, vtkOb
   if (item->toolTip(NameColumn).isEmpty() && object)
   {
     // vtkObject
-    item->setToolTip(NameColumn,
-      "0x" + QString::number(reinterpret_cast<intptr_t>(object), 16));
+    item->setToolTip(NameColumn, "0x" + QString::number(reinterpret_cast<intptr_t>(object), 16));
   }
 }
 
@@ -245,8 +235,7 @@ void qMRMLEventBrokerWidgetPrivate::addObservation(vtkObservation* observation)
   }
   else if (!observation->GetObserver())
   {
-    ctkVTKConnectionPrivate* connection = reinterpret_cast<ctkVTKConnectionPrivate*>(
-      observation->GetCallbackCommand()->GetClientData());
+    ctkVTKConnectionPrivate* connection = reinterpret_cast<ctkVTKConnectionPrivate*>(observation->GetCallbackCommand()->GetClientData());
     observationItem->setText(NameColumn, connection->QtObject->metaObject()->className());
     observationItem->setToolTip(NameColumn, "0x" + QString::number(reinterpret_cast<intptr_t>(connection->QtObject), 16));
   }
@@ -261,7 +250,7 @@ void qMRMLEventBrokerWidgetPrivate::addObservation(vtkObservation* observation)
   observationItem->setText(CommentColumn, observation->GetComment());
 
   // Event
-  QTreeWidgetItem* subjectItem  = this->itemFromSubject(observation->GetSubject());
+  QTreeWidgetItem* subjectItem = this->itemFromSubject(observation->GetSubject());
   QTreeWidgetItem* eventItem = this->itemFromEvent(subjectItem, observation->GetEvent());
   eventItem->addChild(observationItem);
 }
@@ -272,19 +261,16 @@ void qMRMLEventBrokerWidgetPrivate::setupUi(QWidget* parentWidget)
   this->ConnectionsTreeWidget = new QTreeWidget;
 
   QStringList headers;
-  headers << "Object/Type"  << "Elapsed" << "Total" << "Comment";
+  headers << "Object/Type" << "Elapsed" << "Total" << "Comment";
   this->ConnectionsTreeWidget->setHeaderLabels(headers);
 
-  QObject::connect(this->ConnectionsTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*,int)),
-                   parentWidget, SLOT(onItemChanged(QTreeWidgetItem*,int)));
-  QObject::connect(this->ConnectionsTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
-                   parentWidget, SLOT(onCurrentItemChanged(QTreeWidgetItem*)));
+  QObject::connect(this->ConnectionsTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), parentWidget, SLOT(onItemChanged(QTreeWidgetItem*, int)));
+  QObject::connect(this->ConnectionsTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), parentWidget, SLOT(onCurrentItemChanged(QTreeWidgetItem*)));
 
   QVBoxLayout* vBoxLayout = new QVBoxLayout;
   vBoxLayout->addWidget(this->ConnectionsTreeWidget);
   vBoxLayout->setContentsMargins(0, 0, 0, 0);
   parentWidget->setLayout(vBoxLayout);
-
 }
 
 //------------------------------------------------------------------------------
@@ -319,7 +305,7 @@ void qMRMLEventBrokerWidget::refresh()
     d->addObservation(observation);
   }
   d->ConnectionsTreeWidget->setSortingEnabled(isSortingEnabled);
-  //d->ConnectionsTreeWidget->expandAll();
+  // d->ConnectionsTreeWidget->expandAll();
   d->ConnectionsTreeWidget->resizeColumnToContents(0);
 }
 

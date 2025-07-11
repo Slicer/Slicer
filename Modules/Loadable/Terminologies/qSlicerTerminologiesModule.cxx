@@ -64,8 +64,7 @@ qSlicerTerminologiesModule::~qSlicerTerminologiesModule() = default;
 //-----------------------------------------------------------------------------
 QString qSlicerTerminologiesModule::helpText() const
 {
-  QString help =
-    tr("The Terminologies module enables viewing and editing terminology dictionaries used for segmentation.");
+  QString help = tr("The Terminologies module enables viewing and editing terminology dictionaries used for segmentation.");
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -74,7 +73,7 @@ QString qSlicerTerminologiesModule::helpText() const
 QString qSlicerTerminologiesModule::acknowledgementText() const
 {
   return tr("This work is part of SparKit project, funded by Cancer Care Ontario (CCO)'s ACRU program"
-    " and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).");
+            " and Ontario Consortium for Adaptive Interventions in Radiation Oncology (OCAIRO).");
 }
 
 //-----------------------------------------------------------------------------

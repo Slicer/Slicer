@@ -93,7 +93,7 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
 
     // add new branch
     std::list<skel_branch> branchesToDo;
-    skel_branch *branch_elem = AddNewBranchToDo(branchesToDo);
+    skel_branch* branch_elem = AddNewBranchToDo(branchesToDo);
     if (branch_elem->points.empty())
     {
       branch_elem->end_1_point = *act_endpoint;
@@ -138,8 +138,7 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
           act_branch->length += pointdistance(act_point, pt, m_Spacing);
           act_branch->points.push_back(pt);
           act_point = pt;
-          label_image[act_point[0]
-                      + dim[0] * (act_point[1] + dim[1] * act_point[2])] = branchID;
+          label_image[act_point[0] + dim[0] * (act_point[1] + dim[1] * act_point[2])] = branchID;
         }
         else
         {
@@ -174,7 +173,7 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
               }
             }
           }
-        }   // else
+        } // else
       } // while (! branch_done)
 
       // copy branch from branchesToDo to m_Graph
@@ -186,7 +185,8 @@ void SkelGraph::ExtractSkeletalGraph(const unsigned char* image, const int dim[3
 
   // done
 
-  delete[] label_image; label_image = nullptr;
+  delete[] label_image;
+  label_image = nullptr;
   image = nullptr; // no delete, since image points to original
 
   // if (DEBUG_VSKEL)
@@ -199,7 +199,7 @@ void SkelGraph::PrintGraph()
 // print actual m_Graph
 {
   std::deque<skel_branch>::iterator act_graph;
-  std::deque<int>::iterator         act_nb;
+  std::deque<int>::iterator act_nb;
 
   act_graph = m_Graph.begin();
   std::cout << "Graph : " << std::endl;
@@ -239,11 +239,8 @@ void SkelGraph::PrintGraph()
     {
       std::cout << "|  None";
     }
-    std::cout << "| " << act_graph->length << "| "
-         << act_graph->end_1_point[0] << "," << act_graph->end_1_point[1] << ","
-         << act_graph->end_1_point[2] << " | "
-         << act_graph->end_2_point[0] << "," << act_graph->end_2_point[1] << ","
-         << act_graph->end_2_point[2] << " | " << std::endl;
+    std::cout << "| " << act_graph->length << "| " << act_graph->end_1_point[0] << "," << act_graph->end_1_point[1] << "," << act_graph->end_1_point[2] << " | "
+              << act_graph->end_2_point[0] << "," << act_graph->end_2_point[1] << "," << act_graph->end_2_point[2] << " | " << std::endl;
     act_graph++;
   }
 }
@@ -285,7 +282,7 @@ void SkelGraph::FindMaximalPath()
     while (!wait_list.empty())
     {
       // get next entry in wait_list
-      skel_branch * act_node = *(wait_list.begin());
+      skel_branch* act_node = *(wait_list.begin());
       wait_list.pop_front();
 
       // add to path
@@ -299,7 +296,7 @@ void SkelGraph::FindMaximalPath()
       // std::cout << "A " << act_pos_id  << std::endl;
       for (int i = 0; i < 2; i++)
       {
-        std::deque<int> * cont_end = nullptr;
+        std::deque<int>* cont_end = nullptr;
         Coord3i cont_end_point;
         if (i == 0)
         {
@@ -323,7 +320,7 @@ void SkelGraph::FindMaximalPath()
           int distance = *neighbors - act_pos_id;
           std::deque<skel_branch>::iterator act_pos_neigh = act_pos_list;
           advance(act_pos_neigh, distance);
-          skel_branch * act_neighbor = &(*(act_pos_neigh) );
+          skel_branch* act_neighbor = &(*(act_pos_neigh));
           if (!act_neighbor->acc_path.empty())
           {
             // neighbor already treated
@@ -349,14 +346,14 @@ void SkelGraph::FindMaximalPath()
     }
 
     // look for maximum
-    skel_branch * act_max_node = nullptr;
+    skel_branch* act_max_node = nullptr;
     double act_max_val = -1;
     for (std::deque<skel_branch>::iterator branch = m_Graph.begin(); branch != m_Graph.end(); ++branch)
     {
       if (branch->acc_length > act_max_val)
       {
         act_max_val = branch->acc_length;
-        act_max_node = &(*(branch) );
+        act_max_node = &(*(branch));
       }
     }
     // copy maximal path
@@ -402,7 +399,7 @@ void SkelGraph::FindMaximalPath()
     if (branch->max_path_length > m_MaximalPathLength)
     {
       m_MaximalPathLength = branch->max_path_length;
-      maximalPathStartBranch = &(*(branch) );
+      maximalPathStartBranch = &(*(branch));
     }
   }
   if (maximalPathStartBranch)
@@ -415,7 +412,7 @@ void SkelGraph::FindMaximalPath()
   }
 }
 
-void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<Coord3i> &axis_points)
+void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<Coord3i>& axis_points)
 {
   axis_points.clear();
 
@@ -513,12 +510,11 @@ void SkelGraph::SampleAlongMaximalPath(int requestedNumberOfPoints, std::deque<C
   axis_points.push_back(all_axis_points.back());
 }
 
-
 // -------------------------------------------------------------------------
 // Private Methods
 // -------------------------------------------------------------------------
 
-void SkelGraph::FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned char* image, const int dim[3])
+void SkelGraph::FindEndpoints(std::deque<Coord3i>& endPoints, const unsigned char* image, const int dim[3])
 {
   endPoints.clear();
   for (int z = 1; z < dim[2] - 1; z++)
@@ -527,7 +523,7 @@ void SkelGraph::FindEndpoints(std::deque<Coord3i> &endPoints, const unsigned cha
     {
       for (int x = 1; x < dim[0] - 1; x++)
       {
-        if (image[x + dim[0] * ( y + dim[1] * z )] && IsEndpoint(x, y, z, image, dim))
+        if (image[x + dim[0] * (y + dim[1] * z)] && IsEndpoint(x, y, z, image, dim))
         {
           // x,y,z is an endpoint
           Coord3i elem;
@@ -553,7 +549,7 @@ int SkelGraph::IsEndpoint(int x, int y, int z, const unsigned char* image, const
       int px = x - 1;
       for (int k = 0; k < 3; k++)
       {
-        if (image[px + dim[0] * ( py + dim[1] * pz )])
+        if (image[px + dim[0] * (py + dim[1] * pz)])
         {
           if (nb == 2)
           {
@@ -569,10 +565,10 @@ int SkelGraph::IsEndpoint(int x, int y, int z, const unsigned char* image, const
     pz++;
   }
 
-  return (nb == 2);   // == 1 neighbor
+  return (nb == 2); // == 1 neighbor
 }
 
-skel_branch* SkelGraph::AddNewBranchToDo(std::list<skel_branch> &branchesToDo)
+skel_branch* SkelGraph::AddNewBranchToDo(std::list<skel_branch>& branchesToDo)
 {
   skel_branch new_elem;
   new_elem.branchID = static_cast<int>(branchesToDo.size() + m_Graph.size() + 1);
@@ -580,7 +576,7 @@ skel_branch* SkelGraph::AddNewBranchToDo(std::list<skel_branch> &branchesToDo)
   return &(branchesToDo.back());
 }
 
-void SkelGraph::GetValidNeighbors(int* label_image, Coord3i &act_point, std::deque<Coord3i> &neighbors, const unsigned char* image, const int dim[3])
+void SkelGraph::GetValidNeighbors(int* label_image, Coord3i& act_point, std::deque<Coord3i>& neighbors, const unsigned char* image, const int dim[3])
 {
   int pz = act_point[2] - 1;
 
@@ -592,8 +588,8 @@ void SkelGraph::GetValidNeighbors(int* label_image, Coord3i &act_point, std::deq
       int px = act_point[0] - 1;
       for (int k = 0; k < 3; k++)
       {
-        if (image[px + dim[0] * ( py + dim[1] * pz )] && //
-            !label_image[px + dim[0] * ( py + dim[1] * pz )] )
+        if (image[px + dim[0] * (py + dim[1] * pz)] && //
+            !label_image[px + dim[0] * (py + dim[1] * pz)])
         {
           // point exist in skeleton, but is yet unlabeled
           Coord3i pt_elem;
@@ -620,5 +616,4 @@ void SkelGraph::GetValidNeighbors(int* label_image, Coord3i &act_point, std::deq
   //       ++act_neighbor;
   //     }
   //   }
-
 }

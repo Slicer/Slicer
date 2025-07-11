@@ -34,33 +34,27 @@
 #include "qSlicerCorePythonManager.h"
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
-                                       const QString& filePath,
-                                       PyObject* global_dict,
-                                       PyObject* local_dict)
+bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName, const QString& filePath, PyObject* global_dict, PyObject* local_dict)
 {
   PyObject* pyRes = nullptr;
 
   if (filePath.endsWith(".py") || filePath.endsWith(".pyc"))
   {
-    QString pyRunStr = QString(
-        "import importlib.util;"
-        "import sys;"
-        "spec = importlib.util.spec_from_file_location(%2, %1);"
-        "module = importlib.util.module_from_spec(spec);"
-        "sys.modules[%2] = module;"
-        "spec.loader.exec_module(module)"
-      )
-      .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
-      .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName));
+    QString pyRunStr = QString("import importlib.util;"
+                               "import sys;"
+                               "spec = importlib.util.spec_from_file_location(%2, %1);"
+                               "module = importlib.util.module_from_spec(spec);"
+                               "sys.modules[%2] = module;"
+                               "spec.loader.exec_module(module)")
+                         .arg(qSlicerCorePythonManager::toPythonStringLiteral(filePath))
+                         .arg(qSlicerCorePythonManager::toPythonStringLiteral(moduleName));
 
     pyRes = PyRun_String(pyRunStr.toUtf8(), Py_file_input, global_dict, local_dict);
   }
   if (!pyRes)
   {
     PythonQt::self()->handleError();
-    qCritical() << "loadSourceAsModule - Failed to load file" << filePath
-                << " as module" << moduleName << "!";
+    qCritical() << "loadSourceAsModule - Failed to load file" << filePath << " as module" << moduleName << "!";
     return false;
   }
   Py_DECREF(pyRes);
@@ -68,9 +62,7 @@ bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName,
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
-                                              const QString& attributeName,
-                                              PyObject* attributeValue)
+bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName, const QString& attributeName, PyObject* attributeValue)
 {
   if (!attributeValue)
   {
@@ -100,10 +92,7 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName,
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerScriptedUtils::importModulePythonExtensions(
-    qSlicerCorePythonManager* pythonManager,
-    const QString& intDir,const QString& modulePath,
-    bool isEmbedded)
+bool qSlicerScriptedUtils::importModulePythonExtensions(qSlicerCorePythonManager* pythonManager, const QString& intDir, const QString& modulePath, bool isEmbedded)
 {
   Q_UNUSED(intDir);
 
@@ -123,21 +112,20 @@ bool qSlicerScriptedUtils::importModulePythonExtensions(
 
   if (!isEmbedded)
   {
-    QStringList paths; paths << scopedCurrentDir.currentPath();
+    QStringList paths;
+    paths << scopedCurrentDir.currentPath();
     pythonManager->appendPythonPaths(paths);
   }
 
-  pythonManager->executeString(QString(
-        "from slicer.util import importVTKClassesFromDirectory;"
-        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
-        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLPython.*');"
-        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManagerPython.*');"
-        "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleVTKWidgetsPython.*');"
-        ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
-  pythonManager->executeString(QString(
-        "from slicer.util import importQtClassesFromDirectory;"
-        "importQtClassesFromDirectory(%1, 'slicer', filematch='qSlicer*PythonQt.*');"
-        ).arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
+  pythonManager->executeString(QString("from slicer.util import importVTKClassesFromDirectory;"
+                                       "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleLogicPython.*');"
+                                       "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLPython.*');"
+                                       "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleMRMLDisplayableManagerPython.*');"
+                                       "importVTKClassesFromDirectory(%1, 'slicer', filematch='vtkSlicer*ModuleVTKWidgetsPython.*');")
+                                 .arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
+  pythonManager->executeString(QString("from slicer.util import importQtClassesFromDirectory;"
+                                       "importQtClassesFromDirectory(%1, 'slicer', filematch='qSlicer*PythonQt.*');")
+                                 .arg(qSlicerCorePythonManager::toPythonStringLiteral(scopedCurrentDir.currentPath())));
   return !pythonManager->pythonErrorOccured();
 }
 

@@ -30,9 +30,11 @@ class qSlicerLoadableHelloWorldModule : public qSlicerLoadableModule
 {
   Q_OBJECT
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  qSlicerLoadableHelloWorldModule(QObject* parent = nullptr):Superclass(parent){}
+  qSlicerLoadableHelloWorldModule(QObject* parent = nullptr)
+    : Superclass(parent)
+  {
+  }
   ~qSlicerLoadableHelloWorldModule() override = default;
 
   QString helpText() const override { return QString("helpText"); }
@@ -42,16 +44,10 @@ public:
 
 protected:
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
-  {
-    return nullptr;
-  }
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return nullptr; }
 
   /// Create and return the logic associated to this module
-  vtkMRMLAbstractLogic* createLogic() override
-  {
-    return nullptr;
-  }
+  vtkMRMLAbstractLogic* createLogic() override { return nullptr; }
 };
 
 // ----------------------------------------------------------------------------
@@ -93,10 +89,7 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleToSlicerModules()
   qSlicerAbstractModule* module = this->Modules.value(moduleName);
   QVERIFY(moduleName.isEmpty() ? true : module != nullptr);
 
-  bool currentResult = qSlicerLoadableModule::addModuleToSlicerModules(
-        validPythonManager ? &this->PythonManager : nullptr,
-        module,
-        moduleName);
+  bool currentResult = qSlicerLoadableModule::addModuleToSlicerModules(validPythonManager ? &this->PythonManager : nullptr, module, moduleName);
   QCOMPARE(currentResult, expectedResult);
 
   if (expectedResult)
@@ -125,8 +118,7 @@ void qSlicerLoadableModuleWithPythonTester::testAddModuleNameToSlicerModuleNames
   QFETCH(QString, moduleName);
   QFETCH(bool, expectedResult);
 
-  bool currentResult = qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
-        validPythonManager ? &this->PythonManager : nullptr, moduleName);
+  bool currentResult = qSlicerLoadableModule::addModuleNameToSlicerModuleNames(validPythonManager ? &this->PythonManager : nullptr, moduleName);
   QCOMPARE(currentResult, expectedResult);
 
   if (expectedResult)

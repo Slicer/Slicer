@@ -140,8 +140,8 @@ protected:
   virtual void updateColorFromItem(int color, QStandardItem* item);
   virtual void updateNode();
 
-  static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
-                              void* client_data, void* call_data);
+  static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data);
+
 protected:
   QScopedPointer<qMRMLColorModelPrivate> d_ptr;
 

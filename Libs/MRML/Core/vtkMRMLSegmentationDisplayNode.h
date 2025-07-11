@@ -32,7 +32,6 @@ class vtkSegmentation;
 class vtkStringArray;
 class vtkVector3d;
 
-
 /// \brief MRML node for representing segmentation display attributes.
 ///
 /// vtkMRMLSegmentationDisplayNode nodes describe how volume is displayed.
@@ -54,9 +53,9 @@ public:
     bool Visible2DFill{ true }; // This one is used for labelmap volume related operations (color table, merged labelmap)
     bool Visible2DOutline{ true };
     /// Opacity
-    double Opacity3D{1.0};
-    double Opacity2DFill{1.0}; // This one is used for labelmap volume related operations (color table, merged labelmap)
-    double Opacity2DOutline{1.0};
+    double Opacity3D{ 1.0 };
+    double Opacity2DFill{ 1.0 }; // This one is used for labelmap volume related operations (color table, merged labelmap)
+    double Opacity2DOutline{ 1.0 };
     /// Pickable by interactions flag. If true, then the point under the mouse on the segment surfaces in the 3D views is computed, otherwise skipped.
     bool Pickable{ true };
 
@@ -103,7 +102,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from name/value pairs
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -151,10 +150,10 @@ public:
   /// \param properties Display properties of the segment are copied into this object. If display properties
   /// are not defined for this segment explicitly then a warning is logged and default display properties are used.
   /// \return True if display properties are specified for the segment.
-  bool GetSegmentDisplayProperties(std::string segmentID, SegmentDisplayProperties &properties);
+  bool GetSegmentDisplayProperties(std::string segmentID, SegmentDisplayProperties& properties);
 
   /// Set segment display properties.
-  void SetSegmentDisplayProperties(std::string segmentID, SegmentDisplayProperties &properties);
+  void SetSegmentDisplayProperties(std::string segmentID, SegmentDisplayProperties& properties);
 
   /// Set segment display properties to default.
   void SetSegmentDisplayPropertiesToDefault(const std::string& segmentId);
@@ -189,7 +188,7 @@ public:
   //@}
 
   /// Collect representation names that are stored as poly data
-  void GetPolyDataRepresentationNames(std::set<std::string> &representationNames);
+  void GetPolyDataRepresentationNames(std::set<std::string>& representationNames);
 
   /// Decide which poly data representation to use for 3D display.
   /// If preferred representation exists \sa PreferredDisplayRepresentationName3D, then return that.
@@ -203,7 +202,7 @@ public:
   /// Otherwise return source representation.
   std::string GetDisplayRepresentationName2D();
 
-// Convenience and python compatibility functions
+  // Convenience and python compatibility functions
 public:
   /// Get segment color by segment ID. Convenience function for python compatibility.
   /// \return Segment color not overridden, otherwise the override color
@@ -380,11 +379,11 @@ protected:
   bool Visibility2DOutline{ true };
 
   /// 3D opacity for the whole segmentation
-  double Opacity3D{1.0};
+  double Opacity3D{ 1.0 };
   /// 2D fill opacity for the whole segmentation
-  double Opacity2DFill{0.5};
+  double Opacity2DFill{ 0.5 };
   /// 2D outline opacity for the whole segmentation
-  double Opacity2DOutline{1.0};
+  double Opacity2DOutline{ 1.0 };
 
   bool RemoveUnusedDisplayProperties{ true };
 

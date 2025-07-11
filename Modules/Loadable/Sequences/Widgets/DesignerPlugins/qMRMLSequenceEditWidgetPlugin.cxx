@@ -19,25 +19,20 @@
 #include "qMRMLSequenceEditWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLSequenceEditWidgetPlugin
-::qMRMLSequenceEditWidgetPlugin(QObject* _parent)
+qMRMLSequenceEditWidgetPlugin::qMRMLSequenceEditWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget* qMRMLSequenceEditWidgetPlugin
-::createWidget(QWidget* _parent)
+QWidget* qMRMLSequenceEditWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qMRMLSequenceEditWidget* _widget
-    = new qMRMLSequenceEditWidget(_parent);
+  qMRMLSequenceEditWidget* _widget = new qMRMLSequenceEditWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSequenceEditWidgetPlugin
-::domXml() const
+QString qMRMLSequenceEditWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLSequenceEditWidget\" \
           name=\"SequenceEditWidget\">\n"
@@ -45,22 +40,19 @@ QString qMRMLSequenceEditWidgetPlugin
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSequenceEditWidgetPlugin
-::includeFile() const
+QString qMRMLSequenceEditWidgetPlugin::includeFile() const
 {
   return "qMRMLSequenceEditWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSequenceEditWidgetPlugin
-::isContainer() const
+bool qMRMLSequenceEditWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLSequenceEditWidgetPlugin
-::name() const
+QString qMRMLSequenceEditWidgetPlugin::name() const
 {
   return "qMRMLSequenceEditWidget";
 }

@@ -35,8 +35,10 @@
 class qMRMLNodeAttributeTableWidgetPrivate : public Ui_qMRMLNodeAttributeTableWidget
 {
   Q_DECLARE_PUBLIC(qMRMLNodeAttributeTableWidget);
+
 protected:
   qMRMLNodeAttributeTableWidget* const q_ptr;
+
 public:
   qMRMLNodeAttributeTableWidgetPrivate(qMRMLNodeAttributeTableWidget& object);
   void init();
@@ -56,10 +58,8 @@ void qMRMLNodeAttributeTableWidgetPrivate::init()
   Q_Q(qMRMLNodeAttributeTableWidget);
   this->setupUi(q);
 
-  QObject::connect(this->AddAttributeButton, SIGNAL(clicked()),
-          this->MRMLNodeAttributeTableView, SLOT(addAttribute()));
-  QObject::connect(this->RemoveAttributeButton, SIGNAL(clicked()),
-          this->MRMLNodeAttributeTableView, SLOT(removeSelectedAttributes()));
+  QObject::connect(this->AddAttributeButton, SIGNAL(clicked()), this->MRMLNodeAttributeTableView, SLOT(addAttribute()));
+  QObject::connect(this->RemoveAttributeButton, SIGNAL(clicked()), this->MRMLNodeAttributeTableView, SLOT(removeSelectedAttributes()));
 }
 
 // --------------------------------------------------------------------------
@@ -90,14 +90,10 @@ void qMRMLNodeAttributeTableWidget::setMRMLNode(vtkMRMLNode* node)
   Q_D(qMRMLNodeAttributeTableWidget);
   d->MRMLNodeAttributeTableView->setInspectedNode(node);
 
-  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
-  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkMRMLNode::ReferenceAddedEvent,
-                this, SLOT(updateWidgetFromMRML()));
-  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkMRMLNode::ReferenceModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
-  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkMRMLNode::ReferenceRemovedEvent,
-                this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkMRMLNode::ReferenceAddedEvent, this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkMRMLNode::ReferenceModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLNode.GetPointer(), node, vtkMRMLNode::ReferenceRemovedEvent, this, SLOT(updateWidgetFromMRML()));
   d->MRMLNode = node;
 
   this->updateWidgetFromMRML();

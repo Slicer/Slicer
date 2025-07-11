@@ -35,7 +35,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -45,7 +45,7 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLSliceCompositeNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "SliceComposite";}
+  const char* GetNodeTagName() override { return "SliceComposite"; }
 
   /// @{
   /// the ID of a MRMLVolumeNode
@@ -133,25 +133,25 @@ public:
 
   /// @{
   /// toggle that gangs control of slice viewers
-  vtkGetMacro (LinkedControl, int );
-  vtkSetMacro (LinkedControl, int );
+  vtkGetMacro(LinkedControl, int);
+  vtkSetMacro(LinkedControl, int);
   vtkBooleanMacro(LinkedControl, int);
   /// @}
 
   /// @{
   /// toggle for whether linked behavior is immediate or waits until
   /// an interaction is finished
-  vtkGetMacro (HotLinkedControl, int );
-  vtkSetMacro (HotLinkedControl, int );
+  vtkGetMacro(HotLinkedControl, int);
+  vtkSetMacro(HotLinkedControl, int);
   vtkBooleanMacro(HotLinkedControl, int);
   /// @}
 
   /// @{
   /// toggles fiducial visibility in the slice viewer
-  vtkGetMacro (FiducialVisibility, int );
-  vtkSetMacro (FiducialVisibility, int );
-  vtkGetMacro (FiducialLabelVisibility, int );
-  vtkSetMacro (FiducialLabelVisibility, int );
+  vtkGetMacro(FiducialVisibility, int);
+  vtkSetMacro(FiducialVisibility, int);
+  vtkGetMacro(FiducialLabelVisibility, int);
+  vtkSetMacro(FiducialLabelVisibility, int);
   /// @}
 
   /// @{
@@ -166,8 +166,8 @@ public:
   /// configures the behavior of PropagateVolumeSelection():
   /// if set to false, the background/label for slice views
   /// will not be reset. Default value is true
-  vtkSetMacro (DoPropagateVolumeSelection, bool );
-  vtkGetMacro (DoPropagateVolumeSelection, bool );
+  vtkSetMacro(DoPropagateVolumeSelection, bool);
+  vtkGetMacro(DoPropagateVolumeSelection, bool);
   /// @}
 
   /// @{
@@ -177,21 +177,17 @@ public:
   /// No name (i.e. "") by default. Typical names are colors:
   /// "Red", "Green", "Yellow"... to uniquely define the slice node
   /// \sa vtkMRMLSliceNode::SetLayoutName
-  void SetLayoutName(const char* layoutName) {
-    this->SetSingletonTag(layoutName);
-  }
-  char* GetLayoutName() {
-    return this->GetSingletonTag();
-  }
+  void SetLayoutName(const char* layoutName) { this->SetSingletonTag(layoutName); }
+  char* GetLayoutName() { return this->GetSingletonTag(); }
   /// @}
 
   /// Modes for compositing
   enum
   {
-      Alpha = 0,
-      ReverseAlpha,
-      Add,
-      Subtract
+    Alpha = 0,
+    ReverseAlpha,
+    Add,
+    Subtract
   };
 
   /// @{
@@ -250,7 +246,6 @@ public:
   void ResetInteractionFlagsModifier();
 
 protected:
-
   vtkMRMLSliceCompositeNode();
   ~vtkMRMLSliceCompositeNode() override;
   vtkMRMLSliceCompositeNode(const vtkMRMLSliceCompositeNode&);

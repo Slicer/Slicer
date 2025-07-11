@@ -67,7 +67,6 @@ public:
   void Copy(vtkSegmentationConversionPath* source);
 
 protected:
-
   std::vector<vtkSmartPointer<vtkSegmentationConverterRule>> Rules;
 
 protected:
@@ -78,7 +77,6 @@ private:
   vtkSegmentationConversionPath(const vtkSegmentationConversionPath&) = delete;
   void operator=(const vtkSegmentationConversionPath&) = delete;
 };
-
 
 /// \brief Store multiple segmentation conversion paths.
 /// \details

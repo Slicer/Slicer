@@ -31,8 +31,7 @@
 class qSlicerExtensionsServerWidgetPrivate;
 class qSlicerExtensionsManagerModel;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsServerWidget
-  : public qSlicerWebWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsServerWidget : public qSlicerWebWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool browsingEnabled READ isBrowsingEnabled WRITE setBrowsingEnabled)

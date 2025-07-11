@@ -64,7 +64,6 @@ class Q_SLICER_MODULE_SEGMENTATIONS_WIDGETS_EXPORT qMRMLSegmentsModel : public Q
   Q_PROPERTY(int layerColumn READ layerColumn WRITE setLayerColumn)
 
 public:
-
   enum SegmentTableItemDataRole
   {
     SegmentIDRole = Qt::UserRole + 1,
@@ -136,13 +135,13 @@ protected:
   virtual Qt::ItemFlags segmentFlags(QString segmentID, int column) const;
 
   /// Update QStandardItem associated using segmentID and column
-  virtual void updateItemFromSegment(QStandardItem* item, QString segmentID, int column );
+  virtual void updateItemFromSegment(QStandardItem* item, QString segmentID, int column);
   /// Update QStandardItem data associated using segmentID and column
-  virtual void updateItemDataFromSegment(QStandardItem* item, QString segmentID, int column );
+  virtual void updateItemDataFromSegment(QStandardItem* item, QString segmentID, int column);
   /// Update a segment in the MRML node using the associated QStandardItem
-  virtual void updateSegmentFromItem(QString segmentID, QStandardItem* item );
+  virtual void updateSegmentFromItem(QString segmentID, QStandardItem* item);
   /// Update a segment in the MRML node using the associated QStandardItem data
-  virtual void updateSegmentFromItemData(QString segmentID, QStandardItem* item );
+  virtual void updateSegmentFromItemData(QString segmentID, QStandardItem* item);
   /// Update all of the the QStandardItem associated with a column
   void updateItemsFromColumnIndex(int column);
   /// Update all of the the QStandardItem associated with a segment ID

@@ -877,31 +877,20 @@ namespace
 class vtkAbortCommand : public vtkCommand
 {
 public:
-  static vtkAbortCommand* New(){ return new vtkAbortCommand; }
-  void Execute (vtkObject* vtkNotUsed(caller),
-                        unsigned long vtkNotUsed(eventId),
-                        void* vtkNotUsed(callData)) override
-  {
-    this->SetAbortFlag(1);
-  }
+  static vtkAbortCommand* New() { return new vtkAbortCommand; }
+  void Execute(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eventId), void* vtkNotUsed(callData)) override { this->SetAbortFlag(1); }
 };
 
 class vtkRenderCallback : public vtkCommand
 {
 public:
-  static vtkRenderCallback* New()
-  {
-    return new vtkRenderCallback;
-  }
-  void Execute(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eventId), void* vtkNotUsed(callData)) override
-  {
-    this->RenderWindow->Render();
-  }
+  static vtkRenderCallback* New() { return new vtkRenderCallback; }
+  void Execute(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eventId), void* vtkNotUsed(callData)) override { this->RenderWindow->Render(); }
   vtkRenderCallback() = default;
   vtkRenderWindow* RenderWindow{ nullptr };
 };
 
-};
+}; // namespace
 
 //----------------------------------------------------------------------------
 int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
@@ -1024,8 +1013,8 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   for (int i = 0; i < argc; i++)
   {
     disableReplay |= (strcmp("--DisableReplay", argv[i]) == 0);
-    record        |= (strcmp("--Record", argv[i]) == 0);
-    screenshot    |= (strcmp("--Screenshot", argv[i]) == 0);
+    record |= (strcmp("--Record", argv[i]) == 0);
+    screenshot |= (strcmp("--Screenshot", argv[i]) == 0);
   }
   vtkNew<vtkInteractorEventRecorder> recorder;
   recorder->SetInteractor(displayableManagerGroup->GetInteractor());
@@ -1058,7 +1047,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   {
     vtkNew<vtkWindowToImageFilter> windowToImageFilter;
     windowToImageFilter->SetInput(renderWindow.GetPointer());
-    windowToImageFilter->SetScale(1, 1); //set the resolution of the output image
+    windowToImageFilter->SetScale(1, 1); // set the resolution of the output image
     windowToImageFilter->Update();
 
     vtkNew<vtkTesting> testHelper;

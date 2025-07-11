@@ -30,42 +30,35 @@ namespace itk
 template <typename TInputImage, typename TOutputImage>
 void HFieldToDeformationFieldImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
-//  Superclass::GenerateInputRequestedRegion();
-//  outputImage->SetRequestedRegion(inputImage
+  //  Superclass::GenerateInputRequestedRegion();
+  //  outputImage->SetRequestedRegion(inputImage
   this->AllocateOutputs();
 
-  const typename InputImageType::ConstPointer input(this->GetInput() );
+  const typename InputImageType::ConstPointer input(this->GetInput());
 
-  typename OutputImageType::Pointer output(this->GetOutput() );
+  typename OutputImageType::Pointer output(this->GetOutput());
 
-  typename InputImageType::RegionType inputRequestedRegion(input->GetRequestedRegion() );
+  typename InputImageType::RegionType inputRequestedRegion(input->GetRequestedRegion());
 
-  typename OutputImageType::RegionType outputRequestedRegion(output->GetRequestedRegion() );
+  typename OutputImageType::RegionType outputRequestedRegion(output->GetRequestedRegion());
 
-  ImageRegionConstIteratorWithIndex<InputImageType> it = ImageRegionConstIteratorWithIndex<InputImageType>(
-      input, inputRequestedRegion);
+  ImageRegionConstIteratorWithIndex<InputImageType> it = ImageRegionConstIteratorWithIndex<InputImageType>(input, inputRequestedRegion);
 
-  ImageRegionIterator<OutputImageType> oit = ImageRegionIterator<OutputImageType>(
-      output, outputRequestedRegion);
+  ImageRegionIterator<OutputImageType> oit = ImageRegionIterator<OutputImageType>(output, outputRequestedRegion);
   //  typename InputImageType::SpacingType spacing = input->GetSpacing();
   for (it.GoToBegin(), oit.GoToBegin(); !it.IsAtEnd(); ++it, ++oit)
   {
     InputPixelType hvec = it.Get();
     typename OutputImageType::IndexType index = it.GetIndex();
 
-    oit.Set(this->ComputeDisplacement(input, index, hvec) );
+    oit.Set(this->ComputeDisplacement(input, index, hvec));
   }
-
 }
 
 template <typename TInputImage, typename TOutputImage>
-typename TOutputImage::PixelType
-HFieldToDeformationFieldImageFilter<TInputImage, TOutputImage>::ComputeDisplacement(
-  typename InputImageType::ConstPointer input,
-  typename InputImageType::IndexType
-  ind,
-  typename InputImageType::PixelType
-  hvec)
+typename TOutputImage::PixelType HFieldToDeformationFieldImageFilter<TInputImage, TOutputImage>::ComputeDisplacement(typename InputImageType::ConstPointer input,
+                                                                                                                     typename InputImageType::IndexType ind,
+                                                                                                                     typename InputImageType::PixelType hvec)
 {
   typedef typename InputPixelType::ValueType CoordRepType;
   const unsigned int Dimension = InputImageType::ImageDimension;

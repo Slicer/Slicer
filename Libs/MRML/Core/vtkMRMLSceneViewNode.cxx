@@ -42,7 +42,7 @@ vtkMRMLSceneViewNode::vtkMRMLSceneViewNode()
   this->HideFromEditors = 0;
 
   this->SnapshotScene = nullptr;
-//  this->ScreenShot = vtkImageData::New();
+  //  this->ScreenShot = vtkImageData::New();
   this->ScreenShot = nullptr;
   this->ScreenShotType = 0;
 }
@@ -70,7 +70,7 @@ void vtkMRMLSceneViewNode::WriteXML(ostream& of, int nIndent)
   of << " screenshotType=\"" << this->GetScreenShotType() << "\"";
 
   std::string description = this->GetSceneViewDescription();
-  vtksys::SystemTools::ReplaceString(description,"\n","<br>");
+  vtksys::SystemTools::ReplaceString(description, "\n", "<br>");
 
   of << " sceneViewDescription=\"" << this->XMLAttributeEncodeString(description) << "\"";
 }
@@ -92,17 +92,16 @@ void vtkMRMLSceneViewNode::WriteNodeBodyXML(ostream& of, int nIndent)
     vtkMRMLNode* node = (vtkMRMLNode*)this->SnapshotScene->GetNodes()->GetItemAsObject(n);
     if (node && !node->IsA("vtkMRMLSceneViewNode") && node->GetSaveWithScene())
     {
-      vtkIndent vindent(nIndent+1);
+      vtkIndent vindent(nIndent + 1);
       of << vindent << "<" << node->GetNodeTagName() << "\n";
 
       node->WriteXML(of, nIndent + 2);
 
       of << vindent << ">";
-      node->WriteNodeBodyXML(of, nIndent+1);
+      node->WriteNodeBodyXML(of, nIndent + 1);
       of << "</" << node->GetNodeTagName() << ">\n";
     }
   }
-
 }
 
 //----------------------------------------------------------------------------
@@ -131,7 +130,7 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
     {
       // can have spaces in the description, don't use stringstream
       std::string sceneViewDescription = std::string(attValue);
-      vtksys::SystemTools::ReplaceString(sceneViewDescription,"[br]","\n");
+      vtksys::SystemTools::ReplaceString(sceneViewDescription, "[br]", "\n");
       this->SetSceneViewDescription(sceneViewDescription);
     }
   }
@@ -167,8 +166,7 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
   }
   screenCaptureFilename += ".png";
 
-
-  if (vtksys::SystemTools::FileExists(vtksys::SystemTools::ConvertToOutputPath(screenCaptureFilename.c_str()).c_str(),true))
+  if (vtksys::SystemTools::FileExists(vtksys::SystemTools::ConvertToOutputPath(screenCaptureFilename.c_str()).c_str(), true))
   {
     // create a storage node and use it to read the file
     vtkMRMLStorageNode* storageNode = this->GetStorageNode();
@@ -180,15 +178,13 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
       if (storageNode)
       {
         vtkWarningMacro("ReadXMLAttributes: found the ScreenCapture directory, creating a storage node to read the image file at\n\t"
-          << storageNode->GetFileName()
-          << "\n\tImage data be overwritten if there is a storage node pointing to another file");
+                        << storageNode->GetFileName() << "\n\tImage data be overwritten if there is a storage node pointing to another file");
         storageNode->ReadData(this);
       }
     }
     else
     {
-      vtkWarningMacro("ReadXMLAttributes: there is a ScreenCaptures directory with a valid file in it,"
-        << "but waiting to let the extant storage node read it's image file");
+      vtkWarningMacro("ReadXMLAttributes: there is a ScreenCaptures directory with a valid file in it," << "but waiting to let the extant storage node read it's image file");
     }
   }
 
@@ -227,7 +223,6 @@ void vtkMRMLSceneViewNode::ProcessChildNode(vtkMRMLNode* node)
 
   node->SetDisableModifiedEvent(disabledModifyNode);
   this->SetDisableModifiedEvent(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
@@ -236,7 +231,7 @@ void vtkMRMLSceneViewNode::ProcessChildNode(vtkMRMLNode* node)
 void vtkMRMLSceneViewNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLSceneViewNode* snode = (vtkMRMLSceneViewNode*) anode;
+  vtkMRMLSceneViewNode* snode = (vtkMRMLSceneViewNode*)anode;
 
   this->SetScreenShot(vtkMRMLSceneViewNode::SafeDownCast(anode)->GetScreenShot());
   this->SetScreenShotType(vtkMRMLSceneViewNode::SafeDownCast(anode)->GetScreenShotType());
@@ -255,7 +250,7 @@ void vtkMRMLSceneViewNode::Copy(vtkMRMLNode* anode)
   if (snode->SnapshotScene != nullptr)
   {
     int n;
-    for (n=0; n < snode->SnapshotScene->GetNodes()->GetNumberOfItems(); n++)
+    for (n = 0; n < snode->SnapshotScene->GetNodes()->GetNumberOfItems(); n++)
     {
       node = (vtkMRMLNode*)snode->SnapshotScene->GetNodes()->GetItemAsObject(n);
       if (node)
@@ -313,9 +308,9 @@ void vtkMRMLSceneViewNode::UpdateStoredScene()
   vtkMRMLNode* node = nullptr;
 
   // prevent data read in UpdateScene
-  for (n=0; n<nnodesSanpshot; n++)
+  for (n = 0; n < nnodesSanpshot; n++)
   {
-    node  = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
+    node = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
     if (node)
     {
       node->SetAddToSceneNoModify(0);
@@ -323,9 +318,9 @@ void vtkMRMLSceneViewNode::UpdateStoredScene()
   }
 
   // update nodes in the snapshot
-  for (n=0; n<nnodesSanpshot; n++)
+  for (n = 0; n < nnodesSanpshot; n++)
   {
-    node  = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
+    node = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
     if (node)
     {
       node->UpdateScene(this->SnapshotScene);
@@ -378,7 +373,7 @@ void vtkMRMLSceneViewNode::StoreScene()
     if (storableNode)
     {
       if (this->IncludeNodeInSceneView(storableNode) && //
-          storableNode->GetSaveWithScene() )
+          storableNode->GetSaveWithScene())
       {
         if (!storableNode->GetStorageNode())
         {
@@ -403,7 +398,7 @@ void vtkMRMLSceneViewNode::StoreScene()
   {
     vtkMRMLNode* node = this->Scene->GetNthNode(n);
     if (this->IncludeNodeInSceneView(node) && //
-        node->GetSaveWithScene() )
+        node->GetSaveWithScene())
     {
       vtkSmartPointer<vtkMRMLNode> newNode = vtkSmartPointer<vtkMRMLNode>::Take(node->CreateNodeInstance());
 
@@ -446,9 +441,9 @@ void vtkMRMLSceneViewNode::AddMissingNodes()
   vtkMRMLNode* node = nullptr;
   // build the list of nodes in the scene view
   std::map<std::string, vtkMRMLNode*> snapshotMap;
-  for (n=0; n<numNodesInSceneView; n++)
+  for (n = 0; n < numNodesInSceneView; n++)
   {
-    node  = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
+    node = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
     if (node && node->GetID())
     {
       snapshotMap[node->GetID()] = node;
@@ -464,8 +459,7 @@ void vtkMRMLSceneViewNode::AddMissingNodes()
   vtkCollectionSimpleIterator it;
   vtkCollection* sceneNodes = this->Scene->GetNodes();
   int nodesAdded = 0;
-  for (sceneNodes->InitTraversal(it);
-       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
+  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
   {
     std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
     // ignore scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
@@ -527,9 +521,9 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
 
   // remove nodes in the scene which are not stored in the snapshot
   std::map<std::string, vtkMRMLNode*> snapshotMap;
-  for (n=0; n<numNodesInSceneView; n++)
+  for (n = 0; n < numNodesInSceneView; n++)
   {
-    node  = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
+    node = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
     if (node)
     {
       /***
@@ -555,8 +549,7 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
   // Use smart pointer to ensure the nodes still exist when being removed.
   // Indeed, removing a node can have the side effect of removing other nodes.
   std::stack<vtkSmartPointer<vtkMRMLNode>> removedNodes;
-  for (sceneNodes->InitTraversal(it);
-       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
+  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
   {
     std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
     // don't remove the scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
@@ -586,8 +579,7 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
       else
       {
         vtkDebugMacro("RestoreScene encountered a node in the scene that needs to be removed to restore the scene view '"
-          << this->GetSceneViewDescription().c_str() << "'.\n\tNot removing node named '" << nodeToRemove->GetName()
-          << "',\n\tReturning without restoring the scene.");
+                      << this->GetSceneViewDescription().c_str() << "'.\n\tNot removing node named '" << nodeToRemove->GetName() << "',\n\tReturning without restoring the scene.");
         // signal that done trying to restore the scene
         this->Scene->EndState(vtkMRMLScene::RestoreState);
         // signal that there is an error state
@@ -598,7 +590,7 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
   }
 
   std::vector<vtkMRMLNode*> addedNodes;
-  for (n=0; n < numNodesInSceneView; n++)
+  for (n = 0; n < numNodesInSceneView; n++)
   {
     node = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
     if (node)
@@ -629,7 +621,7 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
 
           // to prevent reading data on UpdateScene()
           // but new nodes should read their data
-          //node->SetAddToSceneNoModify(0);
+          // node->SetAddToSceneNoModify(0);
         }
       }
     }
@@ -637,10 +629,9 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
 
   // update all nodes in the scene
 
-  //this->Scene->UpdateNodeReferences(this->Nodes);
+  // this->Scene->UpdateNodeReferences(this->Nodes);
 
-  for (sceneNodes->InitTraversal(it);
-       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
+  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
   {
     if (this->IncludeNodeInSceneView(node) && node->GetSaveWithScene())
     {
@@ -648,19 +639,18 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
     }
   }
 
-  //this->Scene->SetIsClosing(0);
-  for (n=0; n<addedNodes.size(); n++)
+  // this->Scene->SetIsClosing(0);
+  for (n = 0; n < addedNodes.size(); n++)
   {
-    //addedNodes[n]->UpdateScene(this->Scene);
-    //this->Scene->InvokeEvent(vtkMRMLScene::NodeAddedEvent, addedNodes[n] );
+    // addedNodes[n]->UpdateScene(this->Scene);
+    // this->Scene->InvokeEvent(vtkMRMLScene::NodeAddedEvent, addedNodes[n] );
   }
 
   this->Scene->EndState(vtkMRMLScene::RestoreState);
 
 #ifndef NDEBUG
   // sanity checks
-  for (sceneNodes->InitTraversal(it);
-       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
+  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
   {
     assert(node->GetScene() == this->Scene);
   }
@@ -694,9 +684,9 @@ void vtkMRMLSceneViewNode::SetAbsentStorageFileNames()
   unsigned int n;
   vtkMRMLNode* node = nullptr;
 
-  for (n=0; n<numNodesInSceneView; n++)
+  for (n = 0; n < numNodesInSceneView; n++)
   {
-    node  = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
+    node = vtkMRMLNode::SafeDownCast(this->SnapshotScene->GetNodes()->GetItemAsObject(n));
     if (node)
     {
       // for storage nodes replace full path with relative
@@ -722,8 +712,8 @@ void vtkMRMLSceneViewNode::SetAbsentStorageFileNames()
           }
         }
       }
-    } //if (node)
-  } //for (n=0; n<numNodesInSceneView; n++)
+    } // if (node)
+  } // for (n=0; n<numNodesInSceneView; n++)
 }
 
 //----------------------------------------------------------------------------
@@ -735,8 +725,7 @@ vtkMRMLStorageNode* vtkMRMLSceneViewNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLSceneViewStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLSceneViewStorageNode"));
 }
 
 //----------------------------------------------------------------------------
@@ -755,7 +744,7 @@ void vtkMRMLSceneViewNode::SetSceneViewDescription(const std::string& newDescrip
 void vtkMRMLSceneViewNode::SetScreenShot(vtkImageData* newScreenShot)
 {
   this->StorableModifiedTime.Modified();
-  //vtkSetObjectBodyMacro(ScreenShot, vtkImageData, newScreenShot);
+  // vtkSetObjectBodyMacro(ScreenShot, vtkImageData, newScreenShot);
   if (!newScreenShot)
   {
     if (this->ScreenShot)
@@ -787,7 +776,7 @@ void vtkMRMLSceneViewNode::SetScreenShotType(int newScreenShotType)
   this->Modified();
 }
 //----------------------------------------------------------------------------
-int vtkMRMLSceneViewNode::GetNodesByClass(const char* className, std::vector<vtkMRMLNode*> &nodes)
+int vtkMRMLSceneViewNode::GetNodesByClass(const char* className, std::vector<vtkMRMLNode*>& nodes)
 {
   if (!this->SnapshotScene)
   {
@@ -871,7 +860,7 @@ bool vtkMRMLSceneViewNode::IncludeNodeInSceneView(vtkMRMLNode* node)
   return includeInView;
 }
 
-void vtkMRMLSceneViewNode::SetSceneViewRootDir( const char* name)
+void vtkMRMLSceneViewNode::SetSceneViewRootDir(const char* name)
 {
   if (!this->SnapshotScene)
   {

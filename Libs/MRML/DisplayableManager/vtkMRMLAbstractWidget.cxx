@@ -39,7 +39,7 @@ vtkMRMLAbstractWidget::vtkMRMLAbstractWidget()
   this->WidgetRep = nullptr;
   this->WidgetState = vtkMRMLAbstractWidget::WidgetStateIdle;
 
-//  this->NeedToRender = false;
+  //  this->NeedToRender = false;
 }
 
 //----------------------------------------------------------------------
@@ -74,9 +74,12 @@ void vtkMRMLAbstractWidget::SetEventTranslation(unsigned long interactionEvent, 
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLAbstractWidget::SetEventTranslationClickAndDrag(int widgetState, unsigned long startInteractionEvent,
-  int modifiers, int widgetStateDragging,
-  unsigned long widgetStartEvent, unsigned long widgetEndEvent)
+void vtkMRMLAbstractWidget::SetEventTranslationClickAndDrag(int widgetState,
+                                                            unsigned long startInteractionEvent,
+                                                            int modifiers,
+                                                            int widgetStateDragging,
+                                                            unsigned long widgetStartEvent,
+                                                            unsigned long widgetEndEvent)
 {
   unsigned long endInteractionEvent = WidgetEventNone;
   switch (startInteractionEvent)
@@ -91,13 +94,11 @@ void vtkMRMLAbstractWidget::SetEventTranslationClickAndDrag(int widgetState, uns
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLAbstractWidget::SetKeyboardEventTranslation(
-  int widgetState, int modifier, char keyCode,
-  int repeatCount, const char* keySym, unsigned long widgetEvent)
+void vtkMRMLAbstractWidget::SetKeyboardEventTranslation(int widgetState, int modifier, char keyCode, int repeatCount, const char* keySym, unsigned long widgetEvent)
 {
   if (widgetState >= static_cast<int>(this->EventTranslators.size()))
   {
-    this->EventTranslators.resize(widgetState +1);
+    this->EventTranslators.resize(widgetState + 1);
   }
   vtkWidgetEventTranslator* translator = this->EventTranslators[widgetState];
   if (!translator)
@@ -105,17 +106,13 @@ void vtkMRMLAbstractWidget::SetKeyboardEventTranslation(
     this->EventTranslators[widgetState] = vtkSmartPointer<vtkWidgetEventTranslator>::New();
     translator = this->EventTranslators[widgetState];
   }
-  translator->SetTranslation(vtkCommand::KeyPressEvent, modifier, keyCode,
-    repeatCount, keySym, widgetEvent);
+  translator->SetTranslation(vtkCommand::KeyPressEvent, modifier, keyCode, repeatCount, keySym, widgetEvent);
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLAbstractWidget::SetKeyboardEventTranslation(
-  int modifier, char keyCode,
-  int repeatCount, const char* keySym, unsigned long widgetEvent)
+void vtkMRMLAbstractWidget::SetKeyboardEventTranslation(int modifier, char keyCode, int repeatCount, const char* keySym, unsigned long widgetEvent)
 {
-  this->SetKeyboardEventTranslation(WidgetStateAny, modifier, keyCode,
-    repeatCount, keySym, widgetEvent);
+  this->SetKeyboardEventTranslation(WidgetStateAny, modifier, keyCode, repeatCount, keySym, widgetEvent);
 }
 
 //-------------------------------------------------------------------------
@@ -163,7 +160,6 @@ void vtkMRMLAbstractWidget::SetRepresentation(vtkMRMLAbstractWidgetRepresentatio
     }
     this->WidgetRep->SetApplicationLogic(this->ApplicationLogic);
   }
-
 }
 
 //-------------------------------------------------------------------------
@@ -173,7 +169,7 @@ vtkMRMLAbstractWidgetRepresentation* vtkMRMLAbstractWidget::GetRepresentation()
 }
 
 //-------------------------------------------------------------------------
-void vtkMRMLAbstractWidget::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData/*=nullptr*/)
+void vtkMRMLAbstractWidget::UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   if (!this->WidgetRep)
   {
@@ -191,8 +187,7 @@ void vtkMRMLAbstractWidget::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------------------------
-unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(
-  vtkMRMLInteractionEventData* eventData)
+unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(vtkMRMLInteractionEventData* eventData)
 {
   if (!eventData)
   {
@@ -229,8 +224,7 @@ unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(
 }
 
 //-----------------------------------------------------------------------------
-unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(
-  vtkWidgetEventTranslator* translator, vtkMRMLInteractionEventData* eventData)
+unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(vtkWidgetEventTranslator* translator, vtkMRMLInteractionEventData* eventData)
 {
   unsigned long widgetEvent = WidgetEventNone;
 
@@ -256,13 +250,11 @@ unsigned long vtkMRMLAbstractWidget::TranslateInteractionEventToWidgetEvent(
     // NoModifier a preference over AnyModifer.
     if (modifier == vtkEvent::AnyModifier)
     {
-      widgetEvent = translator->GetTranslation(vtkCommand::KeyPressEvent,
-        vtkEvent::NoModifier, keyCode, repeatCount, keySym);
+      widgetEvent = translator->GetTranslation(vtkCommand::KeyPressEvent, vtkEvent::NoModifier, keyCode, repeatCount, keySym);
     }
     if (widgetEvent == WidgetEventNone)
     {
-      widgetEvent = translator->GetTranslation(vtkCommand::KeyPressEvent,
-        modifier, keyCode, repeatCount, keySym);
+      widgetEvent = translator->GetTranslation(vtkCommand::KeyPressEvent, modifier, keyCode, repeatCount, keySym);
     }
   }
   else
@@ -318,10 +310,8 @@ bool vtkMRMLAbstractWidget::GetInteractive()
   {
     case WidgetStateTranslate:
     case WidgetStateScale:
-    case WidgetStateRotate:
-      return true;
-    default:
-      return false;
+    case WidgetStateRotate: return true;
+    default: return false;
   }
 }
 
@@ -333,16 +323,16 @@ bool vtkMRMLAbstractWidget::GetNeedToRender()
     return false;
   }
   return this->WidgetRep->GetNeedToRender();
-/*
-  if (this->NeedToRender)
-    {
-    return true;
-    }
-  if (this->WidgetRep && this->WidgetRep->GetNeedToRender())
-    {
-    return true;
-    }
-  return false;*/
+  /*
+    if (this->NeedToRender)
+      {
+      return true;
+      }
+    if (this->WidgetRep && this->WidgetRep->GetNeedToRender())
+      {
+      return true;
+      }
+    return false;*/
 }
 
 //-------------------------------------------------------------------------
@@ -353,13 +343,13 @@ void vtkMRMLAbstractWidget::NeedToRenderOff()
     return;
   }
   this->WidgetRep->NeedToRenderOff();
-/*
-  this->NeedToRender = false;
-  if (this->WidgetRep)
-    {
-    this->WidgetRep->NeedToRenderOff();
-    }
-*/
+  /*
+    this->NeedToRender = false;
+    if (this->WidgetRep)
+      {
+      this->WidgetRep->NeedToRenderOff();
+      }
+  */
 }
 
 //----------------------------------------------------------------------
@@ -477,17 +467,10 @@ bool vtkMRMLAbstractWidget::CanProcessButtonClickEvent(vtkMRMLInteractionEventDa
   int clickEvent = 0;
   switch (eventData->GetType())
   {
-    case vtkCommand::LeftButtonReleaseEvent:
-      clickEvent = vtkMRMLInteractionEventData::LeftButtonClickEvent;
-      break;
-    case vtkCommand::MiddleButtonReleaseEvent:
-      clickEvent = vtkMRMLInteractionEventData::MiddleButtonClickEvent;
-      break;
-    case vtkCommand::RightButtonReleaseEvent:
-      clickEvent = vtkMRMLInteractionEventData::RightButtonClickEvent;
-      break;
-    default:
-      return false;
+    case vtkCommand::LeftButtonReleaseEvent: clickEvent = vtkMRMLInteractionEventData::LeftButtonClickEvent; break;
+    case vtkCommand::MiddleButtonReleaseEvent: clickEvent = vtkMRMLInteractionEventData::MiddleButtonClickEvent; break;
+    case vtkCommand::RightButtonReleaseEvent: clickEvent = vtkMRMLInteractionEventData::RightButtonClickEvent; break;
+    default: return false;
   }
 
   // Temporarily change the event ID to click, and process the event
@@ -509,17 +492,10 @@ int vtkMRMLAbstractWidget::ProcessButtonClickEvent(vtkMRMLInteractionEventData* 
   int clickEvent = 0;
   switch (eventData->GetType())
   {
-    case vtkCommand::LeftButtonReleaseEvent:
-      clickEvent = vtkMRMLInteractionEventData::LeftButtonClickEvent;
-      break;
-    case vtkCommand::MiddleButtonReleaseEvent:
-      clickEvent = vtkMRMLInteractionEventData::MiddleButtonClickEvent;
-      break;
-    case vtkCommand::RightButtonReleaseEvent:
-      clickEvent = vtkMRMLInteractionEventData::RightButtonClickEvent;
-      break;
-    default:
-      return false;
+    case vtkCommand::LeftButtonReleaseEvent: clickEvent = vtkMRMLInteractionEventData::LeftButtonClickEvent; break;
+    case vtkCommand::MiddleButtonReleaseEvent: clickEvent = vtkMRMLInteractionEventData::MiddleButtonClickEvent; break;
+    case vtkCommand::RightButtonReleaseEvent: clickEvent = vtkMRMLInteractionEventData::RightButtonClickEvent; break;
+    default: return false;
   }
 
   // Temporarily change the event ID to click, and process the event

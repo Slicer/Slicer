@@ -42,7 +42,8 @@ public:
   qSlicerScriptedLoadableModuleWidgetPrivate();
   virtual ~qSlicerScriptedLoadableModuleWidgetPrivate();
 
-  enum {
+  enum
+  {
     SetupMethod = 0,
     EnterMethod,
     ExitMethod,
@@ -52,7 +53,7 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSourceFilePath;
+  QString PythonSourceFilePath;
 };
 
 //-----------------------------------------------------------------------------
@@ -76,7 +77,8 @@ qSlicerScriptedLoadableModuleWidgetPrivate::~qSlicerScriptedLoadableModuleWidget
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModuleWidget::qSlicerScriptedLoadableModuleWidget(QWidget* parentWidget)
-  : Superclass(parentWidget), d_ptr(new qSlicerScriptedLoadableModuleWidgetPrivate)
+  : Superclass(parentWidget)
+  , d_ptr(new qSlicerScriptedLoadableModuleWidgetPrivate)
 {
   new QVBoxLayout(this);
 }
@@ -157,7 +159,10 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModuleWidget::setPythonSource - "
                             "Failed to load scripted loadable module widget: "
-                            "class %1 was not found in %2").arg(className).arg(filePath).toUtf8());
+                            "class %1 was not found in %2")
+                      .arg(className)
+                      .arg(filePath)
+                      .toUtf8());
     PythonQt::self()->handleError();
     return false;
   }
@@ -172,8 +177,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
 
   d->PythonSourceFilePath = filePath;
 
-  if (!qSlicerScriptedUtils::setModuleAttribute(
-        "slicer.modules", className, self))
+  if (!qSlicerScriptedUtils::setModuleAttribute("slicer.modules", className, self))
   {
     qCritical() << "Failed to set" << ("slicer.modules." + className);
   }
@@ -225,9 +229,7 @@ void qSlicerScriptedLoadableModuleWidget::exit()
 }
 
 //-----------------------------------------------------------
-bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node,
-                                                        QString role /* = QString()*/,
-                                                        QString context /* = QString()*/)
+bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString()*/)
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
   PyObject* arguments = PyTuple_New(3);

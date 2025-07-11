@@ -31,8 +31,7 @@
 class qSlicerFileReaderOptions;
 class qSlicerFileReaderPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileReader
-  : public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileReader : public qSlicerIO
 {
   Q_OBJECT
 public:

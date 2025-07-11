@@ -45,7 +45,7 @@ vtkSegmentationHistory::vtkSegmentationHistory()
   this->RestoreStateInProgress = false;
 
   this->SegmentationModifiedCallbackCommand = vtkCallbackCommand::New();
-  this->SegmentationModifiedCallbackCommand->SetClientData( reinterpret_cast<void*>(this) );
+  this->SegmentationModifiedCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
   this->SegmentationModifiedCallbackCommand->SetCallback(vtkSegmentationHistory::OnSegmentationModified);
 }
 
@@ -84,7 +84,7 @@ void vtkSegmentationHistory::SetSegmentation(vtkSegmentation* segmentation)
     this->Segmentation->AddObserver(vtkSegmentation::SegmentRemoved, this->SegmentationModifiedCallbackCommand);
     this->Segmentation->AddObserver(vtkSegmentation::SegmentModified, this->SegmentationModifiedCallbackCommand);
     this->Segmentation->AddObserver(vtkSegmentation::SourceRepresentationModified, this->SegmentationModifiedCallbackCommand);
-    //this->Segmentation->AddObserver(vtkSegmentation::ContainedRepresentationNamesModified, this->SegmentationModifiedCallbackCommand);
+    // this->Segmentation->AddObserver(vtkSegmentation::ContainedRepresentationNamesModified, this->SegmentationModifiedCallbackCommand);
   }
 }
 
@@ -226,8 +226,7 @@ bool vtkSegmentationHistory::RestoreState(unsigned int stateIndex)
 
   std::set<std::string> segmentIDsToKeep;
   std::map<vtkDataObject*, vtkDataObject*> restoredRepresentations;
-  for (SegmentsMap::iterator restoredSegmentsIt = restoredState.Segments.begin();
-    restoredSegmentsIt != restoredState.Segments.end(); ++restoredSegmentsIt)
+  for (SegmentsMap::iterator restoredSegmentsIt = restoredState.Segments.begin(); restoredSegmentsIt != restoredState.Segments.end(); ++restoredSegmentsIt)
   {
     vtkSegment* segmentToRestore = restoredSegmentsIt->second;
     segmentIDsToKeep.insert(restoredSegmentsIt->first);
@@ -348,10 +347,7 @@ void vtkSegmentationHistory::SetMaximumNumberOfStates(unsigned int maximumNumber
 }
 
 //---------------------------------------------------------------------------
-void vtkSegmentationHistory::OnSegmentationModified(vtkObject* vtkNotUsed(caller),
-  unsigned long vtkNotUsed(eid),
-  void* clientData,
-  void* vtkNotUsed(callData))
+void vtkSegmentationHistory::OnSegmentationModified(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkSegmentationHistory* self = reinterpret_cast<vtkSegmentationHistory*>(clientData);
   if (!self)

@@ -58,7 +58,7 @@ int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   vtkMRMLHierarchyNode* hierarchyNode = nullptr;
   if (refNode->IsA("vtkMRMLHierarchyNode"))
   {
-    hierarchyNode = dynamic_cast<vtkMRMLHierarchyNode*> (refNode);
+    hierarchyNode = dynamic_cast<vtkMRMLHierarchyNode*>(refNode);
   }
 
   if (hierarchyNode == nullptr)
@@ -74,7 +74,7 @@ int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   if (fstr.is_open())
   {
-    //turn off modified events
+    // turn off modified events
     int modFlag = hierarchyNode->GetDisableModifiedEvent();
     hierarchyNode->DisableModifiedEventOn();
 
@@ -110,7 +110,7 @@ int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkMRMLHierarchyNode* hierarchyNode = nullptr;
   if (refNode->IsA("vtkMRMLHierarchyNode"))
   {
-    hierarchyNode = dynamic_cast<vtkMRMLHierarchyNode*> (refNode);
+    hierarchyNode = dynamic_cast<vtkMRMLHierarchyNode*>(refNode);
   }
 
   if (hierarchyNode == nullptr)
@@ -126,8 +126,8 @@ int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   if (!of.is_open())
   {
-  vtkErrorMacro("WriteData: unable to open file " << fullName.c_str() << " for writing");
-  return 0;
+    vtkErrorMacro("WriteData: unable to open file " << fullName.c_str() << " for writing");
+    return 0;
   }
 
   // put down a header
@@ -138,7 +138,6 @@ int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   this->StageWriteData(refNode);
 
   return 1;
-
 }
 
 //----------------------------------------------------------------------------

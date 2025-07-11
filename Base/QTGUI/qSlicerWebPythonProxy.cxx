@@ -96,21 +96,13 @@ QString qSlicerWebPythonProxy::evalPython(const QString& python, int mode)
 {
   Q_D(qSlicerWebPythonProxy);
 
-  ctkAbstractPythonManager::ExecuteStringMode executeStringMode{ctkAbstractPythonManager::FileInput};
+  ctkAbstractPythonManager::ExecuteStringMode executeStringMode{ ctkAbstractPythonManager::FileInput };
   switch (mode)
   {
-    case qSlicerWebPythonProxy::EvalInput:
-      executeStringMode = ctkAbstractPythonManager::EvalInput;
-      break;
-    case qSlicerWebPythonProxy::FileInput:
-      executeStringMode = ctkAbstractPythonManager::FileInput;
-      break;
-    case qSlicerWebPythonProxy::SingleInput:
-      executeStringMode = ctkAbstractPythonManager::SingleInput;
-      break;
-    default:
-      qWarning() << Q_FUNC_INFO << " failed: Unknown mode" << mode;
-      break;
+    case qSlicerWebPythonProxy::EvalInput: executeStringMode = ctkAbstractPythonManager::EvalInput; break;
+    case qSlicerWebPythonProxy::FileInput: executeStringMode = ctkAbstractPythonManager::FileInput; break;
+    case qSlicerWebPythonProxy::SingleInput: executeStringMode = ctkAbstractPythonManager::SingleInput; break;
+    default: qWarning() << Q_FUNC_INFO << " failed: Unknown mode" << mode; break;
   }
 
   QString result;

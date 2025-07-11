@@ -74,8 +74,7 @@ protected slots:
 
 protected:
   QScopedPointer<qMRMLVolumeWidgetPrivate> d_ptr;
-  qMRMLVolumeWidget(qMRMLVolumeWidgetPrivate* ptr,
-                    QWidget* parentWidget = nullptr);
+  qMRMLVolumeWidget(qMRMLVolumeWidgetPrivate* ptr, QWidget* parentWidget = nullptr);
 
   /// Return the volume display node.
   vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode() const;

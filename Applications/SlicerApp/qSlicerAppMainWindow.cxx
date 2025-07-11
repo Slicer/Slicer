@@ -201,8 +201,7 @@ qSlicerAppMainWindow::qSlicerAppMainWindow(QWidget* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAppMainWindow::qSlicerAppMainWindow(qSlicerAppMainWindowPrivate* pimpl,
-                                           QWidget* windowParent)
+qSlicerAppMainWindow::qSlicerAppMainWindow(qSlicerAppMainWindowPrivate* pimpl, QWidget* windowParent)
   : Superclass(pimpl, windowParent)
 {
   // init() is called by derived class.
@@ -224,8 +223,7 @@ void qSlicerAppMainWindow::on_HelpKeyboardShortcutsAction_triggered()
   qSlicerModuleManager* moduleManager = qSlicerApplication::application()->moduleManager();
   foreach (const QString& moduleName, moduleManager->modulesNames())
   {
-    qSlicerAbstractModule* module =
-      qobject_cast<qSlicerAbstractModule*>(moduleManager->module(moduleName));
+    qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(moduleManager->module(moduleName));
     if (module)
     {
       moduleActions << module->action();

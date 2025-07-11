@@ -38,8 +38,7 @@ class vtkMRMLViewNode;
 
 // VTK includes
 
-class QMRML_WIDGETS_EXPORT qMRMLThreeDViewControllerWidget
-  : public qMRMLViewControllerBar
+class QMRML_WIDGETS_EXPORT qMRMLThreeDViewControllerWidget : public qMRMLViewControllerBar
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -111,8 +110,7 @@ public slots:
   void setWhiteBackground();
 
   /// If the second color is not set, the first color is used.
-  void setBackgroundColor(const QColor& color,
-                          QColor color2 = QColor());
+  void setBackgroundColor(const QColor& color, QColor color2 = QColor());
 
   /// Utility function to change color of the box
   void setBoxColor(const QColor& color);

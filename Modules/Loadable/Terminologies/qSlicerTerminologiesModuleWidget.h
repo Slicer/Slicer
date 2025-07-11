@@ -31,13 +31,11 @@
 class qSlicerTerminologiesModuleWidgetPrivate;
 class vtkMRMLNode;
 
-class Q_SLICER_QTMODULES_TERMINOLOGIES_EXPORT qSlicerTerminologiesModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_TERMINOLOGIES_EXPORT qSlicerTerminologiesModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTerminologiesModuleWidget(QWidget* parent = nullptr);
   ~qSlicerTerminologiesModuleWidget() override;

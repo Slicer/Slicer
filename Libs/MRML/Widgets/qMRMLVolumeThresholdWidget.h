@@ -22,11 +22,10 @@
 #include "qMRMLVolumeWidget.h"
 class qMRMLVolumeThresholdWidgetPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget
-  : public qMRMLVolumeWidget
+class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget : public qMRMLVolumeWidget
 {
   Q_OBJECT
-  Q_PROPERTY(int  autoThreshold READ autoThreshold WRITE setAutoThreshold)
+  Q_PROPERTY(int autoThreshold READ autoThreshold WRITE setAutoThreshold)
   Q_PROPERTY(double lowerThreshold READ lowerThreshold WRITE setLowerThreshold)
   Q_PROPERTY(double upperThreshold READ upperThreshold WRITE setUpperThreshold)
   Q_PROPERTY(double lowerThresholdBound READ lowerThresholdBound WRITE setLowerThresholdBound)
@@ -43,7 +42,7 @@ public:
   {
     Auto = 0,
     Manual = 1,
-    Off =2
+    Off = 2
   };
 
   ControlMode autoThreshold() const;

@@ -38,7 +38,7 @@
 
 // MRMLWidgets includes
 #include <qMRMLUtils.h>
-//#include <qMRMLPlotModel.h>
+// #include <qMRMLPlotModel.h>
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
@@ -57,12 +57,14 @@
 class qSlicerPlotsModuleWidgetPrivate : public Ui_qSlicerPlotsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerPlotsModuleWidget);
+
 protected:
   qSlicerPlotsModuleWidget* const q_ptr;
+
 public:
   qSlicerPlotsModuleWidgetPrivate(qSlicerPlotsModuleWidget& object);
 
-  vtkSlicerPlotsLogic*      logic() const;
+  vtkSlicerPlotsLogic* logic() const;
 
   vtkWeakPointer<vtkMRMLPlotChartNode> MRMLPlotChartNode;
   vtkWeakPointer<vtkMRMLPlotSeriesNode> MRMLPlotSeriesNode;
@@ -128,7 +130,7 @@ void qSlicerPlotsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   d->MRMLPlotChartNode = chartNode;
 
   // Update GUI from the newly selected node
-  //this->onMRMLPlotChartNodeModified(d->MRMLPlotChartNode);
+  // this->onMRMLPlotChartNodeModified(d->MRMLPlotChartNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -196,8 +198,8 @@ void qSlicerPlotsModuleWidget::onLockPlotButtonClicked()
   }
 
   // toggle the lock
-  //int locked = d->MRMLPlotChartNode->GetLocked();
-  //d->MRMLPlotChartNode->SetLocked(!locked);
+  // int locked = d->MRMLPlotChartNode->GetLocked();
+  // d->MRMLPlotChartNode->SetLocked(!locked);
 }
 
 //-----------------------------------------------------------------------------
@@ -209,9 +211,7 @@ void qSlicerPlotsModuleWidget::setCurrentPlotNode(vtkMRMLNode* tableNode)
 }
 
 //-----------------------------------------------------------
-bool qSlicerPlotsModuleWidget::setEditedNode(vtkMRMLNode* node,
-                                              QString role /* = QString()*/,
-                                              QString context /* = QString()*/)
+bool qSlicerPlotsModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString()*/)
 {
   Q_D(qSlicerPlotsModuleWidget);
   Q_UNUSED(role);
@@ -250,11 +250,10 @@ void qSlicerPlotsModuleWidget::onCopyPlotSeriesNodeClicked()
     return;
   }
 
-
   vtkMRMLPlotSeriesNode* clonedSeriesNode = logic->CloneSeries(d->MRMLPlotSeriesNode, nullptr);
 
   // Add the cloned node to the selected chart node
-  if (d->MRMLPlotChartNode!= nullptr)
+  if (d->MRMLPlotChartNode != nullptr)
   {
     d->MRMLPlotChartNode->AddAndObservePlotSeriesNodeID(clonedSeriesNode->GetID());
   }

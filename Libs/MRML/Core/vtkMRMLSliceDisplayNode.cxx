@@ -31,9 +31,7 @@ vtkMRMLSliceDisplayNode::vtkMRMLSliceDisplayNode()
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSliceDisplayNode::~vtkMRMLSliceDisplayNode()
-{
-}
+vtkMRMLSliceDisplayNode::~vtkMRMLSliceDisplayNode() {}
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
@@ -48,21 +46,21 @@ void vtkMRMLSliceDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintIntMacro(IntersectingSlicesIntersectionMode);
   vtkMRMLPrintIntMacro(IntersectingSlicesLineThicknessMode);
   {
-  os << indent << "ActiveComponents:";
-  for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
-  {
-    os << indent << indent;
-    if (it->first.empty())
+    os << indent << "ActiveComponents:";
+    for (std::map<std::string, ComponentInfo>::iterator it = this->ActiveComponents.begin(); it != this->ActiveComponents.end(); ++it)
     {
-      os << "(default)";
+      os << indent << indent;
+      if (it->first.empty())
+      {
+        os << "(default)";
+      }
+      else
+      {
+        os << it->first;
+      }
+      os << ": " << it->second.Type << ", " << it->second.Index;
     }
-    else
-    {
-      os << it->first;
-    }
-    os << ": " << it->second.Type << ", " << it->second.Index;
-  }
-  os << "\n";
+    os << "\n";
   }
   vtkMRMLPrintEndMacro();
 }
@@ -102,7 +100,7 @@ void vtkMRMLSliceDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLSliceDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -124,35 +122,24 @@ void vtkMRMLSliceDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSliceDisplayNode::SetIntersectingSlicesInteractiveModeEnabled(
-  IntersectingSlicesInteractiveMode mode, bool enabled)
+void vtkMRMLSliceDisplayNode::SetIntersectingSlicesInteractiveModeEnabled(IntersectingSlicesInteractiveMode mode, bool enabled)
 {
   switch (mode)
   {
-    case vtkMRMLSliceDisplayNode::ModeTranslation:
-      this->SetIntersectingSlicesTranslationEnabled(enabled);
-      break;
-    case vtkMRMLSliceDisplayNode::ModeRotation:
-      this->SetIntersectingSlicesRotationEnabled(enabled);
-      break;
-    default:
-      vtkErrorMacro("Unknown mode");
-      break;
+    case vtkMRMLSliceDisplayNode::ModeTranslation: this->SetIntersectingSlicesTranslationEnabled(enabled); break;
+    case vtkMRMLSliceDisplayNode::ModeRotation: this->SetIntersectingSlicesRotationEnabled(enabled); break;
+    default: vtkErrorMacro("Unknown mode"); break;
   }
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveModeEnabled(
-  IntersectingSlicesInteractiveMode mode)
+bool vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveModeEnabled(IntersectingSlicesInteractiveMode mode)
 {
   switch (mode)
   {
-    case vtkMRMLSliceDisplayNode::ModeTranslation:
-      return this->GetIntersectingSlicesTranslationEnabled();
-    case vtkMRMLSliceDisplayNode::ModeRotation:
-      return this->GetIntersectingSlicesRotationEnabled();
-    default:
-      vtkErrorMacro("Unknown mode");
+    case vtkMRMLSliceDisplayNode::ModeTranslation: return this->GetIntersectingSlicesTranslationEnabled();
+    case vtkMRMLSliceDisplayNode::ModeRotation: return this->GetIntersectingSlicesRotationEnabled();
+    default: vtkErrorMacro("Unknown mode");
   }
   return false;
 }
@@ -185,7 +172,7 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesInteractiveHandlesVisi
     case NeverVisible: return "NeverVisible";
     case NearbyVisible: return "NearbyVisible";
     case AlwaysVisible: return "AlwaysVisible";
-    //case FadingVisible: return "FadingVisible";
+    // case FadingVisible: return "FadingVisible";
     default:
       // invalid id
       return "Invalid";
@@ -260,7 +247,7 @@ const char* vtkMRMLSliceDisplayNode::GetIntersectingSlicesLineThicknessModeAsStr
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context/*=GetDefaultContextName()*/)
+int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context /*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
   {
@@ -272,7 +259,7 @@ int vtkMRMLSliceDisplayNode::GetActiveComponentType(std::string context/*=GetDef
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLSliceDisplayNode::GetActiveComponentIndex(std::string context/*=GetDefaultContextName()*/)
+int vtkMRMLSliceDisplayNode::GetActiveComponentIndex(std::string context /*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) == this->ActiveComponents.end())
   {
@@ -284,11 +271,11 @@ int vtkMRMLSliceDisplayNode::GetActiveComponentIndex(std::string context/*=GetDe
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSliceDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context/*=GetDefaultContextName()*/)
+void vtkMRMLSliceDisplayNode::SetActiveComponent(int componentType, int componentIndex, std::string context /*=GetDefaultContextName()*/)
 {
   if (this->ActiveComponents.find(context) != this->ActiveComponents.end() //
-      && this->ActiveComponents[context].Type == componentType               //
-      && this->ActiveComponents[context].Index == componentIndex )
+      && this->ActiveComponents[context].Type == componentType             //
+      && this->ActiveComponents[context].Index == componentIndex)
   {
     // no change
     return;

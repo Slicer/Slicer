@@ -64,7 +64,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
   /// Control in which column data MRML node color is displayed.
   /// A value of -1 (default) hides the column
   Q_PROPERTY(int colorColumn READ colorColumn WRITE setColorColumn)
-    /// Control in which column the parent transforms are displayed
+  /// Control in which column the parent transforms are displayed
   /// A MRML node combobox is displayed in the row of the transformable nodes, in which
   /// the current transform is selected. The user can change the transform using the combobox.
   /// A value of -1 (default) hides the column
@@ -128,8 +128,7 @@ public:
 
   Qt::DropActions supportedDropActions() const override;
   QMimeData* mimeData(const QModelIndexList& indexes) const override;
-  bool dropMimeData(const QMimeData* data, Qt::DropAction action,
-                            int row, int column, const QModelIndex& parent) override;
+  bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
 
   Q_INVOKABLE virtual void setMRMLScene(vtkMRMLScene* scene);
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
@@ -220,18 +219,14 @@ protected:
   virtual void rebuildFromSubjectHierarchy();
 
   virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID);
-  virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, QStandardItem* parent, int row=-1);
+  virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, QStandardItem* parent, int row = -1);
 
   virtual QFlags<Qt::ItemFlag> subjectHierarchyItemFlags(vtkIdType itemID, int column) const;
 
-  virtual void updateItemFromSubjectHierarchyItem(
-    QStandardItem* item, vtkIdType shItemID, int column );
-  virtual void updateItemDataFromSubjectHierarchyItem(
-    QStandardItem* item, vtkIdType shItemID, int column );
-  virtual void updateSubjectHierarchyItemFromItem(
-    vtkIdType shItemID, QStandardItem* item );
-  virtual void updateSubjectHierarchyItemFromItemData(
-    vtkIdType shItemID, QStandardItem* item );
+  virtual void updateItemFromSubjectHierarchyItem(QStandardItem* item, vtkIdType shItemID, int column);
+  virtual void updateItemDataFromSubjectHierarchyItem(QStandardItem* item, vtkIdType shItemID, int column);
+  virtual void updateSubjectHierarchyItemFromItem(vtkIdType shItemID, QStandardItem* item);
+  virtual void updateSubjectHierarchyItemFromItemData(vtkIdType shItemID, QStandardItem* item);
 
   /// Update the model items associated with the subject hierarchy item
   void updateModelItems(vtkIdType itemID);

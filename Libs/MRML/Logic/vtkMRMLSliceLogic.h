@@ -80,7 +80,7 @@ public:
 
   /// The MRML slice node for this slice logic
   vtkGetObjectMacro(SliceNode, vtkMRMLSliceNode);
-  void SetSliceNode (vtkMRMLSliceNode* newSliceNode);
+  void SetSliceNode(vtkMRMLSliceNode* newSliceNode);
 
   /// Convenience function for adding a slice node and setting it in this logic
   vtkMRMLSliceNode* AddSliceNode(const char* layoutName);
@@ -88,25 +88,25 @@ public:
   /// @{
   /// The MRML slice node for this slice logic
   vtkGetObjectMacro(SliceCompositeNode, vtkMRMLSliceCompositeNode);
-  void SetSliceCompositeNode (vtkMRMLSliceCompositeNode* SliceCompositeNode);
+  void SetSliceCompositeNode(vtkMRMLSliceCompositeNode* SliceCompositeNode);
   /// @}
 
   /// @{
   /// The background slice layer
   vtkMRMLSliceLayerLogic* GetBackgroundLayer();
-  void SetBackgroundLayer (vtkMRMLSliceLayerLogic* BackgroundLayer);
+  void SetBackgroundLayer(vtkMRMLSliceLayerLogic* BackgroundLayer);
   /// @}
 
   /// @{
   /// The foreground slice layer
   vtkMRMLSliceLayerLogic* GetForegroundLayer();
-  void SetForegroundLayer (vtkMRMLSliceLayerLogic* ForegroundLayer);
+  void SetForegroundLayer(vtkMRMLSliceLayerLogic* ForegroundLayer);
   /// @}
 
   /// @{
   /// The Label slice layer
   vtkMRMLSliceLayerLogic* GetLabelLayer();
-  void SetLabelLayer (vtkMRMLSliceLayerLogic* LabelLayer);
+  void SetLabelLayer(vtkMRMLSliceLayerLogic* LabelLayer);
   /// @}
 
   vtkMRMLSliceLayerLogic* GetNthLayer(int layerIndex);
@@ -124,24 +124,20 @@ public:
 
   /// Helper to get the background layer Window/Level, intensity range and
   /// status of automatic Window/Level setting
-  void GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                        double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+  void GetBackgroundWindowLevelAndRange(double& window, double& level, double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
 
   /// Helper to get the background layer Window/Level and intensity range
-  void GetBackgroundWindowLevelAndRange(double& window, double& level,
-                                        double& rangeLow, double& rangeHigh);
+  void GetBackgroundWindowLevelAndRange(double& window, double& level, double& rangeLow, double& rangeHigh);
 
   /// Helper to set the foreground layer Window/Level
   void SetForegroundWindowLevel(double window, double level);
 
   /// Helper to get the foreground layer Window/Level, intensity range and
   /// status of automatic Window/Level setting
-  void GetForegroundWindowLevelAndRange(double& window, double& level,
-                                        double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+  void GetForegroundWindowLevelAndRange(double& window, double& level, double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
 
   /// Helper to get the foreground layer Window/Level and intensity range
-  void GetForegroundWindowLevelAndRange(double& window, double& level,
-                                        double& rangeLow, double& rangeHigh);
+  void GetForegroundWindowLevelAndRange(double& window, double& level, double& rangeLow, double& rangeHigh);
 
   /// Model slice plane
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
@@ -384,16 +380,13 @@ public:
   bool GetSliceOffsetRangeResolution(double range[2], double& resolution);
 
 protected:
-
   vtkMRMLSliceLogic();
   ~vtkMRMLSliceLogic() override;
 
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   /// process logic events
-  void ProcessMRMLLogicsEvents(vtkObject* caller,
-                               unsigned long event,
-                               void* callData) override;
+  void ProcessMRMLLogicsEvents(vtkObject* caller, unsigned long event, void* callData) override;
   void ProcessMRMLLogicsEvents();
 
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
@@ -407,10 +400,8 @@ protected:
   void SetupCrosshairNode();
 
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
-  static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLScene* scene,
-                                                          const char* layoutName);
-  static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene,
-    const char* layoutName);
+  static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLScene* scene, const char* layoutName);
+  static vtkMRMLSliceNode* GetSliceNode(vtkMRMLScene* scene, const char* layoutName);
 
   /// Set volume associated with a layer
   void SetNthLayerVolumeNode(int layerIndex, vtkMRMLVolumeNode* volumeNode);
@@ -418,15 +409,14 @@ protected:
   /// @{
   /// Helper to get/set Window/Level in any layer
   void SetWindowLevel(int layer, double window, double level);
-  void GetWindowLevelAndRange(int layer, double& window, double& level,
-                                      double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
+  void GetWindowLevelAndRange(int layer, double& window, double& level, double& rangeLow, double& rangeHigh, bool& autoWindowLevel);
   /// @}
 
   /// Helper to update input of blend filter from a set of layers.
   /// It minimizes changes to the imaging pipeline (does not remove and
   /// re-add an input if it is not changed) because rebuilding of the pipeline
   /// is a relatively expensive operation.
-  static bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo> &layers, bool clipToBackgroundVolume);
+  static bool UpdateBlendLayers(vtkImageBlend* blend, const std::deque<SliceLayerInfo>& layers, bool clipToBackgroundVolume);
 
   /// Helper to update the operation to perform based on compositing mode.
   static bool UpdateAddSubOperation(vtkImageMathematics* addSubMath, int compositing);
@@ -452,8 +442,9 @@ protected:
   /// Deprecated. Returns true if the volume's window/level values are editable on the GUI.
   bool VolumeWindowLevelEditable(const char* vtkNotUsed(volumeNodeID))
   {
-    vtkWarningMacro("vtkMRMLSliceLogic::VolumeWindowLevelEditable method is deprecated. Volume Window Level is always editable. Use the interaction node to check if in editing mode. "
-                    "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
+    vtkWarningMacro(
+      "vtkMRMLSliceLogic::VolumeWindowLevelEditable method is deprecated. Volume Window Level is always editable. Use the interaction node to check if in editing mode. "
+      "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
     return true;
   };
 
@@ -464,26 +455,24 @@ protected:
 
   LayerList Layers;
 
-  bool                          AddingSliceModelNodes;
+  bool AddingSliceModelNodes;
 
-  vtkMRMLSliceNode*             SliceNode;
-  vtkMRMLSliceCompositeNode*    SliceCompositeNode;
+  vtkMRMLSliceNode* SliceNode;
+  vtkMRMLSliceCompositeNode* SliceCompositeNode;
 
-  BlendPipeline*                Pipeline;
-  BlendPipeline*                PipelineUVW;
-  vtkImageReslice*              ExtractModelTexture;
-  vtkAlgorithmOutput*           ImageDataConnection;
+  BlendPipeline* Pipeline;
+  BlendPipeline* PipelineUVW;
+  vtkImageReslice* ExtractModelTexture;
+  vtkAlgorithmOutput* ImageDataConnection;
 
-  vtkMRMLModelNode*             SliceModelNode;
-  vtkMRMLModelDisplayNode*      SliceModelDisplayNode;
-  vtkMRMLLinearTransformNode*   SliceModelTransformNode;
-  double                        SliceSpacing[3];
+  vtkMRMLModelNode* SliceModelNode;
+  vtkMRMLModelDisplayNode* SliceModelDisplayNode;
+  vtkMRMLLinearTransformNode* SliceModelTransformNode;
+  double SliceSpacing[3];
 
 private:
-
   vtkMRMLSliceLogic(const vtkMRMLSliceLogic&) = delete;
   void operator=(const vtkMRMLSliceLogic&) = delete;
-
 };
 
 #endif

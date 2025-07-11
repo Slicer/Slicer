@@ -55,8 +55,7 @@ int qMRMLModelDisplayNodeWidgetTest2(int argc, char* argv[])
   scene->SetURL(argv[1]);
   scene->Connect();
 
-  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(
-    scene->GetFirstNodeByClass("vtkMRMLModelDisplayNode"));
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLModelDisplayNode"));
 
   if (!modelDisplayNode)
   {
@@ -65,9 +64,9 @@ int qMRMLModelDisplayNodeWidgetTest2(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  //qMRMLModelDisplayNodeWidget modelDisplayNodeWidget;
-  //modelDisplayNodeWidget.setMRMLModelDisplayNode(modelDisplayNode);
-  //modelDisplayNodeWidget.show();
+  // qMRMLModelDisplayNodeWidget modelDisplayNodeWidget;
+  // modelDisplayNodeWidget.setMRMLModelDisplayNode(modelDisplayNode);
+  // modelDisplayNodeWidget.show();
   ctkVTKDataSetArrayComboBox dataSetModel;
   dataSetModel.setDataSet(modelDisplayNode->GetInputMesh());
 

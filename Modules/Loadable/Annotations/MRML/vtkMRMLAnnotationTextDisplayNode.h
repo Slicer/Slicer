@@ -15,10 +15,10 @@
 
 class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
- public:
-  static vtkMRMLAnnotationTextDisplayNode* New (  );
-  vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) override;
+public:
+  static vtkMRMLAnnotationTextDisplayNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationTextDisplayNode, vtkMRMLAnnotationDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -28,20 +28,19 @@ class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode
 
   // Description:
   // Read node attributes from XML (MRML) file
-  void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  void WriteXML ( ostream& of, int indent ) override;
-
+  void WriteXML(ostream& of, int indent) override;
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode* node ) override;
+  void Copy(vtkMRMLNode* node) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  const char* GetNodeTagName() override {return "AnnotationTextDisplay";}
+  const char* GetNodeTagName() override { return "AnnotationTextDisplay"; }
 
   // Description:
   // Finds the storage node and read the data
@@ -49,9 +48,7 @@ class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   // Description:
   // Get/Set for Text scale
@@ -67,7 +64,7 @@ class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode
   vtkSetMacro(MaxCharactersPerLine, unsigned int);
   vtkGetMacro(MaxCharactersPerLine, unsigned int);
 
-    /// based on vtkCaptionActor2D.h
+  /// based on vtkCaptionActor2D.h
 
   /// Enable/disable the placement of a border around the text.
   vtkSetMacro(ShowBorder, int);
@@ -96,13 +93,13 @@ class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode
   /// head is automatically scaled so that window resize, zooming or other
   /// camera motion results in proportional changes in size to the leader
   /// glyph. Only used if ShowArrow is true.
-  vtkSetClampMacro(LeaderGlyphSize,double,0.0,0.1);
+  vtkSetClampMacro(LeaderGlyphSize, double, 0.0, 0.1);
   vtkGetMacro(LeaderGlyphSize, double);
 
   /// Specify the maximum size of the leader head (if any) in pixels. This
   /// is used in conjunction with LeaderGlyphSize to cap the maximum size of
   /// the LeaderGlyph.
-  vtkSetClampMacro(MaximumLeaderGlyphSize,int,1,1000);
+  vtkSetClampMacro(MaximumLeaderGlyphSize, int, 1, 1000);
   vtkGetMacro(MaximumLeaderGlyphSize, int);
 
   /// Set/Get the padding between the caption and the border. The value
@@ -126,11 +123,12 @@ class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode
   /// insert breaks between words, but will force breaks where there are no
   /// spaces if necessary
   std::string GetLineWrappedText(std::string inputText);
+
 protected:
   vtkMRMLAnnotationTextDisplayNode();
   ~vtkMRMLAnnotationTextDisplayNode() override = default;
-  vtkMRMLAnnotationTextDisplayNode( const vtkMRMLAnnotationTextDisplayNode& );
-  void operator= ( const vtkMRMLAnnotationTextDisplayNode& );
+  vtkMRMLAnnotationTextDisplayNode(const vtkMRMLAnnotationTextDisplayNode&);
+  void operator=(const vtkMRMLAnnotationTextDisplayNode&);
 
   double TextScale;
 
@@ -145,7 +143,6 @@ protected:
   int MaximumLeaderGlyphSize;
   int Padding;
   int AttachEdgeOnly;
-
 };
 
 #endif

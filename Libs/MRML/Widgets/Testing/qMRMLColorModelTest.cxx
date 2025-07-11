@@ -35,7 +35,6 @@ class qMRMLColorModelTester : public QObject
 {
   Q_OBJECT
 private:
-
   qMRMLColorModel* ColorModel;
 
 private slots:

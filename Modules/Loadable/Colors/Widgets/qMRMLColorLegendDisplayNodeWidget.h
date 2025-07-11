@@ -36,8 +36,7 @@ class vtkMRMLColorLegendDisplayNode;
 class qMRMLColorLegendDisplayNodeWidgetPrivate;
 class QAbstractButton;
 
-class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorLegendDisplayNodeWidget
-  : public qMRMLWidget
+class Q_SLICER_MODULE_COLORS_WIDGETS_EXPORT qMRMLColorLegendDisplayNodeWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -74,7 +73,6 @@ protected slots:
   void onLabelTextButtonClicked(QAbstractButton*);
   void onPositionChanged();
   void onSizeChanged();
-
 
 protected:
   QScopedPointer<qMRMLColorLegendDisplayNodeWidgetPrivate> d_ptr;

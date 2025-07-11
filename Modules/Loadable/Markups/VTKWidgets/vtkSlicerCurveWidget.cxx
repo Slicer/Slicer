@@ -33,10 +33,10 @@ vtkStandardNewMacro(vtkSlicerCurveWidget);
 //----------------------------------------------------------------------
 vtkSlicerCurveWidget::vtkSlicerCurveWidget()
 {
-  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
-  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  this->SetEventTranslationClickAndDrag(
+    WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier, WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
+  this->SetEventTranslationClickAndDrag(
+    WidgetStateOnWidget, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier, WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
 
   // Accept Ctrl+MouseMove (and process as simple mouse move) so that this widget keeps the focus when the user moves
   // the mouse while holding down Ctrl key for inserting a point.
@@ -48,8 +48,7 @@ vtkSlicerCurveWidget::vtkSlicerCurveWidget()
 vtkSlicerCurveWidget::~vtkSlicerCurveWidget() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerCurveWidget::CreateDefaultRepresentation(
-  vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+void vtkSlicerCurveWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))

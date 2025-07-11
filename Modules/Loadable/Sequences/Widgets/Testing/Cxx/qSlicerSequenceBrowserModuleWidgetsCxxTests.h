@@ -15,7 +15,6 @@
 
 ==============================================================================*/
 
-
 #ifndef __qSlicerSequenceBrowserModuleWidgetsCxxTests_h
 #define __qSlicerSequenceBrowserModuleWidgetsCxxTests_h
 

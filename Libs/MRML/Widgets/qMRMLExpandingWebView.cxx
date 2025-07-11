@@ -42,8 +42,6 @@ const char* htmlPostscript = //
   "</body>"
   "</html>";
 
-
-
 //--------------------------------------------------------------------------
 // qMRMLExpandingWebViewPrivate methods
 
@@ -72,28 +70,23 @@ void qMRMLExpandingWebViewPrivate::init()
 //---------------------------------------------------------------------------
 void qMRMLExpandingWebViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
-  //Q_Q(qMRMLExpandingWebView);
+  // Q_Q(qMRMLExpandingWebView);
   if (newScene == this->MRMLScene)
   {
     return;
   }
 
-  this->qvtkReconnect(
-    this->mrmlScene(), newScene,
-    vtkMRMLScene::StartBatchProcessEvent, this, SLOT(startProcessing()));
+  this->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::StartBatchProcessEvent, this, SLOT(startProcessing()));
 
-  this->qvtkReconnect(
-    this->mrmlScene(), newScene,
-    vtkMRMLScene::EndBatchProcessEvent, this, SLOT(endProcessing()));
+  this->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT(endProcessing()));
 
   this->MRMLScene = newScene;
 }
 
-
 // --------------------------------------------------------------------------
 void qMRMLExpandingWebViewPrivate::startProcessing()
 {
-//  Q_Q(qMRMLExpandingWebView);
+  //  Q_Q(qMRMLExpandingWebView);
 }
 
 //
@@ -110,12 +103,12 @@ vtkMRMLScene* qMRMLExpandingWebViewPrivate::mrmlScene()
   return this->MRMLScene;
 }
 
-
 // --------------------------------------------------------------------------
 // qMRMLExpandingWebView methods
 
 // --------------------------------------------------------------------------
-qMRMLExpandingWebView::qMRMLExpandingWebView(QWidget* _parent) : Superclass(_parent)
+qMRMLExpandingWebView::qMRMLExpandingWebView(QWidget* _parent)
+  : Superclass(_parent)
   , d_ptr(new qMRMLExpandingWebViewPrivate(*this))
 {
   Q_D(qMRMLExpandingWebView);
@@ -127,7 +120,6 @@ qMRMLExpandingWebView::~qMRMLExpandingWebView()
 {
   this->setMRMLScene(nullptr);
 }
-
 
 //------------------------------------------------------------------------------
 void qMRMLExpandingWebView::setMRMLScene(vtkMRMLScene* newScene)
@@ -153,7 +145,7 @@ vtkMRMLScene* qMRMLExpandingWebView::mrmlScene() const
 // --------------------------------------------------------------------------
 void qMRMLExpandingWebView::updateWidgetFromMRML()
 {
-  //qDebug() << "qMRMLExpandingWebView::updateWidgetFromMRML()";
+  // qDebug() << "qMRMLExpandingWebView::updateWidgetFromMRML()";
 
   if (!this->mrmlScene())
   {
@@ -184,16 +176,15 @@ void qMRMLExpandingWebView::updateWidgetFromMRML()
   // n. HTML page poscript
   //
   QStringList html;
-  html << htmlPreamble;       // 1. page header, css, javascript
+  html << htmlPreamble; // 1. page header, css, javascript
 
-  html << htmlPostscript;   // 5. page postscript, additional javascript
+  html << htmlPostscript; // 5. page postscript, additional javascript
 
-  //qDebug() << html.join("");
+  // qDebug() << html.join("");
 
   // show the html
   this->setHtml(html.join(""));
   this->show();
-
 }
 
 //---------------------------------------------------------------------------

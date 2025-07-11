@@ -52,8 +52,7 @@ class vtkMRMLScene;
 /// In addition to the populated nodes, qMRMLNodeComboBox contains menu
 /// items to add, delete, edit or rename the currently selected node. Each item
 /// can be hidden.
-class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox
-  : public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString currentNodeID READ currentNodeID WRITE setCurrentNodeID NOTIFY currentNodeIDChanged DESIGNABLE false)
@@ -141,13 +140,10 @@ public:
   /// \note An undefined attributeValue will match any value as long as the node
   /// has the attribute defined. An empty string will only match an empty
   /// string. Otherwise the attributeValue has to match the node's value exactly.
-  Q_INVOKABLE void addAttribute(const QString& nodeType,
-                                const QString& attributeName,
-                                const QVariant& attributeValue = QVariant());
+  Q_INVOKABLE void addAttribute(const QString& nodeType, const QString& attributeName, const QVariant& attributeValue = QVariant());
   /// Remove node type attribute filtering the displayed nodes
   /// \sa addAttribute
-  Q_INVOKABLE void removeAttribute(const QString& nodeType,
-                                const QString& attributeName);
+  Q_INVOKABLE void removeAttribute(const QString& nodeType, const QString& attributeName);
 
   /// BaseName is the name used to generate a node name for all the new created
   /// nodes.

@@ -15,7 +15,7 @@ namespace
 {
 
 template <typename TPixel>
-int DoIt( int argc, char* argv[], TPixel )
+int DoIt(int argc, char* argv[], TPixel)
 {
   PARSE_ARGS;
 
@@ -24,25 +24,24 @@ int DoIt( int argc, char* argv[], TPixel )
 
   const unsigned int Dimension = 3;
 
-  typedef itk::Image<InputPixelType,  Dimension> InputImageType;
+  typedef itk::Image<InputPixelType, Dimension> InputImageType;
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
+  typedef itk::ImageFileReader<InputImageType> ReaderType;
 
   typename ReaderType::Pointer reader = ReaderType::New();
 
-  reader->SetFileName( inputVolume.c_str() );
+  reader->SetFileName(inputVolume.c_str());
 
-  typedef itk::SmoothingRecursiveGaussianImageFilter<
-    InputImageType, OutputImageType>  FilterType;
+  typedef itk::SmoothingRecursiveGaussianImageFilter<InputImageType, OutputImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
-  filter->SetInput( reader->GetOutput() );
-  filter->SetSigma( sigma );
+  filter->SetInput(reader->GetOutput());
+  filter->SetSigma(sigma);
 
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
   typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputVolume.c_str() );
-  writer->SetInput( filter->GetOutput() );
+  writer->SetFileName(outputVolume.c_str());
+  writer->SetInput(filter->GetOutput());
   writer->SetUseCompression(1);
   writer->Update();
 
@@ -55,7 +54,7 @@ int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum pixelType;
   itk::IOComponentEnum componentType;
 
   try
@@ -66,40 +65,20 @@ int main(int argc, char* argv[])
     // signed types
     switch (componentType)
     {
-      case itk::ImageIOBase::UCHAR:
-        return DoIt( argc, argv, static_cast<unsigned char>(0) );
-        break;
-      case itk::ImageIOBase::CHAR:
-        return DoIt( argc, argv, static_cast<signed char>(0) );
-        break;
-      case itk::ImageIOBase::USHORT:
-        return DoIt( argc, argv, static_cast<unsigned short>(0) );
-        break;
-      case itk::ImageIOBase::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0) );
-        break;
-      case itk::ImageIOBase::UINT:
-        return DoIt( argc, argv, static_cast<unsigned int>(0) );
-        break;
-      case itk::ImageIOBase::INT:
-        return DoIt( argc, argv, static_cast<int>(0) );
-        break;
-      case itk::ImageIOBase::ULONG:
-        return DoIt( argc, argv, static_cast<unsigned long>(0) );
-        break;
-      case itk::ImageIOBase::LONG:
-        return DoIt( argc, argv, static_cast<long>(0) );
-        break;
-      case itk::ImageIOBase::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0) );
-        break;
-      case itk::ImageIOBase::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0) );
-        break;
+      case itk::ImageIOBase::UCHAR: return DoIt(argc, argv, static_cast<unsigned char>(0)); break;
+      case itk::ImageIOBase::CHAR: return DoIt(argc, argv, static_cast<signed char>(0)); break;
+      case itk::ImageIOBase::USHORT: return DoIt(argc, argv, static_cast<unsigned short>(0)); break;
+      case itk::ImageIOBase::SHORT: return DoIt(argc, argv, static_cast<short>(0)); break;
+      case itk::ImageIOBase::UINT: return DoIt(argc, argv, static_cast<unsigned int>(0)); break;
+      case itk::ImageIOBase::INT: return DoIt(argc, argv, static_cast<int>(0)); break;
+      case itk::ImageIOBase::ULONG: return DoIt(argc, argv, static_cast<unsigned long>(0)); break;
+      case itk::ImageIOBase::LONG: return DoIt(argc, argv, static_cast<long>(0)); break;
+      case itk::ImageIOBase::FLOAT: return DoIt(argc, argv, static_cast<float>(0)); break;
+      case itk::ImageIOBase::DOUBLE: return DoIt(argc, argv, static_cast<double>(0)); break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:
         std::cerr << "Unknown input image pixel component type: ";
-        std::cerr << itk::ImageIOBase::GetComponentTypeAsString( componentType );
+        std::cerr << itk::ImageIOBase::GetComponentTypeAsString(componentType);
         std::cerr << std::endl;
         return EXIT_FAILURE;
         break;

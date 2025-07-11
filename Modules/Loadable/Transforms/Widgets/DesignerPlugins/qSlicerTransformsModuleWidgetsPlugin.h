@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 #ifndef __qSlicerTransformsModuleWidgetsPlugin_h
 #define __qSlicerTransformsModuleWidgetsPlugin_h
 

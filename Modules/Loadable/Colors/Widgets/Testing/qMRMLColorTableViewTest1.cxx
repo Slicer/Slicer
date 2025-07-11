@@ -81,10 +81,7 @@ int qMRMLColorTableViewTest1(int argc, char* argv[])
 
   topLevel.show();
 
-  vtkSmartPointer<vtkMRMLColorTableNode> userNode
-    = vtkSmartPointer<vtkMRMLColorTableNode>::Take(
-      vtkMRMLColorLogic::CopyNode(colorTableNode.GetPointer(), "User"));
-
+  vtkSmartPointer<vtkMRMLColorTableNode> userNode = vtkSmartPointer<vtkMRMLColorTableNode>::Take(vtkMRMLColorLogic::CopyNode(colorTableNode.GetPointer(), "User"));
 
   qMRMLColorTableView colorTableView;
   colorTableView.setWindowTitle("Editable");

@@ -64,9 +64,7 @@ vtkMRMLPlotSeriesNode::vtkMRMLPlotSeriesNode()
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLPlotSeriesNode::TableModifiedEvent);
-  this->AddNodeReferenceRole(this->GetTableNodeReferenceRole(),
-                             this->GetTableNodeReferenceMRMLAttributeName(),
-                             events.GetPointer());
+  this->AddNodeReferenceRole(this->GetTableNodeReferenceRole(), this->GetTableNodeReferenceMRMLAttributeName(), events.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -128,7 +126,7 @@ void vtkMRMLPlotSeriesNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLPlotSeriesNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLPlotSeriesNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -211,8 +209,7 @@ void vtkMRMLPlotSeriesNode::SetAndObserveTableNodeID(const std::string& tableNod
 //----------------------------------------------------------------------------
 vtkMRMLTableNode* vtkMRMLPlotSeriesNode::GetTableNode()
 {
-  return vtkMRMLTableNode::SafeDownCast(
-    this->GetNodeReference(this->GetTableNodeReferenceRole()));
+  return vtkMRMLTableNode::SafeDownCast(this->GetNodeReference(this->GetTableNodeReferenceRole()));
 }
 
 //----------------------------------------------------------------------------
@@ -220,7 +217,6 @@ void vtkMRMLPlotSeriesNode::SetPlotType(const char* type)
 {
   this->SetPlotType(this->GetPlotTypeFromString(type));
 }
-
 
 //-----------------------------------------------------------
 const char* vtkMRMLPlotSeriesNode::GetPlotTypeAsString(int id)
@@ -352,8 +348,8 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->GetScene()->GetNodeByID(colorTableNodeID));
   if (colorTableNode == nullptr)
   {
-    vtkGenericWarningMacro("vtkMRMLPlotSeriesNode::GenerateUniqueColor failed: color table node by ID "
-      << (colorTableNodeID ? colorTableNodeID : "(none)") << " not found in scene");
+    vtkGenericWarningMacro("vtkMRMLPlotSeriesNode::GenerateUniqueColor failed: color table node by ID " << (colorTableNodeID ? colorTableNodeID : "(none)")
+                                                                                                        << " not found in scene");
     return;
   }
   std::vector<vtkMRMLNode*> seriesNodes;
@@ -361,11 +357,10 @@ void vtkMRMLPlotSeriesNode::SetUniqueColor(const char* colorTableNodeID)
   int numberOfColors = colorTableNode->GetNumberOfColors();
   if (numberOfColors < 1)
   {
-    vtkGenericWarningMacro("vtkMRMLPlotSeriesNode::GenerateUniqueColor failed: color table node "
-      << (colorTableNodeID ? colorTableNodeID : "(none)") << " is empty");
+    vtkGenericWarningMacro("vtkMRMLPlotSeriesNode::GenerateUniqueColor failed: color table node " << (colorTableNodeID ? colorTableNodeID : "(none)") << " is empty");
     return;
   }
-  double color[4] = { 0,0,0,0 };
+  double color[4] = { 0, 0, 0, 0 };
   bool isColorUnique = false;
   for (int colorIndex = 0; colorIndex < numberOfColors; colorIndex++)
   {

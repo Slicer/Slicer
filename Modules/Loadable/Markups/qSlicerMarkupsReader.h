@@ -25,8 +25,7 @@ class qSlicerMarkupsReaderPrivate;
 class vtkSlicerMarkupsLogic;
 
 //----------------------------------------------------------------------------
-class qSlicerMarkupsReader
-  : public qSlicerFileReader
+class qSlicerMarkupsReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:

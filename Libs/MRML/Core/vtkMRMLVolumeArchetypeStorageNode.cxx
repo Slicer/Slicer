@@ -19,8 +19,8 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLScene.h"
 #ifdef MRML_USE_vtkTeem
-#include "vtkMRMLVectorVolumeNode.h"
-#include "vtkMRMLDiffusionTensorVolumeNode.h"
+# include "vtkMRMLVectorVolumeNode.h"
+# include "vtkMRMLDiffusionTensorVolumeNode.h"
 #endif
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
@@ -58,7 +58,7 @@ vtkMRMLNodeNewMacro(vtkMRMLVolumeArchetypeStorageNode);
 vtkMRMLVolumeArchetypeStorageNode::vtkMRMLVolumeArchetypeStorageNode()
 {
   this->CenterImage = 0;
-  this->SingleFile  = 0;
+  this->SingleFile = 0;
   this->UseOrientationFromFile = 1;
   this->ForceRightHandedIJKCoordinateSystem = true;
   this->DefaultWriteFileExtension = "nrrd";
@@ -72,9 +72,9 @@ void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
   {
-  std::stringstream ss;
-  ss << this->CenterImage;
-  of << " centerImage=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->CenterImage;
+    of << " centerImage=\"" << ss.str() << "\"";
   }
   of << " forceRightHandedIJKCoordinateSystem=\"" << (this->ForceRightHandedIJKCoordinateSystem ? "true" : "false") << "\"";
   {
@@ -139,7 +139,7 @@ void vtkMRMLVolumeArchetypeStorageNode::Copy(vtkMRMLNode* anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLVolumeArchetypeStorageNode* node = (vtkMRMLVolumeArchetypeStorageNode*) anode;
+  vtkMRMLVolumeArchetypeStorageNode* node = (vtkMRMLVolumeArchetypeStorageNode*)anode;
 
   this->SetCenterImage(node->CenterImage);
   this->SetSingleFile(node->SingleFile);
@@ -168,8 +168,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeMRMLToVTKITK(int mr
     case vtkMRMLVolumeNode::VoxelVectorTypeSpatial: return vtkITKImageWriter::VoxelVectorTypeSpatial;
     case vtkMRMLVolumeNode::VoxelVectorTypeColorRGB: return vtkITKImageWriter::VoxelVectorTypeColorRGB;
     case vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA: return vtkITKImageWriter::VoxelVectorTypeColorRGBA;
-    default:
-      return vtkITKImageWriter::VoxelVectorTypeUndefined;
+    default: return vtkITKImageWriter::VoxelVectorTypeUndefined;
   }
 }
 
@@ -182,8 +181,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(int vt
     case vtkITKImageWriter::VoxelVectorTypeSpatial: return vtkMRMLVolumeNode::VoxelVectorTypeSpatial;
     case vtkITKImageWriter::VoxelVectorTypeColorRGB: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGB;
     case vtkITKImageWriter::VoxelVectorTypeColorRGBA: return vtkMRMLVolumeNode::VoxelVectorTypeColorRGBA;
-    default:
-      return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
+    default: return vtkMRMLVolumeNode::VoxelVectorTypeUndefined;
   }
 }
 
@@ -191,7 +189,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ConvertVoxelVectorTypeVTKITKToMRML(int vt
 bool vtkMRMLVolumeArchetypeStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
   return refNode->IsA("vtkMRMLScalarVolumeNode") || //
-         refNode->IsA("vtkMRMLVectorVolumeNode" );
+         refNode->IsA("vtkMRMLVectorVolumeNode");
 }
 
 //----------------------------------------------------------------------------
@@ -201,8 +199,7 @@ bool vtkMRMLVolumeArchetypeStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* r
 }
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesReader*
-vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::string& fullName)
+vtkITKArchetypeImageSeriesReader* vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::string& fullName)
 {
 #ifdef MRML_USE_vtkTeem
   //
@@ -212,11 +209,10 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
   //   as a single class on some systems
   //
 
-  vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader =
-      vtkSmartPointer<vtkITKArchetypeImageSeriesVectorReaderSeries>::New();
+  vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader = vtkSmartPointer<vtkITKArchetypeImageSeriesVectorReaderSeries>::New();
   reader->SetArchetype(fullName.c_str());
-  reader->SetSingleFile( this->GetSingleFile() );
-  reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
+  reader->SetSingleFile(this->GetSingleFile());
+  reader->SetUseOrientationFromFile(this->GetUseOrientationFromFile());
   try
   {
     reader->UpdateInformation();
@@ -232,8 +228,8 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
   {
     reader = vtkSmartPointer<vtkITKArchetypeImageSeriesVectorReaderFile>::New();
     reader->SetArchetype(fullName.c_str());
-    reader->SetSingleFile( this->GetSingleFile() );
-    reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
+    reader->SetSingleFile(this->GetSingleFile());
+    reader->SetUseOrientationFromFile(this->GetUseOrientationFromFile());
     try
     {
       reader->UpdateInformation();
@@ -258,15 +254,12 @@ vtkMRMLVolumeArchetypeStorageNode::InstantiateVectorVolumeReader(const std::stri
 #endif
 }
 
-
 //----------------------------------------------------------------------------
 namespace
 {
 
 //----------------------------------------------------------------------------
-void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode* storageNode,
-                                      vtkITKArchetypeImageSeriesReader* reader,
-                                      const std::string& fullName)
+void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode* storageNode, vtkITKArchetypeImageSeriesReader* reader, const std::string& fullName)
 {
   // TODO: this is a workaround for an issue in itk::ImageSeriesReader
   // where is assumes that all the filenames that have been passed
@@ -289,10 +282,8 @@ void ApplyImageSeriesReaderWorkaround(vtkMRMLVolumeArchetypeStorageNode* storage
     for (int n = 0; n < storageNode->GetNumberOfFileNames(); n++)
     {
       std::string nthFileName = storageNode->GetFullNameFromNthFileName(n);
-      vtkDebugWithObjectMacro(storageNode,
-                              "ReadData: got full name for " << n << "th file: " << nthFileName
-                              << ", adding it to reader, current num files on it = "
-                              << reader->GetNumberOfFileNames());
+      vtkDebugWithObjectMacro(
+        storageNode, "ReadData: got full name for " << n << "th file: " << nthFileName << ", adding it to reader, current num files on it = " << reader->GetNumberOfFileNames());
       reader->AddFileName(nthFileName.c_str());
     }
   }
@@ -351,14 +342,14 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   else if (refNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
   {
     reader = vtkSmartPointer<vtkITKArchetypeDiffusionTensorImageReaderFile>::New();
-    reader->SetSingleFile( this->GetSingleFile() );
-    reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
+    reader->SetSingleFile(this->GetSingleFile());
+    reader->SetUseOrientationFromFile(this->GetUseOrientationFromFile());
   }
   else
   {
     reader = vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader>::New();
-    reader->SetSingleFile( this->GetSingleFile() );
-    reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
+    reader->SetSingleFile(this->GetSingleFile());
+    reader->SetUseOrientationFromFile(this->GetUseOrientationFromFile());
   }
 
   if (reader.GetPointer() == nullptr)
@@ -408,28 +399,29 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   catch (itk::ExceptionObject& e)
   {
     readingWorked = false;
-    errorMessage = std::string("ITK exception info: error in ") + e.GetLocation() + "\n"
-                                                + e.GetDescription() + "\n";
+    errorMessage = std::string("ITK exception info: error in ") + e.GetLocation() + "\n" + e.GetDescription() + "\n";
   }
   if (!readingWorked)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
-      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
-          "Cannot read '%1' file as a volume of type '%2'. Details: %3."),
-        fullName.c_str(), refNode ? refNode->GetNodeTagName() : "", errorMessage.c_str());
-    // Log some more details for debugging (not displayed to user)
-    vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal: Reading of file '" << fullName << "' failed: " << errorMessage
-      << " Number of files listed in the node is " << this->GetNumberOfFileNames() << "."
-      << " File reader says it was able to read " << reader->GetNumberOfFileNames() << " files."
-      << " File reader used the archetype file name of '" << reader->GetArchetype() << "' (first filename: '"
-      << (reader->GetFileName(0) ? reader->GetFileName(0) : "") << "')"))
-    return 0;
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
+                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Cannot read '%1' file as a volume of type '%2'. Details: %3."),
+                                                         fullName.c_str(),
+                                                         refNode ? refNode->GetNodeTagName() : "",
+                                                         errorMessage.c_str());
+                                     // Log some more details for debugging (not displayed to user)
+                                     vtkErrorMacro("vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal: Reading of file '"
+                                                   << fullName << "' failed: " << errorMessage << " Number of files listed in the node is " << this->GetNumberOfFileNames() << "."
+                                                   << " File reader says it was able to read " << reader->GetNumberOfFileNames() << " files."
+                                                   << " File reader used the archetype file name of '" << reader->GetArchetype() << "' (first filename: '"
+                                                   << (reader->GetFileName(0) ? reader->GetFileName(0) : "") << "')")) return 0;
   }
 
   if (reader->GetOutput() == nullptr || reader->GetOutput()->GetPointData() == nullptr)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
-      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Unable to read data from file: '%1'"), fullName.c_str()));
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
+                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Unable to read data from file: '%1'"), fullName.c_str()));
     return 0;
   }
 
@@ -438,7 +430,9 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   {
     if (pointData->GetTensors() == nullptr || pointData->GetTensors()->GetNumberOfTuples() == 0)
     {
-      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
+      vtkErrorToMessageCollectionMacro(
+        this->GetUserMessages(),
+        "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
         vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Unable to read DiffusionTensorVolume data from file: '%1'"), fullName.c_str()));
       return 0;
     }
@@ -447,18 +441,20 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   {
     if (pointData->GetScalars() == nullptr || pointData->GetScalars()->GetNumberOfTuples() == 0)
     {
-      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
-        vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Unable to read ScalarVolume data from file: '%1'"), fullName.c_str()));
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                       "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
+                                       vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Unable to read ScalarVolume data from file: '%1'"), fullName.c_str()));
       return 0;
     }
   }
 
-  if (!volNode->IsA("vtkMRMLVectorVolumeNode") //
+  if (!volNode->IsA("vtkMRMLVectorVolumeNode")             //
       && !volNode->IsA("vtkMRMLDiffusionTensorVolumeNode") //
       && reader->GetNumberOfComponents() != 1)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
-      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Not a scalar volume file: '%1'"), fullName.c_str()));
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
+                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Not a scalar volume file: '%1'"), fullName.c_str()));
     return 0;
   }
 
@@ -468,8 +464,7 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   // Get all the file names from the reader
   if (reader->GetNumberOfFileNames() > 1)
   {
-    vtkDebugMacro("ReadDataInternal: Number of file names = " << reader->GetNumberOfFileNames()
-                  << ", number of slice location = " << reader->GetNumberOfSliceLocation());
+    vtkDebugMacro("ReadDataInternal: Number of file names = " << reader->GetNumberOfFileNames() << ", number of slice location = " << reader->GetNumberOfSliceLocation());
     if (this->FileNameList.size() == 0)
     {
       // It is safe to assume that the file names in reader are unique.
@@ -485,23 +480,23 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 #ifndef NDEBUG
         int currentSize =
 #endif
-        this->AddFileName(thisFileName);
-        vtkDebugMacro("ReadDataInternal: After adding file " << n << ", filename = " << thisFileName
-                      << " to this storage node's list, current size of the list = " << currentSize);
+          this->AddFileName(thisFileName);
+        vtkDebugMacro("ReadDataInternal: After adding file " << n << ", filename = " << thisFileName << " to this storage node's list, current size of the list = " << currentSize);
       }
     }
   }
 
   vtkNew<vtkImageChangeInformation> ici;
   ici->SetInputConnection(reader->GetOutputPort());
-  ici->SetOutputSpacing( 1, 1, 1 );
-  ici->SetOutputOrigin( 0, 0, 0 );
+  ici->SetOutputSpacing(1, 1, 1);
+  ici->SetOutputOrigin(0, 0, 0);
   ici->Update();
 
   if (ici->GetOutput() == nullptr)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
-      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Cannot read file: '%1'"), fullName.c_str()));
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
+                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Cannot read file: '%1'"), fullName.c_str()));
     return 0;
   }
 
@@ -513,23 +508,22 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   volNode->SetVoxelVectorType(voxelVectorType);
 
   // If voxel values store spatial vectors then we need to convert from LPS to RAS
-  if (voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial
-    && outputImage->GetNumberOfScalarComponents() == 3)
+  if (voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial && outputImage->GetNumberOfScalarComponents() == 3)
   {
     this->ConvertSpatialVectorVoxelsBetweenRasLps(outputImage);
   }
 
   // Log volume size to the application log. It helps to identify potential out-of-memory issues.
-  vtkDebugMacro(<< "Loaded volume from file: " << fullName
-    << ". Dimensions: " << outputImage->GetDimensions()[0] << "x" << outputImage->GetDimensions()[1] << "x" << outputImage->GetDimensions()[2]
-    << ". Number of components: " << outputImage->GetNumberOfScalarComponents()
-    << ". Pixel type: " << vtkImageScalarTypeNameMacro(outputImage->GetScalarType()) << ".");
+  vtkDebugMacro(<< "Loaded volume from file: " << fullName << ". Dimensions: " << outputImage->GetDimensions()[0] << "x" << outputImage->GetDimensions()[1] << "x"
+                << outputImage->GetDimensions()[2] << ". Number of components: " << outputImage->GetNumberOfScalarComponents()
+                << ". Pixel type: " << vtkImageScalarTypeNameMacro(outputImage->GetScalarType()) << ".");
 
   vtkMatrix4x4* rasToIjkMatrix = reader->GetRasToIjkMatrix();
   if (rasToIjkMatrix == nullptr)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
-      vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Image reader provided invalid RAS to IJK matrix"));
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal",
+                                     vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Image reader provided invalid RAS to IJK matrix"));
   }
   volNode->SetRASToIJKMatrix(rasToIjkMatrix);
 
@@ -581,20 +575,23 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   {
     if (volNode->GetImageData()->GetNumberOfScalarComponents() != 3)
     {
-      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
-        vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
-          "Voxel vector type is spatial but number of scalar components is not 3. Saved vector type will be non-spatial."));
+      vtkWarningToMessageCollectionMacro(
+        this->GetUserMessages(),
+        "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
+        vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Voxel vector type is spatial but number of scalar components is not 3. Saved vector type will be non-spatial."));
     }
     else
     {
       std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
       if (extension != ".nrrd" && extension != ".nhdr")
       {
-        vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
-          vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
-            "Spatial vectors will be written to non-NRRD file format (%1). In this format, voxels are saved"
-            " as regular vectors. If the file is imported again then vector axis directions may be flipped."
-            " It is recommended to save volumes that contain spatial vectors in NRRD file format."), extension.c_str()));
+        vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                           "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
+                                           vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
+                                                                         "Spatial vectors will be written to non-NRRD file format (%1). In this format, voxels are saved"
+                                                                         " as regular vectors. If the file is imported again then vector axis directions may be flipped."
+                                                                         " It is recommended to save volumes that contain spatial vectors in NRRD file format."),
+                                                               extension.c_str()));
       }
     }
   }
@@ -616,12 +613,12 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     vtksys::SystemTools::SplitPath(targetDir.c_str(), targetPathComponents);
     std::vector<std::string> sourcePathComponents;
     vtksys::SystemTools::SplitPath(moveFromDir.c_str(), sourcePathComponents);
-    for (fileNum = 0; fileNum <  dir.GetNumberOfFiles(); ++fileNum)
+    for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
     {
       const char* thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
       // skip the dirs
-      if (strcmp(thisFile,".") && //
-          strcmp(thisFile,".."))
+      if (strcmp(thisFile, ".") && //
+          strcmp(thisFile, ".."))
       {
         targetPathComponents.emplace_back(thisFile);
         sourcePathComponents.emplace_back(thisFile);
@@ -633,8 +630,9 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
           vtkInfoMacro("WriteData: removing old version of file " << targetFile);
           if (!vtksys::SystemTools::RemoveFile(targetFile.c_str()))
           {
-            vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
-              vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Unable to remove old version of file: '%1'"), fullName.c_str()));
+            vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                             "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
+                                             vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Unable to remove old version of file: '%1'"), fullName.c_str()));
           }
         }
         std::string sourceFile = vtksys::SystemTools::JoinPath(sourcePathComponents);
@@ -643,9 +641,11 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
         int renameReturn = std::rename(sourceFile.c_str(), targetFile.c_str());
         if (renameReturn != 0)
         {
-          vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
-            vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Error renaming file to '%1', rename returned code %2"),
-            targetFile.c_str(), std::to_string(renameReturn).c_str()));
+          vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                           "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
+                                           vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Error renaming file to '%1', rename returned code %2"),
+                                                               targetFile.c_str(),
+                                                               std::to_string(renameReturn).c_str()));
           // fall back to doing a second write
           moveSucceeded = false;
           break;
@@ -660,7 +660,6 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     {
       vtkWarningMacro("Failed to remove temporary write directory " << moveFromDir);
     }
-
   }
   else
   {
@@ -675,12 +674,11 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     vtkNew<vtkITKImageWriter> writer;
     writer->SetFileName(fullName.c_str());
 
-    writer->SetInputConnection( volNode->GetImageDataConnection() );
+    writer->SetInputConnection(volNode->GetImageDataConnection());
     writer->SetUseCompression(this->GetUseCompression());
     if (this->WriteFileFormat)
     {
-      writer->SetImageIOClassName(
-        this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->GetClassNameFromFormatString(this->WriteFileFormat));
+      writer->SetImageIOClassName(this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->GetClassNameFromFormatString(this->WriteFileFormat));
     }
 
     // set volume attributes
@@ -692,10 +690,9 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     int voxelVectorType = volNode->GetVoxelVectorType();
     writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
     // If voxel values store spatial vectors then we need to convert from LPS to RAS
-    bool writeVoxelValuesAsLps = (
-      voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial //
-      && volNode->GetImageData()                                   //
-      && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
+    bool writeVoxelValuesAsLps = (voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial //
+                                  && volNode->GetImageData()                                   //
+                                  && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
     if (writeVoxelValuesAsLps)
     {
       // temporarily switch image voxel values from RAS to LPS
@@ -731,10 +728,11 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
     if (!vtkAddonMathUtilities::MatrixAreEqual(currentIjkToRasDirection, identityIjkToRasDirection))
     {
-      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
-        vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
-          "VTK file format can only store LPS axis oriented images. Orientation of the saved image may be incorrect."
-          " NRRD file format is recommended for storing this image."));
+      vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                         "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
+                                         vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
+                                                   "VTK file format can only store LPS axis oriented images. Orientation of the saved image may be incorrect."
+                                                   " NRRD file format is recommended for storing this image."));
     }
   }
 
@@ -759,23 +757,26 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
     if (!vtkAddonMathUtilities::MatrixAreEqual(currentIjkToRas, identityIjkToRas) //
         || !unitZSpacing)
-      {
-      vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
+    {
+      vtkWarningToMessageCollectionMacro(
+        this->GetUserMessages(),
+        "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
         vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
-          "Saving this image in TIFF format will result in loss of information (image position, orientation, or spacing along the third image axis)."
-          " NRRD file format is recommended for storing this image."));
-      }
+                  "Saving this image in TIFF format will result in loss of information (image position, orientation, or spacing along the third image axis)."
+                  " NRRD file format is recommended for storing this image."));
+    }
   }
 
   // Display warnings for Analyze files
-  if (vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".hdr")  //
-    || vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".img") //
-    || vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".img.gz"))
+  if (vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".hdr")    //
+      || vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".img") //
+      || vtksys::SystemTools::StringEndsWith(lowerCaseFileName, ".img.gz"))
   {
-    vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
-      vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
-        "Analyze file format is not recommended, as its image orientation specification is ambiguous."
-        " NRRD file format is recommended for storing this image."));
+    vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                       "vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal",
+                                       vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
+                                                 "Analyze file format is not recommended, as its image orientation specification is ambiguous."
+                                                 " NRRD file format is recommended for storing this image."));
   }
 
   return result;
@@ -789,9 +790,8 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
       this->GetScene()->GetDataIOManager() && //
       this->GetScene()->GetDataIOManager()->GetFileFormatHelper())
   {
-    vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->
-      GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
-    for (int i = 0; i<supportedFormats->GetNumberOfTuples(); i++)
+    vtkStringArray* supportedFormats = this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->GetITKSupportedWriteFileFormats();
+    for (int i = 0; i < supportedFormats->GetNumberOfTuples(); i++)
     {
       this->SupportedWriteFileTypes->InsertNextValue(supportedFormats->GetValue(i));
     }
@@ -812,8 +812,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
 
   if (volNode == nullptr || volNode->GetImageData() == nullptr)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-      vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Cannot write volume, image data is empty"));
+    vtkErrorToMessageCollectionMacro(
+      this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList", vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Cannot write volume, image data is empty"));
     return "";
   }
 
@@ -855,20 +855,22 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   tempSubDir.erase(tempSubDir.find_last_not_of(" ") + 1);
   pathComponents.push_back(tempSubDir);
   std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
-  vtkDebugMacro("UpdateFileList: deleting and then re-creating temp dir "<< tempDir.c_str());
+  vtkDebugMacro("UpdateFileList: deleting and then re-creating temp dir " << tempDir.c_str());
   if (vtksys::SystemTools::FileExists(tempDir.c_str()))
   {
     if (!vtksys::SystemTools::RemoveADirectory(tempDir.c_str()))
     {
-      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-        vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to delete directory '%1'"), tempDir.c_str()));
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                       "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
+                                       vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to delete directory '%1'"), tempDir.c_str()));
       return "";
     }
   }
   if (!vtksys::SystemTools::MakeDirectory(tempDir.c_str()))
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to create directory '%1'"), tempDir.c_str()));
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
+                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to create directory '%1'"), tempDir.c_str()));
     return "";
   }
   // make a new name,
@@ -879,7 +881,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   // set up the writer and write
   vtkNew<vtkITKImageWriter> writer;
   writer->SetFileName(tempName.c_str());
-  writer->SetInputData( volNode->GetImageData() );
+  writer->SetInputData(volNode->GetImageData());
   writer->SetUseCompression(this->GetUseCompression());
   if (this->WriteFileFormat)
   {
@@ -887,8 +889,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
         this->GetScene()->GetDataIOManager() && //
         this->GetScene()->GetDataIOManager()->GetFileFormatHelper())
     {
-      writer->SetImageIOClassName(this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->
-                                  GetClassNameFromFormatString(this->WriteFileFormat));
+      writer->SetImageIOClassName(this->GetScene()->GetDataIOManager()->GetFileFormatHelper()->GetClassNameFromFormatString(this->WriteFileFormat));
     }
   }
 
@@ -901,10 +902,9 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   int voxelVectorType = volNode->GetVoxelVectorType();
   writer->SetVoxelVectorType(this->ConvertVoxelVectorTypeMRMLToVTKITK(voxelVectorType));
   // If voxel values store spatial vectors then we need to convert from LPS to RAS
-  bool writeVoxelValuesAsLps = (
-    voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial //
-    && volNode->GetImageData()                                   //
-    && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
+  bool writeVoxelValuesAsLps = (voxelVectorType == vtkMRMLVolumeNode::VoxelVectorTypeSpatial //
+                                && volNode->GetImageData()                                   //
+                                && volNode->GetImageData()->GetNumberOfScalarComponents() == 3);
   bool success = true;
   if (writeVoxelValuesAsLps)
   {
@@ -927,8 +927,9 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
 
   if (!success)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to write '%1'"), tempName.c_str()));
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
+                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to write '%1'"), tempName.c_str()));
     return "";
   }
 
@@ -938,8 +939,9 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   vtkDebugMacro("UpdateFileList: tempdir " << tempDir.c_str() << " has " << dir.GetNumberOfFiles() << " in it");
   if (!success)
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to open directory '%1'"), tempDir.c_str()));
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
+                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to open directory '%1'"), tempDir.c_str()));
     return "";
   }
 
@@ -957,7 +959,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   else
   {
     if (volNode->GetScene() != nullptr && //
-        strlen(volNode->GetScene()->GetRootDirectory()) )
+        strlen(volNode->GetScene()->GetRootDirectory()))
     {
       // use the scene's root dir, all the files in the list will be
       // relative to it (the relative path is how you go from the root dir to
@@ -967,7 +969,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
           rootDir.find_last_of("/") == rootDir.length() - 1)
       {
         vtkDebugMacro("UpdateFileList: found trailing slash in : " << rootDir);
-        rootDir = rootDir.substr(0, rootDir.length()-1);
+        rootDir = rootDir.substr(0, rootDir.length() - 1);
       }
       vtkDebugMacro("UpdateFileList: got the scene root dir " << rootDir << ", local dir = " << localDirectory.c_str());
       // RelativePath requires two absolute paths, otherwise returns empty
@@ -1001,11 +1003,11 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
     }
   }
   // strip off any trailing slashes
-  if (relativePath.length() != 0 &&                           //
-      relativePath.find_last_of("/")  != std::string::npos && //
+  if (relativePath.length() != 0 &&                          //
+      relativePath.find_last_of("/") != std::string::npos && //
       relativePath.find_last_of("/") == relativePath.length() - 1)
   {
-    vtkDebugMacro("UpdateFileList: stripping off a trailing slash from relativePath '"<< relativePath.c_str() << "'");
+    vtkDebugMacro("UpdateFileList: stripping off a trailing slash from relativePath '" << relativePath.c_str() << "'");
     relativePath = relativePath.substr(0, relativePath.length() - 1);
   }
   vtkDebugMacro("UpdateFileList: using prefix of relative path '" << relativePath.c_str() << "'");
@@ -1018,7 +1020,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   std::string newArchetype = vtksys::SystemTools::GetFilenameName(tempName.c_str());
   vtkDebugMacro("Stripped archetype = " << newArchetype.c_str());
   relativePathComponents.push_back(newArchetype);
-  std::string relativeArchetypeFile =  vtksys::SystemTools::JoinPath(relativePathComponents);
+  std::string relativeArchetypeFile = vtksys::SystemTools::JoinPath(relativePathComponents);
   vtkDebugMacro("Relative archetype = " << relativeArchetypeFile.c_str());
   relativePathComponents.pop_back();
   this->AddFileName(relativeArchetypeFile.c_str());
@@ -1029,8 +1031,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   {
     // skip the dirs
     const char* thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
-    if (strcmp(thisFile,".") && //
-        strcmp(thisFile,".."))
+    if (strcmp(thisFile, ".") && //
+        strcmp(thisFile, ".."))
     {
       vtkDebugMacro("UpdateFileList: adding file number " << fileNum << ", " << thisFile);
       if (newArchetype.compare(thisFile) == 0)
@@ -1040,7 +1042,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
       // at this point, the file name is bare of a directory, turn it into a
       // relative path from the original archetype
       relativePathComponents.emplace_back(thisFile);
-      std::string relativeFile =  vtksys::SystemTools::JoinPath(relativePathComponents);
+      std::string relativeFile = vtksys::SystemTools::JoinPath(relativePathComponents);
       relativePathComponents.pop_back();
       vtkDebugMacro("UpdateFileList: " << fileNum << ", using relative file name " << relativeFile.c_str());
       this->AddFileName(relativeFile.c_str());
@@ -1049,16 +1051,19 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   if (!addedArchetype)
   {
     std::stringstream addedFiles;
-    std::copy(++this->FileNameList.begin(), this->FileNameList.end(),
-              std::ostream_iterator<std::string>(addedFiles,", "));
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-      vtkMRMLI18N::Format(
-        vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
-          "The archetype file '%1' wasn't written out when writing '%2' in '%3'."
-          " Only these %4 file(s) have been written: %5."
-          " Old name is '%6'."),
-        newArchetype.c_str(), tempName.c_str(), tempDir.c_str(),
-        std::to_string(dir.GetNumberOfFiles() - 2).c_str(), addedFiles.str().c_str(), oldName.c_str()));
+    std::copy(++this->FileNameList.begin(), this->FileNameList.end(), std::ostream_iterator<std::string>(addedFiles, ", "));
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
+                                     vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
+                                                                   "The archetype file '%1' wasn't written out when writing '%2' in '%3'."
+                                                                   " Only these %4 file(s) have been written: %5."
+                                                                   " Old name is '%6'."),
+                                                         newArchetype.c_str(),
+                                                         tempName.c_str(),
+                                                         tempDir.c_str(),
+                                                         std::to_string(dir.GetNumberOfFiles() - 2).c_str(),
+                                                         addedFiles.str().c_str(),
+                                                         oldName.c_str()));
     return "";
   }
   // restore the old file name
@@ -1075,8 +1080,9 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode* refNo
   vtkDebugMacro("UpdateFileList: removing temp dir " << tempDir);
   if (!vtksys::SystemTools::RemoveADirectory(tempDir.c_str()))
   {
-    vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
-      vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to remove temporary directory '%1'"), tempDir.c_str()));
+    vtkWarningToMessageCollectionMacro(this->GetUserMessages(),
+                                       "vtkMRMLVolumeArchetypeStorageNode::UpdateFileList",
+                                       vtkMRMLI18N::Format(vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Failed to remove temporary directory '%1'"), tempDir.c_str()));
   }
   return "";
 }
@@ -1092,7 +1098,7 @@ void vtkMRMLVolumeArchetypeStorageNode::SetMetaDataDictionaryFromReader(vtkMRMLV
 {
   if (volNode && reader)
   {
-    volNode->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
+    volNode->SetMetaDataDictionary(reader->GetMetaDataDictionary());
   }
 }
 
@@ -1105,8 +1111,10 @@ void vtkMRMLVolumeArchetypeStorageNode::ConvertSpatialVectorVoxelsBetweenRasLps(
     double* displacementVectors = reinterpret_cast<double*>(imageData->GetScalarPointer());
     for (vtkIdType tuple = 0; tuple < numberOfTuples; tuple++)
     {
-      *displacementVectors = -(*displacementVectors); displacementVectors++;
-      *displacementVectors = -(*displacementVectors); displacementVectors++;
+      *displacementVectors = -(*displacementVectors);
+      displacementVectors++;
+      *displacementVectors = -(*displacementVectors);
+      displacementVectors++;
       displacementVectors++;
     }
     imageData->GetPointData()->GetScalars()->Modified();
@@ -1116,16 +1124,19 @@ void vtkMRMLVolumeArchetypeStorageNode::ConvertSpatialVectorVoxelsBetweenRasLps(
     float* displacementVectors = reinterpret_cast<float*>(imageData->GetScalarPointer());
     for (vtkIdType tuple = 0; tuple < numberOfTuples; tuple++)
     {
-      *displacementVectors = -(*displacementVectors); displacementVectors++;
-      *displacementVectors = -(*displacementVectors); displacementVectors++;
+      *displacementVectors = -(*displacementVectors);
+      displacementVectors++;
+      *displacementVectors = -(*displacementVectors);
+      displacementVectors++;
       displacementVectors++;
     }
     imageData->GetPointData()->GetScalars()->Modified();
   }
   else
   {
-    vtkWarningToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLVolumeArchetypeStorageNode::ConvertSpatialVectorVoxelsBetweenRasLps",
-      vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode",
-        "Displacements are expected to be stored as double or float. Vector values will not be converted from LPS to RAS."));
+    vtkWarningToMessageCollectionMacro(
+      this->GetUserMessages(),
+      "vtkMRMLVolumeArchetypeStorageNode::ConvertSpatialVectorVoxelsBetweenRasLps",
+      vtkMRMLTr("vtkMRMLVolumeArchetypeStorageNode", "Displacements are expected to be stored as double or float. Vector values will not be converted from LPS to RAS."));
   }
 }

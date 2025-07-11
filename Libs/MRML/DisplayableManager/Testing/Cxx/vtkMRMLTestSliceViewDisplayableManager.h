@@ -26,8 +26,7 @@
 
 class vtkMRMLCameraNode;
 
-class vtkMRMLTestSliceViewDisplayableManager :
-  public vtkMRMLAbstractSliceViewDisplayableManager
+class vtkMRMLTestSliceViewDisplayableManager : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 
 public:
@@ -39,7 +38,6 @@ public:
   static int NodeAddedCount;
 
 protected:
-
   vtkMRMLTestSliceViewDisplayableManager();
   ~vtkMRMLTestSliceViewDisplayableManager() override;
 
@@ -56,13 +54,11 @@ protected:
   //  virtual void OnMRMLSceneNodeRemovedEvent(vtkMRMLNode* /*node*/){}
 
 private:
-
   vtkMRMLTestSliceViewDisplayableManager(const vtkMRMLTestSliceViewDisplayableManager&) = delete;
   void operator=(const vtkMRMLTestSliceViewDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;
-
 };
 
 #endif

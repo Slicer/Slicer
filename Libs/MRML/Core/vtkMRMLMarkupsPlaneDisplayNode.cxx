@@ -29,7 +29,7 @@ vtkMRMLMarkupsPlaneDisplayNode::vtkMRMLMarkupsPlaneDisplayNode()
 {
   this->HandlesInteractive = true;
   this->TranslationHandleVisibility = false;
-  this->RotationHandleVisibility= false;
+  this->RotationHandleVisibility = false;
   this->ScaleHandleVisibility = true;
   this->CanDisplayScaleHandles = true;
 }

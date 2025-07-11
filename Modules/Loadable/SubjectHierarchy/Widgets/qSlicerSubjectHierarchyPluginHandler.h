@@ -48,7 +48,6 @@ class qSlicerSubjectHierarchyAbstractPlugin;
 class qSlicerSubjectHierarchyDefaultPlugin;
 class qSlicerSubjectHierarchyPluginHandlerCleanup;
 
-
 ///    In Widgets, not Plugins because the paths and libs need to be exported to extensions
 /// \class qSlicerSubjectHierarchyPluginHandler
 /// \brief Singleton class managing Subject Hierarchy plugins
@@ -68,7 +67,8 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qSlicerSubjectHierarchyPlu
   /// Flag determining whether the patient birth date tag is included in the name of the patient
   /// subject hierarchy item name after loading from DICOM.
   /// False by default
-  Q_PROPERTY(bool displayPatientBirthDateInSubjectHierarchyItemName READ displayPatientBirthDateInSubjectHierarchyItemName WRITE setDisplayPatientBirthDateInSubjectHierarchyItemName)
+  Q_PROPERTY(
+    bool displayPatientBirthDateInSubjectHierarchyItemName READ displayPatientBirthDateInSubjectHierarchyItemName WRITE setDisplayPatientBirthDateInSubjectHierarchyItemName)
   /// Flag determining whether the study ID tag is included in the name of the study
   /// subject hierarchy item name after loading from DICOM.
   /// False by default
@@ -160,17 +160,14 @@ public:
   /// \param parentItemID Prospective parent of the node to add.
   ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return The most suitable plugins if found, empty list otherwise
-  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForAddingNodeToSubjectHierarchy(
-    vtkMRMLNode* node,
-    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID );
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForAddingNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID);
 
   /// Returns the plugin that can handle an item the best for reparenting it inside the subject hierarchy
   /// The best plugins are found based on the confidence numbers they return for the inputs.
   /// \param itemID Item to be reparented in the hierarchy
   /// \param parentItemID Prospective parent of the item to reparent.
   /// \return The most suitable plugins if found, empty list otherwise
-  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForReparentingItemInSubjectHierarchy(
-    vtkIdType itemID, vtkIdType parentItemID );
+  QList<qSlicerSubjectHierarchyAbstractPlugin*> pluginsForReparentingItemInSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID);
 
   /// Find plugin that is most suitable to own a subject hierarchy item.
   /// This method does not set it to the item!

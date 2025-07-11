@@ -24,7 +24,8 @@
 #include "qMRMLWidgetsAbstractPlugin.h"
 
 class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLSliderWidgetPlugin
-  : public QObject, public qMRMLWidgetsAbstractPlugin
+  : public QObject
+  , public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 

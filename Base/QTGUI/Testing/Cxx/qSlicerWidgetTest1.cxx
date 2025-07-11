@@ -47,8 +47,7 @@ int qSlicerWidgetTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
   // check for infinite loop
-  QObject::connect(&widget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   &widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(&widget, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), &widget, SLOT(setMRMLScene(vtkMRMLScene*)));
   vtkMRMLScene* scene = vtkMRMLScene::New();
   widget.setMRMLScene(scene);
   if (widget.mrmlScene() != scene)

@@ -35,8 +35,7 @@ class vtkPolyData;
 class vtkStripper;
 class vtkTubeFilter;
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceEdgeWidgetRepresentation
-  : public vtkMRMLAbstractWidgetRepresentation
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceEdgeWidgetRepresentation : public vtkMRMLAbstractWidgetRepresentation
 {
 public:
   /// Instantiate this class.
@@ -103,7 +102,7 @@ protected:
   /// Handle size, specified in renderer world coordinate system.
   /// For 3D views, renderer world coordinate system is the Slicer world coordinate system, so it is measured in the
   /// scene length unit (typically millimeters).
-  double SliceEdgeSize{2.0};
+  double SliceEdgeSize{ 2.0 };
   bool Interacting{ false };
 
   virtual void SetupSliceEdgePipeline();

@@ -23,7 +23,7 @@
 
 // Qt includes
 #include <QTreeView>
-//#include <QStyledItemDelegate>
+// #include <QStyledItemDelegate>
 class QShowEvent;
 
 // CTK includes
@@ -298,8 +298,7 @@ signals:
 protected slots:
   /// This slot is being triggered when the current node has changed.
   /// \sa currentNodeChanged()
-  virtual void onSelectionChanged(const QItemSelection& selected,
-                                  const QItemSelection& deselected);
+  virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   void onNumberOfVisibleIndexChanged();
 

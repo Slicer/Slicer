@@ -79,6 +79,5 @@ int qMRMLNavigationViewTest1(int argc, char* argv[])
     QTimer::singleShot(200, &app, SLOT(quit()));
   }
 
-
   return app.exec();
 }

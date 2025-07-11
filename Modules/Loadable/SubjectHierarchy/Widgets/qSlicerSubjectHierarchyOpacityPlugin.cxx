@@ -49,12 +49,15 @@
 class qSlicerSubjectHierarchyOpacityPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyOpacityPlugin);
+
 protected:
   qSlicerSubjectHierarchyOpacityPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyOpacityPluginPrivate(qSlicerSubjectHierarchyOpacityPlugin& object);
   ~qSlicerSubjectHierarchyOpacityPluginPrivate() override;
   void init();
+
 public:
   QAction* OpacityAction;
   QMenu* OpacityMenu;
@@ -66,7 +69,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyOpacityPluginPrivate::qSlicerSubjectHierarchyOpacityPluginPrivate(qSlicerSubjectHierarchyOpacityPlugin& object)
-: q_ptr(&object)
+  : q_ptr(&object)
 {
   this->OpacityAction = nullptr;
   this->OpacityMenu = nullptr;
@@ -101,8 +104,8 @@ qSlicerSubjectHierarchyOpacityPluginPrivate::~qSlicerSubjectHierarchyOpacityPlug
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyOpacityPlugin::qSlicerSubjectHierarchyOpacityPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyOpacityPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyOpacityPluginPrivate(*this))
 {
   this->m_Name = QString("Opacity");
 

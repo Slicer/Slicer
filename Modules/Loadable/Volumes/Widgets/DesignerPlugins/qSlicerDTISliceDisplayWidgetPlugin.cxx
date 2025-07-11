@@ -19,25 +19,20 @@
 #include "qSlicerDTISliceDisplayWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerDTISliceDisplayWidgetPlugin
-::qSlicerDTISliceDisplayWidgetPlugin(QObject* _parent)
+qSlicerDTISliceDisplayWidgetPlugin::qSlicerDTISliceDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget* qSlicerDTISliceDisplayWidgetPlugin
-::createWidget(QWidget* _parent)
+QWidget* qSlicerDTISliceDisplayWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerDTISliceDisplayWidget* _widget
-    = new qSlicerDTISliceDisplayWidget(_parent);
+  qSlicerDTISliceDisplayWidget* _widget = new qSlicerDTISliceDisplayWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerDTISliceDisplayWidgetPlugin
-::domXml() const
+QString qSlicerDTISliceDisplayWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerDTISliceDisplayWidget\" \
           name=\"VolumeDisplayWidget\">\n"
@@ -45,22 +40,19 @@ QString qSlicerDTISliceDisplayWidgetPlugin
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerDTISliceDisplayWidgetPlugin
-::includeFile() const
+QString qSlicerDTISliceDisplayWidgetPlugin::includeFile() const
 {
   return "qSlicerDTISliceDisplayWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerDTISliceDisplayWidgetPlugin
-::isContainer() const
+bool qSlicerDTISliceDisplayWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerDTISliceDisplayWidgetPlugin
-::name() const
+QString qSlicerDTISliceDisplayWidgetPlugin::name() const
 {
   return "qSlicerDTISliceDisplayWidget";
 }

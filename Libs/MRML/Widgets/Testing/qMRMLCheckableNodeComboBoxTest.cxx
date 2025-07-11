@@ -48,9 +48,7 @@ private slots:
   void testCheck();
   void testRename();
   void testRename_data();
-
 };
-
 
 // ----------------------------------------------------------------------------
 void qMRMLCheckableNodeComboBoxTester::init()

@@ -17,8 +17,7 @@ class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLScalarVolumeNode;
 class qSlicerScalarVolumeDisplayWidgetPrivate;
 
-class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerScalarVolumeDisplayWidget
-  : public qSlicerWidget
+class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerScalarVolumeDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -59,6 +58,7 @@ protected slots:
 
 protected:
   void showEvent(QShowEvent* event) override;
+
 protected:
   QScopedPointer<qSlicerScalarVolumeDisplayWidgetPrivate> d_ptr;
 

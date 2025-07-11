@@ -66,17 +66,15 @@ void vtkMRMLSubjectHierarchyLegacyNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << " Level=\""
-    << (this->Level ? this->Level : "NULL" ) << "\n";
+  os << indent << " Level=\"" << (this->Level ? this->Level : "NULL") << "\n";
 
-  os << indent << " OwnerPluginName=\""
-    << (this->OwnerPluginName ? this->OwnerPluginName : "NULL" ) << "\n";
+  os << indent << " OwnerPluginName=\"" << (this->OwnerPluginName ? this->OwnerPluginName : "NULL") << "\n";
 
   os << indent << " UIDs=\"";
   for (std::map<std::string, std::string>::iterator uidsIt = this->UIDs.begin(); uidsIt != this->UIDs.end(); ++uidsIt)
   {
-    os << uidsIt->first << vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR.c_str()
-      << uidsIt->second << vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_ITEM_SEPARATOR.c_str();
+    os << uidsIt->first << vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR.c_str() << uidsIt->second
+       << vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_ITEM_SEPARATOR.c_str();
   }
   os << "\"";
 }
@@ -128,7 +126,7 @@ void vtkMRMLSubjectHierarchyLegacyNode::ReadXMLAttributes(const char** atts)
         valueStr = valueStr.substr(itemSeparatorPosition + vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_ITEM_SEPARATOR.size());
         itemSeparatorPosition = valueStr.find(vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_ITEM_SEPARATOR);
       }
-      if (! valueStr.empty())
+      if (!valueStr.empty())
       {
         std::string itemStr = valueStr.substr(0, itemSeparatorPosition);
         size_t tagLevelSeparatorPosition = itemStr.find(vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR);
@@ -146,20 +144,17 @@ void vtkMRMLSubjectHierarchyLegacyNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLSubjectHierarchyLegacyNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  Superclass::WriteXML(of, nIndent);
 
-  of << " Level=\"" << (this->Level ? this->Level : "" ) << "\"";
+  of << " Level=\"" << (this->Level ? this->Level : "") << "\"";
 
-  of << " OwnerPluginName=\""
-    << (this->OwnerPluginName ? this->OwnerPluginName : "" ) << "\"";
+  of << " OwnerPluginName=\"" << (this->OwnerPluginName ? this->OwnerPluginName : "") << "\"";
 
   of << " UIDs=\"";
   for (std::map<std::string, std::string>::iterator uidsIt = this->UIDs.begin(); uidsIt != this->UIDs.end(); ++uidsIt)
   {
-    of << vtkMRMLNode::XMLAttributeEncodeString(uidsIt->first)
-       << vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR
-       << vtkMRMLNode::XMLAttributeEncodeString(uidsIt->second)
-       << vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_ITEM_SEPARATOR;
+    of << vtkMRMLNode::XMLAttributeEncodeString(uidsIt->first) << vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_NAME_VALUE_SEPARATOR
+       << vtkMRMLNode::XMLAttributeEncodeString(uidsIt->second) << vtkMRMLSubjectHierarchyLegacyNode::SUBJECTHIERARCHY_UID_ITEM_SEPARATOR;
   }
   of << "\"";
 }
@@ -201,8 +196,7 @@ std::map<std::string, std::string> vtkMRMLSubjectHierarchyLegacyNode::GetUIDs() 
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUID(
-  vtkMRMLScene* scene, const char* uidName, const char* uidValue)
+vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUID(vtkMRMLScene* scene, const char* uidName, const char* uidValue)
 {
   if (!scene || !uidName || !uidValue)
   {
@@ -212,7 +206,7 @@ vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubject
 
   std::vector<vtkMRMLNode*> subjectHierarchyNodes;
   unsigned int numberOfNodes = scene->GetNodesByClass("vtkMRMLSubjectHierarchyLegacyNode", subjectHierarchyNodes);
-  for (unsigned int shNodeIndex = 0; shNodeIndex<numberOfNodes; shNodeIndex++)
+  for (unsigned int shNodeIndex = 0; shNodeIndex < numberOfNodes; shNodeIndex++)
   {
     vtkMRMLSubjectHierarchyLegacyNode* node = vtkMRMLSubjectHierarchyLegacyNode::SafeDownCast(subjectHierarchyNodes[shNodeIndex]);
     if (node)
@@ -230,8 +224,7 @@ vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubject
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUIDList(
-  vtkMRMLScene* scene, const char* uidName, const char* uidValue)
+vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUIDList(vtkMRMLScene* scene, const char* uidName, const char* uidValue)
 {
   if (!scene || !uidName || !uidValue)
   {
@@ -241,7 +234,7 @@ vtkMRMLSubjectHierarchyLegacyNode* vtkMRMLSubjectHierarchyLegacyNode::GetSubject
 
   std::vector<vtkMRMLNode*> subjectHierarchyNodes;
   unsigned int numberOfNodes = scene->GetNodesByClass("vtkMRMLSubjectHierarchyLegacyNode", subjectHierarchyNodes);
-  for (unsigned int shNodeIndex = 0; shNodeIndex<numberOfNodes; shNodeIndex++)
+  for (unsigned int shNodeIndex = 0; shNodeIndex < numberOfNodes; shNodeIndex++)
   {
     vtkMRMLSubjectHierarchyLegacyNode* node = vtkMRMLSubjectHierarchyLegacyNode::SafeDownCast(subjectHierarchyNodes[shNodeIndex]);
     if (node)
@@ -262,13 +255,13 @@ void vtkMRMLSubjectHierarchyLegacyNode::DeserializeUIDList(std::string uidListSt
 {
   deserializedUIDList.clear();
   char separatorCharacter = ' ';
-  size_t separatorPosition = uidListString.find( separatorCharacter );
+  size_t separatorPosition = uidListString.find(separatorCharacter);
   while (separatorPosition != std::string::npos)
   {
     std::string uid = uidListString.substr(0, separatorPosition);
     deserializedUIDList.push_back(uid);
-    uidListString = uidListString.substr( separatorPosition+1 );
-    separatorPosition = uidListString.find( separatorCharacter );
+    uidListString = uidListString.substr(separatorPosition + 1);
+    separatorPosition = uidListString.find(separatorCharacter);
   }
   // Add last UID in case there was no space at the end (which is default behavior)
   if (!uidListString.empty() && uidListString.find(separatorCharacter) == std::string::npos)
@@ -290,8 +283,7 @@ std::vector<vtkMRMLSubjectHierarchyLegacyNode*> vtkMRMLSubjectHierarchyLegacyNod
   }
 
   // Get referenced SOP instance UIDs
-  const char* referencedInstanceUIDsAttribute = this->GetAttribute(
-    vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName().c_str() );
+  const char* referencedInstanceUIDsAttribute = this->GetAttribute(vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName().c_str());
   if (!referencedInstanceUIDsAttribute)
   {
     return referencedNodes;
@@ -308,8 +300,8 @@ std::vector<vtkMRMLSubjectHierarchyLegacyNode*> vtkMRMLSubjectHierarchyLegacyNod
     // Find first referenced node in whole scene
     if (referencedNodes.empty())
     {
-      vtkMRMLSubjectHierarchyLegacyNode* node = vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUIDList(
-        scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), uidIt->c_str() );
+      vtkMRMLSubjectHierarchyLegacyNode* node =
+        vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUIDList(scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), uidIt->c_str());
       if (node)
       {
         referencedNodes.push_back(node);
@@ -323,7 +315,7 @@ std::vector<vtkMRMLSubjectHierarchyLegacyNode*> vtkMRMLSubjectHierarchyLegacyNod
       for (nodeIt = referencedNodes.begin(); nodeIt != referencedNodes.end(); ++nodeIt)
       {
         // Get instance UIDs of the referenced node
-        std::string uids = (*nodeIt)->GetUID( vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName() );
+        std::string uids = (*nodeIt)->GetUID(vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName());
         if (uids.find(*uidIt) != std::string::npos)
         {
           // If we found the UID in the already found referenced nodes, then we don't need to do anything
@@ -334,8 +326,8 @@ std::vector<vtkMRMLSubjectHierarchyLegacyNode*> vtkMRMLSubjectHierarchyLegacyNod
       // If the referenced SOP instance UID is not contained in the already found referenced nodes, then we look in the scene
       if (!foundUidInFoundReferencedNodes)
       {
-        vtkMRMLSubjectHierarchyLegacyNode* node = vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUIDList(
-          scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), uidIt->c_str() );
+        vtkMRMLSubjectHierarchyLegacyNode* node =
+          vtkMRMLSubjectHierarchyLegacyNode::GetSubjectHierarchyLegacyNodeByUIDList(scene, vtkMRMLSubjectHierarchyConstants::GetDICOMInstanceUIDName(), uidIt->c_str());
         if (node)
         {
           referencedNodes.push_back(node);

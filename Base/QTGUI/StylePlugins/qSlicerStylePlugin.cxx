@@ -38,7 +38,7 @@ qSlicerStylePlugin::qSlicerStylePlugin() = default;
 qSlicerStylePlugin::~qSlicerStylePlugin() = default;
 
 //-----------------------------------------------------------------------------
-QStyle* qSlicerStylePlugin::create( const QString& key )
+QStyle* qSlicerStylePlugin::create(const QString& key)
 {
   if (key.compare("Slicer", Qt::CaseInsensitive) == 0)
   {

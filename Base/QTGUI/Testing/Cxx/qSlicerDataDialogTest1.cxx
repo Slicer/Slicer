@@ -30,16 +30,17 @@
 
 // STD includes
 
-
 //-----------------------------------------------------------------------------
-class qSlicerDummyIOOptionsWidget
-  : public qSlicerIOOptionsWidget
+class qSlicerDummyIOOptionsWidget : public qSlicerIOOptionsWidget
 {
 public:
-  qSlicerDummyIOOptionsWidget(QWidget* parent = nullptr): qSlicerIOOptionsWidget(parent){}
+  qSlicerDummyIOOptionsWidget(QWidget* parent = nullptr)
+    : qSlicerIOOptionsWidget(parent)
+  {
+  }
   ~qSlicerDummyIOOptionsWidget() override = default;
-  QSize minimumSizeHint() const override {return QSize(300, 30);}
-  QSize sizeHint() const override{return QSize(500,30);}
+  QSize minimumSizeHint() const override { return QSize(300, 30); }
+  QSize sizeHint() const override { return QSize(500, 30); }
 
 private:
   Q_DISABLE_COPY(qSlicerDummyIOOptionsWidget);
@@ -49,12 +50,15 @@ private:
 class qSlicerDummyIO : public qSlicerIO
 {
 public:
-  qSlicerDummyIO(QObject* parent = nullptr):qSlicerIO(parent){}
+  qSlicerDummyIO(QObject* parent = nullptr)
+    : qSlicerIO(parent)
+  {
+  }
   ~qSlicerDummyIO() override = default;
-  QString description() const override{return "Dummy";}
-  IOFileType fileType() const override{return QString("UserFile");}
-  virtual QStringList extensions() const{return QStringList(QString("All Files(*)"));}
-  qSlicerIOOptions* options() const override{return new qSlicerDummyIOOptionsWidget;}
+  QString description() const override { return "Dummy"; }
+  IOFileType fileType() const override { return QString("UserFile"); }
+  virtual QStringList extensions() const { return QStringList(QString("All Files(*)")); }
+  qSlicerIOOptions* options() const override { return new qSlicerDummyIOOptionsWidget; }
 
   virtual bool load(const IOProperties& properties);
 };

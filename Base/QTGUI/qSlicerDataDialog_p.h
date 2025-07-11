@@ -35,6 +35,7 @@ class qSlicerDataDialogPrivate
 {
   Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerDataDialog);
+
 public:
   explicit qSlicerDataDialogPrivate(qSlicerDataDialog* object, QWidget* _parent = nullptr);
   ~qSlicerDataDialogPrivate() override;
@@ -54,8 +55,8 @@ protected slots:
   void onFileTypeChanged(const QString&);
   void onFileTypeActivated(const QString&);
 
-//  void updateCheckBoxes(Qt::Orientation orientation, int first, int last);
-//  void updateCheckBoxHeader(int row, int column);
+  //  void updateCheckBoxes(Qt::Orientation orientation, int first, int last);
+  //  void updateCheckBoxHeader(int row, int column);
 
 protected:
   qSlicerDataDialog* const q_ptr;
@@ -86,9 +87,9 @@ protected:
   bool checkAndHandleArchive(const QFileInfo& file);
   /// A holder for the temporary directory so that it doesn't go out of scope before loading.
   QScopedPointer<QTemporaryDir> temporaryArchiveDirectory;
+
 private:
   friend class qSlicerDataDialog;
 };
-
 
 #endif

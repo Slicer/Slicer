@@ -26,15 +26,9 @@ public:
 
   vtkTypeMacro(vtkMRMLDisplayNodeTestHelper1, vtkMRMLDisplayNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLDisplayNodeTestHelper1::New();
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLDisplayNodeTestHelper1::New(); }
 
-  const char* GetTypeAsString()
-  {
-    return "vtkMRMLDisplayNodeTestHelper1";
-  }
+  const char* GetTypeAsString() { return "vtkMRMLDisplayNodeTestHelper1"; }
 
   int ReadFile()
   {
@@ -42,10 +36,7 @@ public:
     return EXIT_SUCCESS;
   }
 
-  const char* GetNodeTagName() override
-  {
-    return "Testing is good";
-  }
+  const char* GetNodeTagName() override { return "Testing is good"; }
 };
 vtkStandardNewMacro(vtkMRMLDisplayNodeTestHelper1);
 

@@ -49,8 +49,7 @@ public:
   void dropEvent(QDropEvent* event) override;
 
   /// run the dialog to select the file/files/directory
-  Q_INVOKABLE bool exec(const qSlicerIO::IOProperties& readerProperties =
-                    qSlicerIO::IOProperties()) override;
+  Q_INVOKABLE bool exec(const qSlicerIO::IOProperties& readerProperties = qSlicerIO::IOProperties()) override;
 
 public Q_SLOTS:
   /// for programmatic population of dialog

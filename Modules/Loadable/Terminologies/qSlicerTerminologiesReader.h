@@ -29,8 +29,7 @@ class qSlicerTerminologiesReaderPrivate;
 class vtkSlicerTerminologiesModuleLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerTerminologiesReader
-  : public qSlicerFileReader
+class qSlicerTerminologiesReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:

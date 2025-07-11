@@ -32,8 +32,7 @@
 
 class qSlicerVolumesIOOptionsWidgetPrivate;
 
-class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesIOOptionsWidget :
-  public qSlicerIOOptionsWidget
+class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesIOOptionsWidget : public qSlicerIOOptionsWidget
 {
   Q_OBJECT
 public:

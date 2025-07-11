@@ -69,9 +69,7 @@ public:
   ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  double canAddNodeToSubjectHierarchy(
-    vtkMRMLNode* node,
-    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID ) const override;
+  double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const override;
 
   /// Make sure a folder display node that is added externally shows up in the hierarchy
   bool addNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID) override;
@@ -115,7 +113,7 @@ public:
   /// Get display color of an owned subject hierarchy item
   /// In case of folders only color is set but no terminology. The properties are not used directly,
   /// but only if applied to the branch (similarly to how it worked in model hierarchies).
-  QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData) const override;
+  QColor getDisplayColor(vtkIdType itemID, QMap<int, QVariant>& terminologyMetaData) const override;
 
   /// Get item context menu item actions to add to tree view
   QList<QAction*> itemContextMenuActions() const override;

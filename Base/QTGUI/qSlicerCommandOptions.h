@@ -59,7 +59,6 @@ public:
 
 protected:
   void addArguments() override;
-
 };
 
 #endif

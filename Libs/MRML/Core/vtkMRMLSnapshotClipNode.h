@@ -28,7 +28,7 @@ class vtkCollection;
 /// \brief Abstract class representing a hierarchy member.
 class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 {
-  public:
+public:
   static vtkMRMLSnapshotClipNode* New();
   vtkTypeMacro(vtkMRMLSnapshotClipNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -37,7 +37,7 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -49,9 +49,9 @@ class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "SnapshotClip";}
+  const char* GetNodeTagName() override { return "SnapshotClip"; }
 
-   ///
+  ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   void UpdateScene(vtkMRMLScene* scene) override;
@@ -75,7 +75,6 @@ protected:
 
   std::vector<std::string> SceneSnapshotNodeIDs;
   vtkCollection* SceneSnapshotNodes;
-
 };
 
 #endif

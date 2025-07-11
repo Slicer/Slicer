@@ -43,7 +43,6 @@ class vtkRenderWindowInteractor;
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerGroup : public vtkObject
 {
 public:
-
   static vtkMRMLDisplayableManagerGroup* New();
   vtkTypeMacro(vtkMRMLDisplayableManagerGroup, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -66,8 +65,7 @@ public:
   vtkMRMLAbstractDisplayableManager* GetNthDisplayableManager(int n);
 
   /// Return a DisplayableManager given its class name
-  vtkMRMLAbstractDisplayableManager*
-      GetDisplayableManagerByClassName(const char* className);
+  vtkMRMLAbstractDisplayableManager* GetDisplayableManagerByClassName(const char* className);
 
   /// Set Renderer and Interactor
   /// No-op if already initialized.
@@ -100,9 +98,7 @@ public:
   /// Returns a new instance of a displayable manager defined by its name:
   /// VTK class name or python file name.
   /// You are responsible of the returned pointer.
-  static vtkMRMLAbstractDisplayableManager* InstantiateDisplayableManager(
-    const char* displayableManagerName);
-
+  static vtkMRMLAbstractDisplayableManager* InstantiateDisplayableManager(const char* displayableManagerName);
 
   /// Set the LightBoxRendererManagerProxy on the
   /// DisplayableManagerGroup. This caches the proxy and broadcasts
@@ -118,13 +114,11 @@ public:
   virtual vtkMRMLLightBoxRendererManagerProxy* GetLightBoxRendererManagerProxy();
 
 protected:
-
   vtkMRMLDisplayableManagerGroup();
   ~vtkMRMLDisplayableManagerGroup() override;
 
   typedef vtkMRMLDisplayableManagerGroup Self;
-  static void DoCallback(vtkObject* vtk_obj, unsigned long event,
-                         void* client_data, void* call_data);
+  static void DoCallback(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data);
   /// Trigger upon a DisplayableManager is either registered or unregistered from
   /// the associated factory
   void onDisplayableManagerFactoryRegisteredEvent(const char* displayableManagerName);
@@ -134,10 +128,8 @@ protected:
   vtkInternal* Internal;
 
 private:
-
   vtkMRMLDisplayableManagerGroup(const vtkMRMLDisplayableManagerGroup&) = delete;
   void operator=(const vtkMRMLDisplayableManagerGroup&) = delete;
-
 };
 
 #endif

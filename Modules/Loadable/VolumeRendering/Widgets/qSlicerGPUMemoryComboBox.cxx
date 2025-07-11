@@ -34,6 +34,7 @@
 class qSlicerGPUMemoryComboBoxPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerGPUMemoryComboBox);
+
 protected:
   qSlicerGPUMemoryComboBox* const q_ptr;
 
@@ -54,8 +55,7 @@ public:
 // qSlicerGPUMemoryComboBoxPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerGPUMemoryComboBoxPrivate::qSlicerGPUMemoryComboBoxPrivate(
-  qSlicerGPUMemoryComboBox& object)
+qSlicerGPUMemoryComboBoxPrivate::qSlicerGPUMemoryComboBoxPrivate(qSlicerGPUMemoryComboBox& object)
   : q_ptr(&object)
   , DefaultText("0 MB (Default)")
 {
@@ -71,12 +71,12 @@ void qSlicerGPUMemoryComboBoxPrivate::init()
   Q_Q(qSlicerGPUMemoryComboBox);
 
   q->setEditable(true);
-  q->lineEdit()->setValidator( new QRegExpValidator(this->MemoryRegExp, q));
+  q->lineEdit()->setValidator(new QRegExpValidator(this->MemoryRegExp, q));
   q->addItem(DefaultText);
-  //q->addItem(qSlicerGPUMemoryComboBox::tr("25 %")); //TODO: Uncomment when totalGPUMemoryInMB works
-  //q->addItem(qSlicerGPUMemoryComboBox::tr("50 %"));
-  //q->addItem(qSlicerGPUMemoryComboBox::tr("75 %"));
-  //q->addItem(qSlicerGPUMemoryComboBox::tr("90 %"));
+  // q->addItem(qSlicerGPUMemoryComboBox::tr("25 %")); //TODO: Uncomment when totalGPUMemoryInMB works
+  // q->addItem(qSlicerGPUMemoryComboBox::tr("50 %"));
+  // q->addItem(qSlicerGPUMemoryComboBox::tr("75 %"));
+  // q->addItem(qSlicerGPUMemoryComboBox::tr("90 %"));
   q->addItem(qSlicerGPUMemoryComboBox::tr("128 MB"));
   q->addItem(qSlicerGPUMemoryComboBox::tr("256 MB"));
   q->addItem(qSlicerGPUMemoryComboBox::tr("512 MB"));
@@ -145,7 +145,6 @@ QString qSlicerGPUMemoryComboBoxPrivate::memoryToString(double memory) const
   }
   return QString::number(static_cast<int>(memory)) + " MB";
 }
-
 
 //-----------------------------------------------------------------------------
 // qSlicerGPUMemoryComboBox methods

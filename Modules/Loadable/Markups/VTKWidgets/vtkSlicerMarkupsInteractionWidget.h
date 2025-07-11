@@ -43,8 +43,7 @@ class vtkTransform;
 class vtkMRMLMarkupsNode;
 class vtkMRMLMarkupsDisplayNode;
 
-class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsInteractionWidget
-  : public vtkMRMLInteractionWidget
+class VTK_SLICER_MARKUPS_MODULE_VTKWIDGETS_EXPORT vtkSlicerMarkupsInteractionWidget : public vtkMRMLInteractionWidget
 {
 public:
   /// Instantiate this class.
@@ -99,29 +98,29 @@ private:
 // CREATE INSTANCE MACRO
 
 #ifdef VTK_HAS_INITIALIZE_OBJECT_BASE
-#define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
-  vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
-  if (ret) \
-  { \
-    return static_cast<type *>(ret); \
-  } \
-  type* result = new type; \
-  result->InitializeObjectBase(); \
-  return result;
+# define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
+   vtkObject* ret = vtkObjectFactory::CreateInstance(#type);            \
+   if (ret)                                                             \
+   {                                                                    \
+     return static_cast<type*>(ret);                                    \
+   }                                                                    \
+   type* result = new type;                                             \
+   result->InitializeObjectBase();                                      \
+   return result;
 #else
-#define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
-  vtkObject* ret = vtkObjectFactory::CreateInstance(#type); \
-  if (ret) \
-  { \
-    return static_cast<type*>(ret); \
-  } \
-return new type;
+# define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
+   vtkObject* ret = vtkObjectFactory::CreateInstance(#type);            \
+   if (ret)                                                             \
+   {                                                                    \
+     return static_cast<type*>(ret);                                    \
+   }                                                                    \
+   return new type;
 #endif
 
-#define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacro(type) \
-vtkSlicerMarkupsInteractionWidget* CreateInstance() const override\
-{ \
-  vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type) \
-}
+#define vtkSlicerMarkupsInteractionWidgetCreateInstanceMacro(type)   \
+  vtkSlicerMarkupsInteractionWidget* CreateInstance() const override \
+  {                                                                  \
+    vtkSlicerMarkupsInteractionWidgetCreateInstanceMacroBody(type)   \
+  }
 
 #endif

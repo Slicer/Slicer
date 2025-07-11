@@ -19,7 +19,7 @@
  *
  * @sa
  * vtkSliceIntersectionWidget vtkWidgetRepresentation vtkAbstractWidget
-*/
+ */
 
 #ifndef vtkMRMLSliceIntersectionRepresentation2D_h
 #define vtkMRMLSliceIntersectionRepresentation2D_h
@@ -46,7 +46,6 @@ class vtkTransform;
 class vtkActor2D;
 
 class SliceIntersectionDisplayPipeline;
-
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLSliceIntersectionRepresentation2D : public vtkMRMLAbstractWidgetRepresentation
 {
@@ -98,17 +97,17 @@ protected:
   void SliceNodeModified(vtkMRMLSliceNode* sliceNode);
   void SliceModelDisplayNodeModified(vtkMRMLModelDisplayNode* sliceNode);
 
-  void UpdateSliceIntersectionDisplay(SliceIntersectionDisplayPipeline *pipeline);
+  void UpdateSliceIntersectionDisplay(SliceIntersectionDisplayPipeline* pipeline);
 
   double GetSliceRotationAngleRad(int eventPos[2]);
 
   // The internal transformation matrix
   vtkTransform* CurrentTransform;
   vtkTransform* TotalTransform;
-  double Origin[4]; //the current origin in world coordinates
-  double DisplayOrigin[3]; //the current origin in display coordinates
-  double CurrentTranslation[3]; //translation this movement
-  double StartWorldPosition[4]; //Start event position converted to world
+  double Origin[4];             // the current origin in world coordinates
+  double DisplayOrigin[3];      // the current origin in display coordinates
+  double CurrentTranslation[3]; // translation this movement
+  double StartWorldPosition[4]; // Start event position converted to world
 
   // Support picking
   double LastEventPosition[2];

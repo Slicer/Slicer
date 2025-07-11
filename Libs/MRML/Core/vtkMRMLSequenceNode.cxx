@@ -34,17 +34,20 @@
 // STD includes
 #include <sstream>
 
-#define SAFE_CHAR_POINTER(unsafeString) ( unsafeString==nullptr?"":unsafeString )
+#define SAFE_CHAR_POINTER(unsafeString) (unsafeString == nullptr ? "" : unsafeString)
 
 // This macro sets a member variable and sets both this node and the storage node as modified.
 // This macro can be used for properties that are stored in both the scene and in the stored file.
 #define vtkCxxSetVariableInDataAndStorageNodeMacro(name, type) \
-  void vtkMRMLSequenceNode::Set##name(type arg) \
-  { \
-    if (arg == this->name) { return; } \
-    this->name = arg; \
-    this->StorableModifiedTime.Modified(); \
-    this->Modified(); \
+  void vtkMRMLSequenceNode::Set##name(type arg)                \
+  {                                                            \
+    if (arg == this->name)                                     \
+    {                                                          \
+      return;                                                  \
+    }                                                          \
+    this->name = arg;                                          \
+    this->StorableModifiedTime.Modified();                     \
+    this->Modified();                                          \
   }
 
 //------------------------------------------------------------------------------
@@ -106,14 +109,14 @@ void vtkMRMLSequenceNode::WriteXML(ostream& of, int nIndent)
   of << indent << " numericIndexValueTolerance=\"" << this->NumericIndexValueTolerance << "\"";
 
   of << indent << " indexValues=\"";
-  for (std::deque<IndexEntryType>::iterator indexIt=this->IndexEntries.begin(); indexIt!=this->IndexEntries.end(); ++indexIt)
+  for (std::deque<IndexEntryType>::iterator indexIt = this->IndexEntries.begin(); indexIt != this->IndexEntries.end(); ++indexIt)
   {
-    if (indexIt!=this->IndexEntries.begin())
+    if (indexIt != this->IndexEntries.begin())
     {
       // not the first index, add a separator before adding values
       of << ";";
     }
-    if (indexIt->DataNode==nullptr)
+    if (indexIt->DataNode == nullptr)
     {
       // If we have a data node ID then store that, it is the most we know about the node that should be there
       if (!indexIt->DataNodeID.empty())
@@ -123,8 +126,7 @@ void vtkMRMLSequenceNode::WriteXML(ostream& of, int nIndent)
       }
       else
       {
-        vtkErrorMacro("Error while writing node "<<(this->GetID()?this->GetID():"(unknown)")
-          << " to XML: data node is invalid at index value "<<indexIt->IndexValue);
+        vtkErrorMacro("Error while writing node " << (this->GetID() ? this->GetID() : "(unknown)") << " to XML: data node is invalid at index value " << indexIt->IndexValue);
       }
     }
     else
@@ -158,10 +160,10 @@ void vtkMRMLSequenceNode::ReadXMLAttributes(const char** atts)
     else if (!strcmp(attName, "indexType"))
     {
       int indexType = GetIndexTypeFromString(attValue);
-      if (indexType<0 || indexType>=vtkMRMLSequenceNode::NumberOfIndexTypes)
+      if (indexType < 0 || indexType >= vtkMRMLSequenceNode::NumberOfIndexTypes)
       {
-        vtkErrorMacro("Invalid index type: "<<(attValue?attValue:"(empty). Assuming TextIndex."));
-        indexType=vtkMRMLSequenceNode::TextIndex;
+        vtkErrorMacro("Invalid index type: " << (attValue ? attValue : "(empty). Assuming TextIndex."));
+        indexType = vtkMRMLSequenceNode::TextIndex;
       }
       SetIndexType(indexType);
     }
@@ -196,16 +198,16 @@ void vtkMRMLSequenceNode::ReadIndexValues(const std::string& indexText)
   while (std::getline(ss, nodeId_indexValue, ';'))
   {
     std::size_t indexValueSeparatorPos = nodeId_indexValue.find_first_of(':');
-    if (indexValueSeparatorPos>0 && indexValueSeparatorPos != std::string::npos)
+    if (indexValueSeparatorPos > 0 && indexValueSeparatorPos != std::string::npos)
     {
       std::string nodeId = nodeId_indexValue.substr(0, indexValueSeparatorPos);
-      std::string indexValue = nodeId_indexValue.substr(indexValueSeparatorPos+1, nodeId_indexValue.size()-indexValueSeparatorPos-1);
+      std::string indexValue = nodeId_indexValue.substr(indexValueSeparatorPos + 1, nodeId_indexValue.size() - indexValueSeparatorPos - 1);
 
       IndexEntryType indexEntry;
-      indexEntry.IndexValue=indexValue;
+      indexEntry.IndexValue = indexValue;
       // The nodes are not read yet, so we can only store the node ID and get the pointer to the node later (in UpdateScene())
-      indexEntry.DataNodeID=nodeId;
-      indexEntry.DataNode=nullptr;
+      indexEntry.DataNodeID = nodeId;
+      indexEntry.DataNode = nullptr;
       this->IndexEntries.push_back(indexEntry);
       modified = true;
     }
@@ -225,7 +227,7 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode* anode)
   int wasModified = this->StartModify();
   Superclass::Copy(anode);
 
-  vtkMRMLSequenceNode* snode = (vtkMRMLSequenceNode*) anode;
+  vtkMRMLSequenceNode* snode = (vtkMRMLSequenceNode*)anode;
   if (!snode)
   {
     vtkErrorMacro("vtkMRMLSequenceNode::Copy failed: invalid input node");
@@ -242,10 +244,10 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode* anode)
   {
     this->SequenceScene->Delete();
   }
-  this->SequenceScene=vtkMRMLScene::New();
+  this->SequenceScene = vtkMRMLScene::New();
 
   // Get data node ID in the target scene from the data node ID in the source scene
-  std::map<std::string, std::string > sourceToTargetDataNodeID;
+  std::map<std::string, std::string> sourceToTargetDataNodeID;
 
   if (snode->SequenceScene)
   {
@@ -268,25 +270,25 @@ void vtkMRMLSequenceNode::Copy(vtkMRMLNode* anode)
   bool mapDataNodeIds = !sourceToTargetDataNodeID.empty();
 
   this->IndexEntries.clear();
-  for (std::deque<IndexEntryType>::iterator sourceIndexIt=snode->IndexEntries.begin(); sourceIndexIt!=snode->IndexEntries.end(); ++sourceIndexIt)
+  for (std::deque<IndexEntryType>::iterator sourceIndexIt = snode->IndexEntries.begin(); sourceIndexIt != snode->IndexEntries.end(); ++sourceIndexIt)
   {
     IndexEntryType seqItem;
-    seqItem.IndexValue=sourceIndexIt->IndexValue;
+    seqItem.IndexValue = sourceIndexIt->IndexValue;
     seqItem.DataNode = nullptr;
-    if (sourceIndexIt->DataNode!=nullptr)
+    if (sourceIndexIt->DataNode != nullptr)
     {
       std::string targetDataNodeID = sourceToTargetDataNodeID[sourceIndexIt->DataNode->GetID()];
       seqItem.DataNode = this->SequenceScene->GetNodeByID(targetDataNodeID);
       seqItem.DataNodeID.clear();
     }
-    if (seqItem.DataNode==nullptr)
+    if (seqItem.DataNode == nullptr)
     {
       // data node was not found, at least copy its ID
       std::string targetDataNodeID = (mapDataNodeIds ? sourceToTargetDataNodeID[sourceIndexIt->DataNodeID] : sourceIndexIt->DataNodeID);
       seqItem.DataNodeID = targetDataNodeID;
       if (seqItem.DataNodeID.empty())
       {
-        vtkWarningMacro("vtkMRMLSequenceNode::Copy: node was not found at index value "<<seqItem.IndexValue);
+        vtkWarningMacro("vtkMRMLSequenceNode::Copy: node was not found at index value " << seqItem.IndexValue);
       }
     }
     this->IndexEntries.push_back(seqItem);
@@ -351,7 +353,7 @@ void vtkMRMLSequenceNode::PrintSelf(ostream& os, vtkIndent indent)
     os << this->IndexEntries[0].IndexValue;
     if (this->IndexEntries.size() > 1)
     {
-      os << " ... " << this->IndexEntries[this->IndexEntries.size()-1].IndexValue;
+      os << " ... " << this->IndexEntries[this->IndexEntries.size() - 1].IndexValue;
       os << " (" << this->IndexEntries.size() << " items)";
     }
   }
@@ -361,7 +363,7 @@ void vtkMRMLSequenceNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 bool vtkMRMLSequenceNode::UpdateDataNodeAtValue(vtkMRMLNode* node, const std::string& indexValue, bool shallowCopy /* = false */)
 {
-  if (node==nullptr)
+  if (node == nullptr)
   {
     vtkErrorMacro("vtkMRMLSequenceNode::UpdateDataNodeAtValue failed, invalid node");
     return false;
@@ -452,9 +454,9 @@ vtkMRMLNode* vtkMRMLSequenceNode::SetDataNodeAtValue(vtkMRMLNode* node, const st
 void vtkMRMLSequenceNode::RemoveDataNodeAtValue(const std::string& indexValue)
 {
   int seqItemIndex = GetItemNumberFromIndexValue(indexValue);
-  if (seqItemIndex<0)
+  if (seqItemIndex < 0)
   {
-    vtkWarningMacro("vtkMRMLSequenceNode::RemoveDataNodeAtValue: node was not found at index value "<<indexValue);
+    vtkWarningMacro("vtkMRMLSequenceNode::RemoveDataNodeAtValue: node was not found at index value " << indexValue);
     return;
   }
   if (!this->SequenceScene)
@@ -468,7 +470,7 @@ void vtkMRMLSequenceNode::RemoveDataNodeAtValue(const std::string& indexValue)
   {
     this->SequenceScene->RemoveNode(dataNode);
   }
-  this->IndexEntries.erase(this->IndexEntries.begin()+seqItemIndex);
+  this->IndexEntries.erase(this->IndexEntries.begin() + seqItemIndex);
   this->Modified();
   this->StorableModifiedTime.Modified();
 }
@@ -486,7 +488,7 @@ int vtkMRMLSequenceNode::GetItemNumberFromIndexValue(const std::string& indexVal
   if (this->IndexType == NumericIndex)
   {
     int lowerBound = 0;
-    int upperBound = numberOfSeqItems-1;
+    int upperBound = numberOfSeqItems - 1;
 
     // Deal with index values not within the range of index values in the Sequence
     double numericIndexValue = atof(indexValue.c_str());
@@ -518,7 +520,7 @@ int vtkMRMLSequenceNode::GetItemNumberFromIndexValue(const std::string& indexVal
     while (upperBound - lowerBound > 1)
     {
       // Note that if middle is equal to either lowerBound or upperBound then upperBound - lowerBound <= 1
-      int middle = int((lowerBound + upperBound)/2);
+      int middle = int((lowerBound + upperBound) / 2);
       double middleNumericIndexValue = atof(this->IndexEntries[middle].IndexValue.c_str());
       if (fabs(numericIndexValue - middleNumericIndexValue) <= this->NumericIndexValueTolerance)
       {
@@ -540,9 +542,9 @@ int vtkMRMLSequenceNode::GetItemNumberFromIndexValue(const std::string& indexVal
   }
 
   // Need linear search for non-numeric index
-  for (int i = 0; i<numberOfSeqItems; i++)
+  for (int i = 0; i < numberOfSeqItems; i++)
   {
-    if (this->IndexEntries[i].IndexValue.compare(indexValue)==0)
+    if (this->IndexEntries[i].IndexValue.compare(indexValue) == 0)
     {
       return i;
     }
@@ -571,9 +573,9 @@ vtkMRMLNode* vtkMRMLSequenceNode::GetDataNodeAtValue(const std::string& indexVal
 //---------------------------------------------------------------------------
 std::string vtkMRMLSequenceNode::GetNthIndexValue(int seqItemIndex)
 {
-  if (seqItemIndex<0 || seqItemIndex>=static_cast<int>(this->IndexEntries.size()))
+  if (seqItemIndex < 0 || seqItemIndex >= static_cast<int>(this->IndexEntries.size()))
   {
-    vtkErrorMacro("vtkMRMLSequenceNode::GetNthIndexValue failed, invalid seqItemIndex value: "<<seqItemIndex);
+    vtkErrorMacro("vtkMRMLSequenceNode::GetNthIndexValue failed, invalid seqItemIndex value: " << seqItemIndex);
     return "";
   }
   return this->IndexEntries[seqItemIndex].IndexValue;
@@ -594,9 +596,9 @@ bool vtkMRMLSequenceNode::UpdateIndexValue(const std::string& oldIndexValue, con
     return true;
   }
   int oldSeqItemIndex = GetItemNumberFromIndexValue(oldIndexValue);
-  if (oldSeqItemIndex<0)
+  if (oldSeqItemIndex < 0)
   {
-    vtkErrorMacro("vtkMRMLSequenceNode::UpdateIndexValue failed, no data node found with index value "<<oldIndexValue);
+    vtkErrorMacro("vtkMRMLSequenceNode::UpdateIndexValue failed, no data node found with index value " << oldIndexValue);
     return false;
   }
   if (this->GetItemNumberFromIndexValue(newIndexValue) >= 0)
@@ -629,7 +631,7 @@ std::string vtkMRMLSequenceNode::GetDataNodeClassName()
   }
   // All the nodes should be of the same class, so just get the class from the first one
   vtkMRMLNode* node = this->IndexEntries[0].DataNode;
-  if (node==nullptr)
+  if (node == nullptr)
   {
     vtkErrorMacro("vtkMRMLSequenceNode::GetDataNodeClassName node is invalid");
     return "";
@@ -641,20 +643,20 @@ std::string vtkMRMLSequenceNode::GetDataNodeClassName()
 //-----------------------------------------------------------------------------
 std::string vtkMRMLSequenceNode::GetDataNodeTagName()
 {
-  std::string undefinedReturn="undefined";
+  std::string undefinedReturn = "undefined";
   if (this->IndexEntries.empty())
   {
     return undefinedReturn;
   }
   // All the nodes should be of the same class, so just get the class from the first one
   vtkMRMLNode* node = this->IndexEntries[0].DataNode;
-  if (node==nullptr)
+  if (node == nullptr)
   {
     vtkErrorMacro("vtkMRMLSequenceNode::GetDataNodeClassName node is invalid");
     return undefinedReturn;
   }
   const char* tagName = node->GetNodeTagName();
-  if (tagName==nullptr)
+  if (tagName == nullptr)
   {
     return undefinedReturn;
   }
@@ -664,16 +666,16 @@ std::string vtkMRMLSequenceNode::GetDataNodeTagName()
 //-----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLSequenceNode::GetNthDataNode(int itemNumber)
 {
-  if (static_cast<int>(this->IndexEntries.size())<=itemNumber)
+  if (static_cast<int>(this->IndexEntries.size()) <= itemNumber)
   {
-    vtkErrorMacro("vtkMRMLSequenceNode::GetNthDataNode failed: itemNumber "<<itemNumber<<" is out of range");
+    vtkErrorMacro("vtkMRMLSequenceNode::GetNthDataNode failed: itemNumber " << itemNumber << " is out of range");
     return nullptr;
   }
   return this->IndexEntries[itemNumber].DataNode;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScene* vtkMRMLSequenceNode::GetSequenceScene(bool autoCreate/*=true*/)
+vtkMRMLScene* vtkMRMLSequenceNode::GetSequenceScene(bool autoCreate /*=true*/)
 {
   if (!this->SequenceScene && autoCreate)
   {
@@ -692,8 +694,7 @@ vtkMRMLStorageNode* vtkMRMLSequenceNode::CreateDefaultStorageNode()
     return nullptr;
   }
 
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass(this->GetDefaultStorageNodeClassName().c_str()));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass(this->GetDefaultStorageNodeClassName().c_str()));
 }
 
 //-----------------------------------------------------------
@@ -710,8 +711,8 @@ std::string vtkMRMLSequenceNode::GetDefaultStorageNodeClassName(const char* file
   if (storableNode && this->GetScene())
   {
     std::string sequenceStorageNodeClassName = storableNode->GetDefaultSequenceStorageNodeClassName();
-    vtkSmartPointer<vtkMRMLStorageNode> storageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(
-      vtkMRMLStorageNode::SafeDownCast(this->GetScene()->CreateNodeByClass(sequenceStorageNodeClassName.c_str())));
+    vtkSmartPointer<vtkMRMLStorageNode> storageNode =
+      vtkSmartPointer<vtkMRMLStorageNode>::Take(vtkMRMLStorageNode::SafeDownCast(this->GetScene()->CreateNodeByClass(sequenceStorageNodeClassName.c_str())));
     if (storageNode)
     {
       // Filename is not specified or it is specified and there is a supported file extension
@@ -780,15 +781,14 @@ std::string vtkMRMLSequenceNode::GetIndexTypeAsString(int indexType)
   {
     case vtkMRMLSequenceNode::NumericIndex: return "numeric";
     case vtkMRMLSequenceNode::TextIndex: return "text";
-    default:
-      return "";
+    default: return "";
   }
 }
 
 //-----------------------------------------------------------
 int vtkMRMLSequenceNode::GetIndexTypeFromString(const std::string& indexTypeString)
 {
-  for (int i = 0; i<vtkMRMLSequenceNode::NumberOfIndexTypes; i++)
+  for (int i = 0; i < vtkMRMLSequenceNode::NumberOfIndexTypes; i++)
   {
     if (indexTypeString == GetIndexTypeAsString(i))
     {

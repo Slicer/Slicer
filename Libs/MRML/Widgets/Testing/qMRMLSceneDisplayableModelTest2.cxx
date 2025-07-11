@@ -67,7 +67,6 @@ int qMRMLSceneDisplayableModelTest2(int argc, char* argv[])
     std::cout << std::endl << "Loaded twice" << std::endl;
 
     scene->Delete();
-
   }
   catch (const char* error)
   {

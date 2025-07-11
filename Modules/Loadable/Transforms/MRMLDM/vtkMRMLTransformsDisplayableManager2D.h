@@ -32,18 +32,15 @@
 /// Displays transforms in slice viewers as glyphs, deformed grid, or
 /// contour lines
 ///
-class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformsDisplayableManager2D
-  : public vtkMRMLAbstractSliceViewDisplayableManager
+class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformsDisplayableManager2D : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 
 public:
-
   static vtkMRMLTransformsDisplayableManager2D* New();
   vtkTypeMacro(vtkMRMLTransformsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLTransformsDisplayableManager2D();
   ~vtkMRMLTransformsDisplayableManager2D() override;
 
@@ -65,7 +62,6 @@ protected:
   void Create() override;
 
 private:
-
   vtkMRMLTransformsDisplayableManager2D(const vtkMRMLTransformsDisplayableManager2D&) = delete;
   void operator=(const vtkMRMLTransformsDisplayableManager2D&) = delete;
 

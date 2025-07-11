@@ -28,8 +28,7 @@
 
 class qSlicerSegmentEditorEraseEffectPrivate;
 
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorEraseEffect :
-  public qSlicerSegmentEditorPaintEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorEraseEffect : public qSlicerSegmentEditorPaintEffect
 {
 public:
   Q_OBJECT

@@ -36,7 +36,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -47,7 +47,7 @@ public:
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// Get/Set flag that controls if points are to be written in various coordinate systems
-  vtkSetClampMacro(CoordinateSystem, int, 0, vtkMRMLStorageNode::CoordinateSystemType_Last-1);
+  vtkSetClampMacro(CoordinateSystem, int, 0, vtkMRMLStorageNode::CoordinateSystemType_Last - 1);
   vtkGetMacro(CoordinateSystem, int);
   std::string GetCoordinateSystemAsString();
   static const char* GetCoordinateSystemAsString(int id);
@@ -66,7 +66,6 @@ protected:
   void operator=(const vtkMRMLMarkupsStorageNode&);
 
 private:
-
   /// Flag set to enum RAS if the points are to be written out/read in using
   /// the RAS coordinate system, enum LPS if the points are to be written
   /// out/read in using LPS coordinate system, enum IJK if the points are

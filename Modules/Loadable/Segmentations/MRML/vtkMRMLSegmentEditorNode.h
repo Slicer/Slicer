@@ -56,7 +56,7 @@ public:
   enum
   {
     /// Areas added to selected segment will be removed from all other segments. (no overlap)
-    OverwriteAllSegments=0,
+    OverwriteAllSegments = 0,
     /// Areas added to selected segment will be removed from all visible segments. (no overlap with visible, overlap possible with hidden)
     OverwriteVisibleSegments,
     /// Areas added to selected segment will not be removed from any segments. (overlap with all other segments)
@@ -74,7 +74,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from name/value pairs
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -92,7 +92,6 @@ public:
   //@}
 
 public:
-
   //@{
   /// Get/set source volume node.
   /// Source volume node is used when editing requires an underlying image.
@@ -220,7 +219,7 @@ protected:
   /// Active effect name
   char* ActiveEffectName{ nullptr };
 
-  int MaskMode{vtkMRMLSegmentationNode::EditAllowedEverywhere};
+  int MaskMode{ vtkMRMLSegmentationNode::EditAllowedEverywhere };
   char* MaskSegmentID{ nullptr };
 
   int OverwriteMode{ OverwriteAllSegments };

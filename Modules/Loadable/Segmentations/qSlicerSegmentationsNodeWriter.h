@@ -28,8 +28,7 @@
 class vtkMRMLNode;
 
 /// Utility class that is ready to use for most of the nodes.
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriter
-  : public qSlicerNodeWriter
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriter : public qSlicerNodeWriter
 {
   Q_OBJECT
 public:

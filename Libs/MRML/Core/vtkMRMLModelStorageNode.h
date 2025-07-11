@@ -34,7 +34,7 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "ModelStorage";}
+  const char* GetNodeTagName() override { return "ModelStorage"; }
 
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;
@@ -46,7 +46,7 @@ public:
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
 
   /// Get/Set flag that controls if points are to be written in various coordinate systems
-  vtkSetClampMacro(CoordinateSystem, int, 0, vtkMRMLStorageNode::CoordinateSystemType_Last-1);
+  vtkSetClampMacro(CoordinateSystem, int, 0, vtkMRMLStorageNode::CoordinateSystemType_Last - 1);
   vtkGetMacro(CoordinateSystem, int);
   static const char* GetCoordinateSystemAsString(int id);
   static int GetCoordinateSystemFromString(const char* name);

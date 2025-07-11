@@ -30,12 +30,12 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerDataModulePrivate;
 
-class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
+
 public:
   typedef qSlicerLoadableModule Superclass;
   qSlicerDataModule(QObject* parent = nullptr);
@@ -53,8 +53,8 @@ public:
   QString helpText() const override;
   QString acknowledgementText() const override;
   QStringList contributors() const override;
-protected:
 
+protected:
   /// Create and return the widget representation associated to this module
   qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 

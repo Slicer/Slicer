@@ -36,8 +36,7 @@ class vtkMRMLMarkupsROINode;
 class qMRMLMarkupsROIWidgetPrivate;
 
 // ------------------------------------------------------------------------------
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsROIWidget
-: public qMRMLMarkupsAbstractOptionsWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsROIWidget : public qMRMLMarkupsAbstractOptionsWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -51,12 +50,10 @@ public:
   vtkMRMLMarkupsROINode* mrmlROINode() const;
 
   void setExtent(double min, double max);
-  void setExtent(double minLR, double maxLR,
-                 double minPA, double maxPA,
-                 double minIS, double maxIS);
+  void setExtent(double minLR, double maxLR, double minPA, double maxPA, double minIS, double maxIS);
 
   /// Gets the name of the additional options widget type
-  const QString className() const override {return "qMRMLMarkupsROIWidget";}
+  const QString className() const override { return "qMRMLMarkupsROIWidget"; }
 
   /// Checks whether a given node can be handled by the widget
   bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsNode) const override;
@@ -82,8 +79,7 @@ public slots:
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
   /// Returns an instance of the widget
-  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
-  { return new qMRMLMarkupsROIWidget(); }
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override { return new qMRMLMarkupsROIWidget(); }
 
 signals:
   void displayClippingBoxChanged(bool);

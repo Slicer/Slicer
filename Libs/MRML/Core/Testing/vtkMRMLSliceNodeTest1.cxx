@@ -19,7 +19,6 @@
 #include <vtkMatrix4x4.h>
 #include <vtkStringArray.h>
 
-
 //----------------------------------------------------------------------------
 void AddSliceOrientationPresets(vtkMRMLSliceNode* sliceNode);
 
@@ -84,8 +83,7 @@ void AddSliceOrientationPresets(vtkMRMLSliceNode* sliceNode)
 }
 
 //----------------------------------------------------------------------------
-int CheckOrientationPresetNames(vtkMRMLSliceNode* sliceNode,
-                                std::vector<std::string> names)
+int CheckOrientationPresetNames(vtkMRMLSliceNode* sliceNode, std::vector<std::string> names)
 {
   vtkNew<vtkStringArray> orientationPresetNames;
   sliceNode->GetSliceOrientationPresetNames(orientationPresetNames.GetPointer());
@@ -116,8 +114,7 @@ int AddSliceOrientationPresetTest()
   expectedOrientationNames.emplace_back("Sagittal");
   expectedOrientationNames.emplace_back("Coronal");
 
-  CHECK_INT(CheckOrientationPresetNames(sliceNode.GetPointer(),
-                                        expectedOrientationNames), EXIT_SUCCESS);
+  CHECK_INT(CheckOrientationPresetNames(sliceNode.GetPointer(), expectedOrientationNames), EXIT_SUCCESS);
 
   return EXIT_SUCCESS;
 }
@@ -135,7 +132,7 @@ void InitializeMatrix(vtkMatrix3x3* matrix, double value)
     }
   }
 }
-}
+} // namespace
 
 //----------------------------------------------------------------------------
 int RemoveSliceOrientationPresetTest()
@@ -272,24 +269,19 @@ int GetSliceOrientationPresetTest()
 
   {
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-    vtkMatrix3x3* current =
-        sliceNode->GetSliceOrientationPreset("");
+    vtkMatrix3x3* current = sliceNode->GetSliceOrientationPreset("");
     TESTING_OUTPUT_ASSERT_ERRORS_END();
     CHECK_NULL(current);
   }
 
   {
-    vtkMatrix3x3* current =
-        sliceNode->GetSliceOrientationPreset("ones");
-    CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(
-                 current, expectedOnes.GetPointer()), true);
+    vtkMatrix3x3* current = sliceNode->GetSliceOrientationPreset("ones");
+    CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(current, expectedOnes.GetPointer()), true);
   }
 
   {
-    vtkMatrix3x3* current =
-        sliceNode->GetSliceOrientationPreset("twos");
-    CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(
-                 current, expectedTwos.GetPointer()), true);
+    vtkMatrix3x3* current = sliceNode->GetSliceOrientationPreset("twos");
+    CHECK_BOOL(vtkAddonMathUtilities::MatrixAreEqual(current, expectedTwos.GetPointer()), true);
   }
 
   return EXIT_SUCCESS;
@@ -307,16 +299,13 @@ int GetSliceOrientationPresetNameTest()
   vtkMRMLSliceNode::GetAxialSliceToRASMatrix(preset.GetPointer());
   sliceNode->AddSliceOrientationPreset("Axial", preset.GetPointer());
 
+  originalPreset->SetElement(1, 1, 1.0 + 1e-4);
 
-  originalPreset->SetElement(1, 1,  1.0 + 1e-4);
+  CHECK_STD_STRING(sliceNode->GetSliceOrientationPresetName(originalPreset.GetPointer()), std::string("Axial"));
 
-  CHECK_STD_STRING(sliceNode->GetSliceOrientationPresetName(
-                   originalPreset.GetPointer()), std::string("Axial"));
+  originalPreset->SetElement(1, 1, 1.0 + 1e-2);
 
-  originalPreset->SetElement(1, 1,  1.0 + 1e-2);
-
-  CHECK_STD_STRING(sliceNode->GetSliceOrientationPresetName(
-                   originalPreset.GetPointer()), std::string(""));
+  CHECK_STD_STRING(sliceNode->GetSliceOrientationPresetName(originalPreset.GetPointer()), std::string(""));
 
   return EXIT_SUCCESS;
 }

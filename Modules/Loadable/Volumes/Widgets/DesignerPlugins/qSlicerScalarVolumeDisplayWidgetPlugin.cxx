@@ -19,25 +19,20 @@
 #include "qSlicerScalarVolumeDisplayWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerScalarVolumeDisplayWidgetPlugin
-::qSlicerScalarVolumeDisplayWidgetPlugin(QObject* _parent)
+qSlicerScalarVolumeDisplayWidgetPlugin::qSlicerScalarVolumeDisplayWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget* qSlicerScalarVolumeDisplayWidgetPlugin
-::createWidget(QWidget* _parent)
+QWidget* qSlicerScalarVolumeDisplayWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerScalarVolumeDisplayWidget* _widget
-    = new qSlicerScalarVolumeDisplayWidget(_parent);
+  qSlicerScalarVolumeDisplayWidget* _widget = new qSlicerScalarVolumeDisplayWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerScalarVolumeDisplayWidgetPlugin
-::domXml() const
+QString qSlicerScalarVolumeDisplayWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerScalarVolumeDisplayWidget\" \
           name=\"VolumeDisplayWidget\">\n"
@@ -45,22 +40,19 @@ QString qSlicerScalarVolumeDisplayWidgetPlugin
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerScalarVolumeDisplayWidgetPlugin
-::includeFile() const
+QString qSlicerScalarVolumeDisplayWidgetPlugin::includeFile() const
 {
   return "qSlicerScalarVolumeDisplayWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerScalarVolumeDisplayWidgetPlugin
-::isContainer() const
+bool qSlicerScalarVolumeDisplayWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerScalarVolumeDisplayWidgetPlugin
-::name() const
+QString qSlicerScalarVolumeDisplayWidgetPlugin::name() const
 {
   return "qSlicerScalarVolumeDisplayWidget";
 }

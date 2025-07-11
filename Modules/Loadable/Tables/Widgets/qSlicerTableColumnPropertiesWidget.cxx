@@ -23,7 +23,7 @@
 #include "ui_qSlicerTableColumnPropertiesWidget.h"
 
 // Markups includes
-//#include <vtkSlicerTablesLogic.h>
+// #include <vtkSlicerTablesLogic.h>
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -44,15 +44,15 @@
 static const char SCHEMA_PROPERTY_NAME[] = "SchemaPropertyName";
 
 //-----------------------------------------------------------------------------
-class qSlicerTableColumnPropertiesWidgetPrivate
-  : public Ui_qSlicerTableColumnPropertiesWidget
+class qSlicerTableColumnPropertiesWidgetPrivate : public Ui_qSlicerTableColumnPropertiesWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTableColumnPropertiesWidget);
+
 protected:
   qSlicerTableColumnPropertiesWidget* const q_ptr;
 
 public:
-  qSlicerTableColumnPropertiesWidgetPrivate( qSlicerTableColumnPropertiesWidget& object);
+  qSlicerTableColumnPropertiesWidgetPrivate(qSlicerTableColumnPropertiesWidget& object);
   ~qSlicerTableColumnPropertiesWidgetPrivate();
   virtual void setupUi(qSlicerTableColumnPropertiesWidget*);
 
@@ -68,7 +68,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qSlicerTableColumnPropertiesWidgetPrivate::qSlicerTableColumnPropertiesWidgetPrivate( qSlicerTableColumnPropertiesWidget& object)
+qSlicerTableColumnPropertiesWidgetPrivate::qSlicerTableColumnPropertiesWidgetPrivate(qSlicerTableColumnPropertiesWidget& object)
   : q_ptr(&object)
   , ColumnNameVisible(true)
   , ConfirmTypeChange(true)
@@ -84,13 +84,12 @@ void qSlicerTableColumnPropertiesWidgetPrivate::setupUi(qSlicerTableColumnProper
   this->Ui_qSlicerTableColumnPropertiesWidget::setupUi(widget);
 }
 
-
 //-----------------------------------------------------------------------------
 // qSlicerTableColumnPropertiesWidget methods
 
 //-----------------------------------------------------------------------------
 qSlicerTableColumnPropertiesWidget::qSlicerTableColumnPropertiesWidget(QWidget* parentWidget)
-  : Superclass( parentWidget )
+  : Superclass(parentWidget)
   , d_ptr(new qSlicerTableColumnPropertiesWidgetPrivate(*this))
 {
   this->setup();
@@ -133,9 +132,7 @@ void qSlicerTableColumnPropertiesWidget::setup()
   }
   connect(d->ApplyTypeChangeButton, SIGNAL(clicked()), this, SLOT(onApplyTypeChange()));
   connect(d->CancelTypeChangeButton, SIGNAL(clicked()), this, SLOT(onCancelTypeChange()));
-
 }
-
 
 //------------------------------------------------------------------------------
 void qSlicerTableColumnPropertiesWidget::setMRMLTableNode(vtkMRMLNode* node)

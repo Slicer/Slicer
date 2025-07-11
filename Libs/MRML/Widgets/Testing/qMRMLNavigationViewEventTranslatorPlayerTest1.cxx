@@ -62,7 +62,7 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLNavigationViewEventTranslatorPlayerTest1(int argc, char* argv[])
@@ -113,9 +113,7 @@ int qMRMLNavigationViewEventTranslatorPlayerTest1(int argc, char* argv[])
   threeDView.setMRMLViewNode(viewNode);
   navigationView.setMRMLViewNode(viewNode);
 
-  etpWidget.addTestCase(&topLevel,
-                        xmlDirectory + "qMRMLNavigationViewEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(&topLevel, xmlDirectory + "qMRMLNavigationViewEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

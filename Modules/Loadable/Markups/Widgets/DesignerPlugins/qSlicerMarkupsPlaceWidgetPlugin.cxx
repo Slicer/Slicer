@@ -22,25 +22,20 @@
 #include "qSlicerMarkupsPlaceWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerMarkupsPlaceWidgetPlugin
-::qSlicerMarkupsPlaceWidgetPlugin(QObject* _parent)
+qSlicerMarkupsPlaceWidgetPlugin::qSlicerMarkupsPlaceWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget* qSlicerMarkupsPlaceWidgetPlugin
-::createWidget(QWidget* _parent)
+QWidget* qSlicerMarkupsPlaceWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerMarkupsPlaceWidget* _widget
-    = new qSlicerMarkupsPlaceWidget(_parent);
+  qSlicerMarkupsPlaceWidget* _widget = new qSlicerMarkupsPlaceWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerMarkupsPlaceWidgetPlugin
-::domXml() const
+QString qSlicerMarkupsPlaceWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerMarkupsPlaceWidget\" \
           name=\"MarkupsPlaceWidget\">\n"
@@ -48,22 +43,19 @@ QString qSlicerMarkupsPlaceWidgetPlugin
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerMarkupsPlaceWidgetPlugin
-::includeFile() const
+QString qSlicerMarkupsPlaceWidgetPlugin::includeFile() const
 {
   return "qSlicerMarkupsPlaceWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerMarkupsPlaceWidgetPlugin
-::isContainer() const
+bool qSlicerMarkupsPlaceWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerMarkupsPlaceWidgetPlugin
-::name() const
+QString qSlicerMarkupsPlaceWidgetPlugin::name() const
 {
   return "qSlicerMarkupsPlaceWidget";
 }

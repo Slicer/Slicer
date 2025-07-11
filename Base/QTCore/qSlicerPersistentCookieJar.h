@@ -50,7 +50,7 @@ public:
   void setFilePath(const QString& filePath);
 
   QList<QNetworkCookie> cookiesForUrl(const QUrl& url) const override;
-  bool setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, const QUrl& url) override;
+  bool setCookiesFromUrl(const QList<QNetworkCookie>& cookieList, const QUrl& url) override;
 
 protected:
   QScopedPointer<qSlicerPersistentCookieJarPrivate> d_ptr;

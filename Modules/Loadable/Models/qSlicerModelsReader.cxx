@@ -88,7 +88,7 @@ qSlicerIO::IOFileType qSlicerModelsReader::fileType() const
 QStringList qSlicerModelsReader::extensions() const
 {
   return QStringList() //
-    << "Model (*.vtk *.vtp *.vtu *.g *.byu *.stl *.ply *.obj *.ucd)";
+         << "Model (*.vtk *.vtp *.vtu *.g *.byu *.stl *.ply *.obj *.ucd)";
 }
 
 //-----------------------------------------------------------------------------
@@ -148,31 +148,27 @@ bool qSlicerModelsReader::load(const IOProperties& properties)
     coordinateSystem = properties["coordinateSystem"].toInt();
   }
   this->userMessages()->ClearMessages();
-  vtkMRMLModelNode* node = d->ModelsLogic->AddModel(
-    fileName.toUtf8(), coordinateSystem, this->userMessages());
+  vtkMRMLModelNode* node = d->ModelsLogic->AddModel(fileName.toUtf8(), coordinateSystem, this->userMessages());
   if (!node)
   {
     // errors are already logged and userMessages contain details that can be displayed to users
     return false;
   }
-  this->setLoadedNodes( QStringList(QString(node->GetID())) );
+  this->setLoadedNodes(QStringList(QString(node->GetID())));
   if (properties.contains("name"))
   {
-    std::string uname = this->mrmlScene()->GetUniqueNameByString(
-      properties["name"].toString().toUtf8());
+    std::string uname = this->mrmlScene()->GetUniqueNameByString(properties["name"].toString().toUtf8());
     node->SetName(uname.c_str());
   }
 
   // If no other nodes are displayed then reset the field of view
   bool otherNodesAreAlreadyVisible = false;
-  vtkSmartPointer<vtkCollection> displayNodes = vtkSmartPointer<vtkCollection>::Take(
-    this->mrmlScene()->GetNodesByClass("vtkMRMLDisplayNode"));
+  vtkSmartPointer<vtkCollection> displayNodes = vtkSmartPointer<vtkCollection>::Take(this->mrmlScene()->GetNodesByClass("vtkMRMLDisplayNode"));
   for (int displayNodeIndex = 0; displayNodeIndex < displayNodes->GetNumberOfItems(); ++displayNodeIndex)
   {
-    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(
-      displayNodes->GetItemAsObject(displayNodeIndex));
+    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(displayNodes->GetItemAsObject(displayNodeIndex));
     if (displayNode->GetDisplayableNode() //
-        && displayNode->GetVisibility() //
+        && displayNode->GetVisibility()   //
         && displayNode->GetDisplayableNode() != node)
     {
       otherNodesAreAlreadyVisible = true;

@@ -27,7 +27,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation3D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerPlaneRepresentation3D_h
 #define vtkSlicerPlaneRepresentation3D_h
@@ -61,7 +61,7 @@ public:
   /// Subclasses of vtkMRMLAbstractWidgetRepresentation must implement these methods. These
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
-  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData=nullptr) override;
+  void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;
@@ -76,33 +76,31 @@ public:
 
   bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
 
-  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
 
-  void CanInteractWithPlane(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+  void CanInteractWithPlane(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
 
 protected:
   vtkSlicerPlaneRepresentation3D();
   ~vtkSlicerPlaneRepresentation3D() override;
 
-  vtkNew<vtkPlaneSource>     PlaneFillFilter;
-  vtkNew<vtkArrowSource>     ArrowFilter;
-  vtkNew<vtkGlyph3D>         ArrowGlypher;
-  vtkNew<vtkPolyData>        PlaneOutlineInputPolyData;
-  vtkNew<vtkTubeFilter>      PlaneOutlineFilter;
+  vtkNew<vtkPlaneSource> PlaneFillFilter;
+  vtkNew<vtkArrowSource> ArrowFilter;
+  vtkNew<vtkGlyph3D> ArrowGlypher;
+  vtkNew<vtkPolyData> PlaneOutlineInputPolyData;
+  vtkNew<vtkTubeFilter> PlaneOutlineFilter;
   vtkNew<vtkArrayCalculator> ArrowColorFilter;
   vtkNew<vtkArrayCalculator> PlaneOutlineColorFilter;
   vtkNew<vtkArrayCalculator> PlaneFillColorFilter;
-  vtkNew<vtkAppendPolyData>  Append;
+  vtkNew<vtkAppendPolyData> Append;
 
-  vtkNew<vtkActor>           PlaneActor;
-  vtkNew<vtkActor>           PlaneOccludedActor;
+  vtkNew<vtkActor> PlaneActor;
+  vtkNew<vtkActor> PlaneOccludedActor;
 
-  vtkNew<vtkPolyDataMapper>  PlaneMapper;
-  vtkNew<vtkPolyDataMapper>  PlaneOccludedMapper;
+  vtkNew<vtkPolyDataMapper> PlaneMapper;
+  vtkNew<vtkPolyDataMapper> PlaneOccludedMapper;
 
-  vtkNew<vtkLookupTable>    PlaneColorLUT;
+  vtkNew<vtkLookupTable> PlaneColorLUT;
 
   std::string LabelFormat;
 

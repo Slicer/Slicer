@@ -33,8 +33,7 @@ typedef _object PyObject;
 #endif
 class qSlicerScriptedLoadableModuleWidgetPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModuleWidget
-  :public qSlicerAbstractModuleWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString moduleName READ moduleName)

@@ -57,12 +57,15 @@
 class qSlicerSubjectHierarchyLabelMapsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyLabelMapsPlugin);
+
 protected:
   qSlicerSubjectHierarchyLabelMapsPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyLabelMapsPluginPrivate(qSlicerSubjectHierarchyLabelMapsPlugin& object);
   ~qSlicerSubjectHierarchyLabelMapsPluginPrivate() override;
   void init();
+
 public:
   QIcon LabelmapIcon;
 
@@ -74,7 +77,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyLabelMapsPluginPrivate::qSlicerSubjectHierarchyLabelMapsPluginPrivate(qSlicerSubjectHierarchyLabelMapsPlugin& object)
-: q_ptr(&object)
+  : q_ptr(&object)
 {
   this->LabelmapIcon = QIcon(":Icons/Labelmap.png");
 
@@ -86,7 +89,7 @@ void qSlicerSubjectHierarchyLabelMapsPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyLabelMapsPlugin);
 
-  this->ToggleOutlineVisibilityAction = new QAction(qSlicerSubjectHierarchyLabelMapsPlugin::tr("2D outline visibility"),q);
+  this->ToggleOutlineVisibilityAction = new QAction(qSlicerSubjectHierarchyLabelMapsPlugin::tr("2D outline visibility"), q);
   QObject::connect(this->ToggleOutlineVisibilityAction, SIGNAL(toggled(bool)), q, SLOT(toggle2DOutlineVisibility(bool)));
   this->ToggleOutlineVisibilityAction->setCheckable(true);
   this->ToggleOutlineVisibilityAction->setChecked(false);
@@ -100,8 +103,8 @@ qSlicerSubjectHierarchyLabelMapsPluginPrivate::~qSlicerSubjectHierarchyLabelMaps
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyLabelMapsPlugin::qSlicerSubjectHierarchyLabelMapsPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyLabelMapsPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyLabelMapsPluginPrivate(*this))
 {
   this->m_Name = QString("LabelMaps");
 
@@ -113,8 +116,7 @@ qSlicerSubjectHierarchyLabelMapsPlugin::qSlicerSubjectHierarchyLabelMapsPlugin(Q
 qSlicerSubjectHierarchyLabelMapsPlugin::~qSlicerSubjectHierarchyLabelMapsPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+double qSlicerSubjectHierarchyLabelMapsPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -221,8 +223,8 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::setDisplayVisibility(vtkIdType item
     else
     {
       // If visibility is off, then hide the labelmap from all slice views
-      qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-        qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+      qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+        qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
       if (!volumesPlugin)
       {
         qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
@@ -252,8 +254,8 @@ int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemI
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
     return -1;
   }
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+    qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
@@ -284,8 +286,8 @@ int qSlicerSubjectHierarchyLabelMapsPlugin::getDisplayVisibility(vtkIdType itemI
 //---------------------------------------------------------------------------
 void qSlicerSubjectHierarchyLabelMapsPlugin::showLabelMapInAllViews(vtkMRMLLabelMapVolumeNode* node)
 {
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes") );
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+    qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
@@ -321,7 +323,7 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::showVisibilityContextMenuActionsFor
   if (this->canOwnSubjectHierarchyItem(itemID))
   {
     // Determine current state of the toggle labelmap outline checkbox (from the first slice view)
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast ( scene->GetNthNodeByClass( 0, "vtkMRMLSliceNode" ) );
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNthNodeByClass(0, "vtkMRMLSliceNode"));
     int useLabelOutline = sliceNode->GetUseLabelOutline();
     d->ToggleOutlineVisibilityAction->blockSignals(true);
     d->ToggleOutlineVisibilityAction->setChecked(useLabelOutline);
@@ -338,9 +340,9 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::toggle2DOutlineVisibility(bool chec
   vtkMRMLSliceNode* sliceNode = nullptr;
   const int numberOfSliceNodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
 
-  for (int i = 0; i<numberOfSliceNodes; i++)
+  for (int i = 0; i < numberOfSliceNodes; i++)
   {
-    sliceNode = vtkMRMLSliceNode::SafeDownCast ( scene->GetNthNodeByClass( i, "vtkMRMLSliceNode" ) );
+    sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNthNodeByClass(i, "vtkMRMLSliceNode"));
     sliceNode->SetUseLabelOutline(checked);
   }
 }
@@ -348,8 +350,8 @@ void qSlicerSubjectHierarchyLabelMapsPlugin::toggle2DOutlineVisibility(bool chec
 //-----------------------------------------------------------------------------
 bool qSlicerSubjectHierarchyLabelMapsPlugin::showItemInView(vtkIdType itemID, vtkMRMLAbstractViewNode* viewNode, vtkIdList* allItemsToShow)
 {
-  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
+  qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+    qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
   if (!volumesPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";

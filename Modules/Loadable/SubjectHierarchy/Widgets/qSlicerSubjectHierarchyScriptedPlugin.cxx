@@ -48,7 +48,8 @@ public:
   qSlicerSubjectHierarchyScriptedPluginPrivate();
   virtual ~qSlicerSubjectHierarchyScriptedPluginPrivate();
 
-  enum {
+  enum
+  {
     CanOwnSubjectHierarchyItemMethod = 0,
     RoleForPluginMethod,
     HelpTextMethod,
@@ -190,7 +191,10 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePa
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSubjectHierarchyScriptedPlugin::setPythonSource - "
                             "Failed to load subject hierarchy scripted plugin: "
-                            "class %1 was not found in %2").arg(className).arg(filePath).toUtf8());
+                            "class %1 was not found in %2")
+                      .arg(className)
+                      .arg(filePath)
+                      .toUtf8());
     PythonQt::self()->handleError();
     return false;
   }
@@ -205,8 +209,7 @@ bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePa
 
   d->PythonSourceFilePath = filePath;
 
-  if (!qSlicerScriptedUtils::setModuleAttribute(
-        "slicer", className, self))
+  if (!qSlicerScriptedUtils::setModuleAttribute("slicer", className, self))
   {
     qCritical() << Q_FUNC_INFO << ": Failed to set" << ("slicer." + className);
   }
@@ -377,7 +380,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions() 
   QList<QAction*> actionList;
   foreach (QVariant actionVariant, resultVariantList)
   {
-    QAction* action = qobject_cast<QAction*>( actionVariant.value<QObject*>() );
+    QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
   }
   return actionList;
@@ -404,7 +407,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::viewContextMenuActions() 
   QList<QAction*> actionList;
   foreach (QVariant actionVariant, resultVariantList)
   {
-    QAction* action = qobject_cast<QAction*>( actionVariant.value<QObject*>() );
+    QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
   }
   return actionList;
@@ -431,7 +434,7 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()
   QList<QAction*> actionList;
   foreach (QVariant actionVariant, resultVariantList)
   {
-    QAction* action = qobject_cast<QAction*>( actionVariant.value<QObject*>() );
+    QAction* action = qobject_cast<QAction*>(actionVariant.value<QObject*>());
     actionList << action;
   }
   return actionList;
@@ -469,9 +472,7 @@ void qSlicerSubjectHierarchyScriptedPlugin::showViewContextMenuActionsForItem(vt
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node,
-  vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
@@ -496,9 +497,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierarchy(
-  vtkIdType itemID,
-  vtkIdType parentItemID) const
+double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);
@@ -523,9 +522,7 @@ double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierar
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(
-  vtkIdType itemID,
-  vtkIdType parentItemID)
+bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
   PyObject* arguments = PyTuple_New(2);

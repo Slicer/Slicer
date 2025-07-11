@@ -50,6 +50,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutViewFactory : public ctkLayoutViewFactory
   /// The accessor MUST BE reimplemented in the derived class.
   /// \sa viewClassName(), isElementSupported, isViewNodeSupported
   Q_PROPERTY(QString viewClassName READ viewClassName);
+
 public:
   /// Superclass typedef
   typedef ctkLayoutViewFactory Superclass;
@@ -127,7 +128,6 @@ Q_SIGNALS:
   /// This signal is emitted when the active view node changed.
   /// \sa setActiveViewNode()
   void activeViewNodeChanged(vtkMRMLAbstractViewNode*);
-
 
 protected:
   QScopedPointer<qMRMLLayoutViewFactoryPrivate> d_ptr;

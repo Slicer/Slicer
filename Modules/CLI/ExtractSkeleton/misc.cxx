@@ -26,10 +26,9 @@ void* ipAllocateData(const int size, const size_t elemsize)
 {
   void* data = nullptr;
 
-  if (!(data = malloc(size * elemsize) ))
+  if (!(data = malloc(size * elemsize)))
   {
-    fprintf(stderr, "Error: ipAllocateData [%s, line %d]: memory allocation failed:",
-            __FILE__, __LINE__);
+    fprintf(stderr, "Error: ipAllocateData [%s, line %d]: memory allocation failed:", __FILE__, __LINE__);
     perror("");
     exit(errno);
   }
@@ -45,25 +44,14 @@ size_t ipGetDataSize(const ipDataType type)
 
   switch (type)
   {
-    case IP_BYTE:
-      retval = sizeof(char);
-      break;
-    case IP_SHORT:
-      retval = sizeof(short);
-      break;
-    case IP_INT:
-      retval = sizeof(int);
-      break;
-    case IP_FLOAT:
-      retval = sizeof(float);
-      break;
-    case IP_DOUBLE:
-      retval = sizeof(double);
-      break;
+    case IP_BYTE: retval = sizeof(char); break;
+    case IP_SHORT: retval = sizeof(short); break;
+    case IP_INT: retval = sizeof(int); break;
+    case IP_FLOAT: retval = sizeof(float); break;
+    case IP_DOUBLE: retval = sizeof(double); break;
     default:
 #ifdef DEBUG_VSKEL
-      fprintf(stderr, "Warning: ipGetDataSize [%s, line %d]: unsupported data type: %d\n",
-              __FILE__, __LINE__, type);
+      fprintf(stderr, "Warning: ipGetDataSize [%s, line %d]: unsupported data type: %d\n", __FILE__, __LINE__, type);
 #endif
 
       retval = 0;
@@ -71,5 +59,4 @@ size_t ipGetDataSize(const ipDataType type)
   }
 
   return retval;
-
 }

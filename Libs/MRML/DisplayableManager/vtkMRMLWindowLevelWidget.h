@@ -23,7 +23,7 @@
  * displayed slice intersection lines.
  *
  *
-*/
+ */
 
 #ifndef vtkMRMLWindowLevelWidget_h
 #define vtkMRMLWindowLevelWidget_h
@@ -41,7 +41,6 @@
 class vtkSliceIntersectionRepresentation2D;
 class vtkMRMLApplicationLogic;
 class vtkMRMLSegmentationDisplayNode;
-
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLWindowLevelWidget : public vtkMRMLAbstractWidget
 {

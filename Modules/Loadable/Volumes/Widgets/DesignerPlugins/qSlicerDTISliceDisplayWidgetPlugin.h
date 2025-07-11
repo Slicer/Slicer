@@ -20,9 +20,9 @@
 
 #include "qSlicerVolumesModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_VOLUMES_WIDGETS_PLUGINS_EXPORT
-qSlicerDTISliceDisplayWidgetPlugin
-  : public QObject, public qSlicerVolumesModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_VOLUMES_WIDGETS_PLUGINS_EXPORT qSlicerDTISliceDisplayWidgetPlugin
+  : public QObject
+  , public qSlicerVolumesModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
@@ -34,7 +34,6 @@ public:
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

@@ -25,7 +25,7 @@
 
 class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLScalarInvariantComboBoxPlugin
   : public QObject
-  ,  public qMRMLWidgetsAbstractPlugin
+  , public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 

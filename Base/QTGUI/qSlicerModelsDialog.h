@@ -44,10 +44,10 @@ public:
   qSlicerFileDialog::IOAction action() const override;
 
   /// run the dialog to select the file/files/directory
-  bool exec(const qSlicerIO::IOProperties& readerProperties =
-                    qSlicerIO::IOProperties()) override;
+  bool exec(const qSlicerIO::IOProperties& readerProperties = qSlicerIO::IOProperties()) override;
 
   QStringList loadedNodes() const override;
+
 protected:
   QScopedPointer<qSlicerModelsDialogPrivate> d_ptr;
 

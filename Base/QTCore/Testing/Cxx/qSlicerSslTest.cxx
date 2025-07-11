@@ -32,9 +32,7 @@ void qSlicerSslTester::testSupportsSsl()
 // ----------------------------------------------------------------------------
 void qSlicerSslTester::testLoadCaCertificates()
 {
-  QVERIFY(qSlicerCoreApplication::loadCaCertificates(
-    qSlicerCoreApplication::caCertificatesPath(
-            QProcessEnvironment::systemEnvironment().value("SLICER_HOME"))));
+  QVERIFY(qSlicerCoreApplication::loadCaCertificates(qSlicerCoreApplication::caCertificatesPath(QProcessEnvironment::systemEnvironment().value("SLICER_HOME"))));
 }
 
 // ----------------------------------------------------------------------------
@@ -45,7 +43,7 @@ public:
   SslEventLoop() = default;
 public slots:
   void onSslErrors(QNetworkReply* reply, const QList<QSslError>& sslErrors)
-{
+  {
     Q_UNUSED(reply);
     foreach (const QSslError& sslError, sslErrors)
     {
@@ -53,7 +51,8 @@ public slots:
       this->SslErrorStrings << sslError.errorString();
     }
     this->quit();
-}
+  }
+
 public:
   QList<QSslError::SslError> SslErrors;
   QStringList SslErrorStrings;
@@ -69,17 +68,13 @@ void qSlicerSslTester::testHttpsConnection()
   QFETCH(QNetworkReply::NetworkError, expectedNetworkError);
   QFETCH(int, expectedStatusCode);
 
-  qSlicerCoreApplication::loadCaCertificates(
-    qSlicerCoreApplication::caCertificatesPath(
-        QProcessEnvironment::systemEnvironment().value("SLICER_HOME")));
+  qSlicerCoreApplication::loadCaCertificates(qSlicerCoreApplication::caCertificatesPath(QProcessEnvironment::systemEnvironment().value("SLICER_HOME")));
 
   QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 
   SslEventLoop eventLoop;
-  QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
-                   &eventLoop, SLOT(quit()));
-  QObject::connect(manager, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)),
-            &eventLoop, SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
+  QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
+  QObject::connect(manager, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)), &eventLoop, SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
 
   QNetworkReply* reply = manager->get(QNetworkRequest(QUrl(url)));
   eventLoop.exec();

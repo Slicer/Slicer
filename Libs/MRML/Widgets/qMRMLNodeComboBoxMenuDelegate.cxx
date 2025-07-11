@@ -24,48 +24,40 @@
 #include <QPainter>
 #include <QStyledItemDelegate>
 
-//include
+// include
 #include "qMRMLNodeComboBoxMenuDelegate.h"
 #include "qMRMLNodeComboBoxDelegate.h"
 
 // --------------------------------------------------------------------------
-qMRMLNodeComboBoxMenuDelegate::qMRMLNodeComboBoxMenuDelegate(QObject* parent,
-                                                             QComboBox* comboBox)
+qMRMLNodeComboBoxMenuDelegate::qMRMLNodeComboBoxMenuDelegate(QObject* parent, QComboBox* comboBox)
   : QAbstractItemDelegate(parent)
   , mCombo(comboBox)
 {
 }
 
 // --------------------------------------------------------------------------
-void qMRMLNodeComboBoxMenuDelegate::paint(QPainter* painter,
-                                          const QStyleOptionViewItem& option,
-                                          const QModelIndex& index) const
+void qMRMLNodeComboBoxMenuDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QStyleOptionMenuItem opt = this->getStyleOption(option, index);
 #ifndef Q_WS_S60
   painter->fillRect(option.rect, opt.palette.window());
 #endif
-  this->mCombo->style()->drawControl(QStyle::CE_MenuItem, &opt, painter,
-                                       this->mCombo);
+  this->mCombo->style()->drawControl(QStyle::CE_MenuItem, &opt, painter, this->mCombo);
 }
 
 // --------------------------------------------------------------------------
-QSize qMRMLNodeComboBoxMenuDelegate::sizeHint(const QStyleOptionViewItem& option,
-                                              const QModelIndex& index) const
+QSize qMRMLNodeComboBoxMenuDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QStyleOptionMenuItem opt = getStyleOption(option, index);
-  return this->mCombo->style()->sizeFromContents(
-      QStyle::CT_MenuItem, &opt, option.rect.size(), this->mCombo);
+  return this->mCombo->style()->sizeFromContents(QStyle::CT_MenuItem, &opt, option.rect.size(), this->mCombo);
 }
 
 // --------------------------------------------------------------------------
-QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
-    const QStyleOptionViewItem& option, const QModelIndex& index) const
+QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QStyleOptionMenuItem menuOption;
 
-  QPalette resolvedpalette =
-      option.palette.resolve(QApplication::palette("QMenu"));
+  QPalette resolvedpalette = option.palette.resolve(QApplication::palette("QMenu"));
   QVariant value = index.data(Qt::ForegroundRole);
   if (value.canConvert(QMetaType::QBrush))
   {
@@ -106,11 +98,9 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
     unselectedHighlight.setHsv(unselectedHighlight.hue(),                      //
                                qMax(0, unselectedHighlight.saturation() - 50), //
                                qMin(255, unselectedHighlight.value() + 15));
-    QColor unselectedHighlightedText =
-        menuOption.palette.color(QPalette::HighlightedText);
+    QColor unselectedHighlightedText = menuOption.palette.color(QPalette::HighlightedText);
     menuOption.palette.setColor(QPalette::Highlight, unselectedHighlight);
-    menuOption.palette.setColor(QPalette::HighlightedText,
-                                unselectedHighlightedText);
+    menuOption.palette.setColor(QPalette::HighlightedText, unselectedHighlightedText);
   }
   /// End of the highlight
 
@@ -127,9 +117,7 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
   QVariant variant = index.model()->data(index, Qt::DecorationRole);
   switch (variant.type())
   {
-    case QVariant::Icon:
-      menuOption.icon = qvariant_cast<QIcon>(variant);
-      break;
+    case QVariant::Icon: menuOption.icon = qvariant_cast<QIcon>(variant); break;
     case QVariant::Color:
     {
       static QPixmap pixmap(option.decorationSize);
@@ -137,19 +125,15 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(
       menuOption.icon = pixmap;
       break;
     }
-    default:
-      menuOption.icon = qvariant_cast<QPixmap>(variant);
-      break;
+    default: menuOption.icon = qvariant_cast<QPixmap>(variant); break;
   }
   if (index.data(Qt::BackgroundRole).canConvert(QMetaType::QBrush))
   {
-    menuOption.palette.setBrush(QPalette::All, QPalette::Window,
-                           qvariant_cast<QBrush>(index.data(Qt::BackgroundRole)));
+    menuOption.palette.setBrush(QPalette::All, QPalette::Window, qvariant_cast<QBrush>(index.data(Qt::BackgroundRole)));
   }
-  menuOption.text = index.model()->data(index, Qt::DisplayRole).toString()
-                         .replace(QLatin1Char('&'), QLatin1String("&&"));
+  menuOption.text = index.model()->data(index, Qt::DisplayRole).toString().replace(QLatin1Char('&'), QLatin1String("&&"));
   menuOption.tabWidth = 0;
-  menuOption.maxIconWidth =  option.decorationSize.width() + 4;
+  menuOption.maxIconWidth = option.decorationSize.width() + 4;
   menuOption.menuRect = option.rect;
   menuOption.rect = option.rect;
 

@@ -165,7 +165,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLViewNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -251,19 +251,15 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
 //------------------------------------------------------------------------------
 double* vtkMRMLViewNode::defaultBackgroundColor()
 {
-  //static double backgroundColor[3] = {0.70196, 0.70196, 0.90588};
-  static double backgroundColor[3] = {0.7568627450980392,
-                                      0.7647058823529412,
-                                      0.9098039215686275};
+  // static double backgroundColor[3] = {0.70196, 0.70196, 0.90588};
+  static double backgroundColor[3] = { 0.7568627450980392, 0.7647058823529412, 0.9098039215686275 };
   return backgroundColor;
 }
 
 //------------------------------------------------------------------------------
 double* vtkMRMLViewNode::defaultBackgroundColor2()
 {
-  static double backgroundColor2[3] = {0.4549019607843137,
-                                       0.4705882352941176,
-                                       0.7450980392156863};
+  static double backgroundColor2[3] = { 0.4549019607843137, 0.4705882352941176, 0.7450980392156863 };
   return backgroundColor2;
 }
 

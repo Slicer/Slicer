@@ -60,9 +60,9 @@ vtkMRMLScalarVolumeNode* loadVolume(const char* volume, vtkMRMLScene* scene)
   scalarNode->SetName("foo");
   scalarNode->SetScene(scene);
   displayNode->SetScene(scene);
-  //vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
-  //displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
-  //colorLogic->Delete();
+  // vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::New();
+  // displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
+  // colorLogic->Delete();
   scene->AddNode(storageNode.GetPointer());
   scene->AddNode(displayNode.GetPointer());
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
@@ -101,7 +101,7 @@ int vtkMRMLSliceLogicTest3(int argc, char* argv[])
   sliceLogic->AddSliceNode("Green");
   sliceLogic->ResizeSliceNode(256, 256);
 
-  //vtkMRMLSliceNode* sliceNode =sliceLogic->GetSliceNode();
+  // vtkMRMLSliceNode* sliceNode =sliceLogic->GetSliceNode();
   vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
 
   vtkNew<vtkMRMLSliceLayerLogic> sliceLayerLogic;
@@ -116,14 +116,14 @@ int vtkMRMLSliceLogicTest3(int argc, char* argv[])
   }
 
   vtkMRMLDisplayNode* displayNode = scalarNode->GetDisplayNode();
-  //sliceLayerLogic->SetVolumeNode(scalarNode);
+  // sliceLayerLogic->SetVolumeNode(scalarNode);
   sliceCompositeNode->SetBackgroundVolumeID(scalarNode->GetID());
   vtkAlgorithmOutput* imgPort = sliceLogic->GetImageDataConnection();
   vtkImageData* img = vtkImageData::SafeDownCast(imgPort->GetProducer()->GetOutputDataObject(0));
   int* dims = img->GetDimensions();
-  std::cout << "Logic dimension"  << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
+  std::cout << "Logic dimension" << dims[0] << " " << dims[1] << " " << dims[2] << std::endl;
   // Not sure why sliceLayerLogic->GetVolumeDisplayNode() is different from displayNode
-  //vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
+  // vtkMRMLScalarVolumeDisplayNode* displayNode2 = vtkMRMLScalarVolumeDisplayNode::SafeDownCast(sliceLayerLogic->GetVolumeDisplayNode());
 
   for (int i = 0; i < 30; ++i)
   {
@@ -131,12 +131,11 @@ int vtkMRMLSliceLogicTest3(int argc, char* argv[])
     timerLog->StartTimer();
     displayNode->Modified();
     timerLog->StopTimer();
-    std::cout << "vtkMRMLDisplayNode::Modified(): " << timerLog->GetElapsedTime()
-              << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
+    std::cout << "vtkMRMLDisplayNode::Modified(): " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
   }
   vtkSmartPointer<vtkImageViewer2> viewer = vtkSmartPointer<vtkImageViewer2>::New();
   viewer->SetInputConnection(sliceLogic->GetImageDataConnection());
-  //viewer->SetInput(appendComponents->GetOutput());
+  // viewer->SetInput(appendComponents->GetOutput());
 
   // Renderer, RenderWindow and Interactor
   vtkRenderWindow* rw = viewer->GetRenderWindow();
@@ -155,8 +154,7 @@ int vtkMRMLSliceLogicTest3(int argc, char* argv[])
     displayNode->Modified();
     rw->Render();
     timerLog->StopTimer();
-    std::cout << "vtkMRMLDisplayNode::Modified() + render: " << timerLog->GetElapsedTime()
-              << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
+    std::cout << "vtkMRMLDisplayNode::Modified() + render: " << timerLog->GetElapsedTime() << " fps: " << 1. / timerLog->GetElapsedTime() << std::endl;
   }
 
   if (argc > 2 && std::string(argv[2]) == "-I")

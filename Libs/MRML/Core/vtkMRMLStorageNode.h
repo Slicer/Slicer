@@ -46,7 +46,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Read data from \a FileName and set it in the referenced node.
@@ -110,7 +110,7 @@ public:
 
   ///
   /// Propagate Progress Event generated in ReadData
-  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   ///
   /// Possible Read and Write states
@@ -209,17 +209,14 @@ public:
 
   ///
   /// Add in another file name to the list of file names
-  unsigned int AddFileName (const char* fileName);
+  unsigned int AddFileName(const char* fileName);
   ///
   /// Clear the array of file names
   void ResetFileNameList();
 
   ///
   /// See how many file names were generated during ExecuteInformation
-  int GetNumberOfFileNames() const
-  {
-    return (int)this->FileNameList.size();
-  };
+  int GetNumberOfFileNames() const { return (int)this->FileNameList.size(); };
 
   ///
   /// is filename in the filename list already?
@@ -240,10 +237,7 @@ public:
 
   ///
   /// Return how many URI names this storage node holds in it's list
-  int GetNumberOfURIs()
-  {
-    return (int)this->URIList.size();
-  }
+  int GetNumberOfURIs() { return (int)this->URIList.size(); }
 
   ///
   /// Set a new data directory for all files
@@ -427,12 +421,12 @@ protected:
   ///
   /// If the URI is not null, fetch it and save it to the node's FileName location or
   /// load directly into the reference node.
-  void StageReadData ( vtkMRMLNode* refNode );
+  void StageReadData(vtkMRMLNode* refNode);
 
   ///
   /// Copy data from the local file location (node->FileName) or node to the remote
   /// location specified by the URI
-  void StageWriteData ( vtkMRMLNode* refNode );
+  void StageWriteData(vtkMRMLNode* refNode);
 
   char* FileName;
   char* TempFileName;

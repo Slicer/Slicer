@@ -41,14 +41,8 @@ public:
 
   ///
   /// Set the two inputs to this filter
-  virtual void SetInput1(vtkDataObject* in)
-  {
-      this->SetInputData(0,in);
-  }
-  virtual void SetInput2(vtkDataObject* in)
-  {
-      this->SetInputData(1,in);
-  }
+  virtual void SetInput1(vtkDataObject* in) { this->SetInputData(0, in); }
+  virtual void SetInput2(vtkDataObject* in) { this->SetInputData(1, in); }
 
 protected:
   vtkImageLabelCombine();
@@ -56,16 +50,15 @@ protected:
 
   int OverwriteInput;
 
-  int RequestInformation (vtkInformation*,
-                                  vtkInformationVector**,
-                                  vtkInformationVector*) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   void ThreadedRequestData(vtkInformation* request,
-                                   vtkInformationVector** inputVector,
-                                   vtkInformationVector* outputVector,
-                                   vtkImageData ***inData,
-                                   vtkImageData** outData,
-                                   int extent[6], int threadId) override;
+                           vtkInformationVector** inputVector,
+                           vtkInformationVector* outputVector,
+                           vtkImageData*** inData,
+                           vtkImageData** outData,
+                           int extent[6],
+                           int threadId) override;
 
   int FillInputPortInformation(int port, vtkInformation* info) override;
 

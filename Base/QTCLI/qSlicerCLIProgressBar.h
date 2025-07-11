@@ -56,7 +56,6 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIProgressBar : public QWidget
   /// progressVisibility
   Q_PROPERTY(Visibility progressVisibility READ progressVisibility WRITE setProgressVisibility)
 public:
-
   typedef QWidget Superclass;
   qSlicerCLIProgressBar(QWidget* parent = nullptr);
   ~qSlicerCLIProgressBar() override;
@@ -109,15 +108,11 @@ protected slots:
   void showDetails(bool show);
 
 protected:
-
   QScopedPointer<qSlicerCLIProgressBarPrivate> d_ptr;
 
 private:
-
   Q_DECLARE_PRIVATE(qSlicerCLIProgressBar);
   Q_DISABLE_COPY(qSlicerCLIProgressBar);
-
 };
-
 
 #endif

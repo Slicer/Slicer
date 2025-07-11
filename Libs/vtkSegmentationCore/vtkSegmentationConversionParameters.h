@@ -85,7 +85,6 @@ public:
   void CopyParameter(vtkSegmentationConversionParameters* source, int sourceIndex);
 
 protected:
-
   struct ConversionParameterType
   {
     std::string Name;

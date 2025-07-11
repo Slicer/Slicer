@@ -47,10 +47,7 @@ public:
   /// in multiple files.
   void SetFileName(const char*);
 
-  char* GetFileName()
-  {
-    return FileName;
-  }
+  char* GetFileName() { return FileName; }
 
   ///
   /// Use compression if possible
@@ -68,16 +65,10 @@ public:
   void Write();
 
   /// Set orientation matrix
-  void SetRasToIJKMatrix(vtkMatrix4x4* mat)
-  {
-    RasToIJKMatrix = mat;
-  }
+  void SetRasToIJKMatrix(vtkMatrix4x4* mat) { RasToIJKMatrix = mat; }
 
   /// Set orientation matrix
-  void SetMeasurementFrameMatrix(vtkMatrix4x4* mat)
-  {
-    MeasurementFrameMatrix = mat;
-  }
+  void SetMeasurementFrameMatrix(vtkMatrix4x4* mat) { MeasurementFrameMatrix = mat; }
 
   /// Defines how to interpret voxel components
   vtkSetMacro(VoxelVectorType, int);
@@ -99,6 +90,6 @@ private:
   void operator=(const vtkITKImageWriter&) = delete;
 };
 
-//vtkStandardNewMacro(vtkITKImageWriter);
+// vtkStandardNewMacro(vtkITKImageWriter);
 
 #endif

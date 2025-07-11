@@ -39,8 +39,7 @@ class vtkMRMLVolumePropertyNode;
 class vtkControlPointsItem;
 class vtkVolumeProperty;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidget
-  : public QWidget
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidget : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -70,10 +69,8 @@ public slots:
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
   void setMRMLVolumePropertyNode(vtkMRMLVolumePropertyNode* volumePropertyNode);
 
-  void moveAllPoints(double x, double y = 0.,
-                     bool dontMoveFirstAndLast = false);
-  void spreadAllPoints(double factor,
-                       bool dontSpreadFirstAndLast = false);
+  void moveAllPoints(double x, double y = 0., bool dontMoveFirstAndLast = false);
+  void spreadAllPoints(double factor, bool dontSpreadFirstAndLast = false);
 
   /// Set chart extent
   void setChartsExtent(double extent[2]);

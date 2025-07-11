@@ -86,8 +86,8 @@ void vtkMRMLShaderPropertyNode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
   this->Superclass::WriteXML(of, nIndent);
 
-//  vtkMRMLWriteXMLBeginMacro(of);
-//  vtkMRMLWriteXMLEndMacro();
+  //  vtkMRMLWriteXMLBeginMacro(of);
+  //  vtkMRMLWriteXMLEndMacro();
 }
 
 //----------------------------------------------------------------------------
@@ -97,14 +97,14 @@ void vtkMRMLShaderPropertyNode::ReadXMLAttributes(const char** atts)
 
   this->Superclass::ReadXMLAttributes(atts);
 
-//  vtkMRMLReadXMLBeginMacro(atts);
-//  vtkMRMLReadXMLEndMacro();
+  //  vtkMRMLReadXMLBeginMacro(atts);
+  //  vtkMRMLReadXMLEndMacro();
 
   this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLShaderPropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLShaderPropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -115,7 +115,7 @@ void vtkMRMLShaderPropertyNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=
     return;
   }
 
-  this->ShaderProperty->DeepCopy( node->ShaderProperty);
+  this->ShaderProperty->DeepCopy(node->ShaderProperty);
 }
 
 //----------------------------------------------------------------------------
@@ -124,20 +124,16 @@ void vtkMRMLShaderPropertyNode::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "ShaderProperty:\n";
-  this->ShaderProperty->PrintSelf(os,indent.GetNextIndent());
+  this->ShaderProperty->PrintSelf(os, indent.GetNextIndent());
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLShaderPropertyNode::ProcessMRMLEvents( vtkObject* caller,
-                                                   unsigned long event,
-                                                   void* callData)
+void vtkMRMLShaderPropertyNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
   switch (event)
   {
-    case vtkCommand::ModifiedEvent:
-      this->Modified();
-      break;
+    case vtkCommand::ModifiedEvent: this->Modified(); break;
   }
 }
 
@@ -150,14 +146,13 @@ vtkMRMLStorageNode* vtkMRMLShaderPropertyNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLShaderPropertyStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLShaderPropertyStorageNode"));
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLShaderPropertyNode::GetModifiedSinceRead()
 {
   return this->Superclass::GetModifiedSinceRead() || //
-    (this->ShaderProperty && //
-     this->ShaderProperty->GetMTime() > this->GetStoredTime());
+         (this->ShaderProperty &&                    //
+          this->ShaderProperty->GetMTime() > this->GetStoredTime());
 }

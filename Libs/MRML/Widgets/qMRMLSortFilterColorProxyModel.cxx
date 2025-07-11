@@ -32,7 +32,6 @@
 #include <QDebug>
 #include <QStandardItem>
 
-
 // -----------------------------------------------------------------------------
 // qMRMLSortFilterColorProxyModelPrivate
 
@@ -42,8 +41,8 @@ class qMRMLSortFilterColorProxyModelPrivate
 public:
   qMRMLSortFilterColorProxyModelPrivate();
 
-  public:
-    bool ShowEmptyColors;
+public:
+  bool ShowEmptyColors;
 };
 
 // -----------------------------------------------------------------------------
@@ -54,8 +53,8 @@ qMRMLSortFilterColorProxyModelPrivate::qMRMLSortFilterColorProxyModelPrivate()
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterColorProxyModel::qMRMLSortFilterColorProxyModel(QObject* vparent)
- : QSortFilterProxyModel(vparent)
- , d_ptr(new qMRMLSortFilterColorProxyModelPrivate)
+  : QSortFilterProxyModel(vparent)
+  , d_ptr(new qMRMLSortFilterColorProxyModelPrivate)
 {
   this->setDynamicSortFilter(true);
 }

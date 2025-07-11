@@ -37,13 +37,13 @@
 
 //---------------------------------------------------------------------------
 qMRMLSceneViewMenuPrivate::qMRMLSceneViewMenuPrivate(qMRMLSceneViewMenu& object)
-  : Superclass(&object), q_ptr(&object)
+  : Superclass(&object)
+  , q_ptr(&object)
 {
   connect(&this->RestoreActionMapper, SIGNAL(mapped(int)), SLOT(restoreSceneView(int)));
   connect(&this->DeleteActionMapper, SIGNAL(mapped(int)), SLOT(deleteSceneView(int)));
 
-  this->SceneViewsLogic = vtkSlicerSceneViewsModuleLogic::SafeDownCast(
-    qSlicerApplication::application()->applicationLogic()->GetModuleLogic("SceneViews"));
+  this->SceneViewsLogic = vtkSlicerSceneViewsModuleLogic::SafeDownCast(qSlicerApplication::application()->applicationLogic()->GetModuleLogic("SceneViews"));
   qvtkConnect(this->SceneViewsLogic, vtkSlicerSceneViewsModuleLogic::SceneViewsModifiedEvent, this, SLOT(resetMenu()));
 }
 
@@ -111,12 +111,10 @@ void qMRMLSceneViewMenuPrivate::addMenuItem(int index)
   QMenu* sceneViewMenu = q->addMenu(QString::fromUtf8(sceneViewName.c_str()));
   sceneViewMenu->setObjectName("sceneViewMenu");
 
-  QAction* restoreAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotRestore.png"), "Restore",
-                                                   &this->RestoreActionMapper, SLOT(map()));
+  QAction* restoreAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotRestore.png"), "Restore", &this->RestoreActionMapper, SLOT(map()));
   this->RestoreActionMapper.setMapping(restoreAction, index);
 
-  QAction* deleteAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotDelete.png"), "Delete",
-                                                  &this->DeleteActionMapper, SLOT(map()));
+  QAction* deleteAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotDelete.png"), "Delete", &this->DeleteActionMapper, SLOT(map()));
   this->DeleteActionMapper.setMapping(deleteAction, index);
 }
 
@@ -191,7 +189,8 @@ void qMRMLSceneViewMenuPrivate::deleteSceneView(int index)
 // qMRMLSceneViewMenu methods
 
 // --------------------------------------------------------------------------
-qMRMLSceneViewMenu::qMRMLSceneViewMenu(QWidget* newParent) : Superclass(newParent)
+qMRMLSceneViewMenu::qMRMLSceneViewMenu(QWidget* newParent)
+  : Superclass(newParent)
   , d_ptr(new qMRMLSceneViewMenuPrivate(*this))
 {
   Q_D(qMRMLSceneViewMenu);
@@ -207,14 +206,12 @@ void qMRMLSceneViewMenu::setMRMLScene(vtkMRMLScene* scene)
   Q_D(qMRMLSceneViewMenu);
   if (scene == d->MRMLScene)
   {
-    return ;
+    return;
   }
 
-  qvtkReconnect(d->MRMLScene, scene,
-                vtkMRMLScene::NodeAddedEvent, d, SLOT(onMRMLNodeAdded(vtkObject*,vtkObject*)));
+  qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeAddedEvent, d, SLOT(onMRMLNodeAdded(vtkObject*, vtkObject*)));
 
-  qvtkReconnect(d->MRMLScene, scene,
-                vtkMRMLScene::NodeRemovedEvent, d, SLOT(onMRMLNodeRemoved(vtkObject*,vtkObject*)));
+  qvtkReconnect(d->MRMLScene, scene, vtkMRMLScene::NodeRemovedEvent, d, SLOT(onMRMLNodeRemoved(vtkObject*, vtkObject*)));
 
   d->MRMLScene = scene;
   emit mrmlSceneChanged(scene);

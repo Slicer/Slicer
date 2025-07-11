@@ -33,10 +33,10 @@
  * This class (and subclasses) are a type of
  * vtkProp; meaning that they can be associated with a vtkRenderer end
  * embedded in a scene like any other vtkActor.
-*
+ *
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation vtkMRMLAbstractWidget vtkPointPlacer
-*/
+ */
 
 #ifndef vtkSlicerMarkupsWidgetRepresentation_h
 #define vtkSlicerMarkupsWidgetRepresentation_h
@@ -107,7 +107,7 @@ public:
   virtual int GetNthControlPointDisplayPosition(int n, double pos[2]);
 
   /// Get the nth control point.
-  virtual vtkMRMLMarkupsNode::ControlPoint *GetNthControlPoint(int n);
+  virtual vtkMRMLMarkupsNode::ControlPoint* GetNthControlPoint(int n);
 
   /// Set/Get the vtkMRMLMarkupsNode connected with this representation
   virtual void SetMarkupsDisplayNode(vtkMRMLMarkupsDisplayNode* markupsDisplayNode);
@@ -123,8 +123,7 @@ public:
   /// Return found component type (as vtkMRMLMarkupsDisplayNode::ComponentType).
   /// closestDistance2 is the squared distance in display coordinates from the closest position where interaction is possible.
   /// componentIndex returns index of the found component (e.g., if control point is found then control point index is returned).
-  virtual void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+  virtual void CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
 
   virtual int FindClosestPointOnWidget(const int displayPos[2], double worldPos[3], int* idx);
 
@@ -142,9 +141,9 @@ public:
 
   //@{
   /**
-  * Returns true if the representation is displayable in the current view.
-  * It takes into account current view node's display node and parent folder's visibility.
-  */
+   * Returns true if the representation is displayable in the current view.
+   * It takes into account current view node's display node and parent folder's visibility.
+   */
   bool IsDisplayable();
   //@}
 
@@ -165,7 +164,7 @@ protected:
     /// Keep in mind that the shape will be
     /// aligned with the constraining plane by orienting it such that
     /// the x axis of the geometry lies along the normal of the plane.
-    //vtkSmartPointer<vtkPolyData> PointMarkerShape;
+    // vtkSmartPointer<vtkPolyData> PointMarkerShape;
     vtkSmartPointer<vtkMarkupsGlyphSource2D> GlyphSource2D;
     vtkSmartPointer<vtkSphereSource> GlyphSourceSphere;
 

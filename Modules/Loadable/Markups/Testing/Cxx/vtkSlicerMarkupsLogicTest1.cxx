@@ -67,7 +67,7 @@ int vtkSlicerMarkupsLogicTest1(int, char*[])
   CHECK_NOT_NULL(name);
   CHECK_STRING(testName, name);
 
-  std::cout << "Added a new markup node to the scene, id = '" << id.c_str() << "', name = '" << name << "'" <<  std::endl;
+  std::cout << "Added a new markup node to the scene, id = '" << id.c_str() << "', name = '" << name << "'" << std::endl;
   vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
   CHECK_NOT_NULL(markupsNode);
 
@@ -164,8 +164,7 @@ int vtkSlicerMarkupsLogicTest1(int, char*[])
   std::cout << "Before renaming:" << std::endl;
   for (int i = 0; i < activeMarkupsNode->GetNumberOfControlPoints(); ++i)
   {
-    std::cout << "Markup " << i << " label = "
-              << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
+    std::cout << "Markup " << i << " label = " << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
   }
 
   activeMarkupsNode->SetName("RenamingTest");
@@ -178,8 +177,7 @@ int vtkSlicerMarkupsLogicTest1(int, char*[])
   std::cout << "After renaming:" << std::endl;
   for (int i = 0; i < activeMarkupsNode->GetNumberOfControlPoints(); ++i)
   {
-    std::cout << "Markup " << i << " label = "
-              << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
+    std::cout << "Markup " << i << " label = " << activeMarkupsNode->GetNthControlPointLabel(i).c_str() << std::endl;
   }
 
   // test setting active list id

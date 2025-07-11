@@ -33,8 +33,7 @@ typedef _object PyObject;
 class qSlicerScriptedFileReaderPrivate;
 class vtkObject;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileReader
-  : public qSlicerFileReader
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileReader : public qSlicerFileReader
 {
   Q_OBJECT
 
@@ -82,12 +81,8 @@ public:
   /// Exposes setLoadedNodes, which is protected in superclass
   /// \sa qSlicerFileReader::loadedNodes()
   /// \sa qSlicerFileWriter::writtenNodes()
-  QStringList loadedNodes() const override {
-    return Superclass::loadedNodes();
-  };
-  void setLoadedNodes(const QStringList& nodes) override {
-    Superclass::setLoadedNodes(nodes);
-  };
+  QStringList loadedNodes() const override { return Superclass::loadedNodes(); };
+  void setLoadedNodes(const QStringList& nodes) override { Superclass::setLoadedNodes(nodes); };
 
 protected:
   QScopedPointer<qSlicerScriptedFileReaderPrivate> d_ptr;

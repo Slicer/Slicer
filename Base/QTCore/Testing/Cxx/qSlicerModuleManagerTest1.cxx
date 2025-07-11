@@ -46,7 +46,7 @@ int qSlicerModuleManagerTest1(int argc, char* argv[])
 
   QString moduleName = "qSlicerTransformsModule";
 
-  bool result0 = moduleManager.isLoaded( moduleName );
+  bool result0 = moduleManager.isLoaded(moduleName);
 
   if (result0 != false)
   {
@@ -54,7 +54,7 @@ int qSlicerModuleManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  bool result1 = moduleManager.loadModule( moduleName );
+  bool result1 = moduleManager.loadModule(moduleName);
 
   if (result1 == false)
   {
@@ -62,7 +62,7 @@ int qSlicerModuleManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  bool result2 = moduleManager.isLoaded( moduleName );
+  bool result2 = moduleManager.isLoaded(moduleName);
 
   if (result2 != true)
   {
@@ -70,7 +70,7 @@ int qSlicerModuleManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  qSlicerAbstractModule* module = moduleManager.module( moduleName );
+  qSlicerAbstractModule* module = moduleManager.module(moduleName);
 
   if (module == nullptr)
   {
@@ -78,9 +78,9 @@ int qSlicerModuleManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  QString moduleTitle = moduleManager.moduleTitle( moduleName );
+  QString moduleTitle = moduleManager.moduleTitle(moduleName);
 
-  QString moduleName1 = moduleManager.moduleName( moduleTitle );
+  QString moduleName1 = moduleManager.moduleName(moduleTitle);
 
   if (moduleName != moduleName1)
   {
@@ -88,12 +88,11 @@ int qSlicerModuleManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  std::cout << "Module Name = " << qPrintable( moduleName ) << std::endl;
+  std::cout << "Module Name = " << qPrintable(moduleName) << std::endl;
 
-  std::cout << "Module Title = " << qPrintable( moduleTitle ) << std::endl;
+  std::cout << "Module Title = " << qPrintable(moduleTitle) << std::endl;
 
-
-  bool result3 = moduleManager.unLoadModule( moduleName );
+  bool result3 = moduleManager.unLoadModule(moduleName);
 
   if (result3 == false)
   {
@@ -101,7 +100,7 @@ int qSlicerModuleManagerTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  bool result4 = moduleManager.isLoaded( moduleName );
+  bool result4 = moduleManager.isLoaded(moduleName);
 
   if (result4 != false)
   {

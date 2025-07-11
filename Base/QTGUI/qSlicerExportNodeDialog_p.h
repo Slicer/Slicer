@@ -84,23 +84,26 @@ public:
   vtkMRMLStorableNode* prototypeNode;
 
   // Set different display style and margin for the frame that contains the widgets
-  enum class FrameStyle {NoFrame, Frame};
+  enum class FrameStyle
+  {
+    NoFrame,
+    Frame
+  };
   void setFrameStyle(FrameStyle);
 
   // Node type that the member widgets will be configured for.
   NodeType nodeType;
 
   // Member widgets
-  QLabel* label = nullptr; // The label in front of our frame in the form layout
-  QFrame* frame = nullptr; // The widget that will go into the form layout
-  QVBoxLayout* frameLayout = nullptr; // The layout that frame will have
-  QComboBox* exportFormatComboBox = nullptr; // Goes into frameLayout
-  QStackedWidget* optionsStackedWidget; // Goes into frameLayout
+  QLabel* label = nullptr;                                 // The label in front of our frame in the form layout
+  QFrame* frame = nullptr;                                 // The widget that will go into the form layout
+  QVBoxLayout* frameLayout = nullptr;                      // The layout that frame will have
+  QComboBox* exportFormatComboBox = nullptr;               // Goes into frameLayout
+  QStackedWidget* optionsStackedWidget;                    // Goes into frameLayout
   qSlicerFileWriterOptionsWidget* optionsWidget = nullptr; // The current options widget, if any, that should be on display by optionsStackedWidget
 
-
   // Mapping from formats to options widgets, to keep track of and reuse options widgets as they get created
-  QHash<QString,qSlicerFileWriterOptionsWidget*> formatToOptionsWidget;
+  QHash<QString, qSlicerFileWriterOptionsWidget*> formatToOptionsWidget;
 
 public slots:
   void formatChangedSlot();
@@ -125,13 +128,11 @@ public:
   each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID;
   it can be left empty, but the "Preserve hierarchy" functionality will not work.
   The reference parameters of this function are assumed to remain valid references during execution (exec) of this dialog.*/
-  bool setup(
-    vtkMRMLScene* scene,
-    const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
-    const QList<vtkMRMLStorableNode*>& nodesRecursive,
-    vtkMRMLStorableNode* selectedNode,
-    const QHash<QString,QVariant>& nodeIdToSubjectHierarchyPath
-  );
+  bool setup(vtkMRMLScene* scene,
+             const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
+             const QList<vtkMRMLStorableNode*>& nodesRecursive,
+             vtkMRMLStorableNode* selectedNode,
+             const QHash<QString, QVariant>& nodeIdToSubjectHierarchyPath);
 
   /// Remove any problem-causing characters from \a fileName, strip off any extension from the end of it if that extension
   /// is known to be associated with \a node, and then put \a extension back on
@@ -141,7 +142,8 @@ public:
   static QString defaultFilename(vtkMRMLNode* node, QString extension);
 
   // Return whether list a has any elements that list b doesn't have.
-  template <typename T> static bool setDifferenceIsNonempty(const QList<T>& a, const QList<T>& b);
+  template <typename T>
+  static bool setDifferenceIsNonempty(const QList<T>& a, const QList<T>& b);
 
   // Return whether all widgets that are part of the given layout are invisible
   // Visibility is considered relative to the given widget relativeTo
@@ -161,7 +163,6 @@ protected slots:
   void onIncludeChildrenCheckBoxStateChanged(int state);
 
 protected:
-
   // Exports nodes based on parameters set in dialog. To be called when the dialog is accepted.
   bool exportNodes();
 
@@ -221,7 +222,7 @@ protected:
 
   // Mapping from node IDs to lists of subject hierarchy item names, where
   // each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID.
-  QHash<QString,QVariant> NodeIdToSubjectHierarchyPath;
+  QHash<QString, QVariant> NodeIdToSubjectHierarchyPath;
 
   // The storable node that was selected in the subject hierarchy to trigger this export, if there is one;
   // can be empty if there isn't. It is conveniently a list so that a uniform interface can be provided by nodeList().
@@ -234,7 +235,7 @@ protected:
   bool LastUsedIncludeChildren;
 
   // Mapping from node type to widget sets that are specific to a node type
-  QHash<NodeTypeWidgetSet::NodeType,NodeTypeWidgetSet*> NodeTypeToNodeTypeWidgetSet;
+  QHash<NodeTypeWidgetSet::NodeType, NodeTypeWidgetSet*> NodeTypeToNodeTypeWidgetSet;
 
   // The row of the QFormLayout that contains the placeholder label. This is the row where NodeTypeWidgetSets will be inserted.
   int NodeTypeWidgetSetStartRow = -1;
@@ -249,6 +250,5 @@ protected:
   // modifying file name can change export format and vice versa.
   bool ProtectFilenameLineEdit;
 };
-
 
 #endif

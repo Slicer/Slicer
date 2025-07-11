@@ -26,10 +26,9 @@
 
 class vtkImageData;
 
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyStorageNode
-  : public vtkMRMLStorageNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyStorageNode : public vtkMRMLStorageNode
 {
-  public:
+public:
   static vtkMRMLVolumePropertyStorageNode* New();
   vtkTypeMacro(vtkMRMLVolumePropertyStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -38,7 +37,7 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyStorage
 
   ///
   /// Get node XML tag name (like Storage, Transform)
-  const char* GetNodeTagName() override {return "VolumePropertyStorage";}
+  const char* GetNodeTagName() override { return "VolumePropertyStorage"; }
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
@@ -60,7 +59,6 @@ protected:
 
   /// Write data from a  referenced node
   int WriteDataInternal(vtkMRMLNode* refNode) override;
-
 };
 
 #endif

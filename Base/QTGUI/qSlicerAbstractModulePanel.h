@@ -44,7 +44,7 @@ public:
 
 signals:
   void moduleAdded(const QString& moduleName);
-  //void moduleAboutToBeRemoved(const QString& moduleName);
+  // void moduleAboutToBeRemoved(const QString& moduleName);
   void moduleRemoved(const QString& moduleName);
 
 protected:

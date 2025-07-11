@@ -29,7 +29,6 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 class VTK_MRML_EXPORT vtkCodedEntry : public vtkObject
 {
 public:
-
   static vtkCodedEntry* New();
   vtkTypeMacro(vtkCodedEntry, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;

@@ -24,7 +24,6 @@
 #include <QMenu>
 #include <QCheckBox>
 
-
 // CTK includes
 #include <ctkPimpl.h>
 // no ui begin
@@ -87,7 +86,7 @@ public slots:
   void interactionModeActionTriggered(bool);
   void setSelectionNode(vtkMRMLSelectionNode* selectionNode);
 
-    /// Create markup by class.
+  /// Create markup by class.
   void onAddNewMarkupsNodeByClass(const QString& className);
 
   // Keyboard shortcuts for Markups node interactions

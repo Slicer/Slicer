@@ -45,9 +45,9 @@ public:
   typedef qSlicerCLIModulePrivate Self;
   qSlicerCLIModulePrivate();
 
-  QString           TempDirectory;
+  QString TempDirectory;
 
-  ModuleDescription                 Desc;
+  ModuleDescription Desc;
 };
 
 //-----------------------------------------------------------------------------
@@ -60,7 +60,8 @@ qSlicerCLIModulePrivate::qSlicerCLIModulePrivate() = default;
 // qSlicerCLIModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerCLIModule::qSlicerCLIModule(QWidget* _parent):Superclass(_parent)
+qSlicerCLIModule::qSlicerCLIModule(QWidget* _parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerCLIModulePrivate)
 {
 }
@@ -182,11 +183,8 @@ QString qSlicerCLIModule::helpText() const
   {
     // Translate "For more information, see the online documentation" text
     // so that translators don't need to deal with any HTML tags.
-    QString onlineDocLink = QString("<a href=\"%1\">%2</a>")
-      .arg(QString::fromStdString(d->Desc.GetDocumentationURL()))
-      .arg(tr("online documentation"));
-    help += QString("<p>%1</p>")
-      .arg(tr("For more information see the %1.").arg(onlineDocLink));
+    QString onlineDocLink = QString("<a href=\"%1\">%2</a>").arg(QString::fromStdString(d->Desc.GetDocumentationURL())).arg(tr("online documentation"));
+    help += QString("<p>%1</p>").arg(tr("For more information see the %1.").arg(onlineDocLink));
   }
   return help;
 }
@@ -227,15 +225,14 @@ QString qSlicerCLIModule::moduleType() const
 void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescription)
 {
   Q_D(qSlicerCLIModule);
-  //qDebug() << "xmlModuleDescription:" << xmlModuleDescription;
+  // qDebug() << "xmlModuleDescription:" << xmlModuleDescription;
   Q_ASSERT(!this->entryPoint().isEmpty());
 
   // Parse module description
   ModuleDescriptionParser parser;
   if (parser.Parse(xmlModuleDescription.toStdString(), d->Desc) != 0)
   {
-    qWarning() << "Failed to parse xml module description:\n"
-               << xmlModuleDescription;
+    qWarning() << "Failed to parse xml module description:\n" << xmlModuleDescription;
     return;
   }
 
@@ -266,10 +263,8 @@ QImage qSlicerCLIModule::moduleLogoToImage(const ModuleLogo& logo)
   {
     return QImage();
   }
-  return ctk::kwIconToQImage(reinterpret_cast<const unsigned char*>(logo.GetLogo()),
-                             logo.GetWidth(), logo.GetHeight(),
-                             logo.GetPixelSize(), logo.GetBufferLength(),
-                             logo.GetOptions());
+  return ctk::kwIconToQImage(
+    reinterpret_cast<const unsigned char*>(logo.GetLogo()), logo.GetWidth(), logo.GetHeight(), logo.GetPixelSize(), logo.GetBufferLength(), logo.GetOptions());
 }
 
 //-----------------------------------------------------------------------------

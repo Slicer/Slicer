@@ -32,8 +32,7 @@ typedef _object PyObject;
 #endif
 class qSlicerScriptedFileWriterPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileWriter
-  : public qSlicerFileWriter
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileWriter : public qSlicerFileWriter
 {
   Q_OBJECT
 
@@ -86,12 +85,8 @@ public:
   /// Exposes setWrittenNodes, which is protected in superclass
   /// \sa qSlicerFileWriter::writtenNodes()
   /// \sa qSlicerFileReader::loadedNodes()
-  QStringList writtenNodes() const override {
-    return Superclass::writtenNodes();
-  };
-  void setWrittenNodes(const QStringList& nodes) override {
-    Superclass::setWrittenNodes(nodes);
-  };
+  QStringList writtenNodes() const override { return Superclass::writtenNodes(); };
+  void setWrittenNodes(const QStringList& nodes) override { Superclass::setWrittenNodes(nodes); };
 
 protected:
   QScopedPointer<qSlicerScriptedFileWriterPrivate> d_ptr;

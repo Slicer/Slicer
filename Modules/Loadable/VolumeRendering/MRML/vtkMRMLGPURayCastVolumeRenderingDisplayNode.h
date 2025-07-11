@@ -26,8 +26,7 @@
 
 /// \name vtkMRMLGPURayCastGPURayCastVolumeRenderingDisplayNode
 /// \brief MRML node for storing information for GPU Raycast Volume Rendering
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLGPURayCastVolumeRenderingDisplayNode
-  : public vtkMRMLVolumeRenderingDisplayNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLGPURayCastVolumeRenderingDisplayNode : public vtkMRMLVolumeRenderingDisplayNode
 {
 public:
   static vtkMRMLGPURayCastVolumeRenderingDisplayNode* New();
@@ -38,7 +37,7 @@ public:
 
   // Description:
   // Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -50,7 +49,7 @@ public:
 
   // Description:
   // Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "GPURayCastVolumeRendering";}
+  const char* GetNodeTagName() override { return "GPURayCastVolumeRendering"; }
 
 protected:
   vtkMRMLGPURayCastVolumeRenderingDisplayNode();

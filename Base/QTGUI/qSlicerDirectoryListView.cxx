@@ -38,6 +38,7 @@
 class qSlicerDirectoryListViewPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerDirectoryListView);
+
 protected:
   qSlicerDirectoryListView* const q_ptr;
 
@@ -52,7 +53,7 @@ public:
     AbsolutePathRole = Qt::UserRole + 1
   };
 
-  QListView*         ListView;
+  QListView* ListView;
   QStandardItemModel DirectoryListModel;
 };
 
@@ -155,8 +156,7 @@ bool qSlicerDirectoryListView::hasDirectory(const QString& path) const
   Q_D(const qSlicerDirectoryListView);
   QString absolutePath = QFileInfo(path).absoluteFilePath();
   QModelIndexList foundIndexes = d->DirectoryListModel.match(
-        d->DirectoryListModel.index(0, 0), qSlicerDirectoryListViewPrivate::AbsolutePathRole,
-        QVariant(absolutePath), /* hits = */ 1, Qt::MatchExactly | Qt::MatchWrap);
+    d->DirectoryListModel.index(0, 0), qSlicerDirectoryListViewPrivate::AbsolutePathRole, QVariant(absolutePath), /* hits = */ 1, Qt::MatchExactly | Qt::MatchWrap);
   Q_ASSERT(foundIndexes.size() < 2);
   return (foundIndexes.size() != 0);
 }

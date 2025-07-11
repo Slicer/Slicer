@@ -44,7 +44,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "TableSQLightStorage";}
+  const char* GetNodeTagName() override { return "TableSQLightStorage"; }
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;

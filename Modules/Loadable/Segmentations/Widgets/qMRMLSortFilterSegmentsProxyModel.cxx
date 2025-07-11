@@ -69,8 +69,8 @@ CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, QString, textFilter, TextFilter);
 
 //------------------------------------------------------------------------------
 qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject* vparent)
- : QSortFilterProxyModel(vparent)
- , d_ptr(new qMRMLSortFilterSegmentsProxyModelPrivate)
+  : QSortFilterProxyModel(vparent)
+  , d_ptr(new qMRMLSortFilterSegmentsProxyModelPrivate)
 {
   this->setDynamicSortFilter(true);
 }
@@ -161,7 +161,7 @@ void qMRMLSortFilterSegmentsProxyModel::setShowStatus(int status, bool shown)
 QString qMRMLSortFilterSegmentsProxyModel::segmentIDFromIndex(const QModelIndex& index) const
 {
   qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
-  return segmentsModel->segmentIDFromIndex( this->mapToSource(index) );
+  return segmentsModel->segmentIDFromIndex(this->mapToSource(index));
 }
 
 //-----------------------------------------------------------------------------
@@ -254,7 +254,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID) con
     QString segmentName(segment->GetName());
     if (!segmentName.contains(d->NameFilter, Qt::CaseInsensitive))
     {
-        return false;
+      return false;
     }
   }
 

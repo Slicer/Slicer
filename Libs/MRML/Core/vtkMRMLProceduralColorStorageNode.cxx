@@ -59,13 +59,11 @@ int vtkMRMLProceduralColorStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   std::string fullName = this->GetFullNameFromFileName();
 
   // cast the input node
-  vtkMRMLProceduralColorNode* colorNode =
-    vtkMRMLProceduralColorNode::SafeDownCast(refNode);
+  vtkMRMLProceduralColorNode* colorNode = vtkMRMLProceduralColorNode::SafeDownCast(refNode);
 
   if (colorNode == nullptr)
   {
-    vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID()
-                  << " to a known procedural color node");
+    vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a known procedural color node");
     return 0;
   }
 
@@ -153,7 +151,7 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   vtkMRMLProceduralColorNode* colorNode = nullptr;
   if (refNode->IsA("vtkMRMLProceduralColorNode"))
   {
-    colorNode = dynamic_cast<vtkMRMLProceduralColorNode*> (refNode);
+    colorNode = dynamic_cast<vtkMRMLProceduralColorNode*>(refNode);
   }
 
   if (colorNode == nullptr)
@@ -209,7 +207,6 @@ int vtkMRMLProceduralColorStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     vtkErrorMacro("WriteDataInternal: only .txt supported");
     return 0;
   }
-
 
   return 1;
 }

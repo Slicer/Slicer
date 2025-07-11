@@ -30,13 +30,11 @@ class vtkMRMLNode;
 class vtkMRMLSequenceNode;
 class vtkMRMLSequenceBrowserNode;
 
-class Q_SLICER_QTMODULES_SEQUENCES_EXPORT qSlicerSequencesModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_SEQUENCES_EXPORT qSlicerSequencesModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerSequencesModuleWidget(QWidget* parent = 0);
   ~qSlicerSequencesModuleWidget() override;
@@ -69,7 +67,6 @@ protected slots:
   void onMRMLSceneEndCloseEvent();
 
 protected:
-
   void updateWidgetFromMRML();
 
   /// Refresh synchronized sequence nodes table from MRML

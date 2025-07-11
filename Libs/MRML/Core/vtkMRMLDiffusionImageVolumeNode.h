@@ -29,7 +29,7 @@ class vtkMRMLDiffusionWeightedVolumeNode;
 ///  to RAS.
 class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolumeNode
 {
-  public:
+public:
   static vtkMRMLDiffusionImageVolumeNode* New();
   vtkTypeMacro(vtkMRMLDiffusionImageVolumeNode, vtkMRMLTensorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -38,7 +38,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -50,9 +50,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "DiffusionImageVolume";}
+  const char* GetNodeTagName() override { return "DiffusionImageVolume"; }
 
- /// Description:
+  /// Description:
   /// String ID of the storage MRML node
   void SetBaselineNodeID(const char* id);
   vtkGetStringMacro(BaselineNodeID);
@@ -62,7 +62,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
   void SetMaskNodeID(const char* id);
   vtkGetStringMacro(MaskNodeID);
 
- /// Description:
+  /// Description:
   /// String ID of the display MRML node
   void SetDiffusionWeightedNodeID(const char* id);
   vtkGetStringMacro(DiffusionWeightedNodeID);
@@ -81,34 +81,28 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolu
 
   ///
   /// Associated volume MRML node
-  //vtkMRMLDiffusionImageVolumeDisplayNode* GetDisplayNode();
+  // vtkMRMLDiffusionImageVolumeDisplayNode* GetDisplayNode();
 
   ///
   /// Update the stored reference to another node in the scene
   void UpdateReferenceID(const char* oldID, const char* newID) override;
 
-   ///
+  ///
   /// Finds the storage node and read the data
-  //void UpdateScene(vtkMRMLScene* scene);
+  // void UpdateScene(vtkMRMLScene* scene);
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   void UpdateReferences() override;
 
-
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   ///
   /// Create default storage node or nullptr if does not have one
-  vtkMRMLStorageNode* CreateDefaultStorageNode() override
-  {
-    return Superclass::CreateDefaultStorageNode();
-  }
+  vtkMRMLStorageNode* CreateDefaultStorageNode() override { return Superclass::CreateDefaultStorageNode(); }
 
 protected:
   vtkMRMLDiffusionImageVolumeNode();
@@ -119,7 +113,6 @@ protected:
   char* BaselineNodeID;
   char* MaskNodeID;
   char* DiffusionWeightedNodeID;
-
 };
 
 #endif

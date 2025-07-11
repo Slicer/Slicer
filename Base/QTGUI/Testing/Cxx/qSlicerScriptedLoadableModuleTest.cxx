@@ -33,7 +33,6 @@ class qSlicerScriptedLoadableModuleTester : public QObject
   Q_OBJECT
 
 private:
-
   QString preparePythonSource(const QString& scriptName);
 
   qSlicerPythonManager PythonManager;
@@ -51,7 +50,6 @@ private slots:
 
   void testSetup();
   void testSetup_data();
-
 };
 
 // ----------------------------------------------------------------------------
@@ -83,8 +81,7 @@ void qSlicerScriptedLoadableModuleTester::initTestCase()
 
   QVERIFY(QDir::temp().exists());
 
-  this->TemporaryDirName =
-      QString("qSlicerScriptedLoadableModuleTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+  this->TemporaryDirName = QString("qSlicerScriptedLoadableModuleTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
 }
 
 // ----------------------------------------------------------------------------

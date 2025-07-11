@@ -21,7 +21,7 @@
  *
  * @sa
  * vtkSliceIntersectionWidget vtkWidgetRepresentation vtkAbstractWidget
-*/
+ */
 
 #ifndef vtkMRMLRubberBandWidgetRepresentation_h
 #define vtkMRMLRubberBandWidgetRepresentation_h

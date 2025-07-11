@@ -24,7 +24,7 @@
  *
  * The vtkSlicerROIWidget is used to create an ROI widget.
  *
-*/
+ */
 
 #ifndef vtkSlicerROIWidget_h
 #define vtkSlicerROIWidget_h

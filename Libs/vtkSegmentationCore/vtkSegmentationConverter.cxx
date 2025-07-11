@@ -70,7 +70,6 @@ void vtkSegmentationConverter::PrintSelf(ostream& os, vtkIndent indent)
       os << indent.GetNextIndent() << "Rule[" << ruleIndex++ << "]:\n";
       rule->PrintSelf(os, indent.GetNextIndent().GetNextIndent());
     }
-
   }
   if (this->CustomConversionParameters->GetNumberOfParameters() > 0)
   {
@@ -93,8 +92,7 @@ void vtkSegmentationConverter::DeepCopy(vtkSegmentationConverter* aConverter)
     int numberOfParameters = rule->ConversionParameters->GetNumberOfParameters();
     for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
     {
-      this->SetConversionParameter(rule->ConversionParameters->GetName(parameterIndex),
-        rule->ConversionParameters->GetValue(parameterIndex));
+      this->SetConversionParameter(rule->ConversionParameters->GetName(parameterIndex), rule->ConversionParameters->GetValue(parameterIndex));
     }
   }
 
@@ -123,7 +121,7 @@ std::string vtkSegmentationConverter::SerializeImageGeometry(vtkMatrix4x4* geome
     return "";
   }
 
-  int extent[6] = {0,-1,0,-1,0,-1};
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
   imageData->GetExtent(extent);
 
   return vtkSegmentationConverter::SerializeImageGeometry(geometryMatrix, extent);
@@ -139,15 +137,15 @@ std::string vtkSegmentationConverter::SerializeImageGeometry(vtkMatrix4x4* geome
 
   vtkNumberToString numberToString;
   std::stringstream geometryStream;
-  for (int i = 0; i<4; i++)
+  for (int i = 0; i < 4; i++)
   {
-    for (int j = 0; j<4; j++)
+    for (int j = 0; j < 4; j++)
     {
       geometryStream << numberToString.Convert(geometryMatrix->GetElement(i, j)) << SERIALIZED_GEOMETRY_SEPARATOR;
     }
   }
 
-  for (int i = 0; i<6; i++)
+  for (int i = 0; i < 6; i++)
   {
     geometryStream << extent[i] << SERIALIZED_GEOMETRY_SEPARATOR;
   }
@@ -164,9 +162,9 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
   }
 
   size_t separatorPosition = geometryString.find(SERIALIZED_GEOMETRY_SEPARATOR);
-  for (int i = 0; i<4; i++)
+  for (int i = 0; i < 4; i++)
   {
-    for (int j = 0; j<4; j++)
+    for (int j = 0; j < 4; j++)
     {
       if (separatorPosition == std::string::npos)
       {
@@ -175,7 +173,7 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
       }
 
       double element = vtkVariant(geometryString.substr(0, separatorPosition)).ToDouble();
-      geometryMatrix->SetElement(i,j,element);
+      geometryMatrix->SetElement(i, j, element);
 
       geometryString = geometryString.substr(separatorPosition + SERIALIZED_GEOMETRY_SEPARATOR.size());
       separatorPosition = geometryString.find(SERIALIZED_GEOMETRY_SEPARATOR);
@@ -183,7 +181,7 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
   }
 
   // Parse image extent
-  for (int i = 0; i<6; i++)
+  for (int i = 0; i < 6; i++)
   {
     if (separatorPosition == std::string::npos)
     {
@@ -200,12 +198,11 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryStri
 }
 
 //----------------------------------------------------------------------------
-bool vtkSegmentationConverter::DeserializeImageGeometry(
-    std::string geometryString,
-    vtkOrientedImageData* orientedImageData,
-    bool allocateScalars/*=true*/,
-    int scalarType/*=VTK_VOID*/,
-    int numberOfScalarsComponents/*=-1*/)
+bool vtkSegmentationConverter::DeserializeImageGeometry(std::string geometryString,
+                                                        vtkOrientedImageData* orientedImageData,
+                                                        bool allocateScalars /*=true*/,
+                                                        int scalarType /*=VTK_VOID*/,
+                                                        int numberOfScalarsComponents /*=-1*/)
 {
   if (!orientedImageData)
   {
@@ -215,7 +212,7 @@ bool vtkSegmentationConverter::DeserializeImageGeometry(
 
   // Parse image geometry matrix in geometry string
   vtkSmartPointer<vtkMatrix4x4> geometryMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
-  int extent[6] = {0,-1,0,-1,0,-1};
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
   if (!vtkSegmentationConverter::DeserializeImageGeometry(geometryString, geometryMatrix, extent))
   {
     vtkErrorWithObjectMacro(orientedImageData, "DeserializeImageGeometry: Failed to de-serialize geometry string " << geometryString);
@@ -241,22 +238,19 @@ void vtkSegmentationConverter::SetConversionParameters(vtkSegmentationConversion
   int numberOfParameters = parameters->GetNumberOfParameters();
   for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
   {
-    this->SetConversionParameter(
-      parameters->GetName(parameterIndex),
-      parameters->GetValue(parameterIndex));
+    this->SetConversionParameter(parameters->GetName(parameterIndex), parameters->GetValue(parameterIndex));
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverter::SetConversionParameter(const std::string& name, const std::string& value, const std::string& description/*=""*/)
+void vtkSegmentationConverter::SetConversionParameter(const std::string& name, const std::string& value, const std::string& description /*=""*/)
 {
   // Cannot set parameter if any property contains a separator character
   if (name.find(SERIALIZATION_SEPARATOR) != std::string::npos || name.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos      //
       || value.find(SERIALIZATION_SEPARATOR) != std::string::npos || value.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos //
       || description.find(SERIALIZATION_SEPARATOR) != std::string::npos || description.find(SERIALIZATION_SEPARATOR_INNER) != std::string::npos)
   {
-    vtkErrorMacro("SetConversionParameter: Conversion parameter '" << name
-      << " name, value, or description contains a separator character so it cannot be set");
+    vtkErrorMacro("SetConversionParameter: Conversion parameter '" << name << " name, value, or description contains a separator character so it cannot be set");
     return;
   }
 
@@ -267,7 +261,7 @@ void vtkSegmentationConverter::SetConversionParameter(const std::string& name, c
   {
     if ((*ruleIt)->HasConversionParameter(name))
     {
-      (*ruleIt)->SetConversionParameter(name,value,description);
+      (*ruleIt)->SetConversionParameter(name, value, description);
       parameterFound = true;
     }
   }
@@ -351,7 +345,8 @@ vtkSegmentationConversionPath* vtkSegmentationConverter::GetCheapestPath(vtkSegm
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConverter::GetPossibleConversions(const std::string& sourceRepresentationName,
-  const std::string& targetRepresentationName, vtkSegmentationConversionPaths* paths)
+                                                      const std::string& targetRepresentationName,
+                                                      vtkSegmentationConversionPaths* paths)
 {
   paths->RemoveAllItems();
   vtkNew<vtkStringArray> skipRepresentations;
@@ -360,8 +355,9 @@ void vtkSegmentationConverter::GetPossibleConversions(const std::string& sourceR
 
 //----------------------------------------------------------------------------
 void vtkSegmentationConverter::FindPath(const std::string& sourceRepresentationName,
-  const std::string& targetRepresentationName, vtkSegmentationConversionPaths* pathsToSource,
-  vtkStringArray* skipRepresentations)
+                                        const std::string& targetRepresentationName,
+                                        vtkSegmentationConversionPaths* pathsToSource,
+                                        vtkStringArray* skipRepresentations)
 {
   if (sourceRepresentationName == targetRepresentationName)
   {
@@ -384,7 +380,7 @@ void vtkSegmentationConverter::FindPath(const std::string& sourceRepresentationN
   skipRepresentationsNew->DeepCopy(skipRepresentations);
   skipRepresentationsNew->InsertNextValue(sourceRepresentationName);
 
-  for (RulesListType::iterator representationRuleIt=rulesFromSourceRepresentation.begin(); representationRuleIt!=rulesFromSourceRepresentation.end(); ++representationRuleIt)
+  for (RulesListType::iterator representationRuleIt = rulesFromSourceRepresentation.begin(); representationRuleIt != rulesFromSourceRepresentation.end(); ++representationRuleIt)
   {
     if (skipRepresentationsNew->LookupValue((*representationRuleIt)->GetTargetRepresentationName()) >= 0)
     {
@@ -489,9 +485,7 @@ void vtkSegmentationConverter::GetAvailableRepresentationNames(std::set<std::str
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverter::GetConversionParametersForPath(
-  vtkSegmentationConversionParameters* conversionParameters,
-  vtkSegmentationConversionPath* path)
+void vtkSegmentationConverter::GetConversionParametersForPath(vtkSegmentationConversionParameters* conversionParameters, vtkSegmentationConversionPath* path)
 {
   conversionParameters->RemoveAllParameters();
   int numberOfRules = path->GetNumberOfRules();
@@ -502,8 +496,7 @@ void vtkSegmentationConverter::GetConversionParametersForPath(
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationConverter::GetAllConversionParameters(
-  vtkSegmentationConversionParameters* conversionParameters)
+void vtkSegmentationConverter::GetAllConversionParameters(vtkSegmentationConversionParameters* conversionParameters)
 {
   conversionParameters->RemoveAllParameters();
   // Get all custom conversion parameters
@@ -529,9 +522,8 @@ std::string vtkSegmentationConverter::SerializeAllConversionParameters()
   int numberOfParameters = parameters->GetNumberOfParameters();
   for (int parameterIndex = 0; parameterIndex < numberOfParameters; parameterIndex++)
   {
-    ssParameters << parameters->GetName(parameterIndex) << SERIALIZATION_SEPARATOR_INNER
-      << parameters->GetValue(parameterIndex) << SERIALIZATION_SEPARATOR_INNER
-      << parameters->GetDescription(parameterIndex) << SERIALIZATION_SEPARATOR;
+    ssParameters << parameters->GetName(parameterIndex) << SERIALIZATION_SEPARATOR_INNER << parameters->GetValue(parameterIndex) << SERIALIZATION_SEPARATOR_INNER
+                 << parameters->GetDescription(parameterIndex) << SERIALIZATION_SEPARATOR;
   }
 
   return ssParameters.str();
@@ -547,15 +539,15 @@ void vtkSegmentationConverter::DeserializeConversionParameters(std::string conve
 
     size_t innerSeparatorPosition = parameterString.find(SERIALIZATION_SEPARATOR_INNER);
     std::string name = parameterString.substr(0, innerSeparatorPosition);
-    parameterString = parameterString.substr(innerSeparatorPosition+1);
+    parameterString = parameterString.substr(innerSeparatorPosition + 1);
     innerSeparatorPosition = parameterString.find(SERIALIZATION_SEPARATOR_INNER);
     std::string value = parameterString.substr(0, innerSeparatorPosition);
-    parameterString = parameterString.substr(innerSeparatorPosition+1);
+    parameterString = parameterString.substr(innerSeparatorPosition + 1);
     innerSeparatorPosition = parameterString.find(SERIALIZATION_SEPARATOR_INNER);
     std::string description = parameterString.substr(0, innerSeparatorPosition);
     this->SetConversionParameter(name, value, description);
 
-    conversionParametersString = conversionParametersString.substr(separatorPosition+1);
+    conversionParametersString = conversionParametersString.substr(separatorPosition + 1);
     separatorPosition = conversionParametersString.find(SERIALIZATION_SEPARATOR);
   }
 }
@@ -593,6 +585,5 @@ void vtkSegmentationConverter::ApplyTransformOnReferenceImageGeometry(vtkAbstrac
     vtkErrorMacro("ApplyTransformOnReferenceImageGeometry: Failed to serialize new image geometry");
     return;
   }
-  this->SetConversionParameter(
-    vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), newGeometryString );
+  this->SetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), newGeometryString);
 }

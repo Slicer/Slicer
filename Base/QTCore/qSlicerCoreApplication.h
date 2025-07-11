@@ -112,7 +112,6 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(bool isUsageLoggingSupported READ isUsageLoggingSupported CONSTANT)
 
 public:
-
   typedef QApplication Superclass;
   qSlicerCoreApplication(int& argc, char** argv);
   ~qSlicerCoreApplication() override;
@@ -190,7 +189,8 @@ public:
   /// \note If exitWhenDone is True, it's your responsibility to exit the application
   void parseArguments(bool& exitWhenDone);
 
-  enum ReturnCode{
+  enum ReturnCode
+  {
     ExitNotRequested = -1,
     ExitSuccess = EXIT_SUCCESS,
     ExitFailure = EXIT_FAILURE
@@ -655,7 +655,6 @@ public slots:
   virtual void openUrl(const QString& url);
 
 protected:
-
   /// Process command line arguments **before** the application event loop is started.
   /// \sa handleCommandLineArguments()
   /// \sa qSlicerApplication::startupCompleted()
@@ -674,7 +673,7 @@ protected slots:
 
   virtual void onSlicerApplicationLogicModified();
   virtual void onUserInformationModified();
-  void onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long);
+  void onSlicerApplicationLogicRequest(vtkObject*, void*, unsigned long);
   void processAppLogicModified();
   void processAppLogicReadData();
   void processAppLogicWriteData();
@@ -716,8 +715,7 @@ signals:
 
   /// Internal method used to move an invocation from a thread to the main thread.
   /// \sa requestInvokeEvent(), scheduleInvokeEvent()
-  void invokeEventRequested(unsigned int delay, void* caller,
-                            unsigned long event, void* callData);
+  void invokeEventRequested(unsigned int delay, void* caller, unsigned long event, void* callData);
 
   void usageEventLogged(const QString& component, const QString& event);
 

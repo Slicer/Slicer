@@ -33,10 +33,11 @@ public:
 
   // Description:
   // Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "HierarchyStorage";}
+  const char* GetNodeTagName() override { return "HierarchyStorage"; }
 
   /// Return true if reference node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
+
 protected:
   vtkMRMLHierarchyStorageNode();
   ~vtkMRMLHierarchyStorageNode() override;

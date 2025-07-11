@@ -38,22 +38,22 @@
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate
-class qMRMLPlotWidgetPrivate
-  : public QObject
+class qMRMLPlotWidgetPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qMRMLPlotWidget);
+
 protected:
   qMRMLPlotWidget* const q_ptr;
+
 public:
   qMRMLPlotWidgetPrivate(qMRMLPlotWidget& object);
   ~qMRMLPlotWidgetPrivate() override;
 
   void init();
 
-  qMRMLPlotView*       PlotView;
+  qMRMLPlotView* PlotView;
   qMRMLPlotViewControllerWidget* PlotController;
 };
-
 
 //---------------------------------------------------------------------------
 qMRMLPlotWidgetPrivate::qMRMLPlotWidgetPrivate(qMRMLPlotWidget& object)
@@ -84,10 +84,8 @@ void qMRMLPlotWidgetPrivate::init()
 
   this->PlotController->setPlotView(this->PlotView);
 
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->PlotView, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->PlotController, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->PlotView, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->PlotController, SLOT(setMRMLScene(vtkMRMLScene*)));
 }
 
 // --------------------------------------------------------------------------
@@ -110,7 +108,6 @@ qMRMLPlotWidget::~qMRMLPlotWidget()
   d->PlotController->setMRMLScene(nullptr);
 }
 
-
 // --------------------------------------------------------------------------
 void qMRMLPlotWidget::setMRMLPlotViewNode(vtkMRMLPlotViewNode* newPlotViewNode)
 {
@@ -125,8 +122,7 @@ void qMRMLPlotWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNo
   vtkMRMLPlotViewNode* plotViewNode = vtkMRMLPlotViewNode::SafeDownCast(newViewNode);
   if (newViewNode && !plotViewNode)
   {
-    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
-      << ". Expected node type: vtkMRMLPlotViewNode";
+    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName() << ". Expected node type: vtkMRMLPlotViewNode";
   }
   this->setMRMLPlotViewNode(plotViewNode);
 }

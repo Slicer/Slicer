@@ -58,8 +58,7 @@ void vtkMRMLMeasurementLength::Compute()
   {
     if (curveNode->GetNumberOfDefinedControlPoints(true) < 2)
     {
-      vtkDebugMacro("Compute: Curve nodes must have more than one control points ("
-        << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
+      vtkDebugMacro("Compute: Curve nodes must have more than one control points (" << curveNode->GetNumberOfDefinedControlPoints(true) << " found)");
       this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
       return;
     }
@@ -69,8 +68,7 @@ void vtkMRMLMeasurementLength::Compute()
   {
     if (lineNode->GetNumberOfDefinedControlPoints(true) < 2)
     {
-      vtkDebugMacro("Compute: Line nodes must have exactly two control points ("
-        << lineNode->GetNumberOfDefinedControlPoints(true) << " found)");
+      vtkDebugMacro("Compute: Line nodes must have exactly two control points (" << lineNode->GetNumberOfDefinedControlPoints(true) << " found)");
       this->LastComputationResult = vtkMRMLMeasurement::InsufficientInput;
       return;
     }

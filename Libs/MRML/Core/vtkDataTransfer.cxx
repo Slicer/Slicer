@@ -5,9 +5,8 @@
 // VTK includes
 #include <vtkObjectFactory.h>
 
-
 vtkStandardNewMacro(vtkDataTransfer);
-vtkCxxSetObjectMacro( vtkDataTransfer, Handler, vtkURIHandler );
+vtkCxxSetObjectMacro(vtkDataTransfer, Handler, vtkURIHandler);
 
 //----------------------------------------------------------------------------
 vtkDataTransfer::vtkDataTransfer()
@@ -25,7 +24,6 @@ vtkDataTransfer::vtkDataTransfer()
   this->SizeOnDisk = 0;
 }
 
-
 //----------------------------------------------------------------------------
 vtkDataTransfer::~vtkDataTransfer()
 {
@@ -34,7 +32,7 @@ vtkDataTransfer::~vtkDataTransfer()
   this->DestinationURI = nullptr;
   if (this->Handler != nullptr)
   {
-    this->SetHandler (nullptr);
+    this->SetHandler(nullptr);
   }
   this->TransferStatus = vtkDataTransfer::Ready;
   this->TransferID = -1;
@@ -46,15 +44,12 @@ vtkDataTransfer::~vtkDataTransfer()
   this->SizeOnDisk = 0;
 }
 
-
 //----------------------------------------------------------------------------
 void vtkDataTransfer::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf ( os, indent );
-  os << indent << "SourceURI: " <<
-    ( this->SourceURI ? this->SourceURI : "(none)") << "\n";
-  os << indent << "DestinationURI: " <<
-    ( this->DestinationURI ? this->DestinationURI : "(none)") << "\n";
+  Superclass::PrintSelf(os, indent);
+  os << indent << "SourceURI: " << (this->SourceURI ? this->SourceURI : "(none)") << "\n";
+  os << indent << "DestinationURI: " << (this->DestinationURI ? this->DestinationURI : "(none)") << "\n";
   os << indent << "Handler: " << this->GetHandler() << "\n";
   os << indent << "TransferCached: " << this->GetTransferCached() << "\n";
   os << indent << "TransferStatus: " << this->GetTransferStatus() << "\n";

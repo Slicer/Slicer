@@ -39,14 +39,13 @@
 
 namespace
 {
-  int test_SceneView_SaveAndRestore(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneViewLogic);
-  int test_SceneView_SingletonNode(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneViewLogic);
+int test_SceneView_SaveAndRestore(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneViewLogic);
+int test_SceneView_SingletonNode(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneViewLogic);
 
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
-int vtkSceneViewRestoreSceneTest(int vtkNotUsed(argc),
-                                         char* vtkNotUsed(argv)[] )
+int vtkSceneViewRestoreSceneTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> appLogic;

@@ -27,7 +27,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerPlaneRepresentation2D_h
 #define vtkSlicerPlaneRepresentation2D_h
@@ -73,11 +73,9 @@ public:
   /// Return the bounds of the representation
   double* GetBounds() VTK_SIZEHINT(6) override;
 
-  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
 
-  void CanInteractWithPlane(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
+  void CanInteractWithPlane(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2);
 
   bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
 

@@ -35,7 +35,8 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Enum of the available plot types
-  enum {
+  enum
+  {
     InteractionModePanView,
     InteractionModeSelectPoints,
     InteractionModeFreehandSelectPoints,
@@ -47,11 +48,11 @@ public:
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-   vtkMRMLNode* CreateNodeInstance()  override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   ///
   /// Read node attributes from XML file.
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -82,8 +83,8 @@ public:
   /// If DoPropagatePlotChartSelection set to false then this
   /// view will not be affected by PropagatePlotChartSelection.
   /// Default value is true.
-  vtkSetMacro (DoPropagatePlotChartSelection, bool );
-  vtkGetMacro (DoPropagatePlotChartSelection, bool );
+  vtkSetMacro(DoPropagatePlotChartSelection, bool);
+  vtkGetMacro(DoPropagatePlotChartSelection, bool);
 
   /// Get/Set interaction mode for mouse left-click and drag.
   /// InteractionModePanView: pans chart view
@@ -112,9 +113,7 @@ public:
 
   ///
   /// Method to propagate events generated in mrml.
-  void ProcessMRMLEvents(vtkObject* caller,
-                                 unsigned long event,
-                                 void* callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// PlotModifiedEvent is fired when:
   ///  - a new PlotChart node is observed

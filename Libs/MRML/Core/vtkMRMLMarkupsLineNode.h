@@ -40,9 +40,9 @@ public:
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char* GetIcon() override {return ":/Icons/MarkupsLine.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsLineMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsLineMouseModePlaceAdd.png";}
+  const char* GetIcon() override { return ":/Icons/MarkupsLine.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsLineMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsLineMouseModePlaceAdd.png"; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -50,13 +50,13 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MarkupsLine";}
+  const char* GetNodeTagName() override { return "MarkupsLine"; }
 
   /// Get markup type internal name
-  const char* GetMarkupType() override {return "Line";};
+  const char* GetMarkupType() override { return "Line"; };
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;

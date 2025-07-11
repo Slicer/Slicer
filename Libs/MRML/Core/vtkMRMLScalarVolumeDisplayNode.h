@@ -40,7 +40,7 @@ class vtkScalarsToColors;
 /// vtkMRMLScalarVolumeDisplayNode nodes describe how volume is displayed.
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
-  public:
+public:
   static vtkMRMLScalarVolumeDisplayNode* New();
   vtkTypeMacro(vtkMRMLScalarVolumeDisplayNode, vtkMRMLVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -49,7 +49,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -61,8 +61,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "VolumeDisplay";}
-
+  const char* GetNodeTagName() override { return "VolumeDisplay"; }
 
   //--------------------------------------------------------------------------
   /// Display Information
@@ -71,14 +70,16 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// \deprecated
   bool GetWindowLevelLocked()
   {
-    vtkWarningMacro("vtkMRMLScalarVolumeDisplayNode::GetWindowLevelLocked method is deprecated. To check if the mouse mode cannot change window/level, get info from the interaction node. "
-                    "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
+    vtkWarningMacro(
+      "vtkMRMLScalarVolumeDisplayNode::GetWindowLevelLocked method is deprecated. To check if the mouse mode cannot change window/level, get info from the interaction node. "
+      "e.g. slicer.app.applicationLogic().GetInteractionNode().GetCurrentInteractionMode() == slicer.vtkMRMLInteractionNode.AdjustWindowLevel");
     return false;
   };
   /// \deprecated
   virtual void SetWindowLevelLocked(bool)
   {
-    vtkWarningMacro("vtkMRMLScalarVolumeDisplayNode::SetWindowLevelLocked method is deprecated. To prevent the mouse from changing window/level, set the interaction node to something other than AdjustWindowLevel. "
+    vtkWarningMacro("vtkMRMLScalarVolumeDisplayNode::SetWindowLevelLocked method is deprecated. To prevent the mouse from changing window/level, set the interaction node to "
+                    "something other than AdjustWindowLevel. "
                     "e.g. slicer.app.applicationLogic().GetInteractionNode().SetCurrentInteractionMode(slicer.vtkMRMLInteractionNode.ViewTransform)");
   };
 
@@ -153,9 +154,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Set the pipeline input
   void SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection) override;
@@ -239,12 +238,16 @@ protected:
   public:
     double Window;
     double Level;
-    WindowLevelPreset(double window, double level) : Window(window), Level(level) {}
+    WindowLevelPreset(double window, double level)
+      : Window(window)
+      , Level(level)
+    {
+    }
   };
-  //double Window;
-  //double Level;
-  //double UpperThreshold;
-  //double LowerThreshold;
+  // double Window;
+  // double Level;
+  // double UpperThreshold;
+  // double LowerThreshold;
 
   /// Set the window level presets from the specified vector.
   /// Calls this->Modified() if there is a change.

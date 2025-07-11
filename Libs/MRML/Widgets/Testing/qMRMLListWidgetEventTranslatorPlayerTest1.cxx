@@ -54,7 +54,7 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLListWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
@@ -79,9 +79,7 @@ int qMRMLListWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   sceneFactory.generateNode("vtkMRMLViewNode");
   sceneFactory.generateNode("vtkMRMLViewNode");
   widget->setMRMLScene(sceneFactory.mrmlScene());
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLListWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(widget, xmlDirectory + "qMRMLListWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

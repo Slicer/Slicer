@@ -22,8 +22,7 @@ qMRMLSegmentationShow3DButtonPlugin::qMRMLSegmentationShow3DButtonPlugin(QObject
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentationShow3DButtonPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentationShow3DButton* pluginWidget =
-    new qMRMLSegmentationShow3DButton(parentWidget);
+  qMRMLSegmentationShow3DButton* pluginWidget = new qMRMLSegmentationShow3DButton(parentWidget);
   return pluginWidget;
 }
 

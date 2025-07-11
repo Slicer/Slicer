@@ -91,13 +91,11 @@ public:
 
   /// Convenient method to get the view node from scene and name of the Logic.
   /// The name of the Logic is the same of the widget one to which it is associated
-  static vtkMRMLViewNode* GetViewNode(vtkMRMLScene* scene,
-                                      const char* layoutName);
+  static vtkMRMLViewNode* GetViewNode(vtkMRMLScene* scene, const char* layoutName);
 
   /// Convenient method to get the camera node from scene and name of the Logic.
   /// The name of the Logic is the same of the widget one to which it is associated
-  static vtkMRMLCameraNode* GetCameraNode(vtkMRMLScene* scene,
-                                          const char* layoutName);
+  static vtkMRMLCameraNode* GetCameraNode(vtkMRMLScene* scene, const char* layoutName);
 
 protected:
   vtkMRMLViewLogic();
@@ -123,7 +121,6 @@ protected:
 private:
   vtkMRMLViewLogic(const vtkMRMLViewLogic&) = delete;
   void operator=(const vtkMRMLViewLogic&) = delete;
-
 };
 
 #endif

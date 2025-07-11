@@ -41,7 +41,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -53,14 +53,11 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Transform";};
+  const char* GetNodeTagName() override { return "Transform"; };
 
   ///
   /// Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene* scene) override
-  {
-     Superclass::UpdateScene(scene);
-  };
+  void UpdateScene(vtkMRMLScene* scene) override { Superclass::UpdateScene(scene); };
 
   ///
   /// Returns 1 if transform is a non-composite linear transform, 0 otherwise (if composite transform or non-linear transform)
@@ -112,11 +109,11 @@ public:
 
   ///
   /// 1 if all the transforms to the top are linear, 0 otherwise
-  int  IsTransformToWorldLinear();
+  int IsTransformToWorldLinear();
 
   ///
   /// 1 if all the transforms between nodes are linear, 0 otherwise
-  int  IsTransformToNodeLinear(vtkMRMLTransformNode* node);
+  int IsTransformToNodeLinear(vtkMRMLTransformNode* node);
 
   ///
   /// Get concatenated transforms to world.
@@ -134,22 +131,19 @@ public:
   /// Get concatenated transforms to the specified node.
   /// The method may change the PreMultiply/PostMultiply flag of the transform.
   /// \sa GetTransformBetweenNodes
-  void GetTransformToNode(vtkMRMLTransformNode* node,
-                          vtkGeneralTransform* transformToNode);
+  void GetTransformToNode(vtkMRMLTransformNode* node, vtkGeneralTransform* transformToNode);
 
   ///
   /// Get concatenated transforms from the specified node.
   /// The method may change the PreMultiply/PostMultiply flag of the transform.
   /// \sa GetTransformBetweenNodes
-  void GetTransformFromNode(vtkMRMLTransformNode* node,
-                          vtkGeneralTransform* transformFromNode);
+  void GetTransformFromNode(vtkMRMLTransformNode* node, vtkGeneralTransform* transformFromNode);
 
   ///
   /// Get concatenated transforms from source to target node
   /// Source and target nodes are allowed to be nullptr, which means that transform is the world transform.
   /// The method may change the PreMultiply/PostMultiply flag of the transform.
-  static void GetTransformBetweenNodes(vtkMRMLTransformNode* sourceNode,
-    vtkMRMLTransformNode* targetNode, vtkGeneralTransform* transformSourceToTarget);
+  static void GetTransformBetweenNodes(vtkMRMLTransformNode* sourceNode, vtkMRMLTransformNode* targetNode, vtkGeneralTransform* transformSourceToTarget);
 
   ///
   /// Get concatenated transforms to world.
@@ -167,22 +161,19 @@ public:
   /// Get concatenated transforms to the specified node.
   /// Returns 0 if the transform is not linear (cannot be described by a matrix).
   /// \sa GetMatrixTransformBetweenNodes
-  virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node,
-                                       vtkMatrix4x4* transformToNode);
+  virtual int GetMatrixTransformToNode(vtkMRMLTransformNode* node, vtkMatrix4x4* transformToNode);
 
   ///
   /// Get concatenated transforms from the specified node.
   /// Returns 0 if the transform is not linear (cannot be described by a matrix).
   /// \sa GetMatrixTransformBetweenNodes
-  virtual int GetMatrixTransformFromNode(vtkMRMLTransformNode* node,
-                                       vtkMatrix4x4* transformFromNode);
+  virtual int GetMatrixTransformFromNode(vtkMRMLTransformNode* node, vtkMatrix4x4* transformFromNode);
 
   ///
   /// Get concatenated transforms from source to target node
   /// Source and target nodes are allowed to be nullptr, which means that transform is the world transform.
   /// Returns 0 if the transform is not linear (cannot be described by a matrix).
-  static int GetMatrixTransformBetweenNodes(vtkMRMLTransformNode* sourceNode,
-    vtkMRMLTransformNode* targetNode, vtkMatrix4x4* transformSourceToTarget);
+  static int GetMatrixTransformBetweenNodes(vtkMRMLTransformNode* sourceNode, vtkMRMLTransformNode* targetNode, vtkMatrix4x4* transformSourceToTarget);
 
   ///
   /// Returns 1 if this node is one of the node's descendants
@@ -277,10 +268,7 @@ public:
   /// Indicates that the transform inside the object is modified.
   /// Typical usage would be to disable transform modified events, call a series of operations that change transforms
   /// and then re-enable transform modified events to invoke any pending notifications.
-  virtual void TransformModified()
-  {
-    this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
-  }
+  virtual void TransformModified() { this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent); }
 
   bool GetModifiedSinceRead() override;
 
@@ -313,9 +301,7 @@ public:
   void SetAndObserveTransformFromParent(vtkAbstractTransform* transform);
 
   /// alternative method to propagate events generated in Transform nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   ///
   /// Creates a shallow copy of an input composite transform (that can contain a complex hierarchy of transforms)
@@ -411,7 +397,7 @@ protected:
   vtkMatrix4x4* CachedMatrixTransformToParent;
   vtkMatrix4x4* CachedMatrixTransformFromParent;
 
-  double CenterOfTransformation[3] {0.0, 0.0, 0.0};
+  double CenterOfTransformation[3]{ 0.0, 0.0, 0.0 };
 };
 
 #endif

@@ -38,7 +38,6 @@ vtkMRMLAnnotationDisplayNode::vtkMRMLAnnotationDisplayNode()
   this->ProjectedOpacity = 1.0;
 
   this->m_Backup = nullptr;
-
 }
 
 //----------------------------------------------------------------------------
@@ -50,9 +49,7 @@ vtkMRMLAnnotationDisplayNode::~vtkMRMLAnnotationDisplayNode()
     this->m_Backup->Delete();
     this->m_Backup = nullptr;
   }
-
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayNode::WriteXML(ostream& of, int nIndent)
@@ -61,14 +58,11 @@ void vtkMRMLAnnotationDisplayNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 }
 
-
-
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayNode::ReadXMLAttributes(const char** atts)
 {
   Superclass::ReadXMLAttributes(atts);
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -85,9 +79,7 @@ void vtkMRMLAnnotationDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
-                                           unsigned long event,
-                                           void* callData )
+void vtkMRMLAnnotationDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
@@ -96,7 +88,7 @@ void vtkMRMLAnnotationDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
 //-----------------------------------------------------------
 void vtkMRMLAnnotationDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
-   Superclass::UpdateScene(scene);
+  Superclass::UpdateScene(scene);
 }
 
 //----------------------------------------------------------------------------
@@ -116,5 +108,4 @@ vtkMRMLAnnotationDisplayNode* vtkMRMLAnnotationDisplayNode::GetBackup()
 {
 
   return this->m_Backup;
-
 }

@@ -53,10 +53,7 @@ public:
 
   itk::ProcessObject::Pointer FGCFilterProcess{ nullptr };
 
-  void Reset()
-  {
-    this->FGCFilterProcess = nullptr;
-  }
+  void Reset() { this->FGCFilterProcess = nullptr; }
 
   vtkITKGrowCut* External{ nullptr };
 
@@ -67,11 +64,12 @@ public:
   struct FastGrowCutWorker
   {
     template <typename IntensityVolumeArrayType, typename SeedLabelVolumeArrayType>
-    void operator()(
-      IntensityVolumeArrayType* vtkNotUsed(intensityVolumeArray),
-      SeedLabelVolumeArrayType* vtkNotUsed(seedLabelVolumeArray),
-      vtkImageData* intensityVolume, vtkImageData* seedLabelVolume,
-      vtkImageData* resultLabelVolume, vtkITKGrowCut* self)
+    void operator()(IntensityVolumeArrayType* vtkNotUsed(intensityVolumeArray),
+                    SeedLabelVolumeArrayType* vtkNotUsed(seedLabelVolumeArray),
+                    vtkImageData* intensityVolume,
+                    vtkImageData* seedLabelVolume,
+                    vtkImageData* resultLabelVolume,
+                    vtkITKGrowCut* self)
     {
       using IntensityType = vtk::GetAPIType<IntensityVolumeArrayType>;
       using SeedLabelType = vtk::GetAPIType<SeedLabelVolumeArrayType>;
@@ -80,12 +78,14 @@ public:
     }
 
     template <typename IntensityVolumeArrayType, typename SeedLabelVolumeArrayType, typename MaskLabelVolumeArrayType>
-    void operator()(
-      IntensityVolumeArrayType* vtkNotUsed(intensityVolumeArray),
-      SeedLabelVolumeArrayType* vtkNotUsed(seedLabelVolumeArray),
-      MaskLabelVolumeArrayType* vtkNotUsed(maskLabelVolumeArray),
-      vtkImageData* intensityVolume, vtkImageData* seedLabelVolume, vtkImageData* maskLabelVolume,
-      vtkImageData* resultLabelVolume, vtkITKGrowCut* self)
+    void operator()(IntensityVolumeArrayType* vtkNotUsed(intensityVolumeArray),
+                    SeedLabelVolumeArrayType* vtkNotUsed(seedLabelVolumeArray),
+                    MaskLabelVolumeArrayType* vtkNotUsed(maskLabelVolumeArray),
+                    vtkImageData* intensityVolume,
+                    vtkImageData* seedLabelVolume,
+                    vtkImageData* maskLabelVolume,
+                    vtkImageData* resultLabelVolume,
+                    vtkITKGrowCut* self)
     {
       using IntensityType = vtk::GetAPIType<IntensityVolumeArrayType>;
       using SeedLabelType = vtk::GetAPIType<SeedLabelVolumeArrayType>;
@@ -97,8 +97,7 @@ public:
 
 //----------------------------------------------------------------------------
 template <typename IntensityType, typename SeedLabelType, typename MaskType>
-void vtkITKGrowCut::vtkInternal::RunGrowCut(vtkImageData* intensityVolume, vtkImageData* seedLabelVolume,
-  vtkImageData* maskLabelVolume, vtkImageData* resultLabelVolume)
+void vtkITKGrowCut::vtkInternal::RunGrowCut(vtkImageData* intensityVolume, vtkImageData* seedLabelVolume, vtkImageData* maskLabelVolume, vtkImageData* resultLabelVolume)
 {
   typedef itk::Image<IntensityType, 3> IntensityImageType;
   typedef itk::Image<SeedLabelType, 3> SeedLabelImageType;
@@ -185,8 +184,7 @@ int vtkITKGrowCut::FillInputPortInformation(int port, vtkInformation* info)
 }
 
 //-----------------------------------------------------------------------------
-void vtkITKGrowCut::ExecuteDataWithInformation(
-  vtkDataObject* resultLabelVolumeDataObject, vtkInformation* vtkNotUsed(resultLabelVolumeInfo))
+void vtkITKGrowCut::ExecuteDataWithInformation(vtkDataObject* resultLabelVolumeDataObject, vtkInformation* vtkNotUsed(resultLabelVolumeInfo))
 {
   vtkImageData* intensityVolume = vtkImageData::SafeDownCast(this->GetInput(0));
   vtkImageData* seedLabelVolume = vtkImageData::SafeDownCast(this->GetInput(1));
@@ -200,7 +198,7 @@ void vtkITKGrowCut::ExecuteDataWithInformation(
     return;
   }
 
-  int intensityVolumeDimensions[3] = {0, 0, 0};
+  int intensityVolumeDimensions[3] = { 0, 0, 0 };
   intensityVolume->GetDimensions(intensityVolumeDimensions);
   if (intensityVolumeDimensions[0] < 3 || intensityVolumeDimensions[1] < 3 || intensityVolumeDimensions[2] < 3)
   {
@@ -226,15 +224,11 @@ void vtkITKGrowCut::ExecuteDataWithInformation(
       return;
     }
 
-    vtkArrayDispatch::Dispatch3::Execute(intensityScalars, seedScalars, maskScalars, worker,
-      intensityVolume, seedLabelVolume, maskLabelVolume, resultLabelVolume,
-      this);
+    vtkArrayDispatch::Dispatch3::Execute(intensityScalars, seedScalars, maskScalars, worker, intensityVolume, seedLabelVolume, maskLabelVolume, resultLabelVolume, this);
   }
   else
   {
-    vtkArrayDispatch::Dispatch2::Execute(intensityScalars, seedScalars, worker,
-      intensityVolume, seedLabelVolume, resultLabelVolume,
-      this);
+    vtkArrayDispatch::Dispatch2::Execute(intensityScalars, seedScalars, worker, intensityVolume, seedLabelVolume, resultLabelVolume, this);
   }
 }
 

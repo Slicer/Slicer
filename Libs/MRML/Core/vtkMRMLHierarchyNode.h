@@ -36,7 +36,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -48,7 +48,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Hierarchy";}
+  const char* GetNodeTagName() override { return "Hierarchy"; }
 
   /// Set the reference node to current scene.
   void SetSceneReferences() override;
@@ -76,16 +76,13 @@ public:
 
   ///
   /// String ID of the parent hierarchy MRML node
-  virtual char* GetParentNodeID()
-  {
-    return GetParentNodeIDReference();
-  }
+  virtual char* GetParentNodeID() { return GetParentNodeIDReference(); }
 
   virtual void SetParentNodeID(const char* ref);
 
   ///
   /// Given this hierarchy node returns all it's children recursively.
-  void GetAllChildrenNodes(std::vector<vtkMRMLHierarchyNode*> &childrenNodes);
+  void GetAllChildrenNodes(std::vector<vtkMRMLHierarchyNode*>& childrenNodes);
 
   ///
   /// Given this hierarchy node returns all it's 1st level children (not recursive).
@@ -94,10 +91,7 @@ public:
   std::vector<vtkMRMLHierarchyNode*> GetChildrenNodes();
 
   /// Returns the number of immediate children in the hierarchy
-  int GetNumberOfChildrenNodes()
-  {
-    return static_cast<int>(this->GetChildrenNodes().size());
-  }
+  int GetNumberOfChildrenNodes() { return static_cast<int>(this->GetChildrenNodes().size()); }
 
   /// Get n-th child node sorted in the order of their SortingValue
   vtkMRMLHierarchyNode* GetNthChildNode(int index);
@@ -121,25 +115,20 @@ public:
   /// ChildNodeAddedEvent is send when a child node added to this parent
   enum
   {
-      ChildNodeAddedEvent = 15550,
-      ChildNodeRemovedEvent = 15551
+    ChildNodeAddedEvent = 15550,
+    ChildNodeRemovedEvent = 15551
   };
 
   //// Associated node methods ////////////////
 
   ///
   /// String ID of the corresponding displayable MRML node
-  virtual char* GetAssociatedNodeID()
-  {
-    return GetAssociatedNodeIDReference();
-  }
+  virtual char* GetAssociatedNodeID() { return GetAssociatedNodeIDReference(); }
 
   virtual void SetAssociatedNodeID(const char* ref);
 
-
   /// Get node associated with this hierarchy node
   virtual vtkMRMLNode* GetAssociatedNode();
-
 
   /// Find all associated children nodes of a specified class in the hierarchy
   /// if childClass is nullptr returns all associated children nodes.
@@ -147,16 +136,14 @@ public:
 
   ///
   /// Get Hierarchy node for a given associated node
-  static vtkMRMLHierarchyNode* GetAssociatedHierarchyNode(vtkMRMLScene* scene,
-                                                          const char* associatedNodeID);
+  static vtkMRMLHierarchyNode* GetAssociatedHierarchyNode(vtkMRMLScene* scene, const char* associatedNodeID);
   ///
   /// Node's Sorting Value
-  //vtkSetMacro(SortingValue, double);
+  // vtkSetMacro(SortingValue, double);
   /// Use a method for Set because it needs to call modified on any associated
-  //nodes (since the order of that associated node could have changed as well)
+  // nodes (since the order of that associated node could have changed as well)
   void SetSortingValue(double value);
   vtkGetMacro(SortingValue, double);
-
 
   /// turn off if only want to have one child associated with this hierarchy
   /// node, as with the leaf type nodes that are pointing to a single mrml
@@ -171,7 +158,6 @@ protected:
   vtkMRMLHierarchyNode(const vtkMRMLHierarchyNode&);
   void operator=(const vtkMRMLHierarchyNode&);
 
-
   ///
   /// String ID of the parent hierarchy MRML node
   void SetParentNodeIDReference(const char* id);
@@ -181,7 +167,6 @@ protected:
 
   /// Mark hierarchy as modified when you
   static void HierarchyIsModified(vtkMRMLScene* scene);
-
 
   ///////////////////////
 
@@ -196,8 +181,8 @@ protected:
 
   typedef std::map<std::string, std::vector<vtkMRMLHierarchyNode*>> HierarchyChildrenNodesType;
 
-  static std::map< vtkMRMLScene*, HierarchyChildrenNodesType> SceneHierarchyChildrenNodes;
-  static std::map< vtkMRMLScene*, vtkMTimeType> SceneHierarchyChildrenNodesMTime;
+  static std::map<vtkMRMLScene*, HierarchyChildrenNodesType> SceneHierarchyChildrenNodes;
+  static std::map<vtkMRMLScene*, vtkMTimeType> SceneHierarchyChildrenNodesMTime;
 
   ////////////////////////////
   ///
@@ -207,9 +192,9 @@ protected:
 
   typedef std::map<std::string, vtkMRMLHierarchyNode*> AssociatedHierarchyNodesType;
 
-  static std::map< vtkMRMLScene*, AssociatedHierarchyNodesType> SceneAssociatedHierarchyNodes;
+  static std::map<vtkMRMLScene*, AssociatedHierarchyNodesType> SceneAssociatedHierarchyNodes;
 
-  static std::map< vtkMRMLScene*, vtkMTimeType> SceneAssociatedHierarchyNodesMTime;
+  static std::map<vtkMRMLScene*, vtkMTimeType> SceneAssociatedHierarchyNodesMTime;
 
   double SortingValue;
 

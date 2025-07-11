@@ -31,8 +31,7 @@ typedef std::vector<vtkMRMLDisplayableHierarchyNode*> vtkMRMLDisplayableHierarch
 /// This class manages the logic associated with displayable hierarchy nodes.
 class VTK_MRML_LOGIC_EXPORT vtkMRMLDisplayableHierarchyLogic : public vtkMRMLAbstractLogic
 {
-  public:
-
+public:
   /// The Usual vtk class functions
   static vtkMRMLDisplayableHierarchyLogic* New();
   vtkTypeMacro(vtkMRMLDisplayableHierarchyLogic, vtkMRMLAbstractLogic);
@@ -62,7 +61,6 @@ protected:
 
   /// Delete the hierarchy node when a node is removed from the scene
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode) override;
-
 };
 
 #endif

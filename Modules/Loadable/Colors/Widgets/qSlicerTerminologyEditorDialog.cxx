@@ -37,13 +37,17 @@
 class qSlicerTerminologyEditorDialogPrivate : public QDialog
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologyEditorDialog);
+
 protected:
   qSlicerTerminologyEditorDialog* const q_ptr;
+
 public:
   explicit qSlicerTerminologyEditorDialogPrivate(qSlicerTerminologyEditorDialog& object, QWidget* parent);
   ~qSlicerTerminologyEditorDialogPrivate() override;
+
 public:
   void init();
+
 private:
   qSlicerTerminologyEditorWidget* EditorWidget{ nullptr };
   QPushButton* SaveButton{ nullptr };
@@ -111,8 +115,7 @@ qSlicerTerminologyEditorDialog::qSlicerTerminologyEditorDialog(QObject* parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTerminologyEditorDialog::qSlicerTerminologyEditorDialog(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& initialTerminologyInfo, QObject* parent)
+qSlicerTerminologyEditorDialog::qSlicerTerminologyEditorDialog(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& initialTerminologyInfo, QObject* parent)
   : QObject(parent)
   , d_ptr(new qSlicerTerminologyEditorDialogPrivate(*this, qobject_cast<QWidget*>(parent)))
 {
@@ -146,8 +149,7 @@ bool qSlicerTerminologyEditorDialog::exec()
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerTerminologyEditorDialog::getTerminology(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo, QObject* parent)
+bool qSlicerTerminologyEditorDialog::getTerminology(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo, QObject* parent)
 {
   // Open terminology dialog and store result
   qSlicerTerminologyEditorDialog dialog(terminologyInfo, parent);
@@ -173,8 +175,7 @@ bool qSlicerTerminologyEditorDialog::getTerminology(vtkSlicerTerminologyEntry* t
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyEditorDialog::terminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo )
+void qSlicerTerminologyEditorDialog::terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorDialog);
   terminologyInfo = d->TerminologyInfo;

@@ -22,7 +22,7 @@
 #include "qMRMLNodeComboBox.h"
 
 qMRMLNodeComboBoxPlugin::qMRMLNodeComboBoxPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -34,13 +34,13 @@ QWidget* qMRMLNodeComboBoxPlugin::createWidget(QWidget* _parent)
 
 QString qMRMLNodeComboBoxPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLNodeComboBox\" name=\"MRMLNodeComboBox\">\n"
-    "  <property name=\"hideChildNodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
-    "  <property name=\"nodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
-    "  <property name=\"interactionNodeSingletonTag\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLNodeComboBox\" name=\"MRMLNodeComboBox\">\n"
+         "  <property name=\"hideChildNodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
+         "  <property name=\"nodeTypes\"> <stringlist notr=\"true\"/> </property>\n"
+         "  <property name=\"interactionNodeSingletonTag\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 QIcon qMRMLNodeComboBoxPlugin::icon() const

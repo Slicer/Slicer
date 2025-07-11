@@ -32,8 +32,7 @@
 
 #include "vtkSlicerDataModuleLogicExport.h"
 
-class VTK_SLICER_DATA_LOGIC_EXPORT vtkSlicerDataModuleLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_DATA_LOGIC_EXPORT vtkSlicerDataModuleLogic : public vtkSlicerModuleLogic
 {
 public:
   static vtkSlicerDataModuleLogic* New();
@@ -41,9 +40,9 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 public:
-  vtkSetMacro( SceneChanged, bool );
-  vtkGetMacro( SceneChanged, bool );
-  vtkBooleanMacro( SceneChanged, bool );
+  vtkSetMacro(SceneChanged, bool);
+  vtkGetMacro(SceneChanged, bool);
+  vtkBooleanMacro(SceneChanged, bool);
 
 protected:
   vtkSlicerDataModuleLogic();
@@ -76,7 +75,6 @@ private:
 protected:
   /// Flag indicating if the scene has recently changed (update of the module GUI if needed)
   bool SceneChanged;
-
 };
 
 #endif

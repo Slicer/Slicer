@@ -50,8 +50,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char* argv[])
   moduleFactoryManager.instantiateModules();
   moduleFactoryManager.loadModules();
 
-  qSlicerAbstractCoreModule* abstractModule =
-    moduleFactoryManager.moduleInstance(moduleName);
+  qSlicerAbstractCoreModule* abstractModule = moduleFactoryManager.moduleInstance(moduleName);
   if (abstractModule == nullptr)
   {
     moduleFactoryManager.printAdditionalInfo();
@@ -63,8 +62,8 @@ int qSlicerModuleFactoryManagerTest1(int argc, char* argv[])
   {
     moduleFactoryManager.printAdditionalInfo();
     std::cerr << __LINE__ << " - Error in moduleTitle() or moduleName()" << std::endl
-              << "expected moduleName  = " << qPrintable( moduleName ) << std::endl
-              << "real moduleName = " << qPrintable( abstractModule->name() ) << std::endl;
+              << "expected moduleName  = " << qPrintable(moduleName) << std::endl
+              << "real moduleName = " << qPrintable(abstractModule->name()) << std::endl;
     return EXIT_FAILURE;
   }
 

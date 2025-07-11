@@ -50,8 +50,7 @@ public:
 // vtkInternal methods
 
 //---------------------------------------------------------------------------
-vtkMRMLRubberBandWidgetRepresentation::vtkInternal
-::vtkInternal(vtkMRMLRubberBandWidgetRepresentation* external)
+vtkMRMLRubberBandWidgetRepresentation::vtkInternal::vtkInternal(vtkMRMLRubberBandWidgetRepresentation* external)
 {
   this->External = external;
 
@@ -73,7 +72,7 @@ vtkMRMLRubberBandWidgetRepresentation::vtkInternal
     points->InsertNextPoint(0.0, 0.0, 0.0);
     vtkNew<vtkIdList> idList;
     idList->InsertNextId(i);
-    idList->InsertNextId((i+1) % 4);
+    idList->InsertNextId((i + 1) % 4);
     this->PolyData->InsertNextCell(VTK_LINE, idList);
   }
 

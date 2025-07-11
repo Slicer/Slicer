@@ -37,7 +37,6 @@
 
 // STD includes
 
-
 // namespace{
 // class qSlicerCoreApplicationTest : public qSlicerCoreApplication
 // {
@@ -129,7 +128,7 @@ int qSlicerCoreApplicationTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  std::cout << "Slicer Home Directory = " << qPrintable( homeDirectory ) << std::endl;
+  std::cout << "Slicer Home Directory = " << qPrintable(homeDirectory) << std::endl;
 
   vtkSlicerApplicationLogic* logic1 = app.applicationLogic();
 

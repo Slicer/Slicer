@@ -64,9 +64,9 @@ static const double INTERACTION_HANDLE_RADIUS = 1.15;
 static const double INTERACTION_HANDLE_ROTATION_ARC_OUTER_RADIUS = INTERACTION_HANDLE_RADIUS + 0.5 * INTERACTION_HANDLE_ROTATION_ARC_THICKNESS;
 static const double INTERACTION_HANDLE_ROTATION_ARC_INNER_RADIUS = INTERACTION_HANDLE_RADIUS - 0.5 * INTERACTION_HANDLE_ROTATION_ARC_THICKNESS;
 static const double INTERACTION_HANDLE_ROTATION_ARC_DEGREES = 360.0;
-static const int    INTERACTION_HANDLE_ROTATION_ARC_RESOLUTION = 30;
+static const int INTERACTION_HANDLE_ROTATION_ARC_RESOLUTION = 30;
 
-static const double INTERACTION_TRANSLATION_HANDLE_LENGTH= 0.75;
+static const double INTERACTION_TRANSLATION_HANDLE_LENGTH = 0.75;
 static const double INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS = 0.15;
 static const double INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS = 0.05;
 
@@ -119,8 +119,7 @@ vtkMRMLInteractionWidgetRepresentation::~vtkMRMLInteractionWidgetRepresentation(
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLInteractionWidgetRepresentation::PrintSelf(ostream& os,
-                                                      vtkIndent indent)
+void vtkMRMLInteractionWidgetRepresentation::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 }
@@ -133,9 +132,10 @@ double vtkMRMLInteractionWidgetRepresentation::GetMaximumHandlePickingDistance2(
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLInteractionWidgetRepresentation::CanInteract(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+void vtkMRMLInteractionWidgetRepresentation::CanInteract(vtkMRMLInteractionEventData* interactionEventData,
+                                                         int& foundComponentType,
+                                                         int& foundComponentIndex,
+                                                         double& closestDistance2)
 {
   foundComponentType = InteractionNone;
   closestDistance2 = VTK_DOUBLE_MAX; // in display coordinate system
@@ -171,10 +171,11 @@ void vtkMRMLInteractionWidgetRepresentation::CanInteract(
 }
 
 //----------------------------------------------------------------------
-void
-vtkMRMLInteractionWidgetRepresentation::CanInteractWithCircleHandle(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2, HandleInfo& handleInfo)
+void vtkMRMLInteractionWidgetRepresentation::CanInteractWithCircleHandle(vtkMRMLInteractionEventData* interactionEventData,
+                                                                         int& foundComponentType,
+                                                                         int& foundComponentIndex,
+                                                                         double& closestDistance2,
+                                                                         HandleInfo& handleInfo)
 {
   vtkMRMLAbstractViewNode* viewNode = this->GetViewNode();
   if (!viewNode || !this->IsDisplayable() || !interactionEventData || !handleInfo.IsVisible() || !interactionEventData->IsDisplayPositionValid())
@@ -221,7 +222,10 @@ vtkMRMLInteractionWidgetRepresentation::CanInteractWithCircleHandle(
 
 //----------------------------------------------------------------------
 void vtkMRMLInteractionWidgetRepresentation::CanInteractWithArrowHandle(vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2, HandleInfo& handleInfo)
+                                                                        int& foundComponentType,
+                                                                        int& foundComponentIndex,
+                                                                        double& closestDistance2,
+                                                                        HandleInfo& handleInfo)
 {
   if (!handleInfo.IsVisible() || !interactionEventData->IsDisplayPositionValid())
   {
@@ -286,7 +290,10 @@ void vtkMRMLInteractionWidgetRepresentation::CanInteractWithArrowHandle(vtkMRMLI
 
 //----------------------------------------------------------------------
 void vtkMRMLInteractionWidgetRepresentation::CanInteractWithRingHandle(vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2, HandleInfo& handleInfo)
+                                                                       int& foundComponentType,
+                                                                       int& foundComponentIndex,
+                                                                       double& closestDistance2,
+                                                                       HandleInfo& handleInfo)
 {
   double handleNormalWorld[4] = { 0.0, 0.0, 0.0, 0.0 };
   this->GetInteractionHandleAxisWorld(handleInfo.ComponentType, handleInfo.Index, handleNormalWorld);
@@ -295,7 +302,6 @@ void vtkMRMLInteractionWidgetRepresentation::CanInteractWithRingHandle(vtkMRMLIn
     // Axis not valid.
     return;
   }
-
 
   // Display position is valid in case of desktop interactions. Otherwise it is a 3D only context such as
   // virtual reality, and then we expect a valid world position in the absence of display position.
@@ -333,11 +339,7 @@ void vtkMRMLInteractionWidgetRepresentation::CanInteractWithRingHandle(vtkMRMLIn
 
   double t = 0; // not used
   double interactionPointOnPlane_World[3] = { 0.0, 0.0, 0.0 };
-  double worldPositionAlongView[4] = {
-    worldPosition4[0] + viewDirection_World[0],
-    worldPosition4[1] + viewDirection_World[1],
-    worldPosition4[2] + viewDirection_World[2],
-    1.0 };
+  double worldPositionAlongView[4] = { worldPosition4[0] + viewDirection_World[0], worldPosition4[1] + viewDirection_World[1], worldPosition4[2] + viewDirection_World[2], 1.0 };
   plane->IntersectWithLine(worldPosition4, worldPositionAlongView, t, interactionPointOnPlane_World);
 
   double closestPointOnRing_World[4] = { 0.0, 0.0, 0.0, 1.0 };
@@ -386,8 +388,7 @@ bool vtkMRMLInteractionWidgetRepresentation::GetTransformationReferencePoint(dou
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLInteractionWidgetRepresentation::UpdateFromMRML(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void* vtkNotUsed(callData))
+void vtkMRMLInteractionWidgetRepresentation::UpdateFromMRML(vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void* vtkNotUsed(callData))
 {
   if (!this->Pipeline)
   {
@@ -512,8 +513,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
         transformGlyph = transformRingGlyph;
         transformOutlineGlyph = transformRingOutlineGlyph;
         break;
-      default:
-        break;
+      default: break;
     }
 
     vtkPolyData* handlePolyData = this->GetHandlePolydata(handleInfo.ComponentType);
@@ -533,11 +533,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
     vtkDoubleArray* orientationArray = vtkDoubleArray::SafeDownCast(handlePolyData->GetPointData()->GetArray("orientation"));
     if (orientationArray)
     {
-      double orientation[9] = {
-        1.0, 0.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0
-      };
+      double orientation[9] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
       orientationArray->GetTuple(handleInfo.Index, orientation);
       vtkNew<vtkMatrix4x4> orientationMatrix;
       for (int i = 0; i < 9; ++i)
@@ -595,13 +591,11 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
     }
 
     // Update color arrays
-    vtkSmartPointer<vtkFloatArray> handleColorArray = vtkFloatArray::SafeDownCast(
-      handlePolyData->GetPointData()->GetAbstractArray("colorIndex"));
+    vtkSmartPointer<vtkFloatArray> handleColorArray = vtkFloatArray::SafeDownCast(handlePolyData->GetPointData()->GetAbstractArray("colorIndex"));
     float handleColorIndex = handleColorArray->GetValue(handleInfo.Index);
 
     // Glyph color array
-    vtkSmartPointer<vtkFloatArray> glyphColorArray = vtkFloatArray::SafeDownCast(
-      handleGlyphPolyData->GetPointData()->GetAbstractArray("colorIndex"));
+    vtkSmartPointer<vtkFloatArray> glyphColorArray = vtkFloatArray::SafeDownCast(handleGlyphPolyData->GetPointData()->GetAbstractArray("colorIndex"));
     if (!glyphColorArray)
     {
       glyphColorArray = vtkSmartPointer<vtkFloatArray>::New();
@@ -614,8 +608,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandlePolyData()
     handleGlyphPolyData->GetPointData()->SetActiveScalars("colorIndex");
 
     // Glyph outline color array
-    vtkSmartPointer<vtkFloatArray> outlineGlyphColorArray = vtkFloatArray::SafeDownCast(
-      handleOutlineGlyphPolyData->GetPointData()->GetAbstractArray("colorIndex"));
+    vtkSmartPointer<vtkFloatArray> outlineGlyphColorArray = vtkFloatArray::SafeDownCast(handleOutlineGlyphPolyData->GetPointData()->GetAbstractArray("colorIndex"));
     if (!outlineGlyphColorArray)
     {
       outlineGlyphColorArray = vtkSmartPointer<vtkFloatArray>::New();
@@ -746,11 +739,11 @@ vtkMRMLInteractionWidgetRepresentation::InteractionPipeline::InteractionPipeline
 
   vtkNew<vtkPoints> rotationPts;
 
-  this->RingOutlinePolyData = vtkSmartPointer <vtkPolyData>::New();
+  this->RingOutlinePolyData = vtkSmartPointer<vtkPolyData>::New();
   this->RingOutlinePolyData->SetPoints(rotationPts);
   this->RingOutlinePolyData->SetLines(vtkNew<vtkCellArray>());
 
-  this->RingPolyData = vtkSmartPointer <vtkPolyData>::New();
+  this->RingPolyData = vtkSmartPointer<vtkPolyData>::New();
   this->RingPolyData->SetPoints(rotationPts);
   this->RingPolyData->SetPolys(vtkNew<vtkCellArray>());
 
@@ -839,30 +832,24 @@ vtkMRMLInteractionWidgetRepresentation::InteractionPipeline::InteractionPipeline
 
   vtkNew<vtkPoints> translationHandlePoints;
   vtkNew<vtkIdList> translationHandlePoly;
-  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint( 0.00,  0.00, 0.00));
-  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(
-    -INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, 0.00));
-  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(
-    -INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS, 0.00));
-  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(
-    -INTERACTION_TRANSLATION_HANDLE_LENGTH, INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS, 0.00));
-  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(
-    -INTERACTION_TRANSLATION_HANDLE_LENGTH, -INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS, 0.00));
-  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(
-    -INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, -INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS, 0.00));
-  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(
-    -INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, -INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, 0.00));
+  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(0.00, 0.00, 0.00));
+  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(-INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, 0.00));
+  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(-INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS, 0.00));
+  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(-INTERACTION_TRANSLATION_HANDLE_LENGTH, INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS, 0.00));
+  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(-INTERACTION_TRANSLATION_HANDLE_LENGTH, -INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS, 0.00));
+  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(-INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, -INTERACTION_TRANSLATION_HANDLE_SHAFT_RADIUS, 0.00));
+  translationHandlePoly->InsertNextId(translationHandlePoints->InsertNextPoint(-INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, -INTERACTION_TRANSLATION_HANDLE_TIP_RADIUS, 0.00));
 
   vtkNew<vtkIdList> translationHandleLine;
   translationHandleLine->DeepCopy(translationHandlePoly);
   translationHandleLine->InsertNextId(0);
 
-  this->ArrowPolyData = vtkSmartPointer <vtkPolyData>::New();
+  this->ArrowPolyData = vtkSmartPointer<vtkPolyData>::New();
   this->ArrowPolyData->SetPoints(translationHandlePoints);
   this->ArrowPolyData->SetPolys(vtkNew<vtkCellArray>());
   this->ArrowPolyData->InsertNextCell(VTK_POLYGON, translationHandlePoly);
 
-  this->ArrowOutlinePolyData = vtkSmartPointer <vtkPolyData>::New();
+  this->ArrowOutlinePolyData = vtkSmartPointer<vtkPolyData>::New();
   this->ArrowOutlinePolyData->SetPoints(translationHandlePoints);
   this->ArrowOutlinePolyData->SetLines(vtkNew<vtkCellArray>());
   this->ArrowOutlinePolyData->InsertNextCell(VTK_POLY_LINE, translationHandleLine);
@@ -986,24 +973,42 @@ void vtkMRMLInteractionWidgetRepresentation::CreateRotationHandles()
   xRotationOrientation->RotateY(90);
   xRotationOrientation->RotateZ(45);
   vtkMatrix4x4* xRotationMatrix = xRotationOrientation->GetMatrix();
-  orientationArray->InsertNextTuple9(xRotationMatrix->GetElement(0, 0), xRotationMatrix->GetElement(1, 0), xRotationMatrix->GetElement(2, 0),
-                                     xRotationMatrix->GetElement(0, 1), xRotationMatrix->GetElement(1, 1), xRotationMatrix->GetElement(2, 1),
-                                     xRotationMatrix->GetElement(0, 2), xRotationMatrix->GetElement(1, 2), xRotationMatrix->GetElement(2, 2));
+  orientationArray->InsertNextTuple9(xRotationMatrix->GetElement(0, 0),
+                                     xRotationMatrix->GetElement(1, 0),
+                                     xRotationMatrix->GetElement(2, 0),
+                                     xRotationMatrix->GetElement(0, 1),
+                                     xRotationMatrix->GetElement(1, 1),
+                                     xRotationMatrix->GetElement(2, 1),
+                                     xRotationMatrix->GetElement(0, 2),
+                                     xRotationMatrix->GetElement(1, 2),
+                                     xRotationMatrix->GetElement(2, 2));
   vtkNew<vtkTransform> yRotationOrientation;
   yRotationOrientation->RotateX(90);
   yRotationOrientation->RotateZ(45);
   vtkMatrix4x4* yRotationMatrix = yRotationOrientation->GetMatrix();
-  orientationArray->InsertNextTuple9(yRotationMatrix->GetElement(0, 0), yRotationMatrix->GetElement(1, 0), yRotationMatrix->GetElement(2, 0),
-                                     yRotationMatrix->GetElement(0, 1), yRotationMatrix->GetElement(1, 1), yRotationMatrix->GetElement(2, 1),
-                                     yRotationMatrix->GetElement(0, 2), yRotationMatrix->GetElement(1, 2), yRotationMatrix->GetElement(2, 2));
+  orientationArray->InsertNextTuple9(yRotationMatrix->GetElement(0, 0),
+                                     yRotationMatrix->GetElement(1, 0),
+                                     yRotationMatrix->GetElement(2, 0),
+                                     yRotationMatrix->GetElement(0, 1),
+                                     yRotationMatrix->GetElement(1, 1),
+                                     yRotationMatrix->GetElement(2, 1),
+                                     yRotationMatrix->GetElement(0, 2),
+                                     yRotationMatrix->GetElement(1, 2),
+                                     yRotationMatrix->GetElement(2, 2));
   vtkNew<vtkTransform> zRotationOrientation;
   zRotationOrientation->RotateZ(45);
   vtkMatrix4x4* zRotationMatrix = zRotationOrientation->GetMatrix();
-  orientationArray->InsertNextTuple9(zRotationMatrix->GetElement(0, 0), zRotationMatrix->GetElement(1, 0), zRotationMatrix->GetElement(2, 0),
-                                     zRotationMatrix->GetElement(0, 1), zRotationMatrix->GetElement(1, 1), zRotationMatrix->GetElement(2, 1),
-                                     zRotationMatrix->GetElement(0, 2), zRotationMatrix->GetElement(1, 2), zRotationMatrix->GetElement(2, 2));
+  orientationArray->InsertNextTuple9(zRotationMatrix->GetElement(0, 0),
+                                     zRotationMatrix->GetElement(1, 0),
+                                     zRotationMatrix->GetElement(2, 0),
+                                     zRotationMatrix->GetElement(0, 1),
+                                     zRotationMatrix->GetElement(1, 1),
+                                     zRotationMatrix->GetElement(2, 1),
+                                     zRotationMatrix->GetElement(0, 2),
+                                     zRotationMatrix->GetElement(1, 2),
+                                     zRotationMatrix->GetElement(2, 2));
 
-  orientationArray->InsertNextTuple9(1,0,0,0,1,0,0,0,1); // View
+  orientationArray->InsertNextTuple9(1, 0, 0, 0, 1, 0, 0, 0, 1); // View
   this->Pipeline->RotationHandlePoints->GetPointData()->AddArray(orientationArray);
 
   vtkNew<vtkIdTypeArray> visibilityArray;
@@ -1027,18 +1032,10 @@ void vtkMRMLInteractionWidgetRepresentation::CreateTranslationHandles()
   vtkNew<vtkDoubleArray> orientationArray;
   orientationArray->SetName("orientation");
   orientationArray->SetNumberOfComponents(9);
-  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0);
-  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0);
-  orientationArray->InsertNextTuple9(1.0, 0.0, 1.0,
-                                     0.0, 0.0, 0.0,
-                                     0.0, 0.0, 1.0);
-  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0); // Free translation
+  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+  orientationArray->InsertNextTuple9(1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0); // Free translation
   this->Pipeline->TranslationHandlePoints->GetPointData()->AddArray(orientationArray);
 
   vtkNew<vtkIdTypeArray> visibilityArray;
@@ -1122,9 +1119,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateTranslationHandleOrientation(
     vtkMath::Cross(xAxis, yAxis, zAxis);
     vtkMath::Normalize(zAxis);
 
-    orientationArray->SetTuple9(i, xAxis[0], xAxis[1], xAxis[2],
-                                   yAxis[0], yAxis[1], yAxis[2],
-                                   zAxis[0], zAxis[1], zAxis[2]);
+    orientationArray->SetTuple9(i, xAxis[0], xAxis[1], xAxis[2], yAxis[0], yAxis[1], yAxis[2], zAxis[0], zAxis[1], zAxis[2]);
   }
 
   double interactionHandlePosition[3] = { 0.0, 0.0, 0.0 };
@@ -1146,9 +1141,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateTranslationHandleOrientation(
   vtkMath::Cross(viewDirection_Handle, xAxis, yAxis);
   vtkMath::Normalize(yAxis);
 
-  orientationArray->SetTuple9(3, xAxis[0], xAxis[1], xAxis[2],
-    yAxis[0], yAxis[1], yAxis[2],
-    zAxis[0], zAxis[1], zAxis[2]);
+  orientationArray->SetTuple9(3, xAxis[0], xAxis[1], xAxis[2], yAxis[0], yAxis[1], yAxis[2], zAxis[0], zAxis[1], zAxis[2]);
 }
 
 //----------------------------------------------------------------------
@@ -1209,9 +1202,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateScaleHandleOrientation()
     vtkMath::Cross(viewDirection_Handle, xAxis, yAxis);
     vtkMath::Normalize(yAxis);
 
-    orientationArray->SetTuple9(i, xAxis[0], xAxis[1], xAxis[2],
-                                   yAxis[0], yAxis[1], yAxis[2],
-                                   zAxis[0], zAxis[1], zAxis[2]);
+    orientationArray->SetTuple9(i, xAxis[0], xAxis[1], xAxis[2], yAxis[0], yAxis[1], yAxis[2], zAxis[0], zAxis[1], zAxis[2]);
   }
 }
 
@@ -1274,9 +1265,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateRotationHandleOrientation()
   vtkMath::Cross(viewDirection_Handle, xAxis, yAxis);
   vtkMath::Normalize(yAxis);
 
-  orientationArray->SetTuple9(3, xAxis[0], xAxis[1], xAxis[2],
-                                 yAxis[0], yAxis[1], yAxis[2],
-                                 zAxis[0], zAxis[1], zAxis[2]);
+  orientationArray->SetTuple9(3, xAxis[0], xAxis[1], xAxis[2], yAxis[0], yAxis[1], yAxis[2], zAxis[0], zAxis[1], zAxis[2]);
 }
 
 //----------------------------------------------------------------------
@@ -1291,18 +1280,10 @@ void vtkMRMLInteractionWidgetRepresentation::CreateScaleHandles()
   vtkNew<vtkDoubleArray> orientationArray;
   orientationArray->SetName("orientation");
   orientationArray->SetNumberOfComponents(9);
-  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0);
-  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0);
-  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0);
-  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0,
-                                     0.0, 1.0, 0.0,
-                                     0.0, 0.0, 1.0); // Free translation
+  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+  orientationArray->InsertNextTuple9(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0); // Free translation
   this->Pipeline->ScaleHandlePoints->GetPointData()->AddArray(orientationArray);
 
   vtkNew<vtkIdTypeArray> visibilityArray;
@@ -1317,7 +1298,7 @@ void vtkMRMLInteractionWidgetRepresentation::CreateScaleHandles()
 int vtkMRMLInteractionWidgetRepresentation::GetNumberOfHandles()
 {
   int numberOfHandles = 0;
-  for (int type = InteractionNone+1; type < Interaction_Last; ++type)
+  for (int type = InteractionNone + 1; type < Interaction_Last; ++type)
   {
     numberOfHandles += this->GetNumberOfHandles(type);
   }
@@ -1369,8 +1350,7 @@ int vtkMRMLInteractionWidgetRepresentation::UpdateHandleColors(int type, int col
     return colorIndex;
   }
 
-  vtkSmartPointer<vtkFloatArray> colorArray = vtkFloatArray::SafeDownCast(
-    pointData->GetAbstractArray("colorIndex"));
+  vtkSmartPointer<vtkFloatArray> colorArray = vtkFloatArray::SafeDownCast(pointData->GetAbstractArray("colorIndex"));
   if (!colorArray)
   {
     colorArray = vtkSmartPointer<vtkFloatArray>::New();
@@ -1380,7 +1360,7 @@ int vtkMRMLInteractionWidgetRepresentation::UpdateHandleColors(int type, int col
     pointData->SetActiveScalars("colorIndex");
   }
   colorArray->Initialize();
-  colorArray->SetNumberOfTuples(handlePolyData->GetNumberOfPoints()*2);
+  colorArray->SetNumberOfTuples(handlePolyData->GetNumberOfPoints() * 2);
 
   double color[4] = { 0.0, 0.0, 0.0, 0.0 };
   for (int i = 0; i < handlePolyData->GetNumberOfPoints(); ++i)
@@ -1408,7 +1388,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandleColors()
 {
   int numberOfHandles = this->GetNumberOfHandles();
   int numberOfColors = numberOfHandles * 2; // alternate fill and outline colors
-  numberOfColors += 2; // Additional colors for minimal fill.
+  numberOfColors += 2;                      // Additional colors for minimal fill.
 
   this->Pipeline->ColorTable->SetNumberOfTableValues(numberOfColors);
   this->Pipeline->ColorTable->SetTableRange(0, double(numberOfColors) - 1);
@@ -1429,16 +1409,16 @@ void vtkMRMLInteractionWidgetRepresentation::GetHandleColor(int type, int index,
     return;
   }
 
-  double red[3]    = { 0.80, 0.35, 0.35 };
+  double red[3] = { 0.80, 0.35, 0.35 };
   double redSelected[3] = { 0.70, 0.07, 0.07 };
 
   double green[3] = { 0.35, 0.70, 0.35 };
   double greenSelected[3] = { 0.00, 0.50, 0.00 };
 
-  double blue[3]   = { 0.35, 0.35, 0.8 };
+  double blue[3] = { 0.35, 0.35, 0.8 };
   double blueSelected[3] = { 0.07, 0.07, 0.70 };
 
-  double white[3]  = { 0.80, 0.80, 0.80 };
+  double white[3] = { 0.80, 0.80, 0.80 };
   double whiteSelected[3] = { 1.00, 1.00, 1.00 };
 
   bool selected = this->GetActiveComponentType() == type && this->GetActiveComponentIndex() == index;
@@ -1446,21 +1426,11 @@ void vtkMRMLInteractionWidgetRepresentation::GetHandleColor(int type, int index,
   double* currentColor = white;
   switch (index)
   {
-    case 0:
-      currentColor = selected ? redSelected : red;
-      break;
-    case 1:
-      currentColor = selected ? greenSelected : green;
-      break;
-    case 2:
-      currentColor = selected ? blueSelected : blue;
-      break;
-    case 3:
-      currentColor = selected ? whiteSelected: white;
-      break;
-    default:
-      currentColor = selected ? whiteSelected : white;
-      break;
+    case 0: currentColor = selected ? redSelected : red; break;
+    case 1: currentColor = selected ? greenSelected : green; break;
+    case 2: currentColor = selected ? blueSelected : blue; break;
+    case 3: currentColor = selected ? whiteSelected : white; break;
+    default: currentColor = selected ? whiteSelected : white; break;
   }
 
   double opacity = this->GetHandleOpacity(type, index);
@@ -1501,7 +1471,7 @@ bool vtkMRMLInteractionWidgetRepresentation::GetHandleVisibility(int type, int i
   }
   if (visibilityArray && index < visibilityArray->GetNumberOfValues())
   {
-     return visibilityArray->GetValue(index) != 0;
+    return visibilityArray->GetValue(index) != 0;
   }
   return true;
 }
@@ -1647,18 +1617,10 @@ void vtkMRMLInteractionWidgetRepresentation::GetInteractionHandleAxisLocal(int t
 
   switch (index)
   {
-    case 0:
-      axisLocal[0] = 1.0;
-      break;
-    case 1:
-      axisLocal[1] = 1.0;
-      break;
-    case 2:
-      axisLocal[2] = 1.0;
-      break;
-    default:
-      faceCamera = type == InteractionRotationHandle;
-      break;
+    case 0: axisLocal[0] = 1.0; break;
+    case 1: axisLocal[1] = 1.0; break;
+    case 2: axisLocal[2] = 1.0; break;
+    default: faceCamera = type == InteractionRotationHandle; break;
   }
 
   if (faceCamera)
@@ -1791,8 +1753,7 @@ vtkMRMLSliceNode* vtkMRMLInteractionWidgetRepresentation::GetSliceNode()
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLInteractionWidgetRepresentation::GetSliceToWorldCoordinates(const double slicePos[2],
-  double worldPos[3])
+void vtkMRMLInteractionWidgetRepresentation::GetSliceToWorldCoordinates(const double slicePos[2], double worldPos[3])
 {
   vtkMRMLSliceNode* sliceNode = this->GetSliceNode();
   if (!this->Renderer || !sliceNode)
@@ -1800,13 +1761,7 @@ void vtkMRMLInteractionWidgetRepresentation::GetSliceToWorldCoordinates(const do
     return;
   }
 
-  double xyzw[4] =
-    {
-    slicePos[0] - this->Renderer->GetOrigin()[0],
-    slicePos[1] - this->Renderer->GetOrigin()[1],
-    0.0,
-    1.0
-    };
+  double xyzw[4] = { slicePos[0] - this->Renderer->GetOrigin()[0], slicePos[1] - this->Renderer->GetOrigin()[1], 0.0, 1.0 };
   double rasw[4] = { 0.0, 0.0, 0.0, 1.0 };
 
   this->GetSliceNode()->GetXYToRAS()->MultiplyPoint(xyzw, rasw);
@@ -1841,12 +1796,12 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateSlicePlaneFromSliceNode()
     this->Pipeline->WorldToSliceTransform->Concatenate(rasToXY);
 
     // TODO: Use 'vtkCamera::GetCompositeProjectionTransformMatrix()'
-    //int* size = this->Renderer->GetSize();
-    //double aspect = double(size[1]) / double(size[0]);
-    //vtkNew<vtkMatrix4x4> compositeProjectionTransformMatrix;
-    //compositeProjectionTransformMatrix->DeepCopy(this->Renderer->GetActiveCamera()->GetCompositeProjectionTransformMatrix(aspect, -1, +1));
-    //compositeProjectionTransformMatrix->Invert();
-    //this->Pipeline->WorldToSliceTransform->Concatenate(compositeProjectionTransformMatrix);
+    // int* size = this->Renderer->GetSize();
+    // double aspect = double(size[1]) / double(size[0]);
+    // vtkNew<vtkMatrix4x4> compositeProjectionTransformMatrix;
+    // compositeProjectionTransformMatrix->DeepCopy(this->Renderer->GetActiveCamera()->GetCompositeProjectionTransformMatrix(aspect, -1, +1));
+    // compositeProjectionTransformMatrix->Invert();
+    // this->Pipeline->WorldToSliceTransform->Concatenate(compositeProjectionTransformMatrix);
 
     int* dimensions = this->GetSliceNode()->GetDimensions();
     if (this->Renderer->GetActiveCamera()->GetUseHorizontalViewAngle())
@@ -1915,8 +1870,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateViewScaleFactor()
   if (this->GetSliceNode())
   {
     vtkMatrix4x4* xyToSlice = this->GetSliceNode()->GetXYToSlice();
-    this->ViewScaleFactorMmPerPixel = sqrt(xyToSlice->GetElement(0, 1) * xyToSlice->GetElement(0, 1)
-      + xyToSlice->GetElement(1, 1) * xyToSlice->GetElement(1, 1));
+    this->ViewScaleFactorMmPerPixel = sqrt(xyToSlice->GetElement(0, 1) * xyToSlice->GetElement(0, 1) + xyToSlice->GetElement(1, 1) * xyToSlice->GetElement(1, 1));
   }
   else
   {
@@ -1940,8 +1894,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateViewScaleFactor()
     // In VR we can't use the scale factor at the handle position since the scale will change when the user rotates their head.
     // The solution is to find the mm to pixel conversion for a point that is as far away from the camera as the handle, but in
     // the camera view direction.
-    this->ViewScaleFactorMmPerPixel = vtkMRMLAbstractThreeDViewDisplayableManager::
-      GetViewScaleFactorAtPosition(this->Renderer, handleFocalPoint_World);
+    this->ViewScaleFactorMmPerPixel = vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition(this->Renderer, handleFocalPoint_World);
   }
 }
 
@@ -1950,8 +1903,7 @@ void vtkMRMLInteractionWidgetRepresentation::UpdateHandleSize()
 {
   if (!this->GetInteractionSizeAbsolute())
   {
-    this->InteractionSize = this->ScreenSizePixel * this->GetScreenScaleFactor()
-      * this->GetInteractionScalePercent() / 100.0 * this->ViewScaleFactorMmPerPixel;
+    this->InteractionSize = this->ScreenSizePixel * this->GetScreenScaleFactor() * this->GetInteractionScalePercent() / 100.0 * this->ViewScaleFactorMmPerPixel;
   }
   else
   {

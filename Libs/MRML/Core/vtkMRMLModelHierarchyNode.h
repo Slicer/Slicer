@@ -35,12 +35,11 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
-
 
   ///
   /// Copy the node's attributes to this object
@@ -48,9 +47,9 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, ModelHierarchy)
-  const char* GetNodeTagName() override {return "ModelHierarchy";}
+  const char* GetNodeTagName() override { return "ModelHierarchy"; }
 
-   ///
+  ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   void UpdateReferences() override;
@@ -65,21 +64,12 @@ public:
 
   ///
   /// String ID of the model MRML node
-  void SetModelNodeID(const char* id)
-  {
-    this->SetDisplayableNodeID(id);
-  }
+  void SetModelNodeID(const char* id) { this->SetDisplayableNodeID(id); }
 
-  char* GetModelNodeID()
-  {
-    return this->GetDisplayableNodeID();
-  }
+  char* GetModelNodeID() { return this->GetDisplayableNodeID(); }
 
   /// Need this for tcl wrapping to call ReferenceStringMacro methods
-  void SetModelNodeIDReference(const char* ref) {
-    this->SetModelNodeID(ref);
-  };
-
+  void SetModelNodeIDReference(const char* ref) { this->SetModelNodeID(ref); };
 
   ///
   /// Get associated model MRML node
@@ -88,7 +78,6 @@ public:
   ///
   /// Get associated display MRML node
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
-
 
   ///
   /// Get the first parent node in hierarchy which is not expanded
@@ -100,10 +89,7 @@ public:
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
-
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
 protected:
   vtkMRMLModelHierarchyNode();
@@ -111,11 +97,9 @@ protected:
   vtkMRMLModelHierarchyNode(const vtkMRMLModelHierarchyNode&);
   void operator=(const vtkMRMLModelHierarchyNode&);
 
-
   /// Data
 
   vtkMRMLModelDisplayNode* ModelDisplayNode;
-
 };
 
 #endif

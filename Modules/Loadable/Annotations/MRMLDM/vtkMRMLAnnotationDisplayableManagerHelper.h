@@ -35,12 +35,9 @@ class vtkMRMLInteractionNode;
 #include <map>
 #include <vector>
 
-class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
-vtkMRMLAnnotationDisplayableManagerHelper
-  : public vtkObject
+class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLAnnotationDisplayableManagerHelper : public vtkObject
 {
 public:
-
   static vtkMRMLAnnotationDisplayableManagerHelper* New();
   vtkTypeMacro(vtkMRMLAnnotationDisplayableManagerHelper, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -73,7 +70,6 @@ public:
   void RemoveAllWidgetsAndNodes();
   /// Remove a node, its widget and its intersection widget
   void RemoveWidgetAndNode(vtkMRMLAnnotationNode* node);
-
 
   /// Search the annotation node list and return the annotation node that has this display node
   vtkMRMLAnnotationNode* GetAnnotationNodeFromDisplayNode(vtkMRMLAnnotationDisplayNode* displayNode);
@@ -128,7 +124,6 @@ public:
   //
   //----------------------------------------------------------------------------------
 
-
   /// Placement of seeds for widget placement
   void PlaceSeed(double x, double y, vtkRenderWindowInteractor* interactor, vtkRenderer* renderer);
 
@@ -138,14 +133,11 @@ public:
   /// Remove all placed seeds
   void RemoveSeeds();
 
-
 protected:
-
   vtkMRMLAnnotationDisplayableManagerHelper();
   ~vtkMRMLAnnotationDisplayableManagerHelper() override;
 
 private:
-
   vtkMRMLAnnotationDisplayableManagerHelper(const vtkMRMLAnnotationDisplayableManagerHelper&) = delete;
   void operator=(const vtkMRMLAnnotationDisplayableManagerHelper&) = delete;
 

@@ -116,7 +116,7 @@ void vtkMRMLStreamingVolumeNode::AllocateImageForFrame(vtkImageData* imageData)
 {
   if (imageData && this->Frame)
   {
-    int frameDimensions[3] = { 0,0,0 };
+    int frameDimensions[3] = { 0, 0, 0 };
     this->Frame->GetDimensions(frameDimensions);
     imageData->SetDimensions(frameDimensions);
     imageData->AllocateScalars(this->Frame->GetVTKScalarType(), this->Frame->GetNumberOfComponents());
@@ -264,7 +264,7 @@ bool vtkMRMLStreamingVolumeNode::DecodeFrame()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLStreamingVolumeNode::EncodeImageData(bool forceKeyFrame/*=false*/)
+bool vtkMRMLStreamingVolumeNode::EncodeImageData(bool forceKeyFrame /*=false*/)
 {
   vtkImageData* imageData = Superclass::GetImageData();
   if (!imageData)
@@ -336,7 +336,7 @@ void vtkMRMLStreamingVolumeNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
 
@@ -355,11 +355,8 @@ void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*
     vtkMRMLDisplayableNode::CopyContent(anode, deepCopy);
 
     /// Duplicated from vtkMRMLVolumeNode::CopyContent()
-    vtkAlgorithm* producer = streamingVolumeNode->ImageDataConnection ?
-      streamingVolumeNode->ImageDataConnection->GetProducer() : nullptr;
-    vtkImageData* sourceImageData = vtkImageData::SafeDownCast(
-      producer ? producer->GetOutputDataObject(
-        streamingVolumeNode->ImageDataConnection->GetIndex()) : nullptr);
+    vtkAlgorithm* producer = streamingVolumeNode->ImageDataConnection ? streamingVolumeNode->ImageDataConnection->GetProducer() : nullptr;
+    vtkImageData* sourceImageData = vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(streamingVolumeNode->ImageDataConnection->GetIndex()) : nullptr);
 
     vtkSmartPointer<vtkImageData> targetImageData = sourceImageData;
     if (deepCopy && sourceImageData)

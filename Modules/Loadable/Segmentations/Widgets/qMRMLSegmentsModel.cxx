@@ -139,7 +139,7 @@ void qMRMLSegmentsModelPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSegmentsModelPrivate::insertSegment(QString segmentID, int row/*=1*/)
+QStandardItem* qMRMLSegmentsModelPrivate::insertSegment(QString segmentID, int row /*=1*/)
 {
   Q_Q(qMRMLSegmentsModel);
   QStandardItem* item = q->itemFromSegmentID(segmentID);
@@ -189,7 +189,7 @@ QString qMRMLSegmentsModelPrivate::getTerminologyUserDataForSegment(vtkSegment* 
 // qMRMLSegmentsModel
 //------------------------------------------------------------------------------
 qMRMLSegmentsModel::qMRMLSegmentsModel(QObject* _parent)
-  :QStandardItemModel(_parent)
+  : QStandardItemModel(_parent)
   , d_ptr(new qMRMLSegmentsModelPrivate(*this))
 {
   Q_D(qMRMLSegmentsModel);
@@ -266,7 +266,7 @@ QString qMRMLSegmentsModel::segmentIDFromItem(QStandardItem* item) const
   return item->data(qMRMLSegmentsModel::SegmentIDRole).toString();
 }
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSegmentsModel::itemFromSegmentID(QString segmentID, int column/*=0*/) const
+QStandardItem* qMRMLSegmentsModel::itemFromSegmentID(QString segmentID, int column /*=0*/) const
 {
   QModelIndex index = this->indexFromSegmentID(segmentID, column);
   QStandardItem* item = this->itemFromIndex(index);
@@ -274,7 +274,7 @@ QStandardItem* qMRMLSegmentsModel::itemFromSegmentID(QString segmentID, int colu
 }
 
 //------------------------------------------------------------------------------
-QModelIndex qMRMLSegmentsModel::indexFromSegmentID(QString segmentID, int column/*=0*/) const
+QModelIndex qMRMLSegmentsModel::indexFromSegmentID(QString segmentID, int column /*=0*/) const
 {
   Q_D(const qMRMLSegmentsModel);
 
@@ -286,8 +286,7 @@ QModelIndex qMRMLSegmentsModel::indexFromSegmentID(QString segmentID, int column
 
   QModelIndex startIndex = this->index(0, 0);
   // QAbstractItemModel::match doesn't browse through columns, we need to do it manually
-  QModelIndexList itemIndexes = this->match(
-    startIndex, SegmentIDRole, segmentID, 1, Qt::MatchExactly | Qt::MatchRecursive);
+  QModelIndexList itemIndexes = this->match(startIndex, SegmentIDRole, segmentID, 1, Qt::MatchExactly | Qt::MatchRecursive);
   if (itemIndexes.size() == 0)
   {
     return QModelIndex();
@@ -309,7 +308,8 @@ QModelIndex qMRMLSegmentsModel::indexFromSegmentID(QString segmentID, int column
     return QModelIndex();
   }
 
-  return this->index(row, column, itemIndex.parent());;
+  return this->index(row, column, itemIndex.parent());
+  ;
 }
 
 //------------------------------------------------------------------------------
@@ -317,8 +317,7 @@ QModelIndexList qMRMLSegmentsModel::indexes(QString segmentID) const
 {
   QModelIndex startIndex = this->index(0, 0);
   // QAbstractItemModel::match doesn't browse through columns, we need to do it manually
-  QModelIndexList itemIndexes = this->match(
-    startIndex, SegmentIDRole, segmentID, 1, Qt::MatchExactly | Qt::MatchRecursive);
+  QModelIndexList itemIndexes = this->match(startIndex, SegmentIDRole, segmentID, 1, Qt::MatchExactly | Qt::MatchRecursive);
   if (itemIndexes.size() != 1)
   {
     return QModelIndexList(); // If 0 it's empty, if >1 it's invalid (one item for each UID)
@@ -496,7 +495,7 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
         break;
     }
 
-    if (item->data(StatusRole).isNull() || //
+    if (item->data(StatusRole).isNull() ||        //
         item->data(StatusRole).toInt() != status) // Only set if it changed (https://bugreports.qt-project.org/browse/QTBUG-20248)
     {
       item->setData(status, StatusRole);
@@ -545,11 +544,11 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
       // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
       // it would fire a superfluous itemChanged() signal.
       if (item->data(VisibilityRole).isNull() //
-        || item->data(VisibilityRole).toBool() != visible)
+          || item->data(VisibilityRole).toBool() != visible)
       {
 
         if (item->data(VisibilityRole).isNull() || //
-          item->data(VisibilityRole) != visible) // Only set if it changed (https://bugreports.qt-project.org/browse/QTBUG-20248)
+            item->data(VisibilityRole) != visible) // Only set if it changed (https://bugreports.qt-project.org/browse/QTBUG-20248)
         {
           item->setData(visible, VisibilityRole);
           item->setIcon(visibilityIcon);
@@ -568,8 +567,8 @@ void qMRMLSegmentsModel::updateItemDataFromSegment(QStandardItem* item, QString 
 void qMRMLSegmentsModel::updateSegmentFromItem(QString segmentID, QStandardItem* item)
 {
   Q_D(qMRMLSegmentsModel);
-  //MRMLNodeModify segmentationNodeModify(d->SegmentationNode);//TODO: Add feature to item if there are performance issues
-  // Calling StartModfiy/EndModify will cause the calldata to be erased, causing the whole table to be updated
+  // MRMLNodeModify segmentationNodeModify(d->SegmentationNode);//TODO: Add feature to item if there are performance issues
+  //  Calling StartModfiy/EndModify will cause the calldata to be erased, causing the whole table to be updated
   this->updateSegmentFromItemData(segmentID, item);
 }
 
@@ -629,7 +628,6 @@ void qMRMLSegmentsModel::updateSegmentFromItemData(QString segmentID, QStandardI
 
     // Update tooltip
     item->setToolTip(qMRMLSegmentsTableView::terminologyTooltipForSegment(segment));
-
   }
   else if (item->column() == this->statusColumn())
   {
@@ -645,8 +643,7 @@ void qMRMLSegmentsModel::updateSegmentFromItemData(QString segmentID, QStandardI
   else
   {
     // For all other columns we need the display node
-    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
-      d->SegmentationNode->GetDisplayNode());
+    vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(d->SegmentationNode->GetDisplayNode());
     if (!displayNode)
     {
       qCritical() << Q_FUNC_INFO << ": No display node for segmentation!";
@@ -739,8 +736,7 @@ void qMRMLSegmentsModel::updateItemsFromSegmentID(QString segmentID)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSegmentsModel::onEvent(
-  vtkObject* caller, unsigned long event, void* clientData, void* callData )
+void qMRMLSegmentsModel::onEvent(vtkObject* caller, unsigned long event, void* clientData, void* callData)
 {
   vtkMRMLSegmentationNode* segmentationNode = reinterpret_cast<vtkMRMLSegmentationNode*>(caller);
   qMRMLSegmentsModel* model = reinterpret_cast<qMRMLSegmentsModel*>(clientData);
@@ -752,9 +748,10 @@ void qMRMLSegmentsModel::onEvent(
 
   // Get segment ID for segmentation node events
   QString segmentID;
-  if (callData && (event == vtkSegmentation::SegmentAdded //
-                || event == vtkSegmentation::SegmentRemoved //
-                || event == vtkSegmentation::SegmentModified))
+  if (callData
+      && (event == vtkSegmentation::SegmentAdded      //
+          || event == vtkSegmentation::SegmentRemoved //
+          || event == vtkSegmentation::SegmentModified))
   {
     const char* segmentIDPtr = reinterpret_cast<const char*>(callData);
     if (segmentIDPtr)
@@ -765,12 +762,8 @@ void qMRMLSegmentsModel::onEvent(
 
   switch (event)
   {
-    case vtkSegmentation::SegmentAdded:
-        model->onSegmentAdded(segmentID);
-      break;
-    case vtkSegmentation::SegmentRemoved:
-        model->onSegmentRemoved(segmentID);
-      break;
+    case vtkSegmentation::SegmentAdded: model->onSegmentAdded(segmentID); break;
+    case vtkSegmentation::SegmentRemoved: model->onSegmentRemoved(segmentID); break;
     case vtkSegmentation::SegmentModified:
       if (!segmentID.isEmpty())
       {
@@ -781,15 +774,9 @@ void qMRMLSegmentsModel::onEvent(
         model->updateFromSegments();
       }
       break;
-    case vtkSegmentation::SegmentsOrderModified:
-      model->onSegmentOrderModified();
-      break;
-    case vtkMRMLDisplayableNode::DisplayModifiedEvent:
-      model->onDisplayNodeModified();
-      break;
-    case vtkMRMLSegmentationNode::SegmentationChangedEvent:
-      model->rebuildFromSegments();
-      break;
+    case vtkSegmentation::SegmentsOrderModified: model->onSegmentOrderModified(); break;
+    case vtkMRMLDisplayableNode::DisplayModifiedEvent: model->onDisplayNodeModified(); break;
+    case vtkMRMLSegmentationNode::SegmentationChangedEvent: model->rebuildFromSegments(); break;
   }
 }
 
@@ -832,7 +819,7 @@ void qMRMLSegmentsModel::onSegmentRemoved(QString removedSegmentID)
   d->SegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
 
   // Iterate in reverse so the index remains valid
-  for (int i = this->rowCount()-1; i >= 0; --i)
+  for (int i = this->rowCount() - 1; i >= 0; --i)
   {
     QModelIndex index = this->index(i, 0);
     std::string currentSegmentID = this->segmentIDFromIndex(index).toStdString();
@@ -1017,7 +1004,7 @@ void qMRMLSegmentsModel::updateColumnCount()
     }
     std::vector<std::string> segmentIDs;
     d->SegmentationNode->GetSegmentation()->GetSegmentIDs(segmentIDs);
-    for (std::vector<std::string>::iterator itemIt= segmentIDs.begin(); itemIt!= segmentIDs.end(); ++itemIt)
+    for (std::vector<std::string>::iterator itemIt = segmentIDs.begin(); itemIt != segmentIDs.end(); ++itemIt)
     {
       this->updateItemsFromSegmentID(itemIt->c_str());
     }
@@ -1047,8 +1034,7 @@ QString qMRMLSegmentsModel::terminologyTooltipForSegment(vtkSegment* segment)
   }
 
   // Get terminologies module logic
-  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
-    qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
+  vtkSlicerTerminologiesModuleLogic* terminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
   if (!terminologiesLogic)
   {
     qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";

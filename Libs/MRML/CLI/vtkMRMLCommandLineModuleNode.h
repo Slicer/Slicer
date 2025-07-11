@@ -43,8 +43,7 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLCommandLineModuleNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override
-    {return "CommandLineModule";}
+  const char* GetNodeTagName() override { return "CommandLineModule"; }
 
   /// List of events that can be fired on or by the node.
   enum CLINodeEvent
@@ -77,27 +76,27 @@ public:
   enum StatusType
   {
     /// Initial state of the CLI.
-    Idle=0x00,
+    Idle = 0x00,
     /// State when the CLI has been requested to be executed.
-    Scheduled=0x01,
+    Scheduled = 0x01,
     /// State when the CLI is being executed.
-    Running=0x02,
+    Running = 0x02,
     /// State when the CLI has been requested to be cancelled.
-    Cancelling=0x04,
+    Cancelling = 0x04,
     /// State when the CLI is no longer being executed because
     /// Cancelling has been requested.
     /// Do not set manually, use Cancel() instead.
-    Cancelled=0x08,
+    Cancelled = 0x08,
     /// State when the CLI has been successfully executed and is in a finishing
     /// state that loads the outputs into the scene.
-    Completing=0x10,
+    Completing = 0x10,
     /// State when the CLI has been successfully executed and outputs are
     /// loaded in the scene.
-    Completed=0x20,
+    Completed = 0x20,
     /// Mask applied when the CLI has been executed with errors
-    ErrorsMask=0x40,
+    ErrorsMask = 0x40,
     /// State when the CLI has been executed with errors
-    CompletedWithErrors= Completed | ErrorsMask,
+    CompletedWithErrors = Completed | ErrorsMask,
     /// Mask used to know if the CLI is in pending mode.
     BusyMask = Scheduled | Running | Cancelling | Completing
   };
@@ -321,10 +320,10 @@ public:
 
   /// Reimplemented for internal reasons.
   void Modified() override;
+
 protected:
   void AbortProcess();
-  void ProcessMRMLEvents(vtkObject* caller, unsigned long event,
-                                 void* callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   int ContinuousOutputUpdateInProgressCount{ 0 };
 

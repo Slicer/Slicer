@@ -25,7 +25,7 @@ class vtkMRMLColorTableNode;
 /// node that allows to read/write volume data from/to file using generic ITK mechanism.
 class VTK_MRML_EXPORT vtkMRMLColorTableStorageNode : public vtkMRMLStorageNode
 {
-  public:
+public:
   static vtkMRMLColorTableStorageNode* New();
   vtkTypeMacro(vtkMRMLColorTableStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -33,7 +33,7 @@ class VTK_MRML_EXPORT vtkMRMLColorTableStorageNode : public vtkMRMLStorageNode
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "ColorTableStorage";};
+  const char* GetNodeTagName() override { return "ColorTableStorage"; };
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
@@ -65,7 +65,6 @@ protected:
 
   /// maximum valid number of colors to read in
   int MaximumColorID;
-
 };
 
 #endif

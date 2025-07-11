@@ -64,8 +64,7 @@ public:
   Q_INVOKABLE void unregisterAll();
 
   /// Returns the list of additional options widgets registered
-  Q_INVOKABLE const QList<QString> registeredOptionsWidgetsClassNames() const
-  { return this->RegisteredWidgets.keys(); }
+  Q_INVOKABLE const QList<QString> registeredOptionsWidgetsClassNames() const { return this->RegisteredWidgets.keys(); }
 
   /// Creates a markups option widget of a given class name. The markups option
   /// widget must have been registered previously (nullptr will return if not).

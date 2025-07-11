@@ -30,19 +30,18 @@ qMRMLSegmentationConversionParametersWidgetPlugin::qMRMLSegmentationConversionPa
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentationConversionParametersWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentationConversionParametersWidget* pluginWidget =
-    new qMRMLSegmentationConversionParametersWidget(parentWidget);
+  qMRMLSegmentationConversionParametersWidget* pluginWidget = new qMRMLSegmentationConversionParametersWidget(parentWidget);
   return pluginWidget;
 }
 
 //-----------------------------------------------------------------------------
 QString qMRMLSegmentationConversionParametersWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSegmentationConversionParametersWidget\" name=\"SegmentationConversionParametersWidget\">\n"
-    "  <property name=\"targetRepresentationName\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSegmentationConversionParametersWidget\" name=\"SegmentationConversionParametersWidget\">\n"
+         "  <property name=\"targetRepresentationName\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 //-----------------------------------------------------------------------------

@@ -37,7 +37,7 @@ class vtkMRMLNode;
 class QMRML_WIDGETS_EXPORT qMRMLClipNodeWidget : public qMRMLWidget
 {
   Q_OBJECT
-    QVTK_OBJECT
+  QVTK_OBJECT
 public:
   qMRMLClipNodeWidget(QWidget* parent = nullptr);
   ~qMRMLClipNodeWidget() override;
@@ -70,7 +70,6 @@ protected slots:
   void updateNodeClipType();
 
 protected:
-
   // Returns true if the frame widget needs to be updated to reflect the node references.
   bool needToUpdateClippingNodeFrame() const;
 

@@ -181,7 +181,6 @@ public:
   /// Remove all node attribute filters specifying a given attribute name and include flag
   Q_INVOKABLE void removeNodeAttributeFilter(QString attributeName, bool include);
 
-
   /// Set level filter that allows showing only items at a specified level and their parents. Show all items if empty
   void setLevelFilter(QStringList& levelFilter);
   QStringList levelFilter() const;

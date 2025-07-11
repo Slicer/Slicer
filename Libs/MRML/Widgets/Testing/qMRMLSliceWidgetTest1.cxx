@@ -67,7 +67,7 @@ int qMRMLSliceWidgetTest1(int argc, char* argv[])
   scene->Connect(userMessages);
   if (scene->GetNumberOfNodes() == 0)
   {
-    std::cerr << "Can't load scene:" << argv[1] << " error: " <<userMessages->GetAllMessagesAsString() << std::endl;
+    std::cerr << "Can't load scene:" << argv[1] << " error: " << userMessages->GetAllMessagesAsString() << std::endl;
     return EXIT_FAILURE;
   }
   vtkMRMLSliceNode* redSliceNode = nullptr;
@@ -114,9 +114,8 @@ int qMRMLSliceWidgetTest1(int argc, char* argv[])
   qMRMLNodeObject nodeObject(volumeNode, &sliceWidget);
   QTimer modifyTimer;
   modifyTimer.setInterval(2000);
-  QObject::connect(&modifyTimer, SIGNAL(timeout()),
-                   &nodeObject, SLOT(modify()));
-  //modifyTimer.start();
+  QObject::connect(&modifyTimer, SIGNAL(timeout()), &nodeObject, SLOT(modify()));
+  // modifyTimer.start();
   if (argc < 3 || QString(argv[2]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));

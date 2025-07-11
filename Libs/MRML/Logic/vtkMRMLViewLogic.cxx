@@ -138,12 +138,10 @@ vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* 
     return nullptr;
   }
 
-  vtkSmartPointer<vtkCollection> viewNodes = vtkSmartPointer<vtkCollection>::Take
-      (scene->GetNodesByClass("vtkMRMLViewNode"));
+  vtkSmartPointer<vtkCollection> viewNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLViewNode"));
   for (int viewNodeIndex = 0; viewNodeIndex < viewNodes->GetNumberOfItems(); ++viewNodeIndex)
   {
-    vtkMRMLViewNode* viewNode =
-        vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(viewNodes->GetItemAsObject(viewNodeIndex));
     if (viewNode &&                  //
         viewNode->GetLayoutName() && //
         !strcmp(viewNode->GetLayoutName(), layoutName))
@@ -157,12 +155,11 @@ vtkMRMLViewNode* vtkMRMLViewLogic::GetViewNode(vtkMRMLScene* scene, const char* 
 //----------------------------------------------------------------------------
 vtkMRMLCameraNode* vtkMRMLViewLogic::GetCameraNode(vtkMRMLScene* scene, const char* layoutName)
 {
-  if (!scene || !layoutName || strlen(layoutName)==0)
+  if (!scene || !layoutName || strlen(layoutName) == 0)
   {
     return nullptr;
   }
-  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
-    scene->GetSingletonNode(layoutName, "vtkMRMLCameraNode"));
+  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(scene->GetSingletonNode(layoutName, "vtkMRMLCameraNode"));
   return cameraNode;
 }
 
@@ -267,8 +264,7 @@ vtkMRMLViewNode* vtkMRMLViewLogic::AddViewNode(const char* layoutName)
     vtkErrorMacro("vtkMRMLViewLogic::AddViewNode failed: scene is not set");
     return nullptr;
   }
-  vtkSmartPointer<vtkMRMLViewNode> node = vtkSmartPointer<vtkMRMLViewNode>::Take(
-    vtkMRMLViewNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLViewNode")));
+  vtkSmartPointer<vtkMRMLViewNode> node = vtkSmartPointer<vtkMRMLViewNode>::Take(vtkMRMLViewNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLViewNode")));
   node->SetLayoutName(layoutName);
   this->GetMRMLScene()->AddNode(node);
   this->SetViewNode(node);

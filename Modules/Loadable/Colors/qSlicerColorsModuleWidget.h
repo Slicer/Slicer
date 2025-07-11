@@ -32,12 +32,10 @@ class vtkMRMLNode;
 class vtkScalarBarWidget;
 class QAbstractButton;
 
-class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModuleWidget
-  : public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_COLORS_EXPORT qSlicerColorsModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerColorsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerColorsModuleWidget() override;

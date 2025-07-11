@@ -142,7 +142,7 @@ vtkSlicerPlaneRepresentation3D::~vtkSlicerPlaneRepresentation3D() = default;
 //-----------------------------------------------------------------------------
 void vtkSlicerPlaneRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
 {
-  //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
+  // Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
 
   if (this->PlaneActor)
@@ -154,7 +154,6 @@ void vtkSlicerPlaneRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "Plane Visibility: (none)\n";
   }
 }
-
 
 //----------------------------------------------------------------------
 bool vtkSlicerPlaneRepresentation3D::GetTransformationReferencePoint(double referencePointWorld[3])
@@ -294,7 +293,7 @@ void vtkSlicerPlaneRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller,
   // Properties label display
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
   if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
-    && planeNode->GetIsPlaneValid()) // including preview
+      && planeNode->GetIsPlaneValid())                         // including preview
   {
     planeNode->GetOriginWorld(this->TextActorPositionWorld);
     this->TextActor->SetVisibility(true);
@@ -336,8 +335,7 @@ void vtkSlicerPlaneRepresentation3D::GetActors(vtkPropCollection* pc)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerPlaneRepresentation3D::ReleaseGraphicsResources(
-  vtkWindow* win)
+void vtkSlicerPlaneRepresentation3D::ReleaseGraphicsResources(vtkWindow* win)
 {
   this->Superclass::ReleaseGraphicsResources(win);
   this->PlaneActor->ReleaseGraphicsResources(win);
@@ -360,8 +358,7 @@ int vtkSlicerPlaneRepresentation3D::RenderOverlay(vtkViewport* viewport)
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerPlaneRepresentation3D::RenderOpaqueGeometry(
-  vtkViewport* viewport)
+int vtkSlicerPlaneRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
   int count = this->Superclass::RenderOpaqueGeometry(viewport);
   if (this->PlaneActor->GetVisibility())
@@ -378,8 +375,7 @@ int vtkSlicerPlaneRepresentation3D::RenderOpaqueGeometry(
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerPlaneRepresentation3D::RenderTranslucentPolygonalGeometry(
-  vtkViewport* viewport)
+int vtkSlicerPlaneRepresentation3D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
   int count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->PlaneActor->GetVisibility())
@@ -428,14 +424,12 @@ double* vtkSlicerPlaneRepresentation3D::GetBounds()
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerPlaneRepresentation3D::CanInteract(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+void vtkSlicerPlaneRepresentation3D::CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
   if (!planeNode || planeNode->GetLocked() || !planeNode->GetIsPlaneValid() //
-    || !interactionEventData )
+      || !interactionEventData)
   {
     return;
   }
@@ -450,9 +444,10 @@ void vtkSlicerPlaneRepresentation3D::CanInteract(
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(vtkMRMLInteractionEventData* interactionEventData,
+                                                          int& foundComponentType,
+                                                          int& foundComponentIndex,
+                                                          double& closestDistance2)
 {
   // Create the tree
   this->PlaneOutlineFilter->Update();
@@ -512,8 +507,8 @@ void vtkSlicerPlaneRepresentation3D::CanInteractWithPlane(
     this->Renderer->DisplayToWorld();
     this->Renderer->GetWorldPoint(closestPointWorld);
 
-    double pixelTolerance = this->PlaneOutlineFilter->GetRadius() / 2.0 / vtkMRMLAbstractThreeDViewDisplayableManager::
-      GetViewScaleFactorAtPosition(this->Renderer, closestPointWorld)
+    double pixelTolerance =
+      this->PlaneOutlineFilter->GetRadius() / 2.0 / vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition(this->Renderer, closestPointWorld)
       + this->PickingTolerance * this->GetScreenScaleFactor();
     if (dist2Display < pixelTolerance * pixelTolerance && dist2Display < closestDistance2)
     {

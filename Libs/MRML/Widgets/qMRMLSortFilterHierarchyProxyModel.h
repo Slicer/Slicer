@@ -27,8 +27,7 @@
 
 class qMRMLSortFilterHierarchyProxyModelPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLSortFilterHierarchyProxyModel
-  : public qMRMLSortFilterProxyModel
+class QMRML_WIDGETS_EXPORT qMRMLSortFilterHierarchyProxyModel : public qMRMLSortFilterProxyModel
 {
   Q_OBJECT
 public:

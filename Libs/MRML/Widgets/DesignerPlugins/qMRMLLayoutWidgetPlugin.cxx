@@ -16,14 +16,14 @@ QString qMRMLLayoutWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLLayoutWidget\" \
           name=\"MRMLLayoutWidget\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>200</height>\n"
-          "  </rect>\n"
-          " </property>\n"
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>200</height>\n"
+         "  </rect>\n"
+         " </property>\n"
          "</widget>\n";
 }
 

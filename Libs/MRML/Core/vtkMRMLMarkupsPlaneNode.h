@@ -60,9 +60,9 @@ public:
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char* GetIcon() override {return ":/Icons/MarkupsPlane.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsPlaneMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsPlaneMouseModePlaceAdd.png";}
+  const char* GetIcon() override { return ":/Icons/MarkupsPlane.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsPlaneMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsPlaneMouseModePlaceAdd.png"; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -86,13 +86,13 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MarkupsPlane";}
+  const char* GetNodeTagName() override { return "MarkupsPlane"; }
 
   /// Get markup type internal name
-  const char* GetMarkupType() override {return "Plane";};
+  const char* GetMarkupType() override { return "Plane"; };
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -256,10 +256,14 @@ public:
   //@{
   /// Helper method for generating an orthogonal right handed matrix from axes.
   /// Transform can optionally be specified to apply an additional transform on the vectors before generating the matrix.
-  static void GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix,
-    vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
-  static void GenerateOrthogonalMatrix(double xAxis[3], double yAxis[3], double zAxis[3], double origin[3],
-    vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
+  static void GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix, vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
+  static void GenerateOrthogonalMatrix(double xAxis[3],
+                                       double yAxis[3],
+                                       double zAxis[3],
+                                       double origin[3],
+                                       vtkMatrix4x4* outputMatrix,
+                                       vtkAbstractTransform* transform = nullptr,
+                                       bool applyScaling = true);
   //@}
 
   /// Re-implemented to react to changes in internal matrices or control points.
@@ -272,7 +276,6 @@ public:
   //@}
 
 protected:
-
   vtkSetMacro(MaximumNumberOfControlPoints, int);
   vtkSetMacro(RequiredNumberOfControlPoints, int);
 
@@ -343,7 +346,7 @@ protected:
   /// Calculates the handle to world matrix based on the current control points
   void UpdateInteractionHandleToWorldMatrix() override;
 
-  friend class vtkSlicerPlaneWidget; // To directly access plane update functions
+  friend class vtkSlicerPlaneWidget;           // To directly access plane update functions
   friend class vtkSlicerPlaneRepresentation3D; // To directly access plane update functions
   friend class vtkSlicerPlaneRepresentation2D; // To directly access plane update functions
 

@@ -12,14 +12,13 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerAnnotationsModulePrivate;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationsModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationsModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
-public:
 
+public:
   typedef qSlicerLoadableModule Superclass;
   qSlicerAnnotationsModule(QObject* parent = nullptr);
   ~qSlicerAnnotationsModule() override;
@@ -44,7 +43,6 @@ public:
   void grabSnapShot();
 
 protected:
-
   /// All initialization code should be done in the setup
   void setup() override;
 

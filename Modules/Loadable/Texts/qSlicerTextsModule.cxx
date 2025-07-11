@@ -58,7 +58,6 @@ QIcon qSlicerTextsModule::icon() const
   return QIcon(":/Icons/SlicerTexts.png");
 }
 
-
 //-----------------------------------------------------------------------------
 QStringList qSlicerTextsModule::categories() const
 {
@@ -95,8 +94,7 @@ QString qSlicerTextsModule::helpText() const
 QString qSlicerTextsModule::acknowledgementText() const
 {
   return tr("This work was supported through CANARIE's Research Software Program, and Cancer Care Ontario."
-    " The Texts module was contributed by Kyle Sunderland and Andras Lasso (Perk Lab, Queen's University)");
-
+            " The Texts module was contributed by Kyle Sunderland and Andras Lasso (Perk Lab, Queen's University)");
 }
 
 //-----------------------------------------------------------------------------
@@ -129,5 +127,5 @@ void qSlicerTextsModule::setup()
 QStringList qSlicerTextsModule::associatedNodeTypes() const
 {
   return QStringList() //
-    << "vtkMRMLTextNode";
+         << "vtkMRMLTextNode";
 }

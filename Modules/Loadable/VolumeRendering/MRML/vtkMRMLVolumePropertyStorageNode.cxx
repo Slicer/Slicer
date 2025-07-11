@@ -52,8 +52,7 @@ bool vtkMRMLVolumePropertyStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNo
 //----------------------------------------------------------------------------
 int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
-  vtkMRMLVolumePropertyNode* vpNode =
-    vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
+  vtkMRMLVolumePropertyNode* vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -136,8 +135,7 @@ int vtkMRMLVolumePropertyStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   if (!line.empty())
   {
     vtkNew<vtkPiecewiseFunction> scalarOpacity;
-    vpNode->GetPiecewiseFunctionFromString(line, scalarOpacity),
-    vpNode->SetScalarOpacity(scalarOpacity);
+    vpNode->GetPiecewiseFunctionFromString(line, scalarOpacity), vpNode->SetScalarOpacity(scalarOpacity);
   }
 
   std::getline(ifs, line);
@@ -165,7 +163,7 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLVolumePropertyNode* vpNode = vtkMRMLVolumePropertyNode::SafeDownCast(refNode);
 
-  std::string fullName =  this->GetFullNameFromFileName();
+  std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
   {
     vtkErrorMacro("vtkMRMLVolumePropertyStorageNode: File name not specified");
@@ -184,19 +182,19 @@ int vtkMRMLVolumePropertyStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
     vtkErrorMacro("Cannot open volume property file: " << fullName);
     return 0;
   }
-  ofs << vpNode->GetVolumeProperty()->GetInterpolationType()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetShade()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetDiffuse()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetAmbient()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetSpecular()  << std::endl;
-  ofs << vpNode->GetVolumeProperty()->GetSpecularPower()  << std::endl;
-  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetScalarOpacity())  << std::endl;
-  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetGradientOpacity())<< std::endl;
-  ofs << vpNode->GetColorTransferFunctionString(vpNode->GetVolumeProperty()->GetRGBTransferFunction())<< std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetInterpolationType() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetShade() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetDiffuse() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetAmbient() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetSpecular() << std::endl;
+  ofs << vpNode->GetVolumeProperty()->GetSpecularPower() << std::endl;
+  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetScalarOpacity()) << std::endl;
+  ofs << vpNode->GetPiecewiseFunctionString(vpNode->GetVolumeProperty()->GetGradientOpacity()) << std::endl;
+  ofs << vpNode->GetColorTransferFunctionString(vpNode->GetVolumeProperty()->GetRGBTransferFunction()) << std::endl;
 
   ofs.close();
 
-  int result =1;
+  int result = 1;
   return result;
 }
 

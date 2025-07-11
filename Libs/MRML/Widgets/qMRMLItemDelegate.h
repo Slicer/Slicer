@@ -47,7 +47,8 @@ public:
 
   /// ColorRole is an invisible role that contains the true color (QColor) when
   /// Qt::DecorationRole contains a pixmap of the color.
-  enum ItemDataRole {
+  enum ItemDataRole
+  {
     ColorEntryRole = Qt::UserRole,
     PointerRole,
     ColorRole
@@ -57,18 +58,14 @@ public:
   int colorRole(const QModelIndex& index) const;
   bool is0To1Value(const QModelIndex& index) const;
 
-  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
-                          const QModelIndex& index) const override;
+  QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
   void setEditorData(QWidget* editor, const QModelIndex& index) const override;
-  void setModelData(QWidget* editor, QAbstractItemModel* model,
-                    const QModelIndex& index) const override;
+  void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
 
-  QSize sizeHint(const QStyleOptionViewItem& option,
-                         const QModelIndex& index) const override;
+  QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-  void updateEditorGeometry(QWidget* editor,
-    const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+  void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
   bool eventFilter(QObject* object, QEvent* event) override;
 

@@ -51,10 +51,10 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
     defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR;
     if (!app->intDir().isEmpty())
     {
-       // On Win32, *both* paths have to be there, since scripts are installed
-       // in the install location, and exec/libs are *automatically* installed
-       // in intDir.
-       defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/" + app->intDir();
+      // On Win32, *both* paths have to be there, since scripts are installed
+      // in the install location, and exec/libs are *automatically* installed
+      // in intDir.
+      defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/" + app->intDir();
     }
   }
 

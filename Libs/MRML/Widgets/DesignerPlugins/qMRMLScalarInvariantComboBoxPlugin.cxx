@@ -22,8 +22,7 @@
 #include "qMRMLScalarInvariantComboBox.h"
 
 //------------------------------------------------------------------------------
-qMRMLScalarInvariantComboBoxPlugin
-::qMRMLScalarInvariantComboBoxPlugin(QObject* parentObject)
+qMRMLScalarInvariantComboBoxPlugin::qMRMLScalarInvariantComboBoxPlugin(QObject* parentObject)
   : QObject(parentObject)
 {
 }

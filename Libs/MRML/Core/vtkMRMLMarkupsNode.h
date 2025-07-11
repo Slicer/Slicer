@@ -35,7 +35,7 @@
 
 // VTK 9.3 does not have VTK_PROPEXCLUDE
 #ifndef VTK_PROPEXCLUDE
-  #define VTK_PROPEXCLUDE
+# define VTK_PROPEXCLUDE
 #endif
 
 class vtkMatrix3x3;
@@ -86,7 +86,6 @@ class VTK_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
   friend class vtkMRMLMarkupsJsonStorageNode;
 
 public:
-
   struct ControlPoint
   {
     ControlPoint()
@@ -141,9 +140,9 @@ public:
 
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual const char* GetIcon() {return ":/Icons/MarkupsGeneric.png";}
-  virtual const char* GetAddIcon() {return ":/Icons/MarkupsGenericMouseModePlace.png";}
-  virtual const char* GetPlaceAddIcon() {return ":/Icons/MarkupsGenericMouseModePlaceAdd.png";}
+  virtual const char* GetIcon() { return ":/Icons/MarkupsGeneric.png"; }
+  virtual const char* GetAddIcon() { return ":/Icons/MarkupsGenericMouseModePlace.png"; }
+  virtual const char* GetPlaceAddIcon() { return ":/Icons/MarkupsGenericMouseModePlaceAdd.png"; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -151,7 +150,7 @@ public:
 
   /// Get markup type internal name. This type name is the same regardless of the
   /// chosen application language and should not be displayed to end users.
-  virtual const char* GetMarkupType() {return "Markup";};
+  virtual const char* GetMarkupType() { return "Markup"; };
 
   /// Get markup short name.
   /// This may be displayed to the user and therefore it is translated to the application language.
@@ -171,18 +170,14 @@ public:
   /// precede each datum with the prefix if not an empty string
   /// coordinateSystemFlag = vtkMRMLStorageNode::CoordinateSystemRAS or vtkMRMLStorageNode::CoordinateSystemLPS
   /// multipleFlag = 1 for the whole list, 1 for the first selected control point
-  void WriteCLI(std::vector<std::string>& commandLine,
-                        std::string prefix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS,
-                        int multipleFlag = 1) override;
+  void WriteCLI(std::vector<std::string>& commandLine, std::string prefix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS, int multipleFlag = 1) override;
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
   vtkMRMLCopyContentMacro(vtkMRMLMarkupsNode);
 
   /// Alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// \brief End modifying the node.
   /// Updates pending measurements and other updates.
@@ -224,10 +219,16 @@ public:
    * and only updated (Compute called) as needed.
    */
   void SetNthMeasurement(int id, vtkMRMLMeasurement* measurement);
-  void SetNthMeasurement(int id, const std::string& name, double value, const std::string& units,
-    std::string printFormat = "", const std::string description = "",
-    vtkCodedEntry* quantityCode = nullptr, vtkCodedEntry* derivationCode = nullptr,
-    vtkCodedEntry* unitsCode = nullptr, vtkCodedEntry* methodCode = nullptr);
+  void SetNthMeasurement(int id,
+                         const std::string& name,
+                         double value,
+                         const std::string& units,
+                         std::string printFormat = "",
+                         const std::string description = "",
+                         vtkCodedEntry* quantityCode = nullptr,
+                         vtkCodedEntry* derivationCode = nullptr,
+                         vtkCodedEntry* unitsCode = nullptr,
+                         vtkCodedEntry* methodCode = nullptr);
   void RemoveAllMeasurements();
   //@}
 
@@ -240,31 +241,31 @@ public:
   ///
   enum
   {
-    LockModifiedEvent = 19000,                  ///< Markups node lock status is changed. Modified event is invoked, too.
-    LabelFormatModifiedEvent,                   ///< Markups node label format changed. Modified event is invoked, too.
-    PointAddedEvent,                            ///< New control point(s) added. Modified event is NOT invoked.
-    PointRemovedEvent,                          ///< Control point(s) deleted. Modified event is NOT invoked.
-    PointPositionDefinedEvent,                  ///< Point was not defined (undefined, preview position status,
-                                                ///  or non-existent point) before but now it is defined.
-    PointPositionUndefinedEvent,                ///< Point position was defined and now it is not defined anymore (point deleted or position is not defined).
-    PointPositionMissingEvent,                  ///< Point was not not missing before and now it is missing.
-    PointPositionNonMissingEvent,               ///< Point missing before and now it is not missing.
-    PointModifiedEvent,                         ///< Existing control point(s) modified, added, or removed. Modified event is NOT invoked.
-    PointStartInteractionEvent,                 ///< When starting interacting with a control point.
-    PointEndInteractionEvent,                   ///< When an interaction with a control point process finishes.
-    CenterOfRotationModifiedEvent,              ///< When position of the center of rotation is changed (used for example for rotating closed curves).
-    FixedNumberOfControlPointsModifiedEvent,    ///< When fixed number of points set/unset.
-    PointAboutToBeRemovedEvent,                 ///< Point is about to be deleted. Thus it is alive when event is called.
+    LockModifiedEvent = 19000,               ///< Markups node lock status is changed. Modified event is invoked, too.
+    LabelFormatModifiedEvent,                ///< Markups node label format changed. Modified event is invoked, too.
+    PointAddedEvent,                         ///< New control point(s) added. Modified event is NOT invoked.
+    PointRemovedEvent,                       ///< Control point(s) deleted. Modified event is NOT invoked.
+    PointPositionDefinedEvent,               ///< Point was not defined (undefined, preview position status,
+                                             ///  or non-existent point) before but now it is defined.
+    PointPositionUndefinedEvent,             ///< Point position was defined and now it is not defined anymore (point deleted or position is not defined).
+    PointPositionMissingEvent,               ///< Point was not not missing before and now it is missing.
+    PointPositionNonMissingEvent,            ///< Point missing before and now it is not missing.
+    PointModifiedEvent,                      ///< Existing control point(s) modified, added, or removed. Modified event is NOT invoked.
+    PointStartInteractionEvent,              ///< When starting interacting with a control point.
+    PointEndInteractionEvent,                ///< When an interaction with a control point process finishes.
+    CenterOfRotationModifiedEvent,           ///< When position of the center of rotation is changed (used for example for rotating closed curves).
+    FixedNumberOfControlPointsModifiedEvent, ///< When fixed number of points set/unset.
+    PointAboutToBeRemovedEvent,              ///< Point is about to be deleted. Thus it is alive when event is called.
   };
 
   /// Placement status of a control point.
   enum
   {
-    PositionUndefined,      ///< PositionUndefined: position is undefined (coordinate values must not be used).
-    PositionPreview,        ///< PositionPreview: new point is being placed, position is tentative.
-    PositionDefined,        ///< PositionDefined: position is specified.
-    PositionMissing,        ///< PositionMissing: point is undefined and placement should not be attempted.
-    PositionStatus_Last     ///< PositionStatus_Last: indicates the end of the enum (int first = 0, int last = PositionStatus_Last)
+    PositionUndefined,  ///< PositionUndefined: position is undefined (coordinate values must not be used).
+    PositionPreview,    ///< PositionPreview: new point is being placed, position is tentative.
+    PositionDefined,    ///< PositionDefined: position is specified.
+    PositionMissing,    ///< PositionMissing: point is undefined and placement should not be attempted.
+    PositionStatus_Last ///< PositionStatus_Last: indicates the end of the enum (int first = 0, int last = PositionStatus_Last)
   };
 
   static const char* GetPositionStatusAsString(int id);
@@ -340,7 +341,7 @@ public:
   /// Markups node takes over ownership of the pointer (markups node will delete it)
   /// \param autoLabel: if enabled (by default it is) then empty point label will be
   /// replaced with automatically generated label.
-  int AddControlPoint(ControlPoint *controlPoint, bool autoLabel = true);
+  int AddControlPoint(ControlPoint* controlPoint, bool autoLabel = true);
 
   ///@{
   /// Add a new control point, defined in the world coordinate system.
@@ -363,7 +364,7 @@ public:
   ///@}
 
   ///@{
-  //Add and insert control point at index, defined in the world coordinate system.
+  // Add and insert control point at index, defined in the world coordinate system.
   //\sa InsertControlPoint
   bool InsertControlPointWorld(int n, vtkVector3d pointWorld, std::string label = std::string());
   bool InsertControlPointWorld(int n, double pointWorld[3], std::string label = std::string());
@@ -401,8 +402,7 @@ public:
   vtkVector3d GetNthControlPointPositionWorld(int pointIndex);
   ///@}
 
-
-    ///@{
+  ///@{
   /// Set of the Nth control point position from coordinates
   void SetNthControlPointPosition(const int pointIndex, const double x, const double y, const double z, int positionStatus = PositionDefined);
   void SetNthControlPointPosition(const int pointIndex, const double position[3], int positionStatus = PositionDefined);
@@ -420,7 +420,10 @@ public:
   /// Orientation: x (0, 3, 6), y (1, 4, 7), z (2, 5, 8)
   /// \sa SetNthControlPointPosition
   void SetNthControlPointPositionOrientationWorld(const int pointIndex,
-    const double pos[3], const double orientationMatrix[9], const char* associatedNodeID, int positionStatus = PositionDefined);
+                                                  const double pos[3],
+                                                  const double orientationMatrix[9],
+                                                  const char* associatedNodeID,
+                                                  int positionStatus = PositionDefined);
 
   ///@{
   /// Set the orientation for the Nth control point from a WXYZ orientation.
@@ -811,13 +814,14 @@ public:
   /// Orientation: x (0, 3, 6), y (1, 4, 7), z (2, 5, 8)
   /// \sa SetNthControlPointPosition
   void SetNthControlPointPositionOrientationWorldFromArray(const int pointIndex,
-    const double positionWorld[3], const double orientationMatrix_World[9],
-    const char* associatedNodeID, int positionStatus = PositionDefined)
+                                                           const double positionWorld[3],
+                                                           const double orientationMatrix_World[9],
+                                                           const char* associatedNodeID,
+                                                           int positionStatus = PositionDefined)
   {
     vtkWarningMacro("vtkMRMLMarkupsNode::SetNthControlPointPositionOrientationWorldFromArray method is deprecated,"
-      << " please use SetNthControlPointPositionOrientationWorld instead");
-    this->SetNthControlPointPositionOrientationWorld(
-      pointIndex, positionWorld, orientationMatrix_World, associatedNodeID, positionStatus);
+                    << " please use SetNthControlPointPositionOrientationWorld instead");
+    this->SetNthControlPointPositionOrientationWorld(pointIndex, positionWorld, orientationMatrix_World, associatedNodeID, positionStatus);
   }
 
   /// Get the WXYZ orientation for the Nth control point
@@ -974,19 +978,17 @@ protected:
   virtual void UpdateInteractionHandleToWorldMatrix();
 
   /// Transform the orientation matrix from node to world coordinates
-  virtual void TransformOrientationMatrixFromNodeToWorld(
-    const double position_Node[3], const double orientationMatrix_Node[9], double orientationMatrix_World[9]);
+  virtual void TransformOrientationMatrixFromNodeToWorld(const double position_Node[3], const double orientationMatrix_Node[9], double orientationMatrix_World[9]);
 
   /// Transform the orientation matrix from world to node coordinates
-  virtual void TransformOrientationMatrixFromWorldToNode(
-    const double position_World[3], const double orientationMatrix_World[9], double orientationMatrix_Node[9]);
+  virtual void TransformOrientationMatrixFromWorldToNode(const double position_World[3], const double orientationMatrix_World[9], double orientationMatrix_Node[9]);
 
   /// Used for limiting number of control points that may be placed.
   /// This is a soft limit at which automatic placement stops.
   int RequiredNumberOfControlPoints{ 0 };
   /// Used for limiting number of control points that may be placed.
   /// This is a hard limit at which new control points cannot be added.
-  int MaximumNumberOfControlPoints{-1};
+  int MaximumNumberOfControlPoints{ -1 };
 
   bool CurveClosed{ false };
 
@@ -1020,7 +1022,7 @@ protected:
   /// Point position can be unset instead of deleting the point.
   bool FixedNumberOfControlPoints{ false };
 
-  std::string ControlPointLabelFormat{"%N-%d"};
+  std::string ControlPointLabelFormat{ "%N-%d" };
 
   /// Keep track of the number of markups that were added to the list, always
   /// incrementing, not decreasing when they're removed. Used to help create

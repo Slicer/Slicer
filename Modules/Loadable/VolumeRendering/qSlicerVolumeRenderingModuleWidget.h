@@ -38,8 +38,7 @@ class vtkMRMLVolumeNode;
 class vtkMRMLVolumePropertyNode;
 class vtkMRMLVolumeRenderingDisplayNode;
 
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
   QVTK_OBJECT

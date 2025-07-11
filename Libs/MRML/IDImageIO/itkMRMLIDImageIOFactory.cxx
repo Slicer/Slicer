@@ -18,16 +18,11 @@
 #include "itkMRMLIDImageIOFactory.h"
 #include "itkVersion.h"
 
-
 namespace itk
 {
 MRMLIDImageIOFactory::MRMLIDImageIOFactory()
 {
-  this->RegisterOverride("itkImageIOBase",
-                         "itkMRMLIDImageIO",
-                         "ImageIO to communicate directly with a MRML scene.",
-                         true,
-                         CreateObjectFunction<MRMLIDImageIO>::New());
+  this->RegisterOverride("itkImageIOBase", "itkMRMLIDImageIO", "ImageIO to communicate directly with a MRML scene.", true, CreateObjectFunction<MRMLIDImageIO>::New());
 }
 
 MRMLIDImageIOFactory::~MRMLIDImageIOFactory() = default;
@@ -37,8 +32,7 @@ const char* MRMLIDImageIOFactory::GetITKSourceVersion() const
   return ITK_SOURCE_VERSION;
 }
 
-const char*
-MRMLIDImageIOFactory::GetDescription() const
+const char* MRMLIDImageIOFactory::GetDescription() const
 {
   return "ImageIOFactory that imports/exports data to a MRML node.";
 }

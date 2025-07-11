@@ -42,17 +42,16 @@ class vtkPlane;
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
-*/
+ */
 
-class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineRepresentation3D
-: public vtkSlicerLineRepresentation3D
+class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineRepresentation3D : public vtkSlicerLineRepresentation3D
 {
 public:
   static vtkSlicerTestLineRepresentation3D* New();
   vtkTypeMacro(vtkSlicerTestLineRepresentation3D, vtkSlicerLineRepresentation3D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData=nullptr) override;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;

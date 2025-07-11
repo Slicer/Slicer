@@ -45,7 +45,6 @@ class QMRML_WIDGETS_EXPORT qMRMLLabelComboBox : public qMRMLWidget
   Q_PROPERTY(bool labelValueVisible READ labelValueVisible WRITE setLabelValueVisible)
 
 public:
-
   typedef qMRMLWidget Superclass;
 
   /// Construct an empty qMRMLColorTableComboBox with a null scene,
@@ -58,11 +57,11 @@ public:
   bool noneEnabled() const;
   void setNoneEnabled(bool enable);
 
-  ///Display or not the colors names
+  /// Display or not the colors names
   bool colorNameVisible() const;
   void setColorNameVisible(bool visible);
 
-  ///Display or not the label values
+  /// Display or not the label values
   bool labelValueVisible() const;
   void setLabelValueVisible(bool visible);
 
@@ -97,6 +96,7 @@ private slots:
 
 protected:
   QScopedPointer<qMRMLLabelComboBoxPrivate> d_ptr;
+
 private:
   Q_DECLARE_PRIVATE(qMRMLLabelComboBox);
   Q_DISABLE_COPY(qMRMLLabelComboBox);

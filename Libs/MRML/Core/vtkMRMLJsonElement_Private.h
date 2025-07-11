@@ -50,16 +50,10 @@ public:
 
   struct JsonDocumentContainer
   {
-    JsonDocumentContainer()
-    {
-      this->Document = new rapidjson::Document;
-    }
-    virtual ~JsonDocumentContainer()
-    {
-      delete this->Document;
-    }
+    JsonDocumentContainer() { this->Document = new rapidjson::Document; }
+    virtual ~JsonDocumentContainer() { delete this->Document; }
     JsonDocumentContainer(const JsonDocumentContainer&) = delete;
-    JsonDocumentContainer& operator= (const JsonDocumentContainer&) = delete;
+    JsonDocumentContainer& operator=(const JsonDocumentContainer&) = delete;
     rapidjson::Document* Document;
   };
 
@@ -71,7 +65,6 @@ public:
   std::shared_ptr<JsonDocumentContainer> JsonRoot;
   rapidjson::Value JsonValue;
 
-
 protected:
   vtkMRMLJsonElement* External;
 
@@ -79,7 +72,8 @@ protected:
 };
 
 // Base class for writers
-class BaseWriter {
+class BaseWriter
+{
 public:
   virtual ~BaseWriter() = default;
   virtual void SetFormatOptions(rapidjson::PrettyFormatOptions options) = 0;
@@ -95,122 +89,69 @@ public:
 };
 
 // Derived class for FileWriter
-class FileWriter : public BaseWriter {
+class FileWriter : public BaseWriter
+{
 public:
   FileWriter(std::unique_ptr<rapidjson::PrettyWriter<rapidjson::FileWriteStream>> writer)
-    : writer_(std::move(writer)) {}
-
-  void SetFormatOptions(rapidjson::PrettyFormatOptions options) override
+    : writer_(std::move(writer))
   {
-    writer_->SetFormatOptions(options);
   }
 
-  void StartArray() override
-  {
-    writer_->StartArray();
-  }
+  void SetFormatOptions(rapidjson::PrettyFormatOptions options) override { writer_->SetFormatOptions(options); }
 
-  void EndArray() override {
-      writer_->EndArray();
-  }
+  void StartArray() override { writer_->StartArray(); }
 
-  void StartObject() override
-  {
-    writer_->StartObject();
-  }
+  void EndArray() override { writer_->EndArray(); }
 
-  void EndObject() override
-  {
-    writer_->EndObject();
-  }
+  void StartObject() override { writer_->StartObject(); }
 
-  void Key(const char* d) override
-  {
-    writer_->Key(d);
-  }
+  void EndObject() override { writer_->EndObject(); }
 
-  void String(const char* d) override
-  {
-    writer_->String(d);
-  }
+  void Key(const char* d) override { writer_->Key(d); }
 
-  void Bool(bool d) override
-  {
-    writer_->Bool(d);
-  }
+  void String(const char* d) override { writer_->String(d); }
 
-  void Int(int d) override
-  {
-    writer_->Int(d);
-  }
+  void Bool(bool d) override { writer_->Bool(d); }
 
-  void Double(double d) override
-  {
-    writer_->Double(d);
-  }
+  void Int(int d) override { writer_->Int(d); }
+
+  void Double(double d) override { writer_->Double(d); }
 
 private:
   std::unique_ptr<rapidjson::PrettyWriter<rapidjson::FileWriteStream>> writer_;
 };
 
 // Derived class for StringWriter
-class StringWriter : public BaseWriter {
+class StringWriter : public BaseWriter
+{
 public:
   StringWriter(std::unique_ptr<rapidjson::PrettyWriter<rapidjson::StringBuffer>> writer)
-    : writer_(std::move(writer)) {}
-
-  void SetFormatOptions(rapidjson::PrettyFormatOptions options) override
+    : writer_(std::move(writer))
   {
-    writer_->SetFormatOptions(options);
   }
 
-  void StartArray() override
-  {
-    writer_->StartArray();
-  }
+  void SetFormatOptions(rapidjson::PrettyFormatOptions options) override { writer_->SetFormatOptions(options); }
 
-  void EndArray() override
-  {
-    writer_->EndArray();
-  }
+  void StartArray() override { writer_->StartArray(); }
 
-  void StartObject() override
-  {
-    writer_->StartObject();
-  }
+  void EndArray() override { writer_->EndArray(); }
 
-  void EndObject() override
-  {
-    writer_->EndObject();
-  }
+  void StartObject() override { writer_->StartObject(); }
 
-  void Key(const char* d) override
-  {
-    writer_->Key(d);
-  }
+  void EndObject() override { writer_->EndObject(); }
 
-  void String(const char* d) override
-  {
-    writer_->String(d);
-  }
+  void Key(const char* d) override { writer_->Key(d); }
 
-  void Bool(bool d) override
-  {
-    writer_->Bool(d);
-  }
+  void String(const char* d) override { writer_->String(d); }
 
-  void Int(int d) override
-  {
-    writer_->Int(d);
-  }
+  void Bool(bool d) override { writer_->Bool(d); }
 
-  void Double(double d) override
-  {
-    writer_->Double(d);
-  }
+  void Int(int d) override { writer_->Int(d); }
+
+  void Double(double d) override { writer_->Double(d); }
 
 private:
-    std::unique_ptr<rapidjson::PrettyWriter<rapidjson::StringBuffer>> writer_;
+  std::unique_ptr<rapidjson::PrettyWriter<rapidjson::StringBuffer>> writer_;
 };
 
 //---------------------------------------------------------------------------
@@ -223,15 +164,9 @@ public:
   void WriteVector(double* v, int numberOfComponents = 3);
   vtkMRMLJsonWriter::vtkInternal* GetActiveWriter();
 
-  void SetFileWriter(std::unique_ptr<rapidjson::PrettyWriter<rapidjson::FileWriteStream>> writer)
-  {
-    this->Writer = std::make_unique<FileWriter>(std::move(writer));
-  }
+  void SetFileWriter(std::unique_ptr<rapidjson::PrettyWriter<rapidjson::FileWriteStream>> writer) { this->Writer = std::make_unique<FileWriter>(std::move(writer)); }
 
-  void SetStringWriter(std::unique_ptr<rapidjson::PrettyWriter<rapidjson::StringBuffer>> writer)
-  {
-    this->Writer = std::make_unique<StringWriter>(std::move(writer));
-  }
+  void SetStringWriter(std::unique_ptr<rapidjson::PrettyWriter<rapidjson::StringBuffer>> writer) { this->Writer = std::make_unique<StringWriter>(std::move(writer)); }
 
   std::vector<char> WriteBuffer;
   FILE* WriteFileHandle{ 0 };

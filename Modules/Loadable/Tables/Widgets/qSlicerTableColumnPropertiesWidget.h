@@ -33,8 +33,7 @@ class qSlicerTableColumnPropertiesWidgetPrivate;
 class vtkMRMLTableNode;
 class qMRMLTableView;
 
-class Q_SLICER_MODULE_TABLES_WIDGETS_EXPORT
-qSlicerTableColumnPropertiesWidget : public qSlicerWidget
+class Q_SLICER_MODULE_TABLES_WIDGETS_EXPORT qSlicerTableColumnPropertiesWidget : public qSlicerWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool columnNameVisible READ columnNameVisible WRITE setColumnNameVisible)
@@ -106,7 +105,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerTableColumnPropertiesWidget);
   Q_DISABLE_COPY(qSlicerTableColumnPropertiesWidget);
-
 };
 
 #endif

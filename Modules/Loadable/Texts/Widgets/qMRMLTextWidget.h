@@ -168,7 +168,6 @@ private:
 protected:
   bool AutoSave{ false };
   bool ReadOnly{ false };
-
 };
 
 #endif

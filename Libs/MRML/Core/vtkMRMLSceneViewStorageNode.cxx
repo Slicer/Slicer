@@ -70,7 +70,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 1;
   }
 
-  vtkMRMLSceneViewNode* sceneViewNode = dynamic_cast<vtkMRMLSceneViewNode*> (refNode);
+  vtkMRMLSceneViewNode* sceneViewNode = dynamic_cast<vtkMRMLSceneViewNode*>(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -99,19 +99,19 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   if (extension == std::string(".png"))
   {
-      reader=vtkSmartPointer<vtkPNGReader>::New();
+    reader = vtkSmartPointer<vtkPNGReader>::New();
   }
   else if (extension == std::string(".jpg") || extension == std::string(".jpeg"))
   {
-    reader=vtkSmartPointer<vtkJPEGReader>::New();
+    reader = vtkSmartPointer<vtkJPEGReader>::New();
   }
   else if (extension == std::string(".tiff"))
   {
-    reader=vtkSmartPointer<vtkTIFFReader>::New();
+    reader = vtkSmartPointer<vtkTIFFReader>::New();
   }
   else if (extension == std::string(".bmp"))
   {
-    reader=vtkSmartPointer<vtkBMPReader>::New();
+    reader = vtkSmartPointer<vtkBMPReader>::New();
   }
   else
   {
@@ -130,8 +130,7 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
     if (reader->GetErrorCode() != vtkErrorCode::NoError)
     {
-      vtkDebugMacro("Cannot read scene view file '" << fullName.c_str() << "' ("
-        << vtkErrorCode::GetStringFromErrorCode(reader->GetErrorCode()) << ")");
+      vtkDebugMacro("Cannot read scene view file '" << fullName.c_str() << "' (" << vtkErrorCode::GetStringFromErrorCode(reader->GetErrorCode()) << ")");
       result = 0;
     }
   }
@@ -187,14 +186,14 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
   else
   {
-    vtkErrorMacro( << "No file extension recognized: " << fullName.c_str() );
+    vtkErrorMacro(<< "No file extension recognized: " << fullName.c_str());
     return 0;
   }
 
   int result = 1; // success by default
 
   writer->SetFileName(fullName.c_str());
-  writer->SetInputData( sceneViewNode->GetScreenShot() );
+  writer->SetInputData(sceneViewNode->GetScreenShot());
   try
   {
     writer->Write();
@@ -206,8 +205,7 @@ int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
   }
   if (writer->GetErrorCode() != vtkErrorCode::NoError)
   {
-    vtkDebugMacro("Cannot write scene view file '" << fullName.c_str() << "' ("
-      << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode()) << ")");
+    vtkDebugMacro("Cannot write scene view file '" << fullName.c_str() << "' (" << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode()) << ")");
     result = 0;
   }
 

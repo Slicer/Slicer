@@ -92,7 +92,6 @@ public:
   vtkGetMacro(RenderingCapabilitiesDetails, std::string);
 
 protected:
-
   vtkSmartPointer<vtkRenderWindow> NewOffscreenRenderWindow();
 
   vtkSystemInformation();
@@ -100,7 +99,7 @@ protected:
   vtkSystemInformation(const vtkSystemInformation&);
   void operator=(const vtkSystemInformation&);
 
-  //private:
+  // private:
 
   vtksys::SystemInformation SystemInformation;
   std::string StringHolder;

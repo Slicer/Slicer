@@ -22,8 +22,7 @@
 #include "vtkMRMLStorageNode.h"
 
 class vtkImageData;
-class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotStorageNode
-  : public vtkMRMLStorageNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationSnapshotStorageNode : public vtkMRMLStorageNode
 {
 public:
   static vtkMRMLAnnotationSnapshotStorageNode* New();
@@ -33,10 +32,11 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "AnnotationSnapshotStorage";}
+  const char* GetNodeTagName() override { return "AnnotationSnapshotStorage"; }
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
+
 protected:
   vtkMRMLAnnotationSnapshotStorageNode();
   ~vtkMRMLAnnotationSnapshotStorageNode() override;

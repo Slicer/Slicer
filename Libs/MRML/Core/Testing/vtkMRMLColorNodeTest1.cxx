@@ -28,22 +28,16 @@ public:
 
   vtkTypeMacro(vtkMRMLColorNodeTestHelper1, vtkMRMLColorNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLColorNodeTestHelper1::New();
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLColorNodeTestHelper1::New(); }
 
-  const char* GetTypeAsString() override
-  {
-    return "vtkMRMLColorNodeTestHelper1";
-  }
+  const char* GetTypeAsString() override { return "vtkMRMLColorNodeTestHelper1"; }
 
   virtual int ReadFile()
   {
     std::cout << "vtkMRMLColorNodeTestHelper1 pretending to read a file " << std::endl;
     return EXIT_SUCCESS;
   }
-  int GetNumberOfColors() override {return 1;}
+  int GetNumberOfColors() override { return 1; }
   bool GetColor(int vtkNotUsed(ind), double color[4]) override
   {
     color[0] = 10;
@@ -62,9 +56,7 @@ vtkStandardNewMacro(vtkMRMLColorNodeTestHelper1);
 
 //---------------------------------------------------------------------------
 int TestGetColorNameAsFileName();
-int TestGetColorNameAsFileName(const char* colorName,
-                                const char* expectedColorFileName,
-                                const char* substr = "_");
+int TestGetColorNameAsFileName(const char* colorName, const char* expectedColorFileName, const char* substr = "_");
 
 //---------------------------------------------------------------------------
 int vtkMRMLColorNodeTest1(int, char*[])
@@ -113,9 +105,7 @@ int TestGetColorNameAsFileName(const char* colorName, const char* expectedColorF
   std::string fileName = colorNode->GetColorNameAsFileName(0, substr);
   if (fileName != std::string(expectedColorFileName))
   {
-    std::cerr << "Input: " << colorName
-              << "\nOutput: " << fileName.c_str()
-              << "\n Expected: " << expectedColorFileName <<std::endl;
+    std::cerr << "Input: " << colorName << "\nOutput: " << fileName.c_str() << "\n Expected: " << expectedColorFileName << std::endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

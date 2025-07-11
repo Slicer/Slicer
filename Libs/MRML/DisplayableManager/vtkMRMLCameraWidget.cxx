@@ -111,35 +111,31 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
   this->SetKeyboardEventTranslation(WidgetStateIdle, vtkEvent::NoModifier, 0, 0, "r", WidgetEventCameraResetFieldOfView);
 
   // Rotate
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier,
-    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::NoModifier, WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
   // Alt modifier to allow action during markup placement
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier, WidgetStateRotate, WidgetEventRotateStart, WidgetEventRotateEnd);
 
   // Pan
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier,
-    WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::NoModifier,
-    WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
+  this->SetEventTranslationClickAndDrag(
+    WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier, WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
+  this->SetEventTranslationClickAndDrag(
+    WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::NoModifier, WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
   // Alt modifier to allow action during markup placement
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier + vtkEvent::ShiftModifier,
-    WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
+  this->SetEventTranslationClickAndDrag(
+    WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::AltModifier + vtkEvent::ShiftModifier, WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
+  this->SetEventTranslationClickAndDrag(
+    WidgetStateIdle, vtkCommand::MiddleButtonPressEvent, vtkEvent::AltModifier, WidgetStateTranslate, WidgetEventTranslateStart, WidgetEventTranslateEnd);
   // Touch translate
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
   this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::PanEvent, vtkEvent::AnyModifier, WidgetEventTouchPanTranslate);
   this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::EndPanEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
 
   // Dolly
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier + vtkEvent::ControlModifier,
-    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier,
-    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  this->SetEventTranslationClickAndDrag(
+    WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier + vtkEvent::ControlModifier, WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::NoModifier, WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
   // Alt modifier to allow action during markup placement
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier,
-    WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::RightButtonPressEvent, vtkEvent::AltModifier, WidgetStateScale, WidgetEventScaleStart, WidgetEventScaleEnd);
   // Mousewheel zooms direction is chosen to be consistent with other applications (Ctrl-MouseWheelForward zooms in in PowerPoint),
   // and with Windows touchpad pinch-to-zoom (pinch to zoom in generates MouseWheelForward event).
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::MouseWheelForwardEvent, vtkEvent::NoModifier, WidgetEventCameraWheelZoomIn);
@@ -153,8 +149,7 @@ vtkMRMLCameraWidget::vtkMRMLCameraWidget()
   this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::EndPinchEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureEnd);
 
   // Spin
-  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier,
-    WidgetStateSpin, WidgetEventSpinStart, WidgetEventSpinEnd);
+  this->SetEventTranslationClickAndDrag(WidgetStateIdle, vtkCommand::LeftButtonPressEvent, vtkEvent::ControlModifier, WidgetStateSpin, WidgetEventSpinStart, WidgetEventSpinEnd);
   // Touch rotate
   this->SetEventTranslation(WidgetStateIdle, vtkCommand::StartRotateEvent, vtkEvent::AnyModifier, WidgetEventTouchGestureStart);
   this->SetEventTranslation(WidgetStateTouchGesture, vtkCommand::RotateEvent, vtkEvent::AnyModifier, WidgetEventTouchSpinCamera);
@@ -320,9 +315,7 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
       this->CameraNode->RotateAround(vtkMRMLCameraNode::S, true);
       break;
 
-    case WidgetEventToggleCameraTiltLock:
-        this->CameraTiltLocked = !this->CameraTiltLocked;
-        break;
+    case WidgetEventToggleCameraTiltLock: this->CameraTiltLocked = !this->CameraTiltLocked; break;
 
     case WidgetEventCameraReset:
       this->SaveStateForUndo();
@@ -370,66 +363,39 @@ bool vtkMRMLCameraWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* e
       this->SetWidgetState(WidgetStateTranslate);
       processedEvent = this->ProcessStartMouseDrag(eventData);
       break;
-    case WidgetEventTranslateEnd:
-      processedEvent = this->ProcessEndMouseDrag(eventData);
-      break;
+    case WidgetEventTranslateEnd: processedEvent = this->ProcessEndMouseDrag(eventData); break;
     case WidgetEventRotateStart:
       this->SetWidgetState(WidgetStateRotate);
       processedEvent = this->ProcessStartMouseDrag(eventData);
       break;
-    case WidgetEventRotateEnd:
-      processedEvent = this->ProcessEndMouseDrag(eventData);
-      break;
+    case WidgetEventRotateEnd: processedEvent = this->ProcessEndMouseDrag(eventData); break;
     case WidgetEventScaleStart:
       this->SetWidgetState(WidgetStateScale);
       processedEvent = this->ProcessStartMouseDrag(eventData);
       break;
-    case WidgetEventScaleEnd:
-      processedEvent = this->ProcessEndMouseDrag(eventData);
-      break;
+    case WidgetEventScaleEnd: processedEvent = this->ProcessEndMouseDrag(eventData); break;
     case WidgetEventMoveCrosshairStart:
       this->SetWidgetState(WidgetStateMoveCrosshair);
       processedEvent = this->ProcessStartMouseDrag(eventData);
       break;
-    case WidgetEventMoveCrosshairEnd:
-      processedEvent = this->ProcessEndMouseDrag(eventData);
-      break;
+    case WidgetEventMoveCrosshairEnd: processedEvent = this->ProcessEndMouseDrag(eventData); break;
     case WidgetEventSpinStart:
       this->SetWidgetState(WidgetStateSpin);
       processedEvent = this->ProcessStartMouseDrag(eventData);
       break;
-    case WidgetEventSpinEnd:
-      processedEvent = this->ProcessEndMouseDrag(eventData);
-      break;
-    case WidgetEventTouchGestureStart:
-      this->ProcessTouchGestureStart(eventData);
-      break;
-    case WidgetEventTouchGestureEnd:
-      this->ProcessTouchGestureEnd(eventData);
-      break;
-    case WidgetEventTouchSpinCamera:
-      this->ProcessTouchCameraSpin(eventData);
-      break;
-    case WidgetEventTouchPinchZoom:
-      this->ProcessTouchCameraZoom(eventData);
-      break;
-    case WidgetEventTouchPanTranslate:
-      this->ProcessTouchCameraTranslate(eventData);
-      break;
-    case WidgetEventMenu:
-      processedEvent = this->ProcessWidgetMenu(eventData);
-      break;
+    case WidgetEventSpinEnd: processedEvent = this->ProcessEndMouseDrag(eventData); break;
+    case WidgetEventTouchGestureStart: this->ProcessTouchGestureStart(eventData); break;
+    case WidgetEventTouchGestureEnd: this->ProcessTouchGestureEnd(eventData); break;
+    case WidgetEventTouchSpinCamera: this->ProcessTouchCameraSpin(eventData); break;
+    case WidgetEventTouchPinchZoom: this->ProcessTouchCameraZoom(eventData); break;
+    case WidgetEventTouchPanTranslate: this->ProcessTouchCameraTranslate(eventData); break;
+    case WidgetEventMenu: processedEvent = this->ProcessWidgetMenu(eventData); break;
 
-    case WidgetEventSetCrosshairPosition:
-      this->ProcessSetCrosshair(eventData);
-      break;
+    case WidgetEventSetCrosshairPosition: this->ProcessSetCrosshair(eventData); break;
 
-    case WidgetEventMaximizeView:
-      processedEvent = this->ProcessMaximizeView(eventData);
-      break;
+    case WidgetEventMaximizeView: processedEvent = this->ProcessMaximizeView(eventData); break;
 
-    default:
-      processedEvent = false;
+    default: processedEvent = false;
   }
 
   if (!processedEvent)
@@ -455,21 +421,11 @@ bool vtkMRMLCameraWidget::ProcessMouseMove(vtkMRMLInteractionEventData* eventDat
 {
   switch (this->WidgetState)
   {
-    case WidgetStateRotate:
-      this->ProcessRotate(eventData);
-      break;
-    case WidgetStateTranslate:
-      this->ProcessTranslate(eventData);
-      break;
-    case WidgetStateScale:
-      this->ProcessScale(eventData);
-      break;
-    case WidgetStateMoveCrosshair:
-      this->ProcessSetCrosshair(eventData);
-      break;
-    case WidgetStateSpin:
-      this->ProcessSpin(eventData);
-      break;
+    case WidgetStateRotate: this->ProcessRotate(eventData); break;
+    case WidgetStateTranslate: this->ProcessTranslate(eventData); break;
+    case WidgetStateScale: this->ProcessScale(eventData); break;
+    case WidgetStateMoveCrosshair: this->ProcessSetCrosshair(eventData); break;
+    case WidgetStateSpin: this->ProcessSpin(eventData); break;
     default:
       // not processed
       return false;
@@ -610,8 +566,7 @@ bool vtkMRMLCameraWidget::ProcessSetCrosshair(vtkMRMLInteractionEventData* event
     int viewGroup = -1; // jump all by default
     if (this->GetCameraNode() && this->GetCameraNode()->GetLayoutName())
     {
-      vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(
-        scene->GetSingletonNode(this->GetCameraNode()->GetLayoutName(), "vtkMRMLViewNode"));
+      vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(scene->GetSingletonNode(this->GetCameraNode()->GetLayoutName(), "vtkMRMLViewNode"));
       if (viewNode)
       {
         viewGroup = viewNode->GetViewGroup();
@@ -697,13 +652,9 @@ bool vtkMRMLCameraWidget::ProcessSpin(vtkMRMLInteractionEventData* eventData)
 
   double* center = this->Renderer->GetCenter();
 
-  double newAngle =
-    atan2((double)eventPosition[1] - (double)center[1],
-          (double)eventPosition[0] - (double)center[0]);
+  double newAngle = atan2((double)eventPosition[1] - (double)center[1], (double)eventPosition[0] - (double)center[0]);
 
-  double oldAngle =
-    atan2((double)this->PreviousEventPosition[1] - (double)center[1],
-          (double)this->PreviousEventPosition[0] - (double)center[0]);
+  double oldAngle = atan2((double)this->PreviousEventPosition[1] - (double)center[1], (double)this->PreviousEventPosition[0] - (double)center[0]);
 
   newAngle = vtkMath::DegreesFromRadians(newAngle);
   oldAngle = vtkMath::DegreesFromRadians(oldAngle);
@@ -751,32 +702,22 @@ bool vtkMRMLCameraWidget::ProcessTranslate(vtkMRMLInteractionEventData* eventDat
 
   double viewFocus[4] = { 0.0, 0.0, 0.0, 1.0 };
   camera->GetFocalPoint(viewFocus);
-  vtkInteractorObserver::ComputeWorldToDisplay(this->Renderer,
-    viewFocus[0], viewFocus[1], viewFocus[2], viewFocus);
+  vtkInteractorObserver::ComputeWorldToDisplay(this->Renderer, viewFocus[0], viewFocus[1], viewFocus[2], viewFocus);
 
   double focalDepth = viewFocus[2];
 
   double newPickPoint[4] = { 0.0, 0.0, 0.0, 1.0 };
-  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer,
-    (double)eventPosition[0], (double)eventPosition[1], focalDepth, newPickPoint);
+  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, (double)eventPosition[0], (double)eventPosition[1], focalDepth, newPickPoint);
 
   // Has to recalc old mouse point since the viewport has moved,
   // so can't move it outside the loop
 
   double oldPickPoint[4] = { 0.0, 0.0, 0.0, 1.0 };
-  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer,
-    (double)this->PreviousEventPosition[0], (double)this->PreviousEventPosition[1],
-    focalDepth, oldPickPoint);
+  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, (double)this->PreviousEventPosition[0], (double)this->PreviousEventPosition[1], focalDepth, oldPickPoint);
 
   // Camera motion is reversed
 
-  double motionVector[4] =
-    {
-    oldPickPoint[0] - newPickPoint[0],
-    oldPickPoint[1] - newPickPoint[1],
-    oldPickPoint[2] - newPickPoint[2],
-    0.0
-    };
+  double motionVector[4] = { oldPickPoint[0] - newPickPoint[0], oldPickPoint[1] - newPickPoint[1], oldPickPoint[2] - newPickPoint[2], 0.0 };
 
   // If model transform is applied to the camera (scale, shear, rotations and translations)
   // then we need to take that into account otherwise we will get
@@ -794,13 +735,9 @@ bool vtkMRMLCameraWidget::ProcessTranslate(vtkMRMLInteractionEventData* eventDat
 
   bool wasCameraNodeModified = this->CameraModifyStart();
 
-  camera->SetFocalPoint(motionVector[0] + viewFocus[0],
-    motionVector[1] + viewFocus[1],
-    motionVector[2] + viewFocus[2]);
+  camera->SetFocalPoint(motionVector[0] + viewFocus[0], motionVector[1] + viewFocus[1], motionVector[2] + viewFocus[2]);
 
-  camera->SetPosition(motionVector[0] + viewPoint[0],
-    motionVector[1] + viewPoint[1],
-    motionVector[2] + viewPoint[2]);
+  camera->SetPosition(motionVector[0] + viewPoint[0], motionVector[1] + viewPoint[1], motionVector[2] + viewPoint[2]);
 
   this->CameraModifyEnd(wasCameraNodeModified, true, true);
 
@@ -861,16 +798,16 @@ bool vtkMRMLCameraWidget::ProcessTouchCameraSpin(vtkMRMLInteractionEventData* ev
 
   bool wasCameraNodeModified = this->CameraModifyStart();
 
-  int pinchPostionDisplay[2] = { 0,0 };
+  int pinchPostionDisplay[2] = { 0, 0 };
   eventData->GetDisplayPosition(pinchPostionDisplay);
 
-  double oldWorldPosition[4] = { 0,0,0,0 };
+  double oldWorldPosition[4] = { 0, 0, 0, 0 };
   vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, pinchPostionDisplay[0], pinchPostionDisplay[1], 0, oldWorldPosition);
 
   camera->Roll(eventData->GetRotation() - eventData->GetLastRotation());
   camera->OrthogonalizeViewUp();
 
-  double newWorldPosition[4] = { 0,0,0,0 };
+  double newWorldPosition[4] = { 0, 0, 0, 0 };
   vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, pinchPostionDisplay[0], pinchPostionDisplay[1], 0, newWorldPosition);
 
   vtkNew<vtkPlane> plane;
@@ -879,7 +816,7 @@ bool vtkMRMLCameraWidget::ProcessTouchCameraSpin(vtkMRMLInteractionEventData* ev
   plane->ProjectPoint(newWorldPosition, newWorldPosition);
   plane->ProjectPoint(oldWorldPosition, oldWorldPosition);
 
-  double deltaWorld[3] = { 0,0,0 };
+  double deltaWorld[3] = { 0, 0, 0 };
   vtkMath::Subtract(oldWorldPosition, newWorldPosition, deltaWorld);
 
   vtkNew<vtkTransform> deltaWorldTransform;
@@ -906,19 +843,19 @@ bool vtkMRMLCameraWidget::ProcessTouchCameraZoom(vtkMRMLInteractionEventData* ev
 
   bool wasCameraNodeModified = this->CameraModifyStart();
 
-  int pinchPostionDisplay[3] = { 0,0,0 };
+  int pinchPostionDisplay[3] = { 0, 0, 0 };
   eventData->GetDisplayPosition(pinchPostionDisplay);
 
   // Remember the position of the center of the pinch in world coordinates
   // This position should stay in the same location on the screen after the dolly has been performed
-  double oldWorldPosition[4] = { 0,0,0,0 };
+  double oldWorldPosition[4] = { 0, 0, 0, 0 };
   vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, pinchPostionDisplay[0], pinchPostionDisplay[1], pinchPostionDisplay[2], oldWorldPosition);
 
   // Perform the zoom
   this->Dolly(eventData->GetScale() / eventData->GetLastScale());
 
   // New position at the center of the pinch gesture
-  double newWorldPosition[4] = { 0,0,0,0 };
+  double newWorldPosition[4] = { 0, 0, 0, 0 };
   vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, pinchPostionDisplay[0], pinchPostionDisplay[1], pinchPostionDisplay[2], newWorldPosition);
 
   vtkNew<vtkPlane> plane;
@@ -928,7 +865,7 @@ bool vtkMRMLCameraWidget::ProcessTouchCameraZoom(vtkMRMLInteractionEventData* ev
   plane->ProjectPoint(oldWorldPosition, oldWorldPosition);
 
   // Determine how far the pinch center has been shifted from it's original location
-  double deltaWorld[3] = { 0,0,0 };
+  double deltaWorld[3] = { 0, 0, 0 };
   vtkMath::Subtract(oldWorldPosition, newWorldPosition, deltaWorld);
 
   // Translate the camera to compensate for the shift of the pinch center
@@ -951,23 +888,15 @@ bool vtkMRMLCameraWidget::ProcessTouchCameraTranslate(vtkMRMLInteractionEventDat
   }
 
   const double* translation = eventData->GetTranslation();
-  double deltaView[3] = {-translation[0], -translation[1], 0.0};
+  double deltaView[3] = { -translation[0], -translation[1], 0.0 };
 
   double worldFocus[4];
   camera->GetFocalPoint(worldFocus);
   double viewFocus[4];
-  vtkInteractorObserver::ComputeWorldToDisplay(this->Renderer,
-                                               worldFocus[0],
-                                               worldFocus[1],
-                                               worldFocus[2],
-                                               viewFocus);
+  vtkInteractorObserver::ComputeWorldToDisplay(this->Renderer, worldFocus[0], worldFocus[1], worldFocus[2], viewFocus);
 
   double newWorldFocus[4];
-  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer,
-                                               viewFocus[0] + deltaView[0],
-                                               viewFocus[1] + deltaView[1],
-                                               viewFocus[2] + deltaView[2],
-                                               newWorldFocus);
+  vtkInteractorObserver::ComputeDisplayToWorld(this->Renderer, viewFocus[0] + deltaView[0], viewFocus[1] + deltaView[1], viewFocus[2] + deltaView[2], newWorldFocus);
 
   double deltaWorld[4];
   vtkMath::Subtract(newWorldFocus, worldFocus, deltaWorld);
@@ -1002,8 +931,7 @@ bool vtkMRMLCameraWidget::Dolly(double factor)
     if (this->GetCameraNode() && this->GetCameraNode()->GetScene())
     {
       vtkMRMLScene* scene = this->GetCameraNode()->GetScene();
-      vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(
-        scene->GetSingletonNode(this->GetCameraNode()->GetLayoutName(), "vtkMRMLViewNode"));
+      vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(scene->GetSingletonNode(this->GetCameraNode()->GetLayoutName(), "vtkMRMLViewNode"));
       if (viewNode)
       {
         viewNode->SetFieldOfView(camera->GetParallelScale());
@@ -1031,7 +959,7 @@ vtkCamera* vtkMRMLCameraWidget::GetCamera()
   {
     return nullptr;
   }
-  return  this->Renderer->GetActiveCamera();
+  return this->Renderer->GetActiveCamera();
 }
 
 //----------------------------------------------------------------------------
@@ -1071,7 +999,6 @@ void vtkMRMLCameraWidget::CameraModifyEnd(bool wasModified, bool updateClippingR
     this->CameraNode->EndModify(wasModified);
   }
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLCameraWidget::SaveStateForUndo()

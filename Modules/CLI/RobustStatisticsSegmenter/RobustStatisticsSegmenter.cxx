@@ -10,14 +10,13 @@
 #include "labelMapPreprocessor.h"
 
 template <typename TPixel>
-itk::Image<short, 3>::Pointer
-getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixel thod = 0);
+itk::Image<short, 3>::Pointer getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixel thod = 0);
 
-int main(int argc, char* * argv)
+int main(int argc, char** argv)
 {
   PARSE_ARGS;
 
-  typedef short                                         PixelType;
+  typedef short PixelType;
   typedef CSFLSRobustStatSegmentor3DLabelMap<PixelType> SFLSRobustStatSegmentor3DLabelMap_c;
 
   // read input image
@@ -25,7 +24,7 @@ int main(int argc, char* * argv)
 
   typedef itk::ImageFileReader<Image_t> ImageReaderType;
   ImageReaderType::Pointer reader = ImageReaderType::New();
-  reader->SetFileName(originalImageFileName.c_str() );
+  reader->SetFileName(originalImageFileName.c_str());
   Image_t::Pointer img;
 
   try
@@ -45,7 +44,7 @@ int main(int argc, char* * argv)
 
   typedef itk::ImageFileReader<LabelImage_t> LabelImageReader_t;
   LabelImageReader_t::Pointer readerLabel = LabelImageReader_t::New();
-  readerLabel->SetFileName(labelImageFileName.c_str() );
+  readerLabel->SetFileName(labelImageFileName.c_str());
   LabelImage_t::Pointer labelImg;
 
   try
@@ -79,44 +78,44 @@ int main(int argc, char* * argv)
 
   seg.doSegmenation();
 
-//   typedef int PixelType;
-//   typedef itk::Image<PixelType, 3 > ImageType;
+  //   typedef int PixelType;
+  //   typedef itk::Image<PixelType, 3 > ImageType;
 
-//   typedef itk::ImageFileReader<ImageType> ImageReaderType;
-//   ImageReaderType::Pointer reader = ImageReaderType::New();
-//   reader->SetFileName(originalImageFileName.c_str());
+  //   typedef itk::ImageFileReader<ImageType> ImageReaderType;
+  //   ImageReaderType::Pointer reader = ImageReaderType::New();
+  //   reader->SetFileName(originalImageFileName.c_str());
 
-//   ImageType::Pointer img;
+  //   ImageType::Pointer img;
 
-//   try
-//     {
-//       reader->Update();
-//       img = reader->GetOutput();
-//     }
-//   catch (itk::ExceptionObject& err)
-//     {
-//       std::cerr<< "ExceptionObject caught !" << std::endl;
-//       std::cerr<< err << std::endl;
-//       raise(SIGABRT);
-//     }
+  //   try
+  //     {
+  //       reader->Update();
+  //       img = reader->GetOutput();
+  //     }
+  //   catch (itk::ExceptionObject& err)
+  //     {
+  //       std::cerr<< "ExceptionObject caught !" << std::endl;
+  //       std::cerr<< err << std::endl;
+  //       raise(SIGABRT);
+  //     }
 
-// //   std::vector<std::vector<long>> seedListIJK;
-// //   seedsPreprocess<ImageType>(img, seed, seedListIJK);
+  // //   std::vector<std::vector<long>> seedListIJK;
+  // //   seedsPreprocess<ImageType>(img, seed, seedListIJK);
 
-//   CSFLSRobustStatSegmentor3D<PixelType> seg;
-//   seg.setImage(img);
+  //   CSFLSRobustStatSegmentor3D<PixelType> seg;
+  //   seg.setImage(img);
 
-//   seg.setSeeds(seedListIJK);
-//   seg.setMaxRunningTime(maxRunningTime);
-//   seg.setMaxVolume(expectedVolume);
+  //   seg.setSeeds(seedListIJK);
+  //   seg.setMaxRunningTime(maxRunningTime);
+  //   seg.setMaxVolume(expectedVolume);
 
-//   seg.setIntensityHomogeneity(intensityHomogeneity);
+  //   seg.setIntensityHomogeneity(intensityHomogeneity);
 
-//   //seg.setNumIter(numOfIteration);
+  //   //seg.setNumIter(numOfIteration);
 
-//   seg.setCurvatureWeight(curvatureWeight/2.0); // in the interface, it's 0~1 scale, internally, it's 0~0.5
+  //   seg.setCurvatureWeight(curvatureWeight/2.0); // in the interface, it's 0~1 scale, internally, it's 0~0.5
 
-//   seg.doSegmenation();
+  //   seg.doSegmenation();
 
   typedef itk::Image<short, 3> MaskImageType;
 
@@ -125,7 +124,7 @@ int main(int argc, char* * argv)
 
   typedef itk::ImageFileWriter<MaskImageType> WriterType;
   WriterType::Pointer outputWriter = WriterType::New();
-  outputWriter->SetFileName(segmentedImageFileName.c_str() );
+  outputWriter->SetFileName(segmentedImageFileName.c_str());
   outputWriter->SetInput(finalMask);
   outputWriter->Update();
 
@@ -144,8 +143,7 @@ int main(int argc, char* * argv)
 }
 
 template <typename TPixel>
-itk::Image<short, 3>::Pointer
-getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixel thod)
+itk::Image<short, 3>::Pointer getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixel thod)
 {
   typedef itk::Image<short, 3> MaskType;
 
@@ -155,17 +153,17 @@ getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixe
   long ny = size[1];
   long nz = size[2];
 
-  MaskType::Pointer   mask = MaskType::New();
-  MaskType::IndexType start = {{0, 0, 0}};
+  MaskType::Pointer mask = MaskType::New();
+  MaskType::IndexType start = { { 0, 0, 0 } };
 
   MaskType::RegionType region;
-  region.SetSize( size );
-  region.SetIndex( start );
+  region.SetSize(size);
+  region.SetIndex(start);
 
-  mask->SetRegions( region );
+  mask->SetRegions(region);
 
-  mask->SetSpacing(img->GetSpacing() );
-  mask->SetOrigin(img->GetOrigin() );
+  mask->SetSpacing(img->GetSpacing());
+  mask->SetOrigin(img->GetOrigin());
 
   mask->Allocate();
   mask->FillBuffer(0);
@@ -175,8 +173,8 @@ getFinalMask(typename itk::Image<TPixel, 3>::Pointer img, unsigned char l, TPixe
     {
       for (long iz = 0; iz < nz; ++iz)
       {
-        MaskType::IndexType idx = {{ix, iy, iz}};
-        TPixel              v = img->GetPixel(idx);
+        MaskType::IndexType idx = { { ix, iy, iz } };
+        TPixel v = img->GetPixel(idx);
 
         mask->SetPixel(idx, v <= thod ? l : 0);
       }

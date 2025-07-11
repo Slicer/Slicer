@@ -19,7 +19,8 @@
 #include "qSlicerPythonManager.h"
 
 //-----------------------------------------------------------------------------
-qSlicerPythonManager::qSlicerPythonManager(QObject* _parent) : Superclass(_parent)
+qSlicerPythonManager::qSlicerPythonManager(QObject* _parent)
+  : Superclass(_parent)
 {
 }
 

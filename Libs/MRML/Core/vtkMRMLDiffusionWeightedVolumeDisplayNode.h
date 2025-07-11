@@ -34,7 +34,7 @@ class vtkImageExtractComponents;
 /// to read the myriad of file formats for medical data.
 class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRMLScalarVolumeDisplayNode
 {
-  public:
+public:
   static vtkMRMLDiffusionWeightedVolumeDisplayNode* New();
   vtkTypeMacro(vtkMRMLDiffusionWeightedVolumeDisplayNode, vtkMRMLScalarVolumeDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -43,7 +43,7 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -55,12 +55,11 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionWeightedVolumeDisplayNode : public vtkMRML
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "DiffusionWeightedVolumeDisplay";}
+  const char* GetNodeTagName() override { return "DiffusionWeightedVolumeDisplay"; }
 
   ///
   /// Get the pipeline input
   vtkAlgorithmOutput* GetInputImageDataConnection() override;
-
 
   void UpdateImageDataPipeline() override;
 

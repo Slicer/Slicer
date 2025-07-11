@@ -105,9 +105,8 @@ vtkBinaryLabelmapToClosedSurfaceConversionRule::vtkBinaryLabelmapToClosedSurface
 vtkBinaryLabelmapToClosedSurfaceConversionRule::~vtkBinaryLabelmapToClosedSurfaceConversionRule() = default;
 
 //----------------------------------------------------------------------------
-unsigned int vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionCost(
-    vtkDataObject* vtkNotUsed(sourceRepresentation)/*=nullptr*/,
-    vtkDataObject* vtkNotUsed(targetRepresentation)/*=nullptr*/)
+unsigned int vtkBinaryLabelmapToClosedSurfaceConversionRule::GetConversionCost(vtkDataObject* vtkNotUsed(sourceRepresentation) /*=nullptr*/,
+                                                                               vtkDataObject* vtkNotUsed(targetRepresentation) /*=nullptr*/)
 {
   // Rough input-independent guess (ms)
   return 500;
@@ -244,7 +243,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
   // Remove "ImageScalars" array because having a scalar in a model would get that
   // scalar array displayed automatically (instead of model node color) when the mesh is loaded.
   vtkPointData* pointData = closedSurfacePolyData->GetPointData();
-  if (pointData!=nullptr)
+  if (pointData != nullptr)
   {
     pointData->RemoveArray("ImageScalars");
   }
@@ -254,7 +253,8 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* segment
 
 //----------------------------------------------------------------------------
 bool vtkBinaryLabelmapToClosedSurfaceConversionRule::CreateClosedSurface(vtkOrientedImageData* orientedBinaryLabelmap,
-  vtkPolyData* closedSurfacePolyData, std::vector<int> labelValues)
+                                                                         vtkPolyData* closedSurfacePolyData,
+                                                                         std::vector<int> labelValues)
 {
   if (!closedSurfacePolyData)
   {
@@ -494,7 +494,7 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::PostConvert(vtkSegmentation
 }
 
 //----------------------------------------------------------------------------
-template<class ImageScalarType>
+template <class ImageScalarType>
 void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool& paddingNecessary)
 {
   if (!binaryLabelmap)
@@ -504,9 +504,9 @@ void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool& paddi
   }
 
   // Check if there are non-zero voxels in the labelmap
-  int extent[6] = {0,-1,0,-1,0,-1};
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
   binaryLabelmap->GetExtent(extent);
-  int dimensions[3] = {0, 0, 0};
+  int dimensions[3] = { 0, 0, 0 };
   binaryLabelmap->GetDimensions(dimensions);
 
   ImageScalarType* imagePtr = (ImageScalarType*)binaryLabelmap->GetScalarPointerForExtent(extent);
@@ -517,7 +517,7 @@ void IsLabelmapPaddingNecessaryGeneric(vtkImageData* binaryLabelmap, bool& paddi
     for (long j = 0; j < dimensions[1]; ++j)
     {
       long offset1 = j * dimensions[0] + offset2;
-      for (long i=0; i<dimensions[0]; ++i)
+      for (long i = 0; i < dimensions[0]; ++i)
       {
         if (i != 0 && i != dimensions[0] - 1    //
             && j != 0 && j != dimensions[1] - 1 //
@@ -554,10 +554,8 @@ bool vtkBinaryLabelmapToClosedSurfaceConversionRule::IsLabelmapPaddingNecessary(
 
   switch (binaryLabelmap->GetScalarType())
   {
-    vtkTemplateMacro(IsLabelmapPaddingNecessaryGeneric<VTK_TT>( binaryLabelmap, paddingNecessary ));
-    default:
-      vtkErrorWithObjectMacro(binaryLabelmap, "IsLabelmapPaddingNecessary: Unknown image scalar type!");
-      return false;
+    vtkTemplateMacro(IsLabelmapPaddingNecessaryGeneric<VTK_TT>(binaryLabelmap, paddingNecessary));
+    default: vtkErrorWithObjectMacro(binaryLabelmap, "IsLabelmapPaddingNecessary: Unknown image scalar type!"); return false;
   }
 
   return paddingNecessary;

@@ -9,8 +9,7 @@ class vtkPlanes;
 class vtkAbstractTransform;
 class vtkMRMLScene;
 
-class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationROINode
-  : public vtkMRMLAnnotationLinesNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationROINode : public vtkMRMLAnnotationLinesNode
 {
 public:
   static vtkMRMLAnnotationROINode* New();
@@ -26,13 +25,13 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
   /// Description:
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "AnnotationROI";}
+  const char* GetNodeTagName() override { return "AnnotationROI"; }
 
-  const char* GetIcon() override {return ":/Icons/AnnotationROI.png";}
+  const char* GetIcon() override { return ":/Icons/AnnotationROI.png"; }
 
   // Description:
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Description:
   /// Write this node's information to a MRML file in XML format.
@@ -46,16 +45,13 @@ public:
 
   /// Description:
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   ///
   /// Indicates if the ROI is updated interactively
   vtkBooleanMacro(InteractiveMode, int);
   vtkGetMacro(InteractiveMode, int);
   vtkSetMacro(InteractiveMode, int);
-
 
   ///
   /// Indicates if the ROI box is inside out
@@ -73,12 +69,12 @@ public:
   int GetROIAnnotationVisibility();
   void SetROIAnnotationVisibility(int flag);
 
-//  int SetROI(vtkIdType line1Id, int sel, int vis);
+  //  int SetROI(vtkIdType line1Id, int sel, int vis);
 
   /// Description:
   /// get/set the point representation color
   double* GetPointColor();
-  void SetPointColor( double initColor[3]);
+  void SetPointColor(double initColor[3]);
 
   /// Description:
   /// get/set the line representation color
@@ -107,18 +103,15 @@ public:
   /// void SetXYZ(double X, double Y, double Z);
   /// void SetXYZ(double* XYZ);
   /// vtkGetVectorMacro(XYZ,double,3);
-  //double* GetXYZ() {return this->GetControlPointCoordinates(0);}
+  // double* GetXYZ() {return this->GetControlPointCoordinates(0);}
   /// returns true and control point coordinate 0 on success, false and 0,0,0 on failure
   bool GetXYZ(double point[3]);
-  int SetXYZ(double newControl[3])
-  {
-    return this->SetControlPoint(0, newControl);
-  }
+  int SetXYZ(double newControl[3]) { return this->SetControlPoint(0, newControl); }
 
   int SetXYZ(double nC1, double nC2, double nC3)
   {
-    double newControl[3] = {nC1,nC2,nC3};
-    return this->SetXYZ(newControl) ;
+    double newControl[3] = { nC1, nC2, nC3 };
+    return this->SetXYZ(newControl);
   }
 
   /// Get/Set for radius of the ROI in RAS coordinates
@@ -128,17 +121,13 @@ public:
   /// vtkGetVectorMacro(RadiusXYZ,double,3);
   bool GetRadiusXYZ(double point[3]);
 
-  int SetRadiusXYZ(double newControl[3])
-  {
-    return this->SetControlPoint(1, newControl);
-  }
+  int SetRadiusXYZ(double newControl[3]) { return this->SetControlPoint(1, newControl); }
 
   int SetRadiusXYZ(double nC1, double nC2, double nC3)
   {
-    double newControl[3] = {nC1,nC2,nC3};
+    double newControl[3] = { nC1, nC2, nC3 };
     return this->SetRadiusXYZ(newControl);
   }
-
 
   /// Get/Set for LabelText
   vtkSetStringMacro(LabelText);
@@ -161,10 +150,9 @@ public:
 
   enum
   {
-      ROINodeAddedEvent = 0,
-      ValueModifiedEvent,
+    ROINodeAddedEvent = 0,
+    ValueModifiedEvent,
   };
-
 
 protected:
   vtkMRMLAnnotationROINode();
@@ -176,7 +164,7 @@ protected:
 
   int SetControlPoint(int id, double newControl[3]);
 
-  int AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);
+  int AddControlPoint(double newControl[3], int selectedFlag, int visibleFlag);
 
   /// Control the orientation of the normals
   int InsideOut;
@@ -187,7 +175,6 @@ protected:
 
   /// The ID of the volume associated with the ROI
   char* VolumeNodeID;
-
 };
 
 #endif

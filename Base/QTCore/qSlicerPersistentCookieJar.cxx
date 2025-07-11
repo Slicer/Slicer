@@ -32,8 +32,10 @@
 class qSlicerPersistentCookieJarPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerPersistentCookieJar);
+
 protected:
   qSlicerPersistentCookieJar* const q_ptr;
+
 public:
   qSlicerPersistentCookieJarPrivate(qSlicerPersistentCookieJar& object);
 
@@ -46,8 +48,8 @@ public:
 // qSlicerPersistentCookieJarPrivate methods
 
 // --------------------------------------------------------------------------
-qSlicerPersistentCookieJarPrivate::
-qSlicerPersistentCookieJarPrivate(qSlicerPersistentCookieJar& object) : q_ptr(&object)
+qSlicerPersistentCookieJarPrivate::qSlicerPersistentCookieJarPrivate(qSlicerPersistentCookieJar& object)
+  : q_ptr(&object)
 {
 }
 
@@ -65,7 +67,8 @@ void qSlicerPersistentCookieJarPrivate::init()
 
 //-----------------------------------------------------------------------------
 qSlicerPersistentCookieJar::qSlicerPersistentCookieJar(QObject* parent)
-  : Superclass(parent), d_ptr(new qSlicerPersistentCookieJarPrivate(*this))
+  : Superclass(parent)
+  , d_ptr(new qSlicerPersistentCookieJarPrivate(*this))
 {
   Q_D(qSlicerPersistentCookieJar);
   d->init();
@@ -89,7 +92,7 @@ void qSlicerPersistentCookieJar::setFilePath(const QString& filePath)
 }
 
 //-----------------------------------------------------------------------------
-QList<QNetworkCookie> qSlicerPersistentCookieJar::cookiesForUrl( const QUrl& url) const
+QList<QNetworkCookie> qSlicerPersistentCookieJar::cookiesForUrl(const QUrl& url) const
 {
   Q_D(const qSlicerPersistentCookieJar);
   QSettings settings(d->FilePath, QSettings::IniFormat);
@@ -104,8 +107,7 @@ QList<QNetworkCookie> qSlicerPersistentCookieJar::cookiesForUrl( const QUrl& url
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerPersistentCookieJar::
-setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, const QUrl& url)
+bool qSlicerPersistentCookieJar::setCookiesFromUrl(const QList<QNetworkCookie>& cookieList, const QUrl& url)
 {
   Q_D(qSlicerPersistentCookieJar);
   QSettings settings(d->FilePath, QSettings::IniFormat);

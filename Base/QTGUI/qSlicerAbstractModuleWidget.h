@@ -22,7 +22,7 @@
 #define __qSlicerAbstractModuleWidget_h
 
 #if defined(_MSC_VER)
-#pragma warning( disable:4250 )
+# pragma warning(disable : 4250)
 #endif
 
 // CTK includes
@@ -37,10 +37,12 @@ class vtkMRMLNode;
 /// Base class of all the Slicer module widgets. The widget is added in the module panels.
 /// Deriving from qSlicerWidget, it inherits the mrmlScene()/setMRMLScene() methods.
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerAbstractModuleWidget
-  :public qSlicerWidget, public qSlicerAbstractModuleRepresentation
+  : public qSlicerWidget
+  , public qSlicerAbstractModuleRepresentation
 {
   Q_OBJECT
   Q_PROPERTY(bool isEntered READ isEntered);
+
 public:
   /// Constructor
   /// \sa QWidget

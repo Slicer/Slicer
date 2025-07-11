@@ -17,10 +17,10 @@ QWidget* qMRMLSliceVerticalControllerWidgetPlugin::createWidget(QWidget* _parent
 // --------------------------------------------------------------------------
 QString qMRMLSliceVerticalControllerWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSliceVerticalControllerWidget\" name=\"MRMLSliceVerticalControllerWidget\">\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSliceVerticalControllerWidget\" name=\"MRMLSliceVerticalControllerWidget\">\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

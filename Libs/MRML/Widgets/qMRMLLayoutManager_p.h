@@ -72,12 +72,12 @@ class vtkMRMLSliceNode;
 class vtkXMLDataElement;
 
 //-----------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLLayoutManagerPrivate
-  : public QObject
+class QMRML_WIDGETS_EXPORT qMRMLLayoutManagerPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLLayoutManager);
+
 protected:
   qMRMLLayoutManager* const q_ptr;
 
@@ -93,8 +93,8 @@ public:
   void setActiveMRMLPlotViewNode(vtkMRMLPlotViewNode* node);
 
   /// Enable/disable paint event associated with the TargetWidget
-  //bool startUpdateLayout();
-  //void endUpdateLayout(bool updateEnabled);
+  // bool startUpdateLayout();
+  // void endUpdateLayout(bool updateEnabled);
 
   /// Refresh the viewport with the current layout from the layout
   /// layout node. Empty the view if there is no layout node.
@@ -113,8 +113,8 @@ public:
   /// identified by \a sliceViewName
   qMRMLSliceWidget* sliceWidget(vtkMRMLSliceNode* node) const;
 
-  vtkMRMLNode* viewNode(QWidget* ) const;
-  QWidget* viewWidget(vtkMRMLNode* ) const;
+  vtkMRMLNode* viewNode(QWidget*) const;
+  QWidget* viewWidget(vtkMRMLNode*) const;
 
 public slots:
   /// Handle MRML scene event
@@ -137,7 +137,6 @@ public slots:
   void updateSegmentationControls();
 
 public:
-
   struct ViewportInfo
   {
     QWidget* Window{ nullptr };
@@ -145,22 +144,21 @@ public:
     QByteArray LastSavedWindowGeometry;
   };
 
-  bool                    Enabled;
-  vtkMRMLScene*           MRMLScene;
-  vtkMRMLLayoutNode*      MRMLLayoutNode;
-  vtkMRMLLayoutLogic*     MRMLLayoutLogic;
-  vtkMRMLViewNode*        ActiveMRMLThreeDViewNode;
-  vtkMRMLTableViewNode*   ActiveMRMLTableViewNode;
-  vtkMRMLPlotViewNode*    ActiveMRMLPlotViewNode;
+  bool Enabled;
+  vtkMRMLScene* MRMLScene;
+  vtkMRMLLayoutNode* MRMLLayoutNode;
+  vtkMRMLLayoutLogic* MRMLLayoutLogic;
+  vtkMRMLViewNode* ActiveMRMLThreeDViewNode;
+  vtkMRMLTableViewNode* ActiveMRMLTableViewNode;
+  vtkMRMLPlotViewNode* ActiveMRMLPlotViewNode;
   /// Top-level windows created and managed by this class that host additional viewports
   /// (outside the main application window).
-  QMap<QString, ViewportInfo>  DetachedViewports;
+  QMap<QString, ViewportInfo> DetachedViewports;
   int AllViewsPauseRenderCount{ 0 };
 };
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLLayoutThreeDViewFactory
-  : public qMRMLLayoutViewFactory
+class QMRML_WIDGETS_EXPORT qMRMLLayoutThreeDViewFactory : public qMRMLLayoutViewFactory
 {
   Q_OBJECT
 public:
@@ -180,8 +178,7 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLLayoutTableViewFactory
-  : public qMRMLLayoutViewFactory
+class QMRML_WIDGETS_EXPORT qMRMLLayoutTableViewFactory : public qMRMLLayoutViewFactory
 {
   Q_OBJECT
 public:
@@ -195,8 +192,7 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLLayoutPlotViewFactory
-  : public qMRMLLayoutViewFactory
+class QMRML_WIDGETS_EXPORT qMRMLLayoutPlotViewFactory : public qMRMLLayoutViewFactory
 {
   Q_OBJECT
 public:
@@ -214,8 +210,7 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLLayoutSliceViewFactory
-  : public qMRMLLayoutViewFactory
+class QMRML_WIDGETS_EXPORT qMRMLLayoutSliceViewFactory : public qMRMLLayoutViewFactory
 {
   Q_OBJECT
 public:

@@ -36,9 +36,9 @@ vtkMRMLNodeNewMacro(vtkMRMLMarkupsAngleNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsAngleNode::vtkMRMLMarkupsAngleNode()
-  : OrientationRotationAxis{0.0, 0.0, 1.0}
+  : OrientationRotationAxis{ 0.0, 0.0, 1.0 }
   , AngleMeasurementMode(Minimal)
-  {
+{
   this->MaximumNumberOfControlPoints = 3;
   this->RequiredNumberOfControlPoints = 3;
 
@@ -53,7 +53,7 @@ vtkMRMLMarkupsAngleNode::vtkMRMLMarkupsAngleNode()
   angleMeasurement->SetName("angle");
   angleMeasurement->SetInputMRMLNode(this);
   this->Measurements->AddItem(angleMeasurement);
-  }
+}
 
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsAngleNode::~vtkMRMLMarkupsAngleNode() = default;
@@ -61,7 +61,7 @@ vtkMRMLMarkupsAngleNode::~vtkMRMLMarkupsAngleNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsAngleNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  Superclass::WriteXML(of, nIndent);
 
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLEnumMacro(angleMeasurementMode, AngleMeasurementMode);
@@ -81,7 +81,7 @@ void vtkMRMLMarkupsAngleNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsAngleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLMarkupsAngleNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -226,7 +226,7 @@ double vtkMRMLMarkupsAngleNode::GetAngleDegrees()
   }
   else
   {
-    double vector1_vector2_Cross[3] = {0.0, 0.0, 0.0};
+    double vector1_vector2_Cross[3] = { 0.0, 0.0, 0.0 };
     vtkMath::Cross(vector1, vector2, vector1_vector2_Cross);
     if (vtkMath::Dot(vector1_vector2_Cross, this->OrientationRotationAxis) >= 0)
     {

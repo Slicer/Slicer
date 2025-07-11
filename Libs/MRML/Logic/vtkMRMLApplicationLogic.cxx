@@ -72,7 +72,7 @@
 
 namespace
 {
-  const char FONTS_DIR[] = "Fonts";
+const char FONTS_DIR[] = "Fonts";
 }
 
 //----------------------------------------------------------------------------
@@ -131,23 +131,22 @@ void vtkMRMLApplicationLogic::vtkInternal::PropagateVolumeSelection(int layer, i
 
   for (int i = 0; i < nnodes; i++)
   {
-    cnode = vtkMRMLSliceCompositeNode::SafeDownCast (
-      this->External->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLSliceCompositeNode" ) );
+    cnode = vtkMRMLSliceCompositeNode::SafeDownCast(this->External->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLSliceCompositeNode"));
     if (!cnode->GetDoPropagateVolumeSelection())
     {
       continue;
     }
     if (layer & vtkMRMLApplicationLogic::BackgroundLayer)
     {
-      cnode->SetBackgroundVolumeID( ID );
+      cnode->SetBackgroundVolumeID(ID);
     }
     if (layer & vtkMRMLApplicationLogic::ForegroundLayer)
     {
-      cnode->SetForegroundVolumeID( secondID );
+      cnode->SetForegroundVolumeID(secondID);
     }
     if (layer & vtkMRMLApplicationLogic::LabelLayer)
     {
-      cnode->SetLabelVolumeID( labelID );
+      cnode->SetLabelVolumeID(labelID);
     }
   }
   if (fit)
@@ -222,8 +221,7 @@ void vtkMRMLApplicationLogic::SetSliceLogics(vtkCollection* sliceLogics)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceLogic* vtkMRMLApplicationLogic::
-GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
+vtkMRMLSliceLogic* vtkMRMLApplicationLogic::GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
 {
   if (!sliceNode || !this->Internal->SliceLogics)
   {
@@ -234,8 +232,7 @@ GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->SliceLogics;
 
-  for (logics->InitTraversal(it);
-      (logic=vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (logics->InitTraversal(it); (logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
   {
     if (logic->GetSliceNode() == sliceNode)
     {
@@ -249,8 +246,7 @@ GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceLogic* vtkMRMLApplicationLogic::
-GetSliceLogicByLayoutName(const char* layoutName) const
+vtkMRMLSliceLogic* vtkMRMLApplicationLogic::GetSliceLogicByLayoutName(const char* layoutName) const
 {
   if (!layoutName || !this->Internal->SliceLogics)
   {
@@ -261,12 +257,11 @@ GetSliceLogicByLayoutName(const char* layoutName) const
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->SliceLogics;
 
-  for (logics->InitTraversal(it);
-      (logic=vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (logics->InitTraversal(it); (logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
   {
     if (logic->GetSliceNode())
     {
-      if (!strcmp( logic->GetSliceNode()->GetLayoutName(), layoutName))
+      if (!strcmp(logic->GetSliceNode()->GetLayoutName(), layoutName))
       {
         return logic;
       }
@@ -277,8 +272,7 @@ GetSliceLogicByLayoutName(const char* layoutName) const
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLSliceLogic* vtkMRMLApplicationLogic::
-GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode* displayNode) const
+vtkMRMLSliceLogic* vtkMRMLApplicationLogic::GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode* displayNode) const
 {
   if (!displayNode || !this->Internal->SliceLogics)
   {
@@ -289,8 +283,7 @@ GetSliceLogicByModelDisplayNode(vtkMRMLModelDisplayNode* displayNode) const
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->SliceLogics;
 
-  for (logics->InitTraversal(it);
-    (logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (logics->InitTraversal(it); (logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
   {
     if (logic->GetSliceModelDisplayNode() == displayNode)
     {
@@ -319,8 +312,7 @@ vtkCollection* vtkMRMLApplicationLogic::GetViewLogics() const
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLViewLogic* vtkMRMLApplicationLogic::
-GetViewLogic(vtkMRMLViewNode* viewNode) const
+vtkMRMLViewLogic* vtkMRMLApplicationLogic::GetViewLogic(vtkMRMLViewNode* viewNode) const
 {
   if (!viewNode || !this->Internal->ViewLogics)
   {
@@ -331,8 +323,7 @@ GetViewLogic(vtkMRMLViewNode* viewNode) const
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->ViewLogics;
 
-  for (logics->InitTraversal(it);
-      (logic=vtkMRMLViewLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (logics->InitTraversal(it); (logic = vtkMRMLViewLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
   {
     if (logic->GetViewNode() == viewNode)
     {
@@ -346,8 +337,7 @@ GetViewLogic(vtkMRMLViewNode* viewNode) const
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLViewLogic* vtkMRMLApplicationLogic::
-GetViewLogicByLayoutName(const char* layoutName) const
+vtkMRMLViewLogic* vtkMRMLApplicationLogic::GetViewLogicByLayoutName(const char* layoutName) const
 {
   if (!layoutName || !this->Internal->ViewLogics)
   {
@@ -358,12 +348,11 @@ GetViewLogicByLayoutName(const char* layoutName) const
   vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->ViewLogics;
 
-  for (logics->InitTraversal(it);
-      (logic=vtkMRMLViewLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (logics->InitTraversal(it); (logic = vtkMRMLViewLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
   {
     if (logic->GetViewNode())
     {
-      if (!strcmp( logic->GetViewNode()->GetLayoutName(), layoutName))
+      if (!strcmp(logic->GetViewNode()->GetLayoutName(), layoutName))
       {
         return logic;
       }
@@ -448,8 +437,7 @@ void vtkMRMLApplicationLogic::SetInteractionNode(vtkMRMLInteractionNode* interac
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::PropagateVolumeSelection(int fit)
 {
-  this->PropagateVolumeSelection(
-        BackgroundLayer | ForegroundLayer | LabelLayer, fit);
+  this->PropagateVolumeSelection(BackgroundLayer | ForegroundLayer | LabelLayer, fit);
 }
 
 //----------------------------------------------------------------------------
@@ -489,13 +477,12 @@ void vtkMRMLApplicationLogic::PropagateTableSelection()
   const int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLTableViewNode");
   for (int i = 0; i < nnodes; i++)
   {
-    vtkMRMLTableViewNode* tnode = vtkMRMLTableViewNode::SafeDownCast (
-      this->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLTableViewNode" ) );
+    vtkMRMLTableViewNode* tnode = vtkMRMLTableViewNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLTableViewNode"));
     if (!tnode->GetDoPropagateTableSelection())
     {
       continue;
     }
-    tnode->SetTableNodeID( tableId );
+    tnode->SetTableNodeID(tableId);
   }
 }
 
@@ -512,8 +499,7 @@ void vtkMRMLApplicationLogic::PropagatePlotChartSelection()
   const int nnodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLPlotViewNode");
   for (int i = 0; i < nnodes; i++)
   {
-    vtkMRMLPlotViewNode* pnode = vtkMRMLPlotViewNode::SafeDownCast (
-      this->GetMRMLScene()->GetNthNodeByClass( i, "vtkMRMLPlotViewNode" ) );
+    vtkMRMLPlotViewNode* pnode = vtkMRMLPlotViewNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLPlotViewNode"));
     if (!pnode->GetDoPropagatePlotChartSelection())
     {
       continue;
@@ -531,14 +517,12 @@ void vtkMRMLApplicationLogic::FitSliceToContent(bool all, bool onlyIfPropagateVo
   }
   vtkMRMLSliceLogic* sliceLogic = nullptr;
   vtkCollectionSimpleIterator it;
-  for (this->Internal->SliceLogics->InitTraversal(it);
-      (sliceLogic = vtkMRMLSliceLogic::SafeDownCast(
-        this->Internal->SliceLogics->GetNextItemAsObject(it)));)
+  for (this->Internal->SliceLogics->InitTraversal(it); (sliceLogic = vtkMRMLSliceLogic::SafeDownCast(this->Internal->SliceLogics->GetNextItemAsObject(it)));)
   {
     if (onlyIfPropagateVolumeSelectionAllowed)
     {
       vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
-      if (sliceCompositeNode!=nullptr && !sliceCompositeNode->GetDoPropagateVolumeSelection())
+      if (sliceCompositeNode != nullptr && !sliceCompositeNode->GetDoPropagateVolumeSelection())
       {
         // propagate volume selection is disabled, skip this slice
         continue;
@@ -597,7 +581,7 @@ std::string vtkMRMLApplicationLogic::UnpackSlicerDataBundle(const char* sdbFileP
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char* sdbFilePath, const char* temporaryDirectory, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   if (!this->GetMRMLScene())
   {
@@ -620,14 +604,13 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char* sdbFilePath, cons
   {
     if (userMessages)
     {
-      userMessages->AddMessage(vtkCommand::ErrorEvent, "Could not unpack file '" + std::string(sdbFilePath)
-       + "' into '" + std::string(temporaryDirectory) + "'");
+      userMessages->AddMessage(vtkCommand::ErrorEvent, "Could not unpack file '" + std::string(sdbFilePath) + "' into '" + std::string(temporaryDirectory) + "'");
     }
     vtkErrorMacro("Could not unpack mrml scene");
     return false;
   }
 
-  this->GetMRMLScene()->SetURL( mrmlFile.c_str() );
+  this->GetMRMLScene()->SetURL(mrmlFile.c_str());
   int success = this->GetMRMLScene()->Connect(userMessages);
   if (!success)
   {
@@ -644,8 +627,7 @@ std::string vtkMRMLApplicationLogic::PercentEncode(std::string s)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot,
-  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char* sdbDir, vtkImageData* screenShot, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   // Overview:
   // - confirm the arguments are valid and create directories if needed
@@ -673,44 +655,42 @@ std::string vtkMRMLApplicationLogic::CreateUniqueFileName(const std::string& fil
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
-                                                      const std::vector<std::string>& directories)
+int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene, const std::vector<std::string>& directories)
 {
 
   // build up the vector
   std::vector<std::string> filesVector;
   std::vector<std::string> filesToLoad;
-  //filesVector.push_back(""); // for relative path
+  // filesVector.push_back(""); // for relative path
 
-// Didn't port this next block of code yet.  Would need to add a
-//   UserParameterSetsPath to the object and some window
-//
-//   // add the list of dirs set from the application
-//   if (this->UserColorFilePaths != nullptr)
-//     {
-//     vtkDebugMacro("\nFindColorFiles: got user color file paths = " << this->UserColorFilePaths);
-//     // parse out the list, breaking at delimiter strings
-// #ifdef _WIN32
-//     const char* delim = ";";
-// #else
-//     const char* delim = ":";
-// #endif
-//     char* ptr = strtok(this->UserColorFilePaths, delim);
-//     while (ptr != nullptr)
-//       {
-//       std::string dir = std::string(ptr);
-//       vtkDebugMacro("\nFindColorFiles: Adding user dir " << dir.c_str() << " to the directories to check");
-//       DirectoriesToCheck.push_back(dir);
-//       ptr = strtok(nullptr, delim);
-//       }
-//     } else { vtkDebugMacro("\nFindColorFiles: oops, the user color file paths aren't set!"); }
-
+  // Didn't port this next block of code yet.  Would need to add a
+  //   UserParameterSetsPath to the object and some window
+  //
+  //   // add the list of dirs set from the application
+  //   if (this->UserColorFilePaths != nullptr)
+  //     {
+  //     vtkDebugMacro("\nFindColorFiles: got user color file paths = " << this->UserColorFilePaths);
+  //     // parse out the list, breaking at delimiter strings
+  // #ifdef _WIN32
+  //     const char* delim = ";";
+  // #else
+  //     const char* delim = ":";
+  // #endif
+  //     char* ptr = strtok(this->UserColorFilePaths, delim);
+  //     while (ptr != nullptr)
+  //       {
+  //       std::string dir = std::string(ptr);
+  //       vtkDebugMacro("\nFindColorFiles: Adding user dir " << dir.c_str() << " to the directories to check");
+  //       DirectoriesToCheck.push_back(dir);
+  //       ptr = strtok(nullptr, delim);
+  //       }
+  //     } else { vtkDebugMacro("\nFindColorFiles: oops, the user color file paths aren't set!"); }
 
   // Get the list of parameter sets in these dir
   for (unsigned int d = 0; d < directories.size(); d++)
   {
     std::string dirString = directories[d];
-    //vtkDebugMacro("\nLoadDefaultParameterSets: checking for parameter sets in dir " << d << " = " << dirString.c_str());
+    // vtkDebugMacro("\nLoadDefaultParameterSets: checking for parameter sets in dir " << d << " = " << dirString.c_str());
 
     filesVector.clear();
     filesVector.push_back(dirString);
@@ -720,7 +700,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
     WIN32_FIND_DATA findData;
     HANDLE fileHandle;
     int flag = 1;
-    std::string search ("*.*");
+    std::string search("*.*");
     dirString += "/";
     search = dirString + search;
 
@@ -735,7 +715,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 #else
     DIR* dp;
     struct dirent* dirp;
-    if ((dp  = opendir(dirString.c_str())) == nullptr)
+    if ((dp = opendir(dirString.c_str())) == nullptr)
     {
       vtkGenericWarningMacro("Error(" << errno << ") opening " << dirString.c_str());
     }
@@ -751,12 +731,12 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
         int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
         if (fileType == vtksys::SystemTools::FileTypeText)
         {
-          //vtkDebugMacro("\nAdding " << fileToCheck.c_str() << " to list of potential parameter sets. Type = " << fileType);
+          // vtkDebugMacro("\nAdding " << fileToCheck.c_str() << " to list of potential parameter sets. Type = " << fileType);
           filesToLoad.push_back(fileToCheck);
         }
         else
         {
-          //vtkDebugMacro("\nSkipping potential parameter set " << fileToCheck.c_str() << ", file type = " << fileType);
+          // vtkDebugMacro("\nSkipping potential parameter set " << fileToCheck.c_str() << ", file type = " << fileType);
         }
         // take this file off so that can build the next file name
         filesVector.pop_back();
@@ -783,7 +763,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
   std::vector<std::string>::iterator fit;
   for (fit = filesToLoad.begin(); fit != filesToLoad.end(); ++fit)
   {
-    scene->SetURL( fit->c_str() );
+    scene->SetURL(fit->c_str());
     scene->Import();
   }
 
@@ -795,13 +775,10 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene* scene,
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLApplicationLogic
-::InvokeRequest::InvokeRequest() = default;
+vtkMRMLApplicationLogic::InvokeRequest::InvokeRequest() = default;
 
 //----------------------------------------------------------------------------
-void vtkMRMLApplicationLogic
-::InvokeEventWithDelay(unsigned int delayInMs, vtkObject* caller, unsigned long eventID,
-              void* callData)
+void vtkMRMLApplicationLogic::InvokeEventWithDelay(unsigned int delayInMs, vtkObject* caller, unsigned long eventID, void* callData)
 {
   InvokeRequest request;
   request.Delay = delayInMs;
@@ -820,19 +797,19 @@ const char* vtkMRMLApplicationLogic::GetTemporaryPath()
 //----------------------------------------------------------------------------
 void vtkMRMLApplicationLogic::SetTemporaryPath(const char* path)
 {
-    if (path == nullptr)
-    {
-      this->Internal->TemporaryPath.clear();
-    }
-    else if (this->Internal->TemporaryPath == std::string(path))
-    {
-      return;
-    }
-    else
-    {
-      this->Internal->TemporaryPath = std::string(path);
-    }
-    this->Modified();
+  if (path == nullptr)
+  {
+    this->Internal->TemporaryPath.clear();
+  }
+  else if (this->Internal->TemporaryPath == std::string(path))
+  {
+    return;
+  }
+  else
+  {
+    this->Internal->TemporaryPath = std::string(path);
+  }
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -891,8 +868,7 @@ void vtkMRMLApplicationLogic::EditNode(vtkMRMLNode* node)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLApplicationLogic::SetModuleLogic(const char* moduleName,
-                                             vtkMRMLAbstractLogic* moduleLogic)
+void vtkMRMLApplicationLogic::SetModuleLogic(const char* moduleName, vtkMRMLAbstractLogic* moduleLogic)
 {
   if (!moduleName)
   {
@@ -918,7 +894,7 @@ vtkMRMLAbstractLogic* vtkMRMLApplicationLogic::GetModuleLogic(const char* module
     vtkErrorMacro("GetModuleLogic: invalid module name");
     return nullptr;
   }
-  //Check that the logic is registered.
+  // Check that the logic is registered.
   if (this->Internal->ModuleLogicMap.count(moduleName) == 0)
   {
     return nullptr;
@@ -963,8 +939,7 @@ void vtkMRMLApplicationLogic::OnMRMLSceneEndRestore()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled(
-  vtkMRMLApplicationLogic::IntersectingSlicesOperation operation, bool enabled)
+void vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesOperation operation, bool enabled)
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
@@ -973,23 +948,18 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled(
     return;
   }
 
-  vtkSmartPointer<vtkCollection> sliceDisplayNodes =
-    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
+  vtkSmartPointer<vtkCollection> sliceDisplayNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
   if (sliceDisplayNodes.GetPointer())
   {
     vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
     vtkCollectionSimpleIterator it;
-    for (sliceDisplayNodes->InitTraversal(it);
-      (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+    for (sliceDisplayNodes->InitTraversal(it); (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
     {
       bool wasModified = false;
       switch (operation)
       {
-        case vtkMRMLApplicationLogic::IntersectingSlicesVisibility:
-          sliceDisplayNode->SetIntersectingSlicesVisibility(enabled);
-          break;
-        case vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive:
-          [[fallthrough]];
+        case vtkMRMLApplicationLogic::IntersectingSlicesVisibility: sliceDisplayNode->SetIntersectingSlicesVisibility(enabled); break;
+        case vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive: [[fallthrough]];
         case vtkMRMLApplicationLogic::IntersectingSlicesInteractive:
           // Since the vtkMRMLSliceIntersectionWidget uses the same interactive representation
           // for either slice intersection of slice thick slab offset interactive updates, until
@@ -1000,26 +970,20 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled(
           sliceDisplayNode->SetIntersectingThickSlabInteractive(enabled);
           sliceDisplayNode->EndModify(wasModified);
           break;
-        case vtkMRMLApplicationLogic::IntersectingSlicesTranslation:
-          sliceDisplayNode->SetIntersectingSlicesTranslationEnabled(enabled);
-          break;
-        case vtkMRMLApplicationLogic::IntersectingSlicesRotation:
-          sliceDisplayNode->SetIntersectingSlicesRotationEnabled(enabled);
-          break;
+        case vtkMRMLApplicationLogic::IntersectingSlicesTranslation: sliceDisplayNode->SetIntersectingSlicesTranslationEnabled(enabled); break;
+        case vtkMRMLApplicationLogic::IntersectingSlicesRotation: sliceDisplayNode->SetIntersectingSlicesRotationEnabled(enabled); break;
       }
     }
   }
 
   // The vtkMRMLSliceIntersectionWidget should observe slice display node modifications
   // but as a workaround for now, trigger update by modifying all the slice nodes.
-  vtkSmartPointer<vtkCollection> sliceNodes =
-    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
+  vtkSmartPointer<vtkCollection> sliceNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
   if (sliceNodes.GetPointer())
   {
     vtkMRMLSliceNode* sliceNode = nullptr;
     vtkCollectionSimpleIterator it;
-    for (sliceNodes->InitTraversal(it);
-      (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+    for (sliceNodes->InitTraversal(it); (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
     {
       sliceNode->Modified();
     }
@@ -1027,8 +991,7 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled(
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled(
-  vtkMRMLApplicationLogic::IntersectingSlicesOperation operation)
+bool vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesOperation operation)
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
@@ -1036,15 +999,13 @@ bool vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled(
     vtkWarningMacro("vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled failed: invalid scene");
     return false;
   }
-  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(
-    scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
   if (!sliceDisplayNode)
   {
     // No slice display nodes are in the scene yet, use the scene default node instead.
     // Developers can set the default appearance of intersecting slices by modifying the
     // default slice display node.
-    vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode =
-      vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
+    vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
     if (!defaultSliceDisplayNode.GetPointer())
     {
       defaultSliceDisplayNode = vtkSmartPointer<vtkMRMLSliceDisplayNode>::New();
@@ -1060,16 +1021,11 @@ bool vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled(
 
   switch (operation)
   {
-    case vtkMRMLApplicationLogic::IntersectingSlicesVisibility:
-      return sliceDisplayNode->GetIntersectingSlicesVisibility();
-    case vtkMRMLApplicationLogic::IntersectingSlicesInteractive:
-      return sliceDisplayNode->GetIntersectingSlicesInteractive();
-    case vtkMRMLApplicationLogic::IntersectingSlicesTranslation:
-      return sliceDisplayNode->GetIntersectingSlicesTranslationEnabled();
-    case vtkMRMLApplicationLogic::IntersectingSlicesRotation:
-      return sliceDisplayNode->GetIntersectingSlicesRotationEnabled();
-    case vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive:
-      return sliceDisplayNode->GetIntersectingThickSlabInteractive();
+    case vtkMRMLApplicationLogic::IntersectingSlicesVisibility: return sliceDisplayNode->GetIntersectingSlicesVisibility();
+    case vtkMRMLApplicationLogic::IntersectingSlicesInteractive: return sliceDisplayNode->GetIntersectingSlicesInteractive();
+    case vtkMRMLApplicationLogic::IntersectingSlicesTranslation: return sliceDisplayNode->GetIntersectingSlicesTranslationEnabled();
+    case vtkMRMLApplicationLogic::IntersectingSlicesRotation: return sliceDisplayNode->GetIntersectingSlicesRotationEnabled();
+    case vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive: return sliceDisplayNode->GetIntersectingThickSlabInteractive();
   }
 
   return false;
@@ -1085,14 +1041,12 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesIntersectionMode(int mode)
     return;
   }
 
-  vtkSmartPointer<vtkCollection> sliceDisplayNodes =
-    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
+  vtkSmartPointer<vtkCollection> sliceDisplayNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
   if (sliceDisplayNodes.GetPointer())
   {
     vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
     vtkCollectionSimpleIterator it;
-    for (sliceDisplayNodes->InitTraversal(it);
-      (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+    for (sliceDisplayNodes->InitTraversal(it); (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
     {
       sliceDisplayNode->SetIntersectingSlicesIntersectionMode(mode);
     }
@@ -1100,14 +1054,12 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesIntersectionMode(int mode)
 
   // The vtkMRMLSliceIntersectionWidget should observe slice display node modifications
   // but as a workaround for now, trigger update by modifying all the slice nodes.
-  vtkSmartPointer<vtkCollection> sliceNodes =
-    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
+  vtkSmartPointer<vtkCollection> sliceNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
   if (sliceNodes.GetPointer())
   {
     vtkMRMLSliceNode* sliceNode = nullptr;
     vtkCollectionSimpleIterator it;
-    for (sliceNodes->InitTraversal(it);
-      (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+    for (sliceNodes->InitTraversal(it); (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
     {
       sliceNode->Modified();
     }
@@ -1123,15 +1075,13 @@ int vtkMRMLApplicationLogic::GetIntersectingSlicesIntersectionMode()
     vtkWarningMacro("vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled failed: invalid scene");
     return false;
   }
-  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(
-    scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
   if (!sliceDisplayNode)
   {
     // No slice display nodes are in the scene yet, use the scene default node instead.
     // Developers can set the default appearance of intersecting slices by modifying the
     // default slice display node.
-    vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode =
-      vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
+    vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
     if (!defaultSliceDisplayNode.GetPointer())
     {
       defaultSliceDisplayNode = vtkSmartPointer<vtkMRMLSliceDisplayNode>::New();
@@ -1158,14 +1108,12 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesLineThicknessMode(int mode)
     return;
   }
 
-  vtkSmartPointer<vtkCollection> sliceDisplayNodes =
-    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
+  vtkSmartPointer<vtkCollection> sliceDisplayNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
   if (sliceDisplayNodes.GetPointer())
   {
     vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
     vtkCollectionSimpleIterator it;
-    for (sliceDisplayNodes->InitTraversal(it);
-      (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+    for (sliceDisplayNodes->InitTraversal(it); (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
     {
       sliceDisplayNode->SetIntersectingSlicesLineThicknessMode(mode);
     }
@@ -1173,14 +1121,12 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesLineThicknessMode(int mode)
 
   // The vtkMRMLSliceIntersectionWidget should observe slice display node modifications
   // but as a workaround for now, trigger update by modifying all the slice nodes.
-  vtkSmartPointer<vtkCollection> sliceNodes =
-    vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
+  vtkSmartPointer<vtkCollection> sliceNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
   if (sliceNodes.GetPointer())
   {
     vtkMRMLSliceNode* sliceNode = nullptr;
     vtkCollectionSimpleIterator it;
-    for (sliceNodes->InitTraversal(it);
-      (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+    for (sliceNodes->InitTraversal(it); (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
     {
       sliceNode->Modified();
     }
@@ -1196,15 +1142,13 @@ int vtkMRMLApplicationLogic::GetIntersectingSlicesLineThicknessMode()
     vtkWarningMacro("vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled failed: invalid scene");
     return false;
   }
-  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(
-    scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
+  vtkMRMLSliceDisplayNode* sliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLSliceDisplayNode"));
   if (!sliceDisplayNode)
   {
     // No slice display nodes are in the scene yet, use the scene default node instead.
     // Developers can set the default appearance of intersecting slices by modifying the
     // default slice display node.
-    vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode =
-      vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
+    vtkSmartPointer<vtkMRMLSliceDisplayNode> defaultSliceDisplayNode = vtkMRMLSliceDisplayNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceDisplayNode"));
     if (!defaultSliceDisplayNode.GetPointer())
     {
       defaultSliceDisplayNode = vtkSmartPointer<vtkMRMLSliceDisplayNode>::New();

@@ -30,10 +30,10 @@ class qSlicerAppMainWindowPrivate;
 class qSlicerLayoutManager;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_APP_EXPORT qSlicerAppMainWindowPrivate
-  : public qSlicerMainWindowPrivate
+class Q_SLICER_APP_EXPORT qSlicerAppMainWindowPrivate : public qSlicerMainWindowPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerAppMainWindow);
+
 public:
   typedef qSlicerMainWindowPrivate Superclass;
   qSlicerAppMainWindowPrivate(qSlicerAppMainWindow& object);

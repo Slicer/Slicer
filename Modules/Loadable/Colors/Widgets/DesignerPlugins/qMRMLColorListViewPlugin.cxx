@@ -22,7 +22,7 @@
 #include "qMRMLColorListView.h"
 
 qMRMLColorListViewPlugin::qMRMLColorListViewPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 

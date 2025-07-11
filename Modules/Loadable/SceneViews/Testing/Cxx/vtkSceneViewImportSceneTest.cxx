@@ -65,8 +65,7 @@ int populateScene(vtkMRMLScene* scene)
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
-int vtkSceneViewImportSceneTest(int argc,
-                                       char* argv[] )
+int vtkSceneViewImportSceneTest(int argc, char* argv[])
 {
   if (argc < 2)
   {

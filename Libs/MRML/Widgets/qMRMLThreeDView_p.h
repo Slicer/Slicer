@@ -57,6 +57,7 @@ class qMRMLThreeDViewPrivate : public ctkVTKRenderViewPrivate
   Q_OBJECT
   QVTK_OBJECT
   Q_DECLARE_PUBLIC(qMRMLThreeDView);
+
 public:
   qMRMLThreeDViewPrivate(qMRMLThreeDView& object);
   ~qMRMLThreeDViewPrivate() override;
@@ -75,10 +76,10 @@ public slots:
 protected:
   void initDisplayableManagers();
 
-  vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
-  vtkMRMLThreeDViewInteractorStyle*  InteractorObserver;
-  vtkMRMLScene*                      MRMLScene;
-  vtkMRMLViewNode*                   MRMLViewNode;
+  vtkMRMLDisplayableManagerGroup* DisplayableManagerGroup;
+  vtkMRMLThreeDViewInteractorStyle* InteractorObserver;
+  vtkMRMLScene* MRMLScene;
+  vtkMRMLViewNode* MRMLViewNode;
 
   vtkNew<vtkSSAOPass> ShadowsRenderPass;
   vtkNew<vtkRenderStepsPass> BasicRenderPass;

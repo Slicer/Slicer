@@ -34,10 +34,10 @@ class vtkImageData;
 /// trajectory as a line or tube.
 class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLModelDisplayNode
 {
- public:
-  static vtkMRMLGlyphableVolumeSliceDisplayNode* New (  );
-  vtkTypeMacro ( vtkMRMLGlyphableVolumeSliceDisplayNode,vtkMRMLModelDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) override;
+public:
+  static vtkMRMLGlyphableVolumeSliceDisplayNode* New();
+  vtkTypeMacro(vtkMRMLGlyphableVolumeSliceDisplayNode, vtkMRMLModelDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
@@ -47,40 +47,34 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
 
   ///
   /// Read node attributes from XML (MRML) file
-  void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
-  void WriteXML ( ostream& of, int indent ) override;
-
+  void WriteXML(ostream& of, int indent) override;
 
   ///
   /// Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode* node ) override;
+  void Copy(vtkMRMLNode* node) override;
 
   ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
-  const char* GetNodeTagName() override {return "GlyphableVolumeSliceDisplayNode";}
+  const char* GetNodeTagName() override { return "GlyphableVolumeSliceDisplayNode"; }
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   void UpdateReferences() override;
 
-  void UpdateReferenceID(const char* oldID, const char* newID) override
-    { Superclass::UpdateReferenceID(oldID, newID); }
+  void UpdateReferenceID(const char* oldID, const char* newID) override { Superclass::UpdateReferenceID(oldID, newID); }
 
   ///
   /// Finds the storage node and read the data
   void UpdateScene(vtkMRMLScene* scene) override;
 
-
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
-
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// Return the output of the glyph producer for the input image data.
   /// The output is connected as the input of the slice transform.
@@ -126,7 +120,6 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// Display Information: Geometry to display (not mutually exclusive)
   //--------------------------------------------------------------------------
 
-
   //--------------------------------------------------------------------------
   /// Display Information: Color Mode
   /// 0) solid color by group 1) color by scalar invariant
@@ -145,29 +138,23 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// Display Information: ColorMode for ALL nodes
   //--------------------------------------------------------------------------
 
- /// Description:
+  /// Description:
   /// Color mode for glyphs. The color modes are mutually exclusive.
-  vtkGetMacro ( ColorMode, int );
-  vtkSetMacro ( ColorMode, int );
+  vtkGetMacro(ColorMode, int);
+  vtkSetMacro(ColorMode, int);
 
   ///
   /// Color by solid color (for example the whole fiber bundle red. blue, etc.)
-  void SetColorModeToSolid ( ) {
-    this->SetColorMode ( this->colorModeSolid );
-  };
+  void SetColorModeToSolid() { this->SetColorMode(this->colorModeSolid); };
 
   ///
   /// Color according to the tensors using various scalar invariants.
-  void SetColorModeToScalar ( ) {
-    this->SetColorMode ( this->colorModeScalar );
-  };
+  void SetColorModeToScalar() { this->SetColorMode(this->colorModeScalar); };
 
   ///
   /// Color according to the tensors using a function of scalar invariants along the tract.
   /// This enables coloring by average FA, for example.
-  void SetColorModeToFunctionOfScalar ( ) {
-    this->SetColorMode ( this->colorModeFunctionOfScalar );
-  };
+  void SetColorModeToFunctionOfScalar() { this->SetColorMode(this->colorModeFunctionOfScalar); };
 
   ///
   /// Use to color by the active cell scalars.  This is intended to support
@@ -176,39 +163,31 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeSliceDisplayNode : public vtkMRMLMod
   /// the active cell scalar field, this will allow coloring by that information.
   /// TO DO: make sure this information can be saved with the tract, save name of
   /// active scalar field if needed.
-  void SetColorModeToUseCellScalars ( ) {
-    this->SetColorMode ( this->colorModeUseCellScalars );
-  };
-
-
+  void SetColorModeToUseCellScalars() { this->SetColorMode(this->colorModeUseCellScalars); };
 
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for glyphs
   //--------------------------------------------------------------------------
 
-
   //--------------------------------------------------------------------------
   /// MRML nodes that are observed
   //--------------------------------------------------------------------------
- protected:
-  vtkMRMLGlyphableVolumeSliceDisplayNode ( );
-  ~vtkMRMLGlyphableVolumeSliceDisplayNode ( ) override;
-  vtkMRMLGlyphableVolumeSliceDisplayNode ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
-  void operator= ( const vtkMRMLGlyphableVolumeSliceDisplayNode& );
+protected:
+  vtkMRMLGlyphableVolumeSliceDisplayNode();
+  ~vtkMRMLGlyphableVolumeSliceDisplayNode() override;
+  vtkMRMLGlyphableVolumeSliceDisplayNode(const vtkMRMLGlyphableVolumeSliceDisplayNode&);
+  void operator=(const vtkMRMLGlyphableVolumeSliceDisplayNode&);
 
   /// Ignore input polydata as it takes a volume slice as input.
   virtual void SetInputToPolyDataPipeline(vtkAlgorithmOutput* glyphPolyData);
 
-    vtkAlgorithmOutput* SliceImagePort;
-    vtkTransform* SliceToXYTransform;
-    vtkTransformPolyDataFilter* SliceToXYTransformer;
-    vtkMatrix4x4* SliceToXYMatrix;
+  vtkAlgorithmOutput* SliceImagePort;
+  vtkTransform* SliceToXYTransform;
+  vtkTransformPolyDataFilter* SliceToXYTransformer;
+  vtkMatrix4x4* SliceToXYMatrix;
 
-
-    /// Enumerated
-    int ColorMode;
-
-
+  /// Enumerated
+  int ColorMode;
 };
 
 #endif

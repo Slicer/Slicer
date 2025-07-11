@@ -33,7 +33,6 @@
 #include <sstream>
 #include <string>
 
-
 //-----------------------------------------------------------------------------
 int SliceLogicsTest();
 int SliceOrientationPresetInitializationTest();
@@ -46,10 +45,8 @@ int vtkMRMLApplicationLogicTest1(int argc, char* argv[])
 {
   if (argc != 2)
   {
-    std::cerr << "Line " << __LINE__
-      << " - Missing parameters!\n"
-      << "Usage: " << argv[0] << " /path/to/temp"
-      << std::endl;
+    std::cerr << "Line " << __LINE__ << " - Missing parameters!\n"
+              << "Usage: " << argv[0] << " /path/to/temp" << std::endl;
     return EXIT_FAILURE;
   }
   const char* tempDir = argv[1];
@@ -130,8 +127,7 @@ int SliceOrientationPresetInitializationTest()
 
   {
     vtkNew<vtkMRMLScene> scene;
-    vtkMRMLSliceNode* defaultSliceNode =
-        vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
+    vtkMRMLSliceNode* defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
     CHECK_NULL(defaultSliceNode);
   }
 
@@ -139,8 +135,7 @@ int SliceOrientationPresetInitializationTest()
     vtkNew<vtkMRMLScene> scene;
     vtkNew<vtkMRMLApplicationLogic> appLogic;
     appLogic->SetMRMLScene(scene);
-    vtkMRMLSliceNode* defaultSliceNode =
-        vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
+    vtkMRMLSliceNode* defaultSliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetDefaultNodeByClass("vtkMRMLSliceNode"));
     CHECK_INT(defaultSliceNode->GetNumberOfSliceOrientationPresets(), 3);
   }
 
@@ -199,49 +194,34 @@ int CreateUniqueFileNameTest(std::string tempDir)
 
   // Check if we get the same file name if already unique
   // existing file: (none)
-  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
-    tempDir + "/CreateUniqueFileNameTest.txt"),
-    tempDir + "/CreateUniqueFileNameTest.txt");
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(tempDir + "/CreateUniqueFileNameTest.txt"), tempDir + "/CreateUniqueFileNameTest.txt");
 
   // Check if we get a suffixed filename if the file exists already
   vtksys::SystemTools::Touch(tempDir + "/CreateUniqueFileNameTest.txt", true);
   // existing files: CreateUniqueFileNameTest.txt
-  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
-    tempDir + "/CreateUniqueFileNameTest.txt"),
-    tempDir + "/CreateUniqueFileNameTest_1.txt");
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(tempDir + "/CreateUniqueFileNameTest.txt"), tempDir + "/CreateUniqueFileNameTest_1.txt");
 
   // Check if a suffix is incremented if the file is already suffixed
   vtksys::SystemTools::Touch(tempDir + "/CreateUniqueFileNameTest_1.txt", true);
   // existing files: CreateUniqueFileNameTest.txt, CreateUniqueFileNameTest_1.txt
-  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
-    tempDir + "/CreateUniqueFileNameTest.txt"),
-    tempDir + "/CreateUniqueFileNameTest_2.txt");
-  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
-    tempDir + "/CreateUniqueFileNameTest_1.txt"),
-    tempDir + "/CreateUniqueFileNameTest_2.txt");
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(tempDir + "/CreateUniqueFileNameTest.txt"), tempDir + "/CreateUniqueFileNameTest_2.txt");
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(tempDir + "/CreateUniqueFileNameTest_1.txt"), tempDir + "/CreateUniqueFileNameTest_2.txt");
 
   // Check if a suffix is incremented if a composite file extension is used
 
   // Check if we get a suffixed filename if the file exists already
   vtksys::SystemTools::Touch(tempDir + "/CreateUniqueFileNameTest.nii.gz", true);
   // existing files: CreateUniqueFileNameTest.txt
-  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
-    tempDir + "/CreateUniqueFileNameTest.nii.gz", ".nii.gz"),
-    tempDir + "/CreateUniqueFileNameTest_1.nii.gz");
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(tempDir + "/CreateUniqueFileNameTest.nii.gz", ".nii.gz"), tempDir + "/CreateUniqueFileNameTest_1.nii.gz");
 
   // Check if a suffix is incremented if the file is already suffixed
   vtksys::SystemTools::Touch(tempDir + "/CreateUniqueFileNameTest_1.nii.gz", true);
   // existing files: CreateUniqueFileNameTest.txt, CreateUniqueFileNameTest_1.txt
-  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
-    tempDir + "/CreateUniqueFileNameTest.nii.gz", ".nii.gz"),
-    tempDir + "/CreateUniqueFileNameTest_2.nii.gz");
-  CHECK_STD_STRING(appLogic->CreateUniqueFileName(
-    tempDir + "/CreateUniqueFileNameTest_1.nii.gz", ".nii.gz"),
-    tempDir + "/CreateUniqueFileNameTest_2.nii.gz");
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(tempDir + "/CreateUniqueFileNameTest.nii.gz", ".nii.gz"), tempDir + "/CreateUniqueFileNameTest_2.nii.gz");
+  CHECK_STD_STRING(appLogic->CreateUniqueFileName(tempDir + "/CreateUniqueFileNameTest_1.nii.gz", ".nii.gz"), tempDir + "/CreateUniqueFileNameTest_2.nii.gz");
 
   return EXIT_SUCCESS;
 }
-
 
 //-----------------------------------------------------------------------------
 int AddModuleLogicTest()
@@ -272,7 +252,7 @@ int AddModuleLogicTest()
 
   // Trying to get a logic that has not been registered should return nullptr
   {
-    const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic((module_name+"a").c_str());
+    const vtkMRMLAbstractLogic* retval = appLogic->GetModuleLogic((module_name + "a").c_str());
 
     // return value should be nullptr
     CHECK_NULL(retval);
@@ -292,7 +272,7 @@ int AddModuleLogicTest()
 
   // Trying to unregister a non-registered module logic
   {
-    appLogic->SetModuleLogic((module_name+"a").c_str(), nullptr);
+    appLogic->SetModuleLogic((module_name + "a").c_str(), nullptr);
   }
 
   // Removing an already registered module logic should succeed

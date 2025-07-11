@@ -35,8 +35,7 @@ class vtkMRMLCameraNode;
 ///  - the axis labels
 ///  - the background colors (gradient)
 /// When the view is rotated, the "closest" axis label is hidden.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewDisplayableManager
-  : public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewDisplayableManager : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 
 public:
@@ -45,7 +44,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLViewDisplayableManager();
   ~vtkMRMLViewDisplayableManager() override;
 
@@ -76,7 +74,6 @@ protected:
   void UpdateFromCameraNode();
 
 private:
-
   vtkMRMLViewDisplayableManager(const vtkMRMLViewDisplayableManager&) = delete;
   void operator=(const vtkMRMLViewDisplayableManager&) = delete;
 

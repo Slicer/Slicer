@@ -73,15 +73,13 @@ vtkMRMLSliceEdgeWidgetRepresentation::~vtkMRMLSliceEdgeWidgetRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-void vtkMRMLSliceEdgeWidgetRepresentation::PrintSelf(ostream& os,
-                                                      vtkIndent indent)
+void vtkMRMLSliceEdgeWidgetRepresentation::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------
-void vtkMRMLSliceEdgeWidgetRepresentation::UpdateFromMRML(
-    vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void* vtkNotUsed(callData))
+void vtkMRMLSliceEdgeWidgetRepresentation::UpdateFromMRML(vtkMRMLNode* vtkNotUsed(caller), unsigned long vtkNotUsed(event), void* vtkNotUsed(callData))
 {
   if (!this->Pipeline)
   {
@@ -360,6 +358,5 @@ void vtkMRMLSliceEdgeWidgetRepresentation::UpdateViewScaleFactor()
 
   double cameraFP[3] = { 0.0 };
   this->Renderer->GetActiveCamera()->GetFocalPoint(cameraFP);
-  this->ViewScaleFactorMmPerPixel = vtkMRMLAbstractThreeDViewDisplayableManager::
-    GetViewScaleFactorAtPosition(this->Renderer, cameraFP);
+  this->ViewScaleFactorMmPerPixel = vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition(this->Renderer, cameraFP);
 }

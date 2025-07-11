@@ -45,13 +45,10 @@ void vtkITKArchetypeDiffusionTensorImageReaderFile::PrintSelf(ostream& os, vtkIn
 
 //----------------------------------------------------------------------------
 template <class T>
-void vtkITKExecuteDataFromFileDiffusionTensor3D(
-  vtkITKArchetypeDiffusionTensorImageReaderFile* self,
-  vtkFloatArray* tensors,
-  vtkImageData* data)
+void vtkITKExecuteDataFromFileDiffusionTensor3D(vtkITKArchetypeDiffusionTensorImageReaderFile* self, vtkFloatArray* tensors, vtkImageData* data)
 {
   typedef itk::DiffusionTensor3D<T> DiffusionTensor3DPixelType;
-  typedef itk::Image<DiffusionTensor3DPixelType,3> ImageType;
+  typedef itk::Image<DiffusionTensor3DPixelType, 3> ImageType;
   typedef itk::ImageSource<ImageType> FilterType;
   typename FilterType::Pointer filter;
   typedef itk::ImageFileReader<ImageType> ReaderType;
@@ -63,8 +60,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
   }
   else
   {
-    typename itk::OrientImageFilter<ImageType,ImageType>::Pointer orient2 =
-      itk::OrientImageFilter<ImageType,ImageType>::New();
+    typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orient2 = itk::OrientImageFilter<ImageType, ImageType>::New();
     orient2->SetDebug(self->GetDebug());
     orient2->SetInput(reader->GetOutput());
     orient2->UseImageDirectionOn();
@@ -88,27 +84,25 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
 
   // pixel type and number of components are correct. OK to read image data
   filter->UpdateLargestPossibleRegion();
-  itk::ImageRegionConstIteratorWithIndex<ImageType>
-    it( reader->GetOutput(), reader->GetOutput()->GetLargestPossibleRegion() );
+  itk::ImageRegionConstIteratorWithIndex<ImageType> it(reader->GetOutput(), reader->GetOutput()->GetLargestPossibleRegion());
   tensors->SetNumberOfComponents(9);
   tensors->SetNumberOfTuples(data->GetNumberOfPoints());
-  //tensors->Modified();
-  for (it.GoToBegin(); !it.IsAtEnd() ; ++it)
+  // tensors->Modified();
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     const itk::Index<3u> index = it.GetIndex();
     vtkIdType position = data->FindPoint(index[0], index[1], index[2]);
     if (position == static_cast<vtkIdType>(-1) || //
         position >= tensors->GetNumberOfTuples())
     {
-      itkGenericExceptionMacro(<< "Can't find index " << index
-                               << " in output image data.");
+      itkGenericExceptionMacro(<< "Can't find index " << index << " in output image data.");
       continue;
     }
     float value[9];
     const DiffusionTensor3DPixelType tensor = it.Get();
-    for (int i = 0; i<3; i++)
+    for (int i = 0; i < 3; i++)
     {
-      for (int j = 0; j<3; j++)
+      for (int j = 0; j < 3; j++)
       {
         value[i + 3 * j] = float(tensor(i, j));
       }
@@ -120,10 +114,9 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The data extent/axes
 // are assumed to be the same as the file extent/order.
-int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
-  vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** vtkNotUsed(inputVector),
-  vtkInformationVector* outputVector)
+int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(vtkInformation* vtkNotUsed(request),
+                                                               vtkInformationVector** vtkNotUsed(inputVector),
+                                                               vtkInformationVector* outputVector)
 {
   if (!this->Superclass::Archetype)
   {
@@ -132,7 +125,7 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
     return 0;
   }
 
-  int extent[6] = {0,-1,0,-1,0,-1};
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
   vtkImageData* data = vtkImageData::GetData(outputVector);
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), extent);
@@ -151,11 +144,8 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
       vtkDebugMacro("DiffusionTensorImageReaderFile: only one file: " << this->FileNames[0].c_str());
       switch (this->OutputScalarType)
       {
-        vtkTemplateMacro(vtkITKExecuteDataFromFileDiffusionTensor3D<VTK_TT>(
-          this, tensors.GetPointer(), data));
-        default:
-          vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType);
-          this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
+        vtkTemplateMacro(vtkITKExecuteDataFromFileDiffusionTensor3D<VTK_TT>(this, tensors.GetPointer(), data));
+        default: vtkErrorMacro(<< "UpdateFromFile: Unknown data type " << this->OutputScalarType); this->SetErrorCode(vtkErrorCode::UnrecognizedFileTypeError);
       }
       data->GetPointData()->SetTensors(tensors.GetPointer());
     }
@@ -186,16 +176,14 @@ int vtkITKArchetypeDiffusionTensorImageReaderFile::RequestData(
 }
 
 //----------------------------------------------------------------------------
-void vtkITKArchetypeDiffusionTensorImageReaderFile
-::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
+void vtkITKArchetypeDiffusionTensorImageReaderFile::ReadProgressCallback(itk::Object* obj, const itk::EventObject&, void* data)
 {
   itk::ProcessObject::Pointer p(dynamic_cast<itk::ProcessObject*>(obj));
   if (p.IsNull())
   {
     return;
   }
-  vtkITKArchetypeDiffusionTensorImageReaderFile* me =
-    reinterpret_cast<vtkITKArchetypeDiffusionTensorImageReaderFile*>(data);
+  vtkITKArchetypeDiffusionTensorImageReaderFile* me = reinterpret_cast<vtkITKArchetypeDiffusionTensorImageReaderFile*>(data);
   me->Progress = p->GetProgress();
-  me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
+  me->InvokeEvent(vtkCommand::ProgressEvent, &me->Progress);
 }

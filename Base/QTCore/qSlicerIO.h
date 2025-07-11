@@ -49,7 +49,7 @@ public:
   explicit qSlicerIO(QObject* parent = nullptr);
   ~qSlicerIO() override;
 
-  typedef QString     IOFileType;
+  typedef QString IOFileType;
   typedef QVariantMap IOProperties;
 
   /// Unique name of the reader/writer

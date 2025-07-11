@@ -36,6 +36,7 @@
 class qSlicerModuleFactoryFilterModelPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerModuleFactoryFilterModel);
+
 protected:
   qSlicerModuleFactoryFilterModel* const q_ptr;
 
@@ -58,19 +59,20 @@ public:
 // --------------------------------------------------------------------------
 void qSlicerModuleFactoryFilterModelPrivate::decodeDataRecursive(QDataStream& stream, QStandardItem* item)
 {
-    int colCount, childCount;
-    stream >> *item;
-    stream >> colCount >> childCount;
-    item->setColumnCount(colCount);
+  int colCount, childCount;
+  stream >> *item;
+  stream >> colCount >> childCount;
+  item->setColumnCount(colCount);
 
-    int childPos = childCount;
+  int childPos = childCount;
 
-    while (childPos > 0) {
-        childPos--;
-        QStandardItem* child = new QStandardItem();
-        decodeDataRecursive(stream, child);
-        item->setChild( childPos / colCount, childPos % colCount, child);
-    }
+  while (childPos > 0)
+  {
+    childPos--;
+    QStandardItem* child = new QStandardItem();
+    decodeDataRecursive(stream, child);
+    item->setChild(childPos / colCount, childPos % colCount, child);
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -242,7 +244,7 @@ void qSlicerModuleFactoryFilterModel::setShowModules(const QStringList& modules)
   this->setFilterRole(Qt::UserRole);
   if (d->HideAllWhenShowModulesIsEmpty && modules.isEmpty())
   {
-    this->setFilterWildcard(/*no tr*/"hide all modules");
+    this->setFilterWildcard(/*no tr*/ "hide all modules");
   }
   else
   {
@@ -267,8 +269,7 @@ void qSlicerModuleFactoryFilterModel::setHideAllWhenShowModulesIsEmpty(bool hide
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::lessThan(const QModelIndex& leftIndex,
-                                               const QModelIndex& rightIndex) const
+bool qSlicerModuleFactoryFilterModel::lessThan(const QModelIndex& leftIndex, const QModelIndex& rightIndex) const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   QString leftModule = this->sourceModel()->data(leftIndex, Qt::UserRole).toString();
@@ -354,8 +355,7 @@ Qt::DropActions qSlicerModuleFactoryFilterModel::supportedDropActions() const
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::DropAction action,
-                                      int row, int column, const QModelIndex& parent)
+bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
   // check if the action is supported
@@ -372,9 +372,8 @@ bool qSlicerModuleFactoryFilterModel::dropMimeData(const QMimeData* data, Qt::Dr
   QByteArray encoded = data->data(format);
   QDataStream stream(&encoded, QIODevice::ReadOnly);
 
-
-  //code based on QAbstractItemModel::decodeData
-  // adapted to work with QStandardItem
+  // code based on QAbstractItemModel::decodeData
+  //  adapted to work with QStandardItem
   int top = INT_MAX;
   int left = INT_MAX;
   int bottom = 0;

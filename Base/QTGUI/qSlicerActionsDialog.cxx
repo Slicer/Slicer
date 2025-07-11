@@ -24,7 +24,7 @@
 #include <QGridLayout>
 #include <QtGlobal>
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
-#include <QWebEngineView>
+# include <QWebEngineView>
 #endif
 
 // Slicer includes
@@ -36,6 +36,7 @@
 class qSlicerActionsDialogPrivate : public Ui_qSlicerActionsDialog
 {
   Q_DECLARE_PUBLIC(qSlicerActionsDialog);
+
 protected:
   qSlicerActionsDialog* const q_ptr;
 
@@ -46,7 +47,6 @@ public:
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
   QWebEngineView* WebView;
 #endif
-
 };
 
 // --------------------------------------------------------------------------
@@ -70,7 +70,7 @@ void qSlicerActionsDialogPrivate::init()
   this->gridLayout->addWidget(this->WebView, 0, 0);
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   QString shortcutsUrl = QString(qSlicerActionsDialog::tr("%1/user_guide/user_interface.html#mouse-keyboard-shortcuts")).arg(app->documentationBaseUrl());
-  this->WebView->setUrl( shortcutsUrl );
+  this->WebView->setUrl(shortcutsUrl);
 #else
   this->tabWidget->setTabEnabled(this->tabWidget->indexOf(this->WikiTab), false);
 #endif
@@ -96,8 +96,7 @@ void qSlicerActionsDialog::addAction(QAction* action, const QString& group)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerActionsDialog::addActions(const QList<QAction*>& actions,
-                                      const QString& group)
+void qSlicerActionsDialog::addActions(const QList<QAction*>& actions, const QString& group)
 {
   Q_D(qSlicerActionsDialog);
   d->ActionsWidget->addActions(actions, group);

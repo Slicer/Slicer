@@ -56,7 +56,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -69,7 +69,6 @@ public:
   ///
   /// Copy the node's attributes to this object
   void CopyOrientation(vtkMRMLVolumeNode* node);
-
 
   ///
   /// Get node XML tag name (like Volume, Model)
@@ -89,18 +88,12 @@ public:
   /// This matrix can be computed either from corner points, or just he
   /// scanOrder.
   /// Return true on success, false otherwise
-  static bool ComputeIJKToRASFromScanOrder(const char* order,
-                                           const double* spacing,
-                                           const int* dims,
-                                           bool centerImage,
-                                           vtkMatrix4x4* IJKToRAS);
+  static bool ComputeIJKToRASFromScanOrder(const char* order, const double* spacing, const int* dims, bool centerImage, vtkMatrix4x4* IJKToRAS);
 
   static const char* ComputeScanOrderFromIJKToRAS(vtkMatrix4x4* IJKToRAS);
 
   void SetIJKToRASDirections(double dirs[3][3]);
-  void SetIJKToRASDirections(double ir, double jr, double kr,
-                             double ia, double ja, double ka,
-                             double is, double js, double ks);
+  void SetIJKToRASDirections(double ir, double jr, double kr, double ia, double ja, double ka, double is, double js, double ks);
   void SetIToRASDirection(double ir, double ia, double is);
   void SetJToRASDirection(double jr, double ja, double js);
   void SetKToRASDirection(double kr, double ka, double ks);
@@ -202,9 +195,7 @@ public:
 
   ///
   /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// ImageDataModifiedEvent is generated when image data is changed
   enum
@@ -214,7 +205,7 @@ public:
 
   ///
   /// Set/Get the ITK MetaDataDictionary
-  void SetMetaDataDictionary( const itk::MetaDataDictionary& );
+  void SetMetaDataDictionary(const itk::MetaDataDictionary&);
   const itk::MetaDataDictionary& GetMetaDataDictionary() const;
 
   bool CanApplyNonLinearTransforms() const override;

@@ -26,16 +26,13 @@
 class qSlicerApplication;
 class qSlicerGeneralizedReformatModulePrivate;
 
-class Q_SLICER_QTMODULES_GENERALIZEDREFORMAT_EXPORT
-qSlicerGeneralizedReformatModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_GENERALIZEDREFORMAT_EXPORT qSlicerGeneralizedReformatModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerGeneralizedReformatModule(QObject* parent = nullptr);
   ~qSlicerGeneralizedReformatModule() override;
@@ -52,7 +49,6 @@ public:
   QStringList dependencies() const override;
 
 protected:
-
   /// Initialize the module. Register the volumes reader/writer
   void setup() override;
 
@@ -68,7 +64,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerGeneralizedReformatModule);
   Q_DISABLE_COPY(qSlicerGeneralizedReformatModule);
-
 };
 
 #endif

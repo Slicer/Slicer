@@ -27,8 +27,7 @@
 class qSlicerMarkupsSettingsPanelPrivate;
 class vtkSlicerMarkupsLogic;
 
-class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsSettingsPanel
-  : public ctkSettingsPanel
+class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsSettingsPanel : public ctkSettingsPanel
 {
   Q_OBJECT
   QVTK_OBJECT

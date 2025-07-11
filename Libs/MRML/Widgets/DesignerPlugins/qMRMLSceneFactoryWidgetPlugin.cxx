@@ -27,7 +27,7 @@
 
 // --------------------------------------------------------------------------
 qMRMLSceneFactoryWidgetPlugin::qMRMLSceneFactoryWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 

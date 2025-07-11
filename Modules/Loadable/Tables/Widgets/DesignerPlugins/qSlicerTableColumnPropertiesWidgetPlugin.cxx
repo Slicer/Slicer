@@ -22,25 +22,20 @@
 #include "qSlicerTableColumnPropertiesWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerTableColumnPropertiesWidgetPlugin
-::qSlicerTableColumnPropertiesWidgetPlugin(QObject* _parent)
+qSlicerTableColumnPropertiesWidgetPlugin::qSlicerTableColumnPropertiesWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
-
 }
 
 //------------------------------------------------------------------------------
-QWidget* qSlicerTableColumnPropertiesWidgetPlugin
-::createWidget(QWidget* _parent)
+QWidget* qSlicerTableColumnPropertiesWidgetPlugin::createWidget(QWidget* _parent)
 {
-  qSlicerTableColumnPropertiesWidget* _widget
-    = new qSlicerTableColumnPropertiesWidget(_parent);
+  qSlicerTableColumnPropertiesWidget* _widget = new qSlicerTableColumnPropertiesWidget(_parent);
   return _widget;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerTableColumnPropertiesWidgetPlugin
-::domXml() const
+QString qSlicerTableColumnPropertiesWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerTableColumnPropertiesWidget\" \
           name=\"SlicerTableColumnPropertiesWidget\">\n"
@@ -48,22 +43,19 @@ QString qSlicerTableColumnPropertiesWidgetPlugin
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerTableColumnPropertiesWidgetPlugin
-::includeFile() const
+QString qSlicerTableColumnPropertiesWidgetPlugin::includeFile() const
 {
   return "qSlicerTableColumnPropertiesWidget.h";
 }
 
 //------------------------------------------------------------------------------
-bool qSlicerTableColumnPropertiesWidgetPlugin
-::isContainer() const
+bool qSlicerTableColumnPropertiesWidgetPlugin::isContainer() const
 {
   return false;
 }
 
 //------------------------------------------------------------------------------
-QString qSlicerTableColumnPropertiesWidgetPlugin
-::name() const
+QString qSlicerTableColumnPropertiesWidgetPlugin::name() const
 {
   return "qSlicerTableColumnPropertiesWidget";
 }

@@ -29,8 +29,7 @@
 class qSlicerSegmentEditorScissorsEffectPrivate;
 class vtkPolyData;
 
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScissorsEffect :
-  public qSlicerSegmentEditorAbstractLabelEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScissorsEffect : public qSlicerSegmentEditorAbstractLabelEffect
 {
 public:
   Q_OBJECT
@@ -68,7 +67,7 @@ public:
   // TODO: temporary code, only for debugging
   /// This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
   /// Folder where debug output will be saved when using this effect.
-  Q_INVOKABLE void setDebugOutputFolder(QString folder) { DebugOutputFolder = folder;  };
+  Q_INVOKABLE void setDebugOutputFolder(QString folder) { DebugOutputFolder = folder; };
   static QString DebugOutputFolder;
 
 public slots:

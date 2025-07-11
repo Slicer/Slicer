@@ -29,8 +29,7 @@
 
 class qSlicerGPUMemoryComboBoxPrivate;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPUMemoryComboBox
-  : public QComboBox
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPUMemoryComboBox : public QComboBox
 {
   Q_OBJECT
   Q_PROPERTY(double currentGPUMemory READ currentGPUMemory WRITE setCurrentGPUMemory)

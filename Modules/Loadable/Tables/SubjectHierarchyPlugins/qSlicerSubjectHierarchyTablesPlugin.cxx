@@ -61,12 +61,15 @@
 class qSlicerSubjectHierarchyTablesPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTablesPlugin);
+
 protected:
   qSlicerSubjectHierarchyTablesPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyTablesPluginPrivate(qSlicerSubjectHierarchyTablesPlugin& object);
   ~qSlicerSubjectHierarchyTablesPluginPrivate() override;
   void init();
+
 public:
   QIcon TableIcon;
 };
@@ -76,15 +79,13 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTablesPluginPrivate::qSlicerSubjectHierarchyTablesPluginPrivate(qSlicerSubjectHierarchyTablesPlugin& object)
-: q_ptr(&object)
+  : q_ptr(&object)
 {
   this->TableIcon = QIcon(":Icons/Table.png");
 }
 
 //------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyTablesPluginPrivate::init()
-{
-}
+void qSlicerSubjectHierarchyTablesPluginPrivate::init() {}
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTablesPluginPrivate::~qSlicerSubjectHierarchyTablesPluginPrivate() = default;
@@ -94,8 +95,8 @@ qSlicerSubjectHierarchyTablesPluginPrivate::~qSlicerSubjectHierarchyTablesPlugin
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyTablesPlugin::qSlicerSubjectHierarchyTablesPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyTablesPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyTablesPluginPrivate(*this))
 {
   this->m_Name = QString("Tables");
 
@@ -107,8 +108,7 @@ qSlicerSubjectHierarchyTablesPlugin::qSlicerSubjectHierarchyTablesPlugin(QObject
 qSlicerSubjectHierarchyTablesPlugin::~qSlicerSubjectHierarchyTablesPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -314,7 +314,7 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode() co
     return nullptr;
   }
 
-  for (int i = 0; i<layoutManager->tableViewCount(); i++)
+  for (int i = 0; i < layoutManager->tableViewCount(); i++)
   {
     qMRMLTableWidget* tableWidget = layoutManager->tableWidget(i);
     if (!tableWidget)

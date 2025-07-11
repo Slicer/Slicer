@@ -120,7 +120,7 @@ public:
   /// Get node XML tag name (like Volume, Contour)
   const char* GetNodeTagName() override;
 
-// Get/Set methods
+  // Get/Set methods
 public:
   /// Get the (practically) singleton subject hierarchy node from MRML scene.
   /// Merges subject hierarchy nodes if multiple found, and returns the merged one.
@@ -202,7 +202,7 @@ public:
   ///   Should never need to call manually!
   void SetItemDataNode(vtkIdType itemID, vtkMRMLNode* dataNode);
 
-// Hierarchy related methods
+  // Hierarchy related methods
 public:
   /// Create subject hierarchy item for a data node.
   /// Can be used to add nodes that were not added automatically (e.g. private scene, HideFromEditors on, or exclude attribute set)
@@ -280,7 +280,7 @@ public:
   /// \return Success flag
   bool MoveItem(vtkIdType itemID, vtkIdType beforeItemID);
 
-// Item finder methods
+  // Item finder methods
 public:
   /// Find subject hierarchy item according to a UID (by exact match)
   /// \param uidName UID string to lookup
@@ -332,7 +332,7 @@ public:
   /// \return Data node associated to the parent of the given data node's item
   vtkMRMLNode* GetParentDataNode(vtkMRMLNode* dataNode, bool recursive = false);
 
-// Utility functions
+  // Utility functions
 public:
   /// Set subject hierarchy branch visibility
   /// \deprecated Kept only for backward compatibility. \sa SetItemDisplayVisibility
@@ -369,7 +369,7 @@ public:
   ///   (e.g. value of vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelStudy()).
   ///   If empty, then look all the way up to the subject and return first attribute found with specified name
   /// \return Attribute value from the lowest level ancestor where the attribute can be found
-  std::string GetAttributeFromItemAncestor(vtkIdType itemID, std::string attributeName, std::string level="");
+  std::string GetAttributeFromItemAncestor(vtkIdType itemID, std::string attributeName, std::string level = "");
 
   /// Get ancestor subject hierarchy item at a certain level
   /// \param level Level of the ancestor item we start searching.

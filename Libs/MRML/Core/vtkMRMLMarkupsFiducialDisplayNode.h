@@ -34,16 +34,16 @@ class VTK_MRML_EXPORT vtkMRMLMarkupsFiducialDisplayNode : public vtkMRMLMarkupsD
 {
 public:
   static vtkMRMLMarkupsFiducialDisplayNode* New();
-  vtkTypeMacro ( vtkMRMLMarkupsFiducialDisplayNode,vtkMRMLMarkupsDisplayNode );
+  vtkTypeMacro(vtkMRMLMarkupsFiducialDisplayNode, vtkMRMLMarkupsDisplayNode);
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance (  ) override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Get node XML tag name (like Volume, Markups)
-  const char* GetNodeTagName() override {return "MarkupsFiducialDisplay";};
+  const char* GetNodeTagName() override { return "MarkupsFiducialDisplay"; };
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
@@ -52,7 +52,7 @@ public:
 protected:
   vtkMRMLMarkupsFiducialDisplayNode();
   ~vtkMRMLMarkupsFiducialDisplayNode() override;
-  vtkMRMLMarkupsFiducialDisplayNode( const vtkMRMLMarkupsFiducialDisplayNode& );
-  void operator= ( const vtkMRMLMarkupsFiducialDisplayNode& );
+  vtkMRMLMarkupsFiducialDisplayNode(const vtkMRMLMarkupsFiducialDisplayNode&);
+  void operator=(const vtkMRMLMarkupsFiducialDisplayNode&);
 };
 #endif

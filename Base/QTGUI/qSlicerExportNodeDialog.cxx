@@ -42,7 +42,7 @@
 
 //-----------------------------------------------------------------------------
 NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* storableNode, vtkMRMLScene* scene)
-  : prototypeNode{storableNode}
+  : prototypeNode{ storableNode }
 {
   this->nodeType = storableNode->GetClassName();
   this->frame = new QFrame(parent);
@@ -79,23 +79,19 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
     const std::string defaultStorageNodeClassName = storableNode->GetDefaultStorageNodeClassName();
     if (!defaultStorageNodeClassName.empty())
     {
-      vtkSmartPointer<vtkMRMLNode> defaultStorageNodeAsNode = vtkSmartPointer<vtkMRMLNode>::Take(
-        scene->CreateNodeByClass(defaultStorageNodeClassName.c_str())
-      );
+      vtkSmartPointer<vtkMRMLNode> defaultStorageNodeAsNode = vtkSmartPointer<vtkMRMLNode>::Take(scene->CreateNodeByClass(defaultStorageNodeClassName.c_str()));
       vtkMRMLStorageNode* defaultStorageNode = vtkMRMLStorageNode::SafeDownCast(defaultStorageNodeAsNode);
       extensionInStorageNode = defaultStorageNode->GetDefaultWriteFileExtension();
     }
   }
 
   // (Checking that storageNode is not null allows us to dodge a warning from completeSlicerWritableFileNameSuffix)
-  QString currentExtension = storageNode ?
-    coreIOManager->completeSlicerWritableFileNameSuffix(storableNode) : QString(".");
+  QString currentExtension = storageNode ? coreIOManager->completeSlicerWritableFileNameSuffix(storableNode) : QString(".");
   int suggestedFormatIndex = -1; // will be index corresponding to format corresponding to currentExtension
   foreach (QString nameFilter, coreIOManager->fileWriterExtensions(storableNode))
   {
     // extract extension (e.g. ".ext") from format description string (e.g. "Blahblahblah (.ext)")
-    QString extension = QString::fromStdString(
-      vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
+    QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(nameFilter.toUtf8()));
 
     // add the entry to the dropdown menu
     this->exportFormatComboBox->addItem(nameFilter, extension);
@@ -113,7 +109,7 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
   {
     for (int i = 0; i < this->exportFormatComboBox->count(); ++i)
     {
-      if (this->exportFormatComboBox->itemData(i).toString() ==  QString('.') + extensionInStorageNode)
+      if (this->exportFormatComboBox->itemData(i).toString() == QString('.') + extensionInStorageNode)
       {
         suggestedFormatIndex = i;
         break;
@@ -135,8 +131,7 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
   }
 
   // We make this connection now, not earlier, so that we don't trigger the signal with the above initialization.
-  QObject::connect(this->exportFormatComboBox, &QComboBox::currentTextChanged,
-                    this, &NodeTypeWidgetSet::formatChangedSlot);
+  QObject::connect(this->exportFormatComboBox, &QComboBox::currentTextChanged, this, &NodeTypeWidgetSet::formatChangedSlot);
 
   // --------------------
   // Setup optionsWidget, now that exportFormatComboBox is initialized
@@ -144,7 +139,7 @@ NodeTypeWidgetSet::NodeTypeWidgetSet(QWidget* parent, vtkMRMLStorableNode* stora
 
   if (!this->updateOptionsWidget())
   {
-    throw std::runtime_error(std::string("NodeTypeWidgetSet: Unable to initialize options widget for ")+storableNode->GetName());
+    throw std::runtime_error(std::string("NodeTypeWidgetSet: Unable to initialize options widget for ") + storableNode->GetName());
   }
 
   // --------------------
@@ -237,7 +232,7 @@ bool NodeTypeWidgetSet::updateOptionsWidget()
     this->formatToOptionsWidget.insert(this->formatText(), newOptionsWidget);
   }
 
-  return true; //success
+  return true; // success
 }
 
 //-----------------------------------------------------------------------------
@@ -284,7 +279,6 @@ QString NodeTypeWidgetSet::extension() const
   return this->exportFormatComboBox->itemData(this->exportFormatComboBox->currentIndex()).toString();
 }
 
-
 QString NodeTypeWidgetSet::formatText() const
 {
   return this->exportFormatComboBox->currentText();
@@ -327,12 +321,12 @@ void NodeTypeWidgetSet::setFrameStyle(NodeTypeWidgetSet::FrameStyle frameStyle)
   if (frameStyle == NodeTypeWidgetSet::FrameStyle::Frame)
   {
     this->frame->setFrameShape(QFrame::StyledPanel);
-    this->frameLayout->setContentsMargins(9,9,9,9);
+    this->frameLayout->setContentsMargins(9, 9, 9, 9);
   }
   else
   {
     this->frame->setFrameShape(QFrame::NoFrame);
-    this->frameLayout->setContentsMargins(0,0,0,0);
+    this->frameLayout->setContentsMargins(0, 0, 0, 0);
   }
 }
 
@@ -391,13 +385,13 @@ bool qSlicerExportNodeDialogPrivate::layoutWidgetsAllInvisible(const QLayout* la
 
 //-----------------------------------------------------------------------------
 qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWidget)
-  : QDialog(parentWidget),
-    LastUsedHardenTransform{false},
-    LastUsedPreserveHierarchy{true},
-    LastUsedRecursiveChildren{true},
-    LastUsedIncludeChildren{true},
-    ProtectFilenameLineEdit{false}
-    {
+  : QDialog(parentWidget)
+  , LastUsedHardenTransform{ false }
+  , LastUsedPreserveHierarchy{ true }
+  , LastUsedRecursiveChildren{ true }
+  , LastUsedIncludeChildren{ true }
+  , ProtectFilenameLineEdit{ false }
+{
   this->setupUi(this);
 
   connect(this->FilenameLineEdit, SIGNAL(editingFinished()), this, SLOT(onFilenameEditingFinished()));
@@ -416,7 +410,7 @@ qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWi
   this->formLayout->getWidgetPosition(this->ExportFormatsLabel, &exportFormatsLabelRow, nullptr); // (returns to second parameter)
   if (exportFormatsLabelRow >= 0)
   {
-    this->NodeTypeWidgetSetStartRow = exportFormatsLabelRow+1;
+    this->NodeTypeWidgetSetStartRow = exportFormatsLabelRow + 1;
   }
   else
   {
@@ -424,13 +418,13 @@ qSlicerExportNodeDialogPrivate::qSlicerExportNodeDialogPrivate(QWidget* parentWi
   }
 
   this->ButtonBox->button(QDialogButtonBox::Save)->setText(qSlicerExportNodeDialog::tr("&Export"));
-    }
+}
 
 //-----------------------------------------------------------------------------
 qSlicerExportNodeDialogPrivate::~qSlicerExportNodeDialogPrivate() = default;
 
 //-----------------------------------------------------------------------------
-const QList<vtkMRMLStorableNode*> & qSlicerExportNodeDialogPrivate::nodeList() const
+const QList<vtkMRMLStorableNode*>& qSlicerExportNodeDialogPrivate::nodeList() const
 {
   if (!this->IncludeChildrenCheckBox->isChecked())
   {
@@ -443,13 +437,11 @@ const QList<vtkMRMLStorableNode*> & qSlicerExportNodeDialogPrivate::nodeList() c
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerExportNodeDialogPrivate::setup(
-  vtkMRMLScene* scene,
-  const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
-  const QList<vtkMRMLStorableNode*>& nodesRecursive,
-  vtkMRMLStorableNode* selectedNode,
-  const QHash<QString,QVariant>& nodeIdToSubjectHierarchyPath
-)
+bool qSlicerExportNodeDialogPrivate::setup(vtkMRMLScene* scene,
+                                           const QList<vtkMRMLStorableNode*>& nodesNonrecursive,
+                                           const QList<vtkMRMLStorableNode*>& nodesRecursive,
+                                           vtkMRMLStorableNode* selectedNode,
+                                           const QHash<QString, QVariant>& nodeIdToSubjectHierarchyPath)
 {
   this->MRMLScene = scene;
   this->NodesRecursive = nodesRecursive;
@@ -469,7 +461,7 @@ bool qSlicerExportNodeDialogPrivate::setup(
     this->IncludeChildrenCheckBox->setChecked(true);
     this->IncludeChildrenCheckBox->hide();
   }
-  else if (this->NodesRecursive.size()==1)
+  else if (this->NodesRecursive.size() == 1)
   {
     // There are no children so it makes no difference-- force unchecked and hide
     this->IncludeChildrenCheckBox->setChecked(false);
@@ -510,9 +502,7 @@ bool qSlicerExportNodeDialogPrivate::setup(
   this->updatePreserveHierarchyCheckBox();
 
   // Initialize directory input widget
-  this->DirectoryPathLineEdit->setCurrentPath(
-    this->LastUsedDirectory.isEmpty() ? this->MRMLScene->GetRootDirectory() : this->LastUsedDirectory
-  );
+  this->DirectoryPathLineEdit->setCurrentPath(this->LastUsedDirectory.isEmpty() ? this->MRMLScene->GetRootDirectory() : this->LastUsedDirectory);
 
   if (this->NodeTypeWidgetSetStartRow < 0)
   {
@@ -590,7 +580,7 @@ void qSlicerExportNodeDialogPrivate::updateHardenTransformCheckBox()
 void qSlicerExportNodeDialogPrivate::updatePreserveHierarchyCheckBox()
 {
   // We display the checkbox if and only the selected subject hierarchy item has children
-  this->PreserveHierarchyCheckBox->setVisible(this->NodesSelectedOnly.empty() || this->NodesRecursive.size()>1);
+  this->PreserveHierarchyCheckBox->setVisible(this->NodesSelectedOnly.empty() || this->NodesRecursive.size() > 1);
 
   // We enable the checkbox if and only if children are being included for export
   if (this->IncludeChildrenCheckBox->isChecked())
@@ -615,7 +605,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
     qCritical() << Q_FUNC_INFO << "failed: The list that tracks node-type-specific widgets is too long; it cannot be valid.";
     return false;
   }
-  for (int i = this->NodeTypesInDialog.size()-1; i >= 0; --i)
+  for (int i = this->NodeTypesInDialog.size() - 1; i >= 0; --i)
   {
     NodeTypeWidgetSet* nodeTypeWidgetSet = this->getNodeTypeWidgetSetSafe(this->NodeTypesInDialog[i], true);
     if (!nodeTypeWidgetSet)
@@ -706,7 +696,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
       bool typeDisplayNameCollision = false;
       for (const auto& otherNodeType : this->NodeTypesInDialog)
       {
-        if (nodeType==otherNodeType)
+        if (nodeType == otherNodeType)
         {
           continue;
         }
@@ -754,7 +744,7 @@ bool qSlicerExportNodeDialogPrivate::populateNodeTypeWidgetSets()
     this->FilenameLineEdit->setFocus(Qt::ActiveWindowFocusReason);
 
     // Use a more specific title when exporting a single node
-    this->setWindowTitle(qSlicerExportNodeDialog::tr("Export ")+QString(this->theOnlyNode()->GetName()));
+    this->setWindowTitle(qSlicerExportNodeDialog::tr("Export ") + QString(this->theOnlyNode()->GetName()));
   }
   else
   {
@@ -817,7 +807,7 @@ void qSlicerExportNodeDialogPrivate::adjustTabbingOrder()
       setTabOrder(nodeTypeWidgetSet->optionsStackedWidget, this->IncludeChildrenCheckBox);
     }
   }
-  setTabOrder(this->IncludeChildrenCheckBox,this->RecursiveChildrenCheckBox);
+  setTabOrder(this->IncludeChildrenCheckBox, this->RecursiveChildrenCheckBox);
   setTabOrder(this->RecursiveChildrenCheckBox, this->PreserveHierarchyCheckBox);
   setTabOrder(this->PreserveHierarchyCheckBox, this->HardenTransformCheckBox);
   setTabOrder(this->HardenTransformCheckBox, this->ButtonBox);
@@ -874,12 +864,11 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     QString betterFilename = this->recommendedFilename(this->theOnlyNode());
     if (this->FilenameLineEdit->text() != betterFilename)
     {
-      QMessageBox messageBox(
-        QMessageBox::Warning, // icon
-        qSlicerExportNodeDialog::tr("Filename not standard"), // title
-        qSlicerExportNodeDialog::tr("The following filename is recommended:") + QStringLiteral("\n") + betterFilename, // message text
-        QMessageBox::NoButton, // buttons; they will be added after
-        this // parent
+      QMessageBox messageBox(QMessageBox::Warning,                                                                                          // icon
+                             qSlicerExportNodeDialog::tr("Filename not standard"),                                                          // title
+                             qSlicerExportNodeDialog::tr("The following filename is recommended:") + QStringLiteral("\n") + betterFilename, // message text
+                             QMessageBox::NoButton,                                                                                         // buttons; they will be added after
+                             this                                                                                                           // parent
       );
       QAbstractButton* acceptButton = messageBox.addButton(qSlicerExportNodeDialog::tr("Accept recommended"), QMessageBox::YesRole);
       messageBox.addButton(qSlicerExportNodeDialog::tr("Keep my filename"), QMessageBox::NoRole);
@@ -917,8 +906,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     }
 
     // Construct file path for node
-    QDir directory = this->PreserveHierarchyCheckBox->isChecked() ?
-      this->getSubjectHierarchyBasedDirectory(node) : this->DirectoryPathLineEdit->currentPath();
+    QDir directory = this->PreserveHierarchyCheckBox->isChecked() ? this->getSubjectHierarchyBasedDirectory(node) : this->DirectoryPathLineEdit->currentPath();
     QString filename;
     if (this->FilenameLineEdit->isEnabled())
     {
@@ -945,8 +933,7 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
     {
       if (this->FilenameLineEdit->isEnabled()) // user error
       {
-        QMessageBox::critical(this, qSlicerExportNodeDialog::tr("Export Error"),
-          qSlicerExportNodeDialog::tr("Failed to export node %1; filename is empty.").arg(node->GetName()));
+        QMessageBox::critical(this, qSlicerExportNodeDialog::tr("Export Error"), qSlicerExportNodeDialog::tr("Failed to export node %1; filename is empty.").arg(node->GetName()));
         return false;
       }
       else // program error
@@ -964,13 +951,13 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
         continue;
       }
       QMessageBox::StandardButtons replaceQuestionButtons;
-      QMessageBox::StandardButton answer = QMessageBox::question(this, qSlicerExportNodeDialog::tr("File Exists"),
-        qSlicerExportNodeDialog::tr("The file %1 already exists. Do you want to replace it?").arg(fileInfo.absoluteFilePath()),
-        this->nodeList().size()>1
-          ? QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel
-          : QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
-        QMessageBox::Yes
-      );
+      QMessageBox::StandardButton answer =
+        QMessageBox::question(this,
+                              qSlicerExportNodeDialog::tr("File Exists"),
+                              qSlicerExportNodeDialog::tr("The file %1 already exists. Do you want to replace it?").arg(fileInfo.absoluteFilePath()),
+                              this->nodeList().size() > 1 ? QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel
+                                                          : QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+                              QMessageBox::Yes);
       if (answer == QMessageBox::Cancel)
       {
         return false;
@@ -990,26 +977,26 @@ bool qSlicerExportNodeDialogPrivate::exportNodes()
       }
     }
 
-      // Get additional saving parameters from options widget
-      qSlicerFileWriterOptionsWidget* options = nodeTypeWidgetSet->optionsWidget;
-      qSlicerIO::IOProperties savingParameters;
-      if (options)
+    // Get additional saving parameters from options widget
+    qSlicerFileWriterOptionsWidget* options = nodeTypeWidgetSet->optionsWidget;
+    qSlicerIO::IOProperties savingParameters;
+    if (options)
+    {
+      savingParameters = options->properties();
+      if (!options->isVisibleTo(this))
       {
-        savingParameters = options->properties();
-        if (!options->isVisibleTo(this))
-        {
-          qCritical() << Q_FUNC_INFO << "error: attempted to use options from an invisible widget.";
-          return false;
-        }
+        qCritical() << Q_FUNC_INFO << "error: attempted to use options from an invisible widget.";
+        return false;
       }
+    }
 
-      // Fill saving parameters with the gathered information
-      savingParameters["nodeID"] = node->GetID();
-      savingParameters["fileName"] = fileInfo.absoluteFilePath();
-      savingParameters["fileFormat"] = nodeTypeWidgetSet->formatText();
+    // Fill saving parameters with the gathered information
+    savingParameters["nodeID"] = node->GetID();
+    savingParameters["fileName"] = fileInfo.absoluteFilePath();
+    savingParameters["fileFormat"] = nodeTypeWidgetSet->formatText();
 
-      // sadly, this copies; if we move to Qt6 then this should be emplace_back with a move
-      savingParameterMaps.push_back(savingParameters);
+    // sadly, this copies; if we move to Qt6 then this should be emplace_back with a move
+    savingParameterMaps.push_back(savingParameters);
   }
 
   if (savingParameterMaps.isEmpty())
@@ -1101,8 +1088,7 @@ QString qSlicerExportNodeDialogPrivate::recommendedFilename(vtkMRMLStorableNode*
   }
 
   // Get the extension associated with the currently selected format
-  QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-    this->theOnlyNodeTypeWidgetSet()->formatText().toUtf8()));
+  QString extension = QString::fromStdString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(this->theOnlyNodeTypeWidgetSet()->formatText().toUtf8()));
   if (extension == "*")
   {
     extension = QString();
@@ -1119,8 +1105,7 @@ QDir qSlicerExportNodeDialogPrivate::getSubjectHierarchyBasedDirectory(vtkMRMLSt
   QString nodeID(node->GetID());
   if (!this->NodeIdToSubjectHierarchyPath.contains(nodeID) || !this->NodeIdToSubjectHierarchyPath[nodeID].canConvert<QStringList>())
   {
-    qWarning() << Q_FUNC_INFO << "warning: lookup for" << node->GetName() << "failed in nodeIdToSubjectHierarchyPath;" <<
-      "\"Preserve hierarchy\" will not work correctly";
+    qWarning() << Q_FUNC_INFO << "warning: lookup for" << node->GetName() << "failed in nodeIdToSubjectHierarchyPath;" << "\"Preserve hierarchy\" will not work correctly";
     return this->DirectoryPathLineEdit->currentPath();
   }
 
@@ -1313,8 +1298,8 @@ bool qSlicerExportNodeDialog::exec(const qSlicerIO::IOProperties& properties)
   }
 
   // Get the hash map that attributes to each node a subject hierarchy path
-  QHash<QString,QVariant> nodeIdToSubjectHierarchyPath;
-  if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert<QHash<QString,QVariant>>())
+  QHash<QString, QVariant> nodeIdToSubjectHierarchyPath;
+  if (properties.contains("nodeIdToSubjectHierarchyPath") && properties["nodeIdToSubjectHierarchyPath"].canConvert<QHash<QString, QVariant>>())
   {
     nodeIdToSubjectHierarchyPath = properties["nodeIdToSubjectHierarchyPath"].toHash();
   }

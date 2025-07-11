@@ -55,7 +55,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->InvertDisplayScalarRange = 0;
 
   // try setting a default grayscale color map
-  //this->SetDefaultColorMap(0);
+  // this->SetDefaultColorMap(0);
 
   // create and set visualization pipeline
   this->AlphaLogic = vtkImageLogic::New();
@@ -77,7 +77,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->MapToColors->SetInputConnection(this->MapToWindowLevelColors->GetOutputPort());
 
   this->ExtractRGB->SetInputConnection(this->MapToColors->GetOutputPort());
-  this->ExtractRGB->SetComponents(0,1,2);
+  this->ExtractRGB->SetComponents(0, 1, 2);
 
   this->ExtractAlpha->SetInputConnection(this->MapToColors->GetOutputPort());
   this->ExtractAlpha->SetComponents(3);
@@ -89,19 +89,19 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->Threshold->SetOutputScalarTypeToUnsignedChar();
   this->Threshold->ThresholdBetween(VTK_SHORT_MIN, VTK_SHORT_MAX);
 
-  this->MultiplyAlpha->SetInputConnection(0, this->ExtractAlpha->GetOutputPort() );
+  this->MultiplyAlpha->SetInputConnection(0, this->ExtractAlpha->GetOutputPort());
   this->MultiplyAlpha->SetBackgroundValue(0);
 
   this->AlphaLogic->SetOperationToAnd();
   this->AlphaLogic->SetOutputTrueValue(255);
 
-  this->AlphaLogic->SetInputConnection(0, this->Threshold->GetOutputPort() );
-  //this->AlphaLogic->SetInputConnection(1, this->Threshold->GetOutputPort() );
-  this->AlphaLogic->SetInputConnection(1, this->MultiplyAlpha->GetOutputPort() );
+  this->AlphaLogic->SetInputConnection(0, this->Threshold->GetOutputPort());
+  // this->AlphaLogic->SetInputConnection(1, this->Threshold->GetOutputPort() );
+  this->AlphaLogic->SetInputConnection(1, this->MultiplyAlpha->GetOutputPort());
 
   this->AppendComponents->RemoveAllInputs();
-  this->AppendComponents->AddInputConnection(0, this->ExtractRGB->GetOutputPort() );
-  this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutputPort() );
+  this->AppendComponents->AddInputConnection(0, this->ExtractRGB->GetOutputPort());
+  this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutputPort());
 
   this->HistogramStatistics = nullptr;
   this->IsInCalculateAutoLevels = false;
@@ -112,7 +112,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
 {
-  this->SetAndObserveColorNodeID( nullptr);
+  this->SetAndObserveColorNodeID(nullptr);
 
   this->AlphaLogic->Delete();
   this->MapToColors->Delete();
@@ -143,8 +143,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
   {
     return;
   }
-  vtkAlgorithm* oldInputImageDataAlgorithm = this->GetInputImageDataConnection() ?
-    this->GetInputImageDataConnection()->GetProducer() : nullptr;
+  vtkAlgorithm* oldInputImageDataAlgorithm = this->GetInputImageDataConnection() ? this->GetInputImageDataConnection()->GetProducer() : nullptr;
 
   if (oldInputImageDataAlgorithm != nullptr)
   {
@@ -153,18 +152,15 @@ void vtkMRMLScalarVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOut
 
   this->Superclass::SetInputImageDataConnection(imageDataConnection);
 
-  vtkAlgorithm* inputImageDataAlgorithm = this->GetInputImageDataConnection() ?
-    this->GetInputImageDataConnection()->GetProducer() : nullptr;
+  vtkAlgorithm* inputImageDataAlgorithm = this->GetInputImageDataConnection() ? this->GetInputImageDataConnection()->GetProducer() : nullptr;
   if (inputImageDataAlgorithm != nullptr)
   {
     vtkObserveMRMLObjectMacro(inputImageDataAlgorithm);
   }
-
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode
-::SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection)
+void vtkMRMLScalarVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput* imageDataConnection)
 {
   this->Threshold->SetInputConnection(imageDataConnection);
 
@@ -185,8 +181,7 @@ void vtkMRMLScalarVolumeDisplayNode
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode
-::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* imageDataConnection)
+void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* imageDataConnection)
 {
   this->MultiplyAlpha->SetStencilConnection(imageDataConnection);
 }
@@ -196,15 +191,13 @@ vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageStencilDat
   // Input ports:
   // 0 = foreground image, 1 = background image, 2 = stencil
   const int stencilInputPort = 2;
-  return this->MultiplyAlpha->GetNumberOfInputConnections(0)>stencilInputPort ?
-    this->MultiplyAlpha->GetInputConnection(0,stencilInputPort) : nullptr;
+  return this->MultiplyAlpha->GetNumberOfInputConnections(0) > stencilInputPort ? this->MultiplyAlpha->GetInputConnection(0, stencilInputPort) : nullptr;
 }
 
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLScalarVolumeDisplayNode::GetInputImageDataConnection()
 {
-  return this->MapToWindowLevelColors->GetNumberOfInputConnections(0) ?
-    this->MapToWindowLevelColors->GetInputConnection(0,0) : nullptr;
+  return this->MapToWindowLevelColors->GetNumberOfInputConnections(0) ? this->MapToWindowLevelColors->GetInputConnection(0, 0) : nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -219,49 +212,49 @@ void vtkMRMLScalarVolumeDisplayNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   {
-  std::stringstream ss;
-  ss << this->GetWindow();
-  of << " window=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->GetWindow();
+    of << " window=\"" << ss.str() << "\"";
   }
   {
-  std::stringstream ss;
-  ss << this->GetLevel();
-  of << " level=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->GetLevel();
+    of << " level=\"" << ss.str() << "\"";
   }
   {
-  std::stringstream ss;
-  ss << this->GetUpperThreshold();
-  of << " upperThreshold=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->GetUpperThreshold();
+    of << " upperThreshold=\"" << ss.str() << "\"";
   }
   {
-  std::stringstream ss;
-  ss << this->GetLowerThreshold();
-  of << " lowerThreshold=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->GetLowerThreshold();
+    of << " lowerThreshold=\"" << ss.str() << "\"";
   }
   {
-  std::stringstream ss;
-  ss << this->Interpolate;
-  of << " interpolate=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->Interpolate;
+    of << " interpolate=\"" << ss.str() << "\"";
   }
   {
-  std::stringstream ss;
-  ss << this->InvertDisplayScalarRange;
-  of << " invertDisplayScalarRange=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->InvertDisplayScalarRange;
+    of << " invertDisplayScalarRange=\"" << ss.str() << "\"";
   }
   {
-  std::stringstream ss;
-  ss << this->AutoWindowLevel;
-  of << " autoWindowLevel=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->AutoWindowLevel;
+    of << " autoWindowLevel=\"" << ss.str() << "\"";
   }
   {
-  std::stringstream ss;
-  ss << this->ApplyThreshold;
-  of << " applyThreshold=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->ApplyThreshold;
+    of << " applyThreshold=\"" << ss.str() << "\"";
   }
   {
-  std::stringstream ss;
-  ss << this->AutoThreshold;
-  of << " autoThreshold=\"" << ss.str() << "\"";
+    std::stringstream ss;
+    ss << this->AutoThreshold;
+    of << " autoThreshold=\"" << ss.str() << "\"";
   }
   if (this->WindowLevelPresets.size() > 0)
   {
@@ -368,7 +361,7 @@ void vtkMRMLScalarVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLScalarVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
 
@@ -412,9 +405,7 @@ void vtkMRMLScalarVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject* caller,
-                                           unsigned long event,
-                                           void* callData )
+void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   vtkMRMLColorNode* cnode = vtkMRMLColorNode::SafeDownCast(caller);
   if (cnode && event == vtkCommand::ModifiedEvent)
@@ -557,7 +548,7 @@ void vtkMRMLScalarVolumeDisplayNode::SetThreshold(double lowerThreshold, double 
   {
     return;
   }
-  this->Threshold->ThresholdBetween( lowerThreshold, upperThreshold );
+  this->Threshold->ThresholdBetween(lowerThreshold, upperThreshold);
   this->Modified();
 }
 
@@ -600,7 +591,7 @@ void vtkMRMLScalarVolumeDisplayNode::UpdateLookupTable(vtkMRMLColorNode* newColo
       {
         // For continuous transfer functions, invert the positions
         vtkNew<vtkColorTransferFunction> invertedCtf;
-        double range[2] = { 0,255 };
+        double range[2] = { 0, 255 };
         ctf->GetRange(range);
         for (int i = 0; i < ctf->GetSize(); i++)
         {
@@ -763,8 +754,7 @@ void vtkMRMLScalarVolumeDisplayNode::ResetWindowLevelPresets()
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetScalarImageData()
 {
-  vtkAlgorithm* producer = this->GetScalarImageDataConnection() ?
-    this->GetScalarImageDataConnection()->GetProducer() : nullptr;
+  vtkAlgorithm* producer = this->GetScalarImageDataConnection() ? this->GetScalarImageDataConnection()->GetProducer() : nullptr;
   return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : nullptr);
 }
 
@@ -787,14 +777,14 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
     // doesn't. It's ok if the display node is not yet in the scene: being
     // loaded (vtkMRMLScene::LoadIntoScene)or stored
     // (vtkMRMLSceneViewNode::StoreScene).
-    assert( !this->GetVolumeNode() || !this->GetVolumeNode()->GetImageData() || //
-            !this->GetScene() || this->GetScene()->GetNodeByID(this->GetID()) != this);
-    vtkDebugMacro( << "No valid image data, returning default values [0, 255]");
+    assert(!this->GetVolumeNode() || !this->GetVolumeNode()->GetImageData() || //
+           !this->GetScene() || this->GetScene()->GetNodeByID(this->GetID()) != this);
+    vtkDebugMacro(<< "No valid image data, returning default values [0, 255]");
     return;
   }
   this->GetScalarImageDataConnection()->GetProducer()->Update();
   imageData->GetScalarRange(range);
-  if (imageData->GetNumberOfScalarComponents() >=3 && //
+  if (imageData->GetNumberOfScalarComponents() >= 3 && //
       fabs(range[0]) < 0.000001 && fabs(range[1]) < 0.000001)
   {
     range[0] = 0;
@@ -807,8 +797,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
 {
   if (!this->GetAutoWindowLevel() && !this->GetAutoThreshold())
   {
-    vtkDebugMacro("CalculateScalarAutoLevels: " << (this->GetID() == nullptr ? "nullid" : this->GetID())
-                  << ": Auto window level not turned on, returning.");
+    vtkDebugMacro("CalculateScalarAutoLevels: " << (this->GetID() == nullptr ? "nullid" : this->GetID()) << ": Auto window level not turned on, returning.");
     return;
   }
 
@@ -860,8 +849,7 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
   this->HistogramStatistics->SetInputData(imageDataScalar);
   this->HistogramStatistics->Update();
   double* intensityRange = this->HistogramStatistics->GetAutoRange();
-  vtkDebugMacro("CalculateScalarAutoLevels:"
-                << " lower: " << intensityRange[0] << " upper: " << intensityRange[1]);
+  vtkDebugMacro("CalculateScalarAutoLevels:" << " lower: " << intensityRange[0] << " upper: " << intensityRange[1]);
 
   int disabledModify = this->StartModify();
   if (this->GetAutoWindowLevel())

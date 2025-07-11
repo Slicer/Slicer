@@ -69,7 +69,6 @@ protected:
 private:
   vtkMRMLViewLinkLogic(const vtkMRMLViewLinkLogic&) = delete;
   void operator=(const vtkMRMLViewLinkLogic&) = delete;
-
 };
 
 #endif

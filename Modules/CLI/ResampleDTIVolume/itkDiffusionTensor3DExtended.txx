@@ -20,19 +20,16 @@ namespace itk
 {
 
 template <class T>
-DiffusionTensor3DExtended<T>
-::DiffusionTensor3DExtended( const Superclass & tensor )
+DiffusionTensor3DExtended<T>::DiffusionTensor3DExtended(const Superclass& tensor)
 {
   for (int i = 0; i < 6; i++)
   {
-    this->SetElement( i, tensor.GetElement( i ) );
+    this->SetElement(i, tensor.GetElement(i));
   }
 }
 
 template <class T>
-typename DiffusionTensor3DExtended<T>::MatrixType
-DiffusionTensor3DExtended<T>
-::GetTensor2Matrix()
+typename DiffusionTensor3DExtended<T>::MatrixType DiffusionTensor3DExtended<T>::GetTensor2Matrix()
 {
   MatrixType matrix;
 
@@ -40,7 +37,7 @@ DiffusionTensor3DExtended<T>
   {
     for (int j = 0; j < 3; j++)
     {
-      matrix[i][j] = ( *this )( i, j );
+      matrix[i][j] = (*this)(i, j);
     }
   }
   return matrix;
@@ -48,28 +45,25 @@ DiffusionTensor3DExtended<T>
 
 template <class T>
 template <class C>
-void
-DiffusionTensor3DExtended<T>
-::SetTensorFromMatrix( Matrix<C, 3, 3> matrix )
+void DiffusionTensor3DExtended<T>::SetTensorFromMatrix(Matrix<C, 3, 3> matrix)
 {
   for (int i = 0; i < 3; i++)
   {
     for (int j = i; j < 3; j++)
     {
-      ( *this )( i, j ) = static_cast<T>( matrix[i][j] );
+      (*this)(i, j) = static_cast<T>(matrix[i][j]);
     }
   }
 }
 
 template <class T>
 template <class C>
-DiffusionTensor3DExtended<T>
-::operator DiffusionTensor3DExtended<C> const ()
+DiffusionTensor3DExtended<T>::operator DiffusionTensor3DExtended<C> const()
 {
   DiffusionTensor3DExtended<C> tmp;
   for (int i = 0; i < 6; i++)
   {
-    tmp.SetElement( i, ( C ) ( this->GetElement( i ) ) );
+    tmp.SetElement(i, (C)(this->GetElement(i)));
   }
   return tmp;
 }

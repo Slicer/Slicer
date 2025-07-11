@@ -22,7 +22,7 @@
  *
  * The vtkSlicerLineWidget is used to create a line widget with a set of 2 points.
  *
-*/
+ */
 
 #ifndef vtkSlicerLineWidget_h
 #define vtkSlicerLineWidget_h

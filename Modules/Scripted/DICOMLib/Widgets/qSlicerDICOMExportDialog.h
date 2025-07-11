@@ -56,8 +56,7 @@ public:
   Q_INVOKABLE void setMRMLScene(vtkMRMLScene* scene);
 
   /// Python compatibility function for showing dialog (calls \a exec)
-  Q_INVOKABLE bool execDialog(vtkIdType itemToSelect = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
-    { return this->exec(itemToSelect); };
+  Q_INVOKABLE bool execDialog(vtkIdType itemToSelect = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) { return this->exec(itemToSelect); };
 
   /// Show DICOM browser and update database to show new items
   Q_INVOKABLE void showUpdatedDICOMBrowser();

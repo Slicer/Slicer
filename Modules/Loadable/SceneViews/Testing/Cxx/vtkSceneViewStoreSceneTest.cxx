@@ -52,8 +52,7 @@ int storePerformance(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneV
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
-int vtkSceneViewStoreSceneTest(int vtkNotUsed(argc),
-                                       char* vtkNotUsed(argv)[] )
+int vtkSceneViewStoreSceneTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkMRMLApplicationLogic> appLogic;
@@ -188,11 +187,9 @@ int references(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneViewLog
 {
   populateScene(scene);
 
-  vtkMRMLNode* volumeNode =
-    scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
   vtkSmartPointer<vtkCollection> sceneReferencedNodes;
-  sceneReferencedNodes.TakeReference(
-    scene->GetReferencedNodes(volumeNode));
+  sceneReferencedNodes.TakeReference(scene->GetReferencedNodes(volumeNode));
   CHECK_INT(sceneReferencedNodes->GetNumberOfItems(), 2);
 
   sceneViewLogic->CreateSceneView("SceneView1");
@@ -224,9 +221,8 @@ int storePerformance(vtkMRMLScene* scene, vtkSlicerSceneViewsModuleLogic* sceneV
   sceneViewLogic->CreateSceneView("SceneView1");
   timer->StopTimer();
 
-  std::cout<< "<DartMeasurement name=\"vtkMRMLSceneViewNode-StorePerformance-"
-           << displayNodePairCount <<"\" type=\"numeric/double\">"
-           << timer->GetElapsedTime() << "</DartMeasurement>" << std::endl;
+  std::cout << "<DartMeasurement name=\"vtkMRMLSceneViewNode-StorePerformance-" << displayNodePairCount << "\" type=\"numeric/double\">" << timer->GetElapsedTime()
+            << "</DartMeasurement>" << std::endl;
 
   return EXIT_SUCCESS;
 }

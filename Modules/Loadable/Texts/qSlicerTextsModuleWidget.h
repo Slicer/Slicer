@@ -34,7 +34,6 @@ class Q_SLICER_QTMODULES_TEXTS_EXPORT qSlicerTextsModuleWidget : public qSlicerA
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTextsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerTextsModuleWidget() override;
@@ -43,7 +42,6 @@ public:
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 protected:
-
   void setup() override;
 
 protected:

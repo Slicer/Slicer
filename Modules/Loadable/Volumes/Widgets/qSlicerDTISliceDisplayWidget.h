@@ -35,8 +35,7 @@ class vtkMRMLDiffusionTensorVolumeSliceDisplayNode;
 class vtkMRMLDiffusionTensorDisplayPropertiesNode;
 class qSlicerDTISliceDisplayWidgetPrivate;
 
-class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDTISliceDisplayWidget
-  : public qSlicerWidget
+class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerDTISliceDisplayWidget : public qSlicerWidget
 {
   Q_OBJECT
   QVTK_OBJECT

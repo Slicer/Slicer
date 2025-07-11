@@ -43,7 +43,7 @@ int vtkMRMLScalarVolumeNodeTest2(int, char*[])
     {
       for (int x = 0; x < dims[0]; x++)
       {
-        vtkTypeUInt16* pixel = static_cast<vtkTypeUInt16*>(imageData->GetScalarPointer(x,y,z));
+        vtkTypeUInt16* pixel = static_cast<vtkTypeUInt16*>(imageData->GetScalarPointer(x, y, z));
         pixel[0] = 0;
       }
     }

@@ -47,8 +47,7 @@ qSlicerSceneIOOptionsWidget::qSlicerSceneIOOptionsWidget(QWidget* parentWidget)
 
   ctkFlowLayout::replaceLayout(this);
 
-  connect(d->ClearSceneCheckBox, SIGNAL(toggled(bool)),
-          this, SLOT(updateProperties()));
+  connect(d->ClearSceneCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateProperties()));
 
   this->updateProperties();
 }

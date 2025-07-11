@@ -33,7 +33,7 @@ class vtkMatrix4x4;
 ///  to RAS.
 class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 {
-  public:
+public:
   static vtkMRMLTensorVolumeNode* New();
   vtkTypeMacro(vtkMRMLTensorVolumeNode, vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -42,7 +42,7 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -54,18 +54,16 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "TensorVolume";}
+  const char* GetNodeTagName() override { return "TensorVolume"; }
 
   ///
   /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
-  void UpdateReferences() override
-    { Superclass::UpdateReferences(); }
+  void UpdateReferences() override { Superclass::UpdateReferences(); }
 
- /// Description:
- /// Update the stored reference to another node in the scene
-  void UpdateReferenceID(const char* oldID, const char* newID) override
-    { Superclass::UpdateReferenceID(oldID, newID); }
+  /// Description:
+  /// Update the stored reference to another node in the scene
+  void UpdateReferenceID(const char* oldID, const char* newID) override { Superclass::UpdateReferenceID(oldID, newID); }
 
   ///
   vtkGetMacro(Order, int);
@@ -76,9 +74,15 @@ class VTK_MRML_EXPORT vtkMRMLTensorVolumeNode : public vtkMRMLScalarVolumeNode
   void SetMeasurementFrameMatrix(const double mf[3][3]);
   /// Description
   /// Set the measurement frame matrix from doubles
-  void SetMeasurementFrameMatrix(const double xr, const double xa, const double xs,
-                           const double yr, const double ya, const double ys,
-                           const double zr, const double za, const double zs);
+  void SetMeasurementFrameMatrix(const double xr,
+                                 const double xa,
+                                 const double xs,
+                                 const double yr,
+                                 const double ya,
+                                 const double ys,
+                                 const double zr,
+                                 const double za,
+                                 const double zs);
 
   void GetMeasurementFrameMatrix(double mf[3][3]);
 

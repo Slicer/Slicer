@@ -88,7 +88,7 @@ public:
   Q_INVOKABLE void getDisplayableManagers(vtkCollection* displayableManagers);
 
   /// Return a DisplayableManager given its class name
-  Q_INVOKABLE  vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
+  Q_INVOKABLE vtkMRMLAbstractDisplayableManager* displayableManagerByClassName(const char* className);
 
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode() const;
@@ -100,9 +100,7 @@ public:
   /// -X, +X, -Y, +Y, -Z, +Z
   Q_INVOKABLE void rotateToViewAxis(unsigned int axisId);
   Q_INVOKABLE void rotateToViewAxis(const std::string& axisLabel);
-  Q_INVOKABLE void resetCamera(bool resetRotation = true,
-                               bool resetTranslation = true,
-                               bool resetDistance = true);
+  Q_INVOKABLE void resetCamera(bool resetRotation = true, bool resetTranslation = true, bool resetDistance = true);
 
   /// Returns camera node of the 3D view
   Q_INVOKABLE vtkMRMLCameraNode* cameraNode();

@@ -26,8 +26,7 @@
 class qSlicerGPURayCastVolumeRenderingPropertiesWidgetPrivate;
 class vtkMRMLGPURayCastVolumeRenderingDisplayNode;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPURayCastVolumeRenderingPropertiesWidget
-  : public qSlicerVolumeRenderingPropertiesWidget
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerGPURayCastVolumeRenderingPropertiesWidget : public qSlicerVolumeRenderingPropertiesWidget
 {
   Q_OBJECT
 public:

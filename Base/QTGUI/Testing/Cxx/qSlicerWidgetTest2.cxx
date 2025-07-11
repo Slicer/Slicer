@@ -22,7 +22,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #ifdef Slicer_BUILD_WEBENGINE_SUPPORT
-#include <QWebEngineView>
+# include <QWebEngineView>
 #endif
 
 // Slicer includes
@@ -72,26 +72,25 @@ vtkMRMLSliceLogic* setupSliceDisplay(vtkMRMLScene* scene, vtkRenderWindow* rw, c
   vtkMRMLVolumeArchetypeStorageNode* storageNode = vtkMRMLVolumeArchetypeStorageNode::New();
   vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::New();
 
-  volumeNode->SetScene( scene );
-  displayNode->SetScene( scene );
-  colorNode->SetScene( scene );
+  volumeNode->SetScene(scene);
+  displayNode->SetScene(scene);
+  colorNode->SetScene(scene);
   colorNode->SetTypeToGrey();
-  storageNode->SetScene( scene );
+  storageNode->SetScene(scene);
 
-  scene->AddNode( volumeNode );
-  scene->AddNode( colorNode );
-  scene->AddNode( displayNode );
-  scene->AddNode( storageNode );
+  scene->AddNode(volumeNode);
+  scene->AddNode(colorNode);
+  scene->AddNode(displayNode);
+  scene->AddNode(storageNode);
 
-  volumeNode->SetName( "sample volume" );
-  volumeNode->SetAndObserveStorageNodeID( storageNode->GetID() );
-  volumeNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
-  displayNode->SetAndObserveColorNodeID( colorNode->GetID() );
+  volumeNode->SetName("sample volume");
+  volumeNode->SetAndObserveStorageNodeID(storageNode->GetID());
+  volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+  displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 
   // read the data
-  storageNode->SetFileName( archetype );
-  storageNode->ReadData( volumeNode );
-
+  storageNode->SetFileName(archetype);
+  storageNode->ReadData(volumeNode);
 
   //
   // Create the slice logic to create the slice image
@@ -104,7 +103,7 @@ vtkMRMLSliceLogic* setupSliceDisplay(vtkMRMLScene* scene, vtkRenderWindow* rw, c
   sliceNode->SetOrientationToCoronal();
 
   vtkMRMLSliceCompositeNode* compositeNode = sliceLogic->GetSliceCompositeNode();
-  compositeNode->SetBackgroundVolumeID( volumeNode->GetID() );
+  compositeNode->SetBackgroundVolumeID(volumeNode->GetID());
 
   //
   // get the output slice and put it into the render window
@@ -113,15 +112,15 @@ vtkMRMLSliceLogic* setupSliceDisplay(vtkMRMLScene* scene, vtkRenderWindow* rw, c
   vtkAlgorithmOutput* slicePort = sliceLogic->GetImageDataConnection();
 
   vtkImageMapper* mapper = vtkImageMapper::New();
-  mapper->SetColorWindow( 255. );
-  mapper->SetColorLevel ( 127.5 );
-  mapper->SetInputConnection( slicePort );
+  mapper->SetColorWindow(255.);
+  mapper->SetColorLevel(127.5);
+  mapper->SetInputConnection(slicePort);
   vtkActor2D* actor = vtkActor2D::New();
-  actor->SetMapper( mapper );
+  actor->SetMapper(mapper);
   actor->GetProperty()->SetDisplayLocationToBackground();
   vtkRenderer* renderer = vtkRenderer::New();
-  renderer->AddActor2D( actor );
-  rw->AddRenderer( renderer );
+  renderer->AddActor2D(actor);
+  rw->AddRenderer(renderer);
 
   // clean up
   mapper->Delete();
@@ -132,7 +131,7 @@ vtkMRMLSliceLogic* setupSliceDisplay(vtkMRMLScene* scene, vtkRenderWindow* rw, c
   displayNode->Delete();
   storageNode->Delete();
 
-  return( sliceLogic );
+  return (sliceLogic);
 }
 
 int qSlicerWidgetTest2(int argc, char* argv[])
@@ -140,10 +139,10 @@ int qSlicerWidgetTest2(int argc, char* argv[])
   if (argc != 2 && argc != 3)
   {
     std::cerr << "Line " << __LINE__ << " - Missing parameters !" << std::endl
-      << "Usage:" << std::endl
-      << "  Default: " << argv[0] << " /path/to/temp" << std::endl
-      << "  For interactive testing: " << argv[0] << " /path/to/temp -I" << std::endl
-      << std::endl;
+              << "Usage:" << std::endl
+              << "  Default: " << argv[0] << " /path/to/temp" << std::endl
+              << "  For interactive testing: " << argv[0] << " /path/to/temp -I" << std::endl
+              << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -188,8 +187,7 @@ int qSlicerWidgetTest2(int argc, char* argv[])
   parentWidget.show();
   parentWidget.raise();
 
-  vtkMRMLSliceLogic* sliceLogic = setupSliceDisplay(
-    scene, vtkWidget->renderWindow(), argv[1] );
+  vtkMRMLSliceLogic* sliceLogic = setupSliceDisplay(scene, vtkWidget->renderWindow(), argv[1]);
 
   if (argc < 3 || QString(argv[2]) != "-I")
   {

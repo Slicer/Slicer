@@ -65,7 +65,7 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
@@ -120,9 +120,7 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 
   sliceWidget.setMRMLSliceNode(redSliceNode);
 
-  etpWidget.addTestCase(&sliceWidget,
-                        xmlDirectory + "qMRMLSliceWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(&sliceWidget, xmlDirectory + "qMRMLSliceWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

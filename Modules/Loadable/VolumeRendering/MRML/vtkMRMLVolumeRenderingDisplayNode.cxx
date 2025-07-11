@@ -52,28 +52,22 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   volumePropertyEvents->InsertNextValue(vtkCommand::StartInteractionEvent);
   volumePropertyEvents->InsertNextValue(vtkCommand::InteractionEvent);
   volumePropertyEvents->InsertNextValue(vtkCommand::EndInteractionEvent);
-  this->AddNodeReferenceRole(VolumePropertyNodeReferenceRole,
-                             VolumePropertyNodeReferenceMRMLAttributeName,
-                             volumePropertyEvents.GetPointer());
+  this->AddNodeReferenceRole(VolumePropertyNodeReferenceRole, VolumePropertyNodeReferenceMRMLAttributeName, volumePropertyEvents.GetPointer());
 
   vtkNew<vtkIntArray> roiEvents;
   roiEvents->InsertNextValue(vtkCommand::ModifiedEvent);
-  this->AddNodeReferenceRole(ROINodeReferenceRole,
-                             ROINodeReferenceMRMLAttributeName,
-                             roiEvents.GetPointer());
+  this->AddNodeReferenceRole(ROINodeReferenceRole, ROINodeReferenceMRMLAttributeName, roiEvents.GetPointer());
 
   vtkNew<vtkIntArray> shaderPropertyEvents;
   shaderPropertyEvents->InsertNextValue(vtkCommand::ModifiedEvent);
-  this->AddNodeReferenceRole(ShaderPropertyNodeReferenceRole,
-                             ShaderPropertyNodeReferenceMRMLAttributeName,
-                             shaderPropertyEvents.GetPointer());
+  this->AddNodeReferenceRole(ShaderPropertyNodeReferenceRole, ShaderPropertyNodeReferenceMRMLAttributeName, shaderPropertyEvents.GetPointer());
 
-  this->CroppingEnabled = 0;//by default cropping is not enabled
+  this->CroppingEnabled = 0; // by default cropping is not enabled
 
   this->Threshold[0] = 0.0;
   this->Threshold[1] = 1.0;
 
-  this->FollowVolumeDisplayNode = 0;// by default do not follow volume display node
+  this->FollowVolumeDisplayNode = 0; // by default do not follow volume display node
   this->IgnoreVolumeDisplayNodeThreshold = 0;
   this->UseSingleVolumeProperty = 0;
 
@@ -175,8 +169,7 @@ vtkMRMLVolumeNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumeNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveVolumePropertyNodeID(
-  const char* volumePropertyNodeID)
+void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveVolumePropertyNodeID(const char* volumePropertyNodeID)
 {
   this->SetAndObserveNodeReferenceID(VolumePropertyNodeReferenceRole, volumePropertyNodeID);
 }
@@ -190,31 +183,29 @@ const char* vtkMRMLVolumeRenderingDisplayNode::GetVolumePropertyNodeID()
 //----------------------------------------------------------------------------
 vtkMRMLVolumePropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetVolumePropertyNode()
 {
-  return vtkMRMLVolumePropertyNode::SafeDownCast(
-    this->GetNodeReference(VolumePropertyNodeReferenceRole));
+  return vtkMRMLVolumePropertyNode::SafeDownCast(this->GetNodeReference(VolumePropertyNodeReferenceRole));
 }
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLVolumeRenderingDisplayNode::GetShaderPropertyNodeID()
 {
-    return this->GetNodeReferenceID(ShaderPropertyNodeReferenceRole);
+  return this->GetNodeReferenceID(ShaderPropertyNodeReferenceRole);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::SetAndObserveShaderPropertyNodeID(const char* shaderPropertyNodeID)
 {
-    this->SetAndObserveNodeReferenceID(ShaderPropertyNodeReferenceRole, shaderPropertyNodeID);
+  this->SetAndObserveNodeReferenceID(ShaderPropertyNodeReferenceRole, shaderPropertyNodeID);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetShaderPropertyNode()
 {
-    return vtkMRMLShaderPropertyNode::SafeDownCast(
-      this->GetNodeReference(ShaderPropertyNodeReferenceRole));
+  return vtkMRMLShaderPropertyNode::SafeDownCast(this->GetNodeReference(ShaderPropertyNodeReferenceRole));
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetOrCreateShaderPropertyNode( vtkMRMLScene* mrmlScene )
+vtkMRMLShaderPropertyNode* vtkMRMLVolumeRenderingDisplayNode::GetOrCreateShaderPropertyNode(vtkMRMLScene* mrmlScene)
 {
   vtkMRMLShaderPropertyNode* sp = this->GetShaderPropertyNode();
   if (sp == nullptr)
@@ -261,7 +252,7 @@ vtkMRMLViewNode* vtkMRMLVolumeRenderingDisplayNode::GetFirstViewNode()
 
   std::vector<vtkMRMLNode*> viewNodes;
   this->GetScene()->GetNodesByClass("vtkMRMLViewNode", viewNodes);
-  for (std::vector<vtkMRMLNode*>::iterator it=viewNodes.begin(); it!=viewNodes.end(); ++it)
+  for (std::vector<vtkMRMLNode*>::iterator it = viewNodes.begin(); it != viewNodes.end(); ++it)
   {
     if (this->IsDisplayableInView((*it)->GetID()))
     {
@@ -299,47 +290,44 @@ double vtkMRMLVolumeRenderingDisplayNode::GetSampleDistance()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject* caller,
-                                                          unsigned long event,
-                                                          void* callData)
+void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLVolumePropertyNode* volumePropertyNode = this->GetVolumePropertyNode();
-  if (volumePropertyNode != nullptr && //
+  if (volumePropertyNode != nullptr &&                                         //
       volumePropertyNode == vtkMRMLVolumePropertyNode::SafeDownCast(caller) && //
-      event ==  vtkCommand::ModifiedEvent)
+      event == vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
   vtkMRMLShaderPropertyNode* shaderPropertyNode = this->GetShaderPropertyNode();
-  if (shaderPropertyNode != nullptr && //
+  if (shaderPropertyNode != nullptr &&                                         //
       shaderPropertyNode == vtkMRMLShaderPropertyNode::SafeDownCast(caller) && //
-      event ==  vtkCommand::ModifiedEvent)
+      event == vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
   vtkMRMLMarkupsROINode* markupRoiNode = this->GetMarkupsROINode();
-  if (markupRoiNode != nullptr && //
+  if (markupRoiNode != nullptr &&                                     //
       markupRoiNode == vtkMRMLMarkupsROINode::SafeDownCast(caller) && //
       event == vtkCommand::ModifiedEvent)
   {
     this->InvokeEvent(vtkCommand::ModifiedEvent, nullptr);
   }
 
-  if (event == vtkCommand::StartEvent || //
-      event == vtkCommand::EndEvent || //
+  if (event == vtkCommand::StartEvent ||            //
+      event == vtkCommand::EndEvent ||              //
       event == vtkCommand::StartInteractionEvent || //
-      event == vtkCommand::InteractionEvent || //
-      event == vtkCommand::EndInteractionEvent
-      )
+      event == vtkCommand::InteractionEvent ||      //
+      event == vtkCommand::EndInteractionEvent)
   {
     this->InvokeEvent(event);
   }
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLVolumeRenderingDisplayNode::IsFastClippingAvailable(vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+bool vtkMRMLVolumeRenderingDisplayNode::IsFastClippingAvailable(vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   bool fastClippingAvailable = true;
   if (this->GetCroppingEnabled())
@@ -369,7 +357,7 @@ bool vtkMRMLVolumeRenderingDisplayNode::IsFastClippingAvailable(vtkMRMLMessageCo
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLVolumeRenderingDisplayNode::IsFastClippingAvailable(vtkMRMLClipNode* clipNode, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+bool vtkMRMLVolumeRenderingDisplayNode::IsFastClippingAvailable(vtkMRMLClipNode* clipNode, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   if (!clipNode)
   {

@@ -51,8 +51,10 @@ class vtkMRMLColorNode;
 class QMRML_WIDGETS_EXPORT qMRMLColorModelPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLColorModel);
+
 protected:
   qMRMLColorModel* const q_ptr;
+
 public:
   qMRMLColorModelPrivate(qMRMLColorModel& object);
   virtual ~qMRMLColorModelPrivate();
@@ -61,9 +63,9 @@ public:
   void updateColumnCount();
   virtual int maxColumnId() const;
 
-  vtkSmartPointer<vtkMRMLColorLogic>  ColorLogic;
+  vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
   vtkSmartPointer<vtkCallbackCommand> CallBack;
-  vtkSmartPointer<vtkMRMLColorNode>   MRMLColorNode;
+  vtkSmartPointer<vtkMRMLColorNode> MRMLColorNode;
 
   bool NoneEnabled{ false };
 

@@ -89,8 +89,7 @@ vtkMRMLSegmentationNode::vtkMRMLSegmentationNode()
   this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SegmentModified);
   this->ContentModifiedEvents->InsertNextValue(vtkSegmentation::SegmentsOrderModified);
 
-  this->AddNodeReferenceRole(this->GetLabelmapConversionColorTableNodeReferenceRole(),
-    this->GetLabelmapConversionColorTableNodeReferenceMRMLAttributeName());
+  this->AddNodeReferenceRole(this->GetLabelmapConversionColorTableNodeReferenceRole(), this->GetLabelmapConversionColorTableNodeReferenceMRMLAttributeName());
 }
 
 //----------------------------------------------------------------------------
@@ -139,7 +138,7 @@ void vtkMRMLSegmentationNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLSegmentationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -159,8 +158,7 @@ void vtkMRMLSegmentationNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
       }
       else
       {
-        vtkSmartPointer<vtkSegmentation> newSegmentation
-          = vtkSmartPointer<vtkSegmentation>::Take(node->GetSegmentation()->NewInstance());
+        vtkSmartPointer<vtkSegmentation> newSegmentation = vtkSmartPointer<vtkSegmentation>::Take(node->GetSegmentation()->NewInstance());
         newSegmentation->DeepCopy(node->GetSegmentation());
         this->SetAndObserveSegmentation(newSegmentation);
       }
@@ -213,8 +211,7 @@ void vtkMRMLSegmentationNode::SetAndObserveSegmentation(vtkSegmentation* segment
   // Remove segment event observations from previous segmentation
   if (this->Segmentation)
   {
-    vtkEventBroker::GetInstance()->RemoveObservations(
-      this->Segmentation, 0, this, this->SegmentationModifiedCallbackCommand);
+    vtkEventBroker::GetInstance()->RemoveObservations(this->Segmentation, 0, this, this->SegmentationModifiedCallbackCommand);
   }
 
   this->SetSegmentation(segmentation);
@@ -222,20 +219,13 @@ void vtkMRMLSegmentationNode::SetAndObserveSegmentation(vtkSegmentation* segment
   // Observe segment events in new segmentation
   if (this->Segmentation)
   {
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::SourceRepresentationModified, this, this->SegmentationModifiedCallbackCommand);
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::SegmentAdded, this, this->SegmentationModifiedCallbackCommand);
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::SegmentRemoved, this, this->SegmentationModifiedCallbackCommand);
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::SegmentModified, this, this->SegmentationModifiedCallbackCommand);
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::ContainedRepresentationNamesModified, this, this->SegmentationModifiedCallbackCommand);
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::RepresentationModified, this, this->SegmentationModifiedCallbackCommand);
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->Segmentation, vtkSegmentation::SegmentsOrderModified, this, this->SegmentationModifiedCallbackCommand);
+    vtkEventBroker::GetInstance()->AddObservation(this->Segmentation, vtkSegmentation::SourceRepresentationModified, this, this->SegmentationModifiedCallbackCommand);
+    vtkEventBroker::GetInstance()->AddObservation(this->Segmentation, vtkSegmentation::SegmentAdded, this, this->SegmentationModifiedCallbackCommand);
+    vtkEventBroker::GetInstance()->AddObservation(this->Segmentation, vtkSegmentation::SegmentRemoved, this, this->SegmentationModifiedCallbackCommand);
+    vtkEventBroker::GetInstance()->AddObservation(this->Segmentation, vtkSegmentation::SegmentModified, this, this->SegmentationModifiedCallbackCommand);
+    vtkEventBroker::GetInstance()->AddObservation(this->Segmentation, vtkSegmentation::ContainedRepresentationNamesModified, this, this->SegmentationModifiedCallbackCommand);
+    vtkEventBroker::GetInstance()->AddObservation(this->Segmentation, vtkSegmentation::RepresentationModified, this, this->SegmentationModifiedCallbackCommand);
+    vtkEventBroker::GetInstance()->AddObservation(this->Segmentation, vtkSegmentation::SegmentsOrderModified, this, this->SegmentationModifiedCallbackCommand);
   }
 
   this->InvokeCustomModifiedEvent(vtkMRMLSegmentationNode::SegmentationChangedEvent);
@@ -287,9 +277,7 @@ void vtkMRMLSegmentationNode::SegmentationModifiedCallback(vtkObject* vtkNotUsed
       self->StorableModifiedTime.Modified();
       self->InvokeCustomModifiedEvent(eid);
       break;
-    default:
-      vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::SegmentationModifiedCallback: Unknown event id "<<eid);
-      return;
+    default: vtkErrorWithObjectMacro(self, "vtkMRMLSegmentationNode::SegmentationModifiedCallback: Unknown event id " << eid); return;
   }
 }
 
@@ -297,7 +285,7 @@ void vtkMRMLSegmentationNode::SegmentationModifiedCallback(vtkObject* vtkNotUsed
 void vtkMRMLSegmentationNode::OnSourceRepresentationModified()
 {
   // Reset supported write file types
-  vtkMRMLSegmentationStorageNode* storageNode =  vtkMRMLSegmentationStorageNode::SafeDownCast(this->GetStorageNode());
+  vtkMRMLSegmentationStorageNode* storageNode = vtkMRMLSegmentationStorageNode::SafeDownCast(this->GetStorageNode());
   if (storageNode)
   {
     storageNode->ResetSupportedWriteFileTypes();
@@ -330,13 +318,10 @@ void vtkMRMLSegmentationNode::OnSegmentRemoved(const char* vtkNotUsed(segmentId)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnSegmentModified(const char* vtkNotUsed(segmentId))
-{
-}
+void vtkMRMLSegmentationNode::OnSegmentModified(const char* vtkNotUsed(segmentId)) {}
 
 //---------------------------------------------------------------------------
-void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(
-  vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemWithNewUID )
+void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(vtkMRMLSubjectHierarchyNode* shNode, vtkIdType itemWithNewUID)
 {
   if (!shNode || !this->Segmentation || !itemWithNewUID)
   {
@@ -355,8 +340,7 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(
   }
 
   // Get volume node from subject hierarchy item with new UID
-  vtkMRMLScalarVolumeNode* referencedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(
-    shNode->GetItemDataNode(itemWithNewUID) );
+  vtkMRMLScalarVolumeNode* referencedVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(shNode->GetItemDataNode(itemWithNewUID));
   if (!referencedVolumeNode)
   {
     // If associated node is not a volume, then return
@@ -372,8 +356,7 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(
   }
 
   // Get DICOM references from segmentation subject hierarchy node
-  std::string referencedInstanceUIDsAttribute = shNode->GetItemAttribute(
-    segmentationShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName() );
+  std::string referencedInstanceUIDsAttribute = shNode->GetItemAttribute(segmentationShItemID, vtkMRMLSubjectHierarchyConstants::GetDICOMReferencedInstanceUIDsAttributeName());
   if (referencedInstanceUIDsAttribute.empty())
   {
     // No references
@@ -404,7 +387,8 @@ void vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded(
     else if (referencedVolumeFound && !warningLogged)
     {
       vtkWarningMacro("vtkMRMLSegmentationNode::OnSubjectHierarchyUIDAdded: Referenced volume for segmentation '"
-        << this->Name << "' found (" << referencedVolumeNode->GetName() << "), but some referenced UIDs are not present in it! (maybe only partial volume was loaded?)");
+                      << this->Name << "' found (" << referencedVolumeNode->GetName()
+                      << "), but some referenced UIDs are not present in it! (maybe only partial volume was loaded?)");
       // Only log warning once for this node
       warningLogged = true;
     }
@@ -420,8 +404,7 @@ vtkMRMLStorageNode* vtkMRMLSegmentationNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLSegmentationStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLSegmentationStorageNode"));
 }
 
 //----------------------------------------------------------------------------
@@ -437,8 +420,7 @@ void vtkMRMLSegmentationNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLSegmentationNode::CreateDefaultDisplayNodes failed: Scene is invalid");
     return;
   }
-  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(
-    this->GetScene()->AddNewNodeByClass("vtkMRMLSegmentationDisplayNode") );
+  vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(this->GetScene()->AddNewNodeByClass("vtkMRMLSegmentationDisplayNode"));
   this->SetAndObserveDisplayNodeID(displayNode->GetID());
 }
 
@@ -540,20 +522,22 @@ void vtkMRMLSegmentationNode::GetBounds(double bounds[6])
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(
-  vtkOrientedImageData* mergedImageData,
-  int extentComputationMode,
-  vtkOrientedImageData* mergedLabelmapGeometry/*=nullptr*/,
-  const std::vector<std::string>& segmentIDs/*=std::vector<std::string>()*/,
-  vtkIntArray* labelValues/*=nullptr*/
-  )
+bool vtkMRMLSegmentationNode::GenerateMergedLabelmap(vtkOrientedImageData* mergedImageData,
+                                                     int extentComputationMode,
+                                                     vtkOrientedImageData* mergedLabelmapGeometry /*=nullptr*/,
+                                                     const std::vector<std::string>& segmentIDs /*=std::vector<std::string>()*/,
+                                                     vtkIntArray* labelValues /*=nullptr*/
+)
 {
   return this->Segmentation->GenerateMergedLabelmap(mergedImageData, extentComputationMode, mergedLabelmapGeometry, segmentIDs, labelValues);
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData, int extentComputationMode,
-  vtkOrientedImageData* mergedLabelmapGeometry /*=nullptr*/, vtkStringArray* segmentIDs /*=nullptr*/, vtkIntArray* labelValues/*nullptr*/)
+bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData,
+                                                                   int extentComputationMode,
+                                                                   vtkOrientedImageData* mergedLabelmapGeometry /*=nullptr*/,
+                                                                   vtkStringArray* segmentIDs /*=nullptr*/,
+                                                                   vtkIntArray* labelValues /*nullptr*/)
 {
   std::vector<std::string> segmentIDsVector;
   if (segmentIDs)
@@ -567,11 +551,14 @@ bool vtkMRMLSegmentationNode::GenerateMergedLabelmapForAllSegments(vtkOrientedIm
 }
 
 //-----------------------------------------------------------------------------
-bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, int editMode,
-  vtkOrientedImageData* referenceGeometry,
-  std::string editedSegmentID/*=""*/, std::string maskSegmentID/*=""*/,
-  vtkOrientedImageData* sourceVolume/*=nullptr*/, double editableIntensityRange[2]/*=nullptr*/,
-  vtkMRMLSegmentationDisplayNode* displayNode/*=nullptr*/)
+bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage,
+                                               int editMode,
+                                               vtkOrientedImageData* referenceGeometry,
+                                               std::string editedSegmentID /*=""*/,
+                                               std::string maskSegmentID /*=""*/,
+                                               vtkOrientedImageData* sourceVolume /*=nullptr*/,
+                                               double editableIntensityRange[2] /*=nullptr*/,
+                                               vtkMRMLSegmentationDisplayNode* displayNode /*=nullptr*/)
 {
   if (!maskImage)
   {
@@ -627,39 +614,35 @@ bool vtkMRMLSegmentationNode::GenerateEditMask(vtkOrientedImageData* maskImage, 
   bool editInsideSegments = false;
   switch (editMode)
   {
-  case vtkMRMLSegmentationNode::EditAllowedEverywhere:
-    editInsideSegments = false;
-    break;
-  case vtkMRMLSegmentationNode::EditAllowedInsideAllSegments:
-    editInsideSegments = true;
-    maskSegmentIDs = allSegmentIDs;
-    break;
-  case vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments:
-    editInsideSegments = true;
-    maskSegmentIDs = visibleSegmentIDs;
-    break;
-  case vtkMRMLSegmentationNode::EditAllowedOutsideAllSegments:
-    editInsideSegments = false;
-    maskSegmentIDs = allSegmentIDs;
-    break;
-  case vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments:
-    editInsideSegments = false;
-    maskSegmentIDs = visibleSegmentIDs;
-    break;
-  case vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment:
-    editInsideSegments = true;
-    if (!maskSegmentID.empty())
-    {
-      maskSegmentIDs.push_back(maskSegmentID);
-    }
-    else
-    {
-      vtkWarningMacro("vtkMRMLSegmentationNode::GenerateEditMask: EditAllowedInsideSingleSegment selected but no mask segment is specified");
-    }
-    break;
-  default:
-    vtkErrorMacro("vtkMRMLSegmentationNode::GenerateEditMask: unknown mask mode");
-    return false;
+    case vtkMRMLSegmentationNode::EditAllowedEverywhere: editInsideSegments = false; break;
+    case vtkMRMLSegmentationNode::EditAllowedInsideAllSegments:
+      editInsideSegments = true;
+      maskSegmentIDs = allSegmentIDs;
+      break;
+    case vtkMRMLSegmentationNode::EditAllowedInsideVisibleSegments:
+      editInsideSegments = true;
+      maskSegmentIDs = visibleSegmentIDs;
+      break;
+    case vtkMRMLSegmentationNode::EditAllowedOutsideAllSegments:
+      editInsideSegments = false;
+      maskSegmentIDs = allSegmentIDs;
+      break;
+    case vtkMRMLSegmentationNode::EditAllowedOutsideVisibleSegments:
+      editInsideSegments = false;
+      maskSegmentIDs = visibleSegmentIDs;
+      break;
+    case vtkMRMLSegmentationNode::EditAllowedInsideSingleSegment:
+      editInsideSegments = true;
+      if (!maskSegmentID.empty())
+      {
+        maskSegmentIDs.push_back(maskSegmentID);
+      }
+      else
+      {
+        vtkWarningMacro("vtkMRMLSegmentationNode::GenerateEditMask: EditAllowedInsideSingleSegment selected but no mask segment is specified");
+      }
+      break;
+    default: vtkErrorMacro("vtkMRMLSegmentationNode::GenerateEditMask: unknown mask mode"); return false;
   }
 
   if (!editInsideSegments)
@@ -744,7 +727,7 @@ vtkIdType vtkMRMLSegmentationNode::GetSegmentSubjectHierarchyItem(std::string se
   shNode->GetItemChildren(segmentationvtkIdType, segmentationChildItemIDs, false);
 
   std::vector<vtkIdType>::iterator childIt;
-  for (childIt=segmentationChildItemIDs.begin(); childIt!=segmentationChildItemIDs.end(); ++childIt)
+  for (childIt = segmentationChildItemIDs.begin(); childIt != segmentationChildItemIDs.end(); ++childIt)
   {
     vtkIdType childItemID = (*childIt);
     std::string childSegmentID = shNode->GetItemAttribute(childItemID, vtkMRMLSegmentationNode::GetSegmentIDAttributeName());
@@ -788,22 +771,20 @@ void vtkMRMLSegmentationNode::SetReferenceImageGeometryParameterFromVolumeNode(v
     }
   }
 
-  std::string serializedImageGeometry = vtkSegmentationConverter::SerializeImageGeometry(
-    volumeIjkToRasMatrix, volumeNode->GetImageData() );
+  std::string serializedImageGeometry = vtkSegmentationConverter::SerializeImageGeometry(volumeIjkToRasMatrix, volumeNode->GetImageData());
 
   // Set parameter
-  this->Segmentation->SetConversionParameter(
-    vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), serializedImageGeometry);
+  this->Segmentation->SetConversionParameter(vtkSegmentationConverter::GetReferenceImageGeometryParameterName(), serializedImageGeometry);
 
   // Set node reference from segmentation to reference geometry volume
-  this->SetNodeReferenceID(
-    vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(), volumeNode->GetID() );
+  this->SetNodeReferenceID(vtkMRMLSegmentationNode::GetReferenceImageGeometryReferenceRole().c_str(), volumeNode->GetID());
 }
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(vtkPolyData* polyData,
-  std::string segmentName/* ="" */, double color[3] /* =nullptr */,
-  std::string segmentId/* ="" */)
+                                                                               std::string segmentName /* ="" */,
+                                                                               double color[3] /* =nullptr */,
+                                                                               std::string segmentId /* ="" */)
 {
   if (!this->Segmentation)
   {
@@ -815,7 +796,7 @@ std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(v
   {
     newSegment->SetName(segmentName.c_str());
   }
-  if (color!=nullptr)
+  if (color != nullptr)
   {
     newSegment->SetColor(color);
   }
@@ -829,8 +810,9 @@ std::string vtkMRMLSegmentationNode::AddSegmentFromClosedSurfaceRepresentation(v
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLSegmentationNode::AddSegmentFromBinaryLabelmapRepresentation(vtkOrientedImageData* imageData,
-  std::string segmentName/* ="" */, double color[3] /* =nullptr */,
-  std::string segmentId/* ="" */)
+                                                                                std::string segmentName /* ="" */,
+                                                                                double color[3] /* =nullptr */,
+                                                                                std::string segmentId /* ="" */)
 {
   if (!this->Segmentation)
   {
@@ -902,8 +884,8 @@ bool vtkMRMLSegmentationNode::GetBinaryLabelmapRepresentation(const std::string 
     return false;
   }
 
-  vtkOrientedImageData* binaryLabelmap = vtkOrientedImageData::SafeDownCast(
-    segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
+  vtkOrientedImageData* binaryLabelmap =
+    vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName()));
   if (!binaryLabelmap)
   {
     vtkErrorMacro("GetBinaryLabelmapRepresentation: No binary labelmap representation in segment");
@@ -1113,13 +1095,10 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
 
     // segmentCenter_Image is floored to put the center exactly in the center of a voxel
     // (otherwise center position would be set at the boundary between two voxels when extent size is an even number)
-    double segmentCenter_Image[4] =
-      {
-      floor((resampledLabelEffectiveExtent[0] + resampledLabelEffectiveExtent[1]) / 2.0),
-      floor((resampledLabelEffectiveExtent[2] + resampledLabelEffectiveExtent[3]) / 2.0),
-      floor((resampledLabelEffectiveExtent[4] + resampledLabelEffectiveExtent[5]) / 2.0),
-      1.0
-      };
+    double segmentCenter_Image[4] = { floor((resampledLabelEffectiveExtent[0] + resampledLabelEffectiveExtent[1]) / 2.0),
+                                      floor((resampledLabelEffectiveExtent[2] + resampledLabelEffectiveExtent[3]) / 2.0),
+                                      floor((resampledLabelEffectiveExtent[4] + resampledLabelEffectiveExtent[5]) / 2.0),
+                                      1.0 };
 
     // Resampled image to world
     vtkNew<vtkMatrix4x4> resampledImageToWorldMatrix;
@@ -1130,7 +1109,7 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
   {
     double bounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
     currentSegment->GetBounds(bounds);
-    if (bounds[0]>bounds[1] || bounds[2]>bounds[3] || bounds[4]>bounds[5])
+    if (bounds[0] > bounds[1] || bounds[2] > bounds[3] || bounds[4] > bounds[5])
     {
       vtkWarningMacro("GetSegmentCenter: segment " << segmentID << " is empty");
       return nullptr;
@@ -1142,7 +1121,6 @@ double* vtkMRMLSegmentationNode::GetSegmentCenter(const std::string& segmentID)
 
   return this->SegmentCenterTmp;
 }
-
 
 //---------------------------------------------------------------------------
 double* vtkMRMLSegmentationNode::GetSegmentCenterRAS(const std::string& segmentID)
@@ -1255,7 +1233,7 @@ int vtkMRMLSegmentationNode::ConvertMaskModeFromString(const char* modeStr)
   {
     return -1;
   }
-  for (int i = 0; i<EditAllowed_Last; i++)
+  for (int i = 0; i < EditAllowed_Last; i++)
   {
     if (strcmp(modeStr, vtkMRMLSegmentationNode::ConvertMaskModeToString(i)) == 0)
     {

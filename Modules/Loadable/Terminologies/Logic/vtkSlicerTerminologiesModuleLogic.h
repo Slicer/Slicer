@@ -36,8 +36,7 @@ class vtkSlicerTerminologyEntry;
 class vtkSlicerTerminologyCategory;
 class vtkSlicerTerminologyType;
 
-class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologiesModuleLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_TERMINOLOGIES_LOGIC_EXPORT vtkSlicerTerminologiesModuleLogic : public vtkSlicerModuleLogic
 {
 public:
   static vtkSlicerTerminologiesModuleLogic* New();
@@ -47,21 +46,16 @@ public:
   /// Information needed to uniquely identify a terminology code
   class CodeIdentifier
   {
-    public:
-      CodeIdentifier()
-        { };
-      CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning = std::string())
-        : CodingSchemeDesignator(codingSchemeDesignator)
-        , CodeValue(codeValue)
-        , CodeMeaning(codeMeaning)
-        { };
-      bool IsValid() const
-      {
-        return !CodingSchemeDesignator.empty() && !CodeValue.empty();
-      };
-      std::string CodingSchemeDesignator;
-      std::string CodeValue;
-      std::string CodeMeaning; // Human readable name (not required for ID)
+  public:
+    CodeIdentifier() {};
+    CodeIdentifier(std::string codingSchemeDesignator, std::string codeValue, std::string codeMeaning = std::string())
+      : CodingSchemeDesignator(codingSchemeDesignator)
+      , CodeValue(codeValue)
+      , CodeMeaning(codeMeaning) {};
+    bool IsValid() const { return !CodingSchemeDesignator.empty() && !CodeValue.empty(); };
+    std::string CodingSchemeDesignator;
+    std::string CodeValue;
+    std::string CodeMeaning; // Human readable name (not required for ID)
   };
 
   /// Node attribute name for name auto generated
@@ -108,13 +102,13 @@ public:
   bool LoadRegionContextFromSegmentDescriptorFile(std::string contextName, std::string filePath);
 
   /// Get context names of loaded terminologies
-  void GetLoadedTerminologyNames(std::vector<std::string> &terminologyNames);
+  void GetLoadedTerminologyNames(std::vector<std::string>& terminologyNames);
   /// Returns true if the terminology name is loaded
   bool IsTerminologyContextLoaded(std::string terminologyName);
   /// Python accessor variant of \sa GetLoadedTerminologyNames
   void GetLoadedTerminologyNames(vtkStringArray* terminologyNames);
   /// Get context names of loaded region contexts
-  void GetLoadedRegionContextNames(std::vector<std::string> &regionContextNames);
+  void GetLoadedRegionContextNames(std::vector<std::string>& regionContextNames);
   /// Python accessor variant of \sa GetLoadedRegionContextNames
   void GetLoadedRegionContextNames(vtkStringArray* regionContextNames);
 
@@ -139,64 +133,74 @@ public:
   /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
   /// \param foundColorIndices if specified then it will contain the indices of the found colors in the color table.
   /// \param foundPreferredColorNodeIndices if specified then it will contain the indices of the found color nodes in the preferredColorNodeNames list.
-  std::vector<std::string> FindColorNodes(
-    std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
-    std::string typeCodingSchemeDesignator, std::string typeCodeValue,
-    std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
-    std::string regionCodingSchemeDesignator, std::string regionCodeValue,
-    std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
-    std::vector<std::string> preferredColorNodeNames,
-    vtkIntArray* foundColorIndices = nullptr,
-    vtkIntArray* foundPreferredColorNodeIndices = nullptr);
+  std::vector<std::string> FindColorNodes(std::string categoryCodingSchemeDesignator,
+                                          std::string categoryCodeValue,
+                                          std::string typeCodingSchemeDesignator,
+                                          std::string typeCodeValue,
+                                          std::string typeModifierCodingSchemeDesignator,
+                                          std::string typeModifierCodeValue,
+                                          std::string regionCodingSchemeDesignator,
+                                          std::string regionCodeValue,
+                                          std::string regionModifierCodingSchemeDesignator,
+                                          std::string regionModifierCodeValue,
+                                          std::vector<std::string> preferredColorNodeNames,
+                                          vtkIntArray* foundColorIndices = nullptr,
+                                          vtkIntArray* foundPreferredColorNodeIndices = nullptr);
 
   /// Return collection of vtkSlicerTerminologyEntry objects designated by the given codes.
   /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
   /// \param foundEntries if specified then it will contain the found terminology entries.
   /// \param foundPreferredColorNodeIndices if specified then it will contain the indices
   ///   of the found terminologies in the in the preferredTerminologyNames list.
-  std::vector<std::string> FindTerminologyNames(
-    std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
-    std::string typeCodingSchemeDesignator, std::string typeCodeValue,
-    std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
-    std::vector<std::string> preferredTerminologyNames,
-    vtkCollection* foundEntries = nullptr,
-    vtkIntArray* foundPreferredTerminologyNameIndices =nullptr);
+  std::vector<std::string> FindTerminologyNames(std::string categoryCodingSchemeDesignator,
+                                                std::string categoryCodeValue,
+                                                std::string typeCodingSchemeDesignator,
+                                                std::string typeCodeValue,
+                                                std::string typeModifierCodingSchemeDesignator,
+                                                std::string typeModifierCodeValue,
+                                                std::vector<std::string> preferredTerminologyNames,
+                                                vtkCollection* foundEntries = nullptr,
+                                                vtkIntArray* foundPreferredTerminologyNameIndices = nullptr);
 
   /// Find the best fitting color node or terminology
   /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
   /// \param foundTerminologyName found terminology name (color node name in case a color node was found)
   /// \param foundColorNodeID found color node ID (empty if terminology was found)
   /// \param foundColorIndex found color index in the color node (-1 if color was not found in the table)
-  bool FindFirstColorNodeOrTerminology(
-    vtkSlicerTerminologyEntry* entry,
-    std::vector<std::string> preferredTerminologyNames,
-    std::string& foundTerminologyName,
-    std::string& foundColorNodeID,
-    int& foundColorIndex);
+  bool FindFirstColorNodeOrTerminology(vtkSlicerTerminologyEntry* entry,
+                                       std::vector<std::string> preferredTerminologyNames,
+                                       std::string& foundTerminologyName,
+                                       std::string& foundColorNodeID,
+                                       int& foundColorIndex);
 
   /// Find the best fitting color node or terminology
   /// \param preferredTerminologyNames List of terminology names in order of preference. If an empty list is provided then all terminologies are searched.
   /// \param foundTerminologyName found terminology name (color node name in case a color node was found)
   /// \param foundColorNodeID found color node ID (empty if terminology was found)
   /// \param foundColorIndex found color index in the color node (-1 if color was not found in the table)
-  bool FindFirstColorNodeOrTerminology(
-    std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
-    std::string typeCodingSchemeDesignator, std::string typeCodeValue,
-    std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
-    std::string regionCodingSchemeDesignator, std::string regionCodeValue,
-    std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
-    std::vector<std::string> preferredTerminologyNames,
-    std::string& foundTerminologyName,
-    std::string& foundColorNodeID,
-    int& foundColorIndex);
+  bool FindFirstColorNodeOrTerminology(std::string categoryCodingSchemeDesignator,
+                                       std::string categoryCodeValue,
+                                       std::string typeCodingSchemeDesignator,
+                                       std::string typeCodeValue,
+                                       std::string typeModifierCodingSchemeDesignator,
+                                       std::string typeModifierCodeValue,
+                                       std::string regionCodingSchemeDesignator,
+                                       std::string regionCodeValue,
+                                       std::string regionModifierCodingSchemeDesignator,
+                                       std::string regionModifierCodeValue,
+                                       std::vector<std::string> preferredTerminologyNames,
+                                       std::string& foundTerminologyName,
+                                       std::string& foundColorNodeID,
+                                       int& foundColorIndex);
 
   /// Return list of region context names containing the specified region.
   /// \param preferredRegionContextNames List of region context names in order of preference. If an empty list is provided then all context are searched.
-  std::vector<std::string> FindRegionContextNames(
-    std::string regionCodingSchemeDesignator, std::string regionCodeValue,
-    std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
-    std::vector<std::string> preferredRegionContextNames,
-    vtkCollection* foundEntries = nullptr);
+  std::vector<std::string> FindRegionContextNames(std::string regionCodingSchemeDesignator,
+                                                  std::string regionCodeValue,
+                                                  std::string regionModifierCodingSchemeDesignator,
+                                                  std::string regionModifierCodeValue,
+                                                  std::vector<std::string> preferredRegionContextNames,
+                                                  vtkCollection* foundEntries = nullptr);
 
   /// Get a category with given name from a terminology
   /// \param category Output argument containing the details of the found category if any (if return value is true)
@@ -221,8 +225,11 @@ public:
   /// \param typeObjects Output argument containing all the \sa type objects in the category.. This is useful if type objects
   ///   need to be retrieved for a large number of types, because it avoids the need to do a costly search in the json tree.
   /// \return Success flag
-  bool FindTypesInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types, std::string search,
-    std::vector<vtkSmartPointer<vtkSlicerTerminologyType>>* typeObjects=nullptr);
+  bool FindTypesInTerminologyCategory(std::string terminologyName,
+                                      CodeIdentifier categoryId,
+                                      std::vector<CodeIdentifier>& types,
+                                      std::string search,
+                                      std::vector<vtkSmartPointer<vtkSlicerTerminologyType>>* typeObjects = nullptr);
   /// Get a type with given name from a terminology category
   /// \param type Output argument containing the details of the found type if any (if return value is true)
   /// \return Success flag
@@ -246,7 +253,10 @@ public:
   /// \param typeModifier Output argument containing the details of the found type modifier if any (if return value is true)
   /// \return Success flag
   bool GetTypeModifierInTerminologyType(std::string terminologyName,
-    CodeIdentifier categoryId, CodeIdentifier typeId, CodeIdentifier modifierId, vtkSlicerTerminologyType* typeModifier);
+                                        CodeIdentifier categoryId,
+                                        CodeIdentifier typeId,
+                                        CodeIdentifier modifierId,
+                                        vtkSlicerTerminologyType* typeModifier);
   /// Get number of type modifiers for the chosen category and type in a terminology
   int GetNumberOfTypeModifiersInTerminologyType(std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type);
   /// Get a terminology type by index
@@ -256,7 +266,11 @@ public:
   /// \param typeModifierIndex index of type modifier to return
   /// \param typeModifier output type modifier
   /// \return Success flag
-  bool GetNthTypeModifierInTerminologyType(std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type, int typeModifierIndex, vtkSlicerTerminologyType* typeModifier);
+  bool GetNthTypeModifierInTerminologyType(std::string terminologyName,
+                                           vtkSlicerTerminologyCategory* category,
+                                           vtkSlicerTerminologyType* type,
+                                           int typeModifierIndex,
+                                           vtkSlicerTerminologyType* typeModifier);
 
   /// Get regions from an region context as collection of \sa vtkSlicerTerminologyType container objects
   /// \param regionCollection Output argument containing all the \sa vtkSlicerTerminologyType objects created
@@ -290,8 +304,7 @@ public:
   /// Get a region modifier with given name from a region
   /// \param regionModifier Output argument containing the details of the found region modifier if any (if return value is true)
   /// \return Success flag
-  bool GetRegionModifierInRegion(std::string regionContextName,
-    CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier);
+  bool GetRegionModifierInRegion(std::string regionContextName, CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier);
   /// Get number of regions in region context.
   /// Allows iterating through region modifiers in Python.
   int GetNumberOfRegionModifierInRegion(std::string regionContextName, vtkSlicerTerminologyType* regionObject);
@@ -302,8 +315,7 @@ public:
   /// \param regionModifierIndex index of region to return, must be between 0 and GetNumberOfRegionsInRegionContext(...)-1
   /// \param regionModifier found region modifier object
   /// \return Success flag
-  bool GetNthRegionModifierInRegion(std::string regionContextName, vtkSlicerTerminologyType* regionObject,
-    int regionModifierIndex, vtkSlicerTerminologyType* regionModifier);
+  bool GetNthRegionModifierInRegion(std::string regionContextName, vtkSlicerTerminologyType* regionObject, int regionModifierIndex, vtkSlicerTerminologyType* regionModifier);
 
   /// Find terminology type or type modifier based on '3dSlicerLabel' attribute
   /// \param terminologyName Terminology context in which the attribute is looked for
@@ -331,14 +343,23 @@ public:
   ///   "regionModifierSchemeDesignator^regionModifierValue^regionModifierMeaning"
   /// Note: The order of the attributes are inconsistent with the codes used in this class for compatibility reasons
   ///       (to vtkMRMLColorLogic::AddTermToTerminology)
-  static std::string SerializeTerminologyEntry(
-    std::string terminologyContextName,
-    std::string categoryValue, std::string categorySchemeDesignator, std::string categoryMeaning,
-    std::string typeValue, std::string typeSchemeDesignator, std::string typeMeaning,
-    std::string modifierValue, std::string modifierSchemeDesignator, std::string modifierMeaning,
-    std::string regionContextName,
-    std::string regionValue, std::string regionSchemeDesignator, std::string regionMeaning,
-    std::string regionModifierValue, std::string regionModifierSchemeDesignator, std::string regionModifierMeaning );
+  static std::string SerializeTerminologyEntry(std::string terminologyContextName,
+                                               std::string categoryValue,
+                                               std::string categorySchemeDesignator,
+                                               std::string categoryMeaning,
+                                               std::string typeValue,
+                                               std::string typeSchemeDesignator,
+                                               std::string typeMeaning,
+                                               std::string modifierValue,
+                                               std::string modifierSchemeDesignator,
+                                               std::string modifierMeaning,
+                                               std::string regionContextName,
+                                               std::string regionValue,
+                                               std::string regionSchemeDesignator,
+                                               std::string regionMeaning,
+                                               std::string regionModifierValue,
+                                               std::string regionModifierSchemeDesignator,
+                                               std::string regionModifierMeaning);
 
   /// Populate terminology entry VTK object based on serialized entry
   /// Serialized terminology entry consists of the following: terminologyContextName, category (codingScheme,
@@ -350,8 +371,8 @@ public:
   /// The entry will be first searched in the terminology context that is specified in the entry,
   /// if not found then it is searched in all the other loaded terminology contexts.
   bool UpdateEntryFromLoadedTerminologies(vtkSlicerTerminologyEntry* entry,
-    std::vector<std::string> preferredTerminologyNames,
-    std::vector<std::string> preferredRegionContextNames);
+                                          std::vector<std::string> preferredTerminologyNames,
+                                          std::vector<std::string> preferredRegionContextNames);
 
   /// Assemble human readable info string from a terminology entry, for example for tooltips
   static std::string GetInfoStringFromTerminologyEntry(vtkSlicerTerminologyEntry* entry);
@@ -386,15 +407,16 @@ public:
   // Deprecated. Use LoadRegionContextFromSegmentDescriptorFile instead.
   bool LoadAnatomicContextFromSegmentDescriptorFile(std::string contextName, std::string filePath);
   // Deprecated. Use GetLoadedRegionContextNames instead.
-  void GetLoadedAnatomicContextNames(std::vector<std::string> &anatomicContextNames);
+  void GetLoadedAnatomicContextNames(std::vector<std::string>& anatomicContextNames);
   /// \deprecated Use GetLoadedRegionContextNames instead.
   void GetLoadedAnatomicContextNames(vtkStringArray* anatomicContextNames);
   /// \deprecated Use FindRegionContextNames instead.
-  std::vector<std::string> FindAnatomicContextNames(
-    std::string anatomicRegionCodingSchemeDesignator, std::string anatomicRegionCodeValue,
-    std::string anatomicRegionModifierCodingSchemeDesignator, std::string anatomicRegionModifierCodeValue,
-    std::vector<std::string> preferredAnatomicContextNames,
-    vtkCollection* foundEntries = nullptr);
+  std::vector<std::string> FindAnatomicContextNames(std::string anatomicRegionCodingSchemeDesignator,
+                                                    std::string anatomicRegionCodeValue,
+                                                    std::string anatomicRegionModifierCodingSchemeDesignator,
+                                                    std::string anatomicRegionModifierCodeValue,
+                                                    std::vector<std::string> preferredAnatomicContextNames,
+                                                    vtkCollection* foundEntries = nullptr);
   /// \deprecated Use GetRegionsInRegionContext instead.
   bool GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions);
   /// \deprecated Use GetNumberOfRegionsInRegionContext instead.
@@ -408,13 +430,14 @@ public:
   /// \deprecated Use GetRegionModifiersInRegion instead.
   bool GetRegionModifiersInAnatomicRegion(std::string anatomicContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers);
   /// \deprecated Use GetRegionModifierInRegion instead.
-  bool GetRegionModifierInAnatomicRegion(std::string regionContextName,
-    CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier);
+  bool GetRegionModifierInAnatomicRegion(std::string regionContextName, CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier);
   /// \deprecated Use GetNumberOfRegionModifierInRegion instead.
   int GetNumberOfRegionModifierInAnatomicRegion(std::string anatomicContextName, vtkSlicerTerminologyType* regionObject);
   /// \deprecated Use GetNthRegionModifierInRegion instead.
-  bool GetNthRegionModifierInAnatomicRegion(std::string anatomicContextName, vtkSlicerTerminologyType* regionObject,
-    int regionModifierIndex, vtkSlicerTerminologyType* regionModifier);
+  bool GetNthRegionModifierInAnatomicRegion(std::string anatomicContextName,
+                                            vtkSlicerTerminologyType* regionObject,
+                                            int regionModifierIndex,
+                                            vtkSlicerTerminologyType* regionModifier);
   /// \deprecated Use GetCodeIdentifierFromCodedEntry instead.
   static CodeIdentifier CodeIdentifierFromTerminologyCategory(vtkSlicerTerminologyCategory* category);
   /// \deprecated Use GetCodeIdentifierFromCodedEntry instead.

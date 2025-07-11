@@ -42,7 +42,7 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int, char*[])
   TESTING_OUTPUT_ASSERT_ERRORS_END();
 
   TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
-  bool flag =  displayableHierarchyLogic->AddChildToParent(nullptr, nullptr);
+  bool flag = displayableHierarchyLogic->AddChildToParent(nullptr, nullptr);
   if (flag != false)
   {
     std::cerr << "AddChildToParent did not fail for null nodes" << std::endl;

@@ -33,7 +33,6 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsFiducialNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsFiducialNode::vtkMRMLMarkupsFiducialNode()
 {
@@ -50,7 +49,7 @@ vtkMRMLMarkupsFiducialNode::~vtkMRMLMarkupsFiducialNode() = default;
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsFiducialNode::WriteXML(ostream& of, int nIndent)
 {
-  Superclass::WriteXML(of,nIndent);
+  Superclass::WriteXML(of, nIndent);
 
   vtkMRMLWriteXMLBeginMacro(of);
   vtkMRMLWriteXMLIntMacro(maximumNumberOfControlPoints, MaximumNumberOfControlPoints);
@@ -79,7 +78,7 @@ void vtkMRMLMarkupsFiducialNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsFiducialNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLMarkupsFiducialNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   Superclass::CopyContent(anode, deepCopy);
 }
@@ -104,8 +103,7 @@ void vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
   }
-  vtkMRMLMarkupsFiducialDisplayNode* dispNode = vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(
-    this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialDisplayNode"));
+  vtkMRMLMarkupsFiducialDisplayNode* dispNode = vtkMRMLMarkupsFiducialDisplayNode::SafeDownCast(this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialDisplayNode"));
   if (!dispNode)
   {
     vtkErrorMacro("vtkMRMLMarkupsFiducialNode::CreateDefaultDisplayNodes failed: unable to create vtkMRMLMarkupsFiducialDisplayNode");

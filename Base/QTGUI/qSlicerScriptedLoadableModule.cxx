@@ -50,18 +50,19 @@ public:
   QStringList Dependencies;
   QString HelpText;
   QString AcknowledgementText;
-  QIcon   Icon;
-  bool   Hidden;
-  QVariantMap   Extensions;
+  QIcon Icon;
+  bool Hidden;
+  QVariantMap Extensions;
   int Index;
 
-  enum {
+  enum
+  {
     SetupMethod = 0
   };
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSourceFilePath;
+  QString PythonSourceFilePath;
 };
 
 //-----------------------------------------------------------------------------
@@ -78,7 +79,6 @@ qSlicerScriptedLoadableModulePrivate::qSlicerScriptedLoadableModulePrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModulePrivate::~qSlicerScriptedLoadableModulePrivate() = default;
-
 
 //-----------------------------------------------------------------------------
 // qSlicerScriptedLoadableModule methods
@@ -160,7 +160,10 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModule::setPythonSource - "
                             "Failed to load scripted loadable module: "
-                            "class %1 was not found in file %2").arg(className).arg(filePath).toLatin1());
+                            "class %1 was not found in file %2")
+                      .arg(className)
+                      .arg(filePath)
+                      .toLatin1());
     PythonQt::self()->handleError();
     return false;
   }
@@ -175,8 +178,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& filePath)
 
   d->PythonSourceFilePath = filePath;
 
-  if (!qSlicerScriptedUtils::setModuleAttribute(
-        "slicer.modules", moduleName + "Instance", self))
+  if (!qSlicerScriptedUtils::setModuleAttribute("slicer.modules", moduleName + "Instance", self))
   {
     qCritical() << "Failed to set" << ("slicer.modules." + moduleName + "Instance");
   }
@@ -210,8 +212,7 @@ void qSlicerScriptedLoadableModule::registerFileDialog()
   {
     return;
   }
-  qSlicerApplication::application()->ioManager()
-    ->registerDialog(fileDialog.take());
+  qSlicerApplication::application()->ioManager()->registerDialog(fileDialog.take());
 }
 
 //-----------------------------------------------------------------------------
@@ -255,16 +256,16 @@ qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidget
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerScriptedLoadableModule::createLogic()
 {
-//  Q_D(qSlicerScriptedLoadableModule);
+  //  Q_D(qSlicerScriptedLoadableModule);
 
   vtkSlicerScriptedLoadableModuleLogic* logic = vtkSlicerScriptedLoadableModuleLogic::New();
 
-//  bool ret = logic->SetPythonSource(d->PythonSource.toStdString());
-//  if (!ret)
-//    {
-//    logic->Delete();
-//    return 0;
-//    }
+  //  bool ret = logic->SetPythonSource(d->PythonSource.toStdString());
+  //  if (!ret)
+  //    {
+  //    logic->Delete();
+  //    return 0;
+  //    }
 
   return logic;
 }

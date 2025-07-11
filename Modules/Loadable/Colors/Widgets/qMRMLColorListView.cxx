@@ -34,8 +34,10 @@
 class qMRMLColorListViewPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLColorListView);
+
 protected:
   qMRMLColorListView* const q_ptr;
+
 public:
   qMRMLColorListViewPrivate(qMRMLColorListView& object);
   void init();
@@ -98,7 +100,7 @@ void qMRMLColorListView::setMRMLColorNode(vtkMRMLColorNode* node)
   Q_ASSERT(mrmlModel);
   mrmlModel->setMRMLColorNode(node);
   this->sortFilterProxyModel()->invalidate();
-  this->setCurrentIndex(this->model()->index(-1,-1));
+  this->setCurrentIndex(this->model()->index(-1, -1));
 }
 
 //------------------------------------------------------------------------------

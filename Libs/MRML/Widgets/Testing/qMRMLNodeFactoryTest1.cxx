@@ -95,8 +95,7 @@ int qMRMLNodeFactoryTest1(int argc, char* argv[])
 
   {
     // Test a singleton node
-    vtkMRMLNode* createdSingletonNode =
-      nodeFactory.createNode("vtkMRMLInteractionNode");
+    vtkMRMLNode* createdSingletonNode = nodeFactory.createNode("vtkMRMLInteractionNode");
 
     if (createdSingletonNode == nullptr ||                          //
         createdSingletonNode->IsA("vtkMRMLInteractionNode") != 1 || //
@@ -113,8 +112,7 @@ int qMRMLNodeFactoryTest1(int argc, char* argv[])
     }
 
     // Test another singleton
-    vtkMRMLNode* createdSingletonNode2 =
-      nodeFactory.createNode("vtkMRMLInteractionNode");
+    vtkMRMLNode* createdSingletonNode2 = nodeFactory.createNode("vtkMRMLInteractionNode");
 
     // Adding the same singleton in the scene should copy the properties of the
     // node to add in the existing node. \sa vtkMRMLScene::AddNode
@@ -136,8 +134,7 @@ int qMRMLNodeFactoryTest1(int argc, char* argv[])
 
   {
     // Test static utility method
-    vtkMRMLNode* createdNodeStatic =
-      qMRMLNodeFactory::createNode(scene.GetPointer(), "vtkMRMLCameraNode");
+    vtkMRMLNode* createdNodeStatic = qMRMLNodeFactory::createNode(scene.GetPointer(), "vtkMRMLCameraNode");
     if (createdNodeStatic == nullptr ||                     //
         createdNodeStatic->IsA("vtkMRMLCameraNode") != 1 || //
         createdNodeStatic->GetReferenceCount() != 2 ||      //
@@ -175,8 +172,7 @@ int qMRMLNodeFactoryTest1(int argc, char* argv[])
 
   {
     // Test createNode with attribute
-    vtkMRMLNode* createdNodeWithAttribute1 =
-      nodeFactory.createNode("vtkMRMLCameraNode");
+    vtkMRMLNode* createdNodeWithAttribute1 = nodeFactory.createNode("vtkMRMLCameraNode");
 
     if (createdNodeWithAttribute1 == nullptr ||                                         //
         strcmp(createdNodeWithAttribute1->GetAttribute("attribute1"), "value1") != 0 || //
@@ -190,10 +186,8 @@ int qMRMLNodeFactoryTest1(int argc, char* argv[])
   {
     // Test basename
     nodeFactory.setBaseName("vtkMRMLCameraNode", "MyBaseName");
-    vtkMRMLNode* createdNodeWithBaseName =
-      nodeFactory.createNode("vtkMRMLCameraNode");
-    vtkMRMLNode* createdNodeWithoutBaseName =
-      nodeFactory.createNode("vtkMRMLColorTableNode");
+    vtkMRMLNode* createdNodeWithBaseName = nodeFactory.createNode("vtkMRMLCameraNode");
+    vtkMRMLNode* createdNodeWithoutBaseName = nodeFactory.createNode("vtkMRMLColorTableNode");
     if (nodeFactory.baseName("vtkMRMLCameraNode") != "MyBaseName" ||      //
         nodeFactory.baseName("vtkMRMLColorTableNode").isNull() != true || //
         strcmp(createdNodeWithBaseName->GetName(), "MyBaseName") != 0 ||  //

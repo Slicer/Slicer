@@ -32,7 +32,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -44,7 +44,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "GridTransform";}
+  const char* GetNodeTagName() override { return "GridTransform"; }
 
 protected:
   vtkMRMLGridTransformNode();

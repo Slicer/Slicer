@@ -29,8 +29,7 @@ class vtkMRMLNode;
 class qSlicerDataModuleWidgetPrivate;
 class qMRMLSubjectHierarchyModel;
 
-class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 public:

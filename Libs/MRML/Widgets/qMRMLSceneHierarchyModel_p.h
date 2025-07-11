@@ -48,6 +48,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModelPrivate : public qMRMLSceneMo
 {
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneHierarchyModel);
+
 public:
   typedef qMRMLSceneModelPrivate Superclass;
   qMRMLSceneHierarchyModelPrivate(qMRMLSceneHierarchyModel& object);

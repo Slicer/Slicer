@@ -42,8 +42,7 @@ vtkMRMLNodeNewMacro(vtkMRMLTableViewNode);
 //----------------------------------------------------------------------------
 vtkMRMLTableViewNode::vtkMRMLTableViewNode()
 {
-  this->AddNodeReferenceRole(this->GetTableNodeReferenceRole(),
-                             this->GetTableNodeReferenceMRMLAttributeName());
+  this->AddNodeReferenceRole(this->GetTableNodeReferenceRole(), this->GetTableNodeReferenceMRMLAttributeName());
 }
 
 //----------------------------------------------------------------------------
@@ -54,7 +53,6 @@ const char* vtkMRMLTableViewNode::GetNodeTagName()
 {
   return "TableView";
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLTableViewNode::WriteXML(ostream& of, int nIndent)
@@ -74,9 +72,9 @@ void vtkMRMLTableViewNode::ReadXMLAttributes(const char** atts)
   {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp (attName, "doPropagateTableSelection" ))
+    if (!strcmp(attName, "doPropagateTableSelection"))
     {
-      this->SetDoPropagateTableSelection(atoi(attValue)?true:false);
+      this->SetDoPropagateTableSelection(atoi(attValue) ? true : false);
     }
   }
   this->EndModify(disabledModify);
@@ -92,7 +90,7 @@ void vtkMRMLTableViewNode::Copy(vtkMRMLNode* anode)
   vtkMRMLTableViewNode* node = vtkMRMLTableViewNode::SafeDownCast(anode);
   if (node)
   {
-    this->SetDoPropagateTableSelection (node->GetDoPropagateTableSelection());
+    this->SetDoPropagateTableSelection(node->GetDoPropagateTableSelection());
   }
   else
   {

@@ -185,7 +185,7 @@ void vtkSegmentationConverterFactory::DisableRepresentation(std::string represen
   for (RuleListType::iterator ruleIt = rulesCopy.begin(); ruleIt != rulesCopy.end(); ++ruleIt)
   {
     if (!representationName.compare(ruleIt->GetPointer()->GetSourceRepresentationName()) //
-        || !representationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()) )
+        || !representationName.compare(ruleIt->GetPointer()->GetTargetRepresentationName()))
     {
       this->UnregisterConverterRule(ruleIt->GetPointer());
     }

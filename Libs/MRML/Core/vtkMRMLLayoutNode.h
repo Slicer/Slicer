@@ -24,7 +24,7 @@ public:
   //--------------------------------------------------------------------------
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -87,7 +87,7 @@ public:
   bool IsMaximizedViewNode(vtkMRMLAbstractViewNode* viewNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Layout";}
+  const char* GetNodeTagName() override { return "Layout"; }
 
   enum SlicerLayout
   {
@@ -197,8 +197,8 @@ protected:
   int SecondaryPanelSize;
 
   std::map<int, std::string> Layouts;
-  char*                      CurrentLayoutDescription;
-  vtkXMLDataElement*         LayoutRootElement;
+  char* CurrentLayoutDescription;
+  vtkXMLDataElement* LayoutRootElement;
 };
 
 #endif

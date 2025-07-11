@@ -33,7 +33,6 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-
 // test the filtering with many cases
 int qMRMLNodeComboBoxTest7(int argc, char* argv[])
 {

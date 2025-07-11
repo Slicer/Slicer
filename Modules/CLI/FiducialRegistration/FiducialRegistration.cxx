@@ -14,52 +14,46 @@
 
 namespace
 {
-  // Function to convert a point from std::vector to itk::Point
-  itk::Point<double, 3>
-    convertStdVectorToITKPoint(const std::vector<float> & vec)
+// Function to convert a point from std::vector to itk::Point
+itk::Point<double, 3> convertStdVectorToITKPoint(const std::vector<float>& vec)
+{
+  itk::Point<double, 3> p;
+  p[0] = vec[0];
+  p[1] = vec[1];
+  p[2] = vec[2];
+  return p;
+}
+
+// Operator to compute the squared distance between two points
+class SquaredPointDistance
+{
+public:
+  explicit SquaredPointDistance(const itk::Point<double, 3>& ctr)
+    : m_Point(ctr)
   {
-    itk::Point<double, 3> p;
-    p[0] = vec[0];
-    p[1] = vec[1];
-    p[2] = vec[2];
-    return p;
   }
 
-  // Operator to compute the squared distance between two points
-  class SquaredPointDistance
-  {
-  public:
-    explicit SquaredPointDistance(const itk::Point<double, 3>& ctr)
-      : m_Point(ctr)
-    {
-    }
+  double operator()(const itk::Point<double, 3>& p) { return (p - m_Point).GetSquaredNorm(); }
 
-    double operator()(const itk::Point<double, 3>& p)
-    {
-      return (p - m_Point).GetSquaredNorm();
-    }
+private:
+  itk::Point<double, 3> m_Point;
+};
 
-  private:
-    itk::Point<double, 3> m_Point;
-
-  };
-
-}
+} // namespace
 
 int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
-
   const double INVALID_RMS = -1;
 
-    // Checking conditions.
+  // Checking conditions.
 
   if (fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 || //
-    fixedLandmarks.size() != movingLandmarks.size() )
+      fixedLandmarks.size() != movingLandmarks.size())
   {
     std::cerr << "Fixed and moving landmark lists must be of the same size "
-      << "and contain at least one point" << std::endl;
+              << "and contain at least one point" << std::endl;
     outputMessage = "Fixed and moving landmark lists must be of the same size and contain at least one point";
     rms = INVALID_RMS;
   }
@@ -74,12 +68,10 @@ int main(int argc, char* argv[])
     }
   }
 
-
   if (transformType != "Translation" && fixedLandmarks.size() < 3)
   {
     std::cerr << "At least 3 fixed landmark fiducial points must be specified "
-              << "for Rigid or Similarity transforms, have " << fixedLandmarks.size()
-              << std::endl;
+              << "for Rigid or Similarity transforms, have " << fixedLandmarks.size() << std::endl;
     if (outputMessage == "")
     {
       outputMessage = "At least 3 fixed landmark fiducial points must be specified for Rigid or Similarity transforms";
@@ -93,9 +85,9 @@ int main(int argc, char* argv[])
   {
     // Write out the return parameters in "name = value" form
     std::ofstream rts;
-    rts.open(returnParameterFile.c_str() );
+    rts.open(returnParameterFile.c_str());
     rts << "rms = " << rms << std::endl;
-    rts << "outputMessage = " << outputMessage <<std::endl;
+    rts << "outputMessage = " << outputMessage << std::endl;
     rts.close();
 
     return EXIT_SUCCESS;
@@ -103,20 +95,16 @@ int main(int argc, char* argv[])
 
   // Prerequisites are fulfilled.
 
-  typedef  std::vector<itk::Point<double, 3> > PointList;
+  typedef std::vector<itk::Point<double, 3>> PointList;
 
-  PointList fixedPoints(fixedLandmarks.size() );
-  PointList movingPoints(movingLandmarks.size() );
+  PointList fixedPoints(fixedLandmarks.size());
+  PointList movingPoints(movingLandmarks.size());
 
   // Convert both points lists to ITK points
 
-  std::transform(fixedLandmarks.begin(), fixedLandmarks.end(),
-    fixedPoints.begin(),
-    convertStdVectorToITKPoint);
+  std::transform(fixedLandmarks.begin(), fixedLandmarks.end(), fixedPoints.begin(), convertStdVectorToITKPoint);
 
-  std::transform(movingLandmarks.begin(), movingLandmarks.end(),
-    movingPoints.begin(),
-    convertStdVectorToITKPoint);
+  std::transform(movingLandmarks.begin(), movingLandmarks.end(), movingPoints.begin(), convertStdVectorToITKPoint);
 
   typedef itk::AffineTransform<double, 3> AffineTransform;
   AffineTransform::Pointer fixedToMovingT = itk::AffineTransform<double, 3>::New();
@@ -127,8 +115,7 @@ int main(int argc, char* argv[])
     TransformType::Pointer transform = TransformType::New();
     transform->SetIdentity();
 
-    typedef itk::LandmarkBasedTransformInitializer<TransformType,
-      itk::Image<short, 3>, itk::Image<short, 3> > InitializerType;
+    typedef itk::LandmarkBasedTransformInitializer<TransformType, itk::Image<short, 3>, itk::Image<short, 3>> InitializerType;
     InitializerType::Pointer initializer = InitializerType::New();
     initializer->SetTransform(transform);
     initializer->SetFixedLandmarks(fixedPoints);
@@ -154,8 +141,7 @@ int main(int argc, char* argv[])
     TransformType::Pointer transform = TransformType::New();
     transform->SetIdentity();
 
-    typedef itk::LandmarkBasedTransformInitializer<TransformType,
-      itk::Image<short, 3>, itk::Image<short, 3> > InitializerType;
+    typedef itk::LandmarkBasedTransformInitializer<TransformType, itk::Image<short, 3>, itk::Image<short, 3>> InitializerType;
     InitializerType::Pointer initializer = InitializerType::New();
     initializer->SetTransform(transform);
     initializer->SetFixedLandmarks(fixedPoints);
@@ -173,8 +159,7 @@ int main(int argc, char* argv[])
     TransformType::Pointer transform = TransformType::New();
     transform->SetIdentity();
 
-    typedef itk::LandmarkBasedTransformInitializer<TransformType,
-      itk::Image<short, 3>, itk::Image<short, 3> > InitializerType;
+    typedef itk::LandmarkBasedTransformInitializer<TransformType, itk::Image<short, 3>, itk::Image<short, 3>> InitializerType;
     InitializerType::Pointer initializer = InitializerType::New();
     initializer->SetTransform(transform);
     initializer->SetFixedLandmarks(fixedPoints);
@@ -192,10 +177,10 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-    // Compute RMS error in the target coordinate system.
+  // Compute RMS error in the target coordinate system.
 
   AffineTransform::Pointer movingToFixedT = AffineTransform::New();
-  fixedToMovingT->GetInverse( movingToFixedT );
+  fixedToMovingT->GetInverse(movingToFixedT);
 
   typedef PointList LandmarkPointContainerType;
   typedef LandmarkPointContainerType::const_iterator PointsContainerConstIterator;
@@ -208,7 +193,7 @@ int main(int argc, char* argv[])
   int counter = itk::NumericTraits<int>::ZeroValue();
   while (mitr != movingPoints.end())
   {
-    movingPointInFixed = movingToFixedT->TransformPoint( *mitr );
+    movingPointInFixed = movingToFixedT->TransformPoint(*mitr);
     errortr = *fitr - movingPointInFixed;
     sum = sum + errortr.GetSquaredNorm();
     ++mitr;
@@ -216,25 +201,22 @@ int main(int argc, char* argv[])
     counter++;
   }
 
-  rms = sqrt( sum / counter );
-
+  rms = sqrt(sum / counter);
 
   itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
-  twriter->SetInput( fixedToMovingT );
-  twriter->SetFileName( saveTransform );
+  twriter->SetInput(fixedToMovingT);
+  twriter->SetFileName(saveTransform);
 
   twriter->Update();
 
-
   outputMessage = "Success";
 
-
-    // Write out the return parameters in "name = value" form
+  // Write out the return parameters in "name = value" form
 
   std::ofstream rts;
-  rts.open(returnParameterFile.c_str() );
+  rts.open(returnParameterFile.c_str());
   rts << "rms = " << rms << std::endl;
-  rts << "outputMessage = " << outputMessage <<std::endl;
+  rts << "outputMessage = " << outputMessage << std::endl;
   rts.close();
 
   return EXIT_SUCCESS;

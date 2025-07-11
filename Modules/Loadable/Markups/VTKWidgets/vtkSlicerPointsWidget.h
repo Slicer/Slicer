@@ -22,7 +22,7 @@
  *
  *
  *
-*/
+ */
 
 #ifndef vtkSlicerPointsWidget_h
 #define vtkSlicerPointsWidget_h

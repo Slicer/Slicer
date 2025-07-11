@@ -31,8 +31,7 @@
 
 class qSlicerSegmentationsModulePrivate;
 
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
@@ -53,7 +52,7 @@ public:
   QString acknowledgementText() const override;
 
   /// Return the authors of the module
-  QStringList  contributors() const override;
+  QStringList contributors() const override;
 
   /// Return module dependencies
   QStringList dependencies() const override;
@@ -92,7 +91,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerSegmentationsModule);
   Q_DISABLE_COPY(qSlicerSegmentationsModule);
-
 };
 
 #endif

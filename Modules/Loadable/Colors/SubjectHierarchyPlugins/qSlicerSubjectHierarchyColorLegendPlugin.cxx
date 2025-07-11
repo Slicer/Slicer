@@ -57,14 +57,16 @@
 class qSlicerSubjectHierarchyColorLegendPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyColorLegendPlugin);
+
 protected:
   qSlicerSubjectHierarchyColorLegendPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyColorLegendPluginPrivate(qSlicerSubjectHierarchyColorLegendPlugin& object);
   ~qSlicerSubjectHierarchyColorLegendPluginPrivate() override;
   void init();
-public:
 
+public:
   QAction* ShowColorLegendAction;
 };
 
@@ -84,8 +86,7 @@ void qSlicerSubjectHierarchyColorLegendPluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchyColorLegendPlugin);
 
   this->ShowColorLegendAction = new QAction(qSlicerSubjectHierarchyColorLegendPlugin::tr("Show color legend"), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ShowColorLegendAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 10);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ShowColorLegendAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 10);
   QObject::connect(this->ShowColorLegendAction, SIGNAL(toggled(bool)), q, SLOT(toggleVisibilityForCurrentItem(bool)));
   this->ShowColorLegendAction->setCheckable(true);
   this->ShowColorLegendAction->setChecked(false);
@@ -99,10 +100,10 @@ qSlicerSubjectHierarchyColorLegendPluginPrivate::~qSlicerSubjectHierarchyColorLe
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyColorLegendPlugin::qSlicerSubjectHierarchyColorLegendPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyColorLegendPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyColorLegendPluginPrivate(*this))
 {
-  this->m_Name = QString(/*no tr*/"ColorLegend");
+  this->m_Name = QString(/*no tr*/ "ColorLegend");
 
   Q_D(qSlicerSubjectHierarchyColorLegendPlugin);
   d->init();
@@ -271,7 +272,7 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showItemInView(vtkIdType itemID, 
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInView( bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode/*=nullptr*/)
+bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInView(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode /*=nullptr*/)
 {
   Q_D(qSlicerSubjectHierarchyColorLegendPlugin);
 
@@ -346,7 +347,7 @@ bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInView( bool show,
 }
 
 //---------------------------------------------------------------------------
-bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInSlice( bool show, vtkIdType itemID, vtkMRMLSliceNode* sliceNode/*=nullptr*/)
+bool qSlicerSubjectHierarchyColorLegendPlugin::showColorLegendInSlice(bool show, vtkIdType itemID, vtkMRMLSliceNode* sliceNode /*=nullptr*/)
 {
   Q_D(qSlicerSubjectHierarchyColorLegendPlugin);
 

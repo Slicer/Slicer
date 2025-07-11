@@ -39,12 +39,10 @@
 /// Displays transforms in slice viewers as glyphs, deformed grid, or
 /// contour lines
 ///
-class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLinearTransformsDisplayableManager
-  : public vtkMRMLAbstractDisplayableManager
+class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLLinearTransformsDisplayableManager : public vtkMRMLAbstractDisplayableManager
 {
 
 public:
-
   static vtkMRMLLinearTransformsDisplayableManager* New();
   vtkTypeMacro(vtkMRMLLinearTransformsDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -55,7 +53,6 @@ public:
   vtkMRMLTransformHandleWidget* GetWidget(vtkMRMLTransformNode* markupsNode);
 
 protected:
-
   vtkMRMLLinearTransformsDisplayableManager();
   ~vtkMRMLLinearTransformsDisplayableManager() override;
 
@@ -80,7 +77,6 @@ protected:
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
 
 private:
-
   vtkMRMLLinearTransformsDisplayableManager(const vtkMRMLLinearTransformsDisplayableManager&) = delete;
   void operator=(const vtkMRMLLinearTransformsDisplayableManager&) = delete;
 

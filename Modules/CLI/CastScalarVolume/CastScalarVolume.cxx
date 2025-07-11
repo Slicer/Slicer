@@ -24,42 +24,36 @@ namespace
 {
 
 template <class Tin, class Tout>
-int DoIt( int argc, char* argv[], Tin, Tout )
+int DoIt(int argc, char* argv[], Tin, Tout)
 {
 
   PARSE_ARGS;
 
-  typedef    Tin InputPixelType;
-  typedef Tout   OutputPixelType;
+  typedef Tin InputPixelType;
+  typedef Tout OutputPixelType;
 
-  typedef itk::Image<InputPixelType,  3> InputImageType;
+  typedef itk::Image<InputPixelType, 3> InputImageType;
   typedef itk::Image<OutputPixelType, 3> OutputImageType;
 
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
+  typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
-  typedef itk::CastImageFilter<
-    InputImageType, OutputImageType>  FilterType;
+  typedef itk::CastImageFilter<InputImageType, OutputImageType> FilterType;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
-  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume",
-                                        CLPProcessInformation);
+  itk::PluginFilterWatcher watchReader1(reader1, "Read Volume", CLPProcessInformation);
 
-  reader1->SetFileName( InputVolume.c_str() );
+  reader1->SetFileName(InputVolume.c_str());
 
   typename FilterType::Pointer filter = FilterType::New();
-  itk::PluginFilterWatcher watchFilter(filter,
-                                       "Cast image",
-                                       CLPProcessInformation);
+  itk::PluginFilterWatcher watchFilter(filter, "Cast image", CLPProcessInformation);
 
-  filter->SetInput( 0, reader1->GetOutput() );
+  filter->SetInput(0, reader1->GetOutput());
 
   typename WriterType::Pointer writer = WriterType::New();
-  itk::PluginFilterWatcher watchWriter(writer,
-                                       "Write Volume",
-                                       CLPProcessInformation);
-  writer->SetFileName( OutputVolume.c_str() );
-  writer->SetInput( filter->GetOutput() );
+  itk::PluginFilterWatcher watchWriter(writer, "Write Volume", CLPProcessInformation);
+  writer->SetFileName(OutputVolume.c_str());
+  writer->SetInput(filter->GetOutput());
   writer->Update();
   return EXIT_SUCCESS;
 }
@@ -71,7 +65,7 @@ int main(int argc, char* argv[])
 
   PARSE_ARGS;
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum pixelType;
   itk::IOComponentEnum componentType;
 
   try
@@ -84,43 +78,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::CHAR:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<char>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<char>(0), static_cast<double>(0));
         }
         else
         {
@@ -131,43 +125,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::SHORT:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<short>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<short>(0), static_cast<double>(0));
         }
         else
         {
@@ -178,43 +172,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::INT:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<int>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<int>(0), static_cast<double>(0));
         }
         else
         {
@@ -225,43 +219,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::LONG:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<long>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<long>(0), static_cast<double>(0));
         }
         else
         {
@@ -272,43 +266,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::UCHAR:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<unsigned char>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<unsigned char>(0), static_cast<double>(0));
         }
         else
         {
@@ -319,43 +313,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::USHORT:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<unsigned short>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<unsigned short>(0), static_cast<double>(0));
         }
         else
         {
@@ -366,43 +360,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::UINT:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<unsigned int>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<unsigned int>(0), static_cast<double>(0));
         }
         else
         {
@@ -413,43 +407,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::ULONG:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<unsigned long>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<unsigned long>(0), static_cast<double>(0));
         }
         else
         {
@@ -460,43 +454,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::FLOAT:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<float>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<float>(0), static_cast<double>(0));
         }
         else
         {
@@ -507,43 +501,43 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::DOUBLE:
         if (Type == std::string("Char"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<char>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<char>(0));
         }
         else if (Type == std::string("UnsignedChar"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<unsigned char>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<unsigned char>(0));
         }
         else if (Type == std::string("Short"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<short>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<short>(0));
         }
         else if (Type == std::string("UnsignedShort"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<unsigned short>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<unsigned short>(0));
         }
         else if (Type == std::string("Int"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<int>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<int>(0));
         }
         else if (Type == std::string("UnsignedInt"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<unsigned int>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<unsigned int>(0));
         }
         else if (Type == std::string("Long"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<long>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<long>(0));
         }
         else if (Type == std::string("UnsignedLong"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<unsigned long>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<unsigned long>(0));
         }
         else if (Type == std::string("Float"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<float>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<float>(0));
         }
         else if (Type == std::string("Double"))
         {
-          return DoIt( argc, argv, static_cast<double>(0), static_cast<double>(0) );
+          return DoIt(argc, argv, static_cast<double>(0), static_cast<double>(0));
         }
         else
         {
@@ -552,9 +546,7 @@ int main(int argc, char* argv[])
         }
         break;
       case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
-      default:
-        std::cout << "Unknown component type " << componentType << std::endl;
-        break;
+      default: std::cout << "Unknown component type " << componentType << std::endl; break;
     }
   }
   catch (itk::ExceptionObject& excep)

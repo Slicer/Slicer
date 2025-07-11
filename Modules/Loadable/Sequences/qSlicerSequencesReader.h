@@ -29,8 +29,7 @@ class qSlicerSequencesReaderPrivate;
 class vtkSlicerSequencesLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerSequencesReader
-  : public qSlicerFileReader
+class qSlicerSequencesReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:

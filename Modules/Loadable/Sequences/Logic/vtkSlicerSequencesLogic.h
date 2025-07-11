@@ -20,7 +20,6 @@
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
-
 #ifndef __vtkSlicerSequencesLogic_h
 #define __vtkSlicerSequencesLogic_h
 
@@ -39,11 +38,9 @@ class vtkMRMLNode;
 class vtkMRMLSequenceNode;
 class vtkMRMLSequenceBrowserNode;
 
-class VTK_SLICER_SEQUENCES_MODULE_LOGIC_EXPORT vtkSlicerSequencesLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_SEQUENCES_MODULE_LOGIC_EXPORT vtkSlicerSequencesLogic : public vtkSlicerModuleLogic
 {
 public:
-
   static vtkSlicerSequencesLogic* New();
   vtkTypeMacro(vtkSlicerSequencesLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -71,8 +68,7 @@ public:
     static bool warningLogged = false;
     if (!warningLogged)
     {
-      vtkWarningMacro("vtkSlicerSequenceBrowserLogic::UpdateVirtualOutputNodes is deprecated,"
-        << " use vtkSlicerSequenceBrowserLogic::UpdateProxyNodes method instead");
+      vtkWarningMacro("vtkSlicerSequenceBrowserLogic::UpdateVirtualOutputNodes is deprecated," << " use vtkSlicerSequenceBrowserLogic::UpdateProxyNodes method instead");
       warningLogged = true;
     }
     this->UpdateProxyNodesFromSequences(browserNode);
@@ -119,15 +115,14 @@ protected:
   bool IsDataConnectorNode(vtkMRMLNode*);
 
   // Time of the last update of each browser node (in universal time)
-  std::map< vtkMRMLSequenceBrowserNode*, double > LastSequenceBrowserUpdateTimeSec;
+  std::map<vtkMRMLSequenceBrowserNode*, double> LastSequenceBrowserUpdateTimeSec;
 
 private:
-
   std::set<vtkMRMLSequenceBrowserNode*> UpdateProxyNodesFromSequencesInProgress;
   std::set<vtkMRMLSequenceBrowserNode*> UpdateSequencesFromProxyNodesInProgress;
 
   vtkSlicerSequencesLogic(const vtkSlicerSequencesLogic&); // Not implemented
-  void operator=(const vtkSlicerSequencesLogic&);               // Not implemented
+  void operator=(const vtkSlicerSequencesLogic&);          // Not implemented
 };
 
 #endif

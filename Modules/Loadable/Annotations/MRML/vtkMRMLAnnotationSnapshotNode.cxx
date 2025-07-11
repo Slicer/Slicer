@@ -33,7 +33,6 @@ vtkMRMLAnnotationSnapshotNode::~vtkMRMLAnnotationSnapshotNode()
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationSnapshotNode);
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationSnapshotNode::WriteXML(ostream& of, int nIndent)
 {
@@ -42,13 +41,12 @@ void vtkMRMLAnnotationSnapshotNode::WriteXML(ostream& of, int nIndent)
   of << " screenshotType=\"" << this->GetScreenShotType() << "\"";
 
   std::string description = this->GetSnapshotDescription();
-  vtksys::SystemTools::ReplaceString(description,"\n","[br]");
+  vtksys::SystemTools::ReplaceString(description, "\n", "[br]");
 
   of << " snapshotDescription=\"" << description << "\"";
 
   of << " scaleFactor=\"" << this->GetScaleFactor() << "\"";
 }
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
@@ -87,7 +85,7 @@ void vtkMRMLAnnotationSnapshotNode::ReadXMLAttributes(const char** atts)
       std::string sceneViewDescription;
       ss >> sceneViewDescription;
 
-      vtksys::SystemTools::ReplaceString(sceneViewDescription,"[br]","\n");
+      vtksys::SystemTools::ReplaceString(sceneViewDescription, "[br]", "\n");
 
       this->SetSnapshotDescription(sceneViewDescription);
     }
@@ -104,8 +102,7 @@ vtkMRMLStorageNode* vtkMRMLAnnotationSnapshotNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLAnnotationSnapshotStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLAnnotationSnapshotStorageNode"));
 }
 
 //----------------------------------------------------------------------------

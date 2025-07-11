@@ -3,7 +3,7 @@
 
 // --------------------------------------------------------------------------
 qMRMLSliceControllerWidgetPlugin::qMRMLSliceControllerWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -17,12 +17,12 @@ QWidget* qMRMLSliceControllerWidgetPlugin::createWidget(QWidget* _parent)
 // --------------------------------------------------------------------------
 QString qMRMLSliceControllerWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSliceControllerWidget\" name=\"MRMLSliceControllerWidget\">\n"
-    "  <property name=\"sliceViewName\"> <string notr=\"true\"/> </property>\n"
-    "  <property name=\"sliceOrientation\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSliceControllerWidget\" name=\"MRMLSliceControllerWidget\">\n"
+         "  <property name=\"sliceViewName\"> <string notr=\"true\"/> </property>\n"
+         "  <property name=\"sliceOrientation\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

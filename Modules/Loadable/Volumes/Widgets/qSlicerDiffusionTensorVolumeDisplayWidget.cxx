@@ -34,12 +34,13 @@
 #include <algorithm>
 
 //-----------------------------------------------------------------------------
-class qSlicerDiffusionTensorVolumeDisplayWidgetPrivate
-  : public Ui_qSlicerDiffusionTensorVolumeDisplayWidget
+class qSlicerDiffusionTensorVolumeDisplayWidgetPrivate : public Ui_qSlicerDiffusionTensorVolumeDisplayWidget
 {
   Q_DECLARE_PUBLIC(qSlicerDiffusionTensorVolumeDisplayWidget);
+
 protected:
   qSlicerDiffusionTensorVolumeDisplayWidget* const q_ptr;
+
 public:
   qSlicerDiffusionTensorVolumeDisplayWidgetPrivate(qSlicerDiffusionTensorVolumeDisplayWidget& object);
   ~qSlicerDiffusionTensorVolumeDisplayWidgetPrivate();
@@ -49,16 +50,13 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerDiffusionTensorVolumeDisplayWidgetPrivate
-::qSlicerDiffusionTensorVolumeDisplayWidgetPrivate(
-  qSlicerDiffusionTensorVolumeDisplayWidget& object)
+qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::qSlicerDiffusionTensorVolumeDisplayWidgetPrivate(qSlicerDiffusionTensorVolumeDisplayWidget& object)
   : q_ptr(&object)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerDiffusionTensorVolumeDisplayWidgetPrivate
-::~qSlicerDiffusionTensorVolumeDisplayWidgetPrivate() = default;
+qSlicerDiffusionTensorVolumeDisplayWidgetPrivate ::~qSlicerDiffusionTensorVolumeDisplayWidgetPrivate() = default;
 
 //-----------------------------------------------------------------------------
 void qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::init()
@@ -68,14 +66,10 @@ void qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::init()
   this->setupUi(q);
   this->DTISliceDisplayWidget->setVisibilityHidden(true);
 
-  QObject::connect(this->ScalarInvariantComboBox, SIGNAL(scalarInvariantChanged(int)),
-                   q, SLOT(setVolumeScalarInvariant(int)));
-  QObject::connect(this->RedSliceCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setRedSliceVisible(bool)));
-  QObject::connect(this->YellowSliceCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setYellowSliceVisible(bool)));
-  QObject::connect(this->GreenSliceCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(setGreenSliceVisible(bool)));
+  QObject::connect(this->ScalarInvariantComboBox, SIGNAL(scalarInvariantChanged(int)), q, SLOT(setVolumeScalarInvariant(int)));
+  QObject::connect(this->RedSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setRedSliceVisible(bool)));
+  QObject::connect(this->YellowSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setYellowSliceVisible(bool)));
+  QObject::connect(this->GreenSliceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setGreenSliceVisible(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -91,8 +85,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::glyphsOnSlicesDisplaySetE
 }
 
 // --------------------------------------------------------------------------
-qSlicerDiffusionTensorVolumeDisplayWidget
-::qSlicerDiffusionTensorVolumeDisplayWidget(QWidget* parentWidget)
+qSlicerDiffusionTensorVolumeDisplayWidget::qSlicerDiffusionTensorVolumeDisplayWidget(QWidget* parentWidget)
   : Superclass(parentWidget)
   , d_ptr(new qSlicerDiffusionTensorVolumeDisplayWidgetPrivate(*this))
 {
@@ -104,12 +97,10 @@ qSlicerDiffusionTensorVolumeDisplayWidget
 }
 
 // --------------------------------------------------------------------------
-qSlicerDiffusionTensorVolumeDisplayWidget
-::~qSlicerDiffusionTensorVolumeDisplayWidget() = default;
+qSlicerDiffusionTensorVolumeDisplayWidget ::~qSlicerDiffusionTensorVolumeDisplayWidget() = default;
 
 // --------------------------------------------------------------------------
-vtkMRMLDiffusionTensorVolumeNode* qSlicerDiffusionTensorVolumeDisplayWidget
-::volumeNode() const
+vtkMRMLDiffusionTensorVolumeNode* qSlicerDiffusionTensorVolumeDisplayWidget::volumeNode() const
 {
   Q_D(const qSlicerDiffusionTensorVolumeDisplayWidget);
   return d->VolumeNode;
@@ -119,8 +110,7 @@ vtkMRMLDiffusionTensorVolumeNode* qSlicerDiffusionTensorVolumeDisplayWidget
 vtkMRMLDiffusionTensorVolumeDisplayNode* qSlicerDiffusionTensorVolumeDisplayWidget::volumeDisplayNode() const
 {
   vtkMRMLDiffusionTensorVolumeNode* volumeNode = this->volumeNode();
-  return volumeNode ? vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(
-    volumeNode->GetVolumeDisplayNode()) : nullptr;
+  return volumeNode ? vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(volumeNode->GetVolumeDisplayNode()) : nullptr;
 }
 
 // --------------------------------------------------------------------------
@@ -134,15 +124,12 @@ QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> qSlicerDiffusionTensorVolumeDispl
   }
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> res;
-  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> displayNodes =
-      displayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
+  std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> displayNodes = displayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
   res.reserve(displayNodes.size());
   std::copy(displayNodes.begin(), displayNodes.end(), std::back_inserter(res));
 #else
-  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> res
-    = QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromVector(
-      QVector<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromStdVector(
-        displayNode->GetSliceGlyphDisplayNodes(d->VolumeNode)));
+  QList<vtkMRMLGlyphableVolumeSliceDisplayNode*> res = QList<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromVector(
+    QVector<vtkMRMLGlyphableVolumeSliceDisplayNode*>::fromStdVector(displayNode->GetSliceGlyphDisplayNodes(d->VolumeNode)));
 #endif
   return res;
 }
@@ -160,22 +147,18 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
 
   vtkMRMLDiffusionTensorVolumeDisplayNode* oldVolumeDisplayNode = this->volumeDisplayNode();
 
-  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() :nullptr,
-                vtkCommand::ModifiedEvent,
-                this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(oldVolumeDisplayNode, volumeNode ? volumeNode->GetVolumeDisplayNode() : nullptr, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->VolumeNode = volumeNode;
   d->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
   vtkMRMLDiffusionTensorVolumeDisplayNode* newVolumeDisplayNode = this->volumeDisplayNode();
   vtkMRMLGlyphableVolumeSliceDisplayNode* glyphableVolumeSliceNode = nullptr;
   if (newVolumeDisplayNode)
   {
-    std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> dtiSliceDisplayNodes =
-      newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
+    std::vector<vtkMRMLGlyphableVolumeSliceDisplayNode*> dtiSliceDisplayNodes = newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
     if (dtiSliceDisplayNodes.size() == 0)
     {
       newVolumeDisplayNode->AddSliceGlyphDisplayNodes(d->VolumeNode);
-      dtiSliceDisplayNodes =
-        newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
+      dtiSliceDisplayNodes = newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
     }
     Q_ASSERT(dtiSliceDisplayNodes.size());
     d->RedSliceCheckBox->setChecked(dtiSliceDisplayNodes[0]->GetVisibility());
@@ -193,8 +176,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
   // The update tasks are also needed when scene is closed (newVolumeDisplayNode is nullptr)
   d->DTISliceDisplayWidget->setMRMLDTISliceDisplayNode(glyphableVolumeSliceNode);
   qvtkDisconnect(nullptr, vtkCommand::ModifiedEvent, this, SLOT(synchronizeSliceDisplayNodes()));
-  qvtkConnect(glyphableVolumeSliceNode, vtkCommand::ModifiedEvent,
-              this, SLOT(synchronizeSliceDisplayNodes()));
+  qvtkConnect(glyphableVolumeSliceNode, vtkCommand::ModifiedEvent, this, SLOT(synchronizeSliceDisplayNodes()));
   this->synchronizeSliceDisplayNodes();
   this->updateWidgetFromMRML();
 }
@@ -204,24 +186,23 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerDiffusionTensorVolumeDisplayWidget);
   this->setEnabled(d->VolumeNode != nullptr);
-  vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode =
-    this->volumeDisplayNode();
+  vtkMRMLDiffusionTensorVolumeDisplayNode* displayNode = this->volumeDisplayNode();
   if (!displayNode)
   {
     return;
   }
   d->ScalarInvariantComboBox->setScalarInvariant(displayNode->GetScalarInvariant());
-  if (
-    displayNode->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation || //
-    displayNode->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector || //
-    displayNode->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector
-    )
+  if (displayNode->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation ||                  //
+      displayNode->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector || //
+      displayNode->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector)
   {
     d->ScalarVolumeDisplayWidget->setColorTableComboBoxEnabled(false);
     d->ScalarVolumeDisplayWidget->setMRMLWindowLevelWidgetEnabled(false);
     displayNode->AutoScalarRangeOn();
     displayNode->AutoWindowLevelOn();
-  } else {
+  }
+  else
+  {
     d->ScalarVolumeDisplayWidget->setColorTableComboBoxEnabled(true);
     d->ScalarVolumeDisplayWidget->setMRMLWindowLevelWidgetEnabled(true);
   }
@@ -239,14 +220,12 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::synchronizeSliceDisplayNodes()
   sliceDisplayNodes[1]->SetOpacity(sliceDisplayNodes[0]->GetOpacity());
   sliceDisplayNodes[1]->SetAndObserveColorNodeID(sliceDisplayNodes[0]->GetColorNodeID());
   sliceDisplayNodes[1]->SetAutoScalarRange(sliceDisplayNodes[0]->GetAutoScalarRange());
-  sliceDisplayNodes[1]->SetScalarRange(sliceDisplayNodes[0]->GetScalarRange()[0],
-                                       sliceDisplayNodes[0]->GetScalarRange()[1]);
+  sliceDisplayNodes[1]->SetScalarRange(sliceDisplayNodes[0]->GetScalarRange()[0], sliceDisplayNodes[0]->GetScalarRange()[1]);
   sliceDisplayNodes[2]->SetColorMode(sliceDisplayNodes[0]->GetColorMode());
   sliceDisplayNodes[2]->SetOpacity(sliceDisplayNodes[0]->GetOpacity());
   sliceDisplayNodes[2]->SetAndObserveColorNodeID(sliceDisplayNodes[0]->GetColorNodeID());
   sliceDisplayNodes[2]->SetAutoScalarRange(sliceDisplayNodes[0]->GetAutoScalarRange());
-  sliceDisplayNodes[2]->SetScalarRange(sliceDisplayNodes[0]->GetScalarRange()[0],
-                                       sliceDisplayNodes[0]->GetScalarRange()[1]);
+  sliceDisplayNodes[2]->SetScalarRange(sliceDisplayNodes[0]->GetScalarRange()[0], sliceDisplayNodes[0]->GetScalarRange()[1]);
 }
 
 //----------------------------------------------------------------------------

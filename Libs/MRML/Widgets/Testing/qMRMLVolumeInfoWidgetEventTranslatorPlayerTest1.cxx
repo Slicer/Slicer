@@ -62,7 +62,7 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLVolumeInfoWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
@@ -83,8 +83,8 @@ int qMRMLVolumeInfoWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 
   vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(256, 256, 1);
-  //imageData->SetSpacing(2., 2., 512.); not used by vtkMRMLVolumeNode
-  //imageData->SetOrigin(0.0,0.0,0.0); not used by vtkMRMLVolumeNode
+  // imageData->SetSpacing(2., 2., 512.); not used by vtkMRMLVolumeNode
+  // imageData->SetOrigin(0.0,0.0,0.0); not used by vtkMRMLVolumeNode
   imageData->AllocateScalars(VTK_UNSIGNED_SHORT, 1); // allocate storage for image data
   volumeNode->SetAndObserveImageData(imageData.GetPointer());
   volumeNode->SetSpacing(2., 2., 512.);
@@ -104,9 +104,7 @@ int qMRMLVolumeInfoWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
 
   qMRMLVolumeInfoWidget volumeInfo;
   volumeInfo.setVolumeNode(volumeNode.GetPointer());
-  etpWidget.addTestCase(&volumeInfo,
-                        xmlDirectory + "qMRMLVolumeInfoWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(&volumeInfo, xmlDirectory + "qMRMLVolumeInfoWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

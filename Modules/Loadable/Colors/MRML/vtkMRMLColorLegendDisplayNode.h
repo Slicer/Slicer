@@ -35,7 +35,12 @@ class VTK_SLICER_COLORS_MODULE_MRML_EXPORT vtkMRMLColorLegendDisplayNode : publi
 {
 public:
   /// color legend orientation preset on a view node
-  enum OrientationType : int { Horizontal = 0, Vertical, Orientation_Last };
+  enum OrientationType : int
+  {
+    Horizontal = 0,
+    Vertical,
+    Orientation_Last
+  };
 
   static vtkMRMLColorLegendDisplayNode* New();
   vtkTypeMacro(vtkMRMLColorLegendDisplayNode, vtkMRMLDisplayNode);
@@ -175,9 +180,9 @@ protected:
 
 private:
   OrientationType Orientation{ vtkMRMLColorLegendDisplayNode::Vertical }; // Vertical or Horizontal
-  double Position[2]{ 0.95, 0.5 }; // color legend position within view
-  double Size[2]{ 0.15, 0.5 }; // color legend width within view
-  std::string TitleText; // color legend title
+  double Position[2]{ 0.95, 0.5 };                                        // color legend position within view
+  double Size[2]{ 0.15, 0.5 };                                            // color legend width within view
+  std::string TitleText;                                                  // color legend title
   vtkTextProperty* TitleTextProperty{ nullptr };
   vtkTextProperty* LabelTextProperty{ nullptr };
   // 7 so that the number appears aligned to the right even if it is large (>1000)

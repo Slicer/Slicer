@@ -47,7 +47,7 @@ int qMRMLSceneModelTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  qMRMLSceneModel   sceneModel;
+  qMRMLSceneModel sceneModel;
   CHECK_INT(sceneModel.rowCount(), 0);
 
   qMRMLSceneFactoryWidget sceneFactory;
@@ -92,7 +92,7 @@ int qMRMLSceneModelTest1(int argc, char* argv[])
   sceneModel.setPostItems(postNodes, sceneModel.mrmlSceneItem());
 
   QStringList preNodes;
-  preNodes << "pre item 1" << "pre item 2"  << "separator";
+  preNodes << "pre item 1" << "pre item 2" << "separator";
   sceneModel.setPreItems(preNodes, sceneModel.mrmlSceneItem());
 
   QStringList postScene;

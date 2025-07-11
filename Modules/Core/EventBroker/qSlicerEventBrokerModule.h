@@ -31,12 +31,10 @@
 
 class qSlicerEventBrokerModulePrivate;
 
-class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModule :
-  public qSlicerCoreModule
+class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModule : public qSlicerCoreModule
 {
   Q_OBJECT
 public:
-
   typedef qSlicerCoreModule Superclass;
   qSlicerEventBrokerModule(QObject* parent = nullptr);
   ~qSlicerEventBrokerModule() override;
@@ -58,6 +56,7 @@ protected:
   vtkMRMLAbstractLogic* createLogic() override;
 
   QScopedPointer<qSlicerEventBrokerModulePrivate> d_ptr;
+
 private:
   Q_DECLARE_PRIVATE(qSlicerEventBrokerModule);
   Q_DISABLE_COPY(qSlicerEventBrokerModule);

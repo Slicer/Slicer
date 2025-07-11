@@ -15,7 +15,6 @@
 
 ==============================================================================*/
 
-
 #ifndef __qSlicerTablesModuleWidgetsCxxTests_h
 #define __qSlicerTablesModuleWidgetsCxxTests_h
 

@@ -36,8 +36,8 @@ class Q_SLICER_QTMODULES_TEXTS_EXPORT qSlicerTextsModule : public qSlicerLoadabl
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
-public:
 
+public:
   typedef qSlicerLoadableModule Superclass;
   qSlicerTextsModule(QObject* parent = nullptr);
   ~qSlicerTextsModule() override;
@@ -77,6 +77,7 @@ protected:
   vtkMRMLAbstractLogic* createLogic() override;
 
   QScopedPointer<qSlicerTextsModulePrivate> d_ptr;
+
 private:
   Q_DECLARE_PRIVATE(qSlicerTextsModule);
   Q_DISABLE_COPY(qSlicerTextsModule);

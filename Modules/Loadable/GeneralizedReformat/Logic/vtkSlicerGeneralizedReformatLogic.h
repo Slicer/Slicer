@@ -20,7 +20,6 @@
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
-
 #ifndef __vtkSlicerGeneralizedReformatLogic_h
 #define __vtkSlicerGeneralizedReformatLogic_h
 
@@ -45,12 +44,9 @@ class vtkPoints;
 
 #include "vtkSlicerGeneralizedReformatModuleLogicExport.h"
 
-
-class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkSlicerGeneralizedReformatLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC_EXPORT vtkSlicerGeneralizedReformatLogic : public vtkSlicerModuleLogic
 {
 public:
-
   static vtkSlicerGeneralizedReformatLogic* New();
   vtkTypeMacro(vtkSlicerGeneralizedReformatLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -67,9 +63,7 @@ public:
   /// normal aligns with the Z-axis. The projection is performed by setting the Z coordinate of
   /// each point to zero, effectively flattening it onto the plane. The points are then transformed
   /// back into world coordinates and stored in `pointsArrayOut`.
-  bool GetPointsProjectedToPlane(vtkPoints* pointsArrayIn,
-                                 vtkMatrix4x4* transformWorldToPlane,
-                                 vtkPoints* pointsArrayOut);
+  bool GetPointsProjectedToPlane(vtkPoints* pointsArrayIn, vtkMatrix4x4* transformWorldToPlane, vtkPoints* pointsArrayOut);
 
   /// Compute transform that straightens volume (useful for example for visualization of curved vessels)
   ///
@@ -115,9 +109,7 @@ public:
   /// \param projectionAxisIndex axis to perform the projection on
   ///
   /// \return True if the projection volume computation is successful, false if input parameters are null.
-  bool ProjectVolume(vtkMRMLScalarVolumeNode* outputProjectedVolume,
-                     vtkMRMLScalarVolumeNode* inputStraightenedVolume,
-                     int projectionAxisIndex = 0);
+  bool ProjectVolume(vtkMRMLScalarVolumeNode* outputProjectedVolume, vtkMRMLScalarVolumeNode* inputStraightenedVolume, int projectionAxisIndex = 0);
 
   /// Resample volume using the registered resampler.
   ///
@@ -138,8 +130,7 @@ public:
                       vtkMRMLTransformNode* resamplingTransform,
                       vtkMRMLVolumeNode* referenceVolume = nullptr,
                       int interpolationType = vtkMRMLAbstractVolumeResampler::InterpolationTypeLinear,
-                      const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters =
-                      vtkMRMLAbstractVolumeResampler::ResamplingParameters());
+                      const vtkMRMLAbstractVolumeResampler::ResamplingParameters& resamplingParameters = vtkMRMLAbstractVolumeResampler::ResamplingParameters());
 
   /// @{
   /// Register/unregister resampler.
@@ -163,10 +154,10 @@ protected:
   double TransformSpacingFactor{ 5.0 };
 
   std::map<std::string, vtkSmartPointer<vtkMRMLAbstractVolumeResampler>> Resamplers;
-private:
 
+private:
   vtkSlicerGeneralizedReformatLogic(const vtkSlicerGeneralizedReformatLogic&); // Not implemented
-  void operator=(const vtkSlicerGeneralizedReformatLogic&); // Not implemented
+  void operator=(const vtkSlicerGeneralizedReformatLogic&);                    // Not implemented
 };
 
 #endif

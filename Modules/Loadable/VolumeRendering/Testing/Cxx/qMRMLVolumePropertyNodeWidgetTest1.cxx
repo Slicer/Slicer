@@ -45,8 +45,7 @@ int qMRMLVolumePropertyNodeWidgetTest1(int argc, char* argv[])
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkSmartPointer<vtkMRMLVolumePropertyNode> volumePropertyNode =
-    vtkSmartPointer<vtkMRMLVolumePropertyNode>::New();
+  vtkSmartPointer<vtkMRMLVolumePropertyNode> volumePropertyNode = vtkSmartPointer<vtkMRMLVolumePropertyNode>::New();
 
   qMRMLVolumePropertyNodeWidget widget;
   widget.setMRMLVolumePropertyNode(volumePropertyNode);

@@ -205,7 +205,6 @@ public:
   bool isPythonDisabled() const;
 #endif
 
-
 protected:
   /// Add arguments - Called from parse() method
   /// \sa parse(const QStringList&)
@@ -221,7 +220,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerCoreCommandOptions);
   Q_DISABLE_COPY(qSlicerCoreCommandOptions);
-
 };
 
 #endif

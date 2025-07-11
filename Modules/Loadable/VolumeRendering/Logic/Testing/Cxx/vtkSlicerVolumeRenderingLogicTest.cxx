@@ -109,8 +109,7 @@ int testPresets(const std::string& moduleShareDirectory)
     // Check the added preset
     vtkMRMLNode* addedPresetWithIcon = logic->GetPresetByName("MyNewPresetWithIcon");
     CHECK_NOT_NULL(addedPresetWithIcon);
-    vtkMRMLVolumeNode* iconNode = vtkMRMLVolumeNode::SafeDownCast(
-      addedPresetWithIcon->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
+    vtkMRMLVolumeNode* iconNode = vtkMRMLVolumeNode::SafeDownCast(addedPresetWithIcon->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
     CHECK_NOT_NULL(iconNode);
     CHECK_POINTER_DIFFERENT(iconNode->GetImageData(), iconImage);
     // Check that the icon has the same content
@@ -144,8 +143,7 @@ int testPresets(const std::string& moduleShareDirectory)
     CHECK_POINTER(newPresetWithIcon->GetScene(), customPresetsScene);
 
     // Check if icon is added and it is a different instance with the same content
-    vtkMRMLVolumeNode* addedIconNode = vtkMRMLVolumeNode::SafeDownCast(
-      addedPresetWithIcon->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
+    vtkMRMLVolumeNode* addedIconNode = vtkMRMLVolumeNode::SafeDownCast(addedPresetWithIcon->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
     // Check that the icon is valid
     CHECK_NOT_NULL(addedIconNode);
     CHECK_NOT_NULL(addedIconNode->GetImageData());

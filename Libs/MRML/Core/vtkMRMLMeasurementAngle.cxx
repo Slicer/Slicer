@@ -59,8 +59,7 @@ void vtkMRMLMeasurementAngle::Compute()
 
   if (angleNode->GetNumberOfDefinedControlPoints(true) != 3)
   {
-    vtkDebugMacro("Compute: Angle nodes must have exactly three control points ("
-      << angleNode->GetNumberOfDefinedControlPoints(true) << " found)");
+    vtkDebugMacro("Compute: Angle nodes must have exactly three control points (" << angleNode->GetNumberOfDefinedControlPoints(true) << " found)");
     this->ClearValue(vtkMRMLMeasurement::InsufficientInput);
     return;
   }

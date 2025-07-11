@@ -66,7 +66,7 @@ inline void Trim(std::string& str)
 
 //----------------------------------------------------------------------------
 /*! Quick and robust string to int conversion */
-template<class T>
+template <class T>
 void StringToInt(const char* strPtr, T& result)
 {
   if (strPtr == nullptr || strlen(strPtr) == 0)
@@ -83,9 +83,12 @@ void StringToInt(const char* strPtr, T& result)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const std::string& fileName, vtkMRMLScene* scene,
-  std::deque<vtkSmartPointer<vtkMRMLSequenceNode>> &createdNodes, std::map<int, std::string >& frameNumberToIndexValueMap,
-  std::map<std::string, std::string > &imageMetaData, SequenceFileType fileType/*=METAIMAGE_SEQUENCE_FILE */)
+int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const std::string& fileName,
+                                                                          vtkMRMLScene* scene,
+                                                                          std::deque<vtkSmartPointer<vtkMRMLSequenceNode>>& createdNodes,
+                                                                          std::map<int, std::string>& frameNumberToIndexValueMap,
+                                                                          std::map<std::string, std::string>& imageMetaData,
+                                                                          SequenceFileType fileType /*=METAIMAGE_SEQUENCE_FILE */)
 {
   int numberOfCreatedNodes = 0;
   // Open in binary mode because we determine the start of the image buffer also during this read
@@ -197,7 +200,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
       continue;
     }
 
-    std::string frameNumberStr = name.substr(0, underscoreFound); // 0000
+    std::string frameNumberStr = name.substr(0, underscoreFound);  // 0000
     std::string frameFieldName = name.substr(underscoreFound + 1); // CustomTransform
 
     int frameNumber = 0;
@@ -242,13 +245,12 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
     {
       break;
     }
-
   }
   fclose(stream);
 
   // Now add all the nodes to the scene
 
-  std::map<std::string, vtkMRMLSequenceNode* > transformSequenceNodes;
+  std::map<std::string, vtkMRMLSequenceNode*> transformSequenceNodes;
 
   for (int currentFrameNumber = 0; currentFrameNumber <= lastFrameNumber; currentFrameNumber++)
   {
@@ -259,8 +261,8 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
       continue;
     }
     std::string paramValueString = frameNumberToIndexValueMap[currentFrameNumber];
-    for (std::vector<vtkMRMLLinearTransformNode*>::iterator transformIt = transformsForCurrentFrame->second.begin();
-      transformIt != transformsForCurrentFrame->second.end(); ++transformIt)
+    for (std::vector<vtkMRMLLinearTransformNode*>::iterator transformIt = transformsForCurrentFrame->second.begin(); transformIt != transformsForCurrentFrame->second.end();
+         ++transformIt)
     {
       vtkMRMLLinearTransformNode* transform = (*transformIt);
       vtkMRMLSequenceNode* transformsSequenceNode = nullptr;
@@ -288,8 +290,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
         // Strip "Transform" from the end of the transform name
         std::string transformPostfix = "Transform";
         if (transformName.length() > transformPostfix.length() && //
-            transformName.compare(transformName.length() - transformPostfix.length(),
-            transformPostfix.length(), transformPostfix) == 0)
+            transformName.compare(transformName.length() - transformPostfix.length(), transformPostfix.length(), transformPostfix) == 0)
         {
           // ends with "Transform" (SomethingToSomethingElseTransform),
           // remove it (to have SomethingToSomethingElse)
@@ -320,11 +321,11 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
   std::string shortestBaseNodeName;
   int transformNodeIndex = 0;
   for (std::deque<vtkSmartPointer<vtkMRMLSequenceNode>>::iterator createdTransformNodeIt = createdNodes.begin();
-    createdTransformNodeIt != createdNodes.end() && transformNodeIndex < numberOfCreatedNodes; ++createdTransformNodeIt, transformNodeIndex++)
+       createdTransformNodeIt != createdNodes.end() && transformNodeIndex < numberOfCreatedNodes;
+       ++createdTransformNodeIt, transformNodeIndex++)
   {
     // strip known file extensions from filename to get base name
-    std::string transformName = (*createdTransformNodeIt)->GetAttribute("Sequences.Source") ?
-      (*createdTransformNodeIt)->GetAttribute("Sequences.Source") : "";
+    std::string transformName = (*createdTransformNodeIt)->GetAttribute("Sequences.Source") ? (*createdTransformNodeIt)->GetAttribute("Sequences.Source") : "";
     std::string baseNodeName = vtkMRMLSequenceStorageNode::GetSequenceBaseName(fileNameName, transformName);
     if (shortestBaseNodeName.empty() || baseNodeName.size() < shortestBaseNodeName.size())
     {
@@ -346,8 +347,7 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
       if (numberOfCreatedNodes == 1)
       {
         // Only one transform is stored in this file. Update stored time to mark the file as not modified since read.
-        vtkMRMLLinearTransformSequenceStorageNode* storageNode =
-          vtkMRMLLinearTransformSequenceStorageNode::SafeDownCast((*createdTransformNodeIt)->GetStorageNode());
+        vtkMRMLLinearTransformSequenceStorageNode* storageNode = vtkMRMLLinearTransformSequenceStorageNode::SafeDownCast((*createdTransformNodeIt)->GetStorageNode());
         if (storageNode)
         {
           // Only one transform is stored in this file. Update stored time to mark the file as not modified since read.
@@ -360,9 +360,11 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(const 
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLLinearTransformSequenceStorageNode::WriteSequenceMetafileTransforms(
-  const std::string& fileName, std::deque<vtkMRMLSequenceNode*> &transformSequenceNodes,
-  std::deque<std::string> &transformNames, vtkMRMLSequenceNode* masterNode, vtkMRMLSequenceNode* imageNode)
+bool vtkMRMLLinearTransformSequenceStorageNode::WriteSequenceMetafileTransforms(const std::string& fileName,
+                                                                                std::deque<vtkMRMLSequenceNode*>& transformSequenceNodes,
+                                                                                std::deque<std::string>& transformNames,
+                                                                                vtkMRMLSequenceNode* masterNode,
+                                                                                vtkMRMLSequenceNode* imageNode)
 {
   vtkMRMLSequenceNode* masterSequenceNode = vtkMRMLSequenceNode::SafeDownCast(masterNode);
   if (masterSequenceNode == nullptr)
@@ -395,18 +397,17 @@ bool vtkMRMLLinearTransformSequenceStorageNode::WriteSequenceMetafileTransforms(
   }
   else
   {
-    defaultHeaderOutStream
-      << "ObjectType = Image" << std::endl
-      << "NDims = 3" << std::endl
-      << "AnatomicalOrientation = RAI" << std::endl
-      << "BinaryData = True" << std::endl
-      << "CompressedData = False" << std::endl
-      << "DimSize = 0 0 " << masterSequenceNode->GetNumberOfDataNodes() << std::endl
-      << "ElementSpacing = 1 1 1" << std::endl
-      << "Offset = 0 0 0" << std::endl
-      << "TransformMatrix = 1 0 0 0 1 0 0 0 1" << std::endl
-      << "ElementType = MET_UCHAR" << std::endl
-      << "Kinds = domain domain list" << std::endl;
+    defaultHeaderOutStream << "ObjectType = Image" << std::endl
+                           << "NDims = 3" << std::endl
+                           << "AnatomicalOrientation = RAI" << std::endl
+                           << "BinaryData = True" << std::endl
+                           << "CompressedData = False" << std::endl
+                           << "DimSize = 0 0 " << masterSequenceNode->GetNumberOfDataNodes() << std::endl
+                           << "ElementSpacing = 1 1 1" << std::endl
+                           << "Offset = 0 0 0" << std::endl
+                           << "TransformMatrix = 1 0 0 0 1 0 0 0 1" << std::endl
+                           << "ElementType = MET_UCHAR" << std::endl
+                           << "Kinds = domain domain list" << std::endl;
   }
 
   // Append the transform information to the end of the file
@@ -508,12 +509,14 @@ int vtkMRMLLinearTransformSequenceStorageNode::ReadDataInternal(vtkMRMLNode* ref
 
   std::deque<vtkSmartPointer<vtkMRMLSequenceNode>> createdTransformNodes;
   createdTransformNodes.push_back(seqNode);
-  std::map<int, std::string > frameNumberToIndexValueMap;
-  std::map<std::string, std::string > imageMetaData;
+  std::map<int, std::string> frameNumberToIndexValueMap;
+  std::map<std::string, std::string> imageMetaData;
   if (vtkMRMLLinearTransformSequenceStorageNode::ReadSequenceFileTransforms(fullName,
-    NULL, /* additional nodes will not be added to the scene */
-    createdTransformNodes,
-    frameNumberToIndexValueMap, imageMetaData) == 0)
+                                                                            NULL, /* additional nodes will not be added to the scene */
+                                                                            createdTransformNodes,
+                                                                            frameNumberToIndexValueMap,
+                                                                            imageMetaData)
+      == 0)
   {
     // error is logged in ReadTransforms
     return false;
@@ -546,8 +549,7 @@ bool vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode(vtkMRM
     vtkMRMLTransformNode* transform = vtkMRMLTransformNode::SafeDownCast(sequenceNode->GetNthDataNode(frameIndex));
     if (transform == NULL || !transform->IsLinear())
     {
-      vtkDebugMacro("vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode:"
-        << " only linear transform nodes can be written (frame " << frameIndex << ")");
+      vtkDebugMacro("vtkMRMLLinearTransformSequenceStorageNode::CanWriteFromReferenceNode:" << " only linear transform nodes can be written (frame " << frameIndex << ")");
       this->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, std::string("Only linear transform nodes can be written in this format."));
       return false;
     }

@@ -42,8 +42,8 @@ public:
     ColorGradient();
     void updatePixmap(vtkScalarsToColors* scalarsToColors);
 
-    vtkMTimeType  MTime;
-    QPixmap       Pixmap;
+    vtkMTimeType MTime;
+    QPixmap Pixmap;
   };
 
   mutable QMap<QString, ColorGradient> GradientCache;
@@ -64,7 +64,7 @@ void qMRMLSceneColorTableModelPrivate::ColorGradient::updatePixmap(vtkScalarsToC
   {
     return;
   }
-  this->Pixmap = QPixmap::fromImage(ctk::scalarsToColorsImage( scalarsToColors, this->Pixmap.size() ));
+  this->Pixmap = QPixmap::fromImage(ctk::scalarsToColorsImage(scalarsToColors, this->Pixmap.size()));
   this->MTime = scalarsToColors->GetMTime();
 }
 
@@ -90,9 +90,8 @@ void qMRMLSceneColorTableModel::updateItemFromNode(QStandardItem* item, vtkMRMLN
   {
     if (this->updateGradientFromNode(colorNode) || item->icon().isNull())
     {
-      qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient =
-        d->GradientCache[colorNode->GetID()];
-      //item->setBackground(colorGradient.Gradient);
+      qMRMLSceneColorTableModelPrivate::ColorGradient& colorGradient = d->GradientCache[colorNode->GetID()];
+      // item->setBackground(colorGradient.Gradient);
       item->setIcon(colorGradient.Pixmap);
     }
   }

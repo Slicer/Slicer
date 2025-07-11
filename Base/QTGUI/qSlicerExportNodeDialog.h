@@ -44,8 +44,7 @@ public:
   /// childIdsRecursive (QList<QString>): Node IDs of all descendants of selectedNodeID in the subject hierarchy
   /// nodeIdToSubjectHierarchyPath (QHash<QString, QStringList>): Mapping from node IDs to lists of subject hierarchy item names, where
   ///   each list starts from the parent of the aforementioned node ID and goes up the hierarchy until it reaches selectedNodeID.
-  bool exec(const qSlicerIO::IOProperties& readerProperties =
-                    qSlicerIO::IOProperties()) override;
+  bool exec(const qSlicerIO::IOProperties& readerProperties = qSlicerIO::IOProperties()) override;
 
 protected:
   QScopedPointer<qSlicerExportNodeDialogPrivate> d_ptr;

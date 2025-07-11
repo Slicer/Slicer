@@ -31,8 +31,10 @@
 class qSlicerIOPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerIO);
+
 protected:
   qSlicerIO* q_ptr;
+
 public:
   qSlicerIOPrivate(qSlicerIO& object);
   virtual ~qSlicerIOPrivate();

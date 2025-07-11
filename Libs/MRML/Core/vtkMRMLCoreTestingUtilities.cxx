@@ -47,8 +47,7 @@ namespace vtkMRMLCoreTestingUtilities
 {
 
 //----------------------------------------------------------------------------
-bool CheckNodeInSceneByID(int line, vtkMRMLScene* scene,
-                          const char* nodeID, vtkMRMLNode* expected)
+bool CheckNodeInSceneByID(int line, vtkMRMLScene* scene, const char* nodeID, vtkMRMLNode* expected)
 {
   std::string testName = "CheckNodeInSceneByID";
 
@@ -84,20 +83,16 @@ bool CheckNodeInSceneByID(int line, vtkMRMLScene* scene,
     std::cerr << "\nLine " << line << " - GetNodeByID(\"" << nodeID << "\")"
               << " : " << testName << " failed"
 
-              << "\n\tcurrent :" << current
-              << ", ID: " << (currentID ? currentID : "(null)")
+              << "\n\tcurrent :" << current << ", ID: " << (currentID ? currentID : "(null)")
 
-              << "\n\texpected:" << expected
-              << ", ID: " << (expectedID ? expectedID : "(null)")
-              << std::endl;
+              << "\n\texpected:" << expected << ", ID: " << (expectedID ? expectedID : "(null)") << std::endl;
     return false;
   }
   return true;
 }
 
 //----------------------------------------------------------------------------
-bool CheckNodeIdAndName(int line, vtkMRMLNode* node,
-                        const char* expectedID, const char* expectedName)
+bool CheckNodeIdAndName(int line, vtkMRMLNode* node, const char* expectedID, const char* expectedName)
 {
   std::string testName = "CheckNodeIdAndName";
   if (!node)
@@ -106,13 +101,9 @@ bool CheckNodeIdAndName(int line, vtkMRMLNode* node,
               << " : " << testName << " failed" << std::endl;
     return false;
   }
-  if (!vtkAddonTestingUtilities::CheckString(
-        line, std::string(testName) + ": Unexpected nodeID",
-        node->GetID(), expectedID) //
+  if (!vtkAddonTestingUtilities::CheckString(line, std::string(testName) + ": Unexpected nodeID", node->GetID(), expectedID) //
 
-      ||!vtkAddonTestingUtilities::CheckString(
-        line, std::string(testName) + ": Unexpected nodeName",
-        node->GetName(), expectedName))
+      || !vtkAddonTestingUtilities::CheckString(line, std::string(testName) + ": Unexpected nodeName", node->GetName(), expectedName))
   {
     return false;
   }
@@ -125,7 +116,7 @@ int GetExpectedNodeAddedClassNames(const char* sceneFilePath, std::vector<std::s
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkXMLDataParser> xmlParser;
   xmlParser->SetFileName(sceneFilePath);
-  CHECK_BOOL(xmlParser->Parse() !=0 , true);
+  CHECK_BOOL(xmlParser->Parse() != 0, true);
   int expectedNumberOfNode = xmlParser->GetRootElement()->GetNumberOfNestedElements();
   CHECK_BOOL(expectedNumberOfNode > 0, true);
 
@@ -160,7 +151,7 @@ int GetExpectedNodeAddedClassNames(const char* sceneFilePath, std::vector<std::s
 int ExerciseBasicObjectMethods(vtkObject* object)
 {
   CHECK_NOT_NULL(object);
-  object->Print( std::cout );
+  object->Print(std::cout);
   std::cout << "Name of Class = " << object->GetClassName() << std::endl;
   std::cout << "Name of Superclass = " << object->Superclass::GetClassName() << std::endl;
   return EXIT_SUCCESS;
@@ -180,7 +171,7 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
   node->UpdateScene(nullptr);
 
   //  Test New()
-  vtkSmartPointer < vtkMRMLNode > node1 = vtkSmartPointer < vtkMRMLNode >::Take(node->CreateNodeInstance());
+  vtkSmartPointer<vtkMRMLNode> node1 = vtkSmartPointer<vtkMRMLNode>::Take(node->CreateNodeInstance());
 
   //  Test GetID()
   CHECK_NULL(node1->GetID());
@@ -197,20 +188,20 @@ int ExerciseBasicMRMLMethods(vtkMRMLNode* node)
   int mod = node->StartModify();
   std::string attributeName = std::string("attName");
   std::string attributeValue = std::string("attValue");
-  node->SetAttribute(attributeName.c_str(), attributeValue.c_str() );
-  CHECK_STRING(node->GetAttribute( attributeName.c_str() ), attributeValue.c_str());
+  node->SetAttribute(attributeName.c_str(), attributeValue.c_str());
+  CHECK_STRING(node->GetAttribute(attributeName.c_str()), attributeValue.c_str());
   node->EndModify(mod);
 
   //  Test getters
-  TEST_SET_GET_BOOLEAN( node, HideFromEditors );
-  TEST_SET_GET_BOOLEAN( node, Selectable );
-  TEST_SET_GET_STRING( node, Description );
-  TEST_SET_GET_STRING( node, Name );
-  TEST_SET_GET_STRING( node, SingletonTag );
-  TEST_SET_GET_BOOLEAN( node, SaveWithScene );
-  TEST_SET_GET_BOOLEAN( node, AddToScene );
-  TEST_SET_GET_BOOLEAN( node, DisableModifiedEvent);
-  TEST_SET_GET_BOOLEAN( node, Selected );
+  TEST_SET_GET_BOOLEAN(node, HideFromEditors);
+  TEST_SET_GET_BOOLEAN(node, Selectable);
+  TEST_SET_GET_STRING(node, Description);
+  TEST_SET_GET_STRING(node, Name);
+  TEST_SET_GET_STRING(node, SingletonTag);
+  TEST_SET_GET_BOOLEAN(node, SaveWithScene);
+  TEST_SET_GET_BOOLEAN(node, AddToScene);
+  TEST_SET_GET_BOOLEAN(node, DisableModifiedEvent);
+  TEST_SET_GET_BOOLEAN(node, Selected);
 
   //  Test singleton utility methods
   node->SetSingletonOff();
@@ -346,7 +337,7 @@ int ExerciseBasicDisplayMRMLMethods(vtkMRMLDisplayNode* node)
   TEST_SET_GET_BOOLEAN(node, VectorVisibility);
   TEST_SET_GET_BOOLEAN(node, TensorVisibility);
   TEST_SET_GET_BOOLEAN(node, AutoScalarRange);
-  double expectedRange[2] = {-10, 10};
+  double expectedRange[2] = { -10, 10 };
   node->SetScalarRange(expectedRange);
   double* scalarRange = node->GetScalarRange();
   CHECK_NOT_NULL(scalarRange);
@@ -495,7 +486,7 @@ int ExerciseBasicStorageMRMLMethods(vtkMRMLStorageNode* node)
   node->ResetURIList();
   std::cout << "Number of uri's after resetting list = " << node->GetNumberOfURIs() << std::endl;
   node->AddURI("https://www.nowhere.com/filename.txt");
-  CHECK_INT(node->GetNumberOfURIs(),1);
+  CHECK_INT(node->GetNumberOfURIs(), 1);
 
   CHECK_STRING(node->GetNthURI(0), "https://www.nowhere.com/filename.txt");
 
@@ -532,16 +523,16 @@ int ExerciseBasicTransformMRMLMethods(vtkMRMLTransformNode* node)
 {
   CHECK_EXIT_SUCCESS(ExerciseBasicStorableMRMLMethods(node));
 
-  std::cout << "IsLinear = " << node->IsLinear()<< std:: endl;
+  std::cout << "IsLinear = " << node->IsLinear() << std::endl;
   CHECK_NOT_NULL(node->GetTransformToParent());
   bool isTransformToWorldLinear = node->IsTransformToWorldLinear();
   std::cout << "IsTransformToWorldLinear = " << isTransformToWorldLinear << std::endl;
-  vtkSmartPointer < vtkMRMLTransformNode > t = vtkSmartPointer < vtkMRMLTransformNode >::Take(vtkMRMLTransformNode::SafeDownCast(node->CreateNodeInstance()));
+  vtkSmartPointer<vtkMRMLTransformNode> t = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLTransformNode::SafeDownCast(node->CreateNodeInstance()));
   std::cout << "IsTransformToNodeLinear = " << node->IsTransformToNodeLinear(t) << std::endl;
-  vtkSmartPointer<vtkGeneralTransform> g =  vtkSmartPointer<vtkGeneralTransform>::New();
+  vtkSmartPointer<vtkGeneralTransform> g = vtkSmartPointer<vtkGeneralTransform>::New();
   node->GetTransformToWorld(g);
   node->GetTransformToNode(t, g);
-  vtkSmartPointer<vtkMatrix4x4> m =  vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkSmartPointer<vtkMatrix4x4> m = vtkSmartPointer<vtkMatrix4x4>::New();
   if (!isTransformToWorldLinear)
   {
     TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
@@ -553,7 +544,7 @@ int ExerciseBasicTransformMRMLMethods(vtkMRMLTransformNode* node)
   }
   else
   {
-    CHECK_BOOL(getMatrixTransformToWorldResult!=0, true);
+    CHECK_BOOL(getMatrixTransformToWorldResult != 0, true);
   }
   if (!isTransformToWorldLinear)
   {
@@ -566,7 +557,7 @@ int ExerciseBasicTransformMRMLMethods(vtkMRMLTransformNode* node)
   }
   else
   {
-    CHECK_BOOL(getMatrixTransformToNodeResult!=0, true);
+    CHECK_BOOL(getMatrixTransformToNodeResult != 0, true);
   }
   std::cout << "IsTransformNodeMyParent = " << node->IsTransformNodeMyParent(t) << std::endl;
   std::cout << "IsTransformNodeMyChild = " << node->IsTransformNodeMyChild(t) << std::endl;
@@ -615,7 +606,7 @@ int ExerciseSceneLoadingMethods(const char* sceneFilePath, vtkMRMLScene* inputSc
   }
   else
   {
-      scene = vtkSmartPointer<vtkMRMLScene>::New();
+    scene = vtkSmartPointer<vtkMRMLScene>::New();
   }
 
   // Add default slice orientation presets
@@ -630,7 +621,7 @@ int ExerciseSceneLoadingMethods(const char* sceneFilePath, vtkMRMLScene* inputSc
 
   scene->Import();
   int numberOfNodesAfterImport = scene->GetNumberOfNodes();
-  CHECK_BOOL(numberOfNodesAfterImport>numberOfNodes, true);
+  CHECK_BOOL(numberOfNodesAfterImport > numberOfNodes, true);
 
   scene->Import();
 
@@ -667,14 +658,14 @@ std::string vtkMRMLNodeCallback::GetErrorString()
 //---------------------------------------------------------------------------
 void vtkMRMLNodeCallback::SetErrorString(const char* error)
 {
-  this->ErrorString = std::string(error?error:"");
+  this->ErrorString = std::string(error ? error : "");
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLNodeCallback::SetErrorString(int line, const char* error)
 {
   std::stringstream ss;
-  ss << "line " << line << " - " << (error?error:"(undefined)");
+  ss << "line " << line << " - " << (error ? error : "(undefined)");
   this->ErrorString = ss.str();
 }
 
@@ -694,8 +685,7 @@ int vtkMRMLNodeCallback::GetNumberOfEvents(unsigned long event)
 int vtkMRMLNodeCallback::GetTotalNumberOfEvents()
 {
   int eventsCount = 0;
-  for (std::map<unsigned long, unsigned int>::const_iterator it = this->ReceivedEvents.begin(),
-       end = this->ReceivedEvents.end(); it != end; ++it)
+  for (std::map<unsigned long, unsigned int>::const_iterator it = this->ReceivedEvents.begin(), end = this->ReceivedEvents.end(); it != end; ++it)
   {
     eventsCount += it->second;
   }
@@ -706,9 +696,7 @@ int vtkMRMLNodeCallback::GetTotalNumberOfEvents()
 std::vector<unsigned long> vtkMRMLNodeCallback::GetReceivedEvents()
 {
   std::vector<unsigned long> receivedEvents;
-  for (std::map<unsigned long,unsigned int>::iterator it = this->ReceivedEvents.begin();
-      it != this->ReceivedEvents.end();
-      ++it)
+  for (std::map<unsigned long, unsigned int>::iterator it = this->ReceivedEvents.begin(); it != this->ReceivedEvents.end(); ++it)
   {
     unsigned long event = it->first;
     if (this->GetNumberOfEvents(event) > 0)
@@ -729,17 +717,14 @@ void vtkMRMLNodeCallback::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "NumberOfModified: " << this->GetNumberOfModified() << "\n";
   std::vector<unsigned long> receivedEvent = this->GetReceivedEvents();
   os << indent << "ReceivedEvents: \n";
-  for (std::vector<unsigned long>::iterator it = receivedEvent.begin();
-      it != receivedEvent.end();
-      ++it)
+  for (std::vector<unsigned long>::iterator it = receivedEvent.begin(); it != receivedEvent.end(); ++it)
   {
     os << indent.GetNextIndent() << *it << " \n";
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLNodeCallback::Execute(vtkObject* vtkcaller,
-  unsigned long eid, void* vtkNotUsed(calldata))
+void vtkMRMLNodeCallback::Execute(vtkObject* vtkcaller, unsigned long eid, void* vtkNotUsed(calldata))
 {
   // Let's return if an error already occurred
   if (this->ErrorString.size() > 0)

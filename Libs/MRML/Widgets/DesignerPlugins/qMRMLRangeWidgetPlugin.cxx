@@ -22,7 +22,7 @@
 #include "qMRMLRangeWidget.h"
 
 qMRMLRangeWidgetPlugin::qMRMLRangeWidgetPlugin(QObject* parentWidget)
-        : QObject(parentWidget)
+  : QObject(parentWidget)
 {
 }
 
@@ -34,11 +34,11 @@ QWidget* qMRMLRangeWidgetPlugin::createWidget(QWidget* parentWidget)
 
 QString qMRMLRangeWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLRangeWidget\" name=\"MRMLRangeWidget\">\n"
-    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLRangeWidget\" name=\"MRMLRangeWidget\">\n"
+         "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 QIcon qMRMLRangeWidgetPlugin::icon() const

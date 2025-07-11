@@ -79,7 +79,7 @@ QStringList qSlicerDataModule::dependencies() const
 {
   QStringList moduleDependencies;
   // Cameras: Required in qSlicerSceneReader
-  moduleDependencies << /*no tr*/"Cameras";
+  moduleDependencies << /*no tr*/ "Cameras";
   return moduleDependencies;
 }
 
@@ -90,8 +90,7 @@ void qSlicerDataModule::setup()
 
   this->Superclass::setup();
 
-  vtkSlicerCamerasModuleLogic* camerasLogic =
-    vtkSlicerCamerasModuleLogic::SafeDownCast(this->moduleLogic(/*no tr*/"Cameras"));
+  vtkSlicerCamerasModuleLogic* camerasLogic = vtkSlicerCamerasModuleLogic::SafeDownCast(this->moduleLogic(/*no tr*/ "Cameras"));
   // NOTE: here we assume that camerasLogic with a nullptr value can be passed
   // to the qSlicerSceneReader. Therefore we trigger a warning but don't return
   // immediately.
@@ -131,12 +130,11 @@ vtkMRMLAbstractLogic* qSlicerDataModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerDataModule::helpText() const
 {
-  QString help = QString(
-    tr("The Data module is the central data-organizing point where all loaded data is "
-    "presented for access and manipulation. It allows organizing "
-    "the data in folders or patient/study trees (automatically done for DICOM), "
-    "visualizing any displayable data, transformation of whole branches, and a "
-    "multitude of data type specific features."));
+  QString help = QString(tr("The Data module is the central data-organizing point where all loaded data is "
+                            "presented for access and manipulation. It allows organizing "
+                            "the data in folders or patient/study trees (automatically done for DICOM), "
+                            "visualizing any displayable data, transformation of whole branches, and a "
+                            "multitude of data type specific features."));
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -144,15 +142,14 @@ QString qSlicerDataModule::helpText() const
 //-----------------------------------------------------------------------------
 QString qSlicerDataModule::acknowledgementText() const
 {
-  QString about =
-    "<center><table border=\"0\"><tr>"
-    "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
-    "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
-    "</tr><tr>"
-    "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
-    "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
-    "</tr></table></center>" +
-    tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC, and the Slicer Community.");
+  QString about = "<center><table border=\"0\"><tr>"
+                  "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
+                  "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
+                  "</tr><tr>"
+                  "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
+                  "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
+                  "</tr></table></center>"
+                  + tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, CTSC, and the Slicer Community.");
   return about;
 }
 

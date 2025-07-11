@@ -24,8 +24,8 @@
 #include "qSlicerQTGUIAbstractPlugin.h"
 
 class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerModulePanelPlugin
-  : public QObject,
-    public qSlicerQTGUIAbstractPlugin
+  : public QObject
+  , public qSlicerQTGUIAbstractPlugin
 {
   Q_OBJECT
 public:

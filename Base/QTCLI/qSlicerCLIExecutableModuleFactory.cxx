@@ -44,12 +44,10 @@ QString findPython()
     return QString();
   }
   return python_path;
-
 }
 
 //-----------------------------------------------------------------------------
-qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(
-  const QString& newTempDirectory)
+qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(const QString& newTempDirectory)
   : TempDirectory(newTempDirectory)
   , CLIModule(nullptr)
 {
@@ -81,17 +79,16 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
   // then set up interpreter path in SEM module `Location` parameter.
   if (QFileInfo(this->path()).suffix().toLower() == "py")
   {
-      QString python_path = findPython();
-      if (python_path.isEmpty())
-      {
-        this->appendInstantiateErrorString(
-          qSlicerCLIModule::tr("Failed to find python interpreter for CLI: %1").arg(this->path()));
-        return nullptr;
-      }
+    QString python_path = findPython();
+    if (python_path.isEmpty())
+    {
+      this->appendInstantiateErrorString(qSlicerCLIModule::tr("Failed to find python interpreter for CLI: %1").arg(this->path()));
+      return nullptr;
+    }
 
-      module->setEntryPoint("python");
-      module->moduleDescription().SetLocation(python_path.toStdString());
-      module->moduleDescription().SetTarget(this->path().toStdString());
+    module->setEntryPoint("python");
+    module->moduleDescription().SetLocation(python_path.toStdString());
+    module->moduleDescription().SetTarget(this->path().toStdString());
   }
 
   QString xmlFilePath = this->xmlModuleDescriptionFilePath();
@@ -150,35 +147,23 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
   {
     this->appendInstantiateErrorString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
     QString errorString;
-    switch(cli.error())
+    switch (cli.error())
     {
       case QProcess::FailedToStart:
-        errorString = qSlicerCLIModule::tr(
-              "The process failed to start. Either the invoked program is missing, or "
-              "you may have insufficient permissions to invoke the program.");
+        errorString = qSlicerCLIModule::tr("The process failed to start. Either the invoked program is missing, or "
+                                           "you may have insufficient permissions to invoke the program.");
         break;
-      case QProcess::Crashed:
-        errorString = qSlicerCLIModule::tr(
-              "The process crashed some time after starting successfully.");
-        break;
-      case QProcess::Timedout:
-        errorString = qSlicerCLIModule::tr(
-              "The process timed out after %1 msecs.").arg(cliProcessTimeoutInMs);
-        break;
+      case QProcess::Crashed: errorString = qSlicerCLIModule::tr("The process crashed some time after starting successfully."); break;
+      case QProcess::Timedout: errorString = qSlicerCLIModule::tr("The process timed out after %1 msecs.").arg(cliProcessTimeoutInMs); break;
       case QProcess::WriteError:
-        errorString = qSlicerCLIModule::tr(
-              "An error occurred when attempting to read from the process. "
-              "For example, the process may not be running.");
+        errorString = qSlicerCLIModule::tr("An error occurred when attempting to read from the process. "
+                                           "For example, the process may not be running.");
         break;
       case QProcess::ReadError:
-        errorString = qSlicerCLIModule::tr(
-              "An error occurred when attempting to read from the process. "
-              "For example, the process may not be running.");
+        errorString = qSlicerCLIModule::tr("An error occurred when attempting to read from the process. "
+                                           "For example, the process may not be running.");
         break;
-      case QProcess::UnknownError:
-        errorString = qSlicerCLIModule::tr(
-              "Failed to execute process. An unknown error occurred.");
-        break;
+      case QProcess::UnknownError: errorString = qSlicerCLIModule::tr("Failed to execute process. An unknown error occurred."); break;
     }
     this->appendInstantiateErrorString(errorString);
     return nullptr;
@@ -206,8 +191,7 @@ QString qSlicerCLIExecutableModuleFactoryItem::runCLIWithXmlArgument()
   {
     this->appendInstantiateWarningString(qSlicerCLIModule::tr("CLI executable: %1").arg(this->path()));
     this->appendInstantiateWarningString(qSlicerCLIModule::tr("XML description doesn't start right away."));
-    this->appendInstantiateWarningString(qSlicerCLIModule::tr("Output before '<?xml' is [%1]").arg(
-                                           xmlDescription.mid(0, xmlDescription.indexOf("<?xml"))));
+    this->appendInstantiateWarningString(qSlicerCLIModule::tr("Output before '<?xml' is [%1]").arg(xmlDescription.mid(0, xmlDescription.indexOf("<?xml"))));
     xmlDescription.remove(0, xmlDescription.indexOf("<?xml"));
   }
   return xmlDescription;
@@ -227,8 +211,10 @@ void qSlicerCLIExecutableModuleFactoryItem::uninstantiate()
 class qSlicerCLIExecutableModuleFactoryPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerCLIExecutableModuleFactory);
+
 protected:
   qSlicerCLIExecutableModuleFactory* const q_ptr;
+
 public:
   typedef qSlicerCLIExecutableModuleFactoryPrivate Self;
   qSlicerCLIExecutableModuleFactoryPrivate(qSlicerCLIExecutableModuleFactory& object);
@@ -239,7 +225,7 @@ private:
 
 //-----------------------------------------------------------------------------
 qSlicerCLIExecutableModuleFactoryPrivate::qSlicerCLIExecutableModuleFactoryPrivate(qSlicerCLIExecutableModuleFactory& object)
-: q_ptr(&object)
+  : q_ptr(&object)
 {
   this->TempDirectory = QDir::tempPath();
 }
@@ -271,7 +257,7 @@ bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file) const
     return false;
   }
 
-  // consider .py files to be executable. interpreter is set in ::instanciator
+  // consider .py files to be executable. interpreter is set in::instanciator
   if ((!file.isExecutable()) && //
       (!file.filePath().endsWith(".py", Qt::CaseInsensitive)))
   {
@@ -281,8 +267,7 @@ bool qSlicerCLIExecutableModuleFactory::isValidFile(const QFileInfo& file) const
 }
 
 //-----------------------------------------------------------------------------
-ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLIExecutableModuleFactory
-::createFactoryFileBasedItem()
+ctkAbstractFactoryItem<qSlicerAbstractCoreModule>* qSlicerCLIExecutableModuleFactory::createFactoryFileBasedItem()
 {
   Q_D(qSlicerCLIExecutableModuleFactory);
   return new qSlicerCLIExecutableModuleFactoryItem(d->TempDirectory);

@@ -51,15 +51,14 @@ void vtkMRMLDisplayableHierarchyLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   }
   // A displayable hierarchy node without children as well as a displayable
   // node is useless node. Delete it.
-  vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
-    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetMRMLScene(), node->GetID()) );
+  vtkMRMLDisplayableHierarchyNode* displayableHierarchyNode =
+    vtkMRMLDisplayableHierarchyNode::SafeDownCast(vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetMRMLScene(), node->GetID()));
   if (displayableHierarchyNode && //
       displayableHierarchyNode->GetNumberOfChildrenNodes() == 0)
   {
     this->GetMRMLScene()->RemoveNode(displayableHierarchyNode);
   }
 }
-
 
 //----------------------------------------------------------------------------
 char* vtkMRMLDisplayableHierarchyLogic::AddDisplayableHierarchyNodeForNode(vtkMRMLDisplayableNode* node)
@@ -128,8 +127,8 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode* 
 
   // does the parent already have a hierarchy node associated with it?
   char* parentHierarchyNodeID = nullptr;
-  vtkMRMLDisplayableHierarchyNode* hierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
-    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(parent->GetScene(), parent->GetID()) );
+  vtkMRMLDisplayableHierarchyNode* hierarchyNode =
+    vtkMRMLDisplayableHierarchyNode::SafeDownCast(vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(parent->GetScene(), parent->GetID()));
   if (!hierarchyNode)
   {
     // create one and add to the scene
@@ -146,8 +145,8 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode* 
   }
 
   // does the child already have a hierarchy node associated with it?
-  vtkMRMLDisplayableHierarchyNode* childHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(
-    vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(child->GetScene(), child->GetID()) );
+  vtkMRMLDisplayableHierarchyNode* childHierarchyNode =
+    vtkMRMLDisplayableHierarchyNode::SafeDownCast(vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(child->GetScene(), child->GetID()));
   if (!childHierarchyNode)
   {
     char* childHierarchyNodeID = this->AddDisplayableHierarchyNodeForNode(child);

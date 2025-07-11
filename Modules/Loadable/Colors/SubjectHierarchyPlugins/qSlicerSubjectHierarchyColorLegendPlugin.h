@@ -41,7 +41,6 @@ public:
   ~qSlicerSubjectHierarchyColorLegendPlugin() override;
 
 public:
-
   /// Get visibility context menu item actions to add to tree view.
   /// These item visibility context menu actions can be shown in the implementations of \sa showVisibilityContextMenuActionsForItem
   QList<QAction*> visibilityContextMenuActions() const override;
@@ -57,8 +56,8 @@ public:
 
   /// Show/hide color legend in a view.
   /// If viewNode is nullptr then it is displayed in all views in the current layout.
-  bool showColorLegendInView( bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode = nullptr);
-  bool showColorLegendInSlice( bool show, vtkIdType itemID, vtkMRMLSliceNode* sliceNode = nullptr);
+  bool showColorLegendInView(bool show, vtkIdType itemID, vtkMRMLViewNode* viewNode = nullptr);
+  bool showColorLegendInSlice(bool show, vtkIdType itemID, vtkMRMLSliceNode* sliceNode = nullptr);
 
 protected slots:
   /// Toggle color legend option for current volume item

@@ -44,9 +44,12 @@
 #include <sstream>
 
 //----------------------------------------------------------------------------
-const double vtkSegment::SEGMENT_COLOR_INVALID[3] = {0.5, 0.5, 0.5};
+const double vtkSegment::SEGMENT_COLOR_INVALID[3] = { 0.5, 0.5, 0.5 };
 
-const char* vtkSegment::GetTerminologyEntryTagName() { return "TerminologyEntry"; };
+const char* vtkSegment::GetTerminologyEntryTagName()
+{
+  return "TerminologyEntry";
+};
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSegment);
@@ -65,8 +68,7 @@ vtkSegment::vtkSegment()
   this->LabelValue = 1;
 
   // Set default terminology Tissue/Tissue from the default Slicer terminology dictionary
-  this->SetTerminology(
-    "Segmentation category and type - 3D Slicer General Anatomy list~SCT^85756007^Tissue~SCT^85756007^Tissue~^^~Anatomic codes - DICOM master list~^^~^^");
+  this->SetTerminology("Segmentation category and type - 3D Slicer General Anatomy list~SCT^85756007^Tissue~SCT^85756007^Tissue~^^~Anatomic codes - DICOM master list~^^~^^");
 }
 
 //----------------------------------------------------------------------------
@@ -98,7 +100,7 @@ void vtkSegment::PrintSelf(ostream& os, vtkIndent indent)
 
   RepresentationMap::iterator reprIt;
   os << indent << "Representations:\n";
-  for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
+  for (reprIt = this->Representations.begin(); reprIt != this->Representations.end(); ++reprIt)
   {
     os << indent.GetNextIndent() << reprIt->first << ":";
     vtkDataObject* dataObject = reprIt->second;
@@ -124,9 +126,9 @@ void vtkSegment::PrintSelf(ostream& os, vtkIndent indent)
     }
   }
 
-  std::map<std::string,std::string>::iterator tagIt;
+  std::map<std::string, std::string>::iterator tagIt;
   os << indent << "Tags:\n";
-  for (tagIt=this->Tags.begin(); tagIt!=this->Tags.end(); ++tagIt)
+  for (tagIt = this->Tags.begin(); tagIt != this->Tags.end(); ++tagIt)
   {
     os << indent.GetNextIndent() << "  " << tagIt->first << ": " << tagIt->second << "\n";
   }
@@ -151,14 +153,14 @@ void vtkSegment::WriteXML(ostream& of, int vtkNotUsed(nIndent))
 
   RepresentationMap::iterator reprIt;
   of << "Representations=\"";
-  for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
+  for (reprIt = this->Representations.begin(); reprIt != this->Representations.end(); ++reprIt)
   {
     of << "  " << reprIt->first << "\"";
   }
 
-  std::map<std::string,std::string>::iterator tagIt;
+  std::map<std::string, std::string>::iterator tagIt;
   of << "Tags=\"";
-  for (tagIt=this->Tags.begin(); tagIt!=this->Tags.end(); ++tagIt)
+  for (tagIt = this->Tags.begin(); tagIt != this->Tags.end(); ++tagIt)
   {
     of << tagIt->first << ":" << tagIt->second << "|";
   }
@@ -180,10 +182,9 @@ void vtkSegment::DeepCopy(vtkSegment* source)
   // Deep copy representations
   std::set<std::string> representationNamesToKeep;
   RepresentationMap::iterator reprIt;
-  for (reprIt=source->Representations.begin(); reprIt!=source->Representations.end(); ++reprIt)
+  for (reprIt = source->Representations.begin(); reprIt != source->Representations.end(); ++reprIt)
   {
-    vtkDataObject* representationCopy =
-      vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByClass( reprIt->second->GetClassName() );
+    vtkDataObject* representationCopy = vtkSegmentationConverterFactory::GetInstance()->ConstructRepresentationObjectByClass(reprIt->second->GetClassName());
     if (!representationCopy)
     {
       vtkErrorMacro("DeepCopy: Unable to construct representation type class '" << reprIt->second->GetClassName() << "'");
@@ -210,7 +211,7 @@ void vtkSegment::DeepCopy(vtkSegment* source)
 
   // Remove representations that are not in the source segment
   for (reprIt = this->Representations.begin(); reprIt != this->Representations.end();
-    /*upon deletion the increment is done already, so don't increment here*/)
+       /*upon deletion the increment is done already, so don't increment here*/)
   {
     if (representationNamesToKeep.find(reprIt->first) == representationNamesToKeep.end())
     {
@@ -240,7 +241,6 @@ void vtkSegment::DeepCopyMetadata(vtkSegment* source)
   this->Tags = source->Tags;
 }
 
-
 //---------------------------------------------------------------------------
 // (Xmin, Xmax, Ymin, Ymax, Zmin, Zmax)
 //---------------------------------------------------------------------------
@@ -249,7 +249,7 @@ void vtkSegment::GetBounds(double bounds[6])
   vtkBoundingBox boundingBox;
 
   RepresentationMap::iterator reprIt;
-  for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
+  for (reprIt = this->Representations.begin(); reprIt != this->Representations.end(); ++reprIt)
   {
     vtkDataSet* representationDataSet = vtkDataSet::SafeDownCast(reprIt->second);
     if (representationDataSet)
@@ -303,7 +303,7 @@ bool vtkSegment::RemoveRepresentation(std::string name)
 }
 
 //---------------------------------------------------------------------------
-void vtkSegment::RemoveAllRepresentations(std::string exceptionRepresentationName/*=""*/)
+void vtkSegment::RemoveAllRepresentations(std::string exceptionRepresentationName /*=""*/)
 {
   bool modified = false;
   RepresentationMap::iterator reprIt = this->Representations.begin();
@@ -332,7 +332,7 @@ void vtkSegment::GetContainedRepresentationNames(std::vector<std::string>& repre
   representationNames.clear();
 
   RepresentationMap::iterator reprIt;
-  for (reprIt=this->Representations.begin(); reprIt!=this->Representations.end(); ++reprIt)
+  for (reprIt = this->Representations.begin(); reprIt != this->Representations.end(); ++reprIt)
   {
     representationNames.push_back(reprIt->first);
   }
@@ -368,7 +368,7 @@ void vtkSegment::RemoveTag(std::string tag)
 //---------------------------------------------------------------------------
 bool vtkSegment::GetTag(std::string tag, std::string& value)
 {
-  std::map<std::string,std::string>::iterator tagIt = this->Tags.find(tag);
+  std::map<std::string, std::string>::iterator tagIt = this->Tags.find(tag);
   if (tagIt == this->Tags.end())
   {
     return false;
@@ -386,7 +386,7 @@ bool vtkSegment::HasTag(std::string tag)
 }
 
 //---------------------------------------------------------------------------
-void vtkSegment::GetTags(std::map<std::string,std::string> &tags)
+void vtkSegment::GetTags(std::map<std::string, std::string>& tags)
 {
   tags = this->Tags;
 }

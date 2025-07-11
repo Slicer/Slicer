@@ -54,11 +54,11 @@ public:
 
 protected:
   qMRMLSliceVerticalControllerWidget* const q_ptr;
-  vtkSmartPointer<vtkMRMLSliceLogic>  SliceLogic;
-  vtkMRMLSelectionNode*               SelectionNode;
+  vtkSmartPointer<vtkMRMLSliceLogic> SliceLogic;
+  vtkMRMLSelectionNode* SelectionNode;
   /// Slicer offset resolution without applying display scaling.
-  double                              SliceOffsetResolution{1.0};
-  bool                                ShowSliceOffsetSlider{ true };
+  double SliceOffsetResolution{ 1.0 };
+  bool ShowSliceOffsetSlider{ true };
 };
 
 //---------------------------------------------------------------------------
@@ -81,10 +81,8 @@ void qMRMLSliceVerticalControllerWidgetPrivate::init()
   this->updateSliceOffsetSliderVisibility();
 
   // Connect Slice offset slider
-  QObject::connect(this->SliceVerticalOffsetSlider, SIGNAL(valueChanged(double)),
-                   q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
-  QObject::connect(this->SliceVerticalOffsetSlider, SIGNAL(valueIsChanging(double)),
-                   q, SLOT(trackSliceOffsetValue(double)), Qt::QueuedConnection);
+  QObject::connect(this->SliceVerticalOffsetSlider, SIGNAL(valueChanged(double)), q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
+  QObject::connect(this->SliceVerticalOffsetSlider, SIGNAL(valueIsChanging(double)), q, SLOT(trackSliceOffsetValue(double)), Qt::QueuedConnection);
 
   vtkNew<vtkMRMLSliceLogic> defaultLogic;
   defaultLogic->SetMRMLApplicationLogic(vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic());
@@ -100,8 +98,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::setSelectionNode()
   vtkMRMLSelectionNode* selectionNode = nullptr;
   if (q->mrmlScene())
   {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-      q->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(q->mrmlScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
   }
 
   this->SelectionNode = selectionNode;
@@ -116,7 +113,7 @@ void qMRMLSliceVerticalControllerWidgetPrivate::onSliceLogicModifiedEvent()
   // Enable/disable widget
   q->setDisabled(newSliceNode == nullptr);
 
-  double offsetRange[2] = {-1.0, 1.0};
+  double offsetRange[2] = { -1.0, 1.0 };
   double offsetResolution = 1.0;
   if (!this->SliceLogic || !this->SliceLogic->GetSliceOffsetRangeResolution(offsetRange, offsetResolution))
   {
@@ -201,8 +198,7 @@ void qMRMLSliceVerticalControllerWidget::setSliceLogic(vtkMRMLSliceLogic* newSli
     return;
   }
 
-  this->qvtkReconnect(d->SliceLogic, newSliceLogic, vtkCommand::ModifiedEvent,
-                      this, SLOT(onSliceLogicModifiedEvent()));
+  this->qvtkReconnect(d->SliceLogic, newSliceLogic, vtkCommand::ModifiedEvent, this, SLOT(onSliceLogicModifiedEvent()));
 
   d->SliceLogic = newSliceLogic;
 
@@ -262,12 +258,11 @@ void qMRMLSliceVerticalControllerWidget::setSliceOffsetValue(double offset)
   {
     return;
   }
-  //qDebug() << "qMRMLSliceVerticalControllerWidget::setSliceOffsetValue:" << offset;
+  // qDebug() << "qMRMLSliceVerticalControllerWidget::setSliceOffsetValue:" << offset;
 
   // This prevents desynchronized update of displayable managers during user interaction
   // (ie. slice intersection widget or segmentations lagging behind during slice translation)
-  vtkMRMLApplicationLogic* applicationLogic =
-    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
   if (applicationLogic)
   {
     applicationLogic->PauseRender();
@@ -291,12 +286,11 @@ void qMRMLSliceVerticalControllerWidget::trackSliceOffsetValue(double offset)
   {
     return;
   }
-  //qDebug() << "qMRMLSliceVerticalControllerWidget::trackSliceOffsetValue";
+  // qDebug() << "qMRMLSliceVerticalControllerWidget::trackSliceOffsetValue";
 
   // This prevents desynchronized update of displayable managers during user interaction
   // (ie. slice intersection widget or segmentations lagging behind during slice translation)
-    vtkMRMLApplicationLogic* applicationLogic =
-    vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
+  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->GetMRMLApplicationLogic();
   if (applicationLogic)
   {
     applicationLogic->PauseRender();

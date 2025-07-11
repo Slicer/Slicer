@@ -63,6 +63,7 @@ class Q_SLICER_MODULE_SUBJECTHIERARCHY_WIDGETS_EXPORT qMRMLSubjectHierarchyModel
 
 protected:
   qMRMLSubjectHierarchyModel* const q_ptr;
+
 public:
   qMRMLSubjectHierarchyModelPrivate(qMRMLSubjectHierarchyModel& object);
   virtual ~qMRMLSubjectHierarchyModelPrivate();

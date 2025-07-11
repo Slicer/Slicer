@@ -15,7 +15,7 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+# pragma warning(disable : 4786)
 #endif
 
 #include "TestGridTransformRegistrationCLP.h"
@@ -38,17 +38,17 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char* argv[], T )
+int DoIt(int argc, char* argv[], T)
 {
   PARSE_ARGS;
 
   // typedefs
-  const    unsigned int ImageDimension = 3;
-  typedef  T                                          PixelType;
-  typedef itk::Image<PixelType, ImageDimension>       InputImageType;
+  const unsigned int ImageDimension = 3;
+  typedef T PixelType;
+  typedef itk::Image<PixelType, ImageDimension> InputImageType;
 
-  typedef itk::ImageFileReader<InputImageType>  FixedImageReaderType;
-  typedef itk::ImageFileReader<InputImageType>  MovingImageReaderType;
+  typedef itk::ImageFileReader<InputImageType> FixedImageReaderType;
+  typedef itk::ImageFileReader<InputImageType> MovingImageReaderType;
 
   typedef itk::VectorImage<double, ImageDimension> GridType;
 
@@ -56,7 +56,7 @@ int DoIt( int argc, char* argv[], T )
 
   // Set up the grid volume
   {
-    grid->SetVectorLength( ImageDimension );
+    grid->SetVectorLength(ImageDimension);
 
     GridType::IndexType start;
 
@@ -66,63 +66,58 @@ int DoIt( int argc, char* argv[], T )
 
     GridType::SizeType size;
 
-    size[0]  = gridSize;
-    size[1]  = gridSize;
-    size[2]  = gridSize;
+    size[0] = gridSize;
+    size[1] = gridSize;
+    size[2] = gridSize;
 
     GridType::RegionType region;
-    region.SetSize( size );
-    region.SetIndex( start );
+    region.SetSize(size);
+    region.SetIndex(start);
 
-    grid->SetRegions( region );
+    grid->SetRegions(region);
   }
 
   // Read fixed and moving images
   //
   //
-  typename FixedImageReaderType::Pointer  fixedImageReader  = FixedImageReaderType::New();
+  typename FixedImageReaderType::Pointer fixedImageReader = FixedImageReaderType::New();
   typename MovingImageReaderType::Pointer movingImageReader = MovingImageReaderType::New();
 
-  fixedImageReader->SetFileName(  FixedImageFileName.c_str() );
-  movingImageReader->SetFileName( MovingImageFileName.c_str() );
+  fixedImageReader->SetFileName(FixedImageFileName.c_str());
+  movingImageReader->SetFileName(MovingImageFileName.c_str());
 
   // Add a time probe
   itk::TimeProbesCollectorBase collector;
 
-  collector.Start( "Read fixed volume" );
+  collector.Start("Read fixed volume");
   fixedImageReader->Update();
-  collector.Stop( "Read fixed volume" );
+  collector.Stop("Read fixed volume");
 
-  collector.Start( "Read moving volume" );
+  collector.Start("Read moving volume");
   movingImageReader->Update();
-  collector.Stop( "Read moving volume" );
+  collector.Stop("Read moving volume");
 
-  collector.Start( "Constructing deformation field" );
-  grid->SetOrigin( fixedImageReader->GetOutput()->GetOrigin() );
+  collector.Start("Constructing deformation field");
+  grid->SetOrigin(fixedImageReader->GetOutput()->GetOrigin());
 
   // Set the spacing of the grid so that there are the gridSize grid
   // points span the image dimensions.
   GridType::SpacingType spacing = fixedImageReader->GetOutput()->GetSpacing();
 
-  typename InputImageType::RegionType fixedRegion =
-    fixedImageReader->GetOutput()->GetLargestPossibleRegion();
-  typename InputImageType::SizeType fixedImageSize =
-    fixedRegion.GetSize();
+  typename InputImageType::RegionType fixedRegion = fixedImageReader->GetOutput()->GetLargestPossibleRegion();
+  typename InputImageType::SizeType fixedImageSize = fixedRegion.GetSize();
   for (unsigned int r = 0; r < ImageDimension; r++)
   {
-    spacing[r] *= floor( static_cast<double>(fixedImageSize[r] - 1)
-                         / static_cast<double>(gridSize - 1) );
+    spacing[r] *= floor(static_cast<double>(fixedImageSize[r] - 1) / static_cast<double>(gridSize - 1));
   }
 
-  grid->SetSpacing( spacing );
+  grid->SetSpacing(spacing);
 
   grid->Allocate();
 
   // Fill with zero
   GridType::PixelContainer* pixelContainer = grid->GetPixelContainer();
-  std::fill( pixelContainer->GetBufferPointer(),
-             pixelContainer->GetBufferPointer() + pixelContainer->Size(),
-             0.0 );
+  std::fill(pixelContainer->GetBufferPointer(), pixelContainer->GetBufferPointer() + pixelContainer->Size(), 0.0);
 
   // Set some elements to non-zero
   {
@@ -131,14 +126,14 @@ int DoIt( int argc, char* argv[], T )
     index[2] = gridSize / 2;
 
     // Deform by 6 pixels in the x direction
-    GridType::PixelType p( 3 );
+    GridType::PixelType p(3);
     p[0] = 6;
     p[1] = 0;
     p[2] = 0;
     for (int x = 0; x < gridSize; ++x)
     {
       index[0] = x;
-      grid->SetPixel( index, p );
+      grid->SetPixel(index, p);
     }
   }
 
@@ -147,8 +142,8 @@ int DoIt( int argc, char* argv[], T )
     typedef itk::ImageFileWriter<GridType> GridWriterType;
 
     GridWriterType::Pointer gridWriter = GridWriterType::New();
-    gridWriter->SetFileName( OutputTransform );
-    gridWriter->SetInput( grid );
+    gridWriter->SetFileName(OutputTransform);
+    gridWriter->SetInput(grid);
 
     try
     {
@@ -161,7 +156,7 @@ int DoIt( int argc, char* argv[], T )
     }
   }
 
-  collector.Stop( "Constructing deformation field" );
+  collector.Stop("Constructing deformation field");
 
   // Report the time taken by the registration
   collector.Report();
@@ -181,14 +176,14 @@ int main(int argc, char* argv[])
   {
     vargsNew.push_back(argv[vi]);
   }
-  vargsNew.push_back(const_cast<char*>("--echo") );
+  vargsNew.push_back(const_cast<char*>("--echo"));
 
   argc = vargsNew.size();
   argv = &(vargsNew[0]);
 
   PARSE_ARGS;
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum pixelType;
   itk::IOComponentEnum componentType;
 
   try
@@ -202,21 +197,15 @@ int main(int argc, char* argv[])
       case itk::IOComponentEnum::CHAR:
       case itk::IOComponentEnum::UCHAR:
       case itk::IOComponentEnum::USHORT:
-      case itk::IOComponentEnum::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0) );
-        break;
+      case itk::IOComponentEnum::SHORT: return DoIt(argc, argv, static_cast<short>(0)); break;
       case itk::IOComponentEnum::ULONG:
       case itk::IOComponentEnum::LONG:
       case itk::IOComponentEnum::UINT:
       case itk::IOComponentEnum::INT:
       case itk::IOComponentEnum::DOUBLE:
-      case itk::IOComponentEnum::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0) );
-        break;
+      case itk::IOComponentEnum::FLOAT: return DoIt(argc, argv, static_cast<float>(0)); break;
       case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
-      default:
-        std::cout << "unknown component type" << std::endl;
-        break;
+      default: std::cout << "unknown component type" << std::endl; break;
     }
   }
   catch (itk::ExceptionObject& excep)

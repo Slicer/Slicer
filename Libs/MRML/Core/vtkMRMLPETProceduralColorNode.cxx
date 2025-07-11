@@ -8,18 +8,17 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLPETProceduralColorNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLPETProceduralColorNode::vtkMRMLPETProceduralColorNode()
 {
 
   // all this is done in the superclass...
-  //this->Name = nullptr;
-  //this->SetName("");
-  //this->FileName = nullptr;
+  // this->Name = nullptr;
+  // this->SetName("");
+  // this->FileName = nullptr;
 
-  //this->ColorTransferFunction = nullptr;
-  //this->ColorTransferFunction = vtkColorTransferFunction::New();
+  // this->ColorTransferFunction = nullptr;
+  // this->ColorTransferFunction = vtkColorTransferFunction::New();
 }
 
 //----------------------------------------------------------------------------
@@ -38,7 +37,6 @@ void vtkMRMLPETProceduralColorNode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
 
   Superclass::WriteXML(of, nIndent);
-
 }
 
 //----------------------------------------------------------------------------
@@ -46,9 +44,7 @@ void vtkMRMLPETProceduralColorNode::ReadXMLAttributes(const char** atts)
 {
 
   Superclass::ReadXMLAttributes(atts);
-
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
@@ -56,7 +52,7 @@ void vtkMRMLPETProceduralColorNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLPETProceduralColorNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
-  //vtkMRMLPETProceduralColorNode* node = (vtkMRMLPETProceduralColorNode*) anode;
+  // vtkMRMLPETProceduralColorNode* node = (vtkMRMLPETProceduralColorNode*) anode;
 }
 
 //----------------------------------------------------------------------------
@@ -79,9 +75,7 @@ void vtkMRMLPETProceduralColorNode::UpdateScene(vtkMRMLScene* scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLPETProceduralColorNode::ProcessMRMLEvents ( vtkObject* caller,
-                                           unsigned long event,
-                                           void* callData )
+void vtkMRMLPETProceduralColorNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;

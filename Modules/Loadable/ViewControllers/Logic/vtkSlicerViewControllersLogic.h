@@ -36,8 +36,7 @@ class vtkMRMLPlotViewNode;
 class vtkMRMLSliceNode;
 class vtkMRMLViewNode;
 
-class VTK_SLICER_VIEWCONTROLLERS_MODULE_LOGIC_EXPORT vtkSlicerViewControllersLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_VIEWCONTROLLERS_MODULE_LOGIC_EXPORT vtkSlicerViewControllersLogic : public vtkSlicerModuleLogic
 {
 public:
   static vtkSlicerViewControllersLogic* New();
@@ -45,7 +44,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 public:
-
   /// Retrieves the default slice view node from the scene.
   /// The returned node can be changed to customize the contents of
   /// new view nodes. ResetAllViewNodesToDefault() can be called to
@@ -77,7 +75,6 @@ protected:
 private:
   vtkSlicerViewControllersLogic(const vtkSlicerViewControllersLogic&) = delete;
   void operator=(const vtkSlicerViewControllersLogic&) = delete;
-
 };
 
 #endif

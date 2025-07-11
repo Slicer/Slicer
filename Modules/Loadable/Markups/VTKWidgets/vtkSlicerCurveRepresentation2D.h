@@ -25,7 +25,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerCurveRepresentation2D_h
 #define vtkSlicerCurveRepresentation2D_h
@@ -54,8 +54,7 @@ public:
   /// are the methods that the widget and its representation use to
   /// communicate with each other.
   void UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
-  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;
@@ -68,8 +67,7 @@ public:
   /// Return the bounds of the representation
   double* GetBounds() VTK_SIZEHINT(6) override;
 
-  void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& componentIndex, double& closestDistance2);
+  void CanInteractWithCurve(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& componentIndex, double& closestDistance2);
 
 protected:
   vtkSlicerCurveRepresentation2D();

@@ -38,7 +38,7 @@ using namespace vtkMRMLCoreTestingUtilities;
 //----------------------------------------------------------------------------
 namespace
 {
-  int TestDefaults();
+int TestDefaults();
 }
 
 int vtkSlicerColorLogicTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
@@ -73,4 +73,4 @@ int TestDefaults()
   return EXIT_SUCCESS;
 }
 
-}
+} // namespace

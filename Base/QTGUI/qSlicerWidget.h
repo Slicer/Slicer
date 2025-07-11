@@ -37,7 +37,9 @@ class vtkSlicerApplicationLogic;
 class QScrollArea;
 class qSlicerWidgetPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWidget : public QWidget, public virtual qSlicerObject
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWidget
+  : public QWidget
+  , public virtual qSlicerObject
 {
   Q_OBJECT
   QVTK_OBJECT

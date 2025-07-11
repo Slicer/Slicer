@@ -48,17 +48,16 @@ int qSlicerModulePanelTest2(int argc, char* argv[])
   QDockWidget dockWidget;
   qSlicerModulePanel* modulePanel = new qSlicerModulePanel(&dockWidget);
   dockWidget.setWidget(modulePanel);
-  //QHBoxLayout* hbox = new QHBoxLayout;
-  //hbox->addWidget(&modulePanel);
-  //dockWidget.setLayout(hbox);
+  // QHBoxLayout* hbox = new QHBoxLayout;
+  // hbox->addWidget(&modulePanel);
+  // dockWidget.setLayout(hbox);
 
   modulePanel->setModuleManager(app.moduleManager());
 
   modulePanel->setModule("EventBroker");
   if (modulePanel->currentModuleName() != "EventBroker")
   {
-    std::cerr<< "qSlicerModulePanel::setModule() failed "
-             << qPrintable(modulePanel->currentModuleName()) << std::endl;
+    std::cerr << "qSlicerModulePanel::setModule() failed " << qPrintable(modulePanel->currentModuleName()) << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -66,8 +65,7 @@ int qSlicerModulePanelTest2(int argc, char* argv[])
 
   // helpAndAcknowledgmentVisible property
   {
-    QWidget* helpCollapsibleButton =
-        modulePanel->findChild<QWidget*>("HelpCollapsibleButton");
+    QWidget* helpCollapsibleButton = modulePanel->findChild<QWidget*>("HelpCollapsibleButton");
     if (!helpCollapsibleButton)
     {
       std::cerr << "Line " << __LINE__ << " - Couldn't find 'HelpCollapsibleButton' widget !\n" << std::endl;

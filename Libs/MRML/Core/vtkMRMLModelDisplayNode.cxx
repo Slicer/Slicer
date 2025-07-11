@@ -141,7 +141,7 @@ void vtkMRMLModelDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -165,9 +165,7 @@ void vtkMRMLModelDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject* caller,
-                                                unsigned long event,
-                                                void* callData )
+void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -185,8 +183,7 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject* caller,
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode
-::SetInputMeshConnection(vtkAlgorithmOutput* meshConnection)
+void vtkMRMLModelDisplayNode::SetInputMeshConnection(vtkAlgorithmOutput* meshConnection)
 {
   if (this->GetInputMeshConnection() == meshConnection)
   {
@@ -196,16 +193,14 @@ void vtkMRMLModelDisplayNode
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode
-::SetInputPolyDataConnection(vtkAlgorithmOutput* polyDataConnection)
+void vtkMRMLModelDisplayNode::SetInputPolyDataConnection(vtkAlgorithmOutput* polyDataConnection)
 {
   // Wrapping `SetInputMeshConnection` for backward compatibility
   this->SetInputMeshConnection(polyDataConnection);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode
-::SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection)
+void vtkMRMLModelDisplayNode::SetInputToMeshPipeline(vtkAlgorithmOutput* meshConnection)
 {
   this->PassThrough->SetInputConnection(meshConnection);
   this->AssignAttribute->SetInputConnection(meshConnection);
@@ -233,8 +228,7 @@ vtkUnstructuredGrid* vtkMRMLModelDisplayNode::GetInputUnstructuredGrid()
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetInputMeshConnection()
 {
-  return this->AssignAttribute->GetNumberOfInputConnections(0) ?
-    this->AssignAttribute->GetInputConnection(0,0) : nullptr;
+  return this->AssignAttribute->GetNumberOfInputConnections(0) ? this->AssignAttribute->GetInputConnection(0, 0) : nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -265,8 +259,7 @@ vtkPointSet* vtkMRMLModelDisplayNode::GetOutputMesh()
   }
 
   producer->Update();
-  return vtkPointSet::SafeDownCast(
-           producer->GetOutputDataObject(outputConnection->GetIndex()));
+  return vtkPointSet::SafeDownCast(producer->GetOutputDataObject(outputConnection->GetIndex()));
 }
 
 //---------------------------------------------------------------------------
@@ -314,8 +307,7 @@ vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputMeshConnection()
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPolyDataConnection()
 {
-  vtkWarningMacro("vtkMRMLModelDisplayNode::GetOutputPolyDataConnection is "
-                  << "deprecated. Favor GetOutputMeshConnection().");
+  vtkWarningMacro("vtkMRMLModelDisplayNode::GetOutputPolyDataConnection is " << "deprecated. Favor GetOutputMeshConnection().");
   return this->GetOutputMeshConnection();
 }
 
@@ -454,7 +446,7 @@ vtkDataSet* vtkMRMLModelDisplayNode::GetScalarDataSet()
 //-----------------------------------------------------------
 vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
 {
-  if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(),"") == 0)
+  if (this->GetActiveScalarName() == nullptr || strcmp(this->GetActiveScalarName(), "") == 0)
   {
     return nullptr;
   }
@@ -478,16 +470,9 @@ vtkDataArray* vtkMRMLModelDisplayNode::GetActiveScalarArray()
   vtkDataSetAttributes* attributes = nullptr;
   switch (this->GetActiveAttributeLocation())
   {
-    case vtkAssignAttribute::POINT_DATA:
-      attributes = mesh->GetPointData();
-      break;
-    case vtkAssignAttribute::CELL_DATA:
-      attributes = mesh->GetCellData();
-      break;
-    default:
-      vtkWarningMacro("vtkMRMLModelDisplayNode::GetActiveScalarArray failed: unsupported attribute location: "
-        << this->GetActiveAttributeLocation());
-      break;
+    case vtkAssignAttribute::POINT_DATA: attributes = mesh->GetPointData(); break;
+    case vtkAssignAttribute::CELL_DATA: attributes = mesh->GetCellData(); break;
+    default: vtkWarningMacro("vtkMRMLModelDisplayNode::GetActiveScalarArray failed: unsupported attribute location: " << this->GetActiveAttributeLocation()); break;
   }
   if (attributes == nullptr)
   {
@@ -537,7 +522,7 @@ int vtkMRMLModelDisplayNode::GetSliceDisplayModeFromString(const char* name)
     // invalid name
     return -1;
   }
-  for (int i = 0; i<SliceDisplayMode_Last; i++)
+  for (int i = 0; i < SliceDisplayMode_Last; i++)
   {
     if (strcmp(name, GetSliceDisplayModeAsString(i)) == 0)
     {

@@ -81,7 +81,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
       vtkDebugMacro("Setting the look up table size to " << numColors << "\n");
       this->SetNumberOfColors(numColors);
     }
-    else  if (!strcmp(attName, "colors"))
+    else if (!strcmp(attName, "colors"))
     {
       std::stringstream ss;
       for (int i = 0; i < this->LookupTable->GetNumberOfTableValues(); i++)
@@ -130,7 +130,7 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
     }
     else
     {
-      vtkDebugMacro ("Unknown attribute name " << attName << endl);
+      vtkDebugMacro("Unknown attribute name " << attName << endl);
     }
   }
   this->EndModify(disabledModify);
@@ -160,7 +160,7 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode* anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLColorTableNode* node = (vtkMRMLColorTableNode*) anode;
+  vtkMRMLColorTableNode* node = (vtkMRMLColorTableNode*)anode;
 
   // Deep copy LookupTable
   if (node->GetLookupTable() != nullptr)
@@ -414,9 +414,9 @@ void vtkMRMLColorTableNode::SetTypeToCoolTint3()
 const char* vtkMRMLColorTableNode::GetTypeAsString()
 {
   const char* type = Superclass::GetTypeAsString();
-  if (type && strcmp(type,"(unknown)") != 0)
+  if (type && strcmp(type, "(unknown)") != 0)
   {
-      return type;
+    return type;
   }
   if (this->Type == this->FullRainbow)
   {
@@ -566,9 +566,7 @@ const char* vtkMRMLColorTableNode::GetTypeAsString()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorTableNode::ProcessMRMLEvents ( vtkObject* caller,
-                                           unsigned long event,
-                                           void* callData )
+void vtkMRMLColorTableNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
@@ -586,7 +584,7 @@ void vtkMRMLColorTableNode::SetType(int type)
 {
   if (this->GetLookupTable() != nullptr && this->Type == type)
   {
-    vtkDebugMacro("SetType: type is already set to " << type <<  " = " << this->GetTypeAsString());
+    vtkDebugMacro("SetType: type is already set to " << type << " = " << this->GetTypeAsString());
     return;
   }
 
@@ -723,8 +721,7 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetDescription(
-      "A scale from black to yellow, through green, of 256 colors, ramp of warm colors with variation in value that's complementary to CoolShade2 ");
+    this->SetDescription("A scale from black to yellow, through green, of 256 colors, ramp of warm colors with variation in value that's complementary to CoolShade2 ");
   }
   else if (this->Type == this->WarmShade3)
   {
@@ -760,8 +757,7 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetValueRange(0, 1);
     this->GetLookupTable()->SetAlphaRange(1, 1); // not used
     this->GetLookupTable()->Build();
-    this->SetDescription(
-      "A scale from black to blue through purple, 256 colors, ramp of cool colors with variation in value that is complementary to WarmShade2 ");
+    this->SetDescription("A scale from black to blue through purple, 256 colors, ramp of cool colors with variation in value that is complementary to WarmShade2 ");
   }
   else if (this->Type == this->CoolShade3)
   {
@@ -924,8 +920,8 @@ void vtkMRMLColorTableNode::SetType(int type)
     this->GetLookupTable()->SetNumberOfTableValues(156);
     this->GetLookupTable()->SetTableRange(0, 255);
     this->GetLookupTable()->SetHueRange(0, 0.15);
-    this->GetLookupTable()->SetSaturationRange(1,1);
-    this->GetLookupTable()->SetValueRange(1,1);
+    this->GetLookupTable()->SetSaturationRange(1, 1);
+    this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
     this->SetDescription("A scale from red to  yellow, 157 colors, useful for ");
@@ -935,8 +931,8 @@ void vtkMRMLColorTableNode::SetType(int type)
   {
     this->GetLookupTable()->SetNumberOfTableValues(256);
     this->GetLookupTable()->SetHueRange(0, 0.8);
-    this->GetLookupTable()->SetSaturationRange(1,1);
-    this->GetLookupTable()->SetValueRange(1,1);
+    this->GetLookupTable()->SetSaturationRange(1, 1);
+    this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
     this->SetDescription("Goes from red to purple, passing through the colors of the rainbow in between. Useful for a colorful display of a label map");
@@ -946,8 +942,8 @@ void vtkMRMLColorTableNode::SetType(int type)
   {
     this->GetLookupTable()->SetNumberOfTableValues(256);
     this->GetLookupTable()->SetHueRange(0.666667, 0.5);
-    this->GetLookupTable()->SetSaturationRange(1,1);
-    this->GetLookupTable()->SetValueRange(1,1);
+    this->GetLookupTable()->SetSaturationRange(1, 1);
+    this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
     this->SetDescription("A lighter blue scale of 256 values, useful for showing registration results.");
@@ -956,8 +952,8 @@ void vtkMRMLColorTableNode::SetType(int type)
   {
     this->GetLookupTable()->SetNumberOfTableValues(256);
     this->GetLookupTable()->SetHueRange(0, 0.1);
-    this->GetLookupTable()->SetSaturationRange(1,1);
-    this->GetLookupTable()->SetValueRange(1,1);
+    this->GetLookupTable()->SetSaturationRange(1, 1);
+    this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
     this->SetDescription("Red to yellow/orange scale, 256 colors, useful for ");
@@ -966,9 +962,9 @@ void vtkMRMLColorTableNode::SetType(int type)
   else if (this->Type == this->InvGrey)
   {
     this->GetLookupTable()->SetNumberOfTableValues(256);
-    this->GetLookupTable()->SetHueRange(0,0);
-    this->GetLookupTable()->SetSaturationRange(0,0);
-    this->GetLookupTable()->SetValueRange(1,0);
+    this->GetLookupTable()->SetHueRange(0, 0);
+    this->GetLookupTable()->SetSaturationRange(0, 0);
+    this->GetLookupTable()->SetValueRange(1, 0);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
     this->SetDescription("A white to black scale, 256 colors, useful to highlight negative versions, or to flip intensities of signal values.");
@@ -978,8 +974,8 @@ void vtkMRMLColorTableNode::SetType(int type)
   {
     this->GetLookupTable()->SetNumberOfTableValues(256);
     this->GetLookupTable()->SetHueRange(0.8, 1);
-    this->GetLookupTable()->SetSaturationRange(1,1);
-    this->GetLookupTable()->SetValueRange(1,1);
+    this->GetLookupTable()->SetSaturationRange(1, 1);
+    this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
     this->SetDescription("A colorful display option, 256 colors going from purple to red");
@@ -994,7 +990,7 @@ void vtkMRMLColorTableNode::SetType(int type)
     vtkLookupTable* neg = vtkLookupTable::New();
     neg->SetNumberOfTableValues(23);
     neg->SetHueRange(0.5, 0.66667);
-    neg->SetSaturationRange( 1, 1);
+    neg->SetSaturationRange(1, 1);
     neg->SetValueRange(1, 1);
     neg->SetRampToLinear();
     neg->Build();
@@ -1002,14 +998,14 @@ void vtkMRMLColorTableNode::SetType(int type)
     // From red to yellow
     vtkLookupTable* pos = vtkLookupTable::New();
     pos->SetNumberOfTableValues(20);
-    pos->SetHueRange(0,0.16667);
-    pos->SetSaturationRange(1,1);
-    pos->SetValueRange(1,1);
+    pos->SetHueRange(0, 0.16667);
+    pos->SetSaturationRange(1, 1);
+    pos->SetValueRange(1, 1);
     pos->SetRampToLinear();
     pos->Build();
 
     this->GetLookupTable()->SetNumberOfTableValues(43);
-    this->GetLookupTable()->SetTableRange(0,255);
+    this->GetLookupTable()->SetTableRange(0, 255);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
 
@@ -1019,7 +1015,7 @@ void vtkMRMLColorTableNode::SetType(int type)
     }
     for (int i = 0; i < 20; i++)
     {
-      this->GetLookupTable()->SetTableValue(i+23, pos->GetTableValue(i));
+      this->GetLookupTable()->SetTableValue(i + 23, pos->GetTableValue(i));
     }
 
     pos->Delete();
@@ -1031,21 +1027,21 @@ void vtkMRMLColorTableNode::SetType(int type)
   {
     int size = 20;
     this->GetLookupTable()->SetNumberOfTableValues(size);
-    this->GetLookupTable()->SetTableRange(0,255);
+    this->GetLookupTable()->SetTableRange(0, 255);
     this->GetLookupTable()->SetHueRange(0, 0.16667);
     this->GetLookupTable()->SetSaturationRange(1, 1);
     this->GetLookupTable()->SetValueRange(1, 1);
     this->GetLookupTable()->SetRampToLinear();
     this->GetLookupTable()->ForceBuild();
     this->SetDescription("A small fMRI positive activation scale going from red to yellow from 0-19, useful for displaying "
-      "functional MRI volumes when don't need the blue of the fMRI scale.");
+                         "functional MRI volumes when don't need the blue of the fMRI scale.");
   }
 
   else if (this->Type == this->Labels)
   {
     // from Slicer2's Colors.xml
     this->GetLookupTable()->SetNumberOfTableValues(257);
-    this->GetLookupTable()->SetTableRange(0,255);
+    this->GetLookupTable()->SetTableRange(0, 255);
     this->Properties.clear();
     this->Properties.resize(this->GetLookupTable()->GetNumberOfTableValues());
 
@@ -1091,10 +1087,10 @@ void vtkMRMLColorTableNode::SetType(int type)
     {
       this->GetLookupTable()->SetTableValue(9, 0.9, 0.7, 0.9, 1.0);
     }
-      if (this->SetColorName(10, "Post-Gyrus") != 0)
-      {
+    if (this->SetColorName(10, "Post-Gyrus") != 0)
+    {
       this->GetLookupTable()->SetTableValue(10, 0.9, 0.9, 0.5, 1.0);
-      }
+    }
     for (int offset = 0; offset <= 240; offset += 10)
     {
       if (this->SetColorName(offset + 11, "jake") != 0)
@@ -1162,8 +1158,7 @@ void vtkMRMLColorTableNode::SetType(int type)
       this->GetLookupTable()->SetTableValue(i, r, g, b, 1.0);
     }
 
-    this->SetDescription(
-      "A random selection of 256 rgb colors, useful to distinguish between a small number of labeled regions (especially outside of the brain)");
+    this->SetDescription("A random selection of 256 rgb colors, useful to distinguish between a small number of labeled regions (especially outside of the brain)");
   }
 
   else if (this->Type == this->User)
@@ -1204,7 +1199,7 @@ void vtkMRMLColorTableNode::SetNumberOfColors(int n)
       this->GetType() != this->File)
   {
     vtkErrorMacro("SetNumberOfColors: Cannot set number of colors"
-      " if not a user defined color table, reset the type first to User or File");
+                  " if not a user defined color table, reset the type first to User or File");
     return;
   }
 
@@ -1388,7 +1383,7 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
     return 0;
   }
   double* rgba = this->GetLookupTable()->GetTableValue(entry);
-  return this->SetColor(entry, r,g,b,rgba[3]);
+  return this->SetColor(entry, r, g, b, rgba[3]);
 }
 
 //---------------------------------------------------------------------------
@@ -1483,7 +1478,7 @@ vtkLookupTable* vtkMRMLColorTableNode::GetLookupTable()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorTableNode::SetAndObserveLookupTable(vtkLookupTable* lut, bool markAllColorsAsDefined/*=true*/)
+void vtkMRMLColorTableNode::SetAndObserveLookupTable(vtkLookupTable* lut, bool markAllColorsAsDefined /*=true*/)
 {
   if (lut != this->LookupTable)
   {
@@ -1506,7 +1501,7 @@ void vtkMRMLColorTableNode::SetAndObserveLookupTable(vtkLookupTable* lut, bool m
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLColorTableNode::IsValidColorIndex(int entry, const std::string& callerMethod, bool isCallerMethodSet/*=false*/)
+bool vtkMRMLColorTableNode::IsValidColorIndex(int entry, const std::string& callerMethod, bool isCallerMethodSet /*=false*/)
 {
   if (isCallerMethodSet)
   {
@@ -1523,8 +1518,8 @@ bool vtkMRMLColorTableNode::IsValidColorIndex(int entry, const std::string& call
     }
     if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
     {
-      vtkErrorMacro(<< callerMethod << ": requested color entry " << entry << " is out of table range: 0 - "
-        << this->GetLookupTable()->GetNumberOfTableValues() - 1 << ", call SetNumberOfColors to change the color table size.");
+      vtkErrorMacro(<< callerMethod << ": requested color entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() - 1
+                    << ", call SetNumberOfColors to change the color table size.");
       return false;
     }
   }
@@ -1538,8 +1533,8 @@ bool vtkMRMLColorTableNode::IsValidColorIndex(int entry, const std::string& call
     }
     if (entry < 0 || entry >= this->GetLookupTable()->GetNumberOfTableValues())
     {
-      vtkErrorMacro(<< callerMethod << ": requested color entry " << entry << " is out of table range: 0 - "
-        << this->GetLookupTable()->GetNumberOfTableValues() - 1 << ", call SetNumberOfColors to change the color table size.");
+      vtkErrorMacro(<< callerMethod << ": requested color entry " << entry << " is out of table range: 0 - " << this->GetLookupTable()->GetNumberOfTableValues() - 1
+                    << ", call SetNumberOfColors to change the color table size.");
       return false;
     }
   }

@@ -63,7 +63,7 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
@@ -89,9 +89,7 @@ int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   vtkNew<vtkMRMLColorLogic> colorLogic;
   colorLogic->SetMRMLScene(scene.GetPointer());
 
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLColorPickerWidgetEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(widget, xmlDirectory + "qMRMLColorPickerWidgetEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // Test case 2
   qMRMLColorPickerWidget* widget2 = new qMRMLColorPickerWidget();
@@ -111,9 +109,7 @@ int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char* argv[])
   colorPETNode->SetTypeToRainbow();
   scene2->AddNode(colorPETNode.GetPointer());
 
-  etpWidget.addTestCase(widget2,
-                        xmlDirectory + "qMRMLColorPickerWidgetEventTranslatorPlayerTest2.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(widget2, xmlDirectory + "qMRMLColorPickerWidgetEventTranslatorPlayerTest2.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

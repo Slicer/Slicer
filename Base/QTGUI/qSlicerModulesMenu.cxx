@@ -34,8 +34,10 @@
 class qSlicerModulesMenuPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerModulesMenu);
+
 protected:
   qSlicerModulesMenu* const q_ptr;
+
 public:
   qSlicerModulesMenuPrivate(qSlicerModulesMenu& object);
   void init();
@@ -51,7 +53,7 @@ public:
 
   QAction* action(const QVariant& actionData, const QMenu* parentMenu = nullptr) const;
   QAction* action(const QString& text, const QMenu* parentMenu = nullptr) const;
-  QMenu*   actionMenu(QAction* action, QMenu* parentMenu) const;
+  QMenu* actionMenu(QAction* action, QMenu* parentMenu) const;
   // clang-format off
   qSlicerModuleManager* ModuleManager;
   QAction*              NoModuleAction; //< Can be used to remove the current module
@@ -98,8 +100,7 @@ void qSlicerModulesMenuPrivate::init()
 
   // Invisible action, don't add it anywhere.
   this->NoModuleAction = new QAction(q);
-  QObject::connect(this->NoModuleAction, SIGNAL(triggered(bool)),
-                   q, SLOT(onActionTriggered()));
+  QObject::connect(this->NoModuleAction, SIGNAL(triggered(bool)), q, SLOT(onActionTriggered()));
 }
 
 //---------------------------------------------------------------------------
@@ -115,7 +116,7 @@ void qSlicerModulesMenuPrivate::addDefaultCategories()
 }
 
 //---------------------------------------------------------------------------
-QAction* qSlicerModulesMenuPrivate::action(const QVariant& actionData, const QMenu* parentMenu/*=nullptr*/) const
+QAction* qSlicerModulesMenuPrivate::action(const QVariant& actionData, const QMenu* parentMenu /*=nullptr*/) const
 {
   Q_Q(const qSlicerModulesMenu);
   if (parentMenu == nullptr)
@@ -141,7 +142,7 @@ QAction* qSlicerModulesMenuPrivate::action(const QVariant& actionData, const QMe
 }
 
 //---------------------------------------------------------------------------
-QAction* qSlicerModulesMenuPrivate::action(const QString& text, const QMenu* parentMenu/*=nullptr*/) const
+QAction* qSlicerModulesMenuPrivate::action(const QString& text, const QMenu* parentMenu /*=nullptr*/) const
 {
   Q_Q(const qSlicerModulesMenu);
   if (parentMenu == nullptr)
@@ -211,11 +212,11 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
     if (order != -1 || actionOrder != -1)
     {
       if (order == -1)
-      {// insert (with index or alphabetically) at the end of the ordered list.
+      { // insert (with index or alphabetically) at the end of the ordered list.
         index = actionIndex;
       }
       else if (actionOrder == -1)
-      {// insert it now
+      { // insert it now
         actionIndex = index + 1;
       }
       else
@@ -225,9 +226,10 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
       }
     }
     // If the action to add is NOT a menu
-    if (!moduleAction->menu() && (action->menu() || //
-                                  action->isSeparator() || //
-                                  actionIndex > index))
+    if (!moduleAction->menu()
+        && (action->menu() ||        //
+            action->isSeparator() || //
+            actionIndex > index))
     {
       menu->insertAction(action, moduleAction);
       return;
@@ -281,8 +283,7 @@ bool qSlicerModulesMenuPrivate::removeTopLevelModuleAction(QAction* moduleAction
   {
     // If the action is removed from the top-level category, re-add the
     // connection.
-    QObject::connect(moduleAction, SIGNAL(triggered(bool)),
-                     q, SLOT(onActionTriggered()));
+    QObject::connect(moduleAction, SIGNAL(triggered(bool)), q, SLOT(onActionTriggered()));
   }
   return true;
 }
@@ -357,7 +358,7 @@ QMenu* qSlicerModulesMenuPrivate::actionMenu(QAction* action, QMenu* parentMenu)
   }
   if (parentMenu == q)
   {
-    actions.removeFirst();//remove All Modules menu
+    actions.removeFirst(); // remove All Modules menu
   }
   foreach (QAction* subAction, actions)
   {
@@ -374,8 +375,7 @@ QMenu* qSlicerModulesMenuPrivate::actionMenu(QAction* action, QMenu* parentMenu)
 }
 
 //---------------------------------------------------------------------------
-qSlicerModulesMenu::qSlicerModulesMenu(const QString& title,
-                                                           QWidget* parentWidget)
+qSlicerModulesMenu::qSlicerModulesMenu(const QString& title, QWidget* parentWidget)
   : Superclass(title, parentWidget)
   , d_ptr(new qSlicerModulesMenuPrivate(*this))
 {
@@ -385,7 +385,7 @@ qSlicerModulesMenu::qSlicerModulesMenu(const QString& title,
 
 //---------------------------------------------------------------------------
 qSlicerModulesMenu::qSlicerModulesMenu(QWidget* parentWidget)
- : Superclass(parentWidget)
+  : Superclass(parentWidget)
   , d_ptr(new qSlicerModulesMenuPrivate(*this))
 {
   Q_D(qSlicerModulesMenu);
@@ -470,12 +470,8 @@ void qSlicerModulesMenu::setModuleManager(qSlicerModuleManager* moduleManager)
   Q_D(qSlicerModulesMenu);
   if (d->ModuleManager)
   {
-    QObject::disconnect(d->ModuleManager,
-                        SIGNAL(moduleLoaded(QString)),
-                        this, SLOT(addModule(QString)));
-    QObject::disconnect(d->ModuleManager,
-                        SIGNAL(moduleAboutToBeUnloaded(QString)),
-                        this, SLOT(removeModule(QString)));
+    QObject::disconnect(d->ModuleManager, SIGNAL(moduleLoaded(QString)), this, SLOT(addModule(QString)));
+    QObject::disconnect(d->ModuleManager, SIGNAL(moduleAboutToBeUnloaded(QString)), this, SLOT(removeModule(QString)));
   }
 
   this->clear();
@@ -488,12 +484,8 @@ void qSlicerModulesMenu::setModuleManager(qSlicerModuleManager* moduleManager)
     return;
   }
 
-  QObject::connect(d->ModuleManager,
-                   SIGNAL(moduleLoaded(QString)),
-                   this, SLOT(addModule(QString)));
-  QObject::connect(d->ModuleManager,
-                   SIGNAL(moduleAboutToBeUnloaded(QString)),
-                   this, SLOT(removeModule(QString)));
+  QObject::connect(d->ModuleManager, SIGNAL(moduleLoaded(QString)), this, SLOT(addModule(QString)));
+  QObject::connect(d->ModuleManager, SIGNAL(moduleAboutToBeUnloaded(QString)), this, SLOT(removeModule(QString)));
   this->addModules(d->ModuleManager->modulesNames());
 }
 
@@ -559,8 +551,7 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
     duplicateAction->setProperty("index", moduleAction->property("index"));
     moduleAction = duplicateAction;
   }
-  QObject::connect(moduleAction, SIGNAL(triggered(bool)),
-                   this, SLOT(onActionTriggered()));
+  QObject::connect(moduleAction, SIGNAL(triggered(bool)), this, SLOT(onActionTriggered()));
 
   foreach (const QString& category, module->categories())
   {
@@ -584,7 +575,7 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
 //---------------------------------------------------------------------------
 bool qSlicerModulesMenu::removeModule(const QString& moduleName)
 {
-   Q_D(qSlicerModulesMenu);
+  Q_D(qSlicerModulesMenu);
   return this->removeModule(d->ModuleManager ? d->ModuleManager->module(moduleName) : nullptr);
 }
 
@@ -612,9 +603,7 @@ bool qSlicerModulesMenu::removeModule(qSlicerAbstractCoreModule* moduleToRemove)
 void qSlicerModulesMenu::setCurrentModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesMenu);
-  QAction* moduleAction = (!moduleName.isEmpty() ?
-                           d->action(QVariant(moduleName)) :
-                           d->NoModuleAction );
+  QAction* moduleAction = (!moduleName.isEmpty() ? d->action(QVariant(moduleName)) : d->NoModuleAction);
   if (!moduleAction)
   {
     // maybe the module hasn't been added yet.

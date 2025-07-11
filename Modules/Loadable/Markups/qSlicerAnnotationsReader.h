@@ -28,8 +28,7 @@ class qSlicerAnnotationsReaderPrivate;
 class vtkSlicerMarkupsLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerAnnotationsReader
-  : public qSlicerFileReader
+class qSlicerAnnotationsReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
@@ -47,13 +46,13 @@ public:
   qSlicerIOOptions* options() const override;
 
   bool load(const IOProperties& properties) override;
+
 protected:
   QScopedPointer<qSlicerAnnotationsReaderPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerAnnotationsReader);
   Q_DISABLE_COPY(qSlicerAnnotationsReader);
-
 };
 
 #endif

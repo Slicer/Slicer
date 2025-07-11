@@ -36,8 +36,7 @@ class vtkMRMLViewNode;
 /// copied into the existing nodes having the same name. This is done
 /// when a camera node is about to be added to the scene.
 ///
-class VTK_SLICER_CAMERAS_LOGIC_EXPORT vtkSlicerCamerasModuleLogic
-  : public vtkSlicerModuleLogic
+class VTK_SLICER_CAMERAS_LOGIC_EXPORT vtkSlicerCamerasModuleLogic : public vtkSlicerModuleLogic
 {
 public:
   static vtkSlicerCamerasModuleLogic* New();

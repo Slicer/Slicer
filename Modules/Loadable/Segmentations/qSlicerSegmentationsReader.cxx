@@ -84,7 +84,7 @@ QString qSlicerSegmentationsReader::description() const
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerSegmentationsReader::fileType() const
 {
-  return QString(/*no tr*/"SegmentationFile");
+  return QString(/*no tr*/ "SegmentationFile");
 }
 
 //-----------------------------------------------------------------------------
@@ -92,10 +92,9 @@ QStringList qSlicerSegmentationsReader::extensions() const
 {
   QString extensionText = tr("Segmentation");
   return QStringList() //
-    << extensionText + " (*.seg.nrrd)" << extensionText + " (*.seg.nhdr)" << extensionText + " (*.seg.vtm)"
-    << extensionText + " (*.nrrd)" << extensionText + " (*.nhdr)" << extensionText + " (*.vtm)"
-    << extensionText + " (*.nii.gz)" << extensionText + " (*.nii)" << extensionText + " (*.hdr)"
-    << extensionText + " (*.stl)" << extensionText + " (*.obj)";
+         << extensionText + " (*.seg.nrrd)" << extensionText + " (*.seg.nhdr)" << extensionText + " (*.seg.vtm)" << extensionText + " (*.nrrd)" << extensionText + " (*.nhdr)"
+         << extensionText + " (*.vtm)" << extensionText + " (*.nii.gz)" << extensionText + " (*.nii)" << extensionText + " (*.hdr)" << extensionText + " (*.stl)"
+         << extensionText + " (*.obj)";
 }
 
 //-----------------------------------------------------------------------------
@@ -195,8 +194,8 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
     segment->SetName(name.toUtf8().constData());
     segment->AddRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(), closedSurfaceRepresentation);
 
-    vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(
-      this->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode", this->mrmlScene()->GetUniqueNameByString(name.toUtf8())));
+    vtkMRMLSegmentationNode* segmentationNode =
+      vtkMRMLSegmentationNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode", this->mrmlScene()->GetUniqueNameByString(name.toUtf8())));
     segmentationNode->SetSourceRepresentationToClosedSurface();
     segmentationNode->CreateDefaultDisplayNodes();
     vtkMRMLSegmentationDisplayNode* displayNode = vtkMRMLSegmentationDisplayNode::SafeDownCast(segmentationNode->GetDisplayNode());
@@ -226,15 +225,15 @@ bool qSlicerSegmentationsReader::load(const IOProperties& properties)
       colorTableNode = vtkMRMLColorTableNode::SafeDownCast(this->mrmlScene()->GetNodeByID(nodeID));
     }
 
-    vtkMRMLSegmentationNode* node = d->SegmentationsLogic->LoadSegmentationFromFile(
-      fileName.toUtf8().constData(), autoOpacities, name.toUtf8(), colorTableNode, this->userMessages());
+    vtkMRMLSegmentationNode* node =
+      d->SegmentationsLogic->LoadSegmentationFromFile(fileName.toUtf8().constData(), autoOpacities, name.toUtf8(), colorTableNode, this->userMessages());
     if (!node)
     {
       this->setLoadedNodes(QStringList());
       return false;
     }
 
-    this->setLoadedNodes( QStringList(QString(node->GetID())) );
+    this->setLoadedNodes(QStringList(QString(node->GetID())));
   }
 
   return true;

@@ -35,14 +35,12 @@ vtkMRMLTextNode::vtkMRMLTextNode()
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLTextNode::~vtkMRMLTextNode()
-{
-}
+vtkMRMLTextNode::~vtkMRMLTextNode() {}
 
 //----------------------------------------------------------------------------
-void vtkMRMLTextNode::SetText(const std::string& text, int encoding/*-1*/)
+void vtkMRMLTextNode::SetText(const std::string& text, int encoding /*-1*/)
 {
-  vtkDebugMacro( << this->GetClassName() << " (" << this << "): setting Text to " << text);
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Text to " << text);
 
   MRMLNodeModifyBlocker blocker(this);
   if (encoding >= 0)
@@ -84,14 +82,10 @@ std::string vtkMRMLTextNode::GetEncodingAsString()
 {
   switch (this->Encoding)
   {
-    case VTK_ENCODING_NONE:
-      return "None";
-    case VTK_ENCODING_US_ASCII:
-      return "ASCII";
-    case VTK_ENCODING_UNICODE:
-      return "Unicode";
-    case VTK_ENCODING_UTF_8:
-      return "UTF-8";
+    case VTK_ENCODING_NONE: return "None";
+    case VTK_ENCODING_US_ASCII: return "ASCII";
+    case VTK_ENCODING_UNICODE: return "Unicode";
+    case VTK_ENCODING_UTF_8: return "UTF-8";
     case VTK_ENCODING_ISO_8859_1:
     case VTK_ENCODING_ISO_8859_2:
     case VTK_ENCODING_ISO_8859_3:
@@ -106,8 +100,7 @@ std::string vtkMRMLTextNode::GetEncodingAsString()
     case VTK_ENCODING_ISO_8859_13:
     case VTK_ENCODING_ISO_8859_14:
     case VTK_ENCODING_ISO_8859_15:
-    case VTK_ENCODING_ISO_8859_16:
-      return "ISO-8859-" + vtkVariant(this->Encoding - VTK_ENCODING_ISO_8859_1 + 1).ToString();
+    case VTK_ENCODING_ISO_8859_16: return "ISO-8859-" + vtkVariant(this->Encoding - VTK_ENCODING_ISO_8859_1 + 1).ToString();
   }
   return "Unknown";
 }
@@ -137,7 +130,7 @@ void vtkMRMLTextNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTextNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLTextNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -198,6 +191,5 @@ vtkMRMLStorageNode* vtkMRMLTextNode::CreateDefaultStorageNode()
       return nullptr;
     }
   }
-  return vtkMRMLTextStorageNode::SafeDownCast(
-    this->Scene->CreateNodeByClass(this->GetDefaultStorageNodeClassName().c_str()));
+  return vtkMRMLTextStorageNode::SafeDownCast(this->Scene->CreateNodeByClass(this->GetDefaultStorageNodeClassName().c_str()));
 }

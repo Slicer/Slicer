@@ -32,8 +32,7 @@ class qSlicerExtensionsItemDelegate;
 class qSlicerExtensionsManagerModel;
 class qSlicerExtensionsLocalWidgetPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsLocalWidget
-  : public QListWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsLocalWidget : public QListWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString searchText READ searchText WRITE setSearchText)
@@ -84,10 +83,8 @@ protected slots:
   void onExtensionCancelledScheduleForUninstall(const QString& extensionName);
   void setExtensionUpdateScheduled(const QString& extensionName);
   void setExtensionUpdateCanceled(const QString& extensionName);
-  void setExtensionUpdateDownloadProgress(
-    const QString& extensionName, qint64 received, qint64 total);
-  void setExtensionInstallDownloadProgress(
-    const QString& extensionName, qint64 received, qint64 total);
+  void setExtensionUpdateDownloadProgress(const QString& extensionName, qint64 received, qint64 total);
+  void setExtensionInstallDownloadProgress(const QString& extensionName, qint64 received, qint64 total);
   void onModelExtensionEnabledChanged(const QString& extensionName, bool enabled);
 
 protected:

@@ -17,12 +17,12 @@
 
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderFile : public vtkITKArchetypeImageSeriesReader
 {
- public:
+public:
   static vtkITKArchetypeImageSeriesVectorReaderFile* New();
   vtkTypeMacro(vtkITKArchetypeImageSeriesVectorReaderFile, vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
- protected:
+protected:
   vtkITKArchetypeImageSeriesVectorReaderFile();
   ~vtkITKArchetypeImageSeriesVectorReaderFile() override;
 

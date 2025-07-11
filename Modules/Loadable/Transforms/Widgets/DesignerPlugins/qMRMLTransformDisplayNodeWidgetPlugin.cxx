@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 #include "qMRMLTransformDisplayNodeWidgetPlugin.h"
 #include "qMRMLTransformDisplayNodeWidget.h"
 

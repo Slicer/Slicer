@@ -37,7 +37,6 @@ public:
   vtkGetMacro(BackgroundValue, double);
   vtkSetMacro(BackgroundValue, double);
 
-
 protected:
   vtkITKDistanceTransform();
   ~vtkITKDistanceTransform() override;

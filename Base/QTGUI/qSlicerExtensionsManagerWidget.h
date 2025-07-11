@@ -37,8 +37,7 @@
 class qSlicerExtensionsManagerWidgetPrivate;
 class qSlicerExtensionsManagerModel;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManagerWidget
-  : public QWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerExtensionsManagerWidget : public QWidget
 {
   Q_OBJECT
 public:

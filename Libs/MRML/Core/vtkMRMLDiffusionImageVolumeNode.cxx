@@ -12,7 +12,6 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-
 #include "vtkObjectFactory.h"
 
 #include "vtkMRMLDiffusionImageVolumeNode.h"
@@ -32,9 +31,9 @@ vtkMRMLDiffusionImageVolumeNode::vtkMRMLDiffusionImageVolumeNode()
   this->BaselineNodeID = nullptr;
   this->MaskNodeID = nullptr;
   this->DiffusionWeightedNodeID = nullptr;
-  //Pair of ID-pointer for observing the corresponding Display node.
-  //this->DisplayNodeID = nullptr;
-  this->Order = 2; //Second order Tensor
+  // Pair of ID-pointer for observing the corresponding Display node.
+  // this->DisplayNodeID = nullptr;
+  this->Order = 2; // Second order Tensor
 }
 
 //----------------------------------------------------------------------------
@@ -57,7 +56,7 @@ vtkMRMLDiffusionImageVolumeNode::~vtkMRMLDiffusionImageVolumeNode()
     delete[] this->DiffusionWeightedNodeID;
     this->DiffusionWeightedNodeID = nullptr;
   }
-   this->SetAndObserveDisplayNodeID(nullptr);
+  this->SetAndObserveDisplayNodeID(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -78,7 +77,6 @@ void vtkMRMLDiffusionImageVolumeNode::WriteXML(ostream& of, int nIndent)
   {
     of << " maskNodeRef=\"" << this->MaskNodeID << "\"";
   }
-
 }
 
 //----------------------------------------------------------------------------
@@ -95,7 +93,7 @@ void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
     std::stringstream ss;
-    ss<<attValue;
+    ss << attValue;
 
     if (!strcmp(attName, "baselineNodeRef"))
     {
@@ -112,7 +110,6 @@ void vtkMRMLDiffusionImageVolumeNode::ReadXMLAttributes(const char** atts)
   }
 
   this->EndModify(disabledModify);
-
 }
 
 //----------------------------------------------------------------------------
@@ -139,7 +136,6 @@ vtkMRMLVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetMaskNode()
   return node;
 }
 
-
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusionWeightedNode()
 {
@@ -153,7 +149,7 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
 }
 
 //----------------------------------------------------------------------------
-//vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetDisplayNode()
+// vtkMRMLVolumeDisplayNode* vtkMRMLVolumeNode::GetDisplayNode()
 //{
 //  vtkMRMLDiffusionImageVolumeDisplayNode* node = nullptr;
 //  if (this->GetScene() && this->GetDisplayNodeID())
@@ -164,9 +160,8 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
 //  return node;
 //}
 
-
 //-----------------------------------------------------------
-//void vtkMRMLDiffusionImageVolumeNode::UpdateScene(vtkMRMLScene* scene)
+// void vtkMRMLDiffusionImageVolumeNode::UpdateScene(vtkMRMLScene* scene)
 //{
 //  Superclass::UpdateScene(scene);
 
@@ -179,7 +174,7 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionImageVolumeNode::UpdateReferenceID(const char* oldID, const char* newID)
 {
-  this->Superclass::UpdateReferenceID(oldID,newID);
+  this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->BaselineNodeID && !strcmp(oldID, this->BaselineNodeID))
   {
     this->SetBaselineNodeID(newID);
@@ -199,24 +194,22 @@ void vtkMRMLDiffusionImageVolumeNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-if (this->BaselineNodeID != nullptr && this->Scene->GetNodeByID(this->BaselineNodeID) == nullptr)
-{
+  if (this->BaselineNodeID != nullptr && this->Scene->GetNodeByID(this->BaselineNodeID) == nullptr)
+  {
     this->SetBaselineNodeID(nullptr);
-}
-if (this->MaskNodeID != nullptr && this->Scene->GetNodeByID(this->MaskNodeID) == nullptr)
-{
+  }
+  if (this->MaskNodeID != nullptr && this->Scene->GetNodeByID(this->MaskNodeID) == nullptr)
+  {
     this->SetMaskNodeID(nullptr);
-}
-if (this->DiffusionWeightedNodeID != nullptr && this->Scene->GetNodeByID(this->DiffusionWeightedNodeID) == nullptr)
-{
+  }
+  if (this->DiffusionWeightedNodeID != nullptr && this->Scene->GetNodeByID(this->DiffusionWeightedNodeID) == nullptr)
+  {
     this->SetDiffusionWeightedNodeID(nullptr);
-}
+  }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLDiffusionImageVolumeNode::ProcessMRMLEvents ( vtkObject* caller,
-                                           unsigned long event,
-                                           void* callData )
+void vtkMRMLDiffusionImageVolumeNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
@@ -226,13 +219,9 @@ void vtkMRMLDiffusionImageVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "DiffusionWeightedNodeID: " <<
-    (this->DiffusionWeightedNodeID ? this->DiffusionWeightedNodeID : "(none)") << "\n";
+  os << indent << "DiffusionWeightedNodeID: " << (this->DiffusionWeightedNodeID ? this->DiffusionWeightedNodeID : "(none)") << "\n";
 
-  os << indent << "BaselineNodeID: " <<
-    (this->BaselineNodeID ? this->BaselineNodeID : "(none)") << "\n";
+  os << indent << "BaselineNodeID: " << (this->BaselineNodeID ? this->BaselineNodeID : "(none)") << "\n";
 
-  os << indent << "MaskNodeID: " <<
-    (this->MaskNodeID ? this->MaskNodeID : "(none)") << "\n";
-
+  os << indent << "MaskNodeID: " << (this->MaskNodeID ? this->MaskNodeID : "(none)") << "\n";
 }

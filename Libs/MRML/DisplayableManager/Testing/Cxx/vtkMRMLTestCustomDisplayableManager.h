@@ -26,8 +26,7 @@
 
 class vtkMRMLCameraNode;
 
-class vtkMRMLTestCustomDisplayableManager :
-  public vtkMRMLAbstractDisplayableManager
+class vtkMRMLTestCustomDisplayableManager : public vtkMRMLAbstractDisplayableManager
 {
 
 public:
@@ -40,7 +39,6 @@ public:
   static int NodeAddedCountSliceView;
 
 protected:
-
   vtkMRMLTestCustomDisplayableManager();
   ~vtkMRMLTestCustomDisplayableManager() override;
 
@@ -52,13 +50,11 @@ protected:
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
 
 private:
-
   vtkMRMLTestCustomDisplayableManager(const vtkMRMLTestCustomDisplayableManager&) = delete;
   void operator=(const vtkMRMLTestCustomDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;
-
 };
 
 #endif

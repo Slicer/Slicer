@@ -26,8 +26,7 @@
 class qSlicerFileWriterOptionsWidgetPrivate;
 
 /// Base class for all the Writer Options widget.
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileWriterOptionsWidget
-  : public qSlicerIOOptionsWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileWriterOptionsWidget : public qSlicerIOOptionsWidget
 {
   Q_OBJECT
 
@@ -41,8 +40,7 @@ public slots:
   virtual void setObject(vtkObject* object);
 
 protected:
-  qSlicerFileWriterOptionsWidget(qSlicerIOOptionsPrivate* pimpl,
-                                 QWidget* parent);
+  qSlicerFileWriterOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parent);
 };
 
 #endif

@@ -34,8 +34,7 @@ class qMRMLModelInfoWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLModelNode;
 
-class QMRML_WIDGETS_EXPORT qMRMLModelInfoWidget
-  : public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLModelInfoWidget : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT

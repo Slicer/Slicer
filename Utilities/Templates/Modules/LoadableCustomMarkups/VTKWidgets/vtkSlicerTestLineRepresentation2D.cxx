@@ -115,7 +115,7 @@ int vtkSlicerTestLineRepresentation2D::RenderOverlay(vtkViewport* viewport)
   int count = 0;
   if (this->MiddlePointActor->GetVisibility())
   {
-    count +=  this->MiddlePointActor->RenderOverlay(viewport);
+    count += this->MiddlePointActor->RenderOverlay(viewport);
   }
   count += this->Superclass::RenderOverlay(viewport);
   return count;

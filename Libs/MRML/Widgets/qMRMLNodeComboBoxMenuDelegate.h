@@ -47,18 +47,14 @@ public:
   qMRMLNodeComboBoxMenuDelegate(QObject* parent, QComboBox* cmb);
 
 protected:
-  void paint(QPainter* painter,
-                     const QStyleOptionViewItem& option,
-                     const QModelIndex& index) const override;
-  QSize sizeHint(const QStyleOptionViewItem& option,
-                         const QModelIndex& index) const override;
+  void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+  QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 private:
   /// Reimplemented to force the highlight in case the item is not selectable
   /// but current. The highlight color used is then slightly different from
   /// the default color
-  QStyleOptionMenuItem getStyleOption(const QStyleOptionViewItem& option,
-                                      const QModelIndex& index) const;
+  QStyleOptionMenuItem getStyleOption(const QStyleOptionViewItem& option, const QModelIndex& index) const;
   QComboBox* mCombo;
   Q_DISABLE_COPY(qMRMLNodeComboBoxMenuDelegate);
 };

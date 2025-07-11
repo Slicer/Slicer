@@ -149,7 +149,7 @@ void vtkMRMLColorLegendDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorLegendDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLColorLegendDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   this->Superclass::CopyContent(anode, deepCopy);
@@ -180,13 +180,9 @@ void vtkMRMLColorLegendDisplayNode::SetOrientation(int id)
 {
   switch (id)
   {
-    case 0:
-      this->SetOrientation(vtkMRMLColorLegendDisplayNode::Horizontal);
-      break;
+    case 0: this->SetOrientation(vtkMRMLColorLegendDisplayNode::Horizontal); break;
     case 1:
-    default:
-      this->SetOrientation(vtkMRMLColorLegendDisplayNode::Vertical);
-      break;
+    default: this->SetOrientation(vtkMRMLColorLegendDisplayNode::Vertical); break;
   }
 }
 
@@ -195,11 +191,9 @@ const char* vtkMRMLColorLegendDisplayNode::GetOrientationAsString(int id)
 {
   switch (id)
   {
-    case vtkMRMLColorLegendDisplayNode::Horizontal:
-      return "Horizontal";
+    case vtkMRMLColorLegendDisplayNode::Horizontal: return "Horizontal";
     case vtkMRMLColorLegendDisplayNode::Vertical:
-    default:
-      return "Vertical";
+    default: return "Vertical";
   }
 }
 
@@ -247,7 +241,7 @@ void vtkMRMLColorLegendDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigne
   Superclass::ProcessMRMLEvents(caller, eventID, callData);
 
   // Propagate primary display node and text properties modification events
-  if (eventID == vtkCommand::ModifiedEvent //
+  if (eventID == vtkCommand::ModifiedEvent                                       //
       && (caller == this->TitleTextProperty || caller == this->LabelTextProperty //
           || caller == this->GetPrimaryDisplayNode()))
   {

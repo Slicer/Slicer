@@ -52,12 +52,15 @@
 class qSlicerSubjectHierarchyFolderPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyFolderPlugin);
+
 protected:
   qSlicerSubjectHierarchyFolderPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyFolderPluginPrivate(qSlicerSubjectHierarchyFolderPlugin& object);
   ~qSlicerSubjectHierarchyFolderPluginPrivate() override;
   void init();
+
 public:
   QIcon FolderIcon;
 
@@ -75,7 +78,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyFolderPluginPrivate::qSlicerSubjectHierarchyFolderPluginPrivate(qSlicerSubjectHierarchyFolderPlugin& object)
-: q_ptr(&object)
+  : q_ptr(&object)
 {
   this->FolderIcon = QIcon(":Icons/Folder.png");
 
@@ -85,8 +88,7 @@ qSlicerSubjectHierarchyFolderPluginPrivate::qSlicerSubjectHierarchyFolderPluginP
   this->ShowEmptyFoldersAction = nullptr;
 
   std::string addedByFolderPluginAttributeNameStr =
-      vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix()
-    + std::string(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder());
+    vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyAttributePrefix() + std::string(vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder());
   this->AddedByFolderPluginAttributeName = QString(addedByFolderPluginAttributeNameStr.c_str());
 }
 
@@ -96,28 +98,24 @@ void qSlicerSubjectHierarchyFolderPluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchyFolderPlugin);
 
   this->CreateFolderUnderSceneAction = new QAction(qSlicerSubjectHierarchyFolderPlugin::tr("Create new folder"), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreateFolderUnderSceneAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 5);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreateFolderUnderSceneAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 5);
   QObject::connect(this->CreateFolderUnderSceneAction, SIGNAL(triggered()), q, SLOT(createFolderUnderScene()));
 
   this->CreateFolderUnderNodeAction = new QAction(qSlicerSubjectHierarchyFolderPlugin::tr("Create child folder"), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreateFolderUnderNodeAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 6);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CreateFolderUnderNodeAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 6);
   QObject::connect(this->CreateFolderUnderNodeAction, SIGNAL(triggered()), q, SLOT(createFolderUnderCurrentNode()));
 
   this->ApplyColorToBranchAction = new QAction(qSlicerSubjectHierarchyFolderPlugin::tr("Apply color to all children"), q);
   this->ApplyColorToBranchAction->setToolTip(
     qSlicerSubjectHierarchyFolderPlugin::tr("If on, then children items will inherit the display properties (e.g. color or opacity) set to the folder"));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ApplyColorToBranchAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 7);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ApplyColorToBranchAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 7);
   QObject::connect(this->ApplyColorToBranchAction, SIGNAL(toggled(bool)), q, SLOT(onApplyColorToBranchToggled(bool)));
   this->ApplyColorToBranchAction->setCheckable(true);
 
   this->ShowEmptyFoldersAction = new QAction(qSlicerSubjectHierarchyFolderPlugin::tr("Show empty folders"), q);
   this->ShowEmptyFoldersAction->setToolTip(
     qSlicerSubjectHierarchyFolderPlugin::tr("If on, then folders that do not contain nodes (allowed by any filter) are shown, otherwise not"));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ShowEmptyFoldersAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 8);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ShowEmptyFoldersAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 8);
   QObject::connect(this->ShowEmptyFoldersAction, SIGNAL(toggled(bool)), q, SLOT(onShowEmptyFoldersToggled(bool)));
   this->ShowEmptyFoldersAction->setCheckable(true);
 }
@@ -130,8 +128,8 @@ qSlicerSubjectHierarchyFolderPluginPrivate::~qSlicerSubjectHierarchyFolderPlugin
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyFolderPlugin::qSlicerSubjectHierarchyFolderPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyFolderPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyFolderPluginPrivate(*this))
 {
   this->m_Name = QString("Folder");
 
@@ -143,8 +141,7 @@ qSlicerSubjectHierarchyFolderPlugin::qSlicerSubjectHierarchyFolderPlugin(QObject
 qSlicerSubjectHierarchyFolderPlugin::~qSlicerSubjectHierarchyFolderPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyFolderPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+double qSlicerSubjectHierarchyFolderPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -345,31 +342,31 @@ void qSlicerSubjectHierarchyFolderPlugin::setDisplayColor(vtkIdType itemID, QCol
 }
 
 //-----------------------------------------------------------------------------
-QColor qSlicerSubjectHierarchyFolderPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant> &terminologyMetaData) const
+QColor qSlicerSubjectHierarchyFolderPlugin::getDisplayColor(vtkIdType itemID, QMap<int, QVariant>& terminologyMetaData) const
 {
   if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid input item";
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
   vtkMRMLSubjectHierarchyNode* shNode = qSlicerSubjectHierarchyPluginHandler::instance()->subjectHierarchyNode();
   if (!shNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to access subject hierarchy node";
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
   vtkMRMLScene* scene = qSlicerSubjectHierarchyPluginHandler::instance()->mrmlScene();
   if (!scene)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid MRML scene";
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
 
   if (scene->IsImporting())
   {
     // During import SH node may be created before the segmentation is read into the scene,
     // so don't attempt to access the segment yet
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
 
   // Set dummy terminology information
@@ -382,10 +379,10 @@ QColor qSlicerSubjectHierarchyFolderPlugin::getDisplayColor(vtkIdType itemID, QM
   vtkMRMLDisplayNode* displayNode = this->displayNodeForItem(itemID);
   if (!displayNode)
   {
-    return QColor(0,0,0,0);
+    return QColor(0, 0, 0, 0);
   }
 
-  double colorArray[3] = {0.0,0.0,0.0};
+  double colorArray[3] = { 0.0, 0.0, 0.0 };
   displayNode->GetColor(colorArray);
   return QColor::fromRgbF(colorArray[0], colorArray[1], colorArray[2]);
 }
@@ -536,8 +533,7 @@ vtkIdType qSlicerSubjectHierarchyFolderPlugin::createFolderUnderItem(vtkIdType p
   }
 
   // Create folder subject hierarchy node
-  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix()
-    + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
+  std::string name = vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyNewItemNamePrefix() + vtkMRMLSubjectHierarchyConstants::GetSubjectHierarchyLevelFolder();
   name = shNode->GenerateUniqueItemName(name);
   vtkIdType childItemID = shNode->CreateFolderItem(parentItemID, name);
   emit requestExpandItem(childItemID);
@@ -716,8 +712,7 @@ void qSlicerSubjectHierarchyFolderPlugin::setApplyColorToBranchEnabledForItem(vt
     return;
   }
 
-  vtkMRMLFolderDisplayNode* folderDisplayNode = vtkMRMLFolderDisplayNode::SafeDownCast(
-    this->createDisplayNodeForItem(itemID) );
+  vtkMRMLFolderDisplayNode* folderDisplayNode = vtkMRMLFolderDisplayNode::SafeDownCast(this->createDisplayNodeForItem(itemID));
   if (!folderDisplayNode)
   {
     qCritical() << Q_FUNC_INFO << ": Failed to get folder display node for item " << itemID;

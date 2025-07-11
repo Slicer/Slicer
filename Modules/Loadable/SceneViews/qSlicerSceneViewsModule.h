@@ -12,14 +12,13 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerSceneViewsModulePrivate;
 
-class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qSlicerSceneViewsModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qSlicerSceneViewsModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
-public:
 
+public:
   typedef qSlicerLoadableModule Superclass;
   qSlicerSceneViewsModule(QObject* parent = nullptr);
   ~qSlicerSceneViewsModule() override;
@@ -41,14 +40,13 @@ public:
   qSlicerGetTitleMacro(tr("Scene Views"));
 
 public slots:
-    /// a public slot to open up the scene view capture
-    /// dialog (get the module manager, get the module sceneviews, get the
-    /// widget representation, then invoke this method
-    /// \sa qSlicerIOManager::openSceneViewsDialog
-    void showSceneViewDialog();
+  /// a public slot to open up the scene view capture
+  /// dialog (get the module manager, get the module sceneviews, get the
+  /// widget representation, then invoke this method
+  /// \sa qSlicerIOManager::openSceneViewsDialog
+  void showSceneViewDialog();
 
 protected:
-
   /// All initialization code should be done in the setup
   void setup() override;
 

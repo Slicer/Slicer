@@ -33,24 +33,20 @@ public:
 // qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate::qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate()
-{
-}
+qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate::qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerSuperLoadableModuleTemplateModuleWidget methods
 
 //-----------------------------------------------------------------------------
 qSlicerSuperLoadableModuleTemplateModuleWidget::qSlicerSuperLoadableModuleTemplateModuleWidget(QWidget* _parent)
-  : Superclass( _parent )
-  , d_ptr( new qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate )
+  : Superclass(_parent)
+  , d_ptr(new qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSuperLoadableModuleTemplateModuleWidget::~qSlicerSuperLoadableModuleTemplateModuleWidget()
-{
-}
+qSlicerSuperLoadableModuleTemplateModuleWidget::~qSlicerSuperLoadableModuleTemplateModuleWidget() {}
 
 //-----------------------------------------------------------------------------
 void qSlicerSuperLoadableModuleTemplateModuleWidget::setup()

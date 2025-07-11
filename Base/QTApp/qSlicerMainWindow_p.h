@@ -37,10 +37,10 @@ class qSlicerMainWindowPrivate;
 class qSlicerLayoutManager;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTAPP_EXPORT qSlicerMainWindowPrivate
-  : public Ui_qSlicerMainWindow
+class Q_SLICER_BASE_QTAPP_EXPORT qSlicerMainWindowPrivate : public Ui_qSlicerMainWindow
 {
   Q_DECLARE_PUBLIC(qSlicerMainWindow);
+
 protected:
   qSlicerMainWindow* const q_ptr;
 

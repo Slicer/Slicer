@@ -53,7 +53,7 @@ void checkFinalWidgetState(void* data)
 
   Q_UNUSED(widget);
 }
-}
+} // namespace
 
 //-----------------------------------------------------------------------------
 int qMRMLCollapsibleButtonEventTranslatorPlayerTest1(int argc, char* argv[])
@@ -72,9 +72,7 @@ int qMRMLCollapsibleButtonEventTranslatorPlayerTest1(int argc, char* argv[])
   // Test case 1
   qMRMLCollapsibleButton* widget = new qMRMLCollapsibleButton();
 
-  etpWidget.addTestCase(widget,
-                        xmlDirectory + "qMRMLCollapsibleButtonEventTranslatorPlayerTest1.xml",
-                        &checkFinalWidgetState);
+  etpWidget.addTestCase(widget, xmlDirectory + "qMRMLCollapsibleButtonEventTranslatorPlayerTest1.xml", &checkFinalWidgetState);
 
   // ------------------------
   if (!app.arguments().contains("-I"))

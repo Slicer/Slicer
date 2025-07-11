@@ -76,7 +76,6 @@ qSlicerDICOMLoadablePrivate::qSlicerDICOMLoadablePrivate()
 //-----------------------------------------------------------------------------
 qSlicerDICOMLoadablePrivate::~qSlicerDICOMLoadablePrivate() = default;
 
-
 //-----------------------------------------------------------------------------
 // qSlicerDICOMLoadable methods
 

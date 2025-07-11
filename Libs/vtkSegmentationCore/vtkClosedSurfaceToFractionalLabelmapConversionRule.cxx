@@ -47,9 +47,8 @@ vtkClosedSurfaceToFractionalLabelmapConversionRule::vtkClosedSurfaceToFractional
 vtkClosedSurfaceToFractionalLabelmapConversionRule::~vtkClosedSurfaceToFractionalLabelmapConversionRule() = default;
 
 //----------------------------------------------------------------------------
-unsigned int vtkClosedSurfaceToFractionalLabelmapConversionRule::GetConversionCost(
-  vtkDataObject* vtkNotUsed(sourceRepresentation)/*=nullptr*/,
-  vtkDataObject* vtkNotUsed(targetRepresentation)/*=nullptr*/)
+unsigned int vtkClosedSurfaceToFractionalLabelmapConversionRule::GetConversionCost(vtkDataObject* vtkNotUsed(sourceRepresentation) /*=nullptr*/,
+                                                                                   vtkDataObject* vtkNotUsed(targetRepresentation) /*=nullptr*/)
 {
   // Rough input-independent guess (ms)
   return 7000;
@@ -112,7 +111,8 @@ bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkSegment* seg
   }
   if (closedSurfacePolyData->GetNumberOfPoints() < 2 || closedSurfacePolyData->GetNumberOfCells() < 2)
   {
-    vtkErrorMacro("Convert: Cannot create binary labelmap from surface with number of points: " << closedSurfacePolyData->GetNumberOfPoints() << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
+    vtkErrorMacro("Convert: Cannot create binary labelmap from surface with number of points: " << closedSurfacePolyData->GetNumberOfPoints()
+                                                                                                << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
     return false;
   }
 
@@ -125,12 +125,12 @@ bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkSegment* seg
   }
 
   // Pad the extent of the fractional labelmap
-  int extent[6] = {0,-1,0,-1,0,-1};
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
   fractionalLabelMap->GetExtent(extent);
-  for (int i = 0; i<2; ++i)
+  for (int i = 0; i < 2; ++i)
   {
-    --extent[2*i];
-    ++extent[2*i+1];
+    --extent[2 * i];
+    ++extent[2 * i + 1];
   }
   fractionalLabelMap->SetExtent(extent);
 
@@ -156,7 +156,7 @@ bool vtkClosedSurfaceToFractionalLabelmapConversionRule::Convert(vtkSegment* seg
   // Specify the surface threshold value for visualization
   vtkSmartPointer<vtkDoubleArray> thresholdValue = vtkSmartPointer<vtkDoubleArray>::New();
   thresholdValue->SetName(vtkSegmentationConverter::GetThresholdValueFieldName());
-  thresholdValue->InsertNextValue((FRACTIONAL_MIN+FRACTIONAL_MAX)/2.0);
+  thresholdValue->InsertNextValue((FRACTIONAL_MIN + FRACTIONAL_MAX) / 2.0);
   fractionalLabelMap->GetFieldData()->AddArray(thresholdValue);
 
   // Specify the interpolation type for visualization

@@ -5,7 +5,6 @@
 
 #include "qMRMLScreenShotDialog.h"
 
-
 class qSlicerSceneViewsModuleDialogPrivate;
 
 class qSlicerSceneViewsModuleDialog : public qMRMLScreenShotDialog
@@ -28,11 +27,11 @@ public:
   void accept() override;
 
 private:
-    Q_DECLARE_PRIVATE(qSlicerSceneViewsModuleDialog);
+  Q_DECLARE_PRIVATE(qSlicerSceneViewsModuleDialog);
 
-    vtkSlicerSceneViewsModuleLogic* m_Logic;
+  vtkSlicerSceneViewsModuleLogic* m_Logic;
 
-    QScopedPointer<qSlicerSceneViewsModuleDialogPrivate> d_ptr;
+  QScopedPointer<qSlicerSceneViewsModuleDialogPrivate> d_ptr;
 };
 
 #endif

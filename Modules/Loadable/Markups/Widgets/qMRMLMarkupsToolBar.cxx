@@ -123,8 +123,7 @@ void qMRMLMarkupsToolBarPrivate::addSetModuleButton(vtkSlicerMarkupsLogic* marku
   QSignalMapper* mapper = new QSignalMapper(moduleButton);
   QObject::connect(moduleButton, SIGNAL(clicked()), mapper, SLOT(map()));
   mapper->setMapping(moduleButton, moduleName);
-  QObject::connect(mapper, SIGNAL(mapped(const QString&)),
-    this, SLOT(onSetModule(const QString&)));
+  QObject::connect(mapper, SIGNAL(mapped(const QString&)), this, SLOT(onSetModule(const QString&)));
   q->addWidget(moduleButton);
 }
 
@@ -159,11 +158,9 @@ void qMRMLMarkupsToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
     return;
   }
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::StartBatchProcessEvent,
-    this, SLOT(onMRMLSceneStartBatchProcess()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::StartBatchProcessEvent, this, SLOT(onMRMLSceneStartBatchProcess()));
 
-  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::EndBatchProcessEvent,
-    this, SLOT(onMRMLSceneEndBatchProcess()));
+  this->qvtkReconnect(this->MRMLScene, newScene, vtkMRMLScene::EndBatchProcessEvent, this, SLOT(onMRMLSceneEndBatchProcess()));
 
   this->MRMLScene = newScene;
   this->MarkupsNodeSelector->setMRMLScene(newScene);
@@ -176,18 +173,13 @@ void qMRMLMarkupsToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   q->setInteractionNode((this->MRMLAppLogic && this->MRMLScene) ? this->MRMLAppLogic->GetInteractionNode() : nullptr);
   q->setSelectionNode((this->MRMLAppLogic && this->MRMLScene) ? this->MRMLAppLogic->GetSelectionNode() : nullptr);
 
-  vtkMRMLSelectionNode* selectionNode =
-    (this->MRMLAppLogic && this->MRMLScene) ?
-    this->MRMLAppLogic->GetSelectionNode() : nullptr;
-  this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::ActivePlaceNodeClassNameChangedEvent,
-    this, SLOT(updateWidgetFromMRML()));
-  this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::PlaceNodeClassNameListModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  vtkMRMLSelectionNode* selectionNode = (this->MRMLAppLogic && this->MRMLScene) ? this->MRMLAppLogic->GetSelectionNode() : nullptr;
+  this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::ActivePlaceNodeClassNameChangedEvent, this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(selectionNode, vtkMRMLSelectionNode::PlaceNodeClassNameListModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   // Update UI
   q->setEnabled(this->MRMLScene != nullptr);
   this->updateWidgetFromMRML();
-
 }
 
 //---------------------------------------------------------------------------
@@ -211,7 +203,6 @@ void qMRMLMarkupsToolBarPrivate::onMRMLSceneEndBatchProcess()
   // update the state from mrml
   this->updateWidgetFromMRML();
 }
-
 
 //---------------------------------------------------------------------------
 QCursor qMRMLMarkupsToolBarPrivate::cursorFromIcon(QIcon& icon)
@@ -252,8 +243,7 @@ void qMRMLMarkupsToolBarPrivate::updateWidgetFromMRML()
   vtkMRMLMarkupsNode* activeMarkupsNode = nullptr;
   if (selectionNode->GetScene())
   {
-    activeMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(
-      selectionNode->GetScene()->GetNodeByID(selectionNode->GetActivePlaceNodeID()));
+    activeMarkupsNode = vtkMRMLMarkupsNode::SafeDownCast(selectionNode->GetScene()->GetNodeByID(selectionNode->GetActivePlaceNodeID()));
   }
   // do not block signals so that signals are emitted
   this->MarkupsNodeSelector->setCurrentNode(activeMarkupsNode);
@@ -285,7 +275,7 @@ void qMRMLMarkupsToolBarPrivate::onPlaceNodeClassNameListModifiedEvent()
 // --------------------------------------------------------------------------
 qMRMLMarkupsToolBar::qMRMLMarkupsToolBar(const QString& title, QWidget* parentWidget)
   : Superclass(title, parentWidget)
-   , d_ptr(new qMRMLMarkupsToolBarPrivate(*this))
+  , d_ptr(new qMRMLMarkupsToolBarPrivate(*this))
 {
   Q_D(qMRMLMarkupsToolBar);
   d->init();
@@ -321,8 +311,7 @@ vtkMRMLMarkupsNode* qMRMLMarkupsToolBar::activeMarkupsNode()
 void qMRMLMarkupsToolBar::setActiveMarkupsNode(vtkMRMLMarkupsNode* newActiveNode)
 {
   Q_D(qMRMLMarkupsToolBar);
-  vtkMRMLSelectionNode* selectionNode = (d->MRMLAppLogic && d->MRMLScene) ?
-    d->MRMLAppLogic->GetSelectionNode() : nullptr;
+  vtkMRMLSelectionNode* selectionNode = (d->MRMLAppLogic && d->MRMLScene) ? d->MRMLAppLogic->GetSelectionNode() : nullptr;
   if (selectionNode == nullptr && newActiveNode != nullptr)
   {
     qWarning() << Q_FUNC_INFO << " failed: invalid selection node";
@@ -364,8 +353,7 @@ void qMRMLMarkupsToolBar::setInteractionNode(vtkMRMLInteractionNode* interaction
   {
     return;
   }
-  d->qvtkReconnect(d->InteractionNode, interactionNode, vtkCommand::ModifiedEvent,
-    d, SLOT(updateWidgetFromMRML()));
+  d->qvtkReconnect(d->InteractionNode, interactionNode, vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRML()));
   d->InteractionNode = interactionNode;
   d->updateWidgetFromMRML();
 }
@@ -379,8 +367,7 @@ void qMRMLMarkupsToolBar::setSelectionNode(vtkMRMLSelectionNode* selectionNode)
   {
     return;
   }
-  d->qvtkReconnect(d->SelectionNode, selectionNode, vtkCommand::ModifiedEvent,
-    d, SLOT(updateWidgetFromMRML()));
+  d->qvtkReconnect(d->SelectionNode, selectionNode, vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRML()));
   d->SelectionNode = selectionNode;
   d->updateWidgetFromMRML();
 }
@@ -408,8 +395,7 @@ void qMRMLMarkupsToolBar::interactionModeActionTriggered(bool toggled)
   // If no active place node class name is selected then use the default class
   if (d->InteractionNode->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
   {
-    vtkMRMLSelectionNode* selectionNode = (d->MRMLAppLogic && d->MRMLScene) ?
-      d->MRMLAppLogic->GetSelectionNode() : nullptr;
+    vtkMRMLSelectionNode* selectionNode = (d->MRMLAppLogic && d->MRMLScene) ? d->MRMLAppLogic->GetSelectionNode() : nullptr;
     if (selectionNode)
     {
       const char* currentPlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
@@ -433,8 +419,7 @@ void qMRMLMarkupsToolBar::initializeToolBarLayout()
 {
   Q_D(qMRMLMarkupsToolBar);
 
-  vtkSlicerMarkupsLogic* markupsLogic =
-    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic(/*no tr*/"Markups"));
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic(/*no tr*/ "Markups"));
   if (!markupsLogic)
   {
     qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
@@ -451,13 +436,11 @@ void qMRMLMarkupsToolBar::initializeToolBarLayout()
 
   // Module shortcuts
   this->addSeparator();
-  d->addSetModuleButton(markupsLogic, /*no tr*/"Markups");
+  d->addSetModuleButton(markupsLogic, /*no tr*/ "Markups");
 
   // Add event observers for registration/unregistration of markups
-  this->qvtkConnect(markupsLogic, vtkSlicerMarkupsLogic::MarkupRegistered,
-    this, SLOT(updateToolBarLayout()));
-  this->qvtkConnect(markupsLogic, vtkSlicerMarkupsLogic::MarkupUnregistered,
-    this, SLOT(updateToolBarLayout()));
+  this->qvtkConnect(markupsLogic, vtkSlicerMarkupsLogic::MarkupRegistered, this, SLOT(updateToolBarLayout()));
+  this->qvtkConnect(markupsLogic, vtkSlicerMarkupsLogic::MarkupUnregistered, this, SLOT(updateToolBarLayout()));
 
   this->updateToolBarLayout();
 }
@@ -468,8 +451,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
   // Node creation buttons
   Q_D(qMRMLMarkupsToolBar);
 
-  vtkSlicerMarkupsLogic* markupsLogic =
-    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic(/*no tr*/"Markups"));
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic(/*no tr*/ "Markups"));
   if (!markupsLogic)
   {
     qWarning() << Q_FUNC_INFO << " failed: invalid markups logic";
@@ -482,7 +464,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
     if (markupsNode && markupsLogic->GetCreateMarkupsPushButton(markupName.c_str()))
     {
       bool buttonExists = false;
-      for (int index = 0; index< this->layout()->count(); index++)
+      for (int index = 0; index < this->layout()->count(); index++)
       {
         std::string buttonName = this->layout()->itemAt(index)->widget()->objectName().toStdString();
         if (buttonName == /*no tr*/ "Create" + markupName + "PushButton")
@@ -497,7 +479,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
         QSignalMapper* mapper = new QSignalMapper(markupCreateButton);
         std::string markupType = markupsNode->GetMarkupType() ? markupsNode->GetMarkupType() : "";
         std::string markupDisplayName = markupsNode->GetTypeDisplayName() ? markupsNode->GetTypeDisplayName() : "";
-        markupCreateButton->setObjectName(QString::fromStdString(/*no tr*/"Create"+markupType+"PushButton"));
+        markupCreateButton->setObjectName(QString::fromStdString(/*no tr*/ "Create" + markupType + "PushButton"));
         markupCreateButton->setToolTip(tr("Create new %1").arg(QString::fromStdString(markupDisplayName)));
         markupCreateButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
         markupCreateButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -509,10 +491,10 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
     }
   }
 
-  for (int index = this->layout()->count()-1; index >=0 ; index--)
+  for (int index = this->layout()->count() - 1; index >= 0; index--)
   {
     QString buttonName = this->layout()->itemAt(index)->widget()->objectName();
-    if (!buttonName.startsWith(/*no tr*/"Create") || !buttonName.endsWith(/*no tr*/"PushButton"))
+    if (!buttonName.startsWith(/*no tr*/ "Create") || !buttonName.endsWith(/*no tr*/ "PushButton"))
     {
       // Not a markup create button, leave it as is
       continue;
@@ -520,7 +502,7 @@ void qMRMLMarkupsToolBar::updateToolBarLayout()
     bool markupExists = false;
     for (const auto& markupName : markupsLogic->GetRegisteredMarkupsTypes())
     {
-      if (QString::fromStdString(/*no tr*/"Create" + markupName + "PushButton") == buttonName)
+      if (QString::fromStdString(/*no tr*/ "Create" + markupName + "PushButton") == buttonName)
       {
         markupExists = true;
         break;
@@ -544,8 +526,7 @@ void qMRMLMarkupsToolBar::onAddNewMarkupsNodeByClass(const QString& className)
   Q_D(qMRMLMarkupsToolBar);
   // Add new markups node to the scene
   vtkMRMLMarkupsNode* markupsNode = nullptr;
-  vtkSlicerMarkupsLogic* markupsLogic =
-    vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic(/*no tr*/"Markups"));
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(d->MRMLAppLogic->GetModuleLogic(/*no tr*/ "Markups"));
   if (markupsLogic)
   {
     markupsNode = markupsLogic->AddNewMarkupsNode(className.toStdString());

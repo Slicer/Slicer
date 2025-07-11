@@ -25,16 +25,13 @@
 
 #include <vtkSlicerLineWidget.h>
 
-class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineWidget
-: public vtkSlicerLineWidget
+class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineWidget : public vtkSlicerLineWidget
 {
 public:
   static vtkSlicerTestLineWidget* New();
   vtkTypeMacro(vtkSlicerTestLineWidget, vtkSlicerLineWidget);
 
-  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
-                                  vtkMRMLAbstractViewNode* viewNode,
-                                  vtkRenderer* renderer) override;
+  void CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer) override;
 
   /// Create instance of the markups widget
   virtual vtkSlicerMarkupsWidget* CreateInstance() const override;

@@ -42,10 +42,10 @@
 #include "qSlicerModulePanel.h"
 #include "qSlicerUtils.h"
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-#include "qSlicerExtensionsManagerModel.h"
+# include "qSlicerExtensionsManagerModel.h"
 #endif
 #ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
-#include "qSlicerApplicationUpdateManager.h"
+# include "qSlicerApplicationUpdateManager.h"
 #endif
 
 // CTK includes
@@ -60,8 +60,10 @@ class qSlicerAppMainWindow;
 class qSlicerWelcomeModuleWidgetPrivate : public Ui_qSlicerWelcomeModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerWelcomeModuleWidget);
+
 protected:
   qSlicerWelcomeModuleWidget* const q_ptr;
+
 public:
   qSlicerWelcomeModuleWidgetPrivate(qSlicerWelcomeModuleWidget& object);
   void setupUi(qSlicerWidget* widget);
@@ -118,12 +120,9 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // Update occurrences of documentation URLs
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-  foreach (QWidget* widget, QWidgetList()
-          << this->FeedbackCollapsibleWidget
-          << this->WelcomeAndAboutCollapsibleWidget
-          << this->OtherUsefulHintsCollapsibleWidget
-          << this->AcknowledgmentCollapsibleWidget
-          )
+  foreach (QWidget* widget,
+           QWidgetList() << this->FeedbackCollapsibleWidget << this->WelcomeAndAboutCollapsibleWidget << this->OtherUsefulHintsCollapsibleWidget
+                         << this->AcknowledgmentCollapsibleWidget)
   {
     QTextBrowser* textBrowser = widget->findChild<QTextBrowser*>();
     if (!textBrowser)
@@ -131,8 +130,7 @@ void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
       continue;
     }
     QString html = textBrowser->toHtml();
-    qSlicerUtils::replaceDocumentationUrlVersion(html,
-      QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
+    qSlicerUtils::replaceDocumentationUrlVersion(html, QUrl(app->documentationBaseUrl()).host(), app->documentationVersion());
     textBrowser->setHtml(html);
   }
 }
@@ -175,10 +173,10 @@ bool qSlicerWelcomeModuleWidgetPrivate::selectModule(const QString& moduleName)
   qSlicerAbstractCoreModule* module = moduleManager->module(moduleName);
   if (!module)
   {
-    QMessageBox::warning(
-          q, qSlicerWelcomeModuleWidget::tr("Raising %1 Module:").arg(moduleName),
-          qSlicerWelcomeModuleWidget::tr("Unfortunately, this requested module is not available in this Slicer session."),
-          QMessageBox::Ok);
+    QMessageBox::warning(q,
+                         qSlicerWelcomeModuleWidget::tr("Raising %1 Module:").arg(moduleName),
+                         qSlicerWelcomeModuleWidget::tr("Unfortunately, this requested module is not available in this Slicer session."),
+                         QMessageBox::Ok);
     return false;
   }
   qSlicerLayoutManager* layoutManager = qSlicerApplication::application()->layoutManager();
@@ -209,16 +207,11 @@ void qSlicerWelcomeModuleWidget::setup()
   Q_D(qSlicerWelcomeModuleWidget);
   d->setupUi(this);
 
-  connect(d->LoadDicomDataButton, SIGNAL(clicked()),
-          this, SLOT (loadDicomData()));
-  connect(d->LoadNonDicomDataButton, SIGNAL(clicked()),
-          this, SLOT (loadNonDicomData()));
-  connect(d->LoadSampleDataButton, SIGNAL(clicked()),
-          this, SLOT (loadRemoteSampleData()));
-  connect(d->EditApplicationSettingsButton, SIGNAL(clicked()),
-          this, SLOT (editApplicationSettings()));
-  connect(d->ExploreLoadedDataPushButton, SIGNAL(clicked()),
-          this, SLOT (exploreLoadedData()));
+  connect(d->LoadDicomDataButton, SIGNAL(clicked()), this, SLOT(loadDicomData()));
+  connect(d->LoadNonDicomDataButton, SIGNAL(clicked()), this, SLOT(loadNonDicomData()));
+  connect(d->LoadSampleDataButton, SIGNAL(clicked()), this, SLOT(loadRemoteSampleData()));
+  connect(d->EditApplicationSettingsButton, SIGNAL(clicked()), this, SLOT(editApplicationSettings()));
+  connect(d->ExploreLoadedDataPushButton, SIGNAL(clicked()), this, SLOT(exploreLoadedData()));
 
 #ifndef Slicer_BUILD_DICOM_SUPPORT
   d->LoadDicomDataButton->hide();
@@ -232,22 +225,19 @@ void qSlicerWelcomeModuleWidget::setup()
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   if (app && app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool())
   {
-    QObject::connect(d->OpenExtensionsManagerButton, SIGNAL(clicked()),
-      qSlicerApplication::application(), SLOT(openExtensionsManagerDialog()));
+    QObject::connect(d->OpenExtensionsManagerButton, SIGNAL(clicked()), qSlicerApplication::application(), SLOT(openExtensionsManagerDialog()));
     qSlicerExtensionsManagerModel* extensionsManagerModel = d->extensionsManagerModel();
     if (extensionsManagerModel)
     {
       extensionUpdatesEnabled = true;
-      QObject::connect(extensionsManagerModel, SIGNAL(extensionUpdatesAvailable(bool)),
-        this, SLOT(setExtensionUpdatesAvailable(bool)));
+      QObject::connect(extensionsManagerModel, SIGNAL(extensionUpdatesAvailable(bool)), this, SLOT(setExtensionUpdatesAvailable(bool)));
 
       if (!extensionsManagerModel->availableUpdateExtensions().empty())
       {
         this->setExtensionUpdatesAvailable(true);
       }
 
-      QObject::connect(extensionsManagerModel, SIGNAL(autoUpdateSettingsChanged()),
-        this, SLOT(onAutoUpdateSettingsChanged()));
+      QObject::connect(extensionsManagerModel, SIGNAL(autoUpdateSettingsChanged()), this, SLOT(onAutoUpdateSettingsChanged()));
     }
   }
   else
@@ -261,23 +251,19 @@ void qSlicerWelcomeModuleWidget::setup()
 #ifdef Slicer_BUILD_APPLICATIONUPDATE_SUPPORT
   if (app && qSlicerApplicationUpdateManager::isApplicationUpdateEnabled())
   {
-    QObject::connect(d->ApplicationUpdateAvailableButton, SIGNAL(clicked()),
-      qSlicerApplication::application(), SLOT(openApplicationDownloadWebsite()));
-    QObject::connect(d->ApplicationUpdateStatusButton, SIGNAL(clicked()),
-      qSlicerApplication::application(), SLOT(openApplicationDownloadWebsite()));
+    QObject::connect(d->ApplicationUpdateAvailableButton, SIGNAL(clicked()), qSlicerApplication::application(), SLOT(openApplicationDownloadWebsite()));
+    QObject::connect(d->ApplicationUpdateStatusButton, SIGNAL(clicked()), qSlicerApplication::application(), SLOT(openApplicationDownloadWebsite()));
     qSlicerApplicationUpdateManager* applicationUpdateManager = d->applicationUpdateManager();
     if (applicationUpdateManager)
     {
       applicationUpdatesEnabled = true;
-      QObject::connect(applicationUpdateManager, SIGNAL(updateAvailable(bool)),
-        this, SLOT(setApplicationUpdateAvailable(bool)));
+      QObject::connect(applicationUpdateManager, SIGNAL(updateAvailable(bool)), this, SLOT(setApplicationUpdateAvailable(bool)));
       if (applicationUpdateManager->isUpdateAvailable())
       {
         this->setApplicationUpdateAvailable(true);
       }
 
-      QObject::connect(applicationUpdateManager, SIGNAL(autoUpdateCheckChanged()),
-        this, SLOT(onAutoUpdateSettingsChanged()));
+      QObject::connect(applicationUpdateManager, SIGNAL(autoUpdateCheckChanged()), this, SLOT(onAutoUpdateSettingsChanged()));
     }
   }
 #endif
@@ -292,21 +278,17 @@ void qSlicerWelcomeModuleWidget::setup()
 
   if (extensionUpdatesEnabled || applicationUpdatesEnabled)
   {
-    QObject::connect(d->CheckForUpdatesAutomaticallyCheckBox, SIGNAL(stateChanged(int)),
-      this, SLOT(onAutoUpdateCheckStateChanged(int)));
+    QObject::connect(d->CheckForUpdatesAutomaticallyCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onAutoUpdateCheckStateChanged(int)));
 
-    QObject::connect(d->CheckForUpdatesNowButton, SIGNAL(clicked()),
-      this, SLOT(checkForUpdates()));
+    QObject::connect(d->CheckForUpdatesNowButton, SIGNAL(clicked()), this, SLOT(checkForUpdates()));
 
-    QObject::connect(d->ExtensionUpdatesStatusButton, SIGNAL(clicked()),
-      qSlicerApplication::application(), SLOT(openExtensionsManagerDialog()));
+    QObject::connect(d->ExtensionUpdatesStatusButton, SIGNAL(clicked()), qSlicerApplication::application(), SLOT(openExtensionsManagerDialog()));
   }
 
   this->Superclass::setup();
 
   d->FeedbackCollapsibleWidget->setCollapsed(false);
 }
-
 
 //-----------------------------------------------------------------------------
 void qSlicerWelcomeModuleWidget::editApplicationSettings()
@@ -383,11 +365,8 @@ void qSlicerWelcomeModuleWidget::setExtensionUpdatesAvailable(bool isAvailable)
   else
   {
     d->ExtensionUpdatesStatusButton->setEnabled(true);
-    d->ExtensionUpdatesStatusButton->setText(
-      tr("%1 extension update is available", "%1 extension updates are available", availableUpdates.size()).arg(availableUpdates.size()));
-    d->ExtensionUpdatesStatusButton->setToolTip(
-      tr("Use Extensions Manager to update these extensions:")
-      + QString("\n- ") + availableUpdates.join("\n- "));
+    d->ExtensionUpdatesStatusButton->setText(tr("%1 extension update is available", "%1 extension updates are available", availableUpdates.size()).arg(availableUpdates.size()));
+    d->ExtensionUpdatesStatusButton->setToolTip(tr("Use Extensions Manager to update these extensions:") + QString("\n- ") + availableUpdates.join("\n- "));
   }
 #else
   Q_UNUSED(isAvailable);

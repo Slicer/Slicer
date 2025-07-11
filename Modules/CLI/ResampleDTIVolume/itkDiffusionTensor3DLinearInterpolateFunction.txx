@@ -20,9 +20,7 @@ namespace itk
 {
 
 template <class TData, class TCoordRep>
-void
-DiffusionTensor3DLinearInterpolateFunction<TData, TCoordRep>
-::AllocateInterpolator()
+void DiffusionTensor3DLinearInterpolateFunction<TData, TCoordRep>::AllocateInterpolator()
 {
   for (int i = 0; i < 6; i++)
   {
@@ -31,6 +29,6 @@ DiffusionTensor3DLinearInterpolateFunction<TData, TCoordRep>
   }
 }
 
-} // end itk namespace
+} // namespace itk
 
 #endif

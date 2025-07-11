@@ -99,7 +99,7 @@ public:
   /// Clipping state for each clipping node reference
   enum ClippingStateType
   {
-    ClipOff = 0, // Clipping disabled
+    ClipOff = 0,           // Clipping disabled
     ClipPositiveSpace = 1, // Keep +ve region of the implicit function
     ClipNegativeSpace = 2, // Keep -ve region of the implicit function
   };
@@ -233,7 +233,6 @@ public:
   bool GetClippingPlanes(vtkPlaneCollection* planeCollection, bool invert = false, vtkMRMLMessageCollection* messages = nullptr);
 
 protected:
-
   /// Update the implicit function based on the clipping nodes.
   void UpdateImplicitFunction();
 
