@@ -52,13 +52,14 @@ public:
   QAction* action(const QVariant& actionData, const QMenu* parentMenu = nullptr) const;
   QAction* action(const QString& text, const QMenu* parentMenu = nullptr) const;
   QMenu*   actionMenu(QAction* action, QMenu* parentMenu) const;
-
+  // clang-format off
   qSlicerModuleManager* ModuleManager;
   QAction*              NoModuleAction; //< Can be used to remove the current module
   QString               CurrentModule;
   bool                  DuplicateActions;
   bool                  ShowHiddenModules;
   QStringList           TopLevelCategoryOrder;
+  // clang-format on
 };
 
 //---------------------------------------------------------------------------
@@ -69,6 +70,7 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
   this->NoModuleAction = nullptr;
   this->DuplicateActions = false;
   this->ShowHiddenModules = false;
+  // clang-format off
   this->TopLevelCategoryOrder
     << qSlicerAbstractCoreModule::tr("Wizards")
     << qSlicerAbstractCoreModule::tr("Informatics")
@@ -85,6 +87,7 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
     << qSlicerAbstractCoreModule::tr("Developer Tools")
     << qSlicerAbstractCoreModule::tr("Legacy")
     << qSlicerAbstractCoreModule::tr("Testing");
+  // clang-format on
 }
 
 //---------------------------------------------------------------------------
