@@ -31,34 +31,33 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerCamerasModulePrivate;
 
-class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule
-  : public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
+
 public:
   typedef qSlicerLoadableModule Superclass;
-  qSlicerCamerasModule(QObject *parent=nullptr);
+  qSlicerCamerasModule(QObject* parent = nullptr);
   ~qSlicerCamerasModule() override;
 
-  QStringList categories()const override;
-  QIcon icon()const override;
+  QStringList categories() const override;
+  QIcon icon() const override;
 
   qSlicerGetTitleMacro(tr("Cameras"));
 
   /// Return help/acknowledgement text
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 protected:
-
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

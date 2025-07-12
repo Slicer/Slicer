@@ -28,18 +28,16 @@
 class vtkMRMLCameraNode;
 
 /// \brief Displayable manager that displays orientation marker in a slice or 3D view
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLOrientationMarkerDisplayableManager
-  : public vtkMRMLAbstractDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLOrientationMarkerDisplayableManager : public vtkMRMLAbstractDisplayableManager
 {
   friend class vtkRendererUpdateObserver;
 
 public:
   static vtkMRMLOrientationMarkerDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLOrientationMarkerDisplayableManager,vtkMRMLAbstractDisplayableManager);
+  vtkTypeMacro(vtkMRMLOrientationMarkerDisplayableManager, vtkMRMLAbstractDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLOrientationMarkerDisplayableManager();
   ~vtkMRMLOrientationMarkerDisplayableManager() override;
 
@@ -58,12 +56,11 @@ protected:
   void UpdateFromRenderer();
 
 private:
-
   vtkMRMLOrientationMarkerDisplayableManager(const vtkMRMLOrientationMarkerDisplayableManager&) = delete;
   void operator=(const vtkMRMLOrientationMarkerDisplayableManager&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
 };
 
 #endif

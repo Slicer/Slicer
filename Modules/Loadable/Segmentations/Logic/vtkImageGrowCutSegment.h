@@ -12,7 +12,7 @@ class VTK_SLICER_SEGMENTATIONS_LOGIC_EXPORT vtkImageGrowCutSegment : public vtkI
 public:
   static vtkImageGrowCutSegment* New();
   vtkTypeMacro(vtkImageGrowCutSegment, vtkImageAlgorithm);
-  void PrintSelf(ostream &os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set input grayscale volume (input 0)
   void SetIntensityVolume(vtkImageData* grayscaleImage) { this->SetInputData(0, grayscaleImage); }
@@ -40,17 +40,17 @@ protected:
   vtkImageGrowCutSegment();
   ~vtkImageGrowCutSegment() override;
 
-  void ExecuteDataWithInformation(vtkDataObject *outData, vtkInformation *outInfo) override;
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  void ExecuteDataWithInformation(vtkDataObject* outData, vtkInformation* outInfo) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  int FillInputPortInformation(int port, vtkInformation * info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
 private:
   vtkImageGrowCutSegment(const vtkImageGrowCutSegment&) = delete;
   void operator=(const vtkImageGrowCutSegment&) = delete;
 
   class vtkInternal;
-  vtkInternal * Internal;
+  vtkInternal* Internal;
   double DistancePenalty;
 };
 

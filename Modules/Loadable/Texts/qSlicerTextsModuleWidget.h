@@ -34,16 +34,14 @@ class Q_SLICER_QTMODULES_TEXTS_EXPORT qSlicerTextsModuleWidget : public qSlicerA
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerTextsModuleWidget(QWidget *parent=nullptr);
+  qSlicerTextsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerTextsModuleWidget() override;
 
   /// Support of node editing. Selects node in user interface that the user wants to edit
   bool setEditedNode(vtkMRMLNode* node, QString role = QString(), QString context = QString()) override;
 
 protected:
-
   void setup() override;
 
 protected:

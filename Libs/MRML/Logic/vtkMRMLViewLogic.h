@@ -56,8 +56,8 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLViewLogic : public vtkMRMLAbstractLogic
 {
 public:
   /// The Usual VTK class functions
-  static vtkMRMLViewLogic *New();
-  vtkTypeMacro(vtkMRMLViewLogic,vtkMRMLAbstractLogic);
+  static vtkMRMLViewLogic* New();
+  vtkTypeMacro(vtkMRMLViewLogic, vtkMRMLAbstractLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// Set/Get layout name. This is used for finding the camera and view node in the scene.
@@ -65,10 +65,10 @@ public:
   virtual const char* GetName() const;
 
   /// The MRML View node for this View logic
-  vtkGetObjectMacro (ViewNode, vtkMRMLViewNode);
+  vtkGetObjectMacro(ViewNode, vtkMRMLViewNode);
 
   /// The MRML camera node for this View logic
-  vtkGetObjectMacro (CameraNode, vtkMRMLCameraNode);
+  vtkGetObjectMacro(CameraNode, vtkMRMLCameraNode);
 
   /// Indicate an interaction with the camera node is beginning. The
   /// parameters of the camera node being manipulated are passed as a
@@ -91,13 +91,11 @@ public:
 
   /// Convenient method to get the view node from scene and name of the Logic.
   /// The name of the Logic is the same of the widget one to which it is associated
-  static vtkMRMLViewNode* GetViewNode(vtkMRMLScene* scene,
-                                      const char* layoutName);
+  static vtkMRMLViewNode* GetViewNode(vtkMRMLScene* scene, const char* layoutName);
 
   /// Convenient method to get the camera node from scene and name of the Logic.
   /// The name of the Logic is the same of the widget one to which it is associated
-  static vtkMRMLCameraNode* GetCameraNode(vtkMRMLScene* scene,
-                                          const char* layoutName);
+  static vtkMRMLCameraNode* GetCameraNode(vtkMRMLScene* scene, const char* layoutName);
 
 protected:
   vtkMRMLViewLogic();
@@ -123,7 +121,6 @@ protected:
 private:
   vtkMRMLViewLogic(const vtkMRMLViewLogic&) = delete;
   void operator=(const vtkMRMLViewLogic&) = delete;
-
 };
 
 #endif

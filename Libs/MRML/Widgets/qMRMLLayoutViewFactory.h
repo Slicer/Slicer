@@ -50,32 +50,33 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutViewFactory : public ctkLayoutViewFactory
   /// The accessor MUST BE reimplemented in the derived class.
   /// \sa viewClassName(), isElementSupported, isViewNodeSupported
   Q_PROPERTY(QString viewClassName READ viewClassName);
+
 public:
   /// Superclass typedef
   typedef ctkLayoutViewFactory Superclass;
 
   /// Constructors
-  explicit qMRMLLayoutViewFactory(QObject* parent=nullptr);
+  explicit qMRMLLayoutViewFactory(QObject* parent = nullptr);
   ~qMRMLLayoutViewFactory() override;
 
   /// Returns the viewClassName property value.
   /// Returns QString() by default. \note To be reimplemented in derived
   /// classes.
   /// \sa viewClassName
-  virtual QString viewClassName()const;
+  virtual QString viewClassName() const;
 
   /// Returns true if the layoutElement matches the viewClassName
   /// \sa viewClassName, isViewNodeSupported()
-  bool isElementSupported(QDomElement layoutElement)const override;
+  bool isElementSupported(QDomElement layoutElement) const override;
 
   /// Returns true if the viewNode matches the viewClassName.
   /// \sa viewClassName, isElementSupported()
-  virtual bool isViewNodeSupported(vtkMRMLAbstractViewNode* viewNode)const;
+  virtual bool isViewNodeSupported(vtkMRMLAbstractViewNode* viewNode) const;
 
   /// Return the layout manager. It means the view factory
   /// can only be used in one layout manager.
   /// \sa setLayoutManager()
-  Q_INVOKABLE qMRMLLayoutManager* layoutManager()const;
+  Q_INVOKABLE qMRMLLayoutManager* layoutManager() const;
 
   /// Set the layout manager
   /// \sa layoutManager
@@ -83,24 +84,24 @@ public:
 
   /// Return the mrml scene that was set.
   /// \sa setMRMLScene()
-  Q_INVOKABLE vtkMRMLScene* mrmlScene()const;
+  Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
 
-  Q_INVOKABLE QWidget* viewWidget(int id)const;
-  Q_INVOKABLE QWidget* viewWidget(vtkMRMLAbstractViewNode* node)const;
-  Q_INVOKABLE QWidget* viewWidget(const QString& name)const;
-  Q_INVOKABLE QWidget* viewWidgetByLayoutLabel(const QString& layoutLabel)const;
-  Q_INVOKABLE int viewCount()const;
+  Q_INVOKABLE QWidget* viewWidget(int id) const;
+  Q_INVOKABLE QWidget* viewWidget(vtkMRMLAbstractViewNode* node) const;
+  Q_INVOKABLE QWidget* viewWidget(const QString& name) const;
+  Q_INVOKABLE QWidget* viewWidgetByLayoutLabel(const QString& layoutLabel) const;
+  Q_INVOKABLE int viewCount() const;
 
   void beginSetupLayout() override;
 
-  vtkMRMLAbstractViewNode* viewNode(QWidget* widget)const;
+  vtkMRMLAbstractViewNode* viewNode(QWidget* widget) const;
 
   /// Return all the names of the created view nodes.
   QStringList viewNodeNames() const;
 
   void setActiveViewNode(vtkMRMLAbstractViewNode* viewNode);
-  vtkMRMLAbstractViewNode* activeViewNode()const;
-  virtual vtkRenderer* activeRenderer()const;
+  vtkMRMLAbstractViewNode* activeViewNode() const;
+  virtual vtkRenderer* activeRenderer() const;
 
 public Q_SLOTS:
   /// Set the MRML scene to the factory and all the created views that are
@@ -128,7 +129,6 @@ Q_SIGNALS:
   /// \sa setActiveViewNode()
   void activeViewNodeChanged(vtkMRMLAbstractViewNode*);
 
-
 protected:
   QScopedPointer<qMRMLLayoutViewFactoryPrivate> d_ptr;
 
@@ -139,8 +139,8 @@ protected:
   /// Reimplemented to support
   QList<QWidget*> createViewsFromXML(QDomElement layoutElement) override;
 
-  virtual vtkMRMLAbstractViewNode* viewNodeFromXML(QDomElement viewElement)const;
-  virtual QList<vtkMRMLAbstractViewNode*> viewNodesFromXML(QDomElement viewElement)const;
+  virtual vtkMRMLAbstractViewNode* viewNodeFromXML(QDomElement viewElement) const;
+  virtual QList<vtkMRMLAbstractViewNode*> viewNodesFromXML(QDomElement viewElement) const;
 
   /// Instantiate a QWidget for a given abstract view node.
   /// To be reimplemented

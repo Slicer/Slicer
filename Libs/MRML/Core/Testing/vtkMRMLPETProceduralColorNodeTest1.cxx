@@ -14,7 +14,7 @@
 #include "vtkMRMLPETProceduralColorNode.h"
 #include "vtkMRMLScene.h"
 
-int vtkMRMLPETProceduralColorNodeTest1(int , char * [] )
+int vtkMRMLPETProceduralColorNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLPETProceduralColorNode> node1;
   vtkNew<vtkMRMLScene> scene;

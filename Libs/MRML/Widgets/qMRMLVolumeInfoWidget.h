@@ -21,7 +21,6 @@
 #ifndef __qMRMLVolumeInfoWidget_h
 #define __qMRMLVolumeInfoWidget_h
 
-
 // Qt includes
 #include <QListWidget>
 
@@ -44,21 +43,21 @@ class QMRML_WIDGETS_EXPORT qMRMLVolumeInfoWidget : public qMRMLWidget
 public:
   typedef qMRMLWidget Superclass;
 
-  qMRMLVolumeInfoWidget(QWidget *parent=nullptr);
+  qMRMLVolumeInfoWidget(QWidget* parent = nullptr);
   ~qMRMLVolumeInfoWidget() override;
 
-  vtkMRMLVolumeNode* volumeNode()const;
+  vtkMRMLVolumeNode* volumeNode() const;
   // Depends on the dimension, spacing and origin of the volume
-  bool isCentered()const;
+  bool isCentered() const;
 
   // Disabled by default
-  bool isDataTypeEditable()const;
+  bool isDataTypeEditable() const;
 
 public slots:
   /// Utility function to be connected with generic signals
-  void setVolumeNode(vtkMRMLNode *node);
+  void setVolumeNode(vtkMRMLNode* node);
   /// Set the volume node to display
-  void setVolumeNode(vtkMRMLVolumeNode *node);
+  void setVolumeNode(vtkMRMLVolumeNode* node);
   void setDataTypeEditable(bool enable);
 
   void setImageSpacing(double*);

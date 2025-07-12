@@ -24,16 +24,14 @@
 namespace
 {
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkMRMLModelNode> LoadModelInScene
-(const char* filepath, vtkMRMLScene* scene)
+vtkSmartPointer<vtkMRMLModelNode> LoadModelInScene(const char* filepath, vtkMRMLScene* scene)
 {
   vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(filepath);
   reader->Update();
 
   assert(reader->GetOutput());
-  vtkSmartPointer<vtkMRMLModelNode> model =
-    vtkSmartPointer<vtkMRMLModelNode>::New();
+  vtkSmartPointer<vtkMRMLModelNode> model = vtkSmartPointer<vtkMRMLModelNode>::New();
   model->SetAndObservePolyData(reader->GetOutput());
   scene->AddNode(model);
   return model;
@@ -42,9 +40,9 @@ vtkSmartPointer<vtkMRMLModelNode> LoadModelInScene
 } // end namespace
 
 //-----------------------------------------------------------------------------
-int vtkSlicerTransformLogicTest2(int argc, char * argv [])
+int vtkSlicerTransformLogicTest2(int argc, char* argv[])
 {
-  if(argc < 2)
+  if (argc < 2)
   {
     std::cerr << "Missing transform file name." << std::endl;
     return EXIT_FAILURE;
@@ -99,23 +97,19 @@ int vtkSlicerTransformLogicTest2(int argc, char * argv [])
 
   // Test childlessTransform
   std::vector<vtkMRMLDisplayableNode*> results;
-  vtkSlicerTransformLogic::GetTransformedNodes(
-    scene, childlessTransform.GetPointer(), results);
+  vtkSlicerTransformLogic::GetTransformedNodes(scene, childlessTransform.GetPointer(), results);
   if (results.size() != 0)
   {
-    std::cout << "Error, expected results.size() == 0, got "
-      << results.size() << std::endl;
+    std::cout << "Error, expected results.size() == 0, got " << results.size() << std::endl;
     return EXIT_FAILURE;
   }
   results.clear();
 
   // Test oneChildTransform
-  vtkSlicerTransformLogic::GetTransformedNodes(
-    scene, oneChildTransform.GetPointer(), results);
+  vtkSlicerTransformLogic::GetTransformedNodes(scene, oneChildTransform.GetPointer(), results);
   if (results.size() != 1)
   {
-    std::cout << "Error, expected results.size() == 1, got "
-      << results.size() << std::endl;
+    std::cout << "Error, expected results.size() == 1, got " << results.size() << std::endl;
     return EXIT_FAILURE;
   }
   if (strcmp(results[0]->GetID(), singleChild->GetID()) != 0)
@@ -126,12 +120,10 @@ int vtkSlicerTransformLogicTest2(int argc, char * argv [])
   results.clear();
 
   // Test twoChildrenTransform
-  vtkSlicerTransformLogic::GetTransformedNodes(
-    scene, twoChildrenTransform.GetPointer(), results);
+  vtkSlicerTransformLogic::GetTransformedNodes(scene, twoChildrenTransform.GetPointer(), results);
   if (results.size() != 2)
   {
-    std::cout << "Error, expected results.size() == 2, got "
-      << results.size() << std::endl;
+    std::cout << "Error, expected results.size() == 2, got " << results.size() << std::endl;
     return EXIT_FAILURE;
   }
   if (strcmp(results[0]->GetID(), child1->GetID()) != 0)
@@ -147,24 +139,20 @@ int vtkSlicerTransformLogicTest2(int argc, char * argv [])
   results.clear();
 
   // Try node not in the scene
-  vtkSlicerTransformLogic::GetTransformedNodes(
-    scene, notInSceneTransform.GetPointer(), results);
+  vtkSlicerTransformLogic::GetTransformedNodes(scene, notInSceneTransform.GetPointer(), results);
   if (results.size() != 0)
   {
-    std::cout << "Error, expected results.size() == 0, got "
-      << results.size() << std::endl;
+    std::cout << "Error, expected results.size() == 0, got " << results.size() << std::endl;
     return EXIT_FAILURE;
   }
   results.clear();
 
   // Test transform tree
   // Not recursively first
-  vtkSlicerTransformLogic::GetTransformedNodes(
-    scene, transformTree.GetPointer(), results, false);
+  vtkSlicerTransformLogic::GetTransformedNodes(scene, transformTree.GetPointer(), results, false);
   if (results.size() != 2)
   {
-    std::cout << "Error, expected results.size() == 2, got "
-      << results.size() << std::endl;
+    std::cout << "Error, expected results.size() == 2, got " << results.size() << std::endl;
     return EXIT_FAILURE;
   }
   if (strcmp(results[0]->GetID(), childTransform->GetID()) != 0)
@@ -180,12 +168,10 @@ int vtkSlicerTransformLogicTest2(int argc, char * argv [])
   results.clear();
 
   // Now recursively
-  vtkSlicerTransformLogic::GetTransformedNodes(
-    scene, transformTree.GetPointer(), results);
+  vtkSlicerTransformLogic::GetTransformedNodes(scene, transformTree.GetPointer(), results);
   if (results.size() != 4)
   {
-    std::cout << "Error, expected results.size() == 4, got "
-      << results.size() << std::endl;
+    std::cout << "Error, expected results.size() == 4, got " << results.size() << std::endl;
     return EXIT_FAILURE;
   }
   if (strcmp(results[0]->GetID(), childTransform->GetID()) != 0)

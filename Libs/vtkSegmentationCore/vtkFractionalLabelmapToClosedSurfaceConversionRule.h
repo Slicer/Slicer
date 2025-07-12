@@ -30,8 +30,7 @@
 ///   closed surface representation (vtkPolyData type). The conversion algorithm
 ///   performs a marching cubes operation on the image data followed by an optional
 ///   decimation step.
-class vtkSegmentationCore_EXPORT vtkFractionalLabelmapToClosedSurfaceConversionRule
-  : public vtkBinaryLabelmapToClosedSurfaceConversionRule
+class vtkSegmentationCore_EXPORT vtkFractionalLabelmapToClosedSurfaceConversionRule : public vtkBinaryLabelmapToClosedSurfaceConversionRule
 {
 public:
   /// Conversion parameter: magnification factor
@@ -57,7 +56,7 @@ public:
   bool Convert(vtkSegment* segment) override;
 
   /// Get the cost of the conversion.
-  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
+  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr, vtkDataObject* targetRepresentation = nullptr) override;
 
   /// Human-readable name of the converter rule
   const char* GetName() override { return "Fractional labelmap to closed surface"; };
@@ -69,7 +68,6 @@ public:
   const char* GetTargetRepresentationName() override { return vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName(); };
 
 protected:
-
   /// This function adds a border around the image that contains the paddingConstant value
   /// \param FractionalLabelMap The image that is being padded
   /// \param paddingConstant The value that is used to fill the new voxels

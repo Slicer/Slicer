@@ -22,16 +22,15 @@
 #include "qMRMLModelDisplayNodeWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLModelDisplayNodeWidgetPlugin::
-  qMRMLModelDisplayNodeWidgetPlugin(QObject *newParent) : QObject(newParent)
+qMRMLModelDisplayNodeWidgetPlugin::qMRMLModelDisplayNodeWidgetPlugin(QObject* newParent)
+  : QObject(newParent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLModelDisplayNodeWidgetPlugin::createWidget(QWidget *newParent)
+QWidget* qMRMLModelDisplayNodeWidgetPlugin::createWidget(QWidget* newParent)
 {
-  qMRMLModelDisplayNodeWidget* newWidget =
-    new qMRMLModelDisplayNodeWidget(newParent);
+  qMRMLModelDisplayNodeWidget* newWidget = new qMRMLModelDisplayNodeWidget(newParent);
   return newWidget;
 }
 
@@ -40,15 +39,15 @@ QString qMRMLModelDisplayNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLModelDisplayNodeWidget\" \
           name=\"EMSegmentInputChannelListWidget\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>200</height>\n"
-          "  </rect>\n"
-          " </property>\n"
-          "</widget>\n";
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>200</height>\n"
+         "  </rect>\n"
+         " </property>\n"
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

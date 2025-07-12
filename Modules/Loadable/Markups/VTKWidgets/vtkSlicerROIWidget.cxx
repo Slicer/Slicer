@@ -45,8 +45,7 @@ vtkSlicerROIWidget::vtkSlicerROIWidget() = default;
 vtkSlicerROIWidget::~vtkSlicerROIWidget() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerROIWidget::CreateDefaultRepresentation(
-  vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+void vtkSlicerROIWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))

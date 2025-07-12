@@ -32,8 +32,7 @@ class vtkPolyData;
 /// \brief Convert closed surface representation (vtkPolyData type) to binary
 ///   labelmap representation (vtkOrientedImageData type). The conversion algorithm
 ///   is based on image stencil.
-class vtkSegmentationCore_EXPORT vtkClosedSurfaceToBinaryLabelmapConversionRule
-  : public vtkSegmentationConverterRule
+class vtkSegmentationCore_EXPORT vtkClosedSurfaceToBinaryLabelmapConversionRule : public vtkSegmentationConverterRule
 {
 public:
   /// Conversion parameter: oversampling factor
@@ -54,7 +53,7 @@ public:
   /// Constructs representation object from representation name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
   /// Note: Need to take ownership of the created object! For example using vtkSmartPointer<vtkDataObject>::Take
-  vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName)  override;
+  vtkDataObject* ConstructRepresentationObjectByRepresentation(std::string representationName) override;
 
   /// Constructs representation object from class name for the supported representation classes
   /// (typically source and target representation VTK classes, subclasses of vtkDataObject)
@@ -69,7 +68,7 @@ public:
   bool PostConvert(vtkSegmentation* segmentation) override;
 
   /// Get the cost of the conversion.
-  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation=nullptr, vtkDataObject* targetRepresentation=nullptr) override;
+  unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr, vtkDataObject* targetRepresentation = nullptr) override;
 
   /// Human-readable name of the converter rule
   const char* GetName() override { return "Closed surface to binary labelmap (simple image stencil)"; };
@@ -103,7 +102,7 @@ protected:
   /// because pre-calculating the geometry of the output image data is not trivial and should be done
   /// only when there is a specific reason to do that (such as doing the conversion for sub-volumes and
   /// then stitching them back together).
-  bool UseOutputImageDataGeometry{false};
+  bool UseOutputImageDataGeometry{ false };
 
 protected:
   vtkClosedSurfaceToBinaryLabelmapConversionRule();

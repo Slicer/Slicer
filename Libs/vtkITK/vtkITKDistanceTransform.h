@@ -17,7 +17,7 @@
 class VTK_ITK_EXPORT vtkITKDistanceTransform : public vtkSimpleImageToImageFilter
 {
 public:
-  static vtkITKDistanceTransform *New();
+  static vtkITKDistanceTransform* New();
   vtkTypeMacro(vtkITKDistanceTransform, vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -36,7 +36,6 @@ public:
   /// Value of background
   vtkGetMacro(BackgroundValue, double);
   vtkSetMacro(BackgroundValue, double);
-
 
 protected:
   vtkITKDistanceTransform();

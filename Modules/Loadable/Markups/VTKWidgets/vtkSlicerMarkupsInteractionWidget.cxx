@@ -18,7 +18,6 @@
 
 ==============================================================================*/
 
-
 #include "vtkSlicerMarkupsInteractionWidget.h"
 #include "vtkSlicerMarkupsInteractionWidgetRepresentation.h"
 
@@ -135,8 +134,7 @@ void vtkSlicerMarkupsInteractionWidget::ApplyTransform(vtkTransform* transform)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsInteractionWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* displayNode,
-  vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+void vtkSlicerMarkupsInteractionWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* displayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation> rep = vtkSmartPointer<vtkSlicerMarkupsInteractionWidgetRepresentation>::New();
   this->SetRenderer(renderer);
@@ -181,9 +179,7 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessInteractionEvent(vtkMRMLInteracti
 
   switch (widgetEvent)
   {
-    case WidgetEventJumpCursor:
-      processedEvent = ProcessWidgetJumpCursor(eventData);
-      break;
+    case WidgetEventJumpCursor: processedEvent = ProcessWidgetJumpCursor(eventData); break;
     case WidgetEventTranslateStart:
     case WidgetEventScaleStart:
     case WidgetEventRotateStart:
@@ -196,8 +192,7 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessInteractionEvent(vtkMRMLInteracti
       // Just invoke the custom event, the interaction will be handled by the superclass
       markupsNode->InvokeCustomModifiedEvent(vtkMRMLMarkupsNode::PointEndInteractionEvent);
       break;
-    default:
-      break;
+    default: break;
   }
   processedEvent = Superclass::ProcessInteractionEvent(eventData);
   return processedEvent;
@@ -239,7 +234,7 @@ bool vtkSlicerMarkupsInteractionWidget::ProcessWidgetJumpCursor(vtkMRMLInteracti
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerMarkupsInteractionWidget::ScaleWidget(double eventPos[2], bool uniformScale/*=false*/)
+void vtkSlicerMarkupsInteractionWidget::ScaleWidget(double eventPos[2], bool uniformScale /*=false*/)
 {
   if (vtkMRMLMarkupsROINode::SafeDownCast(this->GetMarkupsNode()))
   {
@@ -290,14 +285,12 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
   else
   {
     // 3D view
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      this->LastEventPosition, lastEventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, this->LastEventPosition, lastEventPos_World, orientation_World))
     {
       return;
     }
 
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      eventPos, lastEventPos_World, eventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos, lastEventPos_World, eventPos_World, orientation_World))
     {
       return;
     }
@@ -314,10 +307,8 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
   {
     // We are interacting with one of the edges.
     // Restrict scaling to apply only in that direction.
-    this->GetClosestPointOnInteractionAxis(
-      InteractionScaleHandle, index, this->LastEventPosition, lastEventPos_World);
-    this->GetClosestPointOnInteractionAxis(
-      InteractionScaleHandle, index, eventPos, eventPos_World);
+    this->GetClosestPointOnInteractionAxis(InteractionScaleHandle, index, this->LastEventPosition, lastEventPos_World);
+    this->GetClosestPointOnInteractionAxis(InteractionScaleHandle, index, eventPos, eventPos_World);
   }
   else
   {
@@ -413,8 +404,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
         bounds_Plane[0] -= scaleVector_Object[0];
       }
       break;
-    default:
-      break;
+    default: break;
   }
 
   switch (index)
@@ -437,8 +427,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetPlane(double eventPos[2], boo
         bounds_Plane[2] -= scaleVector_Object[1];
       }
       break;
-    default:
-      break;
+    default: break;
   }
 
   // If we have crossed over the origin, we need to flip the selected handle across the Right and/or Anterior axis.
@@ -482,26 +471,13 @@ void vtkSlicerMarkupsInteractionWidget::FlipPlaneHandles(bool flipLRHandle, bool
   {
     switch (index)
     {
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleLEdge:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleREdge;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleREdge:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleLEdge;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner;
-        break;
-      default:
-        break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleLEdge: index = vtkMRMLMarkupsPlaneDisplayNode::HandleREdge; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleREdge: index = vtkMRMLMarkupsPlaneDisplayNode::HandleLEdge; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner: index = vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner: index = vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner: index = vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner: index = vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner; break;
+      default: break;
     }
   }
 
@@ -509,26 +485,13 @@ void vtkSlicerMarkupsInteractionWidget::FlipPlaneHandles(bool flipLRHandle, bool
   {
     switch (index)
     {
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner;
-        break;
-      case vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner:
-        index = vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner;
-        break;
-      default:
-        break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge: index = vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandlePEdge: index = vtkMRMLMarkupsPlaneDisplayNode::HandleAEdge; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner: index = vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleLPCorner: index = vtkMRMLMarkupsPlaneDisplayNode::HandleLACorner; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner: index = vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner; break;
+      case vtkMRMLMarkupsPlaneDisplayNode::HandleRPCorner: index = vtkMRMLMarkupsPlaneDisplayNode::HandleRACorner; break;
+      default: break;
     }
   }
 
@@ -554,10 +517,8 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
   MRMLNodeModifyBlocker blocker(roiNode);
 
   double lastEventPos_World[3] = { 0.0, 0.0, 0.0 };
-  double eventPos_World[3]     = { 0.0, 0.0, 0.0 };
-  double orientation_World[9]  = { 0.0, 0.0, 0.0,
-                                   0.0, 0.0, 0.0,
-                                   0.0, 0.0, 0.0 };
+  double eventPos_World[3] = { 0.0, 0.0, 0.0 };
+  double orientation_World[9] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
   vtkMRMLInteractionWidgetRepresentation* rep = vtkMRMLInteractionWidgetRepresentation::SafeDownCast(this->WidgetRep);
   if (!rep)
@@ -580,14 +541,12 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
   else
   {
     // 3D view
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      this->LastEventPosition, lastEventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, this->LastEventPosition, lastEventPos_World, orientation_World))
     {
       return;
     }
 
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer,
-      eventPos, lastEventPos_World, eventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos, lastEventPos_World, eventPos_World, orientation_World))
     {
       return;
     }
@@ -604,10 +563,8 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
     int index = displayNode->GetActiveComponentIndex();
     if (index < 6 && !rep->GetSliceNode())
     {
-      this->GetClosestPointOnInteractionAxis(
-        InteractionScaleHandle, index, this->LastEventPosition, lastEventPos_World);
-      this->GetClosestPointOnInteractionAxis(
-        InteractionScaleHandle, index, eventPos, eventPos_World);
+      this->GetClosestPointOnInteractionAxis(InteractionScaleHandle, index, this->LastEventPosition, lastEventPos_World);
+      this->GetClosestPointOnInteractionAxis(InteractionScaleHandle, index, eventPos, eventPos_World);
     }
 
     double scaleVector_World[3] = { 0.0, 0.0, 0.0 };
@@ -653,8 +610,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
           bounds_ROI[0] -= scaleVector_ROI[0];
         }
         break;
-      default:
-        break;
+      default: break;
     }
 
     switch (index)
@@ -689,8 +645,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
           bounds_ROI[2] -= scaleVector_ROI[1];
         }
         break;
-      default:
-        break;
+      default: break;
     }
 
     switch (index)
@@ -725,8 +680,7 @@ void vtkSlicerMarkupsInteractionWidget::ScaleWidgetROI(double eventPos[2], bool 
           bounds_ROI[4] -= scaleVector_ROI[2];
         }
         break;
-      default:
-        break;
+      default: break;
     }
 
     double newSize[3] = { 0.0, 0.0, 0.0 };
@@ -769,62 +723,25 @@ void vtkSlicerMarkupsInteractionWidget::FlipROIHandles(bool flipLRHandle, bool f
   {
     switch (index)
     {
-      case vtkMRMLMarkupsROIDisplayNode::HandleLFace:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRFace;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRFace:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLFace;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLAICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRAICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLPICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRPICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRASCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLAICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRPICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLPICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLASCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLAEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRAEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLPEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRPEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLIEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRIEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLSEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRSEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRAEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLAEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRPEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLPEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRIEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLIEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRSEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLSEdge;
-        break;
-      default:
-        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLFace: index = vtkMRMLMarkupsROIDisplayNode::HandleRFace; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRFace: index = vtkMRMLMarkupsROIDisplayNode::HandleLFace; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRAICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRPICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRASCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLAICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLPICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLASCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleRAEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleRPEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLIEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleRIEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLSEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleRSEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleLAEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleLPEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRIEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleLIEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRSEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleLSEdge; break;
+      default: break;
     }
   }
 
@@ -832,62 +749,25 @@ void vtkSlicerMarkupsInteractionWidget::FlipROIHandles(bool flipLRHandle, bool f
   {
     switch (index)
     {
-      case vtkMRMLMarkupsROIDisplayNode::HandleAFace:
-        index = vtkMRMLMarkupsROIDisplayNode::HandlePFace;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandlePFace:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleAFace;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLAICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLPICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLPICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLAICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLASCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRPICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRPICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRAICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRASCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLPEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLAEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRPEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRAEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandlePIEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleAIEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandlePSEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleASEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLAEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLPEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRAEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRPEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleAIEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandlePIEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleASEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandlePSEdge;
-        break;
-      default:
-        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleAFace: index = vtkMRMLMarkupsROIDisplayNode::HandlePFace; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandlePFace: index = vtkMRMLMarkupsROIDisplayNode::HandleAFace; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLPICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLAICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLASCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRPICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRAICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRASCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleLAEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleRAEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandlePIEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleAIEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandlePSEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleASEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleLPEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleRPEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleAIEdge: index = vtkMRMLMarkupsROIDisplayNode::HandlePIEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleASEdge: index = vtkMRMLMarkupsROIDisplayNode::HandlePSEdge; break;
+      default: break;
     }
   }
 
@@ -895,62 +775,25 @@ void vtkSlicerMarkupsInteractionWidget::FlipROIHandles(bool flipLRHandle, bool f
   {
     switch (index)
     {
-      case vtkMRMLMarkupsROIDisplayNode::HandleIFace:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleSFace;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleSFace:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleIFace;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLAICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLASCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLPICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLAICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLPICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRASCorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRPICorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRPICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRAICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRPICorner;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLIEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLSEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRIEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRSEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleAIEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleASEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandlePIEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandlePSEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleLSEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleLIEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleRSEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleRIEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandleASEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandleAIEdge;
-        break;
-      case vtkMRMLMarkupsROIDisplayNode::HandlePSEdge:
-        index = vtkMRMLMarkupsROIDisplayNode::HandlePIEdge;
-        break;
-      default:
-        break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleIFace: index = vtkMRMLMarkupsROIDisplayNode::HandleSFace; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleSFace: index = vtkMRMLMarkupsROIDisplayNode::HandleIFace; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLAICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLASCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLASCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLAICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLPSCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleLPICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRAICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRASCorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPICorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRPICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRASCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRAICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRPSCorner: index = vtkMRMLMarkupsROIDisplayNode::HandleRPICorner; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLIEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleLSEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRIEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleRSEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleAIEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleASEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandlePIEdge: index = vtkMRMLMarkupsROIDisplayNode::HandlePSEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleLSEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleLIEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleRSEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleRIEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandleASEdge: index = vtkMRMLMarkupsROIDisplayNode::HandleAIEdge; break;
+      case vtkMRMLMarkupsROIDisplayNode::HandlePSEdge: index = vtkMRMLMarkupsROIDisplayNode::HandlePIEdge; break;
+      default: break;
     }
   }
 

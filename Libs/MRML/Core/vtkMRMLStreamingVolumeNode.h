@@ -41,16 +41,16 @@ Care Ontario.
 /// In this context, a frame is considered to be a compressed image that may require additional frames to decode to an image,
 /// and an image is the uncompressed pixel based representation.
 /// A video codec can be used to decode and encode between frame and image representations
-class  VTK_MRML_EXPORT vtkMRMLStreamingVolumeNode : public vtkMRMLVectorVolumeNode
+class VTK_MRML_EXPORT vtkMRMLStreamingVolumeNode : public vtkMRMLVectorVolumeNode
 {
 public:
-  static vtkMRMLStreamingVolumeNode *New();
-  vtkTypeMacro(vtkMRMLStreamingVolumeNode,vtkMRMLVectorVolumeNode);
+  static vtkMRMLStreamingVolumeNode* New();
+  vtkTypeMacro(vtkMRMLStreamingVolumeNode, vtkMRMLVectorVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
-  void ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Set node attributes
   void ReadXMLAttributes(const char** atts) override;
@@ -63,8 +63,7 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLStreamingVolumeNode);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override
-  {return "StreamingVolume";}
+  const char* GetNodeTagName() override { return "StreamingVolume"; }
 
   /// Set/Get the observed image data object and and image data connections
   /// \sa vtkMRMLVolumeNode::SetAndObserveImageData(), vtkMRMLVolumeNode::GetImageData(), vtkMRMLVolumeNode::GetImageDataConnection()
@@ -77,7 +76,7 @@ public:
   void SetAndObserveFrame(vtkStreamingVolumeFrame* frame);
 
   /// Returns a pointer to the current frame
-  vtkStreamingVolumeFrame* GetFrame(){return this->Frame.GetPointer();};
+  vtkStreamingVolumeFrame* GetFrame() { return this->Frame.GetPointer(); };
 
   /// Encodes the current vtkImageData as a compressed frame using the specified codec
   /// Returns true if the image is successfully encoded
@@ -93,7 +92,7 @@ public:
 
   /// Callback that is called if the current frame is modified
   /// Invokes FrameModifiedEvent
-  static void FrameModifiedCallback(vtkObject *caller, unsigned long eid, void* clientData, void* callData);
+  static void FrameModifiedCallback(vtkObject* caller, unsigned long eid, void* clientData, void* callData);
   enum
   {
     FrameModifiedEvent = 18002
@@ -127,12 +126,11 @@ protected:
 
 protected:
   vtkSmartPointer<vtkStreamingVolumeCodec> Codec;
-  std::string                              CodecFourCC;
+  std::string CodecFourCC;
   vtkSmartPointer<vtkStreamingVolumeFrame> Frame;
-  bool                                     FrameDecoded{false};
-  bool                                     FrameDecodingInProgress{false};
-  vtkSmartPointer<vtkCallbackCommand>      FrameModifiedCallbackCommand;
-
+  bool FrameDecoded{ false };
+  bool FrameDecodingInProgress{ false };
+  vtkSmartPointer<vtkCallbackCommand> FrameModifiedCallbackCommand;
 };
 
 #endif

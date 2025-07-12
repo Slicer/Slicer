@@ -23,18 +23,12 @@ class vtkMRMLStorableNodeTestHelper1 : public vtkMRMLStorableNode
 {
 public:
   // Provide a concrete New.
-  static vtkMRMLStorableNodeTestHelper1 *New();
+  static vtkMRMLStorableNodeTestHelper1* New();
 
-  vtkTypeMacro(vtkMRMLStorableNodeTestHelper1,vtkMRMLStorableNode);
+  vtkTypeMacro(vtkMRMLStorableNodeTestHelper1, vtkMRMLStorableNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLStorableNodeTestHelper1::New();
-  }
-  const char* GetNodeTagName() override
-  {
-    return "vtkMRMLStorableNodeTestHelper1";
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLStorableNodeTestHelper1::New(); }
+  const char* GetNodeTagName() override { return "vtkMRMLStorableNodeTestHelper1"; }
 
   // for testing purposes, return a valid storage node,
   // vtkMRMLStorageNode::New returns nullptr
@@ -43,7 +37,7 @@ public:
 vtkStandardNewMacro(vtkMRMLStorableNodeTestHelper1);
 
 //---------------------------------------------------------------------------
-int vtkMRMLStorableNodeTest1(int , char * [] )
+int vtkMRMLStorableNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLStorableNodeTestHelper1> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

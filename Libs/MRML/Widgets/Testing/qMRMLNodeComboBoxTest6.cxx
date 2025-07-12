@@ -37,8 +37,7 @@
 #include <vtkNew.h>
 #include "qMRMLWidget.h"
 
-
-int qMRMLNodeComboBoxTest6( int argc, char * argv [] )
+int qMRMLNodeComboBoxTest6(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
@@ -48,12 +47,12 @@ int qMRMLNodeComboBoxTest6( int argc, char * argv [] )
   nodeSelector.setNodeTypes(QStringList("vtkMRMLModelNode"));
   nodeSelector.setNoneEnabled(true);
   nodeSelector.addAttribute("vtkMRMLModelNode", "foo", 1);
-/*
-  qMRMLNodeComboBox nodeSelector2;
-  nodeSelector2.setNodeTypes(QStringList("vtkMRMLModelNode"));
-  nodeSelector2.setNoneEnabled(false);
-  nodeSelector2.addAttribute("vtkMRMLModelNode", "foo", 0);
-*/
+  /*
+    qMRMLNodeComboBox nodeSelector2;
+    nodeSelector2.setNodeTypes(QStringList("vtkMRMLModelNode"));
+    nodeSelector2.setNoneEnabled(false);
+    nodeSelector2.addAttribute("vtkMRMLModelNode", "foo", 0);
+  */
   vtkNew<vtkMRMLScene> scene;
 
   vtkNew<vtkMRMLModelNode> modelNode;
@@ -63,11 +62,11 @@ int qMRMLNodeComboBoxTest6( int argc, char * argv [] )
   nodeSelector.setMRMLScene(scene.GetPointer());
   nodeSelector.setCurrentNode(modelNode.GetPointer());
   nodeSelector.show();
-/*
-  nodeSelector2.setMRMLScene(scene.GetPointer());
-  nodeSelector2.setCurrentNode(modelNode.GetPointer());
-  nodeSelector2.show();
-*/
+  /*
+    nodeSelector2.setMRMLScene(scene.GetPointer());
+    nodeSelector2.setCurrentNode(modelNode.GetPointer());
+    nodeSelector2.show();
+  */
   if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
@@ -75,6 +74,6 @@ int qMRMLNodeComboBoxTest6( int argc, char * argv [] )
   app.processEvents();
   modelNode->SetAttribute("foo", "0");
   modelNode->Modified();
-  qDebug() <<"modified";
+  qDebug() << "modified";
   return app.exec();
 }

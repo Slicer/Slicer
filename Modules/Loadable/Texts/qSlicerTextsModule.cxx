@@ -53,11 +53,10 @@ qSlicerTextsModule::qSlicerTextsModule(QObject* _parentObject)
 qSlicerTextsModule::~qSlicerTextsModule() = default;
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerTextsModule::icon()const
+QIcon qSlicerTextsModule::icon() const
 {
   return QIcon(":/Icons/SlicerTexts.png");
 }
-
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerTextsModule::categories() const
@@ -84,7 +83,7 @@ vtkMRMLAbstractLogic* qSlicerTextsModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTextsModule::helpText()const
+QString qSlicerTextsModule::helpText() const
 {
   QString help = tr("A module to create, edit and manage text data in the scene.") + QLatin1String("<br>");
   help += this->defaultDocumentationLink();
@@ -92,15 +91,14 @@ QString qSlicerTextsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTextsModule::acknowledgementText()const
+QString qSlicerTextsModule::acknowledgementText() const
 {
   return tr("This work was supported through CANARIE's Research Software Program, and Cancer Care Ontario."
-    " The Texts module was contributed by Kyle Sunderland and Andras Lasso (Perk Lab, Queen's University)");
-
+            " The Texts module was contributed by Kyle Sunderland and Andras Lasso (Perk Lab, Queen's University)");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTextsModule::contributors()const
+QStringList qSlicerTextsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Kyle Sunderland (PerkLab, Queen's)");
@@ -111,7 +109,7 @@ QStringList qSlicerTextsModule::contributors()const
 //-----------------------------------------------------------------------------
 void qSlicerTextsModule::setup()
 {
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (!app)
   {
     return;
@@ -128,6 +126,6 @@ void qSlicerTextsModule::setup()
 //-----------------------------------------------------------------------------
 QStringList qSlicerTextsModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLTextNode";
+  return QStringList() //
+         << "vtkMRMLTextNode";
 }

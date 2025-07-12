@@ -26,6 +26,6 @@
 // #if MRML_APPLICATION_SUPPORT_VERSION < MRML_VERSION_CHECK(4, 4, 0)
 // ...
 // #endif
-#define MRML_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
+#define MRML_VERSION_CHECK(major, minor, patch) ((major << 16) | (minor << 8) | (patch))
 
 #endif

@@ -28,10 +28,9 @@ qSlicerTerminologyNavigatorWidgetPlugin::qSlicerTerminologyNavigatorWidgetPlugin
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qSlicerTerminologyNavigatorWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qSlicerTerminologyNavigatorWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qSlicerTerminologyNavigatorWidget* pluginWidget =
-    new qSlicerTerminologyNavigatorWidget(parentWidget);
+  qSlicerTerminologyNavigatorWidget* pluginWidget = new qSlicerTerminologyNavigatorWidget(parentWidget);
   return pluginWidget;
 }
 
@@ -40,7 +39,7 @@ QString qSlicerTerminologyNavigatorWidgetPlugin::domXml() const
 {
   return "<widget class=\"qSlicerTerminologyNavigatorWidget\" \
           name=\"SegmentationDisplayNodeWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

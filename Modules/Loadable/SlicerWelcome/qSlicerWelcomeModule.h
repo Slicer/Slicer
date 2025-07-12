@@ -31,33 +31,30 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerWelcomeModulePrivate;
 
-class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_WELCOME_EXPORT qSlicerWelcomeModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  qSlicerWelcomeModule(QObject *parent=nullptr);
+  qSlicerWelcomeModule(QObject* parent = nullptr);
   ~qSlicerWelcomeModule() override;
 
   qSlicerGetTitleMacro(tr("Welcome to Slicer"));
 
-  QStringList categories()const override;
-  QIcon icon()const override;
+  QStringList categories() const override;
+  QIcon icon() const override;
 
   /// Help to use the module
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
 
 protected:
-
   /// Create and return the widget representation associated to this module
-  qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override;

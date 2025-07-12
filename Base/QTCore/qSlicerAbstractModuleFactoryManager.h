@@ -87,7 +87,7 @@ public:
   typedef ctkAbstractFactory<qSlicerAbstractCoreModule> qSlicerModuleFactory;
 
   typedef QObject Superclass;
-  qSlicerAbstractModuleFactoryManager(QObject * newParent = nullptr);
+  qSlicerAbstractModuleFactoryManager(QObject* newParent = nullptr);
 
   /// Destructor, Deallocates resources
   /// Unregister (and delete) all registered factories.
@@ -118,7 +118,7 @@ public:
   void unregisterFactories();
 
   void setSearchPaths(const QStringList& searchPaths);
-  QStringList searchPaths()const;
+  QStringList searchPaths() const;
 
   /// Utility function that adds a list of path to the current \a searchPaths
   /// list.
@@ -134,15 +134,14 @@ public:
   inline void removeSearchPath(const QString& path);
 
   void setExplicitModules(const QStringList& moduleNames);
-  QStringList explicitModules()const;
-
+  QStringList explicitModules() const;
 
   /// Set or get the \a modulesToIgnore list.
   ///
   /// If list is modified, the signal
   /// modulesToIgnoreChanged(const QStringLists&) is emitted.
   void setModulesToIgnore(const QStringList& modulesNames);
-  QStringList modulesToIgnore()const;
+  QStringList modulesToIgnore() const;
 
   /// Utility function that adds a module to the \a modulesToIgnore list.
   /// \sa removeModuleToIgnore(const QString& moduleName)
@@ -154,7 +153,7 @@ public:
 
   /// After the modules are registered, ignoredModules contains the list
   /// of all the modules that were ignored.
-  QStringList ignoredModuleNames()const;
+  QStringList ignoredModuleNames() const;
 
   /// Scan the paths in \a searchPaths and for each file, attempt to register
   /// using one of the registered factories.
@@ -166,7 +165,7 @@ public:
   Q_INVOKABLE QStringList registeredModuleNames() const;
 
   /// Return true if a module has been registered, false otherwise
-  Q_INVOKABLE bool isRegistered(const QString& name)const;
+  Q_INVOKABLE bool isRegistered(const QString& name) const;
 
   /// Instantiate all previously registered modules.
   virtual void instantiateModules();
@@ -175,10 +174,10 @@ public:
   Q_INVOKABLE QStringList instantiatedModuleNames() const;
 
   /// Return true if a module has been instantiated, false otherwise
-  Q_INVOKABLE bool isInstantiated(const QString& name)const;
+  Q_INVOKABLE bool isInstantiated(const QString& name) const;
 
   /// Return the instance of a module if already instantiated, 0 otherwise
-  Q_INVOKABLE qSlicerAbstractCoreModule* moduleInstance(const QString& moduleName)const;
+  Q_INVOKABLE qSlicerAbstractCoreModule* moduleInstance(const QString& moduleName) const;
 
   /// Uninstantiate all instantiated modules
   void uninstantiateModules();
@@ -189,12 +188,12 @@ public:
   /// Return the list of modules that have \a module as a dependency.
   /// Note that the list can contain unloaded modules.
   /// \sa qSlicerAbstractCoreModule::dependencies(), moduleDependees()
-  QStringList dependentModules(const QString& module)const;
+  QStringList dependentModules(const QString& module) const;
 
   /// Return the list of modules that depend on \a module.
   /// Note that the list can contain unloaded modules.
   /// \sa dependentModules(), qSlicerAbstractCoreModule::dependencies()
-  QStringList moduleDependees(const QString& module)const;
+  QStringList moduleDependees(const QString& module) const;
 
 signals:
   /// \brief This signal is emitted when all the modules associated with the
@@ -222,7 +221,8 @@ public slots:
   /// uninstantiating, set by setVerboseModuleDiscovery()
   /// \sa setVerboseModuleDiscovery()
   void setIsVerbose(bool flag);
-  bool isVerbose()const;
+  bool isVerbose() const;
+
 protected:
   QScopedPointer<qSlicerAbstractModuleFactoryManagerPrivate> d_ptr;
 
@@ -254,7 +254,7 @@ void qSlicerAbstractModuleFactoryManager::addSearchPath(const QString& path)
 //-----------------------------------------------------------------------------
 void qSlicerAbstractModuleFactoryManager::removeSearchPaths(const QStringList& paths)
 {
-  foreach(const QString& path, paths)
+  foreach (const QString& path, paths)
   {
     this->removeSearchPath(path);
   }

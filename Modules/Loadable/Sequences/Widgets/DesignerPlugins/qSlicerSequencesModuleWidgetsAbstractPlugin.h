@@ -16,26 +16,25 @@
   This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
-==============================================================================*/\
+==============================================================================*/
 
 #ifndef qSlicerSequencesModuleWidgetsAbstractPlugin_h
 #define qSlicerSequencesModuleWidgetsAbstractPlugin_h
 
 #include <QtGlobal>
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-#include <QDesignerCustomWidgetInterface>
+# include <QDesignerCustomWidgetInterface>
 #else
-#include <QtUiPlugin/QDesignerCustomWidgetInterface>
+# include <QtUiPlugin/QDesignerCustomWidgetInterface>
 #endif
 
 #include "qSlicerSequencesModuleWidgetsPluginsExport.h"
 
-class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT qSlicerSequencesModuleWidgetsAbstractPlugin
-    : public QDesignerCustomWidgetInterface
+class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT qSlicerSequencesModuleWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerSequencesModuleWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;
@@ -43,7 +42,6 @@ public:
   QIcon icon() const override;
   QString toolTip() const override;
   QString whatsThis() const override;
-
 };
 
 #endif

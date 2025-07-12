@@ -43,7 +43,7 @@ qMRMLLayoutWidget::qMRMLLayoutWidget(QWidget* widget)
 qMRMLLayoutWidget::~qMRMLLayoutWidget() = default;
 
 //------------------------------------------------------------------------------
-qMRMLLayoutManager* qMRMLLayoutWidget::layoutManager()const
+qMRMLLayoutManager* qMRMLLayoutWidget::layoutManager() const
 {
   Q_D(const qMRMLLayoutWidget);
   return d->LayoutManager;
@@ -66,14 +66,14 @@ void qMRMLLayoutWidget::setMRMLScene(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLScene* qMRMLLayoutWidget::mrmlScene()const
+vtkMRMLScene* qMRMLLayoutWidget::mrmlScene() const
 {
   Q_D(const qMRMLLayoutWidget);
   return d->LayoutManager->mrmlScene();
 }
 
 //------------------------------------------------------------------------------
-int qMRMLLayoutWidget::layout()const
+int qMRMLLayoutWidget::layout() const
 {
   Q_D(const qMRMLLayoutWidget);
   return d->LayoutManager->layout();

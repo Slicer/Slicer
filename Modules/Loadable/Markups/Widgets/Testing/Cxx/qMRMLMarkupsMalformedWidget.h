@@ -37,20 +37,19 @@ class qMRMLMarkupsMalformedWidget : public qMRMLMarkupsAbstractOptionsWidget
 
 public:
   typedef qMRMLMarkupsAbstractOptionsWidget Superclass;
-  qMRMLMarkupsMalformedWidget(QWidget* parent=nullptr);
+  qMRMLMarkupsMalformedWidget(QWidget* parent = nullptr);
 
   /// Gets the name of the additional options widget type
-  const QString className() const override {return "";}
+  const QString className() const override { return ""; }
 
   void updateWidgetFromMRML() {}
 
-  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode *) const override {return false;}  /// Set the MRML node of interest
+  bool canManageMRMLMarkupsNode(vtkMRMLMarkupsNode*) const override { return false; } /// Set the MRML node of interest
 
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
   /// Returns an instance of the widget
-  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
-  { return new qMRMLMarkupsMalformedWidget(); }
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override { return new qMRMLMarkupsMalformedWidget(); }
 };
 
 #endif

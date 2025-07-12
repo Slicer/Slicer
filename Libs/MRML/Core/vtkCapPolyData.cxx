@@ -65,7 +65,7 @@ void vtkCapPolyData::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkCapPolyData::GetPlanes(vtkImplicitFunction* function, vtkPlaneCollection* planes, vtkAbstractTransform* parentTransform/*=nullptr*/)
+void vtkCapPolyData::GetPlanes(vtkImplicitFunction* function, vtkPlaneCollection* planes, vtkAbstractTransform* parentTransform /*=nullptr*/)
 {
   if (!function || !planes)
   {
@@ -273,8 +273,7 @@ void vtkCapPolyData::UpdateCellTypeArray(vtkPolyData* polyData)
 }
 
 //------------------------------------------------------------------------------
-int vtkCapPolyData::RequestData(vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** inputVector, vtkInformationVector* outputVector)
+int vtkCapPolyData::RequestData(vtkInformation* vtkNotUsed(request), vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
   // get the info objects
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);

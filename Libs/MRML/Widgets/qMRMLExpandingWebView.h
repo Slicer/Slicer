@@ -31,8 +31,7 @@ class vtkMRMLScene;
 /// \brief qMRMLExpandingWebView is the display canvas for some or all of a MRML scene.
 ///
 /// qMRMLExpandingWebView is currently implemented as a subclass of QWebView
-class QMRML_WIDGETS_EXPORT qMRMLExpandingWebView :
-    public QWebEngineView
+class QMRML_WIDGETS_EXPORT qMRMLExpandingWebView : public QWebEngineView
 {
   Q_OBJECT
 public:

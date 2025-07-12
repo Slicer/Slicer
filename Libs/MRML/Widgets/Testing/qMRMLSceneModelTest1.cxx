@@ -41,13 +41,13 @@
 
 // STD includes
 
-int qMRMLSceneModelTest1( int argc, char * argv [] )
+int qMRMLSceneModelTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  qMRMLSceneModel   sceneModel;
+  qMRMLSceneModel sceneModel;
   CHECK_INT(sceneModel.rowCount(), 0);
 
   qMRMLSceneFactoryWidget sceneFactory;
@@ -92,7 +92,7 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   sceneModel.setPostItems(postNodes, sceneModel.mrmlSceneItem());
 
   QStringList preNodes;
-  preNodes << "pre item 1" << "pre item 2"  << "separator";
+  preNodes << "pre item 1" << "pre item 2" << "separator";
   sceneModel.setPreItems(preNodes, sceneModel.mrmlSceneItem());
 
   QStringList postScene;
@@ -118,7 +118,7 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
   view->setModel(&sceneModel);
   view->show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

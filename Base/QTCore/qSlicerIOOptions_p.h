@@ -18,10 +18,10 @@
 
 ==============================================================================*/
 
-#include "qSlicerIO.h"
-
 #ifndef qSlicerIOOptions_p_h
 #define qSlicerIOOptions_p_h
+
+#include "qSlicerIO.h"
 
 //
 //  W A R N I N G

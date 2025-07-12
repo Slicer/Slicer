@@ -50,20 +50,20 @@ public:
   ~qMRMLModelDisplayNodeWidget() override;
 
   /// Get model display node (if model was selected not folder)
-  vtkMRMLModelDisplayNode* mrmlModelDisplayNode()const;
+  vtkMRMLModelDisplayNode* mrmlModelDisplayNode() const;
   /// Get current display node (may be model or folder display node)
-  vtkMRMLDisplayNode* mrmlDisplayNode()const;
+  vtkMRMLDisplayNode* mrmlDisplayNode() const;
   /// Get current item (if single selection)
-  vtkIdType currentSubjectHierarchyItemID()const;
+  vtkIdType currentSubjectHierarchyItemID() const;
   /// Get current items (if multi selection)
-  QList<vtkIdType> currentSubjectHierarchyItemIDs()const;
+  QList<vtkIdType> currentSubjectHierarchyItemIDs() const;
 
-  bool visibility()const;
-  bool clipping()const;
-  bool sliceIntersectionVisible()const;
-  int sliceIntersectionThickness()const;
-  double sliceIntersectionOpacity()const;
-  bool clippingConfigurationButtonVisible()const;
+  bool visibility() const;
+  bool clipping() const;
+  bool sliceIntersectionVisible() const;
+  int sliceIntersectionThickness() const;
+  double sliceIntersectionOpacity() const;
+  bool clippingConfigurationButtonVisible() const;
 
 signals:
   /// Signal sent if the auto/manual value is updated

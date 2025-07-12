@@ -28,8 +28,7 @@
 class vtkMRMLNode;
 
 /// Utility class that is ready to use for most of the nodes.
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriter
-  : public qSlicerNodeWriter
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriter : public qSlicerNodeWriter
 {
   Q_OBJECT
 public:
@@ -38,7 +37,7 @@ public:
   ~qSlicerSegmentationsNodeWriter() override;
 
   /// Return a new qSlicerSegmentationsNodeWriterOptionsWidget
-  qSlicerIOOptions* options()const override;
+  qSlicerIOOptions* options() const override;
 
   /// Write the node referenced by "nodeID" into the "fileName" file.
   /// Optionally, "useCompression" and "useReferenceGeometry" can be specified.

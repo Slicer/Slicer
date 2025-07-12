@@ -28,21 +28,20 @@ qMRMLSegmentEditorWidgetPlugin::qMRMLSegmentEditorWidgetPlugin(QObject* pluginPa
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLSegmentEditorWidgetPlugin::createWidget(QWidget* parentWidget)
+QWidget* qMRMLSegmentEditorWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentEditorWidget* pluginWidget =
-    new qMRMLSegmentEditorWidget(parentWidget);
+  qMRMLSegmentEditorWidget* pluginWidget = new qMRMLSegmentEditorWidget(parentWidget);
   return pluginWidget;
 }
 
 //-----------------------------------------------------------------------------
 QString qMRMLSegmentEditorWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSegmentEditorWidget\" name=\"SegmentEditorWidget\">\n"
-    "  <property name=\"defaultTerminologyEntrySettingsKey\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSegmentEditorWidget\" name=\"SegmentEditorWidget\">\n"
+         "  <property name=\"defaultTerminologyEntrySettingsKey\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 //-----------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 #include "ui_qSlicerTemplateKeyModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerTemplateKeyModuleWidgetPrivate: public Ui_qSlicerTemplateKeyModuleWidget
+class qSlicerTemplateKeyModuleWidgetPrivate : public Ui_qSlicerTemplateKeyModuleWidget
 {
 public:
   qSlicerTemplateKeyModuleWidgetPrivate();
@@ -33,24 +33,20 @@ public:
 // qSlicerTemplateKeyModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyModuleWidgetPrivate::qSlicerTemplateKeyModuleWidgetPrivate()
-{
-}
+qSlicerTemplateKeyModuleWidgetPrivate::qSlicerTemplateKeyModuleWidgetPrivate() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerTemplateKeyModuleWidget methods
 
 //-----------------------------------------------------------------------------
 qSlicerTemplateKeyModuleWidget::qSlicerTemplateKeyModuleWidget(QWidget* _parent)
-  : Superclass( _parent )
-  , d_ptr( new qSlicerTemplateKeyModuleWidgetPrivate )
+  : Superclass(_parent)
+  , d_ptr(new qSlicerTemplateKeyModuleWidgetPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyModuleWidget::~qSlicerTemplateKeyModuleWidget()
-{
-}
+qSlicerTemplateKeyModuleWidget::~qSlicerTemplateKeyModuleWidget() {}
 
 //-----------------------------------------------------------------------------
 void qSlicerTemplateKeyModuleWidget::setup()

@@ -59,8 +59,7 @@ vtkMRMLViewInteractorStyle::~vtkMRMLViewInteractorStyle()
     int numberOfDisplayableManagers = this->DisplayableManagers->GetDisplayableManagerCount();
     for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
     {
-      vtkMRMLAbstractDisplayableManager* displayableManager =
-          this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex);
+      vtkMRMLAbstractDisplayableManager* displayableManager = this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex);
       displayableManager->RemoveObserver(this->DisplayableManagerCallbackCommand);
     }
   }
@@ -70,7 +69,7 @@ vtkMRMLViewInteractorStyle::~vtkMRMLViewInteractorStyle()
 //----------------------------------------------------------------------------
 void vtkMRMLViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
@@ -331,7 +330,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
 {
   if (!this->DisplayableManagers)
   {
-    //this->SetMouseCursor(VTK_CURSOR_DEFAULT);
+    // this->SetMouseCursor(VTK_CURSOR_DEFAULT);
     return false;
   }
   if (eventData->GetType() == vtkCommand::Button3DEvent || eventData->GetType() == vtkCommand::Move3DEvent)
@@ -348,8 +347,8 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
   // Find the most suitable displayable manager
   for (int displayableManagerIndex = 0; displayableManagerIndex < numberOfDisplayableManagers; ++displayableManagerIndex)
   {
-    vtkMRMLAbstractDisplayableManager* displayableManager = vtkMRMLAbstractDisplayableManager::SafeDownCast(
-      this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex));
+    vtkMRMLAbstractDisplayableManager* displayableManager =
+      vtkMRMLAbstractDisplayableManager::SafeDownCast(this->DisplayableManagers->GetNthDisplayableManager(displayableManagerIndex));
     if (!displayableManager)
     {
       continue;
@@ -406,7 +405,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
   // This prevents desynchronized update of displayable managers during user interaction
   // (ie. slice intersection widget or segmentations lagging behind during slice translation)
   vtkMRMLApplicationLogic* appLogic = this->FocusedDisplayableManager->GetMRMLApplicationLogic();
-  if(appLogic)
+  if (appLogic)
   {
     this->FocusedDisplayableManager->GetMRMLApplicationLogic()->PauseRender();
   }
@@ -417,7 +416,7 @@ bool vtkMRMLViewInteractorStyle::DelegateInteractionEventDataToDisplayableManage
     cursor = this->FocusedDisplayableManager->GetMouseCursor();
   }
   this->FocusedDisplayableManager->SetMouseCursor(cursor);
-  if(appLogic)
+  if (appLogic)
   {
     this->FocusedDisplayableManager->GetMRMLApplicationLogic()->ResumeRender();
   }
@@ -434,16 +433,14 @@ void vtkMRMLViewInteractorStyle::SetMouseCursor(int cursor)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
-  unsigned long event, void* clientdata, void* calldata)
+void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata)
 {
-  vtkMRMLViewInteractorStyle* self
-    = reinterpret_cast<vtkMRMLViewInteractorStyle *>(clientdata);
+  vtkMRMLViewInteractorStyle* self = reinterpret_cast<vtkMRMLViewInteractorStyle*>(clientdata);
 
   // Save info for button click detection
-  if (event == vtkCommand::LeftButtonPressEvent
-    || event == vtkCommand::RightButtonPressEvent
-    || event == vtkCommand::MiddleButtonPressEvent)
+  if (event == vtkCommand::LeftButtonPressEvent     //
+      || event == vtkCommand::RightButtonPressEvent //
+      || event == vtkCommand::MiddleButtonPressEvent)
   {
     self->MouseMovedSinceButtonDown = false;
   }
@@ -457,7 +454,8 @@ void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
   // get the chance to process the events first (except when we are in an
   // interaction state - such as zooming, panning, etc).
 
-  if (/*self->GetInteractorStyle()->GetState() != VTKIS_NONE || */!self->DelegateInteractionEventToDisplayableManagers(event) || self->GetInteractorStyle()->GetState() != VTKIS_NONE)
+  if (/*self->GetInteractorStyle()->GetState() != VTKIS_NONE || */ !self->DelegateInteractionEventToDisplayableManagers(event)
+      || self->GetInteractorStyle()->GetState() != VTKIS_NONE)
   {
     // Displayable managers did not processed it
     vtkMRMLViewInteractorStyle::ProcessEvents(object, event, clientdata, calldata);
@@ -465,126 +463,59 @@ void vtkMRMLViewInteractorStyle::CustomProcessEvents(vtkObject* object,
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewInteractorStyle::ProcessEvents(vtkObject* vtkNotUsed(object),
-  unsigned long event, void* clientdata, void* calldata)
+void vtkMRMLViewInteractorStyle::ProcessEvents(vtkObject* vtkNotUsed(object), unsigned long event, void* clientdata, void* calldata)
 {
-  vtkMRMLViewInteractorStyle* self
-    = reinterpret_cast<vtkMRMLViewInteractorStyle *>(clientdata);
+  vtkMRMLViewInteractorStyle* self = reinterpret_cast<vtkMRMLViewInteractorStyle*>(clientdata);
 
-  switch(event)
+  switch (event)
   {
     /// Mouse functions
-    case vtkCommand::MouseMoveEvent:
-      self->OnMouseMove();
-      break;
-    case vtkCommand::RightButtonDoubleClickEvent:
-      self->OnRightButtonDoubleClick();
-      break;
-    case vtkCommand::RightButtonPressEvent:
-      self->OnRightButtonDown();
-      break;
-    case vtkCommand::RightButtonReleaseEvent:
-      self->OnRightButtonUp();
-      break;
-    case vtkCommand::MiddleButtonDoubleClickEvent:
-      self->OnMiddleButtonDoubleClick();
-      break;
-    case vtkCommand::MiddleButtonPressEvent:
-      self->OnMiddleButtonDown();
-      break;
-    case vtkCommand::MiddleButtonReleaseEvent:
-      self->OnMiddleButtonUp();
-      break;
-    case vtkCommand::LeftButtonDoubleClickEvent:
-      self->OnLeftButtonDoubleClick();
-      break;
-    case vtkCommand::LeftButtonPressEvent:
-      self->OnLeftButtonDown();
-      break;
-    case vtkCommand::LeftButtonReleaseEvent:
-      self->OnLeftButtonUp();
-      break;
-    case vtkCommand::EnterEvent:
-      self->OnEnter();
-      break;
-    case vtkCommand::LeaveEvent:
-      self->OnLeave();
-      break;
-    case vtkCommand::MouseWheelForwardEvent:
-      self->OnMouseWheelForward();
-      break;
-    case vtkCommand::MouseWheelBackwardEvent:
-      self->OnMouseWheelBackward();
-      break;
+    case vtkCommand::MouseMoveEvent: self->OnMouseMove(); break;
+    case vtkCommand::RightButtonDoubleClickEvent: self->OnRightButtonDoubleClick(); break;
+    case vtkCommand::RightButtonPressEvent: self->OnRightButtonDown(); break;
+    case vtkCommand::RightButtonReleaseEvent: self->OnRightButtonUp(); break;
+    case vtkCommand::MiddleButtonDoubleClickEvent: self->OnMiddleButtonDoubleClick(); break;
+    case vtkCommand::MiddleButtonPressEvent: self->OnMiddleButtonDown(); break;
+    case vtkCommand::MiddleButtonReleaseEvent: self->OnMiddleButtonUp(); break;
+    case vtkCommand::LeftButtonDoubleClickEvent: self->OnLeftButtonDoubleClick(); break;
+    case vtkCommand::LeftButtonPressEvent: self->OnLeftButtonDown(); break;
+    case vtkCommand::LeftButtonReleaseEvent: self->OnLeftButtonUp(); break;
+    case vtkCommand::EnterEvent: self->OnEnter(); break;
+    case vtkCommand::LeaveEvent: self->OnLeave(); break;
+    case vtkCommand::MouseWheelForwardEvent: self->OnMouseWheelForward(); break;
+    case vtkCommand::MouseWheelBackwardEvent: self->OnMouseWheelBackward(); break;
 
     // Touch gesture interaction events
-    case vtkCommand::StartPinchEvent:
-      self->OnStartPinch();
-      break;
-    case vtkCommand::PinchEvent:
-      self->OnPinch();
-      break;
-    case vtkCommand::EndPinchEvent:
-      self->OnEndPinch();
-      break;
-    case vtkCommand::StartRotateEvent:
-      self->OnStartRotate();
-      break;
-    case vtkCommand::RotateEvent:
-      self->OnRotate();
-      break;
-    case vtkCommand::EndRotateEvent:
-      self->OnEndRotate();
-      break;
-    case vtkCommand::StartPanEvent:
-      self->OnStartPan();
-      break;
-    case vtkCommand::PanEvent:
-      self->OnPan();
-      break;
-    case vtkCommand::EndPanEvent:
-      self->OnEndPan();
-      break;
-    case vtkCommand::TapEvent:
-      self->OnTap();
-      break;
-    case vtkCommand::LongTapEvent:
-      self->OnLongTap();
-      break;
+    case vtkCommand::StartPinchEvent: self->OnStartPinch(); break;
+    case vtkCommand::PinchEvent: self->OnPinch(); break;
+    case vtkCommand::EndPinchEvent: self->OnEndPinch(); break;
+    case vtkCommand::StartRotateEvent: self->OnStartRotate(); break;
+    case vtkCommand::RotateEvent: self->OnRotate(); break;
+    case vtkCommand::EndRotateEvent: self->OnEndRotate(); break;
+    case vtkCommand::StartPanEvent: self->OnStartPan(); break;
+    case vtkCommand::PanEvent: self->OnPan(); break;
+    case vtkCommand::EndPanEvent: self->OnEndPan(); break;
+    case vtkCommand::TapEvent: self->OnTap(); break;
+    case vtkCommand::LongTapEvent: self->OnLongTap(); break;
 
     /// Keyboard functions
-    case vtkCommand::KeyPressEvent:
-      self->OnConfigure();
-      break;
-    case vtkCommand::KeyReleaseEvent:
-      self->OnKeyRelease();
-      break;
-    case vtkCommand::CharEvent:
-      self->OnChar();
-      break;
+    case vtkCommand::KeyPressEvent: self->OnConfigure(); break;
+    case vtkCommand::KeyReleaseEvent: self->OnKeyRelease(); break;
+    case vtkCommand::CharEvent: self->OnChar(); break;
 
     /// 3D event bindings
-    case vtkCommand::Button3DEvent:
-      self->OnButton3D(static_cast<vtkEventData*>(calldata));
-      break;
-    case vtkCommand::Move3DEvent:
-      self->OnMove3D(static_cast<vtkEventData*>(calldata));
-      break;
+    case vtkCommand::Button3DEvent: self->OnButton3D(static_cast<vtkEventData*>(calldata)); break;
+    case vtkCommand::Move3DEvent: self->OnMove3D(static_cast<vtkEventData*>(calldata)); break;
 
-    case vtkCommand::ExposeEvent:
-      self->OnExpose();
-      break;
-    case vtkCommand::ConfigureEvent:
-      self->OnConfigure();
-      break;
+    case vtkCommand::ExposeEvent: self->OnExpose(); break;
+    case vtkCommand::ConfigureEvent: self->OnConfigure(); break;
 
-    default:
-      break;
+    default: break;
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor *interactor)
+void vtkMRMLViewInteractorStyle::SetInteractor(vtkRenderWindowInteractor* interactor)
 {
   if (interactor == this->Interactor)
   {
@@ -651,15 +582,16 @@ vtkInteractorStyle* vtkMRMLViewInteractorStyle::GetInteractorStyle()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewInteractorStyle::DisplayableManagerCallback(vtkObject *object, unsigned long event, void *clientData, void *callData)
+void vtkMRMLViewInteractorStyle::DisplayableManagerCallback(vtkObject* object, unsigned long event, void* clientData, void* callData)
 {
-  vtkMRMLViewInteractorStyle* self = reinterpret_cast<vtkMRMLViewInteractorStyle *>(clientData);
+  vtkMRMLViewInteractorStyle* self = reinterpret_cast<vtkMRMLViewInteractorStyle*>(clientData);
   assert(object->IsA("vtkMRMLAbstractDisplayableManager"));
   self->ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager::SafeDownCast(object), event, callData);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLViewInteractorStyle::ProcessDisplayableManagerEvents(
-    vtkMRMLAbstractDisplayableManager * vtkNotUsed(displayableManager), unsigned long vtkNotUsed(event), void *vtkNotUsed(callData))
+void vtkMRMLViewInteractorStyle::ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager* vtkNotUsed(displayableManager),
+                                                                 unsigned long vtkNotUsed(event),
+                                                                 void* vtkNotUsed(callData))
 {
 }

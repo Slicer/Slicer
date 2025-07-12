@@ -26,7 +26,7 @@
 using namespace vtkMRMLCoreTestingUtilities;
 
 //---------------------------------------------------------------------------
-int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
+int vtkMRMLColorTableNodeTest1(int argc, char* argv[])
 {
   vtkNew<vtkMRMLColorTableNode> node1;
   {
@@ -37,9 +37,9 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
 
   if (argc != 3)
   {
-    std::cerr << "Line " << __LINE__
-              << " - Missing parameters !\n"
-              << "Usage: " << argv[0] << " /path/to/temp /path/to/TestData"
+    std::cerr << "Line " << __LINE__                                        //
+              << " - Missing parameters !\n"                                //
+              << "Usage: " << argv[0] << " /path/to/temp /path/to/TestData" //
               << std::endl;
     return EXIT_FAILURE;
   }
@@ -108,8 +108,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
         CHECK_NOT_NULL(scene->AddNode(colorNode.GetPointer()));
 
         // add storage node to the scene
-        vtkSmartPointer<vtkMRMLStorageNode> colorStorageNode =
-          vtkSmartPointer<vtkMRMLStorageNode>::Take(colorNode->CreateDefaultStorageNode());
+        vtkSmartPointer<vtkMRMLStorageNode> colorStorageNode = vtkSmartPointer<vtkMRMLStorageNode>::Take(colorNode->CreateDefaultStorageNode());
 
         scene->AddNode(colorStorageNode);
 
@@ -138,8 +137,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
         CHECK_INT(parser->Parse(), 1);
 
         // test the color node
-        vtkMRMLColorTableNode* colorNode =
-          vtkMRMLColorTableNode::SafeDownCast(scene->GetNodeByID(expectedColorNodeId.c_str()));
+        vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(scene->GetNodeByID(expectedColorNodeId.c_str()));
         CHECK_NOT_NULL(colorNode);
 
         CHECK_INT(colorNode->GetStorageNode()->ReadData(colorNode), 1);
@@ -211,8 +209,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[])
       CHECK_INT(colorStorageNode->GetUserMessages()->GetNumberOfMessages(), 0);
       CHECK_INT(colorNode->GetNumberOfColors(), 11);
       CHECK_BOOL(colorNode->GetContainsTerminology(), true);
-      CHECK_STD_STRING(colorNode->GetTerminologyAsString(6),
-        "~SCT^49755003^Morphologically Altered Structure~SCT^4147007^Mass~^^~~SCT^64033007^Kidney~SCT^24028007^Right~");
+      CHECK_STD_STRING(colorNode->GetTerminologyAsString(6), "~SCT^49755003^Morphologically Altered Structure~SCT^4147007^Mass~^^~~SCT^64033007^Kidney~SCT^24028007^Right~");
     }
 
     {

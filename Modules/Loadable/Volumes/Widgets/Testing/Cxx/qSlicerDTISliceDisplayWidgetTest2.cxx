@@ -47,7 +47,7 @@
 #include <itkFactoryRegistration.h>
 
 //-----------------------------------------------------------------------------
-int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
+int qSlicerDTISliceDisplayWidgetTest2(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 

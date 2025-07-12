@@ -23,7 +23,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLPlotViewNodeTest1(int , char * [] )
+int vtkMRMLPlotViewNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLPlotViewNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
@@ -42,23 +42,23 @@ int vtkMRMLPlotViewNodeTest1(int , char * [] )
 
   callback->ResetNumberOfEvents();
   node1->SetPlotChartNodeID(plotChartNode1->GetID());
-  CHECK_INT(callback->GetNumberOfModified(),1);
+  CHECK_INT(callback->GetNumberOfModified(), 1);
 
   callback->ResetNumberOfEvents();
   node1->SetPlotChartNodeID(plotChartNode2->GetID());
-  CHECK_INT(callback->GetNumberOfModified(),1);
+  CHECK_INT(callback->GetNumberOfModified(), 1);
 
   callback->ResetNumberOfEvents();
   node1->SetPlotChartNodeID(plotChartNode2->GetID());
-  CHECK_INT(callback->GetNumberOfModified(),0);
+  CHECK_INT(callback->GetNumberOfModified(), 0);
 
   callback->ResetNumberOfEvents();
   node1->SetPlotChartNodeID(nullptr);
-  CHECK_INT(callback->GetNumberOfModified(),1);
+  CHECK_INT(callback->GetNumberOfModified(), 1);
 
   callback->ResetNumberOfEvents();
   node1->SetPlotChartNodeID(nullptr);
-  CHECK_INT(callback->GetNumberOfModified(),0);
+  CHECK_INT(callback->GetNumberOfModified(), 0);
 
   std::cout << "vtkMRMLPlotViewNodeTest1 completed successfully" << std::endl;
   return EXIT_SUCCESS;

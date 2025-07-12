@@ -23,12 +23,13 @@
 #include "qMRMLNavigationView.h"
 
 //-----------------------------------------------------------------------------
-qMRMLNavigationViewPlugin::qMRMLNavigationViewPlugin(QObject *_parent):QObject(_parent)
+qMRMLNavigationViewPlugin::qMRMLNavigationViewPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLNavigationViewPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLNavigationViewPlugin::createWidget(QWidget* _parent)
 {
   qMRMLNavigationView* _widget = new qMRMLNavigationView(_parent);
   return _widget;
@@ -39,15 +40,15 @@ QString qMRMLNavigationViewPlugin::domXml() const
 {
   return "<widget class=\"qMRMLNavigationView\" \
           name=\"MRMLNavigationView\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>200</height>\n"
-          "  </rect>\n"
-          " </property>\n"
-          "</widget>\n";
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>200</height>\n"
+         "  </rect>\n"
+         " </property>\n"
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

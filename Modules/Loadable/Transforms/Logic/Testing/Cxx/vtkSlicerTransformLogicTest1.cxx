@@ -20,11 +20,11 @@
 #include <itkFactoryRegistration.h>
 
 //-----------------------------------------------------------------------------
-int vtkSlicerTransformLogicTest1(int argc, char * argv [])
+int vtkSlicerTransformLogicTest1(int argc, char* argv[])
 {
   itk::itkFactoryRegistration();
 
-  if(argc < 2)
+  if (argc < 2)
   {
     std::cerr << "Missing transform file name." << std::endl;
     return EXIT_FAILURE;

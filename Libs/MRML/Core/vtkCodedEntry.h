@@ -29,8 +29,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 class VTK_MRML_EXPORT vtkCodedEntry : public vtkObject
 {
 public:
-
-  static vtkCodedEntry *New();
+  static vtkCodedEntry* New();
   vtkTypeMacro(vtkCodedEntry, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -100,9 +99,9 @@ protected:
   void operator=(const vtkCodedEntry&);
 
 protected:
-  char* CodeValue{nullptr};
-  char* CodingSchemeDesignator{nullptr};
-  char* CodeMeaning{nullptr};
+  char* CodeValue{ nullptr };
+  char* CodingSchemeDesignator{ nullptr };
+  char* CodeMeaning{ nullptr };
 };
 
 #endif

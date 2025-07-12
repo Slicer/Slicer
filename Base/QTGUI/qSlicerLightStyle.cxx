@@ -35,7 +35,7 @@ qSlicerLightStyle::qSlicerLightStyle() = default;
 qSlicerLightStyle::~qSlicerLightStyle() = default;
 
 //------------------------------------------------------------------------------
-QPalette qSlicerLightStyle::standardPalette()const
+QPalette qSlicerLightStyle::standardPalette() const
 {
   QPalette palette = this->Superclass::standardLightPalette();
   return palette;

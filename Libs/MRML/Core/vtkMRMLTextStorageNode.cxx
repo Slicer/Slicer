@@ -81,7 +81,7 @@ void vtkMRMLTextStorageNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTextStorageNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLTextStorageNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -110,7 +110,7 @@ void vtkMRMLTextStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode * refNode)
+int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 {
   if (!this->CanReadInReferenceNode(refNode))
   {
@@ -161,7 +161,7 @@ int vtkMRMLTextStorageNode::ReadDataInternal(vtkMRMLNode * refNode)
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode * refNode)
+bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode* refNode)
 {
   vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(refNode);
   if (textNode == nullptr)
@@ -173,7 +173,7 @@ bool vtkMRMLTextStorageNode::CanWriteFromReferenceNode(vtkMRMLNode * refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
+int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLTextNode* textNode = vtkMRMLTextNode::SafeDownCast(refNode);
   if (textNode == nullptr)
@@ -194,8 +194,9 @@ int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
   {
     if (!vtksys::SystemTools::RemoveFile(fullName.c_str()))
     {
-      vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTextStorageNode::WriteDataInternal",
-        "Text file '" << fullName.c_str() << "' could not be overwritten while trying to write (" << (this->ID ? this->ID : "(unknown)") << ").");
+      vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                       "vtkMRMLTextStorageNode::WriteDataInternal",
+                                       "Text file '" << fullName.c_str() << "' could not be overwritten while trying to write (" << (this->ID ? this->ID : "(unknown)") << ").");
       return 0;
     }
   }
@@ -204,8 +205,10 @@ int vtkMRMLTextStorageNode::WriteDataInternal(vtkMRMLNode * refNode)
   file.open(fullName);
   if (!file.is_open())
   {
-    vtkErrorToMessageCollectionMacro(this->GetUserMessages(), "vtkMRMLTextStorageNode::WriteDataInternal",
-      "Text file '" << fullName.c_str() << "' could not be opened for writing while trying to write (" << (this->ID ? this->ID : "(unknown)") << ").");
+    vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
+                                     "vtkMRMLTextStorageNode::WriteDataInternal",
+                                     "Text file '" << fullName.c_str() << "' could not be opened for writing while trying to write (" << (this->ID ? this->ID : "(unknown)")
+                                                   << ").");
     return 0;
   }
   file << textNode->GetText();

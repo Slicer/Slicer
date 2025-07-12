@@ -31,30 +31,30 @@ template <class TData>
 class DiffusionTensor3DTransform : public Object
 {
 public:
-  typedef TData                               DataType;
-  typedef double                              TransformType;
-  typedef DiffusionTensor3DTransform          Self;
-  typedef Point<TransformType, 3>             PointType;
-  typedef DiffusionTensor3D<DataType>         TensorDataType;
+  typedef TData DataType;
+  typedef double TransformType;
+  typedef DiffusionTensor3DTransform Self;
+  typedef Point<TransformType, 3> PointType;
+  typedef DiffusionTensor3D<DataType> TensorDataType;
   typedef DiffusionTensor3DExtended<DataType> InternalTensorDataType;
-  typedef Matrix<TransformType, 3, 3>         MatrixTransformType;
-  typedef Matrix<DataType, 3, 3>              MatrixDataType;
+  typedef Matrix<TransformType, 3, 3> MatrixTransformType;
+  typedef Matrix<DataType, 3, 3> MatrixDataType;
   typedef MatrixExtended<TransformType, 3, 3> InternalMatrixTransformType;
-  typedef MatrixExtended<DataType, 3, 3>      InternalMatrixDataType;
-  typedef SmartPointer<Self>                  Pointer;
-  typedef SmartPointer<const Self>            ConstPointer;
+  typedef MatrixExtended<DataType, 3, 3> InternalMatrixDataType;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(DiffusionTensor3DTransform, Object);
 
   // /Evaluate the position of the transformed tensor
-  virtual PointType EvaluateTensorPosition( const PointType & point ) = 0;
+  virtual PointType EvaluateTensorPosition(const PointType& point) = 0;
 
   // /Evaluate the transformed tensor
-  virtual TensorDataType EvaluateTransformedTensor(  TensorDataType & tensor, PointType & outputPosition) = 0;
+  virtual TensorDataType EvaluateTransformedTensor(TensorDataType& tensor, PointType& outputPosition) = 0;
 
   // /Set the measurement frame of the tensor
-  itkSetMacro( MeasurementFrame, MatrixTransformType );
+  itkSetMacro(MeasurementFrame, MatrixTransformType);
   virtual typename Transform<TransformType, 3, 3>::Pointer GetTransform() = 0;
 
 protected:
@@ -65,7 +65,7 @@ protected:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDiffusionTensor3DTransform.txx"
+# include "itkDiffusionTensor3DTransform.txx"
 #endif
 
 #endif

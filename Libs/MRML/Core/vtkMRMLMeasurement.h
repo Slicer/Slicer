@@ -10,7 +10,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #ifndef __vtkMRMLMeasurement_h
 #define __vtkMRMLMeasurement_h
 
-//#define USE_POLYDATA_MEASUREMENTS
+// #define USE_POLYDATA_MEASUREMENTS
 
 // MRML includes
 #include <vtkCodedEntry.h>
@@ -66,8 +66,8 @@ public:
   /// GetLastComputationResultAsString()
   enum ComputationResult
   {
-    NoChange=0, ///< can be used to indicate to keep the current value
-    OK, ///< success
+    NoChange = 0, ///< can be used to indicate to keep the current value
+    OK,           ///< success
     InsufficientInput,
     InternalError
   };
@@ -94,7 +94,7 @@ public:
 
   /// Clear measured value
   /// Note: per-control-point values are not cleared
-  virtual void ClearValue(ComputationResult computationResult=NoChange);
+  virtual void ClearValue(ComputationResult computationResult = NoChange);
 
   /// Copy one type into another (deep copy)
   virtual void Copy(vtkMRMLMeasurement* source);
@@ -131,7 +131,7 @@ public:
   /// displayCoefficient value for the chosen units.
   /// If units and/or displayCoefficient is not specified then the current Units and/or DisplayCoefficient values are used.
   /// The stored value is computed as displayValue / DisplayCoefficient.
-  void SetDisplayValue(double value, const char* units=nullptr, double displayCoefficient=0.0);
+  void SetDisplayValue(double value, const char* units = nullptr, double displayCoefficient = 0.0);
 
   /// Get display value.
   /// It is computed using this formula: DisplayValue = Value * DisplayCoefficient.
@@ -207,18 +207,19 @@ protected:
   vtkMRMLUnitNode* GetUnitNode(const char* quantityName);
 
 protected:
-  bool Enabled{true};
+  bool Enabled{ true };
   std::string Name;
-  double Value{0.0};
-  bool ValueDefined{false};
-  double DisplayCoefficient{1.0};  std::string Units;
+  double Value{ 0.0 };
+  bool ValueDefined{ false };
+  double DisplayCoefficient{ 1.0 };
+  std::string Units;
   std::string Description;
-  std::string PrintFormat; // for value (double), unit (string)
+  std::string PrintFormat;                       // for value (double), unit (string)
   vtkSmartPointer<vtkCodedEntry> QuantityCode;   // volume
   vtkSmartPointer<vtkCodedEntry> DerivationCode; // min/max/mean
   vtkSmartPointer<vtkCodedEntry> UnitsCode;      // cubic millimeter
   vtkSmartPointer<vtkCodedEntry> MethodCode;     // Sum of segmented voxel volumes
-  ComputationResult LastComputationResult{InsufficientInput};
+  ComputationResult LastComputationResult{ InsufficientInput };
 
   /// Per-control point measurements.
   vtkSmartPointer<vtkDoubleArray> ControlPointValues;

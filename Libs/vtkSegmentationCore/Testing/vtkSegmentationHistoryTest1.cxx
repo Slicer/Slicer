@@ -40,22 +40,20 @@ bool CheckInt(int line, const std::string& description, int current, int expecte
     return EXIT_SUCCESS;
   }
   std::cerr << "\nLine " << line << " - " << description.c_str() << " : test failed"
-    << "\n\tcurrent :" << current
-    << "\n\texpected:" << expected
-    << std::endl;
+            << "\n\tcurrent :" << current << "\n\texpected:" << expected << std::endl;
   return EXIT_FAILURE;
 }
 
 // Use a macro to be able to print the evaluated expression and the line number
-#define CHECK_INT(actual, expected) \
-{ \
-  if (CheckInt(__LINE__,#actual " != " #expected, (actual), (expected)) != EXIT_SUCCESS) \
-  { \
-    return EXIT_FAILURE; \
-  } \
-}
+#define CHECK_INT(actual, expected)                                                         \
+  {                                                                                         \
+    if (CheckInt(__LINE__, #actual " != " #expected, (actual), (expected)) != EXIT_SUCCESS) \
+    {                                                                                       \
+      return EXIT_FAILURE;                                                                  \
+    }                                                                                       \
+  }
 
-}
+} // namespace
 
 // SegmentationCore includes
 #include "vtkBinaryLabelmapToClosedSurfaceConversionRule.h"
@@ -66,7 +64,6 @@ bool CheckInt(int line, const std::string& description, int current, int expecte
 #include "vtkSegmentation.h"
 #include "vtkSegmentationConverterFactory.h"
 #include "vtkSegmentationHistory.h"
-
 
 int CreateCubeLabelmap(vtkOrientedImageData* imageData, int extent[6]);
 void SetReferenceGeometry(vtkSegmentation*);
@@ -90,10 +87,8 @@ int GetVoxelCount(vtkImageData* labelmap, int labelValue)
 int vtkSegmentationHistoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   // Register converter rules
-  vtkSegmentationConverterFactory::GetInstance()->RegisterConverterRule(
-    vtkSmartPointer<vtkBinaryLabelmapToClosedSurfaceConversionRule>::New());
-  vtkSegmentationConverterFactory::GetInstance()->RegisterConverterRule(
-    vtkSmartPointer<vtkClosedSurfaceToBinaryLabelmapConversionRule>::New());
+  vtkSegmentationConverterFactory::GetInstance()->RegisterConverterRule(vtkSmartPointer<vtkBinaryLabelmapToClosedSurfaceConversionRule>::New());
+  vtkSegmentationConverterFactory::GetInstance()->RegisterConverterRule(vtkSmartPointer<vtkClosedSurfaceToBinaryLabelmapConversionRule>::New());
 
   // Create some segmentation content
 
@@ -150,13 +145,15 @@ int vtkSegmentationHistoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   int modfiedSegment2VoxelCount = GetVoxelCount(labelmap, segment2LabelValue);
   if (modfiedSegment1VoxelCount == originalSegment1VoxelCount)
   {
-    std::cerr << "Segment 1 original voxel count (" << originalSegment2VoxelCount << ") and modified voxel count (" << modfiedSegment1VoxelCount << ") should not match!" << std::endl;
+    std::cerr << "Segment 1 original voxel count (" << originalSegment2VoxelCount << ") and modified voxel count (" << modfiedSegment1VoxelCount << ") should not match!"
+              << std::endl;
     return EXIT_FAILURE;
   }
 
   if (modfiedSegment2VoxelCount == originalSegment2VoxelCount)
   {
-    std::cerr << "Segment 2 original voxel count (" << originalSegment2VoxelCount << ") and modified voxel count (" << modfiedSegment2VoxelCount << ") should not match!" << std::endl;
+    std::cerr << "Segment 2 original voxel count (" << originalSegment2VoxelCount << ") and modified voxel count (" << modfiedSegment2VoxelCount << ") should not match!"
+              << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -215,13 +212,11 @@ int vtkSegmentationHistoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 
   // Add two more states to have some more items in the history
   history->SaveState();
-  vtkOrientedImageData::SafeDownCast(segment1->GetRepresentation(
-    vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()))->Modified();
+  vtkOrientedImageData::SafeDownCast(segment1->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()))->Modified();
   CHECK_INT(history->GetNumberOfStates(), 2);
 
   history->SaveState();
-  vtkOrientedImageData::SafeDownCast(segment1->GetRepresentation(
-    vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()))->Modified();
+  vtkOrientedImageData::SafeDownCast(segment1->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()))->Modified();
   CHECK_INT(history->GetNumberOfStates(), 3);
 
   history->RestorePreviousState();
@@ -233,8 +228,7 @@ int vtkSegmentationHistoryTest1(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
   CHECK_INT(history->GetNumberOfStates(), 4);
 
   history->SaveState();
-  vtkOrientedImageData::SafeDownCast(segment1->GetRepresentation(
-    vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()))->Modified();
+  vtkOrientedImageData::SafeDownCast(segment1->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()))->Modified();
 
   // when segmentation is modified, future states are removed, so we have only the two saved states
   CHECK_INT(history->GetNumberOfStates(), 2);

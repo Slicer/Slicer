@@ -99,14 +99,13 @@ vtkSlicerROIRepresentation3D::vtkSlicerROIRepresentation3D()
   this->ROIOutlineOccludedActor->SetMapper(this->ROIOutlineOccludedMapper);
   this->ROIOutlineOccludedActor->SetProperty(this->ROIOutlineOccludedProperty);
   this->ROIOutlineOccludedActor->SetMapper(this->ROIOutlineOccludedMapper);
-
 }
 
 //----------------------------------------------------------------------
 vtkSlicerROIRepresentation3D::~vtkSlicerROIRepresentation3D() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerROIRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void *callData /*=nullptr*/)
+void vtkSlicerROIRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, unsigned long event, void* callData /*=nullptr*/)
 {
   Superclass::UpdateFromMRMLInternal(caller, event, callData);
 
@@ -121,12 +120,8 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, u
   switch (roiNode->GetROIType())
   {
     case vtkMRMLMarkupsROINode::ROITypeBox:
-    case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
-      this->UpdateCubeSourceFromMRML(roiNode);
-      break;
-    default:
-      this->ROIActor->SetVisibility(false);
-      return;
+    case vtkMRMLMarkupsROINode::ROITypeBoundingBox: this->UpdateCubeSourceFromMRML(roiNode); break;
+    default: this->ROIActor->SetVisibility(false); return;
   }
 
   this->ROIToWorldTransform->SetMatrix(roiNode->GetObjectToWorldMatrix());
@@ -148,8 +143,8 @@ void vtkSlicerROIRepresentation3D::UpdateFromMRMLInternal(vtkMRMLNode* caller, u
 
   // Properties label display
   this->TextActor->SetTextProperty(this->GetControlPointsPipeline(controlPointType)->TextProperty);
-  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility()
-    && roiNode->GetNumberOfDefinedControlPoints(true) > 0) // including preview
+  if (this->MarkupsDisplayNode->GetPropertiesLabelVisibility() //
+      && roiNode->GetNumberOfDefinedControlPoints(true) > 0)   // including preview
   {
     roiNode->GetNthControlPointPositionWorld(0, this->TextActorPositionWorld);
     this->TextActor->SetVisibility(true);
@@ -217,7 +212,7 @@ void vtkSlicerROIRepresentation3D::UpdateCubeSourceFromMRML(vtkMRMLMarkupsROINod
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerROIRepresentation3D::GetActors(vtkPropCollection *pc)
+void vtkSlicerROIRepresentation3D::GetActors(vtkPropCollection* pc)
 {
   this->ROIActor->GetActors(pc);
   this->ROIOccludedActor->GetActors(pc);
@@ -227,8 +222,7 @@ void vtkSlicerROIRepresentation3D::GetActors(vtkPropCollection *pc)
 }
 
 //----------------------------------------------------------------------
-void vtkSlicerROIRepresentation3D::ReleaseGraphicsResources(
-  vtkWindow *win)
+void vtkSlicerROIRepresentation3D::ReleaseGraphicsResources(vtkWindow* win)
 {
   this->ROIActor->ReleaseGraphicsResources(win);
   this->ROIOccludedActor->ReleaseGraphicsResources(win);
@@ -238,7 +232,7 @@ void vtkSlicerROIRepresentation3D::ReleaseGraphicsResources(
 }
 
 //----------------------------------------------------------------------
-int vtkSlicerROIRepresentation3D::RenderOverlay(vtkViewport *viewport)
+int vtkSlicerROIRepresentation3D::RenderOverlay(vtkViewport* viewport)
 {
   int count = 0;
   if (this->ROIActor->GetVisibility())
@@ -262,8 +256,7 @@ int vtkSlicerROIRepresentation3D::RenderOverlay(vtkViewport *viewport)
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerROIRepresentation3D::RenderOpaqueGeometry(
-  vtkViewport *viewport)
+int vtkSlicerROIRepresentation3D::RenderOpaqueGeometry(vtkViewport* viewport)
 {
   int count = 0;
   if (this->ROIActor->GetVisibility())
@@ -287,8 +280,7 @@ int vtkSlicerROIRepresentation3D::RenderOpaqueGeometry(
 }
 
 //-----------------------------------------------------------------------------
-int vtkSlicerROIRepresentation3D::RenderTranslucentPolygonalGeometry(
-  vtkViewport *viewport)
+int vtkSlicerROIRepresentation3D::RenderTranslucentPolygonalGeometry(vtkViewport* viewport)
 {
   int count = this->Superclass::RenderTranslucentPolygonalGeometry(viewport);
   if (this->ROIActor->GetVisibility())
@@ -342,7 +334,7 @@ vtkTypeBool vtkSlicerROIRepresentation3D::HasTranslucentPolygonalGeometry()
 }
 
 //----------------------------------------------------------------------
-double *vtkSlicerROIRepresentation3D::GetBounds()
+double* vtkSlicerROIRepresentation3D::GetBounds()
 {
   vtkBoundingBox boundingBox;
   const std::vector<vtkProp*> actors({ this->ROIActor });
@@ -354,15 +346,12 @@ double *vtkSlicerROIRepresentation3D::GetBounds()
 //-----------------------------------------------------------------------------
 void vtkSlicerROIRepresentation3D::PrintSelf(ostream& os, vtkIndent indent)
 {
-  //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
+  // Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h
   this->Superclass::PrintSelf(os, indent);
 }
 
-
 //----------------------------------------------------------------------
-void vtkSlicerROIRepresentation3D::CanInteract(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+void vtkSlicerROIRepresentation3D::CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
 {
   foundComponentType = vtkMRMLMarkupsDisplayNode::ComponentNone;
   vtkMRMLMarkupsNode* markupsNode = this->GetMarkupsNode();
@@ -381,9 +370,10 @@ void vtkSlicerROIRepresentation3D::CanInteract(
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerROIRepresentation3D::CanInteractWithROI(
-  vtkMRMLInteractionEventData* interactionEventData,
-  int& foundComponentType, int& foundComponentIndex, double& closestDistance2)
+void vtkSlicerROIRepresentation3D::CanInteractWithROI(vtkMRMLInteractionEventData* interactionEventData,
+                                                      int& foundComponentType,
+                                                      int& foundComponentIndex,
+                                                      double& closestDistance2)
 {
   this->ROIOutlineFilter->Update();
   if (this->ROIOutlineFilter->GetOutput() && this->ROIOutlineFilter->GetOutput()->GetNumberOfPoints() == 0)

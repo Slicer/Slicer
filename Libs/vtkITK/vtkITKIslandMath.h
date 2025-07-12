@@ -19,8 +19,8 @@
 ///
 class VTK_ITK_EXPORT vtkITKIslandMath : public vtkSimpleImageToImageFilter
 {
- public:
-  static vtkITKIslandMath *New();
+public:
+  static vtkITKIslandMath* New();
   vtkTypeMacro(vtkITKIslandMath, vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -47,9 +47,9 @@ class VTK_ITK_EXPORT vtkITKIslandMath : public vtkSimpleImageToImageFilter
   /// (IJ=3, IK=2, JK=1)
   vtkGetMacro(SliceBySlice, int);
   vtkSetMacro(SliceBySlice, int);
-  void SetSliceBySliceToIJ() {this->SetSliceBySlice(3);}
-  void SetSliceBySliceToIK() {this->SetSliceBySlice(2);}
-  void SetSliceBySliceToJK() {this->SetSliceBySlice(1);}
+  void SetSliceBySliceToIJ() { this->SetSliceBySlice(3); }
+  void SetSliceBySliceToIK() { this->SetSliceBySlice(2); }
+  void SetSliceBySliceToJK() { this->SetSliceBySlice(1); }
 
   ///
   /// Accessors to describe result of calculations
@@ -57,7 +57,6 @@ class VTK_ITK_EXPORT vtkITKIslandMath : public vtkSimpleImageToImageFilter
   vtkSetMacro(NumberOfIslands, unsigned long);
   vtkGetMacro(OriginalNumberOfIslands, unsigned long);
   vtkSetMacro(OriginalNumberOfIslands, unsigned long);
-
 
 protected:
   vtkITKIslandMath();

@@ -41,7 +41,7 @@ class qMRMLSortFilterSegmentsProxyModelPrivate
 public:
   qMRMLSortFilterSegmentsProxyModelPrivate();
 
-  bool FilterEnabled{false};
+  bool FilterEnabled{ false };
   QString NameFilter;
   QString TextFilter;
   bool ShowStatus[vtkSlicerSegmentationsModuleLogic::LastStatus];
@@ -68,9 +68,9 @@ CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, QString, nameFilter, NameFilter);
 CTK_GET_CPP(qMRMLSortFilterSegmentsProxyModel, QString, textFilter, TextFilter);
 
 //------------------------------------------------------------------------------
-qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject *vparent)
- : QSortFilterProxyModel(vparent)
- , d_ptr(new qMRMLSortFilterSegmentsProxyModelPrivate)
+qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject* vparent)
+  : QSortFilterProxyModel(vparent)
+  , d_ptr(new qMRMLSortFilterSegmentsProxyModelPrivate)
 {
   this->setDynamicSortFilter(true);
 }
@@ -79,7 +79,7 @@ qMRMLSortFilterSegmentsProxyModel::qMRMLSortFilterSegmentsProxyModel(QObject *vp
 qMRMLSortFilterSegmentsProxyModel::~qMRMLSortFilterSegmentsProxyModel() = default;
 
 //-----------------------------------------------------------------------------
-vtkMRMLSegmentationNode* qMRMLSortFilterSegmentsProxyModel::segmentationNode()const
+vtkMRMLSegmentationNode* qMRMLSortFilterSegmentsProxyModel::segmentationNode() const
 {
   qMRMLSegmentsModel* model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
   if (!model)
@@ -158,21 +158,21 @@ void qMRMLSortFilterSegmentsProxyModel::setShowStatus(int status, bool shown)
 }
 
 //-----------------------------------------------------------------------------
-QString qMRMLSortFilterSegmentsProxyModel::segmentIDFromIndex(const QModelIndex& index)const
+QString qMRMLSortFilterSegmentsProxyModel::segmentIDFromIndex(const QModelIndex& index) const
 {
   qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
-  return segmentsModel->segmentIDFromIndex( this->mapToSource(index) );
+  return segmentsModel->segmentIDFromIndex(this->mapToSource(index));
 }
 
 //-----------------------------------------------------------------------------
-QModelIndex qMRMLSortFilterSegmentsProxyModel::indexFromSegmentID(QString segmentID, int column)const
+QModelIndex qMRMLSortFilterSegmentsProxyModel::indexFromSegmentID(QString segmentID, int column) const
 {
   qMRMLSegmentsModel* segmentsModel = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
   return this->mapFromSource(segmentsModel->indexFromSegmentID(segmentID, column));
 }
 
 //-----------------------------------------------------------------------------
-QStandardItem* qMRMLSortFilterSegmentsProxyModel::sourceItem(const QModelIndex& sourceIndex)const
+QStandardItem* qMRMLSortFilterSegmentsProxyModel::sourceItem(const QModelIndex& sourceIndex) const
 {
   qMRMLSegmentsModel* model = qobject_cast<qMRMLSegmentsModel*>(this->sourceModel());
   if (!model)
@@ -183,7 +183,7 @@ QStandardItem* qMRMLSortFilterSegmentsProxyModel::sourceItem(const QModelIndex& 
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent)const
+bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
   QStandardItem* parentItem = this->sourceItem(sourceParent);
   if (!parentItem)
@@ -193,7 +193,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QM
   QStandardItem* item = nullptr;
 
   // Sometimes the row is not complete (DnD), search for a non null item
-  for (int childIndex=0; childIndex < parentItem->columnCount(); ++childIndex)
+  for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
   {
     item = parentItem->child(sourceRow, childIndex);
     if (item)
@@ -212,7 +212,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsRow(int sourceRow, const QM
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID)const
+bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID) const
 {
   Q_D(const qMRMLSortFilterSegmentsProxyModel);
 
@@ -254,7 +254,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID)cons
     QString segmentName(segment->GetName());
     if (!segmentName.contains(d->NameFilter, Qt::CaseInsensitive))
     {
-        return false;
+      return false;
     }
   }
 
@@ -312,7 +312,7 @@ bool qMRMLSortFilterSegmentsProxyModel::filterAcceptsItem(QString segmentID)cons
 }
 
 //------------------------------------------------------------------------------
-Qt::ItemFlags qMRMLSortFilterSegmentsProxyModel::flags(const QModelIndex & index)const
+Qt::ItemFlags qMRMLSortFilterSegmentsProxyModel::flags(const QModelIndex& index) const
 {
   QString segmentID = this->segmentIDFromIndex(index);
   bool isSelectable = this->filterAcceptsItem(segmentID);
@@ -344,7 +344,7 @@ void qMRMLSortFilterSegmentsProxyModel::setHideSegments(const QStringList& segme
 }
 
 // --------------------------------------------------------------------------
-QStringList qMRMLSortFilterSegmentsProxyModel::hideSegments()const
+QStringList qMRMLSortFilterSegmentsProxyModel::hideSegments() const
 {
   Q_D(const qMRMLSortFilterSegmentsProxyModel);
   return d->HideSegments;

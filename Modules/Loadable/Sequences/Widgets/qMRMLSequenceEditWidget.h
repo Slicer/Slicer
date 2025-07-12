@@ -32,8 +32,7 @@ class qMRMLSequenceEditWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLSequenceNode;
 
-class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceEditWidget
-: public qMRMLWidget
+class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceEditWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -41,7 +40,7 @@ class Q_SLICER_MODULE_SEQUENCES_WIDGETS_EXPORT qMRMLSequenceEditWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qMRMLSequenceEditWidget(QWidget *newParent = 0);
+  qMRMLSequenceEditWidget(QWidget* newParent = 0);
   ~qMRMLSequenceEditWidget() override;
 
   bool isCandidateNodesSectionVisible();

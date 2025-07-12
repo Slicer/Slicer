@@ -23,21 +23,20 @@ Version:   $Revision: 1.14 $
 #include <vtkObjectFactory.h>
 #include <vtkMatrix4x4.h>
 
-
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTensorVolumeNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTensorVolumeNode::vtkMRMLTensorVolumeNode()
 {
-  for(int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for(int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       this->MeasurementFrameMatrix[i][j] = (i == j) ? 1.0 : 0.0;
     }
   }
-  this->Order = -1; //Tensor order
+  this->Order = -1; // Tensor order
 }
 
 //----------------------------------------------------------------------------
@@ -49,12 +48,12 @@ void vtkMRMLTensorVolumeNode::WriteXML(ostream& of, int nIndent)
   Superclass::WriteXML(of, nIndent);
 
   std::stringstream ss;
-  for(int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for(int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       ss << this->MeasurementFrameMatrix[i][j] << " ";
-      if ( i != 2 && j != 2 )
+      if (i != 2 && j != 2)
       {
         ss << "  ";
       }
@@ -84,9 +83,9 @@ void vtkMRMLTensorVolumeNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       double val;
       ss << attValue;
-      for(int i=0; i<3; i++)
+      for (int i = 0; i < 3; i++)
       {
-        for(int j=0; j<3; j++)
+        for (int j = 0; j < 3; j++)
         {
           ss >> val;
           this->MeasurementFrameMatrix[i][j] = val;
@@ -108,9 +107,9 @@ void vtkMRMLTensorVolumeNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double mf[3][3])
 {
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       this->MeasurementFrameMatrix[i][j] = mf[i][j];
     }
@@ -120,45 +119,51 @@ void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double mf[3][3])
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::GetMeasurementFrameMatrix(double mf[3][3])
 {
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
-      mf[i][j]= this->MeasurementFrameMatrix[i][j];
+      mf[i][j] = this->MeasurementFrameMatrix[i][j];
     }
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
+void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(vtkMatrix4x4* mf)
 {
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
-      this->MeasurementFrameMatrix[i][j]=mf->GetElement(i,j);
+      this->MeasurementFrameMatrix[i][j] = mf->GetElement(i, j);
     }
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTensorVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4 *mf)
+void vtkMRMLTensorVolumeNode::GetMeasurementFrameMatrix(vtkMatrix4x4* mf)
 {
 
   mf->Identity();
-  for (int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
-      mf->SetElement(i,j,this->MeasurementFrameMatrix[i][j]);
+      mf->SetElement(i, j, this->MeasurementFrameMatrix[i][j]);
     }
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double xr, const double xa, const double xs,
-                           const double yr, const double ya, const double ys,
-                           const double zr, const double za, const double zs)
+void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double xr,
+                                                        const double xa,
+                                                        const double xs,
+                                                        const double yr,
+                                                        const double ya,
+                                                        const double ys,
+                                                        const double zr,
+                                                        const double za,
+                                                        const double zs)
 {
   MeasurementFrameMatrix[0][0] = xr;
   MeasurementFrameMatrix[0][1] = xa;
@@ -172,7 +177,7 @@ void vtkMRMLTensorVolumeNode::SetMeasurementFrameMatrix(const double xr, const d
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTensorVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLTensorVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -184,9 +189,9 @@ void vtkMRMLTensorVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
   }
 
   // Matrices
-  for(int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for(int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       this->MeasurementFrameMatrix[i][j] = node->MeasurementFrameMatrix[i][j];
     }
@@ -197,19 +202,18 @@ void vtkMRMLTensorVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=tr
 //----------------------------------------------------------------------------
 void vtkMRMLTensorVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   os << "MeasurementFrameMatrix:\n";
-  for(int i=0; i<3; i++)
+  for (int i = 0; i < 3; i++)
   {
-    for(int j=0; j<3; j++)
+    for (int j = 0; j < 3; j++)
     {
       os << indent << " " << this->MeasurementFrameMatrix[i][j];
     }
-      os << indent << "\n";
+    os << indent << "\n";
   }
   os << "\n";
-  os << "Order: "<<this->Order;
-
+  os << "Order: " << this->Order;
 }
 
 //----------------------------------------------------------------------------
@@ -221,6 +225,5 @@ vtkMRMLStorageNode* vtkMRMLTensorVolumeNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLNRRDStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLNRRDStorageNode"));
 }

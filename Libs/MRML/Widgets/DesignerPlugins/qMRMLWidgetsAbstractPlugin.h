@@ -25,9 +25,9 @@
 
 // Qt includes
 #ifdef MRML_WIDGETS_HAVE_QT5
-#include <QtUiPlugin/QDesignerCustomWidgetInterface>
+# include <QtUiPlugin/QDesignerCustomWidgetInterface>
 #else
-#include <QDesignerCustomWidgetInterface>
+# include <QDesignerCustomWidgetInterface>
 #endif
 
 #include "qMRMLWidgetsPluginsExport.h"
@@ -38,8 +38,8 @@ class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLWidgetsAbstractPlugin : public QDesigner
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
 #endif
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qMRMLWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;
@@ -47,7 +47,6 @@ public:
   QIcon icon() const override;
   QString toolTip() const override;
   QString whatsThis() const override;
-
 };
 
 #endif

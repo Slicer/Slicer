@@ -40,12 +40,14 @@
 class qSlicerTerminologySelectorButtonPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologySelectorButton);
+
 protected:
   qSlicerTerminologySelectorButton* const q_ptr;
+
 public:
   qSlicerTerminologySelectorButtonPrivate(qSlicerTerminologySelectorButton& object);
   void init();
-  QString text()const;
+  QString text() const;
 
   qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle TerminologyInfo;
   mutable QSize CachedSizeHint;
@@ -93,8 +95,8 @@ void qSlicerTerminologySelectorButton::changeTerminology()
       // When terminology is selected from color table, the name and color are always set as custom (not auto-generated).
       // Do not report these as the user selected custom name or color.
       bool isTerminology = true;
-      vtkSlicerTerminologiesModuleLogic* terminologiesLogic = qSlicerCoreApplication::application() ? vtkSlicerTerminologiesModuleLogic::SafeDownCast(
-        qSlicerCoreApplication::application()->moduleLogic("Terminologies")) : nullptr;
+      vtkSlicerTerminologiesModuleLogic* terminologiesLogic =
+        qSlicerCoreApplication::application() ? vtkSlicerTerminologiesModuleLogic::SafeDownCast(qSlicerCoreApplication::application()->moduleLogic("Terminologies")) : nullptr;
       if (terminologiesLogic && d->TerminologyInfo.GetTerminologyEntry())
       {
         const char* contextName = d->TerminologyInfo.GetTerminologyEntry()->GetTerminologyContextName();
@@ -127,16 +129,14 @@ void qSlicerTerminologySelectorButton::onToggled(bool change)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorButton::terminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+void qSlicerTerminologySelectorButton::terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologySelectorButton);
   terminologyInfo = d->TerminologyInfo;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorButton::setTerminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo )
+void qSlicerTerminologySelectorButton::setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologySelectorButton);
 
@@ -146,7 +146,7 @@ void qSlicerTerminologySelectorButton::setTerminologyInfo(
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologySelectorButton::paintEvent(QPaintEvent *)
+void qSlicerTerminologySelectorButton::paintEvent(QPaintEvent*)
 {
   Q_D(qSlicerTerminologySelectorButton);
   QStylePainter p(this);

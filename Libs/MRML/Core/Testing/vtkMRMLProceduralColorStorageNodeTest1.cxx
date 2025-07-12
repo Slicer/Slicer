@@ -13,7 +13,7 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLProceduralColorStorageNode.h"
 
-int vtkMRMLProceduralColorStorageNodeTest1(int , char * [] )
+int vtkMRMLProceduralColorStorageNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLProceduralColorStorageNode> node1;
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());

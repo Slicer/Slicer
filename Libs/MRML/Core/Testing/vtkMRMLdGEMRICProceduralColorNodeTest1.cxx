@@ -14,7 +14,7 @@
 #include "vtkMRMLdGEMRICProceduralColorNode.h"
 #include "vtkMRMLScene.h"
 
-int vtkMRMLdGEMRICProceduralColorNodeTest1(int , char * [] )
+int vtkMRMLdGEMRICProceduralColorNodeTest1(int, char*[])
 {
   vtkNew<vtkMRMLdGEMRICProceduralColorNode> node1;
   vtkNew<vtkMRMLScene> scene;

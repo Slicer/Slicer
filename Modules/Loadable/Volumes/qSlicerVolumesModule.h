@@ -29,26 +29,24 @@
 class qSlicerAbstractModuleWidget;
 class qSlicerVolumesModulePrivate;
 
-class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_VOLUMES_EXPORT qSlicerVolumesModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
-  qSlicerVolumesModule(QObject *parent=nullptr);
+  qSlicerVolumesModule(QObject* parent = nullptr);
   ~qSlicerVolumesModule() override;
 
-  QString helpText()const override;
-  QString acknowledgementText()const override;
-  QStringList contributors()const override;
-  QIcon icon()const override;
-  QStringList categories()const override;
-  QStringList dependencies()const override;
-  QString title()const override;
+  QString helpText() const override;
+  QString acknowledgementText() const override;
+  QStringList contributors() const override;
+  QIcon icon() const override;
+  QStringList categories() const override;
+  QStringList dependencies() const override;
+  QString title() const override;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer
@@ -61,7 +59,7 @@ protected:
   vtkMRMLAbstractLogic* createLogic() override;
 
   /// Specify editable node types
-  QStringList associatedNodeTypes()const override;
+  QStringList associatedNodeTypes() const override;
 
 protected:
   QScopedPointer<qSlicerVolumesModulePrivate> d_ptr;

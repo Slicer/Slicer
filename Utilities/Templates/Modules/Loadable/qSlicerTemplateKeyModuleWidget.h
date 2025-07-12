@@ -26,19 +26,16 @@
 class qSlicerTemplateKeyModuleWidgetPrivate;
 class vtkMRMLNode;
 
-class Q_SLICER_QTMODULES_TEMPLATEKEY_EXPORT qSlicerTemplateKeyModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_TEMPLATEKEY_EXPORT qSlicerTemplateKeyModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerTemplateKeyModuleWidget(QWidget *parent=0);
+  qSlicerTemplateKeyModuleWidget(QWidget* parent = 0);
   virtual ~qSlicerTemplateKeyModuleWidget();
 
 public slots:
-
 
 protected:
   QScopedPointer<qSlicerTemplateKeyModuleWidgetPrivate> d_ptr;

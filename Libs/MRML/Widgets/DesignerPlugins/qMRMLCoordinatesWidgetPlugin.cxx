@@ -22,13 +22,13 @@
 #include "qMRMLCoordinatesWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLCoordinatesWidgetPlugin::qMRMLCoordinatesWidgetPlugin(QObject *_parent)
-: QObject(_parent)
+qMRMLCoordinatesWidgetPlugin::qMRMLCoordinatesWidgetPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLCoordinatesWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLCoordinatesWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLCoordinatesWidget* _widget = new qMRMLCoordinatesWidget(_parent);
   return _widget;
@@ -37,11 +37,11 @@ QWidget *qMRMLCoordinatesWidgetPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString qMRMLCoordinatesWidgetPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLCoordinatesWidget\" name=\"MRMLCoordinatesWidget\">\n"
-    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLCoordinatesWidget\" name=\"MRMLCoordinatesWidget\">\n"
+         "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

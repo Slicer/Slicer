@@ -8,18 +8,17 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLPETProceduralColorNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLPETProceduralColorNode::vtkMRMLPETProceduralColorNode()
 {
 
   // all this is done in the superclass...
-  //this->Name = nullptr;
-  //this->SetName("");
-  //this->FileName = nullptr;
+  // this->Name = nullptr;
+  // this->SetName("");
+  // this->FileName = nullptr;
 
-  //this->ColorTransferFunction = nullptr;
-  //this->ColorTransferFunction = vtkColorTransferFunction::New();
+  // this->ColorTransferFunction = nullptr;
+  // this->ColorTransferFunction = vtkColorTransferFunction::New();
 }
 
 //----------------------------------------------------------------------------
@@ -38,7 +37,6 @@ void vtkMRMLPETProceduralColorNode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
 
   Superclass::WriteXML(of, nIndent);
-
 }
 
 //----------------------------------------------------------------------------
@@ -46,24 +44,22 @@ void vtkMRMLPETProceduralColorNode::ReadXMLAttributes(const char** atts)
 {
 
   Superclass::ReadXMLAttributes(atts);
-
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
-void vtkMRMLPETProceduralColorNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLPETProceduralColorNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
-  //vtkMRMLPETProceduralColorNode *node = (vtkMRMLPETProceduralColorNode *) anode;
+  // vtkMRMLPETProceduralColorNode* node = (vtkMRMLPETProceduralColorNode*) anode;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLPETProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
 
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   if (this->ColorTransferFunction != nullptr)
   {
     os << indent << "ColorTransferFunction:" << endl;
@@ -73,15 +69,13 @@ void vtkMRMLPETProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //-----------------------------------------------------------
 
-void vtkMRMLPETProceduralColorNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLPETProceduralColorNode::UpdateScene(vtkMRMLScene* scene)
 {
   Superclass::UpdateScene(scene);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLPETProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event,
-                                           void *callData )
+void vtkMRMLPETProceduralColorNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
@@ -124,7 +118,7 @@ void vtkMRMLPETProceduralColorNode::SetTypeToMIP()
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLPETProceduralColorNode::GetTypeAsString()
+const char* vtkMRMLPETProceduralColorNode::GetTypeAsString()
 {
   if (this->Type == this->PETheat)
   {
@@ -138,15 +132,15 @@ const char *vtkMRMLPETProceduralColorNode::GetTypeAsString()
   {
     return "PET-Rainbow2";
   }
-  else if ( this->Type == this->PETMIP )
+  else if (this->Type == this->PETMIP)
   {
     return "PET-MaximumIntensityProjection";
   }
-  else if ( this->Type == this->PETDICOM )
+  else if (this->Type == this->PETDICOM)
   {
     return "PET-DICOM";
   }
-  else if ( this->Type == this->PEThotMetalBlue )
+  else if (this->Type == this->PEThotMetalBlue)
   {
     return "PET-HotMetalBlue";
   }

@@ -27,21 +27,20 @@
 
 #include "qSlicerMarkupsModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT
-qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
-  : public QObject, public qSlicerMarkupsModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin
+  : public QObject
+  , public qSlicerMarkupsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin(QObject *_parent = nullptr);
+  qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin(QObject* _parent = nullptr);
 
-  QWidget *createWidget(QWidget *_parent) override;
+  QWidget* createWidget(QWidget* _parent) override;
   QString domXml() const override;
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

@@ -51,7 +51,7 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-char vtkMRMLThreeDReformatDisplayableManagerTest1EventLog[] =
+char vtkMRMLThreeDReformatDisplayableManagerTest1EventLog[] = //
   "# StreamVersion 1\n"
   "RenderEvent 0 0 0 0 0 0 0\n"
   "EnterEvent 592 493 0 0 0 0 0\n"
@@ -868,41 +868,29 @@ char vtkMRMLThreeDReformatDisplayableManagerTest1EventLog[] =
   "EnterEvent 593 598 0 0 0 0 0\n"
   "MouseMoveEvent 593 598 0 0 0 0 0\n"
   "MouseMoveEvent 598 595 0 0 0 0 0\n"
-  "LeaveEvent 604 592 0 0 0 0 0\n"
-  ;
+  "LeaveEvent 604 592 0 0 0 0 0\n";
 
 namespace
 {
 
 //----------------------------------------------------------------------------
-class vtkAbortCommand: public vtkCommand
+class vtkAbortCommand : public vtkCommand
 {
 public:
-  static vtkAbortCommand *New(){ return new vtkAbortCommand; }
-  void Execute (vtkObject* vtkNotUsed(caller),
-                        unsigned long vtkNotUsed(eventId),
-                        void* vtkNotUsed(callData)) override
-  {
-    this->SetAbortFlag(1);
-  }
+  static vtkAbortCommand* New() { return new vtkAbortCommand; }
+  void Execute(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eventId), void* vtkNotUsed(callData)) override { this->SetAbortFlag(1); }
 };
 
 class vtkRenderCallback : public vtkCommand
 {
 public:
-  static vtkRenderCallback *New()
-  {
-    return new vtkRenderCallback;
-  }
-  void Execute(vtkObject *vtkNotUsed(caller), unsigned long vtkNotUsed(eventId), void* vtkNotUsed(callData)) override
-  {
-    this->RenderWindow->Render();
-  }
-  vtkRenderCallback()  = default;
-  vtkRenderWindow *RenderWindow{nullptr};
+  static vtkRenderCallback* New() { return new vtkRenderCallback; }
+  void Execute(vtkObject* vtkNotUsed(caller), unsigned long vtkNotUsed(eventId), void* vtkNotUsed(callData)) override { this->RenderWindow->Render(); }
+  vtkRenderCallback() = default;
+  vtkRenderWindow* RenderWindow{ nullptr };
 };
 
-};
+}; // namespace
 
 //----------------------------------------------------------------------------
 int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
@@ -1025,8 +1013,8 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   for (int i = 0; i < argc; i++)
   {
     disableReplay |= (strcmp("--DisableReplay", argv[i]) == 0);
-    record        |= (strcmp("--Record", argv[i]) == 0);
-    screenshot    |= (strcmp("--Screenshot", argv[i]) == 0);
+    record |= (strcmp("--Record", argv[i]) == 0);
+    screenshot |= (strcmp("--Screenshot", argv[i]) == 0);
   }
   vtkNew<vtkInteractorEventRecorder> recorder;
   recorder->SetInteractor(displayableManagerGroup->GetInteractor());
@@ -1049,7 +1037,7 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   }
 
   int retval = vtkRegressionTestImageThreshold(renderWindow.GetPointer(), 85.0);
-  if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
+  if (record || retval == vtkRegressionTester::DO_INTERACTOR)
   {
     displayableManagerGroup->GetInteractor()->Initialize();
     displayableManagerGroup->GetInteractor()->Start();
@@ -1059,11 +1047,11 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   {
     vtkNew<vtkWindowToImageFilter> windowToImageFilter;
     windowToImageFilter->SetInput(renderWindow.GetPointer());
-    windowToImageFilter->SetScale(1, 1); //set the resolution of the output image
+    windowToImageFilter->SetScale(1, 1); // set the resolution of the output image
     windowToImageFilter->Update();
 
     vtkNew<vtkTesting> testHelper;
-    testHelper->AddArguments(argc, const_cast<const char **>(argv));
+    testHelper->AddArguments(argc, const_cast<const char**>(argv));
 
     std::string screenshootFilename = testHelper->GetDataRoot();
     screenshootFilename += "/Baseline/vtkMRMLThreeDReformatDisplayableManagerTest1.png";

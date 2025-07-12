@@ -28,13 +28,12 @@
 // QTGUI includes
 #include "qSlicerBaseQTGUIDesignerPluginsExport.h"
 
-class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerQTGUIAbstractPlugin
-  : public QDesignerCustomWidgetInterface
+class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerQTGUIAbstractPlugin : public QDesignerCustomWidgetInterface
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerQTGUIAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;

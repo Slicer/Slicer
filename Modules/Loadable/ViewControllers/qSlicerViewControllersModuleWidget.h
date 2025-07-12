@@ -33,19 +33,17 @@
 class qSlicerViewControllersModuleWidgetPrivate;
 class vtkMRMLNode;
 
-class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModuleWidget
-  : public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_VIEWCONTROLLERS_EXPORT qSlicerViewControllersModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerViewControllersModuleWidget(QWidget *parent=nullptr);
+  qSlicerViewControllersModuleWidget(QWidget* parent = nullptr);
   ~qSlicerViewControllersModuleWidget() override;
 
 public slots:
-  void setMRMLScene(vtkMRMLScene *newScene) override;
+  void setMRMLScene(vtkMRMLScene* newScene) override;
   void onNodeAddedEvent(vtkObject* scene, vtkObject* node);
   void onNodeRemovedEvent(vtkObject* scene, vtkObject* node);
   void onLayoutChanged(int);

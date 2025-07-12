@@ -63,8 +63,7 @@ void vtkFastSelectVisiblePoints::UpdateZBuffer()
 }
 
 //----------------------------------------------------------------------------
-int vtkFastSelectVisiblePoints::RequestData(vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** inputVector, vtkInformationVector* outputVector)
+int vtkFastSelectVisiblePoints::RequestData(vtkInformation* vtkNotUsed(request), vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
   // get the info objects
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);

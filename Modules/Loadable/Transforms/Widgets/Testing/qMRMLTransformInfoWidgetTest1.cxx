@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 // Qt includes
 #include <QApplication>
 #include <QTimer>
@@ -40,19 +39,19 @@
 
 // STD includes
 
-int qMRMLTransformInfoWidgetTest1(int argc, char * argv [] )
+int qMRMLTransformInfoWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkNew< vtkMRMLTransformNode > transformNode;
+  vtkNew<vtkMRMLTransformNode> transformNode;
 
   qMRMLTransformInfoWidget transformInfo;
   transformInfo.setMRMLTransformNode(transformNode.GetPointer());
   transformInfo.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

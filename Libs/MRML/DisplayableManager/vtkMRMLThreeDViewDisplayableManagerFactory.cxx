@@ -30,8 +30,8 @@
 // vtkMRMLThreeDViewDisplayableManagerFactory methods
 
 //----------------------------------------------------------------------------
-vtkMRMLThreeDViewDisplayableManagerFactory::
-    vtkMRMLThreeDViewDisplayableManagerFactory():Superclass()
+vtkMRMLThreeDViewDisplayableManagerFactory::vtkMRMLThreeDViewDisplayableManagerFactory()
+  : Superclass()
 {
 }
 

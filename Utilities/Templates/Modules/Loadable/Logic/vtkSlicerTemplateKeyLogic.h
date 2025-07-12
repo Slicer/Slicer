@@ -20,7 +20,6 @@
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
-
 #ifndef __vtkSlicerTemplateKeyLogic_h
 #define __vtkSlicerTemplateKeyLogic_h
 
@@ -34,13 +33,10 @@
 
 #include "vtkSlicerTemplateKeyModuleLogicExport.h"
 
-
-class VTK_SLICER_TEMPLATEKEY_MODULE_LOGIC_EXPORT vtkSlicerTemplateKeyLogic :
-  public vtkSlicerModuleLogic
+class VTK_SLICER_TEMPLATEKEY_MODULE_LOGIC_EXPORT vtkSlicerTemplateKeyLogic : public vtkSlicerModuleLogic
 {
 public:
-
-  static vtkSlicerTemplateKeyLogic *New();
+  static vtkSlicerTemplateKeyLogic* New();
   vtkTypeMacro(vtkSlicerTemplateKeyLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -54,10 +50,10 @@ protected:
   void UpdateFromMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
-private:
 
+private:
   vtkSlicerTemplateKeyLogic(const vtkSlicerTemplateKeyLogic&); // Not implemented
-  void operator=(const vtkSlicerTemplateKeyLogic&); // Not implemented
+  void operator=(const vtkSlicerTemplateKeyLogic&);            // Not implemented
 };
 
 #endif

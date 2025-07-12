@@ -95,10 +95,9 @@ static const int COORDINATE_COMBOBOX_INDEX_WORLD = 0;
 static const int COORDINATE_COMBOBOX_INDEX_LOCAL = 1;
 static const int COORDINATE_COMBOBOX_INDEX_HIDE = 2;
 
-
-//extern qSlicerMarkupsOptionsWidgetsFactory* qSlicerMarkupsOptionsWidgetsFactory::Instance = nullptr;
+// extern qSlicerMarkupsOptionsWidgetsFactory* qSlicerMarkupsOptionsWidgetsFactory::Instance = nullptr;
 //-----------------------------------------------------------------------------
-class qSlicerMarkupsModuleWidgetPrivate: public Ui_qSlicerMarkupsModule
+class qSlicerMarkupsModuleWidgetPrivate : public Ui_qSlicerMarkupsModule
 {
   Q_DECLARE_PUBLIC(qSlicerMarkupsModuleWidget);
 
@@ -153,28 +152,28 @@ private:
 
   QStringList columnLabels;
 
-  QAction*    newMarkupWithCurrentDisplayPropertiesAction;
+  QAction* newMarkupWithCurrentDisplayPropertiesAction;
 
-  QMenu*      visibilityMenu;
-  QAction*    visibilityOnAllControlPointsInListAction;
-  QAction*    visibilityOffAllControlPointsInListAction;
+  QMenu* visibilityMenu;
+  QAction* visibilityOnAllControlPointsInListAction;
+  QAction* visibilityOffAllControlPointsInListAction;
 
-  QMenu*      selectedMenu;
-  QAction*    selectedOnAllControlPointsInListAction;
-  QAction*    selectedOffAllControlPointsInListAction;
+  QMenu* selectedMenu;
+  QAction* selectedOnAllControlPointsInListAction;
+  QAction* selectedOffAllControlPointsInListAction;
 
-  QMenu*      lockMenu;
-  QAction*    lockAllControlPointsInListAction;
-  QAction*    unlockAllControlPointsInListAction;
+  QMenu* lockMenu;
+  QAction* lockAllControlPointsInListAction;
+  QAction* unlockAllControlPointsInListAction;
 
-  QAction*    cutAction;
-  QAction*    copyAction;
-  QAction*    pasteAction;
+  QAction* cutAction;
+  QAction* copyAction;
+  QAction* pasteAction;
 
-  QPixmap     SlicerLockIcon;
-  QPixmap     SlicerUnlockIcon;
-  QPixmap     SlicerVisibleIcon;
-  QPixmap     SlicerInvisibleIcon;
+  QPixmap SlicerLockIcon;
+  QPixmap SlicerUnlockIcon;
+  QPixmap SlicerVisibleIcon;
+  QPixmap SlicerInvisibleIcon;
 
   // Dynamic list of create markups push buttons
   QList<QPushButton*> ceateMarkupsPushButtons;
@@ -198,11 +197,10 @@ qSlicerMarkupsModuleWidgetPrivate::qSlicerMarkupsModuleWidgetPrivate(qSlicerMark
   Q_Q(qSlicerMarkupsModuleWidget);
 
   this->columnLabels << qSlicerMarkupsModuleWidget::tr("Selected") << qSlicerMarkupsModuleWidget::tr("Locked") << qSlicerMarkupsModuleWidget::tr("Visible")
-    << qSlicerMarkupsModuleWidget::tr("Name") << qSlicerMarkupsModuleWidget::tr("Description")
-    << qSlicerMarkupsModuleWidget::tr("R")  //: right
-    << qSlicerMarkupsModuleWidget::tr("A")  //: anterior
-    << qSlicerMarkupsModuleWidget::tr("S")  //: superior
-    << qSlicerMarkupsModuleWidget::tr("Position");
+                     << qSlicerMarkupsModuleWidget::tr("Name") << qSlicerMarkupsModuleWidget::tr("Description") << qSlicerMarkupsModuleWidget::tr("R") //: right
+                     << qSlicerMarkupsModuleWidget::tr("A")                                                                                            //: anterior
+                     << qSlicerMarkupsModuleWidget::tr("S")                                                                                            //: superior
+                     << qSlicerMarkupsModuleWidget::tr("Position");
 
   this->newMarkupWithCurrentDisplayPropertiesAction = nullptr;
   this->visibilityMenu = nullptr;
@@ -244,7 +242,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->Ui_qSlicerMarkupsModule::setupUi(widget);
 
   QStringList registeredMarkups;
-  for(const auto& name: q->markupsLogic()->GetRegisteredMarkupsTypes())
+  for (const auto& name : q->markupsLogic()->GetRegisteredMarkupsTypes())
   {
     vtkMRMLMarkupsNode* markupsNode = q->markupsLogic()->GetNodeByMarkupsType(name.c_str());
     if (markupsNode)
@@ -267,22 +265,16 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // first add actions to the menu, then hook them up
   visibilityMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Visibility"), this->visibilityAllControlPointsInListMenuButton);
   // visibility on
-  this->visibilityOnAllControlPointsInListAction =
-    new QAction(QIcon(":/Icons/Small/SlicerVisible.png"), qSlicerMarkupsModuleWidget::tr("Visibility On"), visibilityMenu);
-  this->visibilityOnAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr(
-    "Set visibility flag to on for all control points in the active markup"));
+  this->visibilityOnAllControlPointsInListAction = new QAction(QIcon(":/Icons/Small/SlicerVisible.png"), qSlicerMarkupsModuleWidget::tr("Visibility On"), visibilityMenu);
+  this->visibilityOnAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Set visibility flag to on for all control points in the active markup"));
   this->visibilityOnAllControlPointsInListAction->setCheckable(false);
-  QObject::connect(this->visibilityOnAllControlPointsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onVisibilityOnAllControlPointsInListPushButtonClicked()));
+  QObject::connect(this->visibilityOnAllControlPointsInListAction, SIGNAL(triggered()), q, SLOT(onVisibilityOnAllControlPointsInListPushButtonClicked()));
 
   // visibility off
-  this->visibilityOffAllControlPointsInListAction =
-    new QAction(QIcon(":/Icons/Small/SlicerInvisible.png"), qSlicerMarkupsModuleWidget::tr("Visibility Off"), visibilityMenu);
-  this->visibilityOffAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr(
-    "Set visibility flag to off for all control points in the active markup"));
+  this->visibilityOffAllControlPointsInListAction = new QAction(QIcon(":/Icons/Small/SlicerInvisible.png"), qSlicerMarkupsModuleWidget::tr("Visibility Off"), visibilityMenu);
+  this->visibilityOffAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Set visibility flag to off for all control points in the active markup"));
   this->visibilityOffAllControlPointsInListAction->setCheckable(false);
-  QObject::connect(this->visibilityOffAllControlPointsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onVisibilityOffAllControlPointsInListPushButtonClicked()));
+  QObject::connect(this->visibilityOffAllControlPointsInListAction, SIGNAL(triggered()), q, SLOT(onVisibilityOffAllControlPointsInListPushButtonClicked()));
 
   this->visibilityMenu->addAction(this->visibilityOnAllControlPointsInListAction);
   this->visibilityMenu->addAction(this->visibilityOffAllControlPointsInListAction);
@@ -290,27 +282,22 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->visibilityAllControlPointsInListMenuButton->setIcon(QIcon(":/Icons/VisibleOrInvisible.png"));
 
   // visibility toggle
-  QObject::connect(this->visibilityAllControlPointsInListMenuButton, SIGNAL(clicked()),
-                   q, SLOT(onVisibilityAllControlPointsInListToggled()));
+  QObject::connect(this->visibilityAllControlPointsInListMenuButton, SIGNAL(clicked()), q, SLOT(onVisibilityAllControlPointsInListToggled()));
 
   // lock
   // first add actions to the menu, then hook them up
   lockMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Lock"), this->lockAllControlPointsInListMenuButton);
   // lock
-  this->lockAllControlPointsInListAction =
-    new QAction(QIcon(":/Icons/Small/SlicerLock.png"), qSlicerMarkupsModuleWidget::tr("Lock"), lockMenu);
+  this->lockAllControlPointsInListAction = new QAction(QIcon(":/Icons/Small/SlicerLock.png"), qSlicerMarkupsModuleWidget::tr("Lock"), lockMenu);
   this->lockAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Set lock flag to on for all control points in the active markup"));
   this->lockAllControlPointsInListAction->setCheckable(false);
-  QObject::connect(this->lockAllControlPointsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onLockAllControlPointsInListPushButtonClicked()));
+  QObject::connect(this->lockAllControlPointsInListAction, SIGNAL(triggered()), q, SLOT(onLockAllControlPointsInListPushButtonClicked()));
 
   // lock off
-  this->unlockAllControlPointsInListAction =
-    new QAction(QIcon(":/Icons/Small/SlicerUnlock.png"), qSlicerMarkupsModuleWidget::tr("Unlock"), lockMenu);
+  this->unlockAllControlPointsInListAction = new QAction(QIcon(":/Icons/Small/SlicerUnlock.png"), qSlicerMarkupsModuleWidget::tr("Unlock"), lockMenu);
   this->unlockAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Set lock flag to off for all control points in the active markup"));
   this->unlockAllControlPointsInListAction->setCheckable(false);
-  QObject::connect(this->unlockAllControlPointsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onUnlockAllControlPointsInListPushButtonClicked()));
+  QObject::connect(this->unlockAllControlPointsInListAction, SIGNAL(triggered()), q, SLOT(onUnlockAllControlPointsInListPushButtonClicked()));
 
   this->lockMenu->addAction(this->lockAllControlPointsInListAction);
   this->lockMenu->addAction(this->unlockAllControlPointsInListAction);
@@ -318,29 +305,22 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->lockAllControlPointsInListMenuButton->setIcon(QIcon(":/Icons/Small/SlicerLockUnlock.png"));
 
   // lock toggle
-  QObject::connect(this->lockAllControlPointsInListMenuButton, SIGNAL(clicked()),
-                   q, SLOT(onLockAllControlPointsInListToggled()));
+  QObject::connect(this->lockAllControlPointsInListMenuButton, SIGNAL(clicked()), q, SLOT(onLockAllControlPointsInListToggled()));
 
   // selected
   // first add actions to the menu, then hook them up
   selectedMenu = new QMenu(qSlicerMarkupsModuleWidget::tr("Selected"), this->selectedAllControlPointsInListMenuButton);
   // selected on
-  this->selectedOnAllControlPointsInListAction =
-    new QAction(QIcon(":/Icons/MarkupsSelected.png"), qSlicerMarkupsModuleWidget::tr("Selected On"), selectedMenu);
-  this->selectedOnAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr(
-    "Set selected flag to on for all control points in the active markup"));
+  this->selectedOnAllControlPointsInListAction = new QAction(QIcon(":/Icons/MarkupsSelected.png"), qSlicerMarkupsModuleWidget::tr("Selected On"), selectedMenu);
+  this->selectedOnAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Set selected flag to on for all control points in the active markup"));
   this->selectedOnAllControlPointsInListAction->setCheckable(false);
-  QObject::connect(this->selectedOnAllControlPointsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onSelectAllControlPointsInListPushButtonClicked()));
+  QObject::connect(this->selectedOnAllControlPointsInListAction, SIGNAL(triggered()), q, SLOT(onSelectAllControlPointsInListPushButtonClicked()));
 
   // selected off
-  this->selectedOffAllControlPointsInListAction =
-    new QAction(QIcon(":/Icons/MarkupsUnselected.png"), qSlicerMarkupsModuleWidget::tr("Selected Off"), selectedMenu);
-  this->selectedOffAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr(
-    "Set selected flag to off for all control points in the active markup"));
+  this->selectedOffAllControlPointsInListAction = new QAction(QIcon(":/Icons/MarkupsUnselected.png"), qSlicerMarkupsModuleWidget::tr("Selected Off"), selectedMenu);
+  this->selectedOffAllControlPointsInListAction->setToolTip(qSlicerMarkupsModuleWidget::tr("Set selected flag to off for all control points in the active markup"));
   this->selectedOffAllControlPointsInListAction->setCheckable(false);
-  QObject::connect(this->selectedOffAllControlPointsInListAction, SIGNAL(triggered()),
-                   q, SLOT(onDeselectAllControlPointsInListPushButtonClicked()));
+  QObject::connect(this->selectedOffAllControlPointsInListAction, SIGNAL(triggered()), q, SLOT(onDeselectAllControlPointsInListPushButtonClicked()));
 
   this->selectedMenu->addAction(this->selectedOnAllControlPointsInListAction);
   this->selectedMenu->addAction(this->selectedOffAllControlPointsInListAction);
@@ -348,27 +328,19 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->selectedAllControlPointsInListMenuButton->setIcon(QIcon(":/Icons/MarkupsSelectedOrUnselected.png"));
 
   // selected toggle
-  QObject::connect(this->selectedAllControlPointsInListMenuButton, SIGNAL(clicked()),
-                   q, SLOT(onSelectedAllControlPointsInListToggled()));
+  QObject::connect(this->selectedAllControlPointsInListMenuButton, SIGNAL(clicked()), q, SLOT(onSelectedAllControlPointsInListToggled()));
 
   // add
-  QObject::connect(this->addControlPointPushButton, SIGNAL(clicked()),
-                   q, SLOT(onAddControlPointPushButtonClicked()));
+  QObject::connect(this->addControlPointPushButton, SIGNAL(clicked()), q, SLOT(onAddControlPointPushButtonClicked()));
   // move
-  QObject::connect(this->moveControlPointUpPushButton, SIGNAL(clicked()),
-                   q, SLOT(onMoveControlPointUpPushButtonClicked()));
-  QObject::connect(this->moveControlPointDownPushButton, SIGNAL(clicked()),
-                   q, SLOT(onMoveControlPointDownPushButtonClicked()));
+  QObject::connect(this->moveControlPointUpPushButton, SIGNAL(clicked()), q, SLOT(onMoveControlPointUpPushButtonClicked()));
+  QObject::connect(this->moveControlPointDownPushButton, SIGNAL(clicked()), q, SLOT(onMoveControlPointDownPushButtonClicked()));
   // position status
-  QObject::connect(this->missingControlPointPushButton, SIGNAL(clicked()),
-      q, SLOT(onMissingControlPointPushButtonClicked()));
-  QObject::connect(this->unsetControlPointPushButton, SIGNAL(clicked()),
-      q, SLOT(onUnsetControlPointPushButtonClicked()));
+  QObject::connect(this->missingControlPointPushButton, SIGNAL(clicked()), q, SLOT(onMissingControlPointPushButtonClicked()));
+  QObject::connect(this->unsetControlPointPushButton, SIGNAL(clicked()), q, SLOT(onUnsetControlPointPushButtonClicked()));
   // delete
-  QObject::connect(this->deleteControlPointPushButton, SIGNAL(clicked()),
-                   q, SLOT(onDeleteControlPointPushButtonClicked()));
-  QObject::connect(this->deleteAllControlPointsInListPushButton, SIGNAL(clicked()),
-      q, SLOT(onDeleteAllControlPointsInListPushButtonClicked()));
+  QObject::connect(this->deleteControlPointPushButton, SIGNAL(clicked()), q, SLOT(onDeleteControlPointPushButtonClicked()));
+  QObject::connect(this->deleteAllControlPointsInListPushButton, SIGNAL(clicked()), q, SLOT(onDeleteAllControlPointsInListPushButtonClicked()));
 
   this->cutAction = new QAction(q);
   this->cutAction->setText(qSlicerMarkupsModuleWidget::tr("Cut"));
@@ -401,8 +373,7 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   QObject::connect(this->pasteAction, SIGNAL(triggered()), q, SLOT(pasteSelectedFromClipboard()));
 
   // set up the active markups node selector
-  QObject::connect(this->activeMarkupTreeView, SIGNAL(currentItemChanged(vtkIdType)),
-    q, SLOT(onActiveMarkupItemChanged(vtkIdType)));
+  QObject::connect(this->activeMarkupTreeView, SIGNAL(currentItemChanged(vtkIdType)), q, SLOT(onActiveMarkupItemChanged(vtkIdType)));
 
   // Create the layout for the create markups group box.
   this->createMarkupsPushButtons();
@@ -411,37 +382,30 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // vtkMRMLApplicationLogic::GetIntersectingSlicesEnabled cannot be called, as the scene
   // is not yet set, so just set to the default value (slice intersections not visible).
   this->sliceIntersectionsVisibilityCheckBox->setChecked(false);
-  QObject::connect(this->sliceIntersectionsVisibilityCheckBox,
-                   SIGNAL(toggled(bool)),
-                   q, SLOT(onSliceIntersectionsVisibilityToggled(bool)));
+  QObject::connect(this->sliceIntersectionsVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(onSliceIntersectionsVisibilityToggled(bool)));
 
   //
   // set up the list visibility/locked buttons
   //
-  QObject::connect(this->listLockedUnlockedPushButton, SIGNAL(clicked()),
-                   q, SLOT(onListLockedUnlockedPushButtonClicked()));
+  QObject::connect(this->listLockedUnlockedPushButton, SIGNAL(clicked()), q, SLOT(onListLockedUnlockedPushButtonClicked()));
 
   //
   // set up the control point number locked/unlocked button
   //
-  QObject::connect(this->fixedNumberOfControlPointsPushButton, SIGNAL(clicked()),
-    q, SLOT(onFixedNumberOfControlPointsPushButtonClicked()));
+  QObject::connect(this->fixedNumberOfControlPointsPushButton, SIGNAL(clicked()), q, SLOT(onFixedNumberOfControlPointsPushButtonClicked()));
 
   //
   // set up the name format line edit
   //
-  QObject::connect(this->nameFormatLineEdit, SIGNAL(textEdited(const QString &)),
-                   q, SLOT(onNameFormatLineEditTextEdited(const QString &)));
+  QObject::connect(this->nameFormatLineEdit, SIGNAL(textEdited(const QString&)), q, SLOT(onNameFormatLineEditTextEdited(const QString&)));
   //
   // set up the reset format button
   //
-  QObject::connect(this->resetNameFormatToDefaultPushButton, SIGNAL(clicked()),
-                   q, SLOT(onResetNameFormatToDefaultPushButtonClicked()));
+  QObject::connect(this->resetNameFormatToDefaultPushButton, SIGNAL(clicked()), q, SLOT(onResetNameFormatToDefaultPushButtonClicked()));
   //
   // set up the rename all button
   //
-  QObject::connect(this->renameAllWithCurrentNameFormatPushButton, SIGNAL(clicked()),
-                   q, SLOT(onRenameAllWithCurrentNameFormatPushButtonClicked()));
+  QObject::connect(this->renameAllWithCurrentNameFormatPushButton, SIGNAL(clicked()), q, SLOT(onRenameAllWithCurrentNameFormatPushButtonClicked()));
 
   //
   // set up the table
@@ -467,68 +431,57 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::SColumn, 65);
 
   // show/hide the coordinate columns
-  QObject::connect(this->coordinatesComboBox,
-                   SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onHideCoordinateColumnsToggled(int)));
+  QObject::connect(this->coordinatesComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onHideCoordinateColumnsToggled(int)));
 
   // use an icon for some column headers
   // selected is a check box
-  QTableWidgetItem *selectedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::SelectedColumn);
+  QTableWidgetItem* selectedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::SelectedColumn);
   selectedHeader->setText("");
   selectedHeader->setIcon(QIcon(":/Icons/MarkupsSelected.png"));
   selectedHeader->setToolTip((qSlicerMarkupsModuleWidget::tr("Click in this column to select/deselect control points for passing to CLI modules")));
   this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::SelectedColumn, 30);
   // locked is an open and closed lock
-  QTableWidgetItem *lockedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::LockedColumn);
+  QTableWidgetItem* lockedHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::LockedColumn);
   lockedHeader->setText("");
   lockedHeader->setIcon(QIcon(":/Icons/Small/SlicerLockUnlock.png"));
   lockedHeader->setToolTip((qSlicerMarkupsModuleWidget::tr("Click in this column to lock/unlock control points to prevent them from being moved by mistake")));
   this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::LockedColumn, 30);
   // visible is an open and closed eye
-  QTableWidgetItem *visibleHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::VisibleColumn);
+  QTableWidgetItem* visibleHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::VisibleColumn);
   visibleHeader->setText("");
   visibleHeader->setIcon(QIcon(":/Icons/Small/SlicerVisibleInvisible.png"));
   visibleHeader->setToolTip((qSlicerMarkupsModuleWidget::tr("Click in this column to show/hide control points in 2D and 3D")));
   this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::VisibleColumn, 30);
   // position is a location bubble
-  QTableWidgetItem *positionHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::PositionColumn);
+  QTableWidgetItem* positionHeader = this->activeMarkupTableWidget->horizontalHeaderItem(qSlicerMarkupsModuleWidgetPrivate::PositionColumn);
   positionHeader->setText("");
   positionHeader->setIcon(QIcon(":/Icons/Large/MarkupsPositionStatus.png"));
-  positionHeader->setToolTip((qSlicerMarkupsModuleWidget::tr(
-    "Click in this column to modify the control point position state.\n\n"
-    "- Edit: Enter place mode to modify the control point position in the slice views\n"
-    "- Skip: 'Place multiple control points' mode skips over the control point entry\n"
-    "- Restore: Set the control point position to its last known set position\n"
-    "- Clear: Clear the defined control point position, but do not delete the control point")));
+  positionHeader->setToolTip((qSlicerMarkupsModuleWidget::tr("Click in this column to modify the control point position state.\n\n"
+                                                             "- Edit: Enter place mode to modify the control point position in the slice views\n"
+                                                             "- Skip: 'Place multiple control points' mode skips over the control point entry\n"
+                                                             "- Restore: Set the control point position to its last known set position\n"
+                                                             "- Clear: Clear the defined control point position, but do not delete the control point")));
   this->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::PositionColumn, 10);
 
   // listen for changes so can update mrml node
-  QObject::connect(this->activeMarkupTableWidget, SIGNAL(cellChanged(int, int)),
-                   q, SLOT(onActiveMarkupTableCellChanged(int, int)));
+  QObject::connect(this->activeMarkupTableWidget, SIGNAL(cellChanged(int, int)), q, SLOT(onActiveMarkupTableCellChanged(int, int)));
 
   // listen for click on a markup
-  QObject::connect(this->activeMarkupTableWidget, SIGNAL(itemClicked(QTableWidgetItem*)),
-                   q, SLOT(onActiveMarkupTableCellClicked(QTableWidgetItem*)));
+  QObject::connect(this->activeMarkupTableWidget, SIGNAL(itemClicked(QTableWidgetItem*)), q, SLOT(onActiveMarkupTableCellClicked(QTableWidgetItem*)));
   // listen for the current cell changing (happens when arrows are used to navigate)
-  QObject::connect(this->activeMarkupTableWidget, SIGNAL(currentCellChanged(int, int, int, int)),
-                   q, SLOT(onActiveMarkupTableCurrentCellChanged(int, int, int, int)));
+  QObject::connect(this->activeMarkupTableWidget, SIGNAL(currentCellChanged(int, int, int, int)), q, SLOT(onActiveMarkupTableCurrentCellChanged(int, int, int, int)));
   // listen for a right click
   this->activeMarkupTableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-  QObject::connect(this->activeMarkupTableWidget, SIGNAL(customContextMenuRequested(QPoint)),
-                   q, SLOT(onRightClickActiveMarkupTableWidget(QPoint)));
+  QObject::connect(this->activeMarkupTableWidget, SIGNAL(customContextMenuRequested(QPoint)), q, SLOT(onRightClickActiveMarkupTableWidget(QPoint)));
 
   // set up the display properties buttons
-  QObject::connect(this->resetToDefaultDisplayPropertiesPushButton, SIGNAL(clicked()),
-    q, SLOT(onResetToDefaultDisplayPropertiesPushButtonClicked()));
-  QObject::connect(this->saveToDefaultDisplayPropertiesPushButton, SIGNAL(clicked()),
-    q, SLOT(onSaveToDefaultDisplayPropertiesPushButtonClicked()));
+  QObject::connect(this->resetToDefaultDisplayPropertiesPushButton, SIGNAL(clicked()), q, SLOT(onResetToDefaultDisplayPropertiesPushButtonClicked()));
+  QObject::connect(this->saveToDefaultDisplayPropertiesPushButton, SIGNAL(clicked()), q, SLOT(onSaveToDefaultDisplayPropertiesPushButtonClicked()));
 
   // Place the options widgets
   this->placeMarkupsOptionsWidgets();
-  QObject::connect(qMRMLMarkupsOptionsWidgetsFactory::instance(), SIGNAL(optionsWidgetRegistered()),
-                   q, SLOT(onUpdateMarkupsOptionsWidgets()));
-  QObject::connect(qMRMLMarkupsOptionsWidgetsFactory::instance(), SIGNAL(optionsWidgetUnregistered()),
-                   q, SLOT(onUpdateMarkupsOptionsWidgets()));
+  QObject::connect(qMRMLMarkupsOptionsWidgetsFactory::instance(), SIGNAL(optionsWidgetRegistered()), q, SLOT(onUpdateMarkupsOptionsWidgets()));
+  QObject::connect(qMRMLMarkupsOptionsWidgetsFactory::instance(), SIGNAL(optionsWidgetUnregistered()), q, SLOT(onUpdateMarkupsOptionsWidgets()));
 
   // hide measurement settings table until markups node containing measurement is set
   this->measurementSettingsTableWidget->setVisible(false);
@@ -545,25 +498,19 @@ void qSlicerMarkupsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->tableExportRadioButton->setChecked(true);
   this->rasExportRadioButton->setChecked(true);
 
-  QObject::connect(this->exportedImportedNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-    q, SLOT(updateImportExportWidgets()));
+  QObject::connect(this->exportedImportedNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, SLOT(updateImportExportWidgets()));
 
-  QObject::connect(this->ImportExportOperationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
-    q, SLOT(updateImportExportWidgets()));
+  QObject::connect(this->ImportExportOperationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), q, SLOT(updateImportExportWidgets()));
 
-  QObject::connect(this->exportImportPushButton, SIGNAL(clicked()),
-    q, SLOT(onImportExportApply()));
+  QObject::connect(this->exportImportPushButton, SIGNAL(clicked()), q, SLOT(onImportExportApply()));
 
   q->updateImportExportWidgets();
 
-  QObject::connect(this->ColorLegendCollapsibleGroupBox, SIGNAL(toggled(bool)),
-    q, SLOT(onColorLegendCollapsibleGroupBoxToggled(bool)));
+  QObject::connect(this->ColorLegendCollapsibleGroupBox, SIGNAL(toggled(bool)), q, SLOT(onColorLegendCollapsibleGroupBoxToggled(bool)));
 
   // Add event observers for registration/unregistration of markups
-  q->qvtkConnect(q->markupsLogic(), vtkSlicerMarkupsLogic::MarkupRegistered,
-    q, SLOT(onCreateMarkupsPushButtons()));
-  q->qvtkConnect(q->markupsLogic(), vtkSlicerMarkupsLogic::MarkupUnregistered,
-    q, SLOT(onCreateMarkupsPushButtons()));
+  q->qvtkConnect(q->markupsLogic(), vtkSlicerMarkupsLogic::MarkupRegistered, q, SLOT(onCreateMarkupsPushButtons()));
+  q->qvtkConnect(q->markupsLogic(), vtkSlicerMarkupsLogic::MarkupUnregistered, q, SLOT(onCreateMarkupsPushButtons()));
 }
 
 //-----------------------------------------------------------------------------
@@ -593,8 +540,7 @@ vtkMRMLSelectionNode* qSlicerMarkupsModuleWidgetPrivate::selectionNode()
   {
     return nullptr;
   }
-  vtkMRMLSelectionNode *selectionNode = vtkMRMLSelectionNode::SafeDownCast(
-    q->mrmlScene()->GetNodeByID(q->markupsLogic()->GetSelectionNodeID().c_str()));
+  vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(q->mrmlScene()->GetNodeByID(q->markupsLogic()->GetSelectionNodeID().c_str()));
   return selectionNode;
 }
 
@@ -613,13 +559,13 @@ vtkMRMLMarkupsDisplayNode* qSlicerMarkupsModuleWidgetPrivate::markupsDisplayNode
 vtkMRMLNode* qSlicerMarkupsModuleWidgetPrivate::selectionNodeActivePlaceNode()
 {
   Q_Q(qSlicerMarkupsModuleWidget);
-  vtkMRMLSelectionNode *selNode = this->selectionNode();
+  vtkMRMLSelectionNode* selNode = this->selectionNode();
   if (!selNode)
   {
     return nullptr;
   }
 
-  const char *selectionNodeActivePlaceNodeID = selNode->GetActivePlaceNodeID();
+  const char* selectionNodeActivePlaceNodeID = selNode->GetActivePlaceNodeID();
   if (!selectionNodeActivePlaceNodeID)
   {
     return nullptr;
@@ -737,7 +683,7 @@ bool qSlicerMarkupsModuleWidgetPrivate::getPersistanceModeEnabled()
 //-----------------------------------------------------------
 void qSlicerMarkupsModuleWidgetPrivate::updateMarkupsOptionsWidgets()
 {
-  foreach(auto widget, this->MarkupsOptionsWidgets)
+  foreach (auto widget, this->MarkupsOptionsWidgets)
   {
     widget->setParent(nullptr);
   }
@@ -746,7 +692,7 @@ void qSlicerMarkupsModuleWidgetPrivate::updateMarkupsOptionsWidgets()
 
   // Create the markups options widgets registered in qMRMLMarkupsOptionsWidgetsFactory.
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
-  foreach(const auto& widgetClassName, factory->registeredOptionsWidgetsClassNames())
+  foreach (const auto& widgetClassName, factory->registeredOptionsWidgetsClassNames())
   {
     this->MarkupsOptionsWidgets.append(factory->createWidget(widgetClassName));
   }
@@ -758,7 +704,7 @@ void qSlicerMarkupsModuleWidgetPrivate::placeMarkupsOptionsWidgets()
   Q_Q(qSlicerMarkupsModuleWidget);
 
   // Add the options widgets
-  foreach(const auto& widget, this->MarkupsOptionsWidgets)
+  foreach (const auto& widget, this->MarkupsOptionsWidgets)
   {
     // If the parent is different from the qSlicerMarkupsModule widget, then add the widget.
     if (widget->parentWidget() != q)
@@ -767,9 +713,8 @@ void qSlicerMarkupsModuleWidgetPrivate::placeMarkupsOptionsWidgets()
       widget->setVisible(false);
     }
 
-      // Forward the mrmlSceneChanged signal
-      QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                       widget, SLOT(setMRMLScene(vtkMRMLScene*)));
+    // Forward the mrmlSceneChanged signal
+    QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), widget, SLOT(setMRMLScene(vtkMRMLScene*)));
   }
 }
 
@@ -778,50 +723,43 @@ void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
 {
   Q_Q(qSlicerMarkupsModuleWidget);
 
-  QGridLayout *layout= new QGridLayout();
+  QGridLayout* layout = new QGridLayout();
 
   vtkMRMLApplicationLogic* appLogic = q->appLogic();
   if (!appLogic)
   {
-      qCritical() << Q_FUNC_INFO << "createMarkupsPushButtons: invalid application logic.";
-      return;
+    qCritical() << Q_FUNC_INFO << "createMarkupsPushButtons: invalid application logic.";
+    return;
   }
 
-  vtkSlicerMarkupsLogic* markupsLogic =
-    vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
   if (!markupsLogic)
   {
     qCritical() << Q_FUNC_INFO << "createMarkupsPushButtons: invalid application logic.";
     return;
   }
 
-  unsigned int i=0;
+  unsigned int i = 0;
 
-  for(const auto& markupName: q->markupsLogic()->GetRegisteredMarkupsTypes())
+  for (const auto& markupName : q->markupsLogic()->GetRegisteredMarkupsTypes())
   {
-    vtkMRMLMarkupsNode* markupsNode =
-      markupsLogic->GetNodeByMarkupsType(markupName.c_str());
+    vtkMRMLMarkupsNode* markupsNode = markupsLogic->GetNodeByMarkupsType(markupName.c_str());
 
     // Create markups add buttons.
     if (markupsNode && q->markupsLogic()->GetCreateMarkupsPushButton(markupName.c_str()))
     {
       QSignalMapper* mapper = new QSignalMapper(q);
-      QPushButton *markupCreatePushButton = new QPushButton();
-      //NOTE: We assign object name so we can test the dynamic creation of buttons in the tests.
-      markupCreatePushButton->setObjectName(QString("Create") +
-                                            QString(markupsNode->GetMarkupType()) +
-                                            QString("PushButton"));
+      QPushButton* markupCreatePushButton = new QPushButton();
+      // NOTE: We assign object name so we can test the dynamic creation of buttons in the tests.
+      markupCreatePushButton->setObjectName(QString("Create") + QString(markupsNode->GetMarkupType()) + QString("PushButton"));
       markupCreatePushButton->setIcon(QIcon(markupsNode->GetPlaceAddIcon()));
       markupCreatePushButton->setToolTip(qSlicerMarkupsModuleWidget::tr("Create %1").arg(markupsNode->GetTypeDisplayName()));
       markupCreatePushButton->setText(QString(markupsNode->GetTypeDisplayName()));
-      layout->addWidget(markupCreatePushButton,
-                        i / this->createMarkupsButtonsColumns,
-                        i % this->createMarkupsButtonsColumns);
+      layout->addWidget(markupCreatePushButton, i / this->createMarkupsButtonsColumns, i % this->createMarkupsButtonsColumns);
 
       QObject::connect(markupCreatePushButton, SIGNAL(clicked()), mapper, SLOT(map()));
       mapper->setMapping(markupCreatePushButton, markupsNode->GetClassName());
-      QObject::connect(mapper, SIGNAL(mapped(const QString&)),
-                       q, SLOT(onCreateMarkupByClass(const QString&)));
+      QObject::connect(mapper, SIGNAL(mapped(const QString&)), q, SLOT(onCreateMarkupByClass(const QString&)));
 
       // NOTE: Alternative connection using lambdas instead of QSignalMapper
       // QObject::connect(markupCreatePushButton, &QPushButton::clicked,
@@ -846,8 +784,8 @@ void qSlicerMarkupsModuleWidgetPrivate::createMarkupsPushButtons()
 
 //-----------------------------------------------------------------------------
 qSlicerMarkupsModuleWidget::qSlicerMarkupsModuleWidget(QWidget* _parent)
-  : Superclass( _parent )
-    , d_ptr( new qSlicerMarkupsModuleWidgetPrivate(*this) )
+  : Superclass(_parent)
+  , d_ptr(new qSlicerMarkupsModuleWidgetPrivate(*this))
 {
   this->volumeSpacingScaleFactor = 10.0;
 }
@@ -877,24 +815,17 @@ void qSlicerMarkupsModuleWidget::enter()
   d->setMRMLMarkupsNodeFromSelectionNode();
 
   // set up mrml scene observations so that the GUI gets updated
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeAddedEvent,
-                    this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeRemovedEvent,
-                    this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndImportEvent,
-                    this, SLOT(onMRMLSceneEndImportEvent()));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndBatchProcessEvent,
-                    this, SLOT(onMRMLSceneEndBatchProcessEvent()));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent,
-                    this, SLOT(onMRMLSceneEndCloseEvent()));
-  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndRestoreEvent,
-                    this, SLOT(onMRMLSceneEndRestoreEvent()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeAddedEvent, this, SLOT(onNodeAddedEvent(vtkObject*, vtkObject*)));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::NodeRemovedEvent, this, SLOT(onNodeRemovedEvent(vtkObject*, vtkObject*)));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndImportEvent, this, SLOT(onMRMLSceneEndImportEvent()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndBatchProcessEvent, this, SLOT(onMRMLSceneEndBatchProcessEvent()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent, this, SLOT(onMRMLSceneEndCloseEvent()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndRestoreEvent, this, SLOT(onMRMLSceneEndRestoreEvent()));
 
-  vtkMRMLNode *selectionNode = d->selectionNode();
+  vtkMRMLNode* selectionNode = d->selectionNode();
   if (selectionNode)
   {
-    this->qvtkConnect(selectionNode, vtkMRMLSelectionNode::ActivePlaceNodeIDChangedEvent,
-                      this, SLOT(onSelectionNodeActivePlaceNodeIDChanged()));
+    this->qvtkConnect(selectionNode, vtkMRMLSelectionNode::ActivePlaceNodeIDChangedEvent, this, SLOT(onSelectionNodeActivePlaceNodeIDChanged()));
   }
   // Toolbar
   qMRMLMarkupsToolBar* toolBar = d->toolBar();
@@ -912,7 +843,7 @@ void qSlicerMarkupsModuleWidget::enter()
     this->setMRMLMarkupsNode(markupsNode);
     vtkIdType itemID = shNode->GetItemByDataNode(markupsNode);
     QModelIndex itemIndex = d->activeMarkupTreeView->sortFilterProxyModel()->indexFromSubjectHierarchyItem(itemID);
-    if(itemIndex.row()>=0)
+    if (itemIndex.row() >= 0)
     {
       d->activeMarkupTreeView->scrollTo(itemIndex);
       d->activeMarkupTreeView->setCurrentNode(markupsNode);
@@ -922,7 +853,6 @@ void qSlicerMarkupsModuleWidget::enter()
   // check the max scales against volume spacing, they might need to be updated
   this->updateMaximumScaleFromVolumes();
   this->enableMarkupTableButtons(d->MarkupsNode ? 1 : 0);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -938,22 +868,20 @@ void qSlicerMarkupsModuleWidget::exit()
   Q_D(qSlicerMarkupsModuleWidget);
   if (d->MarkupsNode)
   {
-    for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+    for (int i = 0; i < d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
     {
-      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
-        d->MarkupsNode->Measurements->GetItemAsObject(i) );
+      vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(d->MarkupsNode->Measurements->GetItemAsObject(i));
       if (currentMeasurement)
       {
         qvtkDisconnect(currentMeasurement, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementModified()));
       }
     }
-    qvtkDisconnect(d->MarkupsNode->Measurements, vtkCommand::ModifiedEvent,
-      this, SLOT(onMeasurementsCollectionModified()));
+    qvtkDisconnect(d->MarkupsNode->Measurements, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementsCollectionModified()));
   }
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerMarkupsLogic *qSlicerMarkupsModuleWidget::markupsLogic()
+vtkSlicerMarkupsLogic* qSlicerMarkupsModuleWidget::markupsLogic()
 {
   if (this->logic() == nullptr)
   {
@@ -1040,7 +968,7 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
     this->updateRows();
   }
   // Update options widgets
-  foreach(const auto& widget, d->MarkupsOptionsWidgets)
+  foreach (const auto& widget, d->MarkupsOptionsWidgets)
   {
     widget->updateWidgetFromMRML();
   }
@@ -1053,19 +981,19 @@ void qSlicerMarkupsModuleWidget::updateMaximumScaleFromVolumes()
 
   double maxSliceSpacing = 1.0;
 
-  vtkMRMLSliceLogic *sliceLogic = nullptr;
-  vtkMRMLApplicationLogic *mrmlAppLogic = this->logic()->GetMRMLApplicationLogic();
+  vtkMRMLSliceLogic* sliceLogic = nullptr;
+  vtkMRMLApplicationLogic* mrmlAppLogic = this->logic()->GetMRMLApplicationLogic();
   if (!mrmlAppLogic)
   {
     return;
   }
 
-  vtkMRMLNode *mrmlNode = this->mrmlScene()->GetNodeByID("vtkMRMLSliceNodeRed");
+  vtkMRMLNode* mrmlNode = this->mrmlScene()->GetNodeByID("vtkMRMLSliceNodeRed");
   if (!mrmlNode)
   {
     return;
   }
-  vtkMRMLSliceNode *redSlice = vtkMRMLSliceNode::SafeDownCast(mrmlNode);
+  vtkMRMLSliceNode* redSlice = vtkMRMLSliceNode::SafeDownCast(mrmlNode);
   if (!redSlice)
   {
     return;
@@ -1076,7 +1004,7 @@ void qSlicerMarkupsModuleWidget::updateMaximumScaleFromVolumes()
     return;
   }
 
-  double *volumeSliceSpacing = sliceLogic->GetBackgroundSliceSpacing();
+  double* volumeSliceSpacing = sliceLogic->GetBackgroundSliceSpacing();
   if (volumeSliceSpacing != nullptr)
   {
     for (int i = 0; i < 3; ++i)
@@ -1120,8 +1048,8 @@ void qSlicerMarkupsModuleWidget::updateRow(int controlPointIndex)
 {
   Q_D(qSlicerMarkupsModuleWidget);
   vtkMRMLMarkupsNode* markupsNode = this->mrmlMarkupsNode();
-  if (!markupsNode
-    || controlPointIndex >= markupsNode->GetNumberOfControlPoints()) // markup point is already deleted (possible after batch update)
+  if (!markupsNode                                                     //
+      || controlPointIndex >= markupsNode->GetNumberOfControlPoints()) // markup point is already deleted (possible after batch update)
   {
     return;
   }
@@ -1244,25 +1172,25 @@ void qSlicerMarkupsModuleWidget::updateRow(int controlPointIndex)
     d->activeMarkupTableWidget->setItem(controlPointIndex, column, item);
   }
 
-   // coordinates
-   double point[3] = {0.0, 0.0, 0.0};
-   if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
-   {
-     double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
-     markupsNode->GetNthControlPointPositionWorld(controlPointIndex, worldPoint);
-     for (int p = 0; p < 3; ++p)
-     {
-       point[p] = worldPoint[p];
-     }
-   }
-   else
-   {
-     markupsNode->GetNthControlPointPosition(controlPointIndex, point);
-   }
+  // coordinates
+  double point[3] = { 0.0, 0.0, 0.0 };
+  if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
+  {
+    double worldPoint[4] = { 0.0, 0.0, 0.0, 1.0 };
+    markupsNode->GetNthControlPointPositionWorld(controlPointIndex, worldPoint);
+    for (int p = 0; p < 3; ++p)
+    {
+      point[p] = worldPoint[p];
+    }
+  }
+  else
+  {
+    markupsNode->GetNthControlPointPosition(controlPointIndex, point);
+  }
   int rColumnIndex = qSlicerMarkupsModuleWidgetPrivate::RColumn;
   int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(controlPointIndex);
-  bool showCoordinates = (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined ||
-    mPositionStatus == vtkMRMLMarkupsNode::PositionPreview);
+  bool showCoordinates = (mPositionStatus == vtkMRMLMarkupsNode::PositionDefined || //
+                          mPositionStatus == vtkMRMLMarkupsNode::PositionPreview);
   for (int p = 0; p < 3; p++)
   {
     column = rColumnIndex + p;
@@ -1301,8 +1229,8 @@ void qSlicerMarkupsModuleWidget::updateRow(int controlPointIndex)
     isNewItem = true;
   }
   int positionStatus = markupsNode->GetNthControlPointPositionStatus(controlPointIndex);
-  if (isNewItem
-    || item->data(Qt::UserRole).toInt() != positionStatus)
+  if (isNewItem //
+      || item->data(Qt::UserRole).toInt() != positionStatus)
   {
     item->setData(Qt::UserRole, positionStatus);
     switch (positionStatus)
@@ -1393,7 +1321,7 @@ void qSlicerMarkupsModuleWidget::onPKeyActivated()
   QPoint pos = QCursor::pos();
 
   // find out which widget it was over
-  QWidget *widget = qSlicerApplication::application()->widgetAt(pos);
+  QWidget* widget = qSlicerApplication::application()->widgetAt(pos);
 
   // simulate a mouse press inside the widget
   QPoint widgetPos = widget->mapFromGlobal(pos);
@@ -1401,7 +1329,7 @@ void qSlicerMarkupsModuleWidget::onPKeyActivated()
   click.setAccepted(true);
 
   // and send it to the widget
-  //qDebug() << "onPKeyActivated: sending event with pos " << widgetPos;
+  // qDebug() << "onPKeyActivated: sending event with pos " << widgetPos;
   QCoreApplication::sendEvent(widget, &click);
 }
 
@@ -1520,13 +1448,13 @@ void qSlicerMarkupsModuleWidget::onAddControlPointPushButtonClicked()
     return;
   }
 
-  if (d->MarkupsNode->GetMaximumNumberOfControlPoints() >= 0
-    && (d->MarkupsNode->GetNumberOfControlPoints() >= d->MarkupsNode->GetMaximumNumberOfControlPoints()) )
+  if (d->MarkupsNode->GetMaximumNumberOfControlPoints() >= 0 //
+      && (d->MarkupsNode->GetNumberOfControlPoints() >= d->MarkupsNode->GetMaximumNumberOfControlPoints()))
   {
     return;
   }
 
-  int index = d->MarkupsNode->AddControlPoint(vtkVector3d(0,0,0));
+  int index = d->MarkupsNode->AddControlPoint(vtkVector3d(0, 0, 0));
   d->MarkupsNode->UnsetNthControlPointPosition(index);
   d->setPlaceModeEnabled(false);
 }
@@ -1541,7 +1469,7 @@ void qSlicerMarkupsModuleWidget::onMoveControlPointUpPushButtonClicked()
   }
 
   // get the selected rows
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+  QList<QTableWidgetItem*> selectedItems = d->activeMarkupTableWidget->selectedItems();
 
   // first, that only one is selected
   if ((selectedItems.size() / d->numberOfColumns()) != 1)
@@ -1550,7 +1478,7 @@ void qSlicerMarkupsModuleWidget::onMoveControlPointUpPushButtonClicked()
     return;
   }
   int thisIndex = selectedItems.at(0)->row();
-  //qDebug() << "Swapping " << thisIndex << " and " << thisIndex - 1;
+  // qDebug() << "Swapping " << thisIndex << " and " << thisIndex - 1;
   d->MarkupsNode->SwapControlPoints(thisIndex, thisIndex - 1);
   // now make sure the new row is selected so a user can keep moving it up
   d->activeMarkupTableWidget->selectRow(thisIndex - 1);
@@ -1566,7 +1494,7 @@ void qSlicerMarkupsModuleWidget::onMoveControlPointDownPushButtonClicked()
   }
 
   // get the selected rows
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+  QList<QTableWidgetItem*> selectedItems = d->activeMarkupTableWidget->selectedItems();
 
   // first, that only one is selected
   if ((selectedItems.size() / d->numberOfColumns()) != 1)
@@ -1574,7 +1502,7 @@ void qSlicerMarkupsModuleWidget::onMoveControlPointDownPushButtonClicked()
     return;
   }
   int thisIndex = selectedItems.at(0)->row();
-  //qDebug() << "Swapping " << thisIndex << " and " << thisIndex + 1;
+  // qDebug() << "Swapping " << thisIndex << " and " << thisIndex + 1;
   d->MarkupsNode->SwapControlPoints(thisIndex, thisIndex + 1);
   // now make sure the new row is selected so a user can keep moving it down
   d->activeMarkupTableWidget->selectRow(thisIndex + 1);
@@ -1619,14 +1547,13 @@ void qSlicerMarkupsModuleWidget::onDeleteControlPointPushButtonClicked(bool conf
     // a long text
     deleteAllMsgBox.setText(labelText);
 
-    QPushButton* deleteButton =
-      deleteAllMsgBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
-      deleteAllMsgBox.addButton(QMessageBox::Cancel);
-      deleteAllMsgBox.setDefaultButton(deleteButton);
-      deleteAllMsgBox.setIcon(QMessageBox::Question);
-      deleteAllMsgBox.setDontShowAgainVisible(true);
-      deleteAllMsgBox.setDontShowAgainSettingsKey("Markups/AlwaysDeleteMarkups");
-      deleteAllMsgBox.exec();
+    QPushButton* deleteButton = deleteAllMsgBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
+    deleteAllMsgBox.addButton(QMessageBox::Cancel);
+    deleteAllMsgBox.setDefaultButton(deleteButton);
+    deleteAllMsgBox.setIcon(QMessageBox::Question);
+    deleteAllMsgBox.setDontShowAgainVisible(true);
+    deleteAllMsgBox.setDontShowAgainSettingsKey("Markups/AlwaysDeleteMarkups");
+    deleteAllMsgBox.exec();
     if (deleteAllMsgBox.clickedButton() != deleteButton)
     {
       return;
@@ -1828,8 +1755,7 @@ void qSlicerMarkupsModuleWidget::onDeleteAllControlPointsInListPushButtonClicked
   // a long text
   deleteAllMsgBox.setText(labelText);
 
-  QPushButton *deleteButton =
-    deleteAllMsgBox.addButton(tr("Delete All"), QMessageBox::AcceptRole);
+  QPushButton* deleteButton = deleteAllMsgBox.addButton(tr("Delete All"), QMessageBox::AcceptRole);
   deleteAllMsgBox.addButton(QMessageBox::Cancel);
   deleteAllMsgBox.setDefaultButton(deleteButton);
   deleteAllMsgBox.setIcon(QMessageBox::Question);
@@ -1855,7 +1781,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupItemChanged(vtkIdType)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeAdded(vtkMRMLNode * node)
+void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeAdded(vtkMRMLNode* node)
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (this->markupsLogic())
@@ -2021,18 +1947,16 @@ void qSlicerMarkupsModuleWidget::onNameFormatLineEditTextEdited(const QString te
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onResetNameFormatToDefaultPushButtonClicked()
 {
-   Q_D(qSlicerMarkupsModuleWidget);
+  Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode || !this->mrmlScene())
   {
     return;
   }
-   // make a new default markups node and use its value for the name format
-  vtkSmartPointer<vtkMRMLMarkupsNode> defaultNode = vtkMRMLMarkupsNode::SafeDownCast(
-    this->mrmlScene()->GetDefaultNodeByClass(d->MarkupsNode->GetClassName()));
+  // make a new default markups node and use its value for the name format
+  vtkSmartPointer<vtkMRMLMarkupsNode> defaultNode = vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->GetDefaultNodeByClass(d->MarkupsNode->GetClassName()));
   if (!defaultNode)
   {
-    defaultNode = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(vtkMRMLMarkupsNode::SafeDownCast(
-      this->mrmlScene()->CreateNodeByClass(d->MarkupsNode->GetClassName())));
+    defaultNode = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->CreateNodeByClass(d->MarkupsNode->GetClassName())));
   }
   if (!defaultNode)
   {
@@ -2044,12 +1968,12 @@ void qSlicerMarkupsModuleWidget::onResetNameFormatToDefaultPushButtonClicked()
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onRenameAllWithCurrentNameFormatPushButtonClicked()
 {
-   Q_D(qSlicerMarkupsModuleWidget);
-   if (!d->MarkupsNode || !this->markupsLogic())
-   {
-     return;
-   }
-   this->markupsLogic()->RenameAllControlPointsFromCurrentFormat(d->MarkupsNode);
+  Q_D(qSlicerMarkupsModuleWidget);
+  if (!d->MarkupsNode || !this->markupsLogic())
+  {
+    return;
+  }
+  this->markupsLogic()->RenameAllControlPointsFromCurrentFormat(d->MarkupsNode);
 }
 
 //-----------------------------------------------------------------------------
@@ -2065,7 +1989,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
   int n = row;
 
   // now switch on the property
-  QTableWidgetItem *item = d->activeMarkupTableWidget->item(row, column);
+  QTableWidgetItem* item = d->activeMarkupTableWidget->item(row, column);
   if (!item)
   {
     qDebug() << QString("Unable to find item in table at ") + QString::number(row) + QString(", ") + QString::number(column);
@@ -2109,19 +2033,19 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
     std::string name = std::string(item->text().toUtf8());
     d->MarkupsNode->SetNthControlPointLabel(n, name);
   }
-  else if (column ==  qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn)
+  else if (column == qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn)
   {
     std::string description = std::string(item->text().toUtf8());
     d->MarkupsNode->SetNthControlPointDescription(n, description);
   }
-  else if (column == qSlicerMarkupsModuleWidgetPrivate::RColumn ||
-           column == qSlicerMarkupsModuleWidgetPrivate::AColumn ||
+  else if (column == qSlicerMarkupsModuleWidgetPrivate::RColumn || //
+           column == qSlicerMarkupsModuleWidgetPrivate::AColumn || //
            column == qSlicerMarkupsModuleWidgetPrivate::SColumn)
   {
     // get the new value
-    double newPoint[3] = {0.0, 0.0, 0.0};
-    if (d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::RColumn) == nullptr ||
-        d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::AColumn) == nullptr ||
+    double newPoint[3] = { 0.0, 0.0, 0.0 };
+    if (d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::RColumn) == nullptr || //
+        d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::AColumn) == nullptr || //
         d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::SColumn) == nullptr)
     {
       // init state, return
@@ -2132,10 +2056,10 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
     newPoint[2] = d->activeMarkupTableWidget->item(row, qSlicerMarkupsModuleWidgetPrivate::SColumn)->text().toDouble();
 
     // get the old value
-    double point[3] = {0.0, 0.0, 0.0};
+    double point[3] = { 0.0, 0.0, 0.0 };
     if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
     {
-      double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
+      double worldPoint[4] = { 0.0, 0.0, 0.0, 1.0 };
       d->MarkupsNode->GetNthControlPointPositionWorld(n, worldPoint);
       for (int p = 0; p < 3; ++p)
       {
@@ -2149,8 +2073,8 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
 
     // changed?
     double minChange = 0.001;
-    if (fabs(newPoint[0] - point[0]) > minChange ||
-        fabs(newPoint[1] - point[1]) > minChange ||
+    if (fabs(newPoint[0] - point[0]) > minChange || //
+        fabs(newPoint[1] - point[1]) > minChange || //
         fabs(newPoint[2] - point[2]) > minChange)
     {
       if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
@@ -2164,7 +2088,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellChanged(int row, int col
     }
     else
     {
-      //qDebug() << QString("Cell changed: no change in location bigger than ") + QString::number(minChange);
+      // qDebug() << QString("Cell changed: no change in location bigger than ") + QString::number(minChange);
     }
   }
   else if (column == qSlicerMarkupsModuleWidgetPrivate::PositionColumn)
@@ -2220,8 +2144,8 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellClicked(QTableWidgetItem
   }
   int column = item->column();
   int row = item->row();
-  if (column == qSlicerMarkupsModuleWidgetPrivate::VisibleColumn ||
-    column == qSlicerMarkupsModuleWidgetPrivate::LockedColumn)
+  if (column == qSlicerMarkupsModuleWidgetPrivate::VisibleColumn || //
+      column == qSlicerMarkupsModuleWidgetPrivate::LockedColumn)
   {
     // toggle the user role, the icon update is triggered by this change
     if (item->data(Qt::UserRole) == QVariant(false))
@@ -2235,29 +2159,28 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellClicked(QTableWidgetItem
   }
   else if (column == qSlicerMarkupsModuleWidgetPrivate::PositionColumn)
   {
-      if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionDefined))
-      {
-        item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionUndefined));
-      }
-      else if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionUndefined))
-      {
-        item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionPreview));
-      }
-      else if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionPreview))
-      {
-        item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionMissing));
-      }
-      else if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionMissing))
-      {
-        item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionDefined));
-      }
+    if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionDefined))
+    {
+      item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionUndefined));
+    }
+    else if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionUndefined))
+    {
+      item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionPreview));
+    }
+    else if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionPreview))
+    {
+      item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionMissing));
+    }
+    else if (item->data(Qt::UserRole) == QVariant(vtkMRMLMarkupsNode::PositionMissing))
+    {
+      item->setData(Qt::UserRole, QVariant(vtkMRMLMarkupsNode::PositionDefined));
+    }
   }
   d->MarkupsNode->SetControlPointPlacementStartIndex(row);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onActiveMarkupTableCurrentCellChanged(
-     int currentRow, int currentColumn, int previousRow, int previousColumn)
+void qSlicerMarkupsModuleWidget::onActiveMarkupTableCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
   Q_D(qSlicerMarkupsModuleWidget);
   Q_UNUSED(currentColumn);
@@ -2288,29 +2211,23 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
   QMenu menu;
 
   // Delete
-  QAction *deletePointAction =
-    new QAction(tr("Delete highlighted control point(s)"), &menu);
+  QAction* deletePointAction = new QAction(tr("Delete highlighted control point(s)"), &menu);
   menu.addAction(deletePointAction);
-  QObject::connect(deletePointAction, SIGNAL(triggered()),
-                   this, SLOT(onDeleteControlPointPushButtonClicked()));
+  QObject::connect(deletePointAction, SIGNAL(triggered()), this, SLOT(onDeleteControlPointPushButtonClicked()));
 
   // Jump slices
-  QAction *jumpSlicesAction =
-    new QAction(tr("Jump slices"), &menu);
+  QAction* jumpSlicesAction = new QAction(tr("Jump slices"), &menu);
   menu.addAction(jumpSlicesAction);
-  QObject::connect(jumpSlicesAction, SIGNAL(triggered()),
-                   this, SLOT(onJumpSlicesActionTriggered()));
+  QObject::connect(jumpSlicesAction, SIGNAL(triggered()), this, SLOT(onJumpSlicesActionTriggered()));
 
   // Refocus 3D cameras
-  QAction *refocusCamerasAction =
-    new QAction(tr("Refocus all cameras"), &menu);
+  QAction* refocusCamerasAction = new QAction(tr("Refocus all cameras"), &menu);
   menu.addAction(refocusCamerasAction);
-  QObject::connect(refocusCamerasAction, SIGNAL(triggered()),
-                   this, SLOT(onRefocusCamerasActionTriggered()));
+  QObject::connect(refocusCamerasAction, SIGNAL(triggered()), this, SLOT(onRefocusCamerasActionTriggered()));
 
   menu.addSeparator();
   // get the selected rows
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+  QList<QTableWidgetItem*> selectedItems = d->activeMarkupTableWidget->selectedItems();
   if (!selectedItems.isEmpty())
   {
     menu.addAction(d->cutAction);
@@ -2320,29 +2237,21 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
 
   menu.addSeparator();
   // Change position status
-  QAction* resetPointAction =
-      new QAction(QIcon(":/Icons/XSmall/MarkupsInProgress.png"), tr("Edit position of highlighted control point(s)"), &menu);
+  QAction* resetPointAction = new QAction(QIcon(":/Icons/XSmall/MarkupsInProgress.png"), tr("Edit position of highlighted control point(s)"), &menu);
   menu.addAction(resetPointAction);
-  QObject::connect(resetPointAction, SIGNAL(triggered()),
-      this, SLOT(onResetControlPointPushButtonClicked()));
+  QObject::connect(resetPointAction, SIGNAL(triggered()), this, SLOT(onResetControlPointPushButtonClicked()));
 
-  QAction* missingPointAction =
-      new QAction(QIcon(":/Icons/XSmall/MarkupsMissing.png"), tr("Skip placement of highlighted control point(s)"), &menu);
+  QAction* missingPointAction = new QAction(QIcon(":/Icons/XSmall/MarkupsMissing.png"), tr("Skip placement of highlighted control point(s)"), &menu);
   menu.addAction(missingPointAction);
-  QObject::connect(missingPointAction, SIGNAL(triggered()),
-      this, SLOT(onMissingControlPointPushButtonClicked()));
+  QObject::connect(missingPointAction, SIGNAL(triggered()), this, SLOT(onMissingControlPointPushButtonClicked()));
 
-  QAction* restorePointAction =
-      new QAction(QIcon(":/Icons/XSmall/MarkupsDefined.png"), tr("Restore position of highlighted control point(s)"), &menu);
+  QAction* restorePointAction = new QAction(QIcon(":/Icons/XSmall/MarkupsDefined.png"), tr("Restore position of highlighted control point(s)"), &menu);
   menu.addAction(restorePointAction);
-  QObject::connect(restorePointAction, SIGNAL(triggered()),
-      this, SLOT(onRestoreControlPointPushButtonClicked()));
+  QObject::connect(restorePointAction, SIGNAL(triggered()), this, SLOT(onRestoreControlPointPushButtonClicked()));
 
-  QAction* unsetPointAction =
-      new QAction(QIcon(":/Icons/XSmall/MarkupsUndefined.png"), tr("Clear position of highlighted control point(s)"), &menu);
+  QAction* unsetPointAction = new QAction(QIcon(":/Icons/XSmall/MarkupsUndefined.png"), tr("Clear position of highlighted control point(s)"), &menu);
   menu.addAction(unsetPointAction);
-  QObject::connect(unsetPointAction, SIGNAL(triggered()),
-      this, SLOT(onUnsetControlPointPushButtonClicked()));
+  QObject::connect(unsetPointAction, SIGNAL(triggered()), this, SLOT(onUnsetControlPointPushButtonClicked()));
 
   menu.addSeparator();
   this->addSelectedCoordinatesToMenu(&menu);
@@ -2351,7 +2260,7 @@ void qSlicerMarkupsModuleWidget::onRightClickActiveMarkupTableWidget(QPoint pos)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
+void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu* menu)
 {
   Q_D(qSlicerMarkupsModuleWidget);
   if (!d->MarkupsNode)
@@ -2360,7 +2269,7 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
   }
 
   // get the selected rows
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+  QList<QTableWidgetItem*> selectedItems = d->activeMarkupTableWidget->selectedItems();
 
   // first, check if nothing is selected
   if (selectedItems.isEmpty())
@@ -2387,12 +2296,12 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
 
   // keep track of point to point distance
   double distance = 0.0;
-  double lastPoint[3] = {0.0, 0.0, 0.0};
+  double lastPoint[3] = { 0.0, 0.0, 0.0 };
 
   menu->addSeparator();
 
   // loop over the selected rows
-  for (int i = 0; i < rows.size() ; i++)
+  for (int i = 0; i < rows.size(); i++)
   {
     int row = rows.at(i);
     // label this selected markup if more than one
@@ -2402,20 +2311,20 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
       // if there's a label use it
       if (!(d->MarkupsNode->GetNthControlPointLabel(row).empty()))
       {
-        indexString =  QString(d->MarkupsNode->GetNthControlPointLabel(row).c_str());
+        indexString = QString(d->MarkupsNode->GetNthControlPointLabel(row).c_str());
       }
       else
       {
         // use the row number as an index (row starts at 0, but GUI starts at 1)
-        indexString = QString::number(row+1);
+        indexString = QString::number(row + 1);
       }
-      indexString +=  QString(" : ");
+      indexString += QString(" : ");
     }
 
-    double point[3] = {0.0, 0.0, 0.0};
+    double point[3] = { 0.0, 0.0, 0.0 };
     if (d->coordinatesComboBox->currentIndex() == COORDINATE_COMBOBOX_INDEX_WORLD)
     {
-      double worldPoint[4] = {0.0, 0.0, 0.0, 1.0};
+      double worldPoint[4] = { 0.0, 0.0, 0.0, 1.0 };
       d->MarkupsNode->GetNthControlPointPositionWorld(row, worldPoint);
       for (int p = 0; p < 3; ++p)
       {
@@ -2427,10 +2336,7 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
       d->MarkupsNode->GetNthControlPointPosition(row, point);
     }
     // format the coordinates
-    QString coordinate =
-      QString::number(point[0]) + QString(",") +
-      QString::number(point[1]) + QString(",") +
-      QString::number(point[2]);
+    QString coordinate = QString::number(point[0]) + QString(",") + QString::number(point[1]) + QString(",") + QString::number(point[2]);
     QString menuString = indexString + coordinate;
     menu->addAction(menuString);
 
@@ -2460,7 +2366,7 @@ void qSlicerMarkupsModuleWidget::addSelectedCoordinatesToMenu(QMenu *menu)
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onJumpSlicesActionTriggered()
 {
- Q_D(qSlicerMarkupsModuleWidget);
+  Q_D(qSlicerMarkupsModuleWidget);
 
   // get the active node
   if (!d->MarkupsNode)
@@ -2469,7 +2375,7 @@ void qSlicerMarkupsModuleWidget::onJumpSlicesActionTriggered()
   }
 
   // get the selected rows
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+  QList<QTableWidgetItem*> selectedItems = d->activeMarkupTableWidget->selectedItems();
 
   // first, check if nothing is selected
   if (selectedItems.isEmpty())
@@ -2501,7 +2407,7 @@ void qSlicerMarkupsModuleWidget::onRefocusCamerasActionTriggered()
     return;
   }
   // get the selected rows
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+  QList<QTableWidgetItem*> selectedItems = d->activeMarkupTableWidget->selectedItems();
   // first, check if nothing is selected
   if (selectedItems.isEmpty())
   {
@@ -2533,7 +2439,7 @@ void qSlicerMarkupsModuleWidget::onUpdateMarkupsOptionsWidgets()
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerMarkupsModuleWidget::getOtherMarkupNames(vtkMRMLNode *thisMarkup)
+QStringList qSlicerMarkupsModuleWidget::getOtherMarkupNames(vtkMRMLNode* thisMarkup)
 {
   QStringList otherMarkups;
 
@@ -2543,7 +2449,7 @@ QStringList qSlicerMarkupsModuleWidget::getOtherMarkupNames(vtkMRMLNode *thisMar
     return otherMarkups;
   }
 
-  vtkCollection *col = this->mrmlScene()->GetNodesByClass(thisMarkup->GetClassName());
+  vtkCollection* col = this->mrmlScene()->GetNodesByClass(thisMarkup->GetClassName());
   int numNodes = col->GetNumberOfItems();
   if (numNodes < 2)
   {
@@ -2554,7 +2460,7 @@ QStringList qSlicerMarkupsModuleWidget::getOtherMarkupNames(vtkMRMLNode *thisMar
 
   for (int n = 0; n < numNodes; n++)
   {
-    vtkMRMLNode *markupsNodeN = vtkMRMLNode::SafeDownCast(col->GetItemAsObject(n));
+    vtkMRMLNode* markupsNodeN = vtkMRMLNode::SafeDownCast(col->GetItemAsObject(n));
     if (strcmp(markupsNodeN->GetID(), thisMarkup->GetID()) != 0)
     {
       otherMarkups.append(QString(markupsNodeN->GetName()));
@@ -2585,7 +2491,7 @@ void qSlicerMarkupsModuleWidget::copySelectedToClipboard()
   }
 
   // get the selected rows
-  QList<QTableWidgetItem *> selectedItems = d->activeMarkupTableWidget->selectedItems();
+  QList<QTableWidgetItem*> selectedItems = d->activeMarkupTableWidget->selectedItems();
 
   // first, check if nothing is selected
   if (selectedItems.isEmpty())
@@ -2654,7 +2560,7 @@ void qSlicerMarkupsModuleWidget::pasteSelectedFromClipboard()
   // SetPointFromString calls various events reporting the id of the point modified.
   // However, already for > 200 points, it gets bad performance. Therefore, we call a simply modified call at the end.
   MRMLNodeModifyBlocker blocker(d->MarkupsNode);
-  foreach(QString line, lines)
+  foreach (QString line, lines)
   {
     line = line.trimmed();
     if (line.isEmpty() || line.startsWith('#'))
@@ -2687,45 +2593,36 @@ void qSlicerMarkupsModuleWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* markupsN
     return;
   }
 
-  qvtkReconnect(d->MarkupsNode, markupsNode, vtkCommand::ModifiedEvent,
-    this, SLOT(onActiveMarkupsNodeModifiedEvent()));
+  qvtkReconnect(d->MarkupsNode, markupsNode, vtkCommand::ModifiedEvent, this, SLOT(onActiveMarkupsNodeModifiedEvent()));
 
   // fixed point number
-  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::FixedNumberOfControlPointsModifiedEvent,
-    this, SLOT(onActiveMarkupsNodeModifiedEvent()));
+  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::FixedNumberOfControlPointsModifiedEvent, this, SLOT(onActiveMarkupsNodeModifiedEvent()));
 
   // points
-  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::PointModifiedEvent,
-    this, SLOT(onActiveMarkupsNodePointModifiedEvent(vtkObject*, void*)));
-  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::PointAddedEvent,
-    this, SLOT(onActiveMarkupsNodePointAddedEvent()));
-  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::PointRemovedEvent,
-    this, SLOT(onActiveMarkupsNodePointRemovedEvent(vtkObject*, void*)));
+  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::PointModifiedEvent, this, SLOT(onActiveMarkupsNodePointModifiedEvent(vtkObject*, void*)));
+  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::PointAddedEvent, this, SLOT(onActiveMarkupsNodePointAddedEvent()));
+  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLMarkupsNode::PointRemovedEvent, this, SLOT(onActiveMarkupsNodePointRemovedEvent(vtkObject*, void*)));
 
   // display
-  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLDisplayableNode::DisplayModifiedEvent,
-    this, SLOT(onActiveMarkupsNodeDisplayModifiedEvent()));
+  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(onActiveMarkupsNodeDisplayModifiedEvent()));
 
   // transforms
-  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLTransformableNode::TransformModifiedEvent,
-    this, SLOT(onActiveMarkupsNodeTransformModifiedEvent()));
+  qvtkReconnect(d->MarkupsNode, markupsNode, vtkMRMLTransformableNode::TransformModifiedEvent, this, SLOT(onActiveMarkupsNodeTransformModifiedEvent()));
 
   // measurements
   if (d->MarkupsNode)
   {
-    qvtkDisconnect(d->MarkupsNode->Measurements, vtkCommand::ModifiedEvent,
-      this, SLOT(onMeasurementsCollectionModified()));
+    qvtkDisconnect(d->MarkupsNode->Measurements, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementsCollectionModified()));
   }
   if (markupsNode)
   {
-    qvtkConnect(markupsNode->Measurements, vtkCommand::ModifiedEvent,
-      this, SLOT(onMeasurementsCollectionModified()));
+    qvtkConnect(markupsNode->Measurements, vtkCommand::ModifiedEvent, this, SLOT(onMeasurementsCollectionModified()));
   }
 
   // Setting the internal Markups node
   d->MarkupsNode = markupsNode;
 
-  foreach(const auto& widget, d->MarkupsOptionsWidgets)
+  foreach (const auto& widget, d->MarkupsOptionsWidgets)
   {
     widget->setMRMLMarkupsNode(markupsNode);
     widget->setVisible(widget->canManageMRMLMarkupsNode(markupsNode));
@@ -2754,13 +2651,13 @@ vtkMRMLMarkupsNode* qSlicerMarkupsModuleWidget::mrmlMarkupsNode()
   {
     return nullptr;
   }
- // make sure the node is still in the scene and convert to markups
- vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->GetNodeByID(node->GetID()));
- return markupsNode;
+  // make sure the node is still in the scene and convert to markups
+  vtkMRMLMarkupsNode* markupsNode = vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->GetNodeByID(node->GetID()));
+  return markupsNode;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject *caller, void *callData)
+void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject* caller, void* callData)
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
@@ -2773,7 +2670,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject
   int* nPtr = reinterpret_cast<int*>(callData);
   int n = (nPtr ? *nPtr : -1);
 
-  if (n>=0)
+  if (n >= 0)
   {
     this->updateRow(n);
     // Only scroll to the point that is currently being placed if jump to slice is enabled
@@ -2784,8 +2681,8 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointModifiedEvent(vtkObject
       if (markupsNode)
       {
         int mPositionStatus = markupsNode->GetNthControlPointPositionStatus(n);
-        if (mPositionStatus == vtkMRMLMarkupsNode::PositionPreview
-          && d->activeMarkupTableWidget->currentRow() != n)
+        if (mPositionStatus == vtkMRMLMarkupsNode::PositionPreview //
+            && d->activeMarkupTableWidget->currentRow() != n)
         {
           d->activeMarkupTableWidget->setCurrentCell(n, 0);
         }
@@ -2828,7 +2725,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointAddedEvent()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointRemovedEvent(vtkObject *caller, void *callData)
+void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointRemovedEvent(vtkObject* caller, void* callData)
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
@@ -2838,7 +2735,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupsNodePointRemovedEvent(vtkObject 
   }
 
   // the call data should be the index n
-  int *nPtr = reinterpret_cast<int*>(callData);
+  int* nPtr = reinterpret_cast<int*>(callData);
   int n = (nPtr ? *nPtr : -1);
   if (n >= 0)
   {
@@ -2896,7 +2793,7 @@ void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggere
   }
 
   // get the display node
-  vtkMRMLDisplayNode *displayNode = d->MarkupsNode->GetDisplayNode();
+  vtkMRMLDisplayNode* displayNode = d->MarkupsNode->GetDisplayNode();
   if (!displayNode)
   {
     qWarning() << Q_FUNC_INFO << " failed: Unable to get the display node on the markups node";
@@ -2904,8 +2801,7 @@ void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggere
   }
 
   // create a new one
-  vtkSmartPointer<vtkMRMLNode> newDisplayNode = vtkSmartPointer<vtkMRMLNode>::Take(
-    this->mrmlScene()->CreateNodeByClass(displayNode->GetClassName()));
+  vtkSmartPointer<vtkMRMLNode> newDisplayNode = vtkSmartPointer<vtkMRMLNode>::Take(this->mrmlScene()->CreateNodeByClass(displayNode->GetClassName()));
   // copy the old one
   if (!newDisplayNode)
   {
@@ -2915,9 +2811,8 @@ void qSlicerMarkupsModuleWidget::onNewMarkupWithCurrentDisplayPropertiesTriggere
   newDisplayNode->Copy(displayNode);
 
   // now create the new markups node
-  const char *className = d->MarkupsNode->GetClassName();
-  vtkSmartPointer<vtkMRMLMarkupsNode> newMRMLNode = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(
-    vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->CreateNodeByClass(className)));
+  const char* className = d->MarkupsNode->GetClassName();
+  vtkSmartPointer<vtkMRMLMarkupsNode> newMRMLNode = vtkSmartPointer<vtkMRMLMarkupsNode>::Take(vtkMRMLMarkupsNode::SafeDownCast(this->mrmlScene()->CreateNodeByClass(className)));
   if (!newMRMLNode)
   {
     qWarning() << Q_FUNC_INFO << " failed: error creating markups node";
@@ -2960,7 +2855,7 @@ void qSlicerMarkupsModuleWidget::onHideCoordinateColumnsToggled(int index)
   d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::AColumn, hide);
   d->activeMarkupTableWidget->setColumnHidden(qSlicerMarkupsModuleWidgetPrivate::SColumn, hide);
 
-  if(hide)
+  if (hide)
   {
     d->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::NameColumn, 60);
     d->activeMarkupTableWidget->setColumnWidth(qSlicerMarkupsModuleWidgetPrivate::DescriptionColumn, 120);
@@ -2985,9 +2880,7 @@ void qSlicerMarkupsModuleWidget::onTransformedCoordinatesToggled(bool checked)
 }
 
 //-----------------------------------------------------------
-bool qSlicerMarkupsModuleWidget::setEditedNode(vtkMRMLNode* node,
-                                              QString role /*=QString()*/,
-                                              QString context /*=QString()*/)
+bool qSlicerMarkupsModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /*=QString()*/, QString context /*=QString()*/)
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
@@ -3005,7 +2898,7 @@ bool qSlicerMarkupsModuleWidget::setEditedNode(vtkMRMLNode* node,
   if (vtkMRMLMarkupsNode::SafeDownCast(node))
   {
     d->setSelectionNodeActivePlaceNode(node);
-    if (controlPointIndex>=0)
+    if (controlPointIndex >= 0)
     {
       d->activeMarkupTableWidget->setCurrentCell(controlPointIndex, 0);
     }
@@ -3020,7 +2913,7 @@ bool qSlicerMarkupsModuleWidget::setEditedNode(vtkMRMLNode* node,
     {
       return false;
     }
-    if (controlPointIndex>=0)
+    if (controlPointIndex >= 0)
     {
       d->activeMarkupTableWidget->setCurrentCell(controlPointIndex, 0);
     }
@@ -3038,8 +2931,8 @@ double qSlicerMarkupsModuleWidget::nodeEditable(vtkMRMLNode* node)
     // we only allow editing of visible nodes in this module
     return 0.0;
   }
-  if (vtkMRMLMarkupsNode::SafeDownCast(node)
-    || vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
+  if (vtkMRMLMarkupsNode::SafeDownCast(node) //
+      || vtkMRMLMarkupsDisplayNode::SafeDownCast(node))
   {
     return 0.5;
   }
@@ -3053,7 +2946,7 @@ double qSlicerMarkupsModuleWidget::nodeEditable(vtkMRMLNode* node)
 void qSlicerMarkupsModuleWidget::onResetToDefaultDisplayPropertiesPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
-  vtkMRMLMarkupsDisplayNode *displayNode = d->markupsDisplayNode();
+  vtkMRMLMarkupsDisplayNode* displayNode = d->markupsDisplayNode();
   if (!displayNode)
   {
     return;
@@ -3070,7 +2963,7 @@ void qSlicerMarkupsModuleWidget::onResetToDefaultDisplayPropertiesPushButtonClic
 void qSlicerMarkupsModuleWidget::onSaveToDefaultDisplayPropertiesPushButtonClicked()
 {
   Q_D(qSlicerMarkupsModuleWidget);
-  vtkMRMLMarkupsDisplayNode *displayNode = d->markupsDisplayNode();
+  vtkMRMLMarkupsDisplayNode* displayNode = d->markupsDisplayNode();
   if (!displayNode)
   {
     return;
@@ -3105,10 +2998,9 @@ void qSlicerMarkupsModuleWidget::observeMeasurementsInCurrentMarkupsNode()
     return;
   }
 
-  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  for (int i = 0; i < d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
   {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
-      d->MarkupsNode->Measurements->GetItemAsObject(i) );
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(d->MarkupsNode->Measurements->GetItemAsObject(i));
     if (!currentMeasurement)
     {
       continue;
@@ -3162,10 +3054,9 @@ void qSlicerMarkupsModuleWidget::updateMeasurementsDescriptionLabel()
   }
 
   QString measurementsString;
-  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  for (int i = 0; i < d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
   {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
-      d->MarkupsNode->Measurements->GetItemAsObject(i) );
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(d->MarkupsNode->Measurements->GetItemAsObject(i));
     if (!currentMeasurement || !currentMeasurement->GetEnabled() || !currentMeasurement->GetValueDefined())
     {
       continue;
@@ -3194,8 +3085,7 @@ void qSlicerMarkupsModuleWidget::populateMeasurementSettingsTable()
   Q_D(qSlicerMarkupsModuleWidget);
 
   d->measurementSettingsTableWidget->clear();
-  d->measurementSettingsTableWidget->setVisible(
-    d->MarkupsNode != nullptr && d->MarkupsNode->Measurements->GetNumberOfItems() > 0 );
+  d->measurementSettingsTableWidget->setVisible(d->MarkupsNode != nullptr && d->MarkupsNode->Measurements->GetNumberOfItems() > 0);
 
   if (!d->MarkupsNode)
   {
@@ -3204,10 +3094,9 @@ void qSlicerMarkupsModuleWidget::populateMeasurementSettingsTable()
 
   d->measurementSettingsTableWidget->setHorizontalHeaderLabels(QStringList() << tr("Name") << tr("Enabled"));
   d->measurementSettingsTableWidget->setRowCount(d->MarkupsNode->Measurements->GetNumberOfItems());
-  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  for (int i = 0; i < d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
   {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
-      d->MarkupsNode->Measurements->GetItemAsObject(i) );
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(d->MarkupsNode->Measurements->GetItemAsObject(i));
     if (!currentMeasurement)
     {
       continue;
@@ -3239,10 +3128,9 @@ void qSlicerMarkupsModuleWidget::onMeasurementEnabledCheckboxToggled(bool on)
   QString measurementName = checkbox->property(NAME_PROPERTY).toString();
 
   // Enable/disable measurement with name
-  for (int i=0; i<d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
+  for (int i = 0; i < d->MarkupsNode->Measurements->GetNumberOfItems(); ++i)
   {
-    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(
-      d->MarkupsNode->Measurements->GetItemAsObject(i) );
+    vtkMRMLMeasurement* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(d->MarkupsNode->Measurements->GetItemAsObject(i));
     if (!currentMeasurement)
     {
       continue;
@@ -3279,9 +3167,8 @@ void qSlicerMarkupsModuleWidget::updateImportExportWidgets()
     // Import
     d->exportImportTableLabel->setText(tr("Input table:"));
     d->exportImportPushButton->setText(tr("Import"));
-    d->exportImportPushButton->setToolTip(
-      tr("Import control points coordinates and properties from table node.\n"
-      "Table column names: label, r, a, s, (or l, p, s), defined, selected, visible, locked, description."));
+    d->exportImportPushButton->setToolTip(tr("Import control points coordinates and properties from table node.\n"
+                                             "Table column names: label, r, a, s, (or l, p, s), defined, selected, visible, locked, description."));
   }
   d->lpsExportRadioButton->setEnabled(isExport);
   d->rasExportRadioButton->setEnabled(isExport);
@@ -3301,13 +3188,11 @@ void qSlicerMarkupsModuleWidget::onImportExportApply()
   {
     // export
     int coordinateSystem = d->rasExportRadioButton->isChecked() ? vtkMRMLStorageNode::CoordinateSystemRAS : vtkMRMLStorageNode::CoordinateSystemLPS;
-    this->markupsLogic()->ExportControlPointsToTable(d->MarkupsNode,
-      vtkMRMLTableNode::SafeDownCast(d->exportedImportedNodeComboBox->currentNode()), coordinateSystem);
+    this->markupsLogic()->ExportControlPointsToTable(d->MarkupsNode, vtkMRMLTableNode::SafeDownCast(d->exportedImportedNodeComboBox->currentNode()), coordinateSystem);
   }
   else
   {
-    this->markupsLogic()->ImportControlPointsFromTable(d->MarkupsNode,
-      vtkMRMLTableNode::SafeDownCast(d->exportedImportedNodeComboBox->currentNode()));
+    this->markupsLogic()->ImportControlPointsFromTable(d->MarkupsNode, vtkMRMLTableNode::SafeDownCast(d->exportedImportedNodeComboBox->currentNode()));
   }
   QApplication::restoreOverrideCursor();
 }

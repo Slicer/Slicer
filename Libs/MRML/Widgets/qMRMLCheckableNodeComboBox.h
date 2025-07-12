@@ -31,8 +31,7 @@ class qMRMLCheckableNodeComboBoxPrivate;
 /// information only resides in the combobox.
 /// Nodes are unchecked by default.
 /// \sa qMRMLNodeComboBox
-class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBox
-  : public qMRMLNodeComboBox
+class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBox : public qMRMLNodeComboBox
 {
   Q_OBJECT
 public:
@@ -46,24 +45,24 @@ public:
 
   /// Return the list of checked nodes.
   /// \sa uncheckedNodes(), nodes()
-  Q_INVOKABLE QList<vtkMRMLNode*> checkedNodes()const;
+  Q_INVOKABLE QList<vtkMRMLNode*> checkedNodes() const;
 
   /// Return the list of unchecked nodes.
   /// \sa checkedNodes(), nodes()
-  Q_INVOKABLE QList<vtkMRMLNode*> uncheckedNodes()const;
+  Q_INVOKABLE QList<vtkMRMLNode*> uncheckedNodes() const;
 
   /// Return true if all the nodes are checked.
   /// If empty, return true;
-  Q_INVOKABLE bool allChecked()const;
+  Q_INVOKABLE bool allChecked() const;
 
   /// Return true if all the nodes are unchecked.
   /// If empty, return true.
-  Q_INVOKABLE bool noneChecked()const;
+  Q_INVOKABLE bool noneChecked() const;
 
   /// Return the CheckState of the node.
   /// If \a node is invalid (null or not in the scene),
   /// Qt::Unchecked is returned.
-  Q_INVOKABLE Qt::CheckState checkState(vtkMRMLNode* node)const;
+  Q_INVOKABLE Qt::CheckState checkState(vtkMRMLNode* node) const;
   Q_INVOKABLE void setCheckState(vtkMRMLNode* node, Qt::CheckState check);
 
   /// Set the node item as user checkable or not.

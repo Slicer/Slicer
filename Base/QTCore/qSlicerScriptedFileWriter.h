@@ -32,8 +32,7 @@ typedef _object PyObject;
 #endif
 class qSlicerScriptedFileWriterPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileWriter
-  : public qSlicerFileWriter
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerScriptedFileWriter : public qSlicerFileWriter
 {
   Q_OBJECT
 
@@ -45,7 +44,7 @@ public:
   qSlicerScriptedFileWriter(QObject* parent = nullptr);
   ~qSlicerScriptedFileWriter() override;
 
-  QString pythonSource()const;
+  QString pythonSource() const;
 
   /// \warning Setting the source is a no-op. See detailed comment in the source code.
   /// If missingClassIsExpected is true (default) then missing class is expected and not treated as an error.
@@ -56,23 +55,23 @@ public:
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerIO::description()
-  QString description()const override;
+  QString description() const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerIO::fileType()
-  IOFileType fileType()const override;
+  IOFileType fileType() const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileWriter::canWriteObject()
-  bool canWriteObject(vtkObject* object)const override;
+  bool canWriteObject(vtkObject* object) const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileWriter::canWriteObjectConfidence()
-  double canWriteObjectConfidence(vtkObject* object)const override;
+  double canWriteObjectConfidence(vtkObject* object) const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileWriter::extensions()
-  QStringList extensions(vtkObject* object)const override;
+  QStringList extensions(vtkObject* object) const override;
 
   /// Reimplemented to propagate to python methods
   /// \sa qSlicerFileWriter::write()
@@ -86,12 +85,8 @@ public:
   /// Exposes setWrittenNodes, which is protected in superclass
   /// \sa qSlicerFileWriter::writtenNodes()
   /// \sa qSlicerFileReader::loadedNodes()
-  QStringList writtenNodes()const override {
-    return Superclass::writtenNodes();
-  };
-  void setWrittenNodes(const QStringList& nodes) override {
-    Superclass::setWrittenNodes(nodes);
-  };
+  QStringList writtenNodes() const override { return Superclass::writtenNodes(); };
+  void setWrittenNodes(const QStringList& nodes) override { Superclass::setWrittenNodes(nodes); };
 
 protected:
   QScopedPointer<qSlicerScriptedFileWriterPrivate> d_ptr;

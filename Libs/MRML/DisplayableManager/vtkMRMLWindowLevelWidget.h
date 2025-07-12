@@ -23,7 +23,7 @@
  * displayed slice intersection lines.
  *
  *
-*/
+ */
 
 #ifndef vtkMRMLWindowLevelWidget_h
 #define vtkMRMLWindowLevelWidget_h
@@ -42,14 +42,13 @@ class vtkSliceIntersectionRepresentation2D;
 class vtkMRMLApplicationLogic;
 class vtkMRMLSegmentationDisplayNode;
 
-
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLWindowLevelWidget : public vtkMRMLAbstractWidget
 {
 public:
   /**
    * Instantiate this class.
    */
-  static vtkMRMLWindowLevelWidget *New();
+  static vtkMRMLWindowLevelWidget* New();
 
   enum
   {
@@ -88,7 +87,7 @@ public:
   void SetMRMLApplicationLogic(vtkMRMLApplicationLogic* applicationLogic) override;
 
   /// Return true if the widget can process the event.
-  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double &distance2) override;
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& distance2) override;
 
   /// Process interaction event.
   bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
@@ -145,7 +144,7 @@ protected:
   bool ProcessSetWindowLevelFromRegionStart(vtkMRMLInteractionEventData* eventData);
   void ProcessSetWindowLevelFromRegion(vtkMRMLInteractionEventData* eventData);
   // If updateWindowLevel is set to false then the operation is cancelled without changing the window/level
-  bool ProcessSetWindowLevelFromRegionEnd(vtkMRMLInteractionEventData* eventData, bool updateWindowLevel=true);
+  bool ProcessSetWindowLevelFromRegionEnd(vtkMRMLInteractionEventData* eventData, bool updateWindowLevel = true);
 
   bool ProcessResetWindowLevel(vtkMRMLInteractionEventData* eventData);
 

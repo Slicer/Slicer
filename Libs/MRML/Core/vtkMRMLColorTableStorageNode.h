@@ -25,15 +25,15 @@ class vtkMRMLColorTableNode;
 /// node that allows to read/write volume data from/to file using generic ITK mechanism.
 class VTK_MRML_EXPORT vtkMRMLColorTableStorageNode : public vtkMRMLStorageNode
 {
-  public:
-  static vtkMRMLColorTableStorageNode *New();
-  vtkTypeMacro(vtkMRMLColorTableStorageNode,vtkMRMLStorageNode);
+public:
+  static vtkMRMLColorTableStorageNode* New();
+  vtkTypeMacro(vtkMRMLColorTableStorageNode, vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override  {return "ColorTableStorage";};
+  const char* GetNodeTagName() override { return "ColorTableStorage"; };
 
   /// Return true if the node can be read in
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;
@@ -51,21 +51,20 @@ protected:
   void InitializeSupportedWriteFileTypes() override;
 
   /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
+  int ReadDataInternal(vtkMRMLNode* refNode) override;
 
   int ReadCtblFile(std::string fullFileName, vtkMRMLColorTableNode* colorNode);
   int ReadCsvFile(std::string fullFileName, vtkMRMLColorTableNode* colorNode);
   std::string GetFieldDelimiterCharacters(std::string filename);
 
   /// Write data from a  referenced node
-  int WriteDataInternal(vtkMRMLNode *refNode) override;
+  int WriteDataInternal(vtkMRMLNode* refNode) override;
 
   int WriteCtblFile(std::string fullFileName, vtkMRMLColorTableNode* colorNode);
   int WriteCsvFile(std::string fullFileName, vtkMRMLColorTableNode* colorNode);
 
   /// maximum valid number of colors to read in
   int MaximumColorID;
-
 };
 
 #endif

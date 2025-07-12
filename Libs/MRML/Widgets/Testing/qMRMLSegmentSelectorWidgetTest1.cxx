@@ -158,7 +158,7 @@ int testMultiSelection(qMRMLSegmentSelectorWidget* segmentSelectorWidget)
   return EXIT_SUCCESS;
 }
 
-int qMRMLSegmentSelectorWidgetTest1( int argc, char * argv [] )
+int qMRMLSegmentSelectorWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);

@@ -20,22 +20,21 @@
 
 #include "qSlicerSequencesModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT
-qMRMLSequenceBrowserToolBarPlugin
-  : public QObject, public qSlicerSequencesModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT qMRMLSequenceBrowserToolBarPlugin
+  : public QObject
+  , public qSlicerSequencesModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
 public:
-  qMRMLSequenceBrowserToolBarPlugin(QObject *_parent = 0);
+  qMRMLSequenceBrowserToolBarPlugin(QObject* _parent = 0);
 
-  QWidget *createWidget(QWidget *_parent) override;
-  QString  domXml() const override;
-  QIcon    icon() const override;
-  QString  includeFile() const override;
-  bool     isContainer() const override;
-  QString  name() const override;
-
+  QWidget* createWidget(QWidget* _parent) override;
+  QString domXml() const override;
+  QIcon icon() const override;
+  QString includeFile() const override;
+  bool isContainer() const override;
+  QString name() const override;
 };
 
 #endif

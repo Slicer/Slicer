@@ -11,52 +11,52 @@ vtkSystemInformation::vtkSystemInformation()
 
 vtkSystemInformation::~vtkSystemInformation() = default;
 
-const char * vtkSystemInformation::GetVendorString()
+const char* vtkSystemInformation::GetVendorString()
 {
   return this->SystemInformation.GetVendorString();
 }
 
-const char * vtkSystemInformation::GetVendorID()
+const char* vtkSystemInformation::GetVendorID()
 {
   return this->SystemInformation.GetVendorID();
 }
 
-const char * vtkSystemInformation::GetTypeID()
+const char* vtkSystemInformation::GetTypeID()
 {
   this->StringHolder = this->SystemInformation.GetTypeID();
   return this->StringHolder.c_str();
 }
 
-const char * vtkSystemInformation::GetFamilyID()
+const char* vtkSystemInformation::GetFamilyID()
 {
   this->StringHolder = this->SystemInformation.GetFamilyID();
   return this->StringHolder.c_str();
 }
 
-const char * vtkSystemInformation::GetModelName()
+const char* vtkSystemInformation::GetModelName()
 {
   this->StringHolder = this->SystemInformation.GetModelName();
   return this->StringHolder.c_str();
 }
 
-const char * vtkSystemInformation::GetModelID()
+const char* vtkSystemInformation::GetModelID()
 {
   this->StringHolder = this->SystemInformation.GetModelID();
   return this->StringHolder.c_str();
 }
 
-const char * vtkSystemInformation::GetSteppingCode()
+const char* vtkSystemInformation::GetSteppingCode()
 {
   this->StringHolder = this->SystemInformation.GetSteppingCode();
   return this->StringHolder.c_str();
 }
 
-const char * vtkSystemInformation::GetExtendedProcessorName()
+const char* vtkSystemInformation::GetExtendedProcessorName()
 {
   return this->SystemInformation.GetExtendedProcessorName();
 }
 
-const char * vtkSystemInformation::GetProcessorSerialNumber()
+const char* vtkSystemInformation::GetProcessorSerialNumber()
 {
   return this->SystemInformation.GetProcessorSerialNumber();
 }
@@ -91,38 +91,35 @@ int vtkSystemInformation::DoesCPUSupportFeature(long int x)
   return this->SystemInformation.DoesCPUSupportFeature(x);
 }
 
-
-const char * vtkSystemInformation::GetOSName()
+const char* vtkSystemInformation::GetOSName()
 {
   return this->SystemInformation.GetOSName();
 }
 
-const char * vtkSystemInformation::GetHostname()
+const char* vtkSystemInformation::GetHostname()
 {
   return this->SystemInformation.GetHostname();
 }
 
-const char * vtkSystemInformation::GetOSRelease()
+const char* vtkSystemInformation::GetOSRelease()
 {
   return this->SystemInformation.GetOSRelease();
 }
 
-const char * vtkSystemInformation::GetOSVersion()
+const char* vtkSystemInformation::GetOSVersion()
 {
   return this->SystemInformation.GetOSVersion();
 }
 
-const char * vtkSystemInformation::GetOSPlatform()
+const char* vtkSystemInformation::GetOSPlatform()
 {
   return this->SystemInformation.GetOSPlatform();
 }
-
 
 int vtkSystemInformation::Is64Bits()
 {
   return this->SystemInformation.Is64Bits();
 }
-
 
 unsigned int vtkSystemInformation::GetNumberOfLogicalCPU() // per physical cpu
 {
@@ -134,12 +131,10 @@ unsigned int vtkSystemInformation::GetNumberOfPhysicalCPU()
   return this->SystemInformation.GetNumberOfPhysicalCPU();
 }
 
-
 int vtkSystemInformation::DoesCPUSupportCPUID()
 {
   return this->SystemInformation.DoesCPUSupportCPUID();
 }
-
 
 // Retrieve memory information in megabyte.
 unsigned long vtkSystemInformation::GetTotalVirtualMemory()
@@ -162,7 +157,6 @@ unsigned long vtkSystemInformation::GetTotalPhysicalMemory()
   return this->SystemInformation.GetTotalPhysicalMemory();
 }
 
-
 // Run the different checks
 void vtkSystemInformation::RunCPUCheck()
 {
@@ -179,8 +173,7 @@ void vtkSystemInformation::RunMemoryCheck()
   this->SystemInformation.RunMemoryCheck();
 }
 
-void
-vtkSystemInformation::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSystemInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   // update all values before printing
   this->RunCPUCheck();
@@ -211,7 +204,6 @@ vtkSystemInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "OSVersion: " << this->GetOSVersion() << "\n";
   os << indent << "OSPlatform: " << this->GetOSPlatform() << "\n";
   os << indent << "Is64Bits: " << this->Is64Bits() << "\n";
-
 
   os << indent << "NumberOfLogicalCPU: " << this->GetNumberOfLogicalCPU() << "\n";
   os << indent << "NumberOfPhysicalCPU: " << this->GetNumberOfPhysicalCPU() << "\n";

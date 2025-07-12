@@ -60,11 +60,10 @@ qSlicerTransformsModule::qSlicerTransformsModule(QObject* _parentObject)
 qSlicerTransformsModule::~qSlicerTransformsModule() = default;
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerTransformsModule::icon()const
+QIcon qSlicerTransformsModule::icon() const
 {
   return QIcon(":/Icons/Transforms.png");
 }
-
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerTransformsModule::categories() const
@@ -93,7 +92,7 @@ vtkMRMLAbstractLogic* qSlicerTransformsModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTransformsModule::helpText()const
+QString qSlicerTransformsModule::helpText() const
 {
   QString help = tr("The Transforms Module creates and edits transforms.") + QLatin1String("<br>");
   help += this->defaultDocumentationLink();
@@ -101,13 +100,13 @@ QString qSlicerTransformsModule::helpText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTransformsModule::acknowledgementText()const
+QString qSlicerTransformsModule::acknowledgementText() const
 {
   return tr("This work was supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community.");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerTransformsModule::contributors()const
+QStringList qSlicerTransformsModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Alex Yarmarkovich (Isomics)");
@@ -122,18 +121,14 @@ QStringList qSlicerTransformsModule::contributors()const
 //-----------------------------------------------------------------------------
 void qSlicerTransformsModule::setup()
 {
-  qSlicerApplication * app = qSlicerApplication::application();
+  qSlicerApplication* app = qSlicerApplication::application();
   if (!app)
   {
     return;
   }
-  vtkSlicerTransformLogic* transformLogic =
-    vtkSlicerTransformLogic::SafeDownCast(this->logic());
-  app->coreIOManager()->registerIO(
-    new qSlicerTransformsReader(transformLogic, this));
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter(
-    "Transforms", QString("TransformFile"),
-    QStringList() << "vtkMRMLTransformNode", true, this));
+  vtkSlicerTransformLogic* transformLogic = vtkSlicerTransformLogic::SafeDownCast(this->logic());
+  app->coreIOManager()->registerIO(new qSlicerTransformsReader(transformLogic, this));
+  app->coreIOManager()->registerIO(new qSlicerNodeWriter("Transforms", QString("TransformFile"), QStringList() << "vtkMRMLTransformNode", true, this));
 
   // Register displayable managers
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLTransformsDisplayableManager2D");
@@ -148,7 +143,7 @@ void qSlicerTransformsModule::setup()
 //-----------------------------------------------------------------------------
 QStringList qSlicerTransformsModule::associatedNodeTypes() const
 {
-  return QStringList()
-    << "vtkMRMLTransformNode"
-    << "vtkMRMLTransformDisplayNode";
+  return QStringList() //
+         << "vtkMRMLTransformNode"
+         << "vtkMRMLTransformDisplayNode";
 }

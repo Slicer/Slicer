@@ -30,26 +30,24 @@
 /// is mrb (for Medical Reality Bundle)
 /// It internally calls vtkMRMLScene::Connect() or vtkMRMLScene::Import()
 /// depending on the clear flag.
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleReader
-  : public qSlicerFileReader
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerSceneBundleReader(QObject* _parent = nullptr);
 
-  QString description()const override;
+  QString description() const override;
   /// Support QString("SceneFile")
-  qSlicerIO::IOFileType fileType()const override;
+  qSlicerIO::IOFileType fileType() const override;
 
   /// Support only .mrb files
-  QStringList extensions()const override;
+  QStringList extensions() const override;
 
   /// the supported properties are:
   /// QString fileName: the path of the mrml scene to load
   /// bool clear: whether the current should be cleared or not
   bool load(const qSlicerIO::IOProperties& properties) override;
 };
-
 
 #endif

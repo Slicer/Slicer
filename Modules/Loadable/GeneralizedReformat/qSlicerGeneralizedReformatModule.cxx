@@ -32,9 +32,7 @@ public:
 // qSlicerGeneralizedReformatModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerGeneralizedReformatModulePrivate::qSlicerGeneralizedReformatModulePrivate()
-{
-}
+qSlicerGeneralizedReformatModulePrivate::qSlicerGeneralizedReformatModulePrivate() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerGeneralizedReformatModule methods
@@ -48,9 +46,7 @@ qSlicerGeneralizedReformatModule::qSlicerGeneralizedReformatModule(QObject* _par
 }
 
 //-----------------------------------------------------------------------------
-qSlicerGeneralizedReformatModule::~qSlicerGeneralizedReformatModule()
-{
-}
+qSlicerGeneralizedReformatModule::~qSlicerGeneralizedReformatModule() {}
 
 //-----------------------------------------------------------------------------
 QString qSlicerGeneralizedReformatModule::helpText() const
@@ -100,8 +96,7 @@ void qSlicerGeneralizedReformatModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerGeneralizedReformatModule
-::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation* qSlicerGeneralizedReformatModule::createWidgetRepresentation()
 {
   return nullptr;
 }

@@ -54,9 +54,15 @@ public:
     MODE_MERGE_MIN,
     MODE_MERGE_MASK
   };
-  static bool ModifyBinaryLabelmap(vtkOrientedImageData* labelmap, vtkSegmentation* segmentation, std::string segmentID,
-    int mergeMode = MODE_REPLACE, const int extent[6] = nullptr, bool minimumOfAllSegments = false, bool sourceRepresentationModifiedEnabled = false,
-    const std::vector<std::string> segmentIdsToOverwrite = {}, std::vector<std::string>* modifiedSegmentIDs = nullptr);
+  static bool ModifyBinaryLabelmap(vtkOrientedImageData* labelmap,
+                                   vtkSegmentation* segmentation,
+                                   std::string segmentID,
+                                   int mergeMode = MODE_REPLACE,
+                                   const int extent[6] = nullptr,
+                                   bool minimumOfAllSegments = false,
+                                   bool sourceRepresentationModifiedEnabled = false,
+                                   const std::vector<std::string> segmentIdsToOverwrite = {},
+                                   std::vector<std::string>* modifiedSegmentIDs = nullptr);
 
   /// Get the list of segment IDs in the same shared labelmap that are contained within the mask
   /// \param segmentationNode Node containing the segmentation
@@ -64,19 +70,33 @@ public:
   /// \param mask Mask labelmap
   /// \param segmentIDs Output list of segment IDs under the mask
   /// \param includeInputSharedSegmentID If false, sharedSegmentID will not be added to the list of output segment IDs even if it is within the mask
-  static bool GetSharedSegmentIDsInMask(vtkSegmentation* segmentation, std::string sharedSegmentID, vtkOrientedImageData* mask, const int extent[6],
-    std::vector<std::string>& segmentIDs, int maskThreshold = 0.0, bool includeInputSharedSegmentID = false);
+  static bool GetSharedSegmentIDsInMask(vtkSegmentation* segmentation,
+                                        std::string sharedSegmentID,
+                                        vtkOrientedImageData* mask,
+                                        const int extent[6],
+                                        std::vector<std::string>& segmentIDs,
+                                        int maskThreshold = 0.0,
+                                        bool includeInputSharedSegmentID = false);
 
 protected:
-  static bool AppendLabelmapToSegment(vtkOrientedImageData* labelmap, vtkSegmentation* segmentation, std::string segmentID, int mergeMode, const int extent[6],
-    bool minimumOfAllSegments, std::vector<std::string>* modifiedSegmentIDs, bool& segmentLabelmapModified);
+  static bool AppendLabelmapToSegment(vtkOrientedImageData* labelmap,
+                                      vtkSegmentation* segmentation,
+                                      std::string segmentID,
+                                      int mergeMode,
+                                      const int extent[6],
+                                      bool minimumOfAllSegments,
+                                      std::vector<std::string>* modifiedSegmentIDs,
+                                      bool& segmentLabelmapModified);
 
   static void ShrinkSegmentToEffectiveExtent(vtkOrientedImageData* segmentLabelmap);
 
   static bool SharedLabelmapShouldOverlap(vtkSegmentation* segmentation, std::string segmentID, std::vector<std::string>& segmentIDsToOverwrite);
 
-  static void SeparateModifiedSegmentFromSharedLabelmap(vtkOrientedImageData* labelmap, vtkSegmentation* segmentation, std::string segmentID,
-    const int extent[6], const std::vector<std::string>& segmentIDsToOverwrite);
+  static void SeparateModifiedSegmentFromSharedLabelmap(vtkOrientedImageData* labelmap,
+                                                        vtkSegmentation* segmentation,
+                                                        std::string segmentID,
+                                                        const int extent[6],
+                                                        const std::vector<std::string>& segmentIDsToOverwrite);
 
   /// Get the intersection of two extents.
   /// If any of the input extents are nullptr or empty (extent[i*2]>extent[i*2+1])

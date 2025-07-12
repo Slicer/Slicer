@@ -22,13 +22,13 @@
 #include "qMRMLSpinBox.h"
 
 // --------------------------------------------------------------------------
-qMRMLSpinBoxPlugin::qMRMLSpinBoxPlugin(QObject *_parent)
-: QObject(_parent)
+qMRMLSpinBoxPlugin::qMRMLSpinBoxPlugin(QObject* _parent)
+  : QObject(_parent)
 {
 }
 
 // --------------------------------------------------------------------------
-QWidget *qMRMLSpinBoxPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLSpinBoxPlugin::createWidget(QWidget* _parent)
 {
   qMRMLSpinBox* _widget = new qMRMLSpinBox(_parent);
   return _widget;
@@ -37,11 +37,11 @@ QWidget *qMRMLSpinBoxPlugin::createWidget(QWidget *_parent)
 // --------------------------------------------------------------------------
 QString qMRMLSpinBoxPlugin::domXml() const
 {
-  return  "<ui language=\"c++\">\n"
-    "<widget class=\"qMRMLSpinBox\" name=\"MRMLSpinBox\">\n"
-    "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
-    "</widget>\n"
-    "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         "<widget class=\"qMRMLSpinBox\" name=\"MRMLSpinBox\">\n"
+         "  <property name=\"quantity\"> <string notr=\"true\"/> </property>\n"
+         "</widget>\n"
+         "</ui>\n";
 }
 
 // --------------------------------------------------------------------------

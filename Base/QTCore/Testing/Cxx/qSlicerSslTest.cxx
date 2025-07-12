@@ -11,7 +11,7 @@
 #include "qSlicerCoreApplication.h"
 
 // ----------------------------------------------------------------------------
-class qSlicerSslTester: public QObject
+class qSlicerSslTester : public QObject
 {
   Q_OBJECT
   typedef qSlicerSslTester Self;
@@ -32,9 +32,7 @@ void qSlicerSslTester::testSupportsSsl()
 // ----------------------------------------------------------------------------
 void qSlicerSslTester::testLoadCaCertificates()
 {
-  QVERIFY(qSlicerCoreApplication::loadCaCertificates(
-    qSlicerCoreApplication::caCertificatesPath(
-            QProcessEnvironment::systemEnvironment().value("SLICER_HOME"))));
+  QVERIFY(qSlicerCoreApplication::loadCaCertificates(qSlicerCoreApplication::caCertificatesPath(QProcessEnvironment::systemEnvironment().value("SLICER_HOME"))));
 }
 
 // ----------------------------------------------------------------------------
@@ -45,15 +43,16 @@ public:
   SslEventLoop() = default;
 public slots:
   void onSslErrors(QNetworkReply* reply, const QList<QSslError>& sslErrors)
-{
+  {
     Q_UNUSED(reply);
-    foreach(const QSslError& sslError, sslErrors)
+    foreach (const QSslError& sslError, sslErrors)
     {
       this->SslErrors << sslError.error();
       this->SslErrorStrings << sslError.errorString();
     }
     this->quit();
-}
+  }
+
 public:
   QList<QSslError::SslError> SslErrors;
   QStringList SslErrorStrings;
@@ -69,19 +68,15 @@ void qSlicerSslTester::testHttpsConnection()
   QFETCH(QNetworkReply::NetworkError, expectedNetworkError);
   QFETCH(int, expectedStatusCode);
 
-  qSlicerCoreApplication::loadCaCertificates(
-    qSlicerCoreApplication::caCertificatesPath(
-        QProcessEnvironment::systemEnvironment().value("SLICER_HOME")));
+  qSlicerCoreApplication::loadCaCertificates(qSlicerCoreApplication::caCertificatesPath(QProcessEnvironment::systemEnvironment().value("SLICER_HOME")));
 
-  QNetworkAccessManager * manager = new QNetworkAccessManager(this);
+  QNetworkAccessManager* manager = new QNetworkAccessManager(this);
 
   SslEventLoop eventLoop;
-  QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
-                   &eventLoop, SLOT(quit()));
-  QObject::connect(manager, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)),
-            &eventLoop, SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
+  QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
+  QObject::connect(manager, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)), &eventLoop, SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
 
-  QNetworkReply * reply = manager->get(QNetworkRequest(QUrl(url)));
+  QNetworkReply* reply = manager->get(QNetworkRequest(QUrl(url)));
   eventLoop.exec();
 
   QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
@@ -95,10 +90,11 @@ void qSlicerSslTester::testHttpsConnection()
 void qSlicerSslTester::testHttpsConnection_data()
 {
   QTest::addColumn<QString>("url");
-  QTest::addColumn<QList<QSslError::SslError> >("expectedSslErrors");
+  QTest::addColumn<QList<QSslError::SslError>>("expectedSslErrors");
   QTest::addColumn<QNetworkReply::NetworkError>("expectedNetworkError");
   QTest::addColumn<int>("expectedStatusCode");
 
+  // clang-format off
   QTest::newRow("invalid-HostNotFoundError-0")
       << "http://i.n.v.a.l.i.d"
       << (QList<QSslError::SslError>())
@@ -118,6 +114,7 @@ void qSlicerSslTester::testHttpsConnection_data()
       << "https://www.eff.org/https-everywhere"
       << (QList<QSslError::SslError>())
       << QNetworkReply::NoError << 200;
+  // clang-format on
 }
 
 // ----------------------------------------------------------------------------

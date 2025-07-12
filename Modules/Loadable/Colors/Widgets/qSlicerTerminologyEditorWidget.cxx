@@ -29,8 +29,10 @@
 class qSlicerTerminologyEditorWidgetPrivate : public Ui_qSlicerTerminologyEditorWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologyEditorWidget);
+
 protected:
   qSlicerTerminologyEditorWidget* const q_ptr;
+
 public:
   qSlicerTerminologyEditorWidgetPrivate(qSlicerTerminologyEditorWidget& object);
   void init();
@@ -143,7 +145,7 @@ void qSlicerTerminologyEditorWidgetPrivate::updateTerminologyFromGUI()
 }
 
 //------------------------------------------------------------------------------
-qSlicerTerminologyEditorWidget::qSlicerTerminologyEditorWidget(QWidget *_parent)
+qSlicerTerminologyEditorWidget::qSlicerTerminologyEditorWidget(QWidget* _parent)
   : QWidget(_parent)
   , d_ptr(new qSlicerTerminologyEditorWidgetPrivate(*this))
 {
@@ -155,7 +157,7 @@ qSlicerTerminologyEditorWidget::qSlicerTerminologyEditorWidget(QWidget *_parent)
 qSlicerTerminologyEditorWidget::~qSlicerTerminologyEditorWidget() = default;
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyEditorWidget::terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo)
+void qSlicerTerminologyEditorWidget::terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorWidget);
   d->updateTerminologyFromGUI();
@@ -163,12 +165,12 @@ void qSlicerTerminologyEditorWidget::terminologyInfo(qSlicerTerminologyNavigator
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyEditorWidget::setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle &terminologyInfo)
+void qSlicerTerminologyEditorWidget::setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorWidget);
   d->TerminologyInfo = terminologyInfo;
   d->OriginalName = d->TerminologyInfo.Name;
-  d->OriginalColor= d->TerminologyInfo.Color;
+  d->OriginalColor = d->TerminologyInfo.Color;
   d->updateGUIFromTerminologyInfo();
 }
 

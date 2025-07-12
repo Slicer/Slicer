@@ -24,19 +24,19 @@
 #include "qSlicerQTGUIAbstractPlugin.h"
 
 class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerWidgetPlugin
-  : public QObject,
-    public qSlicerQTGUIAbstractPlugin
+  : public QObject
+  , public qSlicerQTGUIAbstractPlugin
 {
   Q_OBJECT
 public:
   qSlicerWidgetPlugin(QObject* parent = nullptr);
 
-  QWidget *createWidget(QWidget* parentWidget) override;
-  QString  domXml() const override;
-  QIcon    icon() const override;
-  QString  includeFile() const override;
-  bool     isContainer() const override;
-  QString  name() const override;
+  QWidget* createWidget(QWidget* parentWidget) override;
+  QString domXml() const override;
+  QIcon icon() const override;
+  QString includeFile() const override;
+  bool isContainer() const override;
+  QString name() const override;
 };
 
 #endif

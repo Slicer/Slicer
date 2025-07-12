@@ -2,7 +2,6 @@
 
 #include "vtkTeemNRRDWriter.h"
 
-
 #include "vtkImageData.h"
 #include "vtkPointData.h"
 #include "vtkObjectFactory.h"
@@ -14,9 +13,12 @@
 
 #include "itkNumberToString.h"
 
-
-class AttributeMapType: public std::map<std::string, std::string> {};
-class AxisInfoMapType : public std::map<unsigned int, std::string> {};
+class AttributeMapType : public std::map<std::string, std::string>
+{
+};
+class AxisInfoMapType : public std::map<unsigned int, std::string>
+{
+};
 
 vtkStandardNewMacro(vtkTeemNRRDWriter);
 
@@ -71,21 +73,19 @@ vtkImageData* vtkTeemNRRDWriter::GetInput(int port)
 }
 
 //----------------------------------------------------------------------------
-int vtkTeemNRRDWriter::FillInputPortInformation(
-  int vtkNotUsed(port), vtkInformation *info)
+int vtkTeemNRRDWriter::FillInputPortInformation(int vtkNotUsed(port), vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
   return 1;
-
 }
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
-void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, size_t &numComp, int &vtkType, void **buffer)
+void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData* in, int& kind, size_t& numComp, int& vtkType, void** buffer)
 {
-  vtkDataArray *array = nullptr;
+  vtkDataArray* array = nullptr;
   this->DiffusionWeightedData = 0;
-  if ((array = static_cast<vtkDataArray *> (in->GetPointData()->GetScalars())))
+  if ((array = static_cast<vtkDataArray*>(in->GetPointData()->GetScalars())))
   {
     numComp = array->GetNumberOfComponents();
     vtkType = array->GetDataType();
@@ -93,22 +93,14 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, 
 
     switch (numComp)
     {
-      case 1:
-        kind = nrrdKindScalar;
-        break;
-      case 2:
-        kind = nrrdKindComplex;
-        break;
-      case 3:
-        kind = nrrdKindRGBColor;
-        break;
-      case 4:
-        kind = nrrdKindRGBAColor;
-        break;
+      case 1: kind = nrrdKindScalar; break;
+      case 2: kind = nrrdKindComplex; break;
+      case 3: kind = nrrdKindRGBColor; break;
+      case 4: kind = nrrdKindRGBAColor; break;
       default:
         size_t numGrad = this->DiffusionGradients->GetNumberOfTuples();
         size_t numBValues = this->BValues->GetNumberOfTuples();
-        if (numGrad == numBValues && numGrad == numComp && numGrad>6)
+        if (numGrad == numBValues && numGrad == numComp && numGrad > 6)
         {
           kind = nrrdKindList;
           this->DiffusionWeightedData = 1;
@@ -119,33 +111,33 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, 
         }
     }
   }
-   else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetVectors())))
-   {
-     *buffer = array->GetVoidPointer(0);
-     vtkType = array->GetDataType();
-     kind = nrrdKindVector;
-   }
-   else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetNormals())))
-   {
-     *buffer = array->GetVoidPointer(0);
-     vtkType = array->GetDataType();
-     kind = nrrdKindVector;
-     numComp = array->GetNumberOfComponents();
-   }
-   else if ((array = static_cast<vtkDataArray *> ( in->GetPointData()->GetTensors())))
-   {
-     *buffer = array->GetVoidPointer(0);
-     vtkType = array->GetDataType();
-     kind = nrrdKind3DMatrix;
-     numComp = array->GetNumberOfComponents();
-   }
-   else
-   {
-     *buffer = nullptr;
-     vtkType = VTK_VOID;
-     kind = nrrdKindUnknown;
-     numComp = 0;
-   }
+  else if ((array = static_cast<vtkDataArray*>(in->GetPointData()->GetVectors())))
+  {
+    *buffer = array->GetVoidPointer(0);
+    vtkType = array->GetDataType();
+    kind = nrrdKindVector;
+  }
+  else if ((array = static_cast<vtkDataArray*>(in->GetPointData()->GetNormals())))
+  {
+    *buffer = array->GetVoidPointer(0);
+    vtkType = array->GetDataType();
+    kind = nrrdKindVector;
+    numComp = array->GetNumberOfComponents();
+  }
+  else if ((array = static_cast<vtkDataArray*>(in->GetPointData()->GetTensors())))
+  {
+    *buffer = array->GetVoidPointer(0);
+    vtkType = array->GetDataType();
+    kind = nrrdKind3DMatrix;
+    numComp = array->GetNumberOfComponents();
+  }
+  else
+  {
+    *buffer = nullptr;
+    vtkType = VTK_VOID;
+    kind = nrrdKindUnknown;
+    numComp = 0;
+  }
 
   if (this->VectorAxisKind != nrrdKindUnknown)
   {
@@ -153,23 +145,15 @@ void vtkTeemNRRDWriter::vtkImageDataInfoToNrrdInfo(vtkImageData *in, int &kind, 
   }
 }
 
-int vtkTeemNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
+int vtkTeemNRRDWriter::VTKToNrrdPixelType(const int vtkPixelType)
 {
-  switch( vtkPixelType )
+  switch (vtkPixelType)
   {
     default:
-    case VTK_VOID:
-      return nrrdTypeDefault;
-      break;
-    case VTK_CHAR:
-      return nrrdTypeChar;
-      break;
-    case VTK_UNSIGNED_CHAR:
-      return nrrdTypeUChar;
-      break;
-    case VTK_SHORT:
-      return nrrdTypeShort;
-      break;
+    case VTK_VOID: return nrrdTypeDefault; break;
+    case VTK_CHAR: return nrrdTypeChar; break;
+    case VTK_UNSIGNED_CHAR: return nrrdTypeUChar; break;
+    case VTK_SHORT: return nrrdTypeShort; break;
     case VTK_UNSIGNED_SHORT:
       return nrrdTypeUShort;
       break;
@@ -179,18 +163,10 @@ int vtkTeemNRRDWriter::VTKToNrrdPixelType( const int vtkPixelType )
       //    case nrrdTypeULong:
       //      return ULONG;
       //      break;
-    case VTK_INT:
-      return nrrdTypeInt;
-      break;
-    case VTK_UNSIGNED_INT:
-      return nrrdTypeUInt;
-      break;
-    case VTK_FLOAT:
-      return nrrdTypeFloat;
-      break;
-    case VTK_DOUBLE:
-      return nrrdTypeDouble;
-      break;
+    case VTK_INT: return nrrdTypeInt; break;
+    case VTK_UNSIGNED_INT: return nrrdTypeUInt; break;
+    case VTK_FLOAT: return nrrdTypeFloat; break;
+    case VTK_DOUBLE: return nrrdTypeDouble; break;
   }
 }
 
@@ -224,7 +200,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   if (size[0] > 1 || this->ForceRangeAxis)
   {
     // the range axis has no space direction
-    for (unsigned int saxi=0; saxi < spaceDim; saxi++)
+    for (unsigned int saxi = 0; saxi < spaceDim; saxi++)
     {
       spaceDir[0][saxi] = AIR_NAN;
     }
@@ -240,43 +216,37 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   switch (this->Space)
   {
     case nrrdSpaceRightAnteriorSuperior:
-    case nrrdSpaceRightAnteriorSuperiorTime:
-      break;
+    case nrrdSpaceRightAnteriorSuperiorTime: break;
     case nrrdSpaceLeftPosteriorSuperior:
     case nrrdSpaceLeftPosteriorSuperiorTime:
       rasToSpaceMatrix->SetElement(0, 0, -1);
       rasToSpaceMatrix->SetElement(1, 1, -1);
       break;
-    default:
-      vtkErrorMacro("Write: Unsupported space " << this->Space << " for " << this->GetFileName());
-      return nullptr;
+    default: vtkErrorMacro("Write: Unsupported space " << this->Space << " for " << this->GetFileName()); return nullptr;
   }
   vtkNew<vtkMatrix4x4> ijkToSpaceMatrix;
   vtkMatrix4x4::Multiply4x4(rasToSpaceMatrix, this->IJKToRASMatrix, ijkToSpaceMatrix);
 
   double origin[NRRD_DIM_MAX] = { 0.0 };
-  for (unsigned int axi=0; axi < spaceDim; axi++)
+  for (unsigned int axi = 0; axi < spaceDim; axi++)
   {
-    size[axi+baseDim] = this->GetInput()->GetDimensions()[axi];
-    kind[axi+baseDim] = nrrdKindDomain;
-    origin[axi] = ijkToSpaceMatrix->GetElement((int) axi,3);
+    size[axi + baseDim] = this->GetInput()->GetDimensions()[axi];
+    kind[axi + baseDim] = nrrdKindDomain;
+    origin[axi] = ijkToSpaceMatrix->GetElement((int)axi, 3);
 
-    for (unsigned int saxi=0; saxi < spaceDim; saxi++)
+    for (unsigned int saxi = 0; saxi < spaceDim; saxi++)
     {
-      spaceDir[axi+baseDim][saxi] = ijkToSpaceMatrix->GetElement(saxi,axi);
+      spaceDir[axi + baseDim][saxi] = ijkToSpaceMatrix->GetElement(saxi, axi);
     }
   }
 
   Nrrd* nrrd = nrrdNew();
-  if (nrrdWrap_nva(nrrd, const_cast<void *> (buffer),
-                   this->VTKToNrrdPixelType( vtkType ),
-                   nrrdDim, size)
-      || nrrdSpaceDimensionSet(nrrd, spaceDim)
+  if (nrrdWrap_nva(nrrd, const_cast<void*>(buffer), this->VTKToNrrdPixelType(vtkType), nrrdDim, size) //
+      || nrrdSpaceDimensionSet(nrrd, spaceDim)                                                        //
       || nrrdSpaceOriginSet(nrrd, origin))
   {
-    char *err = biffGetDone(NRRD); // would be nice to free(err)
-    vtkErrorMacro("Write: Error wrapping nrrd for "
-                      << this->GetFileName() << ":\n" << err);
+    char* err = biffGetDone(NRRD); // would be nice to free(err)
+    vtkErrorMacro("Write: Error wrapping nrrd for " << this->GetFileName() << ":\n" << err);
     // Free the nrrd struct but don't touch nrrd->data
     nrrd = nrrdNix(nrrd);
     return nullptr;
@@ -322,7 +292,10 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   for (ait = this->Attributes->begin(); ait != this->Attributes->end(); ++ait)
   {
     // Don't set `space` as k-v. it is handled above, and needs to be a nrrd *field*.
-    if (ait->first == "space") { continue; }
+    if (ait->first == "space")
+    {
+      continue;
+    }
 
     nrrdKeyValueAdd(nrrd, ait->first.c_str(), ait->second.c_str());
   }
@@ -330,13 +303,13 @@ void* vtkTeemNRRDWriter::MakeNRRD()
   // 1. Measurement Frame
   if (this->MeasurementFrameMatrix)
   {
-    for (unsigned int saxi=0; saxi < nrrd->spaceDim; saxi++)
+    for (unsigned int saxi = 0; saxi < nrrd->spaceDim; saxi++)
     {
-      for (unsigned int saxj=0; saxj < nrrd->spaceDim; saxj++)
+      for (unsigned int saxj = 0; saxj < nrrd->spaceDim; saxj++)
       {
         // Note the transpose: each entry in the nrrd measurementFrame
         // is a column of the matrix
-        nrrd->measurementFrame[saxi][saxj] = this->MeasurementFrameMatrix->GetElement(saxj,saxi);
+        nrrd->measurementFrame[saxi][saxj] = this->MeasurementFrameMatrix->GetElement(saxj, saxi);
       }
     }
   }
@@ -367,7 +340,7 @@ void* vtkTeemNRRDWriter::MakeNRRD()
       bval_value << DoubleConvert(maxbVal);
       nrrdKeyValueAdd(nrrd, bval_key.c_str(), bval_value.str().c_str());
 
-      for (unsigned int ig =0; ig < numGrad; ig++)
+      for (unsigned int ig = 0; ig < numGrad; ig++)
       {
         // key
         std::stringstream key_stream;
@@ -378,12 +351,12 @@ void* vtkTeemNRRDWriter::MakeNRRD()
 
         bVal = this->BValues->GetValue(ig);
         // per NA-MIC DWI convention
-        factor = sqrt(bVal/maxbVal);
+        factor = sqrt(bVal / maxbVal);
         std::stringstream value_stream;
-        value_stream << std::setprecision(17) <<
-                        DoubleConvert(grad[0] * factor) << "   " <<
-                        DoubleConvert(grad[1] * factor) << "   " <<
-                        DoubleConvert(grad[2] * factor);
+        value_stream << std::setprecision(17) <<      //
+          DoubleConvert(grad[0] * factor) << "   " << //
+          DoubleConvert(grad[1] * factor) << "   " << //
+          DoubleConvert(grad[2] * factor);
 
         nrrdKeyValueAdd(nrrd, key_stream.str().c_str(), value_stream.str().c_str());
       }
@@ -412,10 +385,10 @@ void vtkTeemNRRDWriter::WriteData()
     return;
   }
 
-  NrrdIoState *nio = nrrdIoStateNew();
+  NrrdIoState* nio = nrrdIoStateNew();
 
   // set encoding for data: compressed (raw), (uncompressed) raw, or ascii
-  if ( this->GetUseCompression() && nrrdEncodingGzip->available() )
+  if (this->GetUseCompression() && nrrdEncodingGzip->available())
   {
     // this is necessarily gzip-compressed *raw* data
     nio->encoding = nrrdEncodingGzip;
@@ -424,15 +397,11 @@ void vtkTeemNRRDWriter::WriteData()
   else
   {
     int fileType = this->GetFileType();
-    switch ( fileType )
+    switch (fileType)
     {
       default:
-      case VTK_BINARY:
-        nio->encoding = nrrdEncodingRaw;
-        break;
-      case VTK_ASCII:
-        nio->encoding = nrrdEncodingAscii;
-        break;
+      case VTK_BINARY: nio->encoding = nrrdEncodingRaw; break;
+      case VTK_ASCII: nio->encoding = nrrdEncodingAscii; break;
     }
   }
 
@@ -442,9 +411,8 @@ void vtkTeemNRRDWriter::WriteData()
   // Write the nrrd to file.
   if (nrrdSave(this->GetFileName(), nrrd, nio))
   {
-    char *err = biffGetDone(NRRD); // would be nice to free(err)
-    vtkErrorMacro("Write: Error writing "
-                      << this->GetFileName() << ":\n" << err);
+    char* err = biffGetDone(NRRD); // would be nice to free(err)
+    vtkErrorMacro("Write: Error writing " << this->GetFileName() << ":\n" << err);
     this->WriteErrorOn();
   }
   // Free the nrrd struct but don't touch nrrd->data
@@ -454,12 +422,12 @@ void vtkTeemNRRDWriter::WriteData()
 
 void vtkTeemNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "RAS to IJK Matrix: ";
-     this->IJKToRASMatrix->PrintSelf(os,indent);
+  this->IJKToRASMatrix->PrintSelf(os, indent);
   os << indent << "Measurement frame: ";
-     this->MeasurementFrameMatrix->PrintSelf(os,indent);
+  this->MeasurementFrameMatrix->PrintSelf(os, indent);
 }
 
 void vtkTeemNRRDWriter::SetAttribute(const std::string& name, const std::string& value)

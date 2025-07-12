@@ -29,8 +29,7 @@
 class qSlicerSegmentEditorPaintEffectPrivate;
 class vtkPolyData;
 
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorPaintEffect :
-  public qSlicerSegmentEditorAbstractLabelEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorPaintEffect : public qSlicerSegmentEditorAbstractLabelEffect
 {
   Q_OBJECT
 
@@ -47,7 +46,7 @@ public:
   QIcon icon() override;
 
   /// Get help text for effect to be displayed in the help box
-  const QString helpText()const override;
+  const QString helpText() const override;
 
   /// Clone editor effect
   qSlicerSegmentEditorAbstractEffect* clone() override;

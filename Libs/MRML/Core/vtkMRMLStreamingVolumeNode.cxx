@@ -46,7 +46,7 @@ vtkMRMLStreamingVolumeNode::vtkMRMLStreamingVolumeNode()
   , Frame(nullptr)
   , FrameModifiedCallbackCommand(vtkSmartPointer<vtkCallbackCommand>::New())
 {
-  this->FrameModifiedCallbackCommand->SetClientData(reinterpret_cast<void *>(this));
+  this->FrameModifiedCallbackCommand->SetClientData(reinterpret_cast<void*>(this));
   this->FrameModifiedCallbackCommand->SetCallback(vtkMRMLStreamingVolumeNode::FrameModifiedCallback);
 }
 
@@ -54,7 +54,7 @@ vtkMRMLStreamingVolumeNode::vtkMRMLStreamingVolumeNode()
 vtkMRMLStreamingVolumeNode::~vtkMRMLStreamingVolumeNode() = default;
 
 //---------------------------------------------------------------------------
-void vtkMRMLStreamingVolumeNode::FrameModifiedCallback(vtkObject *caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
+void vtkMRMLStreamingVolumeNode::FrameModifiedCallback(vtkObject* caller, unsigned long vtkNotUsed(eid), void* clientData, void* vtkNotUsed(callData))
 {
   vtkMRMLStreamingVolumeNode* self = reinterpret_cast<vtkMRMLStreamingVolumeNode*>(clientData);
   if (!self)
@@ -73,12 +73,12 @@ void vtkMRMLStreamingVolumeNode::FrameModifiedCallback(vtkObject *caller, unsign
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLStreamingVolumeNode::ProcessMRMLEvents(vtkObject *caller, unsigned long event, void *callData)
+void vtkMRMLStreamingVolumeNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-  if (this->ImageDataConnection != nullptr &&
-    this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) &&
-    event == vtkCommand::ModifiedEvent)
+  if (this->ImageDataConnection != nullptr &&                                           //
+      this->ImageDataConnection->GetProducer() == vtkAlgorithm::SafeDownCast(caller) && //
+      event == vtkCommand::ModifiedEvent)
   {
     if (!this->FrameDecodingInProgress)
     {
@@ -116,7 +116,7 @@ void vtkMRMLStreamingVolumeNode::AllocateImageForFrame(vtkImageData* imageData)
 {
   if (imageData && this->Frame)
   {
-    int frameDimensions[3] = { 0,0,0 };
+    int frameDimensions[3] = { 0, 0, 0 };
     this->Frame->GetDimensions(frameDimensions);
     imageData->SetDimensions(frameDimensions);
     imageData->AllocateScalars(this->Frame->GetVTKScalarType(), this->Frame->GetNumberOfComponents());
@@ -148,8 +148,8 @@ vtkAlgorithmOutput* vtkMRMLStreamingVolumeNode::GetImageDataConnection()
 //---------------------------------------------------------------------------
 vtkStreamingVolumeCodec* vtkMRMLStreamingVolumeNode::GetCodec()
 {
-  if (!this->Codec ||
-      (this->Codec &&
+  if (!this->Codec || //
+      (this->Codec && //
        this->Codec->GetFourCC() != this->GetCodecFourCC()))
   {
     this->Codec = vtkSmartPointer<vtkStreamingVolumeCodec>::Take(vtkStreamingVolumeCodecFactory::GetInstance()->CreateCodecByFourCC(this->GetCodecFourCC()));
@@ -161,8 +161,7 @@ vtkStreamingVolumeCodec* vtkMRMLStreamingVolumeNode::GetCodec()
 bool vtkMRMLStreamingVolumeNode::HasExternalImageObserver()
 {
   vtkImageData* imageData = Superclass::GetImageData();
-  if ((this->ImageDataConnection != nullptr &&
-       this->ImageDataConnection->GetReferenceCount() > NUMBER_OF_INTERNAL_IMAGEDATACONNECTION_OBSERVERS) ||
+  if ((this->ImageDataConnection != nullptr && this->ImageDataConnection->GetReferenceCount() > NUMBER_OF_INTERNAL_IMAGEDATACONNECTION_OBSERVERS) || //
       (imageData && imageData->GetReferenceCount() > NUMBER_OF_INTERNAL_IMAGEDATA_OBSERVERS))
   {
     return true;
@@ -265,7 +264,7 @@ bool vtkMRMLStreamingVolumeNode::DecodeFrame()
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLStreamingVolumeNode::EncodeImageData(bool forceKeyFrame/*=false*/)
+bool vtkMRMLStreamingVolumeNode::EncodeImageData(bool forceKeyFrame /*=false*/)
 {
   vtkImageData* imageData = Superclass::GetImageData();
   if (!imageData)
@@ -337,7 +336,7 @@ void vtkMRMLStreamingVolumeNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
 
@@ -356,11 +355,8 @@ void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*
     vtkMRMLDisplayableNode::CopyContent(anode, deepCopy);
 
     /// Duplicated from vtkMRMLVolumeNode::CopyContent()
-    vtkAlgorithm* producer = streamingVolumeNode->ImageDataConnection ?
-      streamingVolumeNode->ImageDataConnection->GetProducer() : nullptr;
-    vtkImageData* sourceImageData = vtkImageData::SafeDownCast(
-      producer ? producer->GetOutputDataObject(
-        streamingVolumeNode->ImageDataConnection->GetIndex()) : nullptr);
+    vtkAlgorithm* producer = streamingVolumeNode->ImageDataConnection ? streamingVolumeNode->ImageDataConnection->GetProducer() : nullptr;
+    vtkImageData* sourceImageData = vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(streamingVolumeNode->ImageDataConnection->GetIndex()) : nullptr);
 
     vtkSmartPointer<vtkImageData> targetImageData = sourceImageData;
     if (deepCopy && sourceImageData)
@@ -388,7 +384,7 @@ void vtkMRMLStreamingVolumeNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*
 //----------------------------------------------------------------------------
 void vtkMRMLStreamingVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  Superclass::PrintSelf(os,indent);
+  Superclass::PrintSelf(os, indent);
   vtkMRMLPrintBeginMacro(os, indent);
   os << indent << this->Frame << "\n";
   if (this->Codec)

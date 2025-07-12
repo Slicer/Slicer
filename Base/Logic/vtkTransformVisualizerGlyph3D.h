@@ -45,14 +45,14 @@
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkTransformVisualizerGlyph3D : public vtkGlyph3D
 {
 public:
-  vtkTypeMacro(vtkTransformVisualizerGlyph3D,vtkGlyph3D);
+  vtkTypeMacro(vtkTransformVisualizerGlyph3D, vtkGlyph3D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  static vtkTransformVisualizerGlyph3D *New();
+  static vtkTransformVisualizerGlyph3D* New();
 
   /// If true then glyphs are only scaled with the scalar value along x axis (y and z scaling is 1).
   /// If false then glyphs are scaled uniformly with the scalar value.
-  vtkSetMacro(ScaleDirectional,bool);
-  vtkGetMacro(ScaleDirectional,bool);
+  vtkSetMacro(ScaleDirectional, bool);
+  vtkGetMacro(ScaleDirectional, bool);
 
   /// Set the array used for orienting (and optionally scaling) the glyphs.
   /// Default: active vector array.
@@ -67,20 +67,20 @@ public:
   void SetColorArray(const char* colorArrayName);
 
   /// If true then points with scalar value outside the lower or upper threshold are ignored
-  vtkSetMacro(MagnitudeThresholding,bool);
-  vtkGetMacro(MagnitudeThresholding,bool);
+  vtkSetMacro(MagnitudeThresholding, bool);
+  vtkGetMacro(MagnitudeThresholding, bool);
 
   /// Points with scalar value below this value are ignored (if thresholding is enabled)
-  vtkSetMacro(MagnitudeThresholdLower,double);
-  vtkGetMacro(MagnitudeThresholdLower,double);
+  vtkSetMacro(MagnitudeThresholdLower, double);
+  vtkGetMacro(MagnitudeThresholdLower, double);
 
   /// Points with scalar value above this value are ignored (if thresholding is enabled)
-  vtkSetMacro(MagnitudeThresholdUpper,double);
-  vtkGetMacro(MagnitudeThresholdUpper,double);
+  vtkSetMacro(MagnitudeThresholdUpper, double);
+  vtkGetMacro(MagnitudeThresholdUpper, double);
 
 protected:
   vtkTransformVisualizerGlyph3D();
-  ~vtkTransformVisualizerGlyph3D() override  = default;
+  ~vtkTransformVisualizerGlyph3D() override = default;
 
   bool ScaleDirectional;
 
@@ -88,7 +88,7 @@ protected:
   double MagnitudeThresholdLower;
   double MagnitudeThresholdUpper;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
   vtkTransformVisualizerGlyph3D(const vtkTransformVisualizerGlyph3D&) = delete;

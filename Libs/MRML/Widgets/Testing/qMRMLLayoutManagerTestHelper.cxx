@@ -10,26 +10,25 @@ namespace
 {
 
 // --------------------------------------------------------------------------
-bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager,
-                          vtkMRMLLayoutNode * layoutNode, int expectedViewArrangement)
+bool checkViewArrangement(int line, qMRMLLayoutManager* layoutManager, vtkMRMLLayoutNode* layoutNode, int expectedViewArrangement)
 {
   // Ignore deprecated arrangements (that are not expected to be available)
-  if (expectedViewArrangement == 5     // SlicerLayoutOneUpSliceView
-      || expectedViewArrangement == 11 // SlicerLayoutLightboxView
-      || expectedViewArrangement == 13 // SlicerLayoutSideBySideLightboxView
-      || expectedViewArrangement == 18 // SlicerLayoutSingleLightboxView
-      || expectedViewArrangement == 20 // SlicerLayout3DPlusLightboxView
-      || expectedViewArrangement == 24 // SlicerLayoutConventionalQuantitativeView
-      || expectedViewArrangement == 25 // SlicerLayoutFourUpQuantitativeView
-      || expectedViewArrangement == 26 // SlicerLayoutOneUpQuantitativeView
-      || expectedViewArrangement == 28 // SlicerLayoutThreeOverThreeQuantitativeView
+  if (expectedViewArrangement == 5                                                  // SlicerLayoutOneUpSliceView
+      || expectedViewArrangement == 11                                              // SlicerLayoutLightboxView
+      || expectedViewArrangement == 13                                              // SlicerLayoutSideBySideLightboxView
+      || expectedViewArrangement == 18                                              // SlicerLayoutSingleLightboxView
+      || expectedViewArrangement == 20                                              // SlicerLayout3DPlusLightboxView
+      || expectedViewArrangement == 24                                              // SlicerLayoutConventionalQuantitativeView
+      || expectedViewArrangement == 25                                              // SlicerLayoutFourUpQuantitativeView
+      || expectedViewArrangement == 26                                              // SlicerLayoutOneUpQuantitativeView
+      || expectedViewArrangement == 28                                              // SlicerLayoutThreeOverThreeQuantitativeView
       || expectedViewArrangement == vtkMRMLLayoutNode::SlicerLayoutDicomBrowserView // registered by DICOM module
-      )
+  )
   {
     return true;
   }
 
-  if (layoutManager->layout() != expectedViewArrangement ||
+  if (layoutManager->layout() != expectedViewArrangement || //
       layoutNode->GetViewArrangement() != expectedViewArrangement)
   {
     std::cerr << "Line " << line << " - Add scene failed:\n"

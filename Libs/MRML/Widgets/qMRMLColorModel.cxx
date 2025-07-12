@@ -89,7 +89,7 @@ void qMRMLColorModelPrivate::updateColumnCount()
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModelPrivate::maxColumnId()const
+int qMRMLColorModelPrivate::maxColumnId() const
 {
   int maxId = 0; // information (scene, node uid... ) are stored in the 1st column
   maxId = qMax(maxId, this->ColorColumn);
@@ -103,7 +103,7 @@ int qMRMLColorModelPrivate::maxColumnId()const
 //------------------------------------------------------------------------------
 // qMRMLColorModel
 //------------------------------------------------------------------------------
-qMRMLColorModel::qMRMLColorModel(QObject *_parent)
+qMRMLColorModel::qMRMLColorModel(QObject* _parent)
   : QStandardItemModel(_parent)
   , d_ptr(new qMRMLColorModelPrivate(*this))
 {
@@ -112,7 +112,7 @@ qMRMLColorModel::qMRMLColorModel(QObject *_parent)
 }
 
 //------------------------------------------------------------------------------
-qMRMLColorModel::qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parentObject)
+qMRMLColorModel::qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject* parentObject)
   : QStandardItemModel(parentObject)
   , d_ptr(pimpl)
 {
@@ -140,7 +140,7 @@ void qMRMLColorModel::setMRMLColorNode(vtkMRMLColorNode* colorNode)
 }
 
 //------------------------------------------------------------------------------
-vtkMRMLColorNode* qMRMLColorModel::mrmlColorNode()const
+vtkMRMLColorNode* qMRMLColorModel::mrmlColorNode() const
 {
   Q_D(const qMRMLColorModel);
   return d->MRMLColorNode;
@@ -167,14 +167,14 @@ void qMRMLColorModel::setNoneEnabled(bool enable)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLColorModel::noneEnabled()const
+bool qMRMLColorModel::noneEnabled() const
 {
   Q_D(const qMRMLColorModel);
   return d->NoneEnabled;
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::colorColumn()const
+int qMRMLColorModel::colorColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->ColorColumn;
@@ -189,7 +189,7 @@ void qMRMLColorModel::setColorColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::labelColumn()const
+int qMRMLColorModel::labelColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->LabelColumn;
@@ -204,7 +204,7 @@ void qMRMLColorModel::setLabelColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::opacityColumn()const
+int qMRMLColorModel::opacityColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->OpacityColumn;
@@ -219,7 +219,7 @@ void qMRMLColorModel::setOpacityColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::terminologyColumn()const
+int qMRMLColorModel::terminologyColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->TerminologyColumn;
@@ -234,7 +234,7 @@ void qMRMLColorModel::setTerminologyColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::checkableColumn()const
+int qMRMLColorModel::checkableColumn() const
 {
   Q_D(const qMRMLColorModel);
   return d->CheckableColumn;
@@ -248,9 +248,8 @@ void qMRMLColorModel::setCheckableColumn(int column)
   d->updateColumnCount();
 }
 
-
 //------------------------------------------------------------------------------
-int qMRMLColorModel::colorFromItem(QStandardItem* colorItem)const
+int qMRMLColorModel::colorFromItem(QStandardItem* colorItem) const
 {
   Q_D(const qMRMLColorModel);
   // TODO: fasten by saving the pointer into the data
@@ -267,35 +266,32 @@ int qMRMLColorModel::colorFromItem(QStandardItem* colorItem)const
 }
 
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLColorModel::itemFromColor(int color, int column)const
+QStandardItem* qMRMLColorModel::itemFromColor(int color, int column) const
 {
   if (color == -1)
   {
     return nullptr;
   }
-  QModelIndexList indexes = this->match(this->index(0,0), qMRMLItemDelegate::ColorEntryRole,
-                                        color, 1, Qt::MatchExactly | Qt::MatchRecursive);
+  QModelIndexList indexes = this->match(this->index(0, 0), qMRMLItemDelegate::ColorEntryRole, color, 1, Qt::MatchExactly | Qt::MatchRecursive);
   while (indexes.size())
   {
     if (indexes[0].column() == column)
     {
       return this->itemFromIndex(indexes[0]);
     }
-    indexes = this->match(indexes[0], qMRMLItemDelegate::ColorEntryRole, color, 1,
-                          Qt::MatchExactly | Qt::MatchRecursive);
+    indexes = this->match(indexes[0], qMRMLItemDelegate::ColorEntryRole, color, 1, Qt::MatchExactly | Qt::MatchRecursive);
   }
   return nullptr;
 }
 
 //------------------------------------------------------------------------------
-QModelIndexList qMRMLColorModel::indexes(int color)const
+QModelIndexList qMRMLColorModel::indexes(int color) const
 {
-  return this->match(this->index(0,0), qMRMLItemDelegate::ColorEntryRole, color, -1,
-                     Qt::MatchExactly | Qt::MatchRecursive);
+  return this->match(this->index(0, 0), qMRMLItemDelegate::ColorEntryRole, color, -1, Qt::MatchExactly | Qt::MatchRecursive);
 }
 
 //------------------------------------------------------------------------------
-QColor qMRMLColorModel::qcolorFromColor(int entry)const
+QColor qMRMLColorModel::qcolorFromColor(int entry) const
 {
   Q_D(const qMRMLColorModel);
   if (d->MRMLColorNode == nullptr || entry < 0)
@@ -308,7 +304,7 @@ QColor qMRMLColorModel::qcolorFromColor(int entry)const
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLColorModel::nameFromColor(int entry)const
+QString qMRMLColorModel::nameFromColor(int entry) const
 {
   Q_D(const qMRMLColorModel);
   if (d->MRMLColorNode == nullptr || entry < 0)
@@ -319,7 +315,7 @@ QString qMRMLColorModel::nameFromColor(int entry)const
 }
 
 //------------------------------------------------------------------------------
-int qMRMLColorModel::colorFromName(const QString& name)const
+int qMRMLColorModel::colorFromName(const QString& name) const
 {
   Q_D(const qMRMLColorModel);
   if (d->MRMLColorNode == nullptr)
@@ -374,7 +370,7 @@ void qMRMLColorModel::updateRowForColor(int color)
     if (!colorItem)
     {
       colorItem = new QStandardItem();
-      this->invisibleRootItem()->setChild(color + startIndex,col,colorItem);
+      this->invisibleRootItem()->setChild(color + startIndex, col, colorItem);
     }
     this->updateItemFromColor(colorItem, color, col);
   }
@@ -424,7 +420,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
   {
     double rgba[4] = { 0., 0., 0., 1. };
     d->MRMLColorNode->GetColor(color, rgba);
-    item->setData(QString::number(rgba[3],'f',2), Qt::DisplayRole);
+    item->setData(QString::number(rgba[3], 'f', 2), Qt::DisplayRole);
   }
   if (column == d->TerminologyColumn)
   {
@@ -443,7 +439,7 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
   Q_D(qMRMLColorModel);
   if (d->IsUpdatingWidgetFromMRML)
   {
-    return;  // Updating widget from MRML is in progress, do not do the reverse update
+    return; // Updating widget from MRML is in progress, do not do the reverse update
   }
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(d->MRMLColorNode);
   if (color < 0 || !colorTableNode)
@@ -466,19 +462,16 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLColorModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
-                                      void* client_data, void* vtkNotUsed(call_data))
+void qMRMLColorModel::onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* vtkNotUsed(call_data))
 {
   vtkMRMLColorNode* colorNode = reinterpret_cast<vtkMRMLColorNode*>(vtk_obj);
   qMRMLColorModel* colorModel = reinterpret_cast<qMRMLColorModel*>(client_data);
   Q_ASSERT(colorNode);
   Q_ASSERT(colorModel);
-  switch(event)
+  switch (event)
   {
     default:
-    case vtkCommand::ModifiedEvent:
-      colorModel->onMRMLColorNodeModified(colorNode);
-      break;
+    case vtkCommand::ModifiedEvent: colorModel->onMRMLColorNodeModified(colorNode); break;
   }
 }
 
@@ -494,7 +487,7 @@ void qMRMLColorModel::onMRMLColorNodeModified(vtkObject* node)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLColorModel::onItemChanged(QStandardItem * item)
+void qMRMLColorModel::onItemChanged(QStandardItem* item)
 {
   if (item == this->invisibleRootItem())
   {
@@ -507,9 +500,9 @@ void qMRMLColorModel::onItemChanged(QStandardItem * item)
 //------------------------------------------------------------------------------
 QVariant qMRMLColorModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-  QVariant retval =  QStandardItemModel::headerData(section, orientation, role);
+  QVariant retval = QStandardItemModel::headerData(section, orientation, role);
 
-  if (orientation == Qt::Vertical &&
+  if (orientation == Qt::Vertical && //
       role == Qt::DisplayRole)
   {
     // for the vertical header, decrement the row number by one, since the
@@ -519,11 +512,10 @@ QVariant qMRMLColorModel::headerData(int section, Qt::Orientation orientation, i
   }
 
   return retval;
-
 }
 
 //------------------------------------------------------------------------------
-QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex, bool simplified/*=false*/)
+QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, int colorIndex, bool simplified /*=false*/)
 {
   if (colorNode == nullptr || colorIndex >= colorNode->GetNumberOfColors())
   {
@@ -532,13 +524,13 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
 
   // Get type (with modifier, if any)
   QString type;
-  if (colorNode->GetTerminologyType(colorIndex) != nullptr
-    && colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() != nullptr)
+  if (colorNode->GetTerminologyType(colorIndex) != nullptr //
+      && colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning() != nullptr)
   {
     type = colorNode->GetTerminologyType(colorIndex)->GetCodeMeaning();
     QString typeModifier;
-    if (colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr
-      && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
+    if (colorNode->GetTerminologyTypeModifier(colorIndex) != nullptr //
+        && colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning() != nullptr)
     {
       typeModifier = colorNode->GetTerminologyTypeModifier(colorIndex)->GetCodeMeaning();
     }
@@ -559,13 +551,13 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
 
   // Get region (if any; with modifier, if any)
   QString region;
-  if ( colorNode->GetTerminologyRegion(colorIndex) != nullptr
-    && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
+  if (colorNode->GetTerminologyRegion(colorIndex) != nullptr //
+      && colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning() != nullptr)
   {
     region = colorNode->GetTerminologyRegion(colorIndex)->GetCodeMeaning();
     QString regionModifier;
-    if (colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr
-      && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
+    if (colorNode->GetTerminologyRegionModifier(colorIndex) != nullptr //
+        && colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning() != nullptr)
     {
       regionModifier = colorNode->GetTerminologyRegionModifier(colorIndex)->GetCodeMeaning();
     }
@@ -611,8 +603,8 @@ QString qMRMLColorModel::terminologyTextForColor(vtkMRMLColorNode* colorNode, in
   // Skip category in simplified mode
   if (!simplified)
   {
-    if (colorNode->GetTerminologyCategory(colorIndex) != nullptr
-      && colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() != nullptr)
+    if (colorNode->GetTerminologyCategory(colorIndex) != nullptr //
+        && colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning() != nullptr)
     {
       category = colorNode->GetTerminologyCategory(colorIndex)->GetCodeMeaning();
     }

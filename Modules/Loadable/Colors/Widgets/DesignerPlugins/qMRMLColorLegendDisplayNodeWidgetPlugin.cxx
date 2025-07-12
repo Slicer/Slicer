@@ -19,7 +19,7 @@
 #include "qMRMLColorLegendDisplayNodeWidget.h"
 
 //-----------------------------------------------------------------------------
-qMRMLColorLegendDisplayNodeWidgetPlugin::qMRMLColorLegendDisplayNodeWidgetPlugin(QObject *newParent)
+qMRMLColorLegendDisplayNodeWidgetPlugin::qMRMLColorLegendDisplayNodeWidgetPlugin(QObject* newParent)
   : QObject(newParent)
 {
 }
@@ -43,10 +43,9 @@ QString qMRMLColorLegendDisplayNodeWidgetPlugin::whatsThis() const
 }
 
 //-----------------------------------------------------------------------------
-QWidget *qMRMLColorLegendDisplayNodeWidgetPlugin::createWidget(QWidget *newParent)
+QWidget* qMRMLColorLegendDisplayNodeWidgetPlugin::createWidget(QWidget* newParent)
 {
-  qMRMLColorLegendDisplayNodeWidget* newWidget =
-    new qMRMLColorLegendDisplayNodeWidget(newParent);
+  qMRMLColorLegendDisplayNodeWidget* newWidget = new qMRMLColorLegendDisplayNodeWidget(newParent);
   return newWidget;
 }
 
@@ -55,15 +54,15 @@ QString qMRMLColorLegendDisplayNodeWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLColorLegendDisplayNodeWidget\" \
           name=\"ColorLegendDisplayNodeWidget\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>200</height>\n"
-          "  </rect>\n"
-          " </property>\n"
-          "</widget>\n";
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>200</height>\n"
+         "  </rect>\n"
+         " </property>\n"
+         "</widget>\n";
 }
 
 //-----------------------------------------------------------------------------

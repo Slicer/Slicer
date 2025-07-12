@@ -61,7 +61,7 @@ class QAction;
 class QActionGroup;
 class QToolButton;
 
-class qSlicerMouseModeToolBarPrivate: public QObject
+class qSlicerMouseModeToolBarPrivate : public QObject
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -93,9 +93,9 @@ public slots:
   void onPlaceNodeClassNameListModifiedEvent();
 
 public:
-  vtkSmartPointer<vtkMRMLScene>            MRMLScene;
+  vtkSmartPointer<vtkMRMLScene> MRMLScene;
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
-  vtkWeakPointer<vtkMRMLInteractionNode>   InteractionNode;
+  vtkWeakPointer<vtkMRMLInteractionNode> InteractionNode;
 
   QAction* AdjustViewAction;
   QAction* AdjustWindowLevelAction;
@@ -117,7 +117,7 @@ public:
   ctkSignalMapper* AdjustWindowLevelModeMapper;
 
   /// Place Persistence
-  QAction *PersistenceAction;
+  QAction* PersistenceAction;
 
   /// Group interaction modes together so that they're exclusive
   QActionGroup* InteractionModesActionGroup;

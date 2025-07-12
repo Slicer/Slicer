@@ -21,13 +21,9 @@
 #include "qMRMLMarkupsMalformedWidget.h"
 
 // --------------------------------------------------------------------------
-qMRMLMarkupsMalformedWidget::
-qMRMLMarkupsMalformedWidget(QWidget *parent)
+qMRMLMarkupsMalformedWidget::qMRMLMarkupsMalformedWidget(QWidget* parent)
   : Superclass(parent)
 {
 }
 
-void qMRMLMarkupsMalformedWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* node)
-{
-
-}
+void qMRMLMarkupsMalformedWidget::setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) {}

@@ -25,8 +25,7 @@
 #include "qSlicerFileWriterOptionsWidget.h"
 class qSlicerNodeWriterOptionsWidgetPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriterOptionsWidget
-  : public qSlicerFileWriterOptionsWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriterOptionsWidget : public qSlicerFileWriterOptionsWidget
 {
   Q_OBJECT
   /// If the storage node doesn't support compression, the option can be hidden
@@ -40,7 +39,7 @@ public:
   bool showUseCompression() const;
   void setShowUseCompression(bool show);
 
-  bool isValid()const override;
+  bool isValid() const override;
 
 public slots:
   void setObject(vtkObject* object) override;
@@ -51,8 +50,7 @@ protected slots:
   virtual void setCompressionParameter(QString parameter);
 
 protected:
-  qSlicerNodeWriterOptionsWidget(qSlicerNodeWriterOptionsWidgetPrivate* pimpl,
-    QWidget* parent);
+  qSlicerNodeWriterOptionsWidget(qSlicerNodeWriterOptionsWidgetPrivate* pimpl, QWidget* parent);
 
 private:
   Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerNodeWriterOptionsWidget);

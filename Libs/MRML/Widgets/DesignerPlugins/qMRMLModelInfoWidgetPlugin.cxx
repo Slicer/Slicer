@@ -22,13 +22,13 @@
 #include "qMRMLModelInfoWidget.h"
 
 //------------------------------------------------------------------------------
-qMRMLModelInfoWidgetPlugin::qMRMLModelInfoWidgetPlugin(QObject *_parent)
+qMRMLModelInfoWidgetPlugin::qMRMLModelInfoWidgetPlugin(QObject* _parent)
   : QObject(_parent)
 {
 }
 
 //------------------------------------------------------------------------------
-QWidget *qMRMLModelInfoWidgetPlugin::createWidget(QWidget *_parent)
+QWidget* qMRMLModelInfoWidgetPlugin::createWidget(QWidget* _parent)
 {
   qMRMLModelInfoWidget* _widget = new qMRMLModelInfoWidget(_parent);
   return _widget;
@@ -39,7 +39,7 @@ QString qMRMLModelInfoWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLModelInfoWidget\" \
           name=\"MRMLModelInfoWidget\">\n"
-          "</widget>\n";
+         "</widget>\n";
 }
 
 //------------------------------------------------------------------------------

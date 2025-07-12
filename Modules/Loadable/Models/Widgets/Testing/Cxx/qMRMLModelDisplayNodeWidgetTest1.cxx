@@ -37,20 +37,19 @@
 
 // STD includes
 
-int qMRMLModelDisplayNodeWidgetTest1( int argc, char * argv [] )
+int qMRMLModelDisplayNodeWidgetTest1(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();
   QApplication app(argc, argv);
   qMRMLWidget::postInitializeApplication();
 
-  vtkSmartPointer<vtkMRMLModelDisplayNode> modelDisplayNode =
-    vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+  vtkSmartPointer<vtkMRMLModelDisplayNode> modelDisplayNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
 
   qMRMLModelDisplayNodeWidget modelDisplayNodeWidget;
   modelDisplayNodeWidget.setMRMLModelDisplayNode(modelDisplayNode);
   modelDisplayNodeWidget.show();
 
-  if (argc < 2 || QString(argv[1]) != "-I" )
+  if (argc < 2 || QString(argv[1]) != "-I")
   {
     QTimer::singleShot(200, &app, SLOT(quit()));
   }

@@ -13,78 +13,75 @@
 #include "vtkMRMLAnnotationDisplayNode.h"
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode : public vtkMRMLAnnotationDisplayNode
+class VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNode : public vtkMRMLAnnotationDisplayNode
 {
- public:
-  static vtkMRMLAnnotationTextDisplayNode *New (  );
-  vtkTypeMacro ( vtkMRMLAnnotationTextDisplayNode,vtkMRMLAnnotationDisplayNode );
-  void PrintSelf ( ostream& os, vtkIndent indent ) override;
+public:
+  static vtkMRMLAnnotationTextDisplayNode* New();
+  vtkTypeMacro(vtkMRMLAnnotationTextDisplayNode, vtkMRMLAnnotationDisplayNode);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
-  vtkMRMLNode* CreateNodeInstance () override;
+  vtkMRMLNode* CreateNodeInstance() override;
 
   // Description:
   // Read node attributes from XML (MRML) file
-  void ReadXMLAttributes ( const char** atts ) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   // Description:
   // Write this node's information to a MRML file in XML format.
-  void WriteXML ( ostream& of, int indent ) override;
-
+  void WriteXML(ostream& of, int indent) override;
 
   // Description:
   // Copy the node's attributes to this object
-  void Copy ( vtkMRMLNode *node ) override;
+  void Copy(vtkMRMLNode* node) override;
 
   // Description:
   // Get node XML tag name (like Volume, Annotation)
-  const char* GetNodeTagName() override {return "AnnotationTextDisplay";}
+  const char* GetNodeTagName() override { return "AnnotationTextDisplay"; }
 
   // Description:
   // Finds the storage node and read the data
-  void UpdateScene(vtkMRMLScene *scene) override;
+  void UpdateScene(vtkMRMLScene* scene) override;
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   // Description:
   // Get/Set for Text scale
   void SetTextScale(double scale);
-  vtkGetMacro(TextScale,double);
+  vtkGetMacro(TextScale, double);
 
   /// Enable/disable using automatic line wrap on text lines that are longer than MaxCharactersPerLine
-  vtkSetMacro(UseLineWrap,int);
-  vtkGetMacro(UseLineWrap,int);
-  vtkBooleanMacro(UseLineWrap,int);
+  vtkSetMacro(UseLineWrap, int);
+  vtkGetMacro(UseLineWrap, int);
+  vtkBooleanMacro(UseLineWrap, int);
 
   /// Set the maximum number of characters in a text line, used if UseLineWrap is true
   vtkSetMacro(MaxCharactersPerLine, unsigned int);
   vtkGetMacro(MaxCharactersPerLine, unsigned int);
 
-    /// based on vtkCaptionActor2D.h
+  /// based on vtkCaptionActor2D.h
 
   /// Enable/disable the placement of a border around the text.
-  vtkSetMacro(ShowBorder,int);
-  vtkGetMacro(ShowBorder,int);
-  vtkBooleanMacro(ShowBorder,int);
+  vtkSetMacro(ShowBorder, int);
+  vtkGetMacro(ShowBorder, int);
+  vtkBooleanMacro(ShowBorder, int);
 
   /// Enable/disable drawing a "line" from the caption to the
   /// attachment point.
-  vtkSetMacro(ShowLeader,int);
-  vtkGetMacro(ShowLeader,int);
-  vtkBooleanMacro(ShowLeader,int);
+  vtkSetMacro(ShowLeader, int);
+  vtkGetMacro(ShowLeader, int);
+  vtkBooleanMacro(ShowLeader, int);
 
   /// Indicate whether the leader is 2D (no hidden line) or 3D (z-buffered).
   /// Only used in the 3d displayable managers, 2d ones set it off
-  vtkSetMacro(UseThreeDimensionalLeader,int);
-  vtkGetMacro(UseThreeDimensionalLeader,int);
-  vtkBooleanMacro(UseThreeDimensionalLeader,int);
+  vtkSetMacro(UseThreeDimensionalLeader, int);
+  vtkGetMacro(UseThreeDimensionalLeader, int);
+  vtkBooleanMacro(UseThreeDimensionalLeader, int);
 
   /// Enable/disable showing the arrow head glyph at the end of the leader. Only used if ShowLeader is true
   vtkSetMacro(ShowArrowHead, int);
@@ -96,14 +93,14 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   /// head is automatically scaled so that window resize, zooming or other
   /// camera motion results in proportional changes in size to the leader
   /// glyph. Only used if ShowArrow is true.
-  vtkSetClampMacro(LeaderGlyphSize,double,0.0,0.1);
-  vtkGetMacro(LeaderGlyphSize,double);
+  vtkSetClampMacro(LeaderGlyphSize, double, 0.0, 0.1);
+  vtkGetMacro(LeaderGlyphSize, double);
 
   /// Specify the maximum size of the leader head (if any) in pixels. This
   /// is used in conjunction with LeaderGlyphSize to cap the maximum size of
   /// the LeaderGlyph.
-  vtkSetClampMacro(MaximumLeaderGlyphSize,int,1,1000);
-  vtkGetMacro(MaximumLeaderGlyphSize,int);
+  vtkSetClampMacro(MaximumLeaderGlyphSize, int, 1, 1000);
+  vtkGetMacro(MaximumLeaderGlyphSize, int);
 
   /// Set/Get the padding between the caption and the border. The value
   /// is specified in pixels.
@@ -112,9 +109,9 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
 
   /// Enable/disable whether to attach the arrow only to the edge,
   /// NOT the vertices of the caption border.
-  vtkSetMacro(AttachEdgeOnly,int);
-  vtkGetMacro(AttachEdgeOnly,int);
-  vtkBooleanMacro(AttachEdgeOnly,int);
+  vtkSetMacro(AttachEdgeOnly, int);
+  vtkGetMacro(AttachEdgeOnly, int);
+  vtkBooleanMacro(AttachEdgeOnly, int);
 
   /// Create a backup of this node and attach it.
   void CreateBackup() override;
@@ -126,11 +123,12 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationTextDisplayNod
   /// insert breaks between words, but will force breaks where there are no
   /// spaces if necessary
   std::string GetLineWrappedText(std::string inputText);
+
 protected:
   vtkMRMLAnnotationTextDisplayNode();
-  ~vtkMRMLAnnotationTextDisplayNode() override  = default;
-  vtkMRMLAnnotationTextDisplayNode( const vtkMRMLAnnotationTextDisplayNode& );
-  void operator= ( const vtkMRMLAnnotationTextDisplayNode& );
+  ~vtkMRMLAnnotationTextDisplayNode() override = default;
+  vtkMRMLAnnotationTextDisplayNode(const vtkMRMLAnnotationTextDisplayNode&);
+  void operator=(const vtkMRMLAnnotationTextDisplayNode&);
 
   double TextScale;
 
@@ -145,7 +143,6 @@ protected:
   int MaximumLeaderGlyphSize;
   int Padding;
   int AttachEdgeOnly;
-
 };
 
 #endif

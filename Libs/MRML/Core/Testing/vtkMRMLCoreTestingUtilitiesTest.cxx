@@ -34,7 +34,7 @@ bool TestCheckNodeInSceneByID();
 bool TestCheckNodeIdAndName();
 
 //----------------------------------------------------------------------------
-int vtkMRMLCoreTestingUtilitiesTest(int , char * [] )
+int vtkMRMLCoreTestingUtilitiesTest(int, char*[])
 {
   bool res = true;
   res = res && TestCheckNodeInSceneByID();
@@ -49,28 +49,22 @@ namespace
 class vtkMRMLCoreTestingUtilitiesNode : public vtkMRMLNode
 {
 public:
-  static vtkMRMLCoreTestingUtilitiesNode *New();
+  static vtkMRMLCoreTestingUtilitiesNode* New();
   vtkTypeMacro(vtkMRMLCoreTestingUtilitiesNode, vtkMRMLNode);
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLCoreTestingUtilitiesNode::New();
-  }
-  const char* GetNodeTagName() override
-  {
-    return "Testing";
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLCoreTestingUtilitiesNode::New(); }
+  const char* GetNodeTagName() override { return "Testing"; }
+
 private:
   vtkMRMLCoreTestingUtilitiesNode() = default;
 };
 vtkStandardNewMacro(vtkMRMLCoreTestingUtilitiesNode);
 
-}
+} // namespace
 
 //----------------------------------------------------------------------------
 bool TestCheckNodeInSceneByID()
 {
-  if (CheckNodeInSceneByID(
-        __LINE__, nullptr, nullptr, nullptr))
+  if (CheckNodeInSceneByID(__LINE__, nullptr, nullptr, nullptr))
   {
     return false;
   }
@@ -78,33 +72,26 @@ bool TestCheckNodeInSceneByID()
   vtkNew<vtkMRMLScene> scene;
   scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLCoreTestingUtilitiesNode>::New());
 
-  if (CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(), nullptr, nullptr))
+  if (CheckNodeInSceneByID(__LINE__, scene.GetPointer(), nullptr, nullptr))
   {
     return false;
   }
 
-  if (CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLCoreTestingUtilitiesNode", nullptr))
+  if (CheckNodeInSceneByID(__LINE__, scene.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode", nullptr))
   {
     return false;
   }
 
   vtkNew<vtkMRMLCoreTestingUtilitiesNode> node1;
 
-  if (CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLCoreTestingUtilitiesNode", node1.GetPointer()))
+  if (CheckNodeInSceneByID(__LINE__, scene.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode", node1.GetPointer()))
   {
     return false;
   }
 
   scene->AddNode(node1.GetPointer());
 
-  if (!CheckNodeInSceneByID(
-        __LINE__, scene.GetPointer(),
-        "vtkMRMLCoreTestingUtilitiesNode1", node1.GetPointer()))
+  if (!CheckNodeInSceneByID(__LINE__, scene.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode1", node1.GetPointer()))
   {
     return false;
   }
@@ -115,22 +102,19 @@ bool TestCheckNodeInSceneByID()
 //----------------------------------------------------------------------------
 bool TestCheckNodeIdAndName()
 {
-  if (CheckNodeIdAndName(
-        __LINE__, nullptr, nullptr, nullptr))
+  if (CheckNodeIdAndName(__LINE__, nullptr, nullptr, nullptr))
   {
     return false;
   }
 
   vtkNew<vtkMRMLCoreTestingUtilitiesNode> node1;
 
-  if (!CheckNodeIdAndName(
-        __LINE__, node1.GetPointer(), nullptr, nullptr))
+  if (!CheckNodeIdAndName(__LINE__, node1.GetPointer(), nullptr, nullptr))
   {
     return false;
   }
 
-  if (CheckNodeIdAndName(
-        __LINE__, node1.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode1", "Testing"))
+  if (CheckNodeIdAndName(__LINE__, node1.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode1", "Testing"))
   {
     return false;
   }
@@ -140,8 +124,7 @@ bool TestCheckNodeIdAndName()
 
   scene->AddNode(node1.GetPointer());
 
-  if (!CheckNodeIdAndName(
-        __LINE__, node1.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode1", "Testing"))
+  if (!CheckNodeIdAndName(__LINE__, node1.GetPointer(), "vtkMRMLCoreTestingUtilitiesNode1", "Testing"))
   {
     return false;
   }
