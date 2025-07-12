@@ -54,6 +54,7 @@ namespace
 {
 class qSlicerWebEngineView : public QWebEngineView
 {
+  Q_OBJECT
 public:
   qSlicerWebEngineView(QWidget *parent = Q_NULLPTR) : QWebEngineView(parent){}
   ~qSlicerWebEngineView() override = default;
@@ -147,8 +148,7 @@ void qSlicerWebWidgetPrivate::init()
   QObject::connect(this->WebView, SIGNAL(loadProgress(int)),
                    this->ProgressBar, SLOT(setValue(int)));
 
-  QObject::connect(this->WebEnginePage, SIGNAL(pdfPrintingFinished(QString, bool)),
-                   q, SIGNAL(pdfPrintingFinished(QString, bool)));
+  QObject::connect(this->WebEnginePage, SIGNAL(pdfPrintingFinished(QString, bool)), q, SIGNAL(pdfPrintingFinished(QString, bool)));
 
   this->ProgressBar->setVisible(false);
 
@@ -221,9 +221,7 @@ void qSlicerWebWidgetPrivate::initializeWebEngineProfile(QWebEngineProfile* prof
   }
 
   // setup default download handler shared across all widgets
-  QObject::connect(profile, SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
-                    this, SLOT(handleDownload(QWebEngineDownloadItem*)));
-
+  QObject::connect(profile, SIGNAL(downloadRequested(QWebEngineDownloadItem*)), this, SLOT(handleDownload(QWebEngineDownloadItem*)));
 }
 
 // --------------------------------------------------------------------------
@@ -459,8 +457,7 @@ bool qSlicerWebWidget::acceptNavigationRequest(const QUrl & url, QWebEnginePage:
 {
   Q_D(qSlicerWebWidget);
   Q_ASSERT(d->WebEnginePage);
-  if(d->InternalHosts.contains(url.host())
-    || url.scheme() == "data" // QWebEngineView::setHtml creates a special URL, which encodes data in the URL, always internal
+  if (d->InternalHosts.contains(url.host()) || url.scheme() == "data" // QWebEngineView::setHtml creates a special URL, which encodes data in the URL, always internal
     || !d->HandleExternalUrlWithDesktopService // all requests are internal
     )
   {
@@ -492,3 +489,5 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
   }
 #endif
 }
+
+#include "qSlicerWebWidget.moc"

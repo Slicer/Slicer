@@ -40,6 +40,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyTextsPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTextsPlugin);
 protected:
   qSlicerSubjectHierarchyTextsPlugin* const q_ptr;
@@ -78,8 +79,7 @@ qSlicerSubjectHierarchyTextsPlugin::qSlicerSubjectHierarchyTextsPlugin(QObject* 
 qSlicerSubjectHierarchyTextsPlugin::~qSlicerSubjectHierarchyTextsPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyTextsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+double qSlicerSubjectHierarchyTextsPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -175,3 +175,5 @@ QIcon qSlicerSubjectHierarchyTextsPlugin::icon(vtkIdType itemID)
   // Item unknown by plugin
   return QIcon();
 }
+
+#include "qSlicerSubjectHierarchyTextsPlugin.moc"

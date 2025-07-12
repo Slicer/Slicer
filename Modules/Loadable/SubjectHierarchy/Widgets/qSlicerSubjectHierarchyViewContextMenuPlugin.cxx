@@ -61,6 +61,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyViewContextMenuPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyViewContextMenuPlugin);
 protected:
   qSlicerSubjectHierarchyViewContextMenuPlugin* const q_ptr;
@@ -117,20 +118,17 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->InteractionModeViewTransformAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("View transform"), q);
   this->InteractionModeViewTransformAction->setObjectName("MouseModeViewTransformAction");
   this->InteractionModeViewTransformAction->setCheckable(true);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeViewTransformAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 0);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeViewTransformAction, qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 0);
 
   this->InteractionModeAdjustWindowLevelAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Adjust window/level"), q);
   this->InteractionModeAdjustWindowLevelAction->setObjectName("MouseModeAdjustWindowLevelAction");
   this->InteractionModeAdjustWindowLevelAction->setCheckable(true);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeAdjustWindowLevelAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 1);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModeAdjustWindowLevelAction, qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 1);
 
   this->InteractionModePlaceAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Place"), q);
   this->InteractionModePlaceAction->setObjectName("MouseModePlaceAction");
   this->InteractionModePlaceAction->setCheckable(true);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModePlaceAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 2);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->InteractionModePlaceAction, qSlicerSubjectHierarchyAbstractPlugin::SectionInteraction, 2);
 
   QActionGroup* interactionModeActions = new QActionGroup(q);
   interactionModeActions->setExclusive(true);
@@ -152,37 +150,32 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->CenterThreeDViewAction->setObjectName("CenterViewAction");
   this->CenterThreeDViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Center the slice on "
                                             "the currently visible 3D view content and all loaded volumes."));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CenterThreeDViewAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CenterThreeDViewAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
   QObject::connect(this->CenterThreeDViewAction, SIGNAL(triggered()), q, SLOT(centerThreeDView()));
 
   this->RefocusCameraAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Refocus camera on this point"), q);
   this->RefocusCameraAction->setObjectName("RefocusCameraAction");
   this->RefocusCameraAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Set the camera focus to rotate around this point."));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->RefocusCameraAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->RefocusCameraAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 0);
   QObject::connect(this->RefocusCameraAction, SIGNAL(triggered()), q, SLOT(refocusCamera()));
 
   this->FitSliceViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Reset field of view"), q);
   this->FitSliceViewAction->setObjectName("FitViewAction");
   this->FitSliceViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Center the slice view on the currently displayed volume."));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FitSliceViewAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->FitSliceViewAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 1);
   QObject::connect(this->FitSliceViewAction, SIGNAL(triggered()), q, SLOT(fitSliceView()));
 
   this->RefocusAllCamerasAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Refocus cameras on this point"), q);
   this->RefocusAllCamerasAction->setObjectName("RefocusAllCamerasAction");
   this->RefocusAllCamerasAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Set the focus of all cameras to rotate around this point."));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->RefocusAllCamerasAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->RefocusAllCamerasAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 2);
   QObject::connect(this->RefocusAllCamerasAction, SIGNAL(triggered()), q, SLOT(refocusAllCameras()));
 
 
   this->MaximizeViewAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Maximize view"), q);
   this->MaximizeViewAction->setObjectName("MaximizeViewAction");
   this->MaximizeViewAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show this view maximized in the view layout"));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->MaximizeViewAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->MaximizeViewAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 3);
   QObject::connect(this->MaximizeViewAction, SIGNAL(triggered()), q, SLOT(maximizeView()));
 
   this->ToggleTiltLockAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Tilt lock"), q);
@@ -191,23 +184,22 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
                                           "around the horizontal axis when rotating this view."));
   this->ToggleTiltLockAction->setShortcut(QKeySequence(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Ctrl+b")));
   this->ToggleTiltLockAction->setCheckable(true);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ToggleTiltLockAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ToggleTiltLockAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 4);
   QObject::connect(this->ToggleTiltLockAction, SIGNAL(triggered()), q, SLOT(toggleTiltLock()));
 
   this->ConfigureSliceViewAnnotationsAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Configure slice view annotations..."), q);
   this->ConfigureSliceViewAnnotationsAction->setObjectName("ConfigureSliceViewAnnotationsAction");
   this->ConfigureSliceViewAnnotationsAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Configures display of corner annotations"
                                                         " and color legend."));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 5);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ConfigureSliceViewAnnotationsAction, qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 5);
   QObject::connect(this->ConfigureSliceViewAnnotationsAction, SIGNAL(triggered()), q, SLOT(configureSliceViewAnnotationsAction()));
 
   this->CopyImageAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Copy image"), q);
   this->CopyImageAction->setObjectName("CopyImageAction");
   this->CopyImageAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Copy a screenshot of this view to the clipboard"));
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CopyImageAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionDefault, 20); // set to 20 to make it the last item in the action group
+                                                           qSlicerSubjectHierarchyAbstractPlugin::SectionDefault,
+                                                           20); // set to 20 to make it the last item in the action group
   QObject::connect(this->CopyImageAction, SIGNAL(triggered()), q, SLOT(saveScreenshot()));
 
   int sliceSection = qSlicerSubjectHierarchyAbstractPlugin::SectionDefault + 5; // set section to +5 to allow placing other sections above
@@ -219,8 +211,7 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
                                                         "other slice planes intersect each slice plane."));
   this->IntersectingSlicesVisibilityAction->setCheckable(true);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->IntersectingSlicesVisibilityAction, sliceSection);
-  QObject::connect(this->IntersectingSlicesVisibilityAction, SIGNAL(triggered(bool)),
-    q, SLOT(setIntersectingSlicesVisible(bool)));
+  QObject::connect(this->IntersectingSlicesVisibilityAction, SIGNAL(triggered(bool)), q, SLOT(setIntersectingSlicesVisible(bool)));
 
   // Interactive slice intersections
   this->IntersectingSlicesInteractiveAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Interaction"), q);
@@ -229,32 +220,28 @@ void qSlicerSubjectHierarchyViewContextMenuPluginPrivate::init()
   this->IntersectingSlicesInteractiveAction->setCheckable(true);
   this->IntersectingSlicesInteractiveAction->setEnabled(false);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->IntersectingSlicesInteractiveAction, sliceSection, 1);
-  QObject::connect(this->IntersectingSlicesInteractiveAction, SIGNAL(triggered(bool)),
-    q, SLOT(setIntersectingSlicesHandlesVisible(bool)));
+  QObject::connect(this->IntersectingSlicesInteractiveAction, SIGNAL(triggered(bool)), q, SLOT(setIntersectingSlicesHandlesVisible(bool)));
 
   int thickSlabSection = sliceSection + 5; // set section to +5 to allow placing other sections above
 
   // Thick slab reconstruction
   this->EnableSlabReconstructionAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Thick slab reconstruction"), q);
   this->EnableSlabReconstructionAction->setObjectName("EnableSlabReconstructionAction");
-  this->EnableSlabReconstructionAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr(
-                                                     "Enable Thick Slab Reconstruction (TSR). "
+  this->EnableSlabReconstructionAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Enable Thick Slab Reconstruction (TSR). "
                                                      "TSR is used to merge contiguous slices within a certain range."));
   this->EnableSlabReconstructionAction->setCheckable(true);
   this->EnableSlabReconstructionAction->setEnabled(false);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->EnableSlabReconstructionAction, thickSlabSection);
-  QObject::connect(this->EnableSlabReconstructionAction, SIGNAL(triggered(bool)),
-    q, SLOT(setSlabReconstructionEnabled(bool)));
+  QObject::connect(this->EnableSlabReconstructionAction, SIGNAL(triggered(bool)), q, SLOT(setSlabReconstructionEnabled(bool)));
 
   this->SlabReconstructionInteractiveAction = new QAction(qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Interactive"), q);
   this->SlabReconstructionInteractiveAction->setObjectName("SlabReconstructionInteractiveAction");
-  this->SlabReconstructionInteractiveAction->setToolTip(qSlicerSubjectHierarchyViewContextMenuPlugin::tr(
-                                                          "Show handles for interactively adjusting slab reconstruction thickness."));
+  this->SlabReconstructionInteractiveAction->setToolTip(
+    qSlicerSubjectHierarchyViewContextMenuPlugin::tr("Show handles for interactively adjusting slab reconstruction thickness."));
   this->SlabReconstructionInteractiveAction->setCheckable(true);
   this->SlabReconstructionInteractiveAction->setEnabled(false);
   qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->SlabReconstructionInteractiveAction, thickSlabSection, 1);
-  QObject::connect(this->SlabReconstructionInteractiveAction, SIGNAL(triggered(bool)),
-    q, SLOT(setSlabReconstructionInteractive(bool)));
+  QObject::connect(this->SlabReconstructionInteractiveAction, SIGNAL(triggered(bool)), q, SLOT(setSlabReconstructionInteractive(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -282,20 +269,9 @@ QList<QAction*> qSlicerSubjectHierarchyViewContextMenuPlugin::viewContextMenuAct
 {
   Q_D(const qSlicerSubjectHierarchyViewContextMenuPlugin);
   QList<QAction*> actions;
-  actions << d->InteractionModeViewTransformAction
-    << d->InteractionModeAdjustWindowLevelAction
-    << d->InteractionModePlaceAction
-    << d->MaximizeViewAction
-    << d->FitSliceViewAction
-    << d->RefocusAllCamerasAction
-    << d->CenterThreeDViewAction
-    << d->RefocusCameraAction
-    << d->CopyImageAction
-    << d->ToggleTiltLockAction
-    << d->ConfigureSliceViewAnnotationsAction
-    << d->IntersectingSlicesVisibilityAction
-    << d->IntersectingSlicesInteractiveAction
-    << d->EnableSlabReconstructionAction
+  actions << d->InteractionModeViewTransformAction << d->InteractionModeAdjustWindowLevelAction << d->InteractionModePlaceAction << d->MaximizeViewAction << d->FitSliceViewAction
+          << d->RefocusAllCamerasAction << d->CenterThreeDViewAction << d->RefocusCameraAction << d->CopyImageAction << d->ToggleTiltLockAction
+          << d->ConfigureSliceViewAnnotationsAction << d->IntersectingSlicesVisibilityAction << d->IntersectingSlicesInteractiveAction << d->EnableSlabReconstructionAction
     << d->SlabReconstructionInteractiveAction;
   return actions;
 }
@@ -321,8 +297,7 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   {
     return;
   }
-  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(
-    shNode->GetScene()->GetNodeByID(eventData["ViewNodeID"].toString().toStdString()));
+  vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(shNode->GetScene()->GetNodeByID(eventData["ViewNodeID"].toString().toStdString()));
   if (!viewNode)
   {
     return;
@@ -432,8 +407,8 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::showViewContextMenuActionsFor
   vtkMRMLCameraWidget* cameraWidget = nullptr;
   if (threeDWidget)
   {
-    vtkMRMLCameraDisplayableManager* cameraDisplayableManager = vtkMRMLCameraDisplayableManager::SafeDownCast(threeDWidget->
-      threeDView()->displayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
+    vtkMRMLCameraDisplayableManager* cameraDisplayableManager =
+      vtkMRMLCameraDisplayableManager::SafeDownCast(threeDWidget->threeDView()->displayableManagerByClassName("vtkMRMLCameraDisplayableManager"));
     if (!cameraDisplayableManager)
     {
       qWarning() << Q_FUNC_INFO << " failed: cannot get cameraDisplayableManager";
@@ -710,3 +685,5 @@ void qSlicerSubjectHierarchyViewContextMenuPlugin::setSlabReconstructionInteract
   }
   appLogic->SetIntersectingSlicesEnabled(vtkMRMLApplicationLogic::IntersectingSlicesThickSlabInteractive, interactive);
 }
+
+#include "qSlicerSubjectHierarchyViewContextMenuPlugin.moc"

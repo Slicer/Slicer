@@ -38,6 +38,7 @@ class QWebEngineDownloadItem;
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebEnginePage: public QWebEnginePage
 {
+  Q_OBJECT
   friend class qSlicerWebWidget;
   friend class qSlicerWebWidgetPrivate;
 public:
@@ -65,8 +66,7 @@ protected:
 
   bool certificateError(const QWebEngineCertificateError &certificateError) override
   {
-    qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]"
-             << qPrintable(certificateError.errorDescription());
+    qDebug() << "[SSL] [" << qPrintable(certificateError.url().host().trimmed()) << "]" << qPrintable(certificateError.errorDescription());
     return false;
   }
 

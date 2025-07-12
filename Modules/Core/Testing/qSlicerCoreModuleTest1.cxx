@@ -23,6 +23,7 @@
 
 class ACoreModule: public qSlicerCoreModule
 {
+  Q_OBJECT
 public:
   QString title()const override
   {
@@ -46,3 +47,5 @@ int qSlicerCoreModuleTest1(int, char * [] )
 
   return EXIT_SUCCESS;
 }
+
+#include <qSlicerCoreModuleTest1.moc>

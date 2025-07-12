@@ -47,6 +47,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyParseLocalDataPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyParseLocalDataPlugin);
 protected:
   qSlicerSubjectHierarchyParseLocalDataPlugin* const q_ptr;
@@ -73,8 +74,7 @@ void qSlicerSubjectHierarchyParseLocalDataPluginPrivate::init()
 {
   Q_Q(qSlicerSubjectHierarchyParseLocalDataPlugin);
 
-  this->CreateHierarchyFromLoadedLocalDirectoriesAction = new QAction(
-    qSlicerSubjectHierarchyParseLocalDataPlugin::tr("Create hierarchy from loaded directory structure"), q);
+  this->CreateHierarchyFromLoadedLocalDirectoriesAction = new QAction(qSlicerSubjectHierarchyParseLocalDataPlugin::tr("Create hierarchy from loaded directory structure"), q);
   QObject::connect(this->CreateHierarchyFromLoadedLocalDirectoriesAction, SIGNAL(triggered()), q, SLOT(createHierarchyFromLoadedDirectoryStructure()));
 }
 
@@ -133,8 +133,7 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::showContextMenuActionsForItem(
       vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nextObject);
       if ( storableNode && storableNode->GetStorageNode() && !storableNode->GetHideFromEditors() )
       {
-        QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins =
-          qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingNodeToSubjectHierarchy(storableNode);
+        QList<qSlicerSubjectHierarchyAbstractPlugin*> foundPlugins = qSlicerSubjectHierarchyPluginHandler::instance()->pluginsForAddingNodeToSubjectHierarchy(storableNode);
         if (!foundPlugins.empty())
         {
           d->CreateHierarchyFromLoadedLocalDirectoriesAction->setVisible(true);
@@ -258,8 +257,8 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
       else if (componentIndex < loadedFilePaths[nodeIndex].count()-1)
       {
         // Create parent node if not found for path component
-        qSlicerSubjectHierarchyFolderPlugin* folderPlugin = qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(
-          qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder") );
+        qSlicerSubjectHierarchyFolderPlugin* folderPlugin =
+          qobject_cast<qSlicerSubjectHierarchyFolderPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Folder"));
         parentItemID = folderPlugin->createFolderUnderItem(parentItemID);
         shNode->SetItemName(parentItemID, currentComponent.toUtf8().constData());
         createdItemIDs << parentItemID;
@@ -279,3 +278,5 @@ void qSlicerSubjectHierarchyParseLocalDataPlugin::createHierarchyFromLoadedDirec
     emit requestExpandItem(createdItemID);
   }
 }
+
+#include "qSlicerSubjectHierarchyParseLocalDataPlugin.moc"

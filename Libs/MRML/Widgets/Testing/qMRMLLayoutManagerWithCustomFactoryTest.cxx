@@ -86,9 +86,7 @@ protected:
     QString sliceLayoutName(viewNode->GetLayoutName());
     QString sliceViewLabel(viewNode->GetLayoutLabel());
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(viewNode);
-    QColor sliceLayoutColor = QColor::fromRgbF(sliceNode->GetLayoutColor()[0],
-                                               sliceNode->GetLayoutColor()[1],
-                                               sliceNode->GetLayoutColor()[2]);
+    QColor sliceLayoutColor = QColor::fromRgbF(sliceNode->GetLayoutColor()[0], sliceNode->GetLayoutColor()[1], sliceNode->GetLayoutColor()[2]);
     sliceWidget->setSliceViewName(sliceLayoutName);
     sliceWidget->setObjectName(QString("qMRMLSliceWidget" + sliceLayoutName));
     sliceWidget->setSliceViewLabel(sliceViewLabel);
@@ -221,9 +219,7 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
   layoutManager.setMRMLScene(scene.GetPointer());
 
   // Unregister regular SliceView factory and register a custom one
-  qMRMLLayoutSliceViewFactory* mrmlSliceViewFactory =
-      qobject_cast<qMRMLLayoutSliceViewFactory*>(
-        layoutManager.mrmlViewFactory("vtkMRMLSliceNode"));
+  qMRMLLayoutSliceViewFactory* mrmlSliceViewFactory = qobject_cast<qMRMLLayoutSliceViewFactory*>(layoutManager.mrmlViewFactory("vtkMRMLSliceNode"));
 
   qSlicerLayoutCustomSliceViewFactory* customSliceViewFactory =
       new qSlicerLayoutCustomSliceViewFactory(&layoutManager);
@@ -237,8 +233,7 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
   layoutManager.registerViewFactory(customViewFactory);
 
   int customLayout = vtkMRMLLayoutNode::SlicerLayoutUserView + 1;
-  const char* customLayoutDescription =
-      "<layout type=\"horizontal\">"
+  const char* customLayoutDescription = "<layout type=\"horizontal\">"
       "      <item>"
       "        <view class=\"vtkMRMLSliceNode\" singletontag=\"CustomSliceView\">"
       "          <property name=\"HideFromEditors\" action=\"default\">true</property>"
@@ -327,4 +322,4 @@ int qMRMLLayoutManagerWithCustomFactoryTest(int argc, char * argv[] )
   }
 }
 
-#include "moc_qMRMLLayoutManagerWithCustomFactoryTest.cxx"
+#include "qMRMLLayoutManagerWithCustomFactoryTest.moc"

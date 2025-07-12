@@ -60,6 +60,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyTablesPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyTablesPlugin);
 protected:
   qSlicerSubjectHierarchyTablesPlugin* const q_ptr;
@@ -107,8 +108,7 @@ qSlicerSubjectHierarchyTablesPlugin::qSlicerSubjectHierarchyTablesPlugin(QObject
 qSlicerSubjectHierarchyTablesPlugin::~qSlicerSubjectHierarchyTablesPlugin() = default;
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/)const
+double qSlicerSubjectHierarchyTablesPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -287,8 +287,7 @@ int qSlicerSubjectHierarchyTablesPlugin::getDisplayVisibility(vtkIdType itemID)c
 
   // Return shown if table in table view is the examined node's associated data node
   vtkMRMLTableNode* associatedTableNode = vtkMRMLTableNode::SafeDownCast(shNode->GetItemDataNode(itemID));
-  if ( associatedTableNode && tableViewNode->GetTableNodeID()
-    && !strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()) )
+  if (associatedTableNode && tableViewNode->GetTableNodeID() && !strcmp(tableViewNode->GetTableNodeID(), associatedTableNode->GetID()))
   {
     return 1;
   }
@@ -331,3 +330,5 @@ vtkMRMLTableViewNode* qSlicerSubjectHierarchyTablesPlugin::getTableViewNode()con
 
   return nullptr;
 }
+
+#include "qSlicerSubjectHierarchyTablesPlugin.moc"

@@ -138,6 +138,7 @@
 //-----------------------------------------------------------------------------
 class ctkSlicerPythonConsoleCompleter : public ctkPythonConsoleCompleter
 {
+  Q_OBJECT
 public:
   ctkSlicerPythonConsoleCompleter(ctkAbstractPythonManager& pythonManager, qSlicerApplication* app)
   : ctkPythonConsoleCompleter(pythonManager)
@@ -190,10 +191,8 @@ namespace
 // --------------------------------------------------------------------------
 struct qSlicerScopedTerminalOutputSettings
 {
-  qSlicerScopedTerminalOutputSettings(
-      ctkErrorLogAbstractModel* errorLogModel,
-      const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutputs):
-    ErrorLogModel(errorLogModel)
+  qSlicerScopedTerminalOutputSettings(ctkErrorLogAbstractModel* errorLogModel, const ctkErrorLogTerminalOutput::TerminalOutputs& terminalOutputs)
+    : ErrorLogModel(errorLogModel)
   {
     if (errorLogModel == nullptr)
     {
@@ -226,9 +225,7 @@ protected:
 public:
   typedef qSlicerCoreApplicationPrivate Superclass;
 
-  qSlicerApplicationPrivate(qSlicerApplication& object,
-                            qSlicerCommandOptions * commandOptions,
-                            qSlicerIOManager * ioManager);
+  qSlicerApplicationPrivate(qSlicerApplication& object, qSlicerCommandOptions* commandOptions, qSlicerIOManager* ioManager);
   ~qSlicerApplicationPrivate() override;
 
   /// Convenient method regrouping all initialization code
@@ -263,11 +260,9 @@ public:
 // qSlicerApplicationPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerApplicationPrivate::qSlicerApplicationPrivate(
-    qSlicerApplication& object,
-    qSlicerCommandOptions * commandOptions,
-    qSlicerIOManager * ioManager)
-  : qSlicerCoreApplicationPrivate(object, commandOptions, ioManager), q_ptr(&object)
+qSlicerApplicationPrivate::qSlicerApplicationPrivate(qSlicerApplication& object, qSlicerCommandOptions* commandOptions, qSlicerIOManager* ioManager)
+  : qSlicerCoreApplicationPrivate(object, commandOptions, ioManager)
+  , q_ptr(&object)
 {
   this->ToolTipTrapper = nullptr;
   this->SettingsDialog = nullptr;
@@ -380,9 +375,7 @@ void qSlicerApplicationPrivate::init()
   //----------------------------------------------------------------------------
   this->ErrorLogModel = QSharedPointer<ctkErrorLogModel>(new ctkErrorLogModel);
   this->ErrorLogModel->setLogEntryGrouping(true);
-  this->ErrorLogModel->setTerminalOutputs(
-        this->CoreCommandOptions->disableTerminalOutputs() ?
-          ctkErrorLogTerminalOutput::None : ctkErrorLogTerminalOutput::All);
+  this->ErrorLogModel->setTerminalOutputs(this->CoreCommandOptions->disableTerminalOutputs() ? ctkErrorLogTerminalOutput::None : ctkErrorLogTerminalOutput::All);
 #if defined (Q_OS_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
   // Must not register ctkErrorLogFDMessageHandler when building a window-based
   // (non-console) application because this handler would not
@@ -404,8 +397,10 @@ void qSlicerApplicationPrivate::init()
   {
     q->setPythonConsoleLogLevel(level);
   }
-  QObject::connect(this->ErrorLogModel.data(), SIGNAL(entryAdded(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
-    q, SLOT(logToPythonConsole(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)));
+  QObject::connect(this->ErrorLogModel.data(),
+                   SIGNAL(entryAdded(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)),
+                   q,
+                   SLOT(logToPythonConsole(QDateTime, QString, ctkErrorLogLevel::LogLevel, QString, ctkErrorLogContext, QString)));
 #endif
 
   q->setupFileLogging();
@@ -745,8 +740,7 @@ void qSlicerApplication::handleCommandLineArguments()
 
   if (options->ignoreRest() || !options->unparsedArguments().isEmpty())
   {
-    qSlicerScopedTerminalOutputSettings currentTerminalOutputSettings(
-      this->errorLogModel(), ctkErrorLogTerminalOutput::None);
+    qSlicerScopedTerminalOutputSettings currentTerminalOutputSettings(this->errorLogModel(), ctkErrorLogTerminalOutput::None);
 
     qDebug() << "Ignored arguments:" << options->unparsedArguments();
   }
@@ -917,8 +911,7 @@ void qSlicerApplication::openSettingsDialog(const QString& settingsPanel/*=QStri
     ctkSettingsPanel* settingsModulesPanel = d->SettingsDialog->panel(qSlicerApplication::tr("Modules"));
     if (settingsModulesPanel)
     {
-      QObject::connect(settingsModulesPanel, SIGNAL(favoriteModulesChanged()),
-        this->mainWindow(), SLOT(on_FavoriteModulesChanged()));
+      QObject::connect(settingsModulesPanel, SIGNAL(favoriteModulesChanged()), this->mainWindow(), SLOT(on_FavoriteModulesChanged()));
     }
 
   }
@@ -1129,9 +1122,7 @@ void qSlicerApplication::logApplicationInformation() const
   // This helps in reproducing reported problems.
 
   qSlicerScopedTerminalOutputSettings currentTerminalOutputSettings(
-        this->errorLogModel(),
-        this->commandOptions()->displayApplicationInformation() ?
-          this->errorLogModel()->terminalOutputs() : ctkErrorLogTerminalOutput::None);
+    this->errorLogModel(), this->commandOptions()->displayApplicationInformation() ? this->errorLogModel()->terminalOutputs() : ctkErrorLogTerminalOutput::None);
 
   QStringList titles = QStringList();
   titles << "Session start time "
@@ -1168,9 +1159,7 @@ void qSlicerApplication::logApplicationInformation() const
   // Force using en-US locale, otherwise for example on a computer with
   // Egyptian Arabic (ar-EG) locale, Arabic numerals may be used.
   QLocale enUsLocale = QLocale(QLocale::English, QLocale::UnitedStates);
-  qDebug("%s: %s",
-         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-         qPrintable(enUsLocale.toString(QDateTime::currentDateTime(), "yyyyMMdd_hhmmss")));
+  qDebug("%s: %s", qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')), qPrintable(enUsLocale.toString(QDateTime::currentDateTime(), "yyyyMMdd_hhmmss")));
 
   // Slicer version
   qDebug("%s: %s (revision %s / %s) %s - %s %s",
@@ -1250,10 +1239,8 @@ void qSlicerApplication::logApplicationInformation() const
     totalVirtualMemoryMb = totalVirtualBytes>>10>>10;
   }
 #endif
-  qDebug() << qPrintable(QString("%0: %1 MB physical, %2 MB virtual")
-                         .arg(titles.at(titleIndex++).leftJustified(titleWidth, '.'))
-                         .arg(totalPhysicalMemoryMb)
-                         .arg(totalVirtualMemoryMb));
+  qDebug() << qPrintable(
+    QString("%0: %1 MB physical, %2 MB virtual").arg(titles.at(titleIndex++).leftJustified(titleWidth, '.')).arg(totalPhysicalMemoryMb).arg(totalVirtualMemoryMb));
 
   // CPU
   unsigned int numberOfPhysicalCPU = systemInfo->GetNumberOfPhysicalCPU();
@@ -1275,10 +1262,7 @@ void qSlicerApplication::logApplicationInformation() const
          numberOfPhysicalCPU, numberOfLogicalCPU);
 
   // VTK configuration
-  qDebug("%s: %s rendering, %s threading",
-    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-    "OpenGL2",
-    VTK_SMP_BACKEND);
+  qDebug("%s: %s rendering, %s threading", qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')), "OpenGL2", VTK_SMP_BACKEND);
 
   // Qt configuration
   QString openGLProfileStr = "unknown";
@@ -1318,13 +1302,9 @@ void qSlicerApplication::logApplicationInformation() const
 
   // Internationalization
 #ifdef Slicer_BUILD_I18N_SUPPORT
-  bool internationalizationEnabled =
-    qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled", true).toBool();
+  bool internationalizationEnabled = qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled", true).toBool();
   QString language = qSlicerApplication::application()->userSettings()->value("language").toString();
-  qDebug("%s: %s, language=%s",
-    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-    internationalizationEnabled ? "enabled" : "disabled",
-    qPrintable(language));
+  qDebug("%s: %s, language=%s", qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')), internationalizationEnabled ? "enabled" : "disabled", qPrintable(language));
 #else
   qDebug("%s: not supported",
     qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')));
@@ -1332,9 +1312,7 @@ void qSlicerApplication::logApplicationInformation() const
 
   // Developer mode enabled
   bool developerModeEnabled = settings.value("Developer/DeveloperMode", false).toBool();
-  qDebug("%s: %s",
-         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-         developerModeEnabled ? "enabled" : "disabled");
+  qDebug("%s: %s", qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')), developerModeEnabled ? "enabled" : "disabled");
 
   // Additional module paths
   // These paths are not converted to absolute path, because the raw values are moreuseful for troubleshooting.
@@ -1355,14 +1333,9 @@ void qSlicerApplication::logApplicationInformation() const
     }
   }
 
-  qDebug("%s: %s",
-    qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-    qPrintable(this->applicationDirPath()));
+  qDebug("%s: %s", qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')), qPrintable(this->applicationDirPath()));
 
-  qDebug("%s: %s",
-         qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')),
-         additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
-
+  qDebug("%s: %s", qPrintable(titles.at(titleIndex++).leftJustified(titleWidth, '.')), additionalModulePaths.isEmpty() ? "(none)" : qPrintable(additionalModulePaths.join(", ")));
 }
 
 //-----------------------------------------------------------------------------
@@ -1533,3 +1506,5 @@ void qSlicerApplication::logToPythonConsole(const QDateTime& currentDateTime, co
   }
 }
 #endif
+
+#include "qSlicerApplication.moc"

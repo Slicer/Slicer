@@ -42,6 +42,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyCloneNodePluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyCloneNodePlugin);
 protected:
   qSlicerSubjectHierarchyCloneNodePlugin* const q_ptr;
@@ -69,10 +70,9 @@ void qSlicerSubjectHierarchyCloneNodePluginPrivate::init()
   Q_Q(qSlicerSubjectHierarchyCloneNodePlugin);
 
   this->CloneItemAction = new QAction(qSlicerSubjectHierarchyCloneNodePlugin::tr("Clone"), q);
-  this->CloneItemAction->setToolTip(
-    qSlicerSubjectHierarchyCloneNodePlugin::tr("Clone this item and its data node if any along with display and storage options"));
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CloneItemAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 0.5); // put it right after "Rename" action
+  this->CloneItemAction->setToolTip(qSlicerSubjectHierarchyCloneNodePlugin::tr("Clone this item and its data node if any along with display and storage options"));
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->CloneItemAction, qSlicerSubjectHierarchyAbstractPlugin::SectionNode, 0,
+                                                           0.5); // put it right after "Rename" action
   QObject::connect(this->CloneItemAction, SIGNAL(triggered()), q, SLOT(cloneCurrentItem()));
 }
 
@@ -155,8 +155,7 @@ void qSlicerSubjectHierarchyCloneNodePlugin::cloneCurrentItem()
   vtkIdType clonedItemID = vtkSlicerSubjectHierarchyModuleLogic::CloneSubjectHierarchyItem(shNode, currentItemID);
   if (!clonedItemID)
   {
-    qCritical() << Q_FUNC_INFO << ": Failed to clone subject hierarchy item (ID:"
-        << currentItemID << ", name:" << shNode->GetItemName(currentItemID).c_str() << ")";
+    qCritical() << Q_FUNC_INFO << ": Failed to clone subject hierarchy item (ID:" << currentItemID << ", name:" << shNode->GetItemName(currentItemID).c_str() << ")";
   }
 
   // Trigger update
@@ -168,3 +167,5 @@ const QString qSlicerSubjectHierarchyCloneNodePlugin::getCloneNodeNamePostfix()
 {
   return QString(vtkSlicerSubjectHierarchyModuleLogic::CLONED_NODE_NAME_POSTFIX);
 }
+
+#include "qSlicerSubjectHierarchyCloneNodePlugin.moc"

@@ -71,32 +71,32 @@ public:
     const double dA = static_cast<double>( A );
     const double dB = static_cast<double>( B );
     const double add = dA * dB;
-    const double cadd1 = ( add < NumericTraits<TOutput>::max() ) ?
-      add : NumericTraits<TOutput>::max();
-    const double cadd2 = ( cadd1 > NumericTraits<TOutput>::NonpositiveMin() ) ?
-      cadd1 : NumericTraits<TOutput>::NonpositiveMin();
+    // IEEE‑754 double can exactly represent all integers in the range [–2⁵³, 2⁵³], but beyond that,
+    // only some integer numbers are representable.
+    //  18446744073709551615 (2⁶⁴−1) must be rounded to the nearest representable double: 18446744073709551616
+    constexpr double max_closet_representable = static_cast<double>(NumericTraits<TOutput>::max());
+
+    const double cadd1 = (add < max_closet_representable) ? add : max_closet_representable;
+    const double cadd2 = (cadd1 > NumericTraits<TOutput>::NonpositiveMin()) ? cadd1 : NumericTraits<TOutput>::NonpositiveMin();
     return static_cast<TOutput>( cadd2 );
   }
 };
 }
 
 template <class TInputImage1, class TInputImage2, class TOutputImage>
-class ConstrainedValueMultiplicationImageFilter :
-    public
-BinaryFunctorImageFilter<TInputImage1,TInputImage2,TOutputImage,
-                         Functor::ConstrainedValueMultiplication<
-  typename TInputImage1::PixelType,
-  typename TInputImage2::PixelType,
-  typename TOutputImage::PixelType>   >
+class ConstrainedValueMultiplicationImageFilter
+  : public BinaryFunctorImageFilter<TInputImage1,
+                                    TInputImage2,
+                                    TOutputImage,
+                                    Functor::ConstrainedValueMultiplication<typename TInputImage1::PixelType, typename TInputImage2::PixelType, typename TOutputImage::PixelType>>
 {
 public:
   /** Standard class typedefs. */
   typedef ConstrainedValueMultiplicationImageFilter  Self;
-  typedef BinaryFunctorImageFilter<TInputImage1,TInputImage2,TOutputImage,
-                                   Functor::ConstrainedValueMultiplication<
-    typename TInputImage1::PixelType,
-    typename TInputImage2::PixelType,
-    typename TOutputImage::PixelType> >
+  typedef BinaryFunctorImageFilter<TInputImage1,
+                                   TInputImage2,
+                                   TOutputImage,
+                                   Functor::ConstrainedValueMultiplication<typename TInputImage1::PixelType, typename TInputImage2::PixelType, typename TOutputImage::PixelType>>
                                     Superclass;
   typedef SmartPointer<Self>        Pointer;
   typedef SmartPointer<const Self>  ConstPointer;

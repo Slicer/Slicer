@@ -107,9 +107,7 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
 
   if (steps == 1)
   {
-    q->qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(),
-                    vtkMRMLScene::NodeAddedEvent,
-                    q, SLOT(updateProgressDialog()));
+    q->qvtkConnect(qSlicerCoreApplication::application()->mrmlScene(), vtkMRMLScene::NodeAddedEvent, q, SLOT(updateProgressDialog()));
   }
   return true;
 }
@@ -124,9 +122,7 @@ void qSlicerIOManagerPrivate::stopProgressDialog()
   }
   this->ProgressDialog->setValue(this->ProgressDialog->maximum());
 
-  q->qvtkDisconnect(qSlicerCoreApplication::application()->mrmlScene(),
-                    vtkMRMLScene::NodeAddedEvent,
-                    q, SLOT(updateProgressDialog()));
+  q->qvtkDisconnect(qSlicerCoreApplication::application()->mrmlScene(), vtkMRMLScene::NodeAddedEvent, q, SLOT(updateProgressDialog()));
   delete this->ProgressDialog;
   this->ProgressDialog = nullptr;
 }
@@ -170,28 +166,22 @@ void qSlicerIOManagerPrivate::writeSettings()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerIOManagerPrivate::
-createUniqueDialogName(qSlicerIO::IOFileType fileType,
-                       qSlicerFileDialog::IOAction action,
-                       const qSlicerIO::IOProperties& ioProperties)
+QString qSlicerIOManagerPrivate::createUniqueDialogName(qSlicerIO::IOFileType fileType, qSlicerFileDialog::IOAction action, const qSlicerIO::IOProperties& ioProperties)
 {
   QString objectName;
 
   objectName += action == qSlicerFileDialog::Read ?/*no tr*/"Add" : /*no tr*/"Save";
   objectName += fileType;
-  objectName += ioProperties["multipleFiles"].toBool() ? "s" : "";
+  objectName += ioProperties.value("multipleFiles").toBool() ? "s" : "";
   objectName += /*no tr*/"Dialog";
 
   return objectName;
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFileDialog* qSlicerIOManagerPrivate
-::findDialog(qSlicerIO::IOFileType fileType,
-             qSlicerFileDialog::IOAction action)const
+qSlicerFileDialog* qSlicerIOManagerPrivate::findDialog(qSlicerIO::IOFileType fileType, qSlicerFileDialog::IOAction action) const
 {
-  const QList<qSlicerFileDialog*>& dialogs =
-    (action == qSlicerFileDialog::Read)? this->ReadDialogs : this->WriteDialogs;
+  const QList<qSlicerFileDialog*>& dialogs = (action == qSlicerFileDialog::Read) ? this->ReadDialogs : this->WriteDialogs;
   foreach(qSlicerFileDialog* dialog, dialogs)
   {
     if (dialog->fileType() == fileType)
@@ -224,7 +214,7 @@ qSlicerIOManager::~qSlicerIOManager()
 bool qSlicerIOManager::openLoadSceneDialog()
 {
   qSlicerIO::IOProperties properties;
-  properties["clear"] = true;
+  properties.insert("clear", true);
   return this->openDialog(QString("SceneFile"), qSlicerFileDialog::Read, properties);
 }
 
@@ -232,22 +222,19 @@ bool qSlicerIOManager::openLoadSceneDialog()
 bool qSlicerIOManager::openAddSceneDialog()
 {
   qSlicerIO::IOProperties properties;
-  properties["clear"] = false;
+  properties.insert("clear", false);
   return this->openDialog(QString("SceneFile"), qSlicerFileDialog::Read, properties);
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
-                                  qSlicerFileDialog::IOAction action,
-                                  qSlicerIO::IOProperties properties,
-                                  vtkCollection* loadedNodes)
+bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, qSlicerFileDialog::IOAction action, qSlicerIO::IOProperties properties, vtkCollection* loadedNodes)
 {
   Q_D(qSlicerIOManager);
   bool deleteDialog = false;
-  if (properties["objectName"].toString().isEmpty())
+  if (properties.value("objectName").toString().isEmpty())
   {
     QString name = d->createUniqueDialogName(fileType, action, properties);
-    properties["objectName"] = name;
+    properties.insert("objectName", name);
   }
   qSlicerFileDialog* dialog = d->findDialog(fileType, action);
   if (dialog == nullptr)
@@ -446,8 +433,7 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
   // (it can make a big difference if hundreds of nodes are loaded)
   SlicerRenderBlocker renderBlocker;
   bool needStop = d->startProgressDialog(1);
-  d->ProgressDialog->setLabelText(
-    qSlicerIOManager::tr("Loading file ") + parameters.value("fileName").toString() + " ...");
+  d->ProgressDialog->setLabelText(qSlicerIOManager::tr("Loading file ") + parameters.value("fileName").toString() + " ...");
   if (needStop)
   {
     d->ProgressDialog->setValue(25);
@@ -463,8 +449,7 @@ bool qSlicerIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 
 
 //-----------------------------------------------------------------------------
-bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
-  vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   Q_D(qSlicerIOManager);
   // Speed up data loading by disabling re-rendering
@@ -475,10 +460,7 @@ bool qSlicerIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
   foreach(qSlicerIO::IOProperties fileProperties, files)
   {
     int numberOfUserMessagesBefore = userMessages ? userMessages->GetNumberOfMessages() : 0;
-    success = this->loadNodes(
-      static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
-      fileProperties,
-      loadedNodes, userMessages) && success;
+    success = this->loadNodes(static_cast<qSlicerIO::IOFileType>(fileProperties.value("fileType").toString()), fileProperties, loadedNodes, userMessages) && success;
     if (userMessages && userMessages->GetNumberOfMessages() > numberOfUserMessagesBefore)
     {
       userMessages->AddSeparator();
@@ -574,9 +556,7 @@ void qSlicerIOManager::showLoadNodesResultDialog(bool overallSuccess, vtkMRMLMes
     // Do not block the execution with popup windows if testing mode is enabled.
     return;
   }
-  if (overallSuccess
-    && userMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) == 0
-    && userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0)
+  if (overallSuccess && userMessages->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) == 0 && userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0)
   {
     // Everything is OK, no need to show error popup.
     return;

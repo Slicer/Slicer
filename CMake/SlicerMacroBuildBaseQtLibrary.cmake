@@ -138,7 +138,6 @@ macro(SlicerMacroBuildBaseQtLibrary)
   #-----------------------------------------------------------------------------
   # Sources
   # --------------------------------------------------------------------------
-    set(_moc_options OPTIONS -DSlicer_HAVE_QT5)
     QT5_WRAP_CPP(SLICERQTBASELIB_MOC_OUTPUT ${SLICERQTBASELIB_MOC_SRCS} ${_moc_options})
     QT5_WRAP_UI(SLICERQTBASELIB_UI_CXX ${SLICERQTBASELIB_UI_SRCS})
     if(DEFINED SLICERQTBASELIB_RESOURCES)

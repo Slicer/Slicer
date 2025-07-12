@@ -59,6 +59,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyVolumeRenderingPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyVolumeRenderingPlugin);
 protected:
   qSlicerSubjectHierarchyVolumeRenderingPlugin* const q_ptr;
@@ -95,8 +96,7 @@ void qSlicerSubjectHierarchyVolumeRenderingPluginPrivate::init()
   this->ToggleVolumeRenderingAction->setChecked(false);
 
   this->VolumeRenderingOptionsAction = new QAction(qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Volume rendering options..."), q);
-  this->VolumeRenderingOptionsAction->setToolTip(
-    qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Switch to Volume Rendering module to manage display options"));
+  this->VolumeRenderingOptionsAction->setToolTip(qSlicerSubjectHierarchyVolumeRenderingPlugin::tr("Switch to Volume Rendering module to manage display options"));
   QObject::connect(this->VolumeRenderingOptionsAction, SIGNAL(triggered()), q, SLOT(showVolumeRenderingOptionsForCurrentItem()));
 }
 
@@ -406,8 +406,8 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showItemInView(vtkIdType item
   else
   {
     // Use volume's module implementation for displaying volume in slice views
-    qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin = qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(
-      qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
+    qSlicerSubjectHierarchyVolumesPlugin* volumesPlugin =
+      qobject_cast<qSlicerSubjectHierarchyVolumesPlugin*>(qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName("Volumes"));
     if (!volumesPlugin)
     {
       qCritical() << Q_FUNC_INFO << ": Failed to access Volumes subject hierarchy plugin";
@@ -416,3 +416,5 @@ bool qSlicerSubjectHierarchyVolumeRenderingPlugin::showItemInView(vtkIdType item
     return volumesPlugin->showItemInView(itemID, viewNode, allItemsToShow);
   }
 }
+
+#include "qSlicerSubjectHierarchyVolumeRenderingPlugin.moc"

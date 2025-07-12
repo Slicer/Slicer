@@ -40,6 +40,7 @@
 //----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyDefaultPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyDefaultPlugin);
 protected:
   qSlicerSubjectHierarchyDefaultPlugin* const q_ptr;
@@ -238,8 +239,7 @@ void qSlicerSubjectHierarchyDefaultPlugin::toggleVisibility()
     qCritical() << Q_FUNC_INFO << ": Invalid current item";
     return;
   }
-  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
-    qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(currentItemID);
+  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(currentItemID);
   if (!ownerPlugin)
   {
     qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << currentItemID << " (named " << shNode->GetItemName(currentItemID).c_str() << ") is not owned by any plugin";
@@ -273,12 +273,10 @@ void qSlicerSubjectHierarchyDefaultPlugin::showAllChildren()
   for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
   {
     vtkIdType childItemID = (*childIt);
-    qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
-      qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(childItemID);
+    qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(childItemID);
     if (!ownerPlugin)
     {
-      qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << childItemID << " (named "
-        << shNode->GetItemName(childItemID).c_str() << ") is not owned by any plugin";
+      qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << childItemID << " (named " << shNode->GetItemName(childItemID).c_str() << ") is not owned by any plugin";
       return;
     }
 
@@ -308,15 +306,15 @@ void qSlicerSubjectHierarchyDefaultPlugin::hideAllChildren()
   for (childIt=childItemIDs.begin(); childIt!=childItemIDs.end(); ++childIt)
   {
     vtkIdType childItemID = (*childIt);
-    qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
-      qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(childItemID);
+    qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->getOwnerPluginForSubjectHierarchyItem(childItemID);
     if (!ownerPlugin)
     {
-      qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << childItemID << " (named "
-        << shNode->GetItemName(childItemID).c_str() << ") is not owned by any plugin";
+      qCritical() << Q_FUNC_INFO << ": Subject hierarchy item " << childItemID << " (named " << shNode->GetItemName(childItemID).c_str() << ") is not owned by any plugin";
       return;
     }
 
     ownerPlugin->setDisplayVisibility(childItemID, 0);
   }
 }
+
+#include "qSlicerSubjectHierarchyDefaultPlugin.moc"

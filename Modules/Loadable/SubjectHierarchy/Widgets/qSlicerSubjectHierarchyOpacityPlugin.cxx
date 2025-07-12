@@ -48,6 +48,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyOpacityPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyOpacityPlugin);
 protected:
   qSlicerSubjectHierarchyOpacityPlugin* const q_ptr;
@@ -201,3 +202,5 @@ void qSlicerSubjectHierarchyOpacityPlugin::setOpacityForCurrentItem(double opaci
 
   displayNode->SetOpacity(opacity);
 }
+
+#include "qSlicerSubjectHierarchyOpacityPlugin.moc"

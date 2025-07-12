@@ -63,8 +63,7 @@ void qSlicerModelsModuleWidgetTester::testClearCurrentNode()
   vtkNew<vtkMRMLScene> scene;
 
   scene->SetLoadFromXMLString(1);
-  scene->SetSceneXMLString(
-"<MRML  version=\"Slicer4.4.0\" userTags=\"\">"
+  scene->SetSceneXMLString("<MRML  version=\"Slicer4.4.0\" userTags=\"\">"
 " <View id=\"vtkMRMLViewNode1\"  name=\"View1\" ></View>"
 " <ModelDisplay id=\"vtkMRMLModelDisplayNode4\"  name=\"ModelDisplay\"  ></ModelDisplay>"
 " <Model id=\"vtkMRMLModelNode4\"  name=\"left\"  displayNodeRef=\"vtkMRMLModelDisplayNode4\"  references=\"display:vtkMRMLModelDisplayNode4;\"  ></Model>"
@@ -104,4 +103,4 @@ void qSlicerModelsModuleWidgetTester::testClearCurrentNode()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerModelsModuleWidgetTest)
-#include "moc_qSlicerModelsModuleWidgetTest.cxx"
+#include "qSlicerModelsModuleWidgetTest.moc"

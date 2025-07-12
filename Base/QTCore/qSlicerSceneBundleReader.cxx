@@ -55,19 +55,19 @@ qSlicerSceneBundleReader::qSlicerSceneBundleReader(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSceneBundleReader::description()const
+QString qSlicerSceneBundleReader::description() const
 {
   return tr("MRB Slicer Data Bundle");
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerSceneBundleReader::fileType()const
+qSlicerIO::IOFileType qSlicerSceneBundleReader::fileType() const
 {
   return QString("SceneFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSceneBundleReader::extensions()const
+QStringList qSlicerSceneBundleReader::extensions() const
 {
   return QStringList() << "*.mrb" << "*.zip" << "*.xar";
 }
@@ -76,7 +76,7 @@ QStringList qSlicerSceneBundleReader::extensions()const
 bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
 {
   Q_ASSERT(properties.contains("fileName"));
-  QString file = properties["fileName"].toString();
+  QString file = properties.value("fileName").toString();
 
   // check for a relative path as the unzip will need an absolute one
   QFileInfo fileInfo(file);
@@ -88,7 +88,7 @@ bool qSlicerSceneBundleReader::load(const qSlicerIO::IOProperties& properties)
   bool clear = false;
   if (properties.contains("clear"))
   {
-    clear = properties["clear"].toBool();
+    clear = properties.value("clear").toBool();
   }
 
   // Get all the nodes that have been around before loading

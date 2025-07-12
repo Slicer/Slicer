@@ -27,6 +27,63 @@ if(NOT CMAKE_CXX_STANDARD MATCHES "^(17|20)$")
   message(FATAL_ERROR "CMAKE_CXX_STANDARD must be set to 17 or 20")
 endif()
 
+# Enable AUTOMOC, AUTOUIC, CMAKE_AUTORCC to work with CMake Qt5 and Qt6
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+  ${CMAKE_CURRENT_LIST_DIR}/Libs/MRML/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Scripted/DICOMLib/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Scripted/DataProbe/DataProbeLib/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Scripted/VectorToScalarVolume/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Scripted/DICOM/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Core/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Volumes/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Volumes/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Cameras/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Reformat/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Models/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Models/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/SceneViews/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/ViewControllers/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Terminologies/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Terminologies/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Tables/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Tables/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Transforms/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Transforms/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/SlicerWelcome/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Sequences/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Sequences/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Colors/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Colors/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Segmentations/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Segmentations/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Texts/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Texts/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/CropVolume/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Markups/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Markups/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Data/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/VolumeRendering/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Units/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Units/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Plots/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/Plots/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Modules/Loadable/SubjectHierarchy/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Base/QTGUI/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Base/QTApp/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Base/QTCLI/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Utilities/Templates/Modules/Scripted/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Utilities/Templates/Modules/Loadable/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Utilities/Templates/Modules/LoadableCustomMarkups/Widgets/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Extensions/Testing/LoadableExtensionTemplate/LoadableModuleTemplate/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Extensions/Testing/SuperBuildExtensionTemplate/SuperLoadableModuleTemplate/Resources/UI
+  ${CMAKE_CURRENT_LIST_DIR}/Applications/SlicerApp/Testing/Python/Resources/UI
+)
+
+
 # Prevent unnecessary re-linking on Linux
 #
 # See https://discourse.slicer.org/t/build-when-git-commit-is-changed/29607/12
@@ -716,7 +773,6 @@ set(Slicer_INSTALL_QtPlugins_DIR "${Slicer_INSTALL_ROOT}${Slicer_QtPlugins_DIR}"
 include(SlicerBlockFindQtAndCheckVersion)
   mark_as_superbuild(VARS Qt5_DIR LABELS "FIND_PACKAGE")
 
-set(Slicer_HAVE_QT5 1)
     set(Slicer_HAVE_WEBKIT_SUPPORT 0)
 
 #
@@ -807,6 +863,65 @@ if(Slicer_SUPERBUILD)
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
   return()
 endif()
+
+#-----------------------------------------------------------------------------
+# Preparing for Qt6 where the CMakeified auto-tooling is preferred over the
+# explicit wrapping.
+# Enable AUTOMOC, AUTOUIC, CMAKE_AUTORCC to work with CMake Qt5 and Qt6
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+${PROJECT_SOURCE_DIR}/Extensions/Testing/LoadableExtensionTemplate/LoadableModuleTemplate/Resources/UI
+${PROJECT_SOURCE_DIR}/Extensions/Testing/SuperBuildExtensionTemplate/SuperLoadableModuleTemplate/Resources/UI
+${PROJECT_SOURCE_DIR}/Libs/MRML/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Utilities/Templates/Modules/Loadable/Resources/UI
+${PROJECT_SOURCE_DIR}/Utilities/Templates/Modules/Scripted/Resources/UI
+${PROJECT_SOURCE_DIR}/Utilities/Templates/Modules/LoadableCustomMarkups/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Applications/SlicerApp/Testing/Python/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Core/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/VolumeRendering/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/CropVolume/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Tables/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Tables/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Terminologies/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Terminologies/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Reformat/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/SceneViews/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Models/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Models/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Markups/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Markups/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Cameras/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Units/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Units/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/ViewControllers/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/SubjectHierarchy/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Transforms/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Transforms/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Texts/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Texts/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Colors/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Colors/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Sequences/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Sequences/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/SlicerWelcome/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Volumes/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Volumes/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Segmentations/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Segmentations/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Data/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Plots/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Loadable/Plots/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Scripted/DICOMLib/Widgets/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Scripted/VectorToScalarVolume/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Scripted/DataProbe/DataProbeLib/Resources/UI
+${PROJECT_SOURCE_DIR}/Modules/Scripted/DICOM/Resources/UI
+${PROJECT_SOURCE_DIR}/Base/QTApp/Resources/UI
+${PROJECT_SOURCE_DIR}/Base/QTCLI/Resources/UI
+${PROJECT_SOURCE_DIR}/Base/QTGUI/Resources/UI
+)
 
 foreach(dep QT ${Slicer_DEPENDENCIES})
   if(Slicer_USE_SYSTEM_${dep})

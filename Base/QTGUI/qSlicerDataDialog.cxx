@@ -364,18 +364,16 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
       continue;
     }
     // TBD: fileType is not good enough to describe what reader to use
-    properties["fileType"] = descriptionComboBox->itemData(
-      descriptionComboBox->currentIndex()).toString();
-    qSlicerIOOptionsWidget* optionsItem = dynamic_cast<qSlicerIOOptionsWidget*>(
-      this->FileWidget->cellWidget(row, OptionsColumn));
+    properties.insert("fileType", descriptionComboBox->itemData(descriptionComboBox->currentIndex()).toString());
+    qSlicerIOOptionsWidget* optionsItem = dynamic_cast<qSlicerIOOptionsWidget*>(this->FileWidget->cellWidget(row, OptionsColumn));
     if (optionsItem)
     {
-      // The optionsItem contains all the file properties including "fileName"
-      properties.unite(optionsItem->properties());
+      // The optionsItem contains all the file properties, including "fileName"
+      properties += optionsItem->properties();
     }
     else
     {
-      properties["fileName"] = fileItem->text();
+      properties.insert("fileName", fileItem->text());
     }
     files << properties;
   }
@@ -506,8 +504,7 @@ bool qSlicerDataDialogPrivate::checkAndHandleArchive(const QFileInfo& file)
 {
   if (file.suffix().toLower() == "zip")
   {
-    if (QMessageBox::question(this, tr("Open archive?"),
-      tr("The selected file is a .zip archive, open it and load contents?")) == QMessageBox::Yes)
+    if (QMessageBox::question(this, tr("Open archive?"), tr("The selected file is a .zip archive, open it and load contents?")) == QMessageBox::Yes)
     {
       this->temporaryArchiveDirectory.reset(new QTemporaryDir());
       if (this->temporaryArchiveDirectory->isValid())
@@ -638,7 +635,7 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   Q_ASSERT(!readerProperties.contains("fileName"));
   if (readerProperties.contains("fileNames"))
   {
-    QStringList fileNames = readerProperties["fileNames"].toStringList();
+    QStringList fileNames = readerProperties.value("fileNames").toStringList();
     foreach(QString fileName, fileNames)
     {
       d->addFile(QFileInfo(fileName));

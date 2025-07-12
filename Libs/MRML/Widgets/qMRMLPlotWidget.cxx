@@ -41,6 +41,7 @@
 class qMRMLPlotWidgetPrivate
   : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLPlotWidget);
 protected:
   qMRMLPlotWidget* const q_ptr;
@@ -125,8 +126,7 @@ void qMRMLPlotWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewNo
   vtkMRMLPlotViewNode* plotViewNode = vtkMRMLPlotViewNode::SafeDownCast(newViewNode);
   if (newViewNode && !plotViewNode)
   {
-    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
-      << ". Expected node type: vtkMRMLPlotViewNode";
+    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName() << ". Expected node type: vtkMRMLPlotViewNode";
   }
   this->setMRMLPlotViewNode(plotViewNode);
 }
@@ -169,3 +169,5 @@ qMRMLViewControllerBar* qMRMLPlotWidget::controllerWidget()const
 {
   return this->plotController();
 }
+
+#include "qMRMLPlotWidget.moc"

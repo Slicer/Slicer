@@ -94,7 +94,7 @@ bool qSlicerTransformsReader::load(const IOProperties& properties)
 {
   Q_D(qSlicerTransformsReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString fileName = properties["fileName"].toString();
+  QString fileName = properties.value("fileName").toString();
 
   if (d->TransformLogic.GetPointer() == nullptr)
   {
@@ -102,8 +102,7 @@ bool qSlicerTransformsReader::load(const IOProperties& properties)
   }
 
   this->userMessages()->ClearMessages();
-  vtkMRMLTransformNode* node = d->TransformLogic->AddTransform(
-    fileName.toUtf8(), this->mrmlScene(), this->userMessages());
+  vtkMRMLTransformNode* node = d->TransformLogic->AddTransform(fileName.toUtf8(), this->mrmlScene(), this->userMessages());
   if (node)
   {
     this->setLoadedNodes(QStringList(QString(node->GetID())));

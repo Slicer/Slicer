@@ -61,47 +61,44 @@ int qSlicerVolumesIOOptionsWidgetTest1( int argc, char * argv[] )
   optionsWidget.setMRMLScene(qSlicerApplication::application()->mrmlScene());
 
   optionsWidget.setFileName("mylabelmap-seg.nrrd");
-  if (!optionsWidget.properties()["labelmap"].toBool())
+  if (!optionsWidget.properties().value("labelmap").toBool())
   {
     std::cerr << "Must be a labelmap" << std::endl;
     return EXIT_FAILURE;
   }
-  QString colorID = optionsWidget.properties()["colorNodeID"].toString();
+  QString colorID = optionsWidget.properties().value("colorNodeID").toString();
   qDebug() << __LINE__ << ": Label map: color id: " << colorID;
   if (colorID != defaultLabelColor)
   {
-    std::cerr << __LINE__ << ": wrong color id set for a label map, expected "
-              << defaultLabelColor.toStdString() << std::endl;
+    std::cerr << __LINE__ << ": wrong color id set for a label map, expected " << defaultLabelColor.toStdString() << std::endl;
     return EXIT_FAILURE;
   }
 
   optionsWidget.setFileName("./mylabelmap_seg_1.nrrd");
-  if (!optionsWidget.properties()["labelmap"].toBool())
+  if (!optionsWidget.properties().value("labelmap").toBool())
   {
     std::cerr << "Must be a labelmap" << std::endl;
     return EXIT_FAILURE;
   }
-  colorID = optionsWidget.properties()["colorNodeID"].toString();
+  colorID = optionsWidget.properties().value("colorNodeID").toString();
   qDebug() << __LINE__ << ": Label map: color id: " << colorID;
   if (colorID != defaultLabelColor)
   {
-    std::cerr << __LINE__ << ": wrong color id set for a label map, expected "
-              << defaultLabelColor.toStdString() << std::endl;
+    std::cerr << __LINE__ << ": wrong color id set for a label map, expected " << defaultLabelColor.toStdString() << std::endl;
     return EXIT_FAILURE;
   }
 
   optionsWidget.setFileName("./segment.nrrd");
-  if (optionsWidget.properties()["labelmap"].toBool())
+  if (optionsWidget.properties().value("labelmap").toBool())
   {
     std::cerr << "Not a labelmap" << std::endl;
     return EXIT_FAILURE;
   }
-  colorID = optionsWidget.properties()["colorNodeID"].toString();
+  colorID = optionsWidget.properties().value("colorNodeID").toString();
   qDebug() << __LINE__ << ": Greyscale: color id: " << colorID;
   if (colorID != defaultGreyColor)
   {
-    std::cerr << __LINE__ << ": wrong color id set for a grey scale, expected "
-              << defaultGreyColor.toStdString() << std::endl;
+    std::cerr << __LINE__ << ": wrong color id set for a grey scale, expected " << defaultGreyColor.toStdString() << std::endl;
     return EXIT_FAILURE;
   }
 

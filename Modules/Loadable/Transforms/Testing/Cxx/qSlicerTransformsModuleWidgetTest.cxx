@@ -72,8 +72,7 @@ void qSlicerTransformsModuleWidgetTester::testIdentity()
   transformsModule.initialize(qSlicerApplication::application()->applicationLogic());  // register qSlicerSubjectHierarchyTransformsPlugin
   transformsModule.setMRMLScene(scene.GetPointer());
   transformsModule.logic();
-  qSlicerTransformsModuleWidget* transformsWidget =
-    dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
+  qSlicerTransformsModuleWidget* transformsWidget = dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
 
   vtkNew<vtkMRMLTransformNode> transformNode;
   scene->AddNode(transformNode.GetPointer());
@@ -110,8 +109,7 @@ void qSlicerTransformsModuleWidgetTester::testInvert()
   transformsModule.initialize(qSlicerApplication::application()->applicationLogic());  // register qSlicerSubjectHierarchyTransformsPlugin
   transformsModule.setMRMLScene(scene.GetPointer());
   transformsModule.logic();
-  qSlicerTransformsModuleWidget* transformsWidget =
-    dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
+  qSlicerTransformsModuleWidget* transformsWidget = dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
 
   vtkNew<vtkMRMLTransformNode> transformNode;
   scene->AddNode(transformNode.GetPointer());
@@ -142,4 +140,4 @@ int qSlicerTransformsModuleWidgetTest(int argc, char* argv[])
   return QTest::qExec(&tc, argc, argv);
 }
 
-#include "moc_qSlicerTransformsModuleWidgetTest.cxx"
+#include "qSlicerTransformsModuleWidgetTest.moc"

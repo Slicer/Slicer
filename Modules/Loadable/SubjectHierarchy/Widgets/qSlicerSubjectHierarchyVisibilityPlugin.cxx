@@ -47,6 +47,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyVisibilityPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyVisibilityPlugin);
 protected:
   qSlicerSubjectHierarchyVisibilityPlugin* const q_ptr;
@@ -281,3 +282,5 @@ void qSlicerSubjectHierarchyVisibilityPlugin::showInAllViews()
     }
   }
 }
+
+#include "qSlicerSubjectHierarchyVisibilityPlugin.moc"

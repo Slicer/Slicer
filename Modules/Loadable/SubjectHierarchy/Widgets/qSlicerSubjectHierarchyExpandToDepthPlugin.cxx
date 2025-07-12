@@ -35,6 +35,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerSubjectHierarchyExpandToDepthPluginPrivate: public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyExpandToDepthPlugin);
 protected:
   qSlicerSubjectHierarchyExpandToDepthPlugin* const q_ptr;
@@ -63,8 +64,7 @@ void qSlicerSubjectHierarchyExpandToDepthPluginPrivate::init()
 
   // Set up expand to level action and its menu
   this->ExpandToDepthAction = new QAction(qMRMLSubjectHierarchyTreeView::tr("Expand tree to level..."), q);
-  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ExpandToDepthAction,
-    qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 10);
+  qSlicerSubjectHierarchyAbstractPlugin::setActionPosition(this->ExpandToDepthAction, qSlicerSubjectHierarchyAbstractPlugin::SectionFolder, 10);
   //sceneMenuActions.append(this->ExpandToDepthAction);
 
   QMenu* expandToDepthSubMenu = new QMenu();
@@ -153,3 +153,5 @@ void qSlicerSubjectHierarchyExpandToDepthPlugin::expandToDepthFromContextMenu()
     currentTreeView->expandToDepth(depth);
   }
 }
+
+#include "qSlicerSubjectHierarchyExpandToDepthPlugin.moc"

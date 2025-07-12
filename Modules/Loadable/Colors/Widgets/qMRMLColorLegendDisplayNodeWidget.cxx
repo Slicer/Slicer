@@ -44,6 +44,7 @@
 //-----------------------------------------------------------------------------
 class qMRMLColorLegendDisplayNodeWidgetPrivate : public QWidget, public Ui_qMRMLColorLegendDisplayNodeWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLColorLegendDisplayNodeWidget);
 protected:
   qMRMLColorLegendDisplayNodeWidget* const q_ptr;
@@ -59,8 +60,7 @@ public:
 };
 
 // --------------------------------------------------------------------------
-qMRMLColorLegendDisplayNodeWidgetPrivate::qMRMLColorLegendDisplayNodeWidgetPrivate(
-  qMRMLColorLegendDisplayNodeWidget& object)
+qMRMLColorLegendDisplayNodeWidgetPrivate::qMRMLColorLegendDisplayNodeWidgetPrivate(qMRMLColorLegendDisplayNodeWidget& object)
   : q_ptr(&object)
 {
 }
@@ -77,18 +77,16 @@ void qMRMLColorLegendDisplayNodeWidgetPrivate::init()
   Q_Q(qMRMLColorLegendDisplayNodeWidget);
 
   // Set tooltip in label format widget
-  this->LabelTextPropertyWidget->textEditWidget()->setToolTip(qMRMLColorLegendDisplayNodeWidget::tr(
-    "<html><head><body>Format field uses printf function syntax. Example formats:<br>\
+  this->LabelTextPropertyWidget->textEditWidget()->setToolTip(
+    qMRMLColorLegendDisplayNodeWidget::tr("<html><head><body>Format field uses printf function syntax. Example formats:<br>\
     - display with 1 fractional digits: <b>%.1f</b><br>\
     - display integer: <b>%.0f</b><br>\
     - display with 4 significant digits: <b>%.4g</b><br>\
     - string label annotation: <b>%s</b></body></html>"));
 
   // Radio buttons
-  QObject::connect(this->ColorLegendOrientationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
-    q, SLOT(onColorLegendOrientationButtonClicked(QAbstractButton*)));
-  QObject::connect(this->LabelTextButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
-    q, SLOT(onLabelTextButtonClicked(QAbstractButton*)));
+  QObject::connect(this->ColorLegendOrientationButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), q, SLOT(onColorLegendOrientationButtonClicked(QAbstractButton*)));
+  QObject::connect(this->LabelTextButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), q, SLOT(onLabelTextButtonClicked(QAbstractButton*)));
 
   // Position and size
   QObject::connect(this->PositionXSlider, SIGNAL(valueChanged(double)), q, SLOT(onPositionChanged()));
@@ -105,14 +103,11 @@ void qMRMLColorLegendDisplayNodeWidgetPrivate::init()
                    q, SLOT(onLabelFormatChanged(QString)));
 
   // QSpinBox
-  QObject::connect( this->MaxNumberOfColorsSpinBox, SIGNAL(valueChanged(int)),
-    q, SLOT(onMaximumNumberOfColorsChanged(int)));
-  QObject::connect( this->NumberOfLabelsSpinBox, SIGNAL(valueChanged(int)),
-    q, SLOT(onNumberOfLabelsChanged(int)));
+  QObject::connect(this->MaxNumberOfColorsSpinBox, SIGNAL(valueChanged(int)), q, SLOT(onMaximumNumberOfColorsChanged(int)));
+  QObject::connect(this->NumberOfLabelsSpinBox, SIGNAL(valueChanged(int)), q, SLOT(onNumberOfLabelsChanged(int)));
 
   // QCheckBox
-  QObject::connect( this->ColorLegendVisibilityCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(onColorLegendVisibilityToggled(bool)));
+  QObject::connect(this->ColorLegendVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(onColorLegendVisibilityToggled(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -146,8 +141,7 @@ void qMRMLColorLegendDisplayNodeWidget::setMRMLColorLegendDisplayNode(vtkMRMLCol
   Q_D(qMRMLColorLegendDisplayNodeWidget);
 
   // Each time the node is modified, the UI widgets are updated
-  qvtkReconnect(d->ColorLegendDisplayNode, colorLegendDisplayNode, vtkCommand::ModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->ColorLegendDisplayNode, colorLegendDisplayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   d->ColorLegendDisplayNode = colorLegendDisplayNode;
   d->DisplayNodeViewComboBox->setMRMLDisplayNode(d->ColorLegendDisplayNode);
@@ -396,3 +390,5 @@ void qMRMLColorLegendDisplayNodeWidget::onNumberOfLabelsChanged(int numberOfLabe
 
   d->ColorLegendDisplayNode->SetNumberOfLabels(numberOfLabels);
 }
+
+#include "qMRMLColorLegendDisplayNodeWidget.moc"

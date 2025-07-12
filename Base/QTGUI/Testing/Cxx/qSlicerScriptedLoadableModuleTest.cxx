@@ -31,7 +31,6 @@
 class qSlicerScriptedLoadableModuleTester: public QObject
 {
   Q_OBJECT
-
 private:
 
   QString preparePythonSource(const QString& scriptName);
@@ -72,7 +71,7 @@ bool qSlicerScriptedLoadableModuleTester::resetTmp()
   ctk::removeDirRecursively(tmp.filePath(this->TemporaryDirName));
   tmp.mkdir(this->TemporaryDirName);
   tmp.cd(this->TemporaryDirName);
-  this->Tmp = tmp;
+  this->Tmp.setPath(tmp.dirName());
   return this->Tmp.exists();
 }
 
@@ -83,8 +82,7 @@ void qSlicerScriptedLoadableModuleTester::initTestCase()
 
   QVERIFY(QDir::temp().exists());
 
-  this->TemporaryDirName =
-      QString("qSlicerScriptedLoadableModuleTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
+  this->TemporaryDirName = QString("qSlicerScriptedLoadableModuleTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
 }
 
 // ----------------------------------------------------------------------------
@@ -93,7 +91,7 @@ void qSlicerScriptedLoadableModuleTester::cleanupTestCase()
   if (this->Tmp != QDir::current() && this->Tmp.exists())
   {
     ctk::removeDirRecursively(this->Tmp.absolutePath());
-    this->Tmp = QDir();
+    this->Tmp.setPath(QString());
   }
 }
 
@@ -133,6 +131,7 @@ namespace
 // ----------------------------------------------------------------------------
 class qSlicerScriptedLoadableModuleSetup : public qSlicerScriptedLoadableModule
 {
+  Q_OBJECT
 public:
   void callSetup() { this->setup(); }
 };
@@ -166,4 +165,4 @@ void qSlicerScriptedLoadableModuleTester::testSetup_data()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qSlicerScriptedLoadableModuleTest)
-#include "moc_qSlicerScriptedLoadableModuleTest.cxx"
+#include "qSlicerScriptedLoadableModuleTest.moc"

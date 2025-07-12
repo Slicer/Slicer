@@ -80,4 +80,4 @@ void qMRMLNodeAttributeTableWidgetTester::testSetNode()
 
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(qMRMLNodeAttributeTableWidgetTest)
-#include "moc_qMRMLNodeAttributeTableWidgetTest.cxx"
+#include "qMRMLNodeAttributeTableWidgetTest.moc"

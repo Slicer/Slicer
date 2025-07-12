@@ -88,7 +88,7 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
 {
   Q_D(qSlicerSceneReader);
   Q_ASSERT(properties.contains("fileName"));
-  QString file = properties["fileName"].toString();
+  QString file = properties.value("fileName").toString();
   this->mrmlScene()->SetURL(file.toUtf8());
   bool clear = properties.value("clear", false).toBool();
   bool success = false;
@@ -123,10 +123,8 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
   int loadedMinor = 0;
   int loadedPatch = 0;
   int loadedRevision = 0;
-  if (vtkMRMLScene::ParseVersion(this->mrmlScene()->GetVersion(), currentApplication,
-    currentMajor, currentMinor, currentPatch, currentRevision)
-    && vtkMRMLScene::ParseVersion(this->mrmlScene()->GetLastLoadedVersion(), loadedApplication,
-      loadedMajor, loadedMinor, loadedPatch, loadedRevision))
+  if (vtkMRMLScene::ParseVersion(this->mrmlScene()->GetVersion(), currentApplication, currentMajor, currentMinor, currentPatch, currentRevision)
+      && vtkMRMLScene::ParseVersion(this->mrmlScene()->GetLastLoadedVersion(), loadedApplication, loadedMajor, loadedMinor, loadedPatch, loadedRevision))
   {
     QStringList sceneVersionWarningMessages;
     if (loadedApplication != currentApplication)
@@ -152,9 +150,7 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
 
   // If there were scene loading errors then log the list of extensions that were installed when the scene was saved.
   // It may provide useful hints for why the extension load failed.
-  if (!success
-    || this->userMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0
-    || this->userMessages()->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
+  if (!success || this->userMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0 || this->userMessages()->GetNumberOfMessagesOfType(vtkCommand::WarningEvent) > 0)
   {
     std::string extensions = this->mrmlScene()->GetExtensions() ? this->mrmlScene()->GetExtensions() : "";
     std::string lastLoadedExtensions = this->mrmlScene()->GetLastLoadedExtensions() ? this->mrmlScene()->GetLastLoadedExtensions() : "";
@@ -168,8 +164,7 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
       QSet<QString> notInstalledExtensions = ctk::qStringListToQSet(lastLoadedExtensionsList).subtract(ctk::qStringListToQSet(extensionsList));
       if (!notInstalledExtensions.isEmpty())
       {
-        QString extensionsInformation =
-          tr("These extensions were installed when the scene was saved but not installed now: %1."
+        QString extensionsInformation = tr("These extensions were installed when the scene was saved but not installed now: %1."
              " These extensions may be required for successful loading of the scene.")
           .arg(ctk::qSetToQStringList(notInstalledExtensions).join(", "));
         this->userMessages()->AddMessage(vtkCommand::MessageEvent, extensionsInformation.toStdString());

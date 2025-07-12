@@ -53,12 +53,12 @@ int AModuleWidgetRepresentation::Count = 0;
 //-----------------------------------------------------------------------------
 class AModule: public qSlicerAbstractCoreModule
 {
+  /// Any object deriving from QObject (possibly indirectly) must have the Q_OBJECT macro in
+  /// order to have the signal/slots working and the meta-class name valid.
+  Q_OBJECT
 public:
   QString title()const override { return "A Title";}
-  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
-  {
-    return new AModuleWidgetRepresentation();
-  }
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return new AModuleWidgetRepresentation(); }
 
   vtkMRMLAbstractLogic* createLogic() override
   {
@@ -154,3 +154,5 @@ int qSlicerAbstractCoreModuleTest1(int, char * [] )
 
   return EXIT_SUCCESS;
 }
+
+#include "qSlicerAbstractCoreModuleTest1.moc"

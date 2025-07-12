@@ -44,6 +44,7 @@
 //------------------------------------------------------------------------------
 class qMRMLMarkupsDisplayNodeWidgetPrivate: public QWidget, public Ui_qMRMLMarkupsDisplayNodeWidget
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLMarkupsDisplayNodeWidget);
 
 protected:
@@ -75,52 +76,34 @@ void qMRMLMarkupsDisplayNodeWidgetPrivate::init()
   this->activeColorPickerButton->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
   // set up the display properties
-  QObject::connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(setVisibility(bool)));
-  QObject::connect(this->selectedColorPickerButton, SIGNAL(colorChanged(QColor)),
-    q, SLOT(onSelectedColorPickerButtonChanged(QColor)));
-  QObject::connect(this->unselectedColorPickerButton, SIGNAL(colorChanged(QColor)),
-    q, SLOT(onUnselectedColorPickerButtonChanged(QColor)));
-  QObject::connect(this->activeColorPickerButton, SIGNAL(colorChanged(QColor)),
-    q, SLOT(onActiveColorPickerButtonChanged(QColor)));
-  QObject::connect(this->glyphTypeComboBox, SIGNAL(currentIndexChanged(QString)),
-    q, SLOT(onGlyphTypeComboBoxChanged(QString)));
-  QObject::connect(this->glyphSizeIsAbsoluteButton, SIGNAL(toggled(bool)),
-    q, SLOT(setGlyphSizeIsAbsolute(bool)));
-  QObject::connect(this->glyphScaleSliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(onGlyphScaleSliderWidgetChanged(double)));
-  QObject::connect(this->glyphSizeSliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(onGlyphSizeSliderWidgetChanged(double)));
-  QObject::connect(this->curveLineSizeIsAbsoluteButton, SIGNAL(toggled(bool)),
-    q, SLOT(setCurveLineSizeIsAbsolute(bool)));
-  QObject::connect(this->curveLineThicknessSliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
-  QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
-  QObject::connect(this->PropertiesLabelVisibilityCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(setPropertiesLabelVisibility(bool)));
-  QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)),
-    q, SLOT(setPointLabelsVisibility(bool)));
-  QObject::connect(this->textScaleSliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(onTextScaleSliderWidgetChanged(double)));
+  QObject::connect(this->VisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setVisibility(bool)));
+  QObject::connect(this->selectedColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onSelectedColorPickerButtonChanged(QColor)));
+  QObject::connect(this->unselectedColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onUnselectedColorPickerButtonChanged(QColor)));
+  QObject::connect(this->activeColorPickerButton, SIGNAL(colorChanged(QColor)), q, SLOT(onActiveColorPickerButtonChanged(QColor)));
+  QObject::connect(this->glyphTypeComboBox, SIGNAL(currentIndexChanged(QString)), q, SLOT(onGlyphTypeComboBoxChanged(QString)));
+  QObject::connect(this->glyphSizeIsAbsoluteButton, SIGNAL(toggled(bool)), q, SLOT(setGlyphSizeIsAbsolute(bool)));
+  QObject::connect(this->glyphScaleSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onGlyphScaleSliderWidgetChanged(double)));
+  QObject::connect(this->glyphSizeSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onGlyphSizeSliderWidgetChanged(double)));
+  QObject::connect(this->curveLineSizeIsAbsoluteButton, SIGNAL(toggled(bool)), q, SLOT(setCurveLineSizeIsAbsolute(bool)));
+  QObject::connect(this->curveLineThicknessSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onCurveLineThicknessSliderWidgetChanged(double)));
+  QObject::connect(this->curveLineDiameterSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onCurveLineDiameterSliderWidgetChanged(double)));
+  QObject::connect(this->PropertiesLabelVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPropertiesLabelVisibility(bool)));
+  QObject::connect(this->PointLabelsVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setPointLabelsVisibility(bool)));
+  QObject::connect(this->textScaleSliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onTextScaleSliderWidgetChanged(double)));
 
-  QObject::connect(this->opacitySliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(onOpacitySliderWidgetChanged(double)));
+  QObject::connect(this->opacitySliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onOpacitySliderWidgetChanged(double)));
 
   QObject::connect(this->FillVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setFillVisibility(bool)));
   QObject::connect(this->OutlineVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setOutlineVisibility(bool)));
-  QObject::connect(this->FillOpacitySliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(onFillOpacitySliderWidgetChanged(double)));
-  QObject::connect(this->OutlineOpacitySliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(onOutlineOpacitySliderWidgetChanged(double)));
+  QObject::connect(this->FillOpacitySliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onFillOpacitySliderWidgetChanged(double)));
+  QObject::connect(this->OutlineOpacitySliderWidget, SIGNAL(valueChanged(double)), q, SLOT(onOutlineOpacitySliderWidgetChanged(double)));
 
   this->SnapModeComboBox->addItem(qMRMLMarkupsDisplayNodeWidget::tr("unconstrained"), vtkMRMLMarkupsDisplayNode::SnapModeUnconstrained);
   this->SnapModeComboBox->addItem(qMRMLMarkupsDisplayNodeWidget::tr("snap to visible surface"), vtkMRMLMarkupsDisplayNode::SnapModeToVisibleSurface);
   QObject::connect(this->SnapModeComboBox, SIGNAL(currentIndexChanged(int)), q, SLOT(onSnapModeWidgetChanged()));
 
   QObject::connect(this->OccludedVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setOccludedVisibility(bool)));
-  QObject::connect(this->OccludedOpacitySliderWidget, SIGNAL(valueChanged(double)),
-    q, SLOT(setOccludedOpacity(double)));
+  QObject::connect(this->OccludedOpacitySliderWidget, SIGNAL(valueChanged(double)), q, SLOT(setOccludedOpacity(double)));
 
   QObject::connect(this->OccludedVisibilityCheckBox, SIGNAL(toggled(bool)), q, SLOT(setOccludedVisibility(bool)));
 
@@ -503,8 +486,7 @@ void qMRMLMarkupsDisplayNodeWidget::setCurveLineSizeIsAbsolute(bool absolute)
   {
     return;
   }
-  d->MarkupsDisplayNode->SetCurveLineSizeMode(absolute ?
-    vtkMRMLMarkupsDisplayNode::UseLineDiameter : vtkMRMLMarkupsDisplayNode::UseLineThickness);
+  d->MarkupsDisplayNode->SetCurveLineSizeMode(absolute ? vtkMRMLMarkupsDisplayNode::UseLineDiameter : vtkMRMLMarkupsDisplayNode::UseLineThickness);
 }
 
 //------------------------------------------------------------------------------
@@ -769,3 +751,5 @@ void qMRMLMarkupsDisplayNodeWidget::onSnapModeWidgetChanged()
   int snapMode = d->SnapModeComboBox->currentData().toInt();
   d->MarkupsDisplayNode->SetSnapMode(snapMode);
 }
+
+#include "qMRMLMarkupsDisplayNodeWidget.moc"

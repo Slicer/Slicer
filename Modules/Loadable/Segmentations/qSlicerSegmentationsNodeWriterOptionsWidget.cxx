@@ -49,8 +49,7 @@ void qSlicerSegmentationsNodeWriterOptionsWidgetPrivate::setupUi(QWidget* widget
     " cropped to the minimum necessary size. This saves storage space but changes voxel coordinate system"
     " (physical coordinate system is not affected)."));
   horizontalLayout->addWidget(CropToMinimumExtentCheckbox);
-  QObject::connect(this->CropToMinimumExtentCheckbox, SIGNAL(toggled(bool)),
-    widget, SLOT(setCropToMinimumExtent(bool)));
+  QObject::connect(this->CropToMinimumExtentCheckbox, SIGNAL(toggled(bool)), widget, SLOT(setCropToMinimumExtent(bool)));
 }
 
 //------------------------------------------------------------------------------
@@ -71,8 +70,7 @@ void qSlicerSegmentationsNodeWriterOptionsWidget::setObject(vtkObject* object)
   vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(object);
   if (storableNode)
   {
-    vtkMRMLSegmentationStorageNode* storageNode = vtkMRMLSegmentationStorageNode::SafeDownCast(
-      storableNode->GetStorageNode());
+    vtkMRMLSegmentationStorageNode* storageNode = vtkMRMLSegmentationStorageNode::SafeDownCast(storableNode->GetStorageNode());
     if (storageNode)
     {
       d->CropToMinimumExtentCheckbox->setChecked(storageNode->GetCropToMinimumExtent());
@@ -85,5 +83,5 @@ void qSlicerSegmentationsNodeWriterOptionsWidget::setObject(vtkObject* object)
 void qSlicerSegmentationsNodeWriterOptionsWidget::setCropToMinimumExtent(bool crop)
 {
   Q_D(qSlicerSegmentationsNodeWriterOptionsWidget);
-  d->Properties["cropToMinimumExtent"] = crop;
+  d->Properties.insert("cropToMinimumExtent", crop);
 }

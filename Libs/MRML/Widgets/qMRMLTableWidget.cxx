@@ -44,6 +44,7 @@
 class qMRMLTableWidgetPrivate
   : public QObject
 {
+  Q_OBJECT
   Q_DECLARE_PUBLIC(qMRMLTableWidget);
 protected:
   qMRMLTableWidget* const q_ptr;
@@ -86,10 +87,8 @@ void qMRMLTableWidgetPrivate::init()
 
   this->TableController->setTableView(this->TableView);
 
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->TableView, SLOT(setMRMLScene(vtkMRMLScene*)));
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->TableController, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->TableView, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->TableController, SLOT(setMRMLScene(vtkMRMLScene*)));
 }
 
 // --------------------------------------------------------------------------
@@ -127,8 +126,7 @@ void qMRMLTableWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newViewN
   vtkMRMLTableViewNode* tableViewNode = vtkMRMLTableViewNode::SafeDownCast(newViewNode);
   if (newViewNode && !tableViewNode)
   {
-    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
-      << ". Expected node type: vtkMRMLTableViewNode";
+    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName() << ". Expected node type: vtkMRMLTableViewNode";
   }
   this->setMRMLTableViewNode(tableViewNode);
 }
@@ -174,3 +172,5 @@ qMRMLViewControllerBar* qMRMLTableWidget::controllerWidget()const
   Q_D(const qMRMLTableWidget);
   return this->tableController();
 }
+
+#include "qMRMLTableWidget.moc"

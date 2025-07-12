@@ -73,8 +73,7 @@ public:
   /// If you have a list of nodes to load, it's best to use this function
   /// in order to have a unique progress dialog instead of multiple ones.
   /// It internally calls loadNodes() for each file.
-  bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr,
-    vtkMRMLMessageCollection* userMessages = nullptr) override;
+  bool loadNodes(const QList<qSlicerIO::IOProperties>& files, vtkCollection* loadedNodes = nullptr, vtkMRMLMessageCollection* userMessages = nullptr) override;
 
   /// Helper function to display result of loadNodes.
   /// If success is set false then an error popup is displayed.
@@ -134,7 +133,7 @@ private:
 bool qSlicerIOManager::openAddDataDialog(QString fileName)
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["fileName"] = fileName;
+  ioProperties.insert("fileName", fileName);
   return this->openDialog(QString("NoFile"), qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -154,7 +153,7 @@ bool qSlicerIOManager::openAddVolumeDialog()
 bool qSlicerIOManager::openAddVolumesDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["multipleFiles"] = true;
+  ioProperties.insert("multipleFiles", true);
   return this->openDialog(QString("VolumeFile"), qSlicerFileDialog::Read, ioProperties);
 }
 

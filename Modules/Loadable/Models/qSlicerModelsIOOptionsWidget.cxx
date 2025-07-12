@@ -56,6 +56,5 @@ qSlicerModelsIOOptionsWidget::~qSlicerModelsIOOptionsWidget() = default;
 void qSlicerModelsIOOptionsWidget::updateProperties()
 {
   Q_D(qSlicerModelsIOOptionsWidget);
-  d->Properties["coordinateSystem"] = vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(
-    d->coordinateSystemComboBox->currentText().toLatin1().constData());
+  d->Properties.insert("coordinateSystem", vtkMRMLStorageNode::GetCoordinateSystemTypeFromString(d->coordinateSystemComboBox->currentText().toLatin1().constData()));
 }

@@ -47,7 +47,17 @@ qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent)
 
   // If it applies, disable import of user site packages
   QString noUserSite = qgetenv("PYTHONNOUSERSITE");
-  Py_NoUserSiteDirectory = noUserSite.toInt();
+
+  PyConfig config;
+  PyConfig_InitPythonConfig(&config);
+
+  config.user_site_directory = noUserSite.toInt(); // disable user site packages
+
+  PyStatus status = Py_InitializeFromConfig(&config);
+  if (PyStatus_Exception(status))
+  {
+    Py_ExitStatusException(status);
+  }
 
   // Import site module to ensure the 'site-packages' directory
   // is added to the python path. (see site.addsitepackages function).
@@ -99,10 +109,7 @@ void qSlicerCorePythonManager::addVTKObjectToPythonMain(const QString& name, vtk
   // Remove the last part
   QString attributeName = moduleNameList.takeLast();
 
-  bool success = qSlicerScriptedUtils::setModuleAttribute(
-        moduleNameList.join("."),
-        attributeName,
-        vtkPythonUtil::GetObjectFromPointer(object));
+  bool success = qSlicerScriptedUtils::setModuleAttribute(moduleNameList.join("."), attributeName, vtkPythonUtil::GetObjectFromPointer(object));
   if (!success)
   {
     qCritical() << "qSlicerCorePythonManager::addVTKObjectToPythonMain - "
