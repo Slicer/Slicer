@@ -33,7 +33,7 @@ public:
 
   // Warning, it extracts the archive into the current directory
   // With Qt, you can change the current directory using QDir::setCurrent()
-  static bool ExtractTar(const char* tarFileName, bool verbose, bool extract, std::vector<std::string> * extracted_files = nullptr);
+  static bool ExtractTar(const char* tarFileName, bool verbose, bool extract, std::vector<std::string>* extracted_files = nullptr);
 
   // creates a zip file with the full contents of the directory (recurses)
   // zip entries will include relative path of including tail of directoryToZip

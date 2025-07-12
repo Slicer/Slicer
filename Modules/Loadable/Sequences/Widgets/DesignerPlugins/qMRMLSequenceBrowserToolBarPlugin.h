@@ -20,9 +20,9 @@
 
 #include "qSlicerSequencesModuleWidgetsAbstractPlugin.h"
 
-class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT
-qMRMLSequenceBrowserToolBarPlugin
-  : public QObject, public qSlicerSequencesModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_SEQUENCES_WIDGETS_PLUGINS_EXPORT qMRMLSequenceBrowserToolBarPlugin
+  : public QObject
+  , public qSlicerSequencesModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
@@ -35,7 +35,6 @@ public:
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

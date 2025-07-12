@@ -35,13 +35,10 @@ class vtkRenderer;
 ///
 /// A displayable manager class is responsible to represent a
 /// MRMLDisplayable node in a renderer.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewDisplayableManagerFactory
-  : public vtkMRMLDisplayableManagerFactory
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewDisplayableManagerFactory : public vtkMRMLDisplayableManagerFactory
 {
 public:
-
-  vtkTypeMacro(vtkMRMLThreeDViewDisplayableManagerFactory,
-                       vtkMRMLDisplayableManagerFactory);
+  vtkTypeMacro(vtkMRMLThreeDViewDisplayableManagerFactory, vtkMRMLDisplayableManagerFactory);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /// This is a singleton pattern New.  There will only be ONE
@@ -54,24 +51,20 @@ public:
   static vtkMRMLThreeDViewDisplayableManagerFactory* GetInstance();
 
 protected:
-
   vtkMRMLThreeDViewDisplayableManagerFactory();
   ~vtkMRMLThreeDViewDisplayableManagerFactory() override;
 
   VTK_SINGLETON_DECLARE(vtkMRMLThreeDViewDisplayableManagerFactory);
 
 private:
-
   vtkMRMLThreeDViewDisplayableManagerFactory(const vtkMRMLThreeDViewDisplayableManagerFactory&) = delete;
   void operator=(const vtkMRMLThreeDViewDisplayableManagerFactory&) = delete;
-
 };
 
 #ifndef __VTK_WRAP__
-//BTX
-VTK_SINGLETON_DECLARE_INITIALIZER(VTK_MRML_DISPLAYABLEMANAGER_EXPORT,
-                                  vtkMRMLThreeDViewDisplayableManagerFactory);
-//ETX
+// BTX
+VTK_SINGLETON_DECLARE_INITIALIZER(VTK_MRML_DISPLAYABLEMANAGER_EXPORT, vtkMRMLThreeDViewDisplayableManagerFactory);
+// ETX
 #endif // __VTK_WRAP__
 
 #endif

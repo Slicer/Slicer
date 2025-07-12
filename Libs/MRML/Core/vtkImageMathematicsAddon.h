@@ -55,9 +55,13 @@ protected:
 
   int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  void ThreadedRequestData(vtkInformation* request, vtkInformationVector** inputVector,
-    vtkInformationVector* outputVector, vtkImageData*** inData, vtkImageData** outData,
-    int outExt[6], int threadId) override;
+  void ThreadedRequestData(vtkInformation* request,
+                           vtkInformationVector** inputVector,
+                           vtkInformationVector* outputVector,
+                           vtkImageData*** inData,
+                           vtkImageData** outData,
+                           int outExt[6],
+                           int threadId) override;
 
   double Range[2] = { 0.0, 1.0 };
 

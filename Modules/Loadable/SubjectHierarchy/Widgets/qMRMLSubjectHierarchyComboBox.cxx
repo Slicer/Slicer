@@ -107,16 +107,11 @@ void qMRMLSubjectHierarchyComboBoxPrivate::init()
   container->layout()->addWidget(this->TreeView);
 
   // Make connections
-  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
-                   q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
-  QObject::connect(this->TreeView, SIGNAL(pressed(QModelIndex)),
-                   q, SLOT(hidePopup()));
-  QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)),
-                   q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
-  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)),
-                   q, SIGNAL(currentItemChanged(vtkIdType)));
-  QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)),
-                   q, SIGNAL(currentItemModified(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)), q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(pressed(QModelIndex)), q, SLOT(hidePopup()));
+  QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)), q, SLOT(updateComboBoxTitleAndIcon(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(currentItemChanged(vtkIdType)), q, SIGNAL(currentItemChanged(vtkIdType)));
+  QObject::connect(this->TreeView, SIGNAL(currentItemModified(vtkIdType)), q, SIGNAL(currentItemModified(vtkIdType)));
 }
 
 // --------------------------------------------------------------------------
@@ -168,7 +163,7 @@ void qMRMLSubjectHierarchyComboBox::setMRMLScene(vtkMRMLScene* scene)
   }
 
   // Connect scene events so that title can be updated
-  qvtkReconnect( scene, vtkMRMLScene::EndCloseEvent, this, SLOT( onMRMLSceneCloseEnded(vtkObject*) ) );
+  qvtkReconnect(scene, vtkMRMLScene::EndCloseEvent, this, SLOT(onMRMLSceneCloseEnded(vtkObject*)));
 
   // Set tree root item to be the new scene, and disable showing it
   d->TreeView->setRootItem(shNode->GetSceneItemID());
@@ -372,7 +367,7 @@ QString qMRMLSubjectHierarchyComboBox::attributeValueFilter() const
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::addItemAttributeFilter(QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/)
+void qMRMLSubjectHierarchyComboBox::addItemAttributeFilter(QString attributeName, QVariant attributeValue /*=QString()*/, bool include /*=true*/)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
   this->sortFilterProxyModel()->addItemAttributeFilter(attributeName, attributeValue, include);
@@ -402,8 +397,7 @@ void qMRMLSubjectHierarchyComboBox::removeItemAttributeFilter(QString attributeN
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLSubjectHierarchyComboBox::addNodeAttributeFilter(
-  QString attributeName, QVariant attributeValue/*=QString()*/, bool include/*=true*/, QString className/*=QString()*/)
+void qMRMLSubjectHierarchyComboBox::addNodeAttributeFilter(QString attributeName, QVariant attributeValue /*=QString()*/, bool include /*=true*/, QString className /*=QString()*/)
 {
   Q_D(qMRMLSubjectHierarchyComboBox);
   this->sortFilterProxyModel()->addNodeAttributeFilter(attributeName, attributeValue, include, className);
@@ -558,8 +552,7 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   QStyleOptionComboBox opt;
   this->initStyleOption(&opt);
 
-  QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt,
-                                               QStyle::SC_ComboBoxListBoxPopup, this));
+  QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt, QStyle::SC_ComboBoxListBoxPopup, this));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QRect screen = this->screen()->availableGeometry();
 #else
@@ -669,10 +662,8 @@ void qMRMLSubjectHierarchyComboBox::showPopup()
   container->show();
 
   this->view()->setFocus();
-  this->view()->scrollTo( this->view()->currentIndex(),
-                          this->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, this)
-                             ? QAbstractItemView::PositionAtCenter
-                             : QAbstractItemView::EnsureVisible );
+  this->view()->scrollTo(this->view()->currentIndex(),
+                         this->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, this) ? QAbstractItemView::PositionAtCenter : QAbstractItemView::EnsureVisible);
   container->update();
 }
 
@@ -749,8 +740,7 @@ void qMRMLSubjectHierarchyComboBox::updateComboBoxTitleAndIcon(vtkIdType selecte
 
   // Get icon for selected item
   std::string ownerPluginName = shNode->GetItemOwnerPluginName(selectedShItemID);
-  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin =
-    qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName(ownerPluginName.c_str());
+  qSlicerSubjectHierarchyAbstractPlugin* ownerPlugin = qSlicerSubjectHierarchyPluginHandler::instance()->pluginByName(ownerPluginName.c_str());
   if (ownerPlugin)
   {
     this->setDefaultIcon(ownerPlugin->icon(selectedShItemID));

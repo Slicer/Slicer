@@ -29,7 +29,7 @@
 # include <ctkPythonConsole.h>
 #endif
 
-#include "qMRMLWidget.h"// SlicerApp includes
+#include "qMRMLWidget.h" // SlicerApp includes
 #include "qSlicerApplication.h"
 #include "qSlicerAppMainWindow.h"
 #ifdef Slicer_USE_PYTHONQT

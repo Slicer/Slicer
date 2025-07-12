@@ -46,6 +46,7 @@
 class qSlicerSegmentationsSettingsPanelPrivate : public Ui_qSlicerSegmentationsSettingsPanel
 {
   Q_DECLARE_PUBLIC(qSlicerSegmentationsSettingsPanel);
+
 protected:
   qSlicerSegmentationsSettingsPanel* const q_ptr;
 
@@ -63,8 +64,7 @@ public:
 // qSlicerSegmentationsSettingsPanelPrivate methods
 
 // --------------------------------------------------------------------------
-qSlicerSegmentationsSettingsPanelPrivate
-::qSlicerSegmentationsSettingsPanelPrivate(qSlicerSegmentationsSettingsPanel& object)
+qSlicerSegmentationsSettingsPanelPrivate::qSlicerSegmentationsSettingsPanelPrivate(qSlicerSegmentationsSettingsPanel& object)
   : q_ptr(&object)
 {
 }
@@ -76,8 +76,7 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
 
   this->setupUi(q);
 
-  this->TerminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(
-    qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
+  this->TerminologiesLogic = vtkSlicerTerminologiesModuleLogic::SafeDownCast(qSlicerCoreApplication::application()->moduleLogic("Terminologies"));
   if (!this->TerminologiesLogic)
   {
     qCritical() << Q_FUNC_INFO << ": Terminologies logic is not found";
@@ -89,31 +88,41 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   this->UseTerminologyCheckBox->setChecked(true);
 
   // Register settings
-  q->registerProperty(/*no tr*/"Segmentations/AutoOpacities", this->AutoOpacitiesCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
+  q->registerProperty(/*no tr*/ "Segmentations/AutoOpacities",
+                      this->AutoOpacitiesCheckBox,
+                      "checked",
+                      SIGNAL(toggled(bool)),
                       qSlicerSegmentationsSettingsPanel::tr("Automatically set opacities of the segments based on which contains which, "
-                                                            "so that no segment obscures another"), ctkSettingsPanel::OptionNone);
-  q->registerProperty(/*no tr*/"Segmentations/DefaultSurfaceSmoothing", this->SurfaceSmoothingCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      qSlicerSegmentationsSettingsPanel::tr("Enable closed surface representation smoothing by default"), ctkSettingsPanel::OptionNone);
-  q->registerProperty(/*no tr*/"Segmentations/UseTerminologySelector", this->UseTerminologyCheckBox,
-                      "checked", SIGNAL(toggled(bool)),
-                      qSlicerSegmentationsSettingsPanel::tr("Use standard terminology for segments"), ctkSettingsPanel::OptionNone);
-  q->registerProperty(/*no tr*/"Segmentations/DefaultTerminologyEntry", q,
-                      "defaultTerminologyEntry", SIGNAL(defaultTerminologyEntryChanged(QString)),
-                      qSlicerSegmentationsSettingsPanel::tr("Default terminology entry"), ctkSettingsPanel::OptionNone);
+                                                            "so that no segment obscures another"),
+                      ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/ "Segmentations/DefaultSurfaceSmoothing",
+                      this->SurfaceSmoothingCheckBox,
+                      "checked",
+                      SIGNAL(toggled(bool)),
+                      qSlicerSegmentationsSettingsPanel::tr("Enable closed surface representation smoothing by default"),
+                      ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/ "Segmentations/UseTerminologySelector",
+                      this->UseTerminologyCheckBox,
+                      "checked",
+                      SIGNAL(toggled(bool)),
+                      qSlicerSegmentationsSettingsPanel::tr("Use standard terminology for segments"),
+                      ctkSettingsPanel::OptionNone);
+  q->registerProperty(/*no tr*/ "Segmentations/DefaultTerminologyEntry",
+                      q,
+                      "defaultTerminologyEntry",
+                      SIGNAL(defaultTerminologyEntryChanged(QString)),
+                      qSlicerSegmentationsSettingsPanel::tr("Default terminology entry"),
+                      ctkSettingsPanel::OptionNone);
 
   this->AllowEditingHiddenSegmentComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Ask user"), QMessageBox::InvalidRole);
   this->AllowEditingHiddenSegmentComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Always make visible"), QMessageBox::Yes);
   this->AllowEditingHiddenSegmentComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Always allow"), QMessageBox::No);
-  q->registerProperty("Segmentations/ConfirmEditHiddenSegment", this->AllowEditingHiddenSegmentComboBox,
-    "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
+  q->registerProperty("Segmentations/ConfirmEditHiddenSegment", this->AllowEditingHiddenSegmentComboBox, "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
 
-  this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Overwrite all"), QString(/*no tr*/"OverwriteAllSegments"));
-  this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Overwrite visible"), QString(/*no tr*/"OverwriteVisibleSegments"));
-  this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Allow overlap"), QString(/*no tr*/"OverwriteNone"));
-  q->registerProperty("Segmentations/DefaultOverwriteMode", this->DefaultOverwriteModeComboBox,
-    "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
+  this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Overwrite all"), QString(/*no tr*/ "OverwriteAllSegments"));
+  this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Overwrite visible"), QString(/*no tr*/ "OverwriteVisibleSegments"));
+  this->DefaultOverwriteModeComboBox->addItem(qSlicerSegmentationsSettingsPanel::tr("Allow overlap"), QString(/*no tr*/ "OverwriteNone"));
+  q->registerProperty("Segmentations/DefaultOverwriteMode", this->DefaultOverwriteModeComboBox, "currentUserDataAsString", SIGNAL(currentIndexChanged(int)));
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->AutoOpacitiesCheckBox, SIGNAL(toggled(bool)), q, SLOT(setAutoOpacities(bool)));
@@ -123,11 +132,9 @@ void qSlicerSegmentationsSettingsPanelPrivate::init()
   QObject::connect(this->DefaultOverwriteModeComboBox, SIGNAL(currentIndexChanged(QString)), q, SLOT(setDefaultOverwriteMode(QString)));
 
   // Update default segmentation node from settings when startup completed.
-  QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()),
-    q, SLOT(updateDefaultSegmentationNodeFromWidget()));
+  QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()), q, SLOT(updateDefaultSegmentationNodeFromWidget()));
   // Update default overwrite mode from settings when startup completed.
-  QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()),
-    q, SLOT(updateDefaultOverwriteModeFromWidget()));
+  QObject::connect(qSlicerApplication::application(), SIGNAL(startupCompleted()), q, SLOT(updateDefaultOverwriteModeFromWidget()));
 }
 
 // --------------------------------------------------------------------------
@@ -187,8 +194,7 @@ void qSlicerSegmentationsSettingsPanel::setDefaultOverwriteMode(QString mode)
   Q_UNUSED(mode);
   if (this->segmentationsLogic())
   {
-    this->segmentationsLogic()->SetDefaultOverwriteMode(
-      vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(mode.toStdString().c_str()));
+    this->segmentationsLogic()->SetDefaultOverwriteMode(vtkMRMLSegmentEditorNode::ConvertOverwriteModeFromString(mode.toStdString().c_str()));
   }
 }
 
@@ -212,11 +218,9 @@ void qSlicerSegmentationsSettingsPanel::setDefaultTerminologyEntry(QString termi
     if (d->TerminologiesLogic->DeserializeTerminologyEntry(terminologyStdStr, entry))
     {
       buttonText.clear();
-      buttonText += (entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodeMeaning()
-          ? entry->GetCategoryObject()->GetCodeMeaning() : "?");
+      buttonText += (entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodeMeaning() ? entry->GetCategoryObject()->GetCodeMeaning() : "?");
       buttonText += "/";
-      buttonText += (entry->GetTypeObject() && entry->GetTypeObject()->GetCodeMeaning()
-          ? entry->GetTypeObject()->GetCodeMeaning() : "?");
+      buttonText += (entry->GetTypeObject() && entry->GetTypeObject()->GetCodeMeaning() ? entry->GetTypeObject()->GetCodeMeaning() : "?");
     }
   }
   d->EditDefaultTerminologyEntryPushButton->setText(buttonText);

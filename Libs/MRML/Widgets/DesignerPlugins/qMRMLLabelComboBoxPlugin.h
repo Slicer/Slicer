@@ -3,9 +3,9 @@
 
 #include "qMRMLWidgetsAbstractPlugin.h"
 
-class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLLabelComboBoxPlugin :
-  public QObject,
-  public qMRMLWidgetsAbstractPlugin
+class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLLabelComboBoxPlugin
+  : public QObject
+  , public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
@@ -18,7 +18,6 @@ public:
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

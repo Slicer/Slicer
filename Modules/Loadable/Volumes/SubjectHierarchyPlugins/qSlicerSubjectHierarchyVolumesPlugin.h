@@ -49,7 +49,6 @@ public:
   ~qSlicerSubjectHierarchyVolumesPlugin() override;
 
 public:
-
   /// Get view context menu item actions that are available when right-clicking an object in the views.
   /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
   QList<QAction*> viewContextMenuActions() const override;
@@ -66,9 +65,7 @@ public:
   ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  double canAddNodeToSubjectHierarchy(
-    vtkMRMLNode* node,
-    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID ) const override;
+  double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const override;
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,
@@ -122,8 +119,8 @@ public:
   /// Collect subject hierarchy item IDs of all volumes that are shown in any slice view
   /// \param shownVolumeItemIDs Output argument for subject hierarchy item IDs of shown volumes
   /// \param layer Layer(s) from which the shown volumes are collected. By default it's all layers
-  void collectShownVolumes( QSet<vtkIdType>& shownVolumeItemIDs,
-    int layer = vtkMRMLApplicationLogic::BackgroundLayer | vtkMRMLApplicationLogic::ForegroundLayer | vtkMRMLApplicationLogic::LabelLayer ) const;
+  void collectShownVolumes(QSet<vtkIdType>& shownVolumeItemIDs,
+                           int layer = vtkMRMLApplicationLogic::BackgroundLayer | vtkMRMLApplicationLogic::ForegroundLayer | vtkMRMLApplicationLogic::LabelLayer) const;
 
 protected slots:
   /// Show volumes in study. The first two scalar volumes are shown if there are more.

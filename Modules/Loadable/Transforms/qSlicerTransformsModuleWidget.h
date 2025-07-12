@@ -31,13 +31,11 @@ class vtkMatrix4x4;
 class vtkMRMLNode;
 class qSlicerTransformsModuleWidgetPrivate;
 
-class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_TRANSFORMS_EXPORT qSlicerTransformsModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerTransformsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerTransformsModuleWidget() override;
@@ -62,7 +60,6 @@ public slots:
   void split();
 
 protected:
-
   void setup() override;
 
 protected slots:

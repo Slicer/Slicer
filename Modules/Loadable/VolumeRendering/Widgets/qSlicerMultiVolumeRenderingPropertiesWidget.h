@@ -27,8 +27,7 @@
 class qSlicerMultiVolumeRenderingPropertiesWidgetPrivate;
 class vtkMRMLMultiVolumeRenderingDisplayNode;
 
-class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerMultiVolumeRenderingPropertiesWidget
-  : public qSlicerVolumeRenderingPropertiesWidget
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerMultiVolumeRenderingPropertiesWidget : public qSlicerVolumeRenderingPropertiesWidget
 {
   Q_OBJECT
 public:

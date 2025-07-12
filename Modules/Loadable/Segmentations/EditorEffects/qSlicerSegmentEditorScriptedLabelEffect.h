@@ -44,8 +44,7 @@ class qSlicerSegmentEditorScriptedLabelEffectPrivate;
 ///   and register effect by creating this class and setting python source to implemented
 ///   effect subclass. One example is the DrawEffect.
 ///
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScriptedLabelEffect
-  : public qSlicerSegmentEditorAbstractLabelEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScriptedLabelEffect : public qSlicerSegmentEditorAbstractLabelEffect
 {
   Q_OBJECT
 
@@ -70,7 +69,7 @@ public:
   /// Set flag indicating whether effect operates on segments (true) or the whole segmentation (false).
   void setPerSegment(bool perSegment) override;
 
-// API: Methods that are to be reimplemented in the effect subclasses
+  // API: Methods that are to be reimplemented in the effect subclasses
 public:
   /// Get icon for effect to be displayed in segment editor
   QIcon icon() override;

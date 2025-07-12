@@ -32,20 +32,13 @@
 class AModuleWidgetRepresentation : public qSlicerAbstractModuleRepresentation
 {
 public:
-  AModuleWidgetRepresentation()
-  {
-    ++Count;
-  }
-  ~AModuleWidgetRepresentation() override
-  {
-    --Count;
-  }
+  AModuleWidgetRepresentation() { ++Count; }
+  ~AModuleWidgetRepresentation() override { --Count; }
 
   static int Count;
 
 protected:
   void setup() override {}
-
 };
 
 int AModuleWidgetRepresentation::Count = 0;
@@ -54,16 +47,11 @@ int AModuleWidgetRepresentation::Count = 0;
 class AModule : public qSlicerAbstractCoreModule
 {
 public:
-  QString title() const override { return "A Title";}
-  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override
-  {
-    return new AModuleWidgetRepresentation();
-  }
+  QString title() const override { return "A Title"; }
+  qSlicerAbstractModuleRepresentation* createWidgetRepresentation() override { return new AModuleWidgetRepresentation(); }
 
-  vtkMRMLAbstractLogic* createLogic() override
-  {
-    return nullptr;
-  }
+  vtkMRMLAbstractLogic* createLogic() override { return nullptr; }
+
 protected:
   void setup() override {}
 };
@@ -82,8 +70,7 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
     bool expected = true;
     if (current != expected)
     {
-      std::cerr << "Line " << __LINE__
-                << " - Problem with is/setWidgetRepresentationCreationEnabled methods !\n"
+      std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods !\n"
                 << " current:" << current << "\n"
                 << " expected:" << expected << std::endl;
       return EXIT_FAILURE;
@@ -94,8 +81,7 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
     QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
     if (!repr)
     {
-      std::cerr << "Line " << __LINE__
-                << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
+      std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
                 << " widgetRepresentation is expected to be non-null." << std::endl;
       return EXIT_FAILURE;
     }
@@ -107,8 +93,7 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
     bool expected = false;
     if (current != expected)
     {
-      std::cerr << "Line " << __LINE__
-                << " - Problem with is/setWidgetRepresentationCreationEnabled methods !\n"
+      std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods !\n"
                 << " current:" << current << "\n"
                 << " expected:" << expected << std::endl;
       return EXIT_FAILURE;
@@ -119,8 +104,7 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
     QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
     if (repr)
     {
-      std::cerr << "Line " << __LINE__
-                << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
+      std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
                 << " widgetRepresentation is expected to be null." << std::endl;
       return EXIT_FAILURE;
     }
@@ -132,8 +116,7 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
     QScopedPointer<qSlicerAbstractModuleRepresentation> repr(module.widgetRepresentation());
     if (!repr)
     {
-      std::cerr << "Line " << __LINE__
-                << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
+      std::cerr << "Line " << __LINE__ << " - Problem with is/setWidgetRepresentationCreationEnabled methods:"
                 << " widgetRepresentation is expected to be non-null." << std::endl;
       return EXIT_FAILURE;
     }
@@ -144,8 +127,7 @@ int qSlicerAbstractCoreModuleTest1(int, char*[])
     int expected = 0;
     if (current != expected)
     {
-      std::cerr << "Line " << __LINE__
-                << " - Problem with representation destructor !\n"
+      std::cerr << "Line " << __LINE__ << " - Problem with representation destructor !\n"
                 << " current count:" << current << "\n"
                 << " expected count:" << expected << std::endl;
       return EXIT_FAILURE;

@@ -35,8 +35,7 @@ class QTableWidget;
 class qSlicerMarkupsPlaceWidget;
 class qMRMLNodeComboBox;
 
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT
-qSlicerSimpleMarkupsWidget : public qSlicerWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qSlicerSimpleMarkupsWidget : public qSlicerWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool enterPlaceModeOnNodeChange READ enterPlaceModeOnNodeChange WRITE setEnterPlaceModeOnNodeChange)
@@ -197,7 +196,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerSimpleMarkupsWidget);
   Q_DISABLE_COPY(qSlicerSimpleMarkupsWidget);
-
 };
 
 #endif

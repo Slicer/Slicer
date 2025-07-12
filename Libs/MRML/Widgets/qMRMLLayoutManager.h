@@ -285,6 +285,7 @@ protected:
   void onViewportUsageChanged(const QString& viewportName) override;
 
   using ctkLayoutManager::setLayout;
+
 private:
   Q_DECLARE_PRIVATE(qMRMLLayoutManager);
   Q_DISABLE_COPY(qMRMLLayoutManager);

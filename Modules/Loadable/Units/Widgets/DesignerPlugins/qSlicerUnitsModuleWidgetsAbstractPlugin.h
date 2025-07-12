@@ -26,13 +26,12 @@
 
 #include "qSlicerUnitsModuleWidgetsPluginsExport.h"
 
-class Q_SLICER_MODULE_UNITS_WIDGETS_PLUGINS_EXPORT qSlicerUnitsModuleWidgetsAbstractPlugin
-  : public QDesignerCustomWidgetInterface
+class Q_SLICER_MODULE_UNITS_WIDGETS_PLUGINS_EXPORT qSlicerUnitsModuleWidgetsAbstractPlugin : public QDesignerCustomWidgetInterface
 {
   Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface")
   Q_INTERFACES(QDesignerCustomWidgetInterface);
-public:
 
+public:
   qSlicerUnitsModuleWidgetsAbstractPlugin();
   // Don't reimplement this method.
   QString group() const override;

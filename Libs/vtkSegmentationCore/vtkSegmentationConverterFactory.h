@@ -117,6 +117,7 @@ public:
 
   vtkSegmentationConverterFactoryInitialize();
   ~vtkSegmentationConverterFactoryInitialize();
+
 private:
   static unsigned int Count;
 };

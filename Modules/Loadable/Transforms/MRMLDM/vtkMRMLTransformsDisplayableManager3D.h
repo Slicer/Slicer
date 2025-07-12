@@ -33,17 +33,14 @@
 /// Displays transforms in 3D viewers as glyphs, deformed grid, or
 /// contour surfaces
 ///
-class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformsDisplayableManager3D
-  : public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformsDisplayableManager3D : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
-
   static vtkMRMLTransformsDisplayableManager3D* New();
   vtkTypeMacro(vtkMRMLTransformsDisplayableManager3D, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
-
   vtkMRMLTransformsDisplayableManager3D();
   ~vtkMRMLTransformsDisplayableManager3D() override;
 
@@ -64,7 +61,6 @@ protected:
   void Create() override;
 
 private:
-
   vtkMRMLTransformsDisplayableManager3D(const vtkMRMLTransformsDisplayableManager3D&) = delete;
   void operator=(const vtkMRMLTransformsDisplayableManager3D&) = delete;
 

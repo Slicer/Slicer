@@ -34,8 +34,7 @@
 ///   closed surface representation (vtkPolyData type). The conversion algorithm
 ///   performs a marching cubes operation on the image data followed by an optional
 ///   decimation step.
-class vtkSegmentationCore_EXPORT vtkBinaryLabelmapToClosedSurfaceConversionRule
-  : public vtkSegmentationConverterRule
+class vtkSegmentationCore_EXPORT vtkBinaryLabelmapToClosedSurfaceConversionRule : public vtkSegmentationConverterRule
 {
 public:
   /// Conversion parameter: decimation factor
@@ -88,7 +87,7 @@ public:
   unsigned int GetConversionCost(vtkDataObject* sourceRepresentation = nullptr, vtkDataObject* targetRepresentation = nullptr) override;
 
   /// Human-readable name of the converter rule
-  const char* GetName()  override { return "Binary labelmap to closed surface"; };
+  const char* GetName() override { return "Binary labelmap to closed surface"; };
 
   /// Human-readable name of the source representation
   const char* GetSourceRepresentationName() override { return vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName(); };

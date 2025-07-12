@@ -20,7 +20,6 @@
 
 ==============================================================================*/
 
-
 #ifndef __qMRMLTransformDisplayNodeWidget_h
 #define __qMRMLTransformDisplayNodeWidget_h
 
@@ -37,9 +36,7 @@ class qMRMLTransformDisplayNodeWidgetPrivate;
 class vtkMRMLTransformNode;
 class vtkMRMLNode;
 
-class Q_SLICER_MODULE_TRANSFORMS_WIDGETS_EXPORT
-qMRMLTransformDisplayNodeWidget
-  : public qMRMLWidget
+class Q_SLICER_MODULE_TRANSFORMS_WIDGETS_EXPORT qMRMLTransformDisplayNodeWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -125,7 +122,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLTransformDisplayNodeWidget);
   Q_DISABLE_COPY(qMRMLTransformDisplayNodeWidget);
-
 };
 
 #endif

@@ -26,7 +26,8 @@
 #include "qMRMLWidgetsAbstractPlugin.h"
 
 class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLTableViewPlugin
-  : public QObject, public qMRMLWidgetsAbstractPlugin
+  : public QObject
+  , public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 
@@ -38,7 +39,6 @@ public:
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

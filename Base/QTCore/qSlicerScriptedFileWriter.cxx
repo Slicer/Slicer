@@ -41,7 +41,8 @@ public:
   qSlicerScriptedFileWriterPrivate();
   virtual ~qSlicerScriptedFileWriterPrivate();
 
-  enum {
+  enum
+  {
     DescriptionMethod = 0,
     FileTypeMethod,
     CanWriteObjectMethod,
@@ -52,8 +53,8 @@ public:
 
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
-  QString    PythonSource;
-  QString    PythonClassName;
+  QString PythonSource;
+  QString PythonClassName;
 };
 
 //-----------------------------------------------------------------------------
@@ -145,7 +146,10 @@ bool qSlicerScriptedFileWriter::setPythonSource(const QString& filePath, const Q
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedFileWriter::setPythonSource - "
                             "Failed to load scripted file writer: "
-                            "class %1 was not found in file %2").arg(className).arg(filePath).toUtf8());
+                            "class %1 was not found in file %2")
+                      .arg(className)
+                      .arg(filePath)
+                      .toUtf8());
     return false;
   }
 
@@ -179,8 +183,7 @@ QString qSlicerScriptedFileWriter::description() const
   }
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'description' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'description' "
                << "is expected to return a string !";
     return QString();
   }
@@ -200,8 +203,7 @@ qSlicerIO::IOFileType qSlicerScriptedFileWriter::fileType() const
   }
   if (!PyUnicode_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'fileType' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'fileType' "
                << "is expected to return a string !";
     return IOFileType();
   }
@@ -224,8 +226,7 @@ bool qSlicerScriptedFileWriter::canWriteObject(vtkObject* object) const
   }
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'canWriteObject' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'canWriteObject' "
                << "is expected to return a boolean !";
     return false;
   }
@@ -248,8 +249,7 @@ double qSlicerScriptedFileWriter::canWriteObjectConfidence(vtkObject* object) co
   }
   if (!PyFloat_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'canWriteObjectConfidence' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'canWriteObjectConfidence' "
                << "is expected to return a float!";
     return 0.0;
   }
@@ -271,8 +271,7 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object) const
   }
   if (!PyList_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'extensions' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'extensions' "
                << "is expected to return a string list !";
     return QStringList();
   }
@@ -283,8 +282,7 @@ QStringList qSlicerScriptedFileWriter::extensions(vtkObject* object) const
   {
     if (!PyUnicode_Check(PyTuple_GetItem(resultAsTuple, i)))
     {
-      qWarning() << d->PythonSource
-                 << " - In" << d->PythonClassName << "class, function 'extensions' "
+      qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'extensions' "
                  << "is expected to return a string list !";
       break;
     }
@@ -308,8 +306,7 @@ bool qSlicerScriptedFileWriter::write(const qSlicerIO::IOProperties& properties)
   }
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSource
-               << " - In" << d->PythonClassName << "class, function 'write' "
+    qWarning() << d->PythonSource << " - In" << d->PythonClassName << "class, function 'write' "
                << "is expected to return a string boolean !";
     return false;
   }

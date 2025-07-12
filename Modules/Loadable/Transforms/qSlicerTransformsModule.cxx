@@ -65,7 +65,6 @@ QIcon qSlicerTransformsModule::icon() const
   return QIcon(":/Icons/Transforms.png");
 }
 
-
 //-----------------------------------------------------------------------------
 QStringList qSlicerTransformsModule::categories() const
 {
@@ -127,13 +126,9 @@ void qSlicerTransformsModule::setup()
   {
     return;
   }
-  vtkSlicerTransformLogic* transformLogic =
-    vtkSlicerTransformLogic::SafeDownCast(this->logic());
-  app->coreIOManager()->registerIO(
-    new qSlicerTransformsReader(transformLogic, this));
-  app->coreIOManager()->registerIO(new qSlicerNodeWriter(
-    "Transforms", QString("TransformFile"),
-    QStringList() << "vtkMRMLTransformNode", true, this));
+  vtkSlicerTransformLogic* transformLogic = vtkSlicerTransformLogic::SafeDownCast(this->logic());
+  app->coreIOManager()->registerIO(new qSlicerTransformsReader(transformLogic, this));
+  app->coreIOManager()->registerIO(new qSlicerNodeWriter("Transforms", QString("TransformFile"), QStringList() << "vtkMRMLTransformNode", true, this));
 
   // Register displayable managers
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLTransformsDisplayableManager2D");
@@ -149,6 +144,6 @@ void qSlicerTransformsModule::setup()
 QStringList qSlicerTransformsModule::associatedNodeTypes() const
 {
   return QStringList() //
-    << "vtkMRMLTransformNode"
-    << "vtkMRMLTransformDisplayNode";
+         << "vtkMRMLTransformNode"
+         << "vtkMRMLTransformDisplayNode";
 }

@@ -33,8 +33,10 @@
 class qSlicerModuleFactoryManagerPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerModuleFactoryManager);
+
 protected:
   qSlicerModuleFactoryManager* const q_ptr;
+
 public:
   qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object);
 
@@ -45,8 +47,7 @@ public:
 
 //-----------------------------------------------------------------------------
 // qSlicerModuleFactoryManagerPrivate methods
-qSlicerModuleFactoryManagerPrivate
-::qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object)
+qSlicerModuleFactoryManagerPrivate::qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object)
   : q_ptr(&object)
 {
   this->AppLogic = nullptr;
@@ -58,7 +59,8 @@ qSlicerModuleFactoryManagerPrivate
 
 //-----------------------------------------------------------------------------
 qSlicerModuleFactoryManager::qSlicerModuleFactoryManager(QObject* newParent)
-  : Superclass(newParent), d_ptr(new qSlicerModuleFactoryManagerPrivate(*this))
+  : Superclass(newParent)
+  , d_ptr(new qSlicerModuleFactoryManagerPrivate(*this))
 {
 }
 
@@ -136,7 +138,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
   if (!this->isRegistered(name) || //
       !this->isInstantiated(name))
   {
-    //Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
+    // Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
     return false;
   }
 
@@ -167,8 +169,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
     bool dependencyLoaded = this->loadModule(dependency, name);
     if (!dependencyLoaded)
     {
-      qWarning() << "When loading module " << name << ", the dependency"
-                 << dependency << "failed to be loaded.";
+      qWarning() << "When loading module " << name << ", the dependency" << dependency << "failed to be loaded.";
       return false;
     }
   }
@@ -195,8 +196,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
   instance->setMRMLScene(d->MRMLScene);
 
   // Module should also be aware if current MRML scene has changed
-  this->connect(this,SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                instance, SLOT(setMRMLScene(vtkMRMLScene*)));
+  this->connect(this, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), instance, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   // Handle post-load initialization
   emit this->moduleLoaded(name);
@@ -282,23 +282,20 @@ qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::loadedModule(const QStri
   if (!this->isRegistered(name))
   {
     qDebug() << "The module" << name << "has not been registered.";
-    qDebug() << "The following modules have been registered:"
-             << this->registeredModuleNames();
+    qDebug() << "The following modules have been registered:" << this->registeredModuleNames();
     return nullptr;
   }
   if (!this->isInstantiated(name))
   {
     qDebug() << "The module" << name << "has been registered but not instantiated.";
-    qDebug() << "The following modules have been instantiated:"
-             << this->instantiatedModuleNames();
+    qDebug() << "The following modules have been instantiated:" << this->instantiatedModuleNames();
     return nullptr;
   }
 
   if (!this->isLoaded(name))
   {
-    qDebug()<< "The module" << name << "has not been loaded.";
-    qDebug() << "The following modules have been loaded:"
-             << this->loadedModuleNames();
+    qDebug() << "The module" << name << "has not been loaded.";
+    qDebug() << "The following modules have been loaded:" << this->loadedModuleNames();
     return nullptr;
   }
   return this->moduleInstance(name);

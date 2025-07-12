@@ -183,8 +183,7 @@ public:
   /// actions though.
   Qt::DropActions supportedDropActions() const override;
   QMimeData* mimeData(const QModelIndexList& indexes) const override;
-  bool dropMimeData(const QMimeData* data, Qt::DropAction action,
-                            int row, int column, const QModelIndex& parent) override;
+  bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column, const QModelIndex& parent) override;
 
   /// Returns the parent node of the node, 0 otherwise (the parent is the scene).
   /// Must be reimplemented in derived classes. If reimplemented, you might
@@ -195,15 +194,15 @@ public:
   /// Returns the row model index relative to its parent node independently of
   /// any filtering or proxy model.
   /// Must be reimplemented in derived classes
-  virtual int          nodeIndex(vtkMRMLNode* node) const;
+  virtual int nodeIndex(vtkMRMLNode* node) const;
   /// fast function that only check the type of the node to know if it can be a child.
-  virtual bool         canBeAChild(vtkMRMLNode* node) const;
+  virtual bool canBeAChild(vtkMRMLNode* node) const;
   /// Must be reimplemented in derived classes
   /// Returns false in qMRMLSceneModel
-  virtual bool         canBeAParent(vtkMRMLNode* node) const;
+  virtual bool canBeAParent(vtkMRMLNode* node) const;
   /// Must be reimplemented in derived classes.
   /// Doesn't reparent and returns false by qMRMLSceneModel
-  virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
+  virtual bool reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
   /// Utility method that returns true if \a child has \a parent as parent,
   /// grandparent, great grandparent etc...
   /// \sa isAffiliatedNode()
@@ -321,11 +320,11 @@ protected:
   /// Update the items associated with the node and UID.
   void updateNodeItems(vtkMRMLNode* node, const QString& uid);
 
-  static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
-                               void* client_data, void* call_data);
+  static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event, void* client_data, void* call_data);
 
   /// Must be reimplemented in subclasses that add new column types
   virtual int maxColumnId() const;
+
 protected:
   QScopedPointer<qMRMLSceneModelPrivate> d_ptr;
 

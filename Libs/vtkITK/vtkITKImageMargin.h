@@ -30,7 +30,7 @@
 ///
 class VTK_ITK_EXPORT vtkITKImageMargin : public vtkSimpleImageToImageFilter
 {
- public:
+public:
   static vtkITKImageMargin* New();
   vtkTypeMacro(vtkITKImageMargin, vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -72,10 +72,10 @@ class VTK_ITK_EXPORT vtkITKImageMargin : public vtkSimpleImageToImageFilter
 protected:
   int BackgroundValue{ 0 };
   bool CalculateMarginInMM{ true };
-  double OuterMarginMM{0.0};
-  double InnerMarginMM{0.0};
-  double OuterMarginVoxels{0.0};
-  double InnerMarginVoxels{0.0};
+  double OuterMarginMM{ 0.0 };
+  double InnerMarginMM{ 0.0 };
+  double OuterMarginVoxels{ 0.0 };
+  double InnerMarginVoxels{ 0.0 };
 
 protected:
   vtkITKImageMargin();

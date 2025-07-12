@@ -99,8 +99,7 @@ bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transfor
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename, vtkMRMLScene* scene,
-  vtkMRMLMessageCollection* userMessages/*=nullptr*/)
+vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename, vtkMRMLScene* scene, vtkMRMLMessageCollection* userMessages /*=nullptr*/)
 {
   vtkNew<vtkMRMLTransformStorageNode> storageNode;
 
@@ -138,8 +137,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
 
   if (!storageNode->SupportedFileType(name.c_str()))
   {
-    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerTransformLogic::AddTransform",
-      "Unsupported transform file format: " << filename);
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerTransformLogic::AddTransform", "Unsupported transform file format: " << filename);
     return nullptr;
   }
 
@@ -156,8 +154,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
     {
       userMessages->AddMessages(storageNode->GetUserMessages());
     }
-    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerTransformLogic::AddTransform",
-      "Failed to read transform from file: " << filename);
+    vtkErrorToMessageCollectionMacro(userMessages, "vtkSlicerTransformLogic::AddTransform", "Failed to read transform from file: " << filename);
     return nullptr;
   }
 
@@ -171,21 +168,21 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::AddTransform(const char* filename
   storageNode->GetUserMessages()->ClearMessages();
   switch (GetTransformKind(generalTransform.GetPointer()))
   {
-  case TRANSFORM_LINEAR:
-    tnode = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLLinearTransformNode::New());
-    storageNode->ReadData(tnode.GetPointer());
-    break;
-  case TRANSFORM_BSPLINE:
-    tnode = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLBSplineTransformNode::New());
-    storageNode->ReadData(tnode.GetPointer());
-    break;
-  case TRANSFORM_GRID:
-    tnode = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLGridTransformNode::New());
-    storageNode->ReadData(tnode.GetPointer());
-    break;
-  default:
-    // No specialized classes for thin plate spline, general, and other transforms
-    tnode = generalTransform.GetPointer();
+    case TRANSFORM_LINEAR:
+      tnode = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLLinearTransformNode::New());
+      storageNode->ReadData(tnode.GetPointer());
+      break;
+    case TRANSFORM_BSPLINE:
+      tnode = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLBSplineTransformNode::New());
+      storageNode->ReadData(tnode.GetPointer());
+      break;
+    case TRANSFORM_GRID:
+      tnode = vtkSmartPointer<vtkMRMLTransformNode>::Take(vtkMRMLGridTransformNode::New());
+      storageNode->ReadData(tnode.GetPointer());
+      break;
+    default:
+      // No specialized classes for thin plate spline, general, and other transforms
+      tnode = generalTransform.GetPointer();
   }
 
   if (userMessages)
@@ -212,8 +209,10 @@ const char* vtkSlicerTransformLogic::GetVisualizationDisplacementMagnitudeScalar
 
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPointSet,
-  vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* gridToRAS, int* gridSize,
-  bool transformToWorld /* = true */)
+                                                         vtkMRMLTransformNode* inputTransformNode,
+                                                         vtkMatrix4x4* gridToRAS,
+                                                         int* gridSize,
+                                                         bool transformToWorld /* = true */)
 {
   vtkNew<vtkGeneralTransform> inputTransform;
   if (transformToWorld)
@@ -232,11 +231,11 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
   double transformedPoint_RAS[4] = { 0, 0, 0, 1 };
   double point_Grid[4] = { 0, 0, 0, 1 };
   int sampleIndex = 0;
-  for (point_Grid[2] = 0; point_Grid[2]<gridSize[2]; point_Grid[2]++)
+  for (point_Grid[2] = 0; point_Grid[2] < gridSize[2]; point_Grid[2]++)
   {
-    for (point_Grid[1] = 0; point_Grid[1]<gridSize[1]; point_Grid[1]++)
+    for (point_Grid[1] = 0; point_Grid[1] < gridSize[1]; point_Grid[1]++)
     {
-      for (point_Grid[0] = 0; point_Grid[0]<gridSize[0]; point_Grid[0]++)
+      for (point_Grid[0] = 0; point_Grid[0] < gridSize[0]; point_Grid[0]++)
       {
         gridToRAS->MultiplyPoint(point_Grid, point_RAS);
         inputTransform->TransformPoint(point_RAS, transformedPoint_RAS);
@@ -251,15 +250,16 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
 
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPointSet,
-  vtkMRMLTransformNode* inputTransformNode, vtkPoints* samplePositions_RAS,
-  bool transformToWorld /* = true */)
+                                                         vtkMRMLTransformNode* inputTransformNode,
+                                                         vtkPoints* samplePositions_RAS,
+                                                         bool transformToWorld /* = true */)
 {
   if (!inputTransformNode)
   {
     return;
   }
 
-  //Will contain the corresponding vectors for outputPointSet
+  // Will contain the corresponding vectors for outputPointSet
   int numOfSamples = samplePositions_RAS->GetNumberOfPoints();
   vtkNew<vtkDoubleArray> sampleVectors_RAS;
   sampleVectors_RAS->Initialize();
@@ -310,9 +310,15 @@ void vtkSlicerTransformLogic::GetTransformedPointSamples(vtkPointSet* outputPoin
 /// and stores it in an unstructured grid.
 /// pointGroupSize: the number of points will be N*pointGroupSize (the actual number will be returned in numGridPoints[3])
 //----------------------------------------------------------------------------
-void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* outputPointSet, vtkMRMLTransformNode* inputTransformNode,
-  vtkMatrix4x4* sliceToRAS, double* fieldOfViewOrigin, double* fieldOfViewSize,
-  double pointSpacing, int pointGroupSize/*=1*/, int* numGridPoints/*=0*/, vtkPoints* samplePositions_RAS /*=nullptr*/)
+void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* outputPointSet,
+                                                                vtkMRMLTransformNode* inputTransformNode,
+                                                                vtkMatrix4x4* sliceToRAS,
+                                                                double* fieldOfViewOrigin,
+                                                                double* fieldOfViewSize,
+                                                                double pointSpacing,
+                                                                int pointGroupSize /*=1*/,
+                                                                int* numGridPoints /*=0*/,
+                                                                vtkPoints* samplePositions_RAS /*=nullptr*/)
 {
   if (samplePositions_RAS)
   {
@@ -337,10 +343,10 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* out
   }
   else
   {
-    int numOfPointsX = floor(fieldOfViewSize[0] / (pointSpacing*pointGroupSize))*pointGroupSize;
-    int numOfPointsY = floor(fieldOfViewSize[1] / (pointSpacing*pointGroupSize))*pointGroupSize;
-    double xOfs = (fieldOfViewSize[0] - (numOfPointsX*pointSpacing)) / 2 - fieldOfViewSize[0] / 2 + fieldOfViewOrigin[0];
-    double yOfs = (fieldOfViewSize[1] - (numOfPointsY*pointSpacing)) / 2 - fieldOfViewSize[1] / 2 + fieldOfViewOrigin[1];
+    int numOfPointsX = floor(fieldOfViewSize[0] / (pointSpacing * pointGroupSize)) * pointGroupSize;
+    int numOfPointsY = floor(fieldOfViewSize[1] / (pointSpacing * pointGroupSize)) * pointGroupSize;
+    double xOfs = (fieldOfViewSize[0] - (numOfPointsX * pointSpacing)) / 2 - fieldOfViewSize[0] / 2 + fieldOfViewOrigin[0];
+    double yOfs = (fieldOfViewSize[1] - (numOfPointsY * pointSpacing)) / 2 - fieldOfViewSize[1] / 2 + fieldOfViewOrigin[1];
 
     int gridSize[3] = { numOfPointsX + 1, numOfPointsY + 1, 1 };
 
@@ -380,10 +386,7 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* out
   {
     chosenVector = projectedVectors->GetTuple3(i);
     dot = chosenVector[0] * sliceNormal_RAS[0] + chosenVector[1] * sliceNormal_RAS[1] + chosenVector[2] * sliceNormal_RAS[2];
-    projectedVectors->SetTuple3(i,
-      chosenVector[0] - dot*sliceNormal_RAS[0],
-      chosenVector[1] - dot*sliceNormal_RAS[1],
-      chosenVector[2] - dot*sliceNormal_RAS[2]);
+    projectedVectors->SetTuple3(i, chosenVector[0] - dot * sliceNormal_RAS[0], chosenVector[1] - dot * sliceNormal_RAS[1], chosenVector[2] - dot * sliceNormal_RAS[2]);
   }
   projectedVectors->SetName("ProjectedDisplacementVector");
   outputPointSet->GetPointData()->SetActiveAttribute(GetVisualizationDisplacementMagnitudeScalarName(), vtkDataSetAttributes::SCALARS);
@@ -391,7 +394,9 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(vtkPointSet* out
 
 //----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImageData* magnitudeImage,
-  vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS, bool transformToWorld /* = true */)
+                                                                         vtkMRMLTransformNode* inputTransformNode,
+                                                                         vtkMatrix4x4* ijkToRAS,
+                                                                         bool transformToWorld /* = true */)
 {
   if (!magnitudeImage || !inputTransformNode || !ijkToRAS)
   {
@@ -434,10 +439,8 @@ bool vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImag
         pointDislocationVector_RAS[1] = transformedPoint_RAS[1] - point_RAS[1];
         pointDislocationVector_RAS[2] = transformedPoint_RAS[2] - point_RAS[2];
 
-        float mag = sqrt(
-          pointDislocationVector_RAS[0] * pointDislocationVector_RAS[0] +
-          pointDislocationVector_RAS[1] * pointDislocationVector_RAS[1] +
-          pointDislocationVector_RAS[2] * pointDislocationVector_RAS[2]);
+        float mag = sqrt(pointDislocationVector_RAS[0] * pointDislocationVector_RAS[0] + pointDislocationVector_RAS[1] * pointDislocationVector_RAS[1]
+                         + pointDislocationVector_RAS[2] * pointDislocationVector_RAS[2]);
 
         *(voxelPtr++) = mag;
       }
@@ -449,7 +452,9 @@ bool vtkSlicerTransformLogic::GetTransformedPointSamplesAsMagnitudeImage(vtkImag
 
 //----------------------------------------------------------------------------
 vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform(vtkMRMLTransformNode* inputTransformNode,
-  vtkMRMLVolumeNode* referenceVolumeNode, bool magnitude/*=true*/, vtkMRMLVolumeNode* existingOutputVolumeNode /* = nullptr */)
+                                                                                  vtkMRMLVolumeNode* referenceVolumeNode,
+                                                                                  bool magnitude /*=true*/,
+                                                                                  vtkMRMLVolumeNode* existingOutputVolumeNode /* = nullptr */)
 {
   if (inputTransformNode == nullptr)
   {
@@ -514,8 +519,8 @@ vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransfor
     }
     else
     {
-      vtkErrorMacro("vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform: non-linearly transformed reference volume is not supported." \
-        " Harden or remove the transform from of the reference volume.");
+      vtkErrorMacro("vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransform: non-linearly transformed reference volume is not supported."
+                    " Harden or remove the transform from of the reference volume.");
       if (outputVolumeNode != existingOutputVolumeNode)
       {
         scene->RemoveNode(outputVolumeNode);
@@ -567,7 +572,8 @@ vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransfor
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTransformNode* inputTransformNode,
-  vtkMRMLVolumeNode* referenceVolumeNode /* = nullptr */, vtkMRMLTransformNode* existingOutputTransformNode /* = nullptr */)
+                                                                      vtkMRMLVolumeNode* referenceVolumeNode /* = nullptr */,
+                                                                      vtkMRMLTransformNode* existingOutputTransformNode /* = nullptr */)
 {
   if (inputTransformNode == nullptr)
   {
@@ -576,7 +582,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
   }
   if ((referenceVolumeNode == nullptr || referenceVolumeNode->GetImageData() == nullptr) && (existingOutputTransformNode == nullptr))
   {
-    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: either a valid reference volume node" \
+    vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform failed: either a valid reference volume node"
                   " or an existing output transform node has to be specified");
     return nullptr;
   }
@@ -604,9 +610,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
   }
   // Create/get grid transform
   vtkOrientedGridTransform* outputGridTransform = vtkOrientedGridTransform::SafeDownCast(
-    outputGridTransformNode->GetTransformToParentAs("vtkOrientedGridTransform",
-    false /* don't report conversion error */,
-    true /* we would like to modify the transform */));
+    outputGridTransformNode->GetTransformToParentAs("vtkOrientedGridTransform", false /* don't report conversion error */, true /* we would like to modify the transform */));
   if (outputGridTransform == nullptr)
   {
     // we cannot reuse the existing transform, create a new one
@@ -634,8 +638,8 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
     }
     else
     {
-      vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform: non-linearly transformed reference volume" \
-       " is not supported. Harden or remove the transform from of the reference volume.");
+      vtkErrorMacro("vtkSlicerTransformLogic::ConvertToGridTransform: non-linearly transformed reference volume"
+                    " is not supported. Harden or remove the transform from of the reference volume.");
       if (outputGridTransformNode != existingOutputTransformNode)
       {
         scene->RemoveNode(outputGridTransformNode);
@@ -648,9 +652,7 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
     for (int c = 0; c < 3; c++)
     {
       origin[c] = ijkToRas->GetElement(c, 3);
-      spacing[c] = sqrt(ijkToRas->Element[0][c] * ijkToRas->Element[0][c]
-        + ijkToRas->Element[1][c] * ijkToRas->Element[1][c]
-        + ijkToRas->Element[2][c] * ijkToRas->Element[2][c]);
+      spacing[c] = sqrt(ijkToRas->Element[0][c] * ijkToRas->Element[0][c] + ijkToRas->Element[1][c] * ijkToRas->Element[1][c] + ijkToRas->Element[2][c] * ijkToRas->Element[2][c]);
       if (spacing[c] == 0)
       {
         // Prevent division by zero in case there is a projection matrix is in the transform chain
@@ -699,7 +701,9 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
 
 //----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageData* vectorImage,
-  vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* ijkToRAS, bool transformToWorld /* = true */)
+                                                                      vtkMRMLTransformNode* inputTransformNode,
+                                                                      vtkMatrix4x4* ijkToRAS,
+                                                                      bool transformToWorld /* = true */)
 {
   if (!vectorImage || !inputTransformNode || !ijkToRAS)
   {
@@ -749,28 +753,28 @@ bool vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(vtkImageDa
 
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetTransformedPointSamplesOnRoi(vtkPointSet* pointSet,
-  vtkMRMLTransformNode* inputTransformNode, vtkMatrix4x4* roiToRAS,
-  int* roiSize, double pointSpacingMm, int pointGroupSize/*=1*/, int* numGridPoints/*=0*/)
+                                                              vtkMRMLTransformNode* inputTransformNode,
+                                                              vtkMatrix4x4* roiToRAS,
+                                                              int* roiSize,
+                                                              double pointSpacingMm,
+                                                              int pointGroupSize /*=1*/,
+                                                              int* numGridPoints /*=0*/)
 {
-  double roiSpacing[3] =
-  {
-    sqrt(roiToRAS->Element[0][0] * roiToRAS->Element[0][0]
-      + roiToRAS->Element[1][0] * roiToRAS->Element[1][0] + roiToRAS->Element[2][0] * roiToRAS->Element[2][0]),
-    sqrt(roiToRAS->Element[0][1] * roiToRAS->Element[0][1]
-      + roiToRAS->Element[1][1] * roiToRAS->Element[1][1] + roiToRAS->Element[2][1] * roiToRAS->Element[2][1]),
-    sqrt(roiToRAS->Element[0][2] * roiToRAS->Element[0][2]
-      + roiToRAS->Element[1][2] * roiToRAS->Element[1][2] + roiToRAS->Element[2][2] * roiToRAS->Element[2][2])
+  double roiSpacing[3] = {
+    sqrt(roiToRAS->Element[0][0] * roiToRAS->Element[0][0] + roiToRAS->Element[1][0] * roiToRAS->Element[1][0] + roiToRAS->Element[2][0] * roiToRAS->Element[2][0]),
+    sqrt(roiToRAS->Element[0][1] * roiToRAS->Element[0][1] + roiToRAS->Element[1][1] * roiToRAS->Element[1][1] + roiToRAS->Element[2][1] * roiToRAS->Element[2][1]),
+    sqrt(roiToRAS->Element[0][2] * roiToRAS->Element[0][2] + roiToRAS->Element[1][2] * roiToRAS->Element[1][2] + roiToRAS->Element[2][2] * roiToRAS->Element[2][2])
   };
 
   double roiSizeMm[3] = { roiSize[0] * roiSpacing[0], roiSize[1] * roiSpacing[1], roiSize[2] * roiSpacing[2] };
 
-  int numOfPointsX = floor(roiSizeMm[0] / (pointSpacingMm*pointGroupSize) + 0.5)*pointGroupSize;
-  int numOfPointsY = floor(roiSizeMm[1] / (pointSpacingMm*pointGroupSize) + 0.5)*pointGroupSize;
-  int numOfPointsZ = floor(roiSizeMm[2] / (pointSpacingMm*pointGroupSize) + 0.5)*pointGroupSize;
+  int numOfPointsX = floor(roiSizeMm[0] / (pointSpacingMm * pointGroupSize) + 0.5) * pointGroupSize;
+  int numOfPointsY = floor(roiSizeMm[1] / (pointSpacingMm * pointGroupSize) + 0.5) * pointGroupSize;
+  int numOfPointsZ = floor(roiSizeMm[2] / (pointSpacingMm * pointGroupSize) + 0.5) * pointGroupSize;
 
-  double xOfs = (roiSizeMm[0] - (numOfPointsX*pointSpacingMm)) / 2.0 / roiSpacing[0];
-  double yOfs = (roiSizeMm[1] - (numOfPointsY*pointSpacingMm)) / 2.0 / roiSpacing[1];
-  double zOfs = (roiSizeMm[2] - (numOfPointsZ*pointSpacingMm)) / 2.0 / roiSpacing[2];
+  double xOfs = (roiSizeMm[0] - (numOfPointsX * pointSpacingMm)) / 2.0 / roiSpacing[0];
+  double yOfs = (roiSizeMm[1] - (numOfPointsY * pointSpacingMm)) / 2.0 / roiSpacing[1];
+  double zOfs = (roiSizeMm[2] - (numOfPointsZ * pointSpacingMm)) / 2.0 / roiSpacing[2];
 
   int gridSize[3] = { numOfPointsX + 1, numOfPointsY + 1, numOfPointsZ + 1 };
 
@@ -803,8 +807,10 @@ void vtkSlicerTransformLogic::GetTransformedPointSamplesOnRoi(vtkPointSet* point
 
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
-  vtkMRMLTransformDisplayNode* displayNode, vtkMatrix4x4* roiToRAS, int* roiSize,
-  vtkPoints* samplePositions_RAS)
+                                                      vtkMRMLTransformDisplayNode* displayNode,
+                                                      vtkMatrix4x4* roiToRAS,
+                                                      int* roiSize,
+                                                      vtkPoints* samplePositions_RAS)
 {
   vtkNew<vtkUnstructuredGrid> pointSet;
   vtkMRMLTransformNode* inputTransformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
@@ -818,7 +824,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
   }
 
   vtkNew<vtkTransformVisualizerGlyph3D> glyphFilter;
-  glyphFilter->SetScaleFactor(displayNode->GetGlyphScalePercent()*0.01);
+  glyphFilter->SetScaleFactor(displayNode->GetGlyphScalePercent() * 0.01);
   glyphFilter->SetColorModeToColorByScalar();
   glyphFilter->OrientOn();
   glyphFilter->SetInputData(pointSet.GetPointer());
@@ -831,33 +837,33 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
 
   switch (displayNode->GetGlyphType())
   {
-    //Arrows
+    // Arrows
     case vtkMRMLTransformDisplayNode::GLYPH_TYPE_ARROW:
     {
       vtkNew<vtkArrowSource> arrowSource;
-      arrowSource->SetTipLength(displayNode->GetGlyphTipLengthPercent()*0.01);
-      arrowSource->SetTipRadius(displayNode->GetGlyphDiameterMm()*0.5);
+      arrowSource->SetTipLength(displayNode->GetGlyphTipLengthPercent() * 0.01);
+      arrowSource->SetTipRadius(displayNode->GetGlyphDiameterMm() * 0.5);
       arrowSource->SetTipResolution(displayNode->GetGlyphResolution());
-      arrowSource->SetShaftRadius(arrowSource->GetTipRadius()*0.01*displayNode->GetGlyphShaftDiameterPercent());
+      arrowSource->SetShaftRadius(arrowSource->GetTipRadius() * 0.01 * displayNode->GetGlyphShaftDiameterPercent());
       arrowSource->SetShaftResolution(displayNode->GetGlyphResolution());
       glyphFilter->SetScaleDirectional(true);
       glyphFilter->SetScaleModeToScaleByVector();
       glyphFilter->SetSourceConnection(arrowSource->GetOutputPort());
       break;
     }
-    //Cones
+    // Cones
     case vtkMRMLTransformDisplayNode::GLYPH_TYPE_CONE:
     {
       vtkNew<vtkConeSource> coneSource;
       coneSource->SetHeight(1.0);
-      coneSource->SetRadius(displayNode->GetGlyphDiameterMm()*0.5);
+      coneSource->SetRadius(displayNode->GetGlyphDiameterMm() * 0.5);
       coneSource->SetResolution(displayNode->GetGlyphResolution());
       glyphFilter->SetScaleDirectional(true);
       glyphFilter->SetScaleModeToScaleByVector();
       glyphFilter->SetSourceConnection(coneSource->GetOutputPort());
       break;
     }
-    //Spheres
+    // Spheres
     case vtkMRMLTransformDisplayNode::GLYPH_TYPE_SPHERE:
     {
       vtkNew<vtkSphereSource> sphereSource;
@@ -877,16 +883,19 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
 
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
-  vtkMRMLTransformDisplayNode* displayNode, vtkMatrix4x4* sliceToRAS,
-  double* fieldOfViewOrigin, double* fieldOfViewSize, vtkPoints* samplePositions_RAS)
+                                                      vtkMRMLTransformDisplayNode* displayNode,
+                                                      vtkMatrix4x4* sliceToRAS,
+                                                      double* fieldOfViewOrigin,
+                                                      double* fieldOfViewSize,
+                                                      vtkPoints* samplePositions_RAS)
 {
-  //Pre-processing
+  // Pre-processing
   vtkNew<vtkUnstructuredGrid> pointSet;
   pointSet->Initialize();
 
   vtkMRMLTransformNode* inputTransformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
-  vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(pointSet.GetPointer(), inputTransformNode, sliceToRAS,
-    fieldOfViewOrigin, fieldOfViewSize, displayNode->GetGlyphSpacingMm(), 1, nullptr, samplePositions_RAS);
+  vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(
+    pointSet.GetPointer(), inputTransformNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize, displayNode->GetGlyphSpacingMm(), 1, nullptr, samplePositions_RAS);
 
   vtkNew<vtkTransformVisualizerGlyph3D> glyphFilter;
   vtkNew<vtkTransform> rotateArrow;
@@ -939,7 +948,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
   glyph2DSource->SetScale(1);
   glyph2DSource->SetFilled(0);
 
-  glyphFilter->SetScaleFactor(displayNode->GetGlyphScalePercent()*0.01);
+  glyphFilter->SetScaleFactor(displayNode->GetGlyphScalePercent() * 0.01);
   glyphFilter->SetScaleDirectional(false);
   glyphFilter->SetColorModeToColorByScalar();
   glyphFilter->SetSourceTransform(rotateArrow.GetPointer());
@@ -961,7 +970,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
 int vtkSlicerTransformLogic::GetGridSubdivision(vtkMRMLTransformDisplayNode* displayNode)
 {
   int subdivision = floor(displayNode->GetGridSpacingMm() / displayNode->GetGridResolutionMm() + 0.5);
-  if (subdivision<1)
+  if (subdivision < 1)
   {
     // avoid infinite loops and division by zero errors
     subdivision = 1;
@@ -970,8 +979,7 @@ int vtkSlicerTransformLogic::GetGridSubdivision(vtkMRMLTransformDisplayNode* dis
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData,
-  vtkMRMLTransformDisplayNode* displayNode, int numGridPoints[3], vtkPolyData* warpedGrid/*=nullptr*/)
+void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData, vtkMRMLTransformDisplayNode* displayNode, int numGridPoints[3], vtkPolyData* warpedGrid /*=nullptr*/)
 {
   vtkNew<vtkCellArray> grid;
   vtkNew<vtkLine> line;
@@ -985,8 +993,8 @@ void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData,
     {
       for (int i = 0; i < numGridPoints[0] - 1; i++)
       {
-        line->GetPointIds()->SetId(0, (i)+(j*numGridPoints[0]) + (k*numGridPoints[0] * numGridPoints[1]));
-        line->GetPointIds()->SetId(1, (i + 1) + (j*numGridPoints[0]) + (k*numGridPoints[0] * numGridPoints[1]));
+        line->GetPointIds()->SetId(0, (i) + (j * numGridPoints[0]) + (k * numGridPoints[0] * numGridPoints[1]));
+        line->GetPointIds()->SetId(1, (i + 1) + (j * numGridPoints[0]) + (k * numGridPoints[0] * numGridPoints[1]));
         grid->InsertNextCell(line.GetPointer());
       }
     }
@@ -999,8 +1007,8 @@ void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData,
     {
       for (int i = 0; i < numGridPoints[0]; i += gridSubdivision)
       {
-        line->GetPointIds()->SetId(0, (i)+((j)*numGridPoints[0]) + (k*numGridPoints[0] * numGridPoints[1]));
-        line->GetPointIds()->SetId(1, (i)+((j + 1)*numGridPoints[0]) + (k*numGridPoints[0] * numGridPoints[1]));
+        line->GetPointIds()->SetId(0, (i) + ((j)*numGridPoints[0]) + (k * numGridPoints[0] * numGridPoints[1]));
+        line->GetPointIds()->SetId(1, (i) + ((j + 1) * numGridPoints[0]) + (k * numGridPoints[0] * numGridPoints[1]));
         grid->InsertNextCell(line.GetPointer());
       }
     }
@@ -1013,8 +1021,8 @@ void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData,
     {
       for (int i = 0; i < numGridPoints[0]; i += gridSubdivision)
       {
-        line->GetPointIds()->SetId(0, (i)+((j)*numGridPoints[0]) + ((k)*numGridPoints[0] * numGridPoints[1]));
-        line->GetPointIds()->SetId(1, (i)+((j)*numGridPoints[0]) + ((k + 1)*numGridPoints[0] * numGridPoints[1]));
+        line->GetPointIds()->SetId(0, (i) + ((j)*numGridPoints[0]) + ((k)*numGridPoints[0] * numGridPoints[1]));
+        line->GetPointIds()->SetId(1, (i) + ((j)*numGridPoints[0]) + ((k + 1) * numGridPoints[0] * numGridPoints[1]));
         grid->InsertNextCell(line.GetPointer());
       }
     }
@@ -1026,30 +1034,31 @@ void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData,
   {
     vtkNew<vtkWarpVector> warp;
     warp->SetInputData(gridPolyData);
-    warp->SetScaleFactor(displayNode->GetGridScalePercent()*0.01);
+    warp->SetScaleFactor(displayNode->GetGridScalePercent() * 0.01);
     warp->Update();
     vtkPolyData* polyoutput = warp->GetPolyDataOutput();
 
     int idx = polyoutput->GetPointData()->AddArray(gridPolyData->GetPointData()->GetArray(GetVisualizationDisplacementMagnitudeScalarName()));
     polyoutput->GetPointData()->SetActiveAttribute(idx, vtkDataSetAttributes::SCALARS);
     warpedGrid->ShallowCopy(polyoutput);
-    //warpedGrid->Update();
+    // warpedGrid->Update();
   }
 }
 
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetGridVisualization2d(vtkPolyData* output,
-  vtkMRMLTransformDisplayNode* displayNode, vtkMatrix4x4* sliceToRAS,
-  double* fieldOfViewOrigin, double* fieldOfViewSize)
+                                                     vtkMRMLTransformDisplayNode* displayNode,
+                                                     vtkMatrix4x4* sliceToRAS,
+                                                     double* fieldOfViewOrigin,
+                                                     double* fieldOfViewSize)
 {
   double pointSpacing = displayNode->GetGridSpacingMm() / GetGridSubdivision(displayNode);
   int numGridPoints[3] = { 0 };
 
   vtkNew<vtkPolyData> gridPolyData;
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
-  GetTransformedPointSamplesOnSlice(gridPolyData.GetPointer(), transformNode,
-    sliceToRAS, fieldOfViewOrigin, fieldOfViewSize, pointSpacing,
-    GetGridSubdivision(displayNode), numGridPoints);
+  GetTransformedPointSamplesOnSlice(
+    gridPolyData.GetPointer(), transformNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize, pointSpacing, GetGridSubdivision(displayNode), numGridPoints);
 
   if (displayNode->GetGridShowNonWarped())
   {
@@ -1096,15 +1105,14 @@ void vtkSlicerTransformLogic::GetGridVisualization3d(vtkPolyData* output, vtkMRM
 
   vtkNew<vtkPolyData> gridPolyData;
   vtkMRMLTransformNode* inputTransformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
-  GetTransformedPointSamplesOnRoi(gridPolyData.GetPointer(), inputTransformNode,
-    roiToRAS, roiSize, pointSpacing, GetGridSubdivision(displayNode), numGridPoints);
+  GetTransformedPointSamplesOnRoi(gridPolyData.GetPointer(), inputTransformNode, roiToRAS, roiSize, pointSpacing, GetGridSubdivision(displayNode), numGridPoints);
 
   vtkNew<vtkPolyData> warpedGridPolyData;
   CreateGrid(gridPolyData.GetPointer(), displayNode, numGridPoints, warpedGridPolyData.GetPointer());
 
   vtkNew<vtkTubeFilter> tubeFilter;
   tubeFilter->SetInputData(warpedGridPolyData.GetPointer());
-  tubeFilter->SetRadius(displayNode->GetGridLineDiameterMm()*0.5);
+  tubeFilter->SetRadius(displayNode->GetGridLineDiameterMm() * 0.5);
   tubeFilter->SetNumberOfSides(8);
   tubeFilter->Update();
   output->ShallowCopy(tubeFilter->GetOutput());
@@ -1112,8 +1120,10 @@ void vtkSlicerTransformLogic::GetGridVisualization3d(vtkPolyData* output, vtkMRM
 
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetContourVisualization2d(vtkPolyData* output,
-  vtkMRMLTransformDisplayNode* displayNode, vtkMatrix4x4* sliceToRAS,
-  double* fieldOfViewOrigin, double* fieldOfViewSize)
+                                                        vtkMRMLTransformDisplayNode* displayNode,
+                                                        vtkMatrix4x4* sliceToRAS,
+                                                        double* fieldOfViewOrigin,
+                                                        double* fieldOfViewSize)
 {
   vtkNew<vtkImageData> magnitudeImage;
   double pointSpacing = displayNode->GetContourResolutionMm();
@@ -1144,7 +1154,7 @@ void vtkSlicerTransformLogic::GetContourVisualization2d(vtkPolyData* output,
 
   vtkNew<vtkContourFilter> contourFilter;
   double* levels = displayNode->GetContourLevelsMm();
-  for (unsigned int i = 0; i<displayNode->GetNumberOfContourLevels(); i++)
+  for (unsigned int i = 0; i < displayNode->GetNumberOfContourLevels(); i++)
   {
     contourFilter->SetValue(i, levels[i]);
   }
@@ -1165,14 +1175,10 @@ void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtk
 {
   // Compute the sampling image grid position, orientation, and spacing
   double pointSpacingMm = displayNode->GetContourResolutionMm();
-  double roiSpacingMm[3] =
-  {
-    sqrt(roiToRAS->Element[0][0] * roiToRAS->Element[0][0]
-      + roiToRAS->Element[1][0] * roiToRAS->Element[1][0] + roiToRAS->Element[2][0] * roiToRAS->Element[2][0]),
-    sqrt(roiToRAS->Element[0][1] * roiToRAS->Element[0][1]
-      + roiToRAS->Element[1][1] * roiToRAS->Element[1][1] + roiToRAS->Element[2][1] * roiToRAS->Element[2][1]),
-    sqrt(roiToRAS->Element[0][2] * roiToRAS->Element[0][2]
-      + roiToRAS->Element[1][2] * roiToRAS->Element[1][2] + roiToRAS->Element[2][2] * roiToRAS->Element[2][2])
+  double roiSpacingMm[3] = {
+    sqrt(roiToRAS->Element[0][0] * roiToRAS->Element[0][0] + roiToRAS->Element[1][0] * roiToRAS->Element[1][0] + roiToRAS->Element[2][0] * roiToRAS->Element[2][0]),
+    sqrt(roiToRAS->Element[0][1] * roiToRAS->Element[0][1] + roiToRAS->Element[1][1] * roiToRAS->Element[1][1] + roiToRAS->Element[2][1] * roiToRAS->Element[2][1]),
+    sqrt(roiToRAS->Element[0][2] * roiToRAS->Element[0][2] + roiToRAS->Element[1][2] * roiToRAS->Element[1][2] + roiToRAS->Element[2][2] * roiToRAS->Element[2][2])
   };
   double pointSpacingX_ROI = pointSpacingMm / roiSpacingMm[0];
   double pointSpacingY_ROI = pointSpacingMm / roiSpacingMm[1];
@@ -1211,7 +1217,7 @@ void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtk
   // Contput contours
   vtkNew<vtkContourFilter> contourFilter;
   double* levels = displayNode->GetContourLevelsMm();
-  for (unsigned int i = 0; i<displayNode->GetNumberOfContourLevels(); i++)
+  for (unsigned int i = 0; i < displayNode->GetNumberOfContourLevels(); i++)
   {
     contourFilter->SetValue(i, levels[i]);
   }
@@ -1230,8 +1236,9 @@ void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtk
 
 //----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output_RAS,
-  vtkMRMLTransformDisplayNode* displayNode, vtkMRMLSliceNode* sliceNode,
-  vtkMRMLMarkupsNode* glyphPointsNode /*=nullptr*/)
+                                                 vtkMRMLTransformDisplayNode* displayNode,
+                                                 vtkMRMLSliceNode* sliceNode,
+                                                 vtkMRMLMarkupsNode* glyphPointsNode /*=nullptr*/)
 {
   if (displayNode == nullptr || output_RAS == nullptr || sliceNode == nullptr)
   {
@@ -1254,8 +1261,12 @@ bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output_RAS,
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output, vtkMRMLTransformDisplayNode* displayNode,
-  vtkMatrix4x4* sliceToRAS, double* fieldOfViewOrigin, double* fieldOfViewSize, vtkPoints* samplePositions_RAS /*=nullptr*/)
+bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output,
+                                                 vtkMRMLTransformDisplayNode* displayNode,
+                                                 vtkMatrix4x4* sliceToRAS,
+                                                 double* fieldOfViewOrigin,
+                                                 double* fieldOfViewSize,
+                                                 vtkPoints* samplePositions_RAS /*=nullptr*/)
 {
   if (displayNode == nullptr || output == nullptr || sliceToRAS == nullptr || fieldOfViewOrigin == nullptr || fieldOfViewSize == nullptr)
   {
@@ -1272,15 +1283,9 @@ bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output, vtkMRMLTra
 
   switch (displayNode->GetVisualizationMode())
   {
-  case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH:
-    GetGlyphVisualization2d(output, displayNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize, samplePositions_RAS);
-    break;
-  case vtkMRMLTransformDisplayNode::VIS_MODE_GRID:
-    GetGridVisualization2d(output, displayNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize);
-    break;
-  case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR:
-    GetContourVisualization2d(output, displayNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize);
-    break;
+    case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH: GetGlyphVisualization2d(output, displayNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize, samplePositions_RAS); break;
+    case vtkMRMLTransformDisplayNode::VIS_MODE_GRID: GetGridVisualization2d(output, displayNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize); break;
+    case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR: GetContourVisualization2d(output, displayNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize); break;
   }
 
   return true;
@@ -1288,7 +1293,9 @@ bool vtkSlicerTransformLogic::GetVisualization2d(vtkPolyData* output, vtkMRMLTra
 
 //----------------------------------------------------------------------------
 bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
-  vtkMRMLTransformDisplayNode* displayNode, vtkMRMLNode* regionNode, vtkMRMLMarkupsNode* glyphPointsNode/*=nullptr*/)
+                                                 vtkMRMLTransformDisplayNode* displayNode,
+                                                 vtkMRMLNode* regionNode,
+                                                 vtkMRMLMarkupsNode* glyphPointsNode /*=nullptr*/)
 {
   if (displayNode == nullptr || output == nullptr || regionNode == nullptr)
   {
@@ -1333,7 +1340,7 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
   {
     double roiDiameter_Object[3] = { 0.0, 0.0, 0.0 };
     markupsPlaneNode->GetSize(roiDiameter_Object);
-    double planeBounds[4] = {0.0, 0.0, 0.0, 0.0};
+    double planeBounds[4] = { 0.0, 0.0, 0.0, 0.0 };
     markupsPlaneNode->GetPlaneBounds(planeBounds);
     double roiCorner_Object[4] = { planeBounds[0], planeBounds[2], 0.0, 1.0 };
     double roiCorner_World[4] = { 0.0, 0.0, 0.0, 1.0 };
@@ -1388,8 +1395,11 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTransformDisplayNode* displayNode,
-  vtkMatrix4x4* roiToRAS, int* roiSize, vtkPoints* samplePositions_RAS /*=nullptr*/)
+bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
+                                                 vtkMRMLTransformDisplayNode* displayNode,
+                                                 vtkMatrix4x4* roiToRAS,
+                                                 int* roiSize,
+                                                 vtkPoints* samplePositions_RAS /*=nullptr*/)
 {
   if (displayNode == nullptr || output == nullptr || roiToRAS == nullptr || roiSize == nullptr)
   {
@@ -1409,21 +1419,21 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output, vtkMRMLTra
   displayNode->SetScalarVisibility(1);
   switch (displayNode->GetVisualizationMode())
   {
-  case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH:
-    displayNode->SetBackfaceCulling(1);
-    displayNode->SetOpacity(1);
-    GetGlyphVisualization3d(output, displayNode, roiToRAS, roiSize, samplePositions_RAS);
-    break;
-  case vtkMRMLTransformDisplayNode::VIS_MODE_GRID:
-    displayNode->SetBackfaceCulling(1);
-    displayNode->SetOpacity(1);
-    GetGridVisualization3d(output, displayNode, roiToRAS, roiSize);
-    break;
-  case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR:
-    displayNode->SetBackfaceCulling(0);
-    displayNode->SetOpacity(displayNode->GetContourOpacity());
-    GetContourVisualization3d(output, displayNode, roiToRAS, roiSize);
-    break;
+    case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH:
+      displayNode->SetBackfaceCulling(1);
+      displayNode->SetOpacity(1);
+      GetGlyphVisualization3d(output, displayNode, roiToRAS, roiSize, samplePositions_RAS);
+      break;
+    case vtkMRMLTransformDisplayNode::VIS_MODE_GRID:
+      displayNode->SetBackfaceCulling(1);
+      displayNode->SetOpacity(1);
+      GetGridVisualization3d(output, displayNode, roiToRAS, roiSize);
+      break;
+    case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR:
+      displayNode->SetBackfaceCulling(0);
+      displayNode->SetOpacity(displayNode->GetContourOpacity());
+      GetContourVisualization3d(output, displayNode, roiToRAS, roiSize);
+      break;
   }
 
   displayNode->EndModify(oldModify);
@@ -1523,10 +1533,7 @@ void vtkSlicerTransformLogic::GetMarkupsAsPoints(vtkMRMLMarkupsNode* markupsNode
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTransformLogic::GetTransformedNodes(
-  vtkMRMLScene* scene, vtkMRMLTransformNode* transformNode,
-  std::vector<vtkMRMLDisplayableNode*>& transformedNodes,
-  bool recursive)
+void vtkSlicerTransformLogic::GetTransformedNodes(vtkMRMLScene* scene, vtkMRMLTransformNode* transformNode, std::vector<vtkMRMLDisplayableNode*>& transformedNodes, bool recursive)
 {
   if (!scene || !transformNode || !transformNode->GetID())
   {
@@ -1537,28 +1544,23 @@ void vtkSlicerTransformLogic::GetTransformedNodes(
   scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
   for (size_t i = 0; i < nodes.size(); ++i)
   {
-    vtkMRMLDisplayableNode* node =
-      vtkMRMLDisplayableNode::SafeDownCast(nodes[i]);
+    vtkMRMLDisplayableNode* node = vtkMRMLDisplayableNode::SafeDownCast(nodes[i]);
     if (node->GetTransformNodeID() && //
-      strcmp(transformNode->GetID(), node->GetTransformNodeID()) == 0)
+        strcmp(transformNode->GetID(), node->GetTransformNodeID()) == 0)
     {
       transformedNodes.push_back(node);
 
-      vtkMRMLTransformNode* childTransformNode =
-        vtkMRMLTransformNode::SafeDownCast(node);
+      vtkMRMLTransformNode* childTransformNode = vtkMRMLTransformNode::SafeDownCast(node);
       if (recursive && childTransformNode)
       {
-        vtkSlicerTransformLogic::GetTransformedNodes(
-          scene, childTransformNode, transformedNodes, recursive);
+        vtkSlicerTransformLogic::GetTransformedNodes(scene, childTransformNode, transformedNodes, recursive);
       }
     }
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTransformLogic::GetNodesRASBounds(
-  const std::vector<vtkMRMLDisplayableNode*>& nodes,
-  double bounds[6])
+void vtkSlicerTransformLogic::GetNodesRASBounds(const std::vector<vtkMRMLDisplayableNode*>& nodes, double bounds[6])
 {
   vtkBoundingBox box;
   for (size_t i = 0; i < nodes.size(); ++i)
@@ -1576,9 +1578,7 @@ void vtkSlicerTransformLogic::GetNodesRASBounds(
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTransformLogic::GetNodesBounds(
-  const std::vector<vtkMRMLDisplayableNode*>& nodes,
-  double bounds[6])
+void vtkSlicerTransformLogic::GetNodesBounds(const std::vector<vtkMRMLDisplayableNode*>& nodes, double bounds[6])
 {
   vtkBoundingBox box;
   for (size_t i = 0; i < nodes.size(); ++i)

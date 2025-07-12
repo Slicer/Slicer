@@ -32,7 +32,7 @@ Version:   $Revision: 1.2 $
 vtkMRMLVolumeDisplayNode::vtkMRMLVolumeDisplayNode()
 {
   // try setting a default greyscale color map
-  //this->SetDefaultColorMap(0);
+  // this->SetDefaultColorMap(0);
 }
 
 //----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ void vtkMRMLVolumeDisplayNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -65,11 +65,9 @@ void vtkMRMLVolumeDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=t
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller,
-                                                 unsigned long event,
-                                                 void* callData)
+void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
-  if (event ==  vtkCommand::ModifiedEvent)
+  if (event == vtkCommand::ModifiedEvent)
   {
     this->UpdateImageDataPipeline();
   }
@@ -97,19 +95,18 @@ void vtkMRMLVolumeDisplayNode::UpdateReferences()
 //---------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetImageDataConnection()
 {
-/*
-  if (!this->GetInputImageData())
-    {
-    return 0;
-    }
-  this->UpdateImageDataPipeline();
-*/
+  /*
+    if (!this->GetInputImageData())
+      {
+      return 0;
+      }
+    this->UpdateImageDataPipeline();
+  */
   return this->GetOutputImageDataConnection();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode
-::SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection)
+void vtkMRMLVolumeDisplayNode::SetInputImageDataConnection(vtkAlgorithmOutput* imageDataConnection)
 {
   if (this->GetInputImageDataConnection() == imageDataConnection)
   {
@@ -119,30 +116,24 @@ void vtkMRMLVolumeDisplayNode
   this->Modified();
 }
 //----------------------------------------------------------------------------
-vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode
-::GetInputImageDataConnection()
+vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetInputImageDataConnection()
 {
   return nullptr;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput* vtkNotUsed(imageDataConnection))
-{
-}
+void vtkMRMLVolumeDisplayNode::SetInputToImageDataPipeline(vtkAlgorithmOutput* vtkNotUsed(imageDataConnection)) {}
 
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLVolumeDisplayNode::GetInputImageData()
 {
   vtkAlgorithmOutput* imageConnection = this->GetInputImageDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : nullptr;
-  return vtkImageData::SafeDownCast(
-    producer ? producer->GetOutputDataObject(0) : nullptr);
+  return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : nullptr);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* vtkNotUsed(imageDataConnection))
-{
-}
+void vtkMRMLVolumeDisplayNode::SetBackgroundImageStencilDataConnection(vtkAlgorithmOutput* vtkNotUsed(imageDataConnection)) {}
 
 //----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilDataConnection()
@@ -155,8 +146,7 @@ vtkImageStencilData* vtkMRMLVolumeDisplayNode::GetBackgroundImageStencilData()
 {
   vtkAlgorithmOutput* imageConnection = this->GetBackgroundImageStencilDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : nullptr;
-  return vtkImageStencilData::SafeDownCast(
-    producer ? producer->GetOutputDataObject(0) : nullptr);
+  return vtkImageStencilData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -164,8 +154,7 @@ vtkImageData* vtkMRMLVolumeDisplayNode::GetOutputImageData()
 {
   vtkAlgorithmOutput* imageConnection = this->GetOutputImageDataConnection();
   vtkAlgorithm* producer = imageConnection ? imageConnection->GetProducer() : nullptr;
-  return vtkImageData::SafeDownCast(
-    producer ? producer->GetOutputDataObject(0) : nullptr);
+  return vtkImageData::SafeDownCast(producer ? producer->GetOutputDataObject(0) : nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -175,9 +164,7 @@ vtkAlgorithmOutput* vtkMRMLVolumeDisplayNode::GetOutputImageDataConnection()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::UpdateImageDataPipeline()
-{
-}
+void vtkMRMLVolumeDisplayNode::UpdateImageDataPipeline() {}
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::SetDefaultColorMap()

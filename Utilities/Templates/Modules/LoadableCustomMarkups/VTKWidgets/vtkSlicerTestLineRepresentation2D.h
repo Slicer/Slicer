@@ -62,16 +62,15 @@ class vtkActor2D;
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
-*/
-class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineRepresentation2D
-: public vtkSlicerLineRepresentation2D
+ */
+class VTK_SLICER_TEMPLATEKEY_MODULE_VTKWIDGETS_EXPORT vtkSlicerTestLineRepresentation2D : public vtkSlicerLineRepresentation2D
 {
 public:
   static vtkSlicerTestLineRepresentation2D* New();
   vtkTypeMacro(vtkSlicerTestLineRepresentation2D, vtkSlicerLineRepresentation2D);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData=nullptr) override;
+  void UpdateFromMRML(vtkMRMLNode* caller, unsigned long event, void* callData = nullptr) override;
 
   /// Methods to make this class behave as a vtkProp.
   void GetActors(vtkPropCollection*) override;

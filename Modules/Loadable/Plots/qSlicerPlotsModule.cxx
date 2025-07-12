@@ -76,7 +76,7 @@ QString qSlicerPlotsModule::helpText() const
 QString qSlicerPlotsModule::acknowledgementText() const
 {
   return tr("This module was originally developed by Davide Punzo, Kapteyn Astronomical Institute,"
-    " and was supported through the European Research Council grant nr. 291531.");
+            " and was supported through the European Research Council grant nr. 291531.");
 }
 
 //-----------------------------------------------------------------------------
@@ -112,7 +112,6 @@ void qSlicerPlotsModule::setup()
   shPlugin->setPlotsLogic(plotsLogic);
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(shPlugin);
 }
-
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerPlotsModule::createWidgetRepresentation()

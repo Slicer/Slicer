@@ -20,8 +20,7 @@
 // MRMLLogic includes
 #include <vtkMRMLAbstractLogic.h>
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic
-  : public vtkMRMLAbstractLogic
+class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerModuleLogic : public vtkMRMLAbstractLogic
 {
 public:
   /// The Usual vtk class functions
@@ -31,7 +30,7 @@ public:
 
   /// Get access to overall application state
   virtual vtkSlicerApplicationLogic* GetApplicationLogic();
-  //TODO virtual void SetApplicationLogic(vtkSlicerApplicationLogic* logic);
+  // TODO virtual void SetApplicationLogic(vtkSlicerApplicationLogic* logic);
 
   /// Convenience method for getting another module's logic from the application logic.
   virtual vtkMRMLAbstractLogic* GetModuleLogic(const char* moduleName);
@@ -40,12 +39,10 @@ public:
   void SetModuleShareDirectory(const std::string& shareDirectory);
 
 protected:
-
   vtkSlicerModuleLogic();
   ~vtkSlicerModuleLogic() override;
 
 private:
-
   vtkSlicerModuleLogic(const vtkSlicerModuleLogic&) = delete;
   void operator=(const vtkSlicerModuleLogic&) = delete;
 

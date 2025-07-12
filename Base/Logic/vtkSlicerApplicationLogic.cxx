@@ -48,10 +48,18 @@
 #include "vtkSlicerApplicationLogicRequests.h"
 
 //----------------------------------------------------------------------------
-class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask>> {};
-class ModifiedQueue : public std::queue<vtkSmartPointer<vtkObject>> {};
-class ReadDataQueue : public std::queue<DataRequest*> {};
-class WriteDataQueue : public std::queue<DataRequest*> {};
+class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask>>
+{
+};
+class ModifiedQueue : public std::queue<vtkSmartPointer<vtkObject>>
+{
+};
+class ReadDataQueue : public std::queue<DataRequest*>
+{
+};
+class WriteDataQueue : public std::queue<DataRequest*>
+{
+};
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerApplicationLogic);
@@ -102,13 +110,11 @@ vtkSlicerApplicationLogic::~vtkSlicerApplicationLogic()
 //----------------------------------------------------------------------------
 unsigned int vtkSlicerApplicationLogic::GetReadDataQueueSize()
 {
-  return static_cast<unsigned int>( (*this->InternalReadDataQueue).size() );
+  return static_cast<unsigned int>((*this->InternalReadDataQueue).size());
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerApplicationLogic::SetMRMLSceneDataIO(vtkMRMLScene* newMRMLScene,
-                                                   vtkMRMLRemoteIOLogic* remoteIOLogic,
-                                                   vtkDataIOManagerLogic* dataIOManagerLogic)
+void vtkSlicerApplicationLogic::SetMRMLSceneDataIO(vtkMRMLScene* newMRMLScene, vtkMRMLRemoteIOLogic* remoteIOLogic, vtkDataIOManagerLogic* dataIOManagerLogic)
 {
   if (remoteIOLogic)
   {
@@ -221,8 +227,7 @@ void vtkSlicerApplicationLogic::TerminateProcessingThread()
 }
 
 //----------------------------------------------------------------------------
-void
-vtkSlicerApplicationLogic::ProcessingThreaderCallback(vtkSlicerApplicationLogic* appLogic)
+void vtkSlicerApplicationLogic::ProcessingThreaderCallback(vtkSlicerApplicationLogic* appLogic)
 {
   if (!appLogic)
   {
@@ -283,8 +288,7 @@ void vtkSlicerApplicationLogic::ProcessProcessingTasks()
   }
 }
 
-void
-vtkSlicerApplicationLogic::NetworkingThreaderCallback(vtkSlicerApplicationLogic* appLogic)
+void vtkSlicerApplicationLogic::NetworkingThreaderCallback(vtkSlicerApplicationLogic* appLogic)
 {
   if (!appLogic)
   {
@@ -344,7 +348,7 @@ void vtkSlicerApplicationLogic::ProcessNetworkingTasks()
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask* task )
+int vtkSlicerApplicationLogic::ScheduleTask(vtkSlicerTask* task)
 {
   // only schedule a task if the processing task is up
   this->ProcessingThreadActiveLock.lock();
@@ -356,7 +360,7 @@ int vtkSlicerApplicationLogic::ScheduleTask( vtkSlicerTask* task )
   }
 
   this->ProcessingTaskQueueLock.lock();
-  (*this->InternalTaskQueue).push( task );
+  (*this->InternalTaskQueue).push(task);
   this->ProcessingTaskQueueLock.unlock();
   return true;
 }
@@ -399,8 +403,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char* refNode, con
   this->ReadDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
-  (*this->InternalReadDataQueue).push(
-    new ReadDataRequestFile(refNode, filename, displayData, deleteFile, uid));
+  (*this->InternalReadDataQueue).push(new ReadDataRequestFile(refNode, filename, displayData, deleteFile, uid));
   this->ReadDataQueueLock.unlock();
   return uid;
 }
@@ -484,18 +487,17 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestWriteData(const char* refNode, co
   this->WriteDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
-  (*this->InternalWriteDataQueue).push(
-    new WriteDataRequestFile(refNode, filename, uid) );
+  (*this->InternalWriteDataQueue).push(new WriteDataRequestFile(refNode, filename, uid));
   this->WriteDataQueueLock.unlock();
   return uid;
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestReadScene(
-    const std::string& filename,
-    std::vector<std::string> &targetIDs,
-    std::vector<std::string> &sourceIDs,
-    int displayData, int deleteFile)
+vtkMTimeType vtkSlicerApplicationLogic::RequestReadScene(const std::string& filename,
+                                                         std::vector<std::string>& targetIDs,
+                                                         std::vector<std::string>& sourceIDs,
+                                                         int displayData,
+                                                         int deleteFile)
 {
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock.lock();
@@ -510,8 +512,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestReadScene(
   this->ReadDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
-  (*this->InternalReadDataQueue).push(
-    new ReadDataRequestScene(targetIDs, sourceIDs, filename, displayData, deleteFile, uid));
+  (*this->InternalReadDataQueue).push(new ReadDataRequestScene(targetIDs, sourceIDs, filename, displayData, deleteFile, uid));
   this->ReadDataQueueLock.unlock();
   return uid;
 }
@@ -569,7 +570,7 @@ void vtkSlicerApplicationLogic::ProcessModified()
 
   // schedule the next timer sooner in case there is stuff in the queue
   // otherwise for a while later
-  int delay = (*this->InternalModifiedQueue).size() > 0 ? 0: 200;
+  int delay = (*this->InternalModifiedQueue).size() > 0 ? 0 : 200;
   this->InvokeEvent(vtkSlicerApplicationLogic::RequestModifiedEvent, &delay);
 }
 
@@ -603,14 +604,13 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     delete req;
   }
 
-  int delay = (*this->InternalReadDataQueue).size() > 0 ? 0: 200;
+  int delay = (*this->InternalReadDataQueue).size() > 0 ? 0 : 200;
   // schedule the next timer sooner in case there is stuff in the queue
   // otherwise for a while later
   this->InvokeEvent(vtkSlicerApplicationLogic::RequestReadDataEvent, &delay);
   if (uid)
   {
-    this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent,
-                      reinterpret_cast<void*>(uid));
+    this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent, reinterpret_cast<void*>(uid));
   }
 }
 
@@ -627,7 +627,7 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
   }
 
   // pull an object off the queue
-  DataRequest *req = nullptr;
+  DataRequest* req = nullptr;
   this->WriteDataQueueLock.lock();
   if ((*this->InternalWriteDataQueue).size() > 0)
   {
@@ -648,16 +648,13 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
     this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
     if (uid)
     {
-      this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent,
-        reinterpret_cast<void*>(uid));
+      this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent, reinterpret_cast<void*>(uid));
     }
   }
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath,
-                                                 const std::string& applicationHomeDir,
-                                                 const std::string& slicerRevision)
+bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath, const std::string& applicationHomeDir, const std::string& slicerRevision)
 {
   if (filePath.empty())
   {
@@ -689,8 +686,7 @@ bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath,
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
-                                                  const std::string& applicationHomeDir)
+bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath, const std::string& applicationHomeDir)
 {
   if (filePath.empty())
   {
@@ -710,27 +706,24 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
   std::string canonicalPath = itksys::SystemTools::GetRealPath(path.c_str());
   if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), applicationHomeDir.c_str()))
   {
-    bool isAppBuildTree = itksys::SystemTools::FileExists(
-          std::string(applicationHomeDir).append("/CMakeCache.txt").c_str(), true);
+    bool isAppBuildTree = itksys::SystemTools::FileExists(std::string(applicationHomeDir).append("/CMakeCache.txt").c_str(), true);
     if (isAppBuildTree)
     {
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
       // Check if plugin is installed as an extension
       {
-      std::string extensionInstallDir = itksys::SystemTools::GetRealPath(
-            applicationHomeDir + "/" Slicer_ORGANIZATION_DOMAIN "/" Slicer_EXTENSIONS_DIRBASENAME);
-      if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
-      {
-        return true;
+        std::string extensionInstallDir = itksys::SystemTools::GetRealPath(applicationHomeDir + "/" Slicer_ORGANIZATION_DOMAIN "/" Slicer_EXTENSIONS_DIRBASENAME);
+        if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
+        {
+          return true;
+        }
       }
-      }
       {
-      std::string extensionInstallDir = itksys::SystemTools::GetRealPath(
-            applicationHomeDir + "/" Slicer_ORGANIZATION_NAME "/" Slicer_EXTENSIONS_DIRBASENAME);
-      if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
-      {
-        return true;
-      }
+        std::string extensionInstallDir = itksys::SystemTools::GetRealPath(applicationHomeDir + "/" Slicer_ORGANIZATION_NAME "/" Slicer_EXTENSIONS_DIRBASENAME);
+        if (itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), extensionInstallDir.c_str()))
+        {
+          return true;
+        }
       }
 #endif
       return false;
@@ -744,25 +737,21 @@ bool vtkSlicerApplicationLogic::IsPluginInstalled(const std::string& filePath,
 
   // If the plugin filePath is in a build directory, it is is not installed.
   std::string root;
-  std::string canonicalPathWithoutRoot =
-      itksys::SystemTools::SplitPathRootComponent(canonicalPath.c_str(), &root);
+  std::string canonicalPathWithoutRoot = itksys::SystemTools::SplitPathRootComponent(canonicalPath.c_str(), &root);
   do
   {
-    if (itksys::SystemTools::FileExists(
-          (root + canonicalPathWithoutRoot + "/CMakeCache.txt").c_str(), true))
+    if (itksys::SystemTools::FileExists((root + canonicalPathWithoutRoot + "/CMakeCache.txt").c_str(), true))
     {
       return false;
     }
     canonicalPathWithoutRoot = itksys::SystemTools::GetParentDirectory(canonicalPathWithoutRoot.c_str());
-  }
-  while (!canonicalPathWithoutRoot.empty());
+  } while (!canonicalPathWithoutRoot.empty());
 
   return true;
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
-  const std::string& applicationHomeDir, const std::string& slicerRevision)
+bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath, const std::string& applicationHomeDir, const std::string& slicerRevision)
 {
   if (filePath.empty())
   {
@@ -775,14 +764,12 @@ bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
     return false;
   }
 
-  std::string canonicalApplicationHomeDir =
-      itksys::SystemTools::GetRealPath(applicationHomeDir.c_str());
+  std::string canonicalApplicationHomeDir = itksys::SystemTools::GetRealPath(applicationHomeDir.c_str());
 
   std::string path = itksys::SystemTools::GetFilenamePath(filePath);
   std::string canonicalPath = itksys::SystemTools::GetRealPath(path.c_str());
 
-  bool isBuiltIn = itksys::SystemTools::StringStartsWith(
-        canonicalPath.c_str(), canonicalApplicationHomeDir.c_str());
+  bool isBuiltIn = itksys::SystemTools::StringStartsWith(canonicalPath.c_str(), canonicalApplicationHomeDir.c_str());
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   // Extensions may be stored in the application home directory (it is always the case on macOS and for Windows/Linux
@@ -799,15 +786,13 @@ bool vtkSlicerApplicationLogic::IsPluginBuiltIn(const std::string& filePath,
   (void)slicerRevision;
 #endif
 
-  return  isBuiltIn;
+  return isBuiltIn;
 }
 
 namespace
 {
 //----------------------------------------------------------------------------
-std::string GetModuleHomeDirectory(const std::string& filePath,
-                                   std::string& slicerSubDir,
-                                   std::string& moduleTypeSubDir)
+std::string GetModuleHomeDirectory(const std::string& filePath, std::string& slicerSubDir, std::string& moduleTypeSubDir)
 {
   if (filePath.empty())
   {
@@ -853,16 +838,14 @@ std::string GetModuleHomeDirectory(const std::string& filePath,
   moduleTypeSubDir = components.at(components.size() - 2 - offset);
   slicerSubDir = components.at(components.size() - 3 - offset);
 
-  std::string homeDirectory =
-      itksys::SystemTools::JoinPath(components.begin(), components.end() - 4 - offset);
+  std::string homeDirectory = itksys::SystemTools::JoinPath(components.begin(), components.end() - 4 - offset);
   return homeDirectory;
 }
 
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
-std::string vtkSlicerApplicationLogic::GetModuleShareDirectory(const std::string& moduleName,
-                                                               const std::string& filePath)
+std::string vtkSlicerApplicationLogic::GetModuleShareDirectory(const std::string& moduleName, const std::string& filePath)
 {
   if (moduleName.empty())
   {
@@ -957,8 +940,9 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
     }
     catch (...)
     {
-      vtkWarningMacro("vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground failed: " \
-        "Invalid SLICER_BACKGROUND_THREAD_PRIORITY value (" << priorityStr << "), expected an integer");
+      vtkWarningMacro("vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground failed: "
+                      "Invalid SLICER_BACKGROUND_THREAD_PRIORITY value ("
+                      << priorityStr << "), expected an integer");
     }
   }
 
@@ -979,8 +963,8 @@ void vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground()
   int ret = setpriority(which, pid, priority);
   if (ret != 0)
   {
-    vtkWarningMacro("vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground failed: " \
-      "setpriority did not succeed. You need root privileges to set a priority < 0.");
+    vtkWarningMacro("vtkSlicerApplicationLogic::SetCurrentThreadPriorityToBackground failed: "
+                    "setpriority did not succeed. You need root privileges to set a priority < 0.");
   }
 #endif
 }

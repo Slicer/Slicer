@@ -31,10 +31,8 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
 
-
 // VTK includes
 #include <vtkNew.h>
-
 
 int vtkSlicerMarkupsLogicTest3(int, char*[])
 {
@@ -57,13 +55,12 @@ int vtkSlicerMarkupsLogicTest3(int, char*[])
   vtkNew<vtkSlicerAnnotationModuleLogic> annotLogic;
   annotLogic->SetMRMLScene(scene.GetPointer());
 
-
   // add some annotations
   vtkMRMLAnnotationHierarchyNode* fid1Parent = vtkMRMLAnnotationHierarchyNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLAnnotationHierarchyNode"));
   for (int n = 0; n < 10; n++)
   {
     vtkNew<vtkMRMLAnnotationFiducialNode> annotFid;
-    double p1[3] = {1.1, -2.2, 3.3};
+    double p1[3] = { 1.1, -2.2, 3.3 };
     p1[0] = static_cast<double>(n);
     annotFid->SetFiducialCoordinates(p1);
     annotFid->Initialize(scene.GetPointer());
@@ -77,7 +74,7 @@ int vtkSlicerMarkupsLogicTest3(int, char*[])
   for (int n = 0; n < 5; n++)
   {
     vtkNew<vtkMRMLAnnotationFiducialNode> annotFid;
-    double p1[3] = {5.5, -6.6, 0.0};
+    double p1[3] = { 5.5, -6.6, 0.0 };
     p1[2] = static_cast<double>(n);
     annotFid->SetFiducialCoordinates(p1);
     annotFid->Initialize(scene.GetPointer());
@@ -110,16 +107,15 @@ int vtkSlicerMarkupsLogicTest3(int, char*[])
   }
   else
   {
-    std::cout << "Converted annotation fiducials to " << numMarkupsFiducials
-              << " markups fiducial lists" << std::endl;
+    std::cout << "Converted annotation fiducials to " << numMarkupsFiducials << " markups fiducial lists" << std::endl;
   }
-//  vtkIndent indent;
-//  for (int n = 0; n < numMarkupsFiducials; ++n)
-//    {
-//    vtkMRMLNode* mrmlNode = scene->GetNthNodeByClass(n, "vtkMRMLMarkupsFiducialNode");
-//    std::cout << "\nConverted Markups node " << n << ":" << std::endl;
-//    mrmlNode->PrintSelf(std::cout, indent);
-//    }
+  //  vtkIndent indent;
+  //  for (int n = 0; n < numMarkupsFiducials; ++n)
+  //    {
+  //    vtkMRMLNode* mrmlNode = scene->GetNthNodeByClass(n, "vtkMRMLMarkupsFiducialNode");
+  //    std::cout << "\nConverted Markups node " << n << ":" << std::endl;
+  //    mrmlNode->PrintSelf(std::cout, indent);
+  //    }
 
   // clean up before testing
   applicationLogic->SetMRMLScene(nullptr);
@@ -137,24 +133,21 @@ int vtkSlicerMarkupsLogicTest3(int, char*[])
       std::string desc = markupsFid->GetNthControlPointDescription(3);
       if (desc.compare("testing description") != 0)
       {
-        std::cerr << "Failed to get the expected description on markup 3, got: "
-                  << desc.c_str() << std::endl;
+        std::cerr << "Failed to get the expected description on markup 3, got: " << desc.c_str() << std::endl;
         return EXIT_FAILURE;
       }
       std::string assocNodeID = markupsFid->GetNthControlPointAssociatedNodeID(4);
       if (assocNodeID.compare("vtkMRMLScalarVolumeNode4") != 0)
       {
-        std::cerr << "Failed to get the expected associated node id on markup 4, got: "
-                  << assocNodeID.c_str() << std::endl;
+        std::cerr << "Failed to get the expected associated node id on markup 4, got: " << assocNodeID.c_str() << std::endl;
         return EXIT_FAILURE;
       }
       vtkVector3d posVector = markupsFid->GetNthControlPointPositionVector(0);
       double* pos = posVector.GetData();
-      double expectedPos[3] = {5.5, -6.6, 0.0};
+      double expectedPos[3] = { 5.5, -6.6, 0.0 };
       if (vtkMath::Distance2BetweenPoints(pos, expectedPos) > 0.01)
       {
-        std::cerr << "Expected 0th position of 5.5, -6.6, 0.0, but got: "
-                  << pos[0] << "," << pos[1] << "," << pos[2] << std::endl;
+        std::cerr << "Expected 0th position of 5.5, -6.6, 0.0, but got: " << pos[0] << "," << pos[1] << "," << pos[2] << std::endl;
         return EXIT_FAILURE;
       }
       vtkMRMLMarkupsDisplayNode* dispNode = markupsFid->GetMarkupsDisplayNode();
@@ -179,8 +172,7 @@ int vtkSlicerMarkupsLogicTest3(int, char*[])
       }
       else
       {
-        std::cerr << "Second markups node doesn't have a display node!"
-                  << std::endl;
+        std::cerr << "Second markups node doesn't have a display node!" << std::endl;
         return EXIT_FAILURE;
       }
     }

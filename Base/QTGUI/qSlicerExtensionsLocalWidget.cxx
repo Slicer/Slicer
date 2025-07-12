@@ -48,13 +48,13 @@
 class qSlicerExtensionsLocalWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerExtensionsLocalWidget);
+
 protected:
   qSlicerExtensionsLocalWidget* const q_ptr;
 
 public:
   typedef qSlicerExtensionsLocalWidgetPrivate Self;
   typedef qSlicerExtensionsManagerModel::ExtensionMetadataType ExtensionMetadataType;
-
 
   enum DataRoles
   {
@@ -64,7 +64,7 @@ public:
     InstalledExtensionUpdatedRole,
     OnServerExtensionRevisionRole,
     ChangeLogUrlRole,
-    OnServerExtensionMissingRole,  // confirmed that the extension is missing from the server
+    OnServerExtensionMissingRole, // confirmed that the extension is missing from the server
     OnServerExtensionUpdatedRole,
     UpdateAvailableRole,
     MoreLinkRole,
@@ -86,10 +86,8 @@ public:
   // Add/update/remove extension item
   QListWidgetItem* updateExtensionItem(const QString& extensionName);
 
-  QString extensionIconPath(const QString& extensionName,
-                            const QUrl& extensionIconUrl);
-  QIcon extensionIcon(const QString& extensionName,
-                      const QUrl& extensionIconUrl);
+  QString extensionIconPath(const QString& extensionName, const QUrl& extensionIconUrl);
+  QIcon extensionIcon(const QString& extensionName, const QUrl& extensionIconUrl);
 
   QSignalMapper InstallButtonMapper;
   QSignalMapper AddBookmarkButtonMapper;
@@ -122,7 +120,9 @@ namespace
 {
 
 // --------------------------------------------------------------------------
-class qSlicerExtensionsButtonBox : public QWidget, public Ui_qSlicerExtensionsButtonBox
+class qSlicerExtensionsButtonBox
+  : public QWidget
+  , public Ui_qSlicerExtensionsButtonBox
 {
 public:
   typedef QWidget Superclass;
@@ -196,13 +196,14 @@ public:
 class qSlicerExtensionsItemDelegate : public QStyledItemDelegate
 {
 public:
-  qSlicerExtensionsItemDelegate(qSlicerExtensionsLocalWidget* list,
-                                QObject* parent = nullptr)
-    : QStyledItemDelegate(parent), List(list) {}
+  qSlicerExtensionsItemDelegate(qSlicerExtensionsLocalWidget* list, QObject* parent = nullptr)
+    : QStyledItemDelegate(parent)
+    , List(list)
+  {
+  }
 
   // --------------------------------------------------------------------------
-  void paint(QPainter* painter, const QStyleOptionViewItem& option,
-                     const QModelIndex& index) const override
+  void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override
   {
     QStyleOptionViewItem modifiedOption = option;
     QListWidgetItem* const item = this->List->itemFromIndex(index);
@@ -241,17 +242,13 @@ void qSlicerExtensionsLocalWidgetPrivate::init()
 }
 
 // --------------------------------------------------------------------------
-QString qSlicerExtensionsLocalWidgetPrivate::extensionIconPath(
-  const QString& extensionName, const QUrl& extensionIconUrl)
+QString qSlicerExtensionsLocalWidgetPrivate::extensionIconPath(const QString& extensionName, const QUrl& extensionIconUrl)
 {
-  return QString("%1/%2-icon.%3").arg(
-    this->ExtensionsManagerModel->extensionsInstallPath(),
-    extensionName, QFileInfo(extensionIconUrl.path()).suffix());
+  return QString("%1/%2-icon.%3").arg(this->ExtensionsManagerModel->extensionsInstallPath(), extensionName, QFileInfo(extensionIconUrl.path()).suffix());
 }
 
 // --------------------------------------------------------------------------
-QIcon qSlicerExtensionsLocalWidgetPrivate::extensionIcon(
-  const QString& extensionName, const QUrl& extensionIconUrl)
+QIcon qSlicerExtensionsLocalWidgetPrivate::extensionIcon(const QString& extensionName, const QUrl& extensionIconUrl)
 {
   Q_Q(qSlicerExtensionsLocalWidget);
 
@@ -303,7 +300,6 @@ QIcon qSlicerExtensionsLocalWidgetPrivate::extensionIcon(
     {
       qDebug() << "Icon download for " << extensionName << " already in progress. Active icon downloads: " << this->IconDownloads.keys();
     }
-
   }
 
   return QIcon(":/Icons/ExtensionDefaultIcon.png");
@@ -315,8 +311,7 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::extensionItem(const QStrin
   Q_Q(const qSlicerExtensionsLocalWidget);
 
   QAbstractItemModel* model = q->model();
-  const QModelIndexList indices = model->match(model->index(0, 0, QModelIndex()),
-    Self::NameRole, extensionName, 2, Qt::MatchExactly);
+  const QModelIndexList indices = model->match(model->index(0, 0, QModelIndex()), Self::NameRole, extensionName, 2, Qt::MatchExactly);
 
   Q_ASSERT(indices.count() < 2);
   if (indices.count() == 1)
@@ -338,7 +333,10 @@ public:
 
   // --------------------------------------------------------------------------
   qSlicerExtensionsDescriptionLabel(const QString& extensionName, const QString& slicerRevision, QListWidgetItem* item)
-    : QLabel(), ExtensionName(extensionName), SlicerRevision(slicerRevision), WidgetItem(item)
+    : QLabel()
+    , ExtensionName(extensionName)
+    , SlicerRevision(slicerRevision)
+    , WidgetItem(item)
   {
     QTextOption textOption = this->Text.defaultTextOption();
     textOption.setWrapMode(QTextOption::NoWrap);
@@ -353,23 +351,17 @@ public:
     this->update();
   }
 
-  QListWidgetItem* widgetItem()
-  {
-    return this->WidgetItem;
-  }
+  QListWidgetItem* widgetItem() { return this->WidgetItem; }
 
   // --------------------------------------------------------------------------
   QSize sizeHint() const override
   {
     QSize hint = this->Superclass::sizeHint();
-    hint.setHeight(qRound(this->Text.size().height() + 0.5) +
-                   this->margin() * 2);
+    hint.setHeight(qRound(this->Text.size().height() + 0.5) + this->margin() * 2);
     return hint;
   }
 
-
 protected:
-
   QString versionString(const QString& revision, const QString& isoDateStr)
   {
     // Get formatted date
@@ -412,47 +404,44 @@ protected:
     bool missing = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionMissingRole).toBool();
     bool scheduledForUpdate = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ScheduledForUpdateRole).toBool();
 
-    QString installedVersion = this->versionString(
-      this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionRevisionRole).toString(),
-      this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionUpdatedRole).toString());
+    QString installedVersion = this->versionString(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionRevisionRole).toString(),
+                                                   this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionUpdatedRole).toString());
 
     // Status line
     QString statusText;
     if (!available && missing) // "missing" is checked so that we don't display this message when there have been no update checks before
     {
       statusText += QString("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
-        "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ").arg(this->WarningColor) +
-        qSlicerExtensionsLocalWidget::tr("Not found for this version of the application (r%1)")
-        .arg(this->SlicerRevision) + QLatin1String("</p>");
+                            "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ")
+                      .arg(this->WarningColor)
+                    + qSlicerExtensionsLocalWidget::tr("Not found for this version of the application (r%1)").arg(this->SlicerRevision) + QLatin1String("</p>");
     }
     if (!compatible)
     {
       statusText += QLatin1String("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
-        "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ").arg(this->WarningColor) +
-        qSlicerExtensionsLocalWidget::tr("Incompatible with Slicer r%1 [built for r%2]")
-        .arg(this->SlicerRevision)
-        .arg(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionSlicerVersionRole).toString()) + QLatin1String("</p>");
+                                  "<img style=\"float: left\" src=\":/Icons/ExtensionIncompatible.svg\"/> ")
+                      .arg(this->WarningColor)
+                    + qSlicerExtensionsLocalWidget::tr("Incompatible with Slicer r%1 [built for r%2]")
+                        .arg(this->SlicerRevision)
+                        .arg(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::InstalledExtensionSlicerVersionRole).toString())
+                    + QLatin1String("</p>");
     }
     if (this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::UpdateAvailableRole).toBool() && !scheduledForUpdate)
     {
-      QString onServerVersion = this->versionString(
-        this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionRevisionRole).toString(),
-        this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionUpdatedRole).toString());
+      QString onServerVersion = this->versionString(this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionRevisionRole).toString(),
+                                                    this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::OnServerExtensionUpdatedRole).toString());
 
       QString changeLogText;
       QString changeLogUrl = this->WidgetItem->data(qSlicerExtensionsLocalWidgetPrivate::ChangeLogUrlRole).toString();
       if (!changeLogUrl.isEmpty())
       {
-        changeLogText = QString(" <a href=\"%1\">%2</a>")
-          .arg(changeLogUrl)
-          .arg(qSlicerExtensionsLocalWidget::tr("Change log..."));
+        changeLogText = QString(" <a href=\"%1\">%2</a>").arg(changeLogUrl).arg(qSlicerExtensionsLocalWidget::tr("Change log..."));
       }
       statusText += QString("<p style=\"font-weight: bold; font-size: 80%; color: %1;\">"
-        "<img style=\"float: left\""
-        " src=\":/Icons/ExtensionUpdateAvailable.svg\"/> ").arg(this->InfoColor);
-      statusText += qSlicerExtensionsLocalWidget::tr("An update is available. Installed: %1. Available: %2.")
-        .arg(installedVersion)
-        .arg(onServerVersion);
+                            "<img style=\"float: left\""
+                            " src=\":/Icons/ExtensionUpdateAvailable.svg\"/> ")
+                      .arg(this->InfoColor);
+      statusText += qSlicerExtensionsLocalWidget::tr("An update is available. Installed: %1. Available: %2.").arg(installedVersion).arg(onServerVersion);
       statusText += changeLogText + QLatin1String("</p>");
     }
     if (statusText.isEmpty())
@@ -545,8 +534,7 @@ protected:
   // --------------------------------------------------------------------------
   QString linkUnderCursor(const QPoint& pos)
   {
-    const int caretPos =
-      this->Text.documentLayout()->hitTest(pos, Qt::FuzzyHit);
+    const int caretPos = this->Text.documentLayout()->hitTest(pos, Qt::FuzzyHit);
     if (caretPos < 0)
     {
       return QString();
@@ -607,10 +595,10 @@ protected:
   const QString InfoColor{ "#2c70c8" };
   QListWidgetItem* WidgetItem;
 
-  QString MoreLinkText; // used for computing available space for the extension description
+  QString MoreLinkText;    // used for computing available space for the extension description
   QString LinkUnderCursor; // used for detecting if the mouse is over the "More" link
-  QTextDocument Text; // stores displayed text and format
-  int LastWidth{ -1 };  // to avoid assembling Text on every paint
+  QTextDocument Text;      // stores displayed text and format
+  int LastWidth{ -1 };     // to avoid assembling Text on every paint
 };
 
 // --------------------------------------------------------------------------
@@ -618,7 +606,8 @@ class qSlicerExtensionsItemWidget : public QWidget
 {
 public:
   qSlicerExtensionsItemWidget(qSlicerExtensionsDescriptionLabel* label, QWidget* parent = nullptr)
-    : QWidget(parent), Label(label)
+    : QWidget(parent)
+    , Label(label)
   {
     QHBoxLayout* layout = new QHBoxLayout;
     layout->addWidget(label, 1);
@@ -653,8 +642,7 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::updateExtensionItem(const 
     return nullptr;
   }
   QListWidgetItem* item = this->extensionItem(extensionName);
-  qSlicerExtensionsManagerModel::ExtensionMetadataType metadata =
-    this->ExtensionsManagerModel->extensionMetadata(extensionName);
+  qSlicerExtensionsManagerModel::ExtensionMetadataType metadata = this->ExtensionsManagerModel->extensionMetadata(extensionName);
   qSlicerExtensionsManagerModel::ExtensionMetadataType metadataFromServer =
     this->ExtensionsManagerModel->extensionMetadata(extensionName, qSlicerExtensionsManagerModel::MetadataServer);
 
@@ -754,8 +742,8 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::updateExtensionItem(const 
   item->setData(Self::InstalledExtensionUpdatedRole, metadata["installed"].toBool() ? metadata["updated"].toString() : QString());
   item->setData(Self::InstalledExtensionSlicerVersionRole, metadata["installed"].toBool() ? metadata["slicer_revision"].toString() : QString());
   item->setData(Self::OnServerExtensionRevisionRole, onServerRevision);
-  item->setData(Self::OnServerExtensionMissingRole, metadataFromServer["revision"].toString().isEmpty()
-    && this->ExtensionsManagerModel->lastUpdateTimeExtensionsMetadataFromServer().isValid());
+  item->setData(Self::OnServerExtensionMissingRole,
+                metadataFromServer["revision"].toString().isEmpty() && this->ExtensionsManagerModel->lastUpdateTimeExtensionsMetadataFromServer().isValid());
   item->setData(Self::ChangeLogUrlRole, changeLogUrl);
   item->setData(Self::OnServerExtensionUpdatedRole, metadataFromServer["updated"].toString());
   item->setData(Self::UpdateAvailableRole, q->extensionsManagerModel()->isExtensionUpdateAvailable(extensionName));
@@ -780,7 +768,6 @@ QListWidgetItem* qSlicerExtensionsLocalWidgetPrivate::updateExtensionItem(const 
     qSlicerExtensionsItemWidget* widget = new qSlicerExtensionsItemWidget(label);
 
     widget->updateFromWidgetItem();
-
 
     this->AddBookmarkButtonMapper.setMapping(widget->ButtonBox->AddBookmarkButton, extensionName);
     QObject::connect(widget->ButtonBox->AddBookmarkButton, SIGNAL(clicked()), &this->AddBookmarkButtonMapper, SLOT(map()));
@@ -861,11 +848,10 @@ void qSlicerExtensionsLocalWidget::setExtensionsManagerModel(qSlicerExtensionsMa
   disconnect(this, SLOT(onExtensionMetadataUpdated(QString)));
   disconnect(this, SLOT(onExtensionScheduledForUninstall(QString)));
   disconnect(this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
-  disconnect(this, SLOT(onModelExtensionEnabledChanged(QString,bool)));
-  disconnect(this, SLOT(onExtensionBookmarkedChanged(QString,bool)));
-  disconnect(this, SLOT(setExtensionUpdateDownloadProgress(QString,qint64,qint64)));
-  disconnect(this, SLOT(setExtensionInstallDownloadProgress(QString,qint64,qint64)));
-
+  disconnect(this, SLOT(onModelExtensionEnabledChanged(QString, bool)));
+  disconnect(this, SLOT(onExtensionBookmarkedChanged(QString, bool)));
+  disconnect(this, SLOT(setExtensionUpdateDownloadProgress(QString, qint64, qint64)));
+  disconnect(this, SLOT(setExtensionInstallDownloadProgress(QString, qint64, qint64)));
 
   d->ExtensionsManagerModel = model;
 
@@ -875,17 +861,15 @@ void qSlicerExtensionsLocalWidget::setExtensionsManagerModel(qSlicerExtensionsMa
     connect(d->ExtensionsManagerModel, SIGNAL(extensionInstalled(QString)), this, SLOT(onExtensionInstalled(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionUninstalled(QString)), this, SLOT(onExtensionUninstalled(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionMetadataUpdated(QString)), this, SLOT(onExtensionMetadataUpdated(QString)));
-    connect(d->ExtensionsManagerModel, SIGNAL(extensionBookmarkedChanged(QString, bool)), this, SLOT(onExtensionBookmarkedChanged(QString,bool)));
+    connect(d->ExtensionsManagerModel, SIGNAL(extensionBookmarkedChanged(QString, bool)), this, SLOT(onExtensionBookmarkedChanged(QString, bool)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionScheduledForUninstall(QString)), this, SLOT(onExtensionScheduledForUninstall(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionCancelledScheduleForUninstall(QString)), this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
-    connect(d->ExtensionsManagerModel, SIGNAL(extensionEnabledChanged(QString,bool)), this, SLOT(onModelExtensionEnabledChanged(QString,bool)));
+    connect(d->ExtensionsManagerModel, SIGNAL(extensionEnabledChanged(QString, bool)), this, SLOT(onModelExtensionEnabledChanged(QString, bool)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionUpdateAvailable(QString)), this, SLOT(setExtensionUpdateAvailable(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionScheduledForUpdate(QString)), this, SLOT(setExtensionUpdateScheduled(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionCancelledScheduleForUpdate(QString)), this, SLOT(setExtensionUpdateCanceled(QString)));
-    connect(d->ExtensionsManagerModel, SIGNAL(updateDownloadProgress(QString,qint64,qint64)),
-      this, SLOT(setExtensionUpdateDownloadProgress(QString,qint64,qint64)));
-    connect(d->ExtensionsManagerModel, SIGNAL(installDownloadProgress(QString, qint64, qint64)),
-      this, SLOT(setExtensionInstallDownloadProgress(QString, qint64, qint64)));
+    connect(d->ExtensionsManagerModel, SIGNAL(updateDownloadProgress(QString, qint64, qint64)), this, SLOT(setExtensionUpdateDownloadProgress(QString, qint64, qint64)));
+    connect(d->ExtensionsManagerModel, SIGNAL(installDownloadProgress(QString, qint64, qint64)), this, SLOT(setExtensionInstallDownloadProgress(QString, qint64, qint64)));
     this->onModelUpdated();
   }
 }
@@ -1064,8 +1048,7 @@ void qSlicerExtensionsLocalWidget::setExtensionUpdateCanceled(const QString& ext
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsLocalWidget::setExtensionUpdateDownloadProgress(
-  const QString& extensionName, qint64 received, qint64 total)
+void qSlicerExtensionsLocalWidget::setExtensionUpdateDownloadProgress(const QString& extensionName, qint64 received, qint64 total)
 {
   Q_D(qSlicerExtensionsLocalWidget);
   QListWidgetItem* const item = d->extensionItem(extensionName);
@@ -1103,8 +1086,7 @@ void qSlicerExtensionsLocalWidget::setExtensionUpdateDownloadProgress(
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsLocalWidget::setExtensionInstallDownloadProgress(
-  const QString& extensionName, qint64 received, qint64 total)
+void qSlicerExtensionsLocalWidget::setExtensionInstallDownloadProgress(const QString& extensionName, qint64 received, qint64 total)
 {
   Q_D(qSlicerExtensionsLocalWidget);
   QListWidgetItem* const item = d->extensionItem(extensionName);
@@ -1195,10 +1177,11 @@ void qSlicerExtensionsLocalWidget::onLinkActivated(const QString& link)
     {
       {
         QString extensionName = link.mid(7); // remove leading "slicer:"
-        url.setPath(url.path() + QString("/view/%1/%2/%3")                 //
-                    .arg(extensionName)                                    //
-                    .arg(this->extensionsManagerModel()->slicerRevision()) //
-                    .arg(this->extensionsManagerModel()->slicerOs()));
+        url.setPath(url.path()
+                    + QString("/view/%1/%2/%3")                                //
+                        .arg(extensionName)                                    //
+                        .arg(this->extensionsManagerModel()->slicerRevision()) //
+                        .arg(this->extensionsManagerModel()->slicerOs()));
       }
     }
     else

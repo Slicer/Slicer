@@ -31,8 +31,7 @@
 
 class qSlicerModulePanelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel
-  : public qSlicerAbstractModulePanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel : public qSlicerAbstractModulePanel
 {
   Q_OBJECT
 

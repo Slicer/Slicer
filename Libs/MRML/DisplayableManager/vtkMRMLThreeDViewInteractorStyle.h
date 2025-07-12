@@ -48,8 +48,7 @@ class vtkWorldPointPicker;
 /// \sa vtkInteractorStyleTrackballActor
 /// \sa vtkInteractorStyleJoystickCamera
 /// \sa vtkInteractorStyleJoystickActor
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewInteractorStyle :
-  public vtkMRMLViewInteractorStyle
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewInteractorStyle : public vtkMRMLViewInteractorStyle
 {
 public:
   static vtkMRMLThreeDViewInteractorStyle* New();
@@ -70,8 +69,8 @@ public:
 
   ///
   /// Get/Set the CameraNode
-  vtkGetObjectMacro ( CameraNode, vtkMRMLCameraNode );
-  vtkSetObjectMacro ( CameraNode, vtkMRMLCameraNode );
+  vtkGetObjectMacro(CameraNode, vtkMRMLCameraNode);
+  vtkSetObjectMacro(CameraNode, vtkMRMLCameraNode);
 
   ///
   /// Reimplemented to set the default interactive update rate
@@ -83,8 +82,7 @@ protected:
 
   bool QuickPick(int x, int y, double pickPoint[3]);
 
-  void ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager* displayableManager,
-                                       unsigned long event, void* callData) override;
+  void ProcessDisplayableManagerEvents(vtkMRMLAbstractDisplayableManager* displayableManager, unsigned long event, void* callData) override;
 
   vtkMRMLCameraNode* CameraNode;
 

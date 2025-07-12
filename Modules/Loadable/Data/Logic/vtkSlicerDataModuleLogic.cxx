@@ -54,9 +54,7 @@ void vtkSlicerDataModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "AutoRemoveDisplayAndStorageNode: " <<
-    (AutoRemoveDisplayAndStorageNodes ? "On" : "Off") << "\n";
-
+  os << indent << "AutoRemoveDisplayAndStorageNode: " << (AutoRemoveDisplayAndStorageNodes ? "On" : "Off") << "\n";
 }
 
 //---------------------------------------------------------------------------
@@ -82,7 +80,6 @@ void vtkSlicerDataModuleLogic::UpdateFromMRMLScene()
   this->SceneChangedOn();
 }
 
-
 //----------------------------------------------------------------------------
 void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
@@ -101,28 +98,26 @@ void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
   std::vector<vtkMRMLNode*> referencingNodes;
   for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
   {
-    vtkMRMLNode* dnode = this->GetMRMLScene()->GetNodeByID(
-      displayableNode->GetNthDisplayNodeID(i));
+    vtkMRMLNode* dnode = this->GetMRMLScene()->GetNodeByID(displayableNode->GetNthDisplayNodeID(i));
 
     // make sure no other nodes reference this display node
     this->GetMRMLScene()->GetReferencingNodes(dnode, referencingNodes);
 
     if (referencingNodes.size() == 0 || //
-        (referencingNodes.size() == 1 && referencingNodes[0] == node) )
+        (referencingNodes.size() == 1 && referencingNodes[0] == node))
     {
       nodesToRemove.emplace_back(dnode);
     }
   }
   for (int i = 0; i < displayableNode->GetNumberOfStorageNodes(); ++i)
   {
-    vtkMRMLNode* snode = this->GetMRMLScene()->GetNodeByID(
-      displayableNode->GetNthStorageNodeID(i));
+    vtkMRMLNode* snode = this->GetMRMLScene()->GetNodeByID(displayableNode->GetNthStorageNodeID(i));
 
     // make sure no other nodes reference this storage node
     this->GetMRMLScene()->GetReferencingNodes(snode, referencingNodes);
 
     if (referencingNodes.size() == 0 || //
-        (referencingNodes.size() == 1 && referencingNodes[0] == node) )
+        (referencingNodes.size() == 1 && referencingNodes[0] == node))
     {
       nodesToRemove.emplace_back(snode);
     }

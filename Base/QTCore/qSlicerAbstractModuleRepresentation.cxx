@@ -29,12 +29,11 @@ class qSlicerAbstractModuleRepresentationPrivate
 public:
   qSlicerAbstractModuleRepresentationPrivate();
   vtkWeakPointer<vtkMRMLAbstractLogic> Logic;
-  qSlicerAbstractCoreModule*           Module;
+  qSlicerAbstractCoreModule* Module;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentationPrivate
-::qSlicerAbstractModuleRepresentationPrivate()
+qSlicerAbstractModuleRepresentationPrivate::qSlicerAbstractModuleRepresentationPrivate()
 {
   this->Module = nullptr;
 }
@@ -86,9 +85,7 @@ void qSlicerAbstractModuleRepresentation::setModule(qSlicerAbstractCoreModule* m
 }
 
 //-----------------------------------------------------------
-bool qSlicerAbstractModuleRepresentation::setEditedNode(vtkMRMLNode* node,
-                                                        QString role /* = QString()*/,
-                                                        QString context /* = QString() */)
+bool qSlicerAbstractModuleRepresentation::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString() */)
 {
   Q_UNUSED(node);
   Q_UNUSED(role);

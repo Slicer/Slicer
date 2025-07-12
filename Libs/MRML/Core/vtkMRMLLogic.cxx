@@ -13,9 +13,7 @@
 vtkStandardNewMacro(vtkMRMLLogic);
 
 //------------------------------------------------------------------------------
-vtkMRMLLogic::vtkMRMLLogic()
-{
-}
+vtkMRMLLogic::vtkMRMLLogic() {}
 
 //------------------------------------------------------------------------------
 vtkMRMLLogic::~vtkMRMLLogic() = default;
@@ -32,11 +30,11 @@ std::string vtkMRMLLogic::GetApplicationHomeDirectory()
   {
     if (vtksys::SystemTools::GetEnv("PWD") != nullptr)
     {
-      applicationHome =  std::string(vtksys::SystemTools::GetEnv("PWD"));
+      applicationHome = std::string(vtksys::SystemTools::GetEnv("PWD"));
     }
     else
     {
-      applicationHome =  std::string("");
+      applicationHome = std::string("");
     }
   }
   return applicationHome;

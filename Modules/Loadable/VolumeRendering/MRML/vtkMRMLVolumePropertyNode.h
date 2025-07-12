@@ -25,8 +25,7 @@ class vtkVolumeProperty;
 
 /// \brief vtkMRMLVolumePropertyNode contains the transfer functions (scalar
 /// opacity, color and gradient opacity) for the volume rendering.
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyNode
-  : public vtkMRMLStorableNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyNode : public vtkMRMLStorableNode
 {
 public:
   enum
@@ -91,30 +90,26 @@ public:
   /// Put parameters described in a string into an existing
   /// vtkPiecewiseFunction, use together with GetPiecewiseFunctionString
   /// \sa GetPiecewiseFunctionString(), GetColorTransferFunctionFromString()
-  static void GetPiecewiseFunctionFromString(const std::string& str,
-                                             vtkPiecewiseFunction* result);
+  static void GetPiecewiseFunctionFromString(const std::string& str, vtkPiecewiseFunction* result);
 
   /// Utility function:
   /// Put parameters described in a string into an existing
   /// vtkColorTransferFunction, use together with getColorTransferFunctionString
   /// \sa GetColorTransferFunctionString(), GetPiecewiseFunctionFromString()
-  static void GetColorTransferFunctionFromString(const std::string& str,
-                                                 vtkColorTransferFunction* result);
+  static void GetColorTransferFunctionFromString(const std::string& str, vtkColorTransferFunction* result);
 
   /// Utility function:
   /// Put parameters described in a string into an existing vtkPiecewiseFunction.
   /// To be used with GetPiecewiseFunctionString()
   /// \sa GetPiecewiseFunctionString(), GetPiecewiseFunctionFromString()
-  static inline void GetPiecewiseFunctionFromString(const char* str,
-                                                    vtkPiecewiseFunction* result);
+  static inline void GetPiecewiseFunctionFromString(const char* str, vtkPiecewiseFunction* result);
 
   /// Utility function:
   /// Put parameters described in a string into an existing
   /// vtkColorTransferFunction.
   /// To be used with GetColorTransferFunctionString()
   /// \sa GetColorTransferFunctionFromString()
-  static inline void GetColorTransferFunctionFromString(const char* str,
-                                                        vtkColorTransferFunction* result);
+  static inline void GetColorTransferFunctionFromString(const char* str, vtkColorTransferFunction* result);
 
   /// Utility function:
   /// Return the nearest higher value.
@@ -142,7 +137,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -156,10 +151,10 @@ public:
   void CopyParameterSet(vtkMRMLNode* node);
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "VolumeProperty";}
+  const char* GetNodeTagName() override { return "VolumeProperty"; }
 
   /// Reimplemented for internal reasons.
-  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Create default storage node or nullptr if does not have one
   vtkMRMLStorageNode* CreateDefaultStorageNode() override;
@@ -175,8 +170,8 @@ protected:
   vtkMRMLVolumePropertyNode();
   ~vtkMRMLVolumePropertyNode() override;
 
-  static int NodesFromString(const std::string& dataString, double* &data, int nodeSize);
-  static int DataFromString(const std::string& dataString, double* &data);
+  static int NodesFromString(const std::string& dataString, double*& data, int nodeSize);
+  static int DataFromString(const std::string& dataString, double*& data);
   static std::string DataToString(double* data, int size);
 
   // Getter and setter functions for the storable attributes
@@ -215,31 +210,24 @@ protected:
   /// Effective range of the transfer functions. Outside this range the functions are constant.
   /// Elements: {xMin, xMax}. Other axes not supported because the three transfer functions are
   /// independent value-wise, and they do not have third and fourth axes.
-  double EffectiveRange[2]{0.0,-1.0};
+  double EffectiveRange[2]{ 0.0, -1.0 };
 
 private:
   /// Caution: Not implemented
   vtkMRMLVolumePropertyNode(const vtkMRMLVolumePropertyNode&) = delete;
   void operator=(const vtkMRMLVolumePropertyNode&) = delete;
-
 };
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode
-::GetPiecewiseFunctionFromString(const char* str,
-                                 vtkPiecewiseFunction* result)
+void vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(const char* str, vtkPiecewiseFunction* result)
 {
-  vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(
-    std::string(str), result);
+  vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(std::string(str), result);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumePropertyNode
-::GetColorTransferFunctionFromString(const char* str,
-                                     vtkColorTransferFunction* result)
+void vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(const char* str, vtkColorTransferFunction* result)
 {
-  vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(
-    std::string (str), result);
+  vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(std::string(str), result);
 }
 
 #endif

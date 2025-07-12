@@ -46,7 +46,7 @@ public:
   vtkInternal(vtkMRMLTestCustomDisplayableManager* external);
   ~vtkInternal();
 
-  vtkMRMLTestCustomDisplayableManager*             External;
+  vtkMRMLTestCustomDisplayableManager* External;
 };
 
 //---------------------------------------------------------------------------
@@ -112,13 +112,13 @@ void vtkMRMLTestCustomDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node
   if (vtkMRMLViewNode::SafeDownCast(this->GetMRMLDisplayableNode()))
   {
     vtkMRMLTestCustomDisplayableManager::NodeAddedCountThreeDView++;
-    //std::cout << "vtkMRMLTestCustomDisplayableManager[vtkMRMLViewNode] - NodeAdded - "
-    //          << (node ? node->GetName() : "None")<< std::endl;
+    // std::cout << "vtkMRMLTestCustomDisplayableManager[vtkMRMLViewNode] - NodeAdded - "
+    //           << (node ? node->GetName() : "None")<< std::endl;
   }
   if (vtkMRMLSliceNode::SafeDownCast(this->GetMRMLDisplayableNode()))
   {
     vtkMRMLTestCustomDisplayableManager::NodeAddedCountSliceView++;
-    //std::cout << "vtkMRMLTestCustomDisplayableManager[vtkMRMLSliceNode] - NodeAdded - "
-    //          << (node ? node->GetName() : "None")<< std::endl;
+    // std::cout << "vtkMRMLTestCustomDisplayableManager[vtkMRMLSliceNode] - NodeAdded - "
+    //           << (node ? node->GetName() : "None")<< std::endl;
   }
 }

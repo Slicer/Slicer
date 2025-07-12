@@ -47,8 +47,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qSlicerSceneReader::qSlicerSceneReader(vtkSlicerCamerasModuleLogic* camerasLogic,
-                               QObject* _parent)
+qSlicerSceneReader::qSlicerSceneReader(vtkSlicerCamerasModuleLogic* camerasLogic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerSceneReaderPrivate)
 {
@@ -68,7 +67,7 @@ QString qSlicerSceneReader::description() const
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerSceneReader::fileType() const
 {
-  return QString(/*no tr*/"SceneFile");
+  return QString(/*no tr*/ "SceneFile");
 }
 
 //-----------------------------------------------------------------------------
@@ -123,25 +122,23 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
   int loadedMinor = 0;
   int loadedPatch = 0;
   int loadedRevision = 0;
-  if (vtkMRMLScene::ParseVersion(this->mrmlScene()->GetVersion(), currentApplication,
-    currentMajor, currentMinor, currentPatch, currentRevision) //
-      && vtkMRMLScene::ParseVersion(this->mrmlScene()->GetLastLoadedVersion(), loadedApplication,
-      loadedMajor, loadedMinor, loadedPatch, loadedRevision))
+  if (vtkMRMLScene::ParseVersion(this->mrmlScene()->GetVersion(), currentApplication, currentMajor, currentMinor, currentPatch, currentRevision) //
+      && vtkMRMLScene::ParseVersion(this->mrmlScene()->GetLastLoadedVersion(), loadedApplication, loadedMajor, loadedMinor, loadedPatch, loadedRevision))
   {
     QStringList sceneVersionWarningMessages;
     if (loadedApplication != currentApplication)
     {
       sceneVersionWarningMessages << tr("The scene file was saved with %1 application (this application is %2).")
-        .arg(QString::fromUtf8(loadedApplication.c_str()))
-        .arg(QString::fromUtf8(currentApplication.c_str()));
+                                       .arg(QString::fromUtf8(loadedApplication.c_str()))
+                                       .arg(QString::fromUtf8(currentApplication.c_str()));
     }
     QVersionNumber loadedSceneVersion(loadedMajor, loadedMinor, loadedPatch);
     QVersionNumber currentVersion(currentMajor, currentMinor, currentPatch);
     if (loadedSceneVersion > currentVersion)
     {
       sceneVersionWarningMessages << tr("The scene file was created with a newer version of the application (%1) than the current version (%2).")
-        .arg(loadedSceneVersion.toString())
-        .arg(currentVersion.toString());
+                                       .arg(loadedSceneVersion.toString())
+                                       .arg(currentVersion.toString());
     }
     if (!sceneVersionWarningMessages.isEmpty())
     {
@@ -168,10 +165,9 @@ bool qSlicerSceneReader::load(const qSlicerIO::IOProperties& properties)
       QSet<QString> notInstalledExtensions = ctk::qStringListToQSet(lastLoadedExtensionsList).subtract(ctk::qStringListToQSet(extensionsList));
       if (!notInstalledExtensions.isEmpty())
       {
-        QString extensionsInformation =
-          tr("These extensions were installed when the scene was saved but not installed now: %1."
-             " These extensions may be required for successful loading of the scene.")
-          .arg(ctk::qSetToQStringList(notInstalledExtensions).join(", "));
+        QString extensionsInformation = tr("These extensions were installed when the scene was saved but not installed now: %1."
+                                           " These extensions may be required for successful loading of the scene.")
+                                          .arg(ctk::qSetToQStringList(notInstalledExtensions).join(", "));
         this->userMessages()->AddMessage(vtkCommand::MessageEvent, extensionsInformation.toStdString());
       }
     }

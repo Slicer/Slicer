@@ -52,7 +52,7 @@
 //-----------------------------------------------------------------------------
 class qSlicerVolumesReaderPrivate
 {
-  public:
+public:
   vtkSmartPointer<vtkSlicerVolumesLogic> Logic;
 };
 
@@ -105,10 +105,8 @@ QStringList qSlicerVolumesReader::extensions() const
 {
   // pic files are bio-rad images (see itkBioRadImageIO)
   return QStringList() //
-    << tr("Volume") + " (*.hdr *.nhdr *.nrrd *.mhd *.mha *.mnc *.nii *.nii.gz *.mgh *.mgz *.mgh.gz *.img *.img.gz *.pic)"
-    << tr("Dicom") + " (*.dcm *.ima)"
-    << tr("Image") + " (*.png *.tif *.tiff *.jpg *.jpeg)"
-    << tr("All Files") + " (*)";
+         << tr("Volume") + " (*.hdr *.nhdr *.nrrd *.mhd *.mha *.mnc *.nii *.nii.gz *.mgh *.mgz *.mgh.gz *.img *.img.gz *.pic)" << tr("Dicom") + " (*.dcm *.ima)"
+         << tr("Image") + " (*.png *.tif *.tiff *.jpg *.jpeg)" << tr("All Files") + " (*)";
 }
 
 //----------------------------------------------------------------------------
@@ -196,7 +194,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
   }
   if (properties.contains("autoWindowLevel"))
   {
-    options |= properties["autoWindowLevel"].toBool() ? 0x8: 0x0;
+    options |= properties["autoWindowLevel"].toBool() ? 0x8 : 0x0;
   }
   if (properties.contains("discardOrientation"))
   {
@@ -219,11 +217,7 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
   Q_ASSERT(d->Logic);
   // Weak pointer is used because the node may be deleted if the scene is closed
   // right after reading.
-  vtkWeakPointer<vtkMRMLVolumeNode> node = d->Logic->AddArchetypeVolume(
-    fileName.toUtf8(),
-    name.toUtf8(),
-    options,
-    fileList.GetPointer());
+  vtkWeakPointer<vtkMRMLVolumeNode> node = d->Logic->AddArchetypeVolume(fileName.toUtf8(), name.toUtf8(), options, fileList.GetPointer());
   if (node)
   {
     QString colorNodeID = properties.value("colorNodeID", QString()).toString();
@@ -237,10 +231,8 @@ bool qSlicerVolumesReader::load(const IOProperties& properties)
     }
     if (propagateVolumeSelection)
     {
-      vtkSlicerApplicationLogic* appLogic =
-        d->Logic->GetApplicationLogic();
-      vtkMRMLSelectionNode* selectionNode =
-        appLogic ? appLogic->GetSelectionNode() : nullptr;
+      vtkSlicerApplicationLogic* appLogic = d->Logic->GetApplicationLogic();
+      vtkMRMLSelectionNode* selectionNode = appLogic ? appLogic->GetSelectionNode() : nullptr;
       if (selectionNode)
       {
         if (vtkMRMLLabelMapVolumeNode::SafeDownCast(node))

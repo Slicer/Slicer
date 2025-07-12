@@ -54,8 +54,7 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkInde
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAbstractThreeDViewDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(
-    vtkObject* caller)
+void vtkMRMLAbstractThreeDViewDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
   assert(vtkMRMLViewNode::SafeDownCast(caller));
 #ifndef _DEBUG
@@ -73,103 +72,66 @@ vtkMRMLViewNode* vtkMRMLAbstractThreeDViewDisplayableManager::GetMRMLViewNode()
 //---------------------------------------------------------------------------
 void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEvent(int eventid)
 {
-  vtkInteractorStyle3D* interactorStyle = vtkInteractorStyle3D::SafeDownCast(
-              this->GetInteractor()->GetInteractorStyle());
+  vtkInteractorStyle3D* interactorStyle = vtkInteractorStyle3D::SafeDownCast(this->GetInteractor()->GetInteractorStyle());
 
   if (interactorStyle)
   {
 
-  switch (eventid)
-  {
-    case vtkCommand::ExposeEvent:
-      interactorStyle->OnExpose();
-      break;
+    switch (eventid)
+    {
+      case vtkCommand::ExposeEvent: interactorStyle->OnExpose(); break;
 
-    case vtkCommand::ConfigureEvent:
-      interactorStyle->OnConfigure();
-      break;
+      case vtkCommand::ConfigureEvent: interactorStyle->OnConfigure(); break;
 
-    case vtkCommand::EnterEvent:
-      interactorStyle->OnEnter();
-      break;
+      case vtkCommand::EnterEvent: interactorStyle->OnEnter(); break;
 
-    case vtkCommand::LeaveEvent:
-        interactorStyle->OnLeave();
-      break;
+      case vtkCommand::LeaveEvent: interactorStyle->OnLeave(); break;
 
-    case vtkCommand::TimerEvent:
-        interactorStyle->OnTimer();
-      break;
+      case vtkCommand::TimerEvent: interactorStyle->OnTimer(); break;
 
-    case vtkCommand::MouseMoveEvent:
-        interactorStyle->OnMouseMove();
-      break;
+      case vtkCommand::MouseMoveEvent: interactorStyle->OnMouseMove(); break;
 
-    case vtkCommand::LeftButtonPressEvent:
-        interactorStyle->OnLeftButtonDown();
-      break;
+      case vtkCommand::LeftButtonPressEvent: interactorStyle->OnLeftButtonDown(); break;
 
-    case vtkCommand::LeftButtonReleaseEvent:
-        interactorStyle->OnLeftButtonUp();
-        break;
+      case vtkCommand::LeftButtonReleaseEvent: interactorStyle->OnLeftButtonUp(); break;
 
-    case vtkCommand::MiddleButtonPressEvent:
-        interactorStyle->OnMiddleButtonDown();
-      break;
+      case vtkCommand::MiddleButtonPressEvent: interactorStyle->OnMiddleButtonDown(); break;
 
-    case vtkCommand::MiddleButtonReleaseEvent:
-        interactorStyle->OnMiddleButtonUp();
-      break;
+      case vtkCommand::MiddleButtonReleaseEvent: interactorStyle->OnMiddleButtonUp(); break;
 
-    case vtkCommand::RightButtonPressEvent:
-        interactorStyle->OnRightButtonDown();
-      break;
+      case vtkCommand::RightButtonPressEvent: interactorStyle->OnRightButtonDown(); break;
 
-    case vtkCommand::RightButtonReleaseEvent:
-        interactorStyle->OnRightButtonUp();
-      break;
+      case vtkCommand::RightButtonReleaseEvent: interactorStyle->OnRightButtonUp(); break;
 
-    case vtkCommand::MouseWheelForwardEvent:
-        interactorStyle->OnMouseWheelForward();
-      break;
+      case vtkCommand::MouseWheelForwardEvent: interactorStyle->OnMouseWheelForward(); break;
 
-    case vtkCommand::MouseWheelBackwardEvent:
-        interactorStyle->OnMouseWheelBackward();
-      break;
+      case vtkCommand::MouseWheelBackwardEvent: interactorStyle->OnMouseWheelBackward(); break;
 
-    case vtkCommand::KeyPressEvent:
+      case vtkCommand::KeyPressEvent:
         interactorStyle->OnKeyDown();
         interactorStyle->OnKeyPress();
-      break;
+        break;
 
-    case vtkCommand::KeyReleaseEvent:
+      case vtkCommand::KeyReleaseEvent:
         interactorStyle->OnKeyUp();
         interactorStyle->OnKeyRelease();
-      break;
+        break;
 
-    case vtkCommand::CharEvent:
-        interactorStyle->OnChar();
-      break;
+      case vtkCommand::CharEvent: interactorStyle->OnChar(); break;
 
-    case vtkCommand::DeleteEvent:
-      interactorStyle->SetInteractor(nullptr);
-      break;
+      case vtkCommand::DeleteEvent: interactorStyle->SetInteractor(nullptr); break;
 
-    case vtkCommand::TDxMotionEvent:
-    case vtkCommand::TDxButtonPressEvent:
-    case vtkCommand::TDxButtonReleaseEvent:
-      interactorStyle->DelegateTDxEvent(eventid,nullptr);
-      break;
-  }
+      case vtkCommand::TDxMotionEvent:
+      case vtkCommand::TDxButtonPressEvent:
+      case vtkCommand::TDxButtonReleaseEvent: interactorStyle->DelegateTDxEvent(eventid, nullptr); break;
+    }
 
     return;
   }
 }
 
 //---------------------------------------------------------------------------
-double vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition(vtkRenderer* renderer,
-                                                                                 double positionWorld[3],
-                                                                                 vtkMRMLInteractionEventData* interactionEventData)
+double vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition(vtkRenderer* renderer, double positionWorld[3], vtkMRMLInteractionEventData* interactionEventData)
 {
   double viewScaleFactorMmPerPixel = 1.0;
   if (!renderer || !renderer->GetActiveCamera())
@@ -195,15 +157,14 @@ double vtkMRMLAbstractThreeDViewDisplayableManager::GetViewScaleFactorAtPosition
   }
   else
   {
-    const double cameraFP[] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0};
+    const double cameraFP[] = { positionWorld[0], positionWorld[1], positionWorld[2], 1.0 };
     double cameraViewUp[3] = { 0 };
     cam->GetViewUp(cameraViewUp);
     vtkMath::Normalize(cameraViewUp);
 
-
-    //these should be const but that doesn't compile under VTK 8
-    double topCenterWorld[] = {cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3]};
-    double bottomCenterWorld[] = {cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3]};
+    // these should be const but that doesn't compile under VTK 8
+    double topCenterWorld[] = { cameraFP[0] + cameraViewUp[0], cameraFP[1] + cameraViewUp[1], cameraFP[2] + cameraViewUp[2], cameraFP[3] };
+    double bottomCenterWorld[] = { cameraFP[0] - cameraViewUp[0], cameraFP[1] - cameraViewUp[1], cameraFP[2] - cameraViewUp[2], cameraFP[3] };
 
     double topCenterDisplay[4];
     double bottomCenterDisplay[4];

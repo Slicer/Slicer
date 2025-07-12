@@ -10,7 +10,7 @@
 
 =========================================================================auto=*/
 
-//MRML includes
+// MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
@@ -38,20 +38,14 @@ public:
   {
     std::vector<vtkMRMLDisplayNode*> InternalDisplayNodes;
     int ndnodes = this->GetNumberOfDisplayNodes();
-    for (int i = 0; i<ndnodes; i++)
+    for (int i = 0; i < ndnodes; i++)
     {
       InternalDisplayNodes.push_back(this->GetNthDisplayNode(i));
     }
     return InternalDisplayNodes;
   }
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLDisplayableNodeTestHelper1::New();
-  }
-  const char* GetNodeTagName() override
-  {
-    return "vtkMRMLDisplayableNodeTestHelper1";
-  }
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLDisplayableNodeTestHelper1::New(); }
+  const char* GetNodeTagName() override { return "vtkMRMLDisplayableNodeTestHelper1"; }
 
   vtkMRMLStorageNode* CreateDefaultStorageNode() override
   {
@@ -70,15 +64,8 @@ public:
 
   vtkTypeMacro(vtkMRMLDisplayNodeTestHelper, vtkMRMLDisplayNode);
 
-  vtkMRMLNode* CreateNodeInstance() override
-  {
-    return vtkMRMLDisplayNodeTestHelper::New();
-  }
-  const char* GetNodeTagName() override
-  {
-    return "vtkMRMLDisplayNodeTestHelper";
-  }
-
+  vtkMRMLNode* CreateNodeInstance() override { return vtkMRMLDisplayNodeTestHelper::New(); }
+  const char* GetNodeTagName() override { return "vtkMRMLDisplayNodeTestHelper"; }
 };
 vtkStandardNewMacro(vtkMRMLDisplayNodeTestHelper);
 
@@ -101,7 +88,7 @@ int vtkMRMLDisplayableNodeTest1(int, char*[])
 
   CHECK_EXIT_SUCCESS(TestAddDisplayNodeID());
   CHECK_EXIT_SUCCESS(TestAddDisplayNodeIDWithNoScene());
-  //CHECK_EXIT_SUCCESS(TestAddDisplayNodeIDEventsWithNoScene());
+  // CHECK_EXIT_SUCCESS(TestAddDisplayNodeIDEventsWithNoScene());
   CHECK_EXIT_SUCCESS(TestAddDelayedDisplayNode());
   CHECK_EXIT_SUCCESS(TestRemoveDisplayNodeID());
   CHECK_EXIT_SUCCESS(TestRemoveDisplayNode());
@@ -222,7 +209,7 @@ int TestAddDisplayNodeIDWithNoScene()
   // Finally, add the node into the scene so it can look for the display nodes
   // in the scene.
   scene->AddNode(displayableNode);
-  const std::vector<vtkMRMLDisplayNode*> &internalNodes = displayableNode->GetInternalDisplayNodes();
+  const std::vector<vtkMRMLDisplayNode*>& internalNodes = displayableNode->GetInternalDisplayNodes();
   CHECK_INT(internalNodes.size(), 2);
   CHECK_NOT_NULL(internalNodes[0]);
   CHECK_NOT_NULL(internalNodes[1]);
@@ -418,8 +405,7 @@ int TestRemoveDisplayableNode()
   // Removing the scene from the displayable node clear the cached display
   // nodes.
   vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(0);
-  std::vector<vtkMRMLDisplayNode*> displayNodes =
-    displayableNode->GetInternalDisplayNodes();
+  std::vector<vtkMRMLDisplayNode*> displayNodes = displayableNode->GetInternalDisplayNodes();
 
   CHECK_INT(displayableNode->GetNumberOfDisplayNodes(), 3);
   CHECK_NULL(displayNode);
@@ -522,8 +508,7 @@ int TestReferences()
   displayableNode->AddAndObserveDisplayNodeID(displayNode1->GetID());
 
   vtkSmartPointer<vtkCollection> referencedNodes;
-  referencedNodes.TakeReference(
-    scene->GetReferencedNodes(displayableNode));
+  referencedNodes.TakeReference(scene->GetReferencedNodes(displayableNode));
 
   CHECK_INT(referencedNodes->GetNumberOfItems(), 2);
   CHECK_POINTER(referencedNodes->GetItemAsObject(0), displayableNode);
@@ -653,14 +638,12 @@ int TestImportIntoSceneWithNodeIdConflict()
   std::cout << "\n\nScene2 after import:\n\n" << scene2->GetSceneXMLString() << std::endl;
 
   // Check Display1
-  vtkMRMLDisplayNodeTestHelper* scene2DisplayNode1 =
-    vtkMRMLDisplayNodeTestHelper::SafeDownCast(scene2->GetFirstNodeByName("Display1"));
+  vtkMRMLDisplayNodeTestHelper* scene2DisplayNode1 = vtkMRMLDisplayNodeTestHelper::SafeDownCast(scene2->GetFirstNodeByName("Display1"));
   CHECK_NOT_NULL(scene2DisplayNode1);
   CHECK_STRING_DIFFERENT(scene2DisplayNode1->GetID(), "vtkMRMLDisplayNodeTestHelper1");
 
   // Check Display1 references
-  vtkMRMLDisplayableNode* scene2DisplayableNode1 =
-    vtkMRMLDisplayableNode::SafeDownCast(scene2->GetFirstNodeByName("Displayable1"));
+  vtkMRMLDisplayableNode* scene2DisplayableNode1 = vtkMRMLDisplayableNode::SafeDownCast(scene2->GetFirstNodeByName("Displayable1"));
   CHECK_NOT_NULL(scene2DisplayableNode1);
   CHECK_STRING(scene2DisplayableNode1->GetDisplayNodeID(), scene2DisplayNode1->GetID());
   CHECK_INT(scene2DisplayableNode1->GetNumberOfDisplayNodes(), 1);

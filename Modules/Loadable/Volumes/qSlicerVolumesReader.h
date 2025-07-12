@@ -27,8 +27,7 @@ class qSlicerVolumesReaderPrivate;
 class vtkSlicerVolumesLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerVolumesReader
-  : public qSlicerFileReader
+class qSlicerVolumesReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:

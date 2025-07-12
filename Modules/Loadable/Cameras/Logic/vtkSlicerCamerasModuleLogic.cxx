@@ -34,9 +34,7 @@
 vtkStandardNewMacro(vtkSlicerCamerasModuleLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerCamerasModuleLogic::vtkSlicerCamerasModuleLogic()
-{
-}
+vtkSlicerCamerasModuleLogic::vtkSlicerCamerasModuleLogic() {}
 
 //----------------------------------------------------------------------------
 vtkSlicerCamerasModuleLogic::~vtkSlicerCamerasModuleLogic() = default;
@@ -48,14 +46,12 @@ void vtkSlicerCamerasModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLCameraNode* vtkSlicerCamerasModuleLogic
-::GetViewActiveCameraNode(vtkMRMLViewNode* viewNode)
+vtkMRMLCameraNode* vtkSlicerCamerasModuleLogic::GetViewActiveCameraNode(vtkMRMLViewNode* viewNode)
 {
   if (!this->GetMRMLScene())
   {
     return nullptr;
   }
-  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
-    this->GetMRMLScene()->GetSingletonNode(viewNode->GetLayoutName(), "vtkMRMLCameraNode"));
+  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(this->GetMRMLScene()->GetSingletonNode(viewNode->GetLayoutName(), "vtkMRMLCameraNode"));
   return cameraNode;
 }

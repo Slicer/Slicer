@@ -24,7 +24,8 @@
 #include "qMRMLWidgetsAbstractPlugin.h"
 
 class QMRML_WIDGETS_PLUGINS_EXPORT qMRMLDisplayNodeViewComboBoxPlugin
-  : public QObject, public qMRMLWidgetsAbstractPlugin
+  : public QObject
+  , public qMRMLWidgetsAbstractPlugin
 {
   Q_OBJECT
 

@@ -27,8 +27,7 @@
 
 class qSlicerSegmentationsNodeWriterOptionsWidgetPrivate;
 
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriterOptionsWidget
-  : public qSlicerNodeWriterOptionsWidget
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsNodeWriterOptionsWidget : public qSlicerNodeWriterOptionsWidget
 {
   Q_OBJECT
 

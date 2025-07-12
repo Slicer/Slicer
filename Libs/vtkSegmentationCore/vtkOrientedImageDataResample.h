@@ -58,7 +58,10 @@ public:
   /// \param outputImage Output image
   /// \param linearInterpolation True if linear interpolation is requested (fractional labelmap), or false for nearest neighbor (binary labelmap). Default is false.
   /// \return Success flag
-  static bool ResampleOrientedImageToReferenceGeometry(vtkOrientedImageData* inputImage, vtkMatrix4x4* referenceGeometryMatrix, vtkOrientedImageData* outputImage, bool linearInterpolation = false);
+  static bool ResampleOrientedImageToReferenceGeometry(vtkOrientedImageData* inputImage,
+                                                       vtkMatrix4x4* referenceGeometryMatrix,
+                                                       vtkOrientedImageData* outputImage,
+                                                       bool linearInterpolation = false);
 
   /// Resample an oriented image data to match the geometry of a reference oriented image data
   /// \param inputImage Oriented image to resample
@@ -69,7 +72,13 @@ public:
   ///          to be outside the reference extent, then it is padded. Disabled by default.
   /// \param inputImageTransform If specified then inputImage will be transformed with inputImageTransform before resampled into referenceImage.
   /// \return Success flag
-  static bool ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* referenceImage, vtkOrientedImageData* outputImage, bool linearInterpolation = false, bool padImage = false, vtkAbstractTransform* inputImageTransform = nullptr, double backgroundValue = 0);
+  static bool ResampleOrientedImageToReferenceOrientedImage(vtkOrientedImageData* inputImage,
+                                                            vtkOrientedImageData* referenceImage,
+                                                            vtkOrientedImageData* outputImage,
+                                                            bool linearInterpolation = false,
+                                                            bool padImage = false,
+                                                            vtkAbstractTransform* inputImageTransform = nullptr,
+                                                            double backgroundValue = 0);
 
   /// Transform an oriented image data using a transform that can be linear or non-linear.
   /// Linear: simply multiply the geometry matrix with the applied matrix, extent stays the same
@@ -79,30 +88,45 @@ public:
   /// \param geometryOnly Only the geometry of the image is changed according to the transform if this flag is turned on.
   ///          This flag only has an effect if the transform is non-linear, in which case only the extent is changed. Off by default
   /// \param alwaysResample If on, then image data will be resampled even if the applied transform is linear
-  static void TransformOrientedImage(vtkOrientedImageData* image, vtkAbstractTransform* transform, bool geometryOnly = false, bool alwaysResample = false, bool linearInterpolation = false, double backgroundColor[4]=nullptr);
+  static void TransformOrientedImage(vtkOrientedImageData* image,
+                                     vtkAbstractTransform* transform,
+                                     bool geometryOnly = false,
+                                     bool alwaysResample = false,
+                                     bool linearInterpolation = false,
+                                     double backgroundColor[4] = nullptr);
 
   /// Combines the inputImage and imageToAppend into a new image by max/min operation. The extent will be the union of the two images.
   /// Extent can be specified to restrict imageToAppend's extent to a smaller region.
   /// inputImage and imageToAppend must have the same geometry, but they may have different extents.
-  static bool MergeImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* imageToAppend, vtkOrientedImageData* outputImage, int operation,
-    const int extent[6]=nullptr, double maskThreshold = 0, double fillValue = 1, bool* outputModified = nullptr);
+  static bool MergeImage(vtkOrientedImageData* inputImage,
+                         vtkOrientedImageData* imageToAppend,
+                         vtkOrientedImageData* outputImage,
+                         int operation,
+                         const int extent[6] = nullptr,
+                         double maskThreshold = 0,
+                         double fillValue = 1,
+                         bool* outputModified = nullptr);
 
   /// Modifies inputImage in-place by combining with modifierImage using max/min operation.
   /// The extent will remain unchanged.
   /// Extent can be specified to restrict modifierImage's extent to a smaller region.
   /// inputImage and modifierImage must have the same geometry (origin, spacing, directions) and scalar type, but they may have different extents.
-  static bool ModifyImage(vtkOrientedImageData* inputImage, vtkOrientedImageData* modifierImage, int operation,
-    const int extent[6] = nullptr, double maskThreshold = 0, double fillValue = 1);
+  static bool ModifyImage(vtkOrientedImageData* inputImage,
+                          vtkOrientedImageData* modifierImage,
+                          int operation,
+                          const int extent[6] = nullptr,
+                          double maskThreshold = 0,
+                          double fillValue = 1);
 
   /// Copy image with clipping to the specified extent
-  static bool CopyImage(vtkOrientedImageData* imageToCopy, vtkOrientedImageData* outputImage, const int extent[6]=nullptr);
+  static bool CopyImage(vtkOrientedImageData* imageToCopy, vtkOrientedImageData* outputImage, const int extent[6] = nullptr);
 
   /// Prints image information. Does not print lots of irrelevant information that default PrintSelf would print.
   static void PrintImageInformation(vtkImageData* imageData, ostream& os, vtkIndent indent);
 
   /// Fills an image with the specified value
   /// \param extent The whole extent is filled if extent is not specified
-  static void FillImage(vtkImageData* image, double fillValue, const int extent[6]=nullptr);
+  static void FillImage(vtkImageData* image, double fillValue, const int extent[6] = nullptr);
 
 public:
   /// Calculate effective extent of an image: the IJK extent where non-zero voxels are located
@@ -171,8 +195,11 @@ public:
   ///  If nullptr, the extent will be the overlapping extent between the label and mask.
   /// \param labelValues The values found in the binary labelmap underneath the mask
   /// \param maskThreshold Threshold value for the mask. Values above this threshold are considered to be under the mask
-  static void GetLabelValuesInMask(std::vector<int>& labelValues, vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
-    const int extent[6]=nullptr, int maskThreshold = 0);
+  static void GetLabelValuesInMask(std::vector<int>& labelValues,
+                                   vtkOrientedImageData* binaryLabelmap,
+                                   vtkOrientedImageData* mask,
+                                   const int extent[6] = nullptr,
+                                   int maskThreshold = 0);
 
   /// Determine if there is a non-zero value in the labelmap under the mask
   /// \param binaryLabelmap Input image to get values from
@@ -180,8 +207,7 @@ public:
   /// \param extent Can be set to restrict the examined extent to a smaller region.
   ///  If nullptr, the extent will be the overlapping extent between the label and mask.
   /// \param maskThreshold Threshold value for the mask. Values above this threshold are considered to be under the mask
-  static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask,
-    int extent[6]=nullptr, int maskThreshold = 0);
+  static bool IsLabelInMask(vtkOrientedImageData* binaryLabelmap, vtkOrientedImageData* mask, int extent[6] = nullptr, int maskThreshold = 0);
 
   enum ImageTypeCheckResult
   {
@@ -200,7 +226,8 @@ public:
 
   /// Determine the smallest integer type that can contain the specified scalar range.
   /// \param scalarRange Range of the scalar values that should be representable by the image data type
-  /// \return Smallest integer type that can contain the specified scalar range. Possible values are VTK_UNSIGNED_CHAR, VTK_CHAR, VTK_UNSIGNED_SHORT, VTK_SHORT, VTK_UNSIGNED_INT, VTK_INT and -1 if no valid integer type can contain the scalar range.
+  /// \return Smallest integer type that can contain the specified scalar range. Possible values are VTK_UNSIGNED_CHAR, VTK_CHAR, VTK_UNSIGNED_SHORT, VTK_SHORT, VTK_UNSIGNED_INT,
+  /// VTK_INT and -1 if no valid integer type can contain the scalar range.
   static int GetSmallestIntegerTypeForSegmentationScalarRange(double scalarRange[2]);
 
   /// Cast the data type of the image to the smallest possible size that can contain the currently stored values

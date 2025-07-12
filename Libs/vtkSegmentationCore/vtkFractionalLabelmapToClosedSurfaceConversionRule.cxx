@@ -47,19 +47,20 @@ vtkSegmentationConverterRuleNewMacro(vtkFractionalLabelmapToClosedSurfaceConvers
 vtkFractionalLabelmapToClosedSurfaceConversionRule::vtkFractionalLabelmapToClosedSurfaceConversionRule()
   : vtkBinaryLabelmapToClosedSurfaceConversionRule()
 {
-  this->ConversionParameters->SetParameter(this->GetFractionalLabelMapOversamplingFactorParameterName(), "1",
+  this->ConversionParameters->SetParameter(
+    this->GetFractionalLabelMapOversamplingFactorParameterName(),
+    "1",
     "Determines the oversampling of the reference image geometry. All segments are oversampled with the same value (value of 1 means no oversampling).");
-  this->ConversionParameters->SetParameter(this->GetThresholdFractionParameterName(), "0.5",
-    "Determines the threshold that the closed surface is created at as a fractional value between 0 and 1.");
+  this->ConversionParameters->SetParameter(
+    this->GetThresholdFractionParameterName(), "0.5", "Determines the threshold that the closed surface is created at as a fractional value between 0 and 1.");
 }
 
 //----------------------------------------------------------------------------
 vtkFractionalLabelmapToClosedSurfaceConversionRule::~vtkFractionalLabelmapToClosedSurfaceConversionRule() = default;
 
 //----------------------------------------------------------------------------
-unsigned int vtkFractionalLabelmapToClosedSurfaceConversionRule::GetConversionCost(
-    vtkDataObject* vtkNotUsed(sourceRepresentation)/*=nullptr*/,
-    vtkDataObject* vtkNotUsed(targetRepresentation)/*=nullptr*/)
+unsigned int vtkFractionalLabelmapToClosedSurfaceConversionRule::GetConversionCost(vtkDataObject* vtkNotUsed(sourceRepresentation) /*=nullptr*/,
+                                                                                   vtkDataObject* vtkNotUsed(targetRepresentation) /*=nullptr*/)
 {
   // Rough input-independent guess (ms)
   return 600;
@@ -126,9 +127,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
   double minimumValue = 0.0;
   double maximumValue = 1.0;
   fractionalLabelMap->GetFieldData();
-  vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(
-    fractionalLabelMap->GetFieldData()->GetAbstractArray( vtkSegmentationConverter::GetScalarRangeFieldName() )
-    );
+  vtkDoubleArray* scalarRange = vtkDoubleArray::SafeDownCast(fractionalLabelMap->GetFieldData()->GetAbstractArray(vtkSegmentationConverter::GetScalarRangeFieldName()));
   if (scalarRange && scalarRange->GetNumberOfValues() == 2)
   {
     minimumValue = scalarRange->GetValue(0);
@@ -196,7 +195,7 @@ bool vtkFractionalLabelmapToClosedSurfaceConversionRule::Convert(vtkSegment* seg
     return false;
   }
 
-    vtkSmartPointer<vtkPolyData> convertedSegment = vtkSmartPointer<vtkPolyData>::New();
+  vtkSmartPointer<vtkPolyData> convertedSegment = vtkSmartPointer<vtkPolyData>::New();
 
   // Run marching cubes
   vtkSmartPointer<vtkPolyData> processingResult = marchingCubes->GetOutput();
@@ -290,10 +289,10 @@ void vtkFractionalLabelmapToClosedSurfaceConversionRule::PadLabelmap(vtkOriented
   vtkSmartPointer<vtkImageConstantPad> padder = vtkSmartPointer<vtkImageConstantPad>::New();
   padder->SetInputData(fractionalLabelMap);
   padder->SetConstant(paddingConstant);
-  int extent[6] = {0,-1,0,-1,0,-1};
+  int extent[6] = { 0, -1, 0, -1, 0, -1 };
   fractionalLabelMap->GetExtent(extent);
   // Set the output extent to the new size
-  padder->SetOutputWholeExtent(extent[0]-1, extent[1]+1, extent[2]-1, extent[3]+1, extent[4]-1, extent[5]+1);
+  padder->SetOutputWholeExtent(extent[0] - 1, extent[1] + 1, extent[2] - 1, extent[3] + 1, extent[4] - 1, extent[5] + 1);
   padder->Update();
   fractionalLabelMap->vtkImageData::DeepCopy(padder->GetOutput());
 }

@@ -59,10 +59,8 @@ class DraggableWidgetEventFilter : public QObject
 {
 public:
   /// Set the widget that will become draggable.
-  void setWidget(QWidget* w)
-  {
-    this->Widget = w;
-  }
+  void setWidget(QWidget* w) { this->Widget = w; }
+
 protected:
   bool eventFilter(QObject* obj, QEvent* event) override
   {
@@ -101,13 +99,13 @@ protected:
     // If the event is not one of the specified types, pass it to the base class.
     return QObject::eventFilter(obj, event);
   }
+
 private:
   bool DisableTopMost{ true };
   QWidget* Widget{ nullptr };
   QPoint PressPosition;
   bool Dragging{ false };
 };
-
 
 #ifdef Slicer_USE_QtTesting
 //-----------------------------------------------------------------------------
@@ -134,12 +132,8 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
 } // end of anonymous namespace
 
 //----------------------------------------------------------------------------
-template<typename SlicerMainWindowType>
-int qSlicerApplicationHelper::postInitializeApplication(
-    qSlicerApplication& app,
-    QScopedPointer<QSplashScreen>& splashScreen,
-    QScopedPointer<SlicerMainWindowType>& window
-    )
+template <typename SlicerMainWindowType>
+int qSlicerApplicationHelper::postInitializeApplication(qSlicerApplication& app, QScopedPointer<QSplashScreen>& splashScreen, QScopedPointer<SlicerMainWindowType>& window)
 {
 
 #if defined(Q_CC_GNU) && Q_CC_GNU <= 703
@@ -234,16 +228,16 @@ int qSlicerApplicationHelper::postInitializeApplication(
   moduleFactoryManager->registerModules();
   if (app.commandOptions()->verboseModuleDiscovery())
   {
-    qDebug() << "Number of registered modules:"
-             << moduleFactoryManager->registeredModuleNames().count();
+    qDebug() << "Number of registered modules:" << moduleFactoryManager->registeredModuleNames().count();
   }
 
   splashMessage(splashScreen, qSlicerApplication::tr("Instantiating modules..."));
   // Show the name of each module that is being instantiated to make it easier to see if a module
   // inappropriately performs some lengthy operations during instantiation.
-  QMetaObject::Connection moduleAboutToBeInstantiatedConnection = QObject::connect(
-    moduleFactoryManager, &qSlicerAbstractModuleFactoryManager::moduleAboutToBeInstantiated,
-    [&splashScreen](QString moduleName){splashMessage(splashScreen, qSlicerApplication::tr("Instantiating module \"%1\"...").arg(moduleName));});
+  QMetaObject::Connection moduleAboutToBeInstantiatedConnection =
+    QObject::connect(moduleFactoryManager,
+                     &qSlicerAbstractModuleFactoryManager::moduleAboutToBeInstantiated,
+                     [&splashScreen](QString moduleName) { splashMessage(splashScreen, qSlicerApplication::tr("Instantiating module \"%1\"...").arg(moduleName)); });
   moduleFactoryManager->instantiateModules();
   QObject::disconnect(moduleAboutToBeInstantiatedConnection);
 
@@ -254,12 +248,11 @@ int qSlicerApplicationHelper::postInitializeApplication(
 
   if (app.commandOptions()->verboseModuleDiscovery())
   {
-    qDebug() << "Number of instantiated modules:"
-             << moduleFactoryManager->instantiatedModuleNames().count();
+    qDebug() << "Number of instantiated modules:" << moduleFactoryManager->instantiatedModuleNames().count();
   }
 
-  QStringList failedToBeInstantiatedModuleNames = ctk::qSetToQStringList(
-        ctk::qStringListToQSet(moduleFactoryManager->registeredModuleNames()) - ctk::qStringListToQSet(moduleFactoryManager->instantiatedModuleNames()));
+  QStringList failedToBeInstantiatedModuleNames =
+    ctk::qSetToQStringList(ctk::qStringListToQSet(moduleFactoryManager->registeredModuleNames()) - ctk::qStringListToQSet(moduleFactoryManager->instantiatedModuleNames()));
   if (!failedToBeInstantiatedModuleNames.isEmpty())
   {
     qCritical() << "The following modules failed to be instantiated:";
@@ -282,7 +275,7 @@ int qSlicerApplicationHelper::postInitializeApplication(
     window.reset(new SlicerMainWindowType);
   }
   else if (app.commandOptions()->showPythonConsole() //
-    && !app.commandOptions()->runPythonAndExit())
+           && !app.commandOptions()->runPythonAndExit())
   {
     // there is no main window but we need to show Python console
 #ifdef Slicer_USE_PYTHONQT

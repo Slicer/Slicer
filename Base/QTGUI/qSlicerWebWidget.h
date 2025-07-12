@@ -38,11 +38,12 @@ class QWebChannel;
 class QWebEngineView;
 
 #ifdef QT_NO_SSL
-struct QSslError{};
+struct QSslError
+{
+};
 #endif
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget
-  : public QWidget
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(bool handleExternalUrlWithDesktopService READ handleExternalUrlWithDesktopService WRITE setHandleExternalUrlWithDesktopService)
@@ -50,6 +51,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerWebWidget
   Q_PROPERTY(bool javaScriptConsoleMessageLoggingEnabled READ javaScriptConsoleMessageLoggingEnabled WRITE setJavaScriptConsoleMessageLoggingEnabled)
   Q_PROPERTY(QString url READ url WRITE setUrl)
   friend class qSlicerWebEnginePage;
+
 public:
   /// Superclass typedef
   typedef QWidget Superclass;
@@ -86,8 +88,8 @@ public:
   bool javaScriptConsoleMessageLoggingEnabled() const;
   void setJavaScriptConsoleMessageLoggingEnabled(bool enable);
 
-//  QWebEngineProfile* profile() const;
-//  void setProfile(QWebEngineProfile* profile);
+  //  QWebEngineProfile* profile() const;
+  //  void setProfile(QWebEngineProfile* profile);
 
   /// Return a reference to the QWebView used internally.
   Q_INVOKABLE QWebEngineView* webView();
@@ -143,7 +145,7 @@ protected slots:
   virtual void onLoadStarted();
   virtual void onLoadProgress(int progress);
   virtual void onLoadFinished(bool ok);
-  void handleSslErrors(QNetworkReply* reply, const QList<QSslError> &errors);
+  void handleSslErrors(QNetworkReply* reply, const QList<QSslError>& errors);
 
 protected:
   qSlicerWebWidget(qSlicerWebWidgetPrivate* pimpl, QWidget* parent = nullptr);

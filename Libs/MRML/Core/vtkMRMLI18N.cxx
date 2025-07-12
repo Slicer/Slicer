@@ -134,7 +134,7 @@ void vtkMRMLI18N::classFinalize()
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLI18N::Translate(const char* context, const char* sourceText, const char* disambiguation/*=nullptr*/, int n/*=-1*/)
+std::string vtkMRMLI18N::Translate(const char* context, const char* sourceText, const char* disambiguation /*=nullptr*/, int n /*=-1*/)
 {
   vtkMRMLI18N* i18n = vtkMRMLI18N::GetInstance();
   vtkMRMLTranslator* translator = i18n ? i18n->GetTranslator() : nullptr;
@@ -150,9 +150,15 @@ std::string vtkMRMLI18N::Translate(const char* context, const char* sourceText, 
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLI18N::Format(const std::string& input,
-  const char* arg1/*=nullptr*/, const char* arg2/*=nullptr*/, const char* arg3/*=nullptr*/,
-  const char* arg4/*=nullptr*/, const char* arg5/*=nullptr*/, const char* arg6/*=nullptr*/,
-  const char* arg7/*=nullptr*/, const char* arg8/*=nullptr*/, const char* arg9/*=nullptr*/)
+                                const char* arg1 /*=nullptr*/,
+                                const char* arg2 /*=nullptr*/,
+                                const char* arg3 /*=nullptr*/,
+                                const char* arg4 /*=nullptr*/,
+                                const char* arg5 /*=nullptr*/,
+                                const char* arg6 /*=nullptr*/,
+                                const char* arg7 /*=nullptr*/,
+                                const char* arg8 /*=nullptr*/,
+                                const char* arg9 /*=nullptr*/)
 {
   std::string output;
 

@@ -52,16 +52,14 @@ class vtkImageReslice;
 class vtkGeneralTransform;
 
 // STL includes
-//#include <cstdlib>
+// #include <cstdlib>
 
 class vtkImageLabelOutline;
 class vtkTransform;
 
-class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLayerLogic
-  : public vtkMRMLAbstractLogic
+class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLayerLogic : public vtkMRMLAbstractLogic
 {
 public:
-
   /// The Usual vtk class functions
   static vtkMRMLSliceLayerLogic* New();
   vtkTypeMacro(vtkMRMLSliceLayerLogic, vtkMRMLAbstractLogic);
@@ -70,7 +68,7 @@ public:
   ///
   /// The volume node to operate on
   vtkGetObjectMacro(VolumeNode, vtkMRMLVolumeNode);
-  void SetVolumeNode (vtkMRMLVolumeNode* VolumeNode);
+  void SetVolumeNode(vtkMRMLVolumeNode* VolumeNode);
 
   ///
   /// The volume display node has the render properties of the volume
@@ -82,7 +80,7 @@ public:
   ///
   /// The slice node that defines the view
   vtkGetObjectMacro(SliceNode, vtkMRMLSliceNode);
-  void SetSliceNode (vtkMRMLSliceNode* SliceNode);
+  void SetSliceNode(vtkMRMLSliceNode* SliceNode);
 
   ///
   /// The image reslice or slice being used
@@ -119,7 +117,6 @@ public:
 
   void UpdateGlyphs();
 
-
   ///
   /// Check that we are observing the correct display node
   /// (correct means the same one that the volume node is referencing)
@@ -147,12 +144,8 @@ protected:
   ///
   /// provide the virtual method that updates this Logic based
   /// on mrml changes
-  void ProcessMRMLSceneEvents(vtkObject* caller,
-                                      unsigned long event,
-                                      void* callData) override;
-  void ProcessMRMLNodesEvents(vtkObject* caller,
-                                      unsigned long event,
-                                      void* callData) override;
+  void ProcessMRMLSceneEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
   void UpdateLogic();
   void OnMRMLNodeModified(vtkMRMLNode* node) override;
   vtkAlgorithmOutput* GetSliceImageDataConnection();

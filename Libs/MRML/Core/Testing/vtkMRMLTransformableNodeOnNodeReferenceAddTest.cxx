@@ -102,14 +102,12 @@ void populateScene_nodeRefBeforeAddNode(vtkMRMLScene* scene)
 int testScene(vtkMRMLScene* scene)
 {
   // Check transform node IDs
-  vtkMRMLNode* transformNode =
-    scene->GetFirstNodeByClass("vtkMRMLLinearTransformNode");
+  vtkMRMLNode* transformNode = scene->GetFirstNodeByClass("vtkMRMLLinearTransformNode");
   CHECK_NOT_NULL(transformNode);
   CHECK_STRING(transformNode->GetID(), "vtkMRMLLinearTransformNode1");
 
   // Check references
-  vtkMRMLTransformableNode* transformableNode =
-    vtkMRMLTransformableNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLScalarVolumeNode"));
+  vtkMRMLTransformableNode* transformableNode = vtkMRMLTransformableNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLScalarVolumeNode"));
 
   CHECK_NOT_NULL(transformableNode);
   CHECK_STRING(transformableNode->GetTransformNodeID(), transformNode->GetID());
@@ -129,4 +127,4 @@ int testScene(vtkMRMLScene* scene)
   return EXIT_SUCCESS;
 }
 
-}
+} // namespace

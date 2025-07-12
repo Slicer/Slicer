@@ -32,14 +32,10 @@
 qMRMLNodeComboBoxEventPlayer::qMRMLNodeComboBoxEventPlayer(QObject* parent)
   : pqWidgetEventPlayer(parent)
 {
-
 }
 
 // ----------------------------------------------------------------------------
-bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject* Object,
-                                    const QString& Command,
-                                    const QString& Arguments,
-                                    bool& Error)
+bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
   if (Command != "nodeAddedByUser"         //
       && Command != "currentNodeChanged"   //
@@ -49,8 +45,7 @@ bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject* Object,
     return false;
   }
 
-  if (qMRMLNodeComboBox* const comboBox =
-      qobject_cast<qMRMLNodeComboBox*>(Object))
+  if (qMRMLNodeComboBox* const comboBox = qobject_cast<qMRMLNodeComboBox*>(Object))
   {
     if (Command == "nodeAddedByUser")
     {

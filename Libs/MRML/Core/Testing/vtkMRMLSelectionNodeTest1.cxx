@@ -24,16 +24,16 @@ int vtkMRMLSelectionNodeTest1(int, char*[])
 
   EXERCISE_ALL_BASIC_MRML_METHODS(node1.GetPointer());
 
-  TEST_SET_GET_STRING( node1.GetPointer(), ActiveVolumeID);
-  TEST_SET_GET_STRING( node1.GetPointer(), SecondaryVolumeID);
-  TEST_SET_GET_STRING( node1.GetPointer(), ActiveLabelVolumeID);
-  TEST_SET_GET_STRING( node1.GetPointer(), ActivePlaceNodeID);
-  TEST_SET_GET_STRING( node1.GetPointer(), ActivePlaceNodeClassName);
-  TEST_SET_GET_STRING( node1.GetPointer(), ActiveROIListID);
-  TEST_SET_GET_STRING( node1.GetPointer(), ActiveCameraID);
-  TEST_SET_GET_STRING( node1.GetPointer(), ActiveTableID);
-  TEST_SET_GET_STRING( node1.GetPointer(), ActiveViewID);
-  TEST_SET_GET_STRING( node1.GetPointer(), ActiveLayoutID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActiveVolumeID);
+  TEST_SET_GET_STRING(node1.GetPointer(), SecondaryVolumeID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActiveLabelVolumeID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActivePlaceNodeID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActivePlaceNodeClassName);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActiveROIListID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActiveCameraID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActiveTableID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActiveViewID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ActiveLayoutID);
 
   // markups
   node1->AddNewPlaceNodeClassNameToList(nullptr, nullptr);
@@ -53,9 +53,7 @@ int vtkMRMLSelectionNodeTest1(int, char*[])
     std::string classNamestring = node1->GetPlaceNodeClassNameByIndex(index);
     if (classNamestring.compare(className) != 0)
     {
-      std::cerr << "Error! Set className '" << className.c_str()
-                << "' to list at index " << index << ", but got back '"
-                << classNamestring.c_str() << "'" << std::endl;
+      std::cerr << "Error! Set className '" << className.c_str() << "' to list at index " << index << ", but got back '" << classNamestring.c_str() << "'" << std::endl;
       node1->Print(std::cout);
       return EXIT_FAILURE;
     }
@@ -82,7 +80,7 @@ int vtkMRMLSelectionNodeTest1(int, char*[])
 }
 
 // ---------------------------------------------------------------------------
-int TestUnit(vtkMRMLSelectionNode* node1 )
+int TestUnit(vtkMRMLSelectionNode* node1)
 {
   vtkNew<vtkMRMLCoreTestingUtilities::vtkMRMLNodeCallback> callback;
   node1->AddObserver(vtkMRMLSelectionNode::UnitModifiedEvent, callback.GetPointer());
@@ -94,7 +92,6 @@ int TestUnit(vtkMRMLSelectionNode* node1 )
 
   node1->SetUnitNodeID(quantity, "");
   CHECK_NULL(node1->GetUnitNodeID(quantity));
-
 
   node1->SetUnitNodeID(quantity, nullptr);
   CHECK_NULL(node1->GetUnitNodeID(quantity));

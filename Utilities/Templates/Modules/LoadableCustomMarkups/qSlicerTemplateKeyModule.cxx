@@ -20,7 +20,6 @@
 
 #include "qSlicerTemplateKeyModule.h"
 
-
 // Qt includes
 #include <QDebug>
 
@@ -47,9 +46,7 @@ public:
 // qSlicerTemplateKeyModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyModulePrivate::qSlicerTemplateKeyModulePrivate()
-{
-}
+qSlicerTemplateKeyModulePrivate::qSlicerTemplateKeyModulePrivate() {}
 
 //-----------------------------------------------------------------------------
 // qSlicerTemplateKeyModule methods
@@ -62,9 +59,7 @@ qSlicerTemplateKeyModule::qSlicerTemplateKeyModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerTemplateKeyModule::~qSlicerTemplateKeyModule()
-{
-}
+qSlicerTemplateKeyModule::~qSlicerTemplateKeyModule() {}
 
 //-----------------------------------------------------------------------------
 bool qSlicerTemplateKeyModule::isHidden() const

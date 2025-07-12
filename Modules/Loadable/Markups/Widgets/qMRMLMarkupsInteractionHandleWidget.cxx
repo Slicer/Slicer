@@ -33,8 +33,10 @@
 class qMRMLMarkupsInteractionHandleWidgetPrivate : public Ui_qMRMLMarkupsInteractionHandleWidget
 {
   Q_DECLARE_PUBLIC(qMRMLMarkupsInteractionHandleWidget);
+
 protected:
   qMRMLMarkupsInteractionHandleWidget* const q_ptr;
+
 public:
   qMRMLMarkupsInteractionHandleWidgetPrivate(qMRMLMarkupsInteractionHandleWidget& object);
   void init();
@@ -118,8 +120,7 @@ vtkMRMLMarkupsDisplayNode* qMRMLMarkupsInteractionHandleWidget::mrmlDisplayNode(
 void qMRMLMarkupsInteractionHandleWidget::setMRMLDisplayNode(vtkMRMLMarkupsDisplayNode* displayNode)
 {
   Q_D(qMRMLMarkupsInteractionHandleWidget);
-  this->qvtkReconnect(d->DisplayNode, displayNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRML()));
+  this->qvtkReconnect(d->DisplayNode, displayNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
   d->DisplayNode = displayNode;
 
@@ -260,24 +261,17 @@ void qMRMLMarkupsInteractionHandleWidget::updateMRMLFromWidget()
   MRMLNodeModifyBlocker displayNodeBlocker(d->DisplayNode);
   d->DisplayNode->SetHandlesInteractive(d->overallVisibilityCheckBox->isChecked());
 
-  bool translationHandleAxes[4] = { d->translateXCheckBox->isChecked(),
-                                    d->translateYCheckBox->isChecked(),
-                                    d->translateZCheckBox->isChecked(),
-                                    d->translateViewPlaneCheckBox->isChecked() };
+  bool translationHandleAxes[4] = {
+    d->translateXCheckBox->isChecked(), d->translateYCheckBox->isChecked(), d->translateZCheckBox->isChecked(), d->translateViewPlaneCheckBox->isChecked()
+  };
   d->DisplayNode->SetTranslationHandleComponentVisibility(translationHandleAxes);
   d->DisplayNode->SetTranslationHandleVisibility(d->translateVisibilityCheckBox->isChecked());
 
-  bool rotationHandleAxes[4] = { d->rotateXCheckBox->isChecked(),
-                                 d->rotateYCheckBox->isChecked(),
-                                 d->rotateZCheckBox->isChecked(),
-                                 d->rotateViewPlaneCheckBox->isChecked()};
+  bool rotationHandleAxes[4] = { d->rotateXCheckBox->isChecked(), d->rotateYCheckBox->isChecked(), d->rotateZCheckBox->isChecked(), d->rotateViewPlaneCheckBox->isChecked() };
   d->DisplayNode->SetRotationHandleComponentVisibility(rotationHandleAxes);
   d->DisplayNode->SetRotationHandleVisibility(d->rotateVisibilityCheckBox->isChecked());
 
-  bool scaleHandleAxes[4] = { d->scaleXCheckBox->isChecked(),
-                              d->scaleYCheckBox->isChecked(),
-                              d->scaleZCheckBox->isChecked(),
-                              d->scaleViewPlaneCheckBox->isChecked() };
+  bool scaleHandleAxes[4] = { d->scaleXCheckBox->isChecked(), d->scaleYCheckBox->isChecked(), d->scaleZCheckBox->isChecked(), d->scaleViewPlaneCheckBox->isChecked() };
   d->DisplayNode->SetScaleHandleComponentVisibility(scaleHandleAxes);
   d->DisplayNode->SetScaleHandleVisibility(d->scaleVisibilityCheckBox->isChecked());
 

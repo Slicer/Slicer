@@ -40,7 +40,6 @@ public:
   qSlicerSubjectHierarchyExportPlugin(QObject* parent = nullptr);
   ~qSlicerSubjectHierarchyExportPlugin() override;
 
-
 public:
   /// Get node item context menu actions to add to tree view
   QList<QAction*> itemContextMenuActions() const override;

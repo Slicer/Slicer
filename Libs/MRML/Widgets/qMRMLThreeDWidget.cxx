@@ -44,12 +44,13 @@
 
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate
-class qMRMLThreeDWidgetPrivate
-  : public QObject
+class qMRMLThreeDWidgetPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qMRMLThreeDWidget);
+
 protected:
   qMRMLThreeDWidget* const q_ptr;
+
 public:
   qMRMLThreeDWidgetPrivate(qMRMLThreeDWidget& object);
   ~qMRMLThreeDWidgetPrivate() override;
@@ -59,7 +60,6 @@ public:
   qMRMLThreeDView* ThreeDView;
   qMRMLThreeDViewControllerWidget* ThreeDController;
 };
-
 
 //---------------------------------------------------------------------------
 qMRMLThreeDWidgetPrivate::qMRMLThreeDWidgetPrivate(qMRMLThreeDWidget& object)
@@ -90,11 +90,9 @@ void qMRMLThreeDWidgetPrivate::init()
 
   this->ThreeDController->setThreeDView(this->ThreeDView);
 
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->ThreeDView, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->ThreeDView, SLOT(setMRMLScene(vtkMRMLScene*)));
 
-  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   this->ThreeDController, SLOT(setMRMLScene(vtkMRMLScene*)));
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)), this->ThreeDController, SLOT(setMRMLScene(vtkMRMLScene*)));
 }
 
 // --------------------------------------------------------------------------
@@ -145,8 +143,7 @@ void qMRMLThreeDWidget::setMRMLAbstractViewNode(vtkMRMLAbstractViewNode* newView
   vtkMRMLViewNode* threeDViewNode = vtkMRMLViewNode::SafeDownCast(newViewNode);
   if (newViewNode && !threeDViewNode)
   {
-    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName()
-      << ". Expected node type: vtkMRMLViewNode";
+    qWarning() << Q_FUNC_INFO << " failed: Invalid view node type " << newViewNode->GetClassName() << ". Expected node type: vtkMRMLViewNode";
   }
   this->setMRMLViewNode(threeDViewNode);
 }

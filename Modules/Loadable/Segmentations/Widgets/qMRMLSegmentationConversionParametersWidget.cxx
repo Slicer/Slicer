@@ -49,8 +49,10 @@
 class qMRMLSegmentationConversionParametersWidgetPrivate : public Ui_qMRMLSegmentationConversionParametersWidget
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationConversionParametersWidget);
+
 protected:
   qMRMLSegmentationConversionParametersWidget* const q_ptr;
+
 public:
   qMRMLSegmentationConversionParametersWidgetPrivate(qMRMLSegmentationConversionParametersWidget& object);
   void init();
@@ -92,12 +94,9 @@ void qMRMLSegmentationConversionParametersWidgetPrivate::init()
   this->setupUi(q);
 
   // Make connections
-  QObject::connect(this->PathsTable, SIGNAL(itemSelectionChanged()),
-                   q, SLOT(populateParametersTable()));
-  QObject::connect(this->ParametersTable, SIGNAL(itemChanged(QTableWidgetItem*)),
-                   q, SLOT(onParameterChanged(QTableWidgetItem*)));
-  QObject::connect(this->pushButton_Convert, SIGNAL(clicked()),
-                   q, SLOT(applyConversion()));
+  QObject::connect(this->PathsTable, SIGNAL(itemSelectionChanged()), q, SLOT(populateParametersTable()));
+  QObject::connect(this->ParametersTable, SIGNAL(itemChanged(QTableWidgetItem*)), q, SLOT(onParameterChanged(QTableWidgetItem*)));
+  QObject::connect(this->pushButton_Convert, SIGNAL(clicked()), q, SLOT(applyConversion()));
 
   // Set up initial look of the tables
   this->PathsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -243,7 +242,7 @@ void qMRMLSegmentationConversionParametersWidget::populatePathsTable()
 
   int rowCount = d->PossiblePaths->GetNumberOfPaths();
   d->PathsTable->setRowCount(rowCount);
-  for (int row = 0; row< d->PossiblePaths->GetNumberOfPaths(); ++row)
+  for (int row = 0; row < d->PossiblePaths->GetNumberOfPaths(); ++row)
   {
     // Path cost
     vtkSegmentationConversionPath* path = d->PossiblePaths->GetPath(row);
@@ -354,13 +353,12 @@ void qMRMLSegmentationConversionParametersWidget::populateParametersTable()
       geometryLayout->addWidget(textValueLabel);
 
       QPushButton* specifyGeometryButton = new QPushButton(tr("Specify geometry"), geometryWidget);
-      //setGeometryFromVolumeButton->setFixedWidth(160);
-      QObject::connect(specifyGeometryButton, SIGNAL(clicked()),
-                       this, SLOT(onSpecifyGeometryButtonClicked()));
+      // setGeometryFromVolumeButton->setFixedWidth(160);
+      QObject::connect(specifyGeometryButton, SIGNAL(clicked()), this, SLOT(onSpecifyGeometryButtonClicked()));
       geometryLayout->addWidget(specifyGeometryButton);
 
-      //QTableWidgetItem* geometryItem = new QTableWidgetItem();
-      //geometryItem->setFlags(geometryItem->flags() & ~Qt::ItemIsEditable);
+      // QTableWidgetItem* geometryItem = new QTableWidgetItem();
+      // geometryItem->setFlags(geometryItem->flags() & ~Qt::ItemIsEditable);
       geometryWidget->setToolTip(parameterDescription);
       d->ParametersTable->setCellWidget(row, d->parametersColumnIndex(tr("Value")), geometryWidget);
     }

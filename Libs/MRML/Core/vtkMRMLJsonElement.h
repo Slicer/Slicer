@@ -46,7 +46,8 @@ public:
   /// Returns true if the JSON object contains a member by this name.
   bool HasMember(const char* propertyName);
 
-  enum Type {
+  enum Type
+  {
     UNKNOWN = 0,
     OBJECT = 1,
     ARRAY = 2,
@@ -181,11 +182,9 @@ protected:
   friend class vtkMRMLJsonReader;
 };
 
-
 class VTK_MRML_EXPORT vtkMRMLJsonReader : public vtkObject
 {
 public:
-
   static vtkMRMLJsonReader* New();
   vtkTypeMacro(vtkMRMLJsonReader, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -223,13 +222,11 @@ protected:
   vtkNew<vtkMRMLMessageCollection> UserMessages;
 };
 
-
 /// \brief Writes properties into a JSON stream
 ///
 class VTK_MRML_EXPORT vtkMRMLJsonWriter : public vtkObject
 {
 public:
-
   static vtkMRMLJsonWriter* New();
   vtkTypeMacro(vtkMRMLJsonWriter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;

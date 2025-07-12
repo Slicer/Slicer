@@ -47,7 +47,7 @@ public:
   void init();
 
   vtkWeakPointer<vtkMRMLDisplayNode> MRMLDisplayNode;
-  bool                               IsUpdatingWidgetFromMRML{ false };
+  bool IsUpdatingWidgetFromMRML{ false };
 };
 
 //------------------------------------------------------------------------------
@@ -63,20 +63,15 @@ void qMRMLClipNodeDisplayWidgetPrivate::init()
   this->setupUi(q);
   q->setEnabled(this->MRMLDisplayNode != nullptr);
 
-  QObject::connect(this->checkBox_Clipping, SIGNAL(toggled(bool)),
-    q, SLOT(updateMRMLFromWidget()));
-  QObject::connect(this->checkBox_ClippingCapping, SIGNAL(toggled(bool)),
-    q, SLOT(updateMRMLFromWidget()));
-  QObject::connect(this->sliderWidget_ClippingCapOpacity, SIGNAL(valueChanged(double)),
-    q, SLOT(updateMRMLFromWidget()));
-  QObject::connect(this->checkBox_ClippingOutline, SIGNAL(toggled(bool)),
-    q, SLOT(updateMRMLFromWidget()));
-  QObject::connect(this->checkBox_ClippingKeepWholeCells, SIGNAL(toggled(bool)),
-    q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->checkBox_Clipping, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->checkBox_ClippingCapping, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->sliderWidget_ClippingCapOpacity, SIGNAL(valueChanged(double)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->checkBox_ClippingOutline, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
+  QObject::connect(this->checkBox_ClippingKeepWholeCells, SIGNAL(toggled(bool)), q, SLOT(updateMRMLFromWidget()));
 }
 
 //------------------------------------------------------------------------------
-qMRMLClipNodeDisplayWidget::qMRMLClipNodeDisplayWidget(QWidget* _parent/*=nullptr*/)
+qMRMLClipNodeDisplayWidget::qMRMLClipNodeDisplayWidget(QWidget* _parent /*=nullptr*/)
   : qMRMLWidget(_parent)
   , d_ptr(new qMRMLClipNodeDisplayWidgetPrivate(*this))
 {
@@ -104,8 +99,7 @@ void qMRMLClipNodeDisplayWidget::setMRMLDisplayNode(vtkMRMLNode* node)
 void qMRMLClipNodeDisplayWidget::setMRMLDisplayNode(vtkMRMLDisplayNode* clipNode)
 {
   Q_D(qMRMLClipNodeDisplayWidget);
-  qvtkReconnect(d->MRMLDisplayNode, clipNode, vtkCommand::ModifiedEvent,
-    this, SLOT(updateWidgetFromMRML()));
+  qvtkReconnect(d->MRMLDisplayNode, clipNode, vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
   d->MRMLDisplayNode = clipNode;
   this->updateWidgetFromMRML();
 }

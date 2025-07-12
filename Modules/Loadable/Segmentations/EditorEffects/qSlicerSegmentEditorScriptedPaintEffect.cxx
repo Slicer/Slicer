@@ -45,7 +45,8 @@ public:
   qSlicerSegmentEditorScriptedPaintEffectPrivate();
   virtual ~qSlicerSegmentEditorScriptedPaintEffectPrivate();
 
-  enum {
+  enum
+  {
     IconMethod = 0,
     HelpTextMethod,
     CloneMethod,
@@ -178,7 +179,10 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString file
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSegmentEditorScriptedPaintEffect::setPythonSource - "
                             "Failed to load segment editor scripted effect: "
-                            "class %1 was not found in %2").arg(className).arg(filePath).toUtf8());
+                            "class %1 was not found in %2")
+                      .arg(className)
+                      .arg(filePath)
+                      .toUtf8());
     PythonQt::self()->handleError();
     return false;
   }
@@ -193,8 +197,7 @@ bool qSlicerSegmentEditorScriptedPaintEffect::setPythonSource(const QString file
 
   d->PythonSourceFilePath = filePath;
 
-  if (!qSlicerScriptedUtils::setModuleAttribute(
-        "slicer", className, self))
+  if (!qSlicerScriptedUtils::setModuleAttribute("slicer", className, self))
   {
     qCritical() << "Failed to set" << ("slicer." + className);
   }
@@ -270,8 +273,7 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedPaintEffect::clo
 
   // Parse result
   QVariant resultVariant = PythonQtConv::PyObjToQVariant(result);
-  qSlicerSegmentEditorAbstractEffect* clonedEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
-    resultVariant.value<QObject*>() );
+  qSlicerSegmentEditorAbstractEffect* clonedEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(resultVariant.value<QObject*>());
   if (!clonedEffect)
   {
     qCritical() << d->PythonSourceFilePath << ": clone: Invalid cloned effect object returned from python!";

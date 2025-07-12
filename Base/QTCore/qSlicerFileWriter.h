@@ -27,8 +27,7 @@ class qSlicerFileWriterPrivate;
 
 class vtkObject;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileWriter
-  : public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileWriter : public qSlicerIO
 {
   Q_OBJECT
 public:

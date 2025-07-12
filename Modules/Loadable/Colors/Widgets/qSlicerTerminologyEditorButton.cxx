@@ -38,8 +38,10 @@
 class qSlicerTerminologyEditorButtonPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerTerminologyEditorButton);
+
 protected:
   qSlicerTerminologyEditorButton* const q_ptr;
+
 public:
   qSlicerTerminologyEditorButtonPrivate(qSlicerTerminologyEditorButton& object);
   void init();
@@ -101,16 +103,14 @@ void qSlicerTerminologyEditorButton::onToggled(bool change)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyEditorButton::terminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo )
+void qSlicerTerminologyEditorButton::terminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorButton);
   terminologyInfo = d->TerminologyInfo;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTerminologyEditorButton::setTerminologyInfo(
-  qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo )
+void qSlicerTerminologyEditorButton::setTerminologyInfo(qSlicerTerminologyNavigatorWidget::TerminologyInfoBundle& terminologyInfo)
 {
   Q_D(qSlicerTerminologyEditorButton);
 

@@ -86,9 +86,8 @@ vtkClosedSurfaceToBinaryLabelmapConversionRule::vtkClosedSurfaceToBinaryLabelmap
 vtkClosedSurfaceToBinaryLabelmapConversionRule::~vtkClosedSurfaceToBinaryLabelmapConversionRule() = default;
 
 //----------------------------------------------------------------------------
-unsigned int vtkClosedSurfaceToBinaryLabelmapConversionRule::GetConversionCost(
-  vtkDataObject* vtkNotUsed(sourceRepresentation)/*=nullptr*/,
-  vtkDataObject* vtkNotUsed(targetRepresentation)/*=nullptr*/)
+unsigned int vtkClosedSurfaceToBinaryLabelmapConversionRule::GetConversionCost(vtkDataObject* vtkNotUsed(sourceRepresentation) /*=nullptr*/,
+                                                                               vtkDataObject* vtkNotUsed(targetRepresentation) /*=nullptr*/)
 {
   // Rough input-independent guess (ms)
   return 500;
@@ -131,8 +130,7 @@ vtkDataObject* vtkClosedSurfaceToBinaryLabelmapConversionRule::ConstructRepresen
 //----------------------------------------------------------------------------
 bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment)
 {
-  vtkSmartPointer<vtkOrientedImageData> outputGeometryLabelmap = vtkOrientedImageData::SafeDownCast(
-    segment->GetRepresentation(this->GetTargetRepresentationName()));
+  vtkSmartPointer<vtkOrientedImageData> outputGeometryLabelmap = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(this->GetTargetRepresentationName()));
   this->CreateTargetRepresentation(segment);
 
   // Check validity of source and target representation objects
@@ -145,8 +143,8 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
 
   if (closedSurfacePolyData->GetNumberOfPoints() < 2 || closedSurfacePolyData->GetNumberOfCells() < 2)
   {
-    vtkDebugMacro("Convert: Cannot create binary labelmap from surface with number of points: "
-      << closedSurfacePolyData->GetNumberOfPoints() << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
+    vtkDebugMacro("Convert: Cannot create binary labelmap from surface with number of points: " << closedSurfacePolyData->GetNumberOfPoints()
+                                                                                                << " and number of cells: " << closedSurfacePolyData->GetNumberOfCells());
     return false;
   }
 
@@ -187,10 +185,12 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   else
   {
     // Set voxel values to 0
-    int extent[6] = {0,-1,0,-1,0,-1};
+    int extent[6] = { 0, -1, 0, -1, 0, -1 };
     binaryLabelmap->GetExtent(extent);
-    memset(binaryLabelmapVoxelsPointer, 0, ((extent[1]-extent[0]+1)*(extent[3]-extent[2]+1)*(extent[5]-extent[4]+1) *
-      binaryLabelmap->GetScalarSize() * binaryLabelmap->GetNumberOfScalarComponents()));
+    memset(
+      binaryLabelmapVoxelsPointer,
+      0,
+      ((extent[1] - extent[0] + 1) * (extent[3] - extent[2] + 1) * (extent[5] - extent[4] + 1) * binaryLabelmap->GetScalarSize() * binaryLabelmap->GetNumberOfScalarComponents()));
   }
 
   // Perform conversion
@@ -209,8 +209,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   identityMatrix->Identity();
   binaryLabelmap->SetGeometryFromImageToWorldMatrix(identityMatrix);
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter =
-    vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(closedSurfacePolyData);
   transformPolyDataFilter->SetTransform(inverseOutputLabelmapGeometryTransform);
 
@@ -224,7 +223,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::Convert(vtkSegment* segment
   triangle->SetInputConnection(normalFilter->GetOutputPort());
 
   // Convert to triangle strip
-  vtkSmartPointer<vtkStripper> stripper=vtkSmartPointer<vtkStripper>::New();
+  vtkSmartPointer<vtkStripper> stripper = vtkSmartPointer<vtkStripper>::New();
   stripper->SetInputConnection(triangle->GetOutputPort());
 
   // Convert polydata to stencil
@@ -360,8 +359,7 @@ bool vtkClosedSurfaceToBinaryLabelmapConversionRule::CalculateOutputGeometry(vtk
   inverseImageGeometryTransform->SetMatrix(geometryImageToWorldMatrix);
   inverseImageGeometryTransform->Inverse();
 
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter =
-    vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  vtkSmartPointer<vtkTransformPolyDataFilter> transformPolyDataFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   transformPolyDataFilter->SetInputData(closedSurfacePolyData);
   transformPolyDataFilter->SetTransform(inverseImageGeometryTransform);
   transformPolyDataFilter->Update();
@@ -414,15 +412,15 @@ std::string vtkClosedSurfaceToBinaryLabelmapConversionRule::GetDefaultImageGeome
   }
 
   // Get poly data bounds
-  double bounds[6] = {0,0,0,0,0,0};
+  double bounds[6] = { 0, 0, 0, 0, 0, 0 };
   polyData->GetBounds(bounds);
 
   // Set origin
   vtkSmartPointer<vtkMatrix4x4> geometryMatrix = vtkSmartPointer<vtkMatrix4x4>::New();
   geometryMatrix->Identity(); // Default directions and scaling
-  geometryMatrix->SetElement(0,3,bounds[0]);
-  geometryMatrix->SetElement(1,3,bounds[2]);
-  geometryMatrix->SetElement(2,3,bounds[4]);
+  geometryMatrix->SetElement(0, 3, bounds[0]);
+  geometryMatrix->SetElement(1, 3, bounds[2]);
+  geometryMatrix->SetElement(2, 3, bounds[4]);
 
   // set spacing to have an approximately 250^3 volume
   // this size is not too large for average computing hardware yet

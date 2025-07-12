@@ -25,7 +25,7 @@
  * for details.
  * @sa
  * vtkMRMLAbstractWidgetRepresentation3D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerPointsRepresentation2D_h
 #define vtkSlicerPointsRepresentation2D_h

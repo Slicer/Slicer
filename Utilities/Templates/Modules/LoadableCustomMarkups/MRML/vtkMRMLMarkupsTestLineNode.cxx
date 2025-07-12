@@ -28,9 +28,7 @@
 vtkMRMLNodeNewMacro(vtkMRMLMarkupsTestLineNode);
 
 //--------------------------------------------------------------------------------
-vtkMRMLMarkupsTestLineNode::vtkMRMLMarkupsTestLineNode()
-{
-}
+vtkMRMLMarkupsTestLineNode::vtkMRMLMarkupsTestLineNode() {}
 
 //--------------------------------------------------------------------------------
 vtkMRMLMarkupsTestLineNode::~vtkMRMLMarkupsTestLineNode() = default;

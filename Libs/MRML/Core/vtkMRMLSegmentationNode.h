@@ -63,7 +63,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from name/value pairs
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -73,7 +73,7 @@ public:
   vtkMRMLCopyContentMacro(vtkMRMLSegmentationNode);
 
   /// Get unique node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Segmentation";};
+  const char* GetNodeTagName() override { return "Segmentation"; };
 
   /// Get bounding box in global RAS form (xmin,xmax, ymin,ymax, zmin,zmax).
   /// This method returns the bounds of the object with any transforms that may
@@ -120,7 +120,7 @@ public:
   virtual vtkIdType GetSegmentSubjectHierarchyItem(std::string segmentID, vtkMRMLSubjectHierarchyNode* shNode);
 
 #ifndef __VTK_WRAP__
-//BTX
+  // BTX
   /// Build merged labelmap of the binary labelmap representations of the specified segments
   /// \param mergedImageData Output image data for the merged labelmap image data. Voxels of background volume will be
   /// of signed short type. Label value of n-th segment in segmentIDs list will be (n + 1), or will be specified in labelValues.
@@ -133,9 +133,12 @@ public:
   ///   If not specified, then the label values in the segmentation will be used.
   ///   The size of the array should match the number of segment IDs used in the merged labelmap.
   /// \return Success flag
-  virtual bool GenerateMergedLabelmap(vtkOrientedImageData* mergedImageData, int extentComputationMode, vtkOrientedImageData* mergedLabelmapGeometry = nullptr,
-    const std::vector<std::string>& segmentIDs = std::vector<std::string>(), vtkIntArray* labelValues = nullptr);
-//ETX
+  virtual bool GenerateMergedLabelmap(vtkOrientedImageData* mergedImageData,
+                                      int extentComputationMode,
+                                      vtkOrientedImageData* mergedLabelmapGeometry = nullptr,
+                                      const std::vector<std::string>& segmentIDs = std::vector<std::string>(),
+                                      vtkIntArray* labelValues = nullptr);
+// ETX
 #endif // __VTK_WRAP__
 
   /// Python-accessible version of the more generic \sa GenerateMergedLabelmap.
@@ -152,8 +155,10 @@ public:
   ///   The size of the array should match the number of segment IDs used in the merged labelmap.
   /// \sa GenerateMergedLabelmap
   virtual bool GenerateMergedLabelmapForAllSegments(vtkOrientedImageData* mergedImageData,
-    int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS,
-    vtkOrientedImageData* mergedLabelmapGeometry = nullptr, vtkStringArray* segmentIDs = nullptr, vtkIntArray* labelValues = nullptr);
+                                                    int extentComputationMode = vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS,
+                                                    vtkOrientedImageData* mergedLabelmapGeometry = nullptr,
+                                                    vtkStringArray* segmentIDs = nullptr,
+                                                    vtkIntArray* labelValues = nullptr);
 
   enum
   {
@@ -190,11 +195,14 @@ public:
   /// \param displayNode used when edit mode refers to visible segments.
   ///   If not specified then the first display node is used.
   /// \return Returns true is mask is successfully generated.
-  virtual bool GenerateEditMask(vtkOrientedImageData* maskImage, int editMode,
-    vtkOrientedImageData* referenceGeometry,
-    std::string editedSegmentID="", std::string maskSegmentID="",
-    vtkOrientedImageData* sourceVolume = nullptr, double editableIntensityRange[2] = nullptr,
-    vtkMRMLSegmentationDisplayNode* displayNode = nullptr);
+  virtual bool GenerateEditMask(vtkOrientedImageData* maskImage,
+                                int editMode,
+                                vtkOrientedImageData* referenceGeometry,
+                                std::string editedSegmentID = "",
+                                std::string maskSegmentID = "",
+                                vtkOrientedImageData* sourceVolume = nullptr,
+                                double editableIntensityRange[2] = nullptr,
+                                vtkMRMLSegmentationDisplayNode* displayNode = nullptr);
 
   /// Expose reference identifier to get the volume node defining the reference image geometry if any
   static std::string GetReferenceImageGeometryReferenceRole() { return "referenceImageGeometryRef"; };
@@ -271,13 +279,11 @@ public:
 
   /// Add new segment from a closed surface.
   /// \return Segment ID of the new segment. Empty string if an error occurred.
-  virtual std::string AddSegmentFromClosedSurfaceRepresentation(vtkPolyData* polyData,
-    std::string segmentName = "", double color[3] = nullptr, std::string segmentId = "");
+  virtual std::string AddSegmentFromClosedSurfaceRepresentation(vtkPolyData* polyData, std::string segmentName = "", double color[3] = nullptr, std::string segmentId = "");
 
   /// Add new segment from a binary labelmap.
   /// \return Segment ID of the new segment. Empty string if an error occurred.
-  std::string AddSegmentFromBinaryLabelmapRepresentation(vtkOrientedImageData* imageData,
-    std::string segmentName = "", double color[3] = nullptr, std::string segmentId = "");
+  std::string AddSegmentFromBinaryLabelmapRepresentation(vtkOrientedImageData* imageData, std::string segmentName = "", double color[3] = nullptr, std::string segmentId = "");
 
   /// Delete segment from segmentation.
   void RemoveSegment(const std::string& segmentID);

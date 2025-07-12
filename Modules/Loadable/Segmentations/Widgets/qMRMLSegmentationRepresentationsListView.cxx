@@ -50,8 +50,10 @@
 class qMRMLSegmentationRepresentationsListViewPrivate : public Ui_qMRMLSegmentationRepresentationsListView
 {
   Q_DECLARE_PUBLIC(qMRMLSegmentationRepresentationsListView);
+
 protected:
   qMRMLSegmentationRepresentationsListView* const q_ptr;
+
 public:
   qMRMLSegmentationRepresentationsListViewPrivate(qMRMLSegmentationRepresentationsListView& object);
   void init();
@@ -87,7 +89,7 @@ void qMRMLSegmentationRepresentationsListViewPrivate::init()
 
   // Set up initial look of node representations list
   this->RepresentationsList->setSelectionMode(QAbstractItemView::NoSelection);
-  this->RepresentationsList->setStyleSheet( "QListWidget::item { border-bottom: 1px solid lightGray; }" );
+  this->RepresentationsList->setStyleSheet("QListWidget::item { border-bottom: 1px solid lightGray; }");
 }
 
 //-----------------------------------------------------------------------------
@@ -102,7 +104,6 @@ void qMRMLSegmentationRepresentationsListViewPrivate::setMessage(const QString& 
   this->RepresentationsListMessageLabel->setVisible(!message.isEmpty());
   this->RepresentationsListMessageLabel->setText(message);
 }
-
 
 // --------------------------------------------------------------------------
 // qMRMLSegmentationRepresentationsListView methods
@@ -131,16 +132,11 @@ void qMRMLSegmentationRepresentationsListView::setSegmentationNode(vtkMRMLNode* 
     return;
   }
 
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SourceRepresentationModified,
-                 this, SLOT( populateRepresentationsList() ) );
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::ContainedRepresentationNamesModified,
-                 this, SLOT( populateRepresentationsList() ) );
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentModified,
-                 this, SLOT( populateRepresentationsList() ) );
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentAdded,
-                 this, SLOT( populateRepresentationsList() ) );
-  qvtkReconnect( d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentRemoved,
-                 this, SLOT( populateRepresentationsList() ) );
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SourceRepresentationModified, this, SLOT(populateRepresentationsList()));
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::ContainedRepresentationNamesModified, this, SLOT(populateRepresentationsList()));
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentModified, this, SLOT(populateRepresentationsList()));
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentAdded, this, SLOT(populateRepresentationsList()));
+  qvtkReconnect(d->SegmentationNode, segmentationNode, vtkSegmentation::SegmentRemoved, this, SLOT(populateRepresentationsList()));
 
   d->SegmentationNode = segmentationNode;
   this->populateRepresentationsList();
@@ -178,7 +174,7 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
   segmentation->GetAvailableRepresentationNames(representationNames);
 
   int row = 0;
-  for (std::set<std::string>::iterator reprIt=representationNames.begin(); reprIt!=representationNames.end(); ++reprIt, ++row)
+  for (std::set<std::string>::iterator reprIt = representationNames.begin(); reprIt != representationNames.end(); ++reprIt, ++row)
   {
     QString name(reprIt->c_str());
 
@@ -189,7 +185,7 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
 
     QListWidgetItem* representationItem = new QListWidgetItem();
     representationItem->setFlags(representationItem->flags() & ~Qt::ItemIsEditable);
-    //representationItem->setSizeHint(QSize(-1,26)); //TODO:
+    // representationItem->setSizeHint(QSize(-1,26)); //TODO:
 
     // Representation name
     QLabel* nameLabel = new QLabel(name, representationWidget);
@@ -207,7 +203,8 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
     if (master)
     {
       representationItem->setIcon(QIcon(":/Icons/Source.png"));
-      representationItem->setToolTip(tr("This is the source representation.\n  1. This representation is saved on disk\n  2. If this representation is modified, the others are cleared"));
+      representationItem->setToolTip(
+        tr("This is the source representation.\n  1. This representation is saved on disk\n  2. If this representation is modified, the others are cleared"));
     }
     else if (present)
     {
@@ -234,7 +231,8 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
           ctkMenuButton* updateButton = new ctkMenuButton(representationWidget);
           updateButton->setText(tr("Update"));
           QString updateButtonTooltip = tr("Update %1 representation using custom conversion parameters.\n\n"
-            "Click the down-arrow button for additional operations.").arg(name);
+                                           "Click the down-arrow button for additional operations.")
+                                          .arg(name);
           updateButton->setToolTip(updateButtonTooltip);
           updateButton->setProperty(REPRESENTATION_NAME_PROPERTY, QVariant(name));
           updateButton->setMinimumWidth(updateButton->sizeHint().width() + 10);
@@ -267,7 +265,8 @@ void qMRMLSegmentationRepresentationsListView::populateRepresentationsList()
         ctkMenuButton* createButton = new ctkMenuButton(representationWidget);
         createButton->setText(tr("Create"));
         QString convertButtonTooltip = tr("Create %1 representation using default conversion parameters.\n\n"
-          "Press and hold button to access advanced conversion and removal options.").arg(name);
+                                          "Press and hold button to access advanced conversion and removal options.")
+                                         .arg(name);
         createButton->setToolTip(convertButtonTooltip);
         createButton->setProperty(REPRESENTATION_NAME_PROPERTY, QVariant(name));
         createButton->setMinimumWidth(createButton->sizeHint().width() + 10);
@@ -314,7 +313,8 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationDefault()
   if (!d->SegmentationNode->GetSegmentation()->CreateRepresentation(representationName.toUtf8().constData()))
   {
     QString message = tr("Failed to convert %1 to %2!\n\nProbably there is no valid conversion path between the source representation and %2")
-                        .arg(d->SegmentationNode->GetName()).arg(representationName);
+                        .arg(d->SegmentationNode->GetName())
+                        .arg(representationName);
     QMessageBox::warning(nullptr, tr("Conversion failed"), message);
   }
   QApplication::restoreOverrideCursor();
@@ -355,8 +355,7 @@ void qMRMLSegmentationRepresentationsListView::createRepresentationAdvanced()
   layout->addWidget(parametersWidget);
 
   // Connect conversion done event to dialog close
-  QObject::connect(parametersWidget, SIGNAL(conversionDone()),
-                   parametersDialog, SLOT(accept()));
+  QObject::connect(parametersWidget, SIGNAL(conversionDone()), parametersDialog, SLOT(accept()));
 
   // Show dialog
   parametersDialog->exec();
@@ -412,13 +411,15 @@ void qMRMLSegmentationRepresentationsListView::makeSource()
   {
     // Warn user about the consequences of changing source representation
     QMessageBox::StandardButton answer =
-      QMessageBox::question(nullptr, tr("Confirm source representation change"),
-      tr("Changing source representation will make the 'gold standard' representation the selected one, "
-      "and will result in deletion of all the other representations.\n"
-      "This may mean losing important data that cannot be created again from the new source representation.\n\n"
-      "(Reminder: Source representation is the data type which is saved to disk, and which is used as input when creating other representations)\n\n"
-      "Do you wish to proceed with changing source representation?"),
-      QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+      QMessageBox::question(nullptr,
+                            tr("Confirm source representation change"),
+                            tr("Changing source representation will make the 'gold standard' representation the selected one, "
+                               "and will result in deletion of all the other representations.\n"
+                               "This may mean losing important data that cannot be created again from the new source representation.\n\n"
+                               "(Reminder: Source representation is the data type which is saved to disk, and which is used as input when creating other representations)\n\n"
+                               "Do you wish to proceed with changing source representation?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No);
     if (answer != QMessageBox::Yes)
     {
       return;

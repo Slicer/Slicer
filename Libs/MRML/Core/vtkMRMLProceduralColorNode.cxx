@@ -29,7 +29,6 @@ Version:   $Revision: 1.0 $
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLProceduralColorNode);
 
-
 //----------------------------------------------------------------------------
 vtkMRMLProceduralColorNode::vtkMRMLProceduralColorNode()
 {
@@ -54,7 +53,6 @@ void vtkMRMLProceduralColorNode::WriteXML(ostream& of, int nIndent)
   // Write all attributes not equal to their defaults
 
   Superclass::WriteXML(of, nIndent);
-
 }
 
 //----------------------------------------------------------------------------
@@ -62,16 +60,14 @@ void vtkMRMLProceduralColorNode::ReadXMLAttributes(const char** atts)
 {
 
   Superclass::ReadXMLAttributes(atts);
-
 }
-
 
 //----------------------------------------------------------------------------
 // Copy the anode's attributes to this object.
 void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode* anode)
 {
   Superclass::Copy(anode);
-  vtkMRMLProceduralColorNode* node = (vtkMRMLProceduralColorNode*) anode;
+  vtkMRMLProceduralColorNode* node = (vtkMRMLProceduralColorNode*)anode;
   if (!node)
   {
     vtkWarningMacro("Copy: Input node is not a procedural color node!");
@@ -79,14 +75,14 @@ void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode* anode)
   }
 
   int oldModified = this->StartModify();
-  if (node->GetColorTransferFunction()!=nullptr)
+  if (node->GetColorTransferFunction() != nullptr)
   {
-    if (this->ColorTransferFunction==nullptr)
+    if (this->ColorTransferFunction == nullptr)
     {
       vtkNew<vtkColorTransferFunction> ctf;
       this->SetAndObserveColorTransferFunction(ctf);
     }
-    if (this->ColorTransferFunction!=node->GetColorTransferFunction())
+    if (this->ColorTransferFunction != node->GetColorTransferFunction())
     {
       this->ColorTransferFunction->DeepCopy(node->GetColorTransferFunction());
     }
@@ -96,7 +92,6 @@ void vtkMRMLProceduralColorNode::Copy(vtkMRMLNode* anode)
     this->SetAndObserveColorTransferFunction(nullptr);
   }
   this->EndModify(oldModified);
-
 }
 
 //----------------------------------------------------------------------------
@@ -119,12 +114,10 @@ void vtkMRMLProceduralColorNode::UpdateScene(vtkMRMLScene* scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLProceduralColorNode::ProcessMRMLEvents ( vtkObject* caller,
-                                           unsigned long event,
-                                           void* callData )
+void vtkMRMLProceduralColorNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-  if (caller!=nullptr && caller==this->ColorTransferFunction && event==vtkCommand::ModifiedEvent)
+  if (caller != nullptr && caller == this->ColorTransferFunction && event == vtkCommand::ModifiedEvent)
   {
     Modified();
   }
@@ -140,16 +133,13 @@ vtkLookupTable* vtkMRMLProceduralColorNode::GetLookupTable()
   // copy into a color look up table with NumberOfTableValues entries
   vtkColorTransferFunction* ctf = this->GetColorTransferFunction();
   double* ctfRange = ctf->GetRange();
-  std::vector<double> bareTable(this->NumberOfTableValues*3);
+  std::vector<double> bareTable(this->NumberOfTableValues * 3);
   if (this->NumberOfTableValues > 0)
   {
-    ctf->GetTable(ctfRange[0], ctfRange[1],
-      this->NumberOfTableValues, &(bareTable[0]));
+    ctf->GetTable(ctfRange[0], ctfRange[1], this->NumberOfTableValues, &(bareTable[0]));
   }
 
-  vtkDebugMacro("Changing a color xfer function to a lut, range used = "
-                << ctfRange[0] << ", " << ctfRange[1]
-                << " (" << this->NumberOfTableValues << " colors)");
+  vtkDebugMacro("Changing a color xfer function to a lut, range used = " << ctfRange[0] << ", " << ctfRange[1] << " (" << this->NumberOfTableValues << " colors)");
 
   // Fill in values in lut
   this->ConvertedCTFtoLUT->SetTableRange(ctfRange);
@@ -157,11 +147,7 @@ vtkLookupTable* vtkMRMLProceduralColorNode::GetLookupTable()
   for (vtkIdType i = 0; i < this->NumberOfTableValues; ++i)
   {
     int baseIndex = i * 3;
-    this->ConvertedCTFtoLUT->SetTableValue(i,
-                                           bareTable[baseIndex],
-                                           bareTable[baseIndex + 1],
-                                           bareTable[baseIndex + 2],
-                                           1.0);
+    this->ConvertedCTFtoLUT->SetTableValue(i, bareTable[baseIndex], bareTable[baseIndex + 1], bareTable[baseIndex + 2], 1.0);
   }
   return this->ConvertedCTFtoLUT;
 }
@@ -176,7 +162,7 @@ vtkScalarsToColors* vtkMRMLProceduralColorNode::GetScalarsToColors()
 const char* vtkMRMLProceduralColorNode::GetTypeAsString()
 {
   const char* type = Superclass::GetTypeAsString();
-  if (type && strcmp(type,"(unknown)") != 0)
+  if (type && strcmp(type, "(unknown)") != 0)
   {
     return type;
   }
@@ -188,7 +174,7 @@ bool vtkMRMLProceduralColorNode::SetNameFromColor(int index)
 {
   double color[4];
   this->GetColor(index, color);
-  //this->ColorTransferFunction->GetColor(index, color);
+  // this->ColorTransferFunction->GetColor(index, color);
   std::stringstream ss;
   ss.precision(3);
   ss.setf(std::ios::fixed, std::ios::floatfield);
@@ -200,7 +186,7 @@ bool vtkMRMLProceduralColorNode::SetNameFromColor(int index)
   ss << color[2];
   if (this->SetColorName(index, ss.str().c_str()) == 0)
   {
-    vtkErrorMacro("SetNamesFromColors: error setting name " <<  ss.str().c_str() << " for color index " << index);
+    vtkErrorMacro("SetNamesFromColors: error setting name " << ss.str().c_str() << " for color index " << index);
     return false;
   }
   return true;
@@ -223,7 +209,7 @@ int vtkMRMLProceduralColorNode::GetNumberOfColors()
     }
   return numPoints;
   */
-  if (this->ColorTransferFunction==nullptr)
+  if (this->ColorTransferFunction == nullptr)
   {
     return 0;
   }
@@ -266,14 +252,13 @@ vtkMRMLStorageNode* vtkMRMLProceduralColorNode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLProceduralColorStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLProceduralColorStorageNode"));
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLProceduralColorNode::SetAndObserveColorTransferFunction(vtkColorTransferFunction* ctf)
 {
-  if (ctf==this->ColorTransferFunction)
+  if (ctf == this->ColorTransferFunction)
   {
     return;
   }
@@ -285,15 +270,15 @@ void vtkMRMLProceduralColorNode::SetAndObserveColorTransferFunction(vtkColorTran
 //----------------------------------------------------------------------------
 bool vtkMRMLProceduralColorNode::IsColorMapEqual(vtkColorTransferFunction* tf1, vtkColorTransferFunction* tf2)
 {
-  if (tf1==tf2)
+  if (tf1 == tf2)
   {
     return true;
   }
-  if (tf1==nullptr || tf2==nullptr)
+  if (tf1 == nullptr || tf2 == nullptr)
   {
     return false;
   }
-  if (tf1->GetSize()!=tf2->GetSize())
+  if (tf1->GetSize() != tf2->GetSize())
   {
     return false;
   }
@@ -305,9 +290,9 @@ bool vtkMRMLProceduralColorNode::IsColorMapEqual(vtkColorTransferFunction* tf1, 
   {
     tf1->GetNodeValue(pointIndex, values1);
     tf2->GetNodeValue(pointIndex, values2);
-    for (int valueIndex = 0; valueIndex<NUMBER_OF_VALUES_PER_POINT; ++valueIndex)
+    for (int valueIndex = 0; valueIndex < NUMBER_OF_VALUES_PER_POINT; ++valueIndex)
     {
-      if (values1[valueIndex]!=values2[valueIndex])
+      if (values1[valueIndex] != values2[valueIndex])
       {
         // found a difference
         return false;

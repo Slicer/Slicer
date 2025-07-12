@@ -54,9 +54,7 @@ public:
   ///   Default value is invalid. In that case the parent will be ignored, the confidence numbers are got based on the to-be child node alone.
   /// \return Floating point confidence number between 0 and 1, where 0 means that the plugin cannot handle the
   ///   node, and 1 means that the plugin is the only one that can handle the node (by node type or identifier attribute)
-  double canAddNodeToSubjectHierarchy(
-    vtkMRMLNode* node,
-    vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID ) const override;
+  double canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID = vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID) const override;
 
   /// Determines if the actual plugin can handle a subject hierarchy item. The plugin with
   /// the highest confidence number will "own" the item in the subject hierarchy (set icon, tooltip,

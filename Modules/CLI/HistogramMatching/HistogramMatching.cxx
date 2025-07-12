@@ -15,7 +15,7 @@
 
 =========================================================================*/
 #if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+# pragma warning(disable : 4786)
 #endif
 
 //
@@ -36,7 +36,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char* argv[], T )
+int DoIt(int argc, char* argv[], T)
 {
   PARSE_ARGS;
 
@@ -45,46 +45,42 @@ int DoIt( int argc, char* argv[], T )
   typedef T InputPixelType;
   typedef T OutputPixelType;
 
-  typedef itk::Image<InputPixelType,  Dimension> InputImageType;
+  typedef itk::Image<InputPixelType, Dimension> InputImageType;
   typedef itk::Image<OutputPixelType, Dimension> OutputImageType;
 
   // readers/writers
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
+  typedef itk::ImageFileReader<InputImageType> ReaderType;
   typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
   // define the histogram matching
-  typedef itk::HistogramMatchingImageFilter<
-    InputImageType,
-    OutputImageType, InputPixelType>  FilterType;
+  typedef itk::HistogramMatchingImageFilter<InputImageType, OutputImageType, InputPixelType> FilterType;
 
   // Creation of Reader and Writer filters
   typename ReaderType::Pointer reader1 = ReaderType::New();
   typename ReaderType::Pointer reader2 = ReaderType::New();
-  typename WriterType::Pointer writer  = WriterType::New();
+  typename WriterType::Pointer writer = WriterType::New();
 
   // Create the filter
-  typename FilterType::Pointer  filter = FilterType::New();
-  itk::PluginFilterWatcher watcher(filter, "Match Histogram",
-                                   CLPProcessInformation);
+  typename FilterType::Pointer filter = FilterType::New();
+  itk::PluginFilterWatcher watcher(filter, "Match Histogram", CLPProcessInformation);
 
   // Setup the input and output files
-  reader1->SetFileName( inputVolume.c_str() );
-  reader2->SetFileName( referenceVolume.c_str() );
-  writer->SetFileName( outputVolume.c_str() );
+  reader1->SetFileName(inputVolume.c_str());
+  reader2->SetFileName(referenceVolume.c_str());
+  writer->SetFileName(outputVolume.c_str());
 
   // Setup the filter
-  filter->SetInput( reader1->GetOutput() );
-  filter->SetReferenceImage( reader2->GetOutput() );
-  filter->SetNumberOfHistogramLevels( numberOfHistogramLevels );
-  filter->SetNumberOfMatchPoints( numberOfMatchPoints );
-  filter->SetThresholdAtMeanIntensity( thresholdAtMeanIntensity );
+  filter->SetInput(reader1->GetOutput());
+  filter->SetReferenceImage(reader2->GetOutput());
+  filter->SetNumberOfHistogramLevels(numberOfHistogramLevels);
+  filter->SetNumberOfMatchPoints(numberOfMatchPoints);
+  filter->SetThresholdAtMeanIntensity(thresholdAtMeanIntensity);
 
   // Write the output
-  writer->SetInput( filter->GetOutput() );
+  writer->SetInput(filter->GetOutput());
   writer->Update();
 
   return EXIT_SUCCESS;
-
 }
 
 } // end of anonymous namespace
@@ -94,7 +90,7 @@ int main(int argc, char* argv[])
 
   PARSE_ARGS;
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum pixelType;
   itk::IOComponentEnum componentType;
 
   try
@@ -104,43 +100,23 @@ int main(int argc, char* argv[])
     // This filter handles all types
     switch (componentType)
     {
-      case itk::IOComponentEnum::UCHAR:
-        return DoIt<unsigned char>( argc, argv, static_cast<unsigned char>(0) );
-        break;
-      case itk::IOComponentEnum::CHAR:
-        return DoIt<char>( argc, argv, static_cast<char>(0) );
-        break;
-      case itk::IOComponentEnum::USHORT:
-        return DoIt<unsigned short>( argc, argv, static_cast<unsigned short>(0) );
-        break;
-      case itk::IOComponentEnum::SHORT:
-        return DoIt<short>( argc, argv, static_cast<short>(0) );
-        break;
-      case itk::IOComponentEnum::UINT:
-        return DoIt<unsigned int>( argc, argv, static_cast<unsigned int>(0) );
-        break;
-      case itk::IOComponentEnum::INT:
-        return DoIt<int>( argc, argv, static_cast<int>(0) );
-        break;
+      case itk::IOComponentEnum::UCHAR: return DoIt<unsigned char>(argc, argv, static_cast<unsigned char>(0)); break;
+      case itk::IOComponentEnum::CHAR: return DoIt<char>(argc, argv, static_cast<char>(0)); break;
+      case itk::IOComponentEnum::USHORT: return DoIt<unsigned short>(argc, argv, static_cast<unsigned short>(0)); break;
+      case itk::IOComponentEnum::SHORT: return DoIt<short>(argc, argv, static_cast<short>(0)); break;
+      case itk::IOComponentEnum::UINT: return DoIt<unsigned int>(argc, argv, static_cast<unsigned int>(0)); break;
+      case itk::IOComponentEnum::INT: return DoIt<int>(argc, argv, static_cast<int>(0)); break;
       case itk::IOComponentEnum::ULONG:
-        return DoIt<unsigned long>( argc, argv, static_cast<unsigned long>(0) );
+        return DoIt<unsigned long>(argc, argv, static_cast<unsigned long>(0));
         break;
 /* A bug in ITK prevents this from working with ITK Review Statistics turned on. */
 #if defined USE_REVIEW_STATISTICS
-      case itk::IOComponentEnum::LONG:
-        return DoIt<long>( argc, argv, static_cast<long>(0) );
-        break;
+      case itk::IOComponentEnum::LONG: return DoIt<long>(argc, argv, static_cast<long>(0)); break;
 #endif
-      case itk::IOComponentEnum::FLOAT:
-        return DoIt<float>( argc, argv, static_cast<float>(0) );
-        break;
-      case itk::IOComponentEnum::DOUBLE:
-        return DoIt<double>( argc, argv, static_cast<double>(0) );
-        break;
+      case itk::IOComponentEnum::FLOAT: return DoIt<float>(argc, argv, static_cast<float>(0)); break;
+      case itk::IOComponentEnum::DOUBLE: return DoIt<double>(argc, argv, static_cast<double>(0)); break;
       case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
-      default:
-        std::cout << "unknown component type" << std::endl;
-        break;
+      default: std::cout << "unknown component type" << std::endl; break;
     }
   }
 

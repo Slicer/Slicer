@@ -22,7 +22,7 @@
 #include "qMRMLMatrixWidget.h"
 
 qMRMLMatrixWidgetPlugin::qMRMLMatrixWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 
@@ -36,14 +36,14 @@ QString qMRMLMatrixWidgetPlugin::domXml() const
 {
   return "<widget class=\"qMRMLMatrixWidget\" \
           name=\"MRMLMatrixWidget\">\n"
-          " <property name=\"geometry\">\n"
-          "  <rect>\n"
-          "   <x>0</x>\n"
-          "   <y>0</y>\n"
-          "   <width>200</width>\n"
-          "   <height>200</height>\n"
-          "  </rect>\n"
-          " </property>\n"
+         " <property name=\"geometry\">\n"
+         "  <rect>\n"
+         "   <x>0</x>\n"
+         "   <y>0</y>\n"
+         "   <width>200</width>\n"
+         "   <height>200</height>\n"
+         "  </rect>\n"
+         " </property>\n"
          "</widget>\n";
 }
 

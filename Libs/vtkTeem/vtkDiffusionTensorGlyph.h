@@ -149,7 +149,7 @@ public:
   /// Resolution of the output glyphs. This parameter is a integer value
   /// that sets the number of tensors (points) that are skipped before a glyph is rendered.
   /// 1 is the finest level meaning that every input point a glyph is rendered.
-  vtkSetClampMacro(Resolution,int,1,VTK_INT_MAX);
+  vtkSetClampMacro(Resolution, int, 1, VTK_INT_MAX);
   vtkGetMacro(Resolution, int);
 
   ///
@@ -175,16 +175,16 @@ protected:
 
   void ColorGlyphsBy(int measure);
 
-  int ScalarInvariant;  /// which function of eigenvalues to use for coloring
-  int MaskGlyphs;  /// mask glyphs outside of the brain for example, using the Mask
-  int Resolution; /// allows skipping some tensors for lower resolution glyphing
+  int ScalarInvariant; /// which function of eigenvalues to use for coloring
+  int MaskGlyphs;      /// mask glyphs outside of the brain for example, using the Mask
+  int Resolution;      /// allows skipping some tensors for lower resolution glyphing
 
   int DimensionResolution[2];
 
   vtkMatrix4x4* VolumePositionMatrix;
   vtkMatrix4x4* TensorRotationMatrix;
 
-  vtkImageData* Mask;  /// display glyphs at points where mask is nonzero
+  vtkImageData* Mask; /// display glyphs at points where mask is nonzero
 
 private:
   vtkDiffusionTensorGlyph(const vtkDiffusionTensorGlyph&) = delete;

@@ -70,7 +70,7 @@ public:
   // rapidjson document object cannot be stored in an STL map (there are build errors
   // on Linux and Mac), therefore we store a simple pointer and create/delete
   // the document object manually
-  typedef std::map<std::string, rapidjson::Document* > TerminologyMap;
+  typedef std::map<std::string, rapidjson::Document*> TerminologyMap;
   vtkInternal();
   ~vtkInternal();
 
@@ -176,20 +176,18 @@ vtkSlicerTerminologiesModuleLogic::vtkInternal::vtkInternal() = default;
 //---------------------------------------------------------------------------
 vtkSlicerTerminologiesModuleLogic::vtkInternal::~vtkInternal()
 {
-  for (TerminologyMap::iterator termIt = this->LoadedTerminologies.begin();
-    termIt != this->LoadedTerminologies.end(); ++termIt)
+  for (TerminologyMap::iterator termIt = this->LoadedTerminologies.begin(); termIt != this->LoadedTerminologies.end(); ++termIt)
   {
     delete termIt->second;
   }
-  for (TerminologyMap::iterator anIt = this->LoadedRegionContexts.begin();
-    anIt != this->LoadedRegionContexts.end(); ++anIt)
+  for (TerminologyMap::iterator anIt = this->LoadedRegionContexts.begin(); anIt != this->LoadedRegionContexts.end(); ++anIt)
   {
     delete anIt->second;
   }
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray(CodeIdentifier codeId, rapidjson::Value &jsonArray, int& foundIndex)
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray(CodeIdentifier codeId, rapidjson::Value& jsonArray, int& foundIndex)
 {
   if (!jsonArray.IsArray())
   {
@@ -198,7 +196,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray
 
   // Traverse array and try to find the object with given identifier
   rapidjson::SizeType index = 0;
-  while (index<jsonArray.Size())
+  while (index < jsonArray.Size())
   {
     rapidjson::Value& currentObject = jsonArray[index];
     if (currentObject.IsObject())
@@ -206,7 +204,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCodeInArray
       rapidjson::Value& codingSchemeDesignator = currentObject["CodingSchemeDesignator"];
       rapidjson::Value& codeValue = currentObject["CodeValue"];
       if (codingSchemeDesignator.IsString() && !codeId.CodingSchemeDesignator.compare(codingSchemeDesignator.GetString()) //
-          && codeValue.IsString() && !codeId.CodeValue.compare(codeValue.GetString()) )
+          && codeValue.IsString() && !codeId.CodeValue.compare(codeValue.GetString()))
       {
         foundIndex = index;
         return currentObject;
@@ -281,8 +279,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetCategoryInT
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategoryFromJson(
-  rapidjson::Value& categoryObject, vtkSlicerTerminologyCategory* category)
+bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategoryFromJson(rapidjson::Value& categoryObject, vtkSlicerTerminologyCategory* category)
 {
   if (!categoryObject.IsObject() || !category)
   {
@@ -320,7 +317,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyCategory
     {
       std::string showAnatomyStr = showAnatomy->value.GetString();
       std::transform(showAnatomyStr.begin(), showAnatomyStr.end(), showAnatomyStr.begin(), ::tolower); // Make it lowercase for case-insensitive comparison
-      category->SetShowAnatomy( showAnatomyStr.compare("true") ? false : true );
+      category->SetShowAnatomy(showAnatomyStr.compare("true") ? false : true);
     }
     else if (showAnatomy->value.IsBool())
     {
@@ -351,8 +348,8 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeArrayIn
   rapidjson::Value& typeArray = categoryObject["Type"];
   if (!typeArray.IsArray())
   {
-    vtkGenericWarningMacro("GetTypeArrayInTerminologyCategory: Failed to find Type array member in category '"
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkGenericWarningMacro("GetTypeArrayInTerminologyCategory: Failed to find Type array member in category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName
+                                                                                                               << "'");
     return JSON_EMPTY_VALUE;
   }
 
@@ -360,8 +357,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeArrayIn
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeInTerminologyCategory(
-  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId)
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId)
 {
   if (typeId.CodingSchemeDesignator.empty() || typeId.CodeValue.empty())
   {
@@ -431,10 +427,9 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
     }
     else if (recommendedDisplayRGBValue->value[0].IsInt())
     {
-      type->SetRecommendedDisplayRGBValue(
-        (unsigned char)recommendedDisplayRGBValue->value[0].GetInt(),
-        (unsigned char)recommendedDisplayRGBValue->value[1].GetInt(),
-        (unsigned char)recommendedDisplayRGBValue->value[2].GetInt() );
+      type->SetRecommendedDisplayRGBValue((unsigned char)recommendedDisplayRGBValue->value[0].GetInt(),
+                                          (unsigned char)recommendedDisplayRGBValue->value[1].GetInt(),
+                                          (unsigned char)recommendedDisplayRGBValue->value[2].GetInt());
     }
     else
     {
@@ -443,9 +438,9 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
   }
   else
   {
-    type->SetRecommendedDisplayRGBValue( vtkSlicerTerminologyType::INVALID_COLOR[0],
-                                         vtkSlicerTerminologyType::INVALID_COLOR[1],
-                                         vtkSlicerTerminologyType::INVALID_COLOR[2] ); // 'Invalid' gray
+    type->SetRecommendedDisplayRGBValue(vtkSlicerTerminologyType::INVALID_COLOR[0],
+                                        vtkSlicerTerminologyType::INVALID_COLOR[1],
+                                        vtkSlicerTerminologyType::INVALID_COLOR[2]); // 'Invalid' gray
   }
 
   type->SetHasModifiers((modifier->value).IsArray());
@@ -454,8 +449,9 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::PopulateTerminologyTypeFrom
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierArrayInTerminologyType(
-  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId)
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierArrayInTerminologyType(std::string terminologyName,
+                                                                                                        CodeIdentifier categoryId,
+                                                                                                        CodeIdentifier typeId)
 {
   if (typeId.CodingSchemeDesignator.empty() || typeId.CodeValue.empty())
   {
@@ -464,16 +460,15 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifie
   rapidjson::Value& categoryObject = this->GetCategoryInTerminology(terminologyName, categoryId);
   if (categoryObject.IsNull())
   {
-    vtkGenericWarningMacro("GetTypeModifierArrayInTerminologyType: Failed to find category '" <<
-      categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkGenericWarningMacro("GetTypeModifierArrayInTerminologyType: Failed to find category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return JSON_EMPTY_VALUE;
   }
 
   rapidjson::Value& typeObject = this->GetTypeInTerminologyCategory(terminologyName, categoryId, typeId);
   if (typeObject.IsNull())
   {
-    vtkGenericWarningMacro("GetTypeModifierArrayInTerminologyType: Failed to find type '" << typeId.CodeMeaning << "' in category '"
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkGenericWarningMacro("GetTypeModifierArrayInTerminologyType: Failed to find type '" << typeId.CodeMeaning << "' in category '" << categoryId.CodeMeaning
+                                                                                          << "' in terminology '" << terminologyName << "'");
     return JSON_EMPTY_VALUE;
   }
 
@@ -487,8 +482,10 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifie
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierInTerminologyType(
-  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, CodeIdentifier modifierId)
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetTypeModifierInTerminologyType(std::string terminologyName,
+                                                                                                   CodeIdentifier categoryId,
+                                                                                                   CodeIdentifier typeId,
+                                                                                                   CodeIdentifier modifierId)
 {
   if (modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
   {
@@ -580,16 +577,15 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModif
   rapidjson::Value& regionObject = this->GetRegionInRegionContext(regionContextName, regionId);
   if (regionObject.IsNull())
   {
-    vtkGenericWarningMacro("GetRegionModifierArrayInRegion: Failed to find region '" <<
-      regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
+    vtkGenericWarningMacro("GetRegionModifierArrayInRegion: Failed to find region '" << regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
     return JSON_EMPTY_VALUE;
   }
 
   rapidjson::Value& regionModifierArray = regionObject["Modifier"];
   if (!regionModifierArray.IsArray())
   {
-    vtkGenericWarningMacro("GetRegionModifierArrayInRegion: Failed to find Modifier array member in region '" <<
-      regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
+    vtkGenericWarningMacro("GetRegionModifierArrayInRegion: Failed to find Modifier array member in region '" << regionId.CodeMeaning << "' in region context '"
+                                                                                                              << regionContextName << "'");
     return JSON_EMPTY_VALUE;
   }
 
@@ -597,8 +593,7 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModif
 }
 
 //---------------------------------------------------------------------------
-rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierInRegion(
-  std::string regionContextName, CodeIdentifier regionId, CodeIdentifier modifierId )
+rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModifierInRegion(std::string regionContextName, CodeIdentifier regionId, CodeIdentifier modifierId)
 {
   if (modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
   {
@@ -607,8 +602,8 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModif
   rapidjson::Value& regionModifierArray = this->GetRegionModifierArrayInRegion(regionContextName, regionId);
   if (regionModifierArray.IsNull())
   {
-    vtkGenericWarningMacro("GetRegionModifierInRegion: Failed to find region modifier array for region '" <<
-      regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
+    vtkGenericWarningMacro("GetRegionModifierInRegion: Failed to find region modifier array for region '" << regionId.CodeMeaning << "' in region context '" << regionContextName
+                                                                                                          << "'");
     return JSON_EMPTY_VALUE;
   }
 
@@ -617,8 +612,9 @@ rapidjson::Value& vtkSlicerTerminologiesModuleLogic::vtkInternal::GetRegionModif
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToTerminologyContext(
-  rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName )
+bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToTerminologyContext(rapidjson::Document& descriptorDoc,
+                                                                                                       rapidjson::Document& convertedDoc,
+                                                                                                       std::string contextName)
 {
   if (!descriptorDoc.IsObject() || contextName.empty())
   {
@@ -666,10 +662,10 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     }
     // Note: "The reason for the inner list is that we have one single schema both for input and output. When we provide input metafile,
     //       we can have multiple input files, and each file can have multiple labels, that is why we need to have list of lists"
-    segmentAttributes = segmentAttributes[0]; // Enter "innerList"
+    segmentAttributes = segmentAttributes[0];                                 // Enter "innerList"
     if (!segmentAttributes.HasMember("SegmentedPropertyCategoryCodeSequence") //
         || !segmentAttributes.HasMember("SegmentedPropertyTypeCodeSequence")  //
-        || !segmentAttributes.HasMember("recommendedDisplayRGBValue") )
+        || !segmentAttributes.HasMember("recommendedDisplayRGBValue"))
     {
       vtkGenericWarningMacro("ConvertSegmentationDescriptorToTerminologyContext: Invalid segment terminology entry at index " << index);
       ++index;
@@ -681,7 +677,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
 
     // Get type array if category already exists, create empty otherwise
     vtkSlicerTerminologiesModuleLogic::CodeIdentifier categoryId(
-      segmentCategory["CodingSchemeDesignator"].GetString(), segmentCategory["CodeValue"].GetString(), segmentCategory["CodeMeaning"].GetString() );
+      segmentCategory["CodingSchemeDesignator"].GetString(), segmentCategory["CodeValue"].GetString(), segmentCategory["CodeMeaning"].GetString());
     int foundCategoryIndex = -1;
     rapidjson::Value category(this->GetCodeInArray(categoryId, categoryArray, foundCategoryIndex), allocator);
     rapidjson::Value typeArray;
@@ -704,7 +700,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
 
     // Get type from type array, create empty type if not found
     vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeId(
-      segmentType["CodingSchemeDesignator"].GetString(), segmentType["CodeValue"].GetString(), segmentType["CodeMeaning"].GetString() );
+      segmentType["CodingSchemeDesignator"].GetString(), segmentType["CodeValue"].GetString(), segmentType["CodeMeaning"].GetString());
     int foundTypeIndex = -1;
     rapidjson::Value type(this->GetCodeInArray(typeId, typeArray, foundTypeIndex), allocator);
     rapidjson::Value typeModifierArray;
@@ -740,9 +736,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     {
       rapidjson::Value& segmentTypeModifier = segmentAttributes["SegmentedPropertyTypeModifierCodeSequence"];
       vtkSlicerTerminologiesModuleLogic::CodeIdentifier typeModifierId(
-        segmentTypeModifier["CodingSchemeDesignator"].GetString(),
-        segmentTypeModifier["CodeValue"].GetString(),
-        segmentTypeModifier["CodeMeaning"].GetString() );
+        segmentTypeModifier["CodingSchemeDesignator"].GetString(), segmentTypeModifier["CodeValue"].GetString(), segmentTypeModifier["CodeMeaning"].GetString());
       int foundTypeModifierIndex = -1;
       rapidjson::Value typeModifier(this->GetCodeInArray(typeModifierId, typeModifierArray, foundTypeModifierIndex), allocator);
       // Modifier already exists, nothing to do
@@ -837,8 +831,9 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToRegionContext(
-  rapidjson::Document& descriptorDoc, rapidjson::Document& convertedDoc, std::string contextName)
+bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescriptorToRegionContext(rapidjson::Document& descriptorDoc,
+                                                                                                  rapidjson::Document& convertedDoc,
+                                                                                                  std::string contextName)
 {
   if (!descriptorDoc.IsObject() || contextName.empty())
   {
@@ -896,7 +891,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
 
     // Get region modifier array if region already exists, create empty otherwise
     vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionId(
-      segmentRegion["CodingSchemeDesignator"].GetString(), segmentRegion["CodeValue"].GetString(), segmentRegion["CodeMeaning"].GetString() );
+      segmentRegion["CodingSchemeDesignator"].GetString(), segmentRegion["CodeValue"].GetString(), segmentRegion["CodeMeaning"].GetString());
     int foundRegionIndex = -1;
     rapidjson::Value region(this->GetCodeInArray(regionId, regionArray, foundRegionIndex), allocator);
     rapidjson::Value regionModifierArray;
@@ -919,9 +914,7 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
     {
       rapidjson::Value& segmentRegionModifier = segmentAttributes["AnatomicRegionModifierSequence"];
       vtkSlicerTerminologiesModuleLogic::CodeIdentifier regionModifierId(
-        segmentRegionModifier["CodingSchemeDesignator"].GetString(),
-        segmentRegionModifier["CodeValue"].GetString(),
-        segmentRegionModifier["CodeMeaning"].GetString() );
+        segmentRegionModifier["CodingSchemeDesignator"].GetString(), segmentRegionModifier["CodeValue"].GetString(), segmentRegionModifier["CodeMeaning"].GetString());
       int foundRegionModifierIndex = -1;
       rapidjson::Value regionModifier(this->GetCodeInArray(regionModifierId, regionModifierArray, foundRegionModifierIndex), allocator);
       // Modifier already exists, nothing to do
@@ -981,14 +974,12 @@ bool vtkSlicerTerminologiesModuleLogic::vtkInternal::ConvertSegmentationDescript
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTerminologiesModuleLogic::vtkInternal::GetJsonCodeFromIdentifier(
-  rapidjson::Value& code, CodeIdentifier identifier, rapidjson::Document::AllocatorType& allocator)
+void vtkSlicerTerminologiesModuleLogic::vtkInternal::GetJsonCodeFromIdentifier(rapidjson::Value& code, CodeIdentifier identifier, rapidjson::Document::AllocatorType& allocator)
 {
   code.AddMember("CodingSchemeDesignator", rapidjson::Value().SetString(identifier.CodingSchemeDesignator.c_str(), allocator), allocator);
   code.AddMember("CodeValue", rapidjson::Value().SetString(identifier.CodeValue.c_str(), allocator), allocator);
   code.AddMember("CodeMeaning", rapidjson::Value().SetString(identifier.CodeMeaning.c_str(), allocator), allocator);
 }
-
 
 //---------------------------------------------------------------------------
 // vtkSlicerTerminologiesModuleLogic methods
@@ -1034,7 +1025,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath
 {
   rapidjson::Document* jsonRoot = new rapidjson::Document;
 
-  FILE *fp = fopen(filePath.c_str(), "r");
+  FILE* fp = fopen(filePath.c_str(), "r");
   if (!fp)
   {
     vtkErrorMacro("LoadContextFromFile: Failed to load context from file '" << filePath);
@@ -1065,16 +1056,14 @@ bool vtkSlicerTerminologiesModuleLogic::LoadContextFromFile(std::string filePath
   {
     // Store terminology
     std::string contextName = (*jsonRoot)["SegmentationCategoryTypeContextName"].GetString();
-    vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-      this->Internal->LoadedTerminologies, contextName, jsonRoot);
+    vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(this->Internal->LoadedTerminologies, contextName, jsonRoot);
     vtkDebugMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   }
   else if (!schema.compare(REGION_CONTEXT_SCHEMA) || !schema.compare(REGION_CONTEXT_SCHEMA_1))
   {
     // Store region context
     std::string contextName = (*jsonRoot)["AnatomicContextName"].GetString();
-    vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-      this->Internal->LoadedRegionContexts, contextName, jsonRoot);
+    vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(this->Internal->LoadedRegionContexts, contextName, jsonRoot);
     vtkDebugMacro("Region context named '" << contextName << "' successfully loaded from file " << filePath);
   }
   else
@@ -1095,7 +1084,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
 {
   rapidjson::Document* terminologyRoot = new rapidjson::Document;
 
-  FILE *fp = fopen(filePath.c_str(), "r");
+  FILE* fp = fopen(filePath.c_str(), "r");
   if (!fp)
   {
     vtkErrorMacro("LoadTerminologyFromFile: Failed to load terminology from file '" << filePath << "'");
@@ -1132,8 +1121,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
 
   // Store terminology
   std::string contextName = (*terminologyRoot)["SegmentationCategoryTypeContextName"].GetString();
-  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-    this->Internal->LoadedTerminologies, contextName, terminologyRoot);
+  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(this->Internal->LoadedTerminologies, contextName, terminologyRoot);
 
   vtkDebugMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
@@ -1144,7 +1132,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromFile(std::stri
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile(std::string contextName, std::string filePath)
 {
-  FILE *fp = fopen(filePath.c_str(), "r");
+  FILE* fp = fopen(filePath.c_str(), "r");
   if (!fp)
   {
     vtkErrorMacro("LoadTerminologyFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
@@ -1182,8 +1170,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadTerminologyFromSegmentDescriptorFile
   }
 
   // Store terminology
-  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-    this->Internal->LoadedTerminologies, contextName, convertedDoc );
+  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(this->Internal->LoadedTerminologies, contextName, convertedDoc);
 
   vtkDebugMacro("Terminology named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
@@ -1212,7 +1199,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadRegionContextFromFile(std::st
 {
   rapidjson::Document* regionContextRoot = new rapidjson::Document;
 
-  FILE *fp = fopen(filePath.c_str(), "r");
+  FILE* fp = fopen(filePath.c_str(), "r");
   if (!fp)
   {
     vtkErrorMacro("LoadRegionContextFromFile: Failed to load region context from file " << filePath);
@@ -1250,8 +1237,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadRegionContextFromFile(std::st
 
   // Store region context
   std::string contextName = (*regionContextRoot)["AnatomicContextName"].GetString();
-  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-    this->Internal->LoadedRegionContexts, contextName, regionContextRoot);
+  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(this->Internal->LoadedRegionContexts, contextName, regionContextRoot);
 
   vtkDebugMacro("REgion context named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
@@ -1262,7 +1248,7 @@ std::string vtkSlicerTerminologiesModuleLogic::LoadRegionContextFromFile(std::st
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::LoadRegionContextFromSegmentDescriptorFile(std::string contextName, std::string filePath)
 {
-  FILE *fp = fopen(filePath.c_str(), "r");
+  FILE* fp = fopen(filePath.c_str(), "r");
   if (!fp)
   {
     vtkErrorMacro("LoadRegionContextFromSegmentDescriptorFile: Failed to load terminology from file '" << filePath);
@@ -1300,8 +1286,7 @@ bool vtkSlicerTerminologiesModuleLogic::LoadRegionContextFromSegmentDescriptorFi
   }
 
   // Store region context
-  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(
-    this->Internal->LoadedRegionContexts, contextName, convertedDoc );
+  vtkSlicerTerminologiesModuleLogic::vtkInternal::SetDocumentInTerminologyMap(this->Internal->LoadedRegionContexts, contextName, convertedDoc);
 
   vtkDebugMacro("Region context named '" << contextName << "' successfully loaded from file " << filePath);
   fclose(fp);
@@ -1333,13 +1318,13 @@ void vtkSlicerTerminologiesModuleLogic::LoadUserContexts()
   vtkSmartPointer<vtkDirectory> userSettingsDir = vtkSmartPointer<vtkDirectory>::New();
   userSettingsDir->Open(this->UserContextsPath);
   vtkStringArray* files = userSettingsDir->GetFiles();
-  for (int index = 0; index<files->GetNumberOfValues(); ++index)
+  for (int index = 0; index < files->GetNumberOfValues(); ++index)
   {
     std::string fileName = files->GetValue(index);
 
     // Only load json files
     if (userSettingsDir->FileIsDirectory(fileName.c_str()) //
-        || fileName.size() < 5 || fileName.substr(fileName.size()-5).compare(".json") )
+        || fileName.size() < 5 || fileName.substr(fileName.size() - 5).compare(".json"))
     {
       continue;
     }
@@ -1354,12 +1339,12 @@ void vtkSlicerTerminologiesModuleLogic::LoadUserContexts()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTerminologiesModuleLogic::GetLoadedTerminologyNames(std::vector<std::string> &terminologyNames)
+void vtkSlicerTerminologiesModuleLogic::GetLoadedTerminologyNames(std::vector<std::string>& terminologyNames)
 {
   terminologyNames.clear();
 
   vtkSlicerTerminologiesModuleLogic::vtkInternal::TerminologyMap::iterator termIt;
-  for (termIt=this->Internal->LoadedTerminologies.begin(); termIt!=this->Internal->LoadedTerminologies.end(); ++termIt)
+  for (termIt = this->Internal->LoadedTerminologies.begin(); termIt != this->Internal->LoadedTerminologies.end(); ++termIt)
   {
     terminologyNames.push_back(termIt->first);
   }
@@ -1383,12 +1368,12 @@ void vtkSlicerTerminologiesModuleLogic::GetLoadedTerminologyNames(vtkStringArray
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTerminologiesModuleLogic::GetLoadedRegionContextNames(std::vector<std::string> &regionContextNames)
+void vtkSlicerTerminologiesModuleLogic::GetLoadedRegionContextNames(std::vector<std::string>& regionContextNames)
 {
   regionContextNames.clear();
 
   vtkSlicerTerminologiesModuleLogic::vtkInternal::TerminologyMap::iterator anIt;
-  for (anIt=this->Internal->LoadedRegionContexts.begin(); anIt!=this->Internal->LoadedRegionContexts.end(); ++anIt)
+  for (anIt = this->Internal->LoadedRegionContexts.begin(); anIt != this->Internal->LoadedRegionContexts.end(); ++anIt)
   {
     regionContextNames.push_back(anIt->first);
   }
@@ -1418,7 +1403,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetCategoriesInTerminology(std::string t
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::FindCategoriesInTerminology(std::string terminologyName, std::vector<CodeIdentifier>& categories, std::string search/*=""*/)
+bool vtkSlicerTerminologiesModuleLogic::FindCategoriesInTerminology(std::string terminologyName, std::vector<CodeIdentifier>& categories, std::string search /*=""*/)
 {
   categories.clear();
 
@@ -1495,7 +1480,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthCategoryInTerminology(std::string 
   if (categoryIndex < 0 || categoryIndex >= static_cast<int>(categoryArray.Size()))
   {
     vtkErrorMacro("GetNthCategoryInTerminology failed: category index of " << categoryIndex << " is out of range"
-      << " (number of categories: " << categoryArray.Size() << ")");
+                                                                           << " (number of categories: " << categoryArray.Size() << ")");
     return false;
   }
 
@@ -1535,17 +1520,18 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypesInTerminologyCategory(std::strin
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::FindTypesInTerminologyCategory(
-  std::string terminologyName, CodeIdentifier categoryId, std::vector<CodeIdentifier>& types, std::string search,
-  std::vector<vtkSmartPointer<vtkSlicerTerminologyType>> *typeObjects/*=nullptr*/)
+bool vtkSlicerTerminologiesModuleLogic::FindTypesInTerminologyCategory(std::string terminologyName,
+                                                                       CodeIdentifier categoryId,
+                                                                       std::vector<CodeIdentifier>& types,
+                                                                       std::string search,
+                                                                       std::vector<vtkSmartPointer<vtkSlicerTerminologyType>>* typeObjects /*=nullptr*/)
 {
   types.clear();
 
   rapidjson::Value& typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
   if (typeArray.IsNull())
   {
-    vtkErrorMacro("FindTypesInTerminologyCategory: Failed to find type array in category '"
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("FindTypesInTerminologyCategory: Failed to find type array in category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
   }
 
@@ -1582,8 +1568,8 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypesInTerminologyCategory(
       }
       else
       {
-        vtkErrorMacro("FindTypesInTerminologyCategory: Invalid type '" << typeName.GetString() << "in category '"
-          << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+        vtkErrorMacro("FindTypesInTerminologyCategory: Invalid type '" << typeName.GetString() << "in category '" << categoryId.CodeMeaning << "' in terminology '"
+                                                                       << terminologyName << "'");
       }
     }
     ++index;
@@ -1599,23 +1585,23 @@ int vtkSlicerTerminologiesModuleLogic::GetNumberOfTypesInTerminologyCategory(std
   rapidjson::Value& typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
   if (typeArray.IsNull())
   {
-    vtkErrorMacro("GetNumberOfTypesInTerminologyCategory: Failed to find type array in category '"
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetNumberOfTypesInTerminologyCategory: Failed to find type array in category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return 0;
   }
   return typeArray.Size();
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetNthTypeInTerminologyCategory(std::string terminologyName, vtkSlicerTerminologyCategory* category,
-  int typeIndex, vtkSlicerTerminologyType* type)
+bool vtkSlicerTerminologiesModuleLogic::GetNthTypeInTerminologyCategory(std::string terminologyName,
+                                                                        vtkSlicerTerminologyCategory* category,
+                                                                        int typeIndex,
+                                                                        vtkSlicerTerminologyType* type)
 {
   CodeIdentifier categoryId = this->GetCodeIdentifierFromCodedEntry(category);
   rapidjson::Value& typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
   if (typeArray.IsNull())
   {
-    vtkErrorMacro("GetNthTypeInTerminologyCategory: Failed to find type array in category '"
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetNthTypeInTerminologyCategory: Failed to find type array in category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
   }
   if (!type)
@@ -1640,8 +1626,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthTypeInTerminologyCategory(std::str
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetTypeInTerminologyCategory(
-  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, vtkSlicerTerminologyType* type)
+bool vtkSlicerTerminologiesModuleLogic::GetTypeInTerminologyCategory(std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, vtkSlicerTerminologyType* type)
 {
   if (!type || typeId.CodingSchemeDesignator.empty() || typeId.CodeValue.empty())
   {
@@ -1660,16 +1645,18 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeInTerminologyCategory(
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetTypeModifiersInTerminologyType(
-  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, std::vector<CodeIdentifier>& typeModifiers)
+bool vtkSlicerTerminologiesModuleLogic::GetTypeModifiersInTerminologyType(std::string terminologyName,
+                                                                          CodeIdentifier categoryId,
+                                                                          CodeIdentifier typeId,
+                                                                          std::vector<CodeIdentifier>& typeModifiers)
 {
   typeModifiers.clear();
 
   rapidjson::Value& typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
   if (typeModifierArray.IsNull())
   {
-    vtkErrorMacro("GetTypeModifiersInTerminologyType: Failed to find type modifier array member in type '" << typeId.CodeMeaning << "' in category "
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetTypeModifiersInTerminologyType: Failed to find type modifier array member in type '" << typeId.CodeMeaning << "' in category " << categoryId.CodeMeaning
+                                                                                                           << "' in terminology '" << terminologyName << "'");
     return false;
   }
 
@@ -1685,8 +1672,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeModifiersInTerminologyType(
       rapidjson::Value& typeModifierCodeValue = typeModifier["CodeValue"];
       if (typeModifierName.IsString() && typeModifierCodingSchemeDesignator.IsString() && typeModifierCodeValue.IsString())
       {
-        CodeIdentifier typeModifierId(typeModifierCodingSchemeDesignator.GetString(),
-          typeModifierCodeValue.GetString(), typeModifierName.GetString());
+        CodeIdentifier typeModifierId(typeModifierCodingSchemeDesignator.GetString(), typeModifierCodeValue.GetString(), typeModifierName.GetString());
         typeModifiers.push_back(typeModifierId);
       }
     }
@@ -1697,33 +1683,36 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeModifiersInTerminologyType(
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerTerminologiesModuleLogic::GetNumberOfTypeModifiersInTerminologyType(
-  std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type)
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfTypeModifiersInTerminologyType(std::string terminologyName,
+                                                                                 vtkSlicerTerminologyCategory* category,
+                                                                                 vtkSlicerTerminologyType* type)
 {
   CodeIdentifier categoryId = this->GetCodeIdentifierFromCodedEntry(category);
   CodeIdentifier typeId = this->GetCodeIdentifierFromCodedEntry(type);
   rapidjson::Value& typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
   if (typeModifierArray.IsNull())
   {
-    vtkErrorMacro("GetNumberOfTypeModifiersInTerminologyType: Failed to find type modifier array for type '" << typeId.CodeMeaning << "' in category '"
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetNumberOfTypeModifiersInTerminologyType: Failed to find type modifier array for type '" << typeId.CodeMeaning << "' in category '" << categoryId.CodeMeaning
+                                                                                                             << "' in terminology '" << terminologyName << "'");
     return 0;
   }
   return typeModifierArray.Size();
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetNthTypeModifierInTerminologyType(
-  std::string terminologyName, vtkSlicerTerminologyCategory* category, vtkSlicerTerminologyType* type, int typeModifierIndex,
-  vtkSlicerTerminologyType* typeModifier)
+bool vtkSlicerTerminologiesModuleLogic::GetNthTypeModifierInTerminologyType(std::string terminologyName,
+                                                                            vtkSlicerTerminologyCategory* category,
+                                                                            vtkSlicerTerminologyType* type,
+                                                                            int typeModifierIndex,
+                                                                            vtkSlicerTerminologyType* typeModifier)
 {
   CodeIdentifier categoryId = this->GetCodeIdentifierFromCodedEntry(category);
   CodeIdentifier typeId = this->GetCodeIdentifierFromCodedEntry(type);
   rapidjson::Value& typeModifierArray = this->Internal->GetTypeModifierArrayInTerminologyType(terminologyName, categoryId, typeId);
   if (typeModifierArray.IsNull())
   {
-    vtkErrorMacro("GetNthTypeModifierInTerminologyType: Failed to find type modifier array for type '" << typeId.CodeMeaning << "' in category '"
-      << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetNthTypeModifierInTerminologyType: Failed to find type modifier array for type '" << typeId.CodeMeaning << "' in category '" << categoryId.CodeMeaning
+                                                                                                       << "' in terminology '" << terminologyName << "'");
     return 0;
   }
   if (!typeModifier)
@@ -1734,7 +1723,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthTypeModifierInTerminologyType(
   if (typeModifierIndex < 0 || typeModifierIndex >= static_cast<int>(typeModifierArray.Size()))
   {
     vtkErrorMacro("GetNthTypeModifierInTerminologyType failed: type modifier index of " << typeModifierIndex << " is out of range"
-      << " (number of type modifiers: " << typeModifierArray.Size() << ")");
+                                                                                        << " (number of type modifiers: " << typeModifierArray.Size() << ")");
     return false;
   }
 
@@ -1750,8 +1739,11 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthTypeModifierInTerminologyType(
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetTypeModifierInTerminologyType(
-  std::string terminologyName, CodeIdentifier categoryId, CodeIdentifier typeId, CodeIdentifier modifierId, vtkSlicerTerminologyType* typeModifier)
+bool vtkSlicerTerminologiesModuleLogic::GetTypeModifierInTerminologyType(std::string terminologyName,
+                                                                         CodeIdentifier categoryId,
+                                                                         CodeIdentifier typeId,
+                                                                         CodeIdentifier modifierId,
+                                                                         vtkSlicerTerminologyType* typeModifier)
 {
   if (!typeModifier || modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
   {
@@ -1761,8 +1753,8 @@ bool vtkSlicerTerminologiesModuleLogic::GetTypeModifierInTerminologyType(
   rapidjson::Value& typeModifierObject = this->Internal->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId, modifierId);
   if (typeModifierObject.IsNull())
   {
-    vtkErrorMacro("GetTypeModifierInTerminologyType: Failed to find type modifier '" << modifierId.CodeMeaning << "' in type '"
-      << typeId.CodeMeaning << "' in category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+    vtkErrorMacro("GetTypeModifierInTerminologyType: Failed to find type modifier '" << modifierId.CodeMeaning << "' in type '" << typeId.CodeMeaning << "' in category '"
+                                                                                     << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
     return false;
   }
 
@@ -1779,12 +1771,12 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionsInRegionContext(std::string re
 //---------------------------------------------------------------------------
 int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionsInRegionContext(std::string regionContextName)
 {
-    std::vector<CodeIdentifier> regions;
-    if (!this->GetRegionsInRegionContext(regionContextName, regions))
-    {
-      return 0;
-    }
-    return regions.size();
+  std::vector<CodeIdentifier> regions;
+  if (!this->GetRegionsInRegionContext(regionContextName, regions))
+  {
+    return 0;
+  }
+  return regions.size();
 }
 
 //---------------------------------------------------------------------------
@@ -1803,7 +1795,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthRegionInRegionContext(std::string 
   if (regionIndex < 0 || regionIndex >= regions.size())
   {
     vtkErrorMacro("GetNthRegionInRegionContext failed: region index of " << regionIndex << " is out of range"
-      << " (number of regions: " << regions.size() << ")");
+                                                                         << " (number of regions: " << regions.size() << ")");
     return false;
   }
 
@@ -1827,7 +1819,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindRegionsInRegionContext(std::string r
 
   // Traverse regions
   rapidjson::SizeType index = 0;
-  while (index<regionArray.Size())
+  while (index < regionArray.Size())
   {
     rapidjson::Value& region = regionArray[index];
     if (region.IsObject())
@@ -1849,8 +1841,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindRegionsInRegionContext(std::string r
       }
       else
       {
-        vtkErrorMacro("FindRegionsInRegionContext: Invalid region '" << regionName.GetString()
-          << "' in region context '" << regionContextName << "'");
+        vtkErrorMacro("FindRegionsInRegionContext: Invalid region '" << regionName.GetString() << "' in region context '" << regionContextName << "'");
       }
     }
     ++index;
@@ -1879,22 +1870,21 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionInRegionContext(std::string reg
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInRegion(
-  std::string regionContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers )
+bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInRegion(std::string regionContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers)
 {
   regionModifiers.clear();
 
   rapidjson::Value& regionModifierArray = this->Internal->GetRegionModifierArrayInRegion(regionContextName, regionId);
   if (regionModifierArray.IsNull())
   {
-    vtkErrorMacro("GetRegionModifiersInRegion: Failed to find Region Modifier array member in region '"
-      << regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
+    vtkErrorMacro("GetRegionModifiersInRegion: Failed to find Region Modifier array member in region '" << regionId.CodeMeaning << "' in region context '" << regionContextName
+                                                                                                        << "'");
     return false;
   }
 
   // Collect region modifiers
   rapidjson::SizeType index = 0;
-  while (index<regionModifierArray.Size())
+  while (index < regionModifierArray.Size())
   {
     rapidjson::Value& regionModifier = regionModifierArray[index];
     if (regionModifier.IsObject())
@@ -1904,9 +1894,8 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInRegion(
       rapidjson::Value& regionModifierCodeValue = regionModifier["CodeValue"];
       if (regionModifierName.IsString() && regionModifierCodingSchemeDesignator.IsString() && regionModifierCodeValue.IsString())
       {
-        CodeIdentifier regionModifierId(regionModifierCodingSchemeDesignator.GetString(),
-          regionModifierCodeValue.GetString(), regionModifierName.GetString());
-          regionModifiers.push_back(regionModifierId);
+        CodeIdentifier regionModifierId(regionModifierCodingSchemeDesignator.GetString(), regionModifierCodeValue.GetString(), regionModifierName.GetString());
+        regionModifiers.push_back(regionModifierId);
       }
     }
     ++index;
@@ -1917,7 +1906,9 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInRegion(
 
 //---------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierInRegion(std::string regionContextName,
-    CodeIdentifier regionId, CodeIdentifier modifierId, vtkSlicerTerminologyType* regionModifier)
+                                                                  CodeIdentifier regionId,
+                                                                  CodeIdentifier modifierId,
+                                                                  vtkSlicerTerminologyType* regionModifier)
 {
   if (!regionModifier || modifierId.CodingSchemeDesignator.empty() || modifierId.CodeValue.empty())
   {
@@ -1927,8 +1918,8 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierInRegion(std::string re
   rapidjson::Value& regionModifierObject = this->Internal->GetRegionModifierInRegion(regionContextName, regionId, modifierId);
   if (regionModifierObject.IsNull())
   {
-    vtkErrorMacro("GetRegionModifierInRegion: Failed to find region modifier '" << modifierId.CodeMeaning
-      << "' in region '" << regionId.CodeMeaning << "' in region context '" << regionContextName << "'");
+    vtkErrorMacro("GetRegionModifierInRegion: Failed to find region modifier '" << modifierId.CodeMeaning << "' in region '" << regionId.CodeMeaning << "' in region context '"
+                                                                                << regionContextName << "'");
     return false;
   }
 
@@ -1937,8 +1928,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetRegionModifierInRegion(std::string re
 }
 
 //---------------------------------------------------------------------------
-int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInRegion(
-  std::string regionContextName, vtkSlicerTerminologyType* regionObject)
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInRegion(std::string regionContextName, vtkSlicerTerminologyType* regionObject)
 {
   if (!regionObject)
   {
@@ -1955,8 +1945,10 @@ int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInRegion(
 }
 
 //---------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInRegion(
-  std::string regionContextName, vtkSlicerTerminologyType* regionObject, int regionModifierIndex, vtkSlicerTerminologyType* regionModifier)
+bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInRegion(std::string regionContextName,
+                                                                     vtkSlicerTerminologyType* regionObject,
+                                                                     int regionModifierIndex,
+                                                                     vtkSlicerTerminologyType* regionModifier)
 {
   if (!regionObject)
   {
@@ -1973,7 +1965,7 @@ bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInRegion(
   if (regionModifierIndex < 0 || regionModifierIndex >= regionModifiers.size())
   {
     vtkErrorMacro("GetNthRegionModifierInRegion failed: regionModifier index of " << regionModifierIndex << " is out of range"
-      << " (number of regionModifiers: " << regionModifiers.size() << ")");
+                                                                                  << " (number of regionModifiers: " << regionModifiers.size() << ")");
     return false;
   }
   CodeIdentifier modifierId = regionModifiers[regionModifierIndex];
@@ -1985,12 +1977,11 @@ vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLo
 {
   if (!entry)
   {
-    return CodeIdentifier("","","");
+    return CodeIdentifier("", "", "");
   }
-  CodeIdentifier id(
-    (entry->GetCodingSchemeDesignator() ? entry->GetCodingSchemeDesignator():""),
-    (entry->GetCodeValue() ? entry->GetCodeValue():""),
-    (entry->GetCodeMeaning() ? entry->GetCodeMeaning():"") );
+  CodeIdentifier id((entry->GetCodingSchemeDesignator() ? entry->GetCodingSchemeDesignator() : ""),
+                    (entry->GetCodeValue() ? entry->GetCodeValue() : ""),
+                    (entry->GetCodeMeaning() ? entry->GetCodeMeaning() : ""));
   return id;
 }
 
@@ -2008,56 +1999,48 @@ std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(vtkSlic
   std::string serializedEntry;
   serializedEntry += std::string(entry->GetTerminologyContextName()) + "~";
   serializedEntry +=
-    std::string(entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodingSchemeDesignator()
-      ? entry->GetCategoryObject()->GetCodingSchemeDesignator() : "") + "^"
-    + std::string(entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodeValue()
-      ? entry->GetCategoryObject()->GetCodeValue() : "") + "^"
-    + std::string(entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodeMeaning()
-      ? entry->GetCategoryObject()->GetCodeMeaning() : "") + "~";
+    std::string(entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodingSchemeDesignator() ? entry->GetCategoryObject()->GetCodingSchemeDesignator() : "") + "^"
+    + std::string(entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodeValue() ? entry->GetCategoryObject()->GetCodeValue() : "") + "^"
+    + std::string(entry->GetCategoryObject() && entry->GetCategoryObject()->GetCodeMeaning() ? entry->GetCategoryObject()->GetCodeMeaning() : "") + "~";
+  serializedEntry += std::string(entry->GetTypeObject() && entry->GetTypeObject()->GetCodingSchemeDesignator() ? entry->GetTypeObject()->GetCodingSchemeDesignator() : "") + "^"
+                     + std::string(entry->GetTypeObject() && entry->GetTypeObject()->GetCodeValue() ? entry->GetTypeObject()->GetCodeValue() : "") + "^"
+                     + std::string(entry->GetTypeObject() && entry->GetTypeObject()->GetCodeMeaning() ? entry->GetTypeObject()->GetCodeMeaning() : "") + "~";
   serializedEntry +=
-    std::string(entry->GetTypeObject() && entry->GetTypeObject()->GetCodingSchemeDesignator()
-      ? entry->GetTypeObject()->GetCodingSchemeDesignator() : "") + "^"
-    + std::string(entry->GetTypeObject() && entry->GetTypeObject()->GetCodeValue()
-      ? entry->GetTypeObject()->GetCodeValue() : "") + "^"
-    + std::string(entry->GetTypeObject() && entry->GetTypeObject()->GetCodeMeaning()
-      ? entry->GetTypeObject()->GetCodeMeaning() : "") + "~";
-  serializedEntry +=
-    std::string(entry->GetTypeModifierObject() && entry->GetTypeModifierObject()->GetCodingSchemeDesignator()
-      ? entry->GetTypeModifierObject()->GetCodingSchemeDesignator() : "") + "^"
-    + std::string(entry->GetTypeModifierObject() && entry->GetTypeModifierObject()->GetCodeValue()
-      ? entry->GetTypeModifierObject()->GetCodeValue() : "") + "^"
-    + std::string(entry->GetTypeModifierObject() && entry->GetTypeModifierObject()->GetCodeMeaning()
-      ? entry->GetTypeModifierObject()->GetCodeMeaning() : "") + "~";
+    std::string(entry->GetTypeModifierObject() && entry->GetTypeModifierObject()->GetCodingSchemeDesignator() ? entry->GetTypeModifierObject()->GetCodingSchemeDesignator() : "")
+    + "^" + std::string(entry->GetTypeModifierObject() && entry->GetTypeModifierObject()->GetCodeValue() ? entry->GetTypeModifierObject()->GetCodeValue() : "") + "^"
+    + std::string(entry->GetTypeModifierObject() && entry->GetTypeModifierObject()->GetCodeMeaning() ? entry->GetTypeModifierObject()->GetCodeMeaning() : "") + "~";
 
+  serializedEntry += std::string(entry->GetRegionContextName() ? entry->GetRegionContextName() : "") + "~";
+  serializedEntry += std::string(entry->GetRegionObject() && entry->GetRegionObject()->GetCodingSchemeDesignator() ? entry->GetRegionObject()->GetCodingSchemeDesignator() : "")
+                     + "^" + std::string(entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue() ? entry->GetRegionObject()->GetCodeValue() : "") + "^"
+                     + std::string(entry->GetRegionObject() && entry->GetRegionObject()->GetCodeMeaning() ? entry->GetRegionObject()->GetCodeMeaning() : "") + "~";
   serializedEntry +=
-    std::string(entry->GetRegionContextName() ? entry->GetRegionContextName() : "") + "~";
-  serializedEntry +=
-    std::string(entry->GetRegionObject() && entry->GetRegionObject()->GetCodingSchemeDesignator()
-      ? entry->GetRegionObject()->GetCodingSchemeDesignator() : "") + "^"
-    + std::string(entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue()
-      ? entry->GetRegionObject()->GetCodeValue() : "") + "^"
-    + std::string(entry->GetRegionObject() && entry->GetRegionObject()->GetCodeMeaning()
-      ? entry->GetRegionObject()->GetCodeMeaning() : "") + "~";
-  serializedEntry +=
-    std::string(entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodingSchemeDesignator()
-      ? entry->GetRegionModifierObject()->GetCodingSchemeDesignator() : "") + "^"
-    + std::string(entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeValue()
-      ? entry->GetRegionModifierObject()->GetCodeValue() : "") + "^"
-    + std::string(entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeMeaning()
-      ? entry->GetRegionModifierObject()->GetCodeMeaning() : "");
+    std::string(entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodingSchemeDesignator() ? entry->GetRegionModifierObject()->GetCodingSchemeDesignator()
+                                                                                                                  : "")
+    + "^" + std::string(entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeValue() ? entry->GetRegionModifierObject()->GetCodeValue() : "") + "^"
+    + std::string(entry->GetRegionModifierObject() && entry->GetRegionModifierObject()->GetCodeMeaning() ? entry->GetRegionModifierObject()->GetCodeMeaning() : "");
 
   return serializedEntry;
 }
 
 //-----------------------------------------------------------------------------
-std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(
-  std::string terminologyContextName,
-  std::string categoryValue, std::string categorySchemeDesignator, std::string categoryMeaning,
-  std::string typeValue, std::string typeSchemeDesignator, std::string typeMeaning,
-  std::string modifierValue, std::string modifierSchemeDesignator, std::string modifierMeaning,
-  std::string regionContextName,
-  std::string regionValue, std::string regionSchemeDesignator, std::string regionMeaning,
-  std::string regionModifierValue, std::string regionModifierSchemeDesignator, std::string regionModifierMeaning )
+std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(std::string terminologyContextName,
+                                                                         std::string categoryValue,
+                                                                         std::string categorySchemeDesignator,
+                                                                         std::string categoryMeaning,
+                                                                         std::string typeValue,
+                                                                         std::string typeSchemeDesignator,
+                                                                         std::string typeMeaning,
+                                                                         std::string modifierValue,
+                                                                         std::string modifierSchemeDesignator,
+                                                                         std::string modifierMeaning,
+                                                                         std::string regionContextName,
+                                                                         std::string regionValue,
+                                                                         std::string regionSchemeDesignator,
+                                                                         std::string regionMeaning,
+                                                                         std::string regionModifierValue,
+                                                                         std::string regionModifierSchemeDesignator,
+                                                                         std::string regionModifierMeaning)
 {
   std::string serializedEntry("");
   serializedEntry += terminologyContextName + "~";
@@ -2075,7 +2058,7 @@ std::string vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(
 //-----------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string serializedEntry, vtkSlicerTerminologyEntry* entry)
 {
-  //Note: This implementation could be consolidated with vtkMRMLColorNode::SetTerminologyFromString(int ind, std::string terminologyString)
+  // Note: This implementation could be consolidated with vtkMRMLColorNode::SetTerminologyFromString(int ind, std::string terminologyString)
   if (!entry)
   {
     vtkGenericWarningMacro("vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry: Invalid terminology given");
@@ -2087,7 +2070,7 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
   entry->SetRegionContextName(nullptr);
 
   if (!entry->GetCategoryObject() || !entry->GetTypeObject() || !entry->GetTypeModifierObject() //
-      || !entry->GetRegionObject() || !entry->GetRegionModifierObject() )
+      || !entry->GetRegionObject() || !entry->GetRegionModifierObject())
   {
     vtkErrorWithObjectMacro(entry, "DeserializeTerminologyEntry: Invalid terminology entry given");
     return false;
@@ -2146,7 +2129,7 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
 
   // Region context name (optional)
   std::string regionContextName = entryComponents[4];
-  entry->SetRegionContextName(regionContextName.empty()?nullptr:regionContextName.c_str());
+  entry->SetRegionContextName(regionContextName.empty() ? nullptr : regionContextName.c_str());
 
   // Region (optional)
   std::vector<std::string> regionIds = vtksys::SystemTools::SplitString(entryComponents[5], '^');
@@ -2173,8 +2156,8 @@ bool vtkSlicerTerminologiesModuleLogic::DeserializeTerminologyEntry(std::string 
 
 //-----------------------------------------------------------------------------
 bool vtkSlicerTerminologiesModuleLogic::UpdateEntryFromLoadedTerminologies(vtkSlicerTerminologyEntry* entry,
-  std::vector<std::string> preferredTerminologyNames,
-  std::vector<std::string> preferredRegionContextNames)
+                                                                           std::vector<std::string> preferredTerminologyNames,
+                                                                           std::vector<std::string> preferredRegionContextNames)
 {
   if (!entry)
   {
@@ -2312,7 +2295,7 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
     return "Invalid terminology";
   }
   if (!entry->GetTerminologyContextName() //
-      || !entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue() )
+      || !entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue())
   {
     return "No terminology information";
   }
@@ -2343,7 +2326,7 @@ std::string vtkSlicerTerminologiesModuleLogic::GetInfoStringFromTerminologyEntry
 
   // If region is not selected, then do not show region context name either
   if (entry->GetRegionContextName() //
-      && entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue() )
+      && entry->GetRegionObject() && entry->GetRegionObject()->GetCodeValue())
   {
     terminologyStr = terminologyStr + std::string("\n  Region context: ") + std::string(entry->GetRegionContextName());
     terminologyStr = terminologyStr + std::string("\n  Region: ") + std::string(entry->GetRegionObject()->GetCodeMeaning());
@@ -2399,8 +2382,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypeInTerminologyBy3dSlicerLabel(std
         rapidjson::Value& typeArray = this->Internal->GetTypeArrayInTerminologyCategory(terminologyName, categoryId);
         if (typeArray.IsNull())
         {
-          vtkErrorMacro("FindTypeInTerminologyBy3dSlicerLabel: Failed to find category '"
-            << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+          vtkErrorMacro("FindTypeInTerminologyBy3dSlicerLabel: Failed to find category '" << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
           ++categoryIndex;
           continue;
         }
@@ -2447,8 +2429,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypeInTerminologyBy3dSlicerLabel(std
                   rapidjson::Value& typeModifierCodeValue = typeModifier["CodeValue"];
                   if (typeModifierName.IsString() && typeModifierCodingSchemeDesignator.IsString() && typeModifierCodeValue.IsString())
                   {
-                    CodeIdentifier typeModifierId(typeModifierCodingSchemeDesignator.GetString(),
-                      typeModifierCodeValue.GetString(), typeModifierName.GetString());
+                    CodeIdentifier typeModifierId(typeModifierCodingSchemeDesignator.GetString(), typeModifierCodeValue.GetString(), typeModifierName.GetString());
                     rapidjson::Value::MemberIterator currentSlicerLabelIt = typeModifier.FindMember("3dSlicerLabel");
                     if (currentSlicerLabelIt != typeModifier.MemberEnd() && !slicerLabel.compare(currentSlicerLabelIt->value.GetString()))
                     {
@@ -2471,8 +2452,8 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypeInTerminologyBy3dSlicerLabel(std
             }
             else
             {
-              vtkErrorMacro("FindTypeInTerminologyBy3dSlicerLabel: Invalid type '" << typeName.GetString() << "in category '"
-                << categoryId.CodeMeaning << "' in terminology '" << terminologyName << "'");
+              vtkErrorMacro("FindTypeInTerminologyBy3dSlicerLabel: Invalid type '" << typeName.GetString() << "in category '" << categoryId.CodeMeaning << "' in terminology '"
+                                                                                   << terminologyName << "'");
             }
           }
           ++typeIndex;
@@ -2517,12 +2498,11 @@ bool vtkSlicerTerminologiesModuleLogic::FindTypeInTerminologyBy3dSlicerLabel(std
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
-  vtkSlicerTerminologyEntry* entry,
-  std::vector<std::string> preferredTerminologyNames,
-  std::string& foundTerminologyName,
-  std::string& foundColorNodeID,
-  int& foundColorIndex)
+bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(vtkSlicerTerminologyEntry* entry,
+                                                                        std::vector<std::string> preferredTerminologyNames,
+                                                                        std::string& foundTerminologyName,
+                                                                        std::string& foundColorNodeID,
+                                                                        int& foundColorIndex)
 {
   if (!entry)
   {
@@ -2530,7 +2510,7 @@ bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
     return false;
   }
   if (!entry->GetTerminologyContextName() && //
-    (!entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue()))
+      (!entry->GetCategoryObject() || !entry->GetCategoryObject()->GetCodeValue()))
   {
     // neither context name nor category is specified, this is an empty terminology
     return false;
@@ -2590,27 +2570,37 @@ bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
     regionModifierValue = regionModifierObject->GetCodeValue();
   }
 
-  return this->FindFirstColorNodeOrTerminology(
-    categoryScheme, categoryValue,
-    typeScheme, typeValue,
-    typeModifierScheme, typeModifierValue,
-    regionScheme, regionValue,
-    regionModifierScheme, regionModifierValue,
-    preferredTerminologyNames,
-    foundTerminologyName, foundColorNodeID, foundColorIndex);
+  return this->FindFirstColorNodeOrTerminology(categoryScheme,
+                                               categoryValue,
+                                               typeScheme,
+                                               typeValue,
+                                               typeModifierScheme,
+                                               typeModifierValue,
+                                               regionScheme,
+                                               regionValue,
+                                               regionModifierScheme,
+                                               regionModifierValue,
+                                               preferredTerminologyNames,
+                                               foundTerminologyName,
+                                               foundColorNodeID,
+                                               foundColorIndex);
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
-  std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
-  std::string typeCodingSchemeDesignator, std::string typeCodeValue,
-  std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
-  std::string regionCodingSchemeDesignator, std::string regionCodeValue,
-  std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
-  std::vector<std::string> preferredTerminologyNames,
-  std::string& foundTerminologyName,
-  std::string& foundColorNodeID,
-  int& foundColorIndex)
+bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(std::string categoryCodingSchemeDesignator,
+                                                                        std::string categoryCodeValue,
+                                                                        std::string typeCodingSchemeDesignator,
+                                                                        std::string typeCodeValue,
+                                                                        std::string typeModifierCodingSchemeDesignator,
+                                                                        std::string typeModifierCodeValue,
+                                                                        std::string regionCodingSchemeDesignator,
+                                                                        std::string regionCodeValue,
+                                                                        std::string regionModifierCodingSchemeDesignator,
+                                                                        std::string regionModifierCodeValue,
+                                                                        std::vector<std::string> preferredTerminologyNames,
+                                                                        std::string& foundTerminologyName,
+                                                                        std::string& foundColorNodeID,
+                                                                        int& foundColorIndex)
 {
   std::vector<std::string> foundColorTableNodeIds;
   vtkNew<vtkIntArray> foundColorIndices;
@@ -2620,24 +2610,54 @@ bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
 
   if (!categoryCodingSchemeDesignator.empty() && !categoryCodeValue.empty())
   {
-    foundColorTableNodeIds = this->FindColorNodes(
-      categoryCodingSchemeDesignator, categoryCodeValue, typeCodingSchemeDesignator, typeCodeValue, typeModifierCodingSchemeDesignator, typeModifierCodeValue,
-      regionCodingSchemeDesignator, regionCodeValue, regionModifierCodingSchemeDesignator, regionModifierCodeValue,
-      preferredTerminologyNames, foundColorIndices, foundPreferredColorNodeIndices);
-    foundTerminologyNames = this->FindTerminologyNames(
-      categoryCodingSchemeDesignator, categoryCodeValue, typeCodingSchemeDesignator, typeCodeValue, typeModifierCodingSchemeDesignator, typeModifierCodeValue,
-      preferredTerminologyNames, nullptr, foundTerminologyIndices);
+    foundColorTableNodeIds = this->FindColorNodes(categoryCodingSchemeDesignator,
+                                                  categoryCodeValue,
+                                                  typeCodingSchemeDesignator,
+                                                  typeCodeValue,
+                                                  typeModifierCodingSchemeDesignator,
+                                                  typeModifierCodeValue,
+                                                  regionCodingSchemeDesignator,
+                                                  regionCodeValue,
+                                                  regionModifierCodingSchemeDesignator,
+                                                  regionModifierCodeValue,
+                                                  preferredTerminologyNames,
+                                                  foundColorIndices,
+                                                  foundPreferredColorNodeIndices);
+    foundTerminologyNames = this->FindTerminologyNames(categoryCodingSchemeDesignator,
+                                                       categoryCodeValue,
+                                                       typeCodingSchemeDesignator,
+                                                       typeCodeValue,
+                                                       typeModifierCodingSchemeDesignator,
+                                                       typeModifierCodeValue,
+                                                       preferredTerminologyNames,
+                                                       nullptr,
+                                                       foundTerminologyIndices);
 
     if (!preferredTerminologyNames.empty() && (foundColorTableNodeIds.empty() && foundTerminologyNames.empty()))
     {
       // Preferred terminologies do not contain the item, try to get first terminology containing it among all loaded contexts
-      foundColorTableNodeIds = this->FindColorNodes(
-        categoryCodingSchemeDesignator, categoryCodeValue, typeCodingSchemeDesignator, typeCodeValue, typeModifierCodingSchemeDesignator, typeModifierCodeValue,
-        regionCodingSchemeDesignator, regionCodeValue, regionModifierCodingSchemeDesignator, regionModifierCodeValue,
-        std::vector<std::string>(), foundColorIndices, foundPreferredColorNodeIndices);
-      foundTerminologyNames = this->FindTerminologyNames(
-        categoryCodingSchemeDesignator, categoryCodeValue, typeCodingSchemeDesignator, typeCodeValue, typeModifierCodingSchemeDesignator, typeModifierCodeValue,
-        std::vector<std::string>(), nullptr, foundTerminologyIndices);
+      foundColorTableNodeIds = this->FindColorNodes(categoryCodingSchemeDesignator,
+                                                    categoryCodeValue,
+                                                    typeCodingSchemeDesignator,
+                                                    typeCodeValue,
+                                                    typeModifierCodingSchemeDesignator,
+                                                    typeModifierCodeValue,
+                                                    regionCodingSchemeDesignator,
+                                                    regionCodeValue,
+                                                    regionModifierCodingSchemeDesignator,
+                                                    regionModifierCodeValue,
+                                                    std::vector<std::string>(),
+                                                    foundColorIndices,
+                                                    foundPreferredColorNodeIndices);
+      foundTerminologyNames = this->FindTerminologyNames(categoryCodingSchemeDesignator,
+                                                         categoryCodeValue,
+                                                         typeCodingSchemeDesignator,
+                                                         typeCodeValue,
+                                                         typeModifierCodingSchemeDesignator,
+                                                         typeModifierCodeValue,
+                                                         std::vector<std::string>(),
+                                                         nullptr,
+                                                         foundTerminologyIndices);
     }
   }
 
@@ -2690,13 +2710,15 @@ bool vtkSlicerTerminologiesModuleLogic::FindFirstColorNodeOrTerminology(
 }
 
 //-----------------------------------------------------------------------------
-std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames(
-  std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
-  std::string typeCodingSchemeDesignator, std::string typeCodeValue,
-  std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
-  std::vector<std::string> preferredTerminologyNames,
-  vtkCollection* foundEntries/*=nullptr*/,
-  vtkIntArray* foundPreferredTerminologyNameIndices/*=nullptr*/)
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames(std::string categoryCodingSchemeDesignator,
+                                                                                 std::string categoryCodeValue,
+                                                                                 std::string typeCodingSchemeDesignator,
+                                                                                 std::string typeCodeValue,
+                                                                                 std::string typeModifierCodingSchemeDesignator,
+                                                                                 std::string typeModifierCodeValue,
+                                                                                 std::vector<std::string> preferredTerminologyNames,
+                                                                                 vtkCollection* foundEntries /*=nullptr*/,
+                                                                                 vtkIntArray* foundPreferredTerminologyNameIndices /*=nullptr*/)
 {
   if (foundEntries)
   {
@@ -2758,8 +2780,8 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames
     {
       // Type with a modifier
       vtkNew<vtkSlicerTerminologyType> modifiedTypeObject;
-      if (this->GetTypeModifierInTerminologyType(terminologyName, categoryId, typeId,
-        CodeIdentifier(typeModifierCodingSchemeDesignator, typeModifierCodeValue), modifiedTypeObject))
+      if (this->GetTypeModifierInTerminologyType(
+            terminologyName, categoryId, typeId, CodeIdentifier(typeModifierCodingSchemeDesignator, typeModifierCodeValue), modifiedTypeObject))
       {
         foundTerminologyNames.push_back(terminologyName);
         if (foundEntries)
@@ -2778,11 +2800,12 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindTerminologyNames
 }
 
 //-----------------------------------------------------------------------------
-std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindRegionContextNames(
-  std::string regionCodingSchemeDesignator, std::string regionCodeValue,
-  std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
-  std::vector<std::string> preferredRegionContextNames,
-  vtkCollection* foundEntries/*=nullptr*/)
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindRegionContextNames(std::string regionCodingSchemeDesignator,
+                                                                                   std::string regionCodeValue,
+                                                                                   std::string regionModifierCodingSchemeDesignator,
+                                                                                   std::string regionModifierCodeValue,
+                                                                                   std::vector<std::string> preferredRegionContextNames,
+                                                                                   vtkCollection* foundEntries /*=nullptr*/)
 {
   std::vector<std::string> foundRegionContextNames;
   if (regionCodingSchemeDesignator.empty() || regionCodeValue.empty())
@@ -2819,8 +2842,7 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindRegionContextNam
     {
       // Region with a modifier
       vtkNew<vtkSlicerTerminologyType> modifiedRegionObject;
-      if (this->GetRegionModifierInRegion(regionContextName, regionId,
-        CodeIdentifier(regionModifierCodingSchemeDesignator, regionModifierCodeValue), modifiedRegionObject))
+      if (this->GetRegionModifierInRegion(regionContextName, regionId, CodeIdentifier(regionModifierCodingSchemeDesignator, regionModifierCodeValue), modifiedRegionObject))
       {
         foundRegionContextNames.push_back(regionContextName);
         if (foundEntries)
@@ -2889,11 +2911,11 @@ bool vtkSlicerTerminologiesModuleLogic::AreTerminologyEntriesEqual(vtkSlicerTerm
     return entry1 == entry2;
   }
 
-  return this->AreCodedEntriesEqual(entry1->GetCategoryObject(), entry2->GetCategoryObject()) //
-      && this->AreCodedEntriesEqual(entry1->GetTypeObject(), entry2->GetTypeObject()) //
-      && this->AreCodedEntriesEqual(entry1->GetTypeModifierObject(), entry2->GetTypeModifierObject()) //
-      && this->AreCodedEntriesEqual(entry1->GetRegionObject(), entry2->GetRegionObject()) //
-      && this->AreCodedEntriesEqual(entry1->GetRegionModifierObject(), entry2->GetRegionModifierObject());
+  return this->AreCodedEntriesEqual(entry1->GetCategoryObject(), entry2->GetCategoryObject())            //
+         && this->AreCodedEntriesEqual(entry1->GetTypeObject(), entry2->GetTypeObject())                 //
+         && this->AreCodedEntriesEqual(entry1->GetTypeModifierObject(), entry2->GetTypeModifierObject()) //
+         && this->AreCodedEntriesEqual(entry1->GetRegionObject(), entry2->GetRegionObject())             //
+         && this->AreCodedEntriesEqual(entry1->GetRegionModifierObject(), entry2->GetRegionModifierObject());
 }
 
 //-----------------------------------------------------------------------------
@@ -3073,16 +3095,20 @@ vtkMRMLColorNode* vtkSlicerTerminologiesModuleLogic::GetFirstCompatibleColorNode
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
-  std::string categoryCodingSchemeDesignator, std::string categoryCodeValue,
-  std::string typeCodingSchemeDesignator, std::string typeCodeValue,
-  std::string typeModifierCodingSchemeDesignator, std::string typeModifierCodeValue,
-  std::string regionCodingSchemeDesignator, std::string regionCodeValue,
-  std::string regionModifierCodingSchemeDesignator, std::string regionModifierCodeValue,
-  std::vector<std::string> preferredColorNodeNames,
-  vtkIntArray* foundColorIndices/*=nullptr*/,
-  vtkIntArray* foundPreferredColorNodeIndices/*=nullptr*/
-  )
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(std::string categoryCodingSchemeDesignator,
+                                                                           std::string categoryCodeValue,
+                                                                           std::string typeCodingSchemeDesignator,
+                                                                           std::string typeCodeValue,
+                                                                           std::string typeModifierCodingSchemeDesignator,
+                                                                           std::string typeModifierCodeValue,
+                                                                           std::string regionCodingSchemeDesignator,
+                                                                           std::string regionCodeValue,
+                                                                           std::string regionModifierCodingSchemeDesignator,
+                                                                           std::string regionModifierCodeValue,
+                                                                           std::vector<std::string> preferredColorNodeNames,
+                                                                           vtkIntArray* foundColorIndices /*=nullptr*/,
+                                                                           vtkIntArray* foundPreferredColorNodeIndices /*=nullptr*/
+)
 {
   if (foundColorIndices)
   {
@@ -3109,8 +3135,8 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
   {
     for (const std::string& preferredColorNodeName : preferredColorNodeNames)
     {
-      vtkSmartPointer<vtkCollection> preferredColorNodeCandidates = vtkSmartPointer<vtkCollection>::Take(
-        scene->GetNodesByClassByName("vtkMRMLColorNode", preferredColorNodeName.c_str()));
+      vtkSmartPointer<vtkCollection> preferredColorNodeCandidates =
+        vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClassByName("vtkMRMLColorNode", preferredColorNodeName.c_str()));
       for (int i = 0; i < preferredColorNodeCandidates->GetNumberOfItems(); ++i)
       {
         vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(preferredColorNodeCandidates->GetItemAsObject(i));
@@ -3122,14 +3148,23 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
     }
   }
   // Check if we can find the item in the table
-  std::string terminologyStr = vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry(
-    "", // terminologyContextName: we don't know it, so we set it to empty by default
-    categoryCodeValue, categoryCodingSchemeDesignator, "",
-    typeCodeValue, typeCodingSchemeDesignator, "",
-    typeModifierCodeValue, typeModifierCodingSchemeDesignator, "",
-    "", // regionContextName: we don't know it, so we set it to empty by default
-    regionCodeValue, regionCodingSchemeDesignator, "",
-    regionModifierCodeValue, regionModifierCodingSchemeDesignator, "");
+  std::string terminologyStr = vtkSlicerTerminologiesModuleLogic::SerializeTerminologyEntry("", // terminologyContextName: we don't know it, so we set it to empty by default
+                                                                                            categoryCodeValue,
+                                                                                            categoryCodingSchemeDesignator,
+                                                                                            "",
+                                                                                            typeCodeValue,
+                                                                                            typeCodingSchemeDesignator,
+                                                                                            "",
+                                                                                            typeModifierCodeValue,
+                                                                                            typeModifierCodingSchemeDesignator,
+                                                                                            "",
+                                                                                            "", // regionContextName: we don't know it, so we set it to empty by default
+                                                                                            regionCodeValue,
+                                                                                            regionCodingSchemeDesignator,
+                                                                                            "",
+                                                                                            regionModifierCodeValue,
+                                                                                            regionModifierCodingSchemeDesignator,
+                                                                                            "");
   for (std::string& compatibleColorNodeID : compatibleColorNodeIDs)
   {
     vtkMRMLColorNode* compatibleColorNode = vtkMRMLColorNode::SafeDownCast(scene->GetNodeByID(compatibleColorNodeID));
@@ -3137,8 +3172,7 @@ std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindColorNodes(
     {
       continue;
     }
-    int indexInColorTable = vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(
-      compatibleColorNode, terminologyStr, /* ignoreContextName= */ true);
+    int indexInColorTable = vtkSlicerTerminologiesModuleLogic::GetColorIndexByTerminology(compatibleColorNode, terminologyStr, /* ignoreContextName= */ true);
     if (indexInColorTable > -1)
     {
       foundColorNodeIDs.push_back(compatibleColorNodeID);
@@ -3214,7 +3248,6 @@ void vtkSlicerTerminologiesModuleLogic::SetTerminologyEntryAsString(vtkMRMLNode*
     node->SetAttribute(vtkSlicerTerminologiesModuleLogic::GetTerminologyEntryAttributeName(), entryStr.c_str());
   }
 }
-
 
 //---------------------------------------------------------------------------
 void vtkSlicerTerminologiesModuleLogic::SetTerminologyEntry(vtkMRMLNode* node, vtkSlicerTerminologyEntry* entry)
@@ -3337,17 +3370,20 @@ void vtkSlicerTerminologiesModuleLogic::GetLoadedAnatomicContextNames(vtkStringA
   this->GetLoadedRegionContextNames(anatomicContextNames);
 }
 
-std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindAnatomicContextNames(
-  std::string anatomicRegionCodingSchemeDesignator, std::string anatomicRegionCodeValue,
-  std::string anatomicRegionModifierCodingSchemeDesignator, std::string anatomicRegionModifierCodeValue,
-  std::vector<std::string> preferredAnatomicContextNames,
-  vtkCollection* foundEntries)
+std::vector<std::string> vtkSlicerTerminologiesModuleLogic::FindAnatomicContextNames(std::string anatomicRegionCodingSchemeDesignator,
+                                                                                     std::string anatomicRegionCodeValue,
+                                                                                     std::string anatomicRegionModifierCodingSchemeDesignator,
+                                                                                     std::string anatomicRegionModifierCodeValue,
+                                                                                     std::vector<std::string> preferredAnatomicContextNames,
+                                                                                     vtkCollection* foundEntries)
 {
   vtkWarningMacro("FindAnatomicContextNames is deprecated. Use FindRegionContextNames instead.");
-  return this->FindRegionContextNames(
-    anatomicRegionCodingSchemeDesignator, anatomicRegionCodeValue,
-    anatomicRegionModifierCodingSchemeDesignator, anatomicRegionModifierCodeValue,
-    preferredAnatomicContextNames, foundEntries);
+  return this->FindRegionContextNames(anatomicRegionCodingSchemeDesignator,
+                                      anatomicRegionCodeValue,
+                                      anatomicRegionModifierCodingSchemeDesignator,
+                                      anatomicRegionModifierCodeValue,
+                                      preferredAnatomicContextNames,
+                                      foundEntries);
 }
 
 bool vtkSlicerTerminologiesModuleLogic::GetRegionsInAnatomicContext(std::string anatomicContextName, std::vector<CodeIdentifier>& regions)
@@ -3374,46 +3410,43 @@ bool vtkSlicerTerminologiesModuleLogic::FindRegionsInAnatomicContext(std::string
   return this->FindRegionsInRegionContext(anatomicContextName, regions, search);
 }
 
-bool vtkSlicerTerminologiesModuleLogic::GetRegionInAnatomicContext(
-  std::string anatomicContextName, CodeIdentifier regionId, vtkSlicerTerminologyType* regionObject)
+bool vtkSlicerTerminologiesModuleLogic::GetRegionInAnatomicContext(std::string anatomicContextName, CodeIdentifier regionId, vtkSlicerTerminologyType* regionObject)
 {
   vtkWarningMacro("GetRegionInAnatomicContext is deprecated. Use GetRegionInRegionContext instead.");
   return this->GetRegionInRegionContext(anatomicContextName, regionId, regionObject);
 }
 
-bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInAnatomicRegion(
-  std::string anatomicContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers)
+bool vtkSlicerTerminologiesModuleLogic::GetRegionModifiersInAnatomicRegion(std::string anatomicContextName, CodeIdentifier regionId, std::vector<CodeIdentifier>& regionModifiers)
 {
   vtkWarningMacro("GetRegionModifiersInAnatomicRegion is deprecated. Use GetRegionModifiersInRegion instead.");
   return this->GetRegionModifiersInRegion(anatomicContextName, regionId, regionModifiers);
 }
 
-int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInAnatomicRegion(
-  std::string anatomicContextName, vtkSlicerTerminologyType* regionObject)
+int vtkSlicerTerminologiesModuleLogic::GetNumberOfRegionModifierInAnatomicRegion(std::string anatomicContextName, vtkSlicerTerminologyType* regionObject)
 {
   vtkWarningMacro("GetNumberOfRegionModifierInAnatomicRegion is deprecated. Use GetNumberOfRegionModifierInRegion instead.");
   return this->GetNumberOfRegionModifierInRegion(anatomicContextName, regionObject);
 }
 
-bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInAnatomicRegion(
-  std::string anatomicContextName, vtkSlicerTerminologyType* regionObject, int regionModifierIndex, vtkSlicerTerminologyType* regionModifier)
+bool vtkSlicerTerminologiesModuleLogic::GetNthRegionModifierInAnatomicRegion(std::string anatomicContextName,
+                                                                             vtkSlicerTerminologyType* regionObject,
+                                                                             int regionModifierIndex,
+                                                                             vtkSlicerTerminologyType* regionModifier)
 {
   vtkWarningMacro("GetNthRegionModifierInAnatomicRegion is deprecated. Use GetNthRegionModifierInRegion instead.");
   return this->GetNthRegionModifierInRegion(anatomicContextName, regionObject, regionModifierIndex, regionModifier);
 }
 
-vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(
-  vtkSlicerTerminologyCategory* category)
+vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory(vtkSlicerTerminologyCategory* category)
 {
   vtkGenericWarningMacro("vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyCategory is deprecated."
-    " Use GetCodeIdentifierFromCodedEntry instead.");
+                         " Use GetCodeIdentifierFromCodedEntry instead.");
   return vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(category);
 }
 
-vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(
-  vtkSlicerTerminologyType* type)
+vtkSlicerTerminologiesModuleLogic::CodeIdentifier vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType(vtkSlicerTerminologyType* type)
 {
   vtkGenericWarningMacro("vtkSlicerTerminologiesModuleLogic::CodeIdentifierFromTerminologyType is deprecated."
-    " Use GetCodeIdentifierFromCodedEntry instead.");
+                         " Use GetCodeIdentifierFromCodedEntry instead.");
   return vtkSlicerTerminologiesModuleLogic::GetCodeIdentifierFromCodedEntry(type);
 }

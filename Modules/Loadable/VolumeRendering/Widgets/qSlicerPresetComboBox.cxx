@@ -72,8 +72,7 @@ void qSlicerIconComboBox::showPopup()
   QStyleOptionComboBox opt;
   initStyleOption(&opt);
 
-  QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt,
-                                               QStyle::SC_ComboBoxListBoxPopup, this));
+  QRect listRect(this->style()->subControlRect(QStyle::CC_ComboBox, &opt, QStyle::SC_ComboBoxListBoxPopup, this));
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QRect screen = this->screen()->availableGeometry();
@@ -101,7 +100,7 @@ void qSlicerIconComboBox::showPopup()
   QSize itemSize = this->view()->iconSize();
   bool labelShown = (this->count() > 0) && (!this->itemText(0).isEmpty());
   listRect.setWidth(itemsPerRow * itemSize.width() * 1.1 + margins.left() + margins.right() + 2.0 * container->frameWidth() + verticalScrollBarWidth);
-  listRect.setHeight(itemsPerColumns * itemSize.height() * (labelShown ? 1.2 : 1.05) + margins.top() + margins.bottom()+ 2.0 * container->frameWidth());
+  listRect.setHeight(itemsPerColumns * itemSize.height() * (labelShown ? 1.2 : 1.05) + margins.top() + margins.bottom() + 2.0 * container->frameWidth());
 
   // Position horizontally.
   listRect.moveLeft(above.x());
@@ -121,15 +120,13 @@ void qSlicerIconComboBox::showPopup()
   container->raise();
   container->show();
   this->view()->setFocus();
-  this->view()->scrollTo( this->view()->currentIndex(),
-    this->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, this)
-      ? QAbstractItemView::PositionAtCenter : QAbstractItemView::EnsureVisible);
+  this->view()->scrollTo(this->view()->currentIndex(),
+                         this->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, this) ? QAbstractItemView::PositionAtCenter : QAbstractItemView::EnsureVisible);
   container->update();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerPresetComboBoxPrivate::qSlicerPresetComboBoxPrivate(
-  qSlicerPresetComboBox& object)
+qSlicerPresetComboBoxPrivate::qSlicerPresetComboBoxPrivate(qSlicerPresetComboBox& object)
   : q_ptr(&object)
   , ShowIcons(true)
   , ShowLabelsInPopup(true)
@@ -216,9 +213,8 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
   {
     // Search corresponding icon
     QIcon presetIcon;
-    vtkMRMLVolumeNode* iconVolume = vtkMRMLVolumeNode::SafeDownCast(
-      presetNode->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
-    if (iconVolume && iconVolume->GetImageData()!=nullptr)
+    vtkMRMLVolumeNode* iconVolume = vtkMRMLVolumeNode::SafeDownCast(presetNode->GetNodeReference(vtkSlicerVolumeRenderingLogic::GetIconVolumeReferenceRole()));
+    if (iconVolume && iconVolume->GetImageData() != nullptr)
     {
       QImage qimage;
       qMRMLUtils::vtkImageDataToQImage(iconVolume->GetImageData(), qimage);
@@ -247,8 +243,7 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
   if (volumePropertyNode)
   {
     int previewSize = this->style()->pixelMetric(QStyle::PM_SmallIconSize);
-    vtkScalarsToColors* colors =
-      volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : nullptr;
+    vtkScalarsToColors* colors = volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : nullptr;
     assert(colors && colors->GetRange()[1] > colors->GetRange()[0]);
     QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
     QString imgSrc = ctk::base64HTMLImageTagSrc(img);

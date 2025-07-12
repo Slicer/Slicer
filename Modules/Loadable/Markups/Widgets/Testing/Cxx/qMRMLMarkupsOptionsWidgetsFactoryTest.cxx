@@ -41,39 +41,37 @@ class qMRMLMarkupsOptionsWidgetsFactoryTester : public QObject
 {
   Q_OBJECT
 
-  private slots:
+private slots:
 
-    // Test registration of a valid additional widget without making use of it
-    void testOptionsWidgetRegistration1();
+  // Test registration of a valid additional widget without making use of it
+  void testOptionsWidgetRegistration1();
 
-    // Test registration of a nullptr
-    void testOptionsWidgetRegistration2();
+  // Test registration of a nullptr
+  void testOptionsWidgetRegistration2();
 
-    // Test registration of a malformed widget
-    void testOptionsWidgetRegistration3();
+  // Test registration of a malformed widget
+  void testOptionsWidgetRegistration3();
 
-    // Test registration of a valid additional wiget and unregister malformed
-    // widget
-    void testOptionsWidgetRegistration4();
+  // Test registration of a valid additional wiget and unregister malformed
+  // widget
+  void testOptionsWidgetRegistration4();
 
-    // Test registration of a valid additional wiget and unregister another type
-    // of widget
-    void testOptionsWidgetRegistration5();
+  // Test registration of a valid additional wiget and unregister another type
+  // of widget
+  void testOptionsWidgetRegistration5();
 
-    // Test registration of a valid additional wiget making use of it.
-    // Deallocation is performed by widget going out of scope
-    void testOptionsWidgetRegistration6();
+  // Test registration of a valid additional wiget making use of it.
+  // Deallocation is performed by widget going out of scope
+  void testOptionsWidgetRegistration6();
 
-    // NOTE: This test should be the last one! Test registration of a valid
-    // additional wiget. Deallocation happens by termination of factory.
-    void testOptionsWidgetRegistration7();
+  // NOTE: This test should be the last one! Test registration of a valid
+  // additional wiget. Deallocation happens by termination of factory.
+  void testOptionsWidgetRegistration7();
 };
-
 
 //------------------------------------------------------------------------------
 // In this test we register a valid optional widget
-void qMRMLMarkupsOptionsWidgetsFactoryTester::
-testOptionsWidgetRegistration1()
+void qMRMLMarkupsOptionsWidgetsFactoryTester::testOptionsWidgetRegistration1()
 {
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
   QSignalSpy registeredSignalSpy(factory, SIGNAL(optionsWidgetRegistered()));
@@ -94,8 +92,7 @@ testOptionsWidgetRegistration1()
 
 //------------------------------------------------------------------------------
 // In this test we register a nullptr widget and try to unregister
-void qMRMLMarkupsOptionsWidgetsFactoryTester::
-testOptionsWidgetRegistration2()
+void qMRMLMarkupsOptionsWidgetsFactoryTester::testOptionsWidgetRegistration2()
 {
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
   QSignalSpy registeredSignalSpy(factory, SIGNAL(optionsWidgetRegistered()));
@@ -116,8 +113,7 @@ testOptionsWidgetRegistration2()
 
 //------------------------------------------------------------------------------
 // In this test we register a malformed widget
-void qMRMLMarkupsOptionsWidgetsFactoryTester::
-testOptionsWidgetRegistration3()
+void qMRMLMarkupsOptionsWidgetsFactoryTester::testOptionsWidgetRegistration3()
 {
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
   QSignalSpy registeredSignalSpy(factory, SIGNAL(optionsWidgetRegistered()));
@@ -138,8 +134,7 @@ testOptionsWidgetRegistration3()
 
 //------------------------------------------------------------------------------
 // In this test we register a valid widget and try to unregister a malformed one
-void qMRMLMarkupsOptionsWidgetsFactoryTester::
-testOptionsWidgetRegistration4()
+void qMRMLMarkupsOptionsWidgetsFactoryTester::testOptionsWidgetRegistration4()
 {
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
   QSignalSpy registeredSignalSpy(factory, SIGNAL(optionsWidgetRegistered()));
@@ -166,8 +161,7 @@ testOptionsWidgetRegistration4()
 
 //------------------------------------------------------------------------------
 // In this test we register a valid widget and try to unregister a valid different type
-void qMRMLMarkupsOptionsWidgetsFactoryTester::
-testOptionsWidgetRegistration5()
+void qMRMLMarkupsOptionsWidgetsFactoryTester::testOptionsWidgetRegistration5()
 {
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
   QSignalSpy registeredSignalSpy(factory, SIGNAL(optionsWidgetRegistered()));
@@ -194,8 +188,7 @@ testOptionsWidgetRegistration5()
 
 //------------------------------------------------------------------------------
 // In this test we register a valid widget and make use of it
-void qMRMLMarkupsOptionsWidgetsFactoryTester::
-testOptionsWidgetRegistration6()
+void qMRMLMarkupsOptionsWidgetsFactoryTester::testOptionsWidgetRegistration6()
 {
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
   QSignalSpy registeredSignalSpy(factory, SIGNAL(optionsWidgetRegistered()));
@@ -208,7 +201,7 @@ testOptionsWidgetRegistration6()
   auto registeredWidgets = factory->registeredOptionsWidgetsClassNames();
   QVERIFY(registeredWidgets.length() == 1);
   auto widget = factory->createWidget(registeredWidgets[0]);
-  QVERIFY(widget!=nullptr);
+  QVERIFY(widget != nullptr);
   widget->setParent(widgetPtr.data());
 
   // Test unregistration of a valid widget
@@ -220,8 +213,7 @@ testOptionsWidgetRegistration6()
 
 //------------------------------------------------------------------------------
 // In this test we register a valid widget and make use of it
-void qMRMLMarkupsOptionsWidgetsFactoryTester::
-testOptionsWidgetRegistration7()
+void qMRMLMarkupsOptionsWidgetsFactoryTester::testOptionsWidgetRegistration7()
 {
   auto factory = qMRMLMarkupsOptionsWidgetsFactory::instance();
   QSignalSpy registeredSignalSpy(factory, SIGNAL(optionsWidgetRegistered()));

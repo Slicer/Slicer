@@ -45,8 +45,7 @@ class qSlicerSegmentEditorScriptedPaintEffectPrivate;
 ///   and register effect by creating this class and setting python source to implemented
 ///   effect subclass. One example is the DrawEffect.
 ///
-class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScriptedPaintEffect
-  : public qSlicerSegmentEditorPaintEffect
+class Q_SLICER_SEGMENTATIONS_EFFECTS_EXPORT qSlicerSegmentEditorScriptedPaintEffect : public qSlicerSegmentEditorPaintEffect
 {
   Q_OBJECT
 
@@ -68,7 +67,7 @@ public:
   /// \sa name
   void setName(QString name) override;
 
-// API: Methods that are to be reimplemented in the effect subclasses
+  // API: Methods that are to be reimplemented in the effect subclasses
 public:
   /// Get icon for effect to be displayed in segment editor
   QIcon icon() override;

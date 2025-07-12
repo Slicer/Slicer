@@ -20,8 +20,7 @@
 
 class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStorageNode
 {
-  public:
-
+public:
   static vtkMRMLVolumeSequenceStorageNode* New();
   vtkTypeMacro(vtkMRMLVolumeSequenceStorageNode, vtkMRMLNRRDStorageNode);
 
@@ -29,7 +28,7 @@ class VTK_MRML_EXPORT vtkMRMLVolumeSequenceStorageNode : public vtkMRMLNRRDStora
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "VolumeSequenceStorage";};
+  const char* GetNodeTagName() override { return "VolumeSequenceStorage"; };
 
   /// Return true if the node can be read in.
   bool CanReadInReferenceNode(vtkMRMLNode* refNode) override;

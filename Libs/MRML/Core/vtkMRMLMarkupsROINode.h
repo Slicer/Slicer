@@ -61,9 +61,9 @@ public:
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char* GetIcon() override {return ":/Icons/MarkupsROI.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsROIMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsROIMouseModePlaceAdd.png";}
+  const char* GetIcon() override { return ":/Icons/MarkupsROI.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsROIMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsROIMouseModePlaceAdd.png"; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -72,10 +72,10 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MarkupsROI";}
+  const char* GetNodeTagName() override { return "MarkupsROI"; }
 
   /// Get markup type internal name
-  const char* GetMarkupType() override {return "ROI";};
+  const char* GetMarkupType() override { return "ROI"; };
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
@@ -122,19 +122,13 @@ public:
 
   //@{
   /// 4x4 matrix defining the object center and axis directions within the node coordinate system.
-  vtkMatrix4x4* GetObjectToNodeMatrix()
-  {
-    return this->ObjectToNodeMatrix;
-  };
+  vtkMatrix4x4* GetObjectToNodeMatrix() { return this->ObjectToNodeMatrix; };
   void SetAndObserveObjectToNodeMatrix(vtkMatrix4x4* objectToNodeMatrix);
   //@}
 
   /// 4x4 matrix defining the object center and axis directions within the world coordinate system.
   /// The returned matrix must not be modified.
-  vtkMatrix4x4* GetObjectToWorldMatrix()
-  {
-    return this->ObjectToWorldMatrix;
-  };
+  vtkMatrix4x4* GetObjectToWorldMatrix() { return this->ObjectToWorldMatrix; };
 
   //@{
   /// ROIType represents the method that is used to calculate the size of the ROI.
@@ -162,7 +156,7 @@ public:
   // ROI type enum defines the calculation method that should be used to convert to and from control points.
   enum
   {
-    ROITypeBox, ///< Requires two Control points that are removed after they have been placed.
+    ROITypeBox,         ///< Requires two Control points that are removed after they have been placed.
     ROITypeBoundingBox, ///< ROI forms a bounding box around the control points.
     ROIType_Last
   };
@@ -278,22 +272,24 @@ public:
   //@{
   /// Helper method for generating an orthogonal right handed matrix from axes.
   /// Transform can optionally be specified to apply an additional transform on the vectors before generating the matrix.
-  static void GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix,
-    vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
-  static void GenerateOrthogonalMatrix(double xAxis[3], double yAxis[3], double zAxis[3], double origin[3],
-    vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
+  static void GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix, vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform = nullptr, bool applyScaling = true);
+  static void GenerateOrthogonalMatrix(double xAxis[3],
+                                       double yAxis[3],
+                                       double zAxis[3],
+                                       double origin[3],
+                                       vtkMatrix4x4* outputMatrix,
+                                       vtkAbstractTransform* transform = nullptr,
+                                       bool applyScaling = true);
   //@}
 
   /// Write this node's information to a vector of strings for passing to a CLI,
   /// precede each datum with the prefix if not an empty string
   /// coordinateSystemFlag = vtkMRMLStorageNode::CoordinateSystemRAS or vtkMRMLStorageNode::CoordinateSystemLPS
   /// multipleFlag = 1 for the whole list, 1 for the first selected control point
-  void WriteCLI(std::vector<std::string>& commandLine,
-                        std::string prefix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS,
-                        int multipleFlag = 1) override;
+  void WriteCLI(std::vector<std::string>& commandLine, std::string prefix, int coordinateSystem = vtkMRMLStorageNode::CoordinateSystemRAS, int multipleFlag = 1) override;
 
 protected:
-  int ROIType{vtkMRMLMarkupsROINode::ROITypeBox};
+  int ROIType{ vtkMRMLMarkupsROINode::ROITypeBox };
 
   double Size[3]{ 0.0, 0.0, 0.0 };
 

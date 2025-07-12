@@ -30,8 +30,7 @@
 /// is mrb (for Medical Reality Bundle)
 /// It internally calls vtkMRMLScene::Connect() or vtkMRMLScene::Import()
 /// depending on the clear flag.
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleReader
-  : public qSlicerFileReader
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
@@ -50,6 +49,5 @@ public:
   /// bool clear: whether the current should be cleared or not
   bool load(const qSlicerIO::IOProperties& properties) override;
 };
-
 
 #endif

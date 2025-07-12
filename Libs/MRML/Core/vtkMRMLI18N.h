@@ -64,9 +64,15 @@ public:
   ///     volumeType.c_str());
   /// @endcode
   static std::string Format(const std::string& text,
-    const char* arg1 = nullptr, const char* arg2 = nullptr, const char* arg3 = nullptr,
-    const char* arg4 = nullptr, const char* arg5 = nullptr, const char* arg6 = nullptr,
-    const char* arg7 = nullptr, const char* arg8 = nullptr, const char* arg9 = nullptr);
+                            const char* arg1 = nullptr,
+                            const char* arg2 = nullptr,
+                            const char* arg3 = nullptr,
+                            const char* arg4 = nullptr,
+                            const char* arg5 = nullptr,
+                            const char* arg6 = nullptr,
+                            const char* arg7 = nullptr,
+                            const char* arg8 = nullptr,
+                            const char* arg9 = nullptr);
 
   /// Set translator object. This class takes ownership of the translator
   /// and it releases it when the process quits.
@@ -101,6 +107,7 @@ public:
 
   vtkMRMLI18NInitialize();
   ~vtkMRMLI18NInitialize();
+
 private:
   static unsigned int Count;
 };

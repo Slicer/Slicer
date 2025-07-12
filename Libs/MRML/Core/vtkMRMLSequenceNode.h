@@ -26,7 +26,6 @@
 #include <deque>
 #include <set>
 
-
 /// \brief MRML node for representing a sequence of MRML nodes
 ///
 /// This node contains a sequence of nodes (data nodes).
@@ -55,13 +54,13 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Set node attributes from name/value pairs
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
 
   ///
-/// Copy the node's attributes to this object
+  /// Copy the node's attributes to this object
   void Copy(vtkMRMLNode* node) override;
 
   /// Copy sequence index information (index name, unit, type, values, etc)
@@ -72,7 +71,7 @@ public:
   void UpdateSequenceIndex();
 
   /// Get unique node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Sequence";};
+  const char* GetNodeTagName() override { return "Sequence"; };
 
   /// Set index name (example: time)
   void SetIndexName(const std::string& str);
@@ -191,12 +190,11 @@ protected:
   };
 
 protected:
-
   /// Describes index of the sequence node
   std::string IndexName;
   std::string IndexUnit;
-  int IndexType{vtkMRMLSequenceNode::NumericIndex};
-  double NumericIndexValueTolerance{0.001};
+  int IndexType{ vtkMRMLSequenceNode::NumericIndex };
+  double NumericIndexValueTolerance{ 0.001 };
 
   /// Need to store the nodes in the scene, because for reading/writing nodes
   /// we need MRML storage nodes, which only work if they refer to a data node in the same scene

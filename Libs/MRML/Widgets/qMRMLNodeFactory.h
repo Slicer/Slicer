@@ -41,9 +41,8 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeFactory : public QObject
 {
   Q_OBJECT
 public:
-
   /// Convenient typedef
-  typedef QHash<QString,QString> AttributeType;
+  typedef QHash<QString, QString> AttributeType;
 
   /// Constructors
   typedef QObject Superclass;
@@ -74,8 +73,7 @@ public:
 
   ///
   /// Convenient method allowing to create a new node and add it to the \a scene
-  static vtkMRMLNode* createNode(vtkMRMLScene* scene, const QString& className,
-    const AttributeType& attributes = AttributeType());
+  static vtkMRMLNode* createNode(vtkMRMLScene* scene, const QString& className, const AttributeType& attributes = AttributeType());
 
   ///
   /// Add attribute that will be passed to any new created node.

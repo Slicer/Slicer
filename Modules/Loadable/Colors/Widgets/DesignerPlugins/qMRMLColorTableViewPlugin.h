@@ -26,7 +26,8 @@
 #include "qSlicerColorsModuleWidgetsPluginsExport.h"
 
 class Q_SLICER_QTMODULES_COLORS_WIDGETS_PLUGINS_EXPORT qMRMLColorTableViewPlugin
-  : public QObject, public qSlicerColorsModuleWidgetsAbstractPlugin
+  : public QObject
+  , public qSlicerColorsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 

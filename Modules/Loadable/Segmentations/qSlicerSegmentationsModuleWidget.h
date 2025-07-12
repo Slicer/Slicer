@@ -41,8 +41,7 @@ class vtkMRMLNode;
 class QItemSelection;
 class Ui_qSlicerSegmentationsModule;
 
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -82,8 +81,7 @@ protected:
   /// \param segmentId ID of segment to copy
   /// \param removeFromSource If true, then delete segment from source segmentation after copying. Default value is false.
   /// \return Success flag
-  bool copySegmentBetweenSegmentations(vtkSegmentation* fromSegmentation,
-    vtkSegmentation* toSegmentation, QString segmentId, bool removeFromSource = false);
+  bool copySegmentBetweenSegmentations(vtkSegmentation* fromSegmentation, vtkSegmentation* toSegmentation, QString segmentId, bool removeFromSource = false);
 
   /// Copy segments to/from current segmentation from/to other segmentation.
   /// \param copyFromCurrentSegmentation If true, then copy current->other; otherwise other->current.

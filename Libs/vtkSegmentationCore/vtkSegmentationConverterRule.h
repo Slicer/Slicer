@@ -35,12 +35,12 @@ class vtkSegment;
 
 /// Helper macro for supporting cloning of rules
 #ifndef vtkSegmentationConverterRuleNewMacro
-#define vtkSegmentationConverterRuleNewMacro(newClass) \
-  vtkStandardNewMacro(newClass); \
-  vtkSegmentationConverterRule* newClass::CreateRuleInstance() \
-  { \
-    return newClass::New(); \
-  }
+# define vtkSegmentationConverterRuleNewMacro(newClass)         \
+   vtkStandardNewMacro(newClass);                               \
+   vtkSegmentationConverterRule* newClass::CreateRuleInstance() \
+   {                                                            \
+     return newClass::New();                                    \
+   }
 #endif
 /// \brief Abstract converter rule class. Subclasses perform conversions between specific
 ///   representation types. They define source and target type and provide ways to create those
@@ -53,13 +53,12 @@ class vtkSegment;
 class vtkSegmentationCore_EXPORT vtkSegmentationConverterRule : public vtkObject
 {
 public:
-
   /// Constant to use for converter rules with "infinite" computational cost (i.e. disabled)
   /// It's about UINT_MAX / 400 (allows us to have a few hundred disabled rules)
   static unsigned int GetConversionInfiniteCost() { return 10000000; };
 
 public:
-  //static vtkSegmentationConverterRule* New();
+  // static vtkSegmentationConverterRule* New();
   vtkTypeMacro(vtkSegmentationConverterRule, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -119,7 +118,7 @@ public:
   virtual void GetRuleConversionParameters(vtkSegmentationConversionParameters* conversionParameters) VTK_EXPECTS(conversionParameters != nullptr);
 
   /// Set a conversion parameter
-  virtual void SetConversionParameter(const std::string& name, const std::string& value, const std::string& description="");
+  virtual void SetConversionParameter(const std::string& name, const std::string& value, const std::string& description = "");
 
   /// Get a conversion parameter value
   virtual std::string GetConversionParameter(const std::string& name);

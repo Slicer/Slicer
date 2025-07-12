@@ -47,7 +47,8 @@ public:
   vtkInternal();
   ~vtkInternal();
 
-  enum {
+  enum
+  {
     CreateMethod = 0,
     GetMRMLSceneEventsToObserveMethod,
     ProcessMRMLSceneEventsMethod,
@@ -58,10 +59,10 @@ public:
     OnInteractorStyleEventMethod,
   };
 
-  static int          APIMethodCount;
+  static int APIMethodCount;
   static const char* APIMethodNames[8];
 
-  std::string  PythonSourceFilePath;
+  std::string PythonSourceFilePath;
   PyObject* PythonSelf;
   PyObject* PythonAPIMethods[8];
 };
@@ -73,16 +74,9 @@ public:
 int vtkMRMLScriptedDisplayableManager::vtkInternal::APIMethodCount = 8;
 
 //---------------------------------------------------------------------------
-const char* vtkMRMLScriptedDisplayableManager::vtkInternal::APIMethodNames[8] =
-{
-  "Create",
-  "GetMRMLSceneEventsToObserve",
-  "ProcessMRMLSceneEvents",
-  "ProcessMRMLNodesEvents",
-  "RemoveMRMLObservers",
-  "UpdateFromMRML",
-  "OnMRMLDisplayableNodeModifiedEvent",
-  "OnInteractorStyleEvent",
+const char* vtkMRMLScriptedDisplayableManager::vtkInternal::APIMethodNames[8] = {
+  "Create",         "GetMRMLSceneEventsToObserve",        "ProcessMRMLSceneEvents", "ProcessMRMLNodesEvents", "RemoveMRMLObservers",
+  "UpdateFromMRML", "OnMRMLDisplayableNodeModifiedEvent", "OnInteractorStyleEvent",
 };
 
 //---------------------------------------------------------------------------
@@ -147,28 +141,23 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
   vtkIntArray* sceneEventsAsPointer = nullptr;
 
   // Obtain list of event to listen
-  PyObject* method =
-      this->Internal->PythonAPIMethods[vtkInternal::GetMRMLSceneEventsToObserveMethod];
+  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::GetMRMLSceneEventsToObserveMethod];
   if (method)
   {
-    sceneEventsAsPointer = vtkIntArray::SafeDownCast(
-        vtkPythonUtil::GetPointerFromObject(PyObject_CallObject(method, nullptr), "vtkIntArray"));
+    sceneEventsAsPointer = vtkIntArray::SafeDownCast(vtkPythonUtil::GetPointerFromObject(PyObject_CallObject(method, nullptr), "vtkIntArray"));
     PyErr_Print();
   }
   vtkSmartPointer<vtkIntArray> sceneEvents;
   sceneEvents.TakeReference(sceneEventsAsPointer);
-  //for (int i = 0; i < sceneEvents->GetNumberOfTuples(); i++)
-  //  {
-  //  std::cout << "eventid:" << sceneEvents->GetValue(i) << std::endl;
-  //  }
+  // for (int i = 0; i < sceneEvents->GetNumberOfTuples(); i++)
+  //   {
+  //   std::cout << "eventid:" << sceneEvents->GetValue(i) << std::endl;
+  //   }
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScriptedDisplayableManager
-::ProcessMRMLSceneEvents(vtkObject* caller,
-                         unsigned long event,
-                         void* callData)
+void vtkMRMLScriptedDisplayableManager::ProcessMRMLSceneEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLSceneEventsMethod];
   if (!method)
@@ -179,8 +168,7 @@ void vtkMRMLScriptedDisplayableManager
   PyObject* arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(event));
-  PyTuple_SET_ITEM(arguments, 2,
-                   vtkPythonUtil::GetObjectFromPointer(reinterpret_cast<vtkMRMLNode*>(callData)));
+  PyTuple_SET_ITEM(arguments, 2, vtkPythonUtil::GetObjectFromPointer(reinterpret_cast<vtkMRMLNode*>(callData)));
 
   PyObject_CallObject(method, arguments);
   PyErr_Print();
@@ -189,9 +177,7 @@ void vtkMRMLScriptedDisplayableManager
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller,
-                                                        unsigned long event,
-                                                        void* vtkNotUsed(callData))
+void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* vtkNotUsed(callData))
 {
   PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::ProcessMRMLNodesEventsMethod];
   if (!method)
@@ -257,8 +243,7 @@ void vtkMRMLScriptedDisplayableManager::OnInteractorStyleEvent(int eventid)
 //---------------------------------------------------------------------------
 void vtkMRMLScriptedDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
-  PyObject* method =
-      this->Internal->PythonAPIMethods[vtkInternal::OnMRMLDisplayableNodeModifiedEventMethod];
+  PyObject* method = this->Internal->PythonAPIMethods[vtkInternal::OnMRMLDisplayableNodeModifiedEventMethod];
   if (!method)
   {
     return;
@@ -284,7 +269,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
 
   // Extract filename - It should match the associated python class
   std::string className = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
-  //std::cout << "SetPythonSource - className:" << className << std::endl;
+  // std::cout << "SetPythonSource - className:" << className << std::endl;
 
   // Get a reference to the main module and global dictionary
   PyObject* main_module = PyImport_AddModule("__main__");
@@ -297,13 +282,12 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
     std::ostringstream pyRunStream;
 
     // Use importlib to load the module dynamically
-    pyRunStream
-      << "import importlib.util;"
-      << "import sys;"
-      << "spec = importlib.util.spec_from_file_location('__main__', r'" << filePath << "');"
-      << "module = importlib.util.module_from_spec(spec);"
-      << "sys.modules['__main__'] = module;"
-      << "spec.loader.exec_module(module)";
+    pyRunStream << "import importlib.util;"
+                << "import sys;"
+                << "spec = importlib.util.spec_from_file_location('__main__', r'" << filePath << "');"
+                << "module = importlib.util.module_from_spec(spec);"
+                << "sys.modules['__main__'] = module;"
+                << "spec.loader.exec_module(module)";
 
     PyObject* pyRes = PyRun_String(pyRunStream.str().c_str(), Py_file_input, global_dict, global_dict);
     if (!pyRes)
@@ -316,12 +300,11 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
   }
   if (!classToInstantiate)
   {
-    vtkErrorMacro(<< "SetPythonSource - Failed to load displayable manager class definition from "
-                  << filePath);
+    vtkErrorMacro(<< "SetPythonSource - Failed to load displayable manager class definition from " << filePath);
     return;
   }
 
-  //std::cout << "classToInstantiate:" << classToInstantiate << std::endl;
+  // std::cout << "classToInstantiate:" << classToInstantiate << std::endl;
 
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(this));
@@ -331,8 +314,7 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
   Py_DECREF(arguments);
   if (!self)
   {
-    vtkErrorMacro(<< "SetPythonSource - Failed to instantiate displayable manager:"
-                  << classToInstantiate);
+    vtkErrorMacro(<< "SetPythonSource - Failed to instantiate displayable manager:" << classToInstantiate);
     return;
   }
 
@@ -345,11 +327,11 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& fileP
       continue;
     }
     PyObject* method = PyObject_GetAttrString(self, vtkInternal::APIMethodNames[i]);
-    //std::cout << "method:" << method << std::endl;
+    // std::cout << "method:" << method << std::endl;
     this->Internal->PythonAPIMethods[i] = method;
   }
 
-  //std::cout << "self (" << className << ", instance:" << self << ")" << std::endl;
+  // std::cout << "self (" << className << ", instance:" << self << ")" << std::endl;
 
   this->Internal->PythonSourceFilePath = filePath;
   this->Internal->PythonSelf = self;

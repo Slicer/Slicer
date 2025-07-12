@@ -41,13 +41,12 @@ int TestLongNodeNameSaving(const char* temporaryDirectory)
     scene->SetRootDirectory(temporaryDirectory);
   }
 
-  std::string longNodeName =
-    "Loremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporin"
-    "cididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudex"
-    "ercitationullamcolaborisnisiutaliquipexeacommodoconsequatDuisauteir"
-    "uredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnull"
-    "apariaturExcepteursintoccaecatcupidatatnonproidentsuntinculpaquioff"
-    "iciadeseruntmollitanimidestlaborum";
+  std::string longNodeName = "Loremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporin"
+                             "cididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudex"
+                             "ercitationullamcolaborisnisiutaliquipexeacommodoconsequatDuisauteir"
+                             "uredolorinreprehenderitinvoluptatevelitessecillumdoloreeufugiatnull"
+                             "apariaturExcepteursintoccaecatcupidatatnonproidentsuntinculpaquioff"
+                             "iciadeseruntmollitanimidestlaborum";
   std::string extension = ".txt";
   std::string longFileName = longNodeName + extension;
   std::string safeFileName = qSlicerCoreIOManager::forceFileNameValidCharacters(QString::fromStdString(longFileName)).toStdString();
@@ -56,8 +55,7 @@ int TestLongNodeNameSaving(const char* temporaryDirectory)
   ioManager.setDefaultMaximumFileNameLength(25);
   safeFileName = ioManager.forceFileNameMaxLength(QString::fromStdString(longFileName), extension.length()).toStdString();
 
-  vtkSmartPointer<vtkMRMLTextNode> textNode = vtkMRMLTextNode::SafeDownCast(
-    scene->AddNewNodeByClass("vtkMRMLTextNode", longNodeName));
+  vtkSmartPointer<vtkMRMLTextNode> textNode = vtkMRMLTextNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLTextNode", longNodeName));
   textNode->SetText(longNodeName);
   textNode->SetForceCreateStorageNode(true);
   textNode->AddDefaultStorageNode();
@@ -98,8 +96,7 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
   QStringList allWritableExtensions = manager.allWritableFileExtensions();
   if (allWritableExtensions.isEmpty())
   {
-    std::cerr << "Failed to get the list of all writable file extensions."
-              << std::endl;
+    std::cerr << "Failed to get the list of all writable file extensions." << std::endl;
     return EXIT_FAILURE;
   }
   qDebug() << "All writable extensions = ";
@@ -112,8 +109,7 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
   QStringList allReadableExtensions = manager.allReadableFileExtensions();
   if (allReadableExtensions.isEmpty())
   {
-    std::cerr << "Failed to get the list of all readable file extensions."
-              << std::endl;
+    std::cerr << "Failed to get the list of all readable file extensions." << std::endl;
     return EXIT_FAILURE;
   }
   qDebug() << "All readable extensions = ";
@@ -131,10 +127,10 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
                 << "something.seg.nrrd" << "some.more.seg.seg.nrrd" << "some.less.nrrd";
   QStringList storageNodeClassNames;
   storageNodeClassNames << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode"
-    << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode" << "vtkMRMLModelNode"
-    << "vtkMRMLTransformNode"
-    << "vtkMRMLModelNode" << "vtkMRMLColorTableNode"
-    << "vtkMRMLSegmentationNode" << "vtkMRMLSegmentationNode" << "vtkMRMLSegmentationNode";
+                        << "vtkMRMLScalarVolumeNode" << "vtkMRMLScalarVolumeNode" << "vtkMRMLModelNode"
+                        << "vtkMRMLTransformNode"
+                        << "vtkMRMLModelNode" << "vtkMRMLColorTableNode"
+                        << "vtkMRMLSegmentationNode" << "vtkMRMLSegmentationNode" << "vtkMRMLSegmentationNode";
   QStringList expectedExtensions;
   // thisisafailurecase is the default Qt completeSuffix since it doesn't match any
   // known Slicer ext, same with no suffix, and the vtp.gz one
@@ -153,9 +149,7 @@ int qSlicerCoreIOManagerTest1(int argc, char* argv[])
     QString ext = manager.completeSlicerWritableFileNameSuffix(storableNode);
     if (expectedExtensions[i] != ext)
     {
-      qWarning() << "Failed on file " << testFileNames[i]
-                 << ", expected extension " << expectedExtensions[i]
-                 << ", but got " << ext;
+      qWarning() << "Failed on file " << testFileNames[i] << ", expected extension " << expectedExtensions[i] << ", but got " << ext;
       return EXIT_FAILURE;
     }
     qDebug() << "Found extension " << ext << " from file " << testFileNames[i] << " using " << storageNodeClassNames[i];

@@ -27,8 +27,7 @@
 // Data includes
 #include "qSlicerDataModuleExport.h"
 
-class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneWriter
-  : public qSlicerFileWriter
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneWriter : public qSlicerFileWriter
 {
   Q_OBJECT
 public:

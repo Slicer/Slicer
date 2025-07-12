@@ -51,7 +51,8 @@ public:
   qSlicerSegmentEditorScriptedEffectPrivate();
   virtual ~qSlicerSegmentEditorScriptedEffectPrivate();
 
-  enum {
+  enum
+  {
     IconMethod = 0,
     HelpTextMethod,
     CloneMethod,
@@ -192,7 +193,10 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerSegmentEditorScriptedEffect::setPythonSource - "
                             "Failed to load segment editor scripted effect: "
-                            "class %1 was not found in %2").arg(className).arg(newPythonSource).toUtf8());
+                            "class %1 was not found in %2")
+                      .arg(className)
+                      .arg(newPythonSource)
+                      .toUtf8());
     PythonQt::self()->handleError();
     return false;
   }
@@ -207,8 +211,7 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
 
   d->PythonSourceFilePath = newPythonSource;
 
-  if (!qSlicerScriptedUtils::setModuleAttribute(
-        "slicer", moduleName, self))
+  if (!qSlicerScriptedUtils::setModuleAttribute("slicer", moduleName, self))
   {
     qCritical() << "Failed to set" << ("slicer." + moduleName);
   }
@@ -296,8 +299,7 @@ qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedEffect::clone()
 
   // Parse result
   QVariant resultVariant = PythonQtConv::PyObjToQVariant(result);
-  qSlicerSegmentEditorAbstractEffect* clonedEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(
-    resultVariant.value<QObject*>() );
+  qSlicerSegmentEditorAbstractEffect* clonedEffect = qobject_cast<qSlicerSegmentEditorAbstractEffect*>(resultVariant.value<QObject*>());
   if (!clonedEffect)
   {
     qCritical() << d->PythonSourceFilePath << ": clone: Invalid cloned effect object returned from python!";
@@ -372,8 +374,7 @@ bool qSlicerSegmentEditorScriptedEffect::processInteractionEvents(vtkRenderWindo
   }
   if (!PyBool_Check(result))
   {
-    qWarning() << d->PythonSourceFilePath
-               << " - function 'processInteractionEvents' "
+    qWarning() << d->PythonSourceFilePath << " - function 'processInteractionEvents' "
                << "is expected to return a boolean";
     return false;
   }
@@ -404,7 +405,7 @@ void qSlicerSegmentEditorScriptedEffect::setMRMLDefaults()
   // Note: Left here as comment in case this class is used as template for adaptor
   //  classes of effect base classes that have default implementation of this method
   //  (such as LabelEffect, etc.)
-  //this->Superclass::setMRMLDefaults();
+  // this->Superclass::setMRMLDefaults();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
   d->PythonCppAPI.callMethod(d->SetMRMLDefaultsMethod);
@@ -483,7 +484,7 @@ void qSlicerSegmentEditorScriptedEffect::updateGUIFromMRML()
   // Note: Left here as comment in case this class is used as template for adaptor
   //  classes of effect base classes that have default implementation of this method
   //  (such as LabelEffect, etc.)
-  //this->Superclass::updateGUIFromMRML();
+  // this->Superclass::updateGUIFromMRML();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
   d->PythonCppAPI.callMethod(d->UpdateGUIFromMRMLMethod);
@@ -496,7 +497,7 @@ void qSlicerSegmentEditorScriptedEffect::updateMRMLFromGUI()
   // Note: Left here as comment in case this class is used as template for adaptor
   //  classes of effect base classes that have default implementation of this method
   //  (such as LabelEffect, etc.)
-  //this->Superclass::updateMRMLFromGUI();
+  // this->Superclass::updateMRMLFromGUI();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
   d->PythonCppAPI.callMethod(d->UpdateMRMLFromGUIMethod);
@@ -509,7 +510,7 @@ void qSlicerSegmentEditorScriptedEffect::cleanup()
   // Note: Left here as comment in case this class is used as template for adaptor
   //  classes of effect base classes that have default implementation of this method
   //  (such as LabelEffect, etc.)
-  //this->Superclass::cleanup();
+  // this->Superclass::cleanup();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
   d->PythonCppAPI.callMethod(d->CleanupMethod);

@@ -40,8 +40,7 @@
 #include <vtkArrayCalculator.h>
 #include <vtkOutlineSource.h>
 
-class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformHandleWidgetRepresentation
-  : public vtkMRMLInteractionWidgetRepresentation
+class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformHandleWidgetRepresentation : public vtkMRMLInteractionWidgetRepresentation
 {
 public:
   /// Instantiate this class.

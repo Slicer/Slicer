@@ -36,7 +36,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Do a temp write to update the file list in this storage node with all
@@ -58,7 +58,7 @@ public:
 
   ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override {return "VolumeArchetypeStorage";}
+  const char* GetNodeTagName() override { return "VolumeArchetypeStorage"; }
 
   ///
   /// Center image on read
@@ -131,7 +131,6 @@ protected:
   int SingleFile;
   int UseOrientationFromFile;
   bool ForceRightHandedIJKCoordinateSystem;
-
 };
 
 #endif

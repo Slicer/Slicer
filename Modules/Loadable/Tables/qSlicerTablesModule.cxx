@@ -71,8 +71,7 @@ QIcon qSlicerTablesModule::icon() const
 //-----------------------------------------------------------------------------
 QString qSlicerTablesModule::helpText() const
 {
-  QString help =
-    tr("The Tables module allows displaying and editing of spreadsheets.") + "<br>";
+  QString help = tr("The Tables module allows displaying and editing of spreadsheets.") + "<br>";
   help += this->defaultDocumentationLink();
   return help;
 }
@@ -81,9 +80,9 @@ QString qSlicerTablesModule::helpText() const
 QString qSlicerTablesModule::acknowledgementText() const
 {
   return tr("This work was was partially funded by OCAIRO, the Applied"
-   " Cancer Research Unit program of Cancer Care Ontario, and Department of"
-   " Anesthesia and Critical Care Medicine,"
-   " Children's Hospital of Philadelphia.");
+            " Cancer Research Unit program of Cancer Care Ontario, and Department of"
+            " Anesthesia and Critical Care Medicine,"
+            " Children's Hospital of Philadelphia.");
 }
 
 //-----------------------------------------------------------------------------
@@ -100,7 +99,6 @@ QStringList qSlicerTablesModule::categories() const
   return QStringList() << qSlicerAbstractCoreModule::tr("Informatics");
 }
 
-
 //-----------------------------------------------------------------------------
 QStringList qSlicerTablesModule::dependencies() const
 {
@@ -111,19 +109,14 @@ QStringList qSlicerTablesModule::dependencies() const
 void qSlicerTablesModule::setup()
 {
   this->Superclass::setup();
-  vtkSlicerTablesLogic* TablesLogic =
-    vtkSlicerTablesLogic::SafeDownCast(this->logic());
+  vtkSlicerTablesLogic* TablesLogic = vtkSlicerTablesLogic::SafeDownCast(this->logic());
 
-  qSlicerCoreIOManager* ioManager =
-    qSlicerCoreApplication::application()->coreIOManager();
-  ioManager->registerIO(new qSlicerTablesReader(TablesLogic,this));
-  ioManager->registerIO(new qSlicerNodeWriter(
-    "Table", QString("TableFile"),
-    QStringList() << "vtkMRMLTableNode", false, this));
+  qSlicerCoreIOManager* ioManager = qSlicerCoreApplication::application()->coreIOManager();
+  ioManager->registerIO(new qSlicerTablesReader(TablesLogic, this));
+  ioManager->registerIO(new qSlicerNodeWriter("Table", QString("TableFile"), QStringList() << "vtkMRMLTableNode", false, this));
   // Register Subject Hierarchy core plugins
   qSlicerSubjectHierarchyPluginHandler::instance()->registerPlugin(new qSlicerSubjectHierarchyTablesPlugin());
 }
-
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerTablesModule::createWidgetRepresentation()

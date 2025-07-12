@@ -18,7 +18,7 @@ public:
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -30,7 +30,7 @@ public:
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "PETProceduralColor";}
+  const char* GetNodeTagName() override { return "PETProceduralColor"; }
 
   ///
   ///
@@ -41,10 +41,10 @@ public:
   /// set of colors
   void SetType(int type) override;
 
-  void ProcessMRMLEvents ( vtkObject* caller, unsigned long event, void* callData ) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// The list of valid procedural types
-  //enum
+  // enum
   //{
   ///
   //};
@@ -52,7 +52,7 @@ public:
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
   {
-      DisplayModifiedEvent = 20000
+    DisplayModifiedEvent = 20000
   };
 
   /// The list of valid types

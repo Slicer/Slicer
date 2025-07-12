@@ -3,7 +3,7 @@
 
 // --------------------------------------------------------------------------
 qMRMLSliceInformationWidgetPlugin::qMRMLSliceInformationWidgetPlugin(QObject* _parent)
-        : QObject(_parent)
+  : QObject(_parent)
 {
 }
 

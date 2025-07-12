@@ -15,7 +15,6 @@
 
 ==============================================================================*/
 
-
 #ifndef __qMRMLWidgetCxxTests_h
 #define __qMRMLWidgetCxxTests_h
 

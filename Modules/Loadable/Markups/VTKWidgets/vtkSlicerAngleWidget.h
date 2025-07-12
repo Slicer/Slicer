@@ -22,7 +22,7 @@
  *
  * The vtkSlicerAngleWidget is used to create an angle widget with a set of 3 points.
  *
-*/
+ */
 
 #ifndef vtkSlicerAngleWidget_h
 #define vtkSlicerAngleWidget_h

@@ -61,7 +61,7 @@ public:
   vtkMRMLNode* CreateNodeInstance() override;
 
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "FolderDisplay";}
+  const char* GetNodeTagName() override { return "FolderDisplay"; }
 
   /// Read node attributes from XML file
   void ReadXMLAttributes(const char** atts) override;
@@ -77,7 +77,7 @@ public:
   void SetScene(vtkMRMLScene* scene) override;
 
   /// Process events from the MRML scene
-  void ProcessMRMLEvents( vtkObject* caller, unsigned long event, void* callData) override;
+  void ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Overridden to be able to call modified on branch if necessary
   void Modified() override;

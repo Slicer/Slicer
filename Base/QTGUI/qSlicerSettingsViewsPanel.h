@@ -30,8 +30,7 @@
 class QSettings;
 class qSlicerSettingsViewsPanelPrivate;
 
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsViewsPanel
-  : public ctkSettingsPanel
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsViewsPanel : public ctkSettingsPanel
 {
   Q_OBJECT
   /// Holds the current MSAA's name for the settings.

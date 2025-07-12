@@ -39,7 +39,7 @@ public:
 
   ///
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -65,14 +65,12 @@ public:
 
   ///
   /// alternative method to propagate events generated in Transform nodes
-  void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                  unsigned long /*event*/,
-                                  void * /*callData*/ ) override;
+  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
   /// TransformModifiedEvent is send when the parent transform is modified
   enum
   {
-      TransformModifiedEvent = 15000
+    TransformModifiedEvent = 15000
   };
 
   /// Returns true if the transformable node can apply non-linear transforms.
@@ -153,7 +151,6 @@ private:
   char* TransformNodeIDInternal;
   vtkSetStringMacro(TransformNodeIDInternal);
   vtkGetStringMacro(TransformNodeIDInternal);
-
 };
 
 #endif

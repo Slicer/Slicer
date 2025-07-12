@@ -64,10 +64,7 @@ public slots:
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
   /// Returns an instance of the widget
-  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
-  {
-    return new qMRMLMarkupsPlaneWidget();
-  }
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override { return new qMRMLMarkupsPlaneWidget(); }
 
 protected slots:
   /// Internal function to update type of Plane
@@ -87,7 +84,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qMRMLMarkupsPlaneWidget);
   Q_DISABLE_COPY(qMRMLMarkupsPlaneWidget);
-
 };
 
 #endif

@@ -39,11 +39,9 @@ class vtkMRMLPlotSeriesNode;
 /// \brief Slicer logic class for double array manipulation
 /// This class manages the logic associated with reading, saving,
 /// and changing propertied of the double array nodes
-class VTK_SLICER_PLOTS_MODULE_LOGIC_EXPORT vtkSlicerPlotsLogic
-  : public vtkSlicerModuleLogic
+class VTK_SLICER_PLOTS_MODULE_LOGIC_EXPORT vtkSlicerPlotsLogic : public vtkSlicerModuleLogic
 {
 public:
-
   static vtkSlicerPlotsLogic* New();
   vtkTypeMacro(vtkSlicerPlotsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;

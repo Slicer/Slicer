@@ -30,8 +30,7 @@ qMRMLSegmentationDisplayNodeWidgetPlugin::qMRMLSegmentationDisplayNodeWidgetPlug
 //-----------------------------------------------------------------------------
 QWidget* qMRMLSegmentationDisplayNodeWidgetPlugin::createWidget(QWidget* parentWidget)
 {
-  qMRMLSegmentationDisplayNodeWidget* pluginWidget =
-    new qMRMLSegmentationDisplayNodeWidget(parentWidget);
+  qMRMLSegmentationDisplayNodeWidget* pluginWidget = new qMRMLSegmentationDisplayNodeWidget(parentWidget);
   return pluginWidget;
 }
 

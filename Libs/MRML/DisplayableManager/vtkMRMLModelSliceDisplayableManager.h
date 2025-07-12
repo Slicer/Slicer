@@ -32,14 +32,12 @@ class vtkMRMLDisplayableNode;
 /// Responsible for any display on Slice views that is not the slice themselves
 /// nor the annotations.
 /// Currently support only glyph display for Diffusion Tensor volumes.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelSliceDisplayableManager
-  : public vtkMRMLAbstractSliceViewDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelSliceDisplayableManager : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 
 public:
   static vtkMRMLModelSliceDisplayableManager* New();
-  vtkTypeMacro(vtkMRMLModelSliceDisplayableManager,
-                       vtkMRMLAbstractSliceViewDisplayableManager);
+  vtkTypeMacro(vtkMRMLModelSliceDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // DisplayableNode handling customizations
@@ -47,7 +45,6 @@ public:
   void RemoveDisplayableNode(vtkMRMLDisplayableNode* displayableNode);
 
 protected:
-
   vtkMRMLModelSliceDisplayableManager();
   ~vtkMRMLModelSliceDisplayableManager() override;
 
@@ -67,14 +64,12 @@ protected:
   int AddingDisplayableNode;
 
 private:
-
   vtkMRMLModelSliceDisplayableManager(const vtkMRMLModelSliceDisplayableManager&) = delete;
   void operator=(const vtkMRMLModelSliceDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;
   friend class vtkInternal;
-
 };
 
 #endif

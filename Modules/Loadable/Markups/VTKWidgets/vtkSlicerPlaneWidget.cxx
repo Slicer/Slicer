@@ -46,16 +46,15 @@ vtkSlicerPlaneWidget::vtkSlicerPlaneWidget()
 {
   this->SetEventTranslation(WidgetStateDefine, vtkCommand::LeftButtonReleaseEvent, vtkEvent::AltModifier, WidgetEventControlPointPlacePlaneNormal);
 
-  this->SetEventTranslationClickAndDrag(WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier,
-    WidgetStateTranslatePlane, WidgetEventPlaneMoveStart, WidgetEventPlaneMoveEnd);
+  this->SetEventTranslationClickAndDrag(
+    WidgetStateOnWidget, vtkCommand::LeftButtonPressEvent, vtkEvent::ShiftModifier, WidgetStateTranslatePlane, WidgetEventPlaneMoveStart, WidgetEventPlaneMoveEnd);
 }
 
 //----------------------------------------------------------------------
 vtkSlicerPlaneWidget::~vtkSlicerPlaneWidget() = default;
 
 //----------------------------------------------------------------------
-void vtkSlicerPlaneWidget::CreateDefaultRepresentation(
-  vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
+void vtkSlicerPlaneWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))
@@ -116,24 +115,12 @@ bool vtkSlicerPlaneWidget::ProcessInteractionEvent(vtkMRMLInteractionEventData* 
   bool processedEvent = false;
   switch (widgetEvent)
   {
-  case WidgetEventControlPointPlacePlaneNormal:
-    processedEvent = this->PlacePlaneNormal(eventData);
-    break;
-  case WidgetEventPlaneMoveStart:
-    processedEvent = this->ProcessPlaneMoveStart(eventData);
-    break;
-  case WidgetEventMouseMove:
-    processedEvent = this->ProcessMouseMove(eventData);
-    break;
-  case WidgetEventPlaneMoveEnd:
-    processedEvent = this->ProcessPlaneMoveEnd(eventData);
-    break;
-  case WidgetEventSymmetricScaleStart:
-    processedEvent = ProcessWidgetSymmetricScaleStart(eventData);
-    break;
-  case WidgetEventSymmetricScaleEnd:
-    processedEvent = ProcessEndMouseDrag(eventData);
-    break;
+    case WidgetEventControlPointPlacePlaneNormal: processedEvent = this->PlacePlaneNormal(eventData); break;
+    case WidgetEventPlaneMoveStart: processedEvent = this->ProcessPlaneMoveStart(eventData); break;
+    case WidgetEventMouseMove: processedEvent = this->ProcessMouseMove(eventData); break;
+    case WidgetEventPlaneMoveEnd: processedEvent = this->ProcessPlaneMoveEnd(eventData); break;
+    case WidgetEventSymmetricScaleStart: processedEvent = ProcessWidgetSymmetricScaleStart(eventData); break;
+    case WidgetEventSymmetricScaleEnd: processedEvent = ProcessEndMouseDrag(eventData); break;
   }
 
   if (!processedEvent)
@@ -267,7 +254,6 @@ bool vtkSlicerPlaneWidget::ProcessUpdatePlaneFromViewNormal(vtkMRMLInteractionEv
       vtkMath::Normalize(yAxis_World);
       planeNode->SetAxesWorld(xAxis_World, yAxis_World, zAxis_World);
     }
-
   }
 
   planeNode->SetIsPlaneValid(true);
@@ -278,7 +264,7 @@ bool vtkSlicerPlaneWidget::ProcessUpdatePlaneFromViewNormal(vtkMRMLInteractionEv
 bool vtkSlicerPlaneWidget::ProcessWidgetSymmetricScaleStart(vtkMRMLInteractionEventData* eventData)
 {
   if ((this->WidgetState != vtkSlicerMarkupsWidget::WidgetStateOnWidget) //
-    || this->IsAnyControlPointLocked())
+      || this->IsAnyControlPointLocked())
   {
     return false;
   }
@@ -322,8 +308,7 @@ bool vtkSlicerPlaneWidget::ProcessPlaneTranslate(vtkMRMLInteractionEventData* ev
     return false;
   }
 
-  double eventPos[2]
-  {
+  double eventPos[2]{
     static_cast<double>(eventData->GetDisplayPosition()[0]),
     static_cast<double>(eventData->GetDisplayPosition()[1]),
   };
@@ -456,11 +441,11 @@ bool vtkSlicerPlaneWidget::PlacePoint(vtkMRMLInteractionEventData* eventData)
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMarkupsNode());
   if (!planeNode)
   {
-      return false;
+    return false;
   }
 
   if (planeNode->GetPlaneType() == vtkMRMLMarkupsPlaneNode::PlaneTypePointNormal && //
-    planeNode->GetNumberOfDefinedControlPoints() > 0)
+      planeNode->GetNumberOfDefinedControlPoints() > 0)
   {
     planeNode->SetNormalPointRequired(false);
   }

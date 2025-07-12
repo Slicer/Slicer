@@ -42,7 +42,7 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
-const int NUMBER_OF_BOX_CONTROL_POINTS = 2; // 2 points used for initial ROI definition, then removed
+const int NUMBER_OF_BOX_CONTROL_POINTS = 2;           // 2 points used for initial ROI definition, then removed
 const int NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS = -1; // Any number of points
 
 //----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ vtkMRMLMarkupsROINode::vtkMRMLMarkupsROINode()
 vtkMRMLMarkupsROINode::~vtkMRMLMarkupsROINode() = default;
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsROINode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLMarkupsROINode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -124,8 +124,7 @@ vtkMRMLStorageNode* vtkMRMLMarkupsROINode::CreateDefaultStorageNode()
     vtkErrorMacro("CreateDefaultStorageNode failed: scene is invalid");
     return nullptr;
   }
-  return vtkMRMLStorageNode::SafeDownCast(
-    scene->CreateNodeByClass("vtkMRMLMarkupsROIJsonStorageNode"));
+  return vtkMRMLStorageNode::SafeDownCast(scene->CreateNodeByClass("vtkMRMLMarkupsROIJsonStorageNode"));
 }
 
 //----------------------------------------------------------------------------
@@ -142,8 +141,7 @@ void vtkMRMLMarkupsROINode::CreateDefaultDisplayNodes()
     vtkErrorMacro("vtkMRMLMarkupsROINode::CreateDefaultDisplayNodes failed: scene is invalid");
     return;
   }
-  vtkMRMLMarkupsROIDisplayNode* dispNode = vtkMRMLMarkupsROIDisplayNode::SafeDownCast(
-    this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsROIDisplayNode"));
+  vtkMRMLMarkupsROIDisplayNode* dispNode = vtkMRMLMarkupsROIDisplayNode::SafeDownCast(this->GetScene()->AddNewNodeByClass("vtkMRMLMarkupsROIDisplayNode"));
   if (!dispNode)
   {
     vtkErrorMacro("vtkMRMLMarkupsROINode::CreateDefaultDisplayNodes failed: scene failed to instantiate a vtkMRMLMarkupsROIDisplayNode node");
@@ -337,12 +335,9 @@ const char* vtkMRMLMarkupsROINode::GetROITypeAsString(int roiType)
 {
   switch (roiType)
   {
-    case vtkMRMLMarkupsROINode::ROITypeBox:
-      return "Box";
-    case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
-      return "BoundingBox";
-    default:
-      break;
+    case vtkMRMLMarkupsROINode::ROITypeBox: return "Box";
+    case vtkMRMLMarkupsROINode::ROITypeBoundingBox: return "BoundingBox";
+    default: break;
   }
   return "";
 }
@@ -475,26 +470,23 @@ void vtkMRMLMarkupsROINode::ProcessMRMLEvents(vtkObject* caller, unsigned long e
     vtkNew<vtkGeneralTransform> worldToNode;
     vtkMRMLTransformNode::GetTransformBetweenNodes(nullptr, this->GetParentTransformNode(), worldToNode);
 
-    double xAxis_World[3] = {
-      this->InteractionHandleToWorldMatrix->GetElement(0, 0),
-      this->InteractionHandleToWorldMatrix->GetElement(1, 0),
-      this->InteractionHandleToWorldMatrix->GetElement(2, 0) };
+    double xAxis_World[3] = { this->InteractionHandleToWorldMatrix->GetElement(0, 0),
+                              this->InteractionHandleToWorldMatrix->GetElement(1, 0),
+                              this->InteractionHandleToWorldMatrix->GetElement(2, 0) };
     double xAxis_Node[3] = { 1.0, 0.0, 0.0 };
     worldToNode->TransformVectorAtPoint(center_World, xAxis_World, xAxis_Node);
     vtkMath::Normalize(xAxis_Node);
 
-    double yAxis_World[3] = {
-      this->InteractionHandleToWorldMatrix->GetElement(0, 1),
-      this->InteractionHandleToWorldMatrix->GetElement(1, 1),
-      this->InteractionHandleToWorldMatrix->GetElement(2, 1) };
+    double yAxis_World[3] = { this->InteractionHandleToWorldMatrix->GetElement(0, 1),
+                              this->InteractionHandleToWorldMatrix->GetElement(1, 1),
+                              this->InteractionHandleToWorldMatrix->GetElement(2, 1) };
     double yAxis_Node[3] = { 0.0, 1.0, 0.0 };
     worldToNode->TransformVectorAtPoint(center_World, yAxis_World, yAxis_Node);
     vtkMath::Normalize(yAxis_Node);
 
-    double zAxis_World[3] = {
-      this->InteractionHandleToWorldMatrix->GetElement(0, 2),
-      this->InteractionHandleToWorldMatrix->GetElement(1, 2),
-      this->InteractionHandleToWorldMatrix->GetElement(2, 2) };
+    double zAxis_World[3] = { this->InteractionHandleToWorldMatrix->GetElement(0, 2),
+                              this->InteractionHandleToWorldMatrix->GetElement(1, 2),
+                              this->InteractionHandleToWorldMatrix->GetElement(2, 2) };
     double zAxis_Node[3] = { 0.0, 0.0, 1.0 };
     worldToNode->TransformVectorAtPoint(center_World, zAxis_World, zAxis_Node);
     vtkMath::Normalize(zAxis_Node);
@@ -536,8 +528,7 @@ void vtkMRMLMarkupsROINode::SetROIType(int roiType)
       this->RequiredNumberOfControlPoints = NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS;
       this->MaximumNumberOfControlPoints = NUMBER_OF_BOUNDING_BOX_CONTROL_POINTS;
       break;
-    default:
-      break;
+    default: break;
   }
   this->UpdateROIFromControlPoints();
   this->Modified();
@@ -549,20 +540,18 @@ vtkVector3d GetCenterWorld();
 //----------------------------------------------------------------------------
 vtkVector3d vtkMRMLMarkupsROINode::GetCenter()
 {
-  vtkVector3d center(
-    this->ObjectToNodeMatrix->GetElement(0, 3), //
-    this->ObjectToNodeMatrix->GetElement(1, 3), //
-    this->ObjectToNodeMatrix->GetElement(2, 3));
+  vtkVector3d center(this->ObjectToNodeMatrix->GetElement(0, 3), //
+                     this->ObjectToNodeMatrix->GetElement(1, 3), //
+                     this->ObjectToNodeMatrix->GetElement(2, 3));
   return center;
 }
 
 //----------------------------------------------------------------------------
 vtkVector3d vtkMRMLMarkupsROINode::GetCenterWorld()
 {
-  vtkVector3d centerWorld(
-    this->ObjectToWorldMatrix->GetElement(0, 3), //
-    this->ObjectToWorldMatrix->GetElement(1, 3), //
-    this->ObjectToWorldMatrix->GetElement(2, 3));
+  vtkVector3d centerWorld(this->ObjectToWorldMatrix->GetElement(0, 3), //
+                          this->ObjectToWorldMatrix->GetElement(1, 3), //
+                          this->ObjectToWorldMatrix->GetElement(2, 3));
   return centerWorld;
 }
 
@@ -819,14 +808,9 @@ void vtkMRMLMarkupsROINode::UpdateROIFromControlPoints()
 
     switch (this->ROIType)
     {
-    case vtkMRMLMarkupsROINode::ROITypeBox:
-      this->UpdateBoxROIFromControlPoints();
-      break;
-    case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
-      this->UpdateBoundingBoxROIFromControlPoints();
-      break;
-    default:
-      break;
+      case vtkMRMLMarkupsROINode::ROITypeBox: this->UpdateBoxROIFromControlPoints(); break;
+      case vtkMRMLMarkupsROINode::ROITypeBoundingBox: this->UpdateBoundingBoxROIFromControlPoints(); break;
+      default: break;
     }
 
     this->UpdateImplicitFunction();
@@ -841,7 +825,7 @@ void vtkMRMLMarkupsROINode::UpdateBoxROIFromControlPoints()
   int numberOfControlPoints = this->GetNumberOfControlPoints();
   if (numberOfControlPoints == 0)
   {
-    this->SetSize(0.0,  0.0, 0.0);
+    this->SetSize(0.0, 0.0, 0.0);
     return;
   }
 
@@ -902,13 +886,14 @@ void vtkMRMLMarkupsROINode::UpdateBoxROIFromControlPoints()
   }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkMRMLMarkupsROINode::UpdateBoundingBoxROIFromControlPoints()
 {
   MRMLNodeModifyBlocker blocker(this);
 
-  double bounds_Object[6] = { VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, };
+  double bounds_Object[6] = {
+    VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN,
+  };
   if (this->GetNumberOfControlPoints() == 0)
   {
     for (int i = 0; i < 6; ++i)
@@ -966,14 +951,9 @@ void vtkMRMLMarkupsROINode::UpdateControlPointsFromROI()
 
     switch (this->ROIType)
     {
-      case vtkMRMLMarkupsROINode::ROITypeBox:
-        this->UpdateControlPointsFromBoxROI();
-        break;
-      case vtkMRMLMarkupsROINode::ROITypeBoundingBox:
-        this->UpdateControlPointsFromBoundingBoxROI();
-        break;
-      default:
-        break;
+      case vtkMRMLMarkupsROINode::ROITypeBox: this->UpdateControlPointsFromBoxROI(); break;
+      case vtkMRMLMarkupsROINode::ROITypeBoundingBox: this->UpdateControlPointsFromBoundingBoxROI(); break;
+      default: break;
     }
   }
 
@@ -1146,7 +1126,7 @@ void vtkMRMLMarkupsROINode::GetRadiusXYZ(double radiusXYZ[3])
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsROINode::GetPlanes(vtkPlanes* planes, bool insideOut/*=false*/)
+void vtkMRMLMarkupsROINode::GetPlanes(vtkPlanes* planes, bool insideOut /*=false*/)
 {
   if (!planes)
   {
@@ -1232,7 +1212,7 @@ void vtkMRMLMarkupsROINode::GetPlanes(vtkPlanes* planes, bool insideOut/*=false*
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsROINode::GetPlanesWorld(vtkPlanes* planes, bool insideOut/*=false*/)
+void vtkMRMLMarkupsROINode::GetPlanesWorld(vtkPlanes* planes, bool insideOut /*=false*/)
 {
   if (!planes)
   {
@@ -1318,7 +1298,7 @@ void vtkMRMLMarkupsROINode::GetPlanesWorld(vtkPlanes* planes, bool insideOut/*=f
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMarkupsROINode::GetTransformedPlanes(vtkPlanes* planes, bool insideOut/*=false*/)
+void vtkMRMLMarkupsROINode::GetTransformedPlanes(vtkPlanes* planes, bool insideOut /*=false*/)
 {
   if (!planes)
   {
@@ -1343,13 +1323,15 @@ bool vtkMRMLMarkupsROINode::IsPointInROIWorld(double point_World[3])
 
 //---------------------------------------------------------------------------
 void vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix,
-  vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform/*=nullptr*/, bool applyScaling/*=true*/)
+                                                     vtkMatrix4x4* outputMatrix,
+                                                     vtkAbstractTransform* transform /*=nullptr*/,
+                                                     bool applyScaling /*=true*/)
 {
 
   double xAxis[3] = { 0.0, 0.0, 0.0 };
   double yAxis[3] = { 0.0, 0.0, 0.0 };
   double zAxis[3] = { 0.0, 0.0, 0.0 };
-  double origin[3] = { 0.0,0.0, 0.0 };
+  double origin[3] = { 0.0, 0.0, 0.0 };
   for (int i = 0; i < 3; ++i)
   {
     xAxis[i] = inputMatrix->GetElement(i, 0);
@@ -1361,8 +1343,13 @@ void vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(vtkMatrix4x4* inputMatrix,
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(double xAxis[3], double yAxis[3], double zAxis[3], double origin[3],
-  vtkMatrix4x4* outputMatrix, vtkAbstractTransform* transform/*=nullptr*/, bool applyScaling/*=true*/)
+void vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(double xAxis[3],
+                                                     double yAxis[3],
+                                                     double zAxis[3],
+                                                     double origin[3],
+                                                     vtkMatrix4x4* outputMatrix,
+                                                     vtkAbstractTransform* transform /*=nullptr*/,
+                                                     bool applyScaling /*=true*/)
 {
   if (!xAxis || !yAxis || !zAxis || !origin || !transform || !outputMatrix)
   {
@@ -1370,10 +1357,10 @@ void vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(double xAxis[3], double yAx
     return;
   }
 
-  double xAxisTransformed[3] = { xAxis[0],  xAxis[1], xAxis[2] };
-  double yAxisTransformed[3] = { yAxis[0],  yAxis[1], yAxis[2] };
-  double zAxisTransformed[3] = { zAxis[0],  zAxis[1], zAxis[2] };
-  double originTransformed[3] = { origin[0],  origin[1], origin[2] };
+  double xAxisTransformed[3] = { xAxis[0], xAxis[1], xAxis[2] };
+  double yAxisTransformed[3] = { yAxis[0], yAxis[1], yAxis[2] };
+  double zAxisTransformed[3] = { zAxis[0], zAxis[1], zAxis[2] };
+  double originTransformed[3] = { origin[0], origin[1], origin[2] };
 
   double xAxisScale = vtkMath::Norm(xAxis);
   double yAxisScale = vtkMath::Norm(yAxis);
@@ -1418,8 +1405,7 @@ void vtkMRMLMarkupsROINode::GenerateOrthogonalMatrix(double xAxis[3], double yAx
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLMarkupsROINode::WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
-         int coordinateSystem, int vtkNotUsed(multipleFlag))
+void vtkMRMLMarkupsROINode::WriteCLI(std::vector<std::string>& commandLine, std::string prefix, int coordinateSystem, int vtkNotUsed(multipleFlag))
 {
   // check if the coordinate system flag is set to LPS, otherwise assume RAS
   bool useLPS = (coordinateSystem == vtkMRMLStorageNode::CoordinateSystemLPS);
@@ -1484,7 +1470,7 @@ bool vtkMRMLMarkupsROINode::GetObjectToNodeMatrixRotated()
     for (int col = 0; col < 3; col++)
     {
       double expectedValue = (row == col ? 1.0 : 0.0);
-      if (fabs(objectToNode->GetElement(row, col)-expectedValue) > tolerance)
+      if (fabs(objectToNode->GetElement(row, col) - expectedValue) > tolerance)
       {
         // rotated
         return true;

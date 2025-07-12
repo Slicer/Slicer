@@ -8,15 +8,13 @@
 
 class qSlicerCropVolumeModulePrivate;
 
-class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_CROPVOLUME_EXPORT qSlicerCropVolumeModule : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.slicer.modules.loadable.qSlicerLoadableModule/1.0");
   Q_INTERFACES(qSlicerLoadableModule);
 
 public:
-
   typedef qSlicerLoadableModule Superclass;
   explicit qSlicerCropVolumeModule(QObject* parent = nullptr);
   ~qSlicerCropVolumeModule() override;
@@ -52,7 +50,6 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerCropVolumeModule);
   Q_DISABLE_COPY(qSlicerCropVolumeModule);
-
 };
 
 #endif

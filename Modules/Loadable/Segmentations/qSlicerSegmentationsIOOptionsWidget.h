@@ -31,8 +31,7 @@
 
 class qSlicerSegmentationsIOOptionsWidgetPrivate;
 
-class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsIOOptionsWidget :
-  public qSlicerIOOptionsWidget
+class Q_SLICER_QTMODULES_SEGMENTATIONS_EXPORT qSlicerSegmentationsIOOptionsWidget : public qSlicerIOOptionsWidget
 {
   Q_OBJECT
 public:

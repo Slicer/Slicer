@@ -33,7 +33,7 @@ class vtkCodedEntry;
 /// to read the myriad of file formats for medical data.
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 {
-  public:
+public:
   static vtkMRMLScalarVolumeNode* New();
   vtkTypeMacro(vtkMRMLScalarVolumeNode, vtkMRMLVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -42,7 +42,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
   ///
   /// Set node attributes
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   ///
   /// Write this node's information to a MRML file in XML format.
@@ -54,7 +54,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 
   ///
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "Volume";}
+  const char* GetNodeTagName() override { return "Volume"; }
 
   ///
   /// Make a 'None' volume node with blank image data

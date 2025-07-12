@@ -56,54 +56,45 @@ class VTK_SLICER_BASE_CLI_EXPORT vtkPluginFilterWatcher
 public:
   /** Constructor. Takes a vtkAlgorithm to monitor and an optional
    * comment string that is prepended to each event message. */
-  vtkPluginFilterWatcher(vtkAlgorithm* o,
-                         const char* comment="",
-                         ModuleProcessInformation* inf=nullptr,
-                         double fraction = 1.0,
-                         double start = 0.0);
+  vtkPluginFilterWatcher(vtkAlgorithm* o, const char* comment = "", ModuleProcessInformation* inf = nullptr, double fraction = 1.0, double start = 0.0);
 
   /** Destructor. */
   virtual ~vtkPluginFilterWatcher();
 
   /** Method to get the name of the class be monitored by this
    *  vtkPluginFilterWatcher */
-  const char* GetNameOfClass ()
-  {
-      return (Process ? Process->GetClassName() : "None");
-  }
+  const char* GetNameOfClass() { return (Process ? Process->GetClassName() : "None"); }
 
   /** Methods to control the verbosity of the messages. Quiet
    * reporting limits the information emitted at a ProgressEvent: only filter
    * start and filter end are emitted. */
-  void QuietOn() { this->SetQuiet(true);};
-  void QuietOff() { this->SetQuiet(false);};
+  void QuietOn() { this->SetQuiet(true); };
+  void QuietOff() { this->SetQuiet(false); };
 
   /** Methods to access member data */
   /** Get a pointer to the process object being watched. */
-  vtkAlgorithm* GetProcess () {return Process;};
+  vtkAlgorithm* GetProcess() { return Process; };
 
   /** Set/Get the steps completed. */
-  void SetSteps(int val) {Steps=val;};
-  int GetSteps() {return Steps;};
+  void SetSteps(int val) { Steps = val; };
+  int GetSteps() { return Steps; };
 
   /** Get the start and fraction values. */
-  double GetStart() {return this->Start;};
-  double GetFraction() {return this->Fraction;};
+  double GetStart() { return this->Start; };
+  double GetFraction() { return this->Fraction; };
 
   /** Set/Get the quiet mode boolean. If false, verbose progress is
-    * reported. */
+   * reported. */
   void SetQuiet(bool val);
-  bool GetQuiet() {return Quiet;};
+  bool GetQuiet() { return Quiet; };
 
   /** Get the comment for the watcher. */
-  std::string GetComment() {return Comment;};
+  std::string GetComment() { return Comment; };
 
   /** Get the pointer for the process information. */
-  ModuleProcessInformation* GetProcessInformation() {return this->ProcessInformation;};
-
+  ModuleProcessInformation* GetProcessInformation() { return this->ProcessInformation; };
 
 protected:
-
 private:
   int Steps;
   bool Quiet;

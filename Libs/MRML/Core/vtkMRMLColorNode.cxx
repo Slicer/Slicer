@@ -37,9 +37,7 @@ vtkMRMLColorNode::vtkMRMLColorNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLColorNode::~vtkMRMLColorNode()
-{
-}
+vtkMRMLColorNode::~vtkMRMLColorNode() {}
 
 //----------------------------------------------------------------------------
 void vtkMRMLColorNode::WriteXML(ostream& of, int nIndent)
@@ -102,16 +100,16 @@ vtkScalarsToColors* vtkMRMLColorNode::GetScalarsToColors()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLColorNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLColorNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
 
   vtkMRMLColorNode* node = vtkMRMLColorNode::SafeDownCast(anode);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   if (node->Type != -1)
   {
@@ -269,7 +267,7 @@ void vtkMRMLColorNode::SetNamesFromColors()
 //---------------------------------------------------------------------------
 bool vtkMRMLColorNode::SetNameFromColor(int index)
 {
-  double rgba[4] = {-1.,-1.,-1.,-1.};
+  double rgba[4] = { -1., -1., -1., -1. };
   bool res = this->GetColor(index, rgba);
   std::stringstream ss;
   ss.precision(3);
@@ -406,14 +404,17 @@ std::string vtkMRMLColorNode::GetTerminologyAsString(int ind)
     return std::string();
   }
 
-  return vtkMRMLColorNode::GetTerminologyAsString("", prop.Category, prop.Type, prop.TypeModifier,
-    "", prop.Region, prop.RegionModifier);
+  return vtkMRMLColorNode::GetTerminologyAsString("", prop.Category, prop.Type, prop.TypeModifier, "", prop.Region, prop.RegionModifier);
 }
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLColorNode::GetTerminologyAsString(std::string terminologyContextName,
-    vtkCodedEntry* category, vtkCodedEntry* type, vtkCodedEntry* typeModifier,
-    std::string regionContextName, vtkCodedEntry* region/*=nullptr*/, vtkCodedEntry* regionModifier/*=nullptr*/)
+                                                     vtkCodedEntry* category,
+                                                     vtkCodedEntry* type,
+                                                     vtkCodedEntry* typeModifier,
+                                                     std::string regionContextName,
+                                                     vtkCodedEntry* region /*=nullptr*/,
+                                                     vtkCodedEntry* regionModifier /*=nullptr*/)
 {
   std::string serializedEntry("");
   serializedEntry += terminologyContextName + "~";
@@ -581,11 +582,21 @@ bool vtkMRMLColorNode::SetTerminologyFromString(int ind, std::string terminology
 
 //---------------------------------------------------------------------------
 bool vtkMRMLColorNode::SetTerminology(int ind,
-  std::string categoryCodingScheme, std::string categoryCodeValue, std::string categoryCodeMeaning,
-  std::string typeCodingScheme, std::string typeCodeValue, std::string typeCodeMeaning,
-  std::string typeModifierCodingScheme/*=""*/, std::string typeModifierCodeValue/*=""*/, std::string typeModifierCodeMeaning/*=""*/,
-  std::string regionCodingScheme/*=""*/, std::string regionCodeValue/*=""*/, std::string regionCodeMeaning/*=""*/,
-  std::string regionModifierCodingScheme/*=""*/, std::string regionModifierCodeValue/*=""*/, std::string regionModifierCodeMeaning/*=""*/)
+                                      std::string categoryCodingScheme,
+                                      std::string categoryCodeValue,
+                                      std::string categoryCodeMeaning,
+                                      std::string typeCodingScheme,
+                                      std::string typeCodeValue,
+                                      std::string typeCodeMeaning,
+                                      std::string typeModifierCodingScheme /*=""*/,
+                                      std::string typeModifierCodeValue /*=""*/,
+                                      std::string typeModifierCodeMeaning /*=""*/,
+                                      std::string regionCodingScheme /*=""*/,
+                                      std::string regionCodeValue /*=""*/,
+                                      std::string regionCodeMeaning /*=""*/,
+                                      std::string regionModifierCodingScheme /*=""*/,
+                                      std::string regionModifierCodeValue /*=""*/,
+                                      std::string regionModifierCodeMeaning /*=""*/)
 {
   vtkNew<vtkCodedEntry> category;
   if (!categoryCodeValue.empty())
@@ -643,7 +654,7 @@ std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char* sub
   std::string name = std::string(this->GetColorName(ind));
   if (strstr(name.c_str(), " ") != nullptr)
   {
-    std::string::size_type spaceIndex = name.find( " ", 0 );
+    std::string::size_type spaceIndex = name.find(" ", 0);
     while (spaceIndex != std::string::npos)
     {
       name.replace(spaceIndex, 1, subst, 0, strlen(subst));
@@ -682,8 +693,8 @@ int vtkMRMLColorNode::SetColorName(int ind, const char* name)
 {
   if (ind >= static_cast<int>(this->Properties.size()) || ind < 0)
   {
-    vtkErrorMacro("SetColorName: Index was out of bounds: "<< ind << ", current size is "
-      << this->Properties.size() << ", table name = " << (this->GetName() == nullptr ? "null" : this->GetName()));
+    vtkErrorMacro("SetColorName: Index was out of bounds: " << ind << ", current size is " << this->Properties.size()
+                                                            << ", table name = " << (this->GetName() == nullptr ? "null" : this->GetName()));
     return 0;
   }
   PropertyType& prop = this->Properties[ind];
@@ -720,7 +731,7 @@ void vtkMRMLColorNode::Reset(vtkMRMLNode* vtkNotUsed(defaultNode))
 {
   // don't need to call reset on color nodes, as all but the User color table
   // node are static, and that's taken care of in the vtkMRMLColorTableNode
-  //Superclass::Reset(defaultNode);
+  // Superclass::Reset(defaultNode);
 }
 
 //---------------------------------------------------------------------------

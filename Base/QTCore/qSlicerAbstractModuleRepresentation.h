@@ -42,7 +42,6 @@ class qSlicerAbstractModuleRepresentationPrivate;
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractModuleRepresentation : virtual public qSlicerObject
 {
 public:
-
   typedef qSlicerObject Superclass;
   qSlicerAbstractModuleRepresentation();
   ~qSlicerAbstractModuleRepresentation() override;
@@ -83,7 +82,7 @@ public:
   /// (for example, they look into the node contents and decide based on that if the node belongs to
   /// this module).
 
- /// \sa setEditedNode
+  /// \sa setEditedNode
   virtual double nodeEditable(vtkMRMLNode* node);
 
 protected:

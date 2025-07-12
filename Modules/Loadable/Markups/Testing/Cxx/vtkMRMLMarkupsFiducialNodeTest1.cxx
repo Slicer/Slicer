@@ -37,9 +37,9 @@ int vtkMRMLMarkupsFiducialNodeTest1(int, char*[])
   std::cout << "Get MarkupsDisplayNode returned " << (dispNode ? "valid" : "null") << " pointer" << std::endl;
 
   // set position
-  double inPos[3] = {0.33, 1.55, -99.0};
+  double inPos[3] = { 0.33, 1.55, -99.0 };
   int fidIndex = node1->AddControlPoint(vtkVector3d(inPos), std::string());
-  vtkVector3d posVector= node1->GetNthControlPointPositionVector(0);
+  vtkVector3d posVector = node1->GetNthControlPointPositionVector(0);
   double diff = sqrt(vtkMath::Distance2BetweenPoints(inPos, posVector.GetData()));
   std::cout << "Diff between AddControlPoint and GetNthControlPointPositionVector = " << diff << std::endl;
   if (diff > 0.1)
@@ -87,7 +87,7 @@ int vtkMRMLMarkupsFiducialNodeTest1(int, char*[])
   }
 
   // world coords
-  double inCoords[4] = {0.4, 10.5, -8, 1.0};
+  double inCoords[4] = { 0.4, 10.5, -8, 1.0 };
   node1->SetNthControlPointPositionWorld(fidIndex2, inCoords[0], inCoords[1], inCoords[2]);
   double outCoords[4];
   node1->GetNthControlPointPositionWorld(fidIndex2, outCoords);

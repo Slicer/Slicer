@@ -43,7 +43,7 @@ public:
   vtkInternal(vtkMRMLTestThreeDViewDisplayableManager* external);
   ~vtkInternal();
 
-  vtkMRMLTestThreeDViewDisplayableManager*             External;
+  vtkMRMLTestThreeDViewDisplayableManager* External;
 };
 
 //---------------------------------------------------------------------------
@@ -80,9 +80,7 @@ void vtkMRMLTestThreeDViewDisplayableManager::PrintSelf(ostream& os, vtkIndent i
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTestThreeDViewDisplayableManager::AdditionnalInitializeStep()
-{
-}
+void vtkMRMLTestThreeDViewDisplayableManager::AdditionnalInitializeStep() {}
 
 //---------------------------------------------------------------------------
 void vtkMRMLTestThreeDViewDisplayableManager::Create()
@@ -100,6 +98,6 @@ void vtkMRMLTestThreeDViewDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* 
     return;
   }
   vtkMRMLTestThreeDViewDisplayableManager::NodeAddedCount++;
-  //std::cout << "vtkMRMLTestThreeDViewDisplayableManager - NodeAdded - "
-  //          << (node ? node->GetName() : "None")<< std::endl;
+  // std::cout << "vtkMRMLTestThreeDViewDisplayableManager - NodeAdded - "
+  //           << (node ? node->GetName() : "None")<< std::endl;
 }

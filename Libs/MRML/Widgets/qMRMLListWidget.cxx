@@ -25,15 +25,17 @@
 
 // qMRML includes
 #include "qMRMLListWidget.h"
-//#include "qMRMLItemModel.h"
+// #include "qMRMLItemModel.h"
 #include "qMRMLSceneTransformModel.h"
 
 //------------------------------------------------------------------------------
 class qMRMLListWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qMRMLListWidget);
+
 protected:
   qMRMLListWidget* const q_ptr;
+
 public:
   qMRMLListWidgetPrivate(qMRMLListWidget& object);
   void init();
@@ -49,9 +51,9 @@ qMRMLListWidgetPrivate::qMRMLListWidgetPrivate(qMRMLListWidget& object)
 void qMRMLListWidgetPrivate::init()
 {
   Q_Q(qMRMLListWidget);
-  //p->QListView::setModel(new qMRMLItemModel(p));
-  //p->QListView::setModel(new qMRMLSceneModel(p));
-  ///new ctkModelTester(p->model(), p);
+  // p->QListView::setModel(new qMRMLItemModel(p));
+  // p->QListView::setModel(new qMRMLSceneModel(p));
+  /// new ctkModelTester(p->model(), p);
 
   qMRMLSceneTransformModel* sceneModel = new qMRMLSceneTransformModel(q);
   QSortFilterProxyModel* sortModel = new QSortFilterProxyModel(q);
@@ -66,10 +68,10 @@ void qMRMLListWidgetPrivate::init()
   // and QSortFilterProxyModel::rowCount(QModelIndex) returns 1(the mrmlscene), which
   // is eventually called by the ctkModelTester slot connected to QSortFilterProxyModel
   // signal layoutAboutToBeChanged() which eventually calls testData on the valid QModelIndex
-  //new ctkModelTester(p->model(), p);
+  // new ctkModelTester(p->model(), p);
 
-  //ctkModelTester* tester = new ctkModelTester(p);
-  //tester->setModel(transformModel);
+  // ctkModelTester* tester = new ctkModelTester(p);
+  // tester->setModel(transformModel);
 }
 
 //------------------------------------------------------------------------------

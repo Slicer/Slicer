@@ -49,12 +49,15 @@
 class qSlicerSubjectHierarchyPlotsPluginPrivate : public QObject
 {
   Q_DECLARE_PUBLIC(qSlicerSubjectHierarchyPlotsPlugin);
+
 protected:
   qSlicerSubjectHierarchyPlotsPlugin* const q_ptr;
+
 public:
   qSlicerSubjectHierarchyPlotsPluginPrivate(qSlicerSubjectHierarchyPlotsPlugin& object);
   ~qSlicerSubjectHierarchyPlotsPluginPrivate() override;
   void init();
+
 public:
   QIcon PlotChartIcon;
   QIcon PlotSeriesIcon;
@@ -70,7 +73,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPlotsPluginPrivate::qSlicerSubjectHierarchyPlotsPluginPrivate(qSlicerSubjectHierarchyPlotsPlugin& object)
-: q_ptr(&object)
+  : q_ptr(&object)
 {
   this->PlotChartIcon = QIcon(":Icons/Medium/SlicerInteractivePlotting.png");
   this->PlotSeriesIcon = QIcon(":Icons/Medium/SlicerPlotSeries.png");
@@ -80,9 +83,7 @@ qSlicerSubjectHierarchyPlotsPluginPrivate::qSlicerSubjectHierarchyPlotsPluginPri
 }
 
 //------------------------------------------------------------------------------
-void qSlicerSubjectHierarchyPlotsPluginPrivate::init()
-{
-}
+void qSlicerSubjectHierarchyPlotsPluginPrivate::init() {}
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPlotsPluginPrivate::~qSlicerSubjectHierarchyPlotsPluginPrivate() = default;
@@ -92,8 +93,8 @@ qSlicerSubjectHierarchyPlotsPluginPrivate::~qSlicerSubjectHierarchyPlotsPluginPr
 
 //-----------------------------------------------------------------------------
 qSlicerSubjectHierarchyPlotsPlugin::qSlicerSubjectHierarchyPlotsPlugin(QObject* parent)
- : Superclass(parent)
- , d_ptr( new qSlicerSubjectHierarchyPlotsPluginPrivate(*this) )
+  : Superclass(parent)
+  , d_ptr(new qSlicerSubjectHierarchyPlotsPluginPrivate(*this))
 {
   Q_D(qSlicerSubjectHierarchyPlotsPlugin);
   this->m_Name = QString("Plots");
@@ -111,8 +112,7 @@ void qSlicerSubjectHierarchyPlotsPlugin::setPlotsLogic(vtkSlicerPlotsLogic* plot
 }
 
 //----------------------------------------------------------------------------
-double qSlicerSubjectHierarchyPlotsPlugin::canAddNodeToSubjectHierarchy(
-  vtkMRMLNode* node, vtkIdType parentItemID/*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
+double qSlicerSubjectHierarchyPlotsPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_UNUSED(parentItemID);
   if (!node)
@@ -281,7 +281,8 @@ void qSlicerSubjectHierarchyPlotsPlugin::setDisplayVisibility(vtkIdType itemID, 
         // already hidden
         return;
       }
-      vtkMRMLPlotChartNode* plotChartNode = plotViewNode->GetPlotChartNode();;
+      vtkMRMLPlotChartNode* plotChartNode = plotViewNode->GetPlotChartNode();
+      ;
       if (!plotChartNode)
       {
         // already hidden
@@ -376,7 +377,7 @@ vtkMRMLPlotViewNode* qSlicerSubjectHierarchyPlotsPlugin::getPlotViewNode() const
     return nullptr;
   }
 
-  for (int i = 0; i<layoutManager->plotViewCount(); i++)
+  for (int i = 0; i < layoutManager->plotViewCount(); i++)
   {
     qMRMLPlotWidget* plotWidget = layoutManager->plotWidget(i);
     if (!plotWidget)

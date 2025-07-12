@@ -115,7 +115,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->Interacting = 0;
   this->InteractionFlags = 0;
-  this->InteractionFlagsModifier = (unsigned int) -1;
+  this->InteractionFlagsModifier = (unsigned int)-1;
 
   this->IsUpdatingMatrices = 0;
 
@@ -164,7 +164,7 @@ void vtkMRMLSliceNode::SetInteractionFlagsModifier(unsigned int flags)
 void vtkMRMLSliceNode::ResetInteractionFlagsModifier()
 {
   // Don't call Modified()
-  this->InteractionFlagsModifier = (unsigned int) -1;
+  this->InteractionFlagsModifier = (unsigned int)-1;
 }
 
 //---------------------------------------------------------------------------
@@ -203,7 +203,7 @@ void vtkMRMLSliceNode::RemoveThreeDViewID(char* viewNodeID)
     return;
   }
   std::vector<std::string> viewNodeIDs;
-  for (unsigned int i = 0; i<this->ThreeDViewIDs.size(); i++)
+  for (unsigned int i = 0; i < this->ThreeDViewIDs.size(); i++)
   {
     if (std::string(viewNodeID) != this->ThreeDViewIDs[i])
     {
@@ -218,15 +218,14 @@ void vtkMRMLSliceNode::RemoveThreeDViewID(char* viewNodeID)
   }
   else
   {
-    vtkErrorMacro("vtkMRMLDisplayNode::RemoveThreeDViewID() id "
-      << viewNodeID << " not found");
+    vtkErrorMacro("vtkMRMLDisplayNode::RemoveThreeDViewID() id " << viewNodeID << " not found");
   }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::RemoveAllThreeDViewIDs()
 {
-  for (unsigned int i = 0; i<this->ThreeDViewIDs.size(); i++)
+  for (unsigned int i = 0; i < this->ThreeDViewIDs.size(); i++)
   {
     this->Scene->RemoveReferencedNodeID(ThreeDViewIDs[i].c_str(), this);
   }
@@ -239,8 +238,7 @@ const char* vtkMRMLSliceNode::GetNthThreeDViewID(unsigned int index)
 {
   if (index >= ThreeDViewIDs.size())
   {
-    vtkErrorMacro("vtkMRMLDisplayNode::GetNthThreeDViewID() index "
-      << index << " outside the range 0-" << this->ThreeDViewIDs.size()-1 );
+    vtkErrorMacro("vtkMRMLDisplayNode::GetNthThreeDViewID() index " << index << " outside the range 0-" << this->ThreeDViewIDs.size() - 1);
     return nullptr;
   }
   return ThreeDViewIDs[index].c_str();
@@ -254,8 +252,7 @@ bool vtkMRMLSliceNode::IsThreeDViewIDPresent(const char* viewNodeID) const
     return false;
   }
   std::string value(viewNodeID);
-  std::vector<std::string>::const_iterator it =
-    std::find(this->ThreeDViewIDs.begin(), this->ThreeDViewIDs.end(), value);
+  std::vector<std::string>::const_iterator it = std::find(this->ThreeDViewIDs.begin(), this->ThreeDViewIDs.end(), value);
   return it != this->ThreeDViewIDs.end();
 }
 
@@ -338,8 +335,7 @@ bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4* m1, const vtkMatrix4x4
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4* matrix,
-                                      const vtkMatrix3x3* orientationMatrix)
+bool vtkMRMLSliceNode::MatrixAreEqual(const vtkMatrix4x4* matrix, const vtkMatrix3x3* orientationMatrix)
 {
   return vtkAddonMathUtilities::MatrixAreEqual(matrix, orientationMatrix);
 }
@@ -370,9 +366,7 @@ std::string vtkMRMLSliceNode::GetSliceOrientationPresetName(vtkMatrix3x3* orient
   }
 
   std::vector<OrientationPresetType>::reverse_iterator it;
-  for (it = this->OrientationMatrices.rbegin();
-       it != this->OrientationMatrices.rend();
-       ++it)
+  for (it = this->OrientationMatrices.rbegin(); it != this->OrientationMatrices.rend(); ++it)
   {
     std::string presetName = it->first;
     vtkMatrix3x3* presetOrientationMatrix = this->GetSliceOrientationPreset(presetName);
@@ -390,8 +384,7 @@ std::string vtkMRMLSliceNode::GetOrientation(vtkMatrix4x4* sliceToRAS)
   vtkNew<vtkMatrix3x3> orientationMatrix;
   vtkAddonMathUtilities::GetOrientationMatrix(sliceToRAS, orientationMatrix.GetPointer());
 
-  std::string orientation =
-      this->GetSliceOrientationPresetName(orientationMatrix.GetPointer());
+  std::string orientation = this->GetSliceOrientationPresetName(orientationMatrix.GetPointer());
   if (orientation != "")
   {
     return orientation;
@@ -412,9 +405,7 @@ void vtkMRMLSliceNode::GetSliceOrientationPresetNames(vtkStringArray* presetOrie
 
   std::vector<OrientationPresetType>::iterator it;
   int id = 0;
-  for (it = this->OrientationMatrices.begin();
-       it != this->OrientationMatrices.end();
-       ++it)
+  for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     presetOrientationNames->SetValue(id, it->first);
     id++;
@@ -499,7 +490,8 @@ bool vtkMRMLSliceNode::RenameSliceOrientationPreset(const std::string& name, con
   }
 
   vtkErrorMacro("RenameSliceOrientationPreset: The orientation preset "
-                "'" << name << "' does NOT exist.");
+                "'"
+                << name << "' does NOT exist.");
   return false;
 }
 
@@ -526,7 +518,7 @@ bool vtkMRMLSliceNode::HasSliceOrientationPreset(const std::string& name)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft/*=true*/)
+void vtkMRMLSliceNode::GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft /*=true*/)
 {
   if (!orientationMatrix)
   {
@@ -536,8 +528,8 @@ void vtkMRMLSliceNode::GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix,
   {
     // L
     orientationMatrix->SetElement(0, 0, -1.0);
-    orientationMatrix->SetElement(1, 0,  0.0);
-    orientationMatrix->SetElement(2, 0,  0.0);
+    orientationMatrix->SetElement(1, 0, 0.0);
+    orientationMatrix->SetElement(2, 0, 0.0);
   }
   else
   {
@@ -548,51 +540,51 @@ void vtkMRMLSliceNode::GetAxialSliceToRASMatrix(vtkMatrix3x3* orientationMatrix,
   }
 
   // A
-  orientationMatrix->SetElement(0, 1,  0.0);
-  orientationMatrix->SetElement(1, 1,  1.0);
-  orientationMatrix->SetElement(2, 1,  0.0);
+  orientationMatrix->SetElement(0, 1, 0.0);
+  orientationMatrix->SetElement(1, 1, 1.0);
+  orientationMatrix->SetElement(2, 1, 0.0);
 
   // S (to make arrow up/right to go superior)
-  orientationMatrix->SetElement(0, 2,  0.0);
-  orientationMatrix->SetElement(1, 2,  0.0);
-  orientationMatrix->SetElement(2, 2,  1.0);
+  orientationMatrix->SetElement(0, 2, 0.0);
+  orientationMatrix->SetElement(1, 2, 0.0);
+  orientationMatrix->SetElement(2, 2, 1.0);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft/*=true*/)
+void vtkMRMLSliceNode::GetSagittalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft /*=true*/)
 {
   if (!orientationMatrix)
   {
     return;
   }
   // P
-  orientationMatrix->SetElement(0, 0,  0.0);
-  orientationMatrix->SetElement(1, 0,  -1.0);
-  orientationMatrix->SetElement(2, 0,  0.0);
+  orientationMatrix->SetElement(0, 0, 0.0);
+  orientationMatrix->SetElement(1, 0, -1.0);
+  orientationMatrix->SetElement(2, 0, 0.0);
 
   // S
-  orientationMatrix->SetElement(0, 1,  0.0);
-  orientationMatrix->SetElement(1, 1,  0.0);
-  orientationMatrix->SetElement(2, 1,  1.0);
+  orientationMatrix->SetElement(0, 1, 0.0);
+  orientationMatrix->SetElement(1, 1, 0.0);
+  orientationMatrix->SetElement(2, 1, 1.0);
 
   if (patientRightIsScreenLeft)
   {
     // L (to make arrow up/right to go left)
     orientationMatrix->SetElement(0, 2, -1.0);
-    orientationMatrix->SetElement(1, 2,  0.0);
-    orientationMatrix->SetElement(2, 2,  0.0);
+    orientationMatrix->SetElement(1, 2, 0.0);
+    orientationMatrix->SetElement(2, 2, 0.0);
   }
   else
   {
     // R (to make arrow up/right to go right)
-    orientationMatrix->SetElement(0, 2,  1.0);
-    orientationMatrix->SetElement(1, 2,  0.0);
-    orientationMatrix->SetElement(2, 2,  0.0);
+    orientationMatrix->SetElement(0, 2, 1.0);
+    orientationMatrix->SetElement(1, 2, 0.0);
+    orientationMatrix->SetElement(2, 2, 0.0);
   }
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft/*=true*/)
+void vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatrix, bool patientRightIsScreenLeft /*=true*/)
 {
   if (!orientationMatrix)
   {
@@ -602,30 +594,30 @@ void vtkMRMLSliceNode::GetCoronalSliceToRASMatrix(vtkMatrix3x3* orientationMatri
   {
     // L
     orientationMatrix->SetElement(0, 0, -1.0);
-    orientationMatrix->SetElement(1, 0,  0.0);
-    orientationMatrix->SetElement(2, 0,  0.0);
+    orientationMatrix->SetElement(1, 0, 0.0);
+    orientationMatrix->SetElement(2, 0, 0.0);
   }
   else
   {
     // R
-    orientationMatrix->SetElement(0, 0,  1.0);
-    orientationMatrix->SetElement(1, 0,  0.0);
-    orientationMatrix->SetElement(2, 0,  0.0);
+    orientationMatrix->SetElement(0, 0, 1.0);
+    orientationMatrix->SetElement(1, 0, 0.0);
+    orientationMatrix->SetElement(2, 0, 0.0);
   }
 
   // S
-  orientationMatrix->SetElement(0, 1,  0.0);
-  orientationMatrix->SetElement(1, 1,  0.0);
-  orientationMatrix->SetElement(2, 1,  1.0);
+  orientationMatrix->SetElement(0, 1, 0.0);
+  orientationMatrix->SetElement(1, 1, 0.0);
+  orientationMatrix->SetElement(2, 1, 1.0);
 
   // A (to make arrow up/right to go anterior)
-  orientationMatrix->SetElement(0, 2,  0.0);
-  orientationMatrix->SetElement(1, 2,  1.0);
-  orientationMatrix->SetElement(2, 2,  0.0);
+  orientationMatrix->SetElement(0, 2, 0.0);
+  orientationMatrix->SetElement(1, 2, 1.0);
+  orientationMatrix->SetElement(2, 2, 0.0);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bool patientRightIsScreenLeft/*=true*/)
+void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bool patientRightIsScreenLeft /*=true*/)
 {
   if (!scene)
   {
@@ -658,10 +650,7 @@ void vtkMRMLSliceNode::AddDefaultSliceOrientationPresets(vtkMRMLScene* scene, bo
 //----------------------------------------------------------------------------
 //  Set the SliceToRAS matrix by the position and orientation of the locator
 //
-void vtkMRMLSliceNode::SetSliceToRASByNTP (double Nx, double Ny, double Nz,
-                         double Tx, double Ty, double Tz,
-                         double Px, double Py, double Pz,
-                         int Orientation)
+void vtkMRMLSliceNode::SetSliceToRASByNTP(double Nx, double Ny, double Nz, double Tx, double Ty, double Tz, double Px, double Py, double Pz, int Orientation)
 {
   vnl_double_3 n, t, c;
   vnl_double_3 negN, negT, negC;
@@ -787,8 +776,8 @@ void vtkMRMLSliceNode::UpdateMatrices()
       xyToSlice->SetElement(i, i, spacing[i]);
       xyToSlice->SetElement(i, 3, -this->FieldOfView[i] / 2. + this->XYZOrigin[i]);
     }
-    //vtkWarningMacro( << "FieldOfView[2] = " << this->FieldOfView[2] << ", Dimensions[2] = " << this->Dimensions[2] );
-    //xyToSlice->SetElement(2, 2, 1.);
+    // vtkWarningMacro( << "FieldOfView[2] = " << this->FieldOfView[2] << ", Dimensions[2] = " << this->Dimensions[2] );
+    // xyToSlice->SetElement(2, 2, 1.);
 
     xyToSlice->SetElement(2, 3, 0.);
   }
@@ -818,7 +807,6 @@ void vtkMRMLSliceNode::UpdateMatrices()
     this->XYToRAS->DeepCopy(xyToRAS.GetPointer());
     modified = true;
   }
-
 
   // the mapping from XY output slice pixels to Slice Plane coordinate
   this->UVWToSlice->Identity();
@@ -864,7 +852,6 @@ void vtkMRMLSliceNode::UpdateMatrices()
   this->EndModify(disabledModify);
 
   this->IsUpdatingMatrices = 0;
-
 }
 
 //----------------------------------------------------------------------------
@@ -890,18 +877,18 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
     std::stringstream ss;
-    for (int i = 0; i<3; i++)
+    for (int i = 0; i < 3; i++)
     {
-      for (int j = 0; j<3; j++)
+      for (int j = 0; j < 3; j++)
       {
         ss << it->second->GetElement(i, j);
-        if (!( i==2 && j==2))
+        if (!(i == 2 && j == 2))
         {
           ss << " ";
         }
       }
     }
-      of << " orientationMatrix"<< this->URLEncodeString(it->first.c_str()) <<"=\"" << ss.str().c_str() << "\"";
+    of << " orientationMatrix" << this->URLEncodeString(it->first.c_str()) << "=\"" << ss.str().c_str() << "\"";
   }
 
   vtkMRMLWriteXMLStdStringMacro(orientation, Orientation);
@@ -997,9 +984,9 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     vtkNew<vtkMatrix3x3> orientationMatrix;
     orientationMatrix->Identity();
     ss << xmlReadAttValue;
-    for (int i = 0; i<3; i++)
+    for (int i = 0; i < 3; i++)
     {
-      for (int j = 0; j<3; j++)
+      for (int j = 0; j < 3; j++)
       {
         ss >> val;
         orientationMatrix->SetElement(i, j, val);
@@ -1064,7 +1051,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     if (layoutName.find("Compare") == 0)
     {
       std::string name(this->GetLayoutName());
-      std::string number(name.substr(7, name.size()-7));
+      std::string number(name.substr(7, name.size() - 7));
       this->SetLayoutLabel(number.c_str());
     }
     else if (layoutName == "Red")
@@ -1087,7 +1074,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -1106,8 +1093,7 @@ void vtkMRMLSliceNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
   node->GetSliceOrientationPresetNames(namedOrientations.GetPointer());
   for (int i = 0; i < namedOrientations->GetNumberOfValues(); i++)
   {
-    this->AddSliceOrientationPreset(namedOrientations->GetValue(i),
-        node->GetSliceOrientationPreset(namedOrientations->GetValue(i)));
+    this->AddSliceOrientationPreset(namedOrientations->GetValue(i), node->GetSliceOrientationPreset(namedOrientations->GetValue(i)));
   }
 
   std::string orientation = node->GetOrientation();
@@ -1171,7 +1157,7 @@ void vtkMRMLSliceNode::Reset(vtkMRMLNode* defaultNode)
   // This require a custom behavior implemented here.
   std::string orientation = this->GetOrientation();
   std::string defaultOrientation = (this->GetDefaultOrientation() ? this->GetDefaultOrientation() : "");
-  double layoutColor[3] = {0.0, 0.0, 0.0};
+  double layoutColor[3] = { 0.0, 0.0, 0.0 };
   this->GetLayoutColor(layoutColor);
   this->Superclass::Reset(defaultNode);
   int wasModified = this->StartModify();
@@ -1233,7 +1219,7 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   std::vector<OrientationPresetType>::iterator it;
   for (it = this->OrientationMatrices.begin(); it != this->OrientationMatrices.end(); ++it)
   {
-    os << indent << "OrientationMatrix"<< this->URLEncodeString(it->first.c_str()) <<": \n";
+    os << indent << "OrientationMatrix" << this->URLEncodeString(it->first.c_str()) << ": \n";
     it->second->PrintSelf(os, indent.GetNextIndent());
   }
 
@@ -1285,8 +1271,8 @@ void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
   // deduce the slice spacing
   vtkMatrix4x4* xyzToRAS = this->GetXYToRAS();
 
-  double p1xyz[4] = {0.0,0.0,0.0,1.0};
-  double p2xyz[4] = {0.0,0.0,1.0,1.0};
+  double p1xyz[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double p2xyz[4] = { 0.0, 0.0, 1.0, 1.0 };
 
   double p1ras[4], p2ras[4];
 
@@ -1298,9 +1284,9 @@ void vtkMRMLSliceNode::JumpSliceByCentering(double r, double a, double s)
   if (r != sr || a != sa || s != ss //
       || this->XYZOrigin[0] != 0 || this->XYZOrigin[1] != 0 || this->XYZOrigin[2] != 0)
   {
-    sliceToRAS->SetElement( 0, 3, r - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(0,2) );
-    sliceToRAS->SetElement( 1, 3, a - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(1,2));
-    sliceToRAS->SetElement( 2, 3, s - this->ActiveSlice*sliceSpacing*sliceToRAS->GetElement(2,2) );
+    sliceToRAS->SetElement(0, 3, r - this->ActiveSlice * sliceSpacing * sliceToRAS->GetElement(0, 2));
+    sliceToRAS->SetElement(1, 3, a - this->ActiveSlice * sliceSpacing * sliceToRAS->GetElement(1, 2));
+    sliceToRAS->SetElement(2, 3, s - this->ActiveSlice * sliceSpacing * sliceToRAS->GetElement(2, 2));
     this->SetSliceOrigin(0, 0, 0); // move sliceToRAS origin into the center of the slice view
     this->UpdateMatrices();
   }
@@ -1317,8 +1303,8 @@ void vtkMRMLSliceNode::JumpSliceByOffsetting(double r, double a, double s)
   // deduce the slice spacing
   vtkMatrix4x4* xyzToRAS = this->GetXYToRAS();
 
-  double p1xyz[4] = {0.0,0.0,0.0,1.0};
-  double p2xyz[4] = {0.0,0.0,1.0,1.0};
+  double p1xyz[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double p2xyz[4] = { 0.0, 0.0, 1.0, 1.0 };
 
   double p1ras[4], p2ras[4];
 
@@ -1331,13 +1317,13 @@ void vtkMRMLSliceNode::JumpSliceByOffsetting(double r, double a, double s)
   d = (r - sr) * sliceToRAS->GetElement(0, 2)   //
       + (a - sa) * sliceToRAS->GetElement(1, 2) //
       + (s - ss) * sliceToRAS->GetElement(2, 2);
-  sr += (d - this->ActiveSlice*sliceSpacing)*sliceToRAS->GetElement(0,2);
-  sa += (d - this->ActiveSlice*sliceSpacing)*sliceToRAS->GetElement(1,2);
-  ss += (d - this->ActiveSlice*sliceSpacing)*sliceToRAS->GetElement(2,2);
+  sr += (d - this->ActiveSlice * sliceSpacing) * sliceToRAS->GetElement(0, 2);
+  sa += (d - this->ActiveSlice * sliceSpacing) * sliceToRAS->GetElement(1, 2);
+  ss += (d - this->ActiveSlice * sliceSpacing) * sliceToRAS->GetElement(2, 2);
 
-  sliceToRAS->SetElement( 0, 3, sr );
-  sliceToRAS->SetElement( 1, 3, sa );
-  sliceToRAS->SetElement( 2, 3, ss );
+  sliceToRAS->SetElement(0, 3, sr);
+  sliceToRAS->SetElement(1, 3, sa);
+  sliceToRAS->SetElement(2, 3, ss);
   this->UpdateMatrices();
 }
 
@@ -1348,15 +1334,15 @@ void vtkMRMLSliceNode::JumpSliceByOffsetting(int k, double r, double a, double s
   // ras. If there are not k slices, then jump the first slice to the
   // specified ras
 
-  if (!(k >=0 && k < this->LayoutGridColumns * this->LayoutGridRows))
+  if (!(k >= 0 && k < this->LayoutGridColumns * this->LayoutGridRows))
   {
     k = 0;
   }
 
-  //int oldActiveSlice = this->ActiveSlice;
+  // int oldActiveSlice = this->ActiveSlice;
   this->ActiveSlice = k;
   this->JumpSliceByOffsetting(r, a, s);
-  //this->ActiveSlice = oldActiveSlice;
+  // this->ActiveSlice = oldActiveSlice;
 }
 
 //----------------------------------------------------------------------------
@@ -1366,8 +1352,13 @@ void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene, double r, double a, double s,
-  int jumpMode /* =vtkMRMLSliceNode::DefaultJumpSlice */, int viewGroup /* =-1 */, vtkMRMLSliceNode* exclude /*=nullptr*/)
+void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene,
+                                     double r,
+                                     double a,
+                                     double s,
+                                     int jumpMode /* =vtkMRMLSliceNode::DefaultJumpSlice */,
+                                     int viewGroup /* =-1 */,
+                                     vtkMRMLSliceNode* exclude /*=nullptr*/)
 {
   if (!scene)
   {
@@ -1375,10 +1366,9 @@ void vtkMRMLSliceNode::JumpAllSlices(vtkMRMLScene* scene, double r, double a, do
   }
 
   int nnodes = scene->GetNumberOfNodesByClass("vtkMRMLSliceNode");
-  for (int n = 0; n<nnodes; n++)
+  for (int n = 0; n < nnodes; n++)
   {
-    vtkMRMLSliceNode* node = vtkMRMLSliceNode::SafeDownCast(
-      scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
+    vtkMRMLSliceNode* node = vtkMRMLSliceNode::SafeDownCast(scene->GetNthNodeByClass(n, "vtkMRMLSliceNode"));
     if (node == nullptr || node == exclude)
     {
       continue;
@@ -1469,7 +1459,7 @@ void vtkMRMLSliceNode::SetDimensions(int x, int y, int z)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetUVWExtents (double x, double y, double z)
+void vtkMRMLSliceNode::SetUVWExtents(double x, double y, double z)
 {
   if (x != this->UVWExtents[0] || //
       y != this->UVWExtents[1] || //
@@ -1483,7 +1473,7 @@ void vtkMRMLSliceNode::SetUVWExtents (double x, double y, double z)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetUVWExtents (double xyz[3])
+void vtkMRMLSliceNode::SetUVWExtents(double xyz[3])
 {
   this->SetUVWExtents(xyz[0], xyz[1], xyz[2]);
 }
@@ -1496,7 +1486,7 @@ void vtkMRMLSliceNode::SetSliceResolutionMode(int mode)
     this->SliceResolutionMode = mode;
     if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatchVolumes)
     {
-      this->SetUVWOrigin(0,0,0);
+      this->SetUVWOrigin(0, 0, 0);
     }
     else if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatch2DView ||             //
              this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes || //
@@ -1512,19 +1502,19 @@ void vtkMRMLSliceNode::SetSliceResolutionMode(int mode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetUVWDimensions (int xyz[3])
+void vtkMRMLSliceNode::SetUVWDimensions(int xyz[3])
 {
   this->SetUVWDimensions(xyz[0], xyz[1], xyz[2]);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetUVWMaximumDimensions (int xyz[3])
+void vtkMRMLSliceNode::SetUVWMaximumDimensions(int xyz[3])
 {
   this->SetUVWMaximumDimensions(xyz[0], xyz[1], xyz[2]);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetUVWOrigin (double xyz[3])
+void vtkMRMLSliceNode::SetUVWOrigin(double xyz[3])
 {
   this->SetUVWOrigin(xyz[0], xyz[1], xyz[2]);
 }
@@ -1579,9 +1569,9 @@ void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
 
   if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatchVolumes)
   {
-    u=0;
-    v=0;
-    w=0;
+    u = 0;
+    v = 0;
+    w = 0;
   }
   if (this->SliceResolutionMode != vtkMRMLSliceNode::SliceResolutionMatch2DView && //
       this->SliceResolutionMode != vtkMRMLSliceNode::SliceResolutionCustom)
@@ -1615,11 +1605,11 @@ void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::SetSliceOrigin(double xyz[3])
 {
-  this->SetSliceOrigin(xyz[0],xyz[1],xyz[2]);
+  this->SetSliceOrigin(xyz[0], xyz[1], xyz[2]);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimensions[3])
+void vtkMRMLSliceNode::SetUVWExtentsAndDimensions(double extents[3], int dimensions[3])
 {
   bool modified = false;
 
@@ -1697,20 +1687,20 @@ void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
   {
     // Calculate the scaling and "scaling magnitudes"
     double scaling[3];
-    scaling[0] = this->LayoutGridColumns/(double) columns;
-    scaling[1] = this->LayoutGridRows / (double) rows;
+    scaling[0] = this->LayoutGridColumns / (double)columns;
+    scaling[1] = this->LayoutGridRows / (double)rows;
     scaling[2] = 1.0; // ???
 
     double scaleMagnitude[3];
-    scaleMagnitude[0] = (scaling[0] < 1.0 ? 1.0/scaling[0] : scaling[0]);
-    scaleMagnitude[1] = (scaling[1] < 1.0 ? 1.0/scaling[1] : scaling[1]);
+    scaleMagnitude[0] = (scaling[0] < 1.0 ? 1.0 / scaling[0] : scaling[0]);
+    scaleMagnitude[1] = (scaling[1] < 1.0 ? 1.0 / scaling[1] : scaling[1]);
     scaleMagnitude[2] = 1.0;
 
     // A change in the LightBox layout changes the dimensions of the
     // slice and the FieldOfView in Z
-    this->Dimensions[0] = int( this->Dimensions[0] * scaling[0] );
-    this->Dimensions[1] = int( this->Dimensions[1] * scaling[1] );
-    this->Dimensions[2] = rows*columns;
+    this->Dimensions[0] = int(this->Dimensions[0] * scaling[0]);
+    this->Dimensions[1] = int(this->Dimensions[1] * scaling[1]);
+    this->Dimensions[2] = rows * columns;
 
     // adjust the field of view in x and y to maintain aspect ratio
     if (scaleMagnitude[0] < scaleMagnitude[1])
@@ -1725,9 +1715,7 @@ void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
     }
 
     // keep the same pixel spacing in z, i.e. update FieldOfView[2]
-    this->FieldOfView[2]
-      *= (rows*columns
-          / (double)(this->LayoutGridRows*this->LayoutGridColumns));
+    this->FieldOfView[2] *= (rows * columns / (double)(this->LayoutGridRows * this->LayoutGridColumns));
 
     // cache the layout
     this->LayoutGridRows = rows;
@@ -1735,9 +1723,9 @@ void vtkMRMLSliceNode::SetLayoutGrid(int rows, int columns)
 
     // if the active slice is not on the lightbox, then reset active
     // slice to the last slice in the lightbox
-    if (this->ActiveSlice >= this->LayoutGridRows*this->LayoutGridColumns)
+    if (this->ActiveSlice >= this->LayoutGridRows * this->LayoutGridColumns)
     {
-      this->ActiveSlice = this->LayoutGridRows*this->LayoutGridColumns - 1;
+      this->ActiveSlice = this->LayoutGridRows * this->LayoutGridColumns - 1;
     }
 
     this->UpdateMatrices();
@@ -1755,12 +1743,12 @@ void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
   {
     // Calculate the scaling
     double scaling;
-    scaling = this->LayoutGridRows / (double) rows;
+    scaling = this->LayoutGridRows / (double)rows;
 
     // A change in the LightBox layout changes the dimensions of the
     // slice and the FieldOfView in Z
-    this->Dimensions[1] = int( this->Dimensions[1] * scaling );
-    this->Dimensions[2] = rows*this->LayoutGridColumns;
+    this->Dimensions[1] = int(this->Dimensions[1] * scaling);
+    this->Dimensions[2] = rows * this->LayoutGridColumns;
 
     // adjust the field of view in x to maintain aspect ratio
     this->FieldOfView[0] /= scaling;
@@ -1773,9 +1761,9 @@ void vtkMRMLSliceNode::SetLayoutGridRows(int rows)
 
     // if the active slice is not on the lightbox, then reset active
     // slice to the last slice in the lightbox
-    if (this->ActiveSlice >= this->LayoutGridRows*this->LayoutGridColumns)
+    if (this->ActiveSlice >= this->LayoutGridRows * this->LayoutGridColumns)
     {
-      this->ActiveSlice = this->LayoutGridRows*this->LayoutGridColumns - 1;
+      this->ActiveSlice = this->LayoutGridRows * this->LayoutGridColumns - 1;
     }
 
     this->UpdateMatrices();
@@ -1793,13 +1781,12 @@ void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
   {
     // Calculate the scaling
     double scaling;
-    scaling = this->LayoutGridColumns / (double) cols;
+    scaling = this->LayoutGridColumns / (double)cols;
 
     // A change in the LightBox layout changes the dimensions of the
     // slice and the FieldOfView in Z
-    this->Dimensions[0] = int( this->Dimensions[0]
-                               * (this->LayoutGridColumns / (double) cols));
-    this->Dimensions[2] = this->LayoutGridRows*cols;
+    this->Dimensions[0] = int(this->Dimensions[0] * (this->LayoutGridColumns / (double)cols));
+    this->Dimensions[2] = this->LayoutGridRows * cols;
 
     // adjust the field of view in y to maintain aspect ratio
     this->FieldOfView[1] /= scaling;
@@ -1812,9 +1799,9 @@ void vtkMRMLSliceNode::SetLayoutGridColumns(int cols)
 
     // if the active slice is not on the lightbox, then reset active
     // slice to the last slice in the lightbox
-    if (this->ActiveSlice >= this->LayoutGridRows*this->LayoutGridColumns)
+    if (this->ActiveSlice >= this->LayoutGridRows * this->LayoutGridColumns)
     {
-      this->ActiveSlice = this->LayoutGridRows*this->LayoutGridColumns - 1;
+      this->ActiveSlice = this->LayoutGridRows * this->LayoutGridColumns - 1;
     }
 
     this->UpdateMatrices();
@@ -1856,22 +1843,22 @@ double vtkMRMLSliceNode::GetSliceOffset()
   //
 
   vtkNew<vtkMatrix4x4> sliceToRAS;
-  sliceToRAS->DeepCopy( this->GetSliceToRAS() );
+  sliceToRAS->DeepCopy(this->GetSliceToRAS());
   for (int i = 0; i < 3; i++)
   {
-    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the translation portion
+    sliceToRAS->SetElement(i, 3, 0.0); // Zero out the translation portion
   }
   sliceToRAS->Invert();
   double v1[4], v2[4];
   for (int i = 0; i < 4; i++)
   { // get the translation back as a vector
-    v1[i] = this->GetSliceToRAS()->GetElement( i, 3 );
+    v1[i] = this->GetSliceToRAS()->GetElement(i, 3);
   }
   // bring the translation into slice space
   // and overwrite the z part
   sliceToRAS->MultiplyPoint(v1, v2);
 
-  return ( v2[2] );
+  return (v2[2]);
 }
 
 //----------------------------------------------------------------------------
@@ -1892,10 +1879,10 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
   }
 
   vtkNew<vtkMatrix4x4> sliceToRAS;
-  sliceToRAS->DeepCopy( this->GetSliceToRAS() );
+  sliceToRAS->DeepCopy(this->GetSliceToRAS());
   for (int i = 0; i < 3; i++)
   {
-    sliceToRAS->SetElement( i, 3, 0.0 );  // Zero out the translation portion
+    sliceToRAS->SetElement(i, 3, 0.0); // Zero out the translation portion
   }
   vtkNew<vtkMatrix4x4> sliceToRASInverted; // inverse sliceToRAS
   sliceToRASInverted->DeepCopy(sliceToRAS.GetPointer());
@@ -1903,7 +1890,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
   double v1[4], v2[4], v3[4];
   for (int i = 0; i < 4; i++)
   { // get the translation back as a vector
-    v1[i] = this->GetSliceToRAS()->GetElement( i, 3 );
+    v1[i] = this->GetSliceToRAS()->GetElement(i, 3);
   }
   // bring the translation into slice space
   // and overwrite the z part
@@ -1923,7 +1910,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
     // copy new translation into sliceToRAS
     for (int i = 0; i < 4; i++)
     {
-      sliceToRAS->SetElement( i, 3, v3[i] );
+      sliceToRAS->SetElement(i, 3, v3[i]);
     }
     this->GetSliceToRAS()->DeepCopy(sliceToRAS.GetPointer());
     this->UpdateMatrices();
@@ -1931,7 +1918,7 @@ void vtkMRMLSliceNode::SetSliceOffset(double offset)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool forceSlicePlaneToSingleSlice/*=true*/)
+void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool forceSlicePlaneToSingleSlice /*=true*/)
 {
   if (volumeNode == nullptr)
   {
@@ -1942,18 +1929,18 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode* volumeNode, bool f
   volumeNode->GetIJKToRASMatrix(ijkToRAS.GetPointer());
 
   // apply the transform
-  vtkMRMLTransformNode* transformNode  = volumeNode->GetParentTransformNode();
+  vtkMRMLTransformNode* transformNode = volumeNode->GetParentTransformNode();
   if (transformNode != nullptr)
   {
     if (transformNode->IsTransformToWorldLinear())
     {
       vtkNew<vtkMatrix4x4> rasToRAS;
       transformNode->GetMatrixTransformToWorld(rasToRAS.GetPointer());
-      rasToRAS->Multiply4x4( rasToRAS.GetPointer(), ijkToRAS.GetPointer(), ijkToRAS.GetPointer());
+      rasToRAS->Multiply4x4(rasToRAS.GetPointer(), ijkToRAS.GetPointer(), ijkToRAS.GetPointer());
     }
     else
     {
-      vtkErrorMacro( "Cannot handle non-linear transforms" );
+      vtkErrorMacro("Cannot handle non-linear transforms");
     }
   }
 
@@ -2034,7 +2021,7 @@ void vtkMRMLSliceNode::RotateToAxes(vtkMatrix4x4* referenceToRAS, int sliceNorma
 
       // Comparison metric is sum of angle between x, y, z axis
       double zAxisAngleDiff = fabs(vtkMath::AngleBetweenVectors(sliceZAxisVolumeAxisDirection, sliceZAxisDirection));
-      if (zAxisAngleDiff > vtkMath::Pi()/2.0)
+      if (zAxisAngleDiff > vtkMath::Pi() / 2.0)
       {
         // we ignore z axis flip (we will compute final z direction from on x and y axes and sliceToRasRightHanded)
         zAxisAngleDiff = vtkMath::Pi() - zAxisAngleDiff;
@@ -2092,9 +2079,7 @@ const char* vtkMRMLSliceNode::GetSlabReconstructionTypeAsString(int slabReconstr
     case VTK_IMAGE_SLAB_MIN: return "Min";
     case VTK_IMAGE_SLAB_MEAN: return "Mean";
     case VTK_IMAGE_SLAB_SUM: return "Sum";
-    default:
-      vtkGenericWarningMacro("Unknown reconstruction type: " << slabReconstructionType);
-      return "";
+    default: vtkGenericWarningMacro("Unknown reconstruction type: " << slabReconstructionType); return "";
   }
 }
 

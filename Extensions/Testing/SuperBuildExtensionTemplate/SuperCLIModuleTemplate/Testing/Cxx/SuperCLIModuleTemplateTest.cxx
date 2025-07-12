@@ -1,9 +1,9 @@
 #if defined(_MSC_VER)
-#pragma warning ( disable : 4786 )
+# pragma warning(disable : 4786)
 #endif
 
 #ifdef __BORLANDC__
-#define ITK_LEAN_AND_MEAN
+# define ITK_LEAN_AND_MEAN
 #endif
 
 #include "itkTestMain.h"
@@ -17,7 +17,7 @@
 # define MODULE_IMPORT
 #endif
 
-extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char* []);
+extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char*[]);
 
 void RegisterTests()
 {

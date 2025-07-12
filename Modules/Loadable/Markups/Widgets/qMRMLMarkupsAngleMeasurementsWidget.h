@@ -32,8 +32,7 @@ class qMRMLMarkupsAngleMeasurementsWidgetPrivate;
 class vtkMRMLMarkupsNode;
 
 // ------------------------------------------------------------------------------
-class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsAngleMeasurementsWidget
-  : public qMRMLMarkupsAbstractOptionsWidget
+class Q_SLICER_MODULE_MARKUPS_WIDGETS_EXPORT qMRMLMarkupsAngleMeasurementsWidget : public qMRMLMarkupsAbstractOptionsWidget
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -53,8 +52,7 @@ public:
   void setMRMLMarkupsNode(vtkMRMLMarkupsNode* node) override;
 
   /// Returns an instance of the widget
-  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override
-  { return new qMRMLMarkupsAngleMeasurementsWidget(); }
+  qMRMLMarkupsAbstractOptionsWidget* createInstance() const override { return new qMRMLMarkupsAngleMeasurementsWidget(); }
 
 public slots:
   /// Change angle mode of current angle markup if combobox selection is made.

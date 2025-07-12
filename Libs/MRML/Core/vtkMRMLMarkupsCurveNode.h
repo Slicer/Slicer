@@ -93,9 +93,9 @@ public:
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  const char* GetIcon() override {return ":/Icons/MarkupsOpenCurve.png";}
-  const char* GetAddIcon() override {return ":/Icons/MarkupsCurveMouseModePlace.png";}
-  const char* GetPlaceAddIcon() override {return ":/Icons/MarkupsCurveMouseModePlaceAdd.png";}
+  const char* GetIcon() override { return ":/Icons/MarkupsOpenCurve.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsCurveMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsCurveMouseModePlaceAdd.png"; }
 
   //--------------------------------------------------------------------------
   // MRMLNode methods
@@ -103,13 +103,13 @@ public:
 
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
-  const char* GetNodeTagName() override {return "MarkupsCurve";}
+  const char* GetNodeTagName() override { return "MarkupsCurve"; }
 
   /// Get markup type internal name
-  const char* GetMarkupType() override {return "Curve";};
+  const char* GetMarkupType() override { return "Curve"; };
 
   /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
+  void ReadXMLAttributes(const char** atts) override;
 
   /// Write this node's information to a MRML file in XML format.
   void WriteXML(ostream& of, int indent) override;
@@ -130,11 +130,11 @@ public:
   /// \param numberOfCurvePoints if specified then distances up to the first n points are computed.
   ///   If <0 then all the points are used.
   /// \return sum of distances between the curve points, returns 0 in case of an error
-  double GetCurveLengthWorld(vtkIdType startCurvePointIndex = 0, vtkIdType numberOfCurvePoints=-1);
+  double GetCurveLengthWorld(vtkIdType startCurvePointIndex = 0, vtkIdType numberOfCurvePoints = -1);
 
   /// Utility function to get curve length from a point list.
   /// \sa GetCurveLengthWorld
-  static double GetCurveLength(vtkPoints* curvePoints, bool closedCurve, vtkIdType startCurvePointIndex = 0, vtkIdType numberOfCurvePoints=-1);
+  static double GetCurveLength(vtkPoints* curvePoints, bool closedCurve, vtkIdType startCurvePointIndex = 0, vtkIdType numberOfCurvePoints = -1);
 
   /// Get length of a section of the curve between startPointIndex and endPointIndex.
   /// If endPointIndex < startPointIndex then length outside of the section is computed.
@@ -153,8 +153,11 @@ public:
   /// returns true if successful, false in case of error
   ///
   /// \sa vtkProjectMarkupsCurvePointsFilter::ConstrainPointsToSurface
-  static bool ConstrainPointsToSurface(vtkPoints* originalPoints, vtkPoints* normalVectors, vtkPolyData* surfacePolydata,
-    vtkPoints* surfacePoints, double maximumSearchRadius=.25);
+  static bool ConstrainPointsToSurface(vtkPoints* originalPoints,
+                                       vtkPoints* normalVectors,
+                                       vtkPolyData* surfacePolydata,
+                                       vtkPoints* surfacePoints,
+                                       double maximumSearchRadius = .25);
 
   /// Resample control points to have equal distances in the world coordinate system.
   void ResampleCurveWorld(double controlPointDistance);
@@ -163,17 +166,14 @@ public:
   // If pedigreeIdsArray is specified then the method returns the fractional point index of the original point for each new point.
   // Fractional point index is a value between the point indices of the two original points it was between, the fractional part
   // specifies the distance from those two points. It can be used for interpolating point data.
-  static bool ResamplePoints(vtkPoints* originalPoints, vtkPoints* interpolatedPoints,
-    double samplingDistance, bool closedCurve, vtkDoubleArray* pedigreeIdsArray = nullptr);
+  static bool ResamplePoints(vtkPoints* originalPoints, vtkPoints* interpolatedPoints, double samplingDistance, bool closedCurve, vtkDoubleArray* pedigreeIdsArray = nullptr);
 
   /// Resample static control point measurements using linear interpolation, based on fractional pedigreeIds.
-  static bool ResampleStaticControlPointMeasurements(vtkCollection* measurements, vtkDoubleArray* curvePointsPedigreeIdsArray,
-    int curvePointsPerControlPoint, bool closedCurve);
+  static bool ResampleStaticControlPointMeasurements(vtkCollection* measurements, vtkDoubleArray* curvePointsPedigreeIdsArray, int curvePointsPerControlPoint, bool closedCurve);
 
   /// Samples points along the curve at equal distances.
   /// If endPointIndex < startPointIndex then after the last point, the curve is assumed to continue at the first point.
-  bool GetSampledCurvePointsBetweenStartEndPointsWorld(vtkPoints* sampledPoints,
-    double samplingDistance, vtkIdType startCurvePointIndex, vtkIdType endCurvePointIndex);
+  bool GetSampledCurvePointsBetweenStartEndPointsWorld(vtkPoints* sampledPoints, double samplingDistance, vtkIdType startCurvePointIndex, vtkIdType endCurvePointIndex);
 
   /// Get the index of the closest curve point to the world coordinates
   vtkIdType GetClosestCurvePointIndexToPositionWorld(const double posWorld[3]);
@@ -211,8 +211,12 @@ public:
   vtkIdType GetCurvePointIndexFromControlPointIndex(int controlPointIndex);
 
   /// Get point position along curve. Position is found along the curve and not snapped to closest curve point.
-  static bool GetPositionAndClosestPointIndexAlongCurve(double foundCurvePosition[3], vtkIdType& foundClosestPointIndex,
-    vtkIdType startCurvePointId, double distanceFromStartPoint, vtkPoints* curvePoints, bool closedCurve);
+  static bool GetPositionAndClosestPointIndexAlongCurve(double foundCurvePosition[3],
+                                                        vtkIdType& foundClosestPointIndex,
+                                                        vtkIdType startCurvePointId,
+                                                        double distanceFromStartPoint,
+                                                        vtkPoints* curvePoints,
+                                                        bool closedCurve);
 
   /// Get position of a curve point along the curve relative to the specified start point index in world coordinate system.
   /// \param startCurvePointId index of the curve point to start the distance measurement from

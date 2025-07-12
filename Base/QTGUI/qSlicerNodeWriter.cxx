@@ -107,15 +107,13 @@ bool qSlicerNodeWriter::canWriteObject(vtkObject* object) const
 QStringList qSlicerNodeWriter::extensions(vtkObject* object) const
 {
   QStringList supportedExtensions;
-  vtkMRMLStorageNode* snode =
-      qSlicerCoreIOManager::createAndAddDefaultStorageNode(vtkMRMLStorableNode::SafeDownCast(object));
+  vtkMRMLStorageNode* snode = qSlicerCoreIOManager::createAndAddDefaultStorageNode(vtkMRMLStorableNode::SafeDownCast(object));
   if (snode)
   {
     const int formatCount = snode->GetSupportedWriteFileTypes()->GetNumberOfValues();
     for (int formatIt = 0; formatIt < formatCount; ++formatIt)
     {
-      std::string format =
-        snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
+      std::string format = snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
       supportedExtensions << QString::fromStdString(format);
     }
   }
@@ -129,8 +127,7 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 
   Q_ASSERT(!properties["nodeID"].toString().isEmpty());
 
-  vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(
-    this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
+  vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(this->getNodeByID(properties["nodeID"].toString().toUtf8().data()));
   if (this->canWriteObjectConfidence(node) <= 0.0)
   {
     return false;

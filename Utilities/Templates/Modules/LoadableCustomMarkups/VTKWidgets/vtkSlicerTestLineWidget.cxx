@@ -34,18 +34,13 @@
 vtkStandardNewMacro(vtkSlicerTestLineWidget);
 
 //------------------------------------------------------------------------------
-vtkSlicerTestLineWidget::vtkSlicerTestLineWidget()
-{
-
-}
+vtkSlicerTestLineWidget::vtkSlicerTestLineWidget() {}
 
 //------------------------------------------------------------------------------
 vtkSlicerTestLineWidget::~vtkSlicerTestLineWidget() = default;
 
 //------------------------------------------------------------------------------
-void vtkSlicerTestLineWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode,
-                                                          vtkMRMLAbstractViewNode* viewNode,
-                                                          vtkRenderer* renderer)
+void vtkSlicerTestLineWidget::CreateDefaultRepresentation(vtkMRMLMarkupsDisplayNode* markupsDisplayNode, vtkMRMLAbstractViewNode* viewNode, vtkRenderer* renderer)
 {
   vtkSmartPointer<vtkSlicerMarkupsWidgetRepresentation> rep = nullptr;
   if (vtkMRMLSliceNode::SafeDownCast(viewNode))

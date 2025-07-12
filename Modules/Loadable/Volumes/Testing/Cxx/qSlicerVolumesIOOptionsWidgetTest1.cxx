@@ -70,8 +70,7 @@ int qSlicerVolumesIOOptionsWidgetTest1(int argc, char* argv[])
   qDebug() << __LINE__ << ": Label map: color id: " << colorID;
   if (colorID != defaultLabelColor)
   {
-    std::cerr << __LINE__ << ": wrong color id set for a label map, expected "
-              << defaultLabelColor.toStdString() << std::endl;
+    std::cerr << __LINE__ << ": wrong color id set for a label map, expected " << defaultLabelColor.toStdString() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -85,8 +84,7 @@ int qSlicerVolumesIOOptionsWidgetTest1(int argc, char* argv[])
   qDebug() << __LINE__ << ": Label map: color id: " << colorID;
   if (colorID != defaultLabelColor)
   {
-    std::cerr << __LINE__ << ": wrong color id set for a label map, expected "
-              << defaultLabelColor.toStdString() << std::endl;
+    std::cerr << __LINE__ << ": wrong color id set for a label map, expected " << defaultLabelColor.toStdString() << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -100,11 +98,9 @@ int qSlicerVolumesIOOptionsWidgetTest1(int argc, char* argv[])
   qDebug() << __LINE__ << ": Greyscale: color id: " << colorID;
   if (colorID != defaultGreyColor)
   {
-    std::cerr << __LINE__ << ": wrong color id set for a grey scale, expected "
-              << defaultGreyColor.toStdString() << std::endl;
+    std::cerr << __LINE__ << ": wrong color id set for a grey scale, expected " << defaultGreyColor.toStdString() << std::endl;
     return EXIT_FAILURE;
   }
-
 
   optionsWidget.show();
 

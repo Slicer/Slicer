@@ -22,7 +22,7 @@
  *
  * The vtkSlicerCurveWidget is used to create a curve widget with a set of N points.
  *
-*/
+ */
 
 #ifndef vtkSlicerCurveWidget_h
 #define vtkSlicerCurveWidget_h

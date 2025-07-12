@@ -31,8 +31,7 @@ void vtkMRMLAbstractVolumeResampler::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-std::string vtkMRMLAbstractVolumeResampler::GetParameterValue(
-    const ResamplingParameters& parameters, const std::string& name)
+std::string vtkMRMLAbstractVolumeResampler::GetParameterValue(const ResamplingParameters& parameters, const std::string& name)
 {
   ResamplingParameters::const_iterator parameterIt = parameters.find(name);
   if (parameterIt != parameters.end())
@@ -43,16 +42,14 @@ std::string vtkMRMLAbstractVolumeResampler::GetParameterValue(
 }
 
 //----------------------------------------------------------------------------
-double vtkMRMLAbstractVolumeResampler::GetParameterValueAsDouble(
-    const ResamplingParameters& parameters, const std::string& name)
+double vtkMRMLAbstractVolumeResampler::GetParameterValueAsDouble(const ResamplingParameters& parameters, const std::string& name)
 {
   double value = vtkVariant(vtkMRMLAbstractVolumeResampler::GetParameterValue(parameters, name)).ToDouble();
   return value;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAbstractVolumeResampler::GetParameterValueAsInt(
-    const ResamplingParameters& parameters, const std::string& name)
+int vtkMRMLAbstractVolumeResampler::GetParameterValueAsInt(const ResamplingParameters& parameters, const std::string& name)
 {
   int value = vtkVariant(vtkMRMLAbstractVolumeResampler::GetParameterValue(parameters, name)).ToInt();
   return value;

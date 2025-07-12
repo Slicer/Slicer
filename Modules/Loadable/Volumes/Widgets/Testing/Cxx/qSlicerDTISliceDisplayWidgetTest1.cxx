@@ -45,11 +45,9 @@ int qSlicerDTISliceDisplayWidgetTest1(int argc, char* argv[])
   qMRMLWidget::postInitializeApplication();
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> propertiesNode =
-    vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New();
+  vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> propertiesNode = vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New();
   scene->AddNode(propertiesNode);
-  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> displayNode =
-    vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode>::New();
+  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode> displayNode = vtkSmartPointer<vtkMRMLDiffusionTensorVolumeSliceDisplayNode>::New();
   displayNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(propertiesNode->GetID());
   scene->AddNode(displayNode);
 
@@ -57,9 +55,7 @@ int qSlicerDTISliceDisplayWidgetTest1(int argc, char* argv[])
   widget.setMRMLScene(scene);
   widget.setMRMLDTISliceDisplayNode(displayNode);
 
-  for (int i = 0;
-       i < vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNumberOfScalarInvariants();
-       ++i)
+  for (int i = 0; i < vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNumberOfScalarInvariants(); ++i)
   {
     widget.setColorGlyphBy(vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNthScalarInvariant(i));
   }

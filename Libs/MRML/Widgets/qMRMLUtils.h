@@ -39,11 +39,12 @@ class vtkMatrix4x4;
 class vtkMRMLScene;
 class vtkImageData;
 
-#define compare_double(x, y) (((x-y)<0.000001) && ((x-y)>-0.000001))
+#define compare_double(x, y) (((x - y) < 0.000001) && ((x - y) > -0.000001))
 
 class QMRML_WIDGETS_EXPORT qMRMLUtils : public QObject
 {
   Q_OBJECT;
+
 public:
   typedef qMRMLUtils Self;
   qMRMLUtils(QObject* parent = nullptr);
@@ -51,13 +52,11 @@ public:
 
   ///
   /// Convert a vtkMatrix to a QVector
-  Q_INVOKABLE static void vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector);
+  Q_INVOKABLE static void vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double>& vector);
 
   ///
-  Q_INVOKABLE static void getTransformInCoordinateSystem(vtkMRMLNode* transformNode, bool global,
-    vtkTransform* transform);
-  Q_INVOKABLE static void getTransformInCoordinateSystem(vtkMRMLTransformNode* transformNode,
-    bool global, vtkTransform* transform);
+  Q_INVOKABLE static void getTransformInCoordinateSystem(vtkMRMLNode* transformNode, bool global, vtkTransform* transform);
+  Q_INVOKABLE static void getTransformInCoordinateSystem(vtkMRMLTransformNode* transformNode, bool global, vtkTransform* transform);
 
   /// Retrieve the number of visible view node associated with \a scene
   Q_INVOKABLE static int countVisibleViewNode(vtkMRMLScene* scene);
@@ -81,7 +80,6 @@ public:
 
 private:
   Q_DISABLE_COPY(qMRMLUtils);
-
 };
 
 #endif

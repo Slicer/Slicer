@@ -25,7 +25,8 @@
 #include "qSlicerMarkupsModuleWidgetsAbstractPlugin.h"
 
 class Q_SLICER_MODULE_MARKUPS_WIDGETS_PLUGINS_EXPORT qMRMLMarkupsROIWidgetPlugin
-    : public QObject, public qSlicerMarkupsModuleWidgetsAbstractPlugin
+  : public QObject
+  , public qSlicerMarkupsModuleWidgetsAbstractPlugin
 {
   Q_OBJECT
 
@@ -37,7 +38,6 @@ public:
   QString includeFile() const override;
   bool isContainer() const override;
   QString name() const override;
-
 };
 
 #endif

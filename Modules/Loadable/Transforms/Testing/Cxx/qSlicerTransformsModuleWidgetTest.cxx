@@ -69,11 +69,10 @@ void qSlicerTransformsModuleWidgetTester::testIdentity()
   qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
 
   qSlicerTransformsModule transformsModule;
-  transformsModule.initialize(qSlicerApplication::application()->applicationLogic());  // register qSlicerSubjectHierarchyTransformsPlugin
+  transformsModule.initialize(qSlicerApplication::application()->applicationLogic()); // register qSlicerSubjectHierarchyTransformsPlugin
   transformsModule.setMRMLScene(scene.GetPointer());
   transformsModule.logic();
-  qSlicerTransformsModuleWidget* transformsWidget =
-    dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
+  qSlicerTransformsModuleWidget* transformsWidget = dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
 
   vtkNew<vtkMRMLTransformNode> transformNode;
   scene->AddNode(transformNode.GetPointer());
@@ -82,15 +81,15 @@ void qSlicerTransformsModuleWidgetTester::testIdentity()
 
   vtkNew<vtkMatrix4x4> matrix;
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
-  matrix->SetElement(0,0, 10.);
-  matrix->SetElement(1,0, 2.);
+  matrix->SetElement(0, 0, 10.);
+  matrix->SetElement(1, 0, 2.);
   transformNode->SetMatrixTransformToParent(matrix.GetPointer());
   transformsWidget->identity();
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
-  QCOMPARE(matrix->GetElement(0,0), 1.);
-  QCOMPARE(matrix->GetElement(1,0), 0.);
-  //transformsWidget->show();
-  //qApp->exec();
+  QCOMPARE(matrix->GetElement(0, 0), 1.);
+  QCOMPARE(matrix->GetElement(1, 0), 0.);
+  // transformsWidget->show();
+  // qApp->exec();
 }
 
 // ----------------------------------------------------------------------------
@@ -107,11 +106,10 @@ void qSlicerTransformsModuleWidgetTester::testInvert()
   qSlicerSubjectHierarchyPluginHandler::instance()->setMRMLScene(scene);
 
   qSlicerTransformsModule transformsModule;
-  transformsModule.initialize(qSlicerApplication::application()->applicationLogic());  // register qSlicerSubjectHierarchyTransformsPlugin
+  transformsModule.initialize(qSlicerApplication::application()->applicationLogic()); // register qSlicerSubjectHierarchyTransformsPlugin
   transformsModule.setMRMLScene(scene.GetPointer());
   transformsModule.logic();
-  qSlicerTransformsModuleWidget* transformsWidget =
-    dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
+  qSlicerTransformsModuleWidget* transformsWidget = dynamic_cast<qSlicerTransformsModuleWidget*>(transformsModule.widgetRepresentation());
 
   vtkNew<vtkMRMLTransformNode> transformNode;
   scene->AddNode(transformNode.GetPointer());
@@ -120,19 +118,19 @@ void qSlicerTransformsModuleWidgetTester::testInvert()
 
   vtkNew<vtkMatrix4x4> matrix;
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
-  matrix->SetElement(0,0, 10.);
-  matrix->SetElement(1,0, 2.);
+  matrix->SetElement(0, 0, 10.);
+  matrix->SetElement(1, 0, 2.);
   transformNode->SetMatrixTransformToParent(matrix.GetPointer());
   transformsWidget->invert();
   transformNode->GetMatrixTransformToParent(matrix.GetPointer());
-  QCOMPARE(matrix->GetElement(0,0), 0.1);
-  QCOMPARE(matrix->GetElement(1,0), -0.2);
-  //transformsWidget->show();
-  //qApp->exec();
+  QCOMPARE(matrix->GetElement(0, 0), 0.1);
+  QCOMPARE(matrix->GetElement(1, 0), -0.2);
+  // transformsWidget->show();
+  // qApp->exec();
 }
 
 // ----------------------------------------------------------------------------
-//CTK_TEST_MAIN(qSlicerTransformsModuleWidgetTest)
+// CTK_TEST_MAIN(qSlicerTransformsModuleWidgetTest)
 int qSlicerTransformsModuleWidgetTest(int argc, char* argv[])
 {
   qMRMLWidget::preInitializeApplication();

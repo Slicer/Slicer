@@ -48,7 +48,6 @@ public:
   ~qSlicerSubjectHierarchyViewContextMenuPlugin() override;
 
 public:
-
   /// Get view context menu item actions that are available when right-clicking an object in the views.
   /// These item context menu actions can be shown in the implementations of \sa showViewContextMenuActionsForItem
   QList<QAction*> viewContextMenuActions() const override;

@@ -40,7 +40,7 @@ namespace
 } // end of anonymous namespace
 
 /** Main command */
-int main(int argc, char * *argv)
+int main(int argc, char** argv)
 {
   PARSE_ARGS;
   std::cout << "Processed args." << std::endl;
@@ -62,33 +62,33 @@ int main(int argc, char * *argv)
       }
     }
 
-    typedef unsigned char                        InputPixelType;
-    typedef itk::Image<InputPixelType, 3>        InputImageType;
+    typedef unsigned char InputPixelType;
+    typedef itk::Image<InputPixelType, 3> InputImageType;
     typedef itk::ImageFileReader<InputImageType> ReaderType;
 
-    typedef unsigned char                         OutputPixelType;
-    typedef itk::Image<OutputPixelType, 3>        OutputImageType;
+    typedef unsigned char OutputPixelType;
+    typedef itk::Image<OutputPixelType, 3> OutputImageType;
     typedef itk::ImageFileWriter<OutputImageType> WriterType;
 
-    typedef OutputImageType::PointType            OutputPointType;
-    typedef OutputImageType::IndexType            OutputIndexType;
+    typedef OutputImageType::PointType OutputPointType;
+    typedef OutputImageType::IndexType OutputIndexType;
 
     ReaderType::Pointer Reader = ReaderType::New();
-    Reader->SetFileName(InputImageFileName.c_str() );
+    Reader->SetFileName(InputImageFileName.c_str());
     Reader->Update();
     InputImageType::Pointer inputImage = Reader->GetOutput();
 
     std::cout << "Read image." << std::endl;
 
     OutputImageType::Pointer outputImage = OutputImageType::New();
-    outputImage->SetRegions(Reader->GetOutput()->GetLargestPossibleRegion() );
-    outputImage->SetSpacing(Reader->GetOutput()->GetSpacing() );
-    outputImage->SetOrigin(Reader->GetOutput()->GetOrigin() );
-    outputImage->SetDirection(Reader->GetOutput()->GetDirection() );
+    outputImage->SetRegions(Reader->GetOutput()->GetLargestPossibleRegion());
+    outputImage->SetSpacing(Reader->GetOutput()->GetSpacing());
+    outputImage->SetOrigin(Reader->GetOutput()->GetOrigin());
+    outputImage->SetDirection(Reader->GetOutput()->GetDirection());
     outputImage->Allocate();
 
     itk::Size<3> itkSize = inputImage->GetLargestPossibleRegion().GetSize();
-    int          dim[3];
+    int dim[3];
     dim[0] = itkSize[0];
     dim[1] = itkSize[1];
     dim[2] = itkSize[2];
@@ -96,7 +96,7 @@ int main(int argc, char * *argv)
     InputPixelType* inputImageBuffer = inputImage->GetBufferPointer();
 
     OutputPixelType* outputImageBuffer = outputImage->GetBufferPointer();
-    memset(outputImageBuffer, 0, dim[0] * dim[1] * dim[2] * sizeof(OutputPixelType) );
+    memset(outputImageBuffer, 0, dim[0] * dim[1] * dim[2] * sizeof(OutputPixelType));
 
     std::cout << "Initialized output image." << std::endl;
 
@@ -105,8 +105,7 @@ int main(int argc, char * *argv)
     {
       extract2DSheet = 1;
     }
-    tilg_iso_3D(dim[0], dim[1], dim[2],
-                inputImageBuffer, outputImageBuffer, extract2DSheet);
+    tilg_iso_3D(dim[0], dim[1], dim[2], inputImageBuffer, outputImageBuffer, extract2DSheet);
     std::cout << "Extracted skeleton." << std::endl;
 
     SkelGraph graph;
@@ -129,8 +128,7 @@ int main(int argc, char * *argv)
 
     if (FullTree)
     {
-      memset(outputImageBuffer, 0,
-             dim[0] * dim[1] * dim[2] * sizeof(OutputPixelType) );
+      memset(outputImageBuffer, 0, dim[0] * dim[1] * dim[2] * sizeof(OutputPixelType));
     }
 
     OutputPointType position_LPS;
@@ -151,10 +149,7 @@ int main(int argc, char * *argv)
 
       if (writeSeedsFile)
       {
-        writeOutputFile << i
-          << " " << (*iter)[0]
-          << " " << (*iter)[1]
-          << " " << (*iter)[2] << std::endl;
+        writeOutputFile << i << " " << (*iter)[0] << " " << (*iter)[1] << " " << (*iter)[2] << std::endl;
       }
 
       outputImage->TransformIndexToPhysicalPoint(position_IJK, position_LPS);
@@ -187,7 +182,6 @@ int main(int argc, char * *argv)
       writer->Update();
       std::cout << "Wrote output image." << std::endl;
     }
-
   }
   catch (itk::ExceptionObject& excep)
   {
@@ -195,7 +189,6 @@ int main(int argc, char * *argv)
     std::cerr << argv[0] << " : Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
     return EXIT_FAILURE;
-
   }
 
   return EXIT_SUCCESS;

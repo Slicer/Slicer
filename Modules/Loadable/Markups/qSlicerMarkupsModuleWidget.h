@@ -36,13 +36,11 @@ class vtkMRMLMarkupsNode;
 class vtkMRMLNode;
 class vtkSlicerMarkupsLogic;
 
-class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_MARKUPS_EXPORT qSlicerMarkupsModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
-
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerMarkupsModuleWidget(QWidget* parent = nullptr);
   ~qSlicerMarkupsModuleWidget() override;
@@ -186,8 +184,7 @@ public slots:
   /// React to clicks in the table
   void onActiveMarkupTableCellClicked(QTableWidgetItem* item);
   /// React to arrows setting the current cell
-  void onActiveMarkupTableCurrentCellChanged(int currentRow, int currentColumn,
-                                             int previousRow, int previousColumn);
+  void onActiveMarkupTableCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
   /// Provide a right click menu in the table
   void onRightClickActiveMarkupTableWidget(QPoint pos);
   /// Add the coordinates of the currently selected markups as strings to the given menu, then add a separator
@@ -270,13 +267,15 @@ public slots:
   /// \deprecated Use onVisibilityOnAllControlPointsInListPushButtonClicked instead.
   void onVisibilityOnAllMarkupsInListPushButtonClicked()
   {
-    qWarning("qSlicerMarkupsModuleWidget::onVisibilityOnAllMarkupsInListPushButtonClicked method is deprecated, please use onVisibilityOnAllControlPointsInListPushButtonClicked instead");
+    qWarning(
+      "qSlicerMarkupsModuleWidget::onVisibilityOnAllMarkupsInListPushButtonClicked method is deprecated, please use onVisibilityOnAllControlPointsInListPushButtonClicked instead");
     this->onVisibilityOnAllControlPointsInListPushButtonClicked();
   };
   /// \deprecated Use onVisibilityOffAllControlPointsInListPushButtonClicked instead.
   void onVisibilityOffAllMarkupsInListPushButtonClicked()
   {
-    qWarning("qSlicerMarkupsModuleWidget::onVisibilityOffAllMarkupsInListPushButtonClicked method is deprecated, please use onVisibilityOffAllControlPointsInListPushButtonClicked instead");
+    qWarning("qSlicerMarkupsModuleWidget::onVisibilityOffAllMarkupsInListPushButtonClicked method is deprecated, please use onVisibilityOffAllControlPointsInListPushButtonClicked "
+             "instead");
     this->onVisibilityOffAllControlPointsInListPushButtonClicked();
   };
   /// \deprecated Use onVisibilityAllControlPointsInListToggled instead.

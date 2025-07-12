@@ -28,7 +28,6 @@ class vtkColor3d;
 class VTK_MRML_EXPORT vtkMRMLColors
 {
 public:
-
   static vtkColor3d sliceRed();
   static vtkColor3d sliceYellow();
   static vtkColor3d sliceGreen();

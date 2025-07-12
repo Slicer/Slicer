@@ -38,14 +38,13 @@
 qSlicerLoadableModuleFactoryItem::qSlicerLoadableModuleFactoryItem() = default;
 
 #ifdef Slicer_USE_PYTHONQT
-#include "qSlicerScriptedUtils_p.h" // For importModulePythonExtensions
+# include "qSlicerScriptedUtils_p.h" // For importModulePythonExtensions
 #endif
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
 {
-  qSlicerAbstractCoreModule* module =
-      ctkFactoryPluginItem<qSlicerAbstractCoreModule>::instanciator();
+  qSlicerAbstractCoreModule* module = ctkFactoryPluginItem<qSlicerAbstractCoreModule>::instanciator();
   module->setPath(this->path());
 
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
@@ -59,9 +58,7 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
   {
     // By convention, if the module is not embedded,
     // "<MODULEPATH>/Python" will be appended to PYTHONPATH
-    if (!qSlicerScriptedUtils::importModulePythonExtensions(
-          app->corePythonManager(), app->intDir(), this->path(),
-          app->isEmbeddedModule(this->path())))
+    if (!qSlicerScriptedUtils::importModulePythonExtensions(app->corePythonManager(), app->intDir(), this->path(), app->isEmbeddedModule(this->path())))
     {
       qWarning() << "qSlicerLoadableModuleFactory - Failed to instantiate module" << module->name() << "python extensions";
     }
@@ -120,9 +117,9 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
 
   QSettings* settings = app->revisionUserSettings();
   QStringList additionalModulePaths = app->toSlicerHomeAbsolutePaths(settings->value("Modules/AdditionalPaths").toStringList());
-  QStringList qtModulePaths =  additionalModulePaths + defaultQTModulePaths;
+  QStringList qtModulePaths = additionalModulePaths + defaultQTModulePaths;
 
-  //qDebug() << "qtModulePaths:" << qtModulePaths;
+  // qDebug() << "qtModulePaths:" << qtModulePaths;
 
   return qtModulePaths;
 }

@@ -25,7 +25,7 @@
  * for details.
  * @sa
  * vtkSlicerMarkupsWidgetRepresentation2D vtkMRMLAbstractWidget
-*/
+ */
 
 #ifndef vtkSlicerAngleRepresentation2D_h
 #define vtkSlicerAngleRepresentation2D_h
@@ -68,8 +68,7 @@ public:
   /// Return the bounds of the representation
   double* GetBounds() VTK_SIZEHINT(6) override;
 
-  void CanInteract(vtkMRMLInteractionEventData* interactionEventData,
-    int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
+  void CanInteract(vtkMRMLInteractionEventData* interactionEventData, int& foundComponentType, int& foundComponentIndex, double& closestDistance2) override;
 
   bool GetTransformationReferencePoint(double referencePointWorld[3]) override;
 
