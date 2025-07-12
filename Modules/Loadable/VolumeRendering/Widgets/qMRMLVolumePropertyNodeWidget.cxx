@@ -31,6 +31,9 @@
 #include <vtkVolumeProperty.h>
 #include <vtkWeakPointer.h>
 
+// Qt includes
+#include <QButtonGroup>
+
 //-----------------------------------------------------------------------------
 class qMRMLVolumePropertyNodeWidgetPrivate
   : public Ui_qMRMLVolumePropertyNodeWidget
@@ -47,6 +50,8 @@ public:
   virtual void setupUi();
 
   vtkWeakPointer<vtkMRMLVolumePropertyNode> VolumePropertyNode;
+  int ComponentCount{ 1 };
+  QButtonGroup* ComponentsButtonGroup;
 };
 
 // --------------------------------------------------------------------------
@@ -69,6 +74,14 @@ void qMRMLVolumePropertyNodeWidgetPrivate::setupUi()
                    q, SIGNAL(chartsExtentChanged()));
   QObject::connect(this->VolumePropertyWidget, SIGNAL(thresholdEnabledChanged(bool)),
                    q, SIGNAL(thresholdChanged(bool)));
+  QObject::connect(this->ComponentSpinBox, SIGNAL(valueChanged(int)),
+                   this->VolumePropertyWidget, SLOT(setCurrentComponent(int)));
+
+  this->ComponentsButtonGroup = new QButtonGroup(q);
+  this->ComponentsButtonGroup->addButton(this->RGBColorsRadioButton);
+  this->ComponentsButtonGroup->addButton(this->IndependentRadioButton);
+  QObject::connect(this->ComponentsButtonGroup, SIGNAL(buttonToggled(int, bool)),
+    q, SLOT(updateIndependentComponents()));
 }
 
 // --------------------------------------------------------------------------
@@ -121,6 +134,25 @@ void qMRMLVolumePropertyNodeWidget::updateFromVolumePropertyNode()
   qvtkReconnect(d->VolumePropertyWidget->volumeProperty(), newVolumeProperty,
                 vtkCommand::ModifiedEvent, this, SIGNAL(volumePropertyChanged()));
   d->VolumePropertyWidget->setVolumeProperty(newVolumeProperty);
+
+  bool independentComponents = newVolumeProperty ? newVolumeProperty->GetIndependentComponents() : false;
+
+  bool wasBlocking = d->ComponentsButtonGroup->blockSignals(true);
+  d->RGBColorsRadioButton->setChecked(!independentComponents);
+  d->IndependentRadioButton->setChecked(independentComponents);
+  d->ComponentsButtonGroup->blockSignals(wasBlocking);
+
+  d->RGBColorsRadioButton->setEnabled(d->ComponentCount == 3 || d->ComponentCount == 4);
+
+  bool independentComponentsVisible = newVolumeProperty && d->ComponentCount > 1;
+  d->IndependentComponentsLabel->setVisible(independentComponentsVisible);
+  d->RGBColorsRadioButton->setVisible(independentComponentsVisible);
+  d->IndependentRadioButton->setVisible(independentComponentsVisible);
+
+  d->ComponentLabel->setVisible(independentComponentsVisible);
+  d->ComponentSpinBox->setVisible(independentComponentsVisible);
+  d->ComponentLabel->setEnabled(independentComponents);
+  d->ComponentSpinBox->setEnabled(independentComponents);
 }
 
 // --------------------------------------------------------------------------
@@ -177,4 +209,48 @@ void qMRMLVolumePropertyNodeWidget::spreadAllPoints(double factor, bool dontSpre
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   return d->VolumePropertyWidget->spreadAllPoints(factor, dontSpreadFirstAndLast);
+}
+
+// --------------------------------------------------------------------------
+int qMRMLVolumePropertyNodeWidget::componentCount()const
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  return d->ComponentCount;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::setComponentCount(int componentCount)
+{
+  Q_D(qMRMLVolumePropertyNodeWidget);
+
+  // Limit the component count to the max range for volume rendering in VTK
+  d->ComponentCount = std::clamp(componentCount, 0, VTK_MAX_VRCOMP);
+  d->ComponentSpinBox->setRange(0, d->ComponentCount - 1);
+
+  int currentComponent = d->VolumePropertyWidget->currentComponent();
+  currentComponent = std::clamp(currentComponent, 0, d->ComponentCount - 1);
+  d->VolumePropertyWidget->setCurrentComponent(currentComponent);
+
+  this->updateFromVolumePropertyNode();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::updateIndependentComponents()
+{
+  Q_D(qMRMLVolumePropertyNodeWidget);
+  if (!d->VolumePropertyNode)
+  {
+    return;
+  }
+  vtkVolumeProperty* volumeProperty = d->VolumePropertyNode->GetVolumeProperty();
+  if (!volumeProperty)
+  {
+    return;
+  }
+
+  if (d->IndependentRadioButton->isChecked())
+  {
+    d->ComponentSpinBox->setValue(0);
+  }
+  volumeProperty->SetIndependentComponents(d->IndependentRadioButton->isChecked());
 }
